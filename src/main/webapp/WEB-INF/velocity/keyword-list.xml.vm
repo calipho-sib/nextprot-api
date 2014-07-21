@@ -1,0 +1,5 @@
+<keyword-list>
+	#foreach($keyword in $entry.keywords)
+		<keyword accession="$keyword.accession" kwName="$keyword.name" />
+	#end
+</keyword-list>

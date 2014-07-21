@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+	
+	
+	
+		
+	<!-- Keywords 
+	
+	and prop.property_value in (
+	'Biological process', -> KW-1, KW-4
+	'Cellular component', -> KW-2
+	 'Coding sequence diversity', 'Disease', 'Domain', 'Developmental stage', 'Ligand',
+	 'Molecular function', -> KW-3, KW-5
+	 
+	 'PTM', 'Technical term')
+	
+	
+	-->
+	
+	
+	
+	<!-- 	KW-1 	-->
+	<cv_terms cv_id="300" cv_name="keyword 1" cv_category_id="13" db_xref_id="102"/>	
+	<cv_term_properties cv_term_property_id="300" cv_term_id="300" property_name="Category" property_value="Biological process"/>		
+	<resources resource_id="102" cv_type_id="1"/>
+	<db_xrefs accession="KW-1" resource_id="102" cv_database_id="13" version="build_53"/>
+	
+	<!-- 	KW-2 	-->
+	<cv_terms cv_id="301" cv_name="keyword 2" cv_category_id="13" db_xref_id="103"/>	
+	<cv_term_properties cv_term_property_id="301" cv_term_id="301" property_name="Category" property_value="Cellular component"/>
+	<resources resource_id="103" cv_type_id="1"/>
+	<db_xrefs accession="KW-2" resource_id="103" cv_database_id="13" version="build_53"/>
+
+
+	<!-- 	KW-3 	-->
+	<cv_terms cv_id="302" cv_name="keyword 3" cv_category_id="13" db_xref_id="104"/>	
+	<cv_term_properties cv_term_property_id="302" cv_term_id="302" property_name="Category" property_value="Molecular function"/>	
+	<resources resource_id="104" cv_type_id="1"/>
+	<db_xrefs accession="KW-3" resource_id="104" cv_database_id="13" version="build_53"/>		
+
+	<!-- 	KW-4 with missing resources & db_xrefs preventing query to retrieve it 	-->
+	<cv_terms cv_id="303" cv_name="keyword 4" cv_category_id="13"/>	
+	<cv_term_properties cv_term_property_id="303" cv_term_id="303" property_name="Category" property_value="Biological process"/>
+
+	<!-- 	KW-5 with missing resources & db_xrefs preventing query to retrieve it 	-->
+	<cv_terms cv_id="304" cv_name="keyword 5" cv_category_id="13"/>	
+	<cv_term_properties cv_term_property_id="304" cv_term_id="304" property_name="Category" property_value="Molecular function"/>
+
+	<!-- family -->
+	<cv_terms cv_id="400" cv_name="family 1" cv_category_id="22"/>	
+	<cv_term_properties cv_term_property_id="400" cv_term_id="400"
+		property_name="Category" property_value="Cellular component"/>
+
+	<!-- master -->
+	<sequence_identifiers identifier_id="10" cv_type_id="1" unique_name="NX_P12345"/>
+	<annotations annotation_id="10" identifier_id="10" cv_term_id="300"/> <!-- KW 1 -->
+	<annotations annotation_id="11" identifier_id="10" cv_term_id="301"/> <!-- KW 2 -->
+	<annotations annotation_id="12" identifier_id="10" cv_term_id="302"/> <!-- KW 3 -->
+	<annotations annotation_id="13" identifier_id="10" cv_term_id="304"/> <!-- KW 5 -->
+	<annotations annotation_id="14" identifier_id="10" cv_term_id="400"/> <!-- FAMILY-->		
+	
+</dataset>	

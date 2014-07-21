@@ -1,0 +1,5 @@
+#parse("turtle/prefix.ttl.vm")
+
+#foreach($publication in $publicationList)
+#parse('turtle/publication.ttl.vm')
+#end

@@ -1,0 +1,4 @@
+{
+	"id":"$user.userId",
+	"username":"$user.username"
+}

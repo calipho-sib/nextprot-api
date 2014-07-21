@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+	
+	<view_master_identifier_histories master_id="100" unique_name="PAM" protein_existence="protein level" nextprot_integrated="2010-03-01 12:31:49.894" 
+		nextprot_updated="2013-06-15 02:50:25.47" uniprot_integrated="2006-10-31 11:00:00.0" uniprot_updated="2013-04-03 12:00:00.0" uniprot_version="1" sequence_version="1"/>	
+	
+</dataset>	

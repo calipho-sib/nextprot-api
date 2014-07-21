@@ -1,0 +1,48 @@
+package org.nextprot.api.dao;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+import org.nextprot.api.dbunit.DBUnitBaseTest;
+import org.nextprot.api.domain.PeptideMapping;
+import org.nextprot.api.domain.PeptideMapping.PeptideEvidence;
+import org.nextprot.utils.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+@DatabaseSetup(value = "PeptideMappingDaoTest.xml", type = DatabaseOperation.INSERT)
+public class PeptideMappingDaoTest extends DBUnitBaseTest {
+	
+	@Autowired private PeptideMappingDao peptideMappingDao;
+	
+	@Test
+	public void findPeptidesByMasterId() {
+		List<PeptideMapping> mappings = this.peptideMappingDao.findPeptidesByMasterId(596889L);
+		
+		assertEquals(1, mappings.size());
+		assertEquals("NX_PEPT12345678", mappings.get(0).getPeptideUniqueName());
+		assertEquals(1, mappings.get(0).getIsoformSpecificity().size());
+		List<Pair<Integer, Integer>> positions = mappings.get(0).getIsoformSpecificity().get("NX_P12345-1").getPositions();
+		assertEquals(1, positions.size());
+		assertTrue(1 == positions.get(0).getFirst());
+		assertTrue(1000 == positions.get(0).getSecond());
+	}
+	
+	@Test
+	public void findPeptideEvidences() {
+		List<String> peptideNames = new ArrayList<String>();
+		peptideNames.add("NX_PEPT12345678");
+		List<PeptideEvidence> evidences = this.peptideMappingDao.findPeptideEvidences(peptideNames);
+		assertEquals(1, evidences.size());
+		assertEquals("789654", evidences.get(0).getAccession());
+		assertEquals("NX_PEPT12345678", evidences.get(0).getPeptideName());
+		assertEquals("PubMed", evidences.get(0).getDatabaseName());
+	}
+
+}

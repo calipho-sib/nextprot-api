@@ -1,0 +1,35 @@
+
+# Peptides mappings
+
+
+#foreach($isoform in $entry.getIsoforms())
+#set($isoform-name =  $isoform.getUniqueName())
+#foreach($pep in $entry.getPeptidesByIsoform($isoform-name))
+#set($pep-name=$pep.peptideUniqueName) 
+#set($mapping-iri=$pep-name+"-"+$isoform-name)
+#foreach($spec in $pep.isoformSpecificity.values())
+#if ($spec.isoformName==$isoform-name) 
+  isoform:$isoform-name :mapping :$mapping-iri .
+  :$mapping-iri rdf:type :PeptideMapping ;  
+#foreach($pos in $spec.positions)
+    :position [ 
+      :start "$pos.first"^^xsd:integer ;
+      :end "$pos.second"^^xsd:integer ;
+    ];
+#end
+#foreach($evi in $pep.evidences)
+    :withEvidence [
+      :assignedBy source:$StringUtils.slug($evi.assignedBy) ;
+      :reference [
+        a :Xref ;
+        :provenance db:$StringUtils.slug($evi.databaseName) ;
+        :accession "$evi.accession"^^xsd:string ;
+      ];
+    ];
+#end
+  .
+  
+#end
+#end
+#end
+#end

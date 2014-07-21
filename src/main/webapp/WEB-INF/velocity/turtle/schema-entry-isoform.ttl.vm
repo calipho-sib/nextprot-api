@@ -1,0 +1,156 @@
+#if($prefix)
+#parse("turtle/prefix.ttl.vm")
+#end
+
+<http://np.org/rdf>
+      rdf:type owl:Ontology ;
+      owl:imports owl: , <http://www.w3.org/2004/02/skos/core> ;
+      owl:versionInfo "Initial release"^^xsd:string .
+
+
+:Entry
+      rdf:type owl:Class ;
+      rdfs:comment "General information of a protein."^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      owl:equivalentClass up:Protein;
+      .
+
+:Isoform
+      rdf:type owl:Class ;
+      rdfs:comment "Specific information of a protein isoform."^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      .
+
+:ProteinSequence
+      rdf:type owl:Class ;
+      rdfs:comment "Protein sequence object"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      .
+:Name
+      rdf:type owl:Class ;
+      rdfs:comment "Names given to a protein entry"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      .
+
+:History
+      rdf:type owl:Class ;
+      rdfs:comment "A history of a protein entry"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      .
+
+
+
+# Isoform annotation specificity qualifier
+
+:IsoformAnnotationSpecificityQualifier
+      rdf:type owl:Class ;
+      rdfs:subClassOf owl:Thing ;
+      rdfs:comment "Specificity qualifiers are used to describe the isoform specificity of an annotation"^^xsd:string ;
+      .
+      
+:UNKNOWN
+      rdf:type :IsoformAnnotationSpecificityQualifier ;
+      rdfs:comment "Not applicable or not known."^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      :notIn :SPECIFIC, :BY_DEFAULT;
+      .
+
+:SPECIFIC
+      rdf:type :IsoformAnnotationSpecificityQualifier ;
+      rdfs:comment "the annotation is explicitly linked to this isoform in swissprot."^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      :notIn :UNKNOWN, :BY_DEFAULT;
+      .
+
+:BY_DEFAULT
+      rdf:type :IsoformAnnotationSpecificityQualifier ;
+      rdfs:comment "the annotation is by default propagated from the master to the isoform."^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      :notIn :SPECIFIC, :UNKNOWN;
+      .
+
+
+# quality qualifiers
+
+:QualityQualifier
+      rdf:type owl:Class ;
+      rdfs:subClassOf owl:Thing ;
+      rdfs:comment "Quality qualifiers are used to describe the reliability of an annotation or evidence"^^xsd:string ;
+      .
+
+:GOLD
+      rdf:type :QualityQualifier ;
+      rdfs:comment "High level of confidence"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      :notIn :SILVER, :BRONZE;
+      .
+
+:SILVER
+      rdf:type :QualityQualifier ;
+      rdfs:comment "Medium level of confidence"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      :notIn :GOLD, :BRONZE;
+      .
+      
+:BRONZE
+      rdf:type :QualityQualifier ;
+      rdfs:comment "Low level of confidence"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      :notIn :SILVER, :GOLD;
+      .
+      
+# protein existence
+:ProteinExistence
+      rdf:type owl:Class ;
+      rdfs:subClassOf owl:Thing ;
+      rdfs:comment "Protein existence detection method and reliabilty level"^^xsd:string ;
+      .
+
+:Evidence_at_protein_level
+      rdf:type :ProteinExistence ;
+      :level "1"^^xsd:integer ;
+      rdfs:label "Evidence at protein level"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      :notIn :Evidence_at_transcript_level, :Inferred_from_homology, :Predicted, :Uncertain;
+      .
+
+:Evidence_at_transcript_level
+      rdf:type :ProteinExistence ;
+      :level "2"^^xsd:integer ;
+      rdfs:label "Evidence at transcript level"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      :notIn :Evidence_at_protein_level, :Inferred_from_homology, :Predicted, :Uncertain;
+      .
+
+:Inferred_from_homology
+      rdf:type :ProteinExistence ;
+      :level "3"^^xsd:integer ;
+      rdfs:label "Inferred from homology"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      :notIn :Evidence_at_protein_level, :Evidence_at_transcript_level, :Predicted, :Uncertain;
+      .
+      
+:Predicted
+      rdf:type :ProteinExistence ;
+      :level "4"^^xsd:integer ;
+      rdfs:label "Predicted"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      :notIn :Evidence_at_protein_level, :Evidence_at_transcript_level, :Inferred_from_homology, :Uncertain;
+      .
+
+:Uncertain
+      rdf:type :ProteinExistence ;
+      :level "5"^^xsd:integer ;
+      rdfs:label "Uncertain"^^xsd:string ;
+      rdfs:subClassOf owl:Thing ;
+      :notIn :Evidence_at_protein_level, :Evidence_at_transcript_level, :Inferred_from_homology, :Predicted;
+      .
+      
+
+      
+#TODO generate specific owl for the publication hierarchy       
+:Publication
+      rdf:type owl:Class ;
+      rdfs:subClassOf owl:Thing ;
+      .
+      

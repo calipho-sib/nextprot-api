@@ -1,0 +1,11 @@
+
+
+:Version
+  rdf:type owl:Class ;
+  :git "$version.name"^^xsd:string ;
+  :version "$version.version"^^xsd:string ;
+  :date "$version.date"^^xsd:string ;
+  rdfs:comment "The nextprot api version that generate those current data."^^xsd:string ;
+  rdfs:subClassOf owl:Thing;
+  .
+

@@ -1,0 +1,36 @@
+#if($prefix)
+#parse("turtle/prefix.ttl.vm")
+#end
+#
+# Define Database
+# 
+:Database
+      rdf:type owl:Class ;
+      rdfs:comment "Database of the cross-reference"^^xsd:string ;
+      rdfs:subClassOf owl:Thing;
+      .
+
+:Xref
+      rdf:type owl:Class ;
+      rdfs:comment "Cross reference"^^xsd:string ;
+      rdfs:subClassOf owl:Thing;
+      .
+      
+:Identifier
+      rdf:type owl:Class ;
+      rdfs:comment "Identifier type"^^xsd:string ;
+      rdfs:subClassOf owl:Thing;
+      .
+      
+      
+#foreach($db in $databaseList)
+  
+db:$StringUtils.slug($db.name) rdf:type :Database;
+  rdfs:subClassOf owl:Thing;
+  rdfs:comment "$db.description"^^xsd:string;
+  :category "$db.category"^^xsd:string;
+#if($db.getURL())
+  rdfs:seeAlso "$db.getURL()"^^xsd:anyURI;
+#end
+  .      
+#end

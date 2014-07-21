@@ -1,0 +1,14 @@
+{
+	"elapsedTime":${result.elapsedTime},
+	"entity":"${result.entity}",
+	"index":"${result.index}",
+	#foreach($facet in $result.getFacets().values())
+	"autocomplete": [
+		#foreach($field in $facet.getFacetFields())
+		{ "name":"$field.getFirst()", "count":$field.getSecond() } #if($velocityHasNext), #end 
+		 
+		#end
+	]
+	#end
+
+}

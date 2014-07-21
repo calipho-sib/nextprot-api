@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+
+	<view_master_identifier_names master_id="100" unique_name="PAM" name_class="geneNames" name_type="gene name" is_main="false" synonym_name="DGU" synonym_id="PR1172677" parent_id="PR_1172676"/>
+	<view_master_identifier_names master_id="100" unique_name="PAM" name_class="proteinNames" name_type="name" name_qualifier="full" is_main="true" synonym_name="PAMELA" synonym_id="PR1172678" parent_id="PR_1172676"/>
+
+</dataset> 
+

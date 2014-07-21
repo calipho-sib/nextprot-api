@@ -1,0 +1,22 @@
+<interaction qualityQualifier='$interaction.quality'>
+    <interactionXref database="$interaction.evidenceXrefDB" accession="$interaction.evidenceXrefAC">
+        #set($UNESCAPED_CDATA = $interaction.evidenceXrefURL)
+        <url><![CDATA[$UNESCAPED_CDATA]]></url>
+    </interactionXref>
+        #foreach($interactant in $interaction.interactants)
+            #if($interactant.isNextprot())
+				<interactant uniqueName='NX_$interactant.accession' />
+			#else
+			<interactantXref database='$interactant.database' accession='$interactant.accession'>
+		    	<url>
+		    		#set($UNESCAPED_CDATA = $interactant.url)
+      				<![CDATA[
+      				$UNESCAPED_CDATA
+      				]]>
+		    	</url>
+		    </interactantXref>
+			#end
+		#end
+    ## Interacts with nextprot entries
+    <experiment-count>$interaction.numberOfExperiments</experiment-count>
+</interaction>

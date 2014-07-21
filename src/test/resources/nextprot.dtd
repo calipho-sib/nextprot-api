@@ -1,0 +1,969 @@
+<!ELEMENT dataset (
+   (annotation_properties|
+    annotation_protein_assoc|
+    annotation_relationships|
+    annotation_resource_assoc|
+    annotation_resource_assoc_properties|
+    annotation_synonyms|
+    annotations|
+    bio_sequences|
+    cv_bio_sequence_types|
+    cv_data_releases|
+    cv_database_categories|
+    cv_databases|
+    cv_datasources|
+    cv_date_precisions|
+    cv_exp_data_identifier_assoc_types|
+    cv_experiment_types|
+    cv_experimental_data_types|
+    cv_identifier_types|
+    cv_journals|
+    cv_mapping_annotation_types|
+    cv_program_types|
+    cv_property_names|
+    cv_property_types|
+    cv_property_values|
+    cv_publication_types|
+    cv_qualifier_types|
+    cv_quality_qualifiers|
+    cv_resource_assoc_types|
+    cv_resource_types|
+    cv_specificity_qualifier_types|
+    cv_status|
+    cv_synonym_qualifiers|
+    cv_synonym_types|
+    cv_tag_types|
+    cv_term_categories|
+    cv_term_db_xref_assoc|
+    cv_term_master_view|
+    cv_term_paths|
+    cv_term_properties|
+    cv_term_relationship_types|
+    cv_term_relationships|
+    cv_term_synonyms|
+    cv_terms|
+    data_releases|
+    db_xrefs|
+    dbmaintain_scripts|
+    experiment_properties|
+    experimental_contexts|
+    experimental_data|
+    experimental_data_identifier_assoc|
+    experimental_data_properties|
+    experimental_resources|
+    experiments|
+    expression_view|
+    gene_identifiers|
+    identifier_feature_positions|
+    identifier_properties|
+    identifier_resource_assoc|
+    identifier_resource_assoc_properties|
+    identifier_synonyms|
+    interaction_identifier_xrefs|
+    interactions|
+    mapping_annotations|
+    mapping_positions|
+    master_identifier_name_view|
+    objective_tag_counts|
+    objective_tag_relationships|
+    objective_tags|
+    partnership_partner_assoc|
+    partnership_resource_assoc|
+    partnership_resource_assoc_properties|
+    partnerships|
+    programs|
+    protein_feature_positions|
+    pubauthors|
+    publication_db_xref_assoc|
+    publication_view|
+    publications|
+    resource_properties|
+    resources|
+    sequence_identifiers|
+    variants|
+    view_cv_term|
+    view_master_index|
+    view_master_publication|
+    view_objective_tags)*)>
+
+<!ELEMENT annotation_properties EMPTY>
+<!ATTLIST annotation_properties
+    annotation_property_id CDATA #REQUIRED
+    annotation_id CDATA #IMPLIED
+    property_name CDATA #IMPLIED
+    property_value CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_term_value_id CDATA #IMPLIED
+>
+
+<!ELEMENT annotation_protein_assoc EMPTY>
+<!ATTLIST annotation_protein_assoc
+    assoc_id CDATA #REQUIRED
+    annotation_id CDATA #IMPLIED
+    protein_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_specificity_qualifier_type_id CDATA #IMPLIED
+>
+
+<!ELEMENT annotation_relationships EMPTY>
+<!ATTLIST annotation_relationships
+    annotation_relationship_id CDATA #REQUIRED
+    cv_type_id CDATA #IMPLIED
+    subject_id CDATA #IMPLIED
+    object_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    datasource_id CDATA #IMPLIED
+>
+
+<!ELEMENT annotation_resource_assoc EMPTY>
+<!ATTLIST annotation_resource_assoc
+    assoc_id CDATA #REQUIRED
+    annotation_id CDATA #IMPLIED
+    resource_id CDATA #IMPLIED
+    cv_qualifier_type_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    is_negative_evidence CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+    assigned_by_id CDATA #IMPLIED
+    cv_quality_qualifier_id CDATA #IMPLIED
+    experimental_context_id CDATA #IMPLIED
+>
+
+<!ELEMENT annotation_resource_assoc_properties EMPTY>
+<!ATTLIST annotation_resource_assoc_properties
+    annotation_resource_assoc_property_id CDATA #REQUIRED
+    annotation_resource_id CDATA #IMPLIED
+    property_name CDATA #IMPLIED
+    property_value CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_term_value_id CDATA #IMPLIED
+>
+
+<!ELEMENT annotation_synonyms EMPTY>
+<!ATTLIST annotation_synonyms
+    synonym_id CDATA #REQUIRED
+    annotation_id CDATA #IMPLIED
+    synonym_name CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+    source_id CDATA #IMPLIED
+    is_main CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    parent_id CDATA #IMPLIED
+    cv_qualifier_id CDATA #IMPLIED
+>
+
+<!ELEMENT annotations EMPTY>
+<!ATTLIST annotations
+    annotation_id CDATA #REQUIRED
+    cv_annotation_discriminator_id CDATA #IMPLIED
+    cv_term_id CDATA #IMPLIED
+    description CDATA #IMPLIED
+    identifier_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    unique_name CDATA #IMPLIED
+    datasource_id CDATA #IMPLIED
+    cv_annotation_type_id CDATA #IMPLIED
+    cv_quality_qualifier_id CDATA #IMPLIED
+    internal_create_date CDATA #IMPLIED
+    internal_update_date CDATA #IMPLIED
+    md5 CDATA #IMPLIED
+>
+
+<!ELEMENT bio_sequences EMPTY>
+<!ATTLIST bio_sequences
+    bio_sequence_id CDATA #REQUIRED
+    bio_sequence CDATA #IMPLIED
+    md5 CDATA #IMPLIED
+    identifier_id CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT cv_bio_sequence_types EMPTY>
+<!ATTLIST cv_bio_sequence_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_data_releases EMPTY>
+<!ATTLIST cv_data_releases
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+    datasource_id CDATA #IMPLIED
+    accession_code CDATA #IMPLIED
+    update_frequency CDATA #IMPLIED
+    url CDATA #IMPLIED
+    contact_info CDATA #IMPLIED
+    data_repository CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT cv_database_categories EMPTY>
+<!ATTLIST cv_database_categories
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_databases EMPTY>
+<!ATTLIST cv_databases
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+    url CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    db_code CDATA #IMPLIED
+    link_type CDATA #IMPLIED
+    link_url CDATA #IMPLIED
+    cv_category_id CDATA #IMPLIED
+>
+
+<!ELEMENT cv_datasources EMPTY>
+<!ATTLIST cv_datasources
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    url CDATA #IMPLIED
+    accession CDATA #IMPLIED
+    document_id CDATA #IMPLIED
+>
+
+<!ELEMENT cv_date_precisions EMPTY>
+<!ATTLIST cv_date_precisions
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_exp_data_identifier_assoc_types EMPTY>
+<!ATTLIST cv_exp_data_identifier_assoc_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_experiment_types EMPTY>
+<!ATTLIST cv_experiment_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_experimental_data_types EMPTY>
+<!ATTLIST cv_experimental_data_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_identifier_types EMPTY>
+<!ATTLIST cv_identifier_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_journals EMPTY>
+<!ATTLIST cv_journals
+    cv_id CDATA #REQUIRED
+    journal_name CDATA #IMPLIED
+    med_abbrev CDATA #IMPLIED
+    iso_abbrev CDATA #IMPLIED
+    issn CDATA #IMPLIED
+    essn CDATA #IMPLIED
+    nlmid CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT cv_mapping_annotation_types EMPTY>
+<!ATTLIST cv_mapping_annotation_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_program_types EMPTY>
+<!ATTLIST cv_program_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_property_names EMPTY>
+<!ATTLIST cv_property_names
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    display_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_property_type_id CDATA #IMPLIED
+    cv_term_category_id CDATA #IMPLIED
+>
+
+<!ELEMENT cv_property_types EMPTY>
+<!ATTLIST cv_property_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_property_values EMPTY>
+<!ATTLIST cv_property_values
+    cv_id CDATA #REQUIRED
+    cv_value CDATA #IMPLIED
+    cv_property_name_id CDATA #IMPLIED
+    description CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    rank CDATA #IMPLIED
+>
+
+<!ELEMENT cv_publication_types EMPTY>
+<!ATTLIST cv_publication_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_qualifier_types EMPTY>
+<!ATTLIST cv_qualifier_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_quality_qualifiers EMPTY>
+<!ATTLIST cv_quality_qualifiers
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_resource_assoc_types EMPTY>
+<!ATTLIST cv_resource_assoc_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_resource_types EMPTY>
+<!ATTLIST cv_resource_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_specificity_qualifier_types EMPTY>
+<!ATTLIST cv_specificity_qualifier_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_status EMPTY>
+<!ATTLIST cv_status
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_synonym_qualifiers EMPTY>
+<!ATTLIST cv_synonym_qualifiers
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_synonym_types EMPTY>
+<!ATTLIST cv_synonym_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_tag_types EMPTY>
+<!ATTLIST cv_tag_types
+    cv_id CDATA #REQUIRED
+    cv_parent_id CDATA #IMPLIED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_term_categories EMPTY>
+<!ATTLIST cv_term_categories
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+    cv_display_name CDATA #IMPLIED
+>
+
+<!ELEMENT cv_term_db_xref_assoc EMPTY>
+<!ATTLIST cv_term_db_xref_assoc
+    cv_term_id CDATA #IMPLIED
+    db_xref_id CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+>
+
+<!ELEMENT cv_term_master_view EMPTY>
+<!ATTLIST cv_term_master_view
+    cv_term_id CDATA #IMPLIED
+    master_ids CDATA #IMPLIED
+    resource_count CDATA #IMPLIED
+>
+
+<!ELEMENT cv_term_paths EMPTY>
+<!ATTLIST cv_term_paths
+    cv_term_path_id CDATA #REQUIRED
+    cv_type_id CDATA #IMPLIED
+    subject_id CDATA #IMPLIED
+    object_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    path_distance CDATA #IMPLIED
+    cv_category_id CDATA #IMPLIED
+>
+
+<!ELEMENT cv_term_properties EMPTY>
+<!ATTLIST cv_term_properties
+    cv_term_property_id CDATA #REQUIRED
+    cv_term_id CDATA #IMPLIED
+    property_name CDATA #IMPLIED
+    property_value CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_term_value_id CDATA #IMPLIED
+>
+
+<!ELEMENT cv_term_relationship_types EMPTY>
+<!ATTLIST cv_term_relationship_types
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+>
+
+<!ELEMENT cv_term_relationships EMPTY>
+<!ATTLIST cv_term_relationships
+    cv_term_relationship_id CDATA #REQUIRED
+    cv_type_id CDATA #IMPLIED
+    subject_id CDATA #IMPLIED
+    object_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT cv_term_synonyms EMPTY>
+<!ATTLIST cv_term_synonyms
+    synonym_id CDATA #REQUIRED
+    cv_term_id CDATA #IMPLIED
+    synonym_name CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+    source_id CDATA #IMPLIED
+    is_main CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT cv_terms EMPTY>
+<!ATTLIST cv_terms
+    cv_id CDATA #REQUIRED
+    cv_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_category_id CDATA #IMPLIED
+    db_xref_id CDATA #IMPLIED
+    cv_status_id CDATA #IMPLIED
+    internal_create_date CDATA #IMPLIED
+    internal_update_date CDATA #IMPLIED
+>
+
+<!ELEMENT data_releases EMPTY>
+<!ATTLIST data_releases
+    data_release_id CDATA #REQUIRED
+    cv_data_release_id CDATA #IMPLIED
+    release_version CDATA #IMPLIED
+    release_date CDATA #IMPLIED
+    internal_create_date CDATA #IMPLIED
+    internal_update_date CDATA #IMPLIED
+    cv_status_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT db_xrefs EMPTY>
+<!ATTLIST db_xrefs
+    resource_id CDATA #REQUIRED
+    accession CDATA #IMPLIED
+    version CDATA #IMPLIED
+    description CDATA #IMPLIED
+    cv_database_id CDATA #IMPLIED
+    create_date CDATA #IMPLIED
+    update_date CDATA #IMPLIED
+>
+
+<!ELEMENT dbmaintain_scripts EMPTY>
+<!ATTLIST dbmaintain_scripts
+    file_name CDATA #IMPLIED
+    file_last_modified_at CDATA #IMPLIED
+    checksum CDATA #IMPLIED
+    executed_at CDATA #IMPLIED
+    succeeded CDATA #IMPLIED
+>
+
+<!ELEMENT experiment_properties EMPTY>
+<!ATTLIST experiment_properties
+    experiment_property_id CDATA #REQUIRED
+    experiment_id CDATA #IMPLIED
+    cv_property_name_id CDATA #IMPLIED
+    property_value CDATA #IMPLIED
+    cv_term_value_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_property_value_id CDATA #IMPLIED
+>
+
+<!ELEMENT experimental_contexts EMPTY>
+<!ATTLIST experimental_contexts
+    context_id CDATA #REQUIRED
+    tissue_id CDATA #IMPLIED
+    developmental_stage_id CDATA #IMPLIED
+    cell_line_id CDATA #IMPLIED
+    disease_id CDATA #IMPLIED
+    organelle_id CDATA #IMPLIED
+    detection_method_id CDATA #IMPLIED
+    md5 CDATA #IMPLIED
+    metadata_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT experimental_data EMPTY>
+<!ATTLIST experimental_data
+    experimental_data_id CDATA #REQUIRED
+    cv_experimental_data_type_id CDATA #IMPLIED
+    description CDATA #IMPLIED
+    unique_name CDATA #IMPLIED
+    cv_quality_qualifier_id CDATA #IMPLIED
+    experiment_id CDATA #IMPLIED
+    experimental_resource_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    internal_create_date CDATA #IMPLIED
+    internal_update_date CDATA #IMPLIED
+>
+
+<!ELEMENT experimental_data_identifier_assoc EMPTY>
+<!ATTLIST experimental_data_identifier_assoc
+    assoc_id CDATA #REQUIRED
+    experimental_data_id CDATA #IMPLIED
+    sequence_identifier_id CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT experimental_data_properties EMPTY>
+<!ATTLIST experimental_data_properties
+    experimental_data_property_id CDATA #REQUIRED
+    experimental_data_id CDATA #IMPLIED
+    cv_property_name_id CDATA #IMPLIED
+    property_value CDATA #IMPLIED
+    cv_term_value_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_property_value_id CDATA #IMPLIED
+>
+
+<!ELEMENT experimental_resources EMPTY>
+<!ATTLIST experimental_resources
+    resource_id CDATA #REQUIRED
+    unique_name CDATA #IMPLIED
+>
+
+<!ELEMENT experiments EMPTY>
+<!ATTLIST experiments
+    experiment_id CDATA #REQUIRED
+    description CDATA #IMPLIED
+    source_id CDATA #IMPLIED
+    cv_experiment_type_id CDATA #IMPLIED
+    datasource_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    unique_name CDATA #IMPLIED
+    internal_create_date CDATA #IMPLIED
+    internal_update_date CDATA #IMPLIED
+    link CDATA #IMPLIED
+>
+
+<!ELEMENT expression_view EMPTY>
+<!ATTLIST expression_view
+    identifier_id CDATA #IMPLIED
+    unique_name CDATA #IMPLIED
+    annotation_id CDATA #IMPLIED
+    cv_quality_qualifier_id CDATA #IMPLIED
+    cv_tissue_id CDATA #IMPLIED
+    cv_tissue_name CDATA #IMPLIED
+    cv_tissue_acc CDATA #IMPLIED
+    stage CDATA #IMPLIED
+    is_negative_evidence CDATA #IMPLIED
+    expression_level CDATA #IMPLIED
+    expression_level_rank CDATA #IMPLIED
+    cv_experiment_type_id CDATA #IMPLIED
+    cv_experimental_data_type_id CDATA #IMPLIED
+    exp_data CDATA #IMPLIED
+>
+
+<!ELEMENT gene_identifiers EMPTY>
+<!ATTLIST gene_identifiers
+    identifier_id CDATA #REQUIRED
+    chromosome CDATA #IMPLIED
+    first_pos_chr CDATA #IMPLIED
+    last_pos_chr CDATA #IMPLIED
+    band CDATA #IMPLIED
+    strand CDATA #IMPLIED
+    haplotype CDATA #IMPLIED
+>
+
+<!ELEMENT identifier_feature_positions EMPTY>
+<!ATTLIST identifier_feature_positions
+    position_id CDATA #REQUIRED
+    first_pos CDATA #IMPLIED
+    last_pos CDATA #IMPLIED
+    annotation_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT identifier_properties EMPTY>
+<!ATTLIST identifier_properties
+    identifier_property_id CDATA #REQUIRED
+    identifier_id CDATA #IMPLIED
+    property_value CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_term_value_id CDATA #IMPLIED
+    cv_property_name_id CDATA #IMPLIED
+    cv_property_value_id CDATA #IMPLIED
+>
+
+<!ELEMENT identifier_resource_assoc EMPTY>
+<!ATTLIST identifier_resource_assoc
+    identifier_id CDATA #IMPLIED
+    resource_id CDATA #IMPLIED
+    datasource_id CDATA #IMPLIED
+    assoc_id CDATA #REQUIRED
+    hbn_version CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+    experimental_context_id CDATA #IMPLIED
+    cv_quality_qualifier_id CDATA #IMPLIED
+>
+
+<!ELEMENT identifier_resource_assoc_properties EMPTY>
+<!ATTLIST identifier_resource_assoc_properties
+    identifier_resource_assoc_property_id CDATA #REQUIRED
+    identifier_resource_id CDATA #IMPLIED
+    property_name CDATA #IMPLIED
+    property_value CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_term_value_id CDATA #IMPLIED
+    is_processed CDATA #IMPLIED
+>
+
+<!ELEMENT identifier_synonyms EMPTY>
+<!ATTLIST identifier_synonyms
+    synonym_id CDATA #REQUIRED
+    identifier_id CDATA #IMPLIED
+    synonym_name CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+    source_id CDATA #IMPLIED
+    is_main CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    datasource_id CDATA #IMPLIED
+    parent_id CDATA #IMPLIED
+    cv_qualifier_id CDATA #IMPLIED
+>
+
+<!ELEMENT interaction_identifier_xrefs EMPTY>
+<!ATTLIST interaction_identifier_xrefs
+    interaction_id CDATA #IMPLIED
+    db_xref_id CDATA #IMPLIED
+>
+
+<!ELEMENT interactions EMPTY>
+<!ATTLIST interactions
+    interaction_id CDATA #REQUIRED
+    db_xref_id CDATA #IMPLIED
+    note CDATA #IMPLIED
+    number_experiment CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    datasource_id CDATA #IMPLIED
+    internal_create_date CDATA #IMPLIED
+    internal_update_date CDATA #IMPLIED
+>
+
+<!ELEMENT mapping_annotations EMPTY>
+<!ATTLIST mapping_annotations
+    annotation_id CDATA #REQUIRED
+    reference_identifier_id CDATA #IMPLIED
+    mapped_identifier_id CDATA #IMPLIED
+    rank CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+    source_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    datasource_id CDATA #IMPLIED
+    is_master CDATA #IMPLIED
+    cv_quality_qualifier_id CDATA #IMPLIED
+>
+
+<!ELEMENT mapping_positions EMPTY>
+<!ATTLIST mapping_positions
+    position_id CDATA #REQUIRED
+    first_pos CDATA #IMPLIED
+    last_pos CDATA #IMPLIED
+    annotation_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT master_identifier_name_view EMPTY>
+<!ATTLIST master_identifier_name_view
+    identifier_id CDATA #IMPLIED
+    unique_name CDATA #IMPLIED
+    main_accession CDATA #IMPLIED
+    main_name CDATA #IMPLIED
+    gene_name CDATA #IMPLIED
+    chr_loc CDATA #IMPLIED
+    isoform_num CDATA #IMPLIED
+    structure CDATA #IMPLIED
+    var_num CDATA #IMPLIED
+    ptm_num CDATA #IMPLIED
+    mutagenesis_num CDATA #IMPLIED
+    expression_num CDATA #IMPLIED
+    proteomic CDATA #IMPLIED
+    family_cv_id CDATA #IMPLIED
+    interaction_num CDATA #IMPLIED
+    function_desc CDATA #IMPLIED
+    go_mol_function CDATA #IMPLIED
+    go_bio_process CDATA #IMPLIED
+    disease CDATA #IMPLIED
+    annot_family_ids CDATA #IMPLIED
+    isoform_unique_names CDATA #IMPLIED
+    publication_num CDATA #IMPLIED
+    ec_name CDATA #IMPLIED
+    max_seq_length CDATA #IMPLIED
+>
+
+<!ELEMENT objective_tag_counts EMPTY>
+<!ATTLIST objective_tag_counts
+    objective_tag_count_id CDATA #REQUIRED
+    hbn_version CDATA #IMPLIED
+    tag_id CDATA #IMPLIED
+    cv_entity_sub_type_id CDATA #IMPLIED
+    count CDATA #IMPLIED
+>
+
+<!ELEMENT objective_tag_relationships EMPTY>
+<!ATTLIST objective_tag_relationships
+    objective_tag_relationship_id CDATA #REQUIRED
+    hbn_version CDATA #IMPLIED
+    subject_id CDATA #IMPLIED
+    cv_subject_sub_type_id CDATA #IMPLIED
+    object_id CDATA #IMPLIED
+    cv_object_sub_type_id CDATA #IMPLIED
+>
+
+<!ELEMENT objective_tags EMPTY>
+<!ATTLIST objective_tags
+    objective_tag_id CDATA #REQUIRED
+    cv_entity_type_id CDATA #IMPLIED
+    cv_entity_sub_type_id CDATA #IMPLIED
+    entity_id CDATA #IMPLIED
+    entity_name CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT partnership_partner_assoc EMPTY>
+<!ATTLIST partnership_partner_assoc
+    assoc_id CDATA #REQUIRED
+    partnership_id CDATA #IMPLIED
+    db_xref_id CDATA #IMPLIED
+    is_self_interaction CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT partnership_resource_assoc EMPTY>
+<!ATTLIST partnership_resource_assoc
+    assoc_id CDATA #REQUIRED
+    partnership_id CDATA #IMPLIED
+    resource_id CDATA #IMPLIED
+    assigned_by_id CDATA #IMPLIED
+    cv_eco_id CDATA #IMPLIED
+    cv_quality_qualifier_id CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    note CDATA #IMPLIED
+>
+
+<!ELEMENT partnership_resource_assoc_properties EMPTY>
+<!ATTLIST partnership_resource_assoc_properties
+    property_id CDATA #REQUIRED
+    assoc_id CDATA #IMPLIED
+    cv_property_name_id CDATA #IMPLIED
+    property_value CDATA #IMPLIED
+    cv_term_value_id CDATA #IMPLIED
+    cv_property_value_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT partnerships EMPTY>
+<!ATTLIST partnerships
+    partnership_id CDATA #REQUIRED
+    note CDATA #IMPLIED
+    md5 CDATA #IMPLIED
+    datasource_id CDATA #IMPLIED
+    cv_quality_qualifier_id CDATA #IMPLIED
+    cv_status_id CDATA #IMPLIED
+    internal_create_date CDATA #IMPLIED
+    internal_update_date CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    is_xeno CDATA #IMPLIED
+>
+
+<!ELEMENT programs EMPTY>
+<!ATTLIST programs
+    resource_id CDATA #REQUIRED
+    cv_program_type_id CDATA #IMPLIED
+    name CDATA #IMPLIED
+    description CDATA #IMPLIED
+    program_version CDATA #IMPLIED
+>
+
+<!ELEMENT protein_feature_positions EMPTY>
+<!ATTLIST protein_feature_positions
+    position_id CDATA #REQUIRED
+    first_pos CDATA #IMPLIED
+    last_pos CDATA #IMPLIED
+    annotation_protein_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+>
+
+<!ELEMENT pubauthors EMPTY>
+<!ATTLIST pubauthors
+    pubauthor_id CDATA #REQUIRED
+    publication_id CDATA #IMPLIED
+    last_name CDATA #IMPLIED
+    fore_name CDATA #IMPLIED
+    suffix CDATA #IMPLIED
+    rank CDATA #IMPLIED
+    is_editor CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    initials CDATA #IMPLIED
+    is_person CDATA #IMPLIED
+>
+
+<!ELEMENT publication_db_xref_assoc EMPTY>
+<!ATTLIST publication_db_xref_assoc
+    publication_id CDATA #IMPLIED
+    db_xref_id CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+>
+
+<!ELEMENT publication_view EMPTY>
+<!ATTLIST publication_view
+    resource_id CDATA #IMPLIED
+    unique_name CDATA #IMPLIED
+    large_scale CDATA #IMPLIED
+    nucleotide_seq CDATA #IMPLIED
+    annotated CDATA #IMPLIED
+    computed CDATA #IMPLIED
+    identifier_num CDATA #IMPLIED
+    annotation_num CDATA #IMPLIED
+>
+
+<!ELEMENT publications EMPTY>
+<!ATTLIST publications
+    resource_id CDATA #REQUIRED
+    cv_publication_type_id CDATA #IMPLIED
+    title CDATA #IMPLIED
+    volume CDATA #IMPLIED
+    issue CDATA #IMPLIED
+    first_page CDATA #IMPLIED
+    last_page CDATA #IMPLIED
+    publication_date CDATA #IMPLIED
+    text_date CDATA #IMPLIED
+    cv_date_precision_id CDATA #IMPLIED
+    cv_journal_id CDATA #IMPLIED
+    datasource_id CDATA #IMPLIED
+    md5 CDATA #IMPLIED
+    abstract_text CDATA #IMPLIED
+>
+
+<!ELEMENT resource_properties EMPTY>
+<!ATTLIST resource_properties
+    resource_property_id CDATA #REQUIRED
+    resource_id CDATA #IMPLIED
+    property_name CDATA #IMPLIED
+    property_value CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_term_value_id CDATA #IMPLIED
+>
+
+<!ELEMENT resources EMPTY>
+<!ATTLIST resources
+    resource_id CDATA #REQUIRED
+    cv_type_id CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    internal_create_date CDATA #IMPLIED
+    internal_update_date CDATA #IMPLIED
+>
+
+<!ELEMENT sequence_identifiers EMPTY>
+<!ATTLIST sequence_identifiers
+    identifier_id CDATA #REQUIRED
+    description CDATA #IMPLIED
+    cv_type_id CDATA #IMPLIED
+    unique_name CDATA #IMPLIED
+    display_name CDATA #IMPLIED
+    db_xref_id CDATA #IMPLIED
+    internal_create_date CDATA #IMPLIED
+    internal_update_date CDATA #IMPLIED
+    hbn_version CDATA #IMPLIED
+    cv_status_id CDATA #IMPLIED
+    datasource_id CDATA #IMPLIED
+    cv_quality_qualifier_id CDATA #IMPLIED
+>
+
+<!ELEMENT variants EMPTY>
+<!ATTLIST variants
+    annotation_id CDATA #REQUIRED
+    variant_sequence CDATA #IMPLIED
+    original_sequence CDATA #IMPLIED
+    cv_bio_sequence_type_id CDATA #IMPLIED
+>
+
+<!ELEMENT view_cv_term EMPTY>
+<!ATTLIST view_cv_term
+    cv_term_id CDATA #IMPLIED
+    cv_name CDATA #IMPLIED
+    accession CDATA #IMPLIED
+    description CDATA #IMPLIED
+    cv_category_id CDATA #IMPLIED
+    linked_proteins CDATA #IMPLIED
+    all_linked_proteins CDATA #IMPLIED
+>
+
+<!ELEMENT view_master_index EMPTY>
+<!ATTLIST view_master_index
+    identifier_id CDATA #IMPLIED
+    annot_count CDATA #IMPLIED
+    publication_count CDATA #IMPLIED
+>
+
+<!ELEMENT view_master_publication EMPTY>
+<!ATTLIST view_master_publication
+    master_id CDATA #IMPLIED
+    publication_id CDATA #IMPLIED
+>
+
+<!ELEMENT view_objective_tags EMPTY>
+<!ATTLIST view_objective_tags
+    subject_tag_id CDATA #IMPLIED
+    subject_entity_id CDATA #IMPLIED
+    subject_entity_name CDATA #IMPLIED
+    subject_entity_type CDATA #IMPLIED
+    subject_entity_sub_type CDATA #IMPLIED
+    object_tag_id CDATA #IMPLIED
+    object_entity_id CDATA #IMPLIED
+    object_entity_name CDATA #IMPLIED
+    object_entity_type CDATA #IMPLIED
+    object_entity_sub_type CDATA #IMPLIED
+    object_subject_count CDATA #IMPLIED
+>
+

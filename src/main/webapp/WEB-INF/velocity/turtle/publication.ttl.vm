@@ -1,0 +1,42 @@
+#if($prefix)
+#parse("turtle/prefix.ttl.vm")
+
+#end
+publication:$publication.getMD5() a :Publication;
+#set($UNESCAPED_CDATA = $publication.title)
+    :title """$StringUtils.clean($UNESCAPED_CDATA)"""^^xsd:string;
+#if($publication.cvJournal.name)    
+    :journal "$publication.cvJournal.name"^^xsd:string; 
+#end
+    :volume "$publication.getVolume()"^^xsd:string;
+    :issue "$publication.getIssue()"^^xsd:string; 
+    :year "$publication.getPublicationYear()"^^xsd:string;
+    :firstPage "$publication.getFirstPage()"^^xsd:string; 
+    :lastPage "$publication.getLastPage()"^^xsd:string;
+#foreach($author in $publication.authors)
+#if($author.isPerson())
+    :author[ a :Person;
+#if(!$author.suffix.equals(""))
+      :name "$author.getForeName() $author.getLastName() $author.getSuffix()"^^xsd:string;
+      :suffix "$author.getSuffix()"^^xsd:string;
+#else
+      :name "$author.getForeName() $author.getLastName()"^^xsd:string;
+#end
+    ];
+#else
+    :author[ a :Consortium;
+	      :name "$author.getLastName()"^^xsd:string;
+    ];
+#end
+#end
+#if($publication.getDbXrefs() && $publication.getDbXrefs().size() > 0)
+#foreach($xref in $publication.getDbXrefs())
+##    :fromXref [:accession "$xref.getAccession()"^^xsd:string; :db db:$StringUtils.slug($xref.getDatabaseName())];
+    :from "$StringUtils.slug($xref.getDatabaseName()):$xref.getAccession()"^^xsd:string;
+#end
+###foreach($xref in $publication.dbXrefs)
+##    owl:sameAs "$xref.getResolvedUrl()"^^xsd:anyURI;
+###end
+#end
+    .
+

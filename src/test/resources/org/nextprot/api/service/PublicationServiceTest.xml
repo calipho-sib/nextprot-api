@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+	
+	<cv_database_categories cv_id="666" cv_name="cat" />
+	<cv_databases cv_id="3" cv_name="PubMed" cv_category_id="666"/>
+	
+	<cv_journals cv_id='100' journal_name="Pretty Revue of Science" iso_abbrev="Pr. Rev. Sc."
+		med_abbrev="Pr Rev Sc" issn="0000-0007" essn="[null]"/>
+		
+	<cv_journals cv_id='101' journal_name="Revue of Science" iso_abbrev="Rev. Sc."
+		med_abbrev="Rev Sc" issn="0001-5660" essn="[null]"/>
+	
+	<!-- 	PUBLICATION 1	 -->
+	<resources resource_id="100" cv_type_id="2"/>
+	<publications resource_id="100" title="an interesting paper" text_date="may-2009" cv_publication_type_id="10" cv_journal_id="100"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="001eb61d2064031e5c31bd05bb0ef2ed" />
+	<pubauthors pubauthor_id="102" publication_id="100" 
+		last_name="Luke" fore_name="Lucky" initials="" is_editor="0" rank="0" />		
+	<pubauthors pubauthor_id="104" publication_id="100" 
+		last_name="Kent" fore_name="Clark" initials="" is_editor="0" rank="1" />
+		
+	<resources resource_id="110" cv_type_id="1"/>
+	<db_xrefs accession="15923218" resource_id="110" cv_database_id="3" />		
+	<publication_db_xref_assoc publication_id="100" db_xref_id="110" cv_type_id="1"/>
+	
+	
+	<!-- 	PUBLICATION 2	 -->
+	<resources resource_id="101" cv_type_id="2"/>
+	<publications resource_id="101" title="an AWESOME paper" text_date="june-2009" cv_publication_type_id="10" cv_journal_id="101"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="001eb61d2064031e5c31bd05bb0ef2ed" />
+	<pubauthors pubauthor_id="103" publication_id="101" 
+		last_name="Lightyear" fore_name="Buzz" initials="" is_editor="0" rank="0" />		
+		
+	<resources resource_id="111" cv_type_id="1"/>
+	<db_xrefs accession="15923216" resource_id="111" cv_database_id="3" />		
+	<publication_db_xref_assoc publication_id="101" db_xref_id="111" cv_type_id="1"/>
+	
+	<resources resource_id="112" cv_type_id="1"/>
+	<db_xrefs accession="15923215" resource_id="112" cv_database_id="3" />		
+	<publication_db_xref_assoc publication_id="101" db_xref_id="112" cv_type_id="1"/>
+	
+	
+	<sequence_identifiers identifier_id="100" cv_type_id="1" unique_name="NX_P12345"/>
+	<identifier_resource_assoc assoc_id="1" identifier_id="100" resource_id="100" datasource_id="2"/>
+	<identifier_resource_assoc assoc_id="2" identifier_id="100" resource_id="101" datasource_id="2"/>
+	
+</dataset>	

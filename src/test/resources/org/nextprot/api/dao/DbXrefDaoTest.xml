@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+	
+	<!--  PUB  -->
+	
+	<cv_database_categories cv_id="666" cv_name="cat" />
+	<cv_databases cv_id="3" cv_name="PubMed" cv_category_id="666" link_url="http://pubmed.com?id=3" url="http://pubmed.com"/>
+
+	<resources resource_id="100" cv_type_id="2"/>
+	<publications resource_id="100" title="an interesting paper" text_date="may-2009" cv_publication_type_id="10"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="001eb61d2064031e5c31bd05bb0ef2ed" />
+		
+	<resources resource_id="110" cv_type_id="1"/>
+	<db_xrefs accession="15923218" resource_id="110" cv_database_id="3" />		
+	<publication_db_xref_assoc publication_id="100" db_xref_id="110" cv_type_id="1"/>
+	
+	
+	
+	<!--  MASTER -->
+	
+	<resources resource_id="120" cv_type_id="1"/>
+	<db_xrefs accession="789654" resource_id="120" cv_database_id="3"/>
+	
+	<identifier_resource_assoc resource_id="120" identifier_id="16"/> 
+	<sequence_identifiers identifier_id="16" cv_type_id="1" unique_name="NX_P12345"/>
+	
+	<!-- VIEW -->
+	
+	<cv_databases cv_id="7" cv_name="Ensembl" cv_category_id="666" link_url="http://ensembl.com?id=7" url="http://ensembl.com"/>
+	<resources resource_id="130" cv_type_id="1"/>
+	<db_xrefs accession="3D" resource_id="130" cv_database_id="7"/>
+	<view_master_identifier_identifiers identifier_name="3D" unique_name="NX_P12345" db_name="Ensembl"/>
+	
+	
+	<!-- ANNOTATION -->
+	
+	<annotations annotation_id="1000" cv_annotation_discriminator_id="3" cv_annotation_type_id="1166" unique_name="AN_123_1"
+		description="Receptor for whatever" identifier_id="16" />
+		
+	<annotation_resource_assoc assoc_id="1" annotation_id="1000" resource_id="4000" cv_qualifier_type_id="4"/>
+	
+	<cv_databases cv_id="5" cv_name="Cosmic" cv_category_id="666" link_url="http://cosmic.com?id=5" url="http://cosmic.com"/>
+	<resources resource_id="4000" cv_type_id="1"/>
+	<db_xrefs accession="333" resource_id="4000" cv_database_id="5"/>
+	
+	
+		
+</dataset>	

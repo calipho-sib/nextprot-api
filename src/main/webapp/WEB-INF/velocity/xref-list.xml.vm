@@ -1,0 +1,5 @@
+<xref-list>
+#foreach($xref in $entry.xrefs)
+	#parse('xref.xml.vm')
+#end
+</xref-list>

@@ -1,0 +1,1 @@
+select ds.cv_name as name, ds.description, ds.url from nextprot.cv_datasources ds;

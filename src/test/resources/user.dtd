@@ -1,0 +1,75 @@
+<!ELEMENT dataset (
+   (advanced_user_query|
+    authorities|
+    list_proteins|
+    oauth_access_token|
+    oauth_client_details|
+    protein_lists|
+    users)*)>
+
+<!ELEMENT advanced_user_query EMPTY>
+<!ATTLIST advanced_user_query
+    advanced_user_query_id CDATA #REQUIRED
+    title CDATA #REQUIRED
+    description CDATA #IMPLIED
+    sparql CDATA #REQUIRED
+    public CDATA #REQUIRED
+    submitted CDATA #REQUIRED
+    user_id CDATA #IMPLIED
+>
+
+<!ELEMENT authorities EMPTY>
+<!ATTLIST authorities
+    user_id CDATA #IMPLIED
+    authority CDATA #REQUIRED
+>
+
+<!ELEMENT list_proteins EMPTY>
+<!ATTLIST list_proteins
+    list_id CDATA #REQUIRED
+    entry CDATA #REQUIRED
+>
+
+<!ELEMENT oauth_access_token EMPTY>
+<!ATTLIST oauth_access_token
+    token_id CDATA #IMPLIED
+    token CDATA #IMPLIED
+    authentication_id CDATA #IMPLIED
+    user_name CDATA #IMPLIED
+    client_id CDATA #IMPLIED
+    authentication CDATA #IMPLIED
+    refresh_token CDATA #IMPLIED
+>
+
+<!ELEMENT oauth_client_details EMPTY>
+<!ATTLIST oauth_client_details
+    client_id CDATA #IMPLIED
+    client_secret CDATA #IMPLIED
+    client_name CDATA #IMPLIED
+    client_description CDATA #IMPLIED
+    scope CDATA #IMPLIED
+    resource_ids CDATA #IMPLIED
+    authorized_grant_types CDATA #IMPLIED
+    authorities CDATA #IMPLIED
+    web_server_redirect_uri CDATA #IMPLIED
+    access_token_validity CDATA #IMPLIED
+    refresh_token_validity CDATA #IMPLIED
+    additional_information CDATA #IMPLIED
+>
+
+<!ELEMENT protein_lists EMPTY>
+<!ATTLIST protein_lists
+    list_id CDATA #REQUIRED
+    name CDATA #IMPLIED
+    description CDATA #IMPLIED
+    owner_id CDATA #IMPLIED
+>
+
+<!ELEMENT users EMPTY>
+<!ATTLIST users
+    user_id CDATA #REQUIRED
+    username CDATA #REQUIRED
+    password CDATA #IMPLIED
+    identifier CDATA #IMPLIED
+>
+

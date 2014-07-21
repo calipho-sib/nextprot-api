@@ -1,0 +1,10 @@
+{
+	"id":"$proteinList.id",
+	"name":"$proteinList.name",
+#if($proteinList.description)"description":"$proteinList.description",#end
+	"accessions": [
+	#foreach($acc in $proteinList.accessions)
+	"$acc"#if($velocityHasNext),
+#end
+	#end]
+}

@@ -1,0 +1,10 @@
+#foreach($evidence in $annotation.getEvidences())
+##  anno: $annotation.getUniqueName()
+##  isof: $isoform-name
+##  evid: $evidence.getEvidenceId()
+##  prop: $evidence.getIsoformSpecificity()
+##  test: $evidence.isValidForIsoform($isoform-name)
+#if ($evidence.appliesToIsoform($isoform-name))
+#parse("turtle/isoform-annotation-evidence.ttl.vm")
+#end
+#end

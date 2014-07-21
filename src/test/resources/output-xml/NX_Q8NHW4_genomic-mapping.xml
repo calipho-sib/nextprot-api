@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?><genomic-mapping-list>
+    <genomic-mapping accession="ENSG00000205020" database="ensembl">
+        <gene accession="ENSG00000205020" database="ensembl">
+            <isoform-mapping-list>
+                <isoform-mapping accession="NX_Q8NHW4-1" main-name="Iso 1">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000444414" database="ensembl">
+                            <transcript-protein accession="ENSP00000405533" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002357229">
+                                    <position-on-gene begin="1" end="310"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="CODING" ensembl-exon="ENSE00002375724">
+                                    <position-on-gene begin="869" end="983"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="2" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="STOP" ensembl-exon="ENSE00001734049">
+                                    <position-on-gene begin="1575" end="1739"/>
+                                    <amino-acid rank="first" sequence-position="64" phase="2" value="V"/>
+                                    <amino-acid rank="last" sequence-position="92" phase="0" value="N"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_Q8NHW4-10" main-name="Iso 10">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000589079" database="ensembl">
+                            <transcript-protein accession="ENSP00000466720" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002787928">
+                                    <position-on-gene begin="156" end="310"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="CODING" ensembl-exon="ENSE00002375724">
+                                    <position-on-gene begin="869" end="983"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="2" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="STOP" ensembl-exon="ENSE00002960147">
+                                    <position-on-gene begin="1406" end="1971"/>
+                                    <amino-acid rank="first" sequence-position="64" phase="2" value="V"/>
+                                    <amino-acid rank="last" sequence-position="103" phase="0" value="R"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_Q8NHW4-2" main-name="Iso 2">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000588929" database="ensembl">
+                            <transcript-protein accession="ENSP00000465568" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002787928">
+                                    <position-on-gene begin="235" end="310"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="CODING" ensembl-exon="ENSE00002375724">
+                                    <position-on-gene begin="869" end="983"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="2" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="STOP" ensembl-exon="ENSE00003660235">
+                                    <position-on-gene begin="1590" end="1659"/>
+                                    <amino-acid rank="first" sequence-position="64" phase="2" value="V"/>
+                                    <amino-acid rank="last" sequence-position="87" phase="0" value="N"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_Q8NHW4-3" main-name="Iso 3">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000378350" database="ensembl">
+                            <transcript-protein accession="ENSP00000367601" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002816931">
+                                    <position-on-gene begin="17" end="310"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="CODING" ensembl-exon="ENSE00002375724">
+                                    <position-on-gene begin="869" end="983"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="2" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="STOP" ensembl-exon="ENSE00002920414">
+                                    <position-on-gene begin="1427" end="1971"/>
+                                    <amino-acid rank="first" sequence-position="64" phase="2" value="V"/>
+                                    <amino-acid rank="last" sequence-position="96" phase="0" value="R"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_Q8NHW4-4" main-name="Iso 4">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000591637" database="ensembl">
+                            <transcript-protein accession="ENSP00000468405" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002787928">
+                                    <position-on-gene begin="156" end="310"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="CODING" ensembl-exon="ENSE00002375724">
+                                    <position-on-gene begin="869" end="983"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="2" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="STOP" ensembl-exon="ENSE00002812306">
+                                    <position-on-gene begin="1396" end="1971"/>
+                                    <amino-acid rank="first" sequence-position="64" phase="2" value="V"/>
+                                    <amino-acid rank="last" sequence-position="103" phase="0" value="G"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_Q8NHW4-5" main-name="Iso 5">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000586598" database="ensembl">
+                            <transcript-protein accession="ENSP00000467658" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002787928">
+                                    <position-on-gene begin="156" end="310"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="STOP" ensembl-exon="ENSE00002964386">
+                                    <position-on-gene begin="869" end="1971"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="0" value="V"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                        <transcript-mapping accession="ENST00000589336" database="ensembl">
+                            <transcript-protein accession="ENSP00000467722" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002787928">
+                                    <position-on-gene begin="156" end="310"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="CODING" ensembl-exon="ENSE00002375724">
+                                    <position-on-gene begin="869" end="983"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="2" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="NOT_CODING" ensembl-exon="ENSE00003656153">
+                                    <position-on-gene begin="1386" end="1971"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_Q8NHW4-6" main-name="Iso 6">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000591167" database="ensembl">
+                            <transcript-protein accession="ENSP00000467085" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002787928">
+                                    <position-on-gene begin="156" end="310"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="CODING" ensembl-exon="ENSE00002375724">
+                                    <position-on-gene begin="869" end="983"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="2" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="STOP" ensembl-exon="ENSE00002861624">
+                                    <position-on-gene begin="1457" end="1971"/>
+                                    <amino-acid rank="first" sequence-position="64" phase="2" value="V"/>
+                                    <amino-acid rank="last" sequence-position="86" phase="0" value="R"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_Q8NHW4-7" main-name="Iso 7">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000389068" database="ensembl">
+                            <transcript-protein accession="ENSP00000373720" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002787928">
+                                    <position-on-gene begin="156" end="310"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="K"/>
+                                </exon>
+                                <exon rank="1" coding-status="STOP" ensembl-exon="ENSE00003563030">
+                                    <position-on-gene begin="1590" end="1971"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="K"/>
+                                    <amino-acid rank="last" sequence-position="47" phase="0" value="N"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_Q8NHW4-9" main-name="Iso 9">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000400702" database="ensembl">
+                            <transcript-protein accession="ENSP00000383538" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002787928">
+                                    <position-on-gene begin="156" end="310"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="T"/>
+                                </exon>
+                                <exon rank="1" coding-status="STOP" ensembl-exon="ENSE00003625819">
+                                    <position-on-gene begin="1386" end="1971"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="T"/>
+                                    <amino-acid rank="last" sequence-position="68" phase="0" value="G"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+            </isoform-mapping-list>
+        </gene>
+    </genomic-mapping>			<genomic-mapping accession="ENSG00000197262" database="ensembl">
+        <gene accession="ENSG00000197262" database="ensembl">
+            <isoform-mapping-list>
+                <isoform-mapping accession="NX_Q8NHW4-1" main-name="Iso 1">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000394465" database="ensembl">
+                            <transcript-protein accession="ENSP00000377978" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00001826479">
+                                    <position-on-gene begin="1" end="393"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="CODING" ensembl-exon="ENSE00002821482">
+                                    <position-on-gene begin="952" end="1066"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="2" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="STOP" ensembl-exon="ENSE00003482104">
+                                    <position-on-gene begin="1658" end="2054"/>
+                                    <amino-acid rank="first" sequence-position="64" phase="2" value="V"/>
+                                    <amino-acid rank="last" sequence-position="92" phase="0" value="N"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_Q8NHW4-2" main-name="Iso 2">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000394465" database="ensembl">
+                            <transcript-protein accession="ENSP00000377978" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00001826479">
+                                    <position-on-gene begin="318" end="393"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="CODING" ensembl-exon="ENSE00002821482">
+                                    <position-on-gene begin="952" end="1066"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="2" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="CODING" ensembl-exon="ENSE00003482104">
+                                    <position-on-gene begin="1658" end="1658"/>
+                                    <amino-acid rank="first" sequence-position="64" phase="2" value="V"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="0" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="STOP" ensembl-exon="ENSE00003482104">
+                                    <position-on-gene begin="1674" end="1742"/>
+                                    <amino-acid rank="first" sequence-position="65" phase="0" value="G"/>
+                                    <amino-acid rank="last" sequence-position="87" phase="0" value="N"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_Q8NHW4-5" main-name="Iso 5">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000482104" database="ensembl">
+                            <transcript-protein accession="ENSP00000466965" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002350577">
+                                    <position-on-gene begin="242" end="393"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="CODING" ensembl-exon="ENSE00002821482">
+                                    <position-on-gene begin="952" end="1066"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="2" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="CODING" ensembl-exon="ENSE00001899567">
+                                    <position-on-gene begin="1469" end="1977"/>
+                                    <amino-acid rank="first" sequence-position="64" phase="2" value="V"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="1" value="V"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_Q8NHW4-6" main-name="Iso 6">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000394463" database="ensembl">
+                            <transcript-protein accession="ENSP00000377976" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00002334351">
+                                    <position-on-gene begin="84" end="393"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="26" phase="1" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="CODING" ensembl-exon="ENSE00002821482">
+                                    <position-on-gene begin="952" end="1066"/>
+                                    <amino-acid rank="first" sequence-position="26" phase="1" value="M"/>
+                                    <amino-acid rank="last" sequence-position="64" phase="2" value="V"/>
+                                </exon>
+                                <exon rank="2" coding-status="STOP" ensembl-exon="ENSE00001623878">
+                                    <position-on-gene begin="1540" end="1609"/>
+                                    <amino-acid rank="first" sequence-position="64" phase="2" value="V"/>
+                                    <amino-acid rank="last" sequence-position="86" phase="0" value="R"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+            </isoform-mapping-list>
+        </gene>
+    </genomic-mapping>	</genomic-mapping-list>

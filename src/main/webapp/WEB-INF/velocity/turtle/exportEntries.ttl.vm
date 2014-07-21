@@ -1,0 +1,4 @@
+#parse("turtle/prefix.ttl.vm")
+#foreach($entry in $entryList)
+#parse('turtle/entry.ttl.vm')
+#end

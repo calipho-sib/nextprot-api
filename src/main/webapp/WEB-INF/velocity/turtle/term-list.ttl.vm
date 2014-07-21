@@ -1,0 +1,7 @@
+#parse("turtle/prefix.ttl.vm")
+
+#foreach($terminology in $termList)
+#parse('turtle/term.ttl.vm')
+
+#end
+ 

@@ -1,0 +1,5 @@
+#if($prop.getValue().class.simpleName == 'ArrayList')
+[#foreach($value in $prop.getValue())"$StringUtils.replaceDoubleQuotes($value)"#if($velocityHasNext),#end#end]
+#else
+"$StringUtils.replaceDoubleQuotes($prop.getValue())"
+#end

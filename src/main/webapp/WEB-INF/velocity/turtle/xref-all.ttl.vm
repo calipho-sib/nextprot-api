@@ -1,0 +1,10 @@
+
+# Xrefs - bunch $bunch
+
+#foreach($xref in $xrefIds)
+xref:$xref.dbXrefId a :Xref ;
+  :accession "$xref.accession"^^xsd:string ;
+  :database db:$StringUtils.slug($xref.databaseName) ; 
+  .
+
+#end

@@ -1,0 +1,5 @@
+<publication-list>
+	#foreach($publication in $entry.publications)
+		#parse('publication.xml.vm')
+	#end
+</publication-list>

@@ -1,0 +1,58 @@
+#set($evidence-uri = $evidence.getEvidenceId($isoform-name))
+annotation:$annotation-uri :withEvidence evidence:$evidence-uri. 
+evidence:$evidence-uri 
+  rdf:type :Evidence ;
+  :code :$evidence.getQualifierType();
+  :negative "$evidence.isNegativeEvidence($isoform-name)"^^xsd:boolean;
+#if($evidence.getQualityQualifier())
+  :quality :$evidence.getQualityQualifier();
+#end  
+##  :$evidence.getResourceType() publication:$evidence.getResourceAccession()
+## resource => database (xref:P06213,...) , Publication (publi id=getResourceId())
+#if($evidence.getResourceType().equals("publication"))
+  :publication publication:$evidence.getPublicationMD5();
+#end
+#if($evidence.getResourceType().equals("database"))
+  :fromXref db:$StringUtils.slug($evidence.getResourceDb());
+#end
+
+#if($evidence.getResourceType().equals("database"))
+  :reference [
+    a :Xref ;
+    :accession "$evidence.resourceAccession"^^xsd:string ;
+    :provenance db:$StringUtils.slug($evidence.resourceDb) ; 
+    ] ;
+#end
+
+#if($evidence.getAssignedBy())
+  :assignedBy source:$StringUtils.slug($evidence.getAssignedBy());
+#end
+#if($evidence.getGoQualifier())
+  :goQualifier "$evidence.getGoQualifier()"^^xsd:string;
+#end
+#if($evidence.getCL())
+  :cellLine "$evidence.getCL()"^^xsd:string;
+#end
+#if($evidence.getExpressionLevel())
+  :expressionLevel :$evidence.getExpressionLevel();
+#end
+#if($evidence.getIntegrationLevel())
+  :integrationLevel :$evidence.getIntegrationLevel();
+#end
+#if($evidence.getExperimentalContextId()>0)
+  :experimentalContext context:$evidence.getExperimentalContextId();
+#end
+## next property is useful for debug purpose
+#if($evidence.getResourceAssociationType())
+  :assocType "$evidence.getResourceAssociationType()"^^xsd:string;
+#end
+## next property is useful for debug purpose
+#if($evidence.getIsoformSpecificity())
+  :isoformSpecificity "$evidence.getIsoformSpecificity()"^^xsd:string;
+#end
+## next property is useful for debug purpose
+#if($evidence.getNegativeIsoformSpecificity())
+  :negativeIsoformSpecificity "$evidence.getNegativeIsoformSpecificity()"^^xsd:string;
+#end
+  .
+

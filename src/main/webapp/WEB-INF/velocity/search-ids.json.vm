@@ -1,0 +1,14 @@
+{
+	"elapsedTime":${result.elapsedTime},
+	"entity":"${result.entity}",
+	"index":"${result.index}",
+	"score":${result.maxScore},
+	"found":${result.numFound},
+	"rows":${result.rows},
+	"start":${result.start},
+	"ids": [
+		#foreach($field in $result.getFacet("id").getFoundFacetFields())
+		"$field.getFirst()"#if($velocityHasNext),
+#end 
+		#end]
+}

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+ 		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+		
+
+	<!--  Sparql Endpoing is defined according with its environment  -->
+	<bean id="sparqlEndPoint" class="org.nextprot.search.service.impl.SparqlEndpointImpl">
+		<property name="url" value="${sparql.url}"></property>
+		<property name="timeout" value="${sparql.timeout}"></property>
+	</bean>
+
+	<beans profile="unit">
+
+		<bean id="dataSourceServiceLocator"
+			class="org.nextprot.auth.core.service.impl.DataSourceServiceLocatorImpl">
+			<property name="dataSource" ref="dataSource" />
+			<!-- In unit test we use the same datasource for everything -->
+			<property name="userDataSource" ref="dataSource" />
+		</bean>
+
+		<bean id="txManager"
+			class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+			<property name="dataSource" ref="dataSource" />
+		</bean>
+
+		<bean id="applicationProperties"
+			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="locations">
+				<list>
+					<value>classpath:META-INF/application-unit.properties</value>
+				</list>
+			</property>
+		</bean>
+
+		<!-- Use a connection pooling datasource -->
+		<bean id="dataSource"
+			class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+			<property name="driverClassName" value="${db.driver}" />
+			<property name="url" value="${db.url}" />
+			<property name="username" value="${db.username}" />
+			<property name="password" value="${db.password}" />
+		</bean>
+
+		<bean id="dbUnitDatabaseConnection"
+			class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+			<property name="schema" value="nextprot" />
+			<property name="dataSource" ref="dataSource" />
+		</bean>
+
+	</beans>
+
+	<beans profile="pro">
+
+		<bean id="applicationProperties"
+			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="locations">
+				<list>
+					<value>file:application.properties</value>
+				</list>
+			</property>
+		</bean>
+		
+	</beans>
+
+	<beans profile="dev">
+
+		<bean id="applicationProperties"
+			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="locations">
+				<list>
+					<value>classpath:META-INF/application-dev.properties</value>
+				</list>
+			</property>
+		</bean>
+		
+	</beans>
+
+	<beans profile="pro,dev">
+
+		<bean id="dataSourceServiceLocator"
+			class="org.nextprot.auth.core.service.impl.DataSourceServiceLocatorImpl">
+			<property name="dataSource" ref="dataSource" />
+			<property name="userDataSource" ref="userDataSource" />
+		</bean>
+
+		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+			<property name="driverClass" value="${db.data.driver}" />
+			<property name="jdbcUrl" value="${db.data.url}" />
+			<property name="user" value="${db.data.username}" />
+			<property name="password" value="${db.data.password}" />
+			<property name="maxPoolSize" value="${db.data.maxPoolSize}" />
+			<property name="minPoolSize" value="${db.data.minPoolSize}" />
+			<property name="initialPoolSize" value="${db.data.initialPoolSize}" />
+			<property name="autoCommitOnClose" value="false" />
+		</bean>
+
+		<bean id="userDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+			<property name="driverClass" value="${db.user.driver}" />
+			<property name="jdbcUrl" value="${db.user.url}" />
+			<property name="user" value="${db.user.username}" />
+			<property name="password" value="${db.user.password}" />
+			<property name="maxPoolSize" value="${db.user.maxPoolSize}" />
+			<property name="minPoolSize" value="${db.user.minPoolSize}" />
+			<property name="initialPoolSize" value="${db.user.initialPoolSize}" />
+			<property name="autoCommitOnClose" value="false" />
+		</bean>
+
+		<!-- Transaction manager for the user data source -->
+		<bean id="txManager"
+			class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+			<property name="dataSource" ref="userDataSource" />
+		</bean>
+
+	</beans>
+
+</beans>

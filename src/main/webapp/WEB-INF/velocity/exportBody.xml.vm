@@ -1,0 +1,3 @@
+#foreach($entry in $entryList)
+	#parse('exportEntry.xml.vm')
+#end	

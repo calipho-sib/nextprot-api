@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+	
+	
+	<sequence_identifiers identifier_id="123" cv_type_id="1" cv_status_id="1" unique_name="OLIV"/>
+	
+	<cv_databases cv_id="10" cv_name="database" cv_category_id="16" />
+
+	<annotations annotation_id="123" unique_name="SP_007_001" identifier_id="123" cv_annotation_discriminator_id="3"  
+		datasource_id="1" cv_annotation_type_id="1059" cv_term_id="200"/>
+
+	<cv_terms cv_id="200" db_xref_id="1000" cv_name="Rothschild"/>
+	
+	<annotation_properties annotation_property_id="123" annotation_id="123" property_name="family region" property_value="what?"/>
+
+	<resources resource_id="1000" cv_type_id="1" />
+	<db_xrefs resource_id="1000" accession="SP_007" cv_database_id="10" />
+
+</dataset>	

@@ -1,0 +1,78 @@
+<annotation-list>
+	<annotation-to-be-renamed category='go biological process'>
+		<annotation qualityQualifier='$annotation.getQualityQualifier()'>
+			<description>
+            <![CDATA[Binds to AB1, AB5 and AB4.]]>
+			</description>
+			<resources>
+			</resources>
+			<target-isoform-list>
+				<target-isoform isoformRef='NX_P12345-1'>
+					<position-list>
+						<position first='21' last='30' />
+					</position-list>
+				</target-isoform>
+			</target-isoform-list>
+		</annotation>
+	</annotation-to-be-renamed>
+	<annotation-to-be-renamed category='go molecular function'>
+		<annotation qualityQualifier='$annotation.getQualityQualifier()'>
+			<description>
+            <![CDATA[Binds to AB2 and to the complex AB3/AB4.]]>
+			</description>
+			<resources>
+			</resources>
+			<target-isoform-list>
+				<target-isoform isoformRef='NX_P12345-1'>
+					<position-list>
+						<position first='21' last='30' />
+					</position-list>
+				</target-isoform>
+			</target-isoform-list>
+		</annotation>
+		<annotation qualityQualifier='$annotation.getQualityQualifier()'>
+			<description>
+            <![CDATA[function with no recognized gene names AB10]]>
+			</description>
+			<resources>
+			</resources>
+			<target-isoform-list>
+				<target-isoform isoformRef='NX_P12345-1'>
+					<position-list>
+						<position first='21' last='30' />
+					</position-list>
+				</target-isoform>
+			</target-isoform-list>
+		</annotation>
+		<annotation qualityQualifier='$annotation.getQualityQualifier()'>
+			<description>
+            <![CDATA[go function AB1]]>
+			</description>
+			<resources>
+			</resources>
+			<target-isoform-list>
+				<target-isoform isoformRef='NX_P12345-1'>
+					<position-list>
+						<position first='21' last='30' />
+					</position-list>
+				</target-isoform>
+			</target-isoform-list>
+		</annotation>
+		<annotation qualityQualifier='$annotation.getQualityQualifier()'>
+			<description>
+            <![CDATA[AB1 family]]>
+			</description>
+			<resources>
+				<evidence isNegative='false' qualifierType='POTENTIAL'
+					resourceRef='10' resourceAssocType='source' />
+			</resources>
+			<target-isoform-list>
+				<target-isoform isoformRef='NX_P12345-1'>
+					<position-list>
+						<position first='21' last='30' />
+					</position-list>
+				</target-isoform>
+			</target-isoform-list>
+		</annotation>
+	</annotation-to-be-renamed>
+</annotation-list>

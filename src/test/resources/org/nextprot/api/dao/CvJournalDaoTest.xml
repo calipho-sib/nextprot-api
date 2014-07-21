@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+	
+	<cv_journals cv_id='100' journal_name="Pretty Revue of Science" iso_abbrev="Pr. Rev. Sc."
+		med_abbrev="Pr Rev Sc" issn="0000-0007" essn="[null]"/>
+
+	<cv_journals cv_id='101' journal_name="Revue of Science" iso_abbrev="Rev. Sc."
+		med_abbrev="Rev Sc" issn="0001-5660" essn="[null]"/>
+		
+	<cv_journals cv_id='102' journal_name="Science signaling" iso_abbrev="Sci Signal"
+		med_abbrev="Sci Signal" issn="[null]" essn="0001-566X" />
+		
+	<resources resource_id="101" cv_type_id="2"/>
+	<publications resource_id="101" title="a paper with a title 1" text_date="may-2009" cv_publication_type_id="10" cv_journal_id="100"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="001fbe97e809f51626303615cf4dc6f5"/>
+	
+	<resources resource_id="102" cv_type_id="2"/>
+	<publications resource_id="102" title="a paper with a title 2" text_date="may-2009" cv_publication_type_id="10" cv_journal_id="101"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002dfcf8f2e9db52367339e3852b308b"/>
+
+	<resources resource_id="103" cv_type_id="2"/>
+	<publications resource_id="103" title="a paper with a title 3" text_date="may-2009" cv_publication_type_id="10" cv_journal_id="102"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002e9f9260c36201b8db79d42469dd4d"/>		
+</dataset>	

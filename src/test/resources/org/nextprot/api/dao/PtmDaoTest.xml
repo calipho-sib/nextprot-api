@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../dbxsd/dataset.xsd">
+	
+	
+	<!-- 
+	<sequence_identifiers identifier_id="200" cv_type_id="1" unique_name="NX_P2222" cv_status_id="1" />
+	<identifier_synonyms synonym_id="200" identifier_id="200" cv_type_id="1" synonym_name="Protein NUANCE" is_main="true" />
+	<view_master_index identifier_id="200" annot_count="1" publication_count="1" />
+	<master_identifier_name_view identifier_id="200" unique_name="NX_P2222" gene_name="PAICS" disease="[null]" structure="2345" 
+		proteomic="[null]" expression_num="1" mutagenesis_num="[null]" />
+	-->	
+	<cv_databases cv_id="11" cv_name="Uniprot" description=" ...."/>
+	
+	
+	<!-- CV Terms -->
+	
+	<cv_terms cv_id="1188" cv_name="glycosylation site" cv_category_id="1" cv_status_id="1"
+		db_xref_id="199" />
+	<cv_terms cv_id="200" cv_name="Phosphoserine" cv_category_id="16" cv_status_id="1"
+		db_xref_id="200" />
+	<cv_terms cv_id="201" cv_name="N-linked (GlcNAc...)" cv_category_id="30" cv_status_id="1"
+		db_xref_id="201" />
+		
+		
+	<!-- Resource -->
+	<resources resource_id="200" cv_type_id="1" />
+	<db_xrefs resource_id="200" accession="PTM-204" />
+
+	<resources resource_id="201" cv_type_id="1" />
+	<db_xrefs resource_id="201" accession="GLC-204" />
+	
+	<!-- Sequence Identifiers -->
+	<sequence_identifiers identifier_id="10" cv_type_id="1" unique_name="NP_MAS1"
+		db_xref_id="100"  cv_status_id="1"/>
+
+	<view_master_index identifier_id="10" annot_count="1" publication_count="1" />
+	
+	<master_identifier_name_view identifier_id="10" unique_name="NP_MAS1" gene_name="PAICS" disease="1" structure="2345" 
+		proteomic="1" expression_num="1" mutagenesis_num="1" />
+	
+	<resources resource_id="100" cv_type_id="1" />
+	<db_xrefs resource_id="100" accession="MAS1" />
+
+	<!-- Isoform -->
+	<sequence_identifiers identifier_id="11" cv_type_id="2" unique_name="NP_MAS1-1"
+		db_xref_id="3"  cv_status_id="1"/>
+	
+	<mapping_annotations reference_identifier_id="10" mapped_identifier_id="11"
+		cv_type_id="4" />
+		
+		
+	<!-- Annotation -->
+	<annotations annotation_id="600" cv_annotation_discriminator_id="13"
+		cv_annotation_type_id="13" unique_name="AN_MAS_4" identifier_id="10" description="phosphoserine"
+		cv_term_id="200" cv_quality_qualifier_id="50" />
+	
+	<annotations annotation_id="601" cv_annotation_discriminator_id="13"
+		cv_annotation_type_id="1188" unique_name="AN_MAS_5" identifier_id="10" description="glyco"
+		cv_term_id="201" cv_quality_qualifier_id="50" />
+		
+	<annotations annotation_id="602" cv_annotation_discriminator_id="1"
+		cv_annotation_type_id="1188" unique_name="AN_MAS_6" identifier_id="10" description="quelque chose avec"
+		cv_term_id="201" cv_quality_qualifier_id="50" /> <!-- annotation of not 13 type -->
+		
+	<!-- Assocs -->
+	<annotation_protein_assoc assoc_id="6" annotation_id="600" protein_id="11" />
+	<annotation_protein_assoc assoc_id="7" annotation_id="601" protein_id="11" />
+<!-- 	<annotation_protein_assoc assoc_id="8" annotation_id="601" protein_id="12" /> -->
+<!-- 	<annotation_protein_assoc assoc_id="9" annotation_id="602" protein_id="11" /> -->
+
+	<annotation_resource_assoc annotation_id="600" resource_id="100" cv_qualifier_type_id="4" />
+	<annotation_resource_assoc annotation_id="601" resource_id="100" cv_qualifier_type_id="4" />
+	<annotation_resource_assoc annotation_id="602" resource_id="100" cv_qualifier_type_id="4" />
+
+	<!-- Position -->
+	<protein_feature_positions annotation_protein_id="6" first_pos="100"
+		last_pos="101" />
+	
+	<protein_feature_positions annotation_protein_id="7" first_pos="150"
+		last_pos="151" />
+	
+	<protein_feature_positions annotation_protein_id="8" first_pos="140"
+		last_pos="141" />
+		
+	<protein_feature_positions annotation_protein_id="9" first_pos="1000"
+		last_pos="1001" />	
+
+</dataset>

@@ -1,0 +1,5 @@
+entry:$entry.getUniqueName() 
+#foreach($xref in $entry.xrefs)
+    rdfs:sameAs "$xref.getResolvedUrl()"^^xs:anyURI;
+#end
+    .

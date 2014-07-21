@@ -1,0 +1,27 @@
+<search-result>
+	<elapsedTime>${result.elapsedTime}</elapsedTime>
+	<entity>${result.entity}</entity>
+	<index>${result.index}</index>
+	<score>${result.maxScore}</score>
+	<found>${result.numFound}</found>
+	<rows>${result.rows}</rows>
+	<page>${result.page}</page>
+	<results>
+		#foreach($res in $result.results)
+			<result>
+				#foreach($prop in $res.properties.entrySet()) 
+					<$prop.getKey()>$prop.getValue()</$prop.getKey()>
+				#end
+			</result>
+		#end
+	</results>
+	<facets>
+		#foreach($facet in $result.getFacets().values())
+			<facet name="$facet.getName()">
+			#foreach($field in $facet.getFacetFields())
+				<facet-field name="$field.getFirst()">$field.getSecond()</facet-field>
+			#end
+			</facet>
+		#end
+	</facets>
+</search-result>

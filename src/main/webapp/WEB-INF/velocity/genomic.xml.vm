@@ -1,0 +1,4 @@
+<genomic>
+	#parse("chromosomal-location-list.xml.vm")
+	#parse("genomic-mapping-list.xml.vm")
+</genomic>

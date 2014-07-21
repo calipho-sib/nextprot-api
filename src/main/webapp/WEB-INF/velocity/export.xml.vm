@@ -1,0 +1,10 @@
+<nextProtExport>
+	#parse('annotations.xml.vm')	
+	#parse('chromosomal-locations.xml.vm')	
+	#parse('genomic-mappings.xml.vm')	
+	#parse('isoforms.xml.vm')
+	#parse('kwList.xml.vm')
+	#parse('identifierList.xml.vm')
+	#parse('publications.xml.vm')
+	#parse('xrefs.xml.vm')	
+</nextProtExport>

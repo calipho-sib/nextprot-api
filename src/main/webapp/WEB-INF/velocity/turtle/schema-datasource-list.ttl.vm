@@ -1,0 +1,22 @@
+#if($prefix)
+#parse("turtle/prefix.ttl.vm")
+#end
+#
+# Define Datasource
+# 
+:Source
+      rdf:type owl:Class ;
+      rdfs:comment "Originator of the data"^^xsd:string ;
+      rdfs:subClassOf owl:Thing;
+      .
+#foreach($datasource in $datasourceList)
+  
+source:$StringUtils.slug($datasource.getName())
+  rdf:type :Source;
+  rdfs:subClassOf owl:Thing;
+  rdfs:comment "$datasource.getDescription()"^^xsd:string;
+#if($datasource.getURL())
+  rdfs:seeAlso "$datasource.getURL()"^^xsd:anyURI;
+#end
+  .      
+#end

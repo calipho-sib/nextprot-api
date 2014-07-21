@@ -1,0 +1,5 @@
+<genomic-mapping-list>
+	#foreach($genomicMapping in $entry.genomicMappings)
+		#parse("genomic-mapping.xml.vm")
+	#end
+</genomic-mapping-list>

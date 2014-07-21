@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+
+<!-- 	<cv_property_names cv_id="17" cv_name="tissue" display_name="Tissue"  -->
+<!-- 		description="Tissue from Uniprot tissue cv_term" cv_property_type_id="3" cv_term_category_id="17"/> 		 -->
+		
+	<identifier_properties identifier_property_id="500" identifier_id="100" property_value="whatever" 
+		cv_term_value_id="1" cv_property_name_id="17" cv_property_value_id="1"/>
+		
+		<identifier_properties identifier_property_id="501" identifier_id="100" property_value="whoever" 
+		cv_term_value_id="1" cv_property_name_id="18" cv_property_value_id="1"/>
+				
+	<sequence_identifiers identifier_id="100" cv_type_id="1" unique_name="NX_P12345"/>		
+	<sequence_identifiers identifier_id="101" cv_type_id="1" unique_name="NX_P54321"/>	
+	
+</dataset>	

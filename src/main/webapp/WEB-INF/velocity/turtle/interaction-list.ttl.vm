@@ -1,0 +1,7 @@
+#parse("turtle/prefix.ttl.vm")
+
+## Iterates through the interactions 
+
+#foreach($interaction in $interactionList)
+#parse("turtle/interaction.ttl.vm")
+#end

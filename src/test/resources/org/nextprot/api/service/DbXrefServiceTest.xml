@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+	
+	<cv_database_categories cv_id="666" cv_name="cat" />
+	<cv_databases cv_id="3" cv_name="PubMed" cv_category_id="666" link_url="http://pubmed.com?id=3" url="http://pubmed.com"/>
+
+	<resources resource_id="100" cv_type_id="2"/>
+	<publications resource_id="100" title="an interesting paper" text_date="may-2009" cv_publication_type_id="10"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="001eb61d2064031e5c31bd05bb0ef2ed" />
+		
+	<resources resource_id="110" cv_type_id="1"/>
+	<db_xrefs accession="15923218" resource_id="110" cv_database_id="3" />		
+	<publication_db_xref_assoc publication_id="100" db_xref_id="110" cv_type_id="1"/>
+	
+	
+	<!--  MASTER -->
+	
+	<resources resource_id="120" cv_type_id="1"/>
+	<db_xrefs accession="789654" resource_id="120" cv_database_id="3"/>
+	
+	<identifier_resource_assoc resource_id="120" identifier_id="16"/> 
+	<sequence_identifiers identifier_id="16" cv_type_id="1" unique_name="NX_P12345"/>
+	
+	<view_master_identifier_identifiers identifier_name="3D" unique_name="NX_P12345" db_name="Ensembl"/>
+	
+	
+	<!-- PROPERTIES -->
+	<resource_properties resource_property_id="500" resource_id="120" property_value="lots" property_name="money" cv_term_value_id="10"/>
+	<resource_properties resource_property_id="505" resource_id="120" property_value="squid" property_name="organism name" cv_term_value_id="10"/>
+	<resource_properties resource_property_id="501" resource_id="1000" property_value="not much" property_name="something" cv_term_value_id="10"/>
+	
+</dataset>	

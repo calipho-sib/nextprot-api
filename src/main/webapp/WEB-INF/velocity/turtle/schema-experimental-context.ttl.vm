@@ -1,0 +1,11 @@
+#if($prefix)
+#parse("turtle/prefix.ttl.vm")
+#end
+#
+# Define Experimental Context
+# 
+:ExperimentalContext
+      rdf:type owl:Class ;
+      rdfs:comment "Experimental variables related to evidences"^^xsd:string ;
+      rdfs:subClassOf owl:Thing;
+      .

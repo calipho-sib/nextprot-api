@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+ 
+ 		<!-- TODO SHOULD BE FIXED: WITH SECURITY ENABLED IT SEEMS LIKE NOT DISPLAYING STATISTIC PAGE UNDER WEB-INF       -->
+    
+    <display-name>nextprot-api</display-name>
+
+    <!--  configure spring bootstrap for dao, services, etc. -->
+    <context-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:META-INF/spring/web-context.xml</param-value>
+    </context-param>
+ 
+    <context-param>
+      <param-name>spring.profiles.default</param-name>
+      <param-value>pro</param-value>
+    </context-param>
+
+  
+
+    <!--  configure cors -->  
+    <filter>
+        <filter-name>cors</filter-name>
+        <filter-class>org.nextprot.api.controller.CorsFilter</filter-class>
+    </filter>
+      
+      <filter-mapping>
+        <filter-name>cors</filter-name>
+        <url-pattern>/*</url-pattern>
+      </filter-mapping>    
+      
+       
+    <!--  configure security -->  
+    <filter>
+            <filter-name>springSecurityFilterChain</filter-name>
+            <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+            <init-param>
+                    <param-name>contextAttribute</param-name>
+                    <param-value>org.springframework.web.servlet.FrameworkServlet.CONTEXT.nextprotApi</param-value>
+            </init-param>
+    </filter>
+
+    <filter-mapping>
+            <filter-name>springSecurityFilterChain</filter-name>
+            <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Setting UTF-8 -->
+	  <filter>
+	    <filter-name>Spring character encoding filter</filter-name>
+	    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+	    <init-param>
+	      <param-name>encoding</param-name>
+	      <param-value>UTF-8</param-value>
+	    </init-param>
+	    <init-param>
+	      <param-name>forceEncoding</param-name>
+	      <param-value>true</param-value>
+	    </init-param>
+	  </filter>        
+	  
+	  <!--  configure pretty print  -->
+    <filter>
+	    <filter-name>XmlPrettyPrintFilter</filter-name>
+	    <filter-class>org.nextprot.utils.XmlPrettyPrintFilter</filter-class>
+	  </filter>
+	  <filter-mapping>
+	    <filter-name>XmlPrettyPrintFilter</filter-name>
+	    <url-pattern>*.xml</url-pattern>
+	  </filter-mapping>
+
+
+    <listener>
+      <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener> 
+  
+
+
+
+    <!--  configure spring bootstrap for servlet -->
+		<servlet>
+			<servlet-name>nextprotApi</servlet-name>
+			<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+			<init-param>
+				<param-name>contextConfigLocation</param-name>
+				<param-value>/WEB-INF/api-servlet.xml</param-value>
+			</init-param>
+			<load-on-startup>1</load-on-startup>
+		</servlet>
+ 
+    <servlet-mapping>
+            <servlet-name>nextprotApi</servlet-name>
+            <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+</web-app>

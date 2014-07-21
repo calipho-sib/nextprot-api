@@ -1,0 +1,12 @@
+#foreach($chromosomalLocation in $entry.chromosomalLocations)
+entry:$entry.getUniqueName() :gene gene:$StringUtils.slug($chromosomalLocation.getAccession()).
+gene:$StringUtils.slug($chromosomalLocation.getAccession()) a :Gene;
+    :name "$chromosomalLocation.getRecommendedName()"^^xsd:string;
+    :band "$chromosomalLocation.getBand()"^^xsd:string; 
+    :strand "$chromosomalLocation.getStrand()"^^xsd:string;
+    :chromosome "$chromosomalLocation.getChromosome()"^^xsd:string;
+    :begin "$chromosomalLocation.getFirstPosition()"^^xsd:integer; 
+    :end "$chromosomalLocation.getLastPosition()"^^xsd:integer;  
+    :length "$chromosomalLocation.getLength()"^^xsd:integer;  
+    .
+#end

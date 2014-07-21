@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
+
+
+	<diskStore path="cache" />
+	<!-- Configuring cache for master identifier service -->
+	<cache name="master-unique-names-chromossome"
+		maxEntriesLocalHeap="24" eternal="true" statistics="true" />
+
+	<cache name="master-unique-names" maxEntriesLocalHeap="1"
+		eternal="true" statistics="true" />
+	<cache name="master-unique-name" maxEntriesLocalHeap="22000"
+		eternal="true" statistics="true" />
+
+	<!-- Configuring cache for other services -->
+	<cache name="terminology-by-ontology" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="terminology-all" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="88000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+
+	<cache name="publications-get-by-id" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="543000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+
+	<cache name="schema" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+	<cache name="overview" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+	<cache name="publications" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="xrefs" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+	<cache name="keywords" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+	<cache name="identifiers" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="chromosomal-locations" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="genomic-mappings" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="interactions" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="isoforms" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+	<cache name="peptides" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+	<cache name="antibodies" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="annotations" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+
+	<!-- RDF Help -->
+	<cache name="rdftypename" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="1000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="rdftypefull" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="1000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="rdftypefullall" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="1000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="rdftypetriple" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="10000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="rdftypevalues" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="10000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+	<cache name="rdftypetriplevalues" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="10000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+
+	<!-- SPARQL cache -->
+	<cache name="sparql" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="100000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
+	</cache>
+
+</ehcache>

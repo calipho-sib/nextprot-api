@@ -1,0 +1,19 @@
+#if($prefix)
+#parse("turtle/prefix.ttl.vm")
+#end
+#
+# Define antibody mapping and peptide mapping
+# 
+:AntibodyMapping
+      rdf:type owl:Class ;
+      rdfs:comment "Positional mapping of an antibody to an isoform"^^xsd:string ;
+      rdfs:subClassOf owl:Thing;
+      .
+
+:PeptideMapping
+      rdf:type owl:Class ;
+      rdfs:comment "Positional mapping of a peptide to an isoform"^^xsd:string ;
+      rdfs:subClassOf owl:Thing;
+      .
+
+

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+	
+	
+	<cv_databases  cv_id="3" cv_name="PubMed"/>
+	
+	<cv_terms cv_id="30" cv_name="allergen"/>
+	<cv_terms cv_id="31" cv_name="family name"/>
+	<cv_terms cv_id="32" cv_name="domain"/>
+	
+	<resources resource_id="100" cv_type_id="2"/>
+	<publications resource_id="100" title="an interesting paper" text_date="may-2009" cv_publication_type_id="10"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="001eb61d2064031e5c31bd05bb0ef2ed" />
+
+	<resources resource_id="110" cv_type_id="1"/>
+	<db_xrefs accession="15923218" resource_id="110" cv_database_id="3" />		
+	<publication_db_xref_assoc publication_id="100" db_xref_id="110" cv_type_id="1"/>
+
+	<resources resource_id="111" cv_type_id="1"/>
+	<db_xrefs accession="15923219" resource_id="111" cv_database_id="3" />		
+	<publication_db_xref_assoc publication_id="100" db_xref_id="111" cv_type_id="5"/>
+
+	<!-- find by title -->
+	<resources resource_id="101" cv_type_id="2"/>
+	<publications resource_id="101" title="a paper with a title 1" text_date="may-2009" cv_publication_type_id="10"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="001fbe97e809f51626303615cf4dc6f5"/>
+
+	<resources resource_id="102" cv_type_id="2"/>
+	<publications resource_id="102" title="a paper with a title 2" text_date="may-2009" cv_publication_type_id="10"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002dfcf8f2e9db52367339e3852b308b"/>
+
+	<resources resource_id="103" cv_type_id="2"/>
+	<publications resource_id="103" title="a paper with a title 3" text_date="may-2009" cv_publication_type_id="10"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002e9f9260c36201b8db79d42469dd4d"/>
+
+	<resources resource_id="104" cv_type_id="2"/>
+	<publications resource_id="104" title="a paper with a title 4" text_date="may-2009" cv_publication_type_id="10"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1233"/>
+
+	<resources resource_id="105" cv_type_id="2"/>
+	<publications resource_id="105" title="cendrillon" text_date="may-2009" cv_publication_type_id="10"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1234"/>
+	<pubauthors pubauthor_id="100" publication_id="105" 
+		last_name="Dalton" fore_name="Joe" initials="" is_editor="0" rank="0" />
+	<pubauthors pubauthor_id="101" publication_id="105" 
+		last_name="Dalton" fore_name="Jack" initials="" is_editor="0" rank="1" />
+	
+	
+	<resources resource_id="106" cv_type_id="2"/>
+	<publications resource_id="106" title="cendrillon" text_date="may-2009" cv_publication_type_id="10"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1234"/>
+	<pubauthors pubauthor_id="102" publication_id="106" 
+		last_name="Luke" fore_name="Lucky" initials="" is_editor="0" rank="0" />
+	
+	<!--  idem 106, but with different text date -->
+	<resources resource_id="107" cv_type_id="2"/>
+	<publications resource_id="107" title="cendrillon" text_date="may-2010" cv_publication_type_id="10"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1236"/>
+	<pubauthors pubauthor_id="103" publication_id="107" 
+		last_name="Luke" fore_name="Lucky" initials="" is_editor="0" rank="0" />
+	
+	<!--  idem 106, but with different type -->
+	<resources resource_id="108" cv_type_id="2"/>
+	<publications resource_id="108" title="cendrillon" text_date="may-2009" cv_publication_type_id="50"
+		datasource_id="4" 
+		cv_date_precision_id="30" publication_date="2009-05-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1237"/>
+	<pubauthors pubauthor_id="104" publication_id="108" 
+		last_name="Luke" fore_name="Lucky" initials="" is_editor="0" rank="0" />
+
+
+	<!-- Publications linked to identifiers -->
+	
+	<resources resource_id="301" cv_type_id="2"/>
+	<publications title="directly to master" resource_id="301"
+		cv_publication_type_id="10" datasource_id="4" 
+		text_date="1998" cv_date_precision_id="60" publication_date="1998-01-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1238"/>
+
+	<resources resource_id="310" cv_type_id="1"/>
+	<db_xrefs accession="31023218" resource_id="310" cv_database_id="3" />	
+	<publication_db_xref_assoc publication_id="301" db_xref_id="310" cv_type_id="1"/>
+		
+	<resources resource_id="302" cv_type_id="2"/>
+	<publications title="directly to master and annotation" resource_id="302"
+		cv_publication_type_id="10" datasource_id="4" 
+		text_date="1997" cv_date_precision_id="60" publication_date="1997-01-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1239"/>
+
+	<resources resource_id="303" cv_type_id="2"/>
+	<publications title="only through annotation" resource_id="303"
+		cv_publication_type_id="10" datasource_id="4" 
+		text_date="2001" cv_date_precision_id="60" publication_date="2001-01-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1240"/>
+
+	<resources resource_id="304" cv_type_id="2"/>
+	<publications title="a patent" resource_id="304"
+		cv_publication_type_id="20" datasource_id="2" 
+		text_date="2001" cv_date_precision_id="60" publication_date="2001-01-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1241"/>
+
+	<resources resource_id="305" cv_type_id="2"/>
+	<publications title="an go article" resource_id="305"
+		cv_publication_type_id="10" datasource_id="4" 
+		text_date="2008" cv_date_precision_id="60" publication_date="2008-01-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1242"/>
+
+	<resources resource_id="306" cv_type_id="2"/>
+	<publications title="an addref article" resource_id="306"
+		cv_publication_type_id="10" datasource_id="4" 
+		text_date="2007" cv_date_precision_id="60" publication_date="2007-01-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1242"/>
+
+	<resources resource_id="307" cv_type_id="2"/>
+	<publications title="an article only linked to annotations" resource_id="307"
+		cv_publication_type_id="10" datasource_id="4" 
+		text_date="2011" cv_date_precision_id="60" publication_date="2011-01-01 00:00:00" md5="002eec8d3752883c13ab9a1b064c1242"/>
+
+	<sequence_identifiers identifier_id="100" cv_type_id="1" unique_name="NP_MAS1"/>
+	<annotations annotation_id="501" identifier_id="100" cv_annotation_discriminator_id="3" unique_name="AN_MAS1_1"
+		cv_annotation_type_id="30"/>
+	<annotations annotation_id="502" identifier_id="100" cv_annotation_discriminator_id="3" unique_name="AN_MAS1_2"
+		cv_annotation_type_id="31"/>
+		
+	<annotation_resource_assoc annotation_id="501" resource_id="302"/>
+	<annotation_resource_assoc annotation_id="501" resource_id="303"/>
+	<annotation_resource_assoc annotation_id="502" resource_id="302"/>
+	<annotation_resource_assoc annotation_id="502" resource_id="307"/>
+	
+	<identifier_resource_assoc assoc_id="1" identifier_id="100" resource_id="301" datasource_id="2"/>
+	<identifier_resource_assoc assoc_id="2" identifier_id="100" resource_id="302" datasource_id="2"/>
+	<identifier_resource_assoc assoc_id="3" identifier_id="100" resource_id="304" datasource_id="2"/>
+	<identifier_resource_assoc assoc_id="4" identifier_id="100" resource_id="305" datasource_id="13"/>
+
+	<identifier_resource_assoc assoc_id="5" identifier_id="100" resource_id="301" datasource_id="9"/>
+	<identifier_resource_assoc assoc_id="6" identifier_id="100" resource_id="306" datasource_id="9"/>
+</dataset>	

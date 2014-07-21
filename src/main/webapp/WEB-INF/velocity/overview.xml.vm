@@ -1,0 +1,73 @@
+<overview>
+## ----------------- PROTEIN EXISTENCE -----------------------------
+#if($entry.overview.history.proteinExistence)
+<protein-existence value='$entry.overview.history.proteinExistence'/>
+#end
+## ----------------- PROTEIN NAMES ---------------------------------
+#if($entry.overview.proteinNames)
+<protein-names>
+#foreach($entityName in $entry.overview.proteinNames)
+	#parse('entity-name.xml.vm')
+#end
+</protein-names>
+#end
+## ----------------- ADDITIONAL NAMES ---------------------------------
+#if($entry.overview.additionalNames)
+<additional-names>
+#foreach($entityName in $entry.overview.additionalNames)
+    #parse('entity-name.xml.vm')
+#end
+</additional-names>
+#end
+## ----------------- FUNCTIONAL REGION NAMES ---------------------------
+#if($entry.overview.functionalRegionNames)
+<functional-region-names>
+#foreach($entityName in $entry.overview.functionalRegionNames)
+    #parse('entity-name.xml.vm')
+#end
+</functional-region-names>
+#end
+## ----------------- CLEAVED REGION NAMES ------------------------------
+#if($entry.overview.cleavedRegionNames)
+<cleaved-region-names>
+#foreach($entityName in $entry.overview.cleavedRegionNames)
+    #parse('entity-name.xml.vm')
+#end
+</cleaved-region-names>
+#end
+## ----------------- GENE NAMES ----------------------------------------
+#if($entry.overview.geneNames)
+<gene-names>
+#foreach($entityName in $entry.overview.geneNames)
+    #parse('entity-name.xml.vm')
+#end
+</gene-names>
+#end
+## ----------------- FAMILIES ------------------------------------------
+#if($entry.overview.families.size() > 0)
+<family-list>
+#foreach($family in $entry.overview.families)
+    <family accession="$family.accession">
+        <family-name>$family.name</family-name>
+    </family>
+#end
+</family-list>
+#end
+## ----------------- BIOPHYSICALCHEMICAL properties --------------------
+#if($entry.overview.bioPhyChemProps.size() > 0)
+<biophysicochemicalProperties>
+#foreach($prop in $entry.overview.bioPhyChemProps)
+    <property name="$prop.getFirst()" value="$prop.getSecond()"/>
+#end 
+</biophysicochemicalProperties>
+#end
+## ----------------- HISTORY ----------------------------------------
+<history>
+#if($entry.overview.history.nextprotIntegrationDate)
+    <historyEntry dbName="neXtProt" integrated="$entry.overview.history.getFormattedNextprotIntegrationDate()" updated="$entry.overview.history.getFormattedNextprotUpdateDate()"/>
+#end
+#if($entry.overview.history.uniprotIntegrationDate)
+    <historyEntry dbName="UniProtKB" integrated="$entry.overview.history.getFormattedUniprotIntegrationDate()" updated="$entry.overview.history.getFormattedUniprotUpdateDate()" version="$entry.overview.history.uniprotVersion" lastSequenceUpdate="$entry.overview.history.lastSequenceUpdate" sequenceVersion="$entry.overview.history.sequenceVersion"/>
+#end
+</history>
+</overview>

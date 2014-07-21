@@ -1,0 +1,1 @@
+INSERT into np_users.protein_lists (name, description, owner_id) VALUES (?, ?, ?)

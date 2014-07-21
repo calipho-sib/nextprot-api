@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><genomic-mapping-list>
+    <genomic-mapping accession="ENSG00000125968" database="ensembl">
+        <gene accession="ENSG00000125968" database="ensembl">
+            <isoform-mapping-list>
+                <isoform-mapping accession="NX_P41134-1" main-name="ID-A">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000376112" database="ensembl">
+                            <transcript-protein accession="ENSP00000365280" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="START" ensembl-exon="ENSE00001469419">
+                                    <position-on-gene begin="1" end="531"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="142" phase="0" value="M"/>
+                                </exon>
+                                <exon rank="1" coding-status="STOP" ensembl-exon="ENSE00001469404">
+                                    <position-on-gene begin="771" end="1233"/>
+                                    <amino-acid rank="first" sequence-position="143" phase="0" value="A"/>
+                                    <amino-acid rank="last" sequence-position="155" phase="0" value="A"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+                <isoform-mapping accession="NX_P41134-2" main-name="ID-B">
+                    <transcript-mapping-list>
+                        <transcript-mapping accession="ENST00000376105" database="ensembl">
+                            <transcript-protein accession="ENSP00000365273" database="ensembl"/>
+                            <exon-list>
+                                <exon rank="0" coding-status="MONO" ensembl-exon="ENSE00001469386">
+                                    <position-on-gene begin="7" end="1228"/>
+                                    <amino-acid rank="first" sequence-position="1" phase="0" value="M"/>
+                                    <amino-acid rank="last" sequence-position="149" phase="0" value="M"/>
+                                </exon>
+                            </exon-list>
+                        </transcript-mapping>
+                    </transcript-mapping-list>
+                </isoform-mapping>
+            </isoform-mapping-list>
+        </gene>
+    </genomic-mapping>	</genomic-mapping-list>

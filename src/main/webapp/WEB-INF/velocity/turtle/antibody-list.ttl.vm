@@ -1,0 +1,32 @@
+
+# Antibodies mappings
+
+#foreach($isoform in $entry.getIsoforms())
+#set($isoform-name =  $isoform.getUniqueName())
+#foreach($antibody in $entry.getAntibodiesByIsoform($isoform-name))
+#set($antibody-name=$antibody.antibodyUniqueName) 
+#set($mapping-iri=$antibody-name+"-"+$isoform-name)
+#foreach($spec in $antibody.isoformSpecificity.values())
+#if ($spec.isoformName==$isoform-name) 
+  isoform:$isoform-name :mapping :$mapping-iri .
+  :$mapping-iri 
+    rdf:type :AntibodyMapping ;  
+#foreach($xref in $antibody.xrefs)
+    :reference [
+      a :Xref ;
+      :provenance db:$StringUtils.slug($xref.databaseName) ;
+      :accession "$xref.accession"^^xsd:string ;
+    ];
+#end
+#foreach($pos in $spec.positions)
+    :position [ 
+      :start "$pos.first"^^xsd:integer ;
+      :end "$pos.second"^^xsd:integer ;
+    ];
+#end
+  .
+  
+#end
+#end
+#end
+#end

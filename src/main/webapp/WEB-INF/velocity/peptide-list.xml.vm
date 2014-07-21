@@ -1,0 +1,13 @@
+<peptide-list>
+	#foreach($peptide in $entry.peptideMappings)
+		<peptide>
+			<evidence-list>
+				#foreach($evidence in $peptide.evidences)
+					<evidencePep accession="$evidence.accession" database="$evidence.databaseName" assignedBy="$evidence.assignedBy"/>
+				#end
+			</evidence-list>
+		#set($target-isoform-list = $peptide.isoformSpecificity)
+		#parse('target-isoform-list.xml.vm')	
+		</peptide>
+	#end
+</peptide-list>

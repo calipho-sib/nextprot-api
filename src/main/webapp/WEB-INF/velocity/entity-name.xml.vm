@@ -1,0 +1,11 @@
+<entity-name is-main="$entityName.isMain()" type="$entityName.type" qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">
+    <value>$entityName.synonymName</value>
+	#if($entityName.synonyms)
+        <synonyms>
+		#foreach($synonym in $entityName.synonyms)
+			#set($entityName = $synonym)
+			#parse('entity-name.xml.vm')
+		#end
+		</synonyms>
+	#end				
+</entity-name>

@@ -1,0 +1,33 @@
+<annotation qualityQualifier='$annotation.getQualityQualifier()' #if($annotation.synonym)uniqueName="$annotation.synonym"#end>
+	#if($annotation.getCvTermName())
+    <cv-term accession='$annotation.getCvTermAccessionCode()'>
+    	<cv-name>$annotation.getCvTermName()</cv-name>
+    </cv-term>
+    #end
+	#if($annotation.getDescription())
+    <description>
+	  #set($UNESCAPED_CDATA = $annotation.getDescription())
+      <![CDATA[$UNESCAPED_CDATA]]>
+    </description>
+    #end
+	#if($annotation.getVariant())
+    	<variant original='$annotation.getVariant().getOriginal()' variation='$annotation.getVariant().getVariant()' />
+	#end
+	## might have no properties so need to check
+	#if(($annotation.getProperties()) && ($annotation.getProperties().size() > 0))
+    <property-list>
+        #foreach($property in $annotation.getProperties())
+			<property propertyName='$property.getName()'  #if($property.getAccession()) accession='$property.getAccession()' #end value='$property.getValue()'/>
+		#end
+    </property-list>
+	#end
+    #if($annotation.getEvidences())
+    <resources>
+        #foreach($evidence in $annotation.getEvidences())
+			<evidence isNegative='$evidence.isNegativeEvidence()'  qualifierType='$evidence.getQualifierType()' resourceRef='$evidence.getResourceId()' resourceAssocType='$evidence.getResourceAssociationType()' />
+		#end
+    </resources>
+	#end
+	#set($target-isoform-list = $annotation.getIsoforms())
+	#parse('target-isoform-list-annotation.xml.vm')	
+</annotation>

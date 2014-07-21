@@ -1,0 +1,10 @@
+repository
+np.db.data.properties
+np.db.rdf.properties
+np.db.user.properties
+solr.properties
+application.properties
+.classpath
+.project
+nohup.out
+velocity.log.*

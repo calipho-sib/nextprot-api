@@ -1,0 +1,35 @@
+interaction:$interaction.id a ProteinInteraction ;
+  :quality :$interaction.quality ;
+  :selfInteraction "$interaction.selfInteraction"^^xsd:boolean;
+  :withEvidence evidence:$interaction.evidenceId ;
+#foreach($interactant in $interaction.interactants)
+## if interactant is an entry or isoform described in nextprot
+#if($interactant.isNextprot())
+#if($interactant.isIsoform())
+  :interactant isoform:$interactant.accession ;
+#else
+  :interactant entry:$interactant.accession ;
+#end
+## otherwise interactant is not an entry or isoform described in nextprot, it is an xref
+#else
+  :interactant [
+  	:accession "$interactant.accession"^^xsd:string ;
+  	:database db:$interactant.database ;
+  	:url "$interactant.url"^^xsd:string ;
+  ] ;
+#end
+#end  
+  .
+evidence:$interaction.evidenceId 
+  rdf:type :Evidence ;
+  :code :$interaction.evidenceType ;
+  :assignedBy source:$interaction.evidenceDatasource;
+  :quality :$interaction.evidenceQuality ;
+  :reference [
+    a :Xref;
+    :provenance db:$StringUtils.slug($interaction.evidenceXrefDB) ;
+    :accession "$interaction.evidenceXrefAC"^^xsd::string ;
+  ];
+  :numberOfExperiments $interaction.numberOfExperiments; 
+  .
+   
