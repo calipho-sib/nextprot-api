@@ -1,6 +1,5 @@
 package org.nextprot.utils;
 
-import org.nextprot.search.domain.KeyValueRepresentation;
 
 public class SparqlResult implements KeyValueRepresentation{
 

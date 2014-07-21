@@ -3,9 +3,9 @@ package org.nextprot.api.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nextprot.api.domain.exception.NextProtException;
 import org.nextprot.api.service.SparqlService;
-import org.nextprot.search.domain.exception.NextProtException;
-import org.nextprot.search.utils.FileUtils;
+import org.nextprot.utils.FileUtils;
 import org.nextprot.utils.SparqlResult;
 import org.nextprot.utils.SparqlUtils;
 import org.springframework.beans.factory.InitializingBean;

@@ -15,7 +15,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.nextprot.api.aop.requests.RequestInfo;
 import org.nextprot.api.aop.requests.RequestInfoFactory;
 import org.nextprot.api.aop.requests.RequestManager;
-import org.nextprot.search.domain.KeyValueRepresentation;
+import org.nextprot.utils.KeyValueRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jmx.export.annotation.ManagedAttribute;

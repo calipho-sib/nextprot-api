@@ -2,7 +2,7 @@ package org.nextprot.api.domain;
 
 import java.io.Serializable;
 
-import org.nextprot.search.utils.NPreconditions;
+import org.nextprot.utils.NPreconditions;
 
 public class UserQuery implements Serializable {
 

@@ -1,6 +1,6 @@
 package org.nextprot.api.exceptions;
 
-import org.nextprot.search.domain.exception.NextProtException;
+import org.nextprot.api.domain.exception.NextProtException;
 
 
 public class ConcurrentRequestsException extends NextProtException {

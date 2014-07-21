@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import org.jsondoc.core.annotation.ApiObject;
-import org.jsondoc.core.annotation.ApiObjectField;
 
 @ApiObject(name = "Version", description = "source version that generate triples")
 public class Version implements Serializable{

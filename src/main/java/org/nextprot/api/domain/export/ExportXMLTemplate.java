@@ -1,6 +1,6 @@
 package org.nextprot.api.domain.export;
 
-import org.nextprot.search.domain.exception.NextProtException;
+import org.nextprot.api.domain.exception.NextProtException;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 

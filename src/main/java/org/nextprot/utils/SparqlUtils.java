@@ -97,8 +97,6 @@ public class SparqlUtils {
 	 */
 	public static Map<String, String> getMetaInfo(String query) {
 		
-		System.out.println("QQQQQQQQQQQQQQQ" + query);
-		
 		Map<String,String> meta=new HashMap<String, String>();
 		//
 		// get id and host
