@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.nextprot.api.exceptions.SearchConfigException;
+import org.nextprot.api.domain.exception.SearchConfigException;
 import org.nextprot.api.solr.IndexField;
 import org.nextprot.api.solr.IndexParameter;
 import org.nextprot.api.solr.Query;

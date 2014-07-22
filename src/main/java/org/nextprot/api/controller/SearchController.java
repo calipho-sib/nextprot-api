@@ -10,7 +10,7 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.domain.ProteinList;
-import org.nextprot.api.exceptions.SearchQueryException;
+import org.nextprot.api.domain.exception.SearchQueryException;
 import org.nextprot.api.service.ProteinListService;
 import org.nextprot.api.service.QueryService;
 import org.nextprot.api.service.SparqlEndpoint;

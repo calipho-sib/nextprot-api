@@ -1,4 +1,4 @@
-package org.nextprot.api.exceptions;
+package org.nextprot.api.domain.exception;
 
 public class SearchConfigException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package org.nextprot.api.annotation;
+package org.nextprot.api.aop.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

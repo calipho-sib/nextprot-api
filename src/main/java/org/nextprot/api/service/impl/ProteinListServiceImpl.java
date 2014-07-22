@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.nextprot.api.dao.ProteinListDao;
 import org.nextprot.api.domain.ProteinList;
-import org.nextprot.api.exceptions.SearchQueryException;
+import org.nextprot.api.domain.exception.SearchQueryException;
 import org.nextprot.api.service.ProteinListService;
 import org.nextprot.api.service.QueryService;
 import org.nextprot.api.solr.IndexField;

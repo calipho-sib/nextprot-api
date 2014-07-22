@@ -1,4 +1,4 @@
-package org.nextprot.api.jdbc;
+package org.nextprot.api.spring.jdbc;
 
 import java.util.ArrayList;
 import java.util.HashSet;

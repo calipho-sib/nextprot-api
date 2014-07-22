@@ -1,6 +1,5 @@
-package org.nextprot.api.exceptions;
+package org.nextprot.api.domain.exception;
 
-import org.nextprot.api.domain.exception.NextProtException;
 
 public class EntryNotFoundException extends NextProtException {
 

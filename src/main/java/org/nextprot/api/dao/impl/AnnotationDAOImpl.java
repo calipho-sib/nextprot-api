@@ -12,7 +12,7 @@ import org.nextprot.api.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.domain.annotation.AnnotationProperty;
 import org.nextprot.api.domain.annotation.AnnotationVariant;
-import org.nextprot.api.jdbc.BatchNamedParameterJdbcTemplate;
+import org.nextprot.api.spring.jdbc.BatchNamedParameterJdbcTemplate;
 import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
