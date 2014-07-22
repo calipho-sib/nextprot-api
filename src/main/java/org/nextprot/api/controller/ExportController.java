@@ -29,7 +29,7 @@ import org.nextprot.api.domain.file.format.NPFileFormat;
 import org.nextprot.api.export.ExportService;
 import org.nextprot.api.service.FluentEntryService;
 import org.nextprot.api.service.ProteinListService;
-import org.nextprot.utils.net.NPStreamUtils;
+import org.nextprot.utils.NPStreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;

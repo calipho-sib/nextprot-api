@@ -1,4 +1,4 @@
-package org.nextprot.utils.net;
+package org.nextprot.utils;
 
 import java.io.Closeable;
 import java.io.EOFException;
