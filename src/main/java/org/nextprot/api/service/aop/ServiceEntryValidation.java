@@ -1,4 +1,4 @@
-package org.nextprot.api.aop;
+package org.nextprot.api.service.aop;
 
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
@@ -10,7 +10,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.nextprot.api.aop.annotation.ValidEntry;
 import org.nextprot.api.service.MasterIdentifierService;
 import org.nextprot.core.exception.EntryNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

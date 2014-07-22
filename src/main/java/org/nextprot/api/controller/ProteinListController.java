@@ -12,7 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.domain.ProteinList;
 import org.nextprot.api.service.ProteinListService;
-import org.nextprot.api.service.impl.ProteinListServiceImpl.Operations;
+import org.nextprot.api.service.ProteinListService.Operations;
 import org.nextprot.auth.core.domain.NextprotUser;
 import org.nextprot.auth.core.service.NextprotUserService;
 import org.springframework.beans.factory.annotation.Autowired;

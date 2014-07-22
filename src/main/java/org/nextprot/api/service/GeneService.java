@@ -2,8 +2,8 @@ package org.nextprot.api.service;
 
 import java.util.List;
 
-import org.nextprot.api.aop.annotation.ValidEntry;
 import org.nextprot.api.domain.ChromosomalLocation;
+import org.nextprot.api.service.aop.ValidEntry;
 
 /**
  * Extracts gene / chromosomal information about an entry

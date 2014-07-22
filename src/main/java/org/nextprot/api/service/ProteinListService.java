@@ -4,11 +4,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.nextprot.api.domain.ProteinList;
-import org.nextprot.api.service.impl.ProteinListServiceImpl.Operations;
 import org.nextprot.api.solr.SearchResult;
 import org.nextprot.core.exception.SearchQueryException;
 
 public interface ProteinListService {
+	
+
+	public enum Operations {
+		AND, OR, NOT_IN
+	}
+
 
 	List<ProteinList> getProteinLists(String username);
 	List<ProteinList> getProteinListsMeta(String username);

@@ -1,4 +1,4 @@
-package org.nextprot.api.service;
+package org.nextprot.api.solr;
 
 import java.io.IOException;
 import java.util.List;

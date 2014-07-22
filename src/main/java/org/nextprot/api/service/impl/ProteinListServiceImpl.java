@@ -208,8 +208,4 @@ public class ProteinListServiceImpl implements ProteinListService {
 		return createProteinList(name, description, combined, username);
 	}
 
-	public static enum Operations {
-		AND, OR, NOT_IN
-	}
-
 }

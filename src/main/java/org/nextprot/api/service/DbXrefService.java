@@ -2,9 +2,9 @@ package org.nextprot.api.service;
 
 import java.util.List;
 
-import org.nextprot.api.aop.annotation.ValidEntry;
 import org.nextprot.api.domain.DbXref;
 import org.nextprot.api.domain.PublicationDbXref;
+import org.nextprot.api.service.aop.ValidEntry;
 
 public interface DbXrefService {
 
