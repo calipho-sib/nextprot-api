@@ -27,9 +27,9 @@ import org.nextprot.api.domain.export.ExportTemplate;
 import org.nextprot.api.domain.export.ExportXMLTemplate;
 import org.nextprot.api.domain.file.format.NPFileFormat;
 import org.nextprot.api.export.ExportService;
+import org.nextprot.api.export.ExportUtils;
 import org.nextprot.api.service.FluentEntryService;
 import org.nextprot.api.service.ProteinListService;
-import org.nextprot.utils.NPStreamUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -71,7 +71,7 @@ public class ExportController {
 		response.setHeader("Content-Disposition", "attachment; filename=\"NXEntries." + format.getExtension() + "\"");
 
 		List<Future<File>> futures = exportService.exportAllEntries(format);
-		NPStreamUtils.printOutput(new LinkedList<Future<File>>(futures), response);
+		ExportUtils.printOutput(new LinkedList<Future<File>>(futures), response);
 
 	}
 
@@ -84,7 +84,7 @@ public class ExportController {
 		response.setHeader("Content-Disposition", "attachment; filename=\"NXChromosome" + chromosome + "." + format.getExtension() + "\"");
 
 		List<Future<File>> futures = exportService.exportEntriesOfChromossome(chromosome, format);
-		NPStreamUtils.printOutput(new LinkedList<Future<File>>(futures), response);
+		ExportUtils.printOutput(new LinkedList<Future<File>>(futures), response);
 
 	}
 
@@ -97,7 +97,7 @@ public class ExportController {
 		response.setHeader("Content-Disposition", "attachment; filename=\"NXEntries." + format.getExtension() + "\"");
 
 		List<Future<File>> futures = exportService.exportEntries(new ArrayList<String>(proteinList.getAccessions()), getRequestedFormat(request));
-		NPStreamUtils.printOutput(new LinkedList<Future<File>>(futures), response);
+		ExportUtils.printOutput(new LinkedList<Future<File>>(futures), response);
 
 	}
 

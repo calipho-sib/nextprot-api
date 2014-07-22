@@ -1,4 +1,4 @@
-package org.nextprot.utils;
+package org.nextprot.api.export;
 
 import java.io.Closeable;
 import java.io.EOFException;
@@ -21,9 +21,9 @@ import org.nextprot.api.domain.exception.NextProtException;
  * @author dteixeira
  *
  */
-public class NPStreamUtils {
+public class ExportUtils {
 	
-	private static final Log LOGGER = LogFactory.getLog(NPStreamUtils.class);
+	private static final Log LOGGER = LogFactory.getLog(ExportUtils.class);
 	private static int BYTES_DOWNLOAD = 10 * 1024 * 1024; // 10 MB
 
 	public static void printOutput(Queue<Future<File>> futuresQueue, HttpServletResponse response) {

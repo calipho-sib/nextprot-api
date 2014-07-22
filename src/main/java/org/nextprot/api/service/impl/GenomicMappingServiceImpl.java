@@ -18,7 +18,7 @@ import org.nextprot.api.domain.mapping.GenomicMapping;
 import org.nextprot.api.domain.mapping.IsoformMapping;
 import org.nextprot.api.domain.mapping.TranscriptMapping;
 import org.nextprot.api.service.GenomicMappingService;
-import org.nextprot.commons.MappingUtils;
+import org.nextprot.utils.MappingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;

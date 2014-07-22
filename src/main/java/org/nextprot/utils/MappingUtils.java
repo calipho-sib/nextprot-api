@@ -1,4 +1,4 @@
-package org.nextprot.commons;
+package org.nextprot.utils;
 
 import com.google.common.base.Preconditions;
 

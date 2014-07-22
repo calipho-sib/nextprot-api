@@ -28,7 +28,7 @@ public class RepositoryUserQueryServiceImpl implements RepositoryUserQueryServic
 	}
 
 	@Override
-	@PreAuthorize("{T(org.nextprot.utils.UserQueryUtils).isAuthorized(#userQuery)}")
+	@PreAuthorize("{T(org.nextprot.api.domain.UserQuery).isAuthorized(#userQuery)}")
 	public UserQuery createUserQuery(UserQuery userQuery) {
 		userQuery.checkValid();
 		long id = userQueryDao.saveUserQuery(userQuery);
@@ -37,7 +37,7 @@ public class RepositoryUserQueryServiceImpl implements RepositoryUserQueryServic
 	}
 
 	@Override
-	@PreAuthorize("{T(org.nextprot.utils.UserQueryUtils).isAuthorized(#userQuery)}")
+	@PreAuthorize("{T(org.nextprot.api.domain.UserQuery).isAuthorized(#userQuery)}")
 	public UserQuery updateUserQuery(UserQuery userQuery) {
 		userQuery.checkValid();
 		userQueryDao.updateUserQuery(userQuery);
@@ -45,7 +45,7 @@ public class RepositoryUserQueryServiceImpl implements RepositoryUserQueryServic
 	}
 
 	@Override
-	@PreAuthorize("{T(org.nextprot.utils.UserQueryUtils).isAuthorized(#userQuery)}")
+	@PreAuthorize("{T(org.nextprot.api.domain.UserQuery).isAuthorized(#userQuery)}")
 	public void deleteUserQuery(UserQuery userQuery) {
 		userQueryDao.deleteUserQuery(userQuery.getUserQueryId());
 	}

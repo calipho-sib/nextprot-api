@@ -3,8 +3,12 @@ package org.nextprot.api.service.impl;
 import static org.nextprot.utils.RdfUtils.getPrefixFromNameSpace;
 import static org.nextprot.utils.RdfUtils.getPrefixedNameFromURI;
 
+import org.nextprot.utils.RdfUtils;
+
+import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.RDFVisitor;
 import com.hp.hpl.jena.rdf.model.Resource;
 
@@ -56,6 +60,7 @@ public class RDFBasicVisitor implements RDFVisitor {
 		String pn = getPrefixFromNameSpace(ns) + ln;
 		return pn;
 	}
+	
 	
 	
 }

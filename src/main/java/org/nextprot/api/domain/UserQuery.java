@@ -2,7 +2,11 @@ package org.nextprot.api.domain;
 
 import java.io.Serializable;
 
-import org.nextprot.utils.NPreconditions;
+import org.nextprot.api.domain.exception.NPreconditions;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserQuery implements Serializable {
 
@@ -75,7 +79,32 @@ public class UserQuery implements Serializable {
 	public void checkValid() {
 		NPreconditions.checkNotNull(sparql, "The sparql should not be null");
 		NPreconditions.checkNotNull(title, "The title should not be null");
-		NPreconditions.checkTrue(title.length() >= 3, "The title should be at least 3 characters long");
+		NPreconditions.checkTrue(title.length() >= 3,
+				"The title should be at least 3 characters long");
+	}
+
+	public static boolean isAuthorized(UserQuery q) {
+
+		String securityUserName = "";
+
+		SecurityContext sc = SecurityContextHolder.getContext();
+		if (sc == null)
+			return false;
+
+		Authentication a = SecurityContextHolder.getContext()
+				.getAuthentication();
+		if (a == null)
+			return false;
+
+		if (a.getPrincipal() instanceof UserDetails) {
+			UserDetails currentUserDetails = (UserDetails) a.getPrincipal();
+			securityUserName = currentUserDetails.getUsername();
+		} else {
+			securityUserName = a.getPrincipal().toString();
+		}
+
+		return (q.getUsername().equals(securityUserName));
+
 	}
 
 }

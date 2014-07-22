@@ -1,8 +1,6 @@
 package org.nextprot.api.dao.impl;
 
 import static org.nextprot.utils.RdfUtils.RDF_PREFIXES;
-import static org.nextprot.utils.RdfVisitorUtils.getDataFromSolutionVar;
-import static org.nextprot.utils.RdfVisitorUtils.getObjectTypeFromSample;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +14,7 @@ import java.util.TreeSet;
 import org.nextprot.api.dao.RdfTypeInfoDao;
 import org.nextprot.api.domain.rdf.TripleInfo;
 import org.nextprot.api.service.SparqlEndpoint;
+import org.nextprot.api.service.impl.RDFBasicVisitor;
 import org.nextprot.utils.FileUtils;
 import org.nextprot.utils.RdfUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,8 @@ import org.springframework.stereotype.Repository;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.rdf.model.Literal;
+import com.hp.hpl.jena.rdf.model.RDFNode;
 
 @Repository
 public class RdfTypeInfoDaoImpl implements RdfTypeInfoDao {
@@ -182,4 +183,38 @@ public class RdfTypeInfoDaoImpl implements RdfTypeInfoDao {
 		}
 		return values;
 	}
+	
+	
+	/**
+	 * Private static methods
+	 */
+	
+	
+	private static Object getDataFromSolutionVar(QuerySolution sol, String var) {
+		return getDataFromSolutionVar(sol, var, false);
+	}
+
+	private static Object getDataFromSolutionVar(QuerySolution sol, String var, boolean useQuotes) {
+		RDFNode n = sol.get(var);
+		if (n == null)
+			return "";
+		RDFBasicVisitor rdfVisitor = new RDFBasicVisitor();
+		rdfVisitor.setSurroundLiteralStringWithQuotes(useQuotes);
+		return n.visitWith(rdfVisitor);
+	}
+
+	private static String getObjectTypeFromSample(QuerySolution sol, String objSample) {
+		try {
+			Literal lit = sol.getLiteral(objSample);
+			String typ = lit.getDatatypeURI();
+			return RdfUtils.getPrefixedNameFromURI(typ);
+
+		} catch (Exception e) {
+			System.err.println("Failed for " + objSample);
+			return RdfUtils.BLANK_OBJECT_TYPE;
+		}
+
+	}
+
+
 }

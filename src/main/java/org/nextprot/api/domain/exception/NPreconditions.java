@@ -1,6 +1,5 @@
-package org.nextprot.utils;
+package org.nextprot.api.domain.exception;
 
-import org.nextprot.api.domain.exception.NextProtException;
 
 public class NPreconditions {
 
