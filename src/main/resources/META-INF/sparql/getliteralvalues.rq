@@ -1,0 +1,6 @@
+select distinct ?value
+where {
+ ?inst rdf:type :SomeRdfType .
+  ?inst :SomePredicate ?value . 
+}
+LIMIT :LimitResults

@@ -1,0 +1,11 @@
+select ?type (count(?comment) as ?commentCount) where {
+select (?typ as ?type)  (count(?inst) as ?instanceCount) (?cmt as ?comment) 
+where { ?inst rdf:type ?typ  .
+      filter (?typ NOT IN (:childOf , owl:TransitiveProperty , owl:Ontology , owl:ObjectProperty , owl:FunctionalProperty , owl:Class , rdf:Property   )) 
+      optional { ?typ rdfs:label ?lbl . }
+      optional { ?typ rdfs:comment ?cmt . }
+}
+group by ?typ ?cmt
+order by ?typ
+} group by ?type
+having (count(?comment) > 1)

@@ -1,10 +1,13 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.config;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.nextprot.api.exceptions.SearchConfigException;
+import org.nextprot.api.solr.IndexField;
+import org.nextprot.api.solr.IndexParameter;
+import org.nextprot.api.solr.Query;
 
 public class IndexConfiguration implements QueryBuilder {
 	protected final String BOOST_SPEARATOR = "^";

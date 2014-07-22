@@ -1,0 +1,25 @@
+#
+# Returns the list of rdf:type objects in the data 
+# together with its label, comment and number of instances
+#
+
+select 
+(?typ as ?rdfType) 
+(sample(?lbl) as ?label)  
+(sample(?cmt) as ?comment) 
+(sample(?inst) as ?instanceSample) 
+(count(?inst) as ?instanceCount) 
+where 
+    { 
+      values ?typ { :SomeRdfType } .
+      ?inst rdf:type ?typ  .
+      filter (?typ NOT IN (
+        :childOf , owl:TransitiveProperty , owl:Ontology , 
+        owl:ObjectProperty , owl:FunctionalProperty , owl:Class ,
+        rdf:Property   ))
+      optional { ?typ rdfs:label ?lbl . }
+      optional { ?typ rdfs:comment ?cmt . }
+    }
+group by ?typ
+order by ?typ
+

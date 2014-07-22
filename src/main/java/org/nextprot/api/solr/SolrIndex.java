@@ -1,6 +1,7 @@
 package org.nextprot.api.solr;
 
 import org.nextprot.api.solr.IndexTemplate.ConfigurationName;
+import org.nextprot.api.solr.config.IndexConfiguration;
 
 
 

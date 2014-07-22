@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.nextprot.api.exceptions.SearchConfigException;
+import org.nextprot.api.solr.config.IndexConfiguration;
 
 public abstract class AbstractSolrIndex implements SolrIndex {
 

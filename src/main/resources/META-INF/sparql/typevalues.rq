@@ -1,0 +1,3 @@
+select ?value
+where { ?value rdf:type :SomeRdfType . }
+LIMIT :LimitResults

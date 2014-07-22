@@ -9,7 +9,7 @@
 		
 
 	<!--  Sparql Endpoing is defined according with its environment  -->
-	<bean id="sparqlEndPoint" class="org.nextprot.search.service.impl.SparqlEndpointImpl">
+	<bean id="sparqlEndPoint" class="org.nextprot.api.service.impl.SparqlEndpointImpl">
 		<property name="url" value="${sparql.url}"></property>
 		<property name="timeout" value="${sparql.timeout}"></property>
 	</bean>

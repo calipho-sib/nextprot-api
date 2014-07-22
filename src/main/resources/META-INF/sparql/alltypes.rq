@@ -1,0 +1,8 @@
+select (?typ as ?type)  (count(?inst) as ?instanceCount) (?cmt as ?comment) (?lbl as ?label) 
+where { ?inst rdf:type ?typ  .
+      filter (?typ NOT IN (:childOf , owl:TransitiveProperty , owl:Ontology , owl:ObjectProperty , owl:FunctionalProperty , owl:Class , rdf:Property   )) 
+      optional { ?typ rdfs:label ?lbl . }
+      optional { ?typ rdfs:comment ?cmt . }
+}
+group by ?typ ?cmt ?lbl
+order by ?typ

@@ -1,0 +1,25 @@
+#
+# Returns the list of distinct pair predicate - objectType that are related to :SomeSubjectType in the data
+# if the object has no rdf:type, ?t is unbound, 
+#
+select 
+?subjType
+(?p as ?pred) 
+(?t as ?objType) 
+(count(?o) as ?objCount ) 
+(sample(?s) as ?subjSample) 
+(sample(?o) as ?objSample) 
+where 
+    { 
+      values ?subjType { :SomeRdfType } .
+      ?s rdf:type ?subjType . 
+      ?s ?p ?o . 
+      optional { ?o rdf:type ?t .}
+      filter (?p not in (
+      	rdf:type , :childOf , rdfs:subClassOf , :related , owl:disjointWith ,
+      	:isoformSpecificity , :negativeIsoformSpecificity, :assocType , :notIn
+      	) )
+    }
+group by ?subjType ?p ?t
+order by ?subjType ?p ?t
+

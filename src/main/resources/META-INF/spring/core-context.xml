@@ -26,7 +26,7 @@
 	
 	<context:component-scan base-package="org.nextprot" />
 	
-	<import resource="classpath:search-context.xml"/>	
+	<import resource="classpath:META-INF/spring/search-context.xml"/>	
 
 	<!-- Instrumentation aspects -->
 

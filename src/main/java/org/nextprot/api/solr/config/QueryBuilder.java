@@ -1,4 +1,6 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.config;
+
+import org.nextprot.api.solr.Query;
 
 
 public interface QueryBuilder {

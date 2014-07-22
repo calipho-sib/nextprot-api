@@ -1,9 +1,10 @@
-package org.nextprot.api.solr;
+package org.nextprot.api.solr.config;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.nextprot.api.solr.IndexField;
 import org.nextprot.utils.Pair;
 
 public class SortConfig {
