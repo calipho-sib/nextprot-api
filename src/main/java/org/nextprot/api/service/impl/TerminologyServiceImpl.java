@@ -2,9 +2,9 @@ package org.nextprot.api.service.impl;
 
 import java.util.List;
 
-import org.nextprot.api.dao.TerminologyDao;
-import org.nextprot.api.domain.Terminology;
 import org.nextprot.api.service.TerminologyService;
+import org.nextprot.rdf.dao.TerminologyDao;
+import org.nextprot.rdf.domain.Terminology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;

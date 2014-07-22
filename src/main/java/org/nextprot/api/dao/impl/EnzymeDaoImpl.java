@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.nextprot.api.dao.EnzymeDao;
-import org.nextprot.api.domain.Terminology;
 import org.nextprot.auth.core.service.DataSourceServiceLocator;
+import org.nextprot.rdf.domain.Terminology;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;

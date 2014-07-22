@@ -10,8 +10,8 @@ import java.util.List;
 
 import org.nextprot.api.dao.RepositoryUserQueryDao;
 import org.nextprot.api.domain.UserQuery;
-import org.nextprot.api.domain.exception.NPreconditions;
 import org.nextprot.auth.core.service.DataSourceServiceLocator;
+import org.nextprot.core.exception.NPreconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;

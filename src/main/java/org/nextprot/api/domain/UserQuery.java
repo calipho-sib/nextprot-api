@@ -2,7 +2,7 @@ package org.nextprot.api.domain;
 
 import java.io.Serializable;
 
-import org.nextprot.api.domain.exception.NPreconditions;
+import org.nextprot.core.exception.NPreconditions;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;

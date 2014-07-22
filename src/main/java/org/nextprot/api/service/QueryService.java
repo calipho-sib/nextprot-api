@@ -1,9 +1,9 @@
 package org.nextprot.api.service;
 
-import org.nextprot.api.domain.exception.SearchQueryException;
 import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.solr.SearchResult;
+import org.nextprot.core.exception.SearchQueryException;
 
 
 public interface QueryService {

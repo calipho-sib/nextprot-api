@@ -2,7 +2,7 @@ package org.nextprot.api.dao;
 
 import java.util.List;
 
-import org.nextprot.api.domain.Terminology;
+import org.nextprot.rdf.domain.Terminology;
 
 public interface EnzymeDao {
 

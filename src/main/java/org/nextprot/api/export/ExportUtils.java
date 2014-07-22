@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.domain.exception.NextProtException;
+import org.nextprot.core.exception.NextProtException;
 
 /**
  * Helper class to stream data and dealing with exception, like when user cancels a request.

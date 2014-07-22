@@ -1,7 +1,6 @@
 package org.nextprot.api.service.impl;
 
 import org.nextprot.api.domain.Entry;
-import org.nextprot.api.domain.exception.NextProtException;
 import org.nextprot.api.domain.export.ExportTXTTemplate;
 import org.nextprot.api.domain.export.ExportTemplate;
 import org.nextprot.api.domain.export.ExportXMLTemplate;
@@ -19,6 +18,7 @@ import org.nextprot.api.service.MasterIdentifierService;
 import org.nextprot.api.service.OverviewService;
 import org.nextprot.api.service.PeptideMappingService;
 import org.nextprot.api.service.PublicationService;
+import org.nextprot.core.exception.NextProtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

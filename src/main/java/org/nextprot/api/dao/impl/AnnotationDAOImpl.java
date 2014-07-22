@@ -6,13 +6,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.nextprot.api.dao.AnnotationDAO;
+import org.nextprot.api.dao.impl.spring.BatchNamedParameterJdbcTemplate;
 import org.nextprot.api.domain.annotation.Annotation;
 import org.nextprot.api.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.domain.annotation.AnnotationProperty;
 import org.nextprot.api.domain.annotation.AnnotationVariant;
-import org.nextprot.api.spring.jdbc.BatchNamedParameterJdbcTemplate;
 import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.nextprot.api.domain.ProteinList;
-import org.nextprot.api.domain.exception.SearchQueryException;
 import org.nextprot.api.service.impl.ProteinListServiceImpl.Operations;
 import org.nextprot.api.solr.SearchResult;
+import org.nextprot.core.exception.SearchQueryException;
 
 public interface ProteinListService {
 

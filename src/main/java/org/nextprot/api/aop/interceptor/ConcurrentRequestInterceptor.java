@@ -7,7 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.aop.requests.RequestInfo;
 import org.nextprot.api.aop.requests.RequestManager;
-import org.nextprot.api.domain.exception.ConcurrentRequestsException;
+import org.nextprot.core.exception.ConcurrentRequestsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;

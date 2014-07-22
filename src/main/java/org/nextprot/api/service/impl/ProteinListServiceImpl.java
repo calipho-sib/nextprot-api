@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.nextprot.api.dao.ProteinListDao;
 import org.nextprot.api.domain.ProteinList;
-import org.nextprot.api.domain.exception.SearchQueryException;
 import org.nextprot.api.service.ProteinListService;
 import org.nextprot.api.service.QueryService;
 import org.nextprot.api.solr.IndexField;
@@ -20,6 +19,7 @@ import org.nextprot.api.solr.config.FieldConfigSet;
 import org.nextprot.api.solr.config.IndexConfiguration;
 import org.nextprot.auth.core.domain.NextprotUser;
 import org.nextprot.auth.core.service.NextprotUserService;
+import org.nextprot.core.exception.SearchQueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

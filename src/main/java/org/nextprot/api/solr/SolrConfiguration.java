@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.nextprot.api.domain.exception.SearchConfigException;
+import org.nextprot.core.exception.SearchConfigException;
 import org.springframework.stereotype.Component;
 
 @Component
