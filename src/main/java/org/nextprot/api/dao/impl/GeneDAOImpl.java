@@ -12,10 +12,10 @@ import java.util.Map;
 
 import org.nextprot.api.dao.GeneDAO;
 import org.nextprot.api.domain.ChromosomalLocation;
-import org.nextprot.api.domain.mapping.Exon;
-import org.nextprot.api.domain.mapping.GenomicMapping;
-import org.nextprot.api.domain.mapping.IsoformMapping;
-import org.nextprot.api.domain.mapping.TranscriptMapping;
+import org.nextprot.api.domain.Exon;
+import org.nextprot.api.domain.GenomicMapping;
+import org.nextprot.api.domain.IsoformMapping;
+import org.nextprot.api.domain.TranscriptMapping;
 import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

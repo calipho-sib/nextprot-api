@@ -1,25 +1,15 @@
-package org.nextprot.api.domain.mapping;
+package org.nextprot.api.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsondoc.core.annotation.ApiObject;
-import org.jsondoc.core.annotation.ApiObjectField;
-
-@ApiObject(name = "genomic-mapping", description = "The genomic mapping")
 public class GenomicMapping implements Serializable{
 
 	private static final long serialVersionUID = 4988428417905584804L;
 	private long geneSeqId;
-
-	@ApiObjectField(description = "The database field")
 	private String database;
-
-	@ApiObjectField(description = "The accession")
 	private String accession;
-
-	@ApiObjectField(description = "The isoform mappings")
 	private List<IsoformMapping> isoformMappings;
 
 	public GenomicMapping() {

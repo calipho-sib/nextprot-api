@@ -11,7 +11,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
 import org.nextprot.api.domain.ProteinList;
-import org.nextprot.api.service.impl.ProteinListServiceImpl.Operations;
+import org.nextprot.api.service.ProteinListService.Operations;
 import org.nextprot.api.solr.SearchResult.SearchResultItem;
 import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.nextprot.auth.core.service.NextprotUserService;

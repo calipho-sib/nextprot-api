@@ -1,12 +1,9 @@
-package org.nextprot.api.solr.config;
+package org.nextprot.api.solr;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.nextprot.api.solr.IndexField;
-import org.nextprot.api.solr.IndexParameter;
-import org.nextprot.api.solr.Query;
 import org.nextprot.core.exception.SearchConfigException;
 
 public class IndexConfiguration implements QueryBuilder {

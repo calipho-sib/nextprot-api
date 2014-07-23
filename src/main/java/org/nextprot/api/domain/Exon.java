@@ -1,8 +1,6 @@
-package org.nextprot.api.domain.mapping;
+package org.nextprot.api.domain;
 
 import java.io.Serializable;
-
-import org.nextprot.api.domain.AminoAcid;
 
 public class Exon implements Serializable{
 

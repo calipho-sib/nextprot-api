@@ -3,10 +3,10 @@ package org.nextprot.api.dao;
 import java.util.List;
 
 import org.nextprot.api.domain.ChromosomalLocation;
-import org.nextprot.api.domain.mapping.Exon;
-import org.nextprot.api.domain.mapping.GenomicMapping;
-import org.nextprot.api.domain.mapping.IsoformMapping;
-import org.nextprot.api.domain.mapping.TranscriptMapping;
+import org.nextprot.api.domain.Exon;
+import org.nextprot.api.domain.GenomicMapping;
+import org.nextprot.api.domain.IsoformMapping;
+import org.nextprot.api.domain.TranscriptMapping;
 
 public interface GeneDAO {
 

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.nextprot.api.domain.annotation.Annotation;
-import org.nextprot.api.domain.mapping.GenomicMapping;
 import org.nextprot.rdf.domain.Terminology;
 
 import com.google.common.collect.Lists;

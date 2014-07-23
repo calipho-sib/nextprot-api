@@ -1,10 +1,7 @@
-package org.nextprot.api.solr.config;
+package org.nextprot.api.solr;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.nextprot.api.solr.IndexField;
-import org.nextprot.api.solr.IndexParameter;
 
 public class FieldConfigSet {
 		

@@ -2,8 +2,8 @@ package org.nextprot.api.service;
 
 import java.util.List;
 
-import org.nextprot.api.domain.mapping.GenomicMapping;
-import org.nextprot.api.service.aop.ValidEntry;
+import org.nextprot.api.domain.GenomicMapping;
+import org.nextprot.api.service.annotation.ValidEntry;
 
 /**
  * Extracts gene / chromosomal information about an entry

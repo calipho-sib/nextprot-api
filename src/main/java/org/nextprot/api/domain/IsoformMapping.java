@@ -1,11 +1,9 @@
-package org.nextprot.api.domain.mapping;
+package org.nextprot.api.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-
-import org.nextprot.api.domain.Isoform;
 
 /**
  * This represents an isoform mapped to a specific gene.

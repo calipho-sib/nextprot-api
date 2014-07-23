@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.nextprot.api.domain.DbXref;
 import org.nextprot.api.domain.PublicationDbXref;
-import org.nextprot.api.service.aop.ValidEntry;
+import org.nextprot.api.service.annotation.ValidEntry;
 
 public interface DbXrefService {
 

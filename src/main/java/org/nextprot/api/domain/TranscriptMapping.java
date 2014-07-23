@@ -1,4 +1,4 @@
-package org.nextprot.api.domain.mapping;
+package org.nextprot.api.domain;
 
 import java.io.Serializable;
 import java.util.List;
