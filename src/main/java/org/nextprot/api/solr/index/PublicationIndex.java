@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.index;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
+import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.AutocompleteConfiguration;
 import org.nextprot.api.solr.FieldConfigSet;
 import org.nextprot.api.solr.IndexConfiguration;
@@ -8,7 +9,6 @@ import org.nextprot.api.solr.IndexField;
 import org.nextprot.api.solr.IndexParameter;
 import org.nextprot.api.solr.IndexTemplate;
 import org.nextprot.api.solr.SortConfig;
-import org.nextprot.utils.Pair;
 
 public class PublicationIndex extends IndexTemplate {
 	

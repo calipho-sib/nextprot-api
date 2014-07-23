@@ -5,9 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.junit.Test;
-import org.nextprot.api.dao.InteractionDAO;
+import org.nextprot.api.core.dao.InteractionDAO;
+import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
-import org.nextprot.api.domain.Interaction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

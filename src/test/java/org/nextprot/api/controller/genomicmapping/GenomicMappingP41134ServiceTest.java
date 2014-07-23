@@ -1,8 +1,8 @@
 package org.nextprot.api.controller.genomicmapping;
 
 import org.junit.Test;
+import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
-import org.nextprot.api.service.GenomicMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

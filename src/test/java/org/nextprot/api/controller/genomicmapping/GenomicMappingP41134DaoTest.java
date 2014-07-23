@@ -7,11 +7,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import org.nextprot.api.dao.GeneDAO;
+import org.nextprot.api.core.dao.GeneDAO;
+import org.nextprot.api.core.domain.Exon;
+import org.nextprot.api.core.domain.GenomicMapping;
+import org.nextprot.api.core.domain.TranscriptMapping;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
-import org.nextprot.api.domain.Exon;
-import org.nextprot.api.domain.GenomicMapping;
-import org.nextprot.api.domain.TranscriptMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

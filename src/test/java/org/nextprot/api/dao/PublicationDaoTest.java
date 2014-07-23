@@ -5,8 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.junit.Test;
+import org.nextprot.api.core.dao.PublicationDao;
+import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
-import org.nextprot.api.domain.Publication;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

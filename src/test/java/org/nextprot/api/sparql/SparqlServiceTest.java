@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nextprot.rdf.service.SparqlEndpoint;
-import org.nextprot.rdf.service.SparqlService;
+import org.nextprot.api.rdf.service.SparqlEndpoint;
+import org.nextprot.api.rdf.service.SparqlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

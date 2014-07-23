@@ -7,9 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.nextprot.api.core.dao.CvJournalDao;
+import org.nextprot.api.core.domain.CvJournal;
+import org.nextprot.api.core.domain.PublicationCvJournal;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
-import org.nextprot.api.domain.CvJournal;
-import org.nextprot.api.domain.PublicationCvJournal;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

@@ -3,7 +3,7 @@ package org.nextprot.api.utils;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-import org.nextprot.utils.FileUtils;
+import org.nextprot.api.commons.utils.FileUtils;
 import org.springframework.test.web.servlet.MockMvc;
 
 public abstract class MockMVCUtils {

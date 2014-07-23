@@ -6,9 +6,10 @@ import static org.junit.Assert.assertNull;
 import java.util.List;
 
 import org.junit.Test;
+import org.nextprot.api.core.dao.EntityNameDao;
+import org.nextprot.api.core.domain.Overview.EntityName;
+import org.nextprot.api.core.domain.Overview.EntityNameClass;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
-import org.nextprot.api.domain.Overview.EntityName;
-import org.nextprot.api.domain.Overview.EntityNameClass;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

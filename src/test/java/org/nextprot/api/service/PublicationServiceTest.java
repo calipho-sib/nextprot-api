@@ -7,9 +7,10 @@ import java.util.List;
 import java.util.SortedSet;
 
 import org.junit.Test;
+import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.PublicationAuthor;
+import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
-import org.nextprot.api.domain.Publication;
-import org.nextprot.api.domain.PublicationAuthor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

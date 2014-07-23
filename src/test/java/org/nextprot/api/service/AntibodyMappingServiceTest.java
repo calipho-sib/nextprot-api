@@ -5,9 +5,10 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.junit.Test;
+import org.nextprot.api.core.domain.AntibodyMapping;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
-import org.nextprot.api.domain.AntibodyMapping;
-import org.nextprot.api.domain.DbXref;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

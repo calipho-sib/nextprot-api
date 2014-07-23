@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
-import org.nextprot.utils.Pair;
+import org.nextprot.api.commons.utils.Pair;
 
 public class SortConfig {
 	private String name;

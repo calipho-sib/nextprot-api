@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.nextprot.core.exception.SearchConfigException;
+import org.nextprot.api.commons.exception.SearchConfigException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

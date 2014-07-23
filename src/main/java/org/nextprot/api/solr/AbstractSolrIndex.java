@@ -3,7 +3,7 @@ package org.nextprot.api.solr;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.nextprot.core.exception.SearchConfigException;
+import org.nextprot.api.commons.exception.SearchConfigException;
 
 public abstract class AbstractSolrIndex implements SolrIndex {
 

@@ -10,8 +10,9 @@ import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.core.dao.ProteinListDao;
+import org.nextprot.api.core.domain.ProteinList;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
-import org.nextprot.api.domain.ProteinList;
 import org.nextprot.auth.core.domain.NextprotUser;
 import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.nextprot.auth.core.service.NextprotUserService;

@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.nextprot.utils.Pair;
+import org.nextprot.api.commons.utils.Pair;
 
 /**
  * Encapsulate Solr result. 

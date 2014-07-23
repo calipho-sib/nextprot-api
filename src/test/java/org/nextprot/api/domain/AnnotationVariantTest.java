@@ -2,7 +2,7 @@ package org.nextprot.api.domain;
 
 import junit.framework.TestCase;
 
-import org.nextprot.api.domain.annotation.AnnotationVariant;
+import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 
 public class AnnotationVariantTest extends TestCase {
 

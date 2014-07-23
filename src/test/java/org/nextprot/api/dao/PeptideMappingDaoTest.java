@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.nextprot.api.commons.utils.Pair;
+import org.nextprot.api.core.dao.PeptideMappingDao;
+import org.nextprot.api.core.domain.PeptideMapping;
+import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
-import org.nextprot.api.domain.PeptideMapping;
-import org.nextprot.api.domain.PeptideMapping.PeptideEvidence;
-import org.nextprot.utils.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

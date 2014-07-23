@@ -19,10 +19,10 @@ import javax.xml.validation.Validator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.dao.MasterIdentifierDao;
+import org.nextprot.api.core.dao.MasterIdentifierDao;
+import org.nextprot.api.core.service.export.ExportService;
+import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.dbunit.MVCBaseIntegrationTest;
-import org.nextprot.api.domain.file.format.NPFileFormat;
-import org.nextprot.api.export.ExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 
