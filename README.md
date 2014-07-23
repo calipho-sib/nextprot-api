@@ -28,4 +28,7 @@ mvn test
 * [solr](http://lucene.apache.org/solr/) 
 * [Virtuoso](http://http://virtuoso.openlinksw.com/)
 
-*[Structure101](http://structure101.com) ![Structure101 logo](http://structure101.com/images/s101_170.png "Structure 101")
+* ![Structure101 logo](http://structure101.com/images/s101_170.png "Structure 101") [site](http://structure101.com)
+
+* Git
+* Maven
