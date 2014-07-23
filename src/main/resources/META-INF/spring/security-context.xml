@@ -40,6 +40,25 @@
 		<security:intercept-url pattern="/admin/**" access="ROLE_ADMIN"/>
 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER"/>
 	</security:http>
-	 -->  	
+
+	<security:http pattern="/user/**" entry-point-ref="apiAuthenticationEntryPoint">
+		<security:intercept-url pattern="/user/**" access="ROLE_USER, ROLE_CLIENT"/>
+		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER"/>
+	</security:http>
+
+
+
+	 
+ 
+	<bean id="threeScaleAuthenticationProvider" class="org.nextprot.api.security.ThreeScaleAuthenticationProvider"></bean>
+	
+	<security:http auto-config="true">
+		<security:intercept-url pattern="entry/**" access="ROLE_ADMIN" />
+	</security:http>
+ 
+	<security:authentication-manager>
+	  <security:authentication-provider ref="threeScaleAuthenticationProvider" />
+	</security:authentication-manager>
+	 -->  	 
   	
 </beans>  	    

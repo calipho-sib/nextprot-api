@@ -7,9 +7,9 @@
 	<packaging>war</packaging>
 
 	<properties>
-		<spring.version>3.2.2.RELEASE</spring.version>
+		<spring.version>3.2.8.RELEASE</spring.version>
 		<project.version>${project.version}</project.version>
-		<spring-security.version>3.2.0.RELEASE</spring-security.version>
+		<spring-security.version>3.2.3.RELEASE</spring-security.version>
 	</properties>
 
 	<distributionManagement>
@@ -284,6 +284,27 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
+		</dependency>
+		
+		
+		<!-- API authentication -->
+		<dependency>
+		  <groupId>net.threescale</groupId>
+		  <artifactId>threescale-api</artifactId>
+		  <version>3.0.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
 		</dependency>
 
 	</dependencies>

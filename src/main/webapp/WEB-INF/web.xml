@@ -62,7 +62,7 @@
 	    </init-param>
 	  </filter>        
 	  
-	  <!--  configure pretty print  -->
+	  <!--  configure pretty print 
     <filter>
 	    <filter-name>XmlPrettyPrintFilter</filter-name>
 	    <filter-class>org.nextprot.api.commons.utils.XmlPrettyPrintFilter</filter-class>
@@ -71,7 +71,7 @@
 	    <filter-name>XmlPrettyPrintFilter</filter-name>
 	    <url-pattern>*.xml</url-pattern>
 	  </filter-mapping>
-
+	 -->
 
     <listener>
       <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
