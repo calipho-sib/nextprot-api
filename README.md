@@ -30,5 +30,10 @@ mvn test
 
 * ![Structure101 logo](http://structure101.com/images/s101_170.png "Structure 101") [site](http://structure101.com)
 
+
+<a href="http://structure101.com">
+	<img src="http://structure101.com/images/s101_170.png"/>
+</a>
+
 * Git
 * Maven
