@@ -26,10 +26,10 @@ mvn test
 ## Powered by 
 <ul>
 	<li>
-		<a href="http://spring.io" target="_blank" height="30">	<img alt="Spring"  src="http://blog.goyello.com/wp-content/uploads/2011/12/Logo_Spring_252x150.png"/> </a>
+		<a href="http://spring.io" target="_blank">	<img alt="Spring" height="30" src="http://blog.goyello.com/wp-content/uploads/2011/12/Logo_Spring_252x150.png"/> </a>
 	</li>
 	<li>
-		<a href="http://structure101.com" target="_blank" height="30">	<img alt="Structure101"  src="http://structure101.com/images/s101_170.png"/> </a>
+		<a href="http://structure101.com" target="_blank">	<img alt="Structure101" height="30" src="http://structure101.com/images/s101_170.png"/> </a>
 	</li>
 </ul>
 
