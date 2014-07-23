@@ -23,7 +23,7 @@
     <!--  configure cors -->  
     <filter>
         <filter-name>cors</filter-name>
-        <filter-class>org.nextprot.api.controller.CorsFilter</filter-class>
+        <filter-class>org.nextprot.api.core.controller.CorsFilter</filter-class>
     </filter>
       
       <filter-mapping>
@@ -64,7 +64,7 @@
 	  <!--  configure pretty print  -->
     <filter>
 	    <filter-name>XmlPrettyPrintFilter</filter-name>
-	    <filter-class>org.nextprot.utils.XmlPrettyPrintFilter</filter-class>
+	    <filter-class>org.nextprot.api.commons.utils.XmlPrettyPrintFilter</filter-class>
 	  </filter>
 	  <filter-mapping>
 	    <filter-name>XmlPrettyPrintFilter</filter-name>

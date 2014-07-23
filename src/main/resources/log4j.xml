@@ -50,7 +50,7 @@
     <level value="INFO" />
   </logger>
 
-	<logger name="org.nextprot.api.aop.InstrumentationAspect" additivity="false">
+	<logger name="org.nextprot.api.core.aop.InstrumentationAspect" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="fileAppender" />
 	</logger>

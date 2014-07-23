@@ -24,7 +24,7 @@
 	<mvc:annotation-driven />
 	<mvc:default-servlet-handler />
 	<mvc:interceptors>
-		<bean class="org.nextprot.api.aop.interceptor.ConcurrentRequestInterceptor" />
+		<bean class="org.nextprot.api.core.aop.interceptor.ConcurrentRequestInterceptor" />
 	</mvc:interceptors>
 	
 
@@ -114,11 +114,11 @@
 								<list>
 									<value>java.lang.String</value>
 									<value>java.util.List</value>
-									<value>org.nextprot.api.controller.error.RestErrorResponse
+									<value>org.nextprot.api.core.controller.error.RestErrorResponse
 									</value>
-									<value>org.nextprot.api.domain.Publication</value>
-									<value>org.nextprot.api.domain.PublicationAuthor</value>
-									<value>org.nextprot.api.domain.CvJournal</value>
+									<value>org.nextprot.api.core.domain.Publication</value>
+									<value>org.nextprot.api.core.domain.PublicationAuthor</value>
+									<value>org.nextprot.api.core.domain.CvJournal</value>
 								</list>
 							</property>
 						</bean>
@@ -129,7 +129,7 @@
 	</bean>
 
 	<beans profile="pro,dev">
-		<bean id="adminController" class="org.nextprot.api.controller.AdminController" />
+		<bean id="adminController" class="org.nextprot.api.core.controller.AdminController" />
 	</beans>
 
 

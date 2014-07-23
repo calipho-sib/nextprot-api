@@ -40,14 +40,11 @@
   </bean>
   
 
-	<bean class="org.nextprot.api.aop.InstrumentationAspect"></bean>
-
-	<bean id="fileExport" class="org.nextprot.api.export.impl.FileExportImpl"
-		p:fileRepositoryPath="exports/" />
+	<bean class="org.nextprot.api.core.aop.InstrumentationAspect"></bean>
 
 
 	<beans profile="pro,dev">
-		<bean class="org.nextprot.api.aop.ServiceEntryValidation"></bean>
+		<bean class="org.nextprot.api.core.service.aop.ServiceEntryValidation"></bean>
 	
 		<!-- JMX Support -->
 		<context:mbean-export />

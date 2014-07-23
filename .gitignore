@@ -8,3 +8,4 @@ application.properties
 .project
 nohup.out
 velocity.log.*
+npapi.log
