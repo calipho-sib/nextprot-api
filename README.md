@@ -7,9 +7,6 @@ _CAUTION: Nextprot API is at its very early stages of development. Things are li
 * Provides a full-text search mechanism that relies on Solr Indexes (entry, publication and terms based).
 * Provides an advanced search engine through a SPARQL endpoint available at http://localhost:8080/sparql (based on Virtuoso datastore)
 
-## Technologies
-[spring-mvc](http://spring.io) + [solr](http://lucene.apache.org/solr/) + [maven](http://maven.apache.org/)
-
 ## Usage, 
 ```
 jetty.sh start
@@ -22,15 +19,13 @@ You should be able to log into: http://localhost:8080/nextprot-api
 ```
 mvn test
 ```
-
 ## Questions or comments? 
 [Contact us](http://www.nextprot.org/contact/us)
 
-## Datastores
 
-### Database
-*** coming soon ***
-### Solr indexes
-*** coming soon ***
-### RDF datastore 
-*** coming soon ***
+## Powered by 
+[spring-mvc](http://spring.io) + [solr](http://lucene.apache.org/solr/) + [maven](http://maven.apache.org/)
+
+
+Quality assurance assured by Structure101: 
+![Structure101](http://structure101.com/images/s101_170.png "Structure101")

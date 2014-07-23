@@ -1,7 +1,20 @@
-package org.nextprot.api.core.service;
+package org.nextprot.api.core.service.fluent;
 
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.AntibodyMappingService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.GeneService;
+import org.nextprot.api.core.service.GenomicMappingService;
+import org.nextprot.api.core.service.IdentifierService;
+import org.nextprot.api.core.service.InteractionService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.KeywordService;
+import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.PeptideMappingService;
+import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.export.format.ExportTXTTemplate;
 import org.nextprot.api.core.service.export.format.ExportTemplate;
 import org.nextprot.api.core.service.export.format.ExportXMLTemplate;
