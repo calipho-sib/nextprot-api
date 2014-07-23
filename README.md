@@ -24,16 +24,17 @@ mvn test
 
 
 ## Powered by 
-* [spring-mvc](http://spring.io) 
+<ul>
+	<li>
+		<a href="http://spring.io" target="_blank" height="30">	<img alt="Spring"  src="http://blog.goyello.com/wp-content/uploads/2011/12/Logo_Spring_252x150.png"/> </a>
+	</li>
+	<li>
+		<a href="http://structure101.com" target="_blank" height="30">	<img alt="Structure101"  src="http://structure101.com/images/s101_170.png"/> </a>
+	</li>
+</ul>
+
 * [solr](http://lucene.apache.org/solr/) 
 * [Virtuoso](http://http://virtuoso.openlinksw.com/)
-
-* ![Structure101 logo](http://structure101.com/images/s101_170.png "Structure 101") [site](http://structure101.com)
-
-
-<a href="http://structure101.com">
-	<img src="http://structure101.com/images/s101_170.png"/>
-</a>
 
 * Git
 * Maven
