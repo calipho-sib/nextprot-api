@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AntibodyMappingDao;
 import org.nextprot.api.core.domain.AntibodyMapping;
 import org.nextprot.api.core.domain.IsoformSpecificity;
-import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

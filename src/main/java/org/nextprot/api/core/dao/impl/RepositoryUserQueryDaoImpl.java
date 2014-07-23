@@ -9,9 +9,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.nextprot.api.commons.exception.NPreconditions;
+import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.dao.RepositoryUserQueryDao;
 import org.nextprot.api.core.domain.UserQuery;
-import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;

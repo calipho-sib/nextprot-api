@@ -10,7 +10,7 @@ public class ProteinList {
 	private String description;
 	private Set<String> accessions = new HashSet<String>();
 	private int accSize = 0;
-	private Long ownerId;
+	private String username;
 	
 	public ProteinList() { }
 	
@@ -59,16 +59,16 @@ public class ProteinList {
 		this.accSize = accSize;
 	}
 
-	public Long getOwnerId() {
-		return ownerId;
+	public void setUsername(String username) {
+		this.username = username;
 	}
-
-	public void setOwnerId(Long ownerId) {
-		this.ownerId = ownerId;
+	
+	public String getUsername() {
+		return this.username;
 	}
 	
 	public String toString() {
-		return "name: "+this.name+" description: "+this.description+" accessions: "+this.accessions.size()+"owner: "+this.ownerId;
+		return "name: "+this.name+" description: "+this.description+" accessions: "+this.accessions.size()+"owner: "+this.username;
 	}
 	
 }

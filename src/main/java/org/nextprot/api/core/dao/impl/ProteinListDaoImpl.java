@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.dao.ProteinListDao;
 import org.nextprot.api.core.domain.ProteinList;
-import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -99,7 +99,7 @@ public class ProteinListDaoImpl implements ProteinListDao {
 		                connection.prepareStatement(INSERT_SQL, new String[] {"list_id"});
 		            ps.setString(1, proteinList.getName());
 		            ps.setString(2, proteinList.getDescription());
-		            ps.setLong(3, proteinList.getOwnerId());
+		            ps.setString(3, proteinList.getUsername());
 		            return ps;
 		        }
 		    },
@@ -182,7 +182,7 @@ public class ProteinListDaoImpl implements ProteinListDao {
 			pl.setId(rs.getLong("list_id"));
 			pl.setName(rs.getString("name"));
 			pl.setDescription(rs.getString("description"));
-			pl.setOwnerId(rs.getLong("owner_id"));
+			pl.setUsername(rs.getString("username"));
 			
 			if(rs.getMetaData().getColumnCount() > 4)
 				pl.setAccSize(rs.getInt("count"));

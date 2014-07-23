@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.core.dao.ProteinListDao;
 import org.nextprot.api.core.domain.ProteinList;
@@ -18,10 +19,12 @@ import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.SearchResult;
 import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrIndex;
-import org.nextprot.auth.core.domain.NextprotUser;
-import org.nextprot.auth.core.service.NextprotUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +39,6 @@ public class ProteinListServiceImpl implements ProteinListService {
 	private ProteinListDao proteinListDao;
 	@Autowired
 	private QueryService queryService;
-	@Autowired
-	private NextprotUserService userService;
 	@Autowired
 	private SolrConfiguration configuration;
 
@@ -60,22 +61,21 @@ public class ProteinListServiceImpl implements ProteinListService {
 
 	@Override
 	public ProteinList createProteinList(String listName, String description, Set<String> accessions, String username) {
-		NextprotUser u = this.userService.getUserByUsername(username);
 
-		if (u != null) {
+
 			ProteinList proteinList = new ProteinList();
 			proteinList.setName(listName);
 			proteinList.setDescription(description);
 			proteinList.setAccessions(accessions);
-			proteinList.setOwnerId(u.getUserId());
+			
+			checkIsAuthorized(proteinList);
+
 			ProteinList newList = createProteinList(proteinList);
 
 			System.out.println("selected: " + proteinList.getAccessions().size() + " created: " + newList.getAccessions().size() + " not there: "
 					+ Sets.difference(proteinList.getAccessions(), newList.getAccessions()));
 
 			return newList;
-		}
-		return null;
 	}
 
 	@Override
@@ -207,5 +207,37 @@ public class ProteinListServiceImpl implements ProteinListService {
 
 		return createProteinList(name, description, combined, username);
 	}
+	
+	
+	private static String checkIsAuthorized(ProteinList pl){
+
+		String securityUserName = "";
+		
+		SecurityContext sc = SecurityContextHolder.getContext();
+		if (sc == null){
+			throw new NotAuthorizedException("You must be logged in to access this resource");
+		}
+
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		if (a == null){
+			throw new NotAuthorizedException("You must be logged in to access this resource");
+		}
+		
+		if (a.getPrincipal() instanceof UserDetails) {
+			UserDetails currentUserDetails = (UserDetails) a.getPrincipal();
+			securityUserName = currentUserDetails.getUsername();
+		} else {
+			securityUserName = a.getPrincipal().toString();
+		}
+		
+		if (!pl.getUsername().equals(securityUserName)) {
+			throw new NotAuthorizedException(securityUserName + " is not authorized to modify this resource");
+		}
+		
+		return securityUserName;
+
+
+	}
+
 
 }

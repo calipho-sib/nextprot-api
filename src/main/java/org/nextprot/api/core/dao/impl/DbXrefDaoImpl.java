@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
-import org.nextprot.auth.core.service.DataSourceServiceLocator;
+import org.nextprot.api.core.domain.PublicationDbXref;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;

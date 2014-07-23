@@ -3,9 +3,9 @@ package org.nextprot.api.solr;
 import java.io.Serializable;
 import java.util.List;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.nextprot.api.commons.utils.KeyValueRepresentation;
 
-@JsonIgnoreProperties({ "sparqlTitle", "sparqlEngine" })
+//TODO ? @JsonIgnoreProperties({ "sparqlTitle", "sparqlEngine" })
 public class QueryRequest implements Serializable, KeyValueRepresentation {
 	private static final long serialVersionUID = 1173041326534229259L;
 

@@ -11,9 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.dbunit.MVCBaseIntegrationTest;
-import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SQLDictionaryTest extends MVCBaseIntegrationTest {

@@ -17,7 +17,7 @@
 	<beans profile="unit">
 
 		<bean id="dataSourceServiceLocator"
-			class="org.nextprot.auth.core.service.impl.DataSourceServiceLocatorImpl">
+			class="org.nextprot.api.commons.spring.jdbc.impl.DataSourceServiceLocatorImpl">
 			<property name="dataSource" ref="dataSource" />
 			<!-- In unit test we use the same datasource for everything -->
 			<property name="userDataSource" ref="dataSource" />
@@ -83,7 +83,7 @@
 	<beans profile="pro,dev">
 
 		<bean id="dataSourceServiceLocator"
-			class="org.nextprot.auth.core.service.impl.DataSourceServiceLocatorImpl">
+			class="org.nextprot.api.commons.spring.jdbc.impl.DataSourceServiceLocatorImpl">
 			<property name="dataSource" ref="dataSource" />
 			<property name="userDataSource" ref="userDataSource" />
 		</bean>

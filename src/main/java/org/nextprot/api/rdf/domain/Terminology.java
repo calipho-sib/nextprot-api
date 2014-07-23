@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jsondoc.core.annotation.ApiObject;
 import org.nextprot.api.commons.utils.StringUtils;
 
 public class Terminology implements Serializable{

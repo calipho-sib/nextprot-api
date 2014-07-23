@@ -3,12 +3,8 @@ package org.nextprot.api.rdf.service.impl;
 import static org.nextprot.api.commons.utils.RdfUtils.getPrefixFromNameSpace;
 import static org.nextprot.api.commons.utils.RdfUtils.getPrefixedNameFromURI;
 
-import org.nextprot.api.commons.utils.RdfUtils;
-
-import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.AnonId;
 import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.RDFVisitor;
 import com.hp.hpl.jena.rdf.model.Resource;
 

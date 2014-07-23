@@ -23,8 +23,9 @@
   	    http://www.springframework.org/schema/security/oauth2 
         http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd">
   	    
-  	
-  	<import resource="oauth-context.xml"/>
+
+	<!-- 
+	<import resource="oauth-context.xml"/>
   	
   	<security:global-method-security pre-post-annotations="enabled" />
   	
@@ -39,26 +40,6 @@
 		<security:intercept-url pattern="/admin/**" access="ROLE_ADMIN"/>
 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER"/>
 	</security:http>
-	
-		
-		
-		
-	<security:http access-denied-page="/login.jsp?authentication_error=true" disable-url-rewriting="true">
-		<security:intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY" />
-		<security:form-login login-page="/login.jsp" login-processing-url="/login.do"/>
-		<security:logout logout-success-url="/index.jsp" logout-url="/logout.do"/>
-	</security:http>          		
-	
-	<bean id="apiAuthenticationEntryPoint" class="org.nextprot.auth.core.security.ApiAuthenticationEntryPoint">
-		<property name="loginFormUrl" value="/login.jsp"/>
-	</bean>
-	
-	
-	<security:authentication-manager>
-		<security:authentication-provider user-service-ref="nextprotUserDetailsService">
-			<security:password-encoder hash="bcrypt"/>
-		</security:authentication-provider>
-	</security:authentication-manager>           
-
-	<bean id="nextprotUserDetailsService" class="org.nextprot.auth.core.security.NextprotUserDetailsService"/>  	    
+	 -->  	
+  	
 </beans>  	    

@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.Exon;
 import org.nextprot.api.core.domain.GenomicMapping;
 import org.nextprot.api.core.domain.IsoformMapping;
 import org.nextprot.api.core.domain.TranscriptMapping;
-import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

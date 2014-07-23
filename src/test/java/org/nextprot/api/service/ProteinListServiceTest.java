@@ -10,13 +10,12 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.exception.SearchQueryException;
+import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.domain.ProteinList;
 import org.nextprot.api.core.service.ProteinListService;
 import org.nextprot.api.core.service.ProteinListService.Operations;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
 import org.nextprot.api.solr.SearchResult.SearchResultItem;
-import org.nextprot.auth.core.service.DataSourceServiceLocator;
-import org.nextprot.auth.core.service.NextprotUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -29,8 +28,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 public class ProteinListServiceTest extends DBUnitBaseTest {
 	@Autowired private DataSourceServiceLocator dsLocator;
 	@Autowired private ProteinListService proteinListService;
-	@Autowired private NextprotUserService userService;
-	
+
 	private ProteinList proteinList;
 	
 	private static final String TEST_USER = "asfas";

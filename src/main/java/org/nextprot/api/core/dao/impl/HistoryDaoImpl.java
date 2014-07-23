@@ -7,10 +7,10 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.dao.HistoryDao;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.History;
-import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

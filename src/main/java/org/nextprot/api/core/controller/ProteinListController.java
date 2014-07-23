@@ -13,8 +13,6 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.domain.ProteinList;
 import org.nextprot.api.core.service.ProteinListService;
 import org.nextprot.api.core.service.ProteinListService.Operations;
-import org.nextprot.auth.core.domain.NextprotUser;
-import org.nextprot.auth.core.service.NextprotUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -34,8 +32,6 @@ public class ProteinListController {
 	private final Log Logger = LogFactory.getLog(ProteinListController.class);
 	@Autowired
 	private ProteinListService proteinListService;
-	@Autowired
-	private NextprotUserService userService;
 
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.GET })
 	public String getLists(@PathVariable("username") String username, Model model) {
@@ -48,17 +44,6 @@ public class ProteinListController {
 
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
 	public String createList(@PathVariable("username") String username, @RequestBody ProteinList proteinList, Model model) {
-		// @RequestMapping(value="/user/{uuid}/protein-list", method = {RequestMethod.POST})
-		// public String createList(@PathVariable("uuid") String uuid,
-		// @RequestBody ProteinList proteinList, Model model) {
-
-		NextprotUser user = this.userService.getUserByUsername(username);
-
-		System.out.println("USER ID >> " + user.getUserId() + " >> " + user.getUsername());
-
-		proteinList.setOwnerId(user.getUserId());
-
-		System.out.println("LIST: " + proteinList);
 
 		proteinList = this.proteinListService.createProteinList(proteinList);
 		Logger.info("created list: " + proteinList.getId() + " > " + proteinList.getName());

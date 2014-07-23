@@ -6,13 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.rdf.dao.SchemaDao;
 import org.nextprot.api.rdf.domain.OWLAnnotation;
 import org.nextprot.api.rdf.domain.OWLDatabase;
 import org.nextprot.api.rdf.domain.OWLDatasource;
 import org.nextprot.api.rdf.domain.OWLEvidence;
 import org.nextprot.api.rdf.domain.OWLOntology;
-import org.nextprot.auth.core.service.DataSourceServiceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

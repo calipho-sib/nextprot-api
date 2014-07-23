@@ -31,22 +31,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.security.oauth</groupId>
-			<artifactId>spring-security-oauth2</artifactId>
-			<version>1.0.5.RELEASE</version>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-auth-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>org.biojava</groupId>
 			<artifactId>biojava</artifactId>
 			<version>3.0</version>
