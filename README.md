@@ -24,9 +24,8 @@ mvn test
 
 
 ## Powered by 
-[spring-mvc](http://spring.io) 
-[solr](http://lucene.apache.org/solr/) 
-[Virtuoso](http://http://virtuoso.openlinksw.com/)
+* [spring-mvc](http://spring.io) 
+* [solr](http://lucene.apache.org/solr/) 
+* [Virtuoso](http://http://virtuoso.openlinksw.com/)
 
-(http://structure101.com/images/s101_170.png "Structure101") 
-[Structure101](http://structure101.com)
+*[Structure101](http://structure101.com) ![Structure101 logo](http://structure101.com/images/s101_170.png "Structure 101")
