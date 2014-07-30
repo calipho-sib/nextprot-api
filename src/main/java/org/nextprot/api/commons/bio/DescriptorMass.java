@@ -7,7 +7,7 @@ import java.util.Scanner;
 /**
  * return the molecular weight corresponding to a sequence
  * 
- * @author alexandre.masselot@genebio.com, copied by pam today aaa2345
+ * @author alexandre.masselot@genebio.com, copied by pam
  * 
  */
 public class DescriptorMass {
