@@ -7,7 +7,7 @@ import java.util.Scanner;
 /**
  * return the molecular weight corresponding to a sequence
  * 
- * @author alexandre.masselot@genebio.com
+ * @author alexandre.masselot@genebio.com, copied by pam
  * 
  */
 public class DescriptorMass {
@@ -84,9 +84,8 @@ public class DescriptorMass {
 	}
 
 	public void setMassType(MassType massType) {
-		if (this.massType == massType)
-			return;
-		this.massType = massType;
+		if (DescriptorMass.massType == massType) return;
+		DescriptorMass.massType = massType;
 	}
 
 }
