@@ -19,8 +19,7 @@
     </context-param>
 
   
-
-    <!--  configure cors -->  
+    <!--  configure cors  -->
     <filter>
         <filter-name>cors</filter-name>
         <filter-class>org.nextprot.api.core.controller.CorsFilter</filter-class>
@@ -30,9 +29,10 @@
         <filter-name>cors</filter-name>
         <url-pattern>/*</url-pattern>
       </filter-mapping>    
+        
       
        
-    <!--  configure security 
+    <!--  configure security 	
     <filter>
             <filter-name>springSecurityFilterChain</filter-name>
             <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -46,8 +46,8 @@
             <filter-name>springSecurityFilterChain</filter-name>
             <url-pattern>/*</url-pattern>
     </filter-mapping>
-	-->  
-    
+	--> 
+     
     <!-- Setting UTF-8 -->
 	  <filter>
 	    <filter-name>Spring character encoding filter</filter-name>
