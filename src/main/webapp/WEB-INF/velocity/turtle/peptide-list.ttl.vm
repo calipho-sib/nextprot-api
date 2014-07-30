@@ -10,7 +10,9 @@
 #foreach($spec in $pep.isoformSpecificity.values())
 #if ($spec.isoformName==$isoform-name) 
   isoform:$isoform-name :mapping :$mapping-iri .
+ 
   :$mapping-iri rdf:type :PeptideMapping ;  
+    :peptideName "$pep-name"^^xsd::string ;
 #foreach($pos in $spec.positions)
     :position [ 
       :start "$pos.first"^^xsd:integer ;
