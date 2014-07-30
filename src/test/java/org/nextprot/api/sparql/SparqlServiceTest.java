@@ -2,6 +2,7 @@ package org.nextprot.api.sparql;
 
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
@@ -12,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:app-context.xml" })
+@Ignore
 public class SparqlServiceTest {
 
 	String sSuperLite = "?entry :isoform/:expression/:in ?s." + "?s :subPartOf term:TS-1030;rdfs:label ?name.";
