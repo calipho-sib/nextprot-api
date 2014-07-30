@@ -29,14 +29,6 @@ public class SortConfig {
 			this.sorting.add(p);
 	}
 	
-	private SortConfig(String name, Pair<IndexField, ORDER>[] sorting, int boost) {
-		this.name = name;
-		this.sorting = new ArrayList<Pair<IndexField,ORDER>>();
-		for(Pair<IndexField, ORDER> p : sorting)
-			this.sorting.add(p);
-		this.boost = boost;
-	}
-	
 	public static SortConfig create(String name, IndexField field, ORDER order) {
 		return new SortConfig(name, field, order);
 	}

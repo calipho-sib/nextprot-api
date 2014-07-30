@@ -28,7 +28,7 @@ public class EntryIndex extends IndexTemplate {
 		return Fields.class;
 	}
 
-	private class Configurations extends ConfigurationName {
+	private static class Configurations extends ConfigurationName {
 		public static final String SIMPLE = "simple";
 		public static final String AUTOCOMPLETE = "autocomplete";
 		public static final String ID_SEARCH = "id";

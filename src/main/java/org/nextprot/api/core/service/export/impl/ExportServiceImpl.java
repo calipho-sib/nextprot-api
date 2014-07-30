@@ -243,7 +243,7 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	@PostConstruct
-	private void init() {
+	public void init() {
 
 		clearRepository();
 

@@ -91,7 +91,7 @@ public class CvIndex extends IndexTemplate {
 		addConfiguration(autocompleteConfig);
 	}
 	
-	private class Configurations extends ConfigurationName {
+	private static class Configurations extends ConfigurationName {
 		public static final String SIMPLE = "simple";
 		public static final String AUTOCOMPLETE = "autocomplete";
 	}

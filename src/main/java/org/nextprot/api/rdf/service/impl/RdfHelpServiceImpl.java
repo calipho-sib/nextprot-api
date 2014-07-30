@@ -99,16 +99,6 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 		}
 	}
 
-	private String removeLinesWith(String lines, String s) {
-		String tmp[] = lines.split("\n");
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < tmp.length; i++) {
-			if (!tmp[i].contains(s))
-				sb.append(tmp[i] + "\n");
-		}
-		return sb.toString();
-	}
-
 	private List<String> completeSetOfValuesForTypes = Arrays.asList(":Source", ":Database", ":SubcellularLocation", ":NextprotTissues");
 	private List<String> completeSetOfValuesForLiteral = Arrays.asList("NextprotTissues/rdfs:label", ":SubcellularLocation/rdfs:comment");
 
