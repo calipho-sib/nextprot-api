@@ -16,7 +16,7 @@ public class DescriptorPI  {
 	 * com.genebio.nextprot.tools.sequence.descriptors.SequenceDescriptor#compute
 	 * (java.lang.String)
 	 */
-	public static Double compute(String sequence) {
+	public synchronized static Double compute(String sequence) {
 		try {
 			return new Double(IsoelectricPointCalc.getIsoelectricPoint(ProteinTools.createProtein(sequence)));
 		} catch (Exception e) {
