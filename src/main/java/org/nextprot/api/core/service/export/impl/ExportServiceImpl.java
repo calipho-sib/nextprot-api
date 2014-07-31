@@ -58,7 +58,7 @@ public class ExportServiceImpl implements ExportService {
 	@Autowired
 	private EntryService entryService;
 
-	private final int NUMBER_THREADS = 8;
+	private final int NUMBER_THREADS = 1;
 	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
 
 	private ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
