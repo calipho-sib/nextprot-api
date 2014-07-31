@@ -1,5 +1,5 @@
 #!/bin/bash
-API_OPTIONS="-Xmx4096M -XX:PermSize=256M -XX:MaxPermSize=256M -Dnextprot.api"
+export MAVEN_OPTS="-Xmx4096M -XX:PermSize=256M -XX:MaxPermSize=256M "
 API_PROFILE=dev;[ -n "$2" ] && API_PROFILE=$2 
 API_COMMAND="mvn -Dspring.profiles.active=$API_PROFILE -Dnextprot.api jetty:run"
 PKILL=$(which pkill)
