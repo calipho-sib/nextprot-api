@@ -33,6 +33,9 @@ mvn test
 	<li>
 		<a href="http://structure101.com" target="_blank">	<img alt="Structure101" height="30" src="http://structure101.com/images/s101_170.png"/> </a>
 	</li>
+	<li>
+		<a href="http://yourkit.com" target="_blank"><img alt="Yourkit" height="30" src="http://www.yourkit.com/images/yk_logo.png"/> </a>
+	</li>
 </ul>
 
 * [solr](http://lucene.apache.org/solr/) 
