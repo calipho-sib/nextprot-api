@@ -51,7 +51,7 @@ public class InstrumentationAspect {
 	private AtomicLong serviceRequestIdCounter = new AtomicLong();
 	private ThreadLocal<Long> serviceRequestId = new ThreadLocal<Long>();
 
-	@Around("execution(* org.nextprot.api.controller.*.*(..))")
+	@Around("execution(* org.nextprot.api.*.controller.*.*(..))")
 	public Object logServiceInformaton(ProceedingJoinPoint pjp) throws Throwable {
 
 		if (enableInstrumentation) {
@@ -171,7 +171,7 @@ public class InstrumentationAspect {
 
 	}
 
-	@Around("execution(* org.nextprot.api.dao.*.*(..))")
+	@Around("execution(* org.nextprot.api.*.dao.*.*(..))")
 	public Object logDao(ProceedingJoinPoint pjp) throws Throwable {
 
 		if (enableInstrumentation) {
