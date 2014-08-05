@@ -29,7 +29,7 @@ public class VelocityEngineWithTemplateCaching extends VelocityEngine {
 	@Override
 	public synchronized Template getTemplate(String templateName) {
 		if (!templates.containsKey(templateName)) {
-			Template t = this.getTemplate(templateName);
+			Template t = super.getTemplate(templateName);
 			templates.put(templateName, t);
 		}
 		return templates.get(templateName);
