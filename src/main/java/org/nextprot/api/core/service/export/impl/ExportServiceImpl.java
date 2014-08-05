@@ -22,6 +22,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.commons.velocity.VelocityEngineWithTemplateCaching;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryService;
@@ -66,7 +67,7 @@ public class ExportServiceImpl implements ExportService {
 
 	private final String[] CHROMOSSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
 
-	private VelocityEngine velocityEngine;
+	private VelocityEngineWithTemplateCaching velocityEngine;
 
 	@Override
 	public List<Future<File>> exportAllEntries(NPFileFormat format) {
@@ -203,31 +204,31 @@ public class ExportServiceImpl implements ExportService {
 			}
 
 			checkFormatConstraints();
-			Template exportBody = null;
+			Template template = null;
 			VelocityContext context = null;
 			try {
 
 				if (part.equals(SubPart.HEADER)) {
 					if (format.equals(NPFileFormat.TURTLE.getExtension())) {
-						exportBody = ve.getTemplate("turtle/prefix.ttl.vm");
+						template = ve.getTemplate("turtle/prefix.ttl.vm");
 					} else {
-						exportBody = ve.getTemplate("exportStart.xml.vm");
+						template = ve.getTemplate("exportStart.xml.vm");
 					}
 				} else if (part.equals(SubPart.FOOTER)) {
 					if (format.equals(NPFileFormat.XML.getExtension())) {
-						exportBody = ve.getTemplate("exportEnd.xml.vm");
+						template = ve.getTemplate("exportEnd.xml.vm");
 					}
 				}
 				
-				if(exportBody == null){
-					exportBody = ve.getTemplate("blank.vm");
+				if(template == null){
+					template = ve.getTemplate("blank.vm");
 				}
 
 				context = new VelocityContext();
 
 				FileWriter fw = new FileWriter(filename, true);
 				PrintWriter out = new PrintWriter(new BufferedWriter(fw));
-				exportBody.merge(context, out);
+				template.merge(context, out);
 				out.close();
 
 			} catch (Exception e) {
@@ -241,7 +242,7 @@ public class ExportServiceImpl implements ExportService {
 		}
 
 	}
-
+	
 	@PostConstruct
 	public void init() {
 
@@ -249,7 +250,7 @@ public class ExportServiceImpl implements ExportService {
 
 		if (this.velocityEngine == null) {
 
-			this.velocityEngine = new VelocityEngine();
+			this.velocityEngine = new VelocityEngineWithTemplateCaching();
 			this.velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "file");
 			this.velocityEngine.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
 			this.velocityEngine.setProperty("file.resource.loader.path", "./src/main/webapp/WEB-INF/velocity/");
