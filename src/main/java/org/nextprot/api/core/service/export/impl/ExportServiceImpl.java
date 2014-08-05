@@ -6,7 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -22,7 +24,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.commons.velocity.VelocityEngineWithTemplateCaching;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryService;
@@ -70,7 +71,7 @@ public class ExportServiceImpl implements ExportService {
 
 	private final String[] CHROMOSSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
 
-	private VelocityEngineWithTemplateCaching velocityEngine;
+	private VelocityEngine velocityEngine;
 
 	@Override
 	public List<Future<File>> exportAllEntries(NPFileFormat format) {
@@ -145,9 +146,9 @@ public class ExportServiceImpl implements ExportService {
 			VelocityContext context = null;
 			try {
 				if (format.equals(NPFileFormat.TURTLE.getExtension())) {
-					exportBody = ve.getTemplate("turtle/entry." + format + ".vm");
+					exportBody = getTemplate(ve, "turtle/entry." + format + ".vm");
 				} else {
-					exportBody = ve.getTemplate("entry." + format + ".vm");
+					exportBody = getTemplate(ve, "entry." + format + ".vm");
 				}
 
 				context = new VelocityContext();
@@ -213,18 +214,18 @@ public class ExportServiceImpl implements ExportService {
 
 				if (part.equals(SubPart.HEADER)) {
 					if (format.equals(NPFileFormat.TURTLE.getExtension())) {
-						template = ve.getTemplate("turtle/prefix.ttl.vm");
+						template = getTemplate(ve, "turtle/prefix.ttl.vm");
 					} else {
-						template = ve.getTemplate("exportStart.xml.vm");
+						template = getTemplate(ve, "exportStart.xml.vm");
 					}
 				} else if (part.equals(SubPart.FOOTER)) {
 					if (format.equals(NPFileFormat.XML.getExtension())) {
-						template = ve.getTemplate("exportEnd.xml.vm");
+						template = getTemplate(ve, "exportEnd.xml.vm");
 					}
 				}
 
 				if (template == null) {
-					template = ve.getTemplate("blank.vm");
+					template = getTemplate(ve, "blank.vm");
 				}
 
 				context = new VelocityContext();
@@ -256,7 +257,7 @@ public class ExportServiceImpl implements ExportService {
 
 		if (this.velocityEngine == null) {
 
-			this.velocityEngine = new VelocityEngineWithTemplateCaching();
+			this.velocityEngine = new VelocityEngine();
 			this.velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "file");
 			this.velocityEngine.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
 			this.velocityEngine.setProperty("file.resource.loader.path", "./src/main/webapp/WEB-INF/velocity/");
@@ -301,6 +302,17 @@ public class ExportServiceImpl implements ExportService {
 	@Value("${export.workers.count}")
 	public void setNumberOfWorkers(int numberOfWorkers) {
 		this.numberOfWorkers = numberOfWorkers;
+	}
+
+	
+	private static Map<String, Template> templates = new HashMap<String, Template>();
+
+	private static synchronized Template getTemplate(VelocityEngine ve, String templateName) {
+		if (!templates.containsKey(templateName)) {
+			Template t = ve.getTemplate(templateName);
+			templates.put(templateName, t);
+		}
+		return templates.get(templateName);
 	}
 
 
