@@ -35,6 +35,7 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.export.ExportService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -59,10 +60,12 @@ public class ExportServiceImpl implements ExportService {
 	@Autowired
 	private EntryService entryService;
 
-	private final int NUMBER_THREADS = 8;
+	private int numberOfWorkers = 8;
+
 	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
 
-	private ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
+	private ExecutorService executor = null;
+
 	private static String REPOSITORY_PATH = "repository";
 
 	private final String[] CHROMOSSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
@@ -146,7 +149,7 @@ public class ExportServiceImpl implements ExportService {
 				} else {
 					exportBody = ve.getTemplate("entry." + format + ".vm");
 				}
-				
+
 				context = new VelocityContext();
 				context.put("entry", entryService.findEntry(entryName));
 				context.put("StringUtils", StringUtils.class);
@@ -219,8 +222,8 @@ public class ExportServiceImpl implements ExportService {
 						template = ve.getTemplate("exportEnd.xml.vm");
 					}
 				}
-				
-				if(template == null){
+
+				if (template == null) {
 					template = ve.getTemplate("blank.vm");
 				}
 
@@ -242,11 +245,13 @@ public class ExportServiceImpl implements ExportService {
 		}
 
 	}
-	
+
 	@PostConstruct
 	public void init() {
 
-		clearRepository();
+		// clearRepository();
+
+		executor = Executors.newFixedThreadPool(numberOfWorkers);
 
 		if (this.velocityEngine == null) {
 
@@ -286,5 +291,15 @@ public class ExportServiceImpl implements ExportService {
 		}
 
 	}
+
+
+	public int getNumberOfWorkers() {
+		return numberOfWorkers;
+	}
+	@Value("$export.workers.count")
+	public void setNumberOfWorkers(int numberOfWorkers) {
+		this.numberOfWorkers = numberOfWorkers;
+	}
+
 
 }
