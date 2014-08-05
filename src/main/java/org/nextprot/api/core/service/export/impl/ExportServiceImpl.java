@@ -145,6 +145,7 @@ public class ExportServiceImpl implements ExportService {
 			Template exportBody;
 			VelocityContext context = null;
 			try {
+
 				if (format.equals(NPFileFormat.TURTLE.getExtension())) {
 					exportBody = getTemplate(ve, "turtle/entry." + format + ".vm");
 				} else {
@@ -159,6 +160,9 @@ public class ExportServiceImpl implements ExportService {
 				PrintWriter out = new PrintWriter(new BufferedWriter(fw));
 				exportBody.merge(context, out);
 				out.close();
+				
+				context.remove("entry");
+				context.remove("StringUtils");
 
 			} catch (Exception e) {
 				LOGGER.error("Failed to generate " + entryName + " because of " + e.getMessage());
