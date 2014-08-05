@@ -121,7 +121,7 @@ public class InstrumentationAspect {
 
 	}
 
-	@Around("execution(* org.nextprot.*.service.*.*(..))")
+	@Around("execution(* org.nextprot.api.*.service.*.*(..))")
 	public Object logService(ProceedingJoinPoint pjp) throws Throwable {
 
 		if (enableInstrumentation) {
