@@ -252,6 +252,7 @@ public class ExportServiceImpl implements ExportService {
 		// clearRepository();
 
 		executor = Executors.newFixedThreadPool(numberOfWorkers);
+		LOGGER.info("Starting export executor service with " + numberOfWorkers + " workers");
 
 		if (this.velocityEngine == null) {
 
@@ -296,7 +297,8 @@ public class ExportServiceImpl implements ExportService {
 	public int getNumberOfWorkers() {
 		return numberOfWorkers;
 	}
-	@Value("$export.workers.count")
+	
+	@Value("${export.workers.count}")
 	public void setNumberOfWorkers(int numberOfWorkers) {
 		this.numberOfWorkers = numberOfWorkers;
 	}
