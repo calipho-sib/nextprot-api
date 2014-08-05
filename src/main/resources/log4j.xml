@@ -27,7 +27,7 @@
 	</logger>
 
 	<logger name="org.apache.velocity">
-		<level value="WARN" />
+		<level value="FATAL" />
 	</logger>
 
   <logger name="org.nextprot.auth.server.controller">
