@@ -43,33 +43,27 @@ abstract class DiffBaseTest {
 	@Autowired private SparqlService sparqlService;
 	@Autowired private SparqlEndpoint endpoint;
 
+	private String qName;
 	private int timeSQL;
 	private int timeSPARQL;
 	private int countSQL;
 	private int countSPARQL;
 	private String status;
 	
-	private void resetDefaultLogValues() {
-		timeSPARQL=-1;
-		timeSQL=-1;
-		countSPARQL=-1;
-		countSQL=-1;
-		status="ERROR";
-	}
-	
 	protected void diffCount(String qName) {		
 		try {
+			this.qName=qName;
 			resetDefaultLogValues();		
-			getCountForSparql(qName);
-			getCountForSql(qName);
-			status = (countSQL==countSPARQL ? "OK" : "DIFF");
-			assertTrue(countSQL==countSPARQL);
+			getCountForSparql();
+			getCountForSql();
+			this.status = (this.countSQL==this.countSPARQL ? "OK" : "FAIL");
+			assertTrue(this.countSQL==this.countSPARQL);
 		} finally {
-			LogIt();
+			logIt();
 		}
 	}
 	
-	private int getCountForSql(String qName) {
+	private int getCountForSql() {
 		long t0 = System.currentTimeMillis();
 		String sql = getFileContentAsString("sql/" + qName + ".sql");
 		//SqlParameterSource namedParams = new MapSqlParameterSource("id", id);
@@ -85,7 +79,7 @@ abstract class DiffBaseTest {
 		return countSQL;
 	}
 
-	private int getCountForSparql(String qName){
+	private int getCountForSparql(){
 		long t0 = System.currentTimeMillis();
 		String query = getFileContentAsString("sparql/" + qName + ".sparql");
 		query= RdfUtils.RDF_PREFIXES + "\n" + query;
@@ -104,9 +98,26 @@ abstract class DiffBaseTest {
 		return FileUtils.readResourceAsString(resourcePath + path);
 	}
 
-	private void LogIt() {
+	private void resetDefaultLogValues() {
+		timeSPARQL=-1;
+		timeSQL=-1;
+		countSPARQL=-1;
+		countSQL=-1;
+		status="ERROR";
+	}
+
+	private void logIt() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("TestDate=\""+TestDate.toString() + "\";");
+		String dbURL = "Error";
+		try {
+			sb.append("dbURL="+ dsLocator.getDataSource().getConnection().getMetaData().getURL() +";");
+		} catch(Exception e) {
+			sb.append("dbURL=(Error);");			
+		}
+		sb.append("sparqlURL="+ endpoint.getUrl() +";");
+		sb.append("TestClass="+this.getClass().getSimpleName()+";");
+		sb.append("QueryName="+qName+";");
 		sb.append("timeSQL="+timeSQL + ";");
 		sb.append("timeSPARQL="+timeSPARQL + ";");
 		sb.append("countSQL="+countSQL + ";");
