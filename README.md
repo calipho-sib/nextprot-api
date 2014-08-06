@@ -34,7 +34,9 @@ mvn test
 		<a href="http://structure101.com" target="_blank">	<img alt="Structure101" height="30" src="http://structure101.com/images/s101_170.png"/> </a>
 	</li>
 	<li>
-		<a href="http://yourkit.com" target="_blank"><img alt="Yourkit" height="30" src="http://www.yourkit.com/images/yk_logo.png"/> </a>
+		<a href="http://www.ej-technologies.com/products/jprofiler/overview.html" target="_blank">
+		             <img alt="Java Profiler" height="30" src="https://d325ruyeyianrs.cloudfront.net//mgJIoWeBGjESI3wvaduBhyUarReoVzS8Qq2ppfxyUVv.png"/> 
+		</a>
 	</li>
 </ul>
 
