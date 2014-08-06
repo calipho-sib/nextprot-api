@@ -1,0 +1,25 @@
+PREFIX : <http://nextprot.org/rdf#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX up: <http://purl.uniprot.org/core/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX entry: <http://nextprot.org/rdf/entry/>
+PREFIX isoform: <http://nextprot.org/rdf/isoform/>
+PREFIX annotation: <http://nextprot.org/rdf/annotation/>
+PREFIX evidence: <http://nextprot.org/rdf/evidence/>
+PREFIX xref: <http://nextprot.org/rdf/xref/>
+PREFIX publication: <http://nextprot.org/rdf/publication/>
+PREFIX term: <http://nextprot.org/rdf/terminology/>
+PREFIX gene: <http://nextprot.org/rdf/gene/>
+PREFIX source: <http://nextprot.org/rdf/source/>
+PREFIX db: <http://nextprot.org/rdf/db/>
+PREFIX context: <http://nextprot.org/rdf/context/>
+PREFIX interaction: <http://nextprot.org/rdf/interaction/>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX uniprot: <http://purl.uniprot.org/uniprot/>
+PREFIX unipage: <http://www.uniprot.org/uniprot/>
+
+
+
