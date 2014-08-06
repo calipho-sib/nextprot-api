@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("dev")
-abstract class AbstractIntegrationBaseTest {
+public abstract class AbstractIntegrationBaseTest {
 	
 
 }

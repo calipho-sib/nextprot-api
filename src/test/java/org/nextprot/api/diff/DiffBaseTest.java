@@ -1,5 +1,7 @@
 package org.nextprot.api.diff;
 
+import static org.junit.Assert.assertTrue;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -7,33 +9,27 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.runner.RunWith;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.FileUtils;
 import org.nextprot.api.commons.utils.RdfUtils;
+import org.nextprot.api.dbunit.AbstractIntegrationBaseTest;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Literal;
 
-import static org.junit.Assert.*;
 
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("dev")
 @ContextConfiguration("classpath:META-INF/spring/core-context.xml")
-abstract class DiffBaseTest {
+@DirtiesContext
+abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 	
 	private static final Log Logger = LogFactory.getLog(DiffBaseTest.class);
 
