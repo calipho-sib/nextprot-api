@@ -142,14 +142,14 @@ public class ExportServiceImpl implements ExportService {
 			LOGGER.info("Building " + filename);
 
 			checkFormatConstraints();
-			Template exportBody;
+			Template template;
 			VelocityContext context = null;
 			try {
 
 				if (format.equals(NPFileFormat.TURTLE.getExtension())) {
-					exportBody = getTemplate(ve, "turtle/entry." + format + ".vm");
+					template = ve.getTemplate("turtle/entry." + format + ".vm");
 				} else {
-					exportBody = getTemplate(ve, "entry." + format + ".vm");
+					template = ve.getTemplate("entry." + format + ".vm");
 				}
 
 				context = new VelocityContext();
@@ -158,11 +158,8 @@ public class ExportServiceImpl implements ExportService {
 
 				FileWriter fw = new FileWriter(filename, true);
 				PrintWriter out = new PrintWriter(new BufferedWriter(fw));
-				exportBody.merge(context, out);
+				template.merge(context, out);
 				out.close();
-				
-				context.remove("entry");
-				context.remove("StringUtils");
 
 			} catch (Exception e) {
 				LOGGER.error("Failed to generate " + entryName + " because of " + e.getMessage());
@@ -218,18 +215,18 @@ public class ExportServiceImpl implements ExportService {
 
 				if (part.equals(SubPart.HEADER)) {
 					if (format.equals(NPFileFormat.TURTLE.getExtension())) {
-						template = getTemplate(ve, "turtle/prefix.ttl.vm");
+						template = ve.getTemplate("turtle/prefix.ttl.vm");
 					} else {
-						template = getTemplate(ve, "exportStart.xml.vm");
+						template = ve.getTemplate("exportStart.xml.vm");
 					}
 				} else if (part.equals(SubPart.FOOTER)) {
 					if (format.equals(NPFileFormat.XML.getExtension())) {
-						template = getTemplate(ve, "exportEnd.xml.vm");
+						template = ve.getTemplate("exportEnd.xml.vm");
 					}
 				}
 
 				if (template == null) {
-					template = getTemplate(ve, "blank.vm");
+					template = ve.getTemplate("blank.vm");
 				}
 
 				context = new VelocityContext();
@@ -306,17 +303,6 @@ public class ExportServiceImpl implements ExportService {
 	@Value("${export.workers.count}")
 	public void setNumberOfWorkers(int numberOfWorkers) {
 		this.numberOfWorkers = numberOfWorkers;
-	}
-
-	
-	private static Map<String, Template> templates = new HashMap<String, Template>();
-
-	private static synchronized Template getTemplate(VelocityEngine ve, String templateName) {
-		if (!templates.containsKey(templateName)) {
-			Template t = ve.getTemplate(templateName);
-			templates.put(templateName, t);
-		}
-		return templates.get(templateName);
 	}
 
 
