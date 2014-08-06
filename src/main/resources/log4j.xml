@@ -10,8 +10,17 @@
 	</appender>
 
 
-	<appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
+	<appender name="requestsFileAppender" class="org.apache.log4j.RollingFileAppender">
 		<param name="file" value="log/requests.log" />
+		<param name="MaxFileSize" value="20MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="diffFileAppender" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="log/diff.log" />
 		<param name="MaxFileSize" value="20MB" />
 		<param name="MaxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -54,7 +63,13 @@
 	<logger name="org.nextprot.api.core.aop.InstrumentationAspect"
 		additivity="false">
 		<level value="INFO" />
-		<appender-ref ref="fileAppender" />
+		<appender-ref ref="requestsFileAppender" />
+	</logger>
+
+	<logger name="org.nextprot.api.diff.DiffBaseTest"
+		additivity="false">
+		<level value="INFO" />
+		<appender-ref ref="diffFileAppender" />
 	</logger>
 
 	<!-- root element must be below all others otherwise errors -->
