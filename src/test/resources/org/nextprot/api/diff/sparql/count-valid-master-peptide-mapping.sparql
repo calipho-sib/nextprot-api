@@ -1,0 +1,11 @@
+# -------------------------------------------------------------------------------------------------
+# Number of distinct master - peptide pairs
+# -------------------------------------------------------------------------------------------------
+
+select (count(*) as ?cnt) where {
+	select distinct ?entry ?pep where { 
+	  ?entry :isoform / :mapping ?map .
+	  ?map a :PeptideMapping .
+	  ?map :peptideName ?pep .
+	}
+}

@@ -1,0 +1,11 @@
+# -------------------------------------------------------------------------------------------------
+# Number of distinct isoform - peptide pairs
+# -------------------------------------------------------------------------------------------------
+
+select (count(*) as ?cnt) where {
+	select distinct ?isoform ?pep where { 
+	  ?isoform :mapping ?map .
+	  ?map a :PeptideMapping .
+	  ?map :peptideName ?pep .
+	}
+}

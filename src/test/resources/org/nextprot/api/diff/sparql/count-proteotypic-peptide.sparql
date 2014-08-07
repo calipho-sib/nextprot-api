@@ -1,0 +1,15 @@
+# -------------------------------------------------------------------------------------------------
+# Number of proteotypic peptides:
+# peptides linked to 1 and only one distinct entry 
+# -------------------------------------------------------------------------------------------------
+
+select (count(*) as ?cnt) where {
+  select ?pep (count(?entry) as ?entryCount) where {
+    select distinct ?pep ?entry where { 
+      ?entry :isoform / :mapping ?map .
+      ?map a :PeptideMapping ; :peptideName ?pep .
+    }
+  }
+  group by ?pep
+  having (count(?entry)=1)
+}
