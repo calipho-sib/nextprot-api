@@ -300,6 +300,11 @@
 			</exclusions>
 		</dependency>
 
+		<dependency>
+		    <groupId>sib.calipho</groupId>
+		    <artifactId>spring-security-auth0</artifactId>
+		    <version>0.0.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>commons-lang</groupId>

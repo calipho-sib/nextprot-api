@@ -19,7 +19,7 @@
   	    http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
 	<import resource="core-context.xml" />
-	<!--  <import resource="security-context.xml" /> -->
+	<import resource="auth0-security-context.xml" />
 
 	<mvc:annotation-driven />
 	<mvc:default-servlet-handler />
