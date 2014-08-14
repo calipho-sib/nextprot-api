@@ -20,7 +20,12 @@ isoform:$isoform-name a :Isoform;
 #set($annotation-uri =  $isoform-name + "-" + $annotation.getUniqueName())
 #set($annotation-type = $StringUtils.toCamelCase($annotation.getCategory(), false))
 ##
+## special case for expression
+#if($annotation.getConsensusExpressionLevelPredicat())
+isoform:$isoform-name :$annotation.getConsensusExpressionLevelPredicat() annotation:$annotation-uri .
+#else
 isoform:$isoform-name :$annotation.getCategoryDiscriminatorPredicat() annotation:$annotation-uri .
+#end
 ##
 #parse("turtle/isoform-annotation.ttl.vm")
 #end

@@ -1,9 +1,16 @@
 #set($evidence-uri = $evidence.getEvidenceId($isoform-name))
+## Negative evidence
+## graph is splitted for negative, positive (that include negative expression)
+#if($evidence.isNegativeEvidence($isoform-name))
+annotation:$annotation-uri :withNegativeEvidence evidence:$evidence-uri. 
+#end
 annotation:$annotation-uri :withEvidence evidence:$evidence-uri. 
+## decribe the evidence here
 evidence:$evidence-uri 
   rdf:type :Evidence ;
   :code :$evidence.getQualifierType();
-  :negative "$evidence.isNegativeEvidence($isoform-name)"^^xsd:boolean;
+## negative is no more needed
+##  :negative "$evidence.isNegativeEvidence($isoform-name)"^^xsd:boolean;
 #if($evidence.getQualityQualifier())
   :quality :$evidence.getQualityQualifier();
 #end  

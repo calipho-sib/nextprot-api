@@ -16,7 +16,7 @@
 :Positive
       rdf:type :ExpressionLevel ;
       rdfs:comment "Positive expression"^^xsd:string ;
-      :notIn :Negative;
+      :notIn :Low,:Medium,:High;
       .
       
 :High
@@ -42,7 +42,6 @@
 :Negative
       rdf:type :ExpressionLevel ;
       rdfs:comment "High level of expression"^^xsd:string ;
-      :notIn :Low,:Medium,:High,:Positive;
       .      
 
 #

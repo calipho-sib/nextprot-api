@@ -1,6 +1,6 @@
 #!/bin/bash
-#export MAVEN_OPTS="-Xmx4096M -XX:PermSize=256M -XX:MaxPermSize=256M "
-export MAVEN_OPTS="-Xmx2048m -agentpath:/work/devtools/jprofiler8/bin/linux-x64/libjprofilerti.so=nowait,port=7777"
+export MAVEN_OPTS="-Xmx4048M -XX:PermSize=256M -XX:MaxPermSize=256M "
+#export MAVEN_OPTS="-Xmx2048m -agentpath:/work/devtools/jprofiler8/bin/linux-x64/libjprofilerti.so=nowait,port=7777"
 API_PROFILE=dev;[ -n "$2" ] && API_PROFILE=$2 
 API_COMMAND="mvn -Dspring.profiles.active=$API_PROFILE -Dnextprot.api jetty:run"
 PKILL=$(which pkill)

@@ -1,6 +1,7 @@
 package org.nextprot.api.core.domain.annotation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,20 @@ public class Annotation implements Serializable {
 
 	private List<AnnotationProperty> properties;
 
+	final static Map<String, String> commonExpressionPredicat= new HashMap<String, String>();
+	
+	static{
+		
+		//
+		// map expressionLevel in 3 categories : negative, positive for consensus and mixing when no consensus exist  
+		commonExpressionPredicat.put("", 	   	"variableExpression");
+		commonExpressionPredicat.put("High",   	"expression");
+		commonExpressionPredicat.put("Low",    	"expression");
+		commonExpressionPredicat.put("Medium", 	"expression");
+		commonExpressionPredicat.put("Positive","expression");
+		commonExpressionPredicat.put("Negative","negativeExpression");
+	}	
+	
 	public List<AnnotationEvidence> getEvidences() {
 		return evidences;
 	}
@@ -160,6 +175,27 @@ public class Annotation implements Serializable {
 	
 	public int getEndPositionForIsoform(String isoformName) {
 		return this.targetingIsoformsMap.get(isoformName).getLastPosition();
+	}
+	
+	/**
+	 * select consensus between positive and negative expression, or no consensus 
+	 * @return positive consensus: expression, negative consensus: negativeExpression or no consensus: mixingExpression
+	 */
+	public String getConsensusExpressionLevelPredicat(){
+		String level="";
+		
+		//
+		// check if there is expression info
+		if ((level=evidences.get(0).getExpressionLevel())==null)
+			return null;
+		
+		level=commonExpressionPredicat.get(level);
+		
+		for(AnnotationEvidence e:evidences){
+			if(!level.equals(commonExpressionPredicat.get(e.getExpressionLevel())))
+				return commonExpressionPredicat.get("");
+		}
+		return level;
 	}
 
 }
