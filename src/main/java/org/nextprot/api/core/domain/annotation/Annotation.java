@@ -184,7 +184,10 @@ public class Annotation implements Serializable {
 	public String getConsensusExpressionLevelPredicat(){
 		String level="";
 		
-		//
+		// make sure we have evidences otherwise error breaks ttl generation
+		if (evidences.size()==0) 
+			return null;
+		
 		// check if there is expression info
 		if ((level=evidences.get(0).getExpressionLevel())==null)
 			return null;
