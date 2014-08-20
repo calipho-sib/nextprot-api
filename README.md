@@ -2,7 +2,7 @@
 
 _CAUTION: Nextprot API is at its very early stages of development. Things are likely to change in ways that are not backwards compatible_
 
-This projected is licensed under the terms of the GNU GPL v2.0
+This project is licensed under the terms of the GNU General Public License, version 2 or any later version (see file LICENSE.txt)
 
 # Main API Features:
 * Provides a Java Spring REST API at http://localhost:8080/nextprot-api that connects to an RDBMS database (entry based).
