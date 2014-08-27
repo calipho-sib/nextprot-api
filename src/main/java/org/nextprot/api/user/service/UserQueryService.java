@@ -1,8 +1,8 @@
-package org.nextprot.api.core.service;
+package org.nextprot.api.user.service;
 
 import java.util.List;
 
-import org.nextprot.api.core.domain.UserQuery;
+import org.nextprot.api.user.domain.UserQuery;
 
 /**
  * Service to retrieve user queries 
@@ -10,7 +10,7 @@ import org.nextprot.api.core.domain.UserQuery;
  * @author dteixeira
  *
  */
-public interface RepositoryUserQueryService {
+public interface UserQueryService {
 
 	
 	/**

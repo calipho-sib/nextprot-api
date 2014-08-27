@@ -1,4 +1,4 @@
-package org.nextprot.api.core.dao.impl;
+package org.nextprot.api.user.dao.impl;
 
 import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
 
@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.core.dao.ProteinListDao;
-import org.nextprot.api.core.domain.ProteinList;
+import org.nextprot.api.user.dao.UserListDao;
+import org.nextprot.api.user.domain.UserList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,19 +29,19 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class ProteinListDaoImpl implements ProteinListDao {
+public class UserListDaoImpl implements UserListDao {
 	
 	@Autowired private DataSourceServiceLocator dsLocator;
 
 	@Override
-	public List<ProteinList> getProteinListsMetadata(String username) {
+	public List<UserList> getProteinListsMetadata(String username) {
 		
 		SqlParameterSource namedParameters = new MapSqlParameterSource("username", username);
 		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(getSQLQuery("proteinlists-by-username"), namedParameters, new ProteinListRowMapper());
 	}
 	
 	@Override
-	public ProteinList getProteinListById(long listId) {
+	public UserList getProteinListById(long listId) {
 		String sql = "select * from np_users.protein_lists where list_id = :listId";
 			
 		SqlParameterSource namedParams = new MapSqlParameterSource("listId", listId);
@@ -50,7 +50,7 @@ public class ProteinListDaoImpl implements ProteinListDao {
 	}
 	
 	@Override
-	public ProteinList getProteinListByNameForUserIdentifier(String userIdentifier, String listName) {
+	public UserList getProteinListByNameForUserIdentifier(String userIdentifier, String listName) {
 		String sql = "select l.* " + 
 				"from np_users.users u " + 
 				"inner join np_users.protein_lists l on u.user_id = l.owner_id " + 
@@ -65,7 +65,7 @@ public class ProteinListDaoImpl implements ProteinListDao {
 	
 	
 	@Override
-	public ProteinList getProteinListByNameForUser(String username, String listName) {
+	public UserList getProteinListByNameForUser(String username, String listName) {
 		String sql = "select l.* " + 
 				"from np_users.users u " + 
 				"inner join np_users.protein_lists l on u.user_id = l.owner_id " + 
@@ -86,7 +86,7 @@ public class ProteinListDaoImpl implements ProteinListDao {
 	}
 	
 	@Override
-	public Long saveProteinList(final ProteinList proteinList) {
+	public Long saveProteinList(final UserList proteinList) {
 		final String INSERT_SQL = getSQLQuery("proteinlist-insert");
 		
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
@@ -153,7 +153,7 @@ public class ProteinListDaoImpl implements ProteinListDao {
 	}
 
 	@Override
-	public void updateProteinList(ProteinList proteinList) {
+	public void updateProteinList(UserList proteinList) {
 		String sql = "update np_users.protein_lists set name=?, description=? where list_id=?";
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
 		
@@ -174,11 +174,11 @@ public class ProteinListDaoImpl implements ProteinListDao {
 	}
 
 	
-	class ProteinListRowMapper implements ParameterizedRowMapper<ProteinList> {
+	class ProteinListRowMapper implements ParameterizedRowMapper<UserList> {
 
 		@Override
-		public ProteinList mapRow(ResultSet rs, int row) throws SQLException {
-			ProteinList pl = new ProteinList();
+		public UserList mapRow(ResultSet rs, int row) throws SQLException {
+			UserList pl = new UserList();
 			pl.setId(rs.getLong("list_id"));
 			pl.setName(rs.getString("name"));
 			pl.setDescription(rs.getString("description"));

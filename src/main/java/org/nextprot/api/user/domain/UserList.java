@@ -1,9 +1,9 @@
-package org.nextprot.api.core.domain;
+package org.nextprot.api.user.domain;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class ProteinList {
+public class UserList {
 
 	private Long id;
 	private String name;
@@ -12,9 +12,9 @@ public class ProteinList {
 	private int accSize = 0;
 	private String username;
 	
-	public ProteinList() { }
+	public UserList() { }
 	
-	public ProteinList(String name) {
+	public UserList(String name) {
 		this.name = name;
 	}
 	

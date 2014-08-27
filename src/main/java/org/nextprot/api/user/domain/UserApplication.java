@@ -1,4 +1,4 @@
-package org.nextprot.api.core.domain.user;
+package org.nextprot.api.user.domain;
 
 import java.io.Serializable;
 import java.util.Date;

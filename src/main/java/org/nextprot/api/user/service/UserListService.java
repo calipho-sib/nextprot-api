@@ -1,13 +1,13 @@
-package org.nextprot.api.core.service;
+package org.nextprot.api.user.service;
 
 import java.util.List;
 import java.util.Set;
 
 import org.nextprot.api.commons.exception.SearchQueryException;
-import org.nextprot.api.core.domain.ProteinList;
 import org.nextprot.api.solr.SearchResult;
+import org.nextprot.api.user.domain.UserList;
 
-public interface ProteinListService {
+public interface UserListService {
 	
 
 	public enum Operations {
@@ -15,25 +15,25 @@ public interface ProteinListService {
 	}
 
 
-	List<ProteinList> getProteinLists(String username);
-	List<ProteinList> getProteinListsMeta(String username);
+	List<UserList> getProteinLists(String username);
+	List<UserList> getProteinListsMeta(String username);
 	
-	ProteinList getProteinListById(long listId);
+	UserList getProteinListById(long listId);
 	
-	ProteinList getProteinListByNameByUUID(String userIdentifier, String listName);
-	ProteinList getProteinListByNameForUser(String username, String listName);
+	UserList getProteinListByNameByUUID(String userIdentifier, String listName);
+	UserList getProteinListByNameForUser(String username, String listName);
 	
-	SearchResult getProteinListSearchResult(ProteinList proteinList) throws SearchQueryException;
+	SearchResult getProteinListSearchResult(UserList proteinList) throws SearchQueryException;
 
-	ProteinList createProteinList(ProteinList proteinList);
-	ProteinList createProteinList(String listName, String description, Set<String> accessions, String username);
+	UserList createProteinList(UserList proteinList);
+	UserList createProteinList(String listName, String description, Set<String> accessions, String username);
 
 	void deleteProteinList(long listId);
 	void addAccessions(long listId, Set<String> accessions);
 	void removeAccessions(long listId, Set<String> accessions);
 	
-	ProteinList updateProteinList(ProteinList proteinList);
+	UserList updateProteinList(UserList proteinList);
 	
 	
-	ProteinList combine(String name, String description, String username, String list1, String list2, Operations operation);
+	UserList combine(String name, String description, String username, String list1, String list2, Operations operation);
 }

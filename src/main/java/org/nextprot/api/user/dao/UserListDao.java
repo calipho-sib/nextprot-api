@@ -1,19 +1,19 @@
-package org.nextprot.api.core.dao;
+package org.nextprot.api.user.dao;
 
 import java.util.List;
 import java.util.Set;
 
-import org.nextprot.api.core.domain.ProteinList;
+import org.nextprot.api.user.domain.UserList;
 
-public interface ProteinListDao {
+public interface UserListDao {
 
-	List<ProteinList> getProteinListsMetadata(String username);
+	List<UserList> getProteinListsMetadata(String username);
 	
 	Set<String> getAccessionsByListId(Long listId);
 	
-	Long saveProteinList(ProteinList proteinList);
+	Long saveProteinList(UserList proteinList);
 	
-	void updateProteinList(ProteinList proteinList);
+	void updateProteinList(UserList proteinList);
 	
 	void saveProteinListAccessions(Long listId, Set<String> accessions);
 
@@ -23,9 +23,9 @@ public interface ProteinListDao {
 	
 	Set<Long> getAccessionIds(Set<String> accessions);
 	
-	ProteinList getProteinListById(long listId);
+	UserList getProteinListById(long listId);
 	
-	ProteinList getProteinListByNameForUserIdentifier(String userIdentifier, String listName);
+	UserList getProteinListByNameForUserIdentifier(String userIdentifier, String listName);
 	
-	ProteinList getProteinListByNameForUser(String username, String listName);
+	UserList getProteinListByNameForUser(String username, String listName);
 }

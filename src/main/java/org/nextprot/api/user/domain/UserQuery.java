@@ -1,10 +1,10 @@
-package org.nextprot.api.core.domain;
+package org.nextprot.api.user.domain;
 
 import java.io.Serializable;
 
 import org.nextprot.api.commons.exception.NPreconditions;
 
-public class UserQuery implements Serializable {
+public class UserQuery implements Serializable, UserResource {
 
 	private static final long serialVersionUID = 3051410556247218680L;
 
@@ -77,6 +77,11 @@ public class UserQuery implements Serializable {
 		NPreconditions.checkNotNull(title, "The title should not be null");
 		NPreconditions.checkTrue(title.length() >= 3,
 				"The title should be at least 3 characters long");
+	}
+
+	@Override
+	public String getResourceOwner() {
+		return this.getUsername();
 	}
 
 }

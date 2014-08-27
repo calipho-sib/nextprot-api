@@ -1,4 +1,4 @@
-package org.nextprot.api.core.security.impl;
+package org.nextprot.api.user.security.impl;
 
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -12,8 +12,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.user.UserApplication;
-import org.nextprot.api.core.security.UserApplicationKeyGenerator;
+import org.nextprot.api.user.domain.UserApplication;
+import org.nextprot.api.user.security.UserApplicationKeyGenerator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;

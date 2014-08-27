@@ -1,4 +1,4 @@
-package org.nextprot.api.core.dao.impl;
+package org.nextprot.api.user.dao.impl;
 
 import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
 
@@ -10,8 +10,8 @@ import java.util.List;
 
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.core.dao.RepositoryUserQueryDao;
-import org.nextprot.api.core.domain.UserQuery;
+import org.nextprot.api.user.dao.UserQueryDao;
+import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,7 +25,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @Lazy
-public class RepositoryUserQueryDaoImpl implements RepositoryUserQueryDao {
+public class UserQueryDaoImpl implements UserQueryDao {
 
 	@Autowired private DataSourceServiceLocator dsLocator;
 	

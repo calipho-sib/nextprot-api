@@ -1,4 +1,4 @@
-package org.nextprot.api.core.service.impl;
+package org.nextprot.api.user.service.impl;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -7,9 +7,6 @@ import java.util.Set;
 
 import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.commons.exception.SearchQueryException;
-import org.nextprot.api.core.dao.ProteinListDao;
-import org.nextprot.api.core.domain.ProteinList;
-import org.nextprot.api.core.service.ProteinListService;
 import org.nextprot.api.core.service.QueryService;
 import org.nextprot.api.solr.FieldConfigSet;
 import org.nextprot.api.solr.IndexConfiguration;
@@ -19,6 +16,9 @@ import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.SearchResult;
 import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrIndex;
+import org.nextprot.api.user.dao.UserListDao;
+import org.nextprot.api.user.domain.UserList;
+import org.nextprot.api.user.service.UserListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
@@ -33,20 +33,20 @@ import com.google.common.collect.Sets;
 
 @Lazy
 @Service
-public class ProteinListServiceImpl implements ProteinListService {
+public class UserListServiceImpl implements UserListService {
 
 	@Autowired
-	private ProteinListDao proteinListDao;
+	private UserListDao proteinListDao;
 	@Autowired
 	private QueryService queryService;
 	@Autowired
 	private SolrConfiguration configuration;
 
 	@Override
-	public List<ProteinList> getProteinLists(String username) {
-		List<ProteinList> proteinLists = this.proteinListDao.getProteinListsMetadata(username);
+	public List<UserList> getProteinLists(String username) {
+		List<UserList> proteinLists = this.proteinListDao.getProteinListsMetadata(username);
 
-		for (ProteinList list : proteinLists) {
+		for (UserList list : proteinLists) {
 			Set<String> accessions = this.proteinListDao.getAccessionsByListId(list.getId());
 			list.setAccessions(accessions);
 		}
@@ -54,23 +54,23 @@ public class ProteinListServiceImpl implements ProteinListService {
 	}
 
 	@Override
-	public List<ProteinList> getProteinListsMeta(String username) {
-		List<ProteinList> proteinLists = this.proteinListDao.getProteinListsMetadata(username);
+	public List<UserList> getProteinListsMeta(String username) {
+		List<UserList> proteinLists = this.proteinListDao.getProteinListsMetadata(username);
 		return proteinLists;
 	}
 
 	@Override
-	public ProteinList createProteinList(String listName, String description, Set<String> accessions, String username) {
+	public UserList createProteinList(String listName, String description, Set<String> accessions, String username) {
 
 
-			ProteinList proteinList = new ProteinList();
+			UserList proteinList = new UserList();
 			proteinList.setName(listName);
 			proteinList.setDescription(description);
 			proteinList.setAccessions(accessions);
 			
 			checkIsAuthorized(proteinList);
 
-			ProteinList newList = createProteinList(proteinList);
+			UserList newList = createProteinList(proteinList);
 
 			System.out.println("selected: " + proteinList.getAccessions().size() + " created: " + newList.getAccessions().size() + " not there: "
 					+ Sets.difference(proteinList.getAccessions(), newList.getAccessions()));
@@ -80,12 +80,12 @@ public class ProteinListServiceImpl implements ProteinListService {
 
 	@Override
 	@Transactional
-	public ProteinList createProteinList(ProteinList proteinList) {
+	public UserList createProteinList(UserList proteinList) {
 		Long id = this.proteinListDao.saveProteinList(proteinList);
 		saveAccessions(id, proteinList.getAccessions());
 		proteinList.setId(id);
 
-		ProteinList newList = this.proteinListDao.getProteinListById(id);
+		UserList newList = this.proteinListDao.getProteinListById(id);
 		newList.setAccessions(this.proteinListDao.getAccessionsByListId(id));
 		System.out.println("selected: " + proteinList.getAccessions().size() + " created: " + newList.getAccessions().size() + " not there: "
 				+ Sets.difference(proteinList.getAccessions(), newList.getAccessions()));
@@ -106,11 +106,11 @@ public class ProteinListServiceImpl implements ProteinListService {
 	}
 
 	@Override
-	public ProteinList getProteinListById(long listId) {
-		ProteinList result = this.proteinListDao.getProteinListById(listId);
+	public UserList getProteinListById(long listId) {
+		UserList result = this.proteinListDao.getProteinListById(listId);
 
 		if (result != null) {
-			ProteinList l = result;
+			UserList l = result;
 			l.setAccessions(this.proteinListDao.getAccessionsByListId(listId));
 			return l;
 		}
@@ -118,11 +118,11 @@ public class ProteinListServiceImpl implements ProteinListService {
 	}
 
 	@Override
-	public ProteinList getProteinListByNameByUUID(String userIdentifier, String listName) {
-		ProteinList result = this.proteinListDao.getProteinListByNameForUserIdentifier(userIdentifier, listName);
+	public UserList getProteinListByNameByUUID(String userIdentifier, String listName) {
+		UserList result = this.proteinListDao.getProteinListByNameForUserIdentifier(userIdentifier, listName);
 
 		if (result != null) {
-			ProteinList proteinList = result;
+			UserList proteinList = result;
 			proteinList.setAccessions(this.proteinListDao.getAccessionsByListId(proteinList.getId()));
 			return proteinList;
 		}
@@ -130,11 +130,11 @@ public class ProteinListServiceImpl implements ProteinListService {
 	}
 
 	@Override
-	public ProteinList getProteinListByNameForUser(String username, String listName) {
-		ProteinList result = this.proteinListDao.getProteinListByNameForUser(username, listName);
+	public UserList getProteinListByNameForUser(String username, String listName) {
+		UserList result = this.proteinListDao.getProteinListByNameForUser(username, listName);
 
 		if (result != null) {
-			ProteinList proteinList = result;
+			UserList proteinList = result;
 			proteinList.setAccessions(this.proteinListDao.getAccessionsByListId(proteinList.getId()));
 			return proteinList;
 		}
@@ -153,13 +153,13 @@ public class ProteinListServiceImpl implements ProteinListService {
 	}
 
 	@Override
-	public ProteinList updateProteinList(ProteinList proteinList) {
+	public UserList updateProteinList(UserList proteinList) {
 		this.proteinListDao.updateProteinList(proteinList);
 		return proteinList;
 	}
 
 	@Override
-	public SearchResult getProteinListSearchResult(ProteinList proteinList) throws SearchQueryException {
+	public SearchResult getProteinListSearchResult(UserList proteinList) throws SearchQueryException {
 
 		Set<String> accessions = proteinList.getAccessions();
 
@@ -190,10 +190,10 @@ public class ProteinListServiceImpl implements ProteinListService {
 	}
 
 	@Override
-	public ProteinList combine(String name, String description, String username, String list1, String list2, Operations op) {
+	public UserList combine(String name, String description, String username, String list1, String list2, Operations op) {
 
-		ProteinList l1 = getProteinListByNameForUser(username, list1);
-		ProteinList l2 = getProteinListByNameForUser(username, list2);
+		UserList l1 = getProteinListByNameForUser(username, list1);
+		UserList l2 = getProteinListByNameForUser(username, list2);
 
 		Set<String> combined = new HashSet<String>();
 
@@ -209,7 +209,7 @@ public class ProteinListServiceImpl implements ProteinListService {
 	}
 	
 	
-	private static String checkIsAuthorized(ProteinList pl){
+	private static String checkIsAuthorized(UserList pl){
 
 		String securityUserName = "";
 		

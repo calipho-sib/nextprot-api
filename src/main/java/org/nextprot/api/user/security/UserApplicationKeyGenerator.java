@@ -1,6 +1,6 @@
-package org.nextprot.api.core.security;
+package org.nextprot.api.user.security;
 
-import org.nextprot.api.core.domain.user.UserApplication;
+import org.nextprot.api.user.domain.UserApplication;
 
 public interface UserApplicationKeyGenerator {
 

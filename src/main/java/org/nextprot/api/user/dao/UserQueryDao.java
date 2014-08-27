@@ -1,10 +1,10 @@
-package org.nextprot.api.core.dao;
+package org.nextprot.api.user.dao;
 
 import java.util.List;
 
-import org.nextprot.api.core.domain.UserQuery;
+import org.nextprot.api.user.domain.UserQuery;
 
-public interface RepositoryUserQueryDao {
+public interface UserQueryDao {
 
 	List<UserQuery> getUserQueries(String username);
 

@@ -1,11 +1,13 @@
-package org.nextprot.api.core.service.impl;
+package org.nextprot.api.user.service.impl;
 
 import java.util.List;
 
 import org.nextprot.api.commons.exception.NotAuthorizedException;
-import org.nextprot.api.core.dao.RepositoryUserQueryDao;
-import org.nextprot.api.core.domain.UserQuery;
-import org.nextprot.api.core.service.RepositoryUserQueryService;
+import org.nextprot.api.user.dao.UserQueryDao;
+import org.nextprot.api.user.domain.UserQuery;
+import org.nextprot.api.user.domain.UserResource;
+import org.nextprot.api.user.security.NPContext;
+import org.nextprot.api.user.service.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
@@ -16,10 +18,10 @@ import org.springframework.stereotype.Service;
 
 @Lazy
 @Service
-public class RepositoryUserQueryServiceImpl implements RepositoryUserQueryService {
+public class UserQueryServiceImpl implements UserQueryService {
 
 	@Autowired
-	private RepositoryUserQueryDao userQueryDao;
+	private UserQueryDao userQueryDao;
 
 	@Override
 	public List<UserQuery> getUserQueries(String username) {
@@ -33,7 +35,7 @@ public class RepositoryUserQueryServiceImpl implements RepositoryUserQueryServic
 
 	@Override
 	public UserQuery createUserQuery(UserQuery userQuery) {
-		checkIsAuthorized(userQuery);
+		NPContext.isUserAuthorized(userQuery);
 		userQuery.checkValid();
 		long id = userQueryDao.saveUserQuery(userQuery);
 		userQuery.setUserQueryId(id);
@@ -42,7 +44,7 @@ public class RepositoryUserQueryServiceImpl implements RepositoryUserQueryServic
 
 	@Override
 	public UserQuery updateUserQuery(UserQuery userQuery) {
-		checkIsAuthorized(userQuery);
+		NPContext.isUserAuthorized(userQuery);
 		userQuery.checkValid();
 		userQueryDao.updateUserQuery(userQuery);
 		return userQuery;
@@ -50,7 +52,7 @@ public class RepositoryUserQueryServiceImpl implements RepositoryUserQueryServic
 
 	@Override
 	public void deleteUserQuery(UserQuery userQuery) {
-		checkIsAuthorized(userQuery);
+		NPContext.isUserAuthorized(userQuery);
 		userQueryDao.deleteUserQuery(userQuery.getUserQueryId());
 	}
 
@@ -65,31 +67,5 @@ public class RepositoryUserQueryServiceImpl implements RepositoryUserQueryServic
 	}
 	
 	
-	private static void checkIsAuthorized(UserQuery q){
 
-		String securityUserName = "";
-		
-		SecurityContext sc = SecurityContextHolder.getContext();
-		if (sc == null){
-			throw new NotAuthorizedException("You must be logged in to access this resource");
-		}
-
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		if (a == null){
-			throw new NotAuthorizedException("You must be logged in to access this resource");
-		}
-		
-		if (a.getPrincipal() instanceof UserDetails) {
-			UserDetails currentUserDetails = (UserDetails) a.getPrincipal();
-			securityUserName = currentUserDetails.getUsername();
-		} else {
-			securityUserName = a.getPrincipal().toString();
-		}
-		
-		if (!q.getUsername().equals(securityUserName)) {
-			throw new NotAuthorizedException(securityUserName + " is not authorized to modify this resource");
-		}
-
-
-	}
 }
