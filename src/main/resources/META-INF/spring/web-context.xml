@@ -19,7 +19,7 @@
   	    http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
 	<import resource="core-context.xml" />
-	<import resource="auth0-security-context.xml" />
+	<import resource="security-context.xml" />
 
 	<mvc:annotation-driven />
 	<mvc:default-servlet-handler />
@@ -35,6 +35,12 @@
 	<!-- Used for documentation -->
 	<bean id="documentationController" class="org.jsondoc.springmvc.controller.JSONDocController">
 		<property name="version" value="0.1 beta" />
+		<property name="basePath" value="http://localhost:8080/nextprot-api"/>
+		<property name="packages">
+			<list>
+				<value>org.nextprot.api</value>
+			</list>
+		</property>
 	</bean>
 
 

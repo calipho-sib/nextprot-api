@@ -17,7 +17,11 @@
 <script src="js/bootstrap-button.js"></script>
 <script src="js/nx-api.js"></script>
 
+<script src="//cdn.auth0.com/w2/auth0-widget-5.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 <!-- Le styles -->
+<link href="css/app.css" rel="stylesheet">
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/font-awesome.css" rel="stylesheet">
 <link href="css/nx-api.css" rel="stylesheet">
@@ -27,14 +31,18 @@
 <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
 </head>
 
 <body>
-
+	
 	<div class="navbar navbar-fixed-top navbar-inverse">
 		<div class="navbar-inner">
 			<div class="container-fluid">
 				<a class="brand" href="#">neXtProt REST API</a>
+				<input type="submit" class="btn-login" />
+				<a ng-click="login()" class="btn btn-primary btn-lg btn-login btn-block">SignIn</a>
+				<h2>Welcome <span class="nickname"></span></h2>
 			</div>
 		</div>
 	</div>
