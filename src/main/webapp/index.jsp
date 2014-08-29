@@ -39,10 +39,10 @@
 	<div class="navbar navbar-fixed-top navbar-inverse">
 		<div class="navbar-inner">
 			<div class="container-fluid">
-				<a class="brand" href="#">neXtProt REST API</a>
-				<input type="submit" class="btn-login" />
-				<a ng-click="login()" class="btn btn-primary btn-lg btn-login btn-block">SignIn</a>
-				<h2>Welcome <span class="nickname"></span></h2>
+				<a class="brand" href="#">neXtProt API</a>
+				<a class="btn btn-primary btn-small btn-login pull-right">SignIn</a>
+				<a class="btn btn-primary btn-small btn-logout pull-right">Logout</a>
+				<div align="center"><span class="nickname"></span></div>
 			</div>
 		</div>
 	</div>

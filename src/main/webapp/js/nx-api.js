@@ -309,3 +309,81 @@ function fetchdoc(jsondocurl) {
 				}
 			});
 }
+
+$(document).ready(function() {
+    var widget = new Auth0Widget({
+	    domain: 'nextprot.auth0.com',
+	    clientID: '7vS32LzPoIR1Y0JKahOvUCgGbn94AcFW',
+	    callbackURL: location.href,
+        callbackOnLocationHash: true
+    });
+
+    var userProfile;
+    
+    if(localStorage.getItem('userToken')){
+		$('.nickname').text("You are anonymous");
+	}else {
+		$('.nickname').text("You are not anonymous but I forgot your name lol");
+	}
+    
+    
+    $('.btn-login').click(function(e) {
+      e.preventDefault();
+      widget.signin({ popup: true, scope : 'openid profile'} , null, function(err, profile, token) {
+        if (err) {
+          // Error callback
+          console.log("There was an error");
+          alert("There was an error logging in");
+        } else {
+          // Success calback
+
+          widget.getClient().getDelegationToken('IckaP4QRfGSRGuVZfP9VJBUdlXtgcS4o', token,
+            function(err, thirdPartyApiToken) {
+              localStorage.setItem('thirdPartyApiToken', thirdPartyApiToken.id_token);
+              console.log("Third party token", thirdPartyApiToken.id_token);
+            });
+
+          // Save the JWT token.
+          localStorage.setItem('userToken', token);
+
+          // Save the profile
+          userProfile = profile;
+
+          $('.login-box').hide();
+          $('.logged-in-box').show();
+          $('.nickname').text("Welcome " + profile.nickname);
+        }
+      });
+    });
+
+    $('.btn-logout').click(function(e) {
+	    localStorage.removeItem('userToken');
+	    userProfile = null;
+        $('.nickname').text("You are anonymous");
+    });
+
+
+    $('.btn-api').click(function(e) {
+        // Just call your API here. The header will be sent
+        $.ajax({
+          url: 'http://localhost:3001/secured/ping',
+          method: 'GET'
+        }).then(function(data, textStatus, jqXHR) {
+          alert("The request to the secured enpoint was successfull");
+        }, function() {
+          alert("You need to download the server seed and start it to call this API");
+        });
+      });
+    
+    
+    $.ajaxSetup({
+  	  'beforeSend': function(xhr) {
+  	    if (localStorage.getItem('userToken')) {
+  	      xhr.setRequestHeader('Authorization',
+  	            'Bearer ' + localStorage.getItem('userToken'));
+  	    }
+  	  }
+  	});
+
+});
+
