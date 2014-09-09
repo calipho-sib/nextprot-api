@@ -21,7 +21,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
 <!-- Le styles -->
-<link href="css/app.css" rel="stylesheet">
+<link href="css/nx-api.css" rel="stylesheet">
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/font-awesome.css" rel="stylesheet">
 <link href="css/nx-api.css" rel="stylesheet">
@@ -90,7 +90,7 @@
 <ul class="nav nav-list">
 	<li class="nav-header">APIs</li>
 	{{#apis}}
-		<li><a href="#" id="{{jsondocId}}" rel="api">{{name}}</a></li>
+		<li class="role-{{role}}"><a href="#" id="{{jsondocId}}" rel="api">{{name}}</a></li>
 	{{/apis}}
 </ul>
 </script>

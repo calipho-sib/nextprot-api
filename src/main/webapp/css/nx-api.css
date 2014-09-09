@@ -90,3 +90,20 @@ ol.linenums li {
 	line-height: 20px;
 	text-shadow: 0 1px 0 #fff;
 }
+
+
+/* Roles */
+.role-user { display: none;}
+.role-admin { display: none;}
+
+.anonymous .role-anonymous { display: block;}
+.anonymous .role-user { display: none;}
+.anonymous .role-admin { display: none;}
+
+.user .role-anonymous { display: block;}
+.user .role-user { display: block;}
+.user .role-admin { display: none;}
+
+.admin .role-anonymous { display: block;}
+.admin .role-user { display: block;}
+.admin .role-admin { display: block;}
