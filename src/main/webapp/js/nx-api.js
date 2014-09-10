@@ -1,8 +1,7 @@
 var model;
 
 function checkURLExistence() {
-	var value = "http://" + window.location.hostname
-			+ ":8080/nextprot-api/jsondoc";
+	var value = "http://" + window.location.hostname + ":8080/nextprot-api/jsondoc";
 	if (value.trim() == '') {
 		alert("Please insert a valid URL");
 		return false;
@@ -168,8 +167,8 @@ function fetchdoc(jsondocurl) {
 
 					var objects = Handlebars.compile($("#objects").html());
 					var objectsHTML = objects(data);
-					$("#objectdiv").html(objectsHTML);
-					$("#objectdiv").show();
+					//$("#objectdiv").html(objectsHTML);
+					//TODO Don't show the object div for now $("#objectdiv").show();
 
 					$("#objectdiv a").each(function() {
 						$(this).click(function() {
@@ -191,6 +190,7 @@ function fetchdoc(jsondocurl) {
 }
 
 $(document).ready(function() {
+
     var widget = new Auth0Widget({
 	    domain: 'nextprot.auth0.com',
 	    clientID: '7vS32LzPoIR1Y0JKahOvUCgGbn94AcFW',
@@ -198,11 +198,7 @@ $(document).ready(function() {
         callbackOnLocationHash: true
     });
 
-    if(localStorage.getItem('userToken')){
-    	setUserState();
-    }else {
-    	setAnonymousState();
-    }
+
     
     $('.btn-login').click(function(e) {
       e.preventDefault();
@@ -271,8 +267,7 @@ $(document).ready(function() {
           alert("You need to download the server seed and start it to call this API");
         });
       });
-    
-    
+
     $.ajaxSetup({
   	  'beforeSend': function(xhr) {
   	    if (localStorage.getItem('userToken')) {
@@ -281,6 +276,15 @@ $(document).ready(function() {
   	    }
   	  }
   	});
+
+    //Sets the states initially
+    if(localStorage.getItem('userToken')){
+    	setUserState();
+    }else {
+    	setAnonymousState();
+    }
+    
+
 
 });
 

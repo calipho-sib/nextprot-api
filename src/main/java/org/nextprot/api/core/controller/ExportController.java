@@ -49,7 +49,7 @@ import org.springframework.web.servlet.ViewResolver;
  */
 @Lazy
 @Controller
-@Api(name = "Export", description = "Export entries controller", role = "ROLE_USER")
+@Api(name = "Export", description = "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.", role = "ROLE_USER")
 public class ExportController {
 
 	@Autowired

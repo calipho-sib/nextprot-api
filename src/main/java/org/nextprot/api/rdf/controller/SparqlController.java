@@ -5,10 +5,15 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +30,8 @@ import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
  */
 @Lazy
 @Controller
+@PreAuthorize("hasRole('ROLE_SPARQL')")
+@Api(name = "Sparql", description = "Sparql endpoint where SPARQL queries are available", role="ROLE_SPARQL")
 public class SparqlController {
 
 	@Autowired
@@ -34,14 +41,17 @@ public class SparqlController {
 	
 	@RequestMapping(value = "/sparql-nocache", method = { RequestMethod.GET })
 	@ResponseBody
-	public List<String> sparqlNoCache(@RequestParam(value = "sparql", required = true) String queryString, @RequestParam(value = "sparqlTitle", required = true) String queryTitle,
-			@RequestParam(value = "sparqlEndpoint", required = true) String sparqlEndpoint, @RequestParam(value = "testId", required = false) String testId, Model model) {
+	public List<String> sparqlNoCache(@RequestParam(value = "sparql", required = true) String queryString, 
+			@RequestParam(value = "sparqlTitle", required = true) String queryTitle,
+			@RequestParam(value = "sparqlEndpoint", required = true) String sparqlEndpoint, 
+			@RequestParam(value = "testId", required = false) String testId, Model model) {
 
 		return sparqlService.findEntriesNoCache(queryString, sparqlEndpoint, queryTitle, testId);
 	}
 
 	@RequestMapping(value = "/sparql")
 	@ResponseBody
+	@ApiMethod(path = "/sparql", verb = ApiVerb.GET, description = "Sparql endpoint", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	public String sparql(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query, 
 			@RequestParam(value = "output", required = false) String output,
 			@RequestParam(value = "testid", required = false) String testid,

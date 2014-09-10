@@ -35,7 +35,7 @@ import com.google.common.base.Joiner;
 
 @Lazy
 @Controller
-@Api(name="Search", description="Method to search")
+@Api(name="Search", description="Method to search", role="ROLE_SEARCH")
 public class SearchController {
 
 	private final Log Logger = LogFactory.getLog(SearchController.class);

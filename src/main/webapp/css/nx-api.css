@@ -93,18 +93,7 @@ ol.linenums li {
 
 
 /* Roles */
-.role-user { display: none;}
-.role-admin { display: none;}
+.role { font-size: 8px;}
 
-.anonymous .role-anonymous { display: block;}
-.anonymous .role-user { display: none;}
-.anonymous .role-admin { display: none;}
-
-.user .role-anonymous { display: block;}
-.user .role-user { display: block;}
-.user .role-admin { display: none;}
-.user .role-admin { display: none;}
-
-.admin .role-anonymous { display: block;}
-.admin .role-user { display: block;}
-.admin .role-admin { display: block;}
+/* Don't display the object for now */
+#objectdiv {display: none;}
