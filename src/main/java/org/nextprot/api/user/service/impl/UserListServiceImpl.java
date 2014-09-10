@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.commons.exception.SearchQueryException;
-import org.nextprot.api.core.service.QueryService;
+import org.nextprot.api.core.service.SolrService;
 import org.nextprot.api.solr.FieldConfigSet;
 import org.nextprot.api.solr.IndexConfiguration;
 import org.nextprot.api.solr.IndexField;
@@ -38,7 +38,7 @@ public class UserListServiceImpl implements UserListService {
 	@Autowired
 	private UserListDao proteinListDao;
 	@Autowired
-	private QueryService queryService;
+	private SolrService queryService;
 	@Autowired
 	private SolrConfiguration configuration;
 

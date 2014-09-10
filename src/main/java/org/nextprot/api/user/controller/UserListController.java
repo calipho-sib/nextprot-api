@@ -16,6 +16,7 @@ import org.nextprot.api.user.service.UserListService;
 import org.nextprot.api.user.service.UserListService.Operations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
+@PreAuthorize("hasRole('ROLE_USER')")
 @Api(name = "User Lists", description = "Method to manipulate user lists", role = "ROLE_USER")
 public class UserListController {
 	

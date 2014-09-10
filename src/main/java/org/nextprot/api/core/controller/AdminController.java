@@ -14,29 +14,31 @@ import org.nextprot.api.core.aop.requests.RequestInfo;
 import org.nextprot.api.core.aop.requests.RequestManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@Lazy
-@RequestMapping(value = "admin/")
-//@PreAuthorize("hasRole('ROLE_ADMIN') ")
+@Controller
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 // and #request.getRemoteAddr() == '127.0.0.1'
 @Api(name = "Admin", description = "Admin operations", role = "ROLE_ADMIN")
 public class AdminController {
 
 	private static final Log LOGGER = LogFactory.getLog(AdminController.class);
 
-	@Autowired private RequestManager clientRequestManager;
+	@Autowired 
+	private RequestManager clientRequestManager;
+	
+	@Autowired 
 	private CacheManager cacheManager;
 		
 
 	@ResponseBody
-	@RequestMapping(value = "/admin/cache/clear")
-	@ApiMethod(path = "cache/clear", verb = ApiVerb.GET, role = "admin", description = "Clears the cache")
+	@RequestMapping(value = "/admin/cache/clear", method = { RequestMethod.GET })
+	@ApiMethod(path = "/admin/cache/clear", verb = ApiVerb.GET, description = "Clears the cache")
 	public String clearCache(HttpServletRequest request) {
 
 		LOGGER.warn("Request to clear cache from " + request.getRemoteAddr());

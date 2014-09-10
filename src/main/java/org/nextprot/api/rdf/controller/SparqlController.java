@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiParam;
+import org.jsondoc.core.pojo.ApiParamType;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
@@ -52,7 +54,11 @@ public class SparqlController {
 	@RequestMapping(value = "/sparql")
 	@ResponseBody
 	@ApiMethod(path = "/sparql", verb = ApiVerb.GET, description = "Sparql endpoint", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
-	public String sparql(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query, 
+	public String sparql(HttpServletRequest request, HttpServletResponse response,
+			
+			@ApiParam(name = "query", description = "The SPARQL query", paramType=ApiParamType.QUERY,  allowedvalues = { "SELECT DISTINCT * WHERE {?s ?p ?o} LIMIT 10"})
+			@RequestParam(value = "query", required = false) String query, 
+
 			@RequestParam(value = "output", required = false) String output,
 			@RequestParam(value = "testid", required = false) String testid,
 			@RequestParam(value = "title", required = false) String title,

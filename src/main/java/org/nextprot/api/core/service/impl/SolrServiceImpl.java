@@ -24,7 +24,7 @@ import org.apache.solr.common.SolrDocumentList;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.core.service.QueryService;
+import org.nextprot.api.core.service.SolrService;
 import org.nextprot.api.solr.IndexConfiguration;
 import org.nextprot.api.solr.IndexField;
 import org.nextprot.api.solr.IndexParameter;
@@ -44,8 +44,8 @@ import org.springframework.stereotype.Service;
 
 @Lazy
 @Service
-public class QueryServiceImpl implements QueryService {
-	private static final Log Logger = LogFactory.getLog(QueryServiceImpl.class);
+public class SolrServiceImpl implements SolrService {
+	private static final Log Logger = LogFactory.getLog(SolrServiceImpl.class);
 	
 	@Autowired private SolrConnectionFactory connFactory;
 	@Autowired private SolrConfiguration configuration;

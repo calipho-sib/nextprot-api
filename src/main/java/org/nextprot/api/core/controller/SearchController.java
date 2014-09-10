@@ -11,7 +11,7 @@ import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.service.QueryService;
+import org.nextprot.api.core.service.SolrService;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.Query;
@@ -39,7 +39,7 @@ import com.google.common.base.Joiner;
 public class SearchController {
 
 	private final Log Logger = LogFactory.getLog(SearchController.class);
-	@Autowired private QueryService queryService;
+	@Autowired private SolrService queryService;
 	@Autowired private SparqlService sparqlService;
 	@Autowired private SparqlEndpoint sparqlEndpoint;
 

@@ -9,8 +9,10 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.nextprot.api.commons.exception.SearchConfigException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+@Lazy
 @Component
 public class SolrConnectionFactory {
 	private Map<String, HttpSolrServer> serverMap;
