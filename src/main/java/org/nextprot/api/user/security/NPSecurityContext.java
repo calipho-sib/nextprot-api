@@ -22,6 +22,17 @@ import sib.calipho.spring.security.auth0.Auth0UserDetails;
  */
 public class NPSecurityContext {
 
+	/**
+	 * Check authorization for all resources
+	 * @param userResources
+	 */
+	public static void checkUserAuthorization(Collection<? extends UserResource> userResources) {
+		for(UserResource resource : userResources){
+			checkUserAuthorization(resource);
+		}
+		
+	}
+
 	public static void checkUserAuthorization(UserResource userResource) {
 
 		String securityUserName = "";
@@ -66,5 +77,15 @@ public class NPSecurityContext {
 		}
 		
 		return roles;
+	}
+
+	public static String getCurrentUser() {
+		Authentication a = SecurityContextHolder.getContext().getAuthentication();
+		if (a.getPrincipal() instanceof Auth0UserDetails) {
+			Auth0UserDetails currentUserDetails = (Auth0UserDetails) a.getPrincipal();
+			return currentUserDetails.getUsername();
+		}else {
+			return null;
+		}
 	}
 }

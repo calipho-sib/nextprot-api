@@ -178,8 +178,8 @@ function fetchdoc(jsondocurl) {
 			
 			var objects = Handlebars.compile($("#objects").html());
 			var objectsHTML = objects(data);
-			$("#objectdiv").html(objectsHTML);
-			$("#objectdiv").show();
+			//$("#objectdiv").html(objectsHTML);
+			//$("#objectdiv").show();
 			
 			$("#objectdiv a").each(function() {
 				$(this).click(function() {

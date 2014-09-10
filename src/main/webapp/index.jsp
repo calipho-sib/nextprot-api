@@ -1,7 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"
 	contentType="text/html;charset=utf-8"%>
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
 <title>neXtProt REST API</title>
@@ -100,7 +99,7 @@
 	<li class="nav-header">Objects</li>
 	{{#objects}}
 		<li><a href="#" id="{{jsondocId}}" rel="object">{{name}}</a></li>
-	{{/objects}}objectdiv
+	{{/objects}}
 </ul>
 </script>
 
@@ -361,7 +360,7 @@
 			<h4>Query parameters</h4>
 			{{#queryparameters}}
 				<div class="input-prepend">
-					<span style="text-align:left;" class="add-on span4">{{name}}</span><input type="text" class="span8" name="{{name}}" placeholder="{{name}}">
+					<span style="text-align:left;" class="add-on span4">{{name}}</span><input type="text" class="span8" name="{{name}}" value="{{this.allowedvalues}}" placeholder="{{name}}">
 				</div>
 			{{/queryparameters}}
 		</div>

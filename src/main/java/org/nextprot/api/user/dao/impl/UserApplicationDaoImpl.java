@@ -32,7 +32,7 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	public List<UserApplication> getUserApplications(String username) {
 
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-		namedParameters.addValue("username", username);
+		namedParameters.addValue("owner", username);
 		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(getSQLQuery("user-applications-by-username"), namedParameters, new UserApplicationRowMapper());
 	}
 
@@ -99,9 +99,9 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 		public UserApplication mapRow(ResultSet resultSet, int row) throws SQLException {
 
 			UserApplication app = new UserApplication();
-			app.setName(resultSet.getString("name"));
-			app.setDescription(resultSet.getString("description"));
-			app.setOrganization(resultSet.getString("organization"));
+			app.setName(resultSet.getString("application_name"));
+			app.setDescription(resultSet.getString("application_description"));
+			app.setOrganization(resultSet.getString("application_organization"));
 			return app;
 		}
 	}

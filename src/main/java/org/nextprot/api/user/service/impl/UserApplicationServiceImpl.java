@@ -1,5 +1,6 @@
 package org.nextprot.api.user.service.impl;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.nextprot.api.commons.exception.NPreconditions;
@@ -42,6 +43,11 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
 	}
 
-	
+	@Override
+	public List<UserApplication> getUserApplications(String username) {
+		List<UserApplication> apps = this.userApplicationDao.getUserApplications(username);
+		NPSecurityContext.checkUserAuthorization(apps); //will throw an exception if not authorized
+		return apps;
+	}
 
 }
