@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Lazy
 @Controller
-@Api(name = "Terminology", description = "Method to retrieve a complete or partial terminology")
-public class TermController {
-
+@Api(name = "Terminology", description = "Method to retrieve a complete or partial terminology", role = "rdf")
+public class TerminologyController {
 
 	@Autowired private TerminologyService terminologyService;
 

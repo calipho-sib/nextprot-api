@@ -1,0 +1,80 @@
+package org.nextprot.api.core.controller;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jsondoc.core.pojo.ApiDoc;
+import org.jsondoc.core.pojo.JSONDoc;
+import org.jsondoc.core.util.JSONDocUtils;
+import org.jsondoc.springmvc.controller.JSONDocController;
+import org.nextprot.api.core.service.export.impl.ExportServiceImpl;
+import org.nextprot.api.user.security.NPSecurityContext;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+public class JSONDocRoleController extends JSONDocController {
+
+	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
+
+	private String version;
+	private String basePath;
+	private List<String> packages;
+	private JSONDoc apiDoc;
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public void setBasePath(String basePath) {
+		this.basePath = basePath;
+	}
+
+	public void setPackages(List<String> packages) {
+		this.packages = packages;
+	}
+
+	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Override
+	public @ResponseBody JSONDoc getApi() {
+
+		synchronized (this) {
+			if (apiDoc == null) {
+				apiDoc = JSONDocUtils.getApiDoc(version, basePath, packages);
+			}
+		}
+
+		Set<String> contextRoles = NPSecurityContext.getCurrentUserRoles();
+		LOGGER.info("Context roles");
+		for (String role : contextRoles) {
+			LOGGER.info(role);
+		}
+
+		//Comparator to order by api name
+		Set<ApiDoc> contextApis = new TreeSet<ApiDoc>(new Comparator<ApiDoc>() {
+			public int compare(ApiDoc o1, ApiDoc o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		});
+		
+		Set<ApiDoc> apis = apiDoc.getApis();
+		for (ApiDoc api : apis) {
+			System.out.println(api.getName() + " " + api.getRole());
+			if (api.getRole().equals("ROLE_ANONYMOUS") || contextRoles.contains(api.getRole())) {
+				contextApis.add(api);
+			}
+		}
+
+		JSONDoc contextJSONDoc = new JSONDoc(version, basePath);
+		contextJSONDoc.setApis(contextApis);
+		contextJSONDoc.setObjects(apiDoc.getObjects());
+
+		return contextJSONDoc;
+
+	}
+}

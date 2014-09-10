@@ -96,7 +96,6 @@
 
 
 		<!-- SPRING OTHER -->
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -131,17 +130,14 @@
 			<version>1.0.1</version>
 		</dependency>
 
-
 		<!-- JWT -->
-
 		<dependency>
-		    <groupId>com.auth0</groupId>
-		    <artifactId>java-jwt</artifactId>
-		    <version>0.3</version>
+			<groupId>sib.calipho</groupId>
+			<artifactId>spring-auth0-core</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<!-- TEST -->
-
 		<dependency>
 			<groupId>com.googlecode.java-diff-utils</groupId>
 			<artifactId>diffutils</artifactId>
@@ -155,28 +151,11 @@
 		</dependency>
 
 
-
 		<!-- For the documentation using JSONDOC -->
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-			<version>0.9.8</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.jsondoc</groupId>
-			<artifactId>jsondoc-core</artifactId>
-			<version>1.0.1</version>
-		</dependency>
 		<dependency>
 			<groupId>org.jsondoc</groupId>
 			<artifactId>jsondoc-springmvc</artifactId>
-			<version>1.0.1</version>
+			<version>1.0.3</version>
 		</dependency>
 
 		<!-- AOP dependency -->
@@ -292,13 +271,6 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
-		</dependency>
-		
-		
-		<dependency>
-		    <groupId>sib.calipho</groupId>
-		    <artifactId>spring-security-auth0</artifactId>
-		    <version>0.0.1</version>
 		</dependency>
 
 		<dependency>

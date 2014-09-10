@@ -11,11 +11,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.core.domain.ProteinList;
-import org.nextprot.api.core.service.ProteinListService;
-import org.nextprot.api.core.service.ProteinListService.Operations;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
 import org.nextprot.api.solr.SearchResult.SearchResultItem;
+import org.nextprot.api.user.domain.UserList;
+import org.nextprot.api.user.service.UserListService;
+import org.nextprot.api.user.service.UserListService.Operations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -27,9 +27,9 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @DatabaseSetup(value = "ProteinListServiceTest.xml", type = DatabaseOperation.INSERT)
 public class ProteinListServiceTest extends DBUnitBaseTest {
 	@Autowired private DataSourceServiceLocator dsLocator;
-	@Autowired private ProteinListService proteinListService;
+	@Autowired private UserListService proteinListService;
 
-	private ProteinList proteinList;
+	private UserList proteinList;
 	
 	private static final String TEST_USER = "asfas";
 	private static final String TEST_PASSWORD = "12212";
@@ -52,7 +52,7 @@ public class ProteinListServiceTest extends DBUnitBaseTest {
 	
 	@Test
 	public void testCreateProteinList() {
-		ProteinList created = this.proteinListService.createProteinList(proteinList);
+		UserList created = this.proteinListService.createProteinList(proteinList);
 		long id = created.getId();
 		assertTrue(id ==  this.proteinListService.getProteinListById(id).getId());
 	}
@@ -62,7 +62,7 @@ public class ProteinListServiceTest extends DBUnitBaseTest {
 		Set<String> accs = new HashSet<String>();
 		accs.add("NX_P123");
 		
-		ProteinList l = this.proteinListService.createProteinList("awesome", null, accs, TEST_USER);
+		UserList l = this.proteinListService.createProteinList("awesome", null, accs, TEST_USER);
 		assertEquals("awesome", l.getName());
 	}
 	
@@ -85,16 +85,16 @@ public class ProteinListServiceTest extends DBUnitBaseTest {
 		Set<String> s1 = new HashSet<String>();
 		s1.add("NX_P123");
 		s1.add("NX_P456");
-		ProteinList l1 = this.proteinListService.createProteinList("cool1", null, s1, TEST_USER);
+		UserList l1 = this.proteinListService.createProteinList("cool1", null, s1, TEST_USER);
 				
 		Set<String> s2 = new HashSet<String>();
 		s2.add("NX_P123");
 		s2.add("NX_P321");
-		ProteinList l2 = this.proteinListService.createProteinList("cool2", null, s2, TEST_USER);
+		UserList l2 = this.proteinListService.createProteinList("cool2", null, s2, TEST_USER);
 		
-		ProteinList l3 = this.proteinListService.combine("coolio", null, TEST_USER, l1.getName(), l2.getName(), Operations.OR);
-		ProteinList l4 = this.proteinListService.combine("homie", null, TEST_USER, l1.getName(), l2.getName(), Operations.AND);
-		ProteinList l5 = this.proteinListService.combine("rap", null, TEST_USER, l2.getName(), l1.getName(), Operations.NOT_IN);
+		UserList l3 = this.proteinListService.combine("coolio", null, TEST_USER, l1.getName(), l2.getName(), Operations.OR);
+		UserList l4 = this.proteinListService.combine("homie", null, TEST_USER, l1.getName(), l2.getName(), Operations.AND);
+		UserList l5 = this.proteinListService.combine("rap", null, TEST_USER, l2.getName(), l1.getName(), Operations.NOT_IN);
 		
 		assertEquals("coolio", l3.getName());
 		assertEquals(3, l3.getAccessions().size());
@@ -114,7 +114,7 @@ public class ProteinListServiceTest extends DBUnitBaseTest {
 		Set<String> s1 = new HashSet<String>();
 		s1.add("NX_P123");
 		s1.add("NX_P456");
-		ProteinList l1 = this.proteinListService.createProteinList("cool1", null, s1, TEST_USER);
+		UserList l1 = this.proteinListService.createProteinList("cool1", null, s1, TEST_USER);
 		
 		Set<String> accs = new HashSet<String>();
 		this.proteinListService.addAccessions(l1.getId(), accs);
@@ -125,7 +125,7 @@ public class ProteinListServiceTest extends DBUnitBaseTest {
 		Set<String> s1 = new HashSet<String>();
 		s1.add("NX_P123");
 		s1.add("NX_P456");
-		ProteinList l1 = this.proteinListService.createProteinList("cool1", null, s1, TEST_USER);
+		UserList l1 = this.proteinListService.createProteinList("cool1", null, s1, TEST_USER);
 		
 		assertEquals("cool1", l1.getName());
 		assertEquals(2, l1.getAccessions().size());

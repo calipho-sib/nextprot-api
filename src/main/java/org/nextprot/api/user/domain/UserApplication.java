@@ -3,7 +3,7 @@ package org.nextprot.api.user.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-public class UserApplication implements Serializable {
+public class UserApplication implements Serializable, UserResource {
 
 	private static final long serialVersionUID = -4106316166685442169L;
 
@@ -16,10 +16,20 @@ public class UserApplication implements Serializable {
 	private String responsibleEmail;
 	private String website;
 
+	private String owner;
+
 	private String grants;
 	private String token;
 	private Date tokenValidity;
 	
+	public UserApplication(){
+		
+	}
+
+	public UserApplication(String s, int i, int i1){
+		this.name = "lol";
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -79,6 +89,11 @@ public class UserApplication implements Serializable {
 	}
 	public void setTokenValidity(Date tokenValidity) {
 		this.tokenValidity = tokenValidity;
+	}
+
+	@Override
+	public String getResourceOwner() {
+		return owner;
 	}
 
 }

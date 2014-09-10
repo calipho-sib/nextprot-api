@@ -98,7 +98,6 @@ function fetchdoc(jsondocurl) {
 					$("#maindiv").show();
 
 					var apis = Handlebars.compile($("#apis").html());
-					console.log($("#apis").html());
 					var apisHTML = apis(data);
 					$("#apidiv").html(apisHTML);
 					$("#apidiv").show();
@@ -199,18 +198,10 @@ $(document).ready(function() {
         callbackOnLocationHash: true
     });
 
-    var userProfile;
-    
     if(localStorage.getItem('userToken')){
-		$('.nickname').text("You are not anonymous");
-        $('.btn-logout').show();
-        $('.btn-login').hide();
-        $('body').removeClass().addClass("user");
+    	setUserState();
     }else {
-		$('.nickname').text("You are anonymous");
-        $('.btn-logout').hide();
-        $('.btn-login').show();
-        $('body').removeClass().addClass("anonymous");
+    	setAnonymousState();
     }
     
     $('.btn-login').click(function(e) {
@@ -219,46 +210,56 @@ $(document).ready(function() {
         if (err) {
           // Error callback
           console.log("There was an error");
-          alert("There was an error logging in");
+          alert("There was an error with the log in");
         } else {
-          // Success calback
 
+        	// Save the JWT token.
+            localStorage.setItem('userToken', token);
+            localStorage.setItem('nickname', profile.nickname);
+            
+            // Success calback
+        	
+        	/*
           widget.getClient().getDelegationToken('IckaP4QRfGSRGuVZfP9VJBUdlXtgcS4o', token,
             function(err, thirdPartyApiToken) {
               localStorage.setItem('thirdPartyApiToken', thirdPartyApiToken.id_token);
               console.log("Third party token", thirdPartyApiToken.id_token);
             });
-
-          // Save the JWT token.
-          localStorage.setItem('userToken', token);
-          $('body').removeClass().addClass(profile.roles[0]);
-
-          // Save the profile
-          userProfile = profile;
-
-          $('.btn-logout').show();
-          $('.btn-login').hide();
-
-          $('.login-box').hide();
-          $('.logged-in-box').show();
-          $('.nickname').text("Welcome " + profile.nickname);
+        	*/
+        	setUserState();
+          
         }
       });
     });
 
     $('.btn-logout').click(function(e) {
-        $('.btn-login').show();
     	localStorage.removeItem('userToken');
-	    userProfile = null;
-        $('.nickname').text("You are anonymous");
+        localStorage.removeItem('nickname');
+        setAnonymousState();
+    });
+    
+    function getJSONDOCAccordingToUser(){
+        checkURLExistence();
+    }
+    
+    function setUserState(){
+        $('.btn-logout').show();
+        $('.btn-login').hide();
+        $('.login-box').hide();
+        $('.logged-in-box').show();
+        $('.nickname').text("Welcome " + localStorage.getItem('nickname'));
+        getJSONDOCAccordingToUser();
+    }
 
+    function setAnonymousState(){
+        $('.btn-login').show();
+    	$('.nickname').text("You are anonymous");
         $('.btn-login').show();
         $('.btn-logout').hide();
-        $('body').removeClass().addClass("anonymous");
+        getJSONDOCAccordingToUser();
+    }
 
-    });
-
-
+    
     $('.btn-api').click(function(e) {
         // Just call your API here. The header will be sent
         $.ajax({

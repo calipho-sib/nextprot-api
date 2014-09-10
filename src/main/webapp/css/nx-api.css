@@ -103,6 +103,7 @@ ol.linenums li {
 .user .role-anonymous { display: block;}
 .user .role-user { display: block;}
 .user .role-admin { display: none;}
+.user .role-admin { display: none;}
 
 .admin .role-anonymous { display: block;}
 .admin .role-user { display: block;}

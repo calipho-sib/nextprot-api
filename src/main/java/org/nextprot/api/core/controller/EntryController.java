@@ -6,6 +6,7 @@ import java.util.List;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
+import org.jsondoc.core.pojo.ApiParamType;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.AntibodyMapping;
@@ -65,7 +66,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides and the list of the antibodies.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
 	public String exportEntry(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		List<Entry> proteinList = new ArrayList<Entry>();
 		proteinList.add(this.entryService.findEntry(entryName));
 		model.addAttribute("entryList", proteinList);
@@ -76,7 +77,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/protein-sequence", verb = ApiVerb.GET, description = "Gets the isoforms for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/protein-sequence")
 	public String getIsoforms(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		Entry dummy = new Entry(entryName);
 		dummy.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
@@ -86,7 +87,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/keyword", verb = ApiVerb.GET, description = "Gets the list of keywords for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/keyword")
 	public String getKeywords(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY, allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		List<Keyword> keywords = this.keywordService.findKeywordByMaster(entryName);
 		Entry entry = new Entry(entryName);
 		entry.setKeywords(keywords);
@@ -97,7 +98,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/overview", verb = ApiVerb.GET, description = "Gets an overview of the entry. This includes the protein existence, protein names, gene names, functional region names, cleaved region names, the families, the bio physical and chemical properties and the history. See the Overview object for more details.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/overview")
 	public String getOverview(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		Entry entry = new Entry(entryName);
 		entry.setOverview(overviewService.findOverviewByEntry(entryName));
 		model.addAttribute("entry", entry);
@@ -108,7 +109,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/antibody", verb = ApiVerb.GET, description = "Gets the list of antibodies for a given entry if any.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/antibody")
 	public String getAntibodyMapping(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry which contains antibodies. For example, insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry which contains antibodies. For example, insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		List<AntibodyMapping> mapping = this.antibodyService.findAntibodyMappingByUniqueName(entryName);
 		Entry entry = new Entry(entryName);
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
@@ -121,7 +122,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/peptide", verb = ApiVerb.GET, description = "Gets the list of peptides for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/peptide")
 	public String getPeptideMapping(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		List<PeptideMapping> mapping = this.peptideService.findPeptideMappingByUniqueName(entryName);
 		Entry entry = new Entry(entryName);
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
@@ -134,7 +135,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/identifier", verb = ApiVerb.GET, description = "Gets the list of identifiers for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/identifier")
 	public String getIdentifiers(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		List<Identifier> identifiers = this.identifierService.findIdentifiersByMaster(entryName);
 		Entry entry = new Entry(entryName);
 		entry.setIdentifiers(identifiers);
@@ -145,7 +146,7 @@ public class EntryController {
 	@RequestMapping("/entry/{entry}/genomic/chromosomal-location")
 	@ApiMethod(path = "/entry/{entry}/genomic/chromosomal-location", verb = ApiVerb.GET, description = "Gets the chromosomal locations of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	public String getChromosomalLocation(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		Entry entry = new Entry(entryName);
 		entry.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
 		model.addAttribute("entry", entry);
@@ -155,7 +156,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/genomic/genomic-mapping", verb = ApiVerb.GET, description = "Gets the genomic mappings for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/genomic/genomic-mapping")
 	public String getGenomicMapping(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		Entry dummy = new Entry(entryName);
 		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
@@ -165,7 +166,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/genomic", verb = ApiVerb.GET, description = "Gets the genomic mappings for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/genomic")
 	public String getGenomic(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		Entry dummy = new Entry(entryName);
 		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
 		dummy.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
@@ -176,7 +177,7 @@ public class EntryController {
 	
 	@ApiMethod(path = "/entry/{entry}/publication", verb = ApiVerb.GET, description = "Gets the publications of an given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/publication")
-	public String publications(@ApiParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+	public String publications(@ApiParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		List<Publication> publications = this.publicationService.findPublicationsByMasterUniqueName(entryName);
 		Entry entry = new Entry(entryName);
 		entry.setPublications(publications);
@@ -187,7 +188,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/xref", verb = ApiVerb.GET, description = "Gets the cross references of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/xref")
 	public String getXrefs(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) 
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) 
 			@PathVariable("entry") String entryName, Model model) {
 		List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster(entryName);
 		Entry dummy = new Entry(entryName);
@@ -200,7 +201,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/interaction", verb = ApiVerb.GET, description = "Gets the interactions of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/interaction")
 	public String interactions(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry for example: The cytoplasmic tyrosine-protein kinase BMX: NX_P51813", allowedvalues = { "NX_P51813"}) 
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry for example: The cytoplasmic tyrosine-protein kinase BMX: NX_P51813", paramType=ApiParamType.QUERY, allowedvalues = { "NX_P51813"}) 
 			@PathVariable("entry") String entryName, Model model) {
 		Entry dummy = new Entry(entryName);
 		dummy.setInteractions(interactionService.findInteractionsByEntry(entryName));
@@ -212,7 +213,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/annotation", verb = ApiVerb.GET, description = "Gets the annotations of a given entry grouped by category", produces = { MediaType.APPLICATION_XML_VALUE})
 	@RequestMapping("/entry/{entry}/annotation")
 	public String getEntryAnnotations(
-			@ApiParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) 
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) 
 			@PathVariable("entry") String entryName, Model model) {
 		List<Annotation> annotations = this.annotationService.findAnnotations(entryName);
 		

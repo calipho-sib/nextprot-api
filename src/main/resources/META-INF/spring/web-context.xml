@@ -33,7 +33,7 @@
 	<!-- <mvc:resources location="/, classpath:/META-INF/web-resources/" mapping="/resources/**"/> -->
 
 	<!-- Used for documentation -->
-	<bean id="documentationController" class="org.jsondoc.springmvc.controller.JSONDocController">
+	<bean id="documentationController" class="org.nextprot.api.core.controller.JSONDocRoleController">
 		<property name="version" value="0.1 beta" />
 		<property name="basePath" value="http://localhost:8080/nextprot-api"/>
 		<property name="packages">

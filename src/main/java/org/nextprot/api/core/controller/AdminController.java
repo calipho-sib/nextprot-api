@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.core.aop.requests.RequestInfo;
 import org.nextprot.api.core.aop.requests.RequestManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "admin/")
 //@PreAuthorize("hasRole('ROLE_ADMIN') ")
 // and #request.getRemoteAddr() == '127.0.0.1'
+@Api(name = "Admin", description = "Admin operations", role = "ROLE_ADMIN")
 public class AdminController {
 
 	private static final Log LOGGER = LogFactory.getLog(AdminController.class);
@@ -29,8 +33,10 @@ public class AdminController {
 	@Autowired private RequestManager clientRequestManager;
 	private CacheManager cacheManager;
 		
+
 	@ResponseBody
-	@RequestMapping(value = "cache/clear")
+	@RequestMapping(value = "/admin/cache/clear")
+	@ApiMethod(path = "cache/clear", verb = ApiVerb.GET, role = "admin", description = "Clears the cache")
 	public String clearCache(HttpServletRequest request) {
 
 		LOGGER.warn("Request to clear cache from " + request.getRemoteAddr());
@@ -114,30 +120,5 @@ public class AdminController {
 		return clientRequestManager.getLastFinishedRequest();
 	}
 	
-
-	/*Example on how you would do with a mapper
-	 * private static String convertRequestInfoToJsonString(Map<String, RequestInfo> controllersRequest){
-
-		ObjectMapper m = JsonUtils.getObjectMapper();
-		ObjectNode root = m.createObjectNode();
-
-		List<String> controllerMethods = new ArrayList<String>(controllersRequest.keySet());
-		Collections.sort(controllerMethods);
-		for (String controller : controllersRequest.keySet()) {
-
-			ArrayNode controllersArray = m.createArrayNode();
-			root.put(controller, controllersArray);
-			
-			RequestInfo info = controllersRequest.get(controller);
-			ObjectNode requestNode = m.createObjectNode();
-			for (String attribute : info.keySet())
-				requestNode.put(attribute, info.get(attribute));
-
-			controllersArray.add(requestNode);
-		}
-
-		return JsonUtils.getRepresentationInString(m, root);
-
-	}*/
 
 }

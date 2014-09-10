@@ -51,7 +51,7 @@ public class UserApplicationKeyGeneratorImpl implements UserApplicationKeyGenera
 		    ClaimSet claimSet = new ClaimSet();
 		    claimSet.setExp(24 * 60 * 60 * 365); // expire in 1 year
 		    
-			token = jwtSigner.encode(Algorithm.HS256, payload, "$", secret, claimSet);
+			token = jwtSigner.encode(Algorithm.HS256, payload, "payload", secret, claimSet);
 		
 		} catch (JsonProcessingException e) {
 			throw new NextProtException(e);
