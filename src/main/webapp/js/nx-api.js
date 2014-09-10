@@ -143,8 +143,20 @@ function fetchdoc(jsondocurl) {
 								
 								$('#testButton').button('loading');
 								
+								var suffix = "xml";
+								if (headers["Accept"] == "application/json")
+									suffix = "json"
+								if (headers["Accept"] == "text/turtle")
+									suffix = "ttl"
+								var nextprotURL = "http://"
+											+ window.location.hostname
+											+ ":8080/nextprot-api"
+											+ replacedPath
+											+ "."
+											+ suffix;
+								
 								var res = $.ajax({
-									url : model.basePath + replacedPath,
+									url : nextprotURL,
 									type: method.verb,
 									data: $("#inputJson").val(),
 									headers: headers,
