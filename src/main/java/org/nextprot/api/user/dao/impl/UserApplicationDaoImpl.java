@@ -6,12 +6,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NPreconditions;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.user.controller.UserListController;
 import org.nextprot.api.user.dao.UserApplicationDao;
-import org.nextprot.api.user.dao.impl.UserListDaoImpl.ProteinListRowMapper;
 import org.nextprot.api.user.domain.UserApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -29,6 +34,8 @@ import org.springframework.stereotype.Repository;
 @Lazy
 public class UserApplicationDaoImpl implements UserApplicationDao {
 
+	private final Log Logger = LogFactory.getLog(UserApplicationDaoImpl.class);
+	
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
 
@@ -118,11 +125,28 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	public UserApplication getUserApplication(long id) {
 
 		String sql = "select * from np_users.user_applications where application_id = :application_id";
-		
 		SqlParameterSource namedParams = new MapSqlParameterSource("application_id", id);
-		
 		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForObject(sql, namedParams, new UserApplicationRowMapper());
 
+	}
+
+	@Override
+	public void deleteApplication(Long id) {
+
+		String sql = "delete from np_users.user_applications where application_id = :application_id";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("application_id", id);
+		
+		int affectedRows = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(sql, params);
+		
+		
+		if(affectedRows != 1){
+			String msg = "Ups something wrong occured" + affectedRows + " rows were affected instead of only 1.";
+			Logger.error(msg);
+			throw new NextProtException(msg);
+		}
+		
 	}
 
 }

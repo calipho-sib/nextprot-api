@@ -59,5 +59,14 @@ public class UserApplicationController {
 		return userApp;
 	}
 
+	
+	@ApiMethod(path = "/user/applications/{id}", verb = ApiVerb.DELETE, description = "Deletes an application", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value = "/user/applications/{id}", method = { RequestMethod.DELETE })
+	public void deleteApplication(@PathVariable @ApiParam(name = "id", description = "The User application id", paramType=ApiParamType.PATH) Long id) {
+		UserApplication userApp = userApplicationService.getUserApplication(id);
+		NPSecurityContext.checkUserAuthorization(userApp);
+		userApplicationService.deleteApplication(id);
+	}
+
 
 }

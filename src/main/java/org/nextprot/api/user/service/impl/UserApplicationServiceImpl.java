@@ -50,4 +50,9 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 		return this.userApplicationDao.getUserApplication(id);
 	}
 
+	@Override
+	public void deleteApplication(Long id) {
+		this.userApplicationDao.deleteApplication(id);
+	}
+
 }
