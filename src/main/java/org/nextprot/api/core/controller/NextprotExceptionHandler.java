@@ -9,10 +9,13 @@ import org.nextprot.api.core.controller.error.RestErrorResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Advice class to deal with exception.
@@ -36,6 +39,20 @@ public class NextprotExceptionHandler {
 	@ExceptionHandler(ConcurrentRequestsException.class)
 	@ResponseBody
 	public RestErrorResponse handleTooManyConcurrentRequests(ConcurrentRequestsException ex) {
+		return getResponseError(ex.getLocalizedMessage());
+	}
+	
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(JsonProcessingException.class)
+	@ResponseBody
+	public RestErrorResponse handleWrongJson(JsonProcessingException ex) {
+		return getResponseError(ex.getLocalizedMessage());
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(HttpMediaTypeException.class)
+	@ResponseBody
+	public RestErrorResponse handleMediaTypeException(HttpMediaTypeException ex) {
 		return getResponseError(ex.getLocalizedMessage());
 	}
 
@@ -69,7 +86,7 @@ public class NextprotExceptionHandler {
 	@ResponseBody
 	public RestErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
 		ex.printStackTrace();
-		return getResponseError("The object already exists, choose a different name.");
+		return getResponseError("DataIntegrityViolationException: " + ex.getLocalizedMessage());
 	}
 
 	public RestErrorResponse getResponseError(String message) {

@@ -23,7 +23,6 @@ public class UserApplicationKeyGeneratorTest extends DBUnitBaseTest {
 	public void shouldGenerateAKeyForTheUserApplication() {
 
 		UserApplication app = new UserApplication();
-		app.setId("app-1");
 		app.setName("My test application");
 
 		String token = keyGenerator.generateToken(app);
@@ -35,7 +34,6 @@ public class UserApplicationKeyGeneratorTest extends DBUnitBaseTest {
 		try {
 			String decodedPayload = new String(Base64.decodeBase64(jwt[1]), "UTF-8");
 			// The payload should contain the id and name
-			assertTrue(decodedPayload.contains(app.getId()));
 			assertTrue(decodedPayload.contains(app.getName()));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
@@ -48,7 +46,6 @@ public class UserApplicationKeyGeneratorTest extends DBUnitBaseTest {
 	public void shouldEncodeAndDecodeUserApplication() {
 
 		UserApplication app = new UserApplication();
-		app.setId("app-1");
 		app.setName("My test application");
 
 		String token = keyGenerator.generateToken(app);

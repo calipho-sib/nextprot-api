@@ -7,6 +7,6 @@ import org.nextprot.api.user.domain.UserApplication;
 public interface UserApplicationService {
 
 	public List<UserApplication> getUserApplications(String username);
-	public UserApplication createUserApplication(UserApplication userApplicaiton);
+	public UserApplication createUserApplication(UserApplication userApplication);
 	
 }

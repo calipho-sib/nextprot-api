@@ -3,19 +3,37 @@ package org.nextprot.api.user.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+@JsonInclude(Include.NON_NULL)
+//@JsonIgnoreProperties({"foobar"})
 public class UserApplication implements Serializable, UserResource {
 
 	private static final long serialVersionUID = -4106316166685442169L;
 
-	private String id;
+	private long id;
+
+	@JsonProperty(required=true)
 	private String name;
+	
+	@JsonProperty(required=true)
 	private String description;
 
-	private String organization;
+	
+	private String organisation;
+	
+	@JsonProperty(required=true)
 	private String responsibleName;
+
+	@JsonProperty(required=true)
 	private String responsibleEmail;
+
+	
 	private String website;
 
+	@JsonProperty(required=true)
 	private String owner;
 
 	private String grants;
@@ -42,12 +60,6 @@ public class UserApplication implements Serializable, UserResource {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public String getOrganization() {
-		return organization;
-	}
-	public void setOrganization(String organization) {
-		this.organization = organization;
-	}
 	public String getResponsibleName() {
 		return responsibleName;
 	}
@@ -72,12 +84,7 @@ public class UserApplication implements Serializable, UserResource {
 	public void setGrants(String grants) {
 		this.grants = grants;
 	}
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
+	
 	public String getToken() {
 		return token;
 	}
@@ -94,6 +101,30 @@ public class UserApplication implements Serializable, UserResource {
 	@Override
 	public String getResourceOwner() {
 		return owner;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getOrganisation() {
+		return organisation;
+	}
+
+	public void setOrganisation(String organisation) {
+		this.organisation = organisation;
 	}
 
 }

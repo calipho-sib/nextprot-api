@@ -1,9 +1,7 @@
 package org.nextprot.api.user.service.impl;
 
 import java.util.List;
-import java.util.UUID;
 
-import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.user.dao.UserApplicationDao;
 import org.nextprot.api.user.domain.UserApplication;
 import org.nextprot.api.user.security.NPSecurityContext;
@@ -27,15 +25,11 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 	@Transactional
 	public UserApplication createUserApplication(UserApplication userApplication) {
 		
-		//Check that the id is not set
-		NPreconditions.checkNull(userApplication.getId(), "application not valid");
-		
 		//Check that the current user is allowed to perform the operation
 		NPSecurityContext.checkUserAuthorization(userApplication);
 		
-		//Should we use the UUID type? pros / cons?
-		userApplication.setId(UUID.randomUUID().toString());
-		keyGenerator.generateToken(userApplication);
+		String token = keyGenerator.generateToken(userApplication);
+		userApplication.setToken(token);
 		
 		userApplicationDao.createUserApplication(userApplication);
 		

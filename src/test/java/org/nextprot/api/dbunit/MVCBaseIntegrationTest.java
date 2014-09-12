@@ -49,7 +49,6 @@ public abstract class MVCBaseIntegrationTest extends AbstractIntegrationBaseTest
 	protected String generateTestToken(){
 		
 		UserApplication ua = new UserApplication();
-		ua.setId("SOME-RANDOM-ID");
 		ua.setName("unit-test-application");
 		
 		return keyGenerator.generateToken(ua);

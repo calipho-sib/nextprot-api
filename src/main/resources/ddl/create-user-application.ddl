@@ -2,16 +2,16 @@
 /* Table Name: user_applications */
 /**********************************/
 CREATE TABLE np_users.user_applications(
-  application_id BIGINT NOT NULL,
+  application_id BIGSERIAL NOT NULL,
   application_name VARCHAR(100) NOT NULL,
-  application_description VARCHAR(100) NOT NULL,
-  application_organisation VARCHAR(100) NOT NULL,
-  application_responsible_name VARCHAR(100) NOT NULL,
-  application_responsible_email VARCHAR(100) NOT NULL,
-  application_website VARCHAR(100),
-  application_owner VARCHAR(100),
-  application_token VARCHAR(512),
-  application_state VARCHAR(512)
+  description VARCHAR(100) NOT NULL,
+  organisation VARCHAR(100),
+  responsible_name VARCHAR(100) NOT NULL,
+  responsible_email VARCHAR(100) NOT NULL,
+  website VARCHAR(100),
+  owner VARCHAR(100) NOT NULL,
+  token VARCHAR(1024) NOT NULL,
+  state VARCHAR(10)
 );
 
 ALTER TABLE np_users.user_applications ADD CONSTRAINT PK_user_applications PRIMARY KEY (application_id);

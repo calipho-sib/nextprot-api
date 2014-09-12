@@ -19,6 +19,8 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -39,44 +41,42 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	@Override
 	public void createUserApplication(final UserApplication userApplication) {
 
+		final String INSERT_SQL = getSQLQuery("insert-user-application");
+		
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
+		
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		jdbcTemplate.update(
+		    new PreparedStatementCreator() {
+		        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+		            PreparedStatement ps =
+		                connection.prepareStatement(INSERT_SQL, new String[] {"application_id"});
+		            ps.setString(1, userApplication.getName());
+		            ps.setString(2, userApplication.getDescription());
+		            ps.setString(3, userApplication.getOrganisation());
+		            ps.setString(4, userApplication.getResponsibleEmail());
+		            ps.setString(5, userApplication.getResponsibleName());
+		            ps.setString(6, userApplication.getOwner());
+		        	ps.setString(7, userApplication.getToken());
+	
+		            return ps;
+		        }
+		    },
+		    keyHolder);
+		
+		long applicationId =  keyHolder.getKey().longValue();
+		userApplication.setId(applicationId);
 
-		jdbcTemplate.update(new PreparedStatementCreator() {
-			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-				PreparedStatement ps = connection.prepareStatement(getSQLQuery("advanced-user-query-insert"));
-				ps.setString(1, userApplication.getId());
-				return ps;
-			}
-		});
 
 	}
 
 	@Override
 	public void updateUserApplication(final UserApplication userApplication) {
 
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(this.dsLocator.getUserDataSource());
-
-		jdbcTemplate.update(new PreparedStatementCreator() {
-			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-				PreparedStatement ps = connection.prepareStatement(getSQLQuery("advanced-user-query-update"));
-				ps.setString(1, userApplication.getId());
-				return ps;
-			}
-		});
 	}
 
 	@Override
 	public void deleteUserApplication(final UserApplication userApplication) {
-
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(this.dsLocator.getUserDataSource());
-
-		jdbcTemplate.update(new PreparedStatementCreator() {
-			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-				PreparedStatement ps = connection.prepareStatement(getSQLQuery("user-application-delete"));
-				ps.setString(1, userApplication.getId());
-				return ps;
-			}
-		});
 
 	}
 
@@ -100,8 +100,8 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 
 			UserApplication app = new UserApplication();
 			app.setName(resultSet.getString("application_name"));
-			app.setDescription(resultSet.getString("application_description"));
-			app.setOrganization(resultSet.getString("application_organization"));
+			app.setDescription(resultSet.getString("description"));
+			app.setOrganisation(resultSet.getString("organisation"));
 			return app;
 		}
 	}

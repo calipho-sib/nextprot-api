@@ -39,7 +39,6 @@ public class UserApplicationKeyGeneratorImpl implements UserApplicationKeyGenera
 
 		Map<String, String> map = new HashMap<String, String>();
 		//Don't put all fields to reduce the size of the token
-		map.put("id", application.getId());
 		map.put("name", application.getName());
 
 		String payload, token;
@@ -77,7 +76,6 @@ public class UserApplicationKeyGeneratorImpl implements UserApplicationKeyGenera
 
 			//Don't put all fields to reduce the size of the token
 			UserApplication app = new UserApplication();
-			app.setId(map.get("id"));
 			app.setName(map.get("name"));
 
 			return app;
