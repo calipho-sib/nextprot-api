@@ -6,16 +6,21 @@ http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 http://www.springframework.org/schema/security
 http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-	<security:global-method-security pre-post-annotations="enabled"/>
+	<security:global-method-security
+		pre-post-annotations="enabled" />
 
-	<bean id="auth0EntryPoint" class="sib.calipho.spring.security.auth0.Auth0AuthenticationEntryPoint" />
+	<bean id="auth0EntryPoint"
+		class="sib.calipho.spring.security.auth0.Auth0AuthenticationEntryPoint" />
 
-	<security:http auto-config="true" use-expressions="true" pattern="/**" create-session="stateless"  entry-point-ref="auth0EntryPoint">
+	<security:http auto-config="true" use-expressions="true"
+		pattern="/**" create-session="stateless" entry-point-ref="auth0EntryPoint">
 		<security:intercept-url pattern="/**" access="permitAll" />
-		<security:custom-filter ref="auth0Filter" after="SECURITY_CONTEXT_FILTER" ></security:custom-filter>
+		<security:custom-filter ref="auth0Filter"
+			after="SECURITY_CONTEXT_FILTER"></security:custom-filter>
 	</security:http>
 
-	<bean id="auth0Filter"	class="sib.calipho.spring.security.auth0.Auth0AuthenticationFilter">
+	<bean id="auth0Filter"
+		class="sib.calipho.spring.security.auth0.Auth0AuthenticationFilter">
 		<property name="entryPoint" ref="auth0EntryPoint"></property>
 	</bean>
 
@@ -24,9 +29,16 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 		<property name="clientSecret" value="${auth0.clientSecret}"></property>
 		<property name="clientId" value="${auth0.clientId}"></property>
 	</bean>
-	
+
+	<bean id="auth0TokenHelper"
+		class="sib.calipho.spring.security.auth0.impl.Auth0TokenHelperImpl">
+		<property name="clientSecret" value="${auth0.clientSecret}"></property>
+		<property name="clientId" value="${auth0.clientId}"></property>
+	</bean>
+
 	<security:authentication-manager alias="authenticationManager">
-		<security:authentication-provider ref="auth0AuthenticationProvider" />
+		<security:authentication-provider
+			ref="auth0AuthenticationProvider" />
 	</security:authentication-manager>
 
 </beans>

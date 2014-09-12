@@ -38,7 +38,7 @@ public class UserListServiceImpl implements UserListService {
 	@Autowired
 	private UserListDao proteinListDao;
 	@Autowired
-	private SolrService queryService;
+	private SolrService solrService;
 	@Autowired
 	private SolrConfiguration configuration;
 
@@ -186,7 +186,7 @@ public class UserListServiceImpl implements UserListService {
 		query.rows(50);
 		// Query query = this.queryService.buildQuery(index, "simple", queryString, null, null, null, "0", "50", null, new String[0]);
 
-		return this.queryService.executeByIdQuery(query, fieldNames);
+		return this.solrService.executeByIdQuery(query, fieldNames);
 	}
 
 	@Override

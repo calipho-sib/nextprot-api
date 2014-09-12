@@ -3,18 +3,18 @@ package org.nextprot.api.user.domain;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonInclude(Include.NON_NULL)
-//@JsonIgnoreProperties({"foobar"})
+//@JsonInclude(Include.NON_NULL)
+@JsonIgnoreProperties({"resourceOwner"})
 public class UserApplication implements Serializable, UserResource {
 
 	private static final long serialVersionUID = -4106316166685442169L;
 
 	private long id;
 
+	//TODO doesn't look like it is working ... (should throw an exception before getting in the databse)
 	@JsonProperty(required=true)
 	private String name;
 	

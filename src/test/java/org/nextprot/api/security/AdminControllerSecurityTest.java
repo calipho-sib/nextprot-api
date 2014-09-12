@@ -3,17 +3,20 @@ package org.nextprot.api.security;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Test;
-import org.nextprot.api.dbunit.MVCBaseIntegrationTest;
-import org.nextprot.api.user.domain.UserApplication;
+import org.nextprot.api.dbunit.MVCBaseSecurityIntegrationTest;
 import org.springframework.http.MediaType;
 
-public class AdminControllerSecurityTest extends MVCBaseIntegrationTest {
+public class AdminControllerSecurityTest extends MVCBaseSecurityIntegrationTest {
 
+	private String content = "{\"name\":\"test\"}";
+	
 	@Test
 	public void shouldAskForCredentials() throws Exception {
 
-		this.mockMvc.perform(post("/user/dani/applications.json").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content("{\"name\":\"name\"}")).andExpect(
+		this.mockMvc.perform(post("/user/dani/applications").contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON).content(content)).andExpect(
 				status().isForbidden());
 
 	}
@@ -22,7 +25,7 @@ public class AdminControllerSecurityTest extends MVCBaseIntegrationTest {
 	public void showReturn401ForAnInvalidToken() throws Exception {
 
 		this.mockMvc.perform(
-				post("/user/dani/applications.json").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer a.b.c").accept(MediaType.APPLICATION_JSON).content("{\"name\":\"name\"}"))
+				post("/user/dani/applications").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer a.b.c").accept(MediaType.APPLICATION_JSON).content(content))
 				.andExpect(status().isUnauthorized());
 
 	}
@@ -30,20 +33,12 @@ public class AdminControllerSecurityTest extends MVCBaseIntegrationTest {
 	@Test
 	public void showReturn200ForAValidToken() throws Exception {
 
-		String token = generateTestToken();
+		String token = generateTokenWithExpirationDate(1, TimeUnit.DAYS);
 		
 		this.mockMvc.perform(
 				post("/user/dani/applications.json").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token).accept(MediaType.APPLICATION_JSON)
-						.content("{\"name\":\"name\"}")).andExpect(status().isOk());
+						.content(content)).andExpect(status().isOk());
 	}
 	
-	@Test
-	public void decodeToken(){
-		String tkn = "eyJ0eXBlIjoiSldUIiwiYWxnIjoiSFMyNTYifQ.eyJwYXlsb2FkIjoie1wiaWRcIjpcIlNPTUUtUkFORE9NLUlEXCIsXCJuYW1lXCI6XCJ1bml0LXRlc3QtYXBwbGljYXRpb25cIn0iLCJleHAiOjE0NDEyMDE1NTh9.WzmYPE05bxaP2sn1XMceHfIInzwUXcvillYA_FgoEkw";
-		UserApplication a = keyGenerator.decodeToken(tkn);
-		System.out.println("name:" + a.getName());
-		System.out.println("id:" + a.getId());
-		
-	}
-
+	
 }

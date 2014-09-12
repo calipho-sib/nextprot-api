@@ -17,28 +17,47 @@ import org.springframework.stereotype.Component;
 public class SolrConnectionFactory {
 	private Map<String, HttpSolrServer> serverMap;
 	private final String baseSolrUrl;
+	private final List<SolrIndex> indexes;
 	
 	private final char DASH = '/';
 	
 	@Autowired
 	public SolrConnectionFactory(final SolrConfiguration solrConfiguration, @Value("${solr.url}") final String baseSolrUrl) {
+		indexes = solrConfiguration.getIndexes();
 
 		if(baseSolrUrl.charAt(baseSolrUrl.length()-1) != DASH)
 			this.baseSolrUrl = baseSolrUrl + DASH;
 		else this.baseSolrUrl = baseSolrUrl;
 		
-		final List<SolrIndex> indexes = solrConfiguration.getIndexes();
-		this.serverMap = new HashMap<String, HttpSolrServer>();
+	}
+	
+	public SolrServer getServer(String indexName) {
 
+		//optimise starting up
+		synchronized (this) {
+			if(serverMap == null){
+				initializeServerMap();
+			}
+		}
+		
+		if(this.serverMap.containsKey(indexName)) 
+			return this.serverMap.get(indexName);
+		else throw new SearchConfigException("Index "+indexName+" is not available");
+
+		
+	}
+	
+	
+
+	/**
+	 * Initialize the map only when needed to optimise the start up of the program
+	 */
+	private void initializeServerMap(){
+		this.serverMap = new HashMap<String, HttpSolrServer>();
 		for(SolrIndex index : indexes) {
 			this.serverMap.put(index.getName(), new HttpSolrServer(this.baseSolrUrl+index.getUrl()));
 		}
 	}
 	
-	public SolrServer getServer(String indexName) {
-		if(this.serverMap.containsKey(indexName)) 
-			return this.serverMap.get(indexName);
-		else throw new SearchConfigException("Index "+indexName+" is not available");
-	}
 	
 }

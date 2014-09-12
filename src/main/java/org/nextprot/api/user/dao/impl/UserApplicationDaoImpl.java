@@ -99,9 +99,15 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 		public UserApplication mapRow(ResultSet resultSet, int row) throws SQLException {
 
 			UserApplication app = new UserApplication();
+			app.setId(resultSet.getLong("application_id"));
 			app.setName(resultSet.getString("application_name"));
 			app.setDescription(resultSet.getString("description"));
+			app.setOwner(resultSet.getString("owner"));
 			app.setOrganisation(resultSet.getString("organisation"));
+			app.setResponsibleEmail(resultSet.getString("responsible_email"));
+			app.setResponsibleName(resultSet.getString("responsible_name"));
+
+        	
 			return app;
 		}
 	}

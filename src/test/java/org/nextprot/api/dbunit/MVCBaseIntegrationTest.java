@@ -3,8 +3,6 @@ package org.nextprot.api.dbunit;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import org.junit.Before;
-import org.nextprot.api.user.domain.UserApplication;
-import org.nextprot.api.user.security.UserApplicationKeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.annotation.DirtiesContext;
@@ -29,8 +27,6 @@ import org.springframework.web.context.WebApplicationContext;
 @DirtiesContext
 public abstract class MVCBaseIntegrationTest extends AbstractIntegrationBaseTest {
 
-	@Autowired
-	protected UserApplicationKeyGenerator keyGenerator;
 	
 	@Autowired
 	protected WebApplicationContext wac;
@@ -45,14 +41,6 @@ public abstract class MVCBaseIntegrationTest extends AbstractIntegrationBaseTest
 		this.mockMvc = webAppContextSetup(this.wac).addFilters(this.springSecurityFilterChain).build();
 	}
 	
-	
-	protected String generateTestToken(){
-		
-		UserApplication ua = new UserApplication();
-		ua.setName("unit-test-application");
-		
-		return keyGenerator.generateToken(ua);
-	}
 	
 
 }

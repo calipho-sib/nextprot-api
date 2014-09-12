@@ -1,4 +1,4 @@
-select application_id, application_name
+select application_id, application_name, description, owner, organisation, responsible_email, responsible_name
 from np_users.user_applications
-where application_owner =  :owner
+where owner =  :owner
 order by application_name;
