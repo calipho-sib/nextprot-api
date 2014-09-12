@@ -5,6 +5,8 @@ import java.util.List;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiBodyObject;
 import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiParam;
+import org.jsondoc.core.pojo.ApiParamType;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.user.domain.UserApplication;
 import org.nextprot.api.user.security.NPSecurityContext;
@@ -13,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -45,6 +48,15 @@ public class UserApplicationController {
 	public UserApplication createApplication(@RequestBody @ApiBodyObject UserApplication userApplication) {
 		userApplication.setOwner(NPSecurityContext.getCurrentUser());
 		return userApplicationService.createUserApplication(userApplication);
+	}
+	
+	@ApiMethod(path = "/user/applications/{id}", verb = ApiVerb.GET, description = "Gets the application of the current user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value = "/user/applications/{id}", method = { RequestMethod.GET })
+	@ResponseBody
+	public UserApplication getApplication(@PathVariable @ApiParam(name = "id", description = "The User application id", paramType=ApiParamType.PATH) Long id) {
+		UserApplication userApp = userApplicationService.getUserApplication(id);
+		NPSecurityContext.checkUserAuthorization(userApp);
+		return userApp;
 	}
 
 

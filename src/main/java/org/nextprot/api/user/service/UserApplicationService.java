@@ -8,5 +8,6 @@ public interface UserApplicationService {
 
 	public List<UserApplication> getUserApplications(String username);
 	public UserApplication createUserApplication(UserApplication userApplication);
+	public UserApplication getUserApplication(long id);
 	
 }

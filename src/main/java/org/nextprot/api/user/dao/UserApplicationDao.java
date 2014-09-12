@@ -15,5 +15,7 @@ public interface UserApplicationDao {
 	void deleteUserApplication(UserApplication userApplication);
 
 	UserApplication getUserApplicationById(long id);
+
+	UserApplication getUserApplication(long id);
 	
 }

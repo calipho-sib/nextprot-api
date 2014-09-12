@@ -11,6 +11,7 @@ import java.util.List;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.user.dao.UserApplicationDao;
+import org.nextprot.api.user.dao.impl.UserListDaoImpl.ProteinListRowMapper;
 import org.nextprot.api.user.domain.UserApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -18,6 +19,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -110,6 +112,17 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
         	
 			return app;
 		}
+	}
+
+	@Override
+	public UserApplication getUserApplication(long id) {
+
+		String sql = "select * from np_users.user_applications where application_id = :application_id";
+		
+		SqlParameterSource namedParams = new MapSqlParameterSource("application_id", id);
+		
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForObject(sql, namedParams, new UserApplicationRowMapper());
+
 	}
 
 }

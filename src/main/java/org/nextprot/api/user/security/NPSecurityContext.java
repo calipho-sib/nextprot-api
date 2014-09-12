@@ -55,7 +55,7 @@ public class NPSecurityContext {
 		}
 
 		if (!userResource.getResourceOwner().equals(securityUserName)) {
-			throw new NotAuthorizedException(securityUserName + " is not authorized to modify this resource");
+			throw new NotAuthorizedException(securityUserName + " is not authorized to access this resource");
 		}
 
 	}

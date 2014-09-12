@@ -5,8 +5,10 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.ConcurrentRequestsException;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.core.controller.error.RestErrorResponse;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeException;
@@ -28,38 +30,54 @@ public class NextprotExceptionHandler {
 
 	private static final Log LOGGER = LogFactory.getLog(NextprotExceptionHandler.class);
 
+	
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ExceptionHandler(NotAuthorizedException.class)
+	@ResponseBody
+	public RestErrorResponse handle(NotAuthorizedException ex) {
+		return getResponseError(ex.getLocalizedMessage());
+	}
+
+	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(NextProtException.class)
 	@ResponseBody
-	public RestErrorResponse handleNextprotException(NextProtException ex) {
+	public RestErrorResponse handle(NextProtException ex) {
 		return getResponseError(ex.getLocalizedMessage());
 	}
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(ConcurrentRequestsException.class)
 	@ResponseBody
-	public RestErrorResponse handleTooManyConcurrentRequests(ConcurrentRequestsException ex) {
+	public RestErrorResponse handle(ConcurrentRequestsException ex) {
 		return getResponseError(ex.getLocalizedMessage());
 	}
 	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(JsonProcessingException.class)
 	@ResponseBody
-	public RestErrorResponse handleWrongJson(JsonProcessingException ex) {
+	public RestErrorResponse handle(JsonProcessingException ex) {
 		return getResponseError(ex.getLocalizedMessage());
 	}
 
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(HttpMediaTypeException.class)
 	@ResponseBody
-	public RestErrorResponse handleMediaTypeException(HttpMediaTypeException ex) {
+	public RestErrorResponse handle(HttpMediaTypeException ex) {
 		return getResponseError(ex.getLocalizedMessage());
 	}
-
+	
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(EmptyResultDataAccessException.class)
+	@ResponseBody
+	public RestErrorResponse handle(EmptyResultDataAccessException ex) {
+		return getResponseError("Resource not found");
+	}
+	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
-	public RestErrorResponse handleException(Exception ex) {
+	public RestErrorResponse handle(Exception ex) {
 		String code = Integer.toHexString(ex.getLocalizedMessage().hashCode() + ex.getClass().getCanonicalName().hashCode()).toUpperCase();
 		LOGGER.error("unexpected error occured:" + code + "\t" + ex.getLocalizedMessage());
 		ex.printStackTrace();
@@ -69,14 +87,14 @@ public class NextprotExceptionHandler {
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(EntryNotFoundException.class)
 	@ResponseBody
-	public RestErrorResponse handleException(EntryNotFoundException ex) {
+	public RestErrorResponse handle(EntryNotFoundException ex) {
 		return getResponseError(ex.getLocalizedMessage());
 	}
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler(AccessDeniedException.class)
 	@ResponseBody
-	public RestErrorResponse handleAccessDataException(AccessDeniedException ex) {
+	public RestErrorResponse handle(AccessDeniedException ex) {
 		ex.printStackTrace();
 		return getResponseError(ex.getLocalizedMessage());
 	}
@@ -84,7 +102,7 @@ public class NextprotExceptionHandler {
 	@ResponseStatus(HttpStatus.CONFLICT)
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	@ResponseBody
-	public RestErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+	public RestErrorResponse handle(DataIntegrityViolationException ex) {
 		ex.printStackTrace();
 		return getResponseError("DataIntegrityViolationException: " + ex.getLocalizedMessage());
 	}
