@@ -1,9 +1,10 @@
 package org.nextprot.api.user.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -46,4 +47,18 @@ public class UserApplicationControllerTest extends MVCBaseSecurityIntegrationTes
 
 	}
 
+	
+	@Test
+	public void shouldBEForbidderApplication() throws Exception {
+		
+		UserApplication ua =new UserApplication();
+		ua.setOwner("zzzzz");
+		
+        when(applicationService.getUserApplication(isA(Long.class))).thenReturn(ua);
+
+		String token = generateTokenWithExpirationDate(1, TimeUnit.DAYS, Arrays.asList(new String[] {"USER_ROLE"}));
+		
+		this.mockMvc.perform(get("/user/applications/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token).accept(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+
+	}
 }
