@@ -30,7 +30,7 @@ public abstract class MVCBaseSecurityIntegrationTest extends MVCBaseIntegrationT
 	
 
 	@Autowired
-	private FilterChainProxy springSecurityFilterChain;
+	protected FilterChainProxy springSecurityFilterChain;
 
 	@Autowired
 	private Auth0TokenHelper<Object> tokenHelper;
