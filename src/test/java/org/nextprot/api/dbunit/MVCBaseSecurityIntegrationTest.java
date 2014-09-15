@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -40,9 +41,10 @@ public abstract class MVCBaseSecurityIntegrationTest extends MVCBaseIntegrationT
 		this.mockMvc = webAppContextSetup(this.wac).addFilters(this.springSecurityFilterChain).build();
 	}
 	
-	protected String generateTokenWithExpirationDate(int value, TimeUnit time) throws Exception {
-		Map<String, String> map = new HashMap<String, String>();
+	protected String generateTokenWithExpirationDate(int value, TimeUnit time, List<String> roles) throws Exception {
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("email", "auth0@test.com");
+		map.put("roles", roles);
 		return tokenHelper.generateToken(map, (int) time.toSeconds(value));
 
 	}

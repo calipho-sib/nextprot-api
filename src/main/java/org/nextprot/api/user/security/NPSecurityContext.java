@@ -53,8 +53,12 @@ public class NPSecurityContext {
 		} else {
 			securityUserName = a.getPrincipal().toString();
 		}
+		
+		if(securityUserName == null){
+			throw new NotAuthorizedException("Security user name not set!!!");
+		}
 
-		if (!userResource.getResourceOwner().equals(securityUserName)) {
+		if (!securityUserName.equals(userResource.getResourceOwner())) {
 			throw new NotAuthorizedException(securityUserName + " is not authorized to access this resource");
 		}
 

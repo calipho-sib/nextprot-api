@@ -3,6 +3,7 @@ package org.nextprot.api.security;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class AdminControllerSecurityTest extends MVCBaseSecurityIntegrationTest 
 	@Test
 	public void showReturn200ForAValidToken() throws Exception {
 
-		String token = generateTokenWithExpirationDate(1, TimeUnit.DAYS);
+		String token = generateTokenWithExpirationDate(1, TimeUnit.DAYS, Arrays.asList(new String[]{"ROLE_USER"}));
 		
 		this.mockMvc.perform(
 				post("/user/dani/applications.json").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token).accept(MediaType.APPLICATION_JSON)

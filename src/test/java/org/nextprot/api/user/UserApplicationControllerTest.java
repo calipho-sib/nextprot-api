@@ -3,6 +3,7 @@ package org.nextprot.api.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
@@ -14,7 +15,7 @@ public class UserApplicationControllerTest extends MVCBaseSecurityIntegrationTes
 	@Test
 	public void shouldCreateAUserApplication() throws Exception {
 		
-		String token = generateTokenWithExpirationDate(1, TimeUnit.DAYS);
+		String token = generateTokenWithExpirationDate(1, TimeUnit.DAYS, Arrays.asList(new String[] {"USER_ROLE"}));
 		this.mockMvc.perform(post("/user/applications").contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token).accept(MediaType.APPLICATION_JSON)
 						.content("{\"name\":\"name\"}")).andExpect(status().isOk());
 
