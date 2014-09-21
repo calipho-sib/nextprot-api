@@ -30,7 +30,7 @@ public class SchemaServiceImpl implements SchemaService {
 
 	@Override
 	public List<OWLAnnotation> findAllAnnotation() {
-		return schemaDao.findAllAnnotation();
+		return schemaDao.findAllAnnotation();		
 	}
 
 	@Override

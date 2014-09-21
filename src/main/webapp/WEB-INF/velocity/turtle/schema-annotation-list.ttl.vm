@@ -1,148 +1,23 @@
 #if($prefix)
 #parse("turtle/prefix.ttl.vm")
 #end
+
 #
 # Define super classes for annotations
 #
-:Annotation
-      rdf:type owl:Class ;
-      rdfs:comment "All facts of a protein."^^xsd:string ;
-      rdfs:label "all annotation "^^xsd:string ;
-      rdfs:seeAlso "http://www.nextprot.org/manual/Annotation"^^xsd:anyURI ;
-      rdfs:subClassOf owl:Thing;
-      .
-
-:GeneralAnnotation
-      rdf:type owl:Class ;
-      rdfs:comment "General annotation of a protein."^^xsd:string ;
-      rdfs:label "general annotation "^^xsd:string ;
-      rdfs:seeAlso "http://www.nextprot.org/manual/GeneralAnnotation"^^xsd:anyURI ;
-      rdfs:subClassOf :Annotation;
-      .
-      
-:OntologyAnnotation      
-      rdf:type owl:Class ;
-      rdfs:comment "Ontology annotation of a protein."^^xsd:string ;
-      rdfs:label "ontology annotation "^^xsd:string ;
-      rdfs:seeAlso "http://www.nextprot.org/manual/OntologyAnnotation"^^xsd:anyURI ;
-      rdfs:subClassOf :GeneralAnnotation;
-      .
-
-:Feature
-      rdf:type owl:Class ;
-      rdfs:comment "General sequence annotation of a protein."^^xsd:string ;
-      rdfs:label "general sequence annotation "^^xsd:string ;
-      rdfs:seeAlso "http://www.nextprot.org/manual/Feature"^^xsd:anyURI ;
-      rdfs:subClassOf :Annotation;
-      .
-      
-:AminoAcidModification
-      rdf:type owl:Class ;
-      rdfs:comment "describe a amino acid modification annotation  of a protein."^^xsd:string ;
-      rdfs:label "describe a amino acid modification annotation "^^xsd:string ;
-      rdfs:seeAlso "http://www.nextprot.org/manual/AminoAcidModification"^^xsd:anyURI ;
-      rdfs:subClassOf :Feature;
-      :notIn :SecondaryStructure, :Site, :MisdefinedRegion, :Variant, :MoleculeProcessing, :RegionOfInterest;
-      .
-
-:MoleculeProcessing
-      rdf:type owl:Class ;
-      rdfs:comment "describe a molecule processing annotation  of a protein."^^xsd:string ;
-      rdfs:label "describe a molecule processing annotation "^^xsd:string ;
-      rdfs:seeAlso "http://www.nextprot.org/manual/MoleculeProcessing"^^xsd:anyURI ;
-      rdfs:subClassOf :Feature;
-      :notIn :AminoAcidModification, :SecondaryStructure, :Site, :MisdefinedRegion, :Variant, :RegionOfInterest;
-      .
-
-:MisdefinedRegion
-      rdf:type owl:Class ;
-      rdfs:comment "describe a misdefined region annotation  of a protein."^^xsd:string ;
-      rdfs:label "describe a misdefined region annotation "^^xsd:string ;
-      rdfs:seeAlso "http://www.nextprot.org/manual/MisdefinedRegion"^^xsd:anyURI ;
-      rdfs:subClassOf :Feature;
-      :notIn :AminoAcidModification, :SecondaryStructure, :Site, :Variant, :MoleculeProcessing, :RegionOfInterest;
-      .
-      
-:SecondaryStructure
-      rdf:type owl:Class ;
-      rdfs:comment "describe a secondary structure annotation  of a protein."^^xsd:string ;
-      rdfs:label "describe a secondary structure annotation "^^xsd:string ;
-      rdfs:seeAlso "http://www.nextprot.org/manual/SecondaryStructure"^^xsd:anyURI ;
-      rdfs:subClassOf :Feature;
-      :notIn :AminoAcidModification, :Site, :MisdefinedRegion, :Variant, :MoleculeProcessing, :RegionOfInterest;
-      .
-
-:RegionOfInterest
-      rdf:type owl:Class ;
-      rdfs:comment "describe a region of interest annotation  of a protein."^^xsd:string ;
-      rdfs:label "describe a region of interest annotation "^^xsd:string ;
-      rdfs:seeAlso "http://www.nextprot.org/manual/RegionOfInterest"^^xsd:anyURI ;
-      rdfs:subClassOf :Feature;
-      :notIn :AminoAcidModification, :SecondaryStructure, :Site, :MisdefinedRegion, :Variant, :MoleculeProcessing;
-      .
-      
-:Site
-      rdf:type owl:Class ;
-      rdfs:comment "describe a site annotation  of a protein."^^xsd:string ;
-      rdfs:label "describe a site annotation "^^xsd:string ;
-      rdfs:seeAlso "http://www.nextprot.org/manual/Site"^^xsd:anyURI ;
-      rdfs:subClassOf :Feature;
-      :notIn :AminoAcidModification, :SecondaryStructure, :MisdefinedRegion, :Variant, :MoleculeProcessing, :RegionOfInterest;
-      .
-
-:Variant
-      rdf:type owl:Class ;
-      rdfs:comment "describe a variant annotation  of a protein."^^xsd:string ;
-      rdfs:label "describe a variant annotation "^^xsd:string ;
-      rdfs:seeAlso "http://www.nextprot.org/manual/Variant"^^xsd:anyURI ;
-      rdfs:subClassOf :Feature;
-      :notIn :AminoAcidModification, :SecondaryStructure, :Site, :MisdefinedRegion, :MoleculeProcessing, :RegionOfInterest;
-      .
-
 
 #foreach($annotation in $annotationList)
-:$StringUtils.toCamelCase($annotation.getType(), false)
+:$annotation.rdfTypeName
    rdf:type owl:Class;
-   rdfs:comment "$annotation.getDescription()"^^xsd:string;
-   rdfs:label "$annotation.getLabel()"^^xsd:string;
-   rdfs:seeAlso "http://www.nextprot.org/manual/$StringUtils.toCamelCase($annotation.getType(), false)"^^xsd:anyURI; 
-   rdfs:subClassOf :$StringUtils.toCamelCase($annotation.getParent(), false);
+#if ($annotation.description) 
+   rdfs:comment "$annotation.description"^^xsd:string;
+#end
+   rdfs:label "$annotation.label"^^xsd:string;
+##   rdfs:seeAlso "http://www.nextprot.org/manual/$StringUtils.toCamelCase($annotation.getType(), false)"^^xsd:anyURI;
+#foreach($parent in $annotation.allParents)
+   rdfs:subClassOf :$parent.rdfTypeName;
+#end
    .   
-   
-#end
-
-#
-# Define annotations relations.
-#
- 
-
-:annotation
-      a rdf:Property ;
-      rdfs:domain :Isoform ;
-      rdfs:range :Annotation;
-      .
-
-#TODO precise which Ontology is available for this relation and list other relations depending 
-#     the ontology
-:in
-      rdf:type owl:ObjectProperty ;
-      rdfs:domain :Annotation ;
-      rdfs:range :Term.
-
-## this is a trick to ensure the known predicats list is cleared after a reload 
-$annotationList.get(0).clearPredicatList()      
-      
-#foreach($annotation in $annotationList)
-#if ($annotation.isFirstTimePredicat())
-:$annotation.getPredicat()
-   a rdf:Property;
-   rdfs:subPropertyOf :annotation;
-   rdfs:label "$annotation.getType()"^^xsd:string; 
-   rdfs:domain :Isoform ;
-   rdfs:range  [ a owl:Class;
-     owl:oneOf (#foreach($rdftype in $annotation.getDomain()):$rdftype #end);
-   ];
-   .
 
 #end
-#end
+

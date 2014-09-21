@@ -89,7 +89,7 @@ public class Annotation implements Serializable {
 	}
 
 	public String getCategoryDiscriminatorPredicat() {
-		return OWLAnnotationCategory.getByType(category).getPredicat();
+		return OWLAnnotationCategory.getByDbAnnotationTypeName(category).getRdfPredicate();
 	}
 
 	
