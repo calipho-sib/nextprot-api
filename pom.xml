@@ -155,7 +155,7 @@
 		<dependency>
 			<groupId>org.jsondoc</groupId>
 			<artifactId>jsondoc-springmvc</artifactId>
-			<version>1.0.3</version>
+			<version>1.5.0-SNAPSHOT</version>
 		</dependency>
 
 		<!-- AOP dependency -->
