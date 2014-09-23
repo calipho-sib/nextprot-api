@@ -6,10 +6,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.dbunit.MVCBaseSecurityIntegrationTest;
 import org.springframework.http.MediaType;
 
+@Ignore
 public class AdminControllerSecurityTest extends MVCBaseSecurityIntegrationTest {
 
 	private String content = "{\"name\":\"test\"}";

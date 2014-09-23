@@ -24,7 +24,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 @WebAppConfiguration
 @ContextConfiguration("classpath:META-INF/spring/web-context.xml")
-@DirtiesContext
 public abstract class MVCBaseIntegrationTest extends AbstractIntegrationBaseTest {
 
 	

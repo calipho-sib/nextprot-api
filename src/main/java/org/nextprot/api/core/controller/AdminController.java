@@ -32,7 +32,7 @@ public class AdminController {
 	@Autowired 
 	private RequestManager clientRequestManager;
 	
-	@Autowired 
+	@Autowired(required=false)
 	private CacheManager cacheManager;
 		
 
