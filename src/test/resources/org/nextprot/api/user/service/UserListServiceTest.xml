@@ -3,9 +3,10 @@
 <!DOCTYPE dataset SYSTEM "file:src/test/resources/user.dtd">
 -->
 <!-- Use this one to autocomplete -->
-<!DOCTYPE dataset SYSTEM "../../../../user.dtd"> 
+<!DOCTYPE dataset SYSTEM "../../../../../user.dtd"> 
 <!-- Use the dbunit_insert_helper.sql to generate the statements -->
 <dataset> 
+
 
 	
 </dataset>	

@@ -212,15 +212,26 @@ $(document).ready(function() {
     
     $('.btn-login').click(function(e) {
       e.preventDefault();
-      widget.signin({ popup: true, scope : 'openid profile'} , null, function(err, profile, token) {
-        if (err) {
-          // Error callback
-          console.log("There was an error");
-          alert("There was an error with the log in");
-        } else {
+
+      
+      widget.signin({
+    	  popup: true, 
+    	  scope: 'openid profile offline_access',
+    	  icon: 'http://www.nextprot.org/db/images/blueflat/np.png',
+    	  showIcon: true,
+    	  device: 'Daniel\'s ipad'
+    	  //offline_mode: true
+    	} , null, function(err, profile, id_token, access_token, state, refresh_token) {
+    		
+            if (err) {
+                // Error callback
+                console.log("There was an error", err);
+                alert("There was an error with the log in");
+              } else {
 
         	// Save the JWT token.
-            localStorage.setItem('userToken', token);
+            localStorage.setItem('userToken', id_token);
+            localStorage.setItem('refreshToken', refresh_token);
             localStorage.setItem('nickname', profile.nickname);
             
             // Success calback
@@ -232,9 +243,8 @@ $(document).ready(function() {
               console.log("Third party token", thirdPartyApiToken.id_token);
             });
         	*/
-        	setUserState();
-          
-        }
+            	setUserState();
+              }
       });
     });
 
@@ -281,8 +291,28 @@ $(document).ready(function() {
     $.ajaxSetup({
   	  'beforeSend': function(xhr) {
   	    if (localStorage.getItem('userToken')) {
-  	      xhr.setRequestHeader('Authorization',
-  	            'Bearer ' + localStorage.getItem('userToken'));
+
+	    	//Check if the usertoken has expired
+  	    	var payload = widget.getClient().decodeJwt(localStorage.getItem('userToken'));
+
+
+	    	console.log("checking token validity");
+	    	console.log("exp:" + payload.exp);
+	    	console.log("now:" + (Math.round(Date.now()) / 1000));
+
+  	    	if (Math.round(Date.now()) / 1000 >= payload.exp) {
+  	    		var rt = localStorage.getItem('refreshToken');
+  	    	    console.log("token has expired getting a new one with " , rt);
+  	    	  
+  	    		widget.getClient().refreshToken(rt, function (err, result) {
+  	    		    var fresh_jwt = result.id_token;
+	  	    	    console.log("Got a fresh user token" + fresh_jwt)
+	  	            localStorage.setItem('userToken', fresh_jwt);
+  	    	  });
+  	    	}
+
+
+  	      xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('userToken'));
   	    }
   	  }
   	});

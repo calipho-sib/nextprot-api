@@ -1,4 +1,4 @@
-package org.nextprot.api.service;
+package org.nextprot.api.user.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -14,7 +14,6 @@ import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
 import org.nextprot.api.solr.SearchResult.SearchResultItem;
 import org.nextprot.api.user.domain.UserList;
-import org.nextprot.api.user.service.UserListService;
 import org.nextprot.api.user.service.UserListService.Operations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,8 +23,8 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @Ignore
 @ActiveProfiles("unit")
-@DatabaseSetup(value = "ProteinListServiceTest.xml", type = DatabaseOperation.INSERT)
-public class ProteinListServiceTest extends DBUnitBaseTest {
+@DatabaseSetup(value = "UserListServiceTest.xml", type = DatabaseOperation.INSERT)
+public class UserListServiceTest extends DBUnitBaseTest {
 	@Autowired private DataSourceServiceLocator dsLocator;
 	@Autowired private UserListService proteinListService;
 

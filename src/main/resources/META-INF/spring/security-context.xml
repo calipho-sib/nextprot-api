@@ -1,44 +1,58 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:security="http://www.springframework.org/schema/security"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
 http://www.springframework.org/schema/security
 http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-	<security:global-method-security
-		pre-post-annotations="enabled" />
+	<!-- For the dev purpose the authentication is not activated -->
+	<beans profile="dev">
+		<bean id="authenticator" class="org.springframework.security.authentication.TestingAuthenticationProvider" />
+    
+		<security:http auto-config="true">
+	        <security:intercept-url pattern="/url-not-in-use/**" access="ROLE_USER"/>
+	    </security:http>
+	    
+	    <security:authentication-manager alias="authenticationManager">
+    		<security:authentication-provider ref="authenticator" />
+		</security:authentication-manager>
+	</beans>
 
-	<bean id="auth0EntryPoint"
-		class="sib.calipho.spring.security.auth0.Auth0AuthenticationEntryPoint" />
+	<!-- For the unit testing and production environment the authentication is activated -->
+	<beans profile="pro,unit">
+		<security:global-method-security
+			pre-post-annotations="enabled" />
 
-	<security:http auto-config="true" use-expressions="true"
-		pattern="/**" create-session="stateless" entry-point-ref="auth0EntryPoint">
-		<security:intercept-url pattern="/**" access="permitAll" />
-		<security:custom-filter ref="auth0Filter"
-			after="SECURITY_CONTEXT_FILTER"></security:custom-filter>
-	</security:http>
+		<bean id="auth0EntryPoint"
+			class="sib.calipho.spring.security.auth0.Auth0AuthenticationEntryPoint" />
 
-	<bean id="auth0Filter"
-		class="sib.calipho.spring.security.auth0.Auth0AuthenticationFilter">
-		<property name="entryPoint" ref="auth0EntryPoint"></property>
-	</bean>
+		<security:http auto-config="true" use-expressions="true"
+			pattern="/**" create-session="stateless" entry-point-ref="auth0EntryPoint">
+			<security:intercept-url pattern="/**" access="permitAll" />
+			<security:custom-filter ref="auth0Filter"
+				after="SECURITY_CONTEXT_FILTER"></security:custom-filter>
+		</security:http>
 
-	<bean id="auth0AuthenticationProvider"
-		class="sib.calipho.spring.security.auth0.Auth0AuthenticationProvider">
-		<property name="clientSecret" value="${auth0.clientSecret}"></property>
-		<property name="clientId" value="${auth0.clientId}"></property>
-	</bean>
+		<bean id="auth0Filter"
+			class="sib.calipho.spring.security.auth0.Auth0AuthenticationFilter">
+			<property name="entryPoint" ref="auth0EntryPoint"></property>
+		</bean>
 
-	<bean id="auth0TokenHelper"
-		class="sib.calipho.spring.security.auth0.impl.Auth0TokenHelperImpl">
-		<property name="clientSecret" value="${auth0.clientSecret}"></property>
-		<property name="clientId" value="${auth0.clientId}"></property>
-	</bean>
+		<bean id="auth0AuthenticationProvider"
+			class="sib.calipho.spring.security.auth0.Auth0AuthenticationProvider">
+			<property name="clientSecret" value="${auth0.clientSecret}"></property>
+			<property name="clientId" value="${auth0.clientId}"></property>
+		</bean>
 
-	<security:authentication-manager alias="authenticationManager">
-		<security:authentication-provider
-			ref="auth0AuthenticationProvider" />
-	</security:authentication-manager>
+		<bean id="auth0TokenHelper"
+			class="sib.calipho.spring.security.auth0.impl.Auth0TokenHelperImpl">
+			<property name="clientSecret" value="${auth0.clientSecret}"></property>
+			<property name="clientId" value="${auth0.clientId}"></property>
+		</bean>
 
+		<security:authentication-manager alias="authenticationManager">
+			<security:authentication-provider ref="auth0AuthenticationProvider" />
+		</security:authentication-manager>
+	</beans>
 </beans>

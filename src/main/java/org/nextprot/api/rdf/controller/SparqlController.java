@@ -1,5 +1,6 @@
 package org.nextprot.api.rdf.controller;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,13 +11,15 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
+import org.nextprot.api.rdf.service.SparqlProxyEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,15 +34,19 @@ import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
  */
 @Lazy
 @Controller
-@PreAuthorize("hasRole('ROLE_SPARQL')")
+//@PreAuthorize("hasRole('ROLE_SPARQL')")
 @Api(name = "Sparql", description = "Sparql endpoint where SPARQL queries are available", role="ROLE_SPARQL")
 public class SparqlController {
 
 	@Autowired
 	private SparqlService sparqlService;
+
 	@Autowired
 	private SparqlEndpoint sparqlEndpoint;
-	
+
+	@Autowired
+	private SparqlProxyEndpoint sparqlProxyEndpoint;
+
 	@RequestMapping(value = "/sparql-nocache", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<String> sparqlNoCache(@RequestParam(value = "sparql", required = true) String queryString, 
@@ -50,9 +57,9 @@ public class SparqlController {
 		return sparqlService.findEntriesNoCache(queryString, sparqlEndpoint, queryTitle, testId);
 	}
 
-	@RequestMapping(value = "/sparql")
+	@RequestMapping(value = "/sparqlite")
 	@ResponseBody
-	@ApiMethod(path = "/sparql", verb = ApiVerb.GET, description = "Sparql endpoint", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
+	@ApiMethod(path = "/sparqlite", verb = ApiVerb.GET, description = "Sparql endpoint", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	public String sparql(HttpServletRequest request, HttpServletResponse response,
 			
 			@ApiParam(name = "query", description = "The SPARQL query",  allowedvalues = { "SELECT DISTINCT * WHERE {?s ?p ?o} LIMIT 10"})
@@ -74,6 +81,13 @@ public class SparqlController {
 		}
 		
 		return sparqlService.sparqlSelect(query, engine, Integer.parseInt(sparqlEndpoint.getTimeout()), title, testid,  ResultsFormat.guessSyntax(format, ResultsFormat.FMT_RS_XML)).getOutput();
+	}
+	
+	@RequestMapping("/sparql")
+	@ResponseBody
+	public ResponseEntity<String> mirrorRest(@RequestBody String body, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
+		System.out.println(request.getHeader("Origin"));
+		return this.sparqlProxyEndpoint.sparql(body, request.getQueryString()); 
 	}
 
 }

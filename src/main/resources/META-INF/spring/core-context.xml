@@ -24,6 +24,12 @@
 	<import resource="db-context.xml" />
 	
 	
+		<bean id="auth0TokenHelper"
+		class="sib.calipho.spring.security.auth0.impl.Auth0TokenHelperImpl">
+		<property name="clientSecret" value="${auth0.clientSecret}"></property>
+		<property name="clientId" value="${auth0.clientId}"></property>
+	</bean>
+	
 	<context:component-scan base-package="org.nextprot" />
 	
 	<import resource="classpath:META-INF/spring/search-context.xml"/>	

@@ -63,8 +63,10 @@ ol.linenums li {
   text-shadow: 0 1px 0 #fff;
 }
 
-/* Roles */
-.role { font-size: 8px;}
-
 /* Don't display the object for now */
 #objectdiv {display: none;}
+
+.profile-dev .profile-header { background-color: greenyellow;}
+.profile-dev .nickname {display: none}
+.profile-dev .btn-login, .profile-dev .btn-logout { display: none !important;}
+.profile-dev .devenv:after { content: "YOU ARE IN DEVELOPMENT ENVIRONMENT: AUHTENTICATION IS DISABLED";}

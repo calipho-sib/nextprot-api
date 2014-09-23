@@ -16,8 +16,9 @@
 <script src="js/bootstrap-button.js"></script>
 <script src="js/nx-api.js"></script>
 
-<script src="//cdn.auth0.com/w2/auth0-widget-5.0.min.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<script src="//cdn.auth0.com/w2/auth0-widget-5.2.9.min.js"></script>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
 <!-- Le styles -->
 <link href="css/nx-api.css" rel="stylesheet">
@@ -26,6 +27,7 @@
 <link href="css/nx-api.css" rel="stylesheet">
 <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
 
+
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -33,15 +35,18 @@
 
 </head>
 
-<body>
-	
+<body class="profile-<% out.print(System.getProperty("spring.profiles.active")); %>">
+
 	<div class="navbar navbar-fixed-top navbar-inverse">
 		<div class="navbar-inner">
-			<div class="container-fluid">
-				<a class="brand" href="#">neXtProt API</a>
-				<a class="btn btn-primary btn-small btn-login pull-right">SignIn</a>
+			<div class="container-fluid profile-header">
+				<a class="brand" href="#">neXtProt API</a> 
+				<a class="btn btn-primary btn-small btn-login pull-right">SignIn</a> 
 				<a class="btn btn-primary btn-small btn-logout pull-right">Logout</a>
-				<div align="center"><span class="nickname"></span></div>
+				<div align="center">
+					<span class="nickname"></span>
+					<span class="devenv"></span>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -55,13 +60,15 @@
 				<div class="well sidebar-nav" id="xmlschemadiv" style>
 					<ul class="nav nav-list">
 						<li class="nav-header">XML Schema</li>
-						<li><a href="http://crick:8080/nextprotExport.xsd" target="_blank">nextprotExport.xsd</a></li>
+						<li><a href="http://crick:8080/nextprotExport.xsd"
+							target="_blank">nextprotExport.xsd</a></li>
 					</ul>
 				</div>
 				<div class="well sidebar-nav" id="rdfschemadiv" style>
 					<ul class="nav nav-list">
 						<li class="nav-header">RDF namespaces</li>
-						<li><a href="http://localhost:8080/rdfNamespaces.ttl" target="_blank">rdfNamespaces.ttl</a></li>
+						<li><a href="http://localhost:8080/rdfNamespaces.ttl"
+							target="_blank">rdfNamespaces.ttl</a></li>
 					</ul>
 				</div>
 				<div class="well sidebar-nav" id="objectdiv" style="display: none;"></div>
@@ -74,7 +81,6 @@
 			<div class="span6">
 				<div id="testContent"></div>
 			</div>
-
 		</div>
 	</div>
 
@@ -85,7 +91,7 @@
 </blockquote>
 </script>
 
-<script id="apis" type="text/x-handlebars-template">
+	<script id="apis" type="text/x-handlebars-template">
 <ul class="nav nav-list">
 	<li class="nav-header">APIs</li>
 	{{#apis}}
@@ -94,7 +100,7 @@
 </ul>
 </script>
 
-<script id="objects" type="text/x-handlebars-template">
+	<script id="objects" type="text/x-handlebars-template">
 <ul class="nav nav-list">
 	<li class="nav-header">Objects</li>
 	{{#objects}}
@@ -103,7 +109,7 @@
 </ul>
 </script>
 
-<script id="methods" type="text/x-handlebars-template">
+	<script id="methods" type="text/x-handlebars-template">
 <blockquote>
   <p style="text-transform: uppercase;"><span id="apiName"></span></p>
   <small><span id="apiDescription"></span></cite></small>
@@ -296,7 +302,7 @@
 
 </script>
 
-<script id="test" type="text/x-handlebars-template">
+	<script id="test" type="text/x-handlebars-template">
 <blockquote>
   <p style="text-transform: uppercase;">Playground</span></p>
   <small>{{path}}</small>
@@ -413,7 +419,7 @@
 
 </script>
 
-<script id="object" type="text/x-handlebars-template">
+	<script id="object" type="text/x-handlebars-template">
 <table class=" table-condensed table-striped table-bordered">
 	<tr><th style="width:15%;">Name</th><td><code>{{name}}</code></td></tr>
 	{{#if description}}
@@ -441,6 +447,5 @@
 	{{/if}}
 </table>
 </script>
-
 </body>
 </html>
