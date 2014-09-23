@@ -1,0 +1,3 @@
+## number of valid genes mapped to master sequences
+
+select (count (distinct ?g) as ?cnt) where { ?s a :Entry ; :gene ?g . }

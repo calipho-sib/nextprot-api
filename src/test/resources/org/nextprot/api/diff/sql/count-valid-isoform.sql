@@ -1,0 +1,1 @@
+select count(*) as cnt from nextprot.sequence_identifiers where cv_status_id=1 and cv_type_id=2;
