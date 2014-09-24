@@ -1,15 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.nextprot.api</groupId>
-	<artifactId>nextprot-api</artifactId>
+
+	<groupId>org.nextprot</groupId>
+	<artifactId>nextprot-api-master</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>pom</packaging>
+	<description>An API to access nextprot data</description>
+	<url>https://api.nextprot.org</url>
 
 	<properties>
 		<spring.version>3.2.8.RELEASE</spring.version>
 		<project.version>${project.version}</project.version>
 		<spring-security.version>3.2.3.RELEASE</spring-security.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<distributionManagement>
@@ -24,10 +28,17 @@
 	</distributionManagement>
 
 	<scm>
-		<connection>scm:git:npteam@miniwatt:/work/repos/nextprot-api.git</connection>
-		<developerConnection>scm:git:npteam@miniwatt:/work/repos/nextprot-api.git</developerConnection>
-		<!-- <tag>HEAD</tag> -->
+		<connection>scm:git:git@github.com:calipho-sib/nextprot-api.git</connection>
+		<developerConnection>scm:git:git@github.com:calipho-sib/nextprot-api.git</developerConnection>
 	</scm>
+
+	<modules>
+		<module>nextprot-api-core</module>
+		<module>nextprot-api-commons</module>
+		<module>nextprot-api-rdf</module>
+		<module>nextprot-api-solr</module>
+		<module>nextprot-api-user</module>
+	</modules>
 
 	<dependencies>
 		<dependency>
@@ -282,63 +293,27 @@
 	</dependencies>
 
 	<build>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>jetty-maven-plugin</artifactId>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-war-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
+
+				<plugin>
+					<artifactId>maven-antrun-plugin</artifactId>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
 		<plugins>
-			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<configuration>
-					<!-- <jettyXml>src/etc/jetty-jmx.xml</jettyXml> -->
-					<!-- <scanIntervalSeconds>10</scanIntervalSeconds> -->
-					<webAppConfig>
-						<contextPath>/${project.name}</contextPath>
-					</webAppConfig>
-					<stopKey>foo</stopKey>
-					<stopPort>9999</stopPort>
-					<systemproperties>
-						<systemproperty>
-							<name>org.apache.commons.logging.Log</name>
-							<value>
-								org.apache.commons.logging.impl.Log4JLogger
-							</value>
-						</systemproperty>
-						<systemproperty>
-							<name>log4j.configuration</name>
-							<value>file:./src/main/resources/log4j.xml</value>
-						</systemproperty>
-					</systemproperties>
-				</configuration>
-				<dependencies>
-					<!-- Need this for the ehcache logging -->
-
-					<dependency>
-						<groupId>log4j</groupId>
-						<artifactId>log4j</artifactId>
-						<version>1.2.16</version>
-					</dependency>
-
-				</dependencies>
-				<executions>
-					<execution>
-						<id>start-jetty</id>
-						<phase>pre-integration-test</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<scanIntervalSeconds>0</scanIntervalSeconds>
-							<daemon>true</daemon>
-						</configuration>
-					</execution>
-					<execution>
-						<id>stop-jetty</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>stop</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
 			<plugin>
 				<groupId>com.lukegb.mojo</groupId>
 				<artifactId>gitdescribe-maven-plugin</artifactId>
@@ -378,21 +353,21 @@
 				</executions>
 			</plugin>
 
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>3.0</version>
-                <configuration>
-                    <driver>org.postgresql.Driver</driver>
-                    <url>jdbc:postgresql://crick:5432/np_unit</url>
-                    <user>postgres</user>
-                    <password>postgres</password>
-                    <schemas>
-				        <schema>np_users</schema>
-    				</schemas>
-                </configuration>
-            </plugin>
-            
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<driver>org.postgresql.Driver</driver>
+					<url>jdbc:postgresql://crick:5432/np_unit</url>
+					<user>postgres</user>
+					<password>postgres</password>
+					<schemas>
+						<schema>np_users</schema>
+					</schemas>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>

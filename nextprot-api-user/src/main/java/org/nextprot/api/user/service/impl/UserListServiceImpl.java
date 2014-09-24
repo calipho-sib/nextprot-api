@@ -67,7 +67,7 @@ public class UserListServiceImpl implements UserListService {
 			proteinList.setName(listName);
 			proteinList.setDescription(description);
 			proteinList.setAccessions(accessions);
-			
+
 			checkIsAuthorized(proteinList);
 
 			UserList newList = createProteinList(proteinList);
@@ -207,12 +207,12 @@ public class UserListServiceImpl implements UserListService {
 
 		return createProteinList(name, description, combined, username);
 	}
-	
-	
+
+
 	private static String checkIsAuthorized(UserList pl){
 
 		String securityUserName = "";
-		
+
 		SecurityContext sc = SecurityContextHolder.getContext();
 		if (sc == null){
 			throw new NotAuthorizedException("You must be logged in to access this resource");
@@ -222,18 +222,18 @@ public class UserListServiceImpl implements UserListService {
 		if (a == null){
 			throw new NotAuthorizedException("You must be logged in to access this resource");
 		}
-		
+
 		if (a.getPrincipal() instanceof UserDetails) {
 			UserDetails currentUserDetails = (UserDetails) a.getPrincipal();
 			securityUserName = currentUserDetails.getUsername();
 		} else {
 			securityUserName = a.getPrincipal().toString();
 		}
-		
+
 		if (!pl.getUsername().equals(securityUserName)) {
 			throw new NotAuthorizedException(securityUserName + " is not authorized to modify this resource");
 		}
-		
+
 		return securityUserName;
 
 
