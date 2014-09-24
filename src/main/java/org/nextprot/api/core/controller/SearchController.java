@@ -11,9 +11,7 @@ import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.ProteinList;
-import org.nextprot.api.core.service.ProteinListService;
-import org.nextprot.api.core.service.QueryService;
+import org.nextprot.api.core.service.SolrService;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.Query;
@@ -21,6 +19,8 @@ import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.solr.SearchResult;
 import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrIndex;
+import org.nextprot.api.user.domain.UserList;
+import org.nextprot.api.user.service.UserListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
@@ -35,15 +35,15 @@ import com.google.common.base.Joiner;
 
 @Lazy
 @Controller
-@Api(name="Search", description="Method to search")
+@Api(name="Search", description="Method to search", role="ROLE_SEARCH")
 public class SearchController {
 
 	private final Log Logger = LogFactory.getLog(SearchController.class);
-	@Autowired private QueryService queryService;
+	@Autowired private SolrService queryService;
 	@Autowired private SparqlService sparqlService;
 	@Autowired private SparqlEndpoint sparqlEndpoint;
 
-	@Autowired private ProteinListService proteinListService;
+	@Autowired private UserListService proteinListService;
 	@Autowired private SolrConfiguration configuration;
 
 	/**
@@ -74,7 +74,7 @@ public class SearchController {
 				
 			}else if(queryRequest.hasList()) {
 				
-				ProteinList proteinList = this.proteinListService.getProteinListByNameForUser(queryRequest.getListOwner(), queryRequest.getList());
+				UserList proteinList = this.proteinListService.getProteinListByNameForUser(queryRequest.getListOwner(), queryRequest.getList());
 				Set<String> accessions = proteinList.getAccessions();
 
 				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
@@ -199,7 +199,7 @@ public class SearchController {
 			@RequestParam(value="filter", required=false) String filter,
 			Model model) throws SearchQueryException {
 		
-		ProteinList proteinList = this.proteinListService.getProteinListByNameForUser(username, listName);
+		UserList proteinList = this.proteinListService.getProteinListByNameForUser(username, listName);
 		Set<String> accessions = proteinList.getAccessions();
 		
 		String queryString = "id:" + ( accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next() );

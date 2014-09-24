@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Lazy
 @Controller
-@Api(name = "Schema", description = "Method to retrieve the complete or partial RDF schema of neXtProt.")
+@Api(name = "Schema", description = "Method to retrieve the complete or partial RDF schema of neXtProt.", role="ROLE_RDF")
 public class SchemaController {
-
 
 	@Autowired private SchemaService schemaService;
 	@Autowired private SparqlService advancedQueryService;

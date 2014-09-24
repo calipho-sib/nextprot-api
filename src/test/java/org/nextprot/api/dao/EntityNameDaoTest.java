@@ -23,11 +23,12 @@ public class EntityNameDaoTest extends DBUnitBaseTest {
 	@Test
 	public void testFindNames() {
 		List<EntityName> names = this.entityNameDao.findNames("PAM");
+		
 		assertEquals(2, names.size());
-		assertEquals(EntityNameClass.PROTEIN_NAMES, names.get(0).getClazz());
-		assertEquals(EntityNameClass.GENE_NAMES, names.get(1).getClazz());
-		assertEquals("name", names.get(0).getType());
-		assertEquals("gene name", names.get(1).getType());
-		assertNull(names.get(0).getQualifier());
+		assertEquals(EntityNameClass.GENE_NAMES, names.get(0).getClazz());
+		assertEquals(EntityNameClass.PROTEIN_NAMES, names.get(1).getClazz());
+		assertEquals("gene name", names.get(0).getType());
+		assertEquals("name", names.get(1).getType());
+		assertNull(names.get(1).getQualifier());
 	}
 }

@@ -24,9 +24,8 @@ import org.springframework.web.servlet.ViewResolver;
 
 @Lazy
 @Controller
-@Api(name = "Publication", description = "Method to retrieve publication")
+@Api(name = "Publication", description = "Method to retrieve publication", role = "ROLE_RDF")
 public class PublicationController {
-
 
 	@Autowired private PublicationService publicationService;
 
