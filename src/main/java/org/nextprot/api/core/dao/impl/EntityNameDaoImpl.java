@@ -21,7 +21,8 @@ public class EntityNameDaoImpl implements EntityNameDao {
 	
 	private final String findNames = "select * " +
 			"from nextprot.view_master_identifier_names " +
-			"where unique_name = :uniqueName";
+			"where unique_name = :uniqueName "+ 
+			"order by unique_name";
 	
 	@Override
 	public List<EntityName> findNames(String uniqueName) {

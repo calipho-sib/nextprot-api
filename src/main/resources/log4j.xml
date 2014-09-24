@@ -27,7 +27,7 @@
 			<param name="ConversionPattern" value="%d %m%n" />
 		</layout>
 	</appender>
-
+	
 	<logger name="org.springframework">
 		<level value="WARN" />
 	</logger>

@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Lazy
 @Controller
-@Api(name = "RdfHelp", description = "Method to retrieve help on the complete or partial RDF schema of neXtProt from data.")
+@Api(name = "RdfHelp", description = "Method to retrieve help on the complete or partial RDF schema of neXtProt from data.", role ="ROLE_RDF")
 public class RdfHelpController {
 
 	@Autowired

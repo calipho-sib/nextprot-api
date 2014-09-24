@@ -96,7 +96,6 @@
 
 
 		<!-- SPRING OTHER -->
-
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -131,9 +130,14 @@
 			<version>1.0.1</version>
 		</dependency>
 
+		<!-- JWT -->
+		<dependency>
+			<groupId>sib.calipho</groupId>
+			<artifactId>spring-auth0-core</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
 
 		<!-- TEST -->
-
 		<dependency>
 			<groupId>com.googlecode.java-diff-utils</groupId>
 			<artifactId>diffutils</artifactId>
@@ -147,28 +151,11 @@
 		</dependency>
 
 
-
 		<!-- For the documentation using JSONDOC -->
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-			<version>0.9.8</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.jsondoc</groupId>
-			<artifactId>jsondoc-core</artifactId>
-			<version>1.0.1</version>
-		</dependency>
 		<dependency>
 			<groupId>org.jsondoc</groupId>
 			<artifactId>jsondoc-springmvc</artifactId>
-			<version>1.0.1</version>
+			<version>1.5.0-SNAPSHOT</version>
 		</dependency>
 
 		<!-- AOP dependency -->
@@ -285,21 +272,6 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.16</version>
 		</dependency>
-		
-		
-		<!-- API authentication -->
-		<dependency>
-		  <groupId>net.threescale</groupId>
-		  <artifactId>threescale-api</artifactId>
-		  <version>3.0.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>xml-apis</groupId>
-					<artifactId>xml-apis</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
 
 		<dependency>
 			<groupId>commons-lang</groupId>
@@ -406,7 +378,21 @@
 				</executions>
 			</plugin>
 
-
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <driver>org.postgresql.Driver</driver>
+                    <url>jdbc:postgresql://crick:5432/np_unit</url>
+                    <user>postgres</user>
+                    <password>postgres</password>
+                    <schemas>
+				        <schema>np_users</schema>
+    				</schemas>
+                </configuration>
+            </plugin>
+            
 		</plugins>
 	</build>
 </project>

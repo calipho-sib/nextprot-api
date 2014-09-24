@@ -4,11 +4,13 @@ import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.rdf.dao.SchemaDao;
 import org.nextprot.api.rdf.domain.OWLAnnotation;
+import org.nextprot.api.rdf.domain.OWLAnnotationCategory;
 import org.nextprot.api.rdf.domain.OWLDatabase;
 import org.nextprot.api.rdf.domain.OWLDatasource;
 import org.nextprot.api.rdf.domain.OWLEvidence;
@@ -43,26 +45,6 @@ public class SchemaDaoImpl implements SchemaDao {
 			}
 		});
 		return ontologies;	
-	}
-
-
-	@Override
-	public List<OWLAnnotation> findAllAnnotation() {
-		SqlParameterSource params = new MapSqlParameterSource();
-		List<OWLAnnotation> annotations=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("schema-annotation-list"), params, new ParameterizedRowMapper<OWLAnnotation>() {
-
-			@Override
-			public OWLAnnotation mapRow(ResultSet resultSet, int row) throws SQLException {
-				OWLAnnotation annotation = new OWLAnnotation();
-				
-				annotation.setParent(resultSet.getString("parent"));
-				annotation.setDescription(resultSet.getString("description"));
-				annotation.setType(resultSet.getString("name"));
-				
-				return annotation;
-			}
-		});
-		return annotations;	
 	}
 
 
@@ -142,5 +124,37 @@ public class SchemaDaoImpl implements SchemaDao {
 		});
 		return databases;			
 	}
+
+	// stupid little class used in next method...
+	private class NameDescr {
+		public String name;
+		public String descr;
+		public NameDescr(String name, String descr) {
+			this.name=name;
+			this.descr=descr;
+		}
+	}
+
+	@Override
+	public List<OWLAnnotation> findAllAnnotation() {
+		// get description for annotations that exist in db
+		OWLAnnotationCategory[] cats = OWLAnnotationCategory.values(); 
+		List<Long> typeIds = new ArrayList<Long>();
+		for (OWLAnnotationCategory cat: cats) typeIds.add(new Long(cat.getDbId()));
+		SqlParameterSource params = new MapSqlParameterSource("typeIds", typeIds);
+		List<NameDescr> nds = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("schema-instantiated-annotation-list"), params, new ParameterizedRowMapper<NameDescr>() {
+			@Override
+			public NameDescr mapRow(ResultSet rs, int row) throws SQLException {
+				return new NameDescr(rs.getString("cv_name"), rs.getString("description"));
+			}
+		});
+		// inject descriptions found in db into the OWLAnnotationCategory enum values
+		for (NameDescr nd : nds) OWLAnnotationCategory.getByDbAnnotationTypeName(nd.name).setDescription(nd.descr);
+		// encapsulate OWLAnnotationCategory into OWLAnnotation to be compatible with the rest
+		List<OWLAnnotation> annotations = new ArrayList<OWLAnnotation>();
+		for (OWLAnnotationCategory cat: OWLAnnotationCategory.values()) annotations.add(new OWLAnnotation(cat));
+		return annotations;	
+	}
+	
 	
 }

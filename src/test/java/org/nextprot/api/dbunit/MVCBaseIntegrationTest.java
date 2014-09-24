@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -23,17 +24,22 @@ import org.springframework.web.context.WebApplicationContext;
 
 @WebAppConfiguration
 @ContextConfiguration("classpath:META-INF/spring/web-context.xml")
-@DirtiesContext
 public abstract class MVCBaseIntegrationTest extends AbstractIntegrationBaseTest {
 
+	
 	@Autowired
 	protected WebApplicationContext wac;
 
+	@Autowired
+    private FilterChainProxy springSecurityFilterChain;
+	
 	protected MockMvc mockMvc;
 
 	@Before
 	public void setup() {
-		this.mockMvc = webAppContextSetup(this.wac).build();
+		this.mockMvc = webAppContextSetup(this.wac).addFilters(this.springSecurityFilterChain).build();
 	}
+	
+	
 
 }

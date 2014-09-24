@@ -6,9 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -37,9 +35,11 @@ import org.nextprot.api.core.service.export.ExportService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
+@Lazy
 public class ExportServiceImpl implements ExportService {
 
 	@Autowired
@@ -295,11 +295,10 @@ public class ExportServiceImpl implements ExportService {
 
 	}
 
-
 	public int getNumberOfWorkers() {
 		return numberOfWorkers;
 	}
-	
+
 	@Value("${export.workers.count}")
 	public void setNumberOfWorkers(int numberOfWorkers) {
 		this.numberOfWorkers = numberOfWorkers;

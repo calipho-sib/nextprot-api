@@ -1,3 +1,5 @@
+Copyright (C) 2014 - The neXtprot development team - ndu@isb-sib.ch
+
  GNU GENERAL PUBLIC LICENSE
                        Version 2, June 1991
 

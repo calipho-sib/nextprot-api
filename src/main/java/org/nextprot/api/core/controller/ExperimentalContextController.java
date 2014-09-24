@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Lazy
 @Controller
-@Api(name = "ExperimentalContext", description = "Method to retrieve the list of existing experimental contexts")
+@Api(name = "ExperimentalContext", description = "Method to retrieve the list of existing experimental contexts", role = "ROLE_RDF")
 public class ExperimentalContextController {
 
 

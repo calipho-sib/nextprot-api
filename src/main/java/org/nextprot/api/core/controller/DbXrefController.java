@@ -24,7 +24,7 @@ import org.springframework.web.servlet.ViewResolver;
 
 @Lazy
 @Controller
-@Api(name = "DbXref", description = "Method to retrieve the list of existing cross references")
+@Api(name = "DbXref", description = "Method to retrieve the list of existing cross references", role = "ROLE_RDF")
 public class DbXrefController {
 
 	

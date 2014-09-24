@@ -35,6 +35,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			Annotation annotation = new Annotation();
 			annotation.setAnnotationId(resultSet.getLong("annotation_id"));
 			annotation.setCategory(resultSet.getString("category"));
+			//System.out.println(">>>>>>>> annot id: "+ annotation. getAnnotationId() + ", category: " + annotation.getCategory());			
 			annotation.setDescription(resultSet.getString("description"));
 			annotation.setQualityQualifier(resultSet.getString("quality_qualifier"));
 			annotation.setCvTermName(resultSet.getString("cv_term_name"));
