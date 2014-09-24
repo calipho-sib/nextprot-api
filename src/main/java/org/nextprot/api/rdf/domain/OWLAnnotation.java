@@ -1,8 +1,6 @@
 package org.nextprot.api.rdf.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.jsondoc.core.annotation.ApiObject;

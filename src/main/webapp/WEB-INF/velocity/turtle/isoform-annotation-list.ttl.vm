@@ -16,11 +16,11 @@ isoform:$isoform-name a :Isoform;
 # Annotations
 
 #foreach($annotation in $entry.getAnnotationsByIsoform($isoform-name))
-##	
-#set($annotation-uri =  $isoform-name + "-" + $annotation.getUniqueName())
-#set($annotation-type = $StringUtils.toCamelCase($annotation.getCategory(), false))
-##
-isoform:$isoform-name :$annotation.getCategoryDiscriminatorPredicat() annotation:$annotation-uri .
-##
+#set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)
+#set($annotation-type = $annotation.rdfTypeName)
+#foreach($parentPredicate in $annotation.parentPredicates)
+isoform:$isoform-name :$parentPredicate annotation:$annotation-uri .
+#end
+isoform:$isoform-name :$annotation.rdfPredicate annotation:$annotation-uri .
 #parse("turtle/isoform-annotation.ttl.vm")
 #end
