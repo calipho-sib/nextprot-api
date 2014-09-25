@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jsondoc.core.annotation.ApiObjectField;
+
 public class AnnotationEvidence implements Serializable {
 
 	private static final long serialVersionUID = 2856324820767690302L;
@@ -63,6 +65,9 @@ public class AnnotationEvidence implements Serializable {
 	private long evidenceId;
 
 	private String assignedBy;
+
+	private String assignmentMethod;
+
 	
 	public Long getExperimentalContextId() {
 		return experimentalContextId;
@@ -377,8 +382,6 @@ public class AnnotationEvidence implements Serializable {
 	public String getSP() {
 		return extractProperty("SP");
 	}
-
-	
 	
 	public String getExpressionLevel() {
 		return expressionLevelInfo.get(extractProperty("expressionLevel"));
@@ -388,5 +391,12 @@ public class AnnotationEvidence implements Serializable {
 		return expressionLevelInfo.get(extractProperty("integrationLevel"));
 	}
 
+	public String getAssignmentMethod() {
+		return assignmentMethod;
+	}
+
+	public void setAssignmentMethod(String assignmentMethod) {
+		this.assignmentMethod = assignmentMethod;
+	}
 
 }

@@ -57,6 +57,9 @@ public class PublicationDaoImpl implements PublicationDao {
 			publication.setPublicationDate(resultSet.getDate("publication_date"));
 			publication.setFirstPage(resultSet.getString("first_page"));
 			publication.setLastPage(resultSet.getString("last_page"));
+			
+			// add publication details
+			publication.setIsLargeScale(resultSet.getLong("is_largescale")>0);
 
 			String pubType = resultSet.getString("pub_type");
 			if (pubType.equals("ONLINE PUBLICATION")) {

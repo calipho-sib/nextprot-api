@@ -42,7 +42,7 @@ public class Annotation implements Serializable {
 		
 		//
 		// map expressionLevel in 3 categories : negative, positive for consensus and mixing when no consensus exist  
-		commonExpressionPredicat.put("", 	   	"variableExpression");
+		commonExpressionPredicat.put("", 	   	"expression");
 		commonExpressionPredicat.put("High",   	"expression");
 		commonExpressionPredicat.put("Low",    	"expression");
 		commonExpressionPredicat.put("Medium", 	"expression");

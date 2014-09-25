@@ -8,6 +8,12 @@ annotation:$annotation-uri :withEvidence evidence:$evidence-uri.
 ## decribe the evidence here
 evidence:$evidence-uri 
   rdf:type :Evidence ;
+#if($evidence.getAssignmentMethod() &&  $evidence.getAssignmentMethod().equals("curated"))
+  rdf:type :CuratedEvidence ;
+#end  
+#if($evidence.getAssignmentMethod() && $evidence.getAssignmentMethod().equals("computed"))
+  rdf:type :ComputedEvidence ;
+#end  
   :code :$evidence.getQualifierType();
 ## negative is no more needed
 ##  :negative "$evidence.isNegativeEvidence($isoform-name)"^^xsd:boolean;
@@ -26,8 +32,8 @@ evidence:$evidence-uri
 #if($evidence.getResourceType().equals("database"))
   :reference [
     a :Xref ;
-    :accession "$evidence.resourceAccession"^^xsd:string ;
-    :provenance db:$StringUtils.slug($evidence.resourceDb) ; 
+    :accession "$evidence.resourceAccession"^^xsd:string;
+    :provenance db:$StringUtils.slug($evidence.resourceDb); 
     ] ;
 #end
 

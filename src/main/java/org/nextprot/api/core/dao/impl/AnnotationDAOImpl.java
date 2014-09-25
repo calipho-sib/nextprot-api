@@ -109,6 +109,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 				evidence.setEvidenceId(resultSet.getLong("evidence_id"));
 				evidence.setAssignedBy(resultSet.getString("evidence_assigned_by"));
 				evidence.setExperimentalContextId(resultSet.getLong("experimental_context_id"));
+				evidence.setAssignmentMethod(resultSet.getString("assignment_method"));
 				return evidence;
 				
 			}

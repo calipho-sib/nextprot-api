@@ -47,6 +47,19 @@ public class Publication implements Serializable{
 	@ApiObjectField(description = "The publication date in text")
 	private String textDate;
 
+	@ApiObjectField(description = "Publications related to 15 entries or more")
+	private Boolean isLargeScale;
+
+	
+	public Boolean getIsLargeScale() {
+		return isLargeScale;
+	}
+
+	public void setIsLargeScale(Boolean isLargeScale) {
+		this.isLargeScale = isLargeScale;
+	}
+
+
 	@ApiObjectField(description = "The journal")
 	protected CvJournal cvJournal;
 
