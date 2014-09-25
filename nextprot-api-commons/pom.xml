@@ -16,7 +16,6 @@
 	<description>Common utilities for the nextprot API</description>
 	<url>https://api.nextprot.org</url>
 
-
 	<build>
 		<finalName>nextprot-api-commons</finalName>
 	</build>
