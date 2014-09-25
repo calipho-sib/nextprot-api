@@ -7,15 +7,6 @@ import java.util.Set;
 
 import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.commons.exception.SearchQueryException;
-import org.nextprot.api.core.service.SolrService;
-import org.nextprot.api.solr.FieldConfigSet;
-import org.nextprot.api.solr.IndexConfiguration;
-import org.nextprot.api.solr.IndexField;
-import org.nextprot.api.solr.IndexParameter;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.SearchResult;
-import org.nextprot.api.solr.SolrConfiguration;
-import org.nextprot.api.solr.SolrIndex;
 import org.nextprot.api.user.dao.UserListDao;
 import org.nextprot.api.user.domain.UserList;
 import org.nextprot.api.user.service.UserListService;
@@ -37,10 +28,6 @@ public class UserListServiceImpl implements UserListService {
 
 	@Autowired
 	private UserListDao proteinListDao;
-	@Autowired
-	private SolrService solrService;
-	@Autowired
-	private SolrConfiguration configuration;
 
 	@Override
 	public List<UserList> getProteinLists(String username) {
@@ -158,36 +145,6 @@ public class UserListServiceImpl implements UserListService {
 		return proteinList;
 	}
 
-	@Override
-	public SearchResult getProteinListSearchResult(UserList proteinList) throws SearchQueryException {
-
-		Set<String> accessions = proteinList.getAccessions();
-
-		String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-
-		SolrIndex index = this.configuration.getIndexByName("entry");
-		IndexConfiguration indexConfig = index.getConfig("simple");
-
-		FieldConfigSet fieldConfigSet = indexConfig.getConfigSet(IndexParameter.FL);
-		Set<IndexField> fields = fieldConfigSet.getConfigs().keySet();
-		getClass();
-
-		String[] fieldNames = new String[fields.size()];
-
-		Iterator<IndexField> it = fields.iterator();
-
-		int counter = 0;
-		while (it.hasNext()) {
-			fieldNames[counter++] = it.next().getName();
-		}
-
-		Query query = new Query(index);
-		query.addQuery(queryString);
-		query.rows(50);
-		// Query query = this.queryService.buildQuery(index, "simple", queryString, null, null, null, "0", "50", null, new String[0]);
-
-		return this.solrService.executeByIdQuery(query, fieldNames);
-	}
 
 	@Override
 	public UserList combine(String name, String description, String username, String list1, String list2, Operations op) {

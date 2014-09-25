@@ -13,7 +13,7 @@ public interface SolrService {
 	 * @param query
 	 */
 	SearchResult executeQuery(Query query) throws SearchQueryException;
-	
+
 	/**
 	 * Execute SOLR search query specifying the fields that should be returned
 	 * @param query
@@ -22,7 +22,7 @@ public interface SolrService {
 	 * @throws SearchQueryException
 	 */
 	SearchResult executeCustomQuery(Query query, String[] fields) throws SearchQueryException;
-	
+
 	/**
 	 * Returns only the IDs of the document which are the result of the query
 	 * @param query
@@ -30,25 +30,27 @@ public interface SolrService {
 	 * @throws SearchQueryException
 	 */
 	SearchResult executeIdQuery(Query query) throws SearchQueryException;
-	
+
 	SearchResult executeByIdQuery(Query query, String[] fields);
-	
+
 	/**
-	 * Verifies if the specified name matches a name of 
+	 * Verifies if the specified name matches a name of
 	 * a registered index
 	 * @param indexName
 	 * @return
 	 */
 	boolean checkAvailableIndex(String indexName);
-	
+
 	Query buildQuery(String indexName, String configurationName, QueryRequest request);
-	
-	Query buildQuery(String indexName, String configuration, 
-			String queryString, String quality, String sort, String order, 
+
+	Query buildQuery(String indexName, String configuration,
+			String queryString, String quality, String sort, String order,
 			String start, String rows, String filter);
-	
-//	Query buildQuery(SolrIndex index, String configuration, 
-//			String queryString, String quality, String sort, String order, 
+
+	SearchResult getUserListSearchResult(UserList proteinList) throws SearchQueryException;
+
+//	Query buildQuery(SolrIndex index, String configuration,
+//			String queryString, String quality, String sort, String order,
 //			String start, String rows, String filter);
-	
+
 }
