@@ -3,9 +3,9 @@ package org.nextprot.api.rdf.domain;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
-
 import junit.framework.TestCase;
+
+import org.junit.Test;
 
 public class OWLAnnotationCategoryTest extends TestCase {
 

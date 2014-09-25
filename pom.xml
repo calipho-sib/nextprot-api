@@ -40,11 +40,12 @@
 	</scm>
 
 	<modules>
-		<module>nextprot-api-core</module>
 		<module>nextprot-api-commons</module>
 		<module>nextprot-api-rdf</module>
 		<module>nextprot-api-solr</module>
 		<module>nextprot-api-user</module>
+		<module>nextprot-api-core</module>
+		<module>nextprot-api-web</module>
 	</modules>
 
 	<dependencies>

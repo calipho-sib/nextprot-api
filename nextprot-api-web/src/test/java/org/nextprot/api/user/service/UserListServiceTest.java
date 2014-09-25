@@ -13,6 +13,7 @@ import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
 import org.nextprot.api.solr.SearchResult.SearchResultItem;
+import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserList;
 import org.nextprot.api.user.service.UserListService.Operations;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 public class UserListServiceTest extends DBUnitBaseTest {
 	@Autowired private DataSourceServiceLocator dsLocator;
 	@Autowired private UserListService proteinListService;
+	@Autowired private SolrService solrService;
 
 	private UserList proteinList;
 	
@@ -72,7 +74,7 @@ public class UserListServiceTest extends DBUnitBaseTest {
 		accs.add("NX_P06213");
 		
 		proteinList.setAccessions(accs);
-		List<SearchResultItem> docs = this.proteinListService.getProteinListSearchResult(proteinList).getResults();
+		List<SearchResultItem> docs = this.solrService.getUserListSearchResult(proteinList).getResults();
 		
 		assertEquals(2, docs.size());
 		assertEquals("NX_P01308", docs.get(0).getProperties().get("id"));
