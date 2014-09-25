@@ -2,6 +2,24 @@
 <dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
 
+<!-- for AnnotationDAOTest.shouldTurnTransmembraneAnnotationToIntramembrane() -->
+
+	<sequence_identifiers identifier_id="16" cv_type_id="1" unique_name="NX_P51797" />
+	<sequence_identifiers identifier_id="161" cv_type_id="2" unique_name="NX_P51797-1" />
+	<cv_terms cv_id="1005" cv_name="transmembrane region" cv_category_id="1" db_xref_id="521" cv_status_id="1" />
+	<cv_terms cv_id="51748" cv_name="In membrane" cv_category_id="1" db_xref_id="521" cv_status_id="1" />
+	<annotation_protein_assoc annotation_id="16" protein_id="161" assoc_id="16" />
+	<annotations 
+		annotation_id="16" unique_name="AN_P51797_001299" identifier_id="16"
+		cv_term_id="51748"
+		cv_annotation_discriminator_id="3" cv_annotation_type_id="1005" 
+		description="Loop between two helices"
+		datasource_id="1" cv_quality_qualifier_id="1"
+	/>
+
+
+<!-- for AnnotationDAOTest.shouldGetTheListOfAnnotations -->
+
 	<sequence_identifiers identifier_id="10" cv_type_id="1" unique_name="NX_P12345" />
 
 	<!-- 	Isoform specificity -->
@@ -45,10 +63,51 @@
 	<annotations annotation_id="14" unique_name="AN_P12345_014" identifier_id="10"
 		cv_annotation_discriminator_id="3" cv_annotation_type_id="1302" description="Binds to AB1, AB5 and AB4."
 		datasource_id="1" cv_quality_qualifier_id="1"/>
+
 		
 	<annotation_resource_assoc annotation_id="10" resource_id="10" cv_qualifier_type_id="1" cv_type_id="1"/>
  	<resources resource_id="20"/> 
 	<db_xrefs accession="AC_TEST1" resource_id="20" description="some description of an evidence"/>
+
+
+<!-- for AnnotationDAOTest.shouldTurnBiotechnologyAnnotationToMiscellaneous() -->
+
+	<sequence_identifiers identifier_id="15" cv_type_id="1" unique_name="NX_O43474" />
+	<sequence_identifiers identifier_id="151" cv_type_id="2" unique_name="NX_O43474-1" />
+	<cv_terms cv_id="1050" cv_name="biotechnology" cv_category_id="1" db_xref_id="521" cv_status_id="1" />
+	<cv_terms cv_id="1052" cv_name="miscellaneous" cv_category_id="1" db_xref_id="521" cv_status_id="1" />
+	<annotation_protein_assoc annotation_id="15" protein_id="151" assoc_id="15" />
+	<annotations 
+		annotation_id="15" unique_name="AN_O43474_0626" identifier_id="15"
+		cv_annotation_discriminator_id="3" cv_annotation_type_id="1050" 
+		description="POU5F1/OCT4, SOX2, MYC/c-Myc and KLF4 are the four Yamanaka factors. When combined, these factors..."
+		datasource_id="1" cv_quality_qualifier_id="1"
+	/>
+
+<!-- for AnnotationDAOTest.shouldTurnSplitTransitPeptide() -->
+
+	<cv_terms cv_id="1002" cv_name="transit peptide" cv_category_id="1" db_xref_id="521" cv_status_id="1" />
+	<cv_terms cv_id="51743" cv_name="Mitochondrion" cv_category_id="1" db_xref_id="521" cv_status_id="1" />
+	<cv_terms cv_id="51744" cv_name="Peroxisome" cv_category_id="1" db_xref_id="521" cv_status_id="1" />
+	<sequence_identifiers identifier_id="17" cv_type_id="1" unique_name="NX_Q6P4F2" />
+	<sequence_identifiers identifier_id="171" cv_type_id="2" unique_name="NX_Q6P4F2-1" />
+	<annotations 
+		annotation_id="171" unique_name="AN_Q6P4F2_000443" identifier_id="17"
+		cv_term_id="51743"
+		cv_annotation_discriminator_id="3" cv_annotation_type_id="1002" 
+		description="Mitochondrion"
+		datasource_id="1" cv_quality_qualifier_id="1"
+	/>
+	<annotation_protein_assoc annotation_id="171" protein_id="171" assoc_id="171" />
+	<annotations 
+		annotation_id="172" unique_name="AN_Q6P4F2_000444" identifier_id="17"
+		cv_term_id="51744"
+		cv_annotation_discriminator_id="3" cv_annotation_type_id="1002" 
+		description="Peroxisome"
+		datasource_id="1" cv_quality_qualifier_id="1"
+	/>
+	<annotation_protein_assoc annotation_id="172" protein_id="172" assoc_id="172" />
+
 	
 <!-- 	<cv_resource_assoc_types cv_id="1" cv_name="source" description="The resource is the origin of the data (xref on swissprot for master)" /> -->
 <!-- 	<cv_resource_assoc_types cv_id="2" cv_name="relative" description="The resource is an information relative to the data (xref on prosite for domain)" /> -->

@@ -51,11 +51,9 @@ public enum OWLAnnotationCategory  {
 			
     /*
      * Transformations done on loading annotations from db:
-     * 
-     * 1/ dbId=1002 "transit peptide": split annotations into 2 new types "mitochondrial transit peptide" and "peroxysome trasit peptide"
-     * 2/ dbId=1005 "transmembrane region": move annotations to new type "intramembrane region" if annotation.cv_term_id=51748 "In membrane"
-     * 3/ dbId=1050 "biotechnology": move all annotations to existing type dbId=1052 "Miscellaneous"
-     * 
+     * OK - 1/ dbId=1002 "transit peptide": split annotations into 2 new types "mitochondrial transit peptide" and "peroxysome trasit peptide"
+     * OK - 2/ dbId=1005 "transmembrane region": move annotations to new type "intramembrane region" if annotation.cv_term_id=51748 "In membrane"
+     * OK - 3/ dbId=1050 "biotechnology": move all annotations to existing type dbId=1052 "Miscellaneous"
      */
 			
 	PDB_MAPPING(116892,"3D structure", "pdbMapping", "PDB mapping", new OWLAnnotationCategory[]{ MAPPING }),
@@ -115,7 +113,7 @@ public enum OWLAnnotationCategory  {
 	// instances of general annotations
 	
 	INDUCTION(1042,"induction", "induction", "induction", new OWLAnnotationCategory[]{GENERAL_ANNOTATION }),
-	//BIOTECHNOLOGY(1050,"biotechnology", "biotechnology", "biotechnology", new OWLAnnotationCategory[]{GENERAL_ANNOTATION }),  // only 5 annotations exist, so moved to miscellaneous
+	//BIOTECHNOLOGY(1050,"biotechnology", "biotechnology", "biotechnology", new OWLAnnotationCategory[]{GENERAL_ANNOTATION }),  // OK: only 5 annotations exist, so moved to miscellaneous
 	MISCELLANEOUS(1052,"miscellaneous", "miscellaneous", "miscellaneous", new OWLAnnotationCategory[]{GENERAL_ANNOTATION }),
 	CAUTION(1054,"caution", "caution", "caution", new OWLAnnotationCategory[]{GENERAL_ANNOTATION }),
 	SEQUENCE_CAUTION(1056,"sequence caution", "sequenceCaution", "sequence caution", new OWLAnnotationCategory[]{GENERAL_ANNOTATION }),

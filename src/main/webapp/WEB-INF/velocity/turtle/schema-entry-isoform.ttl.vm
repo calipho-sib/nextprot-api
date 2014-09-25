@@ -26,11 +26,6 @@
       rdfs:comment "Protein sequence object"^^xsd:string ;
       rdfs:subClassOf owl:Thing ;
       .
-:Name
-      rdf:type owl:Class ;
-      rdfs:comment "Names given to a protein entry"^^xsd:string ;
-      rdfs:subClassOf owl:Thing ;
-      .
 
 :History
       rdf:type owl:Class ;
