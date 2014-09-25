@@ -3,7 +3,6 @@ package org.nextprot.api.user.service;
 import java.util.List;
 import java.util.Set;
 
-import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.user.domain.UserList;
 
 public interface UserListService {

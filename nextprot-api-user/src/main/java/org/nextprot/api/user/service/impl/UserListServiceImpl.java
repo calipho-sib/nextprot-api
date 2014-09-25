@@ -1,12 +1,10 @@
 package org.nextprot.api.user.service.impl;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.nextprot.api.commons.exception.NotAuthorizedException;
-import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.user.dao.UserListDao;
 import org.nextprot.api.user.domain.UserList;
 import org.nextprot.api.user.service.UserListService;
@@ -19,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 @Lazy

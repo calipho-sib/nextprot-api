@@ -1,9 +1,7 @@
-package org.nextprot.api.core.service;
+package org.nextprot.api.solr;
 
 import org.nextprot.api.commons.exception.SearchQueryException;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SearchResult;
+import org.nextprot.api.user.domain.UserList;
 
 
 public interface SolrService {

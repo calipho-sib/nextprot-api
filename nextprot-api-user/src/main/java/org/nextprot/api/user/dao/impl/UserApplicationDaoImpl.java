@@ -15,7 +15,6 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.user.controller.UserListController;
 import org.nextprot.api.user.dao.UserApplicationDao;
 import org.nextprot.api.user.domain.UserApplication;
 import org.springframework.beans.factory.annotation.Autowired;

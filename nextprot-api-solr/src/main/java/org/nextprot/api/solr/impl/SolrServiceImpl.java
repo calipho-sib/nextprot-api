@@ -1,9 +1,11 @@
-package org.nextprot.api.core.service.impl;
+package org.nextprot.api.solr.impl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,7 +26,7 @@ import org.apache.solr.common.SolrDocumentList;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.core.service.SolrService;
+import org.nextprot.api.solr.FieldConfigSet;
 import org.nextprot.api.solr.IndexConfiguration;
 import org.nextprot.api.solr.IndexField;
 import org.nextprot.api.solr.IndexParameter;
@@ -37,10 +39,14 @@ import org.nextprot.api.solr.SearchResult.SearchResultSpellcheck;
 import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrConnectionFactory;
 import org.nextprot.api.solr.SolrIndex;
+import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.solr.SortConfig;
+import org.nextprot.api.user.domain.UserList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import com.google.common.base.Joiner;
 
 @Lazy
 @Service
@@ -370,7 +376,7 @@ public SearchResult getUserListSearchResult(UserList proteinList) throws SearchQ
 	query.rows(50);
 	// Query query = this.queryService.buildQuery(index, "simple", queryString, null, null, null, "0", "50", null, new String[0]);
 
-	return this.solrService.executeByIdQuery(query, fieldNames);
+	return this.executeByIdQuery(query, fieldNames);
 }
 
 }

@@ -1,9 +1,9 @@
 package org.nextprot.api.rdf.domain;
 
-import java.util.HashSet;
 import java.util.HashMap;
-import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.nextprot.api.commons.utils.StringUtils;
 

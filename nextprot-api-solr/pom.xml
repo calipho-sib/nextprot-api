@@ -20,6 +20,11 @@
 			<artifactId>nextprot-api-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-user</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
