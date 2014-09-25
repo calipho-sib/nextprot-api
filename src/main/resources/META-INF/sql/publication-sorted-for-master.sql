@@ -1,5 +1,5 @@
 select p1.* as id, pubtypes.cv_name as pub_type, rp.property_value as submission_database , 
-  (select p.is_largescale from nextprot.view_paper_ref_type as p where p.publication_id=p1.resource_id limit 1) as is_largescale
+  (select p.is_largescale from nextprot.view_paper_scale p where p.publication_id=p1.resource_id) as is_largescale         
             from nextprot.publications p1 
                  inner join nextprot.cv_publication_types as pubtypes on p1.cv_publication_type_id = pubtypes.cv_id 
                  left outer join nextprot.cv_journals as j on (p1.cv_journal_id = j.cv_id) 
