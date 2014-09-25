@@ -44,6 +44,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		Preconditions.checkArgument(entryName != null, "The annotation name should be set wit #withName(...)");
 
+		
 		List<Annotation> annotations = annotationDAO.findAnnotationsByEntryName(entryName);
 		if (annotations.isEmpty())
 			return annotations;

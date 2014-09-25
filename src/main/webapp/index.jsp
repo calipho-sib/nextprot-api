@@ -1,7 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"
 	contentType="text/html;charset=utf-8"%>
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
 <title>neXtProt REST API</title>
@@ -17,24 +16,37 @@
 <script src="js/bootstrap-button.js"></script>
 <script src="js/nx-api.js"></script>
 
+<script src="//cdn.auth0.com/w2/auth0-widget-5.2.9.min.js"></script>
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
 <!-- Le styles -->
+<link href="css/nx-api.css" rel="stylesheet">
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/font-awesome.css" rel="stylesheet">
 <link href="css/nx-api.css" rel="stylesheet">
 <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
 
+
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+
 </head>
 
-<body>
+<body class="profile-<% out.print(System.getProperty("spring.profiles.active")); %>">
 
 	<div class="navbar navbar-fixed-top navbar-inverse">
 		<div class="navbar-inner">
-			<div class="container-fluid">
-				<a class="brand" href="#">neXtProt REST API</a>
+			<div class="container-fluid profile-header">
+				<a class="brand" href="#">neXtProt API</a> 
+				<a class="btn btn-primary btn-small btn-login pull-right">SignIn</a> 
+				<a class="btn btn-primary btn-small btn-logout pull-right">Logout</a>
+				<div align="center">
+					<span class="nickname"></span>
+					<span class="devenv"></span>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -48,13 +60,15 @@
 				<div class="well sidebar-nav" id="xmlschemadiv" style>
 					<ul class="nav nav-list">
 						<li class="nav-header">XML Schema</li>
-						<li><a href="http://crick:8080/nextprotExport.xsd" target="_blank">nextprotExport.xsd</a></li>
+						<li><a href="http://crick:8080/nextprotExport.xsd"
+							target="_blank">nextprotExport.xsd</a></li>
 					</ul>
 				</div>
 				<div class="well sidebar-nav" id="rdfschemadiv" style>
 					<ul class="nav nav-list">
 						<li class="nav-header">RDF namespaces</li>
-						<li><a href="http://localhost:8080/rdfNamespaces.ttl" target="_blank">rdfNamespaces.ttl</a></li>
+						<li><a href="http://localhost:8080/rdfNamespaces.ttl"
+							target="_blank">rdfNamespaces.ttl</a></li>
 					</ul>
 				</div>
 				<div class="well sidebar-nav" id="objectdiv" style="display: none;"></div>
@@ -67,7 +81,6 @@
 			<div class="span6">
 				<div id="testContent"></div>
 			</div>
-
 		</div>
 	</div>
 
@@ -78,18 +91,18 @@
 </blockquote>
 </script>
 
-<script id="apis" type="text/x-handlebars-template">
+	<script id="apis" type="text/x-handlebars-template">
 <ul class="nav nav-list">
 	<li class="nav-header">APIs</li>
 	{{#apis}}
-		<li><a href="#" id="{{jsondocId}}" rel="api">{{name}}</a></li>
+		<li><a href="#" id="{{jsondocId}}" rel="api">{{name}} <span class="role">{{role}}</span></a></li>
 	{{/apis}}
 </ul>
 </script>
 
-<script id="objects" type="text/x-handlebars-template">
+	<script id="objects" type="text/x-handlebars-template">
 <ul class="nav nav-list">
-	<li class="nav-header">JSON Objects</li>
+	<li class="nav-header">Objects</li>
 	{{#objects}}
 		<li><a href="#" id="{{jsondocId}}" rel="object">{{name}}</a></li>
 	{{/objects}}
@@ -124,6 +137,16 @@
 						<th>Method</th>
 						<td><span class="label {{verb}}">{{verb}}</span></td>
 					</tr>
+					{{#if produces}}
+						<tr>
+							<th colspan=2>Produces</th>
+						</tr>
+						{{#each produces}}
+							<tr>
+								<td colspan=2><code>{{this}}</code></td>
+							</tr>
+						{{/each}}
+					{{/if}}
 					{{#if consumes}}
 						<tr>
 							<th colspan=2>Consumes</th>
@@ -145,20 +168,64 @@
 							</tr>
 						{{/each}}
 					{{/if}}
-					{{#if urlparameters}}
+					{{#if pathparameters}}
 						<tr>
-							<th colspan=2>URL parameters</th>
+							<th colspan=2>Path parameters</th>
 						</tr>
-						{{#each urlparameters}}
+						{{#each pathparameters}}
 							<tr>
 								<td><code>{{this.name}}</code></td>
 								<td>Required: {{this.required}}</td>
 								
 							</tr>
+							<tr>
+								<td></td>
+								<td>Type: {{this.type}}</td>
+							</tr>
 							{{#if this.description}}
 							<tr>
 								<td></td>
 								<td>Description: {{this.description}}</td>
+							</tr>
+							{{/if}}
+							{{#if this.allowedvalues}}
+							<tr>
+								<td></td>
+								<td>Allowed values: {{this.allowedvalues}}</td>
+							</tr>
+							{{/if}}
+							{{#if this.format}}
+							<tr>
+								<td></td>
+								<td>Format: {{this.format}}</td>
+							</tr>
+							{{/if}}
+						{{/each}}
+					{{/if}}
+					{{#if queryparameters}}
+						<tr>
+							<th colspan=2>Query parameters</th>
+						</tr>
+						{{#each queryparameters}}
+							<tr>
+								<td><code>{{this.name}}</code></td>
+								<td>Required: {{this.required}}</td>
+								
+							</tr>
+							<tr>
+								<td></td>
+								<td>Type: {{this.type}}</td>
+							</tr>
+							{{#if this.description}}
+							<tr>
+								<td></td>
+								<td>Description: {{this.description}}</td>
+							</tr>
+							{{/if}}
+							{{#if this.allowedvalues}}
+							<tr>
+								<td></td>
+								<td>Allowed values: {{this.allowedvalues}}</td>
 							</tr>
 							{{/if}}
 							{{#if this.format}}
@@ -179,7 +246,7 @@
 						</tr>
 						<tr>
 							<td>Multiple</td>
-							<td>{{bodyobject.multiple}} ddd</td>
+							<td>{{bodyobject.multiple}}</td>
 						</tr>
 						{{#if bodyobject.map}}
 							<tr>
@@ -232,9 +299,15 @@
 	</div>
 	{{/methods}}
 </div>
+
 </script>
 
 	<script id="test" type="text/x-handlebars-template">
+<blockquote>
+  <p style="text-transform: uppercase;">Playground</span></p>
+  <small>{{path}}</small>
+</blockquote>
+
 <div class="row-fluid">
 
 	{{#if headers}}	
@@ -243,10 +316,9 @@
 			<h4>Headers</h4>
 			{{#headers}}
 				<div class="input-prepend">
-					<span style="text-align:left;" class="add-on span4">{{name}}</span>
-					<input type="text" class="span8" name="{{name}}" placeholder="{{name}}">
+					<span style="text-align:left;" class="add-on span4">{{name}}</span><input type="text" class="span8" name="{{name}}" placeholder="{{name}}">
 				</div>
-		{{/headers}}
+			{{/headers}}
 		</div>
 	</div>
 	{{/if}}
@@ -275,16 +347,28 @@
 	{{/if}}
 	{{/if}}
 
-	{{#if urlparameters}}
+	{{#if pathparameters}}
 	<div class="span12" style="margin-left:0px">
-		<div id="urlparameters" class="playground-spacer">
-			<h4>URL parameters</h4>
-			{{#urlparameters}}
+		<div id="pathparameters" class="playground-spacer">
+			<h4>Path parameters</h4>
+			{{#pathparameters}}
 				<div class="input-prepend">
-					<span style="text-align:left;" class="add-on span4">{{name}}</span>
-					<input type="text" value="{{this.allowedvalues}}" class="span8" name="{{name}}" placeholder="{{name}}">
+					<span style="text-align:left;" class="add-on span4">{{name}}</span><input type="text" class="span8" name="{{name}}" placeholder="{{name}}">
 				</div>
-			{{/urlparameters}}
+			{{/pathparameters}}
+		</div>
+	</div>
+	{{/if}}
+
+	{{#if queryparameters}}
+	<div class="span12" style="margin-left:0px">
+		<div id="queryparameters" class="playground-spacer">
+			<h4>Query parameters</h4>
+			{{#queryparameters}}
+				<div class="input-prepend">
+					<span style="text-align:left;" class="add-on span4">{{name}}</span><input type="text" class="span8" name="{{name}}" value="{{this.allowedvalues}}" placeholder="{{name}}">
+				</div>
+			{{/queryparameters}}
 		</div>
 	</div>
 	{{/if}}
@@ -308,26 +392,26 @@
 
 <div class="tabbable" id="resInfo" style="display:none;">
 	<ul class="nav nav-tabs">
-  		<li class="active"><a href="#tab1" data-toggle="tab">Text</a></li>
-  		<li><a href="#tab2" data-toggle="tab">Info</a></li>
+  		<li class="active"><a href="#tab1" data-toggle="tab">Response text</a></li>
+  		<li><a href="#tab2" data-toggle="tab">Response info</a></li>
+  		<li><a href="#tab3" data-toggle="tab">Request info</a></li>
 	</ul>
 	<div class="tab-content">
     	<div class="tab-pane active" id="tab1">
-    		<pre id="response" classs="prettyprint">
+    		<pre id="response">
 			</pre>
    		</div>
     	<div class="tab-pane" id="tab2">
-      		<p class="nav-header" style="padding:0px">Request URL</p>
-      		<pre id="requestURL" class="prettyprint">
-			</pre>
-			<p class="nav-header" style="padding:0px">Response time</p>
-      		<pre id="timeElapsed" class="prettyprint">
-			</pre>
 			<p class="nav-header" style="padding:0px">Response code</p>
-      		<pre id="responseStatus" class="prettyprint">
+      		<pre id="responseStatus">
 			</pre>
 			<p class="nav-header" style="padding:0px">Response headers</p>
-      		<pre id="responseHeaders" class="prettyprint">
+      		<pre id="responseHeaders">
+			</pre>
+    	</div>
+		<div class="tab-pane" id="tab3">
+      		<p class="nav-header" style="padding:0px">Request URL</p>
+      		<pre id="requestURL">
 			</pre>
     	</div>
 	</div>
@@ -335,9 +419,12 @@
 
 </script>
 
-<script id="object" type="text/x-handlebars-template">
-<table class="table table-condensed table-striped table-bordered">
+	<script id="object" type="text/x-handlebars-template">
+<table class=" table-condensed table-striped table-bordered">
 	<tr><th style="width:15%;">Name</th><td><code>{{name}}</code></td></tr>
+	{{#if description}}
+		<tr><th>Description</th><td>{{description}}</td></tr>
+	{{/if}}
 	{{#if fields}}
 	<tr><th colspan=2>Fields</th></tr>
 		{{#each fields}}
@@ -360,12 +447,5 @@
 	{{/if}}
 </table>
 </script>
-
-	<script>
-
-		//Executes 
-		checkURLExistence();
-	</script>
-
 </body>
 </html>

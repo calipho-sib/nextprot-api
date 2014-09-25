@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Ignore;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.FileUtils;
 import org.nextprot.api.commons.utils.RdfUtils;
@@ -19,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
 import com.hp.hpl.jena.query.QueryExecution;
@@ -28,7 +28,6 @@ import com.hp.hpl.jena.rdf.model.Literal;
 
 
 @ContextConfiguration("classpath:META-INF/spring/core-context.xml")
-@DirtiesContext
 abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 	
 	private static final Log Logger = LogFactory.getLog(DiffBaseTest.class);

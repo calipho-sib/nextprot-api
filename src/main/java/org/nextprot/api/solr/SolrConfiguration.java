@@ -8,8 +8,10 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 import org.nextprot.api.commons.exception.SearchConfigException;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
+@Lazy
 @Component
 public class SolrConfiguration {
 	

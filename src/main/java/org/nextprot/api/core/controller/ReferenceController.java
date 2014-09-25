@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 
 @Lazy
 @Controller
-@Api(name = "Reference", description = "Method to retrieve xrefs")
+@Api(name = "Reference", description = "Method to retrieve xrefs", role = "ROLE_RDF")
 public class ReferenceController {
 
 	/**

@@ -1,8 +1,9 @@
 package org.nextprot.api.diff;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-
+@Ignore
 public class DiffEntityCountTest extends DiffBaseTest {
 	
 	@Test

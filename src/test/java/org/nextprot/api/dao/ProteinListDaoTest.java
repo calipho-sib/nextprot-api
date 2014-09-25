@@ -11,9 +11,9 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.core.dao.ProteinListDao;
-import org.nextprot.api.core.domain.ProteinList;
 import org.nextprot.api.dbunit.DBUnitBaseTest;
+import org.nextprot.api.user.dao.UserListDao;
+import org.nextprot.api.user.domain.UserList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 
@@ -21,7 +21,7 @@ import org.springframework.dao.DuplicateKeyException;
 public class ProteinListDaoTest extends DBUnitBaseTest {
 
 	@Autowired private DataSourceServiceLocator dsLocator;
-	@Autowired private ProteinListDao proteinListDao;
+	@Autowired private UserListDao proteinListDao;
 	
 	private long listId;
 	
@@ -42,7 +42,7 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 		Set<String> accs = new HashSet<String>();
 		accs.add("NX_P123");
 		
-		ProteinList l = new ProteinList("awesome");
+		UserList l = new UserList("awesome");
 		l.setUsername(username);
 		l.setAccessions(accs);
 		
@@ -51,7 +51,7 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 		this.proteinListDao.saveProteinListAccessions(listId, accs);
 		
 		
-		ProteinList pl = this.proteinListDao.getProteinListById(listId);
+		UserList pl = this.proteinListDao.getProteinListById(listId);
 		assertNotNull(pl);
 		
 		pl.setAccessions(this.proteinListDao.getAccessionsByListId(listId));
@@ -64,11 +64,11 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 	@Test
 	public void testSaveProteinList() {
 		
-		ProteinList l = new ProteinList("awesome");
+		UserList l = new UserList("awesome");
 		l.setUsername(username);
 		
 		long id = this.proteinListDao.saveProteinList(l);
-		ProteinList l2 = this.proteinListDao.getProteinListById(id);
+		UserList l2 = this.proteinListDao.getProteinListById(id);
 		
 		assertNotNull(l2);
 		assertEquals(l.getName(), l2.getName());
@@ -78,9 +78,9 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 	//TODO: create unique index protein_lists_unique_listname_user on "np_users"."protein_lists"(name,owner_id);
 	@Test(expected = DuplicateKeyException.class)
 	public void testSaveDuplicateProteinList() {
-		ProteinList l1 = new ProteinList("awesome");
+		UserList l1 = new UserList("awesome");
 		l1.setUsername(username);
-		ProteinList l2 = new ProteinList("awesome");
+		UserList l2 = new UserList("awesome");
 		l2.setUsername(username);		
 		this.proteinListDao.saveProteinList(l1);
 		this.proteinListDao.saveProteinList(l2);
@@ -88,7 +88,7 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 	
 	@Test
 	public void testUpdateProteinList() {
-		ProteinList l = new ProteinList("awesome");
+		UserList l = new UserList("awesome");
 		l.setUsername(username);
 		long id = this.proteinListDao.saveProteinList(l);
 		l.setId(id);
@@ -97,7 +97,7 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 		l.setDescription("bla");
 		this.proteinListDao.updateProteinList(l);
 		
-		ProteinList l2 = this.proteinListDao.getProteinListById(l.getId());
+		UserList l2 = this.proteinListDao.getProteinListById(l.getId());
 		
 		assertTrue(id == l2.getId());
 		assertEquals(l.getName(), l2.getName());
@@ -111,7 +111,7 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 		Set<Long> accIds = new HashSet<Long>();
 		accIds.add(1L);
 		
-		ProteinList l = new ProteinList("awesome");
+		UserList l = new UserList("awesome");
 		l.setUsername(username);
 		long id = this.proteinListDao.saveProteinList(l);
 		l.setId(id);
@@ -126,14 +126,14 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 	
 	@Test
 	public void testDeleteProteinList() {
-		ProteinList l = new ProteinList("awesome");
+		UserList l = new UserList("awesome");
 		l.setUsername(username);
 		long id = this.proteinListDao.saveProteinList(l);
 		
-		ProteinList t1 = this.proteinListDao.getProteinListById(id);
+		UserList t1 = this.proteinListDao.getProteinListById(id);
 		assertNotNull(t1);
 		this.proteinListDao.deleteProteinList(id);
-		ProteinList t2 = this.proteinListDao.getProteinListById(id);
+		UserList t2 = this.proteinListDao.getProteinListById(id);
 		assertNotNull(t2);
 	}
 	
@@ -154,11 +154,11 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 	
 	@Test
 	public void testGetProteinListById() {
-		ProteinList l = new ProteinList("awesome");
+		UserList l = new UserList("awesome");
 		l.setUsername(username);
 		
 		long id = this.proteinListDao.saveProteinList(l);
-		ProteinList l2 = this.proteinListDao.getProteinListById(id);
+		UserList l2 = this.proteinListDao.getProteinListById(id);
 		
 		assertNotNull(l2);
 		assertEquals(l.getName(), l2.getName());
@@ -166,12 +166,12 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 	
 	@Test
 	public void testGetProteinListByNameForUser() {
-		ProteinList l = new ProteinList("awesome");
+		UserList l = new UserList("awesome");
 		l.setUsername(username);
 		long id = this.proteinListDao.saveProteinList(l);
 		l.setId(id);
 		
-		ProteinList l2 = this.proteinListDao.getProteinListByNameForUser(username, l.getName());
+		UserList l2 = this.proteinListDao.getProteinListByNameForUser(username, l.getName());
 		
 		assertNotNull(l2);
 		assertEquals(l.getName(), l2.getName());
@@ -182,7 +182,7 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 	@Ignore
 	@Test
 	public void testDeleteProteinListAccessions() {
-		ProteinList l = new ProteinList("coolio");
+		UserList l = new UserList("coolio");
 		l.setUsername(username);
 		long id = this.proteinListDao.saveProteinList(l);
 		
@@ -196,7 +196,7 @@ public class ProteinListDaoTest extends DBUnitBaseTest {
 		
 		
 		this.proteinListDao.deleteProteinListAccessions(listId, accs);
-		ProteinList pl = this.proteinListDao.getProteinListById(id);
+		UserList pl = this.proteinListDao.getProteinListById(id);
 		
 		assertEquals("coolio", pl.getName());
 		

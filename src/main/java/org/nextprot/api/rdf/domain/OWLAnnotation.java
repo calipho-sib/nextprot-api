@@ -1,8 +1,7 @@
 package org.nextprot.api.rdf.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import org.jsondoc.core.annotation.ApiObject;
 
@@ -10,59 +9,36 @@ import org.jsondoc.core.annotation.ApiObject;
 public class OWLAnnotation implements Serializable{
 
 	private static final long serialVersionUID = 4404147147281845675L;
-	
+	private OWLAnnotationCategory cat;
 
-	private String type;
-	
-	private String parent;
-
-	private String description;
-
-	private static List<String> done=new ArrayList<String>();
-
-
-	public void clearPredicatList(){
-		done.clear();		
+	public OWLAnnotation(OWLAnnotationCategory cat) {
+		this.cat=cat;
 	}
 	
-	public String getPredicat(){
-		done.add(OWLAnnotationCategory.getByType(type).getPredicat());
-		return OWLAnnotationCategory.getByType(type).getPredicat();
+	public OWLAnnotation(String dbAnnotationTypeName) {
+		this.cat=OWLAnnotationCategory.getByDbAnnotationTypeName(dbAnnotationTypeName);
 	}
-
+	
+	public Integer getDbId () {
+		return cat.getDbId();
+	}	
+	public String getPredicate(){
+		return cat.getRdfPredicate();
+	}
 	public String getLabel(){
-		return OWLAnnotationCategory.getByType(type).getLabel();
+		return cat.getRdfLabel();
 	}
-	
-	public String getParent() {
-		return parent;
+	public String getRdfTypeName(){
+		return cat.getRdfTypeName();
 	}
-	
-	public List<String> getDomain(){
-		return OWLAnnotationCategory.getByType(type).getDomain();
+	public Set<OWLAnnotationCategory> getParents() {
+		return cat.getParents();
 	}
-
-	public void setParent(String parent) {
-		this.parent = parent;
+	public Set<OWLAnnotationCategory> getAllParents() {
+		return cat.getAllParents();
 	}
-
 	public String getDescription() {
-		return description;
+		return cat.getDescription();
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public boolean isFirstTimePredicat(){
-		return !done.contains(OWLAnnotationCategory.getByType(type).getPredicat());
-	}
 }

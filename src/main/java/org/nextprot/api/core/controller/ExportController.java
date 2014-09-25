@@ -20,8 +20,6 @@ import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.ProteinList;
-import org.nextprot.api.core.service.ProteinListService;
 import org.nextprot.api.core.service.export.ExportService;
 import org.nextprot.api.core.service.export.ExportUtils;
 import org.nextprot.api.core.service.export.format.ExportFormat;
@@ -30,6 +28,8 @@ import org.nextprot.api.core.service.export.format.ExportTemplate;
 import org.nextprot.api.core.service.export.format.ExportXMLTemplate;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.user.domain.UserList;
+import org.nextprot.api.user.service.UserListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -49,13 +49,13 @@ import org.springframework.web.servlet.ViewResolver;
  */
 @Lazy
 @Controller
-@Api(name = "Export", description = "Export entries controller")
+@Api(name = "Export", description = "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.", role = "ROLE_USER")
 public class ExportController {
 
 	@Autowired
 	private ExportService exportService;
 	@Autowired
-	private ProteinListService proteinListService;
+	private UserListService proteinListService;
 	@Autowired
 	private ViewResolver viewResolver;
 	@Autowired
@@ -92,7 +92,7 @@ public class ExportController {
 	@RequestMapping("/export/entries/list/{listId}")
 	public void exportByListId(HttpServletResponse response, HttpServletRequest request, @ApiParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
 
-		ProteinList proteinList = this.proteinListService.getProteinListById(Long.valueOf(listId));
+		UserList proteinList = this.proteinListService.getProteinListById(Long.valueOf(listId));
 		NPFileFormat format = getRequestedFormat(request);
 		response.setHeader("Content-Disposition", "attachment; filename=\"NXEntries." + format.getExtension() + "\"");
 
@@ -118,7 +118,7 @@ public class ExportController {
 			default:throw new NextProtException(format + " not supported for templates");
 		}
 
-		ProteinList proteinList = this.proteinListService.getProteinListById(Long.valueOf(listId));
+		UserList proteinList = this.proteinListService.getProteinListById(Long.valueOf(listId));
 		String fileName = "nextprot-" + template.getTemplateName() + "-" + proteinList.getName() + "." + format.getExtension() ;
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 

@@ -1,8 +1,7 @@
 var model;
 
 function checkURLExistence() {
-	var value = "http://" + window.location.hostname
-			+ ":8080/nextprot-api/jsondoc";
+	var value = "http://" + window.location.hostname + ":8080/nextprot-api/jsondoc";
 	if (value.trim() == '') {
 		alert("Please insert a valid URL");
 		return false;
@@ -84,228 +83,248 @@ function formatXML(xml) {
 }
 
 function fetchdoc(jsondocurl) {
-	$
-			.ajax({
-				url : jsondocurl,
-				type : 'GET',
-				dataType : 'json',
-				contentType : "application/json; charset=utf-8",
-				success : function(data) {
-					model = data;
-					var main = Handlebars.compile($("#main").html());
-					var mainHTML = main(data);
-					$("#maindiv").html(mainHTML);
-					$("#maindiv").show();
+	$.ajax({
+		url : jsondocurl,
+		type: 'GET',
+		dataType: 'json',
+		contentType: "application/json; charset=utf-8",
+		success : function(data) {
+			model = data;
+			var main = Handlebars.compile($("#main").html());
+			var mainHTML = main(data);
+			$("#maindiv").html(mainHTML);
+			$("#maindiv").show();
+			
+			var apis = Handlebars.compile($("#apis").html());
+			var apisHTML = apis(data);
+			$("#apidiv").html(apisHTML);
+			$("#apidiv").show();
+			
+			$("#apidiv a").each(function() {
+				$(this).click(function() {
+					var api = jlinq.from(data.apis).equals("jsondocId", this.id).first();
+					var methods = Handlebars.compile($("#methods").html());
+					var methodsHTML = methods(api);
+					$("#content").html(methodsHTML);
+					$("#content").show();
+					$("#apiName").text(api.name);
+					$("#apiDescription").text(api.description);
+					$("#testContent").hide();
+					
+					$('#content a[rel="method"]').each(function() {
+						$(this).click(function() {
+							var method = jlinq.from(api.methods).equals("jsondocId", this.id).first();
+							var test = Handlebars.compile($("#test").html());
+							var testHTML = test(method);
+							$("#testContent").html(testHTML);
+							$("#testContent").show();
+							
+							$("#produces input:first").attr("checked", "checked");
+							
+							$("#testButton").click(function() {
+								var headers = new Object();
+								$("#headers input").each(function() {
+									headers[this.name] = $(this).val();
+								});
+								
+								headers["Accept"] = $("#produces input:checked").val();
+								
+								var replacedPath = method.path;
+								var tempReplacedPath = replacedPath; // this is to handle more than one parameter on the url
+								$("#pathparameters input").each(function() {
+									tempReplacedPath = replacedPath.replace("{"+this.name+"}", $(this).val());
+									replacedPath = tempReplacedPath;
+								});
 
-					var apis = Handlebars.compile($("#apis").html());
-					var apisHTML = apis(data);
-					$("#apidiv").html(apisHTML);
-					$("#apidiv").show();
-
-					$("#apidiv a")
-							.each(
-									function() {
-										$(this)
-												.click(
-														function() {
-															var api = jlinq
-																	.from(
-																			data.apis)
-																	.equals(
-																			"jsondocId",
-																			this.id)
-																	.first();
-															api.methods = api.methods
-																	.sort(function(
-																			a,
-																			b) {
-																		if (a.path > b.path)
-																			return 1;
-																		if (a.path < b.path)
-																			return -1;
-																		return 0;
-																	});
-															// console.log(api);
-															var methods = Handlebars
-																	.compile($(
-																			"#methods")
-																			.html());
-															var methodsHTML = methods(api);
-															$("#content")
-																	.html(
-																			methodsHTML);
-															$("#content")
-																	.show();
-															$("#apiName").text(
-																	api.name);
-															$("#apiDescription")
-																	.text(
-																			api.description);
-															$("#testContent")
-																	.hide();
-
-															$(
-																	'#content a[rel="method"]')
-																	.each(
-																			function() {
-																				$(
-																						this)
-																						.click(
-																								function() {
-																									var method = jlinq
-																											.from(
-																													api.methods)
-																											.equals(
-																													"jsondocId",
-																													this.id)
-																											.first();
-																									var test = Handlebars
-																											.compile($(
-																													"#test")
-																													.html());
-																									var testHTML = test(method);
-																									$(
-																											"#testContent")
-																											.html(
-																													testHTML);
-																									$(
-																											"#testContent")
-																											.show();
-
-																									$(
-																											"#produces input:first")
-																											.attr(
-																													"checked",
-																													"checked");
-
-																									$(
-																											"#testButton")
-																											.click(
-																													function() {
-																														var headers = new Object();
-																														$(
-																																"#headers input")
-																																.each(
-																																		function() {
-																																			headers[this.name] = $(
-																																					this)
-																																					.val();
-																																		});
-
-																														headers["Accept"] = $(
-																																"#produces input:checked")
-																																.val();
-
-																														var replacedPath = method.path;
-																														var tempReplacedPath = replacedPath; // this
-																														// is
-																														// to
-																														// handle
-																														// more
-																														// than
-																														// one
-																														// parameter
-																														// on
-																														// the
-																														// url
-																														$(
-																																"#urlparameters input")
-																																.each(
-																																		function() {
-																																			tempReplacedPath = replacedPath
-																																					.replace(
-																																							"{"
-																																									+ this.name
-																																									+ "}",
-																																							$(
-																																									this)
-																																									.val());
-																																			replacedPath = tempReplacedPath;
-																																		});
-
-																														$(
-																																'#testButton')
-																																.button(
-																																		'loading');
-
-																														var acceptType = $(
-																																"#produces input:checked")
-																																.val();
-																														var suffix = "xml"
-																														if (acceptType == "application/json")
-																															suffix = "json"
-																														if (acceptType == "text/turtle")
-																															suffix = "ttl"
-																														var nextprotURL = "http://"
-																																+ window.location.hostname
-																																+ ":8080/nextprot-api"
-																																+ replacedPath
-																																+ "."
-																																+ suffix;
-
-																														var start = new Date()
-																																.getTime();
-																														var res = $
-																																.ajax({
-																																	url : nextprotURL,
-																																	type : method.verb,
-																																	data : $(
-																																			"#inputJson")
-																																			.val(),
-																																	headers : headers,
-																																	contentType : $(
-																																			"#consumes input:checked")
-																																			.val(),
-																																	success : function(
-																																			data) {
-																																		printResponse(
-																																				data,
-																																				res,
-																																				this.url,
-																																				start);
-																																	},
-																																	error : function(
-																																			data) {
-																																		printResponse(
-																																				data,
-																																				res,
-																																				this.url,
-																																				start);
-																																	}
-																																});
-
-																													});
-
-																								});
-																			});
-														});
-									});
-
-					var objects = Handlebars.compile($("#objects").html());
-					var objectsHTML = objects(data);
-					$("#objectdiv").html(objectsHTML);
-					$("#objectdiv").show();
-
-					$("#objectdiv a").each(
-							function() {
-								$(this).click(
-										function() {
-											var o = jlinq.from(data.objects)
-													.equals("jsondocId",
-															this.id).first();
-											var object = Handlebars.compile($(
-													"#object").html());
-											var objectHTML = object(o);
-											$("#content").html(objectHTML);
-											$("#content").show();
-
-											$("#testContent").hide();
-										});
+								$("#queryparameters input").each(function() {
+									tempReplacedPath = replacedPath.replace("{"+this.name+"}", $(this).val());
+									replacedPath = tempReplacedPath;
+								});
+								
+								$('#testButton').button('loading');
+								
+								var suffix = "xml";
+								if (headers["Accept"] == "application/json")
+									suffix = "json"
+								if (headers["Accept"] == "text/turtle")
+									suffix = "ttl"
+								var nextprotURL = "http://"
+											+ window.location.hostname
+											+ ":8080/nextprot-api"
+											+ replacedPath
+											+ "."
+											+ suffix;
+								
+								var res = $.ajax({
+									url : nextprotURL,
+									type: method.verb,
+									data: $("#inputJson").val(),
+									headers: headers,
+									contentType: $("#consumes input:checked").val(),
+									success : function(data) {
+										printResponse(data, res, this.url);
+									},
+									error: function(data) {
+										printResponse(data, res, this.url);
+									}
+								});
+								
 							});
-
-				},
-				error : function(msg) {
-					alert("Error " + msg);
-				}
+							
+						});
+					});
+				});
 			});
+			
+			var objects = Handlebars.compile($("#objects").html());
+			var objectsHTML = objects(data);
+			//$("#objectdiv").html(objectsHTML);
+			//$("#objectdiv").show();
+			
+			$("#objectdiv a").each(function() {
+				$(this).click(function() {
+					var o = jlinq.from(data.objects).equals("jsondocId", this.id).first();
+					var object = Handlebars.compile($("#object").html());
+					var objectHTML = object(o);
+					$("#content").html(objectHTML);
+					$("#content").show();
+					
+					$("#testContent").hide();
+				});
+			});
+
+		},
+		error: function(msg) {
+			alert("Error " + msg);
+		}
+	});
 }
+$(document).ready(function() {
+
+    var widget = new Auth0Widget({
+	    domain: 'nextprot.auth0.com',
+	    clientID: '7vS32LzPoIR1Y0JKahOvUCgGbn94AcFW',
+	    callbackURL: location.href,
+        callbackOnLocationHash: true
+    });
+
+
+    
+    $('.btn-login').click(function(e) {
+      e.preventDefault();
+
+      
+      widget.signin({
+    	  popup: true, 
+    	  scope: 'openid profile offline_access',
+    	  icon: 'http://www.nextprot.org/db/images/blueflat/np.png',
+    	  showIcon: true,
+    	  device: 'Daniel\'s ipad'
+    	  //offline_mode: true
+    	} , null, function(err, profile, id_token, access_token, state, refresh_token) {
+    		
+            if (err) {
+                // Error callback
+                console.log("There was an error", err);
+                alert("There was an error with the log in");
+              } else {
+
+        	// Save the JWT token.
+            localStorage.setItem('userToken', id_token);
+            localStorage.setItem('refreshToken', refresh_token);
+            localStorage.setItem('nickname', profile.nickname);
+            
+            // Success calback
+        	
+        	/*
+          widget.getClient().getDelegationToken('IckaP4QRfGSRGuVZfP9VJBUdlXtgcS4o', token,
+            function(err, thirdPartyApiToken) {
+              localStorage.setItem('thirdPartyApiToken', thirdPartyApiToken.id_token);
+              console.log("Third party token", thirdPartyApiToken.id_token);
+            });
+        	*/
+            	setUserState();
+              }
+      });
+    });
+
+    $('.btn-logout').click(function(e) {
+    	localStorage.removeItem('userToken');
+        localStorage.removeItem('nickname');
+        setAnonymousState();
+    });
+    
+    function getJSONDOCAccordingToUser(){
+        checkURLExistence();
+    }
+    
+    function setUserState(){
+        $('.btn-logout').show();
+        $('.btn-login').hide();
+        $('.login-box').hide();
+        $('.logged-in-box').show();
+        $('.nickname').text("Welcome " + localStorage.getItem('nickname'));
+        getJSONDOCAccordingToUser();
+    }
+
+    function setAnonymousState(){
+        $('.btn-login').show();
+    	$('.nickname').text("You are anonymous");
+        $('.btn-login').show();
+        $('.btn-logout').hide();
+        getJSONDOCAccordingToUser();
+    }
+
+    
+    $('.btn-api').click(function(e) {
+        // Just call your API here. The header will be sent
+        $.ajax({
+          url: 'http://localhost:3001/secured/ping',
+          method: 'GET'
+        }).then(function(data, textStatus, jqXHR) {
+          alert("The request to the secured enpoint was successfull");
+        }, function() {
+          alert("You need to download the server seed and start it to call this API");
+        });
+      });
+
+    $.ajaxSetup({
+  	  'beforeSend': function(xhr) {
+  	    if (localStorage.getItem('userToken')) {
+
+	    	//Check if the usertoken has expired
+  	    	var payload = widget.getClient().decodeJwt(localStorage.getItem('userToken'));
+
+
+	    	console.log("checking token validity");
+	    	console.log("exp:" + payload.exp);
+	    	console.log("now:" + (Math.round(Date.now()) / 1000));
+
+  	    	if (Math.round(Date.now()) / 1000 >= payload.exp) {
+  	    		var rt = localStorage.getItem('refreshToken');
+  	    	    console.log("token has expired getting a new one with " , rt);
+  	    	  
+  	    		widget.getClient().refreshToken(rt, function (err, result) {
+  	    		    var fresh_jwt = result.id_token;
+	  	    	    console.log("Got a fresh user token" + fresh_jwt)
+	  	            localStorage.setItem('userToken', fresh_jwt);
+  	    	  });
+  	    	}
+
+
+  	      xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('userToken'));
+  	    }
+  	  }
+  	});
+
+    //Sets the states initially
+    if(localStorage.getItem('userToken')){
+    	setUserState();
+    }else {
+    	setAnonymousState();
+    }
+    
+
+
+});
+

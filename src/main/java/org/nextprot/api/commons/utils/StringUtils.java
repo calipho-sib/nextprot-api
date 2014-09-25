@@ -90,8 +90,21 @@ public class StringUtils {
 		return URIref.decode(uri);
 	}
 
+	static public String lowerFirstChar(String s) {
+		if (null==s) return null;
+		if (s.length()==0) return "";
+		return s.substring(0,1).toLowerCase() + s.substring(1);
+	}
+	
+	static public String upperFirstChar(String s) {
+		if (null==s) return null;
+		if (s.length()==0) return "";
+		return s.substring(0,1).toUpperCase() + s.substring(1);
+	}
+	
 	public static void main(String[] args) {
 		System.out.println(clean("H�llo/OP:� - regex,t\nest.{machine\\"));
+		System.out.println(toCamelCase("Hello_world", true));
 	}
 
 }

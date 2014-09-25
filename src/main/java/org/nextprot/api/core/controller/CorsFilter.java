@@ -33,7 +33,7 @@ public class CorsFilter extends OncePerRequestFilter {
         	return;
         }
         chain.doFilter(request, response);
-        Logger.info(request.getHeader("Origin")+" method:"+request.getMethod()+" end of request");
+        Logger.debug(request.getHeader("Origin")+" method:"+request.getMethod()+" end of request");
         
 	}
 
