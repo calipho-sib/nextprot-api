@@ -1,7 +1,7 @@
 var model;
 
 function checkURLExistence() {
-	var value = "http://" + window.location.hostname + ":8080/nextprot-api/jsondoc";
+	var value = "http://" + window.location.hostname + ":8080/nextprot-api-web/jsondoc";
 	if (value.trim() == '') {
 		alert("Please insert a valid URL");
 		return false;
@@ -150,7 +150,7 @@ function fetchdoc(jsondocurl) {
 									suffix = "ttl"
 								var nextprotURL = "http://"
 											+ window.location.hostname
-											+ ":8080/nextprot-api"
+											+ ":8080/nextprot-api-web"
 											+ replacedPath
 											+ "."
 											+ suffix;
@@ -295,20 +295,21 @@ $(document).ready(function() {
 	    	//Check if the usertoken has expired
   	    	var payload = widget.getClient().decodeJwt(localStorage.getItem('userToken'));
 
-
-	    	console.log("checking token validity");
-	    	console.log("exp:" + payload.exp);
-	    	console.log("now:" + (Math.round(Date.now()) / 1000));
-
   	    	if (Math.round(Date.now()) / 1000 >= payload.exp) {
   	    		var rt = localStorage.getItem('refreshToken');
   	    	    console.log("token has expired getting a new one with " , rt);
   	    	  
-  	    		widget.getClient().refreshToken(rt, function (err, result) {
+  	    	  widget.getClient().getDelegationToken({
+  	    	    refresh_token: rt,
+  	    	    api: 'auth0',
+  	    	    scope: 'openid profile'
+  	    	  }, function (err, result) {
+  	    		  	console.log("Got something " , result);
   	    		    var fresh_jwt = result.id_token;
 	  	    	    console.log("Got a fresh user token" + fresh_jwt)
 	  	            localStorage.setItem('userToken', fresh_jwt);
   	    	  });
+  	    	  
   	    	}
 
 

@@ -8,7 +8,6 @@ import java.util.List;
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.core.dao.AntibodyMappingDao;
 import org.nextprot.api.core.domain.AntibodyMapping;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.springframework.beans.factory.annotation.Autowired;

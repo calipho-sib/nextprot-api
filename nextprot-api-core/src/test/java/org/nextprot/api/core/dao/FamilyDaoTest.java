@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
-import org.nextprot.api.core.dao.FamilyDao;
 import org.nextprot.api.core.domain.Family;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.core.domain.AntibodyMapping;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.service.AntibodyMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

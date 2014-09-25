@@ -7,7 +7,6 @@ import java.util.List;
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

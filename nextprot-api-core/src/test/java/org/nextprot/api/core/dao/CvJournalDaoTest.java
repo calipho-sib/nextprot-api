@@ -8,7 +8,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
-import org.nextprot.api.core.dao.CvJournalDao;
 import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.PublicationCvJournal;
 import org.springframework.beans.factory.annotation.Autowired;

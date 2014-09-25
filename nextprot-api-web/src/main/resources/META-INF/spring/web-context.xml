@@ -35,7 +35,7 @@
 	<!-- Used for documentation -->
 	<bean id="documentationController" class="org.nextprot.api.core.controller.JSONDocRoleController">
 		<property name="version" value="0.1 beta" />
-		<property name="basePath" value="http://localhost:8080/nextprot-api"/>
+		<property name="basePath" value="http://localhost:8080/nextprot-api-web"/>
 		<property name="packages">
 			<list>
 				<value>org.nextprot.api</value>

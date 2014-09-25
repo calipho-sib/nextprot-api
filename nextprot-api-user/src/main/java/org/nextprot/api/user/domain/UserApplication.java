@@ -21,6 +21,7 @@ public class UserApplication implements Serializable, UserResource {
 	@JsonProperty(required=true)
 	private String description;
 
+	private String something = "yodelaiu";
 	
 	private String organisation;
 	
@@ -125,6 +126,14 @@ public class UserApplication implements Serializable, UserResource {
 
 	public void setOrganisation(String organisation) {
 		this.organisation = organisation;
+	}
+
+	public String getSomething() {
+		return something;
+	}
+
+	public void setSomething(String something) {
+		this.something = something;
 	}
 
 }

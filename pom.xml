@@ -41,9 +41,9 @@
 
 	<modules>
 		<module>nextprot-api-commons</module>
+		<module>nextprot-api-user</module>
 		<module>nextprot-api-rdf</module>
 		<module>nextprot-api-solr</module>
-		<module>nextprot-api-user</module>
 		<module>nextprot-api-core</module>
 		<module>nextprot-api-web</module>
 	</modules>
@@ -348,29 +348,6 @@
 					</executions>
 				</plugin>
 
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>versions-maven-plugin</artifactId>
-					<version>2.1</version>
-				</plugin>
-
-
-
-
-				<plugin>
-					<groupId>org.mortbay.jetty</groupId>
-					<artifactId>jetty-maven-plugin</artifactId>
-				</plugin>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-war-plugin</artifactId>
-					<version>2.2</version>
-				</plugin>
-
-				<plugin>
-					<artifactId>maven-antrun-plugin</artifactId>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 

@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
-import org.nextprot.api.core.service.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
