@@ -1,4 +1,4 @@
-package org.nextprot.api.commons.utils;
+package org.nextprot.api.core.dbunit;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.MVCBaseIntegrationTest;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SQLDictionaryTest extends MVCBaseIntegrationTest {

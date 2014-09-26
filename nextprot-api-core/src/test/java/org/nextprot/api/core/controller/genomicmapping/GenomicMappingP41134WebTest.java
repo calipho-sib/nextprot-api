@@ -1,8 +1,8 @@
 package org.nextprot.api.core.controller.genomicmapping;
 
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.MVCDBUnitBaseTest;
 import org.nextprot.api.commons.utils.MockMVCUtils;
+import org.nextprot.api.core.dbunit.MVCDBUnitBaseTest;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;

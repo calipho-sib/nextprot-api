@@ -2,7 +2,7 @@ package org.nextprot.api.rdf.dao;
 
 import java.util.List;
 
-import org.nextprot.api.rdf.domain.Terminology;
+import org.nextprot.api.core.domain.Terminology;
 
 public interface TerminologyDao {
 

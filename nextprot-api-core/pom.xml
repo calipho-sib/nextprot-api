@@ -22,17 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-api-rdf</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-api-user</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-api-solr</artifactId>
+			<artifactId>nextprot-api-users</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

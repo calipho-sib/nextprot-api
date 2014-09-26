@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import org.jsondoc.core.annotation.ApiObject;
+import org.nextprot.api.core.domain.OWLAnnotationCategory;
 
 @ApiObject(name = "Annotation", description = "Meta description of an annotation")
 public class OWLAnnotation implements Serializable{

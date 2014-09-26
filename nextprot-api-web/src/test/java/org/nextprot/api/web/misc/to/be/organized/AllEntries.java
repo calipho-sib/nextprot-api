@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.MVCBaseIntegrationTest;
+import org.nextprot.api.core.dbunit.MVCBaseIntegrationTest;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
 

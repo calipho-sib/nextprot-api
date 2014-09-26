@@ -42,13 +42,27 @@
 	<modules>
 		<module>nextprot-api-commons</module>
 		<module>nextprot-api-user</module>
+		<module>nextprot-api-core</module>
 		<module>nextprot-api-rdf</module>
 		<module>nextprot-api-solr</module>
-		<module>nextprot-api-core</module>
 		<module>nextprot-api-web</module>
 	</modules>
 
+	<dependencyManagement>
+
+		<dependencies>
+
+			<dependency>
+				<groupId>org.nextprot</groupId>
+				<artifactId>nextprot-api-commons</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+
+	</dependencyManagement>
+
 	<dependencies>
+
 		<dependency>
 			<groupId>org.biojava</groupId>
 			<artifactId>biojava</artifactId>
@@ -330,8 +344,9 @@
 				</plugin>
 
 				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-eclipse-plugin</artifactId>
-					<version>2.5.1</version>
+					<version>2.9</version>
 				</plugin>
 
 				<plugin>

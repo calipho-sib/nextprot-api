@@ -3,6 +3,7 @@ package org.nextprot.api.rdf.domain;
 import java.io.Serializable;
 
 import org.jsondoc.core.annotation.ApiObject;
+import org.nextprot.api.core.domain.Terminology;
 
 @ApiObject(name = "Ontology", description = "Meta description of an ontology")
 public class OWLOntology implements Serializable{

@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.MVCBaseSecurityIntegrationTest;
+import org.nextprot.api.core.dbunit.MVCBaseSecurityIntegrationTest;
 import org.springframework.http.MediaType;
 
 @Ignore

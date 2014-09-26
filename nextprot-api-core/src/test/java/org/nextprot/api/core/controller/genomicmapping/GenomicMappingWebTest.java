@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.MVCDBUnitBaseTest;
+import org.nextprot.api.core.dbunit.MVCDBUnitBaseTest;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;

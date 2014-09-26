@@ -12,8 +12,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.user.dao.UserListDao;
-import org.nextprot.api.user.domain.UserList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 

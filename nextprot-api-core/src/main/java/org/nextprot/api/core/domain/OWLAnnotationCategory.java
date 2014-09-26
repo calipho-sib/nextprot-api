@@ -1,4 +1,4 @@
-package org.nextprot.api.rdf.domain;
+package org.nextprot.api.core.domain;
 
 import java.util.HashMap;
 import java.util.HashSet;

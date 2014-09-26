@@ -17,12 +17,17 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-api-commons</artifactId>
+			<artifactId>nextprot-api-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-api-core</artifactId>
+			<artifactId>nextprot-api-solr</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-rdf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
@@ -32,6 +37,12 @@
 		<finalName>nextprot-api-web</finalName>
 
 		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-eclipse-plugin</artifactId>
+				<version>2.9</version>
+			</plugin>
 
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>

@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.core.domain.OWLAnnotationCategory;
 import org.nextprot.api.rdf.dao.SchemaDao;
 import org.nextprot.api.rdf.domain.OWLAnnotation;
-import org.nextprot.api.rdf.domain.OWLAnnotationCategory;
 import org.nextprot.api.rdf.domain.OWLDatabase;
 import org.nextprot.api.rdf.domain.OWLDatasource;
 import org.nextprot.api.rdf.domain.OWLEvidence;

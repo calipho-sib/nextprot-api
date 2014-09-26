@@ -6,6 +6,7 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.junit.Test;
+import org.nextprot.api.core.domain.OWLAnnotationCategory;
 
 public class OWLAnnotationCategoryTest extends TestCase {
 

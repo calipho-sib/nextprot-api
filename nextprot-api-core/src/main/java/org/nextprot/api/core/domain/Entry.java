@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.rdf.domain.Terminology;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.MVCBaseIntegrationTest;
+import org.nextprot.api.core.dbunit.MVCBaseIntegrationTest;
 import org.springframework.test.web.servlet.ResultActions;
 
 /**

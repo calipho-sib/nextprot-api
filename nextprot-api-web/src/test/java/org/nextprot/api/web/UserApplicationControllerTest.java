@@ -1,4 +1,4 @@
-package org.nextprot.api.user.controller;
+package org.nextprot.api.web;
 
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.nextprot.api.commons.dbunit.MVCBaseSecurityIntegrationTest;
+import org.nextprot.api.user.controller.UserApplicationController;
 import org.nextprot.api.user.domain.UserApplication;
 import org.nextprot.api.user.service.UserApplicationService;
 import org.springframework.http.MediaType;

@@ -4,7 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.MVCDBUnitBaseTest;
+import org.nextprot.api.core.dbunit.MVCDBUnitBaseTest;
 import org.springframework.test.web.servlet.ResultActions;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;

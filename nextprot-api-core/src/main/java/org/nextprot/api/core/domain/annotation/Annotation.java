@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.nextprot.api.rdf.domain.OWLAnnotationCategory;
+import org.nextprot.api.core.domain.OWLAnnotationCategory;
 
 public class Annotation implements Serializable {
 

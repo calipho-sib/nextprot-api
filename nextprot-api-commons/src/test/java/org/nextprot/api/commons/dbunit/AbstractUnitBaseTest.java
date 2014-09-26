@@ -16,6 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("unit")
 @DirtiesContext
-abstract class AbstractUnitBaseTest {
+public abstract class AbstractUnitBaseTest {
 	
 }
