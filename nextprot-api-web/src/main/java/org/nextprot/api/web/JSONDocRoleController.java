@@ -1,4 +1,4 @@
-package org.nextprot.api.core.controller;
+package org.nextprot.api.web;
 
 import java.util.Comparator;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.jsondoc.core.pojo.JSONDoc;
 import org.jsondoc.core.util.JSONDocUtils;
 import org.jsondoc.springmvc.controller.JSONDocController;
 import org.nextprot.api.core.service.export.impl.ExportServiceImpl;
+import org.nextprot.api.user.security.NPSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;

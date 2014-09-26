@@ -1,4 +1,4 @@
-package org.nextprot.api.core.controller;
+package org.nextprot.api.web;
 
 import java.util.List;
 import java.util.Map;

@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.nextprot.api.core.dbunit.MVCBaseSecurityIntegrationTest;
 import org.nextprot.api.user.controller.UserApplicationController;
 import org.nextprot.api.user.domain.UserApplication;
 import org.nextprot.api.user.service.UserApplicationService;

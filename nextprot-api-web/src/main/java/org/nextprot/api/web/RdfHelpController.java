@@ -1,4 +1,4 @@
-package org.nextprot.api.core.controller;
+package org.nextprot.api.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +14,9 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.rdf.domain.RdfTypeInfo;
+import org.nextprot.api.rdf.domain.TripleInfo;
+import org.nextprot.api.rdf.service.RdfHelpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;

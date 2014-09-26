@@ -1,19 +1,26 @@
-package org.nextprot.api.core.controller;
+package org.nextprot.api.web;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.naming.directory.SearchResult;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.solr.client.solrj.request.QueryRequest;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.rdf.service.SparqlEndpoint;
+import org.nextprot.api.rdf.service.SparqlService;
+import org.nextprot.api.solr.Query;
+import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.SearchResult;
+import org.nextprot.api.solr.SolrConfiguration;
+import org.nextprot.api.solr.SolrIndex;
+import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.user.domain.UserList;
+import org.nextprot.api.user.service.UserListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;

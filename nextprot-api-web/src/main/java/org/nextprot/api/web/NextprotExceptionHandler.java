@@ -1,4 +1,4 @@
-package org.nextprot.api.core.controller;
+package org.nextprot.api.web;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

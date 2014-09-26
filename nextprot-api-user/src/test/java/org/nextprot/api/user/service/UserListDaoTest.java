@@ -1,4 +1,4 @@
-package org.nextprot.api.core.dao;
+package org.nextprot.api.user.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -12,11 +12,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.user.dao.UserListDao;
+import org.nextprot.api.user.domain.UserList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 
 @Ignore
-public class ProteinListDaoTest extends DBUnitBaseTest {
+public class UserListDaoTest extends DBUnitBaseTest {
 
 	@Autowired private DataSourceServiceLocator dsLocator;
 	@Autowired private UserListDao proteinListDao;

@@ -1,4 +1,4 @@
-package org.nextprot.api.rdf.dao.impl;
+package org.nextprot.api.core.dao.impl;
 
 import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
 
@@ -7,8 +7,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.Terminology;
-import org.nextprot.api.rdf.dao.TerminologyDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;

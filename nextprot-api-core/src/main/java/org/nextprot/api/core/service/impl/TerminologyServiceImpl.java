@@ -2,6 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import java.util.List;
 
+import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
 import org.springframework.beans.factory.annotation.Autowired;

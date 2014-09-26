@@ -1,4 +1,4 @@
-package org.nextprot.api.core.controller;
+package org.nextprot.api.web;
 
 import java.io.IOException;
 
