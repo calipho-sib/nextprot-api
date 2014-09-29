@@ -9,3 +9,4 @@ application.properties
 nohup.out
 velocity.log.*
 npapi.log
+AnnotationMVCTest.out.xml
