@@ -1,6 +1,5 @@
 package org.nextprot.api.user.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.jsondoc.core.annotation.Api;

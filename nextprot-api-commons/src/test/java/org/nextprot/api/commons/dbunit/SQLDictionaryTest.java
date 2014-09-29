@@ -7,8 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.Test;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
