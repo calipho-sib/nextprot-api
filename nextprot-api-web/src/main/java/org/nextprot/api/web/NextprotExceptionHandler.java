@@ -6,7 +6,6 @@ import org.nextprot.api.commons.exception.ConcurrentRequestsException;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.NotAuthorizedException;
-import org.nextprot.api.core.controller.error.RestErrorResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;

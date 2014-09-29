@@ -408,21 +408,6 @@
 				</executions>
 			</plugin>
 
-			<plugin>
-				<groupId>org.flywaydb</groupId>
-				<artifactId>flyway-maven-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<driver>org.postgresql.Driver</driver>
-					<url>jdbc:postgresql://crick:5432/np_unit</url>
-					<user>postgres</user>
-					<password>postgres</password>
-					<schemas>
-						<schema>np_users</schema>
-					</schemas>
-				</configuration>
-			</plugin>
-
 		</plugins>
 	</build>
 </project>

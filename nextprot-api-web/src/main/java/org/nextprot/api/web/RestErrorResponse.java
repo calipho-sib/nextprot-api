@@ -1,7 +1,10 @@
-package org.nextprot.api.core.controller.error;
+package org.nextprot.api.web;
 
-public class RestErrorResponse {
+import java.io.Serializable;
 
+public class RestErrorResponse implements Serializable{
+
+	private static final long serialVersionUID = 7820195778216393136L;
 	private String message;
 	private String type;
 /*	private String documentationLink = "http://crick:8080/";

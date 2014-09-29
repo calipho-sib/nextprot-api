@@ -19,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("dev")
 @DirtiesContext
+@Deprecated //should not run on a database with real data (doesn't work for unit testing)
 public abstract class AbstractIntegrationBaseTest {
 	
 

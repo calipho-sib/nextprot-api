@@ -111,8 +111,7 @@
 								<list>
 									<value>java.lang.String</value>
 									<value>java.util.List</value>
-									<value>org.nextprot.api.core.controller.error.RestErrorResponse
-									</value>
+									<value>org.nextprot.api.web.RestErrorResponse</value>
 									<value>org.nextprot.api.core.domain.Publication</value>
 									<value>org.nextprot.api.core.domain.PublicationAuthor</value>
 									<value>org.nextprot.api.core.domain.CvJournal</value>

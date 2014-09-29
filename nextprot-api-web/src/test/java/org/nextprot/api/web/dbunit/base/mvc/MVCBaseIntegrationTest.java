@@ -24,6 +24,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 @WebAppConfiguration
 @ContextConfiguration("classpath:META-INF/spring/web-context.xml")
+@Deprecated //should not run on a database with real data (doesn't work for unit testing)
 public abstract class MVCBaseIntegrationTest extends AbstractIntegrationBaseTest {
 
 	

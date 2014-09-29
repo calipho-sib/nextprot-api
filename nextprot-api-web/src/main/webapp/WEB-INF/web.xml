@@ -22,7 +22,7 @@
     <!--  configure cors  -->
     <filter>
         <filter-name>cors</filter-name>
-        <filter-class>org.nextprot.api.core.controller.CorsFilter</filter-class>
+        <filter-class>org.nextprot.api.web.CorsFilter</filter-class>
     </filter>
       
       <filter-mapping>

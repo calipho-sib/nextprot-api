@@ -29,7 +29,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Controller
 @RequestMapping(value = "/cities")
 public class CityController {
-
+	
+	
 	@ApiMethod(path = "/cities/{name}", verb = ApiVerb.GET, description = "Gets a UserApplication with the given name. (Allowed values are just to demonstrate the annotation attribute)", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	@ApiErrors(apierrors = { @ApiError(code = "2000", description = "UserApplication not found"), @ApiError(code = "9000", description = "Illegal argument") })
 	@RequestMapping(value = "/{name}", method = RequestMethod.GET)

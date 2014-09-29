@@ -4,13 +4,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.MVCDBUnitBaseTest;
 
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-
-@DatabaseSetup(value = "DbXrefControllerTest.xml", type = DatabaseOperation.INSERT)
+@Ignore //TODO create a mock object
 public class XrefControllerTest extends MVCDBUnitBaseTest {
 
 	@Test
