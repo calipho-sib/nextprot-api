@@ -36,14 +36,9 @@ public class SQLDictionaryTest extends CommonsUnitBaseTest {
 	@Test
 	public void shouldExecuteAQuery() throws SQLException {
 
-		final String QUERY = "interactions_by_entry";
 		final int LIMIT = 10;
 		Connection c = dsLocator.getDataSource().getConnection();
-
-		Map<String, String> map = new HashMap<String, String>();
-		map.put(":entryName", "'NX_Q9Y6V7'");
-		String sql = SQLDictionary.getSQLQuery(QUERY, map);
-		PreparedStatement ps = c.prepareStatement(sql);
+		PreparedStatement ps = c.prepareStatement(SQLDictionary.getSQLQuery("test-query-for-unit-testing"));
 		ResultSet rs = ps.executeQuery();
 
 		int j = 0;

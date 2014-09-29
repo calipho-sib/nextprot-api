@@ -1,8 +1,11 @@
 package org.nextprot.api.commons.utils;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
  * Utility class that read SQL queries from a directory. $
@@ -11,8 +14,7 @@ import java.util.Map;
  * @author dteixeira
  */
 public class SQLDictionary {
-	
-	private static final String SQL_PATH = "src/main/resources/sql/";
+
 	private static SQLDictionary singleton = null;
 	static {
 		singleton = new SQLDictionary();
@@ -24,41 +26,23 @@ public class SQLDictionary {
 	private void initialize() {
 
 		sqlQueries = new HashMap<String, String>();
-		File f = new File(SQL_PATH);
-		
-		this.sqlQueries = findFiles(f, sqlQueries);
-	}		
 
-	
-	private Map<String, String> findFiles(File file, Map<String, String> queryMap) {
-		File[] subFiles = file.listFiles();
-		
-		for(File f : subFiles) {
-			if(f.isDirectory())
-				queryMap.putAll(findFiles(f, queryMap));
-			else {
-				queryMap.put(f.getName().replace(".sql",  ""), FileUtils.readFileAsString(f.getAbsolutePath()));
-			}
+		Resource[] resources;
+		try {
+			resources = new PathMatchingResourcePatternResolver().getResources("classpath:sql/**/*.sql");
+			mapQueries(resources, sqlQueries);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return queryMap;
 	}
-	
 
+	private void mapQueries(Resource[] resources, Map<String, String> queryMap) throws IOException {
 
-	/**
-	 * Gets the query
-	 * 
-	 * @param queryId
-	 * @return
-	 */
-	public static String getSQLQuery(String queryId, Map<String,String> bindVariables) {
-		String s = singleton.sqlQueries.get(queryId);
-		for(String variableName : bindVariables.keySet()){
-			s = s.replace(variableName, bindVariables.get(variableName));
+		for (Resource r : resources) {
+			queryMap.put(r.getFilename().replace(".sql", ""), FileUtils.readFileAsString(r.getFile().getAbsolutePath()));
 		}
-		return s;
 	}
-	
+
 
 	/**
 	 * Gets the query
@@ -69,5 +53,5 @@ public class SQLDictionary {
 	public static String getSQLQuery(String queryId) {
 		return singleton.sqlQueries.get(queryId);
 	}
-	
+
 }
