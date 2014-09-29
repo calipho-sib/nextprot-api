@@ -1,7 +1,5 @@
 package org.nextprot.api.user.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +8,7 @@ import java.util.List;
 
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,8 @@ import org.springframework.stereotype.Repository;
 @Lazy
 public class UserQueryDaoImpl implements UserQueryDao {
 
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired private DataSourceServiceLocator dsLocator;
 	
 	@Override
@@ -34,12 +35,12 @@ public class UserQueryDaoImpl implements UserQueryDao {
 
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("username", username);
-		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(getSQLQuery("advanced-user-query-by-username"), namedParameters, new UserQueryRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("advanced-user-query-by-username"), namedParameters, new UserQueryRowMapper());
 	}
 
 	@Override
 	public List<UserQuery> getPublicQueries() {
-		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(getSQLQuery("advanced-public-query"), new UserQueryRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("advanced-public-query"), new UserQueryRowMapper());
 	}
 
 	
@@ -62,7 +63,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 
 	@Override
 	public long saveUserQuery(final UserQuery userQuery) {
-		final String INSERT_SQL = getSQLQuery("advanced-user-query-insert");
+		final String INSERT_SQL = sqlDictionary.getSQLQuery("advanced-user-query-insert");
 
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
 
@@ -85,7 +86,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 	@Override
 	public void updateUserQuery(final UserQuery userQuery) {
 
-		final String UPDATE_SQL = getSQLQuery("advanced-user-query-update");
+		final String UPDATE_SQL = sqlDictionary.getSQLQuery("advanced-user-query-update");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(this.dsLocator.getUserDataSource());
 
 		jdbcTemplate.update(new PreparedStatementCreator() {
@@ -104,7 +105,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 	@Override
 	public void deleteUserQuery(final long id) {
 
-		final String DELETE_SQL = getSQLQuery("advanced-user-query-delete");
+		final String DELETE_SQL = sqlDictionary.getSQLQuery("advanced-user-query-delete");
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(this.dsLocator.getUserDataSource());
 
 		jdbcTemplate.update(new PreparedStatementCreator() {
@@ -119,14 +120,14 @@ public class UserQueryDaoImpl implements UserQueryDao {
 
 	@Override
 	public List<UserQuery> getNextprotQueries() {
-		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(getSQLQuery("advanced-nextprot-query"), new UserQueryRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("advanced-nextprot-query"), new UserQueryRowMapper());
 	}
 
 	@Override
 	public UserQuery getUserQueryById(long id) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("id", id);
-		List<UserQuery> queries = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(getSQLQuery("advanced-user-query-by-id"), namedParameters, new UserQueryRowMapper());
+		List<UserQuery> queries = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("advanced-user-query-by-id"), namedParameters, new UserQueryRowMapper());
 		NPreconditions.checkTrue(queries.size() == 1, "User query not found");
 		return queries.get(0);
 	}

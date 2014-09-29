@@ -1,13 +1,12 @@
 package org.nextprot.api.core.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.HistoryDao;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.History;
@@ -21,13 +20,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class HistoryDaoImpl implements HistoryDao {
 
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired private DataSourceServiceLocator dsLocator;
 	
 	
 	@Override
 	public List<History> findHistoryByEntry(String uniqueName) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("history-by-entry"), namedParameters, new HistoryEntryRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("history-by-entry"), namedParameters, new HistoryEntryRowMapper());
 	}
 	
 	private static class HistoryEntryRowMapper implements ParameterizedRowMapper<History> {

@@ -1,7 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
@@ -17,23 +15,25 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class MasterIdentifierDaoImpl implements MasterIdentifierDao {
 
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired private DataSourceServiceLocator dsLocator;
 	
 	@Override
 	public Long findIdByUniqueName(String uniqueName) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(getSQLQuery("master-id-by-name"), namedParameters, Long.class);
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("master-id-by-name"), namedParameters, Long.class);
 	}
 
 	@Override
 	public List<String> findUniqueNamesOfChromossome(String chromossome) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("chromossome", chromossome);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(SQLDictionary.getSQLQuery("unique-names-of-chromosome"), namedParameters, String.class);
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("unique-names-of-chromosome"), namedParameters, String.class);
 	}
 	
 	@Override
 	public List<String> findUniqueNames() {
-		return new JdbcTemplate(dsLocator.getDataSource()).queryForList(SQLDictionary.getSQLQuery("unique-names"), String.class);
+		return new JdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("unique-names"), String.class);
 	}
 	
 	@Override

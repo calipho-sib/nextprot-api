@@ -112,7 +112,7 @@ public class SparqlServiceImpl implements SparqlService, InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		prefix = FileUtils.readFileAsString("src/main/resources/META-INF/sparql/prefix.rq");
+		prefix = FileUtils.readResourceAsString("sparql/prefix.rq");
 	}
 
 	@Override

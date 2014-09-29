@@ -1,11 +1,10 @@
 package org.nextprot.api.core.dao.impl;
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.impl.spring.BatchNamedParameterJdbcTemplate;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -24,6 +23,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AnnotationDAOImpl implements AnnotationDAO {
+
+	@Autowired private SQLDictionary sqlDictionary;
 
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
@@ -58,7 +59,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	public List<Annotation> findAnnotationsByEntryName(String entryName) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("unique_name", entryName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("annotations-by-entry-name"), namedParameters, new AnnotationRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotations-by-entry-name"), namedParameters, new AnnotationRowMapper());
 
 	}
 
@@ -81,7 +82,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	public List<AnnotationIsoformSpecificity> findAnnotationIsoformsByAnnotationIds(List<Long> annotationIds) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("ids", annotationIds);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("annotation-isoforms-by-annotation-ids"), namedParameters, new AnnotationIsoformRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-isoforms-by-annotation-ids"), namedParameters, new AnnotationIsoformRowMapper());
 
 	}
 
@@ -90,7 +91,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	@Override
 	public List<AnnotationEvidence> findAnnotationEvidencesByAnnotationIds(List<Long> annotationIds) {
 
-		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("annotation-evidences-by-annotation-ids"), "ids", annotationIds, new ParameterizedRowMapper<AnnotationEvidence>() {
+		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidences-by-annotation-ids"), "ids", annotationIds, new ParameterizedRowMapper<AnnotationEvidence>() {
 
 			public AnnotationEvidence mapRow(ResultSet resultSet, int row) throws SQLException {
 
@@ -122,7 +123,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	@Override
 	public List<AnnotationEvidenceProperty> findAnnotationEvidencePropertiesByEvidenceIds(List<Long> evidenceIds) {
 		
-		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("annotation-evidence-properties-by-evidence-ids"), "ids", evidenceIds, new ParameterizedRowMapper<AnnotationEvidenceProperty>() {
+		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidence-properties-by-evidence-ids"), "ids", evidenceIds, new ParameterizedRowMapper<AnnotationEvidenceProperty>() {
 
 			public AnnotationEvidenceProperty mapRow(ResultSet resultSet, int row) throws SQLException {
 
@@ -147,7 +148,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("ids", annotationIds);
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("annotation-properties-by-annotation-ids"), namedParameters, new ParameterizedRowMapper<AnnotationProperty>() {
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-properties-by-annotation-ids"), namedParameters, new ParameterizedRowMapper<AnnotationProperty>() {
 
 			public AnnotationProperty mapRow(ResultSet resultSet, int row) throws SQLException {
 			

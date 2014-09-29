@@ -1,7 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.AbstractMap;
@@ -11,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.Exon;
@@ -27,6 +26,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class GeneDAOImpl implements GeneDAO {
 	
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired private DataSourceServiceLocator dsLocator;
 	
 
@@ -34,7 +35,7 @@ public class GeneDAOImpl implements GeneDAO {
 	public List<ChromosomalLocation> findChromosomalLocationsByEntryName(String entryName) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("unique_name", entryName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("chromosomal-location-by-entry-name"), namedParameters, new ChromosomalLocationRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("chromosomal-location-by-entry-name"), namedParameters, new ChromosomalLocationRowMapper());
 
 	}
 	
@@ -61,7 +62,7 @@ public class GeneDAOImpl implements GeneDAO {
 	public List<GenomicMapping> findGenomicMappingByEntryName(String entryName) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("unique_name", entryName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("genomic-mapping-by-entry-name"), namedParameters, new GenomicMappingRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("genomic-mapping-by-entry-name"), namedParameters, new GenomicMappingRowMapper());
 
 	}
 	
@@ -84,7 +85,7 @@ public class GeneDAOImpl implements GeneDAO {
 	public List<TranscriptMapping> findTranscriptsByIsoformNames(List<String> isoformNames) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("isoform_names", isoformNames);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("transcripts-by-isoform-names"), namedParameters, new TranscriptRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("transcripts-by-isoform-names"), namedParameters, new TranscriptRowMapper());
 
 	}
 	
@@ -115,7 +116,7 @@ public class GeneDAOImpl implements GeneDAO {
 		
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource("transcriptName", transcriptName);
 		namedParameters.addValue("geneName", geneName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("exons-aligned-to-transcript"), namedParameters, new ExonMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("exons-aligned-to-transcript"), namedParameters, new ExonMapper());
 
 	}
 	
@@ -125,7 +126,7 @@ public class GeneDAOImpl implements GeneDAO {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource("transcriptName", transcriptName);
 		namedParameters.addValue("geneName", geneName);
 		namedParameters.addValue("isoformName", isoName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("exons-partially-aligned-to-transcript"), namedParameters, new ExonMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("exons-partially-aligned-to-transcript"), namedParameters, new ExonMapper());
 
 	}
 	
@@ -148,7 +149,7 @@ public class GeneDAOImpl implements GeneDAO {
 	public List<IsoformMapping> getIsoformMappings(List<String> isoformNames){
 		
 		SqlParameterSource namedParameters = new MapSqlParameterSource("isoform_names", isoformNames);
-		List<Map<String,Object>> result = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(getSQLQuery("isoform-mappings"), namedParameters);
+		List<Map<String,Object>> result = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("isoform-mappings"), namedParameters);
 		
 		Map<String, IsoformMapping> isoformMappings = new HashMap<String, IsoformMapping>();
 		for(Map<String,Object> m : result){

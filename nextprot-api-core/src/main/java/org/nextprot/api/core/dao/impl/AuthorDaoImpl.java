@@ -1,12 +1,11 @@
 package org.nextprot.api.core.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AuthorDao;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AuthorDaoImpl implements AuthorDao {
 
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
 
@@ -28,14 +29,14 @@ public class AuthorDaoImpl implements AuthorDao {
 
 	public List<PublicationAuthor> findAuthorsByPublicationId(Long publicationId) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("publicationId", publicationId);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("publication-authors-by-publication-id"), namedParameters, new AuthorRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-authors-by-publication-id"), namedParameters, new AuthorRowMapper());
 	}
 
 	
 	@Override
 	public List<PublicationAuthor> findAuthorsByPublicationIds(List<Long> publicationIds) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("publicationIds", publicationIds);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("publication-authors-by-publication-ids"), namedParameters, new PublicationAuthorRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-authors-by-publication-ids"), namedParameters, new PublicationAuthorRowMapper());
 	};
 
 	

@@ -1,7 +1,5 @@
 package org.nextprot.api.user.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserListDao;
 import org.nextprot.api.user.domain.UserList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,13 +30,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserListDaoImpl implements UserListDao {
 	
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired private DataSourceServiceLocator dsLocator;
 
 	@Override
 	public List<UserList> getProteinListsMetadata(String username) {
 		
 		SqlParameterSource namedParameters = new MapSqlParameterSource("username", username);
-		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(getSQLQuery("proteinlists-by-username"), namedParameters, new ProteinListRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("proteinlists-by-username"), namedParameters, new ProteinListRowMapper());
 	}
 	
 	@Override
@@ -81,13 +82,13 @@ public class UserListDaoImpl implements UserListDao {
 	@Override
 	public Set<String> getAccessionsByListId(Long listId) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("listId", listId);
-		List<String> accs = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForList(getSQLQuery("proteinlists-accessions-by-listid"), namedParameters, String.class);
+		List<String> accs = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForList(sqlDictionary.getSQLQuery("proteinlists-accessions-by-listid"), namedParameters, String.class);
 		return new HashSet<String>(accs);
 	}
 	
 	@Override
 	public Long saveProteinList(final UserList proteinList) {
-		final String INSERT_SQL = getSQLQuery("proteinlist-insert");
+		final String INSERT_SQL = sqlDictionary.getSQLQuery("proteinlist-insert");
 		
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
 		
@@ -149,7 +150,7 @@ public class UserListDaoImpl implements UserListDao {
 	@Override
 	public Set<Long> getAccessionIds(Set<String> accessions) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("accessions", accessions);
-		return new HashSet<Long> (new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForList(getSQLQuery("proteinlists-accid-by-acc"), namedParams, Long.class));
+		return new HashSet<Long> (new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForList(sqlDictionary.getSQLQuery("proteinlists-accid-by-acc"), namedParams, Long.class));
 	}
 
 	@Override

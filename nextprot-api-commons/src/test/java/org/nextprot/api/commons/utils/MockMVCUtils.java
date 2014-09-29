@@ -11,7 +11,7 @@ public abstract class MockMVCUtils {
 
 		String regex = "[\n\t'\" ]";
 		String actual = mockMvc.perform(get(url)).andReturn().getResponse().getContentAsString().replaceAll(regex, "");
-		String expected = FileUtils.readFileAsString(file).replaceAll(regex, "").replace("<?xmlversion=1.0encoding=UTF-8?>", "");
+		String expected = FileUtils.readResourceAsString(file).replaceAll(regex, "").replace("<?xmlversion=1.0encoding=UTF-8?>", "");
 		assertEquals(expected, actual);
 
 	}

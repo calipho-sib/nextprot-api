@@ -18,12 +18,16 @@ public class SQLDictionaryTest extends CommonsUnitBaseTest {
 	@Autowired
 	private DataSourceServiceLocator dsLocator = null;
 
+	@Autowired
+	private SQLDictionary sqlDictionary;
+
+	
 	/**
 	 * @param args
 	 */
 	@Test
 	public void shouldGetTestQuery() {
-		String sql = SQLDictionary.getSQLQuery("test-query-for-unit-testing");
+		String sql = sqlDictionary.getSQLQuery("test-query-for-unit-testing");
 		assertEquals("select * from nextprot.cv_databases\n", sql);
 	}
 
@@ -36,7 +40,7 @@ public class SQLDictionaryTest extends CommonsUnitBaseTest {
 
 		final int LIMIT = 10;
 		Connection c = dsLocator.getDataSource().getConnection();
-		PreparedStatement ps = c.prepareStatement(SQLDictionary.getSQLQuery("test-query-for-unit-testing"));
+		PreparedStatement ps = c.prepareStatement(sqlDictionary.getSQLQuery("test-query-for-unit-testing"));
 		ResultSet rs = ps.executeQuery();
 
 		int j = 0;

@@ -1,12 +1,11 @@
 package org.nextprot.api.core.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.Terminology;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +18,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class TerminologyDaoImpl implements TerminologyDao {
 
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired private DataSourceServiceLocator dsLocator;
 
 	@Override
 	public Terminology findTerminologyByAccession(String accession) {
 		SqlParameterSource params = new MapSqlParameterSource("accession", accession);
-		List<Terminology> terms=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("terminology-by-ac"), params, new ParameterizedRowMapper<Terminology>() {
+		List<Terminology> terms=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-ac"), params, new ParameterizedRowMapper<Terminology>() {
 
 			@Override
 			public Terminology mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -61,7 +62,7 @@ public class TerminologyDaoImpl implements TerminologyDao {
 
 	public List<Terminology> findTerminologyByOntology(String ontology) {
 		SqlParameterSource params = new MapSqlParameterSource("ontology", ontology);
-		List<Terminology> terms=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("terminology-by-ontology"), params, new ParameterizedRowMapper<Terminology>() {
+		List<Terminology> terms=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-ontology"), params, new ParameterizedRowMapper<Terminology>() {
 
 			@Override
 			public Terminology mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -83,7 +84,7 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	@Override
 	public List<Terminology> findAllTerminology() {
 		SqlParameterSource params = new MapSqlParameterSource();
-		List<Terminology> terms=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("terminology-all"), params, new ParameterizedRowMapper<Terminology>() {
+		List<Terminology> terms=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-all"), params, new ParameterizedRowMapper<Terminology>() {
 
 			@Override
 			public Terminology mapRow(ResultSet resultSet, int row) throws SQLException {

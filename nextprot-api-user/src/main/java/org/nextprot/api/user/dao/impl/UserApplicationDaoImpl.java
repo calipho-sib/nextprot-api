@@ -1,7 +1,5 @@
 package org.nextprot.api.user.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserApplicationDao;
 import org.nextprot.api.user.domain.UserApplication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +32,8 @@ import org.springframework.stereotype.Repository;
 @Lazy
 public class UserApplicationDaoImpl implements UserApplicationDao {
 
+	@Autowired private SQLDictionary sqlDictionary;
+
 	private final Log Logger = LogFactory.getLog(UserApplicationDaoImpl.class);
 	
 	@Autowired
@@ -43,13 +44,13 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("owner", username);
-		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(getSQLQuery("user-applications-by-username"), namedParameters, new UserApplicationRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("user-applications-by-username"), namedParameters, new UserApplicationRowMapper());
 	}
 
 	@Override
 	public void createUserApplication(final UserApplication userApplication) {
 
-		final String INSERT_SQL = getSQLQuery("insert-user-application");
+		final String INSERT_SQL = sqlDictionary.getSQLQuery("insert-user-application");
 		
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
 		
@@ -92,7 +93,7 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	public UserApplication getUserApplicationById(long id) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("id", id);
-		List<UserApplication> queries = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(getSQLQuery("user-application-by-id"), namedParameters, new UserApplicationRowMapper());
+		List<UserApplication> queries = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("user-application-by-id"), namedParameters, new UserApplicationRowMapper());
 		NPreconditions.checkTrue(queries.size() == 1, "User application not found");
 		return queries.get(0);
 	}

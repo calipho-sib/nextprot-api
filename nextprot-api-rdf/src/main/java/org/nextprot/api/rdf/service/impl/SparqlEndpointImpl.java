@@ -117,7 +117,7 @@ public class SparqlEndpointImpl implements SparqlEndpoint {
 	@Override
 	@Cacheable("rdftypetriple")
 	public List<TripleInfo> getTripleInfoList(String rdfType) {
-		String queryBase = RDF_PREFIXES + FileUtils.readFileAsString("/META-INF/sparql/typepred.rq");
+		String queryBase = RDF_PREFIXES + FileUtils.readResourceAsString("sparql/typepred.rq");
 		Set<TripleInfo> tripleList = new TreeSet<TripleInfo>();
 		String query = RDF_PREFIXES;
 		query += queryBase.replace(":SomeRdfType", rdfType);

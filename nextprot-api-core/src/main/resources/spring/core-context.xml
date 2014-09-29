@@ -29,9 +29,6 @@
 		<property name="clientId" value="${auth0.clientId}"></property>
 	</bean>
 
-	<context:component-scan base-package="org.nextprot" />
-
-
 	<!-- Instrumentation aspects -->
 
 	<aop:aspectj-autoproxy />

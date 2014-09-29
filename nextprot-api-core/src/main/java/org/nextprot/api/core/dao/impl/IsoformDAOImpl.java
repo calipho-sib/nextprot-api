@@ -19,13 +19,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class IsoformDAOImpl implements IsoformDAO {
 
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
 
 	@Override
 	public List<Isoform> findIsoformsByEntryName(String entryName) {
 
-		String sql = SQLDictionary.getSQLQuery("isoforms-by-entry-name");
+		String sql = sqlDictionary.getSQLQuery("isoforms-by-entry-name");
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("unique_name", entryName);
 		List<Isoform> isoforms = null;
@@ -70,7 +72,7 @@ public class IsoformDAOImpl implements IsoformDAO {
 	@Override
 	public List<IsoformEntityName> findIsoformsSynonymsByEntryName(String entryName) {
 
-		String sql = SQLDictionary.getSQLQuery("isoforms-synonyms-by-entry-name");
+		String sql = sqlDictionary.getSQLQuery("isoforms-synonyms-by-entry-name");
 		
 		SqlParameterSource namedParameters = new MapSqlParameterSource("unique_name", entryName);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new EntityNameRowMapper());

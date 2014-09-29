@@ -24,6 +24,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class InteractionDaoImpl implements InteractionDAO {
 
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired private DataSourceServiceLocator dsLocator;
 
 	// This should be updated in the database
@@ -32,13 +34,13 @@ public class InteractionDaoImpl implements InteractionDAO {
 
 	@Override
 	public List<Interaction> findInteractionsByEntry(String entryName) {
-		String sql = SQLDictionary.getSQLQuery("interactions_by_entry");
+		String sql = sqlDictionary.getSQLQuery("interactions_by_entry");
 		SqlParameterSource namedParameters = new MapSqlParameterSource("entryName", entryName);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new InteractionRowMapper());
 	}
 
 	public List<Interaction> findAllInteractions() {
-		String sql = SQLDictionary.getSQLQuery("interactions-all");
+		String sql = sqlDictionary.getSQLQuery("interactions-all");
 		SqlParameterSource namedParameters = new MapSqlParameterSource();
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new InteractionRowMapper());
 	}

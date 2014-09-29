@@ -1,7 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -10,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.Publication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class PublicationDaoImpl implements PublicationDao {
 
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
 
@@ -30,7 +31,7 @@ public class PublicationDaoImpl implements PublicationDao {
 		params.put("identifierId", masterId);
 		params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
 
-		List<Long> ids = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(getSQLQuery("publication-sorted-for-master"), params, Long.class);
+		List<Long> ids = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, Long.class);
 		return ids;
 	}
 
@@ -39,7 +40,7 @@ public class PublicationDaoImpl implements PublicationDao {
 		params.put("identifierId", masterId);
 		params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper());
 	}
 
 
@@ -100,12 +101,12 @@ public class PublicationDaoImpl implements PublicationDao {
 	
 	public Publication findPublicationById(long id) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("resourceId", id);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper());
 	}
 
 	public List<Publication> findPublicationByTitle(String title) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("title", title);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper());
 	}
 	
 
@@ -115,13 +116,13 @@ public class PublicationDaoImpl implements PublicationDao {
 		// Spring advantages: No need to open / close connection or to worry about result set...
 		// We can use named parameters which are less error prone
 		SqlParameterSource namedParameters = new MapSqlParameterSource("md5", md5);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(getSQLQuery("publication-by-md5"), namedParameters, new PublicationRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("publication-by-md5"), namedParameters, new PublicationRowMapper());
 	}
 
 	@Override
 	public List<Publication> findAllPublications() {
 		SqlParameterSource namedParameters = new MapSqlParameterSource();
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("publication-list"), namedParameters, new PublicationRowMapper());	
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-list"), namedParameters, new PublicationRowMapper());	
 	}
 
 	@Override

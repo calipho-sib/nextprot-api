@@ -1,12 +1,11 @@
 package org.nextprot.api.core.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.PeptideMapping;
@@ -21,11 +20,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class PeptideMappingDaoImpl implements PeptideMappingDao {
 	
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired private DataSourceServiceLocator dsLocator;
 	
 	public List<PeptideMapping> findPeptidesByMasterId(Long id) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("id", id);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("peptide-by-master-id"), namedParams, new RowMapper<PeptideMapping>() {
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("peptide-by-master-id"), namedParams, new RowMapper<PeptideMapping>() {
 
 			@Override
 			public PeptideMapping mapRow(ResultSet resultSet, int row) throws SQLException {

@@ -22,6 +22,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
 
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired private DataSourceServiceLocator dsLocator;
 	
 	@Override
@@ -30,7 +32,7 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
 		SqlParameterSource namedParams = new MapSqlParameterSource("id", id);
 
 		// step 1 - one object per each antibody - isoform - position
-		List<AntibodyMapping> flatmaps =  new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(SQLDictionary.getSQLQuery("antibodies-by-id"), namedParams, new RowMapper<AntibodyMapping>() {
+		List<AntibodyMapping> flatmaps =  new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("antibodies-by-id"), namedParams, new RowMapper<AntibodyMapping>() {
 			@Override
 			public AntibodyMapping mapRow(ResultSet resultSet, int row) throws SQLException {
 				AntibodyMapping antibodyMapping = new AntibodyMapping();

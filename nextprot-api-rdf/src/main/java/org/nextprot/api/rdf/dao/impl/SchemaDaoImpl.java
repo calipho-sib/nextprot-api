@@ -1,13 +1,12 @@
 package org.nextprot.api.rdf.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.domain.OWLAnnotationCategory;
 import org.nextprot.api.rdf.dao.SchemaDao;
 import org.nextprot.api.rdf.domain.OWLAnnotation;
@@ -27,11 +26,14 @@ public class SchemaDaoImpl implements SchemaDao {
 
 	@Autowired private DataSourceServiceLocator dsLocator;
 
+	@Autowired
+	private SQLDictionary sqlDictionary;
+
 
 	@Override
 	public List<OWLOntology> findAllOntology() {
 		SqlParameterSource params = new MapSqlParameterSource();
-		List<OWLOntology> ontologies=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("schema-ontology-list"), params, new ParameterizedRowMapper<OWLOntology>() {
+		List<OWLOntology> ontologies=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("schema-ontology-list"), params, new ParameterizedRowMapper<OWLOntology>() {
 
 			@Override
 			public OWLOntology mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -51,7 +53,7 @@ public class SchemaDaoImpl implements SchemaDao {
 	@Override
 	public List<OWLEvidence> findAllEvidence() {
 		SqlParameterSource params = new MapSqlParameterSource();
-		List<OWLEvidence> evidences=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("schema-evidence-list"), params, new ParameterizedRowMapper<OWLEvidence>() {
+		List<OWLEvidence> evidences=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("schema-evidence-list"), params, new ParameterizedRowMapper<OWLEvidence>() {
 
 			@Override
 			public OWLEvidence mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -70,7 +72,7 @@ public class SchemaDaoImpl implements SchemaDao {
 	@Override
 	public List<OWLDatasource> findAllSource() {
 		SqlParameterSource params = new MapSqlParameterSource();
-		List<OWLDatasource> datasources=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("schema-datasource-list"), params, new ParameterizedRowMapper<OWLDatasource>() {
+		List<OWLDatasource> datasources=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("schema-datasource-list"), params, new ParameterizedRowMapper<OWLDatasource>() {
 
 			@Override
 			public OWLDatasource mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -88,7 +90,7 @@ public class SchemaDaoImpl implements SchemaDao {
 	@Override
 	public List<OWLDatabase> findAllDatabase() {
 		SqlParameterSource params = new MapSqlParameterSource();
-		List<OWLDatabase> databases=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("schema-database-list"), params, new ParameterizedRowMapper<OWLDatabase>() {
+		List<OWLDatabase> databases=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("schema-database-list"), params, new ParameterizedRowMapper<OWLDatabase>() {
 
 			@Override
 			public OWLDatabase mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -110,7 +112,7 @@ public class SchemaDaoImpl implements SchemaDao {
 	@Override
 	public List<OWLDatabase> findAllProvenance() {
 		SqlParameterSource params = new MapSqlParameterSource();
-		List<OWLDatabase> databases=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("schema-provenance-list"), params, new ParameterizedRowMapper<OWLDatabase>() {
+		List<OWLDatabase> databases=new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("schema-provenance-list"), params, new ParameterizedRowMapper<OWLDatabase>() {
 
 			@Override
 			public OWLDatabase mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -142,7 +144,7 @@ public class SchemaDaoImpl implements SchemaDao {
 		List<Long> typeIds = new ArrayList<Long>();
 		for (OWLAnnotationCategory cat: cats) typeIds.add(new Long(cat.getDbId()));
 		SqlParameterSource params = new MapSqlParameterSource("typeIds", typeIds);
-		List<NameDescr> nds = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("schema-instantiated-annotation-list"), params, new ParameterizedRowMapper<NameDescr>() {
+		List<NameDescr> nds = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("schema-instantiated-annotation-list"), params, new ParameterizedRowMapper<NameDescr>() {
 			@Override
 			public NameDescr mapRow(ResultSet rs, int row) throws SQLException {
 				return new NameDescr(rs.getString("cv_name"), rs.getString("description"));

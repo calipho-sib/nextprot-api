@@ -1,12 +1,11 @@
 package org.nextprot.api.core.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.PtmDao;
 import org.nextprot.api.core.domain.Feature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +18,14 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class PtmDaoImpl implements PtmDao {
 
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired private DataSourceServiceLocator dsLocator;
 	
 	@Override
 	public List<Feature> findPtmsByEntry(String uniqueName) {
 		SqlParameterSource params = new MapSqlParameterSource("uniqueName", uniqueName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("ptm-by-master"), params, new ParameterizedRowMapper<Feature>() {
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("ptm-by-master"), params, new ParameterizedRowMapper<Feature>() {
 
 			@Override
 			public Feature mapRow(ResultSet resultSet, int row) throws SQLException {

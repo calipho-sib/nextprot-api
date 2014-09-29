@@ -1,7 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import static org.nextprot.api.commons.utils.SQLDictionary.getSQLQuery;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -9,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
@@ -24,6 +23,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class DbXrefDaoImpl implements DbXrefDao {
 	
+	@Autowired private SQLDictionary sqlDictionary;
+
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
 	
@@ -51,7 +52,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	public List<DbXref> findDbXRefsByPublicationId(Long publicationId) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("publicationId", publicationId);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("dbxref-publication-by-id"), params, new DbXRefRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-publication-by-id"), params, new DbXRefRowMapper());
 	};
 	
 	@Override
@@ -72,7 +73,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	@Override
 	public List<DbXref> findDbXrefsByMaster(String uniqueName) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", uniqueName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("dbxref-by-master"), namedParams, new DbXRefRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master"), namedParams, new DbXRefRowMapper());
 	}
 	
 	public List<DbXrefProperty> findDbXrefsProperties(List<Long> resourceIds) {
@@ -146,7 +147,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	@Override
 	public List<DbXref> findDbXrefByAccession(String accession) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("accession", accession);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("dbxref-by-accession"), namedParams, new DbXRefRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-accession"), namedParams, new DbXRefRowMapper());
 	}
 
 
@@ -160,7 +161,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	public List<DbXref> findDbXrefByResourceId(Long resourceId) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("resourceId", resourceId);
 		//System.out.println("DbXrefDaoImpl.findDbXrefByResourceId() resourceId:" + resourceId);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getSQLQuery("dbxref-by-resource-id"), namedParams, new DbXRefRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-resource-id"), namedParams, new DbXRefRowMapper());
 	}
 
 
