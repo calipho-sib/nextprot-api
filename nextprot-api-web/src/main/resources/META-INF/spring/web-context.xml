@@ -18,7 +18,9 @@
 		http://www.springframework.org/schema/security
   	    http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
-	<import resource="core-context.xml" />
+	<import resource="classpath:spring/core-context.xml" />
+	<import resource="classpath:spring/solr-context.xml" />
+	<import resource="classpath:spring/rdf-context.xml" />
 	<import resource="security-context.xml" />
 
 	<mvc:annotation-driven />
@@ -31,17 +33,6 @@
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
 		up static resources -->
 	<!-- <mvc:resources location="/, classpath:/META-INF/web-resources/" mapping="/resources/**"/> -->
-
-	<!-- Used for documentation -->
-	<bean id="documentationController" class="org.nextprot.api.core.controller.JSONDocRoleController">
-		<property name="version" value="0.1 beta" />
-		<property name="basePath" value="http://localhost:8080/nextprot-api-web"/>
-		<property name="packages">
-			<list>
-				<value>org.nextprot.api</value>
-			</list>
-		</property>
-	</bean>
 
 
 	<!-- This bean sets up the Velocity environment for us based on a root path 
@@ -133,11 +124,6 @@
 			</list>
 		</property>
 	</bean>
-
-	<beans profile="pro,dev">
-		<bean id="adminController" class="org.nextprot.api.core.controller.AdminController" />
-	</beans>
-
 
 	
 </beans>

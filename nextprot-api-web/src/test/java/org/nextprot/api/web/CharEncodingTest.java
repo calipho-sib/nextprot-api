@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 import org.hamcrest.core.StringContains;
 import org.junit.Before;
 import org.junit.Test;
-import org.nextprot.api.core.dbunit.MVCBaseIntegrationTest;
+import org.nextprot.api.web.dbunit.base.mvc.MVCBaseIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;

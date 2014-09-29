@@ -5,15 +5,15 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.core.domain.PeptideMapping;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup(value = "PeptideMappingServiceTest.xml", type = DatabaseOperation.INSERT)
-public class PeptideMappingServiceTest extends DBUnitBaseTest {
+public class PeptideMappingServiceTest extends CoreUnitBaseTest {
 
 	@Autowired private PeptideMappingService peptideMappingService;
 	

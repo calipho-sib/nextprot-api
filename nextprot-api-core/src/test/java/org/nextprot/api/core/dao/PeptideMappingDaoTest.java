@@ -7,17 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup(value = "PeptideMappingDaoTest.xml", type = DatabaseOperation.INSERT)
-public class PeptideMappingDaoTest extends DBUnitBaseTest {
+public class PeptideMappingDaoTest extends CoreUnitBaseTest {
 	
 	@Autowired private PeptideMappingDao peptideMappingDao;
 	

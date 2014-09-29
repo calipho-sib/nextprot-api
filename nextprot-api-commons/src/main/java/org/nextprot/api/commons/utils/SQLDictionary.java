@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class SQLDictionary {
 	
-	private static final String SQL_PATH = "src/main/resources/META-INF/sql/";
+	private static final String SQL_PATH = "src/main/resources/sql/";
 	private static SQLDictionary singleton = null;
 	static {
 		singleton = new SQLDictionary();

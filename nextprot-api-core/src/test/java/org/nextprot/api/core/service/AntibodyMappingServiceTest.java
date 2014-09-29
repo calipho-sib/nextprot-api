@@ -5,16 +5,16 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.core.domain.AntibodyMapping;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup(value = "AntibodyMappingServiceTest.xml", type = DatabaseOperation.INSERT)
-public class AntibodyMappingServiceTest extends DBUnitBaseTest {
+public class AntibodyMappingServiceTest extends CoreUnitBaseTest {
 
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	

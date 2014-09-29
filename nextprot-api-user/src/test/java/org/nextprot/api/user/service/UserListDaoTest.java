@@ -10,7 +10,7 @@ import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
+import org.nextprot.api.commons.dbunit.CommonsUnitBaseTest;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.user.dao.UserListDao;
 import org.nextprot.api.user.domain.UserList;
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 
 @Ignore
-public class UserListDaoTest extends DBUnitBaseTest {
+public class UserListDaoTest extends CommonsUnitBaseTest {
 
 	@Autowired private DataSourceServiceLocator dsLocator;
 	@Autowired private UserListDao proteinListDao;

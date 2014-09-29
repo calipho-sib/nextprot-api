@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 
 @ActiveProfiles("dev")
-public class GenerateDTD extends DBUnitBaseTest {
+public class GenerateDTD extends CommonsUnitBaseTest {
 
 	private static final String dtdFile = "nextprot.dtd";
 

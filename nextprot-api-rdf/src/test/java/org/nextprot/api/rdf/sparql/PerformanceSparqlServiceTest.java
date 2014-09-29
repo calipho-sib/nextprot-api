@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("pro")
-@ContextConfiguration("classpath:META-INF/spring/core-context.xml")
+@ContextConfiguration("classpath:spring/core-context.xml")
 public class PerformanceSparqlServiceTest {
 
 	private static final String BASE_URL = "http://crick:8080/nextprot-api/sparql-nocache?";

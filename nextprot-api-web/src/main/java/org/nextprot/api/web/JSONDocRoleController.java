@@ -1,5 +1,6 @@
 package org.nextprot.api.web;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -16,17 +17,19 @@ import org.nextprot.api.user.security.NPSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+@Controller
 public class JSONDocRoleController extends JSONDocController {
 
 	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
 
-	private String version;
-	private String basePath;
-	private List<String> packages;
+	private String version = "0.1 beta";
+	private String basePath = "http://localhost:8080/nextprot-api-web";
+	private List<String> packages = Arrays.asList(new String[]{"org.nextprot.api"});
 	private JSONDoc apiDoc;
 
 	@Autowired

@@ -57,11 +57,13 @@
 				<artifactId>nextprot-api-commons</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+
 		</dependencies>
 
 	</dependencyManagement>
 
 	<dependencies>
+
 
 		<dependency>
 			<groupId>org.biojava</groupId>

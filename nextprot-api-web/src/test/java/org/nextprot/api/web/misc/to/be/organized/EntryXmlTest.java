@@ -21,7 +21,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.XmlComparator;
-import org.nextprot.api.core.dbunit.MVCBaseIntegrationTest;
+import org.nextprot.api.web.dbunit.base.mvc.MVCBaseIntegrationTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;

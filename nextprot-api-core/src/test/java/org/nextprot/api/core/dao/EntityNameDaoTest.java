@@ -6,16 +6,16 @@ import static org.junit.Assert.assertNull;
 import java.util.List;
 
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.core.domain.Overview.EntityName;
 import org.nextprot.api.core.domain.Overview.EntityNameClass;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup(value = "EntityNameDaoTest.xml", type = DatabaseOperation.INSERT)
-public class EntityNameDaoTest extends DBUnitBaseTest {
+public class EntityNameDaoTest extends CoreUnitBaseTest {
 
 	@Autowired private EntityNameDao entityNameDao;
 	

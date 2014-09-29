@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.PublicationCvJournal;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup(value = "CvJournalDaoTest.xml", type = DatabaseOperation.INSERT)
-public class CvJournalDaoTest extends DBUnitBaseTest {
+public class CvJournalDaoTest extends CoreUnitBaseTest {
 
 	@Autowired private CvJournalDao cvJournalDao;
 	

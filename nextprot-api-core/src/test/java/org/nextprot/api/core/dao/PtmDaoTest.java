@@ -5,15 +5,15 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
 import org.nextprot.api.core.domain.Feature;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup(value = "PtmDaoTest.xml", type = DatabaseOperation.INSERT)
-public class PtmDaoTest extends DBUnitBaseTest {
+public class PtmDaoTest extends CoreUnitBaseTest {
 
 	@Autowired private PtmDao ptmDao;
 	

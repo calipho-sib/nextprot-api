@@ -26,7 +26,7 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Literal;
 
 
-@ContextConfiguration("classpath:META-INF/spring/core-context.xml")
+@ContextConfiguration("classpath:spring/core-context.xml")
 abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 	
 	private static final Log Logger = LogFactory.getLog(DiffBaseTest.class);

@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.dbunit.DBUnitBaseTest;
+import org.nextprot.api.commons.dbunit.CommonsUnitBaseTest;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.user.domain.UserList;
@@ -22,7 +22,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 @Ignore
 @ActiveProfiles("unit")
 @DatabaseSetup(value = "UserListServiceTest.xml", type = DatabaseOperation.INSERT)
-public class UserListServiceTest extends DBUnitBaseTest {
+public class UserListServiceTest extends CommonsUnitBaseTest {
 	@Autowired private DataSourceServiceLocator dsLocator;
 	@Autowired private UserListService proteinListService;
 

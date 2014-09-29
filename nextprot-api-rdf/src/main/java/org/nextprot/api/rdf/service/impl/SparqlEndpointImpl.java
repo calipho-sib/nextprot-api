@@ -15,7 +15,9 @@ import org.nextprot.api.commons.utils.FileUtils;
 import org.nextprot.api.commons.utils.RdfUtils;
 import org.nextprot.api.rdf.domain.TripleInfo;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -25,6 +27,7 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
 
+@Service
 public class SparqlEndpointImpl implements SparqlEndpoint {
 
 	private static final List<String> RDF_TYPES_TO_EXCLUDE = Arrays.asList(":childOf", "rdf:Property");
@@ -36,6 +39,7 @@ public class SparqlEndpointImpl implements SparqlEndpoint {
 		return url;
 	}
 
+	@Value("${sparql.url}")
 	public void setUrl(String url) {
 		this.url = url;
 	}
@@ -44,6 +48,7 @@ public class SparqlEndpointImpl implements SparqlEndpoint {
 		return timeout;
 	}
 
+	@Value("${sparql.timeout}")
 	public void setTimeout(String timeout) {
 		this.timeout = timeout;
 	}
