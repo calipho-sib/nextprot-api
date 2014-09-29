@@ -28,8 +28,8 @@ evidence:$interaction.evidenceId
   :reference [
     a :Xref;
     :provenance db:$StringUtils.slug($interaction.evidenceXrefDB) ;
-    :accession "$interaction.evidenceXrefAC"^^xsd::string ;
+    :accession "$interaction.evidenceXrefAC"^^xsd:string ;
   ];
-  :numberOfExperiments $interaction.numberOfExperiments; 
+  :numberOfExperiments "$interaction.numberOfExperiments"^^xsd:integer; 
   .
    

@@ -129,7 +129,7 @@ public enum OWLAnnotationCategory  {
 	
 	SMALL_MOLECULE_INTERACTION(-112,"SmallMoleculeInteraction", "smallMoleculeInteraction", "Small molecule interaction", new OWLAnnotationCategory[]{GENERIC_INTERACTION, MEDICAL }), // Note: DrugBank xref, 2 parents
 	INTERACTION_INFO(1037,"subunit", "interactionInfo", "interaction info", new OWLAnnotationCategory[]{GENERIC_INTERACTION }),
-	BINARY_INTERACTION(-111,"BinaryInteraction", "binaryInteraction", "binary interaction", new OWLAnnotationCategory[]{GENERIC_INTERACTION }), // placeholder for data coming from table db partnership
+	BINARY_INTERACTION(-111,"BinaryInteraction", "binaryInteraction", "binary interaction", new OWLAnnotationCategory[]{GENERIC_INTERACTION }), // placeholder for data coming from intact in table db partnership
 	
 	
 	SUBCELLULAR_LOCATION(1039,"subcellular location", "subcellularLocation", "subcellular location", new OWLAnnotationCategory[]{GENERIC_LOCATION }),

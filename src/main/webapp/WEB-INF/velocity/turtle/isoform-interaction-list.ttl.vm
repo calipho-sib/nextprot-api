@@ -3,6 +3,7 @@
 #foreach($interaction in $entry.getInteractionsByIsoform($isoform-name))
 #set($iso-interaction-iri=$interaction.id + "-" + $isoform-name)  
 isoform:$isoform-name :interaction interaction:$iso-interaction-iri .
+isoform:$isoform-name :binaryInteraction interaction:$iso-interaction-iri .
 #end
 #Interactions end
 
@@ -12,7 +13,7 @@ isoform:$isoform-name :interaction interaction:$iso-interaction-iri .
 #foreach($interactant in $interaction.getInteractants())
 #if(!$interactant.isEntryPoint() || $interaction.isSelfInteraction())
 #set($hasInteraction=true)  
-interaction:$iso-interaction-iri a :ProteinInteraction;
+interaction:$iso-interaction-iri a :BinaryInteraction;
 #if ($interaction.isInteractionSpecificForIsoform($isoform-name))
   :specificity :SPECIFIC ;
 #else
@@ -55,9 +56,9 @@ evidence:$interaction.evidenceId
   :reference [
     a :Xref;
     :provenance db:$StringUtils.slug($interaction.evidenceXrefDB) ;
-    :accession "$interaction.evidenceXrefAC"^^xsd::string ;
+    :accession "$interaction.evidenceXrefAC"^^xsd:string ;
   ];
-  :numberOfExperiments $interaction.numberOfExperiments; 
+  :numberOfExperiments "$interaction.numberOfExperiments"^^xsd:integer; 
   .
 #end
 
