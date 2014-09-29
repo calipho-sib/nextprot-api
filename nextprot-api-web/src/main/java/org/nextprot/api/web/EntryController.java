@@ -1,7 +1,6 @@
 package org.nextprot.api.web;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.jsondoc.core.annotation.Api;
@@ -42,7 +41,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Lazy
 @Controller
@@ -64,8 +62,6 @@ public class EntryController {
 	@Autowired private DbXrefService xrefService;
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService experimentalContextService;
-
-	
 
 	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides and the list of the antibodies.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
