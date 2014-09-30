@@ -40,12 +40,14 @@
 	</scm>
 
 	<modules>
-		<module>nextprot-api-commons</module>
-		<module>nextprot-api-user</module>
-		<module>nextprot-api-core</module>
-		<module>nextprot-api-rdf</module>
-		<module>nextprot-api-solr</module>
-		<module>nextprot-api-web</module>
+		<module>commons</module>
+		<module>user</module>
+		<module>core</module>
+		<module>rdf</module>
+		<module>solr</module>
+		<module>web</module>
+		<module>demo-sparql-queries</module>
+		<module>test-diff-rdf-db</module>
 	</modules>
 
 	<dependencyManagement>
