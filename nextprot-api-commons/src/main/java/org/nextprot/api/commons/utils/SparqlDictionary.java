@@ -1,5 +1,8 @@
 package org.nextprot.api.commons.utils;
 
+import java.util.List;
+
+import org.nextprot.api.commons.exception.NextProtException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +26,14 @@ public class SparqlDictionary extends FilePatternDictionary {
 	
 	public String getSparqlPrefixes() {
 		return super.getResource("prefix");
+	}
+
+	/**
+	 * Will return a list of sparql queries with tags
+	 * @return
+	 */
+	public List<String> getSparqlWithTags() {
+		throw new NextProtException("You need to implement this method");
 	}
 
 	@Override

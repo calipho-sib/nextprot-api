@@ -1,5 +1,5 @@
 package org.nextprot.api.sparql.queries.example;
-
+/*
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -9,10 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.nextprot.api.commons.utils.SparqlDictionary;
+*/
 import org.junit.Ignore;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ActiveProfiles("pro")
 @ContextConfiguration("classpath:spring/core-context.xml")
 public class PerformanceSparqlServiceTest {
-
+/*
 	private static final String BASE_URL = "http://crick:8080/nextprot-api/sparql-nocache?";
 
 	private enum SparqlEndpoints {
@@ -43,7 +43,7 @@ public class PerformanceSparqlServiceTest {
 	}
 
 	@Autowired
-	private UserQueryDao repositoryUserDao;
+	private SparqlDictionary sparqlDictionary;
 
 	private static String generateTestId() {
 		String newstring = new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
@@ -53,10 +53,10 @@ public class PerformanceSparqlServiceTest {
 
 	@Test
 	public void fullNextProtEntries() {
-		List<UserQuery> userQueries = repositoryUserDao.getNextprotQueries();
+		List<String> userQueries = sparqlDictionary.getSparqlWithTags("nextprot");
 		String testId = generateTestId();
 		for (SparqlEndpoints sparqlEP : SparqlEndpoints.values()) {
-			for (UserQuery uq : userQueries) {
+			for (String uq : userQueries) {
 
 				System.out.println("Sending " + uq.getTitle());
 				String sparql = uq.getSparql();
@@ -108,4 +108,5 @@ public class PerformanceSparqlServiceTest {
 		in.close();
 
 	}
+	*/
 }
