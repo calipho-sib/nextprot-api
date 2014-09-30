@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.nextprot.api.user.dao.UserApplicationDao;
 import org.nextprot.api.user.domain.UserApplication;
+import org.nextprot.api.user.security.NPSecurityContext;
 import org.nextprot.api.user.service.UserApplicationService;
-import org.nextprot.api.web.security.NPSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
