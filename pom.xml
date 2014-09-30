@@ -167,13 +167,6 @@
 			<version>1.0.1</version>
 		</dependency>
 
-		<!-- JWT -->
-		<dependency>
-			<groupId>sib.calipho</groupId>
-			<artifactId>spring-auth0-core</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
-		</dependency>
-
 		<!-- TEST -->
 		<dependency>
 			<groupId>com.googlecode.java-diff-utils</groupId>

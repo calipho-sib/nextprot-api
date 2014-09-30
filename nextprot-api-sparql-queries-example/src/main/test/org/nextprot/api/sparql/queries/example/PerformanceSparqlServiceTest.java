@@ -1,4 +1,4 @@
-package org.nextprot.api.rdf.sparql;
+package org.nextprot.api.sparql.queries.example;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -12,8 +12,6 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nextprot.api.user.dao.UserQueryDao;
-import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;

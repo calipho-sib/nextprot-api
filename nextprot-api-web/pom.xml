@@ -43,6 +43,12 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
+		<!-- JWT -->
+		<dependency>
+			<groupId>sib.calipho</groupId>
+			<artifactId>spring-auth0-core</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 

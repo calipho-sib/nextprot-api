@@ -21,7 +21,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-api-core</artifactId>
+			<artifactId>nextprot-api-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

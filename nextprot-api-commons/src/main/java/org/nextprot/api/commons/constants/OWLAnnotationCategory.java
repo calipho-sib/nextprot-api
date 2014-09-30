@@ -1,4 +1,4 @@
-package org.nextprot.api.core.domain;
+package org.nextprot.api.commons.constants;
 
 import java.util.HashMap;
 import java.util.HashSet;

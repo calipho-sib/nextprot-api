@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nextprot.api.commons.constants.OWLAnnotationCategory;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
-import org.nextprot.api.core.domain.OWLAnnotationCategory;
 import org.nextprot.api.rdf.dao.SchemaDao;
 import org.nextprot.api.rdf.domain.OWLAnnotation;
 import org.nextprot.api.rdf.domain.OWLDatabase;
