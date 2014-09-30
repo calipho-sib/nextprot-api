@@ -3,6 +3,9 @@
 
 #end
 publication:$publication.getMD5() a :Publication;
+#if($publication.getIsLargeScale())
+    rdf:type :LargeScalePublication;
+#end
 #set($UNESCAPED_CDATA = $publication.title)
     :title """$StringUtils.clean($UNESCAPED_CDATA)"""^^xsd:string;
 #if($publication.cvJournal.name)    

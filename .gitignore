@@ -10,3 +10,4 @@ nohup.out
 velocity.log.*
 *.swp
 npapi.log
+AnnotationMVCTest.out.xml

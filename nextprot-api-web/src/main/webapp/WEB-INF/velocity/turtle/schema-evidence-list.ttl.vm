@@ -10,7 +10,20 @@
       rdf:type owl:Class ;
       rdfs:subClassOf owl:Thing;
       .
-                
+
+:CuratedEvidence
+      rdf:type owl:Class ;
+      :notIn :ComputedEvidence;
+      rdfs:subClassOf :Evidence;
+      .
+
+:ComputedEvidence
+      rdf:type owl:Class ;
+      :notIn :CuratedEvidence;
+      rdfs:subClassOf :Evidence;
+      .
+      
+      
 :evidence
       rdf:type owl:ObjectProperty ;
       rdfs:domain :Annotation ;

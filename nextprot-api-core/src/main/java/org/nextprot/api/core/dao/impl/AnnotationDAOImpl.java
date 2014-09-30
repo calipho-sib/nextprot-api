@@ -13,6 +13,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
+import org.nextprot.api.rdf.domain.OWLAnnotationCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -34,9 +35,11 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 		public Annotation mapRow(ResultSet resultSet, int row) throws SQLException {
 
 			Annotation annotation = new Annotation();
+			
+			String category = adaptAnnotationCategoryToApiDataModel(resultSet);
+			
 			annotation.setAnnotationId(resultSet.getLong("annotation_id"));
-			annotation.setCategory(resultSet.getString("category"));
-			//System.out.println(">>>>>>>> annot id: "+ annotation. getAnnotationId() + ", category: " + annotation.getCategory());			
+			annotation.setCategory(category);
 			annotation.setDescription(resultSet.getString("description"));
 			annotation.setQualityQualifier(resultSet.getString("quality_qualifier"));
 			annotation.setCvTermName(resultSet.getString("cv_term_name"));
@@ -52,8 +55,38 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 						annotation.getDescription()));
 			}
 
+			
 			return annotation;
 		}
+
+		/*
+		 * Small changes on the fly to be compliant with API data model:
+         * - dbId=1050 "biotechnology": move all annotations to existing type dbId=1052 "Miscellaneous"
+         * - dbId=1005 "transmembrane region": move annotations to new type "intramembrane region" if annotation.cv_term_id=51748 "In membrane"
+		 * - dbId=1002 "transit peptide": split annotations into 2 new types "mitochondrial transit peptide" and "peroxysome transit peptide"
+		 */
+		public String adaptAnnotationCategoryToApiDataModel(ResultSet rs) throws SQLException {
+			
+			String category = rs.getString("category");			
+			
+    		if (category.equals("biotechnology")) {
+				category=OWLAnnotationCategory.MISCELLANEOUS.getDbAnnotationTypeName();
+				
+			} else if (category.equals("transmembrane region")) {
+				int termId = rs.getInt("cv_term_id");
+				if (termId==51748) category = OWLAnnotationCategory.INTRAMEMBRANE_REGION.getDbAnnotationTypeName();
+				
+			} else if (category.equals("transit peptide")) {
+				int termId = rs.getInt("cv_term_id");
+				if (termId==51743) {
+					category = OWLAnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
+				} else if (termId==51744) {
+					category = OWLAnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName();	
+				}
+			}
+			return category;
+		}
+		
 	};
 
 	public List<Annotation> findAnnotationsByEntryName(String entryName) {
@@ -111,6 +144,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 				evidence.setEvidenceId(resultSet.getLong("evidence_id"));
 				evidence.setAssignedBy(resultSet.getString("evidence_assigned_by"));
 				evidence.setExperimentalContextId(resultSet.getLong("experimental_context_id"));
+				evidence.setAssignmentMethod(resultSet.getString("assignment_method"));
 				return evidence;
 				
 			}
