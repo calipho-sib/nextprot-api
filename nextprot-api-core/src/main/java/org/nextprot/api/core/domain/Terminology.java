@@ -62,7 +62,9 @@ public class Terminology implements Serializable {
 	public String getOntology() {
 		String o = StringUtils.toCamelCase(ontology, false);
 		try {
-			return TerminologyMapping.valueOf(o).getDescription();
+			if(o != null) {
+				return TerminologyMapping.valueOf(o).getDescription();
+			}else return ontology;
 		} catch (IllegalArgumentException e) {
 			return ontology;
 		}

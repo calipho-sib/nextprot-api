@@ -1,5 +1,10 @@
 package org.nextprot.api.commons.constants;
 
+/**
+ * Used for avoiding collision between resource GO-FUNCTION annotation and GO-FUNCTION ontology
+ * @author Olivier Evalet
+ *
+ */
 public enum TerminologyMapping {
 
 	GoMolecularFunction("Go Molecular Function Ontology"), 
