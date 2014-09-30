@@ -6,29 +6,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.nextprot.api.commons.constants.TerminologyMapping;
 import org.nextprot.api.commons.utils.StringUtils;
 
-public class Terminology implements Serializable{
+public class Terminology implements Serializable {
 
-	private static final long serialVersionUID = 4404147147281845675L;	
-	
-	//
-	// avoid confusing between annotation and terms that share the same name
-	final static Map<String, String> termType = new HashMap<String, String>();
-	public Terminology() {
-		termType.put("GoMolecularFunction", "Go Molecular Function Ontology");
-		termType.put("GoBiologicalProcess", "Go Biological Process Ontology");
-		termType.put("GoCellularComponent", "Go Cellular Component Ontology");
-		termType.put("NonStandardAminoAcid", "Non Standard Amino Acid Ontology");
-		termType.put("EnzymeClassification", "Enzyme Classification Ontology");
-	}
-	
+	private static final long serialVersionUID = 4404147147281845675L;
+
 	private Long id;
 
 	private String accession;
 
 	private String name;
-	
+
 	private String description;
 
 	private String ontology;
@@ -36,7 +26,7 @@ public class Terminology implements Serializable{
 	private List<String> parentAccesion;
 
 	private List<String> sameAs;
-	
+
 	public Long getId() {
 		return id;
 	}
@@ -70,11 +60,12 @@ public class Terminology implements Serializable{
 	}
 
 	public String getOntology() {
-		String o=StringUtils.toCamelCase(ontology,false);		
-		if (termType.containsKey(o)){
-			return termType.get(o);
+		String o = StringUtils.toCamelCase(ontology, false);
+		try {
+			return TerminologyMapping.valueOf(o).getDescription();
+		} catch (IllegalArgumentException e) {
+			return ontology;
 		}
-		return ontology;
 	}
 
 	public void setOntology(String ontology) {
@@ -86,8 +77,9 @@ public class Terminology implements Serializable{
 	}
 
 	public void setAncestorAccession(String accession) {
-		if(accession==null) return;
-		List<String> all=Arrays.asList(accession.split("\\|"));
+		if (accession == null)
+			return;
+		List<String> all = Arrays.asList(accession.split("\\|"));
 		this.parentAccesion = all;
 	}
 
@@ -96,9 +88,10 @@ public class Terminology implements Serializable{
 	}
 
 	public void setSameAs(String sameAs) {
-		if(sameAs==null) return;
-		List<String> all=Arrays.asList(sameAs.split("\\|"));
+		if (sameAs == null)
+			return;
+		List<String> all = Arrays.asList(sameAs.split("\\|"));
 		this.sameAs = all;
-	}	
+	}
 
 }
