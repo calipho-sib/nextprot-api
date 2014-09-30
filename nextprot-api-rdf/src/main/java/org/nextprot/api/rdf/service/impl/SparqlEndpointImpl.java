@@ -1,7 +1,5 @@
 package org.nextprot.api.rdf.service.impl;
 
-import static org.nextprot.api.commons.utils.RdfUtils.RDF_PREFIXES;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,10 +9,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.nextprot.api.commons.utils.FileUtils;
-import org.nextprot.api.commons.utils.RdfUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.commons.utils.SparqlDictionary;
+import org.nextprot.api.rdf.domain.RdfConstants;
 import org.nextprot.api.rdf.domain.TripleInfo;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,14 @@ import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
 @Service
 public class SparqlEndpointImpl implements SparqlEndpoint {
 
+	private static final Log LOGGER = LogFactory.getLog(SparqlEndpointImpl.class);
+
+
+	@Autowired 
+	private RdfPrefixService rdfPrefixService;
+	
 	private static final List<String> RDF_TYPES_TO_EXCLUDE = Arrays.asList(":childOf", "rdf:Property");
+	@Autowired private SparqlDictionary sparqlDictionary = null;
 
 	private String url;
 	private String timeout;
@@ -69,8 +77,8 @@ public class SparqlEndpointImpl implements SparqlEndpoint {
 	public Set<String> getAllRdfTypesNames() {
 		Set<String> result = new TreeSet<String>();
 		System.err.println("Sending request to ...." + getUrl());
-		String query = FileUtils.readResourceAsString("/sparql/alldistincttypes.rq");
-		QueryExecution qExec = queryExecution(RdfUtils.RDF_PREFIXES + query);
+		String query = sparqlDictionary.getSparqlOnly("alldistincttypes");
+		QueryExecution qExec = queryExecution(sparqlDictionary.getSparqlWithPrefixes(query));
 		ResultSet rs = qExec.execSelect();
 		while (rs.hasNext()) {
 			String rdfTypeName = (String) getDataFromSolutionVar(rs.next(), "rdfType");
@@ -97,8 +105,8 @@ public class SparqlEndpointImpl implements SparqlEndpoint {
 	@Cacheable("rdftypename")
 	public Map<String, String> getRdfTypeProperties(String rdfType) {
 		Map<String, String> properties = new HashMap<String, String>();
-		String queryBase = FileUtils.readResourceAsString("/sparql/typenames.rq");
-		String query = RDF_PREFIXES;
+		String queryBase = sparqlDictionary.getSparqlOnly("typenames");
+		String query = sparqlDictionary.getSparqlPrefixes();
 		query += queryBase.replace(":SomeRdfType", rdfType);
 		QueryExecution qExec = queryExecution(query);
 		ResultSet rs = qExec.execSelect();
@@ -117,9 +125,9 @@ public class SparqlEndpointImpl implements SparqlEndpoint {
 	@Override
 	@Cacheable("rdftypetriple")
 	public List<TripleInfo> getTripleInfoList(String rdfType) {
-		String queryBase = RDF_PREFIXES + FileUtils.readResourceAsString("sparql/typepred.rq");
+		String queryBase = sparqlDictionary.getSparqlWithPrefixes("typepred");
 		Set<TripleInfo> tripleList = new TreeSet<TripleInfo>();
-		String query = RDF_PREFIXES;
+		String query = sparqlDictionary.getSparqlOnly("prefix");
 		query += queryBase.replace(":SomeRdfType", rdfType);
 		QueryExecution qExec = queryExecution(query);
 		ResultSet rs = qExec.execSelect();
@@ -157,8 +165,9 @@ public class SparqlEndpointImpl implements SparqlEndpoint {
 	public Set<String> getRdfTypeValues(String rdfTypeInfoName, int limit) {
 		
 		Set<String> values = new TreeSet<String>();
-		String queryBase = FileUtils.readResourceAsString("/sparql/typevalues.rq");
-		String query = RDF_PREFIXES;
+		//TODO add a method with a map of named parameters in the sparql dictionary
+		String queryBase = sparqlDictionary.getSparqlOnly("typevalues");
+		String query = sparqlDictionary.getSparqlPrefixes();
 		query += queryBase.replace(":SomeRdfType", rdfTypeInfoName).replace(":LimitResults", String.valueOf(limit));
 		QueryExecution qExec = queryExecution(query);
 		ResultSet rs = qExec.execSelect();
@@ -190,8 +199,8 @@ public class SparqlEndpointImpl implements SparqlEndpoint {
 	public Set<String> getValuesForTriple(String rdfTypeName, String predicate, int limit) {
 
 		Set<String> values = new TreeSet<String>();
-		String queryBase = FileUtils.readResourceAsString("/sparql/getliteralvalues.rq");
-		String query = RDF_PREFIXES;
+		String queryBase = sparqlDictionary.getSparqlOnly("getliteralvalues");
+		String query = sparqlDictionary.getSparqlPrefixes();
 		query += queryBase.replace(":SomeRdfType", rdfTypeName).replace(":SomePredicate", predicate).replace(":LimitResults", String.valueOf(limit));
 
 		QueryExecution qExec = queryExecution(query);
@@ -219,11 +228,11 @@ public class SparqlEndpointImpl implements SparqlEndpoint {
 	 */
 	
 	
-	private static Object getDataFromSolutionVar(QuerySolution sol, String var) {
+	private Object getDataFromSolutionVar(QuerySolution sol, String var) {
 		return getDataFromSolutionVar(sol, var, false);
 	}
 
-	private static Object getDataFromSolutionVar(QuerySolution sol, String var, boolean useQuotes) {
+	private Object getDataFromSolutionVar(QuerySolution sol, String var, boolean useQuotes) {
 		RDFNode n = sol.get(var);
 		if (n == null)
 			return "";
@@ -232,15 +241,15 @@ public class SparqlEndpointImpl implements SparqlEndpoint {
 		return n.visitWith(rdfVisitor);
 	}
 
-	private static String getObjectTypeFromSample(QuerySolution sol, String objSample) {
+	private String getObjectTypeFromSample(QuerySolution sol, String objSample) {
 		try {
 			Literal lit = sol.getLiteral(objSample);
 			String typ = lit.getDatatypeURI();
-			return RdfUtils.getPrefixedNameFromURI(typ);
+			return rdfPrefixService.getPrefixedNameFromURI(typ);
 
 		} catch (Exception e) {
-			System.err.println("Failed for " + objSample);
-			return RdfUtils.BLANK_OBJECT_TYPE;
+			LOGGER.error("Failed for " + objSample);
+			return RdfConstants.BLANK_OBJECT_TYPE;
 		}
 
 	}

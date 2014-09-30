@@ -1,7 +1,11 @@
-package org.nextprot.api.web.misc.to.be.organized;
+package org.nextprot.api.test.rdf.db.diff;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -10,9 +14,9 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.dbunit.AbstractIntegrationBaseTest;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.commons.utils.FileUtils;
-import org.nextprot.api.commons.utils.RdfUtils;
+import org.nextprot.api.commons.utils.SparqlDictionary;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.test.context.ContextConfiguration;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Literal;
@@ -29,6 +35,7 @@ import com.hp.hpl.jena.rdf.model.Literal;
 @ContextConfiguration("classpath:spring/core-context.xml")
 abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 	
+	@Autowired private SparqlDictionary sparqlDictionary;
 	private static final Log Logger = LogFactory.getLog(DiffBaseTest.class);
 
 	private static final Date TestDate = new Date();
@@ -75,8 +82,7 @@ abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 
 	private int getCountForSparql(){
 		long t0 = System.currentTimeMillis();
-		String query = getFileContentAsString("sparql/" + qName + ".sparql");
-		query= RdfUtils.RDF_PREFIXES + "\n" + query;
+		String query = query= sparqlDictionary.getSparqlWithPrefixes(qName);
 		QueryExecution qExec = endpoint.queryExecution(query);			
 		com.hp.hpl.jena.query.ResultSet rs = qExec.execSelect();
 	    QuerySolution qs = rs.next();
@@ -88,8 +94,16 @@ abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 	}
 	
 	private String getFileContentAsString(String path) {
-		String resourcePath = "/org/nextprot/api/diff/";
-		return FileUtils.readResourceAsString(resourcePath + path);
+		try {
+			String resourcePath = "/org/nextprot/api/diff/";
+			return Resources.toString(new URI(resourcePath + path).toURL(), Charsets.UTF_8);
+		} catch (MalformedURLException e) {
+			throw new NextProtException(e);
+		} catch (IOException e) {
+			throw new NextProtException(e);
+		} catch (URISyntaxException e) {
+			throw new NextProtException(e);
+		}
 	}
 
 	private void resetDefaultLogValues() {

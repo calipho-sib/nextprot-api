@@ -15,7 +15,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.RdfUtils;
+import org.nextprot.api.rdf.domain.RdfConstants;
 import org.nextprot.api.rdf.domain.RdfTypeInfo;
 import org.nextprot.api.rdf.domain.TripleInfo;
 import org.nextprot.api.rdf.service.RdfHelpService;
@@ -132,7 +132,7 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 
 		for (TripleInfo triple : triples) {
 			rdfTypeInfo.addTriple(triple);
-			if (triple.isLiteralType() && (!triple.getObjectType().equals(RdfUtils.BLANK_OBJECT_TYPE))) {
+			if (triple.isLiteralType() && (!triple.getObjectType().equals(RdfConstants.BLANK_OBJECT_TYPE))) {
 				String typeLiteral = rdfTypeName + "/" + triple.getPredicate();
 				Set<String> exampleValues = null;
 				if (completeSetOfValuesForLiteral.contains(typeLiteral)) {

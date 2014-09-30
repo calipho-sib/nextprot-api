@@ -1,4 +1,4 @@
-package org.nextprot.api.web.misc.to.be.organized;
+package org.nextprot.api.test.rdf.db.diff;
 
 import org.junit.Ignore;
 import org.junit.Test;
