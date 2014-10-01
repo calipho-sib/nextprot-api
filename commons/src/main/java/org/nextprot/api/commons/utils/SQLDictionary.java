@@ -18,12 +18,12 @@ public class SQLDictionary extends FilePatternDictionary {
 	}
 
 	@Override
-	final String getLocation() {
+	protected final String getLocation() {
 		return "classpath*:sql-queries/**/*.sql";
 	}
 
 	@Override
-	final String getExtension() {
+	protected final String getExtension() {
 		return ".sql";
 	}
 

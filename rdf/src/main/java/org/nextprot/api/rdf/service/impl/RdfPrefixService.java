@@ -3,7 +3,7 @@ package org.nextprot.api.rdf.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.nextprot.api.commons.utils.SparqlDictionary;
+import org.nextprot.api.rdf.utils.SparqlDictionary;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

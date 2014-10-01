@@ -1,10 +1,11 @@
-package org.nextprot.api.commons.utils;
+package org.nextprot.api.rdf.utils;
 
 import java.util.List;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.FilePatternDictionary;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 /**
  * Utility class that read SQL queries from classpath. 
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
  * 
  * @author dteixeira
  */
-@Service
+@Repository
 @Lazy
 public class SparqlDictionary extends FilePatternDictionary {
 
@@ -36,14 +37,15 @@ public class SparqlDictionary extends FilePatternDictionary {
 		throw new NextProtException("You need to implement this method");
 	}
 
+
 	@Override
-	final String getLocation() {
-		return "classpath*:sparql-queries/**/*.rq";
+	protected String getExtension() {
+		return ".rq";
 	}
 
 	@Override
-	final String getExtension() {
-		return ".rq";
+	protected String getLocation() {
+		return "classpath*:sparql-queries/**/*.rq";
 	}
 
 }

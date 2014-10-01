@@ -11,10 +11,10 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.commons.utils.SparqlDictionary;
 import org.nextprot.api.rdf.domain.RdfConstants;
 import org.nextprot.api.rdf.domain.TripleInfo;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
+import org.nextprot.api.rdf.utils.SparqlDictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;

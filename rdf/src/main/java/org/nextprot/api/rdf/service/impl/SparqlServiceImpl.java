@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.SparqlDictionary;
 import org.nextprot.api.commons.utils.SparqlResult;
 import org.nextprot.api.commons.utils.SparqlUtils;
 import org.nextprot.api.rdf.service.SparqlService;
+import org.nextprot.api.rdf.utils.SparqlDictionary;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;

@@ -20,14 +20,14 @@ import com.google.common.io.Resources;
  * 
  * @author dteixeira
  */
-abstract class FilePatternDictionary {
+public abstract class FilePatternDictionary {
 
 	private static Logger log = Logger.getLogger(FilePatternDictionary.class);
 
 	private Map<String, String> resourcesMap = null;
 	
-	abstract String getLocation();
-	abstract String getExtension();
+	protected abstract String getLocation();
+	protected abstract String getExtension();
 	
 	protected String getResource(String resource) {
 		if (resourcesMap.containsKey(resource)) {
