@@ -11,7 +11,7 @@ mvn flyway:migrate
 ```
 
 
-For the unit tests you may need to clean the database (drops all tables and recreated schema)
+For unit testing the db may be cleaned (drops all tables)
 ```
 mvn flyway:clean
 ```
