@@ -1,5 +1,6 @@
 package org.nextprot.api.user.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.jsondoc.core.annotation.Api;
@@ -38,7 +39,9 @@ public class UserApplicationController {
 	@RequestMapping(value = "/user/applications", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserApplication> getApplications() {
-		return userApplicationService.getUserApplications(NPSecurityContext.getCurrentUser());
+		System.err.println("WTFFFF");
+		return Arrays.asList(new UserApplication[]{ new UserApplication()});
+		//return userApplicationService.getUserApplications(NPSecurityContext.getCurrentUser());
 	}
 
 	
