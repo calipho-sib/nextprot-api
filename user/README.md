@@ -3,7 +3,15 @@
 Creates User, User applications, User Lists and User Queries
 
 
-Schema:
-To migrate the database:
+Database schema
+# To migrate the database:
 
-flyway:migrate
+```
+mvn flyway:migrate
+```
+
+
+For the unit tests you may need to clean the database (drops all tables and recreated schema)
+```
+mvn flyway:clean
+```
