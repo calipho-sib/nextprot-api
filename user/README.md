@@ -4,7 +4,7 @@ Creates User, User applications, User Lists and User Queries
 
 
 Database schema
-== Database creation
+### Database creation
 
 ```
 mvn flyway:migrate
