@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nextprot.api.commons.constants.OWLAnnotationCategory;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.rdf.dao.SchemaDao;
@@ -140,9 +140,9 @@ public class SchemaDaoImpl implements SchemaDao {
 	@Override
 	public List<OWLAnnotation> findAllAnnotation() {
 		// get description for annotations that exist in db
-		OWLAnnotationCategory[] cats = OWLAnnotationCategory.values(); 
+		AnnotationApiModel[] cats = AnnotationApiModel.values(); 
 		List<Long> typeIds = new ArrayList<Long>();
-		for (OWLAnnotationCategory cat: cats) typeIds.add(new Long(cat.getDbId()));
+		for (AnnotationApiModel cat: cats) typeIds.add(new Long(cat.getDbId()));
 		SqlParameterSource params = new MapSqlParameterSource("typeIds", typeIds);
 		List<NameDescr> nds = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("schema-instantiated-annotation-list"), params, new ParameterizedRowMapper<NameDescr>() {
 			@Override
@@ -151,10 +151,10 @@ public class SchemaDaoImpl implements SchemaDao {
 			}
 		});
 		// inject descriptions found in db into the OWLAnnotationCategory enum values
-		for (NameDescr nd : nds) OWLAnnotationCategory.getByDbAnnotationTypeName(nd.name).setDescription(nd.descr);
+		for (NameDescr nd : nds) AnnotationApiModel.getByDbAnnotationTypeName(nd.name).setDescription(nd.descr);
 		// encapsulate OWLAnnotationCategory into OWLAnnotation to be compatible with the rest
 		List<OWLAnnotation> annotations = new ArrayList<OWLAnnotation>();
-		for (OWLAnnotationCategory cat: OWLAnnotationCategory.values()) annotations.add(new OWLAnnotation(cat));
+		for (AnnotationApiModel cat: AnnotationApiModel.values()) annotations.add(new OWLAnnotation(cat));
 		return annotations;	
 	}
 	

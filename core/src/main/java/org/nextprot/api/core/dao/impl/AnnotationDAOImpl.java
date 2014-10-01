@@ -3,7 +3,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import org.nextprot.api.commons.constants.OWLAnnotationCategory;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AnnotationDAO;
@@ -70,18 +70,18 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			String category = rs.getString("category");			
 			
     		if (category.equals("biotechnology")) {
-				category=OWLAnnotationCategory.MISCELLANEOUS.getDbAnnotationTypeName();
+				category=AnnotationApiModel.MISCELLANEOUS.getDbAnnotationTypeName();
 				
 			} else if (category.equals("transmembrane region")) {
 				int termId = rs.getInt("cv_term_id");
-				if (termId==51748) category = OWLAnnotationCategory.INTRAMEMBRANE_REGION.getDbAnnotationTypeName();
+				if (termId==51748) category = AnnotationApiModel.INTRAMEMBRANE_REGION.getDbAnnotationTypeName();
 				
 			} else if (category.equals("transit peptide")) {
 				int termId = rs.getInt("cv_term_id");
 				if (termId==51743) {
-					category = OWLAnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
+					category = AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
 				} else if (termId==51744) {
-					category = OWLAnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName();	
+					category = AnnotationApiModel.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName();	
 				}
 			}
 			return category;

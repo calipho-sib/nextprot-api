@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.nextprot.api.commons.constants.OWLAnnotationCategory;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
 
 
 public class Annotation implements Serializable {
@@ -31,7 +31,7 @@ public class Annotation implements Serializable {
 
 	private String synonym;
 	
-	private OWLAnnotationCategory owlAnnotCat;
+	private AnnotationApiModel owlAnnotCat;
 
 	private List<AnnotationEvidence> evidences;
 
@@ -116,13 +116,13 @@ public class Annotation implements Serializable {
 	
 	public List<String> getParentPredicates() {
 		List<String> list = new ArrayList<String>();
-		for (OWLAnnotationCategory cat : owlAnnotCat.getAllParents()) list.add(cat.getRdfPredicate());
+		for (AnnotationApiModel cat : owlAnnotCat.getAllParents()) list.add(cat.getRdfPredicate());
 		return list;
 	}
 	
 	public void setCategory(String category) {
 		this.category = category;
-		this.owlAnnotCat=OWLAnnotationCategory.getByDbAnnotationTypeName(category);
+		this.owlAnnotCat=AnnotationApiModel.getByDbAnnotationTypeName(category);
 	}
 
 	public AnnotationVariant getVariant() {
