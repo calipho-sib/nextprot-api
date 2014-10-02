@@ -52,24 +52,6 @@
 					</schemas>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>properties-maven-plugin</artifactId>
-				<version>1.0-alpha-2</version>
-				<executions>
-					<execution>
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>write-project-properties</goal>
-						</goals>
-						<configuration>
-							<outputFile>
-								${project.build.outputDirectory}/META-INF/pom.properties
-							</outputFile>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
 </project>
