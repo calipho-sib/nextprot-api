@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.dbunit.AbstractIntegrationBaseTest;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.rdf.utils.SparqlDictionary;
@@ -32,7 +33,7 @@ import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Literal;
 
 
-@ContextConfiguration("classpath:spring/core-context.xml")
+@ContextConfiguration("classpath:spring/commons-context.xml")
 abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 	
 	@Autowired private SparqlDictionary sparqlDictionary;
@@ -43,6 +44,7 @@ abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 	@Autowired private DataSourceServiceLocator dsLocator;
 	@Autowired private SparqlService sparqlService;
 	@Autowired private SparqlEndpoint endpoint;
+	@Autowired private SQLDictionary sqlDictionary;
 
 	private String qName;
 	private int timeSQL;
@@ -66,7 +68,7 @@ abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 	
 	private int getCountForSql() {
 		long t0 = System.currentTimeMillis();
-		String sql = getFileContentAsString("sql/" + qName + ".sql");
+		String sql = sqlDictionary.getSQLQuery(qName);
 		//SqlParameterSource namedParams = new MapSqlParameterSource("id", id);
 		SqlParameterSource namedParams = null;
 		List<Integer> counts =  new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParams, new RowMapper<Integer>() {
@@ -93,18 +95,6 @@ abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 		return countSPARQL;
 	}
 	
-	private String getFileContentAsString(String path) {
-		try {
-			String resourcePath = "/org/nextprot/api/diff/";
-			return Resources.toString(new URI(resourcePath + path).toURL(), Charsets.UTF_8);
-		} catch (MalformedURLException e) {
-			throw new NextProtException(e);
-		} catch (IOException e) {
-			throw new NextProtException(e);
-		} catch (URISyntaxException e) {
-			throw new NextProtException(e);
-		}
-	}
 
 	private void resetDefaultLogValues() {
 		timeSPARQL=-1;
