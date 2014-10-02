@@ -3,9 +3,8 @@ package org.nextprot.api.test.rdf.db.diff;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class DiffEntityCountTest extends DiffBaseTest {
-	
+
 	@Test
 	public void testMasterCount(){
 		diffCount("count-valid-master");
@@ -18,7 +17,7 @@ public class DiffEntityCountTest extends DiffBaseTest {
 	public void testGeneCount(){
 		diffCount("count-valid-gene");
 	}
-	
+
 	@Test
 	public void testMasterPeptideMappingCount(){
 		diffCount("count-valid-master-peptide-mapping");
@@ -27,7 +26,7 @@ public class DiffEntityCountTest extends DiffBaseTest {
 	public void testIsoformPeptideMappingCount(){
 		diffCount("count-valid-isoform-peptide-mapping");
 	}
-	
+
 	@Test
 	public void testProteotypicPeptideCount(){
 		diffCount("count-proteotypic-peptide");
