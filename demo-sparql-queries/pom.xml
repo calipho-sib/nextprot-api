@@ -11,12 +11,12 @@
 
 
 	<groupId>org.nextprot</groupId>
-	<artifactId>nextprot-api-sparql-queries-example</artifactId>
+	<artifactId>nextprot-api-demo-sparql-queries</artifactId>
 	<packaging>jar</packaging>
 
 
 	<build>
-		<finalName>nextprot-api-test-rdf-db-diff</finalName>
+		<finalName>nextprot-api-demo-sparql-queries</finalName>
 	</build>
 
 	<dependencies>

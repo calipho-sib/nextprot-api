@@ -1,11 +1,12 @@
-package org.nextprot.api.demo.sparql.queries.service;
+package org.nextprot.api.demo.sparql.queries.controller;
 
 import java.util.List;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.demo.example.queries.DemoSparqlQuery;
+import org.nextprot.api.demo.sparql.queries.domain.DemoSparqlQuery;
+import org.nextprot.api.demo.sparql.queries.service.DemoSparqlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

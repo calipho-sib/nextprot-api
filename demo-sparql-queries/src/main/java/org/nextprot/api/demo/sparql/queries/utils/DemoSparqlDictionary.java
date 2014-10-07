@@ -1,4 +1,4 @@
-package org.nextprot.api.demo.example.queries;
+package org.nextprot.api.demo.sparql.queries.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.FilePatternDictionary;
+import org.nextprot.api.demo.sparql.queries.domain.DemoSparqlQuery;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 

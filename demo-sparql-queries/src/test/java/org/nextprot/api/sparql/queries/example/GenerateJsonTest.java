@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nextprot.api.demo.example.queries.DemoSparqlDictionary;
-import org.nextprot.api.demo.example.queries.DemoSparqlQuery;
+import org.nextprot.api.demo.sparql.queries.domain.DemoSparqlQuery;
+import org.nextprot.api.demo.sparql.queries.utils.DemoSparqlDictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

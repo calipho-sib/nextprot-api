@@ -1,4 +1,4 @@
-package org.nextprot.api.demo.example.queries;
+package org.nextprot.api.demo.sparql.queries.domain;
 
 
 
