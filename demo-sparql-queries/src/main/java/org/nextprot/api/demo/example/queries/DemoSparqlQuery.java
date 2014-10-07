@@ -7,7 +7,14 @@ public class DemoSparqlQuery {
 	private String sparql;
 	private String title;
 	private String tags;
+	private String acs;
 
+	public String getAcs() {
+		return acs;
+	}
+	public void setAcs(String acs) {
+		this.acs = acs;
+	}
 	public String getTags() {
 		return tags;
 	}

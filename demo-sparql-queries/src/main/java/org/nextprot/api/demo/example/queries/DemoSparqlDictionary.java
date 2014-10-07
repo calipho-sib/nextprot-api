@@ -64,88 +64,37 @@ public class DemoSparqlDictionary extends FilePatternDictionary {
 		DemoSparqlQuery dsq = new DemoSparqlQuery();
 		Map<String, String> rawProps = getMetaInfo(rawContent);
 
-		String title = rawProps.get("title");
-
 		dsq.setSparql(rawProps.get("sparql"));
-		dsq.setTitle(title);
-		dsq.setTags(getMetaInfo(rawContent).get("tags"));
+		dsq.setTitle(rawProps.get("title"));
+		dsq.setTags(rawProps.get("tags"));
+		dsq.setAcs(rawProps.get("acs"));
 
 		return dsq;
 
 	}
 
 	
-	private String updateMapForLabelAndRemoveFromRawData(String p, String rawData, String label, Map<String, String> meta) {
+	private String parseAndGlupRawQuery(String rawData, String q, String label, Map<String, String> meta) {
+
+		String p = "[# ]?" + label + ":([^\\n]*)";
 		Matcher m = Pattern.compile(p, Pattern.DOTALL | Pattern.MULTILINE).matcher(rawData);
 		if (m.find()) {
 			meta.put(label, m.group(1));
-			return rawData.replaceAll(p, "");
+			return q.replaceAll(p, "");
 		}
-		return rawData;
+		return q;
 	}
 	
 	private Map<String, String> getMetaInfo(String rawData) {
 		Map<String, String> meta = new HashMap<String, String>();
 		String q = rawData;
 
-		{ // get id and host
-
-			String p = "#id:([^ ]+).?endpoint:([^\\n]*)";
-			Matcher m = Pattern.compile(p, Pattern.DOTALL | Pattern.MULTILINE)
-					.matcher(rawData);
-			if (m.find()) {
-				meta.put("id", m.group(1));
-				meta.put("endpoint", m.group(2));
-				q = q.replaceAll(p, "");
-			}
-		}
-
-		{ // get tags
-			String p = "[# ]?tags:([^ \\n]*)";
-			Matcher m = Pattern.compile(p, Pattern.DOTALL | Pattern.MULTILINE)
-					.matcher(rawData);
-			if (m.find()) {
-				meta.put("tags", m.group(1));
-				q = q.replaceAll(p, "");
-			}
-
-		}
-
-		{ // get acs
-			String p = "[# ]?ac:([^ \\n]*)";
-			Matcher m = Pattern.compile(p, Pattern.DOTALL | Pattern.MULTILINE)
-					.matcher(rawData);
-			if (m.find()) {
-				meta.put("acs", m.group(1));
-				q = q.replaceAll(p, "");
-			}
-
-		}
-
-		{ // get count
-
-			String p = "[# ]?count:([^\\n]*)";
-			Matcher m = Pattern.compile(p, Pattern.DOTALL | Pattern.MULTILINE)
-					.matcher(rawData);
-			meta.put("count", "0");
-			if (m.find()) {
-				meta.put("count", m.group(1));
-				q = q.replaceAll(p, "");
-			}
-		}
-
-		{ // get count
-
-			//
-			// get title
-			String p = "#title:([^\\n]*)";
-			Matcher m = Pattern.compile(p, Pattern.DOTALL | Pattern.MULTILINE)
-					.matcher(rawData);
-			if (m.find()) {
-				meta.put("title", m.group(1));
-				q = q.replaceAll(p, "");
-			}
-		}
+		q = parseAndGlupRawQuery(rawData, q, "id", meta);
+		q = parseAndGlupRawQuery(rawData, q, "endpoint", meta);
+		q = parseAndGlupRawQuery(rawData, q, "tags", meta);
+		q = parseAndGlupRawQuery(rawData, q, "ac", meta);
+		q = parseAndGlupRawQuery(rawData, q, "count", meta);
+		q = parseAndGlupRawQuery(rawData, q, "title", meta);
 		
 		meta.put("sparql", q.trim());
 
