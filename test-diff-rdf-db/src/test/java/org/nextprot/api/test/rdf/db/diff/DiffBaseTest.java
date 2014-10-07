@@ -2,10 +2,6 @@ package org.nextprot.api.test.rdf.db.diff;
 
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
@@ -14,7 +10,6 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.dbunit.AbstractIntegrationBaseTest;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
@@ -26,8 +21,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.rdf.model.Literal;
@@ -84,7 +77,7 @@ abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 
 	private int getCountForSparql(){
 		long t0 = System.currentTimeMillis();
-		String query = query= sparqlDictionary.getSparqlWithPrefixes(qName);
+		String query = sparqlDictionary.getSparqlWithPrefixes(qName);
 		QueryExecution qExec = endpoint.queryExecution(query);			
 		com.hp.hpl.jena.query.ResultSet rs = qExec.execSelect();
 	    QuerySolution qs = rs.next();
