@@ -22,7 +22,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-api-rdf</artifactId>
+			<artifactId>nextprot-api-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- used for tests -->
