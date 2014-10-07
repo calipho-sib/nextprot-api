@@ -20,6 +20,5 @@ left join nextprot.cv_terms t2 on (a.cv_term_id = t2.cv_id)
 left join nextprot.db_xrefs x on (t2.db_xref_id = x.resource_id)  
 left join nextprot.variants v on (v.annotation_id = a.annotation_id) 
 left join nextprot.annotation_synonyms syn on (syn.annotation_id = a.annotation_id and syn.cv_type_id = 10) 
-where t.cv_name not in ('enzyme classification', 'uniprot keyword', 'family name') 
+where t.cv_name not in ( 'family name') 
 and s.unique_name = :unique_name
- 

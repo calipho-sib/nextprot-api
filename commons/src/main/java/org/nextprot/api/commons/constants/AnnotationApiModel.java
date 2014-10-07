@@ -21,8 +21,8 @@ public enum AnnotationApiModel  {
 
 	// names 
 	NAME(-100, "Name", "name","Name",null),
-		FAMILY_NAME(1059,"family name", "familyName", "family name", new AnnotationApiModel[]{ NAME }),
-		ENZYME_CLASSIFICATION(1065,"enzyme classification", "enzymeClassification", "enzyme classification", new AnnotationApiModel[]{ NAME }),
+	// ENZYME_CLASSIFICATION and FAMILY_NAME temporarily appear in the entry overview via another mechanism
+		FAMILY_NAME(1059,"family name", "familyName", "family name", new AnnotationApiModel[]{ NAME }), 
 
 	// generic categories for annotations
 	
@@ -43,6 +43,8 @@ public enum AnnotationApiModel  {
 
 			//TEST1(-1111,"test1","test1","test1", new OWLAnnotationCategory[]{POSITIONAL_ANNOTATION, GENERAL_ANNOTATION}),
 			
+			// ENZYME_CLASSIFICATION and FAMILY_NAME temporarily appear in the entry overview via another mechanism
+			ENZYME_CLASSIFICATION(1065,"enzyme classification", "enzymeClassification", "enzyme classification", new AnnotationApiModel[]{ GENERAL_ANNOTATION }),
     
 	
 	// instantiated annotation categories with real cv_term id and data existing for them			
