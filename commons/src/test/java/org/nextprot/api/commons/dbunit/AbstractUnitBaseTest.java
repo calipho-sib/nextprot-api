@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("unit")
+@ActiveProfiles({"unit", "unit-schema-nextprot"})
 @DirtiesContext
 public abstract class AbstractUnitBaseTest {
 	

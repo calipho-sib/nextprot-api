@@ -17,7 +17,7 @@ import sib.calipho.spring.security.auth0.Auth0TokenHelper;
 @Service
 public class UserApplicationServiceImpl implements UserApplicationService {
 
-	@Autowired
+	@Autowired(required = false)
 	private Auth0TokenHelper<Object> tokenHelper;
 
 	@Autowired
@@ -52,7 +52,9 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
 	@Override
 	public void deleteApplication(Long id) {
-		this.userApplicationDao.deleteApplication(id);
+		UserApplication app = this.userApplicationDao.getUserApplicationById(id);
+		//TODO make checking that is the current user or admin...
+		this.userApplicationDao.deleteUserApplication(app);
 	}
 
 }

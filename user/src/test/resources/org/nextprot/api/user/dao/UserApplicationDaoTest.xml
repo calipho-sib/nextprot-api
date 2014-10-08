@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Use this one to run the tests  -->
+<!DOCTYPE dataset SYSTEM "file:src/test/resources/user.dtd">
+<!-- Use this one to autocomplete -->
+
+<!--<!DOCTYPE dataset SYSTEM "../../../../../user.dtd"> 
+ Use the dbunit_insert_helper.sql to generate the statements -->
+<dataset> 
+
+	<user_applications owner="hello" responsible_name="dani" token="KLJBFAS" application_name="mySuperApplication" application_id="123456" responsible_email="dasads" description="dsadas"/>
+
+</dataset>	

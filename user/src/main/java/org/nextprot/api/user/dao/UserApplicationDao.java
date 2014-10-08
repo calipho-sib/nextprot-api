@@ -8,16 +8,14 @@ public interface UserApplicationDao {
 
 	List<UserApplication> getUserApplications(String username);
 
-	void createUserApplication(UserApplication userApplication);
+	UserApplication createUserApplication(UserApplication userApplication);
 
-	void updateUserApplication(UserApplication userApplication);
+	UserApplication updateUserApplication(UserApplication userApplication);
 
 	void deleteUserApplication(UserApplication userApplication);
 
 	UserApplication getUserApplicationById(long id);
 
 	UserApplication getUserApplication(long id);
-
-	void deleteApplication(Long id);
 	
 }

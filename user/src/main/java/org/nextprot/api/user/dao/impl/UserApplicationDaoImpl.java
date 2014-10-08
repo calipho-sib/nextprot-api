@@ -48,7 +48,7 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	}
 
 	@Override
-	public void createUserApplication(final UserApplication userApplication) {
+	public UserApplication createUserApplication(final UserApplication userApplication) {
 
 		final String INSERT_SQL = sqlDictionary.getSQLQuery("insert-user-application");
 		
@@ -75,17 +75,34 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 		
 		long applicationId =  keyHolder.getKey().longValue();
 		userApplication.setId(applicationId);
+		
+		return userApplication;
 
 
 	}
 
 	@Override
-	public void updateUserApplication(final UserApplication userApplication) {
-
+	public UserApplication updateUserApplication(final UserApplication userApplication) {
+		throw new NextProtException("Should implement this method");
 	}
 
 	@Override
 	public void deleteUserApplication(final UserApplication userApplication) {
+
+		//TODO should put this sql on a external file
+		String sql = "delete from np_users.user_applications where application_id = :application_id";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("application_id", userApplication.getId());
+		
+		int affectedRows = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(sql, params);
+		
+		
+		if(affectedRows != 1){
+			String msg = "Ups something wrong occured" + affectedRows + " rows were affected instead of only 1.";
+			Logger.error(msg);
+			throw new NextProtException(msg);
+		}
 
 	}
 
@@ -124,29 +141,12 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	@Override
 	public UserApplication getUserApplication(long id) {
 
+		//TODO should put this sql on a external file
+		
 		String sql = "select * from np_users.user_applications where application_id = :application_id";
 		SqlParameterSource namedParams = new MapSqlParameterSource("application_id", id);
 		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForObject(sql, namedParams, new UserApplicationRowMapper());
 
-	}
-
-	@Override
-	public void deleteApplication(Long id) {
-
-		String sql = "delete from np_users.user_applications where application_id = :application_id";
-		
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("application_id", id);
-		
-		int affectedRows = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(sql, params);
-		
-		
-		if(affectedRows != 1){
-			String msg = "Ups something wrong occured" + affectedRows + " rows were affected instead of only 1.";
-			Logger.error(msg);
-			throw new NextProtException(msg);
-		}
-		
 	}
 
 }
