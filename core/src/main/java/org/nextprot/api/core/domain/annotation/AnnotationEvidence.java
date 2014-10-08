@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jsondoc.core.annotation.ApiObjectField;
-
 public class AnnotationEvidence implements Serializable {
 
 	private static final long serialVersionUID = 2856324820767690302L;

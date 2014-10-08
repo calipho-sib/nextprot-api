@@ -35,6 +35,11 @@
 			<artifactId>nextprot-api-rdf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-demo-sparql-queries</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!-- used for tests -->
 		<dependency>
 			<groupId>org.nextprot</groupId>

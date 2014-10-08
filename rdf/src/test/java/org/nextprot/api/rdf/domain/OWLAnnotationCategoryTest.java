@@ -142,8 +142,26 @@ public class OWLAnnotationCategoryTest extends TestCase {
 		Set<AnnotationApiModel> cs = AnnotationApiModel.NAME.getAllChildren();
 		System.out.println("Name all children:"+cs.size());
 		assertTrue(cs.contains(AnnotationApiModel.FAMILY_NAME));
-		assertTrue(cs.contains(AnnotationApiModel.ENZYME_CLASSIFICATION));
-		assertTrue(true);
+		//assertTrue(cs.contains(AnnotationApiModel.ENZYME_CLASSIFICATION)); // is now a child of general annotiation
+	}
+	
+	@Test
+	public void testGeneralAnnotationAllChildren() {
+		// get all children of general annotation
+		Set<AnnotationApiModel> cs = AnnotationApiModel.GENERAL_ANNOTATION.getAllChildren();
+		// build a new set of children containing...
+		Set<AnnotationApiModel> cs2 = new HashSet<AnnotationApiModel>();
+		for (AnnotationApiModel aam: AnnotationApiModel.GENERAL_ANNOTATION.getChildren()) {
+			// ... each direct child of general annotation
+			cs2.add(aam);
+			// ... together with direct child of each child (we assume we have two child level only)
+			cs2.addAll(aam.getChildren());
+		}
+		System.out.println("all children of general annotation: "+cs.size());
+		System.out.println("children of children of general annotation: "+cs2.size());
+		assertTrue(cs.containsAll(cs2));
+		assertTrue(cs2.containsAll(cs));
+		assertTrue(cs.equals(cs2));
 	}
 	
 	

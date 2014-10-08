@@ -1,9 +1,10 @@
-package org.nextprot.api.sparql.queries.example;
+package org.nextprot.api.demo.sparql.queries;
 
 public class GenerateJsonFileForExampleQueriesApp {
 	
 	public static void main(String[] args) {
 		
+
 	}
 
 }

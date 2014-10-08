@@ -72,7 +72,9 @@ public class DescriptorMass {
 
 			massDefList.get(MassType.MONOISOTOPIC)[iaa]=massIso;
 			massDefList.get(MassType.AVERAGE)[iaa]=massAvg;
+			scanAA.close();
 		}
+		scanList.close();
 	}
 	
 	static int aa2int(char aa){
