@@ -29,6 +29,10 @@ public abstract class FilePatternDictionary {
 	protected abstract String getLocation();
 	protected abstract String getExtension();
 	
+	protected Map<String, String> getResourcesMap() {
+		return resourcesMap;
+	}
+	
 	protected String getResource(String resource) {
 		if (resourcesMap.containsKey(resource)) {
 			return resourcesMap.get(resource);

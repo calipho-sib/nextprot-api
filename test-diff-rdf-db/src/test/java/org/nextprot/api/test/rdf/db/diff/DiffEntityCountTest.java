@@ -1,6 +1,5 @@
 package org.nextprot.api.test.rdf.db.diff;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class DiffEntityCountTest extends DiffBaseTest {

@@ -55,7 +55,7 @@
 			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 			<property name="locations">
 				<list>
-					<value>file:application.properties</value>
+					<value>file:#{systemProperties['NXAPI_PROP_FILE']}</value>
 				</list>
 			</property>
 		</bean>

@@ -39,9 +39,7 @@ public class UserApplicationController {
 	@RequestMapping(value = "/user/applications", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserApplication> getApplications() {
-		System.err.println("WTFFFF");
-		return Arrays.asList(new UserApplication[]{ new UserApplication()});
-		//return userApplicationService.getUserApplications(NPSecurityContext.getCurrentUser());
+		return userApplicationService.getUserApplications(NPSecurityContext.getCurrentUser());
 	}
 
 	

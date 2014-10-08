@@ -16,3 +16,4 @@ cache
 log
 *.iml
 .idea
+MANIFEST.MF
