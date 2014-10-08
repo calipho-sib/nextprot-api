@@ -16,8 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 @Ignore
-@ActiveProfiles({"unit", "unit-schema-nextprot"})
-public class GenerateDTD extends CommonsUnitBaseTest {
+@ActiveProfiles("unit")
+public class GenerateDTDForUserSchema extends CommonsUnitBaseTest {
 
 	private static final String dtdFile = "nextprot.dtd";
 

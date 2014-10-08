@@ -47,7 +47,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
 	@Override
 	public UserApplication getUserApplication(long id) {
-		return this.userApplicationDao.getUserApplication(id);
+		return this.userApplicationDao.getUserApplicationById(id);
 	}
 
 	@Override

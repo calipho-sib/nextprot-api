@@ -22,7 +22,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -109,8 +108,9 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	@Override
 	public UserApplication getUserApplicationById(long id) {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-		namedParameters.addValue("id", id);
-		List<UserApplication> queries = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("user-application-by-id"), namedParameters, new UserApplicationRowMapper());
+		namedParameters.addValue("application_id", id);
+		String sql = sqlDictionary.getSQLQuery("user-application-by-id");
+		List<UserApplication> queries = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserApplicationRowMapper());
 		NPreconditions.checkTrue(queries.size() == 1, "User application not found");
 		return queries.get(0);
 	}
@@ -138,15 +138,5 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 		}
 	}
 
-	@Override
-	public UserApplication getUserApplication(long id) {
-
-		//TODO should put this sql on a external file
-		
-		String sql = "select * from np_users.user_applications where application_id = :application_id";
-		SqlParameterSource namedParams = new MapSqlParameterSource("application_id", id);
-		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForObject(sql, namedParams, new UserApplicationRowMapper());
-
-	}
 
 }
