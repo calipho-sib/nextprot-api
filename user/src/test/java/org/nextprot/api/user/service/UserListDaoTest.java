@@ -17,6 +17,7 @@ import org.nextprot.api.user.domain.UserList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 
+@Ignore
 public class UserListDaoTest extends CommonsUnitBaseTest {
 
 	@Autowired private DataSourceServiceLocator dsLocator;

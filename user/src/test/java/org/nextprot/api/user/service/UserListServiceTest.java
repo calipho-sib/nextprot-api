@@ -20,6 +20,7 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 
+@Ignore
 @ActiveProfiles("unit")
 @DatabaseSetup(value = "UserListServiceTest.xml", type = DatabaseOperation.INSERT)
 public class UserListServiceTest extends CommonsUnitBaseTest {

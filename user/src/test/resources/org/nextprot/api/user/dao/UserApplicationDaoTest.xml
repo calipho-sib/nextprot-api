@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Use this one to run the tests  -->
-<!DOCTYPE dataset SYSTEM "file:src/test/resources/user.dtd">
+<!DOCTYPE dataset SYSTEM "file:user.dtd">
 <!-- Use this one to autocomplete -->
 
 <!--<!DOCTYPE dataset SYSTEM "../../../../../user.dtd"> 
