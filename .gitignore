@@ -12,3 +12,4 @@ velocity.log.*
 npapi.log
 AnnotationMVCTest.out.xml
 MANIFEST.MF
+.settings
