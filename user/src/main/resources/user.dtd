@@ -1085,7 +1085,7 @@
     responsible_name CDATA #REQUIRED
     responsible_email CDATA #REQUIRED
     website CDATA #IMPLIED
-    owner CDATA #REQUIRED
+    owner_id CDATA #IMPLIED
     token CDATA #REQUIRED
     state CDATA #IMPLIED
 >

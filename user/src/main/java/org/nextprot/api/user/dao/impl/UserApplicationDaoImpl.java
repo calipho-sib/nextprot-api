@@ -76,8 +76,6 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 		userApplication.setId(applicationId);
 		
 		return userApplication;
-
-
 	}
 
 	@Override
@@ -95,14 +93,12 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 		params.put("application_id", userApplication.getId());
 		
 		int affectedRows = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(sql, params);
-		
-		
+
 		if(affectedRows != 1){
 			String msg = "Ups something wrong occured" + affectedRows + " rows were affected instead of only 1.";
 			Logger.error(msg);
 			throw new NextProtException(msg);
 		}
-
 	}
 
 	@Override
@@ -129,11 +125,11 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 			app.setName(resultSet.getString("application_name"));
 			app.setDescription(resultSet.getString("description"));
 			app.setOwner(resultSet.getString("owner"));
+            app.setOwnerId(resultSet.getLong("owner_id"));
 			app.setOrganisation(resultSet.getString("organisation"));
 			app.setResponsibleEmail(resultSet.getString("responsible_email"));
 			app.setResponsibleName(resultSet.getString("responsible_name"));
 
-        	
 			return app;
 		}
 	}

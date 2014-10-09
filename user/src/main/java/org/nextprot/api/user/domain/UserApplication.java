@@ -21,8 +21,7 @@ public class UserApplication implements Serializable, UserResource {
 	@JsonProperty(required=true)
 	private String description;
 
-	private String something = "yodelaiu";
-	
+
 	private String organisation;
 	
 	@JsonProperty(required=true)
@@ -31,24 +30,17 @@ public class UserApplication implements Serializable, UserResource {
 	@JsonProperty(required=true)
 	private String responsibleEmail;
 
-	
 	private String website;
 
 	@JsonProperty(required=true)
 	private String owner;
 
+    private long ownerId;
+
 	private String grants;
 	private String token;
 	private Date tokenValidity;
 	
-	public UserApplication(){
-		
-	}
-
-	public UserApplication(String s, int i, int i1){
-		this.name = "lol";
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -112,7 +104,11 @@ public class UserApplication implements Serializable, UserResource {
 		this.owner = owner;
 	}
 
-	public long getId() {
+    public long getOwnerId() { return ownerId; }
+
+    public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
+
+    public long getId() {
 		return id;
 	}
 
@@ -126,14 +122,6 @@ public class UserApplication implements Serializable, UserResource {
 
 	public void setOrganisation(String organisation) {
 		this.organisation = organisation;
-	}
-
-	public String getSomething() {
-		return something;
-	}
-
-	public void setSomething(String something) {
-		this.something = something;
 	}
 
 }

@@ -9,8 +9,6 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-
-	<groupId>org.nextprot</groupId>
 	<artifactId>nextprot-api-user</artifactId>
 	<packaging>jar</packaging>
 
@@ -44,7 +42,7 @@
 				<version>3.0</version>
 				<configuration>
 					<driver>org.postgresql.Driver</driver>
-					<url>jdbc:postgresql://crick:5432/np_unit</url>
+					<url>jdbc:postgresql://crick.isb-sib.ch:5432/np_unit</url>
 					<user>postgres</user>
 					<password>postgres</password>
 					<schemas>

@@ -20,7 +20,9 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
 		// Will get what is defined on the UserApplicationDaoTest
 		UserApplication app = userAppDao.getUserApplicationById(123456);
 
-		Assert.assertEquals(app.getName(), "mySuperApplication");
+		Assert.assertEquals("mySuperApplication", app.getName());
+        Assert.assertEquals(23L, app.getOwnerId());
+        Assert.assertEquals("spongebob", app.getOwner());
 	}
 
 	@Ignore
