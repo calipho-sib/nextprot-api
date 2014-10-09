@@ -8,6 +8,7 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.demo.sparql.queries.domain.DemoSparqlQuery;
 import org.nextprot.api.demo.sparql.queries.service.DemoSparqlService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,10 +21,18 @@ public class DemoSparqlQueriesController {
 	@Autowired DemoSparqlService demoSparqlService;
 	
 	@ResponseBody
-	@RequestMapping(value = "/demo/sparql/queries", method = { RequestMethod.GET })
-	@ApiMethod(path = "/demo/sparql/queries", verb = ApiVerb.GET, description = "Get demo sparql queries")
+	@RequestMapping(value = "/demo/sparql/queries", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(path = "/demo/sparql/queries", verb = ApiVerb.GET, description = "Get demo sparql queries", produces={MediaType.APPLICATION_JSON_VALUE})
 	public List<DemoSparqlQuery> getDemoSparalQueries() {
 		return demoSparqlService.getDemoSparqlQueries();
 	}
 	
+
+	@ResponseBody
+	@RequestMapping(value = "/demo/sparql/queries/reload", method = { RequestMethod.GET })
+	@ApiMethod(path = "/demo/sparql/queries/reload", verb = ApiVerb.GET, description = "Reload demo sparql queries")
+	public String reloadDemoSparqlQueries() {
+		demoSparqlService.relaodDemoSparqlQueries();
+		return "Reload complete";
+	}
 }

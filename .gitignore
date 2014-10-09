@@ -13,3 +13,4 @@ npapi.log
 AnnotationMVCTest.out.xml
 MANIFEST.MF
 .settings
+rebel.xml

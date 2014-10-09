@@ -101,4 +101,8 @@ public class DemoSparqlDictionary extends FilePatternDictionary {
 
 		return meta;
 	}
+	
+	public void reloadDemoQueries() {
+		super.loadResources();
+	}
 }

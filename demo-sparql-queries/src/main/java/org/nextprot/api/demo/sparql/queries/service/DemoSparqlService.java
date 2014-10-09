@@ -8,4 +8,6 @@ public interface DemoSparqlService {
 	
 	List<DemoSparqlQuery> getDemoSparqlQueries();
 
+	void relaodDemoSparqlQueries();
+
 }
