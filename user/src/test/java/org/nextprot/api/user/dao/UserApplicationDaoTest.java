@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
+//@TransactionConfiguration(defaultRollback = false)
 @DatabaseSetup(value = "UserApplicationDaoTest.xml", type = DatabaseOperation.INSERT)
 public class UserApplicationDaoTest extends UserApplicationBaseTest {
 
