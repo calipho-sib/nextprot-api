@@ -49,7 +49,7 @@
 
 	<bean class="org.nextprot.api.core.service.aop.ServiceEntryValidation"></bean>
 
-	<beans profile="pro,dev">
+	<beans profile="pro">
 
 		<!-- JMX Support -->
 		<context:mbean-export />
