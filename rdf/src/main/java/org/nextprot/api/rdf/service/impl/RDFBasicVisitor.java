@@ -1,5 +1,6 @@
 package org.nextprot.api.rdf.service.impl;
 
+import org.nextprot.api.rdf.utils.RdfPrefixUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.hp.hpl.jena.rdf.model.AnonId;
@@ -10,11 +11,14 @@ import com.hp.hpl.jena.rdf.model.Resource;
 
 public class RDFBasicVisitor implements RDFVisitor {
 
-	@Autowired private RdfPrefixService rdfPrefixService;
+	@Autowired private RdfPrefixUtils rdfPrefixService;
 	
 	private boolean surroundLiteralStringWithQuotes = false;
+
+	private String prefixes;
 	
-	public RDFBasicVisitor() {
+	public RDFBasicVisitor(String prefixes) {
+		this.prefixes = prefixes;
 	}
 
 	public void setSurroundLiteralStringWithQuotes(boolean state) {
@@ -38,13 +42,13 @@ public class RDFBasicVisitor implements RDFVisitor {
 
 	@Override
 	public Object visitURI(Resource r, String uri) {
-		return rdfPrefixService.getPrefixedNameFromURI(uri);
+		return RdfPrefixUtils.getPrefixedNameFromURI(prefixes, uri);
 	}
 	
 	
 	public String getPrefixedName(Resource r) {
 		if (r==null) return null;
-		String pn = rdfPrefixService.getPrefixedNameFromURI(r.getURI());
+		String pn = RdfPrefixUtils.getPrefixedNameFromURI(prefixes, r.getURI());
 		return pn;
 	}
 	
@@ -53,7 +57,7 @@ public class RDFBasicVisitor implements RDFVisitor {
 		if (r==null) return null;
 		String ln = r.getLocalName(); // doesn't work if local name starts with digit !
 		String ns = r.getNameSpace(); // doesn't work if local name starts with digit !
-		String pn = rdfPrefixService.getPrefixFromNameSpace(ns) + ln;
+		String pn = RdfPrefixUtils.getPrefixFromNameSpace(prefixes, ns) + ln;
 		return pn;
 	}
 	
