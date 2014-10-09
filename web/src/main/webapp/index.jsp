@@ -35,7 +35,7 @@
 
 </head>
 
-<body>
+<body class="profile-<% out.print(System.getProperty("spring.profiles.active")); %>">
 
 	<div class="navbar navbar-fixed-top navbar-inverse">
 		<div class="navbar-inner">
