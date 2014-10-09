@@ -19,9 +19,8 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
 	public void shouldGetUserApplicationAsExpected() {
 		// Will get what is defined on the UserApplicationDaoTest
 		UserApplication app = userAppDao.getUserApplicationById(123456);
-		System.out.println(app.getName());
-		Assert.assertEquals(app.getName(), "mySuperApplication");
 
+		Assert.assertEquals(app.getName(), "mySuperApplication");
 	}
 
 	@Ignore
