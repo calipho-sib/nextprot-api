@@ -24,6 +24,7 @@ public class DemoSparqlQueriesController {
 	@RequestMapping(value = "/demo/sparql/queries", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ApiMethod(path = "/demo/sparql/queries", verb = ApiVerb.GET, description = "Get demo sparql queries", produces={MediaType.APPLICATION_JSON_VALUE})
 	public List<DemoSparqlQuery> getDemoSparalQueries() {
+		demoSparqlService.relaodDemoSparqlQueries();
 		return demoSparqlService.getDemoSparqlQueries();
 	}
 	

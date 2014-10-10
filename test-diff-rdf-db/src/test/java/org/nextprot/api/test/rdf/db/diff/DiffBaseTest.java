@@ -52,6 +52,7 @@ abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 			resetDefaultLogValues();		
 			getCountForSparql();
 			getCountForSql();
+			System.out.println("Query "+ qName +": sql =" + countSQL + ", rq="+countSPARQL);
 			this.status = (this.countSQL==this.countSPARQL ? "OK" : "FAIL");
 			assertTrue(this.countSQL==this.countSPARQL);
 		} finally {
