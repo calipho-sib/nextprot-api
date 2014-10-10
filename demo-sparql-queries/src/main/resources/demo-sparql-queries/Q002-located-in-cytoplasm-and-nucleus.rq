@@ -1,0 +1,8 @@
+#title:Q002 that are located both in the cytoplasm and in the nucleus
+#acs:A0AVF1,A0PK00,A1A4S6,A1A5C7,A1KXE4,A2RRD8,A5PL33,A6NDU8,A1L020,A2A288,A5LHX3,A5PLL1,A5YKK6
+#tags:selected,location
+#count:3185
+select distinct ?entry where {
+  ?entry :isoform ?iso.
+  ?iso :location / :in / :childOf term:SL-0086, term:SL-0191
+}order by ?entry
