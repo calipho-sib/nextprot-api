@@ -8,7 +8,14 @@ public class DemoSparqlQuery {
 	private String title;
 	private String tags;
 	private String acs;
+	private String count;
 
+	public String getCount() {
+		return count;
+	}
+	public void setCount(String count) {
+		this.count = count;
+	}
 	public String getAcs() {
 		return acs;
 	}

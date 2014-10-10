@@ -68,6 +68,7 @@ public class DemoSparqlDictionary extends FilePatternDictionary {
 		dsq.setQuery(rawProps.get("query"));
 		dsq.setTitle(rawProps.get("title"));
 		dsq.setTags(rawProps.get("tags"));
+		dsq.setCount(rawProps.get("count"));
 		dsq.setAcs(rawProps.get("acs"));
 
 		return dsq;
