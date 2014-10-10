@@ -17,3 +17,5 @@ log
 *.iml
 .idea
 MANIFEST.MF
+.settings
+rebel.xml

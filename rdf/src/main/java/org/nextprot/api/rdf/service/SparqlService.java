@@ -5,6 +5,7 @@ import java.util.List;
 import org.nextprot.api.commons.utils.SparqlResult;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 
 public interface SparqlService {
@@ -35,5 +36,7 @@ public interface SparqlService {
 	 * @return
 	 */
 	public SparqlResult sparqlSelect(@Value("sparql") String sparql, @Value("sparqlEndpoint") String sparqlEndpointUrl, @Value("timeout") int timeout, @Value("sparqlTitle") String queryTitle, @Value("testId") String testId,  ResultsFormat format);
+
+	QueryExecution queryExecution(String query);
 
 }

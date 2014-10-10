@@ -53,6 +53,14 @@ public class Annotation implements Serializable {
 		commonExpressionPredicat.put("Negative","negativeExpression");
 	}	
 	
+	
+	public String toString() {
+		return uniqueName + ": "  + 
+				"cvTermAccessionCode:" + cvTermAccessionCode +
+				" - cvTermName:" + cvTermName +
+				" - description:"  + description;
+	}
+	
 	public List<AnnotationEvidence> getEvidences() {
 		return evidences;
 	}

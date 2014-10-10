@@ -1,4 +1,4 @@
-package org.nextprot.api.web;
+package org.nextprot.api.rdf.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;

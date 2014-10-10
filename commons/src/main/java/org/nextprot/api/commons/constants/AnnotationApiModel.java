@@ -21,8 +21,8 @@ public enum AnnotationApiModel  {
 
 	// names 
 	NAME(-100, "Name", "name","Name",null),
-		FAMILY_NAME(1059,"family name", "familyName", "family name", new AnnotationApiModel[]{ NAME }),
-		ENZYME_CLASSIFICATION(1065,"enzyme classification", "enzymeClassification", "enzyme classification", new AnnotationApiModel[]{ NAME }),
+	// ENZYME_CLASSIFICATION and FAMILY_NAME temporarily appear in the entry overview via another mechanism
+		FAMILY_NAME(1059,"family name", "familyName", "family name", new AnnotationApiModel[]{ NAME }), 
 
 	// generic categories for annotations
 	
@@ -40,9 +40,12 @@ public enum AnnotationApiModel  {
 			GENERIC_INTERACTION(-11, "GenericInteraction", "interaction","Interaction", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
 			GENERIC_LOCATION(-12, "GenericLocation", "location","Location", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
 			MEDICAL(-13, "Medical", "medical","Medical", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
+			KEYWORD(-14, "Keyword", "keyword","Keywords", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
 
 			//TEST1(-1111,"test1","test1","test1", new OWLAnnotationCategory[]{POSITIONAL_ANNOTATION, GENERAL_ANNOTATION}),
 			
+			// ENZYME_CLASSIFICATION and FAMILY_NAME temporarily appear in the entry overview via another mechanism
+			ENZYME_CLASSIFICATION(1065,"enzyme classification", "enzymeClassification", "enzyme classification", new AnnotationApiModel[]{ GENERAL_ANNOTATION }),
     
 	
 	// instantiated annotation categories with real cv_term id and data existing for them			
@@ -117,7 +120,7 @@ public enum AnnotationApiModel  {
 	MISCELLANEOUS(1052,"miscellaneous", "miscellaneous", "miscellaneous", new AnnotationApiModel[]{GENERAL_ANNOTATION }),
 	CAUTION(1054,"caution", "caution", "caution", new AnnotationApiModel[]{GENERAL_ANNOTATION }),
 	SEQUENCE_CAUTION(1056,"sequence caution", "sequenceCaution", "sequence caution", new AnnotationApiModel[]{GENERAL_ANNOTATION }),
-	UNIPROT_KEYWORD(1064,"uniprot keyword", "uniprotKeyword", "uniprot keyword", new AnnotationApiModel[]{GENERAL_ANNOTATION }),  // TODO: check with Amos if is a general annotation
+	UNIPROT_KEYWORD(1064,"uniprot keyword", "uniprotKeyword", "uniprot keyword", new AnnotationApiModel[]{KEYWORD }),  
 	
 	FUNCTION_INFO(1033,"function", "functionInfo", "function info",  new AnnotationApiModel[]{GENERIC_FUNCTION }),
 	CATALYTIC_ACTIVITY(1034,"catalytic activity", "catalyticActivity", "catalytic activity", new AnnotationApiModel[]{GENERIC_FUNCTION }),

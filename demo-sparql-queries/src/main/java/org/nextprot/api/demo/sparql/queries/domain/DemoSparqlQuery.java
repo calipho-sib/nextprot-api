@@ -4,11 +4,18 @@ package org.nextprot.api.demo.sparql.queries.domain;
 
 public class DemoSparqlQuery {
 
-	private String sparql;
+	private String query;
 	private String title;
 	private String tags;
 	private String acs;
+	private String count;
 
+	public String getCount() {
+		return count;
+	}
+	public void setCount(String count) {
+		this.count = count;
+	}
 	public String getAcs() {
 		return acs;
 	}
@@ -21,11 +28,11 @@ public class DemoSparqlQuery {
 	public void setTags(String tags) {
 		this.tags = tags;
 	}
-	public String getSparql() {
-		return sparql;
+	public String getQuery() {
+		return query;
 	}
-	public void setSparql(String sparql) {
-		this.sparql = sparql;
+	public void setQuery(String query) {
+		this.query = query;
 	}
 	public String getTitle() {
 		return title;
@@ -37,8 +44,8 @@ public class DemoSparqlQuery {
 	public String toString(){
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("** sparql=");
-		sb.append(sparql);
+		sb.append("** query=");
+		sb.append(query);
 		sb.append(";\n");
 
 		sb.append("** title=");

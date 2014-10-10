@@ -1,0 +1,7 @@
+#title:Q007 linked to diseases that are associated with cardiovascular aspects
+#acs:A6NCS4,O00522,O14958,O15273
+#tags:disease
+#count:228
+select distinct ?entry  WHERE {
+  ?entry :isoform /:medical / :in /:related / :childOf term:D002318.
+}

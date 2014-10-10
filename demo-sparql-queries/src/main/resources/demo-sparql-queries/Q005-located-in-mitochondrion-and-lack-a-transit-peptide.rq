@@ -1,7 +1,0 @@
-#title:Q5 located in mitochondrion and that lack a transit peptide
-#ac:A1XBS5,O00159,O00755,O14734,O14972,O15270,A2AJT9,A6NDV4,A6NFY7,A6NK06,B7ZC32
-#tags:selected
-select distinct ?entry where{
- ?entry :isoform/:localisation/:in/:childOf term:SL-0173
-  FILTER NOT EXISTS{ ?entry :classifiedWith term:KW-0809 }
-}order by ?entry

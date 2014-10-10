@@ -16,6 +16,11 @@ public class DemoSparqlServiceImpl implements DemoSparqlService{
 	public List<DemoSparqlQuery> getDemoSparqlQueries() {
 		return demoSparqlDictionary.getDemoSparqlList();
 	}
+
+	@Override
+	public void relaodDemoSparqlQueries() {
+		demoSparqlDictionary.reloadDemoQueries();
+	}
 	
 
 }

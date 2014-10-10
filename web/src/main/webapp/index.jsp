@@ -95,7 +95,7 @@
 <ul class="nav nav-list">
 	<li class="nav-header">APIs</li>
 	{{#apis}}
-		<li><a href="#" id="{{jsondocId}}" rel="api">{{name}} <span class="role">{{role}}</span></a></li>
+		<li><a href="#" id="{{jsondocId}}" rel="api">{{name}}</a></li>
 	{{/apis}}
 </ul>
 </script>
