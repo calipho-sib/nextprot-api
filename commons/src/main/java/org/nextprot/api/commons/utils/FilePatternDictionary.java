@@ -3,6 +3,7 @@ package org.nextprot.api.commons.utils;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 
@@ -52,7 +53,7 @@ public abstract class FilePatternDictionary {
 
 	protected void loadResources() {
 
-		resourcesMap = new HashMap<String, String>();
+		resourcesMap = new TreeMap<String, String>();
 
 		Resource[] resources;
 		try {
