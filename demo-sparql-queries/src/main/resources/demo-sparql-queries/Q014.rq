@@ -1,0 +1,12 @@
+#title:Q014 with 2 SH3 domains and 1 SH2 domain
+#acs:O75791,P15498,P16333,P46108,P46109,P52735,P62993,Q13588,Q9UKW4
+#tags:domain
+#count:9
+select distinct ?entry  where{
+?entry :isoform ?iso.
+#with 1 SH3
+  {select ?iso where{?iso :region ?stat1. ?stat1 :in term:DO-00614}GROUP BY ?iso  HAVING(count( ?stat1)=1)}
+
+#with 2 SH2
+  {select ?iso where{?iso :region ?stat2. ?stat2 :in term:DO-00615}GROUP BY ?iso HAVING(count( ?stat2)=2)}
+}GROUP BY ?entry
