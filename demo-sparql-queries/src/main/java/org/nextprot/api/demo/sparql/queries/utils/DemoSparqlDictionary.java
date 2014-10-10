@@ -65,7 +65,7 @@ public class DemoSparqlDictionary extends FilePatternDictionary {
 		DemoSparqlQuery dsq = new DemoSparqlQuery();
 		Map<String, String> rawProps = getMetaInfo(rawContent);
 
-		dsq.setSparql(rawProps.get("sparql"));
+		dsq.setQuery(rawProps.get("query"));
 		dsq.setTitle(rawProps.get("title"));
 		dsq.setTags(rawProps.get("tags"));
 		dsq.setAcs(rawProps.get("acs"));
@@ -93,11 +93,11 @@ public class DemoSparqlDictionary extends FilePatternDictionary {
 		q = parseAndGlupRawQuery(rawData, q, "id", meta);
 		q = parseAndGlupRawQuery(rawData, q, "endpoint", meta);
 		q = parseAndGlupRawQuery(rawData, q, "tags", meta);
-		q = parseAndGlupRawQuery(rawData, q, "ac", meta);
+		q = parseAndGlupRawQuery(rawData, q, "acs", meta);
 		q = parseAndGlupRawQuery(rawData, q, "count", meta);
 		q = parseAndGlupRawQuery(rawData, q, "title", meta);
 		
-		meta.put("sparql", q.trim());
+		meta.put("query", q.trim());
 
 		return meta;
 	}
