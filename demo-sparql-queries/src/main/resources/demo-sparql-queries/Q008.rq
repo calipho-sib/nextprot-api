@@ -1,6 +1,6 @@
 #title:Q008 whose genes are less than 50000 bp away from the location of the gene of protein Y
 #acs:P04278,P04637,P14415,Q15768,Q96F10,Q9BUR4
-#tags:
+#tags:gene
 #count:5
 select distinct ?entry where {
    #example with P53

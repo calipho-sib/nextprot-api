@@ -1,6 +1,6 @@
 #title:Q003 with 37 transmembrane regions or more
 #acs:Q9H5I5
-#tags:
+#tags:region
 #count:1
 select distinct ?entry where{
  ?entry :isoform ?iso.
