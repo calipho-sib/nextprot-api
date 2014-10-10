@@ -27,7 +27,7 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.RDFNode;
 
 @Service
-public class RdfHelpCachableServiceImpl  {
+public class RdfHelpCacheableServiceImpl  {
 
 	private static final Log LOGGER = LogFactory.getLog(SparqlEndpointImpl.class);
 
@@ -39,8 +39,8 @@ public class RdfHelpCachableServiceImpl  {
 	@Cacheable("rdftypefullall")
 	public Set<String> getAllRdfTypesNames() {
 		Set<String> result = new TreeSet<String>();
-		String query = sparqlDictionary.getSparqlOnly("alldistincttypes");
-		QueryExecution qExec = sparqlService.queryExecution(sparqlDictionary.getSparqlWithPrefixes(query));
+		String query = sparqlDictionary.getSparqlWithPrefixes("alldistincttypes");
+		QueryExecution qExec = sparqlService.queryExecution(query);
 		ResultSet rs = qExec.execSelect();
 		while (rs.hasNext()) {
 			String rdfTypeName = (String) getDataFromSolutionVar(rs.next(), "rdfType");

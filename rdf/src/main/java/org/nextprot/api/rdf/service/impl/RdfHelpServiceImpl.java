@@ -30,7 +30,7 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 	private List<String> completeSetOfValuesForLiteral = Arrays.asList("NextprotTissues/rdfs:label", ":SubcellularLocation/rdfs:comment");
 
 	@Autowired
-	private RdfHelpCachableServiceImpl rdfHelpServiceCached;
+	private RdfHelpCacheableServiceImpl rdfHelpServiceCached;
 
 	private final int NUMBER_THREADS = 10;
 
