@@ -1082,12 +1082,15 @@
     application_name CDATA #REQUIRED
     description CDATA #REQUIRED
     organisation CDATA #IMPLIED
-    responsible_name CDATA #REQUIRED
-    responsible_email CDATA #REQUIRED
+    responsible_name CDATA #IMPLIED
+    responsible_email CDATA #IMPLIED
     website CDATA #IMPLIED
     owner_id CDATA #IMPLIED
     token CDATA #REQUIRED
-    state CDATA #IMPLIED
+    status CDATA #IMPLIED
+    user_data_access CDATA #IMPLIED
+    origins CDATA #IMPLIED
+    creation_date CDATA #REQUIRED
 >
 
 <!ELEMENT user_lists EMPTY>
