@@ -1,7 +1,6 @@
 package org.nextprot.api.user.dao;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
 import org.nextprot.api.user.domain.UserApplication;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-//@TransactionConfiguration(defaultRollback = false)
 @DatabaseSetup(value = "UserApplicationDaoTest.xml", type = DatabaseOperation.INSERT)
 public class UserApplicationDaoTest extends UserApplicationBaseTest {
 
@@ -18,7 +16,7 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
 
 	@Test
 	public void shouldGetUserApplicationAsExpected() {
-		// Will get what is defined on the UserApplicationDaoTest
+
 		UserApplication app = userAppDao.getUserApplicationById(123456);
 
 		Assert.assertEquals("mySuperApplication", app.getName());
@@ -26,20 +24,24 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
         Assert.assertEquals("spongebob", app.getOwner());
 	}
 
-	@Ignore
+    @Test
 	public void shouldCreateAndGetUserApplication() {
+
 		UserApplication app = new UserApplication();
-		app.setName("some name");
-		// app.setName("some name");
-		// app.setName("some name");
-		// app.setName("some name");
-		// app.setName("some name");
 
-		UserApplication app1 = userAppDao.createUserApplication(app);
-		UserApplication app2 = userAppDao.getUserApplicationById(app1.getId());
+		app.setName("test app");
+        app.setDescription("a wonderful app");
+        app.setOwnerId(23);
+        app.setToken("");
 
-		Assert.assertEquals(app1, app2);
+	    userAppDao.createUserApplication(app);
 
+		UserApplication app2 = userAppDao.getUserApplicationById(app.getId());
+
+        Assert.assertEquals(app.getId(), app2.getId());
+        Assert.assertEquals("test app", app2.getName());
+        Assert.assertEquals(23L, app2.getOwnerId());
+        Assert.assertEquals("spongebob", app2.getOwner());
 	}
 
 }

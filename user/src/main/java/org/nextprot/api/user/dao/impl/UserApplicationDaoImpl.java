@@ -1,7 +1,5 @@
 package org.nextprot.api.user.dao.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -18,8 +16,6 @@ import org.nextprot.api.user.dao.UserApplicationDao;
 import org.nextprot.api.user.domain.UserApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -43,35 +39,29 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("owner", username);
-		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("user-applications-by-username"), namedParameters, new UserApplicationRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("read-user-applications-by-username"), namedParameters, new UserApplicationRowMapper());
 	}
 
 	@Override
 	public UserApplication createUserApplication(final UserApplication userApplication) {
 
-		final String INSERT_SQL = sqlDictionary.getSQLQuery("insert-user-application");
-		
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
+		final String INSERT_SQL = sqlDictionary.getSQLQuery("create-user-application");
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+
+        namedParameters.addValue("application_name", userApplication.getName());
+        namedParameters.addValue("description", userApplication.getDescription());
+        namedParameters.addValue("organisation", userApplication.getOrganisation());
+        namedParameters.addValue("responsible_email", userApplication.getResponsibleEmail());
+        namedParameters.addValue("responsible_name", userApplication.getResponsibleName());
+        namedParameters.addValue("owner_id", userApplication.getOwnerId());
+        namedParameters.addValue("token", userApplication.getToken());
+
+        NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource());
 		
 		KeyHolder keyHolder = new GeneratedKeyHolder();
-		jdbcTemplate.update(
-		    new PreparedStatementCreator() {
-		        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-		            PreparedStatement ps =
-		                connection.prepareStatement(INSERT_SQL, new String[] {"application_id"});
-		            ps.setString(1, userApplication.getName());
-		            ps.setString(2, userApplication.getDescription());
-		            ps.setString(3, userApplication.getOrganisation());
-		            ps.setString(4, userApplication.getResponsibleEmail());
-		            ps.setString(5, userApplication.getResponsibleName());
-		            ps.setString(6, userApplication.getOwner());
-		        	ps.setString(7, userApplication.getToken());
-	
-		            return ps;
-		        }
-		    },
-		    keyHolder);
-		
+		jdbcTemplate.update(INSERT_SQL, namedParameters, keyHolder, new String[] {"application_id"});
+
 		long applicationId =  keyHolder.getKey().longValue();
 		userApplication.setId(applicationId);
 		
@@ -103,12 +93,18 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 
 	@Override
 	public UserApplication getUserApplicationById(long id) {
+
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("application_id", id);
-		String sql = sqlDictionary.getSQLQuery("user-application-by-id");
-		List<UserApplication> queries = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserApplicationRowMapper());
+
+		String sql = sqlDictionary.getSQLQuery("read-user-application-by-id");
+
+		List<UserApplication> queries =
+                new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserApplicationRowMapper());
+
 		NPreconditions.checkTrue(queries.size() == 1, "User application not found");
-		return queries.get(0);
+
+        return queries.get(0);
 	}
 
 	/**
@@ -120,12 +116,13 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 
 		public UserApplication mapRow(ResultSet resultSet, int row) throws SQLException {
 
-			UserApplication app = new UserApplication();
+            UserApplication app = new UserApplication();
+
 			app.setId(resultSet.getLong("application_id"));
 			app.setName(resultSet.getString("application_name"));
 			app.setDescription(resultSet.getString("description"));
-			app.setOwner(resultSet.getString("owner"));
             app.setOwnerId(resultSet.getLong("owner_id"));
+            app.setOwner(resultSet.getString("owner"));
 			app.setOrganisation(resultSet.getString("organisation"));
 			app.setResponsibleEmail(resultSet.getString("responsible_email"));
 			app.setResponsibleName(resultSet.getString("responsible_name"));

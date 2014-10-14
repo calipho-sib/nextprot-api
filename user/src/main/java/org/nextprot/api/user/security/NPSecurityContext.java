@@ -35,7 +35,7 @@ public class NPSecurityContext {
 
 	public static void checkUserAuthorization(UserResource userResource) {
 
-		String securityUserName = "";
+		String securityUserName;
 
 		SecurityContext sc = SecurityContextHolder.getContext();
 		if (sc == null) {
@@ -92,4 +92,9 @@ public class NPSecurityContext {
 			return null;
 		}
 	}
+
+    public static long getCurrentUserId() {
+
+        throw new UnsupportedOperationException("NPSecurityContext.getCurrentUserId() not yet implemented");
+    }
 }

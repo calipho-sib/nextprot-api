@@ -9,6 +9,6 @@
 <dataset> 
 
     <users user_id="23" username="spongebob"/>
-	<user_applications owner_id="23" responsible_name="dani" token="KLJBFAS" application_name="mySuperApplication" application_id="123456" responsible_email="dasads" description="dsadas"/>
+	<user_applications owner_id="23" token="KLJBFAS" application_name="mySuperApplication" application_id="123456" responsible_email="dasads" description="dsadas"/>
 
 </dataset>
