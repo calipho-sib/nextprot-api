@@ -34,12 +34,12 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
         app.setOwnerId(23);
         app.setToken("");
 
-	    userAppDao.createUserApplication(app);
+        long id = userAppDao.createUserApplication(app);
 
-		UserApplication app2 = userAppDao.getUserApplicationById(app.getId());
+		UserApplication app2 = userAppDao.getUserApplicationById(id);
 
-        Assert.assertEquals(app.getId(), app2.getId());
         Assert.assertEquals("test app", app2.getName());
+        Assert.assertEquals("a wonderful app", app2.getDescription());
         Assert.assertEquals(23L, app2.getOwnerId());
         Assert.assertEquals("spongebob", app2.getOwner());
 	}

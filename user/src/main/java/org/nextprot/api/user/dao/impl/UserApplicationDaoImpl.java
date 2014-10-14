@@ -43,7 +43,7 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	}
 
 	@Override
-	public UserApplication createUserApplication(final UserApplication userApplication) {
+	public long createUserApplication(final UserApplication userApplication) {
 
 		final String INSERT_SQL = sqlDictionary.getSQLQuery("create-user-application");
 
@@ -62,14 +62,11 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(INSERT_SQL, namedParameters, keyHolder, new String[] {"application_id"});
 
-		long applicationId =  keyHolder.getKey().longValue();
-		userApplication.setId(applicationId);
-		
-		return userApplication;
+		return  keyHolder.getKey().longValue();
 	}
 
 	@Override
-	public UserApplication updateUserApplication(final UserApplication userApplication) {
+	public long updateUserApplication(final UserApplication userApplication) {
 		throw new NextProtException("Should implement this method");
 	}
 

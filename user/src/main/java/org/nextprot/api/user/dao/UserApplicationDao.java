@@ -8,9 +8,9 @@ public interface UserApplicationDao {
 
 	List<UserApplication> getUserApplications(String username);
 
-	UserApplication createUserApplication(UserApplication userApplication);
+	long createUserApplication(UserApplication userApplication);
 
-	UserApplication updateUserApplication(UserApplication userApplication);
+    long updateUserApplication(UserApplication userApplication);
 
 	void deleteUserApplication(UserApplication userApplication);
 
