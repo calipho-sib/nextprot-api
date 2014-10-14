@@ -6,6 +6,7 @@ import java.util.List;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.SparqlResult;
 import org.nextprot.api.commons.utils.SparqlUtils;
+import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.rdf.utils.SparqlDictionary;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,6 +21,7 @@ import com.hp.hpl.jena.query.QueryParseException;
 import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.sparql.core.Var;
 import com.hp.hpl.jena.sparql.engine.binding.Binding;
+import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
 import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 
 @Service
@@ -29,6 +31,8 @@ public class SparqlServiceImpl implements SparqlService, InitializingBean {
 	private String prefix = null;
 	
 	@Autowired private SparqlDictionary sparqlDictionary = null;
+	
+	@Autowired private SparqlEndpoint sparqlEndpoint = null;
 
 
 	@Override
@@ -145,4 +149,12 @@ public class SparqlServiceImpl implements SparqlService, InitializingBean {
 
 	}
 
+	@Override
+	public QueryExecution queryExecution(String query) {
+		QueryEngineHTTP qExec = (QueryEngineHTTP) QueryExecutionFactory.sparqlService(sparqlEndpoint.getUrl(), query);
+		qExec.addParam("timeout", sparqlEndpoint.getTimeout());
+		return qExec;
+	}
+	
+	
 }

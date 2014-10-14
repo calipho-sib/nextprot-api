@@ -19,7 +19,6 @@ import org.nextprot.api.rdf.domain.RdfConstants;
 import org.nextprot.api.rdf.domain.RdfTypeInfo;
 import org.nextprot.api.rdf.domain.TripleInfo;
 import org.nextprot.api.rdf.service.RdfHelpService;
-import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,15 +26,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class RdfHelpServiceImpl implements RdfHelpService {
 
+	private List<String> completeSetOfValuesForTypes = Arrays.asList(":Source", ":Database", ":SubcellularLocation", ":NextprotTissues");
+	private List<String> completeSetOfValuesForLiteral = Arrays.asList("NextprotTissues/rdfs:label", ":SubcellularLocation/rdfs:comment");
+
 	@Autowired
-	private SparqlEndpoint sparqlEndpoint;
+	private RdfHelpCacheableServiceImpl rdfHelpServiceCached;
 
 	private final int NUMBER_THREADS = 10;
 
 	@Override
 	public List<RdfTypeInfo> getRdfTypeFullInfoList() {
 
-		Set<String> rdfTypesNames = sparqlEndpoint.getAllRdfTypesNames();
+		Set<String> rdfTypesNames = rdfHelpServiceCached.getAllRdfTypesNames();
 		List<Future<RdfTypeInfo>> rdfFutureTypes = new ArrayList<Future<RdfTypeInfo>>();
 		List<RdfTypeInfo> rdfTypes = Collections.synchronizedList(new ArrayList<RdfTypeInfo>());
 
@@ -99,8 +101,6 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 		}
 	}
 
-	private List<String> completeSetOfValuesForTypes = Arrays.asList(":Source", ":Database", ":SubcellularLocation", ":NextprotTissues");
-	private List<String> completeSetOfValuesForLiteral = Arrays.asList("NextprotTissues/rdfs:label", ":SubcellularLocation/rdfs:comment");
 
 	@Override
 	public RdfTypeInfo getRdfTypeFullInfo(String rdfTypeName) {
@@ -108,7 +108,7 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 		RdfTypeInfo rdfTypeInfo = new RdfTypeInfo();
 		rdfTypeInfo.setTypeName(rdfTypeName);
 
-		Map<String, String> properties = sparqlEndpoint.getRdfTypeProperties(rdfTypeName);
+		Map<String, String> properties = rdfHelpServiceCached.getRdfTypeProperties(rdfTypeName);
 		
 		if(!properties.isEmpty()){
 			rdfTypeInfo.setTypeName(properties.get("rdfType"));
@@ -119,13 +119,13 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 		}
 
 
-		List<TripleInfo> triples = sparqlEndpoint.getTripleInfoList(rdfTypeInfo.getTypeName());
+		List<TripleInfo> triples = rdfHelpServiceCached.getTripleInfoList(rdfTypeInfo.getTypeName());
 
 		Set<String> values = null;
 		if (completeSetOfValuesForTypes.contains(rdfTypeInfo.getTypeName())) {
-			values = sparqlEndpoint.getRdfTypeValues(rdfTypeName, Integer.MAX_VALUE);
+			values = rdfHelpServiceCached.getRdfTypeValues(rdfTypeName, Integer.MAX_VALUE);
 		} else {
-			values = sparqlEndpoint.getRdfTypeValues(rdfTypeName, 20);
+			values = rdfHelpServiceCached.getRdfTypeValues(rdfTypeName, 20);
 		}
 
 		rdfTypeInfo.setValues(values);
@@ -136,9 +136,9 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 				String typeLiteral = rdfTypeName + "/" + triple.getPredicate();
 				Set<String> exampleValues = null;
 				if (completeSetOfValuesForLiteral.contains(typeLiteral)) {
-					exampleValues = sparqlEndpoint.getValuesForTriple(rdfTypeName, triple.getPredicate(), Integer.MAX_VALUE);
+					exampleValues = rdfHelpServiceCached.getValuesForTriple(rdfTypeName, triple.getPredicate(), Integer.MAX_VALUE);
 				} else {
-					exampleValues = sparqlEndpoint.getValuesForTriple(rdfTypeName, triple.getPredicate(), 50);
+					exampleValues = rdfHelpServiceCached.getValuesForTriple(rdfTypeName, triple.getPredicate(), 50);
 				}
 
 				triple.setValues(exampleValues);
@@ -151,7 +151,7 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 
 	@Override
 	public List<String> getRdfTypeValues(String rdfTypeName) {
-		return new ArrayList<String>(sparqlEndpoint.getRdfTypeValues(rdfTypeName, Integer.MAX_VALUE));
+		return new ArrayList<String>(rdfHelpServiceCached.getRdfTypeValues(rdfTypeName, Integer.MAX_VALUE));
 	}
 	
 	

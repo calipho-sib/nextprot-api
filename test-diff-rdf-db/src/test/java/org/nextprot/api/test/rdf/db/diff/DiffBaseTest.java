@@ -36,7 +36,7 @@ abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 	
 	@Autowired private DataSourceServiceLocator dsLocator;
 	@Autowired private SparqlService sparqlService;
-	@Autowired private SparqlEndpoint endpoint;
+	@Autowired private SparqlEndpoint sparqlEndpoint;
 	@Autowired private SQLDictionary sqlDictionary;
 
 	private String qName;
@@ -79,7 +79,7 @@ abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 	private int getCountForSparql(){
 		long t0 = System.currentTimeMillis();
 		String query = sparqlDictionary.getSparqlWithPrefixes(qName);
-		QueryExecution qExec = endpoint.queryExecution(query);			
+		QueryExecution qExec = sparqlService.queryExecution(query);			
 		com.hp.hpl.jena.query.ResultSet rs = qExec.execSelect();
 	    QuerySolution qs = rs.next();
 		Literal lit = qs.getLiteral("cnt");
@@ -107,7 +107,7 @@ abstract class DiffBaseTest extends AbstractIntegrationBaseTest{
 		} catch(Exception e) {
 			sb.append("dbURL=(Error);");			
 		}
-		sb.append("sparqlURL="+ endpoint.getUrl() +";");
+		sb.append("sparqlURL="+ sparqlEndpoint.getUrl() +";");
 		sb.append("TestClass="+this.getClass().getSimpleName()+";");
 		sb.append("QueryName="+qName+";");
 		sb.append("timeSQL="+timeSQL + ";");
