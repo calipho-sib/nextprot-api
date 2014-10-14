@@ -1,7 +1,6 @@
 
 # Peptides mappings
 
-
 #foreach($isoform in $entry.getIsoforms())
 #set($isoform-name =  $isoform.getUniqueName())
 #foreach($pep in $entry.getPeptidesByIsoform($isoform-name))
@@ -9,8 +8,9 @@
 #set($mapping-iri=$pep-name+"-"+$isoform-name)
 #foreach($spec in $pep.isoformSpecificity.values())
 #if ($spec.isoformName==$isoform-name) 
+  isoform:$isoform-name :positionalAnnotation :$mapping-iri .
   isoform:$isoform-name :mapping :$mapping-iri .
- 
+  isoform:$isoform-name :peptideMapping :$mapping-iri .
   :$mapping-iri rdf:type :PeptideMapping ;  
     :peptideName "$pep-name"^^xsd:string ;
 #foreach($pos in $spec.positions)
