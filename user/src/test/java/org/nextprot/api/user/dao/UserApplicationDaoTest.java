@@ -2,12 +2,15 @@ package org.nextprot.api.user.dao;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
 import org.nextprot.api.user.domain.UserApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
+import java.util.List;
 
 @DatabaseSetup(value = "UserApplicationDaoTest.xml", type = DatabaseOperation.INSERT)
 public class UserApplicationDaoTest extends UserApplicationBaseTest {
@@ -44,4 +47,20 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
         Assert.assertEquals("spongebob", app2.getOwner());
 	}
 
+    @Test
+    public void testGetUserApplicationsByOwnerId() {
+
+        List<UserApplication> apps = userAppDao.getUserApplicationsByOwnerId(23);
+
+        Assert.assertTrue(!apps.isEmpty());
+    }
+
+    @Test(expected = NextProtException.class)
+    public void shouldDropUserApplication() {
+
+        UserApplication app = userAppDao.getUserApplicationById(123456);
+        userAppDao.deleteUserApplication(app);
+
+        userAppDao.getUserApplicationById(123456);
+    }
 }

@@ -35,11 +35,13 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	private DataSourceServiceLocator dsLocator;
 
 	@Override
-	public List<UserApplication> getUserApplications(String username) {
+	public List<UserApplication> getUserApplicationsByOwnerId(long userId) {
 
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-		namedParameters.addValue("owner", username);
-		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("read-user-applications-by-username"), namedParameters, new UserApplicationRowMapper());
+
+        namedParameters.addValue("owner_id", userId);
+
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("read-user-applications-by-owner-id"), namedParameters, new UserApplicationRowMapper());
 	}
 
 	@Override
@@ -73,16 +75,15 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	@Override
 	public void deleteUserApplication(final UserApplication userApplication) {
 
-		//TODO should put this sql on a external file
-		String sql = "delete from np_users.user_applications where application_id = :application_id";
-		
+        final String DELETE_SQL = sqlDictionary.getSQLQuery("delete-user-application");
+
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("application_id", userApplication.getId());
 		
-		int affectedRows = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(sql, params);
+		int affectedRows = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(DELETE_SQL, params);
 
 		if(affectedRows != 1){
-			String msg = "Ups something wrong occured" + affectedRows + " rows were affected instead of only 1.";
+			String msg = "oops something wrong occured" + affectedRows + " rows were affected instead of only 1.";
 			Logger.error(msg);
 			throw new NextProtException(msg);
 		}
@@ -127,6 +128,4 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 			return app;
 		}
 	}
-
-
 }

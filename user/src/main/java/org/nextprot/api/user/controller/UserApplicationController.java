@@ -38,7 +38,7 @@ public class UserApplicationController {
 	@RequestMapping(value = "/user/applications", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserApplication> getApplications() {
-		return userApplicationService.getUserApplications(NPSecurityContext.getCurrentUser());
+		return userApplicationService.getUserApplicationsByOwnerId(NPSecurityContext.getCurrentUserId());
 	}
 
 	
