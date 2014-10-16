@@ -68,8 +68,38 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	}
 
 	@Override
-	public long updateUserApplication(final UserApplication userApplication) {
-		throw new NextProtException("Should implement this method");
+	public void updateUserApplication(final UserApplication src) {
+
+        final String UPDATE_SQL = sqlDictionary.getSQLQuery("update-user-application");
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+
+        // key to identify application to be updated
+        namedParameters.addValue("application_id", src.getId());
+
+        // values to update
+        namedParameters.addValue("application_name", src.getName());
+        namedParameters.addValue("description", src.getDescription());
+        namedParameters.addValue("organisation", src.getOrganisation());
+        namedParameters.addValue("responsible_name", src.getResponsibleName());
+        namedParameters.addValue("responsible_email", src.getResponsibleEmail());
+        namedParameters.addValue("website", src.getWebsite());
+        namedParameters.addValue("token", src.getToken());
+        namedParameters.addValue("status", src.getStatus());
+        namedParameters.addValue("user_data_access", src.getUserDataAccess());
+        namedParameters.addValue("origins", src.getOrigins());
+
+        NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource());
+
+        int affectedRows = jdbcTemplate.update(UPDATE_SQL, namedParameters);
+
+        if (affectedRows != 1) {
+
+            String msg = "something wrong occurred: " + affectedRows + " rows were affected (expected=1).";
+            Logger.error(msg);
+
+            throw new NextProtException(msg);
+        }
 	}
 
 	@Override
@@ -119,11 +149,17 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 			app.setId(resultSet.getLong("application_id"));
 			app.setName(resultSet.getString("application_name"));
 			app.setDescription(resultSet.getString("description"));
+            app.setOrganisation(resultSet.getString("organisation"));
+            app.setResponsibleName(resultSet.getString("responsible_name"));
+            app.setResponsibleEmail(resultSet.getString("responsible_email"));
+            app.setWebsite(resultSet.getString("website"));
             app.setOwnerId(resultSet.getLong("owner_id"));
             app.setOwner(resultSet.getString("owner"));
-			app.setOrganisation(resultSet.getString("organisation"));
-			app.setResponsibleEmail(resultSet.getString("responsible_email"));
-			app.setResponsibleName(resultSet.getString("responsible_name"));
+			app.setToken(resultSet.getString("token"));
+            app.setStatus(resultSet.getString("status"));
+            app.setUserDataAccess(resultSet.getString("user_data_access"));
+            app.setOrigins(resultSet.getString("origins"));
+            app.setCreationDate(resultSet.getDate("creation_date"));
 
 			return app;
 		}

@@ -10,7 +10,7 @@ public interface UserApplicationDao {
 
 	long createUserApplication(UserApplication userApplication);
 
-    long updateUserApplication(UserApplication userApplication);
+    void updateUserApplication(UserApplication userApplication);
 
 	void deleteUserApplication(UserApplication userApplication);
 

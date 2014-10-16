@@ -1,6 +1,7 @@
 package org.nextprot.api.user.domain;
 
 import java.io.Serializable;
+import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,7 +30,7 @@ public class UserApplication implements Serializable, UserResource {
 	private String status;
     private String userDataAccess;
     private String origins;
-    //private Date creationDate;
+    private Date creationDate;
 
 	public String getName() {
 		return name;
@@ -99,7 +100,10 @@ public class UserApplication implements Serializable, UserResource {
     public void setOrigins(String origins) {
         this.origins = origins;
     }
-    //public Date getCreationDate() { return creationDate; }
+    public void setCreationDate(Date date) {
+        this.creationDate = date;
+    }
+    public Date getCreationDate() { return creationDate; }
 
     @Override
 	public String getResourceOwner() {
