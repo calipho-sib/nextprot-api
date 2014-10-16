@@ -1,4 +1,5 @@
 annotation:$annotation-uri a :$annotation-type;
+  :entryAnnotationId "$annotation.getUniqueName()"^^xsd:string;
   :quality :$annotation.getQualityQualifier();
   :specificity :$annotation.getSpecificityForIsoform($isoform-name);
 #if($annotation.getCvTermName())
