@@ -1,8 +1,9 @@
 package org.nextprot.api.user.dao.test.base;
 
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
+import org.nextprot.api.commons.dbunit.DTDIgnoredFlatXMLDataSet;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
@@ -24,9 +25,8 @@ import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,
     DirtiesContextTestExecutionListener.class,
     TransactionDbUnitTestExecutionListener.class })
-@ContextConfiguration("classpath:spring/commons-context.xml")
 @ActiveProfiles({"unit", "unit-schema-user"})
-public abstract class UserApplicationBaseTest extends AbstractUnitBaseTest{
-	
+@DbUnitConfiguration(dataSetLoader = DTDIgnoredFlatXMLDataSet.class)
+public abstract class UserApplicationBaseTest extends AbstractUnitBaseTest {
 
 }

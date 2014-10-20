@@ -1090,7 +1090,7 @@
     status CDATA #IMPLIED
     user_data_access CDATA #IMPLIED
     origins CDATA #IMPLIED
-    creation_date CDATA #REQUIRED
+    creation_date CDATA #IMPLIED
 >
 
 <!ELEMENT user_lists EMPTY>

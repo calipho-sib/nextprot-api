@@ -1,7 +1,7 @@
 package org.nextprot.api.user.domain;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,30 +17,21 @@ public class UserApplication implements Serializable, UserResource {
 	//TODO doesn't look like it is working ... (should throw an exception before getting in the databse)
 	@JsonProperty(required=true)
 	private String name;
-	
 	@JsonProperty(required=true)
 	private String description;
-
-
 	private String organisation;
-	
-	@JsonProperty(required=true)
 	private String responsibleName;
-
-	@JsonProperty(required=true)
 	private String responsibleEmail;
-
 	private String website;
-
-	@JsonProperty(required=true)
 	private String owner;
-
     private long ownerId;
+    @JsonProperty(required=true)
+    private String token;
+	private String status;
+    private String userDataAccess;
+    private String origins;
+    private Date creationDate;
 
-	private String grants;
-	private String token;
-	private Date tokenValidity;
-	
 	public String getName() {
 		return name;
 	}
@@ -71,57 +62,55 @@ public class UserApplication implements Serializable, UserResource {
 	public void setWebsite(String website) {
 		this.website = website;
 	}
-	public String getGrants() {
-		return grants;
-	}
-	public void setGrants(String grants) {
-		this.grants = grants;
-	}
-	
+    public long getOwnerId() { return ownerId; }
+    public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
+    public long getId() {
+        return id;
+    }
+    public void setId(long id) {
+        this.id = id;
+    }
+    public String getOrganisation() {
+        return organisation;
+    }
+    public void setOrganisation(String organisation) {
+        this.organisation = organisation;
+    }
 	public String getToken() {
 		return token;
 	}
 	public void setToken(String token) {
 		this.token = token;
 	}
-	public Date getTokenValidity() {
-		return tokenValidity;
-	}
-	public void setTokenValidity(Date tokenValidity) {
-		this.tokenValidity = tokenValidity;
-	}
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    public String getUserDataAccess() {
+        return userDataAccess;
+    }
+    public void setUserDataAccess(String userDataAccess) {
+        this.userDataAccess = userDataAccess;
+    }
+    public String getOrigins() {
+        return origins;
+    }
+    public void setOrigins(String origins) {
+        this.origins = origins;
+    }
+    public void setCreationDate(Date date) {
+        this.creationDate = date;
+    }
+    public Date getCreationDate() { return creationDate; }
 
-	@Override
+    @Override
 	public String getResourceOwner() {
 		return owner;
 	}
-
 	public String getOwner() {
 		return owner;
 	}
-
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
-
-    public long getOwnerId() { return ownerId; }
-
-    public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
-
-    public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getOrganisation() {
-		return organisation;
-	}
-
-	public void setOrganisation(String organisation) {
-		this.organisation = organisation;
-	}
-
+    public void setOwner(String owner) { this.owner = owner; }
 }

@@ -39,8 +39,8 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 	}
 
 	@Override
-	public List<UserApplication> getUserApplications(String username) {
-		List<UserApplication> apps = this.userApplicationDao.getUserApplications(username);
+	public List<UserApplication> getUserApplicationsByOwnerId(long ownerId) {
+		List<UserApplication> apps = userApplicationDao.getUserApplicationsByOwnerId(ownerId);
 		NPSecurityContext.checkUserAuthorization(apps); //will throw an exception if not authorized
 		return apps;
 	}
