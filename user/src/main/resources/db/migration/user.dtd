@@ -97,6 +97,7 @@
     user_applications|
     user_lists|
     user_queries|
+    user_roles|
     users)*)>
 
 <!ELEMENT annotation_properties EMPTY>
@@ -1087,10 +1088,10 @@
     website CDATA #IMPLIED
     owner_id CDATA #IMPLIED
     token CDATA #REQUIRED
-    status CDATA #IMPLIED
-    user_data_access CDATA #IMPLIED
+    status CDATA #REQUIRED
+    user_data_access CDATA #REQUIRED
     origins CDATA #IMPLIED
-    creation_date CDATA #IMPLIED
+    creation_date CDATA #REQUIRED
 >
 
 <!ELEMENT user_lists EMPTY>
@@ -1112,9 +1113,17 @@
     owner_id CDATA #IMPLIED
 >
 
+<!ELEMENT user_roles EMPTY>
+<!ATTLIST user_roles
+    role_name CDATA #REQUIRED
+    user_id CDATA #REQUIRED
+>
+
 <!ELEMENT users EMPTY>
 <!ATTLIST users
     user_id CDATA #REQUIRED
-    username CDATA #REQUIRED
+    user_name CDATA #REQUIRED
+    first_name CDATA #IMPLIED
+    last_name CDATA #IMPLIED
 >
 
