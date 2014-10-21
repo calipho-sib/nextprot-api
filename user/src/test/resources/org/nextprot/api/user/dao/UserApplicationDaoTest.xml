@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Use this one to run the tests  -->
-<!--<!DOCTYPE dataset SYSTEM "https://raw.githubusercontent.com/calipho-sib/nextprot-api/user-app/user/src/main/resources/db/migration/user.dtd">-->
+<!DOCTYPE dataset SYSTEM "https://raw.githubusercontent.com/calipho-sib/nextprot-api/user-app/user/src/main/resources/db/migration/user.dtd">
 
 <!-- Use this one to autocomplete -->
 
-<!DOCTYPE dataset SYSTEM "/target/classes/db/migration/user.dtd">
+<!-- <!DOCTYPE dataset SYSTEM "/target/classes/db/migration/user.dtd"> -->
 
 <!--<!DOCTYPE dataset SYSTEM "../../../../../user.dtd">
  Use the dbunit_insert_helper.sql to generate the statements -->
 <dataset> 
 
-    <users user_id="23" username="spongebob"/>
-    <users user_id="24" username="tahitibob"/>
+    <users user_id="23" user_name="spongebob"/>
+    <users user_id="24" user_name="tahitibob"/>
 	<user_applications application_id="123456" owner_id="23" token="KLJBFAS" application_name="mySuperApplication" responsible_name="fredji" description="dsadas"/>
 
 </dataset>

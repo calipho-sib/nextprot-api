@@ -27,15 +27,16 @@ import org.springframework.stereotype.Repository;
 @Lazy
 public class UserApplicationDaoImpl implements UserApplicationDao {
 
-	@Autowired private SQLDictionary sqlDictionary;
+    private final Log Logger = LogFactory.getLog(UserApplicationDaoImpl.class);
 
-	private final Log Logger = LogFactory.getLog(UserApplicationDaoImpl.class);
-	
+	@Autowired
+    private SQLDictionary sqlDictionary;
+
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
 
 	@Override
-	public List<UserApplication> getUserApplicationsByOwnerId(long userId) {
+	public List<UserApplication> getUserApplicationListByOwnerId(long userId) {
 
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 

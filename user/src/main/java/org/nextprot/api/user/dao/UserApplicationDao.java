@@ -6,7 +6,7 @@ import org.nextprot.api.user.domain.UserApplication;
 
 public interface UserApplicationDao {
 
-    List<UserApplication> getUserApplicationsByOwnerId(long userId);
+    List<UserApplication> getUserApplicationListByOwnerId(long userId);
 
 	long createUserApplication(UserApplication userApplication);
 

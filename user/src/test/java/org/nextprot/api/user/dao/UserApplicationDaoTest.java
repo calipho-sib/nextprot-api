@@ -52,7 +52,7 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
         Assert.assertEquals(23L, app.getOwnerId());
         Assert.assertEquals("spongebob", app.getOwner());
         Assert.assertEquals("KLJBFAS", app.getToken());
-        Assert.assertNull(app.getStatus());
+        Assert.assertEquals("ACTIVE", app.getStatus());
         Assert.assertEquals("RO", app.getUserDataAccess());
         Assert.assertNull(app.getOrigins());
         Assert.assertEquals(app.getOwner(), app.getResourceOwner());
@@ -62,7 +62,7 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
     @Test
     public void testReadUserApplicationsByOwnerId() {
 
-        List<UserApplication> apps = userAppDao.getUserApplicationsByOwnerId(23);
+        List<UserApplication> apps = userAppDao.getUserApplicationListByOwnerId(23);
 
         Assert.assertTrue(!apps.isEmpty());
     }
@@ -86,7 +86,7 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
         Assert.assertEquals(23L, app.getOwnerId());
         Assert.assertEquals("spongebob", app.getOwner());
         Assert.assertEquals("KLJBFAS", app.getToken());
-        Assert.assertNull(app.getStatus());
+        Assert.assertEquals("ACTIVE", app.getStatus());
         Assert.assertEquals("RO", app.getUserDataAccess());
         Assert.assertNull(app.getOrigins());
         Assert.assertEquals(app.getOwner(), app.getResourceOwner());

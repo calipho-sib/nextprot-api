@@ -27,8 +27,8 @@ public class UserApplication implements Serializable, UserResource {
     private long ownerId;
     @JsonProperty(required=true)
     private String token;
-	private String status;
-    private String userDataAccess;
+	private String status = "ACTIVE"; // "ACTIVE", "BANNED";
+    private String userDataAccess = "RO"; // "RO", "RW"
     private String origins;
     private Date creationDate;
 

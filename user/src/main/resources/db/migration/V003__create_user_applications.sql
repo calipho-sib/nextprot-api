@@ -1,4 +1,4 @@
-CREATE TABLE np_users.user_applications(
+CREATE TABLE np_users.user_applications (
   application_id BIGSERIAL PRIMARY KEY,
   application_name VARCHAR(100) NOT NULL,
   description VARCHAR(100) NOT NULL,
@@ -8,8 +8,8 @@ CREATE TABLE np_users.user_applications(
   website VARCHAR(100),
   owner_id bigint references np_users.users(user_id),
   token VARCHAR(1024) NOT NULL, -- api id
-  status VARCHAR(10) NOT NULL, --active, banned
-  user_data_access VARCHAR (2) NOT NULL default 'RO' CHECK ((user_data_access == 'RO') OR (user_data_access == 'RW')),
+  status VARCHAR(10) NOT NULL default 'ACTIVE' CHECK (status IN ('ACTIVE', 'BANNED')),
+  user_data_access VARCHAR (2) NOT NULL default 'RO' CHECK (user_data_access IN ('RO', 'RW')),
   origins varchar(512), -- hostname hosting the webapp, used to make sure the call to the API is performed from that origin
   -- last_session_date TIMESTAMP,
   creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
