@@ -55,10 +55,14 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
         namedParameters.addValue("application_name", userApplication.getName());
         namedParameters.addValue("description", userApplication.getDescription());
         namedParameters.addValue("organisation", userApplication.getOrganisation());
-        namedParameters.addValue("responsible_email", userApplication.getResponsibleEmail());
         namedParameters.addValue("responsible_name", userApplication.getResponsibleName());
+        namedParameters.addValue("responsible_email", userApplication.getResponsibleEmail());
+        namedParameters.addValue("website", userApplication.getWebsite());
         namedParameters.addValue("owner_id", userApplication.getOwnerId());
         namedParameters.addValue("token", userApplication.getToken());
+        namedParameters.addValue("status", userApplication.getStatus());
+        namedParameters.addValue("user_data_access", userApplication.getUserDataAccess());
+        namedParameters.addValue("origins", userApplication.getOrigins());
 
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource());
 		
