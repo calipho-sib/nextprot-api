@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.security.service.JWTCodec;
 import org.nextprot.api.security.service.exception.NextprotSecurityException;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -23,7 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
-public class JWTCodecImpl<T> implements JWTCodec<Map<String, String>>, InitializingBean{
+public class JWTCodecImpl implements JWTCodec<Map<String, String>>, InitializingBean {
 
 	private static final Log Logger = LogFactory.getLog(JWTCodecImpl.class);
 
@@ -31,13 +32,13 @@ public class JWTCodecImpl<T> implements JWTCodec<Map<String, String>>, Initializ
 	private String clientId = null;
 
 	@Override
-	public String generateToken(Map<String, String> object, int expiration) {
+	public String encodeJWT(Map<String, String> properties, int expiration) {
 
 		String payload, token;
 		try {
 
 			JwtSigner jwtSigner = new JwtSigner();
-			payload = new ObjectMapper().writeValueAsString(object);
+			payload = new ObjectMapper().writeValueAsString(properties);
 
 			ClaimSet claimSet = new ClaimSet();
 			claimSet.setExp(expiration);
@@ -54,7 +55,7 @@ public class JWTCodecImpl<T> implements JWTCodec<Map<String, String>>, Initializ
 	}
 
 	@Override
-	public Map<String, String> decodeToken(String token) {
+	public Map<String, String> decodeJWT(String token) {
 
 		JWTVerifier jwtVerifier = new JWTVerifier(clientSecret, clientId);
 
@@ -93,6 +94,7 @@ public class JWTCodecImpl<T> implements JWTCodec<Map<String, String>>, Initializ
 		return clientSecret;
 	}
 
+    @Value("${auth0.clientId}")
 	public void setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret;
 	}
@@ -101,6 +103,7 @@ public class JWTCodecImpl<T> implements JWTCodec<Map<String, String>>, Initializ
 		return clientId;
 	}
 
+    @Value("${auth0.clientSecret}")
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}

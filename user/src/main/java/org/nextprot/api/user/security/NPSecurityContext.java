@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.auth0.spring.security.auth0.Auth0UserDetails;
 import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.user.domain.UserResource;
 import org.springframework.security.core.Authentication;
@@ -12,8 +13,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import sib.calipho.spring.security.auth0.Auth0UserDetails;
 
 /**
  * Utility methods related to the current logged in user
@@ -30,7 +29,7 @@ public class NPSecurityContext {
 		for(UserResource resource : userResources){
 			checkUserAuthorization(resource);
 		}
-		
+
 	}
 
 	public static void checkUserAuthorization(UserResource userResource) {
