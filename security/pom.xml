@@ -9,7 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>nextprot-api-user</artifactId>
+	<artifactId>nextprot-api-security</artifactId>
 	<packaging>jar</packaging>
 
 	<dependencies>
@@ -25,25 +25,20 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
+		<!-- Auth0 -->
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>spring-security-auth0</artifactId>
+			<version>0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>0.3</version>
+		</dependency>
 	</dependencies>
 
 	<build>
-		<finalName>nextprot-api-user</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.flywaydb</groupId>
-				<artifactId>flyway-maven-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<driver>org.postgresql.Driver</driver>
-					<url>jdbc:postgresql://crick.isb-sib.ch:5432/np_unit</url>
-					<user>postgres</user>
-					<password>postgres</password>
-					<schemas>
-						<schema>np_users</schema>
-					</schemas>
-				</configuration>
-			</plugin>
-		</plugins>
+		<finalName>nextprot-api-security</finalName>
 	</build>
 </project>
