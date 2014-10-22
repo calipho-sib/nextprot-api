@@ -7,3 +7,5 @@ select ?entry  where{
   ?entry :family/:accession/^:accession/^:family ?member.
   ?entry :gene / :chromosome "2"^^xsd:string .
 } group by ?entry  having ( count(?member) >= 5 )
+
+
