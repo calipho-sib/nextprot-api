@@ -6,7 +6,7 @@ CREATE TABLE np_users.user_applications (
   responsible_name VARCHAR(100),
   responsible_email VARCHAR(100),
   website VARCHAR(100),
-  owner_id bigint references np_users.users(user_id),
+  owner_id bigint REFERENCES np_users.users(user_id) ON DELETE CASCADE,
   token VARCHAR(1024) NOT NULL, -- api id
   status VARCHAR(10) NOT NULL default 'ACTIVE' CHECK (status IN ('ACTIVE', 'BANNED')),
   user_data_access VARCHAR (2) NOT NULL default 'RO' CHECK (user_data_access IN ('RO', 'RW')),
