@@ -9,11 +9,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
+import org.nextprot.api.security.service.JWTCodec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.web.servlet.ResultActions;
-
-import sib.calipho.spring.security.auth0.Auth0TokenHelper;
 
 /**
  * Base class for dbunit tests using the spring-test-dbunit framework http://springtestdbunit.github.io/
@@ -33,7 +32,7 @@ public abstract class MVCBaseSecurityIntegrationTest extends MVCBaseIntegrationT
 	protected FilterChainProxy springSecurityFilterChain;
 
 	@Autowired
-	private Auth0TokenHelper<Object> tokenHelper;
+	private JWTCodec<Object> codec;
 
 
 	@Before
@@ -45,7 +44,7 @@ public abstract class MVCBaseSecurityIntegrationTest extends MVCBaseIntegrationT
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("email", "auth0@test.com");
 		map.put("roles", roles);
-		return tokenHelper.generateToken(map, (int) time.toSeconds(value));
+		return codec.encodeJWT(map, (int) time.toSeconds(value));
 
 	}
 	
