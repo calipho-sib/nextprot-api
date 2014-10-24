@@ -8,24 +8,29 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
 	<!-- For the dev purpose the authentication is not activated -->
 	<beans profile="dev">
-		<bean id="authenticator" class="org.springframework.security.authentication.TestingAuthenticationProvider" />
-    
+		<bean id="authenticator"
+			class="org.springframework.security.authentication.TestingAuthenticationProvider" />
+
 		<security:http auto-config="true">
-	        <security:intercept-url pattern="/url-not-in-use/**" access="ROLE_USER"/>
-	    </security:http>
-	    
-	    <security:authentication-manager alias="authenticationManager">
-    		<security:authentication-provider ref="authenticator" />
+			<security:intercept-url pattern="/url-not-in-use/**"
+				access="ROLE_USER" />
+		</security:http>
+
+		<security:authentication-manager
+			alias="authenticationManager">
+			<security:authentication-provider
+				ref="authenticator" />
 		</security:authentication-manager>
 	</beans>
 
-	<!-- For the unit testing and production environment the authentication is activated -->
+	<!-- For the unit testing and production environment the authentication 
+		is activated -->
 	<beans profile="pro,unit">
 		<security:global-method-security
 			pre-post-annotations="enabled" />
 
 		<bean id="auth0EntryPoint"
-			class="sib.calipho.spring.security.auth0.Auth0AuthenticationEntryPoint" />
+			class="com.auth0.spring.security.auth0.Auth0AuthenticationEntryPoint" />
 
 		<security:http auto-config="true" use-expressions="true"
 			pattern="/**" create-session="stateless" entry-point-ref="auth0EntryPoint">
@@ -35,18 +40,12 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 		</security:http>
 
 		<bean id="auth0Filter"
-			class="sib.calipho.spring.security.auth0.Auth0AuthenticationFilter">
+			class="com.auth0.spring.security.auth0.Auth0AuthenticationFilter">
 			<property name="entryPoint" ref="auth0EntryPoint"></property>
 		</bean>
 
 		<bean id="auth0AuthenticationProvider"
-			class="sib.calipho.spring.security.auth0.Auth0AuthenticationProvider">
-			<property name="clientSecret" value="${auth0.clientSecret}"></property>
-			<property name="clientId" value="${auth0.clientId}"></property>
-		</bean>
-
-		<bean id="auth0TokenHelper"
-			class="sib.calipho.spring.security.auth0.impl.Auth0TokenHelperImpl">
+			class="org.nextprot.api.security.service.impl.NextprotAuthProvider">
 			<property name="clientSecret" value="${auth0.clientSecret}"></property>
 			<property name="clientId" value="${auth0.clientId}"></property>
 		</bean>
@@ -54,5 +53,6 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 		<security:authentication-manager alias="authenticationManager">
 			<security:authentication-provider ref="auth0AuthenticationProvider" />
 		</security:authentication-manager>
+		
 	</beans>
 </beans>

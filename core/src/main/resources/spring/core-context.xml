@@ -23,12 +23,6 @@
 
 	<import resource="classpath:spring/commons-context.xml" />
 
-	<bean id="auth0TokenHelper"
-		class="sib.calipho.spring.security.auth0.impl.Auth0TokenHelperImpl">
-		<property name="clientSecret" value="${auth0.clientSecret}"></property>
-		<property name="clientId" value="${auth0.clientId}"></property>
-	</bean>
-
 	<!-- Instrumentation aspects -->
 
 	<aop:aspectj-autoproxy />
