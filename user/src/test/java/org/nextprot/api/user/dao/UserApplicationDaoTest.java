@@ -4,7 +4,6 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.DTDIgnoredFlatXMLDataSet;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
 import org.nextprot.api.user.domain.UserApplication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,18 +100,16 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
     @Test
     public void testUpdateUserApplication() {
 
-        UserApplication app = userAppDao.getUserApplicationById(123456);
-
         UserApplication updateApp = new UserApplication();
 
-        updateApp.setId(app.getId());
+        updateApp.setId(123456);
         updateApp.setName("test app");
         updateApp.setDescription("a wonderful app");
         updateApp.setToken("TOKEN");
 
         userAppDao.updateUserApplication(updateApp);
 
-        app = userAppDao.getUserApplicationById(123456);
+        UserApplication app = userAppDao.getUserApplicationById(123456);
 
         Assert.assertEquals(123456, app.getId());
         Assert.assertEquals("test app", app.getName());
@@ -134,12 +131,12 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
         Assert.assertNotNull(app.getCreationDate());*/
     }
 
-    @Test(expected = NextProtException.class)
+    @Test
     public void testDeleteUserApplication() {
 
         UserApplication app = userAppDao.getUserApplicationById(123456);
         userAppDao.deleteUserApplication(app);
 
-        userAppDao.getUserApplicationById(123456);
+        Assert.assertNull(userAppDao.getUserApplicationById(123456));
     }
 }

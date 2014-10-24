@@ -9,6 +9,8 @@ import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
 import org.nextprot.api.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 //@TransactionConfiguration(defaultRollback = false)
 @DatabaseSetup(value = "UserDaoTest.xml", type = DatabaseOperation.INSERT)
 public class UserDaoTest extends UserApplicationBaseTest {
@@ -67,7 +69,15 @@ public class UserDaoTest extends UserApplicationBaseTest {
         Assert.assertNull(user.getFirstName());
         Assert.assertNull(user.getLastName());
         Assert.assertTrue(!user.getRoles().isEmpty());
+        Assert.assertEquals(2, user.getRoles().size());
         Assert.assertTrue(user.getRoles().contains("USER"));
+        Assert.assertTrue(user.getRoles().contains("ADMIN"));
+    }
+
+    @Test
+    public void testReadUnknownUser() {
+
+        Assert.assertNull(userDao.getUserByUsername("superman"));
     }
 
     @Test
@@ -79,32 +89,87 @@ public class UserDaoTest extends UserApplicationBaseTest {
         Assert.assertEquals("tahitibob", user.getUsername());
         Assert.assertEquals("tahiti", user.getFirstName());
         Assert.assertEquals("bob", user.getLastName());
+        Assert.assertTrue(user.getRoles().isEmpty());
     }
 
     @Test
     public void testReadUsers() {
 
-        Assert.fail("to test");
-        /*List<User> users = userDao.getUserList();
+        List<User> users = userDao.getUserList();
 
-        Assert.assertEquals(2, users.size());*/
+        Assert.assertEquals(2, users.size());
+
+        Assert.assertEquals(23, users.get(0).getId());
+        Assert.assertEquals("spongebob", users.get(0).getUsername());
+        Assert.assertNull(users.get(0).getFirstName());
+        Assert.assertNull(users.get(0).getLastName());
+        Assert.assertTrue(!users.get(0).getRoles().isEmpty());
+        Assert.assertTrue(users.get(0).getRoles().contains("USER"));
+        Assert.assertTrue(users.get(0).getRoles().contains("ADMIN"));
+        Assert.assertEquals(24, users.get(1).getId());
+        Assert.assertEquals("tahitibob", users.get(1).getUsername());
+        Assert.assertEquals("tahiti", users.get(1).getFirstName());
+        Assert.assertEquals("bob", users.get(1).getLastName());
+        Assert.assertTrue(users.get(1).getRoles().isEmpty());
     }
 
     @Test
     public void testUpdateUser() {
 
-        Assert.fail("to test");
-        /*User user = userDao.getUserByUsername("spongebob");
+        User updated = new User();
 
-        userDao.updateUser(user);*/
+        updated.setId(23L);
+        updated.setUsername("spongebob");
+        updated.setFirstName("sponge");
+        updated.setLastName("bob");
+
+        userDao.updateUser(updated);
+
+        User user = userDao.getUserByUsername("spongebob");
+
+        Assert.assertEquals(23, user.getId());
+        Assert.assertEquals("spongebob", user.getUsername());
+        Assert.assertEquals("sponge", user.getFirstName());
+        Assert.assertEquals("bob", user.getLastName());
+
+        Assert.assertTrue(!user.getRoles().isEmpty());
+        Assert.assertEquals(2, user.getRoles().size());
+        Assert.assertTrue(user.getRoles().contains("USER"));
+        Assert.assertTrue(user.getRoles().contains("ADMIN"));
+    }
+
+    @Test
+    public void testUpdateUserWithRoles() {
+
+        User updated = new User();
+
+        updated.setId(23);
+        updated.setUsername("spongebob");
+        updated.setFirstName("sponge");
+        updated.setLastName("bob");
+        updated.setRoles(Sets.newHashSet("USER"));
+
+        userDao.updateUser(updated);
+
+        User user = userDao.getUserByUsername("spongebob");
+
+        Assert.assertEquals(23, user.getId());
+        Assert.assertEquals("spongebob", user.getUsername());
+        Assert.assertEquals("sponge", user.getFirstName());
+        Assert.assertEquals("bob", user.getLastName());
+        Assert.assertTrue(!user.getRoles().isEmpty());
+        Assert.assertEquals(1, user.getRoles().size());
+        Assert.assertTrue(user.getRoles().contains("USER"));
     }
 
     @Test
     public void testDeleteUser() {
 
-        Assert.fail("to test");
-        /*User user = userDao.getUserByUsername("spongebob");
+        User toDelete = new User();
+        toDelete.setId(23);
 
-        userDao.deleteUser(user);*/
+        userDao.deleteUser(toDelete);
+
+        Assert.assertNull(userDao.getUserByUsername("spongebob"));
     }
 }

@@ -1,7 +1,6 @@
 package org.nextprot.api.user.dao.impl;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -13,13 +12,10 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -62,38 +58,6 @@ public class UserDaoImpl implements UserDao {
         return key;
     }
 
-    private void insertUserRoles(final long userId, final Collection<String> roles) {
-
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
-
-        // INSERT INTO np_users.user_roles (user_id, role_name) VALUES (:user_id, :role_name);
-        String sql = "INSERT INTO np_users.user_roles (user_id, role_name) VALUES (?, ?)";
-
-        for (final String role : roles) {
-
-            jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-
-                @Override
-                public void setValues(PreparedStatement ps, int i) throws SQLException {
-
-                    ps.setLong(1, userId);
-                    ps.setString(2, role);
-                }
-
-                @Override
-                public int getBatchSize() {
-                    return roles.size();
-                }
-            });
-        }
-    }
-
-    @Override
-    public List<User> getUserList() {
-
-        return null;
-    }
-
     @Override
 	public User getUserByUsername(String username) {
 
@@ -103,8 +67,23 @@ public class UserDaoImpl implements UserDao {
 
         String sql = sqlDictionary.getSQLQuery("read-user-by-name");
 
-        return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParams, new UserRolesExtractor());
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource());
+
+        List<User> users = template.query(sql, namedParams, new UsersExtractor());
+
+        if (users.isEmpty())
+            return null;
+
+        return users.get(0);
 	}
+
+    @Override
+    public List<User> getUserList() {
+
+        String sql = sqlDictionary.getSQLQuery("read-user-list");
+
+        return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, new UsersExtractor());
+    }
 
 	@Override
 	public void updateUser(User src) {
@@ -118,17 +97,26 @@ public class UserDaoImpl implements UserDao {
 
         // values to update
         namedParameters.addValue("user_name", src.getUsername());
+        namedParameters.addValue("first_name", src.getFirstName());
+        namedParameters.addValue("last_name", src.getLastName());
 
         NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource());
 
         int affectedRows = jdbcTemplate.update(UPDATE_SQL, namedParameters);
 
-        if (affectedRows != 1) {
-
-            String msg = "something wrong occurred: " + affectedRows + " rows were affected (expected=1).";
+        if (affectedRows != 1){
+            String msg = "oops something wrong occurred" + affectedRows + " rows were affected instead of only 1.";
             Logger.error(msg);
-
             throw new NextProtException(msg);
+        }
+
+        if (src.getRoles() != null && !src.getRoles().isEmpty()) {
+
+            // 1. delete all roles for this user if roles exist in user_roles table of src
+            deleteUserRoles(src.getId());
+
+            // 2. insert roles with insertUserRoles(src.getId(), src.getRoles())
+            insertUserRoles(src.getId(), src.getRoles());
         }
 	}
 
@@ -149,47 +137,38 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    private static class UserRolesExtractor implements ResultSetExtractor<User> {
+    private void insertUserRoles(final long userId, final Collection<String> roles) {
 
-        public User extractData(ResultSet resultSet) throws SQLException, DataAccessException {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
 
-            User user = new User();
+        String sql = sqlDictionary.getSQLQuery("create-user-roles");
 
-            Set<String> roles = new HashSet<String>();
+        for (final String role : roles) {
 
-            if (resultSet.next()) {
+            jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
-                user.setId(resultSet.getLong("user_id"));
-                user.setUsername(resultSet.getString("user_name"));
-                user.setFirstName(resultSet.getString("first_name"));
-                user.setLastName(resultSet.getString("last_name"));
+                @Override
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
 
-                if (resultSet.getString("role_name") != null)
-                    roles.add(resultSet.getString("role_name"));
-
-                while (resultSet.next()) {
-
-                    if (resultSet.getString("role_name") != null)
-                        roles.add(resultSet.getString("role_name"));
+                    ps.setLong(1, userId);
+                    ps.setString(2, role);
                 }
 
-                user.setRoles(roles);
-            }
-
-            return user;
+                @Override
+                public int getBatchSize() {
+                    return roles.size();
+                }
+            });
         }
     }
 
-    /*
-	 * private static class UserListExtractor implements
-	 * ResultSetExtractor<List<User>> { public List<User> extractData(ResultSet
-	 * rs) throws SQLException, DataAccessException {
-	 *
-	 * Map<String, User> userMap = new HashMap<String, User>(); while
-	 * (rs.next()) { userList.add(user);
-	 *
-	 * userMap.get(rs)
-	 *
-	 * User user = new User(); userList.add(user); } return userList; } }
-	 */
+    private void deleteUserRoles(final long userId) {
+
+        final String DELETE_SQL = sqlDictionary.getSQLQuery("delete-user-roles");
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("user_id", userId);
+
+        new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(DELETE_SQL, params);
+    }
 }

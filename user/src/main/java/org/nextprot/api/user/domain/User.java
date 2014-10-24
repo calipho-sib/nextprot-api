@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class User {
 
-	private Long id;
+	private long id;
     private String username;
     private String firstName;
 	private String lastName;
@@ -14,7 +14,7 @@ public class User {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
@@ -42,7 +41,8 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 
         namedParameters.addValue("owner_id", userId);
 
-		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("read-user-applications-by-owner-id"), namedParameters, new UserApplicationRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())
+                .query(sqlDictionary.getSQLQuery("read-user-applications-by-owner-id"), namedParameters, new UserApplicationRowMapper());
 	}
 
 	@Override
@@ -135,7 +135,8 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 		List<UserApplication> queries =
                 new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserApplicationRowMapper());
 
-		NPreconditions.checkTrue(queries.size() == 1, "User application not found");
+        if (queries.size() != 1)
+            return null;
 
         return queries.get(0);
 	}
