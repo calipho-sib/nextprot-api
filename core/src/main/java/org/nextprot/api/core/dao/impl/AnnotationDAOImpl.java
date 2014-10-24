@@ -1,13 +1,17 @@
 package org.nextprot.api.core.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.XrefAnnotationMapping;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.impl.spring.BatchNamedParameterJdbcTemplate;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
@@ -29,7 +33,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
-
+	
 	private static class AnnotationRowMapper implements ParameterizedRowMapper<Annotation> {
 
 		public Annotation mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -81,14 +85,35 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 				if (termId==51743) {
 					category = AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
 				} else if (termId==51744) {
-					category = AnnotationApiModel.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName();	
+					category = AnnotationApiModel.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
 				}
 			}
 			return category;
 		}
 		
-	};
-
+	}
+	
+	@Override
+	public List<Annotation> createAdditionalAnnotationsFromXrefs(List<DbXref> xrefs, String entryName) {
+		List<Annotation> annots = new ArrayList<Annotation>();
+		for (DbXref xref: xrefs) {
+			Annotation annotation = new Annotation();
+			annotation.setAnnotationId(xref.getDbXrefId() + 1000000000L);
+			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
+			annotation.setCategory(xam.getAnnotCat());
+			annotation.setDescription(xref.getPropertyValue(xam.getXrefPropName())); // copy of some xref property 
+			annotation.setQualityQualifier(xam.getQualityQualifier()); 
+			annotation.setCvTermName(null);
+			annotation.setCvTermAccessionCode(null);
+			annotation.setSynonym(null);
+			annotation.setUniqueName("AN_" + entryName.substring(3) + "_XR_" + String.valueOf(xref.getDbXrefId()) );
+			annotation.setParentXref(xref);
+			annots.add(annotation);
+		}
+		return annots;
+	}
+	
+	
 	public List<Annotation> findAnnotationsByEntryName(String entryName) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("unique_name", entryName);

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.domain.DbXref;
 
 
 public class Annotation implements Serializable {
@@ -38,6 +39,8 @@ public class Annotation implements Serializable {
 	private Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap;
 
 	private List<AnnotationProperty> properties;
+	
+	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsLikeAnnotations()
 
 	final static Map<String, String> commonExpressionPredicat= new HashMap<String, String>();
 	
@@ -59,6 +62,14 @@ public class Annotation implements Serializable {
 				"cvTermAccessionCode:" + cvTermAccessionCode +
 				" - cvTermName:" + cvTermName +
 				" - description:"  + description;
+	}
+	
+	public DbXref getParentXref() {
+		return parentXref;
+	}
+
+	public void setParentXref(DbXref parentXref) {
+		this.parentXref = parentXref;
 	}
 	
 	public List<AnnotationEvidence> getEvidences() {

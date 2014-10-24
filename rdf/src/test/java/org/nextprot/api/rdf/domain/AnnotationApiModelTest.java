@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 
-public class OWLAnnotationCategoryTest extends TestCase {
+public class AnnotationApiModelTest extends TestCase {
 
 	@Test
 	public void testUnknownAnnotationTypeName() {
