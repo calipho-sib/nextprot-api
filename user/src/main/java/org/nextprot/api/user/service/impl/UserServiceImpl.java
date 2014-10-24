@@ -7,6 +7,8 @@ import org.nextprot.api.user.domain.User;
 import org.nextprot.api.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +26,12 @@ public class UserServiceImpl implements UserService {
 	@PreAuthorize("hasRole('ROLE_USER') && isCurrentUser()")
 	public void updateUser(User user) {
 		userDao.updateUser(user);
+	}
+
+	@Override
+	//TODO @Cacheable if cached, think about cache evict / invalidate the cache
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		return userDao.getUserByUsername(username);
 	}
 
 }
