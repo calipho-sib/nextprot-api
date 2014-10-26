@@ -280,5 +280,13 @@ public enum AnnotationApiModel  {
 	public String toString() {
 		return this.getDbId() + " : " + this.getDbAnnotationTypeName();
 	}
+	
+	public Set<AnnotationPropertyApiModel> getProperties() {
+		return AnnotationPropertyApiModel.getPropertySet(this);
+	}
+	public AnnotationPropertyApiModel getPropertyByDbName(String dbName) {
+		return AnnotationPropertyApiModel.getPropertyByDbName(this, dbName);
+	}
+	
 
 }

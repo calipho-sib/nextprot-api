@@ -7,9 +7,23 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
 
 public class AnnotationApiModelTest extends TestCase {
 
+	@Test
+	public void testPdbMappingProperties() {
+		assertEquals(2,AnnotationApiModel.PDB_MAPPING.getProperties().size());
+		assertNotNull(AnnotationApiModel.PDB_MAPPING.getPropertyByDbName("resolution"));
+		assertNotNull(AnnotationApiModel.PDB_MAPPING.getPropertyByDbName("method"));
+		assertNull(AnnotationApiModel.PDB_MAPPING.getPropertyByDbName("unexistingpropertydbname"));
+	}
+	@Test
+	public void testDomainInfoProperties() {
+		assertNull(AnnotationApiModel.DOMAIN_INFO.getProperties());
+	}
+
+	
 	@Test
 	public void testUnknownAnnotationTypeName() {
 		try {
