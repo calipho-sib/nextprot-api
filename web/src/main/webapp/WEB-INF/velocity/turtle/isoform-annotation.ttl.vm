@@ -4,14 +4,16 @@ annotation:$annotation-uri a :$annotation-type;
   :specificity :$annotation.getSpecificityForIsoform($isoform-name);
 #if($annotation.getCvTermName())
   :in term:$StringUtils.slug($annotation.getCvTermAccessionCode());
-#end 
+#end
 #if($annotation.getDescription())
 #if(! $annotation.getVariant())
   rdfs:comment "$StringUtils.clean($annotation.getDescription())"^^xsd:string;
 #end
 #end
 #foreach($prop in $annotation.getProperties())
-#set($pmodel=$annotation.getPropertyApiModel($prop)) 
+## don't remove the presetting to false in next line otherewise problems (pam)
+#set($pmodel=false)
+#set($pmodel=$annotation.getPropertyApiModel($prop))
 #if($pmodel)
   :$pmodel.getApiName() "$prop.getValue()"^^xsd:$pmodel.getRdfDataType();
 #end
