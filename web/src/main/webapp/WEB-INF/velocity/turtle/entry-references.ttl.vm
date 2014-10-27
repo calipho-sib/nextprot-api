@@ -28,3 +28,11 @@ entry:$entry.uniqueName :reference [
 
 #end
 
+# - - - - - - - -
+# Publications
+# - - - - - - - -
+
+#foreach($pub in $entry.publications)
+entry:$entry.uniqueName :reference publication:$pub.getMD5() .
+#end
+
