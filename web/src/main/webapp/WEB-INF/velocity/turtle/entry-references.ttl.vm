@@ -4,9 +4,10 @@
 # - - - - - - - -
 
 #foreach($xref in $entry.xrefs)
+#set($UNESCAPED_CDATA = $xref.accession)
 entry:$entry.uniqueName :reference [
   a :Xref ;
-  :accession "$xref.accession"^^xsd:string ;
+  :accession "$UNESCAPED_CDATA"^^xsd:string ;
   :provenance db:$StringUtils.slug($xref.databaseName) ; 
   ]
 .
