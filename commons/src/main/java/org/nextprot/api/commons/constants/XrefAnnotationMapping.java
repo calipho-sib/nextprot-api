@@ -15,10 +15,10 @@ import org.nextprot.api.commons.utils.StringUtils;
 public enum XrefAnnotationMapping  {
 
 	//TODO: validated by Pascale., see mail 27.10.2014
-	ORPHANET(84,"Orphanet", "disease", AnnotationApiModel.DISEASE.getDbAnnotationTypeName(),2,"Uniprot","GOLD","EXP","curated"),
-	REACTOME(112, "Reactome", "pathway name", AnnotationApiModel.PATHWAY.getDbAnnotationTypeName(), 2, "Uniprot","GOLD","IC","curated"), 
-	DRUGBANK(27,"DrugBank", "generic name", AnnotationApiModel.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),2,"Uniprot","GOLD","EXP","curated"),
-	KEGGPATHWAY(186,"KEGGPathway",  "pathway name", AnnotationApiModel.PATHWAY.getDbAnnotationTypeName(), 1, "NextProt","GOLD","IC","curated"), // ALTERNATIVE SOURCE = 2 , "NextProt integration"
+	ORPHANET(84,"Orphanet", "disease", AnnotationApiModel.DISEASE.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated", "EXP"),
+	REACTOME(112, "Reactome", "pathway name", AnnotationApiModel.PATHWAY.getDbAnnotationTypeName(), 2, "Uniprot","GOLD","curated","IC"), 
+	DRUGBANK(27,"DrugBank", "generic name", AnnotationApiModel.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated","EXP"),
+	KEGGPATHWAY(186,"KEGGPathway",  "pathway name", AnnotationApiModel.PATHWAY.getDbAnnotationTypeName(), 1, "NextProt","GOLD","curated","IC"), // ALTERNATIVE SOURCE = 2 , "NextProt integration"
 	;
 
 	private final int xrefDbId; 
