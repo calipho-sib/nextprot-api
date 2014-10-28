@@ -21,6 +21,7 @@
 #end
 #foreach($evi in $pep.evidences)
     :withEvidence [
+      rdf:type :Evidence ;
       :assignedBy source:$StringUtils.slug($evi.assignedBy) ;
       :reference [
         a :Xref ;
