@@ -1,34 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:security="http://www.springframework.org/schema/security"
-	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:oxm="http://www.springframework.org/schema/oxm"
-	xmlns:lang="http://www.springframework.org/schema/lang"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
- 		http://www.springframework.org/schema/context
-		http://www.springframework.org/schema/context/spring-context-3.2.xsd
-		http://www.springframework.org/schema/mvc 
-		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
-		http://www.springframework.org/schema/oxm 
-		http://www.springframework.org/schema/oxm/spring-oxm-3.2.xsd
-		http://www.springframework.org/schema/lang 
-		http://www.springframework.org/schema/lang/spring-lang-3.2.xsd
-		http://www.springframework.org/schema/security
-  	    http://www.springframework.org/schema/security/spring-security-3.2.xsd">
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
 
 	<import resource="classpath:spring/core-context.xml" />
 	<import resource="classpath:spring/solr-context.xml" />
 	<import resource="classpath:spring/rdf-context.xml" />
 	<import resource="security-context.xml" />
 
-	<mvc:annotation-driven />
+	<mvc:annotation-driven>
+    <mvc:message-converters register-defaults="false"> <!-- you may have to explicitly register other converters though-->
+        <bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+            <property name="marshaller">
+                <bean class="org.springframework.oxm.xstream.XStreamMarshaller"/>
+            </property>
+            <property name="unmarshaller">
+                <bean class="org.springframework.oxm.xstream.XStreamMarshaller"/>
+            </property>
+        </bean>
+        <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+
+        </bean>
+    </mvc:message-converters>
+    </mvc:annotation-driven>
+
 	<mvc:default-servlet-handler />
 	<mvc:interceptors>
 		<bean class="org.nextprot.api.core.aop.interceptor.ConcurrentRequestInterceptor" />
 	</mvc:interceptors>
-	
+
+
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
 		up static resources -->
@@ -98,31 +103,5 @@
 				</bean>
 			</list>
 		</property>
-		<property name="defaultViews">
-			<list>
-				<bean
-					class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
-					<property name="contentType" value="application/json;charset=UTF-8" />
-				</bean>
-				<bean class="org.springframework.web.servlet.view.xml.MarshallingView">
-					<property name="marshaller">
-						<bean class="org.springframework.oxm.xstream.XStreamMarshaller">
-							<property name="supportedClasses">
-								<list>
-									<value>java.lang.String</value>
-									<value>java.util.List</value>
-									<value>org.nextprot.api.web.RestErrorResponse</value>
-									<value>org.nextprot.api.core.domain.Publication</value>
-									<value>org.nextprot.api.core.domain.PublicationAuthor</value>
-									<value>org.nextprot.api.core.domain.CvJournal</value>
-								</list>
-							</property>
-						</bean>
-					</property>
-				</bean>
-			</list>
-		</property>
 	</bean>
-
-	
 </beans>
