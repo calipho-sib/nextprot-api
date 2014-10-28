@@ -129,7 +129,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 			AnnotationIsoformSpecificity annotation = new AnnotationIsoformSpecificity();
 			annotation.setAnnotationId(resultSet.getLong("annotation_id"));
-			annotation.setFirstPosition(resultSet.getInt("first_pos"));
+			annotation.setFirstPosition(resultSet.getInt("first_pos"));  // the SQL increments first_pos by 1
 			annotation.setLastPosition(resultSet.getInt("last_pos"));
 			annotation.setIsoformName(resultSet.getString("unique_name"));
 			annotation.setSpecificity(resultSet.getString("iso_specificity"));
