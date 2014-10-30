@@ -8,8 +8,10 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.user.domain.User;
 import org.nextprot.api.user.domain.UserApplication;
 import org.nextprot.api.user.service.UserApplicationService;
+import org.nextprot.api.user.service.UserService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +34,10 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 
 	@Autowired
 	private UserDetailsService userDetailsService;
+
+	@Autowired
+	private UserService userService;
+
 	private UserApplicationService userApplicationService;
 
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -40,29 +46,35 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 
 		this.logger.info("Trying to authenticate with token: " + token);
 		try {
-			
+
 			Auth0JWTToken tokenAuth = (Auth0JWTToken) authentication;
 			Map<String, Object> map = this.jwtVerifier.verify(token);
 			this.logger.debug("Decoded JWT token" + map);
-			
+
 			UserDetails userDetails = null;
-			if(map.containsKey("username")){
+			if (map.containsKey("username")) {
 				String username = (String) map.get("username");
-				if(username != null){
+				if (username != null) {
 					userDetails = userDetailsService.loadUserByUsername(username);
-				}else {
-					long appId = (Long) map.get("application_id");
-					UserApplication userApp = userApplicationService.getUserApplication(appId);
-					if(userApp.hasUserDataAccess()){ 
-						userDetails = userDetailsService.loadUserByUsername(userApp.getOwner());
-					}
 				}
-			}
-			
+			} else if (map.containsKey("app_id")) {
+				long appId = (Long) map.get("app_id");
+				UserApplication userApp = userApplicationService.getUserApplication(appId);
+				if (userApp.hasUserDataAccess()) {
+
+					userDetails = userDetailsService.loadUserByUsername(userApp.getOwner());
+					if (userDetails == null) {
+						userService.createUser(buildUserFromAuth0(map));
+					}
+					userDetails = userDetailsService.loadUserByUsername(userApp.getOwner());
+				}
+			} else throw AUTH_ERROR;
+
 			authentication.setAuthenticated(true);
 			tokenAuth.setPrincipal(userDetails);
 			tokenAuth.setDetails(decoded);
 			return authentication;
+
 		} catch (InvalidKeyException e) {
 			this.logger.debug("InvalidKeyException thrown while decoding JWT token " + e.getLocalizedMessage());
 			throw AUTH_ERROR;
@@ -91,6 +103,26 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 		}
 
 		this.jwtVerifier = new JWTVerifier(this.clientSecret, this.clientId);
+	}
+
+	private static User buildUserFromAuth0(Map<String, Object> map) {
+
+		User usr = new User();
+		if (map.containsKey("username")) {
+			usr.setUsername((String) map.get("username"));
+			// TODO check properties
+		} else if (map.containsKey("name")) {
+			usr.setUsername((String) map.get("name"));
+		} else if (map.containsKey("name")) {
+			usr.setUsername((String) map.get("name"));
+		} else if (map.containsKey("name")) {
+			usr.setUsername((String) map.get("name"));
+		} else if (map.containsKey("name")) {
+			usr.setUsername((String) map.get("name"));
+		}
+
+		return usr;
+
 	}
 
 	public String getClientSecret() {

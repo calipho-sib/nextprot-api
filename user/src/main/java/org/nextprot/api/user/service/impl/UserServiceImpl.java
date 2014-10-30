@@ -31,6 +31,12 @@ public class UserServiceImpl implements UserService {
 	@Override
 	//TODO @Cacheable if cached, think about cache evict / invalidate the cache
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		User usr = userDao.getUserByUsername(username);
+		if(usr == null){
+			User user = new User();
+			user.setUsername(username);
+			userDao.createUser(user);
+		}
 		return userDao.getUserByUsername(username);
 	}
 
