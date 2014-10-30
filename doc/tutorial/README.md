@@ -1,4 +1,4 @@
-##Tutorial on how to use the nextprot search engine 
+##Tutorial on how to use the nextprot search engine and API programmatically
 Note: You will need a password to access this alpha version (if you are at Hackathon) someone should have given it to you.
 
 To give you a few examples of what you can do with the advanced search engine (SPARQL based):
