@@ -1,7 +1,7 @@
-#How to roll in hackaton with the new search engine and API programmatically
+#How to roll in hackaton with the neXtProt
 Note: You will need a password to access this alpha version (if you are at Hackathon) someone should have given it to you.
 
-!(http://pixabay.com/static/uploads/photo/2012/04/24/21/29/laptop-40935_640.png)
+![Hackaton](http://pixabay.com/static/uploads/photo/2012/04/24/21/29/laptop-40935_640.png "hackaton")
 
 To give you a few examples of what you can do with the advanced search engine (SPARQL based):
 * You can search the entries with a sequence containing "FF*QYD" like [this](https://search.nextprot.org/proteins/search?mode=advanced&order=desc&sparql=%23Q93%20with%20a%20sequence%20containing%20%22FF*QYD%22%20%20is%20any%20peptide%20of%20any%20length%0A%3Fentry%20:isoform%20%2F%20:sequence%20%2F%20:chain%20%3Fchain%20.%0A%09%20%20%20filter(regex(%3Fchain,%20%22FF.%2BQYD%22))&rows=50)
