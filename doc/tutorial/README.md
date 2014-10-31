@@ -1,6 +1,6 @@
 #How to rock in SDCSB Hackaton using the neXtProt
 
-![Hackaton](http://sdcsb.ucsd.edu/wp-content/themes/sdcsb_theme/images/sdcsb_logo.png "hackaton" )
+![Hackaton](https://dl.dropboxusercontent.com/u/2037400/hackaton.png "hackaton" )
 
 Note: You will need a password to access this alpha version (if you are at Hackathon) someone should have given it to you.
 
