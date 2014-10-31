@@ -1,4 +1,4 @@
-#How to rock in network of biothings hackaton using the neXtProt
+#How to rock in SDCSB Hackaton using the neXtProt
 
 ![Hackaton](http://sdcsb.ucsd.edu/wp-content/themes/sdcsb_theme/images/sdcsb_logo.png "hackaton" )
 
