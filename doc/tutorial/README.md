@@ -1,4 +1,4 @@
-#How to rock in SDCSB Hackaton using the neXtProt
+#How to rock in SDCSB Hackaton using neXtProt
 
 ![Hackaton](https://dl.dropboxusercontent.com/u/2037400/hackaton.png "hackaton" )
 
