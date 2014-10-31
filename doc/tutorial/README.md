@@ -1,6 +1,6 @@
-#How to roll in hackaton with the neXtProt
+#How to rock in network of biothings hackaton using the neXtProt
 
-![Hackaton](http://pixabay.com/static/uploads/photo/2012/04/24/21/29/laptop-40935_640.png =100x100 "hackaton" )
+![Hackaton](http://sdcsb.ucsd.edu/wp-content/themes/sdcsb_theme/images/sdcsb_logo.png "hackaton" )
 
 Note: You will need a password to access this alpha version (if you are at Hackathon) someone should have given it to you.
 
