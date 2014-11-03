@@ -1,7 +1,7 @@
-#title: Q080 with >=1 3D structure of resolution <=X Angstroms
+#title:Q080 with >=1 3D structure of resolution <=X Angstroms
 #acs: Q9Y570, P37840, P40394, ...
-#tags: 3D, resolution
-#count: 4028
+#tags:PDB,resolution
+#count:4028
 #time: 0.76
 select distinct ?entry where {
  ?entry :isoform ?iso .

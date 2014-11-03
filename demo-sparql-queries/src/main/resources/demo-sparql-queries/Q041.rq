@@ -1,6 +1,6 @@
-#title: Q041 that are annotated with GO "F" terms prefixed by "Not"
+#title:Q041 that are annotated with GO "F" terms prefixed by "Not"
 #acs:P12270, Q96EM0, Q9BSI4, ...
-#tags:GO function evidence
+#tags:GO,function,evidence
 #count:226
 #time:0.26
 SELECT distinct ?entry WHERE  {

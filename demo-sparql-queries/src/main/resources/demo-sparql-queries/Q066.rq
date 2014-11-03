@@ -1,7 +1,7 @@
-#title: Q066  that are cytoplasmic with alternate O-glycosylation or phosphorylation at the same positions
+#title:Q066  that are cytoplasmic with alternate O-glycosylation or phosphorylation at the same positions
 #acs: P08047, P31749, P10636, ...
-#tags: location, PTM, sequence
-#count: 17
+#tags:location,PTM,sequence
+#count:17
 #time: 0.9
 select  distinct ?entry where {
  ?entry :isoform ?iso .

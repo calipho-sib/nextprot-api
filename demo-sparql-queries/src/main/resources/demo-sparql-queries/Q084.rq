@@ -1,7 +1,7 @@
-#title: Q084  whose genes are on chromosome n that are known to be glycosylated or phosphorylated or acetylated (excluding prediction)
+#title:Q084  whose genes are on chromosome n that are known to be glycosylated or phosphorylated or acetylated (excluding prediction)
 #acs: , , , ...
-#tags: chromosome, PTM, todo
-#count: 
+#tags:chromosome,PTM,todo
+#count:
 #time: 
 select distinct ?entry {
   ?entry :gene / :chromosome "18"^^xsd:string .

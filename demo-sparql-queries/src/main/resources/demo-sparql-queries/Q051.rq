@@ -1,7 +1,7 @@
-#title: Q051  with >=1 NMR 3D structures
+#title:Q051  with >=1 NMR 3D structures
 #acs: P37840, O00763, O75554, ...
-#tags: NMR, 3D structure
-#count: 1765
+#tags:NMR,PDB
+#count:1765
 #time: 0.37
 SELECT distinct ?entry WHERE {
   ?entry :isoform ?iso.

@@ -1,7 +1,7 @@
-#title: Q053   which are involved in cell adhesion according to GO with an evidence not IAE and not ISS
+#title:Q053   which are involved in cell adhesion according to GO with an evidence not IAE and not ISS
 #acs: O14788, P07911, Q14393, ...
-#tags: function evidence
-#count: 515
+#tags:function,evidence
+#count:515
 #time: 0.48
 SELECT distinct ?entry WHERE {
  ?entry  :isoform/:function ?statement.

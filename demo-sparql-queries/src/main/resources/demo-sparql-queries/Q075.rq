@@ -1,7 +1,7 @@
-#title: Q075  which have been detected in the HUPO liver proteome set but not the HUPO plasma proteome set
+#title:Q075  which have been detected in the HUPO liver proteome set but not the HUPO plasma proteome set
 #acs: A2RTX5, O00471, O00423, ...
-#tags: expression dataset long
-#count: 4660
+#tags:expression.dataset,slow
+#count:4660
 #time: 10s
 select distinct ?entry where {
   ?entry a :Entry .

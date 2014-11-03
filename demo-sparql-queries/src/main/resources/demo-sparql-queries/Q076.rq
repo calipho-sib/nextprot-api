@@ -1,7 +1,7 @@
-#title: Q076  which are located in mitochondrion and have >=1 HPA antibody and exist in >=1 proteome identification sets
+#title:Q076  which are located in mitochondrion and have >=1 HPA antibody and exist in >=1 proteome identification sets
 #acs:  A8K5M9, O75570, P23443, ...
-#tags: location, antibody, dataset, bug?
-#count: 1169
+#tags:location,antibody,dataset,bug?
+#count:1169
 #time: 0.4
 select  distinct ?entry where {
  ?entry :isoform ?iso .

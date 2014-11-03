@@ -1,6 +1,6 @@
-#title: Q043  that bind zinc and are not oxidoreductase and not involved in transcription
+#title:Q043  that bind zinc and are not oxidoreductase and not involved in transcription
 #acs:Q9Y6I4, A6NIR3, A7E2V4, ...
-#tags:zinc function
+#tags:zinc,function
 #count:1297
 #time:0.45
 SELECT distinct ?entry WHERE {

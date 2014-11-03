@@ -1,7 +1,7 @@
-#title: Q056  which have genes with exactly 1 coding exon
+#title:Q056  which have genes with exactly 1 coding exon
 #acs: , , , ...
-#tags: gene exons todo
-#count: 
+#tags:gene,exons,todo
+#count:
 #time: 
 SELECT distinct ?entry  WHERE  {
 

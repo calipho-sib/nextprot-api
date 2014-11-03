@@ -1,7 +1,7 @@
-#title: Q065  with >1 catalytic activity
+#title:Q065  with >1 catalytic activity
 #acs: Q86V88, Q9H008, P54886, ...
-#tags: enzyme, catalytic activity
-#count: 361
+#tags:enzyme
+#count:361
 #time: 0.3
 SELECT distinct ?entry    WHERE  {
   ?ec a :EnzymeClassificationOntology.

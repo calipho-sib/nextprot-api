@@ -1,7 +1,7 @@
-#title: Q052 with a sequence that does not contain a lysin in the mature region
+#title:Q052 with a sequence that does not contain a lysin in the mature region
 #acs: E5RJM6, H3BQW9, P04553, ...
-#tags:sequence mature
-#count: 267
+#tags:sequence,mature
+#count:267
 #time:0.6
 SELECT distinct ?entry WHERE {
 

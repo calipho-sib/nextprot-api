@@ -1,6 +1,6 @@
-#title: Q040 that are enzymes and with >=1 mutagenesis that "decrease" or "abolish" activity
+#title:Q040 that are enzymes and with >=1 mutagenesis that "decrease" or "abolish" activity
 #acs:Q96FJ0, O00487, ,P46736 ...
-#tags:enzyme, mutagenesis
+#tags:enzyme,mutagenesis
 #count:407
 #time:0.3
 SELECT distinct ?entry WHERE  {

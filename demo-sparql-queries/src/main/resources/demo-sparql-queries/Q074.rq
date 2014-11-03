@@ -1,7 +1,7 @@
-#title: Q074 belonging to a family with at least 1 other member in human
+#title:Q074 belonging to a family with at least 1 other member in human
 #acs: Q8NEK5, Q96P63, Q92630, ...
-#tags: family 
-#count: 5416
+#tags:family
+#count:5416
 #time: 4.7
 select distinct ?entry 
 where {

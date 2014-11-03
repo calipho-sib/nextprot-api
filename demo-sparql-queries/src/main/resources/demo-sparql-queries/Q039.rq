@@ -1,6 +1,6 @@
-#title: Q039 with >=1 mutagenesis in a position that correspond to an annotated active site
+#title:Q039 with >=1 mutagenesis in a position that correspond to an annotated active site
 #acs:P53816, P14550, P15374, ...
-#tags:mutagenesis, active site
+#tags:mutagenesis,site
 #count:369
 #time:0.1
 SELECT distinct ?entry WHERE  {

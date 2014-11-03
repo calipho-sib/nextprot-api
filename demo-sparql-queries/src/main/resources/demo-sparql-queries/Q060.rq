@@ -1,7 +1,7 @@
-#title: Q060  which have >=1 negatively charged residue (in set DE) in a transmembrane domain
+#title:Q060  which have >=1 negatively charged residue (in set DE) in a transmembrane domain
 #acs: A6NGA9, O14678, ,A8MWL7 ...
-#tags: domain sequence
-#count: 2532
+#tags:domain,sequence
+#count:2532
 #time: 0.58
 SELECT distinct ?entry WHERE {
  ?entry :isoform ?iso .

@@ -1,7 +1,7 @@
-#title: Q069  phosphorylated by SRC
+#title:Q069  phosphorylated by SRC
 #acs: O43184, O15350, Q9NV92, ...
-#tags: PTM, kinase
-#count: 53
+#tags:PTM,kinase
+#count:53
 #time: 0.25
 select  distinct ?entry where {
  ?entry :isoform ?iso .

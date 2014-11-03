@@ -1,5 +1,5 @@
-#title: Q023 that are involved in transport and located in a membrane and that are not glycosylated (experimentally or predicted)
-#tags:location,function,ptm
+#title:Q023 that are involved in transport and located in a membrane and that are not glycosylated (experimentally or predicted)
+#tags:location,function,PTM
 #count:1541
 #time:3.514
 select distinct ?entry where {

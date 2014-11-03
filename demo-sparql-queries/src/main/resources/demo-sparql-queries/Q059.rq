@@ -1,7 +1,7 @@
-#title: Q059  that are glycosylated and phosphorylated on an extracellular topological domain
-#acs: B2RUZ4, O60667, P51511, ...
-#tags: PTM domain
-#count: 2470
+#title:Q059  that are glycosylated and phosphorylated on an extracellular topological domain
+#acs:B2RUZ4, O60667, P51511, ...
+#tags:PTM,domain
+#count:2470
 #time: 4.85
 select  distinct ?entry where {
  ?entry :isoform ?iso .

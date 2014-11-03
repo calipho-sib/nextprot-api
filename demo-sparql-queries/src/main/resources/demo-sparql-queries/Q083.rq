@@ -1,7 +1,7 @@
-#title: Q083 whose genes are on chromosome n that are expressed only a single tissue/organ
+#title:Q083 whose genes are on chromosome n that are expressed only a single tissue/organ
 #acs: , , , ...
-#tags: chromosome, expression, todo
-#count: 
+#tags:chromosome,expression,todo
+#count:
 #time: 
 SELECT distinct ?entry count(?tiss) WHERE {
   ?entry :gene / :chromosome "18"^^xsd:string .

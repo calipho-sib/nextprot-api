@@ -1,7 +1,7 @@
-#title: Q070 secreted but without a signal sequence
+#title:Q070 secreted but without a signal sequence
 #acs: P00739, Q14393, P01344, ...
-#tags: location, signal, todobetter
-#count: 396
+#tags:location,signal,todobetter
+#count:396
 #time: 0.12
 select distinct ?entry where {
   ?entry :isoform ?iso.

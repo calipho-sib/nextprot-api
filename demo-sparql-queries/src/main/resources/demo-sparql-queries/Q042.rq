@@ -1,6 +1,6 @@
-#title: Q042 that bind a metal and are secreted
+#title:Q042 that bind a metal and are secreted
 #acs:O43852, O43852, P02787, ...
-#tags:location, metal
+#tags:location,metal
 #count:225
 #time:0.1
 SELECT distinct ?entry WHERE {

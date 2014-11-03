@@ -1,7 +1,7 @@
-#title: Q058  which are located on the genome next to a protein which is involved in spermatogenesis
+#title:Q058  which are located on the genome next to a protein which is involved in spermatogenesis
 #acs: , , , ...
-#tags: genome position todo
-#count: 
+#tags:genome,position,todo
+#count:
 #time: 
 SELECT distinct ?entry  WHERE  {
   ?entry :isoform ?iso.

@@ -1,6 +1,6 @@
-#title: Q045 with >=1 active sites that is a proton acceptor
+#title:Q045 with >=1 active sites that is a proton acceptor
 #acs:Q9Y6I4, A2RU49, O15111, ...
-#tags:enzyme, location
+#tags:enzyme,location
 #count:820
 #time:0.07
 SELECT distinct ?entry ?comment WHERE  {
