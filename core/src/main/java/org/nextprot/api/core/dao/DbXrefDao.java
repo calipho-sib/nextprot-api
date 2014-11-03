@@ -13,6 +13,8 @@ public interface DbXrefDao {
 	List<PublicationDbXref> findDbXRefByPublicationIds(List<Long> publicationIds);
 	
 	List<DbXref> findDbXrefsByMaster(String uniqueName);
+
+	List<DbXref> findDbXrefsAsAnnotByMaster(String uniqueName);
 	
 	List<DbXrefProperty> findDbXrefsProperties(List<Long> resourceIds);
 
