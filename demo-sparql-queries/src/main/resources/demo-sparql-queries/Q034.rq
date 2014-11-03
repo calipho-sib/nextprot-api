@@ -1,0 +1,16 @@
+#title: Q034 with >=1 homeobox domain and with >=1 variant in the homeobox domain(s)
+#acs:A6NHT5, A6NNA5, O95076, ...
+#tags:domain, variant
+#count:229
+#time:0.15
+SELECT distinct ?entry WHERE {
+    ?entry :isoform ?iso.
+# with >=1 homeobox domain
+    ?iso  :region  ?st1.
+    ?st1 :in term:DO-00312;:start ?start;:end ?end.
+# with >=1 variant
+    ?iso  :variant  ?var.
+    ?var :start ?varpos.
+# one variant in the homeobox domain
+    FILTER (?varpos >=?start && ?varpos <=?end)
+}

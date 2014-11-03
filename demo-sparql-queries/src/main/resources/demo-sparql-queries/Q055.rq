@@ -1,0 +1,10 @@
+#title: Q055 which have genes of length >=2000000 bp
+#acs: Q15700, Q9UHC6, A1Z1Q3, ...
+#tags: gene
+#count: 7
+#time: 0.1
+select distinct ?entry  where {
+  ?entry :gene / :length ?l .
+  filter (?l >= 2000000)
+}
+order by DESC(?l)

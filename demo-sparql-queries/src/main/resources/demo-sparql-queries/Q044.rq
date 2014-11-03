@@ -1,0 +1,9 @@
+#title: Q044  involved in the X pathway (from reactome for example)
+#acs:Q32NB8, O14832, O76050, ...
+#tags:pathway
+#count:762
+#time:4.6
+select distinct ?entry where {
+  ?entry :isoform / :function / a :Pathway .
+  ?entry  :reference / :provenance db:Reactome .
+}

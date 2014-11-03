@@ -1,0 +1,8 @@
+#title: Q031  with >=10 "splice" isoforms
+#acs:Q9UKT9, P11362, Q8NHW4 ...
+#tags:isoforms
+#count:123
+#time:0.28
+select distinct ?entry   WHERE  {
+  ?entry :isoform ?iso.
+} group by ?entry having(count(?iso)>=10)

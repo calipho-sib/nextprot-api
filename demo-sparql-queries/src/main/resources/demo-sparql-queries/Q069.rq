@@ -1,0 +1,14 @@
+#title: Q069  phosphorylated by SRC
+#acs: O43184, O15350, Q9NV92, ...
+#tags: PTM, kinase
+#count: 53
+#time: 0.25
+select  distinct ?entry where {
+ ?entry :isoform ?iso .
+    ?iso :modifiedResidue ?ptm .
+    ?ptm :in ?ptmtype.
+    ?ptm rdfs:comment ?comment.
+  FILTER (?ptmtype in (term:PTM-0253, term:PTM-0254, term:PTM-0255))  
+  FILTER regex(?comment, "SRC","i")
+ }
+

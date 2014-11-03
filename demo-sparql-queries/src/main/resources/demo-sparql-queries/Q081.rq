@@ -1,0 +1,11 @@
+#title: Q081  with >=1 3D structure and are located in the mitochondrion and are linked with a disease
+#acs: P43897, Q6PI48, Q92890, ...
+#tags:  3D, disease, location
+#count: 155
+#time: 0.1
+SELECT distinct ?entry WHERE {
+  ?entry :isoform ?iso.
+  ?iso :pdbMapping ?map.
+  ?iso :location/:in/:childOf term:SL-0173 .
+  ?iso :medical/rdf:type :Disease.
+ }

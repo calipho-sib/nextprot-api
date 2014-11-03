@@ -1,0 +1,19 @@
+#title: Q033 with >=1 phoshotyrosine but no phosphoserine or phosphothreonine
+#acs:Q9Y3B8, P00387, Q14765, ...
+#tags:PTM
+#count:303
+#time:0.08
+select distinct ?entry where {
+select ?entry ?iso (count(?ptm)) where {
+  ?entry :isoform ?iso .
+  ?iso :modifiedResidue  ?ptm .
+  ?ptm :in term:PTM-0255 #phosphotyrosine .
+  filter (
+    not exists { ?iso :modifiedResidue / :in term:PTM-0253 . } #phosphoserine
+    &&
+    not exists { ?iso :modifiedResidue / :in term:PTM-0254 . } #phosphothreonine
+  )
+}
+group by ?entry ?iso
+having ( count(?ptm) >= 1 )
+}

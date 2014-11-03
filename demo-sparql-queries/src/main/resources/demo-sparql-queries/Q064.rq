@@ -1,0 +1,9 @@
+#title: Q064 which are enzymes with an incomplete EC number
+#acs: A6NFU8, Q9UMW8, O95630, ...
+#tags:pathway
+#count: 1268
+#time: 0.18
+select distinct ?entry where {
+  ?entry :isoform / :function / a :Pathway .
+  ?entry  :reference / :provenance db:Reactome .
+}

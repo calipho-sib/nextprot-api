@@ -1,10 +1,14 @@
 #title:Q016 with a mature chain <= 1000 amino acids which are secreted and do not contain cysteines in the mature chain
-#acs:A1E959,A8MXB1,C9JXX5,E0CX11,O43555,O43852,O60259,P01275,P01282,P02647
-tags:sequence
-count:62
-#pending
+#acs: P10163, P01258, P01270
+tags: sequence
+#count: 165
+#time: 0.08
 SELECT distinct ?entry  WHERE  {
-  ?entry :isoform ?iso.
-  ?iso :location/:in term:SL-0243;:sequence / :chain ?chain;:sequence/:length ?len
-  FILTER (?len<1000 && !regex(?chain, "C"))
+?entry :isoform ?iso .
+?iso :location/:in term:SL-0243;:sequence / :chain ?seq. #secreted
+?iso :matureProtein [ :start ?mstart ; :end ?mend]
+FILTER ((?mend-?mstart > 0) && (?mend-?mstart <= 1000))	 
+BIND(?mend - ?mstart as ?mlen)	 
+BIND(substr(?seq, ?mstart, ?mlen) as ?mseq)	 
+filter(!regex (?mseq,'C'))
 }

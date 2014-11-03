@@ -1,0 +1,8 @@
+#title: Q071 associated with >3 papers that are not "large scale" and not "additional"
+#acs: , , , ...
+#tags: publications todo
+#count:
+#time:
+SELECT distinct ?entry WHERE {
+  ?entry :isoform ?iso .
+}

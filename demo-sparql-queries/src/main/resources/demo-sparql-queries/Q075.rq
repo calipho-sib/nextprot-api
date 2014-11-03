@@ -1,0 +1,12 @@
+#title: Q075  which have been detected in the HUPO liver proteome set but not the HUPO plasma proteome set
+#acs: A2RTX5, O00471, O00423, ...
+#tags: expression dataset long
+#count: 4660
+#time: 10s
+select distinct ?entry where {
+  ?entry a :Entry .
+  ?entry :isoform / :mapping / :withEvidence / :assignedBy source:PeptideAtlas_human_liver .
+  filter NOT EXISTS {
+    ?entry :isoform / :mapping / :withEvidence / :assignedBy source:PeptideAtlas_human_plasma .
+  }
+}

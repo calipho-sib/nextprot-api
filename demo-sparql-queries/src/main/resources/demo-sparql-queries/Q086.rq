@@ -1,0 +1,11 @@
+#title: Q086 whose genes are located in the region 2p12 to 2p24.2
+#acs:  O00470, B5MCY1, A8MZ97, ...
+#tags: chromosome
+#count: 367
+#time: 0.15
+select distinct ?entry where {
+  ?entry :gene  ?gene .
+  ?gene :chromosome "2"^^xsd:string .
+  ?gene :band ?band .
+  filter (?band >= "p12"@en && ?band <= "p24.2"@en )
+}

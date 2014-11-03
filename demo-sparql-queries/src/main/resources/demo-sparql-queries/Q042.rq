@@ -1,0 +1,11 @@
+#title: Q042 that bind a metal and are secreted
+#acs:O43852, O43852, P02787, ...
+#tags:location, metal
+#count:225
+#time:0.1
+SELECT distinct ?entry WHERE {
+ ?entry :isoform ?iso .
+ #?iso :location/:in/:childOf term:SL-0243 .
+ ?iso :keyword / :in term:KW-0964. # secreted
+ ?iso :keyword / :in term:KW-0479. # metal-binding
+}
