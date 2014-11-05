@@ -1,9 +1,9 @@
 <annotation-list>
 #foreach($category in $entry.getAnnotationCategories())
-<annotation-to-be-renamed category='$category'>
+<annotation category='$category'>
 	#foreach($annotation in $entry.getAnnotationsByCategory($category))
 		#parse("annotation.xml.vm")
 	#end
-</annotation-to-be-renamed>
+</annotation>
 #end
 </annotation-list>

@@ -8,11 +8,11 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiParamType;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.AntibodyMapping;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Identifier;
 import org.nextprot.api.core.domain.Keyword;
 import org.nextprot.api.core.domain.PeptideMapping;
@@ -33,6 +33,7 @@ import org.nextprot.api.core.service.KeywordService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -41,6 +42,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Lazy
 @Controller
@@ -227,12 +230,26 @@ public class EntryController {
 	}
 	
 	
-	@RequestMapping("/entry/{entry}/ptm")
-	public String getEntryPtm(@PathVariable("entry") String entryName, Model model) {
-		List<Feature> ptms = this.annotationService.findPtmsByMaster(entryName);
-		model.addAttribute("ptms", ptms);
-		return "ptms";
+	
+	@Autowired
+	private FluentEntryService fluentEntryService;
+
+	
+	@RequestMapping("/e/{entry}")
+	public String getEntryPtm(@PathVariable("entry") String entryName, Model model, @RequestParam("fields") String fields) {
+
+		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withAnnotationsFilteredBy("pathway").getEntry();
+		model.addAttribute("entry", dummy);
+		model.addAttribute("StringUtils", StringUtils.class);
+		return "annotation-list";
+
 	}
+	
+/*	private static checkFieldsExistence(String[] fields){
+		AnnotationApiModel.getInstantiatedCategories()
+	}*/
+
+
 	
 }
 

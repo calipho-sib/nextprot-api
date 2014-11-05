@@ -18,6 +18,8 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.export.format.ExportTXTTemplate;
 import org.nextprot.api.core.service.export.format.ExportTemplate;
 import org.nextprot.api.core.service.export.format.ExportXMLTemplate;
+import org.nextprot.api.core.service.fluent.FluentEntryService.FluentEntry;
+import org.nextprot.api.core.utils.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -193,6 +195,12 @@ public class FluentEntryService {
 			throw new NextProtException(_template + " export template case not found");
 
 		}
+
+		public FluentEntry withAnnotationsFilteredBy(String categoryName) {
+			entry.setAnnotations(AnnotationUtils.filterAnnotationsByCategory(annotationService.findAnnotations(entryName), categoryName));
+			return this;
+		}
+
 	}
 
 }
