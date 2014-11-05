@@ -38,3 +38,7 @@ Click on the web module (nextprot-api-web project) configure the deployment asse
 -	You still need to add the project nextprot-api-web into servers by clicking on the server and choosing (add and remove)
 
 ![logo](add-remove.png)
+
+### Configure JRebel
+
+-	You should also configure JRebel in order to make changes and reflect them directly
