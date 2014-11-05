@@ -15,6 +15,7 @@
     :peptideName "$pep-name"^^xsd:string ;
 #foreach($pos in $spec.positions)
     :position [ 
+      rdf:type :MappingPosition ;    
       :start "$pos.first"^^xsd:integer ;
       :end "$pos.second"^^xsd:integer ;
     ];

@@ -15,13 +15,14 @@
     rdf:type :AntibodyMapping ;  
 #foreach($xref in $antibody.xrefs)
     :reference [
-      a :Xref ;
+      rdf:type :Xref ;
       :provenance db:$StringUtils.slug($xref.databaseName) ;
       :accession "$xref.accession"^^xsd:string ;
     ];
 #end
 #foreach($pos in $spec.positions)
     :position [ 
+      rdf:type :MappingPosition ;
       :start "$pos.first"^^xsd:integer ;
       :end "$pos.second"^^xsd:integer ;
     ];
