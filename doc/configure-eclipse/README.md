@@ -6,6 +6,10 @@
 -	Build the eclipse classpath using `mvn eclipse:eclipse`
 -	Choose on eclipse import project and choose the directory. All the modules should be imported as simple projects.
 
+The following image shows the different modules as different projects. Note that nextprot-api-web project is already configured as web. Don't worry if you don't see it web configured in your workspace at this stage (that's normal). In this guide you will show you how to make it a web module.
+
+![logo](project-import.png)
+
 ### Server configuration (tomcat)
 
 -	Install tomcat locally (just extract the zip file somewhere on your computer)
@@ -32,3 +36,5 @@ Click on the web module (nextprot-api-web project) configure the deployment asse
 ### Add project into server
 
 -	You still need to add the project nextprot-api-web into servers by clicking on the server and choosing (add and remove)
+
+![logo](add-remove.png)
