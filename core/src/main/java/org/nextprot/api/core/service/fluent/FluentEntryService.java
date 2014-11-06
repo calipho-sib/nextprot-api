@@ -1,7 +1,12 @@
 package org.nextprot.api.core.service.fluent;
 
+import java.util.List;
+
+import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
@@ -18,8 +23,8 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.export.format.ExportTXTTemplate;
 import org.nextprot.api.core.service.export.format.ExportTemplate;
 import org.nextprot.api.core.service.export.format.ExportXMLTemplate;
-import org.nextprot.api.core.service.fluent.FluentEntryService.FluentEntry;
 import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.XrefUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -62,10 +67,17 @@ public class FluentEntryService {
 	public class FluentEntry {
 		private Entry entry = null;
 		private String entryName;
+		private AnnotationApiModel annotationCategory;
 
 		public FluentEntry(String entryName) {
 			this.entryName = entryName;
 			this.entry = new Entry(entryName);
+		}
+
+		
+		public FluentEntry withAnnotationCategory(String category) {
+			this.annotationCategory = AnnotationApiModel.getByDbAnnotationTypeName(category);
+			return this;
 		}
 
 		public FluentEntry withOverview() {
@@ -196,10 +208,24 @@ public class FluentEntryService {
 
 		}
 
-		public FluentEntry withAnnotationsFilteredBy(String categoryName) {
-			entry.setAnnotations(AnnotationUtils.filterAnnotationsByCategory(annotationService.findAnnotations(entryName), categoryName));
-			return this;
+		public Entry getEntryFiltered() {
+			
+			List<Annotation> annotations = annotationService.findAnnotations(entryName);
+			List<DbXref> xrefs = xrefService.findDbXrefsByMaster(entryName);
+
+			//Filter if necessary
+			if(annotationCategory != null){
+				annotations = AnnotationUtils.filterAnnotationsByCategory(annotations, annotationCategory);
+				xrefs = XrefUtils.filterXrefsByIds(xrefs, AnnotationUtils.getXrefIdsForAnnotations(annotations));
+			}
+			
+			entry.setAnnotations(annotations);
+			entry.setXrefs(xrefs);
+			
+			return entry;
 		}
+
+		
 
 	}
 

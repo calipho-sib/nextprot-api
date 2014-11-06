@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 
 /**
@@ -212,8 +213,8 @@ public enum AnnotationApiModel  {
 				return category;
 			}
 		}
-		//finally if not found throw an error
-		throw new RuntimeException("Could not find AnnotationCategory for type: "+typeName);
+		//finally if not found throw an error	
+		throw new NextProtException("Could not find annotation category for: "+typeName);
 	}
 		
 	/**
@@ -287,6 +288,7 @@ public enum AnnotationApiModel  {
 	public AnnotationPropertyApiModel getPropertyByDbName(String dbName) {
 		return AnnotationPropertyApiModel.getPropertyByDbName(this, dbName);
 	}
+	
 	
 
 }

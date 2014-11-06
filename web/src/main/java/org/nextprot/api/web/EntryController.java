@@ -78,6 +78,7 @@ public class EntryController {
 		return "exportEntries";
 	}
 	
+	
 	@ApiMethod(path = "/entry/{entry}/protein-sequence", verb = ApiVerb.GET, description = "Gets the isoforms for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/protein-sequence")
 	public String getIsoforms(
@@ -230,25 +231,26 @@ public class EntryController {
 	}
 	
 	
-	
 	@Autowired
 	private FluentEntryService fluentEntryService;
 
 	
-	@RequestMapping("/e/{entry}")
-	public String getEntryPtm(@PathVariable("entry") String entryName, Model model, @RequestParam("fields") String fields) {
+	@RequestMapping("/e/{entry}/{category}")
+	public String getEntryPtm(@PathVariable("entry") String entryName,
+			@PathVariable("category") String category,
+			Model model) {
 
-		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withAnnotationsFilteredBy("pathway").getEntry();
-		model.addAttribute("entry", dummy);
+		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withAnnotationCategory(category).getEntryFiltered();
+		
+		List<Entry> proteinList = new ArrayList<Entry>();
+		proteinList.add(dummy);
+		model.addAttribute("entryList", proteinList);
 		model.addAttribute("StringUtils", StringUtils.class);
-		return "annotation-list";
+
+		return "exportEntries";
 
 	}
 	
-/*	private static checkFieldsExistence(String[] fields){
-		AnnotationApiModel.getInstantiatedCategories()
-	}*/
-
 
 	
 }
