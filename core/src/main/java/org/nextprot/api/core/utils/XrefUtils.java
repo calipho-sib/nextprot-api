@@ -17,8 +17,6 @@ public class XrefUtils {
 	public static List<DbXref> filterXrefsByIds(List<DbXref> xrefs, Set<Long> ids){
 		List<DbXref> xrefsFiltered = new ArrayList<DbXref>();
 		for(DbXref xref : xrefs){
-			System.out.println(xref.getDbXrefId());
-
 			if(ids.contains(xref.getDbXrefId())){
 				xrefsFiltered.add(xref);
 			}

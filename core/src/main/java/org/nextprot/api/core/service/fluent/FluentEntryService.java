@@ -76,7 +76,7 @@ public class FluentEntryService {
 
 		
 		public FluentEntry withAnnotationCategory(String category) {
-			this.annotationCategory = AnnotationApiModel.getByDbAnnotationTypeName(category);
+			this.annotationCategory = AnnotationApiModel.getDecamelizedAnnotationTypeName(category);
 			return this;
 		}
 
