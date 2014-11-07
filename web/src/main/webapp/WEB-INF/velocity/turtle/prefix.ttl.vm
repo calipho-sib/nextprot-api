@@ -11,6 +11,7 @@
 @prefix evidence: <http://nextprot.org/rdf/evidence/> .
 @prefix xref: <http://nextprot.org/rdf/xref/> .
 @prefix publication: <http://nextprot.org/rdf/publication/> .
+@prefix identifier: <http://nextprot.org/rdf/identifier/>
 @prefix term: <http://nextprot.org/rdf/terminology/> .
 @prefix gene: <http://nextprot.org/rdf/gene/> .
 @prefix source: <http://nextprot.org/rdf/source/> .

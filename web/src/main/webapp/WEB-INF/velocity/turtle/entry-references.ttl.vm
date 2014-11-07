@@ -20,7 +20,8 @@ entry:$entry.uniqueName :reference [
 # - - - - - - - -
 
 #foreach($ident in $entry.identifiers)
-entry:$entry.uniqueName :reference [
+entry:$entry.uniqueName :reference $ident.
+[
   a :Identifier ;
   :accession "$ident.name"^^xsd:string ;
   :provenance db:$StringUtils.slug($ident.provenance) ;
