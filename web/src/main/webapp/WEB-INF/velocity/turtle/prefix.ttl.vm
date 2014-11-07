@@ -13,6 +13,7 @@
 @prefix publication: <http://nextprot.org/rdf/publication/> .
 @prefix identifier: <http://nextprot.org/rdf/identifier/> .
 @prefix term: <http://nextprot.org/rdf/terminology/> .
+@prefix cv: <http://nextprot.org/rdf/terminology/> .
 @prefix gene: <http://nextprot.org/rdf/gene/> .
 @prefix source: <http://nextprot.org/rdf/source/> .
 @prefix db: <http://nextprot.org/rdf/db/> .
