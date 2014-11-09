@@ -6,7 +6,7 @@
 #pending
 select  distinct ?entry where {
   ?entry :isoform/:binaryInteraction ?interaction.
-  ?interaction :with ?interactant; :quality :GOLD
+  ?interaction :interactant ?interactant; :quality :GOLD
 } 
 group by ?entry
 having count(distinct ?interactant) > 1

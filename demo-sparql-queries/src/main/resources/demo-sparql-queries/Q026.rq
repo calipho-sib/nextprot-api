@@ -4,7 +4,7 @@
 #time:0.552
 #acs:A0JLT2,A0PJW6,A2A2Y4,O00193,O00198,O00217,O00220,O00221,O00231,O00254
 select distinct ?entry where {
-  ?entry :isoform/:interaction/:with ?interactant.
+  ?entry :isoform/:interaction/:interactant ?interactant.
   # :isoform predicate in line below is optional (postfix ?) because the data model
   # allows the ?interactant to be either an :Entry or an :Isoform 
   ?interactant :isoform?/:location/:in/:childOf term:SL-0173 

@@ -7,7 +7,7 @@
 # we exclude both disease annotation ans reference to Orphanet
 select distinct ?entry  where {
   ?entry :isoform ?iso.
-  ?iso :binaryInteraction/:with ?interactant .
+  ?iso :binaryInteraction/:interactant ?interactant .
   FILTER NOT EXISTS { ?entry :reference / :provenance db:Orphanet . }
   FILTER NOT EXISTS {   ?iso :medical / rdf:type :Disease. }
 }group by ?entry ?iso having (count(?interactant) >= 50)

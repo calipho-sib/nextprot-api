@@ -3,6 +3,6 @@
 #acs:O43143,O75533,Q13573,Q15428,Q15637,Q8IWZ8,Q99459,Q9P013
 #count:8
 select distinct ?entry WHERE  {
-  entry:NX_Q96I25 :isoform / :interaction / :with ?entry.
+  entry:NX_Q96I25 :isoform / :interaction / :interactant ?entry.
   ?entry :isoform / :keyword / :in term:KW-0508
 }
