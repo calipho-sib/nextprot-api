@@ -4,7 +4,7 @@
 #if($evidence.isNegativeEvidence($isoform-name))
 annotation:$annotation-uri :withNegativeEvidence evidence:$evidence-uri. 
 #end
-annotation:$annotation-uri :withEvidence evidence:$evidence-uri. 
+annotation:$annotation-uri :evidence evidence:$evidence-uri. 
 ## decribe the evidence here
 evidence:$evidence-uri 
   rdf:type :Evidence ;

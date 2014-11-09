@@ -6,6 +6,6 @@
 SELECT distinct ?entry WHERE {
  ?entry  :isoform/:function ?statement.
  ?statement :in / :childOf term:GO_0007155.
- ?statement :withEvidence/:code ?ecode .
+ ?statement :evidence/:code ?ecode .
   FILTER  ( ?ecode != :IEA && ?ecode != :ISS)
 }

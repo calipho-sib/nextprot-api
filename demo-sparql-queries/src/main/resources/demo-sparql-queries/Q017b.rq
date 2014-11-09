@@ -10,7 +10,7 @@ SELECT distinct ?entry WHERE  {
   ?iso :location/:in/:childOf term:SL-0191.
   ?iso :expressionProfile ?p.
   ?p :in/:childOf term:TS-1313.
-  ?p :withEvidence / :expressionLevel ?level.
+  ?p :evidence / :expressionLevel ?level.
   ?iso :sequence/:length ?len.
   FILTER (?len>1000)
   FILTER (?level != :Negative)

@@ -1,7 +1,7 @@
 interaction:$interaction.id a ProteinInteraction ;
   :quality :$interaction.quality ;
   :selfInteraction "$interaction.selfInteraction"^^xsd:boolean;
-  :withEvidence evidence:$interaction.evidenceId ;
+  :evidence evidence:$interaction.evidenceId ;
 #foreach($interactant in $interaction.interactants)
 ## if interactant is an entry or isoform described in nextprot
 #if($interactant.isNextprot())

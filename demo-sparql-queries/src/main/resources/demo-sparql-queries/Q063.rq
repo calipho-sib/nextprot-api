@@ -19,7 +19,7 @@ SELECT distinct ?entry  WHERE {
 
 #GO "RNA binding" with evidence IEA or ISS
   ?iso :function ?s1.
-  ?s1 :in /:childOf term:GO_0003723;:withEvidence/:code ?type.
+  ?s1 :in /:childOf term:GO_0003723;:evidence/:code ?type.
   values ?type {:IEA :ISS}
 
  }

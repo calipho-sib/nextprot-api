@@ -11,6 +11,6 @@ SELECT distinct ?entry WHERE {
   ?s2 :in/:childOf  term:TS-0095;:withNegativeEvidence/:experimentalContext/:detectionMethod term:ECO_0000220.
 
 # there exists an evidence telling that the protein is expressed in brain according to IHC
-  ?s1 :in/:childOf  term:TS-0095;:withEvidence/:experimentalContext/:detectionMethod term:ECO_0000045.
+  ?s1 :in/:childOf  term:TS-0095;:evidence/:experimentalContext/:detectionMethod term:ECO_0000045.
 
 }

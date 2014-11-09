@@ -5,10 +5,10 @@
 #time: 10.7
 select distinct ?entry where {
   ?entry :isoform /:expression ?s1.
-  ?s1 :withEvidence ?evi;:in/:childOf term:TS-0564. #Liver
+  ?s1 :evidence ?evi;:in/:childOf term:TS-0564. #Liver
   ?evi :experimentalContext / :detectionMethod / rdfs:subClassOf :IHC; :expressionLevel ?level .
   filter (?level not in (:Negative))
   FILTER NOT EXISTS {
-    ?entry :isoform / :mapping / :withEvidence / :assignedBy source:PeptideAtlas_human_liver .
+    ?entry :isoform / :mapping / :evidence / :assignedBy source:PeptideAtlas_human_liver .
   }
 }

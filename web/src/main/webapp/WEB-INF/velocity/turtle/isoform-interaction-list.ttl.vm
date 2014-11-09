@@ -21,7 +21,7 @@ interaction:$iso-interaction-iri a :BinaryInteraction;
 #end
   :quality :$interaction.quality ;
   :selfInteraction "$interaction.selfInteraction"^^xsd:boolean;
-  :withEvidence evidence:$interaction.evidenceId;
+  :evidence evidence:$interaction.evidenceId;
 #if($interactant.isNextprot())
 #if($interactant.isIsoform())
   :with isoform:$interactant.getNextprotAccession();
