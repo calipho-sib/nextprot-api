@@ -1,6 +1,6 @@
 
 # - - - - - - - -
-# Xrefs 
+# Xrefs v3
 # - - - - - - - -
 
 #foreach($xref in $entry.xrefs)
@@ -20,8 +20,7 @@ entry:$entry.uniqueName :reference [
 # - - - - - - - -
 
 #foreach($ident in $entry.identifiers)
-entry:$entry.uniqueName :reference $ident.
-[
+entry:$entry.uniqueName :reference [
   a :Identifier ;
   :accession "$ident.name"^^xsd:string ;
   :provenance db:$StringUtils.slug($ident.provenance) ;
@@ -37,4 +36,3 @@ entry:$entry.uniqueName :reference $ident.
 #foreach($pub in $entry.publications)
 entry:$entry.uniqueName :reference publication:$pub.getMD5() .
 #end
-

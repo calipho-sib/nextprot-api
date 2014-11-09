@@ -14,17 +14,6 @@ evidence:$evidence-uri
 #if($evidence.getQualityQualifier())
   :quality :$evidence.getQualityQualifier();
 #end  
-##  :$evidence.getResourceType() publication:$evidence.getResourceAccession()
-## resource => database (xref:P06213,...) , Publication (publi id=getResourceId())
-#if($evidence.getResourceType().equals("publication"))
-  :reference publication:$evidence.getPublicationMD5();
-  :publication publication:$evidence.getPublicationMD5();
-#end
-#if($evidence.getResourceType().equals("database"))
-  :fromXref db:$StringUtils.slug($evidence.getResourceDb());
-  :reference xref:$evidence.getResourceId();
-  :xref xref:$evidence.getResourceId();
-#end
 #if($evidence.getAssignedBy())
   :assignedBy source:$StringUtils.slug($evidence.getAssignedBy());
 #end
@@ -43,6 +32,20 @@ evidence:$evidence-uri
 #if($evidence.getExperimentalContextId()>0)
   :experimentalContext context:$evidence.getExperimentalContextId();
 #end
+##  :$evidence.getResourceType() publication:$evidence.getResourceAccession()
+## resource => database (xref:P06213,...) , Publication (publi id=getResourceId())
+#if($evidence.getResourceType().equals("publication"))
+  :reference publication:$evidence.getPublicationMD5();
+#end
+#if($evidence.getResourceType().equals("database"))
+#set($UNESCAPED_CDATA = $evidence.resourceAccession)
+  :fromXref db:$StringUtils.slug($evidence.getResourceDb());
+  :reference [
+    rdf:type :Xref ;
+    :accession "$UNESCAPED_CDATA"^^xsd:string;
+    :provenance db:$StringUtils.slug($evidence.resourceDb); 
+   ] ;
+#end
 ## next property is useful for debug purpose
 #if($evidence.getResourceAssociationType())
   :assocType "$evidence.getResourceAssociationType()"^^xsd:string;
@@ -56,13 +59,3 @@ evidence:$evidence-uri
   :negativeIsoformSpecificity "$evidence.getNegativeIsoformSpecificity()"^^xsd:string;
 #end
   .
-#if($evidence.getResourceType().equals("database"))
-#set($UNESCAPED_CDATA = $evidence.resourceAccession)
-
-xref:$evidence.getResourceId()
-    rdf:type :Xref ;
-    :accession "$UNESCAPED_CDATA"^^xsd:string;
-    :provenance db:$StringUtils.slug($evidence.resourceDb); 
-  .
-#end
-
