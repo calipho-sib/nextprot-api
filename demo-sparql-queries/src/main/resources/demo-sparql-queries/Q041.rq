@@ -6,5 +6,5 @@
 SELECT distinct ?entry WHERE  {
   ?entry :isoform ?iso.
   ?iso :goMolecularFunction ?statement.
-  ?statement :withNegativeEvidence ?ev.
+  ?statement :negativeEvidence ?ev.
 }

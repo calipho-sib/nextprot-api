@@ -2,7 +2,7 @@
 ## Negative evidence
 ## graph is splitted for negative, positive (that include negative expression)
 #if($evidence.isNegativeEvidence($isoform-name))
-annotation:$annotation-uri :withNegativeEvidence evidence:$evidence-uri. 
+annotation:$annotation-uri :negativeEvidence evidence:$evidence-uri. 
 #end
 annotation:$annotation-uri :evidence evidence:$evidence-uri. 
 ## decribe the evidence here
