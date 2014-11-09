@@ -15,9 +15,9 @@ isoform:$isoform-name :binaryInteraction interaction:$iso-interaction-iri .
 #set($hasInteraction=true)  
 interaction:$iso-interaction-iri a :BinaryInteraction;
 #if ($interaction.isInteractionSpecificForIsoform($isoform-name))
-  :specificity :SPECIFIC ;
+  :isoformSpecificity :SPECIFIC ;
 #else
-  :specificity :BY_DEFAULT ;
+  :isoformSpecificity :BY_DEFAULT ;
 #end
   :quality :$interaction.quality ;
   :selfInteraction "$interaction.selfInteraction"^^xsd:boolean;
