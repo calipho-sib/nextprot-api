@@ -138,7 +138,7 @@ public enum AnnotationApiModel  {
 	SUBCELLULAR_LOCATION(1039,"subcellular location", "subcellularLocation", "subcellular location", new AnnotationApiModel[]{GENERIC_LOCATION }),
 	SUBCELLULAR_LOCATION_INFO(63868,"subcellular location info", "subcellularLocationInfo", "subcellular location info", new AnnotationApiModel[]{GENERIC_LOCATION }),
 	GO_CELLULAR_COMPONENT(1063,"go cellular component", "goCellularComponent", "go cellular component", new AnnotationApiModel[]{GENERIC_LOCATION }),
-	DEVELOPMENTAL_STAGE(1041,"developmental stage", "developmentalStage", "developmental stage", new AnnotationApiModel[]{GENERIC_LOCATION }),
+	DEVELOPMENTAL_STAGE(1041,"developmental stage", "developmentalStageInfo", "developmental stage", new AnnotationApiModel[]{GENERIC_LOCATION }),
 	EPRESSION_INFO(1055,"expression info", "expressionInfo", "expression info", new AnnotationApiModel[]{GENERIC_LOCATION }),
 	EPRESSION_PROFILE(1040,"tissue specificity", "expressionProfile", "expression profile (tissue specificity)", new AnnotationApiModel[]{GENERIC_LOCATION }),
 
