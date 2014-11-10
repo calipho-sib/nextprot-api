@@ -181,7 +181,7 @@ public enum AnnotationApiModel  {
 
 	
 	
-	// *************** STATIC PRIVATE METHODS initialized for performance reasons ********************************** ///////////////////
+	// *************** STATIC PRIVATE FINAL CONSTANTS initialized for performance reasons ********************************** ///////////////////
 	
 	// Fill the cache
 	private static final Map<String,AnnotationApiModel> MAP_TYPES =new HashMap<String,AnnotationApiModel>();
@@ -194,7 +194,7 @@ public enum AnnotationApiModel  {
 	private static String HIERARCHY_STRING = null;
 	static {StringBuilder sb = new StringBuilder();getAnnotationHierarchy(AnnotationApiModel.ROOT, sb, 0);HIERARCHY_STRING = sb.toString();}
 	private static void getAnnotationHierarchy(AnnotationApiModel a, StringBuilder sb, int inc) {
-		if(inc > 0) sb.append(new String(new char[inc]).replace('\0', '-') + StringUtils.decamelizeAndReplaceByHyphen(a.getDbAnnotationTypeName()) + "  " + "\n");
+		if(inc > 0) sb.append(new String(new char[inc]).replace('\0', '-') + StringUtils.decamelizeAndReplaceByHyphen(a.getDbAnnotationTypeName()) + "  " + a.getHierarchy() + "\n");
 		int nextInc = inc + 1;
 		for (AnnotationApiModel c : a.getChildren()) {
 				getAnnotationHierarchy(c, sb, nextInc);
@@ -305,6 +305,20 @@ public enum AnnotationApiModel  {
 		Set<AnnotationApiModel> all = new HashSet<AnnotationApiModel>(mine);
 		for (AnnotationApiModel parent : mine) all.addAll(parent.getAllParents());
 		return all;
+	}
+	
+	public String getHierarchy() {
+		StringBuilder sb = new StringBuilder();
+		getPathToRoot(this, sb);
+		return sb.toString();
+	}
+	
+	private void getPathToRoot(AnnotationApiModel a, StringBuilder sb){
+		if(a.getParents().iterator().hasNext()) {
+			AnnotationApiModel parent = a.getParents().iterator().next();
+			getPathToRoot(parent, sb);
+			sb.append(StringUtils.decamelizeAndReplaceByHyphen(a.getDbAnnotationTypeName()) + ":");
+		}
 	}
 	
 	public String toString() {
