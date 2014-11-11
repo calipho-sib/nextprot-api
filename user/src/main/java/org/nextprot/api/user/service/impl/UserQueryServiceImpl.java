@@ -1,7 +1,5 @@
 package org.nextprot.api.user.service.impl;
 
-import java.util.List;
-
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.security.NPSecurityContext;
@@ -9,6 +7,8 @@ import org.nextprot.api.user.service.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Lazy
 @Service
@@ -23,15 +23,20 @@ public class UserQueryServiceImpl implements UserQueryService {
 	}
 
 	@Override
-	public List<UserQuery> getPublicQueries() {
-		return userQueryDao.getPublicQueries();
+	public List<UserQuery> getUserQueriesByTag(String tag) {
+		return userQueryDao.getUserQueriesByTag(tag);
 	}
 
 	@Override
+	public List<UserQuery> getPublishedQueries() {
+		return userQueryDao.getPublishedQueries();
+	}
+
+		@Override
 	public UserQuery createUserQuery(UserQuery userQuery) {
 		NPSecurityContext.checkUserAuthorization(userQuery);
 		userQuery.checkValid();
-		long id = userQueryDao.saveUserQuery(userQuery);
+		long id = userQueryDao.createUserQuery(userQuery);
 		userQuery.setUserQueryId(id);
 		return userQuery;
 	}
@@ -51,15 +56,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 	}
 
 	@Override
-	public List<UserQuery> getNextprotQueries() {
-		return userQueryDao.getNextprotQueries();
-	}
-
-	@Override
 	public UserQuery getUserQueryById(long id) {
 		return userQueryDao.getUserQueryById(id);
 	}
-	
-	
-
 }
