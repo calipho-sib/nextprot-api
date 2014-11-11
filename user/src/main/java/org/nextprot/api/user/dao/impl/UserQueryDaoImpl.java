@@ -42,50 +42,45 @@ public class UserQueryDaoImpl implements UserQueryDao {
 
 		namedParameters.addValue("user_name", username);
 
-		List<UserQuery> userQueryList = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserQueryRowMapper());
-
-		for (UserQuery userQuery : userQueryList) {
-
-			userQuery.setTags(getQueryTagsById(userQuery.getUserQueryId()));
-		}
-
-		return userQueryList;
-	}
-
-	/**
-	 * Get the tag names that belongs to the query {@code queryId}
-	 *
-	 * @param queryId the query identifier
-	 * @return a set of tags
-	 */
-	private Set<String> getQueryTagsById(long queryId) {
-
-		SqlParameterSource namedParameters = new MapSqlParameterSource("query_id", queryId);
-
-		List<String> tags = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForList(sqlDictionary.getSQLQuery("read-user-query-tags-by-id"), namedParameters, String.class);
-
-		return new HashSet<String>(tags);
+		return queryList(sql, namedParameters);
 	}
 
 	@Override
-	public UserQuery getUserQueryById(long id) {
+	public UserQuery getUserQueryById(long queryId) {
+
+		String sql = sqlDictionary.getSQLQuery("read-user-query-by-id");
 
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
-		namedParameters.addValue("id", id);
-		List<UserQuery> queries = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("advanced-user-query-by-id"), namedParameters, new UserQueryRowMapper());
+		namedParameters.addValue("query_id", queryId);
+
+		List<UserQuery> queries = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserQueryRowMapper());
 		NPreconditions.checkTrue(queries.size() == 1, "User query not found");
+
+		queries.get(0).setTags(getQueryTagsById(queries.get(0).getUserQueryId()));
+
 		return queries.get(0);
 	}
 
 	@Override
 	public List<UserQuery> getUserQueriesByTag(String tag) {
 
-		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("advanced-public-query"), new UserQueryRowMapper());
+		String sql = sqlDictionary.getSQLQuery("read-user-queries-by-tag");
+
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+
+		namedParameters.addValue("tag_name", tag);
+
+		return queryList(sql, namedParameters);
 	}
 
 	@Override
 	public List<UserQuery> getPublishedQueries() {
-		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sqlDictionary.getSQLQuery("advanced-public-query"), new UserQueryRowMapper());
+
+		String sql = sqlDictionary.getSQLQuery("read-published-user-queries");
+
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+
+		return queryList(sql, namedParameters);
 	}
 
 	@Override
@@ -143,6 +138,35 @@ public class UserQueryDaoImpl implements UserQueryDao {
 			}
 		});
 
+	}
+
+	/**
+	 * Get the tag names that belongs to the query {@code queryId}
+	 *
+	 * @param queryId the query identifier
+	 * @return a set of tags
+	 */
+	private Set<String> getQueryTagsById(long queryId) {
+
+		SqlParameterSource namedParameters = new MapSqlParameterSource("query_id", queryId);
+
+		List<String> tags = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForList(sqlDictionary.getSQLQuery("read-user-query-tags-by-id"), namedParameters, String.class);
+
+		return new HashSet<String>(tags);
+	}
+
+	// TODO: talk with daniel/pam about the potential performance issue of the following n+1 transactions
+	// better call back ResultSetExtractor<List<UserQuery>> ???
+	private List<UserQuery> queryList(String sql, SqlParameterSource source) {
+
+		List<UserQuery> userQueryList = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, source, new UserQueryRowMapper());
+
+		for (UserQuery userQuery : userQueryList) {
+
+			userQuery.setTags(getQueryTagsById(userQuery.getUserQueryId()));
+		}
+
+		return userQueryList;
 	}
 
 	private static class UserQueryRowMapper implements ParameterizedRowMapper<UserQuery> {
