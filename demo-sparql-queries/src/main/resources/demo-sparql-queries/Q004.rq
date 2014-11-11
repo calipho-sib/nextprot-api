@@ -8,8 +8,8 @@ SELECT distinct ?entry WHERE {
   ?entry :isoform/:expression ?s1,?s2.
 
 # highly expressed in brain
-  ?s1 :in/:childOf  term:TS-0095;:evidence/:expressionLevel :High.
+  ?s1 :term/:childOf  term:TS-0095;:evidence/:expressionLevel :High.
 
 # not expressed in testis
-  ?s2 :in/:childOf  term:TS-1030;:evidence/:expressionLevel :Negative.
+  ?s2 :term/:childOf  term:TS-1030;:evidence/:expressionLevel :Negative.
 }

@@ -11,5 +11,5 @@ select distinct ?entry   WHERE {
   ?isoform :ptm ?statement .
   ?statement a :DisulfideBond.
   filter not exists { ?isoform :keyword  term:KW-0372 . }
-  filter not exists { ?entry  :isoform / :function  / :in term:GO_0005179  . }
+  filter not exists { ?entry  :isoform / :function  / :term term:GO_0005179  . }
 } GROUP by ?entry ?isoform HAVING (count(?statement) =3 )

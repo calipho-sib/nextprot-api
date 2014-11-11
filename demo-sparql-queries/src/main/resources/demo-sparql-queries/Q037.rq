@@ -5,5 +5,5 @@
 #time:0.1
 SELECT distinct ?entry WHERE {
  ?entry :isoform ?iso;:classifiedWith term:KW-0694.
- FILTER NOT EXISTS {?iso :region/:in term:DO-00581}
+ FILTER NOT EXISTS {?iso :region/:term term:DO-00581}
 }

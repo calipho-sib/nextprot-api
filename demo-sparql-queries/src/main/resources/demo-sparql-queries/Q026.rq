@@ -7,6 +7,6 @@ select distinct ?entry where {
   ?entry :isoform/:interaction/:interactant ?interactant.
   # :isoform predicate in line below is optional (postfix ?) because the data model
   # allows the ?interactant to be either an :Entry or an :Isoform 
-  ?interactant :isoform?/:location/:in/:childOf term:SL-0173 
+  ?interactant :isoform?/:location/:term/:childOf term:SL-0173 
 }group by ?entry
 limit 100

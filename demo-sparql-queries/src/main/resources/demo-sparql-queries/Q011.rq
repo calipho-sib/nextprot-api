@@ -6,6 +6,6 @@
 # (transport term:GO_0006810, term:KW-0813) 
 SELECT distinct ?entry WHERE {
   ?entry :isoform ?iso .
-  ?iso :expression/:in/:childOf term:TS-0564.
-  ?iso :keyword / :in term:KW-0813. 
+  ?iso :expression/:term/:childOf term:TS-0564.
+  ?iso :keyword / :term term:KW-0813. 
 }

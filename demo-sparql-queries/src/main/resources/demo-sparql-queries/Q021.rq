@@ -9,9 +9,9 @@ select  distinct ?entry  where {
   ?iso :mapping ?map . 
   ?map a :AntibodyMapping; :reference / :provenance db:HPA
 		 
-  {?iso :keyword / :in term:KW-0576 .}
+  {?iso :keyword / :term term:KW-0576 .}
   UNION 
-  {?iso :subcellularLocation / :in /:childOf term:SL-0204. } 
+  {?iso :subcellularLocation / :term /:childOf term:SL-0204. } 
   UNION 
-  {?iso :goCellularComponent / :in /:childOf term:GO_0005777.}  
+  {?iso :goCellularComponent / :term /:childOf term:GO_0005777.}  
 }

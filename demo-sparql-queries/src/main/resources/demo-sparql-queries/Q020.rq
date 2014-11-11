@@ -10,7 +10,7 @@ select ?entry  where {
     ?entry :gene / :chromosome "21"^^xsd:string .
 
     ?entry :isoform / :expressionProfile ?s1.
-    ?s1 :in / :childOf  term:TS-0445 .
+    ?s1 :term / :childOf  term:TS-0445 .
     ?s1 :evidence ?evi .
     ?evi :expressionLevel :High .
     ?evi :experimentalContext / :detectionMethod term:ECO_0000045.

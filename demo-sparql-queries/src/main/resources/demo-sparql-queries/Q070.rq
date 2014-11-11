@@ -5,7 +5,7 @@
 #time: 0.12
 select distinct ?entry where {
   ?entry :isoform ?iso.
-    ?iso :location/:in/:childOf term:SL-0243
+    ?iso :location/:term/:childOf term:SL-0243
  FILTER NOT EXISTS {?iso :signalPeptide ?_}
  # the filter should apply to displayed entry only
 }

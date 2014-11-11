@@ -6,8 +6,8 @@
 #time:1.159
 SELECT distinct ?entry WHERE  {
   ?entry :isoform ?iso.
-  ?iso :location/:in/:childOf term:SL-0191.
-  ?iso :expression/:in/:childOf term:TS-1313.
+  ?iso :location/:term/:childOf term:SL-0191.
+  ?iso :expression/:term/:childOf term:TS-1313.
   ?iso :sequence/:length ?len.
   FILTER (?len>1000)
 }

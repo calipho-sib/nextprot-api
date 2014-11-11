@@ -3,5 +3,5 @@
 #tags:disease
 #count:228
 select distinct ?entry  WHERE {
-  ?entry :isoform /:medical / :in /:related / :childOf term:D002318.
+  ?entry :isoform /:medical / :term /:related / :childOf term:D002318.
 }

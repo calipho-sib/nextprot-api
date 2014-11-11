@@ -7,9 +7,9 @@
 #see: Q017 is a lot more efficient !
 SELECT distinct ?entry WHERE  {
   ?entry :isoform ?iso.
-  ?iso :location/:in/:childOf term:SL-0191.
+  ?iso :location/:term/:childOf term:SL-0191.
   ?iso :expressionProfile ?p.
-  ?p :in/:childOf term:TS-1313.
+  ?p :term/:childOf term:TS-1313.
   ?p :evidence / :expressionLevel ?level.
   ?iso :sequence/:length ?len.
   FILTER (?len>1000)

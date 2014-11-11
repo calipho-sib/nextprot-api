@@ -5,8 +5,8 @@
 #time: 0.9
 select  distinct ?entry where {
  ?entry :isoform ?iso .
- ?iso :location/:in/:childOf term:SL-0086.
- ?iso :modifiedResidue /:in ?ptmtype.
+ ?iso :location/:term/:childOf term:SL-0086.
+ ?iso :modifiedResidue /:term ?ptmtype.
  ?iso :modifiedResidue /:start ?ptmpos.
  FILTER (?ptmtype in (term:PTM-0253, term:PTM-0254, term:PTM-0255))  
 ?iso :glycosylationSite /:start ?ptmpos.

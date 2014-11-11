@@ -6,12 +6,12 @@
 select  distinct ?entry where {
  ?entry :isoform ?iso .
  ?iso :topologicalDomain ?topodom.
-  ?topodom :in term:CVTO_0002 .
+  ?topodom :term term:CVTO_0002 .
   ?topodom :start ?topostart ; :end ?topoend.
  ?iso :positionalAnnotation ?annot.
   {
 	?annot a :ModifiedResidue.
-	?annot :in ?ptmtype.
+	?annot :term ?ptmtype.
 	FILTER (?ptmtype in (term:PTM-0253, term:PTM-0254, term:PTM-0255))  
   }
   union

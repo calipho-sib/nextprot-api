@@ -8,9 +8,9 @@ SELECT distinct ?entry WHERE {
   ?iso :expressionProfile ?s1;:expressionProfile ?s2.
 
 # there exists an evidence exists saying that microarray didn't not detect any expression in the brain
-  ?s2 :in/:childOf  term:TS-0095;:negativeEvidence/:experimentalContext/:detectionMethod term:ECO_0000220.
+  ?s2 :term/:childOf  term:TS-0095;:negativeEvidence/:experimentalContext/:detectionMethod term:ECO_0000220.
 
 # there exists an evidence telling that the protein is expressed in brain according to IHC
-  ?s1 :in/:childOf  term:TS-0095;:evidence/:experimentalContext/:detectionMethod term:ECO_0000045.
+  ?s1 :term/:childOf  term:TS-0095;:evidence/:experimentalContext/:detectionMethod term:ECO_0000045.
 
 }

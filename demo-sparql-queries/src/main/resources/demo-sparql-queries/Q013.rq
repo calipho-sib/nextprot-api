@@ -4,6 +4,6 @@
 #count:29
 SELECT distinct ?entry WHERE {
   ?entry :isoform ?iso .
-  ?iso :region /:in term:DO-00529.
-  FILTER NOT EXISTS { ?iso :enzymeClassification / :in /:childOf term:2_7_-_- }
+  ?iso :region /:term term:DO-00529.
+  FILTER NOT EXISTS { ?iso :enzymeClassification / :term /:childOf term:2_7_-_- }
 }

@@ -4,5 +4,5 @@
 #count:8
 select distinct ?entry WHERE  {
   entry:NX_Q96I25 :isoform / :interaction / :interactant ?entry.
-  ?entry :isoform / :keyword / :in term:KW-0508
+  ?entry :isoform / :keyword / :term term:KW-0508
 }

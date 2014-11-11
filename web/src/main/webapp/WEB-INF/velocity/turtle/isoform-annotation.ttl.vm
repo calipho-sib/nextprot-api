@@ -3,7 +3,7 @@ annotation:$annotation-uri a :$annotation-type;
   :quality :$annotation.getQualityQualifier();
   :isoformSpecificity :$annotation.getSpecificityForIsoform($isoform-name);
 #if($annotation.getCvTermName())
-  :in term:$StringUtils.slug($annotation.getCvTermAccessionCode());
+  :term term:$StringUtils.slug($annotation.getCvTermAccessionCode());
 #end
 #if($annotation.getDescription())
 #if(! $annotation.getVariant())

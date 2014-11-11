@@ -7,19 +7,19 @@ SELECT distinct ?entry  WHERE {
  ?entry :isoform ?iso
  {
 #>=1 RRM RNA-binding domain
-  ?iso :region/:in term:DO-00581.
+  ?iso :region/:term term:DO-00581.
 
 #GO "RNA binding" with evidence IEA or ISS
   FILTER NOT EXISTS {
-   ?iso :function/:in /:childOf term:GO_0003723
+   ?iso :function/:term /:childOf term:GO_0003723
   }
  }UNION{
 #>=1 RRM RNA-binding domain
-  ?iso :region/:in term:DO-00581.
+  ?iso :region/:term term:DO-00581.
 
 #GO "RNA binding" with evidence IEA or ISS
   ?iso :function ?s1.
-  ?s1 :in /:childOf term:GO_0003723;:evidence/:code ?type.
+  ?s1 :term /:childOf term:GO_0003723;:evidence/:code ?type.
   values ?type {:IEA :ISS}
 
  }

@@ -5,6 +5,6 @@
 #time: 0.53
 select distinct ?entry where {
  ?entry :isoform ?iso .
- ?iso :keyword / :in term:KW-0597 . #phosphoprotein
+ ?iso :keyword / :term term:KW-0597 . #phosphoprotein
  ?iso :pdbMapping ?map.
 }

@@ -6,6 +6,6 @@
 select distinct ?entry where {
   ?entry :isoform ?iso.
   ?iso :function ?statement.
-  ?statement :in / :childOf term:GO_0005102.
-  ?iso :keyword/:in term:KW-0391.
+  ?statement :term / :childOf term:GO_0005102.
+  ?iso :keyword/:term term:KW-0391.
 }
