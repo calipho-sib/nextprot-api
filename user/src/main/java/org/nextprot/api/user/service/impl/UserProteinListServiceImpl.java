@@ -29,7 +29,7 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 		List<UserProteinList> proteinLists = this.proteinListDao.getUserProteinLists(username);
 
 		for (UserProteinList list : proteinLists) {
-			Set<String> accessions = this.proteinListDao.getAccessionsByListId(list.getId());
+			Set<String> accessions = this.proteinListDao.getAccessionsByListId(list.getKey());
 			list.setAccessions(accessions);
 		}
 		return proteinLists;
@@ -37,8 +37,8 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 	@Override
 	public List<UserProteinList> getUserProteinLists(String username) {
-		List<UserProteinList> proteinLists = this.proteinListDao.getUserProteinLists(username);
-		return proteinLists;
+
+		return this.proteinListDao.getUserProteinLists(username);
 	}
 
 	@Override
@@ -91,30 +91,14 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 	@Override
 	public UserProteinList getUserProteinListById(long listId) {
-		UserProteinList result = this.proteinListDao.getUserProteinListById(listId);
 
-		if (result != null) {
-			UserProteinList l = result;
-			//l.setAccessions(this.proteinListDao.getAccessionsByListId(listId));
-			return l;
-		}
-
-		return result;
+		return this.proteinListDao.getUserProteinListById(listId);
 	}
-
-
 
 	@Override
 	public UserProteinList getUserProteinListByNameForUser(String username, String listName) {
-		UserProteinList result = this.proteinListDao.getUserProteinListByName(username, listName);
 
-		if (result != null) {
-			UserProteinList proteinList = result;
-			//proteinList.setAccessions(this.proteinListDao.getAccessionsByListId(proteinList.getId()));
-			return proteinList;
-		}
-
-		return result;
+		return proteinListDao.getUserProteinListByName(username, listName);
 	}
 
 	@Override
@@ -125,12 +109,15 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 	@Override
 	public void removeAccessionNumbers(long listId, Set<String> accessions) {
-		this.proteinListDao.deleteProteinListItems(listId, accessions);
+
+		proteinListDao.deleteProteinListItems(listId, accessions);
 	}
 
 	@Override
 	public UserProteinList updateUserProteinList(UserProteinList proteinList) {
-		this.proteinListDao.updateUserProteinList(proteinList);
+
+		proteinListDao.updateUserProteinList(proteinList);
+
 		return proteinList;
 	}
 
@@ -157,7 +144,7 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 	private static String checkIsAuthorized(UserProteinList pl){
 
-		String securityUserName = "";
+		String securityUserName;
 
 		SecurityContext sc = SecurityContextHolder.getContext();
 		if (sc == null){

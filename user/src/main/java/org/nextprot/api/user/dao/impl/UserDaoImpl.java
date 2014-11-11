@@ -2,9 +2,10 @@ package org.nextprot.api.user.dao.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.JdbcTemplateUtils;
+import org.nextprot.api.commons.utils.KeyValuesJdbcBatchUpdater;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.domain.User;
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -110,25 +108,26 @@ public class UserDaoImpl implements UserDao {
             // 1. delete all roles for this user if roles exist in user_roles table of src
             deleteUserRoles(src.getId());
 
-            // 2. insert roles with insertUserRoles(src.getId(), src.getRoles())
+            // 2. insert roles with insertUserRoles(src.getKey(), src.getRoles())
             insertUserRoles(src.getId(), src.getRoles());
         }
 	}
 
     private void insertUserRoles(final long userId, final Collection<String> roles) {
 
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
-
         String sql = sqlDictionary.getSQLQuery("create-user-roles");
 
-        UserRoleBatchSetter userRoleBatchSetter = new UserRoleBatchSetter(userId, roles.size());
+        KeyValuesJdbcBatchUpdater updater = new KeyValuesJdbcBatchUpdater(new JdbcTemplate(dsLocator.getUserDataSource()), userId) {
 
-        for (final String role : roles) {
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
 
-            userRoleBatchSetter.setRole(role);
+                ps.setLong(1, getKey());
+                ps.setString(2, getValue(i));
+            }
+        };
 
-            jdbcTemplate.batchUpdate(sql, userRoleBatchSetter);
-        }
+        updater.batchUpdate(sql, new ArrayList<String>(roles));
     }
 
     @Override
@@ -156,30 +155,5 @@ public class UserDaoImpl implements UserDao {
         params.put("user_id", userId);
 
         new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(DELETE_SQL, params);
-    }
-
-    private static class UserRoleBatchSetter extends ReusableBatchSetter {
-
-        private String role;
-
-        private UserRoleBatchSetter(long userId, int size) {
-
-            super(userId, size);
-        }
-
-        void setRole(String role) {
-
-            NPreconditions.checkNotNull(role, "undefined role");
-            NPreconditions.checkTrue(role.length()>0, "empty role");
-
-            this.role = role;
-        }
-
-        @Override
-        public void setValues(PreparedStatement ps, int i) throws SQLException {
-
-            ps.setLong(1, getId());
-            ps.setString(2, role);
-        }
     }
 }

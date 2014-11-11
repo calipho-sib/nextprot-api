@@ -1,4 +1,4 @@
-package org.nextprot.api.user.dao.impl;
+package org.nextprot.api.commons.utils;
 
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;

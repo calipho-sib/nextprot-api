@@ -5,12 +5,12 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.JdbcTemplateUtils;
+import org.nextprot.api.commons.utils.KeyValuesJdbcBatchUpdater;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserProteinListDao;
-import org.nextprot.api.user.domain.UserConstants;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -118,31 +118,17 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 
 		final String INSERT_SQL = sqlDictionary.getSQLQuery("create-protein-list-item");
 
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
+		KeyValuesJdbcBatchUpdater updater = new KeyValuesJdbcBatchUpdater(new JdbcTemplate(dsLocator.getUserDataSource()), listId) {
 
-		final int batchSize = UserConstants.JDBC_TEMPLATE_BATCH_SIZE;
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
 
-		List<String> accList = new ArrayList<String>(accessions);
+				ps.setString(1, getValue(i));
+				ps.setLong(2, listId);
+			}
+		};
 
-		for(int j = 0; j < accessions.size(); j += batchSize) {
-
-			final List<String> batchList = accList.subList(j, j + batchSize > accessions.size() ? accessions.size() : j + batchSize);
-
-			jdbcTemplate.batchUpdate(INSERT_SQL, new BatchPreparedStatementSetter() {
-
-				@Override
-				public void setValues(PreparedStatement ps, int i) throws SQLException {
-
-					ps.setString(1, batchList.get(i));
-					ps.setLong(2, listId);
-				}
-
-				@Override
-				public int getBatchSize() {
-					return batchList.size();
-				}
-			});
-		}
+		updater.batchUpdate(INSERT_SQL, new ArrayList<String>(accessions));
 	}
 
 	@Override

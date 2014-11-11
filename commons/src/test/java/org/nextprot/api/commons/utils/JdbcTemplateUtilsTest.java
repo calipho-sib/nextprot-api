@@ -1,4 +1,4 @@
-package org.nextprot.api.user.dao.impl;
+package org.nextprot.api.commons.utils;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,7 +8,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.support.KeyHolder;
 
-import static org.mockito.Matchers.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class JdbcTemplateUtilsTest {

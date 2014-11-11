@@ -5,7 +5,6 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Sets;
 import org.junit.Test;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +16,9 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-//@TransactionConfiguration(defaultRollback = false)
 @DatabaseSetup(value = "UserProteinListDaoTest.xml", type = DatabaseOperation.INSERT)
 public class UserProteinListDaoTest extends UserApplicationBaseTest {
 
-	@Autowired private DataSourceServiceLocator dsLocator;
 	@Autowired private UserProteinListDao proteinListDao;
 
 	private String username = "spongebob";
@@ -76,7 +73,7 @@ public class UserProteinListDaoTest extends UserApplicationBaseTest {
 	@Test
 	public void testGetAccessionsByListIdUnknownId() {
 
-		assertEquals(Sets.newHashSet(), proteinListDao.getAccessionsByListId(157));
+		assertEquals(new HashSet<String>(), proteinListDao.getAccessionsByListId(157));
 	}
 
 	@Test
@@ -142,6 +139,23 @@ public class UserProteinListDaoTest extends UserApplicationBaseTest {
 	}
 
 	@Test
+	public void testCreateUserProteinListAccessions2() {
+
+		Set<String> set = new HashSet<String>();
+		for (int i=0 ; i<1000 ; i++) {
+
+			set.add(String.valueOf(i));
+		}
+
+		proteinListDao.createUserProteinListAccessions(156, set);
+
+		UserProteinList list = proteinListDao.getUserProteinListById(156);
+
+		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 1003,
+				Sets.union(Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"), set));
+	}
+
+	@Test
 	public void testUpdateUserProteinList() {
 
 		UserProteinList l = new UserProteinList();
@@ -201,7 +215,7 @@ public class UserProteinListDaoTest extends UserApplicationBaseTest {
 
 		assertEquals(1, count);
 		assertNull(proteinListDao.getUserProteinListById(156));
-		assertEquals(Sets.newHashSet(), proteinListDao.getAccessionsByListId(156));
+		assertEquals(new HashSet<String>(), proteinListDao.getAccessionsByListId(156));
 	}
 
 	@Test
@@ -211,7 +225,7 @@ public class UserProteinListDaoTest extends UserApplicationBaseTest {
 
 		assertEquals(0, count);
 		assertNull(proteinListDao.getUserProteinListById(157));
-		assertEquals(Sets.newHashSet(), proteinListDao.getAccessionsByListId(157));
+		assertEquals(new HashSet<String>(), proteinListDao.getAccessionsByListId(157));
 	}
 
 	private static void assertExpectedProteinList(UserProteinList list, int expectedListId, String expectedListName, String expectedDescription,
