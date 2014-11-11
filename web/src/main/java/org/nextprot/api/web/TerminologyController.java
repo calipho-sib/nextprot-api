@@ -20,10 +20,10 @@ public class TerminologyController {
 
 	@Autowired private TerminologyService terminologyService;
 
-	@ApiMethod(path = "/rdf/terminology/{terminology}", verb = ApiVerb.GET, description = "Exports one neXtProt terminology, this includes: The ontology, the name, the description and the parent instance.", produces = { "text/turtle"})
-	@RequestMapping("/rdf/terminology/{terminology}")
+	@ApiMethod(path = "/rdf/terminology/{term}", verb = ApiVerb.GET, description = "Exports one neXtProt term, this includes: The ontology, the name, the description of the term and its parent.", produces = { "text/turtle"})
+	@RequestMapping("/rdf/terminology/{term}")
 	public String findOneTerm(
-			@ApiParam(name = "terminology", description = "The name of the neXtProt terminology. For example, the brain: TS-0095", allowedvalues = { "TS-0095"}) @PathVariable("terminology") String accession, Model model) {
+			@ApiParam(name = "term", description = "The accession of a term in a controlled vocabulary. For example, the brain: TS-0095", allowedvalues = { "TS-0095"}) @PathVariable("term") String accession, Model model) {
 		model.addAttribute("terminology", this.terminologyService.findTerminologyByAccession(accession));
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "term";
@@ -33,14 +33,14 @@ public class TerminologyController {
 	@ApiMethod(path = "/rdf/terminology/ontology/{ontology}", verb = ApiVerb.GET, description = "Exports the whole neXtProt terminology for the specified ontology, this includes: The ontology, the name, the description and the parent instance.", produces = {"text/turtle"})
 	@RequestMapping("/rdf/terminology/ontology/{ontology}")
 	public String findAllTermByOntology(
-			@ApiParam(name = "ontology", description = "The name in pascal case format of the neXtProt ontology. For example, the 'NextProt tissues' ontology", allowedvalues = { "NextprotTissues"}) @PathVariable("ontology") String ontology, Model model) {
+			@ApiParam(name = "ontology", description = "The cv_name in pascal case format of the neXtProt ontology. For example, the 'NextprotAnatomyCv' ontology", allowedvalues = { "NextprotAnatomyCv"}) @PathVariable("ontology") String ontology, Model model) {
 		model.addAttribute("termList", this.terminologyService.findTerminologyByOntology(ontology));
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "term-list";
 	}
 
 
-	@ApiMethod(path = "/rdf/terminology", verb = ApiVerb.GET, description = "Exports the whole neXtProt terminology ordered by ontology, this includes: The ontology, the name, the description and the parent instance.", produces = {"text/turtle"})
+	@ApiMethod(path = "/rdf/terminology", verb = ApiVerb.GET, description = "Exports the whole neXtProt terminology ordered by the name of the controlled vocabulary, this includes: The ontology, the name, the description and the parent instance.", produces = {"text/turtle"})
 	@RequestMapping("/rdf/terminology")
 	public String findAllTermOrderedByOntology(Model model) {
 		model.addAttribute("termList", this.terminologyService.findAllTerminology());

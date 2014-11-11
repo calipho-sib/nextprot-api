@@ -1,5 +1,5 @@
 ## repeat annotation for each isoform
-term:$StringUtils.slug($terminology.getAccession()) a :$StringUtils.toCamelCase($terminology.getOntology(), false);
+term:$StringUtils.slug($terminology.getAccession()) a :$terminology.getOntology();
   rdfs:label "$StringUtils.clean($terminology.getName())"^^xsd:string;
 ##  rdfs:comment "$StringUtils.clean($terminology.getDescription())"^^xsd:string;
 #if($terminology.getAncestorAccession())
