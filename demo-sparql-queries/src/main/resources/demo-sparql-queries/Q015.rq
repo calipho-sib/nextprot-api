@@ -4,6 +4,6 @@
 #count:128
 SELECT distinct ?entry WHERE {
 ?entry :isoform ?iso.
-?iso :region / :term term:DO-00477. #PDZ domain
-?iso :binaryInteraction/:interactant/:isoform?/:expression/:term/:childOf term:TS-0095 #brain
+?iso :region / :term cv:DO-00477. #PDZ domain
+?iso :binaryInteraction/:interactant/:isoform?/:expression/:term/:childOf cv:TS-0095 #brain
 }

@@ -4,6 +4,6 @@
 #count:3680
 select distinct ?entry where {
  ?entry :isoform ?iso .
- ?iso :keyword / :term term:KW-0597 .
- ?iso :location /:term /:childOf term:SL-0086 .
+ ?iso :keyword / :term cv:KW-0597 .
+ ?iso :location /:term /:childOf cv:SL-0086 .
 }order by ?entry

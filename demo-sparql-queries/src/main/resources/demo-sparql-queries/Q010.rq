@@ -4,6 +4,6 @@
 #count:1856
 select  distinct  ?entry WHERE  {
   ?entry :isoform ?iso .
-  ?iso :keyword / :term term:KW-0325.
-  FILTER NOT EXISTS { ?iso :topology / :term term:CVTO_0022 }
+  ?iso :keyword / :term cv:KW-0325.
+  FILTER NOT EXISTS { ?iso :topology / :term cv:CVTO_0022 }
 }

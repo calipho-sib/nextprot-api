@@ -6,7 +6,7 @@
 select distinct ?entry where {
  ?entry :isoform ?iso .
   ?iso :location ?loc.
-  ?loc :term/:childOf term:SL-0173 .
+  ?loc :term/:childOf cv:SL-0173 .
   ?loc :evidence /:assignedBy ?src.
   FILTER  ( ?src not in (source:Human_protein_atlas_subcellular_localization, source:GFP-cDNAEMBL))
   # alternatively

@@ -3,9 +3,9 @@
 #tags:expression
 #count:1489
 #time:
-# (transport term:GO_0006810, term:KW-0813) 
+# (transport cv:GO_0006810, cv:KW-0813) 
 SELECT distinct ?entry WHERE {
   ?entry :isoform ?iso .
-  ?iso :expression/:term/:childOf term:TS-0564.
-  ?iso :keyword / :term term:KW-0813. 
+  ?iso :expression/:term/:childOf cv:TS-0564.
+  ?iso :keyword / :term cv:KW-0813. 
 }

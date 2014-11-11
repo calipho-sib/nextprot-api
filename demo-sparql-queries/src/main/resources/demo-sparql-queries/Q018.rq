@@ -6,7 +6,7 @@
 #pending
 select distinct ?entry where {
   ?entry :isoform ?iso .
-  ?iso :location/:term/:childOf term:SL-0191.
+  ?iso :location/:term/:childOf cv:SL-0191.
 # acetylated and methylated
-  ?iso :keyword/:term term:KW-0007,term:KW-0488.
+  ?iso :keyword/:term cv:KW-0007,cv:KW-0488.
 }

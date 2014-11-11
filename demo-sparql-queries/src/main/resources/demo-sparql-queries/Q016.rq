@@ -5,7 +5,7 @@ tags:sequence
 #time:0.08
 SELECT distinct ?entry  WHERE  {
 ?entry :isoform ?iso .
-?iso :location/:term term:SL-0243;:sequence / :chain ?seq. #secreted
+?iso :location/:term cv:SL-0243;:sequence / :chain ?seq. #secreted
 ?iso :matureProtein [ :start ?mstart ; :end ?mend]
 FILTER ((?mend-?mstart > 0) && (?mend-?mstart <= 1000))	 
 BIND(?mend - ?mstart as ?mlen)	 

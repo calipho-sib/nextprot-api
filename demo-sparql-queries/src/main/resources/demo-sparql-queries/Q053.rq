@@ -5,7 +5,7 @@
 #time: 0.48
 SELECT distinct ?entry WHERE {
  ?entry  :isoform/:function ?statement.
- ?statement :term / :childOf term:GO_0007155.
+ ?statement :term / :childOf cv:GO_0007155.
  ?statement :evidence/:code ?ecode .
   FILTER  ( ?ecode != :IEA && ?ecode != :ISS)
 }

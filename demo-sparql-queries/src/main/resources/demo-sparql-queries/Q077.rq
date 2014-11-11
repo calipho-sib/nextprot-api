@@ -5,7 +5,7 @@
 #time: 10.7
 select distinct ?entry where {
   ?entry :isoform /:expression ?s1.
-  ?s1 :evidence ?evi;:term/:childOf term:TS-0564. #Liver
+  ?s1 :evidence ?evi;:term/:childOf cv:TS-0564. #Liver
   ?evi :experimentalContext / :detectionMethod / rdfs:subClassOf :IHC; :expressionLevel ?level .
   filter (?level not in (:Negative))
   FILTER NOT EXISTS {

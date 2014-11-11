@@ -5,7 +5,7 @@
 #time:0.1
 SELECT distinct ?entry WHERE {
  ?entry :isoform ?iso .
- #?iso :location/:term/:childOf term:SL-0243 .
- ?iso :keyword / :term term:KW-0964. # secreted
- ?iso :keyword / :term term:KW-0479. # metal-binding
+ #?iso :location/:term/:childOf cv:SL-0243 .
+ ?iso :keyword / :term cv:KW-0964. # secreted
+ ?iso :keyword / :term cv:KW-0479. # metal-binding
 }

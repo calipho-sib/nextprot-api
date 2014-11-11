@@ -4,7 +4,7 @@
 #count:1327
 select distinct ?entry where{
  ?entry :isoform ?iso .
-  ?iso :location/:term/:childOf term:SL-0173 .
-  FILTER NOT EXISTS{ ?iso :keyword term:KW-0809 }
+  ?iso :location/:term/:childOf cv:SL-0173 .
+  FILTER NOT EXISTS{ ?iso :keyword cv:KW-0809 }
 }order by ?entry
 

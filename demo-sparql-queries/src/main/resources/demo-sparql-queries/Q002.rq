@@ -4,5 +4,5 @@
 #count:3185
 select distinct ?entry where {
   ?entry :isoform ?iso.
-  ?iso :location / :term / :childOf term:SL-0086, term:SL-0191
+  ?iso :location / :term / :childOf cv:SL-0086, cv:SL-0191
 }order by ?entry

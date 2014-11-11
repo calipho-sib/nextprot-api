@@ -24,19 +24,19 @@
       .
 
 # ECO_0000045 IHC =>A spatial pattern of protein expression evidence
-term:ECO_0000045 rdfs:subClassOf :IHC .
+cv:ECO_0000045 rdfs:subClassOf :IHC .
 
 # ECO_0000104 EST =>microarray RNA expression level evidence
-term:ECO_0000104 rdfs:subClassOf :EST .
+cv:ECO_0000104 rdfs:subClassOf :EST .
 
 # ECO_0000220 microarray =>sequencing assay evidence
- term:ECO_0000220 rdfs:subClassOf :Microarray .
+ cv:ECO_0000220 rdfs:subClassOf :Microarray .
  
  
 # alternative to rdfs:subClassOf (see later)
-#:IHC :related term:ECO:0000045 .
-#:EST :related term:ECO:0000104 .
-#:Microarray :related term: ECO:0000220 .
+#:IHC :related cv:ECO:0000045 .
+#:EST :related cv:ECO:0000104 .
+#:Microarray :related cv: ECO:0000220 .
 
  
 

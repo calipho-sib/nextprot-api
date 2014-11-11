@@ -12,7 +12,6 @@ PREFIX evidence: <http://nextprot.org/rdf/evidence/>
 PREFIX xref: <http://nextprot.org/rdf/xref/>
 PREFIX publication: <http://nextprot.org/rdf/publication/>
 PREFIX identifier: <http://nextprot.org/rdf/identifier/>
-PREFIX term: <http://nextprot.org/rdf/terminology/>
 PREFIX cv: <http://nextprot.org/rdf/terminology/>
 PREFIX gene: <http://nextprot.org/rdf/gene/>
 PREFIX source: <http://nextprot.org/rdf/source/>

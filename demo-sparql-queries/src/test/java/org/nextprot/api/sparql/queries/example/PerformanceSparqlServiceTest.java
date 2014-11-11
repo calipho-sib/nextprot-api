@@ -61,7 +61,7 @@ public class PerformanceSparqlServiceTest {
 				System.out.println("Sending " + uq.getTitle());
 				String sparql = uq.getSparql();
 
-				// String sparql = "?entry :isoform/:expression/:term/:childOf term:TS-0564;\n\t:classifiedWith term:KW-0813.";
+				// String sparql = "?entry :isoform/:expression/:term/:childOf cv:TS-0564;\n\t:classifiedWith cv:KW-0813.";
 				try {
 					sendRequest(sparql, sparqlEP, "\"" + uq.getTitle() + "\"", testId);
 				} catch (Exception e) {

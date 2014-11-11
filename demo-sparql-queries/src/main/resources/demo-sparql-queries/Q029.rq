@@ -4,5 +4,5 @@
 #count:228
 #time:0.384
 select distinct ?entry where {
-  ?entry :isoform/:medical/:term/:related/:childOf term:D002318.
+  ?entry :isoform/:medical/:term/:related/:childOf cv:D002318.
 }
