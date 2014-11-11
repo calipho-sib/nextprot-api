@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Use this one to run the tests  -->
+<!--<!DOCTYPE dataset SYSTEM "https://raw.githubusercontent.com/calipho-sib/nextprot-api/user-app/user/src/main/resources/db/migration/user.dtd">-->
+
+<!-- Use this one to autocomplete -->
+<!--<!DOCTYPE dataset SYSTEM "/target/classes/db/migration/user.dtd">-->
+
+<dataset>
+    <users user_id="23" user_name="spongebob"/>
+    <users user_id="24" user_name="tahitibob"/>
+    <user_protein_lists list_id="156" list_name="mylist" description="my proteins" owner_id="23"/>
+    <protein_list_items accession_number="NX_Q14249" list_id="156"/>
+    <protein_list_items accession_number="NX_Q8N5Z0" list_id="156"/>
+    <protein_list_items accession_number="NX_P05165" list_id="156"/>
+</dataset>

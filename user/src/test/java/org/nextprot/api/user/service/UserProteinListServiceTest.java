@@ -1,33 +1,32 @@
 package org.nextprot.api.user.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.HashSet;
-import java.util.Set;
-
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.CommonsUnitBaseTest;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.user.domain.UserList;
-import org.nextprot.api.user.service.UserListService.Operations;
+import org.nextprot.api.user.domain.UserProteinList;
+import org.nextprot.api.user.service.UserProteinListService.Operations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @Ignore
 @ActiveProfiles("unit")
-@DatabaseSetup(value = "UserListServiceTest.xml", type = DatabaseOperation.INSERT)
-public class UserListServiceTest extends CommonsUnitBaseTest {
+@DatabaseSetup(value = "UserProteinListServiceTest.xml", type = DatabaseOperation.INSERT)
+public class UserProteinListServiceTest extends CommonsUnitBaseTest {
 	@Autowired private DataSourceServiceLocator dsLocator;
-	@Autowired private UserListService proteinListService;
+	@Autowired private UserProteinListService proteinListService;
 
-	private UserList proteinList;
+	private UserProteinList proteinList;
 	
 	private static final String TEST_USER = "asfas";
 	private static final String TEST_PASSWORD = "12212";
@@ -50,9 +49,9 @@ public class UserListServiceTest extends CommonsUnitBaseTest {
 	
 	@Test
 	public void testCreateProteinList() {
-		UserList created = this.proteinListService.createProteinList(proteinList);
+		UserProteinList created = this.proteinListService.createUserProteinList(proteinList);
 		long id = created.getId();
-		assertTrue(id ==  this.proteinListService.getProteinListById(id).getId());
+		assertTrue(id ==  this.proteinListService.getUserProteinListById(id).getId());
 	}
 	
 	@Test
@@ -60,7 +59,7 @@ public class UserListServiceTest extends CommonsUnitBaseTest {
 		Set<String> accs = new HashSet<String>();
 		accs.add("NX_P123");
 		
-		UserList l = this.proteinListService.createProteinList("awesome", null, accs, TEST_USER);
+		UserProteinList l = this.proteinListService.createUserProteinList("awesome", null, accs, TEST_USER);
 		assertEquals("awesome", l.getName());
 	}
 	
@@ -84,27 +83,27 @@ public class UserListServiceTest extends CommonsUnitBaseTest {
 		Set<String> s1 = new HashSet<String>();
 		s1.add("NX_P123");
 		s1.add("NX_P456");
-		UserList l1 = this.proteinListService.createProteinList("cool1", null, s1, TEST_USER);
+		UserProteinList l1 = this.proteinListService.createUserProteinList("cool1", null, s1, TEST_USER);
 				
 		Set<String> s2 = new HashSet<String>();
 		s2.add("NX_P123");
 		s2.add("NX_P321");
-		UserList l2 = this.proteinListService.createProteinList("cool2", null, s2, TEST_USER);
+		UserProteinList l2 = this.proteinListService.createUserProteinList("cool2", null, s2, TEST_USER);
 		
-		UserList l3 = this.proteinListService.combine("coolio", null, TEST_USER, l1.getName(), l2.getName(), Operations.OR);
-		UserList l4 = this.proteinListService.combine("homie", null, TEST_USER, l1.getName(), l2.getName(), Operations.AND);
-		UserList l5 = this.proteinListService.combine("rap", null, TEST_USER, l2.getName(), l1.getName(), Operations.NOT_IN);
+		UserProteinList l3 = this.proteinListService.combine("coolio", null, TEST_USER, l1.getName(), l2.getName(), Operations.OR);
+		UserProteinList l4 = this.proteinListService.combine("homie", null, TEST_USER, l1.getName(), l2.getName(), Operations.AND);
+		UserProteinList l5 = this.proteinListService.combine("rap", null, TEST_USER, l2.getName(), l1.getName(), Operations.NOT_IN);
 		
 		assertEquals("coolio", l3.getName());
-		assertEquals(3, l3.getAccessions().size());
+		assertEquals(3, l3.getAccessionNumbers().size());
 		
 		assertEquals("homie", l4.getName());
-		assertEquals(1, l4.getAccessions().size());
-		assertEquals("NX_P123", l4.getAccessions().iterator().next());
+		assertEquals(1, l4.getAccessionNumbers().size());
+		assertEquals("NX_P123", l4.getAccessionNumbers().iterator().next());
 		
 		assertEquals("rap", l5.getName());
-		assertEquals(1, l5.getAccessions().size());
-		assertEquals("NX_P321", l5.getAccessions().iterator().next());
+		assertEquals(1, l5.getAccessionNumbers().size());
+		assertEquals("NX_P321", l5.getAccessionNumbers().iterator().next());
 	}
 	
 	
@@ -113,10 +112,10 @@ public class UserListServiceTest extends CommonsUnitBaseTest {
 		Set<String> s1 = new HashSet<String>();
 		s1.add("NX_P123");
 		s1.add("NX_P456");
-		UserList l1 = this.proteinListService.createProteinList("cool1", null, s1, TEST_USER);
+		UserProteinList l1 = this.proteinListService.createUserProteinList("cool1", null, s1, TEST_USER);
 		
 		Set<String> accs = new HashSet<String>();
-		this.proteinListService.addAccessions(l1.getId(), accs);
+		this.proteinListService.addAccessionNumbers(l1.getId(), accs);
 	}
 	
 	@Test
@@ -124,18 +123,18 @@ public class UserListServiceTest extends CommonsUnitBaseTest {
 		Set<String> s1 = new HashSet<String>();
 		s1.add("NX_P123");
 		s1.add("NX_P456");
-		UserList l1 = this.proteinListService.createProteinList("cool1", null, s1, TEST_USER);
+		UserProteinList l1 = this.proteinListService.createUserProteinList("cool1", null, s1, TEST_USER);
 		
 		assertEquals("cool1", l1.getName());
-		assertEquals(2, l1.getAccessions().size());
+		assertEquals(2, l1.getAccessionNumbers().size());
 		
 		Set<String> remAcc = new HashSet<String>();
 		remAcc.add("NX_P123");
-		this.proteinListService.removeAccessions(l1.getId(), remAcc);
+		this.proteinListService.removeAccessionNumbers(l1.getId(), remAcc);
 		
-		l1 = this.proteinListService.getProteinListById(l1.getId());
+		l1 = this.proteinListService.getUserProteinListById(l1.getId());
 		assertEquals("cool1", l1.getName());
-		assertEquals(1, l1.getAccessions().size());
+		assertEquals(1, l1.getAccessionNumbers().size());
 		
 	}
 }

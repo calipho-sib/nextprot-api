@@ -1,14 +1,13 @@
 package org.nextprot.api.user.domain;
 
-import java.io.Serializable;
-import java.sql.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.sql.Date;
+
 //@JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties({"resourceOwner"})
-public class UserApplication implements Serializable, UserResource {
+public class UserApplication implements UserResource {
 
 	private static final long serialVersionUID = -4106316166685442169L;
 
