@@ -1,5 +1,8 @@
 package org.nextprot.api.user.dao.impl;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.SetMultimap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -33,7 +36,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 	@Autowired private SQLDictionary sqlDictionary;
 
 	@Autowired private DataSourceServiceLocator dsLocator;
-	
+
 	@Override
 	public List<UserQuery> getUserQueries(String username) {
 
@@ -60,9 +63,10 @@ public class UserQueryDaoImpl implements UserQueryDao {
 			return null;
 
 		UserQuery query = queries.get(0);
-		// /NPreconditions.checkTrue(queries.size() == 1, "User query not found");
 
-		query.setTags(getTagsByQueryId(queries.get(0).getUserQueryId()));
+		SetMultimap<Long, String> tags = getQueryTags(Arrays.asList(queries.get(0).getUserQueryId()));
+
+		query.setTags(tags.get(queryId));
 
 		return query;
 	}
@@ -90,18 +94,23 @@ public class UserQueryDaoImpl implements UserQueryDao {
 	}
 
 	@Override
-	public Set<String> getTagsByQueryId(long queryId) {
+	public SetMultimap<Long, String> getQueryTags(Collection<Long> queryIds) {
 
-		SqlParameterSource namedParameters = new MapSqlParameterSource("query_id", queryId);
+		String sql = sqlDictionary.getSQLQuery("read-tags-by-user-query-ids");
 
-		List<String> tags = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForList(sqlDictionary.getSQLQuery("read-user-query-tags-by-id"), namedParameters, String.class);
+		SqlParameterSource namedParameters = new MapSqlParameterSource("query_ids", queryIds);
 
-		return new HashSet<String>(tags);
+		List<Tag> tags = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserQueryTagRowMapper());
+
+		SetMultimap<Long, String> map = HashMultimap.create();
+
+		for (Tag tag : tags) {
+
+			map.put(tag.getQueryId(), tag.getName());
+		}
+
+		return map;
 	}
-
-	//SELECT tag_name, query_id
-	//FROM np_users.user_query_tags
-	//WHERE query_id in (:query_ids)
 
 	@Override
 	public long createUserQuery(final UserQuery userQuery) {
@@ -187,15 +196,27 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(DELETE_SQL, params);
 	}
 
-	// TODO: talk with daniel/pam about the potential performance issue of the following n+1 transactions
-	// better call back ResultSetExtractor<List<UserQuery>> ???
+	/**
+	 * Get user query list and extract tags
+	 *
+	 * @param sql the select from user_queries sql query
+	 * @param source
+	 * @return
+	 */
 	private List<UserQuery> queryList(String sql, SqlParameterSource source) {
 
 		List<UserQuery> userQueryList = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, source, new UserQueryRowMapper());
 
-		for (UserQuery userQuery : userQueryList) {
+		if (!userQueryList.isEmpty()) {
 
-			userQuery.setTags(getTagsByQueryId(userQuery.getUserQueryId()));
+			List<Long> queryIds = Lists.transform(userQueryList, UserQuery.EXTRACT_QUERY_ID);
+
+			SetMultimap<Long, String> tags = getQueryTags(queryIds);
+
+			for (UserQuery query : userQueryList) {
+
+				query.setTags(tags.get(query.getUserQueryId()));
+			}
 		}
 
 		return userQueryList;
@@ -213,6 +234,41 @@ public class UserQueryDaoImpl implements UserQueryDao {
 			query.setPublished(resultSet.getString("published").equals("Y"));
 			query.setOwner(resultSet.getString("user_name"));
 			return query;
+		}
+	}
+
+	private static class Tag {
+
+		private String name;
+		private long queryId;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public long getQueryId() {
+			return queryId;
+		}
+
+		public void setQueryId(long queryId) {
+			this.queryId = queryId;
+		}
+	}
+
+	private static class UserQueryTagRowMapper implements ParameterizedRowMapper<Tag> {
+
+		public Tag mapRow(ResultSet resultSet, int row) throws SQLException {
+
+			Tag tag = new Tag();
+
+			tag.setName(resultSet.getString("tag_name"));
+			tag.setQueryId(resultSet.getLong("query_id"));
+
+			return tag;
 		}
 	}
 }

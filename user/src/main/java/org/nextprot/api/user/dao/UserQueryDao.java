@@ -1,7 +1,9 @@
 package org.nextprot.api.user.dao;
 
+import com.google.common.collect.SetMultimap;
 import org.nextprot.api.user.domain.UserQuery;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -36,11 +38,11 @@ public interface UserQueryDao {
 	List<UserQuery> getPublishedQueries();
 
 	/**
-	 * Get the list of tags associated with user query {@code queryId]
-	 * @param queryId the user query identifier
-	 * @return a set of tags
+	 * Get the tags associated with user queries
+	 * @param queryIds the user queries
+	 * @return a map of tags indexed by query id
 	 */
-	Set<String> getTagsByQueryId(long queryId);
+	SetMultimap<Long, String> getQueryTags(Collection<Long> queryIds);
 
 	/**
 	 * Insert a new user query into database
