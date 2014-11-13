@@ -14,7 +14,8 @@ public class UserQuery implements Serializable, UserResource {
 	private String description;
 	private String sparql;
 	private boolean published;
-	private String username;
+	private String owner;
+	private long ownerId;
 	private Set<String> tags;
 
 	public long getUserQueryId() {
@@ -57,13 +58,17 @@ public class UserQuery implements Serializable, UserResource {
 		this.published = published;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getOwner() {
+		return owner;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
+
+	public long getOwnerId() { return ownerId; }
+
+	public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
 
 	public void checkValid() {
 		NPreconditions.checkNotNull(sparql, "The sparql should not be null");
@@ -81,7 +86,8 @@ public class UserQuery implements Serializable, UserResource {
 
 	@Override
 	public String getResourceOwner() {
-		return this.getUsername();
+		return this.getOwner();
 	}
+
 
 }

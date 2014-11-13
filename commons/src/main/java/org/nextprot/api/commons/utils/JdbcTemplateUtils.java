@@ -17,14 +17,14 @@ public class JdbcTemplateUtils {
      * Insert a row and returns a key number generated for the given column name
      *
      * @param sql the SQL statement
-     * @param columnName name of the column that will have a generated key
+     * @param keyColumnName name of the column that will have a generated key
      * @param namedParameters a container of arguments and SQL types to bind to the query
      * @param jdbcOperations JDBC operations allowing the use of named parameters
      * @return a numeric generated key
      */
-    public static Number insertAndGetKey(String sql, String columnName, SqlParameterSource namedParameters, NamedParameterJdbcOperations jdbcOperations) {
+    public static Number insertAndGetKey(String sql, String keyColumnName, SqlParameterSource namedParameters, NamedParameterJdbcOperations jdbcOperations) {
 
-        return insertAndGetKey(sql, columnName, new GeneratedKeyHolder(), namedParameters, jdbcOperations);
+        return insertAndGetKey(sql, keyColumnName, new GeneratedKeyHolder(), namedParameters, jdbcOperations);
     }
 
     static Number insertAndGetKey(String sql, String columnName, KeyHolder keyHolder, SqlParameterSource namedParameters, NamedParameterJdbcOperations jdbcOperations) {

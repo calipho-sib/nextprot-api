@@ -3,7 +3,6 @@ package org.nextprot.api.user.dao;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Sets;
-import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
 import org.nextprot.api.user.domain.UserQuery;
@@ -69,28 +68,145 @@ public class UserQueryDaoTest extends UserApplicationBaseTest {
 
         assertNotNull(list);
         assertTrue(!list.isEmpty());
-
         assertEquals(1, list.size());
 
         assertExpectedUserQuery(list.get(0), 16, "spongebob", "myquery2", "my second query", true, "another sparql query", Sets.newHashSet("public"));
     }
 
     @Test
-    public void testCreateUserQuery() {
+    public void testGetTagsByQueryId() {
 
-        Assert.fail("implement this test");
+        assertEquals(Sets.newHashSet("public"), userQueryDao.getTagsByQueryId(16));
+    }
+
+    @Test
+    public void testGetTagsByUnknownQueryId() {
+
+        assertEquals(Sets.<String>newHashSet(), userQueryDao.getTagsByQueryId(17));
+    }
+
+    @Test
+    public void testCreateUserQuery() {
 
         UserQuery query = new UserQuery();
 
-        userQueryDao.createUserQuery(query);
+        query.setTitle("ma requete");
+        query.setSparql("yet another sparql query");
+        query.setOwnerId(24);
+
+        long id = userQueryDao.createUserQuery(query);
+        assertTrue(id > 0);
+
+        UserQuery query2 = userQueryDao.getUserQueryById(id);
+
+        assertExpectedUserQuery(query2, id, "tahitibob", "ma requete", null, false, "yet another sparql query", Sets.<String>newHashSet());
+    }
+
+    @Test
+    public void testCreateUserQueryAllField() {
+
+        UserQuery query = new UserQuery();
+
+        query.setTitle("ma requete");
+        query.setDescription("une simple requete");
+        query.setSparql("yet another sparql query");
+        query.setPublished(true);
+        query.setOwnerId(24);
+
+        long id = userQueryDao.createUserQuery(query);
+        assertTrue(id > 0);
+
+        UserQuery query2 = userQueryDao.getUserQueryById(id);
+
+        assertExpectedUserQuery(query2, id, "tahitibob", "ma requete", "une simple requete", false, "yet another sparql query", Sets.<String>newHashSet());
+    }
+
+    @Test
+    public void testCreateUserQueryTags() {
+
+        userQueryDao.createUserQueryTags(16, Sets.newHashSet("great", "heavy"));
+
+        UserQuery query = userQueryDao.getUserQueryById(16);
+
+        assertExpectedUserQuery(query, 16, "spongebob", "myquery2", "my second query", true, "another sparql query", Sets.newHashSet("public", "great", "heavy"));
+    }
+
+    @Test
+    public void testDeleteUserQueryTags() {
+
+        Set<String> accs = new HashSet<String>();
+        accs.add("public");
+
+        int count = userQueryDao.deleteUserQueryTags(16, accs);
+
+        UserQuery query = userQueryDao.getUserQueryById(16);
+
+        assertEquals(1, count);
+
+        assertExpectedUserQuery(query, 16, "spongebob", "myquery2", "my second query", true, "another sparql query", Sets.<String>newHashSet());
+    }
+
+    @Test
+    public void testDeleteUserQueryTags2() {
+
+        Set<String> accs = new HashSet<String>();
+        accs.add("pim");
+        accs.add("pam");
+        accs.add("poum");
+
+        int count = userQueryDao.deleteUserQueryTags(16, accs);
+
+        UserQuery query = userQueryDao.getUserQueryById(16);
+
+        assertEquals(0, count);
+
+        assertExpectedUserQuery(query, 16, "spongebob", "myquery2", "my second query", true, "another sparql query", Sets.newHashSet("public"));
+    }
+
+    @Test
+    public void testDeleteUserQuery() {
+
+        int count = userQueryDao.deleteUserQuery(16);
+
+        assertEquals(1, count);
+        assertNull(userQueryDao.getUserQueryById(16));
+        assertEquals(new HashSet<String>(), userQueryDao.getTagsByQueryId(16));
+    }
+
+    @Test
+    public void testDeleteUserQuery2() {
+
+        int count = userQueryDao.deleteUserQuery(17);
+
+        assertEquals(0, count);
+        assertNull(userQueryDao.getUserQueryById(17));
+        assertEquals(new HashSet<String>(), userQueryDao.getTagsByQueryId(17));
+    }
+
+    @Test
+    public void testUpdateUserQuery() {
+
+        UserQuery query = new UserQuery();
+
+        query.setUserQueryId(16);
+        query.setTitle("ma requete");
+        query.setDescription("une simple requete");
+        query.setSparql("yet another sparql query");
+        query.setPublished(true);
+
+        userQueryDao.updateUserQuery(query);
+
+        query  = userQueryDao.getUserQueryById(16);
+
+        assertExpectedUserQuery(query, 16, "spongebob", "ma requete", "une simple requete", true, "yet another sparql query", Sets.newHashSet("public"));
     }
 
     private static void assertExpectedUserQuery(UserQuery userQuery, long expectedUserQueryId, String expectedOwner, String expectedTitle,
                                                 String expectedDescription, boolean expectedPublished, String expectedSparql,
                                                 Set<String> expectedTags) {
-
+        assertNotNull(userQuery);
         assertEquals(expectedUserQueryId, userQuery.getUserQueryId());
-        assertEquals(expectedOwner, userQuery.getUsername());
+        assertEquals(expectedOwner, userQuery.getOwner());
         assertEquals(expectedOwner, userQuery.getResourceOwner());
         assertEquals(expectedDescription, userQuery.getDescription());
         assertEquals(expectedTitle, userQuery.getTitle());

@@ -37,7 +37,7 @@ public class UserQueryController {
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.POST })
 	@ResponseBody
 	public UserQuery createAdvancedQuery(@RequestBody UserQuery advancedUserQuery, @PathVariable("username") String username) {
-		advancedUserQuery.setUsername(username);
+		advancedUserQuery.setOwner(username);
 		return userQueryService.createUserQuery(advancedUserQuery);
 	}
 
@@ -47,7 +47,7 @@ public class UserQueryController {
 
 		// Never trust what the users sends to you! Set the correct username, so it will be verified by the service,
 		UserQuery q = userQueryService.getUserQueryById(advancedUserQuery.getUserQueryId());
-		advancedUserQuery.setUsername(q.getUsername());
+		advancedUserQuery.setOwner(q.getOwner());
 
 		return userQueryService.updateUserQuery(advancedUserQuery);
 	}

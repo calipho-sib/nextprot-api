@@ -1,33 +1,34 @@
 package org.nextprot.api.user.dao.impl;
 
-import org.nextprot.api.commons.exception.NPreconditions;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.JdbcTemplateUtils;
+import org.nextprot.api.commons.utils.KeyValuesJdbcBatchUpdater;
 import org.nextprot.api.commons.utils.SQLDictionary;
+import org.nextprot.api.commons.utils.SqlBoolean;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 @Lazy
 public class UserQueryDaoImpl implements UserQueryDao {
+
+	private final Log Logger = LogFactory.getLog(UserQueryDaoImpl.class);
 
 	@Autowired private SQLDictionary sqlDictionary;
 
@@ -54,11 +55,16 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		namedParameters.addValue("query_id", queryId);
 
 		List<UserQuery> queries = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserQueryRowMapper());
-		NPreconditions.checkTrue(queries.size() == 1, "User query not found");
 
-		queries.get(0).setTags(getQueryTagsById(queries.get(0).getUserQueryId()));
+		if (queries.isEmpty())
+			return null;
 
-		return queries.get(0);
+		UserQuery query = queries.get(0);
+		// /NPreconditions.checkTrue(queries.size() == 1, "User query not found");
+
+		query.setTags(getTagsByQueryId(queries.get(0).getUserQueryId()));
+
+		return query;
 	}
 
 	@Override
@@ -84,75 +90,101 @@ public class UserQueryDaoImpl implements UserQueryDao {
 	}
 
 	@Override
-	public long createUserQuery(final UserQuery userQuery) {
-		final String INSERT_SQL = sqlDictionary.getSQLQuery("advanced-user-query-insert");
-
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
-
-		KeyHolder keyHolder = new GeneratedKeyHolder();
-		jdbcTemplate.update(new PreparedStatementCreator() {
-			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-				PreparedStatement ps = connection.prepareStatement(INSERT_SQL, new String[] { "advanced_user_query_id" });
-				ps.setString(1, userQuery.getTitle());
-				ps.setString(2, userQuery.getDescription());
-				ps.setString(3, userQuery.getSparql());
-				ps.setString(4, userQuery.getUsername());
-				return ps;
-			}
-		}, keyHolder);
-
-		return keyHolder.getKey().longValue();
-
-	}
-
-	@Override
-	public void updateUserQuery(final UserQuery userQuery) {
-
-		final String UPDATE_SQL = sqlDictionary.getSQLQuery("advanced-user-query-update");
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(this.dsLocator.getUserDataSource());
-
-		jdbcTemplate.update(new PreparedStatementCreator() {
-			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-				PreparedStatement ps = connection.prepareStatement(UPDATE_SQL);
-				ps.setString(1, userQuery.getTitle());
-				ps.setString(2, userQuery.getDescription());
-				ps.setString(3, userQuery.getSparql());
-				ps.setString(4, userQuery.getPublished() ? "Y" : "N");
-				ps.setLong(5, userQuery.getUserQueryId());
-				return ps;
-			}
-		});
-	}
-
-	@Override
-	public void deleteUserQuery(final long id) {
-
-		final String DELETE_SQL = sqlDictionary.getSQLQuery("advanced-user-query-delete");
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(this.dsLocator.getUserDataSource());
-
-		jdbcTemplate.update(new PreparedStatementCreator() {
-			public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-				PreparedStatement ps = connection.prepareStatement(DELETE_SQL);
-				ps.setLong(1, id);
-				return ps;
-			}
-		});
-
-	}
-
-	/**
-	 * Get the tag names that belongs to the query {@code queryId}
-	 *
-	 * @param queryId the query identifier
-	 * @return a set of tags
-	 */
-	private Set<String> getQueryTagsById(long queryId) {
+	public Set<String> getTagsByQueryId(long queryId) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("query_id", queryId);
 
 		List<String> tags = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForList(sqlDictionary.getSQLQuery("read-user-query-tags-by-id"), namedParameters, String.class);
 
 		return new HashSet<String>(tags);
+	}
+
+	//SELECT tag_name, query_id
+	//FROM np_users.user_query_tags
+	//WHERE query_id in (:query_ids)
+
+	@Override
+	public long createUserQuery(final UserQuery userQuery) {
+
+		final String INSERT_SQL = sqlDictionary.getSQLQuery("create-user-query");
+
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+
+		namedParameters.addValue("title", userQuery.getTitle());
+		namedParameters.addValue("description", userQuery.getDescription());
+		namedParameters.addValue("sparql", userQuery.getSparql());
+		namedParameters.addValue("published", userQuery.getPublished());
+		namedParameters.addValue("owner_id", userQuery.getOwnerId());
+
+		return JdbcTemplateUtils.insertAndGetKey(INSERT_SQL, "query_id", namedParameters, new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())).longValue();
+	}
+
+	@Override
+	public void createUserQueryTags(final long queryId, final Set<String> tags) {
+
+		final String INSERT_SQL = sqlDictionary.getSQLQuery("create-user-query-tag");
+
+		KeyValuesJdbcBatchUpdater updater = new KeyValuesJdbcBatchUpdater(new JdbcTemplate(dsLocator.getUserDataSource()), queryId) {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+
+				ps.setString(1, getValue(i));
+				ps.setLong(2, queryId);
+			}
+		};
+
+		updater.batchUpdate(INSERT_SQL, new ArrayList<String>(tags));
+	}
+
+	@Override
+	public void updateUserQuery(final UserQuery src) {
+
+		final String UPDATE_SQL = sqlDictionary.getSQLQuery("update-user-query");
+
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+
+		// key to identify query to update
+		namedParameters.addValue("query_id", src.getUserQueryId());
+
+		// values to update
+		namedParameters.addValue("title", src.getTitle());
+		namedParameters.addValue("description", src.getDescription());
+		namedParameters.addValue("sparql", src.getSparql());
+		namedParameters.addValue("published", SqlBoolean.toChar(src.getPublished()));
+
+		NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource());
+
+		int affectedRows = jdbcTemplate.update(UPDATE_SQL, namedParameters);
+
+		if (affectedRows != 1) {
+			String msg = "oops something wrong occurred" + affectedRows + " rows were affected instead of only 1.";
+
+			Logger.error(msg);
+			throw new NextProtException(msg);
+		}
+	}
+
+	@Override
+	public int deleteUserQuery(final long queryId) {
+
+		final String DELETE_SQL = sqlDictionary.getSQLQuery("delete-user-query");
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("query_id", queryId);
+
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(DELETE_SQL, params);
+	}
+
+	@Override
+	public int deleteUserQueryTags(long queryId, Set<String> tags) {
+
+		final String DELETE_SQL = sqlDictionary.getSQLQuery("delete-user-query-tags");
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("tags", tags);
+
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(DELETE_SQL, params);
 	}
 
 	// TODO: talk with daniel/pam about the potential performance issue of the following n+1 transactions
@@ -163,7 +195,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 
 		for (UserQuery userQuery : userQueryList) {
 
-			userQuery.setTags(getQueryTagsById(userQuery.getUserQueryId()));
+			userQuery.setTags(getTagsByQueryId(userQuery.getUserQueryId()));
 		}
 
 		return userQueryList;
@@ -179,7 +211,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 			query.setDescription(resultSet.getString("description"));
 			query.setSparql(resultSet.getString("sparql"));
 			query.setPublished(resultSet.getString("published").equals("Y"));
-			query.setUsername(resultSet.getString("user_name"));
+			query.setOwner(resultSet.getString("user_name"));
 			return query;
 		}
 	}

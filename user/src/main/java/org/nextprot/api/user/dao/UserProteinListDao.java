@@ -74,9 +74,10 @@ public interface UserProteinListDao {
 	int deleteProteinListItems(long listId, Set<String> accessions);
 
 	/**
-	 * Delete the given list id
+	 * Delete the given list {@code listId}
+	 *
 	 * @param listId the list id to delete
-	 * @return
+	 * @return the number of deleted rows
 	 */
 	int deleteUserProteinList(long listId);
 }

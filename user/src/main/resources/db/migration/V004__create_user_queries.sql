@@ -15,8 +15,8 @@ CREATE INDEX user_query_title_idx  ON np_users.user_queries (title);
 
 CREATE TABLE np_users.user_query_tags (
   tag_name CHARACTER VARYING(256) NOT NULL,
-  query_id bigint REFERENCES np_users.user_queries(query_id) ON DELETE SET NULL,
+  query_id bigint REFERENCES np_users.user_queries(query_id) ON DELETE CASCADE,
 
-  CONSTRAINT user_query_pk PRIMARY KEY (query_id, tag_name)
+  CONSTRAINT user_query_tag_pk PRIMARY KEY (query_id, tag_name)
 );
 
