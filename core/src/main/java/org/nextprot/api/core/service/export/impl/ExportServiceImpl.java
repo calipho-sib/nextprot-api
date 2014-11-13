@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,8 +69,8 @@ public class ExportServiceImpl implements ExportService {
 
 	private final String[] CHROMOSSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
 	
-	@Autowired private VelocityConfig config; 
-
+	@Autowired 
+	private VelocityConfig config; 
 
 	@Override
 	public List<Future<File>> exportAllEntries(NPFileFormat format) {
@@ -94,8 +97,17 @@ public class ExportServiceImpl implements ExportService {
 		futures.add(exportSubPart(SubPart.FOOTER, format));
 		return futures;
 	}
+	
+	
+	@PostConstruct
+	public void init() {
+		executor = Executors.newFixedThreadPool(numberOfWorkers);
+	}
 
 	private Future<File> exportSubPart(SubPart part, NPFileFormat format) {
+		System.out.println("Config" + config);
+		System.out.println("Velocity Engine" + config.getVelocityEngine());
+
 		return executor.submit(new ExportSubPartTask(config.getVelocityEngine(), part, format));
 	}
 
