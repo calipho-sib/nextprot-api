@@ -1,4 +1,4 @@
-package org.nextprot.api.rdf.domain;
+package org.nextprot.api.commons.constants;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -6,8 +6,6 @@ import java.util.Set;
 import junit.framework.TestCase;
 
 import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
 
 public class AnnotationApiModelTest extends TestCase {
 
@@ -73,11 +71,12 @@ public class AnnotationApiModelTest extends TestCase {
 	}
 	
 	@Test
-	public void testRoots() {
-		assertTrue(AnnotationApiModel.getRoots().contains(AnnotationApiModel.NAME));
-		assertTrue(AnnotationApiModel.getRoots().contains(AnnotationApiModel.GENERAL_ANNOTATION));
-		assertTrue(AnnotationApiModel.getRoots().contains(AnnotationApiModel.POSITIONAL_ANNOTATION));
-		assertTrue(AnnotationApiModel.getRoots().size()==3);		
+	public void testRootChildren() {
+		Set<AnnotationApiModel> children = AnnotationApiModel.ROOT.getChildren();
+		assertTrue(children.contains(AnnotationApiModel.NAME));
+		assertTrue(children.contains(AnnotationApiModel.GENERAL_ANNOTATION));
+		assertTrue(children.contains(AnnotationApiModel.POSITIONAL_ANNOTATION));
+		assertTrue(children.size()==3);		
 	}
 	
 	@Test
@@ -182,7 +181,7 @@ public class AnnotationApiModelTest extends TestCase {
 	@Test
 	public void testRootsAllChildrenConsistency() {
 		// set of roots
-		Set<AnnotationApiModel> r = AnnotationApiModel.getRoots();
+		Set<AnnotationApiModel> r = AnnotationApiModel.ROOT.getChildren();
 		System.out.println("Roots :"+ r.size());
 		// set of children of each root
 		Set<AnnotationApiModel> s1 = AnnotationApiModel.GENERAL_ANNOTATION.getAllChildren();
@@ -191,7 +190,7 @@ public class AnnotationApiModelTest extends TestCase {
 		System.out.println("General annotations :"+ s2.size());
 		Set<AnnotationApiModel> s3 = AnnotationApiModel.NAME.getAllChildren();
 		System.out.println("Names :"+ s3.size());
-		int count = AnnotationApiModel.values().length;
+		int count = AnnotationApiModel.values().length - 1;
 		System.out.println("Roots and children :"+ (r.size()+s1.size()+ s2.size()+s3.size()));
 		System.out.println("Full count :"+count);
 		// we assume that no child has more than one root parent (but it is not forbidden)
@@ -202,7 +201,8 @@ public class AnnotationApiModelTest extends TestCase {
 	@Test
 	public void testPositionalAnnotationAllParents() {
 		Set<AnnotationApiModel> cs = AnnotationApiModel.POSITIONAL_ANNOTATION.getAllParents();
-		assertTrue(cs.size()==0);
+		assertTrue(cs.contains(AnnotationApiModel.ROOT));
+		assertTrue(cs.size()==1);
 	}
 	
 	@Test
@@ -210,7 +210,8 @@ public class AnnotationApiModelTest extends TestCase {
 		Set<AnnotationApiModel> cs = AnnotationApiModel.ACTIVE_SITE.getAllParents();
 		assertTrue(cs.contains(AnnotationApiModel.GENERIC_SITE));
 		assertTrue(cs.contains(AnnotationApiModel.POSITIONAL_ANNOTATION));
-		assertTrue(cs.size()==2);
+		assertTrue(cs.contains(AnnotationApiModel.ROOT));
+		assertTrue(cs.size()==3);
 	}
 	
 	@Test
@@ -219,7 +220,8 @@ public class AnnotationApiModelTest extends TestCase {
 		assertTrue(cs.contains(AnnotationApiModel.GENERIC_INTERACTION));
 		assertTrue(cs.contains(AnnotationApiModel.GENERIC_FUNCTION));		
 		assertTrue(cs.contains(AnnotationApiModel.GENERAL_ANNOTATION));
-		assertTrue(cs.size()==3);
+		assertTrue(cs.contains(AnnotationApiModel.ROOT));
+		assertTrue(cs.size()==4);
 	}
 	
 	public void show() {

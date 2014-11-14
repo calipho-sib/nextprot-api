@@ -2,12 +2,10 @@ package org.nextprot.api.core.service.export.impl;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,7 +18,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DbXrefService;
@@ -37,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 @Service
 @Lazy
@@ -70,8 +68,9 @@ public class ExportServiceImpl implements ExportService {
 	private static String REPOSITORY_PATH = "repository";
 
 	private final String[] CHROMOSSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
-
-	private VelocityEngine velocityEngine;
+	
+	@Autowired 
+	private VelocityConfig config; 
 
 	@Override
 	public List<Future<File>> exportAllEntries(NPFileFormat format) {
@@ -98,14 +97,23 @@ public class ExportServiceImpl implements ExportService {
 		futures.add(exportSubPart(SubPart.FOOTER, format));
 		return futures;
 	}
+	
+	
+	@PostConstruct
+	public void init() {
+		executor = Executors.newFixedThreadPool(numberOfWorkers);
+	}
 
 	private Future<File> exportSubPart(SubPart part, NPFileFormat format) {
-		return executor.submit(new ExportSubPartTask(this.velocityEngine, part, format));
+		System.out.println("Config" + config);
+		System.out.println("Velocity Engine" + config.getVelocityEngine());
+
+		return executor.submit(new ExportSubPartTask(config.getVelocityEngine(), part, format));
 	}
 
 	@Override
 	public Future<File> exportEntry(String uniqueName, NPFileFormat format) {
-		return executor.submit(new ExportEntryTask(this.entryService, this.velocityEngine, uniqueName, format));
+		return executor.submit(new ExportEntryTask(this.entryService, config.getVelocityEngine(), uniqueName, format));
 	}
 
 	static class ExportEntryTask implements Callable<File> {
@@ -248,41 +256,6 @@ public class ExportServiceImpl implements ExportService {
 
 	}
 
-	@PostConstruct
-	public void init() {
-
-		// clearRepository();
-
-		executor = Executors.newFixedThreadPool(numberOfWorkers);
-		LOGGER.info("Starting export executor service with " + numberOfWorkers + " workers");
-
-		if (this.velocityEngine == null) {
-
-			this.velocityEngine = new VelocityEngine();
-			this.velocityEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "file");
-			this.velocityEngine.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
-			this.velocityEngine.setProperty("file.resource.loader.path", "./src/main/webapp/WEB-INF/velocity/");
-
-			Properties props = new Properties();
-			try {
-				props.load(new FileInputStream("src/main/webapp/WEB-INF/velocity/velocity.properties"));
-				for (Object p : props.keySet()) {
-					String propertyName = (String) p;
-					this.velocityEngine.setProperty(propertyName, props.getProperty(propertyName));
-				}
-
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-
-			try {
-				this.velocityEngine.init();
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new RuntimeException(e);
-			}
-		}
-	}
 
 	@Override
 	public void clearRepository() {

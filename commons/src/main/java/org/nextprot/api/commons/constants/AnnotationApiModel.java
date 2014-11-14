@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 
 /**
@@ -13,20 +14,24 @@ import org.nextprot.api.commons.utils.StringUtils;
  */
 
 public enum AnnotationApiModel  {
-	
+
+	//Special node for the root
+	ROOT (0, "Root", "Root of the tree","",null),
+
 	/*
 	 * ENUMs with a negative dbId are virtual annotation types. Virtual means that there is NO annotation in our data of this type
 	 * ENUMs with a positive dbId are annotation types attached to at least one annotation in our data  
 	 */
+	
 
 	// names 
-	NAME(-100, "Name", "name","Name",null),
+	NAME(-100, "Name", "name","Name", new AnnotationApiModel[]{ ROOT}),
 	// ENZYME_CLASSIFICATION and FAMILY_NAME temporarily appear in the entry overview via another mechanism
 		FAMILY_NAME(1059,"family name", "familyName", "family name", new AnnotationApiModel[]{ NAME }), 
 
 	// generic categories for annotations
 	
-		POSITIONAL_ANNOTATION(-3, "PositionalAnnotation", "positionalAnnotation", "Positional annotation", null),
+		POSITIONAL_ANNOTATION(-3, "PositionalAnnotation", "positionalAnnotation", "Positional annotation", new AnnotationApiModel[]{ ROOT}),
 			PROCESSING_PRODUCT(-4, "ProcessingProduct", "processingProduct","Processing product", new AnnotationApiModel[]{ POSITIONAL_ANNOTATION }),
 			TOPOLOGY(-5, "Topology", "topology","Topology", new AnnotationApiModel[]{ POSITIONAL_ANNOTATION }),
 			REGION(-6, "Region", "region","Region", new AnnotationApiModel[]{ POSITIONAL_ANNOTATION }),
@@ -35,7 +40,7 @@ public enum AnnotationApiModel  {
 			SECONDARY_STRUCTURE(-9, "secondary structure", "secondaryStructure","Secondary structure", new AnnotationApiModel[]{  POSITIONAL_ANNOTATION }),
 			MAPPING(-91, "GenericMapping", "mapping","Mapping", new AnnotationApiModel[]{ POSITIONAL_ANNOTATION }),
 			
-		GENERAL_ANNOTATION(-2, "GeneralAnnotation", "generalAnnotation","General Annotation", null ),
+		GENERAL_ANNOTATION(-2, "GeneralAnnotation", "generalAnnotation","General Annotation", new AnnotationApiModel[]{ ROOT} ),
 			GENERIC_FUNCTION(-10, "GenericFunction", "function","Function", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
 			GENERIC_INTERACTION(-11, "GenericInteraction", "interaction","Interaction", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
 			GENERIC_LOCATION(-12, "GenericLocation", "location","Location", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
@@ -175,7 +180,29 @@ public enum AnnotationApiModel  {
 	}
 
 	
-	private static Map<String,AnnotationApiModel> mapEnum=new HashMap<String,AnnotationApiModel>();
+	
+	// *************** STATIC PRIVATE METHODS initialized for performance reasons ********************************** ///////////////////
+	
+	// Fill the cache
+	private static final Map<String,AnnotationApiModel> MAP_TYPES =new HashMap<String,AnnotationApiModel>();
+	static {for (AnnotationApiModel category : AnnotationApiModel.values()) {MAP_TYPES.put(category.getDbAnnotationTypeName(), category);}}
+	
+	// Fill the cache decamelized
+	private static Map<String,AnnotationApiModel> MAP_DECAMELIZED_TYPES=new HashMap<String,AnnotationApiModel>();
+	static {for (AnnotationApiModel category : AnnotationApiModel.values()) {MAP_DECAMELIZED_TYPES.put(StringUtils.decamelizeAndReplaceByHyphen(category.getDbAnnotationTypeName()), category);}	}
+
+	private static String HIERARCHY_STRING = null;
+	static {StringBuilder sb = new StringBuilder();getAnnotationHierarchy(AnnotationApiModel.ROOT, sb, 0);HIERARCHY_STRING = sb.toString();}
+	private static void getAnnotationHierarchy(AnnotationApiModel a, StringBuilder sb, int inc) {
+		if(inc > 0) sb.append(new String(new char[inc]).replace('\0', '-') + StringUtils.decamelizeAndReplaceByHyphen(a.getDbAnnotationTypeName()) + "  " + "\n");
+		int nextInc = inc + 1;
+		for (AnnotationApiModel c : a.getChildren()) {
+				getAnnotationHierarchy(c, sb, nextInc);
+		}
+	}
+	
+	
+	
 	/**
 	 * Allows to retrieve info about an annotation category given its annotation type name in the database
 	 * @param typeName the annotation type name ( the cv_terms.cv_name related to the annotation.cv_annotation_type_id)
@@ -203,18 +230,21 @@ public enum AnnotationApiModel  {
 	}
 
 	public static AnnotationApiModel getByDbAnnotationTypeName(String typeName) {
-		// first look in the hash map (faster)
-		if (mapEnum.containsKey(typeName)) return mapEnum.get(typeName);
-		// then try to find the category by iterating through the values
-		for (AnnotationApiModel category : AnnotationApiModel.values()) {
-			if(category.getDbAnnotationTypeName().equals(typeName)) {
-				mapEnum.put(category.getDbAnnotationTypeName(), category);
-				return category;
-			}
-		}
-		//finally if not found throw an error
-		throw new RuntimeException("Could not find AnnotationCategory for type: "+typeName);
+		if (MAP_TYPES.containsKey(typeName)) {
+			return MAP_TYPES.get(typeName);
+		}else throw new NextProtException("\nCould not find annotation category for: "+ typeName + "\nPossible types: \n" + typeName);
 	}
+
+
+	public static AnnotationApiModel getDecamelizedAnnotationTypeName(String typeName) {
+		String typeNameInLowerCase = typeName.toLowerCase();
+		if (MAP_DECAMELIZED_TYPES.containsKey(typeNameInLowerCase)) {
+			return MAP_DECAMELIZED_TYPES.get(typeNameInLowerCase);
+		} else {
+			throw new NextProtException("\nCould not find annotation category for: " + typeName + "\nPossible types: \n" + HIERARCHY_STRING);
+		}
+	}
+	
 		
 	/**
 	 * Tells if this annotation category is used in the field cv_annotation_type_id of an annotations record
@@ -278,7 +308,7 @@ public enum AnnotationApiModel  {
 	}
 	
 	public String toString() {
-		return this.getDbId() + " : " + this.getDbAnnotationTypeName();
+		return /*this.getDbId() + " : " +*/ this.getDbAnnotationTypeName();
 	}
 	
 	public Set<AnnotationPropertyApiModel> getProperties() {
@@ -287,6 +317,7 @@ public enum AnnotationApiModel  {
 	public AnnotationPropertyApiModel getPropertyByDbName(String dbName) {
 		return AnnotationPropertyApiModel.getPropertyByDbName(this, dbName);
 	}
+	
 	
 
 }
