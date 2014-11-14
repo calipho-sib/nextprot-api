@@ -307,6 +307,14 @@ public enum AnnotationApiModel  {
 		return all;
 	}
 	
+	public Set<AnnotationApiModel> getAllParentsButRoot() {
+		Set<AnnotationApiModel> mine = getParents();
+		Set<AnnotationApiModel> all = new HashSet<AnnotationApiModel>(mine);
+		for (AnnotationApiModel parent : mine) all.addAll(parent.getAllParents());
+		all.remove(AnnotationApiModel.ROOT);
+		return all;
+	}
+	
 	public String toString() {
 		return /*this.getDbId() + " : " +*/ this.getDbAnnotationTypeName();
 	}

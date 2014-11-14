@@ -141,7 +141,7 @@ public class Annotation implements Serializable {
 	
 	public List<String> getParentPredicates() {
 		List<String> list = new ArrayList<String>();
-		for (AnnotationApiModel cat : apiCategory.getAllParents()) list.add(cat.getRdfPredicate());
+		for (AnnotationApiModel cat : apiCategory.getAllParentsButRoot()) list.add(cat.getRdfPredicate());
 		return list;
 	}
 			
