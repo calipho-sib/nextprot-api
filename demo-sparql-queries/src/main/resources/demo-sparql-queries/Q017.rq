@@ -7,7 +7,7 @@
 SELECT distinct ?entry WHERE  {
   ?entry :isoform ?iso.
   ?iso :location/:term/:childOf cv:SL-0191.
-  ?iso :expression/:term/:childOf cv:TS-1313.
+  ?iso :detectedExpression/:term/:childOf cv:TS-1313.
   ?iso :sequence/:length ?len.
   FILTER (?len>1000)
 }

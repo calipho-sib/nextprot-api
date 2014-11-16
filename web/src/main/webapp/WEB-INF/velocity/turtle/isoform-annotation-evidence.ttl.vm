@@ -10,7 +10,7 @@ evidence:$evidence-uri
   rdf:type :Evidence ;
   :code :$evidence.getQualifierType();
 ## negative is no more needed
-##  :negative "$evidence.isNegativeEvidence($isoform-name)"^^xsd:boolean;
+  :negative "$evidence.isNegativeEvidence($isoform-name)"^^xsd:boolean;
 #if($evidence.getQualityQualifier())
   :quality :$evidence.getQualityQualifier();
 #end  

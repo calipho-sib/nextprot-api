@@ -48,14 +48,16 @@ public class Annotation implements Serializable {
 	
 	static{
 		
-		//
-		// map expressionLevel in 3 categories : negative, positive for consensus and mixing when no consensus exist  
-		commonExpressionPredicat.put("", 	   	"expression");
-		commonExpressionPredicat.put("High",   	"expression");
-		commonExpressionPredicat.put("Low",    	"expression");
-		commonExpressionPredicat.put("Medium", 	"expression");
-		commonExpressionPredicat.put("Positive","expression");
-		commonExpressionPredicat.put("Negative","negativeExpression");
+		/*
+		 * i changed the predicate names to be compatible with predicate hierarchy
+		 */
+		
+		commonExpressionPredicat.put("", 	   	"detectedExpression");
+		commonExpressionPredicat.put("High",   	"detectedExpression");
+		commonExpressionPredicat.put("Low",    	"detectedExpression");
+		commonExpressionPredicat.put("Medium", 	"detectedExpression");
+		commonExpressionPredicat.put("Positive","detectedExpression");
+		commonExpressionPredicat.put("Negative","undetectedExpression");
 	}	
 	
 	
@@ -230,25 +232,26 @@ public class Annotation implements Serializable {
 	}
 	
 	/**
-	 * select consensus between positive and negative expression, or no consensus 
-	 * @return positive consensus: expression, negative consensus: negativeExpression or no consensus: mixingExpression
+	 * pam 16.11. 2015, harmonization with data model:
+	 * selects expression level consensus:
+	 * - detectedExpression if any evidence is either low, high, medium or positive
+	 * - undetectedExpression if all evidences are negative or not detected
+	 * - null if no data is found 
+	 * @return "detectedExpression", "undetectedExpression" or null
 	 */
 	public String getConsensusExpressionLevelPredicat(){
 		String level="";
-		
 		// make sure we have evidences otherwise error breaks ttl generation
 		if (evidences.size()==0) 
 			return null;
-		
 		// check if there is expression info
 		if ((level=evidences.get(0).getExpressionLevel())==null)
 			return null;
-		
 		level=commonExpressionPredicat.get(level);
-		
 		for(AnnotationEvidence e:evidences){
-			if(!level.equals(commonExpressionPredicat.get(e.getExpressionLevel())))
-				return commonExpressionPredicat.get("");
+			if(!level.equals(commonExpressionPredicat.get(e.getExpressionLevel()))) {
+				return commonExpressionPredicat.get(""); // default 
+			}
 		}
 		return level;
 	}
