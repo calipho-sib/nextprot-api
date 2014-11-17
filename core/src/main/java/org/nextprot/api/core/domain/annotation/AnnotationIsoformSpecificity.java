@@ -20,7 +20,9 @@ public class AnnotationIsoformSpecificity implements Serializable {
 	}
 	
 	private long annotationId; 
+	// if firstPosition = 0, it means that it is unknown (first_pos=null in db)
 	private int firstPosition = 0; // should be at least 1
+	// if lastPosition = 0, it means that it is unknown (last_pos=null in db)
 	private int lastPosition = 0;
 	private String isoformName;
 	private String specificity; // cv_name related to annotation_protein_assoc.cv_specificity_qualifier_type_id
@@ -51,9 +53,16 @@ public class AnnotationIsoformSpecificity implements Serializable {
 	}
 
 	public int getLastPosition() {
-		if(firstPosition > lastPosition) //since the firstPosition is incremented when loaded from the database, this check deals with the case when first == last. For annotations of type variant-insertion
-			return lastPosition + 1; // should be the same as firstPosition
-		else return lastPosition;
+		// 0 means unknown
+		if (lastPosition==0) {
+			return 0; 
+		// since the firstPosition is incremented when loaded from the database, this check deals with the case when first == last
+		// for annotations of type variant-insertion ...
+		} else 	if(firstPosition > lastPosition) {
+			return lastPosition + 1; // ... lastPosition should be the same as firstPosition in case of variant-insertion			
+		} else {
+			return lastPosition;
+		}
 	}
 
 	public void setLastPosition(int lastPosition) {

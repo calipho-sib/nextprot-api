@@ -1,0 +1,10 @@
+#title:Q072 with a cross-reference to CCDS
+#acs: A0AVK6, A1A4T8, A1L4K1, ...
+#tags:xref
+#count:18217
+#time: 3.6
+SELECT distinct ?entry WHERE {
+?entry :reference  / :provenance db:CCDS .
+# we don't have the info linking CCDS to isoforms
+}
+

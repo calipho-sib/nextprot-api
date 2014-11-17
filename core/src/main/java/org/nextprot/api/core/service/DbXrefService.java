@@ -20,6 +20,8 @@ public interface DbXrefService {
 	List<DbXref> findAllDbXrefs();
 	
 	List<DbXref> findDbXrefsByEntry(String uniqueName);
+	
+	List<DbXref> findDbXrefsAsAnnotByEntry(String uniqueName);
 
 	List<DbXref> findDbXRefByPublicationId(Long publicationId);
 	

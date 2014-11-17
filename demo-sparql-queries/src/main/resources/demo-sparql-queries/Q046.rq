@@ -1,0 +1,11 @@
+#title:Q046  with a gene alternative name which is IL27
+#acs:, , , ...
+#tags:todo,gene
+#count:
+#time:
+
+select distinct ?x ?p ?entry ?name where {
+ ?entry a :Entry.
+  ?entry :alternativeName /:fullName ?name.
+ FILTER (strlen(?name) < 5 )
+}

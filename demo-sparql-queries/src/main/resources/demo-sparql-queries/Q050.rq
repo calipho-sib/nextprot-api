@@ -1,0 +1,16 @@
+#title:Q050  which are expressed in brain according to IHC but not expressed in brain according to microarray
+#acs:Q9Y6N5, Q9Y6J6, A1L4K1, ...
+#tags:expression,evidence,long
+#count:9730
+#time:33.8
+SELECT distinct ?entry WHERE {
+  ?entry :isoform ?iso.
+  ?iso :expressionProfile ?s1;:expressionProfile ?s2.
+
+# there exists an evidence exists saying that microarray didn't not detect any expression in the brain
+  ?s2 :in/:childOf  term:TS-0095;:withNegativeEvidence/:experimentalContext/:detectionMethod term:ECO_0000220.
+
+# there exists an evidence telling that the protein is expressed in brain according to IHC
+  ?s1 :in/:childOf  term:TS-0095;:withEvidence/:experimentalContext/:detectionMethod term:ECO_0000045.
+
+}

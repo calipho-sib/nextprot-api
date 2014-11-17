@@ -97,6 +97,13 @@ public class DbXref implements Serializable {
 		return properties;
 	}
 
+	public String getPropertyValue(String name) {
+		for (DbXrefProperty prop: properties) {
+			if (name.equals(prop.getName())) return prop.getValue();
+		}
+		return null;
+	}
+	
 	public void setProperties(List<DbXrefProperty> properties) {
 		this.properties = properties;
 	}

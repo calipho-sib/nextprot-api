@@ -1,0 +1,9 @@
+#title:Q035  located in the mitochondrion and which is an enzyme
+#acs:O00154, P55211, Q14318, ...
+#tags:enzyme,location
+#count:535
+#time:0.08
+SELECT distinct  ?entry   WHERE  {
+  ?entry :classifiedWith/rdf:type :EnzymeClassificationOntology.
+  ?entry :isoform/:location/:in/:childOf term:SL-0173
+}

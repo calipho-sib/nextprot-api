@@ -76,6 +76,13 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master"), namedParams, new DbXRefRowMapper());
 	}
 	
+	@Override
+	public List<DbXref> findDbXrefsAsAnnotByMaster(String uniqueName) {
+		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", uniqueName);
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-as-annot-by-master"), namedParams, new DbXRefRowMapper());
+	}
+	
+	
 	public List<DbXrefProperty> findDbXrefsProperties(List<Long> resourceIds) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("resourceIds", resourceIds);
@@ -163,6 +170,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		//System.out.println("DbXrefDaoImpl.findDbXrefByResourceId() resourceId:" + resourceId);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-resource-id"), namedParams, new DbXRefRowMapper());
 	}
+
 
 
 }

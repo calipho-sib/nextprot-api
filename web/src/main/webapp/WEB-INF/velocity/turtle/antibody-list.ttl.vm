@@ -8,7 +8,9 @@
 #set($mapping-iri=$antibody-name+"-"+$isoform-name)
 #foreach($spec in $antibody.isoformSpecificity.values())
 #if ($spec.isoformName==$isoform-name) 
+  isoform:$isoform-name :positionalAnnotation :$mapping-iri .
   isoform:$isoform-name :mapping :$mapping-iri .
+  isoform:$isoform-name :antibodyMapping :$mapping-iri .
   :$mapping-iri 
     rdf:type :AntibodyMapping ;  
 #foreach($xref in $antibody.xrefs)
