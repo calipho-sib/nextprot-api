@@ -40,6 +40,11 @@ public class UserServiceImpl implements UserService {
 		return userDao.getUserByUsername(username);
 	}
 
+	@Override
+	public void createUser(User user) {
+		userDao.createUser(user);
+	}
+
 }
 
 

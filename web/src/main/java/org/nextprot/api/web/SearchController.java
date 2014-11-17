@@ -1,8 +1,6 @@
 package org.nextprot.api.web;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.google.common.base.Joiner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
@@ -13,25 +11,17 @@ import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SearchResult;
-import org.nextprot.api.solr.SolrConfiguration;
-import org.nextprot.api.solr.SolrIndex;
-import org.nextprot.api.solr.SolrService;
-import org.nextprot.api.user.domain.UserList;
-import org.nextprot.api.user.service.UserListService;
+import org.nextprot.api.solr.*;
+import org.nextprot.api.user.domain.UserProteinList;
+import org.nextprot.api.user.service.UserProteinListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import com.google.common.base.Joiner;
+import java.util.HashSet;
+import java.util.Set;
 
 @Lazy
 @Controller
@@ -43,19 +33,9 @@ public class SearchController {
 	@Autowired private SparqlService sparqlService;
 	@Autowired private SparqlEndpoint sparqlEndpoint;
 
-	@Autowired private UserListService proteinListService;
+	@Autowired private UserProteinListService proteinListService;
 	@Autowired private SolrConfiguration configuration;
 
-	/**
-	 * 
-	 * page default value is 0
-	 * 
-	 * @param index
-	 * @param q
-	 * @param quality
-	 * @param sort 
-	 * @param start
-	 */
 	@RequestMapping(value = "/search/{index}", method = { RequestMethod.POST })
 	public String search(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest, Model model) {
 		
@@ -74,8 +54,8 @@ public class SearchController {
 				
 			}else if(queryRequest.hasList()) {
 				
-				UserList proteinList = this.proteinListService.getProteinListByNameForUser(queryRequest.getListOwner(), queryRequest.getList());
-				Set<String> accessions = proteinList.getAccessions();
+				UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(queryRequest.getListOwner(), queryRequest.getList());
+				Set<String> accessions = proteinList.getAccessionNumbers();
 
 				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 				queryRequest.setQuery(queryString);
@@ -199,8 +179,8 @@ public class SearchController {
 			@RequestParam(value="filter", required=false) String filter,
 			Model model) throws SearchQueryException {
 		
-		UserList proteinList = this.proteinListService.getProteinListByNameForUser(username, listName);
-		Set<String> accessions = proteinList.getAccessions();
+		UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(username, listName);
+		Set<String> accessions = proteinList.getAccessionNumbers();
 		
 		String queryString = "id:" + ( accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next() );
 		

@@ -1,14 +1,15 @@
 package org.nextprot.api.user.domain;
 
-import java.io.Serializable;
-import java.sql.Date;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.sql.Date;
+
+import org.nextprot.api.commons.resource.ResourceOwner;
+
 //@JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties({"resourceOwner"})
-public class UserApplication implements Serializable, UserResource {
+public class UserApplication implements ResourceOwner {
 
 	private static final String USER_APP_RO = "RO";
 	private static final String USER_APP_RW = "RW";

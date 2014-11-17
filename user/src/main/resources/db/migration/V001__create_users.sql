@@ -5,7 +5,7 @@ CREATE TABLE np_users.users (
   last_name VARCHAR(256)
 );
 
-create unique index users_username_udx ON np_users.users USING btree (user_name);
+CREATE UNIQUE index users_username_udx ON np_users.users USING btree (user_name);
 
 CREATE TABLE np_users.user_roles (
   role_name VARCHAR(256) NOT NULL CHECK (role_name IN ('ADMIN', 'USER', 'APP')),

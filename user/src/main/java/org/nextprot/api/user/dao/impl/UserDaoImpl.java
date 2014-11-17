@@ -1,24 +1,23 @@
 package org.nextprot.api.user.dao.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.*;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.JdbcTemplateUtils;
+import org.nextprot.api.commons.utils.KeyValuesJdbcBatchUpdater;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -42,13 +41,7 @@ public class UserDaoImpl implements UserDao {
         namedParameters.addValue("first_name", user.getFirstName());
         namedParameters.addValue("last_name", user.getLastName());
 
-        NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource());
-
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        jdbcTemplate.update(INSERT_USER_SQL, namedParameters, keyHolder, new String[] {"user_id"});
-
-        long key = keyHolder.getKey().longValue();
+        long key = JdbcTemplateUtils.insertAndGetKey(INSERT_USER_SQL, "user_id", namedParameters, new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())).longValue();
 
         if (user.getRoles() != null && !user.getRoles().isEmpty()) {
 
@@ -115,10 +108,27 @@ public class UserDaoImpl implements UserDao {
             // 1. delete all roles for this user if roles exist in user_roles table of src
             deleteUserRoles(src.getId());
 
-            // 2. insert roles with insertUserRoles(src.getId(), src.getRoles())
+            // 2. insert roles with insertUserRoles(src.getKey(), src.getRoles())
             insertUserRoles(src.getId(), src.getRoles());
         }
 	}
+
+    private void insertUserRoles(final long userId, final Collection<String> roles) {
+
+        String sql = sqlDictionary.getSQLQuery("create-user-roles");
+
+        KeyValuesJdbcBatchUpdater updater = new KeyValuesJdbcBatchUpdater(new JdbcTemplate(dsLocator.getUserDataSource()), userId) {
+
+            @Override
+            public void setValues(PreparedStatement ps, int i) throws SQLException {
+
+                ps.setLong(1, getKey());
+                ps.setString(2, getValue(i));
+            }
+        };
+
+        updater.batchUpdate(sql, new ArrayList<String>(roles));
+    }
 
     @Override
     public void deleteUser(User user) {
@@ -130,35 +140,10 @@ public class UserDaoImpl implements UserDao {
 
         int affectedRows = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(DELETE_SQL, params);
 
-        if(affectedRows != 1){
+        if (affectedRows != 1){
             String msg = "oops something wrong occurred" + affectedRows + " rows were affected instead of only 1.";
             Logger.error(msg);
             throw new NextProtException(msg);
-        }
-    }
-
-    private void insertUserRoles(final long userId, final Collection<String> roles) {
-
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dsLocator.getUserDataSource());
-
-        String sql = sqlDictionary.getSQLQuery("create-user-roles");
-
-        for (final String role : roles) {
-
-            jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-
-                @Override
-                public void setValues(PreparedStatement ps, int i) throws SQLException {
-
-                    ps.setLong(1, userId);
-                    ps.setString(2, role);
-                }
-
-                @Override
-                public int getBatchSize() {
-                    return roles.size();
-                }
-            });
         }
     }
 

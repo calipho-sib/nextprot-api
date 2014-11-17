@@ -8,16 +8,14 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.user.domain.User;
-import org.nextprot.api.user.domain.UserApplication;
-import org.nextprot.api.user.service.UserApplicationService;
-import org.nextprot.api.user.service.UserService;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -35,11 +33,6 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 	@Autowired
 	private UserDetailsService userDetailsService;
 
-	@Autowired
-	private UserService userService;
-
-	private UserApplicationService userApplicationService;
-
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
 		String token = ((Auth0JWTToken) authentication).getJwt();
@@ -56,8 +49,13 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 				String username = (String) map.get("username");
 				if (username != null) {
 					userDetails = userDetailsService.loadUserByUsername(username);
-				}
-			} else if (map.containsKey("app_id")) {
+					authentication.setAuthenticated(true);
+					
+					return createSuccessAuthentication(userDetails, map);
+				
+				}else return null;
+				
+			} /*//TODO add the application here or as another provider else if (map.containsKey("app_id")) {
 				long appId = (Long) map.get("app_id");
 				UserApplication userApp = userApplicationService.getUserApplication(appId);
 				if (userApp.hasUserDataAccess()) {
@@ -68,12 +66,10 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 					}
 					userDetails = userDetailsService.loadUserByUsername(userApp.getOwner());
 				}
-			} else throw AUTH_ERROR;
+			}*/ else throw AUTH_ERROR;
 
-			authentication.setAuthenticated(true);
-			tokenAuth.setPrincipal(userDetails);
-			tokenAuth.setDetails(decoded);
-			return authentication;
+			
+			
 
 		} catch (InvalidKeyException e) {
 			this.logger.debug("InvalidKeyException thrown while decoding JWT token " + e.getLocalizedMessage());
@@ -105,26 +101,6 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 		this.jwtVerifier = new JWTVerifier(this.clientSecret, this.clientId);
 	}
 
-	private static User buildUserFromAuth0(Map<String, Object> map) {
-
-		User usr = new User();
-		if (map.containsKey("username")) {
-			usr.setUsername((String) map.get("username"));
-			// TODO check properties
-		} else if (map.containsKey("name")) {
-			usr.setUsername((String) map.get("name"));
-		} else if (map.containsKey("name")) {
-			usr.setUsername((String) map.get("name"));
-		} else if (map.containsKey("name")) {
-			usr.setUsername((String) map.get("name"));
-		} else if (map.containsKey("name")) {
-			usr.setUsername((String) map.get("name"));
-		}
-
-		return usr;
-
-	}
-
 	public String getClientSecret() {
 		return this.clientSecret;
 	}
@@ -142,4 +118,22 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}
+	
+
+    /**
+     * Creates a successful {@link Authentication} object
+     *
+     * @return the successful authentication token
+     */
+    private final Authentication createSuccessAuthentication(UserDetails userDetails, Map<String, Object> map) {
+        
+    	NextprotUserToken usrToken = new NextprotUserToken();
+    	usrToken.setAuthenticated(true);
+    	usrToken.setPrincipal(userDetails);
+    	usrToken.setDetails(map);
+
+        return usrToken;
+    }
+
+	
 }

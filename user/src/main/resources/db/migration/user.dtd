@@ -92,11 +92,12 @@
     view_objective_tags|
     view_paper_ref_type|
     view_paper_scale|
-    list_proteins|
+    protein_list_items|
     schema_version|
     user_applications|
-    user_lists|
+    user_protein_lists|
     user_queries|
+    user_query_tags|
     user_roles|
     users)*)>
 
@@ -1056,10 +1057,10 @@
     is_largescale CDATA #IMPLIED
 >
 
-<!ELEMENT list_proteins EMPTY>
-<!ATTLIST list_proteins
+<!ELEMENT protein_list_items EMPTY>
+<!ATTLIST protein_list_items
+    accession_number CDATA #REQUIRED
     list_id CDATA #REQUIRED
-    entry CDATA #REQUIRED
 >
 
 <!ELEMENT schema_version EMPTY>
@@ -1094,23 +1095,28 @@
     creation_date CDATA #REQUIRED
 >
 
-<!ELEMENT user_lists EMPTY>
-<!ATTLIST user_lists
+<!ELEMENT user_protein_lists EMPTY>
+<!ATTLIST user_protein_lists
     list_id CDATA #REQUIRED
-    name CDATA #IMPLIED
+    list_name CDATA #IMPLIED
     description CDATA #IMPLIED
     owner_id CDATA #IMPLIED
 >
 
 <!ELEMENT user_queries EMPTY>
 <!ATTLIST user_queries
-    user_query_id CDATA #REQUIRED
+    query_id CDATA #REQUIRED
     title CDATA #REQUIRED
     description CDATA #IMPLIED
     sparql CDATA #REQUIRED
-    public CDATA #REQUIRED
-    submitted CDATA #REQUIRED
+    published CDATA #REQUIRED
     owner_id CDATA #IMPLIED
+>
+
+<!ELEMENT user_query_tags EMPTY>
+<!ATTLIST user_query_tags
+    tag_name CDATA #REQUIRED
+    query_id CDATA #REQUIRED
 >
 
 <!ELEMENT user_roles EMPTY>

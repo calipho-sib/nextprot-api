@@ -15,4 +15,4 @@ CREATE TABLE np_users.user_applications (
   creation_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-create unique index user_application_owner_app_udx ON np_users.user_applications USING btree (owner_id, application_name);
+CREATE UNIQUE index user_application_owner_app_udx ON np_users.user_applications USING btree (owner_id, application_name);

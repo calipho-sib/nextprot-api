@@ -1,10 +1,14 @@
 package org.nextprot.api.user.domain;
 
-import java.io.Serializable;
+import com.google.common.base.Function;
 
 import org.nextprot.api.commons.exception.NPreconditions;
+import org.nextprot.api.commons.resource.ResourceOwner;
 
-public class UserQuery implements Serializable, UserResource {
+import java.io.Serializable;
+import java.util.Set;
+
+public class UserQuery implements Serializable, ResourceOwner {
 
 	private static final long serialVersionUID = 3051410556247218680L;
 
@@ -13,8 +17,17 @@ public class UserQuery implements Serializable, UserResource {
 	private String description;
 	private String sparql;
 	private boolean published;
-	private String submitted;
-	private String username;
+	private String owner;
+	private long ownerId;
+	private Set<String> tags;
+
+	public static final Function<UserQuery, Long> EXTRACT_QUERY_ID = new Function<UserQuery, Long>() {
+		@Override
+		public Long apply(UserQuery query) {
+
+			return query.getUserQueryId();
+		}
+	};
 
 	public long getUserQueryId() {
 		return userQueryId;
@@ -56,21 +69,17 @@ public class UserQuery implements Serializable, UserResource {
 		this.published = published;
 	}
 
-	public String getSubmitted() {
-		return submitted;
+	public String getOwner() {
+		return owner;
 	}
 
-	public void setSubmitted(String submitted) {
-		this.submitted = submitted;
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
-	public String getUsername() {
-		return username;
-	}
+	public long getOwnerId() { return ownerId; }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+	public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
 
 	public void checkValid() {
 		NPreconditions.checkNotNull(sparql, "The sparql should not be null");
@@ -78,10 +87,18 @@ public class UserQuery implements Serializable, UserResource {
 		NPreconditions.checkTrue(title.length() >= 3,
 				"The title should be at least 3 characters long");
 	}
+	public Set<String> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<String> tags) {
+		this.tags = tags;
+	}
 
 	@Override
 	public String getResourceOwner() {
-		return this.getUsername();
+		return this.getOwner();
 	}
+
 
 }
