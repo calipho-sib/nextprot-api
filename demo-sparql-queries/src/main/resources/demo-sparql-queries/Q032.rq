@@ -1,0 +1,12 @@
+#title:Q032 with a coiled coil region and involved in transcription but does not contain a bZIP domain
+#acs:Q7Z5H3, Q96KG9, Q6NZI2, ...
+#tags:antibody,location
+#count:185
+#time:0.21
+select distinct ?entry where {
+ ?entry :isoform ?iso;:classifiedWith term:KW-0804.
+ ?iso :region/rdf:type :CoiledCoilRegion.
+ FILTER NOT EXISTS{
+   ?iso :region/:in term:DO-00078
+ }
+}

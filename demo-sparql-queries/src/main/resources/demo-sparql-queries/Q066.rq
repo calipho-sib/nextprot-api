@@ -1,0 +1,13 @@
+#title:Q066  that are cytoplasmic with alternate O-glycosylation or phosphorylation at the same positions
+#acs: P08047, P31749, P10636, ...
+#tags:location,PTM,sequence
+#count:17
+#time: 0.9
+select  distinct ?entry where {
+ ?entry :isoform ?iso .
+ ?iso :location/:in/:childOf term:SL-0086.
+ ?iso :modifiedResidue /:in ?ptmtype.
+ ?iso :modifiedResidue /:start ?ptmpos.
+ FILTER (?ptmtype in (term:PTM-0253, term:PTM-0254, term:PTM-0255))  
+?iso :glycosylationSite /:start ?ptmpos.
+}

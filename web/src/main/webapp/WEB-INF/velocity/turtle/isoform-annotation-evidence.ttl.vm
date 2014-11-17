@@ -30,9 +30,10 @@ evidence:$evidence-uri
 #end
 
 #if($evidence.getResourceType().equals("database"))
+#set($UNESCAPED_CDATA = $evidence.resourceAccession)
   :reference [
     a :Xref ;
-    :accession "$evidence.resourceAccession"^^xsd:string;
+    :accession "$UNESCAPED_CDATA"^^xsd:string;
     :provenance db:$StringUtils.slug($evidence.resourceDb); 
     ] ;
 #end

@@ -73,8 +73,17 @@ public class DbXrefServiceImpl implements DbXrefService {
 		return xrefs;
 	}
 	
+	@Override
 	public List<DbXref> findDbXrefsByEntry(String uniqueName) {
 		return findDbXrefsByMaster(uniqueName);
+	}
+	
+	@Override
+	public List<DbXref> findDbXrefsAsAnnotByEntry(String uniqueName) {
+		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
+		if(! xrefs.isEmpty())
+			return getXrefProperties(xrefs, uniqueName);
+		return xrefs;
 	}
 
 	/**

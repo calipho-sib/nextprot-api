@@ -1,0 +1,11 @@
+#title:Q049  with >=1 variants of the types "A->R" or "R->A"
+#acs:P07988, Q68CP9, Q29836, ...
+#tags:variant
+#count:14
+#time:0.39
+SELECT distinct ?entry WHERE  {
+  ?entry :isoform/:variant ?statement.
+  {?statement :original "A"^^xsd:string;:variation "R"^^xsd:string}
+  UNION
+  {?statement :original "R"^^xsd:string;:variation "A"^^xsd:string}
+}

@@ -134,9 +134,22 @@ public class AnnotationEvidence implements Serializable {
 		this.qualifierType = qualifierType;
 	}
 
+	/**
+	 * Returns either database or publication //TODO should we put this on enum? 
+	 * @return
+	 */
 	public String getResourceType() {
 		return resourceType;
 	}
+	
+	public boolean isResourceAXref() {
+		return ("database".equals(resourceType));
+	}
+
+	public boolean isResourceAPublication() {
+		return ("publication".equals(resourceType));
+	}
+
 
 	public void setResourceType(String resourceType) {
 		this.resourceType = resourceType;

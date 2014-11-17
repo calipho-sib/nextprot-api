@@ -1,0 +1,15 @@
+#title:Q057  which are located in mitochondrion with an evidence other than HPA and DKFZ-GFP
+#acs: Q9Y6N5, O14925, O14879, ...
+#tags:location,evidence
+#count:1068
+#time: 0.25
+select distinct ?entry where {
+ ?entry :isoform ?iso .
+  ?iso :location ?loc.
+  ?loc :in/:childOf term:SL-0173 .
+  ?loc :withEvidence /:assignedBy ?src.
+  FILTER  ( ?src not in (source:Human_protein_atlas_subcellular_localization, source:GFP-cDNAEMBL))
+  # alternatively
+  #?loc :withEvidence /:fromXref ?xr.
+  #FILTER  ( ?xr not in (db:HPA, db:GFP-cDNA))
+}

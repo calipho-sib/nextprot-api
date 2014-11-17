@@ -1,0 +1,17 @@
+#title:Q048 with >=1 variants of the type "C->" (Cys to anything else) that are linked to >=1 disease
+#acs:O00423, O15111, O75112, ...
+#tags:variant
+#count:3392
+#time:0.36
+SELECT distinct ?entry ?v  WHERE  {
+  ?entry :isoform ?iso.
+  ?iso :variant ?statement;:medical/rdf:type :Disease.
+  ?statement :original "C"^^xsd:string;:variation ?v
+}
+
+# or more precisely with disease directly corelated to the variant itself
+#SELECT distinct ?entry WHERE  {
+#  ?entry :isoform / :variant ?variant .
+#  ?variant :original "C"^^xsd:string;:variation ?v.
+#  ?variant :disease ?someDisease .
+#}

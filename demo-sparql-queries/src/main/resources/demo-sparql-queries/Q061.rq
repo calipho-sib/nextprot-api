@@ -1,0 +1,13 @@
+#title:Q061  which have >=1 3D structure that spans the complete sequence of the mature protein
+#acs: Q9Y6J6, O14832, O14727, ...
+#tags:PDB,sequence
+#count:1456
+#time: 0.23
+SELECT distinct ?entry WHERE {
+  ?entry :isoform ?iso.
+ ?iso :pdbMapping  ?pdbmap.
+ ?pdbmap :start ?pdbstart ; :end ?pdbend.
+ ?iso :matureProtein [ :start ?mstart ; :end ?mend]
+ FILTER (?mend-?mstart > 0)	 
+ FILTER((?pdbstart <= ?mstart) && (?pdbend >= ?mend))
+}

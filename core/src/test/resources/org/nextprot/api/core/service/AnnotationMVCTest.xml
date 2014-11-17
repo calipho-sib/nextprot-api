@@ -2,6 +2,30 @@
 <dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
 
+<!-- test xxx starts here -->
+
+	<sequence_identifiers identifier_id="10000" cv_type_id="1" unique_name="NX_P10000" />
+	<sequence_identifiers identifier_id="100001" cv_type_id="2" unique_name="NX_P10000-1" />
+	<bio_sequences bio_sequence_id="235252" bio_sequence="JHGJHGD"  md5="92835729857" identifier_id="100001" cv_type_id="1"  />
+	<identifier_synonyms synonym_id="2378423" identifier_id="100001" synonym_name="Synonym of NX_P10000-1" cv_type_id="1" is_main="true" cv_qualifier_id="1" />
+	<mapping_annotations  annotation_id="10000100001" reference_identifier_id="10000" mapped_identifier_id="100001" cv_type_id="4" />
+	<identifier_properties identifier_property_id="8762376" identifier_id="10000" property_value="NX_P10000-1" cv_property_name_id="11" />
+
+ 	<resources resource_id="1000021" cv_type_id="1" /> 	
+	<cv_databases cv_id="84" cv_name="Orphanet" cv_category_id="8" link_url="http://www.orpha.net/consor/cgi-bin/OC_Exp.php?Lng=GB&amp;Expert=%s" url="http://www.orpha.net/consor/cgi-bin/home.php?Lng=GB" link_type="Explicit" />
+	<db_xrefs accession="XR_ORPHA_100021" resource_id="1000021" description="some XR_ORPHA_100021 xref description" cv_database_id="84" />
+	<identifier_resource_assoc assoc_id="345345345" identifier_id="10000" resource_id="1000021" datasource_id="2" cv_type_id="1" cv_quality_qualifier_id="10" />
+ 	<resource_properties resource_id="1000021" resource_property_id="1000021001" property_name="disease" property_value="Some XR_ORPHA_100021 xref disease property value"  /> 
+ 	<resource_properties resource_id="1000021" resource_property_id="1000021002" property_name="not a disease" property_value="Some irrelevant property value"  /> 
+	 
+<!-- used but already existing in db_unit 
+	<cv_datasources cv_id="1" cv_name="NextProt" /> 
+	<cv_datasources cv_id="2" cv_name="Uniprot" /> 
+-->
+	
+<!-- test xxx ends here -->
+
+
 	<sequence_identifiers identifier_id="10" cv_type_id="1" unique_name="NX_P12345" />
 
 	<!-- 	Isoform specificity -->

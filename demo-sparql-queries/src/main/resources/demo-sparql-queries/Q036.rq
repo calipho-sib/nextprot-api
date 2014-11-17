@@ -1,0 +1,10 @@
+#title:Q036 that are oxidoreductases and bind NAD/NADP
+#acs:Q6DKJ4, Q9BYZ2, Q8TBF2, ...
+#tags:enzyme,location
+#count:267
+#time:0.1
+SELECT distinct ?entry  WHERE  {
+  ?entry :classifiedWith term:KW-0560. #oxidoreductase
+  ?entry :classifiedWith ?kw
+FILTER( ?kw in (term:KW-0520,term:KW-0521)) # NAD or NADP
+}

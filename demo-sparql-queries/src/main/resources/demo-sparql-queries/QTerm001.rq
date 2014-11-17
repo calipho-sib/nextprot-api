@@ -1,0 +1,24 @@
+#title:QTerm001 - Terms of controlled vocabularies containing some word(s)
+#tags:vocabulary
+SELECT DISTINCT * WHERE { 
+  ?term rdfs:label ?label ; a ?type .
+  # ---------------------------
+  # exact match
+  # ---------------------------  
+   filter(?label = "peroxisome"^^xsd:string)
+  
+  # ---------------------------
+  # starting with peroxisome
+  # --------------------------- 
+  # filter(regex(?label,"^peroxisome"))
+  
+  # ---------------------------
+  # containing peroxisome
+  # ---------------------------
+  #filter(regex(?label,"peroxisome"))
+  
+  # ------------------------------------
+  # containing peroxisome and receptor 
+  # ------------------------------------
+  #filter(regex(?label,"peroxisome.*receptor"))
+} LIMIT 20

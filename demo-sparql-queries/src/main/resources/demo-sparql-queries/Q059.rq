@@ -1,0 +1,23 @@
+#title:Q059  that are glycosylated and phosphorylated on an extracellular topological domain
+#acs:B2RUZ4, O60667, P51511, ...
+#tags:PTM,domain
+#count:2470
+#time: 4.85
+select  distinct ?entry where {
+ ?entry :isoform ?iso .
+ ?iso :topologicalDomain ?topodom.
+  ?topodom :in term:CVTO_0002 .
+  ?topodom :start ?topostart ; :end ?topoend.
+ ?iso :positionalAnnotation ?annot.
+  {
+	?annot a :ModifiedResidue.
+	?annot :in ?ptmtype.
+	FILTER (?ptmtype in (term:PTM-0253, term:PTM-0254, term:PTM-0255))  
+  }
+  union
+  {
+  ?annot a :GlycosylationSite.
+  }
+ ?annot :start ?ptmpos.
+  FILTER((?ptmpos >= ?topostart) && (?ptmpos <= ?topoend))
+}

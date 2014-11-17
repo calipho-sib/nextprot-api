@@ -6,7 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.biojava.bio.program.homologene.OrthoPairSetFilter.AllPairsInCollection;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
+import org.nextprot.api.core.domain.DbXref;
 
 
 public class Annotation implements Serializable {
@@ -31,13 +34,15 @@ public class Annotation implements Serializable {
 
 	private String synonym;
 	
-	private AnnotationApiModel owlAnnotCat;
+	private AnnotationApiModel apiCategory;
 
 	private List<AnnotationEvidence> evidences;
 
 	private Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap;
 
 	private List<AnnotationProperty> properties;
+	
+	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsLikeAnnotations()
 
 	final static Map<String, String> commonExpressionPredicat= new HashMap<String, String>();
 	
@@ -59,6 +64,14 @@ public class Annotation implements Serializable {
 				"cvTermAccessionCode:" + cvTermAccessionCode +
 				" - cvTermName:" + cvTermName +
 				" - description:"  + description;
+	}
+	
+	public DbXref getParentXref() {
+		return parentXref;
+	}
+
+	public void setParentXref(DbXref parentXref) {
+		this.parentXref = parentXref;
 	}
 	
 	public List<AnnotationEvidence> getEvidences() {
@@ -115,22 +128,26 @@ public class Annotation implements Serializable {
 	}
 
 	public String getRdfTypeName() {
-		return owlAnnotCat.getRdfTypeName();
+		return apiCategory.getRdfTypeName();
 	}
 
 	public String getRdfPredicate() {
-		return owlAnnotCat.getRdfPredicate();
+		return apiCategory.getRdfPredicate();
+	}
+	
+	public AnnotationApiModel getAPICategory() {
+		return apiCategory;
 	}
 	
 	public List<String> getParentPredicates() {
 		List<String> list = new ArrayList<String>();
-		for (AnnotationApiModel cat : owlAnnotCat.getAllParents()) list.add(cat.getRdfPredicate());
+		for (AnnotationApiModel cat : apiCategory.getAllParents()) list.add(cat.getRdfPredicate());
 		return list;
 	}
-	
+			
 	public void setCategory(String category) {
 		this.category = category;
-		this.owlAnnotCat=AnnotationApiModel.getByDbAnnotationTypeName(category);
+		this.apiCategory=AnnotationApiModel.getByDbAnnotationTypeName(category);
 	}
 
 	public AnnotationVariant getVariant() {
@@ -139,6 +156,20 @@ public class Annotation implements Serializable {
 
 	public void setVariant(AnnotationVariant variant) {
 		this.variant = variant;
+	}
+
+	/*
+	 * returns API model of a property of this annotation 
+	 */
+	public AnnotationPropertyApiModel getPropertyApiModel(String dbName) {
+		return this.apiCategory.getPropertyByDbName(dbName);
+	}
+	
+	/*
+	 * returns API model of a property of this annotation 
+	 */
+	public AnnotationPropertyApiModel getPropertyApiModel(AnnotationProperty prop) {
+		return this.apiCategory.getPropertyByDbName(prop.getName());
 	}
 
 	public List<AnnotationProperty> getProperties() {

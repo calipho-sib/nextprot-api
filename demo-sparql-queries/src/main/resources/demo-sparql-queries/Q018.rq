@@ -1,0 +1,12 @@
+#title:Q18 that are acetylated and methylated and located in the nucleus
+#acs:O00159,O14979,O43524,O60506,O60814,O75530,O75925,P01112,P02545 
+#tags:PTM
+#count:269
+#time:8.564
+#pending
+select distinct ?entry where {
+  ?entry :isoform ?iso .
+  ?iso :location/:in/:childOf term:SL-0191.
+# acetylated and methylated
+  ?iso :keyword/:in term:KW-0007,term:KW-0488.
+}

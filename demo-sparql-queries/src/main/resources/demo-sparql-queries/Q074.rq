@@ -1,0 +1,12 @@
+#title:Q074 belonging to a family with at least 1 other member in human
+#acs: Q8NEK5, Q96P63, Q92630, ...
+#tags:family
+#count:5416
+#time: 4.7
+select distinct ?entry 
+where {
+  ?entry :family/:accession/:childOf ?ac .
+  ?member :family/:accession/:childOf ?ac .
+} 
+group by ?entry
+having (count(distinct ?member) >= 2 )

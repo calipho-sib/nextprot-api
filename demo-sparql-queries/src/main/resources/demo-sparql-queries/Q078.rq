@@ -1,0 +1,11 @@
+#title:Q078  which have been identified in any proteomics set and that are secreted
+#acs: P40933, A1L453, A6NNL5, ...
+#tags:location,proteomics
+#count:1835
+#time: 0.13
+SELECT distinct ?entry  WHERE  {
+ ?entry :isoform ?iso.
+  ?iso :location/:in/:childOf term:SL-0243.
+   ?iso :peptideMapping ?map.
+}
+
