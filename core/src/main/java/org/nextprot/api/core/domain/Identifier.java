@@ -1,9 +1,9 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+
+import java.io.Serializable;
 
 @ApiObject(name = "identifier", description = "The identifier")
 public class Identifier implements Serializable{

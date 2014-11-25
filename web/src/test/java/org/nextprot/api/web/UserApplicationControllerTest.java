@@ -55,7 +55,7 @@ public class UserApplicationControllerTest extends MVCBaseSecurityIntegrationTes
 	public void shouldBEForbidderApplication() throws Exception {
 		
 		UserApplication ua =new UserApplication();
-		ua.setOwner("zzzzz");
+		ua.setOwnerId(23);
 		
         when(applicationService.getUserApplication(isA(Long.class))).thenReturn(ua);
 

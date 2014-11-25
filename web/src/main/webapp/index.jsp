@@ -16,7 +16,7 @@
 <script src="js/bootstrap-button.js"></script>
 <script src="js/nx-api.js"></script>
 
-<script src="//cdn.auth0.com/w2/auth0-widget-5.2.9.min.js"></script>
+<script src="js/auth0-widget-5.2.9.min.js"></script>
 <meta name="viewport"
 	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 

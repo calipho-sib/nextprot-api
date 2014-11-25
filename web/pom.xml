@@ -22,6 +22,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-security</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-api-core</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -47,12 +52,6 @@
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>
-		</dependency>
-		<!-- JWT -->
-		<dependency>
-			<groupId>sib.calipho</groupId>
-			<artifactId>spring-auth0-core</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
