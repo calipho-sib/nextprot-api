@@ -41,4 +41,19 @@ public class AnnotationUtils {
 		return xrefIds;
 	}
 
+
+	public static Set<Long> getPublicationIdsForAnnotations(List<Annotation> annotations) {
+
+		Set<Long> publicationIds = new HashSet<Long>(); 
+		for(Annotation a : annotations){
+			for(AnnotationEvidence e : a.getEvidences()){
+				if(e.isResourceAPublication()){
+					publicationIds.add(e.getResourceId());
+				}
+			}
+		}
+		return publicationIds;
+	
+	}
+
 }
