@@ -3,7 +3,8 @@
 <!DOCTYPE dataset SYSTEM "file:src/test/resources/user.dtd">
 -->
 <!-- Use this one to autocomplete -->
-<!DOCTYPE dataset SYSTEM "https://raw.githubusercontent.com/calipho-sib/nextprot-api/user-app/user/src/main/resources/db/migration/user.dtd">
+<!DOCTYPE dataset SYSTEM "https://raw.githubusercontent.com/calipho-sib/nextprot-api/develop/user/src/main/resources/db/migration/user.dtd">
+
 <!-- Use the dbunit_insert_helper.sql to generate the statements -->
 <dataset> 
 
