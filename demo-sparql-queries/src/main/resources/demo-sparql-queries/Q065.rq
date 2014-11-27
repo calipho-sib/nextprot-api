@@ -4,6 +4,6 @@
 #count:361
 #time: 0.3
 SELECT distinct ?entry    WHERE  {
-  ?ec a :EnzymeClassificationOntology.
+  ?ec a :EnzymeClassificationCv.
   ?entry :classifiedWith ?ec
 }GROUP BY ?entry HAVING (count(?ec)>1)
