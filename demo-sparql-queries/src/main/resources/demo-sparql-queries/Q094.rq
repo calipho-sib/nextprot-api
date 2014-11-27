@@ -21,5 +21,5 @@ WHERE {
   ?entry :swissprotPage ?unipage .
   ?entry :isoform/:expressionProfile ?expr.
   ?expr :term/:childOf  cv:TS-0095 .
-  ?expr :withEvidence / :expressionLevel :High .
+  ?expr :evidence / :expressionLevel :High .
 }
