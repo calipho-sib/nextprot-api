@@ -8,7 +8,6 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiParamType;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.AntibodyMapping;
 import org.nextprot.api.core.domain.DbXref;
@@ -42,13 +41,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 @Lazy
 @Controller
 @Api(name = "Entry", description = "Method to retrieve a complete or partial entry")
 public class EntryController {
+
+	@Autowired
+	private FluentEntryService fluentEntryService;
 
 	@Autowired private AntibodyMappingService antibodyService;
 	@Autowired private EntryService entryService;
@@ -78,6 +78,21 @@ public class EntryController {
 		return "exportEntries";
 	}
 	
+
+	@RequestMapping("/entry/{entryname}/{subpart}")
+	public String getSubPart(@PathVariable("entryname") String entryName, @PathVariable("subpart") String subpart, Model model) {
+		
+		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withAnnotationCategory(subpart).getEntryFiltered();
+		
+		List<Entry> proteinList = new ArrayList<Entry>();
+		proteinList.add(dummy);
+		model.addAttribute("entryList", proteinList);
+		model.addAttribute("StringUtils", StringUtils.class);
+
+		return "exportEntries";
+		
+	}
+
 	
 	@ApiMethod(path = "/entry/{entry}/protein-sequence", verb = ApiVerb.GET, description = "Gets the isoforms for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/protein-sequence")
@@ -231,27 +246,8 @@ public class EntryController {
 	}
 	
 	
-	@Autowired
-	private FluentEntryService fluentEntryService;
 
 	
-	@RequestMapping("/e/{entry}/{category}")
-	public String getEntryPtm(@PathVariable("entry") String entryName,
-			@PathVariable("category") String category,
-			Model model) {
-
-		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withAnnotationCategory(category).getEntryFiltered();
-		
-		List<Entry> proteinList = new ArrayList<Entry>();
-		proteinList.add(dummy);
-		model.addAttribute("entryList", proteinList);
-		model.addAttribute("StringUtils", StringUtils.class);
-
-		return "exportEntries";
-
-	}
-	
-
 	
 }
 
