@@ -43,7 +43,7 @@ public enum AnnotationApiModel  {
 		GENERAL_ANNOTATION(-2, "GeneralAnnotation", "generalAnnotation","General Annotation", new AnnotationApiModel[]{ ROOT} ),
 			GENERIC_FUNCTION(-10, "GenericFunction", "function","Function", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
 			GENERIC_INTERACTION(-11, "GenericInteraction", "interaction","Interaction", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
-			GENERIC_LOCATION(-12, "GenericLocation", "location","Location", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
+			CELLULAR_COMPONENT(-12, "GenericLocation", "cellularComponent","Cellular component", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
 			GENERIC_EXPRESSION(-15, "GenericExpression", "expression","Expression", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
 			MEDICAL(-13, "Medical", "medical","Medical", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
 			KEYWORD(-14, "Keyword", "keyword","Keywords", new AnnotationApiModel[]{  GENERAL_ANNOTATION }),
@@ -141,9 +141,9 @@ public enum AnnotationApiModel  {
 	BINARY_INTERACTION(-111,"BinaryInteraction", "binaryInteraction", "binary interaction", new AnnotationApiModel[]{GENERIC_INTERACTION }), // placeholder for data coming from intact in table db partnership
 	
 	
-	SUBCELLULAR_LOCATION(1039,"subcellular location", "subcellularLocation", "subcellular location", new AnnotationApiModel[]{GENERIC_LOCATION }),
-	SUBCELLULAR_LOCATION_INFO(63868,"subcellular location info", "subcellularLocationInfo", "subcellular location info", new AnnotationApiModel[]{GENERIC_LOCATION }),
-	GO_CELLULAR_COMPONENT(1063,"go cellular component", "goCellularComponent", "go cellular component", new AnnotationApiModel[]{GENERIC_LOCATION }),
+	SUBCELLULAR_LOCATION(1039,"subcellular location", "subcellularLocation", "subcellular location", new AnnotationApiModel[]{CELLULAR_COMPONENT }),
+	SUBCELLULAR_LOCATION_NOTE(63868,"subcellular location info", "subcellularLocationNote", "subcellular location info", new AnnotationApiModel[]{CELLULAR_COMPONENT }),
+	GO_CELLULAR_COMPONENT(1063,"go cellular component", "goCellularComponent", "go cellular component", new AnnotationApiModel[]{CELLULAR_COMPONENT }),
 
 	DEVELOPMENTAL_STAGE(1041,"developmental stage", "developmentalStageInfo", "developmental stage", new AnnotationApiModel[]{GENERIC_EXPRESSION }),
 	EPRESSION_INFO(1055,"expression info", "expressionInfo", "expression info", new AnnotationApiModel[]{GENERIC_EXPRESSION }),
