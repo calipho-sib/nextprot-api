@@ -5,5 +5,5 @@
 select distinct ?entry where {
  ?entry :isoform ?iso .
  ?iso :keyword / :term cv:KW-0597 .
- ?iso :location /:term /:childOf cv:SL-0086 .
+ ?iso :cellularComponent /:term /:childOf cv:SL-0086 .
 }order by ?entry

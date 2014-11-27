@@ -17,7 +17,7 @@ select distinct ?entry where {
   {
 	?iso :keyword / :term cv:KW-0472.
   } union {
-	?iso :location / :term /:childOf cv:SL-0162.
+	?iso :cellularComponent / :term /:childOf cv:SL-0162.
   }  
   filter not exists { ?iso :keyword / :term cv:KW-0325 } 
 }

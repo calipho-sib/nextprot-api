@@ -5,7 +5,7 @@
 #time: 0.4
 select  distinct ?entry where {
  ?entry :isoform ?iso .
- ?iso :location/:term/:childOf cv:SL-0173.
+ ?iso :cellularComponent/:term/:childOf cv:SL-0173.
   ?iso :mapping ?map1.
  ?map1 a :AntibodyMapping.
   ?iso :mapping ?map2.

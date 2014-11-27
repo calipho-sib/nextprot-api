@@ -5,5 +5,5 @@
 #time:0.08
 SELECT distinct  ?entry   WHERE  {
   ?entry :classifiedWith/rdf:type :EnzymeClassificationOntology.
-  ?entry :isoform/:location/:term/:childOf cv:SL-0173
+  ?entry :isoform/:cellularComponent/:term/:childOf cv:SL-0173
 }

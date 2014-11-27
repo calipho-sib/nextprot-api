@@ -5,6 +5,6 @@
 #time: 0.12
 select distinct ?entry where {
   ?entry :isoform ?iso.
-    ?iso :location/:term/:childOf cv:SL-0243
+    ?iso :cellularComponent/:term/:childOf cv:SL-0243
  FILTER NOT EXISTS {?iso :signalPeptide ?_}
  }

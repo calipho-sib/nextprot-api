@@ -6,6 +6,6 @@
 SELECT distinct ?entry WHERE {
   ?entry :isoform ?iso.
   ?iso :pdbMapping ?map.
-  ?iso :location/:term/:childOf cv:SL-0173 .
+  ?iso :cellularComponent/:term/:childOf cv:SL-0173 .
   ?iso :medical/rdf:type :Disease.
  }

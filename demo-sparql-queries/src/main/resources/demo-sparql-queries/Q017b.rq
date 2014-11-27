@@ -7,7 +7,7 @@
 #see: Q017 is a lot more efficient !
 SELECT distinct ?entry WHERE  {
   ?entry :isoform ?iso.
-  ?iso :location/:term/:childOf cv:SL-0191.
+  ?iso :cellularComponent/:term/:childOf cv:SL-0191.
   ?iso :expressionProfile ?p.
   ?p :term/:childOf cv:TS-1313.
   ?p :evidence / :expressionLevel ?level.

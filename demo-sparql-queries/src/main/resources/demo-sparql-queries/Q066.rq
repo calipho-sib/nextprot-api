@@ -5,7 +5,7 @@
 #time: 0.9
 select  distinct ?entry where {
  ?entry :isoform ?iso .
- ?iso :location/:term/:childOf cv:SL-0086.
+ ?iso :cellularComponent/:term/:childOf cv:SL-0086.
  ?iso :modifiedResidue /:term ?ptmtype.
  ?iso :modifiedResidue /:start ?ptmpos.
  FILTER (?ptmtype in (cv:PTM-0253, cv:PTM-0254, cv:PTM-0255))  
