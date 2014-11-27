@@ -1,0 +1,9 @@
+#title: Q087 whose genes are on chromosome X and which do not have a ortholog in mouse
+#acs: O95671, O15488, O60829
+#tags: chromosome, ortholog, x-ref
+#count: 184
+#time: 0.15
+select distinct ?entry  where {
+  ?entry :gene / :chromosome "X"^^xsd:string .
+  FILTER NOT EXISTS { ?entry :reference / :provenance db:MGI . }
+}
