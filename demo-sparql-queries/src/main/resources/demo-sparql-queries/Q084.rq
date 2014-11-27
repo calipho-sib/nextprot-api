@@ -1,12 +1,16 @@
 #title:Q084  whose genes are on chromosome n that are known to be glycosylated or phosphorylated or acetylated (excluding prediction)
-#acs: , , , ...
-#tags:chromosome,PTM,todo
-#count:
-#time: 
+#acs:O95427,P49257,P25391
+#tags:chromosome,PTM
+#count:145
+#time:0.12
 select distinct ?entry {
   ?entry :gene / :chromosome "18"^^xsd:string .
   ?entry :isoform  ?iso.
-  ?iso :glycosylationSite /:evidence /:code ?evcode.
-  filter (?evcode not in (:IEA))
-
-} 
+  {?iso :glycosylationSite /:evidence /:code ?evcode.
+  filter (?evcode not in (:IEA))}
+  UNION
+  {
+  ?iso :modifiedResidue / rdfs:comment ?com.
+  filter (regex(?com, '^phospho|acetyl','i'))
+  }
+}
