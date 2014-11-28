@@ -20,7 +20,7 @@ public class AnnotationUtils {
 	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationApiModel annotationCategory){
 		List<Annotation> annotationList = new ArrayList<Annotation>(); 
 		for(Annotation a : annotations){
-			if(a.getAPICategory() != null && (a.getAPICategory().equals(annotationCategory) || a.getAPICategory().isContainedIn(annotationCategory))){
+			if(a.getAPICategory() != null && (a.getAPICategory().equals(annotationCategory) || a.getAPICategory().isChildOf(annotationCategory))){
 				annotationList.add(a);
 			}
 		}

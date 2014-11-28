@@ -282,6 +282,7 @@ public enum AnnotationApiModel  {
 		return StringUtils.upperFirstChar(this.apiName);
 	}
 		
+	@Deprecated
 	public String getRdfLabel() {
 		return StringUtils.upperFirstChar(this.rdfLabel);
 	}
@@ -312,7 +313,7 @@ public enum AnnotationApiModel  {
 		return all;
 	}
 	
-	public boolean isContainedIn(AnnotationApiModel aam) {
+	public boolean isChildOf(AnnotationApiModel aam) {
 		return aam.getAllChildren().contains(this);
 	}
 	
