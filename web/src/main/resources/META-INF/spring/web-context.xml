@@ -11,8 +11,9 @@
 	<import resource="classpath:spring/rdf-context.xml" />
 	<import resource="security-context.xml" />
 
-	<mvc:annotation-driven>
-		<mvc:message-converters register-defaults="false"> <!-- you may have to explicitly register other converters though -->
+	<mvc:annotation-driven/>
+	<!-- you may have to explicitly register other converters though -->
+<!-- 		<mvc:message-converters register-defaults="false"> 
 			<bean
 				class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
 				<property name="marshaller">
@@ -27,7 +28,7 @@
 			</bean>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
-
+ -->
 	<mvc:default-servlet-handler />
 	<mvc:interceptors>
 		<bean
