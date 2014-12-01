@@ -1,5 +1,7 @@
 package org.nextprot.api.user.service.impl;
 
+import java.util.List;
+
 import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
@@ -7,8 +9,7 @@ import org.nextprot.api.user.service.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Lazy
 @Service
@@ -32,12 +33,14 @@ public class UserQueryServiceImpl implements UserQueryService {
 		return userQueryDao.getPublishedQueries();
 	}
 
-		@Override
+	@Override
+	@Transactional
 	public UserQuery createUserQuery(UserQuery userQuery) {
-		NPSecurityContext.checkUserAuthorization(userQuery);
-		userQuery.checkValid();
 		long id = userQueryDao.createUserQuery(userQuery);
 		userQuery.setUserQueryId(id);
+		if(userQuery.getTags() != null){
+			userQueryDao.createUserQueryTags(id, userQuery.getTags());
+		}
 		return userQuery;
 	}
 

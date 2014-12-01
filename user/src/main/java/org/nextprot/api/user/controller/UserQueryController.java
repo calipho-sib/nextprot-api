@@ -1,6 +1,5 @@
 package org.nextprot.api.user.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.jsondoc.core.annotation.Api;
@@ -32,9 +31,7 @@ public class UserQueryController {
 	@RequestMapping(value = "/queries/public", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserQuery> getPublicUserQueries() {
-		UserQuery q = new UserQuery();
-		q.setTitle("yo");
-		return Arrays.asList(q);
+		return userQueryService.getPublishedQueries();
 	}
 	
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.GET })
