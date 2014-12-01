@@ -36,4 +36,6 @@ public class DemoSparqlQueriesController {
 		demoSparqlService.relaodDemoSparqlQueries();
 		return "Reload complete";
 	}
+	
+	
 }

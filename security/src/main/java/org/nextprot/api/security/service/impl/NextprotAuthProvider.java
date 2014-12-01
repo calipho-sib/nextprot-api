@@ -45,8 +45,8 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 			this.logger.debug("Decoded JWT token" + map);
 
 			UserDetails userDetails = null;
-			if (map.containsKey("username")) {
-				String username = (String) map.get("username");
+			if (map.containsKey("email")) {
+				String username = (String) map.get("email");
 				if (username != null) {
 					userDetails = userDetailsService.loadUserByUsername(username);
 					authentication.setAuthenticated(true);

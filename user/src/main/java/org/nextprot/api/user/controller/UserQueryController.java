@@ -1,5 +1,8 @@
 package org.nextprot.api.user.controller;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.jsondoc.core.annotation.Api;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
@@ -7,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Controller for operating (CRUD) on user queries (SPARQL)
@@ -24,14 +29,17 @@ public class UserQueryController {
 	@Autowired
 	private UserQueryService userQueryService;
 
+	@RequestMapping(value = "/queries/public", method = { RequestMethod.GET })
+	@ResponseBody
+	public List<UserQuery> getPublicUserQueries() {
+		UserQuery q = new UserQuery();
+		q.setTitle("yo");
+		return Arrays.asList(q);
+	}
+	
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.GET })
 	public List<UserQuery> getUserQueries(@PathVariable("username") String username) {
 		return userQueryService.getUserQueries(username);
-	}
-
-	@RequestMapping(value = "/user/public-query", method = { RequestMethod.GET })
-	public List<UserQuery> getPublicQueries() {
-		return userQueryService.getPublishedQueries();
 	}
 
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.POST })
@@ -62,5 +70,7 @@ public class UserQueryController {
 		return model;
 
 	}
+	
+
 
 }

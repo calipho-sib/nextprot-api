@@ -1,11 +1,8 @@
 package org.nextprot.api.user.domain;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class User implements UserDetails {
@@ -15,8 +12,7 @@ public class User implements UserDetails {
 	private String username;
 	private String firstName;
 	private String lastName;
-	private Set<String> roles;
-	private ArrayList<GrantedAuthority> authorities;
+	private Set<GrantedAuthority> authorities;
 
 	public long getId() {
 		return id;
@@ -50,22 +46,12 @@ public class User implements UserDetails {
 		this.lastName = lastName;
 	}
 
-	public Set<String> getRoles() {
-		return roles;
+	public Set<GrantedAuthority> getAuthorities() {
+		return authorities;
 	}
 
-	public void setRoles(Set<String> roles) {
-		this.roles = roles;
-		
-		this.authorities = new ArrayList<GrantedAuthority>();
-		for (String role : roles)
-			this.authorities.add(new SimpleGrantedAuthority(role));
-
-	}
-
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.authorities;
+	public void setAuthorities(Set<GrantedAuthority> authorities) {
+		this.authorities = authorities;
 	}
 
 	@Override

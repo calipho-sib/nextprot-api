@@ -1,5 +1,13 @@
 package org.nextprot.api.user.dao.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -13,11 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Repository;
-
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.*;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -43,9 +48,9 @@ public class UserDaoImpl implements UserDao {
 
         long key = JdbcTemplateUtils.insertAndGetKey(INSERT_USER_SQL, "user_id", namedParameters, new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())).longValue();
 
-        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+        if (user.getAuthorities() != null && !user.getAuthorities().isEmpty()) {
 
-            insertUserRoles(key, user.getRoles());
+        	insertUserAuthorities(key, user.getAuthorities());
         }
 
         return key;
@@ -103,17 +108,17 @@ public class UserDaoImpl implements UserDao {
             throw new NextProtException(msg);
         }
 
-        if (src.getRoles() != null && !src.getRoles().isEmpty()) {
+        if (src.getAuthorities() != null && !src.getAuthorities().isEmpty()) {
 
             // 1. delete all roles for this user if roles exist in user_roles table of src
             deleteUserRoles(src.getId());
 
             // 2. insert roles with insertUserRoles(src.getKey(), src.getRoles())
-            insertUserRoles(src.getId(), src.getRoles());
+            insertUserAuthorities(src.getId(), src.getAuthorities());
         }
 	}
 
-    private void insertUserRoles(final long userId, final Collection<String> roles) {
+    private void insertUserAuthorities(final long userId, final Collection<GrantedAuthority> authorities) {
 
         String sql = sqlDictionary.getSQLQuery("create-user-roles");
 
@@ -127,6 +132,11 @@ public class UserDaoImpl implements UserDao {
             }
         };
 
+        List<String> roles = new ArrayList<String>();	
+        for(GrantedAuthority ga : authorities){
+        	roles.add(ga.getAuthority());
+        }
+        
         updater.batchUpdate(sql, new ArrayList<String>(roles));
     }
 

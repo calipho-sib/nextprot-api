@@ -1,15 +1,22 @@
 package org.nextprot.api.user.service.impl;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.domain.User;
 import org.nextprot.api.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Sets;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -35,7 +42,10 @@ public class UserServiceImpl implements UserService {
 		if(usr == null){
 			User user = new User();
 			user.setUsername(username);
-			userDao.createUser(user);
+			Set<GrantedAuthority> hs = new HashSet<GrantedAuthority>();
+			hs.add(new SimpleGrantedAuthority("ROLE_USER"));
+			user.setAuthorities(hs);
+			createUser(user);
 		}
 		return userDao.getUserByUsername(username);
 	}
