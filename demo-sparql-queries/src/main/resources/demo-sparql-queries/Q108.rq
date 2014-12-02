@@ -2,7 +2,7 @@
 #ac:Q9UQB8,O43586,O94868
 #tags:PDB,domain
 #count:94
-#time:
+#time:0.1
 
 select distinct ?entry where {
   ?entry :isoform ?isoform .
