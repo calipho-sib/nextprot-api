@@ -3,7 +3,9 @@ package org.nextprot.api.user.service.impl;
 import java.util.List;
 
 import org.nextprot.api.security.service.impl.NPSecurityContext;
+import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.dao.UserQueryDao;
+import org.nextprot.api.user.domain.User;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@Autowired
 	private UserQueryDao userQueryDao;
 
+	@Autowired
+	private UserDao userDao;
+	
 	@Override
 	public List<UserQuery> getUserQueries(String username) {
 		return userQueryDao.getUserQueries(username);
@@ -36,6 +41,14 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@Override
 	@Transactional
 	public UserQuery createUserQuery(UserQuery userQuery) {
+
+		//TODO do this in an aspect
+		String username = NPSecurityContext.getCurrentUser();
+		User usr = userDao.getUserByUsername(username);
+		userQuery.setOwner(usr.getUsername());
+		userQuery.setOwnerId(usr.getId());
+			
+		
 		long id = userQueryDao.createUserQuery(userQuery);
 		userQuery.setUserQueryId(id);
 		if(userQuery.getTags() != null){
