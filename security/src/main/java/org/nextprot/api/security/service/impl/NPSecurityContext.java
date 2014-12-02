@@ -85,8 +85,8 @@ public class NPSecurityContext {
 
 	public static String getCurrentUser() {
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		if (a.getPrincipal() instanceof Auth0UserDetails) {
-			Auth0UserDetails currentUserDetails = (Auth0UserDetails) a.getPrincipal();
+		if (a.getPrincipal() instanceof UserDetails) {
+			UserDetails currentUserDetails = (UserDetails) a.getPrincipal();
 			return currentUserDetails.getUsername();
 		}else {
 			return null;

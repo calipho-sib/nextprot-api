@@ -42,10 +42,10 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@Transactional
 	public UserQuery createUserQuery(UserQuery userQuery) {
 
-		//TODO do this in an aspect
+		//TODO replace this with an asepct
 		String username = NPSecurityContext.getCurrentUser();
 		User usr = userDao.getUserByUsername(username);
-		userQuery.setOwner(usr.getUsername());
+		userQuery.setOwner(username);
 		userQuery.setOwnerId(usr.getId());
 			
 		
