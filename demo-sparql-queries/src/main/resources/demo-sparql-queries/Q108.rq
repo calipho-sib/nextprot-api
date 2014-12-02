@@ -1,0 +1,22 @@
+#title: Q108 All proteins that have a 3D structure in PDB that overlap by at least 50 amino acids with a SH3 domain.
+#ac:Q9UQB8,O43586,O94868
+#tags:PDB,domain
+#count:94
+#time:
+
+select distinct ?entry where {
+  ?entry :isoform ?isoform .
+    ?isoform :region ?str .
+      ?str a :3dStructure ; :start ?s1 ; :end ?s2 .
+    ?isoform :region ?dom .
+      ?dom :in term:DO-00615 ; :start ?d1 ; :end ?d2 .
+    bind ( if(?d2<?s2, ?d2, ?s2) - if(?d1>?s1, ?d1, ?s1) as ?overlap) .
+    filter (?overlap>50)
+}
+
+# Note:
+# entries with a 3dStructure    : 5123
+# entries with a SH3 domain     :  221
+# entries with both             :  137
+# entries with both overlap     :   98
+# entries with both overlap>50  :   94

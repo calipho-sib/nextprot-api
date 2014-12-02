@@ -1,6 +1,6 @@
 #title: Q107 All proteins with a protein evidence not "At protein level" with a HGNC identifier/xref that includes the regexp "orf"
 #ac:A6NJI1,C9JXX5,A1A4V9
-#tags:existence.orf
+#tags:existence,orf
 #count:287
 #time:0.42
 
