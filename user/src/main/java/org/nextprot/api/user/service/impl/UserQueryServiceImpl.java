@@ -32,9 +32,10 @@ public class UserQueryServiceImpl implements UserQueryService {
 		return userQueryDao.getPublishedQueries();
 	}
 
-		@Override
+	@Override
 	public UserQuery createUserQuery(UserQuery userQuery) {
-		NPSecurityContext.checkUserAuthorization(userQuery);
+
+		//NPSecurityContext.checkUserAuthorization(userQuery);
 		userQuery.checkValid();
 		long id = userQueryDao.createUserQuery(userQuery);
 		userQuery.setUserQueryId(id);
@@ -43,7 +44,8 @@ public class UserQueryServiceImpl implements UserQueryService {
 
 	@Override
 	public UserQuery updateUserQuery(UserQuery userQuery) {
-		NPSecurityContext.checkUserAuthorization(userQuery);
+
+		//NPSecurityContext.checkUserAuthorization(userQuery);
 		userQuery.checkValid();
 		userQueryDao.updateUserQuery(userQuery);
 		return userQuery;

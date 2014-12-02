@@ -64,7 +64,6 @@
 
 	</beans>
 
-
 	<beans profile="pro">
 
 		<bean id="applicationProperties"

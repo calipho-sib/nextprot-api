@@ -1,8 +1,8 @@
 package org.nextprot.api.user.service;
 
-import java.util.List;
-
 import org.nextprot.api.user.domain.UserApplication;
+
+import java.util.List;
 
 public interface UserApplicationService {
 
@@ -12,6 +12,6 @@ public interface UserApplicationService {
 
     UserApplication getUserApplication(long id);
 
-    void deleteApplication(Long id);
+    void deleteApplication(long id);
 	
 }

@@ -1,9 +1,5 @@
 package org.nextprot.api.user.service.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.security.service.JWTCodec;
 import org.nextprot.api.user.dao.UserApplicationDao;
@@ -15,6 +11,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 @Lazy
 @Service
@@ -23,7 +23,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 	@Autowired(required = false)
 	private JWTCodec<Map<String, String>> codec;
 
-	@Autowired
+	@Autowired(required = false)
 	private UserApplicationDao userApplicationDao;
 
 	@Transactional
@@ -78,7 +78,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 	}
 
 	@Override
-	public void deleteApplication(Long id) {
+	public void deleteApplication(long id) {
 		UserApplication app = this.userApplicationDao.getUserApplicationById(id);
 		//TODO make checking that is the current user or admin...
 		this.userApplicationDao.deleteUserApplication(app);
