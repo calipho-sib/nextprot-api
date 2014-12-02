@@ -94,6 +94,17 @@ public class UserQueryDaoImpl implements UserQueryDao {
 	}
 
 	@Override
+	public List<UserQuery> getTutorialQueries() {
+
+		String sql = sqlDictionary.getSQLQuery("read-tutorial-queries");
+
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+
+		return queryList(sql, namedParameters);
+	}
+
+	
+	@Override
 	public SetMultimap<Long, String> getQueryTags(Collection<Long> queryIds) {
 
 		String sql = sqlDictionary.getSQLQuery("read-tags-by-user-query-ids");

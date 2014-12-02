@@ -38,6 +38,12 @@ public interface UserQueryDao {
 	List<UserQuery> getPublishedQueries();
 
 	/**
+	 * Get a list of published user queries that belongs to user 'nextprot'
+	 * @return a list of user queries
+	 */
+	List<UserQuery> getTutorialQueries();
+
+	/**
 	 * Get the tags associated with user queries
 	 * @param queryIds the user queries
 	 * @return a map of tags indexed by query id

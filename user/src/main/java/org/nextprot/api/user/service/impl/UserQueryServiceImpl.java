@@ -39,6 +39,11 @@ public class UserQueryServiceImpl implements UserQueryService {
 	}
 
 	@Override
+	public List<UserQuery> getTutorialQueries() {
+		return userQueryDao.getTutorialQueries();
+	}
+
+	@Override
 	@Transactional
 	public UserQuery createUserQuery(UserQuery userQuery) {
 

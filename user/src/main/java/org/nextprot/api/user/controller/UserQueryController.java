@@ -34,6 +34,13 @@ public class UserQueryController {
 		return userQueryService.getPublishedQueries();
 	}
 	
+	@RequestMapping(value = "/queries/tutorial", method = { RequestMethod.GET })
+	@ResponseBody
+	public List<UserQuery> getTutorialUserQueries() {
+		return userQueryService.getTutorialQueries();
+	}
+	
+	
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.GET })
 	public List<UserQuery> getUserQueries(@PathVariable("username") String username) {
 		return userQueryService.getUserQueries(username);
