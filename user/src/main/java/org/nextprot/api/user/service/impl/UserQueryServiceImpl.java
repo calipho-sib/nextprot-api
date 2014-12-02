@@ -54,7 +54,6 @@ public class UserQueryServiceImpl implements UserQueryService {
 
 	@Override
 	public void deleteUserQuery(UserQuery userQuery) {
-		NPSecurityContext.checkUserAuthorization(userQuery);
 		userQueryDao.deleteUserQuery(userQuery.getUserQueryId());
 	}
 

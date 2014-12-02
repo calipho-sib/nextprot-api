@@ -1,6 +1,5 @@
 package org.nextprot.api.user.service.impl;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,8 +15,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Sets;
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -29,6 +26,12 @@ public class UserServiceImpl implements UserService {
 		return userDao.getUserList();
 	}
 
+	@Override
+	public User getUser(String username) {
+		return userDao.getUserByUsername(username);
+	}
+
+	
 	@Override
 	@PreAuthorize("hasRole('ROLE_USER') && isCurrentUser()")
 	public void updateUser(User user) {
