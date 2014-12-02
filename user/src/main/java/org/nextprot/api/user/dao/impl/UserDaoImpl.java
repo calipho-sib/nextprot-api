@@ -32,7 +32,7 @@ public class UserDaoImpl implements UserDao {
 	@Autowired
 	private SQLDictionary sqlDictionary;
 
-	@Autowired
+	@Autowired(required = false)
 	private DataSourceServiceLocator dsLocator;
 
     @Override

@@ -13,7 +13,7 @@ public class PopulateRDBMSWithQueriesApp {
 	public static void main(String[] args) {
 
 		System.setProperty("spring.profiles.active", "dev");
-		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("spring/demo-queries-context.xml");
+		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:spring/commons-context.xml", "spring/demo-queries-context.xml");
 
 		DemoSparqlService sparqlService = ctx.getBean(DemoSparqlService.class);
 		UserQueryService userQueryService = ctx.getBean(UserQueryService.class);

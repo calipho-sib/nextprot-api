@@ -136,7 +136,7 @@ public class UserQueryDaoTest extends UserApplicationBaseTest {
 
         UserQuery query2 = userQueryDao.getUserQueryById(id);
 
-        assertExpectedUserQuery(query2, id, "tahitibob", "ma requete", "une simple requete", false, "yet another sparql query", Sets.<String>newHashSet());
+        assertExpectedUserQuery(query2, id, "tahitibob", "ma requete", "une simple requete", true, "yet another sparql query", Sets.<String>newHashSet());
     }
 
     @Test

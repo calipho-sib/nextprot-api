@@ -1,5 +1,15 @@
 package org.nextprot.api.user.dao.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NPreconditions;
@@ -11,6 +21,7 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,11 +29,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
-
+@Lazy
 @Repository
 public class UserProteinListDaoImpl implements UserProteinListDao {
 
@@ -30,7 +37,8 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 
 	@Autowired private SQLDictionary sqlDictionary;
 
-	@Autowired private DataSourceServiceLocator dsLocator;
+	@Autowired(required = false)
+	private DataSourceServiceLocator dsLocator;
 
 	@Override
 	public List<UserProteinList> getUserProteinLists(String username) {

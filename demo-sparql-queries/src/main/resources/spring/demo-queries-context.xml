@@ -12,6 +12,4 @@
 
 	<context:component-scan base-package="org.nextprot.api" />
 
-	<import resource="classpath:spring/commons-context.xml" />
-
 </beans>
