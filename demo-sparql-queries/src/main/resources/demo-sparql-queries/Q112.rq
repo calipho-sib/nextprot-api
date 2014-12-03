@@ -1,0 +1,23 @@
+#title: Q112 located in nucleus and nowhere else
+#ac:,,
+#tags:location,bug
+#count:
+#time:
+
+select ?entry where {
+  {
+  select  ?entry (count(?loc) as ?anyLoc) (sum(?inNucleus) as ?nucleusLoc)
+  where {
+    #values ?entry { entry:NX_Q9P0K7 } .
+    ?entry :isoform / :location ?loc .
+    ?loc :evidence / :negative false .
+    ?loc :term ?locterm .
+    bind( exists {
+      ?locterm :childOf / rdfs:label ?label .
+      filter (regex(?label, '^[Nn]ucleus$'))
+    } as ?inNucleus)
+  }
+  group by ?entry
+ }
+ filter ( ?anyLoc = ?nucleusLoc  && ?nucleusLoc > 0)
+}

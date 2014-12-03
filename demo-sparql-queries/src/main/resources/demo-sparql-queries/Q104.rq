@@ -1,0 +1,11 @@
+#title: Q104 All proteins on chromosome 21 with at least one cross-reference on Orphanet.
+#ac:O43918,P57078,P12110
+#tags: Xref,disease
+#count:31
+#time:0.11
+
+select distinct ?entry {
+?entry
+  :reference / :provenance db:Orphanet ;
+  :gene / :chromosome "21"^^xsd:string
+}
