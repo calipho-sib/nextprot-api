@@ -157,7 +157,7 @@ public enum AnnotationApiModel  {
 
 	private final Integer dbId; // if positive, identifies a real record of the table nextprot.cv_terms (category annotation_type)
 	private final String dbAnnotationTypeName; // if dbId is positive, dbAnnotationTypeName is an exact match of the corresponding record in nextprot.cv_terms 
-	private final String rdfName; // a string from which an rdf predicate and an rdfs:type name is derived 
+	private final String apiName; // a string from which an rdf predicate and an rdfs:type name is derived 
 	private final String rdfLabel; // a human readable label for the rdf:type
 	private String description=null; // may be set later from reading values in the db 
 	
@@ -173,7 +173,7 @@ public enum AnnotationApiModel  {
 		
 		this.dbId = dbId;
 		this.dbAnnotationTypeName=dbAnnotationTypeName;
-		this.rdfName = rdfName;
+		this.apiName = rdfName;
 		this.rdfLabel = rdfLabel;
 		this.parents = new HashSet<AnnotationApiModel>();
 		if (parentCategories!=null) {
@@ -183,7 +183,7 @@ public enum AnnotationApiModel  {
 
 	
 	
-	// *************** STATIC PRIVATE METHODS initialized for performance reasons ********************************** ///////////////////
+	// *************** STATIC PRIVATE FINAL CONSTANTS initialized for performance reasons ********************************** ///////////////////
 	
 	// Fill the cache
 	private static final Map<String,AnnotationApiModel> MAP_TYPES =new HashMap<String,AnnotationApiModel>();
@@ -191,12 +191,12 @@ public enum AnnotationApiModel  {
 	
 	// Fill the cache decamelized
 	private static Map<String,AnnotationApiModel> MAP_DECAMELIZED_TYPES=new HashMap<String,AnnotationApiModel>();
-	static {for (AnnotationApiModel category : AnnotationApiModel.values()) {MAP_DECAMELIZED_TYPES.put(StringUtils.decamelizeAndReplaceByHyphen(category.getDbAnnotationTypeName()), category);}	}
+	static {for (AnnotationApiModel category : AnnotationApiModel.values()) {MAP_DECAMELIZED_TYPES.put(StringUtils.decamelizeAndReplaceByHyphen(category.getApiTypeName()), category);}	}
 
 	private static String HIERARCHY_STRING = null;
 	static {StringBuilder sb = new StringBuilder();getAnnotationHierarchy(AnnotationApiModel.ROOT, sb, 0);HIERARCHY_STRING = sb.toString();}
 	private static void getAnnotationHierarchy(AnnotationApiModel a, StringBuilder sb, int inc) {
-		if(inc > 0) sb.append(new String(new char[inc]).replace('\0', '-') + StringUtils.decamelizeAndReplaceByHyphen(a.getDbAnnotationTypeName()) + "  " + "\n");
+		if(inc > 0) sb.append(new String(new char[inc]).replace('\0', '-') + StringUtils.decamelizeAndReplaceByHyphen(a.getApiTypeName()) + "  " + a.getHierarchy() + "\n");
 		int nextInc = inc + 1;
 		for (AnnotationApiModel c : a.getChildren()) {
 				getAnnotationHierarchy(c, sb, nextInc);
@@ -272,13 +272,19 @@ public enum AnnotationApiModel  {
 	}
 	
 	public String getRdfPredicate() {
-		return StringUtils.lowerFirstChar(this.rdfName);
+		return StringUtils.lowerFirstChar(this.apiName);
 	}
 	
+	@Deprecated //TODO change this for something more generic like #getApiTypeName, since it may be highly used in RDF templates I leave it for now
 	public String getRdfTypeName() {
-		return StringUtils.upperFirstChar(this.rdfName);
+		return getApiTypeName();
+	}
+	
+	public String getApiTypeName() {
+		return StringUtils.upperFirstChar(this.apiName);
 	}
 		
+	@Deprecated
 	public String getRdfLabel() {
 		return StringUtils.upperFirstChar(this.rdfLabel);
 	}
@@ -315,6 +321,24 @@ public enum AnnotationApiModel  {
 		for (AnnotationApiModel parent : mine) all.addAll(parent.getAllParents());
 		all.remove(AnnotationApiModel.ROOT);
 		return all;
+	}
+	
+	public boolean isChildOf(AnnotationApiModel aam) {
+		return aam.getAllChildren().contains(this);
+	}
+	
+	public String getHierarchy() {
+		StringBuilder sb = new StringBuilder();
+		getPathToRoot(this, sb);
+		return sb.toString();
+	}
+	
+	private void getPathToRoot(AnnotationApiModel a, StringBuilder sb){
+		if(a.getParents().iterator().hasNext()) {
+			AnnotationApiModel parent = a.getParents().iterator().next();
+			getPathToRoot(parent, sb);
+			sb.append(StringUtils.decamelizeAndReplaceByHyphen(a.getDbAnnotationTypeName()) + ":");
+		}
 	}
 	
 	public String toString() {

@@ -41,13 +41,29 @@
 			<property name="password" value="${db.password}" />
 		</bean>
 
-		<bean id="dbUnitDatabaseConnection"
-			class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
-			<property name="schema" value="nextprot" />
-			<property name="dataSource" ref="dataSource" />
-		</bean>
+
+		<beans profile="unit-schema-nextprot">
+
+			<bean id="dbUnitDatabaseConnection"
+				class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+				<property name="schema" value="nextprot" />
+				<property name="dataSource" ref="dataSource" />
+			</bean>
+
+		</beans>
+
+		<beans profile="unit-schema-user">
+
+			<bean id="dbUnitDatabaseConnection"
+				class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+				<property name="schema" value="np_users" />
+				<property name="dataSource" ref="dataSource" />
+			</bean>
+
+		</beans>
 
 	</beans>
+
 
 	<beans profile="pro">
 

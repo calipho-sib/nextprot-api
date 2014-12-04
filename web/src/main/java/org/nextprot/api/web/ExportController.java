@@ -1,19 +1,5 @@
 package org.nextprot.api.web;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Future;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
@@ -22,14 +8,10 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.export.ExportService;
 import org.nextprot.api.core.service.export.ExportUtils;
-import org.nextprot.api.core.service.export.format.ExportFormat;
-import org.nextprot.api.core.service.export.format.ExportTXTTemplate;
-import org.nextprot.api.core.service.export.format.ExportTemplate;
-import org.nextprot.api.core.service.export.format.ExportXMLTemplate;
-import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.service.export.format.*;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
-import org.nextprot.api.user.domain.UserList;
-import org.nextprot.api.user.service.UserListService;
+import org.nextprot.api.user.domain.UserProteinList;
+import org.nextprot.api.user.service.UserProteinListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -41,6 +23,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.*;
+import java.util.concurrent.Future;
 
 /**
  * Controller class responsible to extract in streaming
@@ -55,7 +43,7 @@ public class ExportController {
 	@Autowired
 	private ExportService exportService;
 	@Autowired
-	private UserListService proteinListService;
+	private UserProteinListService proteinListService;
 	@Autowired
 	private ViewResolver viewResolver;
 	@Autowired
@@ -92,11 +80,11 @@ public class ExportController {
 	@RequestMapping("/export/entries/list/{listId}")
 	public void exportByListId(HttpServletResponse response, HttpServletRequest request, @ApiParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
 
-		UserList proteinList = this.proteinListService.getProteinListById(Long.valueOf(listId));
+		UserProteinList proteinList = this.proteinListService.getUserProteinListById(Long.valueOf(listId));
 		NPFileFormat format = getRequestedFormat(request);
 		response.setHeader("Content-Disposition", "attachment; filename=\"NXEntries." + format.getExtension() + "\"");
 
-		List<Future<File>> futures = exportService.exportEntries(new ArrayList<String>(proteinList.getAccessions()), getRequestedFormat(request));
+		List<Future<File>> futures = exportService.exportEntries(new ArrayList<String>(proteinList.getAccessionNumbers()), getRequestedFormat(request));
 		ExportUtils.printOutput(new LinkedList<Future<File>>(futures), response);
 
 	}
@@ -118,11 +106,11 @@ public class ExportController {
 			default:throw new NextProtException(format + " not supported for templates");
 		}
 
-		UserList proteinList = this.proteinListService.getProteinListById(Long.valueOf(listId));
+		UserProteinList proteinList = this.proteinListService.getUserProteinListById(Long.valueOf(listId));
 		String fileName = "nextprot-" + template.getTemplateName() + "-" + proteinList.getName() + "." + format.getExtension() ;
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
-		Set<String> accessions = proteinList.getAccessions();
+		Set<String> accessions = proteinList.getAccessionNumbers();
 		try {
 			response.getWriter().write(template.getHeader());
 			for (String acc : accessions) {

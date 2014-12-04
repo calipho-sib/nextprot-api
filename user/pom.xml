@@ -9,12 +9,15 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-
-	<groupId>org.nextprot</groupId>
 	<artifactId>nextprot-api-user</artifactId>
 	<packaging>jar</packaging>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-security</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-api-commons</artifactId>
@@ -27,12 +30,7 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-		<!-- JWT -->
-		<dependency>
-			<groupId>sib.calipho</groupId>
-			<artifactId>spring-auth0-core</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
-		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -44,7 +42,7 @@
 				<version>3.0</version>
 				<configuration>
 					<driver>org.postgresql.Driver</driver>
-					<url>jdbc:postgresql://crick:5432/np_unit</url>
+					<url>jdbc:postgresql://crick.isb-sib.ch:5432/np_unit</url>
 					<user>postgres</user>
 					<password>postgres</password>
 					<schemas>

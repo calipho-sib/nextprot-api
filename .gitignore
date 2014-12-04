@@ -11,6 +11,11 @@ velocity.log.*
 *.swp
 npapi.log
 AnnotationMVCTest.out.xml
+target
+cache
+log
+*.iml
+.idea
 MANIFEST.MF
 .settings
 rebel.xml

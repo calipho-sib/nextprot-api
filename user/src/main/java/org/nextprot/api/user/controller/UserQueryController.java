@@ -28,25 +28,28 @@ public class UserQueryController {
 	@Autowired
 	private UserQueryService userQueryService;
 
+	@RequestMapping(value = "/queries/public", method = { RequestMethod.GET })
+	@ResponseBody
+	public List<UserQuery> getPublicUserQueries() {
+		return userQueryService.getPublishedQueries();
+	}
+	
+	@RequestMapping(value = "/queries/tutorial", method = { RequestMethod.GET })
+	@ResponseBody
+	public List<UserQuery> getTutorialUserQueries() {
+		return userQueryService.getTutorialQueries();
+	}
+	
+	
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.GET })
 	public List<UserQuery> getUserQueries(@PathVariable("username") String username) {
 		return userQueryService.getUserQueries(username);
 	}
 
-	@RequestMapping(value = "/user/public-query", method = { RequestMethod.GET })
-	public List<UserQuery> getPublicQueries() {
-		return userQueryService.getPublicQueries();
-	}
-
-	@RequestMapping(value = "/user/nextprot-query", method = { RequestMethod.GET })
-	public List<UserQuery> getNextprotQueries() {
-		return userQueryService.getNextprotQueries();
-	}
-
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.POST })
 	@ResponseBody
 	public UserQuery createAdvancedQuery(@RequestBody UserQuery advancedUserQuery, @PathVariable("username") String username) {
-		advancedUserQuery.setUsername(username);
+		advancedUserQuery.setOwner(username);
 		return userQueryService.createUserQuery(advancedUserQuery);
 	}
 
@@ -56,7 +59,7 @@ public class UserQueryController {
 
 		// Never trust what the users sends to you! Set the correct username, so it will be verified by the service,
 		UserQuery q = userQueryService.getUserQueryById(advancedUserQuery.getUserQueryId());
-		advancedUserQuery.setUsername(q.getUsername());
+		advancedUserQuery.setOwner(q.getOwner());
 
 		return userQueryService.updateUserQuery(advancedUserQuery);
 	}
@@ -71,5 +74,7 @@ public class UserQueryController {
 		return model;
 
 	}
+	
+
 
 }

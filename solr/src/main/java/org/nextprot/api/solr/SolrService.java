@@ -1,7 +1,7 @@
 package org.nextprot.api.solr;
 
 import org.nextprot.api.commons.exception.SearchQueryException;
-import org.nextprot.api.user.domain.UserList;
+import org.nextprot.api.user.domain.UserProteinList;
 
 
 public interface SolrService {
@@ -45,7 +45,7 @@ public interface SolrService {
 			String queryString, String quality, String sort, String order,
 			String start, String rows, String filter);
 
-	SearchResult getUserListSearchResult(UserList proteinList) throws SearchQueryException;
+	SearchResult getUserListSearchResult(UserProteinList proteinList) throws SearchQueryException;
 
 //	Query buildQuery(SolrIndex index, String configuration,
 //			String queryString, String quality, String sort, String order,

@@ -6,6 +6,7 @@ import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.AntibodyMappingService;
@@ -24,6 +25,7 @@ import org.nextprot.api.core.service.export.format.ExportTXTTemplate;
 import org.nextprot.api.core.service.export.format.ExportTemplate;
 import org.nextprot.api.core.service.export.format.ExportXMLTemplate;
 import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.PublicationUtils;
 import org.nextprot.api.core.utils.XrefUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -212,15 +214,19 @@ public class FluentEntryService {
 			
 			List<Annotation> annotations = annotationService.findAnnotations(entryName);
 			List<DbXref> xrefs = xrefService.findDbXrefsByMaster(entryName);
+			List<Publication> publications = publicationService.findPublicationsByMasterUniqueName(entryName);
 
 			//Filter if necessary
 			if(annotationCategory != null){
 				annotations = AnnotationUtils.filterAnnotationsByCategory(annotations, annotationCategory);
 				xrefs = XrefUtils.filterXrefsByIds(xrefs, AnnotationUtils.getXrefIdsForAnnotations(annotations));
+				publications = PublicationUtils.filterPublicationsByIds(publications, AnnotationUtils.getPublicationIdsForAnnotations(annotations));
 			}
-			
+
+
 			entry.setAnnotations(annotations);
 			entry.setXrefs(xrefs);
+			entry.setPublications(publications);
 			
 			return entry;
 		}

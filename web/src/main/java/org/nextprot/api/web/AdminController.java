@@ -23,8 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_ADMIN')")
-// and #request.getRemoteAddr() == '127.0.0.1'
-@Api(name = "Admin", description = "Admin operations", role = "ROLE_ADMIN")
+@Api(name = "ROLE_ADMIN", description = "Admin operations", role = "ROLE_ADMIN")
 public class AdminController {
 
 	private static final Log LOGGER = LogFactory.getLog(AdminController.class);

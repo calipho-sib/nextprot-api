@@ -20,7 +20,7 @@ public class AnnotationUtils {
 	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationApiModel annotationCategory){
 		List<Annotation> annotationList = new ArrayList<Annotation>(); 
 		for(Annotation a : annotations){
-			if(a.getAPICategory() != null && a.getAPICategory().equals(annotationCategory)){
+			if(a.getAPICategory() != null && (a.getAPICategory().equals(annotationCategory) || a.getAPICategory().isChildOf(annotationCategory))){
 				annotationList.add(a);
 			}
 		}
@@ -39,6 +39,21 @@ public class AnnotationUtils {
 			}
 		}
 		return xrefIds;
+	}
+
+
+	public static Set<Long> getPublicationIdsForAnnotations(List<Annotation> annotations) {
+
+		Set<Long> publicationIds = new HashSet<Long>(); 
+		for(Annotation a : annotations){
+			for(AnnotationEvidence e : a.getEvidences()){
+				if(e.isResourceAPublication()){
+					publicationIds.add(e.getResourceId());
+				}
+			}
+		}
+		return publicationIds;
+	
 	}
 
 }

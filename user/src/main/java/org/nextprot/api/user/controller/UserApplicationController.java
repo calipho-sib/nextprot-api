@@ -1,6 +1,5 @@
 package org.nextprot.api.user.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.jsondoc.core.annotation.Api;
@@ -9,8 +8,8 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiParamType;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.user.domain.UserApplication;
-import org.nextprot.api.user.security.NPSecurityContext;
 import org.nextprot.api.user.service.UserApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -39,7 +38,7 @@ public class UserApplicationController {
 	@RequestMapping(value = "/user/applications", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserApplication> getApplications() {
-		return userApplicationService.getUserApplications(NPSecurityContext.getCurrentUser());
+		return userApplicationService.getUserApplicationsByOwnerId(NPSecurityContext.getCurrentUserId());
 	}
 
 	
@@ -47,7 +46,7 @@ public class UserApplicationController {
 	@RequestMapping(value = "/user/applications", method = { RequestMethod.POST })
 	@ResponseBody
 	public UserApplication createApplication(@RequestBody @ApiBodyObject UserApplication userApplication) {
-		userApplication.setOwner(NPSecurityContext.getCurrentUser());
+		userApplication.setOwnerId(NPSecurityContext.getCurrentUserId());
 		return userApplicationService.createUserApplication(userApplication);
 	}
 	

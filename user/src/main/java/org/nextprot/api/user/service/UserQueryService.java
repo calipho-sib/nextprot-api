@@ -1,8 +1,8 @@
 package org.nextprot.api.user.service;
 
-import java.util.List;
-
 import org.nextprot.api.user.domain.UserQuery;
+
+import java.util.List;
 
 /**
  * Service to retrieve user queries 
@@ -12,7 +12,6 @@ import org.nextprot.api.user.domain.UserQuery;
  */
 public interface UserQueryService {
 
-	
 	/**
 	 * Gets for a particular username
 	 * @param username
@@ -21,16 +20,14 @@ public interface UserQueryService {
 	List<UserQuery> getUserQueries(String username);
 	
 	/**
-	 * Get public queries
+	 * Get user queries by tag name
+	 * @param tag tag name
 	 * @return
 	 */
-	List<UserQuery> getPublicQueries();
+	List<UserQuery> getUserQueriesByTag(String tag);
 
-	/**
-	 * Get nextprot queries
-	 * @return
-	 */
-	List<UserQuery> getNextprotQueries();
+	List<UserQuery> getPublishedQueries();
+	List<UserQuery> getTutorialQueries();
 
 	/**
 	 * Create operation for the user query
