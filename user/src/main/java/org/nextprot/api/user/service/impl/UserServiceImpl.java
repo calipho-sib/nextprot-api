@@ -8,6 +8,8 @@ import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.domain.User;
 import org.nextprot.api.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -33,13 +35,14 @@ public class UserServiceImpl implements UserService {
 
 	
 	@Override
-	@PreAuthorize("hasRole('ROLE_USER') && isCurrentUser()")
+	@PreAuthorize("hasRole('ROLE_USER')") //TODO  && isCurrentUser()
+	@CacheEvict(value = "read-user", key = "#username")
 	public void updateUser(User user) {
 		userDao.updateUser(user);
 	}
 
 	@Override
-	//TODO @Cacheable if cached, think about cache evict / invalidate the cache
+	@Cacheable(value = "read-user", key = "#username")
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User usr = userDao.getUserByUsername(username);
 		if(usr == null){
@@ -54,6 +57,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
+	@CacheEvict(value = "read-user", key = "#username")
 	public void createUser(User user) {
 		userDao.createUser(user);
 	}

@@ -15,6 +15,9 @@
 	<cache name="master-unique-name" maxEntriesLocalHeap="22000"
 		eternal="true" statistics="true" />
 
+	<cache name="read-user" maxEntriesLocalHeap="2000" eternal="true" statistics="true" />
+
+
 	<!-- Configuring cache for other services -->
 	<cache name="terminology-by-ontology" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
