@@ -42,6 +42,7 @@ public class UserQueryController {
 	
 	
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.GET })
+	@ResponseBody
 	public List<UserQuery> getUserQueries(@PathVariable("username") String username) {
 		return userQueryService.getUserQueries(username);
 	}
@@ -65,6 +66,7 @@ public class UserQueryController {
 	}
 
 	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.DELETE })
+	@ResponseBody
 	public Model deleteAdvancedQuery(@PathVariable("username") String username, @PathVariable("id") String id, Model model) {
 
 		// Never trust what the users sends to you! Send the query with the correct username, so it will be verified by the service,
