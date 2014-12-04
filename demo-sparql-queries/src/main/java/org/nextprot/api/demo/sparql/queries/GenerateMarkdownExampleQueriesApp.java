@@ -13,9 +13,11 @@ public class GenerateMarkdownExampleQueriesApp {
 
 		DemoSparqlService sparqlService = ctx.getBean(DemoSparqlService.class);
 		for (DemoSparqlQuery q : sparqlService.getDemoSparqlQueries()) {
-			System.out.println("##" + q.getTitle());
+			System.out.println(q.getTitle());
 			System.out.println("\n");
-			System.out.println(q.getQuery()); //should remove all comments
+			System.out.println("```");
+			System.out.println(q.getQuery()); // should remove all comments
+			System.out.println("```");
 			System.out.println("\n");
 
 		}
