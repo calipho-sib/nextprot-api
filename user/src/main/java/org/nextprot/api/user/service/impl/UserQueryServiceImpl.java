@@ -2,6 +2,7 @@ package org.nextprot.api.user.service.impl;
 
 import java.util.List;
 
+import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.dao.UserQueryDao;
@@ -72,7 +73,9 @@ public class UserQueryServiceImpl implements UserQueryService {
 
 	@Override
 	public void deleteUserQuery(UserQuery userQuery) {
-		userQueryDao.deleteUserQuery(userQuery.getUserQueryId());
+		long queryId = userQuery.getUserQueryId();
+		NPreconditions.checkNotNull(queryId, "Object not found");
+		userQueryDao.deleteUserQuery(queryId);
 	}
 
 	@Override

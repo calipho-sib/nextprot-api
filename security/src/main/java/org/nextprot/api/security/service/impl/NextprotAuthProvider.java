@@ -14,8 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
@@ -28,7 +26,6 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 	private String clientSecret;
 	private String clientId;
 	private final Log logger = LogFactory.getLog(NextprotAuthProvider.class);
-	private static final SecurityException AUTH_ERROR = new SecurityException("Authentication error occured");
 
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -66,26 +63,31 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 					}
 					userDetails = userDetailsService.loadUserByUsername(userApp.getOwner());
 				}
-			}*/ else throw AUTH_ERROR;
+			}*/ else throw new SecurityException("client id not found");
 
 			
 			
 
 		} catch (InvalidKeyException e) {
-			this.logger.debug("InvalidKeyException thrown while decoding JWT token " + e.getLocalizedMessage());
-			throw AUTH_ERROR;
+			e.printStackTrace();
+			this.logger.error("InvalidKeyException thrown while decoding JWT token " + e.getLocalizedMessage());
+			throw new SecurityException(e);
 		} catch (NoSuchAlgorithmException e) {
-			this.logger.debug("NoSuchAlgorithmException thrown while decoding JWT token " + e.getLocalizedMessage());
-			throw AUTH_ERROR;
+			e.printStackTrace();
+			this.logger.error("NoSuchAlgorithmException thrown while decoding JWT token " + e.getLocalizedMessage());
+			throw new SecurityException(e);
 		} catch (IllegalStateException e) {
-			this.logger.debug("IllegalStateException thrown while decoding JWT token " + e.getLocalizedMessage());
-			throw AUTH_ERROR;
+			e.printStackTrace();
+			this.logger.error("IllegalStateException thrown while decoding JWT token " + e.getLocalizedMessage());
+			throw new SecurityException(e);
 		} catch (SignatureException e) {
-			this.logger.debug("SignatureException thrown while decoding JWT token " + e.getLocalizedMessage());
-			throw AUTH_ERROR;
+			e.printStackTrace();
+			this.logger.error("SignatureException thrown while decoding JWT token " + e.getLocalizedMessage());
+			throw new SecurityException(e);
 		} catch (IOException e) {
-			this.logger.debug("IOException thrown while decoding JWT token " + e.getLocalizedMessage());
-			throw AUTH_ERROR;
+			e.printStackTrace();
+			this.logger.error("IOException thrown while decoding JWT token " + e.getLocalizedMessage());
+			throw new SecurityException(e);
 		}
 	}
 

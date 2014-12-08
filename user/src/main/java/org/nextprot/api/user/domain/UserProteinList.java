@@ -7,6 +7,8 @@ import org.nextprot.api.commons.resource.ResourceOwner;
 
 public class UserProteinList implements ResourceOwner {
 
+	private static final long serialVersionUID = 1968815880984849468L;
+
 	private long id;
 	private String name;
 	private String description;
