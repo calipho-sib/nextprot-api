@@ -14,6 +14,7 @@ import org.jsondoc.core.annotation.Api;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserProteinListService.Operations;
+import org.nextprot.api.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,6 +38,9 @@ public class UserListController {
 	@Autowired
 	private UserProteinListService proteinListService;
 
+	@Autowired
+	private UserService userService;
+	
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserProteinList> getUserProteinLists(@PathVariable("username") String username) {
@@ -46,8 +50,10 @@ public class UserListController {
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
 	public String createList(@PathVariable("username") String username, @RequestBody UserProteinList proteinList, Model model) {
 
+		proteinList.setOwner(username);
+		proteinList.setOwnerId(userService.getUser(username).getId());
+		
 		proteinList = this.proteinListService.createUserProteinList(proteinList);
-		Logger.info("created list: " + proteinList.getId() + " > " + proteinList.getName());
 		model.addAttribute("proteinList", proteinList);
 		return "protein-list";
 

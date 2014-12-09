@@ -236,7 +236,7 @@ public class UserProteinListDaoTest extends UserApplicationBaseTest {
 		assertEquals(expectedDescription, list.getDescription());
 		assertEquals(expectedOwner, list.getOwner());
 		assertEquals(expectedOwnerId, list.getOwnerId());
-		assertEquals(expectedProteinCount, list.getProteinCount());
+		assertEquals(expectedProteinCount, list.getEntriesCount());
 		assertEquals(expectedProteins, list.getAccessionNumbers());
 	}
 }

@@ -13,7 +13,7 @@ public class UserProteinList implements ResourceOwner {
 	private String name;
 	private String description;
 	private Set<String> accessionNumbers = new HashSet<String>();
-	private int proteinCount = 0;
+	private int entriesCount = 0;
     private long ownerId;
 	private String owner;
 	
@@ -47,15 +47,15 @@ public class UserProteinList implements ResourceOwner {
 
 	public void setAccessions(Set<String> accessions) {
 		this.accessionNumbers = accessions;
-		this.proteinCount = this.accessionNumbers.size();
+		this.entriesCount = this.accessionNumbers.size();
 	}
 	
-	public int getProteinCount() {
-		return proteinCount;
+	public int getEntriesCount() {
+		return entriesCount;
 	}
 
-	public void setProteinCount(int count) {
-		proteinCount = count;
+	public void setEntriesCount(int count) {
+		entriesCount = count;
 	}
 
     @Override

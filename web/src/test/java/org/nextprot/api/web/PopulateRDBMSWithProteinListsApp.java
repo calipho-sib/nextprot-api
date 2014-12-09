@@ -20,7 +20,7 @@ public class PopulateRDBMSWithProteinListsApp {
 			UserProteinList pl = new UserProteinList();
 			pl.setName("some name" + i);
 			pl.setDescription("some description" + i);
-			pl.setProteinCount(5);
+			pl.setEntriesCount(5);
 			pl.setOwner(username);
 			pl.setOwnerId(userService.getUser(username).getId());
 			

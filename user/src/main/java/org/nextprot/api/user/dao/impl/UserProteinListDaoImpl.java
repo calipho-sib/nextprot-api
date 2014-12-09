@@ -200,7 +200,7 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 			pl.setDescription(rs.getString("description"));
 			pl.setOwnerId(rs.getLong("owner_id"));
 			pl.setOwner(rs.getString("user_name"));
-			pl.setProteinCount(rs.getInt("protCount"));
+			pl.setEntriesCount(rs.getInt("protCount"));
 
 			return pl;
 		}

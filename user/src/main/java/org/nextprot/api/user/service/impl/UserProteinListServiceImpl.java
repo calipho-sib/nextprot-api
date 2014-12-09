@@ -71,9 +71,10 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 		UserProteinList newList = this.proteinListDao.getUserProteinListById(id);
 		//newList.setAccessions(this.proteinListDao.getAccessionsByListId(id));
+	/*
 		System.out.println("selected: " + proteinList.getAccessionNumbers().size() + " created: " + newList.getAccessionNumbers().size() + " not there: "
 				+ Sets.difference(proteinList.getAccessionNumbers(), newList.getAccessionNumbers()));
-
+*/
 		return proteinList;
 
 	}
