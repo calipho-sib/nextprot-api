@@ -15,15 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 @Lazy
 @Service
 public class UserApplicationServiceImpl implements UserApplicationService {
 
-	@Autowired(required = false)
+	@Autowired
 	private JWTCodec<Map<String, String>> codec;
 
-	@Autowired(required = false)
+	@Autowired
 	private UserApplicationDao userApplicationDao;
 
 	@Transactional
@@ -52,19 +51,6 @@ public class UserApplicationServiceImpl implements UserApplicationService {
         return codec.encodeJWT(appProps, 0);
     }
 
-	/*public UserApplication createUserApplication(UserApplication userApplication) {
-		
-		//Check that the current user is allowed to perform the operation
-		NPSecurityContext.checkUserAuthorization(userApplication);
-		
-		String token = tokenHelper.encodeJWT(userApplication, 365 * 60 * 60);
-		userApplication.setToken(token);
-		
-		userApplicationDao.createUserApplication(userApplication);
-		
-		return userApplication;
-	}*/
-
 	@Override
 	public List<UserApplication> getUserApplicationsByOwnerId(long ownerId) {
 		List<UserApplication> apps = userApplicationDao.getUserApplicationListByOwnerId(ownerId);
@@ -83,5 +69,4 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 		//TODO make checking that is the current user or admin...
 		this.userApplicationDao.deleteUserApplication(app);
 	}
-
 }

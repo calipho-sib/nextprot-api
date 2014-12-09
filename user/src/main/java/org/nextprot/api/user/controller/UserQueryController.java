@@ -48,6 +48,7 @@ public class UserQueryController {
 		// Never trust what the users sends to you! Set the correct username, so it will be verified by the service,
 		UserQuery q = userQueryService.getUserQueryById(advancedUserQuery.getUserQueryId());
 		advancedUserQuery.setOwner(q.getOwner());
+		advancedUserQuery.setOwnerId(q.getOwnerId());
 
 		return userQueryService.updateUserQuery(advancedUserQuery);
 	}
@@ -56,8 +57,7 @@ public class UserQueryController {
 	public Model deleteAdvancedQuery(@PathVariable("username") String username, @PathVariable("id") String id, Model model) {
 
 		// Never trust what the users sends to you! Send the query with the correct username, so it will be verified by the service,
-		long qid = Long.parseLong(id);
-		UserQuery q = userQueryService.getUserQueryById(qid);
+		UserQuery q = userQueryService.getUserQueryById(Long.parseLong(id));
 		userQueryService.deleteUserQuery(q);
 		return model;
 

@@ -2,7 +2,6 @@ package org.nextprot.api.user.aop;
 
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.user.domain.UserResource;
 import org.nextprot.api.user.security.NPSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,24 +25,20 @@ public class UserResourceAuthorizationAspect {
 
 		NPSecurityContext.checkUserAuthorization(clientUserResource);
 
-		String storedOwner = getStoredOwner(clientUserResource);
+		UserResourceAuthorizationChecker checker = getAuthorizationChecker(clientUserResource);
 
-		if (storedOwner == null)
-			throw new NotAuthorizedException(clientUserResource.getResourceOwner()+" cannot access resource");
-
-		if (!storedOwner.equals(clientUserResource.getResourceOwner()))
-			throw new NotAuthorizedException(clientUserResource.getResourceOwner()+" cannot access resource");
+		checker.checkAuthorization(clientUserResource);
 	}
 
-	private String getStoredOwner(UserResource userResource) {
+	private UserResourceAuthorizationChecker getAuthorizationChecker(UserResource userResource) {
 
-		Map<String, RealOwnerProvider> providers = context.getBeansOfType(RealOwnerProvider.class);
+		Map<String, UserResourceAuthorizationChecker> checkers = context.getBeansOfType(UserResourceAuthorizationChecker.class);
 
-		for (RealOwnerProvider provider : providers.values()) {
+		for (UserResourceAuthorizationChecker checker : checkers.values()) {
 
-			if (provider.supports(userResource)) {
+			if (checker.supports(userResource)) {
 
-				return provider.getRealOwner(userResource);
+				return checker;
 			}
 		}
 

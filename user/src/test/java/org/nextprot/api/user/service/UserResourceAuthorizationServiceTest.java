@@ -1,21 +1,20 @@
 package org.nextprot.api.user.service;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.security.service.JWTCodec;
+import org.nextprot.api.commons.exception.NotAuthorizedException;
+import org.nextprot.api.user.aop.UserApplicationAuthorizationChecker;
+import org.nextprot.api.user.aop.UserResourceAuthorizationAspect;
 import org.nextprot.api.user.dao.UserApplicationDao;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserApplication;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
-import org.nextprot.api.user.domain.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,7 +23,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
-import java.util.Map;
 
 import static org.mockito.Matchers.*;
 
@@ -33,45 +31,39 @@ import static org.mockito.Matchers.*;
 public class UserResourceAuthorizationServiceTest {
 
     @Autowired
-    UserQueryService uqService;
+    private UserQueryService userQueryService;
 
     @Autowired
-    UserApplicationService uaService;
+    private UserApplicationService userApplicationService;
 
     @Autowired
-    UserProteinListService uplService;
+    private UserProteinListService userProteinListService;
+
+    @Autowired
+    private UserQueryDao userQueryDao;
+
+    @Autowired
+    private UserApplicationDao userApplicationDao;
+
+    @Autowired
+    private UserProteinListDao userProteinListDao;
 
     @Mock
-    UserQueryDao uqDao;
+    private Authentication authentication;
 
-    @Mock
-    UserApplicationDao uaDao;
+    @Autowired
+    private UserResourceAuthorizationAspect aspect;
 
-    @Mock
-    UserProteinListDao uplDao;
-
-    @Mock
-    JWTCodec<Map<String, String>> codec;
-
-    @Mock
-    Authentication authentication;
+    @Autowired
+    private UserApplicationAuthorizationChecker checker;
 
     @Before
     public void init() {
 
         MockitoAnnotations.initMocks(this);
 
-        mockUserDetails(authentication);
+        dressMockedAuthentication(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    @Test(expected = NextProtException.class)
-    public void testCreateUserApplicationServiceSetId() {
-
-        UserApplication userApp = new UserApplication();
-        userApp.setId(2);
-
-        uaService.createUserApplication(userApp);
     }
 
     @Test
@@ -79,44 +71,68 @@ public class UserResourceAuthorizationServiceTest {
 
         UserApplication userApp = Mockito.mock(UserApplication.class);
 
-        Mockito.when(userApp.getResourceOwner()).thenReturn("bobleponge");
-        Mockito.when(userApp.getOwnerId()).thenReturn(666L);
+        dressMockedUserApplication(userApp, "bobleponge", userApplicationDao);
 
-        Mockito.when(uaDao.createUserApplication(userApp)).thenReturn(10L);
-        Mockito.when(uaDao.getUserApplicationById(10L)).thenReturn(userApp);
-        Mockito.when(codec.encodeJWT(any(Map.class), anyInt())).thenReturn("pifpafpouf");
+        userApplicationService.createUserApplication(userApp);
 
-        UserApplication app = uaService.createUserApplication(userApp);
-
-        Mockito.verify(uaDao).updateUserApplication(userApp);
-
-        Assert.assertEquals("pifpafpouf", app.getToken());
+        // TODO: check that aspect/checker correctly check authorization
+        //Mockito.verify(checker).checkAuthorization(userApp);
     }
 
     @Test
     public void testUpdateUserQueryService() {
 
-        UserQuery query =  Mockito.mock(UserQuery.class);
+        UserQuery query = mockUserQuery("bobleponge");
+        Mockito.when(userQueryDao.getUserQueryById(anyLong())).thenReturn(query);
 
-        Mockito.when(query.getResourceOwner()).thenReturn("bobleponge");
-        Mockito.when(query.getOwnerId()).thenReturn(666L);
-        Mockito.when(query.getSparql()).thenReturn("orkfiejjgijrtwithi");
-        Mockito.when(uqDao.getUserQueryById(anyLong())).thenReturn(query);
+        userQueryService.updateUserQuery(query);
+    }
 
-        uqService.updateUserQuery(query);
+    @Test(expected = NotAuthorizedException.class)
+    public void testUpdateUserQueryService2() {
+
+        UserQuery query = mockUserQuery("bobbylapointe");
+        Mockito.when(userQueryDao.getUserQueryById(anyLong())).thenReturn(query);
+
+        userQueryService.updateUserQuery(query);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void testUpdateUserQueryService3() {
+
+        UserQuery query = mockUserQuery("bobleponge");
+        Mockito.when(userQueryDao.getUserQueryById(anyLong())).thenReturn(new UserQuery());
+
+        userQueryService.updateUserQuery(query);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void testUpdateUserQueryService4() {
+
+        UserQuery query = mockUserQuery("bobleponge");
+        UserQuery query2 = mockUserQuery("joelindien");
+
+        Mockito.when(userQueryDao.getUserQueryById(anyLong())).thenReturn(query2);
+
+        userQueryService.updateUserQuery(query);
+    }
+
+    @Test
+    public void testDeleteUserQueryService() {
+
+        UserQuery query = mockUserQuery("bobleponge");
+        Mockito.when(userQueryDao.getUserQueryById(anyLong())).thenReturn(query);
+
+        userQueryService.deleteUserQuery(query);
     }
 
     @Test
     public void testCreateUserQueryService() {
 
-        UserQuery query =  Mockito.mock(UserQuery.class);
+        UserQuery query = mockUserQuery("bobleponge");
+        Mockito.when(userQueryDao.getUserQueryById(anyLong())).thenReturn(query);
 
-        Mockito.when(query.getResourceOwner()).thenReturn("bobleponge");
-        Mockito.when(query.getOwnerId()).thenReturn(666L);
-        Mockito.when(query.getSparql()).thenReturn("orkfiejjgijrtwithi");
-        Mockito.when(uqDao.getUserQueryById(anyLong())).thenReturn(query);
-
-        uqService.createUserQuery(query);
+        userQueryService.createUserQuery(query);
     }
 
     @Test
@@ -125,27 +141,39 @@ public class UserResourceAuthorizationServiceTest {
         UserProteinList proteinList =  Mockito.mock(UserProteinList.class);
 
         Mockito.when(proteinList.getResourceOwner()).thenReturn("bobleponge");
-        Mockito.when(proteinList.getOwnerId()).thenReturn(666L);
-        Mockito.when(uplDao.getUserProteinLists(anyString())).thenReturn(Arrays.asList(proteinList));
+        Mockito.when(proteinList.getOwnerId()).thenReturn(23L);
+        Mockito.when(userProteinListDao.getUserProteinLists(anyString())).thenReturn(Arrays.asList(proteinList));
 
-        uplService.createUserProteinList(proteinList);
+        userProteinListService.createUserProteinList(proteinList);
     }
 
-    private static UserDetails mockUserDetails(Authentication authentication) {
+    private static UserQuery mockUserQuery(String owner) {
+
+        UserQuery query =  Mockito.mock(UserQuery.class);
+
+        Mockito.when(query.getResourceOwner()).thenReturn(owner);
+        Mockito.when(query.getOwnerId()).thenReturn(23L);
+        Mockito.when(query.getSparql()).thenReturn("orkfiejjgijrtwithi");
+
+        return query;
+    }
+
+    private static void dressMockedUserApplication(UserApplication userApp, String owner, UserApplicationDao userApplicationDao) {
+
+        Mockito.when(userApplicationDao.createUserApplication(userApp)).thenReturn(10L);
+        Mockito.when(userApplicationDao.getUserApplicationById(anyLong())).thenReturn(userApp);
+        Mockito.when(userApplicationDao.getUserApplicationListByOwnerId(anyInt())).thenReturn(Arrays.asList(new UserApplication()));
+
+        Mockito.when(userApp.getResourceOwner()).thenReturn(owner);
+        Mockito.when(userApp.getOwnerId()).thenReturn(23L);
+        Mockito.when(userApp.getId()).thenReturn(0L);
+    }
+
+    private static void dressMockedAuthentication(Authentication authentication) {
 
         UserDetails userDetails = Mockito.mock(UserDetails.class);
         Mockito.when(userDetails.getUsername()).thenReturn("bobleponge");
+
         Mockito.when(authentication.getPrincipal()).thenReturn(userDetails);
-        return userDetails;
-    }
-
-    private static <T extends UserResource> T mockUserResource(Class<T> clazz) {
-
-        T userResource =  Mockito.mock(clazz);
-
-        Mockito.when(userResource.getResourceOwner()).thenReturn("bobleponge");
-        //Mockito.when(userResource.getOwnerId()).thenReturn(666L);
-
-        return userResource;
     }
 }

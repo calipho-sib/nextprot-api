@@ -1,16 +1,11 @@
 package org.nextprot.api.user.service.impl;
 
 import com.google.common.collect.Sets;
-import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+// TODO WITH DANI ON THURSDAY
 @Lazy
 @Service
 public class UserProteinListServiceImpl implements UserProteinListService {
@@ -50,16 +46,12 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 			proteinList.setDescription(description);
 			proteinList.setAccessions(accessions);
 
-			checkIsAuthorized(proteinList);
-
 			UserProteinList newList = createUserProteinList(proteinList);
 
 			System.out.println("selected: " + proteinList.getAccessionNumbers().size() + " created: " + newList.getAccessionNumbers().size() + " not there: "
 					+ Sets.difference(proteinList.getAccessionNumbers(), newList.getAccessionNumbers()));
 
 			return newList;
-
-
 	}
 
 	@Override
@@ -140,37 +132,4 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 		return createUserProteinList(name, description, combined, username);
 	}
-
-
-	private static String checkIsAuthorized(UserProteinList pl){
-
-		String securityUserName;
-
-		SecurityContext sc = SecurityContextHolder.getContext();
-		if (sc == null){
-			throw new NotAuthorizedException("You must be logged in to access this resource");
-		}
-
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		if (a == null){
-			throw new NotAuthorizedException("You must be logged in to access this resource");
-		}
-
-		if (a.getPrincipal() instanceof UserDetails) {
-			UserDetails currentUserDetails = (UserDetails) a.getPrincipal();
-			securityUserName = currentUserDetails.getUsername();
-		} else {
-			securityUserName = a.getPrincipal().toString();
-		}
-
-		if (!pl.getOwner().equals(securityUserName)) {
-			throw new NotAuthorizedException(securityUserName + " is not authorized to modify this resource");
-		}
-
-		return securityUserName;
-
-
-	}
-
-
 }

@@ -21,12 +21,13 @@
 	<bean class="org.nextprot.api.user.aop.UserResourceAuthorizationAspect"/>
 
 	<bean class="org.nextprot.api.user.service.impl.UserApplicationServiceImpl"/>
+	<bean class="org.nextprot.api.security.service.impl.JWTCodecImpl"/>
 	<bean class="org.nextprot.api.user.service.impl.UserQueryServiceImpl"/>
 	<bean class="org.nextprot.api.user.service.impl.UserProteinListServiceImpl"/>
 
-	<bean class="org.nextprot.api.user.aop.UserQueryRealOwnerProvider"/>
-	<bean class="org.nextprot.api.user.aop.UserProteinListRealOwnerProvider"/>
-	<bean class="org.nextprot.api.user.aop.UserApplicationRealOwnerProvider"/>
+	<bean class="org.nextprot.api.user.aop.UserQueryUserResourceAuthorizationChecker"/>
+	<bean class="org.nextprot.api.user.aop.UserProteinListAuthorizationChecker"/>
+	<bean class="org.nextprot.api.user.aop.UserApplicationAuthorizationChecker"/>
 
 	<bean class="org.mockito.Mockito" factory-method="mock">
 		<constructor-arg value="org.nextprot.api.user.dao.UserApplicationDao"/>

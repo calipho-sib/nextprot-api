@@ -13,5 +13,4 @@ public interface UserApplicationService {
     UserApplication getUserApplication(long id);
 
     void deleteApplication(long id);
-	
 }
