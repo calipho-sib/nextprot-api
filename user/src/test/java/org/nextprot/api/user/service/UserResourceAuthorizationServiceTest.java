@@ -60,7 +60,7 @@ public class UserResourceAuthorizationServiceTest {
 
         MockitoAnnotations.initMocks(this);
 
-        user = mockUser();
+        user = mockUser("bobleponge");
         Mockito.when(authentication.getPrincipal()).thenReturn(user);
 
         dressMockedUserDao(userDao, user);
@@ -79,6 +79,15 @@ public class UserResourceAuthorizationServiceTest {
 
         // TODO: check that aspect/checker correctly check authorization
         //Mockito.verify(checker).checkAuthorization(userApp);
+    }
+
+    @Test
+    public void testCreateUserQueryService() {
+
+        UserQuery query = mockUserQuery("bobleponge");
+        Mockito.when(userQueryDao.getUserQueryById(anyLong())).thenReturn(query);
+
+        userQueryService.createUserQuery(query);
     }
 
     @Test
@@ -118,24 +127,33 @@ public class UserResourceAuthorizationServiceTest {
     }
 
     @Test
-    public void testCreateUserQueryService() {
-
-        UserQuery query = mockUserQuery("bobleponge");
-        Mockito.when(userQueryDao.getUserQueryById(anyLong())).thenReturn(query);
-
-        userQueryService.createUserQuery(query);
-    }
-
-    @Test
     public void testCreateUserProteinListService() {
 
         UserProteinList proteinList =  Mockito.mock(UserProteinList.class);
-
-        Mockito.when(proteinList.getOwnerName()).thenReturn("bobleponge");
-        Mockito.when(proteinList.getOwnerId()).thenReturn(23L);
+        dressMockedUserProteinList(proteinList, "bobleponge");
         Mockito.when(userProteinListDao.getUserProteinListById(anyLong())).thenReturn(proteinList);
 
         userProteinListService.createUserProteinList(proteinList);
+    }
+
+    @Test
+    public void testUpdateUserProteinListService() {
+
+        UserProteinList proteinList =  Mockito.mock(UserProteinList.class);
+        dressMockedUserProteinList(proteinList, "bobleponge");
+        Mockito.when(userProteinListDao.getUserProteinListById(anyLong())).thenReturn(proteinList);
+
+        userProteinListService.updateUserProteinList(proteinList);
+    }
+
+    @Test(expected = NotAuthorizedException.class)
+    public void testUpdateUserProteinListService2() {
+
+        UserProteinList proteinList =  Mockito.mock(UserProteinList.class);
+        dressMockedUserProteinList(proteinList, "bobbylapointe");
+        Mockito.when(userProteinListDao.getUserProteinListById(anyLong())).thenReturn(proteinList);
+
+        userProteinListService.updateUserProteinList(proteinList);
     }
 
     private static UserQuery mockUserQuery(String owner) {
@@ -160,15 +178,21 @@ public class UserResourceAuthorizationServiceTest {
         Mockito.when(userApp.getId()).thenReturn(0L);
     }
 
-    private static User mockUser() {
+    private static User mockUser(String name) {
 
         User user = Mockito.mock(User.class);
-        Mockito.when(user.getUsername()).thenReturn("bobleponge");
+        Mockito.when(user.getUsername()).thenReturn(name);
         return user;
     }
 
     private static void dressMockedUserDao(UserDao userDao, User user) {
 
         Mockito.when(userDao.getUserByUsername(anyString())).thenReturn(user);
+    }
+
+    private static void dressMockedUserProteinList(UserProteinList proteinList, String name) {
+
+        Mockito.when(proteinList.getOwnerName()).thenReturn(name);
+        Mockito.when(proteinList.getOwnerId()).thenReturn(23L);
     }
 }
