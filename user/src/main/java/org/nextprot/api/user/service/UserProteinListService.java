@@ -17,7 +17,6 @@ public interface UserProteinListService {
 	UserProteinList getUserProteinListByNameForUser(String username, String listName);
 
 	UserProteinList createUserProteinList(UserProteinList proteinList);
-	UserProteinList createUserProteinList(String listName, String description, Set<String> accessions, String username);
 
 	void deleteUserProteinList(long listId);
 	void addAccessionNumbers(long listId, Set<String> accessions);
