@@ -9,6 +9,6 @@
 <dataset>
     <users user_id="23" user_name="spongebob"/>
     <users user_id="24" user_name="tahitibob" first_name="tahiti" last_name="bob"/>
-    <user_roles user_id="23" role_name="USER"/>
-    <user_roles user_id="23" role_name="ADMIN"/>
+    <user_roles user_id="23" role_name="ROLE_USER"/>
+    <user_roles user_id="23" role_name="ROLE_ADMIN"/>
 </dataset>

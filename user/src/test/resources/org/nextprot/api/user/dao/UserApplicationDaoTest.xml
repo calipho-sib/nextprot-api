@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Use this one to run the tests  -->
-<!DOCTYPE dataset SYSTEM "https://raw.githubusercontent.com/calipho-sib/nextprot-api/user-app/user/src/main/resources/db/migration/user.dtd">
-
+<!-- Use this one to run the tests  
+<!DOCTYPE dataset SYSTEM "https://raw.githubusercontent.com/calipho-sib/nextprot-api/develop/user/src/main/resources/db/migration/user.dtd">
+-->
 <!-- Use this one to autocomplete -->
 
 <!-- <!DOCTYPE dataset SYSTEM "/target/classes/db/migration/user.dtd"> -->

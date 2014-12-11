@@ -1,9 +1,11 @@
 package org.nextprot.api.user.dao.impl;
 
 import com.google.common.collect.ImmutableMap;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.user.domain.User;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,8 +24,8 @@ public class UsersExtractorTest {
         List<Map<String, ?>> records = new ArrayList<Map<String, ?>>();
 
         records.add(ImmutableMap.of("user_id", 24L, "user_name", "tahitibob", "first_name", "tahiti", "last_name", "bob", "role_name", ""));
-        records.add(ImmutableMap.of("user_id", 23L, "user_name", "spongebob", "first_name", "", "last_name", "", "role_name", "USER"));
-        records.add(ImmutableMap.of("user_id", 23L, "user_name", "spongebob", "first_name", "", "last_name", "", "role_name", "ADMIN"));
+        records.add(ImmutableMap.of("user_id", 23L, "user_name", "spongebob", "first_name", "", "last_name", "", "role_name", "ROLE_USER"));
+        records.add(ImmutableMap.of("user_id", 23L, "user_name", "spongebob", "first_name", "", "last_name", "", "role_name", "ROLE_ADMIN"));
 
         List<User> users = extractor.extractData(mockResultSet(records));
 
@@ -33,15 +35,15 @@ public class UsersExtractorTest {
         Assert.assertEquals("tahitibob", user.getUsername());
         Assert.assertEquals("tahiti", user.getFirstName());
         Assert.assertEquals("bob", user.getLastName());
-        Assert.assertTrue(user.getRoles().isEmpty());
+        Assert.assertTrue(user.getAuthorities().isEmpty());
         user = users.get(1);
         Assert.assertEquals(23, user.getId());
         Assert.assertEquals("spongebob", user.getUsername());
         Assert.assertNull(user.getFirstName());
         Assert.assertNull(user.getLastName());
-        Assert.assertTrue(!user.getRoles().isEmpty());
-        Assert.assertTrue(user.getRoles().contains("USER"));
-        Assert.assertTrue(user.getRoles().contains("ADMIN"));
+        Assert.assertTrue(!user.getAuthorities().isEmpty());
+        Assert.assertTrue(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER")));
+        Assert.assertTrue(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
     }
 
     @Test
@@ -52,8 +54,8 @@ public class UsersExtractorTest {
         List<Map<String, ?>> records = new ArrayList<Map<String, ?>>();
 
         records.add(ImmutableMap.of("user_id", 24L, "user_name", "tahitibob", "first_name", "tahiti", "last_name", "bob", "role_name", ""));
-        records.add(ImmutableMap.of("user_id", 23L, "user_name", "spongebob", "first_name", "", "last_name", "", "role_name", "USER"));
-        records.add(ImmutableMap.of("user_id", 23L, "user_name", "spongebob", "first_name", "", "last_name", "", "role_name", "ADMIN"));
+        records.add(ImmutableMap.of("user_id", 23L, "user_name", "spongebob", "first_name", "", "last_name", "", "role_name", "ROLE_USER"));
+        records.add(ImmutableMap.of("user_id", 23L, "user_name", "spongebob", "first_name", "", "last_name", "", "role_name", "ROLE_ADMIN"));
 
         List<User> users = extractor.extractData(mockResultSet(records));
 
@@ -63,15 +65,15 @@ public class UsersExtractorTest {
         Assert.assertEquals("tahitibob", user.getUsername());
         Assert.assertEquals("tahiti", user.getFirstName());
         Assert.assertEquals("bob", user.getLastName());
-        Assert.assertTrue(user.getRoles().isEmpty());
+        Assert.assertTrue(user.getAuthorities().isEmpty());
         user = users.get(0);
         Assert.assertEquals(23, user.getId());
         Assert.assertEquals("spongebob", user.getUsername());
         Assert.assertNull(user.getFirstName());
         Assert.assertNull(user.getLastName());
-        Assert.assertTrue(!user.getRoles().isEmpty());
-        Assert.assertTrue(user.getRoles().contains("USER"));
-        Assert.assertTrue(user.getRoles().contains("ADMIN"));
+        Assert.assertTrue(!user.getAuthorities().isEmpty());
+        Assert.assertTrue(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER")));
+        Assert.assertTrue(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER")));
     }
 
     private ResultSet mockResultSet(List<Map<String, ?>> records) throws SQLException {

@@ -1,19 +1,26 @@
 package org.nextprot.api.web;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.pojo.ApiDoc;
+import org.jsondoc.core.pojo.ApiMethodDoc;
+import org.jsondoc.core.pojo.ApiVerb;
 import org.jsondoc.core.pojo.JSONDoc;
 import org.jsondoc.core.util.JSONDocUtils;
 import org.jsondoc.springmvc.controller.JSONDocController;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.export.impl.ExportServiceImpl;
-import org.nextprot.api.user.security.NPSecurityContext;
+import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
@@ -29,7 +36,7 @@ public class JSONDocRoleController extends JSONDocController {
 
 	private String version = "0.1 beta";
 	private String basePath = "http://localhost:8080/nextprot-api-web";
-	private List<String> packages = Arrays.asList(new String[]{"org.nextprot.api"});
+	private List<String> packages = Arrays.asList(new String[] { "org.nextprot.api" });
 	private JSONDoc apiDoc;
 
 	@Autowired
@@ -47,15 +54,33 @@ public class JSONDocRoleController extends JSONDocController {
 		this.packages = packages;
 	}
 
+	@PostConstruct
+	public void init() {
+
+		apiDoc = JSONDocUtils.getApiDoc(version, basePath, packages);
+		for(ApiDoc a : apiDoc.getApis()) {
+			
+			if(a.getName().equals("Entry") && (a.getMethods() != null) && (!a.getMethods().isEmpty())){
+				ApiMethodDoc met = a.getMethods().get(0);
+				System.out.println(met);
+			}
+			
+			if (a.getName().equals("Entry")) {
+				for (AnnotationApiModel model : AnnotationApiModel.values()) {
+					ApiMethodDoc m = new ApiMethodDoc();
+					m.setDescription("Exports only the " + model.getDescription() + " from an entry. It locates on the hierarchy: " + model.getHierarchy());
+					m.setPath("/entry/{entry}/" + StringUtils.decamelizeAndReplaceByHyphen(model.getDbAnnotationTypeName()));
+					m.setVerb(ApiVerb.GET);
+					a.getMethods().add(m);
+				}
+			}
+
+		}
+	}
+
 	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Override
 	public @ResponseBody JSONDoc getApi() {
-
-		synchronized (this) {
-			if (apiDoc == null) {
-				apiDoc = JSONDocUtils.getApiDoc(version, basePath, packages);
-			}
-		}
 
 		Set<String> contextRoles = NPSecurityContext.getCurrentUserRoles();
 		LOGGER.info("Context roles");
@@ -87,6 +112,14 @@ public class JSONDocRoleController extends JSONDocController {
 			if (api.getRole().equals("ROLE_ANONYMOUS") || contextRoles.contains(api.getRole()) || devMode) {
 				contextApis.add(api);
 			}
+
+			Collections.sort(api.getMethods(), new Comparator<ApiMethodDoc>() {
+				@Override
+				public int compare(ApiMethodDoc o1, ApiMethodDoc o2) {
+					return o1.getPath().compareTo(o2.getPath());
+				}
+			});
+
 		}
 
 		JSONDoc contextJSONDoc = new JSONDoc(version, basePath);

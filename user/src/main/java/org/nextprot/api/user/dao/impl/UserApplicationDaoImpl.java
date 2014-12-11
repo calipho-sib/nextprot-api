@@ -31,7 +31,7 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	@Autowired
     private SQLDictionary sqlDictionary;
 
-	@Autowired
+	@Autowired(required = false)
 	private DataSourceServiceLocator dsLocator;
 
 	@Override

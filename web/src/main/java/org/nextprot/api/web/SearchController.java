@@ -85,7 +85,6 @@ public class SearchController {
 			SearchResult result;
 			try {
 				result = this.queryService.executeQuery(query);
-				System.err.println(result.getRows());
 				model.addAttribute("result", result);
 			} catch (SearchQueryException e) {
 				e.printStackTrace();

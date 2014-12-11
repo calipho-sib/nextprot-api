@@ -1,19 +1,5 @@
 package org.nextprot.api.user.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jsondoc.core.annotation.Api;
-import org.nextprot.api.user.domain.UserProteinList;
-import org.nextprot.api.user.service.UserProteinListService;
-import org.nextprot.api.user.service.UserProteinListService.Operations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,29 +8,52 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.jsondoc.core.annotation.Api;
+import org.nextprot.api.user.domain.UserProteinList;
+import org.nextprot.api.user.service.UserProteinListService;
+import org.nextprot.api.user.service.UserProteinListService.Operations;
+import org.nextprot.api.user.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MultipartFile;
+
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
 @Api(name = "User Lists", description = "Method to manipulate user lists", role = "ROLE_USER")
 public class UserListController {
-	
+
 	private final Log Logger = LogFactory.getLog(UserListController.class);
 	@Autowired
 	private UserProteinListService proteinListService;
 
+	@Autowired
+	private UserService userService;
+	
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.GET })
-	public String getLists(@PathVariable("username") String username, Model model) {
-
-		// List<ProteinList> proteinLists = this.proteinListService.getProteinLists(username);
-		List<UserProteinList> proteinLists = this.proteinListService.getUserProteinLists(username);
-		model.addAttribute("proteinLists", proteinLists);
-		return "protein-list-meta";
+	@ResponseBody
+	public List<UserProteinList> getUserProteinLists(@PathVariable("username") String username) {
+		return this.proteinListService.getUserProteinLists(username);
 	}
 
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
 	public String createList(@PathVariable("username") String username, @RequestBody UserProteinList proteinList, Model model) {
 
+		proteinList.setOwner(username);
+		proteinList.setOwnerId(userService.getUser(username).getId());
+		
 		proteinList = this.proteinListService.createUserProteinList(proteinList);
-		Logger.info("created list: " + proteinList.getId() + " > " + proteinList.getName());
 		model.addAttribute("proteinList", proteinList);
 		return "protein-list";
 

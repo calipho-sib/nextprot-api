@@ -15,14 +15,14 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-security</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-api-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.nextprot</groupId>
-            <artifactId>nextprot-api-security</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-api-commons</artifactId>

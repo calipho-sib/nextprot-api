@@ -1,4 +1,4 @@
-package org.nextprot.api.user.security;
+package org.nextprot.api.security.service.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -6,8 +6,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.auth0.spring.security.auth0.Auth0UserDetails;
+
 import org.nextprot.api.commons.exception.NotAuthorizedException;
-import org.nextprot.api.user.domain.UserResource;
+import org.nextprot.api.commons.resource.ResourceOwner;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -25,14 +26,14 @@ public class NPSecurityContext {
 	 * Check authorization for all resources
 	 * @param userResources
 	 */
-	public static void checkUserAuthorization(Collection<? extends UserResource> userResources) {
-		for(UserResource resource : userResources){
+	public static void checkUserAuthorization(Collection<? extends ResourceOwner> userResources) {
+		for(ResourceOwner resource : userResources){
 			checkUserAuthorization(resource);
 		}
 
 	}
 
-	public static void checkUserAuthorization(UserResource userResource) {
+	public static void checkUserAuthorization(ResourceOwner userResource) {
 
 		String securityUserName;
 
@@ -84,8 +85,8 @@ public class NPSecurityContext {
 
 	public static String getCurrentUser() {
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		if (a.getPrincipal() instanceof Auth0UserDetails) {
-			Auth0UserDetails currentUserDetails = (Auth0UserDetails) a.getPrincipal();
+		if (a.getPrincipal() instanceof UserDetails) {
+			UserDetails currentUserDetails = (UserDetails) a.getPrincipal();
 			return currentUserDetails.getUsername();
 		}else {
 			return null;

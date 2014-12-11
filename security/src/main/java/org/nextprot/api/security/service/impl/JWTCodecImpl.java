@@ -20,6 +20,7 @@ import com.auth0.jwt.Algorithm;
 import com.auth0.jwt.ClaimSet;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.JwtSigner;
+import com.auth0.spring.security.auth0.Auth0AuthenticationFilter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -106,6 +107,12 @@ public class JWTCodecImpl implements JWTCodec<Map<String, String>>, Initializing
     @Value("${auth0.clientSecret}")
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
+	}
+
+	@Override
+	public Auth0AuthenticationFilter A() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

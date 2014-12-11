@@ -103,7 +103,7 @@ public class NextprotExceptionHandler {
 	@ResponseBody
 	public RestErrorResponse handle(DataIntegrityViolationException ex) {
 		ex.printStackTrace();
-		return getResponseError("DataIntegrityViolationException: " + ex.getLocalizedMessage());
+		return getResponseError("conflict with another resource (try to use a different name)");
 	}
 
 	public RestErrorResponse getResponseError(String message) {

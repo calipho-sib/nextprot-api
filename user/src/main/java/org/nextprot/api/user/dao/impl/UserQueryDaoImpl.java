@@ -94,6 +94,17 @@ public class UserQueryDaoImpl implements UserQueryDao {
 	}
 
 	@Override
+	public List<UserQuery> getTutorialQueries() {
+
+		String sql = sqlDictionary.getSQLQuery("read-tutorial-queries");
+
+		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+
+		return queryList(sql, namedParameters);
+	}
+
+	
+	@Override
 	public SetMultimap<Long, String> getQueryTags(Collection<Long> queryIds) {
 
 		String sql = sqlDictionary.getSQLQuery("read-tags-by-user-query-ids");
@@ -122,7 +133,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		namedParameters.addValue("title", userQuery.getTitle());
 		namedParameters.addValue("description", userQuery.getDescription());
 		namedParameters.addValue("sparql", userQuery.getSparql());
-		namedParameters.addValue("published", userQuery.getPublished());
+		namedParameters.addValue("published", userQuery.getPublished() ? 'Y' : 'N');
 		namedParameters.addValue("owner_id", userQuery.getOwnerId());
 
 		return JdbcTemplateUtils.insertAndGetKey(INSERT_SQL, "query_id", namedParameters, new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())).longValue();

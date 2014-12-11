@@ -8,7 +8,7 @@ CREATE TABLE np_users.users (
 CREATE UNIQUE index users_username_udx ON np_users.users USING btree (user_name);
 
 CREATE TABLE np_users.user_roles (
-  role_name VARCHAR(256) NOT NULL CHECK (role_name IN ('ADMIN', 'USER', 'APP')),
+  role_name VARCHAR(256) NOT NULL CHECK (role_name IN ('ROLE_ADMIN', 'ROLE_USER', 'ROLE_APP')),
   user_id bigint REFERENCES np_users.users(user_id) ON DELETE CASCADE,
   CONSTRAINT user_role_pk PRIMARY KEY (role_name, user_id)
 );

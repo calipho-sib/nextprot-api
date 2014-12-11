@@ -2,9 +2,9 @@ package org.nextprot.api.user.service.impl;
 
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.security.service.JWTCodec;
+import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.user.dao.UserApplicationDao;
 import org.nextprot.api.user.domain.UserApplication;
-import org.nextprot.api.user.security.NPSecurityContext;
 import org.nextprot.api.user.service.UserApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;

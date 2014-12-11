@@ -3,13 +3,17 @@ package org.nextprot.api.user.domain;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserProteinList implements UserResource {
+import org.nextprot.api.commons.resource.ResourceOwner;
+
+public class UserProteinList implements ResourceOwner {
+
+	private static final long serialVersionUID = 1968815880984849468L;
 
 	private long id;
 	private String name;
 	private String description;
 	private Set<String> accessionNumbers = new HashSet<String>();
-	private int proteinCount = 0;
+	private int entriesCount = 0;
     private long ownerId;
 	private String owner;
 	
@@ -43,15 +47,15 @@ public class UserProteinList implements UserResource {
 
 	public void setAccessions(Set<String> accessions) {
 		this.accessionNumbers = accessions;
-		this.proteinCount = this.accessionNumbers.size();
+		this.entriesCount = this.accessionNumbers.size();
 	}
 	
-	public int getProteinCount() {
-		return proteinCount;
+	public int getEntriesCount() {
+		return entriesCount;
 	}
 
-	public void setProteinCount(int count) {
-		proteinCount = count;
+	public void setEntriesCount(int count) {
+		entriesCount = count;
 	}
 
     @Override

@@ -1,175 +1,187 @@
 package org.nextprot.api.user.dao;
 
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.Sets;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
 import org.nextprot.api.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.List;
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.Sets;
 
 //@TransactionConfiguration(defaultRollback = false)
 @DatabaseSetup(value = "UserDaoTest.xml", type = DatabaseOperation.INSERT)
 public class UserDaoTest extends UserApplicationBaseTest {
 
-    @Autowired
-    UserDao userDao;
+	@Autowired
+	UserDao userDao;
 
-    @Test
-    public void testCreateAndGetUser() {
+	@Test
+	public void testCreateAndGetUser() {
 
-        User user = new User();
+		User user = new User();
 
-        user.setUsername("freud");
+		user.setUsername("freud");
 
-        long id = userDao.createUser(user);
+		long id = userDao.createUser(user);
 
-        Assert.assertTrue(id > 0);
+		Assert.assertTrue(id > 0);
 
-        user = userDao.getUserByUsername(user.getUsername());
+		user = userDao.getUserByUsername(user.getUsername());
 
-        Assert.assertNull(user.getFirstName());
-        Assert.assertNull(user.getLastName());
-        Assert.assertTrue(user.getRoles().isEmpty());
-    }
+		Assert.assertNull(user.getFirstName());
+		Assert.assertNull(user.getLastName());
+		Assert.assertTrue(user.getAuthorities().isEmpty());
+	}
 
-    @Test
-    public void testCreateAndGetUserWithRole() {
+	@Test
+	public void testCreateAndGetUserWithRole() {
 
-        User user = new User();
+		User user = new User();
 
-        user.setUsername("freud");
-        user.setFirstName("huber");
-        user.setLastName("freud");
-        user.setRoles(Sets.newHashSet("USER"));
+		user.setUsername("freud");
+		user.setFirstName("huber");
+		user.setLastName("freud");
 
-        long id = userDao.createUser(user);
+		Set<GrantedAuthority> hs = new HashSet<GrantedAuthority>();
+		hs.add(new SimpleGrantedAuthority("ROLE_USER"));
+		user.setAuthorities(hs);
 
-        Assert.assertTrue(id>0);
+		long id = userDao.createUser(user);
 
-        user = userDao.getUserByUsername(user.getUsername());
+		Assert.assertTrue(id > 0);
 
-        Assert.assertEquals("huber", user.getFirstName());
-        Assert.assertEquals("freud", user.getLastName());
-        Assert.assertTrue(!user.getRoles().isEmpty());
-        Assert.assertEquals(1, user.getRoles().size());
-        Assert.assertTrue(user.getRoles().contains("USER"));
-    }
+		user = userDao.getUserByUsername(user.getUsername());
 
-    @Test
-    public void testReadUserWithRoles() {
+		Assert.assertEquals("huber", user.getFirstName());
+		Assert.assertEquals("freud", user.getLastName());
+		Assert.assertTrue(!user.getAuthorities().isEmpty());
+		Assert.assertEquals(1, user.getAuthorities().size());
+		Assert.assertTrue(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER")));
+	}
 
-        User user = userDao.getUserByUsername("spongebob");
+	@Test
+	public void testReadUserWithRoles() {
 
-        Assert.assertEquals(23, user.getId());
-        Assert.assertEquals("spongebob", user.getUsername());
-        Assert.assertNull(user.getFirstName());
-        Assert.assertNull(user.getLastName());
-        Assert.assertTrue(!user.getRoles().isEmpty());
-        Assert.assertEquals(2, user.getRoles().size());
-        Assert.assertTrue(user.getRoles().contains("USER"));
-        Assert.assertTrue(user.getRoles().contains("ADMIN"));
-    }
+		User user = userDao.getUserByUsername("spongebob");
 
-    @Test
-    public void testReadUnknownUser() {
+		Assert.assertEquals(23, user.getId());
+		Assert.assertEquals("spongebob", user.getUsername());
+		Assert.assertNull(user.getFirstName());
+		Assert.assertNull(user.getLastName());
+		Assert.assertTrue(!user.getAuthorities().isEmpty());
+		Assert.assertEquals(2, user.getAuthorities().size());
+		Assert.assertTrue(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER")));
+		Assert.assertTrue(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
+	}
 
-        Assert.assertNull(userDao.getUserByUsername("superman"));
-    }
+	@Test
+	public void testReadUnknownUser() {
 
-    @Test
-    public void testReadUser2() {
+		Assert.assertNull(userDao.getUserByUsername("superman"));
+	}
 
-        User user = userDao.getUserByUsername("tahitibob");
+	@Test
+	public void testReadUser2() {
 
-        Assert.assertEquals(24, user.getId());
-        Assert.assertEquals("tahitibob", user.getUsername());
-        Assert.assertEquals("tahiti", user.getFirstName());
-        Assert.assertEquals("bob", user.getLastName());
-        Assert.assertTrue(user.getRoles().isEmpty());
-    }
+		User user = userDao.getUserByUsername("tahitibob");
 
-    @Test
-    public void testReadUsers() {
+		Assert.assertEquals(24, user.getId());
+		Assert.assertEquals("tahitibob", user.getUsername());
+		Assert.assertEquals("tahiti", user.getFirstName());
+		Assert.assertEquals("bob", user.getLastName());
+		Assert.assertTrue(user.getAuthorities().isEmpty());
+	}
 
-        List<User> users = userDao.getUserList();
+	@Test
+	public void testReadUsers() {
 
-        Assert.assertEquals(2, users.size());
+		List<User> users = userDao.getUserList();
 
-        Assert.assertEquals(23, users.get(0).getId());
-        Assert.assertEquals("spongebob", users.get(0).getUsername());
-        Assert.assertNull(users.get(0).getFirstName());
-        Assert.assertNull(users.get(0).getLastName());
-        Assert.assertTrue(!users.get(0).getRoles().isEmpty());
-        Assert.assertTrue(users.get(0).getRoles().contains("USER"));
-        Assert.assertTrue(users.get(0).getRoles().contains("ADMIN"));
-        Assert.assertEquals(24, users.get(1).getId());
-        Assert.assertEquals("tahitibob", users.get(1).getUsername());
-        Assert.assertEquals("tahiti", users.get(1).getFirstName());
-        Assert.assertEquals("bob", users.get(1).getLastName());
-        Assert.assertTrue(users.get(1).getRoles().isEmpty());
-    }
+		Assert.assertEquals(2, users.size());
 
-    @Test
-    public void testUpdateUser() {
+		Assert.assertEquals(23, users.get(0).getId());
+		Assert.assertEquals("spongebob", users.get(0).getUsername());
+		Assert.assertNull(users.get(0).getFirstName());
+		Assert.assertNull(users.get(0).getLastName());
+		Assert.assertTrue(!users.get(0).getAuthorities().isEmpty());
+		Assert.assertTrue(users.get(0).getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER")));
+		Assert.assertTrue(users.get(0).getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
+		Assert.assertEquals(24, users.get(1).getId());
+		Assert.assertEquals("tahitibob", users.get(1).getUsername());
+		Assert.assertEquals("tahiti", users.get(1).getFirstName());
+		Assert.assertEquals("bob", users.get(1).getLastName());
+		Assert.assertTrue(users.get(1).getAuthorities().isEmpty());
+	}
 
-        User updated = new User();
+	@Test
+	public void testUpdateUser() {
 
-        updated.setId(23L);
-        updated.setUsername("spongebob");
-        updated.setFirstName("sponge");
-        updated.setLastName("bob");
+		User updated = new User();
 
-        userDao.updateUser(updated);
+		updated.setId(23L);
+		updated.setUsername("spongebob");
+		updated.setFirstName("sponge");
+		updated.setLastName("bob");
 
-        User user = userDao.getUserByUsername("spongebob");
+		userDao.updateUser(updated);
 
-        Assert.assertEquals(23, user.getId());
-        Assert.assertEquals("spongebob", user.getUsername());
-        Assert.assertEquals("sponge", user.getFirstName());
-        Assert.assertEquals("bob", user.getLastName());
+		User user = userDao.getUserByUsername("spongebob");
 
-        Assert.assertTrue(!user.getRoles().isEmpty());
-        Assert.assertEquals(2, user.getRoles().size());
-        Assert.assertTrue(user.getRoles().contains("USER"));
-        Assert.assertTrue(user.getRoles().contains("ADMIN"));
-    }
+		Assert.assertEquals(23, user.getId());
+		Assert.assertEquals("spongebob", user.getUsername());
+		Assert.assertEquals("sponge", user.getFirstName());
+		Assert.assertEquals("bob", user.getLastName());
 
-    @Test
-    public void testUpdateUserWithRoles() {
+		Assert.assertTrue(!user.getAuthorities().isEmpty());
+		Assert.assertEquals(2, user.getAuthorities().size());
+		Assert.assertTrue(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER")));
+		Assert.assertTrue(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
+	}
 
-        User updated = new User();
+	@Test
+	public void testUpdateUserWithRoles() {
 
-        updated.setId(23);
-        updated.setUsername("spongebob");
-        updated.setFirstName("sponge");
-        updated.setLastName("bob");
-        updated.setRoles(Sets.newHashSet("USER"));
+		User updated = new User();
 
-        userDao.updateUser(updated);
+		updated.setId(23);
+		updated.setUsername("spongebob");
+		updated.setFirstName("sponge");
+		updated.setLastName("bob");
+		
+		Set<GrantedAuthority> hs = new HashSet<GrantedAuthority>();
+		hs.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-        User user = userDao.getUserByUsername("spongebob");
+		updated.setAuthorities(hs);
 
-        Assert.assertEquals(23, user.getId());
-        Assert.assertEquals("spongebob", user.getUsername());
-        Assert.assertEquals("sponge", user.getFirstName());
-        Assert.assertEquals("bob", user.getLastName());
-        Assert.assertTrue(!user.getRoles().isEmpty());
-        Assert.assertEquals(1, user.getRoles().size());
-        Assert.assertTrue(user.getRoles().contains("USER"));
-    }
+		userDao.updateUser(updated);
 
-    @Test
-    public void testDeleteUser() {
+		User user = userDao.getUserByUsername("spongebob");
 
-        User toDelete = new User();
-        toDelete.setId(23);
+		Assert.assertEquals(23, user.getId());
+		Assert.assertEquals("spongebob", user.getUsername());
+		Assert.assertEquals("sponge", user.getFirstName());
+		Assert.assertEquals("bob", user.getLastName());
+		Assert.assertTrue(!user.getAuthorities().isEmpty());
+		Assert.assertEquals(1, user.getAuthorities().size());
+		Assert.assertTrue(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_USER")));
+	}
 
-        userDao.deleteUser(toDelete);
+	@Test
+	public void testDeleteUser() {
 
-        Assert.assertNull(userDao.getUserByUsername("spongebob"));
-    }
+		User toDelete = new User();
+		toDelete.setId(23);
+
+		userDao.deleteUser(toDelete);
+
+		Assert.assertNull(userDao.getUserByUsername("spongebob"));
+	}
 }

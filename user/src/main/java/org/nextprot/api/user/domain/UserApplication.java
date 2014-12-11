@@ -5,10 +5,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.sql.Date;
 
+import org.nextprot.api.commons.resource.ResourceOwner;
+
 //@JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties({"resourceOwner"})
-public class UserApplication implements UserResource {
+public class UserApplication implements ResourceOwner {
 
+	private static final String USER_APP_RO = "RO";
+	private static final String USER_APP_RW = "RW";
+	
 	private static final long serialVersionUID = -4106316166685442169L;
 
 	private long id;
@@ -27,7 +32,7 @@ public class UserApplication implements UserResource {
     @JsonProperty(required=true)
     private String token;
 	private String status = "ACTIVE"; // "ACTIVE", "BANNED";
-    private String userDataAccess = "RO"; // "RO", "RW"
+    private String userDataAccess = USER_APP_RO; // "RO", "RW"
     private String origins;
     private Date creationDate;
 
@@ -86,6 +91,9 @@ public class UserApplication implements UserResource {
     }
     public void setStatus(String status) {
         this.status = status;
+    }
+    public boolean hasUserDataAccess() {
+        return USER_APP_RW.equals(userDataAccess); //TODO use enum or boolean ???
     }
     public String getUserDataAccess() {
         return userDataAccess;

@@ -1,10 +1,10 @@
 package org.nextprot.api.commons.utils;
 
+import java.util.List;
+
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.util.List;
 
 /**
  * This object inserts multiple key/values in batch mode

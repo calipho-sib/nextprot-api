@@ -1,12 +1,14 @@
 package org.nextprot.api.user.domain;
 
 import com.google.common.base.Function;
+
 import org.nextprot.api.commons.exception.NPreconditions;
+import org.nextprot.api.commons.resource.ResourceOwner;
 
 import java.io.Serializable;
 import java.util.Set;
 
-public class UserQuery implements Serializable, UserResource {
+public class UserQuery implements Serializable, ResourceOwner {
 
 	private static final long serialVersionUID = 3051410556247218680L;
 
