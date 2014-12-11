@@ -1,11 +1,5 @@
 package org.nextprot.api.user.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -21,6 +15,12 @@ import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @Lazy
@@ -132,13 +132,8 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 
 		String sql = sqlDictionary.getSQLQuery("read-user-application-by-id");
 
-		List<UserApplication> queries =
-                new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserApplicationRowMapper());
-
-        if (queries.size() != 1)
-            return null;
-
-        return queries.get(0);
+		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())
+                .queryForObject(sql, namedParameters, new UserApplicationRowMapper());
 	}
 
 	/**

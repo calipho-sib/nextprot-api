@@ -7,8 +7,6 @@ import org.nextprot.api.user.domain.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class UserApplicationAuthorizationChecker implements UserResourceAuthorizationChecker {
 
@@ -22,18 +20,18 @@ public class UserApplicationAuthorizationChecker implements UserResourceAuthoriz
 
         if (application instanceof UserApplication) {
 
-            long ownerId = ((UserApplication) application).getOwnerId();
+            long appId = ((UserApplication) application).getId();
 
             // Checking authorization only done when application already exists
-            if (((UserApplication) application).getId() > 0) {
+            if (appId > 0) {
 
-                List<UserApplication> foundApps = dao.getUserApplicationListByOwnerId(ownerId);
+                UserApplication foundApp = dao.getUserApplicationById(appId);
 
                 boolean authorizationPassed = false;
 
-                if (!foundApps.isEmpty()) {
+                if (foundApp != null) {
 
-                    String foundOwner = foundApps.get(0).getResourceOwner();
+                    String foundOwner = foundApp.getResourceOwner();
 
                     authorizationPassed = foundOwner != null && foundOwner.equals(resourceOwner);
                 }

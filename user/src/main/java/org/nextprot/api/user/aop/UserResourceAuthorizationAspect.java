@@ -10,7 +10,7 @@ import org.springframework.context.ApplicationContext;
 import java.util.Map;
 
 /**
- * Aspect responsible to check service users authorizing to access resources
+ * Aspect responsible for checking that services have permission to act on {@code UserResource}
  *
  * @author fnikitin
  */
@@ -23,11 +23,13 @@ public class UserResourceAuthorizationAspect {
  	@Before("execution(* org.nextprot.api.user.service.*.*(..)) && args(clientUserResource)")
 	public void checkAuthorization(UserResource clientUserResource) throws Throwable {
 
+		// check the logged-in client
 		NPSecurityContext.checkUserAuthorization(clientUserResource);
 
-		UserResourceAuthorizationChecker checker = getAuthorizationChecker(clientUserResource);
+		// is the one that own the resource
+		UserResourceAuthorizationChecker delegator = getAuthorizationChecker(clientUserResource);
 
-		checker.checkAuthorization(clientUserResource);
+		delegator.checkAuthorization(clientUserResource);
 	}
 
 	private UserResourceAuthorizationChecker getAuthorizationChecker(UserResource userResource) {
