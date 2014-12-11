@@ -31,21 +31,6 @@ public class UserProteinListServiceTest extends CommonsUnitBaseTest {
 	private static final String TEST_USER = "asfas";
 	private static final String TEST_PASSWORD = "12212";
 	
-	public void setup() {
-		
-//		JdbcTemplate template = new JdbcTemplate(dsLocator.getDataSource());
-//		template.update("insert into np_users.np_accessions values(1, 'NX_P123', 'cool')");
-//		template.update("insert into np_users.np_accessions values(2, 'NX_P321', 'word')");
-//		template.update("insert into np_users.np_accessions values(3, 'NX_P456', 'what?')");
-//		
-//		NextprotUser u = new NextprotUser(TEST_USER, TEST_PASSWORD);
-//		u = this.userService.createUser(u);
-//		
-//		proteinList = new ProteinList();
-//		proteinList.setOwnerId(u.getUserId());
-//		proteinList.setName("wat?");
-//		proteinList.setDescription("my first list");
-	}
 	
 	@Test
 	public void testCreateProteinList() {
@@ -59,7 +44,7 @@ public class UserProteinListServiceTest extends CommonsUnitBaseTest {
 		Set<String> accs = new HashSet<String>();
 		accs.add("NX_P123");
 		
-		UserProteinList l = this.proteinListService.createUserProteinList("awesome", null, accs, TEST_USER);
+		UserProteinList l = this.proteinListService.createUserProteinList(createUserProteinList("awesome", null, accs));
 		assertEquals("awesome", l.getName());
 	}
 	
@@ -83,12 +68,12 @@ public class UserProteinListServiceTest extends CommonsUnitBaseTest {
 		Set<String> s1 = new HashSet<String>();
 		s1.add("NX_P123");
 		s1.add("NX_P456");
-		UserProteinList l1 = this.proteinListService.createUserProteinList("cool1", null, s1, TEST_USER);
+		UserProteinList l1 = this.proteinListService.createUserProteinList(createUserProteinList("cool1", null, s1));
 				
 		Set<String> s2 = new HashSet<String>();
 		s2.add("NX_P123");
 		s2.add("NX_P321");
-		UserProteinList l2 = this.proteinListService.createUserProteinList("cool2", null, s2, TEST_USER);
+		UserProteinList l2 = this.proteinListService.createUserProteinList(createUserProteinList("cool2", null, s2));
 		
 		UserProteinList l3 = this.proteinListService.combine("coolio", null, TEST_USER, l1.getName(), l2.getName(), Operations.OR);
 		UserProteinList l4 = this.proteinListService.combine("homie", null, TEST_USER, l1.getName(), l2.getName(), Operations.AND);
@@ -112,7 +97,7 @@ public class UserProteinListServiceTest extends CommonsUnitBaseTest {
 		Set<String> s1 = new HashSet<String>();
 		s1.add("NX_P123");
 		s1.add("NX_P456");
-		UserProteinList l1 = this.proteinListService.createUserProteinList("cool1", null, s1, TEST_USER);
+		UserProteinList l1 = this.proteinListService.createUserProteinList(createUserProteinList("cool1", null, s1));
 		
 		Set<String> accs = new HashSet<String>();
 		this.proteinListService.addAccessionNumbers(l1.getId(), accs);
@@ -123,7 +108,8 @@ public class UserProteinListServiceTest extends CommonsUnitBaseTest {
 		Set<String> s1 = new HashSet<String>();
 		s1.add("NX_P123");
 		s1.add("NX_P456");
-		UserProteinList l1 = this.proteinListService.createUserProteinList("cool1", null, s1, TEST_USER);
+		
+		UserProteinList l1 = this.proteinListService.createUserProteinList(createUserProteinList("cool1", null, s1));
 		
 		assertEquals("cool1", l1.getName());
 		assertEquals(2, l1.getAccessionNumbers().size());
@@ -135,6 +121,18 @@ public class UserProteinListServiceTest extends CommonsUnitBaseTest {
 		l1 = this.proteinListService.getUserProteinListById(l1.getId());
 		assertEquals("cool1", l1.getName());
 		assertEquals(1, l1.getAccessionNumbers().size());
+		
+	}
+	
+	private UserProteinList createUserProteinList(String name, String description, Set<String> accessions){
+		
+		UserProteinList ul = new UserProteinList();
+		ul.setName(name);
+		ul.setDescription(description);
+		ul.setAccessions(accessions);
+		ul.setOwner(TEST_USER);
+		
+		return ul;
 		
 	}
 }

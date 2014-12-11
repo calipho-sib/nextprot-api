@@ -1,8 +1,0 @@
-{
-	"lists": [
-	#foreach($list in $proteinLists)
-		{ "id": "$list.id", "name":"$list.name"#if($list.description), "description":"$list.description" #end, "accessions":$list.getAccSize() }#if($velocityHasNext),
-#end
-	#end	
-	]
-}	

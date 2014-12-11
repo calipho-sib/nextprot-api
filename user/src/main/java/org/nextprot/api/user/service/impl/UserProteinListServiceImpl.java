@@ -1,10 +1,12 @@
 package org.nextprot.api.user.service.impl;
 
 import com.google.common.collect.Sets;
+
 import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
+import org.nextprot.api.user.utils.UserProteinListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.Authentication;
@@ -42,27 +44,6 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	}
 
 	@Override
-	public UserProteinList createUserProteinList(String listName, String description, Set<String> accessions, String username) {
-
-
-			UserProteinList proteinList = new UserProteinList();
-			proteinList.setName(listName);
-			proteinList.setDescription(description);
-			proteinList.setAccessions(accessions);
-
-			checkIsAuthorized(proteinList);
-
-			UserProteinList newList = createUserProteinList(proteinList);
-
-			System.out.println("selected: " + proteinList.getAccessionNumbers().size() + " created: " + newList.getAccessionNumbers().size() + " not there: "
-					+ Sets.difference(proteinList.getAccessionNumbers(), newList.getAccessionNumbers()));
-
-			return newList;
-
-
-	}
-
-	@Override
 	@Transactional
 	public UserProteinList createUserProteinList(UserProteinList proteinList) {
 		long id = this.proteinListDao.createUserProteinList(proteinList);
@@ -71,10 +52,6 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 		UserProteinList newList = this.proteinListDao.getUserProteinListById(id);
 		//newList.setAccessions(this.proteinListDao.getAccessionsByListId(id));
-	/*
-		System.out.println("selected: " + proteinList.getAccessionNumbers().size() + " created: " + newList.getAccessionNumbers().size() + " not there: "
-				+ Sets.difference(proteinList.getAccessionNumbers(), newList.getAccessionNumbers()));
-*/
 		return proteinList;
 
 	}
@@ -126,51 +103,10 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	@Override
 	public UserProteinList combine(String name, String description, String username, String list1, String list2, Operations op) {
 
-		UserProteinList l1 = getUserProteinListByNameForUser(username, list1);
-		UserProteinList l2 = getUserProteinListByNameForUser(username, list2);
-
-		Set<String> combined = new HashSet<String>();
-
-		if (op.equals(Operations.AND)) {
-			combined.addAll(Sets.intersection(l1.getAccessionNumbers(), l2.getAccessionNumbers()));
-		} else if (op.equals(Operations.OR)) {
-			combined = Sets.union(l1.getAccessionNumbers(), l2.getAccessionNumbers()).immutableCopy();
-		} else if (op.equals(Operations.NOT_IN)) {
-			combined.addAll(Sets.difference(l1.getAccessionNumbers(), l2.getAccessionNumbers()));
-		}
-
-		return createUserProteinList(name, description, combined, username);
-	}
-
-
-	private static String checkIsAuthorized(UserProteinList pl){
-
-		String securityUserName;
-
-		SecurityContext sc = SecurityContextHolder.getContext();
-		if (sc == null){
-			throw new NotAuthorizedException("You must be logged in to access this resource");
-		}
-
-		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		if (a == null){
-			throw new NotAuthorizedException("You must be logged in to access this resource");
-		}
-
-		if (a.getPrincipal() instanceof UserDetails) {
-			UserDetails currentUserDetails = (UserDetails) a.getPrincipal();
-			securityUserName = currentUserDetails.getUsername();
-		} else {
-			securityUserName = a.getPrincipal().toString();
-		}
-
-		if (!pl.getOwner().equals(securityUserName)) {
-			throw new NotAuthorizedException(securityUserName + " is not authorized to modify this resource");
-		}
-
-		return securityUserName;
-
-
+		UserProteinList l1 = proteinListDao.getUserProteinListByName(username, list1);
+		UserProteinList l2 = proteinListDao.getUserProteinListByName(username, list2);
+		
+		return UserProteinListUtils.combine(l1, l2, op, name, description);
 	}
 
 

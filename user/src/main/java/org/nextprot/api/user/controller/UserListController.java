@@ -40,7 +40,7 @@ public class UserListController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserProteinList> getUserProteinLists(@PathVariable("username") String username) {
@@ -50,9 +50,10 @@ public class UserListController {
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
 	public String createList(@PathVariable("username") String username, @RequestBody UserProteinList proteinList, Model model) {
 
+		// TODO move this to aspect
 		proteinList.setOwner(username);
 		proteinList.setOwnerId(userService.getUser(username).getId());
-		
+
 		proteinList = this.proteinListService.createUserProteinList(proteinList);
 		model.addAttribute("proteinList", proteinList);
 		return "protein-list";
@@ -107,22 +108,17 @@ public class UserListController {
 	}
 
 	@RequestMapping(value = "/user/{username}/protein-list/combine", method = RequestMethod.GET)
-	public String combine(@PathVariable("username") String username, @RequestParam(value = "name", required = true) String listName,
+	@ResponseBody
+	public UserProteinList combine(@PathVariable("username") String username, @RequestParam(value = "name", required = true) String listName,
 			@RequestParam(value = "description", required = false) String description, @RequestParam(value = "first", required = true) String first,
 			@RequestParam(value = "second", required = true) String second, @RequestParam(value = "op", required = true) String operation, Model model) {
 
 		Operations op = Operations.valueOf(operation);
+		UserProteinList combinedList = proteinListService.combine(listName, description, username, first, second, op);
+		
+		return proteinListService.createUserProteinList(combinedList);
+		
 
-		if (op != null) {
-			UserProteinList list;
-			list = proteinListService.combine(listName, description, username, first, second, Operations.valueOf(operation));
-			model.addAttribute("proteinList", list);
-			return "protein-list";
-
-		} else {
-			model.addAttribute("errormessage", "Invalid operation");
-			return "exception";
-		}
 	}
 
 	@RequestMapping(value = "/protein-list/upload", method = RequestMethod.POST)
