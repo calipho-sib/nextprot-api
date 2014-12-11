@@ -1,11 +1,7 @@
 package org.nextprot.api.security.service.impl;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.util.Map;
-
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.spring.security.auth0.Auth0JWTToken;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -17,8 +13,11 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.spring.security.auth0.Auth0JWTToken;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.util.Map;
 
 public class NextprotAuthProvider implements AuthenticationProvider, InitializingBean {
 

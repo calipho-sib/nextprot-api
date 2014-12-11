@@ -1,6 +1,6 @@
 package org.nextprot.api.user.aop;
 
-import org.nextprot.api.user.domain.UserResource;
+import org.nextprot.api.commons.resource.UserResource;
 
 /**
  * Check that nextprot-user resource can be accessed

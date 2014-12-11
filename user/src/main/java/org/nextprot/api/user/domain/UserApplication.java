@@ -2,14 +2,13 @@ package org.nextprot.api.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.nextprot.api.commons.resource.UserResource;
 
 import java.sql.Date;
 
-import org.nextprot.api.commons.resource.ResourceOwner;
-
 //@JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties({"resourceOwner"})
-public class UserApplication implements ResourceOwner {
+public class UserApplication implements UserResource {
 
 	private static final String USER_APP_RO = "RO";
 	private static final String USER_APP_RW = "RW";
@@ -67,7 +66,13 @@ public class UserApplication implements ResourceOwner {
 		this.website = website;
 	}
     public long getOwnerId() { return ownerId; }
-    public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
+
+	@Override
+	public boolean isPersisted() {
+		return id != 0;
+	}
+
+	public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
     public long getId() {
         return id;
     }
@@ -112,8 +117,11 @@ public class UserApplication implements ResourceOwner {
     }
     public Date getCreationDate() { return creationDate; }
 
-    @Override
-	public String getResourceOwner() {
+	@Override
+	public void setOwnerName(String name) { this.owner = name; }
+
+	@Override
+	public String getOwnerName() {
 		return owner;
 	}
 	public String getOwner() {

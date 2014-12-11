@@ -9,6 +9,7 @@ import org.nextprot.api.user.dao.UserApplicationDao;
 import org.nextprot.api.user.domain.UserApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -125,7 +126,7 @@ public class UserApplicationDaoImpl implements UserApplicationDao {
 	}
 
 	@Override
-	public UserApplication getUserApplicationById(long id) {
+	public UserApplication getUserApplicationById(long id) throws DataAccessException {
 
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("application_id", id);

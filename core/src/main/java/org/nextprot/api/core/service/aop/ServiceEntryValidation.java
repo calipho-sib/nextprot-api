@@ -1,9 +1,5 @@
 package org.nextprot.api.core.service.aop;
 
-import java.lang.annotation.Annotation;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -15,6 +11,10 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+
+import java.lang.annotation.Annotation;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Aspect used to validate a given entry. 
@@ -44,13 +44,13 @@ public class ServiceEntryValidation {
 
 	}
 
-	@Around("execution(* org.nextprot.api.service.*.*(..))")
+	@Around("execution(* org.nextprot.api.*.service.*.*(..))")
 	public Object checkValidEntry(ProceedingJoinPoint pjp) throws Throwable {
 
 		Object[] arguments = pjp.getArgs();
 
 		MethodSignature ms = (MethodSignature) pjp.getSignature();
-		Annotation[][] annotations = (Annotation[][]) ms.getMethod().getParameterAnnotations();
+		Annotation[][] annotations = ms.getMethod().getParameterAnnotations();
 
 		int i = 0;
 		for (Annotation[] paramAnnotations : annotations) {

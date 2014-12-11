@@ -7,18 +7,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.exception.NotAuthorizedException;
-import org.nextprot.api.user.aop.UserApplicationAuthorizationChecker;
-import org.nextprot.api.user.aop.UserResourceAuthorizationAspect;
 import org.nextprot.api.user.dao.UserApplicationDao;
+import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.dao.UserQueryDao;
+import org.nextprot.api.user.domain.User;
 import org.nextprot.api.user.domain.UserApplication;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -43,6 +42,9 @@ public class UserResourceAuthorizationServiceTest {
     private UserQueryDao userQueryDao;
 
     @Autowired
+    private UserDao userDao;
+
+    @Autowired
     private UserApplicationDao userApplicationDao;
 
     @Autowired
@@ -51,18 +53,18 @@ public class UserResourceAuthorizationServiceTest {
     @Mock
     private Authentication authentication;
 
-    @Autowired
-    private UserResourceAuthorizationAspect aspect;
-
-    @Autowired
-    private UserApplicationAuthorizationChecker checker;
+    private User user;
 
     @Before
     public void init() {
 
         MockitoAnnotations.initMocks(this);
 
-        dressMockedAuthentication(authentication);
+        user = mockUser();
+        Mockito.when(authentication.getPrincipal()).thenReturn(user);
+
+        dressMockedUserDao(userDao, user);
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
@@ -106,17 +108,6 @@ public class UserResourceAuthorizationServiceTest {
         userQueryService.updateUserQuery(query);
     }
 
-    @Test(expected = NotAuthorizedException.class)
-    public void testUpdateUserQueryService4() {
-
-        UserQuery query = mockUserQuery("bobleponge");
-        UserQuery query2 = mockUserQuery("joelindien");
-
-        Mockito.when(userQueryDao.getUserQueryById(anyLong())).thenReturn(query2);
-
-        userQueryService.updateUserQuery(query);
-    }
-
     @Test
     public void testDeleteUserQueryService() {
 
@@ -140,7 +131,7 @@ public class UserResourceAuthorizationServiceTest {
 
         UserProteinList proteinList =  Mockito.mock(UserProteinList.class);
 
-        Mockito.when(proteinList.getResourceOwner()).thenReturn("bobleponge");
+        Mockito.when(proteinList.getOwnerName()).thenReturn("bobleponge");
         Mockito.when(proteinList.getOwnerId()).thenReturn(23L);
         Mockito.when(userProteinListDao.getUserProteinLists(anyString())).thenReturn(Arrays.asList(proteinList));
 
@@ -151,7 +142,7 @@ public class UserResourceAuthorizationServiceTest {
 
         UserQuery query =  Mockito.mock(UserQuery.class);
 
-        Mockito.when(query.getResourceOwner()).thenReturn(owner);
+        Mockito.when(query.getOwnerName()).thenReturn(owner);
         Mockito.when(query.getOwnerId()).thenReturn(23L);
         Mockito.when(query.getSparql()).thenReturn("orkfiejjgijrtwithi");
 
@@ -164,16 +155,20 @@ public class UserResourceAuthorizationServiceTest {
         Mockito.when(userApplicationDao.getUserApplicationById(anyLong())).thenReturn(userApp);
         Mockito.when(userApplicationDao.getUserApplicationListByOwnerId(anyInt())).thenReturn(Arrays.asList(new UserApplication()));
 
-        Mockito.when(userApp.getResourceOwner()).thenReturn(owner);
+        Mockito.when(userApp.getOwnerName()).thenReturn(owner);
         Mockito.when(userApp.getOwnerId()).thenReturn(23L);
         Mockito.when(userApp.getId()).thenReturn(0L);
     }
 
-    private static void dressMockedAuthentication(Authentication authentication) {
+    private static User mockUser() {
 
-        UserDetails userDetails = Mockito.mock(UserDetails.class);
-        Mockito.when(userDetails.getUsername()).thenReturn("bobleponge");
+        User user = Mockito.mock(User.class);
+        Mockito.when(user.getUsername()).thenReturn("bobleponge");
+        return user;
+    }
 
-        Mockito.when(authentication.getPrincipal()).thenReturn(userDetails);
+    private static void dressMockedUserDao(UserDao userDao, User user) {
+
+        Mockito.when(userDao.getUserByUsername(anyString())).thenReturn(user);
     }
 }

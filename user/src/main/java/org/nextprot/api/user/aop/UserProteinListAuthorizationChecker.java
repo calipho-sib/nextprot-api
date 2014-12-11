@@ -1,13 +1,11 @@
 package org.nextprot.api.user.aop;
 
 import org.nextprot.api.commons.exception.NotAuthorizedException;
+import org.nextprot.api.commons.resource.UserResource;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
-import org.nextprot.api.user.domain.UserResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class UserProteinListAuthorizationChecker implements UserResourceAuthorizationChecker {
@@ -18,20 +16,16 @@ public class UserProteinListAuthorizationChecker implements UserResourceAuthoriz
     @Override
     public void checkAuthorization(UserResource userProteinList) {
 
-        String resourceOwner = userProteinList.getResourceOwner();
+        long ownerId = userProteinList.getOwnerId();
 
         if (userProteinList instanceof UserProteinList) {
 
-            List<UserProteinList> foundUserProteinList = dao.getUserProteinLists(resourceOwner);
+            UserProteinList foundUserProteinList = dao.getUserProteinListById(((UserProteinList) userProteinList).getId());
 
-            if (!foundUserProteinList.isEmpty()) {
-
-                String userProteinListOwner = foundUserProteinList.get(0).getResourceOwner();
-
-                if (userProteinListOwner == null || !userProteinListOwner.equals(resourceOwner))
-                    throw new NotAuthorizedException(resourceOwner + " cannot access resource");
-            }
-        } else {
+            if (foundUserProteinList.getOwnerId() != ownerId)
+                throw new NotAuthorizedException(foundUserProteinList.getOwnerName() + " cannot access resource");
+        }
+        else {
 
             throw new IllegalStateException(userProteinList.getClass().getSimpleName() + ": incorrect class for authorization check");
         }

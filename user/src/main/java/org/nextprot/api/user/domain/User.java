@@ -1,9 +1,9 @@
 package org.nextprot.api.user.domain;
 
-import java.util.Set;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Set;
 
 public class User implements UserDetails {
 

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
 import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -187,18 +188,17 @@ public class UserQueryDaoTest extends UserApplicationBaseTest {
         int count = userQueryDao.deleteUserQuery(16);
 
         assertEquals(1, count);
-        assertNull(userQueryDao.getUserQueryById(16));
+        assertEquals(1, userQueryDao.getUserQueries("spongebob").size());
         assertTrue(userQueryDao.getQueryTags(Arrays.asList(16L)).isEmpty());
     }
 
-    @Test
+    @Test(expected = EmptyResultDataAccessException.class)
     public void testDeleteUserQuery2() {
 
         int count = userQueryDao.deleteUserQuery(17);
 
         assertEquals(0, count);
-        assertNull(userQueryDao.getUserQueryById(17));
-        assertTrue(userQueryDao.getQueryTags(Arrays.asList(17L)).isEmpty());
+        userQueryDao.getUserQueryById(17);
     }
 
     @Test
@@ -225,7 +225,7 @@ public class UserQueryDaoTest extends UserApplicationBaseTest {
         assertNotNull(userQuery);
         assertEquals(expectedUserQueryId, userQuery.getUserQueryId());
         assertEquals(expectedOwner, userQuery.getOwner());
-        assertEquals(expectedOwner, userQuery.getResourceOwner());
+        assertEquals(expectedOwner, userQuery.getOwnerName());
         assertEquals(expectedDescription, userQuery.getDescription());
         assertEquals(expectedTitle, userQuery.getTitle());
         assertTrue(userQuery.getPublished() == expectedPublished);

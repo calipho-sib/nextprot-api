@@ -5,8 +5,9 @@ import java.io.Serializable;
 
 public interface UserResource extends Serializable {
 
-	public void setOwnerName(String name);
-	public String getOwnerName();
-	public void setOwnerId(String name);
-	public String getOwnerId();
+	void setOwnerName(String name);
+	String getOwnerName();
+	void setOwnerId(long id);
+	long getOwnerId();
+	boolean isPersisted();
 }

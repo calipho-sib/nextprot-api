@@ -1,11 +1,11 @@
 package org.nextprot.api.user.domain;
 
+import org.nextprot.api.commons.resource.UserResource;
+
 import java.util.HashSet;
 import java.util.Set;
 
-import org.nextprot.api.commons.resource.ResourceOwner;
-
-public class UserProteinList implements ResourceOwner {
+public class UserProteinList implements UserResource {
 
 	private static final long serialVersionUID = 1968815880984849468L;
 
@@ -58,8 +58,11 @@ public class UserProteinList implements ResourceOwner {
 		entriesCount = count;
 	}
 
-    @Override
-    public String getResourceOwner() {
+	@Override
+	public void setOwnerName(String name) { this.owner = name; }
+
+	@Override
+    public String getOwnerName() {
         return owner;
     }
 
@@ -71,5 +74,10 @@ public class UserProteinList implements ResourceOwner {
 
     public long getOwnerId() { return ownerId; }
 
-    public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
+	@Override
+	public boolean isPersisted() {
+		return false;
+	}
+
+	public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
 }

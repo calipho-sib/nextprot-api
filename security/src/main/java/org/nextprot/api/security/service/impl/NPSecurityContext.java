@@ -1,19 +1,17 @@
 package org.nextprot.api.security.service.impl;
 
+import com.auth0.spring.security.auth0.Auth0UserDetails;
+import org.nextprot.api.commons.exception.NotAuthorizedException;
+import org.nextprot.api.commons.resource.UserResource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
-import com.auth0.spring.security.auth0.Auth0UserDetails;
-
-import org.nextprot.api.commons.exception.NotAuthorizedException;
-import org.nextprot.api.commons.resource.ResourceOwner;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Utility methods related to the current logged in user
@@ -26,26 +24,18 @@ public class NPSecurityContext {
 	 * Check authorization for all resources
 	 * @param userResources
 	 */
-	public static void checkUserAuthorization(Collection<? extends ResourceOwner> userResources) {
-		for(ResourceOwner resource : userResources){
+	public static void checkUserAuthorization(Collection<? extends UserResource> userResources) {
+		for(UserResource resource : userResources){
 			checkUserAuthorization(resource);
 		}
 
 	}
 
-	public static void checkUserAuthorization(ResourceOwner userResource) {
+	public static void checkUserAuthorization(UserResource userResource) {
 
 		String securityUserName;
 
-		SecurityContext sc = SecurityContextHolder.getContext();
-		if (sc == null) {
-			throw new NotAuthorizedException("You must be logged in to access this resource");
-		}
-
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		if (a == null) {
-			throw new NotAuthorizedException("You must be logged in to access this resource");
-		}
 
 		if (a.getPrincipal() instanceof UserDetails) {
 			UserDetails currentUserDetails = (UserDetails) a.getPrincipal();
@@ -58,7 +48,7 @@ public class NPSecurityContext {
 			throw new NotAuthorizedException("Security user name not set!!!");
 		}
 
-		if (!securityUserName.equals(userResource.getResourceOwner())) {
+		if (!securityUserName.equals(userResource.getOwnerName())) {
 			throw new NotAuthorizedException(securityUserName + " is not authorized to access this resource");
 		}
 
@@ -84,6 +74,7 @@ public class NPSecurityContext {
 	}
 
 	public static String getCurrentUser() {
+
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
 		if (a.getPrincipal() instanceof UserDetails) {
 			UserDetails currentUserDetails = (UserDetails) a.getPrincipal();

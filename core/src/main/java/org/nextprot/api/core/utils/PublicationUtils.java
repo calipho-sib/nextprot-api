@@ -10,8 +10,6 @@ public class PublicationUtils {
 	
 	/**
 	 * Filter publications by their ids
-	 * @param annotations
-	 * @param annotationCategory
 	 * @return
 	 */
 	public static List<Publication> filterPublicationsByIds(List<Publication> publications, Set<Long> ids){

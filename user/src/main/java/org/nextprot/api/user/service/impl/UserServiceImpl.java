@@ -1,9 +1,5 @@
 package org.nextprot.api.user.service.impl;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.domain.User;
 import org.nextprot.api.user.service.UserService;
@@ -16,6 +12,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService {

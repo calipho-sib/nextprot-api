@@ -1,20 +1,19 @@
 package org.nextprot.api.user.dao;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
 import org.nextprot.api.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.Sets;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 //@TransactionConfiguration(defaultRollback = false)
 @DatabaseSetup(value = "UserDaoTest.xml", type = DatabaseOperation.INSERT)
@@ -82,10 +81,10 @@ public class UserDaoTest extends UserApplicationBaseTest {
 		Assert.assertTrue(user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")));
 	}
 
-	@Test
+	@Test(expected = EmptyResultDataAccessException.class)
 	public void testReadUnknownUser() {
 
-		Assert.assertNull(userDao.getUserByUsername("superman"));
+		userDao.getUserByUsername("superman");
 	}
 
 	@Test
@@ -180,8 +179,10 @@ public class UserDaoTest extends UserApplicationBaseTest {
 		User toDelete = new User();
 		toDelete.setId(23);
 
+		Assert.assertEquals(2, userDao.getUserList().size());
+
 		userDao.deleteUser(toDelete);
 
-		Assert.assertNull(userDao.getUserByUsername("spongebob"));
+		Assert.assertEquals(1, userDao.getUserList().size());
 	}
 }

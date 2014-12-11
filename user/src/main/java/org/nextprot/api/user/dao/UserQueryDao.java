@@ -2,6 +2,7 @@ package org.nextprot.api.user.dao;
 
 import com.google.common.collect.SetMultimap;
 import org.nextprot.api.user.domain.UserQuery;
+import org.springframework.dao.DataAccessException;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +23,7 @@ public interface UserQueryDao {
 	 * @param id the query identifier
 	 * @return the user query {@code id}
 	 */
-	UserQuery getUserQueryById(long id);
+	UserQuery getUserQueryById(long id) throws DataAccessException;
 
 	/**
 	 * Get list of queries labeled with {@code tag}

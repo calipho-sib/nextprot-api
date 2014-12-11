@@ -3,12 +3,12 @@ package org.nextprot.api.user.domain;
 import com.google.common.base.Function;
 
 import org.nextprot.api.commons.exception.NPreconditions;
-import org.nextprot.api.commons.resource.ResourceOwner;
+import org.nextprot.api.commons.resource.UserResource;
 
 import java.io.Serializable;
 import java.util.Set;
 
-public class UserQuery implements Serializable, ResourceOwner {
+public class UserQuery implements Serializable, UserResource {
 
 	private static final long serialVersionUID = 3051410556247218680L;
 
@@ -69,6 +69,9 @@ public class UserQuery implements Serializable, ResourceOwner {
 		this.published = published;
 	}
 
+	@Override
+	public void setOwnerName(String name) { this.owner = name; }
+
 	public String getOwner() {
 		return owner;
 	}
@@ -78,6 +81,11 @@ public class UserQuery implements Serializable, ResourceOwner {
 	}
 
 	public long getOwnerId() { return ownerId; }
+
+	@Override
+	public boolean isPersisted() {
+		return false;
+	}
 
 	public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
 
@@ -96,7 +104,7 @@ public class UserQuery implements Serializable, ResourceOwner {
 	}
 
 	@Override
-	public String getResourceOwner() {
+	public String getOwnerName() {
 		return this.getOwner();
 	}
 

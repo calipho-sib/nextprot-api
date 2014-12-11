@@ -1,13 +1,5 @@
 package org.nextprot.api.user.dao.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -18,11 +10,17 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Repository;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.*;
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -57,7 +55,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-	public User getUserByUsername(String username) {
+	public User getUserByUsername(String username) throws DataAccessException {
 
         Map<String, String> namedParams = new HashMap<String, String>();
 
@@ -70,7 +68,7 @@ public class UserDaoImpl implements UserDao {
         List<User> users = template.query(sql, namedParams, new UsersExtractor());
 
         if (users.isEmpty())
-            return null;
+            throw new EmptyResultDataAccessException(1);
 
         return users.get(0);
 	}

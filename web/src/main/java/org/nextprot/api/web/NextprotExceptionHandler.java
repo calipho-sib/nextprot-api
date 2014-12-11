@@ -1,13 +1,14 @@
 package org.nextprot.api.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.ConcurrentRequestsException;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.NotAuthorizedException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeException;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
  * Advice class to deal with exception.
@@ -67,9 +66,9 @@ public class NextprotExceptionHandler {
 	}
 	
 	@ResponseStatus(HttpStatus.NOT_FOUND)
-	@ExceptionHandler(EmptyResultDataAccessException.class)
+	@ExceptionHandler(DataAccessException.class)
 	@ResponseBody
-	public RestErrorResponse handle(EmptyResultDataAccessException ex) {
+	public RestErrorResponse handle(DataAccessException ex) {
 		return getResponseError("Resource not found");
 	}
 	
@@ -78,9 +77,9 @@ public class NextprotExceptionHandler {
 	@ResponseBody
 	public RestErrorResponse handle(Exception ex) {
 		String code = Integer.toHexString(ex.getLocalizedMessage().hashCode() + ex.getClass().getCanonicalName().hashCode()).toUpperCase();
-		LOGGER.error("unexpected error occured:" + code + "\t" + ex.getLocalizedMessage());
+		LOGGER.error("unexpected error occurred:" + code + "\t" + ex.getLocalizedMessage());
 		ex.printStackTrace();
-		return getResponseError("Ups something went wrong.... Try again in a few minutes, if the error persists provide the following code to support : " + code);
+		return getResponseError("Oops something went wrong.... Try again in a few minutes, if the error persists provide the following code to support : " + code);
 	}
 
 	@ResponseStatus(HttpStatus.NOT_FOUND)

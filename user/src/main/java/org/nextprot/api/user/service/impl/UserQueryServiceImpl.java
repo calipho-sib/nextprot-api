@@ -1,18 +1,16 @@
 package org.nextprot.api.user.service.impl;
 
-import java.util.List;
-
 import org.nextprot.api.commons.exception.NPreconditions;
-import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.dao.UserQueryDao;
-import org.nextprot.api.user.domain.User;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Lazy
 @Service
@@ -21,9 +19,6 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@Autowired
 	private UserQueryDao userQueryDao;
 
-	@Autowired
-	private UserDao userDao;
-	
 	@Override
 	public List<UserQuery> getUserQueries(String username) {
 		return userQueryDao.getUserQueries(username);
@@ -48,13 +43,6 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@Transactional
 	public UserQuery createUserQuery(UserQuery userQuery) {
 
-		//TODO replace this with an asepct
-		String username = NPSecurityContext.getCurrentUser();
-		User usr = userDao.getUserByUsername(username);
-		userQuery.setOwner(username);
-		userQuery.setOwnerId(usr.getId());
-			
-		
 		long id = userQueryDao.createUserQuery(userQuery);
 		userQuery.setUserQueryId(id);
 		if(userQuery.getTags() != null){
@@ -65,7 +53,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 
 	@Override
 	public UserQuery updateUserQuery(UserQuery userQuery) {
-		NPSecurityContext.checkUserAuthorization(userQuery);
+
 		userQuery.checkValid();
 		userQueryDao.updateUserQuery(userQuery);
 		return userQuery;
@@ -73,6 +61,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 
 	@Override
 	public void deleteUserQuery(UserQuery userQuery) {
+
 		long queryId = userQuery.getUserQueryId();
 		NPreconditions.checkNotNull(queryId, "Object not found");
 		userQueryDao.deleteUserQuery(queryId);

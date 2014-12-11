@@ -1,18 +1,7 @@
 package org.nextprot.api.user.dao.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.JdbcTemplateUtils;
@@ -22,13 +11,18 @@ import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 @Lazy
 @Repository
@@ -52,26 +46,20 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 	}
 
 	@Override
-	public UserProteinList getUserProteinListById(long listId) {
+	public UserProteinList getUserProteinListById(long listId) throws DataAccessException {
 
 		String sql = sqlDictionary.getSQLQuery("read-user-protein-list-by-id");
 
 		SqlParameterSource namedParams = new MapSqlParameterSource("list_id", listId);
 
-		List<UserProteinList> userProteinLists = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParams, new ProteinListRowMapper());
-
-		if (userProteinLists.isEmpty())
-			return null;
-
-		UserProteinList userProteinList = userProteinLists.get(0);
-
+		UserProteinList userProteinList = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForObject(sql, namedParams, new ProteinListRowMapper());
 		userProteinList.setAccessions(getAccessionsByListId(listId));
 
 		return userProteinList;
 	}
 
 	@Override
-	public UserProteinList getUserProteinListByName(String userIdentifier, String listName) {
+	public UserProteinList getUserProteinListByName(String userIdentifier, String listName) throws DataAccessException {
 
 		String sql = sqlDictionary.getSQLQuery("read-user-protein-list-by-username-listname");
 
@@ -80,12 +68,7 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 		namedParams.put("user_name", userIdentifier);
 		namedParams.put("list_name", listName);
 
-		List<UserProteinList> userProteinLists = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParams, new ProteinListRowMapper());
-
-		NPreconditions.checkTrue(userProteinLists.size() == 1, "UserProteinList not found");
-
-		UserProteinList userProteinList = userProteinLists.get(0);
-
+		UserProteinList userProteinList = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForObject(sql, namedParams, new ProteinListRowMapper());
 		userProteinList.setAccessions(getAccessionsByListId(userProteinList.getId()));
 
 		return userProteinList;

@@ -1,6 +1,7 @@
 package org.nextprot.api.user.dao;
 
 import org.nextprot.api.user.domain.UserProteinList;
+import org.springframework.dao.DataAccessException;
 
 import java.util.List;
 import java.util.Set;
@@ -39,7 +40,7 @@ public interface UserProteinListDao {
 	 * @param listId the list identifier
 	 * @return a user protein list instance
 	 */
-	UserProteinList getUserProteinListById(long listId);
+	UserProteinList getUserProteinListById(long listId) throws DataAccessException;
 
 	/**
 	 * Get the list of accession numbers found in list {@code listId]
@@ -55,7 +56,7 @@ public interface UserProteinListDao {
 	 * @param listName the list name
 	 * @return a user protein list instance
 	 */
-	UserProteinList getUserProteinListByName(String owner, String listName);
+	UserProteinList getUserProteinListByName(String owner, String listName) throws DataAccessException;
 
 	/**
 	 * Update user protein list

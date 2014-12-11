@@ -1,11 +1,11 @@
 package org.nextprot.api.security.service.impl;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.util.Map;
-
+import com.auth0.jwt.Algorithm;
+import com.auth0.jwt.ClaimSet;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.JwtSigner;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -16,13 +16,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import com.auth0.jwt.Algorithm;
-import com.auth0.jwt.ClaimSet;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.JwtSigner;
-import com.auth0.spring.security.auth0.Auth0AuthenticationFilter;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.util.Map;
 
 @Service
 public class JWTCodecImpl implements JWTCodec<Map<String, String>>, InitializingBean {
@@ -108,11 +106,4 @@ public class JWTCodecImpl implements JWTCodec<Map<String, String>>, Initializing
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}
-
-	@Override
-	public Auth0AuthenticationFilter A() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

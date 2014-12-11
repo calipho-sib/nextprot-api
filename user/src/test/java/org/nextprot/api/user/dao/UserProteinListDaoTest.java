@@ -4,11 +4,11 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Sets;
 import org.junit.Test;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -52,13 +52,13 @@ public class UserProteinListDaoTest extends UserApplicationBaseTest {
 		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 3, Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"));
 	}
 
-	@Test (expected = NextProtException.class)
+	@Test (expected = EmptyResultDataAccessException.class)
 	public void testGetUserProteinListByNameUnknownListName() {
 
 		proteinListDao.getUserProteinListByName(username, "my list");
 	}
 
-	@Test (expected = NextProtException.class)
+	@Test (expected = EmptyResultDataAccessException.class)
 	public void testGetUserProteinListByNameUnknownUserName() {
 
 		proteinListDao.getUserProteinListByName("bobby", "mylist");
@@ -214,7 +214,7 @@ public class UserProteinListDaoTest extends UserApplicationBaseTest {
 		int count = proteinListDao.deleteUserProteinList(156);
 
 		assertEquals(1, count);
-		assertNull(proteinListDao.getUserProteinListById(156));
+		assertTrue(proteinListDao.getUserProteinLists("spongebob").isEmpty());
 		assertEquals(new HashSet<String>(), proteinListDao.getAccessionsByListId(156));
 	}
 
@@ -224,7 +224,6 @@ public class UserProteinListDaoTest extends UserApplicationBaseTest {
 		int count = proteinListDao.deleteUserProteinList(157);
 
 		assertEquals(0, count);
-		assertNull(proteinListDao.getUserProteinListById(157));
 		assertEquals(new HashSet<String>(), proteinListDao.getAccessionsByListId(157));
 	}
 

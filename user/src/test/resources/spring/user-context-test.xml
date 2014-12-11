@@ -41,6 +41,10 @@
 		<constructor-arg value="org.nextprot.api.user.dao.UserProteinListDao"/>
 	</bean>
 
+	<bean class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="org.nextprot.api.user.dao.UserDao"/>
+	</bean>
+
 	<!-- <bean class="org.springframework.beans.factory.config.PropertiesFactoryBean" id="pom">
 		<property name="locations">
 			<list>

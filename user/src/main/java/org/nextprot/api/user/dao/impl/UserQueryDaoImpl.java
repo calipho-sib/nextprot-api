@@ -57,15 +57,8 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		MapSqlParameterSource namedParameters = new MapSqlParameterSource();
 		namedParameters.addValue("query_id", queryId);
 
-		List<UserQuery> queries = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserQueryRowMapper());
-
-		if (queries.isEmpty())
-			return null;
-
-		UserQuery query = queries.get(0);
-
-		SetMultimap<Long, String> tags = getQueryTags(Arrays.asList(queries.get(0).getUserQueryId()));
-
+		UserQuery query = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForObject(sql, namedParameters, new UserQueryRowMapper());
+		SetMultimap<Long, String> tags = getQueryTags(Arrays.asList(query.getUserQueryId()));
 		query.setTags(tags.get(queryId));
 
 		return query;

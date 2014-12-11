@@ -1,8 +1,9 @@
 package org.nextprot.api.user.dao;
 
-import java.util.List;
-
 import org.nextprot.api.user.domain.User;
+import org.springframework.dao.DataAccessException;
+
+import java.util.List;
 
 public interface UserDao {
 
@@ -10,7 +11,7 @@ public interface UserDao {
 
     List<User> getUserList();
 
-    User getUserByUsername(String username);
+    User getUserByUsername(String username) throws DataAccessException;
 
     void updateUser(User user);
 

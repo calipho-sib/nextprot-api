@@ -1,5 +1,7 @@
 package org.nextprot.api.user.dao;
 
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
@@ -7,9 +9,6 @@ import org.nextprot.api.commons.dbunit.DTDIgnoredFlatXMLDataSet;
 import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
 import org.nextprot.api.user.domain.UserApplication;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 import java.util.List;
 
@@ -59,7 +58,7 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
         Assert.assertEquals("ACTIVE", app.getStatus());
         Assert.assertEquals("RO", app.getUserDataAccess());
         Assert.assertNull(app.getOrigins());
-        Assert.assertEquals(app.getOwner(), app.getResourceOwner());
+        Assert.assertEquals(app.getOwner(), app.getOwnerName());
         Assert.assertNotNull(app.getCreationDate());
 	}
 
@@ -93,7 +92,7 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
         Assert.assertEquals("ACTIVE", app.getStatus());
         Assert.assertEquals("RO", app.getUserDataAccess());
         Assert.assertNull(app.getOrigins());
-        Assert.assertEquals(app.getOwner(), app.getResourceOwner());
+        Assert.assertEquals(app.getOwner(), app.getOwnerName());
         Assert.assertNotNull(app.getCreationDate());
     }
 
@@ -127,7 +126,7 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
         Assert.assertNull(app.getStatus());
         Assert.assertEquals("RO", app.getUserDataAccess());
         Assert.assertNull(app.getOrigins());
-        Assert.assertEquals(app.getOwner(), app.getResourceOwner());
+        Assert.assertEquals(app.getOwner(), app.getOwnerName());
         Assert.assertNotNull(app.getCreationDate());*/
     }
 
@@ -135,8 +134,8 @@ public class UserApplicationDaoTest extends UserApplicationBaseTest {
     public void testDeleteUserApplication() {
 
         UserApplication app = userAppDao.getUserApplicationById(123456);
-        userAppDao.deleteUserApplication(app);
 
-        Assert.assertNull(userAppDao.getUserApplicationById(123456));
+        userAppDao.deleteUserApplication(app);
+        Assert.assertTrue(userAppDao.getUserApplicationListByOwnerId(23).isEmpty());
     }
 }
