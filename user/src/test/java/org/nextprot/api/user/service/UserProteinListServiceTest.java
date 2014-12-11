@@ -100,7 +100,7 @@ public class UserProteinListServiceTest extends CommonsUnitBaseTest {
 		UserProteinList l1 = this.proteinListService.createUserProteinList(createUserProteinList("cool1", null, s1));
 		
 		Set<String> accs = new HashSet<String>();
-		this.proteinListService.addAccessionNumbers(l1.getId(), accs);
+		//this.proteinListService.addAccessionNumbers(l1.getId(), accs);
 	}
 	
 	@Test
@@ -116,7 +116,7 @@ public class UserProteinListServiceTest extends CommonsUnitBaseTest {
 		
 		Set<String> remAcc = new HashSet<String>();
 		remAcc.add("NX_P123");
-		this.proteinListService.removeAccessionNumbers(l1.getId(), remAcc);
+		//this.proteinListService.removeAccessionNumbers(l1.getId(), remAcc);
 		
 		l1 = this.proteinListService.getUserProteinListById(l1.getId());
 		assertEquals("cool1", l1.getName());

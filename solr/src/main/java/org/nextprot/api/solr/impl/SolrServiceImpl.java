@@ -221,8 +221,6 @@ public class SolrServiceImpl implements SolrService {
 				solrQuery.addSort(s.getFirst().getName(), s.getSecond());
 		}
 
-		System.out.println("boost: "+sortConfig.getBoost());
-
 //		function buildBoost(value) { return "sum(1.0,product(div(log(informational_score),6.0),div("+ value +",100.0)))"; }
 
 		if(sortConfig.getBoost() != -1) {

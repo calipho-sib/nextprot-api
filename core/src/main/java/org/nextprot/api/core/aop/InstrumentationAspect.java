@@ -23,6 +23,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -33,6 +34,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @version $Revision$, $Date$, $Author$
  */
 @Aspect
+@Component
 @ManagedResource(objectName = "org.nextprot.api:name=ControllersInstrumentation", description = "My Managed Bean", log = true, logFile = "jmx.log", persistPeriod = 200, persistLocation = "/tmp", persistName = "bar")
 public class InstrumentationAspect {
 

@@ -1,9 +1,8 @@
 package org.nextprot.api.user.service;
 
-import org.nextprot.api.user.domain.UserProteinList;
-
 import java.util.List;
-import java.util.Set;
+
+import org.nextprot.api.user.domain.UserProteinList;
 
 public interface UserProteinListService {
 
@@ -19,13 +18,9 @@ public interface UserProteinListService {
 
 	UserProteinList createUserProteinList(UserProteinList proteinList);
 
-	void deleteUserProteinList(UserProteinList proteinList);
-
-	void addAccessionNumbers(long listId, Set<String> accessions);
-
-	void removeAccessionNumbers(long listId, Set<String> accessions);
-
 	UserProteinList updateUserProteinList(UserProteinList proteinList);
+
+	void deleteUserProteinList(UserProteinList proteinList);
 
 	UserProteinList combine(String name, String description, String username, String list1, String list2, Operations operation);
 }
