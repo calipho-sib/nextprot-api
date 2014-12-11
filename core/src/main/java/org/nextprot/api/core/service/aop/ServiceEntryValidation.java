@@ -11,6 +11,7 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ import java.util.Set;
  * @version $Revision$, $Date$, $Author$
  */
 @Aspect
-@Lazy
+@Component
 public class ServiceEntryValidation {
 
 	private static final Log LOGGER = LogFactory.getLog(ServiceEntryValidation.class);
