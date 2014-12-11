@@ -156,6 +156,15 @@ public class UserResourceAuthorizationServiceTest {
         userProteinListService.updateUserProteinList(proteinList);
     }
 
+    @Test
+    public void testDeleteUserProteinListService() {
+
+        UserProteinList proteinList =  Mockito.mock(UserProteinList.class);
+        dressMockedUserProteinList(proteinList, "bobleponge");
+        Mockito.when(userProteinListDao.getUserProteinListById(anyLong())).thenReturn(proteinList);
+        userProteinListService.deleteUserProteinList(proteinList);
+    }
+
     private static UserQuery mockUserQuery(String owner) {
 
         UserQuery query =  Mockito.mock(UserQuery.class);

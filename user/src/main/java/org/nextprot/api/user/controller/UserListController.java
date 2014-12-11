@@ -1,13 +1,5 @@
 package org.nextprot.api.user.controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
@@ -20,14 +12,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
@@ -71,7 +65,8 @@ public class UserListController {
 	@RequestMapping(value = "/user/{username}/protein-list/{id}", method = { RequestMethod.DELETE })
 	public Model deleteList(@PathVariable("username") String username, @PathVariable("id") String id, Model model) {
 
-		this.proteinListService.deleteUserProteinList(Long.parseLong(id));
+		UserProteinList userProteinList = proteinListService.getUserProteinListById(Long.parseLong(id));
+		this.proteinListService.deleteUserProteinList(userProteinList);
 		model.addAttribute("listId", id);
 		return model;
 	}
@@ -136,7 +131,7 @@ public class UserListController {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
 			char[] charBuffer = new char[128];
-			int bytesRead = -1;
+			int bytesRead;
 
 			while ((bytesRead = reader.read(charBuffer)) > 0) {
 				stringBuilder.append(charBuffer, 0, bytesRead);

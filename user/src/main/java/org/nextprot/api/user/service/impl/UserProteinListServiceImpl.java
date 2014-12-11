@@ -1,22 +1,14 @@
 package org.nextprot.api.user.service.impl;
 
-import com.google.common.collect.Sets;
-
-import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.utils.UserProteinListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -53,7 +45,6 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 		UserProteinList newList = this.proteinListDao.getUserProteinListById(id);
 		//newList.setAccessions(this.proteinListDao.getAccessionsByListId(id));
 		return proteinList;
-
 	}
 
 	private void saveAccessions(long listId, Set<String> accessions) {
@@ -63,8 +54,8 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	}
 
 	@Override
-	public void deleteUserProteinList(long listId) {
-		this.proteinListDao.deleteUserProteinList(listId);
+	public void deleteUserProteinList(UserProteinList proteinList) {
+		this.proteinListDao.deleteUserProteinList(proteinList.getId());
 	}
 
 	@Override
