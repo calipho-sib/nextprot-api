@@ -67,7 +67,7 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 		System.out.println("selected: " + proteinList.getAccessionNumbers().size() + " created: " + newList.getAccessionNumbers().size() + " not there: "
 				+ Sets.difference(proteinList.getAccessionNumbers(), newList.getAccessionNumbers()));
 */
-		return proteinList;
+		return newList;
 
 	}
 

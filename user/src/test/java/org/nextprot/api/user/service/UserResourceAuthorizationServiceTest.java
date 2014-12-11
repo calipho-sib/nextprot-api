@@ -133,7 +133,7 @@ public class UserResourceAuthorizationServiceTest {
 
         Mockito.when(proteinList.getOwnerName()).thenReturn("bobleponge");
         Mockito.when(proteinList.getOwnerId()).thenReturn(23L);
-        Mockito.when(userProteinListDao.getUserProteinLists(anyString())).thenReturn(Arrays.asList(proteinList));
+        Mockito.when(userProteinListDao.getUserProteinListById(anyLong())).thenReturn(proteinList);
 
         userProteinListService.createUserProteinList(proteinList);
     }

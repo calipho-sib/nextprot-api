@@ -52,7 +52,9 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 
 		SqlParameterSource namedParams = new MapSqlParameterSource("list_id", listId);
 
-		UserProteinList userProteinList = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForObject(sql, namedParams, new ProteinListRowMapper());
+		NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource());
+
+		UserProteinList userProteinList = template.queryForObject(sql, namedParams, new ProteinListRowMapper());
 		userProteinList.setAccessions(getAccessionsByListId(listId));
 
 		return userProteinList;
