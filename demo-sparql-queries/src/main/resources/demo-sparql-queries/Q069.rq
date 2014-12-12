@@ -6,9 +6,9 @@
 select  distinct ?entry where {
  ?entry :isoform ?iso .
     ?iso :modifiedResidue ?ptm .
-    ?ptm :in ?ptmtype.
+    ?ptm :term ?ptmtype.
     ?ptm rdfs:comment ?comment.
-  FILTER (?ptmtype in (term:PTM-0253, term:PTM-0254, term:PTM-0255))  
+  FILTER (?ptmtype in (cv:PTM-0253, cv:PTM-0254, cv:PTM-0255))  
   FILTER regex(?comment, "SRC","i")
  }
 

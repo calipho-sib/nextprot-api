@@ -6,7 +6,7 @@ entry:$entry.getUniqueName()
 #foreach($family in $entry.overview.families)
     :family [
        rdf:type :FamilyInfo ;
-       :accession term:$StringUtils.slug($family.accession) ;
+       :accession cv:$StringUtils.slug($family.accession) ;
 #if($family.region)
        :region "$family.region"^^xsd:string ;
 #end
@@ -21,7 +21,8 @@ entry:$entry.getUniqueName()
 #end
 ## ----------------- ADDITIONAL NAMES ---------------------------------
 #if($entry.overview.additionalNames)
-    :additionalNames[
+    :additionalNames[ 
+        rdf:type :NameList;
 #foreach($entityName in $entry.overview.additionalNames)
     #parse('turtle/entity-name.ttl.vm')
 #end
@@ -30,6 +31,7 @@ entry:$entry.getUniqueName()
 ## ----------------- FUNCTIONAL REGION NAMES ---------------------------
 #if($entry.overview.functionalRegionNames)
     :fonctionalRegionNames[
+        rdf:type :NameList;
 #foreach($entityName in $entry.overview.functionalRegionNames)
         #parse('turtle/entity-name.ttl.vm')
 #end
@@ -38,6 +40,7 @@ entry:$entry.getUniqueName()
 ## ----------------- CLEAVED REGION NAMES ------------------------------
 #if($entry.overview.cleavedRegionNames)
     :cleavedRegionNames[
+        rdf:type :NameList;
 #foreach($entityName in $entry.overview.cleavedRegionNames)
         #parse('turtle/entity-name.ttl.vm')
 #end

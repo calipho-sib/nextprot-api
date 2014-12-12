@@ -39,6 +39,18 @@ Click on the web module (nextprot-api-web project) configure the deployment asse
 
 ![logo](add-remove.png)
 
+### Runtime configuration of TomCat server
+
+By default, the spring configuration active profile is "pro" and tries to read config in file nextprot-application.properties.
+You must activate the "dev" profile for spring to read the appication-dev.properties in the nexprot-api-common module.
+
+-	Click the Run menu, choose Run configurations... option
+-	Select Tomcat v7.0 Sefrver in the left pane, then click the Arguments tab in the right pane
+-	Insert -Dspring.profiles.active=dev in the VM arguments text area, apply and close 
+
+![logo](run-conf-add-profile.png)
+
+
 ### Configure JRebel
 
 -	You should also configure JRebel in order to make changes and reflect them directly

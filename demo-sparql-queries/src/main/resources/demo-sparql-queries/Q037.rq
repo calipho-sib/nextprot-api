@@ -4,6 +4,6 @@
 #count:453
 #time:0.1
 SELECT distinct ?entry WHERE {
- ?entry :isoform ?iso;:classifiedWith term:KW-0694.
- FILTER NOT EXISTS {?iso :region/:in term:DO-00581}
+ ?entry :isoform ?iso;:classifiedWith cv:KW-0694.
+ FILTER NOT EXISTS {?iso :region/:term cv:DO-00581}
 }

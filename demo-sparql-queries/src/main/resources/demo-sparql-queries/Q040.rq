@@ -4,7 +4,7 @@
 #count:407
 #time:0.3
 SELECT distinct ?entry WHERE  {
-  ?entry :classifiedWith/rdf:type :EnzymeClassificationOntology;:isoform ?iso.
+  ?entry :classifiedWith/rdf:type :EnzymeClassificationCv;:isoform ?iso.
   ?iso :mutagenesis/rdfs:comment ?comment
 FILTER regex(?comment, '(decrease|abolish).*activity','i')
 }

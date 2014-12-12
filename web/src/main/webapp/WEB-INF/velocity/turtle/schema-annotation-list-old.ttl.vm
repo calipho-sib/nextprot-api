@@ -124,7 +124,7 @@
 
 #TODO precise which Ontology is available for this relation and list other relations depending 
 #     the ontology
-:in
+:term
       rdf:type owl:ObjectProperty ;
       rdfs:domain :Annotation ;
       rdfs:range :Term.

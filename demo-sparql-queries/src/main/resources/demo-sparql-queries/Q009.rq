@@ -3,13 +3,13 @@
 #tags:selected
 #count:464
 #pending
-#note: filter not exists { ?entry :classifiedWith  term:KW-0372 . } 
+#note: filter not exists { ?entry :classifiedWith  cv:KW-0372 . } 
 #note: is more stringent than 
-#note: filter not exists { ?isoform :keyword  term:KW-0372 . }
+#note: filter not exists { ?isoform :keyword  cv:KW-0372 . }
 select distinct ?entry   WHERE {
   ?entry :isoform ?isoform.
   ?isoform :ptm ?statement .
   ?statement a :DisulfideBond.
-  filter not exists { ?isoform :keyword  term:KW-0372 . }
-  filter not exists { ?entry  :isoform / :function  / :in term:GO_0005179  . }
+  filter not exists { ?isoform :keyword  cv:KW-0372 . }
+  filter not exists { ?entry  :isoform / :function  / :term cv:GO_0005179  . }
 } GROUP by ?entry ?isoform HAVING (count(?statement) =3 )

@@ -2,10 +2,10 @@
 # Classifications (Keywords and Enzymes) 
 entry:$entry.getUniqueName() 
 #foreach($keyword in $entry.keywords)
-  :classifiedWith term:$StringUtils.slug($keyword.accession);
+  :classifiedWith cv:$StringUtils.slug($keyword.accession);
 #end
 #foreach($enzyme in $entry.enzymes)
-  :classifiedWith term:$StringUtils.slug($enzyme.accession);
+  :classifiedWith cv:$StringUtils.slug($enzyme.accession);
 #end
   .
 #end

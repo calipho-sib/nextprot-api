@@ -1,0 +1,16 @@
+#title: Q103 All proteins that do not have a cross-reference to an Ensembl ENSG number.
+#ac:A6NHS1,A8MWK0,Q58FF6
+#tags: Xref 
+#count:216
+#time:1.4
+
+select distinct ?entry  {
+ ?entry a :Entry .
+ filter not exists {
+   ?entry :reference ?x .
+   ?x :provenance db:Ensembl ; :accession ?ac .
+   filter (regex(?ac,'^ENSG'))
+ }
+ # for unknown reasons the filter of Q087 won't work -> 0 entries
+ #  FILTER NOT EXISTS { ?entry :reference / :provenance db:Ensembl . }
+}

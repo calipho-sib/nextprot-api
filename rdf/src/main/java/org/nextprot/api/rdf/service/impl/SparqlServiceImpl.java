@@ -65,7 +65,7 @@ public class SparqlServiceImpl implements SparqlService, InitializingBean {
 			Node entryNode = b.get(x);
 			if (entryNode == null) {
 				qExec.close();
-				throw new NextProtException("Bind your protein result to a variable called ?entry. Example: \"?entry :classifiedWith term:KW-0813.\"");
+				throw new NextProtException("Bind your protein result to a variable called ?entry. Example: \"?entry :classifiedWith cv:KW-0813.\"");
 			} else if (entryNode.toString().indexOf(ENTRY_SUFFIX_URI) == -1) {
 				qExec.close();
 				throw new NextProtException("Any entry found in the output, however was found: " + entryNode.toString());

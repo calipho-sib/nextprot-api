@@ -1,0 +1,12 @@
+#title: Q105 All proteins with at least one cross-reference to the ProteinModelPortal but no cross-references to PDB.
+#ac:A0A183,A0PJX8,A1L020
+#tags:Xref,PDB
+#count:14438
+#time:3.1
+
+select distinct ?entry {
+  ?entry :reference / :provenance db:ProteinModelPortal .
+  filter not exists {
+    ?entry :reference / :provenance db:PDB
+  }
+}

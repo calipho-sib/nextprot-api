@@ -5,6 +5,6 @@
 #time: 0.1
 SELECT distinct ?entry WHERE  {
   ?entry :gene / :chromosome "18"^^xsd:string; :isoform / :variant ?variant .
-  ?variant :withEvidence / :quality :GOLD .
+  ?variant :evidence / :quality :GOLD .
  FILTER NOT EXISTS { ?variant :disease ?disease . }
 }

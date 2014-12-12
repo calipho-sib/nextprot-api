@@ -12,6 +12,7 @@
 	<import resource="security-context.xml" />
 
 	<mvc:annotation-driven/>
+
 	<!-- you may have to explicitly register other converters though -->
 <!-- 		<mvc:message-converters register-defaults="false"> 
 			<bean
@@ -29,6 +30,7 @@
 		</mvc:message-converters>
 	</mvc:annotation-driven>
  -->
+
 	<mvc:default-servlet-handler />
 	<mvc:interceptors>
 		<bean

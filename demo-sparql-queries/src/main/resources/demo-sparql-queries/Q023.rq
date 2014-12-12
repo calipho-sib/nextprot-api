@@ -3,21 +3,21 @@
 #count:1541
 #time:3.514
 select distinct ?entry where {
-# term:KW-0472 membrane
-# term:SL-0162 membrane
-# term:KW-0813 transport
-# term:GO_0006810 transport
+# cv:KW-0472 membrane
+# cv:SL-0162 membrane
+# cv:KW-0813 transport
+# cv:GO_0006810 transport
 # KW-0325 glycoprotein
   ?entry :isoform  ?iso .
   {
-	?iso :goBiologicalProcess / :in / :childOf term:GO_0006810.
+	?iso :goBiologicalProcess / :term / :childOf cv:GO_0006810.
   } union {
-    ?iso :keyword / :in term:KW-0813.
+    ?iso :keyword / :term cv:KW-0813.
   }
   {
-	?iso :keyword / :in term:KW-0472.
+	?iso :keyword / :term cv:KW-0472.
   } union {
-	?iso :location / :in /:childOf term:SL-0162.
+	?iso :cellularComponent / :term /:childOf cv:SL-0162.
   }  
-  filter not exists { ?iso :keyword / :in term:KW-0325 } 
+  filter not exists { ?iso :keyword / :term cv:KW-0325 } 
 }

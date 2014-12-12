@@ -1,9 +1,9 @@
 annotation:$annotation-uri a :$annotation-type;
   :entryAnnotationId "$annotation.getUniqueName()"^^xsd:string;
   :quality :$annotation.getQualityQualifier();
-  :specificity :$annotation.getSpecificityForIsoform($isoform-name);
+  :isoformSpecificity :$annotation.getSpecificityForIsoform($isoform-name);
 #if($annotation.getCvTermName())
-  :in term:$StringUtils.slug($annotation.getCvTermAccessionCode());
+  :term cv:$StringUtils.slug($annotation.getCvTermAccessionCode());
 #end
 #if($annotation.getDescription())
 #if(! $annotation.getVariant())
@@ -27,7 +27,7 @@ annotation:$annotation-uri a :$annotation-type;
 #end    
 #if($variant.getDiseaseTerms())
 #foreach($term in $variant.getDiseaseTerms())
-  :disease term:$term;
+  :disease cv:$term;
 #end
 #end    
 #end

@@ -1,7 +1,7 @@
    select distinct nextprot.db_xrefs.accession as accession, 
           nextprot.cv_terms.cv_name as name, 
           nextprot.cv_terms.description as description, 
-          nextprot.cv_term_categories.cv_name as ontology, 
+          nextprot.cv_term_categories.cv_api_name as ontology, 
 -- get ancestor          
           (select string_agg((select xref.accession from nextprot.db_xrefs   xref where parent.db_xref_id=xref.resource_id ),'|')
       from nextprot.cv_terms parent
@@ -18,5 +18,6 @@ inner join nextprot.db_xrefs xrefr on (root.db_xref_id=xrefr.resource_id)
      from nextprot.cv_terms
 inner join nextprot.db_xrefs on (nextprot.cv_terms.db_xref_id = nextprot.db_xrefs.resource_id)
 inner join nextprot.cv_term_categories on (nextprot.cv_terms.cv_category_id = nextprot.cv_term_categories.cv_id)
-     where replace(initcap(replace(nextprot.cv_term_categories.cv_name, '_', ' ')), ' ', '') = :ontology and nextprot.cv_terms.cv_status_id=1
-  order by nextprot.cv_term_categories.cv_name  
+where nextprot.cv_term_categories.cv_api_name = :ontology 
+and nextprot.cv_terms.cv_status_id=1
+order by nextprot.cv_term_categories.cv_api_name

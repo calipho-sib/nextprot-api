@@ -15,22 +15,22 @@ isoform:$isoform-name :binaryInteraction interaction:$iso-interaction-iri .
 #set($hasInteraction=true)  
 interaction:$iso-interaction-iri a :BinaryInteraction;
 #if ($interaction.isInteractionSpecificForIsoform($isoform-name))
-  :specificity :SPECIFIC ;
+  :isoformSpecificity :SPECIFIC ;
 #else
-  :specificity :BY_DEFAULT ;
+  :isoformSpecificity :BY_DEFAULT ;
 #end
   :quality :$interaction.quality ;
   :selfInteraction "$interaction.selfInteraction"^^xsd:boolean;
-  :withEvidence evidence:$interaction.evidenceId;
+  :evidence evidence:$interaction.evidenceId;
 #if($interactant.isNextprot())
 #if($interactant.isIsoform())
-  :with isoform:$interactant.getNextprotAccession();
+  :interactant isoform:$interactant.getNextprotAccession();
 #else
-  :with entry:$interactant.getNextprotAccession();
+  :interactant entry:$interactant.getNextprotAccession();
 #end
 ## otherwise interactant is not an entry nor an isoform described in nextprot, it is an xref
 #else
-  :with [
+  :interactant [
     rdf:type :Xref ;
     :provenance db:$StringUtils.slug($interactant.database);
     :accession "$interactant.accession"^^xsd:string ;

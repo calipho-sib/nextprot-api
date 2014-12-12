@@ -2,42 +2,18 @@
 ## Negative evidence
 ## graph is splitted for negative, positive (that include negative expression)
 #if($evidence.isNegativeEvidence($isoform-name))
-annotation:$annotation-uri :withNegativeEvidence evidence:$evidence-uri. 
+annotation:$annotation-uri :negativeEvidence evidence:$evidence-uri. 
 #end
-annotation:$annotation-uri :withEvidence evidence:$evidence-uri. 
+annotation:$annotation-uri :evidence evidence:$evidence-uri. 
 ## decribe the evidence here
 evidence:$evidence-uri 
   rdf:type :Evidence ;
-#if($evidence.getAssignmentMethod() &&  $evidence.getAssignmentMethod().equals("curated"))
-  rdf:type :CuratedEvidence ;
-#end  
-#if($evidence.getAssignmentMethod() && $evidence.getAssignmentMethod().equals("computed"))
-  rdf:type :ComputedEvidence ;
-#end  
   :code :$evidence.getQualifierType();
 ## negative is no more needed
-##  :negative "$evidence.isNegativeEvidence($isoform-name)"^^xsd:boolean;
+  :negative "$evidence.isNegativeEvidence($isoform-name)"^^xsd:boolean;
 #if($evidence.getQualityQualifier())
   :quality :$evidence.getQualityQualifier();
 #end  
-##  :$evidence.getResourceType() publication:$evidence.getResourceAccession()
-## resource => database (xref:P06213,...) , Publication (publi id=getResourceId())
-#if($evidence.getResourceType().equals("publication"))
-  :publication publication:$evidence.getPublicationMD5();
-#end
-#if($evidence.getResourceType().equals("database"))
-  :fromXref db:$StringUtils.slug($evidence.getResourceDb());
-#end
-
-#if($evidence.getResourceType().equals("database"))
-#set($UNESCAPED_CDATA = $evidence.resourceAccession)
-  :reference [
-    a :Xref ;
-    :accession "$UNESCAPED_CDATA"^^xsd:string;
-    :provenance db:$StringUtils.slug($evidence.resourceDb); 
-    ] ;
-#end
-
 #if($evidence.getAssignedBy())
   :assignedBy source:$StringUtils.slug($evidence.getAssignedBy());
 #end
@@ -56,6 +32,20 @@ evidence:$evidence-uri
 #if($evidence.getExperimentalContextId()>0)
   :experimentalContext context:$evidence.getExperimentalContextId();
 #end
+##  :$evidence.getResourceType() publication:$evidence.getResourceAccession()
+## resource => database (xref:P06213,...) , Publication (publi id=getResourceId())
+#if($evidence.getResourceType().equals("publication"))
+  :reference publication:$evidence.getPublicationMD5();
+#end
+#if($evidence.getResourceType().equals("database"))
+#set($UNESCAPED_CDATA = $evidence.resourceAccession)
+  :fromXref db:$StringUtils.slug($evidence.getResourceDb());
+  :reference [
+    rdf:type :Xref ;
+    :accession "$UNESCAPED_CDATA"^^xsd:string;
+    :provenance db:$StringUtils.slug($evidence.resourceDb); 
+   ] ;
+#end
 ## next property is useful for debug purpose
 #if($evidence.getResourceAssociationType())
   :assocType "$evidence.getResourceAssociationType()"^^xsd:string;
@@ -69,4 +59,3 @@ evidence:$evidence-uri
   :negativeIsoformSpecificity "$evidence.getNegativeIsoformSpecificity()"^^xsd:string;
 #end
   .
-
