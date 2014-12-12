@@ -1,11 +1,11 @@
 <target-isoform-list>
-	#foreach($isoform in $target-isoform-list)
-		<target-isoform isoformRef='$isoform.getIsoformRef()'>
-			#if($isoform.hasPositions())
-				<position-list>
-					<position #if($isoform.getFirstPosition() > 0) first='$isoform.getFirstPosition()'#{else}firstStatus='unknown'#end #if($isoform.getLastPosition() > 0) last='$isoform.getLastPosition()'#{else}lastStatus='unknown'#end />
-				</position-list>
-			#end
+	#foreach($isospec in $target-isoform-list.values())
+		<target-isoform accession="$isospec.isoformName">
+		#if($isospec.isPositional())
+			<position-list>
+				<position #if($isospec.getFirstPosition() > 0) start='$isospec.getFirstPosition()'#{else}startStatus='unknown'#end #if($isospec.getLastPosition() > 0) end='$isospec.getLastPosition()'#{else}endStatus='unknown'#end />
+			</position-list>
+		#end
 		</target-isoform>
 	#end
 </target-isoform-list>

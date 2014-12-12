@@ -11,4 +11,5 @@
     #if($entry.xrefs) #parse('xref-list.xml.vm') #end
     #if($entry.peptideMappings) #parse('peptide-list.xml.vm') #end
 	#if($entry.antibodyMappings) #parse('antibody-list.xml.vm') #end
+	#if($entry.experimentalContexts) #parse('experimental-context-list.xml.vm') #end	
 </entry>

@@ -1,9 +1,12 @@
-<annotation-list>
-#foreach($category in $entry.getAnnotationCategories())
-<annotation category='$StringUtils.decamelizeAndReplaceByHyphen($category)'>
-	#foreach($annotation in $entry.getAnnotationsByCategory($category))
-		#parse("annotation.xml.vm")
-	#end
-</annotation>
+<annotations>
+#foreach($category in $NXUtils.annotationCategories)
+#if ($category.isLeaf())
+  <annotation-list category="$StringUtils.decamelizeAndReplaceByHyphen($category.apiTypeName)">
+#set($annotations = $NXUtils.getAnnotationsByCategory($entry, $category))
+#foreach($annotation in $annotations)
+    #parse("annotation.xml.vm")
 #end
-</annotation-list>
+  </annotation-list>
+#end
+#end
+</annotations>

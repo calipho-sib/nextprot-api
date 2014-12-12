@@ -38,6 +38,17 @@ public class Entry {
 
 	private List<Terminology> enzymes;
 	
+	private List<ExperimentalContext> experimentalContexts;
+
+
+	public List<ExperimentalContext> getExperimentalContexts() {
+		return experimentalContexts;
+	}
+
+	public void setExperimentalContexts(List<ExperimentalContext> experimentalContexts) {
+		this.experimentalContexts = experimentalContexts;
+	}
+
 	public Entry(String uniqueName) {
 		this.uniqueName = uniqueName;
 	}
@@ -159,19 +170,6 @@ public class Entry {
 				filteredAnnotations.add(a);
 		}
 		return filteredAnnotations;
-	}
-
-	public Set<String> getAnnotationCategories() {
-		Set<String> distinctCategories = Sets.newTreeSet();
-		if (this.annotations != null) {
-			for (Annotation a : annotations) {
-				String category = a.getCategory();
-				if (!distinctCategories.contains(category)) {
-					distinctCategories.add(category);
-				}
-			}
-		}
-		return distinctCategories;
 	}
 
 	public List<PeptideMapping> getPeptideMappings() {

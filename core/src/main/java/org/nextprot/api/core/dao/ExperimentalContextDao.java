@@ -7,7 +7,7 @@ import org.nextprot.api.core.domain.ExperimentalContext;
 
 public interface ExperimentalContextDao {
 
-	List<ExperimentalContext> findExperimentalContextsByIds(List<String> ids);
+	List<ExperimentalContext> findExperimentalContextsByIds(List<Long> ids);
 	List<ExperimentalContext> findAllExperimentalContexts();
 	
 }

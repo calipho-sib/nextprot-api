@@ -14,7 +14,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.Sets;
 
 //@TransactionConfiguration(defaultRollback = false)
 @DatabaseSetup(value = "UserDaoTest.xml", type = DatabaseOperation.INSERT)

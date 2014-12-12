@@ -2,6 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.nextprot.api.core.dao.EnzymeDao;
 import org.nextprot.api.core.domain.Entry;
@@ -10,6 +11,7 @@ import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryService;
+import org.nextprot.api.core.service.ExperimentalContextService;
 import org.nextprot.api.core.service.GeneService;
 import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.service.IdentifierService;
@@ -20,6 +22,7 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.utils.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +41,7 @@ public class EntryServiceImpl implements EntryService {
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private InteractionService interactionService;
+	@Autowired private ExperimentalContextService expContextService;
 	
 	//
 	// sorry about breaking the bests practices with spring ;) 
@@ -60,11 +64,8 @@ public class EntryServiceImpl implements EntryService {
 		entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entryName));
 		entry.setPeptideMappings(this.peptideMappingService.findPeptideMappingByMasterId(masterId));
 		entry.setAntibodyMappings(this.antibodyMappingService.findAntibodyMappingByMasterId(masterId));
-		
-
-		List<Annotation> annotations = this.annotationService.findAnnotations(entryName);
-		entry.setAnnotations(annotations);
-		
+		entry.setAnnotations(this.annotationService.findAnnotations(entryName));
+		entry.setExperimentalContexts(this.expContextService.findExperimentalContextsByEntryName(entryName));
 		return entry;
 	}
 	

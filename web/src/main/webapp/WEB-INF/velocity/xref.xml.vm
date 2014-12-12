@@ -1,5 +1,6 @@
-#set($UNESCAPED_CDATA = $xref.accession)
-<xref database="$xref.databaseName" category="$xref.databaseCategory" accession="$UNESCAPED_CDATA" internal-id="$xref.getDbXrefId()">
+##set($UNESCAPED_CDATA = $xref.accession)
+##<xref database="$xref.databaseName" category="$xref.databaseCategory" accession="$UNESCAPED_CDATA" internal-id="$xref.getDbXrefId()">
+<xref database="$xref.databaseName" category="$xref.databaseCategory" accession="$xref.accession" internal-id="$xref.getDbXrefId()">
 	#if($xref.properties && $xref.properties.size() > 0) 													
 		<properties>
 			#foreach($prop in $xref.properties)

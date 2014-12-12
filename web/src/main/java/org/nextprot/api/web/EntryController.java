@@ -2,6 +2,7 @@ package org.nextprot.api.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
@@ -33,6 +34,9 @@ import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.ExperimentalContextUtil;
+import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -64,9 +68,9 @@ public class EntryController {
 	@Autowired private AuthorService authorService;
 	@Autowired private DbXrefService xrefService;
 	@Autowired private InteractionService interactionService;
-	@Autowired private ExperimentalContextService experimentalContextService;
+	@Autowired private ExperimentalContextService expContextService;
 
-	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides and the list of the antibodies.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
+	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides, the list of the antibodies and the experimental contexts", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
 	public String exportEntry(
 			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"})
@@ -75,6 +79,8 @@ public class EntryController {
 		proteinList.add(this.entryService.findEntry(entryName));
 		model.addAttribute("entryList", proteinList);
 		model.addAttribute("StringUtils", StringUtils.class);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		
 		return "exportEntries";
 	}
 	
@@ -87,8 +93,8 @@ public class EntryController {
 		List<Entry> proteinList = new ArrayList<Entry>();
 		proteinList.add(dummy);
 		model.addAttribute("entryList", proteinList);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
-
 		return "exportEntries";
 		
 	}
@@ -236,8 +242,6 @@ public class EntryController {
 			@ApiParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) 
 			@PathVariable("entry") String entryName, Model model) {
 		List<Annotation> annotations = this.annotationService.findAnnotations(entryName);
-		
-
 		Entry dummy = new Entry(entryName);
 		dummy.setAnnotations(annotations);
 		model.addAttribute("entry", dummy);
@@ -245,6 +249,15 @@ public class EntryController {
 		return "annotation-list";
 	}
 	
+	@ApiMethod(path = "/entry/{entry}/experimentalContext", verb = ApiVerb.GET, description = "Gets the experimental contexts related to the annotations of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping("/entry/{entry}/experimentalContext")
+	public String getEntryExperimentalContexts(@ApiParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+		Entry dummy = new Entry(entryName);
+		dummy.setExperimentalContexts(this.expContextService.findExperimentalContextsByEntryName(entryName));
+		model.addAttribute("entry", dummy);
+		model.addAttribute("StringUtils", StringUtils.class);
+		return "experimental-context-list";
+	}
 	
 
 	

@@ -1,16 +1,19 @@
 package org.nextprot.api.core.service.fluent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.ExperimentalContextService;
 import org.nextprot.api.core.service.GeneService;
 import org.nextprot.api.core.service.GenomicMappingService;
 import org.nextprot.api.core.service.IdentifierService;
@@ -25,6 +28,7 @@ import org.nextprot.api.core.service.export.format.ExportTXTTemplate;
 import org.nextprot.api.core.service.export.format.ExportTemplate;
 import org.nextprot.api.core.service.export.format.ExportXMLTemplate;
 import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.nextprot.api.core.utils.PublicationUtils;
 import org.nextprot.api.core.utils.XrefUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +65,8 @@ public class FluentEntryService {
 	private AntibodyMappingService antibodyMappingService;
 	@Autowired
 	private InteractionService interactionService;
+	@Autowired
+	private ExperimentalContextService ecService;
 
 	public FluentEntry getNewEntry(String entryName) {
 		return new FluentEntry(entryName);
@@ -144,9 +150,14 @@ public class FluentEntryService {
 			return this;
 		}
 
+		public FluentEntry withExperimentalContexts() {
+			entry.setExperimentalContexts(ecService.findExperimentalContextsByEntryName(entryName));
+			return this;
+		}
+
 		public FluentEntry withEverything() {
 			return this.withOverview().withGeneralAnnotations().withPublications().withXrefs().withKeywords().withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
-					.withTargetIsoforms().withAntibodyMappings().withPeptideMappings();
+					.withTargetIsoforms().withAntibodyMappings().withPeptideMappings().withExperimentalContexts();
 		}
 
 		public Entry getEntry() {
@@ -215,21 +226,19 @@ public class FluentEntryService {
 			List<Annotation> annotations = annotationService.findAnnotations(entryName);
 			List<DbXref> xrefs = xrefService.findDbXrefsByMaster(entryName);
 			List<Publication> publications = publicationService.findPublicationsByMasterUniqueName(entryName);
-
+			List<ExperimentalContext> ecs = ecService.findExperimentalContextsByEntryName(entryName);
 			//Filter if necessary
 			if(annotationCategory != null){
 				annotations = AnnotationUtils.filterAnnotationsByCategory(annotations, annotationCategory);
 				xrefs = XrefUtils.filterXrefsByIds(xrefs, AnnotationUtils.getXrefIdsForAnnotations(annotations));
 				publications = PublicationUtils.filterPublicationsByIds(publications, AnnotationUtils.getPublicationIdsForAnnotations(annotations));
+				ecs = ExperimentalContextUtil.filterExperimentalContextsByIds(ecs, AnnotationUtils.getExperimentalContextIdsForAnnotations(annotations));
 				entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 			}
-
-
 			entry.setAnnotations(annotations);
 			entry.setXrefs(xrefs);
 			entry.setPublications(publications);
-			
-			
+			entry.setExperimentalContexts(ecs);
 			return entry;
 		}
 

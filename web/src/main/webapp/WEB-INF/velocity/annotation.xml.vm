@@ -22,12 +22,18 @@
     </property-list>
 	#end
     #if($annotation.getEvidences())
-    <resources>
+    <evidence-list>
         #foreach($evidence in $annotation.getEvidences())
-			<evidence isNegative='$evidence.isNegativeEvidence()'  qualifierType='$evidence.getQualifierType()' resourceRef='$evidence.getResourceId()' resourceAssocType='$evidence.getResourceAssociationType()' />
+			<evidence isNegative='$evidence.isNegativeEvidence()'  qualifierType='$evidence.getQualifierType()' resourceRef='$evidence.getResourceId()' 
+				resourceAssocType='$evidence.getResourceAssociationType()' 
+				#if($evidence.getExperimentalContextId()>0) experimentalContextRef='$evidence.getExperimentalContextId()' #end
+				#if($evidence.getAssignedBy()) sourceRef='$evidence.getAssignedBy()' #end
+			/>
 		#end
-    </resources>
+		
+		
+    </evidence-list>
 	#end
-	#set($target-isoform-list = $annotation.getIsoforms())
+	#set($target-isoform-list = $annotation.getTargetingIsoformsMap())
 	#parse('target-isoform-list-annotation.xml.vm')	
 </annotation>
