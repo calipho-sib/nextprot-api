@@ -1,16 +1,13 @@
 package org.nextprot.api.user.controller;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserProteinListService.Operations;
@@ -81,13 +78,25 @@ public class UserListController {
 
 	@RequestMapping(value = "/user/{username}/protein-list/combine", method = RequestMethod.GET)
 	@ResponseBody
-	public UserProteinList combine(@PathVariable("username") String username, @RequestParam(value = "name", required = true) String listName,
-			@RequestParam(value = "description", required = false) String description, @RequestParam(value = "first", required = true) String first,
-			@RequestParam(value = "second", required = true) String second, @RequestParam(value = "op", required = true) String operation, Model model) {
+	public UserProteinList combine(
+			@PathVariable("username") String username, 
+			@RequestParam(value = "name", required = true) String listName,
+			@RequestParam(value = "description", required = false) String description, 
+			@RequestParam(value = "first", required = true) String first,
+			@RequestParam(value = "second", required = true) String second, 
+			@RequestParam(value = "op", required = true) String operation) {
 
+		if (first.equals(second)){
+			throw new NextProtException("Can't make combination with the same lists");
+		}
+		
 		Operations op = Operations.valueOf(operation);
 		UserProteinList combinedList = proteinListService.combine(listName, description, username, first, second, op);
 
+		if(combinedList.getAccessionNumbers().isEmpty()){
+			throw new NextProtException("The combined list is empty. Only combinations resulting on non-empty lists are saved.");
+		}
+		
 		return proteinListService.createUserProteinList(combinedList);
 
 	}
