@@ -5,6 +5,6 @@
 select distinct ?entry where{
  ?entry :isoform ?iso .
   ?iso :cellularComponent/:term/:childOf cv:SL-0173 .
-  FILTER NOT EXISTS{ ?iso :keyword cv:KW-0809 }
+  FILTER NOT EXISTS{ ?iso :keyword /:term cv:KW-0809 }
 }order by ?entry
 

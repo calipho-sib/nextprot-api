@@ -59,17 +59,21 @@ public class JSONDocRoleController extends JSONDocController {
 
 		apiDoc = JSONDocUtils.getApiDoc(version, basePath, packages);
 		for(ApiDoc a : apiDoc.getApis()) {
-			
+			ApiMethodDoc met = null;
 			if(a.getName().equals("Entry") && (a.getMethods() != null) && (!a.getMethods().isEmpty())){
-				ApiMethodDoc met = a.getMethods().get(0);
-				System.out.println(met);
+				met = a.getMethods().get(0);
+				//System.out.println(met);
 			}
 			
 			if (a.getName().equals("Entry")) {
 				for (AnnotationApiModel model : AnnotationApiModel.values()) {
+					
 					ApiMethodDoc m = new ApiMethodDoc();
+					m.setQueryparameters(met.getQueryparameters());
+					m.setProduces(met.getProduces());
+					m.setConsumes(met.getConsumes());
 					m.setDescription("Exports only the " + model.getDescription() + " from an entry. It locates on the hierarchy: " + model.getHierarchy());
-					m.setPath("/entry/{entry}/" + StringUtils.decamelizeAndReplaceByHyphen(model.getDbAnnotationTypeName()));
+					m.setPath("/entry/{entry}/" + StringUtils.decamelizeAndReplaceByHyphen(model.getApiTypeName()));
 					m.setVerb(ApiVerb.GET);
 					a.getMethods().add(m);
 				}
