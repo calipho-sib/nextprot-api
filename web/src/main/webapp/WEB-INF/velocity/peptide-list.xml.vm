@@ -1,6 +1,6 @@
-<peptide-list>
+<mapping-category category="peptide-mapping" hierarchy="mapping">
 	#foreach($peptide in $entry.peptideMappings)
-		<peptide>
+		<peptide-mapping>
 			<evidence-list>
 				#foreach($evidence in $peptide.evidences)
 					<evidencePep accession="$evidence.accession" database="$evidence.databaseName" assignedBy="$evidence.assignedBy"/>
@@ -8,6 +8,8 @@
 			</evidence-list>
 		#set($target-isoform-list = $peptide.isoformSpecificity)
 		#parse('target-isoform-list.xml.vm')	
-		</peptide>
+		</peptide-mapping>
 	#end
-</peptide-list>
+</mapping-category>
+
+

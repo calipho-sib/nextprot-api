@@ -1,0 +1,4 @@
+<mapping-list>
+    #if($entry.peptideMappings) #parse('peptide-list.xml.vm') #end
+	#if($entry.antibodyMappings) #parse('antibody-list.xml.vm') #end
+</mapping-list>

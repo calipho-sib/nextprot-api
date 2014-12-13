@@ -162,7 +162,7 @@ public class Entry {
 		return filteredInteractions;
 	}
 	
-	
+/*	
 	public List<Annotation> getAnnotationsByCategory(String category) {
 		List<Annotation> filteredAnnotations = Lists.newArrayList();
 		for (Annotation a : annotations) {
@@ -171,7 +171,7 @@ public class Entry {
 		}
 		return filteredAnnotations;
 	}
-
+*/
 	public List<PeptideMapping> getPeptideMappings() {
 		return peptideMappings;
 	}
