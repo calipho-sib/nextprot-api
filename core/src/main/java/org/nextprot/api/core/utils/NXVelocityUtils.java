@@ -59,7 +59,7 @@ public class NXVelocityUtils {
 			if (vals[i].equals(AnnotationApiModel.FAMILY_NAME)) continue;
 			list.add(vals[i]);
 		}
-		System.out.println("cat size:" + list.size());
+		//System.out.println("cat size:" + list.size());
 		return list;
 	}
 

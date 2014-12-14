@@ -2,13 +2,15 @@
 	#foreach($isoform in $entry.isoforms)
 	<isoform accession='$isoform.uniqueName' database='neXtProt' #if($isoform.isSwissProtDisplayedIsoform()) swissprot-displayed-isoform='true' #end>
 	#if($isoform.mainEntityName)
-	<entity-name is-main='true' type='$isoform.mainEntityName.type' qualifier='#if($isoform.mainEntityName.qualifier)$isoform.mainEntityName.qualifier#end'>
-		<value>$isoform.mainEntityName.value</value>
+	<entity-name 
+		type='$isoform.mainEntityName.type' value='$isoform.mainEntityName.value' 
+		is-main='true' qualifier='#if($isoform.mainEntityName.qualifier)$isoform.mainEntityName.qualifier#end'>
 		#if($isoform.synonyms.size() > 0)
 		<synonym-list>
 			#foreach($synonym in $isoform.synonyms)
-              <entity-name is-main='false' type='$synonym.type' qualifier='#if($synonym.qualifier)$synonym.qualifier#end'>
-                <value>$synonym.value</value>
+              <entity-name 
+              	type='$synonym.type' value='$synonym.value'
+              	is-main='false' qualifier='#if($synonym.qualifier)$synonym.qualifier#end' >
               </entity-name>
 			#end
         </synonym-list>

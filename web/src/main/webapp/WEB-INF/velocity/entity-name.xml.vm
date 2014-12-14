@@ -1,5 +1,6 @@
-<entity-name is-main="$entityName.isMain()" type="$entityName.type" qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">
-    <value>$entityName.synonymName</value>
+<entity-name 
+	type="$entityName.type" value="$entityName.synonymName"
+	is-main="$entityName.isMain()" qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">
 	#if($entityName.synonyms)
         <synonyms>
 		#foreach($synonym in $entityName.synonyms)
