@@ -1,4 +1,4 @@
-<annotation qualityQualifier='$annotation.getQualityQualifier()' #if($annotation.synonym)uniqueName="$annotation.synonym"#end>
+<annotation quality-qualifier='$annotation.getQualityQualifier()' #if($annotation.synonym)accession="$annotation.synonym" database='neXtProt'#end>
 	#if($annotation.getCvTermName())
     <cv-term accession='$annotation.getCvTermAccessionCode()'>
     	<cv-name>$annotation.getCvTermName()</cv-name>
@@ -17,21 +17,23 @@
 	#if(($annotation.getProperties()) && ($annotation.getProperties().size() > 0))
     <property-list>
         #foreach($property in $annotation.getProperties())
-			<property propertyName='$property.getName()'  #if($property.getAccession()) accession='$property.getAccession()' #end value='$property.getValue()'/>
+			<property property-name='$property.getName()'  value='$property.getValue()' #if($property.getAccession()) accession='$property.getAccession()' #end />
 		#end
     </property-list>
 	#end
     #if($annotation.getEvidences())
     <evidence-list>
         #foreach($evidence in $annotation.getEvidences())
-			<evidence isNegative='$evidence.isNegativeEvidence()'  qualifierType='$evidence.getQualifierType()' resourceRef='$evidence.getResourceId()' 
-				resourceAssocType='$evidence.getResourceAssociationType()' 
-				#if($evidence.getExperimentalContextId()>0) experimentalContextRef='$evidence.getExperimentalContextId()' #end
-				#if($evidence.getAssignedBy()) sourceRef='$evidence.getAssignedBy()' #end
+			<evidence 
+				is-negative='$evidence.isNegativeEvidence()'  
+				qualifier-type='$evidence.getQualifierType()' 
+				resource-ref='$evidence.getResourceId()' 
+				resource-assoc-type='$evidence.getResourceAssociationType()' 
+				resource-type='$evidence.getResourceType()'
+				#if($evidence.getExperimentalContextId()>0) experimental-context-ref='$evidence.getExperimentalContextId()' #end
+				#if($evidence.getAssignedBy()) source-ref='$evidence.getAssignedBy()' #end
 			/>
 		#end
-		
-		
     </evidence-list>
 	#end
 	#set($target-isoform-list = $annotation.getTargetingIsoformsMap())
