@@ -4,7 +4,7 @@
 	#if($xref.properties && $xref.properties.size() > 0) 													
 		<properties>
 			#foreach($prop in $xref.properties)
-				<property propertyName="$prop.name" value="$prop.value"/>
+				<property property-name="$prop.name" value="$prop.value"/>
 			#end
 		</properties>
 	#end
