@@ -3,7 +3,9 @@
 		<peptide-mapping>
 			<evidence-list>
 				#foreach($evidence in $peptide.evidences)
-					<evidencePep accession="$evidence.accession" database="$evidence.databaseName" assignedBy="$evidence.assignedBy"/>
+					<evidence evidence-code="ECO:0000006" is-negative="false" source-ref="$evidence.assignedBy">
+						<xref accession="$evidence.accession" database="$evidence.databaseName" /> 
+					</evidence>
 				#end
 			</evidence-list>
 		#set($target-isoform-list = $peptide.isoformSpecificity)
