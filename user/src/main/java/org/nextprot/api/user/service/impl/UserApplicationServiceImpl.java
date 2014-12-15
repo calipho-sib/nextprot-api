@@ -29,7 +29,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     public UserApplication createUserApplication(UserApplication userApplication) {
 
         NPreconditions.checkNotNull(userApplication, "The user application should not be null");
-        NPreconditions.checkTrue(userApplication.getId() == 0L, "The user application id "+userApplication.getId()+" should not be defined");
+		NPreconditions.checkTrue(!userApplication.isPersisted(), "The user application should not be already entered");
 
         long id = userApplicationDao.createUserApplication(userApplication);
 
