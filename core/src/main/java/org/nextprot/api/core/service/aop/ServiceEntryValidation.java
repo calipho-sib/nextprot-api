@@ -24,7 +24,7 @@ import java.util.Set;
  * @version $Revision$, $Date$, $Author$
  */
 @Aspect
-@Component
+//TODO should be initialized in context xml @Component
 public class ServiceEntryValidation {
 
 	private static final Log LOGGER = LogFactory.getLog(ServiceEntryValidation.class);

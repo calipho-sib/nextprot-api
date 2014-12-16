@@ -3,6 +3,7 @@ package org.nextprot.api.demo.sparql.queries.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -69,7 +70,10 @@ public class DemoSparqlDictionary extends FilePatternDictionary {
 
 		dsq.setSparql(rawProps.get("query"));
 		dsq.setTitle(rawProps.get("title"));
-		dsq.setTags(Sets.newHashSet(rawProps.get("tags").split(",")));
+		if(rawProps.get("tags") != null){
+			dsq.setTags(Sets.newHashSet(rawProps.get("tags").split(",")));
+		} else dsq.setTags(new HashSet<String>());
+		
 		//dsq.set(rawProps.get("count"));
 		//dsq.setAcs(rawProps.get("acs"));
 
