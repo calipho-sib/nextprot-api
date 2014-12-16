@@ -10,9 +10,11 @@ import java.util.regex.Pattern;
 
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.FilePatternDictionary;
-import org.nextprot.api.demo.sparql.queries.domain.DemoSparqlQuery;
+import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
+
+import com.google.common.collect.Sets;
 
 /**
  * Utility class that read SQL queries from classpath. Queries are hold in
@@ -43,15 +45,15 @@ public class DemoSparqlDictionary extends FilePatternDictionary {
 		return "classpath*:demo-sparql-queries/**/*.rq";
 	}
 
-	public DemoSparqlQuery getDemoQuery(String queryId) {
+	public UserQuery getDemoQuery(String queryId) {
 		String sparqlRaw = super.getResource(queryId);
 		return buildSparqlQueryFromRawContent(sparqlRaw);
 
 	}
 
-	public List<DemoSparqlQuery> getDemoSparqlList() {
+	public List<UserQuery> getDemoSparqlList() {
 		Collection<String> rawData = super.getResourcesMap().values();
-		List<DemoSparqlQuery> demoSparqlQueriesList = new ArrayList<DemoSparqlQuery>();
+		List<UserQuery> demoSparqlQueriesList = new ArrayList<UserQuery>();
 
 		for (String raw : rawData) {
 			demoSparqlQueriesList.add(buildSparqlQueryFromRawContent(raw));
@@ -61,15 +63,15 @@ public class DemoSparqlDictionary extends FilePatternDictionary {
 
 	}
 
-	private DemoSparqlQuery buildSparqlQueryFromRawContent(String rawContent) {
-		DemoSparqlQuery dsq = new DemoSparqlQuery();
+	private UserQuery buildSparqlQueryFromRawContent(String rawContent) {
+		UserQuery dsq = new UserQuery();
 		Map<String, String> rawProps = getMetaInfo(rawContent);
 
-		dsq.setQuery(rawProps.get("query"));
+		dsq.setSparql(rawProps.get("query"));
 		dsq.setTitle(rawProps.get("title"));
-		dsq.setTags(rawProps.get("tags"));
-		dsq.setCount(rawProps.get("count"));
-		dsq.setAcs(rawProps.get("acs"));
+		dsq.setTags(Sets.newHashSet(rawProps.get("tags").split(",")));
+		//dsq.set(rawProps.get("count"));
+		//dsq.setAcs(rawProps.get("acs"));
 
 		return dsq;
 

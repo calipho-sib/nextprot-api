@@ -5,8 +5,8 @@ import java.util.List;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.demo.sparql.queries.domain.DemoSparqlQuery;
 import org.nextprot.api.demo.sparql.queries.service.DemoSparqlService;
+import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ public class DemoSparqlQueriesController {
 	@ResponseBody
 	@RequestMapping(value = "/demo/sparql/queries", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ApiMethod(path = "/demo/sparql/queries", verb = ApiVerb.GET, description = "Get demo sparql queries", produces={MediaType.APPLICATION_JSON_VALUE})
-	public List<DemoSparqlQuery> getDemoSparalQueries() {
+	public List<UserQuery> getDemoSparalQueries() {
 		demoSparqlService.relaodDemoSparqlQueries();
 		return demoSparqlService.getDemoSparqlQueries();
 	}

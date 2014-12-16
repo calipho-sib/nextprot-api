@@ -1,6 +1,5 @@
 package org.nextprot.api.demo.sparql.queries;
 
-import org.nextprot.api.demo.sparql.queries.domain.DemoSparqlQuery;
 import org.nextprot.api.demo.sparql.queries.service.DemoSparqlService;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
@@ -30,7 +29,7 @@ public class PopulateRDBMSWithQueriesApp {
 		userService.loadUserByUsername("evaleto@gmail.com");
 
 		int i = 0;
-		for (DemoSparqlQuery q : sparqlService.getDemoSparqlQueries()) {
+		for (UserQuery q : sparqlService.getDemoSparqlQueries()) {
 
 			i++;
 
@@ -49,10 +48,10 @@ public class PopulateRDBMSWithQueriesApp {
 			uq.setOwnerId(userService.getUser(username).getId());
 
 			uq.setTitle(q.getTitle());
-			uq.setSparql(q.getQuery());
+			uq.setSparql(q.getSparql());
 			uq.setPublished(true);
 			if (q.getTags() != null) {
-				uq.setTags(Sets.newHashSet(q.getTags().split(",")));
+				uq.setTags(Sets.newHashSet(q.getTags()));
 			}
 
 			userQueryService.createUserQuery(uq);

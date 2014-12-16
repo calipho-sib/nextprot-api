@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nextprot.api.demo.sparql.queries.domain.DemoSparqlQuery;
 import org.nextprot.api.demo.sparql.queries.utils.DemoSparqlDictionary;
+import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -18,8 +18,8 @@ public class GenerateJsonTest{
 	
 	@Test
 	public void test() {
-		List<DemoSparqlQuery> queries = demoSparqlDictionary.getDemoSparqlList();
-		for(DemoSparqlQuery query : queries){
+		List<UserQuery> queries = demoSparqlDictionary.getDemoSparqlList();
+		for(UserQuery query : queries){
 			System.out.println(query);
 		}
 	}

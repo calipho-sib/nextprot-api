@@ -1,7 +1,7 @@
 package org.nextprot.api.demo.sparql.queries;
 
-import org.nextprot.api.demo.sparql.queries.domain.DemoSparqlQuery;
 import org.nextprot.api.demo.sparql.queries.service.DemoSparqlService;
+import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class GenerateMarkdownExampleQueriesApp {
@@ -12,11 +12,11 @@ public class GenerateMarkdownExampleQueriesApp {
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:spring/commons-context.xml", "spring/demo-queries-context.xml");
 
 		DemoSparqlService sparqlService = ctx.getBean(DemoSparqlService.class);
-		for (DemoSparqlQuery q : sparqlService.getDemoSparqlQueries()) {
+		for (UserQuery q : sparqlService.getDemoSparqlQueries()) {
 			System.out.println(q.getTitle());
 			System.out.println("\n");
 			System.out.println("```");
-			System.out.println(q.getQuery()); // should remove all comments
+			System.out.println(q.getSparql()); // should remove all comments
 			System.out.println("```");
 			System.out.println("\n");
 
