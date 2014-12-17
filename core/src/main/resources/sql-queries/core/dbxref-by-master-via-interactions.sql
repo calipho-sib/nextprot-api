@@ -1,4 +1,4 @@
-select  
+select distinct
 px.resource_id, db.cv_name as database_name, db.url as database_url, db.link_url as database_link, dbc.cv_name as database_category, px.accession 
 from nextprot.sequence_identifiers si
 inner join nextprot.db_xrefs six on (si.db_xref_id=six.resource_id)

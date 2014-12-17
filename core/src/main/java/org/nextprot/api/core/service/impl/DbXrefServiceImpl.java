@@ -91,15 +91,16 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(xrefs4);
 		xrefs.addAll(xrefs5);
 		List<DbXref> xrefList = new ArrayList<DbXref>(xrefs);
-
+		
 		//for (DbXref xr : xrefs) System.out.println("xref " + xr.getDatabaseName() + " - " + xr.getAccession());
+		
 		System.out.println("xrefs by annotations  : " + xrefs1.size());
 		System.out.println("xrefs by identifiers  : " + xrefs2.size());
 		System.out.println("xrefs by entry        : " + xrefs3.size());
 		System.out.println("xrefs by interactions : " + xrefs4.size());
 		System.out.println("xrefs by peptides     : " + xrefs5.size());
 		System.out.println("xrefs all             : " + xrefs.size());
-
+		
 		if(! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName);
 
 		return xrefList;

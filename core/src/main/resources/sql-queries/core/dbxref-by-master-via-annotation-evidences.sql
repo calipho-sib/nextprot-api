@@ -1,4 +1,5 @@
-select x.resource_id, dbs.cv_name database_name, dbs.url database_url, dbs.link_url database_link, cat.cv_name database_category, x.accession 
+select distinct 
+x.resource_id, dbs.cv_name database_name, dbs.url database_url, dbs.link_url database_link, cat.cv_name database_category, x.accession 
 from nextprot.sequence_identifiers si
 inner join nextprot.annotations ann on ann.identifier_id = si.identifier_id
 inner join nextprot.annotation_resource_assoc ares on ares.annotation_id = ann.annotation_id

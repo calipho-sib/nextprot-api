@@ -42,6 +42,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 	}
 	
 	public List<PeptideEvidence> findPeptideEvidences(List<String> names) {
+		/*
 		String sql = "select distinct peptide.unique_name, xr.accession, db.cv_name as database_name, ds.cv_name as assigned_by, ira.resource_id as resource_id " + 
 				"from nextprot.sequence_identifiers peptide, " +
 				"nextprot.identifier_resource_assoc ira, " +
@@ -54,9 +55,9 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 				"  and ira.datasource_id = ds.cv_id " + 
 				"  and ds.cv_name != 'PeptideAtlas' " + 
 				"  and peptide.unique_name in (:names)";
-		
+		*/
 		SqlParameterSource namedParams = new MapSqlParameterSource("names", names);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParams, new RowMapper<PeptideEvidence>() {
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("peptide-evidences-by-peptide-names"), namedParams, new RowMapper<PeptideEvidence>() {
 
 			@Override
 			public PeptideEvidence mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -66,6 +67,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 				evidence.setDatabaseName(resultSet.getString("database_name"));
 				evidence.setAssignedBy(resultSet.getString("assigned_by"));
 				evidence.setResourceId(resultSet.getLong("resource_id"));
+				evidence.setResourceType(resultSet.getString("resource_type"));
 				return evidence;
 			}
 			

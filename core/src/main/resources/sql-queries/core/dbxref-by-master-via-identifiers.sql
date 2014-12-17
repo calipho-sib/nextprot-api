@@ -1,4 +1,4 @@
-select
+select distinct
 x.resource_id, dbs.cv_name database_name, dbs.url database_url, dbs.link_url database_link, cat.cv_name database_category, x.accession 
 from nextprot.view_master_identifier_identifiers vmm 
 left join nextprot.db_xrefs x on x.accession = vmm.identifier_name

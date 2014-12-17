@@ -1,11 +1,16 @@
-<mapping-category category="peptide-mapping" hierarchy="mapping">
+<mapping-category category='peptide-mapping' hierarchy='mapping'>
 	#foreach($peptide in $entry.peptideMappings)
 		<peptide-mapping>
 			<evidence-list>
 				#foreach($evidence in $peptide.evidences)
-					<evidence evidence-code="ECO:0000006" is-negative="false" xref-internal-ref="$evidence.resourceId"  source-internal-ref="$evidence.assignedBy">
-						<xref accession="$evidence.accession" database="$evidence.databaseName" /> 
-					</evidence>
+					<evidence 
+						is-negative='false' 
+						evidence-code='ECO:0000000' 
+						resource-assoc-type='evidence'
+						resource-internal-ref='$evidence.resourceId'  
+						resource-type='$evidence.resourceType'
+						source-internal-ref='$evidence.assignedBy'
+					/>
 				#end
 			</evidence-list>
 		#set($target-isoform-list = $peptide.isoformSpecificity)

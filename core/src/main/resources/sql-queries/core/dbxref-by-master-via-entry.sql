@@ -1,4 +1,5 @@
-select x.resource_id, dbs.cv_name database_name, dbs.url database_url, dbs.link_url database_link, cat.cv_name database_category, x.accession 
+select distinct
+x.resource_id, dbs.cv_name database_name, dbs.url database_url, dbs.link_url database_link, cat.cv_name database_category, x.accession 
 from nextprot.sequence_identifiers si
 inner join nextprot.identifier_resource_assoc assoc on si.identifier_id = assoc.identifier_id 
 inner join nextprot.resources res on res.resource_id = assoc.resource_id 

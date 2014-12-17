@@ -96,6 +96,7 @@ public class PeptideMapping implements Serializable{
 		private String databaseName;
 		private String assignedBy;
 		private Long resourceId;
+		private String resourceType;
 		
 		public String getPeptideName() {
 			return peptideName;
@@ -127,6 +128,12 @@ public class PeptideMapping implements Serializable{
 		}
 		public void setResourceId(Long resourceId) {
 			this.resourceId = resourceId;
+		}
+		public String getResourceType() {
+			return resourceType;
+		}
+		public void setResourceType(String resourceType) {
+			this.resourceType = resourceType;
 		}
 	}
 }
