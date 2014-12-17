@@ -1,10 +1,12 @@
 package org.nextprot.api.core.service.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
@@ -12,6 +14,7 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.PeptideMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -26,7 +29,8 @@ import com.google.common.collect.Multimaps;
 @Lazy
 @Service
 public class DbXrefServiceImpl implements DbXrefService {
-	@Autowired DbXrefDao dbXRefDao;
+	@Autowired private DbXrefDao dbXRefDao;
+	@Autowired private PeptideMappingService peptideMappingService;
 	
 	private Set<String> dbXrefPropertyFilter;
 	
@@ -64,14 +68,44 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Async
 	@Override
 	@Cacheable("xrefs")
-	public List<DbXref> findDbXrefsByMaster(String uniqueName) {
+	public List<DbXref> findDbXrefsByMaster(String entryName) {
 		
-		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsByMaster(uniqueName);
-		
-		if(! xrefs.isEmpty())
-			return getXrefProperties(xrefs, uniqueName);
-		return xrefs;
+		// build a comparator for the tree set: order by database name, accession
+		Comparator<DbXref> comparator = new Comparator<DbXref>() {
+			public int compare(DbXref a, DbXref b) {
+				int cmp1 = a.getDatabaseName().compareTo(b.getDatabaseName());
+				if (cmp1!=0) return cmp1;
+				return a.getAccession().compareTo(b.getAccession());
+			}
+		};
+		Set<DbXref> xrefs = new TreeSet<DbXref>(comparator);
+		Set<DbXref> xrefs1 = this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName);
+		Set<DbXref> xrefs2 = this.dbXRefDao.findEntryAttachedXrefs(entryName);
+		Set<DbXref> xrefs3 = this.dbXRefDao.findEntryIdentifierXrefs(entryName);
+		Set<DbXref> xrefs4 = this.dbXRefDao.findEntryInteractionXrefs(entryName);
+		List<String> peptideNames = this.peptideMappingService.findPeptideNamesByMasterId(entryName);
+		Set<DbXref> xrefs5 = this.dbXRefDao.findPeptideXrefs(peptideNames);
+		xrefs.addAll(xrefs1);
+		xrefs.addAll(xrefs2);
+		xrefs.addAll(xrefs3);
+		xrefs.addAll(xrefs4);
+		xrefs.addAll(xrefs5);
+		List<DbXref> xrefList = new ArrayList<DbXref>(xrefs);
+
+		//for (DbXref xr : xrefs) System.out.println("xref " + xr.getDatabaseName() + " - " + xr.getAccession());
+		System.out.println("xrefs by annotations  : " + xrefs1.size());
+		System.out.println("xrefs by identifiers  : " + xrefs2.size());
+		System.out.println("xrefs by entry        : " + xrefs3.size());
+		System.out.println("xrefs by interactions : " + xrefs4.size());
+		System.out.println("xrefs by peptides     : " + xrefs5.size());
+		System.out.println("xrefs all             : " + xrefs.size());
+
+		if(! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName);
+
+		return xrefList;
 	}
+	
+	
 	
 	@Override
 	public List<DbXref> findDbXrefsByEntry(String uniqueName) {
@@ -81,8 +115,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Override
 	public List<DbXref> findDbXrefsAsAnnotByEntry(String uniqueName) {
 		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
-		if(! xrefs.isEmpty())
-			return getXrefProperties(xrefs, uniqueName);
+		if(! xrefs.isEmpty()) attachPropertiesToXrefs(xrefs, uniqueName);
 		return xrefs;
 	}
 
@@ -96,7 +129,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	 * @param xrefs
 	 * @return
 	 */
-	private List<DbXref> getXrefProperties(List<DbXref> xrefs, String uniqueName) {
+	private void attachPropertiesToXrefs(List<DbXref> xrefs, String uniqueName) {
 		List<Long> xrefIds = Lists.transform(xrefs, new Function<DbXref, Long>() {
 			public Long apply(DbXref xref) {
 				return xref.getDbXrefId();
@@ -123,7 +156,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 			xref.setResolvedUrl(resolveLinkTarget(uniqueName, xref));
 		}
 		
-		return xrefs;
 	}
 
 	

@@ -15,7 +15,7 @@
     	<evidence 
     		is-negative='false'
     		evidence-code='ECO:0000353' 
-    		source-ref='$interaction.evidenceDatasource'>
+    		source-internal-ref='$interaction.evidenceDatasource'>
 		    <xref database="$interaction.evidenceXrefDB" accession="$interaction.evidenceXrefAC">
         		#set($UNESCAPED_CDATA = $interaction.evidenceXrefURL)
         		<url><![CDATA[$UNESCAPED_CDATA]]></url>

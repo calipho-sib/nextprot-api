@@ -42,7 +42,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 	}
 	
 	public List<PeptideEvidence> findPeptideEvidences(List<String> names) {
-		String sql = "select distinct peptide.unique_name, xr.accession, db.cv_name as database_name, ds.cv_name as assigned_by " + 
+		String sql = "select distinct peptide.unique_name, xr.accession, db.cv_name as database_name, ds.cv_name as assigned_by, ira.resource_id as resource_id " + 
 				"from nextprot.sequence_identifiers peptide, " +
 				"nextprot.identifier_resource_assoc ira, " +
 				"nextprot.db_xrefs xr, " + 
@@ -65,6 +65,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 				evidence.setAccession(resultSet.getString("accession"));
 				evidence.setDatabaseName(resultSet.getString("database_name"));
 				evidence.setAssignedBy(resultSet.getString("assigned_by"));
+				evidence.setResourceId(resultSet.getLong("resource_id"));
 				return evidence;
 			}
 			

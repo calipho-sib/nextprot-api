@@ -3,7 +3,7 @@
 		<peptide-mapping>
 			<evidence-list>
 				#foreach($evidence in $peptide.evidences)
-					<evidence evidence-code="ECO:0000006" is-negative="false" source-ref="$evidence.assignedBy">
+					<evidence evidence-code="ECO:0000006" is-negative="false" xref-internal-ref="$evidence.resourceId"  source-internal-ref="$evidence.assignedBy">
 						<xref accession="$evidence.accession" database="$evidence.databaseName" /> 
 					</evidence>
 				#end

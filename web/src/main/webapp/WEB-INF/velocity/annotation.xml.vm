@@ -27,11 +27,11 @@
 			<evidence 
 				is-negative='$evidence.isNegativeEvidence()'  
 				qualifier-type='$evidence.getQualifierType()' 
-				resource-ref='$evidence.getResourceId()' 
+				resource-internal-ref='$evidence.getResourceId()' 
 				resource-assoc-type='$evidence.getResourceAssociationType()' 
 				resource-type='$evidence.getResourceType()'
-				#if($evidence.getExperimentalContextId()>0) experimental-context-ref='$evidence.getExperimentalContextId()' #end
-				#if($evidence.getAssignedBy()) source-ref='$evidence.getAssignedBy()' #end
+				#if($evidence.getExperimentalContextId()>0) experimental-context-internal-ref='$evidence.getExperimentalContextId()' #end
+				#if($evidence.getAssignedBy()) source-internal-ref='$evidence.getAssignedBy()' #end
 			/>
 		#end
     </evidence-list>

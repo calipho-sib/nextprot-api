@@ -2,9 +2,11 @@ package org.nextprot.api.core.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.IsoformSpecificity;
@@ -59,6 +61,17 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		}
 		return new ArrayList<PeptideMapping>(mergeMap.values());
 	}
+	
+
+	@Override
+	public List<String> findPeptideNamesByMasterId(String uniqueName) {
+		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
+		List<PeptideMapping> allMapping = this.peptideMappingDao.findPeptidesByMasterId(masterId);
+		Set<String> names = new HashSet<String>(); 
+		for (PeptideMapping map: allMapping) names.add(map.getPeptideUniqueName());
+		return new ArrayList<String>(names);
+	}
+	
 	
 	@Override
 	public List<PeptideMapping> findPeptideMappingByUniqueName(String uniqueName) {
