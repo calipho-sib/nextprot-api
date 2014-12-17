@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service.fluent;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.biojava.bio.program.homologene.OrthoPairSetFilter.AllPairsInCollection;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
 import org.nextprot.api.core.domain.DbXref;

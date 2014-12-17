@@ -2,11 +2,9 @@ package org.nextprot.api.core.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.nextprot.api.core.dao.EnzymeDao;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
@@ -22,7 +20,6 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.utils.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

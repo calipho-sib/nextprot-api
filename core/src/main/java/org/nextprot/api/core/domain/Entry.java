@@ -1,12 +1,10 @@
 package org.nextprot.api.core.domain;
 
 import java.util.List;
-import java.util.Set;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class Entry {
 

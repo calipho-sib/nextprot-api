@@ -2,7 +2,6 @@ package org.nextprot.api.web;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
@@ -34,8 +33,6 @@ import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
-import org.nextprot.api.core.utils.AnnotationUtils;
-import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
