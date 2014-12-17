@@ -9,6 +9,8 @@ evidence_type,
 evidence_quality,
 evidence_xrefac,	
 evidence_xrefdb,	
+evidence_resource_id,
+evidence_resource_type,	
 number_of_experiments,
 entry_name,	
 unique_name as unique_name, 
@@ -33,6 +35,16 @@ interactant_url
 	inner join nextprot.db_xrefs crx on (pra.resource_id=crx.resource_id) 
 	where pra.partnership_id=inter.partnership_id
 	) as evidence_xrefac,
+	(select pra.resource_id
+	from nextprot.partnership_resource_assoc pra 
+	where pra.partnership_id=inter.partnership_id
+	) as evidence_resource_id,
+	(select rst.cv_name
+	from nextprot.partnership_resource_assoc pra 
+	inner join nextprot.resources rs on (pra.resource_id=rs.resource_id)
+	inner join nextprot.cv_resource_types rst on (rs.cv_type_id=rst.cv_id)
+	where pra.partnership_id=inter.partnership_id
+	) as evidence_resource_type,
 	(select cvpdbs.link_url
 	from nextprot.partnership_resource_assoc pra 
 	inner join nextprot.db_xrefs crx on (pra.resource_id=crx.resource_id) 
@@ -83,3 +95,4 @@ interactant_url
 	) a
 	where entry_name = :entryName
 	order by interaction_quality, is_interactant_in_nextprot desc, interactant_unique_name
+

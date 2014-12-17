@@ -15,12 +15,12 @@
     	<evidence 
     		is-negative='false'
     		evidence-code='ECO:0000353' 
-    		source-internal-ref='$interaction.evidenceDatasource'>
-		    <xref database="$interaction.evidenceXrefDB" accession="$interaction.evidenceXrefAC">
-        		#set($UNESCAPED_CDATA = $interaction.evidenceXrefURL)
-        		<url><![CDATA[$UNESCAPED_CDATA]]></url>
-    		</xref>
-    	</evidence>
+    		source-internal-ref='$interaction.evidenceDatasource'
+			resource-type='$interaction.evidenceResourceType'
+			resource-internal-ref='$interaction.evidenceResourceId'      		
+			resource-assoc-type='evidence'
+ 			quality-qualifier='$interaction.quality'   		
+    	/>
     </evidence-list>
     <experiment-count>$interaction.numberOfExperiments</experiment-count>
 </interaction>
