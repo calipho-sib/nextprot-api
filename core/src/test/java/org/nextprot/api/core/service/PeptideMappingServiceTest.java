@@ -28,7 +28,7 @@ public class PeptideMappingServiceTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void testFindPeptideMappingByUniqueName() {
-		List<PeptideMapping> mapping = this.peptideMappingService.findPeptideMappingByUniqueName("NX_P12345");
+		List<PeptideMapping> mapping = this.peptideMappingService.findPeptideMappingByMasterUniqueName("NX_P12345");
 		assertEquals("NX_PEPT12345678", mapping.get(0).getPeptideUniqueName());
 		assertEquals(1, mapping.get(0).getEvidences().size());
 		assertEquals("789654", mapping.get(0).getEvidences().get(0).getAccession());

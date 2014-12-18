@@ -31,7 +31,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	@Cacheable("peptides")
 	public List<PeptideMapping> findPeptideMappingByMasterId(Long id) {
 		
-		List<PeptideMapping> allMapping = this.peptideMappingDao.findPeptidesByMasterId(id);
+		List<PeptideMapping> allMapping = this.peptideMappingDao.findAllPeptidesByMasterId(id);
 		
 		// key=peptide,value=mapping with 1-n isospecs, 1-n evidences, 1-n properties
 		Map<String, PeptideMapping> mergeMap = new HashMap<String, PeptideMapping>();
@@ -55,11 +55,11 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			}
 
 			// attach evidences to peptide mappings
-			List<PeptideEvidence> evidences = this.peptideMappingDao.findPeptideEvidences(peptideNames);
+			List<PeptideEvidence> evidences = this.peptideMappingDao.findAllPeptideEvidences(peptideNames);
 			for (PeptideEvidence evidence : evidences)
 				mergeMap.get(evidence.getPeptideName()).addEvidence(evidence);
 			
-			// attach propertires to peptide mappings
+			// attach properties to peptide mappings
 			List<PeptideProperty> props = this.peptideMappingDao.findPeptideProperties(peptideNames);
 			for (PeptideProperty prop: props) 
 				mergeMap.get(prop.getPeptideName()).addProperty(prop);
@@ -72,7 +72,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	@Override
 	public List<String> findPeptideNamesByMasterId(String uniqueName) {
 		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		List<PeptideMapping> allMapping = this.peptideMappingDao.findPeptidesByMasterId(masterId);
+		List<PeptideMapping> allMapping = this.peptideMappingDao.findAllPeptidesByMasterId(masterId);
 		Set<String> names = new HashSet<String>(); 
 		for (PeptideMapping map: allMapping) names.add(map.getPeptideUniqueName());
 		return new ArrayList<String>(names);
@@ -80,7 +80,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	
 	
 	@Override
-	public List<PeptideMapping> findPeptideMappingByUniqueName(String uniqueName) {
+	public List<PeptideMapping> findPeptideMappingByMasterUniqueName(String uniqueName) {
 		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
 		return findPeptideMappingByMasterId(masterId);
 	}

@@ -8,9 +8,13 @@ import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
 
 public interface PeptideMappingDao {
 
-	List<PeptideMapping> findPeptidesByMasterId(Long id);
+	List<PeptideMapping> findAllPeptidesByMasterId(Long id);
+	List<PeptideMapping> findNaturalPeptidesByMasterId(Long id);
+	List<PeptideMapping> findSyntheticPeptidesByMasterId(Long id);
 	
-	List<PeptideEvidence> findPeptideEvidences(List<String> names);
+	List<PeptideEvidence> findAllPeptideEvidences(List<String> names);
+	List<PeptideEvidence> findNaturalPeptideEvidences(List<String> names);
+	List<PeptideEvidence> findSyntheticPeptideEvidences(List<String> names);
 
 	List<PeptideProperty> findPeptideProperties(List<String> names);
 	

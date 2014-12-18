@@ -9,7 +9,7 @@ public interface PeptideMappingService {
 
 	List<PeptideMapping> findPeptideMappingByMasterId(Long id);
 	
-	List<PeptideMapping> findPeptideMappingByUniqueName(@ValidEntry String uniqueName);
+	List<PeptideMapping> findPeptideMappingByMasterUniqueName(@ValidEntry String uniqueName);
 
 	List<String> findPeptideNamesByMasterId(String uniqueName);
 }

@@ -146,7 +146,7 @@ public class EntryController {
 	@RequestMapping("/entry/{entry}/peptide")
 	public String getPeptideMapping(
 			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		List<PeptideMapping> mapping = this.peptideService.findPeptideMappingByUniqueName(entryName);
+		List<PeptideMapping> mapping = this.peptideService.findPeptideMappingByMasterUniqueName(entryName);
 		Entry entry = new Entry(entryName);
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		entry.setPeptideMappings(mapping);

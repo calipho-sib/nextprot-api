@@ -84,9 +84,9 @@ public class PeptideMapping implements Serializable{
 	}
 
 	/**
-	 * 
-	 * @param 
-	 * @return 
+	 * A peptide created artificially (SRM peptides) and not observed by breaking natural proteins should not be
+	 * counted as being proteotypic otherwise computation of protein existence would be altered.
+	 * @return true if the peptide has both properties "is proteotypic" and "is natural" set to "Y" (true)  
 	 */
 	public boolean isProteotypic() {
 		boolean isTypic = false;
@@ -100,6 +100,23 @@ public class PeptideMapping implements Serializable{
 		return isNatural && isTypic;
 	}
 
+	public boolean isNatural() {
+		if (this.properties!=null) {
+			for (PeptideProperty prop: properties) {
+				if (prop.getNameId()==52 && prop.getValue().equals("Y")) return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean isSynthetic() {
+		if (this.properties!=null) {
+			for (PeptideProperty prop: properties) {
+				if (prop.getNameId()==53 && prop.getValue().equals("Y")) return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * 
@@ -131,7 +148,6 @@ public class PeptideMapping implements Serializable{
 		private String assignedBy;
 		private Long resourceId;
 		private String resourceType;
-		
 		
 		public String getPeptideName() {
 			return peptideName;
