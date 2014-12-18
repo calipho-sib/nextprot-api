@@ -61,7 +61,7 @@ public class AdminController {
 
 		}
 
-		LOGGER.info("<html>Cache cleared for: " + sb.toString() + "</html>");
+		LOGGER.debug("<html>Cache cleared for: " + sb.toString() + "</html>");
 		return "Cache cleared for " + sb.toString();
 	}
 	
@@ -69,7 +69,7 @@ public class AdminController {
 	@RequestMapping(value = "cache/{cacheName}/clear")
 	public String clearCache(HttpServletRequest request, @PathVariable("cacheName") String cacheName) {
 
-		LOGGER.warn("Request to clear cache from " + request.getRemoteAddr());
+		LOGGER.debug("Request to clear cache from " + request.getRemoteAddr());
 		StringBuilder sb = null;
 		try {
 
@@ -93,7 +93,7 @@ public class AdminController {
 			return e.getLocalizedMessage();
 		}
 
-		LOGGER.info("<html>Cache cleared for: " + sb.toString() + "</html>");
+		LOGGER.debug("<html>Cache cleared for: " + sb.toString() + "</html>");
 		return "Cache cleared for " + sb.toString();
 	}
 	

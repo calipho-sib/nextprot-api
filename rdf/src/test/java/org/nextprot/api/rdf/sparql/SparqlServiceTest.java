@@ -16,15 +16,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @Ignore
 public class SparqlServiceTest {
 
-	String sSuperLite = "?entry :isoform/:expression/:in ?s." + "?s :subPartOf term:TS-1030;rdfs:label ?name.";
+	String sSuperLite = "?entry :isoform/:expression/:term ?s." + "?s :subPartOf cv:TS-1030;rdfs:label ?name.";
 
-	String sLite = "SELECT  ?entry { " + "?entry :isoform/:expression/:in ?s." + "?s :childOf term:TS-1030;rdfs:label ?name. } order by ?entry LIMIT 5";
+	String sLite = "SELECT  ?entry { " + "?entry :isoform/:expression/:term ?s." + "?s :childOf cv:TS-1030;rdfs:label ?name. } order by ?entry LIMIT 5";
 
-	String s = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + "PREFIX : <http://nextprot.org/rdf#>" + "PREFIX term: <http://nextprot.org/rdf/terminology/>" + "SELECT  ?entry { "
-			+ "?entry :isoform/:expression/:in ?s." + "?s rdfs:subClassOf term:TS-1030;rdfs:label ?name. } order by ?entry LIMIT 5";
+	String s = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + "PREFIX : <http://nextprot.org/rdf#>" + "PREFIX cv: <http://nextprot.org/rdf/terminology/>" + "SELECT  ?entry { "
+			+ "?entry :isoform/:expression/:term ?s." + "?s rdfs:subClassOf cv:TS-1030;rdfs:label ?name. } order by ?entry LIMIT 5";
 
-	String c = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + "PREFIX : <http://nextprot.org/rdf#>" + "PREFIX term: <http://nextprot.org/rdf/terminology/>"
-			+ "SELECT (count(distinct ?entry) as ?c) { " + "?entry :isoform/:expression/:in ?s." + "?s rdfs:subClassOf term:TS-1030;rdfs:label ?name. } order by ?entry LIMIT 5";
+	String c = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + "PREFIX : <http://nextprot.org/rdf#>" + "PREFIX cv: <http://nextprot.org/rdf/terminology/>"
+			+ "SELECT (count(distinct ?entry) as ?c) { " + "?entry :isoform/:expression/:term ?s." + "?s rdfs:subClassOf cv:TS-1030;rdfs:label ?name. } order by ?entry LIMIT 5";
 
 	@Autowired
 	private SparqlService sparqlService;

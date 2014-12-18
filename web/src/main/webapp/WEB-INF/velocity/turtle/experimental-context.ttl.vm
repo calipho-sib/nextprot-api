@@ -1,21 +1,21 @@
 context:$ec.getContextId() a :ExperimentalContext;
 #if ($ec.getTissueAC())
-  :tissue term:$StringUtils.slug($ec.getTissueAC());
+  :tissue cv:$StringUtils.slug($ec.getTissueAC());
 #end
 #if ($ec.getDetectionMethodAC())
-  :detectionMethod term:$StringUtils.slug($ec.getDetectionMethodAC());
+  :detectionMethod cv:$StringUtils.slug($ec.getDetectionMethodAC());
 #end
 #if ($ec.getDevelopmentalStageAC())
-  :developmentalStage term:$StringUtils.slug($ec.getDevelopmentalStageAC());
+  :developmentalStage cv:$StringUtils.slug($ec.getDevelopmentalStageAC());
 #end
 #if ($ec.getCellLineAC())
-  :cellLine term:$StringUtils.slug($ec.getCellLineAC());
+  :cellLine cv:$StringUtils.slug($ec.getCellLineAC());
 #end
 #if ($ec.getDiseaseAC())
-  :disease term:$StringUtils.slug($ec.getDiseaseAC());
+  :disease cv:$StringUtils.slug($ec.getDiseaseAC());
 #end
 #if ($ec.getOrganelleAC())
-  :organelle term:$StringUtils.slug($ec.getOrganelleAC());
+  :organelle cv:$StringUtils.slug($ec.getOrganelleAC());
 #end
 #if ($ec.getMetadataAC())
   :metadata publication:$StringUtils.slug($ec.getMetadataAC());

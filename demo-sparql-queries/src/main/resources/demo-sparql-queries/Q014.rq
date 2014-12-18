@@ -5,8 +5,8 @@
 select distinct ?entry  where{
 ?entry :isoform ?iso.
 #with 1 SH3
-  {select ?iso where{?iso :region ?stat1. ?stat1 :in term:DO-00614}GROUP BY ?iso  HAVING(count( ?stat1)=1)}
+  {select ?iso where{?iso :region ?stat1. ?stat1 :term cv:DO-00614}GROUP BY ?iso  HAVING(count( ?stat1)=1)}
 
 #with 2 SH2
-  {select ?iso where{?iso :region ?stat2. ?stat2 :in term:DO-00615}GROUP BY ?iso HAVING(count( ?stat2)=2)}
+  {select ?iso where{?iso :region ?stat2. ?stat2 :term cv:DO-00615}GROUP BY ?iso HAVING(count( ?stat2)=2)}
 }GROUP BY ?entry

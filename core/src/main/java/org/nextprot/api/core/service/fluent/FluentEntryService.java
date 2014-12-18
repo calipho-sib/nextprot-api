@@ -221,12 +221,14 @@ public class FluentEntryService {
 				annotations = AnnotationUtils.filterAnnotationsByCategory(annotations, annotationCategory);
 				xrefs = XrefUtils.filterXrefsByIds(xrefs, AnnotationUtils.getXrefIdsForAnnotations(annotations));
 				publications = PublicationUtils.filterPublicationsByIds(publications, AnnotationUtils.getPublicationIdsForAnnotations(annotations));
+				entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 			}
 
 
 			entry.setAnnotations(annotations);
 			entry.setXrefs(xrefs);
 			entry.setPublications(publications);
+			
 			
 			return entry;
 		}

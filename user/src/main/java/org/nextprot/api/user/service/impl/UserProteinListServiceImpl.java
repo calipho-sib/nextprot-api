@@ -22,74 +22,47 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 	@Override
 	public List<UserProteinList> getUserProteinLists(String username) {
-
 		return this.proteinListDao.getUserProteinLists(username);
 	}
 
 	@Override
 	@Transactional
-	public UserProteinList createUserProteinList(UserProteinList proteinList) {
+	public UserProteinList createUserProteinList(UserProteinList userProteinList) {
 
-		NPreconditions.checkNotNull(proteinList, "The protein list should not be null");
-		NPreconditions.checkTrue(!proteinList.isPersisted(), "The user protein list should not be already entered");
+		NPreconditions.checkNotNull(userProteinList, "The user protein list should not be null");
+		NPreconditions.checkTrue(!userProteinList.isPersisted(), "The user protein list should be new");
 
-		long id = proteinListDao.createUserProteinList(proteinList);
-		// TODO: not needed ?
-		//proteinList.setId(id);
-		saveAccessions(id, proteinList.getAccessionNumbers());
-
-		return proteinListDao.getUserProteinListById(id);
-	}
-
-	private void saveAccessions(long listId, Set<String> accessions) {
-
-		if (accessions != null && !accessions.isEmpty()) {
-			proteinListDao.createUserProteinListAccessions(listId, accessions);
-		} else {
-
-			// TODO: empty list allowed ?
-			// TODO: throw an exception ?
+		long id = this.proteinListDao.createUserProteinList(userProteinList);
+		userProteinList.setId(id);
+	
+		Set<String> accessions = userProteinList.getAccessionNumbers();
+		if (accessions != null && accessions.size() > 0) {
+			this.proteinListDao.createUserProteinListAccessions(id, accessions);
 		}
+		return userProteinList;
 	}
+
+	
 
 	@Override
 	public void deleteUserProteinList(UserProteinList proteinList) {
-
-		proteinListDao.deleteUserProteinList(proteinList.getId());
+		this.proteinListDao.deleteUserProteinList(proteinList.getId());
 	}
 
 	@Override
 	public UserProteinList getUserProteinListById(long listId) {
-
-		return proteinListDao.getUserProteinListById(listId);
+		return this.proteinListDao.getUserProteinListById(listId);
 	}
 
 	@Override
 	public UserProteinList getUserProteinListByNameForUser(String username, String listName) {
-
 		return proteinListDao.getUserProteinListByName(username, listName);
 	}
 
 	@Override
-	@Transactional
-	public void addAccessionNumbers(long listId, Set<String> accessions) {
-
-		saveAccessions(listId, accessions);
-	}
-
-	@Override
-	public void removeAccessionNumbers(long listId, Set<String> accessions) {
-
-		proteinListDao.deleteProteinListItems(listId, accessions);
-	}
-
-	@Override
 	public UserProteinList updateUserProteinList(UserProteinList proteinList) {
-
 		proteinListDao.updateUserProteinList(proteinList);
-
-		// TODO: why returning proteinList ?
-		return proteinList;
+		return proteinListDao.getUserProteinListById(proteinList.getId());
 	}
 
 	@Override
@@ -97,7 +70,8 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 		UserProteinList l1 = proteinListDao.getUserProteinListByName(username, list1);
 		UserProteinList l2 = proteinListDao.getUserProteinListByName(username, list2);
-		
+
 		return UserProteinListUtils.combine(l1, l2, op, name, description);
 	}
+
 }

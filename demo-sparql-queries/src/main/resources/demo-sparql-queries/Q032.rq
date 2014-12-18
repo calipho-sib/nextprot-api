@@ -4,9 +4,9 @@
 #count:185
 #time:0.21
 select distinct ?entry where {
- ?entry :isoform ?iso;:classifiedWith term:KW-0804.
+ ?entry :isoform ?iso;:classifiedWith cv:KW-0804.
  ?iso :region/rdf:type :CoiledCoilRegion.
  FILTER NOT EXISTS{
-   ?iso :region/:in term:DO-00078
+   ?iso :region/:term cv:DO-00078
  }
 }

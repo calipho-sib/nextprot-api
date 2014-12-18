@@ -4,7 +4,7 @@
 #count:369
 #time:0.1
 SELECT distinct ?entry WHERE  {
-  #?entry :classifiedWith/rdf:type :EnzymeClassificationOntology;:isoform ?iso.
+  #?entry :classifiedWith/rdf:type :EnzymeClassificationCv;:isoform ?iso.
   ?entry :isoform ?iso.
   ?iso :mutagenesis /:start ?mutaPos.
   ?iso :activeSite /:start ?actsitePos.

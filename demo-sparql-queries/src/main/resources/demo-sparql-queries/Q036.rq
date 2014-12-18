@@ -4,7 +4,7 @@
 #count:267
 #time:0.1
 SELECT distinct ?entry  WHERE  {
-  ?entry :classifiedWith term:KW-0560. #oxidoreductase
+  ?entry :classifiedWith cv:KW-0560. #oxidoreductase
   ?entry :classifiedWith ?kw
-FILTER( ?kw in (term:KW-0520,term:KW-0521)) # NAD or NADP
+FILTER( ?kw in (cv:KW-0520,cv:KW-0521)) # NAD or NADP
 }

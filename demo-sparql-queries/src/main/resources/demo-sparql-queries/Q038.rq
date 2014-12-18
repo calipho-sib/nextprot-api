@@ -4,6 +4,6 @@
 #count:26
 #time:0.1
 SELECT distinct ?entry WHERE  {
-  #?entry :isoform/:selenocysteine/:in ?statement.
-  ?entry :isoform/ :keyword / :in term:KW-0712. # selenocysteine
+  #?entry :isoform/:selenocysteine/:term ?statement.
+  ?entry :isoform/ :keyword / :term cv:KW-0712. # selenocysteine
 }

@@ -20,10 +20,17 @@ public class UserProteinListAuthorizationChecker implements UserResourceAuthoriz
 
         if (userProteinList instanceof UserProteinList) {
 
-            UserProteinList foundUserProteinList = dao.getUserProteinListById(((UserProteinList) userProteinList).getId());
 
-            if (foundUserProteinList.getOwnerId() != ownerId)
-                throw new NotAuthorizedException(foundUserProteinList.getOwnerName() + " cannot access resource");
+            // Checking authorization only done when application already exists
+            if (userProteinList.isPersisted()) {
+
+                UserProteinList foundUserProteinList = dao.getUserProteinListById(((UserProteinList) userProteinList).getId());
+
+                if (foundUserProteinList.getOwnerId() != ownerId)
+                    throw new NotAuthorizedException(foundUserProteinList.getOwnerName() + " cannot access resource");
+
+            }
+
         }
         else {
 

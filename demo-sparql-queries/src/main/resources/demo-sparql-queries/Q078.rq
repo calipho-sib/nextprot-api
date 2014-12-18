@@ -5,7 +5,7 @@
 #time: 0.13
 SELECT distinct ?entry  WHERE  {
  ?entry :isoform ?iso.
-  ?iso :location/:in/:childOf term:SL-0243.
+  ?iso :cellularComponent/:term/:childOf cv:SL-0243.
    ?iso :peptideMapping ?map.
 }
 

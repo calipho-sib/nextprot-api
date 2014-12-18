@@ -68,28 +68,28 @@
 # Links between :GOEvidenceCode  :EvidenceCodeOntology
 ## Manual mapping by pam, TODO: to be validated
 
-:IDA :related  term:ECO_0000002 .  
-:IPI :related  term:ECO_0000021 .   
-:IGI  :related  term:ECO_0000011 .  
-:IEP  :related term:ECO_0000008 .  
-:ISS  :related term:ECO_0000027 , term:ECO_0000044 .  
-:ISO  :related  term:ECO_0000201 .  
-:ISA  :related  term:ECO_0000200 .  
-:ISM  :related  term:ECO_0000202 .  
-:IGC  :related  term:ECO_0000177 .  
-:RCA  :related  term:ECO_0000245 .  
-:TAS  :related  term:ECO_0000033 .  
-:NAS  :related  term:ECO_0000034 .  
-:IC  :related  term:ECO_0000205 .  
-:ND  :related  term:ECO_0000035 .  
-:IEA  :related  term:ECO_0000203 .  
+:IDA :related  cv:ECO_0000002 .  
+:IPI :related  cv:ECO_0000021 .   
+:IGI  :related  cv:ECO_0000011 .  
+:IEP  :related cv:ECO_0000008 .  
+:ISS  :related cv:ECO_0000027 , cv:ECO_0000044 .  
+:ISO  :related  cv:ECO_0000201 .  
+:ISA  :related  cv:ECO_0000200 .  
+:ISM  :related  cv:ECO_0000202 .  
+:IGC  :related  cv:ECO_0000177 .  
+:RCA  :related  cv:ECO_0000245 .  
+:TAS  :related  cv:ECO_0000033 .  
+:NAS  :related  cv:ECO_0000034 .  
+:IC  :related  cv:ECO_0000205 .  
+:ND  :related  cv:ECO_0000035 .  
+:IEA  :related  cv:ECO_0000203 .  
 ##:NR  :related  ??? .   
-:IMP  :related  term:ECO_0000015 .  
-:IBA  :related  term:ECO_0000308 .  
-:IBD  :related  term:ECO_0000214 .  
-:IKR  :related  term:ECO_0000216 .  
-:IRD  :related  term:ECO_0000215 .  
-:EXP :related  term:ECO_0000006 .  
+:IMP  :related  cv:ECO_0000015 .  
+:IBA  :related  cv:ECO_0000308 .  
+:IBD  :related  cv:ECO_0000214 .  
+:IKR  :related  cv:ECO_0000216 .  
+:IRD  :related  cv:ECO_0000215 .  
+:EXP :related  cv:ECO_0000006 .  
 
 
 #foreach($evidence in $evidenceList)

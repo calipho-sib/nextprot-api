@@ -15,12 +15,13 @@
     :peptideName "$pep-name"^^xsd:string ;
 #foreach($pos in $spec.positions)
     :position [ 
+      rdf:type :MappingPosition ;    
       :start "$pos.first"^^xsd:integer ;
       :end "$pos.second"^^xsd:integer ;
     ];
 #end
 #foreach($evi in $pep.evidences)
-    :withEvidence [
+    :evidence [
       rdf:type :Evidence ;
       :code :EXP;
       :assignedBy source:$StringUtils.slug($evi.assignedBy) ;

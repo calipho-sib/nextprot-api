@@ -5,11 +5,11 @@
 #time: 0.25
 select distinct ?entry where {
  ?entry :isoform ?iso .
-  ?iso :location ?loc.
-  ?loc :in/:childOf term:SL-0173 .
-  ?loc :withEvidence /:assignedBy ?src.
+  ?iso :cellularComponent ?loc.
+  ?loc :term/:childOf cv:SL-0173 .
+  ?loc :evidence /:assignedBy ?src.
   FILTER  ( ?src not in (source:Human_protein_atlas_subcellular_localization, source:GFP-cDNAEMBL))
   # alternatively
-  #?loc :withEvidence /:fromXref ?xr.
+  #?loc :evidence /:fromXref ?xr.
   #FILTER  ( ?xr not in (db:HPA, db:GFP-cDNA))
 }

@@ -33,7 +33,7 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 
 		String token = ((Auth0JWTToken) authentication).getJwt();
 
-		this.logger.info("Trying to authenticate with token: " + token);
+		this.logger.debug("Trying to authenticate with token: " + token);
 		try {
 
 			Auth0JWTToken tokenAuth = (Auth0JWTToken) authentication;

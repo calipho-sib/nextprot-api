@@ -1,6 +1,6 @@
 
 # - - - - - - - -
-# Xrefs 
+# Xrefs v3
 # - - - - - - - -
 
 #foreach($xref in $entry.xrefs)
@@ -36,4 +36,3 @@ entry:$entry.uniqueName :reference [
 #foreach($pub in $entry.publications)
 entry:$entry.uniqueName :reference publication:$pub.getMD5() .
 #end
-

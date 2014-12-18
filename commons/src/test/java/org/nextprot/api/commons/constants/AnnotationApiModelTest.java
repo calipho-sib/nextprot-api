@@ -224,6 +224,15 @@ public class AnnotationApiModelTest extends TestCase {
 		assertTrue(cs.size()==4);
 	}
 	
+	@Test
+	public void testEnzymeRegulationAllParentsButRoot() {
+		Set<AnnotationApiModel> cs = AnnotationApiModel.ENZYME_REGULATION.getAllParentsButRoot();
+		assertTrue(cs.contains(AnnotationApiModel.GENERIC_INTERACTION));
+		assertTrue(cs.contains(AnnotationApiModel.GENERIC_FUNCTION));		
+		assertTrue(cs.contains(AnnotationApiModel.GENERAL_ANNOTATION));
+		assertTrue(cs.size()==3);
+	}
+	
 	public void show() {
 		for (AnnotationApiModel cat : AnnotationApiModel.values()) 
 			System.out.println(cat.toString());		

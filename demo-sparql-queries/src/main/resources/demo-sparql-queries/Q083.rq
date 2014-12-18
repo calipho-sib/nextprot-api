@@ -6,8 +6,8 @@
 SELECT distinct ?entry count(?tiss) WHERE {
   ?entry :gene / :chromosome "18"^^xsd:string .
   ?entry :isoform  ?iso.
-  ?iso :expressionProfile /:in ?tiss.
-  ?iso :expressionProfile /:in  /:childOf term:TS-0564. #liver
+  ?iso :expressionProfile /:term ?tiss.
+  ?iso :expressionProfile /:term  /:childOf cv:TS-0564. #liver
   # find topmost parent and only count it
 }
 #GROUP BY ?entry ?iso HAVING(count(?tiss) < 5)
