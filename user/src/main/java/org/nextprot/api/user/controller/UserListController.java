@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
+import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -53,6 +54,7 @@ public class UserListController {
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
 	@ResponseBody
 	public UserProteinList createList(@PathVariable("username") String username, @RequestBody UserProteinList proteinList, Model model) {
+		NPreconditions.checkTrue(!proteinList.getName().isEmpty(), "The name of the list should not be empty");
 		return this.proteinListService.createUserProteinList(proteinList);
 	}
 

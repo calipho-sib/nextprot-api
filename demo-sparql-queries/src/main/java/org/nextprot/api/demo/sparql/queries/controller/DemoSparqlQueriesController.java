@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@Api(name = "Demo Sparql Queries", description = "Demo sparql queries")
+@Api(name = "Demo Queries", description = "Demo sparql queries")
 public class DemoSparqlQueriesController {
 
 	@Autowired DemoSparqlService demoSparqlService;
 	
 	@ResponseBody
-	@RequestMapping(value = "/demo/sparql/queries", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
-	@ApiMethod(path = "/demo/sparql/queries", verb = ApiVerb.GET, description = "Get demo sparql queries", produces={MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value = "/queries/tutorial", method = { RequestMethod.GET })
+	@ApiMethod(path = "/queries/tutorial", verb = ApiVerb.GET, description = "Get demo sparql queries", produces={MediaType.APPLICATION_JSON_VALUE})
 	public List<UserQuery> getDemoSparalQueries() {
 		demoSparqlService.relaodDemoSparqlQueries();
 		return demoSparqlService.getDemoSparqlQueries();

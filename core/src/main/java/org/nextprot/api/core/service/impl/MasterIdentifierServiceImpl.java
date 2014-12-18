@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.nextprot.api.core.dao.MasterIdentifierDao;
 import org.nextprot.api.core.service.MasterIdentifierService;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Sets;
 
 @Lazy
 @Service
@@ -23,8 +26,8 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 
 	@Override
 	@Cacheable("master-unique-names")
-	public List<String> findUniqueNames() {
-		return this.masterIdentifierDao.findUniqueNames();
+	public Set<String> findUniqueNames() {
+		return Sets.newHashSet(this.masterIdentifierDao.findUniqueNames());
 	}
 
 	@Override
