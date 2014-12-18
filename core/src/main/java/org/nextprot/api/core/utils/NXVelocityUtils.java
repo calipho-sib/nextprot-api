@@ -37,18 +37,6 @@ public class NXVelocityUtils {
 		return sb.toString();
 	}
 
-	public boolean isNaturalAndProteotypic(PeptideMapping pm) {
-		List<PeptideProperty> props = pm.getProperties();
-		boolean isTypic = false;
-		boolean isNatural = false;
-		if (props!=null) {
-			for (PeptideProperty prop: props) {
-				if (prop.getNameId()==51 && prop.getValue().equals("Y")) isTypic = true; 
-				if (prop.getNameId()==52 && prop.getValue().equals("Y")) isNatural = true; 
-			}
-		}
-		return isNatural && isTypic;
-	}
 	
 	public boolean hasInteractions(Entry entry) {
 		if (entry.getInteractions().size()>0) return true;

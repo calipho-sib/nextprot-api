@@ -1,9 +1,7 @@
 <mapping-category category='peptide-mapping' hierarchy='mapping'>
 	#foreach($peptide in $entry.peptideMappings)
 		<peptide-mapping>
-			<peptide accession='$peptide.peptideUniqueName' database='neXtProt' 
-				is-proteotypic=#if($NXUtils.isNaturalAndProteotypic($peptide))'true'#else'false' #end
-			/> 
+			<peptide accession='$peptide.peptideUniqueName' database='neXtProt' is-proteotypic='$peptide.isProteotypic()' /> 
 ##			#if($peptide.properties && $peptide.properties.size() > 0) 													
 ##				<properties>
 ##					#foreach($prop in $peptide.properties)

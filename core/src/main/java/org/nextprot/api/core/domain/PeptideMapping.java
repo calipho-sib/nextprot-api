@@ -82,7 +82,24 @@ public class PeptideMapping implements Serializable{
 			this.isoformSpecificity.put(isoName, newIsoformSpecificity);
 		}
 	}
-	
+
+	/**
+	 * 
+	 * @param 
+	 * @return 
+	 */
+	public boolean isProteotypic() {
+		boolean isTypic = false;
+		boolean isNatural = false;
+		if (this.properties!=null) {
+			for (PeptideProperty prop: properties) {
+				if (prop.getNameId()==51 && prop.getValue().equals("Y")) isTypic = true; 
+				if (prop.getNameId()==52 && prop.getValue().equals("Y")) isNatural = true; 
+			}
+		}
+		return isNatural && isTypic;
+	}
+
 	
 	/**
 	 * 
@@ -114,6 +131,7 @@ public class PeptideMapping implements Serializable{
 		private String assignedBy;
 		private Long resourceId;
 		private String resourceType;
+		
 		
 		public String getPeptideName() {
 			return peptideName;
