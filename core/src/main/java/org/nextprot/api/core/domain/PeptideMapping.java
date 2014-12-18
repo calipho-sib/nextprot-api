@@ -22,6 +22,8 @@ public class PeptideMapping implements Serializable{
 	
 	@ApiObjectField(description = "The peptide isoform specificity")
 	private Map<String, IsoformSpecificity> isoformSpecificity;
+
+	private List<PeptideProperty> properties;
 	
 	public PeptideMapping() {
 		this.isoformSpecificity = new HashMap<String, IsoformSpecificity>();
@@ -33,6 +35,11 @@ public class PeptideMapping implements Serializable{
 
 	public void setPeptideUniqueName(String peptideUniqueName) {
 		this.peptideUniqueName = peptideUniqueName;
+	}
+	
+	public void addProperty(PeptideProperty prop) {
+		if (this.properties==null) this.properties= new ArrayList<PeptideProperty>();
+		this.properties.add(prop);
 	}
 	
 	public void addEvidence(PeptideEvidence evidence) {
@@ -88,6 +95,16 @@ public class PeptideMapping implements Serializable{
 	
 	
 
+	public List<PeptideProperty> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(List<PeptideProperty> properties) {
+		this.properties = properties;
+	}
+
+
+
 	public static class PeptideEvidence implements Serializable{
 
 		private static final long serialVersionUID = -6416415250105609274L;
@@ -136,4 +153,67 @@ public class PeptideMapping implements Serializable{
 			this.resourceType = resourceType;
 		}
 	}
+	
+	
+	public static class PeptideProperty implements Serializable {
+
+		private static final long serialVersionUID = 7484965874568857427L;
+
+		private Long peptideId;
+		private Long id;
+		private Long nameId;
+		private String name;
+		private String value;
+		private String peptideName;
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
+		}
+
+		public Long getPeptideId() {
+			return peptideId;
+		}
+
+		public void setPeptideId(Long peptideId) {
+			this.peptideId = peptideId;
+		}
+
+		public String getPeptideName() {
+			return peptideName;
+		}
+
+		public void setPeptideName(String peptideName) {
+			this.peptideName = peptideName;
+		}
+
+		public Long getNameId() {
+			return nameId;
+		}
+
+		public void setNameId(Long nameId) {
+			this.nameId = nameId;
+		}
+	}
+
+	
 }

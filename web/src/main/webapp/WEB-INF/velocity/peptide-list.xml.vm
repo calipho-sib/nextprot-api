@@ -1,6 +1,18 @@
 <mapping-category category='peptide-mapping' hierarchy='mapping'>
 	#foreach($peptide in $entry.peptideMappings)
 		<peptide-mapping>
+			<peptide accession='$peptide.peptideUniqueName' database='neXtProt' 
+				is-proteotypic=#if($NXUtils.isNaturalAndProteotypic($peptide))'true'#else'false' #end
+			/> 
+##			#if($peptide.properties && $peptide.properties.size() > 0) 													
+##				<properties>
+##					#foreach($prop in $peptide.properties)
+##						<property property-name="$prop.name" value="$prop.value"/>
+##					#end
+##				</properties>
+##			#end
+			#set($target-isoform-list = $peptide.isoformSpecificity)
+			#parse('target-isoform-list.xml.vm')			
 			<evidence-list>
 				#foreach($evidence in $peptide.evidences)
 					<evidence 
@@ -13,10 +25,6 @@
 					/>
 				#end
 			</evidence-list>
-		#set($target-isoform-list = $peptide.isoformSpecificity)
-		#parse('target-isoform-list.xml.vm')	
 		</peptide-mapping>
 	#end
 </mapping-category>
-
-

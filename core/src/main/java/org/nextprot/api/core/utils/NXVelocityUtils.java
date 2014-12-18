@@ -6,6 +6,8 @@ import java.util.List;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.PeptideMapping;
+import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 public class NXVelocityUtils {
@@ -33,6 +35,19 @@ public class NXVelocityUtils {
 			sb.append(StringUtils.decamelizeAndReplaceByHyphen(cat.getApiTypeName()));			
 		}
 		return sb.toString();
+	}
+
+	public boolean isNaturalAndProteotypic(PeptideMapping pm) {
+		List<PeptideProperty> props = pm.getProperties();
+		boolean isTypic = false;
+		boolean isNatural = false;
+		if (props!=null) {
+			for (PeptideProperty prop: props) {
+				if (prop.getNameId()==51 && prop.getValue().equals("Y")) isTypic = true; 
+				if (prop.getNameId()==52 && prop.getValue().equals("Y")) isNatural = true; 
+			}
+		}
+		return isNatural && isTypic;
 	}
 	
 	public boolean hasInteractions(Entry entry) {

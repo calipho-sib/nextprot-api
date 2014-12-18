@@ -12,6 +12,7 @@ import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
+import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +32,9 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	public List<PeptideMapping> findPeptideMappingByMasterId(Long id) {
 		
 		List<PeptideMapping> allMapping = this.peptideMappingDao.findPeptidesByMasterId(id);
-
-		// Peptide:Isoform
+		
+		// key=peptide,value=mapping with 1-n isospecs, 1-n evidences, 1-n properties
 		Map<String, PeptideMapping> mergeMap = new HashMap<String, PeptideMapping>();
-
 		
 		if (allMapping.size() > 0) {
 			String key = null;
@@ -54,11 +54,17 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 				}
 			}
 
+			// attach evidences to peptide mappings
 			List<PeptideEvidence> evidences = this.peptideMappingDao.findPeptideEvidences(peptideNames);
-
 			for (PeptideEvidence evidence : evidences)
 				mergeMap.get(evidence.getPeptideName()).addEvidence(evidence);
+			
+			// attach propertires to peptide mappings
+			List<PeptideProperty> props = this.peptideMappingDao.findPeptideProperties(peptideNames);
+			for (PeptideProperty prop: props) 
+				mergeMap.get(prop.getPeptideName()).addProperty(prop);
 		}
+		
 		return new ArrayList<PeptideMapping>(mergeMap.values());
 	}
 	

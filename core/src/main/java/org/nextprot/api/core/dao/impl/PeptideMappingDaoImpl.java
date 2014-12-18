@@ -10,6 +10,7 @@ import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
+import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -42,20 +43,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 	}
 	
 	public List<PeptideEvidence> findPeptideEvidences(List<String> names) {
-		/*
-		String sql = "select distinct peptide.unique_name, xr.accession, db.cv_name as database_name, ds.cv_name as assigned_by, ira.resource_id as resource_id " + 
-				"from nextprot.sequence_identifiers peptide, " +
-				"nextprot.identifier_resource_assoc ira, " +
-				"nextprot.db_xrefs xr, " + 
-				"nextprot.cv_databases db, " +
-				"nextprot.cv_datasources ds " + 
-				"where peptide.identifier_id = ira.identifier_id " + 
-				"  and ira.resource_id = xr.resource_id " + 
-				"  and xr.cv_database_id = db.cv_id " + 
-				"  and ira.datasource_id = ds.cv_id " + 
-				"  and ds.cv_name != 'PeptideAtlas' " + 
-				"  and peptide.unique_name in (:names)";
-		*/
+
 		SqlParameterSource namedParams = new MapSqlParameterSource("names", names);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("peptide-evidences-by-peptide-names"), namedParams, new RowMapper<PeptideEvidence>() {
 
@@ -69,6 +57,26 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 				evidence.setResourceId(resultSet.getLong("resource_id"));
 				evidence.setResourceType(resultSet.getString("resource_type"));
 				return evidence;
+			}
+			
+		});
+	}
+
+	@Override
+	public List<PeptideProperty> findPeptideProperties(List<String> names) {
+		SqlParameterSource namedParams = new MapSqlParameterSource("names", names);
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("peptide-properties-by-peptide-names"), namedParams, new RowMapper<PeptideProperty>() {
+
+			@Override
+			public PeptideProperty mapRow(ResultSet resultSet, int row) throws SQLException {
+				PeptideProperty prop = new PeptideProperty();
+				prop.setPeptideId(resultSet.getLong("peptide_id"));
+				prop.setPeptideName(resultSet.getString("peptide_name"));
+				prop.setId(resultSet.getLong("property_id"));
+				prop.setNameId(resultSet.getLong("prop_name_id"));
+				prop.setName(resultSet.getString("prop_name"));
+				prop.setValue(resultSet.getString("prop_value"));
+				return prop;
 			}
 			
 		});
