@@ -73,18 +73,20 @@ public class DbXrefServiceImpl implements DbXrefService {
 		// build a comparator for the tree set: order by database name, accession
 		Comparator<DbXref> comparator = new Comparator<DbXref>() {
 			public int compare(DbXref a, DbXref b) {
-				int cmp1 = a.getDatabaseName().compareTo(b.getDatabaseName());
+				int cmp1 = a.getDatabaseName().toUpperCase().compareTo(b.getDatabaseName().toUpperCase());
 				if (cmp1!=0) return cmp1;
-				return a.getAccession().compareTo(b.getAccession());
+				return a.getAccession().toUpperCase().compareTo(b.getAccession().toUpperCase());
 			}
 		};
 		Set<DbXref> xrefs = new TreeSet<DbXref>(comparator);
+
 		Set<DbXref> xrefs1 = this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName);
 		Set<DbXref> xrefs2 = this.dbXRefDao.findEntryAttachedXrefs(entryName);
 		Set<DbXref> xrefs3 = this.dbXRefDao.findEntryIdentifierXrefs(entryName);
 		Set<DbXref> xrefs4 = this.dbXRefDao.findEntryInteractionXrefs(entryName);
 		List<String> peptideNames = this.peptideMappingService.findPeptideNamesByMasterId(entryName);
-		Set<DbXref> xrefs5 = this.dbXRefDao.findPeptideXrefs(peptideNames);
+		Set<DbXref> xrefs5 = new HashSet<DbXref>();
+		if (peptideNames.size()>0) xrefs5 = this.dbXRefDao.findPeptideXrefs(peptideNames);
 		xrefs.addAll(xrefs1);
 		xrefs.addAll(xrefs2);
 		xrefs.addAll(xrefs3);
