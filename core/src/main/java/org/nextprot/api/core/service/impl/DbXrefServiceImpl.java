@@ -70,7 +70,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Cacheable("xrefs")
 	public List<DbXref> findDbXrefsByMaster(String entryName) {
 		
-		// build a comparator for the tree set: order by database name, accession
+		// build a comparator for the tree set: order by database name, accession, case insensitive
 		Comparator<DbXref> comparator = new Comparator<DbXref>() {
 			public int compare(DbXref a, DbXref b) {
 				int cmp1 = a.getDatabaseName().toUpperCase().compareTo(b.getDatabaseName().toUpperCase());
@@ -78,32 +78,21 @@ public class DbXrefServiceImpl implements DbXrefService {
 				return a.getAccession().toUpperCase().compareTo(b.getAccession().toUpperCase());
 			}
 		};
-		Set<DbXref> xrefs = new TreeSet<DbXref>(comparator);
 
-		Set<DbXref> xrefs1 = this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName);
-		Set<DbXref> xrefs2 = this.dbXRefDao.findEntryAttachedXrefs(entryName);
-		Set<DbXref> xrefs3 = this.dbXRefDao.findEntryIdentifierXrefs(entryName);
-		Set<DbXref> xrefs4 = this.dbXRefDao.findEntryInteractionXrefs(entryName);
+		// now merge xrefs associtated to the entry by annot, interact, mappings, etc. in the tree set 
+		Set<DbXref> xrefs = new TreeSet<DbXref>(comparator);
 		List<String> peptideNames = this.peptideMappingService.findPeptideNamesByMasterId(entryName);
-		Set<DbXref> xrefs5 = new HashSet<DbXref>();
-		if (peptideNames.size()>0) xrefs5 = this.dbXRefDao.findPeptideXrefs(peptideNames);
-		xrefs.addAll(xrefs1);
-		xrefs.addAll(xrefs2);
-		xrefs.addAll(xrefs3);
-		xrefs.addAll(xrefs4);
-		xrefs.addAll(xrefs5);
+		xrefs.addAll(peptideNames.size()>0 ? this.dbXRefDao.findPeptideXrefs(peptideNames) :  new HashSet<DbXref>());
+		xrefs.addAll(this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
+		xrefs.addAll(this.dbXRefDao.findEntryAttachedXrefs(entryName));
+		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
+		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));
+		
+		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<DbXref>(xrefs);
 		
-		//for (DbXref xr : xrefs) System.out.println("xref " + xr.getDatabaseName() + " - " + xr.getAccession());
-		
-		System.out.println("xrefs by annotations  : " + xrefs1.size());
-		System.out.println("xrefs by identifiers  : " + xrefs2.size());
-		System.out.println("xrefs by entry        : " + xrefs3.size());
-		System.out.println("xrefs by interactions : " + xrefs4.size());
-		System.out.println("xrefs by peptides     : " + xrefs5.size());
-		System.out.println("xrefs all             : " + xrefs.size());
-		
-		if(! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName);
+		// get and attach the properties to the xrefs
+		if (! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName);
 
 		return xrefList;
 	}
