@@ -145,7 +145,13 @@ public class FluentEntryService {
 
 		public FluentEntry withPeptideMappings() {
 			Long masterId = masterIdentifierService.findIdByUniqueName(entryName);
-			entry.setPeptideMappings(peptideMappingService.findPeptideMappingByMasterId(masterId));
+			entry.setPeptideMappings(peptideMappingService.findNaturalPeptideMappingByMasterId(masterId));
+			return this;
+		}
+
+		public FluentEntry withSrmPeptideMappings() {
+			Long masterId = masterIdentifierService.findIdByUniqueName(entryName);
+			entry.setSrmPeptideMappings(peptideMappingService.findSyntheticPeptideMappingByMasterId(masterId));
 			return this;
 		}
 
@@ -156,7 +162,7 @@ public class FluentEntryService {
 
 		public FluentEntry withEverything() {
 			return this.withOverview().withGeneralAnnotations().withPublications().withXrefs().withKeywords().withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
-					.withTargetIsoforms().withAntibodyMappings().withPeptideMappings().withExperimentalContexts();
+					.withTargetIsoforms().withAntibodyMappings().withPeptideMappings().withSrmPeptideMappings().withExperimentalContexts();
 		}
 
 		public Entry getEntry() {
@@ -198,6 +204,8 @@ public class FluentEntryService {
 					return this.withAntibodyMappings().getEntry();
 				case PEPTIDE_MAPPINGS:
 					return this.withPeptideMappings().getEntry();
+				case SRM_PEPTIDE_MAPPINGS:
+					return this.withSrmPeptideMappings().getEntry();
 
 				default:
 					throw new NextProtException(template + " export xml template case not found");

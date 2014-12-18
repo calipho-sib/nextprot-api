@@ -27,6 +27,8 @@ public class Entry {
 	private List<Annotation> annotations;
 
 	private List<PeptideMapping> peptideMappings;
+	
+	private List<PeptideMapping> srmPeptideMappings;
 
 	private List<AntibodyMapping> antibodyMappings;
 
@@ -212,5 +214,13 @@ public class Entry {
 
 	public List<Terminology> getEnzymes(){
 		return enzymes;
+	}
+
+	public List<PeptideMapping> getSrmPeptideMappings() {
+		return srmPeptideMappings;
+	}
+
+	public void setSrmPeptideMappings(List<PeptideMapping> srmPeptideMappings) {
+		this.srmPeptideMappings = srmPeptideMappings;
 	}
 }

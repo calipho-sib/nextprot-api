@@ -29,9 +29,41 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	
 	@Override
 	@Cacheable("peptides")
-	public List<PeptideMapping> findPeptideMappingByMasterId(Long id) {
+	public List<PeptideMapping> findNaturalPeptideMappingByMasterId(Long id) {
+		return privateFindPeptideMappingByMasterId(id, true);
+	}
+	
+	@Override
+	@Cacheable("srm-peptides")
+	public List<PeptideMapping> findSyntheticPeptideMappingByMasterId(Long id) {
+		return privateFindPeptideMappingByMasterId(id, false);
+	}	
+	
+	@Override
+	public List<PeptideMapping> findNaturalPeptideMappingByMasterUniqueName(String uniqueName) {
+		return privateFindPeptideMappingByMasterUniqueName(uniqueName, true);
+	}
+	
+	@Override
+	public List<PeptideMapping> findSyntheticPeptideMappingByMasterUniqueName(String uniqueName) {
+		return privateFindPeptideMappingByMasterUniqueName(uniqueName, false);
+	}
 		
-		List<PeptideMapping> allMapping = this.peptideMappingDao.findAllPeptidesByMasterId(id);
+	@Override
+	public List<String> findAllPeptideNamesByMasterId(String uniqueName) {
+		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
+		List<PeptideMapping> allMapping = this.peptideMappingDao.findAllPeptidesByMasterId(masterId);
+		Set<String> names = new HashSet<String>(); 
+		for (PeptideMapping map: allMapping) names.add(map.getPeptideUniqueName());
+		return new ArrayList<String>(names);
+	}
+
+	
+	private List<PeptideMapping> privateFindPeptideMappingByMasterId(Long id, boolean isNatural) {
+		
+		List<PeptideMapping> allMapping = isNatural ? 
+			this.peptideMappingDao.findNaturalPeptidesByMasterId(id) :
+			this.peptideMappingDao.findSyntheticPeptidesByMasterId(id) ;
 		
 		// key=peptide,value=mapping with 1-n isospecs, 1-n evidences, 1-n properties
 		Map<String, PeptideMapping> mergeMap = new HashMap<String, PeptideMapping>();
@@ -55,7 +87,9 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			}
 
 			// attach evidences to peptide mappings
-			List<PeptideEvidence> evidences = this.peptideMappingDao.findAllPeptideEvidences(peptideNames);
+			List<PeptideEvidence> evidences = isNatural ?
+				this.peptideMappingDao.findNaturalPeptideEvidences(peptideNames) :
+				this.peptideMappingDao.findSyntheticPeptideEvidences(peptideNames);
 			for (PeptideEvidence evidence : evidences)
 				mergeMap.get(evidence.getPeptideName()).addEvidence(evidence);
 			
@@ -67,22 +101,11 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		
 		return new ArrayList<PeptideMapping>(mergeMap.values());
 	}
-	
 
-	@Override
-	public List<String> findPeptideNamesByMasterId(String uniqueName) {
-		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		List<PeptideMapping> allMapping = this.peptideMappingDao.findAllPeptidesByMasterId(masterId);
-		Set<String> names = new HashSet<String>(); 
-		for (PeptideMapping map: allMapping) names.add(map.getPeptideUniqueName());
-		return new ArrayList<String>(names);
-	}
 	
-	
-	@Override
-	public List<PeptideMapping> findPeptideMappingByMasterUniqueName(String uniqueName) {
+	private List<PeptideMapping> privateFindPeptideMappingByMasterUniqueName(String uniqueName, boolean isNatural) {
 		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		return findPeptideMappingByMasterId(masterId);
+		return privateFindPeptideMappingByMasterId(masterId, isNatural);
 	}
 
 }

@@ -6,8 +6,6 @@ import java.util.List;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.PeptideMapping;
-import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 public class NXVelocityUtils {
@@ -46,6 +44,7 @@ public class NXVelocityUtils {
 	
 	public boolean hasMappings(Entry entry) {
 		if (entry.getPeptideMappings().size()>0) return true;
+		if (entry.getSrmPeptideMappings().size()>0) return true;
 		if (entry.getAntibodyMappings().size()>0) return true;
 		if (getAnnotationsByCategory(entry, AnnotationApiModel.PDB_MAPPING).size()>0) return true;
 		return false;

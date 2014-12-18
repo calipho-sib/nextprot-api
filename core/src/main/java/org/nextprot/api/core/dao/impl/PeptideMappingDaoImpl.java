@@ -2,7 +2,6 @@ package org.nextprot.api.core.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -73,16 +72,15 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 	
 	private List<PeptideEvidence> privateFindPeptideEvidences(List<String> names, boolean withNatural, boolean withSynthetic) {
 
-		Map<String,Object> params = new HashMap<String,Object>();
-		params.put("names", names);
-		String datasourceClause = " ";
+		String datasourceClause;
 		if (withNatural && withSynthetic) 	{ datasourceClause=" true ";  
 		} else if (withNatural) 			{ datasourceClause=" ds.cv_name != 'SRMAtlas' ";  			
 		} else if (withSynthetic) 			{ datasourceClause=" ds.cv_name  = 'SRMAtlas' ";  
 		} else 								{ datasourceClause=" false ";  
 		}
 		String sql = sqlDictionary.getSQLQuery("peptide-evidences-by-peptide-names").replace(":datasourceClause", datasourceClause);
-		System.out.println(sql);
+		Map<String,Object> params = new HashMap<String,Object>();
+		params.put("names", names);
 		SqlParameterSource namedParams = new MapSqlParameterSource(params);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParams, new RowMapper<PeptideEvidence>() {
 			@Override

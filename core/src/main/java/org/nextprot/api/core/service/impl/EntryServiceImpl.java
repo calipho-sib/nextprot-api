@@ -59,7 +59,8 @@ public class EntryServiceImpl implements EntryService {
 		entry.setGenomicMappings(genomicMappingService.findGenomicMappingsByEntryName(entryName));
 		entry.setInteractions(interactionService.findInteractionsByEntry(entryName));
 		entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entryName));
-		entry.setPeptideMappings(this.peptideMappingService.findPeptideMappingByMasterId(masterId));
+		entry.setPeptideMappings(this.peptideMappingService.findNaturalPeptideMappingByMasterId(masterId));
+		entry.setSrmPeptideMappings(this.peptideMappingService.findSyntheticPeptideMappingByMasterId(masterId));
 		entry.setAntibodyMappings(this.antibodyMappingService.findAntibodyMappingByMasterId(masterId));
 		entry.setAnnotations(this.annotationService.findAnnotations(entryName));
 		entry.setExperimentalContexts(this.expContextService.findExperimentalContextsByEntryName(entryName));

@@ -79,9 +79,9 @@ public class DbXrefServiceImpl implements DbXrefService {
 			}
 		};
 
-		// now merge xrefs associtated to the entry by annot, interact, mappings, etc. in the tree set 
+		// now merge xrefs associated to the entry by annot, interact, mappings, etc. in the tree set 
 		Set<DbXref> xrefs = new TreeSet<DbXref>(comparator);
-		List<String> peptideNames = this.peptideMappingService.findPeptideNamesByMasterId(entryName);
+		List<String> peptideNames = this.peptideMappingService.findAllPeptideNamesByMasterId(entryName);
 		xrefs.addAll(peptideNames.size()>0 ? this.dbXRefDao.findPeptideXrefs(peptideNames) :  new HashSet<DbXref>());
 		xrefs.addAll(this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryAttachedXrefs(entryName));

@@ -104,6 +104,8 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "protein-sequence-list";
 	}
 	
@@ -115,6 +117,8 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setKeywords(keywords);
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "keyword-list";
 	}
 
@@ -125,6 +129,7 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setOverview(overviewService.findOverviewByEntry(entryName));
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "overview";
 	}
@@ -138,6 +143,7 @@ public class EntryController {
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		entry.setAntibodyMappings(mapping);
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "antibody-list";
 	}
@@ -146,13 +152,28 @@ public class EntryController {
 	@RequestMapping("/entry/{entry}/peptide")
 	public String getPeptideMapping(
 			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		List<PeptideMapping> mapping = this.peptideService.findPeptideMappingByMasterUniqueName(entryName);
+		List<PeptideMapping> mapping = this.peptideService.findNaturalPeptideMappingByMasterUniqueName(entryName);
 		Entry entry = new Entry(entryName);
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		entry.setPeptideMappings(mapping);
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "peptide-list";
+	}
+
+	@ApiMethod(path = "/entry/{entry}/srm-peptide", verb = ApiVerb.GET, description = "Gets the list of SRM peptides for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
+	@RequestMapping("/entry/{entry}/srm-peptide")
+	public String getSrmPeptideMapping(
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+		List<PeptideMapping> mapping = this.peptideService.findSyntheticPeptideMappingByMasterUniqueName(entryName);
+		Entry entry = new Entry(entryName);
+		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
+		entry.setPeptideMappings(mapping);
+		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
+		return "srm-peptide-list";
 	}
 
 	@ApiMethod(path = "/entry/{entry}/identifier", verb = ApiVerb.GET, description = "Gets the list of identifiers for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
@@ -163,6 +184,8 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setIdentifiers(identifiers);
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "identifier-list";
 	}
 	
@@ -173,6 +196,8 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "chromosomal-location-list";
 	}
 
@@ -183,6 +208,8 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "genomic-mapping-list";
 	}
 
@@ -194,6 +221,8 @@ public class EntryController {
 		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
 		dummy.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "genomic";
 	}
 
@@ -205,6 +234,8 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setPublications(publications);
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "publication-list";
 	}
 	
@@ -217,6 +248,8 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setXrefs(xrefs);
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "xref-list";
 	}
 
@@ -229,9 +262,10 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setInteractions(interactionService.findInteractionsByEntry(entryName));
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "interaction-list";
 	}
-
 
 	@ApiMethod(path = "/entry/{entry}/annotation", verb = ApiVerb.GET, description = "Gets the annotations of a given entry grouped by category", produces = { MediaType.APPLICATION_XML_VALUE})
 	@RequestMapping("/entry/{entry}/annotation")
@@ -242,6 +276,7 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setAnnotations(annotations);
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "annotation-list";
 	}
@@ -252,6 +287,7 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setExperimentalContexts(this.expContextService.findExperimentalContextsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "experimental-context-list";
 	}
