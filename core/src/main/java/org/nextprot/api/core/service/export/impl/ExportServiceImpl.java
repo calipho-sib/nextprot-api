@@ -164,7 +164,7 @@ public class ExportServiceImpl implements ExportService {
 				context = new VelocityContext();
 				context.put("entry", entryService.findEntry(entryName));
 				context.put("StringUtils", StringUtils.class);
-				context.put("NXUtils", NXVelocityUtils.class);
+				context.put("NXUtils", new NXVelocityUtils());
 			
 
 				FileWriter fw = new FileWriter(filename, true);
