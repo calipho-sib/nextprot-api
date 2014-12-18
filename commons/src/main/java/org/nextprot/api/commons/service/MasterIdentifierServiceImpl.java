@@ -1,10 +1,9 @@
-package org.nextprot.api.core.service.impl;
+package org.nextprot.api.commons.service;
 
 import java.util.List;
 import java.util.Set;
 
-import org.nextprot.api.core.dao.MasterIdentifierDao;
-import org.nextprot.api.core.service.MasterIdentifierService;
+import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;

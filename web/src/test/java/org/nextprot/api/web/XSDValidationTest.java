@@ -19,7 +19,7 @@ import javax.xml.validation.Validator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.core.dao.MasterIdentifierDao;
+import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.service.export.ExportService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.web.dbunit.base.mvc.MVCBaseIntegrationTest;
