@@ -32,26 +32,25 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 		NPreconditions.checkNotNull(userProteinList, "The user protein list should not be null");
 		NPreconditions.checkTrue(!userProteinList.isPersisted(), "The user protein list should be new");
 
-		long id = this.proteinListDao.createUserProteinList(userProteinList);
+		long id = proteinListDao.createUserProteinList(userProteinList);
 		userProteinList.setId(id);
-	
+
 		Set<String> accessions = userProteinList.getAccessionNumbers();
-		if (accessions != null && accessions.size() > 0) {
-			this.proteinListDao.createUserProteinListAccessions(id, accessions);
+		if (accessions != null && !accessions.isEmpty()) {
+			proteinListDao.createUserProteinListAccessions(id, accessions);
 		}
+
 		return userProteinList;
 	}
 
-	
-
 	@Override
 	public void deleteUserProteinList(UserProteinList proteinList) {
-		this.proteinListDao.deleteUserProteinList(proteinList.getId());
+		proteinListDao.deleteUserProteinList(proteinList.getId());
 	}
 
 	@Override
 	public UserProteinList getUserProteinListById(long listId) {
-		return this.proteinListDao.getUserProteinListById(listId);
+		return proteinListDao.getUserProteinListById(listId);
 	}
 
 	@Override
@@ -61,17 +60,23 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 	@Override
 	public UserProteinList updateUserProteinList(UserProteinList proteinList) {
+
 		proteinListDao.updateUserProteinList(proteinList);
+
+		// TODO: protein item list should be also updated
+		// TODO: proposal: create another sql query that delete all items of the list id
+		proteinListDao.deleteProteinListItems(proteinList.getId(), proteinListDao.getAccessionsByListId(proteinList.getId()));
+		proteinListDao.createUserProteinListAccessions(proteinList.getId(), proteinList.getAccessionNumbers());
+
 		return proteinListDao.getUserProteinListById(proteinList.getId());
 	}
 
 	@Override
-	public UserProteinList combine(String name, String description, String username, String list1, String list2, Operations op) {
+	public UserProteinList combine(String name, String description, String username, String list1, String list2, Operator op) {
 
 		UserProteinList l1 = proteinListDao.getUserProteinListByName(username, list1);
 		UserProteinList l2 = proteinListDao.getUserProteinListByName(username, list2);
 
 		return UserProteinListUtils.combine(l1, l2, op, name, description);
 	}
-
 }

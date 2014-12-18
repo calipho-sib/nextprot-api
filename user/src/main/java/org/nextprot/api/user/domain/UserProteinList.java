@@ -76,7 +76,7 @@ public class UserProteinList implements UserResource {
 
 	@Override
 	public boolean isPersisted() {
-		return false;
+		return id != 0;
 	}
 
 	public void setOwnerId(long ownerId) { this.ownerId = ownerId; }

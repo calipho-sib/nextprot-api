@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
 import org.nextprot.api.commons.exception.SearchQueryException;
@@ -14,12 +13,10 @@ import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.when;
 
 public class UserProteinListServiceTest extends AbstractUnitBaseTest {
@@ -45,15 +42,13 @@ public class UserProteinListServiceTest extends AbstractUnitBaseTest {
 	@Test
 	public void testCreateProteinList() {
 
-		UserProteinList proteinList = mockSpongeBobProteinList("awesome", Sets.newHashSet("NX_P123"));
+		final UserProteinList proteinList = createUserProteinList("awesome", Sets.newHashSet("NX_P123"));
 
-		when(dao.createUserProteinList(isA(UserProteinList.class))).thenReturn(10L);
-		when(dao.getUserProteinListById(10L)).thenReturn(createUserProteinList(10L, "awesome", Sets.newHashSet("NX_P123")));
+		dressMockedUserProteinListDao(proteinList, 10);
 
 		UserProteinList created = proteinListService.createUserProteinList(proteinList);
-		long id = created.getId();
 
-		assertEquals(10, id);
+		assertEquals(10, created.getId());
 		assertEquals("awesome", created.getName());
 		assertEquals(Sets.newHashSet("NX_P123"), created.getAccessionNumbers());
 	}
@@ -72,16 +67,19 @@ public class UserProteinListServiceTest extends AbstractUnitBaseTest {
 		assertEquals("NX_P06213", docs.get(1).getProperties().get("id"));*/
 	}
 
-	@Test
+	/*@Test
 	public void testAddAccessions() {
 
 		Set<String> s1 = new HashSet<String>();
 		s1.add("NX_P123");
 		s1.add("NX_P456");
+
 		UserProteinList l1 = proteinListService.createUserProteinList(mockSpongeBobProteinList("cool1", s1));
 
 		Set<String> accs = new HashSet<String>();
-		this.proteinListService.addAccessionNumbers(l1.getId(), accs);
+		s1.add("NX_P124");
+
+		this.proteinListService.updateUserProteinList(l1.getId(), accs);
 	}
 
 	@Test
@@ -103,58 +101,30 @@ public class UserProteinListServiceTest extends AbstractUnitBaseTest {
 		assertEquals("cool1", l1.getName());
 		assertEquals(1, l1.getAccessionNumbers().size());
 
-	}
+	}*/
 
-	@Test
-	public void testCombine() {
-
-		String TEST_USER = "asfas";
-
-		Set<String> s1 = new HashSet<String>();
-		s1.add("NX_P123");
-		s1.add("NX_P456");
-		UserProteinList l1 = this.proteinListService.createUserProteinList(mockSpongeBobProteinList("cool1", s1));
-
-		Set<String> s2 = new HashSet<String>();
-		s2.add("NX_P123");
-		s2.add("NX_P321");
-		UserProteinList l2 = this.proteinListService.createUserProteinList(mockSpongeBobProteinList("cool2", s2));
-
-		UserProteinList l3 = this.proteinListService.combine("coolio", null, TEST_USER, l1.getName(), l2.getName(), UserProteinListService.Operations.OR);
-		UserProteinList l4 = this.proteinListService.combine("homie", null, TEST_USER, l1.getName(), l2.getName(), UserProteinListService.Operations.AND);
-		UserProteinList l5 = this.proteinListService.combine("rap", null, TEST_USER, l2.getName(), l1.getName(), UserProteinListService.Operations.NOT_IN);
-
-		assertEquals("coolio", l3.getName());
-		assertEquals(3, l3.getAccessionNumbers().size());
-
-		assertEquals("homie", l4.getName());
-		assertEquals(1, l4.getAccessionNumbers().size());
-		assertEquals("NX_P123", l4.getAccessionNumbers().iterator().next());
-
-		assertEquals("rap", l5.getName());
-		assertEquals(1, l5.getAccessionNumbers().size());
-		assertEquals("NX_P321", l5.getAccessionNumbers().iterator().next());
-	}
-
-	private static UserProteinList mockSpongeBobProteinList(String name, Set<String> accessions) {
-
-		UserProteinList ul = Mockito.mock(UserProteinList.class);
-
-		when(ul.getName()).thenReturn(name);
-		when(ul.getAccessionNumbers()).thenReturn(accessions);
-		when(ul.getOwnerName()).thenReturn("spongebob");
-
-		return ul;
-	}
-
-	private UserProteinList createUserProteinList(long id, String name, Set<String> accessions) {
+	public static UserProteinList createUserProteinList(String name, Set<String> accessions) {
 
 		UserProteinList ul = new UserProteinList();
 
-		ul.setId(id);
 		ul.setName(name);
 		ul.setAccessions(accessions);
 
 		return ul;
+	}
+
+	private void dressMockedUserProteinListDao(final UserProteinList proteinList, final long serialId) {
+
+		when(dao.createUserProteinList(proteinList)).thenReturn(serialId);
+		/*when(dao.createUserProteinList(proteinList)).thenAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+
+				proteinList.setId(serialId);
+
+				return serialId;
+			}
+		});*/
+		when(dao.getUserProteinListById(serialId)).thenReturn(proteinList);
 	}
 }

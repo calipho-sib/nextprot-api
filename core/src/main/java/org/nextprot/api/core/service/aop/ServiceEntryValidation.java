@@ -10,7 +10,6 @@ import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
@@ -33,7 +32,7 @@ public class ServiceEntryValidation {
 	private MasterIdentifierService masterIdentifierService;
 	private Set<String> uniqueNames;
 
-	private synchronized  Set<String>  getUniqueNames (){
+	private synchronized  Set<String> getUniqueNames (){
 		if(uniqueNames == null){
 			LOGGER.info("Loading neXtProt sequence unique names...");
 			uniqueNames = new HashSet<String>(masterIdentifierService.findUniqueNames());	
