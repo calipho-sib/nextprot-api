@@ -103,7 +103,7 @@ public class UserProteinListUtils {
 					trimmed = "NX_" + trimmed;
 
 				if (!validAccessionNumbers.contains(trimmed))
-					throw new EntryNotFoundException("at line " + ln + ": entry " + trimmed + " was not found");
+					throw new EntryNotFoundException("at line " + (ln + 1) +  ": entry " + trimmed + " was not found");
 
 				accessions.add(trimmed);
 			}

@@ -57,16 +57,8 @@ public class UserListController {
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
 	@ResponseBody
 	public UserProteinList createList(@PathVariable("username") String username,
-			@RequestBody UserProteinList proteinList,
-			@RequestParam("file") MultipartFile file, Model model) {
-		
-
-		if(file != null){
-			Set<String> acs = UserProteinListUtils.parseAccessionNumbers(file, masterIdentifierService.findUniqueNames());
-			proteinList.setAccessions(acs);
+			@RequestBody UserProteinList proteinList, Model model) {
 			return this.proteinListService.createUserProteinList(proteinList);
-			
-		}else return this.proteinListService.createUserProteinList(proteinList);
 	}
 
 	@RequestMapping(value = "/user/{username}/protein-list/{id}", method = { RequestMethod.PUT })
@@ -109,12 +101,12 @@ public class UserListController {
 	@ResponseStatus(HttpStatus.OK)
 	public void upload(@RequestParam("file") MultipartFile file,
 			@PathVariable("username") String username, 
-					@RequestParam(value = "id", required = true) long listId) throws IOException {
+			@PathVariable(value = "id") long listId) throws IOException {
 
 		UserProteinList pl = proteinListService.getUserProteinListById(listId);
 		Set<String> acs = UserProteinListUtils.parseAccessionNumbers(file, masterIdentifierService.findUniqueNames());
 		pl.addAccessions(acs);
-
+		
 		this.proteinListService.updateUserProteinList(pl);
 
 	}
