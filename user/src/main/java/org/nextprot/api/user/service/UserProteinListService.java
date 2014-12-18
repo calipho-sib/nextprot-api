@@ -1,12 +1,12 @@
 package org.nextprot.api.user.service;
 
-import java.util.List;
-
 import org.nextprot.api.user.domain.UserProteinList;
+
+import java.util.List;
 
 public interface UserProteinListService {
 
-	public enum Operations {
+	public enum Operator {
 		AND, OR, NOT_IN
 	}
 
@@ -22,5 +22,5 @@ public interface UserProteinListService {
 
 	void deleteUserProteinList(UserProteinList proteinList);
 
-	UserProteinList combine(String name, String description, String username, String list1, String list2, Operations operation);
+	UserProteinList combine(String name, String description, String username, String list1, String list2, Operator operator);
 }
