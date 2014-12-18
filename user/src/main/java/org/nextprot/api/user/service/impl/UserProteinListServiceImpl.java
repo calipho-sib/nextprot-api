@@ -48,6 +48,7 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 		proteinListDao.deleteUserProteinList(proteinList.getId());
 	}
 
+
 	@Override
 	public UserProteinList getUserProteinListById(long listId) {
 		return proteinListDao.getUserProteinListById(listId);
@@ -59,13 +60,13 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	}
 
 	@Override
+	@Transactional
 	public UserProteinList updateUserProteinList(UserProteinList proteinList) {
 
 		proteinListDao.updateUserProteinList(proteinList);
 
-		// TODO: protein item list should be also updated
-		// TODO: proposal: create another sql query that delete all items of the list id
-		proteinListDao.deleteProteinListItems(proteinList.getId(), proteinListDao.getAccessionsByListId(proteinList.getId()));
+		//Easy way of doing it
+		proteinListDao.deleteAllProteinListItems(proteinList.getId());
 		proteinListDao.createUserProteinListAccessions(proteinList.getId(), proteinList.getAccessionNumbers());
 
 		return proteinListDao.getUserProteinListById(proteinList.getId());

@@ -1,23 +1,31 @@
 package org.nextprot.api.user.controller;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserProteinListService.Operator;
 import org.nextprot.api.user.service.UserService;
+import org.nextprot.api.user.utils.UserProteinListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
@@ -27,6 +35,9 @@ public class UserListController {
 	private final Log Logger = LogFactory.getLog(UserListController.class);
 	@Autowired
 	private UserProteinListService proteinListService;
+
+	@Autowired
+	private MasterIdentifierService masterIdentifierService;
 
 	@Autowired
 	private UserService userService;
@@ -45,8 +56,17 @@ public class UserListController {
 
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
 	@ResponseBody
-	public UserProteinList createList(@PathVariable("username") String username, @RequestBody UserProteinList proteinList, Model model) {
-		return this.proteinListService.createUserProteinList(proteinList);
+	public UserProteinList createList(@PathVariable("username") String username,
+			@RequestBody UserProteinList proteinList,
+			@RequestParam("file") MultipartFile file, Model model) {
+		
+
+		if(file != null){
+			Set<String> acs = UserProteinListUtils.parseAccessionNumbers(file, masterIdentifierService.findUniqueNames());
+			proteinList.setAccessions(acs);
+			return this.proteinListService.createUserProteinList(proteinList);
+			
+		}else return this.proteinListService.createUserProteinList(proteinList);
 	}
 
 	@RequestMapping(value = "/user/{username}/protein-list/{id}", method = { RequestMethod.PUT })
@@ -85,12 +105,17 @@ public class UserListController {
 		return proteinListService.createUserProteinList(combinedList);
 	}
 
-	@RequestMapping(value = "/protein-list/upload", method = RequestMethod.POST)
+	@RequestMapping(value = "/user/{username}/protein-list/{id}/upload", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
-	public void upload(@RequestParam("file") MultipartFile file, @RequestParam(value = "id", required = true) UserProteinList proteinList) throws IOException {
+	public void upload(@RequestParam("file") MultipartFile file,
+			@PathVariable("username") String username, 
+					@RequestParam(value = "id", required = true) long listId) throws IOException {
 
+		UserProteinList pl = proteinListService.getUserProteinListById(listId);
+		Set<String> acs = UserProteinListUtils.parseAccessionNumbers(file, masterIdentifierService.findUniqueNames());
+		pl.addAccessions(acs);
 
-		UserProteinList list = this.proteinListService.createUserProteinList(proteinList);
+		this.proteinListService.updateUserProteinList(pl);
 
 	}
 
