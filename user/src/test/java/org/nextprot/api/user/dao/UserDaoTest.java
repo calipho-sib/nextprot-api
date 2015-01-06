@@ -2,6 +2,7 @@ package org.nextprot.api.user.dao;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
@@ -10,13 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 //@TransactionConfiguration(defaultRollback = false)
 @DatabaseSetup(value = "UserDaoTest.xml", type = DatabaseOperation.INSERT)
