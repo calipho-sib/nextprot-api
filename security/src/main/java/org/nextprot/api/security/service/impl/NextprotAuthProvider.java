@@ -2,8 +2,10 @@ package org.nextprot.api.security.service.impl;
 
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.spring.security.auth0.Auth0JWTToken;
+import com.auth0.spring.security.auth0.Auth0TokenException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.security.service.JWTCodec;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +31,9 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	@Autowired
+	private JWTCodec<Map<String, Object>> codec;
+
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
 		String token = ((Auth0JWTToken) authentication).getJwt();
@@ -51,7 +56,23 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 				
 				}else return null;
 				
-			} /*//TODO add the application here or as another provider else if (map.containsKey("app_id")) {
+			} else if (map.containsKey("payload")) {
+
+				Map<String, Object> payload = codec.decodeJWT(token);
+				String username = (String) payload.get("email");
+
+				if (username != null) {
+					userDetails = userDetailsService.loadUserByUsername(username);
+					authentication.setAuthenticated(true);
+
+					return createSuccessAuthentication(userDetails, map);
+
+				} else {
+					return null;
+				}
+			} else throw new SecurityException("client id not found");
+
+			/*//TODO add the application here or as another provider else if (map.containsKey("app_id")) {
 				long appId = (Long) map.get("app_id");
 				UserApplication userApp = userApplicationService.getUserApplication(appId);
 				if (userApp.hasUserDataAccess()) {
@@ -62,31 +83,22 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 					}
 					userDetails = userDetailsService.loadUserByUsername(userApp.getOwner());
 				}
-			}*/ else throw new SecurityException("client id not found");
-
-			
-			
-
+			}*/
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
 			this.logger.error("InvalidKeyException thrown while decoding JWT token " + e.getLocalizedMessage());
-			throw new SecurityException(e);
+			throw new Auth0TokenException(e);
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
 			this.logger.error("NoSuchAlgorithmException thrown while decoding JWT token " + e.getLocalizedMessage());
-			throw new SecurityException(e);
+			throw new Auth0TokenException(e);
 		} catch (IllegalStateException e) {
-			e.printStackTrace();
 			this.logger.error("IllegalStateException thrown while decoding JWT token " + e.getLocalizedMessage());
-			throw new SecurityException(e);
+			throw new Auth0TokenException(e);
 		} catch (SignatureException e) {
-			e.printStackTrace();
 			this.logger.error("SignatureException thrown while decoding JWT token " + e.getLocalizedMessage());
-			throw new SecurityException(e);
+			throw new Auth0TokenException(e);
 		} catch (IOException e) {
-			e.printStackTrace();
 			this.logger.error("IOException thrown while decoding JWT token " + e.getLocalizedMessage());
-			throw new SecurityException(e);
+			throw new Auth0TokenException("invalid token", e);
 		}
 	}
 

@@ -1,7 +1,5 @@
 package org.nextprot.api.web.dbunit.base.mvc;
 
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-
 import org.junit.Before;
 import org.nextprot.api.commons.dbunit.AbstractIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +9,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
 /**
  * Base class for dbunit tests using the spring-test-dbunit framework http://springtestdbunit.github.io/
  * Transactions are rollback and dev profile is activated by default
  * Dev profile includes database connection to the dev database
  * 
- * @RunWith(SpringJUnit4ClassRunner.class)
- * @ContextConfiguration("classpath:api-servlet-test.xml")
- * @ActiveProfiles("test")
  * @author dteixeira
  */
 

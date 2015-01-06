@@ -19,14 +19,10 @@ import org.springframework.test.web.servlet.ResultActions;
  * Transactions are rollback and dev profile is activated by default
  * Dev profile includes database connection to the dev database
  * 
- * @RunWith(SpringJUnit4ClassRunner.class)
- * @ContextConfiguration("classpath:api-servlet-test.xml")
- * @ActiveProfiles("test")
  * @author dteixeira
  */
 
 public abstract class MVCBaseSecurityIntegrationTest extends MVCBaseIntegrationTest {
-	
 
 	@Autowired
 	protected FilterChainProxy springSecurityFilterChain;
@@ -34,12 +30,6 @@ public abstract class MVCBaseSecurityIntegrationTest extends MVCBaseIntegrationT
 	@Autowired
 	private JWTCodec<Object> codec;
 
-
-	@Before
-	public void setup() {
-		this.mockMvc = webAppContextSetup(this.wac).addFilters(this.springSecurityFilterChain).build();
-	}
-	
 	protected String generateTokenWithExpirationDate(int value, TimeUnit time, List<String> roles) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("email", "auth0@test.com");
