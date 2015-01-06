@@ -1,11 +1,5 @@
 package org.nextprot.api.commons.constants;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.nextprot.api.commons.utils.StringUtils;
 
 /**
  * Description: Used to turn some XRefs into Annotations<br> * 

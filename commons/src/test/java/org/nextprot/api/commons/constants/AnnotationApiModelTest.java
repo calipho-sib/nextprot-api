@@ -21,6 +21,16 @@ public class AnnotationApiModelTest extends TestCase {
 		assertNull(AnnotationApiModel.DOMAIN_INFO.getProperties());
 	}
 
+	@Test
+	public void testIsLeaf() {
+		assertEquals(true,AnnotationApiModel.PDB_MAPPING.isLeaf());
+		assertEquals(false,AnnotationApiModel.GENERAL_ANNOTATION.isLeaf());
+		assertEquals(true,AnnotationApiModel.FUNCTION_INFO.isLeaf());
+		assertEquals(false,AnnotationApiModel.GENERIC_EXPRESSION.isLeaf());
+		
+	}
+	
+	
 	
 	@Test
 	public void testUnknownAnnotationTypeName() {

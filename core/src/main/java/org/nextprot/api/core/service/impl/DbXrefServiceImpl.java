@@ -1,10 +1,12 @@
 package org.nextprot.api.core.service.impl;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
@@ -12,6 +14,7 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.PeptideMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -26,7 +29,8 @@ import com.google.common.collect.Multimaps;
 @Lazy
 @Service
 public class DbXrefServiceImpl implements DbXrefService {
-	@Autowired DbXrefDao dbXRefDao;
+	@Autowired private DbXrefDao dbXRefDao;
+	@Autowired private PeptideMappingService peptideMappingService;
 	
 	private Set<String> dbXrefPropertyFilter;
 	
@@ -64,14 +68,36 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Async
 	@Override
 	@Cacheable("xrefs")
-	public List<DbXref> findDbXrefsByMaster(String uniqueName) {
+	public List<DbXref> findDbXrefsByMaster(String entryName) {
 		
-		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsByMaster(uniqueName);
+		// build a comparator for the tree set: order by database name, accession, case insensitive
+		Comparator<DbXref> comparator = new Comparator<DbXref>() {
+			public int compare(DbXref a, DbXref b) {
+				int cmp1 = a.getDatabaseName().toUpperCase().compareTo(b.getDatabaseName().toUpperCase());
+				if (cmp1!=0) return cmp1;
+				return a.getAccession().toUpperCase().compareTo(b.getAccession().toUpperCase());
+			}
+		};
+
+		// now merge xrefs associated to the entry by annot, interact, mappings, etc. in the tree set 
+		Set<DbXref> xrefs = new TreeSet<DbXref>(comparator);
+		List<String> peptideNames = this.peptideMappingService.findAllPeptideNamesByMasterId(entryName);
+		xrefs.addAll(peptideNames.size()>0 ? this.dbXRefDao.findPeptideXrefs(peptideNames) :  new HashSet<DbXref>());
+		xrefs.addAll(this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
+		xrefs.addAll(this.dbXRefDao.findEntryAttachedXrefs(entryName));
+		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
+		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));
 		
-		if(! xrefs.isEmpty())
-			return getXrefProperties(xrefs, uniqueName);
-		return xrefs;
+		// turn the set into a list to match the signature expected elsewhere
+		List<DbXref> xrefList = new ArrayList<DbXref>(xrefs);
+		
+		// get and attach the properties to the xrefs
+		if (! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName);
+
+		return xrefList;
 	}
+	
+	
 	
 	@Override
 	public List<DbXref> findDbXrefsByEntry(String uniqueName) {
@@ -81,8 +107,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Override
 	public List<DbXref> findDbXrefsAsAnnotByEntry(String uniqueName) {
 		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
-		if(! xrefs.isEmpty())
-			return getXrefProperties(xrefs, uniqueName);
+		if(! xrefs.isEmpty()) attachPropertiesToXrefs(xrefs, uniqueName);
 		return xrefs;
 	}
 
@@ -96,7 +121,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	 * @param xrefs
 	 * @return
 	 */
-	private List<DbXref> getXrefProperties(List<DbXref> xrefs, String uniqueName) {
+	private void attachPropertiesToXrefs(List<DbXref> xrefs, String uniqueName) {
 		List<Long> xrefIds = Lists.transform(xrefs, new Function<DbXref, Long>() {
 			public Long apply(DbXref xref) {
 				return xref.getDbXrefId();
@@ -123,7 +148,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 			xref.setResolvedUrl(resolveLinkTarget(uniqueName, xref));
 		}
 		
-		return xrefs;
 	}
 
 	

@@ -1,0 +1,5 @@
+<annotation-category category="binary-interaction" hierarchy="interaction;general-annotation">
+#foreach($interaction in $entry.interactions)
+#parse("interaction.xml.vm")
+#end
+</annotation-category>

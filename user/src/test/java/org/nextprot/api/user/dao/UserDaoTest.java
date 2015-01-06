@@ -15,6 +15,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 //@TransactionConfiguration(defaultRollback = false)
 @DatabaseSetup(value = "UserDaoTest.xml", type = DatabaseOperation.INSERT)
 public class UserDaoTest extends UserApplicationBaseTest {

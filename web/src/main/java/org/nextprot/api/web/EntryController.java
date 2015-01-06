@@ -33,6 +33,7 @@ import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -64,9 +65,9 @@ public class EntryController {
 	@Autowired private AuthorService authorService;
 	@Autowired private DbXrefService xrefService;
 	@Autowired private InteractionService interactionService;
-	@Autowired private ExperimentalContextService experimentalContextService;
+	@Autowired private ExperimentalContextService expContextService;
 
-	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides and the list of the antibodies.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
+	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides, the list of the antibodies and the experimental contexts", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
 	public String exportEntry(
 			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"})
@@ -75,6 +76,8 @@ public class EntryController {
 		proteinList.add(this.entryService.findEntry(entryName));
 		model.addAttribute("entryList", proteinList);
 		model.addAttribute("StringUtils", StringUtils.class);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		
 		return "exportEntries";
 	}
 	
@@ -87,8 +90,8 @@ public class EntryController {
 		List<Entry> proteinList = new ArrayList<Entry>();
 		proteinList.add(dummy);
 		model.addAttribute("entryList", proteinList);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
-
 		return "exportEntries";
 		
 	}
@@ -101,6 +104,8 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "protein-sequence-list";
 	}
 	
@@ -112,6 +117,8 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setKeywords(keywords);
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "keyword-list";
 	}
 
@@ -122,6 +129,7 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setOverview(overviewService.findOverviewByEntry(entryName));
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "overview";
 	}
@@ -135,6 +143,7 @@ public class EntryController {
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		entry.setAntibodyMappings(mapping);
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "antibody-list";
 	}
@@ -143,13 +152,28 @@ public class EntryController {
 	@RequestMapping("/entry/{entry}/peptide")
 	public String getPeptideMapping(
 			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		List<PeptideMapping> mapping = this.peptideService.findPeptideMappingByUniqueName(entryName);
+		List<PeptideMapping> mapping = this.peptideService.findNaturalPeptideMappingByMasterUniqueName(entryName);
 		Entry entry = new Entry(entryName);
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		entry.setPeptideMappings(mapping);
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "peptide-list";
+	}
+
+	@ApiMethod(path = "/entry/{entry}/srm-peptide", verb = ApiVerb.GET, description = "Gets the list of SRM peptides for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
+	@RequestMapping("/entry/{entry}/srm-peptide")
+	public String getSrmPeptideMapping(
+			@ApiParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+		List<PeptideMapping> mapping = this.peptideService.findSyntheticPeptideMappingByMasterUniqueName(entryName);
+		Entry entry = new Entry(entryName);
+		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
+		entry.setPeptideMappings(mapping);
+		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
+		return "srm-peptide-list";
 	}
 
 	@ApiMethod(path = "/entry/{entry}/identifier", verb = ApiVerb.GET, description = "Gets the list of identifiers for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
@@ -160,6 +184,8 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setIdentifiers(identifiers);
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "identifier-list";
 	}
 	
@@ -170,6 +196,8 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "chromosomal-location-list";
 	}
 
@@ -180,6 +208,8 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "genomic-mapping-list";
 	}
 
@@ -191,6 +221,8 @@ public class EntryController {
 		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
 		dummy.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "genomic";
 	}
 
@@ -202,6 +234,8 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setPublications(publications);
 		model.addAttribute("entry", entry);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "publication-list";
 	}
 	
@@ -214,6 +248,8 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setXrefs(xrefs);
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "xref-list";
 	}
 
@@ -226,9 +262,10 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setInteractions(interactionService.findInteractionsByEntry(entryName));
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
 		return "interaction-list";
 	}
-
 
 	@ApiMethod(path = "/entry/{entry}/annotation", verb = ApiVerb.GET, description = "Gets the annotations of a given entry grouped by category", produces = { MediaType.APPLICATION_XML_VALUE})
 	@RequestMapping("/entry/{entry}/annotation")
@@ -236,15 +273,24 @@ public class EntryController {
 			@ApiParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) 
 			@PathVariable("entry") String entryName, Model model) {
 		List<Annotation> annotations = this.annotationService.findAnnotations(entryName);
-		
-
 		Entry dummy = new Entry(entryName);
 		dummy.setAnnotations(annotations);
 		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "annotation-list";
 	}
 	
+	@ApiMethod(path = "/entry/{entry}/experimentalContext", verb = ApiVerb.GET, description = "Gets the experimental contexts related to the annotations of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping("/entry/{entry}/experimentalContext")
+	public String getEntryExperimentalContexts(@ApiParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308", paramType=ApiParamType.QUERY,  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
+		Entry dummy = new Entry(entryName);
+		dummy.setExperimentalContexts(this.expContextService.findExperimentalContextsByEntryName(entryName));
+		model.addAttribute("entry", dummy);
+		model.addAttribute("NXUtils", new NXVelocityUtils());
+		model.addAttribute("StringUtils", StringUtils.class);
+		return "experimental-context-list";
+	}
 	
 
 	

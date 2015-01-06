@@ -18,8 +18,10 @@ public class Interaction implements Serializable{
 	@ApiObjectField(description = "The datasource of the interaction evidence")
 	private String evidenceDatasource;
 	private String evidenceQuality;
-	private boolean selfInteraction=false;
+	private Long evidenceResourceId;
+	private String evidenceResourceType;
 	
+	private boolean selfInteraction=false;	
 	
 	@ApiObjectField(description = "The local db identifier")
 	private Long partnershipId;
@@ -57,49 +59,33 @@ public class Interaction implements Serializable{
 		interactants = new ArrayList<Interactant>();
 	}
 	
-	
-	
 	public Long getEvidenceId() {
 		return evidenceId;
 	}
-
-
 
 	public void setEvidenceId(Long evidenceId) {
 		this.evidenceId = evidenceId;
 	}
 
-
-
 	public String getEvidenceType() {
 		return evidenceType;
 	}
-
-
 
 	public void setEvidenceType(String evidenceType) {
 		this.evidenceType = evidenceType;
 	}
 
-
-
 	public String getEvidenceQuality() {
 		return evidenceQuality;
 	}
-
-
 
 	public void setEvidenceQuality(String evidenceQuality) {
 		this.evidenceQuality = evidenceQuality;
 	}
 
-
-
 	public String getEvidenceDatasource() {
 		return evidenceDatasource;
 	}
-
-
 
 	public Long getId() {
 		return partnershipId;
@@ -195,4 +181,21 @@ public class Interaction implements Serializable{
 		}
 		return result;
 	}
+
+	public Long getEvidenceResourceId() {
+		return evidenceResourceId;
+	}
+
+	public void setEvidenceResourceId(Long evidenceResourceId) {
+		this.evidenceResourceId = evidenceResourceId;
+	}
+
+	public String getEvidenceResourceType() {
+		return evidenceResourceType;
+	}
+
+	public void setEvidenceResourceType(String evidenceResourceType) {
+		this.evidenceResourceType = evidenceResourceType;
+	}
+
 }

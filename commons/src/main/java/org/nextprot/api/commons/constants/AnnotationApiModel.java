@@ -341,6 +341,10 @@ public enum AnnotationApiModel  {
 		}
 	}
 	
+	public boolean isLeaf() {
+		return getChildren().isEmpty();
+	}
+	
 	public String toString() {
 		return /*this.getDbId() + " : " +*/ this.getDbAnnotationTypeName();
 	}

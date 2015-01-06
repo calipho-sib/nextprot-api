@@ -2,9 +2,7 @@ package org.nextprot.api.core.domain;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.nextprot.api.commons.constants.TerminologyMapping;
 import org.nextprot.api.commons.utils.StringUtils;

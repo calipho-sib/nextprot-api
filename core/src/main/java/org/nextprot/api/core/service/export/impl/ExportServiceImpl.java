@@ -30,6 +30,7 @@ import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.export.ExportService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
@@ -105,8 +106,8 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	private Future<File> exportSubPart(SubPart part, NPFileFormat format) {
-		System.out.println("Config" + config);
-		System.out.println("Velocity Engine" + config.getVelocityEngine());
+		//System.out.println("Config" + config);
+		//System.out.println("Velocity Engine" + config.getVelocityEngine());
 
 		return executor.submit(new ExportSubPartTask(config.getVelocityEngine(), part, format));
 	}
@@ -163,6 +164,8 @@ public class ExportServiceImpl implements ExportService {
 				context = new VelocityContext();
 				context.put("entry", entryService.findEntry(entryName));
 				context.put("StringUtils", StringUtils.class);
+				context.put("NXUtils", new NXVelocityUtils());
+			
 
 				FileWriter fw = new FileWriter(filename, true);
 				PrintWriter out = new PrintWriter(new BufferedWriter(fw));

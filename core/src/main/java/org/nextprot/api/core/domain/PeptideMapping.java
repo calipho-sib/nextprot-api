@@ -22,6 +22,8 @@ public class PeptideMapping implements Serializable{
 	
 	@ApiObjectField(description = "The peptide isoform specificity")
 	private Map<String, IsoformSpecificity> isoformSpecificity;
+
+	private List<PeptideProperty> properties;
 	
 	public PeptideMapping() {
 		this.isoformSpecificity = new HashMap<String, IsoformSpecificity>();
@@ -33,6 +35,11 @@ public class PeptideMapping implements Serializable{
 
 	public void setPeptideUniqueName(String peptideUniqueName) {
 		this.peptideUniqueName = peptideUniqueName;
+	}
+	
+	public void addProperty(PeptideProperty prop) {
+		if (this.properties==null) this.properties= new ArrayList<PeptideProperty>();
+		this.properties.add(prop);
 	}
 	
 	public void addEvidence(PeptideEvidence evidence) {
@@ -75,7 +82,41 @@ public class PeptideMapping implements Serializable{
 			this.isoformSpecificity.put(isoName, newIsoformSpecificity);
 		}
 	}
+
+	/**
+	 * A peptide created artificially (SRM peptides) and not observed by breaking natural proteins should not be
+	 * counted as being proteotypic otherwise computation of protein existence would be altered.
+	 * @return true if the peptide has both properties "is proteotypic" and "is natural" set to "Y" (true)  
+	 */
+	public boolean isProteotypic() {
+		boolean isTypic = false;
+		boolean isNatural = false;
+		if (this.properties!=null) {
+			for (PeptideProperty prop: properties) {
+				if (prop.getNameId()==51 && prop.getValue().equals("Y")) isTypic = true; 
+				if (prop.getNameId()==52 && prop.getValue().equals("Y")) isNatural = true; 
+			}
+		}
+		return isNatural && isTypic;
+	}
+
+	public boolean isNatural() {
+		if (this.properties!=null) {
+			for (PeptideProperty prop: properties) {
+				if (prop.getNameId()==52 && prop.getValue().equals("Y")) return true;
+			}
+		}
+		return false;
+	}
 	
+	public boolean isSynthetic() {
+		if (this.properties!=null) {
+			for (PeptideProperty prop: properties) {
+				if (prop.getNameId()==53 && prop.getValue().equals("Y")) return true;
+			}
+		}
+		return false;
+	}
 	
 	/**
 	 * 
@@ -88,6 +129,16 @@ public class PeptideMapping implements Serializable{
 	
 	
 
+	public List<PeptideProperty> getProperties() {
+		return properties;
+	}
+
+	public void setProperties(List<PeptideProperty> properties) {
+		this.properties = properties;
+	}
+
+
+
 	public static class PeptideEvidence implements Serializable{
 
 		private static final long serialVersionUID = -6416415250105609274L;
@@ -95,6 +146,8 @@ public class PeptideMapping implements Serializable{
 		private String accession;
 		private String databaseName;
 		private String assignedBy;
+		private Long resourceId;
+		private String resourceType;
 		
 		public String getPeptideName() {
 			return peptideName;
@@ -103,6 +156,7 @@ public class PeptideMapping implements Serializable{
 			this.peptideName = peptideName;
 		}
 		public String getAccession() {
+			
 			return accession;
 		}
 		public void setAccession(String accession) {
@@ -120,5 +174,80 @@ public class PeptideMapping implements Serializable{
 		public void setAssignedBy(String assignedBy) {
 			this.assignedBy = assignedBy;
 		}
+		public Long getResourceId() {
+			return resourceId;
+		}
+		public void setResourceId(Long resourceId) {
+			this.resourceId = resourceId;
+		}
+		public String getResourceType() {
+			return resourceType;
+		}
+		public void setResourceType(String resourceType) {
+			this.resourceType = resourceType;
+		}
 	}
+	
+	
+	public static class PeptideProperty implements Serializable {
+
+		private static final long serialVersionUID = 7484965874568857427L;
+
+		private Long peptideId;
+		private Long id;
+		private Long nameId;
+		private String name;
+		private String value;
+		private String peptideName;
+
+		public Long getId() {
+			return id;
+		}
+
+		public void setId(Long id) {
+			this.id = id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public void setValue(String value) {
+			this.value = value;
+		}
+
+		public Long getPeptideId() {
+			return peptideId;
+		}
+
+		public void setPeptideId(Long peptideId) {
+			this.peptideId = peptideId;
+		}
+
+		public String getPeptideName() {
+			return peptideName;
+		}
+
+		public void setPeptideName(String peptideName) {
+			this.peptideName = peptideName;
+		}
+
+		public Long getNameId() {
+			return nameId;
+		}
+
+		public void setNameId(Long nameId) {
+			this.nameId = nameId;
+		}
+	}
+
+	
 }

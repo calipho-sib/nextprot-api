@@ -1,4 +1,4 @@
-<annotation qualityQualifier='$annotation.getQualityQualifier()' #if($annotation.synonym)uniqueName="$annotation.synonym"#end>
+<annotation quality-qualifier='$annotation.getQualityQualifier()' #if($annotation.synonym)accession="$annotation.synonym" database='neXtProt'#end>
 	#if($annotation.getCvTermName())
     <cv-term accession='$annotation.getCvTermAccessionCode()'>
     	<cv-name>$annotation.getCvTermName()</cv-name>
@@ -17,17 +17,25 @@
 	#if(($annotation.getProperties()) && ($annotation.getProperties().size() > 0))
     <property-list>
         #foreach($property in $annotation.getProperties())
-			<property propertyName='$property.getName()'  #if($property.getAccession()) accession='$property.getAccession()' #end value='$property.getValue()'/>
+			<property property-name='$property.getName()'  value='$property.getValue()' #if($property.getAccession()) accession='$property.getAccession()' #end />
 		#end
     </property-list>
 	#end
     #if($annotation.getEvidences())
-    <resources>
+    <evidence-list>
         #foreach($evidence in $annotation.getEvidences())
-			<evidence isNegative='$evidence.isNegativeEvidence()'  qualifierType='$evidence.getQualifierType()' resourceRef='$evidence.getResourceId()' resourceAssocType='$evidence.getResourceAssociationType()' />
+			<evidence 
+				is-negative='$evidence.isNegativeEvidence()'  
+				qualifier-type='$evidence.getQualifierType()' 
+				resource-internal-ref='$evidence.getResourceId()' 
+				resource-assoc-type='$evidence.getResourceAssociationType()' 
+				resource-type='$evidence.getResourceType()'
+				#if($evidence.getExperimentalContextId()>0) experimental-context-internal-ref='$evidence.getExperimentalContextId()' #end
+				#if($evidence.getAssignedBy()) source-internal-ref='$evidence.getAssignedBy()' #end
+			/>
 		#end
-    </resources>
+    </evidence-list>
 	#end
-	#set($target-isoform-list = $annotation.getIsoforms())
+	#set($target-isoform-list = $annotation.getTargetingIsoformsMap())
 	#parse('target-isoform-list-annotation.xml.vm')	
 </annotation>

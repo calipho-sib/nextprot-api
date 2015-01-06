@@ -23,14 +23,19 @@
 	<sequence_identifiers identifier_id="11" cv_type_id="7" unique_name="NX_PEPT12345678"/>
 	
 	<!-- 	MASTER -->
-	<sequence_identifiers identifier_id="596889" cv_type_id="10" unique_name="NX_P12345"/>
+	<sequence_identifiers identifier_id="596889" cv_type_id="1" unique_name="NX_P12345"/>
 	
+	<identifier_properties identifier_property_id="23723875" identifier_id="11" property_value="Y" cv_property_name_id="51" />
+	<identifier_properties identifier_property_id="23723876" identifier_id="11" property_value="Y" cv_property_name_id="52" />
+	<identifier_properties identifier_property_id="23723877" identifier_id="11" property_value="Y" cv_property_name_id="53" />
 	
 	<!-- 	EVIDENCES -->
 	<cv_database_categories cv_id="666" cv_name="cat" />
 	<cv_databases cv_id="3" cv_name="PubMed" cv_category_id="666" link_url="http://pubmed.com?id=3" url="http://pubmed.com"/>
 <!-- 	<cv_datasources cv_id="1" cv_name="Ensembl" description="Ensembl database" accession="" url=""/> -->
 	
+	<resources resource_id="120" cv_type_id="1" />
 	<db_xrefs accession="789654" resource_id="120" cv_database_id="3"/>
 	<identifier_resource_assoc resource_id="120" identifier_id="11" datasource_id="1"/>
+	
 </dataset>	
