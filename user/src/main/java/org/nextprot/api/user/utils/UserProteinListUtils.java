@@ -1,6 +1,7 @@
 package org.nextprot.api.user.utils;
 
 import com.google.common.collect.Sets;
+
 import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -15,13 +16,19 @@ import java.util.Set;
 public class UserProteinListUtils {
 
 	/**
-	 * Apply the given operator to two user protein lists in a new instance of {@code UserProteinList}
+	 * Apply the given operator to two user protein lists in a new instance of
+	 * {@code UserProteinList}
 	 *
-	 * @param l1 first user protein list
-	 * @param l2 second user protein list
-	 * @param operator operator applied to operands
-	 * @param name combined list name
-	 * @param description combined list description
+	 * @param l1
+	 *            first user protein list
+	 * @param l2
+	 *            second user protein list
+	 * @param operator
+	 *            operator applied to operands
+	 * @param name
+	 *            combined list name
+	 * @param description
+	 *            combined list description
 	 * @return a new user protein list combining l1 and l2
 	 */
 	public static UserProteinList combine(UserProteinList l1, UserProteinList l2, Operator operator, String name, String description) {
@@ -55,16 +62,24 @@ public class UserProteinListUtils {
 	}
 
 	/**
-	 * Extract the set of accession numbers from uploaded file.
-	 * Only nextprot and uniprot accession numbers found in {@code validAccessionNumbers} are allowed.
+	 * Extract the set of accession numbers from uploaded file. Only nextprot
+	 * and uniprot accession numbers found in {@code validAccessionNumbers} are
+	 * allowed.
 	 *
-	 * <p>uniprot accession numbers should be converted in nextprot (prefixed with "NX_")</p>
+	 * <p>
+	 * uniprot accession numbers should be converted in nextprot (prefixed with
+	 * "NX_")
+	 * </p>
 	 *
-	 * @param reader the reader
-	 * @param validAccessionNumbers a set of possible nextprot accession numbers
+	 * @param reader
+	 *            the reader
+	 * @param validAccessionNumbers
+	 *            a set of possible nextprot accession numbers
 	 * @return a set of valid accession numbers
-	 * @throws IOException if input exception occurred
-	 * @throws EntryNotFoundException if at least one entry was not found in validAccessionNumbers
+	 * @throws IOException
+	 *             if input exception occurred
+	 * @throws EntryNotFoundException
+	 *             if at least one entry was not found in validAccessionNumbers
 	 */
 	public static Set<String> parseAccessionNumbers(Reader reader, Set<String> validAccessionNumbers) throws IOException {
 
@@ -77,7 +92,7 @@ public class UserProteinListUtils {
 		BufferedReader br = new BufferedReader(reader);
 
 		String line;
-		int ln=0;
+		int ln = 0;
 		while ((line = br.readLine()) != null) {
 
 			String trimmed = line.trim().toUpperCase();
@@ -88,7 +103,7 @@ public class UserProteinListUtils {
 					trimmed = "NX_" + trimmed;
 
 				if (!validAccessionNumbers.contains(trimmed))
-					throw new EntryNotFoundException("at line "+ln+": entry "+trimmed+" was not found");
+					throw new EntryNotFoundException("at line " + (ln + 1) +  ": entry " + trimmed + " was not found");
 
 				accessions.add(trimmed);
 			}
@@ -100,23 +115,33 @@ public class UserProteinListUtils {
 	}
 
 	/**
-	 * Extract set of accession numbers from uploaded file.
-	 * Only nextprot or uniprot accession numbers allowed.
+	 * Extract set of accession numbers from uploaded file. Only nextprot or
+	 * uniprot accession numbers allowed.
 	 *
-	 * <p>uniprot accession numbers should be converted in nextprot (prefixed with "NX_")</p>
+	 * <p>
+	 * uniprot accession numbers should be converted in nextprot (prefixed with
+	 * "NX_")
+	 * </p>
 	 *
-	 * @param file the uploaded file
+	 * @param file
+	 *            the uploaded file
 	 * @return a set of accession numbers
-	 * @throws IOException input exception occurred
+	 * @throws IOException
+	 *             input exception occurred
 	 */
-	public static Set<String> parseAccessionNumbers(MultipartFile file, Set<String> validAccessionNumbers) throws IOException {
+	public static Set<String> parseAccessionNumbers(MultipartFile file, Set<String> validAccessionNumbers) throws NextProtException{
 
 		NPreconditions.checkNotNull(file, "The uploaded file should not be null");
 
-		InputStream inputStream = file.getInputStream();
+		InputStream inputStream;
+		try {
+			inputStream = file.getInputStream();
+			if (file.getInputStream() != null)
+				return parseAccessionNumbers(new InputStreamReader(inputStream), validAccessionNumbers);
 
-		if (file.getInputStream() != null)
-			return parseAccessionNumbers(new InputStreamReader(inputStream), validAccessionNumbers);
+		} catch (IOException e) {
+			throw new NextProtException(e);
+		}
 
 		return new HashSet<String>();
 	}

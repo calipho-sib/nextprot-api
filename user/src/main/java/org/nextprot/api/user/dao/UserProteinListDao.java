@@ -66,7 +66,7 @@ public interface UserProteinListDao {
 	void updateUserProteinList(UserProteinList src);
 
 	/**
-	 * Delete the given proteins
+	 * Delete the given items for a protein list
 	 *
 	 * @param listId the list id to delete protein items from
 	 * @param accessions the set of accession numbers to delete
@@ -81,4 +81,14 @@ public interface UserProteinListDao {
 	 * @return the number of deleted rows
 	 */
 	int deleteUserProteinList(long listId);
+
+	
+	/**
+	 * Delete all the items for a protein list
+	 *
+	 * @param listId the list id to delete protein items from
+	 * @param accessions the set of accession numbers to delete
+	 * @return the number of deleted rows
+	 */
+	int deleteAllProteinListItems(long listId);
 }

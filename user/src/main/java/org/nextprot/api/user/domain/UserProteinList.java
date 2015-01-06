@@ -80,4 +80,8 @@ public class UserProteinList implements UserResource {
 	}
 
 	public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
+
+	public void addAccessions(Set<String> acs) {
+		accessionNumbers.addAll(acs);
+	}
 }

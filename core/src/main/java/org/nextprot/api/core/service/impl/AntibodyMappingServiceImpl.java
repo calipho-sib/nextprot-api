@@ -2,11 +2,11 @@ package org.nextprot.api.core.service.impl;
 
 import java.util.List;
 
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.AntibodyMappingDao;
 import org.nextprot.api.core.domain.AntibodyMapping;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.MasterIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;

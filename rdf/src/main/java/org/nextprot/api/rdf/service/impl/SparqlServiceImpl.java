@@ -39,7 +39,7 @@ public class SparqlServiceImpl implements SparqlService, InitializingBean {
 	@Cacheable("sparql")
 	public List<String> findEntries(String sparql, String sparqlEndpointUrl, String sparqlTitle) {
 
-		String query = buildQuery(sparql);
+		String query = SparqlUtils.buildQuery(prefix, sparql);
 
 		List<String> results = new ArrayList<String>();
 		QueryExecution qExec = null;

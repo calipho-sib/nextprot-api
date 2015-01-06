@@ -128,14 +128,32 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 	@Override
 	public int deleteProteinListItems(long listId, Set<String> accessions) {
 
-		final String DELETE_SQL = sqlDictionary.getSQLQuery("delete-protein_list_items");
+		if(!accessions.isEmpty()){
+			
+			final String DELETE_SQL = sqlDictionary.getSQLQuery("delete-protein_list_items");
+
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("accession_numbers", accessions);
+			params.put("list_id", listId);
+			
+			return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(DELETE_SQL, params);
+
+		}
+		
+		return 0;
+	}
+
+	@Override
+	public int deleteAllProteinListItems(long listId) {
+
+		final String DELETE_SQL = sqlDictionary.getSQLQuery("delete-all-protein-list-items");
 
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("accession_numbers", accessions);
+		params.put("list_id", listId);
 		
 		return new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).update(DELETE_SQL, params);
 	}
-
+	
 	@Override
 	public void updateUserProteinList(UserProteinList src) {
 

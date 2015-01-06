@@ -1,4 +1,4 @@
-package org.nextprot.api.demo.sparql.queries;
+package org.nextprot.api.tasks;
 
 import org.nextprot.api.demo.sparql.queries.service.DemoSparqlService;
 import org.nextprot.api.user.domain.UserQuery;

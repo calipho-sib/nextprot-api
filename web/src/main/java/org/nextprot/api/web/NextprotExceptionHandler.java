@@ -69,7 +69,7 @@ public class NextprotExceptionHandler {
 	@ExceptionHandler(DataAccessException.class)
 	@ResponseBody
 	public RestErrorResponse handle(DataAccessException ex) {
-		return getResponseError("Resource not found");
+		return getResponseError(ex.getLocalizedMessage());
 	}
 	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)

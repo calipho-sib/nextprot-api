@@ -6,11 +6,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
-import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
