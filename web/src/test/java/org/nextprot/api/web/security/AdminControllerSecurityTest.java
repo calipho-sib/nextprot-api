@@ -1,4 +1,4 @@
-package org.nextprot.api.web;
+package org.nextprot.api.web.security;
 
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.MVCBaseSecurityTest;
@@ -35,7 +35,7 @@ public class AdminControllerSecurityTest extends MVCBaseSecurityTest {
 	@Test
 	public void shouldReturn200ForAValidToken() throws Exception {
 
-		String token = generateTokenWithExpirationDate(1, TimeUnit.DAYS, Arrays.asList(new String[]{"ROLE_ADMIN"}));
+		String token = generateTokenWithExpirationDate("test@nextprot.org", 1, TimeUnit.DAYS, Arrays.asList(new String[]{"ROLE_ADMIN"}));
 		
 		this.mockMvc.perform(
 				get(url).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token).accept(MediaType.APPLICATION_JSON)
@@ -45,7 +45,7 @@ public class AdminControllerSecurityTest extends MVCBaseSecurityTest {
 	@Test
 	public void shouldReturn401ForInsufficienPrivilege() throws Exception {
 
-		String token = generateTokenWithExpirationDate(1, TimeUnit.DAYS, Arrays.asList(new String[]{"ROLE_USER"}));
+		String token = generateTokenWithExpirationDate("test@nextprot.org", 1, TimeUnit.DAYS, Arrays.asList(new String[]{"ROLE_USER"}));
 
 		this.mockMvc.perform(
 				get(url).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token).accept(MediaType.APPLICATION_JSON)

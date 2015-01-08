@@ -60,13 +60,13 @@ public abstract class MVCBaseSecurityTest {
 
 	@Before
 	public void setup() {
-		this.mockMvc = webAppContextSetup(this.wac).addFilters(this.springSecurityFilterChain).build();
+		this.mockMvc = webAppContextSetup(this.wac).build();
 	}
 
 
-	protected String generateTokenWithExpirationDate(int value, TimeUnit time, List<String> roles) throws Exception {
+	protected String generateTokenWithExpirationDate(String email, int value, TimeUnit time, List<String> roles) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("email", "auth0@test.com");
+		map.put("email", email);
 		map.put("authorities", roles);
 
 		return codec.encodeJWT(map, (int) time.toSeconds(value));

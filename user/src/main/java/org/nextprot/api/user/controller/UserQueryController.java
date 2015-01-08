@@ -43,9 +43,10 @@ public class UserQueryController {
 
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.POST })
 	@ResponseBody
-	public UserQuery createAdvancedQuery(@RequestBody UserQuery advancedUserQuery, @PathVariable("username") String username) {
-		advancedUserQuery.setOwner(username);
-		return userQueryService.createUserQuery(advancedUserQuery);
+	public UserQuery createAdvancedQuery(@RequestBody UserQuery userQuery, @PathVariable("username") String username) {
+		System.err.println(userQuery);
+		userQuery.setOwner(username);
+		return userQueryService.createUserQuery(userQuery);
 	}
 
 	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.PUT })
