@@ -1,10 +1,10 @@
-#title:Q082  whose genes are on chromosome n that have "gold" variants not linked to disease (ie polymorphisms)
+#title:Proteins whose genes are on chromosome 21 that have "gold" variants not linked to disease (ie polymorphisms)
 #acs: P29508, P31152, P32926, ...
 #tags:variant,quality,evidence,disease
 #count:189
 #time: 0.1
 SELECT distinct ?entry WHERE  {
-  ?entry :gene / :chromosome "18"^^xsd:string; :isoform / :variant ?variant .
+  ?entry :gene / :chromosome "21"^^xsd:string; :isoform / :variant ?variant .
   ?variant :evidence / :quality :GOLD .
  FILTER NOT EXISTS { ?variant :disease ?disease . }
 }
