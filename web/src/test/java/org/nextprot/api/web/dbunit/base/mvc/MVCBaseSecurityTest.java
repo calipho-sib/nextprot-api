@@ -60,7 +60,7 @@ public abstract class MVCBaseSecurityTest {
 
 	@Before
 	public void setup() {
-		this.mockMvc = webAppContextSetup(this.wac).build();
+		this.mockMvc = webAppContextSetup(this.wac).addFilters(this.springSecurityFilterChain).build();
 	}
 
 
