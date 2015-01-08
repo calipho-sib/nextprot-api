@@ -20,7 +20,7 @@ import java.util.Map;
 public class UserApplicationServiceImpl implements UserApplicationService {
 
 	@Autowired
-	private JWTCodec<Map<String, String>> codec;
+	private JWTCodec<Map<String, Object>> codec;
 
 	@Autowired
 	private UserApplicationDao userApplicationDao;
@@ -44,7 +44,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
     private String generateToken(UserApplication userApplication)  {
 
-        Map<String, String> appProps = new HashMap<String, String>();
+        Map<String, Object> appProps = new HashMap<String, Object>();
         appProps.put("id", String.valueOf(userApplication.getId()));
         appProps.put("timestamp", String.valueOf(System.currentTimeMillis()));
 

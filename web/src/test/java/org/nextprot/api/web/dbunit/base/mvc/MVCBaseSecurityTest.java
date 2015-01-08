@@ -35,6 +35,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("unit")
 @DirtiesContext
+
 public abstract class MVCBaseSecurityTest {
 
 	@Autowired
@@ -57,7 +58,7 @@ public abstract class MVCBaseSecurityTest {
 	protected String generateTokenWithExpirationDate(int value, TimeUnit time, List<String> roles) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("email", "auth0@test.com");
-		map.put("roles", roles);
+		map.put("authorities", roles);
 
 		return codec.encodeJWT(map, (int) time.toSeconds(value));
 

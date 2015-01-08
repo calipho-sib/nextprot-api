@@ -50,7 +50,7 @@
 					</webAppConfig>
 					<stopKey>foo</stopKey>
 					<stopPort>9999</stopPort>
-					<systemproperties>
+					<!-- <systemproperties>
 						<systemproperty>
 							<name>org.apache.commons.logging.Log</name>
 							<value>
@@ -61,7 +61,7 @@
 							<name>log4j.configuration</name>
 							<value>file:./src/main/resources/log4j.xml</value>
 						</systemproperty>
-					</systemproperties>
+					</systemproperties>-->
 				</configuration>
 				<dependencies>
 					<!-- Need this for the ehcache logging -->

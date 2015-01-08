@@ -33,20 +33,22 @@ public class AdminControllerSecurityTest extends MVCBaseSecurityTest {
 	}
 
 	@Test
-	public void shouldReturn403ForInvalidPrivilege() throws Exception {
+	public void shouldReturn200ForAValidToken() throws Exception {
 
-		this.mockMvc.perform(
-				get(url).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer a.b.c").accept(MediaType.APPLICATION_JSON).content(content))
-				.andExpect(status().isForbidden());
-	}
-
-	@Test
-	public void showReturn200ForAValidToken() throws Exception {
-
-		String token = generateTokenWithExpirationDate(1, TimeUnit.DAYS, Arrays.asList(new String[]{"ROLE_USER"}));
+		String token = generateTokenWithExpirationDate(1, TimeUnit.DAYS, Arrays.asList(new String[]{"ROLE_ADMIN"}));
 		
 		this.mockMvc.perform(
 				get(url).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token).accept(MediaType.APPLICATION_JSON)
 						.content(content)).andExpect(status().isOk());
+	}
+
+	@Test
+	public void shouldReturn401ForInsufficienPrivilege() throws Exception {
+
+		String token = generateTokenWithExpirationDate(1, TimeUnit.DAYS, Arrays.asList(new String[]{"ROLE_USER"}));
+
+		this.mockMvc.perform(
+				get(url).contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + token).accept(MediaType.APPLICATION_JSON)
+						.content(content)).andExpect(status().isUnauthorized());
 	}
 }
