@@ -7,7 +7,7 @@ http://www.springframework.org/schema/security
 http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 
 	<!-- For the dev purpose the authentication is not activated -->
-	<beans profile="dev">
+	<beans profile="!security">
 		<bean id="authenticator"
 			class="org.springframework.security.authentication.TestingAuthenticationProvider" />
 
@@ -22,8 +22,9 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 		</security:authentication-manager>
 	</beans>
 
+
 	<!-- For the unit testing and production environment the authentication the security is activated -->
-	<beans profile="pro,unit">
+	<beans profile="security">
 
 		<security:global-method-security pre-post-annotations="enabled" />
 

@@ -4,7 +4,7 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Sets;
 import org.junit.Test;
-import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
+import org.nextprot.api.user.dao.test.base.UserResourceBaseTest;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -17,7 +17,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 @DatabaseSetup(value = "UserProteinListDaoTest.xml", type = DatabaseOperation.INSERT)
-public class UserProteinListDaoTest extends UserApplicationBaseTest {
+public class UserProteinListDaoTest extends UserResourceBaseTest {
 
 	@Autowired private UserProteinListDao proteinListDao;
 
@@ -182,12 +182,11 @@ public class UserProteinListDaoTest extends UserApplicationBaseTest {
 
 		int count = proteinListDao.deleteProteinListItems(156, accs);
 
-		UserProteinList list = proteinListDao.getUserProteinListById(156);
-
 		assertEquals(2, count);
 
-		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 1,
-				Sets.newHashSet("NX_Q8N5Z0"));
+		UserProteinList list = proteinListDao.getUserProteinListById(156);
+
+		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 1,Sets.newHashSet("NX_Q8N5Z0"));
 	}
 
 	@Test

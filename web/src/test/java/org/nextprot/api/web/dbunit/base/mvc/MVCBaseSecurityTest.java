@@ -8,11 +8,18 @@ import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+
+import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,11 +38,13 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  */
 
 @WebAppConfiguration
+@TransactionConfiguration(defaultRollback = true)
+@Transactional
+@TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,   DirtiesContextTestExecutionListener.class,    TransactionDbUnitTestExecutionListener.class })
 @ContextConfiguration("classpath:META-INF/spring/web-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("unit")
+@ActiveProfiles({"unit", "security"})
 @DirtiesContext
-
 public abstract class MVCBaseSecurityTest {
 
 	@Autowired

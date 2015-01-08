@@ -15,7 +15,7 @@
  
     <context-param>
       <param-name>spring.profiles.default</param-name>
-      <param-value>pro</param-value>
+      <param-value>pro,cache,security</param-value>
     </context-param>
 
   

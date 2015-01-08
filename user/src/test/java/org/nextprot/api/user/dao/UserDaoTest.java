@@ -4,7 +4,7 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
+import org.nextprot.api.user.dao.test.base.UserResourceBaseTest;
 import org.nextprot.api.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,12 +15,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-//@TransactionConfiguration(defaultRollback = false)
 @DatabaseSetup(value = "UserDaoTest.xml", type = DatabaseOperation.INSERT)
-public class UserDaoTest extends UserApplicationBaseTest {
+public class UserDaoTest extends UserResourceBaseTest {
 
-	@Autowired
-	UserDao userDao;
+	@Autowired UserDao userDao;
 
 	@Test
 	public void testCreateAndGetUser() {

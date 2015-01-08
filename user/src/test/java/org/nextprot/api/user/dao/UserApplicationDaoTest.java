@@ -6,7 +6,7 @@ import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.dbunit.DTDIgnoredFlatXMLDataSet;
-import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
+import org.nextprot.api.user.dao.test.base.UserResourceBaseTest;
 import org.nextprot.api.user.domain.UserApplication;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,7 +16,7 @@ import java.util.List;
 // NOTE: below annotation used to tell dbunit to ignore DTD else INSERT statement fill the missing columns
 // with nulls instead of default value and causes an exception.
 @DbUnitConfiguration(dataSetLoader = DTDIgnoredFlatXMLDataSet.class)
-public class UserApplicationDaoTest extends UserApplicationBaseTest {
+public class UserApplicationDaoTest extends UserResourceBaseTest {
 
 	@Autowired UserApplicationDao userAppDao;
 
