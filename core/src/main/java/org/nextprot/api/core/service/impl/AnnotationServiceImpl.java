@@ -139,6 +139,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 			evidence.setQualifierType(xam.getQualifierType());    
 			evidence.setQualityQualifier(xam.getQualityQualifier());   
 			evidence.setAssignmentMethod(xam.getAssignmentMethod()); 
+			evidence.setEvidenceCodeAC("ECO:0000000"); // temp 
+			evidence.setEvidenceCodeName("evidence"); // temp
 			evidences.add(evidence);
 			annotation.setEvidences(evidences);
 		}
