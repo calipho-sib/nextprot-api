@@ -19,6 +19,16 @@ public class UserQuery implements Serializable, UserResource {
 	private boolean published;
 	private String owner;
 	private long ownerId;
+	private boolean persisted;
+	
+	public boolean isPersisted() {
+		return persisted;
+	}
+
+	public void setPersisted(boolean persisted) {
+		this.persisted = persisted;
+	}
+
 	private Set<String> tags;
 
 	public static final Function<UserQuery, Long> EXTRACT_QUERY_ID = new Function<UserQuery, Long>() {
@@ -81,11 +91,6 @@ public class UserQuery implements Serializable, UserResource {
 	}
 
 	public long getOwnerId() { return ownerId; }
-
-	@Override
-	public boolean isPersisted() {
-		return false;
-	}
 
 	public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
 

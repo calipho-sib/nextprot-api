@@ -3,6 +3,7 @@ package org.nextprot.api.user.controller;
 import java.util.List;
 
 import org.jsondoc.core.annotation.Api;
+import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,12 @@ public class UserQueryController {
 	public List<UserQuery> getPublicUserQueries() {
 		return userQueryService.getPublishedQueries();
 	}
-	
+
+	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.GET })
+	@ResponseBody
+	public UserQuery getUserQuery(@PathVariable("username") String username, @PathVariable("id") String id) {
+		return userQueryService.getUserQueryById(Long.valueOf(id));
+	}
 	
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.GET })
 	@ResponseBody

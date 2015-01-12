@@ -1,5 +1,6 @@
 package org.nextprot.api.user.service.impl;
 
+import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.domain.User;
 import org.nextprot.api.user.service.UserService;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Cacheable(value = "read-user", key = "#username")
+	@AllowedAnonymous
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		try {
 			return userDao.getUserByUsername(username);

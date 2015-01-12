@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,   DirtiesContextTestExecutionListener.class,    TransactionDbUnitTestExecutionListener.class })
 @ContextConfiguration("classpath:META-INF/spring/web-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles({"unit", "security"})
+@ActiveProfiles({"unit",  "unit-schema-user", "security"})
 @DirtiesContext
 public abstract class MVCBaseSecurityTest {
 
