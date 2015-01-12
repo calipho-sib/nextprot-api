@@ -1,22 +1,22 @@
 package org.nextprot.api.web.security;
 
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Test;
+import org.nextprot.api.user.controller.UserQueryController;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.web.dbunit.base.mvc.MVCBaseSecurityTest;
 import org.springframework.http.MediaType;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.handler;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Tests GET, PUT, POST, DELETE for 3 different scenarios (anonymous, owner and other logged user) 
@@ -28,9 +28,10 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 
 	@Test
 	public void shouldReturn200ForPublicQueriesEvenWithoutToken() throws Exception {
-		this.mockMvc.perform(get("/queries/public").accept(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
 
-		// this.mockMvc.perform(get("/use")).andExpect(status().isOk());
+		this.mockMvc.perform(get("/queries/public").accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(handler().handlerType(UserQueryController.class));
 	}
 
 	@Test
