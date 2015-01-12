@@ -13,6 +13,7 @@
   isoform:$isoform-name :peptideMapping :$mapping-iri .
   :$mapping-iri rdf:type :PeptideMapping ;  
     :peptideName "$pep-name"^^xsd:string ;
+    :proteotypic "$pep.isProteotypic()"^^xsd:boolean ;
 #foreach($pos in $spec.positions)
     :position [ 
       rdf:type :MappingPosition ;    

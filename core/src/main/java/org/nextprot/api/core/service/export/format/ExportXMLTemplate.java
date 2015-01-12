@@ -20,7 +20,8 @@ public enum ExportXMLTemplate implements ExportTemplate{
 	INTERACTIONS("interactions"),
 	PROTEIN_SEQUENCE("protein sequence"),
 	ANTIBODY_MAPPINGS("antibody mappings"),
-	PEPTIDE_MAPPINGS("pepetide mappings");
+	PEPTIDE_MAPPINGS("peptide mappings"),
+	SRM_PEPTIDE_MAPPINGS("srm peptide mappings");
 	
 	
 	private String templateName = null;

@@ -1,22 +1,26 @@
-<interaction qualityQualifier='$interaction.quality'>
-    <interactionXref database="$interaction.evidenceXrefDB" accession="$interaction.evidenceXrefAC">
-        #set($UNESCAPED_CDATA = $interaction.evidenceXrefURL)
-        <url><![CDATA[$UNESCAPED_CDATA]]></url>
-    </interactionXref>
-        #foreach($interactant in $interaction.interactants)
-            #if($interactant.isNextprot())
-				<interactant uniqueName='NX_$interactant.accession' />
-			#else
-			<interactantXref database='$interactant.database' accession='$interactant.accession'>
-		    	<url>
-		    		#set($UNESCAPED_CDATA = $interactant.url)
-      				<![CDATA[
-      				$UNESCAPED_CDATA
-      				]]>
-		    	</url>
-		    </interactantXref>
-			#end
+<interaction quality-qualifier='$interaction.quality'>
+#foreach($interactant in $interaction.interactants)
+	#if($interaction.isSelfInteraction() || ! $interactant.isEntryPoint())		
+        #if($interactant.isNextprot())
+	<interactant database='neXtProt' accession='NX_$interactant.accession' />
+		#else
+	<interactant database='$interactant.database' accession='$interactant.accession'>
+		#set($UNESCAPED_CDATA = $interactant.url)
+		<url><![CDATA[$UNESCAPED_CDATA]]></url>
+	</interactant>
 		#end
-    ## Interacts with nextprot entries
+	#end
+#end
+    <evidence-list>
+    	<evidence 
+    		is-negative='false'
+    		evidence-code='ECO:0000353' 
+    		source-internal-ref='$interaction.evidenceDatasource'
+			resource-type='$interaction.evidenceResourceType'
+			resource-internal-ref='$interaction.evidenceResourceId'      		
+			resource-assoc-type='evidence'
+ 			quality-qualifier='$interaction.quality'   		
+    	/>
+    </evidence-list>
     <experiment-count>$interaction.numberOfExperiments</experiment-count>
 </interaction>

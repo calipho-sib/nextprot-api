@@ -61,6 +61,8 @@ public class InteractionDaoImpl implements InteractionDAO {
 			interaction.setEvidenceQuality(resultSet.getString("evidence_quality"));
 			interaction.setEvidenceXrefAC(resultSet.getString("evidence_xrefac"));
 			interaction.setEvidenceXrefDB(resultSet.getString("evidence_xrefdb"));
+			interaction.setEvidenceResourceId(resultSet.getLong("evidence_resource_id"));
+			interaction.setEvidenceResourceType(resultSet.getString("evidence_resource_type"));
 
 			interaction.setNumberOfExperiments(resultSet.getInt("number_of_experiments"));
 			

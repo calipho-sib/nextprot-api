@@ -4,7 +4,7 @@
 			#if($target.positions)
 				<position-list>
 					#foreach($position in $target.positions)
-						<position first="$position.getFirst()" last="$position.getSecond()"/>
+						<position start="$position.getFirst()" end="$position.getSecond()"/>
 					#end
 				</position-list>
 			#end
