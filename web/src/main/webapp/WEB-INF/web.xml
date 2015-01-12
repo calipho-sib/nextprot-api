@@ -48,6 +48,7 @@
     </filter-mapping>
      
     <!-- Setting UTF-8 -->
+    <!-- this filter should have a mapping -->
 	  <filter>
 	    <filter-name>Spring character encoding filter</filter-name>
 	    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
