@@ -27,7 +27,7 @@
 			<evidence 
 				is-negative='$evidence.isNegativeEvidence()'  
 ##				qualifier-type='$evidence.getQualifierType()' 
-				evidence-code='$StringUtils.slug($evidence.getEvidenceCodeAC())'
+				evidence-code='$evidence.getEvidenceCodeAC()'
 				resource-internal-ref='$evidence.getResourceId()' 
 				resource-assoc-type='$evidence.getResourceAssociationType()' 
 				resource-type='$evidence.getResourceType()'
