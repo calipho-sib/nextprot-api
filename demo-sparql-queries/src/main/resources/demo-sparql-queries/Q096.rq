@@ -1,13 +1,13 @@
 #title: Q096  which are targets of drugs for cardiac therapy - - - federated query with drugbank - - -Query based on drug classification ATC Codes
+#tags:drug,federated
 #acs:P23975,O95069,P31645, ...
-#tags: drug,federated
 #count:135
 #time:10  
+
 PREFIX diseasome: <http://wifo5-04.informatik.uni-mannheim.de/diseasome/resource/diseasome/>
 PREFIX drugbank: <http://wifo5-04.informatik.uni-mannheim.de/drugbank/resource/drugbank/>
 
-SELECT distinct ?entry ?atcCode
-WHERE {
+select distinct ?entry ?atcCode where {
   service <http://wifo5-03.informatik.uni-mannheim.de/drugbank/sparql> {
     SELECT distinct ?unipage ?atcCode
     WHERE {

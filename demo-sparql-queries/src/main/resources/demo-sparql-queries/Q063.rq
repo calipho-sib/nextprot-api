@@ -1,9 +1,10 @@
-#title:Q063 which have >=1 RRM RNA-binding domain and either no GO "RNA binding" or a GO "RNA binding" with evidence IEA or ISS
-#acs: Q14103, Q6ZRY4, Q8TC92, ...
-#tags:RNA-binding,domain,evidence
+#title:Proteins that have one or more RRM RNA-binding domain and either no GO "RNA binding" or a GO "RNA binding" with evidence IEA or ISS
+#tags:region,domain,evidence
+#acs:Q14103, Q6ZRY4, Q8TC92, ...
 #count:78
 #time: 0.1
-SELECT distinct ?entry  WHERE {
+
+select distinct ?entry where {
  ?entry :isoform ?iso
  {
 #>=1 RRM RNA-binding domain

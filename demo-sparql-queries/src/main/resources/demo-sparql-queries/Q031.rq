@@ -1,8 +1,9 @@
-#title:Q031  with >=10 "splice" isoforms
-#acs:Q9UKT9, P11362, Q8NHW4 ...
+#title:Proteins with more than 10 alternative isoforms
 #tags:isoforms
+#acs:Q9UKT9, P11362, Q8NHW4 ...
 #count:123
 #time:0.28
-select distinct ?entry   WHERE  {
+
+select distinct ?entry where {
   ?entry :isoform ?iso.
-} group by ?entry having(count(?iso)>=10)
+} group by ?entry having(count(?iso)>10)

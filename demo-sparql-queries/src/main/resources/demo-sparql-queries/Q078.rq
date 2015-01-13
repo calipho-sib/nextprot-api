@@ -1,9 +1,10 @@
-#title:Q078  which have been identified in any proteomics set and that are secreted
+#title:Proteins which have been identified in at least one proteomics set and that are secreted
+#tags:subcellular location,cellular component,proteomics
 #acs: P40933, A1L453, A6NNL5, ...
-#tags:location,proteomics
 #count:1835
 #time: 0.13
-SELECT distinct ?entry  WHERE  {
+
+select distinct ?entry where {
  ?entry :isoform ?iso.
   ?iso :cellularComponent/:term/:childOf cv:SL-0243.
    ?iso :peptideMapping ?map.

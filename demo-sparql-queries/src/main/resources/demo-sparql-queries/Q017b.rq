@@ -1,11 +1,12 @@
 #title:Q017b Proteins >=1000 amino acids and located in nucleus and expressed in nervous system
-#tags:expression,location,sequence,slow
+#tags:expression,subcellular location,cellular component,sequence,slow
 #acs:A3KN83,A4D0V7,A5PL33,A6NHR9,A8MQ14,B1AJZ9,O00159,O00203,O00267,O00268
 #count:927
 #pending
 #time:490.051
 #see: Q017 is a lot more efficient !
-SELECT distinct ?entry WHERE  {
+
+select distinct ?entry where {
   ?entry :isoform ?iso.
   ?iso :cellularComponent/:term/:childOf cv:SL-0191.
   ?iso :expressionProfile ?p.

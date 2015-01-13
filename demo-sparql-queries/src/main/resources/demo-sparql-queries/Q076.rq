@@ -1,9 +1,10 @@
-#title:Q076  which are located in mitochondrion and have >=1 HPA antibody and exist in >=1 proteome identification sets
+#title:Proteins which are located in mitochondrion and have >=1 HPA antibody and exist in >=1 proteome identification sets
+#tags:subcellular location,cellular component,antibody
 #acs:A8K5M9,O75570,P23443, ...
-#tags:location,antibody,dataset
 #count:1169
 #time: 0.4
-select  distinct ?entry where {
+
+select distinct ?entry where {
  ?entry :isoform ?iso .
  ?iso :cellularComponent/:term/:childOf cv:SL-0173.
  ?iso :antibodyMapping ?map1.

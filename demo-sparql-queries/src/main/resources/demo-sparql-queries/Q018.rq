@@ -1,9 +1,10 @@
 #title:Proteins that are acetylated and methylated and located in the nucleus
-#acs:O00159,O14979,O43524,O60506,O60814,O75530,O75925,P01112,P02545 
 #tags:PTM,subcellular location,cellular component
+#acs:O00159,O14979,O43524,O60506,O60814,O75530,O75925,P01112,P02545 
 #count:269
 #time:8.564
 #pending
+
 select distinct ?entry where {
   ?entry :isoform ?iso .
   ?iso :cellularComponent/:term/:childOf cv:SL-0191.

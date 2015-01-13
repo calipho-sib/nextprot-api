@@ -1,8 +1,10 @@
+#id:NXQ_000014
 #title:Proteins with one SH2 and two SH3 domains
+#tags:domain,region
 #acs:O75791,P15498,P16333,P46108,P46109,P52735,P62993,Q13588,Q9UKW4
-#tags:domain
 #count:9
-select distinct ?entry  where{
+
+select distinct ?entry where {
 ?entry :isoform ?iso.
 #with 1 SH3
   {select ?iso where{?iso :region ?stat1. ?stat1 :term cv:DO-00614}GROUP BY ?iso  HAVING(count( ?stat1)=1)}

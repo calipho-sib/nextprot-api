@@ -1,17 +1,17 @@
-#title:Q052 with a sequence that does not contain a lysin in the mature region
-#acs: E5RJM6, H3BQW9, P04553, ...
-#tags:sequence,mature
+#title:Proteins with a sequence that does not contain a lysine in the mature region
+#tags:sequence,processing
+#acs:E5RJM6, H3BQW9, P04553, ...
 #count:267
 #time:0.6
-SELECT distinct ?entry WHERE {
 
-?entry :isoform ?iso .
-?iso :sequence / :chain ?seq.
-?iso :matureProtein [ :start ?mstart ; :end ?mend]
-FILTER (?mend-?mstart > 0)	 
-BIND(?mend - ?mstart as ?mlen)	 
-BIND(substr(?seq, ?mstart, ?mlen) as ?mseq)	 
-#BIND(substr(?seq, ?mstart, ?mend - ?mtart) as ?mseq)	 
-filter(!regex (?mseq,'K'))
+select distinct ?entry where {
+ ?entry :isoform ?iso .
+ ?iso :sequence / :chain ?seq.
+ ?iso :matureProtein [ :start ?mstart ; :end ?mend]
+ FILTER (?mend-?mstart > 0)	 
+ BIND(?mend - ?mstart as ?mlen)	 
+ BIND(substr(?seq, ?mstart, ?mlen) as ?mseq)	 
+ #BIND(substr(?seq, ?mstart, ?mend - ?mtart) as ?mseq)	 
+ filter(!regex (?mseq,'K'))
 }
 

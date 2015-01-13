@@ -1,9 +1,10 @@
-#title:Q066  that are cytoplasmic with alternate O-glycosylation or phosphorylation at the same positions
+#title:Proteins that are cytoplasmic with alternate O-glycosylation or phosphorylation at the same positions
+#tags:subcellular location,cellular component,PTM,glycosylation,carbohydrate,sequence
 #acs: P08047, P31749, P10636, ...
-#tags:location,PTM,sequence
 #count:17
 #time: 0.9
-select  distinct ?entry where {
+
+select distinct ?entry where {
  ?entry :isoform ?iso .
  ?iso :cellularComponent/:term/:childOf cv:SL-0086.
  ?iso :modifiedResidue /:term ?ptmtype.

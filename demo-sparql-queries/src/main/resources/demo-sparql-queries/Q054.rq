@@ -1,8 +1,9 @@
-#title:Q054   which are "Receptor binding" according to GO and Swiss-Prot keyword "Immunity"
-#acs: P05771, O60602, Q13114, ...
+#title:Proteins which are "Receptor binding" according to GO and have the Swiss-Prot keyword "Immunity"
 #tags:function,GO,keyword
+#acs:P05771, O60602, Q13114, ...
 #count:72
 #time: 0.1
+
 select distinct ?entry where {
   ?entry :isoform ?iso.
   ?iso :function ?statement.

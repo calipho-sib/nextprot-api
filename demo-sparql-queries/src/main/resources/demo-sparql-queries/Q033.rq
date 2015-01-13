@@ -1,8 +1,9 @@
-#title:Q033 with >=1 phoshotyrosine but no phosphoserine or phosphothreonine
+#title:Proteins with at least one phoshotyrosine but no phosphoserine or phosphothreonine
+#tags:PTM,phosphorylation
 #acs:Q9Y3B8, P00387, Q14765, ...
-#tags:PTM
 #count:303
 #time:0.08
+
 select distinct ?entry where {
 select ?entry ?iso (count(?ptm)) where {
   ?entry :isoform ?iso .

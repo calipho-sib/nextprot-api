@@ -1,10 +1,11 @@
 #title:Proteins with more than 1 reported interaction (of 'gold' quality)
+#tags:interaction,PPI
 #acs:Q8N7H5
-#tags:interaction
 #count:2743
 #time:0.559
 #pending
-select  distinct ?entry where {
+
+select distinct ?entry where {
   ?entry :isoform/:binaryInteraction ?interaction.
   ?interaction :interactant ?interactant; :quality :GOLD
 } 

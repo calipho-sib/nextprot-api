@@ -1,8 +1,9 @@
-#title:Q079  with >=1 3D structure and are phosphorylated
+#title:Proteins with at least one 3D structure and that are phosphorylated
+#tags:PDB,PTM,3D structure,phosphorylation
 #acs: Q9Y570, P37840, O00763, ...
-#tags:PDB,PTM
 #count:2972
 #time: 0.53
+
 select distinct ?entry where {
  ?entry :isoform ?iso .
  ?iso :keyword / :term cv:KW-0597 . #phosphoprotein

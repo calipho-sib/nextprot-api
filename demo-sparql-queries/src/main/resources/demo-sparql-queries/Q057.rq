@@ -1,8 +1,9 @@
-#title:Q057  which are located in mitochondrion with an evidence other than HPA and DKFZ-GFP
+#title:Proteins that are located in the mitochondrion with an experimental evidence originating not from HPA or DKFZ-GFP
+#tags:subcellular location,cellular component,experimental evidence
 #acs: Q9Y6N5, O14925, O14879, ...
-#tags:location,evidence
 #count:1068
 #time: 0.25
+
 select distinct ?entry where {
  ?entry :isoform ?iso .
   ?iso :cellularComponent ?loc.

@@ -1,8 +1,10 @@
+#id:NXQ_00003
 #title:Proteins with 7 transmembrane regions
+#tags:region,domain,transmembrane,topology
 #acs:
-#tags:region,transmembrane
 #count:1026
-select distinct ?entry where{
+
+select distinct ?entry where {
  ?entry :isoform ?iso.
    ?iso :topology ?statement .
    ?statement a :TransmembraneRegion.

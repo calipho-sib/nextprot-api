@@ -1,9 +1,10 @@
-#title:Q042 that bind a metal and are secreted
+#title:Proteins that bind a metal and are secreted
+#tags:subcellular location,cellular component,metal
 #acs:O43852, O43852, P02787, ...
-#tags:location,metal
 #count:225
 #time:0.1
-SELECT distinct ?entry WHERE {
+
+select distinct ?entry where {
  ?entry :isoform ?iso .
  #?iso :cellularComponent/:term/:childOf cv:SL-0243 .
  ?iso :keyword / :term cv:KW-0964. # secreted

@@ -1,9 +1,10 @@
-#title:Q034 with >=1 homeobox domain and with >=1 variant in the homeobox domain(s)
+#title:Proteins with at least 1 homeobox domain and with at least one variant in the homeobox domain(s)
+#tags:domain,variant,sequence variation
 #acs:A6NHT5, A6NNA5, O95076, ...
-#tags:domain,variant
 #count:229
 #time:0.15
-SELECT distinct ?entry WHERE {
+
+select distinct ?entry where {
     ?entry :isoform ?iso.
 # with >=1 homeobox domain
     ?iso  :region  ?st1.

@@ -1,10 +1,10 @@
-#title: Q103 All proteins that do not have a cross-reference to an Ensembl ENSG number.
+#title:Proteins that do not have a cross-reference to an Ensembl ENSG
+#tags:Xref,cross-reference 
 #ac:A6NHS1,A8MWK0,Q58FF6
-#tags: Xref 
 #count:216
 #time:1.4
 
-select distinct ?entry  {
+select distinct ?entry where {
  ?entry a :Entry .
  filter not exists {
    ?entry :reference ?x .

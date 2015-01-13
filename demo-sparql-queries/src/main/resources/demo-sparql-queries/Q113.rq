@@ -1,10 +1,9 @@
-#title: Q113  Proteins with PE1 and at least one proteotypic peptide
+#title:Proteins with protein evidence "At protein level" (PE=1) and at least one proteotypic peptide
+#tags:peptide,mass spectrometry,proteotypic,protein evidence,PE
 #ac:A0A5B9,A0AV02,A0AV96
-#tags:peptide,proteotypic,long
 #count:14927
 #time:369
 
-# Could be much faster if we attach a triple to peptides telling if it is proteotypic or not !
 select distinct ?entry where {
   ?entry :existence :Evidence_at_protein_level .
   ?entry :isoform / :peptideMapping ?pm .

@@ -1,9 +1,10 @@
-#title:Q035  located in the mitochondrion and which is an enzyme
+#title:Proteins located in the mitochondrion and which is an enzyme
+#tags:enzyme,function,subcellular location,cellular component
 #acs:O00154, P55211, Q14318, ...
-#tags:enzyme,location
 #count:535
 #time:0.08
-SELECT distinct  ?entry   WHERE  {
+
+select distinct ?entry where {
   ?entry :classifiedWith/rdf:type :EnzymeClassificationCv.
   ?entry :isoform/:cellularComponent/:term/:childOf cv:SL-0173
 }

@@ -1,9 +1,10 @@
-#title:Q041 that are annotated with GO "F" terms prefixed by "Not"
-#acs:P12270, Q96EM0, Q9BSI4, ...
+#title:Proteins that are annotated with GO "F" (function) terms prefixed by "Not"
 #tags:GO,function,evidence
+#acs:P12270, Q96EM0, Q9BSI4, ...
 #count:226
 #time:0.26
-SELECT distinct ?entry WHERE  {
+
+select distinct ?entry where {
   ?entry :isoform ?iso.
   ?iso :goMolecularFunction ?statement.
   ?statement :negativeEvidence ?ev.

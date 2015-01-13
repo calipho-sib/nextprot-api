@@ -1,10 +1,11 @@
-#title:Protein that have 3 disulfide bonds and that are not annotated as hormones 
+#id:NXQ_00009
+#title:Proteins that have 3 disulfide bonds and that are not annotated as hormones 
+#tags:PTM,function
 #acs:A4D1T9,A6NC86,A6NDD2,A6NDV4,A6NGN9,A8MWS1,A8MWY0,A8MXU0,B1AKI9,D3W0D1
-#tags:selected,PTM,function
 #count:464
 #pending
 
-select distinct ?entry   WHERE {
+select distinct ?entry where {
   ?entry :isoform ?isoform.
   ?isoform :ptm ?statement .
   ?statement a :DisulfideBond.

@@ -1,9 +1,11 @@
+#id:NXQ_00004
 #title:Proteins highly expressed in brain but not expressed in testis
-#acs: A5YM72,P43699,P78411
 #tags:expression
+#acs:A5YM72,P43699,P78411
 #count: 49
 #time: 0.4
-SELECT distinct ?entry WHERE {
+
+select distinct ?entry where {
   ?entry :isoform ?iso.
 # get all expression
   ?iso :expression ?e1.

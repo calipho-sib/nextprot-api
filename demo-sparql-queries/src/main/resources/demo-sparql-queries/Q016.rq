@@ -1,9 +1,11 @@
+#id:NXQ_00016
 #title:Proteins with a mature chain of less than 1000 amino acids which are secreted and do not contain cysteines in the mature chain
+#tags:sequence,subcellular location,cellular component,processing
 #acs:P10163,P01258,P01270
-tags:sequence,subcellular location,cellular component,processing
 #count:165
 #time:0.08
-SELECT distinct ?entry  WHERE  {
+
+select distinct ?entry where {
 ?entry :isoform ?iso .
 ?iso :cellularComponent/:term cv:SL-0243;:sequence / :chain ?seq. #secreted
 ?iso :matureProtein [ :start ?mstart ; :end ?mend]

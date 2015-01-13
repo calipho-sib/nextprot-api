@@ -1,9 +1,10 @@
-#title:Q060  which have >=1 negatively charged residue (in set DE) in a transmembrane domain
+#title:Proteins which have one or more negatively charged residue in a transmembrane domain
+#tags:domain,region,transmembrane,sequence,
 #acs: A6NGA9, O14678, ,A8MWL7 ...
-#tags:domain,sequence
 #count:2532
 #time: 0.58
-SELECT distinct ?entry WHERE {
+
+select distinct ?entry where {
  ?entry :isoform ?iso .
  ?iso :transmembraneRegion  ?tm.
  ?tm :start ?tmstart ; :end ?tmend.

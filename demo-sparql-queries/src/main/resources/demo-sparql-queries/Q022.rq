@@ -1,10 +1,11 @@
 #title:Proteins with no function annotated 
-#acs:A0PJZ0,A0ZSE6,A1L390
 #tags:function
+#acs:A0PJZ0,A0ZSE6,A1L390
 #count:2750
 #time:0.544
 #pending
-select distinct ?entry where  {
+
+select distinct ?entry where {
   ?entry :isoform ?iso.
   FILTER NOT EXISTS {?iso :function ?_ }
 } order by ?entry

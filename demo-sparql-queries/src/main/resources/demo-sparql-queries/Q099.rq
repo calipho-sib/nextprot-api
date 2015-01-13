@@ -1,6 +1,6 @@
-#title: Q099 entries having PTMS that also fall on variants
+#title:Proteins that have at least one PTM in a position of a variant
+#tags:PTM,variant,sequence variation 
 #ac:Q9UPT9,Q9UPN4,Q9Y272
-#tags: PTM,variants 
 #count:4492 
 #time:18.3  
 

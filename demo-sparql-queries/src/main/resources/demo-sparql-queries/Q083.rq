@@ -1,9 +1,10 @@
 #title:Proteins whose genes are on chromosome 18 that are expressed only in liver
-#acs:
 #tags:chromosome,expression,todo
+#acs:
 #count:
 #time: 
-SELECT distinct ?entry count(?tiss) WHERE {
+
+Select distinct ?entry count(?tiss) where {
   ?entry :gene / :chromosome "18"^^xsd:string .
   ?entry :isoform  ?iso.
   ?iso :expressionProfile /:term ?tiss.

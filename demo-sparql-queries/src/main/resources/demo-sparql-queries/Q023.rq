@@ -2,6 +2,7 @@
 #tags:subcellular location,cellular process,function,PTM
 #count:1541
 #time:3.514
+
 select distinct ?entry where {
 # cv:KW-0472 membrane
 # cv:SL-0162 membrane

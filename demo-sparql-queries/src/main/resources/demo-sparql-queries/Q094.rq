@@ -1,12 +1,13 @@
 #title:Q094  which are targets of antipsychotic drugs and highly expressed in brain - - - federated query with drugbank - - -
-#acs: P08183,P10635,P11229, ...
 #tags:federated,drug
+#acs: P08183,P10635,P11229, ...
 #count: 8
 #time: 1.3
+
 PREFIX diseasome: <http://wifo5-04.informatik.uni-mannheim.de/diseasome/resource/diseasome/>
 PREFIX drugbank: <http://wifo5-04.informatik.uni-mannheim.de/drugbank/resource/drugbank/>
-SELECT distinct ?entry
-WHERE {
+
+select distinct ?entry where {
   service <http://wifo5-03.informatik.uni-mannheim.de/drugbank/sparql> {
     SELECT distinct ?unipage WHERE {
     ?drug drugbank:drugCategory ?drugCat .

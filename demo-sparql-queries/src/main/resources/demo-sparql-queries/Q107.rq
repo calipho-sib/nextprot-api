@@ -1,10 +1,10 @@
-#title: Q107 All proteins with a protein evidence not "At protein level" with a HGNC identifier/xref that includes the regexp "orf"
+#title:Proteinss with a protein evidence not "At protein level" (PE=1) and with a HGNC approved gene name that contains "orf"
+#tags:protein existence,PE,gene name
 #ac:A6NJI1,C9JXX5,A1A4V9
-#tags:existence,orf
 #count:287
 #time:0.42
 
-select  distinct ?entry {
+select distinct ?entry where {
   ?entry :existence ?level .
   filter (?level != :Evidence_at_protein_level) .
   ?entry :reference ?r .

@@ -1,11 +1,12 @@
 #title:Proteins with at least 50 interactors that and not associated with a disease
+#tags:interaction,PPI,disease
 #acs:
-#tags:interaction,disease
 #count:286
 #time:1.283
 #pending
 # we exclude both disease annotation ans reference to Orphanet
-select distinct ?entry  where {
+
+select distinct ?entry where {
   ?entry :isoform ?iso.
   ?iso :binaryInteraction/:interactant ?interactant .
   FILTER NOT EXISTS { ?entry :reference / :provenance db:Orphanet . }
