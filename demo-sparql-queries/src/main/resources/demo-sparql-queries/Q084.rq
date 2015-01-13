@@ -6,7 +6,7 @@
 select distinct ?entry {
   ?entry :gene / :chromosome "18"^^xsd:string .
   ?entry :isoform  ?iso.
-  {?iso :glycosylationSite /:evidence /:code ?evcode.
+  {?iso :glycosylationSite /:evidence /:evidenceCode ?evcode.
   filter (?evcode not in (:IEA))}
   UNION
   {
