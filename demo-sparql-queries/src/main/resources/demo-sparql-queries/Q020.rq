@@ -1,6 +1,6 @@
-#title:Q020, Proteins with >=2 HPA antibodies whose genes are located on chromosome 21 and that are highly expressed at IHC level in heart
+#title:Proteins with at least 2 HPA antibodies whose genes are located on chromosome 21 and that are highly expressed at IHC level in heart
 #acs:P56181,P48449,Q8TCY5
-#tags:selected,expression,antibody,gene
+#tags:selected,expression,antibody,chromosomal location
 #count:3
 #time:1.269
 #pending
@@ -18,7 +18,7 @@ select ?entry  where {
     ?entry :isoform / :mapping ?map .
     ?map a :AntibodyMapping .
     ?map :reference ?ref .
-	?ref :provenance db:HPA; :accession ?ac .
+        ?ref :provenance db:HPA; :accession ?ac .
   }
 } group by ?entry 
 having (count(?ac)>=2)

@@ -1,20 +1,15 @@
 package org.nextprot.api.user.controller;
 
-import java.util.List;
-
 import org.jsondoc.core.annotation.Api;
-import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controller for operating (CRUD) on user queries (SPARQL)
@@ -31,8 +26,8 @@ public class UserQueryController {
 
 	@RequestMapping(value = "/queries/public", method = { RequestMethod.GET })
 	@ResponseBody
-	public List<UserQuery> getPublicUserQueries() {
-		return userQueryService.getPublishedQueries();
+	public List<UserQuery> getTutorialQueries() {
+		return userQueryService.getTutorialQueries();
 	}
 
 	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.GET })
@@ -50,7 +45,6 @@ public class UserQueryController {
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.POST })
 	@ResponseBody
 	public UserQuery createAdvancedQuery(@RequestBody UserQuery userQuery, @PathVariable("username") String username) {
-		System.err.println(userQuery);
 		userQuery.setOwner(username);
 		return userQueryService.createUserQuery(userQuery);
 	}

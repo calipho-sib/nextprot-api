@@ -2,7 +2,6 @@ package org.nextprot.api.user.service.impl;
 
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
-import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
@@ -32,11 +31,6 @@ public class UserQueryServiceImpl implements UserQueryService {
 
 	@Override
 	@AllowedAnonymous
-	public List<UserQuery> getPublishedQueries() {
-		return userQueryDao.getPublishedQueries();
-	}
-
-	@Override
 	public List<UserQuery> getTutorialQueries() {
 		return userQueryDao.getTutorialQueries();
 	}

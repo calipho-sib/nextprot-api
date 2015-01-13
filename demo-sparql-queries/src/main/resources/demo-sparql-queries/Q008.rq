@@ -1,4 +1,4 @@
-#title:Q008 whose genes are less than 50000 bp away from the location of the gene of protein Y
+#title:Proteins whose genes are less than 50000 bp away from the location of the gene coding for protein p53
 #acs:P04278,P04637,P14415,Q15768,Q96F10,Q9BUR4
 #tags:gene
 #count:5

@@ -26,7 +26,6 @@ public interface UserQueryService {
 	 */
 	List<UserQuery> getUserQueriesByTag(String tag);
 
-	List<UserQuery> getPublishedQueries();
 	List<UserQuery> getTutorialQueries();
 
 	/**
