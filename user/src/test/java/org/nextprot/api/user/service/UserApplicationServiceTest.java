@@ -25,13 +25,13 @@ public class UserApplicationServiceTest extends AbstractUnitBaseTest {
     // http://tedvinke.wordpress.com/2014/02/13/mockito-why-you-should-not-use-injectmocks-annotation-to-autowire-fields/
     @InjectMocks
     @Autowired
-    UserApplicationService service;
+    private UserApplicationService service;
 
     @Mock
-    UserApplicationDao dao;
+    private UserApplicationDao dao;
 
     @Mock
-    JWTCodec<Map<String, String>> codec;
+    private JWTCodec<Map<String, String>> codec;
 
     @Before
     public void init() {

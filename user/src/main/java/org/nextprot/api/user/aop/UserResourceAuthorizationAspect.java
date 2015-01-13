@@ -1,22 +1,29 @@
 package org.nextprot.api.user.aop;
 
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.Map;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.nextprot.api.commons.exception.NotAuthorizedException;
+import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.commons.resource.UserResource;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.domain.User;
+import org.nextprot.api.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-
 /**
- * Aspect responsible for checking that services have permission to act on {@code UserResource}
+ * Aspect responsible for checking that services have permission to act on
+ * {@code UserResource}
  *
  * @author fnikitin
  */
@@ -24,8 +31,7 @@ import java.util.Map;
 @Component
 public class UserResourceAuthorizationAspect {
 
-	private static final NotAuthorizedException NOT_AUTHORIZED_EXCEPTION =
-			new NotAuthorizedException("You must be logged in to access this resource");
+	private static final NotAuthorizedException NOT_AUTHORIZED_EXCEPTION = new NotAuthorizedException("You must be logged in to access this resource");
 
 	@Autowired
 	private ApplicationContext context;
@@ -33,37 +39,63 @@ public class UserResourceAuthorizationAspect {
 	@Autowired
 	private UserDao userDao;
 
- 	@Before("execution(* org.nextprot.api.user.service.*.*(..)) && args(untrustedUserResource)")
-	public void checkAuthorization(UserResource untrustedUserResource) throws Throwable {
+	@Around("execution(* org.nextprot.api.user.service.*.*(..)) && !@annotation(org.nextprot.api.commons.resource.AllowedAnonymous)")
+	public Object checkUserAuthorization(ProceedingJoinPoint pjp) throws Throwable {
 
-		// check that client is logged in
-		SecurityContext sc = SecurityContextHolder.getContext();
-		if (sc == null || sc.getAuthentication() == null) {
-			throw NOT_AUTHORIZED_EXCEPTION;
-		}
+		MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
 
-		// set resource owner with the connected user
-		String currentUser = NPSecurityContext.getCurrentUser();
-		if (currentUser == null) {
-			throw NOT_AUTHORIZED_EXCEPTION;
-		}
+			// check that client is logged in
+			SecurityContext sc = SecurityContextHolder.getContext();
+			if (sc == null || sc.getAuthentication() == null) {
+				throw NOT_AUTHORIZED_EXCEPTION;
+			}
 
-		User usr = userDao.getUserByUsername(currentUser);
+			// set resource owner with the connected user
+			String currentUser = NPSecurityContext.getCurrentUser();
+			if (currentUser == null) {
+				throw NOT_AUTHORIZED_EXCEPTION;
+			}
 
-		untrustedUserResource.setOwnerName(usr.getUsername());
-		untrustedUserResource.setOwnerId(usr.getId());
+			User usr = userDao.getUserByUsername(currentUser);
 
-		// is the one that own the resource
-		UserResourceAuthorizationChecker delegator = getAuthorizationChecker(untrustedUserResource);
+			Object[] arguments = pjp.getArgs();
+			for (Object arg : arguments) {
+				if (arg instanceof UserResource) {
 
-		if (delegator == null) {
+					UserResource untrustedUserResource = (UserResource) arg;
 
-			throw new IllegalStateException("UserResourceAuthorizationChecker was not found for resource "+untrustedUserResource.getClass());
-		}
+					untrustedUserResource.setOwnerName(usr.getUsername());
+					untrustedUserResource.setOwnerId(usr.getId());
 
-		delegator.checkAuthorization(untrustedUserResource);
+					// is the one that own the resource
+					UserResourceAuthorizationChecker delegator = getAuthorizationChecker(untrustedUserResource);
 
-		NPSecurityContext.checkUserAuthorization(untrustedUserResource);
+					if (delegator == null) {
+
+						throw new IllegalStateException("UserResourceAuthorizationChecker was not found for resource " + untrustedUserResource.getClass());
+					}
+
+					delegator.checkAuthorization(untrustedUserResource);
+
+					NPSecurityContext.checkUserAuthorization(untrustedUserResource);
+
+					break; // Do it only for the first argument
+
+				}
+			}
+
+			//TODO test if the result is a collection of user resources....
+			Object o = pjp.proceed();
+			if (o instanceof UserResource) {
+				UserResource untrustedUserResource = (UserResource) o;
+				UserResourceAuthorizationChecker delegator = getAuthorizationChecker(untrustedUserResource);
+				delegator.checkAuthorization(untrustedUserResource);
+				NPSecurityContext.checkUserAuthorization(untrustedUserResource);
+			}
+
+			return o;
+
+
 	}
 
 	private UserResourceAuthorizationChecker getAuthorizationChecker(UserResource userResource) {

@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.dao.AuthorDao;
 import org.nextprot.api.core.dao.CvJournalDao;
 import org.nextprot.api.core.dao.DbXrefDao;
-import org.nextprot.api.core.dao.MasterIdentifierDao;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.DbXref;

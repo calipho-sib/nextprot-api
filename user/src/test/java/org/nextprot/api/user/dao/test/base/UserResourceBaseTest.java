@@ -24,6 +24,6 @@ import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
     DirtiesContextTestExecutionListener.class,
     TransactionDbUnitTestExecutionListener.class })
 @ActiveProfiles({"unit", "unit-schema-user"})
-public abstract class UserApplicationBaseTest extends AbstractUnitBaseTest {
+public abstract class UserResourceBaseTest extends AbstractUnitBaseTest {
 
 }

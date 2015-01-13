@@ -30,7 +30,7 @@
 	</bean>
 
 
-	<beans profile="pro">
+	<beans profile="cache">
 
 		<!-- JMX Support -->
 		<context:mbean-export />

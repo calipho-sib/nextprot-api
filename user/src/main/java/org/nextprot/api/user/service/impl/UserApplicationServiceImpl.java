@@ -20,7 +20,7 @@ import java.util.Map;
 public class UserApplicationServiceImpl implements UserApplicationService {
 
 	@Autowired
-	private JWTCodec<Map<String, String>> codec;
+	private JWTCodec<Map<String, Object>> codec;
 
 	@Autowired
 	private UserApplicationDao userApplicationDao;
@@ -29,7 +29,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
     public UserApplication createUserApplication(UserApplication userApplication) {
 
         NPreconditions.checkNotNull(userApplication, "The user application should not be null");
-        NPreconditions.checkTrue(userApplication.getId() == 0L, "The user application id "+userApplication.getId()+" should not be defined");
+		NPreconditions.checkTrue(!userApplication.isPersisted(), "The user application should be new");
 
         long id = userApplicationDao.createUserApplication(userApplication);
 
@@ -44,7 +44,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
     private String generateToken(UserApplication userApplication)  {
 
-        Map<String, String> appProps = new HashMap<String, String>();
+        Map<String, Object> appProps = new HashMap<String, Object>();
         appProps.put("id", String.valueOf(userApplication.getId()));
         appProps.put("timestamp", String.valueOf(System.currentTimeMillis()));
 
@@ -53,9 +53,7 @@ public class UserApplicationServiceImpl implements UserApplicationService {
 
 	@Override
 	public List<UserApplication> getUserApplicationsByOwnerId(long ownerId) {
-		List<UserApplication> apps = userApplicationDao.getUserApplicationListByOwnerId(ownerId);
-		NPSecurityContext.checkUserAuthorization(apps); //will throw an exception if not authorized
-		return apps;
+		return userApplicationDao.getUserApplicationListByOwnerId(ownerId);
 	}
 
 	@Override

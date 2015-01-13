@@ -19,7 +19,7 @@ public class PopulateRDBMSWithQueriesApp {
 		UserQueryService userQueryService = ctx.getBean(UserQueryService.class);
 		UserService userService = ctx.getBean(UserService.class);
 
-		for (UserQuery uq : userQueryService.getPublishedQueries()) {
+		for (UserQuery uq : userQueryService.getTutorialQueries()) {
 			userQueryService.deleteUserQuery(uq);
 			System.err.println("deleting" + uq.getUserQueryId());
 		}

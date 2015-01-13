@@ -1,11 +1,13 @@
 package org.nextprot.api.user.service.impl;
 
+import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.user.dao.UserDao;
 import org.nextprot.api.user.domain.User;
 import org.nextprot.api.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -43,9 +45,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	@Cacheable(value = "read-user", key = "#username")
+	@AllowedAnonymous
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User usr = userDao.getUserByUsername(username);
-		if(usr == null){
+		try {
+			return userDao.getUserByUsername(username);
+		} catch(EmptyResultDataAccessException e) {
+
 			User user = new User();
 			user.setUsername(username);
 			Set<GrantedAuthority> hs = new HashSet<GrantedAuthority>();
@@ -53,6 +58,7 @@ public class UserServiceImpl implements UserService {
 			user.setAuthorities(hs);
 			createUser(user);
 		}
+
 		return userDao.getUserByUsername(username);
 	}
 

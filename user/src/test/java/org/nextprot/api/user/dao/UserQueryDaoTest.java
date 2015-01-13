@@ -5,7 +5,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import org.junit.Test;
-import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
+import org.nextprot.api.user.dao.test.base.UserResourceBaseTest;
 import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -18,7 +18,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 @DatabaseSetup(value = "UserQueriesDaoTest.xml", type = DatabaseOperation.INSERT)
-public class UserQueryDaoTest extends UserApplicationBaseTest {
+public class UserQueryDaoTest extends UserResourceBaseTest {
 
     @Autowired private UserQueryDao userQueryDao;
 

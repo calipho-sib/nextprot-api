@@ -129,5 +129,39 @@ public class SparqlUtils {
 		}
 		return meta;		
 	}
+	
+	
+	public static String buildQuery(String prefixes, String query) {
+
+		// If it does not start with prefix
+		if (!query.trim().toUpperCase().startsWith("PREFIX")) {
+			String resultQuery = "";
+			resultQuery += prefixes;
+
+			// and if does not start with select
+			boolean selectIncluded = false;
+			if (!query.trim().toUpperCase().startsWith("SELECT")) {
+				resultQuery += "SELECT distinct ?entry {\n";
+				selectIncluded = true;
+			}
+
+			resultQuery += query;
+			if (selectIncluded)
+				resultQuery += "\n}";
+
+			return resultQuery;
+
+		} else {
+
+			String resultQuery = "";
+			resultQuery += prefixes;
+			resultQuery += query;
+			return resultQuery;
+
+		}
+
+	}
+
+
 
 }

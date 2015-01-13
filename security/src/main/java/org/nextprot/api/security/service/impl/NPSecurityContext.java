@@ -83,9 +83,4 @@ public class NPSecurityContext {
 			return null;
 		}
 	}
-
-    public static long getCurrentUserId() {
-
-        throw new UnsupportedOperationException("NPSecurityContext.getCurrentUserId() not yet implemented");
-    }
 }
