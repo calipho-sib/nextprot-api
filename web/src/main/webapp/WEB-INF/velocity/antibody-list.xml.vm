@@ -1,6 +1,6 @@
-<antibody-list>
+<mapping-category category="antibody-mapping" hierarchy="mapping">
 	#foreach($antibody in $entry.antibodyMappings)
-		<antibody>
+		<antibody-mapping>
 			#if($antibody.xrefs.size() != 0)
 				#foreach($xref in $antibody.xrefs)
 					#set($UNESCAPED_CDATA = $xref.resolvedUrl)
@@ -9,6 +9,6 @@
 			#end
 		#set($target-isoform-list = $antibody.isoformSpecificity)
 		#parse('target-isoform-list.xml.vm')	
-		</antibody>
+		</antibody-mapping>
 	#end
-</antibody-list>
+</mapping-category>

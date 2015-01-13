@@ -1,6 +1,7 @@
 package org.nextprot.api.core.dao;
 
 import java.util.List;
+import java.util.Set;
 
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
@@ -28,5 +29,10 @@ public interface DbXrefDao {
 
 	List<DbXref> findDbXRefByIds(List<Long> resourceIds);
 	
+	Set<DbXref> findEntryAnnotationsEvidenceXrefs(String entryName);
+	Set<DbXref> findEntryIdentifierXrefs(String entryName);
+	Set<DbXref> findEntryAttachedXrefs(String entryName);
+	Set<DbXref> findEntryInteractionXrefs(String entryName);
+	Set<DbXref> findPeptideXrefs(List<String> peptideNames);
 	
 }

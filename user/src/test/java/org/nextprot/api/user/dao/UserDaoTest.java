@@ -1,7 +1,9 @@
 package org.nextprot.api.user.dao;
 
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.user.dao.test.base.UserResourceBaseTest;
@@ -11,9 +13,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup(value = "UserDaoTest.xml", type = DatabaseOperation.INSERT)
 public class UserDaoTest extends UserResourceBaseTest {

@@ -2,7 +2,10 @@ package org.nextprot.api.core.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
@@ -10,6 +13,7 @@ import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
+import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -24,8 +28,33 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 
 	@Autowired private DataSourceServiceLocator dsLocator;
 	
-	public List<PeptideMapping> findPeptidesByMasterId(Long id) {
-		SqlParameterSource namedParams = new MapSqlParameterSource("id", id);
+	
+	@Override
+	public List<PeptideProperty> findPeptideProperties(List<String> names) {
+		SqlParameterSource namedParams = new MapSqlParameterSource("names", names);
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("peptide-properties-by-peptide-names"), namedParams, new RowMapper<PeptideProperty>() {
+
+			@Override
+			public PeptideProperty mapRow(ResultSet resultSet, int row) throws SQLException {
+				PeptideProperty prop = new PeptideProperty();
+				prop.setPeptideId(resultSet.getLong("peptide_id"));
+				prop.setPeptideName(resultSet.getString("peptide_name"));
+				prop.setId(resultSet.getLong("property_id"));
+				prop.setNameId(resultSet.getLong("prop_name_id"));
+				prop.setName(resultSet.getString("prop_name"));
+				prop.setValue(resultSet.getString("prop_value"));
+				return prop;
+			}
+			
+		});
+	}
+
+	
+	private List<PeptideMapping> privateFindPeptidesByMasterId(Long id, List<Long> propNameIds) {
+		Map<String,Object> params = new HashMap<String,Object>();
+		params.put("id", id);
+		params.put("propNameIds", propNameIds);
+		SqlParameterSource namedParams = new MapSqlParameterSource(params);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("peptide-by-master-id"), namedParams, new RowMapper<PeptideMapping>() {
 
 			@Override
@@ -37,27 +66,23 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 				peptideMapping.addIsoformSpecificity(spec);
 				return peptideMapping;
 			}
-			
 		});
 	}
-	
-	public List<PeptideEvidence> findPeptideEvidences(List<String> names) {
-		String sql = "select distinct peptide.unique_name, xr.accession, db.cv_name as database_name, ds.cv_name as assigned_by " + 
-				"from nextprot.sequence_identifiers peptide, " +
-				"nextprot.identifier_resource_assoc ira, " +
-				"nextprot.db_xrefs xr, " + 
-				"nextprot.cv_databases db, " +
-				"nextprot.cv_datasources ds " + 
-				"where peptide.identifier_id = ira.identifier_id " + 
-				"  and ira.resource_id = xr.resource_id " + 
-				"  and xr.cv_database_id = db.cv_id " + 
-				"  and ira.datasource_id = ds.cv_id " + 
-				"  and ds.cv_name != 'PeptideAtlas' " + 
-				"  and peptide.unique_name in (:names)";
-		
-		SqlParameterSource namedParams = new MapSqlParameterSource("names", names);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParams, new RowMapper<PeptideEvidence>() {
 
+	
+	private List<PeptideEvidence> privateFindPeptideEvidences(List<String> names, boolean withNatural, boolean withSynthetic) {
+
+		String datasourceClause;
+		if (withNatural && withSynthetic) 	{ datasourceClause=" true ";  
+		} else if (withNatural) 			{ datasourceClause=" ds.cv_name != 'SRMAtlas' ";  			
+		} else if (withSynthetic) 			{ datasourceClause=" ds.cv_name  = 'SRMAtlas' ";  
+		} else 								{ datasourceClause=" false ";  
+		}
+		String sql = sqlDictionary.getSQLQuery("peptide-evidences-by-peptide-names").replace(":datasourceClause", datasourceClause);
+		Map<String,Object> params = new HashMap<String,Object>();
+		params.put("names", names);
+		SqlParameterSource namedParams = new MapSqlParameterSource(params);
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParams, new RowMapper<PeptideEvidence>() {
 			@Override
 			public PeptideEvidence mapRow(ResultSet resultSet, int row) throws SQLException {
 				PeptideEvidence evidence = new PeptideEvidence();
@@ -65,10 +90,44 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 				evidence.setAccession(resultSet.getString("accession"));
 				evidence.setDatabaseName(resultSet.getString("database_name"));
 				evidence.setAssignedBy(resultSet.getString("assigned_by"));
+				evidence.setResourceId(resultSet.getLong("resource_id"));
+				evidence.setResourceType(resultSet.getString("resource_type"));
 				return evidence;
 			}
-			
 		});
+	}
+	
+	@Override
+	public List<PeptideMapping> findAllPeptidesByMasterId(Long id) {
+		Long[] propNameIds = {52L,53L}; // 52:natural, 53:synthetic 
+		return privateFindPeptidesByMasterId(id,Arrays.asList(propNameIds));
+	}
+
+	@Override
+	public List<PeptideMapping> findNaturalPeptidesByMasterId(Long id) {
+		Long[] propNameIds = {52L}; // 52:natural, 53:synthetic 
+		return privateFindPeptidesByMasterId(id,Arrays.asList(propNameIds));
+	}
+
+	@Override
+	public List<PeptideMapping> findSyntheticPeptidesByMasterId(Long id) {
+		Long[] propNameIds = {53L}; // 52:natural, 53:synthetic 
+		return privateFindPeptidesByMasterId(id,Arrays.asList(propNameIds));
+	}
+
+	@Override
+	public List<PeptideEvidence> findAllPeptideEvidences(List<String> names) {
+		return privateFindPeptideEvidences(names,true, true);
+	}
+
+	@Override
+	public List<PeptideEvidence> findNaturalPeptideEvidences(List<String> names) {
+		return privateFindPeptideEvidences(names,true, false);
+	}
+
+	@Override
+	public List<PeptideEvidence> findSyntheticPeptideEvidences(List<String> names) {
+		return privateFindPeptideEvidences(names,false, true);
 	}
 
 }

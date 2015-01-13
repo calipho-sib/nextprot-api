@@ -1,12 +1,10 @@
 package org.nextprot.api.core.domain;
 
 import java.util.List;
-import java.util.Set;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class Entry {
 
@@ -29,6 +27,8 @@ public class Entry {
 	private List<Annotation> annotations;
 
 	private List<PeptideMapping> peptideMappings;
+	
+	private List<PeptideMapping> srmPeptideMappings;
 
 	private List<AntibodyMapping> antibodyMappings;
 
@@ -38,6 +38,17 @@ public class Entry {
 
 	private List<Terminology> enzymes;
 	
+	private List<ExperimentalContext> experimentalContexts;
+
+
+	public List<ExperimentalContext> getExperimentalContexts() {
+		return experimentalContexts;
+	}
+
+	public void setExperimentalContexts(List<ExperimentalContext> experimentalContexts) {
+		this.experimentalContexts = experimentalContexts;
+	}
+
 	public Entry(String uniqueName) {
 		this.uniqueName = uniqueName;
 	}
@@ -151,7 +162,7 @@ public class Entry {
 		return filteredInteractions;
 	}
 	
-	
+/*	
 	public List<Annotation> getAnnotationsByCategory(String category) {
 		List<Annotation> filteredAnnotations = Lists.newArrayList();
 		for (Annotation a : annotations) {
@@ -160,20 +171,7 @@ public class Entry {
 		}
 		return filteredAnnotations;
 	}
-
-	public Set<String> getAnnotationCategories() {
-		Set<String> distinctCategories = Sets.newTreeSet();
-		if (this.annotations != null) {
-			for (Annotation a : annotations) {
-				String category = a.getCategory();
-				if (!distinctCategories.contains(category)) {
-					distinctCategories.add(category);
-				}
-			}
-		}
-		return distinctCategories;
-	}
-
+*/
 	public List<PeptideMapping> getPeptideMappings() {
 		return peptideMappings;
 	}
@@ -216,5 +214,13 @@ public class Entry {
 
 	public List<Terminology> getEnzymes(){
 		return enzymes;
+	}
+
+	public List<PeptideMapping> getSrmPeptideMappings() {
+		return srmPeptideMappings;
+	}
+
+	public void setSrmPeptideMappings(List<PeptideMapping> srmPeptideMappings) {
+		this.srmPeptideMappings = srmPeptideMappings;
 	}
 }

@@ -3,7 +3,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.constants.XrefAnnotationMapping;

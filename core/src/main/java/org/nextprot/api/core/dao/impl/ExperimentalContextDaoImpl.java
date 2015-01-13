@@ -23,7 +23,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 	@Autowired private DataSourceServiceLocator dsLocator;
 
 	@Override
-	public List<ExperimentalContext> findExperimentalContextsByIds(List<String> ids) {
+	public List<ExperimentalContext> findExperimentalContextsByIds(List<Long> ids) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("ids", ids);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("experimental-contexts-by-ids"), namedParameters, new EcRowMapper());
 	}
