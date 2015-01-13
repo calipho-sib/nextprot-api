@@ -45,7 +45,6 @@ public class UserQueryController {
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.POST })
 	@ResponseBody
 	public UserQuery createAdvancedQuery(@RequestBody UserQuery userQuery, @PathVariable("username") String username) {
-		System.err.println(userQuery);
 		userQuery.setOwner(username);
 		return userQueryService.createUserQuery(userQuery);
 	}
