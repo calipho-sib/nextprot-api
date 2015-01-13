@@ -1,6 +1,6 @@
-#title:Q004, Proteins highly expressed in brain but not expressed in testis
+#title:Proteins highly expressed in brain but not expressed in testis
 #acs: A5YM72,P43699,P78411
-#tags: expression
+#tags:expression
 #count: 49
 #time: 0.4
 SELECT distinct ?entry WHERE {

@@ -1,5 +1,5 @@
-#title:Q012 that interact with protein Y and that are involved in splicing
-#tags:interaction
+#title:Proteins that interact with protein RBM17 and that are involved in splicing
+#tags:interaction,function
 #acs:O43143,O75533,Q13573,Q15428,Q15637,Q8IWZ8,Q99459,Q9P013
 #count:8
 select distinct ?entry WHERE  {
