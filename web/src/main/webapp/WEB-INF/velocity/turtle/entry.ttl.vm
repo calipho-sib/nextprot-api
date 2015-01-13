@@ -36,3 +36,6 @@ entry:$entry.getUniqueName() a :Entry;
 ## Isoform - peptide mappings
 #parse('turtle/peptide-list.ttl.vm')
 
+## Isoform - SRM peptide mappings
+#parse('turtle/srm-peptide-list.ttl.vm')
+

@@ -141,6 +141,14 @@ public class Entry {
 		return ppmlist;
 	}
 	
+	public List<PeptideMapping> getSrmPeptidesByIsoform(String isoform) {
+		List<PeptideMapping> ppmlist = Lists.newArrayList();
+		for (PeptideMapping ppm: this.srmPeptideMappings) {
+			if (ppm.isSpecificForIsoform(isoform)) ppmlist.add(ppm);
+		}
+		return ppmlist;
+	}
+	
 	public List<Annotation> getAnnotationsByIsoform(String isoform) {
 		List<Annotation> filteredAnnotations = Lists.newArrayList();
 		for (Annotation a : annotations) {

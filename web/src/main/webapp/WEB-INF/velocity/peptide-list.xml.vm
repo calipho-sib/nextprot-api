@@ -15,7 +15,7 @@
 				#foreach($evidence in $peptide.evidences)
 					<evidence 
 						is-negative='false' 
-						evidence-code='ECO:0000248' 
+						evidence-code='ECO:0001096' 
 						resource-assoc-type='evidence'
 						resource-internal-ref='$evidence.resourceId'  
 						resource-type='$evidence.resourceType'
