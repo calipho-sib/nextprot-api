@@ -117,6 +117,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		List<Isoform> isoforms = this.isoService.findIsoformsByEntryName(entryName);
 		List<DbXref> xrefs = this.xrefService.findDbXrefsAsAnnotByEntry(entryName);
 		List<Annotation> annotations = this.annotationDAO.createAdditionalAnnotationsFromXrefs(xrefs, entryName);
+		
 		// build evidences annotations and link them to annotations
 		for (Annotation annotation : annotations) {
 			List<AnnotationEvidence> evidences = new ArrayList<AnnotationEvidence>();
@@ -139,8 +140,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 			evidence.setQualifierType(xam.getQualifierType());    
 			evidence.setQualityQualifier(xam.getQualityQualifier());   
 			evidence.setAssignmentMethod(xam.getAssignmentMethod()); 
-			evidence.setEvidenceCodeAC("ECO:0000000"); // temp 
-			evidence.setEvidenceCodeName("evidence"); // temp
+			evidence.setEvidenceCodeAC(xam.getEcoAC()); 
+			evidence.setEvidenceCodeName(xam.getEcoName()); 
 			evidences.add(evidence);
 			annotation.setEvidences(evidences);
 		}
