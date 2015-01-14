@@ -1,11 +1,5 @@
 package org.nextprot.api.user.controller;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.user.domain.UserProteinList;
@@ -18,21 +12,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
-@Api(name = "User Lists", description = "Method to manipulate user lists", role = "ROLE_USER")
+@Api(name = "User Protein Lists", description = "Method to manipulate user protein lists", role = "ROLE_USER")
 public class UserListController {
 
-	private final Log Logger = LogFactory.getLog(UserListController.class);
 	@Autowired
 	private UserProteinListService proteinListService;
 

@@ -16,17 +16,16 @@ public class UserQueryUserResourceAuthorizationChecker implements UserResourceAu
     @Override
     public void checkAuthorization(UserResource query) {
 
-        long ownerId = query.getOwnerId();
-
         if (query instanceof UserQuery) {
 
             long queryId = ((UserQuery) query).getUserQueryId();
-            
+
             if (((UserQuery) query).getUserQueryId() != 0){
 
                 UserQuery foundUserQuery = dao.getUserQueryById(queryId);
 
-                if (foundUserQuery.getOwnerId() != ownerId)
+                // dao only get owner name
+                if (!foundUserQuery.getOwner().equals(query.getOwnerName()))
                     throw new NotAuthorizedException(query.getOwnerName() + " cannot access resource");
             }
         }

@@ -30,7 +30,7 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	public UserProteinList createUserProteinList(UserProteinList userProteinList) {
 
 		NPreconditions.checkNotNull(userProteinList, "The user protein list should not be null");
-		NPreconditions.checkTrue(!userProteinList.isPersisted(), "The user protein list should be new");
+		NPreconditions.checkTrue(userProteinList.getId() == 0, "The user protein list should be new");
 
 		long id = proteinListDao.createUserProteinList(userProteinList);
 		userProteinList.setId(id);

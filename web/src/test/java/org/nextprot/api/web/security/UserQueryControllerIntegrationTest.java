@@ -36,7 +36,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String sheldonUser = "Sheldon";
 		String sheldonToken = generateTokenWithExpirationDate("Sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
-		String content = "{\"userQueryId\":0,\"title\":\"Super Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"persisted\":false,\"ownerName\":\"test@nextprot.org\"}";
+		String content = "{\"userQueryId\":0,\"title\":\"Super Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// call UserQuery createAdvancedQuery()
 		String responseString = this.mockMvc.perform(post("/user/" + sheldonUser + "/query").contentType(MediaType.APPLICATION_JSON).
@@ -51,7 +51,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void othersShouldNotBeAbleToCreateQuery() throws Exception {
 
-		String content = "{\"userQueryId\":0,\"title\":\"Super Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"persisted\":false,\"ownerName\":\"test@nextprot.org\"}";
+		String content = "{\"userQueryId\":0,\"title\":\"Super Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// call UserQuery createAdvancedQuery()
 		this.mockMvc.perform(post("/user/penny/query").contentType(MediaType.APPLICATION_JSON).
@@ -160,7 +160,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList(new String[] { "ROLE_USER" }));
 
-		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"persisted\":false,\"ownerName\":\"test@nextprot.org\"}";
+		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// UserQuery updateAdvancedQuery()
 		String responseString = this.mockMvc.perform(put("/user/leonard/query/15").header("Authorization", "Bearer " + leonardToken)
@@ -179,7 +179,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList(new String[] { "ROLE_USER" }));
 
-		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"persisted\":false,\"ownerName\":\"test@nextprot.org\"}";
+		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// UserQuery updateAdvancedQuery()
 		this.mockMvc.perform(get("/user/leonard/query/15").header("Authorization", "Bearer " + sheldonToken)
@@ -192,7 +192,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList(new String[] { "ROLE_USER" }));
 
-		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query 1st attempt\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"sheldon\",\"ownerId\":23,\"tags\":null,\"persisted\":false,\"ownerName\":\"sheldon\"}";
+		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query 1st attempt\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"sheldon\",\"ownerId\":23,\"tags\":null,\"ownerName\":\"sheldon\"}";
 
 		// UserQuery updateAdvancedQuery()
 		this.mockMvc.perform(get("/user/leonard/query/15").header("Authorization", "Bearer " + sheldonToken)
@@ -203,7 +203,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void othersShouldNotBeAbleToUpdateLeonardsQuery() throws Exception {
 
-		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query 2nd attempt\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"persisted\":false,\"ownerName\":\"test@nextprot.org\"}";
+		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query 2nd attempt\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// UserQuery updateAdvancedQuery()
 		this.mockMvc.perform(put("/user/leonard/query/15")
