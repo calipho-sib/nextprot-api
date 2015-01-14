@@ -1,7 +1,5 @@
 package org.nextprot.api.tasks;
 
-import org.nextprot.api.demo.sparql.queries.service.DemoSparqlService;
-import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class GenerateMarkdownExampleQueriesApp {
@@ -11,7 +9,7 @@ public class GenerateMarkdownExampleQueriesApp {
 		System.setProperty("spring.profiles.active", "dev");
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:spring/commons-context.xml", "spring/demo-queries-context.xml");
 
-		DemoSparqlService sparqlService = ctx.getBean(DemoSparqlService.class);
+		/*DemoSparqlService sparqlService = ctx.getBean(DemoSparqlService.class);
 		for (UserQuery q : sparqlService.getDemoSparqlQueries()) {
 			System.out.println(q.getTitle());
 			System.out.println("\n");
@@ -20,7 +18,7 @@ public class GenerateMarkdownExampleQueriesApp {
 			System.out.println("```");
 			System.out.println("\n");
 
-		}
+		}*/
 	}
 
 }
