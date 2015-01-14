@@ -13,12 +13,22 @@
   isoform:$isoform-name :antibodyMapping :$mapping-iri .
   :$mapping-iri 
     rdf:type :AntibodyMapping ;  
+	:antibodyName "$antibody.antibodyUniqueName"^^xsd:string ;
 #foreach($xref in $antibody.xrefs)
-    :reference [
-      rdf:type :Xref ;
-      :provenance db:$StringUtils.slug($xref.databaseName) ;
-      :accession "$xref.accession"^^xsd:string ;
-    ];
+    :evidence [
+      rdf:type :Evidence ;
+      :evidenceCode cv:ECO_0000154;
+      :negative "false"^^xsd:boolean;
+      :quality :GOLD;      
+      :assignedBy source:$StringUtils.slug($antibody.assignedBy) ;
+      :assocType "evidence"^^xsd:string;
+	  :reference [
+	  	rdf:type :Xref ;
+	  	:provenance db:$StringUtils.slug($xref.databaseName) ;
+		:accession "$xref.accession"^^xsd:string ;
+	  ];
+    ];	
+    
 #end
 #foreach($pos in $spec.positions)
     :position [ 

@@ -25,6 +25,8 @@
     :evidence [
       rdf:type :Evidence ;
       :evidenceCode cv:ECO_0001096;
+      :negative "false"^^xsd:boolean;
+      :quality :GOLD;      
       :assignedBy source:$StringUtils.slug($evi.assignedBy) ;
       :reference [
         a :Xref ;
