@@ -21,7 +21,7 @@ public class UserProteinListUtilsTest {
     public void testCombineSameListThrowsException() {
 
         UserProteinList l1 = createUserProteinList("cool1", Sets.newHashSet("NX_P123", "NX_P456"));
-        UserProteinListUtils.combine(l1, l1, UserProteinListService.Operator.OR, "coolio", null);
+        UserProteinListUtils.combine(l1, l1, UserProteinListService.Operator.OR, "bobleponge", "coolio", null);
     }
 
     @Test
@@ -30,10 +30,11 @@ public class UserProteinListUtilsTest {
         UserProteinList l1 = createUserProteinList("cool1", Sets.newHashSet("NX_P123", "NX_P456"));
         UserProteinList l2 = createUserProteinList("cool2", Sets.newHashSet("NX_P123", "NX_P321"));
 
-        UserProteinList l3 = UserProteinListUtils.combine(l1, l2, UserProteinListService.Operator.OR, "coolio", null);
+        UserProteinList l3 = UserProteinListUtils.combine(l1, l2, UserProteinListService.Operator.OR, "bobleponge", "coolio", null);
 
         assertEquals("coolio", l3.getName());
         assertEquals(3, l3.getAccessionNumbers().size());
+        assertEquals("bobleponge", l3.getOwner());
         assertEquals(Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"), l3.getAccessionNumbers());
     }
 
@@ -43,10 +44,11 @@ public class UserProteinListUtilsTest {
         UserProteinList l1 = createUserProteinList("cool1", Sets.newHashSet("NX_P123", "NX_P456"));
         UserProteinList l2 = createUserProteinList("cool2", Sets.newHashSet("NX_P123", "NX_P321"));
 
-        UserProteinList l3 = UserProteinListUtils.combine(l2, l1, UserProteinListService.Operator.OR, "coolio", null);
+        UserProteinList l3 = UserProteinListUtils.combine(l2, l1, UserProteinListService.Operator.OR, "bobleponge", "coolio", null);
 
         assertEquals("coolio", l3.getName());
         assertEquals(3, l3.getAccessionNumbers().size());
+        assertEquals("bobleponge", l3.getOwner());
         assertEquals(Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"), l3.getAccessionNumbers());
     }
 
@@ -56,10 +58,11 @@ public class UserProteinListUtilsTest {
         UserProteinList l1 = createUserProteinList("cool1", Sets.newHashSet("NX_P123", "NX_P456"));
         UserProteinList l2 = createUserProteinList("cool2", Sets.newHashSet("NX_P123", "NX_P321"));
 
-        UserProteinList l3 = UserProteinListUtils.combine(l1, l2, UserProteinListService.Operator.AND, "homie", null);
+        UserProteinList l3 = UserProteinListUtils.combine(l1, l2, UserProteinListService.Operator.AND, "bobleponge", "homie", null);
 
         assertEquals("homie", l3.getName());
         assertEquals(1, l3.getAccessionNumbers().size());
+        assertEquals("bobleponge", l3.getOwner());
         assertEquals("NX_P123", l3.getAccessionNumbers().iterator().next());
     }
 
@@ -69,10 +72,11 @@ public class UserProteinListUtilsTest {
         UserProteinList l1 = createUserProteinList("cool1", Sets.newHashSet("NX_P123", "NX_P456"));
         UserProteinList l2 = createUserProteinList("cool2", Sets.newHashSet("NX_P123", "NX_P321"));
 
-        UserProteinList l3 = UserProteinListUtils.combine(l2, l1, UserProteinListService.Operator.AND, "homie", null);
+        UserProteinList l3 = UserProteinListUtils.combine(l2, l1, UserProteinListService.Operator.AND, "bobleponge", "homie", null);
 
         assertEquals("homie", l3.getName());
         assertEquals(1, l3.getAccessionNumbers().size());
+        assertEquals("bobleponge", l3.getOwner());
         assertEquals("NX_P123", l3.getAccessionNumbers().iterator().next());
     }
 
@@ -82,7 +86,7 @@ public class UserProteinListUtilsTest {
         UserProteinList l1 = createUserProteinList("cool1", Sets.newHashSet("NX_P123", "NX_P456"));
         UserProteinList l2 = createUserProteinList("cool2", Sets.newHashSet("NX_P124", "NX_P455"));
 
-        UserProteinListUtils.combine(l1, l2, UserProteinListService.Operator.AND, "coolio", null);
+        UserProteinListUtils.combine(l1, l2, UserProteinListService.Operator.AND, "bobleponge", "coolio", null);
     }
 
     @Test
@@ -91,10 +95,11 @@ public class UserProteinListUtilsTest {
         UserProteinList l1 = createUserProteinList("cool1", Sets.newHashSet("NX_P123", "NX_P456"));
         UserProteinList l2 = createUserProteinList("cool2", Sets.newHashSet("NX_P123", "NX_P321"));
 
-        UserProteinList l3 = UserProteinListUtils.combine(l1, l2, UserProteinListService.Operator.NOT_IN, "rap", null);
+        UserProteinList l3 = UserProteinListUtils.combine(l1, l2, UserProteinListService.Operator.NOT_IN, "bobleponge", "rap", null);
 
         assertEquals("rap", l3.getName());
         assertEquals(1, l3.getAccessionNumbers().size());
+        assertEquals("bobleponge", l3.getOwner());
         assertEquals("NX_P456", l3.getAccessionNumbers().iterator().next());
     }
 
@@ -104,10 +109,11 @@ public class UserProteinListUtilsTest {
         UserProteinList l1 = createUserProteinList("cool1", Sets.newHashSet("NX_P123", "NX_P456"));
         UserProteinList l2 = createUserProteinList("cool2", Sets.newHashSet("NX_P123", "NX_P321"));
 
-        UserProteinList l3 = UserProteinListUtils.combine(l2, l1, UserProteinListService.Operator.NOT_IN, "rap", null);
+        UserProteinList l3 = UserProteinListUtils.combine(l2, l1, UserProteinListService.Operator.NOT_IN, "bobleponge", "rap", null);
 
         assertEquals("rap", l3.getName());
         assertEquals(1, l3.getAccessionNumbers().size());
+        assertEquals("bobleponge", l3.getOwner());
         assertEquals("NX_P321", l3.getAccessionNumbers().iterator().next());
     }
 
@@ -117,7 +123,7 @@ public class UserProteinListUtilsTest {
         UserProteinList l1 = createUserProteinList("cool1", Sets.newHashSet("NX_P123", "NX_P456"));
         UserProteinList l2 = createUserProteinList("cool2", Sets.newHashSet("NX_P123", "NX_P456"));
 
-        UserProteinListUtils.combine(l1, l2, UserProteinListService.Operator.NOT_IN, "coolio", null);
+        UserProteinListUtils.combine(l1, l2, UserProteinListService.Operator.NOT_IN, "bobleponge", "coolio", null);
     }
 
     @Test

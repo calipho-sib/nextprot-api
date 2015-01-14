@@ -26,7 +26,6 @@ public interface UserProteinListService {
 	 * 
 	 * @return
 	 */
-
 	UserProteinList getUserProteinListByNameForUser(String username, String listName);
 
 	UserProteinList createUserProteinList(UserProteinList proteinList);
@@ -35,5 +34,5 @@ public interface UserProteinListService {
 
 	void deleteUserProteinList(UserProteinList proteinList);
 
-	UserProteinList combine(String name, String description, String username, String list1, String list2, Operator operator);
+	UserProteinList combine(String name, String description, String username, String listName1, String listName2, Operator operator);
 }

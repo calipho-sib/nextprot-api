@@ -19,24 +19,22 @@ public class UserProteinListUtils {
 	 * Apply the given operator to two user protein lists in a new instance of
 	 * {@code UserProteinList}
 	 *
-	 * @param l1
-	 *            first user protein list
-	 * @param l2
-	 *            second user protein list
-	 * @param operator
-	 *            operator applied to operands
-	 * @param name
-	 *            combined list name
-	 * @param description
-	 *            combined list description
+	 * @param l1 first user protein list
+	 * @param l2 second user protein list
+	 * @param operator operator applied to operands
+	 * @param username combined list user name
+	 * @param name combined list name
+	 * @param description combined list description
 	 * @return a new user protein list combining l1 and l2
 	 */
-	public static UserProteinList combine(UserProteinList l1, UserProteinList l2, Operator operator, String name, String description) {
+	public static UserProteinList combine(UserProteinList l1, UserProteinList l2, Operator operator,
+										  String username, String name, String description) {
 
 		NPreconditions.checkNotNull(l1, "The first user protein list should not be null");
 		NPreconditions.checkNotNull(l2, "The second user protein list should not be null");
 		NPreconditions.checkNotNull(operator, "The combine operator should not be null");
 		NPreconditions.checkNotNull(name, "The user protein list name should not be null");
+		NPreconditions.checkNotNull(username, "The user protein list user name should not be null");
 
 		NPreconditions.checkTrue(!l1.equals(l2), "Can't make combination with the same lists");
 
@@ -55,6 +53,7 @@ public class UserProteinListUtils {
 
 		UserProteinList combinedProteinList = new UserProteinList();
 		combinedProteinList.setName(name);
+		combinedProteinList.setOwner(username);
 		combinedProteinList.setDescription(description);
 		combinedProteinList.setAccessions(combined);
 

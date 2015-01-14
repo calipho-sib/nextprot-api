@@ -5,7 +5,6 @@ import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserProteinListService.Operator;
-import org.nextprot.api.user.service.UserService;
 import org.nextprot.api.user.utils.UserProteinListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,76 +28,73 @@ public class UserProteinListController {
 	@Autowired
 	private MasterIdentifierService masterIdentifierService;
 
-	@Autowired
-	private UserService userService;
-
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserProteinList> getUserProteinLists(@PathVariable("username") String username) {
 		return this.proteinListService.getUserProteinLists(username);
 	}
 
-	@RequestMapping(value = "/user/{username}/protein-list/{name}", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/{username}/protein-list/{listname}", method = RequestMethod.GET)
 	@ResponseBody
-	public UserProteinList getUserProteinList(@PathVariable("username") String username, @PathVariable("name") String listName) {
+	public UserProteinList getUserProteinList(@PathVariable("username") String username, @PathVariable("listname") String listName) {
 		return this.proteinListService.getUserProteinListByNameForUser(username, listName);
+	}
+
+	@RequestMapping(value = "/user/{username}/protein-list/{listname}/accnums", method = RequestMethod.GET)
+	@ResponseBody
+	public Set<String> getUserProteinListAccessionNumbers(@PathVariable("username") String username, @PathVariable("listname") String listName) {
+		UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(username, listName);
+		return proteinList.getAccessionNumbers();
 	}
 
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
 	@ResponseBody
-	public UserProteinList createUserProteinList(@PathVariable("username") String username,
-												 @RequestBody UserProteinList proteinList) {
-			return this.proteinListService.createUserProteinList(proteinList);
+	public UserProteinList createUserProteinList(@PathVariable("username") String username, @RequestBody UserProteinList proteinList) {
+
+		proteinList.setOwner(username);
+		return this.proteinListService.createUserProteinList(proteinList);
 	}
 
-	@RequestMapping(value = "/user/{username}/protein-list/{id}", method = { RequestMethod.PUT })
+	@RequestMapping(value = "/user/{username}/protein-list/{listid}", method = { RequestMethod.PUT })
 	@ResponseBody
-	public UserProteinList updateUserProteinList(@PathVariable("username") String username, @PathVariable("id") String id,
+	public UserProteinList updateUserProteinList(@PathVariable("username") String username, @PathVariable("listid") String id,
 												 @RequestBody UserProteinList proteinList) {
 		return this.proteinListService.updateUserProteinList(proteinList);
 	}
 
-	@RequestMapping(value = "/user/{username}/protein-list/{id}", method = { RequestMethod.DELETE })
-	public void deleteUserProteinList(@PathVariable("username") String username, @PathVariable("id") String id) {
+	@RequestMapping(value = "/user/{username}/protein-list/{listid}", method = { RequestMethod.DELETE })
+	public void deleteUserProteinList(@PathVariable("username") String username, @PathVariable("listid") String id) {
 
 		UserProteinList userProteinList = proteinListService.getUserProteinListById(Long.parseLong(id));
 		this.proteinListService.deleteUserProteinList(userProteinList);
 	}
 
-	@RequestMapping(value = "/user/{username}/protein-list/{list}/ids", method = RequestMethod.GET)
-	@ResponseBody
-	public Set<String> getUserProteinListIds(@PathVariable("username") String username, @PathVariable("list") String listName) {
-		UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(username, listName);
-		return proteinList.getAccessionNumbers();
-	}
-
 	@RequestMapping(value = "/user/{username}/protein-list/combine", method = RequestMethod.GET)
 	@ResponseBody
-	public UserProteinList combine(
+	public UserProteinList combineUserProteinList(
 			@PathVariable("username") String username, 
-			@RequestParam(value = "name", required = true) String listName,
+			@RequestParam(value = "listname", required = true) String listName,
 			@RequestParam(value = "description", required = false) String description, 
-			@RequestParam(value = "first", required = true) String first,
-			@RequestParam(value = "second", required = true) String second, 
+			@RequestParam(value = "listname1", required = true) String listname1,
+			@RequestParam(value = "listname2", required = true) String listname2,
 			@RequestParam(value = "op", required = true) String operator) {
 
-		UserProteinList combinedList = proteinListService.combine(listName, description, username, first, second, Operator.valueOf(operator));
+		UserProteinList combinedList = proteinListService.combine(listName, description, username, listname1, listname2,
+				Operator.valueOf(operator));
 
 		return proteinListService.createUserProteinList(combinedList);
 	}
 
-	@RequestMapping(value = "/user/{username}/protein-list/{id}/upload", method = RequestMethod.POST)
+	@RequestMapping(value = "/user/{username}/protein-list/{listid}/upload", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
-	public void upload(@RequestParam("file") MultipartFile file,
+	public void uploadProteinList(@RequestParam("file") MultipartFile file,
 			@PathVariable("username") String username, 
-			@PathVariable(value = "id") long listId) throws IOException {
+			@PathVariable(value = "listid") long listId) throws IOException {
 
 		UserProteinList pl = proteinListService.getUserProteinListById(listId);
 		Set<String> acs = UserProteinListUtils.parseAccessionNumbers(file, masterIdentifierService.findUniqueNames());
 		pl.addAccessions(acs);
 		
 		this.proteinListService.updateUserProteinList(pl);
-
 	}
-
 }

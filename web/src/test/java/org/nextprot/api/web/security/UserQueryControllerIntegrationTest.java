@@ -73,7 +73,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void leonardShouldBeAbleToLookAtTutorial() throws Exception {
 
-		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList(new String[]{"ROLE_USER"}));
+		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// call List<UserQuery> getTutorialQueries()
 		this.mockMvc.perform(get("/queries/public").header("Authorization", "Bearer " + leonardToken)
@@ -85,7 +85,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void leonardShouldBeAbleToLookAtHisQueries() throws Exception {
 
-		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList(new String[]{"ROLE_USER"}));
+		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// List<UserQuery> getUserQueries()
 		String responseString = this.mockMvc.perform(get("/user/leonard/query").
@@ -102,7 +102,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void leonardShouldBeAbleToLookAtHisQuery() throws Exception {
 
-		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList(new String[] { "ROLE_USER" }));
+		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// UserQuery getUserQuery()
 		String responseString = this.mockMvc.perform(get("/user/leonard/query/15").
@@ -118,7 +118,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void sheldonShouldNotBeAbleToLookAtLeonardsQueries() throws Exception {
 
-		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList(new String[] { "ROLE_USER" }));
+		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// UserQuery getUserQuery()
 		this.mockMvc.perform(get("/user/leonard/query").
@@ -129,7 +129,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void sheldonShouldNotBeAbleToLookAtLeonardsQuery() throws Exception {
 
-		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList(new String[] { "ROLE_USER" }));
+		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// UserQuery getUserQuery()
 		this.mockMvc.perform(get("/user/leonard/query/15").
@@ -158,7 +158,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void leonardShouldBeAbleToUpdateHisQuery() throws Exception {
 
-		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList(new String[] { "ROLE_USER" }));
+		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
@@ -177,7 +177,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void sheldonShouldNotBeAbleToUpdateLeonardsQuery() throws Exception {
 
-		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList(new String[] { "ROLE_USER" }));
+		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
@@ -190,7 +190,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void sheldonShouldNotBeAbleToUpdateLeonardsQuery2() throws Exception {
 
-		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList(new String[] { "ROLE_USER" }));
+		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query 1st attempt\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"sheldon\",\"ownerId\":23,\"tags\":null,\"ownerName\":\"sheldon\"}";
 
@@ -216,7 +216,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void leonardShouldBeAbleToDeleteHisQuery() throws Exception {
 
-		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList(new String[] { "ROLE_USER" }));
+		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// void deleteUserQuery()
 		this.mockMvc.perform(delete("/user/leonard/query/15").header("Authorization", "Bearer " + leonardToken)
@@ -227,7 +227,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void sheldonShouldNotBeAbleToDeleteLeonardsQuery() throws Exception {
 
-		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList(new String[] { "ROLE_USER" }));
+		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// void deleteUserQuery()
 		this.mockMvc.perform(delete("/user/leonard/query/15").header("Authorization", "Bearer " + sheldonToken)

@@ -48,7 +48,6 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 		proteinListDao.deleteUserProteinList(proteinList.getId());
 	}
 
-
 	@Override
 	public UserProteinList getUserProteinListById(long listId) {
 		return proteinListDao.getUserProteinListById(listId);
@@ -73,11 +72,11 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	}
 
 	@Override
-	public UserProteinList combine(String name, String description, String username, String list1, String list2, Operator op) {
+	public UserProteinList combine(String name, String description, String username, String listName1, String listName2, Operator op) {
 
-		UserProteinList l1 = proteinListDao.getUserProteinListByName(username, list1);
-		UserProteinList l2 = proteinListDao.getUserProteinListByName(username, list2);
+		UserProteinList l1 = proteinListDao.getUserProteinListByName(username, listName1);
+		UserProteinList l2 = proteinListDao.getUserProteinListByName(username, listName2);
 
-		return UserProteinListUtils.combine(l1, l2, op, name, description);
+		return UserProteinListUtils.combine(l1, l2, op, username, name, description);
 	}
 }
