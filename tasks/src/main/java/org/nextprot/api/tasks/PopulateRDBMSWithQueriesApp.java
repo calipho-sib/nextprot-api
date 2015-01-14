@@ -1,12 +1,6 @@
-package org.nextprot.api.demo.sparql.queries;
+package org.nextprot.api.tasks;
 
-import org.nextprot.api.demo.sparql.queries.service.DemoSparqlService;
-import org.nextprot.api.user.domain.UserQuery;
-import org.nextprot.api.user.service.UserQueryService;
-import org.nextprot.api.user.service.UserService;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import com.google.common.collect.Sets;
 
 public class PopulateRDBMSWithQueriesApp {
 
@@ -15,7 +9,7 @@ public class PopulateRDBMSWithQueriesApp {
 		System.setProperty("spring.profiles.active", "pro");
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:spring/commons-context.xml", "spring/demo-queries-context.xml");
 
-		DemoSparqlService sparqlService = ctx.getBean(DemoSparqlService.class);
+		/*DemoSparqlService sparqlService = ctx.getBean(DemoSparqlService.class);
 		UserQueryService userQueryService = ctx.getBean(UserQueryService.class);
 		UserService userService = ctx.getBean(UserService.class);
 
@@ -55,7 +49,7 @@ public class PopulateRDBMSWithQueriesApp {
 			}
 
 			userQueryService.createUserQuery(uq);
-		}
+		}*/
 	}
 
 }

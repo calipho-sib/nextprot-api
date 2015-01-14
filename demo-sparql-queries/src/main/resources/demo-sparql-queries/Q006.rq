@@ -1,8 +1,0 @@
-#title:Proteins whose genes are on chromosome 13 and are associated with a disease
-#acs:O00287,O14788,O15198,O75503,O95409,O95452,P00742,P02462,P05165
-#tags:disease,chromosomal location
-#count:61
-select distinct ?entry where {
-   ?entry :gene / :chromosome  "13"^^xsd:string;
-   :isoform / :medical /rdf:type :Disease.
-}

@@ -42,8 +42,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-api-demo-sparql-queries</artifactId>
-			<version>${project.version}</version>
+			<artifactId>nextprot-queries</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<!-- used for tests -->
 		<dependency>

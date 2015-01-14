@@ -1,9 +1,0 @@
-#title:Q038 with >=1 selenocysteine in their sequence
-#acs:O60613, Q99611, Q9NZV6, ...
-#tags:selenocysteine
-#count:26
-#time:0.1
-SELECT distinct ?entry WHERE  {
-  #?entry :isoform/:selenocysteine/:term ?statement.
-  ?entry :isoform/ :keyword / :term cv:KW-0712. # selenocysteine
-}

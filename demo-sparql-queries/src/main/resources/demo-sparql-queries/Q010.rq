@@ -1,9 +1,0 @@
-#title:Proteins that are glycosylated and are not located in the membrane
-#acs:A1E959,A1KZ92,A1L453,A1L4H1,A2VEC9,A3KMH1,A4D0S4,A4D0V7,A5D8T8
-#tags:subcellular location,PTM
-#count:1856
-select  distinct  ?entry WHERE  {
-  ?entry :isoform ?iso .
-  ?iso :keyword / :term cv:KW-0325.
-  FILTER NOT EXISTS { ?iso :topology / :term cv:CVTO_0022 }
-}

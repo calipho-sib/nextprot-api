@@ -1,4 +1,4 @@
-package org.nextprot.api.demo.sparql.queries.utils;
+package org.nextprot.api.user.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +25,7 @@ import com.google.common.collect.Sets;
  */
 @Repository
 @Lazy
-public class DemoSparqlDictionary extends FilePatternDictionary {
+public class UserQueryTutorialDictionary extends FilePatternDictionary {
 
 	/**
 	 * Will return a list of sparql queries with tags
@@ -43,7 +43,7 @@ public class DemoSparqlDictionary extends FilePatternDictionary {
 
 	@Override
 	protected String getLocation() {
-		return "classpath*:demo-sparql-queries/**/*.rq";
+		return "classpath*:nextprot-queries/**/*.rq";
 	}
 
 	public UserQuery getDemoQuery(String queryId) {

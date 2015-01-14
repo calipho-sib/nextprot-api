@@ -25,11 +25,11 @@
 			<artifactId>nextprot-api-commons</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-                <dependency>
-                        <groupId>org.nextprot</groupId>
-                        <artifactId>nextprot-api-rdf</artifactId>
-                        <version>${project.version}</version>
-                </dependency>
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-rdf</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-api-user</artifactId>
@@ -37,7 +37,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-api-demo-sparql-queries</artifactId>
+			<artifactId>nextprot-queries</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<!-- used for tests -->

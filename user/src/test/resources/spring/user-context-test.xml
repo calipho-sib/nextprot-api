@@ -28,6 +28,8 @@
 	<bean class="org.nextprot.api.user.aop.UserQueryUserResourceAuthorizationChecker"/>
 	<bean class="org.nextprot.api.user.aop.UserProteinListAuthorizationChecker"/>
 	<bean class="org.nextprot.api.user.aop.UserApplicationAuthorizationChecker"/>
+	<bean class="org.nextprot.api.user.aop.UserApplicationAuthorizationChecker"/>
+	<bean class="org.nextprot.api.user.service.impl.UserQueryTutorialDictionary"> </bean>
 
 	<bean class="org.mockito.Mockito" factory-method="mock">
 		<constructor-arg value="org.nextprot.api.user.dao.UserApplicationDao"/>
@@ -44,6 +46,7 @@
 	<bean class="org.mockito.Mockito" factory-method="mock">
 		<constructor-arg value="org.nextprot.api.user.dao.UserDao"/>
 	</bean>
+	
 
 	<!-- <bean class="org.springframework.beans.factory.config.PropertiesFactoryBean" id="pom">
 		<property name="locations">
