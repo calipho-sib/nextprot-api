@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.ExperimentalContext;
@@ -19,7 +20,6 @@ import org.nextprot.api.core.service.IdentifierService;
 import org.nextprot.api.core.service.InteractionService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.KeywordService;
-import org.nextprot.api.core.service.MasterIdentifierService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;

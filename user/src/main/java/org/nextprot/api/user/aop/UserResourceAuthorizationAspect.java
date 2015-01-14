@@ -1,7 +1,8 @@
 package org.nextprot.api.user.aop;
 
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.nextprot.api.commons.exception.NotAuthorizedException;
 import org.nextprot.api.commons.resource.UserResource;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
@@ -13,10 +14,12 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
- * Aspect responsible for checking that services have permission to act on {@code UserResource}
+ * Aspect responsible for checking that services have permission to act on
+ * {@code UserResource}
  *
  * @author fnikitin
  */
@@ -24,8 +27,7 @@ import java.util.Map;
 @Component
 public class UserResourceAuthorizationAspect {
 
-	private static final NotAuthorizedException NOT_AUTHORIZED_EXCEPTION =
-			new NotAuthorizedException("You must be logged in to access this resource");
+	private static final NotAuthorizedException NOT_AUTHORIZED_EXCEPTION = new NotAuthorizedException("You must be logged in to access this resource");
 
 	@Autowired
 	private ApplicationContext context;
@@ -33,8 +35,8 @@ public class UserResourceAuthorizationAspect {
 	@Autowired
 	private UserDao userDao;
 
- 	@Before("execution(* org.nextprot.api.user.service.*.*(..)) && args(untrustedUserResource)")
-	public void checkAuthorization(UserResource untrustedUserResource) throws Throwable {
+	@Around("execution(* org.nextprot.api.user.service.*.*(..)) && !@annotation(org.nextprot.api.commons.resource.AllowedAnonymous)")
+	public Object checkUserAuthorization(ProceedingJoinPoint pjp) throws Throwable {
 
 		// check that client is logged in
 		SecurityContext sc = SecurityContextHolder.getContext();
@@ -50,19 +52,56 @@ public class UserResourceAuthorizationAspect {
 
 		User usr = userDao.getUserByUsername(currentUser);
 
-		untrustedUserResource.setOwnerName(usr.getUsername());
-		untrustedUserResource.setOwnerId(usr.getId());
+		Object[] arguments = pjp.getArgs();
+		for (Object arg : arguments) {
+			if (arg instanceof UserResource) {
 
-		// is the one that own the resource
-		UserResourceAuthorizationChecker delegator = getAuthorizationChecker(untrustedUserResource);
+				UserResource untrustedUserResource = (UserResource) arg;
 
-		if (delegator == null) {
+				untrustedUserResource.setOwnerName(usr.getUsername());
+				untrustedUserResource.setOwnerId(usr.getId());
 
-			throw new IllegalStateException("UserResourceAuthorizationChecker was not found for resource "+untrustedUserResource.getClass());
+				// is the one that own the resource
+				UserResourceAuthorizationChecker delegator = getAuthorizationChecker(untrustedUserResource);
+
+				if (delegator == null) {
+
+					throw new IllegalStateException("UserResourceAuthorizationChecker was not found for resource " + untrustedUserResource.getClass());
+				}
+
+				delegator.checkAuthorization(untrustedUserResource);
+
+				NPSecurityContext.checkUserAuthorization(untrustedUserResource);
+
+				break; // Do it only for the first argument
+			}
 		}
 
-		delegator.checkAuthorization(untrustedUserResource);
+		Object o = pjp.proceed();
 
+		// void function will not return an object
+		if (o == null) {
+			return null;
+		} else if (o instanceof UserResource) {
+			checkUntrustedResource((UserResource) o);
+		} else if (o instanceof Collection) {
+
+			// check the first resource as all collection's elements are of the same user resource type
+			for (UserResource untrustedUserResource : (Collection<UserResource>)o) {
+				checkUntrustedResource(untrustedUserResource);
+			}
+		} else {
+
+			throw new IllegalStateException("checkUserAuthorization error: unexpected result class "+o.getClass());
+		}
+
+		return o;
+	}
+
+	private void checkUntrustedResource(UserResource untrustedUserResource) {
+
+		UserResourceAuthorizationChecker delegator = getAuthorizationChecker(untrustedUserResource);
+		delegator.checkAuthorization(untrustedUserResource);
 		NPSecurityContext.checkUserAuthorization(untrustedUserResource);
 	}
 

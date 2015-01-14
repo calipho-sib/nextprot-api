@@ -1,7 +1,7 @@
 package org.nextprot.api.user.service.impl;
 
 import org.nextprot.api.commons.exception.NPreconditions;
-import org.nextprot.api.user.dao.UserDao;
+import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
@@ -19,6 +19,9 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@Autowired
 	private UserQueryDao userQueryDao;
 
+	@Autowired
+	private UserQueryTutorialDictionary userQueryTutorialDictionary;
+
 	@Override
 	public List<UserQuery> getUserQueries(String username) {
 		return userQueryDao.getUserQueries(username);
@@ -30,22 +33,12 @@ public class UserQueryServiceImpl implements UserQueryService {
 	}
 
 	@Override
-	public List<UserQuery> getPublishedQueries() {
-		return userQueryDao.getPublishedQueries();
-	}
-
-	@Override
-	public List<UserQuery> getTutorialQueries() {
-		return userQueryDao.getTutorialQueries();
-	}
-
-	@Override
 	@Transactional
 	public UserQuery createUserQuery(UserQuery userQuery) {
 
 		long id = userQueryDao.createUserQuery(userQuery);
 		userQuery.setUserQueryId(id);
-		if(userQuery.getTags() != null){
+		if (userQuery.getTags() != null) {
 			userQueryDao.createUserQueryTags(id, userQuery.getTags());
 		}
 		return userQuery;
@@ -70,5 +63,11 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@Override
 	public UserQuery getUserQueryById(long id) {
 		return userQueryDao.getUserQueryById(id);
+	}
+
+	@Override
+	@AllowedAnonymous
+	public List<UserQuery> getTutorialQueries() {
+		return userQueryTutorialDictionary.getDemoSparqlList();
 	}
 }

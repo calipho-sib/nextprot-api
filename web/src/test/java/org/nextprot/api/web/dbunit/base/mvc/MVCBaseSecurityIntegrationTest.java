@@ -1,45 +1,33 @@
 package org.nextprot.api.web.dbunit.base.mvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import org.nextprot.api.security.service.JWTCodec;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.FilterChainProxy;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Before;
-import org.nextprot.api.security.service.JWTCodec;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.web.FilterChainProxy;
-import org.springframework.test.web.servlet.ResultActions;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 /**
  * Base class for dbunit tests using the spring-test-dbunit framework http://springtestdbunit.github.io/
  * Transactions are rollback and dev profile is activated by default
  * Dev profile includes database connection to the dev database
  * 
- * @RunWith(SpringJUnit4ClassRunner.class)
- * @ContextConfiguration("classpath:api-servlet-test.xml")
- * @ActiveProfiles("test")
  * @author dteixeira
  */
 
 public abstract class MVCBaseSecurityIntegrationTest extends MVCBaseIntegrationTest {
-	
 
 	@Autowired
 	protected FilterChainProxy springSecurityFilterChain;
 
 	@Autowired
-	private JWTCodec<Object> codec;
+	private JWTCodec<Map<String, Object>> codec;
 
-
-	@Before
-	public void setup() {
-		this.mockMvc = webAppContextSetup(this.wac).addFilters(this.springSecurityFilterChain).build();
-	}
-	
 	protected String generateTokenWithExpirationDate(int value, TimeUnit time, List<String> roles) throws Exception {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("email", "auth0@test.com");

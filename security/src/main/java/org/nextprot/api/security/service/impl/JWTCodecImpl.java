@@ -7,8 +7,6 @@ import com.auth0.jwt.JwtSigner;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.security.service.JWTCodec;
 import org.nextprot.api.security.service.exception.NextprotSecurityException;
 import org.springframework.beans.factory.InitializingBean;
@@ -23,15 +21,13 @@ import java.security.SignatureException;
 import java.util.Map;
 
 @Service
-public class JWTCodecImpl implements JWTCodec<Map<String, String>>, InitializingBean {
-
-	private static final Log Logger = LogFactory.getLog(JWTCodecImpl.class);
+public class JWTCodecImpl implements JWTCodec<Map<String, Object>>, InitializingBean {
 
 	private String clientSecret = null;
 	private String clientId = null;
 
 	@Override
-	public String encodeJWT(Map<String, String> properties, int expiration) {
+	public String encodeJWT(Map<String, Object> properties, int expiration) {
 
 		String payload, token;
 		try {
@@ -54,7 +50,7 @@ public class JWTCodecImpl implements JWTCodec<Map<String, String>>, Initializing
 	}
 
 	@Override
-	public Map<String, String> decodeJWT(String token) {
+	public Map<String, Object> decodeJWT(String token) {
 
 		JWTVerifier jwtVerifier = new JWTVerifier(clientSecret, clientId);
 
@@ -62,9 +58,8 @@ public class JWTCodecImpl implements JWTCodec<Map<String, String>>, Initializing
 		try {
 
 			verify = jwtVerifier.verify(token);
-			String payload = (String) verify.get("$");
-			@SuppressWarnings("unchecked")
-			Map<String, String> map = new ObjectMapper().readValue(payload,
+			String payload = (String) verify.get("payload");
+			Map<String, Object> map = new ObjectMapper().readValue(payload,
 					Map.class);
 			return map;
 
@@ -93,7 +88,7 @@ public class JWTCodecImpl implements JWTCodec<Map<String, String>>, Initializing
 		return clientSecret;
 	}
 
-    @Value("${auth0.clientId}")
+    @Value("${auth0.clientSecret}")
 	public void setClientSecret(String clientSecret) {
 		this.clientSecret = clientSecret;
 	}
@@ -102,7 +97,7 @@ public class JWTCodecImpl implements JWTCodec<Map<String, String>>, Initializing
 		return clientId;
 	}
 
-    @Value("${auth0.clientSecret}")
+    @Value("${auth0.clientId}")
 	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}

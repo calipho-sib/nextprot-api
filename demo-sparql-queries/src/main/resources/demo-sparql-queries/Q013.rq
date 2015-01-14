@@ -1,9 +1,0 @@
-#title:Q013 with a protein kinase domain but no kinase activity
-#acs:O15197,O43187,P16066,P20594,P25092,P51841,Q02846,Q05823,Q13308,Q496M5
-#tags:domain
-#count:29
-SELECT distinct ?entry WHERE {
-  ?entry :isoform ?iso .
-  ?iso :region /:term cv:DO-00529.
-  FILTER NOT EXISTS { ?iso :enzymeClassification / :term /:childOf cv:2_7_-_- }
-}

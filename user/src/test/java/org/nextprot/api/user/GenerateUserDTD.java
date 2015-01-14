@@ -6,7 +6,7 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatDtdWriter;
 import org.junit.Test;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.user.dao.test.base.UserApplicationBaseTest;
+import org.nextprot.api.user.dao.test.base.UserResourceBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.FileOutputStream;
@@ -14,7 +14,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 //@ActiveProfiles({"unit", "unit-schema-nextprot"})
-public class GenerateUserDTD extends UserApplicationBaseTest {
+public class GenerateUserDTD extends UserResourceBaseTest {
 
 	private static final String dtdFile = "user.dtd";
 

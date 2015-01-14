@@ -1,8 +1,0 @@
-#title:Q029 linked with a disease but without a disease-linked variant
-#tags:disease
-#acs:A6NCS4,O00522,O14958,O15273,O43435,O43541,O43572,O43819
-#count:228
-#time:0.384
-select distinct ?entry where {
-  ?entry :isoform/:medical/:term/:related/:childOf cv:D002318.
-}

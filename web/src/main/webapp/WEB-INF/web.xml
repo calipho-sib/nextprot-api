@@ -1,98 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
- 
- 		<!-- TODO SHOULD BE FIXED: WITH SECURITY ENABLED IT SEEMS LIKE NOT DISPLAYING STATISTIC PAGE UNDER WEB-INF       -->
-    
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+    <!-- TODO SHOULD BE FIXED: WITH SECURITY ENABLED IT SEEMS LIKE NOT DISPLAYING STATISTIC PAGE UNDER WEB-INF       -->
+
     <display-name>nextprot-api</display-name>
 
-    <!--  configure spring bootstrap for dao, services, etc. -->
+    <!--  Setting spring mvc front controller DispatcherServlet -->
+    <servlet>
+        <servlet-name>nextprotApi</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/api-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <!-- DispatcherServlet handles all requests, including requests for static content -->
+    <servlet-mapping>
+        <servlet-name>nextprotApi</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <!-- ContextLoaderListener is a servlet listener that loads additional configuration
+        into a Spring application context alongside the application context created by DispatcherServlet -->
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
+
+    <!-- Tells ContextLoaderListener which Spring configuration file(s) it should load (dao, services, profile, security, etc.) -->
     <context-param>
-      <param-name>contextConfigLocation</param-name>
-      <param-value>classpath:META-INF/spring/web-context.xml</param-value>
-    </context-param>
- 
-    <context-param>
-      <param-name>spring.profiles.default</param-name>
-      <param-value>pro</param-value>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:META-INF/spring/web-context.xml</param-value>
     </context-param>
 
-  
+    <context-param>
+        <param-name>spring.profiles.default</param-name>
+        <param-value>pro,cache,security</param-value>
+    </context-param>
+
+    <!-- Filter performs filtering tasks on the request to a resource (a servlet or static content) -->
     <!--  configure cors  -->
     <filter>
         <filter-name>cors</filter-name>
         <filter-class>org.nextprot.api.web.CorsFilter</filter-class>
     </filter>
-      
-      <filter-mapping>
+    <filter-mapping>
         <filter-name>cors</filter-name>
         <url-pattern>/*</url-pattern>
-      </filter-mapping>    
-        
-      
-       
-    <!--  configure security --> 
+    </filter-mapping>
+
+    <!--  configure security -->
     <filter>
-            <filter-name>springSecurityFilterChain</filter-name>
-            <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-            <init-param>
-                    <param-name>contextAttribute</param-name>
-                    <param-value>org.springframework.web.servlet.FrameworkServlet.CONTEXT.nextprotApi</param-value>
-            </init-param>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>contextAttribute</param-name>
+            <param-value>org.springframework.web.servlet.FrameworkServlet.CONTEXT.nextprotApi</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Setting UTF-8 -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!--  configure pretty print
+    <filter>
+      <filter-name>XmlPrettyPrintFilter</filter-name>
+      <filter-class>org.nextprot.api.commons.utils.XmlPrettyPrintFilter</filter-class>
     </filter>
 
     <filter-mapping>
-            <filter-name>springSecurityFilterChain</filter-name>
-            <url-pattern>/*</url-pattern>
+      <filter-name>XmlPrettyPrintFilter</filter-name>
+      <url-pattern>*.xml</url-pattern>
     </filter-mapping>
-     
-    <!-- Setting UTF-8 -->
-	  <filter>
-	    <filter-name>Spring character encoding filter</filter-name>
-	    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-	    <init-param>
-	      <param-name>encoding</param-name>
-	      <param-value>UTF-8</param-value>
-	    </init-param>
-	    <init-param>
-	      <param-name>forceEncoding</param-name>
-	      <param-value>true</param-value>
-	    </init-param>
-	  </filter>        
-	  
-	  <!--  configure pretty print 
-    <filter>
-	    <filter-name>XmlPrettyPrintFilter</filter-name>
-	    <filter-class>org.nextprot.api.commons.utils.XmlPrettyPrintFilter</filter-class>
-	  </filter>
-	  <filter-mapping>
-	    <filter-name>XmlPrettyPrintFilter</filter-name>
-	    <url-pattern>*.xml</url-pattern>
-	  </filter-mapping>
-	 -->
-
-    <listener>
-      <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener> 
-  
-
-
-
-    <!--  configure spring bootstrap for servlet -->
-		<servlet>
-			<servlet-name>nextprotApi</servlet-name>
-			<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-			<init-param>
-				<param-name>contextConfigLocation</param-name>
-				<param-value>/WEB-INF/api-servlet.xml</param-value>
-			</init-param>
-			<load-on-startup>1</load-on-startup>
-		</servlet>
- 
-    <servlet-mapping>
-            <servlet-name>nextprotApi</servlet-name>
-            <url-pattern>/</url-pattern>
-    </servlet-mapping>
-
+   -->
 </web-app>

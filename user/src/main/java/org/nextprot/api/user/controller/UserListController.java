@@ -7,11 +7,12 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
-import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
-import org.nextprot.api.user.service.UserProteinListService.Operations;
+import org.nextprot.api.user.service.UserProteinListService.Operator;
 import org.nextprot.api.user.service.UserService;
+import org.nextprot.api.user.utils.UserProteinListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,6 +37,9 @@ public class UserListController {
 	private UserProteinListService proteinListService;
 
 	@Autowired
+	private MasterIdentifierService masterIdentifierService;
+
+	@Autowired
 	private UserService userService;
 
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.GET })
@@ -52,8 +56,9 @@ public class UserListController {
 
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
 	@ResponseBody
-	public UserProteinList createList(@PathVariable("username") String username, @RequestBody UserProteinList proteinList, Model model) {
-		return this.proteinListService.createUserProteinList(proteinList);
+	public UserProteinList createList(@PathVariable("username") String username,
+			@RequestBody UserProteinList proteinList, Model model) {
+			return this.proteinListService.createUserProteinList(proteinList);
 	}
 
 	@RequestMapping(value = "/user/{username}/protein-list/{id}", method = { RequestMethod.PUT })
@@ -64,6 +69,7 @@ public class UserListController {
 
 	@RequestMapping(value = "/user/{username}/protein-list/{id}", method = { RequestMethod.DELETE })
 	public void deleteUserList(@PathVariable("username") String username, @PathVariable("id") String id) {
+
 		UserProteinList userProteinList = proteinListService.getUserProteinListById(Long.parseLong(id));
 		this.proteinListService.deleteUserProteinList(userProteinList);
 	}
@@ -84,29 +90,24 @@ public class UserListController {
 			@RequestParam(value = "description", required = false) String description, 
 			@RequestParam(value = "first", required = true) String first,
 			@RequestParam(value = "second", required = true) String second, 
-			@RequestParam(value = "op", required = true) String operation) {
+			@RequestParam(value = "op", required = true) String operator) {
 
-		if (first.equals(second)){
-			throw new NextProtException("Can't make combination with the same lists");
-		}
-		
-		Operations op = Operations.valueOf(operation);
-		UserProteinList combinedList = proteinListService.combine(listName, description, username, first, second, op);
+		UserProteinList combinedList = proteinListService.combine(listName, description, username, first, second, Operator.valueOf(operator));
 
-		if(combinedList.getAccessionNumbers().isEmpty()){
-			throw new NextProtException("The combined list is empty. Only combinations resulting on non-empty lists are saved.");
-		}
-		
 		return proteinListService.createUserProteinList(combinedList);
-
 	}
 
-	@RequestMapping(value = "/protein-list/upload", method = RequestMethod.POST)
+	@RequestMapping(value = "/user/{username}/protein-list/{id}/upload", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
-	public void upload(@RequestParam("file") MultipartFile file, @RequestParam(value = "id", required = true) UserProteinList proteinList) throws IOException {
+	public void upload(@RequestParam("file") MultipartFile file,
+			@PathVariable("username") String username, 
+			@PathVariable(value = "id") long listId) throws IOException {
 
-
-		UserProteinList list = this.proteinListService.createUserProteinList(proteinList);
+		UserProteinList pl = proteinListService.getUserProteinListById(listId);
+		Set<String> acs = UserProteinListUtils.parseAccessionNumbers(file, masterIdentifierService.findUniqueNames());
+		pl.addAccessions(acs);
+		
+		this.proteinListService.updateUserProteinList(pl);
 
 	}
 

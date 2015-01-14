@@ -108,15 +108,6 @@ public class UserResourceAuthorizationServiceTest {
         userQueryService.updateUserQuery(query);
     }
 
-    @Test(expected = NotAuthorizedException.class)
-    public void testUpdateUserQueryService3() {
-
-        UserQuery query = mockUserQuery("bobleponge");
-        Mockito.when(userQueryDao.getUserQueryById(anyLong())).thenReturn(new UserQuery());
-
-        userQueryService.updateUserQuery(query);
-    }
-
     @Test
     public void testDeleteUserQueryService() {
 

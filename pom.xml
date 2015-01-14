@@ -17,9 +17,9 @@
 	</developers>
 
 	<properties>
-		<spring.version>3.2.8.RELEASE</spring.version>
+		<spring.version>3.2.13.RELEASE</spring.version>
 		<project.version>${project.version}</project.version>
-		<spring-security.version>3.2.3.RELEASE</spring-security.version>
+		<spring-security.version>3.2.5.RELEASE</spring-security.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -47,7 +47,6 @@
 		<module>solr</module>
 		<module>security</module>
 		<module>web</module>
-		<module>demo-sparql-queries</module>
 		<module>test-diff-rdf-db</module>
 	</modules>
 
