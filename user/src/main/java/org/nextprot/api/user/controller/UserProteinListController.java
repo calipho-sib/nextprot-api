@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,34 +40,34 @@ public class UserProteinListController {
 
 	@RequestMapping(value = "/user/{username}/protein-list/{name}", method = RequestMethod.GET)
 	@ResponseBody
-	public UserProteinList getList(@PathVariable("username") String username, @PathVariable("name") String listName, Model model) {
+	public UserProteinList getUserProteinList(@PathVariable("username") String username, @PathVariable("name") String listName) {
 		return this.proteinListService.getUserProteinListByNameForUser(username, listName);
 	}
 
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
 	@ResponseBody
-	public UserProteinList createList(@PathVariable("username") String username,
-			@RequestBody UserProteinList proteinList, Model model) {
+	public UserProteinList createUserProteinList(@PathVariable("username") String username,
+												 @RequestBody UserProteinList proteinList) {
 			return this.proteinListService.createUserProteinList(proteinList);
 	}
 
 	@RequestMapping(value = "/user/{username}/protein-list/{id}", method = { RequestMethod.PUT })
 	@ResponseBody
-	public UserProteinList updateList(@PathVariable("username") String username, @PathVariable("id") String id, @RequestBody UserProteinList proteinList) {
+	public UserProteinList updateUserProteinList(@PathVariable("username") String username, @PathVariable("id") String id,
+												 @RequestBody UserProteinList proteinList) {
 		return this.proteinListService.updateUserProteinList(proteinList);
 	}
 
 	@RequestMapping(value = "/user/{username}/protein-list/{id}", method = { RequestMethod.DELETE })
-	public void deleteUserList(@PathVariable("username") String username, @PathVariable("id") String id) {
+	public void deleteUserProteinList(@PathVariable("username") String username, @PathVariable("id") String id) {
 
 		UserProteinList userProteinList = proteinListService.getUserProteinListById(Long.parseLong(id));
 		this.proteinListService.deleteUserProteinList(userProteinList);
 	}
 
-
 	@RequestMapping(value = "/user/{username}/protein-list/{list}/ids", method = RequestMethod.GET)
 	@ResponseBody
-	public Set<String> getListIds(@PathVariable("username") String username, @PathVariable("list") String listName, Model model) {
+	public Set<String> getUserProteinListIds(@PathVariable("username") String username, @PathVariable("list") String listName) {
 		UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(username, listName);
 		return proteinList.getAccessionNumbers();
 	}
