@@ -1,9 +1,0 @@
-#id:NXQ_00203
-#title:Proteins with a mature chain of from 100 to 500 residues
-#tags:TODO,processing
-#acs:
-#count: 
-
-select distinct ?entry where{
-}
-

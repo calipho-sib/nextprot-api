@@ -1,9 +1,0 @@
-#title:Proteins associated with at least 3 papers that are not "large scale" and not "additional"
-#tags:TODO,publications
-#acs: , , , ...
-#count:
-#time:
-
-select distinct ?entry where {
-  ?entry :isoform ?iso .
-}
