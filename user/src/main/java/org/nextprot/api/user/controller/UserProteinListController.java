@@ -22,7 +22,7 @@ import java.util.Set;
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
 @Api(name = "User Protein Lists", description = "Method to manipulate user protein lists", role = "ROLE_USER")
-public class UserListController {
+public class UserProteinListController {
 
 	@Autowired
 	private UserProteinListService proteinListService;
