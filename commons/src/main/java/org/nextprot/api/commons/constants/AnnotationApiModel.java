@@ -16,7 +16,7 @@ import org.nextprot.api.commons.utils.StringUtils;
 public enum AnnotationApiModel  {
 
 	//Special node for the root
-	ROOT (0, "Root", "Root of the tree","",null),
+	ROOT (0, "Root", "Root","",null),
 
 	/*
 	 * ENUMs with a negative dbId are virtual annotation types. Virtual means that there is NO annotation in our data of this type

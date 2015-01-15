@@ -38,6 +38,9 @@ public class OWLAnnotation implements Serializable{
 	public Set<AnnotationApiModel> getAllParents() {
 		return cat.getAllParents();
 	}
+	public Set<AnnotationApiModel> getAllParentsButRoot() {
+		return cat.getAllParentsButRoot();
+	}
 	public String getDescription() {
 		return cat.getDescription();
 	}

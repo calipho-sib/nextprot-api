@@ -7,17 +7,17 @@
 #
 
 #foreach($annotation in $annotationList)
+#if($annotation.rdfTypeName != "Root")
 :$annotation.rdfTypeName
-   rdf:type owl:Class;
+   rdf:type :AnnotationType;
 #if ($annotation.description) 
    rdfs:comment "$annotation.description"^^xsd:string;
 #end
    rdfs:label "$annotation.label"^^xsd:string;
-##   rdfs:seeAlso "http://www.nextprot.org/manual/$StringUtils.toCamelCase($annotation.getType(), false)"^^xsd:anyURI;
-#foreach($parent in $annotation.allParents)
+#foreach($parent in $annotation.getAllParentsButRoot())
    rdfs:subClassOf :$parent.rdfTypeName;
 #end
    .   
-
+#end
 #end
 
