@@ -22,7 +22,7 @@ interaction:$interaction.id a ProteinInteraction ;
   .
 evidence:$interaction.evidenceId 
   rdf:type :Evidence ;
-  :code :$interaction.evidenceType ;
+  :evidenceCode :$interaction.evidenceType ;
   :assignedBy source:$interaction.evidenceDatasource;
   :quality :$interaction.evidenceQuality ;
   :reference [

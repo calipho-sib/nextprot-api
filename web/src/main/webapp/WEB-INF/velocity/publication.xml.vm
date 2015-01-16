@@ -8,7 +8,7 @@
 		<authors>
 		#foreach($author in $publication.authors)
 			#if($author.isPerson())
-				<person name="$author.foreName $author.lastName $author.suffix" suffix="$author.suffix"/>
+				<person name="$author.foreName $author.lastName" suffix="$author.suffix"/>
 			#else
 				<consortium name="$author.lastName"/>
 			#end

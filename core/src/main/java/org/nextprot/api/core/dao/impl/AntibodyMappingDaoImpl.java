@@ -38,6 +38,7 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
 				AntibodyMapping antibodyMapping = new AntibodyMapping();
 				antibodyMapping.setXrefId(resultSet.getLong("db_xref_id"));
 				antibodyMapping.setAntibodyUniqueName(resultSet.getString("antibody_unique_name"));
+				antibodyMapping.setAssignedBy(resultSet.getString("antibody_src"));
 				IsoformSpecificity isoformSpecificity = new IsoformSpecificity(resultSet.getString("iso_unique_name"));
 				isoformSpecificity.addPosition(resultSet.getInt("first_pos"), resultSet.getInt("last_pos"));
 				antibodyMapping.addIsoformSpecificity(isoformSpecificity);

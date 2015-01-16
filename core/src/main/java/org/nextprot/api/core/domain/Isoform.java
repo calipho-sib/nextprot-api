@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Collection;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
 
@@ -11,6 +13,8 @@ import org.nextprot.api.commons.bio.DescriptorPI;
 public class Isoform implements Serializable {
 
 	private static final long serialVersionUID = -4837367264809500204L;
+
+	private final static Log LOGGER = LogFactory.getLog(Isoform.class);
 
 	private String sequence;
 
@@ -32,8 +36,13 @@ public class Isoform implements Serializable {
 	}
 	
 	public String getMassAsString() {
-		Double d = DescriptorMass.compute(sequence);
-		return String.valueOf(Math.round(d));		
+		try {
+			Double d = DescriptorMass.compute(sequence);
+			return String.valueOf(Math.round(d));
+		} catch (Throwable e) {
+			LOGGER.error("Error computing molecular mass of isoform " + uniqueName, e);
+			return "0";
+		}
 	}
 	
 	public String getMd5() {

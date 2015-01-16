@@ -52,7 +52,7 @@ public class AnnotationServiceTest extends CoreUnitBaseTest {
 		AnnotationEvidence evi = a.getEvidences().get(0);
 		assertEquals("Uniprot", evi.getAssignedBy());
 		assertEquals("curated", evi.getAssignmentMethod());
-		assertEquals("EXP", evi.getQualifierType());
+		assertEquals("IC", evi.getQualifierType());
 		assertEquals(false, evi.isNegativeEvidence());
 		assertEquals(true, evi.isValid());
 		assertEquals("XR_ORPHA_100021", evi.getResourceAccession());

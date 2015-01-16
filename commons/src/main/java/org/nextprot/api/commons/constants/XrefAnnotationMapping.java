@@ -1,6 +1,5 @@
 package org.nextprot.api.commons.constants;
 
-
 /**
  * Description: Used to turn some XRefs into Annotations<br> * 
  * @author Pam
@@ -8,11 +7,10 @@ package org.nextprot.api.commons.constants;
 
 public enum XrefAnnotationMapping  {
 
-	//TODO: validated by Pascale., see mail 27.10.2014
-	ORPHANET(84,"Orphanet", "disease", AnnotationApiModel.DISEASE.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated", "EXP"),
-	REACTOME(112, "Reactome", "pathway name", AnnotationApiModel.PATHWAY.getDbAnnotationTypeName(), 2, "Uniprot","GOLD","curated","IC"), 
-	DRUGBANK(27,"DrugBank", "generic name", AnnotationApiModel.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated","EXP"),
-	KEGGPATHWAY(186,"KEGGPathway",  "pathway name", AnnotationApiModel.PATHWAY.getDbAnnotationTypeName(), 1, "NextProt","GOLD","curated","IC"), // ALTERNATIVE SOURCE = 2 , "NextProt integration"
+	ORPHANET(84,"Orphanet", "disease", AnnotationApiModel.DISEASE.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated", "IC","ECO:0000305", "curator inference used in manual assertion"),
+	REACTOME(112, "Reactome", "pathway name", AnnotationApiModel.PATHWAY.getDbAnnotationTypeName(), 2, "Uniprot","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"), 
+	DRUGBANK(27,"DrugBank", "generic name", AnnotationApiModel.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
+	KEGGPATHWAY(186,"KEGGPathway",  "pathway name", AnnotationApiModel.PATHWAY.getDbAnnotationTypeName(), 1, "NextProt","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"), // ALTERNATIVE SOURCE = 2 , "NextProt integration"
 	;
 
 	private final int xrefDbId; 
@@ -24,10 +22,12 @@ public enum XrefAnnotationMapping  {
 	private final String qualityQualifier;
 	private final String assignmentMethod;
 	private final String qualifierType;
-		
+	private final String ecoAC;
+	private final String ecoName;
+			
 	private XrefAnnotationMapping(final int xrefDbId, final String xrefDbName, 
 			final String xrefPropName, final String annotCat, final int srcId, final String srcName,
-			final String qualityQualifier, final String assignMethod, final String qualifierType) {
+			final String qualityQualifier, final String assignMethod, final String qualifierType, String ecoAC, String ecoName) {
 		
 		this.xrefDbId=xrefDbId;
 		this.xrefDbName=xrefDbName;
@@ -38,10 +38,18 @@ public enum XrefAnnotationMapping  {
 		this.qualityQualifier=qualityQualifier;
 		this.qualifierType=qualifierType;
 		this.assignmentMethod=assignMethod;
+		this.ecoAC=ecoAC;
+		this.ecoName=ecoName;
 	}
-	
-	
-	
+		
+	public String getEcoAC() {
+		return ecoAC;
+	}
+
+	public String getEcoName() {
+		return ecoName;
+	}
+
 	public int getXrefDbId() {
 		return xrefDbId;
 	}

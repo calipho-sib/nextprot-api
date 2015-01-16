@@ -14,7 +14,7 @@
     <evidence-list>
     	<evidence 
     		is-negative='false'
-    		evidence-code='ECO:0000353' 
+    		evidence-code='$interaction.evidenceCodeAC' 
     		source-internal-ref='$interaction.evidenceDatasource'
 			resource-type='$interaction.evidenceResourceType'
 			resource-internal-ref='$interaction.evidenceResourceId'      		

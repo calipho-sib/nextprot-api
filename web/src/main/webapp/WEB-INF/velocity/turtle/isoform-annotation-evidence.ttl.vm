@@ -8,7 +8,10 @@ annotation:$annotation-uri :evidence evidence:$evidence-uri.
 ## decribe the evidence here
 evidence:$evidence-uri 
   rdf:type :Evidence ;
-  :code :$evidence.getQualifierType();
+##if($evidence.getEvidenceCodeAC())
+## evidenceCode is mandatory !
+  :evidenceCode cv:$StringUtils.slug($evidence.getEvidenceCodeAC());
+##end
 ## negative is no more needed
   :negative "$evidence.isNegativeEvidence($isoform-name)"^^xsd:boolean;
 #if($evidence.getQualityQualifier())

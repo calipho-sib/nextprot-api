@@ -29,10 +29,13 @@ entry:$entry.getUniqueName() a :Entry;
 #parse('turtle/entry-references.ttl.vm')
 
 
-## Isoform - antibody mappings
+## antibody mappings
 #parse('turtle/antibody-list.ttl.vm')
 
 
-## Isoform - peptide mappings
+## peptide mappings
 #parse('turtle/peptide-list.ttl.vm')
+
+## SRM peptide mappings
+#parse('turtle/srm-peptide-list.ttl.vm')
 

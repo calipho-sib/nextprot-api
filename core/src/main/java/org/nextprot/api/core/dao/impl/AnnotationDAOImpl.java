@@ -151,7 +151,6 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidences-by-annotation-ids"), "ids", annotationIds, new ParameterizedRowMapper<AnnotationEvidence>() {
 
 			public AnnotationEvidence mapRow(ResultSet resultSet, int row) throws SQLException {
-
 					
 				AnnotationEvidence evidence = new AnnotationEvidence();
 				evidence.setNegativeEvidence(resultSet.getBoolean("is_negative_evidence"));
@@ -169,8 +168,9 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 				evidence.setAssignedBy(resultSet.getString("evidence_assigned_by"));
 				evidence.setExperimentalContextId(resultSet.getLong("experimental_context_id"));
 				evidence.setAssignmentMethod(resultSet.getString("assignment_method"));
+				evidence.setEvidenceCodeAC(resultSet.getString("eco_ac"));
+				evidence.setEvidenceCodeName(resultSet.getString("eco_name"));
 				return evidence;
-				
 			}
 		});
 

@@ -50,7 +50,7 @@ interaction:$iso-interaction-iri a :BinaryInteraction;
 #foreach($interaction in $entry.getInteractionsByIsoform($isoform-name))
 evidence:$interaction.evidenceId 
   rdf:type :Evidence ;
-  :code :$interaction.evidenceType ;
+  :evidenceCode cv:$StringUtils.slug($interaction.evidenceCodeAC) ;
   :assignedBy source:$interaction.evidenceDatasource;
   :quality :$interaction.evidenceQuality ;
   :reference [
