@@ -70,6 +70,14 @@ public class UserQueryTutorialDictionary extends FilePatternDictionary {
 
 		dsq.setSparql(rawProps.get("query"));
 		dsq.setTitle(rawProps.get("title"));
+		dsq.setDescription(rawProps.get("comment"));
+
+		try {
+			dsq.setUserQueryId(Long.valueOf(rawProps.get("id").replaceAll("NXQ_", "")));
+		}catch(Exception e){
+			dsq.setUserQueryId(0);
+		}
+		
 		if(rawProps.get("tags") != null){
 			dsq.setTags(Sets.newHashSet(rawProps.get("tags").split(",")));
 		} else dsq.setTags(new HashSet<String>());
@@ -86,10 +94,18 @@ public class UserQueryTutorialDictionary extends FilePatternDictionary {
 
 		String p = "[# ]?" + label + ":([^\\n]*)";
 		Matcher m = Pattern.compile(p, Pattern.DOTALL | Pattern.MULTILINE).matcher(rawData);
-		if (m.find()) {
-			meta.put(label, m.group(1));
-			return q.replaceAll(p, "");
+		boolean found = false;
+		while (m.find()) { //
+			found = true;
+			if(!meta.containsKey(label)){
+				meta.put(label, m.group(1));
+			}else {
+				meta.put(label, meta.get(label) + "\n" + m.group(1));
+			}
+			
 		}
+		if(found) return q.replaceAll(p, "");
+
 		return q;
 	}
 	
@@ -103,6 +119,8 @@ public class UserQueryTutorialDictionary extends FilePatternDictionary {
 		q = parseAndGlupRawQuery(rawData, q, "acs", meta);
 		q = parseAndGlupRawQuery(rawData, q, "count", meta);
 		q = parseAndGlupRawQuery(rawData, q, "title", meta);
+		q = parseAndGlupRawQuery(rawData, q, "comment", meta);
+		q = parseAndGlupRawQuery(rawData, q, "time", meta);
 		
 		meta.put("query", q.trim());
 

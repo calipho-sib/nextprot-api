@@ -24,7 +24,7 @@ public class UserQueryController {
 	@Autowired
 	private UserQueryService userQueryService;
 
-	@RequestMapping(value = "/queries/public", method = { RequestMethod.GET })
+	@RequestMapping(value = "/queries/tutorial", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserQuery> getTutorialQueries() {
 		return userQueryService.getTutorialQueries();
