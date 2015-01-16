@@ -86,7 +86,6 @@ public class SparqlController {
 	@RequestMapping("/sparql")
 	@ResponseBody
 	public ResponseEntity<String> mirrorRest(@RequestBody String body, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
-		System.out.println(request.getHeader("Origin"));
 		return this.sparqlProxyEndpoint.sparql(body, request.getQueryString()); 
 	}
 
