@@ -20,11 +20,13 @@ import java.util.Map;
 /**
  * Aspect responsible for checking that services have permission to act on
  * {@code UserResource}
+ * 
+ * Change: 13 January 2015 // Setting it up on security.xml inside the security profile
  *
- * @author fnikitin
+ *
+ * @author fnikitin, dteixeira
  */
 @Aspect
-@Component
 public class UserResourceAuthorizationAspect {
 
 	private static final NotAuthorizedException NOT_AUTHORIZED_EXCEPTION = new NotAuthorizedException("You must be logged in to access this resource");

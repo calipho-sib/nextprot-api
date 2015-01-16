@@ -43,10 +43,10 @@ public class NXVelocityUtils {
 	}
 	
 	public boolean hasMappings(Entry entry) {
-		if (entry.getPeptideMappings().size()>0) return true;
-		if (entry.getSrmPeptideMappings().size()>0) return true;
-		if (entry.getAntibodyMappings().size()>0) return true;
-		if (getAnnotationsByCategory(entry, AnnotationApiModel.PDB_MAPPING).size()>0) return true;
+		if ((entry.getPeptideMappings() != null) && entry.getPeptideMappings().size()>0) return true;
+		if ((entry.getSrmPeptideMappings() != null) && entry.getSrmPeptideMappings().size()>0) return true;
+		if ((entry.getAntibodyMappings() != null) && entry.getAntibodyMappings().size()>0) return true;
+		if ((entry.getAnnotations() != null) && getAnnotationsByCategory(entry, AnnotationApiModel.PDB_MAPPING).size()>0) return true;
 		return false;
 	}
 	

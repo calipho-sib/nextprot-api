@@ -1,10 +1,13 @@
 package org.nextprot.api.core.service.export;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.service.export.format.NPViews;
 
 public interface ExportService{
 
@@ -38,7 +41,8 @@ public interface ExportService{
 	 * @param filepath
 	 *            The format can be xml or ttl
 	 */
-	public List<Future<File>> exportEntries(List<String> entryNames, NPFileFormat format);
+	public List<Future<File>> exportEntries(Collection<String> entryNames, NPFileFormat format);
+
 
 	/**
 	 * Export the entry name in the format specified with UTF-8 encoding
@@ -51,5 +55,6 @@ public interface ExportService{
 	public Future<File> exportEntry(String entryName, NPFileFormat format);
 	
 	public void clearRepository ();
+
 
 }

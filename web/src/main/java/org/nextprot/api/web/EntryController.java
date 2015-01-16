@@ -77,7 +77,6 @@ public class EntryController {
 		model.addAttribute("entryList", proteinList);
 		model.addAttribute("StringUtils", StringUtils.class);
 		model.addAttribute("NXUtils", new NXVelocityUtils());
-		
 		return "exportEntries";
 	}
 	
@@ -85,15 +84,11 @@ public class EntryController {
 	@RequestMapping("/entry/{entryname}/{subpart}")
 	public String getSubPart(@PathVariable("entryname") String entryName, @PathVariable("subpart") String subpart, Model model) {
 		
-		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withAnnotationCategory(subpart).getEntryFiltered();
-		
-		List<Entry> proteinList = new ArrayList<Entry>();
-		proteinList.add(dummy);
-		model.addAttribute("entryList", proteinList);
+		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withView(subpart);
+		model.addAttribute("entry", dummy);
 		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);
-		return "exportEntries";
-		
+		return "annotation-list";
 	}
 
 	

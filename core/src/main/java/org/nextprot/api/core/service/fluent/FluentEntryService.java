@@ -23,9 +23,7 @@ import org.nextprot.api.core.service.KeywordService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.export.format.ExportTXTTemplate;
-import org.nextprot.api.core.service.export.format.ExportTemplate;
-import org.nextprot.api.core.service.export.format.ExportXMLTemplate;
+import org.nextprot.api.core.service.export.format.NPViews;
 import org.nextprot.api.core.utils.AnnotationUtils;
 import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.nextprot.api.core.utils.PublicationUtils;
@@ -74,17 +72,10 @@ public class FluentEntryService {
 	public class FluentEntry {
 		private Entry entry = null;
 		private String entryName;
-		private AnnotationApiModel annotationCategory;
 
 		public FluentEntry(String entryName) {
 			this.entryName = entryName;
 			this.entry = new Entry(entryName);
-		}
-
-		
-		public FluentEntry withAnnotationCategory(String category) {
-			this.annotationCategory = AnnotationApiModel.getDecamelizedAnnotationTypeName(category);
-			return this;
 		}
 
 		public FluentEntry withOverview() {
@@ -169,73 +160,72 @@ public class FluentEntryService {
 			return entry;
 		}
 
-		public Entry withTemplate(ExportTemplate _template) {
-
-			if (ExportXMLTemplate.class.isInstance(_template)) {
-
-				ExportXMLTemplate template = (ExportXMLTemplate) _template;
-
-				switch (template) {
-				case FULL:
-					return this.withEverything().getEntry();
-				case ACCESSIONS_ONLY:
-					return this.getEntry();
-				case OVERVIEW:
-					return this.withOverview().getEntry();
-				case PUBLICATIONS:
-					return this.withPublications().getEntry();
-				case XREFS:
-					return this.withXrefs().getEntry();
-				case KEYWORDS:
-					return this.withKeywords().getEntry();
-				case IDENTIFIERS:
-					return this.withIdentifiers().getEntry();
-				case CHROMOSOMAL_LOCATIONS:
-					return this.withChromosomalLocations().getEntry();
-				case GENOMIC_MAPPINGS:
-					return this.withGenomicMappings().getEntry();
-				case INTERACTIONS:
-					return this.withInteractions().getEntry();
-				case PROTEIN_SEQUENCE:
-					return this.withTargetIsoforms().getEntry();
-				case GENERAL_ANNOTATIONS:
-					return this.withGeneralAnnotations().getEntry();
-				case ANTIBODY_MAPPINGS:
-					return this.withAntibodyMappings().getEntry();
-				case PEPTIDE_MAPPINGS:
-					return this.withPeptideMappings().getEntry();
-				case SRM_PEPTIDE_MAPPINGS:
-					return this.withSrmPeptideMappings().getEntry();
-
-				default:
-					throw new NextProtException(template + " export xml template case not found");
-
+		public Entry withView(String view) {
+			try {
+				NPViews npView = NPViews.valueOfViewName(view);
+				return getEntrySubPart(npView);
+			} catch (IllegalArgumentException ev) {
+				try {
+					AnnotationApiModel annotationCategory = AnnotationApiModel.getDecamelizedAnnotationTypeName(view);
+					return getEntryFiltered(annotationCategory);
+				} catch (IllegalArgumentException ec) {
+					throw new NextProtException("View " + view + " not found. Please look into...");
 				}
+			}
+		}
 
-			} else if (ExportTXTTemplate.class.isInstance(_template)) {
+		private Entry getEntrySubPart(NPViews npView) {
 
-				ExportTXTTemplate template = (ExportTXTTemplate) _template;
-				switch (template) {
-				case ACCESSIONS_ONLY:
-					return this.getEntry();
-				default:
-					throw new NextProtException(template + " export txt template case not found");
-				}
+			switch (npView) {
+			case FULL_ENTRY:
+				return this.withEverything().getEntry();
+			case ACCESSION:
+				return this.getEntry();
+			case OVERVIEW:
+				return this.withOverview().getEntry();
+			case PUBLICATION:
+				return this.withPublications().getEntry();
+			case XREF:
+				return this.withXrefs().getEntry();
+			case KEYWORD:
+				return this.withKeywords().getEntry();
+			case IDENTIFIER:
+				return this.withIdentifiers().getEntry();
+			case CHROMOSOMAL_LOCATION:
+				return this.withChromosomalLocations().getEntry();
+			case GENOMIC_MAPPING:
+				return this.withGenomicMappings().getEntry();
+			case INTERACTION:
+				return this.withInteractions().getEntry();
+			case PROTEIN_SEQUENCE:
+				return this.withTargetIsoforms().getEntry();
+			case ANNOTATION:
+				return this.withGeneralAnnotations().getEntry();
+			case ANTIBODY:
+				return this.withAntibodyMappings().getEntry();
+			case PEPTIDE:
+				return this.withPeptideMappings().getEntry();
+			case SRM_PEPTIDE_MAPPING:
+				return this.withSrmPeptideMappings().getEntry();
+
+			default: {
+
+				throw new NextProtException(npView + " export xml template case not found");
 
 			}
 
-			throw new NextProtException(_template + " export template case not found");
+			}
 
 		}
 
-		public Entry getEntryFiltered() {
-			
+		public Entry getEntryFiltered(AnnotationApiModel annotationCategory) {
+
 			List<Annotation> annotations = annotationService.findAnnotations(entryName);
 			List<DbXref> xrefs = xrefService.findDbXrefsByMaster(entryName);
 			List<Publication> publications = publicationService.findPublicationsByMasterUniqueName(entryName);
 			List<ExperimentalContext> ecs = ecService.findExperimentalContextsByEntryName(entryName);
-			//Filter if necessary
-			if(annotationCategory != null){
+			// Filter if necessary
+			if (annotationCategory != null) {
 				annotations = AnnotationUtils.filterAnnotationsByCategory(annotations, annotationCategory);
 				xrefs = XrefUtils.filterXrefsByIds(xrefs, AnnotationUtils.getXrefIdsForAnnotations(annotations));
 				publications = PublicationUtils.filterPublicationsByIds(publications, AnnotationUtils.getPublicationIdsForAnnotations(annotations));
@@ -249,8 +239,5 @@ public class FluentEntryService {
 			return entry;
 		}
 
-		
-
 	}
-
 }
