@@ -11,11 +11,13 @@ import org.nextprot.api.core.domain.AntibodyMapping;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 @DatabaseSetup(value = "AntibodyMappingDaoTest.xml", type = DatabaseOperation.INSERT)
+@TransactionConfiguration(defaultRollback = true)
 public class AntibodyMappingDaoTest extends CoreUnitBaseTest {
 	
 	@Autowired private AntibodyMappingDao antibodyMappingDao;
