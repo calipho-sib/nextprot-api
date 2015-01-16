@@ -65,7 +65,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	public void anybodyShouldBeAbleToLookAtTutorialEvenWithoutToken() throws Exception {
 
 		// call List<UserQuery> getTutorialQueries()
-		this.mockMvc.perform(get("/queries/public").accept(MediaType.APPLICATION_JSON))
+		this.mockMvc.perform(get("/queries/tutorial").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(handler().handlerType(UserQueryController.class));
 	}
@@ -76,7 +76,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList(new String[]{"ROLE_USER"}));
 
 		// call List<UserQuery> getTutorialQueries()
-		this.mockMvc.perform(get("/queries/public").header("Authorization", "Bearer " + leonardToken)
+		this.mockMvc.perform(get("/queries/tutorial").header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andExpect(handler().handlerType(UserQueryController.class));
