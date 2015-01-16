@@ -84,7 +84,7 @@ public class EntryController {
 	@RequestMapping("/entry/{entryname}/{subpart}")
 	public String getSubPart(@PathVariable("entryname") String entryName, @PathVariable("subpart") String subpart, Model model) {
 		
-		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withAnnotationCategory(subpart).getEntryFiltered();
+		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withView(subpart);
 		model.addAttribute("entry", dummy);
 		model.addAttribute("NXUtils", new NXVelocityUtils());
 		model.addAttribute("StringUtils", StringUtils.class);

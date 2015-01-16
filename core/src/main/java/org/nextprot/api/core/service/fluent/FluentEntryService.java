@@ -72,16 +72,10 @@ public class FluentEntryService {
 	public class FluentEntry {
 		private Entry entry = null;
 		private String entryName;
-		private AnnotationApiModel annotationCategory;
 
 		public FluentEntry(String entryName) {
 			this.entryName = entryName;
 			this.entry = new Entry(entryName);
-		}
-
-		public FluentEntry withAnnotationCategory(String category) {
-			this.annotationCategory = AnnotationApiModel.getDecamelizedAnnotationTypeName(category);
-			return this;
 		}
 
 		public FluentEntry withOverview() {
@@ -166,7 +160,21 @@ public class FluentEntryService {
 			return entry;
 		}
 
-		public Entry withView(NPViews npView) {
+		public Entry withView(String view) {
+			try {
+				NPViews npView = NPViews.valueOfViewName(view);
+				return getEntrySubPart(npView);
+			} catch (IllegalArgumentException ev) {
+				try {
+					AnnotationApiModel annotationCategory = AnnotationApiModel.getDecamelizedAnnotationTypeName(view);
+					return getEntryFiltered(annotationCategory);
+				} catch (IllegalArgumentException ec) {
+					throw new NextProtException("View " + view + " not found. Please look into...");
+				}
+			}
+		}
+
+		private Entry getEntrySubPart(NPViews npView) {
 
 			switch (npView) {
 			case FULL_ENTRY:
@@ -200,14 +208,17 @@ public class FluentEntryService {
 			case SRM_PEPTIDE_MAPPING:
 				return this.withSrmPeptideMappings().getEntry();
 
-			default:
+			default: {
+
 				throw new NextProtException(npView + " export xml template case not found");
+
+			}
 
 			}
 
 		}
 
-		public Entry getEntryFiltered() {
+		public Entry getEntryFiltered(AnnotationApiModel annotationCategory) {
 
 			List<Annotation> annotations = annotationService.findAnnotations(entryName);
 			List<DbXref> xrefs = xrefService.findDbXrefsByMaster(entryName);
@@ -229,5 +240,4 @@ public class FluentEntryService {
 		}
 
 	}
-
 }

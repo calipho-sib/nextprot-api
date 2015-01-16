@@ -1,6 +1,10 @@
 package org.nextprot.api.user.service.impl;
 
+import java.util.List;
+import java.util.Set;
+
 import org.nextprot.api.commons.exception.NPreconditions;
+import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -9,9 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Set;
 
 @Lazy
 @Service
@@ -79,5 +80,11 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 		UserProteinList l2 = proteinListDao.getUserProteinListByName(username, list2);
 
 		return UserProteinListUtils.combine(l1, l2, op, name, description);
+	}
+
+	@Override
+	@AllowedAnonymous //For now we don't secure the accessions of the list (we just secure the meta information like the name and description...)
+	public Set<String> getUserProteinListAccessionItemsById(long listId) {
+		return proteinListDao.getAccessionsByListId(listId);
 	}
 }

@@ -20,7 +20,7 @@ public interface UserProteinListService {
 	 * @return
 	 */
 	UserProteinList getUserProteinListById(long listId);
-
+	
 	/**
 	 * Gets meta information from the list
 	 * much more peformant than {@link #getUserProteinListById(long)} because the accessions are not ser
@@ -38,4 +38,6 @@ public interface UserProteinListService {
 	void deleteUserProteinList(UserProteinList proteinList);
 
 	UserProteinList combine(String name, String description, String username, String list1, String list2, Operator operator);
+	
+	Set<String> getUserProteinListAccessionItemsById(long listId);
 }
