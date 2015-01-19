@@ -19,15 +19,6 @@ public class UserQuery implements Serializable, UserResource {
 	private boolean published;
 	private String owner;
 	private long ownerId;
-	private boolean persisted;
-	
-	public boolean isPersisted() {
-		return persisted;
-	}
-
-	public void setPersisted(boolean persisted) {
-		this.persisted = persisted;
-	}
 
 	private Set<String> tags;
 
@@ -112,6 +103,4 @@ public class UserQuery implements Serializable, UserResource {
 	public String getOwnerName() {
 		return this.getOwner();
 	}
-
-
 }

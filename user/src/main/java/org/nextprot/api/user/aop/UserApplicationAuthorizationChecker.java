@@ -23,7 +23,7 @@ public class UserApplicationAuthorizationChecker implements UserResourceAuthoriz
             long appId = ((UserApplication) application).getId();
 
             // Checking authorization only done when application already exists
-            if (application.isPersisted()) {
+            if (((UserApplication) application).getId() != 0) {
 
                 UserApplication foundApp = dao.getUserApplicationById(appId);
 

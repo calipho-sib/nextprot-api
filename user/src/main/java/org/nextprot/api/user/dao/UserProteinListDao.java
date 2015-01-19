@@ -22,7 +22,7 @@ public interface UserProteinListDao {
 	 * @param listId list identifier
 	 * @param accessions set of protein accession number
 	 */
-    void createUserProteinListAccessions(long listId, Set<String> accessions);
+    void createUserProteinListItems(long listId, Set<String> accessions);
 
 	/**
 	 * Fetch the list of {@code UserProteinList} that belongs to {@code username}.
@@ -59,11 +59,11 @@ public interface UserProteinListDao {
 	UserProteinList getUserProteinListByName(String owner, String listName) throws DataAccessException;
 
 	/**
-	 * Update user protein list
+	 * Update user protein list name and description
 	 *
 	 * @param src the source object that provides content to set row with
 	 */
-	void updateUserProteinList(UserProteinList src);
+	void updateUserProteinListMetadata(UserProteinList src);
 
 	/**
 	 * Delete the given items for a protein list
@@ -82,12 +82,10 @@ public interface UserProteinListDao {
 	 */
 	int deleteUserProteinList(long listId);
 
-	
 	/**
 	 * Delete all the items for a protein list
 	 *
 	 * @param listId the list id to delete protein items from
-	 * @param accessions the set of accession numbers to delete
 	 * @return the number of deleted rows
 	 */
 	int deleteAllProteinListItems(long listId);
