@@ -79,7 +79,7 @@ public class UserProteinListServiceTest extends AbstractUnitBaseTest {
 		Set<String> accs = new HashSet<String>();
 		s1.add("NX_P124");
 
-		this.proteinListService.updateUserProteinList(l1.getId(), accs);
+		this.proteinListService.updateUserProteinListMetadata(l1.getId(), accs);
 	}
 
 	@Test

@@ -17,8 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -57,18 +56,6 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		// call UserProteinList createUserProteinList()
 		this.mockMvc.perform(post("/user/penny/protein-list").contentType(MediaType.APPLICATION_JSON).content(content).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isUnauthorized());
-	}
-
-	//TODO
-	@Test
-	public void leonardShouldBeAbleToUploadProteinsIntoProteinList() throws Exception {
-
-		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
-
-		// call void uploadProteinList()
-		this.mockMvc.perform(post("/user/leonard/protein-list/157/upload?file=proteins.fasta").header("Authorization", "Bearer " + leonardToken)
-				.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk());
 	}
 
 	// --------------------------------- GET --------------------------------------------------------------
@@ -277,8 +264,79 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 
 	// --------------------------------- PUT --------------------------------------------------------------
 
+	@Test
+	public void leonardShouldBeAbleToUpdateHisProteinList() throws Exception {
+
+		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
+
+		String content = "{\"id\":0,\"name\":\"leonardslist10\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\"],\"entriesCount\":1,\"ownerId\":0,\"owner\":\"leonard\",\"ownerName\":\"leonard\"}";
+
+		// UserProteinList updateUserProteinListMetadata()
+		String responseString = this.mockMvc.perform(put("/user/leonard/protein-list/157").header("Authorization", "Bearer " + leonardToken)
+				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+
+		UserProteinList userProteinList = new ObjectMapper().readValue(responseString, new TypeReference<UserProteinList>() { });
+
+		assertEquals(23, userProteinList.getOwnerId());
+		assertEquals(Sets.newHashSet("NX_45465"), userProteinList.getAccessionNumbers());
+	}
+
+	@Test
+	public void sheldonIsForbiddenToUpdateLeonardsProteinList() throws Exception {
+
+		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
+
+		String content = "{\"id\":0,\"name\":\"leonardslist10\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\"],\"entriesCount\":1,\"ownerId\":0,\"owner\":\"leonard\",\"ownerName\":\"leonard\"}";
+
+		// UserProteinList updateUserProteinListMetadata()
+		this.mockMvc.perform(put("/user/leonard/protein-list/157").header("Authorization", "Bearer " + sheldonToken)
+				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
+				andExpect(status().isForbidden());
+	}
+
+	@Test
+	public void othersIsUnauthorizedToUpdateLeonardsProteinList() throws Exception {
+
+		String content = "{\"id\":0,\"name\":\"leonardslist10\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\"],\"entriesCount\":1,\"ownerId\":0,\"owner\":\"leonard\",\"ownerName\":\"leonard\"}";
+
+		// UserProteinList updateUserProteinListMetadata()
+		this.mockMvc.perform(put("/user/leonard/protein-list/157")
+				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
+				andExpect(status().isUnauthorized());
+	}
 
 	// --------------------------------- DELETE -----------------------------------------------------------
 
+	@Test
+	public void leonardShouldBeAbleToDeleteHisProteinList() throws Exception {
 
+		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
+
+		// void deleteUserProteinList()
+		this.mockMvc.perform(delete("/user/leonard/protein-list/157").header("Authorization", "Bearer " + leonardToken)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	public void sheldonIsForbiddenToDeleteLeonardsProteinList() throws Exception {
+
+		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
+
+		// void deleteUserProteinList()
+		this.mockMvc.perform(delete("/user/leonard/protein-list/157").header("Authorization", "Bearer " + sheldonToken)
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isForbidden());
+	}
+
+	@Test
+	public void othersIsUnauthorizedToDeleteLeonardsProteinList() throws Exception {
+
+		// void deleteUserProteinList()
+		this.mockMvc.perform(delete("/user/leonard/protein-list/157")
+				.contentType(MediaType.APPLICATION_JSON))
+				.andExpect(status().isUnauthorized());
+	}
 }

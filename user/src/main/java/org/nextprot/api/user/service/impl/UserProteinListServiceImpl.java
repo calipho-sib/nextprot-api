@@ -37,7 +37,7 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 		Set<String> accessions = userProteinList.getAccessionNumbers();
 		if (accessions != null && !accessions.isEmpty()) {
-			proteinListDao.createUserProteinListAccessions(id, accessions);
+			proteinListDao.createUserProteinListItems(id, accessions);
 		}
 
 		return userProteinList;
@@ -62,11 +62,16 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	@Transactional
 	public UserProteinList updateUserProteinList(UserProteinList proteinList) {
 
-		proteinListDao.updateUserProteinList(proteinList);
+		proteinListDao.updateUserProteinListMetadata(proteinList);
 
-		//Easy way of doing it
-		proteinListDao.deleteAllProteinListItems(proteinList.getId());
-		proteinListDao.createUserProteinListAccessions(proteinList.getId(), proteinList.getAccessionNumbers());
+		Set<String> accs = proteinList.getAccessionNumbers();
+
+		if (accs != null && !accs.isEmpty()) {
+
+			//Easy way of doing it
+			proteinListDao.deleteAllProteinListItems(proteinList.getId());
+			proteinListDao.createUserProteinListItems(proteinList.getId(), proteinList.getAccessionNumbers());
+		}
 
 		return proteinListDao.getUserProteinListById(proteinList.getId());
 	}

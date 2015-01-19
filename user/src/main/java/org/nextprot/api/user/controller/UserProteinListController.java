@@ -59,6 +59,9 @@ public class UserProteinListController {
 	@ResponseBody
 	public UserProteinList updateUserProteinList(@PathVariable("username") String username, @PathVariable("listid") String id,
 												 @RequestBody UserProteinList proteinList) {
+
+		proteinList.setId(Long.parseLong(id));
+
 		return this.proteinListService.updateUserProteinList(proteinList);
 	}
 

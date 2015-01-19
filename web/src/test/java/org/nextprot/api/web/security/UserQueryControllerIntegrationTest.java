@@ -182,7 +182,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// UserQuery updateAdvancedQuery()
-		this.mockMvc.perform(get("/user/leonard/query/15").header("Authorization", "Bearer " + sheldonToken)
+		this.mockMvc.perform(put("/user/leonard/query/15").header("Authorization", "Bearer " + sheldonToken)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
 				andExpect(status().isForbidden());
 	}
@@ -195,7 +195,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query 1st attempt\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"sheldon\",\"ownerId\":23,\"tags\":null,\"ownerName\":\"sheldon\"}";
 
 		// UserQuery updateAdvancedQuery()
-		this.mockMvc.perform(get("/user/leonard/query/15").header("Authorization", "Bearer " + sheldonToken)
+		this.mockMvc.perform(put("/user/leonard/query/15").header("Authorization", "Bearer " + sheldonToken)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
 				andExpect(status().isForbidden());
 	}

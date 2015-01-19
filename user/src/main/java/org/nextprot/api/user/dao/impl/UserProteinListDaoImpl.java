@@ -108,7 +108,7 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 	}
 
 	@Override
-	public void createUserProteinListAccessions(final long listId, final Set<String> accessions) {
+	public void createUserProteinListItems(final long listId, final Set<String> accessions) {
 
 		final String INSERT_SQL = sqlDictionary.getSQLQuery("create-protein-list-item");
 
@@ -155,7 +155,7 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 	}
 	
 	@Override
-	public void updateUserProteinList(UserProteinList src) {
+	public void updateUserProteinListMetadata(UserProteinList src) {
 
 		final String UPDATE_SQL = sqlDictionary.getSQLQuery("update-user-protein-list");
 
