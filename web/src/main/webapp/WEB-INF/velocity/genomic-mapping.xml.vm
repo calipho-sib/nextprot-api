@@ -1,12 +1,12 @@
-<genomic-mapping accession='$genomicMapping.accession' database='ensembl'>
-	<gene  accession='$genomicMapping.accession' database='ensembl'>
+<genomic-mapping accession='$genomicMapping.accession' database='$genomicMapping.database'>
+	<gene  accession='$genomicMapping.accession' database='$genomicMapping.database'>
 	<isoform-mapping-list>
 	#foreach($isoformMapping in $genomicMapping.isoformMappings)
 		<isoform-mapping accession="$isoformMapping.uniqueName" main-name="$isoformMapping.isoMainName">
 		<transcript-mapping-list>
 		#foreach($transcriptMapping in $isoformMapping.transcriptMappings)
-			<transcript-mapping accession='$transcriptMapping.accession' database='ensembl'>
-			<transcript-protein accession='$transcriptMapping.proteinId' database='ensembl'/>
+			<transcript-mapping accession='$transcriptMapping.accession' database='$transcriptMapping.database'>
+			<transcript-protein accession='$transcriptMapping.proteinId' database='$transcriptMapping.database'/>
 			<exon-list>
 			#foreach($exon in $transcriptMapping.exons)
 			   <exon rank='$exon.rank' coding-status='$exon.codingStatus' ensembl-exon='$exon.accession'>
