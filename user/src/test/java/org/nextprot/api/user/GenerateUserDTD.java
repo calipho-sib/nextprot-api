@@ -13,7 +13,6 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-//@ActiveProfiles({"unit", "unit-schema-nextprot"})
 public class GenerateUserDTD extends UserResourceBaseTest {
 
 	private static final String dtdFile = "user.dtd";
@@ -29,7 +28,7 @@ public class GenerateUserDTD extends UserResourceBaseTest {
 	@Test
 	public void generateUserDTD() throws Exception {
 
-		IDatabaseConnection connection = new DatabaseConnection(dsLocator.getUserDataSource().getConnection());
+		IDatabaseConnection connection = new DatabaseConnection(dsLocator.getUserDataSource().getConnection(), "np_users");
 		// write DTD file 
 		IDataSet dataSet = connection.createDataSet();
 		Writer out = new OutputStreamWriter(new FileOutputStream(dtdFile));

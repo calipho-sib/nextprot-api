@@ -9,5 +9,4 @@ public interface UserResource extends Serializable {
 	String getOwnerName();
 	void setOwnerId(long id);
 	long getOwnerId();
-	boolean isPersisted();
 }

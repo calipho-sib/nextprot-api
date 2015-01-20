@@ -6,7 +6,6 @@ import org.nextprot.api.commons.resource.UserResource;
 
 import java.sql.Date;
 
-//@JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties({"resourceOwner"})
 public class UserApplication implements UserResource {
 
@@ -66,8 +65,6 @@ public class UserApplication implements UserResource {
 		this.website = website;
 	}
     public long getOwnerId() { return ownerId; }
-
-	@Override
 	public boolean isPersisted() {
 		return id != 0;
 	}

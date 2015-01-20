@@ -130,7 +130,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 	@Test
 	public void testCreateUserProteinListAccessions() {
 
-		proteinListDao.createUserProteinListAccessions(156, Sets.newHashSet("prot1", "prot2"));
+		proteinListDao.createUserProteinListItems(156, Sets.newHashSet("prot1", "prot2"));
 
 		UserProteinList list = proteinListDao.getUserProteinListById(156);
 
@@ -147,7 +147,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 			set.add(String.valueOf(i));
 		}
 
-		proteinListDao.createUserProteinListAccessions(156, set);
+		proteinListDao.createUserProteinListItems(156, set);
 
 		UserProteinList list = proteinListDao.getUserProteinListById(156);
 
@@ -164,13 +164,31 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 		l.setName("ma liste");
 		l.setDescription("la liste de bob leponge");
 
-		proteinListDao.updateUserProteinList(l);
+		proteinListDao.updateUserProteinListMetadata(l);
 
 		UserProteinList l2 = proteinListDao.getUserProteinListById(l.getId());
 
 		assertTrue(156 == l2.getId());
 		assertEquals(l.getName(), l2.getName());
 		assertEquals(l.getDescription(), l2.getDescription());
+	}
+
+	@Test
+	public void testUpdateUserProteinList2() {
+
+		UserProteinList l = new UserProteinList();
+
+		l.setId(156);
+		l.setName("ma liste");
+		l.setDescription("la liste de bob leponge");
+		l.setAccessions(Sets.newHashSet("NX_Q14249"));
+
+		proteinListDao.updateUserProteinListMetadata(l);
+
+		UserProteinList l2 = proteinListDao.getUserProteinListById(l.getId());
+
+		assertExpectedProteinList(l2, 156, "ma liste", "la liste de bob leponge", username, 23, 3,
+				Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"));
 	}
 
 	@Test

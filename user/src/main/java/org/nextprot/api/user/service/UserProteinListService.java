@@ -1,9 +1,9 @@
 package org.nextprot.api.user.service;
 
+import org.nextprot.api.user.domain.UserProteinList;
+
 import java.util.List;
 import java.util.Set;
-
-import org.nextprot.api.user.domain.UserProteinList;
 
 public interface UserProteinListService {
 
@@ -25,10 +25,8 @@ public interface UserProteinListService {
 	 * Gets meta information from the list
 	 * much more peformant than {@link #getUserProteinListById(long)} because the accessions are not ser
 	 * 
-	 * @param listId
 	 * @return
 	 */
-
 	UserProteinList getUserProteinListByNameForUser(String username, String listName);
 
 	UserProteinList createUserProteinList(UserProteinList proteinList);
@@ -37,7 +35,7 @@ public interface UserProteinListService {
 
 	void deleteUserProteinList(UserProteinList proteinList);
 
-	UserProteinList combine(String name, String description, String username, String list1, String list2, Operator operator);
-	
 	Set<String> getUserProteinListAccessionItemsById(long listId);
+
+	UserProteinList combine(String name, String description, String username, String listName1, String listName2, Operator operator);
 }
