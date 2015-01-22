@@ -1,37 +1,14 @@
 package org.nextprot.api.web;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiParamType;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.AntibodyMapping;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Identifier;
-import org.nextprot.api.core.domain.Keyword;
-import org.nextprot.api.core.domain.PeptideMapping;
-import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.AntibodyMappingService;
-import org.nextprot.api.core.service.AuthorService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.EntryService;
-import org.nextprot.api.core.service.ExperimentalContextService;
-import org.nextprot.api.core.service.GeneService;
-import org.nextprot.api.core.service.GenomicMappingService;
-import org.nextprot.api.core.service.IdentifierService;
-import org.nextprot.api.core.service.InteractionService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.KeywordService;
-import org.nextprot.api.core.service.OverviewService;
-import org.nextprot.api.core.service.PeptideMappingService;
-import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +19,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Lazy
 @Controller
@@ -67,6 +47,13 @@ public class EntryController {
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService expContextService;
 
+	// TODO: Add attributes to the model of all method's controllers
+	private void addModelDependencies(Model model) {
+
+		model.addAttribute("StringUtils", StringUtils.class);
+		model.addAttribute("NXUtils", NXVelocityUtils.class);
+	}
+
 	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides, the list of the antibodies and the experimental contexts", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
 	public String exportEntry(
@@ -75,8 +62,7 @@ public class EntryController {
 		List<Entry> proteinList = new ArrayList<Entry>();
 		proteinList.add(this.entryService.findEntry(entryName));
 		model.addAttribute("entryList", proteinList);
-		model.addAttribute("StringUtils", StringUtils.class);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
+		addModelDependencies(model);
 		return "exportEntries";
 	}
 	
@@ -86,8 +72,7 @@ public class EntryController {
 		
 		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withView(subpart);
 		model.addAttribute("entry", dummy);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "annotation-list";
 	}
 
@@ -99,8 +84,7 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "protein-sequence-list";
 	}
 	
@@ -112,8 +96,7 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setKeywords(keywords);
 		model.addAttribute("entry", entry);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "keyword-list";
 	}
 
@@ -124,8 +107,7 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setOverview(overviewService.findOverviewByEntry(entryName));
 		model.addAttribute("entry", entry);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "overview";
 	}
 	
@@ -138,8 +120,7 @@ public class EntryController {
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		entry.setAntibodyMappings(mapping);
 		model.addAttribute("entry", entry);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "antibody-list";
 	}
 	
@@ -152,8 +133,7 @@ public class EntryController {
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		entry.setPeptideMappings(mapping);
 		model.addAttribute("entry", entry);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "peptide-list";
 	}
 
@@ -166,8 +146,7 @@ public class EntryController {
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		entry.setPeptideMappings(mapping);
 		model.addAttribute("entry", entry);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "srm-peptide-list";
 	}
 
@@ -179,8 +158,7 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setIdentifiers(identifiers);
 		model.addAttribute("entry", entry);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "identifier-list";
 	}
 	
@@ -191,8 +169,7 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
 		model.addAttribute("entry", entry);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "chromosomal-location-list";
 	}
 
@@ -203,8 +180,7 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "genomic-mapping-list";
 	}
 
@@ -216,8 +192,7 @@ public class EntryController {
 		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
 		dummy.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
 		model.addAttribute("entry", dummy);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "genomic";
 	}
 
@@ -229,8 +204,7 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setPublications(publications);
 		model.addAttribute("entry", entry);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "publication-list";
 	}
 	
@@ -243,8 +217,7 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setXrefs(xrefs);
 		model.addAttribute("entry", dummy);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "xref-list";
 	}
 
@@ -257,8 +230,7 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setInteractions(interactionService.findInteractionsByEntry(entryName));
 		model.addAttribute("entry", dummy);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "interaction-list";
 	}
 
@@ -271,8 +243,7 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setAnnotations(annotations);
 		model.addAttribute("entry", dummy);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "annotation-list";
 	}
 	
@@ -282,8 +253,7 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setExperimentalContexts(this.expContextService.findExperimentalContextsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
-		model.addAttribute("NXUtils", new NXVelocityUtils());
-		model.addAttribute("StringUtils", StringUtils.class);
+		addModelDependencies(model);
 		return "experimental-context-list";
 	}
 	

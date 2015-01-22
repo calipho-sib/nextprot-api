@@ -1,11 +1,6 @@
 package org.nextprot.api.rdf.controller;
 
-import java.net.URISyntaxException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
@@ -19,13 +14,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * Controller used many to log and tune queries. Check the log times. No cache is used on purpose
@@ -86,7 +80,7 @@ public class SparqlController {
 	@RequestMapping("/sparql")
 	@ResponseBody
 	public ResponseEntity<String> mirrorRest(@RequestBody String body, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
-		return this.sparqlProxyEndpoint.sparql(body, request.getQueryString()); 
+		return this.sparqlProxyEndpoint.sparql(body, request.getQueryString());
 	}
 
 }

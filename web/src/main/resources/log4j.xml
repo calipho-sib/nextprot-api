@@ -29,7 +29,7 @@
 	</appender>
 	
 	<logger name="org.springframework">
-		<level value="WARN" />
+		<level value="DEBUG" />
 	</logger>
 
 	<logger name="net.sf.ehcache">
