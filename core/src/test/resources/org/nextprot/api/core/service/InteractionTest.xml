@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+	
+	<cv_databases cv_id="143" cv_name="UniProt" description="UniProt web site" />
+	<cv_databases cv_id="66" cv_name="IntAct" description="Protein interaction database and analysis system" />
+	
+	<sequence_identifiers identifier_id="582681" db_xref_id="1052879" cv_type_id="1" unique_name="NX_P51813" cv_status_id="1" />
+	<sequence_identifiers identifier_id="1111111" db_xref_id="1111111111" cv_type_id="1" unique_name="NX_Q9NRR5" cv_status_id="1" />
+	<db_xrefs resource_id="1052879" accession="P51813" cv_database_id="143"/>
+	<db_xrefs resource_id="1111111111" accession="Q9NRR5" cv_database_id="143"/>
+
+	<partnership_partner_assoc assoc_id="87758" db_xref_id="1052879" partnership_id="44171"  is_self_interaction="false"/>
+	<partnership_partner_assoc assoc_id="5262" db_xref_id="1052879" partnership_id="2646"  is_self_interaction="false"/>
+	<partnership_partner_assoc assoc_id="108957" db_xref_id="1052879" partnership_id="54930"  is_self_interaction="false"/>
+	<partnership_partner_assoc assoc_id="19309" db_xref_id="1052879" partnership_id="9714"  is_self_interaction="false"/>
+	<partnership_partner_assoc assoc_id="10031" db_xref_id="1052879" partnership_id="5051"  is_self_interaction="false"/>
+	<partnership_partner_assoc assoc_id="111111" db_xref_id="1111111111" partnership_id="111112"  is_self_interaction="true"/>
+	
+	<!-- 	this one is gold -->
+	<partnerships partnership_id="44171" cv_quality_qualifier_id="10" cv_status_id="1" datasource_id="100" is_xeno="false"/> 
+	<!-- 	those are silver -->
+	<partnerships partnership_id="2646" cv_quality_qualifier_id="50" cv_status_id="1" datasource_id="100" is_xeno="false"/>
+	<partnerships partnership_id="54930" cv_quality_qualifier_id="50" cv_status_id="1" datasource_id="100" is_xeno="false"/>
+	<partnerships partnership_id="9714" cv_quality_qualifier_id="50" cv_status_id="1" datasource_id="100" is_xeno="false"/>
+	<partnerships partnership_id="5051" cv_quality_qualifier_id="50" cv_status_id="1" datasource_id="100" is_xeno="false"/>
+	<!-- 	this one is related to a fake for self interaction -->
+	<partnerships partnership_id="111112" cv_quality_qualifier_id="10" cv_status_id="1" datasource_id="100" is_xeno="false"/> 
+	
+	<!-- 	Association for number of experiemnts -->
+	<!-- 	this one is related to the gold -->
+	<partnership_resource_assoc assoc_id="44181" partnership_id="44171" resource_id="15688205"/>
+	<!-- 	those are related to the silver -->
+	<partnership_resource_assoc assoc_id="2646" partnership_id="2646" resource_id="15645985"/>
+	<partnership_resource_assoc assoc_id="61171" partnership_id="54930" resource_id="26526542"/>
+	<partnership_resource_assoc assoc_id="9714" partnership_id="9714" resource_id="1052929"/>
+	<partnership_resource_assoc assoc_id="5051" partnership_id="5051" resource_id="15648674"/>
+	<!-- 	this one is related to a fake for self interaction -->
+	<partnership_resource_assoc assoc_id="111114" partnership_id="111112" resource_id="111113"/>
+	
+	<db_xrefs accession="EBI-696621,EBI-696657" resource_id="15688205" cv_database_id="66"/>
+	<db_xrefs accession="EBI-366083,EBI-696657" resource_id="15645985" cv_database_id="66"/>
+	<db_xrefs accession="EBI-352572,EBI-696657" resource_id="26526542" cv_database_id="66"/>
+	<db_xrefs accession="EBI-696657,EBI-886" resource_id="1052929" cv_database_id="66"/>
+	<db_xrefs accession="EBI-3916179,EBI-696657" resource_id="15648674" cv_database_id="66"/>
+
+	<db_xrefs accession="EBI-711226,EBI-711226" resource_id="111113" cv_database_id="66"/>
+
+	<!-- Property name = 5 is related to the number of experiments -->	
+	<!-- 	this one is related to the gold -->
+	<partnership_resource_assoc_properties assoc_id="44181" cv_property_name_id="5" property_value="4" />
+	<!-- 	those are related to the silver -->
+	<partnership_resource_assoc_properties assoc_id="2646" cv_property_name_id="5" property_value="1"/>
+	<partnership_resource_assoc_properties assoc_id="61171" cv_property_name_id="5" property_value="1"/>
+	<partnership_resource_assoc_properties assoc_id="9714" cv_property_name_id="5" property_value="1"/>
+	<partnership_resource_assoc_properties assoc_id="5051" cv_property_name_id="5" property_value="1"/>
+	<!-- 	this one is related to a fake for self interaction -->
+	<partnership_resource_assoc_properties assoc_id="111114" cv_property_name_id="5" property_value="3"/>
+	
+	
+	<!-- 	The other interactants if they exist (left outer join)-->
+	<sequence_identifiers identifier_id="619687" db_xref_id="1052931" cv_type_id="1" unique_name="NX_P11309" cv_status_id="1" />
+	<sequence_identifiers identifier_id="636519" db_xref_id="970583" cv_type_id="1" unique_name="NX_P04637" cv_status_id="1" />
+	<sequence_identifiers identifier_id="618177" db_xref_id="1612287" cv_type_id="1" unique_name="NX_P08238" cv_status_id="1" />
+	<sequence_identifiers identifier_id="604714" db_xref_id="960422" cv_type_id="1" unique_name="NX_P46108" cv_status_id="1" />
+	<sequence_identifiers identifier_id="641502" db_xref_id="2832372" cv_type_id="1" unique_name="NX_Q8N5I9" cv_status_id="1" />
+
+	<db_xrefs accession="P11309" resource_id="1052931" cv_database_id="143"/>
+	<db_xrefs accession="P08238" resource_id="970583" cv_database_id="143"/>
+	<db_xrefs accession="P46108" resource_id="1612287" cv_database_id="143"/>
+	<db_xrefs accession="P04637" resource_id="960422" cv_database_id="143"/>
+	<db_xrefs accession="Q8N5I9" resource_id="2832372" cv_database_id="143"/>
+
+	<partnership_partner_assoc partnership_id="44171" assoc_id="87759" db_xref_id="1052931"/>
+	<partnership_partner_assoc partnership_id="2646" assoc_id="5261" db_xref_id="970583"/>
+	<partnership_partner_assoc partnership_id="54930" assoc_id="108956" db_xref_id="1612287"/>
+	<partnership_partner_assoc partnership_id="9714" assoc_id="19308" db_xref_id="960422"/>
+	<partnership_partner_assoc partnership_id="5051" assoc_id="10032" db_xref_id="2832372"/>
+	
+	
+</dataset>

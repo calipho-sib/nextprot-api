@@ -1,0 +1,59 @@
+#if($prefix)
+#parse("turtle/prefix.ttl.vm")
+#end
+
+#
+# Define Expresion specialisation
+# 
+
+:ExpressionLevel
+      rdf:type owl:Class ;
+      rdfs:subClassOf owl:Thing ;
+      rdfs:comment "Expression levels detected during experiment"^^xsd:string ;
+      .
+
+   
+:Positive
+      rdf:type :ExpressionLevel ;
+      rdfs:comment "Positive expression"^^xsd:string ;
+      :notIn :Low,:Medium,:High;
+      .
+      
+:High
+      rdf:type :ExpressionLevel ;
+      rdfs:comment "High level of expression"^^xsd:string ;
+      rdfs:subClassOf :Positive ;
+      :notIn :Low,:Medium,:Positive;
+      .
+
+:Medium
+      rdf:type :ExpressionLevel ;
+      rdfs:comment "High level of expression"^^xsd:string ;
+      rdfs:subClassOf :Positive ;
+      :notIn :Low,:High,:Positive;
+      .
+:Low
+      rdf:type :ExpressionLevel ;
+      rdfs:comment "High level of expression"^^xsd:string ;
+      rdfs:subClassOf :Positive ;
+      :notIn :Medium,:High,:Positive;
+      .
+
+:Negative
+      rdf:type :ExpressionLevel ;
+      rdfs:comment "High level of expression"^^xsd:string ;
+      .      
+
+#
+# what about not detected?
+:NotDetected owl:sameAs :Negative.
+
+
+      
+#:expressed      
+#:highlyExpressed
+#:notHighlyExpressed     
+#:notExpressed
+
+
+ 

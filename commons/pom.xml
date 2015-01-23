@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.nextprot</groupId>
+		<artifactId>nextprot-api-master</artifactId>
+		<version>0.1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+
+	<groupId>org.nextprot</groupId>
+	<artifactId>nextprot-api-commons</artifactId>
+	<packaging>jar</packaging>
+	<description>Common utilities for the nextprot API</description>
+	<url>https://api.nextprot.org</url>
+
+	<build>
+		<finalName>nextprot-api-commons</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

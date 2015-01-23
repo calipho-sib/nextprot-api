@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+
+<!-- test xxx starts here -->
+
+	<sequence_identifiers identifier_id="10000" cv_type_id="1" unique_name="NX_P10000" />
+	<sequence_identifiers identifier_id="100001" cv_type_id="2" unique_name="NX_P10000-1" />
+	<bio_sequences bio_sequence_id="235252" bio_sequence="JHGJHGD"  md5="92835729857" identifier_id="100001" cv_type_id="1"  />
+	<identifier_synonyms synonym_id="2378423" identifier_id="100001" synonym_name="Synonym of NX_P10000-1" cv_type_id="1" is_main="true" cv_qualifier_id="1" />
+	<mapping_annotations  annotation_id="10000100001" reference_identifier_id="10000" mapped_identifier_id="100001" cv_type_id="4" />
+	<identifier_properties identifier_property_id="8762376" identifier_id="10000" property_value="NX_P10000-1" cv_property_name_id="11" />
+
+ 	<resources resource_id="1000021" cv_type_id="1" /> 	
+	<cv_databases cv_id="84" cv_name="Orphanet" cv_category_id="8" link_url="http://www.orpha.net/consor/cgi-bin/OC_Exp.php?Lng=GB&amp;Expert=%s" url="http://www.orpha.net/consor/cgi-bin/home.php?Lng=GB" link_type="Explicit" />
+	<db_xrefs accession="XR_ORPHA_100021" resource_id="1000021" description="some XR_ORPHA_100021 xref description" cv_database_id="84" />
+	<identifier_resource_assoc assoc_id="345345345" identifier_id="10000" resource_id="1000021" datasource_id="2" cv_type_id="1" cv_quality_qualifier_id="10" />
+ 	<resource_properties resource_id="1000021" resource_property_id="1000021001" property_name="disease" property_value="Some XR_ORPHA_100021 xref disease property value"  /> 
+ 	<resource_properties resource_id="1000021" resource_property_id="1000021002" property_name="not a disease" property_value="Some irrelevant property value"  /> 
+	 
+<!-- used but already existing in db_unit 
+	<cv_datasources cv_id="1" cv_name="NextProt" /> 
+	<cv_datasources cv_id="2" cv_name="Uniprot" /> 
+-->
+	
+<!-- test xxx ends here -->
+
+
+	<sequence_identifiers identifier_id="10" cv_type_id="1" unique_name="NX_P12345" />
+
+	<!-- 	Isoform specificity -->
+	<sequence_identifiers identifier_id="11" cv_type_id="2" unique_name="NX_P12345-1" />
+	<annotation_protein_assoc annotation_id="10" protein_id="11" assoc_id="10" />
+	<protein_feature_positions first_pos="20" last_pos="30" annotation_protein_id="10" position_id="10"/>
+
+	<annotation_protein_assoc annotation_id="11" protein_id="11" assoc_id="11" />
+	<protein_feature_positions first_pos="20" last_pos="30" annotation_protein_id="11" position_id="11"/>
+
+	<annotation_protein_assoc annotation_id="12" protein_id="11" assoc_id="12" />
+	<protein_feature_positions first_pos="20" last_pos="30" annotation_protein_id="12" position_id="12"/>
+
+	<annotation_protein_assoc annotation_id="13" protein_id="11" assoc_id="13" />
+	<protein_feature_positions first_pos="20" last_pos="30" annotation_protein_id="13" position_id="13"/>
+
+	<annotation_protein_assoc annotation_id="14" protein_id="11" assoc_id="14" />
+	<protein_feature_positions first_pos="20" last_pos="30" annotation_protein_id="14" position_id="14"/>
+
+	<!-- ontology annotation -->
+    <cv_terms cv_id="1301" cv_name="go molecular function" cv_category_id="1" db_xref_id="521" cv_status_id="1" />
+    <cv_terms cv_id="1302" cv_name="go biological process" cv_category_id="1" db_xref_id="521" cv_status_id="1" />
+
+	<annotations annotation_id="10" unique_name="AN_P12345_010" identifier_id="10"
+		cv_annotation_discriminator_id="3" cv_annotation_type_id="1301" description="AB1 family"
+		datasource_id="1" cv_quality_qualifier_id="1" />
+		
+
+	<annotations annotation_id="11" unique_name="AN_P12345_011" identifier_id="10"
+		cv_annotation_discriminator_id="4" cv_annotation_type_id="1301" description="go function AB1"
+		datasource_id="1" cv_quality_qualifier_id="1"/>
+
+	<annotations annotation_id="12" unique_name="AN_P12345_012" identifier_id="10"
+		cv_annotation_discriminator_id="3" cv_annotation_type_id="1301"
+		description="function with no recognized gene names AB10" datasource_id="1" cv_quality_qualifier_id="1"/>
+
+	<annotations annotation_id="13" unique_name="AN_P12345_013" identifier_id="10"
+		cv_annotation_discriminator_id="3" cv_annotation_type_id="1301"
+		description="Binds to AB2 and to the complex AB3/AB4." datasource_id="1" cv_quality_qualifier_id="1"/>
+
+	<annotations annotation_id="14" unique_name="AN_P12345_014" identifier_id="10"
+		cv_annotation_discriminator_id="3" cv_annotation_type_id="1302" description="Binds to AB1, AB5 and AB4."
+		datasource_id="1" cv_quality_qualifier_id="1"/>
+		
+	<annotation_resource_assoc annotation_id="10" resource_id="10" cv_qualifier_type_id="1" cv_type_id="1"/>
+ 	<resources resource_id="20"/> 
+	<db_xrefs accession="AC_TEST1" resource_id="20" description="some description of an evidence"/>
+	
+<!-- 	<cv_resource_assoc_types cv_id="1" cv_name="source" description="The resource is the origin of the data (xref on swissprot for master)" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="2" cv_name="relative" description="The resource is an information relative to the data (xref on prosite for domain)" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="3" cv_name="evidence" description="The resource is an evidence of the data (experimental set for tissue specificity)" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="4" cv_name="mapping" description="The resource is equivalent or similar to the original" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="5" cv_name="document" description="The resource is the document for the data or the cvterm" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="6" cv_name="secondary" description="The resource is a secondary source of the data (secondary acc)" /> -->
+	
+<!-- 	<cv_resource_assoc_types cv_id="1" cv_name="POTENTIAL" description="There is some logical or conclusive evidence that the given annotation could apply. Often used to present results from protein sequence analysis software tools." /> -->
+<!-- 	<cv_resource_assoc_types cv_id="2" cv_name="PROBABLE" description="Stronger evidence than the qualifier ÔPotentialÕ: there must be at least some experimental evidence." /> -->
+<!-- 	<cv_resource_assoc_types cv_id="3" cv_name="BY_SIMILARITY" description="Information propagated from other organisms." /> -->
+<!-- 	<cv_resource_assoc_types cv_id="4" cv_name="UNKNOWN" description="Not applicable or not known." /> -->
+<!-- 	<cv_resource_assoc_types cv_id="5" cv_name="EXP" description="Inferred from Experiment" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="6" cv_name="IDA" description="Inferred from Direct Assay" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="7" cv_name="IPI" description="Inferred from Physical Interaction" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="9" cv_name="IGI" description="Inferred from Genetic Interaction" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="10" cv_name="IEP" description="Inferred from Expression Pattern" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="11" cv_name="ISS" description="Inferred from Sequence or Structural Similarity" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="12" cv_name="ISO" description="Inferred from Sequence Orthology" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="13" cv_name="ISA" description="Inferred from Sequence Alignment" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="14" cv_name="ISM" description="Inferred from Sequence Model" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="15" cv_name="IGC" description="Inferred from Genomic Context" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="16" cv_name="RCA" description="Inferred from Reviewed Computational Analysis" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="17" cv_name="TAS" description="Traceable Author Statement" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="18" cv_name="NAS" description="Non-traceable Author Statement" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="19" cv_name="IC" description="Inferred by Curator" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="20" cv_name="ND" description="No biological Data available" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="21" cv_name="IEA" description="Inferred from Electronic Annotation" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="22" cv_name="NR" description="Not Recorded" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="8" cv_name="IMP" description="Inferred from Mutant Phenotype" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="23" cv_name="IBA" description="Inferred from Biological aspect of Ancestor." /> -->
+<!-- 	<cv_resource_assoc_types cv_id="24" cv_name="IBD" description="Inferred from Biological aspect of Descendant." /> -->
+<!-- 	<cv_resource_assoc_types cv_id="25" cv_name="IKR" description="Inferred from Key Residues." /> -->
+<!-- 	<cv_resource_assoc_types cv_id="26" cv_name="IRD" description="Inferred from Rapid Divergence." /> -->
+
+<!-- 	<cv_resource_assoc_types cv_id="1" cv_name="source" description="The resource is the origin of the data (xref on swissprot for master)" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="2" cv_name="relative" description="The resource is an information relative to the data (xref on prosite for domain)" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="3" cv_name="evidence" description="The resource is an evidence of the data (experimental set for tissue specificity)" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="4" cv_name="mapping" description="The resource is equivalent or similar to the original" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="5" cv_name="document" description="The resource is the document for the data or the cvterm" /> -->
+<!-- 	<cv_resource_assoc_types cv_id="6" cv_name="secondary" description="The resource is a secondary source of the data (secondary acc)" /> -->
+	
+</dataset>

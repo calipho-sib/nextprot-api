@@ -1,5 +1,0 @@
-<chromosomal-location-list>
-#foreach($chromosomalLocation in $entry.chromosomalLocations)
-	<chromosomal-location chromosome='$chromosomalLocation.getChromosome()' band='$chromosomalLocation.getBand()' strand='$chromosomalLocation.getStrand()' accession='$chromosomalLocation.getAccession()' begin='$chromosomalLocation.getFirstPosition()' end='$chromosomalLocation.getLastPosition()' />
-#end
-</chromosomal-location-list>

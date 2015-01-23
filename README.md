@@ -2,7 +2,7 @@
 
 _CAUTION: Nextprot API is at its very early stages of development. Things are likely to change in ways that are not backwards compatible_
 
-This projected is licensed under the terms of the GNU GPL v2.0
+This project is licensed under the terms of the GNU General Public License, version 2 or any later version (see file LICENSE.txt)
 
 # Main API Features:
 * Provides a Java Spring REST API at http://localhost:8080/nextprot-api that connects to an RDBMS database (entry based).
@@ -32,6 +32,11 @@ mvn test
 	</li>
 	<li>
 		<a href="http://structure101.com" target="_blank">	<img alt="Structure101" height="30" src="http://structure101.com/images/s101_170.png"/> </a>
+	</li>
+	<li>
+		<a href="http://www.ej-technologies.com/products/jprofiler/overview.html" target="_blank">
+		             <img alt="Java Profiler" height="30" src="https://d325ruyeyianrs.cloudfront.net//mgJIoWeBGjESI3wvaduBhyUarReoVzS8Qq2ppfxyUVv.png"/> 
+		</a>
 	</li>
 </ul>
 

@@ -1,0 +1,64 @@
+#set($evidence-uri = $evidence.getEvidenceId($isoform-name))
+## Negative evidence
+## graph is splitted for negative, positive (that include negative expression)
+#if($evidence.isNegativeEvidence($isoform-name))
+annotation:$annotation-uri :negativeEvidence evidence:$evidence-uri. 
+#end
+annotation:$annotation-uri :evidence evidence:$evidence-uri. 
+## decribe the evidence here
+evidence:$evidence-uri 
+  rdf:type :Evidence ;
+##if($evidence.getEvidenceCodeAC())
+## evidenceCode is mandatory !
+  :evidenceCode cv:$StringUtils.slug($evidence.getEvidenceCodeAC());
+##end
+## negative is no more needed
+  :negative "$evidence.isNegativeEvidence($isoform-name)"^^xsd:boolean;
+#if($evidence.getQualityQualifier())
+  :quality :$evidence.getQualityQualifier();
+#end  
+#if($evidence.getAssignedBy())
+  :assignedBy source:$StringUtils.slug($evidence.getAssignedBy());
+#end
+#if($evidence.getGoQualifier())
+  :goQualifier "$evidence.getGoQualifier()"^^xsd:string;
+#end
+#if($evidence.getCL())
+  :cellLine "$evidence.getCL()"^^xsd:string;
+#end
+#if($evidence.getExpressionLevel())
+  :expressionLevel :$evidence.getExpressionLevel();
+#end
+#if($evidence.getIntegrationLevel())
+  :integrationLevel :$evidence.getIntegrationLevel();
+#end
+#if($evidence.getExperimentalContextId()>0)
+  :experimentalContext context:$evidence.getExperimentalContextId();
+#end
+##  :$evidence.getResourceType() publication:$evidence.getResourceAccession()
+## resource => database (xref:P06213,...) , Publication (publi id=getResourceId())
+#if($evidence.getResourceType().equals("publication"))
+  :reference publication:$evidence.getPublicationMD5();
+#end
+#if($evidence.getResourceType().equals("database"))
+#set($UNESCAPED_CDATA = $evidence.resourceAccession)
+  :fromXref db:$StringUtils.slug($evidence.getResourceDb());
+  :reference [
+    rdf:type :Xref ;
+    :accession "$UNESCAPED_CDATA"^^xsd:string;
+    :provenance db:$StringUtils.slug($evidence.resourceDb); 
+   ] ;
+#end
+## next property is useful for debug purpose
+#if($evidence.getResourceAssociationType())
+  :assocType "$evidence.getResourceAssociationType()"^^xsd:string;
+#end
+## next property is useful for debug purpose
+#if($evidence.getIsoformSpecificity())
+  :isoformSpecificity "$evidence.getIsoformSpecificity()"^^xsd:string;
+#end
+## next property is useful for debug purpose
+#if($evidence.getNegativeIsoformSpecificity())
+  :negativeIsoformSpecificity "$evidence.getNegativeIsoformSpecificity()"^^xsd:string;
+#end
+  .

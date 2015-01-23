@@ -1,0 +1,59 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>nextprot-api-master</artifactId>
+		<groupId>org.nextprot</groupId>
+		<version>0.1.0</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>nextprot-api-user</artifactId>
+	<packaging>jar</packaging>
+
+	<dependencies>
+                <dependency>
+                        <groupId>org.nextprot</groupId>
+                        <artifactId>nextprot-queries</artifactId>
+                        <version>0.0.1-SNAPSHOT</version>
+                </dependency>
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-security</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-commons</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-commons</artifactId>
+			<version>${project.version}</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<finalName>nextprot-api-user</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<driver>org.postgresql.Driver</driver>
+					<url>jdbc:postgresql://crick.isb-sib.ch:5432/np_unit</url>
+					<user>postgres</user>
+					<password>postgres</password>
+					<schemas>
+						<schema>np_users</schema>
+					</schemas>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

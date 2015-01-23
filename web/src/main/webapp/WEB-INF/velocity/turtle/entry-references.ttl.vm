@@ -1,0 +1,38 @@
+
+# - - - - - - - -
+# Xrefs v3
+# - - - - - - - -
+
+#foreach($xref in $entry.xrefs)
+#set($UNESCAPED_CDATA = $xref.accession)
+entry:$entry.uniqueName :reference [
+  a :Xref ;
+  :accession "$UNESCAPED_CDATA"^^xsd:string ;
+  :provenance db:$StringUtils.slug($xref.databaseName) ; 
+  ]
+.
+
+#end
+
+
+# - - - - - - - -
+# Identifiers
+# - - - - - - - -
+
+#foreach($ident in $entry.identifiers)
+entry:$entry.uniqueName :reference [
+  a :Identifier ;
+  :accession "$ident.name"^^xsd:string ;
+  :provenance db:$StringUtils.slug($ident.provenance) ;
+  ]
+.
+
+#end
+
+# - - - - - - - -
+# Publications
+# - - - - - - - -
+
+#foreach($pub in $entry.publications)
+entry:$entry.uniqueName :reference publication:$pub.getMD5() .
+#end

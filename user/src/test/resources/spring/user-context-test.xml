@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!--<import resource="classpath:spring/commons-context.xml" />-->
+
+	<!-- Instrumentation aspects -->
+	<aop:aspectj-autoproxy />
+
+	<!--
+	<context:component-scan
+			base-package="org.nextprot.api.user.aop">
+		<context:include-filter type="assignable" expression="org.nextprot.api.user.aop.UserResourceDTO"/>
+	</context:component-scan> -->
+
+	<bean class="org.nextprot.api.user.aop.UserResourceAuthorizationAspect"/>
+
+	<bean class="org.nextprot.api.user.service.impl.UserApplicationServiceImpl"/>
+	<bean class="org.nextprot.api.security.service.impl.JWTCodecImpl"/>
+	<bean class="org.nextprot.api.user.service.impl.UserQueryServiceImpl"/>
+	<bean class="org.nextprot.api.user.service.impl.UserProteinListServiceImpl"/>
+
+	<bean class="org.nextprot.api.user.aop.UserQueryUserResourceAuthorizationChecker"/>
+	<bean class="org.nextprot.api.user.aop.UserProteinListAuthorizationChecker"/>
+	<bean class="org.nextprot.api.user.aop.UserApplicationAuthorizationChecker"/>
+	<bean class="org.nextprot.api.user.aop.UserApplicationAuthorizationChecker"/>
+	<bean class="org.nextprot.api.user.service.impl.UserQueryTutorialDictionary"> </bean>
+
+	<bean class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="org.nextprot.api.user.dao.UserApplicationDao"/>
+	</bean>
+
+	<bean class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="org.nextprot.api.user.dao.UserQueryDao"/>
+	</bean>
+
+	<bean class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="org.nextprot.api.user.dao.UserProteinListDao"/>
+	</bean>
+
+	<bean class="org.mockito.Mockito" factory-method="mock">
+		<constructor-arg value="org.nextprot.api.user.dao.UserDao"/>
+	</bean>
+	
+
+	<!-- <bean class="org.springframework.beans.factory.config.PropertiesFactoryBean" id="pom">
+		<property name="locations">
+			<list>
+				<value>${config:classpath*:META-INF/}pom.properties</value>
+			</list>
+		</property>
+	</bean> -->
+</beans>
+		
+		

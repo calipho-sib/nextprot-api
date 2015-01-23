@@ -1,0 +1,26 @@
+<interaction quality-qualifier='$interaction.quality'>
+#foreach($interactant in $interaction.interactants)
+	#if($interaction.isSelfInteraction() || ! $interactant.isEntryPoint())		
+        #if($interactant.isNextprot())
+	<interactant database='neXtProt' accession='NX_$interactant.accession' />
+		#else
+	<interactant database='$interactant.database' accession='$interactant.accession'>
+		#set($UNESCAPED_CDATA = $interactant.url)
+		<url><![CDATA[$UNESCAPED_CDATA]]></url>
+	</interactant>
+		#end
+	#end
+#end
+    <evidence-list>
+    	<evidence 
+    		is-negative='false'
+    		evidence-code='$interaction.evidenceCodeAC' 
+    		source-internal-ref='$interaction.evidenceDatasource'
+			resource-type='$interaction.evidenceResourceType'
+			resource-internal-ref='$interaction.evidenceResourceId'      		
+			resource-assoc-type='evidence'
+ 			quality-qualifier='$interaction.quality'   		
+    	/>
+    </evidence-list>
+    <experiment-count>$interaction.numberOfExperiments</experiment-count>
+</interaction>

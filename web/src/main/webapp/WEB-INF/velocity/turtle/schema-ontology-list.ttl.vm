@@ -1,0 +1,53 @@
+#if($prefix)
+#parse("turtle/prefix.ttl.vm")
+#end
+#
+# Define Ontology
+# 
+:Term
+      rdf:type owl:Class ;
+      rdfs:comment "A concept used to classify resources."^^xsd:string ;
+      rdfs:subClassOf owl:Thing;
+      owl:equivalentClass up:Concept;
+      .
+       
+:childOf
+      a rdf:Property, owl:TransitiveProperty ;
+      rdfs:domain :Term ;
+      rdfs:range :Term;
+      .
+
+:related
+      a rdf:Property ;
+      rdfs:domain :Term ;
+      rdfs:range :Term;
+      .
+
+# ECO_0000045 IHC =>A spatial pattern of protein expression evidence
+cv:ECO_0000045 rdfs:subClassOf :IHC .
+
+# ECO_0000104 EST =>microarray RNA expression level evidence
+cv:ECO_0000104 rdfs:subClassOf :EST .
+
+# ECO_0000220 microarray =>sequencing assay evidence
+ cv:ECO_0000220 rdfs:subClassOf :Microarray .
+ 
+ 
+# alternative to rdfs:subClassOf (see later)
+#:IHC :related cv:ECO:0000045 .
+#:EST :related cv:ECO:0000104 .
+#:Microarray :related cv: ECO:0000220 .
+
+ 
+
+#foreach($ontology in $ontologyList)
+  
+:$ontology.getOntology()
+  rdf:type owl:Class ;
+  rdfs:subClassOf :Term;
+  rdfs:label "$ontology.getName()"^^xsd:string;
+  rdfs:comment "$ontology.getDescription()"^^xsd:string;
+  rdfs:seeAlso "http://www.nextprot.org/manual/$ontology.getOntology()"^^xsd:anyURI;
+  .      
+#end
+

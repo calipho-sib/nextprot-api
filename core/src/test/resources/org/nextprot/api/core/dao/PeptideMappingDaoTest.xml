@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+	
+	<!--  Peptide Master  -->
+	<mapping_annotations annotation_id="50" reference_identifier_id="596889" mapped_identifier_id="11" cv_type_id="10" /> 
+	
+<!-- 	source_id="" datasource_id="" is_master="" cv_quality_qualifier_id="" /> -->
+		
+	<!--  Peptide Iso  -->
+	<mapping_annotations annotation_id="60" reference_identifier_id="16" mapped_identifier_id="11" cv_type_id="11" /> 
+	<!--  source_id="" datasource_id="" is_master="" cv_quality_qualifier_id="" /> -->  
+		
+	<!--  Iso Master  -->	
+	<mapping_annotations annotation_id="70" reference_identifier_id="596889" mapped_identifier_id="16" cv_type_id="4" /> 
+	<!-- source_id="" datasource_id="" is_master="" cv_quality_qualifier_id="" /> -->
+	
+	<mapping_positions annotation_id="60" position_id="20" first_pos="1" last_pos="1000"/>
+	
+	<!-- 	ISO 	-->
+	<sequence_identifiers identifier_id="16" cv_type_id="1" unique_name="NX_P12345-1"/>
+	<!-- 	PEPTIDE 	-->
+	<sequence_identifiers identifier_id="11" cv_type_id="7" unique_name="NX_PEPT12345678"/>
+	
+	<!-- 	MASTER -->
+	<sequence_identifiers identifier_id="596889" cv_type_id="1" unique_name="NX_P12345"/>
+	
+	<identifier_properties identifier_property_id="23723875" identifier_id="11" property_value="Y" cv_property_name_id="51" />
+	<identifier_properties identifier_property_id="23723876" identifier_id="11" property_value="Y" cv_property_name_id="52" />
+	<identifier_properties identifier_property_id="23723877" identifier_id="11" property_value="Y" cv_property_name_id="53" />
+	
+	<!-- 	EVIDENCES -->
+	<cv_database_categories cv_id="666" cv_name="cat" />
+	<cv_databases cv_id="3" cv_name="PubMed" cv_category_id="666" link_url="http://pubmed.com?id=3" url="http://pubmed.com"/>
+<!-- 	<cv_datasources cv_id="1" cv_name="Ensembl" description="Ensembl database" accession="" url=""/> -->
+	
+	<resources resource_id="120" cv_type_id="1" />
+	<db_xrefs accession="789654" resource_id="120" cv_database_id="3"/>
+	<identifier_resource_assoc resource_id="120" identifier_id="11" datasource_id="1"/>
+	
+</dataset>	

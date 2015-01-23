@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+	<import resource="classpath:spring/core-context.xml" />
+	<import resource="classpath:spring/solr-context.xml" />
+	<import resource="classpath:spring/rdf-context.xml" />
+	<import resource="security-context.xml" />
+
+	<!-- Make Content Negotiation manager available across all of Spring MVC -->
+	<mvc:annotation-driven> <!--content-negotiation-manager="cnManager"-->
+
+		<!-- override spring mvc's defaults converters implementations -->
+ 		<mvc:message-converters register-defaults="false">
+			<bean
+				class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+				<property name="marshaller">
+					<bean class="org.springframework.oxm.xstream.XStreamMarshaller"/>
+				</property>
+				<property name="unmarshaller">
+					<bean class="org.springframework.oxm.xstream.XStreamMarshaller"/>
+				</property>
+			</bean>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+
+		</mvc:message-converters>
+
+	</mvc:annotation-driven>
+
+	<mvc:default-servlet-handler />
+
+	<mvc:interceptors>
+		<bean
+			class="org.nextprot.api.core.aop.interceptor.ConcurrentRequestInterceptor" />
+	</mvc:interceptors>
+
+
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving
+		up static resources -->
+	<!-- <mvc:resources location="/, classpath:/META-INF/web-resources/" mapping="/resources/**"/> -->
+
+
+	<!-- This bean sets up the Velocity environment for us based on a root path 
+		for templates. Optionally, a properties file can be specified for more control 
+		over the Velocity environment, but the defaults are pretty sane for file 
+		based template loading. -->
+	<bean id="velocityConfig"
+		class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+		<property name="resourceLoaderPath" value="/WEB-INF/velocity/" />
+		<property name="configLocation" value="/WEB-INF/velocity/velocity.properties" />
+	</bean>
+
+
+	<!-- View resolvers can also be configured with ResourceBundles or XML files. 
+		If you need different view resolving based on Locale, you have to use the 
+		resource bundle resolver. -->
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
+	<!-- The ContentNegotiationManager created by either setup is an implementation of ContentNegotationStrategy that
+		implements the PPA Strategy (path extension, then parameter, then Accept header) described above. -->
+	<!--<<bean id="cnManager"
+		  class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		property name="favorPathExtension" value="true"/>
+		<property name="ignoreAcceptHeader" value="true" />
+		<property name="defaultContentType" value="application/json" />
+		<property name="useJaf" value="false"/>
+
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+				<entry key="xml" value="application/xml" />
+				<entry key="ttl" value="text/turtle" />
+				<entry key="html" value="text/html" />
+			</map>
+		</property>
+	</bean>-->
+
+	<bean
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+				<entry key="xml" value="application/xml" />
+				<entry key="ttl" value="text/turtle" />
+				<entry key="html" value="text/html" />
+			</map>
+		</property>
+		<property name="viewResolvers">
+			<list>
+				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="prefix" value="/WEB-INF/jsp/" />
+					<property name="suffix" value=".jsp" />
+				</bean>
+				<bean
+					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+					<property name="prefix" value="" />
+					<property name="suffix" value=".vm" />
+					<property name="contentType" value="application/xml;charset=UTF-8" />
+					<property name="cache" value="true" />
+				</bean>
+				<bean
+					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+					<property name="prefix" value="" />
+					<property name="suffix" value=".vm" />
+					<property name="contentType" value="application/json;charset=UTF-8" />
+				</bean>
+				<bean
+					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+					<property name="prefix" value="turtle/" />
+					<property name="suffix" value=".vm" />
+					<property name="contentType" value="text/turtle;charset=UTF-8" />
+				</bean>
+				<bean
+					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+					<property name="prefix" value="txt/" />
+					<property name="suffix" value=".vm" />
+					<property name="contentType" value="text/plain;charset=UTF-8" />
+				</bean>
+			</list>
+		</property>
+		<property name="defaultViews">
+			<list>
+				<!-- need for json when vm template not found -->
+				<bean
+					class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+					<property name="contentType" value="application/json;charset=UTF-8" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

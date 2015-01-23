@@ -1,0 +1,23 @@
+#if($prefix)
+#parse("turtle/prefix.ttl.vm")
+#end
+
+#
+# Define super classes for annotations
+#
+
+#foreach($annotation in $annotationList)
+#if($annotation.rdfTypeName != "Root")
+:$annotation.rdfTypeName
+   rdf:type :AnnotationType;
+#if ($annotation.description) 
+   rdfs:comment "$annotation.description"^^xsd:string;
+#end
+   rdfs:label "$annotation.label"^^xsd:string;
+#foreach($parent in $annotation.getAllParentsButRoot())
+   rdfs:subClassOf :$parent.rdfTypeName;
+#end
+   .   
+#end
+#end
+

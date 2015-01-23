@@ -1,0 +1,43 @@
+package org.nextprot.api.web.dbunit.base.mvc;
+
+import org.junit.Before;
+import org.nextprot.api.commons.dbunit.AbstractIntegrationBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.FilterChainProxy;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
+
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
+/**
+ * Base class for dbunit tests using the spring-test-dbunit framework http://springtestdbunit.github.io/
+ * Transactions are rollback and dev profile is activated by default
+ * Dev profile includes database connection to the dev database
+ * 
+ * @author dteixeira
+ */
+
+@WebAppConfiguration
+@ContextConfiguration("classpath:META-INF/spring/web-context.xml")
+@Deprecated //should not run on a database with real data (doesn't work for unit testing)
+public abstract class MVCBaseIntegrationTest extends AbstractIntegrationBaseTest {
+
+	
+	@Autowired
+	protected WebApplicationContext wac;
+
+	@Autowired
+    private FilterChainProxy springSecurityFilterChain;
+	
+	protected MockMvc mockMvc;
+
+	@Before
+	public void setup() {
+		this.mockMvc = webAppContextSetup(this.wac).addFilters(this.springSecurityFilterChain).build();
+	}
+	
+	
+
+}

@@ -1,0 +1,86 @@
+<!ELEMENT dataset (
+   (protein_list_items|
+    schema_version|
+    user_applications|
+    user_protein_lists|
+    user_queries|
+    user_query_tags|
+    user_roles|
+    users)*)>
+
+<!ELEMENT protein_list_items EMPTY>
+<!ATTLIST protein_list_items
+    accession_number CDATA #REQUIRED
+    list_id CDATA #REQUIRED
+>
+
+<!ELEMENT schema_version EMPTY>
+<!ATTLIST schema_version
+    version_rank CDATA #REQUIRED
+    installed_rank CDATA #REQUIRED
+    version CDATA #REQUIRED
+    description CDATA #REQUIRED
+    type CDATA #REQUIRED
+    script CDATA #REQUIRED
+    checksum CDATA #IMPLIED
+    installed_by CDATA #REQUIRED
+    installed_on CDATA #REQUIRED
+    execution_time CDATA #REQUIRED
+    success CDATA #REQUIRED
+>
+
+<!ELEMENT user_applications EMPTY>
+<!ATTLIST user_applications
+    application_id CDATA #REQUIRED
+    application_name CDATA #REQUIRED
+    description CDATA #REQUIRED
+    organisation CDATA #IMPLIED
+    responsible_name CDATA #IMPLIED
+    responsible_email CDATA #IMPLIED
+    website CDATA #IMPLIED
+    owner_id CDATA #IMPLIED
+    token CDATA #REQUIRED
+    status CDATA #REQUIRED
+    user_data_access CDATA #REQUIRED
+    origins CDATA #IMPLIED
+    creation_date CDATA #REQUIRED
+>
+
+<!ELEMENT user_protein_lists EMPTY>
+<!ATTLIST user_protein_lists
+    list_id CDATA #REQUIRED
+    list_name CDATA #IMPLIED
+    description CDATA #IMPLIED
+    owner_id CDATA #IMPLIED
+>
+
+<!ELEMENT user_queries EMPTY>
+<!ATTLIST user_queries
+    query_id CDATA #REQUIRED
+    title CDATA #REQUIRED
+    description CDATA #IMPLIED
+    sparql CDATA #REQUIRED
+    published CDATA #REQUIRED
+    owner_id CDATA #IMPLIED
+>
+
+<!ELEMENT user_query_tags EMPTY>
+<!ATTLIST user_query_tags
+    tag_name CDATA #REQUIRED
+    query_id CDATA #REQUIRED
+>
+
+<!ELEMENT user_roles EMPTY>
+<!ATTLIST user_roles
+    role_name CDATA #REQUIRED
+    user_id CDATA #REQUIRED
+>
+
+<!ELEMENT users EMPTY>
+<!ATTLIST users
+    user_id CDATA #REQUIRED
+    user_name CDATA #REQUIRED
+    first_name CDATA #IMPLIED
+    last_name CDATA #IMPLIED
+>
+

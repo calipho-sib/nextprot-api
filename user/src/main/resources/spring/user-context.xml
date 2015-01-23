@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+	<!--<import resource="classpath:spring/commons-context.xml" />-->
+
+	<!-- Instrumentation aspects -->
+	<aop:aspectj-autoproxy />
+	<bean class="org.nextprot.api.user.aop.UserResourceAuthorizationAspect"/>
+
+	<!-- <bean class="org.springframework.beans.factory.config.PropertiesFactoryBean" id="pom">
+		<property name="locations">
+			<list>
+				<value>${config:classpath*:META-INF/}pom.properties</value>
+			</list>
+		</property>
+	</bean> -->
+</beans>
+		
+		
