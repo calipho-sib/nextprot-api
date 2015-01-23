@@ -1,16 +1,18 @@
 package org.nextprot.api.user.service.impl;
 
+import java.util.List;
+
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Lazy
 @Service
@@ -23,6 +25,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 	private UserQueryTutorialDictionary userQueryTutorialDictionary;
 
 	@Override
+	@Cacheable(value = "user-queries", key = "#username")
 	public List<UserQuery> getUserQueries(String username) {
 		return userQueryDao.getUserQueries(username);
 	}
@@ -34,6 +37,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 
 	@Override
 	@Transactional
+	@CacheEvict(value = "user-queries", key = "#userQuery.getOwner()")
 	public UserQuery createUserQuery(UserQuery userQuery) {
 
 		long id = userQueryDao.createUserQuery(userQuery);
@@ -45,6 +49,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 	}
 
 	@Override
+	@CacheEvict(value = "user-queries", key = "#userQuery.getOwner()")
 	public UserQuery updateUserQuery(UserQuery userQuery) {
 
 		userQuery.checkValid();
@@ -53,6 +58,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 	}
 
 	@Override
+	@CacheEvict(value = "user-queries", key = "#userQuery.getOwner()")
 	public void deleteUserQuery(UserQuery userQuery) {
 
 		long queryId = userQuery.getUserQueryId();
@@ -67,6 +73,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 
 	@Override
 	@AllowedAnonymous
+	@Cacheable("tutorial-queries")
 	public List<UserQuery> getTutorialQueries() {
 		return userQueryTutorialDictionary.getDemoSparqlList();
 	}

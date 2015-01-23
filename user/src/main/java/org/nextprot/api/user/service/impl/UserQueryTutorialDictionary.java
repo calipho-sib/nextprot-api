@@ -70,6 +70,8 @@ public class UserQueryTutorialDictionary extends FilePatternDictionary {
 
 		dsq.setSparql(rawProps.get("query"));
 		dsq.setTitle(rawProps.get("title"));
+		dsq.setOwner("nextprot");
+		dsq.setOwnerId(-1);
 		dsq.setDescription(rawProps.get("comment"));
 
 		try {
