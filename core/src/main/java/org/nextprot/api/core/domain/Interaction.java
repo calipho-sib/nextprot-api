@@ -20,15 +20,33 @@ public class Interaction implements Serializable{
 	private String evidenceQuality;
 	private Long evidenceResourceId;
 	private String evidenceResourceType;
-	
-	private boolean selfInteraction=false;	
-	
+	private boolean selfInteraction=false;		
 	@ApiObjectField(description = "The local db identifier")
 	private Long partnershipId;
-
 	@ApiObjectField(description = "The md5 of the interaction as an identifier")
 	private String md5;	
+
+	// members below should be read from the db when the field and value are available
+	private String evidenceCodeAC="ECO:0000353";
+	private String evidenceCodeName="physical interaction evidence used in manual assertion";
+
 	
+	public String getEvidenceCodeAC() {
+		return evidenceCodeAC;
+	}
+
+	public void setEvidenceCodeAC(String evidenceCodeAC) {
+		this.evidenceCodeAC = evidenceCodeAC;
+	}
+
+	public String getEvidenceCodeName() {
+		return evidenceCodeName;
+	}
+
+	public void setEvidenceCodeName(String evidenceCodeName) {
+		this.evidenceCodeName = evidenceCodeName;
+	}
+
 	public boolean isSelfInteraction() {
 		return selfInteraction;
 	}

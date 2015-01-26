@@ -1,5 +1,4 @@
 <experimental-context-list>
-<toto annot='$entry.annotations.size()' ecs='$entry.experimentalContexts.size()'/>
 #foreach($ctx in $entry.getExperimentalContexts())
 	<experimental-context internal-id='$ctx.getContextId()' 
 		#if($ctx.tissueAC) tissueAC='$ctx.tissueAC' #end

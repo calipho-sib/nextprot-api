@@ -1,6 +1,7 @@
 package org.nextprot.api.user.service.impl;
 
 import org.nextprot.api.commons.exception.NPreconditions;
+import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -30,14 +31,14 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	public UserProteinList createUserProteinList(UserProteinList userProteinList) {
 
 		NPreconditions.checkNotNull(userProteinList, "The user protein list should not be null");
-		NPreconditions.checkTrue(!userProteinList.isPersisted(), "The user protein list should be new");
+		NPreconditions.checkTrue(userProteinList.getId() == 0, "The user protein list should be new");
 
 		long id = proteinListDao.createUserProteinList(userProteinList);
 		userProteinList.setId(id);
 
 		Set<String> accessions = userProteinList.getAccessionNumbers();
 		if (accessions != null && !accessions.isEmpty()) {
-			proteinListDao.createUserProteinListAccessions(id, accessions);
+			proteinListDao.createUserProteinListItems(id, accessions);
 		}
 
 		return userProteinList;
@@ -47,7 +48,6 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	public void deleteUserProteinList(UserProteinList proteinList) {
 		proteinListDao.deleteUserProteinList(proteinList.getId());
 	}
-
 
 	@Override
 	public UserProteinList getUserProteinListById(long listId) {
@@ -63,21 +63,32 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	@Transactional
 	public UserProteinList updateUserProteinList(UserProteinList proteinList) {
 
-		proteinListDao.updateUserProteinList(proteinList);
+		proteinListDao.updateUserProteinListMetadata(proteinList);
 
-		//Easy way of doing it
-		proteinListDao.deleteAllProteinListItems(proteinList.getId());
-		proteinListDao.createUserProteinListAccessions(proteinList.getId(), proteinList.getAccessionNumbers());
+		Set<String> accs = proteinList.getAccessionNumbers();
+
+		if (accs != null && !accs.isEmpty()) {
+
+			//Easy way of doing it
+			proteinListDao.deleteAllProteinListItems(proteinList.getId());
+			proteinListDao.createUserProteinListItems(proteinList.getId(), proteinList.getAccessionNumbers());
+		}
 
 		return proteinListDao.getUserProteinListById(proteinList.getId());
 	}
 
 	@Override
-	public UserProteinList combine(String name, String description, String username, String list1, String list2, Operator op) {
+	public UserProteinList combine(String name, String description, String username, String listName1, String listName2, Operator op) {
 
-		UserProteinList l1 = proteinListDao.getUserProteinListByName(username, list1);
-		UserProteinList l2 = proteinListDao.getUserProteinListByName(username, list2);
+		UserProteinList l1 = proteinListDao.getUserProteinListByName(username, listName1);
+		UserProteinList l2 = proteinListDao.getUserProteinListByName(username, listName2);
 
-		return UserProteinListUtils.combine(l1, l2, op, name, description);
+		return UserProteinListUtils.combine(l1, l2, op, username, name, description);
+	}
+
+	@Override
+	@AllowedAnonymous //For now we don't secure the accessions of the list (we just secure the meta information like the name and description...)
+	public Set<String> getUserProteinListAccessionItemsById(long listId) {
+		return proteinListDao.getAccessionsByListId(listId);
 	}
 }

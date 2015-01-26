@@ -20,11 +20,11 @@
 	<mapping_positions annotation_id="60" position_id="20" first_pos="1" last_pos="1000"/>
 	
 	<!-- 	ISO 	-->
-	<sequence_identifiers identifier_id="16" cv_type_id="2" unique_name="NX_P12345-1" db_xref_id="8347536"/>
+	<sequence_identifiers identifier_id="16" cv_type_id="2" unique_name="NX_P12345-1" db_xref_id="8347536"  datasource_id="0" />
 	<!-- 	ANTIBODY 	-->
-	<sequence_identifiers identifier_id="11" cv_type_id="6" unique_name="NX_HPA004932" db_xref_id="120" />
+	<sequence_identifiers identifier_id="11" cv_type_id="6" unique_name="NX_HPA004932" db_xref_id="120"  datasource_id="5" />
 	
-	<sequence_identifiers identifier_id="596889" cv_type_id="1" unique_name="NX_P12345" db_xref_id="3434634"/>
+	<sequence_identifiers identifier_id="596889" cv_type_id="1" unique_name="NX_P12345" db_xref_id="3434634"  datasource_id="0" />
 	
 	<!-- DBXREF -->
 	<resources resource_id="120" cv_type_id="1"/>

@@ -16,7 +16,7 @@ public class UserProteinList implements UserResource {
 	private int entriesCount = 0;
     private long ownerId;
 	private String owner;
-	
+
 	public long getId() {
 		return this.id;
 	}
@@ -73,11 +73,6 @@ public class UserProteinList implements UserResource {
     public void setOwner(String owner) { this.owner = owner; }
 
     public long getOwnerId() { return ownerId; }
-
-	@Override
-	public boolean isPersisted() {
-		return id != 0;
-	}
 
 	public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
 

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 		http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
@@ -11,35 +12,36 @@
 	<import resource="classpath:spring/rdf-context.xml" />
 	<import resource="security-context.xml" />
 
-	<mvc:annotation-driven/>
+	<!-- Make Content Negotiation manager available across all of Spring MVC -->
+	<mvc:annotation-driven> <!--content-negotiation-manager="cnManager"-->
 
-	<!-- you may have to explicitly register other converters though -->
-<!-- 		<mvc:message-converters register-defaults="false"> 
+		<!-- override spring mvc's defaults converters implementations -->
+ 		<mvc:message-converters register-defaults="false">
 			<bean
 				class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
 				<property name="marshaller">
-					<bean class="org.springframework.oxm.xstream.XStreamMarshaller" />
+					<bean class="org.springframework.oxm.xstream.XStreamMarshaller"/>
 				</property>
 				<property name="unmarshaller">
-					<bean class="org.springframework.oxm.xstream.XStreamMarshaller" />
+					<bean class="org.springframework.oxm.xstream.XStreamMarshaller"/>
 				</property>
 			</bean>
-			<bean
-				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-			</bean>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+
 		</mvc:message-converters>
+
 	</mvc:annotation-driven>
- -->
 
 	<mvc:default-servlet-handler />
+
 	<mvc:interceptors>
 		<bean
 			class="org.nextprot.api.core.aop.interceptor.ConcurrentRequestInterceptor" />
 	</mvc:interceptors>
 
 
-
-	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving
 		up static resources -->
 	<!-- <mvc:resources location="/, classpath:/META-INF/web-resources/" mapping="/resources/**"/> -->
 
@@ -61,6 +63,25 @@
 
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
+
+	<!-- The ContentNegotiationManager created by either setup is an implementation of ContentNegotationStrategy that
+		implements the PPA Strategy (path extension, then parameter, then Accept header) described above. -->
+	<!--<<bean id="cnManager"
+		  class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		property name="favorPathExtension" value="true"/>
+		<property name="ignoreAcceptHeader" value="true" />
+		<property name="defaultContentType" value="application/json" />
+		<property name="useJaf" value="false"/>
+
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+				<entry key="xml" value="application/xml" />
+				<entry key="ttl" value="text/turtle" />
+				<entry key="html" value="text/html" />
+			</map>
+		</property>
+	</bean>-->
 
 	<bean
 		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
@@ -113,11 +134,6 @@
 				<bean
 					class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
 					<property name="contentType" value="application/json;charset=UTF-8" />
-				</bean>
-				<bean class="org.springframework.web.servlet.view.xml.MarshallingView">
-					<property name="marshaller">
-						<bean class="org.nextprot.api.web.xstream.NXStreamMarshaller"/>
-					</property>
 				</bean>
 			</list>
 		</property>

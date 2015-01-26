@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.IdentifierDao;
 import org.nextprot.api.core.domain.Identifier;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,13 @@ import org.springframework.stereotype.Repository;
 public class IdentifierDaoImpl implements IdentifierDao {
 	
 	@Autowired private DataSourceServiceLocator dsLocator;
-	
-	private final String findIdentifiersByMaster = "select * " +
-			"from nextprot.view_master_identifier_identifiers vmii " +
-			"where vmii.unique_name = :uniqueName " +
-			"order by vmii.type";
+	@Autowired private SQLDictionary sqlDictionary;
 	
 	@Override
 	public List<Identifier> findIdentifiersByMaster(String uniqueName) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("uniqueName", uniqueName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(findIdentifiersByMaster, params, new IdentifierRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("identifiers-by-master-unique-name"), params, new IdentifierRowMapper());
 	}
 	
 	private static class IdentifierRowMapper implements ParameterizedRowMapper<Identifier> {

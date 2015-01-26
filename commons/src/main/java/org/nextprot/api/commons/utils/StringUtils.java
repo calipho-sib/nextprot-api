@@ -105,7 +105,7 @@ public class StringUtils {
 	/** 
 	 * Replaces the Capital letters with lower letters and prefixed with a hyphen if not in the beginning of the string.
 	 * For instance PTM info becomes ptm-info and modifiedResidue becomes modified-residue 
-	 * @param the raw string
+	 * @param s raw string
 	 * @return the string processed 
 	 */
 	
@@ -113,9 +113,9 @@ public class StringUtils {
 		return s.trim().replaceAll("(\\p{Ll})(\\p{Lu})","$1 $2").replaceAll(" ", "-").toLowerCase();
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		System.out.println(clean("H�llo/OP:� - regex,t\nest.{machine\\"));
 		System.out.println(toCamelCase("Hello_world", true));
-	}
+	}*/
 
 }

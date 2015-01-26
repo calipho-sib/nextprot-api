@@ -1,13 +1,14 @@
 package org.nextprot.api.core.utils;
 
+import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 
 
 public class AnnotationUtils {

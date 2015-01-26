@@ -1,21 +1,14 @@
 package org.nextprot.api.core.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class NXVelocityUtils {
-
-	private static AnnotationUtils annotUtil = new AnnotationUtils();
-	//private static StringUtils strUtil = new StringUtils();
-
-	public static AnnotationUtils getAnnot(){
-		return annotUtil;
-	}
 
 	public static List<Annotation> getAnnotationsByCategory(Entry entry, AnnotationApiModel annotationCategory) {
 		List<Annotation> annotations = entry.getAnnotations();
@@ -36,17 +29,17 @@ public class NXVelocityUtils {
 	}
 
 	
-	public boolean hasInteractions(Entry entry) {
+	public static boolean hasInteractions(Entry entry) {
 		if (entry.getInteractions().size()>0) return true;
 		if (getAnnotationsByCategory(entry, AnnotationApiModel.SMALL_MOLECULE_INTERACTION).size()>0) return true;
 		return false;
 	}
 	
-	public boolean hasMappings(Entry entry) {
-		if (entry.getPeptideMappings().size()>0) return true;
-		if (entry.getSrmPeptideMappings().size()>0) return true;
-		if (entry.getAntibodyMappings().size()>0) return true;
-		if (getAnnotationsByCategory(entry, AnnotationApiModel.PDB_MAPPING).size()>0) return true;
+	public static boolean hasMappings(Entry entry) {
+		if ((entry.getPeptideMappings() != null) && entry.getPeptideMappings().size()>0) return true;
+		if ((entry.getSrmPeptideMappings() != null) && entry.getSrmPeptideMappings().size()>0) return true;
+		if ((entry.getAntibodyMappings() != null) && entry.getAntibodyMappings().size()>0) return true;
+		if ((entry.getAnnotations() != null) && getAnnotationsByCategory(entry, AnnotationApiModel.PDB_MAPPING).size()>0) return true;
 		return false;
 	}
 	

@@ -51,22 +51,35 @@ public class AnnotationEvidence implements Serializable {
 	private String resourceDb;
 	private String resourceDesc;
 	private String publication_md5;
-
 	private Long experimentalContextId;
-	
 	private long annotationId;
 	private boolean isNegativeEvidence;
 	private String qualifierType;
-
 	private String qualityQualifier;
-
 	private long evidenceId;
-
 	private String assignedBy;
-
 	private String assignmentMethod;
+	private String evidenceCodeAC;
+	private String evidenceCodeName;
 
 	
+	
+	public String getEvidenceCodeAC() {
+		return evidenceCodeAC;
+	}
+
+	public void setEvidenceCodeAC(String evidenceCodeAC) {
+		this.evidenceCodeAC = evidenceCodeAC;
+	}
+
+	public String getEvidenceCodeName() {
+		return evidenceCodeName;
+	}
+
+	public void setEvidenceCodeName(String evidenceCodeName) {
+		this.evidenceCodeName = evidenceCodeName;
+	}
+
 	public Long getExperimentalContextId() {
 		return experimentalContextId;
 	}

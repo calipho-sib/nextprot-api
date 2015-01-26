@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -89,7 +90,7 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	@Override
-	public List<Future<File>> exportEntries(List<String> uniqueNames, NPFileFormat format) {
+	public List<Future<File>> exportEntries(Collection<String> uniqueNames, NPFileFormat format) {
 		List<Future<File>> futures = new ArrayList<Future<File>>();
 		futures.add(exportSubPart(SubPart.HEADER, format));
 		for (String uniqueName : uniqueNames) {
@@ -106,9 +107,6 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	private Future<File> exportSubPart(SubPart part, NPFileFormat format) {
-		//System.out.println("Config" + config);
-		//System.out.println("Velocity Engine" + config.getVelocityEngine());
-
 		return executor.submit(new ExportSubPartTask(config.getVelocityEngine(), part, format));
 	}
 

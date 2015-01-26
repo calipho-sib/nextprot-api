@@ -85,6 +85,10 @@
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
 		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
+	<cache name="srm-peptides" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
 	<cache name="antibodies" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
@@ -96,35 +100,22 @@
 		statistics="true">
 	</cache>
 
+	<!-- Tutorial queries (only in memory) -->
+	<cache name="tutorial-queries" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+
+	<!-- User queries (only in memory) -->
+	<cache name="user-queries" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="100"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+
 	<!-- RDF Help -->
-	<cache name="rdftypename" overflowToOffHeap="false"
+	<cache name="rdfhelp" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
-		maxEntriesLocalDisk="1000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true">
-	</cache>
-	<cache name="rdftypefull" overflowToOffHeap="false"
-		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
-		maxEntriesLocalDisk="1000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true">
-	</cache>
-	<cache name="rdftypefullall" overflowToOffHeap="false"
-		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
-		maxEntriesLocalDisk="1000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true">
-	</cache>
-	<cache name="rdftypetriple" overflowToOffHeap="false"
-		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
-		maxEntriesLocalDisk="10000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true">
-	</cache>
-	<cache name="rdftypevalues" overflowToOffHeap="false"
-		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
-		maxEntriesLocalDisk="10000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true">
-	</cache>
-	<cache name="rdftypetriplevalues" overflowToOffHeap="false"
-		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
-		maxEntriesLocalDisk="10000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		maxEntriesLocalDisk="1" eternal="true" memoryStoreEvictionPolicy="LRU"
 		statistics="true">
 	</cache>
 

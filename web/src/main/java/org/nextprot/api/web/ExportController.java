@@ -1,15 +1,29 @@
 package org.nextprot.api.web;
 
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Future;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.export.ExportService;
 import org.nextprot.api.core.service.export.ExportUtils;
-import org.nextprot.api.core.service.export.format.*;
+import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.service.export.format.NPViews;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +37,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.Future;
 
 /**
  * Controller class responsible to extract in streaming
@@ -76,71 +84,64 @@ public class ExportController {
 
 	}
 
-	@ApiMethod(path = "/export/entries/list/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list", produces = { MediaType.APPLICATION_XML_VALUE })
-	@RequestMapping("/export/entries/list/{listId}")
-	public void exportByListId(HttpServletResponse response, HttpServletRequest request, @ApiParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
-
-		UserProteinList proteinList = this.proteinListService.getUserProteinListById(Long.valueOf(listId));
-		NPFileFormat format = getRequestedFormat(request);
-		response.setHeader("Content-Disposition", "attachment; filename=\"NXEntries." + format.getExtension() + "\"");
-
-		List<Future<File>> futures = exportService.exportEntries(new ArrayList<String>(proteinList.getAccessionNumbers()), getRequestedFormat(request));
-		ExportUtils.printOutput(new LinkedList<Future<File>>(futures), response);
-
-	}
-
-	@ApiMethod(path = "/export/template/{templateId}/list/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list", produces = { MediaType.APPLICATION_XML_VALUE })
-	@RequestMapping("/export/template/{templateId}/list/{listId}")
-	public void exportTemplateByListId(Model model, HttpServletResponse response, HttpServletRequest request,
-			@ApiParam(name = "templateId", description = "The template id") @PathVariable("templateId") String templateId,
+	@ApiMethod(path = "/export/list/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list", produces = { MediaType.APPLICATION_XML_VALUE })
+	@RequestMapping("/export/list/{listId}")
+	public void exportList(Model model, HttpServletResponse response, HttpServletRequest request,
 			@ApiParam(name = "listname", description = "The list id") @PathVariable("listId") String listId
-
 	) {
-
-		ExportTemplate template = null;
+		
 		NPFileFormat format = getRequestedFormat(request);
-		switch (format) {
-			case XML:template = ExportXMLTemplate.getTemplate(templateId); break;
-			case TXT:template = ExportTXTTemplate.getTemplate(templateId); break;
-
-			default:throw new NextProtException(format + " not supported for templates");
-		}
-
-		UserProteinList proteinList = this.proteinListService.getUserProteinListById(Long.valueOf(listId));
-		String fileName = "nextprot-" + template.getTemplateName() + "-" + proteinList.getName() + "." + format.getExtension() ;
+		String fileName = "nextprot-list-" + listId + "." + format.getExtension() ;
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
-		Set<String> accessions = proteinList.getAccessionNumbers();
+		//TODO should this be secured or not? for now let's say not...
+		//2 ways of doing it: either add the token in the header or generate a secret value for each list that is created 
+		Set<String> accessions = this.proteinListService.getUserProteinListAccessionItemsById(Long.valueOf(listId));
+		
+		List<Future<File>> futures = exportService.exportEntries(accessions, getRequestedFormat(request));
+		ExportUtils.printOutput(new LinkedList<Future<File>>(futures), response);
+		
+	}
+	
+	@ApiMethod(path = "/export/list/{listId}/{view}", verb = ApiVerb.GET, description = "Exports subpart of entries from a list", produces = { MediaType.APPLICATION_XML_VALUE })
+	@RequestMapping("/export/list/{listId}/{view}")
+	public void exportListSubPart(Model model, HttpServletResponse response, HttpServletRequest request,
+			@ApiParam(name = "The view name", description = "The view name") @PathVariable("view") String view,
+			@ApiParam(name = "listname", description = "The list id") @PathVariable("listId") String listId
+	) {
+
+		NPFileFormat format = getRequestedFormat(request);
+
+		Set<String> accessions = this.proteinListService.getUserProteinListAccessionItemsById(Long.valueOf(listId));
+		String fileName = "nextprot-list-" + listId + "-" + view + "." + format.getExtension() ;
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
 		try {
-			response.getWriter().write(template.getHeader());
+			response.getWriter().write(format.getHeader());
 			for (String acc : accessions) {
-				Entry entry = fluentEntryService.getNewEntry(acc).withTemplate(template);
-				model.addAttribute(template.getVelocityTemplateName(), entry);
-				View v = viewResolver.resolveViewName(template.getVelocityTemplateName(), Locale.ENGLISH);
+				Entry entry = fluentEntryService.getNewEntry(acc).withView(view);
+				model.addAttribute("entry", entry);
+				model.addAttribute("NXUtils", new NXVelocityUtils());
+				model.addAttribute("StringUtils", StringUtils.class);
+
+				View v = viewResolver.resolveViewName("entry", Locale.ENGLISH);
 				v.render(model.asMap(), request, response);
 			}
-			response.getWriter().write(template.getFooter());
+			response.getWriter().write(format.getFooter());
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NextProtException(e.getMessage());
 		}
+
+		
+
 	}
 	
 
 	@RequestMapping(value="/export/templates", method = { RequestMethod.GET })
 	@ResponseBody
-	public Map<String, List<ExportFormat>> getXMLTemplates() {
-		Map<String, List<ExportFormat>> response = new HashMap<String, List<ExportFormat>>();
-
-		List<ExportFormat> templates = new ArrayList<ExportFormat>();
-		ExportFormat xmlFormat = new ExportFormat("xml format", "xml", Arrays.asList(ExportXMLTemplate.values()));
-		ExportFormat txtFormat = new ExportFormat("txt format", "txt", Arrays.asList(ExportTXTTemplate.values()));
-
-		templates.add(xmlFormat);
-		templates.add(txtFormat);
-		
-		response.put("formats", templates);
-		return response;
+	public Map<String, Set<String>> getXMLTemplates() {
+		return NPViews.getFormatViews();
 	}
 
 	private NPFileFormat getRequestedFormat(HttpServletRequest request) {

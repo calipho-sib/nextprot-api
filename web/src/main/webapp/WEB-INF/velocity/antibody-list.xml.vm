@@ -1,11 +1,21 @@
 <mapping-category category="antibody-mapping" hierarchy="mapping">
 	#foreach($antibody in $entry.antibodyMappings)
 		<antibody-mapping>
+			<antibody accesssion='$antibody.antibodyUniqueName' database='neXtProt' />
 			#if($antibody.xrefs.size() != 0)
+			<evidence-list>
 				#foreach($xref in $antibody.xrefs)
+				<evidence
+					is-negative='false' 
+					evidence-code='ECO:0000154' 
+					resource-assoc-type='evidence'
+					resource-internal-ref='$xref.dbXrefId'  
+					resource-type='database'
+					source-internal-ref='$antibody.assignedBy'
 					#set($UNESCAPED_CDATA = $xref.resolvedUrl)
-					<url><![CDATA[$UNESCAPED_CDATA]]></url>
+				/>
 				#end
+			</evidence-list>
 			#end
 		#set($target-isoform-list = $antibody.isoformSpecificity)
 		#parse('target-isoform-list.xml.vm')	

@@ -25,7 +25,17 @@ public class AntibodyMapping implements Serializable {
 	//private List<IsoformSpecificity> isoformSpecificity;
 
 	private Long xrefId;
+	private String assignedBy;
 	
+	
+	public String getAssignedBy() {
+		return assignedBy;
+	}
+
+	public void setAssignedBy(String assignedBy) {
+		this.assignedBy = assignedBy;
+	}
+
 	public void setXrefId(Long id) {
 		this.xrefId=id;
 	}

@@ -20,11 +20,13 @@ import java.util.Map;
 /**
  * Aspect responsible for checking that services have permission to act on
  * {@code UserResource}
+ * 
+ * Change: 13 January 2015 // Setting it up on security.xml inside the security profile
  *
- * @author fnikitin
+ *
+ * @author fnikitin, dteixeira
  */
 @Aspect
-@Component
 public class UserResourceAuthorizationAspect {
 
 	private static final NotAuthorizedException NOT_AUTHORIZED_EXCEPTION = new NotAuthorizedException("You must be logged in to access this resource");
@@ -50,10 +52,35 @@ public class UserResourceAuthorizationAspect {
 			throw NOT_AUTHORIZED_EXCEPTION;
 		}
 
-		User usr = userDao.getUserByUsername(currentUser);
+		checkAdvisedMethodArguments(userDao.getUserByUsername(currentUser), pjp.getArgs());
 
-		Object[] arguments = pjp.getArgs();
+		// proceed to advised method
+		Object o = pjp.proceed();
+
+		// void function will not return an object
+		if (o == null) {
+			return null;
+		} else if (o instanceof UserResource) {
+			checkUntrustedUserResource((UserResource) o);
+		} else if (o instanceof Collection) {
+
+			// check the first resource as all collection's elements are of the same user resource type
+			for (UserResource untrustedUserResource : (Collection<UserResource>)o) {
+
+				checkUntrustedUserResource(untrustedUserResource);
+			}
+		} else {
+
+			throw new IllegalStateException("checkUserAuthorization error: unexpected result class "+o.getClass());
+		}
+
+		return o;
+	}
+
+	private void checkAdvisedMethodArguments(User usr, Object[] arguments) {
+
 		for (Object arg : arguments) {
+
 			if (arg instanceof UserResource) {
 
 				UserResource untrustedUserResource = (UserResource) arg;
@@ -76,29 +103,9 @@ public class UserResourceAuthorizationAspect {
 				break; // Do it only for the first argument
 			}
 		}
-
-		Object o = pjp.proceed();
-
-		// void function will not return an object
-		if (o == null) {
-			return null;
-		} else if (o instanceof UserResource) {
-			checkUntrustedResource((UserResource) o);
-		} else if (o instanceof Collection) {
-
-			// check the first resource as all collection's elements are of the same user resource type
-			for (UserResource untrustedUserResource : (Collection<UserResource>)o) {
-				checkUntrustedResource(untrustedUserResource);
-			}
-		} else {
-
-			throw new IllegalStateException("checkUserAuthorization error: unexpected result class "+o.getClass());
-		}
-
-		return o;
 	}
 
-	private void checkUntrustedResource(UserResource untrustedUserResource) {
+	private void checkUntrustedUserResource(UserResource untrustedUserResource) {
 
 		UserResourceAuthorizationChecker delegator = getAuthorizationChecker(untrustedUserResource);
 		delegator.checkAuthorization(untrustedUserResource);

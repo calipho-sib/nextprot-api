@@ -26,6 +26,8 @@ http://www.springframework.org/schema/security/spring-security-3.2.xsd">
 	<!-- For the unit testing and production environment the authentication the security is activated -->
 	<beans profile="security">
 
+		<bean id="userResourceAuthorizationAspect" class="org.nextprot.api.user.aop.UserResourceAuthorizationAspect" />
+
 		<security:global-method-security pre-post-annotations="enabled" />
 
 		<bean id="auth0EntryPoint" class="com.auth0.spring.security.auth0.Auth0AuthenticationEntryPoint" />

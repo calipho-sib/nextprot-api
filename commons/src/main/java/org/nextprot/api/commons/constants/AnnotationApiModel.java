@@ -1,22 +1,23 @@
 package org.nextprot.api.commons.constants;
 
+import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.StringUtils;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.StringUtils;
 
 /**
  * Description: <br> * 
  * @author Pam inspired from Oliv's OWLAnnotationCategoryOld version <br>
  */
 
-public enum AnnotationApiModel  {
+public enum AnnotationApiModel implements Serializable {
 
 	//Special node for the root
-	ROOT (0, "Root", "Root of the tree","",null),
+	ROOT (0, "Root", "Root","",null),
 
 	/*
 	 * ENUMs with a negative dbId are virtual annotation types. Virtual means that there is NO annotation in our data of this type
