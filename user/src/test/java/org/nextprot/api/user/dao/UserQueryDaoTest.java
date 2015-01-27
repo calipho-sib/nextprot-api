@@ -2,7 +2,6 @@ package org.nextprot.api.user.dao;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import org.junit.Test;
 import org.nextprot.api.user.dao.test.base.UserResourceBaseTest;
@@ -10,10 +9,7 @@ import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -79,7 +75,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
     @Test
     public void testGetTagsByQueryId() {
 
-        SetMultimap<Long, String> tags = userQueryDao.getQueryTags(Arrays.asList(16L));
+        Map<Long, Set<String>> tags = userQueryDao.getQueryTags(Arrays.asList(16L));
 
         assertEquals(1, tags.size());
         assertEquals(Sets.newHashSet("public"), tags.get(16L));
@@ -88,7 +84,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
     @Test
     public void testGetTagsByUnknownQueryId() {
 
-        SetMultimap<Long, String> tags = userQueryDao.getQueryTags(Arrays.asList(17L));
+        Map<Long, Set<String>> tags = userQueryDao.getQueryTags(Arrays.asList(17L));
 
         assertTrue(tags.isEmpty());
         assertEquals(Sets.<String>newHashSet(), tags.get(17L));
@@ -97,7 +93,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
     @Test
     public void testGetTagsByUnknownQueryIds() {
 
-        SetMultimap<Long, String> tags = userQueryDao.getQueryTags(Arrays.asList(16L, 17L));
+        Map<Long, Set<String>> tags = userQueryDao.getQueryTags(Arrays.asList(16L, 17L));
 
         assertTrue(!tags.isEmpty());
         assertEquals(Sets.newHashSet("public"), tags.get(16L));
