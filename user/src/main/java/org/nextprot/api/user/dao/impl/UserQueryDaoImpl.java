@@ -1,17 +1,6 @@
 package org.nextprot.api.user.dao.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.collect.Lists;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -32,7 +21,10 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.collect.Lists;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 @Repository
 @Lazy
@@ -111,15 +103,27 @@ public class UserQueryDaoImpl implements UserQueryDao {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("query_ids", queryIds);
 
-		List<Tag> tags = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserQueryTagRowMapper());
+		List<Tag> foundTags = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserQueryTagRowMapper());
 
 		Map<Long, Set<String>> map = new HashMap<Long, Set<String>>();
-		for (Tag tag : tags) {
-			if(!map.containsKey(tag.getQueryId())){
+
+		Set<Long> foundQueries = new HashSet<Long>();
+
+		for (Tag tag : foundTags) {
+
+			foundQueries.add(tag.getQueryId());
+
+			if (!map.containsKey(tag.getQueryId())) {
 				map.put(tag.getQueryId(), new HashSet<String>());
 			}
 			
 			map.get(tag.getQueryId()).add(tag.getName());
+		}
+
+		for (long queryId : queryIds) {
+
+			if (!foundQueries.contains(queryId))
+				map.put(queryId, new HashSet<String>());
 		}
 
 		return map;

@@ -86,7 +86,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
 
         Map<Long, Set<String>> tags = userQueryDao.getQueryTags(Arrays.asList(17L));
 
-        assertTrue(tags.isEmpty());
+        assertTrue(!tags.isEmpty());
         assertEquals(Sets.<String>newHashSet(), tags.get(17L));
     }
 
@@ -185,7 +185,9 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
 
         assertEquals(1, count);
         assertEquals(1, userQueryDao.getUserQueries("spongebob").size());
-        assertTrue(userQueryDao.getQueryTags(Arrays.asList(16L)).isEmpty());
+        Map<Long, Set<String>> tags = userQueryDao.getQueryTags(Arrays.asList(16L));
+
+        assertTrue(tags.get(16L).isEmpty());
     }
 
     @Test(expected = EmptyResultDataAccessException.class)
