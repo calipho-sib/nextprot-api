@@ -1,8 +1,17 @@
 package org.nextprot.api.user.dao.impl;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.SetMultimap;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -13,6 +22,7 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.commons.utils.SqlBoolean;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
+import org.nextprot.api.user.utils.UserQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,10 +32,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
+import com.google.common.collect.Lists;
 
 @Repository
 @Lazy
@@ -58,7 +65,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		namedParameters.addValue("query_id", queryId);
 
 		UserQuery query = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForObject(sql, namedParameters, new UserQueryRowMapper());
-		SetMultimap<Long, String> tags = getQueryTags(Arrays.asList(query.getUserQueryId()));
+		Map<Long, Set<String>> tags = getQueryTags(Arrays.asList(query.getUserQueryId()));
 		query.setTags(tags.get(queryId));
 
 		return query;
@@ -98,7 +105,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 
 	
 	@Override
-	public SetMultimap<Long, String> getQueryTags(Collection<Long> queryIds) {
+	public Map<Long, Set<String>> getQueryTags(Collection<Long> queryIds) {
 
 		String sql = sqlDictionary.getSQLQuery("read-tags-by-user-query-ids");
 
@@ -106,11 +113,13 @@ public class UserQueryDaoImpl implements UserQueryDao {
 
 		List<Tag> tags = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).query(sql, namedParameters, new UserQueryTagRowMapper());
 
-		SetMultimap<Long, String> map = HashMultimap.create();
-
+		Map<Long, Set<String>> map = new HashMap<Long, Set<String>>();
 		for (Tag tag : tags) {
-
-			map.put(tag.getQueryId(), tag.getName());
+			if(!map.containsKey(tag.getQueryId())){
+				map.put(tag.getQueryId(), new HashSet<String>());
+			}
+			
+			map.get(tag.getQueryId()).add(tag.getName());
 		}
 
 		return map;
@@ -213,13 +222,14 @@ public class UserQueryDaoImpl implements UserQueryDao {
 
 		if (!userQueryList.isEmpty()) {
 
-			List<Long> queryIds = Lists.transform(userQueryList, UserQuery.EXTRACT_QUERY_ID);
+			List<Long> queryIds = Lists.transform(userQueryList, UserQueryUtils.EXTRACT_QUERY_ID);
 
-			SetMultimap<Long, String> tags = getQueryTags(queryIds);
+			Map<Long, Set<String>> tags = getQueryTags(queryIds);
 
 			for (UserQuery query : userQueryList) {
-
-				query.setTags(tags.get(query.getUserQueryId()));
+				Set<String> tagSet = tags.get(query.getUserQueryId());
+				//use hashset because google implementation is not serializable
+				query.setTags(new HashSet<String>(tagSet));
 			}
 		}
 
