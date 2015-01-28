@@ -31,6 +31,7 @@ public abstract class FilePatternDictionary {
 	protected abstract String getExtension();
 
 	protected Map<String, String> getResourcesMap() {
+		loadResources();//TODO remove this in production
 		return resourcesMap;
 	}
 

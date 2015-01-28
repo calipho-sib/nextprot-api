@@ -12,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -39,6 +40,8 @@ public class SparqlProxyEndpointImpl implements SparqlProxyEndpoint {
 			throw new NextProtException(e.getResponseBodyAsString());
 		} catch (URISyntaxException e) {
 			throw new NextProtException(e);
+		} catch (HttpServerErrorException e) {
+			throw new NextProtException(e.getResponseBodyAsString());
 		}
 
 	}
