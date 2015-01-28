@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.nextprot.api.user.domain.UserQuery;
 
+import com.google.common.base.Function;
+
 public class UserQueryUtils {
 
 	public static List<UserQuery> filterByTag(List<UserQuery> queries, String tag) {
@@ -28,5 +30,14 @@ public class UserQueryUtils {
 		}
 		return res;
 	}
+	
+	public static final Function<UserQuery, Long> EXTRACT_QUERY_ID = new Function<UserQuery, Long>() {
+		@Override
+		public Long apply(UserQuery query) {
+
+			return query.getUserQueryId();
+		}
+	};
+
 
 }

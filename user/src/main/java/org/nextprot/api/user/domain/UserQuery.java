@@ -1,12 +1,10 @@
 package org.nextprot.api.user.domain;
 
-import com.google.common.base.Function;
+import java.io.Serializable;
+import java.util.Set;
 
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.resource.UserResource;
-
-import java.io.Serializable;
-import java.util.Set;
 
 public class UserQuery implements Serializable, UserResource {
 
@@ -22,13 +20,6 @@ public class UserQuery implements Serializable, UserResource {
 
 	private Set<String> tags;
 
-	public static final Function<UserQuery, Long> EXTRACT_QUERY_ID = new Function<UserQuery, Long>() {
-		@Override
-		public Long apply(UserQuery query) {
-
-			return query.getUserQueryId();
-		}
-	};
 
 	public long getUserQueryId() {
 		return userQueryId;

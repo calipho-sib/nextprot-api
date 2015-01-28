@@ -1,12 +1,12 @@
 package org.nextprot.api.user.dao;
 
-import com.google.common.collect.SetMultimap;
-import org.nextprot.api.user.domain.UserQuery;
-import org.springframework.dao.DataAccessException;
-
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.nextprot.api.user.domain.UserQuery;
+import org.springframework.dao.DataAccessException;
 
 public interface UserQueryDao {
 
@@ -49,7 +49,7 @@ public interface UserQueryDao {
 	 * @param queryIds the user queries
 	 * @return a map of tags indexed by query id
 	 */
-	SetMultimap<Long, String> getQueryTags(Collection<Long> queryIds);
+	 Map<Long, Set<String>> getQueryTags(Collection<Long> queryIds);
 
 	/**
 	 * Insert a new user query into database
