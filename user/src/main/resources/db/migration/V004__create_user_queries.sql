@@ -7,6 +7,8 @@ CREATE TABLE np_users.user_queries (
   owner_id bigint REFERENCES np_users.users(user_id) ON DELETE SET NULL
 );
 
+ALTER SEQUENCE user_queries_query_id_seq RESTART WITH 100000;
+
 CREATE UNIQUE INDEX user_query_title_ux  ON np_users.user_queries (title, owner_id);
 
 CREATE INDEX user_query_published_idx  ON np_users.user_queries (published);
