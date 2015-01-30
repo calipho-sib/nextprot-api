@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>JSONDoc</title>
+<title>neXtProt REST API</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="">
 <meta name="author" content="">
@@ -118,14 +118,80 @@ table td {
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header">
-		    	<a class="navbar-brand" href="#">JSONDoc</a>
+		    	<a class="navbar-brand" href="#">neXtProt API</a>
     		</div>
-    		<form class="navbar-form navbar-left col-md-8" role="search">
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" ng-controller="HelpCtrl">
+				<ul class="nav navbar-nav">
+
+					<!--  Resources  -->
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-expanded="false">Resources
+							<span class="caret"></span>
+					</a>
+						<ul class="dropdown-menu" role="menu">
+							<li ng-class=""><a href="search.nextprot.org">Search</a></li>
+							<li ng-class=""><a href="snorql.nextprot.org">Snorql</a></li>
+							<li ng-class=""><a href="api.nextprot.org">API</a></li>
+						</ul></li>
+
+					<!-- Help dropdown -->
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-expanded="false">Help
+							<span class="caret"></span>
+					</a>
+						<ul class="dropdown-menu" role="menu">
+							<!-- News -->
+							<li ng-class="{'active':isActiveDoc('/pages/what-is-new')}"><a
+								href="/pages/what-is-new">What's new?</a></li>
+							<li class="divider"></li>
+							<!-- FAQ -->
+							<li ng-class="{'active':isActiveDoc('/pages/faq')}"><a
+								href="/pages/faq">FAQ</a></li>
+							<li class="divider"></li>
+
+							<!-- Found a bug -->
+							<li ng-class=""><a target="_blank"
+								href="https://github.com/calipho-sib/nextprot-api/issues">Found
+									a bug?<i class="icon-github"></i>
+							</a></li>
+						</ul></li>
+
+					<li ng-class=""><a href="/pages/about">About</a></li>
+					<li ng-class=""><a
+						href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact
+							us</a></li>
+
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+
+					<!-- login button -->
+					<li ng-if="!user.profile.email"><a href='' type="button"
+						class="link" ng-click="login()">Login</a></li>
+
+					<!-- once logged in user resources -->
+<!-- 					<li class="dropdown" ng-if="user.profile.email" ng-cloak><a -->
+<!-- 						href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.profile.name -->
+<!-- 							|| user.profile.email}}<span class="caret"></span> -->
+<!-- 					</a> -->
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="/user">My profile</a></li>
+							<li><a href="/user/protein/lists">My protein lists</a></li>
+							<li><a href="/user/queries">My queries</a></li>
+							<li><a href="/user/applications">My applications</a></li>
+							<li class="divider"></li>
+							<li><a href="#" ng-click="logout()">Logout</a></li>
+						</ul></li>
+				</ul>
+			<form class="navbar-form navbar-left col-md-2" role="search">
 				<div class="form-group">
-		        	<input id="jsondocfetch" type="text" class="form-control" style="width:350px" placeholder="Insert here the JSONDoc URL" value="${jsondoc.path}" autocomplete="off">
+		        	<input id="jsondocfetch" type="text" class="form-control" placeholder="Insert here the JSONDoc URL" value="${jsondoc.path}" autocomplete="off">
 		        </div>
 		        <button id="getDocButton" class="btn btn-default">Get documentation</button>
 		    </form>
+			</div>
+
 		</div>
 	</nav>
 
@@ -193,7 +259,6 @@ table td {
 <script id="main" type="text/x-handlebars-template">
 <blockquote>
   <p style="text-transform: uppercase;">API info</span></p>
-  <small>Base path: {{basePath}}</small>
   <small>Version: {{version}}</small>
 </blockquote>
 </script>
@@ -769,7 +834,7 @@ table td {
 	});
 	
 	function checkURLExistence() {
-		var value = $("#jsondocfetch").val();
+		var value = "http://" + window.location.hostname + ":8080/nextprot-api-web/jsondoc";
 		if(value.trim() == '') {
 			alert("Please insert a valid URL");
 			return false;
