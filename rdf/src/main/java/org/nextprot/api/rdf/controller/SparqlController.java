@@ -1,25 +1,26 @@
 package org.nextprot.api.rdf.controller;
 
-import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
-import org.jsondoc.core.annotation.Api;
-import org.jsondoc.core.annotation.ApiMethod;
-import org.jsondoc.core.annotation.ApiParam;
-import org.jsondoc.core.pojo.ApiVerb;
+import java.net.URISyntaxException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlProxyEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URISyntaxException;
-import java.util.List;
+import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 
 /**
  * Controller used many to log and tune queries. Check the log times. No cache is used on purpose
@@ -29,7 +30,6 @@ import java.util.List;
 @Lazy
 @Controller
 //@PreAuthorize("hasRole('ROLE_SPARQL')")
-@Api(name = "Sparql", description = "Sparql endpoint where SPARQL queries are available", role="ROLE_SPARQL")
 public class SparqlController {
 
 	@Autowired
@@ -53,10 +53,8 @@ public class SparqlController {
 
 	@RequestMapping(value = "/sparqlite")
 	@ResponseBody
-	@ApiMethod(path = "/sparqlite", verb = ApiVerb.GET, description = "Sparql endpoint", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	public String sparql(HttpServletRequest request, HttpServletResponse response,
 			
-			@ApiParam(name = "query", description = "The SPARQL query",  allowedvalues = { "SELECT DISTINCT * WHERE {?s ?p ?o} LIMIT 10"})
 			@RequestParam(value = "query", required = false) String query, 
 
 			@RequestParam(value = "output", required = false) String output,

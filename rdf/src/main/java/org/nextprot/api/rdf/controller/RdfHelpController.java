@@ -9,9 +9,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
-import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
-import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.rdf.domain.RdfTypeInfo;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Lazy
 @Controller
-@Api(name = "RdfHelp", description = "Method to retrieve help on the complete or partial RDF schema of neXtProt from data.", role ="ROLE_RDF")
 public class RdfHelpController {
 
 	@Autowired
@@ -45,7 +42,7 @@ public class RdfHelpController {
 	@RequestMapping("/rdf/help/type/{rdfType}")
 	@ResponseBody
 	public RdfTypeInfo helpFullInfo(
-			@ApiParam(name = "rdfType", description = "The description and properties related to a rdf:type object in neXtProt RDF schema. For example, the entities :Entry :Isoform ...", allowedvalues = { ":Entry" }) @PathVariable("rdfType") String rdfType,
+			@PathVariable("rdfType") String rdfType,
 			Model model) {
 		try {
 			RdfTypeInfo typ;
