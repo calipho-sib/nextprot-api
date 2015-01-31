@@ -13,3 +13,6 @@ CREATE TABLE np_users.user_roles (
   CONSTRAINT user_role_pk PRIMARY KEY (role_name, user_id)
 );
 
+insert into np_users.users (user_name, first_name, last_name) values ('ddtxra@gmail.com', 'Daniel', 'Teixeira');
+insert into np_users.user_roles (role_name, user_id) values ('ROLE_USER', 1);
+insert into np_users.user_roles (role_name, user_id) values ('ROLE_ADMIN', 1);

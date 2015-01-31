@@ -1,6 +1,6 @@
 # Nextprot API
 
-_CAUTION: Nextprot API is at its very early stages of development. Things are likely to change in ways that are not backwards compatible_
+CAUTION: Nextprot API is at its very early stages of development. Things are likely to change in ways that are not backwards compatible_
 
 This project is licensed under the terms of the GNU General Public License, version 2 or any later version (see file LICENSE.txt)
 
