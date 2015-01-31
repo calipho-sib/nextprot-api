@@ -1,15 +1,22 @@
 package org.nextprot.api.user.controller;
 
+import java.util.List;
+
 import org.jsondoc.core.annotation.Api;
+import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
+import org.nextprot.api.user.utils.UserQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * Controller for operating (CRUD) on user queries (SPARQL)
@@ -27,9 +34,21 @@ public class UserQueryController {
 	@RequestMapping(value = "/queries/tutorial", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserQuery> getTutorialQueries() {
-		return userQueryService.getTutorialQueries();
-	}
 
+		//start with queries
+		List<UserQuery> res = userQueryService.getTutorialQueries();
+
+		//add user queries if logged (access db, but is cached with cache evict if the query is modified)
+		if (NPSecurityContext.getCurrentUser() != null) { 
+			res.addAll(userQueryService.getUserQueries(NPSecurityContext.getCurrentUser()));
+		}
+
+		//remove snorql queries if not specified
+			res = UserQueryUtils.removeQueriesContainingTag(res, "snorql-only");
+		
+		return res;
+	}
+	
 	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.GET })
 	@ResponseBody
 	public UserQuery getUserQuery(@PathVariable("username") String username, @PathVariable("id") String id) {

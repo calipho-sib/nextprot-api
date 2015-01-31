@@ -100,6 +100,18 @@
 		statistics="true">
 	</cache>
 
+	<!-- Tutorial queries (only in memory) -->
+	<cache name="tutorial-queries" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+
+	<!-- User queries (only in memory) -->
+	<cache name="user-queries" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="100"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+
 	<!-- RDF Help -->
 	<cache name="rdfhelp" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
