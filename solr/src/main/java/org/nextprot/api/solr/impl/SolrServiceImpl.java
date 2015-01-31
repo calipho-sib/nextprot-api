@@ -43,10 +43,10 @@ public class SolrServiceImpl implements SolrService {
 	private final int DEFAULT_ROWS = 50;
 
 	public SearchResult executeQuery(Query query) throws SearchQueryException {
-
+		Logger.info("query:\n" + query.toPrettyString());
 		SolrIndex index = query.getIndex();
 		SolrQuery solrQuery = solrQuerySetup(query);
-
+		
 		return executeSolrQuery(index, solrQuery);
 	}
 

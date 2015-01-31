@@ -82,6 +82,8 @@ public class SearchController {
 				query = this.queryService.buildQuery(indexName, "simple", queryRequest);
 			}
 			
+			Logger.info("queryRequest:\n"+queryRequest.toPrettyString());
+			
 			SearchResult result;
 			try {
 				result = this.queryService.executeQuery(query);

@@ -21,7 +21,6 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 	private String filter;
 	private String sparql;
 	private String mode;
-
 	private String sparqlTitle;
 	private String sparqlEngine;
 
@@ -149,6 +148,31 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 			builder.append("\n");
 		}
 
+		return builder.toString();
+	}
+
+	public String toPrettyString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("listOwner    : "+this.listOwner+"\n");
+		builder.append("list         : "+this.list+"\n");
+		builder.append("accs         : ");
+		if (accs==null) {
+			builder.append("null");
+		} else {
+			for (String ac:accs) builder.append(ac  + " ");
+		}
+		builder.append("\n");
+		builder.append("query        : "+this.query+"\n");
+		builder.append("quality      : "+this.quality+"\n");
+		builder.append("start        : "+this.start+"\n");
+		builder.append("sort         : "+this.sort+"\n");
+		builder.append("order        : "+this.order+"\n");
+		builder.append("rows         : "+this.rows+"\n");
+		builder.append("filter       : "+this.filter+"\n");
+		builder.append("mode         : "+this.mode+"\n");
+		builder.append("sparqlTitle  : "+this.sparqlTitle+"\n");
+		builder.append("sparqlEngine : "+this.sparqlEngine+"\n");
+		builder.append("sparql       : "+this.sparql+"\n");
 		return builder.toString();
 	}
 
