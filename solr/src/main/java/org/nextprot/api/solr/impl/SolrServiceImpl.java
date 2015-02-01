@@ -46,7 +46,9 @@ public class SolrServiceImpl implements SolrService {
 		Logger.info("query:\n" + query.toPrettyString());
 		SolrIndex index = query.getIndex();
 		SolrQuery solrQuery = solrQuerySetup(query);
-		
+		Set<String> params = new TreeSet<String>();
+		for (String p: solrQuery.getParameterNames()) params.add(p + " : " + solrQuery.get(p));
+		for (String p: params) Logger.info("SolrQuery " + p);
 		return executeSolrQuery(index, solrQuery);
 	}
 

@@ -37,6 +37,9 @@ public class EntryIndex extends IndexTemplate {
 
 	@Override
 	protected void setupConfigurations() {
+		
+		// SIMPLE Config
+		
 		IndexConfiguration indexConfig = new IndexConfiguration(Configurations.SIMPLE);
 		
 		indexConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FL)
@@ -115,6 +118,8 @@ public class EntryIndex extends IndexTemplate {
 		indexConfig.setDefaultSortName("default");
 		addConfiguration(indexConfig);
 		
+		// AUTOCOMPLETE Config
+
 		AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(Configurations.AUTOCOMPLETE, indexConfig);
 		
 		autocompleteConfig
@@ -140,12 +145,18 @@ public class EntryIndex extends IndexTemplate {
 
 		setConfigAsDefault(Configurations.SIMPLE);
 		
+		
+		// ID_SEARCH Config
+
 		IndexConfiguration idSearchConfig = new SearchByIdConfiguration(Configurations.ID_SEARCH);
 		idSearchConfig.addSortConfig(SortConfig.create("default", Fields.SCORE, ORDER.desc));
 		idSearchConfig.addConfigSet(indexConfig.getFieldConfigSets().get(IndexParameter.FL));
 		idSearchConfig.setDefaultSortName("default");
 		addConfiguration(idSearchConfig);
 		
+		
+		// PL_SEARCH Config
+
 		IndexConfiguration plSearchConfig = new SearchByIdConfiguration(Configurations.PL_SEARCH);
 		plSearchConfig.addSortConfig(SortConfig.create("default", Fields.SCORE, ORDER.desc));
 		plSearchConfig.addConfigSet(indexConfig.getFieldConfigSets().get(IndexParameter.FL));
