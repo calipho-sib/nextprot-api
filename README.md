@@ -12,11 +12,12 @@ This project is licensed under the terms of the GNU General Public License, vers
 ## Configure your environment (for eclipse)
 ```
 mvn eclipse:eclipse -Dwtpversion=2.0
-Then add the web module into an Apache Tomcat Server (configured in Eclipse) and that's it
+#Then add the web module into an Apache Tomcat Server (configured in Eclipse) and that's it
+#Make sure to add the environment variable -Dspring.profiles.active=DEV on the tomcat startup
 
 #To make it run (by command line)
 cd web
-mvn jetty:run
+mvn jetty:run -Dspring.profiles.active=DEV
 ```
 
 You should be able to log into: http://localhost:8080/nextprot-api
