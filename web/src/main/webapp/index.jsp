@@ -184,12 +184,6 @@ table td {
 							<li><a href="#" ng-click="logout()">Logout</a></li>
 						</ul></li>
 				</ul>
-			<form class="navbar-form navbar-left col-md-2" role="search">
-				<div class="form-group">
-		        	<input id="jsondocfetch" type="text" class="form-control" placeholder="Insert here the JSONDoc URL" value="${jsondoc.path}" autocomplete="off">
-		        </div>
-		        <button id="getDocButton" class="btn btn-default">Get documentation</button>
-		    </form>
 			</div>
 
 		</div>
@@ -1104,6 +1098,8 @@ table td {
 			}
 		});
 	}
+	checkURLExistence();
+
 </script>
 
 </body>
