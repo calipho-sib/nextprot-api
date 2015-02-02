@@ -3,7 +3,9 @@
 This project is licensed under the terms of the GNU General Public License, version 2 or any later version (see file LICENSE.txt)
 
 ## Configure your environment (for eclipse)
-```
+```shell
+git clone https://github.com/calipho-sib/nextprot-api.git #(1st time) 
+cd nextprot-api #(1st time) 
 mvn eclipse:eclipse -Dwtpversion=2.0
 #Then add the web module into an Apache Tomcat Server (configured in Eclipse) and that's it
 #Make sure to add the environment variable -Dspring.profiles.active=DEV on the tomcat startup
