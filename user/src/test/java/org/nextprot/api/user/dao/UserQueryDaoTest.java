@@ -13,7 +13,7 @@ import java.util.*;
 
 import static org.junit.Assert.*;
 
-@DatabaseSetup(value = "UserQueriesDaoTest.xml", type = DatabaseOperation.INSERT)
+@DatabaseSetup(value = "UserQueriesDaoTest.xml", type = DatabaseOperation.CLEAN_INSERT)
 public class UserQueryDaoTest extends UserResourceBaseTest {
 
     @Autowired private UserQueryDao userQueryDao;

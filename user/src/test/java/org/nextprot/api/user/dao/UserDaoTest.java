@@ -16,7 +16,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
-@DatabaseSetup(value = "UserDaoTest.xml", type = DatabaseOperation.INSERT)
+@DatabaseSetup(value = "UserDaoTest.xml", type = DatabaseOperation.CLEAN_INSERT)
 public class UserDaoTest extends UserResourceBaseTest {
 
 	@Autowired UserDao userDao;
