@@ -1,13 +1,6 @@
 # Nextprot API
 
-CAUTION: Nextprot API is at its very early stages of development. Things are likely to change in ways that are not backwards compatible_
-
 This project is licensed under the terms of the GNU General Public License, version 2 or any later version (see file LICENSE.txt)
-
-# Main API Features:
-* Provides a Java Spring REST API at http://localhost:8080/nextprot-api that connects to an RDBMS database (entry based).
-* Provides a full-text search mechanism that relies on Solr Indexes (entry, publication and terms based).
-* Provides an advanced search engine through a SPARQL endpoint available at http://localhost:8080/sparql (based on Virtuoso datastore)
 
 ## Configure your environment (for eclipse)
 ```
@@ -20,7 +13,12 @@ cd web
 mvn jetty:run -Dspring.profiles.active=DEV
 ```
 
-You should be able to log into: http://localhost:8080/nextprot-api
+You should be able to log into: [http://localhost:8080/nextprot-api-web]
+
+# Main API Features:
+* Provides a Java Spring REST API at http://localhost:8080/nextprot-api that connects to an RDBMS database (entry based).
+* Provides a full-text search mechanism that relies on Solr Indexes (entry, publication and terms based).
+* Provides an advanced search engine through a SPARQL endpoint available at http://localhost:8080/sparql (based on Virtuoso datastore)
 
 
 ## Testing
