@@ -9,9 +9,14 @@ This project is licensed under the terms of the GNU General Public License, vers
 * Provides a full-text search mechanism that relies on Solr Indexes (entry, publication and terms based).
 * Provides an advanced search engine through a SPARQL endpoint available at http://localhost:8080/sparql (based on Virtuoso datastore)
 
-## Usage, 
+## Configure your environment (for eclipse)
 ```
-jetty.sh start
+mvn eclipse:eclipse -Dwtpversion=2.0
+Then add the web module into an Apache Tomcat Server (configured in Eclipse) and that's it
+
+#To make it run (by command line)
+cd web
+mvn jetty:run
 ```
 
 You should be able to log into: http://localhost:8080/nextprot-api
