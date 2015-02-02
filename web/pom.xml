@@ -45,11 +45,6 @@
 			<artifactId>nextprot-api-rdf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-queries</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 		<!-- used for tests -->
 		<dependency>
 			<groupId>org.nextprot</groupId>
