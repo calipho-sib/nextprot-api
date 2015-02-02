@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Lazy
 @Controller
-@Api(name = "Interaction", description = "Method to retrieve the list of existing interactions", role = "ROLE_RDF")
+@Api(name = "Interaction", description = "Method to retrieve the list of existing interactions")
 public class InteractionController {
 
 

@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_ADMIN')")
-@Api(name = "ROLE_ADMIN", description = "Admin operations", role = "ROLE_ADMIN")
+@Api(name = "ROLE_ADMIN", description = "Admin operations")
 public class AdminController {
 
 	private static final Log LOGGER = LogFactory.getLog(AdminController.class);

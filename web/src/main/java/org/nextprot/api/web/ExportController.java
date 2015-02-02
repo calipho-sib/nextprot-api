@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
-import org.jsondoc.core.annotation.ApiParam;
+import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -24,7 +24,6 @@ import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.core.service.export.format.NPViews;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
-import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -45,7 +44,7 @@ import org.springframework.web.servlet.ViewResolver;
  */
 @Lazy
 @Controller 
-@Api(name = "Export", description = "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.", role = "ROLE_USER")
+@Api(name = "Export", description = "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
 public class ExportController {
 
 	@Autowired
@@ -74,7 +73,7 @@ public class ExportController {
 	@ApiMethod(path = "/export/entries/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Exports the whole chromosome", produces = { MediaType.APPLICATION_XML_VALUE, "text/turtle" })
 	@RequestMapping("/export/entries/chromosome/{chromosome}")
 	public void exportEntriesByChromosome(HttpServletResponse response, HttpServletRequest request,
-			@ApiParam(name = "chromosome", description = "The number of the chromosome. For example, the chromosome 21", allowedvalues = { "21" }) @PathVariable("chromosome") String chromosome) {
+			@ApiQueryParam(name = "chromosome", description = "The number of the chromosome. For example, the chromosome 21", allowedvalues = { "21" }) @PathVariable("chromosome") String chromosome) {
 
 		NPFileFormat format = getRequestedFormat(request);
 		response.setHeader("Content-Disposition", "attachment; filename=\"NXChromosome" + chromosome + "." + format.getExtension() + "\"");
@@ -87,7 +86,7 @@ public class ExportController {
 	@ApiMethod(path = "/export/list/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list", produces = { MediaType.APPLICATION_XML_VALUE })
 	@RequestMapping("/export/list/{listId}")
 	public void exportList(Model model, HttpServletResponse response, HttpServletRequest request,
-			@ApiParam(name = "listname", description = "The list id") @PathVariable("listId") String listId
+			@ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId
 	) {
 		
 		NPFileFormat format = getRequestedFormat(request);
@@ -106,8 +105,8 @@ public class ExportController {
 	@ApiMethod(path = "/export/list/{listId}/{view}", verb = ApiVerb.GET, description = "Exports subpart of entries from a list", produces = { MediaType.APPLICATION_XML_VALUE })
 	@RequestMapping("/export/list/{listId}/{view}")
 	public void exportListSubPart(Model model, HttpServletResponse response, HttpServletRequest request,
-			@ApiParam(name = "The view name", description = "The view name") @PathVariable("view") String view,
-			@ApiParam(name = "listname", description = "The list id") @PathVariable("listId") String listId
+			@ApiQueryParam(name = "The view name", description = "The view name") @PathVariable("view") String view,
+			@ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId
 	) {
 
 		NPFileFormat format = getRequestedFormat(request);
