@@ -13,14 +13,6 @@ cd web
 mvn jetty:run -Dspring.profiles.active=DEV
 ```
 
-You should be able to log into: [http://localhost:8080/nextprot-api-web]
-
-# Main API Features:
-* Provides a Java Spring REST API at http://localhost:8080/nextprot-api that connects to an RDBMS database (entry based).
-* Provides a full-text search mechanism that relies on Solr Indexes (entry, publication and terms based).
-* Provides an advanced search engine through a SPARQL endpoint available at http://localhost:8080/sparql (based on Virtuoso datastore)
-
-
 ## Testing
 ```
 mvn test
