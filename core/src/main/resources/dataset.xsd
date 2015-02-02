@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" xmlns:dflt="nextprot">
+	<xsd:import namespace="nextprot" schemaLocation="nextprot.xsd" />
+	<xsd:import namespace="np_mappings" schemaLocation="np_mappings.xsd" />
+	<xsd:element name="dataset">
+		<xsd:complexType>
+			<xsd:choice minOccurs="0" maxOccurs="unbounded">
+				<xsd:element name="cv_mapping_annotation_types" type="dflt:cv_mapping_annotation_types__type" />
+				<xsd:element name="resources" type="dflt:resources__type" />
+				<xsd:element name="partnership_resource_assoc_properties" type="dflt:partnership_resource_assoc_properties__type" />
+				<xsd:element name="cv_qualifier_types" type="dflt:cv_qualifier_types__type" />
+				<xsd:element name="objective_tag_counts" type="dflt:objective_tag_counts__type" />
+				<xsd:element name="cv_term_master_view" type="dflt:cv_term_master_view__type" />
+				<xsd:element name="gene_identifiers" type="dflt:gene_identifiers__type" />
+				<xsd:element name="cv_status" type="dflt:cv_status__type" />
+				<xsd:element name="cv_exp_data_identifier_assoc_types" type="dflt:cv_exp_data_identifier_assoc_types__type" />
+				<xsd:element name="annotation_relationships" type="dflt:annotation_relationships__type" />
+				<xsd:element name="cv_journals" type="dflt:cv_journals__type" />
+				<xsd:element name="cv_term_relationship_types" type="dflt:cv_term_relationship_types__type" />
+				<xsd:element name="cv_term_categories" type="dflt:cv_term_categories__type" />
+				<xsd:element name="cv_program_types" type="dflt:cv_program_types__type" />
+				<xsd:element name="cv_term_properties" type="dflt:cv_term_properties__type" />
+				<xsd:element name="variants" type="dflt:variants__type" />
+				<xsd:element name="cv_date_precisions" type="dflt:cv_date_precisions__type" />
+				<xsd:element name="annotation_resource_assoc" type="dflt:annotation_resource_assoc__type" />
+				<xsd:element name="identifier_feature_positions" type="dflt:identifier_feature_positions__type" />
+				<xsd:element name="cv_synonym_qualifiers" type="dflt:cv_synonym_qualifiers__type" />
+				<xsd:element name="dbmaintain_scripts" type="dflt:dbmaintain_scripts__type" />
+				<xsd:element name="programs" type="dflt:programs__type" />
+				<xsd:element name="mapping_annotations" type="dflt:mapping_annotations__type" />
+				<xsd:element name="cv_database_categories" type="dflt:cv_database_categories__type" />
+				<xsd:element name="cv_property_types" type="dflt:cv_property_types__type" />
+				<xsd:element name="cv_quality_qualifiers" type="dflt:cv_quality_qualifiers__type" />
+				<xsd:element name="cv_term_synonyms" type="dflt:cv_term_synonyms__type" />
+				<xsd:element name="cv_databases" type="dflt:cv_databases__type" />
+				<xsd:element name="cv_term_relationships" type="dflt:cv_term_relationships__type" />
+				<xsd:element name="experimental_data_identifier_assoc" type="dflt:experimental_data_identifier_assoc__type" />
+				<xsd:element name="resource_properties" type="dflt:resource_properties__type" />
+				<xsd:element name="identifier_resource_assoc_properties" type="dflt:identifier_resource_assoc_properties__type" />
+				<xsd:element name="expression_view" type="dflt:expression_view__type" />
+				<xsd:element name="publications" type="dflt:publications__type" />
+				<xsd:element name="experimental_resources" type="dflt:experimental_resources__type" />
+				<xsd:element name="cv_terms" type="dflt:cv_terms__type" />
+				<xsd:element name="cv_publication_types" type="dflt:cv_publication_types__type" />
+				<xsd:element name="identifier_properties" type="dflt:identifier_properties__type" />
+				<xsd:element name="view_objective_tags" type="dflt:view_objective_tags__type" />
+				<xsd:element name="experiment_properties" type="dflt:experiment_properties__type" />
+				<xsd:element name="cv_identifier_types" type="dflt:cv_identifier_types__type" />
+				<xsd:element name="objective_tag_relationships" type="dflt:objective_tag_relationships__type" />
+				<xsd:element name="identifier_resource_assoc" type="dflt:identifier_resource_assoc__type" />
+				<xsd:element name="cv_term_db_xref_assoc" type="dflt:cv_term_db_xref_assoc__type" />
+				<xsd:element name="partnership_resource_assoc" type="dflt:partnership_resource_assoc__type" />
+				<xsd:element name="partnership_partner_assoc" type="dflt:partnership_partner_assoc__type" />
+				<xsd:element name="cv_bio_sequence_types" type="dflt:cv_bio_sequence_types__type" />
+				<xsd:element name="protein_feature_positions" type="dflt:protein_feature_positions__type" />
+				<xsd:element name="view_master_index" type="dflt:view_master_index__type" />
+				<xsd:element name="annotation_resource_assoc_properties" type="dflt:annotation_resource_assoc_properties__type" />
+				<xsd:element name="publication_db_xref_assoc" type="dflt:publication_db_xref_assoc__type" />
+				<xsd:element name="bio_sequences" type="dflt:bio_sequences__type" />
+				<xsd:element name="cv_property_names" type="dflt:cv_property_names__type" />
+				<xsd:element name="annotation_properties" type="dflt:annotation_properties__type" />
+				<xsd:element name="partnerships" type="dflt:partnerships__type" />
+				<xsd:element name="cv_experiment_types" type="dflt:cv_experiment_types__type" />
+				<xsd:element name="sequence_identifiers" type="dflt:sequence_identifiers__type" />
+				<xsd:element name="experiments" type="dflt:experiments__type" />
+				<xsd:element name="data_releases" type="dflt:data_releases__type" />
+				<xsd:element name="cv_term_paths" type="dflt:cv_term_paths__type" />
+				<xsd:element name="cv_property_values" type="dflt:cv_property_values__type" />
+				<xsd:element name="view_master_publication" type="dflt:view_master_publication__type" />
+				<xsd:element name="interactions" type="dflt:interactions__type" />
+				<xsd:element name="cv_datasources" type="dflt:cv_datasources__type" />
+				<xsd:element name="mapping_positions" type="dflt:mapping_positions__type" />
+				<xsd:element name="cv_data_releases" type="dflt:cv_data_releases__type" />
+				<xsd:element name="pubauthors" type="dflt:pubauthors__type" />
+				<xsd:element name="db_xrefs" type="dflt:db_xrefs__type" />
+				<xsd:element name="objective_tags" type="dflt:objective_tags__type" />
+				<xsd:element name="identifier_synonyms" type="dflt:identifier_synonyms__type" />
+				<xsd:element name="master_identifier_name_view" type="dflt:master_identifier_name_view__type" />
+				<xsd:element name="cv_experimental_data_types" type="dflt:cv_experimental_data_types__type" />
+				<xsd:element name="annotation_protein_assoc" type="dflt:annotation_protein_assoc__type" />
+				<xsd:element name="view_cv_term" type="dflt:view_cv_term__type" />
+				<xsd:element name="experimental_data_properties" type="dflt:experimental_data_properties__type" />
+				<xsd:element name="cv_tag_types" type="dflt:cv_tag_types__type" />
+				<xsd:element name="cv_specificity_qualifier_types" type="dflt:cv_specificity_qualifier_types__type" />
+				<xsd:element name="publication_view" type="dflt:publication_view__type" />
+				<xsd:element name="annotations" type="dflt:annotations__type" />
+				<xsd:element name="annotation_synonyms" type="dflt:annotation_synonyms__type" />
+				<xsd:element name="cv_resource_assoc_types" type="dflt:cv_resource_assoc_types__type" />
+				<xsd:element name="experimental_data" type="dflt:experimental_data__type" />
+				<xsd:element name="cv_synonym_types" type="dflt:cv_synonym_types__type" />
+				<xsd:element name="cv_resource_types" type="dflt:cv_resource_types__type" />
+				<xsd:element name="interaction_identifier_xrefs" type="dflt:interaction_identifier_xrefs__type" />
+				<xsd:any namespace="nextprot" />
+			</xsd:choice>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
