@@ -16,7 +16,7 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
-@DatabaseSetup(value = "UserProteinListDaoTest.xml", type = DatabaseOperation.INSERT)
+@DatabaseSetup(value = "UserProteinListDaoTest.xml", type = DatabaseOperation.CLEAN_INSERT)
 public class UserProteinListDaoTest extends UserResourceBaseTest {
 
 	@Autowired private UserProteinListDao proteinListDao;
