@@ -24,7 +24,7 @@
 	"spellcheck": {
 		"collations": [
 		#foreach($col in $result.getSpellcheck().getCollations())
-		{"query":"$col.getFirst()","hits":$col.getSecond()}#if($velocityHasNext),
+		{"query":"$StringUtils.removePlus($col.getFirst())","hits":$col.getSecond()}#if($velocityHasNext),
 #end
 		#end],
 		"suggestions": {
