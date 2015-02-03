@@ -28,7 +28,6 @@ public class NextprotExceptionHandler {
 
 	private static final Log LOGGER = LogFactory.getLog(NextprotExceptionHandler.class);
 
-	
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(NotAuthorizedException.class)
 	@ResponseBody
@@ -36,7 +35,6 @@ public class NextprotExceptionHandler {
 		return getResponseError(ex.getLocalizedMessage());
 	}
 
-	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(NextProtException.class)
 	@ResponseBody
@@ -50,7 +48,7 @@ public class NextprotExceptionHandler {
 	public RestErrorResponse handle(ConcurrentRequestsException ex) {
 		return getResponseError(ex.getLocalizedMessage());
 	}
-	
+
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(JsonProcessingException.class)
 	@ResponseBody
@@ -72,7 +70,7 @@ public class NextprotExceptionHandler {
 		return getResponseError(ex.getLocalizedMessage());
 	}
 	
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
 	public RestErrorResponse handle(Exception ex) {
