@@ -42,11 +42,17 @@ public class SolrServiceImpl implements SolrService {
 
 	private final int DEFAULT_ROWS = 50;
 
+	private void logSorQuery(SolrQuery sq) {
+		Set<String> params = new TreeSet<String>();
+		for (String p: sq.getParameterNames()) params.add(p + " : " + sq.get(p));
+		for (String p: params) Logger.info("SolrQuery " + p);
+	}
+	
 	public SearchResult executeQuery(Query query) throws SearchQueryException {
-
+		//Logger.info("query:\n" + query.toPrettyString());
 		SolrIndex index = query.getIndex();
 		SolrQuery solrQuery = solrQuerySetup(query);
-
+		//logSorQuery(solrQuery);
 		return executeSolrQuery(index, solrQuery);
 	}
 
@@ -99,6 +105,7 @@ public class SolrServiceImpl implements SolrService {
 
 	public Query buildQuery(String indexName, String configurationName, QueryRequest request) {
 
+		Logger.debug("calling buildQuery() with indexName=" + indexName + ", configName="+ configurationName + ", request="+ request.toPrettyString());
 		return buildQuery(indexName, configurationName, request.getQuery(), request.getQuality(), request.getSort(),
 				request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
 	}

@@ -117,6 +117,24 @@ public class Query {
 		return this;
 	}
 	
+
+	public String toPrettyString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("indexName       : "+indexName + "\n");
+		builder.append("index.getName() : "+index.getName() + "\n");
+		builder.append("configuration   : "+configuration + "\n");
+		builder.append("field           : "+field + "\n");
+		builder.append("queryString     : "+queryString + "\n");
+		builder.append("filter          : "+filter + "\n");
+		builder.append("sort            : "+sort + "\n");
+		if(order != null) {
+			builder.append("order   : "+order.name() + "\n");
+		}
+		builder.append("start           : "+start + "\n");
+		builder.append("rows            : "+rows + "\n");
+		return builder.toString();
+	}
+	
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		

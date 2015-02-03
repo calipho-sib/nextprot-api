@@ -88,11 +88,12 @@ public class SearchController {
 			} else {
 				query = this.queryService.buildQuery(indexName, "simple", queryRequest);
 			}
-			
+						
 			SearchResult result;
 			try {
 				result = this.queryService.executeQuery(query);
 				model.addAttribute("result", result);
+				model.addAttribute("StringUtils", StringUtils.class);
 			} catch (SearchQueryException e) {
 				e.printStackTrace();
 				model.addAttribute("errormessage", e.getMessage());
