@@ -131,9 +131,9 @@ table td {
 							<span class="caret"></span>
 					</a>
 						<ul class="dropdown-menu" role="menu">
-							<li ng-class=""><a href="search.nextprot.org">Search</a></li>
-							<li ng-class=""><a href="snorql.nextprot.org">Snorql</a></li>
-							<li ng-class=""><a href="api.nextprot.org">API</a></li>
+							<li><a href="http://alpha-search.nextprot.org">Search</a></li>
+							<li><a href="http://alpha-snorql.nextprot.org">Snorql</a></li>
+							<li><a href="http://alpha-api.nextprot.org">API</a></li>
 						</ul></li>
 
 					<!-- Help dropdown -->
