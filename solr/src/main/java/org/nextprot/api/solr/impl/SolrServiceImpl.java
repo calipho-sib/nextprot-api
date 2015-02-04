@@ -258,7 +258,7 @@ public class SolrServiceImpl implements SolrService {
 			result = buildSearchResult(solrQuery, index.getName(),
 					index.getUrl(), response);
 		} catch (SolrServerException e) {
-			throw new SearchConnectionException("Could not connect to Solr server.");
+			throw new SearchConnectionException("Could not connect to Solr server. Please contact support or try again later.");
 		}
 		return result;
 	}
