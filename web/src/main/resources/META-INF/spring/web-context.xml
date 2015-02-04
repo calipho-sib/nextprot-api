@@ -35,11 +35,12 @@
 
 	<mvc:default-servlet-handler />
 
+	<!-- BE CAREFULT WITH THIS INTERCEPTOR!!! If everybody in the same room... with same ips...
 	<mvc:interceptors>
 		<bean
 			class="org.nextprot.api.core.aop.interceptor.ConcurrentRequestInterceptor" />
 	</mvc:interceptors>
-
+	-->
 
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving
 		up static resources -->
