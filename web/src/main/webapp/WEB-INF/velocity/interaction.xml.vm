@@ -12,15 +12,7 @@
 	#end
 #end
     <evidence-list>
-    	<evidence 
-    		is-negative='false'
-    		evidence-code='$interaction.evidenceCodeAC' 
-    		source-internal-ref='$interaction.evidenceDatasource'
-			resource-type='$interaction.evidenceResourceType'
-			resource-internal-ref='$interaction.evidenceResourceId'      		
-			resource-assoc-type='evidence'
- 			quality-qualifier='$interaction.quality'   		
-    	/>
+    	<evidence is-negative='false' evidence-code='$interaction.evidenceCodeAC' source-internal-ref='$interaction.evidenceDatasource' resource-type='$interaction.evidenceResourceType' resource-internal-ref='$interaction.evidenceResourceId' resource-assoc-type='evidence'  quality-qualifier='$interaction.quality' />
     </evidence-list>
     <experiment-count>$interaction.numberOfExperiments</experiment-count>
 </interaction>
