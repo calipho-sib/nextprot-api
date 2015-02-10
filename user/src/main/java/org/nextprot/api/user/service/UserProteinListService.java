@@ -1,9 +1,10 @@
 package org.nextprot.api.user.service;
 
-import org.nextprot.api.user.domain.UserProteinList;
-
 import java.util.List;
 import java.util.Set;
+
+import org.nextprot.api.commons.exception.ResourceNotFoundException;
+import org.nextprot.api.user.domain.UserProteinList;
 
 public interface UserProteinListService {
 
@@ -19,7 +20,7 @@ public interface UserProteinListService {
 	 * @param listId
 	 * @return
 	 */
-	UserProteinList getUserProteinListById(long listId);
+	UserProteinList getUserProteinListById(long listId) throws ResourceNotFoundException;
 	
 	/**
 	 * Gets meta information from the list

@@ -1,8 +1,10 @@
 package org.nextprot.api.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.nextprot.api.commons.exception.ConcurrentRequestsException;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -60,6 +62,13 @@ public class NextprotExceptionHandler {
 	@ExceptionHandler(HttpMediaTypeException.class)
 	@ResponseBody
 	public RestErrorResponse handle(HttpMediaTypeException ex) {
+		return getResponseError(ex.getLocalizedMessage());
+	}
+	
+	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(ResourceNotFoundException.class)
+	@ResponseBody
+	public RestErrorResponse handle(ResourceNotFoundException ex) {
 		return getResponseError(ex.getLocalizedMessage());
 	}
 	
