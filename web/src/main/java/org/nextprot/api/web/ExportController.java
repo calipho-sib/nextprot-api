@@ -90,7 +90,7 @@ public class ExportController {
 	public void exportList(Model model, HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
 
 		UserProteinList pl = this.proteinListService.getUserProteinListById(Long.valueOf(listId));
-		String fileName = pl.getName() + ".list";
+		String fileName = pl.getName() + ".txt";
 
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
@@ -100,7 +100,7 @@ public class ExportController {
 
 		try {
 			if (pl.getDescription() != null) {
-				response.getWriter().write(";" + pl.getDescription() + "\n");
+				response.getWriter().write("#" + pl.getDescription() + "\n");
 			}
 			
 			if(pl.getAccessionNumbers() != null){
