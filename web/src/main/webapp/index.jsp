@@ -118,6 +118,13 @@ table td {
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			
 		    	<a class="navbar-brand" href="#">neXtProt API</a>
     		</div>
 
@@ -143,13 +150,13 @@ table td {
 					</a>
 						<ul class="dropdown-menu" role="menu">
 							<!-- News -->
-							<li ng-class="{'active':isActiveDoc('/pages/what-is-new')}"><a
+							<li class="hide" ng-class="{'active':isActiveDoc('/pages/what-is-new')}"><a
 								href="/pages/what-is-new">What's new?</a></li>
-							<li class="divider"></li>
+							<li class="divider hide"></li>
 							<!-- FAQ -->
-							<li ng-class="{'active':isActiveDoc('/pages/faq')}"><a
+							<li  class="hide" ng-class="{'active':isActiveDoc('/pages/faq')}"><a
 								href="/pages/faq">FAQ</a></li>
-							<li class="divider"></li>
+							<li class="divider hide"></li>
 
 							<!-- Found a bug -->
 							<li ng-class=""><a target="_blank"
@@ -158,7 +165,7 @@ table td {
 							</a></li>
 						</ul></li>
 
-					<li ng-class=""><a href="/pages/about">About</a></li>
+					<li ng-class=""><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/about.md" target="_blank">About</a></li>
 					<li ng-class=""><a
 						href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact
 							us</a></li>
@@ -192,7 +199,7 @@ table td {
 	<div class="container-fluid">
 		<div class="row">
 			
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<div id="maindiv" style="display:none;"></div>
 				
 				<div class="panel-group" id="side-accordion" aria-multiselectable="true" style="display: none;">
@@ -210,7 +217,7 @@ table td {
 						</div>
 					</div>
 					
-					<div class="panel panel-default">
+					<div class="panel panel-default hide">
 						<div class="panel-heading" id="panel-objects">
 							<h4 class="panel-title">
 								<a id="panel-objects" href="#_panel-objects" data-toggle="collapse" data-parent="#side-accordion" aria-controls="_panel-objects" aria-expanded="true">Objects</a>
@@ -223,7 +230,7 @@ table td {
 						</div>
 					</div>
 					
-					<div class="panel panel-default">
+					<div class="panel panel-default hide">
 						<div class="panel-heading" id="panel-flows">
 							<h4 class="panel-title">
 								<a id="panel-flows" href="#_panel-flows" data-toggle="collapse" data-parent="#side-accordion" aria-controls="_panel-flows" aria-expanded="true">Flows</a>
@@ -240,17 +247,51 @@ table td {
 				
 			</div>
 
-			<div class="col-md-5">
+			<div class="col-md-4">
 				<div id="content"></div>			
 			</div>
 			
-			<div class="col-md-4">
+			<div class="col-md-6">
 				<div id="testContent"></div>			
 			</div>
 		</div>
 	</div>
 
-<script id="main" type="text/x-handlebars-template">
+	<!-- Footer
+  ================================================== -->
+	<footer class="container text-center small">
+		<hr />
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="col-md-4">
+					<ul class="nav nav-pills nav-stacked">
+						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/legal%20disclaimer.md" target="_blank">Legal disclaimer</a></li>
+					</ul>
+				</div>
+				<div class="col-md-4">
+					<ul class="nav nav-pills nav-stacked">
+						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2015 SIB</a></li>
+					</ul>
+				</div>
+				<div class="col-md-4">
+					<ul class="nav nav-pills nav-stacked">
+						<li><a href="https://github.com/calipho-sib/nextprot-api"
+							target="_blank"><i class="icon-github"></i>For developers</a></li>
+						</a>
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-3">
+					<ul class="nav nav-pills nav-stacked">
+					</ul>
+				</div>
+			</div>
+		</div>
+		<hr />
+	</footer>
+
+
+	<script id="main" type="text/x-handlebars-template">
 <blockquote>
   <p style="text-transform: uppercase;">API info</span></p>
   <small>Version: {{version}}</small>
@@ -395,19 +436,6 @@ table td {
 								<td><code>{{this.name}}</code></td>
 								<td>{{this.description}}</td>
 							</tr>
-							{{#if this.allowedvalues}}
-								<tr>
-									<td></td>
-									<td>Allowed values: {{this.allowedvalues}}</td>
-								</tr>
-							{{/if}}
-							{{else}}
-							<tr>
-								<td><code>{{this.name}}</code></td>
-								{{#if this.allowedvalues}}
-									<td>Allowed values: {{this.allowedvalues}}</td>
-								{{/if}}
-							</tr>
 							{{/if}}
 						{{/each}}
 					{{/if}}
@@ -430,12 +458,6 @@ table td {
 								<td></td>
 								<td>Type: <code>{{this.jsondocType.oneLineText}}</code></td>
 							</tr>
-							{{#if this.allowedvalues}}
-							<tr>
-								<td></td>
-								<td>Allowed values: {{this.allowedvalues}}</td>
-							</tr>
-							{{/if}}
 							{{#if this.format}}
 							<tr>
 								<td></td>
@@ -463,12 +485,6 @@ table td {
 								<td></td>
 								<td>Type: <code>{{this.jsondocType.oneLineText}}</code></td>
 							</tr>
-							{{#if this.allowedvalues}}
-							<tr>
-								<td></td>
-								<td>Allowed values: {{this.allowedvalues}}</td>
-							</tr>
-							{{/if}}
 							{{#if this.format}}
 							<tr>
 								<td></td>
@@ -630,7 +646,7 @@ table td {
 			{{#pathparameters}}
 				<div class="form-group">
 					<label class="control-label" for="i_{{name}}">{{name}}</label>
-					<input type="text" class="form-control" id="i_{{name}}" name="{{name}}" placeholder="{{name}}">
+					<input type="text" class="form-control" id="i_{{name}}" name="{{name}}" placeholder="{{name}}" value="{{allowedvalues}}">
 				</div>
 			{{/pathparameters}}
 		</div>
@@ -857,14 +873,15 @@ table td {
 	function printResponse(data, res, url) {
 		if(res.responseXML != null) {
 			$("#response").text(formatXML(res.responseText));
+		} else if (url.endsWith("ttl")) {
+			$("#response").text(res.responseText);
 		} else {
 			$("#response").text(JSON.stringify(data, undefined, 2));
 		}
 		
-		prettyPrint();
 		$("#responseStatus").text(res.status);
 		$("#responseHeaders").text(res.getAllResponseHeaders());
-		$("#requestURL").text(url);
+		$("#requestURL").html("<a href='" + url + "' target='_blank'>" + url + "</a>");
 		$('#testButton').button('reset');
 		$("#resInfo").show();
 	}
@@ -967,8 +984,13 @@ table td {
 					
 					$('#testButton').button('loading');
 					
+					var suffix = "xml";
+					if (headers["Accept"] == "application/json")
+						suffix = "json"
+					if (headers["Accept"] == "text/turtle")
+						suffix = "ttl"
 					var res = $.ajax({
-						url : model.basePath + replacedPath,
+						url : model.basePath + replacedPath + "." + suffix,
 						type: method.verb,
 						data: $("#inputJson").val(),
 						headers: headers,
@@ -1049,7 +1071,6 @@ table td {
 				var objecttemplateHTML = objecttemplate(o);
 				$("#testContent").html(objecttemplateHTML);
 				$("#testContent").show();
-				prettyPrint();
 			});
 		});
 		

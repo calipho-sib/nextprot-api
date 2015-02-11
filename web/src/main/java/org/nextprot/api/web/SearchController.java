@@ -3,7 +3,6 @@ package org.nextprot.api.web;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
@@ -32,7 +31,7 @@ import com.google.common.base.Joiner;
 
 @Lazy
 @Controller
-@Api(name="Search", description="Method to search")
+//@Api(name="Search", description="Method to search")
 public class SearchController {
 
 //	private final Log Logger = LogFactory.getLog(SearchController.class);
