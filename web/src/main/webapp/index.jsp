@@ -199,7 +199,7 @@ table td {
 	<div class="container-fluid">
 		<div class="row">
 			
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<div id="maindiv" style="display:none;"></div>
 				
 				<div class="panel-group" id="side-accordion" aria-multiselectable="true" style="display: none;">
@@ -247,11 +247,11 @@ table td {
 				
 			</div>
 
-			<div class="col-md-5">
+			<div class="col-md-4">
 				<div id="content"></div>			
 			</div>
 			
-			<div class="col-md-4">
+			<div class="col-md-6">
 				<div id="testContent"></div>			
 			</div>
 		</div>
