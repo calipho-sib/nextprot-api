@@ -143,13 +143,13 @@ table td {
 					</a>
 						<ul class="dropdown-menu" role="menu">
 							<!-- News -->
-							<li ng-class="{'active':isActiveDoc('/pages/what-is-new')}"><a
+							<li class="hide" ng-class="{'active':isActiveDoc('/pages/what-is-new')}"><a
 								href="/pages/what-is-new">What's new?</a></li>
-							<li class="divider"></li>
+							<li class="divider hide"></li>
 							<!-- FAQ -->
-							<li ng-class="{'active':isActiveDoc('/pages/faq')}"><a
+							<li  class="hide" ng-class="{'active':isActiveDoc('/pages/faq')}"><a
 								href="/pages/faq">FAQ</a></li>
-							<li class="divider"></li>
+							<li class="divider hide"></li>
 
 							<!-- Found a bug -->
 							<li ng-class=""><a target="_blank"
