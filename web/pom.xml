@@ -45,6 +45,13 @@
 			<artifactId>nextprot-api-rdf</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!-- github libraries -->
+		<dependency>
+			<groupId>org.kohsuke</groupId>
+			<artifactId>github-api</artifactId>
+			<version>1.59</version>
+		</dependency>
+
 		<!-- used for tests -->
 		<dependency>
 			<groupId>org.nextprot</groupId>

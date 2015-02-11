@@ -128,4 +128,9 @@
 		statistics="true" copyOnRead="true" copyOnWrite="true">
 	</cache>
 
+	<!-- GitHub Pages -->
+
+	<cache name="github-pages" maxEntriesLocalHeap="1000" timeToLiveSeconds="60"
+		eternal="true" statistics="true" />
+
 </ehcache>
