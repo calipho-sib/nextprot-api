@@ -436,19 +436,6 @@ table td {
 								<td><code>{{this.name}}</code></td>
 								<td>{{this.description}}</td>
 							</tr>
-							{{#if this.allowedvalues}}
-								<tr>
-									<td></td>
-									<td>Allowed values: {{this.allowedvalues}}</td>
-								</tr>
-							{{/if}}
-							{{else}}
-							<tr>
-								<td><code>{{this.name}}</code></td>
-								{{#if this.allowedvalues}}
-									<td>Allowed values: {{this.allowedvalues}}</td>
-								{{/if}}
-							</tr>
 							{{/if}}
 						{{/each}}
 					{{/if}}
@@ -471,12 +458,6 @@ table td {
 								<td></td>
 								<td>Type: <code>{{this.jsondocType.oneLineText}}</code></td>
 							</tr>
-							{{#if this.allowedvalues}}
-							<tr>
-								<td></td>
-								<td>Allowed values: {{this.allowedvalues}}</td>
-							</tr>
-							{{/if}}
 							{{#if this.format}}
 							<tr>
 								<td></td>
@@ -504,12 +485,6 @@ table td {
 								<td></td>
 								<td>Type: <code>{{this.jsondocType.oneLineText}}</code></td>
 							</tr>
-							{{#if this.allowedvalues}}
-							<tr>
-								<td></td>
-								<td>Allowed values: {{this.allowedvalues}}</td>
-							</tr>
-							{{/if}}
 							{{#if this.format}}
 							<tr>
 								<td></td>
@@ -671,7 +646,7 @@ table td {
 			{{#pathparameters}}
 				<div class="form-group">
 					<label class="control-label" for="i_{{name}}">{{name}}</label>
-					<input type="text" class="form-control" id="i_{{name}}" name="{{name}}" placeholder="{{name}}">
+					<input type="text" class="form-control" id="i_{{name}}" name="{{name}}" placeholder="{{name}}" value="{{allowedvalues}}">
 				</div>
 			{{/pathparameters}}
 		</div>
