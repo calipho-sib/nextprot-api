@@ -165,7 +165,7 @@ table td {
 							</a></li>
 						</ul></li>
 
-					<li ng-class=""><a href="/pages/about">About</a></li>
+					<li ng-class=""><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/about.md" target="_blank">About</a></li>
 					<li ng-class=""><a
 						href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact
 							us</a></li>
