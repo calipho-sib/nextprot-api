@@ -210,7 +210,7 @@ table td {
 						</div>
 					</div>
 					
-					<div class="panel panel-default">
+					<div class="panel panel-default hide">
 						<div class="panel-heading" id="panel-objects">
 							<h4 class="panel-title">
 								<a id="panel-objects" href="#_panel-objects" data-toggle="collapse" data-parent="#side-accordion" aria-controls="_panel-objects" aria-expanded="true">Objects</a>
@@ -223,7 +223,7 @@ table td {
 						</div>
 					</div>
 					
-					<div class="panel panel-default">
+					<div class="panel panel-default hide">
 						<div class="panel-heading" id="panel-flows">
 							<h4 class="panel-title">
 								<a id="panel-flows" href="#_panel-flows" data-toggle="collapse" data-parent="#side-accordion" aria-controls="_panel-flows" aria-expanded="true">Flows</a>
