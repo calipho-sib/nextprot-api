@@ -873,13 +873,15 @@ table td {
 	function printResponse(data, res, url) {
 		if(res.responseXML != null) {
 			$("#response").text(formatXML(res.responseText));
+		} else if (url.endsWith("ttl")) {
+			$("#response").text(res.responseText);
 		} else {
 			$("#response").text(JSON.stringify(data, undefined, 2));
 		}
 		
 		$("#responseStatus").text(res.status);
 		$("#responseHeaders").text(res.getAllResponseHeaders());
-		$("#requestURL").text(url);
+		$("#requestURL").html("<a href='" + url + "' target='_blank'>" + url + "</a>");
 		$('#testButton').button('reset');
 		$("#resInfo").show();
 	}
@@ -982,8 +984,13 @@ table td {
 					
 					$('#testButton').button('loading');
 					
+					var suffix = "xml";
+					if (headers["Accept"] == "application/json")
+						suffix = "json"
+					if (headers["Accept"] == "text/turtle")
+						suffix = "ttl"
 					var res = $.ajax({
-						url : model.basePath + replacedPath,
+						url : model.basePath + replacedPath + "." + suffix,
 						type: method.verb,
 						data: $("#inputJson").val(),
 						headers: headers,
