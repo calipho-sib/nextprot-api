@@ -250,7 +250,41 @@ table td {
 		</div>
 	</div>
 
-<script id="main" type="text/x-handlebars-template">
+	<!-- Footer
+  ================================================== -->
+	<footer class="container text-center small">
+		<hr />
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="col-md-4">
+					<ul class="nav nav-pills nav-stacked">
+						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/legal%20disclaimer.md" target="_blank">Legal disclaimer</a></li>
+					</ul>
+				</div>
+				<div class="col-md-4">
+					<ul class="nav nav-pills nav-stacked">
+						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2015 SIB</a></li>
+					</ul>
+				</div>
+				<div class="col-md-4">
+					<ul class="nav nav-pills nav-stacked">
+						<li><a href="https://github.com/calipho-sib/nextprot-api"
+							target="_blank"><i class="icon-github"></i>For developers</a></li>
+						</a>
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-3">
+					<ul class="nav nav-pills nav-stacked">
+					</ul>
+				</div>
+			</div>
+		</div>
+		<hr />
+	</footer>
+
+
+	<script id="main" type="text/x-handlebars-template">
 <blockquote>
   <p style="text-transform: uppercase;">API info</span></p>
   <small>Version: {{version}}</small>
