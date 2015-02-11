@@ -877,7 +877,6 @@ table td {
 			$("#response").text(JSON.stringify(data, undefined, 2));
 		}
 		
-		prettyPrint();
 		$("#responseStatus").text(res.status);
 		$("#responseHeaders").text(res.getAllResponseHeaders());
 		$("#requestURL").text(url);
@@ -1065,7 +1064,6 @@ table td {
 				var objecttemplateHTML = objecttemplate(o);
 				$("#testContent").html(objecttemplateHTML);
 				$("#testContent").show();
-				prettyPrint();
 			});
 		});
 		
