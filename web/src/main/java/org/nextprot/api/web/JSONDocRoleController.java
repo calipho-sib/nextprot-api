@@ -2,12 +2,26 @@ package org.nextprot.api.web;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jsondoc.core.pojo.ApiDoc;
+import org.jsondoc.core.pojo.ApiMethodDoc;
+import org.jsondoc.core.pojo.ApiVerb;
+import org.jsondoc.core.pojo.JSONDoc;
 import org.jsondoc.springmvc.controller.JSONDocController;
+import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.export.impl.ExportServiceImpl;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class JSONDocRoleController extends JSONDocController {
@@ -18,6 +32,8 @@ public class JSONDocRoleController extends JSONDocController {
 	private static String version = "0.1 beta";
 	private static String basePath = "http://alpha-api.nextprot.org";
 	private static List<String> packages = Arrays.asList(new String[] { "org.nextprot.api" });
+    
+    private JSONDoc jsonDoc;
 
 	public JSONDocRoleController() {
 		super(version, basePath, packages);
@@ -38,38 +54,37 @@ public class JSONDocRoleController extends JSONDocController {
 //		this.packages = packages;
 //	}
 //
-//	@PostConstruct
-//	public void init() {
-//
-//		apiDoc = JSONDocUtils.getApiDoc(version, basePath, packages);
-//		for(ApiDoc a : apiDoc.getApis()) {
-//			ApiMethodDoc met = null;
-//			if(a.getName().equals("Entry") && (a.getMethods() != null) && (!a.getMethods().isEmpty())){
-//				met = a.getMethods().get(0);
-//				//System.out.println(met);
-//			}
-//			
-//			if (a.getName().equals("Entry")) {
-//				for (AnnotationApiModel model : AnnotationApiModel.values()) {
-//					
-//					ApiMethodDoc m = new ApiMethodDoc();
-//					m.setQueryparameters(met.getQueryparameters());
-//					m.setProduces(met.getProduces());
-//					m.setConsumes(met.getConsumes());
-//					m.setDescription("Exports only the " + model.getDescription() + " from an entry. It locates on the hierarchy: " + model.getHierarchy());
-//					m.setPath("/entry/{entry}/" + StringUtils.decamelizeAndReplaceByHyphen(model.getApiTypeName()));
-//					m.setVerb(ApiVerb.GET);
-//					a.getMethods().add(m);
-//				}
-//			}
-//
-//		}
-//	}
+	@PostConstruct
+	public void init() {
+		jsonDoc = new SpringJSONDocScanner().getJSONDoc(version, basePath, packages);
+		for(Set<ApiDoc> apiDocs: jsonDoc.getApis().values()) {
+			for(ApiDoc apiDoc: apiDocs) {
+				ApiMethodDoc met = null;
+				if(apiDoc.getName().equals("Entry") && apiDoc.getMethods() != null && !apiDoc.getMethods().isEmpty()) {
+					met = apiDoc.getMethods().iterator().next();
+				}
+				
+				if (apiDoc.getName().equals("Entry")) {
+					for (AnnotationApiModel model: AnnotationApiModel.values()) {
+						ApiMethodDoc m = new ApiMethodDoc();
+						m.setQueryparameters(met.getQueryparameters());
+						m.setProduces(met.getProduces());
+						m.setConsumes(met.getConsumes());
+						m.setDescription("Exports only the " + model.getDescription() + " from an entry. It locates on the hierarchy: " + model.getHierarchy());
+						m.setPath("/entry/{entry}/" + StringUtils.decamelizeAndReplaceByHyphen(model.getApiTypeName()));
+						m.setVerb(ApiVerb.GET);
+						apiDoc.getMethods().add(m);
+					}
+				}
+			}
+		}
+		System.out.println("@PostConstruct / init()");
+		
+	}
 
-//	@RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//	@Override
-//	public @ResponseBody JSONDoc getApi() {
-//
+	@RequestMapping(value = JSONDocController.JSONDOC_DEFAULT_PATH, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Override
+	public @ResponseBody JSONDoc getApi() {
 //		Set<String> contextRoles = NPSecurityContext.getCurrentUserRoles();
 //		LOGGER.info("Context roles");
 //		for (String role : contextRoles) {
@@ -116,5 +131,6 @@ public class JSONDocRoleController extends JSONDocController {
 //
 //		return contextJSONDoc;
 //
-//	}
+		return jsonDoc;
+	}
 }
