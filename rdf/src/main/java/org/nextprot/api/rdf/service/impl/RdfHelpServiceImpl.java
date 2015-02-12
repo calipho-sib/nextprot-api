@@ -55,7 +55,7 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 
 	@Cacheable("rdfhelp")
 	@Override
-	public List<RdfTypeInfo> getRdfTypeFullInfoList() {
+	public synchronized List<RdfTypeInfo> getRdfTypeFullInfoList() {
 
 		Set<String> rdfTypesNames = getAllRdfTypesNames();
 		List<Future<RdfTypeInfo>> rdfFutureTypes = new ArrayList<Future<RdfTypeInfo>>();
