@@ -1,11 +1,17 @@
 package org.nextprot.api.web;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,6 +26,7 @@ import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.export.impl.ExportServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,6 +66,7 @@ public class JSONDocRoleController extends JSONDocController {
 //
 	@PostConstruct
 	public void init() {
+		version = getMavenVersion();
 		jsonDoc = new SpringJSONDocScanner().getJSONDoc(version, basePath, packages);
 		for(Set<ApiDoc> apiDocs: jsonDoc.getApis().values()) {
 			for(ApiDoc apiDoc: apiDocs) {
@@ -144,5 +152,23 @@ public class JSONDocRoleController extends JSONDocController {
 //		return contextJSONDoc;
 //
 		return jsonDoc;
+	}
+	
+	@Autowired
+	ServletContext servletContext;
+	
+	private String getMavenVersion() {
+	    try {
+
+	    	String appServerHome = servletContext.getRealPath("/");
+		    File manifestFile = new File(appServerHome, "META-INF/MANIFEST.MF");
+		    Manifest mf = new Manifest();
+	    	mf.read(new FileInputStream(manifestFile));
+		    Attributes atts = mf.getMainAttributes();
+		    return atts.getValue("Implementation-Build");
+
+	    } catch (IOException e) {
+	    	return "unknown";
+		}
 	}
 }
