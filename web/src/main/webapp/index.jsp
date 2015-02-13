@@ -84,21 +84,18 @@
 				<ul class="nav navbar-nav navbar-right">
 
 					<!-- login button -->
-					<li ng-if="!user.profile.email"><a href='' type="button"
-						class="link" ng-click="login()">Login</a></li>
-
+					<li class="li-login" >
+						<a href='' type="button" class="link btn-login">Login</a>
+					</li>
 					<!-- once logged in user resources -->
-<!-- 					<li class="dropdown" ng-if="user.profile.email" ng-cloak><a -->
-<!-- 						href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.profile.name -->
-<!-- 							|| user.profile.email}}<span class="caret"></span> -->
-<!-- 					</a> -->
+					<li class="dropdown li-logout" style="display:none;" >
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<span class="email"></span><span class="caret"></span>
+						</a>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="/user">My profile</a></li>
-							<li><a href="/user/protein/lists">My protein lists</a></li>
-							<li><a href="/user/queries">My queries</a></li>
-							<li><a href="/user/applications">My applications</a></li>
-							<li class="divider"></li>
-							<li><a href="#" ng-click="logout()">Logout</a></li>
+							<li>
+								<a href='' class="btn-logout"">Logout</a>
+							</li>
 						</ul></li>
 				</ul>
 			</div>
@@ -1027,6 +1024,58 @@
 	}
 	checkURLExistence();
 
+</script>
+
+<!-- Auth0 lock script -->
+<script src="//cdn.auth0.com/js/lock-7.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<script>
+	var lock = null;
+
+	$(document).ready(function() {
+		lock = new Auth0Lock('7vS32LzPoIR1Y0JKahOvUCgGbn94AcFW', 'nextprot.auth0.com');
+	
+   		var userProfile;
+		
+   		$('.btn-login').click(function(e) {
+			e.preventDefault();
+			lock.show(function(err, profile, token) {
+				if (err) {
+					// Error callback
+					alert('There was an error');
+				} else {
+					// Success calback
+					// Save the JWT token.
+					localStorage.setItem('userToken', token);
+	
+					// Save the profile
+					userProfile = profile;
+					
+					$('.li-login').hide();
+					$('.li-logout').show();
+					$('.email').text(userProfile.email);
+					console.log("debug info after login" , userProfile);
+				}
+			});
+		});
+   		
+   		$('.btn-logout').click(function(e) {
+   			localStorage.removeItem('userToken');
+	   		userProfile = null;
+   			window.location.href = "/";
+			$('.li-logout').hide();
+			$('.li-login').show();
+			console.log("debug info after logout " , userProfile);
+   		});
+
+		$.ajaxSetup({
+			'beforeSend': function(xhr) {
+				if (localStorage.getItem('userToken')) {
+					xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('userToken'));
+				}
+			}
+		});
+	});
 </script>
 
 </body>
