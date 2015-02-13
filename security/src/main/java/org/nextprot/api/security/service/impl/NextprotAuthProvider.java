@@ -1,11 +1,17 @@
 package org.nextprot.api.security.service.impl;
 
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.spring.security.auth0.Auth0JWTToken;
-import com.auth0.spring.security.auth0.Auth0TokenException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.security.service.JWTCodec;
+import org.nextprot.api.security.service.NextprotAuth0Endpoint;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,11 +23,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SignatureException;
-import java.util.*;
+import com.auth0.Auth0User;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.spring.security.auth0.Auth0JWTToken;
+import com.auth0.spring.security.auth0.Auth0TokenException;
 
 public class NextprotAuthProvider implements AuthenticationProvider, InitializingBean {
 
@@ -29,6 +34,9 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 	private String clientSecret;
 	private String clientId;
 	private final Log logger = LogFactory.getLog(NextprotAuthProvider.class);
+
+	//@Autowired
+	//private NextprotAuth0Endpoint nextprotAuth0Endpoint;
 
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -43,15 +51,45 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 		this.logger.debug("Trying to authenticate with token: " + token);
 		try {
 
-			Map<String, Object> map = jwtVerifier.verify(token);
-
+			Map<String, Object> map = null;
+			Auth0User auth0User = null;
+			
+			//Should put this in 2 different providers
+			if(token.split("\\.").length == 3){
+				//it's the id token (JWT)
+				map = jwtVerifier.verify(token);
+				this.logger.debug("Authenticating with JWT");
+			} /* else { // not using access token for now
+				try {
+					
+					this.logger.debug("Will ask auth0 service");
+					
+					//in case we send the access token
+					auth0User = nextprotAuth0Endpoint.fetchUser(token);
+					this.logger.debug("Authenticating with access token (asking auth0 endpoint)" + auth0User);
+					
+				}catch (Exception e){
+					e.printStackTrace();
+					this.logger.error(e.getMessage());
+					throw new SecurityException("client id not found");
+				}
+			}*/
+			
 			this.logger.debug("Decoded JWT token" + map);
 
 			UserDetails userDetails;
 
 			// UI Widget map
-			if (map.containsKey("email")) {
-				String username = (String) map.get("email");
+			if ((auth0User != null && auth0User.getEmail() != null) || (map != null && map.containsKey("email"))) {
+
+				String username = null;
+				if(auth0User != null && auth0User.getEmail() != null) {
+					 username = auth0User.getEmail();
+				}
+				else {
+					username = (String) map.get("email");
+				}
+				
 				if (username != null) {
 					userDetails = userDetailsService.loadUserByUsername(username);
 					authentication.setAuthenticated(true);
@@ -62,7 +100,7 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
 				else return null;
 			}
 			// Codec map
-			else if (map.containsKey("payload")) {
+			else if (map != null && map.containsKey("payload")) {
 
 				Map<String, Object> payload = codec.decodeJWT(token);
 				String username = (String) payload.get("email");
@@ -164,52 +202,6 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
         return usrToken;
     }
 
-	/*
-	private String extractUserEmail(Map<String, Object> map) throws IOException {
+ 
 
-		// UI Widget map
-		if (map.containsKey("email")) {
-
-			return (String) map.get("email");
-		}
-
-		// Codec
-		else if (map.containsKey("payload")) {
-
-			Map<String, Object> payload = new ObjectMapper().readValue((String) map.get("payload"),
-					Map.class);
-
-			return (String) payload.get("email");
-		}
-
-		return null;
-	}
-
-	private UserDetails extractUserDetails(Map<String, Object> map) throws IOException {
-
-		String email = extractUserEmail(map);
-
-		if (email != null) {
-
-			UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-			if (map.containsKey("payload")) {
-
-				Map<String, Object> payload = null;
-				payload = new ObjectMapper().readValue((String) map.get("payload"),
-                            Map.class);
-
-				userDetails.getAuthorities().clear();
-
-				for (String authority : (List<String>) payload.get("authorities")) {
-
-					((Set<GrantedAuthority>)userDetails.getAuthorities()).add(new SimpleGrantedAuthority(authority));
-				}
-			}
-		}
-
-		return null;
-	}
-	}
-	 */
 }

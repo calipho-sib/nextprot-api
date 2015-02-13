@@ -1,34 +1,40 @@
 package org.nextprot.api.web;
 
-import com.google.common.base.Joiner;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.jsondoc.core.annotation.Api;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jsondoc.core.annotation.ApiMethod;
-import org.jsondoc.core.annotation.ApiParam;
+import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.solr.*;
+import org.nextprot.api.solr.Query;
+import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.SearchResult;
+import org.nextprot.api.solr.SolrConfiguration;
+import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.google.common.base.Joiner;
 
 @Lazy
 @Controller
-@Api(name="Search", description="Method to search", role="ROLE_SEARCH")
+//@Api(name="Search", description="Method to search")
 public class SearchController {
 
-	private final Log Logger = LogFactory.getLog(SearchController.class);
+//	private final Log Logger = LogFactory.getLog(SearchController.class);
 	@Autowired private SolrService queryService;
 	@Autowired private SparqlService sparqlService;
 	@Autowired private SparqlEndpoint sparqlEndpoint;
@@ -81,11 +87,12 @@ public class SearchController {
 			} else {
 				query = this.queryService.buildQuery(indexName, "simple", queryRequest);
 			}
-			
+						
 			SearchResult result;
 			try {
 				result = this.queryService.executeQuery(query);
 				model.addAttribute("result", result);
+				model.addAttribute("StringUtils", StringUtils.class);
 			} catch (SearchQueryException e) {
 				e.printStackTrace();
 				model.addAttribute("errormessage", e.getMessage());
@@ -102,13 +109,13 @@ public class SearchController {
 	@ApiMethod(path = "/autocomplete/{index}", verb = ApiVerb.GET, description = "")
 	@RequestMapping(value="/autocomplete/{index}", method={RequestMethod.GET, RequestMethod.POST})
 	public String autocomplete(
-			@ApiParam(name="index", allowedvalues={"entry", "terms", "publication"}, required=true) @PathVariable("index") String indexName, 
-			@ApiParam(name="query", description="Search query", required=true) @RequestParam(value="query", required=true) String queryString,
-			@ApiParam(name="quality", description="Quality GOLD/BRONZE") @RequestParam(value="quality", required=false) String quality, 
-			@ApiParam(name="sort") @RequestParam(value="sort", required=false) String sort,
-			@ApiParam(name="order") @RequestParam(value="order", required=false) String order,
-			@ApiParam(name="start") @RequestParam(value="start", required=false) String start, 
-			@ApiParam(name="rows") @RequestParam(value="rows", required=false) String rows,
+			@ApiQueryParam(name="index", allowedvalues={"entry", "terms", "publication"}, required=true) @PathVariable("index") String indexName, 
+			@ApiQueryParam(name="query", description="Search query", required=true) @RequestParam(value="query", required=true) String queryString,
+			@ApiQueryParam(name="quality", description="Quality GOLD/BRONZE") @RequestParam(value="quality", required=false) String quality, 
+			@ApiQueryParam(name="sort") @RequestParam(value="sort", required=false) String sort,
+			@ApiQueryParam(name="order") @RequestParam(value="order", required=false) String order,
+			@ApiQueryParam(name="start") @RequestParam(value="start", required=false) String start, 
+			@ApiQueryParam(name="rows") @RequestParam(value="rows", required=false) String rows,
 			@RequestParam(value="filter", required=false) String filter,
 			Model model) {
 		
@@ -183,7 +190,7 @@ public class SearchController {
 		
 		String queryString = "id:" + ( accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next() );
 		
-		SolrIndex index = this.configuration.getIndexByName("entry");
+//		SolrIndex index = this.configuration.getIndexByName("entry");
 		
 		Query query = this.queryService.buildQuery("entry", "pl_search", queryString, "", sort, order, start, rows, filter);
 		

@@ -1,6 +1,5 @@
 package org.nextprot.api.rdf.controller;
 
-import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Lazy
 @Controller
-@Api(name = "Schema", description = "Method to retrieve the complete or partial RDF schema of neXtProt.", role="ROLE_RDF")
+//@Api(name = "Schema", description = "Method to retrieve the complete or partial RDF schema of neXtProt.")
 public class SchemaController {
 
 	@Autowired private SchemaService schemaService;

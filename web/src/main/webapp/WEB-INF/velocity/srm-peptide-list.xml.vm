@@ -13,14 +13,7 @@
 			#parse('target-isoform-list.xml.vm')			
 			<evidence-list>
 				#foreach($evidence in $peptide.evidences)
-					<evidence 
-						is-negative='false' 
-						evidence-code='ECO:0001096' 
-						resource-assoc-type='evidence'
-						resource-internal-ref='$evidence.resourceId'  
-						resource-type='$evidence.resourceType'
-						source-internal-ref='$evidence.assignedBy'
-					/>
+					<evidence is-negative='false' evidence-code='ECO:0001096' resource-assoc-type='evidence' resource-internal-ref='$evidence.resourceId' resource-type='$evidence.resourceType' source-internal-ref='$evidence.assignedBy'/>
 				#end
 			</evidence-list>
 		</peptide-mapping>

@@ -19,7 +19,7 @@ import java.util.Set;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
-@Api(name = "User Protein Lists", description = "Method to manipulate user protein lists", role = "ROLE_USER")
+@Api(name = "User Protein Lists", description = "Method to manipulate user protein lists")
 public class UserProteinListController {
 
 	@Autowired

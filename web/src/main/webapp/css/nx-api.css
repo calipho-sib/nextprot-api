@@ -3,25 +3,37 @@ body {
 	padding-bottom: 40px;
 }
 
-.sidebar-nav {
-	padding: 9px 0;
-}
-
 .GET {
-	padding-top : 3px;
+	padding-top : 5px;
 	background-color: #468847;
 }
+.PATCH {
+    padding-top : 5px;
+    background-color: #5bc0de;
+}
 .POST {
-	padding-top : 3px;
+	padding-top : 5px;
 	background-color: #3A87AD;
 }
 .PUT {
-	padding-top : 3px;
+	padding-top : 5px;
 	background-color: #F89406;
 }
 .DELETE {
-	padding-top : 3px;
+	padding-top : 5px;
 	background-color: #B94A48;
+}
+.OPTIONS {
+	padding-top : 5px;
+	background-color: #6B5463;
+}
+.TRACE {
+	padding-top : 5px;
+	background-color: #8E6C6E;
+}
+.HEAD {
+	padding-top : 5px;
+	background-color: #AA9A66;
 }
 
 blockquote small:before {
@@ -63,10 +75,27 @@ ol.linenums li {
   text-shadow: 0 1px 0 #fff;
 }
 
-/* Don't display the object for now */
-#objectdiv {display: none;}
+table td {
+	word-wrap: break-word;
+}
 
-.profile-dev .profile-header { background-color: greenyellow;}
-.profile-dev .nickname {display: none}
-.profile-dev .btn-login, .profile-dev .btn-logout { display: none !important;}
-.profile-dev .devenv:after { content: "YOU ARE IN DEVELOPMENT ENVIRONMENT: AUHTENTICATION IS DISABLED";}
+.border-radius-none {
+	border-radius: 0px;
+}
+
+.font-monospace {
+	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
+}
+
+#content a {
+	font-size: 14px;
+	line-height: 16px;
+	color: #337AB7;
+	text-decoration:none;
+	font-weight: normal;
+}
+
+#content a:hover {
+	color:#23527C;
+	text-decoration:underline;
+}

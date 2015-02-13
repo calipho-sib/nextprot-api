@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.core.aop.requests.RequestInfo;
@@ -23,7 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_ADMIN')")
-@Api(name = "ROLE_ADMIN", description = "Admin operations", role = "ROLE_ADMIN")
+//@Api(name = "ROLE_ADMIN", description = "Admin operations")
 public class AdminController {
 
 	private static final Log LOGGER = LogFactory.getLog(AdminController.class);

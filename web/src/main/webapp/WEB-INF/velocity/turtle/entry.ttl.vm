@@ -6,9 +6,18 @@ entry:$entry.getUniqueName() a :Entry;
 ## Links to isoforms
 #foreach($isoform in $entry.getIsoforms())
 #set($isoform-name =  $isoform.getUniqueName())
-  :isoform isoform:$isoform-name;
+  :isoform isoform:$isoform-name ;
 #end
   .
+
+#foreach($isoform in $entry.getIsoforms())
+#if($isoform.isSwissProtDisplayedIsoform()) 
+isoform:$isoform-name :swissprotDisplayed "true"^^xsd:boolean . 
+#else
+isoform:$isoform-name :swissprotDisplayed "false"^^xsd:boolean . 
+#end
+#end
+
 
 # Overview
 #parse('turtle/overview.ttl.vm')

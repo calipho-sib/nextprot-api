@@ -1,6 +1,5 @@
 package org.nextprot.api.web;
 
-import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Lazy
 @Controller
-@Api(name = "Interaction", description = "Method to retrieve the list of existing interactions", role = "ROLE_RDF")
+//@Api(name = "Interaction", description = "Method to retrieve the list of existing interactions")
 public class InteractionController {
 
 

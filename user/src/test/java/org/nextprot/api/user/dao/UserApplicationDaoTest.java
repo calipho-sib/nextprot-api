@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-@DatabaseSetup(value = "UserApplicationDaoTest.xml", type = DatabaseOperation.INSERT)
+@DatabaseSetup(value = "UserApplicationDaoTest.xml", type = DatabaseOperation.CLEAN_INSERT)
 // NOTE: below annotation used to tell dbunit to ignore DTD else INSERT statement fill the missing columns
 // with nulls instead of default value and causes an exception.
 @DbUnitConfiguration(dataSetLoader = DTDIgnoredFlatXMLDataSet.class)

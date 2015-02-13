@@ -5,15 +5,8 @@
 			#if($antibody.xrefs.size() != 0)
 			<evidence-list>
 				#foreach($xref in $antibody.xrefs)
-				<evidence
-					is-negative='false' 
-					evidence-code='ECO:0000154' 
-					resource-assoc-type='evidence'
-					resource-internal-ref='$xref.dbXrefId'  
-					resource-type='database'
-					source-internal-ref='$antibody.assignedBy'
-					#set($UNESCAPED_CDATA = $xref.resolvedUrl)
-				/>
+				## TODO ??? #set($UNESCAPED_CDATA = $xref.resolvedUrl) this is not used apparently .... why is this here?
+				<evidence is-negative='false' evidence-code='ECO:0000154' resource-assoc-type='evidence' resource-internal-ref='$xref.dbXrefId'  resource-type='database' source-internal-ref='$antibody.assignedBy' #set($UNESCAPED_CDATA = $xref.resolvedUrl) />
 				#end
 			</evidence-list>
 			#end

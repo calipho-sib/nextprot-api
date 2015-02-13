@@ -6,7 +6,6 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -24,7 +23,7 @@ import org.springframework.web.servlet.ViewResolver;
 
 @Lazy
 @Controller
-@Api(name = "DbXref", description = "Method to retrieve the list of existing cross references", role = "ROLE_RDF")
+//@Api(name = "DbXref", description = "Method to retrieve the list of existing cross references")
 public class DbXrefController {
 
 	

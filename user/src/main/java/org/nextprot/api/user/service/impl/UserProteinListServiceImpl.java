@@ -1,6 +1,7 @@
 package org.nextprot.api.user.service.impl;
 
 import org.nextprot.api.commons.exception.NPreconditions;
+import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
@@ -8,6 +9,7 @@ import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.utils.UserProteinListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,8 +52,13 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	}
 
 	@Override
+	@AllowedAnonymous
 	public UserProteinList getUserProteinListById(long listId) {
-		return proteinListDao.getUserProteinListById(listId);
+		try {
+			return proteinListDao.getUserProteinListById(listId);
+		}catch(DataAccessException e){
+			throw new ResourceNotFoundException("The list you are trying to reach is not accessible"); 
+		}
 	}
 
 	@Override

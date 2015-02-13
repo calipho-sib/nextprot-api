@@ -1,6 +1,7 @@
 package org.nextprot.api.web;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -13,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
-import org.jsondoc.core.annotation.ApiParam;
+import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -44,8 +45,8 @@ import org.springframework.web.servlet.ViewResolver;
  * @author dteixeira
  */
 @Lazy
-@Controller 
-@Api(name = "Export", description = "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.", role = "ROLE_USER")
+@Controller
+//@Api(name = "Export", description = "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
 public class ExportController {
 
 	@Autowired
@@ -74,7 +75,7 @@ public class ExportController {
 	@ApiMethod(path = "/export/entries/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Exports the whole chromosome", produces = { MediaType.APPLICATION_XML_VALUE, "text/turtle" })
 	@RequestMapping("/export/entries/chromosome/{chromosome}")
 	public void exportEntriesByChromosome(HttpServletResponse response, HttpServletRequest request,
-			@ApiParam(name = "chromosome", description = "The number of the chromosome. For example, the chromosome 21", allowedvalues = { "21" }) @PathVariable("chromosome") String chromosome) {
+			@ApiQueryParam(name = "chromosome", description = "The number of the chromosome. For example, the chromosome 21", allowedvalues = { "21" }) @PathVariable("chromosome") String chromosome) {
 
 		NPFileFormat format = getRequestedFormat(request);
 		response.setHeader("Content-Disposition", "attachment; filename=\"NXChromosome" + chromosome + "." + format.getExtension() + "\"");
@@ -84,36 +85,51 @@ public class ExportController {
 
 	}
 
-	@ApiMethod(path = "/export/list/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list", produces = { MediaType.APPLICATION_XML_VALUE })
+	@ApiMethod(path = "/export/list/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list")
 	@RequestMapping("/export/list/{listId}")
-	public void exportList(Model model, HttpServletResponse response, HttpServletRequest request,
-			@ApiParam(name = "listname", description = "The list id") @PathVariable("listId") String listId
-	) {
-		
-		NPFileFormat format = getRequestedFormat(request);
-		String fileName = "nextprot-list-" + listId + "." + format.getExtension() ;
+	public void exportList(Model model, HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
+
+		UserProteinList pl = this.proteinListService.getUserProteinListById(Long.valueOf(listId));
+		String fileName = pl.getName() + ".txt";
+
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
-		//TODO should this be secured or not? for now let's say not...
-		//2 ways of doing it: either add the token in the header or generate a secret value for each list that is created 
-		Set<String> accessions = this.proteinListService.getUserProteinListAccessionItemsById(Long.valueOf(listId));
-		
-		List<Future<File>> futures = exportService.exportEntries(accessions, getRequestedFormat(request));
-		ExportUtils.printOutput(new LinkedList<Future<File>>(futures), response);
-		
+		// TODO should this be secured or not? for now let's say not...
+		// 2 ways of doing it: either add the token in the header or generate a
+		// secret value for each list that is created
+
+		try {
+			if (pl.getDescription() != null) {
+				response.getWriter().write("#" + pl.getDescription() + "\n");
+			}
+			
+			if(pl.getAccessionNumbers() != null){
+				Iterator<String> sIt = pl.getAccessionNumbers().iterator();
+				while (sIt.hasNext()) {
+					response.getWriter().write(sIt.next());
+					if(sIt.hasNext()){
+						response.getWriter().write("\n");
+					}
+					
+				}
+			}
+
+		} catch (Exception e) {
+			throw new NextProtException(e.getMessage());
+		}
+
 	}
-	
+/*
 	@ApiMethod(path = "/export/list/{listId}/{view}", verb = ApiVerb.GET, description = "Exports subpart of entries from a list", produces = { MediaType.APPLICATION_XML_VALUE })
 	@RequestMapping("/export/list/{listId}/{view}")
 	public void exportListSubPart(Model model, HttpServletResponse response, HttpServletRequest request,
-			@ApiParam(name = "The view name", description = "The view name") @PathVariable("view") String view,
-			@ApiParam(name = "listname", description = "The list id") @PathVariable("listId") String listId
-	) {
+			@ApiQueryParam(name = "The view name", description = "The view name") @PathVariable("view") String view,
+			@ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
 
 		NPFileFormat format = getRequestedFormat(request);
 
 		Set<String> accessions = this.proteinListService.getUserProteinListAccessionItemsById(Long.valueOf(listId));
-		String fileName = "nextprot-list-" + listId + "-" + view + "." + format.getExtension() ;
+		String fileName = "nextprot-list-" + listId + "-" + view + "." + format.getExtension();
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
 		try {
@@ -133,12 +149,9 @@ public class ExportController {
 			throw new NextProtException(e.getMessage());
 		}
 
-		
+	}*/
 
-	}
-	
-
-	@RequestMapping(value="/export/templates", method = { RequestMethod.GET })
+	@RequestMapping(value = "/export/templates", method = { RequestMethod.GET })
 	@ResponseBody
 	public Map<String, Set<String>> getXMLTemplates() {
 		return NPViews.getFormatViews();

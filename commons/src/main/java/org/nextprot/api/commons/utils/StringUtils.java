@@ -113,6 +113,18 @@ public class StringUtils {
 		return s.trim().replaceAll("(\\p{Ll})(\\p{Lu})","$1 $2").replaceAll(" ", "-").toLowerCase();
 	}
 	
+	/**
+	 * Remove the <+> characters from a string
+	 * Used for suggestions retuurned by solr service
+	 * see issue https://issues.isb-sib.ch/browse/CALIPHOMISC-72
+	 * @param s a string
+	 * @return s with <+> chars removed if any are found
+	 */
+	static public String removePlus(String s) {
+    	return s.replace("+", "");
+    }
+    	
+	
 	/*public static void main(String[] args) {
 		System.out.println(clean("H�llo/OP:� - regex,t\nest.{machine\\"));
 		System.out.println(toCamelCase("Hello_world", true));

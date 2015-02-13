@@ -35,11 +35,6 @@
 			<artifactId>nextprot-api-user</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-queries</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 		<!-- used for tests -->
 		<dependency>
 			<groupId>org.nextprot</groupId>

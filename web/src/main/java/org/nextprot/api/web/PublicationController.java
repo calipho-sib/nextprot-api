@@ -7,9 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
-import org.jsondoc.core.annotation.ApiParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.PublicationService;
@@ -24,7 +22,6 @@ import org.springframework.web.servlet.ViewResolver;
 
 @Lazy
 @Controller
-@Api(name = "Publication", description = "Method to retrieve publication", role = "ROLE_RDF")
 public class PublicationController {
 
 	@Autowired private PublicationService publicationService;
@@ -36,7 +33,7 @@ public class PublicationController {
 	@ApiMethod(path = "/rdf/publication/{md5}", verb = ApiVerb.GET, description = "Exports one neXtProt publication.", produces = {  "text/turtle"})
 	@RequestMapping("/rdf/publication/{md5}")
 	public String findOnePublicationByMd5(
-			@ApiParam(name = "md5", description = "The accession of the neXtProt publication. For example, 178d0394ef78390b0087c12f6c45686a", allowedvalues = { "178d0394ef78390b0087c12f6c45686a"}) @PathVariable("md5") String md5, Model model) {
+			@PathVariable("md5") String md5, Model model) {
 		model.addAttribute("publication", this.publicationService.findPublicationByMD5(md5));
 		model.addAttribute("prefix", true);
 		model.addAttribute("StringUtils", StringUtils.class);
@@ -46,7 +43,7 @@ public class PublicationController {
 	@ApiMethod(path = "/rdf/publication/title/{title}", verb = ApiVerb.GET, description = "Exports one neXtProt publication.", produces = {  "text/turtle"})
 	@RequestMapping("/rdf/publication/title/{title}")
 	public String findOnePublicationByTitle(
-			@ApiParam(name = "title", description = "Part of the title of the neXtProt publication. For example, 'databasesA novel gene expressed in human adrenal gland'", allowedvalues = { "databasesA novel gene expressed in human adrenal gland"}) @PathVariable("title") String title, Model model) {
+			@PathVariable("title") String title, Model model) {
 		model.addAttribute("publication", this.publicationService.findPublicationByTitle(title));
 		model.addAttribute("prefix", true);
 		model.addAttribute("StringUtils", StringUtils.class);

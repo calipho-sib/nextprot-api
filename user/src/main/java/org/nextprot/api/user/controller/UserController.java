@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
-@Api(name = "User", description = "Method to manipulate users.", role="ROLE_USER")
+@Api(name = "User", description = "Method to manipulate users.")
 public class UserController {
 
     @Autowired

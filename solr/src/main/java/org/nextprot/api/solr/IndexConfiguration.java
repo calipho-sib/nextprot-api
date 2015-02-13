@@ -74,7 +74,7 @@ public class IndexConfiguration implements QueryBuilder {
 				queryBuilder.append(WHITESPACE);
 		}
 		
-		this.otherParameters.put("spellcheck.q", query.getQueryString());
+		//this.otherParameters.put("spellcheck.q", query.getQueryString());
 		return queryBuilder.toString();
 	}
 	
