@@ -92,6 +92,7 @@ table td {
 	line-height: 16px;
 	color: #337AB7;
 	text-decoration:none;
+	font-weight: normal;
 }
 
 #content a:hover {
