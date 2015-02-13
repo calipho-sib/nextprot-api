@@ -754,13 +754,9 @@
 	});
 	
 	function checkURLExistence() {
-		var value = "http://" + window.location.hostname + ":8080/nextprot-api-web/jsondoc";
-		if(value.trim() == '') {
-			alert("Please insert a valid URL");
-			return false;
-		} else {
-			return fetchdoc(value);
-		}
+		if(window.location == "localhost"){
+			fetchdoc("http://localhost:8080/nextprot-api-web/jsondoc");
+		}else fetchdoc(window.location.href + "/jsondoc");
 	}
 	
 	$("#jsondocfetch").keypress(function(event) {
