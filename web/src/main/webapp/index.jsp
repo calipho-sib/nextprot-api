@@ -754,9 +754,7 @@
 	});
 	
 	function checkURLExistence() {
-		if(window.location == "localhost"){
-			fetchdoc("http://localhost:8080/nextprot-api-web/jsondoc");
-		}else fetchdoc(window.location.href + "/jsondoc");
+		fetchdoc(window.location.href.replace("#", "") + '/jsondoc');
 	}
 	
 	$("#jsondocfetch").keypress(function(event) {
@@ -892,11 +890,12 @@
 					
 					var suffix = "xml";
 					if (headers["Accept"] == "application/json")
-						suffix = "json"
+						suffix = "json";
 					if (headers["Accept"] == "text/turtle")
-						suffix = "ttl"
+						suffix = "ttl";
+					
 					var res = $.ajax({
-						url : model.basePath + replacedPath + "." + suffix,
+						url : window.location.href.replace("#", "") + replacedPath + "." + suffix,
 						type: method.verb,
 						data: $("#inputJson").val(),
 						headers: headers,
@@ -1012,6 +1011,7 @@
 	}
 	
 	function fetchdoc(jsondocurl) {
+		console.log("Fetching doc for " + jsondocurl);
 		$.ajax({
 			url : jsondocurl,
 			type: 'GET',

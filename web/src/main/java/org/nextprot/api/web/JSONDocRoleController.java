@@ -30,7 +30,7 @@ public class JSONDocRoleController extends JSONDocController {
 	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
 
 	private static String version = "0.1 beta";
-	private static String basePath = "http://alpha-api.nextprot.org";
+	private static String basePath = ""; //no need
 	private static List<String> packages = Arrays.asList(new String[] { "org.nextprot.api" });
     
     private JSONDoc jsonDoc;
