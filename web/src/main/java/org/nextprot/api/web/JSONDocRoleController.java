@@ -165,7 +165,7 @@ public class JSONDocRoleController extends JSONDocController {
 		    Manifest mf = new Manifest();
 	    	mf.read(new FileInputStream(manifestFile));
 		    Attributes atts = mf.getMainAttributes();
-		    return atts.getValue("Implementation-Build");
+		    return atts.getValue("Implementation-Version");
 
 	    } catch (IOException e) {
 	    	return "unknown";
