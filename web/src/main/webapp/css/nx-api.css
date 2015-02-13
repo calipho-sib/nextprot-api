@@ -99,3 +99,8 @@ table td {
 	color:#23527C;
 	text-decoration:underline;
 }
+
+#accordion {
+	overflow-y: scroll;
+	max-height: 75vh;
+}
