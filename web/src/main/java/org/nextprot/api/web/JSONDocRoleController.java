@@ -1,6 +1,7 @@
 package org.nextprot.api.web;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -10,8 +11,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.pojo.ApiDoc;
 import org.jsondoc.core.pojo.ApiMethodDoc;
+import org.jsondoc.core.pojo.ApiParamDoc;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.jsondoc.core.pojo.JSONDoc;
+import org.jsondoc.core.util.JSONDocType;
 import org.jsondoc.springmvc.controller.JSONDocController;
 import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
@@ -68,9 +71,20 @@ public class JSONDocRoleController extends JSONDocController {
 					for (AnnotationApiModel model: AnnotationApiModel.values()) {
 						ApiMethodDoc m = new ApiMethodDoc();
 						m.setQueryparameters(met.getQueryparameters());
-						m.setProduces(met.getProduces());
+						Set<String> produces = new HashSet<String>();
+						produces.add(MediaType.APPLICATION_XML_VALUE);
+						m.setProduces(produces);
 						m.setConsumes(met.getConsumes());
-						m.setDescription("Exports only the " + model.getDescription() + " from an entry. It locates on the hierarchy: " + model.getHierarchy());
+						Set<ApiParamDoc> set = new HashSet<ApiParamDoc>();
+						String[] allowedvalues = {"NX_P01308"};
+						set.add(new ApiParamDoc("entry", 
+								"Exports only the " + model.getApiTypeName().toLowerCase() + " from an entry. It locates on the hierarchy: " + model.getHierarchy(), 
+								new JSONDocType("string"), 
+								"true", 
+								allowedvalues, 
+								null, 
+								null));
+						m.setPathparameters(set);
 						m.setPath("/entry/{entry}/" + StringUtils.decamelizeAndReplaceByHyphen(model.getApiTypeName()));
 						m.setVerb(ApiVerb.GET);
 						apiDoc.getMethods().add(m);
@@ -78,8 +92,6 @@ public class JSONDocRoleController extends JSONDocController {
 				}
 			}
 		}
-		System.out.println("@PostConstruct / init()");
-		
 	}
 
 	@RequestMapping(value = JSONDocController.JSONDOC_DEFAULT_PATH, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
