@@ -15,97 +15,7 @@
 
 <!-- Le styles -->
 <link href="css/bootstrap.min.css" rel="stylesheet">
-<style type="text/css">
-body {
-	padding-top: 60px;
-	padding-bottom: 40px;
-}
-
-.GET {
-	padding-top : 5px;
-	background-color: #468847;
-}
-.PATCH {
-    padding-top : 5px;
-    background-color: #5bc0de;
-}
-.POST {
-	padding-top : 5px;
-	background-color: #3A87AD;
-}
-.PUT {
-	padding-top : 5px;
-	background-color: #F89406;
-}
-.DELETE {
-	padding-top : 5px;
-	background-color: #B94A48;
-}
-.OPTIONS {
-	padding-top : 5px;
-	background-color: #6B5463;
-}
-.TRACE {
-	padding-top : 5px;
-	background-color: #8E6C6E;
-}
-.HEAD {
-	padding-top : 5px;
-	background-color: #AA9A66;
-}
-
-blockquote small:before {
-    content: "";
-}
-
-.playground-spacer {
-	margin-top: 15px;
-}
-
-.com { color: #93a1a1; }
-.lit { color: #195f91; }
-.pun, .opn, .clo { color: #93a1a1; }
-.fun { color: #dc322f; }
-.str, .atv { color: #D14; }
-.kwd, .prettyprint .tag { color: #1e347b; }
-.typ, .atn, .dec, .var { color: teal; }
-.pln { color: #48484c; }
-
-.prettyprint {
-  padding: 8px;
-  background-color: #f7f7f9;
-  border: 1px solid #e1e1e8;
-}
-.prettyprint.linenums {
-  -webkit-box-shadow: inset 40px 0 0 #fbfbfc, inset 41px 0 0 #ececf0;
-     -moz-box-shadow: inset 40px 0 0 #fbfbfc, inset 41px 0 0 #ececf0;
-          box-shadow: inset 40px 0 0 #fbfbfc, inset 41px 0 0 #ececf0;
-}
-
-/* Specify class=linenums on a pre to get line numbering */
-ol.linenums {
-  margin: 0 0 0 33px; /* IE indents via margin-left */
-}
-ol.linenums li {
-  padding-left: 12px;
-  color: #bebec5;
-  line-height: 20px;
-  text-shadow: 0 1px 0 #fff;
-}
-
-table td {
-	word-wrap: break-word;
-}
-
-.border-radius-none {
-	border-radius: 0px;
-}
-
-.font-monospace {
-	font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;
-}
-
-</style>
+<link href="css/nx-api.css" rel="stylesheet">
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
@@ -118,6 +28,13 @@ table td {
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container-fluid">
 			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+			
 		    	<a class="navbar-brand" href="#">neXtProt API</a>
     		</div>
 
@@ -143,13 +60,13 @@ table td {
 					</a>
 						<ul class="dropdown-menu" role="menu">
 							<!-- News -->
-							<li ng-class="{'active':isActiveDoc('/pages/what-is-new')}"><a
+							<li class="hide" ng-class="{'active':isActiveDoc('/pages/what-is-new')}"><a
 								href="/pages/what-is-new">What's new?</a></li>
-							<li class="divider"></li>
+							<li class="divider hide"></li>
 							<!-- FAQ -->
-							<li ng-class="{'active':isActiveDoc('/pages/faq')}"><a
+							<li  class="hide" ng-class="{'active':isActiveDoc('/pages/faq')}"><a
 								href="/pages/faq">FAQ</a></li>
-							<li class="divider"></li>
+							<li class="divider hide"></li>
 
 							<!-- Found a bug -->
 							<li ng-class=""><a target="_blank"
@@ -158,7 +75,7 @@ table td {
 							</a></li>
 						</ul></li>
 
-					<li ng-class=""><a href="/pages/about">About</a></li>
+					<li ng-class=""><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/about.md" target="_blank">About</a></li>
 					<li ng-class=""><a
 						href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact
 							us</a></li>
@@ -192,7 +109,7 @@ table td {
 	<div class="container-fluid">
 		<div class="row">
 			
-			<div class="col-md-3">
+			<div class="col-md-2">
 				<div id="maindiv" style="display:none;"></div>
 				
 				<div class="panel-group" id="side-accordion" aria-multiselectable="true" style="display: none;">
@@ -210,7 +127,7 @@ table td {
 						</div>
 					</div>
 					
-					<div class="panel panel-default">
+					<div class="panel panel-default hide">
 						<div class="panel-heading" id="panel-objects">
 							<h4 class="panel-title">
 								<a id="panel-objects" href="#_panel-objects" data-toggle="collapse" data-parent="#side-accordion" aria-controls="_panel-objects" aria-expanded="true">Objects</a>
@@ -223,7 +140,7 @@ table td {
 						</div>
 					</div>
 					
-					<div class="panel panel-default">
+					<div class="panel panel-default hide">
 						<div class="panel-heading" id="panel-flows">
 							<h4 class="panel-title">
 								<a id="panel-flows" href="#_panel-flows" data-toggle="collapse" data-parent="#side-accordion" aria-controls="_panel-flows" aria-expanded="true">Flows</a>
@@ -240,17 +157,51 @@ table td {
 				
 			</div>
 
-			<div class="col-md-5">
+			<div class="col-md-4">
 				<div id="content"></div>			
 			</div>
 			
-			<div class="col-md-4">
+			<div class="col-md-6">
 				<div id="testContent"></div>			
 			</div>
 		</div>
 	</div>
 
-<script id="main" type="text/x-handlebars-template">
+	<!-- Footer
+  ================================================== -->
+	<footer class="container text-center small">
+		<hr />
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="col-md-4">
+					<ul class="nav nav-pills nav-stacked">
+						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/legal%20disclaimer.md" target="_blank">Legal disclaimer</a></li>
+					</ul>
+				</div>
+				<div class="col-md-4">
+					<ul class="nav nav-pills nav-stacked">
+						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2015 SIB</a></li>
+					</ul>
+				</div>
+				<div class="col-md-4">
+					<ul class="nav nav-pills nav-stacked">
+						<li><a href="https://github.com/calipho-sib/nextprot-api"
+							target="_blank"><i class="icon-github"></i>For developers</a></li>
+						</a>
+						</li>
+					</ul>
+				</div>
+				<div class="col-md-3">
+					<ul class="nav nav-pills nav-stacked">
+					</ul>
+				</div>
+			</div>
+		</div>
+		<hr />
+	</footer>
+
+
+	<script id="main" type="text/x-handlebars-template">
 <blockquote>
   <p style="text-transform: uppercase;">API info</span></p>
   <small>Version: {{version}}</small>
@@ -333,9 +284,9 @@ table td {
 						</ul>
 					</div>
 				{{/if}}
-				<table class="table table-condensed table-bordered" style="table-layout: fixed;">
+				<table class="table table-condensed table-bordered">
 					<tr>
-						<th style="width:18%;">Path</th>
+						<th>Path</th>
 						<td><code>{{path}}</code></td>
 					</tr>
 					{{#if supportedversions}}
@@ -395,19 +346,6 @@ table td {
 								<td><code>{{this.name}}</code></td>
 								<td>{{this.description}}</td>
 							</tr>
-							{{#if this.allowedvalues}}
-								<tr>
-									<td></td>
-									<td>Allowed values: {{this.allowedvalues}}</td>
-								</tr>
-							{{/if}}
-							{{else}}
-							<tr>
-								<td><code>{{this.name}}</code></td>
-								{{#if this.allowedvalues}}
-									<td>Allowed values: {{this.allowedvalues}}</td>
-								{{/if}}
-							</tr>
 							{{/if}}
 						{{/each}}
 					{{/if}}
@@ -430,12 +368,6 @@ table td {
 								<td></td>
 								<td>Type: <code>{{this.jsondocType.oneLineText}}</code></td>
 							</tr>
-							{{#if this.allowedvalues}}
-							<tr>
-								<td></td>
-								<td>Allowed values: {{this.allowedvalues}}</td>
-							</tr>
-							{{/if}}
 							{{#if this.format}}
 							<tr>
 								<td></td>
@@ -463,12 +395,6 @@ table td {
 								<td></td>
 								<td>Type: <code>{{this.jsondocType.oneLineText}}</code></td>
 							</tr>
-							{{#if this.allowedvalues}}
-							<tr>
-								<td></td>
-								<td>Allowed values: {{this.allowedvalues}}</td>
-							</tr>
-							{{/if}}
 							{{#if this.format}}
 							<tr>
 								<td></td>
@@ -630,7 +556,7 @@ table td {
 			{{#pathparameters}}
 				<div class="form-group">
 					<label class="control-label" for="i_{{name}}">{{name}}</label>
-					<input type="text" class="form-control" id="i_{{name}}" name="{{name}}" placeholder="{{name}}">
+					<input type="text" class="form-control" id="i_{{name}}" name="{{name}}" placeholder="{{name}}" value="{{allowedvalues}}">
 				</div>
 			{{/pathparameters}}
 		</div>
@@ -828,13 +754,7 @@ table td {
 	});
 	
 	function checkURLExistence() {
-		var value = "http://" + window.location.hostname + ":8080/nextprot-api-web/jsondoc";
-		if(value.trim() == '') {
-			alert("Please insert a valid URL");
-			return false;
-		} else {
-			return fetchdoc(value);
-		}
+		fetchdoc(window.location.href.replace("#", "") + '/jsondoc');
 	}
 	
 	$("#jsondocfetch").keypress(function(event) {
@@ -857,14 +777,15 @@ table td {
 	function printResponse(data, res, url) {
 		if(res.responseXML != null) {
 			$("#response").text(formatXML(res.responseText));
+		} else if (url.endsWith("ttl")) {
+			$("#response").text(res.responseText);
 		} else {
 			$("#response").text(JSON.stringify(data, undefined, 2));
 		}
 		
-		prettyPrint();
 		$("#responseStatus").text(res.status);
 		$("#responseHeaders").text(res.getAllResponseHeaders());
-		$("#requestURL").text(url);
+		$("#requestURL").html("<a href='" + url + "' target='_blank'>" + url + "</a>");
 		$('#testButton').button('reset');
 		$("#resInfo").show();
 	}
@@ -967,8 +888,14 @@ table td {
 					
 					$('#testButton').button('loading');
 					
+					var suffix = "xml";
+					if (headers["Accept"] == "application/json")
+						suffix = "json";
+					if (headers["Accept"] == "text/turtle")
+						suffix = "ttl";
+					
 					var res = $.ajax({
-						url : model.basePath + replacedPath,
+						url : window.location.href.replace("#", "") + replacedPath + "." + suffix,
 						type: method.verb,
 						data: $("#inputJson").val(),
 						headers: headers,
@@ -1049,7 +976,6 @@ table td {
 				var objecttemplateHTML = objecttemplate(o);
 				$("#testContent").html(objecttemplateHTML);
 				$("#testContent").show();
-				prettyPrint();
 			});
 		});
 		
@@ -1085,6 +1011,7 @@ table td {
 	}
 	
 	function fetchdoc(jsondocurl) {
+		console.log("Fetching doc for " + jsondocurl);
 		$.ajax({
 			url : jsondocurl,
 			type: 'GET',
