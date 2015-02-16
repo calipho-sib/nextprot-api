@@ -33,7 +33,7 @@ public class UserQueryController {
 
 	@RequestMapping(value = "/queries/tutorial", method = { RequestMethod.GET })
 	@ResponseBody
-	public List<UserQuery> getTutorialQueries() {
+	public List<UserQuery> getTutorialQueries(@RequestParam(value="snorql", required=false) Boolean snorql) {
 
 		//start with queries
 		List<UserQuery> res = userQueryService.getTutorialQueries();
@@ -44,7 +44,9 @@ public class UserQueryController {
 		}
 
 		//remove snorql queries if not specified
+		if(snorql == null || !snorql){
 			res = UserQueryUtils.removeQueriesContainingTag(res, "snorql-only");
+		}
 		
 		return res;
 	}

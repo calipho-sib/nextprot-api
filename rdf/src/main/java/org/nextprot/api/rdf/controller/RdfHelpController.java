@@ -1,26 +1,16 @@
 package org.nextprot.api.rdf.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
-import org.apache.commons.lang.StringUtils;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.rdf.domain.RdfTypeInfo;
-import org.nextprot.api.rdf.domain.TripleInfo;
 import org.nextprot.api.rdf.service.RdfHelpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -38,7 +28,7 @@ public class RdfHelpController {
 	 * @param model
 	 * @return
 	 */
-	@ApiMethod(path = "/rdf/help/type/{rdfType}", verb = ApiVerb.GET, description = "Gets a description and properties of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
+/*	@ApiMethod(path = "/rdf/help/type/{rdfType}", verb = ApiVerb.GET, description = "Gets a description and properties of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping("/rdf/help/type/{rdfType}")
 	@ResponseBody
 	public RdfTypeInfo helpFullInfo(
@@ -54,7 +44,7 @@ public class RdfHelpController {
 			e.printStackTrace();
 			throw new NextProtException(e.getMessage());
 		}
-	}
+	}*/
 
 	@ApiMethod(path = "/rdf/help/type/all", verb = ApiVerb.GET, description = "Gets a description and properties of all rdf types. WARNING: may require a lot of time.", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping("/rdf/help/type/all")
@@ -64,6 +54,8 @@ public class RdfHelpController {
 		model.addAttribute("result", list);
 		return list;
 	}
+	
+	/*
 
 	@RequestMapping("/rdf/help/type/{rdfType}/values")
 	@ResponseBody
@@ -263,7 +255,7 @@ public class RdfHelpController {
 		}
 		
 	}
-
+*/
 	/*
 	 * @ApiMethod(path = "/rdf/help/type/{rdfType}/name", verb = ApiVerb.GET, description = "Gets a description of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
 	 * @RequestMapping("/rdf/help/type/{rdfType}/name")

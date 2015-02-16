@@ -58,5 +58,10 @@ public class NXVelocityUtils {
 		return list;
 	}
 
+	private static final NXVelocityUtils UTILS = new NXVelocityUtils();
+	public static NXVelocityUtils getInstance() {
+		return UTILS;
+	}
+
 	
 }

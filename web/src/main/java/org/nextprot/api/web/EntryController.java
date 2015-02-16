@@ -70,7 +70,7 @@ public class EntryController {
 	private void addModelDependencies(Model model) {
 
 		model.addAttribute("StringUtils", StringUtils.class);
-		model.addAttribute("NXUtils", NXVelocityUtils.class);
+		model.addAttribute("NXUtils", new NXVelocityUtils()); //Does not work with .class, try http://localhost:8080/nextprot-api-web/entry/NX_P01308/variant.xml
 	}
 
 	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides, the list of the antibodies and the experimental contexts", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})

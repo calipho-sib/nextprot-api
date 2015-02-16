@@ -1,8 +1,10 @@
 package org.nextprot.api.web;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.exception.ResourceNotFoundException;
 import org.nextprot.api.commons.exception.ConcurrentRequestsException;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -28,7 +30,6 @@ public class NextprotExceptionHandler {
 
 	private static final Log LOGGER = LogFactory.getLog(NextprotExceptionHandler.class);
 
-	
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(NotAuthorizedException.class)
 	@ResponseBody
@@ -36,7 +37,6 @@ public class NextprotExceptionHandler {
 		return getResponseError(ex.getLocalizedMessage());
 	}
 
-	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(NextProtException.class)
 	@ResponseBody
@@ -50,7 +50,7 @@ public class NextprotExceptionHandler {
 	public RestErrorResponse handle(ConcurrentRequestsException ex) {
 		return getResponseError(ex.getLocalizedMessage());
 	}
-	
+
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ExceptionHandler(JsonProcessingException.class)
 	@ResponseBody
@@ -66,13 +66,20 @@ public class NextprotExceptionHandler {
 	}
 	
 	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ExceptionHandler(ResourceNotFoundException.class)
+	@ResponseBody
+	public RestErrorResponse handle(ResourceNotFoundException ex) {
+		return getResponseError(ex.getLocalizedMessage());
+	}
+	
+	@ResponseStatus(HttpStatus.NOT_FOUND)
 	@ExceptionHandler(DataAccessException.class)
 	@ResponseBody
 	public RestErrorResponse handle(DataAccessException ex) {
 		return getResponseError(ex.getLocalizedMessage());
 	}
 	
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	@ResponseBody
 	public RestErrorResponse handle(Exception ex) {
