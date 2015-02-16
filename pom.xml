@@ -48,6 +48,7 @@
 		<module>security</module>
 		<module>web</module>
 		<module>test-diff-rdf-db</module>
+		<module>tasks</module>
 	</modules>
 
 	<dependencyManagement>
