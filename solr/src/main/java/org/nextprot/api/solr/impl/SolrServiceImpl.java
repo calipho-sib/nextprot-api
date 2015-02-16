@@ -45,6 +45,7 @@ public class SolrServiceImpl implements SolrService {
 	private void logSorQuery(SolrQuery sq) {
 		Set<String> params = new TreeSet<String>();
 		for (String p: sq.getParameterNames()) params.add(p + " : " + sq.get(p));
+		Logger.info("SolrQuery");
 		for (String p: params) Logger.info("SolrQuery " + p);
 	}
 	
@@ -52,7 +53,7 @@ public class SolrServiceImpl implements SolrService {
 		//Logger.info("query:\n" + query.toPrettyString());
 		SolrIndex index = query.getIndex();
 		SolrQuery solrQuery = solrQuerySetup(query);
-		//logSorQuery(solrQuery);
+		logSorQuery(solrQuery);
 		return executeSolrQuery(index, solrQuery);
 	}
 
