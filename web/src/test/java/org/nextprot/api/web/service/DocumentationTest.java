@@ -26,8 +26,7 @@ public class DocumentationTest extends CommonsUnitBaseTest {
 
 	@Test
 	public void shoudGetDirectoryContentGitHub() throws Exception {
-		System.out.println(service.getDirectoryContent().getTree().size());
-		assertTrue(service.getDirectoryContent().getTree().size() > 0);
+		assertTrue(service.getTree().getTree().length > 0);
 	}
 
 }
