@@ -149,6 +149,7 @@ public class SparqlUtils {
 			if (selectIncluded)
 				resultQuery += "\n}";
 
+			//System.out.println("case 1: resultQuery=\n"+resultQuery+ "\n----------");
 			return resultQuery;
 
 		} else {
@@ -156,6 +157,7 @@ public class SparqlUtils {
 			String resultQuery = "";
 			resultQuery += prefixes;
 			resultQuery += query;
+			//System.out.println("case 2: resultQuery=\n"+resultQuery+ "\n----------");
 			return resultQuery;
 
 		}

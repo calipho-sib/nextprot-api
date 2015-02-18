@@ -35,19 +35,26 @@ public class CvIndex extends IndexTemplate {
 				.add(CvField.SYNONYMS)
 				.add(CvField.DESCRIPTION)
 				.add(CvField.PROPERTIES)
-				.add(CvField.FILTERS)
-				.add(CvField.TEXT));
+				.add(CvField.FILTERS));
+				//.add(CvField.TEXT));
 				
 		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.QF)
+				.add(CvField.AC, 64)
 				.add(CvField.NAME, 32)
-				.add(CvField.DESCRIPTION, 16));
+				.add(CvField.SYNONYMS, 32)
+				.add(CvField.DESCRIPTION, 16)
+				.add(CvField.PROPERTIES, 8)
+				.add(CvField.OTHER_XREFS, 8));
 		
 		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.PF)
+				.add(CvField.AC, 640)
 				.add(CvField.NAME, 320)
 				.add(CvField.SYNONYMS, 320)
-				.add(CvField.DESCRIPTION, 160));
+				.add(CvField.DESCRIPTION, 160)
+				.add(CvField.PROPERTIES, 80)
+				.add(CvField.OTHER_XREFS, 80));
 		
-		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FN)
+/*		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FN)
 				.add(CvField.NAME, 1)
 				.add(CvField.DESCRIPTION, 1));
 		
@@ -56,7 +63,7 @@ public class CvIndex extends IndexTemplate {
 				.add(CvField.NAME)
 				.add(CvField.DESCRIPTION)
 				.add(CvField.PROPERTIES));
-		
+*/		
 		defaultConfig.addOtherParameter("defType", "edismax")
 			.addOtherParameter("facet", "true")
 			.addOtherParameter("facet.field", "filters")
@@ -104,6 +111,7 @@ public class CvIndex extends IndexTemplate {
 		SYNONYMS("synonyms"), 
 		DESCRIPTION("description"), 
 		PROPERTIES("properties"), 
+		OTHER_XREFS("other_xrefs"), 
 		FILTERS("filters"),
 		SCORE("score"), 
 		TEXT("text");
@@ -119,4 +127,5 @@ public class CvIndex extends IndexTemplate {
 		}
 	}
 
+	
 }

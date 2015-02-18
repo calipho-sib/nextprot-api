@@ -1,0 +1,1 @@
+ALTER TABLE np_users.protein_list_items ALTER COLUMN accession_number TYPE CHARACTER VARYING(20);
