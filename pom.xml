@@ -343,8 +343,9 @@
                 </configuration>
             </plugin>
             <plugin>
-                <inherited>true</inherited>
                 <artifactId>maven-deploy-plugin</artifactId>
+                <inherited>true</inherited>
+                <version>2.7</version>
                 <configuration>
                     <updateReleaseInfo>true</updateReleaseInfo>
                 </configuration>
