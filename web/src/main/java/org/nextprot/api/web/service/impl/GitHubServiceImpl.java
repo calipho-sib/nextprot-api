@@ -1,17 +1,12 @@
 package org.nextprot.api.web.service.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.kohsuke.github.GHContent;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHTree;
 import org.kohsuke.github.GitHub;
-import org.kohsuke.github.PagedIterable;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.web.domain.GitHubTree;
-import org.nextprot.api.web.domain.GitHubTrees;
 import org.nextprot.api.web.service.GitHubService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -32,7 +27,6 @@ public class GitHubServiceImpl implements GitHubService {
 	@Override
 	@Cacheable(value = "github-pages")
 	public String getPage(String page) {
-
 		// Not sure if this keeps a connection (if not this can be done on the
 		// postconstruct)
 		try {
@@ -50,12 +44,10 @@ public class GitHubServiceImpl implements GitHubService {
 	}
 
 	@Override
-	//@Cacheable(value = "github-pages")
+	@Cacheable(value = "github-tree")
 	public GHTree getTree() {
-
 		try {
-
-			GitHub github = GitHub.connectAnonymously();
+			GitHub github = GitHub.connectAnonymously();// TODO move this with a token
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
 			return repo.getTreeRecursive("master", 1);
 
@@ -67,3 +59,4 @@ public class GitHubServiceImpl implements GitHubService {
 	}
 
 }
+ 
