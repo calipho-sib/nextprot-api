@@ -20,51 +20,6 @@
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-      <script>
-
-        $(document).ready(function(){
-
-            var hostname=window.location.hostname
-            var protocol=window.location.protocol
-
-            if (! protocol.match(/^https$/) {
-
-                $("a[href^='https://search.nextprot.org']").attr("href", function () {
-
-                    if (hostname.match(/alpha-/)) {
-                        return "http://alpha-search.nextprot.org"
-                    }
-                    else if (hostname.match(/dev-/)) {
-                        return "http://dev-search.nextprot.org"
-                    }
-                });
-
-                $("a[href^='http://snorql.nextprot.org']").attr("href", function () {
-
-                    if (hostname.match(/alpha-/)) {
-                        return "http://alpha-snorql.nextprot.org"
-                    }
-                    else if (hostname.match(/dev-/)) {
-                        return "http://dev-snorql.nextprot.org"
-                    }
-                });
-
-                $("a[href^='https://api.nextprot.org']").attr("href", function () {
-
-                    if (hostname.match(/alpha-/)) {
-                        return "http://alpha-api.nextprot.org"
-                    }
-                    else if (hostname.match(/dev-/)) {
-                        return "http://dev-api.nextprot.org"
-                    }
-                    else if (hostname.match(/build-/)) {
-                        return "http://build-api.nextprot.org"
-                    }
-                });
-            }
-        });
-
-        </script>
     <![endif]-->
 </head>
 
@@ -1070,7 +1025,68 @@
 			}
 		});
 	}
+
+    function changeHref(href, machine) {
+
+        var hostname=window.location.hostname;
+
+        if (hostname.match(/alpha-/)) {
+            return "http://alpha-api.nextprot.org"
+        }
+        else if (hostname.match(/dev-/)) {
+            return "http://dev-api.nextprot.org"
+        }
+        else if (hostname.match(/build-/)) {
+            return "http://build-api.nextprot.org"
+        }
+    }
+
+    function changeHrefs() {
+
+        var hostname=window.location.hostname
+        var protocol=window.location.protocol
+
+        if (! protocol.match(/^https$/)) {
+
+            //$("a[href^='https://search.nextprot.org']").attr("href", changeHref());
+
+            $("a[href^='https://search.nextprot.org']").attr("href", function () {
+
+                if (hostname.match(/alpha-/)) {
+                    return "http://alpha-search.nextprot.org"
+                }
+                else if (hostname.match(/dev-/)) {
+                    return "http://dev-search.nextprot.org"
+                }
+            });
+
+            $("a[href^='http://snorql.nextprot.org']").attr("href", function () {
+
+                if (hostname.match(/alpha-/)) {
+                    return "http://alpha-snorql.nextprot.org"
+                }
+                else if (hostname.match(/dev-/)) {
+                    return "http://dev-snorql.nextprot.org"
+                }
+            });
+
+            $("a[href^='https://api.nextprot.org']").attr("href", function () {
+
+                if (hostname.match(/alpha-/)) {
+                    return "http://alpha-api.nextprot.org"
+                }
+                else if (hostname.match(/dev-/)) {
+                    return "http://dev-api.nextprot.org"
+                }
+                else if (hostname.match(/build-/)) {
+                    return "http://build-api.nextprot.org"
+                }
+            });
+        }
+    }
+
 	checkURLExistence();
+    changeHrefs();
 
 </script>
 
