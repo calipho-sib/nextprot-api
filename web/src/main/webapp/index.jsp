@@ -1026,67 +1026,44 @@
 		});
 	}
 
-    function changeHref(href, machine) {
+    function buildHref(resource) {
 
         var hostname=window.location.hostname;
 
-        if (hostname.match(/alpha-/)) {
-            return "http://alpha-api.nextprot.org"
-        }
-        else if (hostname.match(/dev-/)) {
-            return "http://dev-api.nextprot.org"
-        }
-        else if (hostname.match(/build-/)) {
-            return "http://build-api.nextprot.org"
+        var regexp = /(alpha|dev|build)-(api|search|snorql)\.nextprot\.org/g;
+        var match = regexp.exec(hostname);
+
+        if (match != null) {
+            var machine = match[1]
+
+            if (machine == "build") {
+
+                if (resource == "search") {
+
+                    machine = "alpha";
+                }
+                else if (resource.match("search|snorql")) {
+
+                    machine = "alpha";
+                }
+            }
+
+            return "http://" + machine + "-" + resource + ".nextprot.org"
         }
     }
 
-    function changeHrefs() {
+    function updateResourcesHrefs() {
 
-        var hostname=window.location.hostname
-        var protocol=window.location.protocol
+        if (! window.location.protocol.match(/^https$/)) {
 
-        if (! protocol.match(/^https$/)) {
-
-            //$("a[href^='https://search.nextprot.org']").attr("href", changeHref());
-
-            $("a[href^='https://search.nextprot.org']").attr("href", function () {
-
-                if (hostname.match(/alpha-/)) {
-                    return "http://alpha-search.nextprot.org"
-                }
-                else if (hostname.match(/dev-/)) {
-                    return "http://dev-search.nextprot.org"
-                }
-            });
-
-            $("a[href^='http://snorql.nextprot.org']").attr("href", function () {
-
-                if (hostname.match(/alpha-/)) {
-                    return "http://alpha-snorql.nextprot.org"
-                }
-                else if (hostname.match(/dev-/)) {
-                    return "http://dev-snorql.nextprot.org"
-                }
-            });
-
-            $("a[href^='https://api.nextprot.org']").attr("href", function () {
-
-                if (hostname.match(/alpha-/)) {
-                    return "http://alpha-api.nextprot.org"
-                }
-                else if (hostname.match(/dev-/)) {
-                    return "http://dev-api.nextprot.org"
-                }
-                else if (hostname.match(/build-/)) {
-                    return "http://build-api.nextprot.org"
-                }
-            });
+            $("a[href^='https://search.nextprot.org']").attr("href", buildHref("search"));
+            $("a[href^='http://snorql.nextprot.org']").attr("href", buildHref("snorql"));
+            $("a[href^='https://api.nextprot.org']").attr("href", buildHref("api"));
         }
     }
 
 	checkURLExistence();
-    changeHrefs();
+    updateResourcesHrefs();
 
 </script>
 
