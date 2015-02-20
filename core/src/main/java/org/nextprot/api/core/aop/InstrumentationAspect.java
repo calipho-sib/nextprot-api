@@ -23,6 +23,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -69,6 +70,11 @@ public class InstrumentationAspect {
 
 			ServletRequestAttributes atts = (ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes());
 			if (atts != null && atts.getRequest() != null) {
+				Enumeration<?> e =atts.getRequest().getAttributeNames();
+				int i = 0;
+				while(e.hasMoreElements()){
+					map.put("attreq" + i++, e.nextElement().toString());
+				}
 				map.put("remoteAddr", atts.getRequest().getRemoteAddr());
 				map.put("remoteHost", atts.getRequest().getRemoteHost());
 			}
