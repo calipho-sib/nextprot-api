@@ -62,12 +62,9 @@ public class NPSecurityContext {
 		}
 
 		Set<String> roles = new HashSet<String>();
-		if (a.getPrincipal() instanceof Auth0UserDetails) {
-			Auth0UserDetails currentUserDetails = (Auth0UserDetails) a.getPrincipal();
-			Collection<? extends GrantedAuthority> authorities = currentUserDetails.getAuthorities();
-			for(GrantedAuthority auth : authorities){
-				roles.add(auth.toString());
-			}
+		Collection<? extends GrantedAuthority> authorities = a.getAuthorities();
+		for(GrantedAuthority auth : authorities){
+			roles.add(auth.toString());
 		}
 		
 		return roles;

@@ -198,7 +198,8 @@ public class NextprotAuthProvider implements AuthenticationProvider, Initializin
     	usrToken.setAuthenticated(true);
     	usrToken.setPrincipal(userDetails);
     	usrToken.setDetails(map);
-
+    	usrToken.getAuthorities().addAll(userDetails.getAuthorities());
+    	
         return usrToken;
     }
 
