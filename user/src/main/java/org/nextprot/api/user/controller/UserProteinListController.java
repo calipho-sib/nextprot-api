@@ -1,6 +1,7 @@
 package org.nextprot.api.user.controller;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -19,7 +20,8 @@ import java.util.Set;
 
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
-@Api(name = "User Protein Lists", description = "Method to manipulate user protein lists")
+@Api(name = "User Protein Lists", description = "Method to manipulate user protein lists", group="User")
+@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 public class UserProteinListController {
 
 	@Autowired

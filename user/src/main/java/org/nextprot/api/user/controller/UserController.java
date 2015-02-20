@@ -1,6 +1,7 @@
 package org.nextprot.api.user.controller;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.user.domain.User;
@@ -23,7 +24,8 @@ import java.util.List;
  */
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
-@Api(name = "User", description = "Method to manipulate users.")
+@Api(name = "User", description = "Method to manipulate users.", group="User")
+@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 public class UserController {
 
     @Autowired

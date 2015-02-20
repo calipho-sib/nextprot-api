@@ -3,6 +3,7 @@ package org.nextprot.api.user.controller;
 import java.util.List;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiBodyObject;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
@@ -27,7 +28,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
-@Api(name = "User Application", description = "Method to manipulate applications. Applications are program that access the API")
+@Api(name = "User Application", description = "Method to manipulate applications. Applications are program that access the API", group="User")
+@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 public class UserApplicationController {
 
 	@Autowired

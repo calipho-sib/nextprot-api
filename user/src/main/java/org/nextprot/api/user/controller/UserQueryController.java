@@ -3,12 +3,14 @@ package org.nextprot.api.user.controller;
 import java.util.List;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
 import org.nextprot.api.user.utils.UserQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +27,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Lazy
 @Controller
-@Api(name = "User Queries", description = "Method to manipulate user queries (SPARQL)")
+@PreAuthorize("hasRole('ROLE_USER')")
+@Api(name = "User Queries", description = "Method to manipulate user queries (SPARQL)", group="User")
+@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 public class UserQueryController {
 
 	@Autowired

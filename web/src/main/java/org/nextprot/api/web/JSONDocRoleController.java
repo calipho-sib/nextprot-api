@@ -4,9 +4,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
@@ -26,6 +31,7 @@ import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.export.impl.ExportServiceImpl;
+import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -105,53 +111,47 @@ public class JSONDocRoleController extends JSONDocController {
 	@RequestMapping(value = JSONDocController.JSONDOC_DEFAULT_PATH, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Override
 	public @ResponseBody JSONDoc getApi() {
-//		Set<String> contextRoles = NPSecurityContext.getCurrentUserRoles();
-//		LOGGER.info("Context roles");
-//		for (String role : contextRoles) {
-//			LOGGER.info(role);
-//		}
-//
-//		// Comparator to order by api name
-//		Set<ApiDoc> contextApis = new TreeSet<ApiDoc>(new Comparator<ApiDoc>() {
-//			public int compare(ApiDoc o1, ApiDoc o2) {
-//				return o1.getName().compareTo(o2.getName());
-//			}
-//		});
-//
-//		Set<ApiDoc> apis = apiDoc.getApis();
-//		for (ApiDoc api : apis) {
-//			boolean devMode = false;
-//			if (env != null) {
-//				String[] pfs = env.getActiveProfiles();
-//				if (pfs != null) {
-//					for (String e : pfs) {
-//						if (e.equalsIgnoreCase("dev")) {
-//							devMode = true;
-//							break;
+		Set<String> contextRoles = NPSecurityContext.getCurrentUserRoles();
+		LOGGER.info("Context roles");
+		for (String role : contextRoles) {
+			LOGGER.info(role);
+		}
+
+		Map<String, Set<ApiDoc>> contextApis = new TreeMap<String, Set<ApiDoc>>();
+		for(Entry<String, Set<ApiDoc>> api: jsonDoc.getApis().entrySet()) {
+
+			Set<ApiDoc> contextApiDocs = new TreeSet<ApiDoc>();
+			
+			for (ApiDoc apiDoc : api.getValue()) {
+//				boolean devMode = false;
+//				if (env != null) {
+//					String[] pfs = env.getActiveProfiles();
+//					if (pfs != null) {
+//						for (String e : pfs) {
+//							if (e.equalsIgnoreCase("dev")) {
+//								devMode = true;
+//								break;
+//							}
 //						}
 //					}
 //				}
-//			}
-//			if (api.getRole().equals("ROLE_ANONYMOUS") || contextRoles.contains(api.getRole()) || devMode) {
-//				contextApis.add(api);
-//			}
-//
-//			Collections.sort(api.getMethods(), new Comparator<ApiMethodDoc>() {
-//				@Override
-//				public int compare(ApiMethodDoc o1, ApiMethodDoc o2) {
-//					return o1.getPath().compareTo(o2.getPath());
-//				}
-//			});
-//
-//		}
-//
-//		JSONDoc contextJSONDoc = new JSONDoc(version, basePath);
-//		contextJSONDoc.setApis(contextApis);
-//		contextJSONDoc.setObjects(apiDoc.getObjects());
-//
-//		return contextJSONDoc;
-//
-		return jsonDoc;
+				if (apiDoc.getAuth() == null || apiDoc.getAuth().equals("ROLE_ANONYMOUS") || 
+						(contextRoles != null && !Collections.disjoint(contextRoles, apiDoc.getAuth().getRoles()))) {
+					LOGGER.info("Add " + apiDoc.getName() + "ApiDoc to the current user");
+					contextApiDocs.add(apiDoc);
+				}
+			}
+			if (!contextApiDocs.isEmpty()) {
+				contextApis.put(api.getKey(), contextApiDocs);
+			}
+		}
+		
+		JSONDoc contextJSONDoc = new JSONDoc(version, basePath);
+		contextJSONDoc.setApis(contextApis);
+		contextJSONDoc.setObjects(jsonDoc.getObjects());
+		contextJSONDoc.setFlows(jsonDoc.getFlows());
+
+		return contextJSONDoc;
 	}
 	
 	@Autowired

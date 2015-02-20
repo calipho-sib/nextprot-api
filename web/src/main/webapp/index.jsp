@@ -1039,21 +1039,23 @@
 		
    		$('.btn-login').click(function(e) {
 			e.preventDefault();
-			lock.show(function(err, profile, token) {
-				if (err) {
-					// Error callback
-					alert('There was an error');
-				} else {
+			var options = {popup: true, icon:'img/np.png', authParams: {
+                scope: 'openid email name picture'
+            }};
+			lock.show(options, function(err, profile, token) {
+				if (!err) {
 					// Success calback
 					// Save the JWT token.
 					localStorage.setItem('userToken', token);
-	
+					localStorage.setItem('profile', profile);
+
 					// Save the profile
 					userProfile = profile;
 					
 					$('.li-login').hide();
 					$('.li-logout').show();
 					$('.email').text(userProfile.email);
+					checkURLExistence();
 					console.log("debug info after login" , userProfile);
 				}
 			});
@@ -1062,7 +1064,7 @@
    		$('.btn-logout').click(function(e) {
    			localStorage.removeItem('userToken');
 	   		userProfile = null;
-   			window.location.href = "/";
+   			window.location.reload();
 			$('.li-logout').hide();
 			$('.li-login').show();
 			console.log("debug info after logout " , userProfile);
