@@ -22,9 +22,9 @@ public class GitHubApiController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/contents/pages/{page}", method = { RequestMethod.GET })
-	public String accessPage(@PathVariable("page") String page) {
-		return githubService.getPage(page);
+	@RequestMapping(value = "/contents/{folder}/{page}", method = { RequestMethod.GET })
+	public String accessPage(@PathVariable("folder") String folder, @PathVariable("page") String page) {
+		return githubService.getPage(folder, page);
 	}
 
 }

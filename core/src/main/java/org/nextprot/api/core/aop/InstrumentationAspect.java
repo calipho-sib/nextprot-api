@@ -89,8 +89,6 @@ public class InstrumentationAspect {
 				sb.append("=");
 				sb.append(request.get(key));
 				sb.append(";"); 
-				
-				System.out.println(key + ":"  + request.get(key));
 			}
 
 			long start = System.currentTimeMillis();
