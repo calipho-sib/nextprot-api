@@ -20,7 +20,7 @@ public class DocumentationTest extends CommonsUnitBaseTest {
 
 	@Test
 	public void shoudGetDocumentationFromGitHub() throws Exception {
-		String s = service.getPage("test");
+		String s = service.getPage("pages", "test");
 		assertTrue(s.contains("USED-FOR-TEST-DO-NOT-DELETE"));
 	}
 
