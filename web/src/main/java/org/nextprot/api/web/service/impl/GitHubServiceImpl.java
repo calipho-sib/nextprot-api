@@ -26,14 +26,14 @@ public class GitHubServiceImpl implements GitHubService {
 
 	@Override
 	@Cacheable(value = "github-pages")
-	public String getPage(String page) {
+	public String getPage(String folder, String page) {
 		// Not sure if this keeps a connection (if not this can be done on the
 		// postconstruct)
 		try {
 			GitHub github = GitHub.connectAnonymously();// TODO move this with a
 														// token
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			GHContent content = repo.getFileContent("pages/" + page + ".md");
+			GHContent content = repo.getFileContent(folder + "/" + page + ".md");
 			return content.getContent();
 
 		} catch (IOException e) {
