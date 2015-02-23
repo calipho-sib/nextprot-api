@@ -124,6 +124,13 @@ public class StringUtils {
     	return s.replace("+", "");
     }
     	
+	static public String capitalizeFirstLetter(String input){
+		return input.substring(0, 1).toUpperCase() + input.substring(1);
+	}
+	
+	static public String quote(String input){
+		return "\"" + input + "\"" ;
+	}
 	
 	/*public static void main(String[] args) {
 		System.out.println(clean("H�llo/OP:� - regex,t\nest.{machine\\"));
