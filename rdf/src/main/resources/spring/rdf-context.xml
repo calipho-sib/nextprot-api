@@ -11,10 +11,5 @@
 		http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
 	<!-- Nothing special here, all components are auto wired / scanned -->
-	<beans profile="build">
-		<bean class="org.nextprot.api.web.controller.TerminologyController"></bean>
-		<bean class="org.nextprot.api.web.controller.PublicationController"></bean>
-	</beans>
-
 
 </beans>

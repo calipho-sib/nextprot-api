@@ -2,6 +2,7 @@ package org.nextprot.api.build.controller;
 
 import java.util.List;
 
+import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.rdf.domain.RdfTypeInfo;
@@ -14,7 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-//Do not annotate this with @Controller because the bean is explicitly defined in the build profile on rdf-context.xml
+@Lazy
+@Controller
+@Api(name = "RdfHelp", description = "Method to retrieve rdf help", group="Build rdf")
 public class RdfHelpController {
 
 	@Autowired

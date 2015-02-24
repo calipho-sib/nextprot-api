@@ -1,4 +1,4 @@
-package org.nextprot.api.web.controller;
+package org.nextprot.api.build.controller;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
@@ -6,10 +6,14 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.ExperimentalContextService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Api(name = "ExperimentalContext", description = "Method to retrieve the list of existing experimental contexts")
+@Lazy
+@Controller
+@Api(name = "ExperimentalContext", description = "Method to retrieve the list of existing experimental contexts", group="Build rdf")
 public class ExperimentalContextController {
 
 

@@ -7,11 +7,14 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.rdf.service.SchemaService;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Api(name = "Schema", description = "Method to retrieve the complete or partial RDF schema of neXtProt.")
-//Do not annotate this with @Controller because the bean is explicitly defined in the build profile on rdf-context.xml
+@Lazy
+@Controller
+@Api(name = "Schema", description = "Method to retrieve schemas", group="Build rdf")
 public class SchemaController {
 
 	@Autowired private SchemaService schemaService;

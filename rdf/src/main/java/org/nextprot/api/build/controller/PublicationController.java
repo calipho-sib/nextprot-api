@@ -7,18 +7,23 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 
-//Do not annotate this with @Controller because the bean is explicitly defined in the build profile on rdf-context.xml
+@Lazy
+@Controller
+@Api(name = "Publication", description = "Method to retrieve publications", group="Build rdf")
 public class PublicationController {
 
 	@Autowired private PublicationService publicationService;

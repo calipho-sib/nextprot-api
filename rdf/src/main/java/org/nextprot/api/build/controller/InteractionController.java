@@ -6,10 +6,14 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.InteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Api(name = "Interaction", description = "Method to retrieve the list of existing interactions")
+@Lazy
+@Controller
+@Api(name = "Interaction", description = "Method to retrieve the list of existing interactions", group="Build rdf")
 public class InteractionController {
 
 

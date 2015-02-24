@@ -3,6 +3,7 @@ package org.nextprot.api.web.controller;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -39,19 +40,10 @@ public class JSONDocRoleController extends JSONDocController {
 
 	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
 
-	private static String version = "0.1 beta";
-	private static String basePath = ""; //no need
-	private static List<String> packages = Arrays.asList(new String[] { "org.nextprot.api.commons", 
-																		"org.nextprot.api.core", 
-																		"org.nextprot.api.rdf", 
-																		"org.nextprot.api.solr", 
-																		"org.nextprot.api.user", 
-																		"org.nextprot.api.web" });
-    
     private JSONDoc jsonDoc;
 
 	public JSONDocRoleController() {
-		super(version, basePath, packages);
+		super(null, "", null);
 	}
 
 	@Autowired
@@ -71,7 +63,16 @@ public class JSONDocRoleController extends JSONDocController {
 //
 	@PostConstruct
 	public void init() {
-		version = getMavenVersion();
+		
+		List<String> packages = new ArrayList<String>();
+		packages.addAll(Arrays.asList(new String[] { "org.nextprot.api.commons", 
+				"org.nextprot.api.core", 
+				"org.nextprot.api.rdf", 
+				"org.nextprot.api.solr", 
+				"org.nextprot.api.user",
+				"org.nextprot.api.web" }));
+		
+		String version = getMavenVersion();
 		for(String profile : env.getActiveProfiles()){
 			if(profile.equalsIgnoreCase("build")){
 				packages.add("org.nextprot.api.build");
@@ -79,7 +80,7 @@ public class JSONDocRoleController extends JSONDocController {
 			}
 		}
 		
-		jsonDoc = new SpringJSONDocScanner().getJSONDoc(version, basePath, packages);
+		jsonDoc = new SpringJSONDocScanner().getJSONDoc(version, "", packages);
 		for(Set<ApiDoc> apiDocs: jsonDoc.getApis().values()) {
 			for(ApiDoc apiDoc: apiDocs) {
 				ApiMethodDoc met = null;
