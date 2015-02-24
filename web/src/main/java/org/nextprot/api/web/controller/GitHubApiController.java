@@ -1,4 +1,4 @@
-package org.nextprot.api.web;
+package org.nextprot.api.web.controller;
 
 import org.kohsuke.github.GHTree;
 import org.nextprot.api.web.service.GitHubService;

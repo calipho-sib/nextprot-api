@@ -1,4 +1,4 @@
-package org.nextprot.api.web;
+package org.nextprot.api.web.controller;
 
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
