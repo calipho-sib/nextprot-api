@@ -1,4 +1,4 @@
-package org.nextprot.api.web.controller;
+package org.nextprot.api.build.controller;
 
 import java.util.List;
 import java.util.Locale;
@@ -12,16 +12,13 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 
-@Lazy
-@Controller
+//Do not annotate this with @Controller because the bean is explicitly defined in the build profile on rdf-context.xml
 public class PublicationController {
 
 	@Autowired private PublicationService publicationService;

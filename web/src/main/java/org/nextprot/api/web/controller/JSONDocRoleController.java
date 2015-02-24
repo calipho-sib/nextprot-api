@@ -27,6 +27,7 @@ import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.export.impl.ExportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,12 +37,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class JSONDocRoleController extends JSONDocController {
 
-
 	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
 
 	private static String version = "0.1 beta";
 	private static String basePath = ""; //no need
-	private static List<String> packages = Arrays.asList(new String[] { "org.nextprot.api" });
+	private static List<String> packages = Arrays.asList(new String[] { "org.nextprot.api.commons", 
+																		"org.nextprot.api.core", 
+																		"org.nextprot.api.rdf", 
+																		"org.nextprot.api.solr", 
+																		"org.nextprot.api.user", 
+																		"org.nextprot.api.web" });
     
     private JSONDoc jsonDoc;
 
@@ -49,8 +54,8 @@ public class JSONDocRoleController extends JSONDocController {
 		super(version, basePath, packages);
 	}
 
-//	@Autowired
-//	private Environment env;
+	@Autowired
+	private Environment env;
 //
 //	public void setVersion(String version) {
 //		this.version = version;
@@ -67,6 +72,13 @@ public class JSONDocRoleController extends JSONDocController {
 	@PostConstruct
 	public void init() {
 		version = getMavenVersion();
+		for(String profile : env.getActiveProfiles()){
+			if(profile.equalsIgnoreCase("build")){
+				packages.add("org.nextprot.api.build");
+				break;
+			}
+		}
+		
 		jsonDoc = new SpringJSONDocScanner().getJSONDoc(version, basePath, packages);
 		for(Set<ApiDoc> apiDocs: jsonDoc.getApis().values()) {
 			for(ApiDoc apiDoc: apiDocs) {

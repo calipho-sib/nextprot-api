@@ -1,4 +1,4 @@
-package org.nextprot.api.web.controller;
+package org.nextprot.api.build.controller;
 
 import java.util.List;
 import java.util.Locale;
@@ -6,6 +6,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -14,18 +15,13 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 
-@Lazy
-@Controller
-//@Api(name = "DbXref", description = "Method to retrieve the list of existing cross references")
+@Api(name = "DbXref", description = "Method to retriiiieve the list of existing cross references", group="rdf stuff")
 public class DbXrefController {
-
 	
 	@Autowired private DbXrefService xrService;
 

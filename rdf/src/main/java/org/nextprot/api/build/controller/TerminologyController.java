@@ -1,18 +1,15 @@
-package org.nextprot.api.web.controller;
+package org.nextprot.api.build.controller;
 
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.TerminologyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Lazy
-@Controller
+//Do not annotate this with @Controller because the bean is explicitly defined in the build profile on rdf-context.xml
 public class TerminologyController {
 
 	@Autowired private TerminologyService terminologyService;
