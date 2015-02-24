@@ -1,4 +1,4 @@
-package org.nextprot.api.web;
+package org.nextprot.api.web.controller;
 
 import java.io.File;
 import java.util.Iterator;
