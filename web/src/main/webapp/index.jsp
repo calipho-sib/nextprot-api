@@ -902,6 +902,18 @@
 						},
 						error: function(data) {
 							printResponse(data, res, this.url);
+							
+							var errorMsg;
+							if (res.status == 0) {
+								errorMsg="The API is not accessible";
+							} else if (res.status == 401) {
+								errorMsg="You are not authorized to access the resource. Please login or review your privileges.";
+				            } else if (res.status == 404) {
+				            	errorMsg="URL not found";
+				            } else if (res.status >= 500) {
+				            	errorMsg="Some error occured: " + res.statusText;
+				            }
+							alert("Error: " + errorMsg);
 						}
 					});
 					
