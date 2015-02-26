@@ -39,7 +39,6 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 		String adminToken = generateTokenWithExpirationDate("Admin", 1, TimeUnit.DAYS, Arrays.asList("ROLE_ADMIN"));
 
 		String responseString = this.getJSONDocByUser(adminToken);
-		System.out.println(responseString);
 
 		// All groups exist
 		assertTrue(responseString.matches(this.getRegExpGroup("Admin")));
@@ -53,8 +52,6 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 		String adminToken = generateTokenWithExpirationDate("Anonymous", 1, TimeUnit.DAYS, Arrays.asList("ROLE_ANONYMOUS"));
 
 		String responseString = this.getJSONDocByUser(adminToken);
-
-		System.out.println(responseString);
 
 		// Admin and User groups do not exist
 		assertFalse(responseString.matches(this.getRegExpGroup("Admin")));
