@@ -1088,14 +1088,20 @@
    		var userProfile;
 		
    		if ($.cookie("authUserProfile") && $.cookie("authUserToken")) {
+   			// If there is already a cookie 
+   			// Update login text (set to user email) 
 			$('.li-login').hide();
 			$('.li-logout').show();
 			
+			// Save the profile
 			userProfile = JSON.parse($.cookie("authUserProfile"));
+
+   			// Update login text (set to user email) 
 			$('.email').text(userProfile.email);
    		}
    		
    		$('.btn-login').click(function(e) {
+   			// When click on "Login"
 			e.preventDefault();
 			var options = {popup: true, icon:'img/np.png', authParams: {
                 scope: 'openid email name picture'
@@ -1103,7 +1109,6 @@
 			lock.show(options, function(err, profile, token) {
 				if (!err) {
 					// Success calback
-					
 					// Save cookies
 					$.cookie("authUserProfile", JSON.stringify(profile));
 					$.cookie("authUserToken", token);
@@ -1111,34 +1116,41 @@
 					// Save the profile
 					userProfile = profile;
 					
+		   			// Update login text (set to user email) 
 					$('.li-login').hide();
 					$('.li-logout').show();
 					$('.email').text(userProfile.email);
+					
 					checkURLExistence();
-					console.log("debug info after login" , userProfile);
 				}
 			});
 		});
    		
    		$('.btn-logout').click(function(e) {
+   			// When click on "Logout"
+   			// Remove cookies
 			$.removeCookie("authUserProfile");
 			$.removeCookie("authUserToken");
 			
+			// Remove the profile
 	   		userProfile = null;
 
    			window.location.reload();
-			$('.li-logout').hide();
+			
+   			// Update login text (remove user email) 
+   			$('.li-logout').hide();
 			$('.li-login').show();
 
 			checkURLExistence();
-			
-			console.log("debug info after logout " , userProfile);
    		});
 
    		$(window).unload(function() {
+   			// When closing browser window
+			// Remove cookies
 			$.removeCookie("authUserProfile");
 			$.removeCookie("authUserToken");
 			
+			// Remove the profile
 	   		userProfile = null;
    		});
    		
