@@ -477,24 +477,6 @@
 	{{#if auth}}
 		{{#equal auth.type "BASIC_AUTH"}}
 			<div class="col-md-12">
-				<h4>Basic Authentication</h4>
-				<div class="form-group">
-					<select class="form-control" id="basicAuthSelect" onchange="fillBasicAuthFields(); return false;">
-						<option disabled="disabled" selected="selected">Select a test user or fill inputs below</option>
-						{{#eachInMap auth.testusers}}
-							<option value="{{value}}">{{key}}</option>
-						{{/eachInMap}}
-						<option value="a-wrong-password">invalidate-credentials-cache-user</option>
-					</select>
-				</div>
-				<div class="form-group" style="margin-bottom:5px;">
-					<label for="basicAuthUsername">Username</label>
-					<input class="form-control" type="text" id="basicAuthUsername" name="basicAuthUsername" placeholder="Username">
-				</div>
-				<div class="form-group">
-					<label for="basicAuthPassword">Password</label>
-					<input class="form-control" type="text" id="basicAuthPassword" name="basicAuthPassword" placeholder="Password">
-				</div>
 			</div>
 		{{/equal}}
 	{{/if}}
