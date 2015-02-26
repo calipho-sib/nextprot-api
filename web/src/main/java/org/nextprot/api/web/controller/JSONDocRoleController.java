@@ -159,7 +159,7 @@ public class JSONDocRoleController extends JSONDocController {
 			}
 		}
 		
-		JSONDoc contextJSONDoc = new JSONDoc(version, basePath);
+		JSONDoc contextJSONDoc = new JSONDoc(getMavenVersion(), "");
 		contextJSONDoc.setApis(contextApis);
 		contextJSONDoc.setObjects(jsonDoc.getObjects());
 		contextJSONDoc.setFlows(jsonDoc.getFlows());
