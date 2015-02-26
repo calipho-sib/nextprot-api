@@ -90,7 +90,7 @@
 					<!-- once logged in user resources -->
 					<li class="dropdown li-logout" style="display:none;" >
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-							<span class="email"></span><span class="caret"></span>
+							<span class="user"></span><span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu" role="menu">
 							<li>
@@ -1101,7 +1101,11 @@
 		   			// Update login text (set to user email) 
 					$('.li-login').hide();
 					$('.li-logout').show();
-					$('.email').text(userProfile.email);
+					if (userProfile.name) {
+						$('.user').text(userProfile.name);
+					} else {
+						$('.user').text(userProfile.email);						
+					}
 					
 					checkURLExistence();
 				}
