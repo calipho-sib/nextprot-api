@@ -32,7 +32,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.TYPE)
 				.add(PubField.JOURNAL)
 				.add(PubField.SOURCE)
-				.add(PubField.AUTHORS)
+				.add(PubField.PRETTY_AUTHORS)				
 				.add(PubField.FILTERS));
 		
 		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.QF)
@@ -54,7 +54,8 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.JOURNAL, 80)
 				.add(PubField.SOURCE, 80)
 				.add(PubField.AUTHORS, 80));
-		
+	
+/*		
 		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FN)
 				.add(PubField.AC, 1)
 				.add(PubField.DATE, 1)
@@ -72,6 +73,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.JOURNAL)
 				.add(PubField.SOURCE)
 				.add(PubField.AUTHORS));
+*/
 		
 		defaultConfig.addOtherParameter("defType", "edismax")
 			.addOtherParameter("facet", "true")
@@ -149,6 +151,7 @@ public class PublicationIndex extends IndexTemplate {
 		JOURNAL("journal"), 
 		SOURCE("source"), 
 		AUTHORS("authors"), 
+		PRETTY_AUTHORS("pretty_authors"), 
 		FILTERS("filters"), 
 		TEXT("text");
 		
