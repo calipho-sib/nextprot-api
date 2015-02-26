@@ -56,7 +56,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		// call UserQuery createAdvancedQuery()
 		this.mockMvc.perform(post("/user/penny/query").contentType(MediaType.APPLICATION_JSON).
 				content(content).accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isForbidden());
+				andExpect(status().isUnauthorized());
 	}
 
 	// --------------------------------- GET --------------------------------------------------------------
@@ -208,7 +208,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		// UserQuery updateAdvancedQuery()
 		this.mockMvc.perform(put("/user/leonard/query/15")
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
-				andExpect(status().isForbidden());
+				andExpect(status().isUnauthorized());
 	}
 
 	// --------------------------------- DELETE -----------------------------------------------------------
@@ -241,6 +241,6 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		// void deleteUserQuery()
 		this.mockMvc.perform(delete("/user/leonard/query/15")
 				.contentType(MediaType.APPLICATION_JSON))
-				.andExpect(status().isForbidden());
+				.andExpect(status().isUnauthorized());
 	}
 }

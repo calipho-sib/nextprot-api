@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Lazy
 @Controller
-@PreAuthorize("hasRole('ROLE_USER')")
 @Api(name = "User Queries", description = "Method to manipulate user queries (SPARQL)", group="User")
 @ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 public class UserQueryController {
@@ -67,6 +66,7 @@ public class UserQueryController {
 		return userQueryService.getUserQueries(username);
 	}
 
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.POST })
 	@ResponseBody
 	public UserQuery createAdvancedQuery(@RequestBody UserQuery userQuery, @PathVariable("username") String username) {
@@ -74,6 +74,7 @@ public class UserQueryController {
 		return userQueryService.createUserQuery(userQuery);
 	}
 
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.PUT })
 	@ResponseBody
 	public UserQuery updateAdvancedQuery(@PathVariable("username") String username, @PathVariable("id") String id, @RequestBody UserQuery advancedUserQuery, Model model) {
@@ -86,6 +87,7 @@ public class UserQueryController {
 		return userQueryService.updateUserQuery(advancedUserQuery);
 	}
 
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.DELETE })
 	public void deleteUserQuery(@PathVariable("username") String username, @PathVariable("id") String id, Model model) {
 

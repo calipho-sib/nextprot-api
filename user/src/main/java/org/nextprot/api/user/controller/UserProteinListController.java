@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Set;
 
 @Controller
-@PreAuthorize("hasRole('ROLE_USER')")
 @Api(name = "User Protein Lists", description = "Method to manipulate user protein lists", group="User")
 @ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 public class UserProteinListController {
@@ -49,6 +48,7 @@ public class UserProteinListController {
 		return proteinList.getAccessionNumbers();
 	}
 
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
 	@ResponseBody
 	public UserProteinList createUserProteinList(@PathVariable("username") String username, @RequestBody UserProteinList proteinList) {
@@ -57,6 +57,7 @@ public class UserProteinListController {
 		return this.proteinListService.createUserProteinList(proteinList);
 	}
 
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/{username}/protein-list/{listid}", method = { RequestMethod.PUT })
 	@ResponseBody
 	public UserProteinList updateUserProteinList(@PathVariable("username") String username, @PathVariable("listid") String id,
@@ -67,6 +68,7 @@ public class UserProteinListController {
 		return this.proteinListService.updateUserProteinList(proteinList);
 	}
 
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/{username}/protein-list/{listid}", method = { RequestMethod.DELETE })
 	public void deleteUserProteinList(@PathVariable("username") String username, @PathVariable("listid") String id) {
 
@@ -74,6 +76,7 @@ public class UserProteinListController {
 		this.proteinListService.deleteUserProteinList(userProteinList);
 	}
 
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/{username}/protein-list/combine", method = RequestMethod.GET)
 	@ResponseBody
 	public UserProteinList combineUserProteinList(
@@ -90,6 +93,7 @@ public class UserProteinListController {
 		return proteinListService.createUserProteinList(combinedList);
 	}
 
+	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/{username}/protein-list/{listid}/upload", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
 	public void uploadProteinList(@RequestParam("file") MultipartFile file,
