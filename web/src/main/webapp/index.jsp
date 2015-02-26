@@ -1069,14 +1069,14 @@
 	
    		var userProfile;
 		
-   		if ($.cookie("authUserProfile") && $.cookie("authUserToken")) {
+   		if ($.cookie("profile") && $.cookie("token")) {
    			// If there is already a cookie 
    			// Update login text (set to user email) 
 			$('.li-login').hide();
 			$('.li-logout').show();
 			
 			// Save the profile
-			userProfile = JSON.parse($.cookie("authUserProfile"));
+			userProfile = JSON.parse($.cookie("profile"));
 
    			// Update login text (set to user email) 
 			if (userProfile.name) {
@@ -1096,8 +1096,8 @@
 				if (!err) {
 					// Success calback
 					// Save cookies
-					$.cookie("authUserProfile", JSON.stringify(profile));
-					$.cookie("authUserToken", token);
+					$.cookie("profile", JSON.stringify(profile));
+					$.cookie("token", token);
 
 					// Save the profile
 					userProfile = profile;
@@ -1119,8 +1119,8 @@
    		$('.btn-logout').click(function(e) {
    			// When click on "Logout"
    			// Remove cookies
-			$.removeCookie("authUserProfile");
-			$.removeCookie("authUserToken");
+			$.removeCookie("profile");
+			$.removeCookie("token");
 			
 			// Remove the profile
 	   		userProfile = null;
@@ -1136,8 +1136,8 @@
 
 		$.ajaxSetup({
 			'beforeSend': function(xhr) {
-				if ($.cookie("authUserToken")) {
-					xhr.setRequestHeader('Authorization', 'Bearer ' + $.cookie("authUserToken"));
+				if ($.cookie("token")) {
+					xhr.setRequestHeader('Authorization', 'Bearer ' + $.cookie("token"));
 				}
 			}
 		});
