@@ -1071,13 +1071,13 @@
         }
     }
 
-	checkURLExistence();
     updateResourcesHrefs();
 
 </script>
 
 <!-- Auth0 lock script -->
 <script src="js/lock-7.0.min.js"></script>
+<script src="js/jquery.cookie.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <script>
 	var lock = null;
@@ -1087,6 +1087,14 @@
 	
    		var userProfile;
 		
+   		if ($.cookie("authUserProfile") && $.cookie("authUserToken")) {
+			$('.li-login').hide();
+			$('.li-logout').show();
+			
+			userProfile = JSON.parse($.cookie("authUserProfile"));
+			$('.email').text(userProfile.email);
+   		}
+   		
    		$('.btn-login').click(function(e) {
 			e.preventDefault();
 			var options = {popup: true, icon:'img/np.png', authParams: {
@@ -1095,9 +1103,10 @@
 			lock.show(options, function(err, profile, token) {
 				if (!err) {
 					// Success calback
-					// Save the JWT token.
-					localStorage.setItem('userToken', token);
-					localStorage.setItem('profile', profile);
+					
+					// Save cookies
+					$.cookie("authUserProfile", JSON.stringify(profile));
+					$.cookie("authUserToken", token);
 
 					// Save the profile
 					userProfile = profile;
@@ -1112,21 +1121,29 @@
 		});
    		
    		$('.btn-logout').click(function(e) {
-   			localStorage.removeItem('userToken');
+			$.removeCookie("authUserProfile");
+			$.removeCookie("authUserToken");
+			
 	   		userProfile = null;
+
    			window.location.reload();
 			$('.li-logout').hide();
 			$('.li-login').show();
+
+			checkURLExistence();
+			
 			console.log("debug info after logout " , userProfile);
    		});
 
 		$.ajaxSetup({
 			'beforeSend': function(xhr) {
-				if (localStorage.getItem('userToken')) {
-					xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('userToken'));
+				if ($.cookie("authUserToken")) {
+					xhr.setRequestHeader('Authorization', 'Bearer ' + $.cookie("authUserToken"));
 				}
 			}
 		});
+		
+		checkURLExistence();
 	});
 </script>
 
