@@ -906,7 +906,7 @@
 							var errorMsg;
 							if (res.status == 0) {
 								errorMsg="The API is not accessible";
-							} else if (res.status == 401) {
+							} else if (res.status == 401 || (status == 403)) {
 								errorMsg="You are not authorized to access the resource. Please login or review your privileges.";
 				            } else if (res.status == 404) {
 				            	errorMsg="URL not found";
