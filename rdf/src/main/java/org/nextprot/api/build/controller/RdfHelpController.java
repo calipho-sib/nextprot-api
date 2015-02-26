@@ -1,7 +1,8 @@
-package org.nextprot.api.rdf.controller;
+package org.nextprot.api.build.controller;
 
 import java.util.List;
 
+import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.rdf.domain.RdfTypeInfo;
@@ -16,35 +17,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Lazy
 @Controller
+@Api(name = "RdfHelp", description = "Method to retrieve rdf help", group="Build rdf")
 public class RdfHelpController {
 
 	@Autowired
 	private RdfHelpService service;
-
-	/**
-	 * Full info of a single rdf:type
-	 * 
-	 * @param rdfType
-	 * @param model
-	 * @return
-	 */
-/*	@ApiMethod(path = "/rdf/help/type/{rdfType}", verb = ApiVerb.GET, description = "Gets a description and properties of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
-	@RequestMapping("/rdf/help/type/{rdfType}")
-	@ResponseBody
-	public RdfTypeInfo helpFullInfo(
-			@PathVariable("rdfType") String rdfType,
-			Model model) {
-		try {
-			RdfTypeInfo typ;
-			typ = this.service.getRdfTypeFullInfo(rdfType);
-			model.addAttribute("result", typ);
-			return typ;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new NextProtException(e.getMessage());
-		}
-	}*/
 
 	@ApiMethod(path = "/rdf/help/type/all", verb = ApiVerb.GET, description = "Gets a description and properties of all rdf types. WARNING: may require a lot of time.", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping("/rdf/help/type/all")
@@ -255,7 +232,34 @@ public class RdfHelpController {
 		}
 		
 	}
-*/
+	
+	
+	/**
+	 * Full info of a single rdf:type
+	 * 
+	 * @param rdfType
+	 * @param model
+	 * @return
+	 */
+/*	@ApiMethod(path = "/rdf/help/type/{rdfType}", verb = ApiVerb.GET, description = "Gets a description and properties of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping("/rdf/help/type/{rdfType}")
+	@ResponseBody
+	public RdfTypeInfo helpFullInfo(
+			@PathVariable("rdfType") String rdfType,
+			Model model) {
+		try {
+			RdfTypeInfo typ;
+			typ = this.service.getRdfTypeFullInfo(rdfType);
+			model.addAttribute("result", typ);
+			return typ;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new NextProtException(e.getMessage());
+		}
+	}*/
+
+
 	/*
 	 * @ApiMethod(path = "/rdf/help/type/{rdfType}/name", verb = ApiVerb.GET, description = "Gets a description of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
 	 * @RequestMapping("/rdf/help/type/{rdfType}/name")

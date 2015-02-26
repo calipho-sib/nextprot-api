@@ -1,4 +1,4 @@
-package org.nextprot.api.web;
+package org.nextprot.api.build.controller;
 
 import java.util.List;
 import java.util.Locale;
@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -22,6 +23,7 @@ import org.springframework.web.servlet.ViewResolver;
 
 @Lazy
 @Controller
+@Api(name = "Publication", description = "Method to retrieve publications", group="Build rdf")
 public class PublicationController {
 
 	@Autowired private PublicationService publicationService;

@@ -1,7 +1,9 @@
 package org.nextprot.api.user.utils;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.SimpleFormatter;
 
 import org.nextprot.api.user.domain.UserQuery;
 
@@ -39,5 +41,8 @@ public class UserQueryUtils {
 		}
 	};
 
+	public static String getTutoQueryNameFromId(long id) {
+		return String.format("NXQ_%05d", id);
+	}
 
 }

@@ -48,9 +48,9 @@
 							<span class="caret"></span>
 					</a>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="http://alpha-search.nextprot.org">Search</a></li>
-							<li><a href="http://alpha-snorql.nextprot.org">Snorql</a></li>
-							<li><a href="http://alpha-api.nextprot.org">API</a></li>
+							<li><a href="https://search.nextprot.org">Search</a></li>
+							<li><a href="http://snorql.nextprot.org">Snorql</a></li>
+							<li><a href="https://api.nextprot.org">API</a></li>
 						</ul></li>
 
 					<!-- Help dropdown -->
@@ -1034,7 +1034,45 @@
 			}
 		});
 	}
+
+    function buildHref(resource) {
+
+        var hostname=window.location.hostname;
+
+        var regexp = /(alpha|dev|build)-(api|search|snorql)\.nextprot\.org/g;
+        var match = regexp.exec(hostname);
+
+        if (match != null) {
+            var machine = match[1]
+
+            if (machine == "build") {
+
+                if (resource == "search") {
+
+                    machine = "alpha";
+                }
+                else if (resource.match("search|snorql")) {
+
+                    machine = "alpha";
+                }
+            }
+
+            return "http://" + machine + "-" + resource + ".nextprot.org"
+        }
+    }
+
+    function updateResourcesHrefs() {
+
+        if (! window.location.protocol.match(/^https$/)) {
+
+            $("a[href^='https://search.nextprot.org']").attr("href", buildHref("search"));
+            $("a[href^='http://snorql.nextprot.org']").attr("href", buildHref("snorql"));
+            $("a[href^='https://api.nextprot.org']").attr("href", buildHref("api"));
+        }
+    }
+
 	checkURLExistence();
+    updateResourcesHrefs();
 
 </script>
 

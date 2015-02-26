@@ -1,5 +1,14 @@
 package org.nextprot.api.core.aop;
 
+import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -7,6 +16,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.aop.requests.RequestInfo;
 import org.nextprot.api.core.aop.requests.RequestInfoFactory;
 import org.nextprot.api.core.aop.requests.RequestManager;
@@ -20,12 +30,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import java.lang.annotation.Annotation;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Aspect responsible to instrument the actions of the users
@@ -53,9 +57,10 @@ public class InstrumentationAspect {
 	private AtomicLong serviceRequestIdCounter = new AtomicLong();
 	private ThreadLocal<Long> serviceRequestId = new ThreadLocal<Long>();
 
+	
 	@Around("execution(* org.nextprot.api.*.controller.*.*(..))")
 	public Object logServiceInformaton(ProceedingJoinPoint pjp) throws Throwable {
-
+		
 		if (enableInstrumentation) {
 
 			controllerRequestId.set(controllerRequestIdCounter.incrementAndGet());
@@ -65,15 +70,9 @@ public class InstrumentationAspect {
 			Object[] arguments = pjp.getArgs();
 
 			RequestInfo request = RequestInfoFactory.createRequestInfo(methodSignature.getDeclaringType().getSimpleName() + "#" + methodSignature.getName());
-			Map<String, String> map = extractSecurityInfo(arguments);
+			request.putAll(extractSecurityInfo());
+			request.putAll(extractHttpInfo());
 
-			ServletRequestAttributes atts = (ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes());
-			if (atts != null && atts.getRequest() != null) {
-				map.put("remoteAddr", atts.getRequest().getRemoteAddr());
-				map.put("remoteHost", atts.getRequest().getRemoteHost());
-			}
-
-			request.putAll(map);
 
 			clientRequestManager.startMonitoringClientRequest(request);
 
@@ -85,11 +84,11 @@ public class InstrumentationAspect {
 			sb.append(controllerRequestIdCounter.get());
 			sb.append(";");
 
-			for (String key : map.keySet()) {
+			for (String key : request.keySet()) {
 				sb.append(key);
 				sb.append("=");
-				sb.append(map.get(key));
-				sb.append(";");
+				sb.append(request.get(key));
+				sb.append(";"); 
 			}
 
 			long start = System.currentTimeMillis();
@@ -122,6 +121,7 @@ public class InstrumentationAspect {
 		}
 
 	}
+	
 
 	@Around("execution(* org.nextprot.api.*.service.*.*(..))")
 	public Object logService(ProceedingJoinPoint pjp) throws Throwable {
@@ -310,18 +310,72 @@ public class InstrumentationAspect {
 		return sb;
 	}
 
-	private static Map<String, String> extractSecurityInfo(Object[] arguments) {
+	
+	
+	private static Map<String, String> extractHttpInfo(){
+		
+		HashMap<String, String> map = new HashMap<String, String>();
+
+		HttpServletRequest httpRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		
+		map.put("http-request-x-forwarded-for", httpRequest.getHeader("x-forwarded-for"));
+		map.put("http-request-x-forwarded-host", httpRequest.getHeader("x-forwarded-host"));
+		map.put("http-request-x-forwarded-server", httpRequest.getHeader("x-forwarded-server"));
+
+		map.put("http-request-origin", httpRequest.getHeader("origin"));
+		map.put("http-request-accept", StringUtils.quote(httpRequest.getHeader("accept")));
+		map.put("http-request-content-type", StringUtils.quote(httpRequest.getHeader("content-type")));
+
+		map.put("http-request-referer", httpRequest.getHeader("referer"));
+		map.put("http-request-user-agent",  StringUtils.quote(httpRequest.getHeader("user-agent")));
+		//map.put("http-request-content-type", httpRequest.getContentType());
+		
+		map.put("http-request-method",  StringUtils.quote(httpRequest.getMethod()));
+		map.put("http-request-context-path",  StringUtils.quote(httpRequest.getContextPath()));
+		map.put("http-request-query-string",  StringUtils.quote(httpRequest.getQueryString()));
+		map.put("http-request-uri",  StringUtils.quote(httpRequest.getRequestURI()));
+		map.put("http-request-url",  StringUtils.quote(httpRequest.getRequestURL().toString()));
+		
+		map.put("http-request-remote-host",  StringUtils.quote(httpRequest.getRemoteHost()));
+		map.put("http-request-remote-user",  StringUtils.quote(httpRequest.getRemoteUser()));		
+		map.put("http-request-local-name",  StringUtils.quote(httpRequest.getLocalName()));		
+		map.put("http-request-local-address",  StringUtils.quote(httpRequest.getLocalAddr()));		
+		map.put("http-request-path-info",  StringUtils.quote(httpRequest.getPathInfo()));		
+		
+		
+		Enumeration<String> params = httpRequest.getParameterNames();
+		while (params.hasMoreElements()) {
+			String paramName = params.nextElement();
+			String paramValue = httpRequest.getParameter(paramName);
+			map.put("http-request-param" + StringUtils.capitalizeFirstLetter(paramName), StringUtils.quote(paramValue));
+		}
+
+		return map;
+	
+
+	}
+
+	private static Map<String, String> extractSecurityInfo() {
+
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
 		HashMap<String, String> map = new HashMap<String, String>();
 
 		if (a != null) {
 
+			if (a.getDetails() instanceof Map) {
+				Map<?,?> userDetails = (Map<?,?>) a.getDetails();
+				for(Object o : userDetails.keySet()){
+					map.put("auth0" + StringUtils.capitalizeFirstLetter(o.toString()), StringUtils.quote(userDetails.get(o).toString()));
+				}
+
+			}
+			
 			if (a.getPrincipal() instanceof UserDetails) {
 
 				UserDetails currentUserDetails = (UserDetails) a.getPrincipal();
 
 				map.put("securityUserName", currentUserDetails.getUsername());
-				map.put("securityUserRole", currentUserDetails.getAuthorities().iterator().next().getAuthority());
+				map.put("securityUserRole",  StringUtils.quote(currentUserDetails.getAuthorities().toString()));
 
 			} else {
 				map.put("securityUserName", a.getPrincipal().toString());
