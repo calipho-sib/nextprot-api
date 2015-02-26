@@ -1096,8 +1096,8 @@
 				if (!err) {
 					// Success calback
 					// Save cookies
-					$.cookie("profile", JSON.stringify(profile));
-					$.cookie("token", token);
+					$.cookie("profile", JSON.stringify(profile), { domain: ".nextprot.org" });
+					$.cookie("token", token, { domain: ".nextprot.org" });
 
 					// Save the profile
 					userProfile = profile;
