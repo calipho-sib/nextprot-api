@@ -1126,16 +1126,6 @@
 			checkURLExistence();
    		});
 
-   		$(window).unload(function() {
-   			// When closing browser window
-			// Remove cookies
-			$.removeCookie("authUserProfile");
-			$.removeCookie("authUserToken");
-			
-			// Remove the profile
-	   		userProfile = null;
-   		});
-   		
 		$.ajaxSetup({
 			'beforeSend': function(xhr) {
 				if ($.cookie("authUserToken")) {
