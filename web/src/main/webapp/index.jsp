@@ -1135,6 +1135,13 @@
 			console.log("debug info after logout " , userProfile);
    		});
 
+   		$(window).unload(function() {
+			$.removeCookie("authUserProfile");
+			$.removeCookie("authUserToken");
+			
+	   		userProfile = null;
+   		});
+   		
 		$.ajaxSetup({
 			'beforeSend': function(xhr) {
 				if ($.cookie("authUserToken")) {
