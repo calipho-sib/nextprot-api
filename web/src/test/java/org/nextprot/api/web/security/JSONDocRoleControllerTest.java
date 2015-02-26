@@ -1,6 +1,7 @@
 package org.nextprot.api.web.security;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,13 +26,11 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 
 		String responseString = this.getJSONDocByUser(sheldonToken);
 
-		System.out.println(responseString);
-		
-		// Admin groups exists but is empty (for instance, "Admin":[]")
-		assertTrue(responseString.matches(this.getRegExpForEmptyGroup("Admin")));
-		// [^\\]] = Matches any single character but not ']'
-		assertTrue(responseString.matches(this.getRegExpForNotEmptyGroup("User")));
-		assertTrue(responseString.matches(this.getRegExpForNotEmptyGroup("")));
+		// Admin group does not exist
+		assertFalse(responseString.matches(this.getRegExpGroup("Admin")));
+		// User and "" groups exist
+		assertTrue(responseString.matches(this.getRegExpGroup("User")));
+		assertTrue(responseString.matches(this.getRegExpGroup("")));
 	}
 
 	@Test
@@ -40,13 +39,12 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 		String adminToken = generateTokenWithExpirationDate("Admin", 1, TimeUnit.DAYS, Arrays.asList("ROLE_ADMIN"));
 
 		String responseString = this.getJSONDocByUser(adminToken);
-
 		System.out.println(responseString);
 
-		// [^\\]] = Matches any single character but not ']'
-		assertTrue(responseString.matches(this.getRegExpForNotEmptyGroup("Admin")));
-		assertTrue(responseString.matches(this.getRegExpForNotEmptyGroup("User")));
-		assertTrue(responseString.matches(this.getRegExpForNotEmptyGroup("")));
+		// All groups exist
+		assertTrue(responseString.matches(this.getRegExpGroup("Admin")));
+		assertTrue(responseString.matches(this.getRegExpGroup("User")));
+		assertTrue(responseString.matches(this.getRegExpGroup("")));
 	}
 
 	@Test
@@ -58,11 +56,11 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 
 		System.out.println(responseString);
 
-		// Admin and User groups exists but are empty
-		assertTrue(responseString.matches(this.getRegExpForEmptyGroup("Admin")));
-		assertTrue(responseString.matches(this.getRegExpForEmptyGroup("User")));
-		// [^\\]] = Matches any single character but not ']'
-		assertTrue(responseString.matches(this.getRegExpForNotEmptyGroup("")));
+		// Admin and User groups do not exist
+		assertFalse(responseString.matches(this.getRegExpGroup("Admin")));
+		assertFalse(responseString.matches(this.getRegExpGroup("User")));
+		// "" group exist
+		assertTrue(responseString.matches(this.getRegExpGroup("")));
 	}
 
 	/**
@@ -75,18 +73,9 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 	}
 	
 	/**
-	 * Get regular expression to be able to match empty JSONDoc group (for instance, if <code>groupName</code>
-	 * equals "Admin" we want to be able to match "Admin":[]").
+	 * Get regular expression to be able to match JSONDoc group.
 	 */
-	private String getRegExpForEmptyGroup(String groupName) {
-		return ".*\""+groupName+"\":\\[\\].*";
-	}
-	
-	/**
-	 * Get regular expression to be able to match <b>not</b> empty JSONDoc group (for instance, if <code>groupName</code>
-	 * equals "User" we do not want to be able to match "Admin":[]
-	 */
-	private String getRegExpForNotEmptyGroup(String groupName) {
+	private String getRegExpGroup(String groupName) {
 		return ".*\""+groupName+"\":\\[[^\\]].*";
 	}
 }
