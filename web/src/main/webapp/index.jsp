@@ -1079,7 +1079,11 @@
 			userProfile = JSON.parse($.cookie("authUserProfile"));
 
    			// Update login text (set to user email) 
-			$('.email').text(userProfile.email);
+			if (userProfile.name) {
+				$('.user').text(userProfile.name);
+			} else {
+				$('.user').text(userProfile.email);						
+			}
    		}
    		
    		$('.btn-login').click(function(e) {
