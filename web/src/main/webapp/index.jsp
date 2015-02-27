@@ -1096,8 +1096,13 @@
 				if (!err) {
 					// Success calback
 					// Save cookies
-					$.cookie("profile", JSON.stringify(profile), { domain: ".nextprot.org" });
-					$.cookie("token", token, { domain: ".nextprot.org" });
+					if (window.location.hostname === "localhost") {
+						$.cookie("profile", JSON.stringify(profile));
+						$.cookie("token", token);
+					} else {
+ 						$.cookie("profile", JSON.stringify(profile), { domain: ".nextprot.org" });
+	 					$.cookie("token", token, { domain: ".nextprot.org" });
+					}
 
 					// Save the profile
 					userProfile = profile;
