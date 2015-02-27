@@ -4,12 +4,15 @@ import java.util.List;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiAuthBasic;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
 import org.nextprot.api.user.utils.UserQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,12 +31,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Lazy
 @Controller
 @Api(name = "User Queries", description = "Method to manipulate user queries (SPARQL)", group="User")
-@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 public class UserQueryController {
 
 	@Autowired
 	private UserQueryService userQueryService;
 
+	@ApiMethod(path = "/queries/tutorial", verb = ApiVerb.GET, description = "Get tutorial queries for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping(value = "/queries/tutorial", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserQuery> getTutorialQueries(@RequestParam(value="snorql", required=false) Boolean snorql) {
@@ -54,18 +57,22 @@ public class UserQueryController {
 		return res;
 	}
 	
+	@ApiMethod(path = "/user/{username}/query/{id}", verb = ApiVerb.GET, description = "Get user query", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.GET })
 	@ResponseBody
 	public UserQuery getUserQuery(@PathVariable("username") String username, @PathVariable("id") String id) {
 		return userQueryService.getUserQueryById(Long.valueOf(id));
 	}
 	
+	@ApiMethod(path = "/user/{username}/query/{id}", verb = ApiVerb.GET, description = "Get user queries", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserQuery> getUserQueries(@PathVariable("username") String username) {
 		return userQueryService.getUserQueries(username);
 	}
 
+	@ApiMethod(path = "/user/{username}/query", verb = ApiVerb.POST, description = "Creates an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.POST })
 	@ResponseBody
@@ -74,6 +81,8 @@ public class UserQueryController {
 		return userQueryService.createUserQuery(userQuery);
 	}
 
+	@ApiMethod(path = "/user/{username}/query/{id}", verb = ApiVerb.PUT, description = "Updates an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.PUT })
 	@ResponseBody
@@ -87,6 +96,8 @@ public class UserQueryController {
 		return userQueryService.updateUserQuery(advancedUserQuery);
 	}
 
+	@ApiMethod(path = "/user/{username}/query/{id}", verb = ApiVerb.DELETE, description = "Deletes an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.DELETE })
 	public void deleteUserQuery(@PathVariable("username") String username, @PathVariable("id") String id, Model model) {
@@ -97,6 +108,4 @@ public class UserQueryController {
 
 	}
 	
-
-
 }
