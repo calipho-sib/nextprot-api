@@ -1012,7 +1012,8 @@
 				buildFromJSONDoc(data);
 			},
 			error: function(msg) {
-				alert("Error " + msg);
+				console.log(msg);
+				//alert("Error " + msg);
 			}
 		});
 	}
@@ -1069,14 +1070,14 @@
 	
    		var userProfile;
 		
-   		if ($.cookie("profile") && $.cookie("token")) {
+   		if ($.cookie("nxprofile") && $.cookie("nxtoken")) {
    			// If there is already a cookie 
    			// Update login text (set to user email) 
 			$('.li-login').hide();
 			$('.li-logout').show();
 			
 			// Save the profile
-			userProfile = JSON.parse($.cookie("profile"));
+			userProfile = JSON.parse($.cookie("nxprofile"));
 
    			// Update login text (set to user email) 
 			if (userProfile.name) {
@@ -1096,8 +1097,13 @@
 				if (!err) {
 					// Success calback
 					// Save cookies
-					$.cookie("profile", JSON.stringify(profile), { domain: ".nextprot.org" });
-					$.cookie("token", token, { domain: ".nextprot.org" });
+					if (window.location.hostname === "localhost") {
+						$.cookie("nxprofile", JSON.stringify(profile), {path: "/"});
+						$.cookie("nxtoken", token, {path: "/"});
+					} else {
+ 						$.cookie("nxprofile", JSON.stringify(profile), { path: "/", domain: ".nextprot.org" });
+	 					$.cookie("nxtoken", token, { domain: ".nextprot.org" });
+					}
 
 					// Save the profile
 					userProfile = profile;
@@ -1119,15 +1125,13 @@
    		$('.btn-logout').click(function(e) {
    			// When click on "Logout"
    			// Remove cookies
-			$.removeCookie("profile");
-			$.removeCookie("token");
+			$.removeCookie("nxprofile", { path: "/" });
+			$.removeCookie("nxtoken", { path: "/" });
 			
 			// Remove the profile
 	   		userProfile = null;
 
-   			window.location.reload();
-			
-   			// Update login text (remove user email) 
+			// Update login text (remove user email) 
    			$('.li-logout').hide();
 			$('.li-login').show();
 
@@ -1136,8 +1140,8 @@
 
 		$.ajaxSetup({
 			'beforeSend': function(xhr) {
-				if ($.cookie("token")) {
-					xhr.setRequestHeader('Authorization', 'Bearer ' + $.cookie("token"));
+				if ($.cookie("nxtoken")) {
+					xhr.setRequestHeader('Authorization', 'Bearer ' + $.cookie("nxtoken"));
 				}
 			}
 		});

@@ -131,11 +131,10 @@ public class JSONDocRoleController extends JSONDocController {
 		}
 
 		Map<String, Set<ApiDoc>> contextApis = new TreeMap<String, Set<ApiDoc>>();
-		for(Entry<String, Set<ApiDoc>> api: jsonDoc.getApis().entrySet()) {
+		for(Entry<String, Set<ApiDoc>> apis: jsonDoc.getApis().entrySet()) {
 
+			// For each class annotation (ApiDoc)
 			Set<ApiDoc> contextApiDocs = new TreeSet<ApiDoc>();
-			
-			for (ApiDoc apiDoc : api.getValue()) {
 //				boolean devMode = false;
 //				if (env != null) {
 //					String[] pfs = env.getActiveProfiles();
@@ -148,14 +147,39 @@ public class JSONDocRoleController extends JSONDocController {
 //						}
 //					}
 //				}
+			for (ApiDoc apiDoc : apis.getValue()) {
+
+				// Check authorization at class level 
 				if (apiDoc.getAuth() == null || apiDoc.getAuth().equals("ROLE_ANONYMOUS") || 
 						(contextRoles != null && !Collections.disjoint(contextRoles, apiDoc.getAuth().getRoles()))) {
-					LOGGER.info("Add " + apiDoc.getName() + "ApiDoc to the current user");
-					contextApiDocs.add(apiDoc);
+
+					// For each method annotation (ApiMethodDoc)
+					Set<ApiMethodDoc> contextApiMethodDocs = new TreeSet<ApiMethodDoc>();
+					for (ApiMethodDoc apiMethodDoc : apiDoc.getMethods()) {
+					
+						// Check authorization at method level 
+						if (apiMethodDoc.getAuth() == null || apiMethodDoc.getAuth().equals("ROLE_ANONYMOUS") ||
+								contextRoles != null && !Collections.disjoint(contextRoles, apiMethodDoc.getAuth().getRoles())) {
+							contextApiMethodDocs.add(apiMethodDoc);
+						}
+					}
+					if (!contextApiMethodDocs.isEmpty()) {
+						//Create a copy of apiDoc but with methods according to contextRoles
+						ApiDoc tmpApiDoc = new ApiDoc();
+						tmpApiDoc.setDescription(apiDoc.getDescription());
+						tmpApiDoc.setName(apiDoc.getName());
+						tmpApiDoc.setGroup(apiDoc.getGroup());
+						tmpApiDoc.setMethods(contextApiMethodDocs);
+						tmpApiDoc.setSupportedversions(apiDoc.getSupportedversions());
+						tmpApiDoc.setAuth(apiDoc.getAuth());
+
+						contextApiDocs.add(tmpApiDoc);
+					}
 				}
 			}
 			if (!contextApiDocs.isEmpty()) {
-				contextApis.put(api.getKey(), contextApiDocs);
+				contextApis.put(apis.getKey(), contextApiDocs);
+				LOGGER.info("Add \"" + apis.getKey() + "\" Api to the current user");						
 			}
 		}
 		
