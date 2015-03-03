@@ -1021,25 +1021,12 @@
 
         var hostname=window.location.hostname;
 
-        var regexp = /(alpha|dev|build)-(api|search|snorql)\.nextprot\.org/g;
+        var regexp = /(alpha|dev|build)-api\.nextprot\.org/g;
         var match = regexp.exec(hostname);
 
         if (match != null) {
-            var machine = match[1]
 
-            if (machine == "build") {
-
-                if (resource == "search") {
-
-                    machine = "alpha";
-                }
-                else if (resource.match("search|snorql")) {
-
-                    machine = "alpha";
-                }
-            }
-
-            return "http://" + machine + "-" + resource + ".nextprot.org"
+            return "http://" + match[1] + "-" + resource + ".nextprot.org"
         }
     }
 
