@@ -27,10 +27,16 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 		String responseString = this.getJSONDocByUser(sheldonToken);
 
 		// Admin group does not exist
-		assertFalse(responseString.matches(this.getRegExpGroup("Admin")));
+		assertFalse(this.isMatchRegExpGroup(responseString, "Admin"));
 		// User and "" groups exist
-		assertTrue(responseString.matches(this.getRegExpGroup("User")));
-		assertTrue(responseString.matches(this.getRegExpGroup("")));
+		assertTrue(this.isMatchRegExpGroup(responseString, "User"));
+		assertTrue(this.isMatchRegExpGroup(responseString, ""));
+		
+		// Check presence of User subgroups
+		assertTrue(this.containsWithKeyValue(responseString, "name", "User"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "User Application"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "User Protein Lists"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "User Queries"));
 	}
 
 	@Test
@@ -41,9 +47,15 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 		String responseString = this.getJSONDocByUser(adminToken);
 
 		// All groups exist
-		assertTrue(responseString.matches(this.getRegExpGroup("Admin")));
-		assertTrue(responseString.matches(this.getRegExpGroup("User")));
-		assertTrue(responseString.matches(this.getRegExpGroup("")));
+		assertTrue(this.isMatchRegExpGroup(responseString, "Admin"));
+		assertTrue(this.isMatchRegExpGroup(responseString, "User"));
+		assertTrue(this.isMatchRegExpGroup(responseString, ""));
+
+		// Check presence of User subgroups
+		assertTrue(this.containsWithKeyValue(responseString, "name", "User"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "User Application"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "User Protein Lists"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "User Queries"));
 	}
 
 	@Test
@@ -53,11 +65,26 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 
 		String responseString = this.getJSONDocByUser(adminToken);
 
-		// Admin and User groups do not exist
-		assertFalse(responseString.matches(this.getRegExpGroup("Admin")));
-		assertFalse(responseString.matches(this.getRegExpGroup("User")));
-		// "" group exist
-		assertTrue(responseString.matches(this.getRegExpGroup("")));
+		// Admin group does not exist
+		assertFalse(this.isMatchRegExpGroup(responseString, "Admin"));
+		// User and "" groups exist 
+		assertTrue(this.isMatchRegExpGroup(responseString, "User"));
+		assertTrue(this.isMatchRegExpGroup(responseString, ""));
+
+		// Check presence/absence of User subgroups
+		assertFalse(this.containsWithKeyValue(responseString, "name", "User"));
+		assertFalse(this.containsWithKeyValue(responseString, "name", "User Application"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "User Protein Lists"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "User Queries"));
+
+		// Check that does not contain any "modification" verbs
+		assertFalse(this.containsWithKeyValue(responseString, "verb", "POST"));
+		assertFalse(this.containsWithKeyValue(responseString, "verb", "PATCH"));
+		assertFalse(this.containsWithKeyValue(responseString, "verb", "PUT"));
+		assertFalse(this.containsWithKeyValue(responseString, "verb", "DELETE"));
+		assertFalse(this.containsWithKeyValue(responseString, "verb", "HEAD"));
+		assertFalse(this.containsWithKeyValue(responseString, "verb", "OPTIONS"));
+		assertFalse(this.containsWithKeyValue(responseString, "verb", "TRACE"));
 	}
 
 	/**
@@ -68,11 +95,20 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 				header("Authorization", "Bearer " + user).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 	}
+
+	/**
+	 * Returns true if and only if the provided string contains the specified string formed by key and value 
+	 * (for instance, '"name":"User Application"').
+	 */
+	private boolean containsWithKeyValue(String string, String key, String value) {
+		return string.contains("\"" + key + "\":\"" + value +"\"");
+	}
 	
 	/**
-	 * Get regular expression to be able to match JSONDoc group.
+	 * Returns true if and only if the provided string contains the specified string of a JSONDoc group 
+	 * (for instance, '"Admin":[' not succeeded by ']').
 	 */
-	private String getRegExpGroup(String groupName) {
-		return ".*\""+groupName+"\":\\[[^\\]].*";
+	private boolean isMatchRegExpGroup(String string, String groupName) {
+		return  string.matches(".*\""+groupName+"\":\\[[^\\]].*");
 	}
 }
