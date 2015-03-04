@@ -43,6 +43,12 @@ public interface SolrService {
 
 	SearchResult getUserListSearchResult(UserProteinList proteinList) throws SearchQueryException;
 
+	Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
+
+	Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request);
+
+	Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
+
 	// Query buildQuery(SolrIndex index, String configuration,
 	// String queryString, String quality, String sort, String order,
 	// String start, String rows, String filter);

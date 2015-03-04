@@ -1,6 +1,7 @@
 package org.nextprot.api.solr.impl;
 
 import com.google.common.base.Joiner;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -36,6 +37,7 @@ import java.util.Map.Entry;
 @Service
 public class SolrServiceImpl implements SolrService {
 	private static final Log Logger = LogFactory.getLog(SolrServiceImpl.class);
+	private static final int DEFAULT_ROWS = 50;
 
 	@Autowired
 	private SolrConnectionFactory connFactory;
@@ -308,6 +310,56 @@ public class SolrServiceImpl implements SolrService {
 		// queryString, null, null, null, "0", "50", null, new String[0]);
 
 		return this.executeByIdQuery(query, fieldNames);
+	}
+	
+	
+	@Override
+	public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+		return buildQuery(indexName, "autocomplete", queryString, quality, sort, order, start, rows, filter);
+	}
+
+	@Override
+	public Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request) {
+		return this.buildQuery(indexName, configurationName, request);
+	}
+
+	@Override
+	public Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+		return buildQuery(indexName, "pl_search", queryString, quality, sort, order, start, rows, filter);
+	}
+	
+	
+	private Query buildQuery(String indexName, String configurationName, QueryRequest request) {
+		Logger.debug("calling buildQuery() with indexName=" + indexName + ", configName=" + configurationName + ", request=" + request.toPrettyString());
+		return buildQuery(indexName, configurationName, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
+	}
+
+	private Query buildQuery(String indexName, String configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+
+		String actualIndexName = indexName.equals("entry") && quality != null && quality.equals("gold") ? "gold-entry" : indexName;
+
+		SolrIndex index = this.configuration.getIndexByName(actualIndexName);
+
+		Query q = new Query(index).addQuery(queryString);
+		q.setConfiguration(configuration);
+
+		q.rows((rows != null) ? Integer.parseInt(rows) : DEFAULT_ROWS);
+		q.start((start != null) ? Integer.parseInt(start) : 0);
+
+		if (sort != null && sort.length() > 0)
+			q.sort(sort);
+
+		if (order != null && (order.equals(ORDER.asc.name()) || order.equals(ORDER.desc.name()))) {
+			q.order(ORDER.valueOf(order));
+		}
+
+		q.setIndex(index);
+		q.setIndexName(actualIndexName);
+
+		if (filter != null && filter.length() > 0)
+			q.addFilter(filter);
+
+		return q;
 	}
 
 }

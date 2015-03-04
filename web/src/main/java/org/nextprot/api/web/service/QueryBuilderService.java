@@ -7,11 +7,9 @@ public interface QueryBuilderService {
 
 	public Query buildQueryForSearch(QueryRequest queryRequest, String indexName);
 
-	public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
-
-	public Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest queryRequest);
-
+	
 	public Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
-
+	public Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request);
+	public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
 }

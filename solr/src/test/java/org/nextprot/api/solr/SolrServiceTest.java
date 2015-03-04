@@ -40,7 +40,7 @@ public class SolrServiceTest  {
     	qr.setSort("");
     	qr.setOrder("");
     	qr.setFilter("");
-    	Query q = service.buildQuery( "entry", "simple",  qr);
+    	Query q = service.buildQueryForSearchIndexes("entry", "simple",  qr);
 		SearchResult result = service.executeQuery(q);
 		long numFound = result.getNumFound();
 		if (debug) System.out.println("numFound="+numFound);
@@ -71,7 +71,7 @@ public class SolrServiceTest  {
     	qr.setSort("");
     	qr.setOrder("");
     	qr.setFilter("");
-    	Query q = service.buildQuery( "entry", "simple",  qr);
+    	Query q = service.buildQueryForSearchIndexes( "entry", "simple",  qr);
 		SearchResult result = service.executeQuery(q);
 		long numFound = result.getNumFound();
 		if (debug) System.out.println("numFound="+numFound);
