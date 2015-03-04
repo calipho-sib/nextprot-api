@@ -50,7 +50,6 @@ public class EntryController {
 	private void addModelDependencies(Model model) {
 
 		model.addAttribute("StringUtils", StringUtils.class);
-		//model.addAttribute("NXUtils", new NXVelocityUtils()); //Does not work with .class, try http://localhost:8080/nextprot-api-web/entry/NX_P01308/variant.xml
         model.addAttribute("NXUtils", NXVelocityUtils.class); //Does not work with .class, try http://localhost:8080/nextprot-api-web/entry/NX_P01308/variant.xml
 	}
 
