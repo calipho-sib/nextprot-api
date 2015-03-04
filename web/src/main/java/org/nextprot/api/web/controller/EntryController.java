@@ -64,7 +64,6 @@ public class EntryController {
 		addModelDependencies(model);
 		return "exportEntries";
 	}
-	
 
 	@RequestMapping("/entry/{entryname}/{subpart}")
 	public String getSubPart(@PathVariable("entryname") String entryName, @PathVariable("subpart") String subpart, Model model) {
@@ -75,7 +74,6 @@ public class EntryController {
 		return "annotation-list";
 	}
 
-	
 	@ApiMethod(path = "/entry/{entry}/protein-sequence", verb = ApiVerb.GET, description = "Gets the isoforms for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/protein-sequence")
 	public String getIsoforms(
@@ -84,7 +82,7 @@ public class EntryController {
 		dummy.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
 		addModelDependencies(model);
-		return "protein-sequence-list";
+		return "isoform-list";
 	}
 	
 	@ApiMethod(path = "/entry/{entry}/keyword", verb = ApiVerb.GET, description = "Gets the list of keywords for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
@@ -255,9 +253,5 @@ public class EntryController {
 		addModelDependencies(model);
 		return "experimental-context-list";
 	}
-	
-
-	
-	
 }
 
