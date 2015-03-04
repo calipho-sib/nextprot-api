@@ -11,7 +11,17 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 
 	private String query;
 	private String listOwner;
-	private String list;
+	private long list = 0; //list id
+	private String queryId = null; //nextprot query id
+
+	public String getQueryId() {
+		return queryId;
+	}
+
+	public void setQueryId(String queryId) {
+		this.queryId = queryId;
+	}
+
 	private List<String> accs;
 	private String quality;
 	private String sort;
@@ -24,6 +34,8 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 	private String sparqlTitle;
 	private String sparqlEngine;
 
+
+
 	public String getQuery() {
 		return query;
 	}
@@ -32,15 +44,15 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 		this.query = query;
 	}
 
-	public String getList() {
+	public long getList() {
 		return list;
 	}
 
 	public boolean hasList() {
-		return this.list != null;
+		return this.list  != 0;
 	}
 
-	public void setList(String list) {
+	public void setList(long list) {
 		this.list = list;
 	}
 
@@ -193,6 +205,10 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 
 	public boolean hasSparql() {
 		return sparql != null;
+	}
+
+	public boolean hasNextProtQuery() {
+		return queryId != null;
 	}
 
 	public String getSparqlTitle() {

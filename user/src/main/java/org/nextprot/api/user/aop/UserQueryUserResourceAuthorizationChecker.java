@@ -20,7 +20,7 @@ public class UserQueryUserResourceAuthorizationChecker implements UserResourceAu
 
             long queryId = ((UserQuery) query).getUserQueryId();
 
-            if (((UserQuery) query).getUserQueryId() != 0){
+            if (((UserQuery) query).getUserQueryId() > 99999){ //not a nextprot query
 
                 UserQuery foundUserQuery = dao.getUserQueryById(queryId);
 

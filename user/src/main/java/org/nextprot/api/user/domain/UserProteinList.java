@@ -79,4 +79,16 @@ public class UserProteinList implements UserResource {
 	public void addAccessions(Set<String> acs) {
 		accessionNumbers.addAll(acs);
 	}
+	
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("name : " );
+		sb.append(this.name);
+		sb.append(" (" );
+		sb.append(this.id);
+		sb.append(") accessions size:" );
+		sb.append(entriesCount);
+		return sb.toString();
+	}
 }

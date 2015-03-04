@@ -76,11 +76,11 @@ public class UserQuery implements Serializable, UserResource {
 
 	public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
 
-	public void checkValid() {
+	public void checkValidForUpdate() {
 		NPreconditions.checkNotNull(sparql, "The sparql should not be null");
 		NPreconditions.checkNotNull(title, "The title should not be null");
-		NPreconditions.checkTrue(title.length() >= 3,
-				"The title should be at least 3 characters long");
+		NPreconditions.checkTrue(title.length() >= 3,"The title should be at least 3 characters long");
+		NPreconditions.checkTrue(userQueryId >= 100000,"The user query id is not valid"); // below this number it is reserved for the nextprot query
 	}
 	public Set<String> getTags() {
 		return tags;
