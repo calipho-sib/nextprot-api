@@ -97,7 +97,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 
 		// call List<UserProteinList> getUserProteinLists()
 		this.mockMvc.perform(get("/user/leonard/protein-list").accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isUnauthorized());
+				andExpect(status().isForbidden());
 	}
 
 	// --------------------------------- GET PROTEINS LIST ------------------------------------------------
@@ -146,7 +146,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 
 		// call UserProteinList getUserProteinList()
 		this.mockMvc.perform(get("/user/leonard/protein-list/leonardslist1").accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isUnauthorized());
+				andExpect(status().isForbidden());
 	}
 
 	// --------------------------------- GET PROTEINS ACC NUMBERS -----------------------------------------
@@ -183,7 +183,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 
 		// call Set<String> getUserProteinListAccessionNumbers()
 		this.mockMvc.perform(get("/user/leonard/protein-list/leonardslist/accnums").accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isUnauthorized());
+				andExpect(status().isForbidden());
 	}
 
 	// --------------------------------- GET COMBINED PROTEIN LIST ----------------------------------------
