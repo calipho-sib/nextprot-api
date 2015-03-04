@@ -191,24 +191,37 @@ public class ExportController {
 	@Autowired
 	private SparqlEndpoint sparqlEndpoint;
 
-	@ApiMethod(verb = ApiVerb.GET, description = "", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE, "text/turtle" })
 	@RequestMapping(value = "/entries/{view}", method = { RequestMethod.GET })
 	public void exportEntries(HttpServletRequest request, HttpServletResponse response, @PathVariable("view") String view, @RequestParam(value = "match", required = true) String match,
 			@RequestParam(value = "limit", required = false) Integer limit, Model model) {
-
-		NPFileFormat format = getRequestedFormat(request);
 		QueryRequest qr = getQueryRequest(match);
+		exportEntries(request, response, view, qr, limit, model);
+	}
+	
+
+	@RequestMapping(value = "/entries", method = { RequestMethod.GET })
+	public void exportAllEntries(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "match", required = true) String match,
+			@RequestParam(value = "limit", required = false) Integer limit, Model model) {
+		QueryRequest qr = getQueryRequest(match);
+		exportEntries(request, response, "entry", qr, limit, model);
+	}
+	
+	
+	private void exportEntries(HttpServletRequest request, HttpServletResponse response, String viewName, QueryRequest queryRequest, Integer limit, Model model){
+		
+		
+		NPFileFormat format = getRequestedFormat(request);
 		String fileName = null;
 
 
 		Set<String> accessions = new HashSet<String>();
-		if (qr.hasNextProtQuery()) {
-			fileName = "nextprot-query-" + qr.getQueryId() + "-" + view + "." + format.getExtension();
-			UserQuery uq = userQueryService.getUserQueryById(UserQueryUtils.getUserQueryIdLongFromString(qr.getQueryId()));
+		if (queryRequest.hasNextProtQuery()) {
+			fileName = "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
+			UserQuery uq = userQueryService.getUserQueryById(UserQueryUtils.getUserQueryIdLongFromString(queryRequest.getQueryId()));
 			accessions.addAll(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), uq.getSparql()));
-		}else if (qr.hasList()) {
-			fileName = "nextprot-list-" + qr.getList() + "-" + view + "." + format.getExtension();
-			accessions.addAll(proteinListService.getUserProteinListAccessionItemsById(qr.getList()));
+		}else if (queryRequest.hasList()) {
+			fileName = "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + format.getExtension();
+			accessions.addAll(proteinListService.getUserProteinListAccessionItemsById(queryRequest.getListId()));
 		}else { // search and add filters ...
 		}
 		
@@ -225,7 +238,14 @@ public class ExportController {
 					}
 				}
 				
-				Entry entry = fluentEntryService.getNewEntry(acc).withView(view);
+				Entry entry = null;
+				if(!viewName.equals("entry")){
+					//TODO some incoherance with these 2 names withView and withEverything.getEntry... ???
+					entry = fluentEntryService.getNewEntry(acc).withView(viewName);
+				}else {
+					entry = fluentEntryService.getNewEntry(acc).withEverything().getEntry();
+				}
+				
 				model.addAttribute("entry", entry);
 				model.addAttribute("NXUtils", NXVelocityUtils.class);
 				model.addAttribute("StringUtils", StringUtils.class);
@@ -238,6 +258,7 @@ public class ExportController {
 			e.printStackTrace();
 			throw new NextProtException(e.getMessage());
 		}
+
 	}
 
 	@RequestMapping(value = "/export/templates", method = { RequestMethod.GET })

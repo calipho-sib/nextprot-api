@@ -63,7 +63,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 
 		} else if (queryRequest.hasList()) {
 
-			UserProteinList proteinList = this.proteinListService.getUserProteinListById(queryRequest.getList());
+			UserProteinList proteinList = this.proteinListService.getUserProteinListById(queryRequest.getListId());
 			Set<String> accessions = proteinList.getAccessionNumbers();
 
 			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());

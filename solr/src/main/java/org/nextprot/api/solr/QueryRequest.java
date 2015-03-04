@@ -11,8 +11,16 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 
 	private String query;
 	private String listOwner;
-	private long list = 0; //list id
+	private long listId = 0; //list id
 	private String queryId = null; //nextprot query id
+
+	public long getListId() {
+		return listId;
+	}
+
+	public void setListId(long listId) {
+		this.listId = listId;
+	}
 
 	public String getQueryId() {
 		return queryId;
@@ -44,17 +52,11 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 		this.query = query;
 	}
 
-	public long getList() {
-		return list;
-	}
 
 	public boolean hasList() {
-		return this.list  != 0;
+		return this.listId  != 0;
 	}
 
-	public void setList(long list) {
-		this.list = list;
-	}
 
 	public String getListOwner() {
 		return this.listOwner;
@@ -166,7 +168,7 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 	public String toPrettyString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("listOwner    : "+this.listOwner+"\n");
-		builder.append("list         : "+this.list+"\n");
+		builder.append("list         : "+this.listId+"\n");
 		builder.append("accs         : ");
 		if (accs==null) {
 			builder.append("null");
