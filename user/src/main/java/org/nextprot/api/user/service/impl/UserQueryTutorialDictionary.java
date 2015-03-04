@@ -52,7 +52,7 @@ public class UserQueryTutorialDictionary extends FilePatternDictionary {
 
 	}
 
-	public List<UserQuery> getDemoSparqlList() {
+	public synchronized List<UserQuery> getDemoSparqlList() {
 		Collection<String> rawData = super.getResourcesMap().values();
 		List<UserQuery> demoSparqlQueriesList = new ArrayList<UserQuery>();
 

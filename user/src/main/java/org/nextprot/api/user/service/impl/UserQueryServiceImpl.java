@@ -52,7 +52,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@CacheEvict(value = "user-queries", key = "#userQuery.getOwner()")
 	public UserQuery updateUserQuery(UserQuery userQuery) {
 
-		userQuery.checkValid();
+		userQuery.checkValidForUpdate();
 		userQueryDao.updateUserQuery(userQuery);
 		return userQuery;
 	}
@@ -67,7 +67,13 @@ public class UserQueryServiceImpl implements UserQueryService {
 	}
 
 	@Override
+	@AllowedAnonymous
 	public UserQuery getUserQueryById(long id) {
+		for(UserQuery uq : getTutorialQueries()) { //TODO keep this on a map!!!!!!!!
+			if(uq.getUserQueryId() == id){
+				return uq;
+			}
+		}
 		return userQueryDao.getUserQueryById(id);
 	}
 
