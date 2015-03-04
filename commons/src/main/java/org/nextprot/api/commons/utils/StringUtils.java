@@ -132,9 +132,25 @@ public class StringUtils {
 		return "\"" + input + "\"" ;
 	}
 	
-	/*public static void main(String[] args) {
-		System.out.println(clean("H�llo/OP:� - regex,t\nest.{machine\\"));
-		System.out.println(toCamelCase("Hello_world", true));
-	}*/
+	static public String addQuotesToSimpleJson(String jsonInput){
+		jsonInput = jsonInput.replace("{","");
+		jsonInput = jsonInput.replace("}","");
+		String[] tokens = jsonInput.split(":");
+		StringBuilder sb = new StringBuilder();
+		int i=0;
+		for(String t : tokens){
+			i++;
+			sb.append(quote(t));
+			if((i) <= (tokens.length / 2)){
+				sb.append(":");
+			}
+		}
+		return  "{" + sb.toString() + "}" ;
+		
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(addQuotesToSimpleJson("{queryId:NXQ_00001}"));
+	}
 
 }

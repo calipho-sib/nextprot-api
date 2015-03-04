@@ -1,6 +1,9 @@
 package org.nextprot.api.web.controller;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,8 +28,14 @@ import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.core.service.export.format.NPViews;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
+import org.nextprot.api.rdf.service.SparqlEndpoint;
+import org.nextprot.api.rdf.service.SparqlService;
+import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.user.domain.UserProteinList;
+import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
+import org.nextprot.api.user.service.UserQueryService;
+import org.nextprot.api.user.utils.UserQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -35,9 +44,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Controller class responsible to extract in streaming
@@ -46,7 +58,8 @@ import org.springframework.web.servlet.ViewResolver;
  */
 @Lazy
 @Controller
-//@Api(name = "Export", description = "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
+// @Api(name = "Export", description =
+// "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
 public class ExportController {
 
 	@Autowired
@@ -102,15 +115,15 @@ public class ExportController {
 			if (pl.getDescription() != null) {
 				response.getWriter().write("#" + pl.getDescription() + "\n");
 			}
-			
-			if(pl.getAccessionNumbers() != null){
+
+			if (pl.getAccessionNumbers() != null) {
 				Iterator<String> sIt = pl.getAccessionNumbers().iterator();
 				while (sIt.hasNext()) {
 					response.getWriter().write(sIt.next());
-					if(sIt.hasNext()){
+					if (sIt.hasNext()) {
 						response.getWriter().write("\n");
 					}
-					
+
 				}
 			}
 
@@ -119,37 +132,113 @@ public class ExportController {
 		}
 
 	}
-/*
-	@ApiMethod(path = "/export/list/{listId}/{view}", verb = ApiVerb.GET, description = "Exports subpart of entries from a list", produces = { MediaType.APPLICATION_XML_VALUE })
-	@RequestMapping("/export/list/{listId}/{view}")
-	public void exportListSubPart(Model model, HttpServletResponse response, HttpServletRequest request,
-			@ApiQueryParam(name = "The view name", description = "The view name") @PathVariable("view") String view,
-			@ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
+
+	/*
+	 * @ApiMethod(path = "/export/list/{listId}/{view}", verb = ApiVerb.GET,
+	 * description = "Exports subpart of entries from a list", produces = {
+	 * MediaType.APPLICATION_XML_VALUE })
+	 * 
+	 * @RequestMapping("/export/list/{listId}/{view}") public void
+	 * exportListSubPart(Model model, HttpServletResponse response,
+	 * HttpServletRequest request,
+	 * 
+	 * @ApiQueryParam(name = "The view name", description = "The view name")
+	 * @PathVariable("view") String view,
+	 * 
+	 * @ApiQueryParam(name = "listname", description = "The list id")
+	 * @PathVariable("listId") String listId) {
+	 * 
+	 * NPFileFormat format = getRequestedFormat(request);
+	 * 
+	 * Set<String> accessions =
+	 * this.proteinListService.getUserProteinListAccessionItemsById
+	 * (Long.valueOf(listId)); String fileName = "nextprot-list-" + listId + "-"
+	 * + view + "." + format.getExtension();
+	 * response.setHeader("Content-Disposition", "attachment; filename=\"" +
+	 * fileName + "\"");
+	 * 
+	 * try { response.getWriter().write(format.getHeader()); for (String acc :
+	 * accessions) { Entry entry =
+	 * fluentEntryService.getNewEntry(acc).withView(view);
+	 * model.addAttribute("entry", entry); model.addAttribute("NXUtils", new
+	 * NXVelocityUtils()); model.addAttribute("StringUtils", StringUtils.class);
+	 * 
+	 * View v = viewResolver.resolveViewName("entry", Locale.ENGLISH);
+	 * v.render(model.asMap(), request, response); }
+	 * response.getWriter().write(format.getFooter()); } catch (Exception e) {
+	 * e.printStackTrace(); throw new NextProtException(e.getMessage()); }
+	 * 
+	 * }
+	 */
+
+	private QueryRequest getQueryRequest(String match) {
+
+		ObjectMapper mapper = new ObjectMapper();
+		QueryRequest queryRequest = null;
+		try {
+			return mapper.readValue(StringUtils.addQuotesToSimpleJson(match), QueryRequest.class);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+	}
+
+	@Autowired
+	private UserQueryService userQueryService;
+	@Autowired
+	private SparqlService sparqlService;
+	@Autowired
+	private SparqlEndpoint sparqlEndpoint;
+
+	@ApiMethod(verb = ApiVerb.GET, description = "", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE, "text/turtle" })
+	@RequestMapping(value = "/entries/{view}", method = { RequestMethod.GET })
+	public void exportEntries(HttpServletRequest request, HttpServletResponse response, @PathVariable("view") String view, @RequestParam(value = "match", required = true) String match,
+			@RequestParam(value = "limit", required = false) Integer limit, Model model) {
 
 		NPFileFormat format = getRequestedFormat(request);
+		QueryRequest qr = getQueryRequest(match);
+		String fileName = null;
 
-		Set<String> accessions = this.proteinListService.getUserProteinListAccessionItemsById(Long.valueOf(listId));
-		String fileName = "nextprot-list-" + listId + "-" + view + "." + format.getExtension();
+
+		Set<String> accessions = new HashSet<String>();
+		if (qr.hasNextProtQuery()) {
+			fileName = "nextprot-query-" + qr.getQueryId() + "-" + view + "." + format.getExtension();
+			UserQuery uq = userQueryService.getUserQueryById(UserQueryUtils.getUserQueryIdLongFromString(qr.getQueryId()));
+			accessions.addAll(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), uq.getSparql()));
+		}else if (qr.hasList()) {
+			fileName = "nextprot-list-" + qr.getList() + "-" + view + "." + format.getExtension();
+			accessions.addAll(proteinListService.getUserProteinListAccessionItemsById(qr.getList()));
+		}else { // search and add filters ...
+		}
+		
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
 		try {
-			response.getWriter().write(format.getHeader());
+			response.getWriter().write("\n" + format.getHeader() + "\n");
+			int counter = 0;
 			for (String acc : accessions) {
+				counter++;
+				if(limit != null){
+					if(counter > limit){
+						break;
+					}
+				}
+				
 				Entry entry = fluentEntryService.getNewEntry(acc).withView(view);
 				model.addAttribute("entry", entry);
-				model.addAttribute("NXUtils", new NXVelocityUtils());
+				model.addAttribute("NXUtils", NXVelocityUtils.class);
 				model.addAttribute("StringUtils", StringUtils.class);
 
 				View v = viewResolver.resolveViewName("entry", Locale.ENGLISH);
 				v.render(model.asMap(), request, response);
 			}
-			response.getWriter().write(format.getFooter());
+			response.getWriter().write(format.getFooter()+ "\n");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NextProtException(e.getMessage());
 		}
-
-	}*/
+	}
 
 	@RequestMapping(value = "/export/templates", method = { RequestMethod.GET })
 	@ResponseBody
