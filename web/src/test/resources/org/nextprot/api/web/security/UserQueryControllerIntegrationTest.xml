@@ -10,7 +10,7 @@
     <users user_id="24" user_name="leonard"/>
     <users user_id="23" user_name="sheldon"/>
 
-    <user_queries query_id="15" title="mysupergeniousquery" description="my super genious query" owner_id="24" published="N" sparql="when did the big bang started"/>
-    <user_query_tags query_id="15" tag_name="genious"/>
+    <user_queries query_id="123456789" title="mysupergeniousquery" description="my super genious query" owner_id="24" published="N" sparql="when did the big bang started"/>
+    <user_query_tags query_id="123456789" tag_name="genious"/>
 
 </dataset>

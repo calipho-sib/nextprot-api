@@ -13,16 +13,19 @@ public class UserQueryUserResourceAuthorizationChecker implements UserResourceAu
     @Autowired
     private UserQueryDao dao;
 
-    @Override
+    @Override //THIS SHOULD ONLY BE INTERCEPT FOR DELETES INSERT AND UPDATED
     public void checkAuthorization(UserResource query) {
 
         if (query instanceof UserQuery) {
 
-            long queryId = ((UserQuery) query).getUserQueryId();
+        	long queryId = ((UserQuery) query).getUserQueryId();
+            if (queryId != 0){ 
 
-            if (((UserQuery) query).getUserQueryId() > 99999){ //not a nextprot query
-
-                UserQuery foundUserQuery = dao.getUserQueryById(queryId);
+            	if((queryId < 100000)){ //Tutorial query
+            		throw new NotAuthorizedException("Tutorial queries can't be modified");
+            	}
+            	
+            	UserQuery foundUserQuery = dao.getUserQueryById(queryId);
 
                 // dao only get owner name
                 if (!foundUserQuery.getOwner().equals(query.getOwnerName()))

@@ -48,6 +48,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		assertTrue(uq.getOwner().equals(sheldonUser));  //asserts that the owner of the query is bob
 	}
 
+
 	@Test
 	public void othersShouldNotBeAbleToCreateQuery() throws Exception {
 
@@ -96,7 +97,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 
 		assertTrue(!uqs.isEmpty());
 		assertEquals(1, uqs.size());
-		assertEquals(15, uqs.get(0).getUserQueryId());
+		assertEquals(123456789, uqs.get(0).getUserQueryId());
 	}
 
 	@Test
@@ -105,13 +106,13 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// UserQuery getUserQuery()
-		String responseString = this.mockMvc.perform(get("/user/leonard/query/15").
+		String responseString = this.mockMvc.perform(get("/user/leonard/query/123456789").
 				header("Authorization", "Bearer " + leonardToken).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
 		UserQuery uq = new ObjectMapper().readValue(responseString, UserQuery.class);
 
-		assertTrue(uq.getUserQueryId() == 15); //assert that an id was given
+		assertTrue(uq.getUserQueryId() == 123456789); //assert that an id was given
 		assertTrue(uq.getOwner().equals("leonard"));  //asserts that the owner of the query is bob
 	}
 
@@ -127,14 +128,27 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	}
 
 	@Test
-	public void sheldonShouldNotBeAbleToLookAtLeonardsQuery() throws Exception {
+	public void sheldonShouldBeAbleToLookAtLeonardsQuery() throws Exception {
 
+		//Queries can be read by any people, if queries must be kept secret, we could use the approach like for Google Docs (generate a random ID) that can be used on the URL
+		
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// UserQuery getUserQuery()
-		this.mockMvc.perform(get("/user/leonard/query/15").
+		this.mockMvc.perform(get("/user/leonard/query/123456789").
 				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isForbidden());
+				andExpect(status().isOk());
+	}
+
+
+	@Test
+	public void othersShouldBeAbleToLookAtLeonardsQuery() throws Exception {
+
+		//Queries can be read by any people, if queries must be kept secret, we could use the approach like for Google Docs (generate a random ID) that can be used on the URL
+
+		// UserQuery getUserQuery()
+		this.mockMvc.perform(get("/user/leonard/query/123456789").accept(MediaType.APPLICATION_JSON)).
+				andExpect(status().isOk());
 	}
 
 	@Test
@@ -145,14 +159,6 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 				andExpect(status().isForbidden());
 	}
 
-	@Test
-	public void othersShouldNotBeAbleToLookAtLeonardsQuery() throws Exception {
-
-		// UserQuery getUserQuery()
-		this.mockMvc.perform(get("/user/leonard/query/15").accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isForbidden());
-	}
-
 	// --------------------------------- PUT --------------------------------------------------------------
 
 	@Test
@@ -160,10 +166,10 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
-		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
+		String content = "{\"userQueryId\":123456789,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// UserQuery updateAdvancedQuery()
-		String responseString = this.mockMvc.perform(put("/user/leonard/query/15").header("Authorization", "Bearer " + leonardToken)
+		String responseString = this.mockMvc.perform(put("/user/leonard/query/123456789").header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
@@ -175,14 +181,27 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	}
 
 	@Test
+	public void leonardShouldNotBeAbleToUpdateATutorialQuery() throws Exception {
+
+		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
+
+		String content = "{\"userQueryId\":1,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
+
+		// UserQuery updateAdvancedQuery()
+		this.mockMvc.perform(put("/user/leonard/query/1").header("Authorization", "Bearer " + leonardToken)
+				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content))
+				.andExpect(status().isForbidden());
+	}
+	
+	@Test
 	public void sheldonShouldNotBeAbleToUpdateLeonardsQuery() throws Exception {
 
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
-		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
+		String content = "{\"userQueryId\":123456789,\"title\":\"Awesomely Genious Query\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// UserQuery updateAdvancedQuery()
-		this.mockMvc.perform(put("/user/leonard/query/15").header("Authorization", "Bearer " + sheldonToken)
+		this.mockMvc.perform(put("/user/leonard/query/123456789").header("Authorization", "Bearer " + sheldonToken)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
 				andExpect(status().isForbidden());
 	}
@@ -192,10 +211,10 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
-		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query 1st attempt\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"sheldon\",\"ownerId\":23,\"tags\":null,\"ownerName\":\"sheldon\"}";
+		String content = "{\"userQueryId\":123456789,\"title\":\"Awesomely Genious Query 1st attempt\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"sheldon\",\"ownerId\":23,\"tags\":null,\"ownerName\":\"sheldon\"}";
 
 		// UserQuery updateAdvancedQuery()
-		this.mockMvc.perform(put("/user/leonard/query/15").header("Authorization", "Bearer " + sheldonToken)
+		this.mockMvc.perform(put("/user/leonard/query/123456789").header("Authorization", "Bearer " + sheldonToken)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
 				andExpect(status().isForbidden());
 	}
@@ -203,10 +222,10 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void othersShouldNotBeAbleToUpdateLeonardsQuery() throws Exception {
 
-		String content = "{\"userQueryId\":15,\"title\":\"Awesomely Genious Query 2nd attempt\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
+		String content = "{\"userQueryId\":123456789,\"title\":\"Awesomely Genious Query 2nd attempt\",\"description\":null,\"sparql\":\"some sparql\",\"published\":false,\"owner\":\"test@nextprot.org\",\"ownerId\":0,\"tags\":null,\"ownerName\":\"test@nextprot.org\"}";
 
 		// UserQuery updateAdvancedQuery()
-		this.mockMvc.perform(put("/user/leonard/query/15")
+		this.mockMvc.perform(put("/user/leonard/query/123456789")
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
 				andExpect(status().isUnauthorized());
 	}
@@ -214,12 +233,23 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	// --------------------------------- DELETE -----------------------------------------------------------
 
 	@Test
+	public void leonardShouldNotBeAbleToDeleteATutorialQuery() throws Exception {
+
+		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
+
+		// UserQuery updateAdvancedQuery()
+		this.mockMvc.perform(delete("/user/leonard/query/1").header("Authorization", "Bearer " + leonardToken)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isForbidden());
+	}
+	
+	@Test
 	public void leonardShouldBeAbleToDeleteHisQuery() throws Exception {
 
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// void deleteUserQuery()
-		this.mockMvc.perform(delete("/user/leonard/query/15").header("Authorization", "Bearer " + leonardToken)
+		this.mockMvc.perform(delete("/user/leonard/query/123456789").header("Authorization", "Bearer " + leonardToken)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 	}
@@ -230,7 +260,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// void deleteUserQuery()
-		this.mockMvc.perform(delete("/user/leonard/query/15").header("Authorization", "Bearer " + sheldonToken)
+		this.mockMvc.perform(delete("/user/leonard/query/123456789").header("Authorization", "Bearer " + sheldonToken)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isForbidden());
 	}
@@ -239,7 +269,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	public void othersShouldNotBeAbleToDeleteLeonardsQuery() throws Exception {
 
 		// void deleteUserQuery()
-		this.mockMvc.perform(delete("/user/leonard/query/15")
+		this.mockMvc.perform(delete("/user/leonard/query/123456789")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isUnauthorized());
 	}
