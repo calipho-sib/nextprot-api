@@ -45,7 +45,7 @@ public class EntryController {
 	@Autowired private ExperimentalContextService expContextService;
 
     @ModelAttribute
-    public void populateModelWithUtilsMethods(Model model) {
+    private void populateModelWithUtilsMethods(Model model) {
 
         model.addAttribute("StringUtils", StringUtils.class);
         model.addAttribute("NXUtils", NXVelocityUtils.class);
