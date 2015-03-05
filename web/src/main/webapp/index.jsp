@@ -1097,12 +1097,13 @@
 				if (!err) {
 					// Success calback
 					// Save cookies
+					var expirationInDays = 730; // 730 days = 2 years
 					if (window.location.hostname === "localhost") {
-						$.cookie("nxprofile", JSON.stringify(profile), {path: "/"});
-						$.cookie("nxtoken", token, {path: "/"});
+						$.cookie("nxprofile", JSON.stringify(profile), {path: "/", expires: expirationInDays});
+						$.cookie("nxtoken", token, {path: "/", expires: expirationInDays});
 					} else {
- 						$.cookie("nxprofile", JSON.stringify(profile), { path: "/", domain: ".nextprot.org" });
-	 					$.cookie("nxtoken", token, { domain: ".nextprot.org" });
+ 						$.cookie("nxprofile", JSON.stringify(profile), { path: "/", domain: ".nextprot.org", expires: expirationInDays });
+	 					$.cookie("nxtoken", token, { path: "/", domain: ".nextprot.org", expires: expirationInDays });
 					}
 
 					// Save the profile
