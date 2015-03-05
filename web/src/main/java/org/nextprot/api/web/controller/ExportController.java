@@ -78,7 +78,7 @@ public class ExportController {
 	@RequestMapping("/export/entries/all")
 	public void exportAllEntries(HttpServletResponse response, HttpServletRequest request) {
 
-		NPFileFormat format = getRequestedFormat(request);
+		NPFileFormat format = NPFileFormat.valueOf(request);
 		response.setHeader("Content-Disposition", "attachment; filename=\"NXEntries." + format.getExtension() + "\"");
 
 		List<Future<File>> futures = exportService.exportAllEntries(format);
@@ -91,7 +91,7 @@ public class ExportController {
 	public void exportEntriesByChromosome(HttpServletResponse response, HttpServletRequest request,
 			@ApiQueryParam(name = "chromosome", description = "The number of the chromosome. For example, the chromosome 21", allowedvalues = { "21" }) @PathVariable("chromosome") String chromosome) {
 
-		NPFileFormat format = getRequestedFormat(request);
+		NPFileFormat format = NPFileFormat.valueOf(request);
 		response.setHeader("Content-Disposition", "attachment; filename=\"NXChromosome" + chromosome + "." + format.getExtension() + "\"");
 
 		List<Future<File>> futures = exportService.exportEntriesOfChromossome(chromosome, format);
@@ -226,8 +226,7 @@ public class ExportController {
 	
 	private void exportEntries(HttpServletRequest request, HttpServletResponse response, String viewName, QueryRequest queryRequest, Integer limit, Model model){
 		
-		
-		NPFileFormat format = getRequestedFormat(request);
+		NPFileFormat format = NPFileFormat.valueOf(request);
 		String fileName = null;
 
 		//TODO consider also quality, sort and filters
@@ -285,21 +284,4 @@ public class ExportController {
 	public Map<String, Set<String>> getXMLTemplates() {
 		return NPViews.getFormatViews();
 	}
-
-	private NPFileFormat getRequestedFormat(HttpServletRequest request) {
-		NPFileFormat format = null;
-		String uri = request.getRequestURI();
-		if (uri.toLowerCase().endsWith(".ttl")) {
-			format = NPFileFormat.TURTLE;
-		} else if (uri.toLowerCase().endsWith(".xml")) {
-			format = NPFileFormat.XML;
-		} else if (uri.toLowerCase().endsWith(".json")) {
-			format = NPFileFormat.JSON;
-		} else if (uri.toLowerCase().endsWith(".txt")) {
-			format = NPFileFormat.TXT;
-		} else
-			throw new NextProtException("Format not recognized");
-		return format;
-	}
-
 }

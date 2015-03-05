@@ -1,5 +1,9 @@
 package org.nextprot.api.core.service.export.format;
 
+import org.nextprot.api.commons.exception.NextProtException;
+
+import javax.servlet.http.HttpServletRequest;
+
 public enum NPFileFormat {
 
 	TXT("txt", "text/plain", null, null), 
@@ -36,5 +40,18 @@ public enum NPFileFormat {
 		return footer;
 	}
 
+    public static NPFileFormat valueOf(HttpServletRequest request) {
 
+        String uri = request.getRequestURI();
+        if (uri.toLowerCase().endsWith(".ttl")) {
+            return NPFileFormat.TURTLE;
+        } else if (uri.toLowerCase().endsWith(".xml")) {
+            return NPFileFormat.XML;
+        } else if (uri.toLowerCase().endsWith(".json")) {
+            return NPFileFormat.JSON;
+        } else if (uri.toLowerCase().endsWith(".txt")) {
+            return NPFileFormat.TXT;
+        } else
+            throw new NextProtException("Format not recognized");
+    }
 }
