@@ -131,26 +131,5 @@ public class StringUtils {
 	static public String quote(String input){
 		return "\"" + input + "\"" ;
 	}
-	
-	static public String addQuotesToSimpleJson(String jsonInput){
-		jsonInput = jsonInput.replace("{","");
-		jsonInput = jsonInput.replace("}","");
-		String[] tokens = jsonInput.split(":");
-		StringBuilder sb = new StringBuilder();
-		int i=0;
-		for(String t : tokens){
-			i++;
-			sb.append(quote(t));
-			if((i) <= (tokens.length / 2)){
-				sb.append(":");
-			}
-		}
-		return  "{" + sb.toString() + "}" ;
-		
-	}
-	
-	public static void main(String[] args) {
-		System.out.println(addQuotesToSimpleJson("{queryId:NXQ_00001}"));
-	}
 
 }
