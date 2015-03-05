@@ -1,5 +1,23 @@
 package org.nextprot.api.core.service.export.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.service.export.ExportService;
+import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.utils.NXVelocityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
+
+import javax.annotation.PostConstruct;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -11,32 +29,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.EntryService;
-import org.nextprot.api.core.service.GeneService;
-import org.nextprot.api.core.service.IdentifierService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.KeywordService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.export.ExportService;
-import org.nextprot.api.core.service.export.format.NPFileFormat;
-import org.nextprot.api.core.utils.NXVelocityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 @Service
 @Lazy
@@ -162,8 +154,7 @@ public class ExportServiceImpl implements ExportService {
 				context = new VelocityContext();
 				context.put("entry", entryService.findEntry(entryName));
 				context.put("StringUtils", StringUtils.class);
-				context.put("NXUtils", new NXVelocityUtils());
-			
+				context.put("NXUtils", NXVelocityUtils.class);
 
 				FileWriter fw = new FileWriter(filename, true);
 				PrintWriter out = new PrintWriter(new BufferedWriter(fw));

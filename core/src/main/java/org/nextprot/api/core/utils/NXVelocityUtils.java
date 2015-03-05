@@ -10,6 +10,10 @@ import java.util.List;
 
 public class NXVelocityUtils {
 
+    private NXVelocityUtils() {
+        throw new AssertionError();
+    }
+
 	public static List<Annotation> getAnnotationsByCategory(Entry entry, AnnotationApiModel annotationCategory) {
 		List<Annotation> annotations = entry.getAnnotations();
 		return AnnotationUtils.filterAnnotationsByCategory(annotations, annotationCategory, false);
