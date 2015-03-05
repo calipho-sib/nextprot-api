@@ -15,9 +15,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +44,12 @@ public class EntryController {
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService expContextService;
 
-	// TODO: Add attributes to the model of all method's controllers
-	private void addModelDependencies(Model model) {
+    @ModelAttribute
+    private void populateModelWithUtilsMethods(Model model) {
 
-		model.addAttribute("StringUtils", StringUtils.class);
-        model.addAttribute("NXUtils", NXVelocityUtils.class); //Does not work with .class, try http://localhost:8080/nextprot-api-web/entry/NX_P01308/variant.xml
-	}
+        model.addAttribute("StringUtils", StringUtils.class);
+        model.addAttribute("NXUtils", NXVelocityUtils.class);
+    }
 
 	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides, the list of the antibodies and the experimental contexts", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
@@ -61,7 +59,6 @@ public class EntryController {
 		List<Entry> proteinList = new ArrayList<Entry>();
 		proteinList.add(this.entryService.findEntry(entryName));
 		model.addAttribute("entryList", proteinList);
-		addModelDependencies(model);
 		return "exportEntries";
 	}
 
@@ -70,7 +67,6 @@ public class EntryController {
 		
 		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withView(subpart);
 		model.addAttribute("entry", dummy);
-		addModelDependencies(model);
 		return "annotation-list";
 	}
 
@@ -81,7 +77,6 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
-		addModelDependencies(model);
 		return "isoform-list";
 	}
 	
@@ -93,7 +88,6 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setKeywords(keywords);
 		model.addAttribute("entry", entry);
-		addModelDependencies(model);
 		return "keyword-list";
 	}
 
@@ -104,7 +98,6 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setOverview(overviewService.findOverviewByEntry(entryName));
 		model.addAttribute("entry", entry);
-		addModelDependencies(model);
 		return "overview";
 	}
 	
@@ -117,7 +110,6 @@ public class EntryController {
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		entry.setAntibodyMappings(mapping);
 		model.addAttribute("entry", entry);
-		addModelDependencies(model);
 		return "antibody-list";
 	}
 	
@@ -130,7 +122,6 @@ public class EntryController {
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		entry.setPeptideMappings(mapping);
 		model.addAttribute("entry", entry);
-		addModelDependencies(model);
 		return "peptide-list";
 	}
 
@@ -143,7 +134,6 @@ public class EntryController {
 		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
 		entry.setPeptideMappings(mapping);
 		model.addAttribute("entry", entry);
-		addModelDependencies(model);
 		return "srm-peptide-list";
 	}
 
@@ -155,7 +145,6 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setIdentifiers(identifiers);
 		model.addAttribute("entry", entry);
-		addModelDependencies(model);
 		return "identifier-list";
 	}
 	
@@ -166,7 +155,6 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
 		model.addAttribute("entry", entry);
-		addModelDependencies(model);
 		return "chromosomal-location-list";
 	}
 
@@ -177,7 +165,6 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
-		addModelDependencies(model);
 		return "genomic-mapping-list";
 	}
 
@@ -189,7 +176,6 @@ public class EntryController {
 		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
 		dummy.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
 		model.addAttribute("entry", dummy);
-		addModelDependencies(model);
 		return "genomic";
 	}
 
@@ -201,7 +187,6 @@ public class EntryController {
 		Entry entry = new Entry(entryName);
 		entry.setPublications(publications);
 		model.addAttribute("entry", entry);
-		addModelDependencies(model);
 		return "publication-list";
 	}
 	
@@ -214,7 +199,6 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setXrefs(xrefs);
 		model.addAttribute("entry", dummy);
-		addModelDependencies(model);
 		return "xref-list";
 	}
 
@@ -227,7 +211,6 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setInteractions(interactionService.findInteractionsByEntry(entryName));
 		model.addAttribute("entry", dummy);
-		addModelDependencies(model);
 		return "interaction-list";
 	}
 
@@ -240,7 +223,6 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setAnnotations(annotations);
 		model.addAttribute("entry", dummy);
-		addModelDependencies(model);
 		return "annotation-list";
 	}
 	
@@ -250,7 +232,6 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setExperimentalContexts(this.expContextService.findExperimentalContextsByEntryName(entryName));
 		model.addAttribute("entry", dummy);
-		addModelDependencies(model);
 		return "experimental-context-list";
 	}
 }
