@@ -31,6 +31,7 @@ import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -171,17 +172,17 @@ public class ExportController {
 	 * }
 	 */
 
-	private QueryRequest getQueryRequest(String match) {
-
-		ObjectMapper mapper = new ObjectMapper();
-		QueryRequest queryRequest = null;
-		try {
-			return mapper.readValue(StringUtils.addQuotesToSimpleJson(match), QueryRequest.class);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
+	private QueryRequest getQueryRequest(String query, Integer listId, String queryId, String sparql, String filter, String quality, String sort) {
+		QueryRequest qr = new QueryRequest();
+		qr.setQuery(query);
+		if(listId != null){
+			qr.setListId(listId);
 		}
-
+		qr.setQueryId(queryId);
+		qr.setFilter(filter);
+		qr.setSort(sort);
+		qr.setQuality(quality);
+		return qr;
 	}
 
 	@Autowired
@@ -190,19 +191,35 @@ public class ExportController {
 	private SparqlService sparqlService;
 	@Autowired
 	private SparqlEndpoint sparqlEndpoint;
+	@Autowired
+	private SolrService solrService;
 
 	@RequestMapping(value = "/entries/{view}", method = { RequestMethod.GET })
-	public void exportEntries(HttpServletRequest request, HttpServletResponse response, @PathVariable("view") String view, @RequestParam(value = "match", required = true) String match,
+	public void exportEntries(HttpServletRequest request, HttpServletResponse response, @PathVariable("view") String view, 
+			@RequestParam(value = "query", required = false) String query,
+			@RequestParam(value = "listId", required = false) Integer listId,
+			@RequestParam(value = "queryId", required = false) String queryId,
+			@RequestParam(value = "sparql", required = false) String sparql,
+			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "sort", required = false) String sort,
+			@RequestParam(value = "quality", required = false) String quality,
 			@RequestParam(value = "limit", required = false) Integer limit, Model model) {
-		QueryRequest qr = getQueryRequest(match);
+		QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort);
 		exportEntries(request, response, view, qr, limit, model);
 	}
 	
 
 	@RequestMapping(value = "/entries", method = { RequestMethod.GET })
-	public void exportAllEntries(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "match", required = true) String match,
+	public void exportAllEntries(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "query", required = false) String query,
+			@RequestParam(value = "listId", required = false) Integer listId,
+			@RequestParam(value = "queryId", required = false) String queryId,
+			@RequestParam(value = "sparql", required = false) String sparql,
+			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "sort", required = false) String sort,
+			@RequestParam(value = "quality", required = false) String quality,
 			@RequestParam(value = "limit", required = false) Integer limit, Model model) {
-		QueryRequest qr = getQueryRequest(match);
+		QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort);
 		exportEntries(request, response, "entry", qr, limit, model);
 	}
 	
@@ -213,6 +230,7 @@ public class ExportController {
 		NPFileFormat format = getRequestedFormat(request);
 		String fileName = null;
 
+		//TODO consider also quality, sort and filters
 
 		Set<String> accessions = new HashSet<String>();
 		if (queryRequest.hasNextProtQuery()) {
@@ -222,7 +240,8 @@ public class ExportController {
 		}else if (queryRequest.hasList()) {
 			fileName = "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + format.getExtension();
 			accessions.addAll(proteinListService.getUserProteinListAccessionItemsById(queryRequest.getListId()));
-		}else { // search and add filters ...
+		}else  { // search and add filters ...
+			throw new NextProtException("Not implemented yet.");
 		}
 		
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
