@@ -131,5 +131,9 @@ public class StringUtils {
 	static public String quote(String input){
 		return "\"" + input + "\"" ;
 	}
+	
+	static public boolean isWholeNumber(String input){
+		  return input.matches("\\d+");  //match a number with optional '-' and decimal.
+	}
 
 }
