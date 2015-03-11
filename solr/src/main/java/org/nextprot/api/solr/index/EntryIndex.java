@@ -30,160 +30,99 @@ public class EntryIndex extends IndexTemplate {
 
 	private static class Configurations extends ConfigurationName {
 		public static final String SIMPLE = "simple";
-		public static final String SIMPLE_IDS = "simple_ids";
-
 		public static final String AUTOCOMPLETE = "autocomplete";
 		public static final String ID_SEARCH = "id";
 		public static final String PL_SEARCH = "pl_search";
-
 	}
 
 	@Override
 	protected void setupConfigurations() {
 		
+		// SIMPLE Config
 		
+		IndexConfiguration indexConfig = new IndexConfiguration(Configurations.SIMPLE);
 		
-		  // SIMPLE Config
-			IndexConfiguration indexSimpleConfig = new IndexConfiguration(Configurations.SIMPLE);
-			
-			indexSimpleConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FL)
-				.add(Fields.ID)
-				.add(Fields.EC_NAME)
-				.add(Fields.FILTERS)
-				.add(Fields.RECOMMENDED_AC)
-				.add(Fields.RECOMMENDED_NAME)
-				.add(Fields.UNIPROT_NAME)
-				.add(Fields.RECOMMENDED_GENE_NAMES)
-				.add(Fields.GENE_BAND)
-				.add(Fields.SCORE)
-				.add(Fields.FUNCTION_DESC)
-				.add(Fields.CHR_LOC)
-				.add(Fields.ISOFORM_NUM)
-				.add(Fields.PTM_NUM)
-				.add(Fields.AA_LENGTH)
-				.add(Fields.VAR_NUM)
-				.add(Fields.PROTEIN_EXISTENCE));
-	
-			indexSimpleConfig.addConfigSet(FieldConfigSet.create(IndexParameter.QF)
-				.add(Fields.RECOMMENDED_AC, 8)
-				.add(Fields.RECOMMENDED_NAME, 32)
-				.add(Fields.UNIPROT_NAME, 16)
-				.add(Fields.ALTERNATIVE_ACS, 8)
-				.add(Fields.ALTERNATIVE_NAMES, 16)
-				.add(Fields.RECOMMENDED_GENE_NAMES, 32)
-				.add(Fields.ALTERNATIVE_GENE_NAMES, 8)
-				.add(Fields.FAMILY_NAMES, 4)
-				.add(Fields.CV_NAMES, 4)
-				.add(Fields.CV_SYNONYMS, 4)
-				.add(Fields.CV_ANCESTORS, 2)
-				.add(Fields.PEPTIDE, 2)
-				.add(Fields.ANTIBODY, 2)
-				.add(Fields.TEXT, 0));
-			
-			indexSimpleConfig.addConfigSet(FieldConfigSet.create(IndexParameter.PF)
-				.add(Fields.RECOMMENDED_AC, 80)
-				.add(Fields.RECOMMENDED_NAME, 320)
-				.add(Fields.UNIPROT_NAME, 160)
-				.add(Fields.ALTERNATIVE_ACS, 80)
-				.add(Fields.ALTERNATIVE_NAMES, 160)
-				.add(Fields.RECOMMENDED_GENE_NAMES, 320)
-				.add(Fields.ALTERNATIVE_GENE_NAMES, 80)
-				.add(Fields.FAMILY_NAMES, 40)
-				.add(Fields.CV_NAMES, 40)
-				.add(Fields.CV_SYNONYMS, 40)
-				.add(Fields.CV_ANCESTORS, 20)
-				.add(Fields.PEPTIDE, 20)
-				.add(Fields.ANTIBODY, 20)
-				.add(Fields.TEXT, 20));
-			
-			indexSimpleConfig.addOtherParameter("defType", "edismax")
-				.addOtherParameter("df", "text")
-				.addOtherParameter("mm", "100%")
-				.addOtherParameter("lowercaseOperators", "true")
-				.addOtherParameter("ps", "3")
-				.addOtherParameter("facet", "true")
-				.addOtherParameter("facet.field", "filters")
-				.addOtherParameter("facet.limit", "10")
-				.addOtherParameter("facet.method", "enum")
-				.addOtherParameter("facet.mincount", "1")
-				.addOtherParameter("facet.prefix", "")
-				.addOtherParameter("facet.sort", "count");
-			
-			SortConfig[] sortConfigs = new SortConfig[] {
-					SortConfig.create("gene", Fields.RECOMMENDED_GENE_NAMES_S, ORDER.asc),
-					SortConfig.create("protein", Fields.RECOMMENDED_NAME_S, ORDER.asc),
-					SortConfig.create("family", Fields.FAMILY_NAMES_S, ORDER.asc),
-					SortConfig.create("length", Fields.AA_LENGTH, ORDER.asc),
-					SortConfig.create("ac", Fields.ID, ORDER.asc),
-					SortConfig.create("chromosome", Fields.CHR_LOC_S, ORDER.asc),
-					SortConfig.create("default", Fields.SCORE, ORDER.desc, 100)
-			};
-			indexSimpleConfig.addSortConfig(sortConfigs);
-			indexSimpleConfig.setDefaultSortName("default");
-			addConfiguration(indexSimpleConfig);
-		
-		
-		
-		// SIMPLE_IDS Config (return accessions only)
-		{
-			IndexConfiguration indexSimplesIdsConfig = new IndexConfiguration(Configurations.SIMPLE_IDS);
-			
-			indexSimplesIdsConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FL)
-				.add(Fields.ID));
+		indexConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FL)
+			.add(Fields.ID)
+			.add(Fields.EC_NAME)
+			.add(Fields.FILTERS)
+			.add(Fields.RECOMMENDED_AC)
+			.add(Fields.RECOMMENDED_NAME)
+			.add(Fields.UNIPROT_NAME)
+			.add(Fields.RECOMMENDED_GENE_NAMES)
+			.add(Fields.GENE_BAND)
+			.add(Fields.SCORE)
+			.add(Fields.FUNCTION_DESC)
+			.add(Fields.CHR_LOC)
+			.add(Fields.ISOFORM_NUM)
+			.add(Fields.PTM_NUM)
+			.add(Fields.AA_LENGTH)
+			.add(Fields.VAR_NUM)
+			.add(Fields.PROTEIN_EXISTENCE));
 
-			indexSimplesIdsConfig.addConfigSet(FieldConfigSet.create(IndexParameter.QF)
-				.add(Fields.RECOMMENDED_AC, 8)
-				.add(Fields.RECOMMENDED_NAME, 32)
-				.add(Fields.UNIPROT_NAME, 16)
-				.add(Fields.ALTERNATIVE_ACS, 8)
-				.add(Fields.ALTERNATIVE_NAMES, 16)
-				.add(Fields.RECOMMENDED_GENE_NAMES, 32)
-				.add(Fields.ALTERNATIVE_GENE_NAMES, 8)
-				.add(Fields.FAMILY_NAMES, 4)
-				.add(Fields.CV_NAMES, 4)
-				.add(Fields.CV_SYNONYMS, 4)
-				.add(Fields.CV_ANCESTORS, 2)
-				.add(Fields.PEPTIDE, 2)
-				.add(Fields.ANTIBODY, 2)
-				.add(Fields.TEXT, 0));
-			
-			indexSimplesIdsConfig.addConfigSet(FieldConfigSet.create(IndexParameter.PF)
-				.add(Fields.RECOMMENDED_AC, 80)
-				.add(Fields.RECOMMENDED_NAME, 320)
-				.add(Fields.UNIPROT_NAME, 160)
-				.add(Fields.ALTERNATIVE_ACS, 80)
-				.add(Fields.ALTERNATIVE_NAMES, 160)
-				.add(Fields.RECOMMENDED_GENE_NAMES, 320)
-				.add(Fields.ALTERNATIVE_GENE_NAMES, 80)
-				.add(Fields.FAMILY_NAMES, 40)
-				.add(Fields.CV_NAMES, 40)
-				.add(Fields.CV_SYNONYMS, 40)
-				.add(Fields.CV_ANCESTORS, 20)
-				.add(Fields.PEPTIDE, 20)
-				.add(Fields.ANTIBODY, 20)
-				.add(Fields.TEXT, 20));
-			
-			indexSimplesIdsConfig.addOtherParameter("defType", "edismax")
-				.addOtherParameter("df", "text")
-				.addOtherParameter("mm", "100%")
-				.addOtherParameter("lowercaseOperators", "true")
-				.addOtherParameter("ps", "3");
-			
-			
-			indexSimplesIdsConfig.addSortConfig(sortConfigs);
-			indexSimplesIdsConfig.setDefaultSortName("default");
-			addConfiguration(indexSimplesIdsConfig);
-
-			
-		}
+		indexConfig.addConfigSet(FieldConfigSet.create(IndexParameter.QF)
+			.add(Fields.ID,64)
+			.add(Fields.RECOMMENDED_AC, 8)
+			.add(Fields.RECOMMENDED_NAME, 32)
+			.add(Fields.UNIPROT_NAME, 16)
+			.add(Fields.ALTERNATIVE_ACS, 8)
+			.add(Fields.ALTERNATIVE_NAMES, 16)
+			.add(Fields.RECOMMENDED_GENE_NAMES, 32)
+			.add(Fields.ALTERNATIVE_GENE_NAMES, 8)
+			.add(Fields.FAMILY_NAMES, 4)
+			.add(Fields.CV_NAMES, 4)
+			.add(Fields.CV_SYNONYMS, 4)
+			.add(Fields.CV_ANCESTORS, 2)
+			.add(Fields.PEPTIDE, 2)
+			.add(Fields.ANTIBODY, 2)
+			.add(Fields.TEXT, 0));
 		
-
+		indexConfig.addConfigSet(FieldConfigSet.create(IndexParameter.PF)
+			.add(Fields.ID, 640)
+			.add(Fields.RECOMMENDED_AC, 80)
+			.add(Fields.RECOMMENDED_NAME, 320)
+			.add(Fields.UNIPROT_NAME, 160)
+			.add(Fields.ALTERNATIVE_ACS, 80)
+			.add(Fields.ALTERNATIVE_NAMES, 160)
+			.add(Fields.RECOMMENDED_GENE_NAMES, 320)
+			.add(Fields.ALTERNATIVE_GENE_NAMES, 80)
+			.add(Fields.FAMILY_NAMES, 40)
+			.add(Fields.CV_NAMES, 40)
+			.add(Fields.CV_SYNONYMS, 40)
+			.add(Fields.CV_ANCESTORS, 20)
+			.add(Fields.PEPTIDE, 20)
+			.add(Fields.ANTIBODY, 20)
+			.add(Fields.TEXT, 20));
 		
+		indexConfig.addOtherParameter("defType", "edismax")
+			.addOtherParameter("df", "text")
+			.addOtherParameter("mm", "100%")
+			.addOtherParameter("lowercaseOperators", "true")
+			.addOtherParameter("ps", "3")
+			.addOtherParameter("facet", "true")
+			.addOtherParameter("facet.field", "filters")
+			.addOtherParameter("facet.limit", "10")
+			.addOtherParameter("facet.method", "enum")
+			.addOtherParameter("facet.mincount", "1")
+			.addOtherParameter("facet.prefix", "")
+			.addOtherParameter("facet.sort", "count");
 		
+		SortConfig[] sortConfigs = new SortConfig[] {
+				SortConfig.create("gene", Fields.RECOMMENDED_GENE_NAMES_S, ORDER.asc),
+				SortConfig.create("protein", Fields.RECOMMENDED_NAME_S, ORDER.asc),
+				SortConfig.create("family", Fields.FAMILY_NAMES_S, ORDER.asc),
+				SortConfig.create("length", Fields.AA_LENGTH, ORDER.asc),
+				SortConfig.create("ac", Fields.ID, ORDER.asc),
+				SortConfig.create("chromosome", Fields.CHR_LOC_S, ORDER.asc),
+				SortConfig.create("default", Fields.SCORE, ORDER.desc, 100)
+		};
+		indexConfig.addSortConfig(sortConfigs);
+		indexConfig.setDefaultSortName("default");
+		addConfiguration(indexConfig);
 		
 		// AUTOCOMPLETE Config
 
-		AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(Configurations.AUTOCOMPLETE, indexSimpleConfig);
+		AutocompleteConfiguration autocompleteConfig = new AutocompleteConfiguration(Configurations.AUTOCOMPLETE, indexConfig);
 		
 		autocompleteConfig
 			.addOtherParameter("facet.field", "text")
@@ -192,7 +131,7 @@ public class EntryIndex extends IndexTemplate {
 		autocompleteConfig.addSortConfig(sortConfigs);
 		addConfiguration(autocompleteConfig);
 
-		indexSimpleConfig
+		indexConfig
 			.addOtherParameter("spellcheck.dictionary", "default")
 			.addOtherParameter("spellcheck", "on")
 			.addOtherParameter("spellcheck.extendedResults", "true")
@@ -213,7 +152,7 @@ public class EntryIndex extends IndexTemplate {
 
 		IndexConfiguration idSearchConfig = new SearchByIdConfiguration(Configurations.ID_SEARCH);
 		idSearchConfig.addSortConfig(SortConfig.create("default", Fields.SCORE, ORDER.desc));
-		idSearchConfig.addConfigSet(indexSimpleConfig.getFieldConfigSets().get(IndexParameter.FL));
+		idSearchConfig.addConfigSet(indexConfig.getFieldConfigSets().get(IndexParameter.FL));
 		idSearchConfig.setDefaultSortName("default");
 		addConfiguration(idSearchConfig);
 		
@@ -222,7 +161,7 @@ public class EntryIndex extends IndexTemplate {
 
 		IndexConfiguration plSearchConfig = new SearchByIdConfiguration(Configurations.PL_SEARCH);
 		plSearchConfig.addSortConfig(SortConfig.create("default", Fields.SCORE, ORDER.desc));
-		plSearchConfig.addConfigSet(indexSimpleConfig.getFieldConfigSets().get(IndexParameter.FL));
+		plSearchConfig.addConfigSet(indexConfig.getFieldConfigSets().get(IndexParameter.FL));
 		plSearchConfig.setDefaultSortName("default");
 		plSearchConfig.addSortConfig(sortConfigs);
 		
