@@ -142,11 +142,16 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 
 
 	@Test
-	public void othersShouldBeAbleToLookAtLeonardsQuery() throws Exception {
+	public void othersShouldBeAbleToLookAtLeonardsQueryByItsPublicId() throws Exception {
+
+		this.mockMvc.perform(get("/user/queries/AbC1").accept(MediaType.APPLICATION_JSON)).
+				andExpect(status().isForbidden());
+	}
+	
+	@Test
+	public void othersShouldNotBeAbleToLookAtLeonardsQueryByItsPrivateId() throws Exception {
 
 		//Queries can be read by any people, if queries must be kept secret, we could use the approach like for Google Docs (generate a random ID) that can be used on the URL
-
-		// UserQuery getUserQuery()
 		this.mockMvc.perform(get("/user/queries/123456789").accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isOk());
 	}
