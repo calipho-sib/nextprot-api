@@ -132,6 +132,24 @@
 			<property name="autoCommitOnClose" value="false" />
 		</bean>
 
+	<bean id="uds"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+		<property name="driverClassName" value="${db.user.driver}" />
+		<property name="url" value="${db.user.url}" />
+		<property name="username" value="${db.user.username}" />
+		<property name="password" value="${db.user.password}" />
+	</bean>
+
+	<bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
+		<property name="dataSource" ref="uds" />
+		<property name="schemas">
+		<list>
+		      <value>np_users</value>
+		</list>
+		</property>
+	</bean>
+
 		<!-- Transaction manager for the user data source -->
 		<bean id="txManager"
 			class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
