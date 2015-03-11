@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * Code and decode 36-base 8-length string in the interval of longs [0-36^8[
+ * Code and decode 36-base 8-length string in the interval of longs [0:36^8[
  *
  * Created by fnikitin on 11/03/15.
  */
@@ -72,6 +72,7 @@ public class Base36Codec {
      * @param base36String the string to decode in long
      * @return the decoded long
      * @throws java.lang.IllegalArgumentException if base36String length is too long (&gt; 8)
+     * @throws NumberFormatException if not a base-36 encoded string
      * @throws IndexOutOfBoundsException if the decoded long is out of range [0, 2_821_109_900_000[
      */
     public static long decodeBase36(String base36String) {

@@ -70,6 +70,12 @@ public class Base36CodecTest {
         Base36Codec.decodeBase36("000000001");
     }
 
+    @Test(expected = NumberFormatException.class)
+    public void testDecodeBase36InvalidChar() throws Exception {
+
+        Base36Codec.decodeBase36("ZZ_TOP");
+    }
+
     @Test
     public void testGiveNextBase36String() throws Exception {
 
