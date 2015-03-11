@@ -263,6 +263,24 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 		assertEquals(new HashSet<String>(), proteinListDao.getAccessionsByListId(157));
 	}
 
+    @Test(expected=DuplicateKeyException.class)
+    public void testCreate2UserProteinListsWithDuplicatePublicIdFail() {
+
+        UserProteinList list = new UserProteinList();
+
+        list.setOwnerId(24);
+        list.setPublicId("00000001");
+
+        long id = proteinListDao.createUserProteinList(list);
+        assertTrue(id > 0);
+
+        list = new UserProteinList();
+
+        list.setOwnerId(124);
+        list.setPublicId("00000001");
+        proteinListDao.createUserProteinList(list);
+    }
+
 	private static void assertExpectedProteinList(UserProteinList list, int expectedListId, String expectedListName, String expectedDescription,
 												  String expectedOwner, int expectedOwnerId, int expectedProteinCount, Set<String> expectedProteins, String expectedPubid) {
 

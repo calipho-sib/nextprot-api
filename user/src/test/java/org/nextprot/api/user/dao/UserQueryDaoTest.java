@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.nextprot.api.user.dao.test.base.UserResourceBaseTest;
 import org.nextprot.api.user.domain.UserQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.util.*;
@@ -249,6 +250,29 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
         query  = userQueryDao.getUserQueryById(16);
 
         assertExpectedUserQuery(query, 16, "spongebob", "ma requete", "une simple requete", true, "yet another sparql query", "ZZZZZU8V", Sets.newHashSet("public"));
+    }
+
+    @Test(expected=DuplicateKeyException.class)
+    public void testCreate2UserQueriesWithDuplicatePublicIdFail() {
+
+        UserQuery query = new UserQuery();
+
+        query.setTitle("ma requete");
+        query.setSparql("yet another sparql query");
+        query.setPublicId("00000002");
+        query.setOwnerId(24);
+
+        long id = userQueryDao.createUserQuery(query);
+        assertTrue(id > 0);
+
+        query = new UserQuery();
+
+        query.setTitle("ma requete 2");
+        query.setSparql("yet another  3 sparql query");
+        query.setPublicId("00000002");
+        query.setOwnerId(24);
+
+        userQueryDao.createUserQuery(query);
     }
 
     private static void assertExpectedUserQuery(UserQuery userQuery, long expectedUserQueryId, String expectedOwner, String expectedTitle,
