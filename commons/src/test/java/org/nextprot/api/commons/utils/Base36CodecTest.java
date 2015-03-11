@@ -83,7 +83,7 @@ public class Base36CodecTest {
 
         for (int i=0 ; i<10 ; i++) {
 
-            Assert.assertNotNull(generator.next36BaseString());
+            Assert.assertNotNull(generator.nextBase36String());
         }
     }
 }
