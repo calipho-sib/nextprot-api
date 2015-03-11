@@ -91,4 +91,6 @@ public interface UserQueryDao {
 	 * @return the number of deleted rows
 	 */
 	int deleteUserQueryTags(long queryId, Set<String> tags);
+
+	UserQuery getUserQueryByPublicId(String id);
 }

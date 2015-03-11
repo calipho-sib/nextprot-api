@@ -51,6 +51,7 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
 
 /**
  * Controller class responsible to extract in streaming
@@ -230,7 +231,16 @@ public class ExportController {
 		String fileName = null;
 
 		//TODO consider also quality, sort and filters
+		if(limit != null){ //set the limit (rows is used for paging)
+			queryRequest.setRows(limit.toString());
+		}
 
+		//TODO add filters
+/*		String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
+		queryRequest.setQuery(queryString);
+		return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
+*/
+		
 		Set<String> accessions = new HashSet<String>();
 		if (queryRequest.hasNextProtQuery()) {
 			fileName = "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
@@ -239,7 +249,10 @@ public class ExportController {
 		}else if (queryRequest.hasList()) {
 			fileName = "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + format.getExtension();
 			accessions.addAll(proteinListService.getUserProteinListAccessionItemsById(queryRequest.getListId()));
-		}else  { // search and add filters ...
+		}else  if (queryRequest.getQuery() != null) { // search and add filters ...
+			fileName = "nextprot-search-" + queryRequest.getQuery() + "-" + viewName + "." + format.getExtension();
+			accessions.addAll(solrService.getQueryAccessions(queryRequest));
+		}else {
 			throw new NextProtException("Not implemented yet.");
 		}
 		
@@ -248,7 +261,7 @@ public class ExportController {
 		try {
 			response.getWriter().write("\n" + format.getHeader() + "\n");
 			int counter = 0;
-			for (String acc : accessions) {
+			for (String acc : accessions) { //
 				counter++;
 				if(limit != null){
 					if(counter > limit){

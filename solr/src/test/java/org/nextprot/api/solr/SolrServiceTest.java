@@ -1,14 +1,14 @@
 package org.nextprot.api.solr;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-
 import org.junit.runner.RunWith;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -102,6 +102,22 @@ public class SolrServiceTest  {
     	assertEquals("insulin phosphorylation intracellular", s2);
     }
  
+    
+    @Test
+    public void testQueryResult() throws Exception {
+    	
+    	QueryRequest qr = new QueryRequest();
+    	qr.setQuery("insulin");
+    	//qr.setQuality("gold");
+    	qr.setRows("25000");
+    	qr.setSort("");
+    	qr.setOrder("");
+    	qr.setFilter("");
+
+    	Set<String> accessions = service.getQueryAccessions(qr);
+    	System.out.println(accessions.size());
+
+    }
     
     
 }

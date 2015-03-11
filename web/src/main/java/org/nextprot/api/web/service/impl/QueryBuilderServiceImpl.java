@@ -74,7 +74,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 		} else if (queryRequest.hasNextProtQuery()) {
 
 			
-			UserQuery uq = userQueryService.getUserQueryById(UserQueryUtils.getUserQueryIdLongFromString(queryRequest.getQueryId()));
+			UserQuery uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId());
 			Set<String> accessions = new HashSet<String>(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
 			// In case there is no result
 			if (accessions.isEmpty()) {

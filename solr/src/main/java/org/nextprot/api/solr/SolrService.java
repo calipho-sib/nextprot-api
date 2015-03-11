@@ -1,5 +1,7 @@
 package org.nextprot.api.solr;
 
+import java.util.Set;
+
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.user.domain.UserProteinList;
 
@@ -49,6 +51,7 @@ public interface SolrService {
 
 	Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
+	Set<String> getQueryAccessions(QueryRequest request);
 	// Query buildQuery(SolrIndex index, String configuration,
 	// String queryString, String quality, String sort, String order,
 	// String start, String rows, String filter);

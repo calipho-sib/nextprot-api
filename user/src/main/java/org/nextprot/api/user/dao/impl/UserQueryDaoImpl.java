@@ -1,6 +1,7 @@
 package org.nextprot.api.user.dao.impl;
 
 import com.google.common.collect.Lists;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -288,5 +289,10 @@ public class UserQueryDaoImpl implements UserQueryDao {
 
 			return tag;
 		}
+	}
+
+	@Override
+	public UserQuery getUserQueryByPublicId(String id) {
+		throw new NextProtException("Method not yet implemented");
 	}
 }

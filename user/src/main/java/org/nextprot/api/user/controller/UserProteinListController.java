@@ -4,7 +4,9 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserProteinListService.Operator;
@@ -31,89 +33,82 @@ public class UserProteinListController {
 	@Autowired
 	private MasterIdentifierService masterIdentifierService;
 
-	@ApiMethod(path = "/user/{username}/protein-list", verb = ApiVerb.GET, description = "Gets user protein lists", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.GET })
+	// List collection
+	@ApiMethod(verb = ApiVerb.GET, description = "Gets user protein lists", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value = "/user/lists", method = { RequestMethod.GET })
 	@ResponseBody
-	public List<UserProteinList> getUserProteinLists(@PathVariable("username") String username) {
-		return this.proteinListService.getUserProteinLists(username);
+	@PreAuthorize("hasRole('ROLE_USER')")
+	public List<UserProteinList> getUserProteinLists() {
+		return this.proteinListService.getUserProteinLists(NPSecurityContext.getCurrentUser());
 	}
 
-	@ApiMethod(path = "/user/{username}/protein-list/{listname}", verb = ApiVerb.GET, description = "Gets user protein list", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping(value = "/user/{username}/protein-list/{listname}", method = RequestMethod.GET)
+	@ApiMethod(path = "/user/lists/{listId}", verb = ApiVerb.GET, description = "Gets user protein list", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value = "/user/lists/{listId}", method = RequestMethod.GET)
 	@ResponseBody
-	public UserProteinList getUserProteinList(@PathVariable("username") String username, @PathVariable("listname") String listName) {
-		return this.proteinListService.getUserProteinListByNameForUser(username, listName);
+	public UserProteinList getUserProteinList(@PathVariable("listId") String listId) {
+		if(org.apache.commons.lang3.StringUtils.isNumeric(listId)){
+			return this.proteinListService.getUserProteinListById(Long.valueOf(listId));
+		}else {
+			throw new NextProtException("Not implement yet");
+		}
 	}
 
-	@ApiMethod(path = "/user/{username}/protein-list/{listname}/accnums", verb = ApiVerb.GET, description = "Gets user protein list accession numbers", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping(value = "/user/{username}/protein-list/{listname}/accnums", method = RequestMethod.GET)
-	@ResponseBody
-	public Set<String> getUserProteinListAccessionNumbers(@PathVariable("username") String username, @PathVariable("listname") String listName) {
-		UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(username, listName);
-		return proteinList.getAccessionNumbers();
-	}
-
-	@ApiMethod(path = "/user/{username}/protein-list", verb = ApiVerb.POST, description = "Creates a user protein list for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	// Create a list
+	@ApiMethod(path = "/user/lists", verb = ApiVerb.POST, description = "Creates a user protein list for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@RequestMapping(value = "/user/{username}/protein-list", method = { RequestMethod.POST })
+	@RequestMapping(value = "/user/lists", method = { RequestMethod.POST })
 	@ResponseBody
-	public UserProteinList createUserProteinList(@PathVariable("username") String username, @RequestBody UserProteinList proteinList) {
-
-		proteinList.setOwner(username);
+	public UserProteinList createUserProteinList(@RequestBody UserProteinList proteinList) {
 		return this.proteinListService.createUserProteinList(proteinList);
 	}
 
-	@ApiMethod(path = "/user/{username}/protein-list/{listid}", verb = ApiVerb.PUT, description = "Updates a user protein list for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	// Update a list
+	@ApiMethod(path = "/user/lists/{listid}", verb = ApiVerb.PUT, description = "Updates a user protein list for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@RequestMapping(value = "/user/{username}/protein-list/{listid}", method = { RequestMethod.PUT })
+	@RequestMapping(value = "/user/lists/{listid}", method = { RequestMethod.PUT })
 	@ResponseBody
-	public UserProteinList updateUserProteinList(@PathVariable("username") String username, @PathVariable("listid") String id,
-												 @RequestBody UserProteinList proteinList) {
-
+	public UserProteinList updateUserProteinList(@PathVariable("listid") String id, @RequestBody UserProteinList proteinList) {
 		proteinList.setId(Long.parseLong(id));
-
 		return this.proteinListService.updateUserProteinList(proteinList);
 	}
 
-	@ApiMethod(path = "/user/{username}/protein-list/{listid}", verb = ApiVerb.DELETE, description = "Deletes a user protein list for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	//Delete a list
+	@ApiMethod(verb = ApiVerb.DELETE, description = "Deletes a user protein list for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@RequestMapping(value = "/user/{username}/protein-list/{listid}", method = { RequestMethod.DELETE })
-	public void deleteUserProteinList(@PathVariable("username") String username, @PathVariable("listid") String id) {
-
+	@RequestMapping(value = "/user/lists/{listid}", method = { RequestMethod.DELETE })
+	public void deleteUserProteinList(@PathVariable("listid") String id) {
 		UserProteinList userProteinList = proteinListService.getUserProteinListById(Long.parseLong(id));
 		this.proteinListService.deleteUserProteinList(userProteinList);
 	}
-
-	@ApiMethod(path = "/user/{username}/protein-list/combine", verb = ApiVerb.GET, description = "Combines a user protein list for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	
+	//special operations on list
+	@ApiMethod(verb = ApiVerb.GET, description = "Combines a user protein list for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@RequestMapping(value = "/user/{username}/protein-list/combine", method = RequestMethod.GET)
+	@RequestMapping(value = "/user/lists/combine", method = RequestMethod.GET)
 	@ResponseBody
-	public UserProteinList combineUserProteinList(
-			@PathVariable("username") String username, 
+	public UserProteinList combineUserProteinList( 
 			@RequestParam(value = "listname", required = true) String listName,
 			@RequestParam(value = "description", required = false) String description, 
 			@RequestParam(value = "listname1", required = true) String listname1,
 			@RequestParam(value = "listname2", required = true) String listname2,
 			@RequestParam(value = "op", required = true) String operator) {
 
-		UserProteinList combinedList = proteinListService.combine(listName, description, username, listname1, listname2,
+		UserProteinList combinedList = proteinListService.combine(listName, description, NPSecurityContext.getCurrentUser(), listname1, listname2,
 				Operator.valueOf(operator));
 
 		return proteinListService.createUserProteinList(combinedList);
 	}
 
-	@ApiMethod(path = "/user/{username}/protein-list/{listid}/upload", verb = ApiVerb.POST, description = "Uploads a user protein list for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(path = "/user/lists/{listid}/upload", verb = ApiVerb.POST, description = "Uploads a user protein list for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@RequestMapping(value = "/user/{username}/protein-list/{listid}/upload", method = RequestMethod.POST)
+	@RequestMapping(value = "/user/lists/{listid}/upload", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
-	public void uploadProteinList(@RequestParam("file") MultipartFile file,
-			@PathVariable("username") String username, 
-			@PathVariable(value = "listid") long listId) throws IOException {
+	public void uploadProteinList(@RequestParam("file") MultipartFile file, @PathVariable(value = "listid") long listId) throws IOException {
 
 		UserProteinList pl = proteinListService.getUserProteinListById(listId);
 		Set<String> acs = UserProteinListUtils.parseAccessionNumbers(file, masterIdentifierService.findUniqueNames());
@@ -121,4 +116,14 @@ public class UserProteinListController {
 		
 		this.proteinListService.updateUserProteinList(pl);
 	}
+	
+	@ApiMethod(path = "/user/lists/{listname}/accnums", verb = ApiVerb.GET, description = "Gets user protein list accession numbers", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value = "/user/lists/{listname}/accnums", method = RequestMethod.GET)
+	@ResponseBody
+	public Set<String> getUserProteinListAccessionNumbers(@PathVariable("listname") String listName) {
+		UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(NPSecurityContext.getCurrentUser(), listName);
+		return proteinList.getAccessionNumbers();
+	}
+	
+
 }
