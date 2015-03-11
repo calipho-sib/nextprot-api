@@ -44,12 +44,5 @@ public class UserQueryUtils {
 		return String.format("NXQ_%05d", id);
 	}
 
-	public static long getUserQueryIdLongFromString(String queryIdString) throws NextProtException {
-		try {
-			return Long.valueOf(queryIdString.replaceAll("NXQ_", ""));
-		} catch (NumberFormatException e) {
-			throw new NextProtException("Invalid Query Id. User NXQ_100011 for example");
-		}
-	}
 
 }

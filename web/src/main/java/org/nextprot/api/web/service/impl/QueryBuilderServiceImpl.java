@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.Query;
@@ -63,7 +64,14 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 
 		} else if (queryRequest.hasList()) {
 
-			UserProteinList proteinList = this.proteinListService.getUserProteinListById(queryRequest.getListId());
+			UserProteinList proteinList = null;
+			if(StringUtils.isWholeNumber(queryRequest.getListId())){ //Private id is used
+				proteinList = this.proteinListService.getUserProteinListById(Long.valueOf(queryRequest.getListId()));
+			}else { //public id is used
+				proteinList = this.proteinListService.getUserProteinListByPublicId(queryRequest.getListId());
+			}
+
+			
 			Set<String> accessions = proteinList.getAccessionNumbers();
 
 			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
@@ -73,8 +81,15 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 
 		} else if (queryRequest.hasNextProtQuery()) {
 
+			UserQuery uq = null;
+			if(StringUtils.isWholeNumber(queryRequest.getQueryId())){ //Private id is used
+				uq = userQueryService.getUserQueryById(Long.valueOf(queryRequest.getQueryId()));
+			}else { //public id is used
+				uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId());
+			}
 			
-			UserQuery uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId());
+
+			
 			Set<String> accessions = new HashSet<String>(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
 			// In case there is no result
 			if (accessions.isEmpty()) {

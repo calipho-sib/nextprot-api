@@ -173,7 +173,7 @@ public class ExportController {
 	 * }
 	 */
 
-	private QueryRequest getQueryRequest(String query, Integer listId, String queryId, String sparql, String filter, String quality, String sort) {
+	private QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String filter, String quality, String sort) {
 		QueryRequest qr = new QueryRequest();
 		qr.setQuery(query);
 		if(listId != null){
@@ -198,7 +198,7 @@ public class ExportController {
 	@RequestMapping(value = "/entries/{view}", method = { RequestMethod.GET })
 	public void exportEntries(HttpServletRequest request, HttpServletResponse response, @PathVariable("view") String view, 
 			@RequestParam(value = "query", required = false) String query,
-			@RequestParam(value = "listId", required = false) Integer listId,
+			@RequestParam(value = "listId", required = false) String listId,
 			@RequestParam(value = "queryId", required = false) String queryId,
 			@RequestParam(value = "sparql", required = false) String sparql,
 			@RequestParam(value = "filter", required = false) String filter,
@@ -213,7 +213,7 @@ public class ExportController {
 	@RequestMapping(value = "/entries", method = { RequestMethod.GET })
 	public void exportAllEntries(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "query", required = false) String query,
-			@RequestParam(value = "listId", required = false) Integer listId,
+			@RequestParam(value = "listId", required = false) String listId,
 			@RequestParam(value = "queryId", required = false) String queryId,
 			@RequestParam(value = "sparql", required = false) String sparql,
 			@RequestParam(value = "filter", required = false) String filter,
@@ -244,11 +244,11 @@ public class ExportController {
 		Set<String> accessions = new HashSet<String>();
 		if (queryRequest.hasNextProtQuery()) {
 			fileName = "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
-			UserQuery uq = userQueryService.getUserQueryById(UserQueryUtils.getUserQueryIdLongFromString(queryRequest.getQueryId()));
+			UserQuery uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId()); //For the export we only use public ids
 			accessions.addAll(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), uq.getSparql()));
 		}else if (queryRequest.hasList()) {
 			fileName = "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + format.getExtension();
-			accessions.addAll(proteinListService.getUserProteinListAccessionItemsById(queryRequest.getListId()));
+			accessions.addAll(proteinListService.getUserProteinListByPublicId(queryRequest.getListId()).getAccessionNumbers()); //For the export we only use public ids
 		}else  if (queryRequest.getQuery() != null) { // search and add filters ...
 			fileName = "nextprot-search-" + queryRequest.getQuery() + "-" + viewName + "." + format.getExtension();
 			accessions.addAll(solrService.getQueryAccessions(queryRequest));

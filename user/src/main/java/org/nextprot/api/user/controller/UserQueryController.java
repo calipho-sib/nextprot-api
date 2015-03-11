@@ -5,6 +5,7 @@ import java.util.List;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.user.domain.UserQuery;
@@ -71,13 +72,13 @@ public class UserQueryController {
 	}
 
 	// READ
-	@ApiMethod(verb = ApiVerb.GET, description = "Get user query", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(verb = ApiVerb.GET, description = "Gets a user query by its private or public id. Only if you are authenticated and authorized you can access the list with its private id.", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping(value = "/user/queries/{id}", method = { RequestMethod.GET })
 	@ResponseBody
-	public UserQuery getUserQuery(@PathVariable("id") String id) {
-		if(org.apache.commons.lang3.StringUtils.isNumeric(id)){
+	public UserQuery getUserQuery(@ApiPathParam(name = "id", description = "The private or public id", allowedvalues = { "NXQ_00001" }) @PathVariable("id") String id) {
+		if (org.apache.commons.lang3.StringUtils.isNumeric(id)) {
 			return userQueryService.getUserQueryById(Long.valueOf(id));
-		}else {
+		} else {
 			return userQueryService.getUserQueryByPublicId(id);
 		}
 	}

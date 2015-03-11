@@ -311,8 +311,4 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		}
 	}
 
-	@Override
-	public UserQuery getUserQueryByPublicId(String id) {
-		throw new NextProtException("Method not yet implemented");
-	}
 }
