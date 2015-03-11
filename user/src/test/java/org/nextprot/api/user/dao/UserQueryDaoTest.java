@@ -46,6 +46,9 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
         UserQuery userQuery = userQueryDao.getUserQueryByPublicId("00000001");
 
         assertExpectedUserQuery(userQuery, 15, "spongebob", "myquery", "my first query", false, "sparql query", "00000001", new HashSet<String>());
+
+        userQuery = userQueryDao.getUserQueryByPublicId("ZZZZZU8V");
+        assertExpectedUserQuery(userQuery, 16, "spongebob", "myquery2", "my second query", true, "another sparql query", "ZZZZZU8V", Sets.newHashSet("public"));
     }
 
     @Test(expected = EmptyResultDataAccessException.class)

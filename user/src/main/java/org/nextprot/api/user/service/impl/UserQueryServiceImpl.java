@@ -43,7 +43,8 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@CacheEvict(value = "user-queries", key = "#userQuery.getOwner()")
 	public UserQuery createUserQuery(UserQuery userQuery) {
 
-        String publicId = generator.next36BaseString();
+        // TODO: check here that the random id is unique else generate another one
+        String publicId = generator.nextBase36String();
         userQuery.setPublicId(publicId);
 
 		long id = userQueryDao.createUserQuery(userQuery);
