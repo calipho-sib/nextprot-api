@@ -96,7 +96,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		List<UserQuery> uqs = new ObjectMapper().readValue(responseString, new TypeReference<List<UserQuery>>() { });
 
 		assertTrue(!uqs.isEmpty());
-		assertEquals(1, uqs.size());
+		assertTrue(uqs.size() > 1);
 		assertEquals(123456789, uqs.get(0).getUserQueryId());
 	}
 
@@ -116,6 +116,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		assertTrue(uq.getOwner().equals("leonard"));  //asserts that the owner of the query is bob
 	}
 
+	/* not applicable anymore 
 	@Test
 	public void sheldonShouldNotBeAbleToLookAtLeonardsQueries() throws Exception {
 
@@ -125,10 +126,10 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		this.mockMvc.perform(get("/user/queries").
 				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isForbidden());
-	}
+	}*/
 
 	@Test
-	public void sheldonShouldBeAbleToLookAtLeonardsQuery() throws Exception {
+	public void sheldonShouldNotBeAbleToLookAtLeonardsQueryByItsPrivateId() throws Exception {
 
 		//Queries can be read by any people, if queries must be kept secret, we could use the approach like for Google Docs (generate a random ID) that can be used on the URL
 		
@@ -137,15 +138,28 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		// UserQuery getUserQuery()
 		this.mockMvc.perform(get("/user/queries/123456789").
 				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isOk());
+				andExpect(status().isForbidden());
 	}
 
 
 	@Test
+	public void sheldonShouldBeAbleToLookAtLeonardsQueryByItsPublicId() throws Exception {
+
+		//Queries can be read by any people, if queries must be kept secret, we could use the approach like for Google Docs (generate a random ID) that can be used on the URL
+		
+		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
+
+		// UserQuery getUserQuery()
+		this.mockMvc.perform(get("/user/queries/Abc1").
+				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
+				andExpect(status().isOk());
+	}
+
+	@Test
 	public void othersShouldBeAbleToLookAtLeonardsQueryByItsPublicId() throws Exception {
 
-		this.mockMvc.perform(get("/user/queries/AbC1").accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isForbidden());
+		this.mockMvc.perform(get("/user/queries/Abc1").accept(MediaType.APPLICATION_JSON)).
+				andExpect(status().isOk());
 	}
 	
 	@Test
@@ -153,16 +167,16 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 
 		//Queries can be read by any people, if queries must be kept secret, we could use the approach like for Google Docs (generate a random ID) that can be used on the URL
 		this.mockMvc.perform(get("/user/queries/123456789").accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isOk());
+				andExpect(status().isForbidden());
 	}
 
-	@Test
+	/* @Test not applicable anymore
 	public void othersShouldNotBeAbleToLookAtLeonardsQueries() throws Exception {
 
 		// List<UserQuery> getUserQueries()
 		this.mockMvc.perform(get("/user/queries").accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isForbidden());
-	}
+	}*/
 
 	// --------------------------------- PUT --------------------------------------------------------------
 

@@ -59,7 +59,6 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	}
 
 	@Override
-	@AllowedAnonymous
 	public UserProteinList getUserProteinListById(long listId) {
 		try {
 			return proteinListDao.getUserProteinListById(listId);
