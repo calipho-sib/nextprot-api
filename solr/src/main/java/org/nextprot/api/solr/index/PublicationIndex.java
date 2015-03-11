@@ -30,7 +30,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.ABSTRACT)
 				.add(PubField.VOLUME)
 				.add(PubField.TYPE)
-				.add(PubField.JOURNAL)
+				.add(PubField.PRETTY_JOURNAL)
 				.add(PubField.SOURCE)
 				.add(PubField.PRETTY_AUTHORS)				
 				.add(PubField.FILTERS));
@@ -42,6 +42,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.ABSTRACT, 16)
 				.add(PubField.TYPE, 16)
 				.add(PubField.JOURNAL, 8)
+				.add(PubField.PRETTY_JOURNAL, 8)
 				.add(PubField.SOURCE, 8)
 				.add(PubField.AUTHORS, 8));
 		
@@ -52,6 +53,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.ABSTRACT, 160)
 				.add(PubField.TYPE, 160)
 				.add(PubField.JOURNAL, 80)
+				.add(PubField.PRETTY_JOURNAL, 80)
 				.add(PubField.SOURCE, 80)
 				.add(PubField.AUTHORS, 80));
 	
@@ -149,6 +151,7 @@ public class PublicationIndex extends IndexTemplate {
 		ABSTRACT("abstract"), 
 		TYPE("type"), 
 		JOURNAL("journal"), 
+		PRETTY_JOURNAL("pretty_journal"), 
 		SOURCE("source"), 
 		AUTHORS("authors"), 
 		PRETTY_AUTHORS("pretty_authors"), 

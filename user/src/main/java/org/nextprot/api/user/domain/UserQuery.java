@@ -1,10 +1,10 @@
 package org.nextprot.api.user.domain;
 
-import java.io.Serializable;
-import java.util.Set;
-
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.resource.UserResource;
+
+import java.io.Serializable;
+import java.util.Set;
 
 public class UserQuery implements Serializable, UserResource {
 
@@ -17,6 +17,7 @@ public class UserQuery implements Serializable, UserResource {
 	private boolean published;
 	private String owner;
 	private long ownerId;
+    private String publicId;
 
 	private Set<String> tags;
 
@@ -76,7 +77,15 @@ public class UserQuery implements Serializable, UserResource {
 
 	public void setOwnerId(long ownerId) { this.ownerId = ownerId; }
 
-	public void checkValidForUpdate() {
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
+
+    public void checkValidForUpdate() {
 		NPreconditions.checkNotNull(sparql, "The sparql should not be null");
 		NPreconditions.checkNotNull(title, "The title should not be null");
 		NPreconditions.checkTrue(title.length() >= 3,"The title should be at least 3 characters long");

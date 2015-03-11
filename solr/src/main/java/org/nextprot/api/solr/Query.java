@@ -25,20 +25,34 @@ public class Query {
 		this.indexName = index.getName();
 		this.configuration = configuration;
 	}
-	
+
+    private String escapeColon(String value) {
+
+        int index = value.indexOf(':');
+
+        // Escape ':' in query as it has a special meaning in solr
+        if (index > 0 && value.charAt(index-1) != '\\') {
+            return value.replace(":", "\\:");
+        }
+
+        return value;
+    }
+
 	public Query addQuery(String value) {
-		this.queryString = value;
+
+		this.queryString = escapeColon(value);
 		return this;
 	}
 	
 	public Query addQuery(String field, String value) {
 		this.field = field;
-		this.queryString = value;
+		this.queryString = escapeColon(value);
 		return this;
 	}
 	
 	public Query addQuery(IndexField field, String value) {
-		return addQuery(field.getName(), value);
+
+        return addQuery(field.getName(), value);
 	}
 	
 	public Query addFilter(String filter) {
