@@ -1,9 +1,8 @@
 package org.nextprot.api.user.service.impl;
 
-import java.util.List;
-
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
+import org.nextprot.api.commons.utils.Base36Codec;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
@@ -14,9 +13,13 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Lazy
 @Service
 public class UserQueryServiceImpl implements UserQueryService {
+
+    private final Base36Codec.Generator generator = new Base36Codec.Generator();
 
 	@Autowired
 	private UserQueryDao userQueryDao;
@@ -40,7 +43,11 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@CacheEvict(value = "user-queries", key = "#userQuery.getOwner()")
 	public UserQuery createUserQuery(UserQuery userQuery) {
 
+        String publicId = generator.next36BaseString();
+        userQuery.setPublicId(publicId);
+
 		long id = userQueryDao.createUserQuery(userQuery);
+
 		userQuery.setUserQueryId(id);
 		if (userQuery.getTags() != null) {
 			userQueryDao.createUserQueryTags(id, userQuery.getTags());

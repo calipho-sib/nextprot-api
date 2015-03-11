@@ -31,7 +31,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 		assertNotNull(lists);
 		assertTrue(!lists.isEmpty());
 		assertEquals(1, lists.size());
-		assertExpectedProteinList(lists.get(0), 156, "mylist", "my proteins", username, 23, 3, new HashSet<String>());
+		assertExpectedProteinList(lists.get(0), 156, "mylist", "my proteins", username, 23, 3, new HashSet<String>(), "ZZZZZU8V");
 	}
 
 	@Test
@@ -40,8 +40,22 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 		UserProteinList list = proteinListDao.getUserProteinListById(156);
 
 		assertNotNull(list);
-		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 3, Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"));
+		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 3, Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"), "ZZZZZU8V");
 	}
+
+    @Test
+    public void testGetUserProteinListByPublicId() {
+
+        UserProteinList list = proteinListDao.getUserProteinListByPublicId("ZZZZZU8V");
+
+        assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 3, Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"), "ZZZZZU8V");
+    }
+
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void testGetUserQueryByPublicIdNotFound() {
+
+        proteinListDao.getUserProteinListByPublicId("00000005");
+    }
 
 	@Test
 	public void testGetUserProteinListByName() {
@@ -49,7 +63,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 		UserProteinList list = proteinListDao.getUserProteinListByName(username, "mylist");
 
 		assertNotNull(list);
-		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 3, Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"));
+		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 3, Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"), "ZZZZZU8V");
 	}
 
 	@Test (expected = EmptyResultDataAccessException.class)
@@ -82,6 +96,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
         UserProteinList list = new UserProteinList();
 
         list.setOwnerId(24);
+        list.setPublicId("00000001");
 
         long id = proteinListDao.createUserProteinList(list);
         assertTrue(id > 0);
@@ -100,12 +115,14 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
         int ownerId = 24;
         String desc = "my list";
         String name = "my list of proteins";
+        String publicId = "00000006";
 
         UserProteinList list = new UserProteinList();
 
         list.setName(name);
         list.setOwnerId(ownerId);
         list.setDescription(desc);
+        list.setPublicId(publicId);
 
         long id = proteinListDao.createUserProteinList(list);
 
@@ -115,6 +132,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
         assertEquals(ownerId, list.getOwnerId());
         assertEquals(desc, list.getDescription());
         assertEquals(name, list.getName());
+        assertEquals(publicId, list.getPublicId());
     }
 
 	@Test(expected = DuplicateKeyException.class)
@@ -123,6 +141,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 		UserProteinList l = new UserProteinList();
 		l.setName("mylist");
 		l.setOwnerId(23);
+        l.setPublicId("00000001");
 
 		proteinListDao.createUserProteinList(l);
 	}
@@ -135,7 +154,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 		UserProteinList list = proteinListDao.getUserProteinListById(156);
 
 		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 5,
-				Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165", "prot1", "prot2"));
+				Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165", "prot1", "prot2"), "ZZZZZU8V");
 	}
 
 	@Test
@@ -152,7 +171,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 		UserProteinList list = proteinListDao.getUserProteinListById(156);
 
 		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 1003,
-				Sets.union(Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"), set));
+				Sets.union(Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"), set), "ZZZZZU8V");
 	}
 
 	@Test
@@ -188,7 +207,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 		UserProteinList l2 = proteinListDao.getUserProteinListById(l.getId());
 
 		assertExpectedProteinList(l2, 156, "ma liste", "la liste de bob leponge", username, 23, 3,
-				Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"));
+				Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"), "ZZZZZU8V");
 	}
 
 	@Test
@@ -204,7 +223,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 
 		UserProteinList list = proteinListDao.getUserProteinListById(156);
 
-		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 1,Sets.newHashSet("NX_Q8N5Z0"));
+		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 1,Sets.newHashSet("NX_Q8N5Z0"), "ZZZZZU8V");
 	}
 
 	@Test
@@ -222,7 +241,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 		assertEquals(0, count);
 
 		assertExpectedProteinList(list, 156, "mylist", "my proteins", username, 23, 3,
-				Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"));
+				Sets.newHashSet("NX_Q14249", "NX_Q8N5Z0", "NX_P05165"), "ZZZZZU8V");
 	}
 
 	@Test
@@ -245,7 +264,7 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 	}
 
 	private static void assertExpectedProteinList(UserProteinList list, int expectedListId, String expectedListName, String expectedDescription,
-												  String expectedOwner, int expectedOwnerId, int expectedProteinCount, Set<String> expectedProteins) {
+												  String expectedOwner, int expectedOwnerId, int expectedProteinCount, Set<String> expectedProteins, String expectedPubid) {
 
 		assertEquals(expectedListId, list.getId());
 		assertEquals(expectedListName, list.getName());
@@ -254,5 +273,6 @@ public class UserProteinListDaoTest extends UserResourceBaseTest {
 		assertEquals(expectedOwnerId, list.getOwnerId());
 		assertEquals(expectedProteinCount, list.getEntriesCount());
 		assertEquals(expectedProteins, list.getAccessionNumbers());
+        assertEquals(expectedPubid, list.getPublicId());
 	}
 }

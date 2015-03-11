@@ -27,8 +27,8 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
         assertTrue(!list.isEmpty());
         assertEquals(2, list.size());
 
-        assertExpectedUserQuery(list.get(0), 15, "spongebob", "myquery", "my first query", false, "sparql query", new HashSet<String>());
-        assertExpectedUserQuery(list.get(1), 16, "spongebob", "myquery2", "my second query", true, "another sparql query", Sets.newHashSet("public"));
+        assertExpectedUserQuery(list.get(0), 15, "spongebob", "myquery", "my first query", false, "sparql query", "00000001", new HashSet<String>());
+        assertExpectedUserQuery(list.get(1), 16, "spongebob", "myquery2", "my second query", true, "another sparql query", "ZZZZZU8V", Sets.newHashSet("public"));
     }
 
     @Test
@@ -36,7 +36,21 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
 
         UserQuery userQuery = userQueryDao.getUserQueryById(15);
 
-        assertExpectedUserQuery(userQuery, 15, "spongebob", "myquery", "my first query", false, "sparql query", new HashSet<String>());
+        assertExpectedUserQuery(userQuery, 15, "spongebob", "myquery", "my first query", false, "sparql query", "00000001", new HashSet<String>());
+    }
+
+    @Test
+    public void testGetUserQueryByPublicId() {
+
+        UserQuery userQuery = userQueryDao.getUserQueryByPublicId("00000001");
+
+        assertExpectedUserQuery(userQuery, 15, "spongebob", "myquery", "my first query", false, "sparql query", "00000001", new HashSet<String>());
+    }
+
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void testGetUserQueryByPublicIdNotFound() {
+
+        userQueryDao.getUserQueryByPublicId("00000005");
     }
 
     @Test
@@ -48,7 +62,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
         assertTrue(!list.isEmpty());
         assertEquals(1, list.size());
 
-        assertExpectedUserQuery(list.get(0), 16, "spongebob", "myquery2", "my second query", true, "another sparql query", Sets.newHashSet("public"));
+        assertExpectedUserQuery(list.get(0), 16, "spongebob", "myquery2", "my second query", true, "another sparql query", "ZZZZZU8V", Sets.newHashSet("public"));
     }
 
     @Test
@@ -69,7 +83,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
         assertTrue(!list.isEmpty());
         assertEquals(1, list.size());
 
-        assertExpectedUserQuery(list.get(0), 16, "spongebob", "myquery2", "my second query", true, "another sparql query", Sets.newHashSet("public"));
+        assertExpectedUserQuery(list.get(0), 16, "spongebob", "myquery2", "my second query", true, "another sparql query", "ZZZZZU8V", Sets.newHashSet("public"));
     }
 
     @Test
@@ -107,6 +121,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
 
         query.setTitle("ma requete");
         query.setSparql("yet another sparql query");
+        query.setPublicId("00000002");
         query.setOwnerId(24);
 
         long id = userQueryDao.createUserQuery(query);
@@ -114,7 +129,25 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
 
         UserQuery query2 = userQueryDao.getUserQueryById(id);
 
-        assertExpectedUserQuery(query2, id, "tahitibob", "ma requete", null, false, "yet another sparql query", Sets.<String>newHashSet());
+        assertExpectedUserQuery(query2, id, "tahitibob", "ma requete", null, false, "yet another sparql query", "00000002", Sets.<String>newHashSet());
+    }
+
+    @Test
+    public void testCreateUserQuery2() {
+
+        UserQuery query = new UserQuery();
+
+        query.setTitle("ma requete");
+        query.setSparql("yet another sparql query");
+        query.setPublicId("00000002");
+        query.setOwnerId(24);
+
+        long id = userQueryDao.createUserQuery(query);
+        assertTrue(id > 0);
+
+        UserQuery query2 = userQueryDao.getUserQueryById(id);
+
+        assertExpectedUserQuery(query2, id, "tahitibob", "ma requete", null, false, "yet another sparql query", "00000002", Sets.<String>newHashSet());
     }
 
     @Test
@@ -126,6 +159,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
         query.setDescription("une simple requete");
         query.setSparql("yet another sparql query");
         query.setPublished(true);
+        query.setPublicId("00000003");
         query.setOwnerId(24);
 
         long id = userQueryDao.createUserQuery(query);
@@ -133,7 +167,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
 
         UserQuery query2 = userQueryDao.getUserQueryById(id);
 
-        assertExpectedUserQuery(query2, id, "tahitibob", "ma requete", "une simple requete", true, "yet another sparql query", Sets.<String>newHashSet());
+        assertExpectedUserQuery(query2, id, "tahitibob", "ma requete", "une simple requete", true, "yet another sparql query", "00000003", Sets.<String>newHashSet());
     }
 
     @Test
@@ -143,7 +177,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
 
         UserQuery query = userQueryDao.getUserQueryById(16);
 
-        assertExpectedUserQuery(query, 16, "spongebob", "myquery2", "my second query", true, "another sparql query", Sets.newHashSet("public", "great", "heavy"));
+        assertExpectedUserQuery(query, 16, "spongebob", "myquery2", "my second query", true, "another sparql query", "ZZZZZU8V", Sets.newHashSet("public", "great", "heavy"));
     }
 
     @Test
@@ -158,7 +192,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
 
         assertEquals(1, count);
 
-        assertExpectedUserQuery(query, 16, "spongebob", "myquery2", "my second query", true, "another sparql query", Sets.<String>newHashSet());
+        assertExpectedUserQuery(query, 16, "spongebob", "myquery2", "my second query", true, "another sparql query", "ZZZZZU8V", Sets.<String>newHashSet());
     }
 
     @Test
@@ -175,7 +209,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
 
         assertEquals(0, count);
 
-        assertExpectedUserQuery(query, 16, "spongebob", "myquery2", "my second query", true, "another sparql query", Sets.newHashSet("public"));
+        assertExpectedUserQuery(query, 16, "spongebob", "myquery2", "my second query", true, "another sparql query", "ZZZZZU8V", Sets.newHashSet("public"));
     }
 
     @Test
@@ -214,11 +248,11 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
 
         query  = userQueryDao.getUserQueryById(16);
 
-        assertExpectedUserQuery(query, 16, "spongebob", "ma requete", "une simple requete", true, "yet another sparql query", Sets.newHashSet("public"));
+        assertExpectedUserQuery(query, 16, "spongebob", "ma requete", "une simple requete", true, "yet another sparql query", "ZZZZZU8V", Sets.newHashSet("public"));
     }
 
     private static void assertExpectedUserQuery(UserQuery userQuery, long expectedUserQueryId, String expectedOwner, String expectedTitle,
-                                                String expectedDescription, boolean expectedPublished, String expectedSparql,
+                                                String expectedDescription, boolean expectedPublished, String expectedSparql, String expectedPublicId,
                                                 Set<String> expectedTags) {
         assertNotNull(userQuery);
         assertEquals(expectedUserQueryId, userQuery.getUserQueryId());
@@ -228,6 +262,7 @@ public class UserQueryDaoTest extends UserResourceBaseTest {
         assertEquals(expectedTitle, userQuery.getTitle());
         assertTrue(userQuery.getPublished() == expectedPublished);
         assertEquals(expectedSparql, userQuery.getSparql());
+        assertEquals(expectedPublicId, userQuery.getPublicId());
         assertEquals(expectedTags, userQuery.getTags());
     }
 }

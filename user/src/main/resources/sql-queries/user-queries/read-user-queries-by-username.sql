@@ -1,4 +1,4 @@
-SELECT query_id, title, description, sparql, published, user_name
+SELECT query_id, title, description, sparql, published, public_id, user_name
 FROM np_users.user_queries
 INNER JOIN np_users.users users
 ON owner_id = users.user_id
