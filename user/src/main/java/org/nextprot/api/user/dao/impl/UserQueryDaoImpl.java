@@ -63,6 +63,24 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		return query;
 	}
 
+    @Override
+    public UserQuery getUserQueryByPublicId(String publicId) {
+
+        String sql = sqlDictionary.getSQLQuery("read-user-query-by-pubid");
+
+        MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+        namedParameters.addValue("public_id", publicId);
+
+        UserQuery query = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource()).queryForObject(sql, namedParameters, new UserQueryRowMapper());
+
+        long queryId = query.getUserQueryId();
+
+        Map<Long, Set<String>> tags = getQueryTags(Arrays.asList(queryId));
+        query.setTags(tags.get(queryId));
+
+        return query;
+    }
+
 	@Override
 	public List<UserQuery> getUserQueriesByTag(String tag) {
 
@@ -141,6 +159,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		namedParameters.addValue("sparql", userQuery.getSparql());
 		namedParameters.addValue("published", userQuery.getPublished() ? 'Y' : 'N');
 		namedParameters.addValue("owner_id", userQuery.getOwnerId());
+        namedParameters.addValue("public_id", userQuery.getPublicId());
 
 		return JdbcTemplateUtils.insertAndGetKey(INSERT_SQL, "query_id", namedParameters, new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())).longValue();
 	}
@@ -251,6 +270,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 			query.setSparql(resultSet.getString("sparql"));
 			query.setPublished(resultSet.getString("published").equals("Y"));
 			query.setOwner(resultSet.getString("user_name"));
+            query.setPublicId(resultSet.getString("public_id"));
 			return query;
 		}
 	}

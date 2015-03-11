@@ -60,6 +60,21 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 		return userProteinList;
 	}
 
+    @Override
+    public UserProteinList getUserProteinListByPublicId(String publicId) throws DataAccessException {
+
+        String sql = sqlDictionary.getSQLQuery("read-user-protein-list-by-pubid");
+
+        SqlParameterSource namedParams = new MapSqlParameterSource("public_id", publicId);
+
+        NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource());
+
+        UserProteinList userProteinList = template.queryForObject(sql, namedParams, new ProteinListRowMapper());
+        userProteinList.setAccessions(getAccessionsByListId(userProteinList.getId()));
+
+        return userProteinList;
+    }
+
 	@Override
 	public UserProteinList getUserProteinListByName(String userIdentifier, String listName) throws DataAccessException {
 
@@ -102,6 +117,7 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 		namedParameters.addValue("list_name", userProteinList.getName());
 		namedParameters.addValue("description", userProteinList.getDescription());
 		namedParameters.addValue("owner_id", userProteinList.getOwnerId());
+        namedParameters.addValue("public_id", userProteinList.getPublicId());
 
 		return JdbcTemplateUtils.insertAndGetKey(INSERT_SQL, "list_id", namedParameters,
 				new NamedParameterJdbcTemplate(dsLocator.getUserDataSource())).longValue();
@@ -203,6 +219,7 @@ public class UserProteinListDaoImpl implements UserProteinListDao {
 			pl.setDescription(rs.getString("description"));
 			pl.setOwnerId(rs.getLong("owner_id"));
 			pl.setOwner(rs.getString("user_name"));
+            pl.setPublicId(rs.getString("public_id"));
 			pl.setEntriesCount(rs.getInt("protCount"));
 
 			return pl;

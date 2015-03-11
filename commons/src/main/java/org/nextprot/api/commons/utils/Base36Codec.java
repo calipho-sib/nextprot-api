@@ -104,7 +104,7 @@ public class Base36Codec {
         /**
          * @return the next random base-36 long encoded string in the range ["00000000", "ZZZZZU8W"[
          */
-        public String next36BaseString() {
+        public String nextBase36String() {
 
             long rand = (long)(random.nextDouble()*UPPER_RANGE);
 

@@ -3,6 +3,7 @@ package org.nextprot.api.user.service.impl;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
+import org.nextprot.api.commons.utils.Base36Codec;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -20,6 +21,8 @@ import java.util.Set;
 @Service
 public class UserProteinListServiceImpl implements UserProteinListService {
 
+    private final Base36Codec.Generator generator = new Base36Codec.Generator();
+
 	@Autowired
 	private UserProteinListDao proteinListDao;
 
@@ -34,6 +37,10 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 		NPreconditions.checkNotNull(userProteinList, "The user protein list should not be null");
 		NPreconditions.checkTrue(userProteinList.getId() == 0, "The user protein list should be new");
+
+        // TODO: check here that the random id is unique else generate another one
+        String publicId = generator.nextBase36String();
+        userProteinList.setPublicId(publicId);
 
 		long id = proteinListDao.createUserProteinList(userProteinList);
 		userProteinList.setId(id);

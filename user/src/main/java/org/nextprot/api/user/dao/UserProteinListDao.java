@@ -42,6 +42,14 @@ public interface UserProteinListDao {
 	 */
 	UserProteinList getUserProteinListById(long listId) throws DataAccessException;
 
+    /**
+     * Get {@code UserProteinList} identified by {@code publicId}
+     *
+     * @param publicId the public id identifier
+     * @return the user protein list instance
+     */
+    UserProteinList getUserProteinListByPublicId(String publicId) throws DataAccessException;
+
 	/**
 	 * Get the list of accession numbers found in list {@code listId]
 	 * @param listId the list identifier
