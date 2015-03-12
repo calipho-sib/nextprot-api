@@ -72,7 +72,6 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	}
 
 	@Override
-	@AllowedAnonymous
 	public UserProteinList getUserProteinListById(long listId) {
 		try {
 			return proteinListDao.getUserProteinListById(listId);
@@ -114,8 +113,8 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	}
 
 	@Override
-	@AllowedAnonymous //For now we don't secure the accessions of the list (we just secure the meta information like the name and description...)
-	public Set<String> getUserProteinListAccessionItemsById(long listId) {
-		return proteinListDao.getAccessionsByListId(listId);
+	@AllowedAnonymous
+	public UserProteinList getUserProteinListByPublicId(String publicId) {
+		return proteinListDao.getUserProteinListByPublicId(publicId);
 	}
 }

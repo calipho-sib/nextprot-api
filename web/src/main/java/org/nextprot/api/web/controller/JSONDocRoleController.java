@@ -100,6 +100,7 @@ public class JSONDocRoleController extends JSONDocController {
 						m.setQueryparameters(met.getQueryparameters());
 						Set<String> produces = new HashSet<String>();
 						produces.add(MediaType.APPLICATION_XML_VALUE);
+						produces.add(MediaType.APPLICATION_JSON_VALUE);
 						m.setProduces(produces);
 						m.setConsumes(met.getConsumes());
 						Set<ApiParamDoc> set = new HashSet<ApiParamDoc>();

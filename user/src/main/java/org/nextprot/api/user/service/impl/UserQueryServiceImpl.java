@@ -91,20 +91,40 @@ public class UserQueryServiceImpl implements UserQueryService {
 	}
 
 	@Override
-	@AllowedAnonymous
 	public UserQuery getUserQueryById(long id) {
-		for(UserQuery uq : getTutorialQueries()) { //TODO keep this on a map!!!!!!!!
-			if(uq.getUserQueryId() == id){
-				return uq;
-			}
-		}
+		UserQuery uq = getTutorialQueryById(id);
+		if(uq != null) return uq;
+
 		return userQueryDao.getUserQueryById(id);
 	}
 
 	@Override
 	@AllowedAnonymous
+	public UserQuery getUserQueryByPublicId(String id) 
+	{
+		UserQuery uq = null;
+		if(org.apache.commons.lang3.StringUtils.isNumeric(id.replace("NXQ_", ""))){
+			uq = getTutorialQueryById(Long.valueOf(id.replace("NXQ_", "")));
+		}
+		if(uq != null) return uq;
+
+		return userQueryDao.getUserQueryByPublicId(id);
+	}
+	
+	@Override
+	@AllowedAnonymous
 	@Cacheable("tutorial-queries")
 	public List<UserQuery> getTutorialQueries() {
 		return userQueryTutorialDictionary.getDemoSparqlList();
+	}
+	
+	
+	private UserQuery getTutorialQueryById(long id) {
+		for(UserQuery uq : getTutorialQueries()) { //TODO keep this on a map!!!!!!!!
+			if(uq.getUserQueryId() == id){
+				return uq;
+			}
+		}
+		return null;
 	}
 }

@@ -36,7 +36,7 @@ public interface UserProteinListService {
 
 	void deleteUserProteinList(UserProteinList proteinList);
 
-	Set<String> getUserProteinListAccessionItemsById(long listId);
-
 	UserProteinList combine(String name, String description, String username, String listName1, String listName2, Operator operator);
+
+	UserProteinList getUserProteinListByPublicId(String listId);
 }

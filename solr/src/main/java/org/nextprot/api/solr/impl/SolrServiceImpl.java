@@ -362,4 +362,25 @@ public class SolrServiceImpl implements SolrService {
 		return q;
 	}
 
+	@Override
+	public Set<String> getQueryAccessions(QueryRequest queryRequest) {
+
+		long start = System.currentTimeMillis();
+		Set<String> accessions = new LinkedHashSet<String>();
+		Query query = buildQuery("entry", "simple_ids", queryRequest);
+		SearchResult result;
+		try {
+			result = executeQuery(query);
+			for (SearchResultItem item : result.getResults()) {
+				accessions.add((String)item.getProperties().get("id"));
+			}
+		} catch (SearchQueryException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		System.err.println("Time to search " + (System.currentTimeMillis() - start));
+		return accessions;
+	}
+
 }
