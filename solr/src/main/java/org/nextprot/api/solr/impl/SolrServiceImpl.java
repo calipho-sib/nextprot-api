@@ -367,7 +367,7 @@ public class SolrServiceImpl implements SolrService {
 
 		long start = System.currentTimeMillis();
 		Set<String> accessions = new LinkedHashSet<String>();
-		Query query = buildQuery("entry", "simple_ids", queryRequest);
+		Query query = buildQuery("entry", "simple", queryRequest);
 		SearchResult result;
 		try {
 			result = executeQuery(query);

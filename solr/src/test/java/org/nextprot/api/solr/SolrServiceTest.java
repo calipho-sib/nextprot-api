@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nextprot.api.commons.utils.Pair;
@@ -103,7 +104,9 @@ public class SolrServiceTest  {
     }
  
     
+    
     @Test
+    @Ignore
     public void testQueryResult() throws Exception {
     	
     	QueryRequest qr = new QueryRequest();

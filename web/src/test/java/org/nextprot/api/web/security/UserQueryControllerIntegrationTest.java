@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import org.junit.Test;
+import org.nextprot.api.user.controller.PublicQueryController;
 import org.nextprot.api.user.controller.UserQueryController;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.web.dbunit.base.mvc.MVCBaseSecurityTest;
@@ -66,9 +68,9 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	public void anybodyShouldBeAbleToLookAtTutorialEvenWithoutToken() throws Exception {
 
 		// call List<UserQuery> getTutorialQueries()
-		this.mockMvc.perform(get("/user/me/queries").accept(MediaType.APPLICATION_JSON))
+		this.mockMvc.perform(get("/queries/tutorial").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
-				.andExpect(handler().handlerType(UserQueryController.class));
+				.andExpect(handler().handlerType(PublicQueryController.class));
 	}
 
 	@Test
@@ -96,7 +98,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		List<UserQuery> uqs = new ObjectMapper().readValue(responseString, new TypeReference<List<UserQuery>>() { });
 
 		assertTrue(!uqs.isEmpty());
-		assertTrue(uqs.size() > 1);
+		assertEquals(uqs.size(), 1);
 		assertEquals(123456789, uqs.get(0).getUserQueryId());
 	}
 
@@ -150,7 +152,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// UserQuery getUserQuery()
-		this.mockMvc.perform(get("/user/me/queries/Abc1").
+		this.mockMvc.perform(get("/queries/Abc1").
 				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isOk());
 	}
@@ -158,7 +160,7 @@ public class UserQueryControllerIntegrationTest extends MVCBaseSecurityTest {
 	@Test
 	public void othersShouldBeAbleToLookAtLeonardsQueryByItsPublicId() throws Exception {
 
-		this.mockMvc.perform(get("/user/me/queries/Abc1").accept(MediaType.APPLICATION_JSON)).
+		this.mockMvc.perform(get("/queries/Abc1").accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isOk());
 	}
 	
