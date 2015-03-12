@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,18 +44,33 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@CacheEvict(value = "user-queries", key = "#userQuery.getOwner()")
 	public UserQuery createUserQuery(UserQuery userQuery) {
 
-        // TODO: check here that the random id is unique else generate another one
-        String publicId = generator.nextBase36String();
-        userQuery.setPublicId(publicId);
+        NPreconditions.checkNotNull(userQuery, "The user query should not be null");
 
-		long id = userQueryDao.createUserQuery(userQuery);
+        generateAndSetPublicId(userQuery);
 
-		userQuery.setUserQueryId(id);
-		if (userQuery.getTags() != null) {
-			userQueryDao.createUserQueryTags(id, userQuery.getTags());
-		}
+        if (userQuery.getTags() != null)
+            userQueryDao.createUserQueryTags(userQuery.getUserQueryId(), userQuery.getTags());
+
 		return userQuery;
 	}
+
+    private void generateAndSetPublicId(UserQuery userQuery) {
+
+        DuplicateKeyException e = null;
+
+        do {
+            userQuery.setPublicId(generator.nextBase36String());
+
+            try {
+                long id = userQueryDao.createUserQuery(userQuery);
+                userQuery.setUserQueryId(id);
+
+            } catch (DuplicateKeyException dke) {
+
+                e = dke;
+            }
+        } while(e != null);
+    }
 
 	@Override
 	@CacheEvict(value = "user-queries", key = "#userQuery.getOwner()")

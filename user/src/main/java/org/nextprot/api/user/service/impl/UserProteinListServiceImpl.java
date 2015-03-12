@@ -11,6 +11,7 @@ import org.nextprot.api.user.utils.UserProteinListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,20 +39,32 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 		NPreconditions.checkNotNull(userProteinList, "The user protein list should not be null");
 		NPreconditions.checkTrue(userProteinList.getId() == 0, "The user protein list should be new");
 
-        // TODO: check here that the random id is unique else generate another one
-        String publicId = generator.nextBase36String();
-        userProteinList.setPublicId(publicId);
+        generateAndSetPublicId(userProteinList);
 
-		long id = proteinListDao.createUserProteinList(userProteinList);
-		userProteinList.setId(id);
-
-		Set<String> accessions = userProteinList.getAccessionNumbers();
-		if (accessions != null && !accessions.isEmpty()) {
-			proteinListDao.createUserProteinListItems(id, accessions);
-		}
+        Set<String> accessions = userProteinList.getAccessionNumbers();
+        if (accessions != null && !accessions.isEmpty())
+            proteinListDao.createUserProteinListItems(userProteinList.getId(), accessions);
 
 		return userProteinList;
 	}
+
+    private void generateAndSetPublicId(UserProteinList userProteinList) {
+
+        DuplicateKeyException e = null;
+
+        do {
+            userProteinList.setPublicId(generator.nextBase36String());
+
+            try {
+                long id = proteinListDao.createUserProteinList(userProteinList);
+                userProteinList.setId(id);
+
+            } catch (DuplicateKeyException dke) {
+
+                e = dke;
+            }
+        } while(e != null);
+    }
 
 	@Override
 	public void deleteUserProteinList(UserProteinList proteinList) {
