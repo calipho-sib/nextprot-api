@@ -46,11 +46,13 @@ public class SolrServiceImpl implements SolrService {
 
 	private void logSorQuery(SolrQuery sq) {
 		Set<String> params = new TreeSet<String>();
-		for (String p : sq.getParameterNames())
-			params.add(p + " : " + sq.get(p));
+		for (String p : sq.getParameterNames()) params.add(p + " : " + sq.get(p));
 		Logger.info("SolrQuery");
-		for (String p : params)
+		//System.out.println("SolrQuery");
+		for (String p : params) {
+			//System.out.println("SolrQuery " + p);
 			Logger.info("SolrQuery " + p);
+		}
 	}
 
 	public SearchResult executeQuery(Query query) throws SearchQueryException {
