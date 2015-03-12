@@ -39,7 +39,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String content = "{\"id\":0,\"name\":\"my list\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\"],\"entriesCount\":1,\"ownerId\":0,\"owner\":\"sheldon\",\"ownerName\":\"sheldon\"}";
 
 		// call UserProteinList createUserProteinList()
-		String responseString = this.mockMvc.perform(post("/user/lists").contentType(MediaType.APPLICATION_JSON).
+		String responseString = this.mockMvc.perform(post("/user/me/lists").contentType(MediaType.APPLICATION_JSON).
 				content(content).header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
@@ -54,7 +54,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String content = "{\"id\":0,\"name\":\"my list\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\"],\"entriesCount\":1,\"ownerId\":0,\"owner\":\"sheldon\",\"ownerName\":\"sheldon\"}";
 
 		// call UserProteinList createUserProteinList()
-		this.mockMvc.perform(post("/user/lists").contentType(MediaType.APPLICATION_JSON).content(content).accept(MediaType.APPLICATION_JSON)).
+		this.mockMvc.perform(post("/user/me/lists").contentType(MediaType.APPLICATION_JSON).content(content).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isUnauthorized());
 	}
 
@@ -66,7 +66,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// call List<UserProteinList> getUserProteinLists()
-		String responseString = this.mockMvc.perform(get("/user/lists").header("Authorization", "Bearer " + leonardToken)
+		String responseString = this.mockMvc.perform(get("/user/me/lists").header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
@@ -88,7 +88,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER" ));
 
 		// call List<UserProteinList> getUserProteinLists()
-		this.mockMvc.perform(get("/user/lists/157").
+		this.mockMvc.perform(get("/user/me/lists/157").
 				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isForbidden());
 	}
@@ -97,7 +97,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 	public void othersAreUnauthorizedToLookAtLeonardsProteinLists() throws Exception {
 
 		// call List<UserProteinList> getUserProteinLists()
-		this.mockMvc.perform(get("/user/lists").accept(MediaType.APPLICATION_JSON)).
+		this.mockMvc.perform(get("/user/me/lists").accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isForbidden());
 	}*/
 
@@ -109,7 +109,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// call UserProteinList getUserProteinList()
-		String responseString = this.mockMvc.perform(get("/user/lists/157").header("Authorization", "Bearer " + leonardToken)
+		String responseString = this.mockMvc.perform(get("/user/me/lists/157").header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
@@ -126,7 +126,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// call Set<String> getUserProteinListAccessionNumbers()
-		this.mockMvc.perform(get("/user/lists/unknown-list").header("Authorization", "Bearer " + leonardToken)
+		this.mockMvc.perform(get("/user/me/lists/unknown-list").header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 	}
@@ -137,7 +137,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER" ));
 
 		// call UserProteinList getUserProteinList()
-		this.mockMvc.perform(get("/user/lists/157").
+		this.mockMvc.perform(get("/user/me/lists/157").
 				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isForbidden());
 	}
@@ -148,7 +148,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER" ));
 
 		// call UserProteinList getUserProteinList()
-		this.mockMvc.perform(get("/user/lists/Abc1").
+		this.mockMvc.perform(get("/user/me/lists/Abc1").
 				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isOk());
 	}
@@ -157,7 +157,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 	public void othersAreUnauthorizedToLookAtLeonardsProteinListByItsPrivateId() throws Exception {
 
 		// call UserProteinList getUserProteinList()
-		this.mockMvc.perform(get("/user/lists/157").accept(MediaType.APPLICATION_JSON)).
+		this.mockMvc.perform(get("/user/me/lists/157").accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isForbidden());
 	}
 	
@@ -165,7 +165,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 	public void othersAreAuthorizedToLookAtLeonardsProteinListByItsPublicId() throws Exception {
 
 		// call UserProteinList getUserProteinList()
-		this.mockMvc.perform(get("/user/lists/Abc1").accept(MediaType.APPLICATION_JSON)).
+		this.mockMvc.perform(get("/user/me/lists/Abc1").accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isOk());
 	}
 
@@ -177,7 +177,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// call Set<String> getUserProteinListAccessionNumbers()
-		String responseString = this.mockMvc.perform(get("/user/lists/leonardslist1/accnums").header("Authorization", "Bearer " + leonardToken)
+		String responseString = this.mockMvc.perform(get("/user/me/lists/leonardslist1/accnums").header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
@@ -194,7 +194,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER" ));
 
 		// call Set<String> getUserProteinListAccessionNumbers()
-		this.mockMvc.perform(get("/user/lists/157/accnums").
+		this.mockMvc.perform(get("/user/me/lists/157/accnums").
 				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isForbidden());
 	}*/
@@ -203,7 +203,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 	public void othersAreUnauthorizedToLookAtLeonardsProteinListAccessionNumbers() throws Exception {
 
 		// call Set<String> getUserProteinListAccessionNumbers()
-		this.mockMvc.perform(get("/user/lists/leonardslist/accnums").accept(MediaType.APPLICATION_JSON)).
+		this.mockMvc.perform(get("/user/me/lists/leonardslist/accnums").accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isForbidden());
 	}
 
@@ -215,7 +215,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// call UserProteinList combineUserProteinList()
-		String responseString = this.mockMvc.perform(get("/user/lists/combine?listname=leonardslist3&listname1=leonardslist1&listname2=leonardslist2&op=AND")
+		String responseString = this.mockMvc.perform(get("/user/me/lists/combine?listname=leonardslist3&listname1=leonardslist1&listname2=leonardslist2&op=AND")
 				.header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -233,7 +233,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// call UserProteinList combineUserProteinList()
-		String responseString = this.mockMvc.perform(get("/user/lists/combine?listname=leonardslist3&listname1=leonardslist1&listname2=leonardslist2&op=OR")
+		String responseString = this.mockMvc.perform(get("/user/me/lists/combine?listname=leonardslist3&listname1=leonardslist1&listname2=leonardslist2&op=OR")
 				.header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -251,7 +251,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// call UserProteinList combineUserProteinList()
-		String responseString = this.mockMvc.perform(get("/user/lists/combine?listname=leonardslist3&listname1=leonardslist1&listname2=leonardslist2&op=NOT_IN")
+		String responseString = this.mockMvc.perform(get("/user/me/lists/combine?listname=leonardslist3&listname1=leonardslist1&listname2=leonardslist2&op=NOT_IN")
 				.header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk())
@@ -270,7 +270,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER" ));
 
 		// call Set<String> getUserProteinListAccessionNumbers()
-		this.mockMvc.perform(get("/user/lists/combine?listname=leonardslist3&listname1=leonardslist1&listname2=leonardslist2&op=AND").
+		this.mockMvc.perform(get("/user/me/lists/combine?listname=leonardslist3&listname1=leonardslist1&listname2=leonardslist2&op=AND").
 				header("Authorization", "Bearer " + sheldonToken).accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isForbidden());
 	}*/
@@ -279,7 +279,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 	public void othersAreUnauthorizedToCombineLeonardsProteinLists() throws Exception {
 
 		// call Set<String> getUserProteinListAccessionNumbers()
-		this.mockMvc.perform(get("/user/lists/combine?listname=leonardslist3&listname1=leonardslist1&listname2=leonardslist2&op=AND").
+		this.mockMvc.perform(get("/user/me/lists/combine?listname=leonardslist3&listname1=leonardslist1&listname2=leonardslist2&op=AND").
 				accept(MediaType.APPLICATION_JSON)).
 				andExpect(status().isUnauthorized());
 	}
@@ -294,7 +294,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String content = "{\"id\":0,\"name\":\"leonardslist10\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\"],\"entriesCount\":1,\"ownerId\":0,\"owner\":\"leonard\",\"ownerName\":\"leonard\"}";
 
 		// UserProteinList updateUserProteinListMetadata()
-		String responseString = this.mockMvc.perform(put("/user/lists/157").header("Authorization", "Bearer " + leonardToken)
+		String responseString = this.mockMvc.perform(put("/user/me/lists/157").header("Authorization", "Bearer " + leonardToken)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content))
 				.andExpect(status().isOk())
 				.andReturn().getResponse().getContentAsString();
@@ -313,7 +313,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String content = "{\"id\":0,\"name\":\"leonardslist10\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\"],\"entriesCount\":1,\"ownerId\":0,\"owner\":\"leonard\",\"ownerName\":\"leonard\"}";
 
 		// UserProteinList updateUserProteinListMetadata()
-		this.mockMvc.perform(put("/user/lists/157").header("Authorization", "Bearer " + sheldonToken)
+		this.mockMvc.perform(put("/user/me/lists/157").header("Authorization", "Bearer " + sheldonToken)
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
 				andExpect(status().isForbidden());
 	}
@@ -324,7 +324,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String content = "{\"id\":0,\"name\":\"leonardslist10\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\"],\"entriesCount\":1,\"ownerId\":0,\"owner\":\"leonard\",\"ownerName\":\"leonard\"}";
 
 		// UserProteinList updateUserProteinListMetadata()
-		this.mockMvc.perform(put("/user/lists/157")
+		this.mockMvc.perform(put("/user/me/lists/157")
 				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content)).
 				andExpect(status().isUnauthorized());
 	}
@@ -337,7 +337,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// void deleteUserProteinList()
-		this.mockMvc.perform(delete("/user/lists/157").header("Authorization", "Bearer " + leonardToken)
+		this.mockMvc.perform(delete("/user/me/lists/157").header("Authorization", "Bearer " + leonardToken)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk());
 	}
@@ -348,7 +348,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		String sheldonToken = generateTokenWithExpirationDate("sheldon", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
 
 		// void deleteUserProteinList()
-		this.mockMvc.perform(delete("/user/lists/157").header("Authorization", "Bearer " + sheldonToken)
+		this.mockMvc.perform(delete("/user/me/lists/157").header("Authorization", "Bearer " + sheldonToken)
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isForbidden());
 	}
@@ -357,7 +357,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 	public void othersIsUnauthorizedToDeleteLeonardsProteinList() throws Exception {
 
 		// void deleteUserProteinList()
-		this.mockMvc.perform(delete("/user/lists/157")
+		this.mockMvc.perform(delete("/user/me/lists/157")
 				.contentType(MediaType.APPLICATION_JSON))
 				.andExpect(status().isUnauthorized());
 	}
