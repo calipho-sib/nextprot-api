@@ -67,6 +67,13 @@
 
 	<dependencies>
 
+
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>3.1</version>
+        </dependency>
+
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-queries</artifactId>

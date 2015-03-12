@@ -55,4 +55,12 @@ public interface UserQueryService {
 	 * @return
 	 */
 	UserQuery getUserQueryById(long id);
+
+	/**
+	 * Gets the corresponding user query or null if it does not exist
+	 * @param id
+	 * @return
+	 */
+	UserQuery getUserQueryByPublicId(String id);
+
 }

@@ -75,6 +75,7 @@ public class UserQueryTutorialDictionary extends FilePatternDictionary {
 		dsq.setDescription(rawProps.get("comment"));
 
 		try {
+			dsq.setPublicId(rawProps.get("id"));
 			dsq.setUserQueryId(Long.valueOf(rawProps.get("id").replaceAll("NXQ_", "")));
 		}catch(Exception e){
 			dsq.setUserQueryId(0);

@@ -5,11 +5,12 @@ import java.util.List;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
+import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
-import org.nextprot.api.user.utils.UserQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -30,65 +31,50 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Lazy
 @Controller
-@Api(name = "User Queries", description = "Method to manipulate user queries (SPARQL)", group="User")
+@Api(name = "User Queries", description = "Method to manipulate personal user queries when authenticated", group="User")
 public class UserQueryController {
 
 	@Autowired
 	private UserQueryService userQueryService;
 
-	@ApiMethod(path = "/queries/tutorial", verb = ApiVerb.GET, description = "Get tutorial queries for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping(value = "/queries/tutorial", method = { RequestMethod.GET })
+	// Collections /////////////////
+	@ApiMethod(verb = ApiVerb.GET, description = "Gets user queries for the current logged user and all the tutorials queries as well, If snorql parameter is set, snorql specific queries should also be retrieved", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping(value = "/user/me/queries", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserQuery> getTutorialQueries(@RequestParam(value="snorql", required=false) Boolean snorql) {
-
-		//start with queries
-		List<UserQuery> res = userQueryService.getTutorialQueries();
-
-		//add user queries if logged (access db, but is cached with cache evict if the query is modified)
-		if (NPSecurityContext.getCurrentUser() != null) { 
-			res.addAll(userQueryService.getUserQueries(NPSecurityContext.getCurrentUser()));
-		}
-
-		//remove snorql queries if not specified
-		if(snorql == null || !snorql){
-			res = UserQueryUtils.removeQueriesContainingTag(res, "snorql-only");
-		}
-		
-		return res;
+		return userQueryService.getUserQueries(NPSecurityContext.getCurrentUser());
 	}
 	
-	@ApiMethod(path = "/user/{username}/query/{id}", verb = ApiVerb.GET, description = "Get user query", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.GET })
-	@ResponseBody
-	public UserQuery getUserQuery(@PathVariable("username") String username, @PathVariable("id") String id) {
-		return userQueryService.getUserQueryById(Long.valueOf(id));
-	}
-	
-	@ApiMethod(path = "/user/{username}/query/{id}", verb = ApiVerb.GET, description = "Get user queries", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.GET })
-	@ResponseBody
-	public List<UserQuery> getUserQueries(@PathVariable("username") String username) {
-		return userQueryService.getUserQueries(username);
-	}
+	// Elements (CRUD) /////////////////
 
-	@ApiMethod(path = "/user/{username}/query", verb = ApiVerb.POST, description = "Creates an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	// CREATE
+	@ApiMethod(verb = ApiVerb.POST, description = "Creates an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@RequestMapping(value = "/user/{username}/query", method = { RequestMethod.POST })
+	@RequestMapping(value = "/user/me/queries", method = { RequestMethod.POST })
 	@ResponseBody
-	public UserQuery createAdvancedQuery(@RequestBody UserQuery userQuery, @PathVariable("username") String username) {
-		userQuery.setOwner(username);
+	public UserQuery createAdvancedQuery(@RequestBody UserQuery userQuery) {
 		return userQueryService.createUserQuery(userQuery);
 	}
 
-	@ApiMethod(path = "/user/{username}/query/{id}", verb = ApiVerb.PUT, description = "Updates an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	// READ
+	@ApiMethod(verb = ApiVerb.GET, description = "Gets a user query by its private or public id. Only if you are authenticated and authorized you can access the list with its private id.", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/user/me/queries/{id}", method = { RequestMethod.GET })
+	@ResponseBody
+	public UserQuery getUserQuery(@ApiPathParam(name = "id", description = "The private or public id", allowedvalues = { "NXQ_00001" }) @PathVariable("id") Integer id) {
+		return userQueryService.getUserQueryById(id);
+	}
+
+	// UPDATE
+	@ApiMethod(path = "/user/me/queries/{id}", verb = ApiVerb.PUT, description = "Updates an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.PUT })
+	@RequestMapping(value = "/user/me/queries/{id}", method = { RequestMethod.PUT })
 	@ResponseBody
-	public UserQuery updateAdvancedQuery(@PathVariable("username") String username, @PathVariable("id") String id, @RequestBody UserQuery advancedUserQuery, Model model) {
+	public UserQuery updateAdvancedQuery(@PathVariable("id") String id, @RequestBody UserQuery advancedUserQuery, Model model) {
 
-		// Never trust what the users sends to you! Set the correct username, so it will be verified by the service,
+		// Never trust what the users sends to you! Set the correct username, so it will be verified by the service, 
+		//TODO Is this done on the aspect
 		UserQuery q = userQueryService.getUserQueryById(advancedUserQuery.getUserQueryId());
 		advancedUserQuery.setOwner(q.getOwner());
 		advancedUserQuery.setOwnerId(q.getOwnerId());
@@ -96,13 +82,14 @@ public class UserQueryController {
 		return userQueryService.updateUserQuery(advancedUserQuery);
 	}
 
-	@ApiMethod(path = "/user/{username}/query/{id}", verb = ApiVerb.DELETE, description = "Deletes an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	// DELETE
+	@ApiMethod(verb = ApiVerb.DELETE, description = "Deletes an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 	@PreAuthorize("hasRole('ROLE_USER')")
-	@RequestMapping(value = "/user/{username}/query/{id}", method = { RequestMethod.DELETE })
-	public void deleteUserQuery(@PathVariable("username") String username, @PathVariable("id") String id, Model model) {
-
+	@RequestMapping(value = "/user/me/queries/{id}", method = { RequestMethod.DELETE })
+	public void deleteUserQuery(@PathVariable("id") String id, Model model) {
 		// Never trust what the users sends to you! Send the query with the correct username, so it will be verified by the service,
+		//TODO Is this done on the aspect
 		UserQuery q = userQueryService.getUserQueryById(Long.parseLong(id));
 		userQueryService.deleteUserQuery(q);
 

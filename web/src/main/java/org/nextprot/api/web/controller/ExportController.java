@@ -51,6 +51,7 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
 
 /**
  * Controller class responsible to extract in streaming
@@ -172,7 +173,7 @@ public class ExportController {
 	 * }
 	 */
 
-	private QueryRequest getQueryRequest(String query, Integer listId, String queryId, String sparql, String filter, String quality, String sort) {
+	private QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String filter, String quality, String sort) {
 		QueryRequest qr = new QueryRequest();
 		qr.setQuery(query);
 		if(listId != null){
@@ -197,7 +198,7 @@ public class ExportController {
 	@RequestMapping(value = "/entries/{view}", method = { RequestMethod.GET })
 	public void exportEntries(HttpServletRequest request, HttpServletResponse response, @PathVariable("view") String view, 
 			@RequestParam(value = "query", required = false) String query,
-			@RequestParam(value = "listId", required = false) Integer listId,
+			@RequestParam(value = "listId", required = false) String listId,
 			@RequestParam(value = "queryId", required = false) String queryId,
 			@RequestParam(value = "sparql", required = false) String sparql,
 			@RequestParam(value = "filter", required = false) String filter,
@@ -212,7 +213,7 @@ public class ExportController {
 	@RequestMapping(value = "/entries", method = { RequestMethod.GET })
 	public void exportAllEntries(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "query", required = false) String query,
-			@RequestParam(value = "listId", required = false) Integer listId,
+			@RequestParam(value = "listId", required = false) String listId,
 			@RequestParam(value = "queryId", required = false) String queryId,
 			@RequestParam(value = "sparql", required = false) String sparql,
 			@RequestParam(value = "filter", required = false) String filter,
@@ -230,16 +231,28 @@ public class ExportController {
 		String fileName = null;
 
 		//TODO consider also quality, sort and filters
+		if(limit != null){ //set the limit (rows is used for paging)
+			queryRequest.setRows(limit.toString());
+		}
 
+		//TODO add filters
+/*		String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
+		queryRequest.setQuery(queryString);
+		return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
+*/
+		
 		Set<String> accessions = new HashSet<String>();
 		if (queryRequest.hasNextProtQuery()) {
 			fileName = "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
-			UserQuery uq = userQueryService.getUserQueryById(UserQueryUtils.getUserQueryIdLongFromString(queryRequest.getQueryId()));
+			UserQuery uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId()); //For the export we only use public ids
 			accessions.addAll(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), uq.getSparql()));
 		}else if (queryRequest.hasList()) {
 			fileName = "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + format.getExtension();
-			accessions.addAll(proteinListService.getUserProteinListAccessionItemsById(queryRequest.getListId()));
-		}else  { // search and add filters ...
+			accessions.addAll(proteinListService.getUserProteinListByPublicId(queryRequest.getListId()).getAccessionNumbers()); //For the export we only use public ids
+		}else  if (queryRequest.getQuery() != null) { // search and add filters ...
+			fileName = "nextprot-search-" + queryRequest.getQuery() + "-" + viewName + "." + format.getExtension();
+			accessions.addAll(solrService.getQueryAccessions(queryRequest));
+		}else {
 			throw new NextProtException("Not implemented yet.");
 		}
 		
@@ -248,7 +261,7 @@ public class ExportController {
 		try {
 			response.getWriter().write("\n" + format.getHeader() + "\n");
 			int counter = 0;
-			for (String acc : accessions) {
+			for (String acc : accessions) { //
 				counter++;
 				if(limit != null){
 					if(counter > limit){

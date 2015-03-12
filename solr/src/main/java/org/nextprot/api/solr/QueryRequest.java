@@ -11,14 +11,14 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 
 	private String query;
 	private String listOwner;
-	private long listId = 0; //list id
+	private String listId = null; //list id
 	private String queryId = null; //nextprot query id
 
-	public long getListId() {
+	public String getListId() {
 		return listId;
 	}
 
-	public void setListId(long listId) {
+	public void setListId(String listId) {
 		this.listId = listId;
 	}
 
@@ -54,7 +54,7 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 
 
 	public boolean hasList() {
-		return this.listId  != 0;
+		return this.listId  != null;
 	}
 
 

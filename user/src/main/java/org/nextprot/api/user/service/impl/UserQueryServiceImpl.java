@@ -1,9 +1,8 @@
 package org.nextprot.api.user.service.impl;
 
-import java.util.List;
-
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
+import org.nextprot.api.commons.utils.Base36Codec;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
@@ -11,12 +10,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Lazy
 @Service
 public class UserQueryServiceImpl implements UserQueryService {
+
+    private final Base36Codec.Generator generator = new Base36Codec.Generator();
 
 	@Autowired
 	private UserQueryDao userQueryDao;
@@ -40,13 +44,33 @@ public class UserQueryServiceImpl implements UserQueryService {
 	@CacheEvict(value = "user-queries", key = "#userQuery.getOwner()")
 	public UserQuery createUserQuery(UserQuery userQuery) {
 
-		long id = userQueryDao.createUserQuery(userQuery);
-		userQuery.setUserQueryId(id);
-		if (userQuery.getTags() != null) {
-			userQueryDao.createUserQueryTags(id, userQuery.getTags());
-		}
+        NPreconditions.checkNotNull(userQuery, "The user query should not be null");
+
+        generateAndSetPublicId(userQuery);
+
+        if (userQuery.getTags() != null)
+            userQueryDao.createUserQueryTags(userQuery.getUserQueryId(), userQuery.getTags());
+
 		return userQuery;
 	}
+
+    private void generateAndSetPublicId(UserQuery userQuery) {
+
+        DuplicateKeyException e = null;
+
+        do {
+            userQuery.setPublicId(generator.nextBase36String());
+
+            try {
+                long id = userQueryDao.createUserQuery(userQuery);
+                userQuery.setUserQueryId(id);
+
+            } catch (DuplicateKeyException dke) {
+
+                e = dke;
+            }
+        } while(e != null);
+    }
 
 	@Override
 	@CacheEvict(value = "user-queries", key = "#userQuery.getOwner()")
@@ -67,20 +91,40 @@ public class UserQueryServiceImpl implements UserQueryService {
 	}
 
 	@Override
-	@AllowedAnonymous
 	public UserQuery getUserQueryById(long id) {
-		for(UserQuery uq : getTutorialQueries()) { //TODO keep this on a map!!!!!!!!
-			if(uq.getUserQueryId() == id){
-				return uq;
-			}
-		}
+		UserQuery uq = getTutorialQueryById(id);
+		if(uq != null) return uq;
+
 		return userQueryDao.getUserQueryById(id);
 	}
 
 	@Override
 	@AllowedAnonymous
+	public UserQuery getUserQueryByPublicId(String id) 
+	{
+		UserQuery uq = null;
+		if(org.apache.commons.lang3.StringUtils.isNumeric(id.replace("NXQ_", ""))){
+			uq = getTutorialQueryById(Long.valueOf(id.replace("NXQ_", "")));
+		}
+		if(uq != null) return uq;
+
+		return userQueryDao.getUserQueryByPublicId(id);
+	}
+	
+	@Override
+	@AllowedAnonymous
 	@Cacheable("tutorial-queries")
 	public List<UserQuery> getTutorialQueries() {
 		return userQueryTutorialDictionary.getDemoSparqlList();
+	}
+	
+	
+	private UserQuery getTutorialQueryById(long id) {
+		for(UserQuery uq : getTutorialQueries()) { //TODO keep this on a map!!!!!!!!
+			if(uq.getUserQueryId() == id){
+				return uq;
+			}
+		}
+		return null;
 	}
 }
