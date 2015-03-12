@@ -30,52 +30,32 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.ABSTRACT)
 				.add(PubField.VOLUME)
 				.add(PubField.TYPE)
-				.add(PubField.PRETTY_JOURNAL)
+				.add(PubField.PRETTY_JOURNAL) // contains only iso abbr to be displayed
 				.add(PubField.SOURCE)
 				.add(PubField.PRETTY_AUTHORS)				
 				.add(PubField.FILTERS));
 		
 		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.QF)
 				.add(PubField.AC, 16)
-				.add(PubField.DATE, 16)
+				.add(PubField.YEAR, 16)
 				.add(PubField.TITLE, 16)
-				.add(PubField.ABSTRACT, 16)
+				.add(PubField.ABSTRACT, 4)
 				.add(PubField.TYPE, 16)
-				.add(PubField.JOURNAL, 8)
-				.add(PubField.PRETTY_JOURNAL, 8)
+				.add(PubField.JOURNAL, 8) // contain both full name and iso abbr
 				.add(PubField.SOURCE, 8)
 				.add(PubField.AUTHORS, 8));
 		
 		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.PF)
 				.add(PubField.AC, 160)
-				.add(PubField.DATE, 160)
+				.add(PubField.YEAR, 160)
 				.add(PubField.TITLE, 160)
-				.add(PubField.ABSTRACT, 160)
+				.add(PubField.ABSTRACT, 40)
 				.add(PubField.TYPE, 160)
-				.add(PubField.JOURNAL, 80)
-				.add(PubField.PRETTY_JOURNAL, 80)
+				.add(PubField.JOURNAL, 80) // contain both full name and iso abbr
 				.add(PubField.SOURCE, 80)
 				.add(PubField.AUTHORS, 80));
 	
-/*		
-		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FN)
-				.add(PubField.AC, 1)
-				.add(PubField.DATE, 1)
-				.add(PubField.TITLE, 1)
-				.add(PubField.ABSTRACT, 1)
-				.add(PubField.TYPE, 1)
-				.add(PubField.JOURNAL, 1)
-				.add(PubField.SOURCE, 1)
-				.add(PubField.AUTHORS, 1));
-		
-		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.HI)
-				.add(PubField.DATE)
-				.add(PubField.TITLE)
-				.add(PubField.TYPE)
-				.add(PubField.JOURNAL)
-				.add(PubField.SOURCE)
-				.add(PubField.AUTHORS));
-*/
+
 		
 		defaultConfig.addOtherParameter("defType", "edismax")
 			.addOtherParameter("facet", "true")
@@ -87,10 +67,10 @@ public class PublicationIndex extends IndexTemplate {
 		
 		@SuppressWarnings("unchecked")
 		SortConfig sortConfig = SortConfig.create("default", new Pair[] {
-				Pair.create(PubField.DATE, ORDER.desc),
-				Pair.create(PubField.VOLUME, ORDER.desc),
-				Pair.create(PubField.FIRST_PAGE, ORDER.desc),
-				Pair.create(PubField.TITLE_S, ORDER.asc)
+				Pair.create(PubField.YEAR, ORDER.desc),
+				Pair.create(PubField.PRETTY_JOURNAL, ORDER.asc),
+				Pair.create(PubField.VOLUME, ORDER.asc),
+				Pair.create(PubField.FIRST_PAGE, ORDER.asc),
 		});
 
 		defaultConfig.addSortConfig(sortConfig);
@@ -145,6 +125,7 @@ public class PublicationIndex extends IndexTemplate {
 		VOLUME("volume"), 
 		FIRST_PAGE("first_page"), 
 		LAST_PAGE("last_page"), 
+		YEAR("year"), 
 		DATE("date"), 
 		TITLE("title"), 
 		TITLE_S("title_s"),
