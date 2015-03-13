@@ -75,15 +75,4 @@ public class Base36CodecTest {
 
         Base36Codec.decodeBase36("ZZ_TOP");
     }
-
-    @Test
-    public void testGiveNextBase36String() throws Exception {
-
-        Base36Codec.Generator generator = new Base36Codec.Generator();
-
-        for (int i=0 ; i<10 ; i++) {
-
-            Assert.assertNotNull(generator.nextBase36String());
-        }
-    }
 }

@@ -3,7 +3,7 @@ package org.nextprot.api.user.service.impl;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
-import org.nextprot.api.commons.utils.Base36Codec;
+import org.nextprot.api.commons.utils.StringGenService;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -22,7 +22,10 @@ import java.util.Set;
 @Service
 public class UserProteinListServiceImpl implements UserProteinListService {
 
-    private final Base36Codec.Generator generator = new Base36Codec.Generator();
+    private static final String PUBLIC_ID_UNIQUE_CONSTRAINT_NAME = "user_protein_lists_pubid_udx";
+
+    @Autowired
+    private StringGenService generator;
 
 	@Autowired
 	private UserProteinListDao proteinListDao;
@@ -39,7 +42,7 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 		NPreconditions.checkNotNull(userProteinList, "The user protein list should not be null");
 		NPreconditions.checkTrue(userProteinList.getId() == 0, "The user protein list should be new");
 
-        generateAndSetPublicId(userProteinList);
+        generatePubidAndCreate(userProteinList);
 
         Set<String> accessions = userProteinList.getAccessionNumbers();
         if (accessions != null && !accessions.isEmpty())
@@ -48,21 +51,36 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 		return userProteinList;
 	}
 
-    private void generateAndSetPublicId(UserProteinList userProteinList) {
+    /**
+     * Generate and set public_id into userProteinList then invoke dao.createUserProteinList.
+     *
+     * @param userProteinList the resource to create
+     *
+     * @throws DuplicateKeyException
+     */
+    private void generatePubidAndCreate(UserProteinList userProteinList) {
 
-        DuplicateKeyException e = null;
+        int maxLoop = 10;
 
+        DuplicateKeyException e;
+
+        int count=0;
         do {
-            userProteinList.setPublicId(generator.nextBase36String());
+            userProteinList.setPublicId(generator.generateString());
 
             try {
                 long id = proteinListDao.createUserProteinList(userProteinList);
                 userProteinList.setId(id);
+                e = null;
 
             } catch (DuplicateKeyException dke) {
 
+                if (!dke.getMessage().contains(PUBLIC_ID_UNIQUE_CONSTRAINT_NAME) || count >= maxLoop)
+                    throw dke;
+
                 e = dke;
             }
+            count++;
         } while(e != null);
     }
 
