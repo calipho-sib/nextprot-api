@@ -34,7 +34,7 @@ public class GitHubServiceImpl implements GitHubService {
 	 * @throws IOException
 	 */
 	private GitHub getGitHubConnection () throws IOException{
-		if(githubToken != null || githubToken.equalsIgnoreCase("undefined")){
+		if((githubToken == null) || githubToken.equalsIgnoreCase("undefined")){
 			return GitHub.connectAnonymously();
 		}else return GitHub.connectUsingOAuth(githubToken);
 	}
