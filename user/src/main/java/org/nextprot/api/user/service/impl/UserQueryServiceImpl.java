@@ -2,7 +2,7 @@ package org.nextprot.api.user.service.impl;
 
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
-import org.nextprot.api.commons.utils.Base36Codec;
+import org.nextprot.api.commons.utils.StringGenService;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
@@ -20,7 +20,10 @@ import java.util.List;
 @Service
 public class UserQueryServiceImpl implements UserQueryService {
 
-    private final Base36Codec.Generator generator = new Base36Codec.Generator();
+    private static final String PUBLIC_ID_UNIQUE_CONSTRAINT_NAME = "user_queries_pubid_udx";
+
+    @Autowired
+    private StringGenService generator;
 
 	@Autowired
 	private UserQueryDao userQueryDao;
@@ -46,7 +49,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 
         NPreconditions.checkNotNull(userQuery, "The user query should not be null");
 
-        generateAndSetPublicId(userQuery);
+        generatePubidAndCreate(userQuery);
 
         if (userQuery.getTags() != null)
             userQueryDao.createUserQueryTags(userQuery.getUserQueryId(), userQuery.getTags());
@@ -54,21 +57,35 @@ public class UserQueryServiceImpl implements UserQueryService {
 		return userQuery;
 	}
 
-    private void generateAndSetPublicId(UserQuery userQuery) {
+    /**
+     * Generate and set public id into userQuery then dao createUserQuery
+     * @param userQuery
+     *
+     * @throws DuplicateKeyException if
+     */
+    private void generatePubidAndCreate(UserQuery userQuery) {
 
-        DuplicateKeyException e = null;
+        int maxLoop = 10;
 
+        DuplicateKeyException e;
+
+        int count=0;
         do {
-            userQuery.setPublicId(generator.nextBase36String());
+            userQuery.setPublicId(generator.generateString());
 
             try {
                 long id = userQueryDao.createUserQuery(userQuery);
                 userQuery.setUserQueryId(id);
+                e = null;
 
             } catch (DuplicateKeyException dke) {
 
+                if (!dke.getMessage().contains(PUBLIC_ID_UNIQUE_CONSTRAINT_NAME) || count >= maxLoop)
+                    throw dke;
+
                 e = dke;
             }
+            count++;
         } while(e != null);
     }
 
