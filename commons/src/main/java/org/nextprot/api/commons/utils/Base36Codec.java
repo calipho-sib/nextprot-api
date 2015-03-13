@@ -3,7 +3,6 @@ package org.nextprot.api.commons.utils;
 import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
-import java.util.Random;
 
 /**
  * Code and decode 36-base 8-length string in the interval of longs [0:36^8[
@@ -87,28 +86,5 @@ public class Base36Codec {
         }
 
         return decodedLong;
-    }
-
-    /**
-     * Generates random 36-base 8-length strings
-     */
-    public static class Generator {
-
-        private final Random random;
-
-        public Generator() {
-
-            random = new Random();
-        }
-
-        /**
-         * @return the next random base-36 long encoded string in the range ["00000000", "ZZZZZU8W"[
-         */
-        public String nextBase36String() {
-
-            long rand = (long)(random.nextDouble()*UPPER_RANGE);
-
-            return encodeBase36(rand);
-        }
     }
 }
