@@ -64,7 +64,7 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GitHub github =  getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			return repo.getTreeRecursive("master", 1);
+			return repo.getTreeRecursive("change-urls", 1);
 
 		} catch (IOException e) {
 			e.printStackTrace();
