@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpException;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.rdf.domain.RdfConstants;
 import org.nextprot.api.rdf.domain.RdfTypeInfo;
@@ -242,40 +243,47 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 	}
 
 
-	private List<TripleInfo> getTripleInfoList(String rdfType) {
+		@Override 
+	public List<TripleInfo> getTripleInfoList(String rdfType) {
 		String queryBase = sparqlDictionary.getSparqlWithPrefixes("typepred");
 		Set<TripleInfo> tripleList = new TreeSet<TripleInfo>();
-		String query = sparqlDictionary.getSparqlOnly("prefix");
-		query += queryBase.replace(":SomeRdfType", rdfType);
-		QueryExecution qExec = sparqlService.queryExecution(query);
-		ResultSet rs = qExec.execSelect();
-		while (rs.hasNext()) {
-			QuerySolution sol = rs.next();
-			TripleInfo ti = new TripleInfo();
-			String pred = (String) getDataFromSolutionVar(sol, "pred");
-			String sspl = (String) getDataFromSolutionVar(sol, "subjSample");
-			String ospl = (String) getDataFromSolutionVar(sol, "objSample", true);
-
-			String spl = sspl + " " + pred + " " + ospl + " .";
-			ti.setTripleSample(spl);
-			ti.setPredicate(pred);
-			ti.setSubjectType((String) getDataFromSolutionVar(sol, "subjType"));
-
-			String objectType = (String) getDataFromSolutionVar(sol, "objType");
-			if (objectType.length() == 0) {
-				System.out.println(ti);
-				objectType = getObjectTypeFromSample(sol, "objSample");
-				ti.setLiteralType(true);
+		
+		try {
+			String query = sparqlDictionary.getSparqlOnly("prefix");
+			query += queryBase.replace(":SomeRdfType", rdfType);
+			QueryExecution qExec = sparqlService.queryExecution(query);
+			ResultSet rs = qExec.execSelect();
+			while (rs.hasNext()) {
+				QuerySolution sol = rs.next();
+				TripleInfo ti = new TripleInfo();
+				String pred = (String) getDataFromSolutionVar(sol, "pred");
+				String sspl = (String) getDataFromSolutionVar(sol, "subjSample");
+				String ospl = (String) getDataFromSolutionVar(sol, "objSample", true);
+	
+				String spl = sspl + " " + pred + " " + ospl + " .";
+				ti.setTripleSample(spl);
+				ti.setPredicate(pred);
+				ti.setSubjectType((String) getDataFromSolutionVar(sol, "subjType"));
+	
+				String objectType = (String) getDataFromSolutionVar(sol, "objType");
+				if (objectType.length() == 0) {
+					System.out.println(ti);
+					objectType = getObjectTypeFromSample(sol, "objSample");
+					ti.setLiteralType(true);
+				}
+				ti.setObjectType(objectType);
+	
+				ti.setTripleCount(Integer.valueOf((String) getDataFromSolutionVar(sol, "objCount")));
+	
+				tripleList.add(ti);
 			}
-			ti.setObjectType(objectType);
-
-			ti.setTripleCount(Integer.valueOf((String) getDataFromSolutionVar(sol, "objCount")));
-
-			tripleList.add(ti);
+			qExec.close();
+		} catch (Exception e) {
+			System.err.println("Error with " + rdfType );
+			e.printStackTrace();
 		}
-		qExec.close();
+		
 		return new ArrayList<TripleInfo>(tripleList);
-
 	}
 
 
