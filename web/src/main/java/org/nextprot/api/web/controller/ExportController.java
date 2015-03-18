@@ -2,12 +2,10 @@ package org.nextprot.api.web.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -15,19 +13,15 @@ import java.util.concurrent.Future;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.export.ExportService;
+import org.nextprot.api.core.service.ExportService;
 import org.nextprot.api.core.service.export.ExportUtils;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.core.service.export.format.NPViews;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
-import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.QueryRequest;
@@ -36,7 +30,6 @@ import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserQueryService;
-import org.nextprot.api.user.utils.UserQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -47,11 +40,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Joiner;
 
 /**
  * Controller class responsible to extract in streaming
@@ -234,60 +223,29 @@ public class ExportController {
 		if(limit != null){ //set the limit (rows is used for paging)
 			queryRequest.setRows(limit.toString());
 		}
-
-		//TODO add filters
-/*		String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-		queryRequest.setQuery(queryString);
-		return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
-*/
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 		
-		Set<String> accessions = new HashSet<String>();
+			Set<String> accessions = new HashSet<String>();
 		if (queryRequest.hasNextProtQuery()) {
-			fileName = "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
+			fileName = "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + NPFileFormat.XML.getExtension();
 			UserQuery uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId()); //For the export we only use public ids
 			accessions.addAll(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), uq.getSparql()));
 		}else if (queryRequest.hasList()) {
-			fileName = "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + format.getExtension();
+			fileName = "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + NPFileFormat.XML.getExtension();
 			accessions.addAll(proteinListService.getUserProteinListByPublicId(queryRequest.getListId()).getAccessionNumbers()); //For the export we only use public ids
 		}else  if (queryRequest.getQuery() != null) { // search and add filters ...
-			fileName = "nextprot-search-" + queryRequest.getQuery() + "-" + viewName + "." + format.getExtension();
+			fileName = "nextprot-search-" + queryRequest.getQuery() + "-" + viewName + "." + NPFileFormat.XML.getExtension();
 			accessions.addAll(solrService.getQueryAccessions(queryRequest));
 		}else {
 			throw new NextProtException("Not implemented yet.");
 		}
 		
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-
+		
 		try {
-			response.getWriter().write("\n" + format.getHeader() + "\n");
-			int counter = 0;
-			for (String acc : accessions) { //
-				counter++;
-				if(limit != null){
-					if(counter > limit){
-						break;
-					}
-				}
-				
-				Entry entry = null;
-				if(!viewName.equals("entry")){
-					//TODO some incoherance with these 2 names withView and withEverything.getEntry... ???
-					entry = fluentEntryService.getNewEntry(acc).withView(viewName);
-				}else {
-					entry = fluentEntryService.getNewEntry(acc).withEverything().getEntry();
-				}
-				
-				model.addAttribute("entry", entry);
-				model.addAttribute("NXUtils", NXVelocityUtils.class);
-				model.addAttribute("StringUtils", StringUtils.class);
-
-				View v = viewResolver.resolveViewName("entry", Locale.ENGLISH);
-				v.render(model.asMap(), request, response);
-			}
-			response.getWriter().write(format.getFooter()+ "\n");
-		} catch (Exception e) {
+			this.exportService.streamResultsInXML(response.getWriter(), viewName, accessions);
+		} catch (IOException e) {
 			e.printStackTrace();
-			throw new NextProtException(e.getMessage());
+			throw new NextProtException("Failed to stream xml data");
 		}
 
 	}

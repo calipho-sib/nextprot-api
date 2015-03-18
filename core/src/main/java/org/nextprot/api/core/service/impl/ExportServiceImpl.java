@@ -1,34 +1,47 @@
-package org.nextprot.api.core.service.export.impl;
+package org.nextprot.api.core.service.impl;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.service.export.ExportService;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntryService;
+import org.nextprot.api.core.service.ExportService;
+import org.nextprot.api.core.service.GeneService;
+import org.nextprot.api.core.service.IdentifierService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.KeywordService;
+import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
-
-import javax.annotation.PostConstruct;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 @Service
 @Lazy
@@ -52,6 +65,10 @@ public class ExportServiceImpl implements ExportService {
 	private AnnotationService annotationService;
 	@Autowired
 	private EntryService entryService;
+	@Autowired
+	private FluentEntryService fluentEntryService;
+	@Autowired
+	private ViewResolver viewResolver;
 
 	private int numberOfWorkers = 8;
 
@@ -172,6 +189,65 @@ public class ExportServiceImpl implements ExportService {
 		}
 
 	}
+	
+	
+	
+	
+	static class ExportStreamTask implements Runnable {
+
+		private String format;
+		private String entryName;
+		private VelocityEngine ve;
+		private EntryService entryService;
+		private Writer writer;
+
+		public ExportStreamTask(EntryService entryService, VelocityEngine ve, String entryName, NPFileFormat format, Writer writer) {
+			this.ve = ve;
+			this.writer = writer;
+			this.entryService = entryService;
+			this.entryName = entryName;
+			this.format = format.getExtension();
+		}
+
+		public void checkFormatConstraints() {
+			if (format == null) {
+				throw new NextProtException("A format should be specified (xml or ttl)");
+			}
+		}
+
+		@Override
+		public void run() {
+
+			checkFormatConstraints();
+			Template template;
+			VelocityContext context = null;
+			try {
+
+				if (format.equals(NPFileFormat.TURTLE.getExtension())) {
+					template = ve.getTemplate("turtle/entry." + format + ".vm");
+				} else {
+					template = ve.getTemplate("entry." + format + ".vm");
+				}
+
+				context = new VelocityContext();
+				context.put("entry", entryService.findEntry(entryName));
+				context.put("StringUtils", StringUtils.class);
+				context.put("NXUtils", NXVelocityUtils.class);
+
+				template.merge(context, writer);
+
+			} catch (Exception e) {
+				LOGGER.error("Failed to generate " + entryName + " because of " + e.getMessage());
+				e.printStackTrace();
+				throw e;
+			}
+			
+
+		}
+
+
+	}
+
 
 	enum SubPart {
 		HEADER, FOOTER
@@ -268,6 +344,31 @@ public class ExportServiceImpl implements ExportService {
 	public void setNumberOfWorkers(int numberOfWorkers) {
 		this.numberOfWorkers = numberOfWorkers;
 	}
+	
+	
+	@Override
+	public void streamResultsInXML(Writer writer, String viewName, Set<String> accessions) {
+		
+		ExecutorService executor = Executors.newFixedThreadPool(1);//always use one thread for client calls (it should already be in cache)
+
+		for(String acc : accessions){
+			executor.submit(new ExportStreamTask(this.entryService, config.getVelocityEngine(), acc, NPFileFormat.XML, writer));
+		}
+
+
+		//TODO consider also quality, sort and filters
+/*		if(limit != null){ //set the limit (rows is used for paging)
+			queryRequest.setRows(limit.toString());
+		}*/
+
+		//TODO add filters
+/*		String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
+		queryRequest.setQuery(queryString);
+		return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
+*/
+
+	}
+
 
 
 }
