@@ -176,7 +176,7 @@ public class ExportController {
 			qr.setListId(listId);
 		}
 		qr.setQueryId(queryId);
-		qr.setRows(limit.toString());
+		qr.setRows("30000");
 		qr.setFilter(filter);
 		qr.setSort(sort);
 		qr.setQuality(quality);
@@ -262,10 +262,6 @@ public class ExportController {
 			throw new NextProtException("Not implemented yet.");
 		}
 		
-		if(queryRequest.getRows() != null){
-			int limit = Integer.valueOf(queryRequest.getRows());
-			return accessions.subList(0, limit);
-		}
 		return accessions;
 		
 		/*String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
