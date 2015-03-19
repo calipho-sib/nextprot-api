@@ -60,9 +60,9 @@ public interface ExportService {
 
 	public void clearRepository();
 
-	void streamResultsInXML(OutputStream stream, String viewName, Set<String> accessions, boolean close);
+	void streamResultsInXML(OutputStream stream, String viewName, Set<String> accessions);
 
-	void streamResultsInJson(OutputStream stream, String viewName, Set<String> accessions, boolean close);
+	void streamResultsInJson(OutputStream stream, String viewName, Set<String> accessions);
 
 
 }

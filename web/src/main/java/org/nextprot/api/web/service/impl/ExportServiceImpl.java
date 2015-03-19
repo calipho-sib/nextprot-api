@@ -294,7 +294,7 @@ public class ExportServiceImpl implements ExportService {
 	
 	
 	@Override
-	public void streamResultsInXML(OutputStream outputStream, String viewName, Set<String> accessions, boolean close) {
+	public void streamResultsInXML(OutputStream outputStream, String viewName, Set<String> accessions) {
 		try {
 			Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
 
@@ -314,7 +314,7 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	@Override
-	public void streamResultsInJson(OutputStream outputStream, String viewName, Set<String> accessions, boolean close) {
+	public void streamResultsInJson(OutputStream outputStream, String viewName, Set<String> accessions) {
 		JsonGenerator generator = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();

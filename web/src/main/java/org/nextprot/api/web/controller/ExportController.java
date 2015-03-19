@@ -32,6 +32,7 @@ import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserQueryService;
 import org.nextprot.api.web.service.ExportService;
+import org.nextprot.api.web.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -57,6 +58,10 @@ public class ExportController {
 
 	@Autowired
 	private ExportService exportService;
+
+	@Autowired
+	private SearchService searchService;
+
 	@Autowired
 	private UserProteinListService proteinListService;
 	@Autowired
@@ -244,6 +249,7 @@ public class ExportController {
 	}
 	
 	private Collection<String> getAccessionsFromRequest(QueryRequest queryRequest){
+
 		List<String> accessions = new ArrayList<String>();
 		if (queryRequest.hasNextProtQuery()) {
 			UserQuery uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId()); //For the export we only use public ids
@@ -251,7 +257,7 @@ public class ExportController {
 		}else if (queryRequest.hasList()) {
 			accessions.addAll(proteinListService.getUserProteinListByPublicId(queryRequest.getListId()).getAccessionNumbers()); //For the export we only use public ids
 		}else  if (queryRequest.getQuery() != null) { // search and add filters ...
-			accessions.addAll(solrService.getQueryAccessions(queryRequest));
+			accessions.addAll(searchService.getAssessions(queryRequest));
 		}else {
 			throw new NextProtException("Not implemented yet.");
 		}
@@ -278,7 +284,7 @@ public class ExportController {
 		Set<String> accessions = new HashSet<String>(getAccessionsFromRequest(queryRequest));
 		
 		try {
-			this.exportService.streamResultsInXML(response.getOutputStream(), viewName, accessions, true); //should we close the writer or not???
+			this.exportService.streamResultsInXML(response.getOutputStream(), viewName, accessions); //should we close the writer or not???
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new NextProtException("Failed to stream xml data");
@@ -290,7 +296,7 @@ public class ExportController {
 
 		Set<String> accessions = new HashSet<String>(getAccessionsFromRequest(queryRequest));
 		try {
-			this.exportService.streamResultsInJson(response.getOutputStream(), viewName, accessions, true); //should we close the writer or not???
+			this.exportService.streamResultsInJson(response.getOutputStream(), viewName, accessions); //should we close the writer or not???
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new NextProtException("Failed to stream json data");
