@@ -91,11 +91,11 @@ public class ExportController {
 
 	}
 
-	@ApiMethod(path = "/export/list/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list")
-	@RequestMapping("/export/list/{listId}")
+	@ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list")
+	@RequestMapping("/export/lists/{listId}")
 	public void exportList(Model model, HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
 
-		UserProteinList pl = this.proteinListService.getUserProteinListById(Long.valueOf(listId));
+		UserProteinList pl = this.proteinListService.getUserProteinListByPublicId(listId);
 		String fileName = pl.getName() + ".txt";
 
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
@@ -187,7 +187,7 @@ public class ExportController {
 	@Autowired
 	private SolrService solrService;
 
-	@RequestMapping(value = "/entries/{view}", method = { RequestMethod.GET })
+	@RequestMapping(value = "/export/entries/{view}", method = { RequestMethod.GET })
 	public void streamEntriesInXMLSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "query", required = false) String query,
 			@RequestParam(value = "listId", required = false) String listId,
@@ -208,7 +208,7 @@ public class ExportController {
 	}
 
 	
-	@RequestMapping(value = "/entries", method = { RequestMethod.GET })
+	@RequestMapping(value = "/export/entries", method = { RequestMethod.GET })
 	public void streamEntriesInXML(HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "query", required = false) String query,
 			@RequestParam(value = "listId", required = false) String listId,
