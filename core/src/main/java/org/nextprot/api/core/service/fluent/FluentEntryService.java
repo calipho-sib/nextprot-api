@@ -156,11 +156,14 @@ public class FluentEntryService {
 					.withTargetIsoforms().withAntibodyMappings().withPeptideMappings().withSrmPeptideMappings().withExperimentalContexts();
 		}
 
-		public Entry getEntry() {
+		private Entry getEntry() {
 			return entry;
 		}
 
 		public Entry withView(String view) {
+			if(view.equals("entry")){
+				return this.withEverything().getEntry();
+			}
 			try {
 				NPViews npView = NPViews.valueOfViewName(view);
 				return getEntrySubPart(npView);

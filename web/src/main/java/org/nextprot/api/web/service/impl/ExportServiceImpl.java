@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -22,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
@@ -44,6 +45,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
@@ -193,38 +196,6 @@ public class ExportServiceImpl implements ExportService {
 
 	}
 	
-	
-	
-	static class ExportJsonStreamTask implements Runnable {
-
-		private String entryName;
-		private FluentEntryService fluentEntryService;
-		private Writer writer;
-		private String viewName;
-
-		public ExportJsonStreamTask(FluentEntryService fluentEntryService, String entryName, String viewName, Writer writer) {
-			this.viewName = viewName;
-			this.writer = writer;
-			this.fluentEntryService = fluentEntryService;
-			this.entryName = entryName;
-		}
-
-		@Override
-		public void run() {
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
-				System.err.println(entry.getUniprotName());
-				mapper.writeValue(writer, entry);
-				writer.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-
-
 	enum SubPart {
 		HEADER, FOOTER
 	};
@@ -323,44 +294,69 @@ public class ExportServiceImpl implements ExportService {
 	
 	
 	@Override
-	public void streamResultsInXML(Writer writer, String viewName, Set<String> accessions, boolean close) {
+	public void streamResultsInXML(OutputStream outputStream, String viewName, Set<String> accessions, boolean close) {
 		try {
+			Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
+
 			writer.write("<entry-list>");
+			writer.flush();
+
 			for (String acc : accessions) {
 				streamXml(acc, viewName, writer);
+				writer.flush();
 			}
-			writer.write("</entry-list>");			
+			writer.write("</entry-list>");	
+			writer.close();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void streamResultsInJson(Writer writer, String viewName, Set<String> accessions, boolean close) {
-		for (String acc : accessions) {
-			ExportJsonStreamTask task = new ExportJsonStreamTask(this.fluentEntryService, acc, viewName, writer);
-			task.run();
-		}
-	}
+	public void streamResultsInJson(OutputStream outputStream, String viewName, Set<String> accessions, boolean close) {
+		JsonGenerator generator = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonFactory factory = mapper.getFactory();
+			generator = factory.createGenerator(outputStream);
 
+			for (String acc : accessions) {
+				streamJson(acc, viewName, generator);
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally{
+			if(generator != null){
+				try {
+					generator.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
 	
 	
 	private void streamXml(String entryName, String viewName, Writer writer) {
 
 			Template template = config.getVelocityEngine().getTemplate("entry.xml.vm");
 
+			Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
 			VelocityContext context = new VelocityContext();
-			context.put("entry", fluentEntryService.getNewEntry(entryName).withView(viewName));
+			context.put("entry", entry);
 			context.put("StringUtils", StringUtils.class);
 			context.put("NXUtils", NXVelocityUtils.class);
-
+			
 			template.merge(context, writer);
-			try {
-				writer.flush();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	}
+	
+	private void streamJson(String entryName, String viewName,  JsonGenerator generator) throws IOException {
 
+		Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
+		generator.writeObject(entry);
 	}
 
 }

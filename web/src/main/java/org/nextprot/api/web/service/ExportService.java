@@ -1,6 +1,7 @@
 package org.nextprot.api.web.service;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Collection;
@@ -59,9 +60,9 @@ public interface ExportService {
 
 	public void clearRepository();
 
-	void streamResultsInXML(Writer writer, String viewName, Set<String> accessions, boolean close);
+	void streamResultsInXML(OutputStream stream, String viewName, Set<String> accessions, boolean close);
 
-	void streamResultsInJson(Writer writer, String viewName, Set<String> accessions, boolean close);
+	void streamResultsInJson(OutputStream stream, String viewName, Set<String> accessions, boolean close);
 
 
 }
