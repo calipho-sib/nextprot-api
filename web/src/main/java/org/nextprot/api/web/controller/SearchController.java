@@ -6,20 +6,16 @@ import java.util.Set;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.rdf.utils.SparqlDictionary;
 import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.solr.SearchResult;
 import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrService;
-import org.nextprot.api.user.controller.UserQueryController;
 import org.nextprot.api.user.domain.UserProteinList;
-import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserQueryService;
 import org.nextprot.api.user.service.impl.UserQueryTutorialDictionary;
@@ -125,6 +121,7 @@ public class SearchController {
 				if((queryRequest.getMode() != null) && queryRequest.getMode().equalsIgnoreCase("advanced")){
 					
 					Set<String> accessions = new HashSet<String>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
+
 					String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 					queryRequest.setQuery(queryString);
 					query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);

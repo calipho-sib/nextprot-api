@@ -40,6 +40,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.YEAR, 16)
 				.add(PubField.TITLE, 16)
 				.add(PubField.ABSTRACT, 4)
+				.add(PubField.VOLUME, 4)
 				.add(PubField.TYPE, 16)
 				.add(PubField.JOURNAL, 8) // contain both full name and iso abbr
 				.add(PubField.SOURCE, 8)
@@ -50,6 +51,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.YEAR, 160)
 				.add(PubField.TITLE, 160)
 				.add(PubField.ABSTRACT, 40)
+				.add(PubField.VOLUME, 40)
 				.add(PubField.TYPE, 160)
 				.add(PubField.JOURNAL, 80) // contain both full name and iso abbr
 				.add(PubField.SOURCE, 80)
@@ -119,34 +121,53 @@ public class PublicationIndex extends IndexTemplate {
 		return PubField.class;
 	}
 	
+	@Override
+	public IndexField[] getFieldValues() {
+		return PubField.values();
+	}
+	
 	public static enum PubField implements IndexField {
 		ID("id"), 
 		AC("ac"), 
-		VOLUME("volume"), 
+		VOLUME("volume","volume"), 
 		FIRST_PAGE("first_page"), 
 		LAST_PAGE("last_page"), 
-		YEAR("year"), 
+		YEAR("year","year"), 
 		DATE("date"), 
-		TITLE("title"), 
+		TITLE("title","title"), 
 		TITLE_S("title_s"),
-		ABSTRACT("abstract"), 
+		ABSTRACT("abstract","abstract"), 
 		TYPE("type"), 
-		JOURNAL("journal"), 
+		JOURNAL("journal","journal"), 
 		PRETTY_JOURNAL("pretty_journal"), 
 		SOURCE("source"), 
-		AUTHORS("authors"), 
+		AUTHORS("authors","author"), 
 		PRETTY_AUTHORS("pretty_authors"), 
 		FILTERS("filters"), 
 		TEXT("text");
 		
 		private String name;
+		private String publicName;
 		
 		private PubField(String name) {
 			this.name = name;
 		}
+
+		private PubField(String name, String publicName) {
+			this.name = name;
+			this.publicName = publicName;
+		}
 		   
 		public String getName() {
 			return this.name;
+		}
+		
+		public boolean hasPublicName() {
+			return this.publicName!=null && this.publicName.length()>0;
+		}
+		
+		public String getPublicName() {
+			return this.publicName;
 		}
 	}
 

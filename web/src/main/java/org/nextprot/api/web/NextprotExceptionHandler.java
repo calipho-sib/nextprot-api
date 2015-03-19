@@ -92,6 +92,7 @@ public class NextprotExceptionHandler {
 	public RestErrorResponse handle(Exception ex) {
 		String code = Integer.toHexString(ex.getLocalizedMessage().hashCode() + ex.getClass().getCanonicalName().hashCode()).toUpperCase();
 		LOGGER.error("unexpected error occurred:" + code + "\t" + ex.getLocalizedMessage());
+		ex.printStackTrace();
 		return getResponseErrorMsg("Oops something went wrong.... Try again in a few minutes, if the error persists provide the following code to support : " + code);
 	}
 
