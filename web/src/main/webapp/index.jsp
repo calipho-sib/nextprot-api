@@ -1113,8 +1113,14 @@
    		$('.btn-logout').click(function(e) {
    			// When click on "Logout"
    			// Remove cookies
-			$.removeCookie("nxprofile", { path: "/" });
-			$.removeCookie("nxtoken", { path: "/" });
+   			if (window.location.hostname === "localhost") {
+				$.removeCookie("nxprofile", { path: "/" });
+				$.removeCookie("nxtoken", { path: "/" });
+			} else {
+				$.removeCookie("nxprofile", { path: "/", domain: ".nextprot.org" });
+				$.removeCookie("nxtoken", { path: "/", domain: ".nextprot.org" });
+			}
+
 			
 			// Remove the profile
 	   		userProfile = null;
