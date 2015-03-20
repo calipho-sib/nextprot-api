@@ -3,11 +3,11 @@ package org.nextprot.api.web.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
@@ -15,19 +15,14 @@ import java.util.concurrent.Future;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.export.ExportService;
 import org.nextprot.api.core.service.export.ExportUtils;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.core.service.export.format.NPViews;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
-import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.QueryRequest;
@@ -36,7 +31,8 @@ import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserQueryService;
-import org.nextprot.api.user.utils.UserQueryUtils;
+import org.nextprot.api.web.service.ExportService;
+import org.nextprot.api.web.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -47,11 +43,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Joiner;
 
 /**
  * Controller class responsible to extract in streaming
@@ -66,6 +58,10 @@ public class ExportController {
 
 	@Autowired
 	private ExportService exportService;
+
+	@Autowired
+	private SearchService searchService;
+
 	@Autowired
 	private UserProteinListService proteinListService;
 	@Autowired
@@ -100,11 +96,11 @@ public class ExportController {
 
 	}
 
-	@ApiMethod(path = "/export/list/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list")
-	@RequestMapping("/export/list/{listId}")
+	@ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list")
+	@RequestMapping("/export/lists/{listId}")
 	public void exportList(Model model, HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
 
-		UserProteinList pl = this.proteinListService.getUserProteinListById(Long.valueOf(listId));
+		UserProteinList pl = this.proteinListService.getUserProteinListByPublicId(listId);
 		String fileName = pl.getName() + ".txt";
 
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
@@ -173,13 +169,14 @@ public class ExportController {
 	 * }
 	 */
 
-	private QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String filter, String quality, String sort) {
+	private QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String filter, String quality, String sort, Integer limit) {
 		QueryRequest qr = new QueryRequest();
 		qr.setQuery(query);
 		if(listId != null){
 			qr.setListId(listId);
 		}
 		qr.setQueryId(queryId);
+		qr.setRows("30000");
 		qr.setFilter(filter);
 		qr.setSort(sort);
 		qr.setQuality(quality);
@@ -195,8 +192,8 @@ public class ExportController {
 	@Autowired
 	private SolrService solrService;
 
-	@RequestMapping(value = "/entries/{view}", method = { RequestMethod.GET })
-	public void exportEntries(HttpServletRequest request, HttpServletResponse response, @PathVariable("view") String view, 
+	@RequestMapping(value = "/export/entries/{view}", method = { RequestMethod.GET })
+	public void streamEntriesInXMLSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response,
 			@RequestParam(value = "query", required = false) String query,
 			@RequestParam(value = "listId", required = false) String listId,
 			@RequestParam(value = "queryId", required = false) String queryId,
@@ -205,89 +202,100 @@ public class ExportController {
 			@RequestParam(value = "sort", required = false) String sort,
 			@RequestParam(value = "quality", required = false) String quality,
 			@RequestParam(value = "limit", required = false) Integer limit, Model model) {
-		QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort);
-		exportEntries(request, response, view, qr, limit, model);
-	}
-	
-
-	@RequestMapping(value = "/entries", method = { RequestMethod.GET })
-	public void exportAllEntries(HttpServletRequest request, HttpServletResponse response,
-			@RequestParam(value = "query", required = false) String query,
-			@RequestParam(value = "listId", required = false) String listId,
-			@RequestParam(value = "queryId", required = false) String queryId,
-			@RequestParam(value = "sparql", required = false) String sparql,
-			@RequestParam(value = "filter", required = false) String filter,
-			@RequestParam(value = "sort", required = false) String sort,
-			@RequestParam(value = "quality", required = false) String quality,
-			@RequestParam(value = "limit", required = false) Integer limit, Model model) {
-		QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort);
-		exportEntries(request, response, "entry", qr, limit, model);
-	}
-	
-	
-	private void exportEntries(HttpServletRequest request, HttpServletResponse response, String viewName, QueryRequest queryRequest, Integer limit, Model model){
+		QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort, limit);
 		
 		NPFileFormat format = NPFileFormat.valueOf(request);
-		String fileName = null;
-
-		//TODO consider also quality, sort and filters
-		if(limit != null){ //set the limit (rows is used for paging)
-			queryRequest.setRows(limit.toString());
+		if(format.equals(NPFileFormat.XML)){
+			exportEntriesInXML(request, response, view, qr, limit, model);
+		}else if(format.equals(NPFileFormat.JSON)){
+			exportEntriesInJson(request, response, view, qr, limit, model);
 		}
+	}
 
-		//TODO add filters
-/*		String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-		queryRequest.setQuery(queryString);
-		return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
-*/
-		
+	
+	@RequestMapping(value = "/export/entries", method = { RequestMethod.GET })
+	public void streamEntriesInXML(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam(value = "query", required = false) String query,
+			@RequestParam(value = "listId", required = false) String listId,
+			@RequestParam(value = "queryId", required = false) String queryId,
+			@RequestParam(value = "sparql", required = false) String sparql,
+			@RequestParam(value = "filter", required = false) String filter,
+			@RequestParam(value = "sort", required = false) String sort,
+			@RequestParam(value = "quality", required = false) String quality,
+			@RequestParam(value = "limit", required = false) Integer limit, Model model) {
+		QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort, limit);
+
+		NPFileFormat format = NPFileFormat.valueOf(request);
+		if(format.equals(NPFileFormat.XML)){
+			exportEntriesInXML(request, response, "entry", qr, limit, model);
+		}else if(format.equals(NPFileFormat.JSON)){
+			exportEntriesInJson(request, response,  "entry", qr, limit, model);
+		}
+	}
+
+	
+	
+	private String getFileName(QueryRequest queryRequest, String viewName, NPFileFormat format){
 		Set<String> accessions = new HashSet<String>();
 		if (queryRequest.hasNextProtQuery()) {
-			fileName = "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
+			return "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
+		}else if (queryRequest.hasList()) {
+			return "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + format.getExtension();
+		}else  if (queryRequest.getQuery() != null) { // search and add filters ...
+			return "nextprot-search-" + queryRequest.getQuery() + "-" + viewName + "." + format.getExtension();
+		}else {
+			throw new NextProtException("Not implemented yet.");
+		}
+	}
+	
+	private Collection<String> getAccessionsFromRequest(QueryRequest queryRequest){
+
+		List<String> accessions = new ArrayList<String>();
+		if (queryRequest.hasNextProtQuery()) {
 			UserQuery uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId()); //For the export we only use public ids
 			accessions.addAll(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), uq.getSparql()));
 		}else if (queryRequest.hasList()) {
-			fileName = "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + format.getExtension();
 			accessions.addAll(proteinListService.getUserProteinListByPublicId(queryRequest.getListId()).getAccessionNumbers()); //For the export we only use public ids
 		}else  if (queryRequest.getQuery() != null) { // search and add filters ...
-			fileName = "nextprot-search-" + queryRequest.getQuery() + "-" + viewName + "." + format.getExtension();
-			accessions.addAll(solrService.getQueryAccessions(queryRequest));
+			accessions.addAll(searchService.getAssessions(queryRequest));
 		}else {
 			throw new NextProtException("Not implemented yet.");
 		}
 		
+		return accessions;
+		
+		/*String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
+		queryRequest.setQuery(queryString);
+		return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);*/
+
+	}
+
+	
+	private void exportEntriesInXML(HttpServletRequest request, HttpServletResponse response, String viewName, QueryRequest queryRequest, Integer limit, Model model){
+
+		NPFileFormat format = NPFileFormat.valueOf(request);
+
+		String fileName = getFileName(queryRequest, viewName, format);
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-
+		Set<String> accessions = new HashSet<String>(getAccessionsFromRequest(queryRequest));
+		
 		try {
-			response.getWriter().write("\n" + format.getHeader() + "\n");
-			int counter = 0;
-			for (String acc : accessions) { //
-				counter++;
-				if(limit != null){
-					if(counter > limit){
-						break;
-					}
-				}
-				
-				Entry entry = null;
-				if(!viewName.equals("entry")){
-					//TODO some incoherance with these 2 names withView and withEverything.getEntry... ???
-					entry = fluentEntryService.getNewEntry(acc).withView(viewName);
-				}else {
-					entry = fluentEntryService.getNewEntry(acc).withEverything().getEntry();
-				}
-				
-				model.addAttribute("entry", entry);
-				model.addAttribute("NXUtils", NXVelocityUtils.class);
-				model.addAttribute("StringUtils", StringUtils.class);
-
-				View v = viewResolver.resolveViewName("entry", Locale.ENGLISH);
-				v.render(model.asMap(), request, response);
-			}
-			response.getWriter().write(format.getFooter()+ "\n");
-		} catch (Exception e) {
+			this.exportService.streamResultsInXML(response.getOutputStream(), viewName, accessions); //should we close the writer or not???
+		} catch (IOException e) {
 			e.printStackTrace();
-			throw new NextProtException(e.getMessage());
+			throw new NextProtException("Failed to stream xml data");
+		}
+
+	}
+	
+	private void exportEntriesInJson(HttpServletRequest request, HttpServletResponse response, String viewName, QueryRequest queryRequest, Integer limit, Model model){
+
+		Set<String> accessions = new HashSet<String>(getAccessionsFromRequest(queryRequest));
+		try {
+			this.exportService.streamResultsInJson(response.getOutputStream(), viewName, accessions); //should we close the writer or not???
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new NextProtException("Failed to stream json data");
 		}
 
 	}

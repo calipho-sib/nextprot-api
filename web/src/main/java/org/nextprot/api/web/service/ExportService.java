@@ -1,15 +1,18 @@
-package org.nextprot.api.core.service.export;
+package org.nextprot.api.web.service;
 
 import java.io.File;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.nextprot.api.core.service.export.format.NPFileFormat;
-import org.nextprot.api.core.service.export.format.NPViews;
 
-public interface ExportService{
+public interface ExportService {
 
 	/**
 	 * Export all entries in the format specified with UTF-8 encoding
@@ -22,7 +25,8 @@ public interface ExportService{
 	List<Future<File>> exportAllEntries(NPFileFormat format);
 
 	/**
-	 * Export entries based on chromosome in the format specified with UTF-8 encoding
+	 * Export entries based on chromosome in the format specified with UTF-8
+	 * encoding
 	 * 
 	 * @param chromosome
 	 *            The chromosome name / number
@@ -34,7 +38,8 @@ public interface ExportService{
 	public List<Future<File>> exportEntriesOfChromossome(String chromosome, NPFileFormat format);
 
 	/**
-	 * Export entries based on entry names in the format specified with UTF-8 encoding
+	 * Export entries based on entry names in the format specified with UTF-8
+	 * encoding
 	 * 
 	 * @param entryNames
 	 *            The list of entries
@@ -42,7 +47,6 @@ public interface ExportService{
 	 *            The format can be xml or ttl
 	 */
 	public List<Future<File>> exportEntries(Collection<String> entryNames, NPFileFormat format);
-
 
 	/**
 	 * Export the entry name in the format specified with UTF-8 encoding
@@ -53,8 +57,12 @@ public interface ExportService{
 	 *            The format can be xml or ttl
 	 */
 	public Future<File> exportEntry(String entryName, NPFileFormat format);
-	
-	public void clearRepository ();
+
+	public void clearRepository();
+
+	void streamResultsInXML(OutputStream stream, String viewName, Set<String> accessions);
+
+	void streamResultsInJson(OutputStream stream, String viewName, Set<String> accessions);
 
 
 }

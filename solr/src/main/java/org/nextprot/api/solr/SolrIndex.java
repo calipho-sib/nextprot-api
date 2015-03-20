@@ -15,4 +15,5 @@ public interface SolrIndex {
 	
 	Class<? extends ConfigurationName> getConfigNames();
 	Class<? extends IndexField> getFields();
+	IndexField[] getFieldValues();
 }

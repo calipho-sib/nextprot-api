@@ -20,9 +20,9 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
-import org.nextprot.api.core.service.export.ExportService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.web.dbunit.base.mvc.MVCBaseIntegrationTest;
+import org.nextprot.api.web.service.ExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 
