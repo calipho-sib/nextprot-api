@@ -47,7 +47,7 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GitHub github = getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			GHContent content = repo.getFileContent(folder + "/" + page + ".md");
+			GHContent content = repo.getFileContent(folder + "/" + page + ".md", "change-urls");
 			return content.getContent();
 
 		} catch (IOException e) {
