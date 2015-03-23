@@ -298,14 +298,20 @@ public class ExportServiceImpl implements ExportService {
 		try {
 			Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
 
-			writer.write("<entry-list>");
+			writer.write("<?xml version='1.0' encoding='UTF-8'?>\n");
+			writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"https://dl.dropboxusercontent.com/u/2037400/nextprot-export.xsd\">\n");
+			
+			//TODO add <header> 
+			
+			writer.write("<entry-list>\n");
 			writer.flush();
 
 			for (String acc : accessions) {
 				streamXml(acc, viewName, writer);
 				writer.flush();
 			}
-			writer.write("</entry-list>");	
+			writer.write("</entry-list>\n");	
+			writer.write("</nextprot-export>\n");	
 			writer.close();
 
 		} catch (IOException e) {
