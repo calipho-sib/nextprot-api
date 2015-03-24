@@ -2,10 +2,10 @@ package org.nextprot.api.web.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -236,7 +236,6 @@ public class ExportController {
 	
 	
 	private String getFileName(QueryRequest queryRequest, String viewName, NPFileFormat format){
-		Set<String> accessions = new HashSet<String>();
 		if (queryRequest.hasNextProtQuery()) {
 			return "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
 		}else if (queryRequest.hasList()) {
@@ -248,9 +247,11 @@ public class ExportController {
 		}
 	}
 	
-	private Collection<String> getAccessionsFromRequest(QueryRequest queryRequest){
+	@Autowired private SolrService queryService;
 
-		List<String> accessions = new ArrayList<String>();
+	private List<String> getAccessionsFromRequestFilteredOrderedAndSorted(QueryRequest queryRequest, Integer limit){
+
+		LinkedHashSet<String> accessions = new LinkedHashSet<String>();
 		if (queryRequest.hasNextProtQuery()) {
 			UserQuery uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId()); //For the export we only use public ids
 			accessions.addAll(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), uq.getSparql()));
@@ -262,12 +263,11 @@ public class ExportController {
 			throw new NextProtException("Not implemented yet.");
 		}
 		
-		return accessions;
+		List<String> results = searchService.getAccessionsFilteredAndSorted(queryRequest, accessions);
+		if(limit != null){
+			return results.subList(0, limit);
+		}return results;
 		
-		/*String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-		queryRequest.setQuery(queryString);
-		return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);*/
-
 	}
 
 	
@@ -277,7 +277,7 @@ public class ExportController {
 
 		String fileName = getFileName(queryRequest, viewName, format);
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-		Set<String> accessions = new HashSet<String>(getAccessionsFromRequest(queryRequest));
+		List<String> accessions = getAccessionsFromRequestFilteredOrderedAndSorted(queryRequest, limit);
 		
 		try {
 			this.exportService.streamResultsInXML(response.getOutputStream(), viewName, accessions); //should we close the writer or not???
@@ -290,7 +290,7 @@ public class ExportController {
 	
 	private void exportEntriesInJson(HttpServletRequest request, HttpServletResponse response, String viewName, QueryRequest queryRequest, Integer limit, Model model){
 
-		Set<String> accessions = new HashSet<String>(getAccessionsFromRequest(queryRequest));
+		List<String> accessions = getAccessionsFromRequestFilteredOrderedAndSorted(queryRequest, limit);
 		try {
 			this.exportService.streamResultsInJson(response.getOutputStream(), viewName, accessions); //should we close the writer or not???
 		} catch (IOException e) {

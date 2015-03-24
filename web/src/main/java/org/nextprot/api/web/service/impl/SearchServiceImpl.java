@@ -1,6 +1,8 @@
 package org.nextprot.api.web.service.impl;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,12 +13,15 @@ import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.solr.SearchResult;
 import org.nextprot.api.solr.SearchResult.SearchResultFacet;
+import org.nextprot.api.solr.SearchResult.SearchResultItem;
 import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.nextprot.api.web.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import com.google.common.base.Joiner;
 
 @Service
 @Lazy
@@ -43,6 +48,31 @@ public class SearchServiceImpl implements SearchService {
 		} catch (SearchQueryException e) {
 			e.printStackTrace();
 			throw new NextProtException("Error when retrieving accessions");
+		}
+		return set;
+	}
+	
+	
+	@Override
+	public List<String> getAccessionsFilteredAndSorted(QueryRequest queryRequest, Set<String> accessions) {
+		
+
+		List<String> set = new ArrayList<String>();
+		try {
+			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
+			queryRequest.setQuery(queryString);
+
+			queryRequest.setRows("25000");
+			Query query =  queryBuilderService.buildQueryForSearchIndexes("entry", "pl_search", queryRequest);
+			SearchResult result = this.solrService.executeIdQuery(query);
+			List<SearchResultItem> items = result.getResults();
+			for (SearchResultItem i : items) {
+				set.add((String) i.getProperties().get("id"));
+			}
+
+		} catch (SearchQueryException e) {
+			e.printStackTrace();
+			throw new NextProtException("Error when search for pl search");
 		}
 		return set;
 	}

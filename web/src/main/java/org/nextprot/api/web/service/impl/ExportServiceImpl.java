@@ -11,7 +11,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -294,7 +293,7 @@ public class ExportServiceImpl implements ExportService {
 	
 	
 	@Override
-	public void streamResultsInXML(OutputStream outputStream, String viewName, Set<String> accessions) {
+	public void streamResultsInXML(OutputStream outputStream, String viewName, List<String> accessions) {
 		try {
 			Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
 
@@ -320,7 +319,7 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	@Override
-	public void streamResultsInJson(OutputStream outputStream, String viewName, Set<String> accessions) {
+	public void streamResultsInJson(OutputStream outputStream, String viewName, List<String> accessions) {
 		JsonGenerator generator = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
