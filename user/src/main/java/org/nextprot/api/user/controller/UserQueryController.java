@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Lazy
 @Controller
 @Api(name = "User Queries", description = "Method to manipulate personal user queries when authenticated", group="User")
+@PreAuthorize("hasRole('ROLE_USER')")
 public class UserQueryController {
 
 	@Autowired

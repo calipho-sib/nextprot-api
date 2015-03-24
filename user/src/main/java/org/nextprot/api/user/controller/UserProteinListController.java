@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @Api(name = "User Protein Lists", description = "Method to manipulate user protein lists", group="User")
+@PreAuthorize("hasRole('ROLE_USER')")
 public class UserProteinListController {
 
 	@Autowired
