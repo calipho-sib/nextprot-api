@@ -70,8 +70,8 @@ public class EntryController {
 		return "annotation-list";
 	}
 
-	@ApiMethod(path = "/entry/{entry}/protein-sequence", verb = ApiVerb.GET, description = "Gets the isoforms for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping("/entry/{entry}/protein-sequence")
+	@ApiMethod(path = "/entry/{entry}/isoform-list", verb = ApiVerb.GET, description = "Gets the isoforms for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping("/entry/{entry}/isoform-list")
 	public String getIsoforms(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 		Entry dummy = new Entry(entryName);

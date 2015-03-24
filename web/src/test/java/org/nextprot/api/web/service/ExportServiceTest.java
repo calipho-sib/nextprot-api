@@ -30,7 +30,6 @@ public class ExportServiceTest extends WebUnitBaseTest {
 	public void shouldExportEntries() throws Exception {
 		OutputStream os = Mockito.mock(OutputStream.class);
 		service.streamResultsInXML(os, "overview",  new HashSet<String>(Arrays.asList("NX_P06213", "NX_P01308")));
-		System.out.println("done");
 		Mockito.verify(os, Mockito.times(4)).flush();
 	}
 
