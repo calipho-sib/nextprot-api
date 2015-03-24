@@ -118,15 +118,5 @@ public class UserProteinListController {
 		
 		this.proteinListService.updateUserProteinList(pl);
 	}
-	
-	//TODO i don't think this is used anymore....
-	@RequestMapping(value = "/user/me/lists/{listname}/accnums", method = RequestMethod.GET)
-	@ResponseBody
-	@Deprecated
-	public Set<String> getUserProteinListAccessionNumbers(@PathVariable("listname") String listName) {
-		UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(NPSecurityContext.getCurrentUser(), listName);
-		return proteinList.getAccessionNumbers();
-	}
-	
 
 }
