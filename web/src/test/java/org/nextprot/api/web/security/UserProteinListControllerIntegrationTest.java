@@ -170,7 +170,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 	}
 
 	// --------------------------------- GET PROTEINS ACC NUMBERS -----------------------------------------
-
+	/* Test is not applicable
 	@Test
 	public void leonardShouldBeAbleToLookAtHisOwnProteinListAccessionNumbers() throws Exception {
 
@@ -187,7 +187,6 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		assertEquals(Sets.newHashSet("NX_Q14239","NX_Q8N5Z0","NX_P05185"), accessionNumbers);
 	}
 
-	/* Test is not applicable
 	@Test
 	public void sheldonIsForbiddenToLookAtLeonardsProteinListAccessionNumbers() throws Exception {
 
