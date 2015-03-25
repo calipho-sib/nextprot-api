@@ -9,7 +9,7 @@ public interface SearchService {
 
 	public Set<String> getAssessions(QueryRequest queryRequest);
 
-	List<String> getAccessionsFilteredAndSorted(QueryRequest queryRequest, Set<String> accessions);
+	List<String> getAccessionsFilteredAndSorted(QueryRequest queryRequest, Set<String> accessions, Integer limit);
 
 }
 	

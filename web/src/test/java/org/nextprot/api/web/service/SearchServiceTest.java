@@ -29,4 +29,14 @@ public class SearchServiceTest extends WebUnitBaseTest {
 		Set<String> accs = service.getAssessions(request);
 		assertTrue(accs.contains("NX_P01308"));
 	}
+	
+	
+	@Test
+	public void shouldNotContainThatManyEntries() throws Exception {
+		QueryRequest request = new QueryRequest();
+		request.setQuery("daniel teixeira tlr6");
+		Set<String> accs = service.getAssessions(request);
+		System.out.println(accs.size());
+	}
+
 }

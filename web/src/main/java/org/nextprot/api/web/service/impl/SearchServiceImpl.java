@@ -54,7 +54,7 @@ public class SearchServiceImpl implements SearchService {
 	
 	
 	@Override
-	public List<String> getAccessionsFilteredAndSorted(QueryRequest queryRequest, Set<String> accessions) {
+	public List<String> getAccessionsFilteredAndSorted(QueryRequest queryRequest, Set<String> accessions, Integer limit) {
 		
 
 		List<String> set = new ArrayList<String>();
@@ -62,7 +62,10 @@ public class SearchServiceImpl implements SearchService {
 			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 			queryRequest.setQuery(queryString);
 
-			queryRequest.setRows("25000");
+			if(limit != null){
+				queryRequest.setRows(limit.toString());
+			}else queryRequest.setRows("25000");
+
 			Query query =  queryBuilderService.buildQueryForSearchIndexes("entry", "pl_search", queryRequest);
 			SearchResult result = this.solrService.executeIdQuery(query);
 			List<SearchResultItem> items = result.getResults();

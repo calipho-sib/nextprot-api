@@ -2,8 +2,6 @@ package org.nextprot.api.web.controller;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -242,6 +240,8 @@ public class ExportController {
 			return "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + format.getExtension();
 		}else  if (queryRequest.getQuery() != null) { // search and add filters ...
 			return "nextprot-search-" + queryRequest.getQuery() + "-" + viewName + "." + format.getExtension();
+		}else  if (queryRequest.getQuery() != null) { // search and add filters ...
+			return "nextprot-sparql-" + queryRequest.getSparql() + "-" + viewName + "." + format.getExtension();
 		}else {
 			throw new NextProtException("Not implemented yet.");
 		}
@@ -254,17 +254,19 @@ public class ExportController {
 		LinkedHashSet<String> accessions = new LinkedHashSet<String>();
 		if (queryRequest.hasNextProtQuery()) {
 			UserQuery uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId()); //For the export we only use public ids
-			accessions.addAll(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), uq.getSparql()));
+			accessions.addAll(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), uq.getTitle()));
 		}else if (queryRequest.hasList()) {
 			accessions.addAll(proteinListService.getUserProteinListByPublicId(queryRequest.getListId()).getAccessionNumbers()); //For the export we only use public ids
-		}else  if (queryRequest.getQuery() != null) { // search and add filters ...
+		}else if (queryRequest.getQuery() != null) { // search and add filters ...
 			accessions.addAll(searchService.getAssessions(queryRequest));
+		}else if (queryRequest.getSparql() != null) { // search and add filters ...
+			accessions.addAll(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), "had-oc query"));
 		}else {
 			throw new NextProtException("Not implemented yet.");
 		}
 		
-		List<String> results = searchService.getAccessionsFilteredAndSorted(queryRequest, accessions);
-		if(limit != null){
+		List<String> results = searchService.getAccessionsFilteredAndSorted(queryRequest, accessions, limit);
+		if((limit != null)  && (results.size() > limit)){
 			return results.subList(0, limit);
 		}return results;
 		
@@ -280,7 +282,7 @@ public class ExportController {
 		List<String> accessions = getAccessionsFromRequestFilteredOrderedAndSorted(queryRequest, limit);
 		
 		try {
-			this.exportService.streamResultsInXML(response.getOutputStream(), viewName, accessions); //should we close the writer or not???
+			this.exportService.streamResultsInXML(response.getOutputStream(), viewName, accessions); 
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new NextProtException("Failed to stream xml data");
@@ -292,7 +294,7 @@ public class ExportController {
 
 		List<String> accessions = getAccessionsFromRequestFilteredOrderedAndSorted(queryRequest, limit);
 		try {
-			this.exportService.streamResultsInJson(response.getOutputStream(), viewName, accessions); //should we close the writer or not???
+			this.exportService.streamResultsInJson(response.getOutputStream(), viewName, accessions);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new NextProtException("Failed to stream json data");
