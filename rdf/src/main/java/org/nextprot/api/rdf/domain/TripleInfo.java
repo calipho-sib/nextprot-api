@@ -48,12 +48,12 @@ public class TripleInfo implements Serializable, Comparable<TripleInfo> {
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("--- TripleInfo ---\n");
-		sb.append("subjectType:" + subjectType + "\n");
-		sb.append("predicate:" + predicate + "\n");
-		sb.append("objectType:" + objectType + "\n");
-		sb.append("tripleSample:"+tripleSample + "\n");
-		sb.append("tripleCount:" + tripleCount + "\n");
+		sb.append("Triple: ");
+		sb.append(this.subjectType + " ");
+		sb.append(this.predicate + " ");
+		sb.append(this.objectType + " , ");
+		sb.append("count: " + this.tripleCount + " , ");
+		sb.append("sample: "+ this.tripleSample);
 		return sb.toString();
 	}
 	

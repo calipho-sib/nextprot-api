@@ -36,6 +36,10 @@
 		<level value="WARN" />
 	</logger>
 
+	<logger name="org.nextprot.api.rdf">
+		<level value="INFO" />
+	</logger>
+
 	<logger name="net.sf.ehcache">
 		<level value="INFO" />
 	</logger>
