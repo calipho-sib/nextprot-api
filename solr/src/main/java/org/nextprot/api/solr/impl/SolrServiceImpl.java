@@ -73,7 +73,8 @@ public class SolrServiceImpl implements SolrService {
 	public SearchResult executeQuery(Query query) throws SearchQueryException {
 		SolrIndex index = query.getIndex();
 		SolrQuery solrQuery = solrQuerySetup(query);
-		//logSolrQuery("SearchResult",solrQuery);
+		
+		logSolrQuery("executeQuery",solrQuery);
 		return executeSolrQuery(index, solrQuery);
 	}
 
@@ -103,10 +104,11 @@ public class SolrServiceImpl implements SolrService {
 		if (index == null)
 			index = this.configuration.getIndexByName(query.getIndexName());
 		String configName = query.getConfigName();
-
 		IndexConfiguration indexConfig = configName == null ? index.getDefaultConfig() : index.getConfig(query.getConfigName());
+		Logger.debug("configName="+indexConfig.getName());
 
 		SolrQuery solrQuery = buildSolrIdQuery(query, indexConfig);
+		
 		logSolrQuery("executeIdQuery", solrQuery);
 		
 		return executeSolrQuery(index, solrQuery);
@@ -133,14 +135,19 @@ public class SolrServiceImpl implements SolrService {
 	 */
 	@Override
 	public SolrQuery buildSolrIdQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException {
+		Logger.debug("Query index name:" + query.getIndexName());
+		Logger.debug("Query config name: "+ query.getConfigName());
+		String qs1 = indexConfig.buildQuery(query);
+		String qs2 = query.getQueryString(true);
+		Logger.debug("Original query string from query qs0 : " + query.getQueryString());
+		Logger.debug("QueryString after escaping fields:   : " + qs1);
+		Logger.debug("Index config build query output qs1  : " + qs2);
 		SolrQuery solrQuery = new SolrQuery();
-		String queryString = indexConfig.buildQuery(query);
-		queryString = query.getQueryString(true);
-		solrQuery.setQuery(queryString);
+		solrQuery.setQuery(qs2);
 		solrQuery.setRows(0);
 		solrQuery.set("facet", true);
 		solrQuery.set("facet.field", "id");
-		solrQuery.set("facet.query", queryString);
+		solrQuery.set("facet.query", qs2);
 		solrQuery.set("facet.limit", 30000);
 		logSolrQuery("buildSolrIdQuery",solrQuery);
 		return solrQuery;
@@ -301,8 +308,10 @@ public class SolrServiceImpl implements SolrService {
 		return results;
 	}
 
-	/**
-	 * ???? unused
+
+	/** 
+	 * seems unused
+	 * 
 	 */
 	@Override
 	public SearchResult getUserListSearchResult(UserProteinList proteinList) throws SearchQueryException {
@@ -319,9 +328,7 @@ public class SolrServiceImpl implements SolrService {
 		getClass();
 
 		String[] fieldNames = new String[fields.size()];
-
 		Iterator<IndexField> it = fields.iterator();
-
 		int counter = 0;
 		while (it.hasNext()) {
 			fieldNames[counter++] = it.next().getName();

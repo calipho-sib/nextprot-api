@@ -128,6 +128,8 @@ public class SearchController {
 
 				} else {
 					query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
+					// query = queryBuilderService.buildQueryForSearch(queryRequest, indexName); alternative ?
+
 				}
 				
 				result = this.queryService.executeIdQuery(query);

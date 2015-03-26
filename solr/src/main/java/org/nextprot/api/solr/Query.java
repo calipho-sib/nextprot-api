@@ -34,19 +34,6 @@ public class Query {
 		this.queryString=value;
 		return this;
 	}
-
-	/*
-	public Query addQuery(String field, String value) {
-		this.field = field;
-		this.queryString = escapeColon(value);
-		return this;
-	}
-	
-	public Query addQuery(IndexField field, String value) {
-
-        return addQuery(field.getName(), value);
-	}
-	*/
 	
 	public Query addFilter(String filter) {
 		this.filter = filter;

@@ -33,7 +33,10 @@
 	</logger>
 
 	<logger name="org.nextprot.api.solr">
-		<level value="WARN" />
+		<level value="DEBUG" />
+	</logger>
+	<logger name="org.nextprot.api.web">
+		<level value="DEBUG" />
 	</logger>
 
 	<logger name="org.nextprot.api.rdf">
@@ -53,7 +56,7 @@
 	</logger>
 
 	<logger name="org.apache.solr">
-		<level value="INFO" />
+		<level value="WARN" />
 	</logger>
 
 	<logger name="org.apache.solr.client.solrj.impl.HttpSolrServer">

@@ -51,15 +51,17 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 	@Override
 	public Query buildQueryForSearch(QueryRequest queryRequest, String indexName) {
 
+		Logger.debug(queryRequest.toPrettyString());
+		
 		if (queryRequest.hasAccs()) {
+			Logger.debug("queryRequest.hasAccs()");
 			Set<String> accessions = new HashSet<String>(queryRequest.getAccs());
 			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 			queryRequest.setQuery(queryString);
-
 			return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
 
 		} else if (queryRequest.hasList()) {
-
+			Logger.debug("queryRequest.hasList()");
 			UserProteinList proteinList = null;
 			if(StringUtils.isWholeNumber(queryRequest.getListId())){ //Private id is used
 				proteinList = this.proteinListService.getUserProteinListById(Long.valueOf(queryRequest.getListId()));
@@ -76,7 +78,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 			return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
 
 		} else if (queryRequest.hasNextProtQuery()) {
-
+			Logger.debug("queryRequest.hasNextProtQuery()");
 			UserQuery uq = null;
 			if(StringUtils.isWholeNumber(queryRequest.getQueryId())){ //Private id is used
 				uq = userQueryService.getUserQueryById(Long.valueOf(queryRequest.getQueryId()));
@@ -102,7 +104,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 			return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
 
 		} else if (queryRequest.hasSparql()) {
-
+			Logger.debug("queryRequest.hasSparql()");			
 			Set<String> accessions = new HashSet<String>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
 
 			// In case there is no result
@@ -120,6 +122,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 			return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
 
 		} else {
+			Logger.debug("queryRequest.default for simple search");			
 			return queryService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
 		}
 

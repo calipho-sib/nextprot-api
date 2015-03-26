@@ -90,6 +90,16 @@ public class QueryTest {
         Assert.assertEquals("id:NX_A0P322", query.getQueryString(true));
     }
 
+    @Test
+    public void test1() {
+        Query query = new Query(Mockito.mock(SolrIndex.class));
+        query.setIndex(new EntryIndex());
+        query.addQuery("+insulin");
+        String result = query.getQueryString(true);
+        System.out.println(result);
+        Assert.assertEquals("+insulin", result);
+    }
+
     
     
 }
