@@ -128,16 +128,11 @@ public class SearchController {
 
 				} else {
 					query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
-					// query = queryBuilderService.buildQueryForSearch(queryRequest, indexName); alternative ?
 
 				}
 				
 				result = this.queryService.executeIdQuery(query);
 				model.addAttribute("result", result);
-
-//				result = executeQuery(index, "simple", queryString, quality, sort, order, start, rows, filter, "id");
-//				model.addAttribute("result", result);
-//				Query query = this.queryService.buildQuery(index, "simple", queryString, quality, null, null, start, rows, null);
 
 			} catch (SearchQueryException e) {
 				e.printStackTrace();

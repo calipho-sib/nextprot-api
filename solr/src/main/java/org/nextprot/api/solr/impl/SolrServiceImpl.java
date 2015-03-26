@@ -1,7 +1,6 @@
 package org.nextprot.api.solr.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +15,6 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -28,7 +26,6 @@ import org.apache.solr.common.SolrDocumentList;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.FieldConfigSet;
 import org.nextprot.api.solr.IndexConfiguration;
 import org.nextprot.api.solr.IndexField;
 import org.nextprot.api.solr.IndexParameter;
@@ -43,12 +40,9 @@ import org.nextprot.api.solr.SolrConnectionFactory;
 import org.nextprot.api.solr.SolrIndex;
 import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.solr.SortConfig;
-import org.nextprot.api.user.domain.UserProteinList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
-import com.google.common.base.Joiner;
 
 @Lazy
 @Service
@@ -86,18 +80,7 @@ public class SolrServiceImpl implements SolrService {
 		return executeSolrQuery(index, solrQuery);
 	}
 
-	public SearchResult executeByIdQuery(Query query, String[] fields) {
-		SolrIndex index = query.getIndex();
-
-		SolrQuery solrQuery = new SolrQuery();
-		solrQuery.setQuery(query.getQueryString());
-		solrQuery.setFields(fields);
-		solrQuery.setStart(query.getStart());
-		solrQuery.setRows(query.getRows());
-
-		return executeSolrQuery(index, solrQuery);
-	}
-
+	
 	public SearchResult executeIdQuery(Query query) throws SearchQueryException {
 		SolrIndex index = query.getIndex();
 
@@ -137,17 +120,14 @@ public class SolrServiceImpl implements SolrService {
 	public SolrQuery buildSolrIdQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException {
 		Logger.debug("Query index name:" + query.getIndexName());
 		Logger.debug("Query config name: "+ query.getConfigName());
-		String qs1 = indexConfig.buildQuery(query);
-		String qs2 = query.getQueryString(true);
-		Logger.debug("Original query string from query qs0 : " + query.getQueryString());
-		Logger.debug("QueryString after escaping fields:   : " + qs1);
-		Logger.debug("Index config build query output qs1  : " + qs2);
+		String solrReadyQueryString = indexConfig.buildQuery(query);
+		Logger.debug("Solr-ready query       : " + solrReadyQueryString);
 		SolrQuery solrQuery = new SolrQuery();
-		solrQuery.setQuery(qs2);
+		solrQuery.setQuery(solrReadyQueryString);
 		solrQuery.setRows(0);
 		solrQuery.set("facet", true);
 		solrQuery.set("facet.field", "id");
-		solrQuery.set("facet.query", qs2);
+		solrQuery.set("facet.query", solrReadyQueryString);
 		solrQuery.set("facet.limit", 30000);
 		logSolrQuery("buildSolrIdQuery",solrQuery);
 		return solrQuery;
@@ -244,6 +224,7 @@ public class SolrServiceImpl implements SolrService {
 		SearchResult results = new SearchResult(indexName, url);
 
 		SolrDocumentList docs = response.getResults();
+		Logger.debug("Response doc size:"+docs.size());
 		List<SearchResultItem> res = new ArrayList<SearchResultItem>();
 
 		SearchResultItem item = null;
@@ -270,12 +251,13 @@ public class SolrServiceImpl implements SolrService {
 		// Facets
 
 		List<FacetField> facetFields = response.getFacetFields();
-
+		Logger.debug("Response facet fields:" + facetFields.size());
 		if (facetFields != null) {
 			SearchResultFacet facet = null;
 
 			for (FacetField ff : facetFields) {
 				facet = new SearchResultFacet(ff.getName());
+				Logger.debug("Response facet field:" + ff.getName() + " count:" + ff.getValueCount());
 
 				for (Count c : ff.getValues())
 					facet.addFacetField(c.getName(), c.getCount());
@@ -309,10 +291,7 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 
-	/** 
-	 * seems unused
-	 * 
-	 */
+/*
 	@Override
 	public SearchResult getUserListSearchResult(UserProteinList proteinList) throws SearchQueryException {
 
@@ -342,7 +321,7 @@ public class SolrServiceImpl implements SolrService {
 
 		return this.executeByIdQuery(query, fieldNames);
 	}
-	
+*/	
 	
 	@Override
 	public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
@@ -410,7 +389,7 @@ public class SolrServiceImpl implements SolrService {
 			e.printStackTrace();
 		}
 
-		System.err.println("Time to search " + (System.currentTimeMillis() - start));
+		Logger.debug("Time to search " + (System.currentTimeMillis() - start));
 		return accessions;
 	}
 

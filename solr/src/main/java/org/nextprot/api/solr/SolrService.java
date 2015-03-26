@@ -34,8 +34,6 @@ public interface SolrService {
 	 */
 	SearchResult executeIdQuery(Query query) throws SearchQueryException;
 
-	SearchResult executeByIdQuery(Query query, String[] fields);
-
 	/**
 	 * Verifies if the specified name matches a name of a registered index
 	 * 
@@ -44,8 +42,6 @@ public interface SolrService {
 	 */
 	boolean checkAvailableIndex(String indexName);
 
-	SearchResult getUserListSearchResult(UserProteinList proteinList) throws SearchQueryException;
-
 	Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
 	Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request);
@@ -53,9 +49,6 @@ public interface SolrService {
 	Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter);
 
 	Set<String> getQueryAccessions(QueryRequest request);
-	// Query buildQuery(SolrIndex index, String configuration,
-	// String queryString, String quality, String sort, String order,
-	// String start, String rows, String filter);
 
 	SolrQuery buildSolrIdQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException;
 
