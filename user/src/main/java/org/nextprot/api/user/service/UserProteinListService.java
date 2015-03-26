@@ -1,7 +1,6 @@
 package org.nextprot.api.user.service;
 
 import java.util.List;
-import java.util.Set;
 
 import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.user.domain.UserProteinList;

@@ -8,7 +8,6 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
-import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Lazy
 @Controller
 @Api(name = "User Queries", description = "Method to manipulate personal user queries when authenticated", group="User")
+@PreAuthorize("hasRole('ROLE_USER')")
 public class UserQueryController {
 
 	@Autowired

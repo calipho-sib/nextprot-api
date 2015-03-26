@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<xs:element name="nextprotExport">
+	<xs:element name="nextprot-export">
 		<xs:annotation>
 			<xs:documentation>NextProt schema</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="header" />
+				<!--TODO   <xs:element ref="header" /> -->
 				<xs:element ref="entry-list" />
 			</xs:sequence>
 		</xs:complexType>
@@ -70,18 +70,11 @@
 	<xs:element name="entry">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="protein-existence" />
-				<xs:element ref="protein-name" />
-				<xs:element ref="additionalNames" minOccurs="0" />
-				<xs:element ref="functionalRegionNames" minOccurs="0" />
-				<xs:element ref="cleavedRegionNames" minOccurs="0" />
-				<xs:element ref="geneNames" minOccurs="0" />
-				<xs:element ref="families" minOccurs="0" />
-				<xs:element ref="history" />
+				<xs:element ref="overview" />
+				<xs:element ref="isoform-list" />
 				<xs:element ref="annotations" />
 				<xs:element ref="keywords" />
 				<xs:element ref="interaction-list" minOccurs="0" />
-				<xs:element ref="isoforms" />
 				<xs:element ref="chromosomal-location-list" minOccurs="0" />
 				<xs:element ref="genomic-mapping-list" minOccurs="0" />
 				<xs:element ref="identifiers" minOccurs="0" />
@@ -90,7 +83,22 @@
 				<xs:element ref="peptide-list" minOccurs="0"/>
 				<xs:element ref="antibody-list" minOccurs="0"/>
 			</xs:sequence>
-			<xs:attribute name="uniqueName" use="required" type="xs:normalizedString" />
+			<xs:attribute name="accession" use="required" type="xs:normalizedString" />
+			<xs:attribute name="database" use="required" type="xs:normalizedString" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="overview">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="protein-existence" />
+				<xs:element ref="protein-name-list" />
+				<xs:element ref="additional-name-list" minOccurs="0"/>
+				<xs:element ref="functional-region-name-list" minOccurs="0"/>
+				<xs:element ref="cleaved-region-name-list" />
+				<xs:element ref="gene-name-list" />
+				<xs:element ref="family-list" minOccurs="0" />
+				<xs:element ref="history" />
+			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="protein-existence">
@@ -98,48 +106,76 @@
  			<xs:attribute name="value" type="xs:string" /> 
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="additional-name-list">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="entity-name" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="functional-region-name-list">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="entity-name" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="biophysicochemical-properties">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="entity-name" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="cleaved-region-name-list">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="entity-name" maxOccurs="unbounded" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="protein-name-list">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="entity-name" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
 	<xs:element name="protein-name">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="entityName" />
+				<xs:element ref="entity-name" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="additionalNames">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="entityName" maxOccurs="unbounded" />
+				<xs:element ref="entity-name" maxOccurs="unbounded" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="functionalRegionNames">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="entityName" maxOccurs="unbounded" />
+				<xs:element ref="entity-name" maxOccurs="unbounded" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="cleavedRegionNames">
+	<xs:element name="gene-name-list">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="entityName" maxOccurs="unbounded" />
+				<xs:element ref="entity-name" minOccurs="1" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="geneNames">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="entityName" minOccurs="1" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="entityName">
+	<xs:element name="entity-name">
 		<xs:complexType>
 			<xs:choice minOccurs="0" maxOccurs="unbounded">
 				<xs:element ref="synonyms" />
-				<xs:element ref="value" />
 			</xs:choice>
-			<xs:attribute name="isMain" use="required" type="xs:boolean" />
+			<xs:attribute name="value" type="xs:string" />
+			<xs:attribute name="is-main" use="required" type="xs:boolean" />
 			<xs:attribute name="qualifier" use="required" />
 			<xs:attribute name="type" use="required" type="nameType" />
 		</xs:complexType>
@@ -147,7 +183,7 @@
 	<xs:element name="synonyms">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="entityName" />
+				<xs:element maxOccurs="unbounded" ref="entity-name" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
@@ -164,7 +200,7 @@
 			<xs:enumeration value="clone name" />
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:element name="families">
+	<xs:element name="family-list">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element ref="family" maxOccurs="unbounded" />
@@ -174,27 +210,27 @@
 	<xs:element name="family">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="familyName" />
+				<xs:element ref="family-name" />
 			</xs:sequence>
 			<xs:attribute name="accession" use="required" type="xs:normalizedString" />
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="familyName" type="xs:string" />
+	<xs:element name="family-name" type="xs:string" />
 	<xs:element name="history">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="historyEntry" maxOccurs="2" />
+				<xs:element ref="history-entry" maxOccurs="2" />
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="historyEntry">
+	<xs:element name="history-entry">
 		<xs:complexType>
-			<xs:attribute name="dbName" use="required" />
+			<xs:attribute name="database" use="required" />
 			<xs:attribute name="integrated" type="xs:date" use="required" />
 			<xs:attribute name="updated" type="xs:date" use="required" />
 			<xs:attribute name="version" type="xs:integer" use="optional" />
-			<xs:attribute name="lastSequenceUpdate" type="xs:date" use="optional" />
-			<xs:attribute name="sequenceVersion" type="xs:integer" use="optional" />
+			<xs:attribute name="last-sequence-update" type="xs:date" use="optional" />
+			<xs:attribute name="sequence-version" type="xs:integer" use="optional" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="value" type="xs:string" />
@@ -492,7 +528,7 @@
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="experiment-count" type="xs:integer" />
-	<xs:element name="isoforms">
+	<xs:element name="isoform-list">
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element maxOccurs="unbounded" ref="isoform" />
@@ -502,11 +538,11 @@
 	<xs:element name="isoform">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="entityName" minOccurs="0" />
+				<xs:element ref="entity-name" minOccurs="0" />
 				<xs:element ref="sequence" />
 			</xs:sequence>
 			<xs:attribute name="swissprotDisplayedIsoform" type="xs:boolean" />
-			<xs:attribute name="uniqueName" use="required" type="xs:NCName" />
+			<xs:attribute name="accession" use="required" type="xs:NCName" />
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="sequence" type="xs:string" />

@@ -16,7 +16,10 @@ public class Query {
 	private int start = 0;
 	private int rows;
 	
-	public Query(SolrIndex index) {
+	
+
+    
+    public Query(SolrIndex index) {
 		this(index, null);
 	}
 	
@@ -26,24 +29,13 @@ public class Query {
 		this.configuration = configuration;
 	}
 
-    private String escapeColon(String value) {
-
-        int index = value.indexOf(':');
-
-        // Escape ':' in query as it has a special meaning in solr
-        if (index > 0 && value.charAt(index-1) != '\\') {
-            return value.replace(":", "\\:");
-        }
-
-        return value;
-    }
 
 	public Query addQuery(String value) {
-
-		this.queryString = escapeColon(value);
+		this.queryString=value;
 		return this;
 	}
-	
+
+	/*
 	public Query addQuery(String field, String value) {
 		this.field = field;
 		this.queryString = escapeColon(value);
@@ -54,6 +46,7 @@ public class Query {
 
         return addQuery(field.getName(), value);
 	}
+	*/
 	
 	public Query addFilter(String filter) {
 		this.filter = filter;
@@ -105,8 +98,38 @@ public class Query {
 		return field;
 	}
 
+	/**
+	 * We always want to use the private name of the fields (private name = the one known by solr)
+	 * @return
+	 */
 	public String getQueryString() {
-		return queryString;
+		return getQueryStringWithPrivateFieldNames(false);
+	}
+	
+	/**
+	 * Escaping non field related colon is mandatory for SolrService.buildSolrIdQuery() 
+	 * which is called by SolrService.executeIdQuery() called by SearchController.searchIds()
+	 * @param escapeColon
+	 * @return
+	 */
+	public String getQueryString(boolean escapeColon) {
+		return getQueryStringWithPrivateFieldNames(escapeColon);
+	}
+
+	private String getQueryStringWithPrivateFieldNames(boolean escapeColon) {
+		String qs = this.queryString;
+		// remove any backslash
+        qs = qs.replace("\\","");        			
+        // escape <:> everywhere if requested
+        if (escapeColon) qs = qs.replace(":","\\:");   
+        // replace public field names with private ones (known by solr)
+        for (IndexField f: this.index.getFieldValues()) {
+        	if (f.hasPublicName()) {
+        		String esc = escapeColon ? "\\" : "";
+                qs = qs.replace(f.getPublicName() + esc + ":", f.getName() + ":");
+        	}
+        }
+        return qs;
 	}
 
 	public String getFilter() {

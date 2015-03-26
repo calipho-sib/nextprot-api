@@ -1,24 +1,27 @@
 package org.nextprot.api.web.security;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-import com.google.common.collect.Sets;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.junit.Test;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.web.dbunit.base.mvc.MVCBaseSecurityTest;
 import org.springframework.http.MediaType;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import com.google.common.collect.Sets;
 
 /**
  * Tests GET, PUT, POST, DELETE for 3 different scenarios (anonymous, owner and other logged user) 
@@ -158,7 +161,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 
 		// call UserProteinList getUserProteinList()
 		this.mockMvc.perform(get("/user/me/lists/157").accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isForbidden());
+				andExpect(status().isUnauthorized());
 	}
 	
 	@Test
@@ -170,7 +173,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 	}
 
 	// --------------------------------- GET PROTEINS ACC NUMBERS -----------------------------------------
-
+	/* Test is not applicable
 	@Test
 	public void leonardShouldBeAbleToLookAtHisOwnProteinListAccessionNumbers() throws Exception {
 
@@ -187,7 +190,6 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		assertEquals(Sets.newHashSet("NX_Q14239","NX_Q8N5Z0","NX_P05185"), accessionNumbers);
 	}
 
-	/* Test is not applicable
 	@Test
 	public void sheldonIsForbiddenToLookAtLeonardsProteinListAccessionNumbers() throws Exception {
 
@@ -199,13 +201,6 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 				andExpect(status().isForbidden());
 	}*/
 
-	@Test
-	public void othersAreUnauthorizedToLookAtLeonardsProteinListAccessionNumbers() throws Exception {
-
-		// call Set<String> getUserProteinListAccessionNumbers()
-		this.mockMvc.perform(get("/user/me/lists/leonardslist/accnums").accept(MediaType.APPLICATION_JSON)).
-				andExpect(status().isForbidden());
-	}
 
 	// --------------------------------- GET COMBINED PROTEIN LIST ----------------------------------------
 

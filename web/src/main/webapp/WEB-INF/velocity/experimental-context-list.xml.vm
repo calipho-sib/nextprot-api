@@ -1,5 +1,5 @@
 <experimental-context-list>
 #foreach($ctx in $entry.getExperimentalContexts())
-	<experimental-context internal-id='$ctx.getContextId()' #if($ctx.tissueAC) tissueAC='$ctx.tissueAC' #end #if($ctx.developmentalStageAC) developmentalStageAC='$ctx.developmentalStageAC' #end #if($ctx.cellLineAC) cellLineAC='$ctx.cellLineAC' #end #if($ctx.diseaseAC) diseaseAC='$ctx.diseaseAC' #end #if($ctx.organelleAC) organelleAC='$ctx.organelleAC' #end #if($ctx.detectionMethodAC) detectionMethodAC='$ctx.detectionMethodAC' #end #if($ctx.metadataAC) metadataAC='$ctx.metadataAC' #end />
+	<experimental-context internal-id='$ctx.getContextId()' #if($ctx.tissueAC) tissue-ac='$ctx.tissueAC' #end #if($ctx.developmentalStageAC) developmental-stage-ac='$ctx.developmentalStageAC' #end #if($ctx.cellLineAC) cell-line-ac='$ctx.cellLineAC' #end #if($ctx.diseaseAC) disease-ac='$ctx.diseaseAC' #end #if($ctx.organelleAC) organelle-ac='$ctx.organelleAC' #end #if($ctx.detectionMethodAC) detection-method-ac='$ctx.detectionMethodAC' #end #if($ctx.metadataAC) metadata-ac='$ctx.metadataAC' #end />
 #end
 </experimental-context-list>

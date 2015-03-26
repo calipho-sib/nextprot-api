@@ -103,6 +103,11 @@ public class CvIndex extends IndexTemplate {
 		public static final String AUTOCOMPLETE = "autocomplete";
 	}
 	
+	@Override
+	public IndexField[] getFieldValues() {
+		return CvField.values();
+	}
+	
 	public static enum CvField implements IndexField {
 		ID("id"), 
 		AC("ac"), 
@@ -117,13 +122,28 @@ public class CvIndex extends IndexTemplate {
 		TEXT("text");
 		
 		private String name;
+		private String publicName;
 		
 		private CvField(String name) {
 			this.name = name;
 		}
+		private CvField(String name, String publicName) {
+			this.name = name;
+			this.publicName=publicName;
+		}
 
 		public String getName() {
 			return this.name;
+		}
+
+		@Override
+		public String getPublicName() {
+			return this.publicName;
+		}
+
+		@Override
+		public boolean hasPublicName() {
+			return this.publicName!=null && this.publicName.length()>0;
 		}
 	}
 

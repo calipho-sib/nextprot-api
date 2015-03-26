@@ -30,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @Api(name = "User Protein Lists", description = "Method to manipulate user protein lists", group="User")
+@PreAuthorize("hasRole('ROLE_USER')")
 public class UserProteinListController {
 
 	@Autowired
@@ -117,14 +118,5 @@ public class UserProteinListController {
 		
 		this.proteinListService.updateUserProteinList(pl);
 	}
-	
-	@ApiMethod(path = "/user/me/lists/{listname}/accnums", verb = ApiVerb.GET, description = "Gets user protein list accession numbers", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping(value = "/user/me/lists/{listname}/accnums", method = RequestMethod.GET)
-	@ResponseBody
-	public Set<String> getUserProteinListAccessionNumbers(@PathVariable("listname") String listName) {
-		UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(NPSecurityContext.getCurrentUser(), listName);
-		return proteinList.getAccessionNumbers();
-	}
-	
 
 }

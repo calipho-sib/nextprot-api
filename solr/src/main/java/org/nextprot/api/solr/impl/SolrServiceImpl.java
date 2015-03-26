@@ -1,6 +1,13 @@
 package org.nextprot.api.solr.impl;
 
-import com.google.common.base.Joiner;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,17 +28,27 @@ import org.apache.solr.common.SolrDocumentList;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.*;
+import org.nextprot.api.solr.FieldConfigSet;
+import org.nextprot.api.solr.IndexConfiguration;
+import org.nextprot.api.solr.IndexField;
+import org.nextprot.api.solr.IndexParameter;
+import org.nextprot.api.solr.Query;
+import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.SearchResult;
 import org.nextprot.api.solr.SearchResult.SearchResultFacet;
 import org.nextprot.api.solr.SearchResult.SearchResultItem;
 import org.nextprot.api.solr.SearchResult.SearchResultSpellcheck;
+import org.nextprot.api.solr.SolrConfiguration;
+import org.nextprot.api.solr.SolrConnectionFactory;
+import org.nextprot.api.solr.SolrIndex;
+import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.solr.SortConfig;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.Map.Entry;
+import com.google.common.base.Joiner;
 
 @Lazy
 @Service
@@ -44,22 +61,19 @@ public class SolrServiceImpl implements SolrService {
 	@Autowired
 	private SolrConfiguration configuration;
 
-	private void logSorQuery(SolrQuery sq) {
+	private void logSolrQuery(String context, SolrQuery sq) {
 		Set<String> params = new TreeSet<String>();
 		for (String p : sq.getParameterNames()) params.add(p + " : " + sq.get(p));
-		Logger.info("SolrQuery");
-		//System.out.println("SolrQuery");
+		Logger.debug("SolrQuery ============================================================== in " + context);
 		for (String p : params) {
-			//System.out.println("SolrQuery " + p);
-			Logger.info("SolrQuery " + p);
+			Logger.debug("SolrQuery " + p);
 		}
 	}
 
 	public SearchResult executeQuery(Query query) throws SearchQueryException {
-		// Logger.info("query:\n" + query.toPrettyString());
 		SolrIndex index = query.getIndex();
 		SolrQuery solrQuery = solrQuerySetup(query);
-		logSorQuery(solrQuery);
+		//logSolrQuery("SearchResult",solrQuery);
 		return executeSolrQuery(index, solrQuery);
 	}
 
@@ -93,7 +107,8 @@ public class SolrServiceImpl implements SolrService {
 		IndexConfiguration indexConfig = configName == null ? index.getDefaultConfig() : index.getConfig(query.getConfigName());
 
 		SolrQuery solrQuery = buildSolrIdQuery(query, indexConfig);
-
+		logSolrQuery("executeIdQuery", solrQuery);
+		
 		return executeSolrQuery(index, solrQuery);
 	}
 
@@ -113,18 +128,21 @@ public class SolrServiceImpl implements SolrService {
 		return buildSolrQuery(query, indexConfig);
 	}
 
-	private SolrQuery buildSolrIdQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException {
+	/*
+	 * references: SearchController.searchIds() -> this.executeIdQuery() -> here
+	 */
+	@Override
+	public SolrQuery buildSolrIdQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException {
 		SolrQuery solrQuery = new SolrQuery();
-
 		String queryString = indexConfig.buildQuery(query);
-
+		queryString = query.getQueryString(true);
 		solrQuery.setQuery(queryString);
 		solrQuery.setRows(0);
 		solrQuery.set("facet", true);
 		solrQuery.set("facet.field", "id");
 		solrQuery.set("facet.query", queryString);
 		solrQuery.set("facet.limit", 30000);
-
+		logSolrQuery("buildSolrIdQuery",solrQuery);
 		return solrQuery;
 	}
 
@@ -202,8 +220,9 @@ public class SolrServiceImpl implements SolrService {
 		SearchResult result = new SearchResult();
 		SolrServer server = this.connFactory.getServer(index.getName());
 
-		Logger.debug("server: " + index.getName() + " >> " + ((HttpSolrServer) server).getBaseURL());
-		Logger.debug("query: " + solrQuery.toString());
+		//Logger.debug("server: " + index.getName() + " >> " + ((HttpSolrServer) server).getBaseURL());
+		//Logger.debug("query: " + solrQuery.toString());
+		logSolrQuery("executeSolrQuery", solrQuery);
 
 		try {
 			QueryResponse response = server.query(solrQuery, METHOD.POST);
@@ -282,6 +301,9 @@ public class SolrServiceImpl implements SolrService {
 		return results;
 	}
 
+	/**
+	 * ???? unused
+	 */
 	@Override
 	public SearchResult getUserListSearchResult(UserProteinList proteinList) throws SearchQueryException {
 
@@ -332,7 +354,7 @@ public class SolrServiceImpl implements SolrService {
 	
 	
 	private Query buildQuery(String indexName, String configurationName, QueryRequest request) {
-		Logger.debug("calling buildQuery() with indexName=" + indexName + ", configName=" + configurationName + ", request=" + request.toPrettyString());
+		//Logger.debug("calling buildQuery() with indexName=" + indexName + ", configName=" + configurationName + ", request=" + request.toPrettyString());
 		return buildQuery(indexName, configurationName, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
 	}
 

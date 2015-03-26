@@ -1,4 +1,22 @@
-package org.nextprot.api.core.service.export.impl;
+package org.nextprot.api.web.service.impl;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -7,28 +25,28 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.service.export.ExportService;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntryService;
+import org.nextprot.api.core.service.GeneService;
+import org.nextprot.api.core.service.IdentifierService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.KeywordService;
+import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
+import org.nextprot.api.web.service.ExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
-import javax.annotation.PostConstruct;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @Lazy
@@ -52,6 +70,10 @@ public class ExportServiceImpl implements ExportService {
 	private AnnotationService annotationService;
 	@Autowired
 	private EntryService entryService;
+	@Autowired
+	private FluentEntryService fluentEntryService;
+	@Autowired 
+	private VelocityConfig config; 
 
 	private int numberOfWorkers = 8;
 
@@ -63,8 +85,8 @@ public class ExportServiceImpl implements ExportService {
 
 	private final String[] CHROMOSSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
 	
-	@Autowired 
-	private VelocityConfig config; 
+	/*@Autowired 
+	private VelocityConfig config; */
 
 	@Override
 	public List<Future<File>> exportAllEntries(NPFileFormat format) {
@@ -172,7 +194,7 @@ public class ExportServiceImpl implements ExportService {
 		}
 
 	}
-
+	
 	enum SubPart {
 		HEADER, FOOTER
 	};
@@ -268,6 +290,78 @@ public class ExportServiceImpl implements ExportService {
 	public void setNumberOfWorkers(int numberOfWorkers) {
 		this.numberOfWorkers = numberOfWorkers;
 	}
+	
+	
+	@Override
+	public void streamResultsInXML(OutputStream outputStream, String viewName, List<String> accessions) {
+		try {
+			Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
 
+			writer.write("<?xml version='1.0' encoding='UTF-8'?>\n");
+			writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"https://dl.dropboxusercontent.com/u/2037400/nextprot-export.xsd\">\n");
+			
+			//TODO add <header> 
+			
+			writer.write("<entry-list>\n");
+			writer.flush();
+
+			for (String acc : accessions) {
+				streamXml(acc, viewName, writer);
+				writer.flush();
+			}
+			writer.write("</entry-list>\n");	
+			writer.write("</nextprot-export>\n");	
+			writer.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void streamResultsInJson(OutputStream outputStream, String viewName, List<String> accessions) {
+		JsonGenerator generator = null;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonFactory factory = mapper.getFactory();
+			generator = factory.createGenerator(outputStream);
+
+			for (String acc : accessions) {
+				streamJson(acc, viewName, generator);
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally{
+			if(generator != null){
+				try {
+					generator.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+	
+	
+	private void streamXml(String entryName, String viewName, Writer writer) {
+
+			Template template = config.getVelocityEngine().getTemplate("entry.xml.vm");
+
+			Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
+			VelocityContext context = new VelocityContext();
+			context.put("entry", entry);
+			context.put("StringUtils", StringUtils.class);
+			context.put("NXUtils", NXVelocityUtils.class);
+			
+			template.merge(context, writer);
+	}
+	
+	private void streamJson(String entryName, String viewName,  JsonGenerator generator) throws IOException {
+
+		Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
+		generator.writeObject(entry);
+	}
 
 }

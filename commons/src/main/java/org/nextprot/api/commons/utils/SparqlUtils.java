@@ -132,6 +132,14 @@ public class SparqlUtils {
 	
 	
 	public static String buildQuery(String prefixes, String query) {
+			String resultQuery = "";
+			resultQuery += prefixes;
+			resultQuery += query;
+			return resultQuery;
+
+	}
+
+	public static String buildQueryOld(String prefixes, String query) {
 
 		// If it does not start with prefix
 		if (!query.trim().toUpperCase().startsWith("PREFIX")) {
