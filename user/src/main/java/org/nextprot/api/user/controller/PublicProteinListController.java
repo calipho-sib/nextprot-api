@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -24,25 +25,25 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Lazy
 @Controller
-@Api(name = "Protein lists", description = "Method to access queries without authentication (SPARQL)", group="Protein Lists")
+@Api(name = "Protein lists", description = "Method to access queries without authentication (SPARQL)", group = "Protein Lists")
 public class PublicProteinListController {
 
 	@Autowired
 	private UserProteinListService proteinListService;
 
 	// Collections /////////////////
-	@ApiMethod(verb = ApiVerb.GET, description = "Gets all public lists", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(verb = ApiVerb.GET, description = "Gets all public lists", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping(value = "/lists", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<UserProteinList> getLists() {
-		return new ArrayList<UserProteinList>(); //empty for now
+		return new ArrayList<UserProteinList>(); // empty for now
 	}
 
 	// Get on list /////////////////
-	@ApiMethod(verb = ApiVerb.GET, description = "Get list by its public id", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(verb = ApiVerb.GET, description = "Get list by its public id", produces = { MediaType.APPLICATION_JSON_VALUE }, consumes = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping(value = "/lists/{listId}", method = { RequestMethod.GET })
 	@ResponseBody
-	public UserProteinList getUserProteinList(@PathVariable("listId") String listId) {
+	public UserProteinList getUserProteinList(@ApiPathParam(name = "listId", description = "The public id of the list", allowedvalues = { "" }) @PathVariable("listId") String listId) {
 		return proteinListService.getUserProteinListByPublicId(listId);
 	}
 

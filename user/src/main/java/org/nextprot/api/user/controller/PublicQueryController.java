@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Lazy
 @Controller
-@Api(name = "Queries", description = "Method to access queries without authentication (SPARQL)", group="Queries")
+@Api(name = "Queries", description = "Method to access queries without authentication (SPARQL)", group="Sparql Queries")
 public class PublicQueryController {
 
 	@Autowired

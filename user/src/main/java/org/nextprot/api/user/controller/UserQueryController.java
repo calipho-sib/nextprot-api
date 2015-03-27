@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @Api(name = "User Queries", description = "Method to manipulate personal user queries when authenticated", group="User")
 @PreAuthorize("hasRole('ROLE_USER')")
+@ApiAuthBasic(roles={"ROLE_USER"})
 public class UserQueryController {
 
 	@Autowired
@@ -49,8 +50,6 @@ public class UserQueryController {
 
 	// CREATE
 	@ApiMethod(verb = ApiVerb.POST, description = "Creates an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
-	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
-	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/me/queries", method = { RequestMethod.POST })
 	@ResponseBody
 	public UserQuery createAdvancedQuery(@RequestBody UserQuery userQuery) {
@@ -67,8 +66,6 @@ public class UserQueryController {
 
 	// UPDATE
 	@ApiMethod(path = "/user/me/queries/{id}", verb = ApiVerb.PUT, description = "Updates an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
-	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
-	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/me/queries/{id}", method = { RequestMethod.PUT })
 	@ResponseBody
 	public UserQuery updateAdvancedQuery(@PathVariable("id") String id, @RequestBody UserQuery advancedUserQuery, Model model) {
@@ -84,8 +81,6 @@ public class UserQueryController {
 
 	// DELETE
 	@ApiMethod(verb = ApiVerb.DELETE, description = "Deletes an advanced query for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
-	@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
-	@PreAuthorize("hasRole('ROLE_USER')")
 	@RequestMapping(value = "/user/me/queries/{id}", method = { RequestMethod.DELETE })
 	public void deleteUserQuery(@PathVariable("id") String id, Model model) {
 		// Never trust what the users sends to you! Send the query with the correct username, so it will be verified by the service,
