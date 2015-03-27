@@ -3,6 +3,7 @@ package org.nextprot.api.rdf.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nextprot.api.commons.exception.ExceptionUtils;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.SparqlResult;
 import org.nextprot.api.commons.utils.SparqlUtils;
@@ -47,7 +48,8 @@ public class SparqlServiceImpl implements SparqlService, InitializingBean {
 		try {
 			qExec = QueryExecutionFactory.sparqlService(sparqlEndpointUrl, query);
 		} catch (QueryParseException qe) {
-			throw new NextProtException("Malformed SPARQL: " + qe.getLocalizedMessage());
+			String msg = ExceptionUtils.fixLineNumberInErrorMessage(qe.getLocalizedMessage());
+			throw new NextProtException("Malformed SPARQL: " + msg);
 		}
 
 		ResultSet rs = qExec.execSelect();
@@ -142,7 +144,8 @@ public class SparqlServiceImpl implements SparqlService, InitializingBean {
 			qExec.close();
 
 		} catch (QueryParseException qe) {
-			throw new NextProtException("Malformed SPARQL: " + qe.getLocalizedMessage());
+			String msg = ExceptionUtils.fixLineNumberInErrorMessage(qe.getLocalizedMessage());
+			throw new NextProtException("Malformed SPARQL: " + msg);
 		}
 
 		return result;
