@@ -28,34 +28,50 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 
 		// Admin group does not exist
 		assertFalse(this.isMatchRegExpGroup(responseString, "Admin"));
-		// User and "" groups exist
-		assertTrue(this.isMatchRegExpGroup(responseString, "User"));
+
+		// User and public groups exist
 		assertTrue(this.isMatchRegExpGroup(responseString, ""));
+		assertTrue(this.isMatchRegExpGroup(responseString, "User"));
+		assertTrue(this.isMatchRegExpGroup(responseString, "Protein Lists"));
+		assertTrue(this.isMatchRegExpGroup(responseString, "Sparql Queries"));
 		
 		// Check presence of User subgroups
-		assertTrue(this.containsWithKeyValue(responseString, "name", "User"));
-		assertTrue(this.containsWithKeyValue(responseString, "name", "User Application"));
+		
+		//user stuff
 		assertTrue(this.containsWithKeyValue(responseString, "name", "User Protein Lists"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "Protein lists"));
+
+		//public
 		assertTrue(this.containsWithKeyValue(responseString, "name", "User Queries"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "Queries"));
 	}
 
 	@Test
-	public void adminShouldBeAbleToSeeAllData() throws Exception {
+	public void adminUserShouldBeAbleToSeeAllData() throws Exception {
 
-		String adminToken = generateTokenWithExpirationDate("Admin", 1, TimeUnit.DAYS, Arrays.asList("ROLE_ADMIN"));
+		String adminToken = generateTokenWithExpirationDate("AdminUser", 1, TimeUnit.DAYS, Arrays.asList("ROLE_ADMIN", "ROLE_USER"));
 
 		String responseString = this.getJSONDocByUser(adminToken);
 
 		// All groups exist
+		assertTrue(this.isMatchRegExpGroup(responseString, ""));
 		assertTrue(this.isMatchRegExpGroup(responseString, "Admin"));
 		assertTrue(this.isMatchRegExpGroup(responseString, "User"));
-		assertTrue(this.isMatchRegExpGroup(responseString, ""));
+		assertTrue(this.isMatchRegExpGroup(responseString, "Protein Lists"));
+		assertTrue(this.isMatchRegExpGroup(responseString, "Sparql Queries"));
 
 		// Check presence of User subgroups
-		assertTrue(this.containsWithKeyValue(responseString, "name", "User"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "Admin tasks"));
 		assertTrue(this.containsWithKeyValue(responseString, "name", "User Application"));
+	
+		//user stuff
 		assertTrue(this.containsWithKeyValue(responseString, "name", "User Protein Lists"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "Protein lists"));
+
+		//public
 		assertTrue(this.containsWithKeyValue(responseString, "name", "User Queries"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "Queries"));
+
 	}
 
 	@Test
@@ -68,14 +84,14 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 		// Admin group does not exist
 		assertFalse(this.isMatchRegExpGroup(responseString, "Admin"));
 		// User and "" groups exist 
-		assertTrue(this.isMatchRegExpGroup(responseString, "User"));
-		assertTrue(this.isMatchRegExpGroup(responseString, ""));
+		assertTrue(this.isMatchRegExpGroup(responseString, "Protein Lists"));
+		assertTrue(this.isMatchRegExpGroup(responseString, "Sparql Queries"));
+
 
 		// Check presence/absence of User subgroups
-		assertFalse(this.containsWithKeyValue(responseString, "name", "User"));
-		assertFalse(this.containsWithKeyValue(responseString, "name", "User Application"));
-		assertTrue(this.containsWithKeyValue(responseString, "name", "User Protein Lists"));
-		assertTrue(this.containsWithKeyValue(responseString, "name", "User Queries"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "Protein lists"));
+		assertTrue(this.containsWithKeyValue(responseString, "name", "Queries"));
+
 
 		// Check that does not contain any "modification" verbs
 		assertFalse(this.containsWithKeyValue(responseString, "verb", "POST"));
