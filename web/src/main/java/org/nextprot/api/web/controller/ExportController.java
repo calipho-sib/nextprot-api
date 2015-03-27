@@ -182,11 +182,17 @@ public class ExportController {
 	 */
 
 	private QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String filter, String quality, String sort, String order, Integer limit) {
+
 		QueryRequest qr = new QueryRequest();
 		qr.setQuery(query);
 		if (listId != null) {
 			qr.setListId(listId);
 		}
+		
+		if (sparql != null) {
+			qr.setSparql(sparql);
+		}
+		
 		qr.setQueryId(queryId);
 		qr.setRows("50");
 		qr.setFilter(filter);
@@ -236,10 +242,8 @@ public class ExportController {
 		} else if (queryRequest.hasList()) {
 			return "nextprot-list-" + queryRequest.getListId() + "-" + viewName + "." + format.getExtension();
 		} else if (queryRequest.getQuery() != null) { // search and add filters
-														// ...
 			return "nextprot-search-" + queryRequest.getQuery() + "-" + viewName + "." + format.getExtension();
-		} else if (queryRequest.getQuery() != null) { // search and add filters
-														// ...
+		} else if (queryRequest.getSparql() != null) { // search and add filters
 			return "nextprot-sparql-" + queryRequest.getSparql() + "-" + viewName + "." + format.getExtension();
 		} else {
 			throw new NextProtException("Not implemented yet.");
@@ -249,55 +253,12 @@ public class ExportController {
 	@Autowired
 	private SolrService queryService;
 
-	private Set<String> getAccessions(QueryRequest queryRequest, Integer limit) {
-
-		LinkedHashSet<String> accessions = new LinkedHashSet<String>();
-		if (queryRequest.hasNextProtQuery()) {
-			UserQuery uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId()); // For
-																								// the
-																								// export
-																								// we
-																								// only
-																								// use
-																								// public
-																								// ids
-			accessions.addAll(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), uq.getTitle()));
-		} else if (queryRequest.hasList()) {
-			accessions.addAll(proteinListService.getUserProteinListByPublicId(queryRequest.getListId()).getAccessionNumbers()); // For
-																																// the
-																																// export
-																																// we
-																																// only
-																																// use
-																																// public
-																																// ids
-		} else if (queryRequest.getQuery() != null) { // search and add filters
-														// ...
-			accessions.addAll(searchService.getAssessions(queryRequest));
-		} else if (queryRequest.getSparql() != null) { // search and add filters
-														// ...
-			accessions.addAll(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), "had-oc query"));
-		} else {
-			throw new NextProtException("Not implemented yet.");
-		}
-
-		return accessions;
-	}
-
 	private void exportEntries(NPFileFormat format, HttpServletRequest request, HttpServletResponse response, String viewName, QueryRequest queryRequest, Integer limit, Model model) {
 
 		// Gets the accessions
 		String fileName = getFileName(queryRequest, viewName, format);
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-		Set<String> accessions = getAccessions(queryRequest, limit);
-		
-		Logger.info("Found " + accessions.size() + " results to export");
-		
 
-		queryRequest.setAccs(new ArrayList<String>(accessions));
-		queryRequest.setQuery(null);
-		queryRequest.setSparql(null);
-		queryRequest.setListId(null);
 
 		Writer writer = null;
 		try {
@@ -311,14 +272,20 @@ public class ExportController {
 
 			// stream by range of 10
 			int rows = 10;
-			for (int start = 0; (start < accessions.size()) || ((limit != null) && (start < limit)); start += rows) {
+			int max = 25000;
+			for (int start = 0; (start < max) || ((limit != null) && (start < limit)); start += rows) {
 
 				Logger.info("Streaming from start: " + start + "with rows of" + rows);
 				queryRequest.setStart(String.valueOf(start));
 				queryRequest.setRows(String.valueOf(rows));
 
-				Query query = queryService.buildQueryForSearchIndexes("entry", "pl_search", queryRequest);
+				Query query = queryBuilderService.buildQueryForSearch(queryRequest, "entry");
 				List<String> subAccs = this.solrService.executeQueryAndGetAccessions(query);
+				
+				//break if there is no more results
+				if(subAccs.isEmpty())
+					break;
+				
 				if (format.equals(NPFileFormat.XML)) {
 					this.exportService.streamResultsInXML(writer, viewName, subAccs, false, false);
 				} else if (format.equals(NPFileFormat.JSON)) {
