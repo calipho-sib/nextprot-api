@@ -3,6 +3,7 @@ package org.nextprot.api.web.service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 
 import org.junit.Ignore;
@@ -28,20 +29,20 @@ public class ExportServiceTest extends WebUnitBaseTest {
 	@Test
 	public void shouldExportEntries() throws Exception {
 		OutputStream os = Mockito.mock(OutputStream.class);
-		service.streamResultsInXML(os, "overview",  Arrays.asList("NX_P06213", "NX_P01308"));
+		service.streamResultsInXML(new PrintWriter(System.out), "overview",  Arrays.asList("NX_P06213", "NX_P01308"), false, false);
 		Mockito.verify(os, Mockito.times(4)).flush();
 	}
 
 	@Test
 	public void shouldExportEntriesInOutputStream() throws Exception {
 		OutputStream os = new FileOutputStream(new File("tmp.xml"));
-		service.streamResultsInXML(os, "overview",  Arrays.asList("NX_P06213", "NX_P01308"));
+		service.streamResultsInXML(new PrintWriter(System.out), "overview",  Arrays.asList("NX_P06213", "NX_P01308"), false, false);
 		os.close();
 	}
 	
 	@Test
 	public void shouldExportEntriesInJson() throws Exception {
-		service.streamResultsInJson(System.out, "overview",  Arrays.asList("NX_P06213", "NX_P01308"));
+		service.streamResultsInJson(new PrintWriter(System.out), "overview",  Arrays.asList("NX_P06213", "NX_P01308"));
 	}
 
 
