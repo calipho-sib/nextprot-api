@@ -36,11 +36,8 @@ public class SearchServiceTest extends WebUnitBaseTest {
 	@Test
 	public void shouldNotContainThatManyEntries() throws Exception {
 		QueryRequest request = new QueryRequest();
-		request.setQuery("*");
-		//request.setQuality("");
-		request.setSort("gene");
-		request.setOrder("desc");
-		
+		request.setQuery("insulin");
+		request.setQuality("quality=gold-and-silver");
 		Set<String> accs = service.getAccessions(request);
 		System.out.println(accs.size());
 		

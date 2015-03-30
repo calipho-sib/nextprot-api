@@ -271,15 +271,13 @@ public class ExportController {
 			if (format.equals(NPFileFormat.XML)) {
 				this.exportService.streamResultsInXML(writer, null, null, true, false);
 			}
-
-			// stream by range of 10
+			
+			if((queryRequest.getQuality() == null) || (queryRequest.getQuality().equals(""))){
+				queryRequest.setQuality("gold");
+			}
 			
 			Set<String> accessionsSet = searchService.getAccessions(queryRequest);
 			List<String> accessions = null;
-			
-			if(queryRequest.getQuality() == null){
-				queryRequest.setQuality("gold");
-			}
 			
 			if(queryRequest.getSort() != null || queryRequest.getOrder() != null){
 				//TODO This is very slow and is highly memory intensive please review the way of sorting this using only the asking for ids. See the SearchServiceTest 
