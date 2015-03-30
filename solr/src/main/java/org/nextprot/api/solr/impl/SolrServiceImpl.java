@@ -1,13 +1,5 @@
 package org.nextprot.api.solr.impl;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -26,23 +18,16 @@ import org.apache.solr.common.SolrDocumentList;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.solr.IndexConfiguration;
-import org.nextprot.api.solr.IndexField;
-import org.nextprot.api.solr.IndexParameter;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SearchResult;
+import org.nextprot.api.solr.*;
 import org.nextprot.api.solr.SearchResult.SearchResultFacet;
 import org.nextprot.api.solr.SearchResult.SearchResultItem;
 import org.nextprot.api.solr.SearchResult.SearchResultSpellcheck;
-import org.nextprot.api.solr.SolrConfiguration;
-import org.nextprot.api.solr.SolrConnectionFactory;
-import org.nextprot.api.solr.SolrIndex;
-import org.nextprot.api.solr.SolrService;
-import org.nextprot.api.solr.SortConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 @Lazy
 @Service
@@ -121,6 +106,10 @@ public class SolrServiceImpl implements SolrService {
 		Logger.debug("Query index name:" + query.getIndexName());
 		Logger.debug("Query config name: "+ query.getConfigName());
 		String solrReadyQueryString = indexConfig.buildQuery(query);
+		String filter = query.getFilter();
+		if (filter != null)
+			solrReadyQueryString += " AND filters:" + filter;
+
 		Logger.debug("Solr-ready query       : " + solrReadyQueryString);
 		SolrQuery solrQuery = new SolrQuery();
 		solrQuery.setQuery(solrReadyQueryString);
