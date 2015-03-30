@@ -62,21 +62,36 @@ public class SearchServiceImpl implements SearchService {
 	@Override
 	public Set<String> getAccessions(QueryRequest queryRequest) {
 		if (queryRequest.hasAccs()) {
+			
 			Logger.debug("queryRequest.hasAccs()");
 			return new HashSet<String>(queryRequest.getAccs());
 
 		} else if (queryRequest.hasList()) {
+			
 			Logger.debug("queryRequest.hasList()");
 			UserProteinList proteinList = this.proteinListService.getUserProteinListByPublicId(queryRequest.getListId());
 			return proteinList.getAccessionNumbers();
 
 		} else if (queryRequest.hasNextProtQuery()) {
+		
 			UserQuery uq  = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId());
 			return new HashSet<String>(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
+		
 		} else if (queryRequest.hasSparql()) {
+		
 			return new HashSet<String>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
+		
 		} else {
-			return getAccessionsForSimple(queryRequest);
+
+			String originalQuality = queryRequest.getQuality();
+			//Set gold quality if not specified
+			if((queryRequest.getQuality() == null) || (queryRequest.getQuality().equals(""))){
+				queryRequest.setQuality("gold");
+			}
+			Set<String> accesions =  getAccessionsForSimple(queryRequest);
+			queryRequest.setQuality(originalQuality);
+			return accesions;
+			
 		}
 
 	}

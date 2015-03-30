@@ -2,7 +2,6 @@ package org.nextprot.api.web.service;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -17,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
  * @author dteixeira
  */
 
-@ActiveProfiles({"pro"})
+@ActiveProfiles({ "dev" })
 public class SearchServiceTest extends WebUnitBaseTest {
 
 	@Autowired
@@ -31,16 +30,14 @@ public class SearchServiceTest extends WebUnitBaseTest {
 		Set<String> accs = service.getAccessions(request);
 		assertTrue(accs.contains("NX_P01308"));
 	}
-	
-	
+
 	@Test
 	public void shouldNotContainThatManyEntries() throws Exception {
 		QueryRequest request = new QueryRequest();
-		request.setQuery("insulin");
+		request.setQuery("daniel teixeiracarvalho ");
 		request.setQuality("quality=gold-and-silver");
 		Set<String> accs = service.getAccessions(request);
-		System.out.println(accs.size());
-		
+		assertTrue(accs.size() < 10);
 	}
 
 }

@@ -272,10 +272,6 @@ public class ExportController {
 				this.exportService.streamResultsInXML(writer, null, null, true, false);
 			}
 			
-			if((queryRequest.getQuality() == null) || (queryRequest.getQuality().equals(""))){
-				queryRequest.setQuality("gold");
-			}
-			
 			Set<String> accessionsSet = searchService.getAccessions(queryRequest);
 			List<String> accessions = null;
 			
