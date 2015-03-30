@@ -295,7 +295,8 @@ public class ExportServiceImpl implements ExportService {
 
 			if (withHeader) {
 				writer.write("<?xml version='1.0' encoding='UTF-8'?>\n");
-				writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"https://dl.dropboxusercontent.com/u/2037400/nextprot-export.xsd\">\n");
+				//writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"https://dl.dropboxusercontent.com/u/2037400/nextprot-export.xsd\">\n");
+				writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 				// TODO add <header>
 				writer.write("<entry-list>\n");
 				writer.flush();
