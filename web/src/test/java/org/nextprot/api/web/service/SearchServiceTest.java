@@ -1,14 +1,15 @@
 package org.nextprot.api.web.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import java.util.Set;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Exports an entry
@@ -16,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author dteixeira
  */
 
-@Ignore
+@ActiveProfiles({"pro"})
 public class SearchServiceTest extends WebUnitBaseTest {
 
 	@Autowired
@@ -25,8 +26,9 @@ public class SearchServiceTest extends WebUnitBaseTest {
 	@Test
 	public void shouldExportEntries() throws Exception {
 		QueryRequest request = new QueryRequest();
+		request.setQuality("gold");
 		request.setQuery("insulin");
-		Set<String> accs = service.getAssessions(request);
+		Set<String> accs = service.getAccessions(request);
 		assertTrue(accs.contains("NX_P01308"));
 	}
 	
@@ -34,9 +36,14 @@ public class SearchServiceTest extends WebUnitBaseTest {
 	@Test
 	public void shouldNotContainThatManyEntries() throws Exception {
 		QueryRequest request = new QueryRequest();
-		request.setQuery("daniel teixeira tlr6");
-		Set<String> accs = service.getAssessions(request);
+		request.setQuery("*");
+		//request.setQuality("");
+		request.setSort("gene");
+		request.setOrder("desc");
+		
+		Set<String> accs = service.getAccessions(request);
 		System.out.println(accs.size());
+		
 	}
 
 }

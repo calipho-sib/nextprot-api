@@ -257,7 +257,9 @@ public class ExportController {
 
 		// Gets the accessions
 		String fileName = getFileName(queryRequest, viewName, format);
-		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+		if (format.equals(NPFileFormat.XML)) {
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+		}
 
 
 		Writer writer = null;
@@ -271,29 +273,28 @@ public class ExportController {
 			}
 
 			// stream by range of 10
-			int rows = 10;
-			int max = 25000;
-			for (int start = 0; (start < max) || ((limit != null) && (start < limit)); start += rows) {
-
-				Logger.info("Streaming from start: " + start + "with rows of" + rows);
-				queryRequest.setStart(String.valueOf(start));
-				queryRequest.setRows(String.valueOf(rows));
-
-				Query query = queryBuilderService.buildQueryForSearch(queryRequest, "entry");
-				List<String> subAccs = this.solrService.executeQueryAndGetAccessions(query);
-				
-				//break if there is no more results
-				if(subAccs.isEmpty())
-					break;
-				
-				if (format.equals(NPFileFormat.XML)) {
-					this.exportService.streamResultsInXML(writer, viewName, subAccs, false, false);
-				} else if (format.equals(NPFileFormat.JSON)) {
-					this.exportService.streamResultsInJson(writer, viewName, subAccs);
-				} else {
-					throw new NextProtException("Format not yet supported");
-				}
-
+			
+			Set<String> accessionsSet = searchService.getAccessions(queryRequest);
+			List<String> accessions = null;
+			
+			if(queryRequest.getQuality() == null){
+				queryRequest.setQuality("gold");
+			}
+			
+			if(queryRequest.getSort() != null || queryRequest.getOrder() != null){
+				//TODO This is very slow and is highly memory intensive please review the way of sorting this using only the asking for ids. See the SearchServiceTest 
+				accessions = searchService.sortAccessions(queryRequest, accessionsSet);
+			}else {
+				accessions = new ArrayList<String>(accessionsSet);
+			}
+			
+			
+			if (format.equals(NPFileFormat.XML)) {
+				this.exportService.streamResultsInXML(writer, viewName, accessions, false, false);
+			} else if (format.equals(NPFileFormat.JSON)) {
+				this.exportService.streamResultsInJson(writer, viewName, accessions);
+			} else {
+				throw new NextProtException("Format not yet supported");
 			}
 
 			// write the footer
