@@ -33,10 +33,10 @@
 	</logger>
 
 	<logger name="org.nextprot.api.solr">
-		<level value="DEBUG" />
+		<level value="WARN" />
 	</logger>
 	<logger name="org.nextprot.api.web">
-		<level value="DEBUG" />
+		<level value="WARN" />
 	</logger>
 
 	<logger name="org.nextprot.api.rdf">

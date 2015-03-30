@@ -15,6 +15,7 @@ import org.apache.solr.client.solrj.response.SpellCheckResponse.Collation;
 import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
@@ -196,8 +197,9 @@ public class SolrServiceImpl implements SolrService {
 		SearchResult result = new SearchResult();
 		SolrServer server = this.connFactory.getServer(index.getName());
 
-		//Logger.debug("server: " + index.getName() + " >> " + ((HttpSolrServer) server).getBaseURL());
-		//Logger.debug("query: " + solrQuery.toString());
+		// Logger.debug("server: " + index.getName() + " >> " +
+		// ((HttpSolrServer) server).getBaseURL());
+		// Logger.debug("query: " + solrQuery.toString());
 		logSolrQuery("executeSolrQuery", solrQuery);
 
 		try {
@@ -213,7 +215,7 @@ public class SolrServiceImpl implements SolrService {
 		SearchResult results = new SearchResult(indexName, url);
 
 		SolrDocumentList docs = response.getResults();
-		Logger.debug("Response doc size:"+docs.size());
+		Logger.debug("Response doc size:" + docs.size());
 		List<SearchResultItem> res = new ArrayList<SearchResultItem>();
 
 		SearchResultItem item = null;
@@ -279,39 +281,34 @@ public class SolrServiceImpl implements SolrService {
 		return results;
 	}
 
+	/*
+	 * @Override public SearchResult getUserListSearchResult(UserProteinList
+	 * proteinList) throws SearchQueryException {
+	 * 
+	 * Set<String> accessions = proteinList.getAccessionNumbers();
+	 * 
+	 * String queryString = "id:" + (accessions.size() > 1 ? "(" +
+	 * Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
+	 * 
+	 * SolrIndex index = this.configuration.getIndexByName("entry");
+	 * IndexConfiguration indexConfig = index.getConfig("simple");
+	 * 
+	 * FieldConfigSet fieldConfigSet =
+	 * indexConfig.getConfigSet(IndexParameter.FL); Set<IndexField> fields =
+	 * fieldConfigSet.getConfigs().keySet(); getClass();
+	 * 
+	 * String[] fieldNames = new String[fields.size()]; Iterator<IndexField> it
+	 * = fields.iterator(); int counter = 0; while (it.hasNext()) {
+	 * fieldNames[counter++] = it.next().getName(); }
+	 * 
+	 * Query query = new Query(index); query.addQuery(queryString);
+	 * query.rows(50); // Query query = this.queryService.buildQuery(index,
+	 * "simple", // queryString, null, null, null, "0", "50", null, new
+	 * String[0]);
+	 * 
+	 * return this.executeByIdQuery(query, fieldNames); }
+	 */
 
-/*
-	@Override
-	public SearchResult getUserListSearchResult(UserProteinList proteinList) throws SearchQueryException {
-
-		Set<String> accessions = proteinList.getAccessionNumbers();
-
-		String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-
-		SolrIndex index = this.configuration.getIndexByName("entry");
-		IndexConfiguration indexConfig = index.getConfig("simple");
-
-		FieldConfigSet fieldConfigSet = indexConfig.getConfigSet(IndexParameter.FL);
-		Set<IndexField> fields = fieldConfigSet.getConfigs().keySet();
-		getClass();
-
-		String[] fieldNames = new String[fields.size()];
-		Iterator<IndexField> it = fields.iterator();
-		int counter = 0;
-		while (it.hasNext()) {
-			fieldNames[counter++] = it.next().getName();
-		}
-
-		Query query = new Query(index);
-		query.addQuery(queryString);
-		query.rows(50);
-		// Query query = this.queryService.buildQuery(index, "simple",
-		// queryString, null, null, null, "0", "50", null, new String[0]);
-
-		return this.executeByIdQuery(query, fieldNames);
-	}
-*/	
-	
 	@Override
 	public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
 		return buildQuery(indexName, "autocomplete", queryString, quality, sort, order, start, rows, filter);
@@ -326,10 +323,11 @@ public class SolrServiceImpl implements SolrService {
 	public Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
 		return buildQuery(indexName, "pl_search", queryString, quality, sort, order, start, rows, filter);
 	}
-	
-	
+
 	private Query buildQuery(String indexName, String configurationName, QueryRequest request) {
-		//Logger.debug("calling buildQuery() with indexName=" + indexName + ", configName=" + configurationName + ", request=" + request.toPrettyString());
+		// Logger.debug("calling buildQuery() with indexName=" + indexName +
+		// ", configName=" + configurationName + ", request=" +
+		// request.toPrettyString());
 		return buildQuery(indexName, configurationName, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
 	}
 
@@ -362,24 +360,20 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	@Override
-	public Set<String> getQueryAccessions(QueryRequest queryRequest) {
+	public List<String> executeQueryAndGetAccessions(Query query) {
 
-		long start = System.currentTimeMillis();
-		Set<String> accessions = new LinkedHashSet<String>();
-		Query query = buildQuery("entry", "simple", queryRequest);
-		SearchResult result;
+		List<String> accessions = new ArrayList<String>();
 		try {
-			result = executeQuery(query);
+			SearchResult result = executeQuery(query);
 			for (SearchResultItem item : result.getResults()) {
-				accessions.add((String)item.getProperties().get("id"));
+				accessions.add((String) item.getProperties().get("id"));
 			}
 		} catch (SearchQueryException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw new NextProtException("An exception was thrown while searching");
 		}
-
-		Logger.debug("Time to search " + (System.currentTimeMillis() - start));
 		return accessions;
+
 	}
 
 }

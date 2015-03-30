@@ -138,22 +138,7 @@ public class SolrServiceTest  {
     	assertEquals("insulin phosphorylation intracellular", s2);
     }
     
-    @Test
-    @Ignore
-    public void testQueryResult() throws Exception {
-    	
-    	QueryRequest qr = new QueryRequest();
-    	qr.setQuery("insulin");
-    	//qr.setQuality("gold");
-    	qr.setRows("25000");
-    	qr.setSort("");
-    	qr.setOrder("");
-    	qr.setFilter("");
 
-    	Set<String> accessions = service.getQueryAccessions(qr);
-    	System.out.println(accessions.size());
-
-    }
     
     
 }

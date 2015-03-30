@@ -9,6 +9,7 @@ import java.util.Set;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.solr.SearchResult;
@@ -51,33 +52,7 @@ public class SearchServiceImpl implements SearchService {
 		}
 		return set;
 	}
+
 	
-	
-	@Override
-	public List<String> getAccessionsFilteredAndSorted(QueryRequest queryRequest, Set<String> accessions, Integer limit) {
-		
-
-		List<String> set = new ArrayList<String>();
-		try {
-			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-			queryRequest.setQuery(queryString);
-
-			if(limit != null){
-				queryRequest.setRows(limit.toString());
-			}else queryRequest.setRows("25000");
-
-			Query query =  queryBuilderService.buildQueryForSearchIndexes("entry", "pl_search", queryRequest);
-			SearchResult result = this.solrService.executeIdQuery(query);
-			List<SearchResultItem> items = result.getResults();
-			for (SearchResultItem i : items) {
-				set.add((String) i.getProperties().get("id"));
-			}
-
-		} catch (SearchQueryException e) {
-			e.printStackTrace();
-			throw new NextProtException("Error when search for pl search");
-		}
-		return set;
-	}
 
 }
