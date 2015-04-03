@@ -80,13 +80,14 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 		} else if (queryRequest.hasNextProtQuery()) {
 			Logger.debug("queryRequest.hasNextProtQuery()");
 			UserQuery uq = null;
+
+			//TODO  i don t think this is used anymore, checkout the logs
 			if(StringUtils.isWholeNumber(queryRequest.getQueryId())){ //Private id is used
+				Logger.fatal("Yes I am beeing used!!!");
 				uq = userQueryService.getUserQueryById(Long.valueOf(queryRequest.getQueryId()));
 			}else { //public id is used
 				uq = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId());
 			}
-			
-
 			
 			Set<String> accessions = new HashSet<String>(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
 			// In case there is no result

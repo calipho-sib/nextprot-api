@@ -200,7 +200,7 @@ public class FluentEntryService {
 				return this.withGenomicMappings().getEntry();
 			case INTERACTION:
 				return this.withInteractions().getEntry();
-			case PROTEIN_SEQUENCE:
+			case ISOFORM:
 				return this.withTargetIsoforms().getEntry();
 			case ANNOTATION:
 				return this.withGeneralAnnotations().getEntry();

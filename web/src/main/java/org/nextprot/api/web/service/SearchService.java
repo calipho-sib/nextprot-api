@@ -7,9 +7,8 @@ import org.nextprot.api.solr.QueryRequest;
 
 public interface SearchService {
 
-	public Set<String> getAssessions(QueryRequest queryRequest);
+	Set<String> getAccessions(QueryRequest queryRequest);
 
-	List<String> getAccessionsFilteredAndSorted(QueryRequest queryRequest, Set<String> accessions, Integer limit);
+	List<String> sortAccessions(QueryRequest queryRequest, Set<String> accessions);
 
 }
-	

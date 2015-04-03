@@ -108,6 +108,12 @@ public class SearchController {
 	}
 	
 	
+	/**
+	 * @param indexName
+	 * @param queryRequest
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value="/search-ids/{index}", method={ RequestMethod.POST })
 	public String searchIds(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest, Model model) {
 		

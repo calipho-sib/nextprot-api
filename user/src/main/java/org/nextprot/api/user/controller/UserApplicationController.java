@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
 @Api(name = "User Application", description = "Method to manipulate applications. Applications are program that access the API", group="User")
-@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
+@ApiAuthBasic(roles={"ROLE_ADMIN"})
 public class UserApplicationController {
 
 	@Autowired

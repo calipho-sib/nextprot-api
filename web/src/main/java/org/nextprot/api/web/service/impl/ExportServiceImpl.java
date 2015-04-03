@@ -4,8 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -23,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
@@ -72,8 +71,8 @@ public class ExportServiceImpl implements ExportService {
 	private EntryService entryService;
 	@Autowired
 	private FluentEntryService fluentEntryService;
-	@Autowired 
-	private VelocityConfig config; 
+	@Autowired
+	private VelocityConfig config;
 
 	private int numberOfWorkers = 8;
 
@@ -84,9 +83,10 @@ public class ExportServiceImpl implements ExportService {
 	private static String REPOSITORY_PATH = "repository";
 
 	private final String[] CHROMOSSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
-	
-	/*@Autowired 
-	private VelocityConfig config; */
+
+	/*
+	 * @Autowired private VelocityConfig config;
+	 */
 
 	@Override
 	public List<Future<File>> exportAllEntries(NPFileFormat format) {
@@ -113,8 +113,7 @@ public class ExportServiceImpl implements ExportService {
 		futures.add(exportSubPart(SubPart.FOOTER, format));
 		return futures;
 	}
-	
-	
+
 	@PostConstruct
 	public void init() {
 		executor = Executors.newFixedThreadPool(numberOfWorkers);
@@ -194,7 +193,7 @@ public class ExportServiceImpl implements ExportService {
 		}
 
 	}
-	
+
 	enum SubPart {
 		HEADER, FOOTER
 	};
@@ -270,7 +269,6 @@ public class ExportServiceImpl implements ExportService {
 
 	}
 
-
 	@Override
 	public void clearRepository() {
 
@@ -290,50 +288,54 @@ public class ExportServiceImpl implements ExportService {
 	public void setNumberOfWorkers(int numberOfWorkers) {
 		this.numberOfWorkers = numberOfWorkers;
 	}
-	
-	
+
 	@Override
-	public void streamResultsInXML(OutputStream outputStream, String viewName, List<String> accessions) {
+	public void streamResultsInXML(Writer writer, String viewName, List<String> accessions, boolean withHeader, boolean withFooter) {
 		try {
-			Writer writer = new OutputStreamWriter(outputStream, "UTF-8");
 
-			writer.write("<?xml version='1.0' encoding='UTF-8'?>\n");
-			writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"https://dl.dropboxusercontent.com/u/2037400/nextprot-export.xsd\">\n");
-			
-			//TODO add <header> 
-			
-			writer.write("<entry-list>\n");
-			writer.flush();
-
-			for (String acc : accessions) {
-				streamXml(acc, viewName, writer);
+			if (withHeader) {
+				writer.write("<?xml version='1.0' encoding='UTF-8'?>\n");
+				//writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"https://dl.dropboxusercontent.com/u/2037400/nextprot-export.xsd\">\n");
+				writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
+				// TODO add <header>
+				writer.write("<entry-list>\n");
 				writer.flush();
 			}
-			writer.write("</entry-list>\n");	
-			writer.write("</nextprot-export>\n");	
-			writer.close();
+
+			if (accessions != null) {
+				for (String acc : accessions) {
+					streamXml(acc, viewName, writer);
+					writer.flush();
+				}
+			}
+
+			if (withFooter) {
+				writer.write("</entry-list>\n");
+				writer.write("</nextprot-export>\n");
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
+			throw new NextProtException("Failed to stream xml");
 		}
 	}
 
 	@Override
-	public void streamResultsInJson(OutputStream outputStream, String viewName, List<String> accessions) {
+	public void streamResultsInJson(Writer writer, String viewName, List<String> accessions) {
 		JsonGenerator generator = null;
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			JsonFactory factory = mapper.getFactory();
-			generator = factory.createGenerator(outputStream);
+			generator = factory.createGenerator(writer);
 
 			for (String acc : accessions) {
 				streamJson(acc, viewName, generator);
 			}
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally{
-			if(generator != null){
+		} finally {
+			if (generator != null) {
 				try {
 					generator.close();
 				} catch (IOException e) {
@@ -343,22 +345,21 @@ public class ExportServiceImpl implements ExportService {
 		}
 
 	}
-	
-	
+
 	private void streamXml(String entryName, String viewName, Writer writer) {
 
-			Template template = config.getVelocityEngine().getTemplate("entry.xml.vm");
+		Template template = config.getVelocityEngine().getTemplate("entry.xml.vm");
 
-			Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
-			VelocityContext context = new VelocityContext();
-			context.put("entry", entry);
-			context.put("StringUtils", StringUtils.class);
-			context.put("NXUtils", NXVelocityUtils.class);
-			
-			template.merge(context, writer);
+		Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
+		VelocityContext context = new VelocityContext();
+		context.put("entry", entry);
+		context.put("StringUtils", StringUtils.class);
+		context.put("NXUtils", NXVelocityUtils.class);
+
+		template.merge(context, writer);
 	}
-	
-	private void streamJson(String entryName, String viewName,  JsonGenerator generator) throws IOException {
+
+	private void streamJson(String entryName, String viewName, JsonGenerator generator) throws IOException {
 
 		Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
 		generator.writeObject(entry);

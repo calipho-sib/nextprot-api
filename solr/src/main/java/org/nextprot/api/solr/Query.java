@@ -15,9 +15,6 @@ public class Query {
 	private ORDER order;
 	private int start = 0;
 	private int rows;
-	
-	
-
     
     public Query(SolrIndex index) {
 		this(index, null);
@@ -104,6 +101,8 @@ public class Query {
 	}
 
 	private String getQueryStringWithPrivateFieldNames(boolean escapeColon) {
+		if(queryString == null) return null;
+		
 		String qs = this.queryString;
 		// remove any backslash
         qs = qs.replace("\\","");        			
