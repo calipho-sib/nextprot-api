@@ -3,7 +3,7 @@ iso.unique_name as iso_unique_name,
 antibody.unique_name as antibody_unique_name, 
 antibody.db_xref_id as db_xref_id,
 src.cv_name as antibody_src,
-mp.first_pos, 
+(mp.first_pos + 1) as first_pos, 
 mp.last_pos
 from nextprot.mapping_annotations anti_master,  
 nextprot.mapping_annotations anti_iso,  

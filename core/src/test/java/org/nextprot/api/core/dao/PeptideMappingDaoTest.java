@@ -30,7 +30,7 @@ public class PeptideMappingDaoTest extends CoreUnitBaseTest {
 		assertEquals(1, mappings.get(0).getIsoformSpecificity().size());
 		List<Pair<Integer, Integer>> positions = mappings.get(0).getIsoformSpecificity().get("NX_P12345-1").getPositions();
 		assertEquals(1, positions.size());
-		assertTrue(1 == positions.get(0).getFirst());
+		assertTrue(2 == positions.get(0).getFirst());
 		assertTrue(1000 == positions.get(0).getSecond());
 	}
 	
