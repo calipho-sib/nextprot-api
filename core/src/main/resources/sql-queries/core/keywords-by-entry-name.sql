@@ -13,7 +13,7 @@ and t.cv_id = prop.cv_term_id
 and x.accession not in ('KW-0181', 'KW-1185') -- Complete proteome KW-0181 and Reference proteome KW-1185 are banned because they are irrelavant for nextProt (Amos said) 
 and prop.property_name = 'Category' 
 and prop.property_value in ('Biological process','Cellular component', 'Coding sequence diversity', 'Disease', 'Domain', 'Developmental stage', 'Ligand','Molecular function', 'PTM', 'Technical term')
-
+order by x.accession
 /*
 Amos email from (Thu, Jul 11, 2013 at 12:11 PM)
 

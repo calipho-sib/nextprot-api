@@ -20,7 +20,7 @@ public class KeywordDaoTest extends CoreUnitBaseTest {
 	@Test
 	public void testFindKeywordByMaster() {
 		List<Keyword> keywords = this.keywordDao.findKeywordByMaster("NX_P12345");
-
+		
 		for (Keyword k: keywords) System.out.println(k.getAccession());
 		
 		assertEquals(3, keywords.size());
