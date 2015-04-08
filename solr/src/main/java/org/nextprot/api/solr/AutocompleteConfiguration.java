@@ -26,14 +26,14 @@ public class AutocompleteConfiguration extends IndexConfiguration {
 	 */
 	@Override
 	public String buildQuery(Query query) {
-		String initialQuery = query.getQueryString();
+		String initialQuery = query.getQueryString(true);
 		String queryString = super.buildQuery(query);
 		
 		// finishes with space
 		if(initialQuery.charAt(initialQuery.length()-1) == WHITESPACE.charAt(0)) {
 			this.otherParameters.put("facet.prefix", RANDOM_STRING);
 		} else {
-			String[] tokens = query.getQueryString().split(WHITESPACE);
+			String[] tokens = query.getQueryString(true).split(WHITESPACE);
 			String lastToken = tokens[tokens.length-1].toLowerCase();
 			char lastCharOfLastToken = lastToken.charAt(lastToken.length()-1);
 			String prefix = "";

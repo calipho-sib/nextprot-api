@@ -3,6 +3,7 @@ package org.nextprot.api.user.service.impl;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
+import org.nextprot.api.commons.utils.StringGenService;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -10,6 +11,7 @@ import org.nextprot.api.user.utils.UserProteinListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,11 @@ import java.util.Set;
 @Lazy
 @Service
 public class UserProteinListServiceImpl implements UserProteinListService {
+
+    private static final String PUBLIC_ID_UNIQUE_CONSTRAINT_NAME = "user_protein_lists_pubid_udx";
+
+    @Autowired
+    private StringGenService generator;
 
 	@Autowired
 	private UserProteinListDao proteinListDao;
@@ -35,16 +42,47 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 		NPreconditions.checkNotNull(userProteinList, "The user protein list should not be null");
 		NPreconditions.checkTrue(userProteinList.getId() == 0, "The user protein list should be new");
 
-		long id = proteinListDao.createUserProteinList(userProteinList);
-		userProteinList.setId(id);
+        generatePubidAndCreate(userProteinList);
 
-		Set<String> accessions = userProteinList.getAccessionNumbers();
-		if (accessions != null && !accessions.isEmpty()) {
-			proteinListDao.createUserProteinListItems(id, accessions);
-		}
+        Set<String> accessions = userProteinList.getAccessionNumbers();
+        if (accessions != null && !accessions.isEmpty())
+            proteinListDao.createUserProteinListItems(userProteinList.getId(), accessions);
 
 		return userProteinList;
 	}
+
+    /**
+     * Generate and set public_id into userProteinList then invoke dao.createUserProteinList.
+     *
+     * @param userProteinList the resource to create
+     *
+     * @throws DuplicateKeyException
+     */
+    private void generatePubidAndCreate(UserProteinList userProteinList) {
+
+        int maxLoop = 10;
+
+        DuplicateKeyException e;
+
+        int count=0;
+        do {
+            userProteinList.setPublicId(generator.generateString());
+
+            try {
+                long id = proteinListDao.createUserProteinList(userProteinList);
+                userProteinList.setId(id);
+                e = null;
+
+            } catch (DuplicateKeyException dke) {
+
+                if (!dke.getMessage().contains(PUBLIC_ID_UNIQUE_CONSTRAINT_NAME) || count >= maxLoop)
+                    throw dke;
+
+                e = dke;
+            }
+            count++;
+        } while(e != null);
+    }
 
 	@Override
 	public void deleteUserProteinList(UserProteinList proteinList) {
@@ -52,7 +90,6 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	}
 
 	@Override
-	@AllowedAnonymous
 	public UserProteinList getUserProteinListById(long listId) {
 		try {
 			return proteinListDao.getUserProteinListById(listId);
@@ -94,8 +131,8 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 	}
 
 	@Override
-	@AllowedAnonymous //For now we don't secure the accessions of the list (we just secure the meta information like the name and description...)
-	public Set<String> getUserProteinListAccessionItemsById(long listId) {
-		return proteinListDao.getAccessionsByListId(listId);
+	@AllowedAnonymous
+	public UserProteinList getUserProteinListByPublicId(String publicId) {
+		return proteinListDao.getUserProteinListByPublicId(publicId);
 	}
 }

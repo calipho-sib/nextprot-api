@@ -1,6 +1,7 @@
 package org.nextprot.api.user.controller;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.user.domain.User;
@@ -23,15 +24,17 @@ import java.util.List;
  */
 @Controller
 @PreAuthorize("hasRole('ROLE_USER')")
-@Api(name = "User", description = "Method to manipulate users.")
+@Api(name = "User", description = "Method to manipulate users.", group="User")
+@ApiAuthBasic(roles={"ROLE_USER","ROLE_ADMIN"})
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @ApiMethod(path = "/users", verb = ApiVerb.GET, description = "Gets all applications for a logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
+   /* @ApiMethod(path = "/users", verb = ApiVerb.GET, description = "Gets all applications for a logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
     @RequestMapping(value = "/users", method = { RequestMethod.GET })
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<User> getApplications() {
         //return userService.getUserList();
 
@@ -41,7 +44,7 @@ public class UserController {
         user.setUsername("okkdoedko");
 
         return Arrays.asList(user);
-    }
+    }*/
 
 	
 	/*@ApiMethod(path = "/user/applications", verb = ApiVerb.POST, description = "Creates a user application for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})

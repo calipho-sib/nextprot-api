@@ -7,10 +7,9 @@ public class RestErrorResponse implements Serializable{
 	private static final long serialVersionUID = 7820195778216393136L;
 	private String message;
 	private String type;
-/*	private String documentationLink = "http://crick:8080/";
-	private String exampleLink = "http://crick:8080/nextprot-api/entry/NX_P01308/overview.xml";*/
-	private String about = "neXtProt API v0.1 - http://nextprot.org";
-
+	//TODO include maven version
+	private String about = "neXtProt API - https://api.nextprot.org";
+	
 	public String getMessage() {
 		return message;
 	}
@@ -18,24 +17,6 @@ public class RestErrorResponse implements Serializable{
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
-	/*
-	public String getDocumentationLink() {
-		return documentationLink;
-	}
-
-	public void setDocumentationLink(String documentationLink) {
-		this.documentationLink = documentationLink;
-	}
-
-	public String getExampleLink() {
-		return exampleLink;
-	}
-
-	public void setExampleLink(String exampleLink) {
-		this.exampleLink = exampleLink;
-	}*/
-
 
 	public String getType() {
 		return type;

@@ -11,6 +11,7 @@ entry:$entry.getUniqueName() a :Entry;
   .
 
 #foreach($isoform in $entry.getIsoforms())
+#set($isoform-name =  $isoform.getUniqueName())
 #if($isoform.isSwissProtDisplayedIsoform()) 
 isoform:$isoform-name :swissprotDisplayed "true"^^xsd:boolean . 
 #else

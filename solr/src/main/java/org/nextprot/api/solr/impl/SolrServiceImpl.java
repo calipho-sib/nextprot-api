@@ -1,6 +1,5 @@
 package org.nextprot.api.solr.impl;
 
-import com.google.common.base.Joiner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.solr.client.solrj.SolrQuery;
@@ -8,7 +7,6 @@ import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrRequest.METHOD;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -17,6 +15,7 @@ import org.apache.solr.client.solrj.response.SpellCheckResponse.Collation;
 import org.apache.solr.client.solrj.response.SpellCheckResponse.Suggestion;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
@@ -24,7 +23,6 @@ import org.nextprot.api.solr.*;
 import org.nextprot.api.solr.SearchResult.SearchResultFacet;
 import org.nextprot.api.solr.SearchResult.SearchResultItem;
 import org.nextprot.api.solr.SearchResult.SearchResultSpellcheck;
-import org.nextprot.api.user.domain.UserProteinList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -36,24 +34,27 @@ import java.util.Map.Entry;
 @Service
 public class SolrServiceImpl implements SolrService {
 	private static final Log Logger = LogFactory.getLog(SolrServiceImpl.class);
+	private static final int DEFAULT_ROWS = 50;
 
-	@Autowired private SolrConnectionFactory connFactory;
-	@Autowired private SolrConfiguration configuration;
+	@Autowired
+	private SolrConnectionFactory connFactory;
+	@Autowired
+	private SolrConfiguration configuration;
 
-	private final int DEFAULT_ROWS = 50;
-
-	private void logSorQuery(SolrQuery sq) {
+	private void logSolrQuery(String context, SolrQuery sq) {
 		Set<String> params = new TreeSet<String>();
-		for (String p: sq.getParameterNames()) params.add(p + " : " + sq.get(p));
-		Logger.info("SolrQuery");
-		for (String p: params) Logger.info("SolrQuery " + p);
+		for (String p : sq.getParameterNames()) params.add(p + " : " + sq.get(p));
+		Logger.debug("SolrQuery ============================================================== in " + context);
+		for (String p : params) {
+			Logger.debug("SolrQuery " + p);
+		}
 	}
-	
+
 	public SearchResult executeQuery(Query query) throws SearchQueryException {
-		//Logger.info("query:\n" + query.toPrettyString());
 		SolrIndex index = query.getIndex();
 		SolrQuery solrQuery = solrQuerySetup(query);
-		logSorQuery(solrQuery);
+		
+		logSolrQuery("executeQuery",solrQuery);
 		return executeSolrQuery(index, solrQuery);
 	}
 
@@ -65,80 +66,25 @@ public class SolrServiceImpl implements SolrService {
 		return executeSolrQuery(index, solrQuery);
 	}
 
-
-	public SearchResult executeByIdQuery(Query query, String[] fields) {
-		SolrIndex index = query.getIndex();
-
-		SolrQuery solrQuery = new SolrQuery();
-		solrQuery.setQuery(query.getQueryString());
-		solrQuery.setFields(fields);
-		solrQuery.setStart(query.getStart());
-		solrQuery.setRows(query.getRows());
-
-		return executeSolrQuery(index, solrQuery);
-	}
-
+	
 	public SearchResult executeIdQuery(Query query) throws SearchQueryException {
 		SolrIndex index = query.getIndex();
 
 		if (index == null)
 			index = this.configuration.getIndexByName(query.getIndexName());
 		String configName = query.getConfigName();
-
-		IndexConfiguration indexConfig = configName == null ? index
-				.getDefaultConfig() : index.getConfig(query.getConfigName());
+		IndexConfiguration indexConfig = configName == null ? index.getDefaultConfig() : index.getConfig(query.getConfigName());
+		Logger.debug("configName="+indexConfig.getName());
 
 		SolrQuery solrQuery = buildSolrIdQuery(query, indexConfig);
-
+		
+		logSolrQuery("executeIdQuery", solrQuery);
+		
 		return executeSolrQuery(index, solrQuery);
 	}
 
 	public boolean checkAvailableIndex(String indexName) {
 		return this.configuration.hasIndex(indexName);
-	}
-
-
-	public Query buildQuery(String indexName, String configuration, String queryString, String sort, String order,
-			String start, String rows) {
-
-		return buildQuery(indexName, configuration, queryString, null, sort, order, start, rows, null);
-	}
-
-	public Query buildQuery(String indexName, String configurationName, QueryRequest request) {
-
-		Logger.debug("calling buildQuery() with indexName=" + indexName + ", configName="+ configurationName + ", request="+ request.toPrettyString());
-		return buildQuery(indexName, configurationName, request.getQuery(), request.getQuality(), request.getSort(),
-				request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
-	}
-
-
-	public Query buildQuery(String indexName, String configuration, String queryString, String quality, String sort, String order,
-			String start, String rows, String filter) {
-
-		String actualIndexName = indexName.equals("entry") && quality != null && quality.equals("gold") ? "gold-entry" : indexName;
-
-		SolrIndex index = this.configuration.getIndexByName(actualIndexName);
-
-		Query q = new Query(index).addQuery(queryString);
-		q.setConfiguration(configuration);
-
-		q.rows((rows != null) ? Integer.parseInt(rows) : DEFAULT_ROWS);
-		q.start((start != null) ? Integer.parseInt(start) : 0);
-
-		if(sort != null && sort.length() > 0)
-			q.sort(sort);
-
-		if(order != null && (order.equals(ORDER.asc.name()) || order.equals(ORDER.desc.name()))) {
-			q.order(ORDER.valueOf(order));
-		}
-
-		q.setIndex(index);
-		q.setIndexName(actualIndexName);
-
-		if(filter != null && filter.length() > 0)
-			q.addFilter(filter);
-
-		return q;
 	}
 
 	private SolrQuery solrQuerySetup(Query query) throws SearchQueryException {
@@ -148,28 +94,34 @@ public class SolrServiceImpl implements SolrService {
 			index = this.configuration.getIndexByName(query.getIndexName());
 		String configName = query.getConfigName();
 
-		IndexConfiguration indexConfig = configName == null ? index
-				.getDefaultConfig() : index.getConfig(query.getConfigName());
+		IndexConfiguration indexConfig = configName == null ? index.getDefaultConfig() : index.getConfig(query.getConfigName());
 
 		return buildSolrQuery(query, indexConfig);
 	}
 
-	private SolrQuery buildSolrIdQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException {
+	/*
+	 * references: SearchController.searchIds() -> this.executeIdQuery() -> here
+	 */
+	@Override
+	public SolrQuery buildSolrIdQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException {
+		Logger.debug("Query index name:" + query.getIndexName());
+		Logger.debug("Query config name: "+ query.getConfigName());
+		String solrReadyQueryString = indexConfig.buildQuery(query);
+		String filter = query.getFilter();
+		if (filter != null)
+			solrReadyQueryString += " AND filters:" + filter;
+
+		Logger.debug("Solr-ready query       : " + solrReadyQueryString);
 		SolrQuery solrQuery = new SolrQuery();
-
-		String queryString = indexConfig.buildQuery(query);
-
-		solrQuery.setQuery(queryString);
+		solrQuery.setQuery(solrReadyQueryString);
 		solrQuery.setRows(0);
 		solrQuery.set("facet", true);
 		solrQuery.set("facet.field", "id");
-		solrQuery.set("facet.query", queryString);
+		solrQuery.set("facet.query", solrReadyQueryString);
 		solrQuery.set("facet.limit", 30000);
-
+		logSolrQuery("buildSolrIdQuery",solrQuery);
 		return solrQuery;
 	}
-
-
 
 	/**
 	 * Builds a SOLR Query according to the specified index configuration
@@ -178,8 +130,7 @@ public class SolrServiceImpl implements SolrService {
 	 * @param indexConfig
 	 * @return
 	 */
-	private SolrQuery buildSolrQuery(Query query, IndexConfiguration indexConfig)
-			throws SearchQueryException {
+	private SolrQuery buildSolrQuery(Query query, IndexConfiguration indexConfig) throws SearchQueryException {
 		SolrQuery solrQuery = new SolrQuery();
 
 		String queryString = indexConfig.buildQuery(query);
@@ -192,16 +143,11 @@ public class SolrServiceImpl implements SolrService {
 		solrQuery.setStart(query.getStart());
 		solrQuery.setRows(query.getRows());
 		solrQuery.setFields(indexConfig.getParameterQuery(IndexParameter.FL));
-		solrQuery.set(IndexParameter.FL.name().toLowerCase(),
-				indexConfig.getParameterQuery(IndexParameter.FL));
-		solrQuery.set(IndexParameter.QF.name().toLowerCase(),
-				indexConfig.getParameterQuery(IndexParameter.QF));
-		solrQuery.set(IndexParameter.PF.name().toLowerCase(),
-				indexConfig.getParameterQuery(IndexParameter.PF));
-		solrQuery.set(IndexParameter.FN.name().toLowerCase(),
-				indexConfig.getParameterQuery(IndexParameter.FN));
-		solrQuery.set(IndexParameter.HI.name().toLowerCase(),
-				indexConfig.getParameterQuery(IndexParameter.HI));
+		solrQuery.set(IndexParameter.FL.name().toLowerCase(), indexConfig.getParameterQuery(IndexParameter.FL));
+		solrQuery.set(IndexParameter.QF.name().toLowerCase(), indexConfig.getParameterQuery(IndexParameter.QF));
+		solrQuery.set(IndexParameter.PF.name().toLowerCase(), indexConfig.getParameterQuery(IndexParameter.PF));
+		solrQuery.set(IndexParameter.FN.name().toLowerCase(), indexConfig.getParameterQuery(IndexParameter.FN));
+		solrQuery.set(IndexParameter.HI.name().toLowerCase(), indexConfig.getParameterQuery(IndexParameter.HI));
 
 		Map<String, String> otherParameters = indexConfig.getOtherParameters();
 
@@ -216,9 +162,9 @@ public class SolrServiceImpl implements SolrService {
 			sortConfig = indexConfig.getSortConfig(sortName);
 
 			if (sortConfig == null)
-				throw new SearchQueryException("sort " + sortName
-						+ " does not exist");
-		} else sortConfig = indexConfig.getDefaultSortConfiguration();
+				throw new SearchQueryException("sort " + sortName + " does not exist");
+		} else
+			sortConfig = indexConfig.getDefaultSortConfiguration();
 
 		if (query.getOrder() != null) {
 			for (Pair<IndexField, ORDER> s : sortConfig.getSorting())
@@ -229,16 +175,16 @@ public class SolrServiceImpl implements SolrService {
 				solrQuery.addSort(s.getFirst().getName(), s.getSecond());
 		}
 
-//		function buildBoost(value) { return "sum(1.0,product(div(log(informational_score),6.0),div("+ value +",100.0)))"; }
+		// function buildBoost(value) { return
+		// "sum(1.0,product(div(log(informational_score),6.0),div("+ value
+		// +",100.0)))"; }
 
-		if(sortConfig.getBoost() != -1) {
-			solrQuery.set("boost", "sum(1.0,product(div(log(informational_score),6.0),div("+ sortConfig.getBoost() +",100.0)))");
+		if (sortConfig.getBoost() != -1) {
+			solrQuery.set("boost", "sum(1.0,product(div(log(informational_score),6.0),div(" + sortConfig.getBoost() + ",100.0)))");
 		}
-
 
 		return solrQuery;
 	}
-
 
 	/**
 	 * Perform the Solr query and return the results
@@ -251,24 +197,25 @@ public class SolrServiceImpl implements SolrService {
 		SearchResult result = new SearchResult();
 		SolrServer server = this.connFactory.getServer(index.getName());
 
-		 Logger.debug("server: "+index.getName()+" >> "+((HttpSolrServer)server).getBaseURL());
-		 Logger.debug("query: "+solrQuery.toString());
+		// Logger.debug("server: " + index.getName() + " >> " +
+		// ((HttpSolrServer) server).getBaseURL());
+		// Logger.debug("query: " + solrQuery.toString());
+		logSolrQuery("executeSolrQuery", solrQuery);
 
 		try {
 			QueryResponse response = server.query(solrQuery, METHOD.POST);
-			result = buildSearchResult(solrQuery, index.getName(),
-					index.getUrl(), response);
+			result = buildSearchResult(solrQuery, index.getName(), index.getUrl(), response);
 		} catch (SolrServerException e) {
 			throw new SearchConnectionException("Could not connect to Solr server. Please contact support or try again later.");
 		}
 		return result;
 	}
 
-	private SearchResult buildSearchResult(SolrQuery query, String indexName,
-			String url, QueryResponse response) {
+	private SearchResult buildSearchResult(SolrQuery query, String indexName, String url, QueryResponse response) {
 		SearchResult results = new SearchResult(indexName, url);
 
 		SolrDocumentList docs = response.getResults();
+		Logger.debug("Response doc size:" + docs.size());
 		List<SearchResultItem> res = new ArrayList<SearchResultItem>();
 
 		SearchResultItem item = null;
@@ -282,7 +229,8 @@ public class SolrServiceImpl implements SolrService {
 		}
 
 		results.setResults(res);
-		if(query.getStart() != null) results.setStart(query.getStart());
+		if (query.getStart() != null)
+			results.setStart(query.getStart());
 
 		results.setRows(query.getRows());
 		results.setElapsedTime(response.getElapsedTime());
@@ -294,12 +242,13 @@ public class SolrServiceImpl implements SolrService {
 		// Facets
 
 		List<FacetField> facetFields = response.getFacetFields();
-
+		Logger.debug("Response facet fields:" + facetFields.size());
 		if (facetFields != null) {
 			SearchResultFacet facet = null;
 
 			for (FacetField ff : facetFields) {
 				facet = new SearchResultFacet(ff.getName());
+				Logger.debug("Response facet field:" + ff.getName() + " count:" + ff.getValueCount());
 
 				for (Count c : ff.getValues())
 					facet.addFacetField(c.getName(), c.getCount());
@@ -309,26 +258,22 @@ public class SolrServiceImpl implements SolrService {
 
 		// Spellcheck
 
-		SpellCheckResponse spellcheckResponse = response
-				.getSpellCheckResponse();
+		SpellCheckResponse spellcheckResponse = response.getSpellCheckResponse();
 
 		if (spellcheckResponse != null) {
 			SearchResultSpellcheck spellcheckResult = new SearchResultSpellcheck();
 
 			List<Suggestion> suggestions = spellcheckResponse.getSuggestions();
-			List<Collation> collations = spellcheckResponse
-					.getCollatedResults();
+			List<Collation> collations = spellcheckResponse.getCollatedResults();
 
 			if (collations != null) {
 				for (Collation c : collations)
-					spellcheckResult.addCollation(c.getCollationQueryString(),
-							c.getNumberOfHits());
+					spellcheckResult.addCollation(c.getCollationQueryString(), c.getNumberOfHits());
 			}
 
 			if (suggestions != null)
 				for (Suggestion s : suggestions)
-					spellcheckResult.addSuggestions(s.getToken(),
-							s.getAlternatives());
+					spellcheckResult.addSuggestions(s.getToken(), s.getAlternatives());
 
 			results.setSpellCheck(spellcheckResult);
 		}
@@ -336,36 +281,99 @@ public class SolrServiceImpl implements SolrService {
 		return results;
 	}
 
+	/*
+	 * @Override public SearchResult getUserListSearchResult(UserProteinList
+	 * proteinList) throws SearchQueryException {
+	 * 
+	 * Set<String> accessions = proteinList.getAccessionNumbers();
+	 * 
+	 * String queryString = "id:" + (accessions.size() > 1 ? "(" +
+	 * Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
+	 * 
+	 * SolrIndex index = this.configuration.getIndexByName("entry");
+	 * IndexConfiguration indexConfig = index.getConfig("simple");
+	 * 
+	 * FieldConfigSet fieldConfigSet =
+	 * indexConfig.getConfigSet(IndexParameter.FL); Set<IndexField> fields =
+	 * fieldConfigSet.getConfigs().keySet(); getClass();
+	 * 
+	 * String[] fieldNames = new String[fields.size()]; Iterator<IndexField> it
+	 * = fields.iterator(); int counter = 0; while (it.hasNext()) {
+	 * fieldNames[counter++] = it.next().getName(); }
+	 * 
+	 * Query query = new Query(index); query.addQuery(queryString);
+	 * query.rows(50); // Query query = this.queryService.buildQuery(index,
+	 * "simple", // queryString, null, null, null, "0", "50", null, new
+	 * String[0]);
+	 * 
+	 * return this.executeByIdQuery(query, fieldNames); }
+	 */
 
-@Override
-public SearchResult getUserListSearchResult(UserProteinList proteinList) throws SearchQueryException {
-
-	Set<String> accessions = proteinList.getAccessionNumbers();
-
-	String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-
-	SolrIndex index = this.configuration.getIndexByName("entry");
-	IndexConfiguration indexConfig = index.getConfig("simple");
-
-	FieldConfigSet fieldConfigSet = indexConfig.getConfigSet(IndexParameter.FL);
-	Set<IndexField> fields = fieldConfigSet.getConfigs().keySet();
-	getClass();
-
-	String[] fieldNames = new String[fields.size()];
-
-	Iterator<IndexField> it = fields.iterator();
-
-	int counter = 0;
-	while (it.hasNext()) {
-		fieldNames[counter++] = it.next().getName();
+	@Override
+	public Query buildQueryForAutocomplete(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+		return buildQuery(indexName, "autocomplete", queryString, quality, sort, order, start, rows, filter);
 	}
 
-	Query query = new Query(index);
-	query.addQuery(queryString);
-	query.rows(50);
-	// Query query = this.queryService.buildQuery(index, "simple", queryString, null, null, null, "0", "50", null, new String[0]);
+	@Override
+	public Query buildQueryForSearchIndexes(String indexName, String configurationName, QueryRequest request) {
+		return this.buildQuery(indexName, configurationName, request);
+	}
 
-	return this.executeByIdQuery(query, fieldNames);
-}
+	@Override
+	public Query buildQueryForProteinLists(String indexName, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+		return buildQuery(indexName, "pl_search", queryString, quality, sort, order, start, rows, filter);
+	}
+
+	private Query buildQuery(String indexName, String configurationName, QueryRequest request) {
+		// Logger.debug("calling buildQuery() with indexName=" + indexName +
+		// ", configName=" + configurationName + ", request=" +
+		// request.toPrettyString());
+		return buildQuery(indexName, configurationName, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
+	}
+
+	private Query buildQuery(String indexName, String configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
+
+		String actualIndexName = indexName.equals("entry") && quality != null && quality.equals("gold") ? "gold-entry" : indexName;
+
+		SolrIndex index = this.configuration.getIndexByName(actualIndexName);
+
+		Query q = new Query(index).addQuery(queryString);
+		q.setConfiguration(configuration);
+
+		q.rows((rows != null) ? Integer.parseInt(rows) : DEFAULT_ROWS);
+		q.start((start != null) ? Integer.parseInt(start) : 0);
+
+		if (sort != null && sort.length() > 0)
+			q.sort(sort);
+
+		if (order != null && (order.equals(ORDER.asc.name()) || order.equals(ORDER.desc.name()))) {
+			q.order(ORDER.valueOf(order));
+		}
+
+		q.setIndex(index);
+		q.setIndexName(actualIndexName);
+
+		if (filter != null && filter.length() > 0)
+			q.addFilter(filter);
+
+		return q;
+	}
+
+	@Override
+	public List<String> executeQueryAndGetAccessions(Query query) {
+
+		List<String> accessions = new ArrayList<String>();
+		try {
+			SearchResult result = executeQuery(query);
+			for (SearchResultItem item : result.getResults()) {
+				accessions.add((String) item.getProperties().get("id"));
+			}
+		} catch (SearchQueryException e) {
+			e.printStackTrace();
+			throw new NextProtException("An exception was thrown while searching");
+		}
+		return accessions;
+
+	}
 
 }

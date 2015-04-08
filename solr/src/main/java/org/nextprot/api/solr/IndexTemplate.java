@@ -11,5 +11,7 @@ public abstract class IndexTemplate extends AbstractSolrIndex {
 
 	protected abstract void setupConfigurations();
 	
+	public abstract IndexField[] getFieldValues();
+	
 	public static abstract class ConfigurationName { };
 }

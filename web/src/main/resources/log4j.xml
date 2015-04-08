@@ -29,11 +29,18 @@
 	</appender>
 	
 	<logger name="org.springframework">
-		<level value="INFO" />
+		<level value="WARN" />
 	</logger>
 
 	<logger name="org.nextprot.api.solr">
 		<level value="WARN" />
+	</logger>
+	<logger name="org.nextprot.api.web">
+		<level value="WARN" />
+	</logger>
+
+	<logger name="org.nextprot.api.rdf">
+		<level value="INFO" />
 	</logger>
 
 	<logger name="net.sf.ehcache">
@@ -49,7 +56,7 @@
 	</logger>
 
 	<logger name="org.apache.solr">
-		<level value="INFO" />
+		<level value="WARN" />
 	</logger>
 
 	<logger name="org.apache.solr.client.solrj.impl.HttpSolrServer">

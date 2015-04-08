@@ -5,18 +5,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
 import org.nextprot.api.commons.exception.SearchQueryException;
+import org.nextprot.api.commons.utils.StringGenService;
 import org.nextprot.api.security.service.JWTCodec;
 import org.nextprot.api.user.dao.UserProteinListDao;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 
 import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 public class UserProteinListServiceTest extends AbstractUnitBaseTest {
@@ -33,11 +37,14 @@ public class UserProteinListServiceTest extends AbstractUnitBaseTest {
 	@Mock
 	private JWTCodec<Map<String, String>> codec;
 
+    @Mock
+    private StringGenService stringGenerator;
+
 	@Before
 	public void init() {
 
 		MockitoAnnotations.initMocks(this);
-	}
+    }
 
 	@Test
 	public void testCreateProteinList() {
@@ -51,7 +58,68 @@ public class UserProteinListServiceTest extends AbstractUnitBaseTest {
 		assertEquals(10, created.getId());
 		assertEquals("awesome", created.getName());
 		assertEquals(Sets.newHashSet("NX_P123"), created.getAccessionNumbers());
+
+        Mockito.verify(stringGenerator, times(1)).generateString();
 	}
+
+    @Test
+    public void testGeneratePubIdInCreateProteinList() {
+
+        UserProteinList proteinList = createUserProteinList("awesome", Sets.newHashSet("NX_P123"));
+
+        Mockito.when(dao.createUserProteinList(proteinList))
+                .thenThrow(new DuplicateKeyException("PreparedStatementCallback; SQL [INSERT INTO np_users.user_protein_lists (list_name, description, owner_id, public_id)\n" +
+                        "VALUES (?, ?, ?, ?);]; ERROR: duplicate key value violates unique constraint \"user_protein_lists_pubid_udx\"\n" +
+                        "  Detail: Key (public_id)=(00000001) already exists.; nested exception is org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"user_protein_lists_pubid_udx\"\n" +
+                        "  Detail: Key (public_id)=(00000001) already exists."))
+                .thenThrow(new DuplicateKeyException("PreparedStatementCallback; SQL [INSERT INTO np_users.user_protein_lists (list_name, description, owner_id, public_id)\n" +
+                        "VALUES (?, ?, ?, ?);]; ERROR: duplicate key value violates unique constraint \"user_protein_lists_pubid_udx\"\n" +
+                        "  Detail: Key (public_id)=(00000001) already exists.; nested exception is org.postgresql.util.PSQLException: ERROR: duplicate key value violates unique constraint \"user_protein_lists_pubid_udx\"\n" +
+                        "  Detail: Key (public_id)=(00000001) already exists."))
+                .thenReturn(1L);
+
+        proteinListService.createUserProteinList(proteinList);
+
+        Mockito.verify(stringGenerator, times(3)).generateString();
+    }
+
+    @Test(expected = DuplicateKeyException.class)
+    public void testGeneratePubIdInCreateProteinList2() {
+
+        UserProteinList proteinList = createUserProteinList("awesome", Sets.newHashSet("NX_P123"));
+
+        Mockito.when(dao.createUserProteinList(proteinList))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+                .thenThrow(new DuplicateKeyException("user_protein_lists_pubid_udx"))
+
+                .thenReturn(1L);
+
+        proteinListService.createUserProteinList(proteinList);
+
+        Mockito.verify(stringGenerator, times(3)).generateString();
+    }
+
+    @Test(expected = DuplicateKeyException.class)
+    public void testGeneratePubIdInCreateProteinList3() {
+
+        UserProteinList proteinList = createUserProteinList("awesome", Sets.newHashSet("NX_P123"));
+
+        Mockito.when(dao.createUserProteinList(proteinList))
+                .thenThrow(new DuplicateKeyException(""))
+                .thenReturn(1L);
+
+        proteinListService.createUserProteinList(proteinList);
+    }
 
 	public void getProteinListSearchResult() throws SearchQueryException {
 		//TODO rewrite this code on the solr module 

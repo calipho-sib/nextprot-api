@@ -42,22 +42,29 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 
 	private static final Log LOGGER = LogFactory.getLog(SparqlEndpointImpl.class);
 
-	private List<String> completeSetOfValuesForTypes = Arrays.asList(":Source", ":Database", ":SubcellularLocation", ":NextprotTissues");
-	private List<String> completeSetOfValuesForLiteral = Arrays.asList("NextprotTissues/rdfs:label", ":SubcellularLocation/rdfs:comment");
+	private List<String> completeSetOfValuesForTypes = Arrays.asList(":Source", ":Database", ":SubcellularLocation", ":NextprotAnatomyCv");
+	private List<String> completeSetOfValuesForLiteral = Arrays.asList("NextprotAnatomyCv/rdfs:label", ":SubcellularLocation/rdfs:comment");
 
 	private static final List<String> RDF_TYPES_TO_EXCLUDE = Arrays.asList(":childOf", "rdf:Property");
 
 	private @Autowired SparqlDictionary sparqlDictionary = null;
 	private @Autowired SparqlService sparqlService = null;
 
-
 	private final int NUMBER_THREADS = 10;
 
+	private int errorCount=0;
+	
+	private synchronized void incrementErrors() {
+		errorCount++;
+	}
+	
 	@Cacheable("rdfhelp")
 	@Override
 	public synchronized List<RdfTypeInfo> getRdfTypeFullInfoList() {
 
-		Set<String> rdfTypesNames = getAllRdfTypesNames();
+		long t0 = System.currentTimeMillis();
+		
+		Set<String> rdfTypesNames = getRdfTypesNames();
 		List<Future<RdfTypeInfo>> rdfFutureTypes = new ArrayList<Future<RdfTypeInfo>>();
 		List<RdfTypeInfo> rdfTypes = Collections.synchronizedList(new ArrayList<RdfTypeInfo>());
 
@@ -103,8 +110,13 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 			fullMap.put(rti.getTypeName(), rti);
 		}
 
-		buildPathToOrigin(fullMap, fullMap.get(":Entry"), "?entry ", 0);
+		if (fullMap.containsKey(":Entry")) buildPathToOrigin(fullMap, fullMap.get(":Entry"), "?entry ", 0);
 
+		long seconds = (System.currentTimeMillis()-t0)/1000;
+		String duration = String.format("%d:%02d:%02d", seconds/3600, (seconds%3600)/60, (seconds%60)) + " [H:MM:SS]";
+		LOGGER.info("errors: " + errorCount);
+		LOGGER.info("duration: " + duration);
+		
 		return rdfTypes;
 	}
 
@@ -189,35 +201,48 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 
 		@Override
 		public RdfTypeInfo call() {
-			System.out.println("Calling " + rdfType);
+			LOGGER.info("Calling " + rdfType);
 			return rdfTypeInfoService.getRdfTypeFullInfo(rdfType);
 		}
 
 
 	}
 
-	private Set<String> getAllRdfTypesNames() {
+
+	private int getMaxRdfTypes() {
+		int max = -1; // all rdf types are retrieved
+		String maxStr = System.getProperty("rdftype.max");
+		if (maxStr!=null && maxStr.length()>0) max = Integer.parseInt(maxStr);
+		LOGGER.info(max==-1 ? "Retrieving all RDF types" : "Retrieving sample of RDF types, size = " + max);
+		return max;
+	}
+	
+	private Set<String> getRdfTypesNames() {
 		Set<String> result = new TreeSet<String>();
 		String query = sparqlDictionary.getSparqlWithPrefixes("alldistincttypes");
 		QueryExecution qExec = sparqlService.queryExecution(query);
 		ResultSet rs = qExec.execSelect();
+		int max = getMaxRdfTypes();
+		int cnt=0;
 		while (rs.hasNext()) {
 			String rdfTypeName = (String) getDataFromSolutionVar(rs.next(), "rdfType");
 			if (!RDF_TYPES_TO_EXCLUDE.contains(rdfTypeName)) {
 				if (!rdfTypeName.startsWith("http://") && !rdfTypeName.startsWith("owl:") && !rdfTypeName.startsWith("rdfs:Class")) {
 					if (!result.contains(rdfTypeName)) {
+						cnt++;
+						if (cnt>=max && max!=-1) break;
 						result.add(rdfTypeName);
 					} else {
-						System.out.println(rdfTypeName + " is not unique");
+						LOGGER.warn(rdfTypeName + " is not unique");
 					}
 				} else {
-					System.out.println("Skipping " + rdfTypeName);
+					LOGGER.info("Skipping " + rdfTypeName);
 				}
 			}
 		}
 		qExec.close();
 
-		System.out.println("Found " + result.size());
+		LOGGER.info("RdfType found: " + result.size());
 
 		return result;
 	}
@@ -242,40 +267,49 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 	}
 
 
-	private List<TripleInfo> getTripleInfoList(String rdfType) {
+		@Override 
+	public List<TripleInfo> getTripleInfoList(String rdfType) {
 		String queryBase = sparqlDictionary.getSparqlWithPrefixes("typepred");
 		Set<TripleInfo> tripleList = new TreeSet<TripleInfo>();
-		String query = sparqlDictionary.getSparqlOnly("prefix");
-		query += queryBase.replace(":SomeRdfType", rdfType);
-		QueryExecution qExec = sparqlService.queryExecution(query);
-		ResultSet rs = qExec.execSelect();
-		while (rs.hasNext()) {
-			QuerySolution sol = rs.next();
-			TripleInfo ti = new TripleInfo();
-			String pred = (String) getDataFromSolutionVar(sol, "pred");
-			String sspl = (String) getDataFromSolutionVar(sol, "subjSample");
-			String ospl = (String) getDataFromSolutionVar(sol, "objSample", true);
-
-			String spl = sspl + " " + pred + " " + ospl + " .";
-			ti.setTripleSample(spl);
-			ti.setPredicate(pred);
-			ti.setSubjectType((String) getDataFromSolutionVar(sol, "subjType"));
-
-			String objectType = (String) getDataFromSolutionVar(sol, "objType");
-			if (objectType.length() == 0) {
-				System.out.println(ti);
-				objectType = getObjectTypeFromSample(sol, "objSample");
-				ti.setLiteralType(true);
+		
+		try {
+			String query = sparqlDictionary.getSparqlOnly("prefix");
+			query += queryBase.replace(":SomeRdfType", rdfType);
+			QueryExecution qExec = sparqlService.queryExecution(query);
+			ResultSet rs = qExec.execSelect();
+			while (rs.hasNext()) {
+				QuerySolution sol = rs.next();
+				TripleInfo ti = new TripleInfo();
+				String pred = (String) getDataFromSolutionVar(sol, "pred");
+				String sspl = (String) getDataFromSolutionVar(sol, "subjSample");
+				String ospl = (String) getDataFromSolutionVar(sol, "objSample", true);
+	
+				String spl = sspl + " " + pred + " " + ospl + " .";
+				ti.setTripleSample(spl);
+				ti.setPredicate(pred);
+				ti.setSubjectType((String) getDataFromSolutionVar(sol, "subjType"));
+	
+				String objectType = (String) getDataFromSolutionVar(sol, "objType");
+				if (objectType.length() == 0) {
+					LOGGER.info(ti);
+					objectType = getObjectTypeFromSample(sol, "objSample");
+					ti.setLiteralType(true);
+				}
+				ti.setObjectType(objectType);
+	
+				ti.setTripleCount(Integer.valueOf((String) getDataFromSolutionVar(sol, "objCount")));
+	
+				tripleList.add(ti);
 			}
-			ti.setObjectType(objectType);
-
-			ti.setTripleCount(Integer.valueOf((String) getDataFromSolutionVar(sol, "objCount")));
-
-			tripleList.add(ti);
+			qExec.close();
+		} catch (Exception e) {
+			incrementErrors();
+			System.err.println("Error with " + rdfType );
+			e.printStackTrace();
+			LOGGER.error("Error with " + rdfType, e);
 		}
-		qExec.close();
+		
 		return new ArrayList<TripleInfo>(tripleList);
-
 	}
 
 
@@ -363,7 +397,7 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 			return RdfPrefixUtils.getPrefixedNameFromURI(sparqlDictionary.getSparqlPrefixes(), typ);
 
 		} catch (Exception e) {
-			LOGGER.error("Failed for " + objSample);
+			LOGGER.error("Failed for " + objSample, e);
 			return RdfConstants.BLANK_OBJECT_TYPE;
 		}
 

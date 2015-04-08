@@ -156,11 +156,14 @@ public class FluentEntryService {
 					.withTargetIsoforms().withAntibodyMappings().withPeptideMappings().withSrmPeptideMappings().withExperimentalContexts();
 		}
 
-		public Entry getEntry() {
+		private Entry getEntry() {
 			return entry;
 		}
 
 		public Entry withView(String view) {
+			if(view.equals("entry")){
+				return this.withEverything().getEntry();
+			}
 			try {
 				NPViews npView = NPViews.valueOfViewName(view);
 				return getEntrySubPart(npView);
@@ -197,7 +200,7 @@ public class FluentEntryService {
 				return this.withGenomicMappings().getEntry();
 			case INTERACTION:
 				return this.withInteractions().getEntry();
-			case PROTEIN_SEQUENCE:
+			case ISOFORM:
 				return this.withTargetIsoforms().getEntry();
 			case ANNOTATION:
 				return this.withGeneralAnnotations().getEntry();

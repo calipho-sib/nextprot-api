@@ -1,14 +1,15 @@
 package org.nextprot.api.solr;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
-
 import org.junit.runner.RunWith;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -28,6 +29,9 @@ public class SolrServiceTest  {
 
     @Autowired
     private SolrService service;
+	@Autowired 
+	private SolrConfiguration configuration;
+
     
     private boolean debug = false;
     
@@ -40,7 +44,7 @@ public class SolrServiceTest  {
     	qr.setSort("");
     	qr.setOrder("");
     	qr.setFilter("");
-    	Query q = service.buildQuery( "entry", "simple",  qr);
+    	Query q = service.buildQueryForSearchIndexes("entry", "simple",  qr);
 		SearchResult result = service.executeQuery(q);
 		long numFound = result.getNumFound();
 		if (debug) System.out.println("numFound="+numFound);
@@ -71,7 +75,7 @@ public class SolrServiceTest  {
     	qr.setSort("");
     	qr.setOrder("");
     	qr.setFilter("");
-    	Query q = service.buildQuery( "entry", "simple",  qr);
+    	Query q = service.buildQueryForSearchIndexes( "entry", "simple",  qr);
 		SearchResult result = service.executeQuery(q);
 		long numFound = result.getNumFound();
 		if (debug) System.out.println("numFound="+numFound);
@@ -94,6 +98,38 @@ public class SolrServiceTest  {
     }
 
     @Test
+    public void testGoColonIsEscaped() throws Exception {
+    	QueryRequest qr = new QueryRequest();
+    	qr.setQuery("go:0004386");
+    	qr.setQuality("gold");
+    	qr.setRows("50");
+    	qr.setSort("");
+    	qr.setOrder("");
+    	qr.setFilter("");
+    	Query q = service.buildQueryForSearchIndexes( "entry", "simple",  qr);
+    	//IndexConfiguration ic = this.configuration.getIndexByName("entry").getConfig("simple");
+    	//SolrQuery sq = service.buildSolrIdQuery(q, ic);
+    	SearchResult result = service.executeIdQuery(q);
+		long numFound = result.getNumFound();
+		assertTrue(numFound>=0); // we should get no error
+    }
+
+    @Test
+    public void testAuthorFieldColonIsNotEscaped() throws Exception {
+    	QueryRequest qr = new QueryRequest();
+    	qr.setQuery("author:bairoch");
+    	qr.setQuality("gold");
+    	qr.setRows("50");
+    	qr.setSort("");
+    	qr.setOrder("");
+    	qr.setFilter("");
+    	Query q = service.buildQueryForSearchIndexes( "entry", "simple",  qr);
+    	SearchResult result = service.executeIdQuery(q);
+		long numFound = result.getNumFound();
+		assertTrue(numFound>=0); // we should get no error
+    }
+    
+    @Test
     public void testPlusAreRemoved() throws Exception {
     	String s = "+insulin +phosphorylation +intracellular";
     	String s2 = StringUtils.removePlus(s);
@@ -101,7 +137,8 @@ public class SolrServiceTest  {
     	if (debug) System.out.println(s2);
     	assertEquals("insulin phosphorylation intracellular", s2);
     }
- 
+    
+
     
     
 }

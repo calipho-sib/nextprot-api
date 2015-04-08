@@ -11,7 +11,25 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 
 	private String query;
 	private String listOwner;
-	private String list;
+	private String listId = null; //list id
+	private String queryId = null; //nextprot query id
+
+	public String getListId() {
+		return listId;
+	}
+
+	public void setListId(String listId) {
+		this.listId = listId;
+	}
+
+	public String getQueryId() {
+		return queryId;
+	}
+
+	public void setQueryId(String queryId) {
+		this.queryId = queryId;
+	}
+
 	private List<String> accs;
 	private String quality;
 	private String sort;
@@ -24,6 +42,8 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 	private String sparqlTitle;
 	private String sparqlEngine;
 
+
+
 	public String getQuery() {
 		return query;
 	}
@@ -32,17 +52,11 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 		this.query = query;
 	}
 
-	public String getList() {
-		return list;
-	}
 
 	public boolean hasList() {
-		return this.list != null;
+		return this.listId  != null;
 	}
 
-	public void setList(String list) {
-		this.list = list;
-	}
 
 	public String getListOwner() {
 		return this.listOwner;
@@ -154,7 +168,7 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 	public String toPrettyString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("listOwner    : "+this.listOwner+"\n");
-		builder.append("list         : "+this.list+"\n");
+		builder.append("list         : "+this.listId+"\n");
 		builder.append("accs         : ");
 		if (accs==null) {
 			builder.append("null");
@@ -193,6 +207,10 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 
 	public boolean hasSparql() {
 		return sparql != null;
+	}
+
+	public boolean hasNextProtQuery() {
+		return queryId != null;
 	}
 
 	public String getSparqlTitle() {

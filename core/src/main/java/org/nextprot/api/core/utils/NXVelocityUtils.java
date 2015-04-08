@@ -10,6 +10,10 @@ import java.util.List;
 
 public class NXVelocityUtils {
 
+    private NXVelocityUtils() {
+        throw new AssertionError();
+    }
+
 	public static List<Annotation> getAnnotationsByCategory(Entry entry, AnnotationApiModel annotationCategory) {
 		List<Annotation> annotations = entry.getAnnotations();
 		return AnnotationUtils.filterAnnotationsByCategory(annotations, annotationCategory, false);
@@ -47,7 +51,7 @@ public class NXVelocityUtils {
 	 * 
 	 * @return the list of LEAF annotation categories except family-name
 	 */
-	public static List<AnnotationApiModel>  getAnnotationCategories() {
+	public static List<AnnotationApiModel> getAnnotationCategories() {
 		List<AnnotationApiModel> list = new ArrayList<AnnotationApiModel>();
 		AnnotationApiModel[] vals = AnnotationApiModel.values();
 		for (int i=0;i<vals.length;i++) {
@@ -57,11 +61,4 @@ public class NXVelocityUtils {
 		//System.out.println("cat size:" + list.size());
 		return list;
 	}
-
-	private static final NXVelocityUtils UTILS = new NXVelocityUtils();
-	public static NXVelocityUtils getInstance() {
-		return UTILS;
-	}
-
-	
 }

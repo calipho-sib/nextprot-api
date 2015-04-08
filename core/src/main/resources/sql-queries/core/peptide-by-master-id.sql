@@ -1,7 +1,7 @@
 select distinct(pept_iso.annotation_id), 
 	iso.unique_name as iso_unique_name, 
 	peptide.unique_name as pep_unique_name, 
-	mp.first_pos, 
+	(mp.first_pos + 1) as first_pos, 
 	mp.last_pos 
 from nextprot.mapping_annotations pept_master, 
 	nextprot.mapping_annotations pept_iso, 

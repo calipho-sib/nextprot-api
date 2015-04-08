@@ -30,48 +30,34 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.ABSTRACT)
 				.add(PubField.VOLUME)
 				.add(PubField.TYPE)
-				.add(PubField.JOURNAL)
+				.add(PubField.PRETTY_JOURNAL) // contains only iso abbr to be displayed
 				.add(PubField.SOURCE)
-				.add(PubField.AUTHORS)
+				.add(PubField.PRETTY_AUTHORS)				
 				.add(PubField.FILTERS));
 		
 		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.QF)
 				.add(PubField.AC, 16)
-				.add(PubField.DATE, 16)
+				.add(PubField.YEAR, 16)
 				.add(PubField.TITLE, 16)
-				.add(PubField.ABSTRACT, 16)
+				.add(PubField.ABSTRACT, 4)
+				.add(PubField.VOLUME, 4)
 				.add(PubField.TYPE, 16)
-				.add(PubField.JOURNAL, 8)
+				.add(PubField.JOURNAL, 8) // contain both full name and iso abbr
 				.add(PubField.SOURCE, 8)
 				.add(PubField.AUTHORS, 8));
 		
 		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.PF)
 				.add(PubField.AC, 160)
-				.add(PubField.DATE, 160)
+				.add(PubField.YEAR, 160)
 				.add(PubField.TITLE, 160)
-				.add(PubField.ABSTRACT, 160)
+				.add(PubField.ABSTRACT, 40)
+				.add(PubField.VOLUME, 40)
 				.add(PubField.TYPE, 160)
-				.add(PubField.JOURNAL, 80)
+				.add(PubField.JOURNAL, 80) // contain both full name and iso abbr
 				.add(PubField.SOURCE, 80)
 				.add(PubField.AUTHORS, 80));
-		
-		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FN)
-				.add(PubField.AC, 1)
-				.add(PubField.DATE, 1)
-				.add(PubField.TITLE, 1)
-				.add(PubField.ABSTRACT, 1)
-				.add(PubField.TYPE, 1)
-				.add(PubField.JOURNAL, 1)
-				.add(PubField.SOURCE, 1)
-				.add(PubField.AUTHORS, 1));
-		
-		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.HI)
-				.add(PubField.DATE)
-				.add(PubField.TITLE)
-				.add(PubField.TYPE)
-				.add(PubField.JOURNAL)
-				.add(PubField.SOURCE)
-				.add(PubField.AUTHORS));
+	
+
 		
 		defaultConfig.addOtherParameter("defType", "edismax")
 			.addOtherParameter("facet", "true")
@@ -83,10 +69,10 @@ public class PublicationIndex extends IndexTemplate {
 		
 		@SuppressWarnings("unchecked")
 		SortConfig sortConfig = SortConfig.create("default", new Pair[] {
-				Pair.create(PubField.DATE, ORDER.desc),
-				Pair.create(PubField.VOLUME, ORDER.desc),
-				Pair.create(PubField.FIRST_PAGE, ORDER.desc),
-				Pair.create(PubField.TITLE_S, ORDER.asc)
+				Pair.create(PubField.YEAR, ORDER.desc),
+				Pair.create(PubField.PRETTY_JOURNAL, ORDER.asc),
+				Pair.create(PubField.VOLUME, ORDER.asc),
+				Pair.create(PubField.FIRST_PAGE, ORDER.asc),
 		});
 
 		defaultConfig.addSortConfig(sortConfig);
@@ -135,31 +121,53 @@ public class PublicationIndex extends IndexTemplate {
 		return PubField.class;
 	}
 	
+	@Override
+	public IndexField[] getFieldValues() {
+		return PubField.values();
+	}
+	
 	public static enum PubField implements IndexField {
 		ID("id"), 
 		AC("ac"), 
-		VOLUME("volume"), 
+		VOLUME("volume","volume"), 
 		FIRST_PAGE("first_page"), 
 		LAST_PAGE("last_page"), 
+		YEAR("year","year"), 
 		DATE("date"), 
-		TITLE("title"), 
+		TITLE("title","title"), 
 		TITLE_S("title_s"),
-		ABSTRACT("abstract"), 
+		ABSTRACT("abstract","abstract"), 
 		TYPE("type"), 
-		JOURNAL("journal"), 
+		JOURNAL("journal","journal"), 
+		PRETTY_JOURNAL("pretty_journal"), 
 		SOURCE("source"), 
-		AUTHORS("authors"), 
+		AUTHORS("authors","author"), 
+		PRETTY_AUTHORS("pretty_authors"), 
 		FILTERS("filters"), 
 		TEXT("text");
 		
 		private String name;
+		private String publicName;
 		
 		private PubField(String name) {
 			this.name = name;
 		}
+
+		private PubField(String name, String publicName) {
+			this.name = name;
+			this.publicName = publicName;
+		}
 		   
 		public String getName() {
 			return this.name;
+		}
+		
+		public boolean hasPublicName() {
+			return this.publicName!=null && this.publicName.length()>0;
+		}
+		
+		public String getPublicName() {
+			return this.publicName;
 		}
 	}
 

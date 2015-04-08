@@ -1,5 +1,5 @@
 <annotation-list>
-#foreach($category in $NXUtils.annotationCategories)
+#foreach($category in $NXUtils.getAnnotationCategories())
 #if ($category.isLeaf())
 #set($catName=$NXUtils.getAnnotationCategoryNameForXML($category))
 #set($catHier=$NXUtils.getAnnotationCategoryHierachyForXML($category))

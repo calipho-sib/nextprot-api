@@ -40,7 +40,7 @@ public class AntibodyMappingDaoTest extends CoreUnitBaseTest {
 		//System.out.println("positions size: "+ positions.size());
 		assertEquals(1, positions.size());
 		//System.out.println("position first: "+ positions.get(0).getFirst());
-		assertTrue(1 == positions.get(0).getFirst());
+		assertTrue(2 == positions.get(0).getFirst());
 		//System.out.println("position second: "+ positions.get(0).getSecond());
 		assertTrue(1000 == positions.get(0).getSecond());
 	}

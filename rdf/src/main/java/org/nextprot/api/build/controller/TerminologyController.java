@@ -1,5 +1,6 @@
-package org.nextprot.api.web;
+package org.nextprot.api.build.controller;
 
+import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Lazy
 @Controller
+@Api(name = "Terminology", description = "Method to retrieve terminologies", group="Build rdf")
 public class TerminologyController {
 
 	@Autowired private TerminologyService terminologyService;

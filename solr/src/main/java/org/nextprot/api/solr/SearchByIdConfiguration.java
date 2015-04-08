@@ -10,7 +10,7 @@ public class SearchByIdConfiguration extends IndexConfiguration {
 	
 	@Override
 	public String buildQuery(Query query) {
-		return query.getQueryString();
+		return query.getQueryString(true);
 	}
 
 }

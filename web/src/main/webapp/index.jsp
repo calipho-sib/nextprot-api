@@ -84,21 +84,18 @@
 				<ul class="nav navbar-nav navbar-right">
 
 					<!-- login button -->
-					<li ng-if="!user.profile.email"><a href='' type="button"
-						class="link" ng-click="login()">Login</a></li>
-
+					<li class="li-login" >
+						<a href='' type="button" class="link btn-login">Login</a>
+					</li>
 					<!-- once logged in user resources -->
-<!-- 					<li class="dropdown" ng-if="user.profile.email" ng-cloak><a -->
-<!-- 						href="#" class="dropdown-toggle" data-toggle="dropdown">{{user.profile.name -->
-<!-- 							|| user.profile.email}}<span class="caret"></span> -->
-<!-- 					</a> -->
+					<li class="dropdown li-logout" style="display:none;" >
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<span class="user"></span><span class="caret"></span>
+						</a>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="/user">My profile</a></li>
-							<li><a href="/user/protein/lists">My protein lists</a></li>
-							<li><a href="/user/queries">My queries</a></li>
-							<li><a href="/user/applications">My applications</a></li>
-							<li class="divider"></li>
-							<li><a href="#" ng-click="logout()">Logout</a></li>
+							<li>
+								<a href='' class="btn-logout"">Logout</a>
+							</li>
 						</ul></li>
 				</ul>
 			</div>
@@ -480,24 +477,6 @@
 	{{#if auth}}
 		{{#equal auth.type "BASIC_AUTH"}}
 			<div class="col-md-12">
-				<h4>Basic Authentication</h4>
-				<div class="form-group">
-					<select class="form-control" id="basicAuthSelect" onchange="fillBasicAuthFields(); return false;">
-						<option disabled="disabled" selected="selected">Select a test user or fill inputs below</option>
-						{{#eachInMap auth.testusers}}
-							<option value="{{value}}">{{key}}</option>
-						{{/eachInMap}}
-						<option value="a-wrong-password">invalidate-credentials-cache-user</option>
-					</select>
-				</div>
-				<div class="form-group" style="margin-bottom:5px;">
-					<label for="basicAuthUsername">Username</label>
-					<input class="form-control" type="text" id="basicAuthUsername" name="basicAuthUsername" placeholder="Username">
-				</div>
-				<div class="form-group">
-					<label for="basicAuthPassword">Password</label>
-					<input class="form-control" type="text" id="basicAuthPassword" name="basicAuthPassword" placeholder="Password">
-				</div>
 			</div>
 		{{/equal}}
 	{{/if}}
@@ -905,6 +884,18 @@
 						},
 						error: function(data) {
 							printResponse(data, res, this.url);
+							
+							var errorMsg;
+							if (res.status == 0) {
+								errorMsg="The API is not accessible";
+							} else if (res.status == 401 || (status == 403)) {
+								errorMsg="You are not authorized to access the resource. Please login or review your privileges.";
+				            } else if (res.status == 404) {
+				            	errorMsg="URL not found";
+				            } else if (res.status >= 500) {
+				            	errorMsg="Some error occured: " + res.statusText;
+				            }
+							alert("Error: " + errorMsg);
 						}
 					});
 					
@@ -1021,7 +1012,8 @@
 				buildFromJSONDoc(data);
 			},
 			error: function(msg) {
-				alert("Error " + msg);
+				console.log(msg);
+				//alert("Error " + msg);
 			}
 		});
 	}
@@ -1030,25 +1022,12 @@
 
         var hostname=window.location.hostname;
 
-        var regexp = /(alpha|dev|build)-(api|search|snorql)\.nextprot\.org/g;
+        var regexp = /(alpha|dev|build)-api\.nextprot\.org/g;
         var match = regexp.exec(hostname);
 
         if (match != null) {
-            var machine = match[1]
 
-            if (machine == "build") {
-
-                if (resource == "search") {
-
-                    machine = "alpha";
-                }
-                else if (resource.match("search|snorql")) {
-
-                    machine = "alpha";
-                }
-            }
-
-            return "http://" + machine + "-" + resource + ".nextprot.org"
+            return "http://" + match[1] + "-" + resource + ".nextprot.org"
         }
     }
 
@@ -1062,9 +1041,107 @@
         }
     }
 
-	checkURLExistence();
     updateResourcesHrefs();
 
+</script>
+
+<!-- Auth0 lock script -->
+<script src="js/lock-7.0.min.js"></script>
+<script src="js/jquery.cookie.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<script>
+	var lock = null;
+
+	$(document).ready(function() {
+		lock = new Auth0Lock('7vS32LzPoIR1Y0JKahOvUCgGbn94AcFW', 'nextprot.auth0.com');
+	
+   		var userProfile;
+		
+   		if ($.cookie("nxprofile") && $.cookie("nxtoken")) {
+   			// If there is already a cookie 
+   			// Update login text (set to user email) 
+			$('.li-login').hide();
+			$('.li-logout').show();
+			
+			// Save the profile
+			userProfile = JSON.parse($.cookie("nxprofile"));
+
+   			// Update login text (set to user email) 
+			if (userProfile.name) {
+				$('.user').text(userProfile.name);
+			} else {
+				$('.user').text(userProfile.email);						
+			}
+   		}
+   		
+   		$('.btn-login').click(function(e) {
+   			// When click on "Login"
+			e.preventDefault();
+			var options = {popup: true, icon:'img/np.png', authParams: {
+                scope: 'openid email name picture'
+            }};
+			lock.show(options, function(err, profile, token) {
+				if (!err) {
+					// Success calback
+					// Save cookies
+					var expirationInDays = 730; // 730 days = 2 years
+					if (window.location.hostname === "localhost") {
+						$.cookie("nxprofile", JSON.stringify(profile), {path: "/", expires: expirationInDays});
+						$.cookie("nxtoken", token, {path: "/", expires: expirationInDays});
+					} else {
+ 						$.cookie("nxprofile", JSON.stringify(profile), { path: "/", domain: ".nextprot.org", expires: expirationInDays });
+	 					$.cookie("nxtoken", token, { path: "/", domain: ".nextprot.org", expires: expirationInDays });
+					}
+
+					// Save the profile
+					userProfile = profile;
+					
+		   			// Update login text (set to user email) 
+					$('.li-login').hide();
+					$('.li-logout').show();
+					if (userProfile.name) {
+						$('.user').text(userProfile.name);
+					} else {
+						$('.user').text(userProfile.email);						
+					}
+					
+					checkURLExistence();
+				}
+			});
+		});
+   		
+   		$('.btn-logout').click(function(e) {
+   			// When click on "Logout"
+   			// Remove cookies
+   			if (window.location.hostname === "localhost") {
+				$.removeCookie("nxprofile", { path: "/" });
+				$.removeCookie("nxtoken", { path: "/" });
+			} else {
+				$.removeCookie("nxprofile", { path: "/", domain: ".nextprot.org" });
+				$.removeCookie("nxtoken", { path: "/", domain: ".nextprot.org" });
+			}
+
+			
+			// Remove the profile
+	   		userProfile = null;
+
+			// Update login text (remove user email) 
+   			$('.li-logout').hide();
+			$('.li-login').show();
+
+			checkURLExistence();
+   		});
+
+		$.ajaxSetup({
+			'beforeSend': function(xhr) {
+				if ($.cookie("nxtoken")) {
+					xhr.setRequestHeader('Authorization', 'Bearer ' + $.cookie("nxtoken"));
+				}
+			}
+		});
+		
+		checkURLExistence();
+	});
 </script>
 
 </body>

@@ -193,7 +193,7 @@ public class SearchResult  {
 				if(p.getSecond() > 0) 
 					foundFields.add(p);
 			
-			System.out.println("FOUND: "+ foundFields.size());
+			//System.out.println("FOUND: "+ foundFields.size());
 			return foundFields;
 		}
 		

@@ -1,7 +1,6 @@
 package org.nextprot.api.user.service;
 
 import java.util.List;
-import java.util.Set;
 
 import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.user.domain.UserProteinList;
@@ -36,7 +35,7 @@ public interface UserProteinListService {
 
 	void deleteUserProteinList(UserProteinList proteinList);
 
-	Set<String> getUserProteinListAccessionItemsById(long listId);
-
 	UserProteinList combine(String name, String description, String username, String listName1, String listName2, Operator operator);
+
+	UserProteinList getUserProteinListByPublicId(String listId);
 }

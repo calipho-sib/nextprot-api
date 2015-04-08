@@ -1,50 +1,31 @@
-package org.nextprot.api.rdf.controller;
+package org.nextprot.api.build.controller;
 
 import java.util.List;
 
+import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.rdf.domain.RdfTypeInfo;
+import org.nextprot.api.rdf.domain.TripleInfo;
 import org.nextprot.api.rdf.service.RdfHelpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Lazy
 @Controller
+@Api(name = "RdfHelp", description = "Method to retrieve rdf help", group="Build rdf")
 public class RdfHelpController {
 
 	@Autowired
 	private RdfHelpService service;
-
-	/**
-	 * Full info of a single rdf:type
-	 * 
-	 * @param rdfType
-	 * @param model
-	 * @return
-	 */
-/*	@ApiMethod(path = "/rdf/help/type/{rdfType}", verb = ApiVerb.GET, description = "Gets a description and properties of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
-	@RequestMapping("/rdf/help/type/{rdfType}")
-	@ResponseBody
-	public RdfTypeInfo helpFullInfo(
-			@PathVariable("rdfType") String rdfType,
-			Model model) {
-		try {
-			RdfTypeInfo typ;
-			typ = this.service.getRdfTypeFullInfo(rdfType);
-			model.addAttribute("result", typ);
-			return typ;
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new NextProtException(e.getMessage());
-		}
-	}*/
 
 	@ApiMethod(path = "/rdf/help/type/all", verb = ApiVerb.GET, description = "Gets a description and properties of all rdf types. WARNING: may require a lot of time.", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping("/rdf/help/type/all")
@@ -255,27 +236,55 @@ public class RdfHelpController {
 		}
 		
 	}
-*/
-	/*
-	 * @ApiMethod(path = "/rdf/help/type/{rdfType}/name", verb = ApiVerb.GET, description = "Gets a description of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
-	 * @RequestMapping("/rdf/help/type/{rdfType}/name")
-	 * @ResponseBody
-	 * public RdfTypeInfo helpNames(
-	 * @ApiParam(name = "rdfType", description = "The name of of a rdf:type object in neXtProt RDF schema. For example, the entities :Entry :Isoform ...", allowedvalues = { ":Entry" }) @PathVariable("rdfType") String rdfType,
-	 * Model model) {
-	 * RdfTypeInfo typ = this.service.getRdfTypeName(rdfType);
-	 * model.addAttribute("result", typ);
-	 * return typ;
-	 * }
-	 * @ApiMethod(path = "/rdf/help/type/{rdfType}/triplets", verb = ApiVerb.GET, description = "Gets the list of typical triplets found when the subject has rdf:type rdfType", produces = { MediaType.APPLICATION_JSON_VALUE })
-	 * @RequestMapping("/rdf/help/type/{rdfType}/triplets")
-	 * @ResponseBody
-	 * public List<TripleInfo> helpPreds(
-	 * @ApiParam(name = "rdfType", description = "The name of of a rdf:type object in neXtProt RDF schema. For example, the entities :Entry :Isoform ...", allowedvalues = { ":Entry" }) @PathVariable("rdfType") String rdfType,
-	 * Model model) {
-	 * List<TripleInfo> types = this.service.getTripleInfoList(rdfType);
-	 * model.addAttribute("result", types);
-	 * return types;
-	 * }
+	
+	
+	/**
+	 * Full info of a single rdf:type
+	 * 
+	 * @param rdfType
+	 * @param model
+	 * @return
 	 */
+    @ApiMethod(path = "/rdf/help/type/{rdfType}", verb = ApiVerb.GET, description = "Gets a description and properties of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping("/rdf/help/type/{rdfType}")
+	@ResponseBody
+	public RdfTypeInfo helpFullInfo(
+			@PathVariable("rdfType") String rdfType,
+			Model model) {
+		try {
+			RdfTypeInfo typ;
+			typ = this.service.getRdfTypeFullInfo(rdfType);
+			model.addAttribute("result", typ);
+			return typ;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new NextProtException(e.getMessage());
+		}
+	}
+
+/*	
+	 @ApiMethod(path = "/rdf/help/type/{rdfType}/name", verb = ApiVerb.GET, description = "Gets a description of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
+	 @RequestMapping("/rdf/help/type/{rdfType}/name")
+	 @ResponseBody
+	 public RdfTypeInfo helpNames(
+		 @ApiPathParam(name = "rdfType", description = "The name of of a rdf:type object in neXtProt RDF schema. For example, the entities :Entry :Isoform ...", allowedvalues = { ":Entry" }) @PathVariable("rdfType") String rdfType,
+		 Model model) {
+		 RdfTypeInfo typ = this.service..getRdfTypeName(rdfType);
+		 //this.service.getRdfTypeFullInfo(rdfType);
+		 model.addAttribute("result", typ);
+		 return typ;
+	 }
+*/	 
+	 @ApiMethod(path = "/rdf/help/type/{rdfType}/triplets", verb = ApiVerb.GET, description = "Gets the list of typical triplets found when the subject has rdf:type rdfType", produces = { MediaType.APPLICATION_JSON_VALUE })
+	 @RequestMapping("/rdf/help/type/{rdfType}/triplets")
+	 @ResponseBody
+	 public List<TripleInfo> helpPreds(
+		 @ApiPathParam(name = "rdfType", description = "The name of of a rdf:type object in neXtProt RDF schema. For example, the entities :Entry :Isoform ...", allowedvalues = { ":Entry" }) @PathVariable("rdfType") String rdfType,
+		 Model model) {
+		 List<TripleInfo> types = this.service.getTripleInfoList(rdfType);
+		 model.addAttribute("result", types);
+		 return types;
+	 }
+	 
 }

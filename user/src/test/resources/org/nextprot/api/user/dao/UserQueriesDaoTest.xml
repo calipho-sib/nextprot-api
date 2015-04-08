@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Use this one to run the tests  -->
-<!DOCTYPE dataset SYSTEM "https://raw.githubusercontent.com/calipho-sib/nextprot-api/develop/user/src/main/resources/db/migration/user.dtd">
+<!--<!DOCTYPE dataset SYSTEM "https://raw.githubusercontent.com/calipho-sib/nextprot-api/develop/user/src/main/resources/db/migration/user.dtd">-->
 
 <!-- Use this one to autocomplete -->
 <!-- <!DOCTYPE dataset SYSTEM "/target/classes/db/migration/user.dtd">-->
@@ -9,8 +9,8 @@
     <users user_id="23" user_name="spongebob"/>
     <users user_id="24" user_name="tahitibob"/>
     <user_queries query_id="15" title="myquery" description="my first query" owner_id="23"
-            published="N" sparql="sparql query"/>
+            published="N" sparql="sparql query" public_id="00000001"/>
     <user_queries query_id="16" title="myquery2" description="my second query" owner_id="23"
-                  published="Y" sparql="another sparql query"/>
+                  published="Y" sparql="another sparql query" public_id="ZZZZZU8V"/>/>
     <user_query_tags query_id="16" tag_name="public"/>
 </dataset>

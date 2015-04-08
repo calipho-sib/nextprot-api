@@ -65,7 +65,7 @@ public class IndexConfiguration implements QueryBuilder {
 	 */
 	public String buildQuery(Query query) {
 		StringBuilder queryBuilder = new StringBuilder();
-		String[] tokens = query.getQueryString().split(WHITESPACE);
+		String[] tokens = query.getQueryString(true).split(WHITESPACE);
 		
 		for(int i=0; i<tokens.length; i++) {
 			queryBuilder.append(PLUS+tokens[i]);

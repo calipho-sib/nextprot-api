@@ -52,7 +52,7 @@ public class UserQueryTutorialDictionary extends FilePatternDictionary {
 
 	}
 
-	public List<UserQuery> getDemoSparqlList() {
+	public synchronized List<UserQuery> getDemoSparqlList() {
 		Collection<String> rawData = super.getResourcesMap().values();
 		List<UserQuery> demoSparqlQueriesList = new ArrayList<UserQuery>();
 
@@ -75,6 +75,7 @@ public class UserQueryTutorialDictionary extends FilePatternDictionary {
 		dsq.setDescription(rawProps.get("comment"));
 
 		try {
+			dsq.setPublicId(rawProps.get("id"));
 			dsq.setUserQueryId(Long.valueOf(rawProps.get("id").replaceAll("NXQ_", "")));
 		}catch(Exception e){
 			dsq.setUserQueryId(0);

@@ -61,6 +61,7 @@ public class EntryIndex extends IndexTemplate {
 			.add(Fields.PROTEIN_EXISTENCE));
 
 		indexConfig.addConfigSet(FieldConfigSet.create(IndexParameter.QF)
+			.add(Fields.ID,64)
 			.add(Fields.RECOMMENDED_AC, 8)
 			.add(Fields.RECOMMENDED_NAME, 32)
 			.add(Fields.UNIPROT_NAME, 16)
@@ -77,6 +78,7 @@ public class EntryIndex extends IndexTemplate {
 			.add(Fields.TEXT, 0));
 		
 		indexConfig.addConfigSet(FieldConfigSet.create(IndexParameter.PF)
+			.add(Fields.ID, 640)
 			.add(Fields.RECOMMENDED_AC, 80)
 			.add(Fields.RECOMMENDED_NAME, 320)
 			.add(Fields.UNIPROT_NAME, 160)
@@ -174,12 +176,16 @@ public class EntryIndex extends IndexTemplate {
 		
 	}
 
+	@Override
+	public IndexField[] getFieldValues() {
+		return Fields.values();
+	}
 	
 	
 	public enum Fields implements IndexField {
-		ID("id"),
+		ID("id","id"), // public name for id is necessary for executeIdQuery() otherwise the id: of the query string is escaped
 		PROTEIN_EXISTENCE("protein_existence"),
-		PE_LEVEL("pe_level"),			
+		PE_LEVEL("pe_level","pe"),			
 		PUBLI_CURATED_COUNT("publi_curated_count"),
 		PUBLI_LARGE_SCALE_COUNT("publi_large_scale_count"),
 		PUBLI_COMPUTED_COUNT("publi_computed_count"),
@@ -193,7 +199,7 @@ public class EntryIndex extends IndexTemplate {
 		PTM_NUM("ptm_num"),
 		VAR_NUM("var_num"),
 		AA_LENGTH("aa_length"),
-		RECOMMENDED_AC("recommended_ac"),
+		RECOMMENDED_AC("recommended_ac","ac"),
 		RECOMMENDED_NAME("recommended_name"),
 		RECOMMENDED_NAME_S("recommended_name_s"),
 		UNIPROT_NAME("uniprot_name"),
@@ -225,9 +231,14 @@ public class EntryIndex extends IndexTemplate {
 		SCORE("score");
 		
 		private String fieldName;
-		  
+		private String publicName;
+		
 		private Fields(String fieldName) {
 			this.fieldName = fieldName;
+		}
+		private Fields(String fieldName, String publicName) {
+			this.fieldName = fieldName;
+			this.publicName=publicName;
 		}
 
 		public String getName() {
@@ -242,9 +253,22 @@ public class EntryIndex extends IndexTemplate {
 				
 			return sv;
 		}
+
+		@Override
+		public String getPublicName() {
+			return this.publicName;
+		}
+
+		@Override
+		public boolean hasPublicName() {
+			return this.publicName!=null && this.publicName.length()>0;
+		}
 		
 		
 	}
+
+
+
 
 
 }

@@ -1,4 +1,4 @@
-package org.nextprot.api.web;
+package org.nextprot.api.web.controller;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,6 +17,9 @@ import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
+import org.nextprot.api.user.service.UserQueryService;
+import org.nextprot.api.user.service.impl.UserQueryTutorialDictionary;
+import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
@@ -39,9 +42,14 @@ public class SearchController {
 	@Autowired private SparqlService sparqlService;
 	@Autowired private SparqlEndpoint sparqlEndpoint;
 
+	@Autowired private UserQueryService userQueryService;
 	@Autowired private UserProteinListService proteinListService;
 	@Autowired private SolrConfiguration configuration;
+	@Autowired private QueryBuilderService queryBuilderService;
 
+	@Autowired
+	private UserQueryTutorialDictionary userQueryTutorialDictionary;
+	
 	@RequestMapping(value = "/search/{index}", method = { RequestMethod.POST })
 	public String search(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest, Model model) {
 		
@@ -49,44 +57,7 @@ public class SearchController {
 		
 		if(this.queryService.checkAvailableIndex(indexName)) {
 			
-			Query query = null;
-
-			if(queryRequest.hasAccs()) {
-				Set<String> accessions = new HashSet<String>(queryRequest.getAccs());
-				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-				queryRequest.setQuery(queryString);
-
-				query = this.queryService.buildQuery(indexName, "pl_search", queryRequest);
-				
-			}else if(queryRequest.hasList()) {
-				
-				UserProteinList proteinList = this.proteinListService.getUserProteinListByNameForUser(queryRequest.getListOwner(), queryRequest.getList());
-				Set<String> accessions = proteinList.getAccessionNumbers();
-
-				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-				queryRequest.setQuery(queryString);
-
-				query = this.queryService.buildQuery(indexName, "pl_search", queryRequest);
-			}
-			else if(queryRequest.hasSparql()) {
-				
-				Set<String> accessions = new HashSet<String>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
-				
-				//In case there is no result
-				if(accessions.isEmpty()){
-					//There is no entry with NULL value, so the result will be empty, but the result structure will be maintaned (could be replace by SearchResult factory where you create an emptry result)
-					accessions.add("NULL"); 
-				}
-				
-				String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-				queryRequest.setQuery(queryString);
-
-				query = this.queryService.buildQuery(indexName, "pl_search", queryRequest);
-
-				
-			} else {
-				query = this.queryService.buildQuery(indexName, "simple", queryRequest);
-			}
+			Query query = queryBuilderService.buildQueryForSearch(queryRequest, indexName);
 						
 			SearchResult result;
 			try {
@@ -121,7 +92,7 @@ public class SearchController {
 		
 		if(this.queryService.checkAvailableIndex(indexName)) {
 
-			Query q = this.queryService.buildQuery(indexName, "autocomplete", queryString, quality, sort, order, start, "0", filter);
+			Query q = this.queryBuilderService.buildQueryForAutocomplete(indexName, queryString, quality, sort, order, start, "0", filter);
 			SearchResult result;
 			try {
 				result = this.queryService.executeQuery(q);
@@ -137,6 +108,12 @@ public class SearchController {
 	}
 	
 	
+	/**
+	 * @param indexName
+	 * @param queryRequest
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value="/search-ids/{index}", method={ RequestMethod.POST })
 	public String searchIds(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest, Model model) {
 		
@@ -150,20 +127,18 @@ public class SearchController {
 				if((queryRequest.getMode() != null) && queryRequest.getMode().equalsIgnoreCase("advanced")){
 					
 					Set<String> accessions = new HashSet<String>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
+
 					String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
 					queryRequest.setQuery(queryString);
-					query = this.queryService.buildQuery(indexName, "pl_search", queryRequest);
+					query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
 
 				} else {
-					query = this.queryService.buildQuery(indexName, "simple", queryRequest);
+					query = this.queryBuilderService.buildQueryForSearchIndexes(indexName, "simple", queryRequest);
+
 				}
 				
 				result = this.queryService.executeIdQuery(query);
 				model.addAttribute("result", result);
-
-//				result = executeQuery(index, "simple", queryString, quality, sort, order, start, rows, filter, "id");
-//				model.addAttribute("result", result);
-//				Query query = this.queryService.buildQuery(index, "simple", queryString, quality, null, null, start, rows, null);
 
 			} catch (SearchQueryException e) {
 				e.printStackTrace();
@@ -192,7 +167,7 @@ public class SearchController {
 		
 //		SolrIndex index = this.configuration.getIndexByName("entry");
 		
-		Query query = this.queryService.buildQuery("entry", "pl_search", queryString, "", sort, order, start, rows, filter);
+		Query query = this.queryBuilderService.buildQueryForProteinLists("entry", queryString, "", sort, order, start, rows, filter);
 		
 		SearchResult result = this.queryService.executeQuery(query);
 		

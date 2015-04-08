@@ -1,4 +1,5 @@
-<nextprot-export xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://crick:8080/nextprotExport.xsd">
+##<nextprot-export xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://crick:8080/nextprotExport.xsd">
+<nextprot-export>
 	<entry-list>
 
 	

@@ -16,6 +16,7 @@ public class UserProteinList implements UserResource {
 	private int entriesCount = 0;
     private long ownerId;
 	private String owner;
+    private String publicId;
 
 	public long getId() {
 		return this.id;
@@ -78,5 +79,24 @@ public class UserProteinList implements UserResource {
 
 	public void addAccessions(Set<String> acs) {
 		accessionNumbers.addAll(acs);
+	}
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
+
+    public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("name : " );
+		sb.append(this.name);
+		sb.append(" (" );
+		sb.append(this.id);
+		sb.append(") accessions size:" );
+		sb.append(entriesCount);
+		return sb.toString();
 	}
 }

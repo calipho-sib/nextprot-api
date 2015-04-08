@@ -132,9 +132,8 @@ public class StringUtils {
 		return "\"" + input + "\"" ;
 	}
 	
-	/*public static void main(String[] args) {
-		System.out.println(clean("H�llo/OP:� - regex,t\nest.{machine\\"));
-		System.out.println(toCamelCase("Hello_world", true));
-	}*/
+	static public boolean isWholeNumber(String input){
+		  return input.matches("\\d+");  //match a number with optional '-' and decimal.
+	}
 
 }

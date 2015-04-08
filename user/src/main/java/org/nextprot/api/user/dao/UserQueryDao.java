@@ -1,12 +1,12 @@
 package org.nextprot.api.user.dao;
 
+import org.nextprot.api.user.domain.UserQuery;
+import org.springframework.dao.DataAccessException;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.nextprot.api.user.domain.UserQuery;
-import org.springframework.dao.DataAccessException;
 
 public interface UserQueryDao {
 
@@ -24,6 +24,13 @@ public interface UserQueryDao {
 	 * @return the user query {@code id}
 	 */
 	UserQuery getUserQueryById(long id) throws DataAccessException;
+
+    /**
+     * Get user query identified by {@code publicId}
+     * @param publicId the public id identifier
+     * @return the user query
+     */
+    UserQuery getUserQueryByPublicId(String publicId) throws DataAccessException;
 
 	/**
 	 * Get list of queries labeled with {@code tag}
