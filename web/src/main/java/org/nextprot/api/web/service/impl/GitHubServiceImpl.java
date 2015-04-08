@@ -47,7 +47,7 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GitHub github = getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			GHContent content = repo.getFileContent(folder + "/" + page + ".md", "develop");
+			GHContent content = repo.getFileContent(folder + "/" + page + ".md", "master");
 			return content.getContent();
 
 		} catch (IOException e) {
@@ -64,7 +64,7 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GitHub github =  getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			return repo.getTreeRecursive("develop", 1);
+			return repo.getTreeRecursive("master", 1);
 
 		} catch (IOException e) {
 			e.printStackTrace();
