@@ -61,7 +61,8 @@ public class EntryIndex extends IndexTemplate {
 			.add(Fields.PROTEIN_EXISTENCE));
 
 		indexConfig.addConfigSet(FieldConfigSet.create(IndexParameter.QF)
-			.add(Fields.ID,64)
+			//.add(Fields.ID,64)
+			.add(Fields.IDSP0,64)
 			.add(Fields.RECOMMENDED_AC, 8)
 			.add(Fields.RECOMMENDED_NAME, 32)
 			.add(Fields.UNIPROT_NAME, 16)
@@ -78,7 +79,8 @@ public class EntryIndex extends IndexTemplate {
 			.add(Fields.TEXT, 0));
 		
 		indexConfig.addConfigSet(FieldConfigSet.create(IndexParameter.PF)
-			.add(Fields.ID, 640)
+			//.add(Fields.ID, 640)
+			.add(Fields.IDSP0,640)
 			.add(Fields.RECOMMENDED_AC, 80)
 			.add(Fields.RECOMMENDED_NAME, 320)
 			.add(Fields.UNIPROT_NAME, 160)
@@ -199,6 +201,7 @@ public class EntryIndex extends IndexTemplate {
 		PTM_NUM("ptm_num"),
 		VAR_NUM("var_num"),
 		AA_LENGTH("aa_length"),
+		IDSP0("idsp0", "idsp0"), // a copy of ID but having type text_split0
 		RECOMMENDED_AC("recommended_ac","ac"),
 		RECOMMENDED_NAME("recommended_name"),
 		RECOMMENDED_NAME_S("recommended_name_s"),
