@@ -20,10 +20,9 @@ public class EntryControllerTest extends WebUnitBaseTest {
   @Test
   public void shouldContainOverview() throws Exception {
 	  this.mockMvc.perform(get("/entry/NX_P03372/overview.xml"))
-	  	.andExpect(xpath("entry/overview").exists())
-	  	.andExpect(xpath("/overview/protein-existence").exists())
-	  	.andExpect(xpath("/overview/gene-name-list").exists());
+	  	.andExpect(xpath("entry/overview").exists());
   }
+	
 
   /*
 
