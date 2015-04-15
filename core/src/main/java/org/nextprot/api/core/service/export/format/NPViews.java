@@ -18,7 +18,6 @@ public enum NPViews{
 	ANNOTATION(NPFileFormat.XML),
 	PUBLICATION(NPFileFormat.XML),
 	XREF(NPFileFormat.XML),
-	KEYWORD(NPFileFormat.XML),
 	IDENTIFIER(NPFileFormat.XML),
 	CHROMOSOMAL_LOCATION(NPFileFormat.XML),
 	GENOMIC_MAPPING(NPFileFormat.XML),

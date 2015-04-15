@@ -1,13 +1,20 @@
 package org.nextprot.api.web.controller;
 
+import java.util.List;
+
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.AntibodyMapping;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Identifier;
+import org.nextprot.api.core.domain.Keyword;
+import org.nextprot.api.core.domain.PeptideMapping;
+import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +22,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 @Lazy
 @Controller
@@ -27,22 +34,6 @@ public class EntryController {
 
 	@Autowired
 	private FluentEntryService fluentEntryService;
-
-	@Autowired private AntibodyMappingService antibodyService;
-	@Autowired private EntryService entryService;
-	@Autowired private IsoformService isoformService;
-	@Autowired private GeneService geneService;
-	@Autowired private AnnotationService annotationService;
-	@Autowired private KeywordService keywordService;
-	@Autowired private OverviewService overviewService;
-	@Autowired private PeptideMappingService peptideService;
-	@Autowired private GenomicMappingService genomicService;
-	@Autowired private IdentifierService identifierService;
-	@Autowired private PublicationService publicationService;
-	@Autowired private AuthorService authorService;
-	@Autowired private DbXrefService xrefService;
-	@Autowired private InteractionService interactionService;
-	@Autowired private ExperimentalContextService expContextService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -56,63 +47,56 @@ public class EntryController {
 	public String exportEntry(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName, Model model) {
-		List<Entry> proteinList = new ArrayList<Entry>();
-		proteinList.add(this.entryService.findEntry(entryName));
-		model.addAttribute("entryList", proteinList);
-		return "exportEntries";
+		
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("entry");
+		model.addAttribute("entry", entry);
+		
+		return "entry";
 	}
 
 	@RequestMapping("/entry/{entryname}/{subpart}")
 	public String getSubPart(@PathVariable("entryname") String entryName, @PathVariable("subpart") String subpart, Model model) {
 		
-		Entry dummy = this.fluentEntryService.getNewEntry(entryName).withView(subpart);
-		model.addAttribute("entry", dummy);
-		return "annotation-list";
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView(subpart);
+		model.addAttribute("entry", entry);
+		return "entry";
 	}
 
 	@ApiMethod(path = "/entry/{entry}/isoform", verb = ApiVerb.GET, description = "Gets the isoforms for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/isoform")
 	public String getIsoforms(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		Entry dummy = new Entry(entryName);
-		dummy.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
-		model.addAttribute("entry", dummy);
-		return "isoform-list";
-	}
-	
-	@ApiMethod(path = "/entry/{entry}/keyword", verb = ApiVerb.GET, description = "Gets the list of keywords for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping("/entry/{entry}/keyword")
-	public String getKeywords(
-			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308", allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		List<Keyword> keywords = this.keywordService.findKeywordByMaster(entryName);
-		Entry entry = new Entry(entryName);
-		entry.setKeywords(keywords);
+
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("isoform");
 		model.addAttribute("entry", entry);
-		return "keyword-list";
+		return "entry";
+
 	}
 
 	@ApiMethod(path = "/entry/{entry}/overview", verb = ApiVerb.GET, description = "Gets an overview of the entry. This includes the protein existence, protein names, gene names, functional region names, cleaved region names, the families, the bio physical and chemical properties and the history. See the Overview object for more details.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/overview")
 	public String getOverview(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		Entry entry = new Entry(entryName);
-		entry.setOverview(overviewService.findOverviewByEntry(entryName));
+
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("overview");
 		model.addAttribute("entry", entry);
-		return "overview";
+		return "entry";
+
 	}
+	
 	
 	@ApiMethod(path = "/entry/{entry}/antibody", verb = ApiVerb.GET, description = "Gets the list of antibodies for a given entry if any.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/antibody")
 	public String getAntibodyMapping(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry which contains antibodies. For example, insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		List<AntibodyMapping> mapping = this.antibodyService.findAntibodyMappingByUniqueName(entryName);
-		Entry entry = new Entry(entryName);
-		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
-		entry.setAntibodyMappings(mapping);
+
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("antibody");
 		model.addAttribute("entry", entry);
-		return "antibody-list";
+		return "entry";
 	}
 	
+	/*
+
 	@ApiMethod(path = "/entry/{entry}/peptide", verb = ApiVerb.GET, description = "Gets the list of peptides for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/peptide")
 	public String getPeptideMapping(
@@ -223,7 +207,7 @@ public class EntryController {
 		Entry dummy = new Entry(entryName);
 		dummy.setAnnotations(annotations);
 		model.addAttribute("entry", dummy);
-		return "annotation-list";
+		return "entry";
 	}
 	
 	@ApiMethod(path = "/entry/{entry}/experimentalContext", verb = ApiVerb.GET, description = "Gets the experimental contexts related to the annotations of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
@@ -234,5 +218,7 @@ public class EntryController {
 		model.addAttribute("entry", dummy);
 		return "experimental-context-list";
 	}
+	
+	*/
 }
 
