@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.rdf.service.SparqlProxyEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -29,7 +30,11 @@ public class SparqlController {
 	@RequestMapping("/sparql")
 	@ResponseBody
 	public ResponseEntity<String> mirrorRest(@RequestBody String body, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
-		return this.sparqlProxyEndpoint.sparql(body, request.getQueryString());
+		String queryString = request.getQueryString();
+		if(request.getParameter("query") == null){
+			throw new NextProtException("Please provide a SPARQL query");
+		}
+		return this.sparqlProxyEndpoint.sparql(body, queryString);
 	}
 
 
