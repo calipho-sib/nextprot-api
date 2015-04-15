@@ -4,8 +4,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 import org.junit.Test;
+import org.mockito.internal.matchers.GreaterThan;
+import org.mockito.internal.matchers.LessThan;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.ResultActions;
 
 @ActiveProfiles("dev")
 public class EntryControllerTest extends WebUnitBaseTest {
@@ -19,10 +22,86 @@ public class EntryControllerTest extends WebUnitBaseTest {
   
   @Test
   public void shouldContainOverview() throws Exception {
-	  this.mockMvc.perform(get("/entry/NX_P03372/overview.xml"))
-	  	.andExpect(xpath("entry/overview").exists());
+	  this.mockMvc.perform(get("/entry/NX_P03372/overview.xml")).andExpect(xpath("entry/overview").exists());
   }
+
+  @Test
+  public void shouldContainIdentifier() throws Exception {
+	  this.mockMvc.perform(get("/entry/NX_P03372/identifier.xml")).andExpect(xpath("entry/identifier-list").exists());
+  }
+
+  @Test
+  public void shouldContainChromosomalLocation() throws Exception {
+	  this.mockMvc.perform(get("/entry/NX_P03372/chromosomal-location.xml")).andExpect(xpath("entry/chromosomal-location-list").exists());
+  }
+
+
+  @Test
+  public void shouldContainGenomicMapping() throws Exception {
+	  this.mockMvc.perform(get("/entry/NX_P03372/genomic-mapping.xml")).andExpect(xpath("entry/genomic-mapping-list").exists());
+  }
+
+  @Test
+  public void shouldContainPublications() throws Exception {
+	  this.mockMvc.perform(get("/entry/NX_P03372/publication.xml")).andExpect(xpath("entry/publication-list").exists());
+  }
+
+  @Test
+  public void shouldContainXref() throws Exception {
+	  this.mockMvc.perform(get("/entry/NX_P03372/xref.xml")).andExpect(xpath("entry/xref-list").exists());
+  }
+
+  @Test
+  public void shouldContainInteraction() throws Exception {
+	  this.mockMvc.perform(get("/entry/NX_P03372/interaction.xml")).andExpect(xpath("entry/interaction-list").exists());
+  }
+
+  @Test
+  public void shouldContainAnnotation() throws Exception {
+	  this.mockMvc.perform(get("/entry/NX_P03372/annotation.xml")).andExpect(xpath("entry/annotation-list").exists());
+  }
+
+
+  @Test
+  public void shouldContainSecondaryStructuresAndRelatedReferences() throws Exception {
+	  ResultActions r = this.mockMvc.perform(get("/entry/NX_P03372/secondary-structure.xml"));
+	  r.andExpect(xpath("entry/annotation-list//@category").nodeCount(new GreaterThan<Integer>(1)));
+	  r.andExpect(xpath("entry/annotation-list//@category").nodeCount(new LessThan<Integer>(5)));
+  }
+
+  @Test
+  public void shouldContainHelixesAndRelatedReferences() throws Exception {
+	  ResultActions r =  this.mockMvc.perform(get("/entry/NX_P03372/helix.xml"));
+	  r.andExpect(xpath("entry/annotation-list//@category").string("helix"));
+	  r.andExpect(xpath("entry/xref-list").exists());
+  }
+
+  @Test
+  public void shouldContainExperimentalContext() throws Exception {
+	  this.mockMvc.perform(get("/entry/NX_P03372/experimental-context.xml")).andExpect(xpath("entry/experimental-context-list").exists());
+  }
+
+  
 	
+  //TODO These mappings should also contain the xrefs / publications as well...
+  @Test
+  public void shouldContainAntibody() throws Exception {
+	  ResultActions r = this.mockMvc.perform(get("/entry/NX_P03372/antibody.xml"));
+	  r.andExpect(xpath("entry/mapping-list/mapping-category/@category").string("antibody-mapping"));
+  }
+  
+  @Test
+  public void shouldContainPeptide() throws Exception {
+	  ResultActions r = this.mockMvc.perform(get("/entry/NX_P03372/peptide.xml"));
+	  r.andExpect(xpath("entry/mapping-list/mapping-category/@category").string("peptide-mapping"));
+	  r.andExpect(xpath("entry/mapping-list/mapping-category/peptide-mapping").exists());
+  }
+
+  @Test
+  public void shouldContainSrmPeptide() throws Exception {
+	  ResultActions r = this.mockMvc.perform(get("/entry/NX_P03372/srm-peptide.xml"));
+	  r.andExpect(xpath("entry/mapping-list/mapping-category/@category").string("srm-peptide-mapping"));
+  }
 
   /*
 
