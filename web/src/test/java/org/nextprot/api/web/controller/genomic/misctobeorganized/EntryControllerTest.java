@@ -3,57 +3,30 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
-import org.hamcrest.core.StringContains;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.web.dbunit.base.mvc.MVCDBUnitBaseTest;
+import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
+import org.springframework.test.context.ActiveProfiles;
 
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
-
-@Ignore
-@DatabaseSetup(value = {"PeptideMappingControllerTest.xml"} , type = DatabaseOperation.INSERT)
-public class EntryControllerTest extends MVCDBUnitBaseTest {//MVCBaseIntegrationTest {
- 
+@ActiveProfiles("dev")
+public class EntryControllerTest extends WebUnitBaseTest {
+	
   @Test
-  public void testExportEntry() throws Exception {
-	  this.mockMvc.perform(get("/entry/NX_P03372.xml"))
-	  	.andExpect(status().isOk())
-	  	.andExpect(xpath("/neXtProtExport").exists())
-	  	.andExpect(xpath("/neXtProtExport/proteins/protein//@uniqueName").string("NX_P03372"))
-	  	.andExpect(xpath("/neXtProtExport/proteins/protein/annotations").exists())
-	  	.andExpect(xpath("/neXtProtExport/proteins/protein/keywords").exists())
-	  	.andExpect(xpath("/neXtProtExport/proteins/protein/isoforms").exists())
-	  	.andExpect(xpath("/neXtProtExport/proteins/protein/chromosomalLocations").exists())
-	  	.andExpect(xpath("/neXtProtExport/proteins/protein/genomicMappings").exists())
-	  	.andExpect(xpath("/neXtProtExport/proteins/protein/identifiers").exists())
-	  	.andExpect(xpath("/neXtProtExport/proteins/protein/publications").exists())
-	  	.andExpect(xpath("/neXtProtExport/proteins/protein/xrefs").exists())
-	  	;
+  public void shouldContainIsoform() throws Exception {
+	  this.mockMvc.perform(get("/entry/NX_P06213/isoform.xml")).andExpect(status().isOk())
+	  	.andExpect(xpath("/entry/isoform-list/isoform/sequence").exists())
+	  	.andExpect(xpath("/entry/isoform-list/isoform").nodeCount(2));
   }
   
   @Test
-  public void shouldGetOverview() throws Exception {
+  public void shouldContainOverview() throws Exception {
 	  this.mockMvc.perform(get("/entry/NX_P03372/overview.xml"))
-	  	.andExpect(xpath("/overview").exists())
-	  	.andExpect(xpath("/overview/proteinExistence").exists())
-	  	.andExpect(xpath("/overview/proteinExistence//@value").string("protein level"))
-	  	.andExpect(xpath("/overview/proteinNames").exists())
-	  	.andExpect(xpath("/overview/proteinNames/entityName//@isMain").string("true"))
-	  	.andExpect(xpath("/overview/proteinNames/entityName//@type").string("name"))
-	  	.andExpect(xpath("/overview/proteinNames/entityName//@qualifier").string("full"))
-	  	.andExpect(xpath("/overview/proteinNames/entityName/value").string("Estrogen receptor"))
-	  	
-	  	.andExpect(xpath("/overview/proteinNames/entityName/synonyms").exists())
-	  	.andExpect(xpath("/overview/proteinNames/entityName/synonyms/entityName[1]//@isMain").string("false"))
-	  	.andExpect(xpath("/overview/proteinNames/entityName/synonyms/entityName[1]//@type").string("name"))
-	  	.andExpect(xpath("/overview/proteinNames/entityName/synonyms/entityName[1]//@qualifier").string("full"))
-	  	.andExpect(xpath("/overview/proteinNames/entityName/synonyms/entityName[1]/value").exists())
-	  	.andExpect(xpath("/overview/proteinNames/entityName/synonyms/entityName[2]//@qualifier").string("full"))
-	  	;
-	  	
+	  	.andExpect(xpath("entry/overview").exists())
+	  	.andExpect(xpath("/overview/protein-existence").exists())
+	  	.andExpect(xpath("/overview/gene-name-list").exists());
   }
-  
+
+  /*
+
   @Test
   public void shouldGetChromosomalLocation() throws Exception {
     this.mockMvc.perform(get("/entry/NX_P03372/chromosomal-locations.xml"))
@@ -167,6 +140,7 @@ public class EntryControllerTest extends MVCDBUnitBaseTest {//MVCBaseIntegration
 	  
 	  
   }
+  */
 
 }
 

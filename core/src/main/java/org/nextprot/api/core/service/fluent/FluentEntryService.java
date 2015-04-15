@@ -141,6 +141,7 @@ public class FluentEntryService {
 		}
 
 		public FluentEntry withSrmPeptideMappings() {
+			System.err.println("Getting srm peptitde");
 			Long masterId = masterIdentifierService.findIdByUniqueName(entryName);
 			entry.setSrmPeptideMappings(peptideMappingService.findSyntheticPeptideMappingByMasterId(masterId));
 			return this;
@@ -208,7 +209,7 @@ public class FluentEntryService {
 				return this.withAntibodyMappings().getEntry();
 			case PEPTIDE:
 				return this.withPeptideMappings().getEntry();
-			case SRM_PEPTIDE_MAPPING:
+			case SRM_PEPTIDE:
 				return this.withSrmPeptideMappings().getEntry();
 
 			default: {

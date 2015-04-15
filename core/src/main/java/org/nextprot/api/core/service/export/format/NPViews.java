@@ -25,7 +25,7 @@ public enum NPViews{
 	ISOFORM(NPFileFormat.XML),
 	ANTIBODY(NPFileFormat.XML),
 	PEPTIDE(NPFileFormat.XML),
-	SRM_PEPTIDE_MAPPING(NPFileFormat.XML);
+	SRM_PEPTIDE(NPFileFormat.XML);
 	
 	
 	private List<NPFileFormat> supportedFormats = null;
@@ -39,7 +39,8 @@ public enum NPViews{
 	}
 	
 	public static NPViews valueOfViewName(String s){
-		return NPViews.valueOf(s.toUpperCase().replaceAll("_", "-"));
+		String aux = s.toUpperCase().replaceAll("-", "_");
+		return NPViews.valueOf(aux);
 	}
 
 	private static HashMap<String, Set<String>> formatViews = null;

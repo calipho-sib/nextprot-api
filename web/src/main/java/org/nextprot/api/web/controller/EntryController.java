@@ -1,20 +1,11 @@
 package org.nextprot.api.web.controller;
 
-import java.util.List;
-
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.AntibodyMapping;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Identifier;
-import org.nextprot.api.core.domain.Keyword;
-import org.nextprot.api.core.domain.PeptideMapping;
-import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,83 +86,75 @@ public class EntryController {
 		return "entry";
 	}
 	
-	/*
 
 	@ApiMethod(path = "/entry/{entry}/peptide", verb = ApiVerb.GET, description = "Gets the list of peptides for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/peptide")
 	public String getPeptideMapping(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		List<PeptideMapping> mapping = this.peptideService.findNaturalPeptideMappingByMasterUniqueName(entryName);
-		Entry entry = new Entry(entryName);
-		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
-		entry.setPeptideMappings(mapping);
+
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("antibody");
 		model.addAttribute("entry", entry);
-		return "peptide-list";
+		return "entry";
+
 	}
+
 
 	@ApiMethod(path = "/entry/{entry}/srm-peptide", verb = ApiVerb.GET, description = "Gets the list of SRM peptides for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/srm-peptide")
 	public String getSrmPeptideMapping(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		List<PeptideMapping> mapping = this.peptideService.findSyntheticPeptideMappingByMasterUniqueName(entryName);
-		Entry entry = new Entry(entryName);
-		entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));
-		entry.setPeptideMappings(mapping);
+	
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("srm-peptide");
 		model.addAttribute("entry", entry);
-		return "srm-peptide-list";
+		return "entry";
+		
 	}
+
 
 	@ApiMethod(path = "/entry/{entry}/identifier", verb = ApiVerb.GET, description = "Gets the list of identifiers for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/identifier")
 	public String getIdentifiers(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		List<Identifier> identifiers = this.identifierService.findIdentifiersByMaster(entryName);
-		Entry entry = new Entry(entryName);
-		entry.setIdentifiers(identifiers);
+
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("identifier");
 		model.addAttribute("entry", entry);
-		return "identifier-list";
+		return "entry";
 	}
 	
 	@RequestMapping("/entry/{entry}/genomic/chromosomal-location")
 	@ApiMethod(path = "/entry/{entry}/genomic/chromosomal-location", verb = ApiVerb.GET, description = "Gets the chromosomal locations of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	public String getChromosomalLocation(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		Entry entry = new Entry(entryName);
-		entry.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("chromosomal-location");
 		model.addAttribute("entry", entry);
-		return "chromosomal-location-list";
+		return "entry";
 	}
 
 	@ApiMethod(path = "/entry/{entry}/genomic/genomic-mapping", verb = ApiVerb.GET, description = "Gets the genomic mappings for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/genomic/genomic-mapping")
 	public String getGenomicMapping(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		Entry dummy = new Entry(entryName);
-		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
-		model.addAttribute("entry", dummy);
-		return "genomic-mapping-list";
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("genomic-mapping");
+		model.addAttribute("entry", entry);
+		return "entry";
 	}
 
 	@ApiMethod(path = "/entry/{entry}/genomic", verb = ApiVerb.GET, description = "Gets the genomic mappings for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/genomic")
 	public String getGenomic(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		Entry dummy = new Entry(entryName);
-		dummy.setGenomicMappings(genomicService.findGenomicMappingsByEntryName(entryName));
-		dummy.setChromosomalLocations(geneService.findChromosomalLocationsByEntry(entryName));
-		model.addAttribute("entry", dummy);
-		return "genomic";
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("genomic");
+		model.addAttribute("entry", entry);
+		return "entry";
 	}
 
 	
 	@ApiMethod(path = "/entry/{entry}/publication", verb = ApiVerb.GET, description = "Gets the publications of an given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/publication")
 	public String publications(@ApiPathParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		List<Publication> publications = this.publicationService.findPublicationsByMasterUniqueName(entryName);
-		Entry entry = new Entry(entryName);
-		entry.setPublications(publications);
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("publication");
 		model.addAttribute("entry", entry);
-		return "publication-list";
+		return "entry";
 	}
 	
 	@ApiMethod(path = "/entry/{entry}/xref", verb = ApiVerb.GET, description = "Gets the cross references of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
@@ -179,11 +162,9 @@ public class EntryController {
 	public String getXrefs(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) 
 			@PathVariable("entry") String entryName, Model model) {
-		List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster(entryName);
-		Entry dummy = new Entry(entryName);
-		dummy.setXrefs(xrefs);
-		model.addAttribute("entry", dummy);
-		return "xref-list";
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("xref");
+		model.addAttribute("entry", entry);
+		return "entry";
 	}
 
 
@@ -192,10 +173,9 @@ public class EntryController {
 	public String interactions(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry for example: The cytoplasmic tyrosine-protein kinase BMX: NX_P51813", allowedvalues = { "NX_P51813"}) 
 			@PathVariable("entry") String entryName, Model model) {
-		Entry dummy = new Entry(entryName);
-		dummy.setInteractions(interactionService.findInteractionsByEntry(entryName));
-		model.addAttribute("entry", dummy);
-		return "interaction-list";
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("interaction");
+		model.addAttribute("entry", entry);
+		return "entry";
 	}
 
 	@ApiMethod(path = "/entry/{entry}/annotation", verb = ApiVerb.GET, description = "Gets the annotations of a given entry grouped by category", produces = { MediaType.APPLICATION_XML_VALUE})
@@ -203,22 +183,19 @@ public class EntryController {
 	public String getEntryAnnotations(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) 
 			@PathVariable("entry") String entryName, Model model) {
-		List<Annotation> annotations = this.annotationService.findAnnotations(entryName);
-		Entry dummy = new Entry(entryName);
-		dummy.setAnnotations(annotations);
-		model.addAttribute("entry", dummy);
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("annotation");
+		model.addAttribute("entry", entry);
 		return "entry";
 	}
 	
-	@ApiMethod(path = "/entry/{entry}/experimentalContext", verb = ApiVerb.GET, description = "Gets the experimental contexts related to the annotations of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping("/entry/{entry}/experimentalContext")
+	@ApiMethod(path = "/entry/{entry}/experimental-context", verb = ApiVerb.GET, description = "Gets the experimental contexts related to the annotations of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
+	@RequestMapping("/entry/{entry}/experimental-context")
 	public String getEntryExperimentalContexts(@ApiPathParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		Entry dummy = new Entry(entryName);
-		dummy.setExperimentalContexts(this.expContextService.findExperimentalContextsByEntryName(entryName));
-		model.addAttribute("entry", dummy);
-		return "experimental-context-list";
+		Entry entry = this.fluentEntryService.getNewEntry(entryName).withView("experimental-context");
+		model.addAttribute("entry", entry);
+		return "entry";
 	}
 	
-	*/
+	
 }
 
