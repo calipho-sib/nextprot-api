@@ -54,7 +54,6 @@
 	<dependencyManagement>
 
 		<dependencies>
-
 			<dependency>
 				<groupId>org.nextprot</groupId>
 				<artifactId>nextprot-api-commons</artifactId>
