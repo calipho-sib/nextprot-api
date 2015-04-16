@@ -94,7 +94,7 @@
 						</a>
 						<ul class="dropdown-menu" role="menu">
 							<li>
-								<a href='' class="btn-logout"">Logout</a>
+								<a href='' class="btn-logout">Logout</a>
 							</li>
 						</ul></li>
 				</ul>
@@ -107,12 +107,11 @@
 		<div class="row">
 			
 			<div class="col-md-2">
-				<div id="maindiv" style="display:none;"></div>
-				
+
 				<div class="panel-group" id="side-accordion" aria-multiselectable="true" style="display: none;">
 					
 					<div class="panel panel-default">
-						<div class="panel-heading" id="panel-apis">
+						<div class="panel-heading">
 							<h4 class="panel-title">
 								<a id="panel-apis" href="#_panel-apis" data-toggle="collapse" data-parent="#side-accordion" aria-controls="_panel-apis" aria-expanded="true">API</a>
 							</h4>
@@ -125,7 +124,7 @@
 					</div>
 					
 					<div class="panel panel-default hide">
-						<div class="panel-heading" id="panel-objects">
+						<div class="panel-heading">
 							<h4 class="panel-title">
 								<a id="panel-objects" href="#_panel-objects" data-toggle="collapse" data-parent="#side-accordion" aria-controls="_panel-objects" aria-expanded="true">Objects</a>
 							</h4>
@@ -138,7 +137,7 @@
 					</div>
 					
 					<div class="panel panel-default hide">
-						<div class="panel-heading" id="panel-flows">
+						<div class="panel-heading">
 							<h4 class="panel-title">
 								<a id="panel-flows" href="#_panel-flows" data-toggle="collapse" data-parent="#side-accordion" aria-controls="_panel-flows" aria-expanded="true">Flows</a>
 							</h4>
@@ -169,25 +168,23 @@
 	<footer class="container text-center small">
 		<hr />
 		<div class="row">
-			<div class="col-lg-12">
-				<div class="col-md-4">
+			<div class="col-lg-15">
+				<div class="col-md-3">
 					<ul class="nav nav-pills nav-stacked">
 						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/legal%20disclaimer.md" target="_blank">Legal disclaimer</a></li>
 					</ul>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<ul class="nav nav-pills nav-stacked">
 						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2015 SIB</a></li>
 					</ul>
 				</div>
-				<div class="col-md-4">
+				<div class="col-md-3">
 					<ul class="nav nav-pills nav-stacked">
-						<li><a href="https://github.com/calipho-sib/nextprot-api"
-							target="_blank"><i class="icon-github"></i>For developers</a></li>
-						</a>
-						</li>
+						<li><a href="https://github.com/calipho-sib/nextprot-api" target="_blank"><i class="icon-github"></i>For developers</a></li>
 					</ul>
 				</div>
+				<div id="maindiv" style="display:none;" class="col-md-3"></div>
 				<div class="col-md-3">
 					<ul class="nav nav-pills nav-stacked">
 					</ul>
@@ -199,11 +196,13 @@
 
 
 	<script id="main" type="text/x-handlebars-template">
-<blockquote>
-  <p style="text-transform: uppercase;">API info</span></p>
-  <small>Version: {{version}}</small>
-</blockquote>
-</script>
+		<ul class="nav nav-pills nav-stacked">
+			<li><a href="https://github.com/calipho-sib/nextprot-api/releases"
+				   target="_blank"><i class="icon-tag"></i>Version: {{version}}</a></li>
+			</a>
+			</li>
+		</ul>
+	</script>
 
 <script id="apis" type="text/x-handlebars-template">
 {{#eachInMap apis}}
