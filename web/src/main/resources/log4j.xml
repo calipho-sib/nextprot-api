@@ -10,6 +10,13 @@
 	</appender>
 
 
+	<appender name="splunkAppender"
+		class="org.nextprot.api.commons.utils.SplunkRawTCPAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %m%n" />
+		</layout>
+	</appender>
+	
 	<appender name="requestsFileAppender" class="org.apache.log4j.RollingFileAppender">
 		<param name="file" value="log/requests.log" />
 		<param name="MaxFileSize" value="20MB" />
@@ -71,10 +78,10 @@
 		<level value="INFO" />
 	</logger>
 
-	<logger name="org.nextprot.api.core.aop.InstrumentationAspect"
-		additivity="false">
+	<logger name="org.nextprot.api.core.aop.InstrumentationAspect" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="requestsFileAppender" />
+		<!--  <appender-ref ref="splunkAppender" />-->
 	</logger>
 
 	<logger name="org.nextprot.api.diff.DiffBaseTest"
