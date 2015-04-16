@@ -18,15 +18,15 @@ public enum NPViews{
 	ANNOTATION(NPFileFormat.XML),
 	PUBLICATION(NPFileFormat.XML),
 	XREF(NPFileFormat.XML),
-	KEYWORD(NPFileFormat.XML),
 	IDENTIFIER(NPFileFormat.XML),
 	CHROMOSOMAL_LOCATION(NPFileFormat.XML),
+	EXPERIMENTAL_CONTEXT(NPFileFormat.XML),
 	GENOMIC_MAPPING(NPFileFormat.XML),
 	INTERACTION(NPFileFormat.XML),
 	ISOFORM(NPFileFormat.XML),
 	ANTIBODY(NPFileFormat.XML),
 	PEPTIDE(NPFileFormat.XML),
-	SRM_PEPTIDE_MAPPING(NPFileFormat.XML);
+	SRM_PEPTIDE(NPFileFormat.XML);
 	
 	
 	private List<NPFileFormat> supportedFormats = null;
@@ -40,7 +40,8 @@ public enum NPViews{
 	}
 	
 	public static NPViews valueOfViewName(String s){
-		return NPViews.valueOf(s.toUpperCase().replaceAll("_", "-"));
+		String aux = s.toUpperCase().replaceAll("-", "_");
+		return NPViews.valueOf(aux);
 	}
 
 	private static HashMap<String, Set<String>> formatViews = null;

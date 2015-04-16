@@ -152,8 +152,10 @@ public class FluentEntryService {
 		}
 
 		public FluentEntry withEverything() {
-			return this.withOverview().withGeneralAnnotations().withPublications().withXrefs().withKeywords().withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
-					.withTargetIsoforms().withAntibodyMappings().withPeptideMappings().withSrmPeptideMappings().withExperimentalContexts();
+			this.withOverview().withGeneralAnnotations().withPublications().withXrefs().withKeywords().withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
+			.withTargetIsoforms().withAntibodyMappings().withPeptideMappings().withSrmPeptideMappings().withExperimentalContexts();
+			
+			return this;
 		}
 
 		private Entry getEntry() {
@@ -190,8 +192,6 @@ public class FluentEntryService {
 				return this.withPublications().getEntry();
 			case XREF:
 				return this.withXrefs().getEntry();
-			case KEYWORD:
-				return this.withKeywords().getEntry();
 			case IDENTIFIER:
 				return this.withIdentifiers().getEntry();
 			case CHROMOSOMAL_LOCATION:
@@ -208,8 +208,10 @@ public class FluentEntryService {
 				return this.withAntibodyMappings().getEntry();
 			case PEPTIDE:
 				return this.withPeptideMappings().getEntry();
-			case SRM_PEPTIDE_MAPPING:
+			case SRM_PEPTIDE:
 				return this.withSrmPeptideMappings().getEntry();
+			case EXPERIMENTAL_CONTEXT:
+				return this.withExperimentalContexts().getEntry();
 
 			default: {
 

@@ -128,6 +128,11 @@
 		statistics="true" copyOnRead="true" copyOnWrite="true">
 	</cache>
 
+	<cache name="sparql-proxy" overflowToOffHeap="false"
+		maxEntriesLocalHeap="100" 
+		eternal="true" statistics="true"/>
+
+
 	<!-- GitHub Pages -->
 
 	<cache name="github-pages" maxEntriesLocalHeap="1000" timeToLiveSeconds="60" statistics="true" />

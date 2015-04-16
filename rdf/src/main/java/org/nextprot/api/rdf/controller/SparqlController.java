@@ -1,26 +1,19 @@
 package org.nextprot.api.rdf.controller;
 
 import java.net.URISyntaxException;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.nextprot.api.rdf.service.SparqlEndpoint;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.rdf.service.SparqlProxyEndpoint;
-import org.nextprot.api.rdf.service.SparqlService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
 
 /**
  * Controller used many to log and tune queries. Check the log times. No cache is used on purpose
@@ -29,18 +22,29 @@ import com.hp.hpl.jena.sparql.resultset.ResultsFormat;
  */
 @Lazy
 @Controller
-//@PreAuthorize("hasRole('ROLE_SPARQL')")
 public class SparqlController {
 
 	@Autowired
+	private SparqlProxyEndpoint sparqlProxyEndpoint;
+	
+	@RequestMapping("/sparql")
+	@ResponseBody
+	public ResponseEntity<String> mirrorRest(@RequestBody String body, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
+		String queryString = request.getQueryString();
+		if(request.getParameter("query") == null){
+			throw new NextProtException("Please provide a SPARQL query");
+		}
+		return this.sparqlProxyEndpoint.sparql(body, queryString);
+	}
+
+
+	/*@Autowired
 	private SparqlService sparqlService;
 
 	@Autowired
 	private SparqlEndpoint sparqlEndpoint;
-
-	@Autowired
-	private SparqlProxyEndpoint sparqlProxyEndpoint;
-
+	*/
+	/*
 	@RequestMapping(value = "/sparql-nocache", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<String> sparqlNoCache(@RequestParam(value = "sparql", required = true) String queryString, 
@@ -74,11 +78,7 @@ public class SparqlController {
 		
 		return sparqlService.sparqlSelect(query, engine, Integer.parseInt(sparqlEndpoint.getTimeout()), title, testid,  ResultsFormat.guessSyntax(format, ResultsFormat.FMT_RS_XML)).getOutput();
 	}
+	*/
 	
-	@RequestMapping("/sparql")
-	@ResponseBody
-	public ResponseEntity<String> mirrorRest(@RequestBody String body, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
-		return this.sparqlProxyEndpoint.sparql(body, request.getQueryString());
-	}
 
 }
