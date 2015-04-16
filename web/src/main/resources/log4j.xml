@@ -81,7 +81,7 @@
 	<logger name="org.nextprot.api.core.aop.InstrumentationAspect" additivity="false">
 		<level value="INFO" />
 		<appender-ref ref="requestsFileAppender" />
-		<!--  <appender-ref ref="splunkAppender" />-->
+		<!-- <appender-ref ref="splunkAppender" />-->
 	</logger>
 
 	<logger name="org.nextprot.api.diff.DiffBaseTest"

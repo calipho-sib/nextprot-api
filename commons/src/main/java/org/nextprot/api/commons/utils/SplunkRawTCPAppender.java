@@ -14,7 +14,7 @@ import org.apache.log4j.spi.LoggingEvent;
 public class SplunkRawTCPAppender extends AppenderSkeleton {
 
 	// connection settings
-	private String host = "nextp-vm1.vital-it.ch";
+	private String host = "kant";
 	private int port = 5150;
 
 	//queuing settings
@@ -53,7 +53,7 @@ public class SplunkRawTCPAppender extends AppenderSkeleton {
 				sri.setDropEventsOnQueueFull(dropEventsOnQueueFull);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			errorHandler
 					.error("Couldn't establish Raw TCP connection for SplunkRawTCPAppender named \""
 							+ this.name + "\".");
