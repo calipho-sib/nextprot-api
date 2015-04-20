@@ -93,5 +93,24 @@ public class Terminology implements Serializable {
 		List<String> all = Arrays.asList(sameAs.split("\\|"));
 		this.sameAs = all;
 	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("name=");
+		sb.append(name);
+		sb.append("\n");
+		sb.append("accession=");
+		sb.append(this.accession);
+		sb.append("\n");
+		sb.append("ontology=");
+		sb.append(this.ontology);
+		sb.append("\n");
+		sb.append("description=");
+		sb.append(this.description);
+		sb.append("\n");
+		
+		return sb.toString();
+		
+	}
 
 }
