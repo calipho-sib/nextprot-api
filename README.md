@@ -40,6 +40,5 @@ mvn test
 
 * [solr](http://lucene.apache.org/solr/) 
 * [Virtuoso](http://http://virtuoso.openlinksw.com/)
-
 * Git
 * Maven
