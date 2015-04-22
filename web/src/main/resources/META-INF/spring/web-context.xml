@@ -91,38 +91,39 @@
 				<entry key="json" value="application/json" />
 				<entry key="xml" value="application/xml" />
 				<entry key="ttl" value="text/turtle" />
+				<entry key="fasta" value="text/plain" />
 				<entry key="html" value="text/html" />
 			</map>
 		</property>
 		<property name="viewResolvers">
 			<list>
 				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
-				<bean
-					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+				<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 					<property name="prefix" value="/WEB-INF/jsp/" />
 					<property name="suffix" value=".jsp" />
 				</bean>
-				<bean
-					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="application/xml;charset=UTF-8" />
 					<property name="cache" value="true" />
 				</bean>
-				<bean
-					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="application/json;charset=UTF-8" />
 				</bean>
-				<bean
-					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="turtle/" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/turtle;charset=UTF-8" />
 				</bean>
-				<bean
-					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+					<property name="prefix" value="fasta/" />
+					<property name="suffix" value=".vm" />
+					<property name="contentType" value="text/plain;charset=UTF-8" />
+				</bean>
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="txt/" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/plain;charset=UTF-8" />
