@@ -1,5 +1,7 @@
 package org.nextprot.api.commons.utils;
 
+import com.google.common.base.Preconditions;
+
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
 import java.util.regex.Pattern;
@@ -136,4 +138,36 @@ public class StringUtils {
 		  return input.matches("\\d+");  //match a number with optional '-' and decimal.
 	}
 
+	/**
+	 * Format text with lines of <code>max</code> length
+	 *
+	 * @param text the text to format
+	 * @param maxLineLen the maximum line length
+	 * @return formatted text
+	 */
+	public static String wrapText(String text, int maxLineLen) {
+
+		Preconditions.checkNotNull(text);
+		Preconditions.checkArgument(maxLineLen > 0);
+
+		return wrapTextRec(text, maxLineLen, new StringBuilder());
+	}
+
+	static String wrapTextRec(String text, int maxLineLen, StringBuilder sb) {
+
+		if (text.length()<maxLineLen) {
+
+			sb.append(text);
+
+			return sb.toString();
+		} else {
+
+			String head = text.substring(0, maxLineLen);
+			String tail = text.substring(maxLineLen);
+
+			sb.append(head).append("\n");
+
+			return wrapTextRec(tail, maxLineLen, sb);
+		}
+	}
 }
