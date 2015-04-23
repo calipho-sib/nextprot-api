@@ -1,1 +1,6 @@
->nxp|$entry.getUniqueName()|INSR|Insulin receptor|Short
+#set ( $protName = $entry.getOverview().getMainProteinName() )
+#set ( $geneName = $entry.getOverview().getMainGeneName() )
+#foreach($isoform in $entry.isoforms)
+>nxp|$isoform.getUniqueName()|$geneName|$protName|$isoform.formatIsoformId()
+$StringUtils.wrapText($isoform.getSequence(), 60)
+#end
