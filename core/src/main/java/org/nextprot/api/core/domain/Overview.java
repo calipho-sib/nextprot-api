@@ -1,16 +1,13 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.Pair;
+
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @ApiObject(name = "overview", description = "The overview of an entry")
 public class Overview implements Serializable{
@@ -340,12 +337,26 @@ public class Overview implements Serializable{
 		return proteinNames;
 	}
 
+	public String getMainProteinName() {
+
+		EntityName name = getMainEntityName(proteinNames, EntityNameClass.PROTEIN_NAMES);
+
+		return name.getSynonymName();
+	}
+
 	public void setProteinNames(List<EntityName> proteinNames) {
 		this.proteinNames = proteinNames;
 	}
 
 	public List<EntityName> getGeneNames() {
 		return geneNames;
+	}
+
+	public String getMainGeneName() {
+
+		EntityName name = getMainEntityName(geneNames, EntityNameClass.GENE_NAMES);
+
+		return name.getSynonymName();
 	}
 
 	public void setGeneNames(List<EntityName> geneNames) {
@@ -374,5 +385,20 @@ public class Overview implements Serializable{
 
 	public void setAdditionalNames(List<EntityName> additionalNames) {
 		this.additionalNames = additionalNames;
+	}
+
+	/**
+	 * Get the main entity name
+	 * @param entityNameList the list of entity names
+	 * @return
+	 */
+	private static EntityName getMainEntityName(List<EntityName> entityNameList, EntityNameClass entityNameClass) {
+
+		for (EntityName entityName : entityNameList) {
+
+			if (entityName.isMain()) return entityName;
+		}
+
+		throw new NextProtException("could not find main "+((entityNameClass == EntityNameClass.PROTEIN_NAMES) ? "protein":"gene")+" name");
 	}
 }
