@@ -1,13 +1,13 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.util.Collection;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
+
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.util.Collection;
 
 
 public class Isoform implements Serializable {
@@ -97,4 +97,13 @@ public class Isoform implements Serializable {
 		this.synonyms = synonyms;
 	}
 
+	public String formatIsoformId() {
+
+		String value = getMainEntityName().getValue();
+
+		if (value.matches("\\d+")) {
+			return "Iso "+value;
+		}
+		return value;
+	}
 }
