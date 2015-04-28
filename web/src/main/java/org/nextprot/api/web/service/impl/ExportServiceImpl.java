@@ -1,21 +1,8 @@
 package org.nextprot.api.web.service.impl;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import javax.annotation.PostConstruct;
-
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -25,14 +12,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.EntryService;
-import org.nextprot.api.core.service.GeneService;
-import org.nextprot.api.core.service.IdentifierService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.KeywordService;
-import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
@@ -43,9 +23,15 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.annotation.PostConstruct;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 @Lazy
@@ -343,6 +329,22 @@ public class ExportServiceImpl implements ExportService {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void streamResultsInFasta(Writer writer, String viewName, List<String> accessions) {
+
+		try {
+			if (accessions != null) {
+				for (String acc : accessions) {
+					streamFasta(acc, writer);
+					writer.flush();
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new NextProtException("Failed to stream fasta");
+		}
 
 	}
 
@@ -350,9 +352,25 @@ public class ExportServiceImpl implements ExportService {
 
 		Template template = config.getVelocityEngine().getTemplate("entry.xml.vm");
 
-		Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
+		streamWithTemplate(template, entryName, writer, viewName);
+	}
+
+	private void streamFasta(String entryName, Writer writer) {
+
+		Template template = config.getVelocityEngine().getTemplate("fasta/entry.fasta.vm");
+
+		streamWithTemplate(template, entryName, writer, "isoform", "overview");
+	}
+
+	private void streamWithTemplate(Template template, String entryName, Writer writer, String... viewNames) {
+
+		FluentEntryService.FluentEntry fluentEntry = fluentEntryService.newFluentEntry(entryName);
+
+		for (String viewName : viewNames)
+			fluentEntry.buildWithView(viewName);
+
 		VelocityContext context = new VelocityContext();
-		context.put("entry", entry);
+		context.put("entry", fluentEntry.build());
 		context.put("StringUtils", StringUtils.class);
 		context.put("NXUtils", NXVelocityUtils.class);
 
@@ -361,7 +379,7 @@ public class ExportServiceImpl implements ExportService {
 
 	private void streamJson(String entryName, String viewName, JsonGenerator generator) throws IOException {
 
-		Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
+		Entry entry = fluentEntryService.newFluentEntry(entryName).buildWithView(viewName);
 		generator.writeObject(entry);
 	}
 

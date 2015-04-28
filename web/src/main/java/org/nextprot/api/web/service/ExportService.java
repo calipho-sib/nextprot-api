@@ -60,5 +60,5 @@ public interface ExportService {
 
 	void streamResultsInJson(Writer stream, String viewName, List<String> accessions);
 
-
+	void streamResultsInFasta(Writer stream, String viewName, List<String> accessions);
 }

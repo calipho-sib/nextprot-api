@@ -1,21 +1,5 @@
 package org.nextprot.api.web.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Future;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.ApiMethod;
@@ -28,11 +12,9 @@ import org.nextprot.api.core.service.export.format.NPViews;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
-import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserQueryService;
 import org.nextprot.api.web.service.ExportService;
@@ -43,12 +25,17 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ViewResolver;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.*;
+import java.util.concurrent.Future;
 
 /**
  * Controller class responsible to extract in streaming
@@ -169,7 +156,7 @@ public class ExportController {
 	 * 
 	 * try { response.getWriter().write(format.getHeader()); for (String acc :
 	 * accessions) { Entry entry =
-	 * fluentEntryService.getNewEntry(acc).withView(view);
+	 * fluentEntryService.newFluentEntry(acc).buildWithView(view);
 	 * model.addAttribute("entry", entry); model.addAttribute("NXUtils", new
 	 * NXVelocityUtils()); model.addAttribute("StringUtils", StringUtils.class);
 	 * 
@@ -212,7 +199,7 @@ public class ExportController {
 	private SolrService solrService;
 
 	@RequestMapping(value = "/export/entries/{view}", method = { RequestMethod.GET })
-	public void streamEntriesInXMLSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query,
+	public void streamEntriesSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query,
 			@RequestParam(value = "listId", required = false) String listId, @RequestParam(value = "queryId", required = false) String queryId,
 			@RequestParam(value = "sparql", required = false) String sparql, @RequestParam(value = "filter", required = false) String filter,
 			@RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "order", required = false) String order,
@@ -225,7 +212,7 @@ public class ExportController {
 	}
 
 	@RequestMapping(value = "/export/entries", method = { RequestMethod.GET })
-	public void streamEntriesInXML(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query,
+	public void streamEntries(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query,
 			@RequestParam(value = "listId", required = false) String listId, @RequestParam(value = "queryId", required = false) String queryId,
 			@RequestParam(value = "sparql", required = false) String sparql, @RequestParam(value = "filter", required = false) String filter,
 			@RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "order", required = false) String order,
@@ -257,10 +244,9 @@ public class ExportController {
 
 		// Gets the accessions
 		String fileName = getFileName(queryRequest, viewName, format);
-		if (format.equals(NPFileFormat.XML)) {
+		if (!format.equals(NPFileFormat.JSON)) {
 			response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 		}
-
 
 		Writer writer = null;
 		try {
@@ -271,22 +257,23 @@ public class ExportController {
 			if (format.equals(NPFileFormat.XML)) {
 				this.exportService.streamResultsInXML(writer, null, null, true, false);
 			}
-			
+
 			Set<String> accessionsSet = searchService.getAccessions(queryRequest);
-			List<String> accessions = null;
-			
+			List<String> accessions;
+
 			if(queryRequest.getSort() != null || queryRequest.getOrder() != null){
 				//TODO This is very slow and is highly memory intensive please review the way of sorting this using only the asking for ids. See the SearchServiceTest 
 				accessions = searchService.sortAccessions(queryRequest, accessionsSet);
 			}else {
-				accessions = new ArrayList<String>(accessionsSet);
+				accessions = new ArrayList<>(accessionsSet);
 			}
-			
 			
 			if (format.equals(NPFileFormat.XML)) {
 				this.exportService.streamResultsInXML(writer, viewName, accessions, false, false);
 			} else if (format.equals(NPFileFormat.JSON)) {
 				this.exportService.streamResultsInJson(writer, viewName, accessions);
+			} else if (format.equals(NPFileFormat.FASTA)) {
+				this.exportService.streamResultsInFasta(writer, viewName, accessions);
 			} else {
 				throw new NextProtException("Format not yet supported");
 			}
@@ -309,7 +296,6 @@ public class ExportController {
 				throw new NextProtException("Failed to close writer for xml");
 			}
 		}
-
 	}
 
 	@RequestMapping(value = "/export/templates", method = { RequestMethod.GET })
