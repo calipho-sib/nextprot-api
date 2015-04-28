@@ -1,7 +1,5 @@
 package org.nextprot.api.core.service.fluent;
 
-import java.util.List;
-
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
@@ -10,19 +8,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.AntibodyMappingService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.ExperimentalContextService;
-import org.nextprot.api.core.service.GeneService;
-import org.nextprot.api.core.service.GenomicMappingService;
-import org.nextprot.api.core.service.IdentifierService;
-import org.nextprot.api.core.service.InteractionService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.KeywordService;
-import org.nextprot.api.core.service.OverviewService;
-import org.nextprot.api.core.service.PeptideMappingService;
-import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.export.format.NPViews;
 import org.nextprot.api.core.utils.AnnotationUtils;
 import org.nextprot.api.core.utils.ExperimentalContextUtil;
@@ -31,6 +17,8 @@ import org.nextprot.api.core.utils.XrefUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Lazy
 @Service
@@ -65,7 +53,7 @@ public class FluentEntryService {
 	@Autowired
 	private ExperimentalContextService ecService;
 
-	public FluentEntry getNewEntry(String entryName) {
+	public FluentEntry newFluentEntry(String entryName) {
 		return new FluentEntry(entryName);
 	}
 
@@ -158,17 +146,17 @@ public class FluentEntryService {
 			return this;
 		}
 
-		private Entry getEntry() {
+		public Entry build() {
 			return entry;
 		}
 
-		public Entry withView(String view) {
+		public Entry buildWithView(String view) {
 			if(view.equals("entry")){
-				return this.withEverything().getEntry();
+				return this.withEverything().build();
 			}
 			try {
 				NPViews npView = NPViews.valueOfViewName(view);
-				return getEntrySubPart(npView);
+				return buildEntrySubPart(npView);
 			} catch (IllegalArgumentException ev) {
 				try {
 					AnnotationApiModel annotationCategory = AnnotationApiModel.getDecamelizedAnnotationTypeName(view);
@@ -179,39 +167,39 @@ public class FluentEntryService {
 			}
 		}
 
-		private Entry getEntrySubPart(NPViews npView) {
+		private Entry buildEntrySubPart(NPViews npView) {
 
 			switch (npView) {
 			case FULL_ENTRY:
-				return this.withEverything().getEntry();
+				return this.withEverything().build();
 			case ACCESSION:
-				return this.getEntry();
+				return this.build();
 			case OVERVIEW:
-				return this.withOverview().getEntry();
+				return this.withOverview().build();
 			case PUBLICATION:
-				return this.withPublications().getEntry();
+				return this.withPublications().build();
 			case XREF:
-				return this.withXrefs().getEntry();
+				return this.withXrefs().build();
 			case IDENTIFIER:
-				return this.withIdentifiers().getEntry();
+				return this.withIdentifiers().build();
 			case CHROMOSOMAL_LOCATION:
-				return this.withChromosomalLocations().getEntry();
+				return this.withChromosomalLocations().build();
 			case GENOMIC_MAPPING:
-				return this.withGenomicMappings().getEntry();
+				return this.withGenomicMappings().build();
 			case INTERACTION:
-				return this.withInteractions().getEntry();
+				return this.withInteractions().build();
 			case ISOFORM:
-				return this.withTargetIsoforms().getEntry();
+				return this.withTargetIsoforms().build();
 			case ANNOTATION:
-				return this.withGeneralAnnotations().getEntry();
+				return this.withGeneralAnnotations().build();
 			case ANTIBODY:
-				return this.withAntibodyMappings().getEntry();
+				return this.withAntibodyMappings().build();
 			case PEPTIDE:
-				return this.withPeptideMappings().getEntry();
+				return this.withPeptideMappings().build();
 			case SRM_PEPTIDE:
-				return this.withSrmPeptideMappings().getEntry();
+				return this.withSrmPeptideMappings().build();
 			case EXPERIMENTAL_CONTEXT:
-				return this.withExperimentalContexts().getEntry();
+				return this.withExperimentalContexts().build();
 
 			default: {
 
