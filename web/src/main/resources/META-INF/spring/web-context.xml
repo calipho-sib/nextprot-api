@@ -92,6 +92,7 @@
 				<entry key="xml" value="application/xml" />
 				<entry key="ttl" value="text/turtle" />
 				<entry key="fasta" value="text/plain" />
+				<entry key="peff" value="text/plain" />
 				<entry key="html" value="text/html" />
 			</map>
 		</property>
@@ -120,6 +121,11 @@
 				</bean>
 				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="fasta/" />
+					<property name="suffix" value=".vm" />
+					<property name="contentType" value="text/plain;charset=UTF-8" />
+				</bean>
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+					<property name="prefix" value="peff/" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/plain;charset=UTF-8" />
 				</bean>

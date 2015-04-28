@@ -1,17 +1,12 @@
 package org.nextprot.api.web.service.impl;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
@@ -58,7 +53,7 @@ public class ExportServiceImpl implements ExportService {
 	@Autowired
 	private FluentEntryService fluentEntryService;
 	@Autowired
-	private VelocityConfig config;
+	private VelocityConfig velocityConfig;
 
 	private int numberOfWorkers = 8;
 
@@ -106,12 +101,12 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	private Future<File> exportSubPart(SubPart part, NPFileFormat format) {
-		return executor.submit(new ExportSubPartTask(config.getVelocityEngine(), part, format));
+		return executor.submit(new ExportSubPartTask(velocityConfig.getVelocityEngine(), part, format));
 	}
 
 	@Override
 	public Future<File> exportEntry(String uniqueName, NPFileFormat format) {
-		return executor.submit(new ExportEntryTask(this.entryService, config.getVelocityEngine(), uniqueName, format));
+		return executor.submit(new ExportEntryTask(this.entryService, velocityConfig.getVelocityEngine(), uniqueName, format));
 	}
 
 	static class ExportEntryTask implements Callable<File> {
@@ -276,111 +271,10 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	@Override
-	public void streamResultsInXML(Writer writer, String viewName, List<String> accessions, boolean withHeader, boolean withFooter) {
-		try {
+	public void streamResults(NPFileFormat format, Writer stream, String viewName, List<String> accessions) throws IOException {
 
-			if (withHeader) {
-				writer.write("<?xml version='1.0' encoding='UTF-8'?>\n");
-				//writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"https://dl.dropboxusercontent.com/u/2037400/nextprot-export.xsd\">\n");
-				writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
-				// TODO add <header>
-				writer.write("<entry-list>\n");
-				writer.flush();
-			}
+		AbstractStreamExporter exporter = AbstractStreamExporter.valueOf(format, stream, fluentEntryService, velocityConfig);
 
-			if (accessions != null) {
-				for (String acc : accessions) {
-					streamXml(acc, viewName, writer);
-					writer.flush();
-				}
-			}
-
-			if (withFooter) {
-				writer.write("</entry-list>\n");
-				writer.write("</nextprot-export>\n");
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new NextProtException("Failed to stream xml");
-		}
+		exporter.export(accessions, viewName);
 	}
-
-	@Override
-	public void streamResultsInJson(Writer writer, String viewName, List<String> accessions) {
-		JsonGenerator generator = null;
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			JsonFactory factory = mapper.getFactory();
-			generator = factory.createGenerator(writer);
-
-			for (String acc : accessions) {
-				streamJson(acc, viewName, generator);
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (generator != null) {
-				try {
-					generator.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	@Override
-	public void streamResultsInFasta(Writer writer, String viewName, List<String> accessions) {
-
-		try {
-			if (accessions != null) {
-				for (String acc : accessions) {
-					streamFasta(acc, writer);
-					writer.flush();
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new NextProtException("Failed to stream fasta");
-		}
-
-	}
-
-	private void streamXml(String entryName, String viewName, Writer writer) {
-
-		Template template = config.getVelocityEngine().getTemplate("entry.xml.vm");
-
-		streamWithTemplate(template, entryName, writer, viewName);
-	}
-
-	private void streamFasta(String entryName, Writer writer) {
-
-		Template template = config.getVelocityEngine().getTemplate("fasta/entry.fasta.vm");
-
-		streamWithTemplate(template, entryName, writer, "isoform", "overview");
-	}
-
-	private void streamWithTemplate(Template template, String entryName, Writer writer, String... viewNames) {
-
-		FluentEntryService.FluentEntry fluentEntry = fluentEntryService.newFluentEntry(entryName);
-
-		for (String viewName : viewNames)
-			fluentEntry.buildWithView(viewName);
-
-		VelocityContext context = new VelocityContext();
-		context.put("entry", fluentEntry.build());
-		context.put("StringUtils", StringUtils.class);
-		context.put("NXUtils", NXVelocityUtils.class);
-
-		template.merge(context, writer);
-	}
-
-	private void streamJson(String entryName, String viewName, JsonGenerator generator) throws IOException {
-
-		Entry entry = fluentEntryService.newFluentEntry(entryName).buildWithView(viewName);
-		generator.writeObject(entry);
-	}
-
 }
