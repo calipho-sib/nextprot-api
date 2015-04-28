@@ -40,16 +40,7 @@ public class IsoformMapping implements Serializable{
 	}
 
 	public String getIsoMainName() {
-
-		try {
-			if(isoform.getMainEntityName() == null)
-				return "Iso 1";
-			else return "Iso " + Integer.valueOf(isoform.getMainEntityName().getValue());
-			
-		} catch (NumberFormatException e) {
-			return isoform.getMainEntityName().getValue();
-		}
-
+		return isoform.formatIsoformId();
 	}
 
 	public long getReferenceGeneId() {

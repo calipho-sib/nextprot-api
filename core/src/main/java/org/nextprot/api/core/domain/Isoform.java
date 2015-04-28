@@ -99,11 +99,16 @@ public class Isoform implements Serializable {
 
 	public String formatIsoformId() {
 
-		String value = getMainEntityName().getValue();
+		String value = "Iso 1";
 
-		if (value.matches("\\d+")) {
-			return "Iso "+value;
+		if (mainEntityName != null) {
+
+			value = mainEntityName.getValue();
+
+			if (value.matches("\\d+"))
+				value = "Iso " + value;
 		}
+
 		return value;
 	}
 }
