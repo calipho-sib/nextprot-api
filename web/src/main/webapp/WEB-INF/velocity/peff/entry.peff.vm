@@ -1,0 +1,6 @@
+#set ( $protName = $entry.getOverview().getMainProteinName() )
+#set ( $geneName = $entry.getOverview().getMainGeneName() )
+#foreach($isoform in $entry.isoforms)
+>nxp:$isoform.getUniqueName() \DbUniqueId=$isoform.getUniqueName() \Pname=$protName \Gname=$geneName \NcbiTaxId=XXXX \TaxName=Homo Sapiens \Length=$isoform.getSequence().length() \SV=XXX \EV=XXX \PE=X \ModResPsi=(11|MOD:00046)(15|MOD:00046)(72|MOD:00047)(74|MOD:00046) \Variant=(8|8|R)(24|24|V)(60|60|D)(69|69|K)(72|72|A)(72|72|S)(87|87|D)(90|90|K)(90|90|G)(103|103|G)(104|104|Q)(119|119|G)(122|122|S)(136|136|V)(138|138|V)(159|159|R)(164|164|T)(179|179|K)(188|188|I)(208|208|R)(216|216|F)(223|223|A)(226|226|N)(260|260|W)(17|17|D)(33|33|R)(63|63|T)(126|126|L)(174|174|R)(229|229|K) \Processed=(1|260|mature protein)
+$StringUtils.wrapText($isoform.getSequence(), 60)
+#end

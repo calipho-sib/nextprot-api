@@ -273,8 +273,8 @@ public class ExportServiceImpl implements ExportService {
 	@Override
 	public void streamResults(NPFileFormat format, Writer stream, String viewName, List<String> accessions) throws IOException {
 
-		AbstractStreamExporter exporter = AbstractStreamExporter.valueOf(format, stream, fluentEntryService, velocityConfig);
+		NPStreamExporter exporter = NPFileExporter.valueOf(format).getNPStreamExporter();
 
-		exporter.export(accessions, viewName);
+		exporter.export(accessions, stream, viewName);
 	}
 }

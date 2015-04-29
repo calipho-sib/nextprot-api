@@ -6,17 +6,17 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Export entries sequence in FASTA format
+ * Export entries sequence in PEFF (extended FASTA) format
  *
  * Created by fnikitin on 28/04/15.
  */
-public class FastaStreamExporter extends NPStreamExporter {
+public class PeffStreamExporter extends NPStreamExporter {
 
     private final Template template;
 
-    FastaStreamExporter() {
+    PeffStreamExporter() {
 
-        template = velocityConfig.getVelocityEngine().getTemplate("fasta/entry.fasta.vm");
+        template = velocityConfig.getVelocityEngine().getTemplate("peff/entry.peff.vm");
     }
 
     @Override
