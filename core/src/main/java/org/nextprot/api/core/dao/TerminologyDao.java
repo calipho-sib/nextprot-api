@@ -8,9 +8,9 @@ public interface TerminologyDao {
 
 	public Terminology findTerminologyByAccession(String accession);
 
-	List<Terminology> findTerminologByTitle(String title);
+	List<Terminology> findTerminologByTitle(String title); // Not implemented
 
-	List<Terminology> findTerminologyByName(String name) ;
+	List<Terminology> findTerminologyByName(String name); // Not implemented
 	
 	List<Terminology> findTerminologyByOntology(String ontology);
 
