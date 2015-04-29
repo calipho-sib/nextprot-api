@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.export.format.NPFileFormat;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -15,21 +13,20 @@ import java.io.Writer;
  *
  * Created by fnikitin on 28/04/15.
  */
-class JSONStreamExporter extends AbstractStreamExporter {
+public class JSONStreamExporter extends NPStreamExporter {
 
-    private final JsonGenerator generator;
+    private final JsonFactory factory;
 
-    public JSONStreamExporter(Writer writer, FluentEntryService fluentEntryService) throws IOException {
+    public JSONStreamExporter() {
         
-        super(NPFileFormat.JSON, writer, fluentEntryService);
-
         ObjectMapper mapper = new ObjectMapper();
-        JsonFactory factory = mapper.getFactory();
-        generator = factory.createGenerator(writer);
+        factory = mapper.getFactory();
     }
 
     @Override
-    protected void exportStream(String entryName, String viewName) throws IOException {
+    protected void exportStream(String entryName, Writer writer, String viewName) throws IOException {
+
+        JsonGenerator generator = factory.createGenerator(writer);
 
         Entry entry = fluentEntryService.newFluentEntry(entryName).buildWithView(viewName);
         generator.writeObject(entry);

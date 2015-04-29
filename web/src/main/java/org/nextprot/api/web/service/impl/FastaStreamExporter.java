@@ -1,9 +1,6 @@
 package org.nextprot.api.web.service.impl;
 
 import org.apache.velocity.Template;
-import org.nextprot.api.core.service.export.format.NPFileFormat;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
-import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -13,22 +10,18 @@ import java.io.Writer;
  *
  * Created by fnikitin on 28/04/15.
  */
-class FastaStreamExporter extends AbstractStreamExporter {
+public class FastaStreamExporter extends NPStreamExporter {
 
-    private final VelocityConfig velocityConfig;
+    private final Template template;
 
-    public FastaStreamExporter(Writer writer, FluentEntryService fluentEntryService, VelocityConfig velocityConfig) {
-        
-        super(NPFileFormat.FASTA, writer, fluentEntryService);
+    FastaStreamExporter() {
 
-        this.velocityConfig = velocityConfig;
+        template = velocityConfig.getVelocityEngine().getTemplate("fasta/entry.fasta.vm");
     }
 
     @Override
-    protected void exportStream(String entryName, String viewName) throws IOException {
+    protected void exportStream(String entryName, Writer writer, String viewName) throws IOException {
 
-        Template template = velocityConfig.getVelocityEngine().getTemplate("fasta/entry.fasta.vm");
-
-        streamWithVelocityTemplate(template, entryName, "isoform", "overview");
+        streamWithVelocityTemplate(template, entryName, writer, "isoform", "overview");
     }
 }
