@@ -14,7 +14,7 @@ inner join nextprot.cv_terms root on (root_r.subject_id=root.cv_id)
 inner join nextprot.db_xrefs xrefr on (root.db_xref_id=xrefr.resource_id) 
      where xrefr.accession=nextprot.db_xrefs.accession)  as ancestor, 
 -- get other_xrefs
-   (select string_agg(cat.cv_name || ', ' || db.cv_name || ', ' || ref.accession , ' | ') 
+   (select string_agg(cat.cv_name || ', ' || db.cv_name || ', ' || ref.accession  || ', ' || db.link_url, ' | ') 
      from nextprot.cv_term_db_xref_assoc tra 
      inner join nextprot.db_xrefs ref on (tra.db_xref_id=ref.resource_id) 
      inner join nextprot.cv_databases db on (ref.cv_database_id=db.cv_id)
