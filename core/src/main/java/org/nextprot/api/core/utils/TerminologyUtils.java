@@ -39,18 +39,23 @@ public class TerminologyUtils {
 	public static List<DbXref> convertToXrefs (String xrefsstring) {
 
 		if (xrefsstring == null) return null;
-		// Builds DbXref list from String of xrefs formatted as "dbcat, db, acc" trios separated by pipes
+		// Builds DbXref list from String of xrefs formatted as "dbcat, db, acc, linkurl" quartetss separated by pipes
 		List<DbXref> xrefs = new ArrayList<DbXref>();
 		List<String> allxrefs = Arrays.asList(xrefsstring.split(" \\| "));
 		for (String onexref: allxrefs) {
+			
 			List<String> fields = Arrays.asList(onexref.split(", "));
 			String dbcat = fields.get(0);
 			String db = fields.get(1);
 			String acc = fields.get(2);
+			String linkurl = "nolink.org/%s";
+			if(fields.size() > 3) {linkurl = fields.get(3);}
+			//else {System.err.println("No link for: " + onexref);}
 			DbXref dbref = new DbXref();
 			dbref.setDatabaseName(db);
 			dbref.setAccession(acc);
 			dbref.setDatabaseCategory(dbcat);
+			dbref.setLinkUrl(linkurl);
 			//dbref.setDbXrefId(?);
 			xrefs.add(dbref);
 			}
