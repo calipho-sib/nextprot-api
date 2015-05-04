@@ -110,6 +110,7 @@ public class Terminology implements Serializable {
 		for (DbXref currxref : xrefs) {
 			if(currxref.getDatabaseCategory().equals(category)) filteredxrefs.add(currxref);
 		}
+		if(filteredxrefs.size() == 0) return null;
 		return filteredxrefs;
 	}
 
