@@ -11,7 +11,6 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
-import java.io.*; 
 
 @ActiveProfiles({"dev"})
 public class TerminologyServiceTest extends CoreUnitBaseTest {
@@ -73,23 +72,19 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	}
 	
 	@Test
-	public void shouldReturnAllTerms()  throws IOException {
+	public void shouldReturnAllTerms()  {
 		int cnt = 0, refcnt = 0, maxref = 0;
-		FileWriter fw = new FileWriter("/home/agateau/termsaveas.txt");
 		List<Terminology> terms = this.terminologyService.findAllTerminology();
 		assertTrue(terms.size() > 145000); 
 		for(Terminology term : terms)  {
 			List<String> sameas = term.getSameAs();
 			if(sameas != null) {
-			//System.out.println(term.getOntology() + ":" + term.getAccession() + " -> " + sameas);
-			fw.write(term.getOntology() + ":" + term.getAccession() + " -> " + sameas + "\n");
 			cnt++;
 			refcnt = sameas.size();
-			if(refcnt > maxref) {maxref = refcnt;System.out.println(term.getOntology() + ":" + term.getAccession() + " -> " + sameas);}
+			if(refcnt > maxref) maxref = refcnt;
 			}
 		}
-		fw.close();
-		assertEquals(67754,cnt);
+		assertEquals(44021,cnt);
 		assertEquals(64,maxref);
 	} 
 	
