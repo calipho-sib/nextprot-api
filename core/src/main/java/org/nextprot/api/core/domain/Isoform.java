@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
+import org.nextprot.api.core.utils.NXVelocityUtils;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
@@ -28,13 +29,14 @@ public class Isoform implements Serializable {
 
 	private Collection<IsoformEntityName> synonyms;
 	
-	
+	@Deprecated
 	public String getIsoelectricPointAsString() {
 		Double d = DescriptorPI.compute(sequence);
 		DecimalFormat df = new DecimalFormat("#.##");
 		return df.format(d);
 	}
-	
+
+	@Deprecated
 	public String getMassAsString() {
 		try {
 			Double d = DescriptorMass.compute(sequence);
@@ -97,18 +99,9 @@ public class Isoform implements Serializable {
 		this.synonyms = synonyms;
 	}
 
+	@Deprecated
 	public String formatIsoformId() {
 
-		String value = "Iso 1";
-
-		if (mainEntityName != null) {
-
-			value = mainEntityName.getValue();
-
-			if (value.matches("\\d+"))
-				value = "Iso " + value;
-		}
-
-		return value;
+		return NXVelocityUtils.formatIsoformId(this);
 	}
 }
