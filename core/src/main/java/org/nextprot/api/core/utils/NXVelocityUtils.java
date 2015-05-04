@@ -12,6 +12,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class NXVelocityUtils {
@@ -154,49 +155,99 @@ public class NXVelocityUtils {
 	}
 
 	/**
-	 * Get the list of all variants of a given isoform as specified in PEFF developed by the HUPO PSI (PubMed:19132688)
+	 * Get all variants of a given isoform as string specified in PEFF developed by the HUPO PSI (PubMed:19132688)
 	 *
 	 * @param entry the entry to find variant from
 	 * @param isoform the isoform to find variant of
-	 * @return a list of Annotation of type VARIANT
+	 * @return a list of Annotation of type VARIANT as PEFF format
 	 */
-	public static List<String> getListVariantAsPeff(Entry entry, Isoform isoform) {
+	public static String getVariantsAsPeffString(Entry entry, Isoform isoform) {
 
 		Preconditions.checkNotNull(entry);
 
-		List<String> variants = new ArrayList<>();
+		StringBuilder sb = new StringBuilder();
+
+		for (Variation variation : getListVariant(entry, isoform)) {
+
+			sb.append(variation.asPeff());
+		}
+
+		return sb.toString();
+	}
+
+	static List<Variation> getListVariant(Entry entry, Isoform isoform) {
+
+		Preconditions.checkNotNull(entry);
+
+		List<Variation> variations = new ArrayList<>();
 
 		for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
 
 			if (annotation.getAPICategory() == AnnotationApiModel.VARIANT)
-				variants.add(getVariantAsPeff(isoform, annotation));
+				variations.add(Variation.valueOf(isoform, annotation));
 		}
 
-		return variants;
+		Collections.sort(variations);
+
+		return variations;
 	}
 
-	/**
-	 * Format a given variant as specified in PEFF developed by the HUPO PSI (PubMed:19132688)
-	 *
-	 * @param isoform the variant isoform
-	 * @param variant the variation
-	 * @return (START|END|AA_VARIATION)
-	 */
-	static String getVariantAsPeff(Isoform isoform, Annotation variant) {
+	static class Variation implements Comparable<Variation> {
 
-		Preconditions.checkNotNull(isoform);
-		Preconditions.checkNotNull(variant);
+		private final String variant;
+		private final int start;
+		private final int end;
 
-		StringBuilder sb = new StringBuilder();
+		public Variation(String variant, int start, int end) {
 
-		AnnotationIsoformSpecificity target = variant.getTargetingIsoformsMap().get(isoform.getUniqueName());
+			Preconditions.checkArgument(!variant.isEmpty());
+			Preconditions.checkArgument(start >= 0);
+			Preconditions.checkArgument(start <= end);
 
-		int start = target.getFirstPosition();
-		int end = target.getLastPosition();
-		String variation = variant.getVariant().getVariant();
+			this.variant = variant;
+			this.start = start;
+			this.end = end;
+		}
 
-		sb.append("(").append(start).append("|").append(end).append("|").append(variation).append(")");
+		public static Variation valueOf(Isoform isoform, Annotation variant) {
 
-		return sb.toString();
+			Preconditions.checkNotNull(isoform);
+			Preconditions.checkNotNull(variant);
+
+			AnnotationIsoformSpecificity target = variant.getTargetingIsoformsMap().get(isoform.getUniqueName());
+
+			return new Variation(variant.getVariant().getVariant(), target.getFirstPosition(), target.getLastPosition());
+		}
+
+		public String getVariant() {
+			return variant;
+		}
+
+		public int getEnd() {
+			return end;
+		}
+
+		public int getStart() {
+			return start;
+		}
+
+		/** Format as specified in PEFF developed by the HUPO PSI (PubMed:19132688) */
+		public String asPeff() {
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("(").append(start).append("|").append(end).append("|").append(variant).append(")");
+			return sb.toString();
+		}
+
+		@Override
+		public int compareTo(Variation other) {
+
+			return Integer.compare(start, other.getStart());
+		}
+
+		public String toString() {
+
+			return asPeff();
+		}
 	}
 }

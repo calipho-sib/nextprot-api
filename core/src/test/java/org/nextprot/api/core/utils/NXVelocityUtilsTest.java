@@ -3,6 +3,8 @@ package org.nextprot.api.core.utils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformEntityName;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -10,6 +12,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,25 +55,73 @@ public class NXVelocityUtilsTest {
     }
 
     @Test
-    public void testGetVariantAsPeff() throws Exception {
+    public void testVariation() throws Exception {
 
-        Annotation variant = newVariant("R", "Q", new Position("NX_P22694-1", 32, 32));
+        NXVelocityUtils.Variation variation = new NXVelocityUtils.Variation("Q", 32, 32);
 
-        Assert.assertEquals("(32|32|Q)", NXVelocityUtils.getVariantAsPeff(newIsoform("NX_P22694-1"), variant));
+        Assert.assertEquals("(32|32|Q)", variation.asPeff());
     }
 
     @Test
-    public void testGetVariantAsPeff2() throws Exception {
+    public void testGetVariantList() throws Exception {
 
-        Annotation variant = newVariant("R", "Q",
+        Annotation variant1 = newVariant("R", "Q",
+                new Position("NX_P22694-1", 106, 106),
+                new Position("NX_P22694-2", 153, 153),
+                new Position("NX_P22694-3", 94, 94)
+        );
+
+        Annotation variant2 = newVariant("T", "M",
                 new Position("NX_P22694-1", 300, 300),
                 new Position("NX_P22694-2", 347, 347),
                 new Position("NX_P22694-3", 288, 288)
         );
 
-        Assert.assertEquals("(300|300|Q)", NXVelocityUtils.getVariantAsPeff(newIsoform("NX_P22694-1"), variant));
-        Assert.assertEquals("(347|347|Q)", NXVelocityUtils.getVariantAsPeff(newIsoform("NX_P22694-2"), variant));
-        Assert.assertEquals("(288|288|Q)", NXVelocityUtils.getVariantAsPeff(newIsoform("NX_P22694-3"), variant));
+        Annotation variant3 = newVariant("A", "P",
+                new Position("NX_P22694-1", 26, 26)
+        );
+
+        Entry entry = newEntry("NX_P22694", Arrays.asList(variant1, variant2, variant3));
+
+        List<NXVelocityUtils.Variation> variations = NXVelocityUtils.getListVariant(entry, newIsoform("NX_P22694-1"));
+
+        Assert.assertEquals("P", variations.get(0).getVariant());
+        Assert.assertEquals(26, variations.get(0).getStart());
+        Assert.assertEquals(26, variations.get(0).getEnd());
+
+        Assert.assertEquals("Q", variations.get(1).getVariant());
+        Assert.assertEquals(106, variations.get(1).getStart());
+        Assert.assertEquals(106, variations.get(1).getEnd());
+
+        Assert.assertEquals("M", variations.get(2).getVariant());
+        Assert.assertEquals(300, variations.get(2).getStart());
+        Assert.assertEquals(300, variations.get(2).getEnd());
+    }
+
+    @Test
+    public void testGetVariantListAsPeff() throws Exception {
+
+        Annotation variant1 = newVariant("R", "Q",
+                new Position("NX_P22694-1", 106, 106),
+                new Position("NX_P22694-2", 153, 153),
+                new Position("NX_P22694-3", 94, 94)
+        );
+
+        Annotation variant2 = newVariant("T", "M",
+                new Position("NX_P22694-1", 300, 300),
+                new Position("NX_P22694-2", 347, 347),
+                new Position("NX_P22694-3", 288, 288)
+        );
+
+        Annotation variant3 = newVariant("A", "P",
+                new Position("NX_P22694-1", 26, 26)
+        );
+
+        Entry entry = newEntry("NX_P22694", Arrays.asList(variant1, variant2, variant3));
+
+        Assert.assertEquals("(26|26|P)(106|106|Q)(300|300|M)", NXVelocityUtils.getVariantsAsPeffString(entry, newIsoform("NX_P22694-1")));
+        Assert.assertEquals("(153|153|Q)(347|347|M)", NXVelocityUtils.getVariantsAsPeffString(entry, newIsoform("NX_P22694-2")));
+        Assert.assertEquals("(94|94|Q)(288|288|M)", NXVelocityUtils.getVariantsAsPeffString(entry, newIsoform("NX_P22694-3")));
     }
 
     private static Isoform newIsoform(String id) {
@@ -84,6 +135,7 @@ public class NXVelocityUtilsTest {
     private static Annotation newVariant(String ori, String var, Position... isoformPositions) {
 
         Annotation variant = new Annotation();
+        variant.setCategory(AnnotationApiModel.VARIANT.getDbAnnotationTypeName());
 
         variant.setVariant(new AnnotationVariant(ori, var, ""));
 
@@ -102,6 +154,15 @@ public class NXVelocityUtilsTest {
         variant.setTargetingIsoforms(specificityList);
 
         return variant;
+    }
+
+    private static Entry newEntry(String id, List<Annotation> annotations) {
+
+        Entry entry = new Entry(id);
+
+        entry.setAnnotations(annotations);
+
+        return entry;
     }
 
     private static class Position {
