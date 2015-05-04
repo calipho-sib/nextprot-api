@@ -235,7 +235,7 @@ public enum AnnotationApiModel implements Serializable {
 	public static AnnotationApiModel getByDbAnnotationTypeName(String typeName) {
 		if (MAP_TYPES.containsKey(typeName)) {
 			return MAP_TYPES.get(typeName);
-		}else throw new NextProtException("\nCould not find annotation category for: "+ typeName + "\nPossible types: \n" + typeName);
+		}else throw new NextProtException("\nCould not find annotation category for: "+ typeName + "\nPossible types: \n" + MAP_TYPES.keySet());
 	}
 
 
