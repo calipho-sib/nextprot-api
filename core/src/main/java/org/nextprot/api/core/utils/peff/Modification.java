@@ -9,6 +9,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * A modification located on isoform
@@ -17,6 +18,7 @@ import java.util.List;
  */
 public abstract class Modification extends LocatedAnnotation {
 
+    private static Logger LOGGER = Logger.getLogger("Modification");
     private final String modName;
 
     protected Modification(String isoformId, Annotation annotation, String modName) {
@@ -48,6 +50,7 @@ public abstract class Modification extends LocatedAnnotation {
             case MODIFIED_RESIDUE:
                 return new ModificationPsi(isoformId, annotation);
             default:
+                LOGGER.warning("could not create instance of annotation of type "+annotation.getAPICategory()+" of isoform id "+isoformId);
                 return null;
         }
     }
@@ -105,17 +108,20 @@ public abstract class Modification extends LocatedAnnotation {
 
         Preconditions.checkNotNull(entry);
 
-        List<Modification> variations = new ArrayList<>();
+        List<Modification> modifications = new ArrayList<>();
 
         for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
 
-            if (annotation.getAPICategory().isChildOf(AnnotationApiModel.GENERIC_PTM))
-                variations.add(Modification.valueOf(isoform.getUniqueName(), annotation));
+            if (annotation.getAPICategory().isChildOf(AnnotationApiModel.GENERIC_PTM) && annotation.getAPICategory() != AnnotationApiModel.PTM_INFO) {
+                Modification modification = Modification.valueOf(isoform.getUniqueName(), annotation);
+
+                if (modification != null) modifications.add(modification);
+            }
         }
 
-        Collections.sort(variations);
+        Collections.sort(modifications);
 
-        return variations;
+        return modifications;
     }
 
     static String getGenericPTMsAsPeffString(Entry entry, Isoform isoform, boolean fetchPsi) {
