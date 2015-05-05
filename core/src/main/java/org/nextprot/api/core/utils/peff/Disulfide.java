@@ -7,16 +7,11 @@ import org.nextprot.api.core.domain.annotation.Annotation;
  *
  * Created by fnikitin on 05/05/15.
  */
-public class Disulfide extends Modification {
+class Disulfide extends ModificationNoPsi {
 
     public Disulfide(String isoformId, Annotation annotation) {
 
         super(isoformId, annotation);
-    }
-
-    public final String getModificationName() {
-
-        return "Disulfide";
     }
 
     @Override

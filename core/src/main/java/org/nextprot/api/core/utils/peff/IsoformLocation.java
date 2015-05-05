@@ -3,7 +3,7 @@ package org.nextprot.api.core.utils.peff;
 import com.google.common.base.Preconditions;
 
 /**
- * A simple implementation of Location
+ * An isoform Location
  *
  * Created by fnikitin on 05/05/15.
  */

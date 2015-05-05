@@ -26,6 +26,7 @@ public class DisulfideTest {
 
         when(annotation.getStartPositionForIsoform(Mockito.anyString())).thenReturn(from);
         when(annotation.getEndPositionForIsoform(Mockito.anyString())).thenReturn(to);
+        when(annotation.getCvTermName()).thenReturn("Disulfide");
 
         return annotation;
     }

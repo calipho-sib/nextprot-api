@@ -8,7 +8,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
  *
  * Created by fnikitin on 05/05/15.
  */
-public abstract class LocatedAnnotation implements Location<LocatedAnnotation>, PeffFormatter {
+abstract class LocatedAnnotation implements Location<LocatedAnnotation>, PeffFormatter {
 
     private final IsoformLocation location;
 
