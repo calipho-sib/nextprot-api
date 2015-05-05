@@ -8,7 +8,8 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.utils.peff.Modification;
+import org.nextprot.api.core.utils.peff.Variation;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -175,6 +176,27 @@ public class NXVelocityUtils {
 		return sb.toString();
 	}
 
+	/**
+	 * Get all modifications of a given isoform as string specified in PEFF developed by the HUPO PSI (PubMed:19132688)
+	 *
+	 * @param entry the entry to find modified residues from
+	 * @param isoform the isoform to find modification
+	 * @return a list of Annotation of type MODIFICATIONS as PEFF format
+	 */
+	public static String getGenericPTMsAsPeffString(Entry entry, Isoform isoform) {
+
+		Preconditions.checkNotNull(entry);
+
+		StringBuilder sb = new StringBuilder();
+
+		for (Modification modif : getListGenericPTM(entry, isoform)) {
+
+			sb.append(modif.asPeff());
+		}
+
+		return sb.toString();
+	}
+
 	static List<Variation> getListVariant(Entry entry, Isoform isoform) {
 
 		Preconditions.checkNotNull(entry);
@@ -184,7 +206,7 @@ public class NXVelocityUtils {
 		for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
 
 			if (annotation.getAPICategory() == AnnotationApiModel.VARIANT)
-				variations.add(Variation.valueOf(isoform, annotation));
+				variations.add(new Variation(isoform.getUniqueName(), annotation));
 		}
 
 		Collections.sort(variations);
@@ -192,62 +214,29 @@ public class NXVelocityUtils {
 		return variations;
 	}
 
-	static class Variation implements Comparable<Variation> {
+	/**
+	 * Get all modifications of given isoform (Kind considered are SELENOCYSTEINE, LIPIDATION_SITE, GLYCOSYLATION_SITE,
+	 * CROSS_LINK. DISULFIDE_BOND, MODIFIED_RESIDUE and PTM_INFO)
+	 *
+	 * @param entry
+	 * @param isoform
+	 * @return
+	 */
+	static List<Modification> getListGenericPTM(Entry entry, Isoform isoform) {
 
-		private final String variant;
-		private final int start;
-		private final int end;
+		Preconditions.checkNotNull(entry);
 
-		public Variation(String variant, int start, int end) {
+		List<Modification> variations = new ArrayList<>();
 
-			Preconditions.checkArgument(!variant.isEmpty());
-			Preconditions.checkArgument(start >= 0);
-			Preconditions.checkArgument(start <= end);
+		for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
 
-			this.variant = variant;
-			this.start = start;
-			this.end = end;
+			if (annotation.getAPICategory().isChildOf(AnnotationApiModel.GENERIC_PTM))
+				variations.add(Modification.valueOf(isoform.getUniqueName(), annotation));
 		}
 
-		public static Variation valueOf(Isoform isoform, Annotation variant) {
+		Collections.sort(variations);
 
-			Preconditions.checkNotNull(isoform);
-			Preconditions.checkNotNull(variant);
-
-			AnnotationIsoformSpecificity target = variant.getTargetingIsoformsMap().get(isoform.getUniqueName());
-
-			return new Variation(variant.getVariant().getVariant(), target.getFirstPosition(), target.getLastPosition());
-		}
-
-		public String getVariant() {
-			return variant;
-		}
-
-		public int getEnd() {
-			return end;
-		}
-
-		public int getStart() {
-			return start;
-		}
-
-		/** Format as specified in PEFF developed by the HUPO PSI (PubMed:19132688) */
-		public String asPeff() {
-
-			StringBuilder sb = new StringBuilder();
-			sb.append("(").append(start).append("|").append(end).append("|").append(variant).append(")");
-			return sb.toString();
-		}
-
-		@Override
-		public int compareTo(Variation other) {
-
-			return Integer.compare(start, other.getStart());
-		}
-
-		public String toString() {
-
-			return asPeff();
-		}
+		return variations;
 	}
+
 }

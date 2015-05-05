@@ -1,15 +1,11 @@
 #set ( $protName = $entry.getOverview().getMainProteinName() )
 #set ( $geneName = $entry.getOverview().getMainGeneName() )
 #foreach($isoform in $entry.isoforms)
->nxp:$isoform.getUniqueName() \DbUniqueId=$isoform.getUniqueName() \Pname=$protName \Gname=$geneName
-\NcbiTaxId=9606
-\TaxName=Homo Sapiens
-\Length=$isoform.getSequence().length()
+>nxp:$isoform.getUniqueName() \DbUniqueId=$isoform.getUniqueName() \Pname=$protName \Gname=$geneName \NcbiTaxId=9606 \TaxName=Homo Sapiens \Length=$isoform.getSequence().length() \Variant=$NXUtils.getVariantsAsPeffString($entry, $isoform)
 \SV=XXX
 \EV=XXX
 \PE=X
-\ModResPsi=(11|MOD:00046)(15|MOD:00046)(72|MOD:00047)(74|MOD:00046)
-\Variant=$NXUtils.getVariantsAsPeffString($entry, $isoform)
+\ModResPsi=$NXUtils.getGenericPTMsAsPeffString($entry, $isoform)
 \Processed=(1|260|mature protein)
 $StringUtils.wrapText($isoform.getSequence(), 60)
 #end
