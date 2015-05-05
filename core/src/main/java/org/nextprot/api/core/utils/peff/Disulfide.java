@@ -15,6 +15,7 @@ public class Disulfide extends Modification {
     }
 
     public final String getModificationName() {
+
         return "Disulfide";
     }
 

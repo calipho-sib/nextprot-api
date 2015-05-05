@@ -1,14 +1,15 @@
 package org.nextprot.api.core.domain.annotation;
 
+import com.google.common.base.Preconditions;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
+import org.nextprot.api.core.domain.DbXref;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
-import org.nextprot.api.core.domain.DbXref;
 
 
 public class Annotation implements Serializable {
@@ -219,6 +220,7 @@ public class Annotation implements Serializable {
 	}
 	
 	public int getStartPositionForIsoform(String isoformName) {
+		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
 		return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
 	}
 	
@@ -227,6 +229,7 @@ public class Annotation implements Serializable {
 	}
 	
 	public int getEndPositionForIsoform(String isoformName) {
+		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
 		return this.targetingIsoformsMap.get(isoformName).getLastPosition();
 	}
 	

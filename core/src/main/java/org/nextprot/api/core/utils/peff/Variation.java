@@ -3,11 +3,11 @@ package org.nextprot.api.core.utils.peff;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 /**
- * A variation located on isoform
+ * A variation located on an isoform
  *
  * Created by fnikitin on 05/05/15.
  */
-public class Variation extends Position {
+public class Variation extends LocatedAnnotation {
 
     private final String variant;
 
@@ -19,6 +19,7 @@ public class Variation extends Position {
     }
 
     public String getVariant() {
+
         return variant;
     }
 

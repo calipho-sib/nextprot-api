@@ -7,7 +7,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
  *
  * Created by fnikitin on 05/05/15.
  */
-public abstract class Modification extends Position {
+public abstract class Modification extends LocatedAnnotation {
 
     private final String modName;
 

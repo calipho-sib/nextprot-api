@@ -10,6 +10,7 @@ import org.nextprot.api.core.domain.IsoformEntityName;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
+import org.nextprot.api.core.utils.peff.IsoformLocation;
 import org.nextprot.api.core.utils.peff.Modification;
 import org.nextprot.api.core.utils.peff.Variation;
 
@@ -60,19 +61,19 @@ public class NXVelocityUtilsTest {
     public void testGetVariantList() throws Exception {
 
         Annotation variant1 = newVariant("R", "Q",
-                new SimplePosition("NX_P22694-1", 106, 106),
-                new SimplePosition("NX_P22694-2", 153, 153),
-                new SimplePosition("NX_P22694-3", 94, 94)
+                new IsoformLocation("NX_P22694-1", 106, 106),
+                new IsoformLocation("NX_P22694-2", 153, 153),
+                new IsoformLocation("NX_P22694-3", 94, 94)
         );
 
         Annotation variant2 = newVariant("T", "M",
-                new SimplePosition("NX_P22694-1", 300, 300),
-                new SimplePosition("NX_P22694-2", 347, 347),
-                new SimplePosition("NX_P22694-3", 288, 288)
+                new IsoformLocation("NX_P22694-1", 300, 300),
+                new IsoformLocation("NX_P22694-2", 347, 347),
+                new IsoformLocation("NX_P22694-3", 288, 288)
         );
 
         Annotation variant3 = newVariant("A", "P",
-                new SimplePosition("NX_P22694-1", 26, 26)
+                new IsoformLocation("NX_P22694-1", 26, 26)
         );
 
         Entry entry = newEntry("NX_P22694", Arrays.asList(variant1, variant2, variant3));
@@ -96,19 +97,19 @@ public class NXVelocityUtilsTest {
     public void testGetVariantListAsPeff() throws Exception {
 
         Annotation variant1 = newVariant("R", "Q",
-                new SimplePosition("NX_P22694-1", 106, 106),
-                new SimplePosition("NX_P22694-2", 153, 153),
-                new SimplePosition("NX_P22694-3", 94, 94)
+                new IsoformLocation("NX_P22694-1", 106, 106),
+                new IsoformLocation("NX_P22694-2", 153, 153),
+                new IsoformLocation("NX_P22694-3", 94, 94)
         );
 
         Annotation variant2 = newVariant("T", "M",
-                new SimplePosition("NX_P22694-1", 300, 300),
-                new SimplePosition("NX_P22694-2", 347, 347),
-                new SimplePosition("NX_P22694-3", 288, 288)
+                new IsoformLocation("NX_P22694-1", 300, 300),
+                new IsoformLocation("NX_P22694-2", 347, 347),
+                new IsoformLocation("NX_P22694-3", 288, 288)
         );
 
         Annotation variant3 = newVariant("A", "P",
-                new SimplePosition("NX_P22694-1", 26, 26)
+                new IsoformLocation("NX_P22694-1", 26, 26)
         );
 
         Entry entry = newEntry("NX_P22694", Arrays.asList(variant1, variant2, variant3));
@@ -123,23 +124,23 @@ public class NXVelocityUtilsTest {
 
         Annotation mod1 = newModification("Phosphothreonine",
                 AnnotationApiModel.MODIFIED_RESIDUE,
-                new SimplePosition("NX_P22694-1", 196, 196),
-                new SimplePosition("NX_P22694-2", 243, 243),
-                new SimplePosition("NX_P22694-3", 184, 184)
+                new IsoformLocation("NX_P22694-1", 196, 196),
+                new IsoformLocation("NX_P22694-2", 243, 243),
+                new IsoformLocation("NX_P22694-3", 184, 184)
         );
 
         Annotation mod2 = newModification("Phosphoserine",
                 AnnotationApiModel.MODIFIED_RESIDUE,
-                new SimplePosition("NX_P22694-1", 339, 339),
-                new SimplePosition("NX_P22694-2", 386, 386),
-                new SimplePosition("NX_P22694-3", 327, 327)
+                new IsoformLocation("NX_P22694-1", 339, 339),
+                new IsoformLocation("NX_P22694-2", 386, 386),
+                new IsoformLocation("NX_P22694-3", 327, 327)
         );
 
         Annotation mod3 = newModification("Phosphothreonine",
                 AnnotationApiModel.MODIFIED_RESIDUE,
-                new SimplePosition("NX_P22694-1", 198, 198),
-                new SimplePosition("NX_P22694-2", 245, 245),
-                new SimplePosition("NX_P22694-3", 186, 186)
+                new IsoformLocation("NX_P22694-1", 198, 198),
+                new IsoformLocation("NX_P22694-2", 245, 245),
+                new IsoformLocation("NX_P22694-3", 186, 186)
         );
 
         Entry entry = newEntry("NX_P22694", Arrays.asList(mod1, mod2, mod3));
@@ -164,23 +165,23 @@ public class NXVelocityUtilsTest {
 
         Annotation mod1 = newModification("Phosphothreonine",
                 AnnotationApiModel.MODIFIED_RESIDUE,
-                new SimplePosition("NX_P22694-1", 196, 196),
-                new SimplePosition("NX_P22694-2", 243, 243),
-                new SimplePosition("NX_P22694-3", 184, 184)
+                new IsoformLocation("NX_P22694-1", 196, 196),
+                new IsoformLocation("NX_P22694-2", 243, 243),
+                new IsoformLocation("NX_P22694-3", 184, 184)
         );
 
         Annotation mod2 = newModification("Phosphoserine",
                 AnnotationApiModel.MODIFIED_RESIDUE,
-                new SimplePosition("NX_P22694-1", 339, 339),
-                new SimplePosition("NX_P22694-2", 386, 386),
-                new SimplePosition("NX_P22694-3", 327, 327)
+                new IsoformLocation("NX_P22694-1", 339, 339),
+                new IsoformLocation("NX_P22694-2", 386, 386),
+                new IsoformLocation("NX_P22694-3", 327, 327)
         );
 
         Annotation mod3 = newModification("Phosphothreonine",
                 AnnotationApiModel.MODIFIED_RESIDUE,
-                new SimplePosition("NX_P22694-1", 198, 198),
-                new SimplePosition("NX_P22694-2", 245, 245),
-                new SimplePosition("NX_P22694-3", 186, 186)
+                new IsoformLocation("NX_P22694-1", 198, 198),
+                new IsoformLocation("NX_P22694-2", 245, 245),
+                new IsoformLocation("NX_P22694-3", 186, 186)
         );
 
         Entry entry = newEntry("NX_P22694", Arrays.asList(mod1, mod2, mod3));
@@ -198,7 +199,7 @@ public class NXVelocityUtilsTest {
         return isoform;
     }
 
-    private static Annotation newVariant(String ori, String var, SimplePosition... isoformPositions) {
+    private static Annotation newVariant(String ori, String var, IsoformLocation... isoformPositions) {
 
         Annotation variant = new Annotation();
         variant.setCategory(AnnotationApiModel.VARIANT.getDbAnnotationTypeName());
@@ -207,7 +208,7 @@ public class NXVelocityUtilsTest {
 
         List<AnnotationIsoformSpecificity> specificityList = new ArrayList<>();
 
-        for (SimplePosition position : isoformPositions) {
+        for (IsoformLocation position : isoformPositions) {
 
             AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
 
@@ -222,7 +223,7 @@ public class NXVelocityUtilsTest {
         return variant;
     }
 
-    private static Annotation newModification(String modName, AnnotationApiModel type, SimplePosition... isoformPositions) {
+    private static Annotation newModification(String modName, AnnotationApiModel type, IsoformLocation... isoformPositions) {
 
         Annotation modification = new Annotation();
         modification.setCategory(type.getDbAnnotationTypeName());
@@ -231,7 +232,7 @@ public class NXVelocityUtilsTest {
 
         List<AnnotationIsoformSpecificity> specificityList = new ArrayList<>();
 
-        for (SimplePosition position : isoformPositions) {
+        for (IsoformLocation position : isoformPositions) {
 
             AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
 
@@ -253,31 +254,5 @@ public class NXVelocityUtilsTest {
         entry.setAnnotations(annotations);
 
         return entry;
-    }
-
-    private static class SimplePosition {
-
-        private final String isoformId;
-        private final int start;
-        private final int end;
-
-        SimplePosition(String isoformId, int start, int end) {
-
-            this.isoformId = isoformId;
-            this.start = start;
-            this.end = end;
-        }
-
-        public String getIsoformId() {
-            return isoformId;
-        }
-
-        public int getStart() {
-            return start;
-        }
-
-        public int getEnd() {
-            return end;
-        }
     }
 }
