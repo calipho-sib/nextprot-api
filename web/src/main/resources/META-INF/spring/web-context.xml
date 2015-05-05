@@ -66,9 +66,9 @@
 
 	<!-- The ContentNegotiationManager created by either setup is an implementation of ContentNegotationStrategy that
 		implements the PPA Strategy (path extension, then parameter, then Accept header) described above. -->
-	<!--<<bean id="cnManager"
+	<bean id="contentNegotiationManager"
 		  class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
-		property name="favorPathExtension" value="true"/>
+		<property name="favorPathExtension" value="true"/>
 		<property name="ignoreAcceptHeader" value="true" />
 		<property name="defaultContentType" value="application/json" />
 		<property name="useJaf" value="false"/>
@@ -79,22 +79,15 @@
 				<entry key="xml" value="application/xml" />
 				<entry key="ttl" value="text/turtle" />
 				<entry key="html" value="text/html" />
+				<entry key="fasta" value="text/plain" />
+				<entry key="peff" value="text/plain" />
 			</map>
 		</property>
-	</bean>-->
+	</bean>
 
 	<bean
 		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-		<property name="mediaTypes">
-			<map>
-				<entry key="json" value="application/json" />
-				<entry key="xml" value="application/xml" />
-				<entry key="ttl" value="text/turtle" />
-				<entry key="fasta" value="text/plain" />
-				<entry key="peff" value="text/plain" />
-				<entry key="html" value="text/html" />
-			</map>
-		</property>
+		<property name="contentNegotiationManager" ref="contentNegotiationManager"/>
 		<property name="viewResolvers">
 			<list>
 				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
@@ -119,12 +112,12 @@
 					<property name="contentType" value="text/turtle;charset=UTF-8" />
 				</bean>
 				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
-					<property name="prefix" value="fasta/" />
+					<property name="prefix" value="peff/" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/plain;charset=UTF-8" />
 				</bean>
 				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
-					<property name="prefix" value="peff/" />
+					<property name="prefix" value="fasta/" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/plain;charset=UTF-8" />
 				</bean>
