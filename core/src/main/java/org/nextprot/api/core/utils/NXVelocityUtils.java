@@ -42,16 +42,16 @@ public class NXVelocityUtils {
 
 	
 	public static boolean hasInteractions(Entry entry) {
-		if (entry.getInteractions().size()>0) return true;
-		if (getAnnotationsByCategory(entry, AnnotationApiModel.SMALL_MOLECULE_INTERACTION).size()>0) return true;
+		if (!entry.getInteractions().isEmpty()) return true;
+		if (!getAnnotationsByCategory(entry, AnnotationApiModel.SMALL_MOLECULE_INTERACTION).isEmpty()) return true;
 		return false;
 	}
 	
 	public static boolean hasMappings(Entry entry) {
-		if ((entry.getPeptideMappings() != null) && entry.getPeptideMappings().size()>0) return true;
-		if ((entry.getSrmPeptideMappings() != null) && entry.getSrmPeptideMappings().size()>0) return true;
-		if ((entry.getAntibodyMappings() != null) && entry.getAntibodyMappings().size()>0) return true;
-		if ((entry.getAnnotations() != null) && getAnnotationsByCategory(entry, AnnotationApiModel.PDB_MAPPING).size()>0) return true;
+		if ((entry.getPeptideMappings() != null) && !entry.getPeptideMappings().isEmpty()) return true;
+		if ((entry.getSrmPeptideMappings() != null) && !entry.getSrmPeptideMappings().isEmpty()) return true;
+		if ((entry.getAntibodyMappings() != null) && !entry.getAntibodyMappings().isEmpty()) return true;
+		if ((entry.getAnnotations() != null) && !getAnnotationsByCategory(entry, AnnotationApiModel.PDB_MAPPING).isEmpty()) return true;
 		return false;
 	}
 	
@@ -66,7 +66,6 @@ public class NXVelocityUtils {
 			if (vals[i].equals(AnnotationApiModel.FAMILY_NAME)) continue;
 			list.add(vals[i]);
 		}
-		//System.out.println("cat size:" + list.size());
 		return list;
 	}
 
