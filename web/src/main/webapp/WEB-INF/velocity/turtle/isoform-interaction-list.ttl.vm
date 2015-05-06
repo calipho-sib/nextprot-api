@@ -34,7 +34,8 @@ interaction:$iso-interaction-iri a :BinaryInteraction;
     rdf:type :Xref ;
     :provenance db:$StringUtils.slug($interactant.database);
     :accession "$interactant.accession"^^xsd:string ;
-    :url "$interactant.url"^^xsd:string;
+    :url "$interactant.url"^^xsd:string ;
+    skos:exactMatch uniprot:$interactant.accession ;
     ] ;
 #end    
 #end  
