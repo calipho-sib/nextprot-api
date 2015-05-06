@@ -14,7 +14,7 @@ public class PeffStreamExporter extends NPStreamExporter {
 
     private final Template template;
 
-    PeffStreamExporter() {
+    public PeffStreamExporter() {
 
         template = velocityConfig.getVelocityEngine().getTemplate("peff/entry.peff.vm");
     }

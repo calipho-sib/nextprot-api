@@ -4,10 +4,15 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
+import org.nextprot.api.core.utils.peff.ModificationPsi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -18,6 +23,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import java.util.List;
+
 @Lazy
 @Controller
 @Api(name = "Entry", description = "Method to retrieve a complete or partial entry")
@@ -25,6 +32,9 @@ public class EntryController {
 
 	@Autowired
 	private FluentEntryService fluentEntryService;
+
+	@Autowired
+	private TerminologyService terminologyService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -41,7 +51,9 @@ public class EntryController {
 		
 		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("entry");
 		model.addAttribute("entry", entry);
-		
+
+		fetchPsiIds(entry.getAnnotations());
+
 		return "entry";
 	}
 
@@ -185,7 +197,31 @@ public class EntryController {
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
-	
-	
+
+	// TODO: REMOVE THIS HACK - Find a way to provide an access to PSI-MOD id from domain object Annotation
+	@Deprecated
+	private void fetchPsiIds(List<Annotation> annotations) {
+
+		for (Annotation annotation : annotations) {
+
+			if (annotation.getAPICategory() == AnnotationApiModel.MODIFIED_RESIDUE) {
+
+				String id = annotation.getCvTermAccessionCode();
+				ModificationPsi.addPsiModIdToMap(id, getPsiModId(id));
+			}
+		}
+	}
+	@Deprecated
+	private String getPsiModId(String modName) {
+
+		Terminology term = terminologyService.findTerminologyByAccession(modName);
+
+		for (String synonym : term.getSameAs()) {
+
+			if (synonym.matches("\\d{5}")) return "MOD:"+synonym;
+		}
+
+		return null;
+	}
 }
 
