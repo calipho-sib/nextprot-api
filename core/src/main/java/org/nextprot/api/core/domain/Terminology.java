@@ -144,6 +144,9 @@ public class Terminology implements Serializable {
 		sb.append("xrefs=");
 		sb.append(TerminologyUtils.convertXrefsToString(this.getXrefs()));
 		sb.append("\n");
+		sb.append("sameAs=");
+		sb.append(this.getSameAs());
+		sb.append("\n");
 		sb.append("properties=");
 		sb.append(TerminologyUtils.convertPropertiesToString(this.getProperties()));
 		sb.append("\n");
