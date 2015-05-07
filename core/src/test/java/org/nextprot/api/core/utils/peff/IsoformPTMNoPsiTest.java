@@ -16,7 +16,7 @@ public class IsoformPTMNoPsiTest {
     @Test
     public void testDisulfideBondAsPeff() throws Exception {
 
-        DisulfideBond mod = new DisulfideBond("spongebob", newMockAnnotation(31, 96, AnnotationApiModel.DISULFIDE_BOND, "Disulfide"));
+        DisulfideBond mod = new DisulfideBond("spongebob", newMockAnnotation(31, 96, AnnotationApiModel.DISULFIDE_BOND, ""));
 
         Assert.assertEquals("(31|Disulfide)(96|Disulfide)", mod.asPeff());
     }

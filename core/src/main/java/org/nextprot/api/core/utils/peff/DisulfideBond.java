@@ -17,7 +17,7 @@ class DisulfideBond extends IsoformPTM {
 
     DisulfideBond(String isoformId, Annotation annotation) {
 
-        super(isoformId, annotation, SUPPORTED_MODELS, annotation.getCvTermName());
+        super(isoformId, annotation, SUPPORTED_MODELS, "Disulfide");
     }
 
     @Override
