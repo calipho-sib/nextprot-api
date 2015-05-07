@@ -6,9 +6,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -16,49 +14,35 @@ import java.util.logging.Logger;
  *
  * Created by fnikitin on 05/05/15.
  */
-public abstract class Modification extends LocatedAnnotation {
+public abstract class IsoformPTM extends IsoformAnnotation {
 
     private static Logger LOGGER = Logger.getLogger("Modification");
     private final String modName;
 
-    protected Modification(String isoformId, Annotation annotation, String modName) {
+    protected IsoformPTM(String isoformId, Annotation annotation, Set<AnnotationApiModel> supportedApiModel, String modName) {
 
-        super(isoformId, annotation);
+        super(isoformId, annotation, supportedApiModel);
 
         this.modName = modName;
     }
 
-    public static Modification valueOf(String isoformId, Annotation annotation) {
+    public static IsoformPTM valueOf(String isoformId, Annotation annotation) {
 
-        /**
-         * SELENOCYSTEINE,
-         * LIPIDATION_SITE,
-         * GLYCOSYLATION_SITE,
-         * CROSS_LINK.
-         * DISULFIDE_BOND,
-         * MODIFIED_RESIDUE
-         * PTM_INFO ???
-         */
-        switch (annotation.getAPICategory()) {
+        AnnotationApiModel apiModel = annotation.getAPICategory();
 
-            case DISULFIDE_BOND:
-                return new Disulfide(isoformId, annotation);
-            case GLYCOSYLATION_SITE:
-            case LIPIDATION_SITE:
-            case CROSS_LINK:
-                return new ModificationNoPsi(isoformId, annotation);
-            case MODIFIED_RESIDUE:
-                return new ModificationPsi(isoformId, annotation);
-            default:
-                LOGGER.warning("could not create instance of annotation of type "+annotation.getAPICategory()+" of isoform id "+isoformId);
-                return null;
-        }
+        if (DisulfideBond.isModelSupported(apiModel))
+            return new DisulfideBond(isoformId, annotation);
+        else if (IsoformPTMNoPsi.isModelSupported(apiModel))
+            return new IsoformPTMNoPsi(isoformId, annotation);
+        else if (IsoformPTMPsi.isModelSupported(apiModel))
+            return new IsoformPTMPsi(isoformId, annotation);
+        else
+            LOGGER.warning("could not create instance of annotation of type "+annotation.getAPICategory()+" of isoform id "+isoformId);
+
+        return null;
     }
 
-    public boolean isPSI() {
-
-        return this instanceof ModificationPsi;
-    }
+    public abstract boolean isPSI();
 
     public String getModificationName() {
         return modName;
@@ -104,24 +88,23 @@ public abstract class Modification extends LocatedAnnotation {
      * @param isoform
      * @return
      */
-    static List<Modification> getListGenericPTM(Entry entry, Isoform isoform) {
+    static List<IsoformPTM> getListGenericPTM(Entry entry, Isoform isoform) {
 
         Preconditions.checkNotNull(entry);
 
-        List<Modification> modifications = new ArrayList<>();
+        List<IsoformPTM> isoformPTMs = new ArrayList<>();
 
         for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
 
             if (annotation.getAPICategory().isChildOf(AnnotationApiModel.GENERIC_PTM) && annotation.getAPICategory() != AnnotationApiModel.PTM_INFO) {
-                Modification modification = Modification.valueOf(isoform.getUniqueName(), annotation);
 
-                if (modification != null) modifications.add(modification);
+                isoformPTMs.add(IsoformPTM.valueOf(isoform.getUniqueName(), annotation));
             }
         }
 
-        Collections.sort(modifications);
+        Collections.sort(isoformPTMs);
 
-        return modifications;
+        return isoformPTMs;
     }
 
     static String getGenericPTMsAsPeffString(Entry entry, Isoform isoform, boolean fetchPsi) {
@@ -130,7 +113,7 @@ public abstract class Modification extends LocatedAnnotation {
 
         StringBuilder sb = new StringBuilder();
 
-        for (Modification modif : Modification.getListGenericPTM(entry, isoform)) {
+        for (IsoformPTM modif : IsoformPTM.getListGenericPTM(entry, isoform)) {
 
             if (modif.isPSI() == fetchPsi)
                 sb.append(modif.asPeff());

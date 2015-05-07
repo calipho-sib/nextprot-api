@@ -8,9 +8,9 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.peff.Modification;
-import org.nextprot.api.core.utils.peff.ProcessingProduct;
-import org.nextprot.api.core.utils.peff.Variation;
+import org.nextprot.api.core.utils.peff.IsoformPTM;
+import org.nextprot.api.core.utils.peff.IsoformProcessingProduct;
+import org.nextprot.api.core.utils.peff.IsoformVariation;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -133,7 +133,7 @@ public class NXVelocityUtils {
 
 	public static String getProcessingProductsAsPeffString(Entry entry, Isoform isoform) {
 
-		return ProcessingProduct.getProductsAsPeffString(entry, isoform);
+		return IsoformProcessingProduct.getProductsAsPeffString(entry, isoform);
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class NXVelocityUtils {
 	 */
 	public static String getVariantsAsPeffString(Entry entry, Isoform isoform) {
 
-		return Variation.getVariantsAsPeffString(entry, isoform);
+		return IsoformVariation.getVariantsAsPeffString(entry, isoform);
 	}
 
 	/**
@@ -157,11 +157,11 @@ public class NXVelocityUtils {
 	 */
 	public static String getPsiPTMsAsPeffString(Entry entry, Isoform isoform) {
 
-		return Modification.getPsiPTMsAsPeffString(entry, isoform);
+		return IsoformPTM.getPsiPTMsAsPeffString(entry, isoform);
 	}
 
 	public static String getNoPsiPTMsAsPeffString(Entry entry, Isoform isoform) {
 
-		return Modification.getNoPsiPTMsAsPeffString(entry, isoform);
+		return IsoformPTM.getNoPsiPTMsAsPeffString(entry, isoform);
 	}
 }

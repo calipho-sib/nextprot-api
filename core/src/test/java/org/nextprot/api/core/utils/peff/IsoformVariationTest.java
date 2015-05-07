@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by fnikitin on 05/05/15.
  */
-public class VariationTest {
+public class IsoformVariationTest {
 
     @Test
     public void testGetVariantList() throws Exception {
@@ -40,19 +40,19 @@ public class VariationTest {
 
         Entry entry = newEntry("NX_P22694", Arrays.asList(variant1, variant2, variant3));
 
-        List<Variation> variations = Variation.getListVariant(entry, newIsoform("NX_P22694-1"));
+        List<IsoformVariation> isoformVariations = IsoformVariation.getListVariant(entry, newIsoform("NX_P22694-1"));
 
-        Assert.assertEquals("P", variations.get(0).getVariant());
-        Assert.assertEquals(26, variations.get(0).getStart());
-        Assert.assertEquals(26, variations.get(0).getEnd());
+        Assert.assertEquals("P", isoformVariations.get(0).getVariant());
+        Assert.assertEquals(26, isoformVariations.get(0).getStart());
+        Assert.assertEquals(26, isoformVariations.get(0).getEnd());
 
-        Assert.assertEquals("Q", variations.get(1).getVariant());
-        Assert.assertEquals(106, variations.get(1).getStart());
-        Assert.assertEquals(106, variations.get(1).getEnd());
+        Assert.assertEquals("Q", isoformVariations.get(1).getVariant());
+        Assert.assertEquals(106, isoformVariations.get(1).getStart());
+        Assert.assertEquals(106, isoformVariations.get(1).getEnd());
 
-        Assert.assertEquals("M", variations.get(2).getVariant());
-        Assert.assertEquals(300, variations.get(2).getStart());
-        Assert.assertEquals(300, variations.get(2).getEnd());
+        Assert.assertEquals("M", isoformVariations.get(2).getVariant());
+        Assert.assertEquals(300, isoformVariations.get(2).getStart());
+        Assert.assertEquals(300, isoformVariations.get(2).getEnd());
     }
 
     @Test

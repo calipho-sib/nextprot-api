@@ -10,7 +10,8 @@ import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
-import org.nextprot.api.core.utils.peff.ModificationPsi;
+import org.nextprot.api.core.utils.peff.IsoformPTMPsi;
+import org.nextprot.api.core.utils.peff.PsiModMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -35,10 +36,11 @@ public class EntryController {
 	@Deprecated
 	private TerminologyMapper terminologyMapper = new TerminologyMapper();
 
-	// TODO: REMOVE THIS HACK - Find a way to provide an access to PSI-MOD id from domain object Annotation
+	// TODO: REMOVE THIS HACK - Get PSI-MOD id from domain object Annotation that will be accessible in a future release
 	@Deprecated
-	private class TerminologyMapper implements ModificationPsi.PsiModMapper {
+	private class TerminologyMapper implements PsiModMapper {
 
+		@Override
 		public String getPsiModId(String modName) {
 
 			Terminology term = terminologyService.findTerminologyByAccession(modName);
@@ -68,7 +70,7 @@ public class EntryController {
 		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("entry");
 		model.addAttribute("entry", entry);
 
-		ModificationPsi.addPsiModIdsToMap(entry.getAnnotations(), terminologyMapper);
+		IsoformPTMPsi.addPsiModIdsToMap(entry.getAnnotations(), terminologyMapper);
 
 		return "entry";
 	}

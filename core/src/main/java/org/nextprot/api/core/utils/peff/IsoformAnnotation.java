@@ -1,21 +1,26 @@
 package org.nextprot.api.core.utils.peff;
 
 import com.google.common.base.Preconditions;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.domain.annotation.Annotation;
+
+import java.util.Set;
 
 /**
  * Annotation located on isoform formattable in PEFF specified by the HUPO PSI (PubMed:19132688)
  *
  * Created by fnikitin on 05/05/15.
  */
-abstract class LocatedAnnotation implements Location<LocatedAnnotation>, PeffFormatter {
+abstract class IsoformAnnotation implements Location<IsoformAnnotation>, PeffFormatter {
 
     private final IsoformLocation location;
 
-    protected LocatedAnnotation(String isoformId, Annotation annotation) {
+    protected IsoformAnnotation(String isoformId, Annotation annotation, Set<AnnotationApiModel> supportedApiModel) {
 
         Preconditions.checkNotNull(isoformId);
         Preconditions.checkNotNull(annotation);
+        Preconditions.checkNotNull(supportedApiModel);
+        Preconditions.checkArgument(supportedApiModel.contains(annotation.getAPICategory()));
 
         location = new IsoformLocation(isoformId, annotation.getStartPositionForIsoform(isoformId),
                 annotation.getEndPositionForIsoform(isoformId));
@@ -30,7 +35,7 @@ abstract class LocatedAnnotation implements Location<LocatedAnnotation>, PeffFor
     }
 
     @Override
-    public int compareTo(LocatedAnnotation other) {
+    public int compareTo(IsoformAnnotation other) {
 
         return location.compareTo(other.location);
     }

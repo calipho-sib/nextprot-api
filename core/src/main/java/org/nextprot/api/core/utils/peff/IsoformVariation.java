@@ -8,6 +8,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 /**
@@ -15,13 +16,13 @@ import java.util.List;
  *
  * Created by fnikitin on 05/05/15.
  */
-public class Variation extends LocatedAnnotation {
+public class IsoformVariation extends IsoformAnnotation {
 
     private final String variant;
 
-    public Variation(String isoformId, Annotation annotation) {
+    public IsoformVariation(String isoformId, Annotation annotation) {
 
-        super(isoformId, annotation);
+        super(isoformId, annotation, EnumSet.of(AnnotationApiModel.VARIANT));
 
         variant = annotation.getVariant().getVariant();
     }
@@ -53,28 +54,28 @@ public class Variation extends LocatedAnnotation {
 
         StringBuilder sb = new StringBuilder();
 
-        for (Variation variation : getListVariant(entry, isoform)) {
+        for (IsoformVariation isoformVariation : getListVariant(entry, isoform)) {
 
-            sb.append(variation.asPeff());
+            sb.append(isoformVariation.asPeff());
         }
 
         return sb.toString();
     }
 
-    static List<Variation> getListVariant(Entry entry, Isoform isoform) {
+    static List<IsoformVariation> getListVariant(Entry entry, Isoform isoform) {
 
         Preconditions.checkNotNull(entry);
 
-        List<Variation> variations = new ArrayList<>();
+        List<IsoformVariation> isoformVariations = new ArrayList<>();
 
         for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
 
             if (annotation.getAPICategory() == AnnotationApiModel.VARIANT)
-                variations.add(new Variation(isoform.getUniqueName(), annotation));
+                isoformVariations.add(new IsoformVariation(isoform.getUniqueName(), annotation));
         }
 
-        Collections.sort(variations);
+        Collections.sort(isoformVariations);
 
-        return variations;
+        return isoformVariations;
     }
 }
