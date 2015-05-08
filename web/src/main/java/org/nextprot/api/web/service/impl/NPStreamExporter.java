@@ -17,13 +17,13 @@ public abstract class NPStreamExporter {
 
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
-    protected final FluentEntryService fluentEntryService;
-    protected final VelocityConfig velocityConfig;
+    protected FluentEntryService fluentEntryService;
+    protected VelocityConfig velocityConfig;
 
     public NPStreamExporter() {
 
-        this.fluentEntryService = (FluentEntryService) applicationContext.getBean("FluentEntryService");
-        this.velocityConfig = (VelocityConfig) applicationContext.getBean("VelocityConfig");
+        this.fluentEntryService = (FluentEntryService) applicationContext.getBean("fluentEntryService");
+        this.velocityConfig = (VelocityConfig) applicationContext.getBean("velocityConfig");
     }
 
     public void export(Collection<String> accessions, Writer writer, String viewName) throws IOException {
