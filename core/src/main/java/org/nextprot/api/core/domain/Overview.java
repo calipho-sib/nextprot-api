@@ -394,9 +394,11 @@ public class Overview implements Serializable{
 	 */
 	private static EntityName getMainEntityName(List<EntityName> entityNameList, EntityNameClass entityNameClass) {
 
-		for (EntityName entityName : entityNameList) {
+		if (entityNameList != null) {
+			for (EntityName entityName : entityNameList) {
 
-			if (entityName.isMain()) return entityName;
+				if (entityName.isMain()) return entityName;
+			}
 		}
 
 		throw new NextProtException("could not find main "+((entityNameClass == EntityNameClass.PROTEIN_NAMES) ? "protein":"gene")+" name");
