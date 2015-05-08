@@ -1,5 +1,13 @@
-#set ( $protName = $entry.getOverview().getMainProteinName() )
-#set ( $geneName = $entry.getOverview().getMainGeneName() )
+#if(  $entry.getOverview().hasMainProteinName() )
+    #set ( $protName = $entry.getOverview().getMainProteinName() )
+#else
+    #set ( $protName = "NA" )
+#end
+#if(  $entry.getOverview().hasMainGeneName() )
+    #set ( $geneName = $entry.getOverview().getMainGeneName() )
+#else
+    #set ( $geneName = "NA" )
+#end
 #set ( $pe = $entry.getOverview().getHistory().getProteinExistenceLevel() )
 #set ( $sv = $entry.getOverview().getHistory().getSequenceVersion() )
 #set ( $ev = $entry.getOverview().getHistory().getUniprotVersion() )

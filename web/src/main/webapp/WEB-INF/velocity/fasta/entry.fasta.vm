@@ -1,5 +1,13 @@
-#set ( $protName = $entry.getOverview().getMainProteinName() )
-#set ( $geneName = $entry.getOverview().getMainGeneName() )
+#if(  $entry.getOverview().hasMainProteinName() )
+    #set ( $protName = $entry.getOverview().getMainProteinName() )
+#else
+    #set ( $protName = "NA" )
+#end
+#if(  $entry.getOverview().hasMainGeneName() )
+    #set ( $geneName = $entry.getOverview().getMainGeneName() )
+#else
+    #set ( $geneName = "NA" )
+#end
 #foreach($isoform in $entry.isoforms)
 >nxp|$isoform.getUniqueName()|$geneName|$protName|$isoform.formatIsoformId()
 $StringUtils.wrapText($isoform.getSequence(), 60)
