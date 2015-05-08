@@ -359,6 +359,16 @@ public class Overview implements Serializable{
 		return name.getSynonymName();
 	}
 
+	public boolean hasMainGeneName() {
+
+		return geneNames != null && getMainEntityName(geneNames, EntityNameClass.GENE_NAMES) != null;
+	}
+
+	public boolean hasMainProteinName() {
+
+		return proteinNames != null && getMainEntityName(proteinNames, EntityNameClass.PROTEIN_NAMES) != null;
+	}
+
 	public void setGeneNames(List<EntityName> geneNames) {
 		this.geneNames = geneNames;
 	}
