@@ -11,8 +11,8 @@ public enum NPFileFormat {
 	JSON("json", "application/json", null, null), 
 	TURTLE("ttl", "text/turtle", null, null), 
 	TSV("tsv", "text/tab-separated-values", null, null),
-	FASTA("fasta", "text/plain", null, null),
-	PEFF("peff", "text/plain", null, null)
+	FASTA("fasta", "text/fasta", null, null),
+	PEFF("peff", "text/peff", null, null)
 	;
 
 	private String header;
