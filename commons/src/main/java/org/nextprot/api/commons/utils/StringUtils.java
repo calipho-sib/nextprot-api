@@ -139,6 +139,21 @@ public class StringUtils {
 	}
 
 	/**
+	 * Recursively format text with lines of <code>max</code> length.
+	 *
+	 * @param text the text to format
+	 * @param maxLineLen the maximum line length
+	 * @return formatted text
+	 */
+	public static String wrapTextRec(String text, int maxLineLen) {
+
+		Preconditions.checkNotNull(text);
+		Preconditions.checkArgument(maxLineLen > 0);
+
+		return wrapTextRec(text, maxLineLen, new StringBuilder());
+	}
+
+	/**
 	 * Format text with lines of <code>max</code> length
 	 *
 	 * @param text the text to format
@@ -150,7 +165,26 @@ public class StringUtils {
 		Preconditions.checkNotNull(text);
 		Preconditions.checkArgument(maxLineLen > 0);
 
-		return wrapTextRec(text, maxLineLen, new StringBuilder());
+		StringBuilder sb = new StringBuilder();
+
+		int textLen = text.length();
+
+		int begin=0;
+		while (begin<textLen) {
+
+			int end = begin + maxLineLen;
+
+			if (end > textLen) {
+				sb.append(text.substring(begin));
+				break;
+			}
+
+			sb.append(text.substring(begin, end)).append("\n");
+
+			begin = end;
+		}
+
+		return sb.toString();
 	}
 
 	static String wrapTextRec(String text, int maxLineLen, StringBuilder sb) {
