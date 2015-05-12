@@ -84,10 +84,10 @@ public class PeptideMapping implements Serializable{
 	}
 
 	/**
+	  Obsolete, see mail Amos, 11 May 2015   
 	 * A peptide created artificially (SRM peptides) and not observed by breaking natural proteins should not be
 	 * counted as being proteotypic otherwise computation of protein existence would be altered.
 	 * @return true if the peptide has both properties "is proteotypic" and "is natural" set to "Y" (true)  
-	 */
 	public boolean isProteotypic() {
 		boolean isTypic = false;
 		boolean isNatural = false;
@@ -97,9 +97,19 @@ public class PeptideMapping implements Serializable{
 				if (prop.getNameId()==52 && prop.getValue().equals("Y")) isNatural = true; 
 			}
 		}
-		return isNatural && isTypic;
+		return isTypic && isNatural;
 	}
+	 */
 
+	public boolean isProteotypic() {
+		if (this.properties!=null) {
+			for (PeptideProperty prop: properties) {
+				if (prop.getNameId()==51 && prop.getValue().equals("Y")) return true; 
+			}
+		}
+		return false;
+	}
+	
 	public boolean isNatural() {
 		if (this.properties!=null) {
 			for (PeptideProperty prop: properties) {
