@@ -12,9 +12,15 @@
 #set ( $sv = $entry.getOverview().getHistory().getSequenceVersion() )
 #set ( $ev = $entry.getOverview().getHistory().getUniprotVersion() )
 #foreach($isoform in $entry.isoforms)
-    #set ( $PsiPTMs = $NXUtils.getPsiPTMsAsPeffString($entry, $isoform) )
-    #set ( $NoPsiPTMs = $NXUtils.getNoPsiPTMsAsPeffString($entry, $isoform) )
->nxp:$isoform.getUniqueName() \DbUniqueId=$isoform.getUniqueName() \Pname=$protName isoform $isoform.formatIsoformId() \Gname=$geneName \NcbiTaxId=9606 \TaxName=Homo Sapiens \Length=$isoform.getSequence().length() \SV=$sv \EV=$ev \PE=$pe #if(!$PsiPTMs.isEmpty())\ModResPsi=$PsiPTMs#end #if(!$NoPsiPTMs.isEmpty())\ModRes=$NoPsiPTMs#end \Variant=$NXUtils.getVariantsAsPeffString($entry, $isoform) \Processed=$NXUtils.getProcessingProductsAsPeffString($entry, $isoform)
+    #set ( $psiPTMs = $NXUtils.getPsiPTMsAsPeffString($entry, $isoform) )
+    #set ( $noPsiPTMs = $NXUtils.getNoPsiPTMsAsPeffString($entry, $isoform) )
+    #set ( $variants = $NXUtils.getVariantsAsPeffString($entry, $isoform) )
+    #set ( $processed = $NXUtils.getProcessingProductsAsPeffString($entry, $isoform) )
+>nxp:$isoform.getUniqueName() \DbUniqueId=$isoform.getUniqueName() \Pname=$protName isoform $isoform.formatIsoformId() \Gname=$geneName \NcbiTaxId=9606 \TaxName=Homo Sapiens \Length=$isoform.getSequence().length() \SV=$sv \EV=$ev \PE=$pe #if(!$psiPTMs.isEmpty())\ModResPsi=$psiPTMs #end
+#if(!$noPsiPTMs.isEmpty())\ModRes=$noPsiPTMs #end
+#if(!$variants.isEmpty())\Variant=$variants #end
+#if(!$processed.isEmpty())\Processed=$processed#end
+
 $StringUtils.wrapText($isoform.getSequence(), 60)
 #end
 
