@@ -11,6 +11,7 @@ public class PublicationAuthor implements Comparable<PublicationAuthor>, Seriali
 	private Long authorId;
 	private String lastName;
 	private String foreName;
+	private String initials;
 	private String suffix="";
 	private Integer rank;
 	private boolean person;
@@ -45,7 +46,14 @@ public class PublicationAuthor implements Comparable<PublicationAuthor>, Seriali
 		this.foreName = foreName;
 	}
 	
-
+	public String getInitials() {
+		return initials;
+	}
+	
+	public void setInitials(String initials) {
+		this.initials = initials;
+	}
+	
 	public String getSuffix() {
 		return suffix;
 	}
