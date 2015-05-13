@@ -60,8 +60,17 @@ public class PublicQueryController {
 	@ApiMethod(verb = ApiVerb.GET, description = "Gets all tutorial queries", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping(value = "/queries/tutorial", method = { RequestMethod.GET })
 	@ResponseBody
+	@Deprecated //use only queries instead
 	public List<UserQuery> getTutorialQueries() {
-		return userQueryService.getTutorialQueries();
+		List<UserQuery> res =  userQueryService.getTutorialQueries();
+		
+		//add user queries if logged (access db, but is cached with cache evict if the query is modified)
+		if (NPSecurityContext.getCurrentUser() != null) { 
+			res.addAll(userQueryService.getUserQueries(NPSecurityContext.getCurrentUser()));
+		}
+		
+		return res;
+
 	}
 	
 	
