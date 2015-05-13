@@ -1,22 +1,22 @@
 package org.nextprot.api.tasks;
 
-import java.io.IOException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class GenerateSolrTerminologyIndex {
+public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 
-	public static void main(String[] args) throws SolrServerException, IOException {
+	
+	public static void main(String[] args) {
+		GenerateSolrTerminologyIndex i = new GenerateSolrTerminologyIndex();
+		i.launch(args);
+	}	    
+	
+	@Override
+	public void start(String[] args) {
 
-		Logger logger = Logger.getLogger(GenerateSolrTerminologyIndex.class);
-		System.setProperty("spring.profiles.active", "dev");
-		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("classpath:spring/commons-context.xml",	"classpath:spring/core-context.xml");
-		TerminologyService terminologyService = ctx.getBean(TerminologyService.class);
+		TerminologyService terminologyService = getBean(TerminologyService.class);
 		
 		int termcnt = 0;
 		
@@ -24,29 +24,25 @@ public class GenerateSolrTerminologyIndex {
 		
 		// Remove previous indexes, TODO: find appropriate string for ontology-specific deletion (filters:ontologyname?)
 		logger.info("removing all solr terminology records");
-		indexer.deleteByQuery( "*:*" );
-		indexer.commit();
+		indexer.clearDatabase();
 		
 		List<Terminology> allterms;
-		if(args.length == 0) { // No arg: index all ontologies
+		if (args.length == 0) { // No arg: index all ontologies
 			System.err.println("indexing: all ontologies");
 			logger.info("indexing all terminologies");
 			allterms = terminologyService.findAllTerminology();
-		   }
-		else { // Index ontology given as argument
+		} else { // Index ontology given as argument
 			System.err.println("indexing: " + args[0]);
 			logger.info("indexing terminology: " + args[0]);
 			allterms = terminologyService.findTerminologyByOntology(args[0]);
-		   }
-		
+		}
+
 		for (Terminology t : allterms) {
 			indexer.add(t);
 			termcnt++;
-			//if((args.length == 0) && (termcnt >= 1000)) break;
-			}
-		
-		if(indexer.docs.size() > 0) // There are some prepared docs not yet sent to solr server
-			indexer.solrServer.add(indexer.docs);
+		}
+
+		indexer.addRemaing();
 		
 		logger.info("comitting");
 		indexer.commit();
