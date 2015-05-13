@@ -8,6 +8,7 @@ public class CvJournal implements Serializable{
 
 	private Long journalId;
 	private String name;
+	private String abbrev;
 	
 	public Long getJournalId() {
 		return journalId;
@@ -23,6 +24,18 @@ public class CvJournal implements Serializable{
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getAbbrev() {
+		return abbrev;
+	}
+	
+	public void setAbbrev(String abbrev) {
+		this.abbrev = abbrev;
+	}
+	
+	public String toString() {
+		return "(id=" + journalId + ") " + name + "(short=" + abbrev + ")";
 	}
 	
 }
