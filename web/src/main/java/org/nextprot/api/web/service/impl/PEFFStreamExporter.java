@@ -22,6 +22,6 @@ public class PeffStreamExporter extends NPStreamExporter {
     @Override
     protected void exportStream(String entryName, Writer writer, String viewName) throws IOException {
 
-        streamWithVelocityTemplate(template, entryName, writer, "isoform", "overview");
+        streamWithVelocityTemplate(template, entryName, writer, "isoform", "entry");
     }
 }
