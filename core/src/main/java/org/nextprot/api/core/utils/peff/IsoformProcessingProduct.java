@@ -21,8 +21,8 @@ public class IsoformProcessingProduct extends IsoformAnnotation {
         PSI_PEFF_MAP = new HashMap<>();
 
         PSI_PEFF_MAP.put(AnnotationApiModel.SIGNAL_PEPTIDE, "SIGNAL");
-        PSI_PEFF_MAP.put(AnnotationApiModel.MATURATION_PEPTIDE, "PEPTIDE");
-        PSI_PEFF_MAP.put(AnnotationApiModel.MATURE_PROTEIN, "PROPEP");
+        PSI_PEFF_MAP.put(AnnotationApiModel.MATURATION_PEPTIDE, "PROPEP");
+        PSI_PEFF_MAP.put(AnnotationApiModel.MATURE_PROTEIN, "CHAIN");
         PSI_PEFF_MAP.put(AnnotationApiModel.PEROXISOME_TRANSIT_PEPTIDE, "TRANSIT");
         PSI_PEFF_MAP.put(AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE, "TRANSIT");
     }
