@@ -228,6 +228,9 @@ public class Publication implements Serializable{
 		sb.append("id=");
 		sb.append(this.id);
 		sb.append("\n");
+		sb.append("md5=");
+		sb.append(this.md5);
+		sb.append("\n");
 		sb.append("title=");
 		sb.append(this.title);
 		sb.append("\n");
