@@ -42,11 +42,10 @@ public class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 			if(currpub.getPublicationType().equals("ARTICLE")) artcnt++;
 			else if(currpub.getPublicationType().equals("SUBMISSION")) submcnt++;
 			else othercnt++;
-			if(pubcnt >= 2000) break;
+			if((pubcnt % 1000)==0) System.err.println(pubcnt + " publications done");
+			if(pubcnt >= 50000) break;
 		}
 		
-		System.err.println("got all publications" + (System.currentTimeMillis()-start)/1000 + " seconds...");
-
 		indexer.addRemaing();
 		
 		logger.info("comitting");
