@@ -1,5 +1,5 @@
 select p1.* as id, pubtypes.cv_name as pub_type, rp.property_value as submission_database , 
-  (select p.is_largescale from nextprot.view_paper_scale p where p.publication_id=p1.resource_id) as is_largescale         
+  (select p.is_largescale from nextprot.view_paper_scale p where p.publication_id=p1.resource_id) as is_largescale,         
   (select pv.annotated from nextprot.publication_view pv where pv.resource_id=pubs.resource_id limit 1) as is_curated,   
   (select pv.computed from nextprot.publication_view pv where pv.resource_id=pubs.resource_id limit 1) as is_computed    
             from nextprot.publications p1 
