@@ -23,10 +23,11 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
 	
 	
 	@Test
-	public void testPublicationById() {
-		 List<Long> ids = publicationService.findAllPublicationIds();
-		 //Publication publication = publicationService.findPublicationById(ids.get(0));
-		 Publication publication = publicationService.findPublicationById(41632424);
+	public void testPublicationByMD5() {
+		 Publication publication = publicationService.findPublicationByMD5("fd2943320efb55276584a53b5b094049");
 		 System.out.println(publication);
+		 Assert.assertTrue(publication.getFirstPage().equals("254"));
+		 // check that abstract bug CALIPHOMISC-241 is fixed (pmid 24867236)
+		 Assert.assertTrue(publication.getAbstractText().contains("regulator of microtubule organisation"));
 	}
 }
