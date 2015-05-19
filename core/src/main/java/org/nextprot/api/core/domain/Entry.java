@@ -1,10 +1,9 @@
 package org.nextprot.api.core.domain;
 
-import java.util.List;
-
+import com.google.common.collect.Lists;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import com.google.common.collect.Lists;
+import java.util.List;
 
 public class Entry {
 
@@ -151,10 +150,13 @@ public class Entry {
 	
 	public List<Annotation> getAnnotationsByIsoform(String isoform) {
 		List<Annotation> filteredAnnotations = Lists.newArrayList();
-		for (Annotation a : annotations) {
-			//Should not be enough to determine if the annotation is on the isoform or not
-			if(a.isAnnotationValidForIsoform(isoform)){
+
+		if (annotations != null) {
+			for (Annotation a : annotations) {
+				//Should not be enough to determine if the annotation is on the isoform or not
+				if (a.isAnnotationValidForIsoform(isoform)) {
 					filteredAnnotations.add(a);
+				}
 			}
 		}
 		return filteredAnnotations;
@@ -162,9 +164,12 @@ public class Entry {
 
 	public List<Interaction> getInteractionsByIsoform(String isoform) {
 		List<Interaction> filteredInteractions = Lists.newArrayList();
-		for (Interaction a : interactions) {
-			if(a.isInteractionValidForIsoform(isoform)){
+
+		if (annotations != null) {
+			for (Interaction a : interactions) {
+				if (a.isInteractionValidForIsoform(isoform)) {
 					filteredInteractions.add(a);
+				}
 			}
 		}
 		return filteredInteractions;

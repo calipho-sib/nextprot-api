@@ -755,10 +755,10 @@
 	function printResponse(data, res, url) {
 		if(res.responseXML != null) {
 			$("#response").text(formatXML(res.responseText));
-		} else if (url.endsWith("ttl")) {
-			$("#response").text(res.responseText);
-		} else {
+		} else if (url.endsWith("json")) {
 			$("#response").text(JSON.stringify(data, undefined, 2));
+		} else {
+			$("#response").text(res.responseText);
 		}
 		
 		$("#responseStatus").text(res.status);
@@ -865,13 +865,17 @@
 					});
 					
 					$('#testButton').button('loading');
-					
+
 					var suffix = "xml";
 					if (headers["Accept"] == "application/json")
 						suffix = "json";
 					if (headers["Accept"] == "text/turtle")
 						suffix = "ttl";
-					
+					if (headers["Accept"] == "text/fasta")
+						suffix = "fasta";
+					if (headers["Accept"] == "text/peff")
+						suffix = "peff";
+
 					var res = $.ajax({
 						url : window.location.href.replace("#", "") + replacedPath + "." + suffix,
 						type: method.verb,

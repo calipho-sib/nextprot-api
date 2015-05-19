@@ -1,5 +1,7 @@
 package org.nextprot.api.core.domain;
 
+import org.nextprot.api.core.utils.NXVelocityUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,17 +41,9 @@ public class IsoformMapping implements Serializable{
 		this.uniqueName = uniqueName;
 	}
 
+	@Deprecated
 	public String getIsoMainName() {
-
-		try {
-			if(isoform.getMainEntityName() == null)
-				return "Iso 1";
-			else return "Iso " + Integer.valueOf(isoform.getMainEntityName().getValue());
-			
-		} catch (NumberFormatException e) {
-			return isoform.getMainEntityName().getValue();
-		}
-
+		return NXVelocityUtils.formatIsoformId(isoform);
 	}
 
 	public long getReferenceGeneId() {

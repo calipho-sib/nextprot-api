@@ -10,7 +10,10 @@ public enum NPFileFormat {
 	XML("xml", "application/xml", "<entry-list>", "</entry-list>"), 
 	JSON("json", "application/json", null, null), 
 	TURTLE("ttl", "text/turtle", null, null), 
-	TSV("tsv", "text/tab-separated-values", null, null);
+	TSV("tsv", "text/tab-separated-values", null, null),
+	FASTA("fasta", "text/fasta", null, null),
+	PEFF("peff", "text/peff", null, null)
+	;
 
 	private String header;
 	private String footer;
@@ -51,7 +54,11 @@ public enum NPFileFormat {
             return NPFileFormat.JSON;
         } else if (uri.toLowerCase().endsWith(".txt")) {
             return NPFileFormat.TXT;
-        } else
+		} else if (uri.toLowerCase().endsWith(".fasta")) {
+			return NPFileFormat.FASTA;
+        } else if (uri.toLowerCase().endsWith(".peff")) {
+			return NPFileFormat.PEFF;
+		} else
             throw new NextProtException("Format not recognized");
     }
 }
