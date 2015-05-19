@@ -46,16 +46,16 @@ public class IsoformPTMTest {
         List<IsoformPTM> mods = IsoformPTM.getListGenericPTM(entry, newIsoform("NX_P22694-1"));
 
         Assert.assertEquals("MOD:0001", mods.get(0).getModificationName());
-        Assert.assertEquals(196, mods.get(0).getStart());
-        Assert.assertEquals(196, mods.get(0).getEnd());
+        Assert.assertEquals(196, mods.get(0).getStart().getValue());
+        Assert.assertEquals(196, mods.get(0).getEnd().getValue());
 
         Assert.assertEquals("MOD:0001", mods.get(1).getModificationName());
-        Assert.assertEquals(198, mods.get(1).getStart());
-        Assert.assertEquals(198, mods.get(1).getEnd());
+        Assert.assertEquals(198, mods.get(1).getStart().getValue());
+        Assert.assertEquals(198, mods.get(1).getEnd().getValue());
 
         Assert.assertEquals("MOD:0002", mods.get(2).getModificationName());
-        Assert.assertEquals(339, mods.get(2).getStart());
-        Assert.assertEquals(339, mods.get(2).getEnd());
+        Assert.assertEquals(339, mods.get(2).getStart().getValue());
+        Assert.assertEquals(339, mods.get(2).getEnd().getValue());
     }
 
     @Test
@@ -112,8 +112,8 @@ public class IsoformPTMTest {
             AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
 
             spec.setIsoformName(position.getIsoformId());
-            spec.setFirstPosition(position.getStart());
-            spec.setLastPosition(position.getEnd());
+            spec.setFirstPosition(position.getStart().getValue());
+            spec.setLastPosition(position.getEnd().getValue());
 
             specificityList.add(spec);
         }

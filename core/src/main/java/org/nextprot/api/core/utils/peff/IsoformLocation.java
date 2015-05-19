@@ -10,15 +10,20 @@ import com.google.common.base.Preconditions;
 public class IsoformLocation implements Location<IsoformLocation> {
 
     private final String isoformId;
-    private final int start;
-    private final int end;
+    private final Value start;
+    private final Value end;
 
     public IsoformLocation(String isoformId, int start, int end) {
 
+        this(isoformId, Value.of(start), Value.of(end));
+    }
+
+    public IsoformLocation(String isoformId, Value start, Value end) {
+
         Preconditions.checkNotNull(isoformId);
         Preconditions.checkArgument(!isoformId.isEmpty());
-        Preconditions.checkArgument(start >= 0);
-        Preconditions.checkArgument(end>=start);
+        Preconditions.checkNotNull(start);
+        Preconditions.checkNotNull(end);
 
         this.isoformId = isoformId;
         this.start = start;
@@ -31,18 +36,21 @@ public class IsoformLocation implements Location<IsoformLocation> {
     }
 
     @Override
-    public final int getEnd() {
+    public final Value getEnd() {
         return end;
     }
 
     @Override
-    public final int getStart() {
+    public final Value getStart() {
         return start;
     }
 
     @Override
     public int compareTo(IsoformLocation other) {
 
-        return Integer.compare(start, other.getStart());
+        int from = (start.isDefined()) ? start.getValue() : end.getValue();
+        int to = (other.getStart().isDefined()) ? other.getStart().getValue() : other.getEnd().getValue();
+
+        return Integer.compare(from, to);
     }
 }

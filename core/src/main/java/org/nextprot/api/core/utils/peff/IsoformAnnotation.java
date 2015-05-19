@@ -22,15 +22,15 @@ abstract class IsoformAnnotation implements Location<IsoformAnnotation>, PeffFor
         Preconditions.checkNotNull(supportedApiModel);
         Preconditions.checkArgument(supportedApiModel.contains(annotation.getAPICategory()));
 
-        location = new IsoformLocation(isoformId, annotation.getStartPositionForIsoform(isoformId),
-                annotation.getEndPositionForIsoform(isoformId));
+        location = new IsoformLocation(isoformId, Value.of(annotation.getStartPositionForIsoform(isoformId)),
+                Value.of(annotation.getEndPositionForIsoform(isoformId)));
     }
 
-    public final int getEnd() {
+    public final Value getEnd() {
         return location.getEnd();
     }
 
-    public final int getStart() {
+    public final Value getStart() {
         return location.getStart();
     }
 

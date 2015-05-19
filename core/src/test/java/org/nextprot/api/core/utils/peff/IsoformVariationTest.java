@@ -99,8 +99,8 @@ public class IsoformVariationTest {
             AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
 
             spec.setIsoformName(position.getIsoformId());
-            spec.setFirstPosition(position.getStart());
-            spec.setLastPosition(position.getEnd());
+            spec.setFirstPosition(position.getStart().getValue());
+            spec.setLastPosition(position.getEnd().getValue());
 
             specificityList.add(spec);
         }
