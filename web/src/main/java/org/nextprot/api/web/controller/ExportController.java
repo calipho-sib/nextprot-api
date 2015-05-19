@@ -25,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -55,8 +56,6 @@ public class ExportController {
 
     @Autowired
     private UserProteinListService proteinListService;
-    @Autowired
-    private EntryController entryController;
 
     @Autowired
     private QueryBuilderService queryBuilderService;

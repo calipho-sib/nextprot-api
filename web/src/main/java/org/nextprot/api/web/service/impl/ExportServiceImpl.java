@@ -54,6 +54,8 @@ public class ExportServiceImpl implements ExportService {
 	private FluentEntryService fluentEntryService;
 	@Autowired
 	private VelocityConfig velocityConfig;
+	@Autowired
+	private TerminologyService terminologyService;
 
 	private int numberOfWorkers = 8;
 
@@ -274,6 +276,8 @@ public class ExportServiceImpl implements ExportService {
 	public void streamResults(NPFileFormat format, Writer stream, String viewName, List<String> accessions) throws IOException {
 
 		NPStreamExporter exporter = NPFileExporter.valueOf(format).getNPStreamExporter();
+
+		exporter.setTerminologyService(terminologyService);
 
 		exporter.export(accessions, stream, viewName);
 	}

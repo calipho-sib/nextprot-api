@@ -3,6 +3,8 @@ package org.nextprot.api.web.service.impl;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.web.ApplicationContextProvider;
@@ -19,11 +21,17 @@ public abstract class NPStreamExporter {
 
     protected FluentEntryService fluentEntryService;
     protected VelocityConfig velocityConfig;
+    protected TerminologyService terminologyService;
 
     public NPStreamExporter() {
 
         this.fluentEntryService = (FluentEntryService) applicationContext.getBean("fluentEntryService");
         this.velocityConfig = (VelocityConfig) applicationContext.getBean("velocityConfig");
+    }
+
+    protected void setTerminologyService(TerminologyService ts) {
+
+        terminologyService = ts;
     }
 
     public void export(Collection<String> accessions, Writer writer, String viewName) throws IOException {
@@ -58,11 +66,19 @@ public abstract class NPStreamExporter {
         for (String otherName : otherViewNames)
             fluentEntry.buildWithView(otherName);
 
+        Entry entry = fluentEntry.build();
+
+        handleEntry(entry);
+
         VelocityContext context = new VelocityContext();
-        context.put("entry", fluentEntry.build());
+        context.put("entry", entry);
         context.put("StringUtils", StringUtils.class);
         context.put("NXUtils", NXVelocityUtils.class);
 
         template.merge(context, writer);
+    }
+
+    protected void handleEntry(Entry entry) {
+
     }
 }
