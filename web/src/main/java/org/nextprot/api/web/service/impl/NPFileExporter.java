@@ -8,7 +8,7 @@ public enum NPFileExporter {
     XML(new XMLStreamExporter()),
     JSON(new JSONStreamExporter()),
     FASTA(new FastaStreamExporter()),
-    PEFF(new PeffStreamExporter2())
+    PEFF(new PeffStreamExporter())
     ;
 
     private NPStreamExporter exporter;

@@ -14,7 +14,7 @@ import java.io.Writer;
  *
  * Created by fnikitin on 28/04/15.
  */
-public class PeffStreamExporter2 extends NPStreamExporter {
+public class PeffStreamExporter extends NPStreamExporter {
 
     private final Template template;
 
@@ -39,7 +39,7 @@ public class PeffStreamExporter2 extends NPStreamExporter {
         }
     }
 
-    public PeffStreamExporter2() {
+    public PeffStreamExporter() {
 
         template = velocityConfig.getVelocityEngine().getTemplate("peff/entry.peff.vm");
     }

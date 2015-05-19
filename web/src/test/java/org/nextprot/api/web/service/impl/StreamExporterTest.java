@@ -60,7 +60,7 @@ public class StreamExporterTest extends WebUnitBaseTest {
 
         Writer writer = new PrintWriter(System.out);
 
-        NPStreamExporter exporter = new PeffStreamExporter2();
+        NPStreamExporter exporter = new PeffStreamExporter();
 
         exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview");
         //Mockito.verify(os, Mockito.times(4)).flush();
