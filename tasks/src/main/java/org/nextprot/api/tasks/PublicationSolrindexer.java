@@ -56,9 +56,9 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 			int i = authorset.size();
 			StringBuilder sb = new StringBuilder();
 			for (PublicationAuthor author : authorset) {
-				doc.addField("authors",author.getLastName() + " " + author.getForeName());
-				sb.append(author.getLastName() + " ");
-				sb.append(author.getInitials().replaceAll("(.)", "$1\\.")); // add a '.' after each initial
+				String inidotted = author.getInitials().replaceAll("(.)", "$1\\.");
+				doc.addField("authors",author.getLastName() + " " + author.getForeName() + " " + inidotted);
+				sb.append(author.getLastName() + " " + inidotted);
 				if (--i != 0) sb.append(" | ");
 				}
 			doc.addField("pretty_authors",sb.toString()); // for display only
