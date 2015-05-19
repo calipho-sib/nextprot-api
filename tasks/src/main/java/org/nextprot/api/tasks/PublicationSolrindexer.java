@@ -26,7 +26,10 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		doc.addField("id", publi.getPublicationId());
 		Set<DbXref> xrefs = publi.getDbXrefs();
 		// TODO: this 'ac' field should be renamed 'xrefs'
-		if (xrefs != null) { doc.addField("ac",TerminologyUtils.convertXrefsToSolrString(new ArrayList<DbXref>(xrefs))); }
+		if (xrefs != null)
+		   // The format is slightly different in current publication indexes vs terminology indexes, check if justified
+		   // if yes create an adhoc Publication.convertXrefsToSolrString method
+		   { doc.addField("ac",TerminologyUtils.convertXrefsToSolrString(new ArrayList<DbXref>(xrefs))); }
 		String filters="";
 		filters+=((publi.getIsLargeScale())?" largescale":"");
 		filters+=((publi.getIsCurated())?" curated":"");
