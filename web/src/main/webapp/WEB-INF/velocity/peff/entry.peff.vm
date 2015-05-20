@@ -1,12 +1,8 @@
 #if(  $entry.getOverview().hasMainProteinName() )
     #set ( $protName = $entry.getOverview().getMainProteinName() )
-#else
-    #set ( $protName = "N/A" )
 #end
 #if(  $entry.getOverview().hasMainGeneName() )
     #set ( $geneName = $entry.getOverview().getMainGeneName() )
-#else
-    #set ( $geneName = "N/A" )
 #end
 #set ( $pe = $entry.getOverview().getHistory().getProteinExistenceLevel() )
 #set ( $sv = $entry.getOverview().getHistory().getSequenceVersion() )
@@ -16,7 +12,8 @@
     #set ( $noPsiPTMs = $NXUtils.getNoPsiPTMsAsPeffString($entry, $isoform) )
     #set ( $variants = $NXUtils.getVariantsAsPeffString($entry, $isoform) )
     #set ( $processed = $NXUtils.getProcessingProductsAsPeffString($entry, $isoform) )
->nxp:$isoform.getUniqueName() \DbUniqueId=$isoform.getUniqueName() \Pname=$protName isoform $isoform.formatIsoformId() \Gname=$geneName \NcbiTaxId=9606 \TaxName=Homo Sapiens \Length=$isoform.getSequence().length() \SV=$sv \EV=$ev \PE=$pe #if(!$psiPTMs.isEmpty())\ModResPsi=$psiPTMs #end
+>nxp:$isoform.getUniqueName() \DbUniqueId=$isoform.getUniqueName() #if($protName)\Pname=$protName isoform $isoform.formatIsoformId()#end
+#if($geneName) \Gname=$geneName#end \NcbiTaxId=9606 \TaxName=Homo Sapiens \Length=$isoform.getSequence().length() \SV=$sv \EV=$ev \PE=$pe #if(!$psiPTMs.isEmpty())\ModResPsi=$psiPTMs #end
 #if(!$noPsiPTMs.isEmpty())\ModRes=$noPsiPTMs #end
 #if(!$variants.isEmpty())\Variant=$variants #end
 #if(!$processed.isEmpty())\Processed=$processed#end
