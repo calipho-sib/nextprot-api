@@ -70,7 +70,7 @@ public class FlatXmlDataSetExtractor {
 
         ITable table = ds.getTable(tableName);
 
-        List<A> annotations = new ArrayList<>();
+        List<A> dataList = new ArrayList<>();
 
         for (int i=0 ; i<table.getRowCount() ; i++) {
 
@@ -81,9 +81,9 @@ public class FlatXmlDataSetExtractor {
                 factory.setField(element, fields[j], table.getValue(i, fields[j]).toString());
             }
 
-            annotations.add(element);
+            dataList.add(element);
         }
 
-        return annotations;
+        return dataList;
     }
 }
