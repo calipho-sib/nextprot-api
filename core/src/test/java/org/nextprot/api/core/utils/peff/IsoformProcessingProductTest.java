@@ -26,7 +26,7 @@ public class IsoformProcessingProductTest {
 
         IsoformProcessingProduct mod = new IsoformProcessingProduct("spongebob", newMockAnnotation(20, 213, AnnotationApiModel.MATURATION_PEPTIDE));
 
-        Assert.assertEquals("(20|213|PEPTIDE)", mod.asPeff());
+        Assert.assertEquals("(20|213|PROPEP)", mod.asPeff());
     }
 
     @Test
@@ -34,7 +34,7 @@ public class IsoformProcessingProductTest {
 
         IsoformProcessingProduct mod = new IsoformProcessingProduct("spongebob", newMockAnnotation(17, 609, AnnotationApiModel.MATURE_PROTEIN));
 
-        Assert.assertEquals("(17|609|PROPEP)", mod.asPeff());
+        Assert.assertEquals("(17|609|CHAIN)", mod.asPeff());
     }
 
     @Test
