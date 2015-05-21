@@ -13,7 +13,6 @@ import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.DbXrefDao;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -239,34 +238,5 @@ public class AnnotationServiceTest {
 		}
 
 		return map;
-	}
-
-	private static List<DbXref> extractDbXRefs(FlatXmlDataSetExtractor extractor) throws DataSetException {
-
-		FlatXmlDataSetExtractor.Factory<DbXref> factory = new FlatXmlDataSetExtractor.Factory<DbXref>() {
-
-			@Override
-			public DbXref create() {
-				return new DbXref();
-			}
-
-			@Override
-			public void setField(DbXref dbxref, String key, String value) {
-
-				dbxref.setDatabaseCategory("disease");
-
-				switch (key) {
-
-					case "accession":
-						dbxref.setAccession(value);
-						break;
-					case "resource_id":
-						dbxref.setDbXrefId(Long.valueOf(value));
-						break;
-				}
-			}
-		};
-
-		return extractor.extractDataList("db_xrefs", factory, "accession", "resource_id");
 	}
 }
