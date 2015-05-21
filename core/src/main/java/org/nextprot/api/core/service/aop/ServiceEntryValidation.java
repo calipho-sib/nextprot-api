@@ -32,10 +32,10 @@ public class ServiceEntryValidation {
 	private MasterIdentifierService masterIdentifierService;
 	private Set<String> uniqueNames;
 
-	private synchronized  Set<String> getUniqueNames (){
+	private synchronized  Set<String> getUniqueNames(){
 		if(uniqueNames == null){
 			LOGGER.info("Loading neXtProt sequence unique names...");
-			uniqueNames = new HashSet<String>(masterIdentifierService.findUniqueNames());	
+			uniqueNames = new HashSet<>(masterIdentifierService.findUniqueNames());
 		}
 		return uniqueNames;
 	}
@@ -45,6 +45,7 @@ public class ServiceEntryValidation {
 	}
 
 	@Around("execution(* org.nextprot.api.*.service.*.*(..))")
+	//@Around("execution(* org.nextprot.api.*.service.*.*(.., @aspects.ValidEntry (*), ..))")
 	public Object checkValidEntry(ProceedingJoinPoint pjp) throws Throwable {
 
 		Object[] arguments = pjp.getArgs();

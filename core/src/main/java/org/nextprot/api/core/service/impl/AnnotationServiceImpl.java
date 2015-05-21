@@ -1,26 +1,18 @@
 package org.nextprot.api.core.service.impl;
 
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.XrefAnnotationMapping;
 import org.nextprot.api.core.dao.AnnotationDAO;
-import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PtmDao;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.IsoformService;
@@ -29,22 +21,17 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.security.InvalidParameterException;
+import java.util.*;
 
 @Lazy
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
 
 	@Autowired private AnnotationDAO annotationDAO;
-	@Autowired private DbXrefDao dbXrefDAO;
 	@Autowired private PtmDao ptmDao;
 	@Autowired private DbXrefService xrefService;
 	@Autowired private IsoformService isoService;
-	
 
 	@Override
 	@Cacheable("annotations")
@@ -61,7 +48,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			List<AnnotationEvidence> evidences = annotationDAO.findAnnotationEvidencesByAnnotationIds(annotationIds);
 			Multimap<Long, AnnotationEvidence> evidencesByAnnotationId = Multimaps.index(evidences, new AnnotationEvidenceFunction());
 			for (Annotation annotation : annotations) {
-				annotation.setEvidences(new ArrayList<AnnotationEvidence>(evidencesByAnnotationId.get(annotation.getAnnotationId())));
+				annotation.setEvidences(new ArrayList<>(evidencesByAnnotationId.get(annotation.getAnnotationId())));
 			}
 	
 			// Evidences properties
@@ -70,7 +57,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 				List<AnnotationEvidenceProperty> evidenceProperties = annotationDAO.findAnnotationEvidencePropertiesByEvidenceIds(evidencesIds);
 				Multimap<Long, AnnotationEvidenceProperty> propertiesByEvidenceId = Multimaps.index(evidenceProperties, new AnnotationEvidencePropertyFunction());
 				for (AnnotationEvidence evidence : evidences) {
-					evidence.setProperties(new ArrayList<AnnotationEvidenceProperty>(propertiesByEvidenceId.get(evidence.getEvidenceId())));
+					evidence.setProperties(new ArrayList<>(propertiesByEvidenceId.get(evidence.getEvidenceId())));
 				}
 			}
 	
@@ -79,7 +66,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			Multimap<Long, AnnotationIsoformSpecificity> isoformsByAnnotationId = Multimaps.index(isoforms, new AnnotationIsoformFunction());
 	
 			for (Annotation annotation : annotations) {
-				annotation.setTargetingIsoforms(new ArrayList<AnnotationIsoformSpecificity>(isoformsByAnnotationId.get(annotation.getAnnotationId())));
+				annotation.setTargetingIsoforms(new ArrayList<>(isoformsByAnnotationId.get(annotation.getAnnotationId())));
 			}
 	
 			// Properties
@@ -87,7 +74,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			Multimap<Long, AnnotationProperty> propertiesByAnnotationId = Multimaps.index(properties, new AnnotationPropertyFunction());
 	
 			for (Annotation annotation : annotations) {
-				annotation.setProperties(new ArrayList<AnnotationProperty>(propertiesByAnnotationId.get(annotation.getAnnotationId())));
+				annotation.setProperties(new ArrayList<>(propertiesByAnnotationId.get(annotation.getAnnotationId())));
 			}
 	
 	
@@ -108,7 +95,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(this.getXrefsLikeAnnotations(entryName));
 
 		return annotations;
-
 	}
 	
 	public List<Annotation> getXrefsLikeAnnotations(String entryName) {
@@ -120,7 +106,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		
 		// build evidences annotations and link them to annotations
 		for (Annotation annotation : annotations) {
-			List<AnnotationEvidence> evidences = new ArrayList<AnnotationEvidence>();
+			List<AnnotationEvidence> evidences = new ArrayList<>();
 			AnnotationEvidence evidence = new AnnotationEvidence();
 			evidence.setAnnotationId(annotation.getAnnotationId());
 			DbXref pxref = annotation.getParentXref();
@@ -148,7 +134,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		
 		// build isoform specificity from isoforms and annotations and link them to annotations
 		for (Annotation annotation : annotations) {
-			List<AnnotationIsoformSpecificity> isospecs = new ArrayList<AnnotationIsoformSpecificity>();
+			List<AnnotationIsoformSpecificity> isospecs = new ArrayList<>();
 			for (Isoform iso: isoforms) {
 				AnnotationIsoformSpecificity isospec = new AnnotationIsoformSpecificity();
 				isospec.setAnnotationId(annotation.getAnnotationId());
@@ -224,28 +210,24 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		String category = annotation.getCategory();
 
-		setDefaultDescription(annotation);
-
-		if (category.equals("sequence caution")) {
-			setSequenceCautionDescription(annotation);
-		} else if (category.equals("go molecular function") || category.equals("go cellular component") || category.equals("go biological process")) {
-			setGODescription(annotation);
-		} else if (category.equals("sequence conflict") || category.equals("sequence variant") || category.equals("mutagenesis site")) {
-			setVariantDescription(annotation);
-		} 
-		
-	}
-	
-	private static void setDefaultDescription(Annotation annotation) {
-
 		if (annotation.getDescription() == null || annotation.getDescription().indexOf(":") == 1) {
 			annotation.setDescription(annotation.getCvTermName());
+		}
+
+		if (category != null) {
+			if (category.equals("sequence caution")) {
+				setSequenceCautionDescription(annotation);
+			} else if (category.equals("go molecular function") || category.equals("go cellular component") || category.equals("go biological process")) {
+				setGODescription(annotation);
+			} else if (category.equals("sequence conflict") || category.equals("sequence variant") || category.equals("mutagenesis site")) {
+				setVariantDescription(annotation);
+			}
 		}
 	}
 
 	private static void setSequenceCautionDescription(Annotation annotation) {
 
-		SortedSet<String> acs = new TreeSet<String>();
+		SortedSet<String> acs = new TreeSet<>();
 
 		// GET all evidences from that annotation
 		// If the resource type of the evidence is from DATABASE then add its xref emblAcs.add
@@ -262,7 +244,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		sb.append(" differ").append((acs.size() == 1 ? "s" : "")).append(" from that shown.");
 
 		// Beginning of the sentence finish, then:
-		List<AnnotationProperty> conflictTypeProps = new ArrayList<AnnotationProperty>();
+		List<AnnotationProperty> conflictTypeProps = new ArrayList<>();
 		for (AnnotationProperty ap : annotation.getProperties()) {
 			if (ap.getName().equals("conflict type"))
 				conflictTypeProps.add(ap);
@@ -308,8 +290,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 		return sortedPositions;
 	}
 
-
-
 	private static void setVariantDescription(Annotation annotation) {
 
 		if (annotation.getVariant() != null) {
@@ -319,7 +299,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 				annotation.setDescription("Missing " + description);
 			}
 		}
-
 	}
 
 	private static void setGODescription(Annotation annotation) {
@@ -335,14 +314,10 @@ public class AnnotationServiceImpl implements AnnotationService {
 					annotation.setDescription(description);
 					break;
 				}
-
-
 			}
 		}
-
 	}
 
-	
 	private List<Feature> filterByIsoform(String isoformUniqueName, List<Feature> annotations) {
 		List<Feature> filteredFeatures = new ArrayList<Feature>();
 		for (Feature f : annotations) {
