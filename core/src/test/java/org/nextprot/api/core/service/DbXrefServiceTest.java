@@ -10,20 +10,19 @@ import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.service.impl.DbXrefServiceImpl;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 //@DatabaseSetup(value = "DbXrefServiceTest.xml", type = DatabaseOperation.INSERT)
-public class DbXrefServiceTest extends CoreUnitBaseTest {
+public class DbXrefServiceTest {
 
 	private FlatXmlDataSetExtractor flatXmlDataSetExtractor;
 
@@ -63,7 +62,7 @@ public class DbXrefServiceTest extends CoreUnitBaseTest {
 		xrefService.findDbXrefsByMaster("NX_P12345");
 
 		verify(peptideMappingService).findAllPeptideNamesByMasterId(anyString());
-		verify(dbXRefDao, times(0)).findPeptideXrefs(anyList());
+		verify(dbXRefDao, times(0)).findPeptideXrefs(anyListOf(String.class));
 		verify(dbXRefDao).findEntryAnnotationsEvidenceXrefs("NX_P12345");
 		verify(dbXRefDao).findEntryAttachedXrefs("NX_P12345");
 		verify(dbXRefDao).findEntryIdentifierXrefs("NX_P12345");
