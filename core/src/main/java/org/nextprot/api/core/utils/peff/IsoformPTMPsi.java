@@ -1,6 +1,9 @@
 package org.nextprot.api.core.utils.peff;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.*;
@@ -11,6 +14,8 @@ import java.util.*;
  * Created by fnikitin on 05/05/15.
  */
 public class IsoformPTMPsi extends IsoformPTM {
+
+    private static final Log Logger = LogFactory.getLog(IsoformPTMPsi.class);
 
     // PTM-XXXX -> MOD:YYYYY
     @Deprecated
@@ -25,7 +30,9 @@ public class IsoformPTMPsi extends IsoformPTM {
     }
 
     @Deprecated
-    public static void addPsiModIdsToMap(List<Annotation> annotations, PsiModMapper mapper) {
+    public static void addPsiModIdsToMap(Entry entry, PsiModMapper mapper) {
+
+        List<Annotation> annotations = entry.getAnnotations();
 
         for (Annotation annotation : annotations) {
 
@@ -34,7 +41,8 @@ public class IsoformPTMPsi extends IsoformPTM {
                 String id = annotation.getCvTermAccessionCode();
                 String modId = mapper.getPsiModId(id);
 
-                if (modId != null && !psiModMap.containsKey(id)) psiModMap.put(id, modId);
+                if (modId == null) Logger.warn(entry.getUniqueName()+" has a mod "+id +" w/o PSI equivalent");
+                else if (!psiModMap.containsKey(id)) psiModMap.put(id, modId);
             }
         }
     }

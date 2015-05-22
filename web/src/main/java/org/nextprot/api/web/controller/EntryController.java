@@ -71,7 +71,7 @@ public class EntryController {
 		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("entry");
 		model.addAttribute("entry", entry);
 
-		IsoformPTMPsi.addPsiModIdsToMap(entry.getAnnotations(), terminologyMapper);
+		IsoformPTMPsi.addPsiModIdsToMap(entry, terminologyMapper);
 
 		return "entry";
 	}

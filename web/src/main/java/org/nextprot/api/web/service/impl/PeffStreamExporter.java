@@ -64,6 +64,6 @@ public class PeffStreamExporter extends NPStreamExporter {
     @Override
     protected void handleEntry(Entry entry) {
 
-        IsoformPTMPsi.addPsiModIdsToMap(entry.getAnnotations(), terminologyMapper);
+        IsoformPTMPsi.addPsiModIdsToMap(entry, terminologyMapper);
     }
 }
