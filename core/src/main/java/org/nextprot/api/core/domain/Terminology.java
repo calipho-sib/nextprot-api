@@ -1,11 +1,12 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-
 import org.nextprot.api.commons.constants.TerminologyMapping;
 import org.nextprot.api.commons.utils.StringUtils;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Terminology implements Serializable {
 
@@ -23,7 +24,7 @@ public class Terminology implements Serializable {
 
 	private List<String> parentAccesion;
 
-	private List<String> sameAs;
+	private List<String> sameAs = new ArrayList<>();
 
 	public Long getId() {
 		return id;

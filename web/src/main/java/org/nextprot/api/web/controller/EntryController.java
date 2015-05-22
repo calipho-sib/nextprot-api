@@ -1,5 +1,8 @@
 package org.nextprot.api.web.controller;
 
+import com.google.common.base.Preconditions;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
@@ -33,6 +36,9 @@ public class EntryController {
 	@Autowired
 	private TerminologyService terminologyService;
 
+	//@Autowired
+	//private PsiModMapper terminologyMapper;
+
 	@Deprecated
 	private TerminologyMapper terminologyMapper = new TerminologyMapper();
 
@@ -40,14 +46,24 @@ public class EntryController {
 	@Deprecated
 	private class TerminologyMapper implements PsiModMapper {
 
+		private final Log Logger = LogFactory.getLog(TerminologyMapper.class);
+
 		@Override
 		public String getPsiModId(String modName) {
 
+			Preconditions.checkNotNull(modName);
+
 			Terminology term = terminologyService.findTerminologyByAccession(modName);
 
-			for (String synonym : term.getSameAs()) {
+			if (term == null) {
+				Logger.warn("no term found for " + modName);
+			}
+			else {
+				for (String synonym : term.getSameAs()) {
 
-				if (synonym.matches("\\d{5}")) return "MOD:"+synonym;
+					if (synonym.matches("\\d{5}"))
+						return "MOD:" + synonym;
+				}
 			}
 
 			return null;

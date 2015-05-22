@@ -23,7 +23,7 @@ public class IsoformPTMPsi extends IsoformPTM {
 
     private static Set<AnnotationApiModel> SUPPORTED_MODELS = EnumSet.of(AnnotationApiModel.MODIFIED_RESIDUE, AnnotationApiModel.CROSS_LINK, AnnotationApiModel.LIPIDATION_SITE);
 
-    IsoformPTMPsi(String isoformId, Annotation annotation) {
+    public IsoformPTMPsi(String isoformId, Annotation annotation) {
 
         super(isoformId, annotation, SUPPORTED_MODELS, (psiModMap.containsKey(annotation.getCvTermAccessionCode())) ?
                         psiModMap.get(annotation.getCvTermAccessionCode()) : annotation.getCvTermAccessionCode());
@@ -41,8 +41,14 @@ public class IsoformPTMPsi extends IsoformPTM {
                 String id = annotation.getCvTermAccessionCode();
                 String modId = mapper.getPsiModId(id);
 
-                if (modId == null) Logger.warn(entry.getUniqueName()+" has a mod "+id +" w/o PSI equivalent");
-                else if (!psiModMap.containsKey(id)) psiModMap.put(id, modId);
+                if (modId == null) {
+                    Logger.warn(entry.getUniqueName()+" has a mod "+id +" w/o PSI equivalent");
+                    modId = "MOD:XXXXX";
+                }
+
+                if (!psiModMap.containsKey(id)) {
+                    psiModMap.put(id, modId);
+                }
             }
         }
     }

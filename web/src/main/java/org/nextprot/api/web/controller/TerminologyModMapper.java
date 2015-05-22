@@ -33,28 +33,19 @@ public class TerminologyModMapper implements PsiModMapper {
 
         Preconditions.checkNotNull(modName);
 
-        Terminology term = findTerm(modName);
+        Terminology term = terminologyService.findTerminologyByAccession(modName);
 
-        if (term != null) {
-
+        if (term == null) {
+            Logger.warn("no term found for " + modName);
+        }
+        else {
             for (String synonym : term.getSameAs()) {
 
-                if (synonym.matches("\\d{5}")) return "MOD:" + synonym;
+                if (synonym.matches("\\d{5}"))
+                    return "MOD:" + synonym;
             }
         }
 
         return null;
-    }
-
-    private Terminology findTerm(String modName) {
-
-        Terminology term = terminologyService.findTerminologyByAccession(modName);
-
-        if (term == null)
-            Logger.warn("no term found for "+modName);
-        else if (term.getSameAs() == null)
-            Logger.warn("no equivalent found for "+term.getAccession());
-
-        return term;
     }
 }
