@@ -43,7 +43,7 @@ public class IsoformPTMPsi extends IsoformPTM {
 
                 if (modId == null) {
                     Logger.warn(entry.getUniqueName()+" has a mod "+id +" w/o PSI equivalent");
-                    modId = "MOD:XXXXX";
+                    modId = id;
                 }
 
                 if (!psiModMap.containsKey(id)) {
