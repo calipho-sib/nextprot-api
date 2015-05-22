@@ -1,5 +1,7 @@
 package org.nextprot.api.web.service.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Terminology;
@@ -16,6 +18,7 @@ import java.io.Writer;
  */
 public class PeffStreamExporter extends NPStreamExporter {
 
+    private final Log Logger = LogFactory.getLog(PeffStreamExporter.class);
     private final Template template;
 
     @Deprecated
@@ -30,10 +33,18 @@ public class PeffStreamExporter extends NPStreamExporter {
 
             Terminology term = terminologyService.findTerminologyByAccession(modName);
 
+            if (term == null) {
+
+                Logger.warn("no term found for "+modName);
+                return null;
+            }
+
             for (String synonym : term.getSameAs()) {
 
                 if (synonym.matches("\\d{5}")) return "MOD:"+synonym;
             }
+
+            Logger.warn("no PSI mod name found for "+modName);
 
             return null;
         }
