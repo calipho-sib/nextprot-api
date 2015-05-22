@@ -32,7 +32,9 @@ public class IsoformPTMPsi extends IsoformPTM {
             if (SUPPORTED_MODELS.contains(annotation.getAPICategory())) {
 
                 String id = annotation.getCvTermAccessionCode();
-                if (!psiModMap.containsKey(id)) psiModMap.put(id, mapper.getPsiModId(id));
+                String modId = mapper.getPsiModId(id);
+
+                if (modId != null && !psiModMap.containsKey(id)) psiModMap.put(id, modId);
             }
         }
     }
