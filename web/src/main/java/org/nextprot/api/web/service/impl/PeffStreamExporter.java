@@ -33,7 +33,7 @@ public class PeffStreamExporter extends NPStreamExporter {
 
             Terminology term = terminologyService.findTerminologyByAccession(modName);
 
-            if (term == null) {
+            if (term == null || term.getSameAs() == null) {
 
                 Logger.warn("no term found for "+modName);
                 return null;
