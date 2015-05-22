@@ -20,5 +20,3 @@
 
 $StringUtils.wrapText($isoform.getSequence(), 60)
 #end
-
-
