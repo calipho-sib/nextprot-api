@@ -43,6 +43,14 @@ public class IsoformPTMTest {
 
         Entry entry = newEntry("NX_P22694", Arrays.asList(mod1, mod2, mod3));
 
+        IsoformPTMPsi.addPsiModIdsToMap(entry, new PsiModMapper() {
+            @Override
+            public String getPsiModId(String id) {
+
+                return id;
+            }
+        });
+
         List<IsoformPTM> mods = IsoformPTM.getListGenericPTM(entry, newIsoform("NX_P22694-1"));
 
         Assert.assertEquals("MOD:0001", mods.get(0).getModificationName());
