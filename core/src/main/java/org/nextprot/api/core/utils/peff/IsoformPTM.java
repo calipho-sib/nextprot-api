@@ -51,6 +51,9 @@ public abstract class IsoformPTM extends IsoformAnnotation {
     @Override
     public String asPeff() {
 
+        if (modName.isEmpty())
+            return "";
+
         StringBuilder sb = new StringBuilder();
         sb.append("(").append(getStart()).append("|").append(modName).append(")");
         return sb.toString();

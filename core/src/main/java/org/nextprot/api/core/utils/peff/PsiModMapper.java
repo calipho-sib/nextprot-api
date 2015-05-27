@@ -5,6 +5,6 @@ package org.nextprot.api.core.utils.peff;
  */
 public interface PsiModMapper {
 
-    /** @return the PSI mod identifier that maps the given id */
+    /** @return the PSI mod identifier that maps the given id or null if not found */
     String getPsiModId(String id);
 }

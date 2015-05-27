@@ -26,7 +26,7 @@ public class IsoformPTMPsi extends IsoformPTM {
     public IsoformPTMPsi(String isoformId, Annotation annotation) {
 
         super(isoformId, annotation, SUPPORTED_MODELS, (psiModMap.containsKey(annotation.getCvTermAccessionCode())) ?
-                        psiModMap.get(annotation.getCvTermAccessionCode()) : annotation.getCvTermAccessionCode());
+                        psiModMap.get(annotation.getCvTermAccessionCode()) : "");
     }
 
     @Deprecated
@@ -43,10 +43,7 @@ public class IsoformPTMPsi extends IsoformPTM {
 
                 if (modId == null) {
                     Logger.warn(entry.getUniqueName()+" has a mod "+id +" w/o PSI equivalent");
-                    modId = id;
-                }
-
-                if (!psiModMap.containsKey(id)) {
+                } else if (!psiModMap.containsKey(id)) {
                     psiModMap.put(id, modId);
                 }
             }
