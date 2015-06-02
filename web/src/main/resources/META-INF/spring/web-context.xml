@@ -81,6 +81,7 @@
 				<entry key="html" value="text/html" />
 				<entry key="fasta" value="text/fasta" />
 				<entry key="peff" value="text/peff" />
+				<entry key="txt" value="text/plain" />
 			</map>
 		</property>
 	</bean>

@@ -1,14 +1,9 @@
 package org.nextprot.api.core.service.export.format;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
+
+import java.util.*;
 
 public enum NPViews{
 	
@@ -47,7 +42,7 @@ public enum NPViews{
 	private static HashMap<String, Set<String>> formatViews = null;
 
 	static {
-		formatViews = new HashMap<String, Set<String>>();
+		formatViews = new HashMap<>();
 		for (NPFileFormat format : NPFileFormat.values()) {
 			formatViews.put(format.name().toLowerCase(), new LinkedHashSet<String>());
 			for (NPViews v : NPViews.values()) {

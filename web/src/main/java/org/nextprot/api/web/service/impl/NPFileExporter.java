@@ -6,6 +6,7 @@ import org.nextprot.api.core.service.export.format.NPFileFormat;
 public enum NPFileExporter {
 
     XML(new XMLStreamExporter()),
+    TXT(new TXTStreamExporter()),
     JSON(new JSONStreamExporter()),
     FASTA(new FastaStreamExporter()),
     PEFF(new PeffStreamExporter())
@@ -28,6 +29,8 @@ public enum NPFileExporter {
 
             case XML:
                 return XML;
+            case TXT:
+                return TXT;
             case JSON:
                 return JSON;
             case FASTA:
