@@ -14,28 +14,28 @@ import java.util.logging.Logger;
  *
  * Created by fnikitin on 05/05/15.
  */
-public abstract class IsoformPTM extends IsoformAnnotation {
+public abstract class IsoformPTMPeffFormatter extends IsoformAnnotationPeffFormatter {
 
     private static Logger LOGGER = Logger.getLogger("Modification");
     private final String modName;
 
-    protected IsoformPTM(String isoformId, Annotation annotation, Set<AnnotationApiModel> supportedApiModel, String modName) {
+    protected IsoformPTMPeffFormatter(String isoformId, Annotation annotation, Set<AnnotationApiModel> supportedApiModel, String modName) {
 
         super(isoformId, annotation, supportedApiModel);
 
         this.modName = modName;
     }
 
-    public static IsoformPTM valueOf(String isoformId, Annotation annotation) {
+    public static IsoformPTMPeffFormatter valueOf(String isoformId, Annotation annotation) {
 
         AnnotationApiModel apiModel = annotation.getAPICategory();
 
-        if (DisulfideBond.isModelSupported(apiModel))
-            return new DisulfideBond(isoformId, annotation);
-        else if (IsoformPTMNoPsi.isModelSupported(apiModel))
-            return new IsoformPTMNoPsi(isoformId, annotation);
-        else if (IsoformPTMPsi.isModelSupported(apiModel))
-            return new IsoformPTMPsi(isoformId, annotation);
+        if (DisulfideBondPeffFormatter.isModelSupported(apiModel))
+            return new DisulfideBondPeffFormatter(isoformId, annotation);
+        else if (IsoformPTMNoPsiPeffFormatter.isModelSupported(apiModel))
+            return new IsoformPTMNoPsiPeffFormatter(isoformId, annotation);
+        else if (IsoformPTMPsiPeffFormatter.isModelSupported(apiModel))
+            return new IsoformPTMPsiPeffFormatter(isoformId, annotation);
         else
             LOGGER.warning("could not create instance of annotation of type "+annotation.getAPICategory()+" of isoform id "+isoformId);
 
@@ -91,17 +91,17 @@ public abstract class IsoformPTM extends IsoformAnnotation {
      * @param isoform
      * @return
      */
-    static List<IsoformPTM> getListGenericPTM(Entry entry, Isoform isoform) {
+    static List<IsoformPTMPeffFormatter> getListGenericPTM(Entry entry, Isoform isoform) {
 
         Preconditions.checkNotNull(entry);
 
-        List<IsoformPTM> isoformPTMs = new ArrayList<>();
+        List<IsoformPTMPeffFormatter> isoformPTMs = new ArrayList<>();
 
         for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
 
             if (annotation.getAPICategory().isChildOf(AnnotationApiModel.GENERIC_PTM) && annotation.getAPICategory() != AnnotationApiModel.PTM_INFO) {
 
-                isoformPTMs.add(IsoformPTM.valueOf(isoform.getUniqueName(), annotation));
+                isoformPTMs.add(IsoformPTMPeffFormatter.valueOf(isoform.getUniqueName(), annotation));
             }
         }
 
@@ -116,7 +116,7 @@ public abstract class IsoformPTM extends IsoformAnnotation {
 
         StringBuilder sb = new StringBuilder();
 
-        for (IsoformPTM modif : IsoformPTM.getListGenericPTM(entry, isoform)) {
+        for (IsoformPTMPeffFormatter modif : IsoformPTMPeffFormatter.getListGenericPTM(entry, isoform)) {
 
             if (modif.isPSI() == fetchPsi)
                 sb.append(modif.asPeff());

@@ -13,9 +13,9 @@ import java.util.*;
  *
  * Created by fnikitin on 05/05/15.
  */
-public class IsoformPTMPsi extends IsoformPTM {
+public class IsoformPTMPsiPeffFormatter extends IsoformPTMPeffFormatter {
 
-    private static final Log Logger = LogFactory.getLog(IsoformPTMPsi.class);
+    private static final Log Logger = LogFactory.getLog(IsoformPTMPsiPeffFormatter.class);
 
     // PTM-XXXX -> MOD:YYYYY
     @Deprecated
@@ -23,7 +23,7 @@ public class IsoformPTMPsi extends IsoformPTM {
 
     private static Set<AnnotationApiModel> SUPPORTED_MODELS = EnumSet.of(AnnotationApiModel.MODIFIED_RESIDUE, AnnotationApiModel.CROSS_LINK, AnnotationApiModel.LIPIDATION_SITE);
 
-    public IsoformPTMPsi(String isoformId, Annotation annotation) {
+    public IsoformPTMPsiPeffFormatter(String isoformId, Annotation annotation) {
 
         super(isoformId, annotation, SUPPORTED_MODELS, (psiModMap.containsKey(annotation.getCvTermAccessionCode())) ?
                         psiModMap.get(annotation.getCvTermAccessionCode()) : "");

@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Created by fnikitin on 05/05/15.
  */
-public class IsoformPTMTest {
+public class IsoformPTMPeffFormatterTest {
 
     @Test
     public void testGetModificationList() throws Exception {
@@ -43,7 +43,7 @@ public class IsoformPTMTest {
 
         Entry entry = newEntry("NX_P22694", Arrays.asList(mod1, mod2, mod3));
 
-        IsoformPTMPsi.addPsiModIdsToMap(entry, new PsiModMapper() {
+        IsoformPTMPsiPeffFormatter.addPsiModIdsToMap(entry, new PsiModMapper() {
             @Override
             public String getPsiModId(String id) {
 
@@ -51,7 +51,7 @@ public class IsoformPTMTest {
             }
         });
 
-        List<IsoformPTM> mods = IsoformPTM.getListGenericPTM(entry, newIsoform("NX_P22694-1"));
+        List<IsoformPTMPeffFormatter> mods = IsoformPTMPeffFormatter.getListGenericPTM(entry, newIsoform("NX_P22694-1"));
 
         Assert.assertEquals("MOD:0001", mods.get(0).getModificationName());
         Assert.assertEquals(196, mods.get(0).getStart().getValue());
@@ -92,9 +92,9 @@ public class IsoformPTMTest {
 
         Entry entry = newEntry("NX_P22694", Arrays.asList(mod1, mod2, mod3));
 
-        Assert.assertEquals("(196|MOD:0001)(198|MOD:0001)(339|MOD:0002)", IsoformPTM.getPsiPTMsAsPeffString(entry, newIsoform("NX_P22694-1")));
-        Assert.assertEquals("(243|MOD:0001)(245|MOD:0001)(386|MOD:0002)", IsoformPTM.getPsiPTMsAsPeffString(entry, newIsoform("NX_P22694-2")));
-        Assert.assertEquals("(184|MOD:0001)(186|MOD:0001)(327|MOD:0002)", IsoformPTM.getPsiPTMsAsPeffString(entry, newIsoform("NX_P22694-3")));
+        Assert.assertEquals("(196|MOD:0001)(198|MOD:0001)(339|MOD:0002)", IsoformPTMPeffFormatter.getPsiPTMsAsPeffString(entry, newIsoform("NX_P22694-1")));
+        Assert.assertEquals("(243|MOD:0001)(245|MOD:0001)(386|MOD:0002)", IsoformPTMPeffFormatter.getPsiPTMsAsPeffString(entry, newIsoform("NX_P22694-2")));
+        Assert.assertEquals("(184|MOD:0001)(186|MOD:0001)(327|MOD:0002)", IsoformPTMPeffFormatter.getPsiPTMsAsPeffString(entry, newIsoform("NX_P22694-3")));
     }
 
     private static Isoform newIsoform(String id) {

@@ -11,12 +11,12 @@ import static org.mockito.Mockito.when;
 /**
  * Created by fnikitin on 07/05/15.
  */
-public class IsoformProcessingProductTest {
+public class IsoformProcessingProductPeffFormatterTest {
 
     @Test
     public void testSignalPeptideAsPeff() throws Exception {
 
-        IsoformProcessingProduct mod = new IsoformProcessingProduct("spongebob", newMockAnnotation(1, 29, AnnotationApiModel.SIGNAL_PEPTIDE));
+        IsoformProcessingProductPeffFormatter mod = new IsoformProcessingProductPeffFormatter("spongebob", newMockAnnotation(1, 29, AnnotationApiModel.SIGNAL_PEPTIDE));
 
         Assert.assertEquals("(1|29|SIGNAL)", mod.asPeff());
     }
@@ -24,7 +24,7 @@ public class IsoformProcessingProductTest {
     @Test
     public void testMaturationPeptideAsPeff() throws Exception {
 
-        IsoformProcessingProduct mod = new IsoformProcessingProduct("spongebob", newMockAnnotation(20, 213, AnnotationApiModel.MATURATION_PEPTIDE));
+        IsoformProcessingProductPeffFormatter mod = new IsoformProcessingProductPeffFormatter("spongebob", newMockAnnotation(20, 213, AnnotationApiModel.MATURATION_PEPTIDE));
 
         Assert.assertEquals("(20|213|PROPEP)", mod.asPeff());
     }
@@ -32,7 +32,7 @@ public class IsoformProcessingProductTest {
     @Test
     public void testMatureProteinAsPeff() throws Exception {
 
-        IsoformProcessingProduct mod = new IsoformProcessingProduct("spongebob", newMockAnnotation(17, 609, AnnotationApiModel.MATURE_PROTEIN));
+        IsoformProcessingProductPeffFormatter mod = new IsoformProcessingProductPeffFormatter("spongebob", newMockAnnotation(17, 609, AnnotationApiModel.MATURE_PROTEIN));
 
         Assert.assertEquals("(17|609|CHAIN)", mod.asPeff());
     }
@@ -40,7 +40,7 @@ public class IsoformProcessingProductTest {
     @Test
     public void testMitochondrialTransitPeptideAsPeff() throws Exception {
 
-        IsoformProcessingProduct mod = new IsoformProcessingProduct("spongebob", newMockAnnotation(1, 19, AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE));
+        IsoformProcessingProductPeffFormatter mod = new IsoformProcessingProductPeffFormatter("spongebob", newMockAnnotation(1, 19, AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE));
 
         Assert.assertEquals("(1|19|TRANSIT)", mod.asPeff());
     }
@@ -48,7 +48,7 @@ public class IsoformProcessingProductTest {
     @Test
     public void testPeroxisomeTransitPeptideAsPeff() throws Exception {
 
-        IsoformProcessingProduct mod = new IsoformProcessingProduct("spongebob", newMockAnnotation(1, 19, AnnotationApiModel.PEROXISOME_TRANSIT_PEPTIDE));
+        IsoformProcessingProductPeffFormatter mod = new IsoformProcessingProductPeffFormatter("spongebob", newMockAnnotation(1, 19, AnnotationApiModel.PEROXISOME_TRANSIT_PEPTIDE));
 
         Assert.assertEquals("(1|19|TRANSIT)", mod.asPeff());
     }

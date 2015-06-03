@@ -11,11 +11,11 @@ import java.util.Set;
  *
  * Created by fnikitin on 05/05/15.
  */
-abstract class IsoformAnnotation implements Location<IsoformAnnotation>, PeffFormatter {
+abstract class IsoformAnnotationPeffFormatter implements Location<IsoformAnnotationPeffFormatter>, PeffFormatter {
 
     private final IsoformLocation location;
 
-    protected IsoformAnnotation(String isoformId, Annotation annotation, Set<AnnotationApiModel> supportedApiModel) {
+    protected IsoformAnnotationPeffFormatter(String isoformId, Annotation annotation, Set<AnnotationApiModel> supportedApiModel) {
 
         Preconditions.checkNotNull(isoformId);
         Preconditions.checkNotNull(annotation);
@@ -35,7 +35,7 @@ abstract class IsoformAnnotation implements Location<IsoformAnnotation>, PeffFor
     }
 
     @Override
-    public int compareTo(IsoformAnnotation other) {
+    public int compareTo(IsoformAnnotationPeffFormatter other) {
 
         return location.compareTo(other.location);
     }

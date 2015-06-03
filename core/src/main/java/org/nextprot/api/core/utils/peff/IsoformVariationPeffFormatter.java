@@ -16,11 +16,11 @@ import java.util.List;
  *
  * Created by fnikitin on 05/05/15.
  */
-public class IsoformVariation extends IsoformAnnotation {
+public class IsoformVariationPeffFormatter extends IsoformAnnotationPeffFormatter {
 
     private final String variant;
 
-    public IsoformVariation(String isoformId, Annotation annotation) {
+    public IsoformVariationPeffFormatter(String isoformId, Annotation annotation) {
 
         super(isoformId, annotation, EnumSet.of(AnnotationApiModel.VARIANT));
 
@@ -54,7 +54,7 @@ public class IsoformVariation extends IsoformAnnotation {
 
         StringBuilder sb = new StringBuilder();
 
-        for (IsoformVariation isoformVariation : getListVariant(entry, isoform)) {
+        for (IsoformVariationPeffFormatter isoformVariation : getListVariant(entry, isoform)) {
 
             sb.append(isoformVariation.asPeff());
         }
@@ -62,16 +62,16 @@ public class IsoformVariation extends IsoformAnnotation {
         return sb.toString();
     }
 
-    static List<IsoformVariation> getListVariant(Entry entry, Isoform isoform) {
+    static List<IsoformVariationPeffFormatter> getListVariant(Entry entry, Isoform isoform) {
 
         Preconditions.checkNotNull(entry);
 
-        List<IsoformVariation> isoformVariations = new ArrayList<>();
+        List<IsoformVariationPeffFormatter> isoformVariations = new ArrayList<>();
 
         for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
 
             if (annotation.getAPICategory() == AnnotationApiModel.VARIANT)
-                isoformVariations.add(new IsoformVariation(isoform.getUniqueName(), annotation));
+                isoformVariations.add(new IsoformVariationPeffFormatter(isoform.getUniqueName(), annotation));
         }
 
         Collections.sort(isoformVariations);

@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by fnikitin on 05/05/15.
  */
-public class IsoformVariationTest {
+public class IsoformVariationPeffFormatterTest {
 
     @Test
     public void testGetVariantList() throws Exception {
@@ -40,7 +40,7 @@ public class IsoformVariationTest {
 
         Entry entry = newEntry("NX_P22694", Arrays.asList(variant1, variant2, variant3));
 
-        List<IsoformVariation> isoformVariations = IsoformVariation.getListVariant(entry, newIsoform("NX_P22694-1"));
+        List<IsoformVariationPeffFormatter> isoformVariations = IsoformVariationPeffFormatter.getListVariant(entry, newIsoform("NX_P22694-1"));
 
         Assert.assertEquals("P", isoformVariations.get(0).getVariant());
         Assert.assertEquals(26, isoformVariations.get(0).getStart().getValue());

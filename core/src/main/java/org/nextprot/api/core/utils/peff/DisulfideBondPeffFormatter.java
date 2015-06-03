@@ -11,11 +11,11 @@ import java.util.Set;
  *
  * Created by fnikitin on 05/05/15.
  */
-class DisulfideBond extends IsoformPTM {
+class DisulfideBondPeffFormatter extends IsoformPTMPeffFormatter {
 
     private static final Set<AnnotationApiModel> SUPPORTED_MODELS = EnumSet.of(AnnotationApiModel.DISULFIDE_BOND);
 
-    DisulfideBond(String isoformId, Annotation annotation) {
+    DisulfideBondPeffFormatter(String isoformId, Annotation annotation) {
 
         super(isoformId, annotation, SUPPORTED_MODELS, "Disulfide");
     }

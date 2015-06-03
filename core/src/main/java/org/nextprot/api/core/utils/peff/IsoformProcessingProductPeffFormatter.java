@@ -11,7 +11,7 @@ import java.util.*;
 /**
  * Created by fnikitin on 05/05/15.
  */
-public class IsoformProcessingProduct extends IsoformAnnotation {
+public class IsoformProcessingProductPeffFormatter extends IsoformAnnotationPeffFormatter {
 
     private final AnnotationApiModel model;
     private static final Map<AnnotationApiModel, String> PSI_PEFF_MAP;
@@ -27,7 +27,7 @@ public class IsoformProcessingProduct extends IsoformAnnotation {
         PSI_PEFF_MAP.put(AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE, "TRANSIT");
     }
 
-    IsoformProcessingProduct(String isoformId, Annotation annotation) {
+    IsoformProcessingProductPeffFormatter(String isoformId, Annotation annotation) {
 
         super(isoformId, annotation, PSI_PEFF_MAP.keySet());
 
@@ -48,7 +48,7 @@ public class IsoformProcessingProduct extends IsoformAnnotation {
 
         StringBuilder sb = new StringBuilder();
 
-        for (IsoformProcessingProduct product : getListProcessingProduct(entry, isoform)) {
+        for (IsoformProcessingProductPeffFormatter product : getListProcessingProduct(entry, isoform)) {
 
             sb.append(product.asPeff());
         }
@@ -56,16 +56,16 @@ public class IsoformProcessingProduct extends IsoformAnnotation {
         return sb.toString();
     }
 
-    static List<IsoformProcessingProduct> getListProcessingProduct(Entry entry, Isoform isoform) {
+    static List<IsoformProcessingProductPeffFormatter> getListProcessingProduct(Entry entry, Isoform isoform) {
 
         Preconditions.checkNotNull(entry);
 
-        List<IsoformProcessingProduct> products = new ArrayList<>();
+        List<IsoformProcessingProductPeffFormatter> products = new ArrayList<>();
 
         for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
 
             if (PSI_PEFF_MAP.containsKey(annotation.getAPICategory()))
-                products.add(new IsoformProcessingProduct(isoform.getUniqueName(), annotation));
+                products.add(new IsoformProcessingProductPeffFormatter(isoform.getUniqueName(), annotation));
         }
 
         Collections.sort(products);

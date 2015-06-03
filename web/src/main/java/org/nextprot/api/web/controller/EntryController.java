@@ -13,7 +13,7 @@ import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
-import org.nextprot.api.core.utils.peff.IsoformPTMPsi;
+import org.nextprot.api.core.utils.peff.IsoformPTMPsiPeffFormatter;
 import org.nextprot.api.core.utils.peff.PsiModMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -87,7 +87,7 @@ public class EntryController {
 		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("entry");
 		model.addAttribute("entry", entry);
 
-		IsoformPTMPsi.addPsiModIdsToMap(entry, terminologyMapper);
+		IsoformPTMPsiPeffFormatter.addPsiModIdsToMap(entry, terminologyMapper);
 
 		return "entry";
 	}

@@ -11,11 +11,11 @@ import java.util.Set;
  *
  * Created by fnikitin on 05/05/15.
  */
-class IsoformPTMNoPsi extends IsoformPTM {
+class IsoformPTMNoPsiPeffFormatter extends IsoformPTMPeffFormatter {
 
     private static final Set<AnnotationApiModel> SUPPORTED_MODELS = EnumSet.of(AnnotationApiModel.GLYCOSYLATION_SITE, AnnotationApiModel.SELENOCYSTEINE);
 
-    IsoformPTMNoPsi(String isoformId, Annotation annotation) {
+    IsoformPTMNoPsiPeffFormatter(String isoformId, Annotation annotation) {
 
         super(isoformId, annotation, SUPPORTED_MODELS, annotation.getCvTermName());
     }

@@ -11,12 +11,12 @@ import static org.mockito.Mockito.when;
 /**
  * Created by fnikitin on 07/05/15.
  */
-public class IsoformPTMNoPsiTest {
+public class IsoformPTMNoPsiPeffFormatterTest {
 
     @Test
     public void testDisulfideBondAsPeff() throws Exception {
 
-        DisulfideBond mod = new DisulfideBond("spongebob", newMockAnnotation(31, 96, AnnotationApiModel.DISULFIDE_BOND, ""));
+        DisulfideBondPeffFormatter mod = new DisulfideBondPeffFormatter("spongebob", newMockAnnotation(31, 96, AnnotationApiModel.DISULFIDE_BOND, ""));
 
         Assert.assertEquals("(31|Disulfide)(96|Disulfide)", mod.asPeff());
     }
@@ -24,7 +24,7 @@ public class IsoformPTMNoPsiTest {
     @Test
     public void testGlycoAsPeff() throws Exception {
 
-        IsoformPTMNoPsi mod = new IsoformPTMNoPsi("spongebob", newMockAnnotation(31, 96, AnnotationApiModel.GLYCOSYLATION_SITE, "N-linked (GlcNAc...)"));
+        IsoformPTMNoPsiPeffFormatter mod = new IsoformPTMNoPsiPeffFormatter("spongebob", newMockAnnotation(31, 96, AnnotationApiModel.GLYCOSYLATION_SITE, "N-linked (GlcNAc...)"));
 
         Assert.assertEquals("(31|N-linked (GlcNAc...))", mod.asPeff());
     }
