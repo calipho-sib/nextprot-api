@@ -84,7 +84,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 			if(refcnt > maxref) maxref = refcnt;
 			}
 		}
-		assertEquals(44021,cnt);
+		assertTrue(cnt > 44000); 
 		assertEquals(64,maxref);
 	} 
 	
