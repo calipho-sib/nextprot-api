@@ -4,7 +4,6 @@ import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.EnumSet;
-import java.util.Set;
 
 /**
  * A Modified residue without PSI-MOD identifier
@@ -13,11 +12,9 @@ import java.util.Set;
  */
 class IsoformPTMNoPsiPeffFormatter extends IsoformPTMPeffFormatter {
 
-    private static final Set<AnnotationApiModel> SUPPORTED_MODELS = EnumSet.of(AnnotationApiModel.GLYCOSYLATION_SITE, AnnotationApiModel.SELENOCYSTEINE);
+    IsoformPTMNoPsiPeffFormatter() {
 
-    IsoformPTMNoPsiPeffFormatter(String isoformId, Annotation annotation) {
-
-        super(isoformId, annotation, SUPPORTED_MODELS, annotation.getCvTermName());
+        super(EnumSet.of(AnnotationApiModel.GLYCOSYLATION_SITE, AnnotationApiModel.SELENOCYSTEINE), PeffKey.MOD_RES);
     }
 
     @Override
@@ -25,8 +22,9 @@ class IsoformPTMNoPsiPeffFormatter extends IsoformPTMPeffFormatter {
         return false;
     }
 
-    public static boolean isModelSupported(AnnotationApiModel model) {
+    @Override
+    protected String getModName(Annotation annotation) {
 
-        return SUPPORTED_MODELS.contains(model);
+        return annotation.getCvTermName();
     }
 }

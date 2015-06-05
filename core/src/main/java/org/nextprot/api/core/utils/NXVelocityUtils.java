@@ -8,15 +8,15 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.peff.IsoformPTMPeffFormatter;
-import org.nextprot.api.core.utils.peff.IsoformProcessingProductPeffFormatter;
-import org.nextprot.api.core.utils.peff.IsoformVariationPeffFormatter;
+import org.nextprot.api.core.utils.peff.PeffFormatterMaster;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 public class NXVelocityUtils {
+
+	private static PeffFormatterMaster PEFF_FORMATTER = new PeffFormatterMaster();
 
     private NXVelocityUtils() {
         throw new AssertionError();
@@ -110,58 +110,27 @@ public class NXVelocityUtils {
 		return String.valueOf(Math.round(d));
 	}
 
-	public static String getEntrySequenceVersion(Entry entry) {
-
-		Preconditions.checkNotNull(entry);
-
-		return null;
-	}
-
-	public static String getEntryVersion(Entry entry) {
-
-		Preconditions.checkNotNull(entry);
-
-		return null;
-	}
-
-	public static int getEntryProteinExistence(Entry entry) {
-
-		Preconditions.checkNotNull(entry);
-
-		return 1;
-	}
-
-	public static String getProcessingProductsAsPeffString(Entry entry, Isoform isoform) {
-
-		return IsoformProcessingProductPeffFormatter.getProductsAsPeffString(entry, isoform);
-	}
-
 	/**
-	 * Get all variants of a given isoform as string specified in PEFF developed by the HUPO PSI (PubMed:19132688)
+	 * Format PEFF header of a given isoform as string specified in PEFF developed by the HUPO PSI (PubMed:19132688)
 	 *
 	 * @param entry the entry to find variant from
 	 * @param isoform the isoform to find variant of
-	 * @return a list of Annotation of type VARIANT as PEFF format
+	 * @param sv sequence version
+	 * @param ev entry version
+	 * @param pe protein existence level
+	 * @return a PEFF formatted header
 	 */
-	public static String getVariantsAsPeffString(Entry entry, Isoform isoform) {
+	public static String buildPeffHeader(Entry entry, Isoform isoform, String protName, String geneName, String sv, String ev, String pe) {
 
-		return IsoformVariationPeffFormatter.getVariantsAsPeffString(entry, isoform);
-	}
+		StringBuilder sb = new StringBuilder(">nxp:");
 
-	/**
-	 * Get all modifications of a given isoform as string specified in PEFF developed by the HUPO PSI (PubMed:19132688)
-	 *
-	 * @param entry the entry to find modified residues from
-	 * @param isoform the isoform to find modification
-	 * @return a list of Annotation of type MODIFICATIONS as PEFF format
-	 */
-	public static String getPsiPTMsAsPeffString(Entry entry, Isoform isoform) {
+		sb.append(isoform.getUniqueName()).append(" \\DbUniqueId=").append(isoform.getUniqueName());
+		if (protName != null) sb.append("\\Pname=").append(protName);
+		if (geneName != null) sb.append("\\Gname=").append(geneName);
+		sb.append("\\NcbiTaxId=9606 \\TaxName=Homo Sapiens \\Length=").append(isoform.getSequence().length());
+		sb.append("\\SV=").append(sv).append("\\EV=").append(ev).append("\\PE=").append(pe);
+		sb.append(PEFF_FORMATTER.format(entry, isoform));
 
-		return IsoformPTMPeffFormatter.getPsiPTMsAsPeffString(entry, isoform);
-	}
-
-	public static String getNoPsiPTMsAsPeffString(Entry entry, Isoform isoform) {
-
-		return IsoformPTMPeffFormatter.getNoPsiPTMsAsPeffString(entry, isoform);
+		return sb.toString();
 	}
 }

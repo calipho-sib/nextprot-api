@@ -1,42 +1,34 @@
 package org.nextprot.api.core.utils.peff;
 
-import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 
 /**
  * A variation located on an isoform
  *
  * Created by fnikitin on 05/05/15.
  */
-public class IsoformVariationPeffFormatter extends IsoformAnnotationPeffFormatter {
+class IsoformVariationPeffFormatter extends IsoformAnnotationPeffFormatter {
 
-    private final String variant;
+    public IsoformVariationPeffFormatter() {
 
-    public IsoformVariationPeffFormatter(String isoformId, Annotation annotation) {
-
-        super(isoformId, annotation, EnumSet.of(AnnotationApiModel.VARIANT));
-
-        variant = annotation.getVariant().getVariant();
-    }
-
-    public String getVariant() {
-
-        return variant;
+        super(EnumSet.of(AnnotationApiModel.VARIANT), PeffKey.VARIANT);
     }
 
     @Override
-    public String asPeff() {
+    public String asPeffValue(Isoform isoform, Annotation... annotations) {
 
         StringBuilder sb = new StringBuilder();
-        sb.append("(").append(getStart()).append("|").append(getEnd()).append("|").append(variant).append(")");
+
+        for (Annotation annotation : annotations) {
+
+            sb.append("(").append(annotation.getStartPositionForIsoform(isoform.getUniqueName()))
+                    .append("|").append(annotation.getEndPositionForIsoform(isoform.getUniqueName())).append("|")
+                    .append(annotation.getVariant().getVariant()).append(")");
+        }
 
         return sb.toString();
     }
@@ -48,7 +40,7 @@ public class IsoformVariationPeffFormatter extends IsoformAnnotationPeffFormatte
      * @param isoform the isoform to find variant of
      * @return a list of Annotation of type VARIANT as PEFF format
      */
-    public static String getVariantsAsPeffString(Entry entry, Isoform isoform) {
+    /*public static String getVariantsAsPeffString(Entry entry, Isoform isoform) {
 
         Preconditions.checkNotNull(entry);
 
@@ -77,5 +69,5 @@ public class IsoformVariationPeffFormatter extends IsoformAnnotationPeffFormatte
         Collections.sort(isoformVariations);
 
         return isoformVariations;
-    }
+    }*/
 }

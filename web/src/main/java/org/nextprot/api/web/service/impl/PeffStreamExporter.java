@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Terminology;
-import org.nextprot.api.core.utils.peff.IsoformPTMPsiPeffFormatter;
 import org.nextprot.api.core.utils.peff.PsiModMapper;
 
 import java.io.IOException;
@@ -64,6 +63,6 @@ public class PeffStreamExporter extends NPStreamExporter {
     @Override
     protected void handleEntry(Entry entry) {
 
-        IsoformPTMPsiPeffFormatter.addPsiModIdsToMap(entry, terminologyMapper);
+        //IsoformPTMPsiPeffFormatter.addPsiModIdsToMap(entry, terminologyMapper);
     }
 }

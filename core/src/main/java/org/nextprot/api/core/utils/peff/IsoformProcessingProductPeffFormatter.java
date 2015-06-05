@@ -1,19 +1,17 @@
 package org.nextprot.api.core.utils.peff;
 
-import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by fnikitin on 05/05/15.
  */
-public class IsoformProcessingProductPeffFormatter extends IsoformAnnotationPeffFormatter {
+class IsoformProcessingProductPeffFormatter extends IsoformAnnotationPeffFormatter {
 
-    private final AnnotationApiModel model;
     private static final Map<AnnotationApiModel, String> PSI_PEFF_MAP;
 
     static {
@@ -27,22 +25,27 @@ public class IsoformProcessingProductPeffFormatter extends IsoformAnnotationPeff
         PSI_PEFF_MAP.put(AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE, "TRANSIT");
     }
 
-    IsoformProcessingProductPeffFormatter(String isoformId, Annotation annotation) {
+    IsoformProcessingProductPeffFormatter() {
 
-        super(isoformId, annotation, PSI_PEFF_MAP.keySet());
-
-        model = annotation.getAPICategory();
+        super(PSI_PEFF_MAP.keySet(), PeffKey.PROCESSED);
     }
 
     @Override
-    public String asPeff() {
+    public String asPeffValue(Isoform isoform, Annotation... annotations) {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("(").append(getStart()).append("|").append(getEnd()).append("|").append(PSI_PEFF_MAP.get(model)).append(")");
+        StringBuilder sb = new StringBuilder("");
+
+        for (Annotation annotation : annotations) {
+
+            sb.append("(").append(annotation.getStartPositionForIsoform(isoform.getUniqueName()))
+                    .append("|").append(annotation.getEndPositionForIsoform(isoform.getUniqueName()))
+                    .append("|").append(PSI_PEFF_MAP.get(annotation.getAPICategory())).append(")");
+        }
+
         return sb.toString();
     }
 
-    public static String getProductsAsPeffString(Entry entry, Isoform isoform) {
+    /*public static String getProductsAsPeffString(Entry entry, Isoform isoform) {
 
         Preconditions.checkNotNull(entry);
 
@@ -71,5 +74,5 @@ public class IsoformProcessingProductPeffFormatter extends IsoformAnnotationPeff
         Collections.sort(products);
 
         return products;
-    }
+    }*/
 }

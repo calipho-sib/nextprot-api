@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -11,37 +13,57 @@ import java.util.Set;
  *
  * Created by fnikitin on 05/05/15.
  */
-abstract class IsoformAnnotationPeffFormatter implements Location<IsoformAnnotationPeffFormatter>, PeffFormatter {
+abstract class IsoformAnnotationPeffFormatter implements PeffFormatter {
 
-    private final IsoformLocation location;
+    private static final Map<AnnotationApiModel, PeffFormatter> map = new HashMap<>();
 
-    protected IsoformAnnotationPeffFormatter(String isoformId, Annotation annotation, Set<AnnotationApiModel> supportedApiModel) {
-
-        Preconditions.checkNotNull(isoformId);
-        Preconditions.checkNotNull(annotation);
-        Preconditions.checkNotNull(supportedApiModel);
-        Preconditions.checkArgument(supportedApiModel.contains(annotation.getAPICategory()));
-
-        location = new IsoformLocation(isoformId, Value.of(annotation.getStartPositionForIsoform(isoformId)),
-                Value.of(annotation.getEndPositionForIsoform(isoformId)));
+    static {
+        // create and register unique instance of formatters
+        new IsoformPTMPsiPeffFormatter();
+        new IsoformPTMNoPsiPeffFormatter();
+        new DisulfideBondPeffFormatter();
+        new IsoformVariationPeffFormatter();
+        new IsoformProcessingProductPeffFormatter();
     }
 
-    public final Value getEnd() {
-        return location.getEnd();
+    protected final Set<AnnotationApiModel> supportedApiModels;
+    protected final PeffKey peffKey;
+
+    protected IsoformAnnotationPeffFormatter(Set<AnnotationApiModel> supportedApiModels, PeffKey peffKey) {
+
+        Preconditions.checkNotNull(supportedApiModels);
+        Preconditions.checkNotNull(peffKey);
+
+        this.supportedApiModels = supportedApiModels;
+        this.peffKey = peffKey;
+
+        for (AnnotationApiModel model : supportedApiModels) {
+
+            map.put(model, this);
+        }
     }
 
-    public final Value getStart() {
-        return location.getStart();
+    public static PeffFormatter getFormatter(Annotation annotation) {
+
+        return map.get(annotation.getAPICategory());
+    }
+
+    public Set<AnnotationApiModel> getSupportedApiModels() {
+
+        return supportedApiModels;
     }
 
     @Override
-    public int compareTo(IsoformAnnotationPeffFormatter other) {
+    public boolean support(AnnotationApiModel model) {
 
-        return location.compareTo(other.location);
+        return supportedApiModels.contains(model);
     }
 
-    public String toString() {
+    @Override
+    public final PeffKey getPeffKey() {
 
-        return asPeff();
+        return peffKey;
     }
+
+
 }

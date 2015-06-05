@@ -1,6 +1,7 @@
 package org.nextprot.api.core.utils.peff;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.EnumSet;
@@ -15,9 +16,9 @@ class DisulfideBondPeffFormatter extends IsoformPTMPeffFormatter {
 
     private static final Set<AnnotationApiModel> SUPPORTED_MODELS = EnumSet.of(AnnotationApiModel.DISULFIDE_BOND);
 
-    DisulfideBondPeffFormatter(String isoformId, Annotation annotation) {
+    DisulfideBondPeffFormatter() {
 
-        super(isoformId, annotation, SUPPORTED_MODELS, "Disulfide");
+        super(SUPPORTED_MODELS, PeffKey.MOD_RES);
     }
 
     @Override
@@ -26,16 +27,24 @@ class DisulfideBondPeffFormatter extends IsoformPTMPeffFormatter {
     }
 
     @Override
-    public String asPeff() {
+    protected final String getModName(Annotation annotation) {
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("(").append(getStart()).append("|").append(getModificationName()).append(")")
-                .append("(").append(getEnd()).append("|").append(getModificationName()).append(")");
-        return sb.toString();
+        return "Disulfide";
     }
 
-    public static boolean isModelSupported(AnnotationApiModel model) {
+    @Override
+    public String asPeffValue(Isoform isoform, Annotation... annotations) {
 
-        return SUPPORTED_MODELS.contains(model);
+        StringBuilder sb = new StringBuilder();
+
+        for (Annotation annotation : annotations) {
+
+            sb.append("(").append(annotation.getStartPositionForIsoform(isoform.getUniqueName())).append("|")
+                    .append("Disulfide").append(")")
+                    .append("(").append(annotation.getEndPositionForIsoform(isoform.getUniqueName())).append("|")
+                    .append("Disulfide").append(")");
+        }
+
+        return sb.toString();
     }
 }

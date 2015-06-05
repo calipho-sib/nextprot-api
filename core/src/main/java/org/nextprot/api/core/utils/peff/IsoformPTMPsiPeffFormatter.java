@@ -13,7 +13,7 @@ import java.util.*;
  *
  * Created by fnikitin on 05/05/15.
  */
-public class IsoformPTMPsiPeffFormatter extends IsoformPTMPeffFormatter {
+class IsoformPTMPsiPeffFormatter extends IsoformPTMPeffFormatter {
 
     private static final Log Logger = LogFactory.getLog(IsoformPTMPsiPeffFormatter.class);
 
@@ -23,10 +23,9 @@ public class IsoformPTMPsiPeffFormatter extends IsoformPTMPeffFormatter {
 
     private static Set<AnnotationApiModel> SUPPORTED_MODELS = EnumSet.of(AnnotationApiModel.MODIFIED_RESIDUE, AnnotationApiModel.CROSS_LINK, AnnotationApiModel.LIPIDATION_SITE);
 
-    public IsoformPTMPsiPeffFormatter(String isoformId, Annotation annotation) {
+    public IsoformPTMPsiPeffFormatter() {
 
-        super(isoformId, annotation, SUPPORTED_MODELS, (psiModMap.containsKey(annotation.getCvTermAccessionCode())) ?
-                        psiModMap.get(annotation.getCvTermAccessionCode()) : "");
+        super(SUPPORTED_MODELS, PeffKey.MOD_RES_PSI);
     }
 
     @Deprecated
@@ -55,8 +54,10 @@ public class IsoformPTMPsiPeffFormatter extends IsoformPTMPeffFormatter {
         return true;
     }
 
-    public static boolean isModelSupported(AnnotationApiModel model) {
+    @Override
+    protected String getModName(Annotation annotation) {
 
-        return SUPPORTED_MODELS.contains(model);
+        return annotation.getCvTermAccessionCode();
+        //return (psiModMap.containsKey(annotation.getCvTermAccessionCode())) ? psiModMap.get(annotation.getCvTermAccessionCode()) : "";
     }
 }
