@@ -78,6 +78,10 @@ public class Isoform implements Serializable {
 	public boolean isSwissProtDisplayedIsoform() {
 		return swissProtDisplayedIsoform;
 	}
+	
+	public boolean isCanonicalIsoform() {
+		return this.isSwissProtDisplayedIsoform();
+	}
 
 	public void setSwissProtDisplayedIsoform(boolean swissProtDisplayedIsoform) {
 		this.swissProtDisplayedIsoform = swissProtDisplayedIsoform;

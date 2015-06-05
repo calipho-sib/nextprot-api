@@ -17,6 +17,11 @@ isoform:$isoform-name :swissprotDisplayed "true"^^xsd:boolean .
 #else
 isoform:$isoform-name :swissprotDisplayed "false"^^xsd:boolean . 
 #end
+#if($isoform.isCanonicalIsoform()) 
+isoform:$isoform-name :canonicalIsoform "true"^^xsd:boolean . 
+#else
+isoform:$isoform-name :canonicalIsoform "false"^^xsd:boolean . 
+#end
 #end
 
 
