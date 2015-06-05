@@ -22,11 +22,6 @@ class DisulfideBondPeffFormatter extends IsoformPTMPeffFormatter {
     }
 
     @Override
-    public boolean isPSI() {
-        return false;
-    }
-
-    @Override
     protected final String getModName(Annotation annotation) {
 
         return "Disulfide";
@@ -39,7 +34,8 @@ class DisulfideBondPeffFormatter extends IsoformPTMPeffFormatter {
 
         for (Annotation annotation : annotations) {
 
-            sb.append("(").append(annotation.getStartPositionForIsoform(isoform.getUniqueName())).append("|")
+            if (support(annotation))
+                sb.append("(").append(annotation.getStartPositionForIsoform(isoform.getUniqueName())).append("|")
                     .append("Disulfide").append(")")
                     .append("(").append(annotation.getEndPositionForIsoform(isoform.getUniqueName())).append("|")
                     .append("Disulfide").append(")");

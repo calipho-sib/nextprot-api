@@ -2,6 +2,7 @@ package org.nextprot.api.core.utils.peff;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,9 +40,9 @@ abstract class IsoformAnnotationPeffFormatter implements PeffFormatter {
     }
 
     @Override
-    public boolean support(AnnotationApiModel model) {
+    public boolean support(Annotation annotation) {
 
-        return supportedApiModels.contains(model);
+        return supportedApiModels.contains(annotation.getAPICategory());
     }
 
     @Override
@@ -49,6 +50,4 @@ abstract class IsoformAnnotationPeffFormatter implements PeffFormatter {
 
         return peffKey;
     }
-
-
 }

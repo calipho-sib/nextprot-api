@@ -1,6 +1,5 @@
 package org.nextprot.api.core.utils.peff;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
@@ -34,5 +33,5 @@ public interface PeffFormatter {
 
     PeffKey getPeffKey();
     String asPeffValue(Isoform isoform, Annotation... annotations);
-    boolean support(AnnotationApiModel model);
+    boolean support(Annotation annotation);
 }

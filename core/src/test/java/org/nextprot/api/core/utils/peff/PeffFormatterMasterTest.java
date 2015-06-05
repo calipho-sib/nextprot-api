@@ -27,8 +27,8 @@ public class PeffFormatterMasterTest {
 
         PeffFormatterMaster formatter = new PeffFormatterMaster();
 
-        String peff = formatter.format(newMockEntry("NX_A0A087X1C5",
-                Collections.singletonList(newMockAnnotation(17, 609, AnnotationApiModel.MATURE_PROTEIN))),
+        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
+                        Collections.singletonList(newMockAnnotation(17, 609, AnnotationApiModel.MATURE_PROTEIN))),
                 newMockIsoform("NX_A0A087X1C5-1"));
 
         Assert.assertEquals("\\Processed=(17|609|CHAIN)", peff);
@@ -39,7 +39,7 @@ public class PeffFormatterMasterTest {
 
         PeffFormatterMaster formatter = new PeffFormatterMaster();
 
-        String peff = formatter.format(newMockEntry("NX_A0A087X1C5",
+        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
                         Collections.singletonList(newMockAnnotation(1, 29, AnnotationApiModel.SIGNAL_PEPTIDE))),
                 newMockIsoform("NX_A0A087X1C5-1"));
 
@@ -51,7 +51,7 @@ public class PeffFormatterMasterTest {
 
         PeffFormatterMaster formatter = new PeffFormatterMaster();
 
-        String peff = formatter.format(newMockEntry("NX_A0A087X1C5",
+        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
                         Collections.singletonList(newMockAnnotation(20, 213, AnnotationApiModel.MATURATION_PEPTIDE))),
                 newMockIsoform("NX_A0A087X1C5-1"));
 
@@ -63,7 +63,7 @@ public class PeffFormatterMasterTest {
 
         PeffFormatterMaster formatter = new PeffFormatterMaster();
 
-        String peff = formatter.format(newMockEntry("NX_A0A087X1C5",
+        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
                         Collections.singletonList(newMockAnnotation(1, 19, AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE))),
                 newMockIsoform("NX_A0A087X1C5-1"));
 
@@ -75,7 +75,7 @@ public class PeffFormatterMasterTest {
 
         PeffFormatterMaster formatter = new PeffFormatterMaster();
 
-        String peff = formatter.format(newMockEntry("NX_A0A087X1C5",
+        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
                         Collections.singletonList(newMockAnnotation(1, 19, AnnotationApiModel.PEROXISOME_TRANSIT_PEPTIDE))),
                 newMockIsoform("NX_A0A087X1C5-1"));
 
@@ -88,7 +88,7 @@ public class PeffFormatterMasterTest {
 
         PeffFormatterMaster formatter = new PeffFormatterMaster();
 
-        String peff = formatter.format(newMockEntry("NX_A0A087X1C5",
+        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
                         Collections.singletonList(newMockAnnotation(31, 96, AnnotationApiModel.DISULFIDE_BOND))),
                 newMockIsoform("NX_A0A087X1C5-1"));
 
@@ -100,7 +100,7 @@ public class PeffFormatterMasterTest {
 
         PeffFormatterMaster formatter = new PeffFormatterMaster();
 
-        String peff = formatter.format(newMockEntry("NX_A0A087X1C5",
+        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
                         Collections.singletonList(newMockAnnotation(31, 96, AnnotationApiModel.GLYCOSYLATION_SITE, "N-linked (GlcNAc...)"))),
                 newMockIsoform("NX_A0A087X1C5-1"));
 
@@ -113,7 +113,7 @@ public class PeffFormatterMasterTest {
 
         PeffFormatterMaster formatter = new PeffFormatterMaster();
 
-        String peff = formatter.format(newMockEntry("NX_A0A087X1C5",
+        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_A0A087X1C5",
                         Collections.singletonList(newMockAnnotation(31, 31, AnnotationApiModel.MODIFIED_RESIDUE, null, "MOD:0001"))),
                 newMockIsoform("NX_A0A087X1C5-1"));
 
@@ -129,9 +129,9 @@ public class PeffFormatterMasterTest {
         Annotation mod2 = newMockAnnotation(339, 339, AnnotationApiModel.MODIFIED_RESIDUE, "Phosphoserine", "MOD:0002");
         Annotation mod3 = newMockAnnotation(198, 198, AnnotationApiModel.MODIFIED_RESIDUE, "Phosphothreonine", "MOD:0003");
 
-        String peff = formatter.format(
-                        newMockEntry("NX_P22694", Arrays.asList(mod1, mod2, mod3)),
-                        newMockIsoform("NX_P22694-1")
+        String peff = formatter.formatIsoformAnnotations(
+                newMockEntry("NX_P22694", Arrays.asList(mod1, mod2, mod3)),
+                newMockIsoform("NX_P22694-1")
         );
 
         Assert.assertEquals("\\ModResPsi=(196|MOD:0001)(198|MOD:0003)(339|MOD:0002)", peff);
@@ -143,11 +143,11 @@ public class PeffFormatterMasterTest {
 
         PeffFormatterMaster formatter = new PeffFormatterMaster();
 
-        String peff = formatter.format(newMockEntry("NX_P22694", Arrays.asList(
-                                newMockVariantAnnotation(106, 106,"R", "Q"),
-                                newMockVariantAnnotation(300, 300, "T", "M"),
-                                newMockVariantAnnotation(26, 26, "A", "P")
-                        )),
+        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_P22694", Arrays.asList(
+                        newMockVariantAnnotation(106, 106, "R", "Q"),
+                        newMockVariantAnnotation(300, 300, "T", "M"),
+                        newMockVariantAnnotation(26, 26, "A", "P")
+                )),
                 newMockIsoform("NX_P22694-1"));
 
         Assert.assertEquals("\\Variant=(26|26|P)(106|106|Q)(300|300|M)", peff);
@@ -158,7 +158,7 @@ public class PeffFormatterMasterTest {
 
         PeffFormatterMaster formatter = new PeffFormatterMaster();
 
-        String peff = formatter.format(newMockEntry("NX_P22694", Arrays.asList(
+        String peff = formatter.formatIsoformAnnotations(newMockEntry("NX_P22694", Arrays.asList(
                         newMockAnnotation(1, 515, AnnotationApiModel.MATURE_PROTEIN),
                         newMockAnnotation(416, 416, AnnotationApiModel.GLYCOSYLATION_SITE, "N-linked (GlcNAc...)"),
                         newMockVariantAnnotation(311, 311, "R", "L"),

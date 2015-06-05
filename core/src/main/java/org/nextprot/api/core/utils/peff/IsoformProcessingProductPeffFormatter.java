@@ -37,42 +37,12 @@ class IsoformProcessingProductPeffFormatter extends IsoformAnnotationPeffFormatt
 
         for (Annotation annotation : annotations) {
 
-            sb.append("(").append(annotation.getStartPositionForIsoform(isoform.getUniqueName()))
+            if (support(annotation))
+                sb.append("(").append(annotation.getStartPositionForIsoform(isoform.getUniqueName()))
                     .append("|").append(annotation.getEndPositionForIsoform(isoform.getUniqueName()))
                     .append("|").append(PSI_PEFF_MAP.get(annotation.getAPICategory())).append(")");
         }
 
         return sb.toString();
     }
-
-    /*public static String getProductsAsPeffString(Entry entry, Isoform isoform) {
-
-        Preconditions.checkNotNull(entry);
-
-        StringBuilder sb = new StringBuilder();
-
-        for (IsoformProcessingProductPeffFormatter product : getListProcessingProduct(entry, isoform)) {
-
-            sb.append(product.asPeff());
-        }
-
-        return sb.toString();
-    }
-
-    static List<IsoformProcessingProductPeffFormatter> getListProcessingProduct(Entry entry, Isoform isoform) {
-
-        Preconditions.checkNotNull(entry);
-
-        List<IsoformProcessingProductPeffFormatter> products = new ArrayList<>();
-
-        for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
-
-            if (PSI_PEFF_MAP.containsKey(annotation.getAPICategory()))
-                products.add(new IsoformProcessingProductPeffFormatter(isoform.getUniqueName(), annotation));
-        }
-
-        Collections.sort(products);
-
-        return products;
-    }*/
 }

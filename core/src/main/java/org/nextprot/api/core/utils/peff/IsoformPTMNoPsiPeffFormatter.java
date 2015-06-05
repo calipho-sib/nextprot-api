@@ -18,11 +18,6 @@ class IsoformPTMNoPsiPeffFormatter extends IsoformPTMPeffFormatter {
     }
 
     @Override
-    public boolean isPSI() {
-        return false;
-    }
-
-    @Override
     protected String getModName(Annotation annotation) {
 
         return annotation.getCvTermName();

@@ -26,6 +26,27 @@ public class PeffFormatterMaster {
                 new IsoformProcessingProductPeffFormatter());
     }
 
+    /*@Deprecated
+    public static void addPsiModIdsToMap(Entry entry, PsiModMapper mapper) {
+
+        List<Annotation> annotations = entry.getAnnotations();
+
+        for (Annotation annotation : annotations) {
+
+            if (SUPPORTED_MODELS.contains(annotation.getAPICategory())) {
+
+                String id = annotation.getCvTermAccessionCode();
+                String modId = mapper.getPsiModId(id);
+
+                if (modId == null) {
+                    Logger.warn(entry.getUniqueName()+" has a mod "+id +" w/o PSI equivalent");
+                } else if (!psiModMap.containsKey(id)) {
+                    psiModMap.put(id, modId);
+                }
+            }
+        }
+    }*/
+
     /**
      * Create a new instance given an array of formatters that do the real job.
      *
@@ -64,7 +85,7 @@ public class PeffFormatterMaster {
         }
     }
 
-    public String format(Entry entry, final Isoform isoform) {
+    public String formatIsoformAnnotations(Entry entry, final Isoform isoform) {
 
         Preconditions.checkNotNull(entry);
         Preconditions.checkNotNull(isoform);

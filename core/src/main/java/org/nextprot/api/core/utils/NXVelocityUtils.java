@@ -16,7 +16,7 @@ import java.util.List;
 
 public class NXVelocityUtils {
 
-	private static PeffFormatterMaster PEFF_FORMATTER = new PeffFormatterMaster();
+	private static final PeffFormatterMaster PEFF_FORMATTER = new PeffFormatterMaster();
 
     private NXVelocityUtils() {
         throw new AssertionError();
@@ -129,7 +129,7 @@ public class NXVelocityUtils {
 		if (geneName != null) sb.append("\\Gname=").append(geneName);
 		sb.append("\\NcbiTaxId=9606 \\TaxName=Homo Sapiens \\Length=").append(isoform.getSequence().length());
 		sb.append("\\SV=").append(sv).append("\\EV=").append(ev).append("\\PE=").append(pe);
-		sb.append(PEFF_FORMATTER.format(entry, isoform));
+		sb.append(PEFF_FORMATTER.formatIsoformAnnotations(entry, isoform));
 
 		return sb.toString();
 	}

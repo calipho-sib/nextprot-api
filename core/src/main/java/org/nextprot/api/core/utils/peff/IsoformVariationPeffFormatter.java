@@ -25,49 +25,12 @@ class IsoformVariationPeffFormatter extends IsoformAnnotationPeffFormatter {
 
         for (Annotation annotation : annotations) {
 
-            sb.append("(").append(annotation.getStartPositionForIsoform(isoform.getUniqueName()))
+            if (support(annotation))
+                sb.append("(").append(annotation.getStartPositionForIsoform(isoform.getUniqueName()))
                     .append("|").append(annotation.getEndPositionForIsoform(isoform.getUniqueName())).append("|")
                     .append(annotation.getVariant().getVariant()).append(")");
         }
 
         return sb.toString();
     }
-
-    /**
-     * Get all variants of a given isoform as string specified in PEFF developed by the HUPO PSI (PubMed:19132688)
-     *
-     * @param entry the entry to find variant from
-     * @param isoform the isoform to find variant of
-     * @return a list of Annotation of type VARIANT as PEFF format
-     */
-    /*public static String getVariantsAsPeffString(Entry entry, Isoform isoform) {
-
-        Preconditions.checkNotNull(entry);
-
-        StringBuilder sb = new StringBuilder();
-
-        for (IsoformVariationPeffFormatter isoformVariation : getListVariant(entry, isoform)) {
-
-            sb.append(isoformVariation.asPeff());
-        }
-
-        return sb.toString();
-    }
-
-    static List<IsoformVariationPeffFormatter> getListVariant(Entry entry, Isoform isoform) {
-
-        Preconditions.checkNotNull(entry);
-
-        List<IsoformVariationPeffFormatter> isoformVariations = new ArrayList<>();
-
-        for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
-
-            if (annotation.getAPICategory() == AnnotationApiModel.VARIANT)
-                isoformVariations.add(new IsoformVariationPeffFormatter(isoform.getUniqueName(), annotation));
-        }
-
-        Collections.sort(isoformVariations);
-
-        return isoformVariations;
-    }*/
 }
