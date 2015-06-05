@@ -192,10 +192,14 @@ public class JSONDocRoleController extends JSONDocController {
 		return contextJSONDoc;
 	}
 	
-	@Autowired
+	@Autowired(required = false)
 	ServletContext servletContext;
 	
 	private String getMavenVersion() {
+		
+		if(servletContext == null)
+			return "NOT AVAILABLE";
+		
 	    try {
 
 	    	String appServerHome = servletContext.getRealPath("/");

@@ -102,6 +102,17 @@
 
 	</beans>
 
+	<beans profile="pro">
+		<bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
+			<property name="dataSource" ref="uds" />
+			<property name="schemas">
+				<list>
+					<value>np_users</value>
+				</list>
+			</property>
+		</bean>
+	</beans>
+
 	<beans profile="pro,dev">
 
 		<bean id="dataSourceServiceLocator"
@@ -141,14 +152,7 @@
 		<property name="password" value="${db.user.password}" />
 	</bean>
 
-	<bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
-		<property name="dataSource" ref="uds" />
-		<property name="schemas">
-		<list>
-		      <value>np_users</value>
-		</list>
-		</property>
-	</bean>
+
 
 		<!-- Transaction manager for the user data source -->
 		<bean id="txManager"

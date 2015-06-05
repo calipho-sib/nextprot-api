@@ -1056,6 +1056,13 @@
 	var lock = null;
 
 	$(document).ready(function() {
+		
+		if (typeof String.prototype.endsWith !== 'function') {
+		    String.prototype.endsWith = function(suffix) {
+		        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+		    };
+		}
+		
 		lock = new Auth0Lock('7vS32LzPoIR1Y0JKahOvUCgGbn94AcFW', 'nextprot.auth0.com');
 	
    		var userProfile;

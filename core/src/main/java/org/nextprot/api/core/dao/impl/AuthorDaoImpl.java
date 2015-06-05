@@ -23,9 +23,6 @@ public class AuthorDaoImpl implements AuthorDao {
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
 
-	private String sqlHeader = "select pubauthor_id, last_name, fore_name, suffix, rank, initials, is_person ";
-
-	
 
 	public List<PublicationAuthor> findAuthorsByPublicationId(Long publicationId) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("publicationId", publicationId);
@@ -50,6 +47,7 @@ public class AuthorDaoImpl implements AuthorDao {
 			PublicationAuthor author = new PublicationAuthor();
 			author.setAuthorId(resultSet.getLong("pubauthor_id"));
 			author.setLastName(resultSet.getString("last_name"));
+			author.setInitials(resultSet.getString("initials"));
 			String name = resultSet.getString("fore_name").isEmpty() ? resultSet.getString("initials")  : resultSet.getString("fore_name");
 			author.setPerson(resultSet.getBoolean("is_person"));
 			author.setForeName(name);
@@ -65,6 +63,7 @@ public class AuthorDaoImpl implements AuthorDao {
 		public PublicationAuthor mapRow(ResultSet resultSet, int row) throws SQLException {
 			PublicationAuthor author = new PublicationAuthor();
 			author.setAuthorId(resultSet.getLong("pubauthor_id"));
+			author.setInitials(resultSet.getString("initials"));
 			author.setLastName(resultSet.getString("last_name"));
 			author.setPerson(resultSet.getBoolean("is_person"));
 			String name = resultSet.getString("fore_name").isEmpty() ? resultSet.getString("initials")  : resultSet.getString("fore_name");

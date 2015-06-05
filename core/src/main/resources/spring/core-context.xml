@@ -46,7 +46,7 @@
 		</bean>
 		<bean id="ehcache"
 			class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
-			p:configLocation="classpath:META-INF/config/ehcache.xml" />
+			p:configLocation="classpath:ehcache.xml" />
 
 
 		<bean class="net.sf.ehcache.management.ManagementService"
