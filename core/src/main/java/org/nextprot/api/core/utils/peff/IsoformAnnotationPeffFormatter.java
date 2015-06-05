@@ -2,7 +2,6 @@ package org.nextprot.api.core.utils.peff;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,15 +15,6 @@ import java.util.Set;
 abstract class IsoformAnnotationPeffFormatter implements PeffFormatter {
 
     private static final Map<AnnotationApiModel, PeffFormatter> map = new HashMap<>();
-
-    static {
-        // create and register unique instance of formatters
-        new IsoformPTMPsiPeffFormatter();
-        new IsoformPTMNoPsiPeffFormatter();
-        new DisulfideBondPeffFormatter();
-        new IsoformVariationPeffFormatter();
-        new IsoformProcessingProductPeffFormatter();
-    }
 
     protected final Set<AnnotationApiModel> supportedApiModels;
     protected final PeffKey peffKey;
@@ -41,11 +31,6 @@ abstract class IsoformAnnotationPeffFormatter implements PeffFormatter {
 
             map.put(model, this);
         }
-    }
-
-    public static PeffFormatter getFormatter(Annotation annotation) {
-
-        return map.get(annotation.getAPICategory());
     }
 
     public Set<AnnotationApiModel> getSupportedApiModels() {
