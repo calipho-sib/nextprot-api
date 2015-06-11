@@ -21,6 +21,11 @@
 
 
 	<!-- Configuring cache for other services -->
+	<cache name="terminology-by-accession" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100"
+		   maxEntriesLocalDisk="200000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true" copyOnRead="true" copyOnWrite="true">
+	</cache>
 	<cache name="terminology-by-ontology" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"

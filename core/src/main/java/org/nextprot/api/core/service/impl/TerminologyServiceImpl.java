@@ -1,7 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.List;
-
 import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
@@ -10,6 +8,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Lazy
 @Service
 public class TerminologyServiceImpl implements TerminologyService {
@@ -17,6 +17,7 @@ public class TerminologyServiceImpl implements TerminologyService {
 	@Autowired private TerminologyDao terminologyDao;
 	
 	@Override
+	@Cacheable("terminology-by-accession")
 	public Terminology findTerminologyByAccession(String accession) {
 		return terminologyDao.findTerminologyByAccession(accession);
 	}

@@ -48,7 +48,6 @@ public interface PublicationDao {
 	 * @param uniqueName
 	 * @return
 	 */	
-	public List<Publication> findAllPublications();	
 
 	public List<Long> findAllPublicationsIds();	
 	

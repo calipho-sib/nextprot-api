@@ -1,6 +1,6 @@
 <isoform-list>
 	#foreach($isoform in $entry.isoforms)
-	<isoform accession='$isoform.uniqueName' database='neXtProt' #if($isoform.isSwissProtDisplayedIsoform()) swissprot-displayed-isoform='true' #end>
+	<isoform accession='$isoform.uniqueName' database='neXtProt' #if($isoform.isSwissProtDisplayedIsoform()) swissprot-displayed-isoform='true' canonical-isoform='true' #end>
 	#if($isoform.mainEntityName)
 	<entity-name type='$isoform.mainEntityName.type' value='$isoform.mainEntityName.value' is-main='true' qualifier='#if($isoform.mainEntityName.qualifier)$isoform.mainEntityName.qualifier#end'>
 		#if($isoform.synonyms.size() > 0)

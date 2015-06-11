@@ -34,8 +34,8 @@ public class PublicationServiceImpl implements PublicationService {
 
 	@Cacheable("publications-get-by-id")
 	public Publication findPublicationById(long id) {
-		Publication publication = this.publicationDao.findPublicationById(id);
-		loadAuthorsXrefAndCvJournal(publication);
+		Publication publication = this.publicationDao.findPublicationById(id); // Basic fields
+		loadAuthorsXrefAndCvJournal(publication); // add non-basic fields to object
 		return publication;
 	}
 

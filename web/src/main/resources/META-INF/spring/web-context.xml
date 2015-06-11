@@ -10,7 +10,7 @@
 	<import resource="classpath:spring/core-context.xml" />
 	<import resource="classpath:spring/solr-context.xml" />
 	<import resource="classpath:spring/rdf-context.xml" />
-	<import resource="security-context.xml" />
+	<import resource="classpath:META-INF/spring/security-context.xml" />
 
 	<!-- Make Content Negotiation manager available across all of Spring MVC -->
 	<mvc:annotation-driven> <!--content-negotiation-manager="cnManager"-->
