@@ -77,11 +77,11 @@ public class Publication implements Serializable{
 	}
 
 	public Boolean getIsComputed() {
-		return isCurated;
+		return isComputed;
 	}
 
-	public void setIsComputed(Boolean isCurated) {
-		this.isCurated = isCurated;
+	public void setIsComputed(Boolean isComputed) {
+		this.isComputed = isComputed;
 	}
 
 	@ApiObjectField(description = "The journal")
