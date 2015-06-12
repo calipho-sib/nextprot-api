@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.IsoformSpecific;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class Annotation implements Serializable {
+public class Annotation implements Serializable, IsoformSpecific {
 
 	private static final long serialVersionUID = -1576387963315643702L;
 
@@ -190,12 +191,13 @@ public class Annotation implements Serializable {
 		this.synonym = synonym;
 	}
 
-	public boolean isAnnotationValidForIsoform(String isoform) {
+	@Override
+	public boolean isSpecificForIsoform(String isoform) {
 		return targetingIsoformsMap.containsKey(isoform);
 	}
 
 	public boolean isAnnotationPositionalForIsoform(String isoform) {
-		if(isAnnotationValidForIsoform(isoform)){
+		if(isSpecificForIsoform(isoform)){
 			return targetingIsoformsMap.get(isoform).isPositional();
 		}else return false;
 	}

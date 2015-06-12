@@ -77,7 +77,7 @@ public enum AnnotationApiModel implements Serializable {
 	//TRANSIT_PEPTIDE(1002,"transit peptide", "transitPeptide", "transit peptide", new OWLAnnotationCategory[]{PROCESSING_PRODUCT }), // split into mitochondrial & peroxisome // db annotation split into types of 2 next lines
 	PEROXISOME_TRANSIT_PEPTIDE(-10021,"peroxisome transit peptide", "peroxisomeTransitPeptide", "Peroxisome transit peptide", new AnnotationApiModel[]{PROCESSING_PRODUCT }),
 	MITOCHONDRIAL_TRANSIT_PEPTIDE(-10022,"mitochondrial transit peptide", "mitochondrialTransitPeptide", "Mitochondrial transit peptide", new AnnotationApiModel[]{PROCESSING_PRODUCT }), 
-	MATURATION_PEPTIDE(1003,"maturation peptide", "maturationPeptide", "maturation peptide", new AnnotationApiModel[]{PROCESSING_PRODUCT }),
+	MATURATION_PEPTIDE(1003,"maturation peptide", "propeptide", "maturation peptide", new AnnotationApiModel[]{PROCESSING_PRODUCT }),
 	MATURE_PROTEIN(1004,"mature protein", "matureProtein", "mature protein", new AnnotationApiModel[]{PROCESSING_PRODUCT }),
 	
 	TRANSMEMBRANE_REGION(1005,"transmembrane region", "transmembraneRegion", "transmembrane region",  new AnnotationApiModel[]{TOPOLOGY }), 
