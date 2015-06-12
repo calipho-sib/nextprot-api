@@ -28,14 +28,14 @@ public class NXVelocityUtils {
 	}
 	
 	public static String getAnnotationCategoryNameForXML(AnnotationApiModel annotationCategory) {
-		return StringUtils.decamelizeAndReplaceByHyphen(annotationCategory.getApiTypeName());
+		return StringUtils.camelToKebabCase(annotationCategory.getApiTypeName());
 	}
 	
 	public static String getAnnotationCategoryHierachyForXML(AnnotationApiModel annotationCategory) {
 		StringBuffer sb = new StringBuffer();
 		for (AnnotationApiModel cat: annotationCategory.getAllParentsButRoot()) {
 			if (sb.length()>0) sb.append(";");
-			sb.append(StringUtils.decamelizeAndReplaceByHyphen(cat.getApiTypeName()));			
+			sb.append(StringUtils.camelToKebabCase(cat.getApiTypeName()));
 		}
 		return sb.toString();
 	}

@@ -1,31 +1,8 @@
 package org.nextprot.api.web.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsondoc.core.pojo.ApiDoc;
-import org.jsondoc.core.pojo.ApiMethodDoc;
-import org.jsondoc.core.pojo.ApiParamDoc;
-import org.jsondoc.core.pojo.ApiVerb;
-import org.jsondoc.core.pojo.JSONDoc;
+import org.jsondoc.core.pojo.*;
 import org.jsondoc.core.util.JSONDocType;
 import org.jsondoc.springmvc.controller.JSONDocController;
 import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
@@ -40,6 +17,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletContext;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 @Controller
 public class JSONDocRoleController extends JSONDocController {
@@ -113,7 +100,7 @@ public class JSONDocRoleController extends JSONDocController {
 								null, 
 								null));
 						m.setPathparameters(set);
-						m.setPath("/entry/{entry}/" + StringUtils.decamelizeAndReplaceByHyphen(model.getApiTypeName()));
+						m.setPath("/entry/{entry}/" + StringUtils.camelToKebabCase(model.getApiTypeName()));
 						m.setVerb(ApiVerb.GET);
 						apiDoc.getMethods().add(m);
 					}

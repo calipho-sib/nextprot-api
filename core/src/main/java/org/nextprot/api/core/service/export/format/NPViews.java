@@ -58,8 +58,7 @@ public enum NPViews{
 	
 	private static void getAnnotationHierarchy(AnnotationApiModel a, Set<String> list, int inc) {
 		if(inc > 0) {
-			String name = new String(new char[inc]).replace('\0', '-') + StringUtils.decamelizeAndReplaceByHyphen(a.getApiTypeName());
-			System.out.println(name);
+			String name = new String(new char[inc]).replace('\0', '-') + StringUtils.camelToKebabCase(a.getApiTypeName());
 			list.add(name);
 		}
 		
