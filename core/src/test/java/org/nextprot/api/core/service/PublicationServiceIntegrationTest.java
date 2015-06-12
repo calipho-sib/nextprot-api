@@ -40,7 +40,6 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
 	@Test
 	public void testPublicationAbstract() {
 		 Publication publication = publicationService.findPublicationById(41589965);
-		 //System.out.println(publication);
 		 Assert.assertTrue(publication.getFirstPage().equals("254"));
 		 // check that abstract bug CALIPHOMISC-241 is fixed (pmid 24867236)
 		 Assert.assertTrue(publication.getAbstractText().contains("regulator of microtubule organisation"));
