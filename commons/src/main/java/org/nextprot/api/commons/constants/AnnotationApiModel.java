@@ -192,12 +192,12 @@ public enum AnnotationApiModel implements Serializable {
 	
 	// Fill the cache decamelized
 	private static Map<String,AnnotationApiModel> MAP_DECAMELIZED_TYPES=new HashMap<String,AnnotationApiModel>();
-	static {for (AnnotationApiModel category : AnnotationApiModel.values()) {MAP_DECAMELIZED_TYPES.put(StringUtils.decamelizeAndReplaceByHyphen(category.getApiTypeName()), category);}	}
+	static {for (AnnotationApiModel category : AnnotationApiModel.values()) {MAP_DECAMELIZED_TYPES.put(StringUtils.camelToKebabCase(category.getApiTypeName()), category);}	}
 
 	private static String HIERARCHY_STRING = null;
 	static {StringBuilder sb = new StringBuilder();getAnnotationHierarchy(AnnotationApiModel.ROOT, sb, 0);HIERARCHY_STRING = sb.toString();}
 	private static void getAnnotationHierarchy(AnnotationApiModel a, StringBuilder sb, int inc) {
-		if(inc > 0) sb.append(new String(new char[inc]).replace('\0', '-') + StringUtils.decamelizeAndReplaceByHyphen(a.getApiTypeName()) + "  " + a.getHierarchy() + "\n");
+		if(inc > 0) sb.append(new String(new char[inc]).replace('\0', '-') + StringUtils.camelToKebabCase(a.getApiTypeName()) + "  " + a.getHierarchy() + "\n");
 		int nextInc = inc + 1;
 		for (AnnotationApiModel c : a.getChildren()) {
 				getAnnotationHierarchy(c, sb, nextInc);
@@ -338,7 +338,7 @@ public enum AnnotationApiModel implements Serializable {
 		if(a.getParents().iterator().hasNext()) {
 			AnnotationApiModel parent = a.getParents().iterator().next();
 			getPathToRoot(parent, sb);
-			sb.append(StringUtils.decamelizeAndReplaceByHyphen(a.getDbAnnotationTypeName()) + ":");
+			sb.append(StringUtils.camelToKebabCase(a.getDbAnnotationTypeName()) + ":");
 		}
 	}
 	

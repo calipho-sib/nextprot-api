@@ -1,5 +1,41 @@
 <experimental-context-list>
 #foreach($ctx in $entry.getExperimentalContexts())
-	<experimental-context internal-id='$ctx.getContextId()' #if($ctx.tissueAC) tissue-ac='$ctx.tissueAC' #end #if($ctx.developmentalStageAC) developmental-stage-ac='$ctx.developmentalStageAC' #end #if($ctx.cellLineAC) cell-line-ac='$ctx.cellLineAC' #end #if($ctx.diseaseAC) disease-ac='$ctx.diseaseAC' #end #if($ctx.organelleAC) organelle-ac='$ctx.organelleAC' #end #if($ctx.detectionMethodAC) detection-method-ac='$ctx.detectionMethodAC' #end #if($ctx.metadataAC) metadata-ac='$ctx.metadataAC' #end />
+    <experimental-context internal-id='$ctx.getContextId()' metadata-ac='$ctx.metadataAC'>
+		#if($ctx.tissue)
+		<cvterm type="tissue" terminology='$StringUtils.camelToKebabCase($ctx.getTissue().getOntology())' accession='$ctx.tissueAC'>
+            <name>$ctx.getTissue().getName()</name>
+        </cvterm>
+		#end
+
+		#if($ctx.developmentalStage)
+			<cvterm type="developmental-stage" terminology='$StringUtils.camelToKebabCase($ctx.getDevelopmentalStage().getOntology())' accession='$ctx.developmentalStageAC'>
+                <name>$ctx.getDevelopmentalStage().getName()</name>
+            </cvterm>
+		#end
+
+		#if($ctx.detectionMethod)
+		<cvterm type="detection-method" terminology='$StringUtils.camelToKebabCase($ctx.getDetectionMethod().getOntology())' accession='$ctx.detectionMethodAC'>
+            <name>$ctx.getDetectionMethod().getName()</name>
+        </cvterm>
+		#end
+
+		#if($ctx.cellLine)
+            <cvterm type="cell-line" terminology='$StringUtils.camelToKebabCase($ctx.getCellLine().getOntology())' accession='$ctx.cellLineAC'>
+                <name>$ctx.getCellLine().getName()</name>
+            </cvterm>
+		#end
+
+		#if($ctx.disease)
+            <cvterm type="disease" terminology='$StringUtils.camelToKebabCase($ctx.getDisease().getOntology())' accession='$ctx.diseaseAC'>
+                <name>$ctx.getDisease().getName()</name>
+            </cvterm>
+		#end
+
+		#if($ctx.organelle)
+            <cvterm type="organelle" terminology='$StringUtils.camelToKebabCase($ctx.getOrganelle().getOntology())' accession='$ctx.organelleAC'>
+                <name>$ctx.getOrganelle().getName()</name>
+            </cvterm>
+		#end
+    </experimental-context>
 #end
 </experimental-context-list>
