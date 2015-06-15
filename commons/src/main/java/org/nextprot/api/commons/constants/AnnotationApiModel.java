@@ -354,11 +354,24 @@ public enum AnnotationApiModel implements Serializable {
 		return sb.toString();
 	}
 	
-	private void getPathToRoot(AnnotationApiModel a, StringBuilder sb){
+	static void getPathToRoot(AnnotationApiModel a, StringBuilder sb){
+
+		System.out.println("getPathToRoot("+a+")");
+
 		if(a.getParents().iterator().hasNext()) {
 			AnnotationApiModel parent = a.getParents().iterator().next();
 			getPathToRoot(parent, sb);
+
 			sb.append(StringUtils.camelToKebabCase(a.getDbAnnotationTypeName()) + ":");
+			System.out.println("append "+a+", sb="+sb.toString());
+		}
+	}
+
+	void getPathToRoot(StringBuilder sb){
+		if(getParents().iterator().hasNext()) {
+			AnnotationApiModel parent = getParents().iterator().next();
+			parent.getPathToRoot(sb);
+			sb.append(StringUtils.camelToKebabCase(getDbAnnotationTypeName()) + ":");
 		}
 	}
 	
@@ -376,8 +389,21 @@ public enum AnnotationApiModel implements Serializable {
 	public AnnotationPropertyApiModel getPropertyByDbName(String dbName) {
 		return AnnotationPropertyApiModel.getPropertyByDbName(this, dbName);
 	}
-	
-	
+
+	public String getAnnotationCategoryHierachyForXML() {
+		StringBuffer sb = new StringBuffer();
+
+		for (AnnotationApiModel cat: getAllParentsButRoot()) {
+			if (sb.length()>0) sb.append(";");
+			sb.append(StringUtils.camelToKebabCase(cat.getApiTypeName()));
+		}
+		return sb.toString();
+	}
+
+	public String getAnnotationCategoryNameForXML() {
+		return StringUtils.camelToKebabCase(getApiTypeName());
+	}
+
 	private static class MyComp implements Comparator<AnnotationApiModel> {
 
 		@Override

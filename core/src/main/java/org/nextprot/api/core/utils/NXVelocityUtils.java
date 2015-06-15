@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -26,16 +25,13 @@ public class NXVelocityUtils {
 	}
 	
 	public static String getAnnotationCategoryNameForXML(AnnotationApiModel annotationCategory) {
-		return StringUtils.camelToKebabCase(annotationCategory.getApiTypeName());
+
+		return annotationCategory.getAnnotationCategoryNameForXML();
 	}
 	
 	public static String getAnnotationCategoryHierachyForXML(AnnotationApiModel annotationCategory) {
-		StringBuffer sb = new StringBuffer();
-		for (AnnotationApiModel cat: annotationCategory.getAllParentsButRoot()) {
-			if (sb.length()>0) sb.append(";");
-			sb.append(StringUtils.camelToKebabCase(cat.getApiTypeName()));
-		}
-		return sb.toString();
+
+		return annotationCategory.getAnnotationCategoryHierachyForXML();
 	}
 
 	
