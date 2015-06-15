@@ -13,7 +13,6 @@ import org.nextprot.api.core.utils.peff.IsoformProcessingProduct;
 import org.nextprot.api.core.utils.peff.IsoformVariation;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 public class NXVelocityUtils {
@@ -23,8 +22,7 @@ public class NXVelocityUtils {
     }
 
 	public static List<Annotation> getAnnotationsByCategory(Entry entry, AnnotationApiModel annotationCategory) {
-		List<Annotation> annotations = entry.getAnnotations();
-		return AnnotationUtils.filterAnnotationsByCategory(annotations, annotationCategory, false);
+		return AnnotationUtils.filterAnnotationsByCategory(entry.getAnnotations(), annotationCategory, false);
 	}
 	
 	public static String getAnnotationCategoryNameForXML(AnnotationApiModel annotationCategory) {
@@ -55,18 +53,8 @@ public class NXVelocityUtils {
 		return false;
 	}
 	
-	/**
-	 * 
-	 * @return the list of LEAF annotation categories except family-name
-	 */
 	public static List<AnnotationApiModel> getAnnotationCategories() {
-		List<AnnotationApiModel> list = new ArrayList<AnnotationApiModel>();
-		AnnotationApiModel[] vals = AnnotationApiModel.values();
-		for (int i=0;i<vals.length;i++) {
-			if (vals[i].equals(AnnotationApiModel.FAMILY_NAME)) continue;
-			list.add(vals[i]);
-		}
-		return list;
+		return AnnotationApiModel.getSortedCategories();
 	}
 
 	public static String formatIsoformId(Isoform isoform) {

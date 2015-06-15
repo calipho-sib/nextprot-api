@@ -4,10 +4,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Description: <br> * 
@@ -165,18 +162,18 @@ public enum AnnotationApiModel implements Serializable {
 	private final Set<AnnotationApiModel> parents;
 	
 	/** Category of control vocabulary that may be used to define the annotation */
-	private AnnotationApiModel(
-			final Integer dbId, 
-			final String dbAnnotationTypeName, 
-			final String rdfName, 
-	        final String rdfLabel,
+	AnnotationApiModel(
+			final Integer dbId,
+			final String dbAnnotationTypeName,
+			final String rdfName,
+			final String rdfLabel,
 			final AnnotationApiModel[] parentCategories) {
 		
 		this.dbId = dbId;
 		this.dbAnnotationTypeName=dbAnnotationTypeName;
 		this.apiName = rdfName;
 		this.rdfLabel = rdfLabel;
-		this.parents = new HashSet<AnnotationApiModel>();
+		this.parents = new HashSet<>();
 		if (parentCategories!=null) {
 			for (int i=0;i<parentCategories.length;i++) parents.add(parentCategories[i]);
 		}
@@ -187,11 +184,11 @@ public enum AnnotationApiModel implements Serializable {
 	// *************** STATIC PRIVATE FINAL CONSTANTS initialized for performance reasons ********************************** ///////////////////
 	
 	// Fill the cache
-	private static final Map<String,AnnotationApiModel> MAP_TYPES =new HashMap<String,AnnotationApiModel>();
+	private static final Map<String,AnnotationApiModel> MAP_TYPES =new HashMap<>();
 	static {for (AnnotationApiModel category : AnnotationApiModel.values()) {MAP_TYPES.put(category.getDbAnnotationTypeName(), category);}}
 	
 	// Fill the cache decamelized
-	private static Map<String,AnnotationApiModel> MAP_DECAMELIZED_TYPES=new HashMap<String,AnnotationApiModel>();
+	private static Map<String,AnnotationApiModel> MAP_DECAMELIZED_TYPES=new HashMap<>();
 	static {for (AnnotationApiModel category : AnnotationApiModel.values()) {MAP_DECAMELIZED_TYPES.put(StringUtils.camelToKebabCase(category.getApiTypeName()), category);}	}
 
 	private static String HIERARCHY_STRING = null;
@@ -203,9 +200,34 @@ public enum AnnotationApiModel implements Serializable {
 				getAnnotationHierarchy(c, sb, nextInc);
 		}
 	}
-	
-	
-	
+
+	private static List<AnnotationApiModel> SORTED_CATEGORIES = null;
+	static { SORTED_CATEGORIES = sortAnnotationCategories(); }
+
+	/**
+	 * Sort categories (generic parent > direct parent annotation > annotation category name
+	 * @return the list of LEAF annotation categories except family-name
+	 */
+	private static List<AnnotationApiModel> sortAnnotationCategories() {
+
+		List<AnnotationApiModel> list = new ArrayList<>();
+		AnnotationApiModel[] vals = AnnotationApiModel.values();
+
+		for (AnnotationApiModel value : vals) {
+
+			if (!value.equals(AnnotationApiModel.FAMILY_NAME)) list.add(value);
+		}
+
+		Collections.sort(list, new MyComp());
+
+		return list;
+	}
+
+	public static List<AnnotationApiModel> getSortedCategories() {
+
+		return SORTED_CATEGORIES;
+	}
+
 	/**
 	 * Allows to retrieve info about an annotation category given its annotation type name in the database
 	 * @param typeName the annotation type name ( the cv_terms.cv_name related to the annotation.cv_annotation_type_id)
@@ -304,22 +326,20 @@ public enum AnnotationApiModel implements Serializable {
 	
 	public Set<AnnotationApiModel> getAllChildren() {
 		Set<AnnotationApiModel> mine = getChildren();
-		Set<AnnotationApiModel> all = new HashSet<AnnotationApiModel>(mine);
+		Set<AnnotationApiModel> all = new HashSet<>(mine);
 		for (AnnotationApiModel child : mine) all.addAll(child.getAllChildren());
 		return all;
 	}
 	
 	public Set<AnnotationApiModel> getAllParents() {
 		Set<AnnotationApiModel> mine = getParents();
-		Set<AnnotationApiModel> all = new HashSet<AnnotationApiModel>(mine);
+		Set<AnnotationApiModel> all = new HashSet<>(mine);
 		for (AnnotationApiModel parent : mine) all.addAll(parent.getAllParents());
 		return all;
 	}
 	
 	public Set<AnnotationApiModel> getAllParentsButRoot() {
-		Set<AnnotationApiModel> mine = getParents();
-		Set<AnnotationApiModel> all = new HashSet<AnnotationApiModel>(mine);
-		for (AnnotationApiModel parent : mine) all.addAll(parent.getAllParents());
+		Set<AnnotationApiModel> all = getAllParents();
 		all.remove(AnnotationApiModel.ROOT);
 		return all;
 	}
@@ -358,5 +378,12 @@ public enum AnnotationApiModel implements Serializable {
 	}
 	
 	
+	private static class MyComp implements Comparator<AnnotationApiModel> {
 
+		@Override
+		public int compare(AnnotationApiModel m1, AnnotationApiModel m2) {
+
+			return 0;
+		}
+	}
 }
