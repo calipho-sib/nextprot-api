@@ -24,17 +24,6 @@ public class NXVelocityUtils {
 		return AnnotationUtils.filterAnnotationsByCategory(entry.getAnnotations(), annotationCategory, false);
 	}
 	
-	public static String getAnnotationCategoryNameForXML(AnnotationApiModel annotationCategory) {
-
-		return annotationCategory.getAnnotationCategoryNameForXML();
-	}
-	
-	public static String getAnnotationCategoryHierachyForXML(AnnotationApiModel annotationCategory) {
-
-		return annotationCategory.getAnnotationCategoryHierachyForXML();
-	}
-
-	
 	public static boolean hasInteractions(Entry entry) {
 		if (!entry.getInteractions().isEmpty()) return true;
 		if (!getAnnotationsByCategory(entry, AnnotationApiModel.SMALL_MOLECULE_INTERACTION).isEmpty()) return true;
