@@ -217,7 +217,12 @@ public enum AnnotationApiModel implements Serializable {
 			@Override
 			public int compare(AnnotationApiModel m1, AnnotationApiModel m2) {
 
-				return m1.getHierarchy().compareTo(m2.getHierarchy());
+				int cmp = m1.getHierarchy().compareTo(m2.getHierarchy());
+
+				if (cmp == 0)
+					return m1.getApiTypeName().compareTo(m2.getApiTypeName());
+
+				return cmp;
 			}
 		});
 
@@ -349,7 +354,7 @@ public enum AnnotationApiModel implements Serializable {
 		return sb.toString();
 	}
 
-	private void getPathToRoot(StringBuilder sb, char delimitor){
+	void getPathToRoot(StringBuilder sb, char delimitor){
 
 		if (parent!= null && parent != ROOT) {
 			parent.getPathToRoot(sb, delimitor);

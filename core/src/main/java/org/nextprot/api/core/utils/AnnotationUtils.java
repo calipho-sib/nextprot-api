@@ -4,15 +4,23 @@ import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import java.util.*;
 
 
 public class AnnotationUtils {
-	
+
+	private static Comparator<Annotation> COMPARATOR;
+
+
+	static {
+		COMPARATOR = new Comparator<Annotation>() {
+			@Override
+			public int compare(Annotation a1, Annotation a2) {
+
+				return Long.compare(a1.getAnnotationId(), a2.getAnnotationId());
+			}
+		};
+	}
 	
 	/**
 	 * Filter annotation by its category
@@ -42,6 +50,9 @@ public class AnnotationUtils {
 				}
 			}
 		}
+
+		Collections.sort(annotationList, COMPARATOR);
+
 		return annotationList;
 	}
 	
