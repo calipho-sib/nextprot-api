@@ -1,6 +1,6 @@
-package org.nextprot.api.commons.utils;
+package org.nextprot.api.commons.constants;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.utils.StringUtils;
 
 /**
  * Created by fnikitin on 17/06/15.

@@ -1,6 +1,4 @@
-package org.nextprot.api.commons.utils;
-
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+package org.nextprot.api.commons.constants;
 
 /**
  * Export tree as graph dot format (http://www.graphviz.org/content/dot-language).

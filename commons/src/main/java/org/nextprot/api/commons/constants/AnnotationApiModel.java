@@ -3,7 +3,6 @@ package org.nextprot.api.commons.constants;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.commons.utils.TreeVisitor;
-import org.nextprot.api.commons.utils.TreeVisitorDot;
 
 import java.io.Serializable;
 import java.util.*;
