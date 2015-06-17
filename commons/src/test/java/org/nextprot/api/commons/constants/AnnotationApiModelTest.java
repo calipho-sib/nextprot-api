@@ -279,4 +279,99 @@ public class AnnotationApiModelTest {
 
 		Assert.assertEquals(64, AnnotationApiModel.getInstantiatedCategories().size());
 	}
+
+	@Test
+	public void testExportDotTree() {
+
+		String expected = "graph annotationTypes {\n" +
+				"\tnodesep=0.1; ranksep=0.5; ratio=compress; size=\"7.5,10\"; center=true; node [style=\"rounded,filled\", width=0, height=0, shape=box, fillcolor=\"#E5E5E5\", concentrate=true]\n" +
+				"\tRoot -- Name ;\n" +
+				"\tName -- FamilyName ;\n" +
+				"\tRoot -- GeneralAnnotation ;\n" +
+				"\tGeneralAnnotation -- CellularComponent ;\n" +
+				"\tCellularComponent -- SubcellularLocation ;\n" +
+				"\tCellularComponent -- GoCellularComponent ;\n" +
+				"\tCellularComponent -- SubcellularLocationNote ;\n" +
+				"\tGeneralAnnotation -- Interaction ;\n" +
+				"\tInteraction -- InteractionInfo ;\n" +
+				"\tInteraction -- EnzymeRegulation ;\n" +
+				"\tInteraction -- SmallMoleculeInteraction ;\n" +
+				"\tInteraction -- Cofactor ;\n" +
+				"\tInteraction -- BinaryInteraction ;\n" +
+				"\tGeneralAnnotation -- EnzymeClassification ;\n" +
+				"\tGeneralAnnotation -- Caution ;\n" +
+				"\tGeneralAnnotation -- Miscellaneous ;\n" +
+				"\tGeneralAnnotation -- Function ;\n" +
+				"\tFunction -- GoMolecularFunction ;\n" +
+				"\tFunction -- CatalyticActivity ;\n" +
+				"\tFunction -- FunctionInfo ;\n" +
+				"\tFunction -- GoBiologicalProcess ;\n" +
+				"\tFunction -- Pathway ;\n" +
+				"\tGeneralAnnotation -- Induction ;\n" +
+				"\tGeneralAnnotation -- Expression ;\n" +
+				"\tExpression -- ExpressionInfo ;\n" +
+				"\tExpression -- ExpressionProfile ;\n" +
+				"\tExpression -- DevelopmentalStageInfo ;\n" +
+				"\tGeneralAnnotation -- Medical ;\n" +
+				"\tMedical -- Allergen ;\n" +
+				"\tMedical -- Pharmaceutical ;\n" +
+				"\tMedical -- Disease ;\n" +
+				"\tGeneralAnnotation -- SequenceCaution ;\n" +
+				"\tGeneralAnnotation -- Keyword ;\n" +
+				"\tKeyword -- UniprotKeyword ;\n" +
+				"\tRoot -- PositionalAnnotation ;\n" +
+				"\tPositionalAnnotation -- SequenceConflict ;\n" +
+				"\tPositionalAnnotation -- Site ;\n" +
+				"\tSite -- MiscellaneousSite ;\n" +
+				"\tSite -- ActiveSite ;\n" +
+				"\tSite -- BindingSite ;\n" +
+				"\tSite -- CleavageSite ;\n" +
+				"\tSite -- MetalBindingSite ;\n" +
+				"\tPositionalAnnotation -- NonTerminalResidue ;\n" +
+				"\tPositionalAnnotation -- Topology ;\n" +
+				"\tTopology -- IntramembraneRegion ;\n" +
+				"\tTopology -- TopologicalDomain ;\n" +
+				"\tTopology -- TransmembraneRegion ;\n" +
+				"\tPositionalAnnotation -- Ptm ;\n" +
+				"\tPtm -- LipidationSite ;\n" +
+				"\tPtm -- CrossLink ;\n" +
+				"\tPtm -- Selenocysteine ;\n" +
+				"\tPtm -- ModifiedResidue ;\n" +
+				"\tPtm -- DisulfideBond ;\n" +
+				"\tPtm -- GlycosylationSite ;\n" +
+				"\tPtm -- PtmInfo ;\n" +
+				"\tPositionalAnnotation -- ProcessingProduct ;\n" +
+				"\tProcessingProduct -- MitochondrialTransitPeptide ;\n" +
+				"\tProcessingProduct -- MatureProtein ;\n" +
+				"\tProcessingProduct -- SignalPeptide ;\n" +
+				"\tProcessingProduct -- Propeptide ;\n" +
+				"\tProcessingProduct -- InitiatorMethionine ;\n" +
+				"\tProcessingProduct -- PeroxisomeTransitPeptide ;\n" +
+				"\tPositionalAnnotation -- Region ;\n" +
+				"\tRegion -- MiscellaneousRegion ;\n" +
+				"\tRegion -- CoiledCoilRegion ;\n" +
+				"\tRegion -- Domain ;\n" +
+				"\tRegion -- NucleotidePhosphateBindingRegion ;\n" +
+				"\tRegion -- CompositionallyBiasedRegion ;\n" +
+				"\tRegion -- ShortSequenceMotif ;\n" +
+				"\tRegion -- DnaBindingRegion ;\n" +
+				"\tRegion -- CalciumBindingRegion ;\n" +
+				"\tRegion -- ZincFingerRegion ;\n" +
+				"\tRegion -- InteractingRegion ;\n" +
+				"\tRegion -- Repeat ;\n" +
+				"\tPositionalAnnotation -- Mapping ;\n" +
+				"\tMapping -- PdbMapping ;\n" +
+				"\tPositionalAnnotation -- SecondaryStructure ;\n" +
+				"\tSecondaryStructure -- Turn ;\n" +
+				"\tSecondaryStructure -- BetaStrand ;\n" +
+				"\tSecondaryStructure -- Helix ;\n" +
+				"\tPositionalAnnotation -- Variant ;\n" +
+				"\tPositionalAnnotation -- DomainInfo ;\n" +
+				"\tPositionalAnnotation -- NonConsecutiveResidue ;\n" +
+				"\tPositionalAnnotation -- Mutagenesis ;\n" +
+				"\tPositionalAnnotation -- VariantInfo ;\n" +
+				"}";
+
+		Assert.assertEquals(expected, AnnotationApiModel.exportHierarchyAsGraphDot());
+	}
 }
