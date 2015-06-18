@@ -24,7 +24,7 @@ public class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 		
 		// Remove previous indexes
 		logger.info("removing all solr publication records");
-		indexer.clearDatabase();
+		indexer.clearDatabase("");
 		
 		List<Long> allpubids;
 		
