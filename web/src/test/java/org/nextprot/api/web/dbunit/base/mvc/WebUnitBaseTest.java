@@ -30,7 +30,7 @@ import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
     DirtiesContextTestExecutionListener.class,
     TransactionDbUnitTestExecutionListener.class })
 @ContextConfiguration("classpath:META-INF/spring/web-context.xml")
-public abstract class WebUnitBaseTest extends AbstractUnitBaseTest {
+abstract class WebUnitBaseTest extends AbstractUnitBaseTest {
 
 	@Autowired
 	protected WebApplicationContext wac;
