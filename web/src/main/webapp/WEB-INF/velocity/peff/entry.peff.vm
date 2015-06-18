@@ -1,22 +1,9 @@
-#if(  $entry.getOverview().hasMainProteinName() )
-    #set ( $protName = $entry.getOverview().getMainProteinName() )
-#end
-#if(  $entry.getOverview().hasMainGeneName() )
-    #set ( $geneName = $entry.getOverview().getMainGeneName() )
-#end
-#set ( $pe = $entry.getOverview().getHistory().getProteinExistenceLevel() )
-#set ( $sv = $entry.getOverview().getHistory().getSequenceVersion() )
-#set ( $ev = $entry.getOverview().getHistory().getUniprotVersion() )
+#if(  $entry.getOverview().hasMainProteinName() ) #set ( $protName = $entry.getOverview().getMainProteinName() )#end
+#if(  $entry.getOverview().hasMainGeneName() ) #set ( $geneName = $entry.getOverview().getMainGeneName() )#end
+#set ( $entryProteinExistence = $entry.getOverview().getHistory().getProteinExistenceLevel() )
+#set ( $entrySequenceVersion = $entry.getOverview().getHistory().getSequenceVersion() )
+#set ( $entryVersion = $entry.getOverview().getHistory().getUniprotVersion() )
 #foreach($isoform in $entry.isoforms)
-    #set ( $psiPTMs = $NXUtils.getPsiPTMsAsPeffString($entry, $isoform) )
-    #set ( $noPsiPTMs = $NXUtils.getNoPsiPTMsAsPeffString($entry, $isoform) )
-    #set ( $variants = $NXUtils.getVariantsAsPeffString($entry, $isoform) )
-    #set ( $processed = $NXUtils.getProcessingProductsAsPeffString($entry, $isoform) )
->nxp:$isoform.getUniqueName() \DbUniqueId=$isoform.getUniqueName() #if($protName)\Pname=$protName isoform $isoform.formatIsoformId()#end
-#if($geneName) \Gname=$geneName#end \NcbiTaxId=9606 \TaxName=Homo Sapiens \Length=$isoform.getSequence().length() \SV=$sv \EV=$ev \PE=$pe #if(!$psiPTMs.isEmpty())\ModResPsi=$psiPTMs #end
-#if(!$noPsiPTMs.isEmpty())\ModRes=$noPsiPTMs #end
-#if(!$variants.isEmpty())\Variant=$variants #end
-#if(!$processed.isEmpty())\Processed=$processed#end
-
+$NXUtils.buildPeffHeader($entry, $isoform, $protName, $geneName, $entrySequenceVersion, $entryVersion, $entryProteinExistence)
 $StringUtils.wrapText($isoform.getSequence(), 60)
 #end

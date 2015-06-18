@@ -1,20 +1,18 @@
 package org.nextprot.api.web.service.impl;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
-import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.web.servlet.view.velocity.VelocityConfig;
-
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Arrays;
 
+import org.junit.Ignore;
+import org.junit.Test;
+import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
+
 @Ignore
-@ActiveProfiles({"dev"})
-public class StreamExporterTest extends WebUnitBaseTest {
+public class StreamExporterTest extends WebIntegrationBaseTest {
 
     @Autowired
     private FluentEntryService fluentEntryService;

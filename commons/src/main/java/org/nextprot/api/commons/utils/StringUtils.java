@@ -7,15 +7,16 @@ import java.text.Normalizer.Form;
 import java.util.regex.Pattern;
 
 public class StringUtils {
-	private static final Pattern NONLATIN = Pattern.compile("[^\\w-]");
+
+	private static final Pattern NON_ASCIIDASH = Pattern.compile("[^\\w-]");
 	private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
-
-
 	
 	/**
 	 * Replaces the white spaces and the "-" and transform the String in camel
 	 * case
-	 * 
+	 *
+	 * @see <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles">https://en.wikipedia.org/wiki/Letter_case#Special_case_styles</a>
+	 *
 	 * @param inputString
 	 *            The string to be transformed
 	 * @param avoidFirst
@@ -44,12 +45,50 @@ public class StringUtils {
 		return ret.toString();
 	}
 
-	static public String slug(String unicode) {
+	/**
+	 * Replaces the Capital letters with lower letters and prefixed with a hyphen if not in the beginning of the string.
+	 * For instance PTM info becomes ptm-info and modifiedResidue becomes modified-residue
+	 *
+	 * @see <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles">https://en.wikipedia.org/wiki/Letter_case#Special_case_styles</a>
+	 *
+	 * @param s raw string
+	 * @return the string processed
+	 */
+	public static String camelToKebabCase(String s){
+		return camelToLetterCase(s, "-");
+	}
+
+	/**
+	 * Replaces the Capital letters with lower letters and prefixed with a underscore if not in the beginning of the string.
+	 * For instance PTM info becomes ptm_info and modifiedResidue becomes modified_residue
+	 *
+	 * @see <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles">https://en.wikipedia.org/wiki/Letter_case#Special_case_styles</a>
+	 *
+	 * @param s raw string
+	 * @return the string processed
+	 */
+	public static String camelToSnakeCase(String s){
+		return camelToLetterCase(s, "_");
+	}
+
+	private static String camelToLetterCase(String s, String delimitor) {
+
+		return s.trim().replaceAll("(\\p{Ll})(\\p{Lu})","$1 $2").replaceAll(" ", delimitor).toLowerCase();
+	}
+
+	/**
+	 * Non word characters/hyphen are removed, punctuation and spaces are replaced by single underscores.
+	 *
+	 * @param unicode
+	 * @return
+	 */
+	public static String slug(String unicode) {
+
 		String nowhitespace = WHITESPACE.matcher(unicode).replaceAll("_");
 		String normalized = Normalizer.normalize(nowhitespace, Form.NFD)
 				.replaceAll("[:;.,/(){}\\\\]", "_");
-		String slug = NONLATIN.matcher(normalized).replaceAll("");
-		return slug.toString();
+
+		return NON_ASCIIDASH.matcher(normalized).replaceAll("");
 	}
 
 	static public String clean(String input) {
@@ -103,18 +142,7 @@ public class StringUtils {
 		if (s.length()==0) return "";
 		return s.substring(0,1).toUpperCase() + s.substring(1);
 	}
-	
-	/** 
-	 * Replaces the Capital letters with lower letters and prefixed with a hyphen if not in the beginning of the string.
-	 * For instance PTM info becomes ptm-info and modifiedResidue becomes modified-residue 
-	 * @param s raw string
-	 * @return the string processed 
-	 */
-	
-	static public String decamelizeAndReplaceByHyphen(String s){
-		return s.trim().replaceAll("(\\p{Ll})(\\p{Lu})","$1 $2").replaceAll(" ", "-").toLowerCase();
-	}
-	
+
 	/**
 	 * Remove the <+> characters from a string
 	 * Used for suggestions retuurned by solr service

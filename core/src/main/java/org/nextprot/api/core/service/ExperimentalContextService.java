@@ -6,7 +6,6 @@ import org.nextprot.api.core.domain.ExperimentalContext;
 
 public interface ExperimentalContextService {
 
-	//List<ExperimentalContext> findExperimentalContextsByIds(List<Long> ids);
 	List<ExperimentalContext> findExperimentalContextsByEntryName(String entryName);
 	List<ExperimentalContext> findAllExperimentalContexts();
 

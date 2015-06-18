@@ -39,7 +39,10 @@
 #if($entry.overview.geneNames)
 <gene-name-list>
 #foreach($entityName in $entry.overview.geneNames)
-    #parse('entity-name.xml.vm')
+	<gene-name type="recommended">$entityName.synonymName</gene-name>
+	#foreach($synonym in $entityName.synonyms)
+	<gene-name type="alternative">$synonym.synonymName</gene-name>
+	#end
 #end
 </gene-name-list>
 #end

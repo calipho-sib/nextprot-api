@@ -1,4 +1,4 @@
-package org.nextprot.api.web.controller.genomic.misctobeorganized;
+package org.nextprot.api.web.integration.xml;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
@@ -6,12 +6,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.Test;
 import org.mockito.internal.matchers.GreaterThan;
 import org.mockito.internal.matchers.LessThan;
-import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.test.web.servlet.ResultActions;
 
-@ActiveProfiles("dev")
-public class EntryControllerTest extends WebUnitBaseTest {
+public class EntryXMLIntegrationTest extends WebIntegrationBaseTest {
 	
   @Test
   public void shouldContainIsoform() throws Exception {
