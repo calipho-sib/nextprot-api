@@ -24,16 +24,17 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 		
 		// Remove previous indexes, TODO: find appropriate string for ontology-specific deletion (filters:ontologyname?)
 		logger.info("removing all solr terminology records");
-		indexer.clearDatabase();
 		
 		List<Terminology> allterms;
 		if (args.length == 0) { // No arg: index all ontologies
 			System.err.println("indexing: all ontologies");
 			logger.info("indexing all terminologies");
+			indexer.clearDatabase("");
 			allterms = terminologyService.findAllTerminology();
 		} else { // Index ontology given as argument
 			System.err.println("indexing: " + args[0]);
 			logger.info("indexing terminology: " + args[0]);
+			indexer.clearDatabase(args[0]);
 			allterms = terminologyService.findTerminologyByOntology(args[0]);
 		}
 
