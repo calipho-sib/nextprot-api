@@ -4,10 +4,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 
-@ActiveProfiles("dev")
 public class EntryOverviewXMLIntegrationTest extends WebIntegrationBaseTest {
 	
   @Test
