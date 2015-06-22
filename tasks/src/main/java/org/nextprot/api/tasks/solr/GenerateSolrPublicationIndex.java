@@ -2,6 +2,7 @@ package org.nextprot.api.tasks.solr;
 
 import java.util.List;
 
+import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.tasks.solr.indexer.PublicationSolrindexer;
@@ -22,7 +23,11 @@ public class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 		
 		int pubcnt = 0, artcnt = 0, submcnt = 0, othercnt = 0;
 		
-		SolrIndexer<Publication> indexer = new PublicationSolrindexer("http://localhost:8983/solr/nppublications1");
+		String solrServer = System.getProperty("solr.server");
+		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=http://localhost:8983/solr/nppublications1");
+		logger.info("Solr server: " + solrServer); 
+
+		SolrIndexer<Publication> indexer = new PublicationSolrindexer(solrServer);
 		
 		// Remove previous indexes
 		logger.info("removing all solr publication records");
