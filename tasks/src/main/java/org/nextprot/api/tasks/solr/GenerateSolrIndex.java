@@ -1,4 +1,4 @@
-package org.nextprot.api.tasks;
+package org.nextprot.api.tasks.solr;
 
 import org.apache.log4j.Logger;
 import org.springframework.cache.CacheManager;

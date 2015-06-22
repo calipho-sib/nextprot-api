@@ -1,9 +1,12 @@
-package org.nextprot.api.tasks;
+package org.nextprot.api.tasks.solr;
 
 import java.util.List;
 
+import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.tasks.solr.indexer.CvTermSolrIndexer;
+import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 
 public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 
@@ -20,7 +23,11 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 		
 		int termcnt = 0;
 		
-		SolrIndexer<Terminology> indexer = new CvTermSolrIndexer("http://localhost:8983/solr/npcvs1");
+		String solrServer = System.getProperty("solr.server");
+		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=http://localhost:8983/solr/npcvs1");
+		logger.info("Solr server: " + solrServer); 
+		
+		SolrIndexer<Terminology> indexer = new CvTermSolrIndexer(solrServer);
 		
 		// Remove previous indexes, TODO: find appropriate string for ontology-specific deletion (filters:ontologyname?)
 		logger.info("removing all solr terminology records");

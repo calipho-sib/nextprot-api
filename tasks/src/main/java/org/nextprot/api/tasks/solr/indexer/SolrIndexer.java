@@ -1,4 +1,4 @@
-package org.nextprot.api.tasks;
+package org.nextprot.api.tasks.solr.indexer;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NextProtException;
 
-abstract class SolrIndexer<T> {
+public abstract class SolrIndexer<T> {
 
 	private HttpSolrServer solrServer;
 	protected List<SolrInputDocument> docs;

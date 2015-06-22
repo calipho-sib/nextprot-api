@@ -1,9 +1,11 @@
-package org.nextprot.api.tasks;
+package org.nextprot.api.tasks.solr;
 
 import java.util.List;
 
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.tasks.solr.indexer.PublicationSolrindexer;
+import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
 
 public class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 
