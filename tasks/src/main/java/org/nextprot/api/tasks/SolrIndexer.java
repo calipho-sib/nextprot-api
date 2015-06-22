@@ -69,9 +69,10 @@ abstract class SolrIndexer<T> {
 
 	}
 
-	public void clearDatabase() {
+	public void clearDatabase(String query) {
 		try {
-			solrServer.deleteByQuery("*:*");
+			if(query != null && !query.equals("")) solrServer.deleteByQuery(query);
+			else solrServer.deleteByQuery("*:*");
 			solrServer.commit();
 			solrServer.optimize();
 		} catch (SolrServerException | IOException e) {
