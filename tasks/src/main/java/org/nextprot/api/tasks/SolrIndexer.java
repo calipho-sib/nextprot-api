@@ -71,7 +71,7 @@ abstract class SolrIndexer<T> {
 
 	public void clearDatabase(String query) {
 		try {
-			if(query != null) solrServer.deleteByQuery(query);
+			if(query != null && !query.equals("")) solrServer.deleteByQuery(query);
 			else solrServer.deleteByQuery("*:*");
 			solrServer.commit();
 			solrServer.optimize();
