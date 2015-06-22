@@ -47,6 +47,7 @@ public abstract class NPStreamExporter {
         }
 
         writeFooter(writer);
+        writer.flush();
     }
 
     protected abstract void exportStream(String entryName, Writer writer, String viewName) throws IOException;

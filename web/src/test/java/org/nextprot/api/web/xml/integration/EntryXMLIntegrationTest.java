@@ -1,4 +1,4 @@
-package org.nextprot.api.web.integration.xml;
+package org.nextprot.api.web.xml.integration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
