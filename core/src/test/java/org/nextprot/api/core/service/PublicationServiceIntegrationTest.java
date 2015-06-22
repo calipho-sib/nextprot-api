@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
@@ -22,12 +23,12 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
 	@Test
 	public void testPublicationIds() {
 		 List<Long> ids = publicationService.findAllPublicationIds();
-		 System.err.println(ids.size() + " publications");
 		 Assert.assertTrue(ids.size() > 400000);
 	}
 	
 	
 	@Test
+	@Ignore
 	public void testPublicationXrefs() {
 		Publication publication = publicationService.findPublicationById(690405);
 		// check that publication bug NEXTPROT-989 is fixed (pmid 12631268), should have 2 xrefs
@@ -42,6 +43,17 @@ public class PublicationServiceIntegrationTest extends CoreUnitBaseTest {
 		 Publication publication = publicationService.findPublicationById(41589965);
 		 Assert.assertTrue(publication.getFirstPage().equals("254"));
 		 // check that abstract bug CALIPHOMISC-241 is fixed (pmid 24867236)
+		 Assert.assertTrue(publication.getAbstractText().length() > 0);
+	}
+
+	
+	@Test
+	@Ignore
+	public void testPublicationAbstractAsItShouldBeIfLoadedCorrectly() {
+		 Publication publication = publicationService.findPublicationById(41589965);
+		 Assert.assertTrue(publication.getFirstPage().equals("254"));
+		 // check that abstract bug CALIPHOMISC-241 is fixed (pmid 24867236)
+		 System.err.println(publication.getAbstractText());
 		 Assert.assertTrue(publication.getAbstractText().contains("regulator of microtubule organisation"));
 	}
 

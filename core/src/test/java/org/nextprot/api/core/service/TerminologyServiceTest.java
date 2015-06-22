@@ -67,7 +67,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 
 	@Test
 	public void shouldReturnAValidCategory() {
-		Terminology term = this.terminologyService.findTerminologyByAccession("DO-00860");
+		Terminology term = this.terminologyService.findTerminologyByAccession("DO-00861");
 		String propval = "";
 		for (Terminology.TermProperty property : term.getProperties()) {
 			if(property.getPropertyName().equals("Feature category")) propval=property.getPropertyValue(); 
