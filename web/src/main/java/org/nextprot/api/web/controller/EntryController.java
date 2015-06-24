@@ -1,20 +1,13 @@
 package org.nextprot.api.web.controller;
 
-import com.google.common.base.Preconditions;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Terminology;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
-import org.nextprot.api.core.utils.peff.IsoformPTMPsi;
-import org.nextprot.api.core.utils.peff.PsiModMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -33,43 +26,6 @@ public class EntryController {
 	@Autowired
 	private FluentEntryService fluentEntryService;
 
-	@Autowired
-	private TerminologyService terminologyService;
-
-	//@Autowired
-	//private PsiModMapper terminologyMapper;
-
-	@Deprecated
-	private TerminologyMapper terminologyMapper = new TerminologyMapper();
-
-	// TODO: REMOVE THIS HACK - Get PSI-MOD id from domain object Annotation that will be accessible in a future release
-	@Deprecated
-	private class TerminologyMapper implements PsiModMapper {
-
-		private final Log Logger = LogFactory.getLog(TerminologyMapper.class);
-
-		@Override
-		public String getPsiModId(String modName) {
-
-			Preconditions.checkNotNull(modName);
-
-			Terminology term = terminologyService.findTerminologyByAccession(modName);
-
-			if (term == null) {
-				Logger.warn("no term found for " + modName);
-			}
-			else {
-				for (String synonym : term.getSameAs()) {
-
-					if (synonym.matches("\\d{5}"))
-						return "MOD:" + synonym;
-				}
-			}
-
-			return null;
-		}
-	}
-
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
 
@@ -78,7 +34,7 @@ public class EntryController {
     }
 
 	@ApiMethod(path = "/entry/{entry}", verb = ApiVerb.GET, description = "Exports the whole neXtProt entry, this includes: The overview, the annotations, the keywords, the interactions, the isoforms, the chromosomal location, the genomic mapping, the list of identifiers, the publications, the cross references, the list of peptides, the list of the antibodies and the experimental contexts",
-			produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle", "text/peff", "text/fasta"})
+			produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle", /*"text/peff",*/ "text/fasta"})
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
 	public String exportEntry(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
@@ -86,8 +42,6 @@ public class EntryController {
 		
 		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("entry");
 		model.addAttribute("entry", entry);
-
-		IsoformPTMPsi.addPsiModIdsToMap(entry, terminologyMapper);
 
 		return "entry";
 	}

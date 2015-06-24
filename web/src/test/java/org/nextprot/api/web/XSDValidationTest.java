@@ -13,14 +13,14 @@ import javax.xml.validation.Validator;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
+import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.service.ExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 @Ignore
-@ActiveProfiles(profiles = {"dev", "cache"})
-public class XSDValidationTest extends WebUnitBaseTest {
+@ActiveProfiles(profiles = {"cache"})
+public class XSDValidationTest extends WebIntegrationBaseTest {
 
 
 	@Autowired

@@ -1,5 +1,9 @@
 package org.nextprot.api.core.service.aop;
 
+import java.lang.annotation.Annotation;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -10,11 +14,6 @@ import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.lang.annotation.Annotation;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Aspect used to validate a given entry. 
@@ -23,7 +22,6 @@ import java.util.Set;
  * @version $Revision$, $Date$, $Author$
  */
 @Aspect
-@Component
 public class ServiceEntryValidation {
 
 	private static final Log LOGGER = LogFactory.getLog(ServiceEntryValidation.class);

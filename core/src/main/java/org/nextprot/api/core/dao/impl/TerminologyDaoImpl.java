@@ -6,8 +6,6 @@ import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -16,9 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class TerminologyDaoImpl implements TerminologyDao {
@@ -39,19 +35,6 @@ public class TerminologyDaoImpl implements TerminologyDao {
 			return null;			
 		return terms.get(0);
 	}
-
-	@Override
-	public Map<String, Terminology> findTerminologyByAccessions(List<String> accessions) {
-
-		String sql = sqlDictionary.getSQLQuery("terminology-by-acs");
-
-		MapSqlParameterSource params = new MapSqlParameterSource("accessions", accessions);
-
-		NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource());
-
-		return template.query(sql, params, new TerminologyExtractor());
-	}
-
 
 	public List<Terminology> findTerminologyByOntology(String ontology) {
 		SqlParameterSource params = new MapSqlParameterSource("ontology", ontology);
@@ -96,36 +79,6 @@ public class TerminologyDaoImpl implements TerminologyDao {
 			term.setAncestorAccession(resultSet.getString("ancestor"));
 			term.setXrefs(TerminologyUtils.convertToXrefs(resultSet.getString("xref")));
 			return term;
-		}
-	}
-
-	private static class TerminologyExtractor implements ResultSetExtractor<Map<String, Terminology>> {
-
-		public TerminologyExtractor() {}
-
-		@Override
-		public Map<String, Terminology> extractData(ResultSet resultSet) throws SQLException, DataAccessException {
-
-			Map<String, Terminology> terms = new HashMap<>();
-
-			while (resultSet.next()) {
-
-				Terminology term = new Terminology();
-
-				term.setId(resultSet.getLong("id"));
-				term.setAccession(resultSet.getString("accession"));
-				term.setDescription(resultSet.getString("description"));
-				term.setName(resultSet.getString("name"));
-				term.setSynonyms(resultSet.getString("synonyms"));
-				term.setProperties(TerminologyUtils.convertToProperties(resultSet.getString("properties"), term.getId(), term.getAccession()));
-				term.setOntology(resultSet.getString("ontology"));
-				term.setAncestorAccession(resultSet.getString("ancestor"));
-				term.setXrefs(TerminologyUtils.convertToXrefs(resultSet.getString("xref")));
-
-				terms.put(term.getAccession(), term);
-			}
-
-			return terms;
 		}
 	}
 }

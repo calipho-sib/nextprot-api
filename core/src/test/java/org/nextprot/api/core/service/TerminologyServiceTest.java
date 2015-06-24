@@ -66,6 +66,16 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	}
 
 	@Test
+	public void shouldReturnAValidCategory() {
+		Terminology term = this.terminologyService.findTerminologyByAccession("DO-00861");
+		String propval = "";
+		for (Terminology.TermProperty property : term.getProperties()) {
+			if(property.getPropertyName().equals("Feature category")) propval=property.getPropertyValue(); 
+		}
+		assertEquals("zinc finger", propval); 
+	}
+
+	@Test
 	public void shouldReturnUniprotFamilies() {
 		List<Terminology> terms = this.terminologyService.findTerminologyByOntology("UniprotFamilyCv");
 		assertTrue(terms.size() > 9700);
@@ -73,18 +83,18 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void shouldReturnAllTerms()  {
-		int cnt = 0, refcnt = 0, maxref = 0;
+		int sameascnt = 0, refcnt = 0, maxref = 0;
 		List<Terminology> terms = this.terminologyService.findAllTerminology();
 		assertTrue(terms.size() > 145000); 
 		for(Terminology term : terms)  {
 			List<String> sameas = term.getSameAs();
 			if(sameas != null) {
-			cnt++;
+				sameascnt++; 
 			refcnt = sameas.size();
 			if(refcnt > maxref) maxref = refcnt;
 			}
 		}
-		assertTrue(cnt > 44000); 
+		assertTrue(sameascnt > 44000); 
 		assertEquals(64,maxref);
 	} 
 	

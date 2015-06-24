@@ -1,4 +1,4 @@
-package org.nextprot.api.tasks;
+package org.nextprot.api.tasks.solr.indexer;
 
 import java.util.List;
 

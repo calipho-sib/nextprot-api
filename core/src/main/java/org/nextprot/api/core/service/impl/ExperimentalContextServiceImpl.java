@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.core.dao.ExperimentalContextDao;
+import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
@@ -20,19 +21,15 @@ import java.util.Set;
 @Service
 public class ExperimentalContextServiceImpl implements ExperimentalContextService {
 	
-	@Autowired ExperimentalContextDao ecDao;
-	@Autowired AnnotationService annotationService;
-	
-	/*
-	@Override
-	public List<ExperimentalContext> findExperimentalContextsByIds(List<Long> ids) {
-		return ecDao.findExperimentalContextsByIds(ids);
-	}
-*/
+	@Autowired private ExperimentalContextDao ecDao;
+	@Autowired private AnnotationService annotationService;
+	@Autowired private TerminologyDao terminologyDao;
 	
 	@Override
 	public List<ExperimentalContext> findAllExperimentalContexts() {
-		return ecDao.findAllExperimentalContexts();
+		List<ExperimentalContext> ecs = ecDao.findAllExperimentalContexts();
+		updateTerminologies(ecs);
+		return ecs;
 	}
 
 	@Override
@@ -41,8 +38,26 @@ public class ExperimentalContextServiceImpl implements ExperimentalContextServic
 		//TODO: reimplement exp context dao to get the list without annotations directly from entry name
 		List<Annotation> annotations = this.annotationService.findAnnotations(entryName);
 		Set<Long> ecSet = AnnotationUtils.getExperimentalContextIdsForAnnotations(annotations);
-		return ecDao.findExperimentalContextsByIds(new ArrayList<Long>(ecSet));
+		List<ExperimentalContext> ecs = ecDao.findExperimentalContextsByIds(new ArrayList<>(ecSet));
+		updateTerminologies(ecs);
+		return ecs;
 	}
-	
+
+	private void updateTerminologies(List<ExperimentalContext> ecs) {
+
+		for (ExperimentalContext ec : ecs) {
+			updateTerminologies(ec);
+		}
+	}
+
+	private void updateTerminologies(ExperimentalContext ec) {
+
+		if (ec.getCellLine() != null) ec.setCellLine(terminologyDao.findTerminologyByAccession(ec.getCellLineAC()));
+		if (ec.getTissue() != null) ec.setTissue(terminologyDao.findTerminologyByAccession(ec.getTissueAC()));
+		if (ec.getOrganelle() != null) ec.setOrganelle(terminologyDao.findTerminologyByAccession(ec.getOrganelleAC()));
+		if (ec.getDetectionMethod() != null) ec.setDetectionMethod(terminologyDao.findTerminologyByAccession(ec.getDetectionMethodAC()));
+		if (ec.getDisease() != null) ec.setDisease(terminologyDao.findTerminologyByAccession(ec.getDiseaseAC()));
+		if (ec.getDevelopmentalStage() != null) ec.setDevelopmentalStage(terminologyDao.findTerminologyByAccession(ec.getDevelopmentalStageAC()));
+	}
 }
 

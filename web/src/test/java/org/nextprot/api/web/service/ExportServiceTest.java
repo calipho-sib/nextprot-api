@@ -1,17 +1,16 @@
 package org.nextprot.api.web.service;
 
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.Arrays;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
-import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
+import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
-
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.Arrays;
 
 /**
  * Exports an entry
@@ -19,8 +18,7 @@ import java.util.Arrays;
  * @author dteixeira
  */
 @Ignore
-@ActiveProfiles({"pro"})
-public class ExportServiceTest extends WebUnitBaseTest {
+public class ExportServiceTest extends WebIntegrationBaseTest {
 
 	@Autowired
 	private FluentEntryService fluentEntryService;

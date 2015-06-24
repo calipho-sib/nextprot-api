@@ -38,7 +38,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @version $Revision$, $Date$, $Author$
  */
 @Aspect
-@Component
 @ManagedResource(objectName = "org.nextprot.api:name=ControllersInstrumentation", description = "My Managed Bean", log = true, logFile = "jmx.log", persistPeriod = 200, persistLocation = "/tmp", persistName = "bar")
 public class InstrumentationAspect {
 

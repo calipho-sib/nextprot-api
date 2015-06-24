@@ -873,8 +873,8 @@
 						suffix = "ttl";
 					if (headers["Accept"] == "text/fasta")
 						suffix = "fasta";
-					if (headers["Accept"] == "text/peff")
-						suffix = "peff";
+					//if (headers["Accept"] == "text/peff")
+					//	suffix = "peff";
 
 					var res = $.ajax({
 						url : window.location.href.replace("#", "") + replacedPath + "." + suffix,

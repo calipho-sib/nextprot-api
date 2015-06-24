@@ -127,11 +127,12 @@ public class PublicationDaoImpl implements PublicationDao {
 
 	@Override
 	public List<Long> findAllPublicationsIds() {
-		String sql= "select pubs.resource_id pub_id\n" + 
-				"           from nextprot.publications pubs\n" + 
-				"     inner join  nextprot.cv_publication_types pubtypes on ( pubs.cv_publication_type_id = pubtypes.cv_id)";
+		//String sql= "select pubs.resource_id pub_id\n" + 
+		//		"           from nextprot.publications pubs\n" + 
+		//		"     inner join  nextprot.cv_publication_types pubtypes on ( pubs.cv_publication_type_id = pubtypes.cv_id)";
 		SqlParameterSource namedParameters = new MapSqlParameterSource();
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new LongRowMapper());	
+		//return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new LongRowMapper());	
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-allids"), namedParameters, new LongRowMapper());	
 	}
 
 }

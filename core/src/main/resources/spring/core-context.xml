@@ -29,6 +29,10 @@
 		</property>
 	</bean>
 
+	<beans profile="!unit">
+		<bean id="serviceEntryValidation" class="org.nextprot.api.core.service.aop.ServiceEntryValidation" />
+		<bean id="instrumentationAspect" class="org.nextprot.api.core.aop.InstrumentationAspect" />
+	</beans>
 
 	<beans profile="cache">
 
