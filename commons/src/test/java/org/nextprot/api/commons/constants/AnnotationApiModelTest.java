@@ -120,10 +120,10 @@ public class AnnotationApiModelTest extends TestCase {
 	public void testRdfTypeNameUnicity() {
 		Set<String> atns = new HashSet<String>();
 		for (AnnotationApiModel cat: AnnotationApiModel.values()) {
-			if (atns.contains(cat.getRdfTypeName())) {
-				System.out.println("ERROR: OWLAnnotationCategory.getRdfTypeName " + cat.getRdfTypeName() +  " is not unique" );
+			if (atns.contains(cat.getApiTypeName())) {
+				System.out.println("ERROR: OWLAnnotationCategory.getRdfTypeName " + cat.getApiTypeName() +  " is not unique" );
 			} else {
-				atns.add(cat.getRdfTypeName());
+				atns.add(cat.getApiTypeName());
 			}
 		}
 		assertTrue(AnnotationApiModel.values().length==atns.size());

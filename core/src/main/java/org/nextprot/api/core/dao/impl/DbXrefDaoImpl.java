@@ -211,6 +211,15 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	}
 
 	@Override
+	public Set<DbXref> findEntryInteractionInteractantsXrefs(String entryName) {
+		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", entryName);
+		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master-via-interactions-interactants"), namedParams, new DbXRefRowMapper());
+		return new HashSet<DbXref>(xrefs); 
+	}
+
+	
+	
+	@Override
 	public Set<DbXref> findPeptideXrefs(List<String> names) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("names", names);
 		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-peptide-names"), namedParams, new DbXRefRowMapper());

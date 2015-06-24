@@ -205,16 +205,6 @@ public class EntryController {
 	}
 
 
-	@ApiMethod(path = "/entry/{entry}/interaction", verb = ApiVerb.GET, description = "Gets the interactions of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping("/entry/{entry}/interaction")
-	public String interactions(
-			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry for example: The cytoplasmic tyrosine-protein kinase BMX: NX_P51813", allowedvalues = { "NX_P51813"}) 
-			@PathVariable("entry") String entryName, Model model) {
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("interaction");
-		model.addAttribute("entry", entry);
-		return "entry";
-	}
-
 	@ApiMethod(path = "/entry/{entry}/annotation", verb = ApiVerb.GET, description = "Gets the annotations of a given entry grouped by category", produces = { MediaType.APPLICATION_XML_VALUE})
 	@RequestMapping("/entry/{entry}/annotation")
 	public String getEntryAnnotations(

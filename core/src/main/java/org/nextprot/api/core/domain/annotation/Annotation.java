@@ -43,7 +43,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private List<AnnotationProperty> properties;
 	
-	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsLikeAnnotations()
+	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsAsAnnotationsByEntry()
 
 	final static Map<String, String> commonExpressionPredicat= new HashMap<String, String>();
 	
@@ -130,8 +130,8 @@ public class Annotation implements Serializable, IsoformSpecific {
 		return category;
 	}
 
-	public String getRdfTypeName() {
-		return apiCategory.getRdfTypeName();
+	public String getApiTypeName() {
+		return apiCategory.getApiTypeName();
 	}
 
 	public String getRdfPredicate() {

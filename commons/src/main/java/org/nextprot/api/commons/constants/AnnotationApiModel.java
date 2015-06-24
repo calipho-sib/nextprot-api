@@ -275,11 +275,13 @@ public enum AnnotationApiModel implements Serializable {
 	public String getRdfPredicate() {
 		return StringUtils.lowerFirstChar(this.apiName);
 	}
-	
+
+/*	
 	@Deprecated //TODO change this for something more generic like #getApiTypeName, since it may be highly used in RDF templates I leave it for now
 	public String getRdfTypeName() {
 		return getApiTypeName();
 	}
+*/
 	
 	public String getApiTypeName() {
 		return StringUtils.upperFirstChar(this.apiName);

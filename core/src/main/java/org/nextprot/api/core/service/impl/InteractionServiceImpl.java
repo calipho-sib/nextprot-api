@@ -1,10 +1,15 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.nextprot.api.core.dao.InteractionDAO;
 import org.nextprot.api.core.domain.Interaction;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.InteractionService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.utils.BinaryInteraction2Annotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -14,8 +19,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class InteractionServiceImpl implements InteractionService {
 
-	@Autowired
-	private InteractionDAO interactionDAO;
+	@Autowired private InteractionDAO interactionDAO;
+	@Autowired private IsoformService isoService;
 
 	@Override
 	@Cacheable("interactions")
@@ -24,8 +29,16 @@ public class InteractionServiceImpl implements InteractionService {
 	}
 
 	@Override
-	public List<Interaction> findAllInteractions() {
-		return interactionDAO.findAllInteractions();
+	@Cacheable("interactions-as-annot")
+	public List<Annotation> findInteractionsAsAnnotationsByEntry(String entryName) {
+		List<Annotation> annots = new ArrayList<Annotation>();
+		List<Isoform> isoforms = this.isoService.findIsoformsByEntryName(entryName);
+		List<Interaction> interactions = this.interactionDAO.findInteractionsByEntry(entryName);
+		for (Interaction inter : interactions) {
+			Annotation annot = BinaryInteraction2Annotation.transform(inter, entryName, isoforms);
+			annots.add(annot);
+		}
+		return annots;
 	}
 
 }

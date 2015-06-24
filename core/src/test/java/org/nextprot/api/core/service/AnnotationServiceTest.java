@@ -74,8 +74,7 @@ public class AnnotationServiceTest {
 
 		Mockito.verify(annotationDAO).findAnnotationsByEntryName("NX_P12345");
 		Mockito.verify(isoformService).findIsoformsByEntryName("NX_P12345");
-		Mockito.verify(dbXrefService).findDbXrefsAsAnnotByEntry("NX_P12345");
-		Mockito.verify(annotationDAO).createAdditionalAnnotationsFromXrefs(anyList(), anyString());
+		Mockito.verify(dbXrefService).findDbXrefsAsAnnotationsByEntry("NX_P12345");
 	}
 
 	@Test

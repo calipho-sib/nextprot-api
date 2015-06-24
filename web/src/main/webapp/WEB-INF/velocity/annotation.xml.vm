@@ -18,7 +18,7 @@
     <property-list>
         #foreach($property in $annotation.getProperties())
 			#if(!$property.getName().equals("rank"))
-				<property property-name='$property.getName()'  value='$property.getValue()' #if($property.getAccession()) accession='$property.getAccession()' #end />
+				<property #if($property.getType()) type='$property.getType()' #end property-name='$property.getName()'  value='$property.getValue()' #if($property.getAccession()) accession='$property.getAccession()' #end />
 			#end
 		#end
     </property-list>

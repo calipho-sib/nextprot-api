@@ -34,5 +34,6 @@ public interface DbXrefDao {
 	Set<DbXref> findEntryAttachedXrefs(String entryName);
 	Set<DbXref> findEntryInteractionXrefs(String entryName);
 	Set<DbXref> findPeptideXrefs(List<String> peptideNames);
+	Set<DbXref> findEntryInteractionInteractantsXrefs(String entryName);
 	
 }

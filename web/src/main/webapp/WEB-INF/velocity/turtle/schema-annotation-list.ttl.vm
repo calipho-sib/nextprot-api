@@ -7,15 +7,15 @@
 #
 
 #foreach($annotation in $annotationList)
-#if($annotation.rdfTypeName != "Root")
-:$annotation.rdfTypeName
+#if($annotation.apiTypeName != "Root")
+:$annotation.apiTypeName
    rdf:type :AnnotationType;
 #if ($annotation.description) 
    rdfs:comment "$annotation.description"^^xsd:string;
 #end
    rdfs:label "$annotation.label"^^xsd:string;
 #foreach($parent in $annotation.getAllParentsButRoot())
-   rdfs:subClassOf :$parent.rdfTypeName;
+   rdfs:subClassOf :$parent.apiTypeName;
 #end
    .   
 #end
