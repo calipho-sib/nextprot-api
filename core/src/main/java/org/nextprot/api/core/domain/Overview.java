@@ -57,6 +57,10 @@ public class Overview implements Serializable{
 	public History getHistory() {
 		return history;
 	}
+	
+	public String getProteinExistence() {
+		return this.history.proteinExistence;
+	}
 
 	public void setHistory(History history) {
 		this.history = history;

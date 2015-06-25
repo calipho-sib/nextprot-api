@@ -68,6 +68,12 @@ public class Entry {
 		return overview;
 	}
 
+	public String getProteinExistence() {
+		if(this.overview != null){
+			return this.overview.getProteinExistence();
+		} return "N/A";
+	}
+
 	public void setOverview(Overview overview) {
 		this.overview = overview;
 	}
