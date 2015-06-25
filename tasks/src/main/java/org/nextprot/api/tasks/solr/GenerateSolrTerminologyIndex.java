@@ -24,25 +24,24 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 		int termcnt = 0;
 		
 		String solrServer = System.getProperty("solr.server");
-		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=http://localhost:8983/solr/npcvs1");
+		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=\"http://localhost:8983/solr/npcvs1\"");
 		logger.info("Solr server: " + solrServer); 
 		
+		String ontologyToReindex = System.getProperty("solr.ontology"); // eg: java -Dsolr.ontology="UniprotFamilyCv" (don't forget CamelCasing)
 		SolrIndexer<Terminology> indexer = new CvTermSolrIndexer(solrServer);
-		
-		// Remove previous indexes, TODO: find appropriate string for ontology-specific deletion (filters:ontologyname?)
-		logger.info("removing all solr terminology records");
+		//logger.info("removing all solr terminology records");
 		
 		List<Terminology> allterms;
-		if (args.length == 0) { // No arg: index all ontologies
+		if (ontologyToReindex == null) { // No arg: index all ontologies
 			System.err.println("indexing: all ontologies");
 			logger.info("indexing all terminologies");
 			indexer.clearDatabase("");
 			allterms = terminologyService.findAllTerminology();
-		} else { // Index ontology given as argument
-			System.err.println("indexing: " + args[0]);
-			logger.info("indexing terminology: " + args[0]);
-			indexer.clearDatabase(args[0]);
-			allterms = terminologyService.findTerminologyByOntology(args[0]);
+		} else { // Index ontology given as VM argument
+			System.err.println("indexing: " + ontologyToReindex);
+			logger.info("indexing terminology: " + ontologyToReindex);
+			indexer.clearDatabase("filters:" + ontologyToReindex);
+			allterms = terminologyService.findTerminologyByOntology(ontologyToReindex);
 		}
 
 		for (Terminology t : allterms) {
