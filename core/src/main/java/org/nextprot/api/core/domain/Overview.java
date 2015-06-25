@@ -57,6 +57,15 @@ public class Overview implements Serializable{
 	public History getHistory() {
 		return history;
 	}
+	
+	public String getProteinExistence() {
+		return this.history.getProteinExistence();
+	}
+	
+	public int getProteinExistenceLevel() {
+		return this.history.getProteinExistenceLevel();
+	}
+
 
 	public void setHistory(History history) {
 		this.history = history;
@@ -94,6 +103,8 @@ public class Overview implements Serializable{
 	public static class History implements Serializable {
 
 		private static final long serialVersionUID = 778801504825937620L;
+
+		@Deprecated
 		private String proteinExistence;
 		private Date nextprotIntegrationDate;
 		private Date nextprotUpdateDate;
@@ -109,6 +120,7 @@ public class Overview implements Serializable{
 		 * 
 		 * @return a string to be displayed in ttl, xml, etc. representing the protein existence
 		 */
+		@Deprecated //Should use overview instead
 		public String getProteinExistence() {
 			return Overview.peMap.get(proteinExistence).name;
 		}
@@ -117,6 +129,7 @@ public class Overview implements Serializable{
 		 * 
 		 * @return the string stored in the db (not the one to be displayed, experted, etc...)
 		 */
+		@Deprecated //Should use overview instead
 		public String getProteinExistenceRaw() {
 			return this.proteinExistence;
 		}
@@ -126,6 +139,7 @@ public class Overview implements Serializable{
 		 * @return an integer representing the protein existence level between 1 and 5. 
 		 * 1 is the highest level of certainty
 		 */
+		@Deprecated //Should use overview instead
 		public int getProteinExistenceLevel() {
 			return Overview.peMap.get(proteinExistence).level;
 		}
@@ -218,8 +232,8 @@ public class Overview implements Serializable{
 		private EntityNameClass clazz;
 		private String type;
 		private String qualifier;
-		private String synonymId;
-		private String synonymName;
+		private String id;
+		private String name;
 		private String parentId;
 		private List<EntityName> synonyms;
 
@@ -265,20 +279,30 @@ public class Overview implements Serializable{
 			this.qualifier = qualifier;
 		}
 		
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String synonymId) {
+			this.id = synonymId;
+		}
+
+		@Deprecated //TODO fix this on nextprot-js and remove deprecated
 		public String getSynonymId() {
-			return synonymId;
+			return id;
 		}
 
-		public void setSynonymId(String synonymId) {
-			this.synonymId = synonymId;
-		}
-
+		@Deprecated //TODO fix this on nextprot-js and remove deprecated
 		public String getSynonymName() {
-			return synonymName;
+			return name;
 		}
 		
-		public void setSynonymName(String synonymName) {
-			this.synonymName = synonymName;
+		public String getName() {
+			return name;
+		}
+		
+		public void setName(String name) {
+			this.name = name;
 		}
 
 		public String getParentId() {
@@ -289,10 +313,6 @@ public class Overview implements Serializable{
 			this.parentId = parentId;
 		}
 
-		public void setValue(String value) {
-			this.synonymName = value;
-		}
-		
 		public List<EntityName> getSynonyms() {
 			return synonyms;
 		}
@@ -341,7 +361,7 @@ public class Overview implements Serializable{
 
 		EntityName name = getMainEntityName(proteinNames, EntityNameClass.PROTEIN_NAMES);
 
-		return name.getSynonymName();
+		return name.getName();
 	}
 
 	public void setProteinNames(List<EntityName> proteinNames) {
@@ -356,7 +376,7 @@ public class Overview implements Serializable{
 
 		EntityName name = getMainEntityName(geneNames, EntityNameClass.GENE_NAMES);
 
-		return name.getSynonymName();
+		return name.getName();
 	}
 
 	public boolean hasMainGeneName() {
