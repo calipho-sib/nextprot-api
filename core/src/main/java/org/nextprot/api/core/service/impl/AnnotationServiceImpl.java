@@ -1,32 +1,35 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
-import org.nextprot.api.commons.constants.XrefAnnotationMapping;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.PtmDao;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Feature;
-import org.nextprot.api.core.domain.Interaction;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.InteractionService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.utils.BinaryInteraction2Annotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.security.InvalidParameterException;
-import java.util.*;
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 @Lazy
 @Service
@@ -35,7 +38,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private AnnotationDAO annotationDAO;
 	@Autowired private PtmDao ptmDao;
 	@Autowired private DbXrefService xrefService;
-	@Autowired private IsoformService isoService;
 	@Autowired private InteractionService interactionService;  
 	
 
