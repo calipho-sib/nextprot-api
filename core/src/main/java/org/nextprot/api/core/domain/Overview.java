@@ -218,8 +218,8 @@ public class Overview implements Serializable{
 		private EntityNameClass clazz;
 		private String type;
 		private String qualifier;
-		private String synonymId;
-		private String synonymName;
+		private String id;
+		private String name;
 		private String parentId;
 		private List<EntityName> synonyms;
 
@@ -265,20 +265,20 @@ public class Overview implements Serializable{
 			this.qualifier = qualifier;
 		}
 		
-		public String getSynonymId() {
-			return synonymId;
+		public String getId() {
+			return id;
 		}
 
-		public void setSynonymId(String synonymId) {
-			this.synonymId = synonymId;
+		public void setId(String synonymId) {
+			this.id = synonymId;
 		}
 
-		public String getSynonymName() {
-			return synonymName;
+		public String getName() {
+			return name;
 		}
 		
-		public void setSynonymName(String synonymName) {
-			this.synonymName = synonymName;
+		public void setName(String name) {
+			this.name = name;
 		}
 
 		public String getParentId() {
@@ -289,10 +289,6 @@ public class Overview implements Serializable{
 			this.parentId = parentId;
 		}
 
-		public void setValue(String value) {
-			this.synonymName = value;
-		}
-		
 		public List<EntityName> getSynonyms() {
 			return synonyms;
 		}
@@ -341,7 +337,7 @@ public class Overview implements Serializable{
 
 		EntityName name = getMainEntityName(proteinNames, EntityNameClass.PROTEIN_NAMES);
 
-		return name.getSynonymName();
+		return name.getName();
 	}
 
 	public void setProteinNames(List<EntityName> proteinNames) {
@@ -356,7 +352,7 @@ public class Overview implements Serializable{
 
 		EntityName name = getMainEntityName(geneNames, EntityNameClass.GENE_NAMES);
 
-		return name.getSynonymName();
+		return name.getName();
 	}
 
 	public boolean hasMainGeneName() {

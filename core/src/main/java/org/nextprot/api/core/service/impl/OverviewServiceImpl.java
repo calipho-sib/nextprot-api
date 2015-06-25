@@ -47,7 +47,7 @@ public class OverviewServiceImpl implements OverviewService {
 		Map<String, EntityName> entityMap = Maps.uniqueIndex(entityNames, new Function<EntityName, String>() {
 			@Override
 			public String apply(EntityName entityName) {
-				return entityName.getSynonymId();
+				return entityName.getId();
 			}
 		});
 
@@ -60,7 +60,7 @@ public class OverviewServiceImpl implements OverviewService {
 			if (parentId != null && mutableEntityMap.containsKey(parentId)) {
 				mutableEntityMap.get(parentId).addSynonym(entityName);
 			} else {
-				mutableEntityMap.put(entityName.getSynonymId(), entityName);
+				mutableEntityMap.put(entityName.getId(), entityName);
 			}
 		}
 

@@ -1,12 +1,12 @@
 #if($entityName.isMain())
   :recommendedName [
     rdf:type :Name;
-    :$StringUtils.toCamelCase($entityName.getComposedName(),true) "$StringUtils.clean($entityName.synonymName)"^^xsd:string;
+    :$StringUtils.toCamelCase($entityName.getComposedName(),true) "$StringUtils.clean($entityName.name)"^^xsd:string;
   ];
 #else
   :alternativeName [
     rdf:type :Name;
-    #set($UNESCAPED_CDATA_SYNONYM = $entityName.synonymName)
+    #set($UNESCAPED_CDATA_SYNONYM = $entityName.name)
     :$StringUtils.toCamelCase($entityName.getComposedName(),true) "$StringUtils.clean($UNESCAPED_CDATA_SYNONYM)"^^xsd:string;
   ];
 #end

@@ -39,9 +39,9 @@
 #if($entry.overview.geneNames)
 <gene-name-list>
 #foreach($entityName in $entry.overview.geneNames)
-	<gene-name type="recommended">$entityName.synonymName</gene-name>
+	<gene-name type="recommended">$entityName.name</gene-name>
 	#foreach($synonym in $entityName.synonyms)
-	<gene-name type="alternative">$synonym.synonymName</gene-name>
+	<gene-name type="alternative">$synonym.name</gene-name>
 	#end
 #end
 </gene-name-list>
