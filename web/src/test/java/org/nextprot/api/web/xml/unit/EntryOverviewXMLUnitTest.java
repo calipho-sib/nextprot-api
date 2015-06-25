@@ -25,8 +25,8 @@ public class EntryOverviewXMLUnitTest extends WebUnitBaseTest {
 		Entry entry = new Entry("my-test-entry");
 		Overview overview = new Overview();	entry.setOverview(overview);
 		List<EntityName> names = new ArrayList<Overview.EntityName>();	overview.setGeneNames(names);
-		EntityName mainName = new EntityName(); mainName.setMain(true); mainName.setSynonymName("ABCD"); 
-		EntityName synonym = new EntityName(); synonym.setMain(false); synonym.setSynonymName("EFGH");	mainName.setSynonyms(Arrays.asList(synonym));
+		EntityName mainName = new EntityName(); mainName.setMain(true); mainName.setName("ABCD"); 
+		EntityName synonym = new EntityName(); synonym.setMain(false); synonym.setName("EFGH");	mainName.setSynonyms(Arrays.asList(synonym));
 		names.add(mainName);
 
 		// Gets the velocity output
