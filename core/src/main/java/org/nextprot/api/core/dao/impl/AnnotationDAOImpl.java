@@ -91,27 +91,8 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 		}
 		
 	}
-	
-	@Override
-	public List<Annotation> createAdditionalAnnotationsFromXrefs(List<DbXref> xrefs, String entryName) {
-		List<Annotation> annots = new ArrayList<Annotation>();
-		for (DbXref xref: xrefs) {
-			Annotation annotation = new Annotation();
-			annotation.setAnnotationId(xref.getDbXrefId() + 1000000000L);
-			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
-			annotation.setCategory(xam.getAnnotCat());
-			annotation.setDescription(xref.getPropertyValue(xam.getXrefPropName())); // copy of some xref property 
-			annotation.setQualityQualifier(xam.getQualityQualifier()); 
-			annotation.setCvTermName(null);
-			annotation.setCvTermAccessionCode(null);
-			annotation.setSynonym(null);
-			annotation.setUniqueName("AN_" + entryName.substring(3) + "_XR_" + String.valueOf(xref.getDbXrefId()) );
-			annotation.setParentXref(xref);
-			annots.add(annotation);
-		}
-		return annots;
-	}
-	
+
+
 	
 	public List<Annotation> findAnnotationsByEntryName(String entryName) {
 

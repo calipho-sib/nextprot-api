@@ -8,17 +8,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.nextprot.api.commons.constants.XrefAnnotationMapping;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.PublicationDbXref;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
@@ -31,6 +37,7 @@ import com.google.common.collect.Multimaps;
 public class DbXrefServiceImpl implements DbXrefService {
 	@Autowired private DbXrefDao dbXRefDao;
 	@Autowired private PeptideMappingService peptideMappingService;
+	@Autowired private IsoformService isoService;
 	
 	private Set<String> dbXrefPropertyFilter;
 	
@@ -64,8 +71,83 @@ public class DbXrefServiceImpl implements DbXrefService {
 		return xrefs;
 	}
 	
+	private List<Annotation> createAdditionalAnnotationsFromXrefs(List<DbXref> xrefs, String entryName) {
+		List<Annotation> annots = new ArrayList<Annotation>();
+		for (DbXref xref: xrefs) {
+			Annotation annotation = new Annotation();
+			annotation.setAnnotationId(xref.getDbXrefId() + 1000000000L);
+			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
+			annotation.setCategory(xam.getAnnotCat());
+			annotation.setDescription(xref.getPropertyValue(xam.getXrefPropName())); // copy of some xref property 
+			annotation.setQualityQualifier(xam.getQualityQualifier()); 
+			annotation.setCvTermName(null);
+			annotation.setCvTermAccessionCode(null);
+			annotation.setSynonym(null);
+			annotation.setUniqueName("AN_" + entryName.substring(3) + "_XR_" + String.valueOf(xref.getDbXrefId()) );
+			annotation.setParentXref(xref);
+			annots.add(annotation);
+		}
+		return annots;
+	}
+	
+	
+	@Override
+	@Cacheable("xrefs-as-annot")
+	public List<Annotation> findDbXrefsAsAnnotationsByEntry(String entryName) {
+	    // build annotations from xrefs
+		List<Isoform> isoforms = this.isoService.findIsoformsByEntryName(entryName);
+		List<DbXref> xrefs = this.findDbXrefsAsAnnotByEntry(entryName);
+		List<Annotation> annotations = this.createAdditionalAnnotationsFromXrefs(xrefs, entryName);
+		
+		// build evidences annotations and link them to annotations
+		for (Annotation annotation : annotations) {
+			List<AnnotationEvidence> evidences = new ArrayList<>();
+			AnnotationEvidence evidence = new AnnotationEvidence();
+			evidence.setAnnotationId(annotation.getAnnotationId());
+			DbXref pxref = annotation.getParentXref();
+			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(pxref.getDatabaseName());
+			evidence.setEvidenceId(annotation.getAnnotationId() + 20000000000L);
+			evidence.setAssignedBy(xam.getSrcName());
+			evidence.setResourceId(pxref.getDbXrefId());
+			evidence.setResourceAccession(pxref.getAccession());
+			evidence.setResourceDb(pxref.getDatabaseName());
+			evidence.setResourceAssociationType("evidence");
+			evidence.setResourceType("database");
+			evidence.setNegativeEvidence(false);
+			evidence.setExperimentalContextId(null);
+			evidence.setResourceDescription(null);
+			evidence.setPublicationMD5(null);
+			evidence.setProperties(new ArrayList<AnnotationEvidenceProperty>());
+			evidence.setQualifierType(xam.getQualifierType());    
+			evidence.setQualityQualifier(xam.getQualityQualifier());   
+			evidence.setAssignmentMethod(xam.getAssignmentMethod()); 
+			evidence.setEvidenceCodeAC(xam.getEcoAC()); 
+			evidence.setEvidenceCodeName(xam.getEcoName()); 
+			evidences.add(evidence);
+			annotation.setEvidences(evidences);
+		}
+		
+		// build isoform specificity from isoforms and annotations and link them to annotations
+		for (Annotation annotation : annotations) {
+			List<AnnotationIsoformSpecificity> isospecs = new ArrayList<>();
+			for (Isoform iso: isoforms) {
+				AnnotationIsoformSpecificity isospec = new AnnotationIsoformSpecificity();
+				isospec.setAnnotationId(annotation.getAnnotationId());
+				isospec.setFirstPosition(0);
+				isospec.setLastPosition(0);
+				isospec.setIsoformName(iso.getUniqueName());
+				isospec.setSpecificity("UNKNOWN");
+				isospecs.add(isospec);
+			}
+			annotation.setTargetingIsoforms(isospecs);
+			
+		}
 
-	@Async
+		return annotations;
+		
+	}
+	
+
 	@Override
 	@Cacheable("xrefs")
 	public List<DbXref> findDbXrefsByMaster(String entryName) {
@@ -86,7 +168,9 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryAttachedXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
-		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));
+		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));             // xrefs of interactions evidences
+		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName)); // xrefs of xeno interactants
+		
 		
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<DbXref>(xrefs);
@@ -98,14 +182,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	}
 	
 	
-	
-	@Override
-	public List<DbXref> findDbXrefsByEntry(String uniqueName) {
-		return findDbXrefsByMaster(uniqueName);
-	}
-	
-	@Override
-	public List<DbXref> findDbXrefsAsAnnotByEntry(String uniqueName) {
+	private List<DbXref> findDbXrefsAsAnnotByEntry(String uniqueName) {
 		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
 		if(! xrefs.isEmpty()) attachPropertiesToXrefs(xrefs, uniqueName);
 		return xrefs;

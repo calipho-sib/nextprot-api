@@ -1,28 +1,35 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import org.apache.commons.lang.StringUtils;
-import org.nextprot.api.commons.constants.XrefAnnotationMapping;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.PtmDao;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Feature;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.InteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.security.InvalidParameterException;
-import java.util.*;
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 @Lazy
 @Service
@@ -31,7 +38,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private AnnotationDAO annotationDAO;
 	@Autowired private PtmDao ptmDao;
 	@Autowired private DbXrefService xrefService;
-	@Autowired private IsoformService isoService;
+	@Autowired private InteractionService interactionService;  
+	
 
 	@Override
 	@Cacheable("annotations")
@@ -92,65 +100,12 @@ public class AnnotationServiceImpl implements AnnotationService {
 			}
 		}
 		
-		annotations.addAll(this.getXrefsLikeAnnotations(entryName));
+		annotations.addAll(this.xrefService.findDbXrefsAsAnnotationsByEntry(entryName));
+		annotations.addAll(this.interactionService.findInteractionsAsAnnotationsByEntry(entryName));
 
 		return annotations;
 	}
 	
-	public List<Annotation> getXrefsLikeAnnotations(String entryName) {
-
-	    // build annotations from xrefs
-		List<Isoform> isoforms = this.isoService.findIsoformsByEntryName(entryName);
-		List<DbXref> xrefs = this.xrefService.findDbXrefsAsAnnotByEntry(entryName);
-		List<Annotation> annotations = this.annotationDAO.createAdditionalAnnotationsFromXrefs(xrefs, entryName);
-		
-		// build evidences annotations and link them to annotations
-		for (Annotation annotation : annotations) {
-			List<AnnotationEvidence> evidences = new ArrayList<>();
-			AnnotationEvidence evidence = new AnnotationEvidence();
-			evidence.setAnnotationId(annotation.getAnnotationId());
-			DbXref pxref = annotation.getParentXref();
-			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(pxref.getDatabaseName());
-			evidence.setEvidenceId(annotation.getAnnotationId() + 20000000000L);
-			evidence.setAssignedBy(xam.getSrcName());
-			evidence.setResourceId(pxref.getDbXrefId());
-			evidence.setResourceAccession(pxref.getAccession());
-			evidence.setResourceDb(pxref.getDatabaseName());
-			evidence.setResourceAssociationType("evidence");
-			evidence.setResourceType("database");
-			evidence.setNegativeEvidence(false);
-			evidence.setExperimentalContextId(null);
-			evidence.setResourceDescription(null);
-			evidence.setPublicationMD5(null);
-			evidence.setProperties(new ArrayList<AnnotationEvidenceProperty>());
-			evidence.setQualifierType(xam.getQualifierType());    
-			evidence.setQualityQualifier(xam.getQualityQualifier());   
-			evidence.setAssignmentMethod(xam.getAssignmentMethod()); 
-			evidence.setEvidenceCodeAC(xam.getEcoAC()); 
-			evidence.setEvidenceCodeName(xam.getEcoName()); 
-			evidences.add(evidence);
-			annotation.setEvidences(evidences);
-		}
-		
-		// build isoform specificity from isoforms and annotations and link them to annotations
-		for (Annotation annotation : annotations) {
-			List<AnnotationIsoformSpecificity> isospecs = new ArrayList<>();
-			for (Isoform iso: isoforms) {
-				AnnotationIsoformSpecificity isospec = new AnnotationIsoformSpecificity();
-				isospec.setAnnotationId(annotation.getAnnotationId());
-				isospec.setFirstPosition(0);
-				isospec.setLastPosition(0);
-				isospec.setIsoformName(iso.getUniqueName());
-				isospec.setSpecificity("UNKNOWN");
-				isospecs.add(isospec);
-			}
-			annotation.setTargetingIsoforms(isospecs);
-			
-		}
-
-		return annotations;
-	}
-
 	
 	
 	@Override

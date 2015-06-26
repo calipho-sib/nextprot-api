@@ -1,5 +1,0 @@
-<interaction-list>
-#foreach($interaction in $entry.interactions)
-#parse("interaction.xml.vm")
-#end
-</interaction-list>

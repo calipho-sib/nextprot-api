@@ -17,7 +17,7 @@ public enum NPViews{
 	CHROMOSOMAL_LOCATION(NPFileFormat.XML),
 	EXPERIMENTAL_CONTEXT(NPFileFormat.XML),
 	GENOMIC_MAPPING(NPFileFormat.XML),
-	INTERACTION(NPFileFormat.XML),
+	//INTERACTION(NPFileFormat.XML),  // now treated as annotation subpart (CALIPHOMISC-302)
 	ISOFORM(NPFileFormat.XML),
 	ANTIBODY(NPFileFormat.XML),
 	PEPTIDE(NPFileFormat.XML),
