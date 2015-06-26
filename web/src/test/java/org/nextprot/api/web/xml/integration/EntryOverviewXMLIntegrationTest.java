@@ -27,7 +27,7 @@ public class EntryOverviewXMLIntegrationTest extends WebIntegrationBaseTest {
 
 	  //Tests issue CALIPHOMISC-330 https://issues.isb-sib.ch/browse/CALIPHOMISC-330
 	  ResultActions actions = this.mockMvc.perform(get("/entry/NX_Q3L8U1/overview.xml"));
-	  actions.andExpect(xpath("entry/overview/gene-list/gene-list/gene/gene-name[@type='ORFName']").exists());
+	  actions.andExpect(xpath("entry/overview/gene-list/gene/gene-name[@type='ORFName']").exists());
   }
 
 
