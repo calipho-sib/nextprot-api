@@ -14,11 +14,22 @@ public class EntryOverviewXMLIntegrationTest extends WebIntegrationBaseTest {
 	  //Tests issue CALIPHOMISC-330 https://issues.isb-sib.ch/browse/CALIPHOMISC-330
 	  
 	  ResultActions actions = this.mockMvc.perform(get("/entry/NX_P38398/overview.xml"));
-	  actions.andExpect(xpath("entry/overview/gene-name-list/gene-name[@type='recommended']").exists());
-	  actions.andExpect(xpath("entry/overview/gene-name-list/gene-name[@type='recommended']").string("BRCA1"));
-	  actions.andExpect(xpath("entry/overview/gene-name-list/gene-name[@type='alternative']").exists());
-	  actions.andExpect(xpath("entry/overview/gene-name-list/gene-name[@type='alternative']").string("RNF53"));
+	  actions.andExpect(xpath("entry/overview/gene-list/gene/gene-name[@type='primary']").exists());
+	  actions.andExpect(xpath("entry/overview/gene-list/gene/gene-name[@type='primary']").string("BRCA1"));
+	  actions.andExpect(xpath("entry/overview/gene-list/gene/gene-name[@type='synonym']").exists());
+	  actions.andExpect(xpath("entry/overview/gene-list/gene/gene-name[@type='synonym']").string("RNF53"));
   }
+  
+  
+	
+  @Test
+  public void shouldContainOverviewWithGeneNameIncludingORFName() throws Exception {
+
+	  //Tests issue CALIPHOMISC-330 https://issues.isb-sib.ch/browse/CALIPHOMISC-330
+	  ResultActions actions = this.mockMvc.perform(get("/entry/NX_Q3L8U1/overview.xml"));
+	  actions.andExpect(xpath("entry/overview/gene-list/gene-list/gene/gene-name[@type='ORFName']").exists());
+  }
+
 
 
 }

@@ -10,18 +10,22 @@
 <recommended-name>
     #set ( $recommendedName = $entry.getOverview().getRecommendedProteinName() )
     <protein-name qualifier="#if($recommendedName.getQualifier())$recommendedName.getQualifier()#end">$recommendedName.name</protein-name>
-    #foreach($synName in $recommendedName.synonyms)
-    <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
-    #end
+	#if($recommendedName.synonyms)
+	    #foreach($synName in $recommendedName.synonyms)
+	    <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
+	    #end
+	#end
 </recommended-name>
 ## ----------------- ALTERNATIVE-NAMES (LIST) ------------------------------
 <alternative-name-list>
     #foreach($entityName in $entry.overview.alternativeProteinNames)
         <alternative-name>
 	        <protein-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</protein-name>
-		    #foreach($synName in $entityName.synonyms)
-		    <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
-		    #end
+			#if($entityName.synonyms)
+			    #foreach($synName in $entityName.synonyms)
+			    <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
+			    #end
+			#end
         </alternative-name>
     #end
 </alternative-name-list>
@@ -51,12 +55,11 @@
             <gene>
                 <gene-name type="primary">$entityName.name</gene-name>
                 #foreach($synonym in $entityName.synonyms)
-                #if(!$synonym.category.equals('ORF'))
+                #if($synonym.category.equals('ORF'))
+			        <gene-name type="ORFName">$synonym.name</gene-name>
+			    #else
 			        <gene-name type="synonym">$synonym.name</gene-name>
-			    #end
-			    #if($synonym.category.equals('ORF'))
-			        <gene-name type="ORF">$synonym.name</gene-name>
-			    #end
+                #end
                 #end
             </gene>
         #end

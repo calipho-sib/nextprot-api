@@ -44,6 +44,10 @@ public class Overview implements Serializable{
 		return history;
 	}
 	
+	/**
+	 * The recommended name is composed by 1 full name and can optionally contain n short names and n ECs (enzyme names)
+	 * @return the recommended name as full and its synonyms (shorts ent ECs) if they exists
+	 */
 	public EntityName getRecommendedProteinName() {
 		EntityName recommendedName = new Overview.EntityName();
 		for(EntityName name : this.proteinNames){
@@ -56,11 +60,12 @@ public class Overview implements Serializable{
 				recommendedName.setParentId(name.getParentId());
 				recommendedName.setQualifier(name.getQualifier());
 				recommendedName.setType(name.getType());
-				recommendedName.setSynonyms(new ArrayList<Overview.EntityName>());
-				
-				for(EntityName sname : name.getSynonyms()){
-					if(!sname.getQualifier().equals("full")){
-						recommendedName.getSynonyms().add(sname); //add the short and children
+				if(name.getSynonyms() != null){
+					recommendedName.setSynonyms(new ArrayList<Overview.EntityName>());
+					for(EntityName sname : name.getSynonyms()){
+						if(!sname.getQualifier().equals("full")){
+							recommendedName.getSynonyms().add(sname); //add the short and children
+						}
 					}
 				}
 			}
@@ -68,13 +73,19 @@ public class Overview implements Serializable{
 		return recommendedName;
 	}
 	
+	/**
+	 * Each alternative name can either 1 full name with n shorts and n ECs. Or can also be one allergen / CD antigen or INN 
+	 * @return
+	 */
 	public List<EntityName> getAlternativeProteinNames() {
 		List<EntityName> result = new ArrayList<Overview.EntityName>();
 		for(EntityName name : this.proteinNames){
 			if(name.isMain){
-				for(EntityName sname : name.getSynonyms()){
-					if(sname.getQualifier().equals("full")){
-						result.add(sname); 
+				if(name.getSynonyms() != null){
+					for(EntityName sname : name.getSynonyms()){
+						if(sname.getQualifier().equals("full")){
+							result.add(sname); 
+						}
 					}
 				}
 			}
@@ -410,6 +421,10 @@ public class Overview implements Serializable{
 		this.proteinNames = proteinNames;
 	}
 
+	/**
+	 * Contains gene names and ORF names
+	 * @return
+	 */
 	public List<EntityName> getGeneNames() {
 		return geneNames;
 	}

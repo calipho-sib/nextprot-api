@@ -37,7 +37,7 @@ public class StreamExporterTest extends WebIntegrationBaseTest {
         NodeList nodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/entry-list/entry/overview");
         assertEquals(2, nodes.getLength());
 
-        NodeList recommendedNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/entry-list/entry/overview/gene-name-list/gene-name[@type='recommended']");
+        NodeList recommendedNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/entry-list/entry/overview/gene-list/gene/gene-name[@type='primary']");
         assertEquals(recommendedNodes.item(0).getTextContent(), "INSR");
         assertEquals(recommendedNodes.item(1).getTextContent(), "INS");
         
