@@ -27,7 +27,7 @@ public class EntryOverviewXMLUnitTest extends WebUnitBaseTest {
 		List<EntityName> names = new ArrayList<Overview.EntityName>();	overview.setGeneNames(names);
 		EntityName mainName = new EntityName(); mainName.setMain(true); mainName.setName("ABCD"); 
 		EntityName synonym = new EntityName(); synonym.setMain(false); synonym.setName("EFGH");
-		EntityName orf = new EntityName(); synonym.setMain(false); synonym.setName("IJKL");	synonym.setCategory("ORF"); 
+		EntityName orf = new EntityName(); orf.setMain(false); orf.setName("IJKL");	orf.setCategory("ORF"); 
 		mainName.setSynonyms(Arrays.asList(synonym, orf));
 		names.add(mainName);
 		
@@ -40,11 +40,11 @@ public class EntryOverviewXMLUnitTest extends WebUnitBaseTest {
 
 		// Test the content using xmlunit
 		NodeList recommendedNodes = XMLUnitUtils.getMatchingNodes(output, "entry/overview/gene-list/gene/gene-name[@type='primary']");
-		assertEquals(recommendedNodes.item(0).getTextContent(), "ABCD");
+		assertEquals("ABCD", recommendedNodes.item(0).getTextContent());
 		NodeList alternativeNodeList = XMLUnitUtils.getMatchingNodes(output, "entry/overview/gene-list/gene/gene-name[@type='synonym']");
-		assertEquals(alternativeNodeList.item(0).getTextContent(), "EFGH");
+		assertEquals("EFGH", alternativeNodeList.item(0).getTextContent());
 		NodeList orfNodeList = XMLUnitUtils.getMatchingNodes(output, "entry/overview/gene-list/gene/gene-name[@type='ORFName']");
-		assertEquals(orfNodeList.item(0).getTextContent(), "IJKL");
+		assertEquals("IJKL", orfNodeList.item(0).getTextContent());
 
 	}
 
