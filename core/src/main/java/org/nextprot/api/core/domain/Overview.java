@@ -44,22 +44,48 @@ public class Overview implements Serializable{
 		return history;
 	}
 	
-	private static List<EntityName> filterNamesByIsMainValue(boolean isMain, List<EntityName> names){
-		List<EntityName> result = new ArrayList<Overview.EntityName>();
-		for(EntityName name : names){
-			if(name.isMain == isMain){
-				result.add(name);
+	public EntityName getRecommendedProteinName() {
+		EntityName recommendedName = new Overview.EntityName();
+		for(EntityName name : this.proteinNames){
+			if(name.isMain){
+				recommendedName.setCategory(name.getCategory());
+				recommendedName.setClazz(name.getClazz());
+				recommendedName.setId(name.getId());
+				recommendedName.setMain(true);
+				recommendedName.setName(name.getName());
+				recommendedName.setParentId(name.getParentId());
+				recommendedName.setQualifier(name.getQualifier());
+				recommendedName.setType(name.getType());
+				recommendedName.setSynonyms(new ArrayList<Overview.EntityName>());
+				
+				for(EntityName sname : name.getSynonyms()){
+					if(!sname.getQualifier().equals("full")){
+						recommendedName.getSynonyms().add(sname); //add the short and children
+					}
+				}
 			}
 		}
-		return result;
-	}
-
-	public List<EntityName> getRecommendedProteinNames() {
-		return filterNamesByIsMainValue(true, proteinNames);
+		return recommendedName;
 	}
 	
 	public List<EntityName> getAlternativeProteinNames() {
-		return filterNamesByIsMainValue(false, proteinNames);
+		List<EntityName> result = new ArrayList<Overview.EntityName>();
+		for(EntityName name : this.proteinNames){
+			if(name.isMain){
+				for(EntityName sname : name.getSynonyms()){
+					if(sname.getQualifier().equals("full")){
+						result.add(sname); 
+					}
+				}
+			}
+		}
+
+		//adding additional names into alternatives
+		if(this.additionalNames != null){ //this includes CD antigen / allergen and INN
+			result.addAll(this.additionalNames); 
+		}
+		
+		return result;
 	}
 
 	

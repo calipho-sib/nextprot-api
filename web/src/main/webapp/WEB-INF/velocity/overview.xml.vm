@@ -1,39 +1,48 @@
 <overview>
 ## ----------------- PROTEIN EXISTENCE -----------------------------
 #if($entry.overview.history.proteinExistence)
-<protein-existence value='$entry.overview.history.proteinExistence'/>
+    <protein-existence value='$entry.overview.history.proteinExistence'/>
 #end
 ## ----------------- PROTEIN NAMES ---------------------------------
 #if($entry.overview.proteinNames)
-<protein-name-list>
-#foreach($entityName in $entry.overview.proteinNames)
-	#parse('entity-name.xml.vm')
-#end
-</protein-name-list>
-#end
-## ----------------- ADDITIONAL NAMES ---------------------------------
-#if($entry.overview.additionalNames)
-<additional-name-list>
-#foreach($entityName in $entry.overview.additionalNames)
-    #parse('entity-name.xml.vm')
-#end
-</additional-name-list>
+    <protein-name-list>
+## ----------------- RECOMMENDED-NAME ------------------------------
+<recommended-name>
+    #set ( $recommendedName = $entry.getOverview().getRecommendedProteinName() )
+    <protein-name qualifier="#if($recommendedName.getQualifier())$recommendedName.getQualifier()#end">$recommendedName.name</protein-name>
+    #foreach($synName in $recommendedName.synonyms)
+    <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
+    #end
+</recommended-name>
+## ----------------- ALTERNATIVE-NAMES (LIST) ------------------------------
+<alternative-name-list>
+    #foreach($entityName in $entry.overview.alternativeProteinNames)
+        <alternative-name>
+	        <protein-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</protein-name>
+		    #foreach($synName in $entityName.synonyms)
+		    <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
+		    #end
+        </alternative-name>
+    #end
+</alternative-name-list>
+
+## ----------------- CLEAVED REGION NAMES ------------------------------
+#if($entry.overview.cleavedRegionNames)
+    <cleaved-region-name-list>
+        #foreach($entityName in $entry.overview.cleavedRegionNames)
+            #parse('entity-name.xml.vm')
+        #end
+    </cleaved-region-name-list>
 #end
 ## ----------------- FUNCTIONAL REGION NAMES ---------------------------
 #if($entry.overview.functionalRegionNames)
-<functional-region-name-list>
-#foreach($entityName in $entry.overview.functionalRegionNames)
-    #parse('entity-name.xml.vm')
+    <functional-region-name-list>
+        #foreach($entityName in $entry.overview.functionalRegionNames)
+            #parse('entity-name.xml.vm')
+        #end
+    </functional-region-name-list>
 #end
-</functional-region-name-list>
-#end
-## ----------------- CLEAVED REGION NAMES ------------------------------
-#if($entry.overview.cleavedRegionNames)
-<cleaved-region-name-list>
-#foreach($entityName in $entry.overview.cleavedRegionNames)
-    #parse('entity-name.xml.vm')
-#end
-</cleaved-region-name-list>
+    </protein-name-list>
 #end
 ## ----------------- GENE NAMES ----------------------------------------
 #if($entry.overview.geneNames)
@@ -55,29 +64,29 @@
 #end
 ## ----------------- FAMILIES ------------------------------------------
 #if($entry.overview.families.size() > 0)
-<family-list>
-#foreach($family in $entry.overview.families)
-    <family accession="$family.accession">
-        <family-name>$family.name</family-name>
-    </family>
-#end
-</family-list>
+    <family-list>
+        #foreach($family in $entry.overview.families)
+            <family accession="$family.accession">
+                <family-name>$family.name</family-name>
+            </family>
+        #end
+    </family-list>
 #end
 ## ----------------- BIOPHYSICALCHEMICAL properties --------------------
 #if($entry.overview.bioPhyChemProps.size() > 0)
-<biophysicochemical-properties>
-#foreach($prop in $entry.overview.bioPhyChemProps)
-    <property name="$prop.getFirst()" value="$prop.getSecond()"/>
-#end 
-</biophysicochemical-properties>
+    <biophysicochemical-properties>
+        #foreach($prop in $entry.overview.bioPhyChemProps)
+            <property name="$prop.getFirst()" value="$prop.getSecond()"/>
+        #end 
+    </biophysicochemical-properties>
 #end
 ## ----------------- HISTORY ----------------------------------------
 <history>
-#if($entry.overview.history.nextprotIntegrationDate)
-    <history-entry database="neXtProt" integrated="$entry.overview.history.getFormattedNextprotIntegrationDate()" updated="$entry.overview.history.getFormattedNextprotUpdateDate()"/>
-#end
-#if($entry.overview.history.uniprotIntegrationDate)
-    <history-entry database="UniProtKB" integrated="$entry.overview.history.getFormattedUniprotIntegrationDate()" updated="$entry.overview.history.getFormattedUniprotUpdateDate()" version="$entry.overview.history.uniprotVersion" last-sequence-update="$entry.overview.history.lastSequenceUpdate" sequence-version="$entry.overview.history.sequenceVersion"/>
-#end
+    #if($entry.overview.history.nextprotIntegrationDate)
+        <history-entry database="neXtProt" integrated="$entry.overview.history.getFormattedNextprotIntegrationDate()" updated="$entry.overview.history.getFormattedNextprotUpdateDate()"/>
+    #end
+    #if($entry.overview.history.uniprotIntegrationDate)
+        <history-entry database="UniProtKB" integrated="$entry.overview.history.getFormattedUniprotIntegrationDate()" updated="$entry.overview.history.getFormattedUniprotUpdateDate()" version="$entry.overview.history.uniprotVersion" last-sequence-update="$entry.overview.history.lastSequenceUpdate" sequence-version="$entry.overview.history.sequenceVersion"/>
+    #end
 </history>
 </overview>
