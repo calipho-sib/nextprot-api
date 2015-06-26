@@ -43,7 +43,22 @@ public class OverviewServiceImpl implements OverviewService {
 			overview.setHistory(history.get(0));
 
 		List<Overview.EntityName> entityNames = this.entryNameDao.findNames(uniqueName);
-		
+		setNamesInOverview(entityNames, overview);
+
+		overview.setFamilies(this.familyDao.findFamilies(uniqueName));
+
+		List<Pair<String, String>> props = this.bioPhyChemPropsDao.findPropertiesByUniqueName(uniqueName);
+
+		List<Overview.BioPhysicalChemicalProperty> bpcp = new ArrayList<Overview.BioPhysicalChemicalProperty>();
+		for(Pair<String, String> p :  props){
+			bpcp.add(new Overview.BioPhysicalChemicalProperty(p.getFirst(), p.getSecond()));
+		}
+		overview.setBioPhyChemProps(bpcp);
+		return overview;
+	}
+	
+	private void setNamesInOverview(List<Overview.EntityName> entityNames, Overview overview){
+
 		Map<String, EntityName> entityMap = Maps.uniqueIndex(entityNames, new Function<EntityName, String>() {
 			@Override
 			public String apply(EntityName entityName) {
@@ -102,17 +117,6 @@ public class OverviewServiceImpl implements OverviewService {
 			}
 			}
 		}
-
-		overview.setFamilies(this.familyDao.findFamilies(uniqueName));
-
-		List<Pair<String, String>> props = this.bioPhyChemPropsDao.findPropertiesByUniqueName(uniqueName);
-
-		List<Overview.BioPhysicalChemicalProperty> bpcp = new ArrayList<Overview.BioPhysicalChemicalProperty>();
-		for(Pair<String, String> p :  props){
-			bpcp.add(new Overview.BioPhysicalChemicalProperty(p.getFirst(), p.getSecond()));
-		}
-		overview.setBioPhyChemProps(bpcp);
-		return overview;
 	}
 
 }
