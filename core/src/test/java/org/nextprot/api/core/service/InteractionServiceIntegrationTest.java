@@ -84,9 +84,9 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 			 
 			for (AnnotationProperty prop: annot.getProperties()) {
 				if (prop.getName().equals("numberOfExperiments")) numberOfExperiments++;
-				if (prop.getName().equals("entry-accession") && prop.getType().equals("interactant")) entryacs++;
-				if (prop.getName().equals("isoform-accession") && prop.getType().equals("interactant")) isoacs++;
-				if (prop.getName().equals("resource-internal-ref") && prop.getType().equals("interactant")) resourceinternalrefs++;				
+				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_ENTRY_AC)) entryacs++;
+				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_ISO_AC)) isoacs++;
+				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) resourceinternalrefs++;				
 			}
 		}
 		assertTrue(numberOfExperiments==4);

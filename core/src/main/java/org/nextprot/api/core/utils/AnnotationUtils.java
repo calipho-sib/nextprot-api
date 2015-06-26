@@ -91,8 +91,8 @@ public class AnnotationUtils {
 		for(Annotation a : annotations){
 			if (a.getAPICategory()==AnnotationApiModel.BINARY_INTERACTION) {
 				for (AnnotationProperty p: a.getProperties()) {
-					if (p.getType()!=null && p.getType().equals(AnnotationProperty.TYPE_INTERACTANT)) {
-						if (p.getName().equals(AnnotationProperty.NAME_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
+					if (p.getName().equals(AnnotationProperty.NAME_INTERACTANT)) {
+						if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
 					}
 				}
 			}
