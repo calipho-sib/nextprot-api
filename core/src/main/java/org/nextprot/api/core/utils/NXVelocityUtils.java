@@ -1,6 +1,8 @@
 package org.nextprot.api.core.utils;
 
-import com.google.common.base.Preconditions;
+import java.text.DecimalFormat;
+import java.util.List;
+
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
@@ -9,11 +11,10 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.peff.PeffFormatterMaster;
 
-import java.text.DecimalFormat;
-import java.util.List;
+import com.google.common.base.Preconditions;
 
 public class NXVelocityUtils {
-
+	
 	private static final PeffFormatterMaster PEFF_FORMATTER = new PeffFormatterMaster();
 
     private NXVelocityUtils() {
