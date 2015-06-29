@@ -29,15 +29,31 @@
         </alternative-name>
     #end
 </alternative-name-list>
+</protein-name-list>
+#end
 
 ## ----------------- CLEAVED REGION NAMES ------------------------------
 #if($entry.overview.cleavedRegionNames)
-    <cleaved-region-name-list>
-        #foreach($entityName in $entry.overview.cleavedRegionNames)
-            #parse('entity-name.xml.vm')
-        #end
-    </cleaved-region-name-list>
+<chain-list> 
+    #foreach($entityName in $entry.overview.cleavedRegionNames)
+    <chain>
+        <recommended-name>
+	        <chain-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</chain-name>
+	   </recommended-name>
+	   #if($entityName.synonyms)
+	    <alternative-name-list>
+	    #foreach($synonym in $entityName.synonyms)
+	        <alternative-name>
+		        <chain-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</chain-name>
+		   </alternative-name>
+		#end
+	    </alternative-name-list>
+	    #end
+    </chain>
+	#end
+</chain-list> 
 #end
+
 ## ----------------- FUNCTIONAL REGION NAMES ---------------------------
 #if($entry.overview.functionalRegionNames)
     <functional-region-name-list>
@@ -46,8 +62,7 @@
         #end
     </functional-region-name-list>
 #end
-    </protein-name-list>
-#end
+
 ## ----------------- GENE NAMES ----------------------------------------
 #if($entry.overview.geneNames)
     <gene-list>
