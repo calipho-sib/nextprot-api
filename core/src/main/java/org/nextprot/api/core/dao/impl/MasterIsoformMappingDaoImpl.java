@@ -2,20 +2,13 @@ package org.nextprot.api.core.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
-import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.IsoformSpecificity;
-import org.nextprot.api.core.domain.PeptideMapping;
-import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
-import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
