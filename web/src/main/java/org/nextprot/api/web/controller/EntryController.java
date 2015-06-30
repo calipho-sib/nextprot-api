@@ -31,7 +31,7 @@ public class EntryController {
 	@Autowired
 	private FluentEntryService fluentEntryService;
 	@Autowired
-	private MasterIsoformMappingService mimService;
+	private MasterIsoformMappingService masterIsoformMappingService;
 	
 
     @ModelAttribute
@@ -76,7 +76,7 @@ public class EntryController {
 	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public Map<String,IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
-		return mimService.findMasterIsoformMappingByMasterUniqueName(entryName);
+		return masterIsoformMappingService.findMasterIsoformMappingByMasterUniqueName(entryName);
 	}
 
 	
