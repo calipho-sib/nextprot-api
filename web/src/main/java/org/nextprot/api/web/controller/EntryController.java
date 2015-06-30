@@ -1,12 +1,16 @@
 package org.nextprot.api.web.controller;
 
+import java.util.Map;
+
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.core.service.impl.MasterIsoformMappingService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Lazy
 @Controller
@@ -25,6 +30,9 @@ public class EntryController {
 
 	@Autowired
 	private FluentEntryService fluentEntryService;
+	@Autowired
+	private MasterIsoformMappingService mimService;
+	
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -65,6 +73,15 @@ public class EntryController {
 
 	}
 
+	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public Map<String,IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
+		return mimService.findMasterIsoformMappingByMasterUniqueName(entryName);
+	}
+
+	
+	
+	
 	@ApiMethod(path = "/entry/{entry}/overview", verb = ApiVerb.GET, description = "Gets an overview of the entry. This includes the protein existence, protein names, gene names, functional region names, cleaved region names, the families, the bio physical and chemical properties and the history. See the Overview object for more details.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/overview")
 	public String getOverview(
