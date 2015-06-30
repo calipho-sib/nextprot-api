@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -99,27 +100,40 @@ public class OverviewServiceImpl implements OverviewService {
 
 			switch (en) {
 			case PROTEIN_NAMES: {
-				overview.setProteinNames(new ArrayList<EntityName>(entryNameMap.get(en)));
+				overview.setProteinNames(getSortedList(entryNameMap, en));
 				break;
 			}
 			case GENE_NAMES: {
-				overview.setGeneNames(new ArrayList<EntityName>(entryNameMap.get(en)));
+				overview.setGeneNames(getSortedList(entryNameMap, en));
 				break;
 			}
 			case CLEAVED_REGION_NAMES: {
-				overview.setCleavedRegionNames(new ArrayList<EntityName>(entryNameMap.get(en)));
+				overview.setCleavedRegionNames(getSortedList(entryNameMap, en));
 				break;
 			}
 			case ADDITIONAL_NAMES: {
-				overview.setAdditionalNames(new ArrayList<EntityName>(entryNameMap.get(en)));
+				overview.setAdditionalNames(getSortedList(entryNameMap, en));
 				break;
 			}
 			case FUNCTIONAL_REGION_NAMES: {
-				overview.setFunctionalRegionNames(new ArrayList<EntityName>(entryNameMap.get(en)));
+				overview.setFunctionalRegionNames(getSortedList(entryNameMap, en));
 				break;
 			}
 			}
 		}
+		
+	
+	}
+	
+	private static List<EntityName> getSortedList(Multimap<Overview.EntityNameClass, EntityName> entryMap, EntityNameClass en){
+		List<EntityName> list = new ArrayList<EntityName>(entryMap.get(en));
+		for(EntityName e : list){
+			if(e.getSynonyms() != null){
+				Collections.sort(e.getSynonyms());
+			}
+		}
+		Collections.sort(list);
+		return list;
 	}
 
 }

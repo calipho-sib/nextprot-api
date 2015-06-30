@@ -3,17 +3,22 @@ package org.nextprot.api.core.domain;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.Pair;
+import org.nextprot.api.core.aop.InstrumentationAspect;
 
 public class Overview implements Serializable{
 
 	private static final long serialVersionUID = 3393680983821185971L;
+	private static final Log LOGGER = LogFactory.getLog(Overview.class);
 
 	private static class PE {
 		String name;
@@ -96,6 +101,7 @@ public class Overview implements Serializable{
 			result.addAll(this.additionalNames); 
 		}
 		
+		Collections.sort(result);
 		return result;
 	}
 
@@ -267,7 +273,7 @@ public class Overview implements Serializable{
 		}
 	}
 	
-	public static class EntityName implements Serializable{
+	public static class EntityName implements Serializable, Comparable<EntityName>{
 
 		private static final long serialVersionUID = -6510772648061413417L;
 		private Boolean isMain;
@@ -378,6 +384,38 @@ public class Overview implements Serializable{
 			this.synonyms.add(synonym);
 		}
 
+		@Override
+		public int compareTo(EntityName o) {
+			int thisValue = 10;
+			if(this.qualifier != null){
+				try {
+					thisValue = QualifierValue.valueOf(this.qualifier.replaceAll("\\s+","_").toUpperCase()).ordinal();
+				}catch (IllegalArgumentException e){
+					e.printStackTrace();
+					LOGGER.error("Failed to compare enum values for this qualifier " + this.qualifier + e.getMessage());
+				}
+			}
+			
+			int otherValue = 10;
+			if(o.qualifier != null){
+				try {
+					otherValue = QualifierValue.valueOf(o.qualifier.replaceAll("\\s+","_").toUpperCase()).ordinal();
+				}catch (IllegalArgumentException e){
+					e.printStackTrace();
+					LOGGER.error("Failed to compare enum values for other qualifier " + o.qualifier + e.getMessage());
+				}
+			}
+			
+			System.err.println(this.qualifier + thisValue);
+			System.err.println(o.qualifier + otherValue);
+
+			return thisValue - otherValue;
+		}
+		
+		private static enum QualifierValue {
+			FULL, SHORT, EC, ALLERGEN, INN, CD_ANTIGEN
+		}
+
 	
 		
 	}
@@ -387,7 +425,7 @@ public class Overview implements Serializable{
 		GENE_NAMES("geneNames"),
 		FUNCTIONAL_REGION_NAMES("functionalRegionNames"),
 		CLEAVED_REGION_NAMES("cleavedRegionNames"),
-		ADDITIONAL_NAMES("additionalNames");
+		ADDITIONAL_NAMES("additionalNames"); //TODO not sure if we need additional names in the API anymore
 		
 		private String className;
 		
