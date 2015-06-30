@@ -7,6 +7,6 @@ import org.nextprot.api.core.domain.IsoformSpecificity;
 
 public interface MasterIsoformMappingService {
 
-	Map<String,IsoformSpecificity> findMasterIsoformMappingByMasterUniqueName(String uniqueName);
+	Map<String,IsoformSpecificity> findMasterIsoformMappingByEntryName(String uniqueName);
 
 }
