@@ -13,7 +13,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.core.aop.InstrumentationAspect;
 
 public class Overview implements Serializable{
 
@@ -79,7 +78,8 @@ public class Overview implements Serializable{
 	}
 	
 	/**
-	 * Each alternative name can either 1 full name with n shorts and n ECs. Or can also be one allergen / CD antigen or INN 
+	 * Each alternative name can either 1 full name with n shorts and n ECs. 
+	 * We also include here the additional names: allergen / CD antigen and INN 
 	 * @return
 	 */
 	public List<EntityName> getAlternativeProteinNames() {
@@ -406,9 +406,6 @@ public class Overview implements Serializable{
 				}
 			}
 			
-			System.err.println(this.qualifier + thisValue);
-			System.err.println(o.qualifier + otherValue);
-
 			return thisValue - otherValue;
 		}
 		
