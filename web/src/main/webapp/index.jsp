@@ -451,7 +451,7 @@
 					</div>
 				{{/if}}
 				{{#if jsondochints}}
-					<div class="alert alert-info alert-dismissible border-radius-none">
+					<div class="alert alert-info alert-dismissible border-radius-none" style="display:none">
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						<p><strong>Hints to provide a better understanding of your API:</strong></p>
 						<ul class="list-unstyled">
@@ -645,7 +645,7 @@
 	{{/if}}
 </table>
 {{#if jsondochints}}
-	<div class="alert alert-info alert-dismissible border-radius-none">
+	<div class="alert alert-info alert-dismissible border-radius-none" style="display:none">
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		<p><strong>Hints to provide a better understanding of your API:</strong></p>
 		<ul class="list-unstyled">
