@@ -19,13 +19,28 @@ public class MasterIsoformMappingServiceIntegrationTest extends CoreUnitBaseTest
 
 	@Test
 	public void shouldReturn2IsoformsWith2MappingPositionsEach() {
-		Map<String,IsoformSpecificity> mappings = this.mimService.findMasterIsoformMappingByMasterUniqueName("NX_P26439");
+		Map<String,IsoformSpecificity> mappings = this.mimService.findMasterIsoformMappingByEntryName("NX_P26439");
 		assertTrue(mappings.size() == 2);
 		assertTrue(mappings.containsKey("NX_P26439-1"));
 		assertTrue(mappings.containsKey("NX_P26439-2"));
-		assertTrue(mappings.get("NX_P26439-1").getIsoformName().equals("NX_P26439-1"));
+		System.out.println(mappings.get("NX_P26439-1").getIsoformName());
+		System.out.println(mappings.get("NX_P26439-2").getIsoformName());
+		assertTrue(mappings.get("NX_P26439-1").getIsoformName().equals("Iso 1"));
+		assertTrue(mappings.get("NX_P26439-2").getIsoformName().equals("Iso 2"));
 		assertTrue(mappings.get("NX_P26439-1").getPositions().size()==2);
-		assertTrue(mappings.get("NX_P26439-2").getIsoformName().equals("NX_P26439-2"));
 		assertTrue(mappings.get("NX_P26439-2").getPositions().size()==2);
 	}
+	
+	@Test
+	public void shouldReturn3IsoformsWithMainNames() {
+		Map<String,IsoformSpecificity> mappings = this.mimService.findMasterIsoformMappingByEntryName("NX_P46976");
+		assertTrue(mappings.size() == 3);
+		assertTrue(mappings.containsKey("NX_P46976-1"));
+		assertTrue(mappings.containsKey("NX_P46976-2"));
+		assertTrue(mappings.containsKey("NX_P46976-3"));
+		assertTrue(mappings.get("NX_P46976-1").getIsoformName().equals("GN-1L"));
+		assertTrue(mappings.get("NX_P46976-2").getIsoformName().equals("GN-1"));
+		assertTrue(mappings.get("NX_P46976-3").getIsoformName().equals("GN-1S"));
+	}
+	
 }

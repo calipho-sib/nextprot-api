@@ -76,7 +76,7 @@ public class EntryController {
 	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public Map<String,IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
-		return masterIsoformMappingService.findMasterIsoformMappingByMasterUniqueName(entryName);
+		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
 	}
 
 	
