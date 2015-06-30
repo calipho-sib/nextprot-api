@@ -29,41 +29,69 @@
         </alternative-name>
     #end
 </alternative-name-list>
+</protein-name-list>
+#end
 
 ## ----------------- CLEAVED REGION NAMES ------------------------------
 #if($entry.overview.cleavedRegionNames)
-    <cleaved-region-name-list>
-        #foreach($entityName in $entry.overview.cleavedRegionNames)
-            #parse('entity-name.xml.vm')
-        #end
-    </cleaved-region-name-list>
+<chain-list> 
+    #foreach($entityName in $entry.overview.cleavedRegionNames)
+    <chain>
+        <recommended-name>
+	        <chain-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</chain-name>
+	   </recommended-name>
+	   #if($entityName.synonyms)
+	    <alternative-name-list>
+	    #foreach($synonym in $entityName.synonyms)
+	        <alternative-name>
+		        <chain-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</chain-name>
+		   </alternative-name>
+		#end
+	    </alternative-name-list>
+	    #end
+    </chain>
+	#end
+</chain-list> 
 #end
+
 ## ----------------- FUNCTIONAL REGION NAMES ---------------------------
 #if($entry.overview.functionalRegionNames)
-    <functional-region-name-list>
-        #foreach($entityName in $entry.overview.functionalRegionNames)
-            #parse('entity-name.xml.vm')
-        #end
-    </functional-region-name-list>
+<region-list> 
+    #foreach($entityName in $entry.overview.functionalRegionNames)
+    <region>
+        <recommended-name>
+	        <region-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</region-name>
+	   </recommended-name>
+	   #if($entityName.synonyms)
+	    <alternative-name-list>
+	    #foreach($synonym in $entityName.synonyms)
+	        <alternative-name>
+		        <region-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</region-name>
+		   </alternative-name>
+		#end
+	    </alternative-name-list>
+	    #end
+    </region>
+	#end
+</region-list> 
 #end
-    </protein-name-list>
-#end
+
 ## ----------------- GENE NAMES ----------------------------------------
 #if($entry.overview.geneNames)
-    <gene-list>
-        #foreach($entityName in $entry.overview.geneNames)
-            <gene>
-                <gene-name type="primary">$entityName.name</gene-name>
-                #foreach($synonym in $entityName.synonyms)
-                #if($synonym.category.equals('ORF'))
-			        <gene-name type="ORFName">$synonym.name</gene-name>
-			    #else
-			        <gene-name type="synonym">$synonym.name</gene-name>
-                #end
-                #end
-            </gene>
-        #end
-    </gene-list>
+<gene-list>
+    #foreach($entityName in $entry.overview.geneNames)
+        <gene>
+            <gene-name type="primary">$entityName.name</gene-name>
+            #foreach($synonym in $entityName.synonyms)
+            #if($synonym.category.equals('ORF'))
+		        <gene-name type="ORFName">$synonym.name</gene-name>
+		    #else
+		        <gene-name type="synonym">$synonym.name</gene-name>
+            #end
+            #end
+        </gene>
+    #end
+</gene-list>
 #end
 ## ----------------- FAMILIES ------------------------------------------
 #if($entry.overview.families.size() > 0)
