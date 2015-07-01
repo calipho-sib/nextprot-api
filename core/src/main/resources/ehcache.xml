@@ -112,6 +112,11 @@
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		statistics="true" copyOnRead="true" copyOnWrite="true">
 	</cache>
+	<cache name="entry-properties" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true" copyOnRead="true" copyOnWrite="true">
+	</cache>
 
 	<!-- Tutorial queries (only in memory) -->
 	<cache name="tutorial-queries" overflowToOffHeap="false"
