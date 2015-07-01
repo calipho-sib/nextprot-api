@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Entry {
 
+	private EntryProperties properties;
+	
 	private String uniqueName;
 
 	private Overview overview;
@@ -207,6 +209,14 @@ public class Entry {
 
 	public void setSrmPeptideMappings(List<PeptideMapping> srmPeptideMappings) {
 		this.srmPeptideMappings = srmPeptideMappings;
+	}
+
+	public EntryProperties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(EntryProperties properties) {
+		this.properties = properties;
 	}
 
 	/**
