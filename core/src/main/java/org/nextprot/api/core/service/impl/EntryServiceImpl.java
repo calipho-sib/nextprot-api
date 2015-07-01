@@ -9,6 +9,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntryPropertiesService;
 import org.nextprot.api.core.service.EntryService;
 import org.nextprot.api.core.service.ExperimentalContextService;
 import org.nextprot.api.core.service.GeneService;
@@ -39,7 +40,7 @@ public class EntryServiceImpl implements EntryService {
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService expContextService;
-	
+	@Autowired private EntryPropertiesService entryPropertiesService;	
 	//
 	// sorry about breaking the bests practices with spring ;) 
 	@Autowired private EnzymeDao enzymeDao;
@@ -64,6 +65,7 @@ public class EntryServiceImpl implements EntryService {
 		entry.setAntibodyMappings(this.antibodyMappingService.findAntibodyMappingByMasterId(masterId));
 		entry.setAnnotations(this.annotationService.findAnnotations(entryName));
 		entry.setExperimentalContexts(this.expContextService.findExperimentalContextsByEntryName(entryName));
+		entry.setProperties(this.entryPropertiesService.findEntryProperties(entryName));
 		return entry;
 	}
 	
