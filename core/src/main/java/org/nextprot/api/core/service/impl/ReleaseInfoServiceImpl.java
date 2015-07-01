@@ -14,7 +14,7 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
 	@Override
 	public ReleaseInfo findReleaseInfo() {
 		ReleaseInfo ri = new ReleaseInfo();
-		//TODO ReleaseInfo ri = releaseInfoDao.getReleaseInfo();
+		ri.setDatabaseRelease(releaseInfoDao.findNextProtRelease());
 		ri.setDatasources(releaseInfoDao.findReleaseInfoDataSources());
 		return ri;
 	}

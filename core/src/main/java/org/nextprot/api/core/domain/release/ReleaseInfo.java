@@ -5,7 +5,7 @@ import java.util.List;
 public class ReleaseInfo {
 
 	private String databaseRelease;
-	private String applicationRelease;
+	private String apiRelease;
 	private List<ReleaseInfoDataSource> datasources;
 
 	public String getDatabaseRelease() {
@@ -16,12 +16,12 @@ public class ReleaseInfo {
 		this.databaseRelease = databaseRelease;
 	}
 
-	public String getApplicationRelease() {
-		return applicationRelease;
+	public String getApiRelease() {
+		return apiRelease;
 	}
 
-	public void setApplicationRelease(String applicationRelease) {
-		this.applicationRelease = applicationRelease;
+	public void setApiRelease(String apiRelease) {
+		this.apiRelease = apiRelease;
 	}
 
 	public List<ReleaseInfoDataSource> getDatasources() {
@@ -31,6 +31,5 @@ public class ReleaseInfo {
 	public void setDatasources(List<ReleaseInfoDataSource> datasources) {
 		this.datasources = datasources;
 	}
-	
-}
 
+}
