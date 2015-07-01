@@ -50,8 +50,17 @@ public class EntryXMLIntegrationTest extends WebIntegrationBaseTest {
   }
 
   @Test
-  public void shouldContainInteraction() throws Exception {
-	  this.mockMvc.perform(get("/entry/NX_P03372/interaction.xml")).andExpect(xpath("entry/interaction-list").exists());
+  public void shouldContainBinaryInteractionAsAnnotation() throws Exception {
+	  this.mockMvc.perform(
+			  get("/entry/NX_P03372/interaction.xml")).
+			  andExpect(xpath("entry/annotation-list/annotation-category[@category='binary-interaction']").exists());
+  }
+
+  @Test
+  public void shouldContainSmallMoleculeInteraction() throws Exception {
+	  this.mockMvc.perform(
+			  get("/entry/NX_P03372/interaction.xml")).
+			  andExpect(xpath("entry/annotation-list/annotation-category[@category='small-molecule-interaction']").exists());
   }
 
   @Test

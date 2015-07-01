@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,25 @@ public class OverviewServiceImpl implements OverviewService {
 			overview.setHistory(history.get(0));
 
 		List<Overview.EntityName> entityNames = this.entryNameDao.findNames(uniqueName);
+		entityNames.addAll(entryNameDao.findORFGeneNames(uniqueName));
+		entityNames.addAll(entryNameDao.findAlternativeChainNames(uniqueName));
 		
+		setNamesInOverview(entityNames, overview);
+
+		overview.setFamilies(this.familyDao.findFamilies(uniqueName));
+
+		List<Pair<String, String>> props = this.bioPhyChemPropsDao.findPropertiesByUniqueName(uniqueName);
+
+		List<Overview.BioPhysicalChemicalProperty> bpcp = new ArrayList<Overview.BioPhysicalChemicalProperty>();
+		for(Pair<String, String> p :  props){
+			bpcp.add(new Overview.BioPhysicalChemicalProperty(p.getFirst(), p.getSecond()));
+		}
+		overview.setBioPhyChemProps(bpcp);
+		return overview;
+	}
+	
+	private void setNamesInOverview(List<Overview.EntityName> entityNames, Overview overview){
+
 		Map<String, EntityName> entityMap = Maps.uniqueIndex(entityNames, new Function<EntityName, String>() {
 			@Override
 			public String apply(EntityName entityName) {
@@ -81,38 +100,40 @@ public class OverviewServiceImpl implements OverviewService {
 
 			switch (en) {
 			case PROTEIN_NAMES: {
-				overview.setProteinNames(new ArrayList<EntityName>(entryNameMap.get(en)));
+				overview.setProteinNames(getSortedList(entryNameMap, en));
 				break;
 			}
 			case GENE_NAMES: {
-				overview.setGeneNames(new ArrayList<EntityName>(entryNameMap.get(en)));
+				overview.setGeneNames(getSortedList(entryNameMap, en));
 				break;
 			}
 			case CLEAVED_REGION_NAMES: {
-				overview.setCleavedRegionNames(new ArrayList<EntityName>(entryNameMap.get(en)));
+				overview.setCleavedRegionNames(getSortedList(entryNameMap, en));
 				break;
 			}
 			case ADDITIONAL_NAMES: {
-				overview.setAdditionalNames(new ArrayList<EntityName>(entryNameMap.get(en)));
+				overview.setAdditionalNames(getSortedList(entryNameMap, en));
 				break;
 			}
 			case FUNCTIONAL_REGION_NAMES: {
-				overview.setFunctionalRegionNames(new ArrayList<EntityName>(entryNameMap.get(en)));
+				overview.setFunctionalRegionNames(getSortedList(entryNameMap, en));
 				break;
 			}
 			}
 		}
-
-		overview.setFamilies(this.familyDao.findFamilies(uniqueName));
-
-		List<Pair<String, String>> props = this.bioPhyChemPropsDao.findPropertiesByUniqueName(uniqueName);
-
-		List<Overview.BioPhysicalChemicalProperty> bpcp = new ArrayList<Overview.BioPhysicalChemicalProperty>();
-		for(Pair<String, String> p :  props){
-			bpcp.add(new Overview.BioPhysicalChemicalProperty(p.getFirst(), p.getSecond()));
+		
+	
+	}
+	
+	private static List<EntityName> getSortedList(Multimap<Overview.EntityNameClass, EntityName> entryMap, EntityNameClass en){
+		List<EntityName> list = new ArrayList<EntityName>(entryMap.get(en));
+		for(EntityName e : list){
+			if(e.getSynonyms() != null){
+				Collections.sort(e.getSynonyms());
+			}
 		}
-		overview.setBioPhyChemProps(bpcp);
-		return overview;
+		Collections.sort(list);
+		return list;
 	}
 
 }

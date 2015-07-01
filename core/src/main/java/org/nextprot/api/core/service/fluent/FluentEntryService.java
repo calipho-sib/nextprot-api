@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Lazy
 @Service
@@ -145,8 +146,10 @@ public class FluentEntryService {
 		}
 
 		public FluentEntry withEverything() {
-			this.withOverview().withGeneralAnnotations().withPublications().withXrefs().withKeywords().withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
-			.withTargetIsoforms().withAntibodyMappings().withPeptideMappings().withSrmPeptideMappings().withExperimentalContexts();
+			this.withOverview().withGeneralAnnotations().withPublications().withXrefs().withKeywords()
+			.withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
+			.withTargetIsoforms().withAntibodyMappings().withPeptideMappings().withSrmPeptideMappings()
+			.withExperimentalContexts();
 			
 			return this;
 		}
@@ -191,8 +194,10 @@ public class FluentEntryService {
 				return this.withChromosomalLocations().build();
 			case GENOMIC_MAPPING:
 				return this.withGenomicMappings().build();
+			/*
 			case INTERACTION:
-				return this.withInteractions().build();
+				return this.withInteractions().build();  // now treated as annotation subpart
+			*/
 			case ISOFORM:
 				return this.withTargetIsoforms().build();
 			case ANNOTATION:
@@ -225,7 +230,9 @@ public class FluentEntryService {
 			// Filter if necessary
 			if (annotationCategory != null) {
 				annotations = AnnotationUtils.filterAnnotationsByCategory(annotations, annotationCategory);
-				xrefs = XrefUtils.filterXrefsByIds(xrefs, AnnotationUtils.getXrefIdsForAnnotations(annotations));
+				Set<Long> xrefIds = AnnotationUtils.getXrefIdsForAnnotations(annotations);
+				xrefIds.addAll(AnnotationUtils.getXrefIdsForInteractionsInteractants(annotations));
+				xrefs = XrefUtils.filterXrefsByIds(xrefs, xrefIds);
 				publications = PublicationUtils.filterPublicationsByIds(publications, AnnotationUtils.getPublicationIdsForAnnotations(annotations));
 				ecs = ExperimentalContextUtil.filterExperimentalContextsByIds(ecs, AnnotationUtils.getExperimentalContextIdsForAnnotations(annotations));
 				entry.setIsoforms(isoformService.findIsoformsByEntryName(entryName));

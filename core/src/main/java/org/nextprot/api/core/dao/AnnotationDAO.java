@@ -27,6 +27,4 @@ public interface AnnotationDAO {
 	
 	List<AnnotationEvidenceProperty> findAnnotationEvidencePropertiesByEvidenceIds(List<Long> evidenceIds);
 	
-	List<Annotation> createAdditionalAnnotationsFromXrefs(List<DbXref> xrefs, String entryName);
-
 }

@@ -18,7 +18,7 @@
     <property-list>
         #foreach($property in $annotation.getProperties())
 			#if(!$property.getName().equals("rank"))
-				<property property-name='$property.getName()'  value='$property.getValue()' #if($property.getAccession()) accession='$property.getAccession()' #end />
+				<property property-name='$property.getName()'  value='$property.getValue()' #if($property.getValueType()) value-type='$property.getValueType()' #end #if($property.getAccession()) accession='$property.getAccession()' #end />
 			#end
 		#end
     </property-list>
@@ -27,7 +27,15 @@
     <evidence-list>
         #foreach($evidence in $annotation.getEvidences())
 			## should include qualifier-type='$evidence.getQualifierType()' 
-			<evidence is-negative='$evidence.isNegativeEvidence()' evidence-code='$evidence.getEvidenceCodeAC()' resource-internal-ref='$evidence.getResourceId()'  resource-assoc-type='$evidence.getResourceAssociationType()' #if($evidence.getQualityQualifier()) accession='$evidence.getQualityQualifier()' #end resource-type='$evidence.getResourceType()' #if($evidence.getExperimentalContextId()>0) experimental-context-internal-ref='$evidence.getExperimentalContextId()' #end #if($evidence.getAssignedBy()) source-internal-ref='$evidence.getAssignedBy()' #end	/>
+			<evidence is-negative='$evidence.isNegativeEvidence()' evidence-code='$evidence.getEvidenceCodeAC()' resource-internal-ref='$evidence.getResourceId()'  resource-assoc-type='$evidence.getResourceAssociationType()' #if($evidence.getQualityQualifier()) accession='$evidence.getQualityQualifier()' #end resource-type='$evidence.getResourceType()' #if($evidence.getExperimentalContextId()>0) experimental-context-internal-ref='$evidence.getExperimentalContextId()' #end #if($evidence.getAssignedBy()) source-internal-ref='$evidence.getAssignedBy()' #end >
+				#if($evidence.getPropertiesNames())
+					<property-list>
+						#foreach($pk in $evidence.getPropertiesNames())
+							<property property-name="$pk" value="$evidence.getPropertyValue($pk)" />
+						#end
+					</property-list>
+				#end
+			</evidence>
 		#end
     </evidence-list>
 	#end

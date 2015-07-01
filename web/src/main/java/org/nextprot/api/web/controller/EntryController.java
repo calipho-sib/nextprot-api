@@ -1,12 +1,16 @@
 package org.nextprot.api.web.controller;
 
+import java.util.Map;
+
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.core.service.impl.MasterIsoformMappingService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Lazy
 @Controller
@@ -25,6 +30,9 @@ public class EntryController {
 
 	@Autowired
 	private FluentEntryService fluentEntryService;
+	@Autowired
+	private MasterIsoformMappingService masterIsoformMappingService;
+	
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -65,6 +73,15 @@ public class EntryController {
 
 	}
 
+	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public Map<String,IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
+		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
+	}
+
+	
+	
+	
 	@ApiMethod(path = "/entry/{entry}/overview", verb = ApiVerb.GET, description = "Gets an overview of the entry. This includes the protein existence, protein names, gene names, functional region names, cleaved region names, the families, the bio physical and chemical properties and the history. See the Overview object for more details.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/overview")
 	public String getOverview(
@@ -158,16 +175,6 @@ public class EntryController {
 		return "entry";
 	}
 
-
-	@ApiMethod(path = "/entry/{entry}/interaction", verb = ApiVerb.GET, description = "Gets the interactions of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
-	@RequestMapping("/entry/{entry}/interaction")
-	public String interactions(
-			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry for example: The cytoplasmic tyrosine-protein kinase BMX: NX_P51813", allowedvalues = { "NX_P51813"}) 
-			@PathVariable("entry") String entryName, Model model) {
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("interaction");
-		model.addAttribute("entry", entry);
-		return "entry";
-	}
 
 	@ApiMethod(path = "/entry/{entry}/annotation", verb = ApiVerb.GET, description = "Gets the annotations of a given entry grouped by category", produces = { MediaType.APPLICATION_XML_VALUE})
 	@RequestMapping("/entry/{entry}/annotation")

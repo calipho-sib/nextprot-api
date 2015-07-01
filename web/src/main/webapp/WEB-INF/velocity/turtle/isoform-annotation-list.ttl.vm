@@ -17,7 +17,9 @@ isoform:$isoform-name a :Isoform;
 
 #foreach($annotation in $entry.getAnnotationsByIsoform($isoform-name))
 #set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)
-#set($annotation-type = $annotation.rdfTypeName)
+#set($annotation-type = $annotation.apiTypeName)
+## special case for binary interactions which have their own template for ttl
+#if($annotation-type != "BinaryInteraction")
 #foreach($parentPredicate in $annotation.parentPredicates)
 isoform:$isoform-name :$parentPredicate annotation:$annotation-uri .
 #end
@@ -27,4 +29,5 @@ isoform:$isoform-name :$annotation.rdfPredicate annotation:$annotation-uri .
 isoform:$isoform-name :$annotation.getConsensusExpressionLevelPredicat() annotation:$annotation-uri .
 #end
 #parse("turtle/isoform-annotation.ttl.vm")
+#end
 #end
