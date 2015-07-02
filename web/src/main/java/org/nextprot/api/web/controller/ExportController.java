@@ -212,7 +212,7 @@ public class ExportController {
         }
     }
 
-    private QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String filter, String quality, String sort, String order, Integer limit) {
+    private static QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String filter, String quality, String sort, String order, Integer limit) {
 
         QueryRequest qr = new QueryRequest();
         qr.setQuery(query);

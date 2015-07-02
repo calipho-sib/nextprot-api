@@ -25,37 +25,6 @@ import javax.xml.transform.stream.StreamSource;
 
 public class XmlPrettyPrintFilter implements Filter{
 
-	public static String getPrettyXml(String xmlStr) {
-		
-		try {
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			transformerFactory.setAttribute("indent-number", 4);
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			StreamResult result = new StreamResult(new StringWriter());
-			StreamSource source = new StreamSource(new StringReader(removeInitialIndentation(xmlStr)));
-			transformer.transform(source, result);
-			String xmlString = result.getWriter().toString();
-			return xmlString;
-
-		} catch (TransformerException e) {
-			e.printStackTrace();
-			//throw new RuntimeException(e);
-			return xmlStr;
-		}
-	}
-
-	private static String removeInitialIndentation(String input) {
-
-		StringBuilder sb = new StringBuilder();
-		String[] lines = input.split("\n");
-		for (String line : lines) {
-			sb.append(line.trim());
-		}
-
-		return sb.toString();
-
-	}
 
 	protected FilterConfig config;
 
@@ -79,7 +48,7 @@ public class XmlPrettyPrintFilter implements Filter{
 	    if (newResponse instanceof CharResponseWrapper) {
 	      String text = newResponse.toString();
 	      if (text != null) {
-	        text = getPrettyXml(text);
+	        text = PrettyPrinter.getPrettyXml(text);
 	         response.getWriter().write(text);
 	      }
 	    }

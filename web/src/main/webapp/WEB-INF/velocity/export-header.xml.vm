@@ -1,4 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nextprot-export>
 <database-name>neXtProt</database-name>
-<query-string>1</query-string>
-<entries-count>1</entries-count>
-#parse('release.xml.vm')
+<entries-count>$entriesCount</entries-count>

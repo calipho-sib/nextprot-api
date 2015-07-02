@@ -6,8 +6,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
+import org.nextprot.api.core.domain.release.ReleaseContents;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.utils.XMLUnitUtils;
@@ -32,8 +35,13 @@ public class StreamExporterTest extends WebIntegrationBaseTest {
 
         NPStreamExporter exporter = new XMLStreamExporter();
 
-        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview");
-
+        Map<String, Object> map = new HashMap<String, Object>();        map.put("queryString", "something");        map.put("entriesCount", 2);
+        ReleaseContents rc = new ReleaseContents();        rc.setApiRelease("yo");        rc.setDatabaseRelease("2020");        map.put("release", rc);
+        
+        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview", map);
+        
+        System.err.println(out.toString());
+        
         NodeList nodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/entry-list/entry/overview");
         assertEquals(2, nodes.getLength());
 
@@ -50,7 +58,7 @@ public class StreamExporterTest extends WebIntegrationBaseTest {
 
         NPStreamExporter exporter = new JSONStreamExporter();
 
-        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview");
+        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview", null);
     }
 
     @Test
@@ -60,7 +68,7 @@ public class StreamExporterTest extends WebIntegrationBaseTest {
 
         NPStreamExporter exporter = new FastaStreamExporter();
 
-        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview");
+        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview", null);
     }
 
     @Test
@@ -70,6 +78,6 @@ public class StreamExporterTest extends WebIntegrationBaseTest {
 
         NPStreamExporter exporter = new PeffStreamExporter();
 
-        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview");
+        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview", null);
     }
 }

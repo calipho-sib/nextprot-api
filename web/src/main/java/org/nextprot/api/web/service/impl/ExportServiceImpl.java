@@ -19,10 +19,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import javax.annotation.PostConstruct;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,6 +59,8 @@ public class ExportServiceImpl implements ExportService {
 	private VelocityConfig velocityConfig;
 	@Autowired
 	private TerminologyService terminologyService;
+	@Autowired
+    private ReleaseInfoService releaseInfoService;
 
 	private int numberOfWorkers = 8;
 
@@ -278,7 +283,12 @@ public class ExportServiceImpl implements ExportService {
 		NPStreamExporter exporter = NPFileExporter.valueOf(format).getNPStreamExporter();
 
 		exporter.setTerminologyService(terminologyService);
-
-		exporter.export(accessions, stream, viewName);
+		
+		if(format.equals(NPFileFormat.XML)){
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("entriesCount", accessions.size());
+			map.put("release", releaseInfoService.findReleaseContents());
+			exporter.export(accessions, stream, viewName, map);
+		}else 	exporter.export(accessions, stream, viewName, null);
 	}
 }
