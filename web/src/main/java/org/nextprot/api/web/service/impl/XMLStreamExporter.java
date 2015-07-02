@@ -21,7 +21,7 @@ public class XMLStreamExporter extends NPStreamExporter {
 
     private final Template template;
 
-    XMLStreamExporter() {
+    public XMLStreamExporter() {
         template = velocityConfig.getVelocityEngine().getTemplate("entry.xml.vm");
     }
 

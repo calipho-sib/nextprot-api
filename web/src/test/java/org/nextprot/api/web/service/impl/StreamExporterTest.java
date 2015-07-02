@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,24 +27,16 @@ public class StreamExporterTest extends WebIntegrationBaseTest {
     @Autowired
     private VelocityConfig velocityConfig;
     
+    
+
 
     @Test
     public void testXMLExportStream() throws Exception {
 
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-
         NPStreamExporter exporter = new XMLStreamExporter();
-
-        Map<String, Object> map = new HashMap<String, Object>();        map.put("queryString", "something");        map.put("entriesCount", 2);
-        ReleaseContents rc = new ReleaseContents();        rc.setApiRelease("yo");        rc.setDatabaseRelease("2020");        map.put("release", rc);
-        
-        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview", map);
-        
-        System.err.println(out.toString());
-        
-        NodeList nodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/entry-list/entry/overview");
-        assertEquals(2, nodes.getLength());
+        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview", null);
 
         NodeList recommendedNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/entry-list/entry/overview/gene-list/gene/gene-name[@type='primary']");
         assertEquals(recommendedNodes.item(0).getTextContent(), "INSR");
