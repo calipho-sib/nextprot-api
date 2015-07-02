@@ -97,9 +97,7 @@
 #if($entry.overview.families.size() > 0)
     <family-list>
         #foreach($family in $entry.overview.families)
-            <family accession="$family.accession">
-                <family-name>$family.name</family-name>
-            </family>
+            #parse("family.xml.vm")
         #end
     </family-list>
 #end

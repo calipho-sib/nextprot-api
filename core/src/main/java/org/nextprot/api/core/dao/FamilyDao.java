@@ -7,4 +7,5 @@ import org.nextprot.api.core.domain.Family;
 public interface FamilyDao {
 
 	List<Family> findFamilies(String uniqueName);
+	Family findParentOfFamilyId(Long termId);
 }
