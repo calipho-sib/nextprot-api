@@ -1,4 +1,4 @@
-select iso.unique_name as isoform_name, p.first_pos, p.last_pos
+select iso.unique_name as isoform_ac, p.first_pos, p.last_pos
 from nextprot.sequence_identifiers ma 
 inner join nextprot.mapping_annotations map on (ma.identifier_id=map.reference_identifier_id)
 inner join nextprot.sequence_identifiers iso on (map.mapped_identifier_id=iso.identifier_id)

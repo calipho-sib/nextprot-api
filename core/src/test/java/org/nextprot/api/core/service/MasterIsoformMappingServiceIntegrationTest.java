@@ -2,10 +2,10 @@ package org.nextprot.api.core.service;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Map;
+import java.util.List;
 
 import org.junit.Test;
-import org.nextprot.api.core.domain.IsoformSpecificity;
+import org.nextprot.api.core.domain.TemporaryIsoformSpecificity;
 import org.nextprot.api.core.service.impl.MasterIsoformMappingService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,28 +19,41 @@ public class MasterIsoformMappingServiceIntegrationTest extends CoreUnitBaseTest
 
 	@Test
 	public void shouldReturn2IsoformsWith2MappingPositionsEach() {
-		Map<String,IsoformSpecificity> mappings = this.mimService.findMasterIsoformMappingByEntryName("NX_P26439");
-		assertTrue(mappings.size() == 2);
-		assertTrue(mappings.containsKey("NX_P26439-1"));
-		assertTrue(mappings.containsKey("NX_P26439-2"));
-		System.out.println(mappings.get("NX_P26439-1").getIsoformName());
-		System.out.println(mappings.get("NX_P26439-2").getIsoformName());
-		assertTrue(mappings.get("NX_P26439-1").getIsoformName().equals("Iso 1"));
-		assertTrue(mappings.get("NX_P26439-2").getIsoformName().equals("Iso 2"));
-		assertTrue(mappings.get("NX_P26439-1").getPositions().size()==2);
-		assertTrue(mappings.get("NX_P26439-2").getPositions().size()==2);
+		List<TemporaryIsoformSpecificity> specs = this.mimService.findMasterIsoformMappingByEntryName("NX_P26439");
+		assertTrue(specs.size()==2);
+		TemporaryIsoformSpecificity spec;
+		spec= specs.get(0);
+		assertTrue(spec.getIsoformAc().equals("NX_P26439-1"));
+		assertTrue(spec.getIsoformName().equals("Iso 1"));
+		assertTrue(spec.getPositions().size()==2);
+		
+		spec = specs.get(1);
+		assertTrue(spec.getIsoformAc().equals("NX_P26439-2"));
+		assertTrue(spec.getIsoformName().equals("Iso 2"));
+		assertTrue(spec.getPositions().size()==2);
+		
 	}
-	
+
 	@Test
-	public void shouldReturn3IsoformsWithMainNames() {
-		Map<String,IsoformSpecificity> mappings = this.mimService.findMasterIsoformMappingByEntryName("NX_P46976");
-		assertTrue(mappings.size() == 3);
-		assertTrue(mappings.containsKey("NX_P46976-1"));
-		assertTrue(mappings.containsKey("NX_P46976-2"));
-		assertTrue(mappings.containsKey("NX_P46976-3"));
-		assertTrue(mappings.get("NX_P46976-1").getIsoformName().equals("GN-1L"));
-		assertTrue(mappings.get("NX_P46976-2").getIsoformName().equals("GN-1"));
-		assertTrue(mappings.get("NX_P46976-3").getIsoformName().equals("GN-1S"));
+	public void shouldReturnIsoformsInProperOrder() {
+		List<TemporaryIsoformSpecificity> specs = this.mimService.findMasterIsoformMappingByEntryName("NX_Q8WZ42");
+		int i=0;
+		for (TemporaryIsoformSpecificity spec: specs) {
+			i++;
+			assertTrue(spec.getIsoformName().equals("Iso " + i)); // TITIN has Iso 1, Iso 2, ... Iso 13
+			System.out.println(spec.getIsoformAc() + " - " + spec.getIsoformName() + " - " + spec.getSortableName());
+		}
+		assertTrue(true);
 	}
+
+	@Test
+	public void shouldReturnIsoformsInProperOrder2() {
+		List<TemporaryIsoformSpecificity> specs = this.mimService.findMasterIsoformMappingByEntryName("NX_P46976");
+		assertTrue(specs.get(0).getIsoformName().equals("GN-1"));
+		assertTrue(specs.get(1).getIsoformName().equals("GN-1L"));
+		assertTrue(specs.get(2).getIsoformName().equals("GN-1S"));
+	}
+
+
 	
 }
