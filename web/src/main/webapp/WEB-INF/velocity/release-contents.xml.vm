@@ -7,7 +7,7 @@
       	  #foreach($rds in $release.datasources)
  	     <datasource source='$rds.source' description="$rds.description" release="$rds.releaseVersion" last-import-date="$rds.lastImportDate">
  		     <datasource-url>
- 		     #set($UNESCAPED_CDATA_DS_URL = $datasource.url)
+ 		     #set($UNESCAPED_CDATA_DS_URL = $rds.url)
  		     <![CDATA[ $UNESCAPED_CDATA_DS_URL ]]>
  		     </datasource-url>
  	     </datasource>
