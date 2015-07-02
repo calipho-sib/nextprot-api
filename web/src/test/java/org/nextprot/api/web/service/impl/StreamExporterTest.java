@@ -5,13 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.Test;
-import org.nextprot.api.core.domain.release.ReleaseContents;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.utils.XMLUnitUtils;

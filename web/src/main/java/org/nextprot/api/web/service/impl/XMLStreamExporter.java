@@ -66,7 +66,7 @@ public class XMLStreamExporter extends NPStreamExporter {
 
         Template releaseContentTemplate = velocityConfig.getVelocityEngine().getTemplate("release-contents.xml.vm");
         writePrettyXml(releaseContentTemplate, new NXVelocityContext(params), writer);
-
+    	writer.write("</header>");
     	writer.write("<entry-list>");
 
     }
