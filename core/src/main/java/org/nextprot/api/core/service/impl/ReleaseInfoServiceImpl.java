@@ -33,7 +33,7 @@ public class ReleaseInfoServiceImpl implements ReleaseInfoService {
 	@Cacheable("release-contents")
 	public ReleaseContents findReleaseContents() {
 		ReleaseContents ri = new ReleaseContents();
-		ri.setDatabaseRelease(releaseInfoDao.findNextProtRelease());
+		ri.setDatabaseRelease(releaseInfoDao.findDatabaseRelease());
 		ri.setApiRelease(this.getApiVersion());
 		ri.setDatasources(releaseInfoDao.findReleaseInfoDataSources());
 		return ri;

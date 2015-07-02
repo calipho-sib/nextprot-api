@@ -35,7 +35,7 @@ public class ReleaseInfoDaoImpl implements ReleaseInfoDao {
 	}
 
 	@Override
-	public String findNextProtRelease() {
+	public String findDatabaseRelease() {
 		return new JdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("nextprot-release"), String.class);
 	}
 
