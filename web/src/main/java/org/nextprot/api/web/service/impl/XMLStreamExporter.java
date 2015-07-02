@@ -62,7 +62,7 @@ public class XMLStreamExporter extends NPStreamExporter {
     @Override
     protected void writeHeader(Writer writer, Map<String, Object> params) throws IOException {
         Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("export-header.xml.vm");
-        headerTemplate.merge(new NXVelocityContext(), writer);
+        headerTemplate.merge(new NXVelocityContext(params), writer);
 
         Template releaseContentTemplate = velocityConfig.getVelocityEngine().getTemplate("release-contents.xml.vm");
         writePrettyXml(releaseContentTemplate, new NXVelocityContext(params), writer);

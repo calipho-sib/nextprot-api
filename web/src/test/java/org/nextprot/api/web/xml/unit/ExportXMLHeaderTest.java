@@ -35,6 +35,9 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
         assertEquals(dbReleaseNodes.item(0).getTextContent(), "database-test-version");
         NodeList apiReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/release/nextprot/api-release");
         assertEquals(apiReleaseNodes.item(0).getTextContent(), "api-test-version");
+        NodeList entriesCountNode = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/entries-count");
+        assertEquals(entriesCountNode.item(0).getTextContent(), "2");
+
         
         
     }

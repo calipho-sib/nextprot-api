@@ -1,26 +1,11 @@
 package org.nextprot.api.web.service.impl;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.service.export.format.NPFileFormat;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
-import org.nextprot.api.core.utils.NXVelocityUtils;
-import org.nextprot.api.web.service.ExportService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.view.velocity.VelocityConfig;
-
-import javax.annotation.PostConstruct;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,6 +15,34 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+
+import javax.annotation.PostConstruct;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntryService;
+import org.nextprot.api.core.service.GeneService;
+import org.nextprot.api.core.service.IdentifierService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.KeywordService;
+import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.ReleaseInfoService;
+import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.web.NXVelocityContext;
+import org.nextprot.api.web.service.ExportService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 @Service
 @Lazy
@@ -160,10 +173,7 @@ public class ExportServiceImpl implements ExportService {
 					template = ve.getTemplate("entry." + format + ".vm");
 				}
 
-				context = new VelocityContext();
-				context.put("entry", entryService.findEntry(entryName));
-				context.put("StringUtils", StringUtils.class);
-				context.put("NXUtils", NXVelocityUtils.class);
+				context = new NXVelocityContext(entryService.findEntry(entryName));
 
 				FileWriter fw = new FileWriter(filename, true);
 				PrintWriter out = new PrintWriter(new BufferedWriter(fw));
@@ -289,6 +299,6 @@ public class ExportServiceImpl implements ExportService {
 			map.put("entriesCount", accessions.size());
 			map.put("release", releaseInfoService.findReleaseContents());
 			exporter.export(accessions, stream, viewName, map);
-		}else 	exporter.export(accessions, stream, viewName, null);
+		}else exporter.export(accessions, stream, viewName, null);
 	}
 }
