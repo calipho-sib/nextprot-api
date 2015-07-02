@@ -23,19 +23,16 @@ public class StreamExporterTest extends WebIntegrationBaseTest {
     @Autowired
     private VelocityConfig velocityConfig;
     
+    
+
 
     @Test
     public void testXMLExportStream() throws Exception {
 
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-
         NPStreamExporter exporter = new XMLStreamExporter();
-
-        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview");
-
-        NodeList nodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/entry-list/entry/overview");
-        assertEquals(2, nodes.getLength());
+        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview", null);
 
         NodeList recommendedNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/entry-list/entry/overview/gene-list/gene/gene-name[@type='primary']");
         assertEquals(recommendedNodes.item(0).getTextContent(), "INSR");
@@ -50,7 +47,7 @@ public class StreamExporterTest extends WebIntegrationBaseTest {
 
         NPStreamExporter exporter = new JSONStreamExporter();
 
-        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview");
+        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview", null);
     }
 
     @Test
@@ -60,7 +57,7 @@ public class StreamExporterTest extends WebIntegrationBaseTest {
 
         NPStreamExporter exporter = new FastaStreamExporter();
 
-        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview");
+        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview", null);
     }
 
     @Test
@@ -70,6 +67,6 @@ public class StreamExporterTest extends WebIntegrationBaseTest {
 
         NPStreamExporter exporter = new PeffStreamExporter();
 
-        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview");
+        exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview", null);
     }
 }

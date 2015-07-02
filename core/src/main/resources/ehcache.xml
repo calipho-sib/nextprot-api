@@ -19,6 +19,8 @@
 
 	<cache name="read-user" maxEntriesLocalHeap="2000" eternal="true" statistics="true" copyOnRead="true" copyOnWrite="true"/>
 
+	<cache name="release-contents" maxEntriesLocalHeap="1"
+		eternal="true" statistics="true" copyOnRead="true" copyOnWrite="true"/>
 
 	<!-- Configuring cache for other services -->
 	<cache name="terminology-by-accession" overflowToOffHeap="false"

@@ -1,13 +1,31 @@
 package org.nextprot.api.web.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsondoc.core.pojo.*;
+import org.jsondoc.core.pojo.ApiDoc;
+import org.jsondoc.core.pojo.ApiMethodDoc;
+import org.jsondoc.core.pojo.ApiParamDoc;
+import org.jsondoc.core.pojo.ApiVerb;
+import org.jsondoc.core.pojo.JSONDoc;
 import org.jsondoc.core.util.JSONDocType;
 import org.jsondoc.springmvc.controller.JSONDocController;
 import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.web.service.impl.ExportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +35,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 @Controller
 public class JSONDocRoleController extends JSONDocController {
@@ -41,6 +49,10 @@ public class JSONDocRoleController extends JSONDocController {
 
 	@Autowired
 	private Environment env;
+	
+	@Autowired
+	private ReleaseInfoService releaseInfoService;
+
 //
 //	public void setVersion(String version) {
 //		this.version = version;
@@ -65,7 +77,7 @@ public class JSONDocRoleController extends JSONDocController {
 				"org.nextprot.api.user",
 				"org.nextprot.api.web" }));
 		
-		String version = getMavenVersion();
+		String version = releaseInfoService.findReleaseContents().getApiRelease();
 		for(String profile : env.getActiveProfiles()){
 			if(profile.equalsIgnoreCase("build")){
 				packages.add("org.nextprot.api.build");
@@ -171,7 +183,7 @@ public class JSONDocRoleController extends JSONDocController {
 			}
 		}
 		
-		JSONDoc contextJSONDoc = new JSONDoc(getMavenVersion(), "");
+		JSONDoc contextJSONDoc = new JSONDoc(releaseInfoService.findReleaseContents().getApiRelease(), "");
 		contextJSONDoc.setApis(contextApis);
 		contextJSONDoc.setObjects(jsonDoc.getObjects());
 		contextJSONDoc.setFlows(jsonDoc.getFlows());
@@ -179,25 +191,5 @@ public class JSONDocRoleController extends JSONDocController {
 		return contextJSONDoc;
 	}
 	
-	@Autowired(required = false)
-	ServletContext servletContext;
-	
-	private String getMavenVersion() {
-		
-		if(servletContext == null)
-			return "NOT AVAILABLE";
-		
-	    try {
 
-	    	String appServerHome = servletContext.getRealPath("/");
-		    File manifestFile = new File(appServerHome, "META-INF/MANIFEST.MF");
-		    Manifest mf = new Manifest();
-	    	mf.read(new FileInputStream(manifestFile));
-		    Attributes atts = mf.getMainAttributes();
-		    return atts.getValue("Implementation-Version");
-
-	    } catch (IOException e) {
-	    	return "unknown";
-		}
-	}
 }

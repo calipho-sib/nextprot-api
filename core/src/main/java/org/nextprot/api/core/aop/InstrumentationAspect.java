@@ -27,7 +27,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -79,7 +78,7 @@ public class InstrumentationAspect {
 			sb.append("type=Controller;");
 			addMethodParameters(sb, methodSignature);
 			addArgumentsParameters(sb, arguments, annotations);
-			sb.append("ControllerId=");
+			sb.append("controllerRequestId=");
 			sb.append(controllerRequestIdCounter.get());
 			sb.append(";");
 
@@ -137,12 +136,12 @@ public class InstrumentationAspect {
 			sb.append("type=Service;");
 			addMethodParameters(sb, methodSignature);
 			addArgumentsParameters(sb, arguments, annotations);
-			sb.append("ServiceId=");
+			sb.append("serviceRequestId=");
 			sb.append(serviceRequestIdCounter.get());
 			sb.append(";");
 			Long cId = serviceRequestId.get();
 			if (cId != null) {
-				sb.append("controllerId=");
+				sb.append("controllerRequestId=");
 				sb.append(cId);
 				sb.append(";");
 			}
@@ -191,14 +190,14 @@ public class InstrumentationAspect {
 
 			Long sId = serviceRequestId.get();
 			if (sId != null) {
-				sb.append("serviceId=");
+				sb.append("serviceRequestId=");
 				sb.append(sId);
 				sb.append(";");
 			}
 
 			Long cId = controllerRequestId.get();
 			if (cId != null) {
-				sb.append("controllerId=");
+				sb.append("controllerRequestId=");
 				sb.append(cId);
 				sb.append(";");
 			}
@@ -326,7 +325,7 @@ public class InstrumentationAspect {
 		map.put("http-request-content-type", StringUtils.quote(httpRequest.getHeader("content-type")));
 
 		map.put("http-request-referer", httpRequest.getHeader("referer"));
-		map.put("http-request-user-agent",  StringUtils.quote(httpRequest.getHeader("user-agent")));
+		//map.put("http-request-user-agent",  StringUtils.quote(httpRequest.getHeader("user-agent")));
 		//map.put("http-request-content-type", httpRequest.getContentType());
 		
 		map.put("http-request-method",  StringUtils.quote(httpRequest.getMethod()));
@@ -346,7 +345,7 @@ public class InstrumentationAspect {
 		while (params.hasMoreElements()) {
 			String paramName = params.nextElement();
 			String paramValue = httpRequest.getParameter(paramName);
-			map.put("http-request-param" + StringUtils.capitalizeFirstLetter(paramName), StringUtils.quote(paramValue));
+			map.put("http-request-param-" + paramName, StringUtils.quote(paramValue));
 		}
 
 		return map;
