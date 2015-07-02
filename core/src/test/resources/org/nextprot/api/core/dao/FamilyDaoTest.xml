@@ -10,7 +10,7 @@
 	<annotations annotation_id="123" unique_name="SP_007_001" identifier_id="123" cv_annotation_discriminator_id="3"  
 		datasource_id="1" cv_annotation_type_id="1059" cv_term_id="200"/>
 
-	<cv_terms cv_id="200" db_xref_id="1000" cv_name="Rothschild"/>
+	<cv_terms cv_id="200" db_xref_id="1000" cv_name="Rothschild" cv_status_id="1"/>
 	
 	<annotation_properties annotation_property_id="123" annotation_id="123" property_name="family region" property_value="what?"/>
 
