@@ -24,7 +24,7 @@ public class ReleaseInfoTest extends CoreUnitBaseTest {
 	public void shouldFindAValdiDatabaseRelease() {
 		try {
 			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-			String dbRelease = releaseInfoService.findReleaseInfo().getDatabaseRelease();
+			String dbRelease = releaseInfoService.findReleaseContents().getDatabaseRelease();
 			Date d = null;
 			d = dateFormat.parse(dbRelease);
 			assertTrue(d != null);
@@ -36,7 +36,7 @@ public class ReleaseInfoTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void shouldFindDataSources() {
-		int datasourcesSize = releaseInfoService.findReleaseInfo().getDatasources().size();
+		int datasourcesSize = releaseInfoService.findReleaseContents().getDatasources().size();
 		assertEquals(ReleaseDataSources.values().length,  datasourcesSize);
 	}
 

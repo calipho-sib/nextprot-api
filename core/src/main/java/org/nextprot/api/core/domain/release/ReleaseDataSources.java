@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain.release;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -74,6 +75,16 @@ public enum ReleaseDataSources {
 			Set<String> cvNames = new HashSet<String>();
 			for(ReleaseDataSources ds : ReleaseDataSources.values()){
 				cvNames.add(ds.getCvName());
+			}
+			return cvNames;
+		}
+		
+		public static Set<String> getDistinctCvNamesExcept(ReleaseDataSources ... exceptDs) {
+			Set<String> cvNames = new HashSet<String>();
+			for(ReleaseDataSources ds : ReleaseDataSources.values()){
+				if(!Arrays.asList(exceptDs).contains(ds)){ //If the array is not contained
+					cvNames.add(ds.getCvName());
+				}
 			}
 			return cvNames;
 		}

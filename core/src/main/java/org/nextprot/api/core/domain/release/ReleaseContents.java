@@ -1,12 +1,15 @@
 package org.nextprot.api.core.domain.release;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ReleaseInfo {
+public class ReleaseContents implements Serializable{
+
+	private static final long serialVersionUID = 2368364380055302455L;
 
 	private String databaseRelease;
 	private String apiRelease;
-	private List<ReleaseInfoDataSource> datasources;
+	private List<ReleaseContentsDataSource> datasources;
 
 	public String getDatabaseRelease() {
 		return databaseRelease;
@@ -24,11 +27,11 @@ public class ReleaseInfo {
 		this.apiRelease = apiRelease;
 	}
 
-	public List<ReleaseInfoDataSource> getDatasources() {
+	public List<ReleaseContentsDataSource> getDatasources() {
 		return datasources;
 	}
 
-	public void setDatasources(List<ReleaseInfoDataSource> datasources) {
+	public void setDatasources(List<ReleaseContentsDataSource> datasources) {
 		this.datasources = datasources;
 	}
 

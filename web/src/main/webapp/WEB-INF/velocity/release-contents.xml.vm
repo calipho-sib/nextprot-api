@@ -1,0 +1,16 @@
+<release>
+      <nextprot>
+        <database-release>$release.databaseRelease</database-release>
+        <api-release>$release.apiRelease</api-release>
+      </nextprot>
+      <datasources>
+      	  #foreach($rds in $release.datasources)
+ 	     <datasource source='$rds.source' description="$rds.description" release="$rds.releaseVersion" last-import-date="$rds.lastImportDate">
+ 		     <datasource-url>
+ 		     #set($UNESCAPED_CDATA_DS_URL = $datasource.url)
+ 		     <![CDATA[ $UNESCAPED_CDATA_DS_URL ]]>
+ 		     </datasource-url>
+ 	     </datasource>
+ 	     #end
+      </datasources>
+</release>
