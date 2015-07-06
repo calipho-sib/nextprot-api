@@ -167,6 +167,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		int cvac_cnt = 0;
 		for (Annotation currannot : annots) {
 			String category = currannot.getCategory();
+			//System.err.println(category);
 			/* if(category.contains("Binary"))  {
 				//System.err.println(category + " : " + currannot.getUniqueName());
 				List<AnnotationProperty> annotprops =  currannot.getProperties();
