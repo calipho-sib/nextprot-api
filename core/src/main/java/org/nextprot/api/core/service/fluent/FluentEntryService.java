@@ -1,17 +1,8 @@
 package org.nextprot.api.core.service.fluent;
 
-import java.util.List;
-import java.util.Set;
-
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
-import org.nextprot.api.core.domain.ExperimentalContext;
-import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
@@ -25,11 +16,6 @@ import org.nextprot.api.core.service.KeywordService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.export.format.EntryBlocks;
-import org.nextprot.api.core.utils.AnnotationUtils;
-import org.nextprot.api.core.utils.ExperimentalContextUtil;
-import org.nextprot.api.core.utils.PublicationUtils;
-import org.nextprot.api.core.utils.XrefUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

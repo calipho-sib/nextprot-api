@@ -78,9 +78,6 @@ public class EntryController {
 	public List<TemporaryIsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
 		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
 	}
-
-	
-	
 	
 	@ApiMethod(path = "/entry/{entry}/overview", verb = ApiVerb.GET, description = "Gets an overview of the entry. This includes the protein existence, protein names, gene names, functional region names, cleaved region names, the families, the bio physical and chemical properties and the history. See the Overview object for more details.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/overview")
