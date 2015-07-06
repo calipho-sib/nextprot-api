@@ -19,6 +19,8 @@
 
 	<cache name="read-user" maxEntriesLocalHeap="2000" eternal="true" statistics="true" copyOnRead="true" copyOnWrite="true"/>
 
+	<cache name="release-contents" maxEntriesLocalHeap="1"
+		eternal="true" statistics="true" copyOnRead="true" copyOnWrite="true"/>
 
 	<!-- Configuring cache for other services -->
 	<cache name="terminology-by-accession" overflowToOffHeap="false"
@@ -63,6 +65,10 @@
 		statistics="true" copyOnRead="true" copyOnWrite="true">
 	</cache>
 	<cache name="xrefs" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+	</cache>
+	<cache name="families" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
 		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
 	</cache>

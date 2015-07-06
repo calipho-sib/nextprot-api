@@ -1,12 +1,14 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformSpecificity;
+import org.nextprot.api.core.domain.TemporaryIsoformSpecificity;
 import org.nextprot.api.core.service.IsoformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,7 +25,7 @@ public class MasterIsoformMappingServiceImpl implements MasterIsoformMappingServ
 	
 	@Override
 	@Cacheable("master-isoform-mapping")
-	public Map<String,IsoformSpecificity> findMasterIsoformMappingByEntryName(String entryName) {
+	public List<TemporaryIsoformSpecificity> findMasterIsoformMappingByEntryName(String entryName) {
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 		// build a map between isoform unique name and isoform main name
@@ -43,18 +45,20 @@ public class MasterIsoformMappingServiceImpl implements MasterIsoformMappingServ
 		}
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-		// group partial mappings obtained from DAO by isoform
+		// group partial mappings obtained from DAO by isoform and set isoform name
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-		Map<String,IsoformSpecificity> map = new HashMap<String,IsoformSpecificity>();
-		List<IsoformSpecificity> specs = masterIsoformMappingDao.findIsoformMappingByMaster(entryName);
-		for (IsoformSpecificity tmpSpec: specs) {
-			String uniqueName = tmpSpec.getIsoformName();
-			if ( ! map.containsKey(uniqueName)) map.put(uniqueName, new IsoformSpecificity(uniqueName));
-			IsoformSpecificity spec = map.get(uniqueName);
+		Map<String,TemporaryIsoformSpecificity> map = new HashMap<String,TemporaryIsoformSpecificity>();
+		List<TemporaryIsoformSpecificity> specs = masterIsoformMappingDao.findIsoformMappingByMaster(entryName);
+		for (TemporaryIsoformSpecificity tmpSpec: specs) {
+			String ac = tmpSpec.getIsoformAc();
+			if ( ! map.containsKey(ac)) map.put(ac, new TemporaryIsoformSpecificity(ac));
+			TemporaryIsoformSpecificity spec = map.get(ac);
 			// replace unique name with main name
-			spec.setIsoformName(unique2mainName.get(uniqueName));
+			spec.setIsoformName(unique2mainName.get(ac));
 			spec.addPosition(tmpSpec.getPositions().get(0));
 		}
-		return map;
+		List<TemporaryIsoformSpecificity> list = new ArrayList<TemporaryIsoformSpecificity>(map.values());
+		Collections.sort(list);
+		return list;
 	}
 }

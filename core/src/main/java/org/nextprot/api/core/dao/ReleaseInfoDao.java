@@ -2,10 +2,11 @@ package org.nextprot.api.core.dao;
 
 import java.util.List;
 
-import org.nextprot.api.core.domain.release.ReleaseInfoDataSource;
+import org.nextprot.api.core.domain.release.ReleaseContentsDataSource;
 
 public interface ReleaseInfoDao {
 
-	List<ReleaseInfoDataSource> findReleaseInfoDataSources();
+	List<ReleaseContentsDataSource> findReleaseInfoDataSources();
+	String findDatabaseRelease();
 
 }

@@ -1,5 +1,6 @@
 package org.nextprot.api.web.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.jsondoc.core.annotation.Api;
@@ -9,6 +10,7 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.IsoformSpecificity;
+import org.nextprot.api.core.domain.TemporaryIsoformSpecificity;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.core.service.impl.MasterIsoformMappingService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
@@ -75,7 +77,7 @@ public class EntryController {
 
 	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
-	public Map<String,IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
+	public List<TemporaryIsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
 		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
 	}
 

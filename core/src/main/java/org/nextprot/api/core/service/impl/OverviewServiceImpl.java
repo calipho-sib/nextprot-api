@@ -8,12 +8,12 @@ import java.util.Map;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.EntityNameDao;
-import org.nextprot.api.core.dao.FamilyDao;
 import org.nextprot.api.core.dao.HistoryDao;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.EntityName;
 import org.nextprot.api.core.domain.Overview.EntityNameClass;
 import org.nextprot.api.core.domain.Overview.History;
+import org.nextprot.api.core.service.FamilyService;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,7 +31,7 @@ public class OverviewServiceImpl implements OverviewService {
 
 	@Autowired private HistoryDao historyDao;
 	@Autowired private EntityNameDao entryNameDao;
-	@Autowired private FamilyDao familyDao;
+	@Autowired private FamilyService familyService;
 	@Autowired private BioPhyChemPropsDao bioPhyChemPropsDao;
 
 	@Override
@@ -49,7 +49,7 @@ public class OverviewServiceImpl implements OverviewService {
 		
 		setNamesInOverview(entityNames, overview);
 
-		overview.setFamilies(this.familyDao.findFamilies(uniqueName));
+		overview.setFamilies(this.familyService.findFamilies(uniqueName));
 
 		List<Pair<String, String>> props = this.bioPhyChemPropsDao.findPropertiesByUniqueName(uniqueName);
 
