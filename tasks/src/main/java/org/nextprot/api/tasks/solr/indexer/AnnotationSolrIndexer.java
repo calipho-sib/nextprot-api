@@ -6,21 +6,24 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.apache.solr.common.SolrInputDocument;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.dao.impl.DbXrefDaoImpl;
 //import org.biojavax.bio.seq.io.UniProtCommentParser.Interaction;
 //import org.nextprot.api.core.domain.AntibodyMapping;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryProperties;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Identifier;
 import org.nextprot.api.core.domain.Interactant;
-// import org.nextprot.api.core.domain.Keyword;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.Overview.EntityName;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.domain.Interaction;
 //import org.nextprot.api.core.service.TerminologyService;
@@ -52,10 +55,11 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		doc.addField("pe_level", ovv.getProteinExistenceLevel());
 		//doc.addField("isoform_num", entry.getIsoforms().size());
 		String precname = ovv.getMainProteinName();
-		System.err.println(id + " " + precname);
+		//System.err.println(id + " " + precname);
 		doc.addField("recommended_name", precname);
 		doc.addField("recommended_name_s", precname);
 
+		// Filters and entry properties
 		EntryProperties props = entry.getProperties();
 		doc.addField("isoform_num", props.getIsoformCount());
 		int cnt;
@@ -108,6 +112,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 				}
 			}
 		
+		// Gene names, synonyms and orf names
 		List <EntityName> genenames = ovv.getGeneNames();
 		if(genenames != null ) {
 			String maingenename = ovv.getMainGeneName(); // TODO: check for multigene entries
@@ -117,7 +122,6 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 				List <EntityName> genesynonames = currname.getSynonyms();
 				if(genesynonames != null)
 				for (EntityName genesynoname : genesynonames) {
-			    //String syno = currname.getSynonyms();
 				doc.addField("alternative_gene_names", genesynoname.getName());
 			    //System.err.println("syn: " + genesynoname.getName()); 
 				}
@@ -146,12 +150,34 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		//System.err.println("adding chr_loc: " + chrloc);
 		doc.addField("chr_loc", chrloc);
 		
+		/* DbXrefDaoImpl dao = new DbXrefDaoImpl();
+		Set<DbXref> intactdbrefs = dao.findEntryInteractionInteractantsXrefs(id);
+		if(intactdbrefs != null)
+		for (DbXref intactdbref : intactdbrefs) {	
+			System.err.println(intactdbref.getProperties());
+			List<DbXrefProperty> xrefprops =  intactdbref.getProperties();
+			for (DbXrefProperty xrefprop : xrefprops) {
+				if(xrefprop.getName().equals("gene designation")) {
+					System.err.println("gene: " + xrefprop.getValue());
+				}
+			}
+		} */
+		
 		List<Annotation> annots =  entry.getAnnotations();
 		int cvac_cnt = 0;
 		for (Annotation currannot : annots) {
 			String category = currannot.getCategory();
-			System.err.println("type: " + category);
-			//if(category.contains("interact")) System.err.println(category + " : " + currannot.getDescription());
+			/* if(category.contains("Binary"))  {
+				//System.err.println(category + " : " + currannot.getUniqueName());
+				List<AnnotationProperty> annotprops =  currannot.getProperties();
+				for (AnnotationProperty annotprop : annotprops) {
+					if(annotprop.getName().equals("interactant")) {
+						long dbrefid = Integer.parseInt(annotprop.getValue());
+						//DbXref xref = 
+					System.err.println("dbrefid: " + annotprop.getValue());
+					}
+				}
+			} */
 			if(category.equals("function")) doc.addField("function_desc", currannot.getDescription());
 			else if(category.equals("subcellular location") || category.equals("go cellular component") ||
 					category.equals("domain") || category.equals("repeat") ||  category.equals("zinc finger region") ||
@@ -175,6 +201,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 			} // or maybe not 'else'
 		}
 		
+		// Identifiers
 		List <Identifier> identifiers = entry.getIdentifiers();
 		for (Identifier currident : identifiers) {
 			String idtype = currident.getType();
@@ -197,7 +224,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		for (Interaction currinteraction : interactions) {
 			List<Interactant> interactants = currinteraction.getInteractants();
 			for (Interactant currinteractant : interactants) {
-			     System.err.println(currinteractant.getNextprotAccession() + " " + currinteractant.getUrl());
+			     //System.err.println(currinteractant.getNextprotAccession() + " " + currinteractant.getUrl());
 			}
 			//doc.addField("interactions", interaction.getAccession());
 		}
@@ -208,6 +235,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 			String acc =  xref.getAccession();
 			String db = xref.getDatabaseName();
 			//System.err.println(db+":"+acc);
+			//if(db.equals("IntAct")) System.err.println("id " +  xref.getDbXrefId() + ": " +  xref.getPropertyValue("gene designation")); 
 			if(db.equals("neXtProt")) continue; // Internal stuff like NX_VG_10_51732257_248
 			if(db.equals("HPA") && !acc.contains("ENSG")) doc.addField("antibody", acc);
 			else if(db.equals("PeptideAtlas") || db.equals("SRMAtlas")) doc.addField("peptide", acc + ", " + db + ":" + acc);
@@ -269,6 +297,8 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		//System.err.println(id + " uniq: " + cv_acs.size() + " vs " + cvac_cnt); 
 		//if(cv_acs.size() < cvac_cnt-2)
 		//System.err.println(cv_acs.size());
+		
+		// Final  CV acs and ancestors
 		for (String cvac : cv_acs) {
 			//System.out.println(cvac);
 			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
