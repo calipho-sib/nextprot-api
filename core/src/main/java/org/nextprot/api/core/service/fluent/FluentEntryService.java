@@ -53,7 +53,10 @@ public class FluentEntryService {
 	private InteractionService interactionService;
 	@Autowired
 	private ExperimentalContextService ecService;
-
+	
+	@Autowired
+	private EntryPropertiesService entryPropertiesService;
+	
 	public FluentEntry newFluentEntry(String entryName) {
 		return new FluentEntry(entryName);
 	}
@@ -65,6 +68,8 @@ public class FluentEntryService {
 		public FluentEntry(String entryName) {
 			this.entryName = entryName;
 			this.entry = new Entry(entryName);
+			this.entry.setProperties(entryPropertiesService.findEntryProperties(entryName));
+
 		}
 
 		public FluentEntry withOverview() {
