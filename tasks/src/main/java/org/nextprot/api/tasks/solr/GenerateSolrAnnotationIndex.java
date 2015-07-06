@@ -47,11 +47,13 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		logger.info("indexing " + allentryids.size() +  " entries...");
 		for (String id : allentryids) {
 			//System.err.println("id: " + id);
-			Entry currentry = entryService.findEntry("NX_Q86SQ0");
-			//Entry currentry = entryService.findEntry(id);
+			//Entry currentry = entryService.findEntry("NX_Q86SQ0");
+			//Entry currentry = entryService.findEntry("NX_Q86WN1");
+			Entry currentry = entryService.findEntry(id);
 			indexer.add(currentry);
 			ecnt++;
-			if(ecnt >= 1) break;
+			if((ecnt % 100) == 0) System.err.println(ecnt + "...");
+			//if(ecnt >= 500) break;
 		}
 		
 		indexer.addRemaing();
