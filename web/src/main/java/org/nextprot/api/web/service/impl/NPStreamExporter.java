@@ -9,6 +9,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.fluent.EntryBuilder;
 import org.nextprot.api.core.service.fluent.FluentEntryService;
 import org.nextprot.api.web.ApplicationContextProvider;
 import org.nextprot.api.web.NXVelocityContext;
@@ -60,12 +61,12 @@ public abstract class NPStreamExporter {
 
     protected void streamWithVelocityTemplate(Template template, String entryName, Writer writer, String viewName, String... otherViewNames) throws IOException {
 
-        FluentEntryService.FluentEntry fluentEntry = fluentEntryService.newFluentEntry(entryName);
+        EntryBuilder fluentEntry = fluentEntryService.newFluentEntry(entryName);
 
-        fluentEntry.buildWithView(viewName);
+        fluentEntry.with(viewName);
 
         for (String otherName : otherViewNames)
-            fluentEntry.buildWithView(otherName);
+            fluentEntry.with(otherName);
 
         Entry entry = fluentEntry.build();
 

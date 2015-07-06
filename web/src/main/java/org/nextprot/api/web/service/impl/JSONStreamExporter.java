@@ -28,7 +28,7 @@ public class JSONStreamExporter extends NPStreamExporter {
 
         JsonGenerator generator = factory.createGenerator(writer);
 
-        Entry entry = fluentEntryService.newFluentEntry(entryName).buildWithView(viewName);
+        Entry entry = fluentEntryService.newFluentEntry(entryName).with(viewName).build();
         generator.writeObject(entry);
     }
 }
