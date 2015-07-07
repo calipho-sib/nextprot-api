@@ -49,8 +49,8 @@ public class EntryBuilderServiceImpl implements EntryBuilderService{
 		String entryName = entryConfig.getEntryName();
 		Entry entry = new Entry(entryName);
 
-		
-//		synchronized (){
+		//Lock per entry in case the cache is not set yet
+		synchronized (masterIdentifierService.findIdByUniqueName(entryName)){
 
 			//Always set properties about the entry
 			entry.setProperties(entryPropertiesService.findEntryProperties(entryName));
@@ -96,10 +96,10 @@ public class EntryBuilderServiceImpl implements EntryBuilderService{
 			}
 			
 			if(entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart()){ //TODO should be added in annotation list
-						setEntryAdditionalInformation(entry); //adds isoforms, publications, xrefs and experimental contexts
+				setEntryAdditionalInformation(entry); //adds isoforms, publications, xrefs and experimental contexts
 			} 
 
-//		}
+		}
 		
 		//CPU Intensive
 		if(entryConfig.hasSubPart()){ //TODO should be added in annotation list
@@ -131,7 +131,10 @@ public class EntryBuilderServiceImpl implements EntryBuilderService{
 			entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entry.getUniqueName()));
 		}
 	}
-	
 
+	@Override
+	public Entry buildWithEverything(String entryName) {
+		return this.build(EntryConfig.newConfig(entryName).withEverything());
+	}
 
 }

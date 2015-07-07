@@ -157,9 +157,7 @@ public class EntryConfig {
 
 		if("entry".equals(blockOrSubpart.toLowerCase())){
 			this.withEverything();
-		}
-		
-		if(EntryBlocks.containsBlock(blockOrSubpart.toUpperCase())){
+		}else  if(EntryBlocks.containsBlock(blockOrSubpart.toUpperCase())){
 			this.withEntryBlock(EntryBlocks.valueOfViewName(blockOrSubpart.toUpperCase()));
 		}else {
 			try{

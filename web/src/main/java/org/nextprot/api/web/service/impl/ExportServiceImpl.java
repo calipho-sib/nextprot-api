@@ -24,57 +24,27 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.EntryService;
-import org.nextprot.api.core.service.GeneService;
-import org.nextprot.api.core.service.IdentifierService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.KeywordService;
-import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
-import org.nextprot.api.core.service.impl.EntryBuilderServiceImpl;
 import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.service.ExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 @Service
-@Lazy
 public class ExportServiceImpl implements ExportService {
 
-	@Autowired
-	private PublicationService publicationService;
-	@Autowired
-	private DbXrefService xrefService;
-	@Autowired
-	private KeywordService kwService;
-	@Autowired
-	private IdentifierService identifierService;
-	@Autowired
-	private GeneService geneService;
-	@Autowired
-	private IsoformService isoformService;
-	@Autowired
-	private MasterIdentifierService masterIdentifierService;
-	@Autowired
-	private AnnotationService annotationService;
-	@Autowired
-	private EntryService entryService;
-	@Autowired
-	private EntryBuilderServiceImpl fluentEntryService;
-	@Autowired
-	private VelocityConfig velocityConfig;
-	@Autowired
-	private TerminologyService terminologyService;
-	@Autowired
-    private ReleaseInfoService releaseInfoService;
 
+	@Autowired  private EntryBuilderService entryBuilderService;
+	@Autowired  private MasterIdentifierService masterIdentifierService;
+	@Autowired  private VelocityConfig velocityConfig;
+	@Autowired  private TerminologyService terminologyService;
+	@Autowired  private ReleaseInfoService releaseInfoService;
+	
 	private int numberOfWorkers = 8;
 
 	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
@@ -126,7 +96,7 @@ public class ExportServiceImpl implements ExportService {
 
 	@Override
 	public Future<File> exportEntry(String uniqueName, NPFileFormat format) {
-		return executor.submit(new ExportEntryTask(this.entryService, velocityConfig.getVelocityEngine(), uniqueName, format));
+		return executor.submit(new ExportEntryTask(this.entryBuilderService, velocityConfig.getVelocityEngine(), uniqueName, format));
 	}
 
 	static class ExportEntryTask implements Callable<File> {
@@ -135,11 +105,11 @@ public class ExportServiceImpl implements ExportService {
 		private String filename;
 		private String entryName;
 		private VelocityEngine ve;
-		private EntryService entryService;
+		private EntryBuilderService entryBuilderService;
 
-		public ExportEntryTask(EntryService entryService, VelocityEngine ve, String entryName, NPFileFormat format) {
+		public ExportEntryTask(EntryBuilderService entryBuilderService, VelocityEngine ve, String entryName, NPFileFormat format) {
 			this.ve = ve;
-			this.entryService = entryService;
+			this.entryBuilderService = entryBuilderService;
 			this.filename = REPOSITORY_PATH + "/" + format.name() + "/" + entryName + "." + format.getExtension();
 			new File(filename).getParentFile().mkdirs();
 			this.entryName = entryName;
@@ -173,7 +143,7 @@ public class ExportServiceImpl implements ExportService {
 					template = ve.getTemplate("entry." + format + ".vm");
 				}
 
-				context = new NXVelocityContext(entryService.findEntry(entryName));
+				context = new NXVelocityContext(entryBuilderService.buildWithEverything(entryName));
 
 				FileWriter fw = new FileWriter(filename, true);
 				PrintWriter out = new PrintWriter(new BufferedWriter(fw));

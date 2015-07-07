@@ -9,8 +9,8 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.TemporaryIsoformSpecificity;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.service.impl.EntryBuilderServiceImpl;
 import org.nextprot.api.core.service.impl.MasterIsoformMappingService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +29,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Api(name = "Entry", description = "Method to retrieve a complete or partial entry")
 public class EntryController {
 
-	@Autowired
-	private EntryBuilderServiceImpl fluentEntryService;
-	@Autowired
-	private MasterIsoformMappingService masterIsoformMappingService;
+	@Autowired	private EntryBuilderService entryBuilderService;
+	@Autowired	private MasterIsoformMappingService masterIsoformMappingService;
 	
 
     @ModelAttribute
@@ -49,7 +47,7 @@ public class EntryController {
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName, Model model) {
 		
-		Entry entry = this.fluentEntryService.build(EntryConfig.newConfig(entryName).withEverything());
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
 		model.addAttribute("entry", entry);
 
 		return "entry";
@@ -58,7 +56,7 @@ public class EntryController {
 	@RequestMapping("/entry/{entryname}/{blockOrSubpart}")
 	public String getSubPart(@PathVariable("entryname") String entryName, @PathVariable("blockOrSubpart") String blockOrSubpart, Model model) {
 		
-		Entry entry = this.fluentEntryService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart));
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart));
 		model.addAttribute("entry", entry);
 		return "entry";
 	}

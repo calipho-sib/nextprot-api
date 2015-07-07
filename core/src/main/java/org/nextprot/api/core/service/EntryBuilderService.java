@@ -5,6 +5,6 @@ import org.nextprot.api.core.service.fluent.EntryConfig;
 
 public interface EntryBuilderService {
 
-	Entry build(EntryConfig fluentEntry);
-
+	Entry build(EntryConfig entryConfig);
+	Entry buildWithEverything(String entryName);
 }

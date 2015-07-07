@@ -65,8 +65,9 @@ public abstract class NPStreamExporter {
 
     	entryConfig.with(viewName);
 
-        for (String otherName : otherViewNames)
+        for (String otherName : otherViewNames){
         	entryConfig.with(otherName);
+        }
 
         Entry entry = fluentEntryService.build(entryConfig);
 
