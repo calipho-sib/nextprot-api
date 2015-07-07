@@ -13,6 +13,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.annotation.ValidEntry;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -61,7 +62,6 @@ public class ServiceEntryValidation {
 					}
 					break;
 				}
-
 			}
 			i++;
 		}

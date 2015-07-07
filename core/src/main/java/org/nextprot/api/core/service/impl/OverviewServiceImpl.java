@@ -17,7 +17,6 @@ import org.nextprot.api.core.service.FamilyService;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
@@ -25,9 +24,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
-@Lazy
 @Service
-public class OverviewServiceImpl implements OverviewService {
+class OverviewServiceImpl implements OverviewService {
 
 	@Autowired private HistoryDao historyDao;
 	@Autowired private EntityNameDao entryNameDao;

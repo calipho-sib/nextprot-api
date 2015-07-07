@@ -1,4 +1,4 @@
-package org.nextprot.api.core.service.impl;
+package org.nextprot.api.core.service;
 
 import java.util.List;
 

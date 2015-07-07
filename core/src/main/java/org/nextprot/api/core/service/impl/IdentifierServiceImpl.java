@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Lazy
 @Service
-public class IdentifierServiceImpl implements IdentifierService {
+class IdentifierServiceImpl implements IdentifierService {
 
 	@Autowired private IdentifierDao identifierDao;
 	

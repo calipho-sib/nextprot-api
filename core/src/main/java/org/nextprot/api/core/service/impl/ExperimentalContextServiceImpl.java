@@ -1,5 +1,9 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.nextprot.api.core.dao.ExperimentalContextDao;
 import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.ExperimentalContext;
@@ -12,14 +16,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 
 @Lazy
 @Service
-public class ExperimentalContextServiceImpl implements ExperimentalContextService {
+class ExperimentalContextServiceImpl implements ExperimentalContextService {
 	
 	@Autowired private ExperimentalContextDao ecDao;
 	@Autowired private AnnotationService annotationService;

@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.nextprot.api.core.domain.TemporaryIsoformSpecificity;
-import org.nextprot.api.core.service.impl.MasterIsoformMappingService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;

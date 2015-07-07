@@ -10,15 +10,14 @@ import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.TemporaryIsoformSpecificity;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 //import org.biojavax.bio.seq.io.UniProtCommentParser.Isoform;
 
-@Lazy
 @Service
-public class MasterIsoformMappingServiceImpl implements MasterIsoformMappingService {
+class MasterIsoformMappingServiceImpl implements MasterIsoformMappingService {
 
 	@Autowired private MasterIsoformMappingDao masterIsoformMappingDao;
 	@Autowired private IsoformService isoformService ;

@@ -1,29 +1,37 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.dao.AuthorDao;
 import org.nextprot.api.core.dao.CvJournalDao;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PublicationDao;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.CvJournal;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.PublicationAuthor;
+import org.nextprot.api.core.domain.PublicationCvJournal;
+import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 
-@Lazy
 @Service
-public class PublicationServiceImpl implements PublicationService {
+class PublicationServiceImpl implements PublicationService {
 
 	@Autowired private MasterIdentifierDao masterIdentifierDao;
 	@Autowired private PublicationDao publicationDao;

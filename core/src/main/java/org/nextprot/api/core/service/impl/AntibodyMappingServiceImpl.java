@@ -9,12 +9,10 @@ import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-@Lazy
 @Service
-public class AntibodyMappingServiceImpl implements AntibodyMappingService {
+class AntibodyMappingServiceImpl implements AntibodyMappingService {
 
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private AntibodyMappingDao antibodyMappingDao;

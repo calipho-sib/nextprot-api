@@ -22,7 +22,6 @@ import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.InteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
@@ -31,9 +30,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
-@Lazy
 @Service
-public class AnnotationServiceImpl implements AnnotationService {
+class AnnotationServiceImpl implements AnnotationService {
 
 	@Autowired private AnnotationDAO annotationDAO;
 	@Autowired private PtmDao ptmDao;

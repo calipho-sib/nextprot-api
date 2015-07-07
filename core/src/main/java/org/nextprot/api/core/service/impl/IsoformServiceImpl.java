@@ -8,16 +8,14 @@ import org.nextprot.api.core.domain.IsoformEntityName;
 import org.nextprot.api.core.service.IsoformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
-@Lazy
 @Service
-public class IsoformServiceImpl implements IsoformService {
+class IsoformServiceImpl implements IsoformService {
 
 	@Autowired
 	private IsoformDAO isoformDAO;

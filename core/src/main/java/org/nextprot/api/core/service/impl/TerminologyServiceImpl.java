@@ -8,12 +8,10 @@ import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-@Lazy
 @Service
-public class TerminologyServiceImpl implements TerminologyService {
+class TerminologyServiceImpl implements TerminologyService {
 
 	@Autowired private TerminologyDao terminologyDao;
 	@Autowired private EnzymeDao enzymeDao;

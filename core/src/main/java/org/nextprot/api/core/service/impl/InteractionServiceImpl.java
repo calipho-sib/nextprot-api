@@ -12,12 +12,10 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.BinaryInteraction2Annotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-@Lazy
 @Service
-public class InteractionServiceImpl implements InteractionService {
+class InteractionServiceImpl implements InteractionService {
 
 	@Autowired private InteractionDAO interactionDAO;
 	@Autowired private IsoformService isoService;

@@ -1,5 +1,8 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
@@ -20,11 +23,12 @@ import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EntryBuilderServiceImpl implements EntryBuilderService{
+class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 
 	@Autowired private OverviewService overviewService;
 	@Autowired private PublicationService publicationService;
@@ -43,14 +47,19 @@ public class EntryBuilderServiceImpl implements EntryBuilderService{
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
 	@Autowired private EntryPropertiesService entryPropertiesService;	
 
+	private Map<String, Object> objectLocks = new ConcurrentHashMap<String, Object>();
+	
+		
 	@Override
 	public Entry build(EntryConfig entryConfig) {
 	
 		String entryName = entryConfig.getEntryName();
 		Entry entry = new Entry(entryName);
 
-		//Lock per entry in case the cache is not set yet
-		synchronized (masterIdentifierService.findIdByUniqueName(entryName)){
+		//Lock per entry in case the cache is not set yet (should be quite) fast thougth
+		synchronized (objectLocks.get(entryName)){
+			
+			System.err.println("I am here with" + entryName);
 
 			//Always set properties about the entry
 			entry.setProperties(entryPropertiesService.findEntryProperties(entryName));
@@ -101,6 +110,8 @@ public class EntryBuilderServiceImpl implements EntryBuilderService{
 
 		}
 		
+		System.err.println("I got out with" + entryName);
+		
 		//CPU Intensive
 		if(entryConfig.hasSubPart()){ //TODO should be added in annotation list
 			
@@ -135,6 +146,13 @@ public class EntryBuilderServiceImpl implements EntryBuilderService{
 	@Override
 	public Entry buildWithEverything(String entryName) {
 		return this.build(EntryConfig.newConfig(entryName).withEverything());
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		for(String uniqueName : masterIdentifierService.findUniqueNames()){
+			objectLocks.put(uniqueName, new Object());
+		}
 	}
 
 }
