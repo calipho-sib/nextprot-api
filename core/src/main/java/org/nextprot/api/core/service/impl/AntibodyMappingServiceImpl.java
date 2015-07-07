@@ -19,22 +19,17 @@ public class AntibodyMappingServiceImpl implements AntibodyMappingService {
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private AntibodyMappingDao antibodyMappingDao;
 	@Autowired private DbXrefService xrefService;
-	
+
 	@Override
 	@Cacheable("antibodies")
-	public List<AntibodyMapping> findAntibodyMappingByMasterId(Long id) {
-		List<AntibodyMapping> mappings = this.antibodyMappingDao.findAntibodiesById(id);
+	public List<AntibodyMapping> findAntibodyMappingByUniqueName(String entryName) {
+		Long masterId = this.masterIdentifierService.findIdByUniqueName(entryName);
+		List<AntibodyMapping> mappings = this.antibodyMappingDao.findAntibodiesById(masterId);
 		for(AntibodyMapping mapping : mappings) {
 			//System.out.println("Antibody mapping before setting xref" + mapping.toString());
 			mapping.setXrefs(this.xrefService.findDbXRefByResourceId(mapping.getXrefId()));
 		}
 		return mappings;
-	}
-
-	@Override
-	public List<AntibodyMapping> findAntibodyMappingByUniqueName(String entryName) {
-		Long masterId = this.masterIdentifierService.findIdByUniqueName(entryName);
-		return findAntibodyMappingByMasterId(masterId);
 	}
 	
 }

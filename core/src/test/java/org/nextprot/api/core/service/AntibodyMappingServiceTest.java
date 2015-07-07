@@ -20,14 +20,14 @@ public class AntibodyMappingServiceTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void testFindAntibodyMappingByMasterId() {
-		List<AntibodyMapping> mappings = this.antibodyMappingService.findAntibodyMappingByMasterId(596889L);
+		List<AntibodyMapping> mappings = this.antibodyMappingService.findAntibodyMappingByUniqueName("NX_P12345");
 		assertEquals(1, mappings.size());
 		assertEquals("NX_HPA004932", mappings.get(0).getAntibodyUniqueName());
 	}
 	
 	@Test
 	public void testFindAntibodyMappingByUniqueName() {
-		List<AntibodyMapping> mappings = this.antibodyMappingService.findAntibodyMappingByMasterId(596889L);
+		List<AntibodyMapping> mappings = this.antibodyMappingService.findAntibodyMappingByUniqueName("NX_P12345");
 		//System.out.println("mapping size:" + mappings.size());
 		assertEquals(1, mappings.size());
 		assertEquals("NX_HPA004932", mappings.get(0).getAntibodyUniqueName());

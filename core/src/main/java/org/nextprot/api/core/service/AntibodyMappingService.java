@@ -9,13 +9,6 @@ public interface AntibodyMappingService {
 
 	/**
 	 * 
-	 * @param id
-	 * @return
-	 */
-	List<AntibodyMapping> findAntibodyMappingByMasterId(Long id);
-	
-	/**
-	 * 
 	 * @param uniqueName
 	 * @return
 	 */

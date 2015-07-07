@@ -27,7 +27,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private PeptideMappingDao peptideMappingDao;
 	
-	@Override
+/*	@Override
 	@Cacheable("peptides")
 	public List<PeptideMapping> findNaturalPeptideMappingByMasterId(Long id) {
 		return privateFindPeptideMappingByMasterId(id, true);
@@ -38,13 +38,15 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	public List<PeptideMapping> findSyntheticPeptideMappingByMasterId(Long id) {
 		return privateFindPeptideMappingByMasterId(id, false);
 	}	
-	
+	*/
 	@Override
+	@Cacheable("peptides")
 	public List<PeptideMapping> findNaturalPeptideMappingByMasterUniqueName(String uniqueName) {
 		return privateFindPeptideMappingByMasterUniqueName(uniqueName, true);
 	}
 	
 	@Override
+	@Cacheable("srm-peptides")
 	public List<PeptideMapping> findSyntheticPeptideMappingByMasterUniqueName(String uniqueName) {
 		return privateFindPeptideMappingByMasterUniqueName(uniqueName, false);
 	}

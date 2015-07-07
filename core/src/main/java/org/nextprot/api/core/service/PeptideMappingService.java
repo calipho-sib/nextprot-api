@@ -7,9 +7,9 @@ import org.nextprot.api.core.service.annotation.ValidEntry;
 
 public interface PeptideMappingService {
 
-	List<PeptideMapping> findNaturalPeptideMappingByMasterId(Long id);
+/*	List<PeptideMapping> findNaturalPeptideMappingByMasterId(Long id);
 	List<PeptideMapping> findSyntheticPeptideMappingByMasterId(Long id);
-
+*/
 	List<PeptideMapping> findNaturalPeptideMappingByMasterUniqueName(@ValidEntry String uniqueName);
 	List<PeptideMapping> findSyntheticPeptideMappingByMasterUniqueName(@ValidEntry String uniqueName);
 
