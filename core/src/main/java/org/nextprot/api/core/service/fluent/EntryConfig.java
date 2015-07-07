@@ -2,17 +2,18 @@ package org.nextprot.api.core.service.fluent;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.export.format.EntryBlocks;
 
-public class EntryBuilder {
+public class EntryConfig {
 	
-	private FluentEntryService fluentEntryService;
 	private boolean overview, publications, genomicMappings, xrefs, keywords, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, antibodyMappings, peptideMappings, srmPeptideMappings, experimentalContext;
 
-	public EntryBuilder(String entryName, FluentEntryService fluentEntryService){
+	private EntryConfig(String entryName){
 		this.entryName = entryName;
-		this.fluentEntryService = fluentEntryService;
+	}
+	
+	public static EntryConfig newConfig(String entryName){
+		return new EntryConfig(entryName);
 	}
 
 	public boolean hasOverview() {
@@ -71,75 +72,69 @@ public class EntryBuilder {
 		return experimentalContext;
 	}
 
-	public EntryBuilder withOverview() {
+	public EntryConfig withOverview() {
 		this.overview = true; return this;
 	}
 
-	public EntryBuilder withPublications() {
+	public EntryConfig withPublications() {
 		this.publications = true; return this;
 	}
 
-	public EntryBuilder withGenomicMappings() {
+	public EntryConfig withGenomicMappings() {
 		this.genomicMappings = true; return this;
 	}
 
-	public EntryBuilder withXrefs() {
+	public EntryConfig withXrefs() {
 		this.xrefs = true; return this;
 	}
 
-	public EntryBuilder withKeywords() {
+	public EntryConfig withKeywords() {
 		this.keywords = true; return this;
 	}
 
-	public EntryBuilder withIdentifiers() {
+	public EntryConfig withIdentifiers() {
 		this.identifiers = true; return this;
 	}
 
-	public EntryBuilder withChromosomalLocations() {
+	public EntryConfig withChromosomalLocations() {
 		this.chromosomalLocations = true; return this;
 	}
 
-	public EntryBuilder withInteractions() {
+	public EntryConfig withInteractions() {
 		this.interactions = true; return this;
 	}
 
-	public EntryBuilder withTargetIsoforms() {
+	public EntryConfig withTargetIsoforms() {
 		this.targetIsoforms = true; return this;
 	}
 
-	public EntryBuilder withGeneralAnnotations() {
+	public EntryConfig withAnnotations() {
 		this.generalAnnotations = true; return this;
 	}
 
-	public EntryBuilder withAntibodyMappings() {
+	public EntryConfig withAntibodyMappings() {
 		this.antibodyMappings = true; return this;
 	}
 
-	public EntryBuilder withPeptideMappings() {
+	public EntryConfig withPeptideMappings() {
 		this.peptideMappings = true; return this;
 	}
 
-	public EntryBuilder withSrmPeptideMappings() {
+	public EntryConfig withSrmPeptideMappings() {
 		this.srmPeptideMappings = true; return this;
 	}
 
-	public EntryBuilder withExperimentalContexts() {
+	public EntryConfig withExperimentalContexts() {
 		this.experimentalContext = true; return this;
 	}
 
 
-	public EntryBuilder withEverything() {
-		this.withOverview().withGeneralAnnotations().withPublications().withXrefs().withKeywords()
+	public EntryConfig withEverything() {
+		this.withOverview().withAnnotations().withPublications().withXrefs().withKeywords()
 		.withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
 		.withTargetIsoforms().withAntibodyMappings().withPeptideMappings().withSrmPeptideMappings()
 		.withExperimentalContexts();
 		return this;
-	}
-
-
-	public Entry build() {
-		//TODO ahhhrrrrg this looks like a cycle dependency 
-		return this.fluentEntryService.build(this);
 	}
 
 	private AnnotationApiModel subpart;
@@ -153,14 +148,14 @@ public class EntryBuilder {
 	 * @param blockOrSubpart
 	 * @return
 	 */
-	public EntryBuilder with(String blockOrSubpart) {
+	public EntryConfig with(String blockOrSubpart) {
 
 		if("entry".equals(blockOrSubpart.toLowerCase())){
 			this.withEverything();
 		}
 		
-		if(EntryBlocks.containsBlock(blockOrSubpart)){
-			this.withEntryBlock(EntryBlocks.valueOfViewName(blockOrSubpart));
+		if(EntryBlocks.containsBlock(blockOrSubpart.toUpperCase())){
+			this.withEntryBlock(EntryBlocks.valueOfViewName(blockOrSubpart.toUpperCase()));
 		}else {
 			try{
 				this.subpart = AnnotationApiModel.getDecamelizedAnnotationTypeName(blockOrSubpart);
@@ -174,9 +169,9 @@ public class EntryBuilder {
 	
 	
 	//Overload with NPViews
-	private EntryBuilder withEntryBlock(EntryBlocks npView) {
+	private EntryConfig withEntryBlock(EntryBlocks block) {
 
-		switch (npView) {
+		switch (block) {
 			case FULL_ENTRY: this.withEverything(); break;
 			case ACCESSION: break;//TODO withProperties break;
 			case OVERVIEW: this.withOverview(); break;
@@ -186,12 +181,12 @@ public class EntryBuilder {
 			case CHROMOSOMAL_LOCATION: this.withChromosomalLocations(); break;
 			case GENOMIC_MAPPING: this.withGenomicMappings(); break;
 			case ISOFORM: this.withTargetIsoforms(); break;
-			case ANNOTATION: this.withGeneralAnnotations(); break;
+			case ANNOTATION: this.withAnnotations(); break;
 			case ANTIBODY:  this.withAntibodyMappings(); break;
 			case PEPTIDE: this.withPeptideMappings(); break;
 			case SRM_PEPTIDE:  this.withSrmPeptideMappings(); break;
 			case EXPERIMENTAL_CONTEXT: this.withExperimentalContexts(); break;
-			default: {throw new NextProtException(npView + " export xml template case not found");}
+			default: {throw new NextProtException(block + " block not found");}
 		}
 		return this;
 
@@ -205,5 +200,6 @@ public class EntryBuilder {
 	public String getEntryName() {
 		return this.entryName;
 	}
+
 
 }

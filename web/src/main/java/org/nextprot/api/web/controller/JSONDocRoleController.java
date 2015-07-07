@@ -26,6 +26,7 @@ import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.ReleaseInfoService;
+import org.nextprot.api.core.service.export.format.EntryBlocks;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.web.service.impl.ExportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,20 +53,26 @@ public class JSONDocRoleController extends JSONDocController {
 	
 	@Autowired
 	private ReleaseInfoService releaseInfoService;
+	
+	
+	private static ApiMethodDoc cloneMethodDocWithName(ApiMethodDoc met, String name, String additionalDescription){
+		ApiMethodDoc m = new ApiMethodDoc();
+		m.setQueryparameters(met.getQueryparameters());
+		Set<String> produces = new HashSet<String>();
+		produces.add(MediaType.APPLICATION_XML_VALUE);
+		produces.add(MediaType.APPLICATION_JSON_VALUE);
+		m.setProduces(produces);
+		m.setConsumes(met.getConsumes());
+		Set<ApiParamDoc> set = new HashSet<ApiParamDoc>();
+		String[] allowedvalues = {"NX_P01308"};
+		set.add(new ApiParamDoc("entry", "Exports only the " + name + " from an entry. " + additionalDescription,  new JSONDocType("string"),  "true", allowedvalues, null, null));
+		m.setPathparameters(set);
+		m.setPath("/entry/{entry}/" + StringUtils.camelToKebabCase(name));
+		m.setVerb(ApiVerb.GET);
+		
+		return m;
+	}
 
-//
-//	public void setVersion(String version) {
-//		this.version = version;
-//	}
-//
-//	public void setBasePath(String basePath) {
-//		this.basePath = basePath;
-//	}
-//
-//	public void setPackages(List<String> packages) {
-//		this.packages = packages;
-//	}
-//
 	@PostConstruct
 	public void init() {
 		
@@ -94,27 +101,17 @@ public class JSONDocRoleController extends JSONDocController {
 				}
 				
 				if (apiDoc.getName().equals("Entry")) {
+
+					//adding blocks
+					for (EntryBlocks block: EntryBlocks.values()) {
+						if(!block.equals(EntryBlocks.FULL_ENTRY))
+							apiDoc.getMethods().add(cloneMethodDocWithName(met, block.name().toLowerCase(), ""));
+					}
+
+					//adding subparts
 					for (AnnotationApiModel model: AnnotationApiModel.values()) {
-						ApiMethodDoc m = new ApiMethodDoc();
-						m.setQueryparameters(met.getQueryparameters());
-						Set<String> produces = new HashSet<String>();
-						produces.add(MediaType.APPLICATION_XML_VALUE);
-						produces.add(MediaType.APPLICATION_JSON_VALUE);
-						m.setProduces(produces);
-						m.setConsumes(met.getConsumes());
-						Set<ApiParamDoc> set = new HashSet<ApiParamDoc>();
-						String[] allowedvalues = {"NX_P01308"};
-						set.add(new ApiParamDoc("entry", 
-								"Exports only the " + model.getApiTypeName().toLowerCase() + " from an entry. It locates on the hierarchy: " + model.getHierarchy(), 
-								new JSONDocType("string"), 
-								"true", 
-								allowedvalues, 
-								null, 
-								null));
-						m.setPathparameters(set);
-						m.setPath("/entry/{entry}/" + StringUtils.camelToKebabCase(model.getApiTypeName()));
-						m.setVerb(ApiVerb.GET);
-						apiDoc.getMethods().add(m);
+						String additionalDescription = "It locates on the hierarchy: " + model.getHierarchy();
+						apiDoc.getMethods().add(cloneMethodDocWithName(met, model.getApiTypeName().toLowerCase(), additionalDescription));
 					}
 				}
 			}

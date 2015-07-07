@@ -36,8 +36,14 @@ public enum EntryBlocks{
 	
 	public static boolean containsBlock(String s){
 		String aux = s.toUpperCase().replaceAll("-", "_");
-		return Arrays.asList(EntryBlocks.values()).contains(aux);
+	    for (EntryBlocks c : EntryBlocks.values()) {
+	        if (c.name().equals(aux)) {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
+	
 	
 	public static EntryBlocks valueOfViewName(String s){
 		String aux = s.toUpperCase().replaceAll("-", "_");

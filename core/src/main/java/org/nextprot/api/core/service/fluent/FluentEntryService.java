@@ -38,56 +38,62 @@ public class FluentEntryService {
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService experimentalContextService;
+
+	public Entry build(EntryConfig fluentEntry) {
 	
-	public EntryBuilder newFluentEntry(String entryName) {
-		return new EntryBuilder(entryName, this);
-	}
-	
-	public Entry build(EntryBuilder fluentEntry) {
-		
 		String entryName = fluentEntry.getEntryName();
 		Entry entry = new Entry(entryName);
-		if(fluentEntry.hasOverview()){
-			entry.setOverview(this.overviewService.findOverviewByEntry(entryName));
-		}
-		if(fluentEntry.hasPublications()){
-			entry.setPublications(this.publicationService.findPublicationsByMasterUniqueName(entryName));
-		}
-		if(fluentEntry.hasXrefs()){
-			entry.setXrefs(this.xrefService.findDbXrefsByMaster(entryName));
-		}
-		if(fluentEntry.hasIdentifiers()){
-			entry.setIdentifiers(this.identifierService.findIdentifiersByMaster(entryName));
-		}
-		if(fluentEntry.hasChromosomalLocations()){
-			entry.setChromosomalLocations(this.geneService.findChromosomalLocationsByEntry(entryName));
-		}
-		if(fluentEntry.hasGenomicMappings()){
-			entry.setGenomicMappings(this.genomicMappingService.findGenomicMappingsByEntryName(entryName));
-		}
-		if(fluentEntry.hasTargetIsoforms()){
-			entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entryName));
-		}
-		if(fluentEntry.hasGeneralAnnotations()){
-			entry.setAnnotations(this.annotationService.findAnnotations(entryName));
-		}
-		if(fluentEntry.hasAntibodyMappings()){
-			entry.setAntibodyMappings(this.antibodyMappingService.findAntibodyMappingByUniqueName(entryName));
-		}
-		if(fluentEntry.hasPeptideMappings()){
-			entry.setPeptideMappings(this.peptideMappingService.findNaturalPeptideMappingByMasterUniqueName(entryName));
-		}
-		if(fluentEntry.hasSrmPeptideMappings()){
-			entry.setSrmPeptideMappings(this.peptideMappingService.findSyntheticPeptideMappingByMasterUniqueName(entryName));
-		}
-		if(fluentEntry.hasExperimentalContext()){
-			entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entryName));
-		}
+
+//		synchronized (){
+
+			if(fluentEntry.hasOverview()){
+				entry.setOverview(this.overviewService.findOverviewByEntry(entryName));
+			}
+			if(fluentEntry.hasPublications()){
+				entry.setPublications(this.publicationService.findPublicationsByMasterUniqueName(entryName));
+			}
+			if(fluentEntry.hasXrefs()){
+				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entryName));
+			}
+			if(fluentEntry.hasIdentifiers()){
+				entry.setIdentifiers(this.identifierService.findIdentifiersByMaster(entryName));
+			}
+			if(fluentEntry.hasChromosomalLocations()){
+				entry.setChromosomalLocations(this.geneService.findChromosomalLocationsByEntry(entryName));
+			}
+			if(fluentEntry.hasGenomicMappings()){
+				entry.setGenomicMappings(this.genomicMappingService.findGenomicMappingsByEntryName(entryName));
+			}
+			if(fluentEntry.hasTargetIsoforms()){
+				entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entryName));
+			}
+			if(fluentEntry.hasGeneralAnnotations()){
+				entry.setAnnotations(this.annotationService.findAnnotations(entryName));
+			}
+			if(fluentEntry.hasAntibodyMappings()){
+				entry.setAntibodyMappings(this.antibodyMappingService.findAntibodyMappingByUniqueName(entryName));
+			}
+			if(fluentEntry.hasPeptideMappings()){
+				entry.setPeptideMappings(this.peptideMappingService.findNaturalPeptideMappingByMasterUniqueName(entryName));
+			}
+			if(fluentEntry.hasSrmPeptideMappings()){
+				entry.setSrmPeptideMappings(this.peptideMappingService.findSyntheticPeptideMappingByMasterUniqueName(entryName));
+			}
+			if(fluentEntry.hasExperimentalContext()){
+				entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entryName));
+			}
+			
+			
+			if(fluentEntry.hasGeneralAnnotations() || fluentEntry.hasSubPart()
+					   || fluentEntry.hasAntibodyMappings() || fluentEntry.hasPeptideMappings() || fluentEntry.hasSrmPeptideMappings()){ //TODO should be added in annotation list
+						setEntryAdditionalInformation(entry); //adds isoforms, publications, xrefs and experimental contexts
+		} 
+
+//		}
 		
+		//CPU Intensive
 		if(fluentEntry.hasGeneralAnnotations() || fluentEntry.hasSubPart()
 		   || fluentEntry.hasAntibodyMappings() || fluentEntry.hasPeptideMappings() || fluentEntry.hasSrmPeptideMappings()){ //TODO should be added in annotation list
-			
-			setEntryAdditionalInformation(entry); //adds isoforms, publications, xrefs and experimental contexts
 			
 			if(fluentEntry.hasSubPart()){
 				return EntryUtils.filterEntryBySubPart(entry, fluentEntry.getSubpart());
