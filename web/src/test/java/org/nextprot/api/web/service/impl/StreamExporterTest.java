@@ -8,7 +8,7 @@ import java.io.Writer;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.core.service.impl.EntryBuilderServiceImpl;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.utils.XMLUnitUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import org.w3c.dom.NodeList;
 public class StreamExporterTest extends WebIntegrationBaseTest {
 
     @Autowired
-    private FluentEntryService fluentEntryService;
+    private EntryBuilderServiceImpl fluentEntryService;
 
     @Autowired
     private VelocityConfig velocityConfig;

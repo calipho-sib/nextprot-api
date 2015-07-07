@@ -1,4 +1,4 @@
-package org.nextprot.api.core.service.fluent;
+package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
@@ -6,6 +6,7 @@ import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.ExperimentalContextService;
 import org.nextprot.api.core.service.GeneService;
 import org.nextprot.api.core.service.GenomicMappingService;
@@ -16,13 +17,13 @@ import org.nextprot.api.core.service.KeywordService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-@Lazy
 @Service
-public class FluentEntryService {
+public class EntryBuilderServiceImpl implements EntryBuilderService{
 
 	@Autowired private OverviewService overviewService;
 	@Autowired private PublicationService publicationService;
@@ -38,65 +39,67 @@ public class FluentEntryService {
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService experimentalContextService;
+	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
 
-	public Entry build(EntryConfig fluentEntry) {
+	@Override
+	public Entry build(EntryConfig entryConfig) {
 	
-		String entryName = fluentEntry.getEntryName();
+		String entryName = entryConfig.getEntryName();
 		Entry entry = new Entry(entryName);
 
 //		synchronized (){
 
-			if(fluentEntry.hasOverview()){
+			if(entryConfig.hasOverview()){
 				entry.setOverview(this.overviewService.findOverviewByEntry(entryName));
 			}
-			if(fluentEntry.hasPublications()){
+			if(entryConfig.hasPublications()){
 				entry.setPublications(this.publicationService.findPublicationsByMasterUniqueName(entryName));
 			}
-			if(fluentEntry.hasXrefs()){
+			if(entryConfig.hasXrefs()){
 				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entryName));
 			}
-			if(fluentEntry.hasIdentifiers()){
+			if(entryConfig.hasIdentifiers()){
 				entry.setIdentifiers(this.identifierService.findIdentifiersByMaster(entryName));
 			}
-			if(fluentEntry.hasChromosomalLocations()){
+			if(entryConfig.hasChromosomalLocations()){
 				entry.setChromosomalLocations(this.geneService.findChromosomalLocationsByEntry(entryName));
 			}
-			if(fluentEntry.hasGenomicMappings()){
+			if(entryConfig.hasGenomicMappings()){
 				entry.setGenomicMappings(this.genomicMappingService.findGenomicMappingsByEntryName(entryName));
 			}
-			if(fluentEntry.hasTargetIsoforms()){
+			if(entryConfig.hasTargetIsoforms()){
 				entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entryName));
 			}
-			if(fluentEntry.hasGeneralAnnotations()){
+			if(entryConfig.hasGeneralAnnotations()){
 				entry.setAnnotations(this.annotationService.findAnnotations(entryName));
 			}
-			if(fluentEntry.hasAntibodyMappings()){
+			if(entryConfig.hasAntibodyMappings()){
 				entry.setAntibodyMappings(this.antibodyMappingService.findAntibodyMappingByUniqueName(entryName));
 			}
-			if(fluentEntry.hasPeptideMappings()){
+			if(entryConfig.hasPeptideMappings()){
 				entry.setPeptideMappings(this.peptideMappingService.findNaturalPeptideMappingByMasterUniqueName(entryName));
 			}
-			if(fluentEntry.hasSrmPeptideMappings()){
+			if(entryConfig.hasSrmPeptideMappings()){
 				entry.setSrmPeptideMappings(this.peptideMappingService.findSyntheticPeptideMappingByMasterUniqueName(entryName));
 			}
-			if(fluentEntry.hasExperimentalContext()){
+			if(entryConfig.hasExperimentalContext()){
 				entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entryName));
 			}
+			if(entryConfig.hasEnzymes()){
+				entry.setEnzymes(terminologyService.findEnzymeByMaster(entryName));
+			}
 			
-			
-			if(fluentEntry.hasGeneralAnnotations() || fluentEntry.hasSubPart()
-					   || fluentEntry.hasAntibodyMappings() || fluentEntry.hasPeptideMappings() || fluentEntry.hasSrmPeptideMappings()){ //TODO should be added in annotation list
+			if(entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart()){ //TODO should be added in annotation list
 						setEntryAdditionalInformation(entry); //adds isoforms, publications, xrefs and experimental contexts
-		} 
+			} 
 
 //		}
 		
 		//CPU Intensive
-		if(fluentEntry.hasGeneralAnnotations() || fluentEntry.hasSubPart()
-		   || fluentEntry.hasAntibodyMappings() || fluentEntry.hasPeptideMappings() || fluentEntry.hasSrmPeptideMappings()){ //TODO should be added in annotation list
+		if(entryConfig.hasSubPart()){ //TODO should be added in annotation list
 			
-			if(fluentEntry.hasSubPart()){
-				return EntryUtils.filterEntryBySubPart(entry, fluentEntry.getSubpart());
+			if(entryConfig.hasSubPart()){
+				return EntryUtils.filterEntryBySubPart(entry, entryConfig.getSubpart());
 			}else return entry;
 			
 		} else {

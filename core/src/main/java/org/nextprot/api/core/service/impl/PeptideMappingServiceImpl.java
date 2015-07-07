@@ -26,32 +26,28 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private PeptideMappingDao peptideMappingDao;
-	
-/*	@Override
-	@Cacheable("peptides")
-	public List<PeptideMapping> findNaturalPeptideMappingByMasterId(Long id) {
-		return privateFindPeptideMappingByMasterId(id, true);
-	}
+
 	
 	@Override
-	@Cacheable("srm-peptides")
-	public List<PeptideMapping> findSyntheticPeptideMappingByMasterId(Long id) {
-		return privateFindPeptideMappingByMasterId(id, false);
-	}	
-	*/
-	@Override
-	@Cacheable("peptides")
+	@Cacheable("natural-peptides")
 	public List<PeptideMapping> findNaturalPeptideMappingByMasterUniqueName(String uniqueName) {
-		return privateFindPeptideMappingByMasterUniqueName(uniqueName, true);
+		
+		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
+		return findPeptideMappingByMasterId(masterId, true);
+
 	}
 	
 	@Override
 	@Cacheable("srm-peptides")
 	public List<PeptideMapping> findSyntheticPeptideMappingByMasterUniqueName(String uniqueName) {
-		return privateFindPeptideMappingByMasterUniqueName(uniqueName, false);
+
+		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
+		return findPeptideMappingByMasterId(masterId, false);
+
 	}
 		
 	@Override
+	@Cacheable("all-peptides")
 	public List<String> findAllPeptideNamesByMasterId(String uniqueName) {
 		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
 		List<PeptideMapping> allMapping = this.peptideMappingDao.findAllPeptidesByMasterId(masterId);
@@ -61,7 +57,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	}
 
 	
-	private List<PeptideMapping> privateFindPeptideMappingByMasterId(Long id, boolean isNatural) {
+	private List<PeptideMapping> findPeptideMappingByMasterId(Long id, boolean isNatural) {
 		
 		List<PeptideMapping> allMapping = isNatural ? 
 			this.peptideMappingDao.findNaturalPeptidesByMasterId(id) :
@@ -105,9 +101,4 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	}
 
 	
-	private List<PeptideMapping> privateFindPeptideMappingByMasterUniqueName(String uniqueName, boolean isNatural) {
-		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		return privateFindPeptideMappingByMasterId(masterId, isNatural);
-	}
-
 }

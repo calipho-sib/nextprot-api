@@ -35,7 +35,7 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.core.service.impl.EntryBuilderServiceImpl;
 import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.service.ExportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +67,7 @@ public class ExportServiceImpl implements ExportService {
 	@Autowired
 	private EntryService entryService;
 	@Autowired
-	private FluentEntryService fluentEntryService;
+	private EntryBuilderServiceImpl fluentEntryService;
 	@Autowired
 	private VelocityConfig velocityConfig;
 	@Autowired

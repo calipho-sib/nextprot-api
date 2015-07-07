@@ -7,7 +7,7 @@ import java.util.Arrays;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.core.service.impl.EntryBuilderServiceImpl;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
@@ -21,7 +21,7 @@ import org.springframework.web.servlet.view.velocity.VelocityConfig;
 public class ExportServiceTest extends WebIntegrationBaseTest {
 
 	@Autowired
-	private FluentEntryService fluentEntryService;
+	private EntryBuilderServiceImpl fluentEntryService;
 
 	@Autowired
 	private VelocityConfig velocityConfig;

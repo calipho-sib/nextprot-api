@@ -10,7 +10,7 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.TemporaryIsoformSpecificity;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.core.service.impl.EntryBuilderServiceImpl;
 import org.nextprot.api.core.service.impl.MasterIsoformMappingService;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class EntryController {
 
 	@Autowired
-	private FluentEntryService fluentEntryService;
+	private EntryBuilderServiceImpl fluentEntryService;
 	@Autowired
 	private MasterIsoformMappingService masterIsoformMappingService;
 	

@@ -40,7 +40,14 @@ public interface TerminologyService {
 	 * Retrieves terms sorted by ontology
 	 * @return
 	 */
-	public List<Terminology> findAllTerminology();	
+	public List<Terminology> findAllTerminology();
+
+	/**
+	 * Gets enzyme terminology ???
+	 * @param entryName
+	 * @return
+	 */
+	public List<Terminology> findEnzymeByMaster(String entryName);	
 
 	
 }

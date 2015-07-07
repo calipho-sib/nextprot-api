@@ -7,6 +7,7 @@ import org.nextprot.api.core.service.export.format.EntryBlocks;
 public class EntryConfig {
 	
 	private boolean overview, publications, genomicMappings, xrefs, keywords, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, antibodyMappings, peptideMappings, srmPeptideMappings, experimentalContext;
+	private boolean enzymes;
 
 	private EntryConfig(String entryName){
 		this.entryName = entryName;
@@ -127,13 +128,17 @@ public class EntryConfig {
 	public EntryConfig withExperimentalContexts() {
 		this.experimentalContext = true; return this;
 	}
+	
+	public EntryConfig withEnzymes() {
+		this.enzymes = true; return this; //TODO is this necessary? can't we write a method on top of overview names???
+	}
 
 
 	public EntryConfig withEverything() {
 		this.withOverview().withAnnotations().withPublications().withXrefs().withKeywords()
 		.withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
 		.withTargetIsoforms().withAntibodyMappings().withPeptideMappings().withSrmPeptideMappings()
-		.withExperimentalContexts();
+		.withExperimentalContexts().withEnzymes();
 		return this;
 	}
 
@@ -199,6 +204,10 @@ public class EntryConfig {
 
 	public String getEntryName() {
 		return this.entryName;
+	}
+
+	public boolean hasEnzymes() {
+		return this.enzymes;
 	}
 
 

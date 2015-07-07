@@ -10,7 +10,7 @@ import org.apache.velocity.VelocityContext;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.core.service.impl.EntryBuilderServiceImpl;
 import org.nextprot.api.web.ApplicationContextProvider;
 import org.nextprot.api.web.NXVelocityContext;
 import org.springframework.context.ApplicationContext;
@@ -20,13 +20,13 @@ public abstract class NPStreamExporter {
 
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
-    protected FluentEntryService fluentEntryService;
+    protected EntryBuilderServiceImpl fluentEntryService;
     protected VelocityConfig velocityConfig;
     protected TerminologyService terminologyService;
     
     public NPStreamExporter() {
 
-        this.fluentEntryService = applicationContext.getBean(FluentEntryService.class);
+        this.fluentEntryService = applicationContext.getBean(EntryBuilderServiceImpl.class);
         this.velocityConfig = applicationContext.getBean(VelocityConfig.class);
     }
 
