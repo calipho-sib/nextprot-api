@@ -1,8 +1,9 @@
 package org.nextprot.api.core.dao;
 
-import org.nextprot.api.core.domain.Terminology;
-
 import java.util.List;
+import java.util.Set;
+
+import org.nextprot.api.core.domain.Terminology;
 
 public interface TerminologyDao {
 
@@ -15,5 +16,7 @@ public interface TerminologyDao {
 	List<Terminology> findTerminologyByOntology(String ontology);
 
 	List<Terminology> findAllTerminology();
+
+	List<Terminology> findTerminologyByAccessions(Set<String> accessions);
 
 }

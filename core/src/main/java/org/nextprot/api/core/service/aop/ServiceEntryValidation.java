@@ -14,6 +14,7 @@ import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -23,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @version $Revision$, $Date$, $Author$
  */
 @Aspect
-public class ServiceEntryValidation {
+public class ServiceEntryValidation implements InitializingBean{
 
 	private static final Log LOGGER = LogFactory.getLog(ServiceEntryValidation.class);
 
@@ -31,23 +32,20 @@ public class ServiceEntryValidation {
 	private MasterIdentifierService masterIdentifierService;
 	private Set<String> uniqueNames;
 
-	private synchronized  Set<String> getUniqueNames(){
-		if(uniqueNames == null){
-			LOGGER.info("Loading neXtProt sequence unique names...");
-			uniqueNames = new HashSet<>(masterIdentifierService.findUniqueNames());
-		}
-		return uniqueNames;
-	}
-	
-	public ServiceEntryValidation() {
-
-	}
-
 	@Around("execution(* org.nextprot.api.*.service.*.*(..))")
 	//@Around("execution(* org.nextprot.api.*.service.*.*(.., @aspects.ValidEntry (*), ..))")
 	public Object checkValidEntry(ProceedingJoinPoint pjp) throws Throwable {
 
 		Object[] arguments = pjp.getArgs();
+		for (Object arg : arguments) {
+			if (EntryConfig.class.isAssignableFrom(arg.getClass())) {
+				if (!uniqueNames.contains(((EntryConfig) arg).getEntryName())) {
+					LOGGER.error("neXtProt entry " + ((EntryConfig) arg).getEntryName() + " was not found, throwing EntryNotFoundException");
+					throw new EntryNotFoundException(((EntryConfig) arg).getEntryName());
+				}
+			}
+
+		}
 
 		MethodSignature ms = (MethodSignature) pjp.getSignature();
 		Annotation[][] annotations = ms.getMethod().getParameterAnnotations();
@@ -56,7 +54,7 @@ public class ServiceEntryValidation {
 		for (Annotation[] paramAnnotations : annotations) {
 			for (Annotation annotation : paramAnnotations) {
 				if (ValidEntry.class.isAssignableFrom(annotation.getClass())) {
-					if (!getUniqueNames().contains(arguments[i])) {
+					if (!uniqueNames.contains(arguments[i])) {
 						LOGGER.error("neXtProt entry " + arguments[i] + " was not found, throwing EntryNotFoundException");
 						throw new EntryNotFoundException((String) arguments[i]);
 					}
@@ -67,6 +65,12 @@ public class ServiceEntryValidation {
 		}
 		return pjp.proceed();
 
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		//Since there is not modification, this one do not need to be synchronized
+		uniqueNames = new HashSet<>(masterIdentifierService.findUniqueNames());
 	}
 
 }

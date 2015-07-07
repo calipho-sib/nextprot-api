@@ -19,9 +19,6 @@ public class Terminology implements Serializable {
 	private String name;
 	private String description;
 	private String ontology;
-
-
-
 	//private List<String> sameAs = new ArrayList<>();
 
 	private List<String> parentAccession;
