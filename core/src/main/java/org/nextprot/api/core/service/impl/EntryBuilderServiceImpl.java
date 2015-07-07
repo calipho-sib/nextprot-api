@@ -7,6 +7,7 @@ import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryPropertiesService;
 import org.nextprot.api.core.service.ExperimentalContextService;
 import org.nextprot.api.core.service.GeneService;
 import org.nextprot.api.core.service.GenomicMappingService;
@@ -40,6 +41,7 @@ public class EntryBuilderServiceImpl implements EntryBuilderService{
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService experimentalContextService;
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
+	@Autowired private EntryPropertiesService entryPropertiesService;	
 
 	@Override
 	public Entry build(EntryConfig entryConfig) {
@@ -47,8 +49,12 @@ public class EntryBuilderServiceImpl implements EntryBuilderService{
 		String entryName = entryConfig.getEntryName();
 		Entry entry = new Entry(entryName);
 
+		
 //		synchronized (){
 
+			//Always set properties about the entry
+			entry.setProperties(entryPropertiesService.findEntryProperties(entryName));
+		
 			if(entryConfig.hasOverview()){
 				entry.setOverview(this.overviewService.findOverviewByEntry(entryName));
 			}

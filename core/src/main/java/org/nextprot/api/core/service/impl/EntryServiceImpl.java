@@ -13,15 +13,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EntryServiceImpl implements EntryService {
+
 	
 	@Autowired EntryBuilderService entryBuilderService;
 	@Autowired MasterIdentifierService masterIdentifierService;
 
 	@Override
 	public Entry findEntry(String entryName) {
-		Entry entry = new Entry(entryName);
-		entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
-		return entry;
+		return entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
 	}
 	
 	@Override

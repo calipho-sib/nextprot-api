@@ -22,12 +22,12 @@ public interface EntryService {
 	List<Entry> findEntries(List<String> entryNames);
 	
 	/**
-	 * Retrieve the list of entries in a specific chromossome
-	 * @param chromossome
+	 * Retrieve the list of entries in a specific chromosome
+	 * @param chromosome
 	 * @return
 	 */
-	List<Entry> findEntriesByChromossome(String chromossome);
+	List<Entry> findEntriesByChromossome(String chromosome);
 	
-	List<String> findEntryNamesByChromossome(String chromossome);
+	List<String> findEntryNamesByChromossome(String chromosome);
 	
 }

@@ -8,6 +8,8 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 
 public class Entry implements KeyValueRepresentation{
 
+	private EntryProperties properties;
+	
 	private String uniqueName;
 
 	private Overview overview;
@@ -208,6 +210,14 @@ public class Entry implements KeyValueRepresentation{
 
 	public void setSrmPeptideMappings(List<PeptideMapping> srmPeptideMappings) {
 		this.srmPeptideMappings = srmPeptideMappings;
+	}
+
+	public EntryProperties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(EntryProperties properties) {
+		this.properties = properties;
 	}
 
 	/**
