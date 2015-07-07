@@ -8,9 +8,9 @@ import java.util.Map;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.service.impl.EntryBuilderServiceImpl;
 import org.nextprot.api.web.ApplicationContextProvider;
 import org.nextprot.api.web.NXVelocityContext;
 import org.springframework.context.ApplicationContext;
@@ -20,13 +20,13 @@ public abstract class NPStreamExporter {
 
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
-    protected EntryBuilderServiceImpl fluentEntryService;
+    protected EntryBuilderService entryBuilderService;
     protected VelocityConfig velocityConfig;
     protected TerminologyService terminologyService;
     
     public NPStreamExporter() {
 
-        this.fluentEntryService = applicationContext.getBean(EntryBuilderServiceImpl.class);
+        this.entryBuilderService = applicationContext.getBean(EntryBuilderService.class);
         this.velocityConfig = applicationContext.getBean(VelocityConfig.class);
     }
 
@@ -69,7 +69,7 @@ public abstract class NPStreamExporter {
         	entryConfig.with(otherName);
         }
 
-        Entry entry = fluentEntryService.build(entryConfig);
+        Entry entry = entryBuilderService.build(entryConfig);
 
         handleEntry(entry);
         handleMerge(template, new NXVelocityContext(entry), writer);

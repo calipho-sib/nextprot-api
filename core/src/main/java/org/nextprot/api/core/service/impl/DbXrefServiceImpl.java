@@ -34,7 +34,7 @@ import com.google.common.collect.Multimaps;
 
 @Lazy
 @Service
-class DbXrefServiceImpl implements DbXrefService {
+public class DbXrefServiceImpl implements DbXrefService {
 	@Autowired private DbXrefDao dbXRefDao;
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private IsoformService isoService;

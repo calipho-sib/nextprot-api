@@ -1,14 +1,14 @@
 package org.nextprot.api.web.service.impl;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.Writer;
 
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 
-import java.io.IOException;
-import java.io.Writer;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Export entries in JSON format
@@ -30,7 +30,7 @@ public class JSONStreamExporter extends NPStreamExporter {
 
         JsonGenerator generator = factory.createGenerator(writer);
 
-        Entry entry = fluentEntryService.build(EntryConfig.newConfig(entryName).with(viewName));
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).with(viewName));
         generator.writeObject(entry);
     }
 }

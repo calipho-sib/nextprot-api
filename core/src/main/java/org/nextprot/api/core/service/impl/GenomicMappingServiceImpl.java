@@ -32,7 +32,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 @Service
-class GenomicMappingServiceImpl implements GenomicMappingService {
+public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 	// private static final Log LOGGER = LogFactory.getLog(GenomicMappingServiceImpl.class);
 	private final static Log LOGGER = LogFactory.getLog(GenomicMappingServiceImpl.class);

@@ -31,7 +31,7 @@ import com.google.common.collect.Multimaps;
 
 
 @Service
-class PublicationServiceImpl implements PublicationService {
+public class PublicationServiceImpl implements PublicationService {
 
 	@Autowired private MasterIdentifierDao masterIdentifierDao;
 	@Autowired private PublicationDao publicationDao;

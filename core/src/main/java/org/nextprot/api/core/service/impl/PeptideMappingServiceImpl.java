@@ -20,7 +20,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
-class PeptideMappingServiceImpl implements PeptideMappingService {
+public class PeptideMappingServiceImpl implements PeptideMappingService {
 
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private PeptideMappingDao peptideMappingDao;

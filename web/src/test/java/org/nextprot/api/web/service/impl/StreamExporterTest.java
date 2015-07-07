@@ -8,8 +8,6 @@ import java.io.Writer;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.impl.EntryBuilderServiceImpl;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.utils.XMLUnitUtils;
 import org.springframework.beans.factory.annotation.Autowired;

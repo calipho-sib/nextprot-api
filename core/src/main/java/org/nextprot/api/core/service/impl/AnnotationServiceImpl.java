@@ -31,7 +31,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 @Service
-class AnnotationServiceImpl implements AnnotationService {
+public class AnnotationServiceImpl implements AnnotationService {
 
 	@Autowired private AnnotationDAO annotationDAO;
 	@Autowired private PtmDao ptmDao;
