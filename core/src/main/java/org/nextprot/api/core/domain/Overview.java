@@ -410,7 +410,7 @@ public class Overview implements Serializable{
 		}
 		
 		private static enum QualifierValue {
-			FULL, SHORT, EC, ALLERGEN, INN, CD_ANTIGEN
+			FULL, SHORT, EC, ALLERGEN, CD_ANTIGEN, INN 
 		}
 
 	

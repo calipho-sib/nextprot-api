@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.nextprot.api.core.dao.EnzymeDao;
 import org.nextprot.api.core.dao.TerminologyDao;
@@ -48,6 +49,11 @@ class TerminologyServiceImpl implements TerminologyService {
 	@Cacheable("enzyme-terminology") //TODO there should be an utiliy method on entry to get the enzymes...
 	public List<Terminology> findEnzymeByMaster(String entryName) {
 		return enzymeDao.findEnzymeByMaster(entryName);
+	}
+
+	@Override
+	public List<Terminology> findTerminologyByAccessions(Set<String> terminologyAccessions) {
+		return terminologyDao.findTerminologyByAccessions(terminologyAccessions);
 	}
 
 }
