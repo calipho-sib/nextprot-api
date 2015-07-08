@@ -1,5 +1,10 @@
 package org.nextprot.api.core.dao.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Set;
+
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.TerminologyDao;
@@ -11,10 +16,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 
 @Repository
 public class TerminologyDaoImpl implements TerminologyDao {
@@ -35,6 +36,16 @@ public class TerminologyDaoImpl implements TerminologyDao {
 			return null;			
 		return terms.get(0);
 	}
+	
+	
+	@Override
+	public List<Terminology> findTerminologyByAccessions(Set<String> accessions) {
+		
+		SqlParameterSource params = new MapSqlParameterSource("accessions", accessions);
+		List<Terminology> terms = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-acs"), params, new DbTermRowMapper());
+		return terms;
+	}
+
 
 	public List<Terminology> findTerminologyByOntology(String ontology) {
 		SqlParameterSource params = new MapSqlParameterSource("ontology", ontology);

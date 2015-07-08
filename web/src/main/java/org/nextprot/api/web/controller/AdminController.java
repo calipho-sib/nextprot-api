@@ -1,5 +1,6 @@
 package org.nextprot.api.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,11 +11,13 @@ import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.core.aop.requests.RequestInfo;
 import org.nextprot.api.core.aop.requests.RequestManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,65 +41,66 @@ public class AdminController {
 		
 
 	@ResponseBody
-	@RequestMapping(value = "/admin/cache/clear", method = { RequestMethod.GET })
+	@RequestMapping(value = "/admin/cache/clear", method = { RequestMethod.GET }, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ApiMethod(path = "/admin/cache/clear", verb = ApiVerb.GET, description = "Clears the cache")
-	public String clearCache(HttpServletRequest request) {
+	public List<String> clearCache(HttpServletRequest request) {
 
 		LOGGER.warn("Request to clear cache from " + request.getRemoteAddr());
-		StringBuilder sb = null;
+		List<String> result = new ArrayList<String>();
+
 		try {
-
-			sb = new StringBuilder();
-
 			if (cacheManager != null) {
 				for (String cacheName : cacheManager.getCacheNames()) {
 					cacheManager.getCache(cacheName).clear();
-					sb.append("<li>" + cacheName + " </>");
+					result.add("cache " + cacheName + " cleared");
 				}
 			} else {
-				return "no cache manager found";
+				result.add("no cache manager found");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());
-			return e.getLocalizedMessage();
+			result.add( e.getLocalizedMessage());
 
 		}
 
-		LOGGER.debug("<html>Cache cleared for: " + sb.toString() + "</html>");
-		return "Cache cleared for " + sb.toString();
+		return result;
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "cache/{cacheName}/clear")
-	public String clearCache(HttpServletRequest request, @PathVariable("cacheName") String cacheName) {
+	@RequestMapping(value = "/admin/cache/{cacheName}/clear", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(path = "/admin/cache/{cacheName}/clear", verb = ApiVerb.GET, description = "Clears the cache")
+	public List<String> clearCache(HttpServletRequest request, 
+			@ApiPathParam(name = "cacheName", description = "The name of the cache",  allowedvalues = { "master-isoform-mapping"})
+			@PathVariable("cacheName") String cacheName) {
 
 		LOGGER.debug("Request to clear cache from " + request.getRemoteAddr());
-		StringBuilder sb = null;
+		List<String> result = new ArrayList<String>();
 		try {
-
-			sb = new StringBuilder();
 
 			if (cacheManager != null) {
 
-				if (cacheManager.getCache(cacheName) == null)
-					return "No cache named " + cacheName + " was found.";
+				if (cacheManager.getCache(cacheName) == null){
+					result.add("cache " + cacheName + " not found");
+					return result;
+				}
+
 
 				cacheManager.getCache(cacheName).clear();
-				sb.append("<li>" + cacheName + " </>");
+				result.add(cacheName + " cleared");
 
 			} else {
-				return "no cache manager found";
+				result.add("no cache manager found");
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());
-			return e.getLocalizedMessage();
+			result.add(e.getLocalizedMessage());
+			return result;
 		}
 
-		LOGGER.debug("<html>Cache cleared for: " + sb.toString() + "</html>");
-		return "Cache cleared for " + sb.toString();
+		return result;
 	}
 	
 	
@@ -107,18 +111,22 @@ public class AdminController {
 		return userIpAddress;
 	}
 
-	@RequestMapping(value = "requests/running")
-	@PreAuthorize("hasRole('ROLE_ADMIN') ") //and #request.getRemoteAddr() == '127.0.0.1'
+	@ResponseBody
+	@RequestMapping(value = "/admin/requests/running", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(path = "/admin/requests/running", verb = ApiVerb.GET, description = "Retrives the running requests")
 	public List<RequestInfo> requests(HttpServletRequest request) {
 		return clientRequestManager.getRequests();
 	}
 
-	@RequestMapping(value = "requests/last/added")
+	@ResponseBody
+	@RequestMapping(value = "/admin/requests/last-added", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(path = "/admin/requests/last-added", verb = ApiVerb.GET, description = "Retrieves the lastest running requests")
 	public  Map<String, RequestInfo> lastAdded(HttpServletRequest request) {
 		return clientRequestManager.getLastAddedRequestByController();
 	}
 	
-	@RequestMapping(value = "requests/last/finised", method = RequestMethod.GET)
+	@RequestMapping(value = "/admin/requests/last-finished")
+	@ApiMethod(path = "/admin/requests/last-finished", verb = ApiVerb.GET, description = "Retrieves the latest finished requests", produces = {MediaType.APPLICATION_JSON_VALUE})
 	public Map<String, RequestInfo>  lastFinished(HttpServletRequest request) {
 		return clientRequestManager.getLastFinishedRequest();
 	}

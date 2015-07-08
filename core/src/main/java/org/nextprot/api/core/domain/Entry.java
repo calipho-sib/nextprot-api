@@ -1,12 +1,15 @@
 package org.nextprot.api.core.domain;
 
-import org.nextprot.api.core.domain.annotation.Annotation;
-
 import java.util.ArrayList;
 import java.util.List;
 
-public class Entry {
+import org.nextprot.api.commons.utils.KeyValueRepresentation;
+import org.nextprot.api.core.domain.annotation.Annotation;
 
+public class Entry implements KeyValueRepresentation{
+
+	private EntryProperties properties;
+	
 	private String uniqueName;
 
 	private Overview overview;
@@ -209,6 +212,14 @@ public class Entry {
 		this.srmPeptideMappings = srmPeptideMappings;
 	}
 
+	public EntryProperties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(EntryProperties properties) {
+		this.properties = properties;
+	}
+
 	/**
 	 * Filter a elements specific of the given isoform
 	 * @param tList the list to filter
@@ -227,5 +238,15 @@ public class Entry {
 		}
 
 		return list;
+	}
+
+	@Override
+	public String toKeyValueString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("entry=" + this.uniqueName + ";");
+		sb.append("annotations-count=" + ((this.annotations != null) ? this.annotations.size() : 0) + ";");
+		sb.append("publications-count=" + ((this.publications != null) ? this.publications.size() : 0) + ";");
+		sb.append("xrefs-count=" + ((this.xrefs != null) ? this.xrefs.size() : 0) + ";");
+		return sb.toString();
 	}
 }

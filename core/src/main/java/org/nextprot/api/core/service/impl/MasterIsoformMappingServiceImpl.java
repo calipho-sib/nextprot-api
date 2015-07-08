@@ -8,24 +8,25 @@ import java.util.Map;
 
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.TemporaryIsoformSpecificity;
+import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 //import org.biojavax.bio.seq.io.UniProtCommentParser.Isoform;
 
-@Lazy
+import com.google.common.collect.ImmutableList;
+
 @Service
-public class MasterIsoformMappingServiceImpl implements MasterIsoformMappingService {
+class MasterIsoformMappingServiceImpl implements MasterIsoformMappingService {
 
 	@Autowired private MasterIsoformMappingDao masterIsoformMappingDao;
 	@Autowired private IsoformService isoformService ;
 	
 	@Override
 	@Cacheable("master-isoform-mapping")
-	public List<TemporaryIsoformSpecificity> findMasterIsoformMappingByEntryName(String entryName) {
+	public List<IsoformSpecificity> findMasterIsoformMappingByEntryName(String entryName) {
 
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 		// build a map between isoform unique name and isoform main name
@@ -40,18 +41,20 @@ public class MasterIsoformMappingServiceImpl implements MasterIsoformMappingServ
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 		// group partial mappings obtained from DAO by isoform and set isoform name
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-		Map<String,TemporaryIsoformSpecificity> map = new HashMap<String,TemporaryIsoformSpecificity>();
-		List<TemporaryIsoformSpecificity> specs = masterIsoformMappingDao.findIsoformMappingByMaster(entryName);
-		for (TemporaryIsoformSpecificity tmpSpec: specs) {
+		Map<String,IsoformSpecificity> map = new HashMap<String,IsoformSpecificity>();
+		List<IsoformSpecificity> specs = masterIsoformMappingDao.findIsoformMappingByMaster(entryName);
+		for (IsoformSpecificity tmpSpec: specs) {
 			String ac = tmpSpec.getIsoformAc();
-			if ( ! map.containsKey(ac)) map.put(ac, new TemporaryIsoformSpecificity(ac));
-			TemporaryIsoformSpecificity spec = map.get(ac);
+			if ( ! map.containsKey(ac)) map.put(ac, new IsoformSpecificity(null, ac));
+			IsoformSpecificity spec = map.get(ac);
 			// replace unique name with main name
-			spec.setIsoformName(unique2mainName.get(ac));
+			spec.setIsoformMainName(unique2mainName.get(ac));
 			spec.addPosition(tmpSpec.getPositions().get(0));
 		}
-		List<TemporaryIsoformSpecificity> list = new ArrayList<TemporaryIsoformSpecificity>(map.values());
+		List<IsoformSpecificity> list = new ArrayList<IsoformSpecificity>(map.values());
 		Collections.sort(list);
-		return list;
+		
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<IsoformSpecificity>().addAll(list).build();
 	}
 }

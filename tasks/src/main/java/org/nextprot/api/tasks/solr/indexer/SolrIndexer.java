@@ -14,7 +14,7 @@ public abstract class SolrIndexer<T> {
 	private HttpSolrServer solrServer;
 	protected List<SolrInputDocument> docs;
 
-	private static final int BATCH_SIZE = 200;
+	private static final int BATCH_SIZE = 150;
 
 	public SolrIndexer(String url) {
 		this.solrServer = new HttpSolrServer(url);

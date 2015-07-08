@@ -17,49 +17,56 @@ import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-@Lazy
+import com.google.common.collect.ImmutableList;
+
 @Service
 public class PeptideMappingServiceImpl implements PeptideMappingService {
 
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private PeptideMappingDao peptideMappingDao;
+
 	
 	@Override
-	@Cacheable("peptides")
-	public List<PeptideMapping> findNaturalPeptideMappingByMasterId(Long id) {
-		return privateFindPeptideMappingByMasterId(id, true);
+	@Cacheable("natural-peptides")
+	public List<PeptideMapping> findNaturalPeptideMappingByMasterUniqueName(String uniqueName) {
+		
+		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
+		List<PeptideMapping> peps =  findPeptideMappingByMasterId(masterId, true);
+		
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<PeptideMapping>().addAll(peps).build();
+
+
+
 	}
 	
 	@Override
 	@Cacheable("srm-peptides")
-	public List<PeptideMapping> findSyntheticPeptideMappingByMasterId(Long id) {
-		return privateFindPeptideMappingByMasterId(id, false);
-	}	
-	
-	@Override
-	public List<PeptideMapping> findNaturalPeptideMappingByMasterUniqueName(String uniqueName) {
-		return privateFindPeptideMappingByMasterUniqueName(uniqueName, true);
-	}
-	
-	@Override
 	public List<PeptideMapping> findSyntheticPeptideMappingByMasterUniqueName(String uniqueName) {
-		return privateFindPeptideMappingByMasterUniqueName(uniqueName, false);
+
+		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
+		List<PeptideMapping> peps = findPeptideMappingByMasterId(masterId, false);
+
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<PeptideMapping>().addAll(peps).build();
+
 	}
 		
 	@Override
+	@Cacheable("all-peptides")
 	public List<String> findAllPeptideNamesByMasterId(String uniqueName) {
 		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
 		List<PeptideMapping> allMapping = this.peptideMappingDao.findAllPeptidesByMasterId(masterId);
 		Set<String> names = new HashSet<String>(); 
 		for (PeptideMapping map: allMapping) names.add(map.getPeptideUniqueName());
-		return new ArrayList<String>(names);
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<String>().addAll(new ArrayList<String>(names)).build();
 	}
 
 	
-	private List<PeptideMapping> privateFindPeptideMappingByMasterId(Long id, boolean isNatural) {
+	private List<PeptideMapping> findPeptideMappingByMasterId(Long id, boolean isNatural) {
 		
 		List<PeptideMapping> allMapping = isNatural ? 
 			this.peptideMappingDao.findNaturalPeptidesByMasterId(id) :
@@ -103,9 +110,4 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	}
 
 	
-	private List<PeptideMapping> privateFindPeptideMappingByMasterUniqueName(String uniqueName, boolean isNatural) {
-		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		return privateFindPeptideMappingByMasterId(masterId, isNatural);
-	}
-
 }

@@ -93,10 +93,11 @@ public class InstrumentationAspect {
 			// Proceed to method invocation
 			try {
 
+				LOGGER.info("aspect=before;" + sb);
 				Object result = pjp.proceed();
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addResultParameters(sb, result);
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 
 				clientRequestManager.stopMonitoringCurrentRequestInfo();
 				controllerRequestId.remove();
@@ -106,7 +107,7 @@ public class InstrumentationAspect {
 
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addExceptionParameters(sb, e);
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 
 				clientRequestManager.stopMonitoringCurrentRequestInfo(e);
 				controllerRequestId.remove();
@@ -150,10 +151,11 @@ public class InstrumentationAspect {
 			try {
 
 				Object result = pjp.proceed();
+				LOGGER.info("aspect=before;" + sb);
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addResultParameters(sb, result);
 				serviceRequestId.remove();
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 				return result;
 
 			} catch (Exception e) {
@@ -161,7 +163,7 @@ public class InstrumentationAspect {
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addExceptionParameters(sb, e);
 				serviceRequestId.remove();
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 				throw e;
 			}
 
@@ -205,17 +207,18 @@ public class InstrumentationAspect {
 			long start = System.currentTimeMillis();
 			try {
 
+				LOGGER.info("aspect=before;" + sb);
 				Object result = pjp.proceed();
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addResultParameters(sb, result);
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 				return result;
 
 			} catch (Exception e) {
 
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addExceptionParameters(sb, e);
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 				throw e;
 			}
 

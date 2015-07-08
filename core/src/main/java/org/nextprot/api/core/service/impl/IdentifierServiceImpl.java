@@ -10,16 +10,21 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableList;
+
 @Lazy
 @Service
-public class IdentifierServiceImpl implements IdentifierService {
+class IdentifierServiceImpl implements IdentifierService {
 
 	@Autowired private IdentifierDao identifierDao;
 	
 	@Override
 	@Cacheable("identifiers")
 	public List<Identifier> findIdentifiersByMaster(String uniqueName) {
-		return this.identifierDao.findIdentifiersByMaster(uniqueName);		
+		
+		List<Identifier> identifiers = this.identifierDao.findIdentifiersByMaster(uniqueName);
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Identifier>().addAll(identifiers).build();
 	}
 	
 }

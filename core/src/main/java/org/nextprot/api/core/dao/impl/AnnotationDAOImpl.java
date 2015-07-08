@@ -1,16 +1,13 @@
 package org.nextprot.api.core.dao.impl;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.constants.XrefAnnotationMapping;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.impl.spring.BatchNamedParameterJdbcTemplate;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
@@ -23,6 +20,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Component;
+
+import com.google.common.collect.ImmutableList;
 
 
 @Component
@@ -98,7 +97,6 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("unique_name", entryName);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotations-by-entry-name"), namedParameters, new AnnotationRowMapper());
-
 	}
 
 	// Annotation Isoforms /////////////////////////////////////////////////////////////////////////////

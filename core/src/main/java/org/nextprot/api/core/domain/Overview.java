@@ -410,7 +410,7 @@ public class Overview implements Serializable{
 		}
 		
 		private static enum QualifierValue {
-			FULL, SHORT, EC, ALLERGEN, INN, CD_ANTIGEN
+			FULL, SHORT, EC, ALLERGEN, CD_ANTIGEN, INN 
 		}
 
 	
@@ -467,8 +467,8 @@ public class Overview implements Serializable{
 	public String getMainGeneName() {
 
 		EntityName name = getMainEntityName(geneNames, EntityNameClass.GENE_NAMES);
-
-		return name.getName();
+        if(name != null) return name.getName();
+        else return null;
 	}
 
 	public boolean hasMainGeneName() {
@@ -522,7 +522,10 @@ public class Overview implements Serializable{
 				if (entityName.isMain()) return entityName;
 			}
 		}
+		
+		if(entityNameClass.equals(EntityNameClass.PROTEIN_NAMES)){
+			throw new NextProtException("could not find main  protein name");
+		}else return null;
 
-		throw new NextProtException("could not find main "+((entityNameClass == EntityNameClass.PROTEIN_NAMES) ? "protein":"gene")+" name");
 	}
 }

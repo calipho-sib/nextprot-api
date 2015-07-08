@@ -20,7 +20,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ReleaseInfoServiceImpl implements ReleaseInfoService {
+class ReleaseInfoServiceImpl implements ReleaseInfoService {
 
 	@Autowired(required = false) private ServletContext servletContext;
 	@Autowired private ReleaseInfoDao releaseInfoDao;

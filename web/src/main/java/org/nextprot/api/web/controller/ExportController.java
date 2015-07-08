@@ -8,7 +8,7 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.export.ExportUtils;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
-import org.nextprot.api.core.service.export.format.NPViews;
+import org.nextprot.api.core.service.export.format.EntryBlocks;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.QueryRequest;
@@ -236,6 +236,6 @@ public class ExportController {
     @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
     @ResponseBody
     public Map<String, Set<String>> getXMLTemplates() {
-        return NPViews.getFormatViews();
+        return EntryBlocks.getFormatViews();
     }
 }

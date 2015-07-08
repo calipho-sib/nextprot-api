@@ -12,12 +12,12 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.BinaryInteraction2Annotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-@Lazy
+import com.google.common.collect.ImmutableList;
+
 @Service
-public class InteractionServiceImpl implements InteractionService {
+class InteractionServiceImpl implements InteractionService {
 
 	@Autowired private InteractionDAO interactionDAO;
 	@Autowired private IsoformService isoService;
@@ -25,7 +25,10 @@ public class InteractionServiceImpl implements InteractionService {
 	@Override
 	@Cacheable("interactions")
 	public List<Interaction> findInteractionsByEntry(String entryName) {
-		return interactionDAO.findInteractionsByEntry(entryName);
+		List<Interaction> interactions = interactionDAO.findInteractionsByEntry(entryName);
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Interaction>().addAll(interactions).build();
+
 	}
 
 	@Override
@@ -38,7 +41,10 @@ public class InteractionServiceImpl implements InteractionService {
 			Annotation annot = BinaryInteraction2Annotation.transform(inter, entryName, isoforms);
 			annots.add(annot);
 		}
-		return annots;
+
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Annotation>().addAll(annots).build();
+
 	}
 
 }

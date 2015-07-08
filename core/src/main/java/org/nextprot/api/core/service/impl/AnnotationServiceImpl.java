@@ -22,16 +22,15 @@ import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.InteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
-@Lazy
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
 
@@ -103,7 +102,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(this.xrefService.findDbXrefsAsAnnotationsByEntry(entryName));
 		annotations.addAll(this.interactionService.findInteractionsAsAnnotationsByEntry(entryName));
 
-		return annotations;
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
+		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 	}
 	
 	
