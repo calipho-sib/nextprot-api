@@ -1,7 +1,6 @@
 package org.nextprot.api.core.domain;
 
 import java.io.Serializable;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 

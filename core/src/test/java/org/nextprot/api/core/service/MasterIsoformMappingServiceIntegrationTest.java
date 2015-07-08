@@ -41,7 +41,7 @@ public class MasterIsoformMappingServiceIntegrationTest extends CoreUnitBaseTest
 		for (TemporaryIsoformSpecificity spec: specs) {
 			i++;
 			assertTrue(spec.getIsoformName().equals("Iso " + i)); // TITIN has Iso 1, Iso 2, ... Iso 13
-			System.out.println(spec.getIsoformAc() + " - " + spec.getIsoformName() + " - " + spec.getSortableName());
+			//System.out.println(spec.getIsoformAc() + " - " + spec.getIsoformName() + " - " + spec.getSortableName());
 		}
 		assertTrue(true);
 	}
@@ -53,7 +53,5 @@ public class MasterIsoformMappingServiceIntegrationTest extends CoreUnitBaseTest
 		assertTrue(specs.get(1).getIsoformName().equals("GN-1L"));
 		assertTrue(specs.get(2).getIsoformName().equals("GN-1S"));
 	}
-
-
 	
 }

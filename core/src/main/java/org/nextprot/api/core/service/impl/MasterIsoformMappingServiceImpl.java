@@ -34,13 +34,6 @@ public class MasterIsoformMappingServiceImpl implements MasterIsoformMappingServ
 		Map<String,String> unique2mainName = new HashMap<String,String>();
 		for (Isoform iso: isoforms) {
 			String mainName = iso.getMainEntityName().getValue();
-			try {
-				// if main name is an integer value we add the prefix "Iso "
-				Integer.parseInt(mainName);
-				mainName = "Iso " + mainName;
-			} catch (Exception e) { 
-				// otherwise we're happy with the value returned
-			}
 			unique2mainName.put(iso.getUniqueName(), mainName);
 		}
 
