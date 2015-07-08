@@ -1,5 +1,7 @@
 <chromosomal-location-list>
 #foreach($chromosomalLocation in $entry.chromosomalLocations)
-	<chromosomal-location chromosome='$chromosomalLocation.getChromosome()' band='$chromosomalLocation.getBand()' strand='$chromosomalLocation.getStrand()' accession='$chromosomalLocation.getAccession()' geneStart='$chromosomalLocation.getFirstPosition()' geneEnd='$chromosomalLocation.getLastPosition()'/>
+	#if( $chromosomalLocation.getAccession().startsWith("ENSG") ) #set ( $accession = $chromosomalLocation.getAccession() )
+	#else #set ( $accession = "" ) #end
+	<chromosomal-location chromosome='$chromosomalLocation.getChromosome()' band='$chromosomalLocation.getBand()' strand='$chromosomalLocation.getStrand()' accession='$accession' geneStart='$chromosomalLocation.getFirstPosition()' geneEnd='$chromosomalLocation.getLastPosition()'/>
 #end
 </chromosomal-location-list>
