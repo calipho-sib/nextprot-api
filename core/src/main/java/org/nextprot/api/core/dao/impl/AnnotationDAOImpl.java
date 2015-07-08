@@ -1,19 +1,11 @@
 package org.nextprot.api.core.dao.impl;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
+import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.impl.spring.BatchNamedParameterJdbcTemplate;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationVariant;
+import org.nextprot.api.core.domain.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,7 +13,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ImmutableList;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Component
@@ -190,13 +186,40 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			public AnnotationProperty mapRow(ResultSet resultSet, int row) throws SQLException {
 			
 				AnnotationProperty property = new AnnotationProperty();
+
 				property.setAnnotationId(resultSet.getLong("annotation_id"));
-				property.setName(resultSet.getString("property_name"));
-				property.setValue(resultSet.getString("property_value"));
 				property.setAccession(resultSet.getString("accession"));
+				setPropertyNameValue(property, resultSet.getString("property_name"), resultSet.getString("property_value"));
+
 				return property;
 			}
 		});
+	}
 
+	static void setPropertyNameValue(AnnotationProperty property, String name, String value) {
+
+		property.setName(name);
+		property.setValue((name.equals("mutation AA")) ? asHGVMutationFormat(value) : value);
+	}
+
+	static String asHGVMutationFormat(String value) {
+
+		Preconditions.checkArgument(value.startsWith("p."));
+
+		Pattern pat = Pattern.compile("([A-Z])\\d+_?([A-Z])?.*");
+
+		Matcher matcher = pat.matcher(value);
+
+		while (matcher.find()) {
+
+			System.out.println(matcher.group(1));
+			System.out.println(matcher.group(2));
+		}
+
+		// 1. locate 1-letter AAs and replace with 3-letter
+		// 2. replace * by Ter
+		// 3. remove everything after del
+
+		return value;
 	}
 }

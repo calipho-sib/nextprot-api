@@ -33,12 +33,21 @@ public class AnnotationDAOImplTest {
     }
 
     @Test
+    public void testAsHGVMutationFormat() throws Exception {
+
+        AnnotationDAOImpl.asHGVMutationFormat("p.R54C");
+        AnnotationDAOImpl.asHGVMutationFormat("p.E3815*");
+        AnnotationDAOImpl.asHGVMutationFormat("p.I6616del");
+        AnnotationDAOImpl.asHGVMutationFormat("p.K487_L498del12");
+        AnnotationDAOImpl.asHGVMutationFormat("p.P564_L567delPRAL");
+    }
+
+    @Test
     public void testAsHGVMutationFormats() throws Exception {
 
         Map<String, String> hgvFormats = new HashMap<>();
 
         hgvFormats.put("p.R54C", "p.Arg54Cys");
-        hgvFormats.put("p.L11L", "p.Leu11Leu");
         hgvFormats.put("p.E3815*", "p.Glu3815Ter");
         hgvFormats.put("p.I6616del", "p.Ile6616del");
         hgvFormats.put("p.K487_L498del12", "p.Lys487_Leu498del");
