@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableList;
+
 @Service
 class AntibodyMappingServiceImpl implements AntibodyMappingService {
 
@@ -27,7 +29,8 @@ class AntibodyMappingServiceImpl implements AntibodyMappingService {
 			//System.out.println("Antibody mapping before setting xref" + mapping.toString());
 			mapping.setXrefs(this.xrefService.findDbXRefByResourceId(mapping.getXrefId()));
 		}
-		return mappings;
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
+		return new ImmutableList.Builder<AntibodyMapping>().addAll(mappings).build();
 	}
 	
 }

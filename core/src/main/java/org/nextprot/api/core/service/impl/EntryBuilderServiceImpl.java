@@ -58,8 +58,6 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 
 		//Lock per entry in case the cache is not set yet (should be quite) fast thougth
 		synchronized (objectLocks.get(entryName)){
-			
-			System.err.println("I am here with" + entryName);
 
 			//Always set properties about the entry
 			entry.setProperties(entryPropertiesService.findEntryProperties(entryName));
@@ -109,8 +107,6 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			} 
 
 		}
-		
-		System.err.println("I got out with" + entryName);
 		
 		//CPU Intensive
 		if(entryConfig.hasSubPart()){ //TODO should be added in annotation list

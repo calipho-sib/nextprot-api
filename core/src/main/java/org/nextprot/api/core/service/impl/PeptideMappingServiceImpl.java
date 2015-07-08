@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableList;
+
 @Service
 public class PeptideMappingServiceImpl implements PeptideMappingService {
 
@@ -31,7 +33,12 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	public List<PeptideMapping> findNaturalPeptideMappingByMasterUniqueName(String uniqueName) {
 		
 		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		return findPeptideMappingByMasterId(masterId, true);
+		List<PeptideMapping> peps =  findPeptideMappingByMasterId(masterId, true);
+		
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<PeptideMapping>().addAll(peps).build();
+
+
 
 	}
 	
@@ -40,7 +47,10 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	public List<PeptideMapping> findSyntheticPeptideMappingByMasterUniqueName(String uniqueName) {
 
 		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		return findPeptideMappingByMasterId(masterId, false);
+		List<PeptideMapping> peps = findPeptideMappingByMasterId(masterId, false);
+
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<PeptideMapping>().addAll(peps).build();
 
 	}
 		
@@ -51,7 +61,8 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		List<PeptideMapping> allMapping = this.peptideMappingDao.findAllPeptidesByMasterId(masterId);
 		Set<String> names = new HashSet<String>(); 
 		for (PeptideMapping map: allMapping) names.add(map.getPeptideUniqueName());
-		return new ArrayList<String>(names);
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<String>().addAll(new ArrayList<String>(names)).build();
 	}
 
 	

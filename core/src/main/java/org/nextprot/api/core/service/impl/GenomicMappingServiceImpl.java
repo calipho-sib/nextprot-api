@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -146,7 +147,8 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		}
 
 		// TODO looks like there is some exons missing, have they changed???? For example this one: ENSE00003030217 is not found for NX_P03372
-		return genomicMappings;
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<GenomicMapping>().addAll(genomicMappings).build();
 
 	}
 

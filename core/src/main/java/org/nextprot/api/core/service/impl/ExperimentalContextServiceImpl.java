@@ -20,6 +20,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableList;
+
 
 @Lazy
 @Service
@@ -44,7 +46,9 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 		Set<Long> ecSet = AnnotationUtils.getExperimentalContextIdsForAnnotations(annotations);
 		List<ExperimentalContext> ecs = ecDao.findExperimentalContextsByIds(new ArrayList<>(ecSet));
 		updateTerminologies(ecs);
-		return ecs;
+
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<ExperimentalContext>().addAll(ecs).build();
 	}
 
 	private void updateTerminologies(List<ExperimentalContext> ecs) {

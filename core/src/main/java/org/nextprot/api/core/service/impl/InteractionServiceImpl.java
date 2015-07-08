@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableList;
+
 @Service
 class InteractionServiceImpl implements InteractionService {
 
@@ -23,7 +25,10 @@ class InteractionServiceImpl implements InteractionService {
 	@Override
 	@Cacheable("interactions")
 	public List<Interaction> findInteractionsByEntry(String entryName) {
-		return interactionDAO.findInteractionsByEntry(entryName);
+		List<Interaction> interactions = interactionDAO.findInteractionsByEntry(entryName);
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Interaction>().addAll(interactions).build();
+
 	}
 
 	@Override
@@ -36,7 +41,10 @@ class InteractionServiceImpl implements InteractionService {
 			Annotation annot = BinaryInteraction2Annotation.transform(inter, entryName, isoforms);
 			annots.add(annot);
 		}
-		return annots;
+
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Annotation>().addAll(annots).build();
+
 	}
 
 }

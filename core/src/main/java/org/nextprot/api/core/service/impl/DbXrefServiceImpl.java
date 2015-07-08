@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -143,7 +144,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 			
 		}
 
-		return annotations;
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 		
 	}
 	
@@ -178,7 +180,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 		// get and attach the properties to the xrefs
 		if (! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName);
 
-		return xrefList;
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<DbXref>().addAll(xrefList).build();
 	}
 	
 	

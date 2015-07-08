@@ -24,6 +24,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -115,7 +116,8 @@ public class PublicationServiceImpl implements PublicationService {
 			publication.setCvJournal(journalMap.get(publicationId));
 		}
 		
-		return publications;
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Publication>().addAll(publications).build();
 	}
 	
 	@Autowired

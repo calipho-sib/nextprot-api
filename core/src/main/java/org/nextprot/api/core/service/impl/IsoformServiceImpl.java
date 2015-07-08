@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
@@ -33,7 +34,8 @@ class IsoformServiceImpl implements IsoformService {
 			isoform.setSynonyms(synonymsMultiMap.get(isoform.getUniqueName()));
 		}
 		
-		return isoforms;
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Isoform>().addAll(isoforms).build();
 	}
 	
 	private class SynonymFunction implements Function<IsoformEntityName, String> {

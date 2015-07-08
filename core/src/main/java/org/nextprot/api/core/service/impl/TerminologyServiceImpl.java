@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.ImmutableList;
+
 @Service
 class TerminologyServiceImpl implements TerminologyService {
 
@@ -36,24 +38,36 @@ class TerminologyServiceImpl implements TerminologyService {
 	@Override
 	@Cacheable("terminology-by-ontology")
 	public List<Terminology> findTerminologyByOntology(String ontology) {
-		return terminologyDao.findTerminologyByOntology(ontology);
+		List<Terminology> terms = terminologyDao.findTerminologyByOntology(ontology);
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Terminology>().addAll(terms).build();
+
 	}
 
 	@Override
 	@Cacheable("terminology-all")
 	public List<Terminology> findAllTerminology() {
-		return terminologyDao.findAllTerminology();
+		List<Terminology> terms =  terminologyDao.findAllTerminology();
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Terminology>().addAll(terms).build();
+
 	}
 
 	@Override
 	@Cacheable("enzyme-terminology") //TODO there should be an utiliy method on entry to get the enzymes...
 	public List<Terminology> findEnzymeByMaster(String entryName) {
-		return enzymeDao.findEnzymeByMaster(entryName);
+		List<Terminology> terms =  enzymeDao.findEnzymeByMaster(entryName);
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Terminology>().addAll(terms).build();
+
 	}
 
 	@Override
 	public List<Terminology> findTerminologyByAccessions(Set<String> terminologyAccessions) {
-		return terminologyDao.findTerminologyByAccessions(terminologyAccessions);
+		List<Terminology> terms =  terminologyDao.findTerminologyByAccessions(terminologyAccessions);
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Terminology>().addAll(terms).build();
+
 	}
 
 }

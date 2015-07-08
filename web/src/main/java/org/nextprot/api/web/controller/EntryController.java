@@ -8,7 +8,7 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.TemporaryIsoformSpecificity;
+import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -63,7 +63,7 @@ public class EntryController {
 
 	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
-	public List<TemporaryIsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
+	public List<IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
 		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
 	}
 	
