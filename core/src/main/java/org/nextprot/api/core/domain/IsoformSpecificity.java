@@ -18,6 +18,7 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 	@Deprecated
 	private String deprecatedIsoformName;
 	private String isoformMainName;
+	private String sortableName;
 	private String isoformAc;
 	
 	public void setIsoformAc(String isoformAc) {
@@ -38,8 +39,32 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 		this.deprecatedIsoformName = isoformName;
 	}
 
-	public String setIsoformMainName(String isoformMainName) {
-		return this.isoformMainName = isoformMainName;
+	public void setIsoformMainName(String isoformMainName) {
+		
+		this.isoformMainName = isoformMainName;
+		
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+		// setup sortable name
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+	
+		// by default: same as isoformMainName
+		this.sortableName = this.isoformMainName;
+		
+		if (isoformMainName==null) {
+			this.sortableName=null; 
+			return; 
+		}
+		
+		if (isoformMainName != null && isoformMainName.startsWith("Iso ")) {
+			String nb = isoformMainName.substring(4);
+			try {
+				Integer.parseInt(nb);
+				while (nb.length()<3) nb = "0" + nb;
+				this.sortableName = "Iso "+ nb;
+			} 
+			catch (Exception e) { }
+		} 
+
 	}
 	
 	public String getIsoformMainName() {
@@ -92,18 +117,7 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 	
 	
 	public String getSortableName() {
-		if (isoformMainName.startsWith("Iso ")) {
-			String nb = isoformMainName.substring(4);
-			try {
-				Integer.parseInt(nb);
-				while (nb.length()<3) nb="0"+nb;
-				return "Iso "+nb;
-			} 
-			catch (Exception e) {
-				return isoformMainName;
-			}
-		}
-		return isoformMainName;
+		return sortableName;
 	}
 	
 	
