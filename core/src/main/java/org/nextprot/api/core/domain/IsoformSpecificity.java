@@ -42,19 +42,10 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 	public void setIsoformMainName(String isoformMainName) {
 		
 		this.isoformMainName = isoformMainName;
-		
+		this.sortableName = isoformMainName; // by default: same as isoformMainName
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-		// setup sortable name
+		// special case for sortable name when name ends with numeric value
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-	
-		// by default: same as isoformMainName
-		this.sortableName = this.isoformMainName;
-		
-		if (isoformMainName==null) {
-			this.sortableName=null; 
-			return; 
-		}
-		
 		if (isoformMainName != null && isoformMainName.startsWith("Iso ")) {
 			String nb = isoformMainName.substring(4);
 			try {
@@ -64,7 +55,6 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 			} 
 			catch (Exception e) { }
 		} 
-
 	}
 	
 	public String getIsoformMainName() {
