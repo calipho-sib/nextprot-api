@@ -102,10 +102,4 @@ public class Isoform implements Serializable {
 	public void setSynonyms(Collection<IsoformEntityName> synonyms) {
 		this.synonyms = synonyms;
 	}
-
-	@Deprecated
-	public String formatIsoformId() {
-
-		return NXVelocityUtils.formatIsoformId(this);
-	}
 }

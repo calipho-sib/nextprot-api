@@ -1,8 +1,5 @@
 package org.nextprot.api.core.utils;
 
-import java.text.DecimalFormat;
-import java.util.List;
-
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
@@ -11,7 +8,8 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.peff.PeffFormatterMaster;
 
-import com.google.common.base.Preconditions;
+import java.text.DecimalFormat;
+import java.util.List;
 
 public class NXVelocityUtils {
 	
@@ -41,23 +39,6 @@ public class NXVelocityUtils {
 	
 	public static List<AnnotationApiModel> getAnnotationCategories() {
 		return AnnotationApiModel.getSortedCategories();
-	}
-
-	public static String formatIsoformId(Isoform isoform) {
-
-		Preconditions.checkNotNull(isoform);
-
-		String value = "Iso 1";
-
-		if (isoform.getMainEntityName() != null) {
-
-			value = isoform.getMainEntityName().getValue();
-
-			if (value.matches("\\d+"))
-				value = "Iso " + value;
-		}
-
-		return value;
 	}
 
 	/**

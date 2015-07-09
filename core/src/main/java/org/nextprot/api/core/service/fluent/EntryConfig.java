@@ -186,8 +186,8 @@ public class EntryConfig {
 			case ISOFORM: this.withTargetIsoforms(); break;
 			case ANNOTATION: this.withAnnotations(); break;
 			case ANTIBODY:  this.withAntibodyMappings(); break;
-			case PEPTIDE: this.withPeptideMappings(); break;
-			case SRM_PEPTIDE:  this.withSrmPeptideMappings(); break;
+			case PEPTIDE_MAPPING: this.withPeptideMappings(); break;
+			case SRM_PEPTIDE_MAPPING:  this.withSrmPeptideMappings(); break;
 			case EXPERIMENTAL_CONTEXT: this.withExperimentalContexts(); break;
 			default: {throw new NextProtException(block + " block not found");}
 		}

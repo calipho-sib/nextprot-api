@@ -53,4 +53,11 @@ public class MasterIsoformMappingServiceIntegrationTest extends CoreUnitBaseTest
 		assertTrue(specs.get(2).getIsoformMainName().equals("GN-1S"));
 	}
 	
+	
+	@Test
+	public void shouldReturnSingleIsoformWithDefaultNameIso_1() {
+		List<IsoformSpecificity> specs = this.mimService.findMasterIsoformMappingByEntryName("NX_A0A087WTH1");
+		assertTrue(specs.get(0).getIsoformMainName().equals("Iso 1"));
+	}
+	
 }

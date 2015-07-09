@@ -105,13 +105,14 @@ public class JSONDocRoleController extends JSONDocController {
 					//adding blocks
 					for (EntryBlocks block: EntryBlocks.values()) {
 						if(!block.equals(EntryBlocks.FULL_ENTRY))
-							apiDoc.getMethods().add(cloneMethodDocWithName(met, block.name().toLowerCase(), ""));
+							apiDoc.getMethods().add(cloneMethodDocWithName(met, block.name().toLowerCase().replaceAll("_", "-"), ""));
 					}
 
+					
 					//adding subparts
 					for (AnnotationApiModel model: AnnotationApiModel.values()) {
 						String additionalDescription = "It locates on the hierarchy: " + model.getHierarchy();
-						apiDoc.getMethods().add(cloneMethodDocWithName(met, model.getApiTypeName().toLowerCase(), additionalDescription));
+						apiDoc.getMethods().add(cloneMethodDocWithName(met, StringUtils.camelToKebabCase(model.getApiTypeName()), additionalDescription));
 					}
 				}
 			}

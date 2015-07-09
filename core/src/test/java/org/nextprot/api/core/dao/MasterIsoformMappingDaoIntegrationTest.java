@@ -26,6 +26,5 @@ public class MasterIsoformMappingDaoIntegrationTest extends CoreUnitBaseTest {
 			assertTrue(spec.getPositions().size()==1);  // we expect one position item by row and thus by IsoformSpecificity
  			System.out.println(spec.toString());
  		}
-	}	
-	
+	}		
 }

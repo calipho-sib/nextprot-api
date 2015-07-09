@@ -20,8 +20,8 @@ public enum EntryBlocks{
 	//INTERACTION(NPFileFormat.XML),  // now treated as annotation subpart (CALIPHOMISC-302)
 	ISOFORM(NPFileFormat.XML),
 	ANTIBODY(NPFileFormat.XML),
-	PEPTIDE(NPFileFormat.XML),
-	SRM_PEPTIDE(NPFileFormat.XML);
+	PEPTIDE_MAPPING(NPFileFormat.XML),
+	SRM_PEPTIDE_MAPPING(NPFileFormat.XML);
 	
 	
 	private List<NPFileFormat> supportedFormats = null;
