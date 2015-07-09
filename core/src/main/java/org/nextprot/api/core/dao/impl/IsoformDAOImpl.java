@@ -43,6 +43,25 @@ public class IsoformDAOImpl implements IsoformDAO {
 	}
 
 	private static class IsoformRowMapper implements ParameterizedRowMapper<Isoform> {
+		
+		/*
+		 * Use this query to retrieve all the isoforms without a main "name" synonym:
+		 * 
+		 * 
+			select iso.unique_name
+			from sequence_identifiers iso
+			where iso.cv_type_id=2 and iso.cv_status_id=1
+			EXCEPT
+			select iso.unique_name
+			from sequence_identifiers iso
+			left outer join nextprot.identifier_synonyms syn on (iso.identifier_id = syn.identifier_id) 
+			left outer join nextprot.cv_synonym_types syn_types on (syn.cv_type_id = syn_types.cv_id) 
+			left join nextprot.cv_synonym_qualifiers syn_qualifiers on (syn.cv_qualifier_id = syn_qualifiers.cv_id) 
+			where iso.cv_type_id=2 and iso.cv_status_id=1
+			and syn.is_main=true and syn.cv_type_id=1
+		 *
+		 *
+		 */
 
 		@Override
 		public Isoform mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -53,17 +72,26 @@ public class IsoformDAOImpl implements IsoformDAO {
 			isoform.setSwissProtDisplayedIsoform(resultSet.getBoolean("is_swissprot_display"));
 
 			// Set the main entity
+			IsoformEntityName mainEntity = new IsoformEntityName();
+			mainEntity.setQualifier(null); // always null in data
+			mainEntity.setType("name");    // can be "name" or "accession code" but we want it to be "name" ! 
+			mainEntity.setValue(resultSet.getString("synonym_name"));
 			
-			String type = resultSet.getString("syn_type");
-			
-			if (!type.equals("accession code")) {
-				IsoformEntityName mainEntity = new IsoformEntityName();
-				mainEntity.setQualifier(resultSet.getString("syn_qualifier"));
-				mainEntity.setType(resultSet.getString("syn_type"));
-				mainEntity.setValue(resultSet.getString("synonym_name"));
-
-				isoform.setMainEntityName(mainEntity);
+			// there are > 9400 isoforms without a "name" synonym and they are ALL the only isoform of their entry
+			// in this case all we have is an accession code we replace it with "Iso 1"
+			if (resultSet.getString("syn_type").equals("accession code")) {
+				mainEntity.setValue("Iso 1"); 
 			}
+			
+			// some isoform names are just a number (integer value)
+			// in this case we add a prefix "Iso " to it
+			String value = mainEntity.getValue();
+			if (value.matches("\\d+")) {
+				value = "Iso " + value;
+				mainEntity.setValue(value);
+			}
+			
+			isoform.setMainEntityName(mainEntity);
 
 			return isoform;
 		}

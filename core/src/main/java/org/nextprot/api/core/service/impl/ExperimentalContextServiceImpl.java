@@ -1,29 +1,35 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.nextprot.api.core.dao.ExperimentalContextDao;
-import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.ExperimentalContext;
+import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.ExperimentalContextService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.ImmutableList;
 
 
 @Lazy
 @Service
-public class ExperimentalContextServiceImpl implements ExperimentalContextService {
+class ExperimentalContextServiceImpl implements ExperimentalContextService {
 	
 	@Autowired private ExperimentalContextDao ecDao;
 	@Autowired private AnnotationService annotationService;
-	@Autowired private TerminologyDao terminologyDao;
+	@Autowired private TerminologyService terminologyService;
 	
 	@Override
 	public List<ExperimentalContext> findAllExperimentalContexts() {
@@ -31,7 +37,7 @@ public class ExperimentalContextServiceImpl implements ExperimentalContextServic
 		updateTerminologies(ecs);
 		return ecs;
 	}
-
+	
 	@Override
 	@Cacheable("experimental-contexts-by-entry")
 	public List<ExperimentalContext> findExperimentalContextsByEntryName(String entryName) {	
@@ -40,24 +46,44 @@ public class ExperimentalContextServiceImpl implements ExperimentalContextServic
 		Set<Long> ecSet = AnnotationUtils.getExperimentalContextIdsForAnnotations(annotations);
 		List<ExperimentalContext> ecs = ecDao.findExperimentalContextsByIds(new ArrayList<>(ecSet));
 		updateTerminologies(ecs);
-		return ecs;
+
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<ExperimentalContext>().addAll(ecs).build();
 	}
 
 	private void updateTerminologies(List<ExperimentalContext> ecs) {
 
+		Set<String> terminologyAccessions = new HashSet<String>();
+		  
 		for (ExperimentalContext ec : ecs) {
-			updateTerminologies(ec);
+			terminologyAccessions.add(ec.getCellLineAC());
+			terminologyAccessions.add(ec.getTissueAC());
+			terminologyAccessions.add(ec.getOrganelleAC());
+			terminologyAccessions.add(ec.getDetectionMethodAC());
+			terminologyAccessions.add(ec.getDiseaseAC());
+			terminologyAccessions.add(ec.getDevelopmentalStageAC());
 		}
+		
+		List<Terminology> terms = terminologyService.findTerminologyByAccessions(terminologyAccessions);
+		Map<String, Terminology> map = new HashMap<>();
+		for(Terminology term : terms){
+			map.put(term.getAccession(), term);
+		}
+
+		for (ExperimentalContext ec : ecs) {
+			updateTerminologies(ec, map);
+		}
+
 	}
 
-	private void updateTerminologies(ExperimentalContext ec) {
+	private void updateTerminologies(ExperimentalContext ec, Map<String, Terminology> map) {
 
-		if (ec.getCellLine() != null) ec.setCellLine(terminologyDao.findTerminologyByAccession(ec.getCellLineAC()));
-		if (ec.getTissue() != null) ec.setTissue(terminologyDao.findTerminologyByAccession(ec.getTissueAC()));
-		if (ec.getOrganelle() != null) ec.setOrganelle(terminologyDao.findTerminologyByAccession(ec.getOrganelleAC()));
-		if (ec.getDetectionMethod() != null) ec.setDetectionMethod(terminologyDao.findTerminologyByAccession(ec.getDetectionMethodAC()));
-		if (ec.getDisease() != null) ec.setDisease(terminologyDao.findTerminologyByAccession(ec.getDiseaseAC()));
-		if (ec.getDevelopmentalStage() != null) ec.setDevelopmentalStage(terminologyDao.findTerminologyByAccession(ec.getDevelopmentalStageAC()));
+		if (ec.getCellLine() != null) ec.setCellLine(map.get(ec.getCellLineAC()));
+		if (ec.getTissue() != null) ec.setTissue(map.get(ec.getTissueAC()));
+		if (ec.getOrganelle() != null) ec.setOrganelle(map.get(ec.getOrganelleAC()));
+		if (ec.getDetectionMethod() != null) ec.setDetectionMethod(map.get(ec.getDetectionMethodAC()));
+		if (ec.getDisease() != null) ec.setDisease(map.get(ec.getDiseaseAC()));
+		if (ec.getDevelopmentalStage() != null) ec.setDevelopmentalStage(map.get(ec.getDevelopmentalStageAC()));
 	}
 }
 

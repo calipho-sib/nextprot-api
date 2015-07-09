@@ -44,10 +44,10 @@ public class PeptideMappingServiceTest {
 
 		when(peptideMappingDao.findNaturalPeptidesByMasterId(anyLong())).thenReturn(Lists.newArrayList(mapping));
 
-		peptideMappingService.findNaturalPeptideMappingByMasterId(596889L);
+		peptideMappingService.findNaturalPeptideMappingByMasterUniqueName("NX-YOOO");
 
-		verify(peptideMappingDao).findNaturalPeptidesByMasterId(596889L);
-		verify(peptideMappingDao, times(0)).findSyntheticPeptidesByMasterId(596889L);
+		verify(peptideMappingDao).findNaturalPeptidesByMasterId(anyLong());
+		verify(peptideMappingDao, times(0)).findSyntheticPeptidesByMasterId(anyLong());
 		verify(peptideMappingDao).findNaturalPeptideEvidences(Lists.newArrayList("COOLIO"));
 		verify(peptideMappingDao).findPeptideProperties(Lists.newArrayList("COOLIO"));
 	}
@@ -57,9 +57,9 @@ public class PeptideMappingServiceTest {
 
 		when(peptideMappingDao.findNaturalPeptidesByMasterId(anyLong())).thenReturn(new ArrayList<PeptideMapping>());
 
-		peptideMappingService.findNaturalPeptideMappingByMasterId(596889L);
+		peptideMappingService.findNaturalPeptideMappingByMasterUniqueName("NX-YOOO");
 
-		verify(peptideMappingDao).findNaturalPeptidesByMasterId(596889L);
+		verify(peptideMappingDao).findNaturalPeptidesByMasterId(anyLong());
 		verify(peptideMappingDao, times(0)).findSyntheticPeptidesByMasterId(596889L);
 		verify(peptideMappingDao, times(0)).findNaturalPeptideEvidences(Lists.newArrayList("COOLIO"));
 		verify(peptideMappingDao, times(0)).findPeptideProperties(Lists.newArrayList("COOLIO"));
@@ -73,10 +73,10 @@ public class PeptideMappingServiceTest {
 
 		when(peptideMappingDao.findSyntheticPeptidesByMasterId(anyLong())).thenReturn(Lists.newArrayList(mapping));
 
-		peptideMappingService.findSyntheticPeptideMappingByMasterId(596889L);
+		peptideMappingService.findSyntheticPeptideMappingByMasterUniqueName("NX-YOOO");
 
-		verify(peptideMappingDao).findSyntheticPeptidesByMasterId(596889L);
-		verify(peptideMappingDao, times(0)).findNaturalPeptidesByMasterId(596889L);
+		verify(peptideMappingDao).findSyntheticPeptidesByMasterId(anyLong());
+		verify(peptideMappingDao, times(0)).findNaturalPeptidesByMasterId(anyLong());
 		verify(peptideMappingDao).findSyntheticPeptideEvidences(Lists.newArrayList("SYNTH"));
 		verify(peptideMappingDao).findPeptideProperties(Lists.newArrayList("SYNTH"));
 	}
@@ -84,7 +84,7 @@ public class PeptideMappingServiceTest {
 	@Ignore
 	@Test
 	public void testFindPeptideMappingByMasterId() {
-		List<PeptideMapping> mapping = this.peptideMappingService.findNaturalPeptideMappingByMasterId(596889L);
+		List<PeptideMapping> mapping = this.peptideMappingService.findNaturalPeptideMappingByMasterUniqueName("NX-YOOO");
 		assertEquals(1, mapping.size());
 		assertEquals("NX_PEPT12345678", mapping.get(0).getPeptideUniqueName());
 		assertEquals(1, mapping.get(0).getEvidences().size());

@@ -10,79 +10,79 @@
 	<diskStore path="cache" />
 	<!-- Configuring cache for master identifier service -->
 	<cache name="master-unique-names-chromossome"
-		maxEntriesLocalHeap="24" eternal="true" statistics="true" copyOnRead="true" copyOnWrite="true"/>
+		maxEntriesLocalHeap="24" eternal="true" statistics="true"/>
 
 	<cache name="master-unique-names" maxEntriesLocalHeap="1"
-		eternal="true" statistics="true" copyOnRead="true" copyOnWrite="true"/>
+		eternal="true" statistics="true"/>
 	<cache name="master-unique-name" maxEntriesLocalHeap="22000"
-		eternal="true" statistics="true" copyOnRead="true" copyOnWrite="true"/>
+		eternal="true" statistics="true"/>
 
-	<cache name="read-user" maxEntriesLocalHeap="2000" eternal="true" statistics="true" copyOnRead="true" copyOnWrite="true"/>
+	<cache name="read-user" maxEntriesLocalHeap="2000" eternal="true" statistics="true"/>
 
 	<cache name="release-contents" maxEntriesLocalHeap="1"
-		eternal="true" statistics="true" copyOnRead="true" copyOnWrite="true"/>
+		eternal="true" statistics="true"/>
 
 	<!-- Configuring cache for other services -->
 	<cache name="terminology-by-accession" overflowToOffHeap="false"
 		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100"
 		   maxEntriesLocalDisk="200000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		   statistics="true" copyOnRead="true" copyOnWrite="true">
+		   statistics="true">
 	</cache>
 	<cache name="terminology-by-ontology" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
-		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		maxEntriesLocalDisk="200" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true">
 	</cache>
 	<cache name="terminology-all" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="88000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true">
 	</cache>
 
 	<cache name="experimental-contexts-by-entry" overflowToOffHeap="false"
 		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		   maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		   statistics="true" copyOnRead="true" copyOnWrite="true">
+		   statistics="true">
 	</cache>
 
 	<cache name="publications-get-by-id" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="543000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true">
 	</cache>
 
 	<cache name="schema" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
 	<cache name="overview" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
 	<cache name="publications" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true">
 	</cache>
 	<cache name="xrefs" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
 	<cache name="families" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
 	<cache name="master-isoform-mapping" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
 	<cache name="xrefs-as-annot" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
 	<cache name="keywords" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
 	<cache name="identifiers" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
@@ -92,80 +92,86 @@
 	<cache name="chromosomal-locations" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true">
 	</cache>
 	<cache name="genomic-mappings" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true">
 	</cache>
 	<cache name="interactions" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true">
 	</cache>
 	<cache name="interactions-as-annot" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true">
 	</cache>
 	<cache name="isoforms" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
-	<cache name="peptides" overflowToOffHeap="false" overflowToDisk="true"
+	<cache name="natural-peptides" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+	<cache name="all-peptides" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
 	<cache name="srm-peptides" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+	<cache name="enzyme-terminology" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
 		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
 	</cache>
 	<cache name="antibodies" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true">
 	</cache>
 	<cache name="annotations" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true">
 	</cache>
 	<cache name="entry-properties" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true" >
 	</cache>
 
 	<!-- Tutorial queries (only in memory) -->
 	<cache name="tutorial-queries" overflowToOffHeap="false"
 		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"
-		memoryStoreEvictionPolicy="LRU" copyOnRead="true" copyOnWrite="true">
+		memoryStoreEvictionPolicy="LRU">
 	</cache>
 
 	<!-- User queries (only in memory) -->
 	<cache name="user-queries" overflowToOffHeap="false"
 		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="100"
-		memoryStoreEvictionPolicy="LRU" copyOnRead="true" copyOnWrite="true">
+		memoryStoreEvictionPolicy="LRU">
 	</cache>
 
 	<!-- RDF Help -->
 	<cache name="rdfhelp" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="1" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true">
 	</cache>
 
 	<!-- SPARQL cache -->
 	<cache name="sparql" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="100000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		statistics="true" copyOnRead="true" copyOnWrite="true">
+		statistics="true">
 	</cache>
 
-	<cache name="sparql-proxy" overflowToOffHeap="false"
-		maxEntriesLocalHeap="100" 
-		eternal="true" statistics="true"/>
+	<cache name="sparql-proxy" overflowToOffHeap="false" maxEntriesLocalHeap="100"  eternal="true" statistics="true"/>
 
 
 	<!-- GitHub Pages -->

@@ -8,8 +8,9 @@ import java.util.Map;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.ApplicationContextProvider;
 import org.nextprot.api.web.NXVelocityContext;
 import org.springframework.context.ApplicationContext;
@@ -19,13 +20,13 @@ public abstract class NPStreamExporter {
 
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
-    protected FluentEntryService fluentEntryService;
+    protected EntryBuilderService entryBuilderService;
     protected VelocityConfig velocityConfig;
     protected TerminologyService terminologyService;
     
     public NPStreamExporter() {
 
-        this.fluentEntryService = applicationContext.getBean(FluentEntryService.class);
+        this.entryBuilderService = applicationContext.getBean(EntryBuilderService.class);
         this.velocityConfig = applicationContext.getBean(VelocityConfig.class);
     }
 
@@ -60,14 +61,15 @@ public abstract class NPStreamExporter {
 
     protected void streamWithVelocityTemplate(Template template, String entryName, Writer writer, String viewName, String... otherViewNames) throws IOException {
 
-        FluentEntryService.FluentEntry fluentEntry = fluentEntryService.newFluentEntry(entryName);
+    	EntryConfig entryConfig = EntryConfig.newConfig(entryName);
 
-        fluentEntry.buildWithView(viewName);
+    	entryConfig.with(viewName);
 
-        for (String otherName : otherViewNames)
-            fluentEntry.buildWithView(otherName);
+        for (String otherName : otherViewNames){
+        	entryConfig.with(otherName);
+        }
 
-        Entry entry = fluentEntry.build();
+        Entry entry = entryBuilderService.build(entryConfig);
 
         handleEntry(entry);
         handleMerge(template, new NXVelocityContext(entry), writer);

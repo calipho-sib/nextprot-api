@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Lazy
 @Service
-public class AuthorServiceImpl implements AuthorService {
+class AuthorServiceImpl implements AuthorService {
 
 	@Autowired
 	private AuthorDao authorDAO;

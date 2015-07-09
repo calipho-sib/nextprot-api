@@ -1,7 +1,6 @@
 package org.nextprot.api.web.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
@@ -10,9 +9,9 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.IsoformSpecificity;
-import org.nextprot.api.core.domain.TemporaryIsoformSpecificity;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
-import org.nextprot.api.core.service.impl.MasterIsoformMappingService;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.MasterIsoformMappingService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -30,10 +29,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Api(name = "Entry", description = "Method to retrieve a complete or partial entry")
 public class EntryController {
 
-	@Autowired
-	private FluentEntryService fluentEntryService;
-	@Autowired
-	private MasterIsoformMappingService masterIsoformMappingService;
+	@Autowired	private EntryBuilderService entryBuilderService;
+	@Autowired	private MasterIsoformMappingService masterIsoformMappingService;
 	
 
     @ModelAttribute
@@ -50,58 +47,58 @@ public class EntryController {
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName, Model model) {
 		
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("entry");
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
 		model.addAttribute("entry", entry);
 
 		return "entry";
 	}
 
-	@RequestMapping("/entry/{entryname}/{subpart}")
-	public String getSubPart(@PathVariable("entryname") String entryName, @PathVariable("subpart") String subpart, Model model) {
+	@RequestMapping("/entry/{entryname}/{blockOrSubpart}")
+	public String getSubPart(@PathVariable("entryname") String entryName, @PathVariable("blockOrSubpart") String blockOrSubpart, Model model) {
 		
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView(subpart);
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart));
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
+
+	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public List<IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
+		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
+	}
+	
+	/*
 
 	@ApiMethod(path = "/entry/{entry}/isoform", verb = ApiVerb.GET, description = "Gets the isoforms for a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/isoform")
 	public String getIsoforms(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("isoform");
+		Entry entry = this.fluentEntryService.build(EntryConfig.newConfig(entryName).withTargetIsoforms());
 		model.addAttribute("entry", entry);
 		return "entry";
 
 	}
 
-	@RequestMapping(value = "/entry/{entry}/isoform/mapping", produces = {MediaType.APPLICATION_JSON_VALUE})
-	@ResponseBody
-	public List<TemporaryIsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
-		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
-	}
-
-	
-	
 	
 	@ApiMethod(path = "/entry/{entry}/overview", verb = ApiVerb.GET, description = "Gets an overview of the entry. This includes the protein existence, protein names, gene names, functional region names, cleaved region names, the families, the bio physical and chemical properties and the history. See the Overview object for more details.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/overview")
 	public String getOverview(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("overview");
+		Entry entry = this.fluentEntryService.build(EntryConfig.newConfig(entryName).withOverview());
 		model.addAttribute("entry", entry);
 		return "entry";
 
-	}
+	}*/
 	
-	
+	/*
 	@ApiMethod(path = "/entry/{entry}/antibody", verb = ApiVerb.GET, description = "Gets the list of antibodies for a given entry if any.", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE, "text/turtle"})
 	@RequestMapping("/entry/{entry}/antibody")
 	public String getAntibodyMapping(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry which contains antibodies. For example, insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("antibody");
+		Entry entry = this.fluentEntryService.newFluentEntry(entryName).withAntibodyMappings().build();
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
@@ -112,7 +109,7 @@ public class EntryController {
 	public String getPeptideMapping(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("peptide");
+		Entry entry = this.fluentEntryService.newFluentEntry(entryName).withPeptideMappings().build();
 		model.addAttribute("entry", entry);
 		return "entry";
 
@@ -124,7 +121,7 @@ public class EntryController {
 	public String getSrmPeptideMapping(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 	
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("srm-peptide");
+		Entry entry = this.fluentEntryService.newFluentEntry(entryName).withSrmPeptideMappings().build();
 		model.addAttribute("entry", entry);
 		return "entry";
 		
@@ -136,7 +133,7 @@ public class EntryController {
 	public String getIdentifiers(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
 
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("identifier");
+		Entry entry = this.fluentEntryService.newFluentEntry(entryName).withIdentifiers().build();
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
@@ -145,7 +142,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/chromosomal-location", verb = ApiVerb.GET, description = "Gets the chromosomal locations of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	public String getChromosomalLocation(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("chromosomal-location");
+		Entry entry = this.fluentEntryService.newFluentEntry(entryName).withChromosomalLocations().build();
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
@@ -154,7 +151,7 @@ public class EntryController {
 	@RequestMapping("/entry/{entry}/genomic-mapping")
 	public String getGenomicMapping(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("genomic-mapping");
+		Entry entry = this.fluentEntryService.newFluentEntry(entryName).withGenomicMappings().build();
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
@@ -162,7 +159,7 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/publication", verb = ApiVerb.GET, description = "Gets the publications of an given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/publication")
 	public String publications(@ApiPathParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("publication");
+		Entry entry = this.fluentEntryService.newFluentEntry(entryName).withPublications().build();
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
@@ -172,7 +169,7 @@ public class EntryController {
 	public String getXrefs(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) 
 			@PathVariable("entry") String entryName, Model model) {
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("xref");
+		Entry entry = this.fluentEntryService.newFluentEntry(entryName).withXrefs().build();
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
@@ -183,7 +180,7 @@ public class EntryController {
 	public String getEntryAnnotations(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) 
 			@PathVariable("entry") String entryName, Model model) {
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("annotation");
+		Entry entry = this.fluentEntryService.newFluentEntry(entryName).withAnnotations().build();
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
@@ -191,11 +188,11 @@ public class EntryController {
 	@ApiMethod(path = "/entry/{entry}/experimental-context", verb = ApiVerb.GET, description = "Gets the experimental contexts related to the annotations of a given entry", produces = { MediaType.APPLICATION_XML_VALUE , MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping("/entry/{entry}/experimental-context")
 	public String getEntryExperimentalContexts(@ApiPathParam(name = "entry", description = "The name of the neXtProt entry for example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName, Model model) {
-		Entry entry = this.fluentEntryService.newFluentEntry(entryName).buildWithView("experimental-context");
+		Entry entry = this.fluentEntryService.newFluentEntry(entryName).withExperimentalContexts().build();
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
-
+	*/
 
 }
 

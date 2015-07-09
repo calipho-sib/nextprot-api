@@ -9,6 +9,6 @@
     #set ( $geneName = "-" )
 #end
 #foreach($isoform in $entry.isoforms)
->nxp|$isoform.getUniqueName()|$geneName|$protName|$isoform.formatIsoformId()
+>nxp|$isoform.getUniqueName()|$geneName|$protName|$isoform.getMainEntityName().getValue()
 $StringUtils.wrapText($isoform.getSequence(), 60)
 #end

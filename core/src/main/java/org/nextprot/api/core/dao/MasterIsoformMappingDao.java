@@ -2,10 +2,10 @@ package org.nextprot.api.core.dao;
 
 import java.util.List;
 
-import org.nextprot.api.core.domain.TemporaryIsoformSpecificity;
+import org.nextprot.api.core.domain.IsoformSpecificity;
 
 public interface MasterIsoformMappingDao {
 
-	List<TemporaryIsoformSpecificity> findIsoformMappingByMaster(String ac);
+	List<IsoformSpecificity> findIsoformMappingByMaster(String ac);
 	
 }

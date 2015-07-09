@@ -8,7 +8,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EntryPropertiesServiceImpl implements EntryPropertiesService {
+class EntryPropertiesServiceImpl implements EntryPropertiesService {
 	
 	@Autowired private EntryPropertiesDao entryPropertiesDao;
 
@@ -17,7 +17,5 @@ public class EntryPropertiesServiceImpl implements EntryPropertiesService {
 	public EntryProperties findEntryProperties(String uniqueName) {
 		return this.entryPropertiesDao.findEntryProperties(uniqueName);
 	}	
-	
-	
 
 }

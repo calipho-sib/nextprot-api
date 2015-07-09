@@ -1,16 +1,12 @@
 package org.nextprot.api.core.domain;
 
-import org.jsondoc.core.annotation.ApiObject;
-import org.jsondoc.core.annotation.ApiObjectField;
-
 import java.io.Serializable;
 
-@ApiObject(name = "experimentalContext", description = "The experimental context")
 public class ExperimentalContext implements Serializable{
 
 	private static final long serialVersionUID = 1821144711310429872L;
 	
-	@ApiObjectField(description = "The experimental context identifier")
+	// The experimental context identifier
 	private Long contextId; // primary key
 	
 	private Terminology tissue;
@@ -18,10 +14,11 @@ public class ExperimentalContext implements Serializable{
 	private Terminology cellLine;
 	private Terminology disease;
 	private Terminology organelle;
-	@ApiObjectField(description = "The experimental context detection method (ECO code)")
+	
+	// The experimental context detection method (ECO code)
 	private Terminology detectionMethod;  // ECO code
 
-	@ApiObjectField(description = "The experimental context metadata document identifier (md5)")
+	//The experimental context metadata document identifier (md5)
 	private String metadataAC;  // md5 of publication
 	
 	

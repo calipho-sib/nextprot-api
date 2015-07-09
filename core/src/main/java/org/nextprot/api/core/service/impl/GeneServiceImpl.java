@@ -7,19 +7,21 @@ import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.service.GeneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-@Lazy
+import com.google.common.collect.ImmutableList;
+
 @Service
-public class GeneServiceImpl implements GeneService {
+class GeneServiceImpl implements GeneService {
 
 	@Autowired private GeneDAO geneDAO;
 
 	@Override
 	@Cacheable("chromosomal-locations")
 	public List<ChromosomalLocation> findChromosomalLocationsByEntry(String entryName) {
-		return geneDAO.findChromosomalLocationsByEntryName(entryName);
+		List<ChromosomalLocation> chroms = geneDAO.findChromosomalLocationsByEntryName(entryName);
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<ChromosomalLocation>().addAll(chroms).build();
 	}
 
 }

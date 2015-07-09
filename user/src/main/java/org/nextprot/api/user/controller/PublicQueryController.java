@@ -1,5 +1,6 @@
 package org.nextprot.api.user.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jsondoc.core.annotation.Api;
@@ -40,7 +41,8 @@ public class PublicQueryController {
 	public List<UserQuery> getQueriesIHaveAccess(@RequestParam(value="snorql", required=false) Boolean snorql) {
 
 		//start with queries
-		List<UserQuery> res = userQueryService.getTutorialQueries();
+		List<UserQuery> res = new ArrayList<UserQuery>();
+		res.addAll(userQueryService.getTutorialQueries());
 
 		//add user queries if logged (access db, but is cached with cache evict if the query is modified)
 		if (NPSecurityContext.getCurrentUser() != null) { 
@@ -62,7 +64,9 @@ public class PublicQueryController {
 	@ResponseBody
 	@Deprecated //use only queries instead
 	public List<UserQuery> getTutorialQueries() {
-		List<UserQuery> res =  userQueryService.getTutorialQueries();
+		
+		List<UserQuery> res = new ArrayList<UserQuery>();
+		res.addAll(userQueryService.getTutorialQueries());
 		
 		//add user queries if logged (access db, but is cached with cache evict if the query is modified)
 		if (NPSecurityContext.getCurrentUser() != null) { 
