@@ -45,7 +45,10 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 		List<Annotation> annotations = this.annotationService.findAnnotations(entryName);
 		Set<Long> ecSet = AnnotationUtils.getExperimentalContextIdsForAnnotations(annotations);
 		List<ExperimentalContext> ecs = ecDao.findExperimentalContextsByIds(new ArrayList<>(ecSet));
-		updateTerminologies(ecs);
+		
+		if(!ecs.isEmpty()){
+			updateTerminologies(ecs);
+		}
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<ExperimentalContext>().addAll(ecs).build();
