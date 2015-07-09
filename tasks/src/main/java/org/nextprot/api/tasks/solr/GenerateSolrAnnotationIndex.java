@@ -6,6 +6,7 @@ import java.util.Set;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.tasks.solr.indexer.AnnotationSolrIndexer;
@@ -32,6 +33,7 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 
 		AnnotationSolrIndexer indexer = new AnnotationSolrIndexer(solrServer);
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
+		indexer.setDbxrefservice(getBean(DbXrefService.class));
 		
 		// Remove previous indexes
 		logger.info("removing all solr entries records");
@@ -48,12 +50,12 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		for (String id : allentryids) {
 			//System.err.println("id: " + id);
 			//Entry currentry = entryService.findEntry("NX_Q86SQ0");
-			//Entry currentry = entryService.findEntry("NX_Q6ZP01");
+			//Entry currentry = entryService.findEntry("NX_Q08426");
 			Entry currentry = entryService.findEntry(id);
 			indexer.add(currentry);
 			ecnt++;
 			if((ecnt % 100) == 0) System.err.println(ecnt + "...");
-			if(ecnt >= 30) break;
+			if(ecnt >= 100) break;
 		}
 		
 		indexer.addRemaing();
