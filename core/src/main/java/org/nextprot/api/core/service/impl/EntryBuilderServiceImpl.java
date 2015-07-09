@@ -98,6 +98,9 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			if(entryConfig.hasExperimentalContext()){
 				entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entryName));
 			}
+			if(entryConfig.hasInteractions()){
+				entry.setInteractions(this.interactionService.findInteractionsByEntry(entryName));
+			}
 			if(entryConfig.hasEnzymes()){
 				entry.setEnzymes(terminologyService.findEnzymeByMaster(entryName));
 			}
