@@ -21,8 +21,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.ImmutableList;
-
 
 @Component
 public class AnnotationDAOImpl implements AnnotationDAO {

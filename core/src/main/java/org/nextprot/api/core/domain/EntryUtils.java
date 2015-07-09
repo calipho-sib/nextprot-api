@@ -17,7 +17,6 @@ public class EntryUtils implements Serializable{
 
 	public static Entry filterEntryBySubPart(Entry entry, AnnotationApiModel annotationCategory) {
 		
-		long now = System.currentTimeMillis();
 		
 		List<Annotation> annotations;
 		List<DbXref> xrefs;
@@ -41,7 +40,6 @@ public class EntryUtils implements Serializable{
 
 		}
 		
-		System.out.println("Time to end for " + annotationCategory + (System.currentTimeMillis() - now ));
 		return entry;
 	}
 
