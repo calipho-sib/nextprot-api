@@ -99,14 +99,14 @@ public class EntryXMLIntegrationTest extends WebIntegrationBaseTest {
   
   @Test
   public void shouldContainPeptide() throws Exception {
-	  ResultActions r = this.mockMvc.perform(get("/entry/NX_P03372/peptide.xml"));
+	  ResultActions r = this.mockMvc.perform(get("/entry/NX_P03372/peptide-mapping.xml"));
 	  r.andExpect(xpath("entry/mapping-list/mapping-category/@category").string("peptide-mapping"));
 	  r.andExpect(xpath("entry/mapping-list/mapping-category/peptide-mapping").exists());
   }
 
   @Test
   public void shouldContainSrmPeptide() throws Exception {
-	  ResultActions r = this.mockMvc.perform(get("/entry/NX_P03372/srm-peptide.xml"));
+	  ResultActions r = this.mockMvc.perform(get("/entry/NX_P03372/srm-peptide-mapping.xml"));
 	  r.andExpect(xpath("entry/mapping-list/mapping-category/@category").string("srm-peptide-mapping"));
   }
 
