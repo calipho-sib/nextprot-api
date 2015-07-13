@@ -50,8 +50,8 @@ public class ExportTXTHeaderTest extends WebUnitBaseTest {
         exporter.setEntryBuilderService(entryBuilderMockService);
 
         Map<String, Object> map = new HashMap<String, Object>(); map.put(ExportService.ENTRIES_COUNT_PARAM, 2);
-        exporter.export(Arrays.asList("NX_1", "NX_2"), writer, "entry", map);
         when(entryBuilderMockService.build(any(EntryConfig.class))).thenReturn(new Entry("NX_1")).thenReturn(new Entry("NX_2"));
+        exporter.export(Arrays.asList("NX_1", "NX_2"), writer, "entry", map);
        
         String[] rows = out.toString().split("\n");
         assertEquals(rows[0], "#nb entries=2");
