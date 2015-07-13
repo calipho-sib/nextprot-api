@@ -84,7 +84,7 @@
             <gene-name type="primary">$entityName.name</gene-name>
             #foreach($synonym in $entityName.synonyms)
             #if($synonym.category.equals('ORF'))
-		        <gene-name type="ORFName">$synonym.name</gene-name>
+		        <gene-name type="ORF">$synonym.name</gene-name>
 		    #else
 		        <gene-name type="synonym">$synonym.name</gene-name>
             #end
