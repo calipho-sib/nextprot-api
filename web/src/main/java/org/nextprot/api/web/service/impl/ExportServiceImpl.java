@@ -266,7 +266,7 @@ public class ExportServiceImpl implements ExportService {
 		
 		if(format.equals(NPFileFormat.XML)){
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("entriesCount", accessions.size());
+			map.put(ExportService.ENTRIES_COUNT_PARAM, accessions.size());
 			map.put("release", releaseInfoService.findReleaseContents());
 			exporter.export(accessions, stream, viewName, map);
 		}else exporter.export(accessions, stream, viewName, null);
