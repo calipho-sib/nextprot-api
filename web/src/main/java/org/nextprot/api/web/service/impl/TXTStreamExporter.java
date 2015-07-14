@@ -28,7 +28,7 @@ public class TXTStreamExporter extends NPStreamExporter {
 
     @Override
     protected void writeHeader(Writer writer, Map<String, Object> params) throws IOException {
-    	if(params.containsKey(ExportService.ENTRIES_COUNT_PARAM)){
+    	if((params != null) & params.containsKey(ExportService.ENTRIES_COUNT_PARAM)){
         	writer.write("#nb entries=" + params.get(ExportService.ENTRIES_COUNT_PARAM) + "\n");
     	}else LOGGER.warn("Entries count parameter not found, header discarded...");
     	
