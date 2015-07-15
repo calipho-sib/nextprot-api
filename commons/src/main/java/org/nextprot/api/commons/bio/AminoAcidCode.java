@@ -49,9 +49,67 @@ public enum AminoAcidCode {
         return code1;
     }
 
-    public static AminoAcidCode valueOfCode1AA(char aa) {
+    public static AminoAcidCode valueOfCode(String code) {
 
-        switch (aa) {
+        if (code.length() == 1)
+            return valueOfCode1AA(code.charAt(0));
+        else {
+            switch (code) {
+                case "Gly":
+                    return Glycine;
+                case "Pro":
+                    return Proline;
+                case "Ala":
+                    return Alanine;
+                case "Val":
+                    return Valine;
+                case "Leu":
+                    return Leucine;
+                case "Ile":
+                    return Isoleucine;
+                case "Met":
+                    return Methionine;
+                case "Cys":
+                    return Cysteine;
+                case "Phe":
+                    return Phenylalanine;
+                case "Tyr":
+                    return Tyrosine;
+                case "Trp":
+                    return Tryptophan;
+                case "His":
+                    return Histidine;
+                case "Lys":
+                    return Lysine;
+                case "Arg":
+                    return Arginine;
+                case "Gln":
+                    return Glutamine;
+                case "Asn":
+                    return Asparagine;
+                case "Glu":
+                    return GlutamicAcid;
+                case "Asp":
+                    return AsparticAcid;
+                case "Ser":
+                    return Serine;
+                case "Thr":
+                    return Threonine;
+                case "Sec":
+                    return Selenocysteine;
+                case "Pyl":
+                    return Pyrrolysine;
+                case "Ter":
+                    return Stop;
+                default:
+                    throw new IllegalArgumentException("No enum constant AminoAcidCode." + code);
+            }
+        }
+    }
+
+    public static AminoAcidCode valueOfCode1AA(char code) {
+
+        switch (code) {
             case 'G': return Glycine;
             case 'P': return Proline;
             case 'A': return Alanine;
@@ -75,7 +133,7 @@ public enum AminoAcidCode {
             case 'U': return Selenocysteine;
             case 'O': return Pyrrolysine;
             case '*': return Stop;
-            default: throw new IllegalArgumentException( "No enum constant AminoAcidCode." + aa);
+            default: throw new IllegalArgumentException( "No enum constant AminoAcidCode." + code);
         }
     }
 }

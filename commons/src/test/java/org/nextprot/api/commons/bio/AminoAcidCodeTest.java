@@ -15,6 +15,12 @@ public class AminoAcidCodeTest {
     }
 
     @Test
+    public void testValueOfCodeFound() throws Exception {
+
+        Assert.assertEquals(AminoAcidCode.Alanine, AminoAcidCode.valueOfCode("Ala"));
+    }
+
+    @Test
     public void testGetAACode1() throws Exception {
 
         Assert.assertEquals('A', AminoAcidCode.valueOfCode1AA('A').get1LetterCode());
