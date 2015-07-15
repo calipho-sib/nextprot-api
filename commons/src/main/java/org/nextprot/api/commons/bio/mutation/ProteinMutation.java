@@ -42,6 +42,10 @@ public class ProteinMutation {
         return lastAffectedAminoAcidPos;
     }
 
+    public boolean isAminoAcidRange() {
+        return lastAffectedAminoAcidPos - firstAffectedAminoAcidPos > 0;
+    }
+
     public Mutation getMutation() {
         return mutation;
     }

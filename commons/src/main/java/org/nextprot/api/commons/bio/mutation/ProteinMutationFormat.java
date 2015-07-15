@@ -10,13 +10,19 @@ import java.text.ParseException;
  */
 public interface ProteinMutationFormat {
 
+    enum AACodeType {
+        ONE_LETTER, THREE_LETTER
+    }
+
     /**
      * Formats a <code>ProteinMutation</code>.
      *
      * @param mutation the mutation to format
+     * @param type the aa letter code type
+     *
      * @return a formatter <code>String</>
      */
-    String format(ProteinMutation mutation);
+    String format(ProteinMutation mutation, AACodeType type);
 
     /**
      * Parses text from the beginning of the given string to produce a ProteinMutation.

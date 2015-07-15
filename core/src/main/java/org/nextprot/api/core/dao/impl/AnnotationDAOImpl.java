@@ -1,5 +1,5 @@
 package org.nextprot.api.core.dao.impl;
-import com.google.common.base.Preconditions;
+import org.nextprot.api.commons.bio.mutation.ProteinMutationHGVFormat;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
@@ -16,12 +16,12 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 @Component
 public class AnnotationDAOImpl implements AnnotationDAO {
+
+	private static ProteinMutationHGVFormat MUTATION_HGV_FORMAT = new ProteinMutationHGVFormat();
 
 	@Autowired private SQLDictionary sqlDictionary;
 
@@ -199,27 +199,6 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	static void setPropertyNameValue(AnnotationProperty property, String name, String value) {
 
 		property.setName(name);
-		property.setValue((name.equals("mutation AA")) ? asHGVMutationFormat(value) : value);
-	}
-
-	static String asHGVMutationFormat(String value) {
-
-		Preconditions.checkArgument(value.startsWith("p."));
-
-		Pattern pat = Pattern.compile("([A-Z])\\d+_?([A-Z])?.*");
-
-		Matcher matcher = pat.matcher(value);
-
-		while (matcher.find()) {
-
-			System.out.println(matcher.group(1));
-			System.out.println(matcher.group(2));
-		}
-
-		// 1. locate 1-letter AAs and replace with 3-letter
-		// 2. replace * by Ter
-		// 3. remove everything after del
-
-		return value;
+		property.setValue((name.equals("mutation AA")) ? MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parseNonStandardCosmic(value)) : value);
 	}
 }

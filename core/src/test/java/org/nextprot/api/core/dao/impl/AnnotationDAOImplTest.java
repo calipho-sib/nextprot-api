@@ -4,9 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by fnikitin on 08/07/15.
  */
@@ -30,33 +27,5 @@ public class AnnotationDAOImplTest {
         AnnotationDAOImpl.setPropertyNameValue(property, "mutation AA", "p.R54C");
 
         Assert.assertNotEquals("p.R54C", property.getValue());
-    }
-
-    @Test
-    public void testAsHGVMutationFormat() throws Exception {
-
-        AnnotationDAOImpl.asHGVMutationFormat("p.R54C");
-        AnnotationDAOImpl.asHGVMutationFormat("p.E3815*");
-        AnnotationDAOImpl.asHGVMutationFormat("p.I6616del");
-        AnnotationDAOImpl.asHGVMutationFormat("p.K487_L498del12");
-        AnnotationDAOImpl.asHGVMutationFormat("p.P564_L567delPRAL");
-    }
-
-    @Test
-    public void testAsHGVMutationFormats() throws Exception {
-
-        Map<String, String> hgvFormats = new HashMap<>();
-
-        hgvFormats.put("p.R54C", "p.Arg54Cys");
-        hgvFormats.put("p.E3815*", "p.Glu3815Ter");
-        hgvFormats.put("p.I6616del", "p.Ile6616del");
-        hgvFormats.put("p.K487_L498del12", "p.Lys487_Leu498del");
-        hgvFormats.put("p.P564_L567delPRAL", "p.Pro564_Leu567del");
-        hgvFormats.put("p.M682fs*1", "p.Met682fsTer1");
-        hgvFormats.put("p.S1476fs*>9", "p.Ser1476fsTer>9");
-
-        for (Map.Entry<String, String> hgvFormat : hgvFormats.entrySet()) {
-            Assert.assertEquals(hgvFormat.getValue(), AnnotationDAOImpl.asHGVMutationFormat(hgvFormat.getKey()));
-        }
     }
 }

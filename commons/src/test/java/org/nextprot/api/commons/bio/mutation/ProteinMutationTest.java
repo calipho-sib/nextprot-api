@@ -20,6 +20,8 @@ public class ProteinMutationTest {
         Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastAffectedAminoAcidCode());
         Assert.assertEquals(54, pm.getLastAffectedAminoAcidPos());
 
+        Assert.assertTrue(!pm.isAminoAcidRange());
+
         Assert.assertTrue(pm.getMutation() instanceof Substitution);
         Assert.assertEquals(AminoAcidCode.Cysteine, pm.getMutation().getValue());
     }
