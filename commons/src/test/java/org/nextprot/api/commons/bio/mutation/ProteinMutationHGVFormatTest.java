@@ -64,6 +64,63 @@ public class ProteinMutationHGVFormatTest {
         Assert.assertEquals("p.D419_R420delinsSSDG", format.format(pm));
     }
 
+
+    @Test
+    public void testFormatSubstitutionCode3() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcid(AminoAcidCode.Arginine, 54).substitutedBy(AminoAcidCode.Cysteine).build();
+
+        Assert.assertEquals("p.Arg54Cys", format.format(pm, ProteinMutationFormat.AACodeType.THREE_LETTER));
+    }
+
+    @Test
+    public void testFormatAADeletionCode3() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcid(AminoAcidCode.Lysine, 73).deleted().build();
+
+        Assert.assertEquals("p.Lys73del", format.format(pm, ProteinMutationFormat.AACodeType.THREE_LETTER));
+    }
+
+    @Test
+    public void testFormatRangeDeletionCode3() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 487, AminoAcidCode.Leucine, 498).deleted().build();
+
+        Assert.assertEquals("p.Lys487_Leu498del", format.format(pm, ProteinMutationFormat.AACodeType.THREE_LETTER));
+    }
+
+    @Test
+    public void testFormatFrameshiftCode3() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(1).build();
+
+        Assert.assertEquals("p.Met682fsTer1", format.format(pm, ProteinMutationFormat.AACodeType.THREE_LETTER));
+    }
+
+    @Test
+    public void testFormatDeletion1AaAndInsertion1Code3() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcid(AminoAcidCode.Threonine, 399).deletedAndInserts(AminoAcidCode.Leucine).build();
+
+        Assert.assertEquals("p.Thr399delinsLeu", format.format(pm, ProteinMutationFormat.AACodeType.THREE_LETTER));
+    }
+
+    @Test
+    public void testFormatDeletionMultiAasAndInsertion1Code3() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcids(AminoAcidCode.Leucine, 330, AminoAcidCode.Alanine, 331).deletedAndInserts(AminoAcidCode.Phenylalanine).build();
+
+        Assert.assertEquals("p.Leu330_Ala331delinsPhe", format.format(pm, ProteinMutationFormat.AACodeType.THREE_LETTER));
+    }
+
+    @Test
+    public void testFormatDeletionMultiAndInsertionMultiCode3() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcids(AminoAcidCode.AsparticAcid, 419, AminoAcidCode.Arginine, 420).deletedAndInserts(AminoAcidCode.Serine, AminoAcidCode.Serine, AminoAcidCode.AsparticAcid, AminoAcidCode.Glycine).build();
+
+        Assert.assertEquals("p.Asp419_Arg420delinsSerSerAspGly", format.format(pm, ProteinMutationFormat.AACodeType.THREE_LETTER));
+    }
+
     @Test
     public void testParseSubstitution() throws Exception {
 
@@ -150,18 +207,14 @@ public class ProteinMutationHGVFormatTest {
     @Test
     public void testParseNonStandardCosmic() throws Exception {
 
-    }
+        /*
+        "p.K487_L498del12"
+        "p.P564_L567delPRAL"
+        "p.T399>L"
+         */
 
-   /* @Test
-    public void testAsHGVMutationFormat() throws Exception {
-
-        ProteinMutationHGVFormat.asHGVMutationFormat("p.R54C");
-        ProteinMutationHGVFormat.asHGVMutationFormat("p.E3815*");
-        ProteinMutationHGVFormat.asHGVMutationFormat("p.I6616del");
-        ProteinMutationHGVFormat.asHGVMutationFormat("p.K487_L498del12");
-        ProteinMutationHGVFormat.asHGVMutationFormat("p.P564_L567delPRAL");
-        ProteinMutationHGVFormat.asHGVMutationFormat("p.T399>L");
     }
+/*
 
     @Test
     public void testAsHGVMutationFormats() throws Exception {
