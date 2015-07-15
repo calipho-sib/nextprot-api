@@ -29,8 +29,7 @@ public interface ProteinMutationFormat {
      *
      * @param source A <code>String</code> whose beginning should be parsed.
      * @return A <code>ProteinMutation</code> parsed from the string.
-     * @exception ParseException if the beginning of the specified string
-     *            cannot be parsed.
+     * @exception ParseException if the specified string cannot be parsed.
      */
-    ProteinMutation parse(String source);
+    ProteinMutation parse(String source) throws ParseException;
 }
