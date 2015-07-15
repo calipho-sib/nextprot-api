@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.nextprot.api.core.domain.Terminology;
 
@@ -40,7 +41,16 @@ public interface TerminologyService {
 	 * Retrieves terms sorted by ontology
 	 * @return
 	 */
-	public List<Terminology> findAllTerminology();	
+	public List<Terminology> findAllTerminology();
+
+	/**
+	 * Gets enzyme terminology ???
+	 * @param entryName
+	 * @return
+	 */
+	public List<Terminology> findEnzymeByMaster(String entryName);
+
+	public List<Terminology> findTerminologyByAccessions(Set<String> terminologyAccessions);	
 
 	
 }

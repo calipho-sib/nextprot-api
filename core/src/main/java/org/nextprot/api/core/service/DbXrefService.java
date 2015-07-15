@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.PublicationDbXref;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
 public interface DbXrefService {
@@ -19,10 +20,6 @@ public interface DbXrefService {
 
 	List<DbXref> findAllDbXrefs();
 	
-	List<DbXref> findDbXrefsByEntry(String uniqueName);
-	
-	List<DbXref> findDbXrefsAsAnnotByEntry(String uniqueName);
-
 	List<DbXref> findDbXRefByPublicationId(Long publicationId);
 	
 	List<PublicationDbXref> findDbXRefByPublicationIds(List<Long> publicationIds);
@@ -32,5 +29,7 @@ public interface DbXrefService {
 	List<Long> getAllDbXrefsIds();
 
 	List<DbXref> findDbXRefByIds(List<Long> resourceIds);
+
+	List<Annotation> findDbXrefsAsAnnotationsByEntry(String entryName);
 	
 }

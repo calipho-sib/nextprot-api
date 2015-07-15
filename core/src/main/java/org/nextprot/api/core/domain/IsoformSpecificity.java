@@ -11,22 +11,68 @@ import org.nextprot.api.commons.utils.Pair;
  * @author mpereira
  *
  */
-public class IsoformSpecificity implements Serializable{
+public class IsoformSpecificity implements Serializable, Comparable<IsoformSpecificity>{
 
 	private static final long serialVersionUID = -6617265777393722080L;
-	private String isoformName;
+
+	@Deprecated
+	private String deprecatedIsoformName;
+	private String isoformMainName;
+	private String sortableName;
+	private String isoformAc;
+	
+	public void setIsoformAc(String isoformAc) {
+		this.isoformAc = isoformAc;
+	}
+
+
 	private List<Pair<Integer, Integer>> positions;
-	
+
+	public IsoformSpecificity(String isoformName, String isoformAc) {
+		this.isoformMainName = isoformName;
+		this.isoformAc = isoformAc;
+	}
+
+	//isoform name should be replaced with ac
+	@Deprecated
 	public IsoformSpecificity(String isoformName) {
-		this.isoformName = isoformName;
+		this.deprecatedIsoformName = isoformName;
+	}
+
+	public void setIsoformMainName(String isoformMainName) {
+		
+		this.isoformMainName = isoformMainName;
+		this.sortableName = isoformMainName; // by default: same as isoformMainName
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+		// special case for sortable name when name ends with numeric value
+		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+		if (isoformMainName != null && isoformMainName.startsWith("Iso ")) {
+			String nb = isoformMainName.substring(4);
+			try {
+				Integer.parseInt(nb);
+				while (nb.length()<3) nb = "0" + nb;
+				this.sortableName = "Iso "+ nb;
+			} 
+			catch (Exception e) { }
+		} 
 	}
 	
+	public String getIsoformMainName() {
+		return isoformMainName;
+	}
+
+	public String getIsoformAc() {
+		return isoformAc;
+	}
+
+	@Deprecated
 	public String getIsoformName() {
-		return isoformName;
+		return deprecatedIsoformName;
 	}
-	
+
+	@Deprecated
 	public void setIsoformName(String isoformName) {
-		this.isoformName = isoformName;
+		this.deprecatedIsoformName = isoformName;
 	}
 	
 	public List<Pair<Integer, Integer>> getPositions() {
@@ -49,7 +95,7 @@ public class IsoformSpecificity implements Serializable{
 	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append("specificity for isoform "+ isoformName + ": ");
+		sb.append("specificity for isoform "+ deprecatedIsoformName + ": ");
 		boolean afterFirst = false;
 		for (Pair<Integer,Integer> pos : positions) {
 			if (afterFirst) sb.append(" , ");
@@ -58,4 +104,17 @@ public class IsoformSpecificity implements Serializable{
 		}
 		return sb.toString();
 	}
+	
+	
+	public String getSortableName() {
+		return sortableName;
+	}
+	
+	
+	@Override
+	public int compareTo(IsoformSpecificity o) {
+		return this.getSortableName().compareTo(o.getSortableName());
+	}
+
+
 }

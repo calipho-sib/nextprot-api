@@ -1,1 +1,20 @@
->nxp|$entry.getUniqueName()|INSR|Insulin receptor|Short
+#if(  $entry.getOverview().hasMainProteinName() )
+#set ( $protName = $entry.getOverview().getMainProteinName() )
+#else
+#set ( $protName = "-" )
+#end
+#if($entry.getOverview().hasMainGeneName() )
+#foreach($gn in $entry.overview.geneNames)
+#if(!$geneName)
+#set ($geneName = $gn.name)##First time or only one Gene
+#else
+#set ($geneName = $geneName + ";" + $gn.name)##For all other gene names (it may happen -> 135 entries like this)
+#end
+#end
+#else
+#set ($geneName = "-" )##When there is no gene name
+#end
+#foreach($isoform in $entry.isoforms)
+>nxp|$isoform.getUniqueName()|$geneName|$protName|$isoform.getMainEntityName().getValue()
+$StringUtils.wrapText($isoform.getSequence(), 60)
+#end

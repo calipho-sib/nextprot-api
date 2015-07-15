@@ -61,6 +61,8 @@ public class PublicationDaoImpl implements PublicationDao {
 			
 			// add publication details
 			publication.setIsLargeScale(resultSet.getLong("is_largescale")>0);
+			publication.setIsCurated(resultSet.getLong("is_curated")>0);
+			publication.setIsComputed(resultSet.getLong("is_computed")>0);
 
 			String pubType = resultSet.getString("pub_type");
 			if (pubType.equals("ONLINE PUBLICATION")) {
@@ -75,7 +77,8 @@ public class PublicationDaoImpl implements PublicationDao {
 				String subDB = "Submitted to " + resultSet.getString("submission_database");
 				if (subDB != null) {
 					if (!title.startsWith(subDB)) { // add the submission database is necessary 
-						publication.setTitle(subDB + title);
+						//publication.setTitle(subDB + title);
+						publication.setSubmission(subDB);
 					}
 				} 
 
@@ -123,18 +126,13 @@ public class PublicationDaoImpl implements PublicationDao {
 	}
 
 	@Override
-	public List<Publication> findAllPublications() {
-		SqlParameterSource namedParameters = new MapSqlParameterSource();
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-list"), namedParameters, new PublicationRowMapper());	
-	}
-
-	@Override
 	public List<Long> findAllPublicationsIds() {
-		String sql= "select pubs.resource_id pub_id\n" + 
-				"           from nextprot.publications pubs\n" + 
-				"     inner join  nextprot.cv_publication_types pubtypes on ( pubs.cv_publication_type_id = pubtypes.cv_id)";
+		//String sql= "select pubs.resource_id pub_id\n" + 
+		//		"           from nextprot.publications pubs\n" + 
+		//		"     inner join  nextprot.cv_publication_types pubtypes on ( pubs.cv_publication_type_id = pubtypes.cv_id)";
 		SqlParameterSource namedParameters = new MapSqlParameterSource();
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new LongRowMapper());	
+		//return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new LongRowMapper());	
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-allids"), namedParameters, new LongRowMapper());	
 	}
 
 }

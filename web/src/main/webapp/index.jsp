@@ -451,7 +451,7 @@
 					</div>
 				{{/if}}
 				{{#if jsondochints}}
-					<div class="alert alert-info alert-dismissible border-radius-none">
+					<div class="alert alert-info alert-dismissible border-radius-none" style="display:none">
 						<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 						<p><strong>Hints to provide a better understanding of your API:</strong></p>
 						<ul class="list-unstyled">
@@ -645,7 +645,7 @@
 	{{/if}}
 </table>
 {{#if jsondochints}}
-	<div class="alert alert-info alert-dismissible border-radius-none">
+	<div class="alert alert-info alert-dismissible border-radius-none" style="display:none">
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		<p><strong>Hints to provide a better understanding of your API:</strong></p>
 		<ul class="list-unstyled">
@@ -755,10 +755,10 @@
 	function printResponse(data, res, url) {
 		if(res.responseXML != null) {
 			$("#response").text(formatXML(res.responseText));
-		} else if (url.endsWith("ttl")) {
-			$("#response").text(res.responseText);
-		} else {
+		} else if (url.endsWith("json")) {
 			$("#response").text(JSON.stringify(data, undefined, 2));
+		} else {
+			$("#response").text(res.responseText);
 		}
 		
 		$("#responseStatus").text(res.status);
@@ -865,13 +865,17 @@
 					});
 					
 					$('#testButton').button('loading');
-					
+
 					var suffix = "xml";
 					if (headers["Accept"] == "application/json")
 						suffix = "json";
 					if (headers["Accept"] == "text/turtle")
 						suffix = "ttl";
-					
+					if (headers["Accept"] == "text/fasta")
+						suffix = "fasta";
+					//if (headers["Accept"] == "text/peff")
+					//	suffix = "peff";
+
 					var res = $.ajax({
 						url : window.location.href.replace("#", "") + replacedPath + "." + suffix,
 						type: method.verb,
@@ -1052,6 +1056,13 @@
 	var lock = null;
 
 	$(document).ready(function() {
+		
+		if (typeof String.prototype.endsWith !== 'function') {
+		    String.prototype.endsWith = function(suffix) {
+		        return this.indexOf(suffix, this.length - suffix.length) !== -1;
+		    };
+		}
+		
 		lock = new Auth0Lock('7vS32LzPoIR1Y0JKahOvUCgGbn94AcFW', 'nextprot.auth0.com');
 	
    		var userProfile;

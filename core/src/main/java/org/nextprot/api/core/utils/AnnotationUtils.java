@@ -3,16 +3,25 @@ package org.nextprot.api.core.utils;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import java.util.*;
 
 
 public class AnnotationUtils {
-	
+
+	private static Comparator<Annotation> COMPARATOR;
+
+
+	static {
+		COMPARATOR = new Comparator<Annotation>() {
+			@Override
+			public int compare(Annotation a1, Annotation a2) {
+
+				return Long.compare(a1.getAnnotationId(), a2.getAnnotationId());
+			}
+		};
+	}
 	
 	/**
 	 * Filter annotation by its category
@@ -42,6 +51,9 @@ public class AnnotationUtils {
 				}
 			}
 		}
+
+		Collections.sort(annotationList, COMPARATOR);
+
 		return annotationList;
 	}
 	
@@ -64,6 +76,24 @@ public class AnnotationUtils {
 			for(AnnotationEvidence e : a.getEvidences()){
 				if(e.isResourceAXref()){
 					xrefIds.add(e.getResourceId());
+				}
+			}
+		}
+		return xrefIds;
+	}
+
+	/*
+	 * Returns a set of xref identifiers corresponding to the interactants which are involved 
+	 * in binary interaction annotations and which are not human proteins (xeno interactions)
+	 */
+	public static Set<Long> getXrefIdsForInteractionsInteractants(List<Annotation> annotations){
+		Set<Long> xrefIds = new HashSet<Long>(); 
+		for(Annotation a : annotations){
+			if (a.getAPICategory()==AnnotationApiModel.BINARY_INTERACTION) {
+				for (AnnotationProperty p: a.getProperties()) {
+					if (p.getName().equals(AnnotationProperty.NAME_INTERACTANT)) {
+						if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
+					}
 				}
 			}
 		}

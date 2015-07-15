@@ -14,30 +14,14 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 /**
- * @author dteixeira
+ * @author pam !
  */
 
-@DatabaseSetup(value = "AnnotationMVCTest.xml", type = DatabaseOperation.INSERT)
+@DatabaseSetup(value="AnnotationMVCTest.xml", type = DatabaseOperation.INSERT)
 public class AnnotationServiceTest extends CoreUnitBaseTest {
 
-	@Autowired
-	AnnotationService annotationService;
-
-	@Test
-	public void shouldGetTheListOfAnnotationsFromService() {
-
-		List<Annotation> annotations = annotationService.findAnnotations("NX_P12345");
-		assertEquals(annotations.size(), 5);
-
-		for (Annotation a : annotations) {
-			System.out.println(a.getCategory());
-		}
-
-		System.out.println(annotations.iterator().next().getEvidences().size());
-		System.out.println(annotations.iterator().next().getTargetingIsoformsMap().size());
-		System.out.println(annotations.iterator().next().getProperties().size());
-
-	}
+	
+	@Autowired AnnotationService annotationService;
 
 	@Test
 	public void shouldGetAnOrphanetAnnotationFromService() {
@@ -58,6 +42,5 @@ public class AnnotationServiceTest extends CoreUnitBaseTest {
 		assertEquals("XR_ORPHA_100021", evi.getResourceAccession());
 		assertEquals("Orphanet", evi.getResourceDb());
 	}
-	
-	
+
 }

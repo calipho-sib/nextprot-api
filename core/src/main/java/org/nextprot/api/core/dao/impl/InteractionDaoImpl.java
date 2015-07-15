@@ -39,11 +39,7 @@ public class InteractionDaoImpl implements InteractionDAO {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new InteractionRowMapper());
 	}
 
-	public List<Interaction> findAllInteractions() {
-		String sql = sqlDictionary.getSQLQuery("interactions-all");
-		SqlParameterSource namedParameters = new MapSqlParameterSource();
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new InteractionRowMapper());
-	}
+
 
 	private static class InteractionRowMapper implements ParameterizedRowMapper<Interaction> {
 
@@ -72,12 +68,14 @@ public class InteractionDaoImpl implements InteractionDAO {
 			//There is always the entry itself 
 			Interactant selfInteractant = new Interactant();
 			selfInteractant.setAccession(resultSet.getString("unique_name"));
+			selfInteractant.setXrefId(resultSet.getLong("entry_xref_id"));
 			selfInteractant.setNextprot(true);
 			selfInteractant.setEntryPoint(true);
 
 			//And another entry, that may be present in nextprot or not
 			Interactant otherInteractant = new Interactant();
 			otherInteractant.setAccession(resultSet.getString("interactant_unique_name"));
+			otherInteractant.setXrefId(resultSet.getLong("interactant_xref_id"));
 			otherInteractant.setDatabase(resultSet.getString("interactant_database"));
 			otherInteractant.setUrl(resultSet.getString("interactant_url"));
 			otherInteractant.setNextprot(resultSet.getBoolean("is_interactant_in_nextprot"));
@@ -98,7 +96,7 @@ public class InteractionDaoImpl implements InteractionDAO {
 
 			
 			//TODO make a unit test for this
-			//If it is a slef interaction add just the otherInteractant (which is the self)
+			//If it is a self interaction add just the otherInteractant (which is the self)
 			if(otherInteractant.getAccession() == null){
 				interaction.addInteractant(selfInteractant);
 			}else {

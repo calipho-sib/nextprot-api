@@ -10,10 +10,24 @@ import java.io.Serializable;
 public class AnnotationProperty implements Serializable {
 	
 	private static final long serialVersionUID = 2243514603302154352L;
+	public static final String NAME_INTERACTANT="interactant";
+	public static final String VALUE_TYPE_RIF="resource-internal-ref";
+	public static final String VALUE_TYPE_ENTRY_AC="entry-accession";
+	public static final String VALUE_TYPE_ISO_AC="isoform-accession";
+	
 	private long annotationId;
+	private String valueType;
 	private String name;
 	private String value;
 	private String accession;
+
+	
+	public String getValueType() {
+		return valueType;
+	}
+	public void setValueType(String type) {
+		this.valueType = type;
+	}
 	public long getAnnotationId() {
 		return annotationId;
 	}

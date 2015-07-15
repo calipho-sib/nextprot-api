@@ -10,7 +10,7 @@
 	<import resource="classpath:spring/core-context.xml" />
 	<import resource="classpath:spring/solr-context.xml" />
 	<import resource="classpath:spring/rdf-context.xml" />
-	<import resource="security-context.xml" />
+	<import resource="classpath:META-INF/spring/security-context.xml" />
 
 	<!-- Make Content Negotiation manager available across all of Spring MVC -->
 	<mvc:annotation-driven> <!--content-negotiation-manager="cnManager"-->
@@ -57,8 +57,7 @@
 		<property name="configLocation" value="/WEB-INF/velocity/velocity.properties" />
 	</bean>
 
-
-	<!-- View resolvers can also be configured with ResourceBundles or XML files. 
+	<!-- View resolvers can also be configured with ResourceBundles or XML files.
 		If you need different view resolving based on Locale, you have to use the 
 		resource bundle resolver. -->
 
@@ -67,9 +66,9 @@
 
 	<!-- The ContentNegotiationManager created by either setup is an implementation of ContentNegotationStrategy that
 		implements the PPA Strategy (path extension, then parameter, then Accept header) described above. -->
-	<!--<<bean id="cnManager"
+	<bean id="contentNegotiationManager"
 		  class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
-		property name="favorPathExtension" value="true"/>
+		<property name="favorPathExtension" value="true"/>
 		<property name="ignoreAcceptHeader" value="true" />
 		<property name="defaultContentType" value="application/json" />
 		<property name="useJaf" value="false"/>
@@ -80,49 +79,50 @@
 				<entry key="xml" value="application/xml" />
 				<entry key="ttl" value="text/turtle" />
 				<entry key="html" value="text/html" />
+				<entry key="fasta" value="text/fasta" />
+				<!--<entry key="peff" value="text/peff" />-->
+				<entry key="txt" value="text/plain" />
 			</map>
 		</property>
-	</bean>-->
+	</bean>
 
 	<bean
 		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-		<property name="mediaTypes">
-			<map>
-				<entry key="json" value="application/json" />
-				<entry key="xml" value="application/xml" />
-				<entry key="ttl" value="text/turtle" />
-				<entry key="html" value="text/html" />
-			</map>
-		</property>
+		<property name="contentNegotiationManager" ref="contentNegotiationManager"/>
 		<property name="viewResolvers">
 			<list>
 				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
-				<bean
-					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+				<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 					<property name="prefix" value="/WEB-INF/jsp/" />
 					<property name="suffix" value=".jsp" />
 				</bean>
-				<bean
-					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="application/xml;charset=UTF-8" />
 					<property name="cache" value="true" />
 				</bean>
-				<bean
-					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="application/json;charset=UTF-8" />
 				</bean>
-				<bean
-					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="turtle/" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/turtle;charset=UTF-8" />
 				</bean>
-				<bean
-					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<!--<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+					<property name="prefix" value="peff/" />
+					<property name="suffix" value=".vm" />
+					<property name="contentType" value="text/peff;charset=UTF-8" />
+				</bean>-->
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+					<property name="prefix" value="fasta/" />
+					<property name="suffix" value=".vm" />
+					<property name="contentType" value="text/fasta;charset=UTF-8" />
+				</bean>
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="txt/" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/plain;charset=UTF-8" />

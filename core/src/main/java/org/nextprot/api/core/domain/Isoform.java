@@ -1,13 +1,14 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.util.Collection;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
+import org.nextprot.api.core.utils.NXVelocityUtils;
+
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.util.Collection;
 
 
 public class Isoform implements Serializable {
@@ -28,13 +29,14 @@ public class Isoform implements Serializable {
 
 	private Collection<IsoformEntityName> synonyms;
 	
-	
+	@Deprecated
 	public String getIsoelectricPointAsString() {
 		Double d = DescriptorPI.compute(sequence);
 		DecimalFormat df = new DecimalFormat("#.##");
 		return df.format(d);
 	}
-	
+
+	@Deprecated
 	public String getMassAsString() {
 		try {
 			Double d = DescriptorMass.compute(sequence);
@@ -76,6 +78,10 @@ public class Isoform implements Serializable {
 	public boolean isSwissProtDisplayedIsoform() {
 		return swissProtDisplayedIsoform;
 	}
+	
+	public boolean isCanonicalIsoform() {
+		return this.isSwissProtDisplayedIsoform();
+	}
 
 	public void setSwissProtDisplayedIsoform(boolean swissProtDisplayedIsoform) {
 		this.swissProtDisplayedIsoform = swissProtDisplayedIsoform;
@@ -96,5 +102,4 @@ public class Isoform implements Serializable {
 	public void setSynonyms(Collection<IsoformEntityName> synonyms) {
 		this.synonyms = synonyms;
 	}
-
 }

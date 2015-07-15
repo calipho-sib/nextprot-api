@@ -1,14 +1,14 @@
 package org.nextprot.api.core.domain;
 
+import org.jsondoc.core.annotation.ApiObject;
+import org.jsondoc.core.annotation.ApiObjectField;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsondoc.core.annotation.ApiObject;
-import org.jsondoc.core.annotation.ApiObjectField;
-
 @ApiObject(name = "interaction", description = "The interactions")
-public class Interaction implements Serializable{
+public class Interaction implements Serializable, IsoformSpecific {
 
 	private static final long serialVersionUID = -4893142951872871844L;
 
@@ -180,7 +180,8 @@ public class Interaction implements Serializable{
 
 	// according to issue http://issues.isb-sib.ch/browse/CALIPHOMISC-149
 	// we always propagate the interactions to all isoforms but we set the specificity property
-	public boolean isInteractionValidForIsoform(String isoform) {
+	@Override
+	public boolean isSpecificForIsoform(String isoform) {
 		return true;
 	}
 

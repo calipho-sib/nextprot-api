@@ -1,13 +1,15 @@
 package org.nextprot.api.core.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import com.google.common.collect.Lists;
+public class Entry implements KeyValueRepresentation{
 
-public class Entry {
-
+	private EntryProperties properties;
+	
 	private String uniqueName;
 
 	private Overview overview;
@@ -69,6 +71,19 @@ public class Entry {
 		return overview;
 	}
 
+	public String getProteinExistence() {
+		if(this.overview != null){
+			return this.overview.getProteinExistence();
+		} return "N/A";
+	}
+	
+	public int getProteinExistenceLevel() {
+		if(this.overview != null){
+			return this.overview.getProteinExistenceLevel();
+		} return -1;
+	}
+
+
 	public void setOverview(Overview overview) {
 		this.overview = overview;
 	}
@@ -126,60 +141,25 @@ public class Entry {
 	}
 
 	public List<AntibodyMapping> getAntibodiesByIsoform(String isoform) {
-		List<AntibodyMapping> abmlist = Lists.newArrayList();
-		for (AntibodyMapping abm: this.antibodyMappings) {
-			if (abm.isSpecificForIsoform(isoform)) abmlist.add(abm);
-		}
-		return abmlist;
+		return Entry.filterByIsoform(antibodyMappings, isoform);
 	}
 	
 	public List<PeptideMapping> getPeptidesByIsoform(String isoform) {
-		List<PeptideMapping> ppmlist = Lists.newArrayList();
-		for (PeptideMapping ppm: this.peptideMappings) {
-			if (ppm.isSpecificForIsoform(isoform)) ppmlist.add(ppm);
-		}
-		return ppmlist;
+		return Entry.filterByIsoform(peptideMappings, isoform);
 	}
 	
 	public List<PeptideMapping> getSrmPeptidesByIsoform(String isoform) {
-		List<PeptideMapping> ppmlist = Lists.newArrayList();
-		for (PeptideMapping ppm: this.srmPeptideMappings) {
-			if (ppm.isSpecificForIsoform(isoform)) ppmlist.add(ppm);
-		}
-		return ppmlist;
+		return Entry.filterByIsoform(srmPeptideMappings, isoform);
 	}
 	
 	public List<Annotation> getAnnotationsByIsoform(String isoform) {
-		List<Annotation> filteredAnnotations = Lists.newArrayList();
-		for (Annotation a : annotations) {
-			//Should not be enough to determine if the annotation is on the isoform or not
-			if(a.isAnnotationValidForIsoform(isoform)){
-					filteredAnnotations.add(a);
-			}
-		}
-		return filteredAnnotations;
+		return Entry.filterByIsoform(annotations, isoform);
 	}
 
 	public List<Interaction> getInteractionsByIsoform(String isoform) {
-		List<Interaction> filteredInteractions = Lists.newArrayList();
-		for (Interaction a : interactions) {
-			if(a.isInteractionValidForIsoform(isoform)){
-					filteredInteractions.add(a);
-			}
-		}
-		return filteredInteractions;
+		return Entry.filterByIsoform(interactions, isoform);
 	}
-	
-/*	
-	public List<Annotation> getAnnotationsByCategory(String category) {
-		List<Annotation> filteredAnnotations = Lists.newArrayList();
-		for (Annotation a : annotations) {
-			if (a.getCategory().equals(category))
-				filteredAnnotations.add(a);
-		}
-		return filteredAnnotations;
-	}
-*/
+
 	public List<PeptideMapping> getPeptideMappings() {
 		return peptideMappings;
 	}
@@ -230,5 +210,43 @@ public class Entry {
 
 	public void setSrmPeptideMappings(List<PeptideMapping> srmPeptideMappings) {
 		this.srmPeptideMappings = srmPeptideMappings;
+	}
+
+	public EntryProperties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(EntryProperties properties) {
+		this.properties = properties;
+	}
+
+	/**
+	 * Filter a elements specific of the given isoform
+	 * @param tList the list to filter
+	 * @param isoform the isoform filter applied to the list
+	 * @param <T> the element type that implement the IsoformSpecific interface
+	 * @return a filtered list
+	 */
+	private static <T extends IsoformSpecific> List<T> filterByIsoform(List<T> tList, String isoform) {
+
+		List<T> list = new ArrayList<>();
+
+		if (tList != null) {
+			for (T t : tList) {
+				if (t.isSpecificForIsoform(isoform)) list.add(t);
+			}
+		}
+
+		return list;
+	}
+
+	@Override
+	public String toKeyValueString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("entry=" + this.uniqueName + ";");
+		sb.append("annotations-count=" + ((this.annotations != null) ? this.annotations.size() : 0) + ";");
+		sb.append("publications-count=" + ((this.publications != null) ? this.publications.size() : 0) + ";");
+		sb.append("xrefs-count=" + ((this.xrefs != null) ? this.xrefs.size() : 0) + ";");
+		return sb.toString();
 	}
 }

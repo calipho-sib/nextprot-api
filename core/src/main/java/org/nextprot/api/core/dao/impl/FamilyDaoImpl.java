@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.FamilyDao;
 import org.nextprot.api.core.domain.Family;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,33 +19,35 @@ import org.springframework.stereotype.Repository;
 public class FamilyDaoImpl implements FamilyDao {
 
 	@Autowired private DataSourceServiceLocator dsLocator;
-	
-	private final String findFamilies = "select distinct m.identifier_id as master_id, m.unique_name as unique_name, xr.accession as accession, ap.property_value as family_region, cv.cv_name as family_name, a.description as description " +
-			"from nextprot.sequence_identifiers m " +
-			"inner join nextprot.annotations a on (m.identifier_id = a.identifier_id and a.cv_annotation_type_id = 1059) " + 
-			"inner join nextprot.cv_terms cv on (a.cv_term_id = cv.cv_id) " +
-			"inner join nextprot.db_xrefs xr on (cv.db_xref_id = xr.resource_id) " +
-			"left outer join nextprot.annotation_properties ap on (a.annotation_id = ap.annotation_id and ap.property_name = 'family region') " +
-			"where m.cv_type_id = 1 " +
-			"and m.cv_status_id = 1 " +
-			"and m.unique_name = :uniqueName ";
+	@Autowired private SQLDictionary sqlDictionary;
 	
 	@Override
 	public List<Family> findFamilies(String uniqueName) {
+		String sql = sqlDictionary.getSQLQuery("families-by-entry");	
 		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(findFamilies, namedParameters, new FamilyRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new FamilyRowMapper());
 	}
+	
+	@Override
+	public Family findParentOfFamilyId(Long familyId) {
+		String sql = sqlDictionary.getSQLQuery("parent-family-by-term-id");	
+		SqlParameterSource namedParameters = new MapSqlParameterSource("familyId", familyId);
+		List<Family> parents = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new FamilyRowMapper());
+		if (parents==null || parents.size()==0) return null;
+		return parents.get(0);
+	}
+
 	
 	static class FamilyRowMapper implements ParameterizedRowMapper<Family> {
 
 		@Override
 		public Family mapRow(ResultSet resultSet, int row) throws SQLException {
 			Family family = new Family();
+			family.setFamilyId(resultSet.getLong("family_id"));
 			family.setAccession(resultSet.getString("accession"));
 			family.setName(resultSet.getString("family_name"));
 			family.setDescription(resultSet.getString("description"));
 			family.setRegion(resultSet.getString("family_region"));
-			
 			return family;
 		}
 		

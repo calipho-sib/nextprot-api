@@ -17,7 +17,6 @@ public interface InteractionDAO {
 	 * @return
 	 */
 	public List<Interaction> findInteractionsByEntry(String entryName);
-	public List<Interaction> findAllInteractions();
-	
+
 	
 }

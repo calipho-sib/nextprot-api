@@ -8,7 +8,9 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,59 +23,28 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.EntryService;
-import org.nextprot.api.core.service.GeneService;
-import org.nextprot.api.core.service.IdentifierService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.KeywordService;
-import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.ReleaseInfoService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
-import org.nextprot.api.core.service.fluent.FluentEntryService;
-import org.nextprot.api.core.utils.NXVelocityUtils;
+import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.service.ExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 @Service
-@Lazy
 public class ExportServiceImpl implements ExportService {
 
-	@Autowired
-	private PublicationService publicationService;
-	@Autowired
-	private DbXrefService xrefService;
-	@Autowired
-	private KeywordService kwService;
-	@Autowired
-	private IdentifierService identifierService;
-	@Autowired
-	private GeneService geneService;
-	@Autowired
-	private IsoformService isoformService;
-	@Autowired
-	private MasterIdentifierService masterIdentifierService;
-	@Autowired
-	private AnnotationService annotationService;
-	@Autowired
-	private EntryService entryService;
-	@Autowired
-	private FluentEntryService fluentEntryService;
-	@Autowired
-	private VelocityConfig config;
 
+	@Autowired  private EntryBuilderService entryBuilderService;
+	@Autowired  private MasterIdentifierService masterIdentifierService;
+	@Autowired  private VelocityConfig velocityConfig;
+	@Autowired  private TerminologyService terminologyService;
+	@Autowired  private ReleaseInfoService releaseInfoService;
+	
 	private int numberOfWorkers = 8;
 
 	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
@@ -120,12 +91,12 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	private Future<File> exportSubPart(SubPart part, NPFileFormat format) {
-		return executor.submit(new ExportSubPartTask(config.getVelocityEngine(), part, format));
+		return executor.submit(new ExportSubPartTask(velocityConfig.getVelocityEngine(), part, format));
 	}
 
 	@Override
 	public Future<File> exportEntry(String uniqueName, NPFileFormat format) {
-		return executor.submit(new ExportEntryTask(this.entryService, config.getVelocityEngine(), uniqueName, format));
+		return executor.submit(new ExportEntryTask(this.entryBuilderService, velocityConfig.getVelocityEngine(), uniqueName, format));
 	}
 
 	static class ExportEntryTask implements Callable<File> {
@@ -134,11 +105,11 @@ public class ExportServiceImpl implements ExportService {
 		private String filename;
 		private String entryName;
 		private VelocityEngine ve;
-		private EntryService entryService;
+		private EntryBuilderService entryBuilderService;
 
-		public ExportEntryTask(EntryService entryService, VelocityEngine ve, String entryName, NPFileFormat format) {
+		public ExportEntryTask(EntryBuilderService entryBuilderService, VelocityEngine ve, String entryName, NPFileFormat format) {
 			this.ve = ve;
-			this.entryService = entryService;
+			this.entryBuilderService = entryBuilderService;
 			this.filename = REPOSITORY_PATH + "/" + format.name() + "/" + entryName + "." + format.getExtension();
 			new File(filename).getParentFile().mkdirs();
 			this.entryName = entryName;
@@ -172,10 +143,7 @@ public class ExportServiceImpl implements ExportService {
 					template = ve.getTemplate("entry." + format + ".vm");
 				}
 
-				context = new VelocityContext();
-				context.put("entry", entryService.findEntry(entryName));
-				context.put("StringUtils", StringUtils.class);
-				context.put("NXUtils", NXVelocityUtils.class);
+				context = new NXVelocityContext(entryBuilderService.buildWithEverything(entryName));
 
 				FileWriter fw = new FileWriter(filename, true);
 				PrintWriter out = new PrintWriter(new BufferedWriter(fw));
@@ -290,79 +258,16 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	@Override
-	public void streamResultsInXML(Writer writer, String viewName, List<String> accessions, boolean withHeader, boolean withFooter) {
-		try {
+	public void streamResults(NPFileFormat format, Writer stream, String viewName, List<String> accessions) throws IOException {
 
-			if (withHeader) {
-				writer.write("<?xml version='1.0' encoding='UTF-8'?>\n");
-				//writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"https://dl.dropboxusercontent.com/u/2037400/nextprot-export.xsd\">\n");
-				writer.write("<nextprot-export xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
-				// TODO add <header>
-				writer.write("<entry-list>\n");
-				writer.flush();
-			}
+		NPStreamExporter exporter = NPFileExporter.valueOf(format).getNPStreamExporter();
 
-			if (accessions != null) {
-				for (String acc : accessions) {
-					streamXml(acc, viewName, writer);
-					writer.flush();
-				}
-			}
-
-			if (withFooter) {
-				writer.write("</entry-list>\n");
-				writer.write("</nextprot-export>\n");
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new NextProtException("Failed to stream xml");
-		}
+		exporter.setTerminologyService(terminologyService);
+		
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put(ExportService.ENTRIES_COUNT_PARAM, accessions.size());
+		map.put("release", releaseInfoService.findReleaseContents());
+		exporter.export(accessions, stream, viewName, map);
+		
 	}
-
-	@Override
-	public void streamResultsInJson(Writer writer, String viewName, List<String> accessions) {
-		JsonGenerator generator = null;
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			JsonFactory factory = mapper.getFactory();
-			generator = factory.createGenerator(writer);
-
-			for (String acc : accessions) {
-				streamJson(acc, viewName, generator);
-			}
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			if (generator != null) {
-				try {
-					generator.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-	}
-
-	private void streamXml(String entryName, String viewName, Writer writer) {
-
-		Template template = config.getVelocityEngine().getTemplate("entry.xml.vm");
-
-		Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
-		VelocityContext context = new VelocityContext();
-		context.put("entry", entry);
-		context.put("StringUtils", StringUtils.class);
-		context.put("NXUtils", NXVelocityUtils.class);
-
-		template.merge(context, writer);
-	}
-
-	private void streamJson(String entryName, String viewName, JsonGenerator generator) throws IOException {
-
-		Entry entry = fluentEntryService.getNewEntry(entryName).withView(viewName);
-		generator.writeObject(entry);
-	}
-
 }

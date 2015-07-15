@@ -9,7 +9,18 @@ public class Interactant implements Serializable {
 	private String url;
 	private String database;
 	private String accession;
+	private Long xrefId;
 	
+	
+	
+	public Long getXrefId() {
+		return xrefId;
+	}
+
+	public void setXrefId(Long xrefId) {
+		this.xrefId = xrefId;
+	}
+
 	// if true: we have a sequence_identifiers record for this entry / isoform
 	private boolean isNextprot;     
 	

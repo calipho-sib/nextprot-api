@@ -2,7 +2,6 @@ package org.nextprot.api.core.dao;
 
 import java.util.List;
 
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
@@ -27,6 +26,4 @@ public interface AnnotationDAO {
 	
 	List<AnnotationEvidenceProperty> findAnnotationEvidencePropertiesByEvidenceIds(List<Long> evidenceIds);
 	
-	List<Annotation> createAdditionalAnnotationsFromXrefs(List<DbXref> xrefs, String entryName);
-
 }

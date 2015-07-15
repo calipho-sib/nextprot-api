@@ -50,6 +50,7 @@ public class CvJournalDaoImpl implements CvJournalDao {
 		public CvJournal mapRow(ResultSet resultSet, int row) throws SQLException {
 			CvJournal journal = new CvJournal();
 			journal.setJournalId(resultSet.getLong("cv_id"));
+			journal.setAbbrev(resultSet.getString("iso_abbrev"));
 			journal.setName(resultSet.getString("journal_name"));
 			return journal;
 		}

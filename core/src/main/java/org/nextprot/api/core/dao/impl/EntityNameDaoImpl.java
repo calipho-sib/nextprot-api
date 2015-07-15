@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.EntityNameDao;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.EntityName;
@@ -17,34 +18,50 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class EntityNameDaoImpl implements EntityNameDao {
-	@Autowired private DataSourceServiceLocator dsLocator;
-	
-	private final String findNames = "select * " +
-			"from nextprot.view_master_identifier_names " +
-			"where unique_name = :uniqueName "+ 
-			"order by unique_name";
-	
+
+	@Autowired	private SQLDictionary sqlDictionary;
+	@Autowired	private DataSourceServiceLocator dsLocator;
+
 	@Override
 	public List<EntityName> findNames(String uniqueName) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(findNames, namedParameters, new EntryNameRowMapper());
+		 List<EntityName> entityNames = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("entity-names"), namedParameters, new EntryNameRowMapper());
+		 return entityNames;
 	}
-	
+
 	private static class EntryNameRowMapper implements ParameterizedRowMapper<EntityName> {
 
 		@Override
 		public EntityName mapRow(ResultSet resultSet, int row) throws SQLException {
 			EntityName entryName = new Overview.EntityName();
 			entryName.setClazz(Overview.EntityNameClass.getValue(resultSet.getString("name_class")));
+			entryName.setCategory(resultSet.getString("category"));
 			entryName.setType(resultSet.getString("name_type"));
 			entryName.setQualifier(resultSet.getString("name_qualifier"));
 			entryName.setMain(resultSet.getBoolean("is_main"));
-			entryName.setValue(resultSet.getString("synonym_name"));
-			entryName.setSynonymId(resultSet.getString("synonym_id"));
+			entryName.setName(resultSet.getString("synonym_name"));
+			entryName.setId(resultSet.getString("synonym_id"));
 			entryName.setParentId(resultSet.getString("parent_id"));
 			return entryName;
 		}
-		
+
+	}
+
+
+	@Override
+	@Deprecated //TODO remove this when orf gene names included in view_master_identifier_names
+	public List<EntityName> findORFGeneNames(String uniqueName) {
+		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
+		List<EntityName> entityNames = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("orf-gene-names"), namedParameters, new EntryNameRowMapper());
+		return entityNames;
+	}
+
+	
+	@Override
+	public List<EntityName> findAlternativeChainNames(String uniqueName) {
+		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
+		 List<EntityName> entityNames = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("alternative-chain-names"), namedParameters, new EntryNameRowMapper());
+		 return entityNames;
 	}
 
 }

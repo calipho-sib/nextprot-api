@@ -1,8 +1,5 @@
 package org.nextprot.api.web.controller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,11 +10,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,6 +25,8 @@ import org.jsondoc.springmvc.controller.JSONDocController;
 import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
+import org.nextprot.api.core.service.ReleaseInfoService;
+import org.nextprot.api.core.service.export.format.EntryBlocks;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.web.service.impl.ExportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,19 +50,29 @@ public class JSONDocRoleController extends JSONDocController {
 
 	@Autowired
 	private Environment env;
-//
-//	public void setVersion(String version) {
-//		this.version = version;
-//	}
-//
-//	public void setBasePath(String basePath) {
-//		this.basePath = basePath;
-//	}
-//
-//	public void setPackages(List<String> packages) {
-//		this.packages = packages;
-//	}
-//
+	
+	@Autowired
+	private ReleaseInfoService releaseInfoService;
+	
+	
+	private static ApiMethodDoc cloneMethodDocWithName(ApiMethodDoc met, String name, String additionalDescription){
+		ApiMethodDoc m = new ApiMethodDoc();
+		m.setQueryparameters(met.getQueryparameters());
+		Set<String> produces = new HashSet<String>();
+		produces.add(MediaType.APPLICATION_XML_VALUE);
+		produces.add(MediaType.APPLICATION_JSON_VALUE);
+		m.setProduces(produces);
+		m.setConsumes(met.getConsumes());
+		Set<ApiParamDoc> set = new HashSet<ApiParamDoc>();
+		String[] allowedvalues = {"NX_P01308"};
+		set.add(new ApiParamDoc("entry", "Exports only the " + name + " from an entry. " + additionalDescription,  new JSONDocType("string"),  "true", allowedvalues, null, null));
+		m.setPathparameters(set);
+		m.setPath("/entry/{entry}/" + StringUtils.camelToKebabCase(name));
+		m.setVerb(ApiVerb.GET);
+		
+		return m;
+	}
+
 	@PostConstruct
 	public void init() {
 		
@@ -78,7 +84,7 @@ public class JSONDocRoleController extends JSONDocController {
 				"org.nextprot.api.user",
 				"org.nextprot.api.web" }));
 		
-		String version = getMavenVersion();
+		String version = releaseInfoService.findReleaseContents().getApiRelease();
 		for(String profile : env.getActiveProfiles()){
 			if(profile.equalsIgnoreCase("build")){
 				packages.add("org.nextprot.api.build");
@@ -95,27 +101,18 @@ public class JSONDocRoleController extends JSONDocController {
 				}
 				
 				if (apiDoc.getName().equals("Entry")) {
+
+					//adding blocks
+					for (EntryBlocks block: EntryBlocks.values()) {
+						if(!block.equals(EntryBlocks.FULL_ENTRY))
+							apiDoc.getMethods().add(cloneMethodDocWithName(met, block.name().toLowerCase().replaceAll("_", "-"), ""));
+					}
+
+					
+					//adding subparts
 					for (AnnotationApiModel model: AnnotationApiModel.values()) {
-						ApiMethodDoc m = new ApiMethodDoc();
-						m.setQueryparameters(met.getQueryparameters());
-						Set<String> produces = new HashSet<String>();
-						produces.add(MediaType.APPLICATION_XML_VALUE);
-						produces.add(MediaType.APPLICATION_JSON_VALUE);
-						m.setProduces(produces);
-						m.setConsumes(met.getConsumes());
-						Set<ApiParamDoc> set = new HashSet<ApiParamDoc>();
-						String[] allowedvalues = {"NX_P01308"};
-						set.add(new ApiParamDoc("entry", 
-								"Exports only the " + model.getApiTypeName().toLowerCase() + " from an entry. It locates on the hierarchy: " + model.getHierarchy(), 
-								new JSONDocType("string"), 
-								"true", 
-								allowedvalues, 
-								null, 
-								null));
-						m.setPathparameters(set);
-						m.setPath("/entry/{entry}/" + StringUtils.decamelizeAndReplaceByHyphen(model.getApiTypeName()));
-						m.setVerb(ApiVerb.GET);
-						apiDoc.getMethods().add(m);
+						String additionalDescription = "It locates on the hierarchy: " + model.getHierarchy();
+						apiDoc.getMethods().add(cloneMethodDocWithName(met, StringUtils.camelToKebabCase(model.getApiTypeName()), additionalDescription));
 					}
 				}
 			}
@@ -184,7 +181,7 @@ public class JSONDocRoleController extends JSONDocController {
 			}
 		}
 		
-		JSONDoc contextJSONDoc = new JSONDoc(getMavenVersion(), "");
+		JSONDoc contextJSONDoc = new JSONDoc(releaseInfoService.findReleaseContents().getApiRelease(), "");
 		contextJSONDoc.setApis(contextApis);
 		contextJSONDoc.setObjects(jsonDoc.getObjects());
 		contextJSONDoc.setFlows(jsonDoc.getFlows());
@@ -192,21 +189,5 @@ public class JSONDocRoleController extends JSONDocController {
 		return contextJSONDoc;
 	}
 	
-	@Autowired
-	ServletContext servletContext;
-	
-	private String getMavenVersion() {
-	    try {
 
-	    	String appServerHome = servletContext.getRealPath("/");
-		    File manifestFile = new File(appServerHome, "META-INF/MANIFEST.MF");
-		    Manifest mf = new Manifest();
-	    	mf.read(new FileInputStream(manifestFile));
-		    Attributes atts = mf.getMainAttributes();
-		    return atts.getValue("Implementation-Version");
-
-	    } catch (IOException e) {
-	    	return "unknown";
-		}
-	}
 }

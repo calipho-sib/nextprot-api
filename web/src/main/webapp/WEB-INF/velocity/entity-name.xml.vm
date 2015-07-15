@@ -1,10 +1,6 @@
-<entity-name type="$entityName.type" value="$entityName.synonymName" is-main="$entityName.isMain()" qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">
-	#if($entityName.synonyms)
-        <synonyms>
-		#foreach($synonym in $entityName.synonyms)
-			#set($entityName = $synonym)
-			#parse('entity-name.xml.vm')
-		#end
-		</synonyms>
-	#end				
-</entity-name>
+<protein-name  type="recommended" category="$entityName.type" value="$entityName.name" is-main="$entityName.isMain()" qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end"></protein-name>
+#if($entityName.synonyms)
+	#foreach($synonym in $entityName.synonyms)
+		<protein-name type="alternative" category="$entityName.type" value="$entityName.name" is-main="$entityName.isMain()" qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end"></protein-name>
+	#end
+#end	

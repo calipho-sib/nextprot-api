@@ -27,7 +27,6 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -38,7 +37,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * @version $Revision$, $Date$, $Author$
  */
 @Aspect
-@Component
 @ManagedResource(objectName = "org.nextprot.api:name=ControllersInstrumentation", description = "My Managed Bean", log = true, logFile = "jmx.log", persistPeriod = 200, persistLocation = "/tmp", persistName = "bar")
 public class InstrumentationAspect {
 
@@ -80,7 +78,7 @@ public class InstrumentationAspect {
 			sb.append("type=Controller;");
 			addMethodParameters(sb, methodSignature);
 			addArgumentsParameters(sb, arguments, annotations);
-			sb.append("ControllerId=");
+			sb.append("controllerRequestId=");
 			sb.append(controllerRequestIdCounter.get());
 			sb.append(";");
 
@@ -95,10 +93,11 @@ public class InstrumentationAspect {
 			// Proceed to method invocation
 			try {
 
+				LOGGER.info("aspect=before;" + sb);
 				Object result = pjp.proceed();
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addResultParameters(sb, result);
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 
 				clientRequestManager.stopMonitoringCurrentRequestInfo();
 				controllerRequestId.remove();
@@ -108,7 +107,7 @@ public class InstrumentationAspect {
 
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addExceptionParameters(sb, e);
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 
 				clientRequestManager.stopMonitoringCurrentRequestInfo(e);
 				controllerRequestId.remove();
@@ -138,12 +137,12 @@ public class InstrumentationAspect {
 			sb.append("type=Service;");
 			addMethodParameters(sb, methodSignature);
 			addArgumentsParameters(sb, arguments, annotations);
-			sb.append("ServiceId=");
+			sb.append("serviceRequestId=");
 			sb.append(serviceRequestIdCounter.get());
 			sb.append(";");
 			Long cId = serviceRequestId.get();
 			if (cId != null) {
-				sb.append("controllerId=");
+				sb.append("controllerRequestId=");
 				sb.append(cId);
 				sb.append(";");
 			}
@@ -152,10 +151,11 @@ public class InstrumentationAspect {
 			try {
 
 				Object result = pjp.proceed();
+				LOGGER.info("aspect=before;" + sb);
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addResultParameters(sb, result);
 				serviceRequestId.remove();
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 				return result;
 
 			} catch (Exception e) {
@@ -163,7 +163,7 @@ public class InstrumentationAspect {
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addExceptionParameters(sb, e);
 				serviceRequestId.remove();
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 				throw e;
 			}
 
@@ -192,14 +192,14 @@ public class InstrumentationAspect {
 
 			Long sId = serviceRequestId.get();
 			if (sId != null) {
-				sb.append("serviceId=");
+				sb.append("serviceRequestId=");
 				sb.append(sId);
 				sb.append(";");
 			}
 
 			Long cId = controllerRequestId.get();
 			if (cId != null) {
-				sb.append("controllerId=");
+				sb.append("controllerRequestId=");
 				sb.append(cId);
 				sb.append(";");
 			}
@@ -207,17 +207,18 @@ public class InstrumentationAspect {
 			long start = System.currentTimeMillis();
 			try {
 
+				LOGGER.info("aspect=before;" + sb);
 				Object result = pjp.proceed();
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addResultParameters(sb, result);
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 				return result;
 
 			} catch (Exception e) {
 
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addExceptionParameters(sb, e);
-				LOGGER.info(sb);
+				LOGGER.info("aspect=after;" + sb);
 				throw e;
 			}
 
@@ -327,7 +328,7 @@ public class InstrumentationAspect {
 		map.put("http-request-content-type", StringUtils.quote(httpRequest.getHeader("content-type")));
 
 		map.put("http-request-referer", httpRequest.getHeader("referer"));
-		map.put("http-request-user-agent",  StringUtils.quote(httpRequest.getHeader("user-agent")));
+		//map.put("http-request-user-agent",  StringUtils.quote(httpRequest.getHeader("user-agent")));
 		//map.put("http-request-content-type", httpRequest.getContentType());
 		
 		map.put("http-request-method",  StringUtils.quote(httpRequest.getMethod()));
@@ -347,7 +348,7 @@ public class InstrumentationAspect {
 		while (params.hasMoreElements()) {
 			String paramName = params.nextElement();
 			String paramValue = httpRequest.getParameter(paramName);
-			map.put("http-request-param" + StringUtils.capitalizeFirstLetter(paramName), StringUtils.quote(paramValue));
+			map.put("http-request-param-" + paramName, StringUtils.quote(paramValue));
 		}
 
 		return map;

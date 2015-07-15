@@ -8,6 +8,7 @@ import java.util.SortedSet;
 
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.core.utils.TerminologyUtils;
 
 @ApiObject(name = "publication", description = "A publication")
 public class Publication implements Serializable{
@@ -47,9 +48,17 @@ public class Publication implements Serializable{
 	@ApiObjectField(description = "The publication date in text")
 	private String textDate;
 
+	@ApiObjectField(description = "The submission to db text (EMBL, PDB, ...")
+	private String submission;
+
 	@ApiObjectField(description = "Publications related to 15 entries or more")
 	private Boolean isLargeScale;
 
+	@ApiObjectField(description = "Curated Publications")
+	private Boolean isCurated;
+	// TODO: reassess the way we define 'curared/computed' and get rid of the 'limit 1' in publication-by-ressource.sql
+	@ApiObjectField(description = "Computed Publications")
+	private Boolean isComputed;
 	
 	public Boolean getIsLargeScale() {
 		return isLargeScale;
@@ -59,6 +68,21 @@ public class Publication implements Serializable{
 		this.isLargeScale = isLargeScale;
 	}
 
+	public Boolean getIsCurated() {
+		return isCurated;
+	}
+
+	public void setIsCurated(Boolean isCurated) {
+		this.isCurated = isCurated;
+	}
+
+	public Boolean getIsComputed() {
+		return isComputed;
+	}
+
+	public void setIsComputed(Boolean isComputed) {
+		this.isComputed = isComputed;
+	}
 
 	@ApiObjectField(description = "The journal")
 	protected CvJournal cvJournal;
@@ -94,6 +118,14 @@ public class Publication implements Serializable{
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getSubmission() {
+		return submission;
+	}
+
+	public void setSubmission(String submission) {
+		this.submission = submission;
 	}
 
 	public String getAbstractText() {
@@ -186,6 +218,42 @@ public class Publication implements Serializable{
 
 	public void setDbXrefs(Set<DbXref> dbXrefs) {
 		this.dbXrefs = dbXrefs;
+	}
+
+	
+	public String toString() {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("id=");
+		sb.append(this.id);
+		sb.append("\n");
+		sb.append("md5=");
+		sb.append(this.md5);
+		sb.append("\n");
+		sb.append("title=");
+		sb.append(this.title);
+		sb.append("\n");
+		sb.append("submission=");
+		sb.append((this.submission != null) ? this.submission : "null");
+		sb.append("\n");
+		sb.append("volume=");
+		sb.append(this.volume);
+		sb.append("; issue=");
+		sb.append(this.issue);
+		sb.append("\n");
+		sb.append("pub_type=");
+		sb.append(this.publicationType);
+		sb.append("\n");
+		sb.append("journal=");
+		sb.append(this.cvJournal);
+		sb.append("\n");
+		sb.append("authorsCnt=");
+		sb.append((this.authors != null) ? this.authors.size() : "null");
+		sb.append("\n");
+		
+		return sb.toString();
+
 	}
 
 

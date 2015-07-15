@@ -2,27 +2,23 @@ package org.nextprot.api.core.domain;
 
 import java.io.Serializable;
 
-import org.jsondoc.core.annotation.ApiObject;
-import org.jsondoc.core.annotation.ApiObjectField;
-
-@ApiObject(name = "experimentalContext", description = "The experimental context")
 public class ExperimentalContext implements Serializable{
 
 	private static final long serialVersionUID = 1821144711310429872L;
 	
-	@ApiObjectField(description = "The experimental context identifier")
+	// The experimental context identifier
 	private Long contextId; // primary key
 	
-	private String tissueAC;
-	private String developmentalStageAC;
-	private String cellLineAC;
-	private String diseaseAC;
-	private String organelleAC;
+	private Terminology tissue;
+	private Terminology developmentalStage;
+	private Terminology cellLine;
+	private Terminology disease;
+	private Terminology organelle;
+	
+	// The experimental context detection method (ECO code)
+	private Terminology detectionMethod;  // ECO code
 
-	@ApiObjectField(description = "The experimental context detection method (ECO code)")
-	private String detectionMethodAC;  // ECO code
-
-	@ApiObjectField(description = "The experimental context metadata document identifier (md5)")
+	//The experimental context metadata document identifier (md5)
 	private String metadataAC;  // md5 of publication
 	
 	
@@ -32,41 +28,67 @@ public class ExperimentalContext implements Serializable{
 	public void setContextId(Long contextId) {
 		this.contextId = contextId;
 	}
-	public String getTissueAC() {
-		return tissueAC;
+
+	public Terminology getTissue() {
+		return tissue;
 	}
-	public void setTissueAC(String tissueAC) {
-		this.tissueAC = tissueAC;
+	public String getTissueAC() {
+		return (tissue != null) ? tissue.getAccession() : null;
+	}
+	public void setTissue(Terminology tissue) {
+		this.tissue = tissue;
+	}
+
+	public Terminology getDevelopmentalStage() {
+		return developmentalStage;
 	}
 	public String getDevelopmentalStageAC() {
-		return developmentalStageAC;
+		return (developmentalStage != null) ? developmentalStage.getAccession() : null;
 	}
-	public void setDevelopmentalStageAC(String developmentalStageAC) {
-		this.developmentalStageAC = developmentalStageAC;
+	public void setDevelopmentalStage(Terminology developmentalStage) {
+		this.developmentalStage = developmentalStage;
+	}
+
+	public Terminology getCellLine() {
+		return cellLine;
 	}
 	public String getCellLineAC() {
-		return cellLineAC;
+		return (cellLine != null) ? cellLine.getAccession() : null;
 	}
-	public void setCellLineAC(String cellLineAC) {
-		this.cellLineAC = cellLineAC;
+
+	public void setCellLine(Terminology cellLine) {
+		this.cellLine = cellLine;
+	}
+
+	public Terminology getDisease() {
+		return disease;
 	}
 	public String getDiseaseAC() {
-		return diseaseAC;
+		return (disease != null) ? disease.getAccession() : null;
 	}
-	public void setDiseaseAC(String diseaseAC) {
-		this.diseaseAC = diseaseAC;
+	public void setDisease(Terminology disease) {
+		this.disease = disease;
+	}
+
+	public Terminology getOrganelle() {
+		return organelle;
 	}
 	public String getOrganelleAC() {
-		return organelleAC;
+		return (organelle != null) ? organelle.getAccession() : null;
 	}
-	public void setOrganelleAC(String organelleAC) {
-		this.organelleAC = organelleAC;
+
+	public void setOrganelle(Terminology organelle) {
+		this.organelle = organelle;
+	}
+
+	public Terminology getDetectionMethod() {
+		return detectionMethod;
 	}
 	public String getDetectionMethodAC() {
-		return detectionMethodAC;
+		return (detectionMethod != null) ? detectionMethod.getAccession() : null;
 	}
-	public void setDetectionMethodAC(String detectionMethodAC) {
-		this.detectionMethodAC = detectionMethodAC;
+	public void setDetectionMethod(Terminology detectionMethod) {
+		this.detectionMethod = detectionMethod;
 	}
 	public String getMetadataAC() {
 		return metadataAC;

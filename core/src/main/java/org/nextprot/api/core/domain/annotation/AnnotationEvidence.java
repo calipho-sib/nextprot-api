@@ -1,9 +1,12 @@
 package org.nextprot.api.core.domain.annotation;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class AnnotationEvidence implements Serializable {
 
@@ -299,6 +302,32 @@ public class AnnotationEvidence implements Serializable {
 	}
 
 	/**
+	 * 
+	 * @return a set of property names related to the evidence and that are allowed to be shown
+	 */
+	public Set<String> getPropertiesNames() {
+		// do an intersection between properties we want to show and properties we have
+		Set<String> propsOk = new HashSet<String>(Arrays.asList("expressionLevel","antibodies acc"));
+		propsOk.retainAll(propertiesMap.keySet());
+		// return the intersection
+		return propsOk;
+	}
+	
+	/**
+	 * 
+	 * @param name a proprty name
+	 * @return a string representing the property value associated to name
+	 */
+	public String getPropertyValue(String name) {
+		// special cases first
+		if ("expressionLevel".equals(name)) return getExpressionLevel();
+		if ("integrationLevel".equals(name)) return getIntegrationLevel();
+		//...
+		// general case finally
+		return propertiesMap.get(name);
+	}
+	
+	/**
 	 * deploy properties,
 	 * 
 	 * select distinct property_value from
@@ -306,6 +335,7 @@ public class AnnotationEvidence implements Serializable {
 	 * 'integrationLevel' order by property_value
 	 */
 	private String extractProperty(String propertyName) {
+		
 		return propertiesMap.get(propertyName);
 
 	}

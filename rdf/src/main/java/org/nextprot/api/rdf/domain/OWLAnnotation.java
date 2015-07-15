@@ -1,10 +1,10 @@
 package org.nextprot.api.rdf.domain;
 
-import java.io.Serializable;
-import java.util.Set;
-
 import org.jsondoc.core.annotation.ApiObject;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+
+import java.io.Serializable;
+import java.util.Set;
 
 @ApiObject(name = "Annotation", description = "Meta description of an annotation")
 public class OWLAnnotation implements Serializable{
@@ -30,10 +30,10 @@ public class OWLAnnotation implements Serializable{
 		return cat.getRdfLabel();
 	}
 	public String getRdfTypeName(){
-		return cat.getRdfTypeName();
+		return cat.getApiTypeName();
 	}
-	public Set<AnnotationApiModel> getParents() {
-		return cat.getParents();
+	public AnnotationApiModel getParent() {
+		return cat.getParent();
 	}
 	public Set<AnnotationApiModel> getAllParents() {
 		return cat.getAllParents();

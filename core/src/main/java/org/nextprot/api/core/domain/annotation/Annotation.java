@@ -1,17 +1,19 @@
 package org.nextprot.api.core.domain.annotation;
 
+import com.google.common.base.Preconditions;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.IsoformSpecific;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
-import org.nextprot.api.core.domain.DbXref;
 
-
-public class Annotation implements Serializable {
+public class Annotation implements Serializable, IsoformSpecific {
 
 	private static final long serialVersionUID = -1576387963315643702L;
 
@@ -41,7 +43,7 @@ public class Annotation implements Serializable {
 
 	private List<AnnotationProperty> properties;
 	
-	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsLikeAnnotations()
+	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsAsAnnotationsByEntry()
 
 	final static Map<String, String> commonExpressionPredicat= new HashMap<String, String>();
 	
@@ -128,8 +130,8 @@ public class Annotation implements Serializable {
 		return category;
 	}
 
-	public String getRdfTypeName() {
-		return apiCategory.getRdfTypeName();
+	public String getApiTypeName() {
+		return apiCategory.getApiTypeName();
 	}
 
 	public String getRdfPredicate() {
@@ -189,12 +191,13 @@ public class Annotation implements Serializable {
 		this.synonym = synonym;
 	}
 
-	public boolean isAnnotationValidForIsoform(String isoform) {
+	@Override
+	public boolean isSpecificForIsoform(String isoform) {
 		return targetingIsoformsMap.containsKey(isoform);
 	}
 
 	public boolean isAnnotationPositionalForIsoform(String isoform) {
-		if(isAnnotationValidForIsoform(isoform)){
+		if(isSpecificForIsoform(isoform)){
 			return targetingIsoformsMap.get(isoform).isPositional();
 		}else return false;
 	}
@@ -219,6 +222,7 @@ public class Annotation implements Serializable {
 	}
 	
 	public int getStartPositionForIsoform(String isoformName) {
+		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
 		return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
 	}
 	
@@ -227,6 +231,7 @@ public class Annotation implements Serializable {
 	}
 	
 	public int getEndPositionForIsoform(String isoformName) {
+		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
 		return this.targetingIsoformsMap.get(isoformName).getLastPosition();
 	}
 	

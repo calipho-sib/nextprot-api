@@ -1,8 +1,8 @@
 <annotation-list>
 #foreach($category in $NXUtils.getAnnotationCategories())
 #if ($category.isLeaf())
-#set($catName=$NXUtils.getAnnotationCategoryNameForXML($category))
-#set($catHier=$NXUtils.getAnnotationCategoryHierachyForXML($category))
+#set($catName=$category.getAnnotationCategoryNameForXML())
+#set($catHier=$category.getAnnotationCategoryHierarchyForXML())
 #set($annotations=$NXUtils.getAnnotationsByCategory($entry, $category))
 #if (!$annotations.isEmpty())
   <annotation-category category="$catName" hierarchy="$catHier">

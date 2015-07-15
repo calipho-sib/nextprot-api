@@ -6,9 +6,8 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
+import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 /**
  * Exports an entry
@@ -16,8 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
  * @author dteixeira
  */
 
-@ActiveProfiles({ "dev" })
-public class SearchServiceTest extends WebUnitBaseTest {
+public class SearchServiceTest extends WebIntegrationBaseTest {
 
 	@Autowired
 	private SearchService service;

@@ -2,8 +2,16 @@ package org.nextprot.api.web.dbunit.base.mvc;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
+
+import org.apache.velocity.Template;
 import org.junit.Before;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.web.NXVelocityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -14,6 +22,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 
@@ -33,6 +42,9 @@ import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 public abstract class WebUnitBaseTest extends AbstractUnitBaseTest {
 
 	@Autowired
+	private VelocityConfig velocityConfig;
+	
+	@Autowired
 	protected WebApplicationContext wac;
 
 	protected MockMvc mockMvc;
@@ -40,6 +52,18 @@ public abstract class WebUnitBaseTest extends AbstractUnitBaseTest {
 	@Before
 	public void setup() {
 		this.mockMvc = webAppContextSetup(this.wac).build();
+	}
+	
+	
+	protected String getVelocityOutput(Entry entry) throws IOException{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		Writer writer = new PrintWriter(out);
+
+		NXVelocityContext context = new NXVelocityContext(entry);
+		Template template = velocityConfig.getVelocityEngine().getTemplate("entry.xml.vm");
+		template.merge(context, writer);
+		writer.flush();
+		return out.toString();
 	}
 
 

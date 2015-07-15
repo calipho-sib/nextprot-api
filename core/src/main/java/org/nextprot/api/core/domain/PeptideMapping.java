@@ -1,16 +1,16 @@
 package org.nextprot.api.core.domain;
 
+import org.jsondoc.core.annotation.ApiObject;
+import org.jsondoc.core.annotation.ApiObjectField;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jsondoc.core.annotation.ApiObject;
-import org.jsondoc.core.annotation.ApiObjectField;
-
 @ApiObject(name = "peptide", description = "The peptide mapping")
-public class PeptideMapping implements Serializable{
+public class PeptideMapping implements Serializable, IsoformSpecific {
 
 	private static final long serialVersionUID = 7304469815021872304L;
 
@@ -133,6 +133,7 @@ public class PeptideMapping implements Serializable{
 	 * @param isoformName a nextprot isoform unique name (starting with NX_)
 	 * @return true if the mapping applies to the isoform otherwise false
 	 */
+	@Override
 	public boolean isSpecificForIsoform(String isoformName) {
 		return this.isoformSpecificity.containsKey(isoformName);
 	}

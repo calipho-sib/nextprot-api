@@ -21,17 +21,16 @@ import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.PublicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 
-@Lazy
 @Service
 public class PublicationServiceImpl implements PublicationService {
 
@@ -44,8 +43,8 @@ public class PublicationServiceImpl implements PublicationService {
 
 	@Cacheable("publications-get-by-id")
 	public Publication findPublicationById(long id) {
-		Publication publication = this.publicationDao.findPublicationById(id);
-		loadAuthorsXrefAndCvJournal(publication);
+		Publication publication = this.publicationDao.findPublicationById(id); // Basic fields
+		loadAuthorsXrefAndCvJournal(publication); // add non-basic fields to object
 		return publication;
 	}
 
@@ -111,13 +110,14 @@ public class PublicationServiceImpl implements PublicationService {
 		long publicationId = -1;
 		for(Publication publication : publications) {
 			publicationId = publication.getPublicationId();
-			SortedSet<PublicationAuthor> authorSet = new TreeSet<PublicationAuthor>(authorMap.get(publicationId));
+			SortedSet<PublicationAuthor> authorSet = new TreeSet<>(authorMap.get(publicationId));
 			publication.setAuthors(authorSet);
 			publication.setDbXrefs(new HashSet<DbXref>(xrefMap.get(publicationId)));
 			publication.setCvJournal(journalMap.get(publicationId));
 		}
 		
-		return publications;
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Publication>().addAll(publications).build();
 	}
 	
 	@Autowired
@@ -127,7 +127,7 @@ public class PublicationServiceImpl implements PublicationService {
 
 	@Override
 	public Publication findPublicationByMD5(String md5) {
-		Publication publication = this.publicationDao.findPublicationByMD5(md5);		
+		Publication publication = this.publicationDao.findPublicationByMD5(md5);
 		loadAuthorsXrefAndCvJournal(publication);
 		return publication;
 	}
@@ -135,8 +135,8 @@ public class PublicationServiceImpl implements PublicationService {
 
 	private void loadAuthorsXrefAndCvJournal(Publication p){
 		long publicationId = p.getPublicationId();
-		p.setAuthors(new TreeSet<PublicationAuthor>(this.authorDao.findAuthorsByPublicationId(publicationId)));
-		p.setDbXrefs(new HashSet<DbXref>(this.dbXrefDao.findDbXRefsByPublicationId(publicationId)));
+		p.setAuthors(new TreeSet<>(this.authorDao.findAuthorsByPublicationId(publicationId)));
+		p.setDbXrefs(new HashSet<>(this.dbXrefDao.findDbXRefsByPublicationId(publicationId)));
 
 		List<CvJournal> res = this.cvJournalDao.findByPublicationId(publicationId);
 		if(res.size() > 0) p.setCvJournal(res.get(0));		

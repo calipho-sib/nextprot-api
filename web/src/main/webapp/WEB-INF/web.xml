@@ -43,6 +43,17 @@
         <param-value>pro,cache,security</param-value>
     </context-param>
 
+    <!-- Adds etag filter for entry 	-->
+    
+	<filter>
+	   <filter-name>etagFilter</filter-name>
+	   <filter-class>org.springframework.web.filter.ShallowEtagHeaderFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	   <filter-name>etagFilter</filter-name>
+	   <url-pattern>/entry/*</url-pattern>
+	</filter-mapping>
+
     <!-- Filter performs filtering tasks on the request to a resource (a servlet or static content) -->
     <!--  configure cors  -->
     <filter>
