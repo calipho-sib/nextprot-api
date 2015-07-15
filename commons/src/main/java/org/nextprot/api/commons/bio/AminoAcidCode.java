@@ -1,5 +1,8 @@
 package org.nextprot.api.commons.bio;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Amino-acid 1- and 3-letter symbols
  *
@@ -135,5 +138,32 @@ public enum AminoAcidCode {
             case '*': return Stop;
             default: throw new IllegalArgumentException( "No enum constant AminoAcidCode." + code);
         }
+    }
+
+    public static AminoAcidCode[] valueOfCodeSequence(String sequence) {
+
+        List<Integer> ucs = new ArrayList<>();
+
+        for (int i=0 ; i<sequence.length() ; i++) {
+
+            if (Character.isUpperCase(sequence.charAt(i))) ucs.add(i);
+        }
+
+        if (ucs.get(0) != 0) throw new IllegalArgumentException("First amino-acid is not known: Not a valid sequence of AminoAcidCode sequence");
+
+        AminoAcidCode[] codes = new AminoAcidCode[ucs.size()];
+
+        int i=0;
+        while (i<ucs.size()) {
+
+            int start = ucs.get(i);
+            int end = ((i+1) < ucs.size()) ? ucs.get(i+1) : sequence.length();
+
+            codes[i] = AminoAcidCode.valueOfCode(sequence.substring(start, end));
+
+            i++;
+        }
+
+        return codes;
     }
 }

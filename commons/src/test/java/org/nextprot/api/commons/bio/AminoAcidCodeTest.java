@@ -21,6 +21,24 @@ public class AminoAcidCodeTest {
     }
 
     @Test
+    public void testValueOfCodeSequenceOk() throws Exception {
+
+        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.Tryptophan, AminoAcidCode.Tryptophan, AminoAcidCode.Alanine, AminoAcidCode.Tyrosine}, AminoAcidCode.valueOfCodeSequence("TrpWAlaY"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testValueOfCodeSequenceFirstInvalid() throws Exception {
+
+        AminoAcidCode.valueOfCodeSequence("trpWAlaY");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testValueOfCodeSequenceOtherInvalid() throws Exception {
+
+        AminoAcidCode.valueOfCodeSequence("TrpWalaY");
+    }
+
+    @Test
     public void testGetAACode1() throws Exception {
 
         Assert.assertEquals('A', AminoAcidCode.valueOfCode1AA('A').get1LetterCode());
