@@ -188,13 +188,96 @@ public class ProteinMutationHGVFormatTest {
         Assert.assertEquals(330, pm.getFirstAffectedAminoAcidPos());
         Assert.assertEquals(331, pm.getLastAffectedAminoAcidPos());
         Assert.assertTrue(pm.getMutation() instanceof DeletionAndInsertion);
-        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("F"), (AminoAcidCode[])  pm.getMutation().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("F"), (AminoAcidCode[]) pm.getMutation().getValue());
     }
 
     @Test
     public void testParseDeletionMultiAndInsertionMulti() throws Exception {
 
         ProteinMutation pm = format.parse("p.D419_R420delinsSSDG");
+
+        Assert.assertEquals(AminoAcidCode.AsparticAcid, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(419, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(420, pm.getLastAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof DeletionAndInsertion);
+        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("SSDG"), (AminoAcidCode[]) pm.getMutation().getValue());
+    }
+
+    @Test
+    public void testParseSubstitutionCode3() throws Exception {
+
+        ProteinMutation pm = format.parse("p.Arg54Cys");
+
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(54, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(54, pm.getLastAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Substitution);
+        Assert.assertEquals(AminoAcidCode.Cysteine, pm.getMutation().getValue());
+    }
+
+    @Test
+    public void testParseAADeletionCode3() throws Exception {
+
+        ProteinMutation pm = format.parse("p.Lys73del");
+
+        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(73, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Deletion);
+    }
+
+    @Test
+    public void testParseRangeDeletionCode3() throws Exception {
+
+        ProteinMutation pm = format.parse("p.Lys487_Leu498del");
+
+        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(487, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(498, pm.getLastAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Deletion);
+    }
+
+    @Test
+    public void testParseFrameshiftCode3() throws Exception {
+
+        ProteinMutation pm = format.parse("p.Met682fsTer1");
+
+        Assert.assertEquals(AminoAcidCode.Methionine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(682, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Frameshift);
+        Assert.assertEquals(1, pm.getMutation().getValue());
+    }
+
+    @Test
+    public void testParseDeletion1AaAndInsertion1Code3() throws Exception {
+
+        ProteinMutation pm = format.parse("p.Thr399delinsLeu");
+
+        Assert.assertEquals(AminoAcidCode.Threonine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(399, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof DeletionAndInsertion);
+        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("L"), (AminoAcidCode[]) pm.getMutation().getValue());
+    }
+
+    @Test
+    public void testParseDeletionMultiAasAndInsertion1Code3() throws Exception {
+
+        ProteinMutation pm = format.parse("p.Leu330_Ala331delinsPhe");
+
+        Assert.assertEquals(AminoAcidCode.Leucine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.Alanine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(330, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(331, pm.getLastAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof DeletionAndInsertion);
+        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("F"), (AminoAcidCode[])  pm.getMutation().getValue());
+    }
+
+    @Test
+    public void testParseDeletionMultiAndInsertionMultiCode3() throws Exception {
+
+        ProteinMutation pm = format.parse("p.Asp419_Arg420delinsSerSerAspGly");
 
         Assert.assertEquals(AminoAcidCode.AsparticAcid, pm.getFirstAffectedAminoAcidCode());
         Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastAffectedAminoAcidCode());
