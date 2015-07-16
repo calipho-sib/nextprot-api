@@ -2,6 +2,8 @@ package org.nextprot.api.commons.bio.mutation;
 
 import com.google.common.base.Preconditions;
 
+import java.util.Objects;
+
 /**
  * A frameshift affects a protein sequence after amino-acid leading to a truncated protein.
  *
@@ -24,5 +26,18 @@ public class Frameshift implements Mutation<Integer> {
     @Override
     public Integer getValue() {
         return stopCodonPos;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Frameshift)) return false;
+        Frameshift that = (Frameshift) o;
+        return stopCodonPos == that.stopCodonPos;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stopCodonPos);
     }
 }

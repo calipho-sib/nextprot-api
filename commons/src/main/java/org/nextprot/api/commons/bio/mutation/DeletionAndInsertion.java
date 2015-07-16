@@ -28,4 +28,17 @@ public class DeletionAndInsertion implements Mutation<AminoAcidCode[]> {
 
         return Arrays.copyOf(aas, aas.length);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DeletionAndInsertion)) return false;
+        DeletionAndInsertion that = (DeletionAndInsertion) o;
+        return Arrays.equals(aas, that.aas);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(aas);
+    }
 }

@@ -3,6 +3,8 @@ package org.nextprot.api.commons.bio.mutation;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 
+import java.util.Objects;
+
 /**
  * This object can describe protein mutations of type substitution, deletion, delins and frameshift.
  * Its instanciation is based on a fluent interface.
@@ -48,6 +50,23 @@ public class ProteinMutation {
 
     public Mutation getMutation() {
         return mutation;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProteinMutation)) return false;
+        ProteinMutation that = (ProteinMutation) o;
+        return Objects.equals(firstAffectedAminoAcidPos, that.firstAffectedAminoAcidPos) &&
+                Objects.equals(lastAffectedAminoAcidPos, that.lastAffectedAminoAcidPos) &&
+                Objects.equals(firstAffectedAminoAcidCode, that.firstAffectedAminoAcidCode) &&
+                Objects.equals(lastAffectedAminoAcidCode, that.lastAffectedAminoAcidCode) &&
+                Objects.equals(mutation, that.mutation);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstAffectedAminoAcidCode, firstAffectedAminoAcidPos, lastAffectedAminoAcidCode, lastAffectedAminoAcidPos, mutation);
     }
 
     public static class FluentBuilder implements ProteinMutationBuilder.StartBuilding {
