@@ -47,8 +47,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
 	@Autowired private EntryPropertiesService entryPropertiesService;	
 
-	private Map<String, Object> objectLocks = new ConcurrentHashMap<String, Object>();
-	
+	private static Map<String, Object> objectLocks = new ConcurrentHashMap<String, Object>();
 		
 	@Override
 	public Entry build(EntryConfig entryConfig) {
@@ -57,7 +56,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 		Entry entry = new Entry(entryName);
 
 		//Lock per entry in case the cache is not set yet (should be quite) fast thougth
-		synchronized (objectLocks.get(entryName)){
+		synchronized (getOrPutSynchronizer(entryName)){
 
 			//Always set properties about the entry
 			entry.setProperties(entryPropertiesService.findEntryProperties(entryName));
@@ -98,6 +97,9 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			if(entryConfig.hasExperimentalContext()){
 				entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entryName));
 			}
+			if(entryConfig.hasInteractions()){
+				entry.setInteractions(this.interactionService.findInteractionsByEntry(entryName));
+			}
 			if(entryConfig.hasEnzymes()){
 				entry.setEnzymes(terminologyService.findEnzymeByMaster(entryName));
 			}
@@ -121,6 +123,16 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 
 	}
 	
+	private static Object getOrPutSynchronizer(String entryName) {
+		if(objectLocks.containsKey(entryName)){
+			return objectLocks.get(entryName);
+		}else {
+			Object o = new Object();
+			objectLocks.put(entryName, o);
+			return o;
+		}
+	}
+
 	private void setEntryAdditionalInformation(Entry entry){
 		if(entry.getAnnotations() == null || entry.getAnnotations().isEmpty()){
 			entry.setAnnotations(this.annotationService.findAnnotations(entry.getUniqueName()));

@@ -21,7 +21,15 @@ public abstract class NPStreamExporter {
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
     protected EntryBuilderService entryBuilderService;
-    protected VelocityConfig velocityConfig;
+    public EntryBuilderService getEntryBuilderService() {
+		return entryBuilderService;
+	}
+
+	public void setEntryBuilderService(EntryBuilderService entryBuilderService) {
+		this.entryBuilderService = entryBuilderService;
+	}
+
+	protected VelocityConfig velocityConfig;
     protected TerminologyService terminologyService;
     
     public NPStreamExporter() {

@@ -38,7 +38,7 @@ public class ServiceEntryValidation implements InitializingBean{
 
 		Object[] arguments = pjp.getArgs();
 		for (Object arg : arguments) {
-			if (EntryConfig.class.isAssignableFrom(arg.getClass())) {
+			if ((arg != null) && EntryConfig.class.isAssignableFrom(arg.getClass())) {
 				if (!uniqueNames.contains(((EntryConfig) arg).getEntryName())) {
 					LOGGER.error("neXtProt entry " + ((EntryConfig) arg).getEntryName() + " was not found, throwing EntryNotFoundException");
 					throw new EntryNotFoundException(((EntryConfig) arg).getEntryName());
