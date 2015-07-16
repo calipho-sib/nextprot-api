@@ -19,8 +19,11 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
 
     private static final Pattern SUBSTITUTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)([A-Z])([a-z]{2})?$");
     private static final Pattern DELETION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?del$");
+    private static final Pattern DELETION_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?del.*$");
     private static final Pattern FRAMESHIFT_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)(\\d+)$");
-    private static final Pattern DELETION_INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?delins((?:[A-Z]([a-z]{2})?)+)$");
+    private static final Pattern FRAMESHIFT_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)>?(\\d+)$");
+    private static final Pattern DELETION_INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?delins((?:[A-Z\\*]([a-z]{2})?)+)$");
+    private static final Pattern DELETION_INSERTION_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?(?:delins|>)((?:[A-Z\\*]([a-z]{2})?)+)$");
 
     public enum ParsingMode {
 
@@ -93,36 +96,45 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
         Preconditions.checkArgument(source.startsWith("p."), "not a valid protein sequence variant");
         Preconditions.checkNotNull(parsingMode);
 
+        ProteinMutation.FluentBuilder builder = new ProteinMutation.FluentBuilder();
+
         try {
-            return strictParsing(source);
+            return strictParsing(source, builder);
         } catch (ParseException e) {
 
             if (parsingMode == ParsingMode.PERMISSIVE)
-                return permissiveParsing(source);
+                return permissiveParsing(source, builder);
 
             throw e;
         }
     }
 
-    private ProteinMutation strictParsing(String source) throws ParseException {
-
-        ProteinMutation.FluentBuilder builder = new ProteinMutation.FluentBuilder();
+    private ProteinMutation strictParsing(String source, ProteinMutation.FluentBuilder builder) throws ParseException {
 
         ProteinMutation mutation = buildSubstitution(source, builder);
+
         // TODO: I would have preferred to find an elegant way to do the following...
         if (mutation == null) mutation = buildDeletion(source, builder);
         if (mutation == null) mutation = buildFrameshift(source, builder);
         if (mutation == null) mutation = buildDeletionInsertion(source, builder);
 
-        if (mutation == null) throw new ParseException("not a valid protein mutation", 0);
+        if (mutation == null) throw new ParseException(source + " is not a valid protein mutation", 0);
 
         return mutation;
     }
 
-    private ProteinMutation permissiveParsing(String source) throws ParseException {
+    private ProteinMutation permissiveParsing(String source, ProteinMutation.FluentBuilder builder) throws ParseException {
 
+        ProteinMutation mutation = buildSubstitution(source, builder);
 
-        return null;
+        // TODO: I would have preferred to find an elegant way to do the following...
+        if (mutation == null) mutation = buildDeletionFromPermissiveSource(source, builder);
+        if (mutation == null) mutation = buildFrameshiftFromPermissiveSource(source, builder);
+        if (mutation == null) mutation = buildDeletionInsertionFromPermissiveSource(source, builder);
+
+        if (mutation == null) throw new ParseException(source + " is not a valid protein mutation", 0);
+
+        return mutation;
     }
 
     private AminoAcidCode valueOfAminoAcidCode(String code1, String code2and3) {
@@ -211,27 +223,65 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
         return null;
     }
 
+    private ProteinMutation buildDeletionFromPermissiveSource(String source, ProteinMutation.FluentBuilder builder) {
 
+        Matcher m = DELETION_PATTERN_PERMISSIVE.matcher(source);
 
-    static String asHGVMutationFormat(String value) {
+        if (m.matches()) {
 
-        Preconditions.checkArgument(value.startsWith("p."));
+            AminoAcidCode affectedAAFirst = valueOfAminoAcidCode(m.group(1), m.group(2));
+            int affectedAAPosFirst = Integer.parseInt(m.group(3));
 
-        Pattern pat = Pattern.compile("([A-Z])\\d+_?([A-Z])?.*");
+            if (m.group(4) == null) {
 
-        Matcher matcher = pat.matcher(value);
+                return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst).deleted().build();
+            }
 
-        while (matcher.find()) {
+            AminoAcidCode affectedAALast = valueOfAminoAcidCode(m.group(4), m.group(5));
+            int affectedAAPosLast = Integer.parseInt(m.group(6));
 
-            System.out.println(matcher.group(1)+" AND "+matcher.group(2));
+            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast).deleted().build();
         }
 
-        // 1. replace all 1-letter AAs by 3-letter code
-        // 2. replace '*' by 'Ter'
-        // 3. remove everything after del
-        // 4. replace 'fs>\d+' by 'fs\d+'
-        // 4. replace '>' by 'delins'
+        return null;
+    }
 
-        return value;
+    private ProteinMutation buildFrameshiftFromPermissiveSource(String source, ProteinMutation.FluentBuilder builder) {
+
+        Matcher m = FRAMESHIFT_PATTERN_PERMISSIVE.matcher(source);
+
+        if (m.matches()) {
+
+            AminoAcidCode affectedAA = valueOfAminoAcidCode(m.group(1), m.group(2));
+            int affectedAAPos = Integer.parseInt(m.group(3));
+
+            return builder.aminoAcid(affectedAA, affectedAAPos).thenFrameshift(Integer.parseInt(m.group(4))).build();
+        }
+
+        return null;
+    }
+
+    private ProteinMutation buildDeletionInsertionFromPermissiveSource(String source, ProteinMutation.FluentBuilder builder) {
+
+        Matcher m = DELETION_INSERTION_PATTERN_PERMISSIVE.matcher(source);
+
+        if (m.matches()) {
+
+            AminoAcidCode affectedAAFirst = valueOfAminoAcidCode(m.group(1), m.group(2));
+            int affectedAAPosFirst = Integer.parseInt(m.group(3));
+
+            AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfCodeSequence(m.group(7));
+
+            if (m.group(4) == null) return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst)
+                    .deletedAndInserts(insertedAAs).build();
+
+            AminoAcidCode affectedAALast = valueOfAminoAcidCode(m.group(4), m.group(5));
+            int affectedAAPosLast = Integer.parseInt(m.group(6));
+
+            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
+                    .deletedAndInserts(insertedAAs).build();
+        }
+
+        return null;
     }
 }

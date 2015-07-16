@@ -308,7 +308,7 @@ public class ProteinMutationHGVFormatTest {
         Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstAffectedAminoAcidCode());
         Assert.assertEquals(487, pm.getFirstAffectedAminoAcidPos());
         Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastAffectedAminoAcidCode());
-        Assert.assertEquals(498, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(498, pm.getLastAffectedAminoAcidPos());
         Assert.assertTrue(pm.getMutation() instanceof Deletion);
     }
 
@@ -320,7 +320,7 @@ public class ProteinMutationHGVFormatTest {
         Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstAffectedAminoAcidCode());
         Assert.assertEquals(487, pm.getFirstAffectedAminoAcidPos());
         Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastAffectedAminoAcidCode());
-        Assert.assertEquals(498, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(498, pm.getLastAffectedAminoAcidPos());
         Assert.assertTrue(pm.getMutation() instanceof Deletion);
     }
 
