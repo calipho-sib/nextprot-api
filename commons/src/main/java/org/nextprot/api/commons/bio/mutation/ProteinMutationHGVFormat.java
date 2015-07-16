@@ -99,38 +99,24 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
         ProteinMutation.FluentBuilder builder = new ProteinMutation.FluentBuilder();
 
         try {
-            return strictParsing(source, builder);
+            return parseWithMode(source, builder, ParsingMode.STRICT);
         } catch (ParseException e) {
 
             if (parsingMode == ParsingMode.PERMISSIVE)
-                return permissiveParsing(source, builder);
+                return parseWithMode(source, builder, ParsingMode.PERMISSIVE);
 
             throw e;
         }
     }
 
-    private ProteinMutation strictParsing(String source, ProteinMutation.FluentBuilder builder) throws ParseException {
+    private ProteinMutation parseWithMode(String source, ProteinMutation.FluentBuilder builder, ParsingMode mode) throws ParseException {
 
         ProteinMutation mutation = buildSubstitution(source, builder);
 
         // TODO: I would have preferred to find an elegant way to do the following...
-        if (mutation == null) mutation = buildDeletion(source, builder);
-        if (mutation == null) mutation = buildFrameshift(source, builder);
-        if (mutation == null) mutation = buildDeletionInsertion(source, builder);
-
-        if (mutation == null) throw new ParseException(source + " is not a valid protein mutation", 0);
-
-        return mutation;
-    }
-
-    private ProteinMutation permissiveParsing(String source, ProteinMutation.FluentBuilder builder) throws ParseException {
-
-        ProteinMutation mutation = buildSubstitution(source, builder);
-
-        // TODO: I would have preferred to find an elegant way to do the following...
-        if (mutation == null) mutation = buildDeletionFromPermissiveSource(source, builder);
-        if (mutation == null) mutation = buildFrameshiftFromPermissiveSource(source, builder);
-        if (mutation == null) mutation = buildDeletionInsertionFromPermissiveSource(source, builder);
+        if (mutation == null) mutation = buildDeletion(source, builder, mode);
+        if (mutation == null) mutation = buildFrameshift(source, builder, mode);
+        if (mutation == null) mutation = buildDeletionInsertion(source, builder, mode);
 
         if (mutation == null) throw new ParseException(source + " is not a valid protein mutation", 0);
 
@@ -161,71 +147,9 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
         return null;
     }
 
-    private ProteinMutation buildDeletion(String source, ProteinMutation.FluentBuilder builder) {
+    private ProteinMutation buildDeletion(String source, ProteinMutation.FluentBuilder builder, ParsingMode mode) {
 
-        Matcher m = DELETION_PATTERN.matcher(source);
-
-        if (m.matches()) {
-
-            AminoAcidCode affectedAAFirst = valueOfAminoAcidCode(m.group(1), m.group(2));
-            int affectedAAPosFirst = Integer.parseInt(m.group(3));
-
-            if (m.group(4) == null) {
-
-                return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst).deleted().build();
-            }
-
-            AminoAcidCode affectedAALast = valueOfAminoAcidCode(m.group(4), m.group(5));
-            int affectedAAPosLast = Integer.parseInt(m.group(6));
-
-            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast).deleted().build();
-        }
-
-        return null;
-    }
-
-    private ProteinMutation buildFrameshift(String source, ProteinMutation.FluentBuilder builder) {
-
-        Matcher m = FRAMESHIFT_PATTERN.matcher(source);
-
-        if (m.matches()) {
-
-            AminoAcidCode affectedAA = valueOfAminoAcidCode(m.group(1), m.group(2));
-            int affectedAAPos = Integer.parseInt(m.group(3));
-
-            return builder.aminoAcid(affectedAA, affectedAAPos).thenFrameshift(Integer.parseInt(m.group(4))).build();
-        }
-
-        return null;
-    }
-
-    private ProteinMutation buildDeletionInsertion(String source, ProteinMutation.FluentBuilder builder) {
-
-        Matcher m = DELETION_INSERTION_PATTERN.matcher(source);
-
-        if (m.matches()) {
-
-            AminoAcidCode affectedAAFirst = valueOfAminoAcidCode(m.group(1), m.group(2));
-            int affectedAAPosFirst = Integer.parseInt(m.group(3));
-
-            AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfCodeSequence(m.group(7));
-
-            if (m.group(4) == null) return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst)
-                    .deletedAndInserts(insertedAAs).build();
-
-            AminoAcidCode affectedAALast = valueOfAminoAcidCode(m.group(4), m.group(5));
-            int affectedAAPosLast = Integer.parseInt(m.group(6));
-
-            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
-                    .deletedAndInserts(insertedAAs).build();
-        }
-
-        return null;
-    }
-
-    private ProteinMutation buildDeletionFromPermissiveSource(String source, ProteinMutation.FluentBuilder builder) {
-
-        Matcher m = DELETION_PATTERN_PERMISSIVE.matcher(source);
+        Matcher m = (mode == ParsingMode.STRICT) ? DELETION_PATTERN.matcher(source) : DELETION_PATTERN_PERMISSIVE.matcher(source);
 
         if (m.matches()) {
 
@@ -246,9 +170,9 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
         return null;
     }
 
-    private ProteinMutation buildFrameshiftFromPermissiveSource(String source, ProteinMutation.FluentBuilder builder) {
+    private ProteinMutation buildFrameshift(String source, ProteinMutation.FluentBuilder builder, ParsingMode mode) {
 
-        Matcher m = FRAMESHIFT_PATTERN_PERMISSIVE.matcher(source);
+        Matcher m = (mode == ParsingMode.STRICT) ? FRAMESHIFT_PATTERN.matcher(source) : FRAMESHIFT_PATTERN_PERMISSIVE.matcher(source);
 
         if (m.matches()) {
 
@@ -261,9 +185,9 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
         return null;
     }
 
-    private ProteinMutation buildDeletionInsertionFromPermissiveSource(String source, ProteinMutation.FluentBuilder builder) {
+    private ProteinMutation buildDeletionInsertion(String source, ProteinMutation.FluentBuilder builder, ParsingMode mode) {
 
-        Matcher m = DELETION_INSERTION_PATTERN_PERMISSIVE.matcher(source);
+        Matcher m = (mode == ParsingMode.STRICT) ? DELETION_INSERTION_PATTERN.matcher(source) : DELETION_INSERTION_PATTERN_PERMISSIVE.matcher(source);
 
         if (m.matches()) {
 
