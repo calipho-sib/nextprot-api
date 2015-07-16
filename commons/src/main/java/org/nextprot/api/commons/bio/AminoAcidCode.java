@@ -145,8 +145,8 @@ public enum AminoAcidCode {
         List<Integer> ucs = new ArrayList<>();
 
         for (int i=0 ; i<sequence.length() ; i++) {
-
-            if (Character.isUpperCase(sequence.charAt(i))) ucs.add(i);
+            char c = sequence.charAt(i);
+            if (Character.isUpperCase(c) || c == '*') ucs.add(i);
         }
 
         if (ucs.get(0) != 0) throw new IllegalArgumentException("First amino-acid is not known: Not a valid sequence of AminoAcidCode sequence");

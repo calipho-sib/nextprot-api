@@ -9,13 +9,19 @@ import org.junit.Test;
 public class AminoAcidCodeTest {
 
     @Test
-    public void testValueOfCode1AAFound() throws Exception {
+    public void testValueOfCode1Found() throws Exception {
 
         Assert.assertEquals(AminoAcidCode.Alanine, AminoAcidCode.valueOfCode1AA('A'));
     }
 
     @Test
-    public void testValueOfCodeFound() throws Exception {
+    public void testValueOfCode1AlsoFound() throws Exception {
+
+        Assert.assertEquals(AminoAcidCode.Stop, AminoAcidCode.valueOfCode("*"));
+    }
+
+    @Test
+    public void testValueOfCode3Found() throws Exception {
 
         Assert.assertEquals(AminoAcidCode.Alanine, AminoAcidCode.valueOfCode("Ala"));
     }
@@ -24,6 +30,18 @@ public class AminoAcidCodeTest {
     public void testValueOfCodeSequenceOk() throws Exception {
 
         Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.Tryptophan, AminoAcidCode.Tryptophan, AminoAcidCode.Alanine, AminoAcidCode.Tyrosine}, AminoAcidCode.valueOfCodeSequence("TrpWAlaY"));
+    }
+
+    @Test
+    public void testValueOfCodeSequence2Ok() throws Exception {
+
+        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.Stop}, AminoAcidCode.valueOfCodeSequence("Ter"));
+    }
+
+    @Test
+    public void testValueOfCodeSequence3Ok() throws Exception {
+
+        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.Threonine, AminoAcidCode.Tyrosine, AminoAcidCode.Stop}, AminoAcidCode.valueOfCodeSequence("TY*"));
     }
 
     @Test(expected = IllegalArgumentException.class)
