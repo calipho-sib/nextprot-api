@@ -288,36 +288,100 @@ public class ProteinMutationHGVFormatTest {
     }
 
     @Test
-    public void testParseNonStandardCosmic() throws Exception {
+    public void testPermissiveParserCorrectlyParseStandardSubstitution() throws Exception {
 
-        /*
-        "p.K487_L498del12"
-        "p.P564_L567delPRAL"
-        "p.T399>L"
-         */
+        ProteinMutation pm = format.parse("p.R54C", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
 
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(54, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(54, pm.getLastAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Substitution);
+        Assert.assertEquals(AminoAcidCode.Cysteine, pm.getMutation().getValue());
     }
-/*
 
     @Test
-    public void testAsHGVMutationFormats() throws Exception {
+    public void testParseAANonStandardDeletion1() throws Exception {
 
-        Map<String, String> hgvFormats = new HashMap<>();
+        ProteinMutation pm = format.parse("p.K487_L498del12", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
 
-        hgvFormats.put("p.R54C", "p.Arg54Cys");
-        hgvFormats.put("p.E3815*", "p.Glu3815Ter");
-        hgvFormats.put("p.I6616del", "p.Ile6616del");
-        hgvFormats.put("p.K487_L498del12", "p.Lys487_Leu498del");
-        hgvFormats.put("p.P564_L567delPRAL", "p.Pro564_Leu567del");
-        hgvFormats.put("p.M682fs*1", "p.Met682fsTer1");
-        hgvFormats.put("p.S1476fs*>9", "p.Ser1476fsTer9");
-        hgvFormats.put("p.T399>L", "p.Thr399>Leu");
-        hgvFormats.put("p.L330_A331>F", "p.Leu330_Ala331>Phe");
-        hgvFormats.put("p.W39_E40>*", "p.Trp39_Glu40>Ter");
-        hgvFormats.put("p.D419_R420>SSDG", "p.Asp419_Arg420>SerSerAspGly");
+        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(487, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(498, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Deletion);
+    }
 
-        for (Map.Entry<String, String> hgvFormat : hgvFormats.entrySet()) {
-            Assert.assertEquals(hgvFormat.getValue(), ProteinMutationHGVFormat.asHGVMutationFormat(hgvFormat.getKey()));
-        }
-    }*/
+    @Test
+    public void testParseAANonStandardDeletion2() throws Exception {
+
+        ProteinMutation pm = format.parse("p.K487_L498delPRAL", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+
+        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(487, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(498, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Deletion);
+    }
+
+    @Test
+    public void testParseAANonStandardFrameshift() throws Exception {
+
+        ProteinMutation pm = format.parse("p.S1476fs*>9", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+
+        Assert.assertEquals(AminoAcidCode.Serine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(1476, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Frameshift);
+        Assert.assertEquals(9, pm.getMutation().getValue());
+    }
+
+    @Test
+    public void testParseAANonStandardDelins1() throws Exception {
+
+        ProteinMutation pm = format.parse("p.T399>L", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+
+        Assert.assertEquals(AminoAcidCode.Threonine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(399, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof DeletionAndInsertion);
+        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("L"), (AminoAcidCode[]) pm.getMutation().getValue());
+    }
+
+    @Test
+    public void testParseAANonStandardDelins2() throws Exception {
+
+        ProteinMutation pm = format.parse("p.L330_A331>F", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+
+        Assert.assertEquals(AminoAcidCode.Leucine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.Alanine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(330, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(331, pm.getLastAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof DeletionAndInsertion);
+        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("F"), (AminoAcidCode[]) pm.getMutation().getValue());
+    }
+
+    @Test
+    public void testParseAANonStandardDelins3() throws Exception {
+
+        ProteinMutation pm = format.parse("p.W39_E40>*", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+
+        Assert.assertEquals(AminoAcidCode.Tryptophan, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.GlutamicAcid, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(39, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(40, pm.getLastAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof DeletionAndInsertion);
+        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("*"), (AminoAcidCode[]) pm.getMutation().getValue());
+    }
+
+    @Test
+    public void testParseAANonStandardDelins4() throws Exception {
+
+        ProteinMutation pm = format.parse("p.D419_R420>SSDG", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+
+        Assert.assertEquals(AminoAcidCode.AsparticAcid, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(419, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(420, pm.getLastAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof DeletionAndInsertion);
+        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("SSDG"), (AminoAcidCode[]) pm.getMutation().getValue());
+    }
 }

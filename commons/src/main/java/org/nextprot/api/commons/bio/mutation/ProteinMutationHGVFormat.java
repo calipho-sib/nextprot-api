@@ -22,6 +22,11 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
     private static final Pattern FRAMESHIFT_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)(\\d+)$");
     private static final Pattern DELETION_INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?delins((?:[A-Z]([a-z]{2})?)+)$");
 
+    public enum ParsingMode {
+
+        STRICT, PERMISSIVE
+    }
+
     public String format(ProteinMutation mutation) {
         return format(mutation, AACodeType.ONE_LETTER);
     }
@@ -61,11 +66,45 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
         return sb.toString();
     }
 
+    /**
+     * Parses text from the beginning of the given string to produce a ProteinMutation in strict mode
+     *
+     * @param source a standard HGV text.
+     * @return A <code>ProteinMutation</code> parsed from the string.
+     * @exception ParseException if the specified string cannot be parsed.
+     */
     @Override
     public ProteinMutation parse(String source) throws ParseException {
 
+        return parse(source, ParsingMode.STRICT);
+    }
+
+    /**
+     * Parses text from the beginning of the given string to produce a ProteinMutation in permissive or strict mode
+     *
+     * @param source a standard or closely standard HGV text.
+     * @param parsingMode if ParsingMode.PERMISSIVE accept slightly difference from the correct format else throw a ParseException
+     * @return A <code>ProteinMutation</code> parsed from the string.
+     * @exception ParseException if the specified string cannot be parsed.
+     */
+    public ProteinMutation parse(String source, ParsingMode parsingMode) throws ParseException {
+
         Preconditions.checkNotNull(source);
         Preconditions.checkArgument(source.startsWith("p."), "not a valid protein sequence variant");
+        Preconditions.checkNotNull(parsingMode);
+
+        try {
+            return strictParsing(source);
+        } catch (ParseException e) {
+
+            if (parsingMode == ParsingMode.PERMISSIVE)
+                return permissiveParsing(source);
+
+            throw e;
+        }
+    }
+
+    private ProteinMutation strictParsing(String source) throws ParseException {
 
         ProteinMutation.FluentBuilder builder = new ProteinMutation.FluentBuilder();
 
@@ -78,6 +117,12 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
         if (mutation == null) throw new ParseException("not a valid protein mutation", 0);
 
         return mutation;
+    }
+
+    private ProteinMutation permissiveParsing(String source) throws ParseException {
+
+
+        return null;
     }
 
     private AminoAcidCode valueOfAminoAcidCode(String code1, String code2and3) {
@@ -166,15 +211,7 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
         return null;
     }
 
-    /**
-     * Parse string provides by COSMIC
-     * @param source
-     * @return
-     */
-    public ProteinMutation parseNonStandardCosmic(String source) {
 
-        return null;
-    }
 
     static String asHGVMutationFormat(String value) {
 
