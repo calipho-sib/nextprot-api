@@ -22,7 +22,7 @@ public class ExonCategorizer {
         this.endPositionIsoform = endPositionIsoform;
     }
 
-    public ExonType categorize(Exon exon) {
+    public ExonCategory categorize(Exon exon) {
 
         int startPositionExon = exon.getFirstPositionOnGene();
         int endPositionExon = exon.getLastPositionOnGene();
@@ -30,11 +30,11 @@ public class ExonCategorizer {
         Preconditions.checkArgument(startPositionIsoform <= endPositionIsoform, "The start position of the isoform on the gene " + startPositionIsoform + " can not be bigger than the end " + endPositionIsoform);
         Preconditions.checkArgument(startPositionExon <= endPositionExon, "The start position of the exon on the gene " + startPositionIsoform + " can not be bigger than the end " + endPositionIsoform);
 
-        ExonType codingStatus;
+        ExonCategory codingStatus;
 
         // not coding exons in the beginning of the transcript
         if (endPositionExon < startPositionIsoform) {
-            codingStatus = ExonType.NOT_CODING;
+            codingStatus = ExonCategory.NOT_CODING;
             // ************ SPI ******************* EPI *******************
             // **<SPE>***EPE***********************************************
         }
@@ -43,8 +43,8 @@ public class ExonCategorizer {
         else if (startPositionExon > endPositionIsoform) {
             // Some kind of hack has probably been done in the db here !!
             // We consider exon to be of kind STOP_ONLY if it is closed to the last coding exon !!
-            if (startPositionExon - endPositionIsoform < 3) codingStatus = ExonType.STOP_ONLY;
-            else codingStatus = ExonType.NOT_CODING;
+            if (startPositionExon - endPositionIsoform < 3) codingStatus = ExonCategory.STOP_ONLY;
+            else codingStatus = ExonCategory.NOT_CODING;
 
             // ************ SPI ******************* EPI *******************
             // ********************************************SPE*<EPE>*******
@@ -52,27 +52,27 @@ public class ExonCategorizer {
 
         // start codon
         else if (startPositionExon <= startPositionIsoform && endPositionExon < endPositionIsoform) {
-            codingStatus = ExonType.START;
+            codingStatus = ExonCategory.START;
             // ************ SPI ******************* EPI *******************
             // *******SPE**********<EPE>***********************************
         }
 
         // end codon
         else if (endPositionExon >= endPositionIsoform && startPositionExon > startPositionIsoform && startPositionExon < endPositionIsoform) {
-            codingStatus = ExonType.STOP;
+            codingStatus = ExonCategory.STOP;
             // ************ SPI ******************* EPI *******************
             // *********************<SPE>******************EPE*************
         }
 
         // Case where only one exon can translate the whole isoform
         else if (startPositionExon <= startPositionIsoform && endPositionExon >= endPositionIsoform) {
-            codingStatus = ExonType.MONO;
+            codingStatus = ExonCategory.MONO;
             // ************ SPI ******************* EPI *******************
             // *************SPE**********************************EPE*******
         } else {
 
             // In the last case it must be a coding exon
-            codingStatus = ExonType.CODING;
+            codingStatus = ExonCategory.CODING;
         }
 
         return codingStatus;
