@@ -1,42 +1,24 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map.Entry;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.commons.utils.MappingUtils;
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.*;
 import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.dao.IsoformDAO;
-import org.nextprot.api.core.domain.AminoAcid;
-import org.nextprot.api.core.domain.Exon;
-import org.nextprot.api.core.domain.GenomicMapping;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformMapping;
-import org.nextprot.api.core.domain.TranscriptMapping;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.service.GenomicMappingService;
+import org.nextprot.api.core.utils.exon.TranscriptInfosExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Service
 public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 	// private static final Log LOGGER = LogFactory.getLog(GenomicMappingServiceImpl.class);
-	private final static Log LOGGER = LogFactory.getLog(GenomicMappingServiceImpl.class);
 
 	@Autowired private GeneDAO geneDAO;
 	@Autowired private IsoformDAO isoformDAO;
@@ -155,90 +137,19 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	private void computeExonCompositions(IsoformMapping isoformMapping) {
 
 		List<Entry<Integer, Integer>> positions = isoformMapping.getPositionsOfIsoformOnReferencedGene();
+
 		final int startPositionIsoform = positions.get(0).getKey();
 		final int endPositionIsoform = positions.get(positions.size() - 1).getValue();
-		final String isoformSequence = isoformMapping.getBioSequence();
+
+		//TranscriptInfoLogger exonInfoLogger = new TranscriptInfoLogger();
+		//TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(exonInfoLogger);
+		TranscriptInfosExtractor extractor = new TranscriptInfosExtractor();
 
 		for (TranscriptMapping t : isoformMapping.getTranscriptMappings()) {
 
-			// System.err.println(t.getAccession());
-			// In case of http://www.nextprot.org/db/entry/NX_O15519/exons how is it done, when there is no transcript???
-
-			int currentPosition = 0;
-
-			for (Exon e : t.getExons()) {
-
-				final int startPositionExon = e.getFirstPositionOnGene();
-				final int endPositionExon = e.getLastPositionOnGene();
-
-				int startPositionCoding = startPositionExon;
-				int endPositionCoding = endPositionExon;
-
-				String codingStatus = MappingUtils.getExonCodingStatus(startPositionIsoform, endPositionIsoform, startPositionExon, endPositionExon);
-				e.setCodingStatus(codingStatus);
-
-				if (codingStatus.equals("STOP_ONLY") || codingStatus.equals("NOT_CODING")) {
-					continue; // in this case there is no amino acid
-				} else if (codingStatus.equals("START")) {
-					startPositionCoding = startPositionIsoform;
-				} else if (codingStatus.equals("STOP")) {
-					endPositionCoding = endPositionIsoform;
-				} else if (codingStatus.equals("MONO")) {
-					startPositionCoding = startPositionIsoform;
-					endPositionCoding = endPositionIsoform;
-				}
-
-				int firstPosition = (int) currentPosition / 3;
-				int firstPhase = (int) currentPosition % 3;
-
-				int exonCodingLength = endPositionCoding - startPositionCoding + 1;
-				currentPosition += exonCodingLength;
-
-				int lastPosition = (int) currentPosition / 3;
-				int lastPhase = (int) currentPosition % 3;
-
-				if (lastPosition > (isoformSequence.length() - 1))
-					lastPosition = isoformSequence.length() - 1;
-
-//				System.err.println(e.getAccession() + " startPositionExon:" + startPositionExon + " endPositionExon:" + endPositionExon + " exonLength:" + (endPositionExon - startPositionExon)
-//						+ " firstPosition: " + firstPosition + " lastPosition: " + lastPosition + " coding:" + codingStatus + " startOnIsoform:" + startPositionIsoform + " endOnIsoform"
-//						+ endPositionIsoform + " iso name:" + isoformMapping.getIsoMainName() + " seq size:" + isoformSequence.length() + " transcript name:" + t.getAccession());
-
-				e.setFirstAminoAcid(getFirstAminoAcid(isoformSequence, firstPosition, firstPhase));
-				e.setLastAminoAcid(getLastAminoAcid(isoformSequence, lastPosition, lastPhase));
-
-			}
+			extractor.extract(isoformMapping.getUniqueName() + "." + t.getAccession(), isoformMapping.getBioSequence(), startPositionIsoform, endPositionIsoform, t.getExons());
+			//LOGGER.info(t.getAccession() + ": " + exonInfoLogger.getInfos());
 		}
-
-	}
-
-	private static AminoAcid getLastAminoAcid(String isoformSequence, int position, int phase) {
-
-		if ((position > 0) && (phase == 0) && (position + 1 != isoformSequence.length())) { // It should not be the end ot the isoform
-			position = position - 1;
-		}
-
-		if (position > isoformSequence.length()) {
-			position = isoformSequence.length() - 1;
-			System.err.println("Why is this happeningm for the last??? Isoform length" + isoformSequence.length() + " position=" + position + " phase=" + phase);
-		}
-
-		return new AminoAcid(position + 1, phase, isoformSequence.charAt(position));
-	}
-
-	private static AminoAcid getFirstAminoAcid(String isoformSequence, int position, int phase) {
-
-		// Check NX_A6NC05
-		if (position == isoformSequence.length()) {
-			position = isoformSequence.length() - 1;
-		}
-
-		if (position > isoformSequence.length()) {
-			position = isoformSequence.length() - 1;
-			LOGGER.warn("Why the is this happening for the first amino acid??? Isoform length" + isoformSequence.length() + " position=" + position + " phase=" + phase);
-		}
-
-		return new AminoAcid(position + 1, phase, isoformSequence.charAt(position));
 	}
 
 	private class IsoformNameFunction implements Function<Isoform, String> {
@@ -246,5 +157,4 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			return isoform.getUniqueName();
 		}
 	}
-
 }

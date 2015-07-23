@@ -34,7 +34,7 @@ public class ExonCategorizer {
 
         // not coding exons in the beginning of the transcript
         if (endPositionExon < startPositionIsoform) {
-            codingStatus = ExonCategory.NOT_CODING;
+            codingStatus = ExonCategory.NOT_CODING_PRE;
             // ************ SPI ******************* EPI *******************
             // **<SPE>***EPE***********************************************
         }
@@ -44,7 +44,7 @@ public class ExonCategorizer {
             // Some kind of hack has probably been done in the db here !!
             // We consider exon to be of kind STOP_ONLY if it is closed to the last coding exon !!
             if (startPositionExon - endPositionIsoform < 3) codingStatus = ExonCategory.STOP_ONLY;
-            else codingStatus = ExonCategory.NOT_CODING;
+            else codingStatus = ExonCategory.NOT_CODING_POST;
 
             // ************ SPI ******************* EPI *******************
             // ********************************************SPE*<EPE>*******
@@ -58,7 +58,7 @@ public class ExonCategorizer {
         }
 
         // end codon
-        else if (endPositionExon >= endPositionIsoform && startPositionExon > startPositionIsoform && startPositionExon < endPositionIsoform) {
+        else if (endPositionExon >= endPositionIsoform && startPositionExon > startPositionIsoform && startPositionExon <= endPositionIsoform) {
             codingStatus = ExonCategory.STOP;
             // ************ SPI ******************* EPI *******************
             // *********************<SPE>******************EPE*************
@@ -76,38 +76,5 @@ public class ExonCategorizer {
         }
 
         return codingStatus;
-    }
-
-    private boolean isStopOnlyDeducedFromGeneSeq(Exon previous, String geneSequence) {
-
-        if (previous != null) {
-
-            // 1. startPositionExon > endPositionIsoform
-            // 2. first codon of this exon is a CODON STOP:(XXX)
-            //  3 possible cases:
-            //  PREV-EXON+0_LAST-CODON: ... CUR-EXON_LAST-CODON: XXX
-            //  PREV-EXON+1_LAST-CODON: ..X CUR-EXON_LAST-CODON: XX.
-            //  PREV-EXON+2_LAST-CODON: .XX CUR-EXON_LAST-CODON: X..
-
-            String firstCodon = getFirstCodon(previous, geneSequence);
-
-            if (firstCodon.equals("TAA") || firstCodon.equals("TAG") || firstCodon.equals("TGA"))
-                return true;
-        }
-        return false;
-    }
-
-    private String getFirstCodon(Exon previous, String geneSequence) {
-
-        Preconditions.checkNotNull(previous);
-
-        // prev: phase | curr
-        //  XXX: 0     | NNN
-        //  XXN: 1     | NNX
-        //  XNN: 2     | NXX
-        int genePos = previous.getLastPositionOnGene();
-        int phase = previous.getLastAminoAcid().getPhase();
-
-        return geneSequence.substring(genePos-phase, genePos+3-phase);
     }
 }

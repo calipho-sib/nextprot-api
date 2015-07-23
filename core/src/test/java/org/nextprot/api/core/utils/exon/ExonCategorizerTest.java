@@ -64,6 +64,25 @@ public class ExonCategorizerTest {
         Assert.assertEquals(ExonCategory.STOP, status);
     }
 
+    @Test
+    public void testStopExonStatus2() throws Exception {
+
+        // NX_Q8NFW8-2
+        ExonCategorizer categorizer = new ExonCategorizer(131, 16108);
+
+        ExonCategory status = categorizer.categorize(createMockExonList(16108, 16261).get(0));
+        Assert.assertEquals(ExonCategory.STOP, status);
+    }
+
+    @Test
+    public void testNonCodingExon() throws Exception {
+
+        ExonCategorizer categorizer = new ExonCategorizer(941, 43058);
+
+        ExonCategory status = categorizer.categorize(createMockExonList(276, 289).get(0));
+        Assert.assertEquals(ExonCategory.NOT_CODING_PRE, status);
+    }
+
     private List<Exon> createMockExonList(int... startEnds) {
 
         Preconditions.checkArgument(startEnds.length % 2 == 0);
