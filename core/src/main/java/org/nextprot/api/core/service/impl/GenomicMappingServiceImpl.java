@@ -14,11 +14,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 @Service
 public class GenomicMappingServiceImpl implements GenomicMappingService {
 
-	// private static final Log LOGGER = LogFactory.getLog(GenomicMappingServiceImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(GenomicMappingServiceImpl.class.getSimpleName());
 
 	@Autowired private GeneDAO geneDAO;
 	@Autowired private IsoformDAO isoformDAO;
@@ -148,7 +149,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		for (TranscriptMapping t : isoformMapping.getTranscriptMappings()) {
 
 			extractor.extract(isoformMapping.getUniqueName() + "." + t.getAccession(), isoformMapping.getBioSequence(), startPositionIsoform, endPositionIsoform, t.getExons());
-			//LOGGER.info(t.getAccession() + ": " + exonInfoLogger.getInfos());
+			//LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + ": " + exonInfoLogger.getInfos());
 		}
 	}
 
