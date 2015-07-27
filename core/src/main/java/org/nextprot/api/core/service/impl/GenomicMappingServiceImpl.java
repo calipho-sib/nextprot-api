@@ -128,6 +128,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		// Computes exon compositions for each isoform mapping
 		//LOGGER.info(entryName);
 		for (IsoformMapping isoformMapping : isoformMappings) {
+
 			computeExonCompositions(isoformMapping);
 		}
 
@@ -147,11 +148,10 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		//TranscriptInfoLogger exonInfoLogger = new TranscriptInfoLogger();
 		//TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(exonInfoLogger);
 		TranscriptInfosExtractor extractor = new TranscriptInfosExtractor();
-
 		for (TranscriptMapping t : isoformMapping.getTranscriptMappings()) {
 
 			extractor.extract(isoformMapping.getUniqueName() + "." + t.getAccession(), isoformMapping.getBioSequence(), startPositionIsoform, endPositionIsoform, t.getExons());
-			//LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + " ("+t.getQuality()+ "): " + exonInfoLogger.getInfos());
+			//LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + "." + t.getReferenceGeneUniqueName() + " (" + t.getQuality() + "): " + exonInfoLogger.getInfos());
 		}
 	}
 
