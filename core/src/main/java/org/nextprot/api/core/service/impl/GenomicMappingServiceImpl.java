@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 @Service
 public class GenomicMappingServiceImpl implements GenomicMappingService {
 
+	// -Djava.util.logging.SimpleFormatter.format=%5$s%6$s%n
 	private static final Logger LOGGER = Logger.getLogger(GenomicMappingServiceImpl.class.getSimpleName());
 
 	@Autowired private GeneDAO geneDAO;
@@ -125,6 +126,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		});
 
 		// Computes exon compositions for each isoform mapping
+		//LOGGER.info(entryName);
 		for (IsoformMapping isoformMapping : isoformMappings) {
 			computeExonCompositions(isoformMapping);
 		}
@@ -149,7 +151,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		for (TranscriptMapping t : isoformMapping.getTranscriptMappings()) {
 
 			extractor.extract(isoformMapping.getUniqueName() + "." + t.getAccession(), isoformMapping.getBioSequence(), startPositionIsoform, endPositionIsoform, t.getExons());
-			//LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + ": " + exonInfoLogger.getInfos());
+			//LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + " ("+t.getQuality()+ "): " + exonInfoLogger.getInfos());
 		}
 	}
 
