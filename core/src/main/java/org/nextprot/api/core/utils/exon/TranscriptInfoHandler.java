@@ -12,9 +12,8 @@ public interface TranscriptInfoHandler {
 
     void startHandlingTranscript();
     void startHandlingExon(Exon exon);
-    void handleFirstAA(Exon exon, AminoAcid aa);
-    void handleLastAA(Exon exon, AminoAcid aa);
-    void handleExonCategory(Exon exon, ExonCategory cat);
+    void handleCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category);
+    void handleNonCodingExon(Exon exon, ExonCategory cat);
     void endHandlingExon(Exon exon);
     void endHandlingTranscript();
     void endWithException(Exon exon, SequenceIndexOutOfBoundsException e);

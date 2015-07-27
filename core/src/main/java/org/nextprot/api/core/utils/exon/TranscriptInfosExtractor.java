@@ -79,7 +79,12 @@ public class TranscriptInfosExtractor {
 
             handler.startHandlingExon(exon);
             try {
-                extractInfosFromExon(exon);
+                ExonCategory exonCategory = categorizer.categorize(exon);
+
+                if (exonCategory.isCoding())
+                    handleCodingExon(isoformSequence, exon, exonCategory);
+                else
+                    handler.handleNonCodingExon(exon, exonCategory);
             } catch (SequenceIndexOutOfBoundsException e) {
 
                 handler.endWithException(exon, e);
@@ -88,14 +93,6 @@ public class TranscriptInfosExtractor {
             handler.endHandlingExon(exon);
         }
         handler.endHandlingTranscript();
-    }
-
-    private void extractInfosFromExon(final Exon exon) throws SequenceIndexOutOfBoundsException {
-
-        ExonCategory exonCategory = categorizer.categorize(exon);
-        handler.handleExonCategory(exon, exonCategory);
-
-        if (exonCategory.isCoding()) extractAminoAcids(isoformSequence, exon, exonCategory);
     }
 
     private void moveToNextFirstPos() {
@@ -111,7 +108,7 @@ public class TranscriptInfosExtractor {
         if (currentPhase == 0) currentIsoformPos--;
     }
 
-    private void extractAminoAcids(String isoformSequence, Exon exon, ExonCategory cat) throws SequenceIndexOutOfBoundsException {
+    private void handleCodingExon(String isoformSequence, Exon exon, ExonCategory cat) throws SequenceIndexOutOfBoundsException {
 
         int startPositionExon = exon.getFirstPositionOnGene();
         int endPositionExon = exon.getLastPositionOnGene();
@@ -122,13 +119,15 @@ public class TranscriptInfosExtractor {
             endPositionExon = endPositionIsoform;
 
         moveToNextFirstPos();
-        handler.handleFirstAA(exon, newAminoAcid(isoformSequence, currentIsoformPos, currentPhase));
+        AminoAcid first = newAminoAcid(isoformSequence, currentIsoformPos, currentPhase);
 
         // update transcript length
         currentTranscriptLen += endPositionExon - startPositionExon + 1;
 
         moveToNextLastPos();
-        handler.handleLastAA(exon, newAminoAcid(isoformSequence, currentIsoformPos, currentPhase));
+        AminoAcid last = newAminoAcid(isoformSequence, currentIsoformPos, currentPhase);
+
+        handler.handleCodingExon(exon, first, last, cat);
     }
 
     private AminoAcid newAminoAcid(String isoformSequence, int aaPosition, int phase) throws SequenceIndexOutOfBoundsException {
@@ -150,18 +149,15 @@ public class TranscriptInfosExtractor {
         public void startHandlingExon(Exon exon) {}
 
         @Override
-        public void handleFirstAA(Exon exon, AminoAcid aa) {
-            exon.setFirstAminoAcid(aa);
+        public void handleCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
+            exon.setFirstAminoAcid(first);
+            exon.setLastAminoAcid(last);
+            exon.setCodingStatus(category.getTypeString());
         }
 
         @Override
-        public void handleLastAA(Exon exon, AminoAcid aa) {
-            exon.setLastAminoAcid(aa);
-        }
-
-        @Override
-        public void handleExonCategory(Exon exon, ExonCategory cat) {
-            exon.setCodingStatus(cat.toString());
+        public void handleNonCodingExon(Exon exon, ExonCategory category) {
+            exon.setCodingStatus(category.getTypeString());
         }
 
         @Override

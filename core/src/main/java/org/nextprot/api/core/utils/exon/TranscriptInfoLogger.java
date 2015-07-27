@@ -9,7 +9,6 @@ import org.nextprot.api.core.domain.Exon;
 public class TranscriptInfoLogger implements TranscriptInfoHandler {
 
     private StringBuilder sb;
-    private ExonCategory current;
 
     @Override
     public void startHandlingTranscript() {
@@ -20,20 +19,14 @@ public class TranscriptInfoLogger implements TranscriptInfoHandler {
     public void startHandlingExon(Exon exon) {}
 
     @Override
-    public void handleFirstAA(Exon exon, AminoAcid aa) {
-
-        sb.append(aa.getBase()).append("").append(aa.getPosition()).append("(+").append(aa.getPhase()).append(")-");
+    public void handleCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
+        sb.append(first.getBase()).append("").append(first.getPosition()).append("(+").append(first.getPhase()).append(")-");
+        sb.append(category).append("-").append(last.getBase()).append("").append(last.getPosition()).append("(+").append(last.getPhase()).append(") ");
     }
 
     @Override
-    public void handleLastAA(Exon exon, AminoAcid aa) {
-
-        sb.append(current).append("-").append(aa.getBase()).append("").append(aa.getPosition()).append("(+").append(aa.getPhase()).append(") ");
-    }
-
-    @Override
-    public void handleExonCategory(Exon exon, ExonCategory cat) {
-        current = cat;
+    public void handleNonCodingExon(Exon exon, ExonCategory category) {
+        sb.append(category.getTypeString()).append(" ");
     }
 
     @Override

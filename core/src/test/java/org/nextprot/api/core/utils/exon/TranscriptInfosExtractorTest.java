@@ -251,7 +251,6 @@ public class TranscriptInfosExtractorTest {
         private SequenceIndexOutOfBoundsException e;
 
         private TranscriptInfoCollector() {
-
             this.exonInfos = new ArrayList<>();
         }
 
@@ -260,31 +259,23 @@ public class TranscriptInfosExtractorTest {
 
         @Override
         public void startHandlingExon(Exon exon) {
-
             exonInfo = new ExonInfo();
         }
 
         @Override
-        public void handleFirstAA(Exon exon, AminoAcid aa) {
-
-            exonInfo.setFirstAA(aa);
+        public void handleCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
+            exonInfo.setFirstAA(first);
+            exonInfo.setLastAA(last);
+            exonInfo.setExonCategory(category);
         }
 
         @Override
-        public void handleLastAA(Exon exon, AminoAcid aa) {
-
-            exonInfo.setLastAA(aa);
-        }
-
-        @Override
-        public void handleExonCategory(Exon exon, ExonCategory cat) {
-
+        public void handleNonCodingExon(Exon exon, ExonCategory cat) {
             exonInfo.setExonCategory(cat);
         }
 
         @Override
         public void endHandlingExon(Exon exon) {
-
             exonInfos.add(exonInfo);
         }
 
@@ -293,12 +284,10 @@ public class TranscriptInfosExtractorTest {
 
         @Override
         public void endWithException(Exon exon, SequenceIndexOutOfBoundsException e) {
-
             this.e = e;
         }
 
         public ExonInfo getInfoAt(int index) {
-
             Preconditions.checkElementIndex(index, exonInfos.size());
             return exonInfos.get(index);
         }
