@@ -78,17 +78,13 @@ public class TranscriptInfosExtractor {
         for (Exon exon : exons) {
 
             handler.startHandlingExon(exon);
-            try {
-                ExonCategory exonCategory = categorizer.categorize(exon);
+            ExonCategory exonCategory = categorizer.categorize(exon);
 
-                if (exonCategory.isCoding())
-                    handleCodingExon(isoformSequence, exon, exonCategory);
-                else
-                    handler.handleNonCodingExon(exon, exonCategory);
-            } catch (SequenceIndexOutOfBoundsException e) {
-
-                handler.endWithException(exon, e);
-                break;
+            if (exonCategory.isCoding()) {
+                if (!handleCodingExon(isoformSequence, exon, exonCategory)) break;
+            }
+            else {
+                handler.handleNonCodingExon(exon, exonCategory);
             }
             handler.endHandlingExon(exon);
         }
@@ -108,7 +104,7 @@ public class TranscriptInfosExtractor {
         if (currentPhase == 0) currentIsoformPos--;
     }
 
-    private void handleCodingExon(String isoformSequence, Exon exon, ExonCategory cat) throws SequenceIndexOutOfBoundsException {
+    private boolean handleCodingExon(String isoformSequence, Exon exon, ExonCategory cat) {
 
         int startPositionExon = exon.getFirstPositionOnGene();
         int endPositionExon = exon.getLastPositionOnGene();
@@ -127,12 +123,25 @@ public class TranscriptInfosExtractor {
         moveToNextLastPos();
         AminoAcid last = newAminoAcid(isoformSequence, currentIsoformPos, currentPhase);
 
+        if (first.getPosition() > isoformSequence.length()) {
+            handler.handleCodingExonError(new ExonBoundError(exon, first, last,
+                    ExonBoundError.AminoAcidOutOfBound.FIRST, isoformSequence.length()));
+            return false;
+        }
+        else if (last.getPosition() > isoformSequence.length()) {
+            handler.handleCodingExonError(new ExonBoundError(exon, first, last,
+                    ExonBoundError.AminoAcidOutOfBound.LAST, isoformSequence.length()));
+            return false;
+        }
+
         handler.handleCodingExon(exon, first, last, cat);
+
+        return true;
     }
 
-    private AminoAcid newAminoAcid(String isoformSequence, int aaPosition, int phase) throws SequenceIndexOutOfBoundsException {
+    private AminoAcid newAminoAcid(String isoformSequence, int aaPosition, int phase) {
 
-        if (aaPosition >= isoformSequence.length()) throw new SequenceIndexOutOfBoundsException(accession, aaPosition, isoformSequence.length());
+        if (aaPosition >= isoformSequence.length()) return new AminoAcid(aaPosition + 1, phase, '?');
 
         return new AminoAcid(aaPosition + 1, phase, isoformSequence.charAt(aaPosition));
     }
@@ -167,8 +176,15 @@ public class TranscriptInfosExtractor {
         public void endHandlingTranscript() {}
 
         @Override
-        public void endWithException(Exon exon, SequenceIndexOutOfBoundsException e) {
-            LOGGER.error(e.getMessage());
+        public void handleCodingExonError(ExonBoundError exonBoundError) {
+
+            StringBuilder sb = new StringBuilder("SequenceIndexOutOfBoundsException: index (");
+
+            sb.append(exonBoundError.getOutOfBoundAminoAcid().getPosition()-1);
+
+            sb.append(") must be less than size (").append(exonBoundError.getIsoformLength()).append(")");
+
+            LOGGER.error(sb.toString());
         }
     }
 }

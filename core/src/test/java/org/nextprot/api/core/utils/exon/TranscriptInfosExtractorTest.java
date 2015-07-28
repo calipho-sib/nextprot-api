@@ -178,7 +178,27 @@ public class TranscriptInfosExtractorTest {
         //Assert.assertEquals(ExonCategory.NOT_CODING_POST, collector.getInfoAt(2).getExonCategory());
         //Assert.assertNull(collector.getInfoAt(2).getFirstAA());
         //Assert.assertNull(collector.getInfoAt(2).getLastAA());
-        Assert.assertNotNull(collector.getException());
+        Assert.assertTrue(collector.hasError());
+    }
+
+    @Test
+    public void testExtractInfosNX_Q658P3Iso1() throws Exception {
+
+        List<Exon> exons = createMockExonList(1, 997, 1885, 2040, 54668, 54808);
+
+        TranscriptInfoCollector collector = new TranscriptInfoCollector();
+        TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
+
+        extractor.extract("MSATGDRHPTQGDQEAPVSQEGAQAEAAGAGNQEGGDSGPDSSDVVPAAEVVGVAGPVEGLGEEEGEQAAGLAAVPRGGSAEEDSDIGPATEEEEEEEGNEAANFDLAVVARRYPASGIHFVLLDMVHSLLHRLSHNDHILIENRQLSRLMVGPHAAARNLWGNLPPLLLPQRLGAGAAARAGEGLGLIQEAASVPEPAVPADLAEMAREPAEEAAEEKLSEEATEEPDAEEPATEEPTAQEATAPEEVTKSQPEKWDEEAQDAAGEEEKEQEKEKDAENKVKNSKGT", 256, 53495, exons);
+
+        Assert.assertEquals(1, collector.size());
+
+        assertInfoEquals(collector.getInfoAt(0), 'M', 1, 0, 'E', 248, 1, ExonCategory.START);
+        //assertInfoEquals(collector.getInfoAt(1), 'E', 248, 1, 'T', 288, 1, ExonCategory.CODING);
+        //Assert.assertEquals(ExonCategory.NOT_CODING_POST, collector.getInfoAt(2).getExonCategory());
+        //Assert.assertNull(collector.getInfoAt(2).getFirstAA());
+        //Assert.assertNull(collector.getInfoAt(2).getLastAA());
+        Assert.assertTrue(collector.hasError());
     }
 
     private void assertInfoEquals(ExonInfo info, char firstAA, int firstPos, int startPhase,  char lastAA, int lastPos, int endPhase, ExonCategory type) {
@@ -248,7 +268,7 @@ public class TranscriptInfosExtractorTest {
 
         private final List<ExonInfo> exonInfos;
         private ExonInfo exonInfo;
-        private SequenceIndexOutOfBoundsException e;
+        private boolean error;
 
         private TranscriptInfoCollector() {
             this.exonInfos = new ArrayList<>();
@@ -270,6 +290,11 @@ public class TranscriptInfosExtractorTest {
         }
 
         @Override
+        public void handleCodingExonError(ExonBoundError exonBoundError) {
+            error = true;
+        }
+
+        @Override
         public void handleNonCodingExon(Exon exon, ExonCategory cat) {
             exonInfo.setExonCategory(cat);
         }
@@ -282,18 +307,13 @@ public class TranscriptInfosExtractorTest {
         @Override
         public void endHandlingTranscript() {}
 
-        @Override
-        public void endWithException(Exon exon, SequenceIndexOutOfBoundsException e) {
-            this.e = e;
-        }
-
         public ExonInfo getInfoAt(int index) {
             Preconditions.checkElementIndex(index, exonInfos.size());
             return exonInfos.get(index);
         }
 
-        public SequenceIndexOutOfBoundsException getException() {
-            return e;
+        public boolean hasError() {
+            return error;
         }
 
         public int size() {

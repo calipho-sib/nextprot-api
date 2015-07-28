@@ -25,6 +25,19 @@ public class TranscriptInfoLogger implements TranscriptInfoHandler {
     }
 
     @Override
+    public void handleCodingExonError(ExonBoundError exonBoundError) {
+
+        AminoAcid first = exonBoundError.getFirst();
+
+        if (exonBoundError.getAminoAcidOutOfBound() == ExonBoundError.AminoAcidOutOfBound.LAST) {
+            sb.append(first.getBase()).append("").append(first.getPosition()).append("(+").append(first.getPhase()).append(")-");
+            sb.append("ERROR-?(" + (exonBoundError.getLast().getPosition()-1) + ">=" + exonBoundError.getIsoformLength() + "!)");
+        } else {
+            sb.append("?(" + (first.getPosition()-1) + ">=" + exonBoundError.getIsoformLength() + "!)-ERROR-...");
+        }
+    }
+
+    @Override
     public void handleNonCodingExon(Exon exon, ExonCategory category) {
         sb.append(category.getTypeString()).append(" ");
     }
@@ -34,12 +47,6 @@ public class TranscriptInfoLogger implements TranscriptInfoHandler {
 
     @Override
     public void endHandlingTranscript() {}
-
-    @Override
-    public void endWithException(Exon exon, SequenceIndexOutOfBoundsException e) {
-
-        sb.append("ERROR-?("+e.getIndex() +">="+e.getSize()+")!");
-    }
 
     public String getInfos() {
 
