@@ -50,7 +50,16 @@ public class GenomicMappingTest extends WebIntegrationBaseTest {
 	@Test
 	public void testNX_Q96M20() throws Exception {
 
-		Set<String> names = Sets.newHashSet("NX_Q96M20");//NX_Q7Z6V5, NX_Q9Y281, NX_Q96M20
+		Set<String> names = Sets.newHashSet("NX_Q96M20");//NX_Q7Z6V5, NX_Q9Y281, NX_Q96M20, NX_Q658P3
+		for (String name : names) {
+			entryBuilderService.build(EntryConfig.newConfig(name).withGenomicMappings());
+		}
+	}
+
+	@Test
+	public void testNX_Q658P3() throws Exception {
+
+		Set<String> names = Sets.newHashSet("NX_Q658P3");//NX_Q7Z6V5, NX_Q9Y281, NX_Q96M20, NX_Q658P3
 		for (String name : names) {
 			entryBuilderService.build(EntryConfig.newConfig(name).withGenomicMappings());
 		}

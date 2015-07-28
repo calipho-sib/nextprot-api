@@ -181,25 +181,49 @@ public class TranscriptInfosExtractorTest {
         Assert.assertTrue(collector.hasError());
     }
 
-    @Test
-    public void testExtractInfosNX_Q658P3Iso1() throws Exception {
+    /*@Test
+    public void testExtractInfosNX_Q658P3Iso3() throws Exception {
 
-        List<Exon> exons = createMockExonList(1, 997, 1885, 2040, 54668, 54808);
+        List<Exon> exons = createMockExonList(1, 81, 6813, 7227, 21682, 22181, 23872, 24399, 30877, 31041, 39250, 41842);
 
         TranscriptInfoCollector collector = new TranscriptInfoCollector();
         TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
 
-        extractor.extract("MSATGDRHPTQGDQEAPVSQEGAQAEAAGAGNQEGGDSGPDSSDVVPAAEVVGVAGPVEGLGEEEGEQAAGLAAVPRGGSAEEDSDIGPATEEEEEEEGNEAANFDLAVVARRYPASGIHFVLLDMVHSLLHRLSHNDHILIENRQLSRLMVGPHAAARNLWGNLPPLLLPQRLGAGAAARAGEGLGLIQEAASVPEPAVPADLAEMAREPAEEAAEEKLSEEATEEPDAEEPATEEPTAQEATAPEEVTKSQPEKWDEEAQDAAGEEEKEQEKEKDAENKVKNSKGT", 256, 53495, exons);
+        extractor.extract("NX_Q658P3-3.ENST00000354888", "MPEEMDKPLISLHLVDSDSSLAKVPDEAPKVGILGSGDFARSLATRLVGSGFKVVVGSRNPKRTARLFPSAAQVTFQEEAVSSPEVIFVAVFREHYSSLCSLSDQLAGKILVDVSNPTEQEHLQHRESNAEYLASLFPTCTVVKAFNVISAWTLQAGPRDGNRQVPICGDQPEAKRAVSEMALAMGFMPVDMGSLASAWEVEAMPLRLLPAWKVPTLLALGLFVCFYAYNFVRDVLQPYVQESQNKFFKLPVSVVNTTLPCVAYVLLSLVYLPGVLAAALQLRRGTKYQRFPDWLDHWLQHRKQIGLLSFFCAALHALYSFCLPLRRAHRYDLVNLAVKQVLANKSHLWVEEVWRMEIYLSLGVLALGTLSLLAVTSLPSIANSLNWREFSFVQSSLGFVALVLSTLHTLTYGWTRAFEESRYKFYLPPTFTLTLLVPCVVILAKALFLLPCISRRLARIRRGWERESTIKFTLPTDHALAEKTSHV", 21690, 39528, exons);
 
-        Assert.assertEquals(1, collector.size());
+        Assert.assertEquals(5, collector.size());
 
-        assertInfoEquals(collector.getInfoAt(0), 'M', 1, 0, 'E', 248, 1, ExonCategory.START);
-        //assertInfoEquals(collector.getInfoAt(1), 'E', 248, 1, 'T', 288, 1, ExonCategory.CODING);
-        //Assert.assertEquals(ExonCategory.NOT_CODING_POST, collector.getInfoAt(2).getExonCategory());
-        //Assert.assertNull(collector.getInfoAt(2).getFirstAA());
-        //Assert.assertNull(collector.getInfoAt(2).getLastAA());
-        Assert.assertTrue(collector.hasError());
+        Assert.assertEquals(ExonCategory.NOT_CODING_PRE, collector.getInfoAt(0).getExonCategory());
+        Assert.assertNull(collector.getInfoAt(0).getFirstAA());
+        Assert.assertNull(collector.getInfoAt(0).getLastAA());
+        assertInfoEquals(collector.getInfoAt(1), 'M', 1, 0, 'Q', 164, 0, ExonCategory.START);
+        assertInfoEquals(collector.getInfoAt(2), 'V', 165, 0, 'Q', 340, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(3), 'V', 341, 0, 'V', 350, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(4), 'E', 351, 0, 'Q', 394, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(5), 'S', 395, 0, 'V', 487, 0, ExonCategory.STOP);
     }
+
+    @Test
+    public void testExtractInfosNX_Q658P3Iso3np1() throws Exception {
+
+        List<Exon> exons = createMockExonList(46, 81, 21682, 22181, 23872, 24399, 30877, 30906, 30910, 31041, 39250, 39891);
+
+        TranscriptInfoCollector collector = new TranscriptInfoCollector();
+        TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
+
+        extractor.extract("NX_Q658P3-3.ENST00000354888", "MPEEMDKPLISLHLVDSDSSLAKVPDEAPKVGILGSGDFARSLATRLVGSGFKVVVGSRNPKRTARLFPSAAQVTFQEEAVSSPEVIFVAVFREHYSSLCSLSDQLAGKILVDVSNPTEQEHLQHRESNAEYLASLFPTCTVVKAFNVISAWTLQAGPRDGNRQVPICGDQPEAKRAVSEMALAMGFMPVDMGSLASAWEVEAMPLRLLPAWKVPTLLALGLFVCFYAYNFVRDVLQPYVQESQNKFFKLPVSVVNTTLPCVAYVLLSLVYLPGVLAAALQLRRGTKYQRFPDWLDHWLQHRKQIGLLSFFCAALHALYSFCLPLRRAHRYDLVNLAVKQVLANKSHLWVEEVWRMEIYLSLGVLALGTLSLLAVTSLPSIANSLNWREFSFVQSSLGFVALVLSTLHTLTYGWTRAFEESRYKFYLPPTFTLTLLVPCVVILAKALFLLPCISRRLARIRRGWERESTIKFTLPTDHALAEKTSHV", 21690, 39528, exons);
+
+        Assert.assertEquals(6, collector.size());
+
+        Assert.assertEquals(ExonCategory.NOT_CODING_PRE, collector.getInfoAt(0).getExonCategory());
+        Assert.assertNull(collector.getInfoAt(0).getFirstAA());
+        Assert.assertNull(collector.getInfoAt(0).getLastAA());
+        assertInfoEquals(collector.getInfoAt(1), 'M', 1, 0, 'Q', 164, 0, ExonCategory.START);
+        assertInfoEquals(collector.getInfoAt(2), 'V', 165, 0, 'Q', 340, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(3), 'V', 341, 0, 'V', 350, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(4), 'E', 351, 0, 'Q', 394, 0, ExonCategory.CODING);
+        assertInfoEquals(collector.getInfoAt(5), 'S', 395, 0, 'V', 487, 0, ExonCategory.STOP);
+    }*/
 
     private void assertInfoEquals(ExonInfo info, char firstAA, int firstPos, int startPhase,  char lastAA, int lastPos, int endPhase, ExonCategory type) {
 
