@@ -187,6 +187,8 @@ public class UserProteinListUtils {
 	 */
 	public static void checkFormatAndCollectValidAccessionNumber(String uncheckedAccessionNumber, Set<String> validAccessionNumberCollector, Set<String> allNPAccessionNumbers) {
 
+		NPreconditions.checkNotNull(allNPAccessionNumbers, "The collector should not be null");
+
 		String trimmed = uncheckedAccessionNumber.trim().toUpperCase();
 
 		if (uncheckedAccessionNumber.charAt(0) != '#') {
