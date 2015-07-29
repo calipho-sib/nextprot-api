@@ -1,9 +1,11 @@
 package org.nextprot.api.tasks.solr.indexer;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
@@ -26,6 +28,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.domain.Interaction;
+import org.nextprot.api.core.service.DbXrefService;
 //import org.nextprot.api.core.service.TerminologyService;
 //import org.nextprot.api.import org.nextprot.api.core.domain.AntibodyMapping;
 //import org.nextprot.api.core.utils.TerminologyUtils;
@@ -36,6 +39,7 @@ import org.nextprot.api.core.service.TerminologyService;
 public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 	
 	private TerminologyService terminologyservice;
+	private DbXrefService dbxrefservice;
 
 	public AnnotationSolrIndexer(String url) {
 		super(url);
@@ -46,6 +50,8 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		SolrInputDocument doc = new SolrInputDocument();
 		Set <String> cv_acs = new HashSet<String>();
 		Set <String> cv_ancestors_acs = new HashSet<String>();
+		Set <String> cv_synonyms = new HashSet<String>();
+		Set <String> cv_tissues = new HashSet<String>();
 		String id = entry.getUniqueName();
 		doc.addField("id", id);
 		doc.addField("idsp0", id);
@@ -55,7 +61,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		doc.addField("pe_level", ovv.getProteinExistenceLevel());
 		//doc.addField("isoform_num", entry.getIsoforms().size());
 		String precname = ovv.getMainProteinName();
-		//System.err.println(id + " " + precname);
+		System.err.println(id + " " + precname);
 		doc.addField("recommended_name", precname);
 		doc.addField("recommended_name_s", precname);
 
@@ -145,12 +151,16 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		for (ChromosomalLocation currloc : chrlocs) {
 			if(chrloc == null) chrloc = currloc.getChromosome();
 			String band = currloc.getBand();
-			if(band != null) chrloc += band;
+			if(band != null) {
+				chrloc += band;
+				doc.addField("gene_band", band);
+			}
 		}
 		//System.err.println("adding chr_loc: " + chrloc);
 		doc.addField("chr_loc", chrloc);
+		doc.addField("chr_loc_s", this.sortChr(chrloc));
 		
-		/* DbXrefDaoImpl dao = new DbXrefDaoImpl();
+		/*DbXrefDaoImpl dao = new DbXrefDaoImpl(); // Not working
 		Set<DbXref> intactdbrefs = dao.findEntryInteractionInteractantsXrefs(id);
 		if(intactdbrefs != null)
 		for (DbXref intactdbref : intactdbrefs) {	
@@ -168,23 +178,32 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		for (Annotation currannot : annots) {
 			String category = currannot.getCategory();
 			//System.err.println(category);
-			/* if(category.contains("Binary"))  {
+			 if(category.contains("Binary"))  {
 				//System.err.println(category + " : " + currannot.getUniqueName());
 				List<AnnotationProperty> annotprops =  currannot.getProperties();
 				for (AnnotationProperty annotprop : annotprops) {
 					if(annotprop.getName().equals("interactant")) {
+						//int dbrefid = Integer.parseInt(annotprop.getValue());
+						//DbXref xref = 
+					  if(annotprop.getValueType().equals("resource-internal-ref"))	{
 						long dbrefid = Integer.parseInt(annotprop.getValue());
 						//DbXref xref = 
-					System.err.println("dbrefid: " + annotprop.getValue());
+					    //System.err.println("dbrefid: " + dbrefid);
+					  }
 					}
 				}
-			} */
+			} 
 			if(category.equals("function")) doc.addField("function_desc", currannot.getDescription());
+			else if(category.equals("tissue specificity")) {
+				cv_tissues.add(currannot.getCvTermAccessionCode()); // No duplicates: this is a Set
+				cv_tissues.add(currannot.getCvTermName()); // No duplicates: this is a Set
+				//doc.addField("expression", currannot.getCvTermName()); 
+			   }
 			else if(category.equals("subcellular location") || category.equals("go cellular component") ||
 					category.equals("domain") || category.equals("repeat") ||  category.equals("zinc finger region") ||
 					category.equals("go molecular function") || category.equals("go biological process") ||
-					category.equals("tissue specificity") ||
-					category.equals("uniprot keyword")) {
+					category.equals("pathway") || category.equals("amino acid modification") ||
+					category.equals("uniprot keyword") || category.equals("disease")) {
 				String cvac = currannot.getCvTermAccessionCode();
 				if(cvac != null) {
 				   doc.addField("cv_acs", cvac);
@@ -206,10 +225,13 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		List <Identifier> identifiers = entry.getIdentifiers();
 		for (Identifier currident : identifiers) {
 			String idtype = currident.getType();
-			//System.err.println("type: " + idtype);
+			//if(currident.getDatabase() == null)
+			//System.err.println("type: " + idtype + " " + currident.getName());
 			if(idtype.equals("Secondary AC")) doc.addField("alternative_acs", currident.getName());
-			else if (idtype.equals("IMAGE") || idtype.equals("FLJ") || idtype.equals("MGC") || idtype.equals("DKFZ")) doc.addField("clone_name", currident.getName());
+			else if (idtype.equals("IMAGE") || idtype.equals("FLJ") || idtype.equals("MGC") || idtype.equals("DKFZ") || idtype.equals("Others")) doc.addField("clone_name", currident.getName());
 			else if (idtype.equals("Illumina") || idtype.equals("Affymetrix")) doc.addField("microarray_probe", currident.getName());
+			else if (idtype.equals("Entry name"))  doc.addField("uniprot_name", currident.getName());
+			//else System.err.println("type: " + idtype);
 		}
 		
 		List<Terminology> enzymes = entry.getEnzymes();
@@ -219,13 +241,32 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 			cvac_cnt++;
 			cv_acs.add(currenzyme.getAccession());
 			doc.addField("cv_names", currenzyme.getName());
+			List <String> synonyms = currenzyme.getSynonyms();
+			if(synonyms != null)
+			for (String synonym : synonyms) { System.err.println("enzyme synonym: " + synonym); // never shows up
+			    doc.addField("cv_synonyms", synonym);
+			}
 		}
 
 		List<Interaction> interactions = entry.getInteractions();
+		//System.err.println(interactions.size() + " interactions");
 		for (Interaction currinteraction : interactions) {
+			//System.err.println(currinteraction.getEvidenceXrefAC()); // EBI-372273,EBI-603319
+			doc.addField("interactions", currinteraction.getEvidenceXrefAC());
 			List<Interactant> interactants = currinteraction.getInteractants();
+			//System.err.println(interactants.size() + " interactants");
 			for (Interactant currinteractant : interactants) {
+				//currinteractant.
 			     //System.err.println(currinteractant.getNextprotAccession() + " " + currinteractant.getUrl());
+			     List<Long> ll = Arrays.asList(currinteractant.getXrefId()); // findDbXRefByIds exists but not findDbXRefById
+			     DbXref xref1 = this.dbxrefservice.findDbXRefByIds(ll).get(0);
+			     List<DbXrefProperty> xrefprops =  xref1.getProperties();
+			     if(xrefprops != null)
+			    	for (DbXrefProperty xrefprop : xrefprops) {
+			    		 //System.err.println("propname: " + xrefprop.getName());
+			    	 } //else System.err.println("no properties for: " + xref1.getAccession());
+			    	 //System.err.println("propval: " + xref1.getAccession());
+			    	 //System.err.println("propval: " + xref1.getPropertyValue("gene designation"));
 			}
 			//doc.addField("interactions", interaction.getAccession());
 		}
@@ -237,7 +278,16 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 			String db = xref.getDatabaseName();
 			//System.err.println(db+":"+acc);
 			//if(db.equals("IntAct")) System.err.println("id " +  xref.getDbXrefId() + ": " +  xref.getPropertyValue("gene designation")); 
-			if(db.equals("neXtProt")) continue; // Internal stuff like NX_VG_10_51732257_248
+			/*if(db.equals("neXtProt")) {
+				if(acc.equals(id)) continue; // Internal stuff like NX_VG_10_51732257_248
+				String gen = xref.getPropertyValue("gene designation");
+				System.err.println("nonxeno: " + gen);
+			}
+			if(db.equals("UniProt") && !id.contains(acc)) {
+				String gen = xref.getPropertyValue("gene designation");
+				if(gen != null) { gen = gen.toUpperCase(); System.err.println("xeno: " + gen); }
+				else System.err.println("no gene for: " + acc );
+				} */
 			if(db.equals("HPA") && !acc.contains("ENSG")) doc.addField("antibody", acc);
 			else if(db.equals("PeptideAtlas") || db.equals("SRMAtlas")) doc.addField("peptide", acc + ", " + db + ":" + acc);
 			else if(db.equals("Ensembl")) doc.addField("ensembl", acc);
@@ -270,51 +320,64 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		if(publi_curated_count > 0) doc.addField("publi_curated_count", publi_curated_count);
 		if(publi_large_scale_count > 0) doc.addField("publi_large_scale_count", publi_large_scale_count);
 		
-		//doc.addField("orf_names", entry.());
-		//doc.addField("cv_synonyms", entry.());
+		//doc.addField("orf_names", entry.()); -> together with gene synonyms
 		//doc.addField("ec_name", entry.getChromosomalLocations().get(0));
 		//doc.addField("expression", entry.());
-		//doc.addField("gene_band", entry.());
 		//doc.addField("informational_score", entry.());
 		//doc.addField("interactions", entry.());
-		//doc.addField("region_name", entry.());
-		//doc.addField("uniprot_name", entry.());
+		//doc.addField("region_name", entry.()); corresponds to 'includes' activity
 		
-		/*
-		 *  List<String> synonstrings = terminology.getSynonyms();
-		if (synonstrings != null) {
-			int i = synonstrings.size();
-			StringBuilder sb = new StringBuilder();
-			for (String syn: synonstrings) {sb.append(syn); if (--i != 0) sb.append(" | "); }
-			doc.addField("synonyms",sb.toString());
-		}
-		
+		/*	
 		List<Terminology.TermProperty> properties = terminology.getProperties();
 		if (properties != null) {
 			doc.addField("properties",TerminologyUtils.convertPropertiesToString(properties));
 		} */
 		
-		// Get cv ancestors from a unique list of cv_acs
-		//System.err.println(id + " uniq: " + cv_acs.size() + " vs " + cvac_cnt); 
-		//if(cv_acs.size() < cvac_cnt-2)
-		//System.err.println(cv_acs.size());
-		
-		// Final  CV acs and ancestors
+		// Final CV acs, ancestors and synonyms
 		for (String cvac : cv_acs) {
-			//System.out.println(cvac);
 			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
+			String category = term.getOntology();
+			//System.out.println(cvac + ": " + category);
 			//if(term == null) System.err.println("problem with " + cvac);
 			//else { System.err.println(cvac);
 			List<String> ancestors = term.getAncestorAccession();
 			if(ancestors != null) 
 			  for (String ancestor : ancestors)
                   cv_ancestors_acs.add(ancestor); // No duplicate: this is a Set
-			}
-		
+			List<String> synonyms = term.getSynonyms();
+			if(synonyms != null) { //if (term.getOntology().startsWith("Go")) System.err.println("adding: " + synonyms.get(0));
+			  for (String synonym : synonyms)
+                  cv_synonyms.add(synonym.trim()); // No duplicate: this is a Set
+			      }
+		}
+		// Index generated sets
 		for (String ancestorac : cv_ancestors_acs) {
 			doc.addField("cv_ancestors_acs", ancestorac);
 			doc.addField("cv_ancestors", this.terminologyservice.findTerminologyByAccession(ancestorac).getName());
 		}
+
+		for (String synonym : cv_synonyms) {
+			doc.addField("cv_synonyms", synonym);
+		}
+		
+		// Expression
+		SortedSet <String> cv_tissues_final = new TreeSet<String>();
+		for (String cv : cv_tissues) {
+			cv_tissues_final.add(cv); // No duplicate: this is a Set
+			if(cv.startsWith("TS-")) {
+				Terminology term = this.terminologyservice.findTerminologyByAccession(cv);
+				List<String> ancestors = term.getAncestorAccession();
+				if(ancestors != null) 
+				  for (String ancestorac : ancestors) {
+					  cv_tissues_final.add(ancestorac);  // No duplicate: this is a Set
+					  cv_tissues_final.add(this.terminologyservice.findTerminologyByAccession(ancestorac).getName());  // No duplicate: this is a Set
+				  }
+				List<String> synonyms = term.getSynonyms();
+				if(synonyms != null) for (String synonym : synonyms)  cv_tissues_final.add(synonym); 
+			}
+		}
+		for (String cv : cv_tissues_final) doc.addField("expression", cv.trim());
+		
 		return doc;
 	}
 
@@ -327,7 +390,16 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		this.terminologyservice = terminologyservice;
 	}
 
+	public DbXrefService getDbxrefSolrIndexerervice() {
+		return dbxrefservice;
+	}
+
+	public void setDbxrefservice(DbXrefService dbxrefservice) {
+		this.dbxrefservice = dbxrefservice;
+	}
+
 	public static long sortChr(String chr) {
+		// Allows to sort results based on chromosomal location
 		chr=chr.trim();
 		
 		String[] chr_loc=chr.split("([pq]|cen)");  // split on p or q

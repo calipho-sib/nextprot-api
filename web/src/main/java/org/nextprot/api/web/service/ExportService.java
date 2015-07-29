@@ -12,6 +12,11 @@ import java.util.concurrent.Future;
 public interface ExportService {
 
 	/**
+	 * Params name to show the number of entries (used on velocity templates)
+	 */
+	String ENTRIES_COUNT_PARAM = "entriesCount";
+	
+	/**
 	 * Export all entries in the format specified with UTF-8 encoding
 	 * 
 	 * @param format The format can be xml or ttl
