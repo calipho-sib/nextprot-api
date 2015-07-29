@@ -188,7 +188,7 @@ public class UserProteinListUtils {
 			if (!trimmed.startsWith("NX_"))
 				trimmed = "NX_" + trimmed;
 
-			if (!allNPAccessionNumbers.contains(trimmed)) throw new EntryNotFoundException(trimmed);
+			if (!allNPAccessionNumbers.contains(trimmed)) throw new EntryNotFoundException(uncheckedAccessionNumber);
 
 			validAccessionNumberCollector.add(trimmed);
 		}

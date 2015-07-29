@@ -14,7 +14,7 @@ public class EntryNotFoundException extends NextProtException {
 
 	public EntryNotFoundException(String contextMessage, String entry) {
 
-		super(contextMessage+"Entry " + entry + " not found. Give a valid neXtProt entry as parameter, example: NX_P59103.");
+		super(contextMessage+"Entry '" + entry + "' not found. Give a valid neXtProt entry as parameter, example: NX_P59103.");
 
 		this.entry = entry;
 	}
