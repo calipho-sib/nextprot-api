@@ -105,7 +105,7 @@ public class UserProteinListUtils {
 				checkFormatAndCollectValidAccessionNumber(line, collector, validAccessionNumbers);
 			} catch (EntryNotFoundException e) {
 
-				throw new EntryNotFoundException("at line " + (ln + 1) + ": " + e.getMessage());
+				throw new EntryNotFoundException("at line " + (ln + 1) + ": ", e.getEntry());
 			}
 
 			ln++;
@@ -161,17 +161,9 @@ public class UserProteinListUtils {
 
 		Set<String> collector = new HashSet<>(uncheckedAccessionNumbers.size());
 
-		int i=0;
 		for (String uncheckedAccessionNumber : uncheckedAccessionNumbers) {
 
-			try {
-				checkFormatAndCollectValidAccessionNumber(uncheckedAccessionNumber, collector, validAccessionNumbers);
-			} catch (EntryNotFoundException e) {
-
-				throw new EntryNotFoundException("at index " + i + ": " + e.getMessage());
-			}
-
-			i++;
+			checkFormatAndCollectValidAccessionNumber(uncheckedAccessionNumber, collector, validAccessionNumbers);
 		}
 
 		return collector;
@@ -196,8 +188,7 @@ public class UserProteinListUtils {
 			if (!trimmed.startsWith("NX_"))
 				trimmed = "NX_" + trimmed;
 
-			if (!allNPAccessionNumbers.contains(trimmed))
-				throw new EntryNotFoundException("entry " + trimmed + " was not found");
+			if (!allNPAccessionNumbers.contains(trimmed)) throw new EntryNotFoundException(trimmed);
 
 			validAccessionNumberCollector.add(trimmed);
 		}

@@ -5,7 +5,22 @@ public class EntryNotFoundException extends NextProtException {
 
 	private static final long serialVersionUID = -7757144894731083422L;
 
-	public EntryNotFoundException(String s) {
-		super("Entry " + s + " not found. Give a valid neXtProt entry as parameter, example: NX_P59103 ");
+	private final String entry;
+
+	public EntryNotFoundException(String entry) {
+
+		this("", entry);
+	}
+
+	public EntryNotFoundException(String contextMessage, String entry) {
+
+		super(contextMessage+"Entry " + entry + " not found. Give a valid neXtProt entry as parameter, example: NX_P59103.");
+
+		this.entry = entry;
+	}
+
+	public String getEntry() {
+
+		return entry;
 	}
 }
