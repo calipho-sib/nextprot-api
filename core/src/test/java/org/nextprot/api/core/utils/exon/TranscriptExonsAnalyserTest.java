@@ -16,15 +16,15 @@ import static org.mockito.Mockito.when;
  *
  * Created by fnikitin on 22/07/15.
  */
-public class TranscriptInfosExtractorTest {
+public class TranscriptExonsAnalyserTest {
 
     @Test
     public void testExtractInfosNX_Q9Y281_3() throws Exception {
 
         List<Exon> exons = createMockExonList(134, 286, 1263, 1570, 1688, 1764, 1847, 4437);
 
-        TranscriptInfoCollector collector = new TranscriptInfoCollector();
-        TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
+        InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
+        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
 
         extractor.extract("MASGVTVNDEVIKVFNDMKVRKSSTQEEIKKRKKAVLFCLSDDKRQIIVEEAKQILVGDIGDTVEDPYTSFVKLLPLNDCRYALYDATYETKESKKEDLVFIFWAPESAPLKSKMIYASSKDAIKKKFTGIKHEWQVNGLDDIKDRSTLGEKLGGNVVVSLEGKPL", 284, 1956, exons);
 
@@ -48,8 +48,8 @@ public class TranscriptInfosExtractorTest {
 
         List<Exon> exons = createMockExonList(34,224,4040,4177,7360,7413,11870,12033,15393,15549,16038,16189,18806,18944,26449,26563,39708,39885,42548,42668,61768,62080);
 
-        TranscriptInfoCollector collector = new TranscriptInfoCollector();
-        TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
+        InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
+        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
 
         extractor.extract("MRRHMVTYAWQLLKKELGLYQLAMDIIIMIRVCKMFRQGLRGFREYQIIETAHWKHPIFSFWDKKMQSRVTFDTMDFIAEEGHFPPKAIQIMQKKPSWRTEDEIQAVCNILQVLDSYRNYAEPLQLLLAKVMRFERFGRRRVIIKKGQKGNSFYFIYLGTVAITKDEDGSSAFLDPHPKLLHKGSCFGEMDVLHASVRRSTIVCMEETEFLVVDREDFFANKLDQEVQKDAQYRFEFFRKMELFASWSDEKLWQLVAMAKIERFSYGQLISKDFGESPFIMFISKGSCEVLRLLDLGASPSYRRWIWQHLELIDGRPLKTHLSEYSPMERFKEFQIKSYPLQDFSSLKLPHLKKAWGLQGTSFSRKIRTSGDTLPKMLGPKIQSRPAQSIKCAMINIKPGELPKEAAVGAYVKVHTVEQGEIL", 174, 61767, exons);
 
@@ -83,8 +83,8 @@ public class TranscriptInfosExtractorTest {
 
         List<Exon> exons = createMockExonList(8143, 8407, 14894, 15213, 15847, 16039, 20468, 20622, 33645, 33843, 35671, 35749, 36955, 37000);
 
-        TranscriptInfoCollector collector = new TranscriptInfoCollector();
-        TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
+        InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
+        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
 
         extractor.extract("MSKAHKPWPYRRRSQFSSRKYLKKEMNSFQQQPPPFGTVPPQMMFPPNWQGAEKDAAFLAKDFNFLTLNNQPPPGNRSQPRAMGPENNLYSQYEQKVRPCIDLIDSLRALGVEQDLALPAIAVIGDQSSGKSSVLEALSGVALPRGSAQNVMAGNGRGISHELISLEITSPEVPDLTIIDLPGITRVAVDNQPRDIGLQVS", 14965, 33650, exons);
 
@@ -111,8 +111,8 @@ public class TranscriptInfosExtractorTest {
 
         List<Exon> exons = createMockExonList(1, 1295);
 
-        TranscriptInfoCollector collector = new TranscriptInfoCollector();
-        TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
+        InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
+        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
 
         extractor.extract("MAEQLSPGKAVDQVCTFLFKKPGRKGAAGRRKRPACDPEPGESGSSSDEGCTVVRPEKKRVTHNPMIQKTRDSGKQKAAYGDLSSEEEEENEPESLGVVYKSTRSAKPVGPEDMGATAVYELDTEKERDAQAIFERSQKIQEELRGKEDDKIYRGINNYQKYMKPKDTSMGNASSGMVRKGPIRAPEHLRATVRWDYQPDICKDYKETGFCGFGDSCKFLHDRSDYKHGWQIERELDEGRYGVYEDENYEVGSDDEEIPFKCFICRQSFQNPVVTKCRHYFCESCALQHFRTTPRCYVCDQQTNGVFNPAKELIAKLEKHRATGEGGASDLPEDPDEDAIPIT", 216, 1244, exons);
 
@@ -125,8 +125,8 @@ public class TranscriptInfosExtractorTest {
 
         List<Exon> exons = createMockExonList(52, 390, 8976, 9118, 9282, 9437, 12394, 12527, 14659, 14753, 16108, 16261, 18948, 19501);
 
-        TranscriptInfoCollector collector = new TranscriptInfoCollector();
-        TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
+        InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
+        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
 
         extractor.extract("MDSVEKGAATSVSNPRGRPSRGRPPKLQRNSRGGQGRGVEKPPHLAALILARGGSKGIPLKNIKHLAGVPLIGWVLRAALDSGAFQSVWVSTDHDEIENVAKQFGAQVHRRSSEVSKDSSTSLDAIIEFLNYHNEVDIVGNIQATSPCLHPTDLQKVAEMIREEGYDSVFSVVRRHQFRWSEIQKGVREVTEPLNLNPAKRPRRQDWDGELYENGSFYFAKRHLIEMGYLQGGKMAYYEMRAEHSVDIDVDIDWPIAEQRVLR", 131, 16108, exons);
 
@@ -148,8 +148,8 @@ public class TranscriptInfosExtractorTest {
 
         List<Exon> exons = createMockExonList(1, 11, 100, 100, 150, 151, 200, 300);
 
-        TranscriptInfoCollector collector = new TranscriptInfoCollector();
-        TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
+        InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
+        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
 
         extractor.extract("MRTEQ", 10, 209, exons);
 
@@ -166,8 +166,8 @@ public class TranscriptInfosExtractorTest {
 
         List<Exon> exons = createMockExonList(1, 997, 1885, 2040, 54668, 54808);
 
-        TranscriptInfoCollector collector = new TranscriptInfoCollector();
-        TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(collector);
+        InfoCollectorAnalysis collector = new InfoCollectorAnalysis();
+        TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser(collector);
 
         extractor.extract("MSATGDRHPTQGDQEAPVSQEGAQAEAAGAGNQEGGDSGPDSSDVVPAAEVVGVAGPVEGLGEEEGEQAAGLAAVPRGGSAEEDSDIGPATEEEEEEEGNEAANFDLAVVARRYPASGIHFVLLDMVHSLLHRLSHNDHILIENRQLSRLMVGPHAAARNLWGNLPPLLLPQRLGAGAAARAGEGLGLIQEAASVPEPAVPADLAEMAREPAEEAAEEKLSEEATEEPDAEEPATEEPTAQEATAPEEVTKSQPEKWDEEAQDAAGEEEKEQEKEKDAENKVKNSKGT", 256, 53495, exons);
 
@@ -288,48 +288,48 @@ public class TranscriptInfosExtractorTest {
         }
     }
 
-    private class TranscriptInfoCollector implements TranscriptInfoHandler {
+    private class InfoCollectorAnalysis implements ExonsAnalysisListener {
 
         private final List<ExonInfo> exonInfos;
         private ExonInfo exonInfo;
         private boolean error;
 
-        private TranscriptInfoCollector() {
+        private InfoCollectorAnalysis() {
             this.exonInfos = new ArrayList<>();
         }
 
         @Override
-        public void startHandlingTranscript() {}
+        public void started() {}
 
         @Override
-        public void startHandlingExon(Exon exon) {
+        public void startedExon(Exon exon) {
             exonInfo = new ExonInfo();
         }
 
         @Override
-        public void handleCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
+        public void analysedCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
             exonInfo.setFirstAA(first);
             exonInfo.setLastAA(last);
             exonInfo.setExonCategory(category);
         }
 
         @Override
-        public void handleCodingExonError(ExonBoundError exonBoundError) {
+        public void analysedCodingExonFailed(Exon exon, ExonOutOfBoundError exonOutOfBoundError) {
             error = true;
         }
 
         @Override
-        public void handleNonCodingExon(Exon exon, ExonCategory cat) {
+        public void analysedNonCodingExon(Exon exon, ExonCategory cat) {
             exonInfo.setExonCategory(cat);
         }
 
         @Override
-        public void endHandlingExon(Exon exon) {
+        public void terminated(Exon exon) {
             exonInfos.add(exonInfo);
         }
 
         @Override
-        public void endHandlingTranscript() {}
+        public void terminated() {}
 
         public ExonInfo getInfoAt(int index) {
             Preconditions.checkElementIndex(index, exonInfos.size());

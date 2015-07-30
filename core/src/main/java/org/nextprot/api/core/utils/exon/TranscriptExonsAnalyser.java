@@ -13,13 +13,13 @@ import java.util.*;
  *
  * Created by fnikitin on 22/07/15.
  */
-public class TranscriptInfosExtractor {
+public class TranscriptExonsAnalyser {
 
-    private final static Log LOGGER = LogFactory.getLog(TranscriptInfosExtractor.class);
-    private static final TranscriptInfoHandler DEFAULT_HANDLER = new TranscriptInfoHandlerImpl();
+    private final static Log LOGGER = LogFactory.getLog(TranscriptExonsAnalyser.class);
+    private static final ExonsAnalysisListener DEFAULT_HANDLER = new ExonsAnalysisListenerImpl();
 
     private final List<Exon> exons;
-    private final TranscriptInfoHandler handler;
+    private final ExonsAnalysisListener handler;
     private String accession;
 
     private ExonCategorizer categorizer;
@@ -31,12 +31,12 @@ public class TranscriptInfosExtractor {
     private int currentIsoformPos;
     private int currentPhase;
 
-    public TranscriptInfosExtractor() {
+    public TranscriptExonsAnalyser() {
 
         this(DEFAULT_HANDLER);
     }
 
-    public TranscriptInfosExtractor(TranscriptInfoHandler handler) {
+    public TranscriptExonsAnalyser(ExonsAnalysisListener handler) {
 
         Preconditions.checkNotNull(handler);
 
@@ -74,21 +74,21 @@ public class TranscriptInfosExtractor {
 
         init(accession, isoformSequence, startPositionIsoform, endPositionIsoform, exons);
 
-        handler.startHandlingTranscript();
+        handler.started();
         for (Exon exon : exons) {
 
-            handler.startHandlingExon(exon);
+            handler.startedExon(exon);
             ExonCategory exonCategory = categorizer.categorize(exon);
 
             if (exonCategory.isCoding()) {
                 if (!handleCodingExon(isoformSequence, exon, exonCategory)) break;
             }
             else {
-                handler.handleNonCodingExon(exon, exonCategory);
+                handler.analysedNonCodingExon(exon, exonCategory);
             }
-            handler.endHandlingExon(exon);
+            handler.terminated(exon);
         }
-        handler.endHandlingTranscript();
+        handler.terminated();
     }
 
     private void moveToNextFirstPos() {
@@ -124,17 +124,17 @@ public class TranscriptInfosExtractor {
         AminoAcid last = newAminoAcid(isoformSequence, currentIsoformPos, currentPhase);
 
         if (first.getPosition() > isoformSequence.length()) {
-            handler.handleCodingExonError(new ExonBoundError(exon, first, last,
-                    ExonBoundError.AminoAcidOutOfBound.FIRST, isoformSequence.length()));
+            handler.analysedCodingExonFailed(exon, new ExonOutOfBoundError(first, last,
+                    ExonOutOfBoundError.AminoAcidOutOfBound.FIRST, isoformSequence.length()));
             return false;
         }
         else if (last.getPosition() > isoformSequence.length()) {
-            handler.handleCodingExonError(new ExonBoundError(exon, first, last,
-                    ExonBoundError.AminoAcidOutOfBound.LAST, isoformSequence.length()));
+            handler.analysedCodingExonFailed(exon, new ExonOutOfBoundError(first, last,
+                    ExonOutOfBoundError.AminoAcidOutOfBound.LAST, isoformSequence.length()));
             return false;
         }
 
-        handler.handleCodingExon(exon, first, last, cat);
+        handler.analysedCodingExon(exon, first, last, cat);
 
         return true;
     }
@@ -149,40 +149,40 @@ public class TranscriptInfosExtractor {
     /**
      * Update exon on the fly in this default implementation
      */
-    private static class TranscriptInfoHandlerImpl implements TranscriptInfoHandler {
+    private static class ExonsAnalysisListenerImpl implements ExonsAnalysisListener {
 
         @Override
-        public void startHandlingTranscript() {}
+        public void started() {}
 
         @Override
-        public void startHandlingExon(Exon exon) {}
+        public void startedExon(Exon exon) {}
 
         @Override
-        public void handleCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
+        public void analysedCodingExon(Exon exon, AminoAcid first, AminoAcid last, ExonCategory category) {
             exon.setFirstAminoAcid(first);
             exon.setLastAminoAcid(last);
             exon.setCodingStatus(category.getTypeString());
         }
 
         @Override
-        public void handleNonCodingExon(Exon exon, ExonCategory category) {
+        public void analysedNonCodingExon(Exon exon, ExonCategory category) {
             exon.setCodingStatus(category.getTypeString());
         }
 
         @Override
-        public void endHandlingExon(Exon exon) {}
+        public void terminated(Exon exon) {}
 
         @Override
-        public void endHandlingTranscript() {}
+        public void terminated() {}
 
         @Override
-        public void handleCodingExonError(ExonBoundError exonBoundError) {
+        public void analysedCodingExonFailed(Exon exon, ExonOutOfBoundError exonOutOfBoundError) {
 
             StringBuilder sb = new StringBuilder("SequenceIndexOutOfBoundsException: index (");
 
-            sb.append(exonBoundError.getOutOfBoundAminoAcid().getPosition()-1);
+            sb.append(exonOutOfBoundError.getOutOfBoundAminoAcid().getPosition()-1);
 
-            sb.append(") must be less than size (").append(exonBoundError.getIsoformLength()).append(")");
+            sb.append(") must be less than size (").append(exonOutOfBoundError.getIsoformLength()).append(")");
 
             LOGGER.error(sb.toString());
         }

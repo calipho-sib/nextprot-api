@@ -7,7 +7,7 @@ import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.service.GenomicMappingService;
-import org.nextprot.api.core.utils.exon.TranscriptInfosExtractor;
+import org.nextprot.api.core.utils.exon.TranscriptExonsAnalyser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -145,13 +145,13 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		final int startPositionIsoform = positions.get(0).getKey();
 		final int endPositionIsoform = positions.get(positions.size() - 1).getValue();
 
-		//TranscriptInfoLogger exonInfoLogger = new TranscriptInfoLogger();
+		//ExonsAnalysisLogger exonInfoLogger = new ExonsAnalysisLogger();
 		//TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(exonInfoLogger);
-		TranscriptInfosExtractor extractor = new TranscriptInfosExtractor();
+		TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser();
 		for (TranscriptMapping t : isoformMapping.getTranscriptMappings()) {
 
 			extractor.extract(isoformMapping.getUniqueName() + "." + t.getAccession(), isoformMapping.getBioSequence(), startPositionIsoform, endPositionIsoform, t.getExons());
-			//LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + "." + t.getReferenceGeneUniqueName() + " (" + t.getQuality() + "): " + exonInfoLogger.getInfos());
+			//LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + "." + t.getReferenceGeneUniqueName() + " (" + t.getQuality() + "): " + exonInfoLogger.getLog());
 		}
 	}
 

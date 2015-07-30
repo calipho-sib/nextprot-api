@@ -1,33 +1,26 @@
 package org.nextprot.api.core.utils.exon;
 
 import org.nextprot.api.core.domain.AminoAcid;
-import org.nextprot.api.core.domain.Exon;
 
 /**
- * An exon with a bound error
+ * An exon out of bound error
  *
  * Created by fnikitin on 28/07/15.
  */
-public class ExonBoundError {
+public class ExonOutOfBoundError {
 
     public enum AminoAcidOutOfBound {FIRST, LAST};
 
-    private final Exon exon;
     private final AminoAcid first;
     private final AminoAcid last;
     private final AminoAcidOutOfBound aminoAcidOutOfBound;
     private final int isoformLength;
 
-    public ExonBoundError(Exon exon, AminoAcid first, AminoAcid last, AminoAcidOutOfBound aminoAcidOutOfBound, int isoformLength) {
-        this.exon = exon;
+    public ExonOutOfBoundError(AminoAcid first, AminoAcid last, AminoAcidOutOfBound aminoAcidOutOfBound, int isoformLength) {
         this.first = first;
         this.last = last;
         this.aminoAcidOutOfBound = aminoAcidOutOfBound;
         this.isoformLength = isoformLength;
-    }
-
-    public Exon getExon() {
-        return exon;
     }
 
     public int getIsoformLength() {
