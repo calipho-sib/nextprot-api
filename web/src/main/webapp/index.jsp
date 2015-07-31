@@ -548,7 +548,7 @@
 			{{#queryparameters}}
 				<div class="form-group">
 					<label for="i_{{name}}">{{name}}</label>
-					<input type="text" class="form-control" id="i_{{name}}" name="{{name}}" placeholder="{{name}}">
+					<input type="text" class="form-control" id="i_{{name}}" name="{{name}}" placeholder="{{name}}" value="{{allowedvalues}}">
 				</div>
 			{{/queryparameters}}
 		</div>
