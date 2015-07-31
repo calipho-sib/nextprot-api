@@ -17,6 +17,14 @@ public class ProteinMutationHGVFormatTest {
     }
 
     @Test
+    public void testFormatSubstitutionWithStop() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcid(AminoAcidCode.GlutamicAcid, 31).substitutedBy(AminoAcidCode.Stop).build();
+
+        Assert.assertEquals("p.E31*", format.format(pm));
+    }
+
+    @Test
     public void testFormatAADeletion() throws Exception {
 
         ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcid(AminoAcidCode.Lysine, 73).deleted().build();
@@ -132,6 +140,19 @@ public class ProteinMutationHGVFormatTest {
         Assert.assertEquals(54, pm.getLastAffectedAminoAcidPos());
         Assert.assertTrue(pm.getMutation() instanceof Substitution);
         Assert.assertEquals(AminoAcidCode.Cysteine, pm.getMutation().getValue());
+    }
+
+    @Test
+    public void testParseSubstitutionStop() throws Exception {
+
+        ProteinMutation pm = format.parse("p.R54*");
+
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(54, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(54, pm.getLastAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Substitution);
+        Assert.assertEquals(AminoAcidCode.Stop, pm.getMutation().getValue());
     }
 
     @Test
