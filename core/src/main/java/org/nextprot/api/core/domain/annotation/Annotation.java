@@ -1,16 +1,18 @@
 package org.nextprot.api.core.domain.annotation;
 
-import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.IsoformSpecific;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.IsoformSpecific;
+import org.nextprot.api.core.domain.IsoformSpecificity;
+
+import com.google.common.base.Preconditions;
 
 
 public class Annotation implements Serializable, IsoformSpecific {
@@ -39,7 +41,10 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private List<AnnotationEvidence> evidences;
 
+	@Deprecated // use target isoform map
 	private Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap;
+	
+	private Map<String, IsoformSpecificity> targetIsoformsMap;
 
 	private List<AnnotationProperty> properties;
 	
@@ -131,11 +136,15 @@ public class Annotation implements Serializable, IsoformSpecific {
 	}
 
 	public String getApiTypeName() {
-		return apiCategory.getApiTypeName();
+		if(apiCategory != null){
+			return apiCategory.getApiTypeName();
+		}else return null;
 	}
 
 	public String getRdfPredicate() {
-		return apiCategory.getRdfPredicate();
+		if(apiCategory != null){
+			return apiCategory.getRdfPredicate();
+		}else return null;
 	}
 	
 	public AnnotationApiModel getAPICategory() {
@@ -143,15 +152,22 @@ public class Annotation implements Serializable, IsoformSpecific {
 	}
 	
 	public List<String> getParentPredicates() {
-		List<String> list = new ArrayList<String>();
-		for (AnnotationApiModel cat : apiCategory.getAllParentsButRoot()) list.add(cat.getRdfPredicate());
-		return list;
+		if(apiCategory!= null){
+			List<String> list = new ArrayList<String>();
+			for (AnnotationApiModel cat : apiCategory.getAllParentsButRoot()) list.add(cat.getRdfPredicate());
+			return list;
+		}else return null;
 	}
 			
 	public void setCategory(String category) {
 		this.category = category;
 		this.apiCategory=AnnotationApiModel.getByDbAnnotationTypeName(category);
 	}
+	
+	public void setCategoryOnly(String category) {
+		this.category = category;
+	}
+
 
 	public AnnotationVariant getVariant() {
 		return variant;
@@ -202,15 +218,29 @@ public class Annotation implements Serializable, IsoformSpecific {
 		}else return false;
 	}
 
+	@Deprecated //Use setTargetIsoformsMap instead
 	public void setTargetingIsoforms(List<AnnotationIsoformSpecificity> targetingIsoforms) {
 		this.targetingIsoformsMap = new HashMap<String, AnnotationIsoformSpecificity>();
 		for (AnnotationIsoformSpecificity isospecAnnot : targetingIsoforms) {
 			targetingIsoformsMap.put(isospecAnnot.getIsoformName(), isospecAnnot);
 		}
 	}
+	
+	//This new method replaces setTargetingIsoforms
+	public void setTargetIsoformsMap(List<IsoformSpecificity> targetingIsoforms) {
+		this.targetIsoformsMap = new HashMap<String, IsoformSpecificity>();
+		for (IsoformSpecificity isospecAnnot : targetingIsoforms) {
+			targetIsoformsMap.put(isospecAnnot.getIsoformAc(), isospecAnnot);
+		}
+	}
 
+	@Deprecated
 	public Map<String, AnnotationIsoformSpecificity> getTargetingIsoformsMap() {
 		return targetingIsoformsMap;
+	}
+	
+	public Map<String, IsoformSpecificity> getTargetIsoformsMap() {
+		return targetIsoformsMap;
 	}
 
 	public String getUniqueName() {
@@ -221,8 +251,9 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.uniqueName = uniqueName;
 	}
 	
+	
 	public int getStartPositionForIsoform(String isoformName) {
-		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
+		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
 		return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
 	}
 	
@@ -244,20 +275,22 @@ public class Annotation implements Serializable, IsoformSpecific {
 	 * @return "detectedExpression", "undetectedExpression" or null
 	 */
 	public String getConsensusExpressionLevelPredicat(){
-		String level="";
-		// make sure we have evidences otherwise error breaks ttl generation
-		if (evidences.size()==0) 
-			return null;
-		// check if there is expression info
-		if ((level=evidences.get(0).getExpressionLevel())==null)
-			return null;
-		level=commonExpressionPredicat.get(level);
-		for(AnnotationEvidence e:evidences){
-			if(!level.equals(commonExpressionPredicat.get(e.getExpressionLevel()))) {
-				return commonExpressionPredicat.get(""); // default 
+		if(evidences != null){
+			String level="";
+			// make sure we have evidences otherwise error breaks ttl generation
+			if (evidences.size()==0) 
+				return null;
+			// check if there is expression info
+			if ((level=evidences.get(0).getExpressionLevel())==null)
+				return null;
+			level=commonExpressionPredicat.get(level);
+			for(AnnotationEvidence e:evidences){
+				if(!level.equals(commonExpressionPredicat.get(e.getExpressionLevel()))) {
+					return commonExpressionPredicat.get(""); // default 
+				}
 			}
-		}
-		return level;
+			return level;
+		}else return null;
 	}
 
 }
