@@ -251,7 +251,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 			if (annotation.getVariant().getVariant().equals("")) {
 				String description = annotation.getDescription();
-				annotation.setDescription("Missing " + description);
+				annotation.setDescription("Missing " + (description==null ? "": description));
 			}
 		}
 	}

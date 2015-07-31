@@ -9,6 +9,8 @@ import org.nextprot.api.user.service.UserProteinListService;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -154,5 +156,25 @@ public class UserProteinListUtilsTest {
         Set<String> set = UserProteinListUtils.parseAccessionNumbers(reader, Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"));
 
         assertEquals(Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"), set);
+    }
+
+    @Test
+    public void testCheckAndFormatAccessionNumber() throws IOException {
+
+        Set<String> collector = new HashSet<>();
+
+        UserProteinListUtils.checkFormatAndCollectValidAccessionNumber("P123", collector, Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"));
+
+        assertEquals(1, collector.size());
+        assertTrue(collector.contains("NX_P123"));
+    }
+
+    @Test
+    public void testCheckAndFormatAccessionNumbers() throws IOException {
+
+        Set<String> validAccessions = UserProteinListUtils.checkAndFormatAccessionNumbers(Arrays.asList("P123", "P456", "NX_P321", "#dewfref"),
+                Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"));
+
+        assertEquals(Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"), validAccessions);
     }
 }

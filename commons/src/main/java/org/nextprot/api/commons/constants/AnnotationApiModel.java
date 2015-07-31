@@ -112,7 +112,7 @@ public enum AnnotationApiModel implements Serializable {
 	BETA_STRAND(1026,"beta strand", "betaStrand", "beta strand", SECONDARY_STRUCTURE ),
 	
 	VARIANT(1027,"sequence variant", "variant", "variant", POSITIONAL_ANNOTATION ),
-	VARIANT_INFO(1045,"polymorphism", "variantInfo", "VariantInfo", POSITIONAL_ANNOTATION ),
+	VARIANT_INFO(1045,"polymorphism", "variantInfo", "VariantInfo", GENERAL_ANNOTATION ),
 
 	MUTAGENESIS(1028,"mutagenesis site", "mutagenesis", "mutagenesis", POSITIONAL_ANNOTATION ),
 	SEQUENCE_CONFLICT(1029,"sequence conflict", "sequenceConflict", "sequence conflict", POSITIONAL_ANNOTATION ),
