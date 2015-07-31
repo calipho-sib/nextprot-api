@@ -207,7 +207,7 @@ public class AnnotationApiModelTest {
 		System.out.println("Names :"+ s3.size());
 		int count = AnnotationApiModel.values().length - 1;
 		System.out.println("Roots and children :"+ (r.size()+s1.size()+ s2.size()+s3.size()));
-		System.out.println("Full count :"+count);
+		System.out.println("Full count :" + count);
 		// we assume that no child has more than one root parent (but it is not forbidden)
 		// so the sum of each root shildren set + number of roots should be equal to enum values count
 		Assert.assertTrue(r.size() + s1.size() + s2.size() + s3.size() == count);
@@ -251,7 +251,7 @@ public class AnnotationApiModelTest {
 
 		List<AnnotationApiModel> categories = AnnotationApiModel.getSortedCategories();
 
-		Assert.assertEquals(85, categories.size());
+		Assert.assertEquals(94, categories.size());
 	}
 
 	@Test
@@ -283,95 +283,126 @@ public class AnnotationApiModelTest {
 	@Test
 	public void testExportDotTree() {
 
-		String expected = "graph annotationTypes {\n" +
-				"\tnodesep=0.1; ranksep=0.5; ratio=compress; size=\"7.5,10\"; center=true; node [style=\"rounded,filled\", width=0, height=0, shape=box, fillcolor=\"#E5E5E5\", concentrate=true]\n" +
-				"\tRoot -- Name ;\n" +
-				"\tName -- FamilyName ;\n" +
-				"\tRoot -- GeneralAnnotation ;\n" +
-				"\tGeneralAnnotation -- CellularComponent ;\n" +
-				"\tCellularComponent -- SubcellularLocation ;\n" +
-				"\tCellularComponent -- GoCellularComponent ;\n" +
-				"\tCellularComponent -- SubcellularLocationNote ;\n" +
-				"\tGeneralAnnotation -- Interaction ;\n" +
-				"\tInteraction -- InteractionInfo ;\n" +
-				"\tInteraction -- EnzymeRegulation ;\n" +
-				"\tInteraction -- SmallMoleculeInteraction ;\n" +
-				"\tInteraction -- Cofactor ;\n" +
-				"\tInteraction -- BinaryInteraction ;\n" +
-				"\tGeneralAnnotation -- EnzymeClassification ;\n" +
-				"\tGeneralAnnotation -- Caution ;\n" +
-				"\tGeneralAnnotation -- Miscellaneous ;\n" +
-				"\tGeneralAnnotation -- Function ;\n" +
-				"\tFunction -- GoMolecularFunction ;\n" +
-				"\tFunction -- CatalyticActivity ;\n" +
-				"\tFunction -- FunctionInfo ;\n" +
-				"\tFunction -- GoBiologicalProcess ;\n" +
-				"\tFunction -- Pathway ;\n" +
-				"\tGeneralAnnotation -- Induction ;\n" +
-				"\tGeneralAnnotation -- Expression ;\n" +
-				"\tExpression -- ExpressionInfo ;\n" +
-				"\tExpression -- ExpressionProfile ;\n" +
-				"\tExpression -- DevelopmentalStageInfo ;\n" +
-				"\tGeneralAnnotation -- Medical ;\n" +
-				"\tMedical -- Allergen ;\n" +
-				"\tMedical -- Pharmaceutical ;\n" +
-				"\tMedical -- Disease ;\n" +
-				"\tGeneralAnnotation -- SequenceCaution ;\n" +
-				"\tGeneralAnnotation -- Keyword ;\n" +
-				"\tKeyword -- UniprotKeyword ;\n" +
-				"\tRoot -- PositionalAnnotation ;\n" +
-				"\tPositionalAnnotation -- SequenceConflict ;\n" +
-				"\tPositionalAnnotation -- Site ;\n" +
-				"\tSite -- MiscellaneousSite ;\n" +
-				"\tSite -- ActiveSite ;\n" +
-				"\tSite -- BindingSite ;\n" +
-				"\tSite -- CleavageSite ;\n" +
-				"\tSite -- MetalBindingSite ;\n" +
-				"\tPositionalAnnotation -- NonTerminalResidue ;\n" +
-				"\tPositionalAnnotation -- Topology ;\n" +
-				"\tTopology -- IntramembraneRegion ;\n" +
-				"\tTopology -- TopologicalDomain ;\n" +
-				"\tTopology -- TransmembraneRegion ;\n" +
-				"\tPositionalAnnotation -- Ptm ;\n" +
-				"\tPtm -- LipidationSite ;\n" +
-				"\tPtm -- CrossLink ;\n" +
-				"\tPtm -- Selenocysteine ;\n" +
-				"\tPtm -- ModifiedResidue ;\n" +
-				"\tPtm -- DisulfideBond ;\n" +
-				"\tPtm -- GlycosylationSite ;\n" +
-				"\tPtm -- PtmInfo ;\n" +
-				"\tPositionalAnnotation -- ProcessingProduct ;\n" +
-				"\tProcessingProduct -- MitochondrialTransitPeptide ;\n" +
-				"\tProcessingProduct -- MatureProtein ;\n" +
-				"\tProcessingProduct -- SignalPeptide ;\n" +
-				"\tProcessingProduct -- Propeptide ;\n" +
-				"\tProcessingProduct -- InitiatorMethionine ;\n" +
-				"\tProcessingProduct -- PeroxisomeTransitPeptide ;\n" +
-				"\tPositionalAnnotation -- Region ;\n" +
-				"\tRegion -- MiscellaneousRegion ;\n" +
-				"\tRegion -- CoiledCoilRegion ;\n" +
-				"\tRegion -- Domain ;\n" +
-				"\tRegion -- NucleotidePhosphateBindingRegion ;\n" +
-				"\tRegion -- CompositionallyBiasedRegion ;\n" +
-				"\tRegion -- ShortSequenceMotif ;\n" +
-				"\tRegion -- DnaBindingRegion ;\n" +
-				"\tRegion -- CalciumBindingRegion ;\n" +
-				"\tRegion -- ZincFingerRegion ;\n" +
-				"\tRegion -- InteractingRegion ;\n" +
-				"\tRegion -- Repeat ;\n" +
-				"\tPositionalAnnotation -- Mapping ;\n" +
-				"\tMapping -- PdbMapping ;\n" +
-				"\tPositionalAnnotation -- SecondaryStructure ;\n" +
-				"\tSecondaryStructure -- Turn ;\n" +
-				"\tSecondaryStructure -- BetaStrand ;\n" +
-				"\tSecondaryStructure -- Helix ;\n" +
-				"\tPositionalAnnotation -- Variant ;\n" +
-				"\tPositionalAnnotation -- DomainInfo ;\n" +
-				"\tPositionalAnnotation -- NonConsecutiveResidue ;\n" +
-				"\tPositionalAnnotation -- Mutagenesis ;\n" +
-				"\tPositionalAnnotation -- VariantInfo ;\n" +
-				"}";
+		String[] expectedEdges = new String[] {
+				"Root -- Name",
+				"Name -- FamilyName",
+				"Root -- GeneralAnnotation",
+				"GeneralAnnotation -- CellularComponent",
+				"CellularComponent -- SubcellularLocation",
+				"CellularComponent -- GoCellularComponent",
+				"CellularComponent -- SubcellularLocationNote",
+				"GeneralAnnotation -- Interaction",
+				"Interaction -- InteractionInfo",
+				"Interaction -- EnzymeRegulation",
+				"Interaction -- SmallMoleculeInteraction",
+				"Interaction -- Cofactor",
+				"Interaction -- BinaryInteraction",
+				"GeneralAnnotation -- EnzymeClassification",
+				"GeneralAnnotation -- Caution",
+				"GeneralAnnotation -- Miscellaneous",
+				"GeneralAnnotation -- Function",
+				"Function -- GoMolecularFunction",
+				"Function -- CatalyticActivity",
+				"Function -- FunctionInfo",
+				"Function -- GoBiologicalProcess",
+				"Function -- Pathway",
+				"GeneralAnnotation -- Induction",
+				"GeneralAnnotation -- Expression",
+				"Expression -- ExpressionInfo",
+				"Expression -- ExpressionProfile",
+				"Expression -- DevelopmentalStageInfo",
+				"GeneralAnnotation -- Medical",
+				"Medical -- Allergen",
+				"Medical -- Pharmaceutical",
+				"Medical -- Disease",
+				"GeneralAnnotation -- SequenceCaution",
+				"GeneralAnnotation -- Keyword",
+				"Keyword -- UniprotKeyword",
+				"Root -- PositionalAnnotation",
+				"PositionalAnnotation -- SequenceConflict",
+				"PositionalAnnotation -- Site",
+				"Site -- MiscellaneousSite",
+				"Site -- ActiveSite",
+				"Site -- BindingSite",
+				"Site -- CleavageSite",
+				"Site -- MetalBindingSite",
+				"PositionalAnnotation -- NonTerminalResidue",
+				"PositionalAnnotation -- Topology",
+				"Topology -- IntramembraneRegion",
+				"Topology -- TopologicalDomain",
+				"Topology -- TransmembraneRegion",
+				"PositionalAnnotation -- Ptm",
+				"Ptm -- LipidationSite",
+				"Ptm -- CrossLink",
+				"Ptm -- Selenocysteine",
+				"Ptm -- ModifiedResidue",
+				"Ptm -- DisulfideBond",
+				"Ptm -- GlycosylationSite",
+				"Ptm -- PtmInfo",
+				"PositionalAnnotation -- ProcessingProduct",
+				"ProcessingProduct -- MitochondrialTransitPeptide",
+				"ProcessingProduct -- MatureProtein",
+				"ProcessingProduct -- SignalPeptide",
+				"ProcessingProduct -- Propeptide",
+				"ProcessingProduct -- InitiatorMethionine",
+				"ProcessingProduct -- PeroxisomeTransitPeptide",
+				"PositionalAnnotation -- Region",
+				"Region -- MiscellaneousRegion",
+				"Region -- CoiledCoilRegion",
+				"Region -- Domain",
+				"Region -- NucleotidePhosphateBindingRegion",
+				"Region -- CompositionallyBiasedRegion",
+				"Region -- ShortSequenceMotif",
+				"Region -- DnaBindingRegion",
+				"Region -- CalciumBindingRegion",
+				"Region -- ZincFingerRegion",
+				"Region -- InteractingRegion",
+				"Region -- Repeat",
+				"PositionalAnnotation -- Mapping",
+				"Mapping -- PdbMapping",
+				"PositionalAnnotation -- SecondaryStructure",
+				"SecondaryStructure -- Turn",
+				"SecondaryStructure -- BetaStrand",
+				"SecondaryStructure -- Helix",
+				"PositionalAnnotation -- Variant",
+				"PositionalAnnotation -- DomainInfo",
+				"PositionalAnnotation -- NonConsecutiveResidue",
+				"PositionalAnnotation -- Mutagenesis",
+				"PositionalAnnotation -- VariantInfo"
+		};
 
-		//Assert.assertEquals(expected, AnnotationApiModel.exportHierarchyAsGraphDot());
+		String export = AnnotationApiModel.exportHierarchyAsGraphDot();
+
+		for (String expectedEdge : expectedEdges) {
+			Assert.assertTrue(export.contains(expectedEdge));
+		}
+	}
+
+	@Test
+	public void testValueofBioPhysChem() {
+
+		Assert.assertEquals(AnnotationApiModel.ABSORPTION_MAX, AnnotationApiModel.valueOfBioPhysChem("absorption max"));
+		Assert.assertEquals(AnnotationApiModel.ABSORPTION_NOTE, AnnotationApiModel.valueOfBioPhysChem("absorption note"));
+		Assert.assertEquals(AnnotationApiModel.KINETIC_KM, AnnotationApiModel.valueOfBioPhysChem("kinetic KM"));
+		Assert.assertEquals(AnnotationApiModel.KINETIC_NOTE, AnnotationApiModel.valueOfBioPhysChem("kinetic note"));
+		Assert.assertEquals(AnnotationApiModel.KINETIC_VMAX, AnnotationApiModel.valueOfBioPhysChem("kinetic Vmax"));
+		Assert.assertEquals(AnnotationApiModel.PH_DEPENDENCE, AnnotationApiModel.valueOfBioPhysChem("phDependence"));
+		Assert.assertEquals(AnnotationApiModel.REDOX_POTENTIAL, AnnotationApiModel.valueOfBioPhysChem("redoxPotential"));
+		Assert.assertEquals(AnnotationApiModel.TEMPERATURE_DEPENDENCE, AnnotationApiModel.valueOfBioPhysChem("temperatureDependence"));
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void testValueofUnknownBioPhysChemName() {
+
+		AnnotationApiModel.valueOfBioPhysChem("absorption min");
+	}
+
+	@Test
+	public void testApiNamesDoesNotContainSpaces() {
+
+		for (AnnotationApiModel model : AnnotationApiModel.values()) {
+
+			Assert.assertTrue(!model.getApiTypeName().contains(" "));
+		}
 	}
 }

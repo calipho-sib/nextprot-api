@@ -151,6 +151,15 @@ public enum AnnotationApiModel implements Serializable {
 	ALLERGEN(1048,"allergen", "allergen", "allergen", MEDICAL ),
 	PHARMACEUTICAL(1051,"pharmaceutical", "pharmaceutical", "pharmaceutical", MEDICAL ),
 
+	BIOPHYSICOCHEMICAL_PROPERTY(-16, "Biophysicochemical property", "biophysicochemicalProperty", "biophysicochemical property", GENERAL_ANNOTATION),
+	ABSORPTION_MAX(-17, "absorption max", "absorptionMax", "absorption max", BIOPHYSICOCHEMICAL_PROPERTY),
+	ABSORPTION_NOTE(-18, "absorption note", "absorptionNote", "absorption note", BIOPHYSICOCHEMICAL_PROPERTY),
+	KINETIC_KM(-19, "kinetic KM", "kineticKM", "kinetic KM", BIOPHYSICOCHEMICAL_PROPERTY),
+	KINETIC_VMAX(-20, "kinetic Vmax", "kineticVmax", "kinetic Vmax", BIOPHYSICOCHEMICAL_PROPERTY),
+	KINETIC_NOTE(-21, "kinetic note", "kineticNote", "kinetic note", BIOPHYSICOCHEMICAL_PROPERTY),
+	PH_DEPENDENCE(-22, "phDependence", "phDependence", "phDependence", BIOPHYSICOCHEMICAL_PROPERTY),
+	REDOX_POTENTIAL(-23, "redoxPotential", "redoxPotential", "redoxPotential", BIOPHYSICOCHEMICAL_PROPERTY),
+	TEMPERATURE_DEPENDENCE(-24, "temperatureDependence", "temperatureDependence", "temperatureDependence", BIOPHYSICOCHEMICAL_PROPERTY)
 	;
 
 	private final Integer dbId; // if positive, identifies a real record of the table nextprot.cv_terms (category annotation_type)
@@ -165,13 +174,13 @@ public enum AnnotationApiModel implements Serializable {
 	AnnotationApiModel(
 			final Integer dbId,
 			final String dbAnnotationTypeName,
-			final String rdfName,
+			final String apiName,
 			final String rdfLabel,
 			final AnnotationApiModel parent) {
 		
 		this.dbId = dbId;
 		this.dbAnnotationTypeName = dbAnnotationTypeName;
-		this.apiName = rdfName;
+		this.apiName = apiName;
 		this.rdfLabel = rdfLabel;
 		this.parent = parent;
 	}
@@ -381,15 +390,6 @@ public enum AnnotationApiModel implements Serializable {
 		return AnnotationPropertyApiModel.getPropertyByDbName(this, dbName);
 	}
 
-	public String getAnnotationCategoryHierarchyForXML() {
-
-		return getPathToRoot(';');
-	}
-
-	public String getAnnotationCategoryNameForXML() {
-		return StringUtils.camelToKebabCase(getApiTypeName());
-	}
-
 	public static String exportHierarchyAsGraphDot() {
 
 		TreeVisitor<AnnotationApiModel> visitor = new TreeVisitorDot("annotationTypes");
@@ -397,5 +397,41 @@ public enum AnnotationApiModel implements Serializable {
 		visitor.visit(ROOT);
 
 		return visitor.asString();
+	}
+
+	/**
+	 * Returns the enum constant of the specified biophysicalchemical enum type with the
+	 * specified name.  The name must match exactly an identifier used
+	 * to declare an enum constant in this type.  (Extraneous whitespace
+	 * characters are not permitted.)
+	 *
+	 * @param name the name of the constant to return
+	 * @return the enum constant of the specified enum type with the
+	 *      specified name
+	 * @throws IllegalArgumentException if the specified enum type has
+	 *         no constant with the specified name, or the specified
+	 *         class object does not represent an enum type
+	 */
+	public static AnnotationApiModel valueOfBioPhysChem(String name) {
+		switch (name) {
+			case "absorption max":
+				return ABSORPTION_MAX;
+			case "absorption note":
+				return ABSORPTION_NOTE;
+			case "kinetic KM":
+				return KINETIC_KM;
+			case "kinetic note":
+				return KINETIC_NOTE;
+			case "kinetic Vmax":
+				return KINETIC_VMAX;
+			case "phDependence":
+				return PH_DEPENDENCE;
+			case "redoxPotential":
+				return REDOX_POTENTIAL;
+			case "temperatureDependence":
+				return TEMPERATURE_DEPENDENCE;
+			default:
+				throw new IllegalArgumentException("No biophysicalchemical enum constant maps name '" + name+"'");
+		}
 	}
 }
