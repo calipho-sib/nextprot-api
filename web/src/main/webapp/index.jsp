@@ -866,6 +866,8 @@
 					
 					$('#testButton').button('loading');
 
+					
+					//Add sufix for brower call
 					var suffix = "xml";
 					if (headers["Accept"] == "application/json")
 						suffix = "json";
@@ -876,8 +878,21 @@
 					//if (headers["Accept"] == "text/peff")
 					//	suffix = "peff";
 
+					if(replacedPath.indexOf('?') != -1){
+						var begin = replacedPath.substring(0, replacedPath.indexOf('?'));
+						var end = replacedPath.substring(replacedPath.indexOf('?'), replacedPath.length);
+						replacedPath = begin + "." + suffix + end; 
+					}else {
+						replacedPath += "." + suffix;
+					}
+					
+					if(replacedPath[0] == "/"){
+						replacedPath = replacedPath.substring(1, replacedPath.length);
+					}
+					
+					
 					var res = $.ajax({
-						url : window.location.href.replace("#", "") + replacedPath + "." + suffix,
+						url : window.location.href.replace("#", "") + replacedPath,
 						type: method.verb,
 						data: $("#inputJson").val(),
 						headers: headers,
