@@ -6,6 +6,10 @@ import java.util.List;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(Include.NON_NULL)
 public class Entry implements KeyValueRepresentation{
 
 	private EntryProperties properties;
