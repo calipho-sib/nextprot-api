@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
-import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.dao.EntryPropertiesDao;
 import org.nextprot.api.core.domain.EntryProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,8 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 	@Override
 	public EntryProperties findEntryProperties(String uniqueName) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
-		EntryProperties ep = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("entry-properties"), namedParameters, new EntryPropertyRowMapper());
+		NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dsLocator.getDataSource());
+		EntryProperties ep = template.queryForObject(sqlDictionary.getSQLQuery("entry-properties"), namedParameters, new EntryPropertyRowMapper());
 		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("entry-references-count"), namedParameters, new EntryPropertyRowAppender(ep));
 		return ep;
 	}
