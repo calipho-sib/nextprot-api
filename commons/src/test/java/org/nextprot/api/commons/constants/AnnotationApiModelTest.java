@@ -381,20 +381,14 @@ public class AnnotationApiModelTest {
 	@Test
 	public void testValueofBioPhysChem() {
 
-		Assert.assertEquals(AnnotationApiModel.ABSORPTION_MAX, AnnotationApiModel.valueOfBioPhysChem("absorption max"));
-		Assert.assertEquals(AnnotationApiModel.ABSORPTION_NOTE, AnnotationApiModel.valueOfBioPhysChem("absorption note"));
-		Assert.assertEquals(AnnotationApiModel.KINETIC_KM, AnnotationApiModel.valueOfBioPhysChem("kinetic KM"));
-		Assert.assertEquals(AnnotationApiModel.KINETIC_NOTE, AnnotationApiModel.valueOfBioPhysChem("kinetic note"));
-		Assert.assertEquals(AnnotationApiModel.KINETIC_VMAX, AnnotationApiModel.valueOfBioPhysChem("kinetic Vmax"));
-		Assert.assertEquals(AnnotationApiModel.PH_DEPENDENCE, AnnotationApiModel.valueOfBioPhysChem("phDependence"));
-		Assert.assertEquals(AnnotationApiModel.REDOX_POTENTIAL, AnnotationApiModel.valueOfBioPhysChem("redoxPotential"));
-		Assert.assertEquals(AnnotationApiModel.TEMPERATURE_DEPENDENCE, AnnotationApiModel.valueOfBioPhysChem("temperatureDependence"));
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void testValueofUnknownBioPhysChemName() {
-
-		AnnotationApiModel.valueOfBioPhysChem("absorption min");
+		Assert.assertEquals(AnnotationApiModel.ABSORPTION_MAX, AnnotationApiModel.getByDbAnnotationTypeName("absorption max"));
+		Assert.assertEquals(AnnotationApiModel.ABSORPTION_NOTE, AnnotationApiModel.getByDbAnnotationTypeName("absorption note"));
+		Assert.assertEquals(AnnotationApiModel.KINETIC_KM, AnnotationApiModel.getByDbAnnotationTypeName("kinetic KM"));
+		Assert.assertEquals(AnnotationApiModel.KINETIC_NOTE, AnnotationApiModel.getByDbAnnotationTypeName("kinetic note"));
+		Assert.assertEquals(AnnotationApiModel.KINETIC_VMAX, AnnotationApiModel.getByDbAnnotationTypeName("kinetic Vmax"));
+		Assert.assertEquals(AnnotationApiModel.PH_DEPENDENCE, AnnotationApiModel.getByDbAnnotationTypeName("phDependence"));
+		Assert.assertEquals(AnnotationApiModel.REDOX_POTENTIAL, AnnotationApiModel.getByDbAnnotationTypeName("redoxPotential"));
+		Assert.assertEquals(AnnotationApiModel.TEMPERATURE_DEPENDENCE, AnnotationApiModel.getByDbAnnotationTypeName("temperatureDependence"));
 	}
 
 	@Test
