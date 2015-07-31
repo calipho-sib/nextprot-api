@@ -8,9 +8,15 @@ public class EntryConfig {
 	
 	private boolean overview, publications, genomicMappings, xrefs, keywords, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, antibodyMappings, peptideMappings, srmPeptideMappings, experimentalContext;
 	private boolean enzymes;
-
+	private boolean withoutAdditionalReferences = false; // by default we put xrefs, publications, experimental contexts
+	private boolean withoutProperties = false; //by default we get properties
+	
 	private EntryConfig(String entryName){
-		this.entryName = entryName;
+		if(entryName.toUpperCase().startsWith("NX_")){
+			this.entryName = entryName;
+		}else {
+			this.entryName = "NX_" + entryName;
+		}
 	}
 	
 	public static EntryConfig newConfig(String entryName){
@@ -19,6 +25,14 @@ public class EntryConfig {
 
 	public boolean hasOverview() {
 		return overview;
+	}
+	
+	public boolean hasNoAdditionalReferences() {
+		return withoutAdditionalReferences;
+	}
+	
+	public boolean hasNoProperties() {
+		return withoutProperties;
 	}
 
 	public boolean hasPublications() {
@@ -128,6 +142,10 @@ public class EntryConfig {
 	public EntryConfig withExperimentalContexts() {
 		this.experimentalContext = true; return this;
 	}
+
+	public EntryConfig withoutProperties() {
+		this.withoutProperties = true; return this; 
+	}
 	
 	public EntryConfig withEnzymes() {
 		this.enzymes = true; return this; //TODO is this necessary? can't we write a method on top of overview names???
@@ -169,7 +187,12 @@ public class EntryConfig {
 		return this;
 		
 	}
-	
+
+
+	public EntryConfig withoutAdditionalReferences() {
+		this.withoutAdditionalReferences = false;
+		return this;
+	}
 	
 	//Overload with NPViews
 	private EntryConfig withEntryBlock(EntryBlocks block) {
@@ -207,6 +230,7 @@ public class EntryConfig {
 	public boolean hasEnzymes() {
 		return this.enzymes;
 	}
+
 
 
 }

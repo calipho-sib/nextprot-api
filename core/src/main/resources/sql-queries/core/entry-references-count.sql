@@ -1,0 +1,3 @@
+select publication_num as references_curated_publications_count, additional_num as references_additional_publications_count, patent_num as references_patents_count, submission_num as references_submissions_count, online_num as references_web_resources_count, ref_num as references_count 
+from nextprot.view_master_reference_count 
+where unique_name = :uniqueName

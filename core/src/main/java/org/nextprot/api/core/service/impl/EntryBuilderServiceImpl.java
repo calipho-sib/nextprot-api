@@ -58,8 +58,10 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 		//Lock per entry in case the cache is not set yet (should be quite) fast thougth
 		synchronized (getOrPutSynchronizer(entryName)){
 
-			//Always set properties about the entry
-			entry.setProperties(entryPropertiesService.findEntryProperties(entryName));
+			//Always set properties about the entry, unless it was explicitly said not to set them
+			if(!entryConfig.hasNoProperties()){
+				entry.setProperties(entryPropertiesService.findEntryProperties(entryName));
+			}
 		
 			if(entryConfig.hasOverview()){
 				entry.setOverview(this.overviewService.findOverviewByEntry(entryName));
@@ -104,7 +106,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setEnzymes(terminologyService.findEnzymeByMaster(entryName));
 			}
 			
-			if(entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart()){ //TODO should be added in annotation list
+			if((!entryConfig.hasNoAdditionalReferences()) && (entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart())){ //TODO should be added in annotation list
 				setEntryAdditionalInformation(entry); //adds isoforms, publications, xrefs and experimental contexts
 			} 
 
