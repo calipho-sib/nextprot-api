@@ -4,14 +4,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.service.PepXService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Ignore
 public class PepXServiceTest extends WebIntegrationBaseTest {
 
     @Autowired
