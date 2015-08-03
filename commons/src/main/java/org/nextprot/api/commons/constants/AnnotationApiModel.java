@@ -416,6 +416,17 @@ public enum AnnotationApiModel implements Serializable {
 		return AnnotationPropertyApiModel.getPropertyByDbName(this, dbName);
 	}
 
+	// used by velocity
+	public String getAnnotationCategoryHierarchyForXML() {
+
+		return getPathToRoot(';');
+	}
+
+	// used by velocity
+	public String getAnnotationCategoryNameForXML() {
+		return StringUtils.camelToKebabCase(getApiTypeName());
+	}
+
 	public static String exportHierarchyAsGraphDot() {
 
 		TreeVisitor<AnnotationApiModel> visitor = new TreeVisitorDot("annotationTypes");
