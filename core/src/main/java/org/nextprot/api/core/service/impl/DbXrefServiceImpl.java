@@ -76,7 +76,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		List<Annotation> annots = new ArrayList<Annotation>();
 		for (DbXref xref: xrefs) {
 			Annotation annotation = new Annotation();
-			annotation.setAnnotationId(xref.getDbXrefId() + 1000000000L);
+			annotation.setAnnotationId(xref.getDbXrefId() + 10_000_000_000L);
 			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
 			annotation.setCategory(xam.getAnnotCat());
 			annotation.setDescription(xref.getPropertyValue(xam.getXrefPropName())); // copy of some xref property 
@@ -107,7 +107,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 			evidence.setAnnotationId(annotation.getAnnotationId());
 			DbXref pxref = annotation.getParentXref();
 			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(pxref.getDatabaseName());
-			evidence.setEvidenceId(annotation.getAnnotationId() + 20000000000L);
+			evidence.setEvidenceId(annotation.getAnnotationId() + 20_000_000_000L);
 			evidence.setAssignedBy(xam.getSrcName());
 			evidence.setResourceId(pxref.getDbXrefId());
 			evidence.setResourceAccession(pxref.getAccession());

@@ -21,7 +21,7 @@ public class BinaryInteraction2Annotation {
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation core object
 		// - - - - - - - - - - - - - - - - - - - - 
-		Long annotId = inter.getId() + 30000000000L;
+		Long annotId = inter.getId() + 30_000_000_000L;
 		
 		Annotation annot = new Annotation();
 		annot.setAnnotationId(annotId);

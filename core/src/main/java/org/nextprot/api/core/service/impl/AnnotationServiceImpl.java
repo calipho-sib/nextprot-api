@@ -20,6 +20,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.InteractionService;
+import org.nextprot.api.core.utils.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -94,10 +95,14 @@ public class AnnotationServiceImpl implements AnnotationService {
 				}
 			}
 	
+			AnnotationUtils.convertType2EvidencesToProperties(annotations); // CALIPHOMISC-277
+
 			for (Annotation annot : annotations) {
 				refactorDescription(annot);
 			}
 		}
+		
+		
 		
 		annotations.addAll(this.xrefService.findDbXrefsAsAnnotationsByEntry(entryName));
 		annotations.addAll(this.interactionService.findInteractionsAsAnnotationsByEntry(entryName));
@@ -186,12 +191,19 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		// GET all evidences from that annotation
 		// If the resource type of the evidence is from DATABASE then add its xref emblAcs.add
+		/*
 		for (AnnotationEvidence evidence : annotation.getEvidences()) {
 			if (evidence.getResourceAssociationType().equals("evidence") && evidence.getResourceType().equals("database")) {
 				acs.add(evidence.getResourceAccession());
 			}
 		}
+		*/
 
+		for (AnnotationProperty ap : annotation.getProperties()) {
+			if (ap.getName().equals("differing sequence")) acs.add(ap.getAccession());
+		}
+		
+		
 		StringBuilder sb = new StringBuilder("The sequence").append((acs.size() > 1 ? "s" : ""));
 		for (String emblAc : acs) {
 			sb.append(" ").append(emblAc);

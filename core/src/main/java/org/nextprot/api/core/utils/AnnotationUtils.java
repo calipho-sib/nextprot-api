@@ -83,6 +83,25 @@ public class AnnotationUtils {
 	}
 
 	/*
+	 * Returns a set of xref identifiers in some special cases:
+	 * - "sequence caution" annotation type => xrefs found in "differing sequence" property
+	 * 
+	 */
+	public static Set<Long> getXrefIdsForAnnotationsProperties(List<Annotation> annotations){
+		Set<Long> xrefIds = new HashSet<Long>(); 
+		for(Annotation a : annotations){
+			if (a.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
+				for (AnnotationProperty p: a.getProperties()) {
+					if (p.getName().equals(AnnotationProperty.NAME_DIFFERING_SEQUENCE)) {
+						if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
+					}
+				}
+			}
+		}
+		return xrefIds;
+	}
+
+	/*
 	 * Returns a set of xref identifiers corresponding to the interactants which are involved 
 	 * in binary interaction annotations and which are not human proteins (xeno interactions)
 	 */
@@ -113,6 +132,28 @@ public class AnnotationUtils {
 		}
 		return publicationIds;
 	
+	}
+	
+	public static void convertType2EvidencesToProperties(List<Annotation> annotations) {
+		for (Annotation annot: annotations) {
+			if (annot.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
+				Iterator<AnnotationEvidence> evIt = annot.getEvidences().iterator();
+				while (evIt.hasNext()) {
+					AnnotationEvidence evi = evIt.next();
+					if (evi.getResourceAssociationType().equals("relative")) {
+						AnnotationProperty p = new AnnotationProperty();
+						p.setAnnotationId(annot.getAnnotationId());
+						p.setAccession(evi.getResourceAccession());
+						p.setName("differing sequence");
+						p.setValue(""+evi.getResourceId());
+						p.setValueType("resource-internal-ref");
+						if (annot.getProperties()==null) annot.setProperties(new ArrayList<AnnotationProperty>());
+						annot.getProperties().add(p);
+						evIt.remove();
+					}
+				}
+			}
+		}
 	}
 
 }

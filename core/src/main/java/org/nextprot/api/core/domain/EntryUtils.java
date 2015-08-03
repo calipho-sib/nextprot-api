@@ -29,6 +29,7 @@ public class EntryUtils implements Serializable{
 			annotations = AnnotationUtils.filterAnnotationsByCategory(entry.getAnnotations(), annotationCategory);
 			Set<Long> xrefIds = AnnotationUtils.getXrefIdsForAnnotations(annotations);
 			xrefIds.addAll(AnnotationUtils.getXrefIdsForInteractionsInteractants(annotations));
+			xrefIds.addAll(AnnotationUtils.getXrefIdsForAnnotationsProperties(annotations));
 			xrefs = XrefUtils.filterXrefsByIds(entry.getXrefs(), xrefIds);
 			publications = PublicationUtils.filterPublicationsByIds(entry.getPublications(), AnnotationUtils.getPublicationIdsForAnnotations(annotations));
 
