@@ -157,9 +157,9 @@ public enum AnnotationApiModel implements Serializable {
 	KINETIC_KM(-19, "kinetic KM", "kineticKM", "kinetic KM", BIOPHYSICOCHEMICAL_PROPERTY),
 	KINETIC_VMAX(-20, "kinetic Vmax", "kineticVmax", "kinetic Vmax", BIOPHYSICOCHEMICAL_PROPERTY),
 	KINETIC_NOTE(-21, "kinetic note", "kineticNote", "kinetic note", BIOPHYSICOCHEMICAL_PROPERTY),
-	PH_DEPENDENCE(-22, "phDependence", "phDependence", "phDependence", BIOPHYSICOCHEMICAL_PROPERTY),
-	REDOX_POTENTIAL(-23, "redoxPotential", "redoxPotential", "redoxPotential", BIOPHYSICOCHEMICAL_PROPERTY),
-	TEMPERATURE_DEPENDENCE(-24, "temperatureDependence", "temperatureDependence", "temperatureDependence", BIOPHYSICOCHEMICAL_PROPERTY);
+	PH_DEPENDENCE(-22, "pH dependence", "phDependence", "phDependence", BIOPHYSICOCHEMICAL_PROPERTY),
+	REDOX_POTENTIAL(-23, "redox potential", "redoxPotential", "redoxPotential", BIOPHYSICOCHEMICAL_PROPERTY),
+	TEMPERATURE_DEPENDENCE(-24, "temperature dependence", "temperatureDependence", "temperatureDependence", BIOPHYSICOCHEMICAL_PROPERTY);
 
 	private final Integer dbId; // if positive, identifies a real record of the table nextprot.cv_terms (category annotation_type)
 	private final String dbAnnotationTypeName; // if dbId is positive, dbAnnotationTypeName is an exact match of the corresponding record in nextprot.cv_terms 

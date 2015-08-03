@@ -386,9 +386,9 @@ public class AnnotationApiModelTest {
 		Assert.assertEquals(AnnotationApiModel.KINETIC_KM, AnnotationApiModel.getByDbAnnotationTypeName("kinetic KM"));
 		Assert.assertEquals(AnnotationApiModel.KINETIC_NOTE, AnnotationApiModel.getByDbAnnotationTypeName("kinetic note"));
 		Assert.assertEquals(AnnotationApiModel.KINETIC_VMAX, AnnotationApiModel.getByDbAnnotationTypeName("kinetic Vmax"));
-		Assert.assertEquals(AnnotationApiModel.PH_DEPENDENCE, AnnotationApiModel.getByDbAnnotationTypeName("phDependence"));
-		Assert.assertEquals(AnnotationApiModel.REDOX_POTENTIAL, AnnotationApiModel.getByDbAnnotationTypeName("redoxPotential"));
-		Assert.assertEquals(AnnotationApiModel.TEMPERATURE_DEPENDENCE, AnnotationApiModel.getByDbAnnotationTypeName("temperatureDependence"));
+		Assert.assertEquals(AnnotationApiModel.PH_DEPENDENCE, AnnotationApiModel.getByDbAnnotationTypeName("pH dependence"));
+		Assert.assertEquals(AnnotationApiModel.REDOX_POTENTIAL, AnnotationApiModel.getByDbAnnotationTypeName("redox potential"));
+		Assert.assertEquals(AnnotationApiModel.TEMPERATURE_DEPENDENCE, AnnotationApiModel.getByDbAnnotationTypeName("temperature dependence"));
 	}
 
 	@Test
