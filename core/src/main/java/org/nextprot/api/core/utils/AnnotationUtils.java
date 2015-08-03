@@ -85,6 +85,7 @@ public class AnnotationUtils {
 	/*
 	 * Returns a set of xref identifiers in some special cases:
 	 * - "sequence caution" annotation type => xrefs found in "differing sequence" property
+	 * - "cofactor" annotation rype => xrefs found in "cofactor" property
 	 * 
 	 */
 	public static Set<Long> getXrefIdsForAnnotationsProperties(List<Annotation> annotations){
@@ -93,6 +94,13 @@ public class AnnotationUtils {
 			if (a.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
 				for (AnnotationProperty p: a.getProperties()) {
 					if (p.getName().equals(AnnotationProperty.NAME_DIFFERING_SEQUENCE)) {
+						if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
+					}
+				}
+			}
+			else if (a.getAPICategory()==AnnotationApiModel.COFACTOR) {
+				for (AnnotationProperty p: a.getProperties()) {
+					if (p.getName().equals(AnnotationProperty.NAME_COFACTOR)) {
 						if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
 					}
 				}
@@ -137,23 +145,35 @@ public class AnnotationUtils {
 	public static void convertType2EvidencesToProperties(List<Annotation> annotations) {
 		for (Annotation annot: annotations) {
 			if (annot.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
-				Iterator<AnnotationEvidence> evIt = annot.getEvidences().iterator();
-				while (evIt.hasNext()) {
-					AnnotationEvidence evi = evIt.next();
-					if (evi.getResourceAssociationType().equals("relative")) {
-						AnnotationProperty p = new AnnotationProperty();
-						p.setAnnotationId(annot.getAnnotationId());
-						p.setAccession(evi.getResourceAccession());
-						p.setName("differing sequence");
-						p.setValue(""+evi.getResourceId());
-						p.setValueType("resource-internal-ref");
-						if (annot.getProperties()==null) annot.setProperties(new ArrayList<AnnotationProperty>());
-						annot.getProperties().add(p);
-						evIt.remove();
-					}
-				}
+				convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_DIFFERING_SEQUENCE);
+			} 
+			else if (annot.getAPICategory()==AnnotationApiModel.COFACTOR) {
+				convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_COFACTOR);
 			}
 		}
+	}
+	
+	/*
+	 * SEQUENCE_CAUTION => property name = differing sequence
+	 * COFACTOR         => property name = cofactor
+	 */
+	private static void convertType2EvidenceToProperty(Annotation annot, String propertyName) {
+		Iterator<AnnotationEvidence> evIt = annot.getEvidences().iterator();
+		while (evIt.hasNext()) {
+			AnnotationEvidence evi = evIt.next();
+			if (evi.getResourceAssociationType().equals("relative")) {
+				AnnotationProperty p = new AnnotationProperty();
+				p.setAnnotationId(annot.getAnnotationId());
+				p.setAccession(evi.getResourceAccession());
+				p.setName(propertyName);
+				p.setValue(""+evi.getResourceId());
+				p.setValueType(AnnotationProperty.VALUE_TYPE_RIF);
+				if (annot.getProperties()==null) annot.setProperties(new ArrayList<AnnotationProperty>());
+				annot.getProperties().add(p);
+				evIt.remove();
+			}
+		}
+		
 	}
 
 }
