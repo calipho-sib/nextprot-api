@@ -12,7 +12,8 @@ public class AnnotationProperty implements Serializable {
 	private static final long serialVersionUID = 2243514603302154352L;
 	public static final String NAME_INTERACTANT="interactant";
 	public static final String NAME_DIFFERING_SEQUENCE="differing sequence";	
-	public static final String NAME_COFACTOR="cofactor";	
+	public static final String NAME_COFACTOR="cofactor";
+	public static final String NAME_ALTERNATIVE_DISEASE_TERM="alternative disease term";
 	public static final String VALUE_TYPE_RIF="resource-internal-ref";
 	public static final String VALUE_TYPE_ENTRY_AC="entry-accession";
 	public static final String VALUE_TYPE_ISO_AC="isoform-accession";
@@ -55,4 +56,13 @@ public class AnnotationProperty implements Serializable {
 		this.accession = accession;
 	}
 
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("annot:"+ this.getAnnotationId());
+		sb.append(" - name:" + this.getName());
+		sb.append(" - ac:" + this.getAccession());
+		sb.append(" - value:" + this.getValue());
+		sb.append(" - vtype:" + this.getValueType());
+		return sb.toString();
+	}
 }

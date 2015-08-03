@@ -19,6 +19,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideMappingService;
@@ -76,6 +77,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		List<Annotation> annots = new ArrayList<Annotation>();
 		for (DbXref xref: xrefs) {
 			Annotation annotation = new Annotation();
+			annotation.setProperties(new ArrayList<AnnotationProperty>());
 			annotation.setAnnotationId(xref.getDbXrefId() + 10_000_000_000L);
 			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
 			annotation.setCategory(xam.getAnnotCat());

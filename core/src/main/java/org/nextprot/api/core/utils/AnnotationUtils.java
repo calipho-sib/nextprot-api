@@ -97,6 +97,9 @@ public class AnnotationUtils {
 			else if (a.getAPICategory()==AnnotationApiModel.COFACTOR) {
 				addXrefIdRelatedToAnnotationPropertyName(a, AnnotationProperty.NAME_COFACTOR, xrefIds);
 			}
+			else if (a.getAPICategory()==AnnotationApiModel.DISEASE) {
+				addXrefIdRelatedToAnnotationPropertyName(a, AnnotationProperty.NAME_ALTERNATIVE_DISEASE_TERM, xrefIds);
+			}
 		}
 		return xrefIds;
 	}
@@ -104,7 +107,9 @@ public class AnnotationUtils {
 	private static void addXrefIdRelatedToAnnotationPropertyName(Annotation a, String propName, Set<Long> xrefIds) {
 		for (AnnotationProperty p: a.getProperties()) {
 			if (p.getName().equals(propName)) {
-				if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
+				if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) {
+					xrefIds.add(Long.parseLong(p.getValue()));
+				}
 			}
 		}		
 	}
@@ -142,6 +147,11 @@ public class AnnotationUtils {
 	
 	}
 	
+	/*
+	 * SEQUENCE_CAUTION => property name = differing sequence
+	 * COFACTOR         => property name = cofactor
+	 * DISEASE          => property name = alternative disease term
+	 */
 	public static void convertType2EvidencesToProperties(List<Annotation> annotations) {
 		for (Annotation annot: annotations) {
 			if (annot.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
@@ -150,13 +160,13 @@ public class AnnotationUtils {
 			else if (annot.getAPICategory()==AnnotationApiModel.COFACTOR) {
 				convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_COFACTOR);
 			}
+			else if (annot.getAPICategory()==AnnotationApiModel.DISEASE) {
+				convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_ALTERNATIVE_DISEASE_TERM);
+			}
 		}
 	}
 	
-	/*
-	 * SEQUENCE_CAUTION => property name = differing sequence
-	 * COFACTOR         => property name = cofactor
-	 */
+
 	private static void convertType2EvidenceToProperty(Annotation annot, String propertyName) {
 		Iterator<AnnotationEvidence> evIt = annot.getEvidences().iterator();
 		while (evIt.hasNext()) {

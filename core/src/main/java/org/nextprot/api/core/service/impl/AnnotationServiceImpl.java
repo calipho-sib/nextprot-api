@@ -86,7 +86,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 			}
 	
 	
-			//Removes annotations which do not map to any isoform, this may happen in case where the annotation has been seen in a peptide and the annotation was propagated to the master, but we were not able to map to any isoform
+			// Removes annotations which do not map to any isoform, 
+			// this may happen in case where the annotation has been seen in a peptide and the annotation was propagated to the master, 
+			// but we were not able to map to any isoform
 			Iterator<Annotation> annotationsIt = annotations.iterator();
 			while(annotationsIt.hasNext()){
 				Annotation a = annotationsIt.next();
@@ -101,8 +103,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 				refactorDescription(annot);
 			}
 		}
-		
-		
 		
 		annotations.addAll(this.xrefService.findDbXrefsAsAnnotationsByEntry(entryName));
 		annotations.addAll(this.interactionService.findInteractionsAsAnnotationsByEntry(entryName));
