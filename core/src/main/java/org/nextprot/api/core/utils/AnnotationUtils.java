@@ -92,23 +92,23 @@ public class AnnotationUtils {
 		Set<Long> xrefIds = new HashSet<Long>(); 
 		for(Annotation a : annotations){
 			if (a.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
-				for (AnnotationProperty p: a.getProperties()) {
-					if (p.getName().equals(AnnotationProperty.NAME_DIFFERING_SEQUENCE)) {
-						if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
-					}
-				}
+				addXrefIdRelatedToAnnotationPropertyName(a, AnnotationProperty.NAME_DIFFERING_SEQUENCE, xrefIds);
 			}
 			else if (a.getAPICategory()==AnnotationApiModel.COFACTOR) {
-				for (AnnotationProperty p: a.getProperties()) {
-					if (p.getName().equals(AnnotationProperty.NAME_COFACTOR)) {
-						if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
-					}
-				}
+				addXrefIdRelatedToAnnotationPropertyName(a, AnnotationProperty.NAME_COFACTOR, xrefIds);
 			}
 		}
 		return xrefIds;
 	}
 
+	private static void addXrefIdRelatedToAnnotationPropertyName(Annotation a, String propName, Set<Long> xrefIds) {
+		for (AnnotationProperty p: a.getProperties()) {
+			if (p.getName().equals(propName)) {
+				if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
+			}
+		}		
+	}
+	
 	/*
 	 * Returns a set of xref identifiers corresponding to the interactants which are involved 
 	 * in binary interaction annotations and which are not human proteins (xeno interactions)
