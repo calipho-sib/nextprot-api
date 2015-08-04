@@ -144,8 +144,8 @@ public enum AnnotationApiModel implements Serializable {
 	GO_CELLULAR_COMPONENT(1063, "go cellular component", "goCellularComponent", "go cellular component", CELLULAR_COMPONENT),
 
 	DEVELOPMENTAL_STAGE(1041, "developmental stage", "developmentalStageInfo", "developmental stage", GENERIC_EXPRESSION),
-	EPRESSION_INFO(1055, "expression info", "expressionInfo", "expression info", GENERIC_EXPRESSION),
-	EPRESSION_PROFILE(1040, "tissue specificity", "expressionProfile", "expression profile (tissue specificity)", GENERIC_EXPRESSION),
+	EXPRESSION_INFO(1055, "expression info", "expressionInfo", "expression info", GENERIC_EXPRESSION),
+	EXPRESSION_PROFILE(1040, "tissue specificity", "expressionProfile", "expression profile (tissue specificity)", GENERIC_EXPRESSION),
 
 	DISEASE(1046, "disease", "disease", "disease", MEDICAL),
 	ALLERGEN(1048, "allergen", "allergen", "allergen", MEDICAL),
