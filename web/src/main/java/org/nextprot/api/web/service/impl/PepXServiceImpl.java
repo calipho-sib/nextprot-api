@@ -23,6 +23,7 @@ import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.utils.AnnotationUtils;
 import org.nextprot.api.web.service.PepXService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,8 +38,7 @@ public class PepXServiceImpl implements PepXService {
 	private EntryBuilderService entryBuilderService;
 
 	private String pepXUrl;
-	
-	
+
 	@Value("${pepx.url}")
 	public void setPepXUrl(String pepXUrl) {
 		this.pepXUrl = pepXUrl;
@@ -53,9 +53,12 @@ public class PepXServiceImpl implements PepXService {
 
 		Set<String> entriesNames = entriesMap.keySet();
 		for (String entryName : entriesNames) {
-			EntryConfig targetIsoconf = EntryConfig.newConfig(entryName).withTargetIsoforms().withoutAdditionalReferences().withoutProperties(); //.with("variant")
+			EntryConfig targetIsoconf = EntryConfig.newConfig(entryName).withTargetIsoforms().with("variant").withoutAdditionalReferences().withoutProperties(); // .with("variant")
 			Entry entry = entryBuilderService.build(targetIsoconf);
-			entries.add(filterVariantAnnotsWithPepxResults(peptide, modeIsoleucine, entry, entriesMap.get(entryName)));
+			Entry resultEntry = filterVariantAnnotsWithPepxResults(peptide, modeIsoleucine, entry.getUniqueName(), entry.getAnnotations(), entriesMap.get(entryName));
+			if((resultEntry.getAnnotations() != null) && (!resultEntry.getAnnotations().isEmpty())){
+				entries.add(resultEntry);
+			}
 		}
 
 		return entries;
@@ -107,57 +110,45 @@ public class PepXServiceImpl implements PepXService {
 		return entriesMap;
 	}
 
-	// Response is something like [O60678,1,297] or [O60678,1]
-	// In the first case it means isoform 1
-	private Entry filterVariantAnnotsWithPepxResults(String peptide, boolean modeIsoleucine, Entry entry, List<Pair<Integer, Integer>> isoformNamesAndOptionalPosition) {
+	private Entry filterVariantAnnotsWithPepxResults(String peptide, boolean modeIsoleucine, String uniqueName, List<Annotation> annotations, List<Pair<Integer, Integer>> isoformNamesAndOptionalPosition) {
 
+		Entry resultEntry = new Entry(uniqueName);
+		
 		List<Annotation> finalAnnotations = new ArrayList<>();
 		for (Pair<Integer, Integer> isos : isoformNamesAndOptionalPosition) {
-			String isoformName = entry.getUniqueName() + "-" + isos.getFirst();
-			
-			/*if(isos.getSecond() != null){
+			String isoformName = uniqueName + "-" + isos.getFirst();
+
+			Annotation annotation = new Annotation();
+			annotation.setCategoryOnly("pepx-virtual-annotation");
+			annotation.setCvTermName(peptide);
+			annotation.setDescription("This virtual annotation describes the peptide " + peptide + " found in " + isoformName);
+
+			IsoformSpecificity is = new IsoformSpecificity(null, isoformName);
+			if (isos.getSecond() != null) {// It means there is a variant!!!
+
 				int startPeptidePosition = isos.getSecond();
-				int endPeptidePosition = startPeptidePosition + peptide.length(); 
-				LOGGER.warn("Variant annotations count " + entry.getAnnotations());
-				for (Annotation variantAnnotation : entry.getAnnotations()) {
-					if(variantAnnotation.isSpecificForIsoform(isoName)){
+				int endPeptidePosition = startPeptidePosition + peptide.length();
 
-						int variantPosition = variantAnnotation.getStartPositionForIsoform(isoName); // start and end should be the same
-						if((variantPosition >= startPeptidePosition) && (variantPosition <= endPeptidePosition)){ //in between
+				List<Annotation> variantAnnotations = AnnotationUtils.filterAnnotationsBetweenPositions(startPeptidePosition, endPeptidePosition, annotations, isoformName);
 
-							//check that all isoforms are present
-							//variantAnnotation.getTargetingIsoformsMap();
-							
-							finalAnnotations.add(variantAnnotation);
-							break;
-						}
-
-					}else {
-						LOGGER.warn("PepX returned a variant that we do not consider a cosmic variant for isoform " + isoName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
-					}
+				if ((variantAnnotations == null) || variantAnnotations.isEmpty()) {
+					LOGGER.warn("PepX returned a variant that we do not consider a cosmic variant for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
+					continue; //WILL NOT ADD THIS ANNOTATION
+				} else if (variantAnnotations.size() > 1) {
+					LOGGER.warn("PepX returned more than 1 variant for isoform " + isoformName + " at position " + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
+					continue;  //WILL NOT ADD THIS ANNOTATION
 				}
-			}else {*/
-				
-				Annotation annotation = new Annotation();
-				annotation.setCategoryOnly("pepx-virtual-annotation");
-				annotation.setCvTermName(peptide);
-				annotation.setDescription("This virtual annotation describes the peptide " + peptide + " found in " + isoformName);
-				
-				IsoformSpecificity is = new IsoformSpecificity(null, isoformName);
-				if(isos.getSecond() != null){
-					is.setPositions(Arrays.asList(new Pair<Integer, Integer>(isos.getSecond(), isos.getSecond())));
-				}
-				List<IsoformSpecificity> targetingIsoforms = new ArrayList<>();
-				targetingIsoforms.add(is); // what's the isoform name ???
-				
-				annotation.setTargetIsoformsMap(targetingIsoforms);
-				finalAnnotations.add(annotation);
-				//TODO create a virtual annotation
-			//}
+
+				is.setPositions(Arrays.asList(new Pair<Integer, Integer>(isos.getSecond(), isos.getSecond())));
+				annotation.setVariant(variantAnnotations.get(0).getVariant());
+			}
+
+			annotation.setTargetIsoformsMap(Arrays.asList(is));
+			finalAnnotations.add(annotation);
 		}
-		
-		entry.setAnnotations(finalAnnotations);
-		return entry;
+
+		resultEntry.setAnnotations(finalAnnotations);
+		return resultEntry;
 
 	}
 
