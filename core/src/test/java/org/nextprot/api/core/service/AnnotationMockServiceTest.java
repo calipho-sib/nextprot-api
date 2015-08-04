@@ -1,13 +1,7 @@
 package org.nextprot.api.core.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.dbunit.dataset.DataSetException;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,13 +11,20 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.AnnotationDAO;
+import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.DbXrefDao;
+import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.impl.AnnotationServiceImpl;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import java.io.FileNotFoundException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 /**
  * @author dteixeira
@@ -53,6 +54,12 @@ public class AnnotationMockServiceTest {
 
 	@Mock 
 	private InteractionService interactionService;
+
+	@Mock
+	private IsoformDAO isoformDAO;
+
+	@Mock
+	private BioPhyChemPropsDao bioPhyChemPropsDao;
 
 	@Before
 	public void init() throws FileNotFoundException, DataSetException {

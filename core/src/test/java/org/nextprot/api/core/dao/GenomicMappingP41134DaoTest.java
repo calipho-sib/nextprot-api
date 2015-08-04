@@ -1,11 +1,7 @@
 package org.nextprot.api.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Arrays;
-import java.util.List;
-
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Exon;
 import org.nextprot.api.core.domain.GenomicMapping;
@@ -13,8 +9,11 @@ import org.nextprot.api.core.domain.TranscriptMapping;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Class used for testing Genomic Mapping DAO
@@ -39,7 +38,7 @@ public class GenomicMappingP41134DaoTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldGetTranscriptMapping() throws Exception {
 		List<TranscriptMapping> tms = geneDAO.findTranscriptsByIsoformNames(Arrays.asList("NX_P41134-1", "NX_P41134-2"));
-		assertEquals(tms.size(), 2);
+		assertEquals(2, tms.size());
 	}
 
 	@Test

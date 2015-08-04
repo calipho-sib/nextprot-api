@@ -2,7 +2,7 @@
 	<gene  accession='$genomicMapping.accession' database='$genomicMapping.database'>
 	<isoform-mapping-list>
 	#foreach($isoformMapping in $genomicMapping.isoformMappings)
-		<isoform-mapping accession="$isoformMapping.uniqueName" main-name="$isoformMapping.isoMainName">
+		<isoform-mapping accession="$isoformMapping.uniqueName" main-name="$isoformMapping.isoform.mainEntityName.value">
 		<transcript-mapping-list>
 		#foreach($transcriptMapping in $isoformMapping.transcriptMappings)
 			<transcript-mapping accession='$transcriptMapping.accession' database='$transcriptMapping.database'>
