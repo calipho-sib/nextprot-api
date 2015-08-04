@@ -190,7 +190,7 @@ public class EntryConfig {
 
 
 	public EntryConfig withoutAdditionalReferences() {
-		this.withoutAdditionalReferences = false;
+		this.withoutAdditionalReferences = true;
 		return this;
 	}
 	

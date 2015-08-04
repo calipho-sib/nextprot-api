@@ -1,11 +1,19 @@
 package org.nextprot.api.core.utils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-
-import java.util.*;
 
 
 public class AnnotationUtils {
@@ -41,8 +49,9 @@ public class AnnotationUtils {
 	 * @return a list of annotations
 	 */
 	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationApiModel annotationCategory, boolean withChildren) {
+		if(annotations == null) return null;
 		List<Annotation> annotationList = new ArrayList<Annotation>(); 
-		for(Annotation a : annotations){
+			for(Annotation a : annotations){
 			if(a.getAPICategory() != null) {
 				if (a.getAPICategory().equals(annotationCategory)) {
 					annotationList.add(a);
@@ -69,8 +78,26 @@ public class AnnotationUtils {
 		return ecIds;		
 	}
 	
+
+	
+	public static List<Annotation> filterAnnotationsBetweenPositions(int start, int end, List<Annotation> annotations, String isoform) {
+		if(annotations == null) return null;
+		List<Annotation> finalAnnotations = new ArrayList<Annotation>();
+		for (Annotation annot : annotations) {
+			if (annot.isAnnotationPositionalForIsoform(isoform)) {
+				int isoStartPosition, isoEndPosition = -1;
+				isoStartPosition = annot.getStartPositionForIsoform(isoform);
+				isoStartPosition = annot.getEndPositionForIsoform(isoform);
+				if ((isoStartPosition >= start) && (isoEndPosition <= end)) {
+					finalAnnotations.add(annot);
+				}
+			}
+		}
+		return finalAnnotations;
+	}
 	
 	public static Set<Long> getXrefIdsForAnnotations(List<Annotation> annotations){
+		if(annotations == null) return null;
 		Set<Long> xrefIds = new HashSet<Long>(); 
 		for(Annotation a : annotations){
 			for(AnnotationEvidence e : a.getEvidences()){
@@ -119,6 +146,7 @@ public class AnnotationUtils {
 	 * in binary interaction annotations and which are not human proteins (xeno interactions)
 	 */
 	public static Set<Long> getXrefIdsForInteractionsInteractants(List<Annotation> annotations){
+		if(annotations == null) return null;
 		Set<Long> xrefIds = new HashSet<Long>(); 
 		for(Annotation a : annotations){
 			if (a.getAPICategory()==AnnotationApiModel.BINARY_INTERACTION) {

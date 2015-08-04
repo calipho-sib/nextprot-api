@@ -116,7 +116,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 		if(entryConfig.hasSubPart()){ //TODO should be added in annotation list
 			
 			if(entryConfig.hasSubPart()){
-				return EntryUtils.filterEntryBySubPart(entry, entryConfig.getSubpart());
+				return EntryUtils.filterEntryBySubPart(entry, entryConfig);
 			}else return entry;
 			
 		} else {
