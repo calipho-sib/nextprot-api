@@ -27,6 +27,11 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 
 	private List<Pair<Integer, Integer>> positions;
 
+	/**
+	 * 
+	 * @param isoformName should be Iso 1
+	 * @param isoformAc should be NX_Q5VYM1-1
+	 */
 	public IsoformSpecificity(String isoformName, String isoformAc) {
 		this.isoformMainName = isoformName;
 		this.isoformAc = isoformAc;

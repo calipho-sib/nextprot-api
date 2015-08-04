@@ -1,22 +1,20 @@
 package org.nextprot.api.core.service.impl;
 
-import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import org.apache.commons.lang.StringUtils;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.dao.AnnotationDAO;
+import org.nextprot.api.core.dao.BioPhyChemPropsDao;
+import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.PtmDao;
 import org.nextprot.api.core.domain.Feature;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.InteractionService;
@@ -25,12 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.security.InvalidParameterException;
+import java.util.*;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
@@ -38,8 +32,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private AnnotationDAO annotationDAO;
 	@Autowired private PtmDao ptmDao;
 	@Autowired private DbXrefService xrefService;
-	@Autowired private InteractionService interactionService;  
-	
+	@Autowired private InteractionService interactionService;
+	@Autowired private BioPhyChemPropsDao bioPhyChemPropsDao;
+	@Autowired private IsoformDAO isoformDAO;
 
 	@Override
 	@Cacheable("annotations")
@@ -84,8 +79,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 			for (Annotation annotation : annotations) {
 				annotation.setProperties(new ArrayList<>(propertiesByAnnotationId.get(annotation.getAnnotationId())));
 			}
-	
-	
 			// Removes annotations which do not map to any isoform, 
 			// this may happen in case where the annotation has been seen in a peptide and the annotation was propagated to the master, 
 			// but we were not able to map to any isoform
@@ -106,13 +99,58 @@ public class AnnotationServiceImpl implements AnnotationService {
 		
 		annotations.addAll(this.xrefService.findDbXrefsAsAnnotationsByEntry(entryName));
 		annotations.addAll(this.interactionService.findInteractionsAsAnnotationsByEntry(entryName));
+		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 	}
-	
-	
-	
+
+	private List<Annotation> bioPhyChemPropsToAnnotationList(String entryName, List<AnnotationProperty> props) {
+
+		List<Annotation> annotations = new ArrayList<>(props.size());
+
+		List<Isoform> isoforms = isoformDAO.findIsoformsByEntryName(entryName);
+
+		for(AnnotationProperty property :  props){
+
+			Annotation annotation = new Annotation();
+
+			AnnotationApiModel model = AnnotationApiModel.getByDbAnnotationTypeName(property.getName());
+			String description = property.getValue();
+
+			annotation.setAnnotationId(40_000_000_000L + property.getAnnotationId());
+			annotation.setCategory(model.getDbAnnotationTypeName());
+			annotation.setDescription(description);
+			annotation.setEvidences(new ArrayList<AnnotationEvidence>());
+
+			annotation.setQualityQualifier("GOLD");
+			annotation.setUniqueName(entryName + "_" + model.getApiTypeName());
+			annotation.setTargetingIsoforms(newAnnotationIsoformSpecificityList(annotation.getAnnotationId(), isoforms));
+
+			annotations.add(annotation);
+		}
+
+		return annotations;
+	}
+
+	private List<AnnotationIsoformSpecificity> newAnnotationIsoformSpecificityList(long annotationId, List<Isoform> isoforms) {
+
+		List<AnnotationIsoformSpecificity> specs = new ArrayList<>(isoforms.size());
+
+		for (Isoform isoform : isoforms) {
+
+			AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
+
+			spec.setAnnotationId(annotationId);
+			spec.setIsoformName(isoform.getUniqueName());
+			spec.setSpecificity("UNKNOWN");
+
+			specs.add(spec);
+		}
+
+		return specs;
+	}
+
 	@Override
 	public List<Feature> findPtmsByMaster(String uniqueName) {
 		return this.ptmDao.findPtmsByEntry(uniqueName);
