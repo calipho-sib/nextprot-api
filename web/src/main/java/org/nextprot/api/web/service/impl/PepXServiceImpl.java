@@ -21,6 +21,7 @@ import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.AnnotationUtils;
@@ -130,17 +131,28 @@ public class PepXServiceImpl implements PepXService {
 				int endPeptidePosition = startPeptidePosition + peptide.length();
 
 				List<Annotation> variantAnnotations = AnnotationUtils.filterAnnotationsBetweenPositions(startPeptidePosition, endPeptidePosition, annotations, isoformName);
-
+				
 				if ((variantAnnotations == null) || variantAnnotations.isEmpty()) {
+				
 					LOGGER.warn("PepX returned a variant that we do not consider a cosmic variant for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
 					continue; //WILL NOT ADD THIS ANNOTATION
+				
 				} else if (variantAnnotations.size() > 1) {
 					LOGGER.warn("PepX returned more than 1 variant for isoform " + isoformName + " at position " + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
-					continue;  //WILL NOT ADD THIS ANNOTATION
+
+					//continue;  //WILL NOT ADD THIS ANNOTATION
+
+				}else { //one variant on that position
+
+					int startPos = variantAnnotations.get(0).getStartPositionForIsoform(isoformName);
+					int endPos = variantAnnotations.get(0).getEndPositionForIsoform(isoformName);
+					
+					is.setPositions(Arrays.asList(new Pair<Integer, Integer>(startPos, endPos)));
+					AnnotationVariant var = variantAnnotations.get(0).getVariant();
+					annotation.setVariant(var);
+
 				}
 
-				is.setPositions(Arrays.asList(new Pair<Integer, Integer>(isos.getSecond(), isos.getSecond())));
-				annotation.setVariant(variantAnnotations.get(0).getVariant());
 			}
 
 			annotation.setTargetIsoformsMap(Arrays.asList(is));

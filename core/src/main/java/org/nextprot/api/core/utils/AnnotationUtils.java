@@ -87,7 +87,7 @@ public class AnnotationUtils {
 			if (annot.isAnnotationPositionalForIsoform(isoform)) {
 				int isoStartPosition, isoEndPosition = -1;
 				isoStartPosition = annot.getStartPositionForIsoform(isoform);
-				isoStartPosition = annot.getEndPositionForIsoform(isoform);
+				isoEndPosition = annot.getEndPositionForIsoform(isoform);
 				if ((isoStartPosition >= start) && (isoEndPosition <= end)) {
 					finalAnnotations.add(annot);
 				}
