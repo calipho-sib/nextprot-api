@@ -106,19 +106,14 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setEnzymes(terminologyService.findEnzymeByMaster(entryName));
 			}
 			
-			if((!entryConfig.hasNoAdditionalReferences()) && (entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart())){ //TODO should be added in annotation list
-				setEntryAdditionalInformation(entry); //adds isoforms, publications, xrefs and experimental contexts
+			if((entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart())){ //TODO should be added in annotation list
+				setEntryAdditionalInformation(entry, entryConfig); //adds isoforms, publications, xrefs and experimental contexts
 			} 
 
 		}
-		
 		//CPU Intensive
 		if(entryConfig.hasSubPart()){ //TODO should be added in annotation list
-			
-			if(entryConfig.hasSubPart()){
 				return EntryUtils.filterEntryBySubPart(entry, entryConfig);
-			}else return entry;
-			
 		} else {
 			return entry;
 		}
@@ -135,21 +130,27 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 		}
 	}
 
-	private void setEntryAdditionalInformation(Entry entry){
+	private void setEntryAdditionalInformation(Entry entry, EntryConfig config){
+
 		if(entry.getAnnotations() == null || entry.getAnnotations().isEmpty()){
 			entry.setAnnotations(this.annotationService.findAnnotations(entry.getUniqueName()));
 		}
-		if(entry.getIsoforms() == null || entry.getIsoforms().isEmpty()){
-			entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entry.getUniqueName()));
-		}
-		if(entry.getPublications() == null || entry.getPublications().isEmpty()){
-			entry.setPublications(this.publicationService.findPublicationsByMasterUniqueName(entry.getUniqueName()));
-		}
-		if(entry.getXrefs() == null || entry.getXrefs().isEmpty()){
-			entry.setXrefs(this.xrefService.findDbXrefsByMaster(entry.getUniqueName()));
-		}
-		if(entry.getExperimentalContexts() == null || entry.getExperimentalContexts().isEmpty()){
-			entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entry.getUniqueName()));
+		
+		if(!config.hasNoAdditionalReferences()){
+
+			if(entry.getIsoforms() == null || entry.getIsoforms().isEmpty()){
+				entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entry.getUniqueName()));
+			}
+			if(entry.getPublications() == null || entry.getPublications().isEmpty()){
+				entry.setPublications(this.publicationService.findPublicationsByMasterUniqueName(entry.getUniqueName()));
+			}
+			if(entry.getXrefs() == null || entry.getXrefs().isEmpty()){
+				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entry.getUniqueName()));
+			}
+			if(entry.getExperimentalContexts() == null || entry.getExperimentalContexts().isEmpty()){
+				entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entry.getUniqueName()));
+			}
+
 		}
 	}
 
