@@ -131,29 +131,39 @@ public class PepXServiceImpl implements PepXService {
 				int endPeptidePosition = startPeptidePosition + peptide.length();
 
 				List<Annotation> variantAnnotations = AnnotationUtils.filterAnnotationsBetweenPositions(startPeptidePosition, endPeptidePosition, annotations, isoformName);
+				List<Annotation> validAnnotations = filterValidVariantAnnotations(peptide, modeIsoleucine, variantAnnotations, isoformName);
 				
-				if ((variantAnnotations == null) || variantAnnotations.isEmpty()) {
+				if ((validAnnotations == null) || validAnnotations.isEmpty()) {
 				
 					LOGGER.warn("PepX returned a variant that we do not consider a cosmic variant for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
 					continue; //WILL NOT ADD THIS ANNOTATION
 				
-				} else if (variantAnnotations.size() > 1) {
-					LOGGER.warn("PepX returned more than 1 variant for isoform " + isoformName + " at position " + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
+				} else if (validAnnotations.size() > 1) {
+					LOGGER.warn("There is more than 1 valid variant (" + validAnnotations.size() + ") for isoform (returning the 1st) " + isoformName + " between position " + startPeptidePosition + " and " + endPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
 
-					//continue;  //WILL NOT ADD THIS ANNOTATION
-
-				}else { //one variant on that position
-
-					int startPos = variantAnnotations.get(0).getStartPositionForIsoform(isoformName);
-					int endPos = variantAnnotations.get(0).getEndPositionForIsoform(isoformName);
+					//Takes only the first valid
+					int startPos = validAnnotations.get(0).getStartPositionForIsoform(isoformName);
+					int endPos = validAnnotations.get(0).getEndPositionForIsoform(isoformName);
 					
 					is.setPositions(Arrays.asList(new Pair<Integer, Integer>(startPos, endPos)));
-					AnnotationVariant var = variantAnnotations.get(0).getVariant();
+					AnnotationVariant var = validAnnotations.get(0).getVariant();
+					annotation.setVariant(var);
+
+					
+				}else { //one variant on that position
+
+					int startPos = validAnnotations.get(0).getStartPositionForIsoform(isoformName);
+					int endPos = validAnnotations.get(0).getEndPositionForIsoform(isoformName);
+					
+					is.setPositions(Arrays.asList(new Pair<Integer, Integer>(startPos, endPos)));
+					AnnotationVariant var = validAnnotations.get(0).getVariant();
 					annotation.setVariant(var);
 
 				}
 
 			}
+			
+			//Check that the peptide is containes!!!
 
 			annotation.setTargetIsoformsMap(Arrays.asList(is));
 			finalAnnotations.add(annotation);
@@ -162,6 +172,24 @@ public class PepXServiceImpl implements PepXService {
 		resultEntry.setAnnotations(finalAnnotations);
 		return resultEntry;
 
+	}
+
+	//TODO to be tested
+	private List<Annotation> filterValidVariantAnnotations(String peptide, boolean modeIsoLeucine, List<Annotation> variantAnnotations, String isoform) {
+		List<Annotation> resultAnnotations = new ArrayList<>();
+		String sequenceToMatch = modeIsoLeucine? (peptide.toUpperCase().replaceAll("I", "L")) : peptide.toUpperCase();
+		
+		for(Annotation annotation : variantAnnotations){
+			if(annotation.isAnnotationPositionalForIsoform(isoform)){ //Check that the isoform is valid
+				String variant = annotation.getVariant().getVariant().toUpperCase();
+				String variantToMatch = modeIsoLeucine ? variant.replaceAll("I", "L") : variant;
+				if(sequenceToMatch.contains(variantToMatch)){ 		//Check if the variant is present
+					resultAnnotations.add(annotation);
+				}
+			}
+
+		}
+		return resultAnnotations;
 	}
 
 }
