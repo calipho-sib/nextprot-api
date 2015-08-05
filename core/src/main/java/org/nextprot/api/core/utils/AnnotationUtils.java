@@ -9,10 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 
 
@@ -87,7 +85,7 @@ public class AnnotationUtils {
 			if (annot.isAnnotationPositionalForIsoform(isoform)) {
 				int isoStartPosition, isoEndPosition = -1;
 				isoStartPosition = annot.getStartPositionForIsoform(isoform);
-				isoStartPosition = annot.getEndPositionForIsoform(isoform);
+				isoEndPosition = annot.getEndPositionForIsoform(isoform);
 				if ((isoStartPosition >= start) && (isoEndPosition <= end)) {
 					finalAnnotations.add(annot);
 				}

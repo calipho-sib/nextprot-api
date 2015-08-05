@@ -1,16 +1,21 @@
 package org.nextprot.api.core.utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 
 public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
@@ -228,6 +233,44 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		// <property property-name="differing sequence" value="2222" value-type="resource-internal-ref" accession="AC-0002"/>
 		// <property property-name="interactant" value="16867031" value-type="resource-internal-ref" accession="Q77M19"/>
 		
+    }
+    
+    @Test
+    public void shouldReturnAnnotationIfContainedInTheRange()  {
+
+    	String isoName = "iso-1";
+    	Annotation a1 = mock(Annotation.class);
+    	when(a1.isAnnotationPositionalForIsoform(isoName)).thenReturn(true);
+    	when(a1.getStartPositionForIsoform(isoName)).thenReturn(10);
+    	when(a1.getEndPositionForIsoform(isoName)).thenReturn(12);
+    	
+    	List<Annotation> filteredAnnots = AnnotationUtils.filterAnnotationsBetweenPositions(10, 20, Arrays.asList(a1), isoName);
+    	assertEquals(filteredAnnots.size(), 1);
+    }
+
+
+    @Test
+    public void shouldNotReturnAnnotationIfOverlapsALittleBit()  { //This is used on the pepX logic, if you want to change the logic be careful (add a flag or change the method name for example), but keep the same logic for pepX
+
+    	String isoName = "iso-1";
+    	Annotation a1 = mock(Annotation.class);
+    	when(a1.isAnnotationPositionalForIsoform(isoName)).thenReturn(true);
+    	when(a1.getStartPositionForIsoform(isoName)).thenReturn(5);
+    	when(a1.getEndPositionForIsoform(isoName)).thenReturn(10);
+    	
+    	assertTrue(AnnotationUtils.filterAnnotationsBetweenPositions(10, 20, Arrays.asList(a1), isoName).isEmpty());
+    }
+
+    @Test
+    public void shouldNotReturnAnnotationIfOusideTheRange()  { 
+    	
+    	String isoName = "iso-1";
+    	Annotation a1 = mock(Annotation.class);
+    	when(a1.isAnnotationPositionalForIsoform(isoName)).thenReturn(true);
+    	when(a1.getStartPositionForIsoform(isoName)).thenReturn(5);
+    	when(a1.getEndPositionForIsoform(isoName)).thenReturn(9);
+    	
+    	assertTrue(AnnotationUtils.filterAnnotationsBetweenPositions(10, 20, Arrays.asList(a1), isoName).isEmpty());
     }
 
     

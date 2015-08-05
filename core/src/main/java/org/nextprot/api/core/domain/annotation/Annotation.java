@@ -253,8 +253,13 @@ public class Annotation implements Serializable, IsoformSpecific {
 	
 	
 	public int getStartPositionForIsoform(String isoformName) {
-		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
-		return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
+		if(targetingIsoformsMap != null){
+			Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
+			return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
+		}else {
+			Preconditions.checkArgument(targetIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
+			return this.targetIsoformsMap.get(isoformName).getPositions().get(0).getFirst();
+		}
 	}
 	
 	public String getSpecificityForIsoform(String isoformName) {
@@ -262,8 +267,13 @@ public class Annotation implements Serializable, IsoformSpecific {
 	}
 	
 	public int getEndPositionForIsoform(String isoformName) {
+		if(targetingIsoformsMap != null){
 		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
-		return this.targetingIsoformsMap.get(isoformName).getLastPosition();
+			return this.targetingIsoformsMap.get(isoformName).getLastPosition();
+		}else {
+			Preconditions.checkArgument(targetIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
+			return this.targetIsoformsMap.get(isoformName).getPositions().get(0).getSecond();
+		}
 	}
 	
 	/**

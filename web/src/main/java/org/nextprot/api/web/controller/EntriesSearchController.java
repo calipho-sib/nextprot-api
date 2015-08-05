@@ -30,7 +30,7 @@ public class EntriesSearchController {
 	@RequestMapping(value = "peptide", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ApiMethod(path = "peptide", verb = ApiVerb.GET, description = "Gets entries that match a peptide")
 	public List<Entry> pepx(
-			@ApiQueryParam(name = "peptide", description = "The peptide", allowedvalues = { "IRLNK" }) @RequestParam(value = "peptide", required = true) String peptide,
+			@ApiQueryParam(name = "peptide", description = "The peptide", allowedvalues = { "GANAP" }) @RequestParam(value = "peptide", required = true) String peptide,
 			@ApiQueryParam(name = "modeIL", description = "The mode isoleucine / leucine replaces the isoleucine by a leucine", allowedvalues = { "true" }) @RequestParam(value = "modeIL", required = false) Boolean modeIL) {
 
 		NPreconditions.checkTrue(peptide.length() >= 5, "The minimum lenght of the peptide must be 5");
