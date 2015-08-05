@@ -9,10 +9,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 
 
