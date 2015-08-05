@@ -143,11 +143,17 @@ public class PepXServiceImpl implements PepXService {
 				int startPeptidePosition = isoNameAndOptionalPosition.getSecond();
 				int endPeptidePosition = startPeptidePosition + peptide.length();
 				List<Annotation> variantAnnotations = AnnotationUtils.filterAnnotationsBetweenPositions(startPeptidePosition, endPeptidePosition, varAnnotations, isoformName);
-				List<Annotation> validAnnotations = filterValidVariantAnnotations(peptide, modeIsoleucine, variantAnnotations, isoformName);
+
+				Isoform iso = IsoformUtils.getIsoformByIsoName(isoforms, isoformName);
+				if(iso == null){
+					throw new NextProtException("The variant at " + startPeptidePosition +  " is not specific for this isoform " + isoformName);
+				}
+				
+				List<Annotation> validAnnotations = filterValidVariantAnnotations(peptide, modeIsoleucine, variantAnnotations, isoformName, iso.getSequence());
 
 				if ((validAnnotations == null) || validAnnotations.isEmpty()) {
 					
-					throw new NextProtException("PepX returned a variant that we do not consider a cosmic variant for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
+					throw new NextProtException("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
 				
 				} else if (validAnnotations.size() > 1) {
 
@@ -190,13 +196,22 @@ public class PepXServiceImpl implements PepXService {
 	}
 
 	//This method is static friendly so that it can be tested ////////////////////////////////
-	static List<Annotation> filterValidVariantAnnotations(String peptide, boolean modeIsoLeucine, List<Annotation> variantAnnotations, String isoform) {
+	static List<Annotation> filterValidVariantAnnotations(String peptide, boolean modeIsoLeucine, List<Annotation> variantAnnotations, String isoformName, String originalSequence) {
 		List<Annotation> resultAnnotations = new ArrayList<>();
-		for(Annotation annotation : variantAnnotations){
-			if(annotation.isAnnotationPositionalForIsoform(isoform)){ //Check that the isoform is valid
+		for(Annotation varAnnot : variantAnnotations){
+			if(varAnnot.isAnnotationPositionalForIsoform(isoformName)){ //Check that the isoform is valid
 				//In this case the peptide is the sequence and the variant is the peptide
-				if(PeptideUtils.isPeptideContainedInTheSequence(annotation.getVariant().getVariant(), peptide, modeIsoLeucine)){//Check if the variant is present
-					resultAnnotations.add(annotation);
+				if(PeptideUtils.isPeptideContainedInTheSequence(varAnnot.getVariant().getVariant(), peptide, modeIsoLeucine)){//Check if the variant is present in the peptide
+					StringBuilder sequenceWithVariant = new StringBuilder(originalSequence);
+					int variantPosition = varAnnot.getStartPositionForIsoform(isoformName) - 1;
+					char originalAA = originalSequence.charAt(variantPosition);
+					if(originalAA != varAnnot.getVariant().getOriginal().charAt(0)){
+						throw new NextProtException("The amino acid " + originalAA + " is not present on the sequence of the isoform (position) " + "(" + isoformName + ")" + variantPosition );
+					}
+					sequenceWithVariant.setCharAt(variantPosition, varAnnot.getVariant().getVariant().charAt(0));
+					if(PeptideUtils.isPeptideContainedInTheSequence(peptide, sequenceWithVariant.toString(), modeIsoLeucine)){//Check if the peptide is present with the sequence with the variant
+						resultAnnotations.add(varAnnot);
+					}
 				}
 			}
 

@@ -5,7 +5,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -54,6 +53,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			String entryName = "NX_FAKE_ENTRY";
 			
 			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>("Iso-1", null)); //not positional since there is no position
+			@SuppressWarnings("unchecked")
 			List<Annotation> annotations = mock(List.class);
 			Isoform isoform = mock(Isoform.class);
 			when(isoform.getUniqueName()).thenReturn("Iso-1");
@@ -86,18 +86,10 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			when(isoform.getSequence()).thenReturn("MDADPYNPVLPTNRASAYFRLKKFAVAESDCNLAVALNRSYTKAYSRRGAARFALQKLEEAKKDYERVLELEPNNFEATNELRKISQALASKENSYPKEADIVIKSTEGERKQIEAQQNKQQAISEKDRGNGFFKEGKYERAIECYTRGIAADGANALLPANRAMAYLKIQKYEEAEKDCTQAILLDGSYSKAFARRGTARTFLGKLNEAKQDFETVLLLEPGNKQAVTELSKIKKELIEKGHWDDVFLDSTQRQNVVKPIDNPPHPGSTKPLKKVIIEETGNLIQTIDVPDSTTAAAPENNPINLANVIAATGTTSKKNSSQDDLFPTSDTPRAKVLKIEEVSDTSSLQPQASLKQDVCQSYSEKMPIEIEQKPAQFATTVLPPIPANSFQLESDFRQLKSSPDMLYQYLKQIEPSLYPKLFQKNLDPDVFNQIVKILHDFYIEKEKPLLIFEILQRLSELKRFDMAVMFMSETEKKIARALFNHIDKSGLKDSSVEELKKRYGG"); 
 			
 			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>(isoName, 154)); //Position of the begin of peptide
-			Annotation variantAnnotation = mock(Annotation.class, Mockito.RETURNS_DEEP_STUBS);
-			when(variantAnnotation.getStartPositionForIsoform(isoName)).thenReturn(158);
-			when(variantAnnotation.getEndPositionForIsoform(isoName)).thenReturn(158);
-			when(variantAnnotation.isAnnotationPositionalForIsoform(isoName)).thenReturn(true);
-
-			when(variantAnnotation.getVariant().getOriginal()).thenReturn("L");
-			when(variantAnnotation.getVariant().getVariant()).thenReturn("P");
-
-			List<Annotation> annotations = Arrays.asList(variantAnnotation);
+			List<Annotation> annots = Arrays.asList(getMockedAnnotation("L", "P", 158, isoName, true));
 			List<Isoform> isoforms = Arrays.asList(isoform);
 
-			List<Annotation> pepxAnnots = PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, annotations, isoforms); //empty or null annotations
+			List<Annotation> pepxAnnots = PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, annots, isoforms); //empty or null annotations
 			assertTrue(pepxAnnots.size() == 1);
 			assertTrue(pepxAnnots.get(0).getVariant().getOriginal().equals("L"));
 			assertTrue(pepxAnnots.get(0).getVariant().getVariant().equals("P"));
@@ -108,34 +100,102 @@ public class PepXServiceTest extends WebUnitBaseTest {
 	
 	
 	@Test(expected=NextProtException.class)
-	public void shouldThrowAnExceptionWhenThereIsAPositionButPeptideWithVariantNotContainedInTheIsoform() throws Exception {
-
+	public void shouldGiveAnExceptionIfTheVariantIsNotConaintedInThePeptide() throws Exception {
 		try {
+
+			//Taking example NX_Q9H6T3
 			String peptide = "GANAP";
 			boolean modeIsoleucine = true;
-			String entryName = "NX_FAKE_ENTRY";
+			String entryName = "NX_Q9H6T3";
+			String isoName = "NX_Q9H6T3-3";
+
+			Isoform isoform = mock(Isoform.class);
+			when(isoform.getUniqueName()).thenReturn(isoName);
+			//https://cdn.rawgit.com/calipho-sib/sequence-viewer/master/examples/simple.html (check that page to format the sequence)
+			//GANAL is present instead of GANAP
+			when(isoform.getSequence()).thenReturn("MDADPYNPVLPTNRASAYFRLKKFAVAESDCNLAVALNRSYTKAYSRRGAARFALQKLEEAKKDYERVLELEPNNFEATNELRKISQALASKENSYPKEADIVIKSTEGERKQIEAQQNKQQAISEKDRGNGFFKEGKYERAIECYTRGIAADGANALLPANRAMAYLKIQKYEEAEKDCTQAILLDGSYSKAFARRGTARTFLGKLNEAKQDFETVLLLEPGNKQAVTELSKIKKELIEKGHWDDVFLDSTQRQNVVKPIDNPPHPGSTKPLKKVIIEETGNLIQTIDVPDSTTAAAPENNPINLANVIAATGTTSKKNSSQDDLFPTSDTPRAKVLKIEEVSDTSSLQPQASLKQDVCQSYSEKMPIEIEQKPAQFATTVLPPIPANSFQLESDFRQLKSSPDMLYQYLKQIEPSLYPKLFQKNLDPDVFNQIVKILHDFYIEKEKPLLIFEILQRLSELKRFDMAVMFMSETEKKIARALFNHIDKSGLKDSSVEELKKRYGG"); 
 			
-			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>("Iso-1", 30));
-			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, new ArrayList<Annotation>(), null); //empty or null annotations
+			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>(isoName, 154)); //Position of the begin of peptide
+			List<Annotation> annots = Arrays.asList(getMockedAnnotation("L", "Z", 158, isoName, true));
+			List<Isoform> isoforms = Arrays.asList(isoform);
+
+			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, annots, isoforms); //empty or null annotations
+		}catch(NextProtException e){
+			if(e.getMessage().contains("No valid variants found for isoform ")){
+				throw e; //success tests
+			}else fail();
+		}
+
+	}
+
+	
+	@Test(expected=NextProtException.class)
+	public void shouldGiveAnExceptionIfTheOriginalIsNotPresentOnTheSequence() throws Exception {
+		try {
+
+			//Taking example NX_Q9H6T3
+			String peptide = "GANAP";
+			boolean modeIsoleucine = true;
+			String entryName = "NX_Q9H6T3";
+			String isoName = "NX_Q9H6T3-3";
+
+			Isoform isoform = mock(Isoform.class);
+			when(isoform.getUniqueName()).thenReturn(isoName);
+			//https://cdn.rawgit.com/calipho-sib/sequence-viewer/master/examples/simple.html (check that page to format the sequence)
+			//GANAL is present instead of GANAP
+			when(isoform.getSequence()).thenReturn("MDADPYNPVLPTNRASAYFRLKKFAVAESDCNLAVALNRSYTKAYSRRGAARFALQKLEEAKKDYERVLELEPNNFEATNELRKISQALASKENSYPKEADIVIKSTEGERKQIEAQQNKQQAISEKDRGNGFFKEGKYERAIECYTRGIAADGANALLPANRAMAYLKIQKYEEAEKDCTQAILLDGSYSKAFARRGTARTFLGKLNEAKQDFETVLLLEPGNKQAVTELSKIKKELIEKGHWDDVFLDSTQRQNVVKPIDNPPHPGSTKPLKKVIIEETGNLIQTIDVPDSTTAAAPENNPINLANVIAATGTTSKKNSSQDDLFPTSDTPRAKVLKIEEVSDTSSLQPQASLKQDVCQSYSEKMPIEIEQKPAQFATTVLPPIPANSFQLESDFRQLKSSPDMLYQYLKQIEPSLYPKLFQKNLDPDVFNQIVKILHDFYIEKEKPLLIFEILQRLSELKRFDMAVMFMSETEKKIARALFNHIDKSGLKDSSVEELKKRYGG"); 
+			
+			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>(isoName, 154)); //Position of the begin of peptide
+			//Original is not contained in the sequence, should be a L L->P (GANAL)
+			List<Annotation> annots = Arrays.asList(getMockedAnnotation("O", "P", 158, isoName, true));
+			List<Isoform> isoforms = Arrays.asList(isoform);
+
+			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, annots, isoforms); //empty or null annotations
+		}catch(NextProtException e){
+			if(e.getMessage().contains("The amino acid")){
+				throw e; //success tests
+			}else fail();
+		}
+	
+
+	}
+
+	
+	@Test(expected=NextProtException.class)
+	public void shouldThrowAnExceptionWhenPepXGivesAVariantNotSpecificToTheIsoform() throws Exception {
+
+		try {
+
+			//Taking example NX_Q9H6T3
+			String peptide = "GANAP";
+			boolean modeIsoleucine = true;
+			String entryName = "NX_Q9H6T3";
+			String isoName = "NX_Q9H6T3-3";
+
+			Isoform iso1 = mock(Isoform.class);
+			when(iso1.getUniqueName()).thenReturn("another-iso-name");
+			when(iso1.getSequence()).thenReturn("MDADPYNPVLPTNRASAYFRLKKFAVAESDCNLAVALNRSYTKAYSRRGAARFALQKLEEAKKDYERVLELEPNNFEATNELRKISQALASKENSYPKEADIVIKSTEGERKQIEAQQNKQQAISEKDRGNGFFKEGKYERAIECYTRGIAADGANALLPANRAMAYLKIQKYEEAEKDCTQAILLDGSYSKAFARRGTARTFLGKLNEAKQDFETVLLLEPGNKQAVTELSKIKKELIEKGHWDDVFLDSTQRQNVVKPIDNPPHPGSTKPLKKVIIEETGNLIQTIDVPDSTTAAAPENNPINLANVIAATGTTSKKNSSQDDLFPTSDTPRAKVLKIEEVSDTSSLQPQASLKQDVCQSYSEKMPIEIEQKPAQFATTVLPPIPANSFQLESDFRQLKSSPDMLYQYLKQIEPSLYPKLFQKNLDPDVFNQIVKILHDFYIEKEKPLLIFEILQRLSELKRFDMAVMFMSETEKKIARALFNHIDKSGLKDSSVEELKKRYGG"); 
+			
+			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>(isoName, 154)); //Position of the begin of peptide
+			List<Annotation> annots = Arrays.asList(getMockedAnnotation("L", "P", 158, isoName, true));
+			List<Isoform> isoforms = Arrays.asList(iso1);
+
+			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, annots, isoforms); //empty or null annotations
+
 
 		}catch(NextProtException e){
-			if(e.getMessage().contains("PepX returned a variant that we do not consider a cosmic variant for isoform")){
+			if(e.getMessage().contains("is not specific for this isoform")){
 				throw e; //success tests
 			}else fail();
 		}
 	}
 	
 	
-	// 
 	@Test
 	public void shouldReturnAValidAnnotationIfTheVariantIsContainedInThePeptipeAndItIsSpecificToTheIsoform() throws Exception {
 		String isoName = "iso-1";
-		Annotation a1 = mock(Annotation.class, Mockito.RETURNS_DEEP_STUBS);
-		when(a1.getVariant().getVariant()).thenReturn("D");
-		when(a1.isAnnotationPositionalForIsoform(isoName)).thenReturn(true);
-
-		List<Annotation> annots = Arrays.asList(a1);
-		List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("ABCD", true, annots, isoName);
+		List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "D", 5, isoName, true));
+		List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("DDF", true, annots, isoName, "ABCDEFGHI");
 
 		assertTrue(resultAnnots.size() == 1);
 	}
@@ -144,13 +204,8 @@ public class PepXServiceTest extends WebUnitBaseTest {
 	@Test
 	public void shouldNotReturnAValidAnnotationIfItIsNotSpecificToTheIsoform() throws Exception {
 		String isoName = "iso-1";
-		Annotation a1 = mock(Annotation.class, Mockito.RETURNS_DEEP_STUBS);
-		when(a1.getVariant().getVariant()).thenReturn("D");
-		when(a1.isAnnotationPositionalForIsoform(isoName)).thenReturn(true);
-
-		List<Annotation> annots = Arrays.asList(a1);
-		List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("ABCD", true, annots, "another-iso-name");
-
+		List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "D", 5, isoName, true));
+		List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("DDF", true, annots, "another-iso-name", "ABCDEFGHI");
 		assertTrue(resultAnnots.size() == 0);
 	}
 	
@@ -158,14 +213,37 @@ public class PepXServiceTest extends WebUnitBaseTest {
 	@Test
 	public void shouldNotReturnAValidAnnotationIfTheVariantIsNotContainedInThePeptide() throws Exception {
 		String isoName = "iso-1";
-		Annotation a1 = mock(Annotation.class, Mockito.RETURNS_DEEP_STUBS);
-		when(a1.getVariant().getVariant()).thenReturn("F");
-		when(a1.isAnnotationPositionalForIsoform(isoName)).thenReturn(true);
-
-		List<Annotation> annots = Arrays.asList(a1);
-		List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("ABCD", true, annots, isoName);
-
+		List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "Z", 4, isoName, true));
+		List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("DDF", true, annots, isoName, "ABCDEFGHI");
 		assertTrue(resultAnnots.size() == 0);
+	}
+	
+	@Test(expected = NextProtException.class)
+	public void shouldThrowAnExceptionIfTheOriginalAminoAcidIsNotInTheSequenceAtThatPosition() throws Exception {
+		try {
+				String isoName = "iso-1";
+				List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "D", 4, isoName, true));
+				List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("DDF", true, annots, isoName, "ABCDEFGHI");
+				assertTrue(resultAnnots.size() == 0);
+		
+			}catch(NextProtException e){
+				if(e.getMessage().contains("The amino acid ")){
+					throw e; //success tests
+				}else fail();
+			}
+	}
+	
+	
+	private Annotation getMockedAnnotation(String original, String variant, int position, String isoName, boolean isAnnotationPositionalForIso){
+		
+		Annotation a1 = mock(Annotation.class, Mockito.RETURNS_DEEP_STUBS);
+		when(a1.getVariant().getOriginal()).thenReturn(original);
+		when(a1.getVariant().getVariant()).thenReturn(variant);
+		when(a1.getStartPositionForIsoform(isoName)).thenReturn(position);
+		when(a1.getEndPositionForIsoform(isoName)).thenReturn(position);
+		when(a1.isAnnotationPositionalForIsoform(isoName)).thenReturn(isAnnotationPositionalForIso);
+		return a1;
+
 	}
 
 }
