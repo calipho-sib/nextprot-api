@@ -3,10 +3,7 @@ package org.nextprot.api.core.service.impl;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.domain.*;
@@ -17,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
@@ -56,7 +50,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 				transcriptMapping.setExons(findAndSortExons(transcriptMapping));
 			}
 
-			computeExonListPhasesAndAminoacids(isoformMapping, false);
+			if (!isoformMapping.getTranscriptMappings().isEmpty()) computeExonListPhasesAndAminoacids(isoformMapping, false);
 		}
 
 		// Gets all the genes for a given entry (can be more than one)
@@ -126,7 +120,37 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			isoformMapping.getTranscriptMappings().addAll(tms);
 		}
 
+		Set<String> isoformMappingNames = Maps.uniqueIndex(isoformMappings, new Function<IsoformMapping, String>() {
+			public String apply(IsoformMapping im) {
+				return im.getUniqueName();
+			}
+		}).keySet();
+
+		isoformMappings.addAll(addEmptyIsoformMappings(isoformsByName, Sets.difference(isoformsByName.keySet(), isoformMappingNames)));
+
 		Collections.sort(isoformMappings, ISOFORM_MAPPING_COMPARATOR);
+
+		return isoformMappings;
+	}
+
+	private List<IsoformMapping> addEmptyIsoformMappings(ImmutableMap<String, Isoform> isoformsByName, Set<String> nonMappingIsoformNames) {
+
+		List<IsoformMapping> isoformMappings = new ArrayList<>();
+
+		for (String nonMappingIsoformName : nonMappingIsoformNames) {
+
+			Isoform isoform = isoformsByName.get(nonMappingIsoformName);
+
+			IsoformMapping im = new IsoformMapping();
+
+			im.setIsoform(isoform);
+			im.setTranscriptMappings(new ArrayList<TranscriptMapping>());
+			im.setUniqueName(isoform.getUniqueName());
+			im.setReferenceGeneId(-1L);
+			im.setPositionsOfIsoformOnReferencedGene(new ArrayList<Entry<Integer, Integer>>());
+
+			isoformMappings.add(im);
+		}
 
 		return isoformMappings;
 	}
