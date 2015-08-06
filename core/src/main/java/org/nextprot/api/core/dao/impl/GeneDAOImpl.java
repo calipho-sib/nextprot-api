@@ -74,7 +74,7 @@ public class GeneDAOImpl implements GeneDAO {
 	
 	
 	@Override
-	public List<TranscriptMapping> findTranscriptsByIsoformNames(List<String> isoformNames) {
+	public List<TranscriptMapping> findTranscriptsByIsoformNames(Collection<String> isoformNames) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("isoform_names", isoformNames);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("transcripts-by-isoform-names"), namedParameters, new TranscriptRowMapper());
@@ -137,7 +137,7 @@ public class GeneDAOImpl implements GeneDAO {
 	}
 	
 	@Override
-	public List<IsoformMapping> getIsoformMappings(List<String> isoformNames){
+	public List<IsoformMapping> getIsoformMappings(Collection<String> isoformNames){
 		
 		SqlParameterSource namedParameters = new MapSqlParameterSource("isoform_names", isoformNames);
 		List<Map<String,Object>> result = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("isoform-mappings"), namedParameters);
