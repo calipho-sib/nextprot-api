@@ -2,17 +2,25 @@ package org.nextprot.api.core.service.impl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.*;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.service.GenomicMappingService;
+import org.nextprot.api.core.utils.exon.ExonsAnalysisLogger;
 import org.nextprot.api.core.utils.exon.TranscriptExonsAnalyser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
@@ -22,6 +30,9 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	// -Djava.util.logging.SimpleFormatter.format=%5$s%6$s%n
 	private static final Logger LOGGER = Logger.getLogger(GenomicMappingServiceImpl.class.getSimpleName());
 
+	private static final ExonComparator EXON_COMPARATOR = new ExonComparator();
+	private static final IsoformMappingComparator ISOFORM_MAPPING_COMPARATOR = new IsoformMappingComparator();
+
 	@Autowired private GeneDAO geneDAO;
 	@Autowired private IsoformDAO isoformDAO;
 
@@ -29,135 +40,175 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	@Cacheable("genomic-mappings")
 	public List<GenomicMapping> findGenomicMappingsByEntryName(String entryName) {
 
-		Preconditions.checkArgument((entryName != null) && (entryName.length() > 1), "The entry name is not valid");
-		// ////////////////////////////////////// GENES //////////////////////////////////////////////////////////////////////////////////
+		Preconditions.checkArgument((entryName != null) && (entryName.length() > 1), "The entry name "+entryName +" is not valid");
 
-		// Gets all the genes for a given entry (can be more than one)
-		List<GenomicMapping> genomicMappings = geneDAO.findGenomicMappingByEntryName(entryName);
-		Preconditions.checkArgument(!genomicMappings.isEmpty(), "No genomic mapping found for entry" + entryName);
-
-		// ////////////////////////////////////// ISOFORMS //////////////////////////////////////////////////////////////////////////////////
-
-		// Gets all the isoforms
-		List<Isoform> isoforms = isoformDAO.findIsoformsByEntryName(entryName);
-		List<String> isoformNames = Lists.transform(isoforms, new IsoformNameFunction());
-		ImmutableMap<String, Isoform> isoformsByName = Maps.uniqueIndex(isoforms, new Function<Isoform, String>() {
-			public String apply(Isoform isoform) {
-				return isoform.getUniqueName();
-			}
-		});
-
-		Preconditions.checkArgument(!isoformNames.isEmpty(), "No isoforms found for entry " + entryName);
+		// Gets all the isoforms for a given entry
+		List<Isoform> isoforms = findIsoforms(entryName);
 
 		// Gets all the isoform mappings (done for each gene)
-		List<IsoformMapping> isoformMappings = geneDAO.getIsoformMappings(isoformNames);
+		List<IsoformMapping> isoformMappings = findAndSortIsoformAndTranscriptMappings(isoforms);
 
 		for (IsoformMapping isoformMapping : isoformMappings) {
-			Isoform isoform = isoformsByName.get(isoformMapping.getUniqueName());
-			isoformMapping.setIsoform(isoform);
-		}
 
-		Multimap<Long, IsoformMapping> isoformsMappingsByGeneId = Multimaps.index(isoformMappings, new Function<IsoformMapping, Long>() {
-			public Long apply(IsoformMapping isoformMapping) {
-				return isoformMapping.getReferenceGeneId();
-			}
-		});
+			for (TranscriptMapping transcriptMapping : isoformMapping.getTranscriptMappings()) { // TODO This will fire multiple queries, but it is the easier way for now
 
-		// Puts the isoformMappings to the associated gene and order it
-		for (GenomicMapping genomicMapping : genomicMappings) {
-			Collection<IsoformMapping> mappings = isoformsMappingsByGeneId.get(genomicMapping.getGeneSeqId());
-
-			List<IsoformMapping> ims = new ArrayList<IsoformMapping>(mappings);
-			// Sorts the list alphabetically
-			Collections.sort(ims, new Comparator<IsoformMapping>() {
-				@Override
-				public int compare(IsoformMapping im1, IsoformMapping im2) {
-					return im1.getUniqueName().compareTo(im2.getUniqueName());
-				}
-			});
-
-			genomicMapping.getIsoformMappings().addAll(ims);
-		}
-
-		// ////////////////////////////////////// TRANSCRIPTS //////////////////////////////////////////////////////////////////////////////////
-
-		// Should get different transcripts for each isoforms
-		List<TranscriptMapping> transcriptMappings = geneDAO.findTranscriptsByIsoformNames(isoformNames);
-		Multimap<String, TranscriptMapping> transcriptMappingsByGeneIdAndIsoName = Multimaps.index(transcriptMappings, new Function<TranscriptMapping, String>() {
-			public String apply(TranscriptMapping transcriptMapping) {
-				return transcriptMapping.getReferenceGeneId() + transcriptMapping.getIsoformName();
-			}
-		});
-
-		for (IsoformMapping isoformMapping : isoformMappings) {
-			String key = isoformMapping.getReferenceGeneId() + isoformMapping.getUniqueName();
-			Collection<TranscriptMapping> tms = transcriptMappingsByGeneIdAndIsoName.get(key);
-			isoformMapping.getTranscriptMappings().addAll(tms);
-		}
-
-		// ////////////////////////////////////// EXONS //////////////////////////////////////////////////////////////////////////////////
-
-		for (TranscriptMapping t : transcriptMappings) { // TODO This will fire multiple queries, but it is the easier way for now
-
-			Collection<Exon> exons = null;
-
-			if (t.getQuality().equalsIgnoreCase("GOLD")) {
-				exons = geneDAO.findExonsAlignedToTranscriptOfGene(t.getUniqueName(), t.getReferenceGeneUniqueName());
-			} else {
-				exons = geneDAO.findExonsPartiallyAlignedToTranscriptOfGene(t.getIsoformName(), t.getUniqueName(), t.getReferenceGeneUniqueName());
+				// TODO: when branch CALIPHOMISC-355 will be merged, exons will be conditionally set if GOLD or SILVER and only on the mapping reference
+				transcriptMapping.setExons(findAndSortExons(transcriptMapping));
 			}
 
-			List<Exon> sortedExons = new ArrayList<Exon>(exons);
-			Collections.sort(sortedExons, new Comparator<Exon>() {
-				@Override
-				public int compare(Exon e1, Exon e2) {
-					return e1.getFirstPositionOnGene() - e2.getFirstPositionOnGene();
-				}
-			});
-//			System.err.println("Setting " + sortedExons.size() + " for " + t.getUniqueName() + " and isoform " + t.getIsoformName());
-			t.setExons(sortedExons);
+			computeExonListPhasesAndAminoacids(isoformMapping, false);
 		}
 
-		Collections.sort(isoformMappings, new Comparator<IsoformMapping>() {
-			@Override
-			public int compare(IsoformMapping im1, IsoformMapping im2) {
-				return im1.getUniqueName().compareTo(im2.getUniqueName());
-			}
-		});
-
-		// Computes exon compositions for each isoform mapping
-		//LOGGER.info(entryName);
-		for (IsoformMapping isoformMapping : isoformMappings) {
-
-			computeExonCompositions(isoformMapping);
-		}
+		// Gets all the genes for a given entry (can be more than one)
+		List<GenomicMapping> genomicMappings = findGenomicMappings(entryName, isoformMappings);
 
 		// TODO looks like there is some exons missing, have they changed???? For example this one: ENSE00003030217 is not found for NX_P03372
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<GenomicMapping>().addAll(genomicMappings).build();
-
 	}
 
-	private void computeExonCompositions(IsoformMapping isoformMapping) {
+	private void computeExonListPhasesAndAminoacids(IsoformMapping isoformMapping, boolean logEnabled) {
 
 		List<Entry<Integer, Integer>> positions = isoformMapping.getPositionsOfIsoformOnReferencedGene();
 
 		final int startPositionIsoform = positions.get(0).getKey();
 		final int endPositionIsoform = positions.get(positions.size() - 1).getValue();
 
-		//ExonsAnalysisLogger exonInfoLogger = new ExonsAnalysisLogger();
-		//TranscriptInfosExtractor extractor = new TranscriptInfosExtractor(exonInfoLogger);
-		TranscriptExonsAnalyser extractor = new TranscriptExonsAnalyser();
+		TranscriptExonsAnalyser extractor;
+		ExonsAnalysisLogger exonInfoLogger = null;
+
+		if (logEnabled) {
+			exonInfoLogger = new ExonsAnalysisLogger();
+			extractor = new TranscriptExonsAnalyser(exonInfoLogger);
+		} else {
+			extractor = new TranscriptExonsAnalyser();
+		}
+
 		for (TranscriptMapping t : isoformMapping.getTranscriptMappings()) {
 
 			extractor.extract(isoformMapping.getUniqueName() + "." + t.getAccession(), isoformMapping.getBioSequence(), startPositionIsoform, endPositionIsoform, t.getExons());
-			//LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + "." + t.getReferenceGeneUniqueName() + " (" + t.getQuality() + "): " + exonInfoLogger.getLog());
+			if (logEnabled) LOGGER.info(isoformMapping.getUniqueName() + "." + t.getAccession() + "." + t.getReferenceGeneUniqueName() + " (" + t.getQuality() + "): " + exonInfoLogger.getLog());
 		}
 	}
 
-	private class IsoformNameFunction implements Function<Isoform, String> {
-		public String apply(Isoform isoform) {
-			return isoform.getUniqueName();
+	private List<Isoform> findIsoforms(String entryName) {
+
+		List<Isoform> isoforms = isoformDAO.findIsoformsByEntryName(entryName);
+		Preconditions.checkArgument(!isoforms.isEmpty(), "No isoforms found for entry " + entryName);
+
+		return isoforms;
+	}
+
+	private List<IsoformMapping> findAndSortIsoformAndTranscriptMappings(List<Isoform> isoforms) {
+
+		// map isoName -> isoform
+		ImmutableMap<String, Isoform> isoformsByName = Maps.uniqueIndex(isoforms, new Function<Isoform, String>() {
+			public String apply(Isoform isoform) {
+				return isoform.getUniqueName();
+			}
+		});
+
+		// Find all transcripts mapping all isoforms
+		List<TranscriptMapping> transcriptMappings = geneDAO.findTranscriptsByIsoformNames(isoformsByName.keySet());
+
+		// Gets all the isoform mappings (done for each gene)
+		List<IsoformMapping> isoformMappings = geneDAO.getIsoformMappings(isoformsByName.keySet());
+
+		// Set isoform and populate transcript mappings
+		for (IsoformMapping isoformMapping : isoformMappings) {
+
+			Isoform isoform = isoformsByName.get(isoformMapping.getUniqueName());
+
+			isoformMapping.setIsoform(isoform);
+
+			Collection<TranscriptMapping> tms = Collections2.filter(transcriptMappings, new TranscriptMappingPredicate(isoformMapping));
+
+			isoformMapping.getTranscriptMappings().addAll(tms);
+		}
+
+		Collections.sort(isoformMappings, ISOFORM_MAPPING_COMPARATOR);
+
+		return isoformMappings;
+	}
+
+	private List<Exon> findAndSortExons(TranscriptMapping transcriptMapping) {
+
+		List<Exon> exons;
+
+		if (transcriptMapping.getQuality().equalsIgnoreCase("GOLD")) {
+			exons = geneDAO.findExonsAlignedToTranscriptOfGene(transcriptMapping.getUniqueName(), transcriptMapping.getReferenceGeneUniqueName());
+		} else {
+			exons = geneDAO.findExonsPartiallyAlignedToTranscriptOfGene(transcriptMapping.getIsoformName(), transcriptMapping.getUniqueName(), transcriptMapping.getReferenceGeneUniqueName());
+		}
+
+		Collections.sort(exons, EXON_COMPARATOR);
+
+		return exons;
+	}
+
+	private List<GenomicMapping> findGenomicMappings(String entryName, List<IsoformMapping> isoformMappings) {
+
+		List<GenomicMapping> genomicMappings = geneDAO.findGenomicMappingByEntryName(entryName);
+		Preconditions.checkArgument(!genomicMappings.isEmpty(), "No genomic mapping found for entry" + entryName);
+
+		// Puts the isoformMappings to the associated gene and order it
+		for (GenomicMapping genomicMapping : genomicMappings) {
+
+			Collection<IsoformMapping> mappings = Collections2.filter(isoformMappings, new IsoformMappingPredicate(genomicMapping.getGeneSeqId()));
+
+			genomicMapping.getIsoformMappings().addAll(mappings);
+
+			Collections.sort(genomicMapping.getIsoformMappings(), ISOFORM_MAPPING_COMPARATOR);
+		}
+
+		return genomicMappings;
+	}
+
+	private static class TranscriptMappingPredicate implements Predicate<TranscriptMapping> {
+
+		private final IsoformMapping isoformMapping;
+
+		public TranscriptMappingPredicate(IsoformMapping isoformMapping) {
+
+			this.isoformMapping = isoformMapping;
+		}
+
+		@Override
+		public boolean apply(TranscriptMapping tm) {
+
+			return tm.getReferenceGeneId() == isoformMapping.getReferenceGeneId() && tm.getIsoformName().equals(isoformMapping.getUniqueName());
+		}
+	}
+
+	private static class IsoformMappingPredicate implements Predicate<IsoformMapping> {
+
+		private final long referenceGeneId;
+
+		public IsoformMappingPredicate(long referenceGeneId) {
+
+			this.referenceGeneId = referenceGeneId;
+		}
+
+		@Override
+		public boolean apply(IsoformMapping im) {
+
+			return im.getReferenceGeneId() == referenceGeneId;
+		}
+	}
+
+	private static class ExonComparator implements Comparator<Exon> {
+
+		@Override
+		public int compare(Exon e1, Exon e2) {
+			return e1.getFirstPositionOnGene() - e2.getFirstPositionOnGene();
+		}
+	}
+
+	private static class IsoformMappingComparator implements Comparator<IsoformMapping> {
+
+		@Override
+		public int compare(IsoformMapping im1, IsoformMapping im2) {
+			return im1.getUniqueName().compareTo(im2.getUniqueName());
 		}
 	}
 }
