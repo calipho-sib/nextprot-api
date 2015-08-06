@@ -94,8 +94,9 @@ public class PepXServiceImpl implements PepXService {
 
 			String[] acs = sb.toString().split("<br>");
 			NPreconditions.checkTrue(acs[0].toLowerCase().contains("searching"), "Unexpected format from pepX on the first row: " + acs[0]);
-			for (int i = 1; i < acs.length - 1; i++) { // Do not take 1st and
-														// last row
+			for (int i = 1; i < acs.length; i++) { // Do not take 1st row
+				if(acs[i].contains("match")) break; // sometimes 
+				
 				String[] ei = acs[i].split("-");
 				String currentEntry = "NX_" + ei[0];
 				int isoNumber = Integer.valueOf(ei[1]);
