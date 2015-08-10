@@ -1,7 +1,7 @@
 <annotation quality-qualifier='$annotation.getQualityQualifier()' #if($annotation.synonym)accession="$annotation.synonym" database='neXtProt'#end>
 	#if($annotation.getCvTermName())
     <cv-term accession='$annotation.getCvTermAccessionCode()'>
-    	<cv-name>$annotation.getCvTermName()</cv-name>
+    	<name>$annotation.getCvTermName()</name>
     </cv-term>
     #end
 	#if($annotation.getDescription())

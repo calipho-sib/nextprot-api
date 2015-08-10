@@ -112,10 +112,10 @@
 ## ----------------- HISTORY ----------------------------------------
 <history>
     #if($entry.overview.history.nextprotIntegrationDate)
-        <history-entry database="neXtProt" integrated="$entry.overview.history.getFormattedNextprotIntegrationDate()" updated="$entry.overview.history.getFormattedNextprotUpdateDate()"/>
+        <entry-history database="neXtProt" integrated="$entry.overview.history.getFormattedNextprotIntegrationDate()" updated="$entry.overview.history.getFormattedNextprotUpdateDate()"/>
     #end
     #if($entry.overview.history.uniprotIntegrationDate)
-        <history-entry database="UniProtKB" integrated="$entry.overview.history.getFormattedUniprotIntegrationDate()" updated="$entry.overview.history.getFormattedUniprotUpdateDate()" version="$entry.overview.history.uniprotVersion" last-sequence-update="$entry.overview.history.lastSequenceUpdate" sequence-version="$entry.overview.history.sequenceVersion"/>
+        <entry-history database="UniProtKB" integrated="$entry.overview.history.getFormattedUniprotIntegrationDate()" updated="$entry.overview.history.getFormattedUniprotUpdateDate()" version="$entry.overview.history.uniprotVersion" last-sequence-update="$entry.overview.history.lastSequenceUpdate" sequence-version="$entry.overview.history.sequenceVersion"/>
     #end
 </history>
 </overview>

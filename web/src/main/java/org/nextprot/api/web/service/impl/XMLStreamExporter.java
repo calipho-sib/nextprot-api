@@ -1,15 +1,15 @@
 package org.nextprot.api.web.service.impl;
 
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.nextprot.api.commons.utils.PrettyPrinter;
+import org.nextprot.api.web.NXVelocityContext;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Map;
-
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.nextprot.api.commons.utils.PrettyPrinter;
-import org.nextprot.api.web.NXVelocityContext;
 
 /**
  * Export entries in XML format
@@ -66,7 +66,7 @@ public class XMLStreamExporter extends NPStreamExporter {
 
         Template releaseContentTemplate = velocityConfig.getVelocityEngine().getTemplate("release-contents.xml.vm");
         writePrettyXml(releaseContentTemplate, new NXVelocityContext(params), writer);
-    	writer.write("</header>");
+    	writer.write("  </header>");
     	writer.write("<entry-list>");
 
     }
