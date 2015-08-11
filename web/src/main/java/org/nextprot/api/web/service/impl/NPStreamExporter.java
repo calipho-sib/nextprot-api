@@ -1,10 +1,5 @@
 package org.nextprot.api.web.service.impl;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Collection;
-import java.util.Map;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.core.domain.Entry;
@@ -16,14 +11,16 @@ import org.nextprot.api.web.NXVelocityContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Collection;
+import java.util.Map;
+
 public abstract class NPStreamExporter {
 
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
     protected EntryBuilderService entryBuilderService;
-    public EntryBuilderService getEntryBuilderService() {
-		return entryBuilderService;
-	}
 
 	public void setEntryBuilderService(EntryBuilderService entryBuilderService) {
 		this.entryBuilderService = entryBuilderService;
@@ -43,9 +40,9 @@ public abstract class NPStreamExporter {
         terminologyService = ts;
     }
 
-    public void export(Collection<String> accessions, Writer writer, String viewName, Map<String,Object> map) throws IOException {
+    public void export(Collection<String> accessions, Writer writer, String viewName, Map<String,Object> headerParams) throws IOException {
 
-        writeHeader(writer, map);
+        writeHeader(writer, headerParams);
 
         if (accessions != null) {
 
@@ -62,7 +59,7 @@ public abstract class NPStreamExporter {
     protected abstract void exportStream(String entryName, Writer writer, String viewName) throws IOException;
 
     /** Write header to the output stream (supposed to be overriden by sub classes if needed) */
-    protected void writeHeader(Writer writer, Map<String, Object> params) throws IOException {}
+    protected void writeHeader(Writer writer, Map<String, Object> headerParams) throws IOException {}
 
     /** Write footer to the output stream (supposed to be overriden by sub classes if needed) */
     protected void writeFooter(Writer writer) throws IOException {}
