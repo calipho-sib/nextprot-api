@@ -1,13 +1,13 @@
 	package org.nextprot.api.web.service.impl;
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.nextprot.api.web.service.ExportService;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Map;
 
 /**
  * Export entries in TXT format
@@ -28,7 +28,7 @@ public class TXTStreamExporter extends NPStreamExporter {
 
     @Override
     protected void writeHeader(Writer writer, Map<String, Object> params) throws IOException {
-    	if((params != null) & params.containsKey(ExportService.ENTRIES_COUNT_PARAM)){
+    	if((params != null) && params.containsKey(ExportService.ENTRIES_COUNT_PARAM)){
         	writer.write("#nb entries=" + params.get(ExportService.ENTRIES_COUNT_PARAM) + "\n");
     	}else LOGGER.warn("Entries count parameter not found, header discarded...");
     	
