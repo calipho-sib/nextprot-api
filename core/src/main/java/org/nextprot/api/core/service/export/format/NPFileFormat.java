@@ -6,8 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 
 public enum NPFileFormat {
 
-	TXT("txt", "text/plain", null, null), 
-	XML("xml", "application/xml", "<entry-list>", "</entry-list>"), 
+	TXT("txt", "text/plain", null, null),
+	XLS("xls", "application/vnd.ms-excel", null, null),
+	XML("xml", "application/xml", "<entry-list>", "</entry-list>"),
 	JSON("json", "application/json", null, null), 
 	TURTLE("ttl", "text/turtle", null, null), 
 	TSV("tsv", "text/tab-separated-values", null, null),
@@ -54,6 +55,8 @@ public enum NPFileFormat {
             return NPFileFormat.JSON;
         } else if (uri.toLowerCase().endsWith(".txt")) {
             return NPFileFormat.TXT;
+		} else if (uri.toLowerCase().endsWith(".xls")) {
+			return NPFileFormat.XLS;
 		} else if (uri.toLowerCase().endsWith(".fasta")) {
 			return NPFileFormat.FASTA;
         } else if (uri.toLowerCase().endsWith(".peff")) {
