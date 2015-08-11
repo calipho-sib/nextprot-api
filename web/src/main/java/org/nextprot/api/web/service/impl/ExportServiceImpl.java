@@ -1,23 +1,5 @@
 package org.nextprot.api.web.service.impl;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -34,6 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
+
+import javax.annotation.PostConstruct;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 public class ExportServiceImpl implements ExportService {
@@ -53,16 +43,12 @@ public class ExportServiceImpl implements ExportService {
 
 	private static String REPOSITORY_PATH = "repository";
 
-	private final String[] CHROMOSSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
-
-	/*
-	 * @Autowired private VelocityConfig config;
-	 */
+	private final String[] CHROMOSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
 
 	@Override
 	public List<Future<File>> exportAllEntries(NPFileFormat format) {
-		List<String> uniqueNames = new ArrayList<String>();
-		for (String chrm : CHROMOSSOMES) {
+		List<String> uniqueNames = new ArrayList<>();
+		for (String chrm : CHROMOSOMES) {
 			uniqueNames.addAll(this.masterIdentifierService.findUniqueNamesOfChromossome(chrm));
 		}
 		return exportEntries(uniqueNames, format);
@@ -76,7 +62,7 @@ public class ExportServiceImpl implements ExportService {
 
 	@Override
 	public List<Future<File>> exportEntries(Collection<String> uniqueNames, NPFileFormat format) {
-		List<Future<File>> futures = new ArrayList<Future<File>>();
+		List<Future<File>> futures = new ArrayList<>();
 		futures.add(exportSubPart(SubPart.HEADER, format));
 		for (String uniqueName : uniqueNames) {
 			futures.add(exportEntry(uniqueName, format));
@@ -111,6 +97,7 @@ public class ExportServiceImpl implements ExportService {
 			this.ve = ve;
 			this.entryBuilderService = entryBuilderService;
 			this.filename = REPOSITORY_PATH + "/" + format.name() + "/" + entryName + "." + format.getExtension();
+			//noinspection ResultOfMethodCallIgnored
 			new File(filename).getParentFile().mkdirs();
 			this.entryName = entryName;
 			this.format = format.getExtension();
@@ -134,7 +121,7 @@ public class ExportServiceImpl implements ExportService {
 
 			checkFormatConstraints();
 			Template template;
-			VelocityContext context = null;
+			VelocityContext context;
 			try {
 
 				if (format.equals(NPFileFormat.TURTLE.getExtension())) {
@@ -157,14 +144,13 @@ public class ExportServiceImpl implements ExportService {
 			}
 
 			return f;
-
 		}
 
 	}
 
 	enum SubPart {
 		HEADER, FOOTER
-	};
+	}
 
 	static class ExportSubPartTask implements Callable<File> {
 
@@ -180,6 +166,7 @@ public class ExportServiceImpl implements ExportService {
 			this.part = part;
 			this.format = format.getExtension();
 			this.filename = REPOSITORY_PATH + "/" + format.name() + "/" + part.name() + "." + format.getExtension();
+			//noinspection ResultOfMethodCallIgnored
 			new File(filename).getParentFile().mkdirs();
 		}
 
@@ -199,7 +186,7 @@ public class ExportServiceImpl implements ExportService {
 
 			checkFormatConstraints();
 			Template template = null;
-			VelocityContext context = null;
+			VelocityContext context;
 			try {
 
 				if (part.equals(SubPart.HEADER)) {
@@ -241,15 +228,21 @@ public class ExportServiceImpl implements ExportService {
 	public void clearRepository() {
 
 		LOGGER.info("Cleaning export service repository at path: " + REPOSITORY_PATH);
-		if (new File(REPOSITORY_PATH).exists()) {
-			for (File file : new File(REPOSITORY_PATH).listFiles())
-				file.delete();
+
+		File repo = new File(REPOSITORY_PATH);
+
+		if (repo.exists()) {
+
+			File[] files = repo.listFiles();
+
+			if (files != null) {
+				for (File file : files) {
+					//noinspection ResultOfMethodCallIgnored
+					file.delete();
+				}
+			}
 		}
 
-	}
-
-	public int getNumberOfWorkers() {
-		return numberOfWorkers;
 	}
 
 	@Value("${export.workers.count}")
@@ -264,10 +257,9 @@ public class ExportServiceImpl implements ExportService {
 
 		exporter.setTerminologyService(terminologyService);
 		
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new HashMap<>();
 		map.put(ExportService.ENTRIES_COUNT_PARAM, accessions.size());
 		map.put("release", releaseInfoService.findReleaseContents());
 		exporter.export(accessions, stream, viewName, map);
-		
 	}
 }

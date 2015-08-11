@@ -1,23 +1,16 @@
 package org.nextprot.api.web.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.export.ExportUtils;
-import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.core.service.export.format.EntryBlocks;
-import org.nextprot.api.rdf.service.SparqlEndpoint;
-import org.nextprot.api.rdf.service.SparqlService;
+import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
-import org.nextprot.api.user.service.UserQueryService;
 import org.nextprot.api.web.service.ExportService;
-import org.nextprot.api.web.service.QueryBuilderService;
 import org.nextprot.api.web.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -46,8 +39,6 @@ import java.util.concurrent.Future;
 // "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
 public class ExportController {
 
-    private static final Log Logger = LogFactory.getLog(ExportController.class);
-
     @Autowired
     private ExportService exportService;
 
@@ -57,9 +48,6 @@ public class ExportController {
     @Autowired
     private UserProteinListService proteinListService;
 
-    @Autowired
-    private QueryBuilderService queryBuilderService;
-
     @ApiMethod(path = "/export/entries/all", verb = ApiVerb.GET, description = "Exports all entries", produces = {MediaType.APPLICATION_XML_VALUE, "text/turtle"})
     @RequestMapping("/export/entries/all")
     public void exportAllEntries(HttpServletResponse response, HttpServletRequest request) {
@@ -68,8 +56,7 @@ public class ExportController {
         response.setHeader("Content-Disposition", "attachment; filename=\"NXEntries." + format.getExtension() + "\"");
 
         List<Future<File>> futures = exportService.exportAllEntries(format);
-        ExportUtils.printOutput(new LinkedList<Future<File>>(futures), response);
-
+        ExportUtils.printOutput(new LinkedList<>(futures), response);
     }
 
     @ApiMethod(path = "/export/entries/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Exports the whole chromosome", produces = {MediaType.APPLICATION_XML_VALUE, "text/turtle"})
@@ -81,8 +68,7 @@ public class ExportController {
         response.setHeader("Content-Disposition", "attachment; filename=\"NXChromosome" + chromosome + "." + format.getExtension() + "\"");
 
         List<Future<File>> futures = exportService.exportEntriesOfChromossome(chromosome, format);
-        ExportUtils.printOutput(new LinkedList<Future<File>>(futures), response);
-
+        ExportUtils.printOutput(new LinkedList<>(futures), response);
     }
 
     @ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list")
@@ -118,17 +104,6 @@ public class ExportController {
             throw new NextProtException(e.getMessage());
         }
     }
-
-    @Autowired
-    private UserQueryService userQueryService;
-    @Autowired
-    private SparqlService sparqlService;
-    @Autowired
-    private SparqlEndpoint sparqlEndpoint;
-    @Autowired
-    private SolrService solrService;
-    @Autowired
-    private SolrService queryService;
 
     @RequestMapping(value = "/export/entries/{view}", method = {RequestMethod.GET})
     public void streamEntriesSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query,
