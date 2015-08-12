@@ -5,7 +5,7 @@ import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.export.ExportUtils;
-import org.nextprot.api.core.service.export.format.EntryBlocks;
+import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.user.domain.UserProteinList;
@@ -148,23 +148,23 @@ public class ExportController {
     private void streamEntries(NPFileFormat format, HttpServletResponse response, String viewName, QueryRequest queryRequest) {
 
         setResponseHeader(format, viewName, queryRequest, response);
+        List<String> entries = getAccessions(queryRequest);
 
         NPEntryWriter writer = null;
 
         try {
             writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, response.getOutputStream());
 
-            exportService.streamResults(writer, viewName, getAccessions(queryRequest));
-        } catch (Exception e) {
-
+            exportService.streamResults(writer, viewName, entries);
+        } catch (IOException e) {
             e.printStackTrace();
-            throw new NextProtException("Failed to stream "+format.getExtension());
+            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
         } finally {
             try {
-                writer.close();
+                if (writer != null) writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new NextProtException("Failed to close stream "+format.getExtension());
+                throw new NextProtException(format.getExtension()+" closing stream failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
             }
         }
     }
@@ -216,6 +216,6 @@ public class ExportController {
     @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
     @ResponseBody
     public Map<String, Set<String>> getXMLTemplates() {
-        return EntryBlocks.getFormatViews();
+        return EntryBlock.getFormatViews();
     }
 }
