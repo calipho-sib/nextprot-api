@@ -48,14 +48,14 @@ public class ExportServiceImpl implements ExportService {
 	public List<Future<File>> exportAllEntries(NPFileFormat format) {
 		List<String> uniqueNames = new ArrayList<>();
 		for (String chrm : CHROMOSOMES) {
-			uniqueNames.addAll(this.masterIdentifierService.findUniqueNamesOfChromossome(chrm));
+			uniqueNames.addAll(this.masterIdentifierService.findUniqueNamesOfChromosome(chrm));
 		}
 		return exportEntries(uniqueNames, format);
 	}
 
 	@Override
-	public List<Future<File>> exportEntriesOfChromossome(String chromossome, NPFileFormat format) {
-		List<String> uniqueNames = this.masterIdentifierService.findUniqueNamesOfChromossome(chromossome);
+	public List<Future<File>> exportEntriesOfChromosome(String chromossome, NPFileFormat format) {
+		List<String> uniqueNames = this.masterIdentifierService.findUniqueNamesOfChromosome(chromossome);
 		return exportEntries(uniqueNames, format);
 	}
 

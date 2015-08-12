@@ -30,7 +30,7 @@ public interface ExportService {
 	 * @param chromosome The chromosome name / number
 	 * @param format The format can be xml or ttl
 	 */
-	List<Future<File>> exportEntriesOfChromossome(String chromosome, NPFileFormat format);
+	List<Future<File>> exportEntriesOfChromosome(String chromosome, NPFileFormat format);
 
 	/**
 	 * Export entries based on entry names in the format specified with UTF-8

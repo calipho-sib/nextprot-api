@@ -67,7 +67,7 @@ public class ExportController {
         NPFileFormat format = NPFileFormat.valueOf(request);
         response.setHeader("Content-Disposition", "attachment; filename=\"NXChromosome" + chromosome + "." + format.getExtension() + "\"");
 
-        List<Future<File>> futures = exportService.exportEntriesOfChromossome(chromosome, format);
+        List<Future<File>> futures = exportService.exportEntriesOfChromosome(chromosome, format);
         ExportUtils.printOutput(new LinkedList<>(futures), response);
     }
 

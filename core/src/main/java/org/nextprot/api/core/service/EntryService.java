@@ -1,9 +1,9 @@
 package org.nextprot.api.core.service;
 
-import java.util.List;
-
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.annotation.ValidEntry;
+
+import java.util.List;
 
 public interface EntryService {
 
@@ -26,8 +26,8 @@ public interface EntryService {
 	 * @param chromosome
 	 * @return
 	 */
-	List<Entry> findEntriesByChromossome(String chromosome);
+	List<Entry> findEntriesByChromosome(String chromosome);
 	
-	List<String> findEntryNamesByChromossome(String chromosome);
+	List<String> findEntryNamesByChromosome(String chromosome);
 	
 }
