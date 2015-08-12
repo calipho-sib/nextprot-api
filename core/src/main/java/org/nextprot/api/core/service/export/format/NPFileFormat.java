@@ -4,28 +4,27 @@ import org.nextprot.api.commons.exception.NextProtException;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * A file format
+ */
 public enum NPFileFormat {
 
-	TXT("txt", "text/plain", null, null),
-	XLS("xls", "application/vnd.ms-excel", null, null),
-	XML("xml", "application/xml", "<entry-list>", "</entry-list>"),
-	JSON("json", "application/json", null, null), 
-	TURTLE("ttl", "text/turtle", null, null), 
-	TSV("tsv", "text/tab-separated-values", null, null),
-	FASTA("fasta", "text/fasta", null, null),
-	PEFF("peff", "text/peff", null, null)
+	TXT("txt", "text/plain"),
+	XLS("xls", "application/vnd.ms-excel"),
+	XML("xml", "application/xml"),
+	JSON("json", "application/json"),
+	TURTLE("ttl", "text/turtle"),
+	TSV("tsv", "text/tab-separated-values"),
+	FASTA("fasta", "text/fasta"),
+	PEFF("peff", "text/peff")
 	;
 
-	private String header;
-	private String footer;
 	private String extension;
 	private String contentType;
 
-	NPFileFormat(String extension, String contentType, String header, String footer) {
+	NPFileFormat(String extension, String contentType) {
 		this.extension = extension;
 		this.contentType = contentType;
-		this.header = header;
-		this.footer = footer;
 	}
 
 	public String getExtension() {
@@ -34,14 +33,6 @@ public enum NPFileFormat {
 
 	public String getContentType() {
 		return contentType;
-	}
-
-	public String getHeader() {
-		return header;
-	}
-
-	public String getFooter() {
-		return footer;
 	}
 
     public static NPFileFormat valueOf(HttpServletRequest request) {
