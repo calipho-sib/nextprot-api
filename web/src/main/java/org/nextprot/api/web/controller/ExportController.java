@@ -164,7 +164,7 @@ public class ExportController {
                 if (writer != null) writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new NextProtException(format.getExtension()+" closing stream failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
+                throw new NextProtException("closing "+format.getExtension()+" stream failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
             }
         }
     }
