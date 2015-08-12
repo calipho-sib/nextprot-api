@@ -75,7 +75,7 @@ public class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
         return (bool) ? "yes" : "no";
     }
 
-    // http://dev-api.nextprot.org/export/entries/accession.xml?query=kimuramatsumoto
+    // http://dev-api.nextprot.org/export/entries/accession.xls?query=kimura-matsumoto
     @Override
     protected void writeEntry(String entryName, String viewName) throws IOException {
 
@@ -135,7 +135,7 @@ public class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
     }
 
     @Override
-    public void close() throws IOException {
+    public void lastFlush() throws IOException {
 
         workbook.write(stream);
     }

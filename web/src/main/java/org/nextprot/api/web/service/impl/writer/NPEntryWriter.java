@@ -29,7 +29,7 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
 
      * @param entries the entries to be flush
      * @param viewName the view name
-     * @param headerParams an optionaly parameters map for header
+     * @param headerParams an optionally parameters map for header
      * @throws IOException
      */
     public void write(Collection<String> entries, String viewName, Map<String, Object> headerParams) throws IOException {
@@ -46,9 +46,8 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
         }
 
         writeFooter();
-        flush();
+        lastFlush();
 
-        end();
         close();
     }
 
@@ -69,8 +68,10 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
         stream.flush();
     }
 
-    /** Writing terminated (just before closing) */
-    protected void end() {}
+    /** Last flushing before closing stream */
+    protected void lastFlush() throws IOException {
+        stream.flush();
+    }
 
     /** Closes the stream */
     public void close() throws IOException {
