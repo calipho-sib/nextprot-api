@@ -1,9 +1,13 @@
 package org.nextprot.api.web.service.impl.writer;
 
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 
-import java.io.ByteArrayOutputStream;
+import java.io.*;
 import java.util.Arrays;
 
 /**
@@ -12,12 +16,44 @@ import java.util.Arrays;
 public class NPEntryXLSWriterTest extends WebIntegrationBaseTest {
 
     @Test
-    public void testXLSExportStream() throws Exception {
+    public void testXLSWriterStream() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        NPEntryOutputStreamWriter exporter = new NPEntryXLSWriter(out);
+        NPEntryXLSWriter writer = new NPEntryXLSWriter(out);
 
-        exporter.write(Arrays.asList("NX_P48730"), "overview", null);
+        writer.write(Arrays.asList("NX_P48730"), "entry", null);
+
+        assertXLSEquals(out, new String[] { "acc. code", "name", "gene name(s)", "chromosome", "proteomics", "disease",	"structure", "#isof.", "#variants", "#PTMS", "mutagenesis", "tissue expr.", "PE" },
+                new Object[] { "NX_P48730","Casein kinase I isoform delta","CSNK1D","17q25.3","yes","yes","yes",2,41,8,"yes","yes","Evidence at protein level"});
+    }
+
+    @Test
+    public void exportXLSFile() throws Exception {
+
+        FileOutputStream out = new FileOutputStream("/Users/fnikitin/Downloads/proteins.xls");
+
+        NPEntryXLSWriter writer = new NPEntryXLSWriter(out);
+
+        writer.write(Arrays.asList("NX_P48730"), "entry", null);
+    }
+
+    private static void assertXLSEquals(ByteArrayOutputStream baos, String[] headers, Object[] values) throws IOException {
+
+        InputStream is = new ByteArrayInputStream(baos.toByteArray());
+
+        HSSFWorkbook workbook = new HSSFWorkbook(is);
+        HSSFSheet worksheet = workbook.getSheet("Proteins");
+
+        HSSFRow headerRow = worksheet.getRow(0);
+        HSSFRow valuesRow = worksheet.getRow(1);
+
+        for (int i=0 ; i<headers.length ; i++) {
+            Assert.assertEquals(headers[i], headerRow.getCell(i).getStringCellValue());
+            if (i>=7 && i<=9)
+                Assert.assertEquals(values[i], (int)valuesRow.getCell(i).getNumericCellValue());
+            else
+                Assert.assertEquals(values[i], valuesRow.getCell(i).getStringCellValue());
+        }
     }
 }

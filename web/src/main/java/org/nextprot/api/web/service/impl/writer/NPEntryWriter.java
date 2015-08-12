@@ -1,5 +1,7 @@
 package org.nextprot.api.web.service.impl.writer;
 
+import com.google.common.base.Preconditions;
+
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
@@ -17,6 +19,8 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
 
     public NPEntryWriter(S stream) {
 
+        Preconditions.checkNotNull(stream);
+
         this.stream = stream;
     }
 
@@ -30,25 +34,26 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
      */
     public void write(Collection<String> entries, String viewName, Map<String, Object> headerParams) throws IOException {
 
-        init();
-
+        start();
         writeHeader(headerParams);
 
         if (entries != null) {
 
             for (String acc : entries) {
                 writeEntry(acc, viewName);
-                stream.flush();
+                flush();
             }
         }
 
         writeFooter();
-        stream.flush();
+        flush();
 
+        end();
         close();
     }
 
-    public void init() {}
+    /** Writing initiated */
+    public void start() {}
 
     /** Write header to the output stream (to be overridden by if needed) */
     protected void writeHeader(Map<String, Object> headerParams) throws IOException {}
@@ -56,9 +61,16 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
     /** Write a single entry to the output stream given a view */
     protected abstract void writeEntry(String entryName, String viewName) throws IOException;
 
-
     /** Write footer to the output stream (to be overridden by if needed) */
     protected void writeFooter() throws IOException {}
+
+    /** Flushing to stream */
+    protected void flush() throws IOException {
+        stream.flush();
+    }
+
+    /** Writing terminated (just before closing) */
+    protected void end() {}
 
     /** Closes the stream */
     public void close() throws IOException {

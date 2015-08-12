@@ -1,14 +1,15 @@
 package org.nextprot.api.web.service.impl.writer;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.util.HSSFColor;
+import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
 /**
  * Export entries in XLS format
@@ -19,39 +20,79 @@ public class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
 
     private final HSSFWorkbook workbook;
     private final HSSFSheet worksheet;
+    private final HSSFCellStyle hlinkStyle;
 
     private int rowIndex;
 
-    private final OutputStream os;
+    public NPEntryXLSWriter(OutputStream stream) {
 
-    public NPEntryXLSWriter(OutputStream os) {
-
-        super(os);
+        super(stream);
 
         workbook = new HSSFWorkbook();
+        hlinkStyle = createHLinkStyle(workbook);
         worksheet = workbook.createSheet("Proteins");
-
         rowIndex = 0;
+    }
 
-        this.os = os;
+    private static HSSFCellStyle createHLinkStyle(HSSFWorkbook workbook) {
+
+        HSSFCellStyle ls = workbook.createCellStyle();
+
+        HSSFFont hlinkFont = workbook.createFont();
+        hlinkFont.setUnderline(HSSFFont.U_SINGLE);
+        hlinkFont.setColor(HSSFColor.BLUE.index);
+        ls.setFont(hlinkFont);
+
+        return ls;
+    }
+
+    @Override
+    protected void writeHeader(Map<String, Object> headerParams) throws IOException {
+
+        String[] headers = new String[] { "acc. code", "name", "gene name(s)", "chromosome", "proteomics", "disease",	"structure", "#isof.", "#variants", "#PTMS", "mutagenesis", "tissue expr.", "PE" };
+
+        HSSFRow row = worksheet.createRow(rowIndex);
+
+        for (int i=0 ; i<headers.length ; i++) {
+
+            HSSFCell accCodeCell = row.createCell(i);
+            accCodeCell.setCellValue(headers[i]);
+        }
+
+        rowIndex++;
+    }
+
+    private void setHyperLink(HSSFCell cell, String address) {
+
+        HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+        link.setAddress(address);
+        cell.setHyperlink(link);
+        cell.setCellStyle(hlinkStyle);
+    }
+
+    private static String booleanToYesNoString(boolean bool) {
+
+        return (bool) ? "yes" : "no";
     }
 
     // http://dev-api.nextprot.org/export/entries/accession.xml?query=kimuramatsumoto
     @Override
     protected void writeEntry(String entryName, String viewName) throws IOException {
 
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).with(viewName));
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName)
+                        .withBlock(EntryBlock.OVERVIEW)
+                        .withBlock(EntryBlock.CHROMOSOMAL_LOCATION));
 
         /**
          * acc. code / name             / gene name(s) / chromosome / proteomics / disease	/ structure	/ #isof. / #variants / #PTMS / mutagenesis / tissue expr. /	PE
          * -----------------------------------------------------------------------------------------------------------------------------------------------------------
          * NX_P48730 / Casein kinase .. / CSNK1        / 17q25.3    / yes	     / yes	    / yes	    / 2	     / 41	     / 8	 / yes         / yes          / Evidence at protein level
          */
-        // index from 0,0... cell A1 is cell(0,0)
         HSSFRow row = worksheet.createRow(rowIndex);
 
         HSSFCell accCodeCell = row.createCell(0);
         accCodeCell.setCellValue(entryName);
+        setHyperLink(accCodeCell, "http://www.nextprot.org/db/entry/" + entryName);
 
         HSSFCell nameCell = row.createCell(1);
         nameCell.setCellValue(entry.getOverview().getMainProteinName());
@@ -60,41 +101,42 @@ public class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
         geneNamesCell.setCellValue(entry.getOverview().getMainGeneName());
 
         HSSFCell chromosomeCell = row.createCell(3);
-        chromosomeCell.setCellValue(entry.getChromosomalLocations().get(0).getChromosome());
+        ChromosomalLocation location = entry.getChromosomalLocations().get(0);
+        chromosomeCell.setCellValue(location.getChromosome() + location.getBand());
 
         HSSFCell proteomicsCell = row.createCell(4);
-        proteomicsCell.setCellValue(entryName);
+        proteomicsCell.setCellValue(booleanToYesNoString(entry.getProperties().getFilterproteomics()));
 
         HSSFCell diseaseCell = row.createCell(5);
-        diseaseCell.setCellValue(entryName);
+        diseaseCell.setCellValue(booleanToYesNoString(entry.getProperties().getFilterdisease()));
 
         HSSFCell structureCell = row.createCell(6);
-        structureCell.setCellValue(entryName);
+        structureCell.setCellValue(booleanToYesNoString(entry.getProperties().getFilterstructure()));
 
         HSSFCell isoformCountCell = row.createCell(7);
-        isoformCountCell.setCellValue(entryName);
+        isoformCountCell.setCellValue(entry.getProperties().getIsoformCount());
 
         HSSFCell variantCountCell = row.createCell(8);
-        variantCountCell.setCellValue(entryName);
+        variantCountCell.setCellValue(entry.getProperties().getVarCount());
 
         HSSFCell ptmCountCell = row.createCell(9);
-        ptmCountCell.setCellValue(entryName);
+        ptmCountCell.setCellValue(entry.getProperties().getPtmCount());
 
         HSSFCell mutagenesisCell = row.createCell(10);
-        mutagenesisCell.setCellValue(entryName);
+        mutagenesisCell.setCellValue(booleanToYesNoString(entry.getProperties().getFiltermutagenesis()));
 
         HSSFCell tissueExpressionCell = row.createCell(11);
-        tissueExpressionCell.setCellValue(entryName);
+        tissueExpressionCell.setCellValue(booleanToYesNoString(entry.getProperties().getFilterexpressionprofile()));
 
         HSSFCell proteinEvidenceCell = row.createCell(12);
-        proteinEvidenceCell.setCellValue(entryName);
+        proteinEvidenceCell.setCellValue(entry.getProperties().getProteinExistence());
 
         rowIndex++;
     }
 
     @Override
-    protected void writeFooter() throws IOException {
+    public void close() throws IOException {
 
-        workbook.write(os);
+        workbook.write(stream);
     }
 }

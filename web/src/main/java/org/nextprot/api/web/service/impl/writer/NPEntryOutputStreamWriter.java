@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import java.io.OutputStream;
 
 /**
- * A base class for output stream exporter
+ * A base class for output stream writer
  *
  * @author fnikitin
  */
