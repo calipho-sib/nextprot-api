@@ -5,7 +5,7 @@ import org.nextprot.api.commons.utils.StringUtils;
 
 import java.util.*;
 
-public enum EntryBlocks{
+public enum EntryBlock {
 	
 	FULL_ENTRY(null, NPFileFormat.XML, NPFileFormat.TXT),
 	ACCESSION(NPFileFormat.XML, NPFileFormat.TXT),
@@ -26,7 +26,7 @@ public enum EntryBlocks{
 	
 	private List<NPFileFormat> supportedFormats = null;
 
-	EntryBlocks(NPFileFormat ... supportedFormats){
+	EntryBlock(NPFileFormat... supportedFormats){
 		this.supportedFormats = Arrays.asList(supportedFormats);
 	}
 	
@@ -36,7 +36,7 @@ public enum EntryBlocks{
 	
 	public static boolean containsBlock(String s){
 		String aux = s.toUpperCase().replaceAll("-", "_");
-	    for (EntryBlocks c : EntryBlocks.values()) {
+	    for (EntryBlock c : EntryBlock.values()) {
 	        if (c.name().equals(aux)) {
 	            return true;
 	        }
@@ -45,9 +45,9 @@ public enum EntryBlocks{
 	}
 	
 	
-	public static EntryBlocks valueOfViewName(String s){
+	public static EntryBlock valueOfViewName(String s){
 		String aux = s.toUpperCase().replaceAll("-", "_");
-		return EntryBlocks.valueOf(aux);
+		return EntryBlock.valueOf(aux);
 	}
 
 	private static HashMap<String, Set<String>> formatViews = null;
@@ -56,7 +56,7 @@ public enum EntryBlocks{
 		formatViews = new HashMap<>();
 		for (NPFileFormat format : NPFileFormat.values()) {
 			formatViews.put(format.name().toLowerCase(), new LinkedHashSet<String>());
-			for (EntryBlocks v : EntryBlocks.values()) {
+			for (EntryBlock v : EntryBlock.values()) {
 				if (v.supportedFormats.contains(format)) {
 					formatViews.get(format.name().toLowerCase()).add(v.getURLFormat());
 					if(v.equals(ANNOTATION)){
