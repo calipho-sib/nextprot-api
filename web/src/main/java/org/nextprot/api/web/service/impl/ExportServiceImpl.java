@@ -8,10 +8,10 @@ import org.apache.velocity.app.VelocityEngine;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.ReleaseInfoService;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.service.ExportService;
+import org.nextprot.api.web.service.impl.writer.NPEntryWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,22 +28,21 @@ import java.util.concurrent.Future;
 @Service
 public class ExportServiceImpl implements ExportService {
 
+	private static final Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
+	private static final String REPOSITORY_PATH = "repository";
+	private static final String[] CHROMOSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
 
-	@Autowired  private EntryBuilderService entryBuilderService;
-	@Autowired  private MasterIdentifierService masterIdentifierService;
-	@Autowired  private VelocityConfig velocityConfig;
-	@Autowired  private TerminologyService terminologyService;
-	@Autowired  private ReleaseInfoService releaseInfoService;
+	@Autowired
+	private EntryBuilderService entryBuilderService;
+	@Autowired
+	private MasterIdentifierService masterIdentifierService;
+	@Autowired
+	private VelocityConfig velocityConfig;
+	@Autowired
+	private ReleaseInfoService releaseInfoService;
 	
 	private int numberOfWorkers = 8;
-
-	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
-
 	private ExecutorService executor = null;
-
-	private static String REPOSITORY_PATH = "repository";
-
-	private final String[] CHROMOSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
 
 	@Override
 	public List<Future<File>> exportAllEntries(NPFileFormat format) {
@@ -219,9 +218,7 @@ public class ExportServiceImpl implements ExportService {
 			}
 
 			return f;
-
 		}
-
 	}
 
 	@Override
@@ -251,15 +248,12 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	@Override
-	public void streamResults(NPFileFormat format, Writer stream, String viewName, List<String> accessions) throws IOException {
+	public void streamResults(NPEntryWriter writer, String viewName, List<String> accessions) throws IOException {
 
-		NPStreamExporter exporter = NPFileExporter.valueOf(format).getNPStreamExporter();
-
-		exporter.setTerminologyService(terminologyService);
-		
 		Map<String, Object> map = new HashMap<>();
 		map.put(ExportService.ENTRIES_COUNT_PARAM, accessions.size());
 		map.put("release", releaseInfoService.findReleaseContents());
-		exporter.export(accessions, stream, viewName, map);
+
+		writer.write(accessions, viewName, map);
 	}
 }

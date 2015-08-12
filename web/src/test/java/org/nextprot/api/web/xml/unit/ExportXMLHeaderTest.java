@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.release.ReleaseContents;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.ExportService;
-import org.nextprot.api.web.service.impl.NPStreamExporter;
-import org.nextprot.api.web.service.impl.XMLStreamExporter;
+import org.nextprot.api.web.service.impl.writer.NPEntryVelocityBasedWriter;
+import org.nextprot.api.web.service.impl.writer.NPEntryXMLWriter;
 import org.nextprot.api.web.utils.XMLUnitUtils;
 import org.w3c.dom.NodeList;
 
@@ -25,7 +25,7 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
 
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        NPStreamExporter exporter = new XMLStreamExporter();
+        NPEntryVelocityBasedWriter exporter = new NPEntryXMLWriter(writer);
         
         Map<String, Object> map = new HashMap<>();
 
@@ -38,7 +38,7 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
 
         map.put("release", rc);
         
-        exporter.export(new ArrayList<String>(), writer, "overview", map);
+        exporter.write(new ArrayList<String>(), "overview", map);
 
         NodeList dbReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/header/release/nextprot/database-release");
         assertEquals(dbReleaseNodes.item(0).getTextContent(), "database-test-version");

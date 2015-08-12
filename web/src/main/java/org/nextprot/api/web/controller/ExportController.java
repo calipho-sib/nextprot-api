@@ -12,6 +12,8 @@ import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.web.service.ExportService;
 import org.nextprot.api.web.service.SearchService;
+import org.nextprot.api.web.service.impl.writer.NPEntryWriter;
+import org.nextprot.api.web.service.impl.writer.NPEntryWriterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -23,8 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.*;
 import java.util.concurrent.Future;
 
@@ -114,7 +114,7 @@ public class ExportController {
         QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort, order, limit);
 
         NPFileFormat format = NPFileFormat.valueOf(request);
-        exportEntries(format, response, view, qr);
+        streamEntries(format, response, view, qr);
     }
 
     @RequestMapping(value = "/export/entries", method = {RequestMethod.GET})
@@ -126,35 +126,42 @@ public class ExportController {
         QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort, order, limit);
 
         NPFileFormat format = NPFileFormat.valueOf(request);
-        exportEntries(format, response, "entry", qr);
+        streamEntries(format, response, "entry", qr);
     }
 
-    private void exportEntries(NPFileFormat format, HttpServletResponse response, String viewName, QueryRequest queryRequest) {
+    private List<String> getAccessions(QueryRequest queryRequest) {
 
-        Writer writer = null;
+        Set<String> accessionsSet = searchService.getAccessions(queryRequest);
+        List<String> accessions;
+
+        if (queryRequest.getSort() != null || queryRequest.getOrder() != null) {
+            //TODO This is very slow and is highly memory intensive please review the way of sorting this using only the asking for ids. See the SearchServiceTest
+            accessions = searchService.sortAccessions(queryRequest, accessionsSet);
+        } else {
+            accessions = new ArrayList<>(accessionsSet);
+            Collections.sort(accessions);
+        }
+
+        return accessions;
+    }
+
+    private void streamEntries(NPFileFormat format, HttpServletResponse response, String viewName, QueryRequest queryRequest) {
+
+        setResponseHeader(format, viewName, queryRequest, response);
+
+        NPEntryWriter writer = null;
 
         try {
-            writer = newStreamWriter(format, viewName, queryRequest, response);
+            writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, response.getOutputStream());
 
-            Set<String> accessionsSet = searchService.getAccessions(queryRequest);
-            List<String> accessions;
-
-            if (queryRequest.getSort() != null || queryRequest.getOrder() != null) {
-                //TODO This is very slow and is highly memory intensive please review the way of sorting this using only the asking for ids. See the SearchServiceTest
-                accessions = searchService.sortAccessions(queryRequest, accessionsSet);
-            } else {
-                accessions = new ArrayList<>(accessionsSet);
-                Collections.sort(accessions);
-            }
-
-            exportService.streamResults(format, writer, viewName, accessions);
-        } catch (IOException e) {
+            exportService.streamResults(writer, viewName, getAccessions(queryRequest));
+        } catch (Exception e) {
 
             e.printStackTrace();
             throw new NextProtException("Failed to stream "+format.getExtension());
         } finally {
             try {
-                if (writer != null) writer.close();
+                writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
                 throw new NextProtException("Failed to close stream "+format.getExtension());
@@ -162,15 +169,13 @@ public class ExportController {
         }
     }
 
-    private Writer newStreamWriter(NPFileFormat format, String viewName, QueryRequest queryRequest, HttpServletResponse response) throws IOException {
+    private void setResponseHeader(NPFileFormat format, String viewName, QueryRequest queryRequest, HttpServletResponse response) {
 
         String filename = getFilename(queryRequest, viewName, format);
 
         if (!format.equals(NPFileFormat.JSON)) {
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
         }
-
-        return new OutputStreamWriter(response.getOutputStream(), "UTF-8");
     }
 
     private String getFilename(QueryRequest queryRequest, String viewName, NPFileFormat format) {

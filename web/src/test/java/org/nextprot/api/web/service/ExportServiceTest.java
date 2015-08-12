@@ -1,15 +1,15 @@
 package org.nextprot.api.web.service;
 
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.Arrays;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
+import org.nextprot.api.web.service.impl.writer.NPEntryWriter;
+import org.nextprot.api.web.service.impl.writer.NPEntryWriterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
+
+import java.util.Arrays;
 
 /**
  * Exports an entry
@@ -32,8 +32,9 @@ public class ExportServiceTest extends WebIntegrationBaseTest {
 		service.streamResultsInXML(new PrintWriter(System.out), "overview", Arrays.asList("NX_P06213", "NX_P01308"), false, false);
 		Mockito.verify(os, Mockito.times(4)).flush();*/
 
-		Writer writer = new PrintWriter(System.out);
-		service.streamResults(NPFileFormat.XML, writer, "overview", Arrays.asList("NX_P06213", "NX_P01308"));
+		NPEntryWriter exporter = NPEntryWriterFactory.newNPEntryStreamWriter(NPFileFormat.XML, System.out);
+
+		service.streamResults(exporter, "overview", Arrays.asList("NX_P06213", "NX_P01308"));
 	}
 
 	@Test
@@ -43,7 +44,8 @@ public class ExportServiceTest extends WebIntegrationBaseTest {
 		NPStreamExporter exporter = NPFileExporter.XML.getNPStreamExporter();
 		exporter.export(Arrays.asList("NX_P06213", "NX_P01308"), writer, "overview");*/
 
-		Writer writer = new PrintWriter(System.out);
-		service.streamResults(NPFileFormat.JSON, writer, "overview", Arrays.asList("NX_P06213", "NX_P01308"));
+		NPEntryWriter exporter = NPEntryWriterFactory.newNPEntryStreamWriter(NPFileFormat.XML, System.out);
+
+		service.streamResults(exporter, "overview", Arrays.asList("NX_P06213", "NX_P01308"));
 	}
 }

@@ -1,4 +1,4 @@
-package org.nextprot.api.web.service.impl;
+package org.nextprot.api.web.service.impl.writer;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -17,17 +17,11 @@ import java.util.Map;
  * Created by fnikitin on 28/04/15.
  * Daniel added pretty print for xml and xml header
  */
-public class XMLStreamExporter extends NPStreamExporter {
+public class NPEntryXMLWriter extends NPEntryVelocityBasedWriter {
 
-    private final Template template;
+    public NPEntryXMLWriter(Writer writer) {
 
-    public XMLStreamExporter() {
-        template = velocityConfig.getVelocityEngine().getTemplate("entry.xml.vm");
-    }
-
-    @Override
-    protected void exportStream(String entryName, Writer writer, String viewName) throws IOException {
-        streamWithVelocityTemplate(template, entryName, writer, viewName);
+        super(writer, "entry.xml.vm");
     }
 
     /**
@@ -35,14 +29,13 @@ public class XMLStreamExporter extends NPStreamExporter {
      * @throws IOException 
      */
     @Override
-    protected void handleMerge(Template template, VelocityContext context, Writer writer) throws IOException {
-    	writePrettyXml(template, context, writer);
+    protected void handleTemplateMerge(Template template, VelocityContext context) throws IOException {
+    	writePrettyXml(template, context);
     }
-    
-    
-    protected void writePrettyXml(Template template, VelocityContext context, Writer writer) throws IOException{
+
+    private void writePrettyXml(Template template, VelocityContext context) throws IOException{
     	
-    	String prettyXml = null;
+    	String prettyXml;
         try( //try with resources will be closed automatically in the finally block without having to declare
         		
         		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -54,25 +47,23 @@ public class XMLStreamExporter extends NPStreamExporter {
             prettyXml = PrettyPrinter.getPrettyXml(out.toString());
 
         }
-        writer.write(prettyXml);
-
+        stream.write(prettyXml);
     }
-
 
     @Override
-    protected void writeHeader(Writer writer, Map<String, Object> params) throws IOException {
+    protected void writeHeader(Map<String, Object> params) throws IOException {
         Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("export-header.xml.vm");
-        headerTemplate.merge(new NXVelocityContext(params), writer);
+        headerTemplate.merge(new NXVelocityContext(params), stream);
 
         Template releaseContentTemplate = velocityConfig.getVelocityEngine().getTemplate("release-contents.xml.vm");
-        writePrettyXml(releaseContentTemplate, new NXVelocityContext(params), writer);
-    	writer.write("  </header>");
-    	writer.write("<entry-list>");
-
+        writePrettyXml(releaseContentTemplate, new NXVelocityContext(params));
+        stream.write("  </header>");
+        stream.write("<entry-list>");
     }
 
-    protected void writeFooter(Writer writer) throws IOException {
+    @Override
+    protected void writeFooter() throws IOException {
         Template exportTemplate = velocityConfig.getVelocityEngine().getTemplate("export-footer.xml.vm");
-		exportTemplate.merge(new NXVelocityContext(), writer);
+		exportTemplate.merge(new NXVelocityContext(), stream);
     }
 }
