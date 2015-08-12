@@ -28,7 +28,9 @@ class FamilyServiceImpl implements FamilyService {
 		@Override
 		public int compare(Family f1, Family f2) {
 
-			return Integer.compare(REGION_SORT_INDEX.get(f1.getRegion()), REGION_SORT_INDEX.get(f2.getRegion()));
+			if (f1.getRegion() != null && f2.getRegion() != null)
+				return Integer.compare(REGION_SORT_INDEX.get(f1.getRegion()), REGION_SORT_INDEX.get(f2.getRegion()));
+			return 0;
 		}
 	};
 
