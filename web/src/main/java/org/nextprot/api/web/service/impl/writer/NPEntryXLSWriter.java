@@ -135,8 +135,9 @@ public class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
     }
 
     @Override
-    public void lastFlush() throws IOException {
+    public void close() throws IOException {
 
         workbook.write(stream);
+        workbook.close();
     }
 }

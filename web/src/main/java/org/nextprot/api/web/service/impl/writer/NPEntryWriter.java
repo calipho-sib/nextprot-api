@@ -17,6 +17,11 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
 
     protected final S stream;
 
+    /**
+     * Build writer that flush in the given stream
+     * @param stream an output stream
+     *
+     */
     public NPEntryWriter(S stream) {
 
         Preconditions.checkNotNull(stream);
@@ -25,7 +30,7 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
     }
 
     /**
-     * Writes all entries given the view and closes the stream.
+     * Writes all entries given the view and closes the writer (The stream should be closed outside).
 
      * @param entries the entries to be flush
      * @param viewName the view name
@@ -34,7 +39,7 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
      */
     public void write(Collection<String> entries, String viewName, Map<String, Object> headerParams) throws IOException {
 
-        start();
+        init();
         writeHeader(headerParams);
 
         if (entries != null) {
@@ -46,13 +51,13 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
         }
 
         writeFooter();
-        lastFlush();
+        flush();
 
         close();
     }
 
     /** Writing initiated */
-    public void start() {}
+    public void init() {}
 
     /** Write header to the output stream (to be overridden by if needed) */
     protected void writeHeader(Map<String, Object> headerParams) throws IOException {}
@@ -68,13 +73,6 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
         stream.flush();
     }
 
-    /** Last flushing before closing stream */
-    protected void lastFlush() throws IOException {
-        stream.flush();
-    }
-
-    /** Closes the stream */
-    public void close() throws IOException {
-        stream.close();
-    }
+    /** Closes the writer (and not the stream) */
+    public void close() throws IOException { }
 }

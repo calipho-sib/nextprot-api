@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.export.format.NPFileFormat;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -25,7 +26,7 @@ public class NPEntryWriterFactory {
      * @return a NPEntryWriter instance
      * @throws UnsupportedEncodingException
      */
-    public static NPEntryWriter newNPEntryStreamWriter(NPFileFormat format, OutputStream os) throws UnsupportedEncodingException {
+    public static NPEntryWriter newNPEntryStreamWriter(NPFileFormat format, OutputStream os) throws IOException {
 
         Preconditions.checkNotNull(format);
         Preconditions.checkNotNull(os);

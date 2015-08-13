@@ -16,22 +16,27 @@ import java.io.OutputStream;
  */
 public class NPEntryJSONWriter extends NPEntryOutputStreamWriter {
 
-    private final JsonFactory factory;
+    private final JsonGenerator generator;
 
-    public NPEntryJSONWriter(OutputStream os) {
+    public NPEntryJSONWriter(OutputStream os) throws IOException {
 
         super(os);
 
         ObjectMapper mapper = new ObjectMapper();
-        factory = mapper.getFactory();
+        JsonFactory factory = mapper.getFactory();
+        generator = factory.createGenerator(os);
     }
 
     @Override
     protected void writeEntry(String entryName, String viewName) throws IOException {
 
-        JsonGenerator generator = factory.createGenerator(stream);
-
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).with(viewName));
         generator.writeObject(entry);
+    }
+
+    @Override
+    public void close() throws IOException {
+
+        generator.close();
     }
 }
