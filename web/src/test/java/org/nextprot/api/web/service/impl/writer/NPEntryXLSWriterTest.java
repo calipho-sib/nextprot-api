@@ -28,7 +28,7 @@ public class NPEntryXLSWriterTest extends WebIntegrationBaseTest {
                 new Object[] { "NX_P48730","Casein kinase I isoform delta","CSNK1D","17q25.3","yes","yes","yes",2,41,8,"yes","yes","Evidence at protein level"});
     }
 
-    @Test
+    //@Test
     public void exportXLSFile() throws Exception {
 
         FileOutputStream out = new FileOutputStream("/Users/fnikitin/Downloads/proteins.xls");
