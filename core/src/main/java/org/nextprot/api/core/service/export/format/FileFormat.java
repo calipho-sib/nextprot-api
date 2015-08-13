@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * A file format
  */
-public enum NPFileFormat {
+public enum FileFormat {
 
 	TXT("txt", "text/plain"),
 	XLS("xls", "application/vnd.ms-excel"),
@@ -22,7 +22,7 @@ public enum NPFileFormat {
 	private String extension;
 	private String contentType;
 
-	NPFileFormat(String extension, String contentType) {
+	FileFormat(String extension, String contentType) {
 		this.extension = extension;
 		this.contentType = contentType;
 	}
@@ -35,23 +35,23 @@ public enum NPFileFormat {
 		return contentType;
 	}
 
-    public static NPFileFormat valueOf(HttpServletRequest request) {
+    public static FileFormat valueOf(HttpServletRequest request) {
 
         String uri = request.getRequestURI();
         if (uri.toLowerCase().endsWith(".ttl")) {
-            return NPFileFormat.TURTLE;
+            return FileFormat.TURTLE;
         } else if (uri.toLowerCase().endsWith(".xml")) {
-            return NPFileFormat.XML;
+            return FileFormat.XML;
         } else if (uri.toLowerCase().endsWith(".json")) {
-            return NPFileFormat.JSON;
+            return FileFormat.JSON;
         } else if (uri.toLowerCase().endsWith(".txt")) {
-            return NPFileFormat.TXT;
+            return FileFormat.TXT;
 		} else if (uri.toLowerCase().endsWith(".xls")) {
-			return NPFileFormat.XLS;
+			return FileFormat.XLS;
 		} else if (uri.toLowerCase().endsWith(".fasta")) {
-			return NPFileFormat.FASTA;
+			return FileFormat.FASTA;
         } else if (uri.toLowerCase().endsWith(".peff")) {
-			return NPFileFormat.PEFF;
+			return FileFormat.PEFF;
 		} else
             throw new NextProtException("Format not recognized");
     }

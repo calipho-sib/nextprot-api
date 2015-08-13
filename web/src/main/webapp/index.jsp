@@ -867,7 +867,7 @@
 					$('#testButton').button('loading');
 
 					
-					//Add sufix for brower call
+					//Add suffix for brower call
 					var suffix = "xml";
 					if (headers["Accept"] == "application/json")
 						suffix = "json";
@@ -875,6 +875,8 @@
 						suffix = "ttl";
 					if (headers["Accept"] == "text/fasta")
 						suffix = "fasta";
+					if (headers["Accept"] == "application/vnd.ms-excel")
+						suffix = "xls";
 					//if (headers["Accept"] == "text/peff")
 					//	suffix = "peff";
 

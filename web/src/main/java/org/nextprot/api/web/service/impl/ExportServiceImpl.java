@@ -8,7 +8,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.ReleaseInfoService;
-import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.service.export.format.FileFormat;
 import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.service.ExportService;
 import org.nextprot.api.web.service.impl.writer.NPEntryWriter;
@@ -45,7 +45,7 @@ public class ExportServiceImpl implements ExportService {
 	private ExecutorService executor = null;
 
 	@Override
-	public List<Future<File>> exportAllEntries(NPFileFormat format) {
+	public List<Future<File>> exportAllEntries(FileFormat format) {
 		List<String> uniqueNames = new ArrayList<>();
 		for (String chrm : CHROMOSOMES) {
 			uniqueNames.addAll(this.masterIdentifierService.findUniqueNamesOfChromosome(chrm));
@@ -54,13 +54,13 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	@Override
-	public List<Future<File>> exportEntriesOfChromosome(String chromossome, NPFileFormat format) {
+	public List<Future<File>> exportEntriesOfChromosome(String chromossome, FileFormat format) {
 		List<String> uniqueNames = this.masterIdentifierService.findUniqueNamesOfChromosome(chromossome);
 		return exportEntries(uniqueNames, format);
 	}
 
 	@Override
-	public List<Future<File>> exportEntries(Collection<String> uniqueNames, NPFileFormat format) {
+	public List<Future<File>> exportEntries(Collection<String> uniqueNames, FileFormat format) {
 		List<Future<File>> futures = new ArrayList<>();
 		futures.add(exportSubPart(SubPart.HEADER, format));
 		for (String uniqueName : uniqueNames) {
@@ -75,12 +75,12 @@ public class ExportServiceImpl implements ExportService {
 		executor = Executors.newFixedThreadPool(numberOfWorkers);
 	}
 
-	private Future<File> exportSubPart(SubPart part, NPFileFormat format) {
+	private Future<File> exportSubPart(SubPart part, FileFormat format) {
 		return executor.submit(new ExportSubPartTask(velocityConfig.getVelocityEngine(), part, format));
 	}
 
 	@Override
-	public Future<File> exportEntry(String uniqueName, NPFileFormat format) {
+	public Future<File> exportEntry(String uniqueName, FileFormat format) {
 		return executor.submit(new ExportEntryTask(this.entryBuilderService, velocityConfig.getVelocityEngine(), uniqueName, format));
 	}
 
@@ -92,7 +92,7 @@ public class ExportServiceImpl implements ExportService {
 		private VelocityEngine ve;
 		private EntryBuilderService entryBuilderService;
 
-		public ExportEntryTask(EntryBuilderService entryBuilderService, VelocityEngine ve, String entryName, NPFileFormat format) {
+		public ExportEntryTask(EntryBuilderService entryBuilderService, VelocityEngine ve, String entryName, FileFormat format) {
 			this.ve = ve;
 			this.entryBuilderService = entryBuilderService;
 			this.filename = REPOSITORY_PATH + "/" + format.name() + "/" + entryName + "." + format.getExtension();
@@ -123,7 +123,7 @@ public class ExportServiceImpl implements ExportService {
 			VelocityContext context;
 			try {
 
-				if (format.equals(NPFileFormat.TURTLE.getExtension())) {
+				if (format.equals(FileFormat.TURTLE.getExtension())) {
 					template = ve.getTemplate("turtle/entry." + format + ".vm");
 				} else {
 					template = ve.getTemplate("entry." + format + ".vm");
@@ -153,13 +153,13 @@ public class ExportServiceImpl implements ExportService {
 
 	static class ExportSubPartTask implements Callable<File> {
 
-		private NPFileFormat npFormat;
+		private FileFormat npFormat;
 		private String format;
 		private VelocityEngine ve;
 		private String filename;
 		private SubPart part;
 
-		public ExportSubPartTask(VelocityEngine ve, SubPart part, NPFileFormat format) {
+		public ExportSubPartTask(VelocityEngine ve, SubPart part, FileFormat format) {
 			this.npFormat = format;
 			this.ve = ve;
 			this.part = part;
@@ -170,7 +170,7 @@ public class ExportServiceImpl implements ExportService {
 		}
 
 		public void checkFormatConstraints() {
-			if (!(npFormat.equals(NPFileFormat.TURTLE) || npFormat.equals(NPFileFormat.XML))) {
+			if (!(npFormat.equals(FileFormat.TURTLE) || npFormat.equals(FileFormat.XML))) {
 				throw new RuntimeException("A format should be specified (xml or ttl)");
 			}
 		}
@@ -189,13 +189,13 @@ public class ExportServiceImpl implements ExportService {
 			try {
 
 				if (part.equals(SubPart.HEADER)) {
-					if (format.equals(NPFileFormat.TURTLE.getExtension())) {
+					if (format.equals(FileFormat.TURTLE.getExtension())) {
 						template = ve.getTemplate("turtle/prefix.ttl.vm");
 					} else {
 						template = ve.getTemplate("exportStart.xml.vm");
 					}
 				} else if (part.equals(SubPart.FOOTER)) {
-					if (format.equals(NPFileFormat.XML.getExtension())) {
+					if (format.equals(FileFormat.XML.getExtension())) {
 						template = ve.getTemplate("exportEnd.xml.vm");
 					}
 				}

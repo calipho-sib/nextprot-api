@@ -6,7 +6,7 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.export.ExportUtils;
 import org.nextprot.api.core.service.export.format.EntryBlock;
-import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.service.export.format.FileFormat;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -52,7 +52,7 @@ public class ExportController {
     @RequestMapping("/export/entries/all")
     public void exportAllEntries(HttpServletResponse response, HttpServletRequest request) {
 
-        NPFileFormat format = NPFileFormat.valueOf(request);
+        FileFormat format = FileFormat.valueOf(request);
         response.setHeader("Content-Disposition", "attachment; filename=\"NXEntries." + format.getExtension() + "\"");
 
         List<Future<File>> futures = exportService.exportAllEntries(format);
@@ -64,7 +64,7 @@ public class ExportController {
     public void exportEntriesByChromosome(HttpServletResponse response, HttpServletRequest request,
                                           @ApiQueryParam(name = "chromosome", description = "The number of the chromosome. For example, the chromosome 21", allowedvalues = {"21"}) @PathVariable("chromosome") String chromosome) {
 
-        NPFileFormat format = NPFileFormat.valueOf(request);
+        FileFormat format = FileFormat.valueOf(request);
         response.setHeader("Content-Disposition", "attachment; filename=\"NXChromosome" + chromosome + "." + format.getExtension() + "\"");
 
         List<Future<File>> futures = exportService.exportEntriesOfChromosome(chromosome, format);
@@ -113,7 +113,7 @@ public class ExportController {
                                      @RequestParam(value = "quality", required = false) String quality, @RequestParam(value = "limit", required = false) Integer limit, Model model) {
         QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort, order, limit);
 
-        NPFileFormat format = NPFileFormat.valueOf(request);
+        FileFormat format = FileFormat.valueOf(request);
         streamEntries(format, response, view, qr);
     }
 
@@ -125,7 +125,7 @@ public class ExportController {
                               @RequestParam(value = "quality", required = false) String quality, @RequestParam(value = "limit", required = false) Integer limit, Model model) {
         QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort, order, limit);
 
-        NPFileFormat format = NPFileFormat.valueOf(request);
+        FileFormat format = FileFormat.valueOf(request);
         streamEntries(format, response, "entry", qr);
     }
 
@@ -145,7 +145,7 @@ public class ExportController {
         return accessions;
     }
 
-    private void streamEntries(NPFileFormat format, HttpServletResponse response, String viewName, QueryRequest queryRequest) {
+    private void streamEntries(FileFormat format, HttpServletResponse response, String viewName, QueryRequest queryRequest) {
 
         setResponseHeader(format, viewName, queryRequest, response);
         List<String> entries = getAccessions(queryRequest);
@@ -169,16 +169,16 @@ public class ExportController {
         }
     }
 
-    private void setResponseHeader(NPFileFormat format, String viewName, QueryRequest queryRequest, HttpServletResponse response) {
+    private void setResponseHeader(FileFormat format, String viewName, QueryRequest queryRequest, HttpServletResponse response) {
 
         String filename = getFilename(queryRequest, viewName, format);
 
-        if (!format.equals(NPFileFormat.JSON)) {
+        if (!format.equals(FileFormat.JSON)) {
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
         }
     }
 
-    private String getFilename(QueryRequest queryRequest, String viewName, NPFileFormat format) {
+    private String getFilename(QueryRequest queryRequest, String viewName, FileFormat format) {
         if (queryRequest.hasNextProtQuery()) {
             return "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
         } else if (queryRequest.hasList()) {
