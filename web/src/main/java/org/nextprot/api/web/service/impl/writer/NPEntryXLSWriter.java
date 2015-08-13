@@ -9,6 +9,7 @@ import org.nextprot.api.core.service.fluent.EntryConfig;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +24,13 @@ public class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
     private final HSSFCellStyle hlinkStyle;
 
     private int rowIndex;
+
+    public interface EntryHandler {
+
+        List<EntryBlock> getEntryBlocks();
+        int size();
+        String getValueAt(int index);
+    }
 
     public NPEntryXLSWriter(OutputStream stream) {
 
@@ -73,6 +81,26 @@ public class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
     private static String booleanToYesNoString(boolean bool) {
 
         return (bool) ? "yes" : "no";
+    }
+
+    protected void writeEntry2(String entryName, String viewName, EntryHandler handler) throws IOException {
+
+        EntryConfig config = EntryConfig.newConfig(entryName);
+
+        for (EntryBlock block : handler.getEntryBlocks()) {
+
+            config.withBlock(block);
+        }
+
+        Entry entry = entryBuilderService.build(config);
+
+        HSSFRow row = worksheet.createRow(rowIndex);
+
+        for (int i=0 ; i<handler.size() ; i++) {
+
+            HSSFCell cell = row.createCell(i);
+            cell.setCellValue(handler.getValueAt(i));
+        }
     }
 
     // http://dev-api.nextprot.org/export/entries/accession.xls?query=kimura-matsumoto
