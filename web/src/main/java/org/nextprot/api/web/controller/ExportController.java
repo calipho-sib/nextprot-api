@@ -153,7 +153,7 @@ public class ExportController {
         NPEntryWriter writer = null;
 
         try {
-            writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, response.getOutputStream());
+            writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream());
 
             exportService.streamResults(writer, viewName, entries);
         } catch (IOException e) {
