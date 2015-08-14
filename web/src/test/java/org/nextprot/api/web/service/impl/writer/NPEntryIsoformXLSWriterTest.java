@@ -22,7 +22,7 @@ public class NPEntryIsoformXLSWriterTest extends WebIntegrationBaseTest {
 
         NPEntryXLSWriter writer = new NPEntryIsoformXLSWriter(out);
 
-        writer.write(Arrays.asList("NX_P48730"), "isoform", null);
+        writer.write(Arrays.asList("NX_P48730"));
 
         assertXLSEquals(out, new String[]{"acc. code", "protein name", "isoform", "seq. len", "mass", "PI"},
                 new Object[]{"NX_P48730-1", "Casein kinase I isoform delta", "Iso 1", 415.0, 47330.0, 9.77},
@@ -37,7 +37,7 @@ public class NPEntryIsoformXLSWriterTest extends WebIntegrationBaseTest {
 
         NPEntryXLSWriter writer = new NPEntryIsoformXLSWriter(out);
 
-        writer.write(Arrays.asList("NX_P48730"), "isoform", null);
+        writer.write(Arrays.asList("NX_P48730"));
     }
 
     private static void assertXLSEquals(ByteArrayOutputStream baos, String[] headers, Object[]... expectedRows) throws IOException {

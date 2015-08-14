@@ -254,6 +254,6 @@ public class ExportServiceImpl implements ExportService {
 		map.put(ExportService.ENTRIES_COUNT_PARAM, accessions.size());
 		map.put("release", releaseInfoService.findReleaseContents());
 
-		writer.write(accessions, viewName, map);
+		writer.write(accessions, map);
 	}
 }

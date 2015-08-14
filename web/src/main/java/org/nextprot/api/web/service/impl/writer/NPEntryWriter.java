@@ -30,14 +30,24 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
     }
 
     /**
-     * Writes all entries given the view and closes the writer (The stream should be closed outside).
+     * Writes all entries and closes the writer (The stream should be closed outside).
 
      * @param entries the entries to be flush
-     * @param viewName the view name
+     * @throws IOException
+     */
+    public void write(Collection<String> entries) throws IOException {
+
+        write(entries, null);
+    }
+
+    /**
+     * Writes all entries and closes the writer (The stream should be closed outside).
+
+     * @param entries the entries to be flush
      * @param headerParams an optionally parameters map for header
      * @throws IOException
      */
-    public void write(Collection<String> entries, String viewName, Map<String, Object> headerParams) throws IOException {
+    public void write(Collection<String> entries, Map<String, Object> headerParams) throws IOException {
 
         init();
         writeHeader(headerParams);
@@ -45,7 +55,7 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
         if (entries != null) {
 
             for (String acc : entries) {
-                writeEntry(acc, viewName);
+                writeEntry(acc);
                 flush();
             }
         }
@@ -62,8 +72,8 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
     /** Write header to the output stream (to be overridden by if needed) */
     protected void writeHeader(Map<String, Object> headerParams) throws IOException {}
 
-    /** Write a single entry to the output stream given a view */
-    protected abstract void writeEntry(String entryName, String viewName) throws IOException;
+    /** Write a single entry to the output stream */
+    protected abstract void writeEntry(String entryName) throws IOException;
 
     /** Write footer to the output stream (to be overridden by if needed) */
     protected void writeFooter() throws IOException {}

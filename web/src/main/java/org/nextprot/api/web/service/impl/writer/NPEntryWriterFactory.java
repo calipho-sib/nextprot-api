@@ -34,14 +34,13 @@ public class NPEntryWriterFactory {
         switch (format) {
 
             case XML:
-                return new NPEntryXMLWriter(new OutputStreamWriter(os, UTF_8));
+                return new NPEntryXMLWriter(new OutputStreamWriter(os, UTF_8), view);
             case TXT:
                 return new NPEntryTXTWriter(new OutputStreamWriter(os, UTF_8));
             case XLS:
-                if (view.equals("isoform")) return new NPEntryIsoformXLSWriter(os);
-                else return new NPEntryOverviewXLSWriter(os);
+                return NPEntryXLSWriter.newNPEntryXLSWriter(os, view);
             case JSON:
-                return new NPEntryJSONWriter(os);
+                return new NPEntryJSONWriter(os, view);
             case FASTA:
                 return new NPEntryFastaWriter(new OutputStreamWriter(os, UTF_8));
             case PEFF:

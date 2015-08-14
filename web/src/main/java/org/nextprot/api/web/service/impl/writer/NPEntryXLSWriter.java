@@ -100,7 +100,7 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
     /** Provides nextprot entry data to this XLS writer */
     public interface EntryDataProvider {
 
-        // @return the EntryBlocks needed to get data
+        // @return the EntryBlocks needed to get data (equivalent to view names)
         List<EntryBlock> getSourceEntryBlocks();
 
         // @return the field names
@@ -124,6 +124,14 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
         rowIndex = 0;
 
         this.entryDataProvider = entryDataProvider;
+    }
+
+    public static NPEntryXLSWriter newNPEntryXLSWriter(OutputStream os, String viewName) {
+
+        if (viewName.equals("isoform"))
+            return new NPEntryIsoformXLSWriter(os);
+        else
+            return new NPEntryOverviewXLSWriter(os);
     }
 
     private static HSSFCellStyle createHLinkStyle(HSSFWorkbook workbook) {
@@ -155,7 +163,7 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
     }
 
     @Override
-    protected void writeEntry(String entryName, String viewName) throws IOException {
+    protected void writeEntry(String entryName) throws IOException {
 
         EntryConfig config = EntryConfig.newConfig(entryName);
 

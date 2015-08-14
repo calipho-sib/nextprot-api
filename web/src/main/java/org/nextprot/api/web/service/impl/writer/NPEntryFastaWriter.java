@@ -12,12 +12,12 @@ public class NPEntryFastaWriter extends NPEntryVelocityBasedWriter {
 
     public NPEntryFastaWriter(Writer writer) {
 
-        super(writer, "fasta/entry.fasta.vm");
+        super(writer, "fasta/entry.fasta.vm", "overview");
     }
 
     @Override
-    protected void writeEntry(String entryName, String viewName) throws IOException {
+    protected void writeEntry(String entryName) throws IOException {
 
-        streamWithVelocityTemplate(entryName, "isoform", "overview");
+        streamWithVelocityTemplate(entryName, "isoform");
     }
 }

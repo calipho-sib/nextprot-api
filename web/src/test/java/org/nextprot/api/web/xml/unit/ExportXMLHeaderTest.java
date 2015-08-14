@@ -25,7 +25,7 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
 
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        NPEntryVelocityBasedWriter exporter = new NPEntryXMLWriter(writer);
+        NPEntryVelocityBasedWriter exporter = new NPEntryXMLWriter(writer, "overview");
         
         Map<String, Object> map = new HashMap<>();
 
@@ -38,7 +38,7 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
 
         map.put("release", rc);
         
-        exporter.write(new ArrayList<String>(), "overview", map);
+        exporter.write(new ArrayList<String>(), map);
 
         NodeList dbReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/header/release/nextprot/database-release");
         assertEquals(dbReleaseNodes.item(0).getTextContent(), "database-test-version");

@@ -20,7 +20,7 @@ public class NPEntryTXTWriter extends NPEntryVelocityBasedWriter {
 
     public NPEntryTXTWriter(Writer writer) {
 
-        super(writer, "txt/entry.txt.vm");
+        super(writer, "txt/entry.txt.vm", "accession");
     }
 
     @Override
@@ -33,8 +33,8 @@ public class NPEntryTXTWriter extends NPEntryVelocityBasedWriter {
     }
 
     @Override
-    protected void writeEntry(String entryName, String viewName) throws IOException {
+    protected void writeEntry(String entryName) throws IOException {
 
-        streamWithVelocityTemplate(entryName, "accession");
+        streamWithVelocityTemplate(entryName);
     }
 }

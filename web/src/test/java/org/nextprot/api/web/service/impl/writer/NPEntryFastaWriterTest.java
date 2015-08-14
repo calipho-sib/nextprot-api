@@ -23,7 +23,7 @@ public class NPEntryFastaWriterTest extends WebIntegrationBaseTest {
 
         NPEntryVelocityBasedWriter exporter = new NPEntryFastaWriter(writer);
 
-        exporter.write(Arrays.asList("NX_P06213", "NX_P01308"), "overview", null);
+        exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
 
         assertEquals(">nxp|NX_P06213-2|INSR|Insulin receptor|Short\n" +
                 "MATGGRRGAAAAPLLVAVAALLLGAAGHLYPGEVCPGMDIRNNLTRLHELENCSVIEGHL\n" +

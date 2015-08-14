@@ -1,5 +1,6 @@
 package org.nextprot.api.web.service.impl.writer;
 
+import com.google.common.base.Preconditions;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.core.domain.Entry;
@@ -25,14 +26,20 @@ public abstract class NPEntryVelocityBasedWriter extends NPEntryWriter<Writer> {
     protected EntryBuilderService entryBuilderService;
     protected VelocityConfig velocityConfig;
     private final Template template;
+    private final String viewName;
 
-    public NPEntryVelocityBasedWriter(Writer writer, String templateName) {
+    public NPEntryVelocityBasedWriter(Writer writer, String templateName, String viewName) {
 
         super(writer);
+
+        Preconditions.checkNotNull(templateName);
+        Preconditions.checkNotNull(viewName);
 
         entryBuilderService = applicationContext.getBean(EntryBuilderService.class);
         velocityConfig = applicationContext.getBean(VelocityConfig.class);
         template = velocityConfig.getVelocityEngine().getTemplate(templateName);
+
+        this.viewName = viewName;
     }
 
     public void setEntryBuilderService(EntryBuilderService entryBuilderService) {
@@ -40,12 +47,12 @@ public abstract class NPEntryVelocityBasedWriter extends NPEntryWriter<Writer> {
     }
 
     @Override
-    protected void writeEntry(String entryName, String viewName) throws IOException {
+    protected void writeEntry(String entryName) throws IOException {
 
         streamWithVelocityTemplate(entryName, viewName);
     }
 
-    final void streamWithVelocityTemplate(String entryName, String viewName, String... otherViewNames) throws IOException {
+    final void streamWithVelocityTemplate(String entryName, String... otherViewNames) throws IOException {
 
     	EntryConfig entryConfig = EntryConfig.newConfig(entryName);
 

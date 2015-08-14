@@ -14,13 +14,13 @@ public class NPEntryPeffWriter extends NPEntryVelocityBasedWriter {
 
     public NPEntryPeffWriter(Writer writer) {
 
-        super(writer, "peff/entry.peff.vm");
+        super(writer, "peff/entry.peff.vm", "entry");
     }
 
     @Override
-    protected void writeEntry(String entryName, String viewName) throws IOException {
+    protected void writeEntry(String entryName) throws IOException {
 
-        streamWithVelocityTemplate(entryName, "isoform", "entry");
+        streamWithVelocityTemplate(entryName, "isoform");
     }
 
     @Override

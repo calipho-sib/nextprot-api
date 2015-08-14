@@ -19,9 +19,9 @@ import java.util.Map;
  */
 public class NPEntryXMLWriter extends NPEntryVelocityBasedWriter {
 
-    public NPEntryXMLWriter(Writer writer) {
+    public NPEntryXMLWriter(Writer writer, String viewName) {
 
-        super(writer, "entry.xml.vm");
+        super(writer, "entry.xml.vm", viewName);
     }
 
     /**

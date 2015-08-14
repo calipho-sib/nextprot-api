@@ -26,7 +26,7 @@ public class NPEntryPeffWriterTest extends WebIntegrationBaseTest {
 
         NPEntryVelocityBasedWriter exporter = new NPEntryPeffWriter(writer);
 
-        exporter.write(Arrays.asList("NX_P06213", "NX_P01308"), "overview", null);
+        exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
 
         assertEquals("$NXUtils.buildPeffHeader($entry, $isoform, $protName, $geneName, $entrySequenceVersion, $entryVersion, $entryProteinExistence)\n" +
                 "MATGGRRGAAAAPLLVAVAALLLGAAGHLYPGEVCPGMDIRNNLTRLHELENCSVIEGHL\n" +

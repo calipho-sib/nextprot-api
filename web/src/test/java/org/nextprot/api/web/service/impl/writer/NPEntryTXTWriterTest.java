@@ -30,7 +30,7 @@ public class NPEntryTXTWriterTest extends WebIntegrationBaseTest {
         Map<String, Object> params = new HashMap<>();
         params.put(ExportService.ENTRIES_COUNT_PARAM, 2);
 
-        exporter.write(Arrays.asList("NX_P06213", "NX_P01308"), "overview", params);
+        exporter.write(Arrays.asList("NX_P06213", "NX_P01308"), params);
 
         assertEquals("#nb entries=2\nNX_P06213\nNX_P01308\n", out.toString());
     }
