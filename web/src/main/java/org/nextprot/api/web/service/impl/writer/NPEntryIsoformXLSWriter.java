@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class NPEntryIsoformXLSWriter extends NPEntryXLSWriter {
 
-    private static class Strategy implements WritingRowStrategy {
+    private static class DataProvider implements EntryDataProvider {
 
         @Override
         public List<EntryBlock> getSourceEntryBlocks() {
@@ -26,7 +26,7 @@ public class NPEntryIsoformXLSWriter extends NPEntryXLSWriter {
         }
 
         @Override
-        public String[] getHeaders() {
+        public String[] getFieldNames() {
             return new String[] {"acc. code", "protein name", "isoform", "seq. len", "mass", "PI"};
         }
 
@@ -37,7 +37,7 @@ public class NPEntryIsoformXLSWriter extends NPEntryXLSWriter {
 
             for (Isoform isoform : entry.getIsoforms()) {
 
-                Object[] values = new Object[getHeaders().length];
+                Object[] values = new Object[getFieldNames().length];
 
                 values[0] = isoform.getUniqueName();
                 values[1] = entry.getOverview().getMainProteinName();
@@ -46,9 +46,8 @@ public class NPEntryIsoformXLSWriter extends NPEntryXLSWriter {
                 values[4] = DescriptorMass.compute(isoform.getSequence());
                 values[5] = DescriptorPI.compute(isoform.getSequence());
 
-                Record record = new Record();
+                Record record = new Record(values);
 
-                record.setValues(values);
                 record.setStringValueIndices(new int[] { 0, 1, 2 });
                 record.setIntValueIndices(new int[] { 3 });
                 record.setDoubleValueIndices(new int[] { 4, 5 });
@@ -64,6 +63,6 @@ public class NPEntryIsoformXLSWriter extends NPEntryXLSWriter {
 
     public NPEntryIsoformXLSWriter(OutputStream stream) {
 
-        super(stream, "Isoforms", new Strategy());
+        super(stream, "Isoforms", new DataProvider());
     }
 }

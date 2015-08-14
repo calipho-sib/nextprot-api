@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class NPEntryOverviewXLSWriter extends NPEntryXLSWriter {
 
-    private static class Strategy implements WritingRowStrategy {
+    private static class DataProvider implements EntryDataProvider {
 
         @Override
         public List<EntryBlock> getSourceEntryBlocks() {
@@ -23,14 +23,14 @@ public class NPEntryOverviewXLSWriter extends NPEntryXLSWriter {
         }
 
         @Override
-        public String[] getHeaders() {
+        public String[] getFieldNames() {
             return new String[] { "acc. code", "protein name", "gene name(s)", "chromosome", "proteomics", "disease",	"structure", "#isof.", "#variants", "#PTMS", "mutagenesis", "tissue expr.", "PE" };
         }
 
         @Override
         public List<Record> getRecords(Entry entry) {
 
-            Object[] values = new Object[getHeaders().length];
+            Object[] values = new Object[getFieldNames().length];
 
             values[0] = entry.getUniqueName();
             values[1] = entry.getOverview().getMainProteinName();
@@ -47,9 +47,8 @@ public class NPEntryOverviewXLSWriter extends NPEntryXLSWriter {
             values[11] = booleanToYesNoString(entry.getProperties().getFilterexpressionprofile());
             values[12] = entry.getProperties().getProteinExistence();
 
-            Record record = new Record();
+            Record record = new Record(values);
 
-            record.setValues(values);
             record.setStringValueIndices(new int[]{0, 1, 2, 3, 4, 5, 6, 10, 11, 12});
             record.setIntValueIndices(new int[]{7, 8, 9});
 
@@ -66,6 +65,6 @@ public class NPEntryOverviewXLSWriter extends NPEntryXLSWriter {
 
     public NPEntryOverviewXLSWriter(OutputStream stream) {
 
-        super(stream, "Proteins", new Strategy());
+        super(stream, "Proteins", new DataProvider());
     }
 }

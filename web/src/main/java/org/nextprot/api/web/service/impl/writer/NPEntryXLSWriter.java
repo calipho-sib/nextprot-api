@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Export nextprot entries in XLS format
+ * An abstract class to export nextprot entries in XLS format.
+ *
+ * Need an implementation of <code>EntryDataProvider</code> to handle extraction of data in Records
+ * for XLS sheet rows and cells to be properly created.
  *
  * Created by fnikitin on 11/08/15.
  */
@@ -26,21 +29,25 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
 
     private int rowIndex;
 
+    /** A record represents field values to be written into an XLS row */
     public static class Record {
 
-        private Object[] values;
+        private final Object[] values;
         private int[] stringValueIndices = new int[0];
         private int[] intValueIndices = new int[0];
         private int[] doubleValueIndices = new int[0];
         private int[] booleanValueIndices = new int[0];
         private Map<Integer, String> hyperLinks = new HashMap<>();
 
-        public Object[] getValues() {
-            return values;
+        public Record(Object[] values) {
+
+            Preconditions.checkNotNull(values);
+
+            this.values = values;
         }
 
-        public void setValues(Object[] values) {
-            this.values = values;
+        public Object[] getValues() {
+            return values;
         }
 
         // @return indices which values are of type String
@@ -90,32 +97,33 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
         }
     }
 
-    public interface WritingRowStrategy {
+    /** Provides nextprot entry data to this XLS writer */
+    public interface EntryDataProvider {
 
-        // Get the EntryBlocks needed to get values and build this row
+        // @return the EntryBlocks needed to get data
         List<EntryBlock> getSourceEntryBlocks();
 
-        // Get the names of column values
-        String[] getHeaders();
+        // @return the field names
+        String[] getFieldNames();
 
-        // @return a list of records (a record maps a row in excel)
+        // @return a list of data records (a record contain the field values) of the given entry
         List<Record> getRecords(Entry entry);
     }
 
-    private WritingRowStrategy strategy;
+    private final EntryDataProvider entryDataProvider;
 
-    protected NPEntryXLSWriter(OutputStream stream, String sheetName, WritingRowStrategy strategy) {
+    protected NPEntryXLSWriter(OutputStream stream, String sheetName, EntryDataProvider entryDataProvider) {
 
         super(stream);
 
-        Preconditions.checkNotNull(strategy);
+        Preconditions.checkNotNull(entryDataProvider);
 
         workbook = new HSSFWorkbook();
         hlinkStyle = createHLinkStyle(workbook);
         worksheet = workbook.createSheet(sheetName);
         rowIndex = 0;
 
-        this.strategy = strategy;
+        this.entryDataProvider = entryDataProvider;
     }
 
     private static HSSFCellStyle createHLinkStyle(HSSFWorkbook workbook) {
@@ -133,7 +141,7 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
     @Override
     protected void writeHeader(Map<String, Object> headerParams) throws IOException {
 
-        String[] headers = strategy.getHeaders();
+        String[] headers = entryDataProvider.getFieldNames();
 
         HSSFRow row = worksheet.createRow(rowIndex);
 
@@ -146,28 +154,19 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
         rowIndex++;
     }
 
-    private void setHyperLink(HSSFCell cell, String address) {
-
-        HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
-        link.setAddress(address);
-        cell.setHyperlink(link);
-        cell.setCellStyle(hlinkStyle);
-    }
-
-    // http://dev-api.nextprot.org/export/entries/accession.xls?query=kimura-matsumoto
     @Override
     protected void writeEntry(String entryName, String viewName) throws IOException {
 
         EntryConfig config = EntryConfig.newConfig(entryName);
 
-        for (EntryBlock block : strategy.getSourceEntryBlocks()) {
+        for (EntryBlock block : entryDataProvider.getSourceEntryBlocks()) {
 
             config.withBlock(block);
         }
 
         Entry entry = entryBuilderService.build(config);
 
-        for (Record record : strategy.getRecords(entry)) {
+        for (Record record : entryDataProvider.getRecords(entry)) {
 
             HSSFRow row = worksheet.createRow(rowIndex);
             writeRecord(row, record);
@@ -203,7 +202,7 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
         for (int index : record.getDoubleValueIndices()) {
 
             cells[index] = row.createCell(index);
-            cells[index].setCellValue((double)values[index]);
+            cells[index].setCellValue((double) values[index]);
         }
 
         Map<Integer, String> links = record.getHyperLinks();
@@ -212,6 +211,14 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
 
             setHyperLink(cells[index], links.get(index));
         }
+    }
+
+    private void setHyperLink(HSSFCell cell, String address) {
+
+        HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
+        link.setAddress(address);
+        cell.setHyperlink(link);
+        cell.setCellStyle(hlinkStyle);
     }
 
     @Override
