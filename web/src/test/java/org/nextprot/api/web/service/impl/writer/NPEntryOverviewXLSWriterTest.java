@@ -25,7 +25,7 @@ public class NPEntryOverviewXLSWriterTest extends WebIntegrationBaseTest {
         writer.write(Arrays.asList("NX_P48730"), "entry", null);
 
         assertXLSEquals(out, new String[] { "acc. code", "protein name", "gene name(s)", "chromosome", "proteomics", "disease",	"structure", "#isof.", "#variants", "#PTMS", "mutagenesis", "tissue expr.", "PE" },
-                new Object[] { "NX_P48730","Casein kinase I isoform delta","CSNK1D","17q25.3","yes","yes","yes",2,41,8,"yes","yes","Evidence at protein level"});
+                new Object[] { "NX_P48730","Casein kinase I isoform delta","CSNK1D","17q25.3","yes","yes","yes",2.0,41.0,8.0,"yes","yes","Evidence at protein level"});
     }
 
     //@Test
@@ -51,7 +51,7 @@ public class NPEntryOverviewXLSWriterTest extends WebIntegrationBaseTest {
         for (int i=0 ; i<headers.length ; i++) {
             Assert.assertEquals(headers[i], headerRow.getCell(i).getStringCellValue());
             if (i>=7 && i<=9)
-                Assert.assertEquals(values[i], (int)valuesRow.getCell(i).getNumericCellValue());
+                Assert.assertEquals(values[i], valuesRow.getCell(i).getNumericCellValue());
             else
                 Assert.assertEquals(values[i], valuesRow.getCell(i).getStringCellValue());
         }

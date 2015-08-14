@@ -43,14 +43,14 @@ public class NPEntryIsoformXLSWriter extends NPEntryXLSWriter {
                 values[1] = entry.getOverview().getMainProteinName();
                 values[2] = isoform.getMainEntityName().getValue();
                 values[3] = isoform.getSequenceLength();
-                values[4] = DescriptorMass.compute(isoform.getSequence());
+                values[4] = (int)Math.round(DescriptorMass.compute(isoform.getSequence()));
                 values[5] = DescriptorPI.compute(isoform.getSequence());
 
                 Record record = new Record(values);
 
                 record.setStringValueIndices(new int[] { 0, 1, 2 });
-                record.setIntValueIndices(new int[] { 3 });
-                record.setDoubleValueIndices(new int[] { 4, 5 });
+                record.setIntValueIndices(new int[] { 3, 4 });
+                record.setDoubleValueIndices(new int[] { 5 });
 
                 record.addHyperLinks(0, "http://www.nextprot.org/db/entry/"+entry.getUniqueName()+"/sequence?isoforms=" + isoform.getUniqueName());
 
