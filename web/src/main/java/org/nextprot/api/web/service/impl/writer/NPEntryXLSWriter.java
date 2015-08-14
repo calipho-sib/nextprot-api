@@ -1,22 +1,27 @@
 package org.nextprot.api.web.service.impl.writer;
 
+import com.google.common.base.Preconditions;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Export entries in XLS format
+ * An abstract class to export nextprot entries in XLS format.
+ *
+ * Need an implementation of <code>EntryDataProvider</code> to handle extraction of data in Records
+ * for XLS sheet rows and cells to be properly created.
  *
  * Created by fnikitin on 11/08/15.
  */
-public class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
+public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
 
     private final HSSFWorkbook workbook;
     private final HSSFSheet worksheet;
@@ -24,14 +29,101 @@ public class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
 
     private int rowIndex;
 
-    public NPEntryXLSWriter(OutputStream stream) {
+    /** A record represents field values to be written into an XLS row */
+    public static class Record {
+
+        private final Object[] values;
+        private int[] stringValueIndices = new int[0];
+        private int[] intValueIndices = new int[0];
+        private int[] doubleValueIndices = new int[0];
+        private int[] booleanValueIndices = new int[0];
+        private Map<Integer, String> hyperLinks = new HashMap<>();
+
+        public Record(Object[] values) {
+
+            Preconditions.checkNotNull(values);
+
+            this.values = values;
+        }
+
+        public Object[] getValues() {
+            return values;
+        }
+
+        // @return indices which values are of type String
+        public int[] getStringValueIndices() {
+            return stringValueIndices;
+        }
+
+        public void setStringValueIndices(int[] stringValueIndices) {
+            this.stringValueIndices = stringValueIndices;
+        }
+
+        // @return indices which values are of type int
+        public int[] getIntValueIndices() {
+            return intValueIndices;
+        }
+
+        public void setIntValueIndices(int[] intValueIndices) {
+            this.intValueIndices = intValueIndices;
+        }
+
+        // @return indices which values are of type float or double
+        public int[] getDoubleValueIndices() {
+            return doubleValueIndices;
+        }
+
+        public void setDoubleValueIndices(int[] doubleValueIndices) {
+            this.doubleValueIndices = doubleValueIndices;
+        }
+
+        // @return indices which values are boolean
+        public int[] getBooleanValueIndices() {
+            return booleanValueIndices;
+        }
+
+        public void setBooleanValueIndices(int[] booleanValueIndices) {
+            this.booleanValueIndices = booleanValueIndices;
+        }
+
+        // Define hyperlinks for specific cells
+        public Map<Integer, String> getHyperLinks() {
+            return hyperLinks;
+        }
+
+        public void addHyperLinks(int index, String address) {
+
+            hyperLinks.put(index, address);
+        }
+    }
+
+    /** Provides nextprot entry data to this XLS writer */
+    public interface EntryDataProvider {
+
+        // @return the EntryBlocks needed to get data
+        List<EntryBlock> getSourceEntryBlocks();
+
+        // @return the field names
+        String[] getFieldNames();
+
+        // @return a list of data records (a record contain the field values) of the given entry
+        List<Record> getRecords(Entry entry);
+    }
+
+    private final EntryDataProvider entryDataProvider;
+
+    protected NPEntryXLSWriter(OutputStream stream, String sheetName, EntryDataProvider entryDataProvider) {
 
         super(stream);
 
+        Preconditions.checkNotNull(entryDataProvider);
+
         workbook = new HSSFWorkbook();
         hlinkStyle = createHLinkStyle(workbook);
-        worksheet = workbook.createSheet("Proteins");
+        worksheet = workbook.createSheet(sheetName);
         rowIndex = 0;
+
+        this.entryDataProvider = entryDataProvider;
     }
 
     private static HSSFCellStyle createHLinkStyle(HSSFWorkbook workbook) {
@@ -49,7 +141,7 @@ public class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
     @Override
     protected void writeHeader(Map<String, Object> headerParams) throws IOException {
 
-        String[] headers = new String[] { "acc. code", "name", "gene name(s)", "chromosome", "proteomics", "disease",	"structure", "#isof.", "#variants", "#PTMS", "mutagenesis", "tissue expr.", "PE" };
+        String[] headers = entryDataProvider.getFieldNames();
 
         HSSFRow row = worksheet.createRow(rowIndex);
 
@@ -62,76 +154,71 @@ public class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
         rowIndex++;
     }
 
+    @Override
+    protected void writeEntry(String entryName, String viewName) throws IOException {
+
+        EntryConfig config = EntryConfig.newConfig(entryName);
+
+        for (EntryBlock block : entryDataProvider.getSourceEntryBlocks()) {
+
+            config.withBlock(block);
+        }
+
+        Entry entry = entryBuilderService.build(config);
+
+        for (Record record : entryDataProvider.getRecords(entry)) {
+
+            HSSFRow row = worksheet.createRow(rowIndex);
+            writeRecord(row, record);
+
+            rowIndex++;
+        }
+    }
+
+    private void writeRecord(HSSFRow row, Record record) {
+
+        Object[] values = record.getValues();
+
+        HSSFCell[] cells = new HSSFCell[values.length];
+
+        for (int index : record.getStringValueIndices()) {
+
+            cells[index] = row.createCell(index);
+            cells[index].setCellValue((String)values[index]);
+        }
+
+        for (int index : record.getBooleanValueIndices()) {
+
+            cells[index] = row.createCell(index);
+            cells[index].setCellValue((boolean)values[index]);
+        }
+
+        for (int index : record.getIntValueIndices()) {
+
+            cells[index] = row.createCell(index);
+            cells[index].setCellValue((int)values[index]);
+        }
+
+        for (int index : record.getDoubleValueIndices()) {
+
+            cells[index] = row.createCell(index);
+            cells[index].setCellValue((double) values[index]);
+        }
+
+        Map<Integer, String> links = record.getHyperLinks();
+
+        for (int index : links.keySet()) {
+
+            setHyperLink(cells[index], links.get(index));
+        }
+    }
+
     private void setHyperLink(HSSFCell cell, String address) {
 
         HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);
         link.setAddress(address);
         cell.setHyperlink(link);
         cell.setCellStyle(hlinkStyle);
-    }
-
-    private static String booleanToYesNoString(boolean bool) {
-
-        return (bool) ? "yes" : "no";
-    }
-
-    // http://dev-api.nextprot.org/export/entries/accession.xls?query=kimura-matsumoto
-    @Override
-    protected void writeEntry(String entryName, String viewName) throws IOException {
-
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName)
-                        .withBlock(EntryBlock.OVERVIEW)
-                        .withBlock(EntryBlock.CHROMOSOMAL_LOCATION));
-
-        /**
-         * acc. code / name             / gene name(s) / chromosome / proteomics / disease	/ structure	/ #isof. / #variants / #PTMS / mutagenesis / tissue expr. /	PE
-         * -----------------------------------------------------------------------------------------------------------------------------------------------------------
-         * NX_P48730 / Casein kinase .. / CSNK1        / 17q25.3    / yes	     / yes	    / yes	    / 2	     / 41	     / 8	 / yes         / yes          / Evidence at protein level
-         */
-        HSSFRow row = worksheet.createRow(rowIndex);
-
-        HSSFCell accCodeCell = row.createCell(0);
-        accCodeCell.setCellValue(entryName);
-        setHyperLink(accCodeCell, "http://www.nextprot.org/db/entry/" + entryName);
-
-        HSSFCell nameCell = row.createCell(1);
-        nameCell.setCellValue(entry.getOverview().getMainProteinName());
-
-        HSSFCell geneNamesCell = row.createCell(2);
-        geneNamesCell.setCellValue(entry.getOverview().getMainGeneName());
-
-        HSSFCell chromosomeCell = row.createCell(3);
-        ChromosomalLocation location = entry.getChromosomalLocations().get(0);
-        chromosomeCell.setCellValue(location.getChromosome() + location.getBand());
-
-        HSSFCell proteomicsCell = row.createCell(4);
-        proteomicsCell.setCellValue(booleanToYesNoString(entry.getProperties().getFilterproteomics()));
-
-        HSSFCell diseaseCell = row.createCell(5);
-        diseaseCell.setCellValue(booleanToYesNoString(entry.getProperties().getFilterdisease()));
-
-        HSSFCell structureCell = row.createCell(6);
-        structureCell.setCellValue(booleanToYesNoString(entry.getProperties().getFilterstructure()));
-
-        HSSFCell isoformCountCell = row.createCell(7);
-        isoformCountCell.setCellValue(entry.getProperties().getIsoformCount());
-
-        HSSFCell variantCountCell = row.createCell(8);
-        variantCountCell.setCellValue(entry.getProperties().getVarCount());
-
-        HSSFCell ptmCountCell = row.createCell(9);
-        ptmCountCell.setCellValue(entry.getProperties().getPtmCount());
-
-        HSSFCell mutagenesisCell = row.createCell(10);
-        mutagenesisCell.setCellValue(booleanToYesNoString(entry.getProperties().getFiltermutagenesis()));
-
-        HSSFCell tissueExpressionCell = row.createCell(11);
-        tissueExpressionCell.setCellValue(booleanToYesNoString(entry.getProperties().getFilterexpressionprofile()));
-
-        HSSFCell proteinEvidenceCell = row.createCell(12);
-        proteinEvidenceCell.setCellValue(entry.getProperties().getProteinExistence());
-
-        rowIndex++;
     }
 
     @Override

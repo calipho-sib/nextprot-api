@@ -53,6 +53,6 @@ public enum FileFormat {
         } else if (uri.toLowerCase().endsWith(".peff")) {
 			return FileFormat.PEFF;
 		} else
-            throw new NextProtException("Format not recognized");
+            throw new NextProtException(uri+": format not recognized");
     }
 }

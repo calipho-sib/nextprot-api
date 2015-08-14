@@ -26,7 +26,7 @@ public class NPEntryWriterFactory {
      * @return a NPEntryWriter instance
      * @throws UnsupportedEncodingException
      */
-    public static NPEntryWriter newNPEntryStreamWriter(FileFormat format, OutputStream os) throws IOException {
+    public static NPEntryWriter newNPEntryStreamWriter(FileFormat format, String view, OutputStream os) throws IOException {
 
         Preconditions.checkNotNull(format);
         Preconditions.checkNotNull(os);
@@ -38,7 +38,8 @@ public class NPEntryWriterFactory {
             case TXT:
                 return new NPEntryTXTWriter(new OutputStreamWriter(os, UTF_8));
             case XLS:
-                return new NPEntryXLSWriter(os);
+                if (view.equals("isoform")) return new NPEntryIsoformXLSWriter(os);
+                else return new NPEntryOverviewXLSWriter(os);
             case JSON:
                 return new NPEntryJSONWriter(os);
             case FASTA:
@@ -46,7 +47,7 @@ public class NPEntryWriterFactory {
             case PEFF:
                 return new NPEntryPeffWriter(new OutputStreamWriter(os, UTF_8));
             default:
-                throw new NextProtException("No NPStreamExporter implementation for "+format);
+                throw new NextProtException("No NPEntryWriter implementation for "+format);
         }
     }
 }
