@@ -1,55 +1,80 @@
 package org.nextprot.api.commons.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
+import com.google.common.base.Preconditions;
 
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+import java.io.StringReader;
+import java.io.StringWriter;
 
 public class PrettyPrinter {
 
+    private static final TransformerFactory TRANSFORMER_FACTORY;
+    private static final String INDENTATION = "    ";
 
-	public static String getPrettyXml(String xmlStr) {
-		
-		try {
-			
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
-			transformerFactory.setAttribute("indent-number", 4);
-			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			StreamResult result = new StreamResult(new StringWriter());
-			StreamSource source = new StreamSource(new StringReader(removeInitialIndentation(xmlStr)));
-			transformer.transform(source, result);
-			String xmlString = result.getWriter().toString();
-			return xmlString;
+    private final Transformer transformer;
 
-		} catch (TransformerException e) {
-			e.printStackTrace();
-			//throw new RuntimeException(e);
-			return xmlStr;
-		}
-	}
-	
-	
-	private static String removeInitialIndentation(String input) {
+    static {
+        TRANSFORMER_FACTORY = TransformerFactory.newInstance();
+        TRANSFORMER_FACTORY.setAttribute("indent-number", INDENTATION.length());
+    }
 
-		StringBuilder sb = new StringBuilder();
-		String[] lines = input.split("\n");
-		for (String line : lines) {
-			sb.append(line.trim());
-		}
+    public PrettyPrinter() throws TransformerConfigurationException {
 
-		return sb.toString();
+        transformer = TRANSFORMER_FACTORY.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+    }
 
-	}
+    public String prettify(String xmlStr) throws TransformerException {
 
+        return prettify(xmlStr, 0);
+    }
 
+    public String prettify(String xmlStr, int level) throws TransformerException {
+
+        StreamResult result = new StreamResult(new StringWriter());
+        StreamSource source = new StreamSource(new StringReader(removeInitialIndentation(xmlStr)));
+        transformer.transform(source, result);
+        return indent(result.getWriter().toString(), level);
+    }
+
+    private static String removeInitialIndentation(String input) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = input.split("\n");
+        for (String line : lines) {
+            sb.append(line.trim());
+        }
+
+        return sb.toString();
+    }
+
+    private static String indent(String input, int level) {
+
+        StringBuilder sb = new StringBuilder();
+        String[] lines = input.split("\n");
+        String indentation = newIndentation(level);
+        for (String line : lines) {
+            sb.append(indentation);
+            sb.append(line);
+            sb.append("\n");
+        }
+
+        return sb.toString();
+    }
+
+    private static String newIndentation(int level) {
+
+        Preconditions.checkArgument(level>=0);
+
+        StringBuilder sb = new StringBuilder();
+
+        for(int i=0 ; i<level ;i++) {
+            sb.append(INDENTATION);
+        }
+
+        return sb.toString();
+    }
 }
