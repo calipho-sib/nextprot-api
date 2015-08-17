@@ -2,9 +2,12 @@ package org.nextprot.api.web.service.impl.writer;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.PrettyPrinter;
 import org.nextprot.api.web.NXVelocityContext;
 
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,9 +22,18 @@ import java.util.Map;
  */
 public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
 
+    private final PrettyPrinter prettyPrinter;
+
     public NPEntryXMLStreamWriter(Writer writer, String viewName) {
 
         super(writer, "entry.xml.vm", viewName);
+
+        try {
+            prettyPrinter = new PrettyPrinter();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+            throw new NextProtException("internal error: cannot instanciate NPEntryXMLStreamWriter");
+        }
     }
 
     /**
@@ -30,21 +42,31 @@ public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
      */
     @Override
     protected void handleTemplateMerge(Template template, VelocityContext context) throws IOException {
-    	writePrettyXml(template, context);
+    	writePrettyXml(template, context, 2);
     }
 
-    private void writePrettyXml(Template template, VelocityContext context) throws IOException{
-    	
+    /**
+     *
+     * @param template
+     * @param context
+     * @param currentLevel level 0 is root level
+     * @throws IOException
+     */
+    private void writePrettyXml(Template template, VelocityContext context, int currentLevel) throws IOException{
+
     	String prettyXml;
         try( //try with resources will be closed automatically in the finally block without having to declare
-        		
-        		ByteArrayOutputStream out = new ByteArrayOutputStream();
-        		Writer auxWriter = new PrintWriter(out);
+             ByteArrayOutputStream out = new ByteArrayOutputStream();
+             Writer auxWriter = new PrintWriter(out)
     		) {
-
             template.merge(context, auxWriter);
             auxWriter.flush();
-            prettyXml = PrettyPrinter.getPrettyXml(out.toString());
+            try {
+                prettyXml = prettyPrinter.prettify(out.toString(), currentLevel);
+            } catch (TransformerException e) {
+                e.printStackTrace();
+                prettyXml = out.toString();
+            }
 
         }
         stream.write(prettyXml);
@@ -56,9 +78,9 @@ public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
         headerTemplate.merge(new NXVelocityContext(params), stream);
 
         Template releaseContentTemplate = velocityConfig.getVelocityEngine().getTemplate("release-contents.xml.vm");
-        writePrettyXml(releaseContentTemplate, new NXVelocityContext(params));
+        writePrettyXml(releaseContentTemplate, new NXVelocityContext(params), 2);
         stream.write("  </header>\n");
-        stream.write("<entry-list>\n");
+        stream.write("  <entry-list>\n");
     }
 
     @Override
