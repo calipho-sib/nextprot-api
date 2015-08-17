@@ -1,30 +1,28 @@
 <genomic-mapping accession='$genomicMapping.accession' database='$genomicMapping.database'>
-	<gene  accession='$genomicMapping.accession' database='$genomicMapping.database'>
 	<isoform-mapping-list>
-	#foreach($isoformMapping in $genomicMapping.isoformMappings)
+		#foreach($isoformMapping in $genomicMapping.isoformMappings)
 		<isoform-mapping accession="$isoformMapping.uniqueName" main-name="$isoformMapping.isoform.mainEntityName.value">
-		<transcript-mapping-list>
-		#foreach($transcriptMapping in $isoformMapping.transcriptMappings)
-			<transcript-mapping accession='$transcriptMapping.accession' database='$transcriptMapping.database'>
-			<transcript-protein accession='$transcriptMapping.proteinId' database='$transcriptMapping.database'/>
-			<exon-list>
-			#foreach($exon in $transcriptMapping.exons)
-			   <exon rank='$exon.rank' coding-status='$exon.codingStatus' ensembl-exon='$exon.accession'>
-                <position-on-gene begin='$exon.firstPositionOnGene' end='$exon.lastPositionOnGene' />
-				#if($exon.getFirstAminoAcid())
-                <amino-acid rank='first' sequence-position='$exon.firstAminoAcid.position' phase='$exon.firstAminoAcid.phase' value='$exon.firstAminoAcid.base'/>
-                #end
-				#if($exon.getLastAminoAcid())
-                <amino-acid rank='last' sequence-position='$exon.lastAminoAcid.position' phase='$exon.lastAminoAcid.phase' value='$exon.lastAminoAcid.base'/>
-                #end
-              </exon>
-			#end
-			</exon-list>
-			</transcript-mapping>
-		#end
-		</transcript-mapping-list>
+			<transcript-mapping-list>
+				#foreach($transcriptMapping in $isoformMapping.transcriptMappings)
+				<transcript-mapping accession='$transcriptMapping.accession' database='$transcriptMapping.database' quality-qualifier='$transcriptMapping.quality'>
+					<transcript-protein accession='$transcriptMapping.proteinId' database='$transcriptMapping.database'/>
+					<exon-list>
+						#foreach($exon in $transcriptMapping.exons)
+			   			<exon rank='$exon.rank' coding-status='$exon.codingStatus' accession='$exon.accession' database='$transcriptMapping.database'>
+							<position-on-gene begin='$exon.firstPositionOnGene' end='$exon.lastPositionOnGene' />
+							#if($exon.getFirstAminoAcid())
+								<amino-acid rank='first' sequence-position='$exon.firstAminoAcid.position' phase='$exon.firstAminoAcid.phase' value='$exon.firstAminoAcid.base'/>
+                			#end
+							#if($exon.getLastAminoAcid())
+                				<amino-acid rank='last' sequence-position='$exon.lastAminoAcid.position' phase='$exon.lastAminoAcid.phase' value='$exon.lastAminoAcid.base'/>
+                			#end
+              			</exon>
+						#end
+					</exon-list>
+				</transcript-mapping>
+				#end
+			</transcript-mapping-list>
 		</isoform-mapping>
-	#end
+		#end
 	</isoform-mapping-list>
-	</gene>
 </genomic-mapping>
