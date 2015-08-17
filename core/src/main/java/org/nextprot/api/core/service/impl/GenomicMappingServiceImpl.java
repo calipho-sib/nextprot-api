@@ -46,7 +46,6 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 			for (TranscriptMapping transcriptMapping : isoformMapping.getTranscriptMappings()) { // TODO This will fire multiple queries, but it is the easier way for now
 
-				// TODO: when branch CALIPHOMISC-355 will be merged, exons will be conditionally set if GOLD or SILVER and only on the mapping reference
 				transcriptMapping.setExons(findAndSortExons(transcriptMapping));
 			}
 
@@ -120,37 +119,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 			isoformMapping.getTranscriptMappings().addAll(tms);
 		}
 
-		Set<String> isoformMappingNames = Maps.uniqueIndex(isoformMappings, new Function<IsoformMapping, String>() {
-			public String apply(IsoformMapping im) {
-				return im.getUniqueName();
-			}
-		}).keySet();
-
-		isoformMappings.addAll(addEmptyIsoformMappings(isoformsByName, Sets.difference(isoformsByName.keySet(), isoformMappingNames)));
-
 		Collections.sort(isoformMappings, ISOFORM_MAPPING_COMPARATOR);
-
-		return isoformMappings;
-	}
-
-	private List<IsoformMapping> addEmptyIsoformMappings(ImmutableMap<String, Isoform> isoformsByName, Set<String> nonMappingIsoformNames) {
-
-		List<IsoformMapping> isoformMappings = new ArrayList<>();
-
-		for (String nonMappingIsoformName : nonMappingIsoformNames) {
-
-			Isoform isoform = isoformsByName.get(nonMappingIsoformName);
-
-			IsoformMapping im = new IsoformMapping();
-
-			im.setIsoform(isoform);
-			im.setTranscriptMappings(new ArrayList<TranscriptMapping>());
-			im.setUniqueName(isoform.getUniqueName());
-			im.setReferenceGeneId(-1L);
-			im.setPositionsOfIsoformOnReferencedGene(new ArrayList<Entry<Integer, Integer>>());
-
-			isoformMappings.add(im);
-		}
 
 		return isoformMappings;
 	}
