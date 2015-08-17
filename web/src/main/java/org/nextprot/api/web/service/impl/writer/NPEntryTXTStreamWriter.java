@@ -27,7 +27,7 @@ public class NPEntryTXTStreamWriter extends NPEntryVelocityBasedStreamWriter {
     protected void writeHeader(Map<String, Object> params) throws IOException {
 
         if (params != null && params.containsKey(ExportService.ENTRIES_COUNT_PARAM))
-            stream.write("#nb entries=" + params.get(ExportService.ENTRIES_COUNT_PARAM) + "\n");
+            getStream().write("#nb entries=" + params.get(ExportService.ENTRIES_COUNT_PARAM) + "\n");
     	else
             LOGGER.warn("Entries count parameter not found, header discarded...");
     }

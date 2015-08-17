@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
 
-    protected final S stream;
+    private final S stream;
 
     /**
      * Build writer that flush in the given stream
@@ -30,7 +30,15 @@ public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
     }
 
     /**
-     * Writes all entries and closes the writer (The stream should be closed outside).
+     * @return the output stream (should be closed outside this class).
+     */
+    protected final S getStream() {
+
+        return stream;
+    }
+
+    /**
+     * Writes all entries and closes the writer (The stream should be closed outside this class).
 
      * @param entries the entries to be flush
      * @throws IOException

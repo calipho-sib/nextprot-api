@@ -24,12 +24,17 @@ public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
 
     private final PrettyPrinter prettyPrinter;
 
+    private final ByteArrayOutputStream tmpOut;
+    private final Writer tmpWriter;
+
     public NPEntryXMLStreamWriter(Writer writer, String viewName) {
 
         super(writer, "entry.xml.vm", viewName);
 
         try {
             prettyPrinter = new PrettyPrinter();
+            tmpOut = new ByteArrayOutputStream();
+            tmpWriter = new PrintWriter(tmpOut);
         } catch (TransformerConfigurationException e) {
             e.printStackTrace();
             throw new NextProtException("internal error: cannot instanciate NPEntryXMLStreamWriter");
@@ -54,38 +59,42 @@ public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
      */
     private void writePrettyXml(Template template, VelocityContext context, int currentLevel) throws IOException{
 
-    	String prettyXml;
-        try( //try with resources will be closed automatically in the finally block without having to declare
-             ByteArrayOutputStream out = new ByteArrayOutputStream();
-             Writer auxWriter = new PrintWriter(out)
-    		) {
-            template.merge(context, auxWriter);
-            auxWriter.flush();
-            try {
-                prettyXml = prettyPrinter.prettify(out.toString(), currentLevel);
-            } catch (TransformerException e) {
-                e.printStackTrace();
-                prettyXml = out.toString();
-            }
+        String prettyXml;
 
+        template.merge(context, tmpWriter);
+        tmpWriter.flush();
+        try {
+            prettyXml = prettyPrinter.prettify(tmpOut.toString(), currentLevel);
+        } catch (TransformerException e) {
+            e.printStackTrace();
+            prettyXml = tmpOut.toString();
         }
-        stream.write(prettyXml);
+        tmpOut.reset();
+
+        getStream().write(prettyXml);
     }
 
     @Override
     protected void writeHeader(Map<String, Object> params) throws IOException {
         Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("export-header.xml.vm");
-        headerTemplate.merge(new NXVelocityContext(params), stream);
+        headerTemplate.merge(new NXVelocityContext(params), getStream());
 
         Template releaseContentTemplate = velocityConfig.getVelocityEngine().getTemplate("release-contents.xml.vm");
         writePrettyXml(releaseContentTemplate, new NXVelocityContext(params), 2);
-        stream.write("  </header>\n");
-        stream.write("  <entry-list>\n");
+        getStream().write("    </header>\n");
+        getStream().write("    <entry-list>\n");
     }
 
     @Override
     protected void writeFooter() throws IOException {
         Template exportTemplate = velocityConfig.getVelocityEngine().getTemplate("export-footer.xml.vm");
-		exportTemplate.merge(new NXVelocityContext(), stream);
+		exportTemplate.merge(new NXVelocityContext(), getStream());
+    }
+
+    @Override
+    public void close() throws IOException {
+
+        tmpOut.close();
+        tmpWriter.close();
     }
 }

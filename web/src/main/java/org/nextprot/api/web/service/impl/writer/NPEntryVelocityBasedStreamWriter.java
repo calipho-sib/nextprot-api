@@ -70,7 +70,7 @@ public abstract class NPEntryVelocityBasedStreamWriter extends NPEntryStreamWrit
 
     protected void handleTemplateMerge(Template template, VelocityContext context) throws IOException {
 
-        template.merge(context, stream);
+        template.merge(context, getStream());
     }
 
     protected void handleEntry(Entry entry) { }
