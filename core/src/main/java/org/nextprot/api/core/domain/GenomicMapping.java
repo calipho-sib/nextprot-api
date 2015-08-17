@@ -14,7 +14,7 @@ public class GenomicMapping implements Serializable{
 
 	public GenomicMapping() {
 
-		isoformMappings = new ArrayList<IsoformMapping>();
+		isoformMappings = new ArrayList<>();
 	}
 
 	public String getDatabase() {
@@ -49,4 +49,9 @@ public class GenomicMapping implements Serializable{
 		this.isoformMappings = isoformMappings;
 	}
 
+	// used in velocity
+	public boolean isVirtual() {
+
+		return accession.startsWith("NX_VG");
+	}
 }
