@@ -57,8 +57,8 @@ public class NPEntryXMLWriter extends NPEntryVelocityBasedWriter {
 
         Template releaseContentTemplate = velocityConfig.getVelocityEngine().getTemplate("release-contents.xml.vm");
         writePrettyXml(releaseContentTemplate, new NXVelocityContext(params));
-        stream.write("  </header>");
-        stream.write("<entry-list>");
+        stream.write("  </header>\n");
+        stream.write("<entry-list>\n");
     }
 
     @Override
