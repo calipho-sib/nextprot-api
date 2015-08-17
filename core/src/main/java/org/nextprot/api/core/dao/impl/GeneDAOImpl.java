@@ -131,7 +131,7 @@ public class GeneDAOImpl implements GeneDAO {
 			exon.setName(resultSet.getString("exon"));
 			exon.setFirstPositionOnGene(resultSet.getInt("first_position"));
 			exon.setLastPositionOnGene(resultSet.getInt("last_position"));
-			exon.setRank(resultSet.getInt("rank"));
+			exon.setRank(resultSet.getInt("rank")+1);
 			return exon;
 		}
 	}
