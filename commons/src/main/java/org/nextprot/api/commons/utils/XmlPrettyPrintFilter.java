@@ -13,12 +13,12 @@ import java.io.PrintWriter;
 public class XmlPrettyPrintFilter implements Filter {
 
     protected FilterConfig config;
-    private PrettyPrinter prettyPrinter;
+    private XMLPrettyPrinter XMLPrettyPrinter;
 
     public void init(FilterConfig config) throws ServletException {
         this.config = config;
         try {
-            prettyPrinter = new PrettyPrinter();
+            XMLPrettyPrinter = new XMLPrettyPrinter();
         } catch (TransformerConfigurationException e) {
             e.printStackTrace();
             throw new ServletException(e);
@@ -42,7 +42,7 @@ public class XmlPrettyPrintFilter implements Filter {
             String text = newResponse.toString();
             if (text != null) {
                 try {
-                    text = prettyPrinter.prettify(text);
+                    text = XMLPrettyPrinter.prettify(text);
                 } catch (TransformerException e) {
                     e.printStackTrace();
                     throw new IOException(e);

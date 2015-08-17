@@ -8,7 +8,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
 import java.io.StringWriter;
 
-public class PrettyPrinter {
+public class XMLPrettyPrinter {
 
     private static final TransformerFactory TRANSFORMER_FACTORY;
     private static final String INDENTATION = "    ";
@@ -20,7 +20,7 @@ public class PrettyPrinter {
         TRANSFORMER_FACTORY.setAttribute("indent-number", INDENTATION.length());
     }
 
-    public PrettyPrinter() throws TransformerConfigurationException {
+    public XMLPrettyPrinter() throws TransformerConfigurationException {
 
         transformer = TRANSFORMER_FACTORY.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");

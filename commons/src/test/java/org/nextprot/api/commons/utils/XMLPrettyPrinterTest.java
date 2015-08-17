@@ -6,12 +6,12 @@ import org.junit.Test;
 /**
  * Created by fnikitin on 17/08/15.
  */
-public class PrettyPrinterTest {
+public class XMLPrettyPrinterTest {
 
     @Test
     public void testPrettyfying() throws Exception {
 
-        PrettyPrinter printer = new PrettyPrinter();
+        XMLPrettyPrinter printer = new XMLPrettyPrinter();
 
         String xml = newMessyXml();
 
@@ -48,7 +48,7 @@ public class PrettyPrinterTest {
     @Test
     public void testPrettyfyingWithLevel() throws Exception {
 
-        PrettyPrinter printer = new PrettyPrinter();
+        XMLPrettyPrinter printer = new XMLPrettyPrinter();
 
         String xml = newMessyXml();
 
@@ -85,7 +85,7 @@ public class PrettyPrinterTest {
     @Test(expected = IllegalArgumentException.class)
     public void testPrettyfyingWithBadLevel() throws Exception {
 
-        PrettyPrinter printer = new PrettyPrinter();
+        XMLPrettyPrinter printer = new XMLPrettyPrinter();
         printer.prettify(newMessyXml(), -1);
     }
 

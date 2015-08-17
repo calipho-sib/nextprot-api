@@ -3,7 +3,7 @@ package org.nextprot.api.web.service.impl.writer;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.PrettyPrinter;
+import org.nextprot.api.commons.utils.XMLPrettyPrinter;
 import org.nextprot.api.web.NXVelocityContext;
 
 import javax.xml.transform.TransformerConfigurationException;
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
 
-    private final PrettyPrinter prettyPrinter;
+    private final XMLPrettyPrinter XMLPrettyPrinter;
 
     private final ByteArrayOutputStream tmpOut;
     private final Writer tmpWriter;
@@ -32,7 +32,7 @@ public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
         super(writer, "entry.xml.vm", viewName);
 
         try {
-            prettyPrinter = new PrettyPrinter();
+            XMLPrettyPrinter = new XMLPrettyPrinter();
             tmpOut = new ByteArrayOutputStream();
             tmpWriter = new PrintWriter(tmpOut);
         } catch (TransformerConfigurationException e) {
@@ -64,7 +64,7 @@ public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
         template.merge(context, tmpWriter);
         tmpWriter.flush();
         try {
-            prettyXml = prettyPrinter.prettify(tmpOut.toString(), currentLevel);
+            prettyXml = XMLPrettyPrinter.prettify(tmpOut.toString(), currentLevel);
         } catch (TransformerException e) {
             e.printStackTrace();
             prettyXml = tmpOut.toString();
