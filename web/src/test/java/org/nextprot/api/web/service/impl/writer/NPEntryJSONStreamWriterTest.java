@@ -10,14 +10,14 @@ import java.util.Arrays;
 /**
  * Created by fnikitin on 12/08/15.
  */
-public class NPEntryJSONWriterTest extends WebIntegrationBaseTest {
+public class NPEntryJSONStreamWriterTest extends WebIntegrationBaseTest {
 
     @Test
     public void testJSONExportStream() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        NPEntryOutputStreamWriter exporter = new NPEntryJSONWriter(out, "overview");
+        NPEntryOutputStreamWriter exporter = new NPEntryJSONStreamWriter(out, "overview");
 
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
 

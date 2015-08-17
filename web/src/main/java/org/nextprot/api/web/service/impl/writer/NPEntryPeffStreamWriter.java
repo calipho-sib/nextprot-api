@@ -6,13 +6,13 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Export entries sequence in PEFF (extended FASTA) format
+ * Streams entries sequence in PEFF (extended FASTA) format
  *
  * Created by fnikitin on 28/04/15.
  */
-public class NPEntryPeffWriter extends NPEntryVelocityBasedWriter {
+public class NPEntryPeffStreamWriter extends NPEntryVelocityBasedStreamWriter {
 
-    public NPEntryPeffWriter(Writer writer) {
+    public NPEntryPeffStreamWriter(Writer writer) {
 
         super(writer, "peff/entry.peff.vm", "entry");
     }

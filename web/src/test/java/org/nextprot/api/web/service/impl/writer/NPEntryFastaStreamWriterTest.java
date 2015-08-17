@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by fnikitin on 12/08/15.
  */
-public class NPEntryFastaWriterTest extends WebIntegrationBaseTest {
+public class NPEntryFastaStreamWriterTest extends WebIntegrationBaseTest {
 
     @Test
     public void testFastaExportStream() throws Exception {
@@ -21,7 +21,7 @@ public class NPEntryFastaWriterTest extends WebIntegrationBaseTest {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
 
-        NPEntryVelocityBasedWriter exporter = new NPEntryFastaWriter(writer);
+        NPEntryVelocityBasedStreamWriter exporter = new NPEntryFastaStreamWriter(writer);
 
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
 

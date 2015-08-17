@@ -9,8 +9,8 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.ExportService;
-import org.nextprot.api.web.service.impl.writer.NPEntryVelocityBasedWriter;
-import org.nextprot.api.web.service.impl.writer.NPEntryTXTWriter;
+import org.nextprot.api.web.service.impl.writer.NPEntryVelocityBasedStreamWriter;
+import org.nextprot.api.web.service.impl.writer.NPEntryTXTStreamWriter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -46,7 +46,7 @@ public class ExportTXTHeaderTest extends WebUnitBaseTest {
     	
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        NPEntryVelocityBasedWriter exporter = new NPEntryTXTWriter(writer);
+        NPEntryVelocityBasedStreamWriter exporter = new NPEntryTXTStreamWriter(writer);
         exporter.setEntryBuilderService(entryBuilderMockService);
 
         Map<String, Object> map = new HashMap<String, Object>(); map.put(ExportService.ENTRIES_COUNT_PARAM, 2);

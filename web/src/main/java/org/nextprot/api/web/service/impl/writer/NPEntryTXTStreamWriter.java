@@ -9,16 +9,16 @@ import java.io.Writer;
 import java.util.Map;
 
 /**
- * Export entries in TXT format
+ * Streams entries in TXT format
  *
  * Created by fnikitin on 28/04/15.
  * Modified by dteixeir on 13/07 to include header
  */
-public class NPEntryTXTWriter extends NPEntryVelocityBasedWriter {
+public class NPEntryTXTStreamWriter extends NPEntryVelocityBasedStreamWriter {
 
-	private static final Log LOGGER = LogFactory.getLog(NPEntryTXTWriter.class);
+	private static final Log LOGGER = LogFactory.getLog(NPEntryTXTStreamWriter.class);
 
-    public NPEntryTXTWriter(Writer writer) {
+    public NPEntryTXTStreamWriter(Writer writer) {
 
         super(writer, "txt/entry.txt.vm", "accession");
     }

@@ -12,14 +12,14 @@ import java.io.Writer;
 import java.util.Map;
 
 /**
- * Export entries in XML format
+ * Streams entries in XML format
  *
  * Created by fnikitin on 28/04/15.
  * Daniel added pretty print for xml and xml header
  */
-public class NPEntryXMLWriter extends NPEntryVelocityBasedWriter {
+public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
 
-    public NPEntryXMLWriter(Writer writer, String viewName) {
+    public NPEntryXMLStreamWriter(Writer writer, String viewName) {
 
         super(writer, "entry.xml.vm", viewName);
     }

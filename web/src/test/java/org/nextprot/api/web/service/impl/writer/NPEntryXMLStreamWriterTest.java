@@ -15,14 +15,14 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by fnikitin on 12/08/15.
  */
-public class NPEntryXMLWriterTest extends WebIntegrationBaseTest {
+public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
 
     @Test
     public void testXMLExportStream() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        NPEntryVelocityBasedWriter exporter = new NPEntryXMLWriter(writer, "overview");
+        NPEntryVelocityBasedStreamWriter exporter = new NPEntryXMLStreamWriter(writer, "overview");
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
 
         NodeList recommendedNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/entry-list/entry/overview/gene-list/gene/gene-name[@type='primary']");

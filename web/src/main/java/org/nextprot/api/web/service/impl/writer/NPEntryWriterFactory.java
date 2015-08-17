@@ -26,7 +26,7 @@ public class NPEntryWriterFactory {
      * @return a NPEntryWriter instance
      * @throws UnsupportedEncodingException
      */
-    public static NPEntryWriter newNPEntryStreamWriter(FileFormat format, String view, OutputStream os) throws IOException {
+    public static NPEntryStreamWriter newNPEntryStreamWriter(FileFormat format, String view, OutputStream os) throws IOException {
 
         Preconditions.checkNotNull(format);
         Preconditions.checkNotNull(os);
@@ -34,19 +34,19 @@ public class NPEntryWriterFactory {
         switch (format) {
 
             case XML:
-                return new NPEntryXMLWriter(new OutputStreamWriter(os, UTF_8), view);
+                return new NPEntryXMLStreamWriter(new OutputStreamWriter(os, UTF_8), view);
             case TXT:
-                return new NPEntryTXTWriter(new OutputStreamWriter(os, UTF_8));
+                return new NPEntryTXTStreamWriter(new OutputStreamWriter(os, UTF_8));
             case XLS:
                 return NPEntryXLSWriter.newNPEntryXLSWriter(os, view);
             case JSON:
-                return new NPEntryJSONWriter(os, view);
+                return new NPEntryJSONStreamWriter(os, view);
             case FASTA:
-                return new NPEntryFastaWriter(new OutputStreamWriter(os, UTF_8));
+                return new NPEntryFastaStreamWriter(new OutputStreamWriter(os, UTF_8));
             case PEFF:
-                return new NPEntryPeffWriter(new OutputStreamWriter(os, UTF_8));
+                return new NPEntryPeffStreamWriter(new OutputStreamWriter(os, UTF_8));
             default:
-                throw new NextProtException("No NPEntryWriter implementation for "+format);
+                throw new NextProtException("No NPEntryStreamWriter implementation for "+format);
         }
     }
 }

@@ -15,11 +15,11 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * A base class for velocity-based stream exporter
+ * A base class for velocity-based stream writers
  *
  * @author fnikitin
  */
-public abstract class NPEntryVelocityBasedWriter extends NPEntryWriter<Writer> {
+public abstract class NPEntryVelocityBasedStreamWriter extends NPEntryStreamWriter<Writer> {
 
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
@@ -28,7 +28,7 @@ public abstract class NPEntryVelocityBasedWriter extends NPEntryWriter<Writer> {
     private final Template template;
     private final String viewName;
 
-    public NPEntryVelocityBasedWriter(Writer writer, String templateName, String viewName) {
+    public NPEntryVelocityBasedStreamWriter(Writer writer, String templateName, String viewName) {
 
         super(writer);
 

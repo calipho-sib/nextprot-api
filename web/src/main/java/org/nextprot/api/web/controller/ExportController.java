@@ -12,7 +12,7 @@ import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.web.service.ExportService;
 import org.nextprot.api.web.service.SearchService;
-import org.nextprot.api.web.service.impl.writer.NPEntryWriter;
+import org.nextprot.api.web.service.impl.writer.NPEntryStreamWriter;
 import org.nextprot.api.web.service.impl.writer.NPEntryWriterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -150,7 +150,7 @@ public class ExportController {
         setResponseHeader(format, viewName, queryRequest, response);
         List<String> entries = getAccessions(queryRequest);
 
-        NPEntryWriter writer = null;
+        NPEntryStreamWriter writer = null;
 
         try {
             writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream());

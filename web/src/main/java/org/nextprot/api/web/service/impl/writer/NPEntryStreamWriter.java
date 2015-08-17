@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * Created by fnikitin on 11/08/15.
  */
-public abstract class NPEntryWriter<S extends Flushable & Closeable> {
+public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
 
     protected final S stream;
 
@@ -22,7 +22,7 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
      * @param stream an output stream
      *
      */
-    public NPEntryWriter(S stream) {
+    public NPEntryStreamWriter(S stream) {
 
         Preconditions.checkNotNull(stream);
 
@@ -41,8 +41,9 @@ public abstract class NPEntryWriter<S extends Flushable & Closeable> {
     }
 
     /**
-     * Writes all entries and closes the writer (The stream should be closed outside).
-
+     * Writes each entry and flush to the stream then at the end closes the writer (The stream should be closed
+     * outside this class).
+     *
      * @param entries the entries to be flush
      * @param headerParams an optionally parameters map for header
      * @throws IOException

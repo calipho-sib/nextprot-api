@@ -14,7 +14,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by fnikitin on 12/08/15.
  */
-public class NPEntryPeffWriterTest extends WebIntegrationBaseTest {
+public class NPEntryPeffStreamWriterTest extends WebIntegrationBaseTest {
 
     @Ignore
     @Test
@@ -24,7 +24,7 @@ public class NPEntryPeffWriterTest extends WebIntegrationBaseTest {
 
         Writer writer = new PrintWriter(out);
 
-        NPEntryVelocityBasedWriter exporter = new NPEntryPeffWriter(writer);
+        NPEntryVelocityBasedStreamWriter exporter = new NPEntryPeffStreamWriter(writer);
 
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
 

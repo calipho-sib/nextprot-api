@@ -4,8 +4,8 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.release.ReleaseContents;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.ExportService;
-import org.nextprot.api.web.service.impl.writer.NPEntryVelocityBasedWriter;
-import org.nextprot.api.web.service.impl.writer.NPEntryXMLWriter;
+import org.nextprot.api.web.service.impl.writer.NPEntryVelocityBasedStreamWriter;
+import org.nextprot.api.web.service.impl.writer.NPEntryXMLStreamWriter;
 import org.nextprot.api.web.utils.XMLUnitUtils;
 import org.w3c.dom.NodeList;
 
@@ -25,7 +25,7 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
 
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        NPEntryVelocityBasedWriter exporter = new NPEntryXMLWriter(writer, "overview");
+        NPEntryVelocityBasedStreamWriter exporter = new NPEntryXMLStreamWriter(writer, "overview");
         
         Map<String, Object> map = new HashMap<>();
 

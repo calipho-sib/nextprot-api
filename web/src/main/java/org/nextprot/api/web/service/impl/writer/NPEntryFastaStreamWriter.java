@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Export entries sequence in FASTA format
+ * Streams entries sequence in FASTA format
  *
  * Created by fnikitin on 28/04/15.
  */
-public class NPEntryFastaWriter extends NPEntryVelocityBasedWriter {
+public class NPEntryFastaStreamWriter extends NPEntryVelocityBasedStreamWriter {
 
-    public NPEntryFastaWriter(Writer writer) {
+    public NPEntryFastaStreamWriter(Writer writer) {
 
         super(writer, "fasta/entry.fasta.vm", "overview");
     }

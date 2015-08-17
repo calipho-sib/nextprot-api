@@ -11,7 +11,7 @@ import java.io.OutputStream;
  *
  * @author fnikitin
  */
-public abstract class NPEntryOutputStreamWriter extends NPEntryWriter<OutputStream> {
+public abstract class NPEntryOutputStreamWriter extends NPEntryStreamWriter<OutputStream> {
 
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 

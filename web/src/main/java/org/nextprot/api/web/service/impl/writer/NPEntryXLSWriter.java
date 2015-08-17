@@ -221,6 +221,9 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
         }
     }
 
+    // No need to flush after each entry has been written
+    protected void flush() throws IOException { }
+
     private void setHyperLink(HSSFCell cell, String address) {
 
         HSSFHyperlink link = new HSSFHyperlink(HSSFHyperlink.LINK_URL);

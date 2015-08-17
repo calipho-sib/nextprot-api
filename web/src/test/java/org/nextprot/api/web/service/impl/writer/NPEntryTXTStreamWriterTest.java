@@ -16,7 +16,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by fnikitin on 12/08/15.
  */
-public class NPEntryTXTWriterTest extends WebIntegrationBaseTest {
+public class NPEntryTXTStreamWriterTest extends WebIntegrationBaseTest {
 
     @Test
     public void testTXTExportStream() throws Exception {
@@ -25,7 +25,7 @@ public class NPEntryTXTWriterTest extends WebIntegrationBaseTest {
 
         Writer writer = new PrintWriter(out);
 
-        NPEntryVelocityBasedWriter exporter = new NPEntryTXTWriter(writer);
+        NPEntryVelocityBasedStreamWriter exporter = new NPEntryTXTStreamWriter(writer);
 
         Map<String, Object> params = new HashMap<>();
         params.put(ExportService.ENTRIES_COUNT_PARAM, 2);
