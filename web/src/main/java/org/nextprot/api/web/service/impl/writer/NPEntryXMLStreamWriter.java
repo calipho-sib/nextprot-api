@@ -1,5 +1,7 @@
 package org.nextprot.api.web.service.impl.writer;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -8,10 +10,7 @@ import org.nextprot.api.web.NXVelocityContext;
 
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -22,10 +21,17 @@ import java.util.Map;
  */
 public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
 
+    private static final Log LOGGER = LogFactory.getLog(NPEntryXMLStreamWriter.class);
+
     private final XMLPrettyPrinter XMLPrettyPrinter;
 
     private final ByteArrayOutputStream tmpOut;
     private final Writer tmpWriter;
+
+    public NPEntryXMLStreamWriter(OutputStream os, String viewName) {
+
+        this(new OutputStreamWriter(os), viewName);
+    }
 
     public NPEntryXMLStreamWriter(Writer writer, String viewName) {
 
@@ -36,8 +42,8 @@ public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
             tmpOut = new ByteArrayOutputStream();
             tmpWriter = new PrintWriter(tmpOut);
         } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-            throw new NextProtException("internal error: cannot instanciate NPEntryXMLStreamWriter");
+
+            throw new NextProtException("cannot instanciate NPEntryXMLStreamWriter: "+ e.getMessage());
         }
     }
 
@@ -57,7 +63,7 @@ public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
      * @param currentLevel level 0 is root level
      * @throws IOException
      */
-    private void writePrettyXml(Template template, VelocityContext context, int currentLevel) throws IOException{
+    private void writePrettyXml(Template template, VelocityContext context, int currentLevel) throws IOException {
 
         String prettyXml;
 
@@ -66,7 +72,7 @@ public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
         try {
             prettyXml = XMLPrettyPrinter.prettify(tmpOut.toString(), currentLevel);
         } catch (TransformerException e) {
-            e.printStackTrace();
+            LOGGER.warn(e.getMessage());
             prettyXml = tmpOut.toString();
         }
         tmpOut.reset();

@@ -39,7 +39,7 @@ public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
 
     /**
      * Writes all entries and closes the writer (The stream should be closed outside this class).
-
+     *
      * @param entries the entries to be flush
      * @throws IOException
      */
@@ -71,8 +71,6 @@ public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
 
         writeFooter();
         flush();
-
-        close();
     }
 
     /** Writing initiated */
