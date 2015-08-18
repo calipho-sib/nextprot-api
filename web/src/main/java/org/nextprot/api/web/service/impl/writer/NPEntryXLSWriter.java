@@ -9,6 +9,7 @@ import org.nextprot.api.core.service.fluent.EntryConfig;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,6 +148,14 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
     }
 
     @Override
+    public void write(Collection<String> entries, Map<String, Object> headerParams) throws IOException {
+
+        super.write(entries, headerParams);
+
+        workbook.write(getStream());
+    }
+
+    @Override
     protected void writeHeader(Map<String, Object> headerParams) throws IOException {
 
         String[] headers = entryDataProvider.getFieldNames();
@@ -235,7 +244,6 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
     @Override
     public void close() throws IOException {
 
-        workbook.write(getStream());
         workbook.close();
     }
 }
