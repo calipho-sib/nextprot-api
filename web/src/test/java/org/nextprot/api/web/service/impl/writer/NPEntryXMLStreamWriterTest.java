@@ -144,6 +144,10 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
                 "            </overview>\n" +
                 "        </entry>\n" +
                 "    </entry-list>\n" +
+                "    <copyright>\n" +
+                "        Copyrighted by the SIB Swiss Institute of Bioinformatics.\n" +
+                "        Distributed under the Creative Commons Attribution-NoDerivs License - see http://creativecommons.org/licenses/by-nd/3.0/\n" +
+                "    </copyright>\n" +
                 "</nextprot-export>\n", out.toString());
     }
 
@@ -162,6 +166,10 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
                 "    </header>\n" +
                 "    <entry-list>\n" +
                 "    </entry-list>\n" +
+                "    <copyright>\n" +
+                "        Copyrighted by the SIB Swiss Institute of Bioinformatics.\n" +
+                "        Distributed under the Creative Commons Attribution-NoDerivs License - see http://creativecommons.org/licenses/by-nd/3.0/\n" +
+                "    </copyright>\n" +
                 "</nextprot-export>\n", out.toString());
     }
 }
