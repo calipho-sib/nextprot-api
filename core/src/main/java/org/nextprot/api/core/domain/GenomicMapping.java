@@ -48,10 +48,4 @@ public class GenomicMapping implements Serializable{
 	public void setIsoformMappings(List<IsoformMapping> isoformMappings) {
 		this.isoformMappings = isoformMappings;
 	}
-
-	// used in velocity
-	public boolean isVirtual() {
-
-		return accession.startsWith("NX_VG");
-	}
 }

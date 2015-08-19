@@ -1,7 +1,5 @@
 <genomic-mapping-list>
 	#foreach($genomicMapping in $entry.genomicMappings)
-		#if(!$genomicMapping.isVirtual())
 		#parse("genomic-mapping.xml.vm")
-		#end
 	#end
 </genomic-mapping-list>

@@ -142,7 +142,6 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	private List<GenomicMapping> findGenomicMappings(String entryName, List<IsoformMapping> isoformMappings) {
 
 		List<GenomicMapping> genomicMappings = geneDAO.findGenomicMappingByEntryName(entryName);
-		Preconditions.checkArgument(!genomicMappings.isEmpty(), "No genomic mapping found for entry" + entryName);
 
 		// Puts the isoformMappings to the associated gene and order it
 		for (GenomicMapping genomicMapping : genomicMappings) {
