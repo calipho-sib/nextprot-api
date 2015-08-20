@@ -2,11 +2,11 @@
 ##<xref database="$xref.databaseName" category="$xref.databaseCategory" accession="$UNESCAPED_CDATA" internal-id="$xref.getDbXrefId()">
 <xref database="$xref.databaseName" category="$xref.databaseCategory" accession="$xref.accession" internal-id="$xref.getDbXrefId()">
 	#if($xref.properties && $xref.properties.size() > 0) 													
-		<properties>
+		<property-list>
 			#foreach($prop in $xref.properties)
 				<property name="$prop.name" value="$prop.value"/>
 			#end
-		</properties>
+		</property-list>
 	#end
 	<url>
 	#set($UNESCAPED_CDATA = $xref.getResolvedUrl())
