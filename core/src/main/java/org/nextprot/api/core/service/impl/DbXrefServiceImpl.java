@@ -62,84 +62,113 @@ public class DbXrefServiceImpl implements DbXrefService {
 		return xrefs;
 	}
 	
-	private List<Annotation> createAdditionalAnnotationsFromXrefs(List<DbXref> xrefs, String entryName) {
-		List<Annotation> annots = new ArrayList<>();
-		for (DbXref xref: xrefs) {
-			Annotation annotation = new Annotation();
-			annotation.setProperties(new ArrayList<AnnotationProperty>());
-			annotation.setAnnotationId(xref.getDbXrefId() + 10_000_000_000L);
-			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
-			annotation.setCategory(xam.getAnnotCat());
-			annotation.setDescription(xref.getPropertyValue(xam.getXrefPropName())); // copy of some xref property 
-			annotation.setQualityQualifier(xam.getQualityQualifier()); 
-			annotation.setCvTermName(null);
-			annotation.setCvTermAccessionCode(null);
-			annotation.setSynonym(null);
-			annotation.setUniqueName("AN_" + entryName.substring(3) + "_XR_" + String.valueOf(xref.getDbXrefId()) );
-			annotation.setParentXref(xref);
-			annots.add(annotation);
-		}
-		return annots;
-	}
-	
-	
-	@Override
-	@Cacheable("xrefs-as-annot")
-	public List<Annotation> findDbXrefsAsAnnotationsByEntry(String entryName) {
-	    // build annotations from xrefs
-		List<Isoform> isoforms = this.isoService.findIsoformsByEntryName(entryName);
-		List<DbXref> xrefs = this.findDbXrefsAsAnnotByEntry(entryName);
-		List<Annotation> annotations = this.createAdditionalAnnotationsFromXrefs(xrefs, entryName);
-		
-		// build evidences annotations and link them to annotations
-		for (Annotation annotation : annotations) {
-			List<AnnotationEvidence> evidences = new ArrayList<>();
-			AnnotationEvidence evidence = new AnnotationEvidence();
-			evidence.setAnnotationId(annotation.getAnnotationId());
-			DbXref pxref = annotation.getParentXref();
-			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(pxref.getDatabaseName());
-			evidence.setEvidenceId(annotation.getAnnotationId() + 20_000_000_000L);
-			evidence.setAssignedBy(xam.getSrcName());
-			evidence.setResourceId(pxref.getDbXrefId());
-			evidence.setResourceAccession(pxref.getAccession());
-			evidence.setResourceDb(pxref.getDatabaseName());
-			evidence.setResourceAssociationType("evidence");
-			evidence.setResourceType("database");
-			evidence.setNegativeEvidence(false);
-			evidence.setExperimentalContextId(null);
-			evidence.setResourceDescription(null);
-			evidence.setPublicationMD5(null);
-			evidence.setProperties(new ArrayList<AnnotationEvidenceProperty>());
-			evidence.setQualifierType(xam.getQualifierType());    
-			evidence.setQualityQualifier(xam.getQualityQualifier());   
-			evidence.setAssignmentMethod(xam.getAssignmentMethod()); 
-			evidence.setEvidenceCodeAC(xam.getEcoAC()); 
-			evidence.setEvidenceCodeName(xam.getEcoName()); 
-			evidences.add(evidence);
-			annotation.setEvidences(evidences);
-		}
-		
-		// build isoform specificity from isoforms and annotations and link them to annotations
-		for (Annotation annotation : annotations) {
-			List<AnnotationIsoformSpecificity> isospecs = new ArrayList<>();
-			for (Isoform iso: isoforms) {
-				AnnotationIsoformSpecificity isospec = new AnnotationIsoformSpecificity();
-				isospec.setAnnotationId(annotation.getAnnotationId());
-				isospec.setFirstPosition(0);
-				isospec.setLastPosition(0);
-				isospec.setIsoformName(iso.getUniqueName());
-				isospec.setSpecificity("UNKNOWN");
-				isospecs.add(isospec);
-			}
-			annotation.setTargetingIsoforms(isospecs);
-			
+	private List<Annotation> convertXrefsIntoAnnotations(List<DbXref> xrefs, String entryName) {
+
+		List<Isoform> isoforms = isoService.findIsoformsByEntryName(entryName);
+
+		List<Annotation> xrefAnnotations = new ArrayList<>();
+
+		for (DbXref xref : xrefs) {
+
+			xrefAnnotations.add(convertXrefIntoAnnotation(xref, entryName, isoforms));
 		}
 
-		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
-		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
-		
+		return xrefAnnotations;
 	}
-	
+
+	private Annotation convertXrefIntoAnnotation(DbXref xref, String entryName, List<Isoform> isoforms) {
+
+		Annotation annotation = new Annotation();
+
+		annotation.setProperties(new ArrayList<AnnotationProperty>());
+		annotation.setAnnotationId(xref.getDbXrefId() + 10_000_000_000L);
+		XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
+		annotation.setCategory(xam.getAnnotCat());
+		annotation.setDescription(xref.getPropertyValue(xam.getXrefPropName())); // copy of some xref property
+		annotation.setQualityQualifier(xam.getQualityQualifier());
+		annotation.setCvTermName(null);
+		annotation.setCvTermAccessionCode(null);
+		annotation.setSynonym(null);
+		annotation.setUniqueName("AN_" + entryName.substring(3) + "_XR_" + String.valueOf(xref.getDbXrefId()));
+		annotation.setParentXref(xref);
+
+		annotation.setEvidences(Arrays.asList(newAnnotationEvidence(annotation)));
+		annotation.setTargetingIsoforms(newAnnotationIsoformSpecificityList(isoforms, annotation));
+
+		return annotation;
+	}
+
+	private AnnotationEvidence newAnnotationEvidence(Annotation xrefAnnotation) {
+
+		AnnotationEvidence evidence = new AnnotationEvidence();
+		DbXref pxref = xrefAnnotation.getParentXref();
+
+		evidence.setAnnotationId(xrefAnnotation.getAnnotationId());
+		XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(pxref.getDatabaseName());
+		evidence.setEvidenceId(xrefAnnotation.getAnnotationId() + 20_000_000_000L);
+		evidence.setAssignedBy(xam.getSrcName());
+		evidence.setResourceId(pxref.getDbXrefId());
+		evidence.setResourceAccession(pxref.getAccession());
+		evidence.setResourceDb(pxref.getDatabaseName());
+		evidence.setResourceAssociationType("evidence");
+		evidence.setResourceType("database");
+		evidence.setNegativeEvidence(false);
+		evidence.setExperimentalContextId(null);
+		evidence.setResourceDescription(null);
+		evidence.setPublicationMD5(null);
+		evidence.setProperties(new ArrayList<AnnotationEvidenceProperty>());
+		evidence.setQualifierType(xam.getQualifierType());
+		evidence.setQualityQualifier(xam.getQualityQualifier());
+		evidence.setAssignmentMethod(xam.getAssignmentMethod());
+		evidence.setEvidenceCodeAC(xam.getEcoAC());
+		evidence.setEvidenceCodeName(xam.getEcoName());
+
+		return evidence;
+	}
+
+	// build isoform specificity from isoforms and annotations and link them to annotations
+	private List<AnnotationIsoformSpecificity> newAnnotationIsoformSpecificityList(List<Isoform> isoforms, Annotation xrefAnnotation) {
+
+		List<AnnotationIsoformSpecificity> isospecs = new ArrayList<>();
+
+		for (Isoform iso: isoforms) {
+
+			AnnotationIsoformSpecificity isospec = new AnnotationIsoformSpecificity();
+
+			isospec.setAnnotationId(xrefAnnotation.getAnnotationId());
+			isospec.setFirstPosition(0);
+			isospec.setLastPosition(0);
+			isospec.setIsoformName(iso.getUniqueName());
+			isospec.setSpecificity("UNKNOWN");
+
+			isospecs.add(isospec);
+		}
+
+		return isospecs;
+	}
+
+	@Override
+	@Cacheable("xrefs-as-annot")
+	/** Convert dbxrefs of type XrefAnnotationMapping into annotation for the given entry */
+	public List<Annotation> findDbXrefsAsAnnotationsByEntry(String entryName) {
+
+		List<DbXref> xrefsToConvert = findDbXrefsConvertibleIntoAnnotationByEntry(entryName);
+		List<Annotation> xrefAnnotations = convertXrefsIntoAnnotations(xrefsToConvert, entryName);
+
+		return new ImmutableList.Builder<Annotation>().addAll(xrefAnnotations).build();
+	}
+
+	/**
+	 * Find dbxrefs convertible into Annotations (of type XrefAnnotationMapping)
+	 * @param uniqueName the entry name
+	 * @return a list of DbXref convertible to Annotation
+	 */
+	private List<DbXref> findDbXrefsConvertibleIntoAnnotationByEntry(String uniqueName) {
+
+		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
+		if(! xrefs.isEmpty()) attachPropertiesToXrefs(xrefs, uniqueName);
+		return xrefs;
+	}
 
 	@Override
 	@Cacheable("xrefs")
@@ -173,13 +202,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<DbXref>().addAll(xrefList).build();
-	}
-	
-	
-	private List<DbXref> findDbXrefsAsAnnotByEntry(String uniqueName) {
-		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
-		if(! xrefs.isEmpty()) attachPropertiesToXrefs(xrefs, uniqueName);
-		return xrefs;
 	}
 
 	/**

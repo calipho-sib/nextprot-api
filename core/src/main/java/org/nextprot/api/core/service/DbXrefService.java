@@ -30,6 +30,7 @@ public interface DbXrefService {
 
 	List<DbXref> findDbXRefByIds(List<Long> resourceIds);
 
+	/** Convert DbXrefs of type XrefAnnotationMapping into Annotations */
 	List<Annotation> findDbXrefsAsAnnotationsByEntry(String entryName);
-	
+
 }
