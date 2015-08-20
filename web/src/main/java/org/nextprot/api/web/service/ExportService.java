@@ -1,10 +1,10 @@
 package org.nextprot.api.web.service;
 
-import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.service.export.format.FileFormat;
+import org.nextprot.api.web.service.impl.writer.NPEntryStreamWriter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -21,7 +21,7 @@ public interface ExportService {
 	 * 
 	 * @param format The format can be xml or ttl
 	 */
-	List<Future<File>> exportAllEntries(NPFileFormat format);
+	List<Future<File>> exportAllEntries(FileFormat format);
 
 	/**
 	 * Export entries based on chromosome in the format specified with UTF-8
@@ -30,7 +30,7 @@ public interface ExportService {
 	 * @param chromosome The chromosome name / number
 	 * @param format The format can be xml or ttl
 	 */
-	public List<Future<File>> exportEntriesOfChromossome(String chromosome, NPFileFormat format);
+	List<Future<File>> exportEntriesOfChromosome(String chromosome, FileFormat format);
 
 	/**
 	 * Export entries based on entry names in the format specified with UTF-8
@@ -38,7 +38,7 @@ public interface ExportService {
 	 * 
 	 * @param entryNames The list of entries
 	 */
-	public List<Future<File>> exportEntries(Collection<String> entryNames, NPFileFormat format);
+	List<Future<File>> exportEntries(Collection<String> entryNames, FileFormat format);
 
 	/**
 	 * Export the entry name in the format specified with UTF-8 encoding
@@ -46,9 +46,9 @@ public interface ExportService {
 	 * @param entryName The entry to export
 	 * @param format The export format
 	 */
-	public Future<File> exportEntry(String entryName, NPFileFormat format);
+	Future<File> exportEntry(String entryName, FileFormat format);
 
-	public void clearRepository();
+	void clearRepository();
 
-	void streamResults(NPFileFormat format, Writer stream, String viewName, List<String> accessions) throws IOException;
+	void streamResults(NPEntryStreamWriter writer, String viewName, List<String> accessions) throws IOException;
 }

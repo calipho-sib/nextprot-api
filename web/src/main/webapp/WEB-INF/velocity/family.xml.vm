@@ -21,18 +21,18 @@
 
 <family>
 #if($reg) 
-<family-region>$reg</family-region> 
+	<family-region>$reg</family-region>
 #end
-<family-name-list>
+	<family-name-list>
 #if($f1)
-	<family-name type="$f1.level" accession="$f1.accession">$f1.name</family-name>
+		<family-name type="$f1.level" accession="$f1.accession">$f1.name</family-name>
 #end
 #if($f2)
-	<family-name type="$f2.level" accession="$f2.accession">$f2.name</family-name>
+		<family-name type="$f2.level" accession="$f2.accession">$f2.name</family-name>
 #end
 #if($f3)
-	<family-name type="$f3.level" accession="$f3.accession">$f3.name</family-name>
+		<family-name type="$f3.level" accession="$f3.accession">$f3.name</family-name>
 #end	
-</family-name-list>
+	</family-name-list>
 </family>
 

@@ -1,15 +1,16 @@
 package org.nextprot.api.core.dao;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.service.FamilyService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class FamilyServiceIntegrationTest extends CoreUnitBaseTest {
@@ -36,8 +37,7 @@ public class FamilyServiceIntegrationTest extends CoreUnitBaseTest {
  				assertTrue(false);								// this should NOT occur
  			}
  		}
-	}	
-
+	}
 
 	@Test
 	public void shouldReturn_1_Family_Having_2_Parents() {
@@ -51,7 +51,16 @@ public class FamilyServiceIntegrationTest extends CoreUnitBaseTest {
  		assertTrue(fam.getParent().getParent()!=null);
  		System.out.println(fam.getParent().getParent());
  		assertTrue(fam.getParent().getParent().getParent()==null); 		
-	}	
+	}
 
-	
+	@Test
+	public void shouldBeSortedByRegion() {
+
+		List<Family> families = familyService.findFamilies("NX_Q3SY69");
+
+		assertEquals(2, families.size());
+
+		assertEquals("In the N-terminal section", families.get(0).getRegion());
+		assertEquals("In the C-terminal section", families.get(1).getRegion());
+	}
 }

@@ -1,13 +1,10 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import org.nextprot.api.commons.constants.XrefAnnotationMapping;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
@@ -15,11 +12,7 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.PublicationDbXref;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideMappingService;
@@ -29,11 +22,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.util.*;
 
 @Lazy
 @Service
@@ -46,7 +35,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	private Set<String> dbXrefPropertyFilter;
 	
 	{
-		this.dbXrefPropertyFilter = new HashSet<String>();
+		this.dbXrefPropertyFilter = new HashSet<>();
 		this.dbXrefPropertyFilter.add("status");
 		this.dbXrefPropertyFilter.add("match status");
 		this.dbXrefPropertyFilter.add("organism ID");
@@ -76,7 +65,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	}
 	
 	private List<Annotation> createAdditionalAnnotationsFromXrefs(List<DbXref> xrefs, String entryName) {
-		List<Annotation> annots = new ArrayList<Annotation>();
+		List<Annotation> annots = new ArrayList<>();
 		for (DbXref xref: xrefs) {
 			Annotation annotation = new Annotation();
 			annotation.setProperties(new ArrayList<AnnotationProperty>());
@@ -168,8 +157,9 @@ public class DbXrefServiceImpl implements DbXrefService {
 		};
 
 		// now merge xrefs associated to the entry by annot, interact, mappings, etc. in the tree set 
-		Set<DbXref> xrefs = new TreeSet<DbXref>(comparator);
+		Set<DbXref> xrefs = new TreeSet<>(comparator);
 		List<String> peptideNames = this.peptideNamesService.findAllPeptideNamesByMasterId(entryName);
+
 		xrefs.addAll(peptideNames.size()>0 ? this.dbXRefDao.findPeptideXrefs(peptideNames) :  new HashSet<DbXref>());
 		xrefs.addAll(this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryAttachedXrefs(entryName));
@@ -179,7 +169,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		
 		
 		// turn the set into a list to match the signature expected elsewhere
-		List<DbXref> xrefList = new ArrayList<DbXref>(xrefs);
+		List<DbXref> xrefList = new ArrayList<>(xrefs);
 		
 		// get and attach the properties to the xrefs
 		if (! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName);
@@ -228,14 +218,11 @@ public class DbXrefServiceImpl implements DbXrefService {
 		});
 
 		for (DbXref xref : xrefs) {
-			xref.setProperties(new ArrayList<DbXrefProperty>(propsMap.get(xref.getDbXrefId())));
+			xref.setProperties(new ArrayList<>(propsMap.get(xref.getDbXrefId())));
 			xref.setResolvedUrl(resolveLinkTarget(uniqueName, xref));
 		}
-		
 	}
 
-	
-	
 	private String resolveLinkTarget(String primaryId, DbXref xref) {
 		primaryId = primaryId.startsWith("NX_") ? primaryId.substring(3) : primaryId;
 		if (! xref.getLinkUrl().contains("%u")) {

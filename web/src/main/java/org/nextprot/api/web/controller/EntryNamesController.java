@@ -1,7 +1,5 @@
 package org.nextprot.api.web.controller;
 
-import java.util.List;
-
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
 
 @Lazy
 @Controller
@@ -32,8 +32,8 @@ public class EntryNamesController {
 	@ResponseBody
 	public List<String> getEntryNamesByChromosome(
 			@ApiPathParam(name = "chromosome", description = "The chromosome number or X / Y. Example: 21", allowedvalues = { "21"}) 
-			@PathVariable("chromosome") String chromossome, Model model) {
-		return masterIdentifierService.findUniqueNamesOfChromossome(chromossome);
+			@PathVariable("chromosome") String chromosome, Model model) {
+		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome);
 	}
 
 }

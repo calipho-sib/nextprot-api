@@ -1,7 +1,5 @@
 package org.nextprot.api.commons.dao.impl;
 
-import java.util.List;
-
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
@@ -11,6 +9,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public class MasterIdentifierDaoImpl implements MasterIdentifierDao {
@@ -26,8 +26,8 @@ public class MasterIdentifierDaoImpl implements MasterIdentifierDao {
 	}
 
 	@Override
-	public List<String> findUniqueNamesOfChromossome(String chromossome) {
-		SqlParameterSource namedParameters = new MapSqlParameterSource("chromossome", chromossome);
+	public List<String> findUniqueNamesOfChromosome(String chromosome) {
+		SqlParameterSource namedParameters = new MapSqlParameterSource("chromosome", chromosome);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("unique-names-of-chromosome"), namedParameters, String.class);
 	}
 	

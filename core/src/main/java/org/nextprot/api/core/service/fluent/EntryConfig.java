@@ -2,7 +2,7 @@ package org.nextprot.api.core.service.fluent;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.service.export.format.EntryBlocks;
+import org.nextprot.api.core.service.export.format.EntryBlock;
 
 public class EntryConfig {
 	
@@ -10,11 +10,13 @@ public class EntryConfig {
 	private boolean enzymes;
 	private boolean withoutAdditionalReferences = false; // by default we put xrefs, publications, experimental contexts
 	private boolean withoutProperties = false; //by default we get properties
-	
-	private EntryConfig(String entryName){
+	private AnnotationApiModel subpart;
+	private final String entryName;
+
+	private EntryConfig(String entryName) {
 		if(entryName.toUpperCase().startsWith("NX_")){
 			this.entryName = entryName;
-		}else {
+		} else {
 			this.entryName = "NX_" + entryName;
 		}
 	}
@@ -79,6 +81,22 @@ public class EntryConfig {
 		return experimentalContext;
 	}
 
+	public boolean hasSubPart() {
+		return (this.subpart != null);
+	}
+
+	public String getEntryName() {
+		return this.entryName;
+	}
+
+	public boolean hasEnzymes() {
+		return this.enzymes;
+	}
+
+	public AnnotationApiModel getSubpart() {
+		return subpart;
+	}
+
 	public EntryConfig withOverview() {
 		this.overview = true; return this;
 	}
@@ -130,11 +148,15 @@ public class EntryConfig {
 	public EntryConfig withoutProperties() {
 		this.withoutProperties = true; return this; 
 	}
-	
+
+	public EntryConfig withoutAdditionalReferences() {
+		this.withoutAdditionalReferences = true;
+		return this;
+	}
+
 	public EntryConfig withEnzymes() {
 		this.enzymes = true; return this; //TODO is this necessary? can't we write a method on top of overview names???
 	}
-
 
 	public EntryConfig withEverything() {
 		this.withOverview().withAnnotations().withPublications().withXrefs().withKeywords()
@@ -144,42 +166,31 @@ public class EntryConfig {
 		return this;
 	}
 
-	private AnnotationApiModel subpart;
-	private String entryName;
-	public AnnotationApiModel getSubpart() {
-		return subpart;
-	}
-
 	/**
-	 * could be a block or supart
+	 * Could be a block or subpart
 	 * @param blockOrSubpart
 	 * @return
 	 */
 	public EntryConfig with(String blockOrSubpart) {
 
 		if("entry".equals(blockOrSubpart.toLowerCase())){
-			this.withEverything();
-		}else  if(EntryBlocks.containsBlock(blockOrSubpart.toUpperCase())){
-			this.withEntryBlock(EntryBlocks.valueOfViewName(blockOrSubpart.toUpperCase()));
-		}else {
+			withEverything();
+		}
+		else if(EntryBlock.containsBlock(blockOrSubpart.toUpperCase())){
+			withBlock(EntryBlock.valueOfViewName(blockOrSubpart.toUpperCase()));
+		}
+		else {
 			try{
-				this.subpart = AnnotationApiModel.getDecamelizedAnnotationTypeName(blockOrSubpart);
+				subpart = AnnotationApiModel.getDecamelizedAnnotationTypeName(blockOrSubpart);
 			} catch (IllegalArgumentException ec) {
 				throw new NextProtException("Block or subpart " + blockOrSubpart + " not found. Please look into...");
 			}
 		}
 		return this;
-		
 	}
 
-
-	public EntryConfig withoutAdditionalReferences() {
-		this.withoutAdditionalReferences = true;
-		return this;
-	}
-	
 	//Overload with NPViews
-	private EntryConfig withEntryBlock(EntryBlocks block) {
+	public EntryConfig withBlock(EntryBlock block) {
 
 		switch (block) {
 			case FULL_ENTRY: this.withEverything(); break;
@@ -199,26 +210,12 @@ public class EntryConfig {
 			default: {throw new NextProtException(block + " block not found");}
 		}
 		return this;
-
 	}
 
-
-	public boolean hasSubPart() {
-		return (this.subpart != null);
-	}
-
-	public String getEntryName() {
-		return this.entryName;
-	}
-
-	public boolean hasEnzymes() {
-		return this.enzymes;
-	}
 
 	public boolean hasSubPart(AnnotationApiModel subpart) {
 		return subpart.equals(this.subpart);
 	}
-
 
 
 }

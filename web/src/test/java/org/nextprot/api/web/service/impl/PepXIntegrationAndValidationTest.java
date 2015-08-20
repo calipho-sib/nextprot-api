@@ -1,37 +1,42 @@
 package org.nextprot.api.web.service.impl;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Test;
+import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.service.PepXService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
 
     @Autowired
     private PepXService pepXService;
-
-    @Autowired
-    private EntryBuilderService entryBuilderService;
     
+	@Autowired
+	private DataSourceServiceLocator dsLocator;
+	
     @Test
     public void testPepXService() throws Exception {
-    	List<Entry> entries = pepXService.findEntriesWithPeptides("LIMINA", true);
-    	assertFalse(entries.isEmpty());
+    	
+    	List<String> peptides = getPeptides();
+    	for(String peptide : peptides){
+    		List<Entry> entries = pepXService.findEntriesWithPeptides(peptide, true);
+    		assertFalse(entries.get(0).getAnnotations().isEmpty());
+    	}
+    	
+    }
+
+    private List<String> getPeptides() throws Exception {
+    	
+    	String sqlToGetPeptides = "select bio_sequence from nextprot.bio_sequences  where cv_type_id = 5 limit 10";
+		return new JdbcTemplate(dsLocator.getDataSource()).queryForList(sqlToGetPeptides, String.class);
     }
 
     
-    @Test
-    public void testPepXServiceWithAFalseAminoAcid() throws Exception {
-    	List<Entry> entries = pepXService.findEntriesWithPeptides("LUMINA", true);
-    	assertTrue(entries.isEmpty());
-    }
-
 
 }

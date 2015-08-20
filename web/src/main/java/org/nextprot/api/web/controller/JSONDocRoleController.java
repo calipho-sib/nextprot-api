@@ -1,32 +1,15 @@
 package org.nextprot.api.web.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsondoc.core.pojo.ApiDoc;
-import org.jsondoc.core.pojo.ApiMethodDoc;
-import org.jsondoc.core.pojo.ApiParamDoc;
-import org.jsondoc.core.pojo.ApiVerb;
-import org.jsondoc.core.pojo.JSONDoc;
+import org.jsondoc.core.pojo.*;
 import org.jsondoc.core.util.JSONDocType;
 import org.jsondoc.springmvc.controller.JSONDocController;
 import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.ReleaseInfoService;
-import org.nextprot.api.core.service.export.format.EntryBlocks;
+import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.security.service.impl.NPSecurityContext;
 import org.nextprot.api.web.service.impl.ExportServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +19,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.PostConstruct;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Controller
 public class JSONDocRoleController extends JSONDocController {
@@ -103,8 +90,8 @@ public class JSONDocRoleController extends JSONDocController {
 				if (apiDoc.getName().equals("Entry")) {
 
 					//adding blocks
-					for (EntryBlocks block: EntryBlocks.values()) {
-						if(!block.equals(EntryBlocks.FULL_ENTRY))
+					for (EntryBlock block: EntryBlock.values()) {
+						if(!block.equals(EntryBlock.FULL_ENTRY))
 							apiDoc.getMethods().add(cloneMethodDocWithName(met, block.name().toLowerCase().replaceAll("_", "-"), ""));
 					}
 
