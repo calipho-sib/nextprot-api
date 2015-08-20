@@ -92,5 +92,12 @@ public enum XrefAnnotationMapping  {
 		throw new RuntimeException("Could not find XrefAnnotationMapping for database name: " + dbName);
 	}
 	
+	public static boolean hasName(String name) {
 
+		for (XrefAnnotationMapping m : XrefAnnotationMapping.values()) {
+			if(m.xrefDbName.equals(name)) return true;
+		}
+
+		return false;
+	}
 }

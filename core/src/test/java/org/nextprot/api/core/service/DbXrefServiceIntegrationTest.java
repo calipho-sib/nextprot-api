@@ -1,19 +1,19 @@
 package org.nextprot.api.core.service;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.domain.Interaction;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class DbXrefServiceIntegrationTest extends CoreUnitBaseTest {
@@ -64,6 +64,8 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("REACT_268024"));
 		assertTrue(evi.getResourceDb().equals("Reactome"));
+
+		assertEmptyProperties("NX_A0AVF1", 42610527);
 	}
 	
 	@Test
@@ -83,6 +85,8 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("hsa04120+134111"));
 		assertTrue(evi.getResourceDb().equals("KEGGPathway"));
+
+		assertEmptyProperties("NX_A1L167", 14559832);
 	}
 	
 	@Test
@@ -102,6 +106,8 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("478"));
 		assertTrue(evi.getResourceDb().equals("Orphanet"));
+
+		assertEmptyProperties("NX_A0PJY2", 1077769);
 	}
 	
 /**
@@ -125,8 +131,18 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("DB00852"));
 		assertTrue(evi.getResourceDb().equals("DrugBank"));
+
+		assertEmptyProperties("NX_Q9Y2D1", 983678);
 	}
 	
 
+	private void assertEmptyProperties(String entryName, long propertyId) {
+
+		List<DbXref> dbxrefs = this.xrefService.findDbXrefsByMaster(entryName);
+
+		for (DbXref xref : dbxrefs)
+			if (xref.getDbXrefId() == propertyId)
+				Assert.assertTrue(xref.getProperties().isEmpty());
+	}
 	
 }

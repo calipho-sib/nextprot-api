@@ -166,6 +166,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	private List<DbXref> findDbXrefsConvertibleIntoAnnotationByEntry(String uniqueName) {
 
 		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
+
 		if(! xrefs.isEmpty()) attachPropertiesToXrefs(xrefs, uniqueName);
 		return xrefs;
 	}
@@ -192,7 +193,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionXrefs(entryName));             // xrefs of interactions evidences
 		xrefs.addAll(this.dbXRefDao.findEntryInteractionInteractantsXrefs(entryName)); // xrefs of xeno interactants
-		
 		
 		// turn the set into a list to match the signature expected elsewhere
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
@@ -237,7 +237,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		});
 
 		for (DbXref xref : xrefs) {
-			xref.setProperties(new ArrayList<>(propsMap.get(xref.getDbXrefId())));
+			xref.setProperties((!XrefAnnotationMapping.hasName(xref.getDatabaseName())) ? new ArrayList<>(propsMap.get(xref.getDbXrefId())) : new ArrayList<DbXrefProperty>());
 			xref.setResolvedUrl(resolveLinkTarget(uniqueName, xref));
 		}
 	}
