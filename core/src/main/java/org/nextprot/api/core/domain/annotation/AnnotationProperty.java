@@ -14,7 +14,7 @@ public class AnnotationProperty implements Serializable {
 	public static final String NAME_DIFFERING_SEQUENCE="differing sequence";	
 	public static final String NAME_COFACTOR="cofactor";
 	public static final String NAME_PEPTIDE_NAME="peptide name";
-	public static final String NAME_PEPTIDE_PROTEOTYPICITY="proteotypic";
+	public static final String NAME_PEPTIDE_PROTEOTYPICITY="is proteotypic";
 	public static final String NAME_ALTERNATIVE_DISEASE_TERM="alternative disease description";
 	public static final String VALUE_TYPE_RIF="resource-internal-ref";
 	public static final String VALUE_TYPE_ENTRY_AC="entry-accession";

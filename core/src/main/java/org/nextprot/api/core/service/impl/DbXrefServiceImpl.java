@@ -23,6 +23,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideMappingService;
+import org.nextprot.api.core.service.PeptideNamesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -40,6 +41,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Autowired private DbXrefDao dbXRefDao;
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private IsoformService isoService;
+	@Autowired private PeptideNamesService peptideNamesService;
 	
 	private Set<String> dbXrefPropertyFilter;
 	
@@ -167,7 +169,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		// now merge xrefs associated to the entry by annot, interact, mappings, etc. in the tree set 
 		Set<DbXref> xrefs = new TreeSet<DbXref>(comparator);
-		List<String> peptideNames = this.peptideMappingService.findAllPeptideNamesByMasterId(entryName);
+		List<String> peptideNames = this.peptideNamesService.findAllPeptideNamesByMasterId(entryName);
 		xrefs.addAll(peptideNames.size()>0 ? this.dbXRefDao.findPeptideXrefs(peptideNames) :  new HashSet<DbXref>());
 		xrefs.addAll(this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryAttachedXrefs(entryName));

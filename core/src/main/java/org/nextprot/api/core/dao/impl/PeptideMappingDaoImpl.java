@@ -2,11 +2,13 @@ package org.nextprot.api.core.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.nextprot.api.commons.constants.PeptideMappingAnnotationMapping;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.PeptideMappingDao;
@@ -15,6 +17,7 @@ import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -58,14 +61,9 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 	}
 
 	
-	private List<PeptideEvidence> privateFindPeptideEvidences(List<String> names, boolean withNatural, boolean withSynthetic) {
+	private List<PeptideEvidence> findPeptideEvidences(List<String> names, boolean natural) {
 
-		String datasourceClause;
-		if (withNatural && withSynthetic) 	{ datasourceClause=" true ";  
-		} else if (withNatural) 			{ datasourceClause=" ds.cv_name != 'SRMAtlas' ";  			
-		} else if (withSynthetic) 			{ datasourceClause=" ds.cv_name  = 'SRMAtlas' ";  
-		} else 								{ datasourceClause=" false ";  
-		}
+		String datasourceClause = natural ? " ds.cv_name != 'SRMAtlas' " : " ds.cv_name  = 'SRMAtlas' ";  
 		String sql = sqlDictionary.getSQLQuery("peptide-evidences-by-peptide-names").replace(":datasourceClause", datasourceClause);
 		Map<String,Object> params = new HashMap<String,Object>();
 		params.put("names", names);
@@ -105,25 +103,15 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 		});
 	}
 	
-	@Override
-	public List<PeptideEvidence> findAllPeptideEvidences(List<String> names) {
-		return privateFindPeptideEvidences(names,true, true);
-	}
-
+	
 	@Override
 	public List<PeptideEvidence> findNaturalPeptideEvidences(List<String> names) {
-		return privateFindPeptideEvidences(names,true, false);
+		return findPeptideEvidences(names, true);
 	}
 
 	@Override
 	public List<PeptideEvidence> findSyntheticPeptideEvidences(List<String> names) {
-		return privateFindPeptideEvidences(names,false, true);
-	}
-
-	@Override
-	public List<PeptideMapping> findAllPeptidesByMasterId(Long id) {
-		Long[] propNameIds = {52L,53L}; // 52:natural, 53:synthetic 
-		return findPeptidesByMasterId(id,Arrays.asList(propNameIds));
+		return findPeptideEvidences(names, false);
 	}
 
 	@Override
@@ -146,25 +134,15 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 	 * 
 	 */
 	
+	@Override
+	public List<Map<String,Object>> findPeptideMappingAnnotationsByMasterId(Long id, boolean withNatural, boolean withSynthetic) {
+		// 52:natural, 53:synthetic 
+		List<Long> propNameIdList = new ArrayList<>();
+		if (withNatural) propNameIdList.add(52L);
+		if (withSynthetic) propNameIdList.add(53L);
+		return findPeptideMappingAnnotationsByMasterId(id,propNameIdList);
+	}
 	
-	@Override
-	public List<Map<String,Object>> findAllPeptideMappingAnnotationsByMasterId(Long id) {
-		Long[] propNameIds = {52L,53L}; // 52:natural, 53:synthetic 
-		return findPeptideMappingAnnotationsByMasterId(id,Arrays.asList(propNameIds));
-	}
-
-	@Override
-	public List<Map<String,Object>> findNaturalPeptideMappingAnnotationsByMasterId(Long id) {
-		Long[] propNameIds = {52L}; // 52:natural, 53:synthetic 
-		return findPeptideMappingAnnotationsByMasterId(id,Arrays.asList(propNameIds));
-	}
-
-	@Override
-	public List<Map<String,Object>> findSyntheticPeptideMappingAnnotationsByMasterId(Long id) {
-		Long[] propNameIds = {53L}; // 52:natural, 53:synthetic 
-		return findPeptideMappingAnnotationsByMasterId(id,Arrays.asList(propNameIds));
-	}
-
 	
 	private List<Map<String,Object>> findPeptideMappingAnnotationsByMasterId(Long id, List<Long> propNameIds) {
 		Map<String,Object> params = new HashMap<String,Object>();
@@ -175,7 +153,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 			@Override
 			public Map<String,Object> mapRow(ResultSet resultSet, int row) throws SQLException {
 				Map<String,Object> peptideMapping = new HashMap<>();
-				peptideMapping.put(KEY_ANNOTATION_ID, resultSet.getLong("annotation_id"));
+				peptideMapping.put(KEY_ANNOTATION_ID, resultSet.getLong("annotation_id") + 50_000_000_000L );
 				peptideMapping.put(KEY_QUALITY_QUALIFIER,resultSet.getString("quality_qualifier"));
 				peptideMapping.put(KEY_PEP_UNIQUE_NAME,resultSet.getString("pep_unique_name"));
 				peptideMapping.put(KEY_ISO_UNIQUE_NAME,resultSet.getString("iso_unique_name"));
@@ -189,44 +167,72 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 
 	
 	@Override
-	public List<AnnotationProperty> findPeptideAnnotationProperties(List<String> names) {
+	public Map<String,List<AnnotationProperty>> findPeptideAnnotationPropertiesMap(List<String> names) {
+		
 		SqlParameterSource namedParams = new MapSqlParameterSource("names", names);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("peptide-properties-by-peptide-names"), namedParams, new RowMapper<AnnotationProperty>() {
-
+		List<AnnotationProperty> props = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("peptide-properties-by-peptide-names"), namedParams, new RowMapper<AnnotationProperty>() {
 			@Override
 			public AnnotationProperty mapRow(ResultSet resultSet, int row) throws SQLException {
 				AnnotationProperty prop = new AnnotationProperty();				
 				prop.setAccession(resultSet.getString("peptide_name"));
 				prop.setName(resultSet.getString("prop_name"));
-				prop.setValue(resultSet.getString("prop_value"));				
+				prop.setValue(resultSet.getString("prop_value"));		
 				return prop;
 			}
-			
 		});
+		Map<String,List<AnnotationProperty>> result = new HashMap<>();
+		for (AnnotationProperty p: props) {
+			String pepKey = p.getAccession();
+			if (!result.containsKey(pepKey)) result.put(pepKey, new ArrayList<AnnotationProperty>());
+			result.get(pepKey).add(p);
+		}
+		return result;
 	}
 
 
 	@Override
-	public List<AnnotationEvidence> findAllPeptideAnnotationEvidences(List<String> names) {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<String,List<AnnotationEvidence>> findPeptideAnnotationEvidencesMap(List<String> names, boolean natural) {
+
+		String datasourceClause = natural ? " ds.cv_name != 'SRMAtlas'" : " ds.cv_name  = 'SRMAtlas'";  
+		final PeptideMappingAnnotationMapping pmam = natural ? PeptideMappingAnnotationMapping.PEPTIDE_MAPPING : PeptideMappingAnnotationMapping.SRM_PEPTIDE_MAPPING;
+		String sql = sqlDictionary.getSQLQuery("peptide-evidences-by-peptide-names").replace(":datasourceClause", datasourceClause);
+		Map<String,Object> params = new HashMap<String,Object>();
+		params.put("names", names);
+		SqlParameterSource namedParams = new MapSqlParameterSource(params);
+		List<AnnotationEvidence> evidences = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParams, new RowMapper<AnnotationEvidence>() {
+			@Override
+			public AnnotationEvidence mapRow(ResultSet resultSet, int row) throws SQLException {
+				AnnotationEvidence evidence = new AnnotationEvidence();
+				evidence.setAnnotationId(0); // set later by service
+				evidence.setAssignedBy(resultSet.getString("assigned_by"));
+				evidence.setAssignmentMethod(pmam.getAssignmentMethod());
+				evidence.setEvidenceCodeAC(pmam.getEcoAC());
+				evidence.setEvidenceCodeName(pmam.getEcoName());
+				evidence.setExperimentalContextId(null);
+				evidence.setNegativeEvidence(false);
+				evidence.setProperties(new ArrayList<AnnotationEvidenceProperty>());
+				evidence.setPublicationMD5(null);
+				evidence.setQualifierType(pmam.getQualifierType());
+				evidence.setQualityQualifier(pmam.getQualityQualifier());
+				evidence.setResourceAccession(resultSet.getString("accession"));
+				evidence.setResourceAssociationType("evidence");
+				evidence.setResourceDb(resultSet.getString("database_name"));
+				evidence.setResourceDescription(resultSet.getString("unique_name")); // temp value
+				evidence.setResourceId(resultSet.getLong("resource_id"));
+				evidence.setResourceType(resultSet.getString("resource_type"));
+				return evidence;
+			}
+		});
+		// turn this list into a map having the peptide name as the key
+		Map<String,List<AnnotationEvidence>> result = new HashMap<>();
+		for (AnnotationEvidence ev: evidences) {
+			String pepKey = ev.getResourceDescription();
+			ev.setResourceDescription(null); // remove temp value
+			if (!result.containsKey(pepKey)) result.put(pepKey, new ArrayList<AnnotationEvidence>());
+			result.get(pepKey).add(ev);
+		}
+		return result;
 	}
-
-
-	@Override
-	public List<AnnotationEvidence> findNaturalPeptideAnnotationEvidences(List<String> names) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
-	@Override
-	public List<AnnotationEvidence> findSyntheticPeptideAnnotationEvidences(List<String> names) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-
 
 	
 }

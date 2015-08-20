@@ -8,8 +8,6 @@ import org.nextprot.api.core.service.annotation.ValidEntry;
 
 public interface PeptideMappingService {
 
-	List<String> findAllPeptideNamesByMasterId(String uniqueName);
-
 	// old interface (soon obsolete)
 	List<PeptideMapping> findNaturalPeptideMappingByMasterUniqueName(@ValidEntry String uniqueName);
 	List<PeptideMapping> findSyntheticPeptideMappingByMasterUniqueName(@ValidEntry String uniqueName);

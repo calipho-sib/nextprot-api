@@ -12,6 +12,8 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
@@ -24,7 +26,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 	//@Autowired private PeptideMappingService peptideMappingService;
 
 	@Test
-    public void shouldBuild1AnnotationWith2IsoSpecs()  {
+    public void shouldBuild_1_AnnotationWith_2_IsoSpecs()  {
 		Long annotId = 3562876L;
 		List<Map<String,Object>> records = new ArrayList<>();
 		records.add(buildDaoRecord(annotId, "GOLD", 2, "NX_Q9UGM3-1", "NX_PEPT00113713", 881, 901));
@@ -57,7 +59,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     }
     
 	@Test
-    public void shouldBuild2AnnotationsEachHaving1IsoSpec()  {
+    public void shouldBuild_2_AnnotationsEachHaving_1_IsoSpec()  {
 		Long annotId = 3562876L;
 		Long annotId2 = 3500000L;
 		List<Map<String,Object>> records = new ArrayList<>();
@@ -104,7 +106,137 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(spec.getSpecificity().equals("SPECIFIC"));
     	
     }
-    
+
+	@Test
+    public void shouldBuild_2_AnnotationsAboutSamePeptide_EachAnnotationHaving_2_Properties()  {
+		Long annotId = 3562876L;
+		Long annotId2 = 3500000L;
+		List<Map<String,Object>> records = new ArrayList<>();
+		records.add(buildDaoRecord(annotId, "GOLD", 2, "NX_Q9UGM3-1", "NX_PEPT00113713", 881, 901));
+		records.add(buildDaoRecord(annotId2, "GOLD", 3, "NX_Q9UGM3-1", "NX_PEPT00113713", 382, 402));
+
+		List<AnnotationProperty> props = new ArrayList<>();
+		//props.add(buildAnnotationProperty("NX_PEPT00113713", "peptide name", "NX_PEPT00113713"));
+		props.add(buildAnnotationProperty("NX_PEPT00113713", "is proteotypic", "Y"));
+		props.add(buildAnnotationProperty("NX_PEPT00113713", "is natural", "Y"));
+		props.add(buildAnnotationProperty("NX_PEPT00113713", "is synthetic", "N"));
+		Map<String,List<AnnotationProperty>> propMap = new HashMap<>();
+		propMap.put("NX_PEPT00113713", props);
+		
+		Map<Long,Annotation> annotationMap = PeptideMappingServiceImpl.buildAnnotationMapFromRecords(records, true);
+		List<Annotation> annotations = new ArrayList<Annotation>(annotationMap.values());
+		PeptideMappingServiceImpl.attachPeptidePropertiesToAnnotations(annotations, propMap);
+		
+		assertTrue(annotationMap.size()==2);
+
+    	Annotation annot;
+    	AnnotationProperty prop;
+
+    	// checking first annotation
+    	annot = annotationMap.get(annotId);
+    	assertTrue(annot.getAnnotationId()==annotId);
+
+    	prop = annot.getProperties().get(0);
+    	assertTrue(prop.getAnnotationId()==annotId);
+    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME));
+    	assertTrue(prop.getValue().equals("NX_PEPT00113713"));
+    	
+    	prop = annot.getProperties().get(1);
+    	System.out.println("annotationid in prop:" + prop.getAnnotationId());
+    	assertTrue(prop.getAnnotationId()==annotId);
+    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_PROTEOTYPICITY));
+    	assertTrue(prop.getValue().equals("Y"));
+    	
+
+    	// checking second annotation
+    	annot = annotationMap.get(annotId2);
+    	assertTrue(annot.getAnnotationId()==annotId2);
+
+    	prop = annot.getProperties().get(0);
+    	assertTrue(prop.getAnnotationId()==annotId2);
+    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME));
+    	assertTrue(prop.getValue().equals("NX_PEPT00113713"));
+    	
+    	prop = annot.getProperties().get(1);
+    	System.out.println("annotationid in prop:" + prop.getAnnotationId());
+    	assertTrue(prop.getAnnotationId()==annotId2);
+    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_PROTEOTYPICITY));
+    	assertTrue(prop.getValue().equals("Y"));
+    }
+	
+	@Test
+    public void shouldBuild_2_AnnotationsAboutSamePeptide_EachAnnotationHaving_1_Evidence()  {
+		Long annotId = 3562876L;
+		Long annotId2 = 3500000L;
+		List<Map<String,Object>> records = new ArrayList<>();
+		records.add(buildDaoRecord(annotId, "GOLD", 2, "NX_Q9UGM3-1", "NX_PEPT00113713", 881, 901));
+		records.add(buildDaoRecord(annotId2, "GOLD", 3, "NX_Q9UGM3-1", "NX_PEPT00113713", 382, 402));
+
+		List<AnnotationEvidence> evidences = new ArrayList<>();
+		//props.add(buildAnnotationProperty("NX_PEPT00113713", "peptide name", "NX_PEPT00113713"));
+		evidences.add(buildAnnotationEvidence());
+		Map<String,List<AnnotationEvidence>> evMap = new HashMap<>();
+		evMap.put("NX_PEPT00113713", evidences);
+		
+		Map<Long,Annotation> annotationMap = PeptideMappingServiceImpl.buildAnnotationMapFromRecords(records, true);
+		List<Annotation> annotations = new ArrayList<Annotation>(annotationMap.values());
+		PeptideMappingServiceImpl.attachPeptideEvidencesToAnnotations(annotations, evMap);
+		
+		assertTrue(annotationMap.size()==2);
+
+    	Annotation annot;
+    	AnnotationEvidence ev;
+
+    	// checking first annotation
+    	annot = annotationMap.get(annotId);
+    	assertTrue(annot.getAnnotationId()==annotId);
+
+    	ev = annot.getEvidences().get(0);
+    	System.out.println("evidence 1 annotation id = " + ev.getAnnotationId());
+    	assertTrue(ev.getAnnotationId()==annotId);
+
+    	// checking second annotation
+    	annot = annotationMap.get(annotId2);
+    	assertTrue(annot.getAnnotationId()==annotId2);
+
+    	ev = annot.getEvidences().get(0);
+    	System.out.println("evidence 2 annotation id = " + ev.getAnnotationId());
+    	assertTrue(ev.getAnnotationId()==annotId2);
+    	
+    }
+	
+	
+	AnnotationProperty buildAnnotationProperty(String peptideName, String propertyName, String propertyValue) {
+		AnnotationProperty prop = new AnnotationProperty();
+		prop.setAccession(peptideName);
+		prop.setName(propertyName);
+		prop.setValue(propertyValue);
+		return prop;
+	}
+	
+	AnnotationEvidence buildAnnotationEvidence() {
+		AnnotationEvidence ev = new AnnotationEvidence();
+		ev.setAnnotationId(0);
+		ev.setAssignedBy("some source");
+		ev.setAssignmentMethod("some method");
+		ev.setEvidenceCodeAC("some eco");
+		ev.setEvidenceCodeName("some eo name");
+		ev.setEvidenceId(234234L);
+		ev.setExperimentalContextId(null);
+		ev.setNegativeEvidence(false);
+		ev.setProperties(new ArrayList<AnnotationEvidenceProperty>());
+		ev.setPublicationMD5(null);
+		ev.setQualifierType("some qualifier type");
+		ev.setQualityQualifier("some quality qualifier");
+		ev.setResourceAccession("some resource ac");
+		ev.setResourceAssociationType("some resource assoc type");
+		ev.setResourceDb("some resource db");
+		ev.setResourceDescription(null);
+		ev.setResourceId(8347578437L);
+		ev.setResourceType("some resource type");
+		return ev;
+	}
+	
     Map<String,Object> buildDaoRecord(Long annotId, String quality, Integer rank, String iso, String pep, Integer first, Integer last)  {
 
     	Map<String,Object> rec = new HashMap<>();

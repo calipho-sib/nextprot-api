@@ -1,13 +1,10 @@
 package org.nextprot.api.core.service.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.service.MasterIdentifierService;
@@ -17,9 +14,12 @@ import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.PeptideMappingService;
+import org.nextprot.api.core.service.PeptideNamesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -31,9 +31,8 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private PeptideMappingDao peptideMappingDao;
+	@Autowired private PeptideNamesService peptideNamesService;
 
-
-//TODO see cache definition in xml for this service (changes required)
 	
 	@Override
 	@Cacheable("natural-peptides")
@@ -62,17 +61,6 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	}
 		
 	
-	@Override
-	@Cacheable("all-peptides-names")
-	public List<String> findAllPeptideNamesByMasterId(String uniqueName) {
-		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		List<Map<String,Object>> allMapping = this.peptideMappingDao.findAllPeptideMappingAnnotationsByMasterId(masterId);
-		Set<String> names = new HashSet<String>(); 
-		for (Map<String,Object> map: allMapping) 
-			names.add((String)map.get(PeptideMappingDao.KEY_PEP_UNIQUE_NAME));
-		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
-		return new ImmutableList.Builder<String>().addAll(new ArrayList<String>(names)).build();
-	}
 	
 
 
@@ -130,44 +118,133 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	@Override
 	@Cacheable("natural-peptide-mapping-annotations")
 	public List<Annotation> findNaturalPeptideMappingAnnotationsByMasterUniqueName(String uniqueName) {
-
-		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		List<Annotation> peps = findPeptideMappingAnnotationsByMasterId(masterId, true);
-
-		//returns a immutable list when the result is cache able (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
-		return new ImmutableList.Builder<Annotation>().addAll(peps).build();
-
+		
+		return findPeptideMappingAnnotationsByMasterUniqueName(uniqueName,true);
 	}
 
+	
 	@Override
 	@Cacheable("srm-peptide-mapping-annotations")
 	public List<Annotation> findSyntheticPeptideMappingAnnotationsByMasterUniqueName(String uniqueName) {
+		
+		return findPeptideMappingAnnotationsByMasterUniqueName(uniqueName,false);
+	}
 
-		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		List<Annotation> peps = findPeptideMappingAnnotationsByMasterId(masterId, false);
-
-		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
-		return new ImmutableList.Builder<Annotation>().addAll(peps).build();
+	
+	private List<Annotation> findPeptideMappingAnnotationsByMasterUniqueName(String uniqueName, boolean withNatural) {
+	
+		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);		
+		boolean withSynthetic = ! withNatural;
+		List<Map<String, Object>> records = this.peptideMappingDao.findPeptideMappingAnnotationsByMasterId(masterId, withNatural, withSynthetic);
+		Map<Long,Annotation> annotationMap = buildAnnotationMapFromRecords(records, withNatural);		
+		List<Annotation> annotations = new ArrayList<Annotation>(annotationMap.values());
+		if (annotations.size()==0) return annotations;
+		
+		List<String> pepNames = this.peptideNamesService.findAllPeptideNamesByMasterId(uniqueName);
+		
+		Map<String,List<AnnotationProperty>> props = this.peptideMappingDao.findPeptideAnnotationPropertiesMap(pepNames);
+		attachPeptidePropertiesToAnnotations(annotations, props);	
+		
+		Map<String,List<AnnotationEvidence>> evidences = this.peptideMappingDao.findPeptideAnnotationEvidencesMap(pepNames, withNatural); // nat=true,synth=false
+		attachPeptideEvidencesToAnnotations(annotations, evidences);	
+		
+		//returns a immutable list when the result is cacheable (this prevents modifying the cache, 
+		//since the cache returns a reference) copy on read and copy on write is too much time consuming
+		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
+		
 	}
 	
-
 	
-	
-	List<Annotation> findPeptideMappingAnnotationsByMasterId(Long id, boolean isNatural) {
-		List<Map<String, Object>> records = (isNatural ? 
-				this.peptideMappingDao.findNaturalPeptideMappingAnnotationsByMasterId(id) : 
-					this.peptideMappingDao.findSyntheticPeptideMappingAnnotationsByMasterId(id)) ;
-		Map<Long,Annotation> annotationMap = buildAnnotationMapFromRecords(records, isNatural);
-		return new ArrayList<Annotation>(annotationMap.values());
+	static void attachPeptidePropertiesToAnnotations(List<Annotation> annotations, Map<String, List<AnnotationProperty>> propMap) {
+		for (Annotation annot: annotations) {
+			AnnotationProperty pepNameProperty = annot.getProperties().get(0); // WARNING: we expect first property in list be the "peptide name" property !
+			if (!pepNameProperty.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME)) {
+				throw new RuntimeException("Found unexpected property name:" + pepNameProperty.getName());
+			}
+			String pepName = pepNameProperty.getValue();
+			if (!propMap.containsKey(pepName)) {
+				throw new RuntimeException("Found no props for peptide with name:" + pepName);
+			}
+			List<AnnotationProperty> props = cloneUsefulPropertiesForAnnotation(propMap.get(pepName), annot.getAnnotationId());
+			annot.getProperties().addAll(props);
+		}
 	}
 	
-	private void attachAnnotationProperties(Collection<Annotation> annotations) {
-		// attach other properties to annotations according to their peptide name
-		//List<PeptideProperty> props = this.peptideMappingDao.findPeptideProperties(peptideNames);
-
+	/*
+	 * clone the property 'is proteotypic' and sets its annotation id
+	 * and return a list containing this "cloned" property
+	 */
+	static List<AnnotationProperty> cloneUsefulPropertiesForAnnotation(List<AnnotationProperty> peptideProperties, Long annotationId) {
+		List<AnnotationProperty> result = new ArrayList<>();
+		for (AnnotationProperty pp: peptideProperties) {
+			if (pp.getName().equals(AnnotationProperty.NAME_PEPTIDE_PROTEOTYPICITY)) {
+				AnnotationProperty ap = new AnnotationProperty();
+				ap.setAnnotationId(annotationId);
+				ap.setAccession(pp.getAccession());
+				ap.setName(pp.getName());
+				ap.setValue(pp.getValue());
+				ap.setValueType(pp.getValueType());
+				result.add(ap);
+			}
+		}
+		return result;
 	}
 	
+	static void attachPeptideEvidencesToAnnotations(List<Annotation> annotations, Map<String, List<AnnotationEvidence>> evidences) {
+		for (Annotation annot: annotations) {
+			AnnotationProperty pepNameProperty = annot.getProperties().get(0);  // WARNING: we expect first property in list be the "peptide name" property !
+			if (!pepNameProperty.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME)) {
+				throw new RuntimeException("Found unexpected property name:" + pepNameProperty.getName());
+			}
+			String pepName = pepNameProperty.getValue();
+			if (!evidences.containsKey(pepName)) {
+				throw new RuntimeException("Found no evidence for peptide with name:" + pepName);
+			}
+			List<AnnotationEvidence> peptideEvidences = evidences.get(pepName); 
+			List<AnnotationEvidence> clonedList = cloneEvidencesForAnnotation(peptideEvidences, annot.getAnnotationId());
+			annot.setEvidences(clonedList);
+		}
+	}
 	
+	static List<AnnotationEvidence> cloneEvidencesForAnnotation(List<AnnotationEvidence> peptideEvidences, Long annotationId) {
+		
+		List<AnnotationEvidence> result = new ArrayList<>();
+		for (AnnotationEvidence pepEvi: peptideEvidences) {
+			AnnotationEvidence annEvi = new AnnotationEvidence(); 
+			annEvi.setAnnotationId(annotationId);
+			annEvi.setAssignedBy(pepEvi.getAssignedBy());
+			annEvi.setAssignmentMethod(pepEvi.getAssignmentMethod());
+			annEvi.setEvidenceCodeAC(pepEvi.getEvidenceCodeAC());
+			annEvi.setEvidenceCodeName(pepEvi.getEvidenceCodeName());
+			annEvi.setEvidenceId(pepEvi.getEvidenceId());
+			annEvi.setExperimentalContextId(pepEvi.getExperimentalContextId());
+			annEvi.setNegativeEvidence(pepEvi.isNegativeEvidence());
+			annEvi.setPublicationMD5(pepEvi.getPublicationMD5());
+			annEvi.setQualifierType(pepEvi.getQualifierType());
+			annEvi.setQualityQualifier(pepEvi.getQualityQualifier());
+			annEvi.setResourceAccession(pepEvi.getResourceAccession());
+			annEvi.setResourceAssociationType(pepEvi.getResourceAssociationType());
+			annEvi.setResourceDb(pepEvi.getResourceDb());
+			annEvi.setResourceDescription(pepEvi.getResourceDescription());
+			annEvi.setResourceId(pepEvi.getResourceId());
+			annEvi.setResourceType(pepEvi.getResourceType());
+			if (pepEvi.getPropertiesNames()!=null) {
+				List<AnnotationEvidenceProperty> props = new ArrayList<>();
+				for (String n: pepEvi.getPropertiesNames()) {
+					String v = pepEvi.getPropertyValue(n);
+					AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
+					prop.setEvidenceId(pepEvi.getEvidenceId());
+					prop.setPropertyName(n);
+					prop.setPropertyValue(v);
+					props.add(prop);
+				}
+				annEvi.setProperties(props);
+			}
+			result.add(annEvi);
+		}
+		return result;
+	}
+		
 	static Map<Long,Annotation> buildAnnotationMapFromRecords(List<Map<String,Object>> records, boolean isNatural) {
 		
 		Map<Long,Annotation> annotationMap = new HashMap<>();	
@@ -183,7 +260,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			String quality = (String)record.get(PeptideMappingDao.KEY_QUALITY_QUALIFIER);
 			String category = (isNatural ? 
 					AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName() : 
-						AnnotationApiModel.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName());
+					AnnotationApiModel.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName());
 
 			// if annot never seen before, put it into the map and initialize it
 			if (!annotationMap.containsKey(annotationId)) {

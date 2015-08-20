@@ -3,6 +3,7 @@ package org.nextprot.api.core.service.impl;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
@@ -90,10 +91,10 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			if(entryConfig.hasAntibodyMappings()){
 				entry.setAntibodyMappings(this.antibodyMappingService.findAntibodyMappingByUniqueName(entryName));
 			}
-			if(entryConfig.hasPeptideMappings()){
+			if(entryConfig.hasSubPart(AnnotationApiModel.PEPTIDE_MAPPING)){
 				entry.setPeptideMappings(this.peptideMappingService.findNaturalPeptideMappingByMasterUniqueName(entryName));
 			}
-			if(entryConfig.hasSrmPeptideMappings()){
+			if(entryConfig.hasSubPart(AnnotationApiModel.SRM_PEPTIDE_MAPPING)){
 				entry.setSrmPeptideMappings(this.peptideMappingService.findSyntheticPeptideMappingByMasterUniqueName(entryName));
 			}
 			if(entryConfig.hasExperimentalContext()){

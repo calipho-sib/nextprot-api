@@ -20,25 +20,17 @@ public interface PeptideMappingDao {
 	public static final String KEY_QUALITY_QUALIFIER="qualityQualifier";
 	
 	// as peptide mappings (soon obsolete)
-	List<PeptideMapping> findAllPeptidesByMasterId(Long id);
+
 	List<PeptideMapping> findNaturalPeptidesByMasterId(Long id);
 	List<PeptideMapping> findSyntheticPeptidesByMasterId(Long id);
-	
-	List<PeptideEvidence> findAllPeptideEvidences(List<String> names);
 	List<PeptideEvidence> findNaturalPeptideEvidences(List<String> names);
 	List<PeptideEvidence> findSyntheticPeptideEvidences(List<String> names);
-
 	List<PeptideProperty> findPeptideProperties(List<String> names);
 
 	// as annotations (new implementation)
-	List<Map<String,Object>> findAllPeptideMappingAnnotationsByMasterId(Long id);
-	List<Map<String,Object>> findNaturalPeptideMappingAnnotationsByMasterId(Long id);
-	List<Map<String,Object>> findSyntheticPeptideMappingAnnotationsByMasterId(Long id);
-	
-	List<AnnotationEvidence> findAllPeptideAnnotationEvidences(List<String> names);
-	List<AnnotationEvidence> findNaturalPeptideAnnotationEvidences(List<String> names);
-	List<AnnotationEvidence> findSyntheticPeptideAnnotationEvidences(List<String> names);
 
-	List<AnnotationProperty> findPeptideAnnotationProperties(List<String> names);
+	List<Map<String,Object>> findPeptideMappingAnnotationsByMasterId(Long id, boolean withNatural, boolean withSynthetic);
+	Map<String,List<AnnotationEvidence>> findPeptideAnnotationEvidencesMap(List<String> names, boolean withNatural);
+	Map<String,List<AnnotationProperty>> findPeptideAnnotationPropertiesMap(List<String> names);
 	
 }

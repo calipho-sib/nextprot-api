@@ -55,6 +55,9 @@ public class AnnotationMockServiceTest {
 	@Mock 
 	private InteractionService interactionService;
 
+	@Mock 
+	private PeptideMappingService peptideMappingService;
+
 	@Mock
 	private IsoformDAO isoformDAO;
 
