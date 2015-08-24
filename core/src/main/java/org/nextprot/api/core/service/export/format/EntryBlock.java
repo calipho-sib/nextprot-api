@@ -19,10 +19,9 @@ public enum EntryBlock {
 	GENOMIC_MAPPING(FileFormat.XML),
 	//INTERACTION(NPFileFormat.XML),  // now treated as annotation subpart (CALIPHOMISC-302)
 	ISOFORM(FileFormat.XML),
-	ANTIBODY(FileFormat.XML),
-	PEPTIDE_MAPPING(FileFormat.XML),
-	SRM_PEPTIDE_MAPPING(FileFormat.XML);
-	
+	ANTIBODY(FileFormat.XML);
+	//PEPTIDE_MAPPING(NPFileFormat.XML),
+	//SRM_PEPTIDE_MAPPING(NPFileFormat.XML);
 	
 	private List<FileFormat> supportedFormats = null;
 

@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.dao.AnnotationDAO;
@@ -18,6 +19,7 @@ import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.InteractionService;
+import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.utils.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -35,6 +37,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private InteractionService interactionService;
 	@Autowired private BioPhyChemPropsDao bioPhyChemPropsDao;
 	@Autowired private IsoformDAO isoformDAO;
+	@Autowired private PeptideMappingService peptideMappingService;
 
 	@Override
 	@Cacheable("annotations")
@@ -99,6 +102,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 		
 		annotations.addAll(this.xrefService.findDbXrefsAsAnnotationsByEntry(entryName));
 		annotations.addAll(this.interactionService.findInteractionsAsAnnotationsByEntry(entryName));
+		annotations.addAll(this.peptideMappingService.findNaturalPeptideMappingAnnotationsByMasterUniqueName(entryName));
+		annotations.addAll(this.peptideMappingService.findSyntheticPeptideMappingAnnotationsByMasterUniqueName(entryName));		
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)

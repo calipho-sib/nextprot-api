@@ -64,6 +64,8 @@ public enum AnnotationApiModel implements Serializable {
      */
 
 	PDB_MAPPING(116892, "3D structure", "pdbMapping", "PDB mapping", MAPPING),
+	PEPTIDE_MAPPING(-116892, "peptide mapping", "peptideMapping", "Peptide mapping", MAPPING),
+	SRM_PEPTIDE_MAPPING(-116893, "SRM peptide mapping", "srmPeptideMapping", "SRM Peptide mapping", MAPPING),
 
 	NON_CONSECUTIVE_RESIDUE(1031, "non-consecutive residues", "nonConsecutiveResidue", "Non-consecutive residue", POSITIONAL_ANNOTATION),
 	NON_TERMINAL_RESIDUE(1032, "non-terminal residue", "nonTerminalResidue", "Non-terminal residue", POSITIONAL_ANNOTATION),
@@ -144,8 +146,8 @@ public enum AnnotationApiModel implements Serializable {
 	GO_CELLULAR_COMPONENT(1063, "go cellular component", "goCellularComponent", "go cellular component", CELLULAR_COMPONENT),
 
 	DEVELOPMENTAL_STAGE(1041, "developmental stage", "developmentalStageInfo", "developmental stage", GENERIC_EXPRESSION),
-	EPRESSION_INFO(1055, "expression info", "expressionInfo", "expression info", GENERIC_EXPRESSION),
-	EPRESSION_PROFILE(1040, "tissue specificity", "expressionProfile", "expression profile (tissue specificity)", GENERIC_EXPRESSION),
+	EXPRESSION_INFO(1055, "expression info", "expressionInfo", "expression info", GENERIC_EXPRESSION),
+	EXPRESSION_PROFILE(1040, "tissue specificity", "expressionProfile", "expression profile (tissue specificity)", GENERIC_EXPRESSION),
 
 	DISEASE(1046, "disease", "disease", "disease", MEDICAL),
 	ALLERGEN(1048, "allergen", "allergen", "allergen", MEDICAL),

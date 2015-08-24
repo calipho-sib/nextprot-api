@@ -3,7 +3,7 @@
 	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
 	
 	<!--  Peptide Master  -->
-	<mapping_annotations annotation_id="50" reference_identifier_id="596889" mapped_identifier_id="11" cv_type_id="10" /> 
+	<mapping_annotations annotation_id="50" reference_identifier_id="596889" mapped_identifier_id="11" cv_type_id="10" cv_quality_qualifier_id="10"  /> 
 	
 <!-- 	source_id="" datasource_id="" is_master="" cv_quality_qualifier_id="" /> -->
 		

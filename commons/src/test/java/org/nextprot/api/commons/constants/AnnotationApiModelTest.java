@@ -251,7 +251,7 @@ public class AnnotationApiModelTest {
 
 		List<AnnotationApiModel> categories = AnnotationApiModel.getSortedCategories();
 
-		Assert.assertEquals(94, categories.size());
+		Assert.assertEquals(96, categories.size());
 	}
 
 	@Test

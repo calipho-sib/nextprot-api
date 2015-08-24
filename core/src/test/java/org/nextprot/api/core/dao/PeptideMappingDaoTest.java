@@ -23,7 +23,7 @@ public class PeptideMappingDaoTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void findPeptidesByMasterId() {
-		List<PeptideMapping> mappings = this.peptideMappingDao.findAllPeptidesByMasterId(596889L);
+		List<PeptideMapping> mappings = this.peptideMappingDao.findNaturalPeptidesByMasterId(596889L);
 		
 		assertEquals(1, mappings.size());
 		assertEquals("NX_PEPT12345678", mappings.get(0).getPeptideUniqueName());
@@ -38,7 +38,7 @@ public class PeptideMappingDaoTest extends CoreUnitBaseTest {
 	public void findPeptideEvidences() {
 		List<String> peptideNames = new ArrayList<String>();
 		peptideNames.add("NX_PEPT12345678");
-		List<PeptideEvidence> evidences = this.peptideMappingDao.findAllPeptideEvidences(peptideNames);
+		List<PeptideEvidence> evidences = this.peptideMappingDao.findNaturalPeptideEvidences(peptideNames);
 		assertEquals(1, evidences.size());
 		assertEquals("789654", evidences.get(0).getAccession());
 		assertEquals("NX_PEPT12345678", evidences.get(0).getPeptideName());
