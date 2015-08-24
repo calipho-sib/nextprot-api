@@ -1,12 +1,12 @@
 package org.nextprot.api.web.xml.integration;
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
-
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.utils.XMLUnitUtils;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class EntrySpecialAnnotationsXMLIntegrationTest extends WebIntegrationBaseTest {
 	
@@ -32,7 +32,7 @@ public class EntrySpecialAnnotationsXMLIntegrationTest extends WebIntegrationBas
 	      actions.andExpect(xpath(annotXpath + "/evidence-list/evidence[@resource-assoc-type='relative']").doesNotExist());
 	      
 	      // testing existence of property that should replace the "relative" evidence
-	      String propXpath = annotXpath + "/property-list/property[@property-name='alternative disease term']";
+	      String propXpath = annotXpath + "/property-list/property[@name='alternative disease term']";
 		  actions.andExpect(xpath(propXpath).exists());
 		  String value = XMLUnitUtils.getMatchingNodes(xml, propXpath).item(0).getAttributes().getNamedItem("value").getNodeValue();
 		  
@@ -52,7 +52,7 @@ public class EntrySpecialAnnotationsXMLIntegrationTest extends WebIntegrationBas
 
 		  ResultActions actions = this.mockMvc.perform(get("/entry/NX_Q9GZT9/cofactor.xml"));
 		  String xml = actions.andReturn().getResponse().getContentAsString();
-		  String propXpath = "entry//annotation-category[@category='cofactor']/annotation/property-list/property[@property-name='cofactor' and @accession='CHEBI:29033']";
+		  String propXpath = "entry//annotation-category[@category='cofactor']/annotation/property-list/property[@name='cofactor' and @accession='CHEBI:29033']";
 		  actions.andExpect(xpath(propXpath).exists());
 	      	      
 	      // testing that any "relative" evidence was removed
@@ -78,7 +78,7 @@ public class EntrySpecialAnnotationsXMLIntegrationTest extends WebIntegrationBas
 
 		  ResultActions actions = this.mockMvc.perform(get("/entry/NX_P38398/sequence-caution.xml"));
 		  String xml = actions.andReturn().getResponse().getContentAsString();
-		  String propXpath = "entry//annotation-category[@category='sequence-caution']/annotation/property-list/property[@property-name='differing sequence' and @accession='AAB61673']";
+		  String propXpath = "entry//annotation-category[@category='sequence-caution']/annotation/property-list/property[@name='differing sequence' and @accession='AAB61673']";
 		  actions.andExpect(xpath(propXpath).exists());
 	      	      
 		  // testing the content of the description which should contain the accession declared in the property
@@ -108,7 +108,7 @@ public class EntrySpecialAnnotationsXMLIntegrationTest extends WebIntegrationBas
 
 		  ResultActions actions = this.mockMvc.perform(get("/entry/NX_P03372/binary-interaction.xml"));
 		  String xml = actions.andReturn().getResponse().getContentAsString();
-		  String propXpath = "entry//annotation-category[@category='binary-interaction']/annotation/property-list/property[@property-name='interactant' and @value-type='resource-internal-ref' and @accession='Q81LD0']";
+		  String propXpath = "entry//annotation-category[@category='binary-interaction']/annotation/property-list/property[@name='interactant' and @value-type='resource-internal-ref' and @accession='Q81LD0']";
 		  actions.andExpect(xpath(propXpath).exists());
 	      	      	      
 	      // getting the value of the "interactant" property
