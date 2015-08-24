@@ -4,7 +4,7 @@
 		<isoform-mapping accession="$isoformMapping.uniqueName" main-name="$isoformMapping.isoform.mainEntityName.value">
 			<transcript-mapping-list>
 				#foreach($transcriptMapping in $isoformMapping.transcriptMappings)
-				<transcript-mapping accession='$transcriptMapping.accession' database='$transcriptMapping.database' quality-qualifier='$transcriptMapping.quality'>
+				<transcript-mapping accession='$transcriptMapping.accession' database='$transcriptMapping.database' quality='$transcriptMapping.quality'>
 					<transcript-protein accession='$transcriptMapping.proteinId' database='$transcriptMapping.database'/>
 					<exon-list>
 						#foreach($exon in $transcriptMapping.exons)
