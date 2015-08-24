@@ -55,6 +55,7 @@ having sum(a.cnt)=1
 		assertTrue(annot.getCategory().equals(AnnotationApiModel.PATHWAY.getDbAnnotationTypeName()));
 		assertTrue(annot.getAPICategory()==AnnotationApiModel.PATHWAY);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
+		Assert.assertEquals("Intraflagellar transport", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
 			assertTrue(spec.getSpecificity().equals("UNKNOWN"));
 		}
@@ -64,8 +65,6 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("REACT_268024"));
 		assertTrue(evi.getResourceDb().equals("Reactome"));
-
-		assertEmptyProperties("NX_A0AVF1", 42610527);
 	}
 	
 	@Test
@@ -76,6 +75,7 @@ having sum(a.cnt)=1
 		assertTrue(annot.getCategory().equals(AnnotationApiModel.PATHWAY.getDbAnnotationTypeName()));
 		assertTrue(annot.getAPICategory()==AnnotationApiModel.PATHWAY);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
+		Assert.assertEquals("Ubiquitin mediated proteolysis", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
 			assertTrue(spec.getSpecificity().equals("UNKNOWN"));
 		}
@@ -85,8 +85,6 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("hsa04120+134111"));
 		assertTrue(evi.getResourceDb().equals("KEGGPathway"));
-
-		assertEmptyProperties("NX_A1L167", 14559832);
 	}
 	
 	@Test
@@ -97,6 +95,7 @@ having sum(a.cnt)=1
 		assertTrue(annot.getCategory().equals(AnnotationApiModel.DISEASE.getDbAnnotationTypeName()));
 		assertTrue(annot.getAPICategory()==AnnotationApiModel.DISEASE);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
+		Assert.assertEquals("Kallmann syndrome", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
 			assertTrue(spec.getSpecificity().equals("UNKNOWN"));
 		}
@@ -106,13 +105,7 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("478"));
 		assertTrue(evi.getResourceDb().equals("Orphanet"));
-
-		assertEmptyProperties("NX_A0PJY2", 1077769);
 	}
-	
-/**
- * 	
- */
 	
 	@Test
 	public void shouldReturn_1_DrugBankXrefAsAnnotation() {
@@ -122,6 +115,7 @@ having sum(a.cnt)=1
 		assertTrue(annot.getCategory().equals(AnnotationApiModel.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName()));
 		assertTrue(annot.getAPICategory()==AnnotationApiModel.SMALL_MOLECULE_INTERACTION);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
+		Assert.assertEquals("Pseudoephedrine", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
 			assertTrue(spec.getSpecificity().equals("UNKNOWN"));
 		}
@@ -131,10 +125,31 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("DB00852"));
 		assertTrue(evi.getResourceDb().equals("DrugBank"));
+	}
+
+	@Test
+	public void reactomeXrefShouldHaveEmptyProperties() {
+
+		assertEmptyProperties("NX_A0AVF1", 42610527);
+	}
+
+	@Test
+	public void KEGGPathwayXrefShouldHaveEmptyProperties() {
+
+		assertEmptyProperties("NX_A1L167", 14559832);
+	}
+
+	@Test
+	public void orphanetXrefShouldHaveEmptyProperties() {
+
+		assertEmptyProperties("NX_A0PJY2", 1077769);
+	}
+
+	@Test
+	public void drugBankXrefShouldHaveEmptyProperties() {
 
 		assertEmptyProperties("NX_Q9Y2D1", 983678);
 	}
-	
 
 	private void assertEmptyProperties(String entryName, long propertyId) {
 

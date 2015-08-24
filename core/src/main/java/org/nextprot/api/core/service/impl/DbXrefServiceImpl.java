@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -26,6 +27,7 @@ import java.util.*;
 @Lazy
 @Service
 public class DbXrefServiceImpl implements DbXrefService {
+
 	@Autowired private DbXrefDao dbXRefDao;
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private IsoformService isoService;
@@ -78,14 +80,18 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 	private Annotation convertXrefIntoAnnotation(DbXref xref, String entryName, List<Isoform> isoforms) {
 
+		Preconditions.checkNotNull(xref.getProperties());
+
 		Annotation annotation = new Annotation();
 
 		annotation.setProperties(new ArrayList<AnnotationProperty>());
 		annotation.setAnnotationId(xref.getDbXrefId() + 10_000_000_000L);
+
 		XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
 		annotation.setCategory(xam.getAnnotCat());
 		annotation.setDescription(xref.getPropertyValue(xam.getXrefPropName())); // copy of some xref property
 		annotation.setQualityQualifier(xam.getQualityQualifier());
+
 		annotation.setCvTermName(null);
 		annotation.setCvTermAccessionCode(null);
 		annotation.setSynonym(null);
@@ -167,7 +173,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
 
-		if(! xrefs.isEmpty()) attachPropertiesToXrefs(xrefs, uniqueName);
+		if(! xrefs.isEmpty()) attachPropertiesToXrefs(xrefs, uniqueName, false);
 		return xrefs;
 	}
 
@@ -198,7 +204,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
 		
 		// get and attach the properties to the xrefs
-		if (! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName);
+		if (! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName, true);
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<DbXref>().addAll(xrefList).build();
@@ -214,7 +220,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	 * @param xrefs
 	 * @return
 	 */
-	private void attachPropertiesToXrefs(List<DbXref> xrefs, String uniqueName) {
+	private void attachPropertiesToXrefs(List<DbXref> xrefs, String uniqueName, boolean byMaster) {
 		List<Long> xrefIds = Lists.transform(xrefs, new Function<DbXref, Long>() {
 			public Long apply(DbXref xref) {
 				return xref.getDbXrefId();
@@ -222,14 +228,14 @@ public class DbXrefServiceImpl implements DbXrefService {
 		});
 
 		List<DbXrefProperty> props = this.dbXRefDao.findDbXrefsProperties(xrefIds);
-		
+
 		Iterator<DbXrefProperty> it = props.iterator();
-		
+
 		while(it.hasNext()) {
 			if(this.dbXrefPropertyFilter.contains(it.next().getName()))
 				it.remove();
 		}
-				
+
 		Multimap<Long, DbXrefProperty> propsMap = Multimaps.index(props, new Function<DbXrefProperty, Long>() {
 			public Long apply(DbXrefProperty prop) {
 				return prop.getDbXrefId();
@@ -237,7 +243,10 @@ public class DbXrefServiceImpl implements DbXrefService {
 		});
 
 		for (DbXref xref : xrefs) {
-			xref.setProperties((!XrefAnnotationMapping.hasName(xref.getDatabaseName())) ? new ArrayList<>(propsMap.get(xref.getDbXrefId())) : new ArrayList<DbXrefProperty>());
+			if (byMaster)
+				xref.setProperties((!XrefAnnotationMapping.hasName(xref.getDatabaseName())) ? new ArrayList<>(propsMap.get(xref.getDbXrefId())) : new ArrayList<DbXrefProperty>());
+			else
+				xref.setProperties(new ArrayList<>(propsMap.get(xref.getDbXrefId())));
 			xref.setResolvedUrl(resolveLinkTarget(uniqueName, xref));
 		}
 	}
@@ -269,9 +278,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		return templateURL.replaceAll("%u", primaryId);
 	}
-
-
-
 
 	@Override
 	public List<DbXref> findDbXrefByAccession(String accession) {
