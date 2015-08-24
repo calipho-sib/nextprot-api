@@ -65,6 +65,8 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("REACT_268024"));
 		assertTrue(evi.getResourceDb().equals("Reactome"));
+
+		Assert.assertTrue(annotations.get(0).getProperties().isEmpty());
 	}
 	
 	@Test
@@ -85,6 +87,8 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("hsa04120+134111"));
 		assertTrue(evi.getResourceDb().equals("KEGGPathway"));
+
+		Assert.assertTrue(annotations.get(0).getProperties().isEmpty());
 	}
 	
 	@Test
@@ -105,6 +109,8 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("478"));
 		assertTrue(evi.getResourceDb().equals("Orphanet"));
+
+		Assert.assertTrue(annotations.get(0).getProperties().isEmpty());
 	}
 	
 	@Test
@@ -125,6 +131,8 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("DB00852"));
 		assertTrue(evi.getResourceDb().equals("DrugBank"));
+
+		Assert.assertTrue(annotations.get(0).getProperties().isEmpty());
 	}
 
 	@Test

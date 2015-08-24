@@ -155,6 +155,10 @@ public class DbXrefServiceImpl implements DbXrefService {
 	public List<Annotation> findDbXrefsAsAnnotationsByEntry(String entryName) {
 
 		List<DbXref> xrefsToConvert = findDbXrefsConvertibleIntoAnnotationByEntry(entryName);
+
+		if(!xrefsToConvert.isEmpty())
+			attachPropertiesToXrefs(xrefsToConvert, entryName, true);
+
 		List<Annotation> xrefAnnotations = convertXrefsIntoAnnotations(xrefsToConvert, entryName);
 
 		return new ImmutableList.Builder<Annotation>().addAll(xrefAnnotations).build();
@@ -167,11 +171,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	 */
 	private List<DbXref> findDbXrefsConvertibleIntoAnnotationByEntry(String uniqueName) {
 
-		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
-
-		//
-		if(! xrefs.isEmpty()) attachPropertiesToXrefs(xrefs, uniqueName, true);
-		return xrefs;
+		return this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
 	}
 
 	@Override
