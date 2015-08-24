@@ -32,7 +32,7 @@ public class EntrySpecialAnnotationsXMLIntegrationTest extends WebIntegrationBas
 	      actions.andExpect(xpath(annotXpath + "/evidence-list/evidence[@resource-assoc-type='relative']").doesNotExist());
 	      
 	      // testing existence of property that should replace the "relative" evidence
-	      String propXpath = annotXpath + "/property-list/property[@name='alternative disease term']";
+	      String propXpath = annotXpath + "/property-list/property[@name='alternative disease description']";
 		  actions.andExpect(xpath(propXpath).exists());
 		  String value = XMLUnitUtils.getMatchingNodes(xml, propXpath).item(0).getAttributes().getNamedItem("value").getNodeValue();
 		  
