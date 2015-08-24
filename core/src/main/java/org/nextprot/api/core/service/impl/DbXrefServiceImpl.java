@@ -2,10 +2,8 @@ package org.nextprot.api.core.service.impl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import com.google.common.base.Predicate;
+import com.google.common.collect.*;
 import org.nextprot.api.commons.constants.XrefAnnotationMapping;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
@@ -31,17 +29,15 @@ public class DbXrefServiceImpl implements DbXrefService {
 	@Autowired private DbXrefDao dbXRefDao;
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private IsoformService isoService;
-	
-	private Set<String> dbXrefPropertyFilter;
-	
-	{
-		this.dbXrefPropertyFilter = new HashSet<>();
-		this.dbXrefPropertyFilter.add("status");
-		this.dbXrefPropertyFilter.add("match status");
-		this.dbXrefPropertyFilter.add("organism ID");
-		this.dbXrefPropertyFilter.add("organism name");
-	}
-	
+
+	private static final Function<DbXref, Long> DB_XREF_LONG_FUNCTION = new Function<DbXref, Long>() {
+		public Long apply(DbXref xref) {
+			return xref.getDbXrefId();
+		}
+	};
+
+	private static final Predicate<DbXrefProperty> DB_XREF_EXCLUDING_HIDDEN_PROPERTIES_PREDICATE = new DbXrefExcludedPropertyPredicate(Sets.newHashSet("status", "match status", "organism ID", "organism name"));
+
 	@Override
 	public List<DbXref> findDbXRefByPublicationId(Long publicationId) {
 		return this.dbXRefDao.findDbXRefsByPublicationId(publicationId);
@@ -173,7 +169,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		List<DbXref> xrefs = this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
 
-		if(! xrefs.isEmpty()) attachPropertiesToXrefs(xrefs, uniqueName, false);
+		//
+		if(! xrefs.isEmpty()) attachPropertiesToXrefs(xrefs, uniqueName, true);
 		return xrefs;
 	}
 
@@ -204,46 +201,26 @@ public class DbXrefServiceImpl implements DbXrefService {
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
 		
 		// get and attach the properties to the xrefs
-		if (! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName, true);
+		if (! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName, false);
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<DbXref>().addAll(xrefList).build();
 	}
 
-	/**
-	 * 	private propertyNotPrinted = [
-		'status',
-		'match status',
-		'organism ID',
-		'organism name',
-	];
-	 * @param xrefs
-	 * @return
-	 */
-	private void attachPropertiesToXrefs(List<DbXref> xrefs, String uniqueName, boolean byMaster) {
-		List<Long> xrefIds = Lists.transform(xrefs, new Function<DbXref, Long>() {
-			public Long apply(DbXref xref) {
-				return xref.getDbXrefId();
-			}
-		});
+	private void attachPropertiesToXrefs(List<DbXref> xrefs, String uniqueName, boolean fetchXrefAnnotationMappingProperties) {
 
-		List<DbXrefProperty> props = this.dbXRefDao.findDbXrefsProperties(xrefIds);
+		List<Long> xrefIds = Lists.transform(xrefs, DB_XREF_LONG_FUNCTION);
 
-		Iterator<DbXrefProperty> it = props.iterator();
+		Collection<DbXrefProperty> shownProperties = Collections2.filter(dbXRefDao.findDbXrefsProperties(xrefIds), DB_XREF_EXCLUDING_HIDDEN_PROPERTIES_PREDICATE);
 
-		while(it.hasNext()) {
-			if(this.dbXrefPropertyFilter.contains(it.next().getName()))
-				it.remove();
-		}
-
-		Multimap<Long, DbXrefProperty> propsMap = Multimaps.index(props, new Function<DbXrefProperty, Long>() {
+		Multimap<Long, DbXrefProperty> propsMap = Multimaps.index(shownProperties, new Function<DbXrefProperty, Long>() {
 			public Long apply(DbXrefProperty prop) {
 				return prop.getDbXrefId();
 			}
 		});
 
 		for (DbXref xref : xrefs) {
-			if (byMaster)
+			if (!fetchXrefAnnotationMappingProperties)
 				xref.setProperties((!XrefAnnotationMapping.hasName(xref.getDatabaseName())) ? new ArrayList<>(propsMap.get(xref.getDbXrefId())) : new ArrayList<DbXrefProperty>());
 			else
 				xref.setProperties(new ArrayList<>(propsMap.get(xref.getDbXrefId())));
@@ -296,7 +273,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 //		for(DbXref xref : xrefs)
 //			xref.setResolvedUrl(resolveLinkTarget(xref));
 
-		return xrefs;	
+		return xrefs;
 	}
 
 	@Override
@@ -308,5 +285,21 @@ public class DbXrefServiceImpl implements DbXrefService {
 	public List<Long> getAllDbXrefsIds() {
 		return this.dbXRefDao.getAllDbXrefsIds();
 	}
-	
+
+	private static class DbXrefExcludedPropertyPredicate implements Predicate<DbXrefProperty> {
+
+		private Set<String> excludedProperties;
+
+		public DbXrefExcludedPropertyPredicate(Set<String> excludedProperties) {
+
+			this.excludedProperties = excludedProperties;
+		}
+
+		@Override
+		public boolean apply(DbXrefProperty property) {
+
+			return !excludedProperties.contains(property.getName());
+		}
+	}
+
 }

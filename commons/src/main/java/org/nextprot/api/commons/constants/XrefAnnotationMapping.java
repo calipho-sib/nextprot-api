@@ -25,7 +25,7 @@ public enum XrefAnnotationMapping  {
 	private final String ecoAC;
 	private final String ecoName;
 			
-	private XrefAnnotationMapping(final int xrefDbId, final String xrefDbName, 
+	XrefAnnotationMapping(final int xrefDbId, final String xrefDbName,
 			final String xrefPropName, final String annotCat, final int srcId, final String srcName,
 			final String qualityQualifier, final String assignMethod, final String qualifierType, String ecoAC, String ecoName) {
 		
@@ -91,7 +91,7 @@ public enum XrefAnnotationMapping  {
 		}
 		throw new RuntimeException("Could not find XrefAnnotationMapping for database name: " + dbName);
 	}
-	
+
 	public static boolean hasName(String name) {
 
 		for (XrefAnnotationMapping m : XrefAnnotationMapping.values()) {
