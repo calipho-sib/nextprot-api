@@ -1,8 +1,6 @@
-<annotation quality-qualifier='$annotation.getQualityQualifier()' #if($annotation.synonym)accession="$annotation.synonym" database='neXtProt'#end>
+<annotation quality='$annotation.getQualityQualifier()' #if($annotation.synonym)accession="$annotation.synonym" database='neXtProt'#end>
 	#if($annotation.getCvTermName())
-    <cv-term accession='$annotation.getCvTermAccessionCode()'>
-    	<name>$annotation.getCvTermName()</name>
-    </cv-term>
+    <cv-term accession='$annotation.getCvTermAccessionCode()'>$annotation.getCvTermName()</cv-term>
     #end
 	#if($annotation.getDescription())
     <description>
@@ -27,7 +25,7 @@
     <evidence-list>
         #foreach($evidence in $annotation.getEvidences())
 			## should include qualifier-type='$evidence.getQualifierType()' 
-			<evidence is-negative='$evidence.isNegativeEvidence()' evidence-code='$evidence.getEvidenceCodeAC()' resource-internal-ref='$evidence.getResourceId()'  resource-assoc-type='$evidence.getResourceAssociationType()' #if($evidence.getQualityQualifier()) quality-qualifier='$evidence.getQualityQualifier()' #end resource-type='$evidence.getResourceType()' #if($evidence.getExperimentalContextId()>0) experimental-context-internal-ref='$evidence.getExperimentalContextId()' #end #if($evidence.getAssignedBy()) source-internal-ref='$evidence.getAssignedBy()' #end >
+			<evidence is-negative='$evidence.isNegativeEvidence()' evidence-code='$evidence.getEvidenceCodeAC()' resource-internal-ref='$evidence.getResourceId()'  resource-assoc-type='$evidence.getResourceAssociationType()' #if($evidence.getQualityQualifier()) quality='$evidence.getQualityQualifier()' #end resource-type='$evidence.getResourceType()' #if($evidence.getExperimentalContextId()>0) experimental-context-internal-ref='$evidence.getExperimentalContextId()' #end #if($evidence.getAssignedBy()) source-internal-ref='$evidence.getAssignedBy()' #end >
 				#if($evidence.getPropertiesNames())
 					<property-list>
 						#foreach($pk in $evidence.getPropertiesNames())
