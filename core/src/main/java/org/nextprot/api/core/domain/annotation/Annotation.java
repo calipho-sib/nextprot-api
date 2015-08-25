@@ -1,18 +1,17 @@
 package org.nextprot.api.core.domain.annotation;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
 import org.nextprot.api.core.domain.IsoformSpecificity;
 
-import com.google.common.base.Preconditions;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class Annotation implements Serializable, IsoformSpecific {
@@ -24,7 +23,9 @@ public class Annotation implements Serializable, IsoformSpecific {
 	private String cvTermAccessionCode;
 
 	private String cvTermName;
-		
+
+	private String cvApiName;
+
 	private String description;
 
 	private String category;
@@ -105,6 +106,14 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	public void setCvTermName(String cvTermName) {
 		this.cvTermName = cvTermName;
+	}
+
+	public String getCvApiName() {
+		return cvApiName;
+	}
+
+	public void setCvApiName(String cvApiName) {
+		this.cvApiName = cvApiName;
 	}
 
 	public String getQualityQualifier() {
