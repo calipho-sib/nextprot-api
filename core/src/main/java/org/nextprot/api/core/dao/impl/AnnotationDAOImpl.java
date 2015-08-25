@@ -45,6 +45,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			annotation.setQualityQualifier(resultSet.getString("quality_qualifier"));
 			annotation.setCvTermName(resultSet.getString("cv_term_name"));
 			annotation.setCvTermAccessionCode(resultSet.getString("cv_term_accession"));
+			annotation.setCvApiName(resultSet.getString("cv_api_name"));
 			annotation.setSynonym(resultSet.getString("synonym"));
 			annotation.setUniqueName(resultSet.getString("annotation_unique_name"));
 
