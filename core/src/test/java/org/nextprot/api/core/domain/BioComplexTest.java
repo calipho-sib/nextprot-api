@@ -15,7 +15,7 @@ public class BioComplexTest {
 
         bioComplex.add(new BioIsoform());
         bioComplex.add(new BioIsoform());
-        bioComplex.add(new BioObjectExternal(BioObject.Kind.MOLECULE));
+        bioComplex.add(new BioObjectExternal(BioObject.Kind.CHEMICAL));
 
         Assert.assertEquals(3, bioComplex.size());
         Assert.assertEquals(BioObject.Kind.GROUP, bioComplex.getKind());
