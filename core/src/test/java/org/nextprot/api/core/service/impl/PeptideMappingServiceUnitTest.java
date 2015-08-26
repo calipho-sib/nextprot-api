@@ -252,7 +252,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 		props.add(buildAnnotationProperty(pep2, "is synthetic", "N"));
 		propMap.put(pep2, props);
 
-		// apply same mechanism as service
+		// apply same mechanism as service: should probably mock the DAO methods and call the service but...
 		Map<Long,Annotation> annotationMap = PeptideMappingServiceImpl.buildAnnotationMapFromRecords(records, true);
 		List<Annotation> annotations = new ArrayList<Annotation>(annotationMap.values());
 		PeptideMappingServiceImpl.attachPeptidePropertiesToAnnotations(annotations, propMap);	
