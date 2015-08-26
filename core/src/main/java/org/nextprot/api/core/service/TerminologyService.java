@@ -44,7 +44,7 @@ public interface TerminologyService {
 	public List<Terminology> findAllTerminology();
 
 	/**
-	 * Gets enzyme terminology ???
+	 * Gets enzyme terminologies
 	 * @param entryName
 	 * @return
 	 */
