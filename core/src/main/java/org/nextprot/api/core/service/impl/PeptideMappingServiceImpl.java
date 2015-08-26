@@ -271,7 +271,8 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 				annot.setQualityQualifier(quality);
 				annot.setTargetingIsoforms(new ArrayList<AnnotationIsoformSpecificity>());
 				String entry = iso.substring(0, iso.indexOf('-'));
-				annot.setUniqueName("AN_" + entry + "_" + pep + "_" + rank);
+				String nature = isNatural ? "_NATUR": "_SYNTH";
+				annot.setUniqueName("AN_" + entry + "_" + annot.getAnnotationId() + nature);
 
 				// add peptide name property
 				List<AnnotationProperty> props = new ArrayList<>(); 
