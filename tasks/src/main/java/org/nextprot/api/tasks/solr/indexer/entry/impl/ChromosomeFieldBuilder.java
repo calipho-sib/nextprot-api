@@ -21,6 +21,10 @@ public class ChromosomeFieldBuilder implements FieldBuilder{
 	private List<String> geneBands = new ArrayList<>();
 	
 	public ChromosomeFieldBuilder (Entry entry){
+		init(entry);
+	}
+	
+	private void init(Entry entry){
 		List <ChromosomalLocation> chrlocs = entry.getChromosomalLocations();
 		for (ChromosomalLocation currloc : chrlocs) {
 			if(chrLoc == null) chrLoc = currloc.getChromosome();
@@ -30,7 +34,6 @@ public class ChromosomeFieldBuilder implements FieldBuilder{
 				geneBands.add(band);
 			}
 		}
-		
 		chrLocS = sortChr(chrLoc);
 	}
 	

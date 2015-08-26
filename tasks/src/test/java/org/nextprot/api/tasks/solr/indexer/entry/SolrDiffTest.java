@@ -17,7 +17,7 @@ public class SolrDiffTest extends CoreUnitBaseTest {
 
 	HttpSolrServer solr = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npentries1");
 
-	protected List<Object> getValueForFieldInCurrentSolrImplementation(String entryName, Fields field) {
+	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, Fields field) {
 
 		List<Object> result = new ArrayList<Object>();
 
@@ -37,7 +37,7 @@ public class SolrDiffTest extends CoreUnitBaseTest {
 			throw new RuntimeException(e);
 		}
 		
-		return result;
+		return result.get(0);
 	}
 
 }

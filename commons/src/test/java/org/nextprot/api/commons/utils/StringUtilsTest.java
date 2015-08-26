@@ -9,6 +9,8 @@ import org.junit.Test;
  */
 public class StringUtilsTest {
 
+	
+    
     @Test
     public void testCamelCase() {
 
@@ -107,4 +109,11 @@ public class StringUtilsTest {
 
         Assert.assertEquals(expectedText, StringUtils.wrapText(text, 60));
     }
+    
+    @Test
+    public void testHtmlTagsRemoval() {
+        String cc = StringUtils.removeHtmlTags("<hello>world</hello>");
+        Assert.assertEquals("world", cc);
+    }
+
 }

@@ -153,48 +153,6 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		if(allfamilies == null) {doc.addField("family_names", allfamilies); doc.addField("family_names_s", allfamilies);}
 		
 		
-		List<Annotation> annots =  entry.getAnnotations();
-		int cvac_cnt = 0;
-		for (Annotation currannot : annots) {
-			//if(currannot.getQualityQualifier().equals("GOLD")) System.err.println("GOLD");
-			//else System.err.println("SILVER");
-			String category = currannot.getCategory();
-			//if(category.equals("subunit")) {TODO: parse the 'binds' and 'interacts with' objects and check if official gene names}
-			//System.err.println(category);
-			 if(category.contains("Binary"))  {
-				//System.err.println(category + " : " + currannot.getUniqueName());
-				List<AnnotationProperty> annotprops =  currannot.getProperties();
-				for (AnnotationProperty annotprop : annotprops) {
-					if(annotprop.getName().equals("interactant")) {
-						//int dbrefid = Integer.parseInt(annotprop.getValue());
-						//DbXref xref = 
-					  if(annotprop.getValueType().equals("resource-internal-ref"))	{
-						long dbrefid = Integer.parseInt(annotprop.getValue());
-						//DbXref xref = 
-					    //System.err.println("dbrefid: " + dbrefid);
-					  }
-					}
-				}
-			} 
-			if(category.equals("function")) doc.addField("function_desc", currannot.getDescription());
-			else if(category.equals("tissue specificity")) {
-				cv_tissues.add(currannot.getCvTermAccessionCode()); // No duplicates: this is a Set
-				cv_tissues.add(currannot.getCvTermName()); // No duplicates: this is a Set
-				//doc.addField("expression", currannot.getCvTermName()); 
-			   }
-			else  {
-				String cvac = currannot.getCvTermAccessionCode();
-				if(cvac != null) {
-				   doc.addField("cv_acs", cvac);
-				   cvac_cnt++;
-				   cv_acs.add(cvac); // No duplicates: this is a Set, will be used for synonyms and ancestors
-				   doc.addField("cv_names", currannot.getCvTermName()); 
-				   }
-				String desc = currannot.getDescription();
-				if(desc != null) {doc.addField("annotations", desc);}
-			}
-		}
-		
 		// Identifiers
 		List <Identifier> identifiers = entry.getIdentifiers();
 		for (Identifier currident : identifiers) {
@@ -211,7 +169,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		List<Terminology> enzymes = entry.getEnzymes();
 		String ec_names = "";
 		for (Terminology currenzyme : enzymes) {
-			cvac_cnt++;
+			//TODO DANIEL cvac_cnt++;
 			cv_acs.add(currenzyme.getAccession());
 			doc.addField("cv_names", currenzyme.getName());
 			ec_names += "EC " + currenzyme.getAccession() + ", ";
@@ -382,12 +340,17 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 	}
 
 	
-	private Map<Fields, FieldBuilder> fieldsBuilder = new HashMap<Fields, FieldBuilder>();
+	private Map<Fields, FieldBuilder> fieldsBuilderMap = new HashMap<Fields, FieldBuilder>();
 	
-	private void buildSolrDocument(){
+	private void buildSolrDocument(Entry entry){
 		initializeFieldBuilders();
 		SolrInputDocument doc = new SolrInputDocument();
-		
+
+		for(Fields f : Fields.values()){
+			FieldBuilder fb = fieldsBuilderMap.get(f);
+			Object o = fb.build(entry, f, f.getClazz());
+			doc.addField(f.getName(), o);
+		}
 	}
 
 	private void initializeFieldBuilders() {
@@ -397,7 +360,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 	    	 try {
 				FieldBuilder fb = (FieldBuilder) c.newInstance();
 				for(Fields f: fb.getSupportedFields()){
-					fieldsBuilder.put(f, fb);
+					fieldsBuilderMap.put(f, fb);
 				}
 			} catch (InstantiationException | IllegalAccessException e) {
 				e.printStackTrace();

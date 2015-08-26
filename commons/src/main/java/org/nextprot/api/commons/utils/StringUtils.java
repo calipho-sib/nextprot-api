@@ -232,4 +232,8 @@ public class StringUtils {
 			return wrapTextRec(tail, maxLineLen, sb);
 		}
 	}
+	
+	public static String removeHtmlTags(String htmlString){
+		return htmlString.replaceAll("\\<.*?>","");
+	}
 }

@@ -30,9 +30,6 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		int i = 0;
 		while(entriesIt.hasNext() && i < 100){
 			String entryName = entriesIt.next();
-			System.out.print(i++);
-			System.out.println(entryName);
-			
 			Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withChromosomalLocations());
 
 			testChrLoc(entryName, entry);
@@ -51,10 +48,8 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder(entry);
 		String chrLocValue = cfb.build(entry, field, String.class);
 		
-		List<Object> expectedValues = getValueForFieldInCurrentSolrImplementation(entryName, field);
-		
-		assertEquals(expectedValues.size(), 1);
-		assertEquals(expectedValues.get(0), chrLocValue);
+		String expectedValues = (String) getValueForFieldInCurrentSolrImplementation(entryName, field);
+		assertEquals(expectedValues, chrLocValue);
 
 	}
 	
@@ -66,10 +61,9 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder(entry);
 		Integer chrLocValue = cfb.build(entry, field, Integer.class);
 		
-		List<Object> expectedValues = getValueForFieldInCurrentSolrImplementation(entryName, field);
+		Integer expectedValue = (Integer) getValueForFieldInCurrentSolrImplementation(entryName, field);
 		
-		assertEquals(expectedValues.size(), 1);
-		assertEquals(expectedValues.get(0), chrLocValue);
+		assertEquals(expectedValue, chrLocValue);
 
 	}
 	
@@ -81,12 +75,12 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 
 		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder(entry);
 		List<String> geneBandValues = cfb.build(entry, field, List.class);
-		List<Object> expectedValues = getValueForFieldInCurrentSolrImplementation(entryName, field);
+		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entryName, field);
 		
 		assertEquals(expectedValues.size(), 1); // Even it if maps to many genes we only take the 1st one
 		assertEquals(geneBandValues.size(), 1); // Even it if maps to many genes we only take the 1st one
 
-		String expectedValue = ((List<String>) expectedValues.get(0)).get(0);
+		String expectedValue = expectedValues.get(0);
 		String newValue = geneBandValues.get(0).toString();
 		
 		assertTrue(expectedValue.startsWith(newValue)); // Kant: [p13.11 16p13.11] new version: [p13.11]
