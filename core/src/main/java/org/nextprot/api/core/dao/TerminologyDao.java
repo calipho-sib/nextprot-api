@@ -19,4 +19,6 @@ public interface TerminologyDao {
 
 	List<Terminology> findTerminologyByAccessions(Set<String> accessions);
 
+	List<String> findEnzymeAcsByMaster(String entryName);
+
 }
