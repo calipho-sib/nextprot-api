@@ -1,4 +1,4 @@
-select  t2.cv_name as name,  x.accession as accession
+select x.accession as accession
          from nextprot.annotations a 
          inner join nextprot.sequence_identifiers s on (s.identifier_id = a.identifier_id)  
          left join nextprot.cv_terms t on (a.cv_annotation_type_id = t.cv_id)  
