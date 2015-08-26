@@ -7,7 +7,7 @@ public class BioIsoform extends BioObject<Isoform> {
 
     public BioIsoform() {
 
-        super(Kind.ISOFORM);
+        super(BioType.ISOFORM, ResourceType.INTERNAL);
 
         setDatabase("neXtProt");
     }

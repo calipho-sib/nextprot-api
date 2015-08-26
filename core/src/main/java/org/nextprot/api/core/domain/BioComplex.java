@@ -1,7 +1,9 @@
 package org.nextprot.api.core.domain;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A group of BioObjects is still a BioObject
@@ -12,10 +14,28 @@ public class BioComplex extends BioObject<List<BioObject<?>>> {
 
     private final List<BioObject<?>> bioObjects;
 
-    protected BioComplex() {
-        super(Kind.GROUP);
+    protected BioComplex(BioObject<?>... bioObjects) {
 
-        bioObjects = new ArrayList<>();
+        super(BioType.GROUP, getResourceType(bioObjects));
+
+        this.bioObjects = new ArrayList<>();
+
+        for (BioObject<?> bioObject : bioObjects) {
+
+            this.bioObjects.add(bioObject);
+        }
+    }
+
+    private static ResourceType getResourceType(BioObject<?>... bioObjects) {
+
+        Set<ResourceType> refs = new HashSet<>();
+
+        for (BioObject<?> bioObject : bioObjects) {
+
+            refs.add(bioObject.getResourceType());
+        }
+
+        return (refs.size() == 1) ? refs.iterator().next() : ResourceType.MIXED;
     }
 
     public void add(BioObject<?> graphic) {

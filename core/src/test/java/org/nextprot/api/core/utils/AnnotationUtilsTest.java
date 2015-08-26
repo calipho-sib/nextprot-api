@@ -288,6 +288,6 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		Assert.assertEquals("CHEBI:38290", bo.getAccession());
 		Assert.assertEquals("ChEBI", bo.getDatabase());
 		Assert.assertEquals(39334228, bo.getId());
-		Assert.assertEquals(BioObject.Kind.CHEMICAL, bo.getKind());
+		Assert.assertEquals(BioObject.BioType.CHEMICAL, bo.getBioType());
 	}
 }

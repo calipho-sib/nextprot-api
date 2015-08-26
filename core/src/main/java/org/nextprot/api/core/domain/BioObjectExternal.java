@@ -7,8 +7,8 @@ package org.nextprot.api.core.domain;
  */
 public class BioObjectExternal extends BioObject<DbXref> {
 
-    public BioObjectExternal(Kind kind) {
+    public BioObjectExternal(BioType bioType) {
 
-        super(kind);
+        super(bioType, ResourceType.EXTERNAL);
     }
 }

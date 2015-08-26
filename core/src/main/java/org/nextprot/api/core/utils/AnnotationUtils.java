@@ -234,7 +234,7 @@ public class AnnotationUtils {
 
 	static BioObject newExternalBioObject(AnnotationEvidence evi) {
 
-		BioObject bo = new BioObjectExternal(BioObject.Kind.CHEMICAL);
+		BioObject bo = new BioObjectExternal(BioObject.BioType.CHEMICAL);
 
 		bo.setId(evi.getResourceId());
 		bo.setAccession(evi.getResourceAccession());

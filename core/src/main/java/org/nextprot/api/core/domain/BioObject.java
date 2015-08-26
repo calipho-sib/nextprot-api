@@ -9,19 +9,22 @@ import com.google.common.base.Preconditions;
  */
 public abstract class BioObject<T> {
 
-    public enum Kind { CHEMICAL, PROTEIN, ISOFORM, GROUP }
+    public enum BioType { CHEMICAL, PROTEIN, ISOFORM, GROUP }
+    public enum ResourceType { INTERNAL, EXTERNAL, MIXED }
 
     private long id;
     private String accession;
     private String database;
-    private final Kind kind;
+    private final BioType bioType;
+    private final ResourceType resourceType;
     private T content;
 
-    protected BioObject(Kind kind) {
+    protected BioObject(BioType bioType, ResourceType resourceType) {
 
-        Preconditions.checkNotNull(kind);
+        Preconditions.checkNotNull(bioType);
 
-        this.kind = kind;
+        this.bioType = bioType;
+        this.resourceType = resourceType;
     }
 
     public long getId() {
@@ -48,8 +51,12 @@ public abstract class BioObject<T> {
         this.database = database;
     }
 
-    public Kind getKind() {
-        return kind;
+    public BioType getBioType() {
+        return bioType;
+    }
+
+    public ResourceType getResourceType() {
+        return resourceType;
     }
 
     public T getContent() {
