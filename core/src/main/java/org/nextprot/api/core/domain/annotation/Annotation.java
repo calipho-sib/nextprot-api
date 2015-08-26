@@ -3,6 +3,7 @@ package org.nextprot.api.core.domain.annotation;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
+import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
 import org.nextprot.api.core.domain.IsoformSpecificity;
@@ -48,6 +49,8 @@ public class Annotation implements Serializable, IsoformSpecific {
 	private Map<String, IsoformSpecificity> targetIsoformsMap;
 
 	private List<AnnotationProperty> properties;
+
+	private BioObject bioObject;
 	
 	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsAsAnnotationsByEntry()
 
@@ -274,7 +277,15 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public String getSpecificityForIsoform(String isoformName) {
 		return this.targetingIsoformsMap.get(isoformName).getSpecificity();
 	}
-	
+
+	public BioObject getBioObject() {
+		return bioObject;
+	}
+
+	public void setBioObject(BioObject bioObject) {
+		this.bioObject = bioObject;
+	}
+
 	public int getEndPositionForIsoform(String isoformName) {
 		if(targetingIsoformsMap != null){
 		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
