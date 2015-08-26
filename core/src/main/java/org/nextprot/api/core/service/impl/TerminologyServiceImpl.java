@@ -57,11 +57,11 @@ class TerminologyServiceImpl implements TerminologyService {
 	@Cacheable("enzyme-terminology") //TODO there should be an utility method on entry to get the enzymes...
 	public List<Terminology> findEnzymeByMaster(String entryName) {
 		Set<String> accessions = new HashSet<String>(terminologyDao.findEnzymeAcsByMaster(entryName));
-		if(!accessions.isEmpty()){
+		if(!accessions.isEmpty()){ //is found accessions gets the corresponding terminology
 			List<Terminology> terms =  terminologyDao.findTerminologyByAccessions(accessions);
 			//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 			return new ImmutableList.Builder<Terminology>().addAll(terms).build();
-		}else return new ArrayList<Terminology>();
+		}else return new ImmutableList.Builder<Terminology>().build(); //returns empty list
 	}
 
 	@Override
