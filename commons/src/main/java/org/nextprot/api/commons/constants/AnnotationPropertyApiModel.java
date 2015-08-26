@@ -30,7 +30,7 @@ public class AnnotationPropertyApiModel {
 						new AnnotationPropertyApiModel("peptide name","peptideName","string"), 
 						new AnnotationPropertyApiModel("is proteotypic", "proteotypic", "boolean"))));
 		
-		// add other links annotation - property links below
+		// add other annotation - property links below
 		// ...
 	}
 		
