@@ -11,11 +11,7 @@ public class BioComplexTest {
     @Test
     public void test() {
 
-        BioComplex bioComplex = new BioComplex();
-
-        bioComplex.add(new BioIsoform());
-        bioComplex.add(new BioIsoform());
-        bioComplex.add(new BioObjectExternal(BioObject.BioType.CHEMICAL));
+        BioComplex bioComplex = new BioComplex(new BioIsoform(), new BioIsoform(), new BioObjectExternal(BioObject.BioType.CHEMICAL));
 
         Assert.assertEquals(3, bioComplex.size());
         Assert.assertEquals(BioObject.BioType.GROUP, bioComplex.getBioType());

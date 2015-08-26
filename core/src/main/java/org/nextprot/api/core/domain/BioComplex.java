@@ -14,32 +14,36 @@ public class BioComplex extends BioObject<List<BioObject<?>>> {
 
     private final List<BioObject<?>> bioObjects;
 
-    protected BioComplex(BioObject<?>... bioObjects) {
+    protected BioComplex(BioObject<?> bioObject, BioObject<?>... others) {
 
-        super(BioType.GROUP, getResourceType(bioObjects));
+        super(BioType.GROUP, deduceResourceType(bioObject, others));
 
         this.bioObjects = new ArrayList<>();
 
-        for (BioObject<?> bioObject : bioObjects) {
+        populateBioObjects(bioObject, others);
+    }
 
-            this.bioObjects.add(bioObject);
+    private void populateBioObjects(BioObject<?> bioObject, BioObject<?>... others) {
+
+        this.bioObjects.add(bioObject);
+        for (BioObject<?> bo : others) {
+
+            this.bioObjects.add(bo);
         }
     }
 
-    private static ResourceType getResourceType(BioObject<?>... bioObjects) {
+    private static ResourceType deduceResourceType(BioObject<?> bioObject, BioObject<?>... others) {
 
         Set<ResourceType> refs = new HashSet<>();
 
-        for (BioObject<?> bioObject : bioObjects) {
+        refs.add(bioObject.getResourceType());
 
-            refs.add(bioObject.getResourceType());
+        for (BioObject<?> bo : others) {
+
+            refs.add(bo.getResourceType());
         }
 
         return (refs.size() == 1) ? refs.iterator().next() : ResourceType.MIXED;
-    }
-
-    public void add(BioObject<?> graphic) {
-        bioObjects.add(graphic);
     }
 
     public int size() {
