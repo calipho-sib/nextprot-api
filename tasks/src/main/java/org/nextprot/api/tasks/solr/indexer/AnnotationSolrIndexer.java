@@ -1,8 +1,10 @@
 package org.nextprot.api.tasks.solr.indexer;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -32,6 +34,10 @@ import org.nextprot.api.core.service.DbXrefService;
 //import org.nextprot.api.core.utils.TerminologyUtils;
 //import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
+import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+import org.reflections.Reflections;
 
 
 public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
@@ -146,19 +152,6 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		}
 		if(allfamilies == null) {doc.addField("family_names", allfamilies); doc.addField("family_names_s", allfamilies);}
 		
-		List <ChromosomalLocation> chrlocs = entry.getChromosomalLocations();
-		String chrloc = null;
-		for (ChromosomalLocation currloc : chrlocs) {
-			if(chrloc == null) chrloc = currloc.getChromosome();
-			String band = currloc.getBand();
-			if(band != null) {
-				chrloc += band;
-				doc.addField("gene_band", band);
-			}
-		}
-		//System.err.println("adding chr_loc: " + chrloc);
-		doc.addField("chr_loc", chrloc);
-		doc.addField("chr_loc_s", this.sortChr(chrloc));
 		
 		List<Annotation> annots =  entry.getAnnotations();
 		int cvac_cnt = 0;
@@ -388,37 +381,28 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		this.dbxrefservice = dbxrefservice;
 	}
 
-	public static long sortChr(String chr) {
-		// Allows to sort results based on chromosomal location
-		chr=chr.trim();
+	
+	private Map<Fields, FieldBuilder> fieldsBuilder = new HashMap<Fields, FieldBuilder>();
+	
+	private void buildSolrDocument(){
+		initializeFieldBuilders();
+		SolrInputDocument doc = new SolrInputDocument();
 		
-		String[] chr_loc=chr.split("([pq]|cen)");  // split on p or q
-		long f_chr0=1000000; 	 
-		long f_q=50000; 	 
-		long f_chr1=1000; 		
-		int  max_chr=50;		// max chr localtion after pq 
-		long chr0, chr1;
-
-		
-		// push unknown chromosome at the end 
-		if (chr.indexOf("unknown")>-1 || chr.equals("")) { return f_chr0*30; }
-		if(chr_loc[0].equalsIgnoreCase("x")){ chr0=23*f_chr0;}
-		else if(chr_loc[0].equalsIgnoreCase("y")) { chr0=24*f_chr0; }
-		else if(chr_loc[0].equalsIgnoreCase("mt")) { chr0=25*f_chr0;}
-		else { chr0=Integer.parseInt(chr_loc[0])*f_chr0; }
-		
-		// sort(cen) = 10E5*XX + 10E4-1
-		if (chr.indexOf("cen")>-1)	return chr0+f_q-1;			
-		// sort(chr) = 10E5*XX 
-		if (chr_loc.length==1) return (chr0);
-		
-		// extract double value from digits after p or q
-		chr1=(long)( Double.parseDouble(chr_loc[1].split("[-,]")[0]) * f_chr1);
-		
-		// sort(q) = 10E5*XX + 10E4 + 100*YY
-		if(chr.indexOf('q')>-1) return chr0+chr1+f_q;			
-		
-		// sort(p) = 10E6*XX + 1000*(45-YY)  //descending order
-		return chr0 + f_chr1 * max_chr - chr1;
 	}
+
+	private void initializeFieldBuilders() {
+	     Reflections reflections = new Reflections("org.nextprot.api.tasks.solr.indexer.entry.impl");
+	     Set<Class<?>> entryFieldBuilderClasses = reflections.getTypesAnnotatedWith(EntryFieldBuilder.class);
+	     for(Class<?> c : entryFieldBuilderClasses){
+	    	 try {
+				FieldBuilder fb = (FieldBuilder) c.newInstance();
+				for(Fields f: fb.getSupportedFields()){
+					fieldsBuilder.put(f, fb);
+				}
+			} catch (InstantiationException | IllegalAccessException e) {
+				e.printStackTrace();
+			}
+	     }
+	}
+	
 }

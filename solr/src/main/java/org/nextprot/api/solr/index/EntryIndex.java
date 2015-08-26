@@ -1,5 +1,7 @@
 package org.nextprot.api.solr.index;
 
+import java.util.List;
+
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.nextprot.api.solr.AutocompleteConfiguration;
 import org.nextprot.api.solr.FieldConfigSet;
@@ -195,8 +197,8 @@ public class EntryIndex extends IndexTemplate {
 		FILTERS("filters"),
 		EC_NAME("ec_name"),
 		FUNCTION_DESC("function_desc"),
-		CHR_LOC("chr_loc"),
-		CHR_LOC_S("chr_loc_s"),
+		CHR_LOC("chr_loc", String.class),
+		CHR_LOC_S("chr_loc_s", Long.class),
 		ISOFORM_NUM("isoform_num"),
 		PTM_NUM("ptm_num"),
 		VAR_NUM("var_num"),
@@ -225,7 +227,7 @@ public class EntryIndex extends IndexTemplate {
 		CLONE_NAME("clone_name"),
 		ENSEMBL("ensembl"),
 		MICROARRAY_PROBE("microarray_probe"),
-		GENE_BAND("gene_band"),
+		GENE_BAND("gene_band", List.class),
 		PEPTIDE("peptide"),
 		ANTIBODY("antibody"),
 		INTERACTIONS("interactions"),
@@ -235,6 +237,7 @@ public class EntryIndex extends IndexTemplate {
 		
 		private String fieldName;
 		private String publicName;
+		private Class<?> clazz;
 		
 		private Fields(String fieldName) {
 			this.fieldName = fieldName;
@@ -242,6 +245,16 @@ public class EntryIndex extends IndexTemplate {
 		private Fields(String fieldName, String publicName) {
 			this.fieldName = fieldName;
 			this.publicName=publicName;
+		}
+		
+		private Fields(String fieldName, Class<?> clazz) {
+			this.fieldName = fieldName;
+			this.clazz=clazz;
+		}
+		private Fields(String fieldName, String publicName, Class<?> clazz) {
+			this.fieldName = fieldName;
+			this.publicName=publicName;
+			this.clazz=clazz;
 		}
 
 		public String getName() {
@@ -265,6 +278,9 @@ public class EntryIndex extends IndexTemplate {
 		@Override
 		public boolean hasPublicName() {
 			return this.publicName!=null && this.publicName.length()>0;
+		}
+		public Class<?> getClazz() {
+			return this.clazz;
 		}
 		
 		
