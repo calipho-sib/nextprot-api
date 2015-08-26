@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
  */
 public abstract class BioObject<T> {
 
-    enum Kind { MOLECULE, PROTEIN, ISOFORM, GROUP }
+    public enum Kind { MOLECULE, PROTEIN, ISOFORM, GROUP }
 
     private long id;
     private String accession;
