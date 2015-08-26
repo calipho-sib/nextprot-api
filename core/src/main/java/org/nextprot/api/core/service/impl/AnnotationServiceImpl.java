@@ -9,6 +9,7 @@ import com.google.common.collect.Multimaps;
 
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.IsoformDAO;
@@ -123,7 +124,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 			AnnotationApiModel model = AnnotationApiModel.getByDbAnnotationTypeName(property.getName());
 			String description = property.getValue();
 
-			annotation.setAnnotationId(40_000_000_000L + property.getAnnotationId());
+			
+			annotation.setAnnotationId(property.getAnnotationId() + IdentifierOffset.BIOPHYSICOCHEMICAL_ANNOTATION_OFFSET);
 			annotation.setCategory(model.getDbAnnotationTypeName());
 			annotation.setDescription(description);
 			annotation.setEvidences(new ArrayList<AnnotationEvidence>());

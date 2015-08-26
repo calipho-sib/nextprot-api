@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+
+import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.XrefAnnotationMapping;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
@@ -69,7 +71,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		for (DbXref xref: xrefs) {
 			Annotation annotation = new Annotation();
 			annotation.setProperties(new ArrayList<AnnotationProperty>());
-			annotation.setAnnotationId(xref.getDbXrefId() + 10_000_000_000L);
+			annotation.setAnnotationId(xref.getDbXrefId() + IdentifierOffset.XREF_ANNOTATION_OFFSET);
 			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
 			annotation.setCategory(xam.getAnnotCat());
 			annotation.setDescription(xref.getPropertyValue(xam.getXrefPropName())); // copy of some xref property 
@@ -100,7 +102,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 			evidence.setAnnotationId(annotation.getAnnotationId());
 			DbXref pxref = annotation.getParentXref();
 			XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(pxref.getDatabaseName());
-			evidence.setEvidenceId(annotation.getAnnotationId() + 20_000_000_000L);
+			evidence.setEvidenceId(annotation.getAnnotationId() + IdentifierOffset.XREF_ANNOTATION_EVIDENCE_OFFSET);
 			evidence.setAssignedBy(xam.getSrcName());
 			evidence.setResourceId(pxref.getDbXrefId());
 			evidence.setResourceAccession(pxref.getAccession());

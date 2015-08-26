@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.InteractionDAO;
@@ -47,11 +48,11 @@ public class InteractionDaoImpl implements InteractionDAO {
 		public Interaction mapRow(ResultSet resultSet, int row) throws SQLException {
 
 			Interaction interaction = new Interaction();
-			interaction.setId(resultSet.getLong("interaction_id"));
+			interaction.setId(resultSet.getLong("interaction_id") + IdentifierOffset.BINARY_INTERACTION_ANNOTATION_OFFSET);
 			interaction.setMd5(resultSet.getString("interaction_md5"));
 			interaction.setQuality(resultSet.getString("interaction_quality"));
 
-			interaction.setEvidenceId(resultSet.getLong("evidence_id"));
+			interaction.setEvidenceId(resultSet.getLong("evidence_id") + IdentifierOffset.BINARY_INTERACTION_ANNOTATION_EVIDENCE_OFFSET);
 			interaction.setEvidenceDatasource(resultSet.getString("evidence_datasource"));
 			interaction.setEvidenceType(resultSet.getString("evidence_type"));
 			interaction.setEvidenceQuality(resultSet.getString("evidence_quality"));
