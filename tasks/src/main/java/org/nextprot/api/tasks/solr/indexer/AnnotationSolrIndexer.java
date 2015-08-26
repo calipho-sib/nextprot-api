@@ -53,12 +53,15 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		Set <String> cv_synonyms = new HashSet<String>();
 		Set <String> cv_tissues = new HashSet<String>();
 		String id = entry.getUniqueName();
+		//Integer pe_level = 0;
+		//
 		doc.addField("id", id);
 		doc.addField("idsp0", id);
 		doc.addField("recommended_ac", id.substring(3));
 		Overview ovv = entry.getOverview(); 
 		doc.addField("protein_existence", ovv.getProteinExistence());
-		doc.addField("pe_level", ovv.getProteinExistenceLevel());
+		int pe_level = ovv.getProteinExistenceLevel(); // Will be used to compute informational score
+		doc.addField("pe_level", pe_level);
 		//doc.addField("isoform_num", entry.getIsoforms().size());
 		String precname = ovv.getMainProteinName();
 		System.err.println(id + " " + precname);
@@ -108,14 +111,14 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		altnames = ovv.getFunctionalRegionNames(); // The enzymatic activities of a multifunctional enzyme (maybe redundent with getEnzymes)
 		if(altnames != null )
 			for (EntityName altname : altnames) {
-				doc.addField("region_name", altname.getName());
-				//System.err.println(id + " fromincludes: " + altname.getName());
-				List <EntityName> paltnames = altname.getSynonyms();
+				doc.addField("region_name", altname.getName()); // region_name should be renamed activity_name
+				// Synonyms allready collected in the getEnzymes loop
+				/* List <EntityName> paltnames = altname.getSynonyms();
 				if(paltnames != null )
 				for (EntityName ecname : paltnames) {
 				    //doc.addField("ec_name", ecname.getName());
-					//System.err.println(id + " fromincludes: " + ecname.getName());
-				}
+					System.err.println(id + " fromincludes: " + ecname.getName());
+				} */
 			}
 		
 		// Gene names, synonyms and orf names
@@ -147,7 +150,6 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		
 		List <ChromosomalLocation> chrlocs = entry.getChromosomalLocations();
 		String chrloc = null;
-		//String tststring = null;
 		for (ChromosomalLocation currloc : chrlocs) {
 			if(chrloc == null) chrloc = currloc.getChromosome();
 			String band = currloc.getBand();
@@ -160,23 +162,13 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		doc.addField("chr_loc", chrloc);
 		doc.addField("chr_loc_s", this.sortChr(chrloc));
 		
-		/*DbXrefDaoImpl dao = new DbXrefDaoImpl(); // Not working
-		Set<DbXref> intactdbrefs = dao.findEntryInteractionInteractantsXrefs(id);
-		if(intactdbrefs != null)
-		for (DbXref intactdbref : intactdbrefs) {	
-			System.err.println(intactdbref.getProperties());
-			List<DbXrefProperty> xrefprops =  intactdbref.getProperties();
-			for (DbXrefProperty xrefprop : xrefprops) {
-				if(xrefprop.getName().equals("gene designation")) {
-					System.err.println("gene: " + xrefprop.getValue());
-				}
-			}
-		} */
-		
 		List<Annotation> annots =  entry.getAnnotations();
 		int cvac_cnt = 0;
 		for (Annotation currannot : annots) {
+			//if(currannot.getQualityQualifier().equals("GOLD")) System.err.println("GOLD");
+			//else System.err.println("SILVER");
 			String category = currannot.getCategory();
+			//if(category.equals("subunit")) {TODO: parse the 'binds' and 'interacts with' objects and check if official gene names}
 			//System.err.println(category);
 			 if(category.contains("Binary"))  {
 				//System.err.println(category + " : " + currannot.getUniqueName());
@@ -199,26 +191,17 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 				cv_tissues.add(currannot.getCvTermName()); // No duplicates: this is a Set
 				//doc.addField("expression", currannot.getCvTermName()); 
 			   }
-			else if(category.equals("subcellular location") || category.equals("go cellular component") ||
-					category.equals("domain") || category.equals("repeat") ||  category.equals("zinc finger region") ||
-					category.equals("go molecular function") || category.equals("go biological process") ||
-					category.equals("pathway") || category.equals("amino acid modification") ||
-					category.equals("uniprot keyword") || category.equals("disease")) {
+			else  {
 				String cvac = currannot.getCvTermAccessionCode();
 				if(cvac != null) {
 				   doc.addField("cv_acs", cvac);
 				   cvac_cnt++;
-				   cv_acs.add(cvac); // No duplicates: this is a Set
+				   cv_acs.add(cvac); // No duplicates: this is a Set, will be used for synonyms and ancestors
 				   doc.addField("cv_names", currannot.getCvTermName()); 
 				   }
+				String desc = currannot.getDescription();
+				if(desc != null) {doc.addField("annotations", desc);}
 			}
-			else if(category.equals("region of interest") || category.equals("interacting region")) { // compositionally biased region ?
-				//doc.addField("?", currannot.getDescription()); 
-			}
-			else {
-				doc.addField("annotations", currannot.getDescription());
-			//System.err.println(category + " : " + currannot.getDescription());
-			} // or maybe not 'else'
 		}
 		
 		// Identifiers
@@ -235,19 +218,19 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		}
 		
 		List<Terminology> enzymes = entry.getEnzymes();
+		String ec_names = "";
 		for (Terminology currenzyme : enzymes) {
-			//System.err.println(id + " fromenz: " + currenzyme.getAccession());
-			doc.addField("cv_acs", currenzyme.getAccession());
 			cvac_cnt++;
 			cv_acs.add(currenzyme.getAccession());
 			doc.addField("cv_names", currenzyme.getName());
+			ec_names += "EC " + currenzyme.getAccession() + ", ";
+			
 			List <String> synonyms = currenzyme.getSynonyms();
 			if(synonyms != null)
-			for (String synonym : synonyms) { System.err.println("enzyme synonym: " + synonym); // never shows up
-			    doc.addField("cv_synonyms", synonym);
-			}
+			   for (String synonym : synonyms)  doc.addField("cv_synonyms", synonym.trim());
 		}
-
+		doc.addField("ec_name", ec_names);
+		
 		List<Interaction> interactions = entry.getInteractions();
 		//System.err.println(interactions.size() + " interactions");
 		for (Interaction currinteraction : interactions) {
@@ -263,7 +246,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 			     List<DbXrefProperty> xrefprops =  xref1.getProperties();
 			     if(xrefprops != null)
 			    	for (DbXrefProperty xrefprop : xrefprops) {
-			    		 //System.err.println("propname: " + xrefprop.getName());
+			    		 System.err.println("propname: " + xrefprop.getName()); // never shows
 			    	 } //else System.err.println("no properties for: " + xref1.getAccession());
 			    	 //System.err.println("propval: " + xref1.getAccession());
 			    	 //System.err.println("propval: " + xref1.getPropertyValue("gene designation"));
@@ -282,12 +265,12 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 				if(acc.equals(id)) continue; // Internal stuff like NX_VG_10_51732257_248
 				String gen = xref.getPropertyValue("gene designation");
 				System.err.println("nonxeno: " + gen);
-			}
-			if(db.equals("UniProt") && !id.contains(acc)) {
+			}*/
+			if((db.equals("UniProt") || db.equals("neXtProt")) && !id.contains(acc)) { // wrong for nextprot gene designation -> protein name
 				String gen = xref.getPropertyValue("gene designation");
-				if(gen != null) { gen = gen.toUpperCase(); System.err.println("xeno: " + gen); }
-				else System.err.println("no gene for: " + acc );
-				} */
+				if(gen != null && gen != "-") { gen = gen.toUpperCase(); System.err.println(acc + ": " + gen); doc.addField("interactions", gen);}
+				//else System.err.println("no gene for: " + acc );
+				} 
 			if(db.equals("HPA") && !acc.contains("ENSG")) doc.addField("antibody", acc);
 			else if(db.equals("PeptideAtlas") || db.equals("SRMAtlas")) doc.addField("peptide", acc + ", " + db + ":" + acc);
 			else if(db.equals("Ensembl")) doc.addField("ensembl", acc);
@@ -319,13 +302,22 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		if(publi_computed_count > 0) doc.addField("publi_computed_count", publi_computed_count);
 		if(publi_curated_count > 0) doc.addField("publi_curated_count", publi_curated_count);
 		if(publi_large_scale_count > 0) doc.addField("publi_large_scale_count", publi_large_scale_count);
+		// Now we can compute informational score
+		int info_score = 0;
+		if(pe_level == 1) info_score=12;
+		else if(pe_level == 2) info_score=10;
+		else if(pe_level == 3 || pe_level == 4) info_score=8;
+		else if(pe_level == 5) info_score=5;
+		int coeff = 100*publi_curated_count + 25*publi_computed_count + 10*publi_large_scale_count;
+		info_score = coeff * info_score / 10;
+		doc.addField("informational_score", info_score);
 		
 		//doc.addField("orf_names", entry.()); -> together with gene synonyms
 		//doc.addField("ec_name", entry.getChromosomalLocations().get(0));
 		//doc.addField("expression", entry.());
 		//doc.addField("informational_score", entry.());
 		//doc.addField("interactions", entry.());
-		//doc.addField("region_name", entry.()); corresponds to 'includes' activity
+		//doc.addField("region_name", entry.()); corresponds to 'includes' activity (parsed in the getenzyme loop)
 		
 		/*	
 		List<Terminology.TermProperty> properties = terminology.getProperties();
