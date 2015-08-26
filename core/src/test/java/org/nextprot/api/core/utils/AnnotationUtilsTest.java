@@ -1,21 +1,22 @@
 package org.nextprot.api.core.utils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Assert;
+import org.junit.Test;
+import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.domain.BioObject;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
@@ -273,5 +274,20 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
     	assertTrue(AnnotationUtils.filterAnnotationsBetweenPositions(10, 20, Arrays.asList(a1), isoName).isEmpty());
     }
 
-    
+	@Test
+	public void testConvertEvidenceToExternalBioObject()  {
+
+		AnnotationEvidence ev = new AnnotationEvidence();
+
+		ev.setResourceAccession("CHEBI:38290");
+		ev.setResourceAssociationType("relative");
+		ev.setResourceDb("ChEBI");
+		ev.setResourceId(39334228);
+
+		BioObject bo = AnnotationUtils.newExternalBioObject(ev);
+		Assert.assertEquals("CHEBI:38290", bo.getAccession());
+		Assert.assertEquals("ChEBI", bo.getDatabase());
+		Assert.assertEquals(39334228, bo.getId());
+		Assert.assertEquals(BioObject.Kind.CHEMICAL, bo.getKind());
+	}
 }

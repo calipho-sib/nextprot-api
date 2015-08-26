@@ -1,17 +1,13 @@
 package org.nextprot.api.core.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.domain.BioObject;
+import org.nextprot.api.core.domain.BioObjectExternal;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+
+import java.util.*;
 
 
 public class AnnotationUtils {
@@ -110,17 +106,17 @@ public class AnnotationUtils {
 	/*
 	 * Returns a set of xref identifiers in some special cases:
 	 * - "sequence caution" annotation type => xrefs found in "differing sequence" property
-	 * - "cofactor" annotation rype => xrefs found in "cofactor" property
-	 * 
+	 * - "cofactor" annotation type => xrefs found in "cofactor" property
 	 */
-	public static Set<Long> getXrefIdsForAnnotationsProperties(List<Annotation> annotations){
-		Set<Long> xrefIds = new HashSet<Long>(); 
+	public static Set<Long> getXrefIdsFromAnnotations(List<Annotation> annotations){
+		Set<Long> xrefIds = new HashSet<>();
+
 		for(Annotation a : annotations){
 			if (a.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
 				addXrefIdRelatedToAnnotationPropertyName(a, AnnotationProperty.NAME_DIFFERING_SEQUENCE, xrefIds);
 			}
 			else if (a.getAPICategory()==AnnotationApiModel.COFACTOR) {
-				addXrefIdRelatedToAnnotationPropertyName(a, AnnotationProperty.NAME_COFACTOR, xrefIds);
+				xrefIds.add(a.getBioObject().getId());
 			}
 			else if (a.getAPICategory()==AnnotationApiModel.DISEASE) {
 				addXrefIdRelatedToAnnotationPropertyName(a, AnnotationProperty.NAME_ALTERNATIVE_DISEASE_TERM, xrefIds);
@@ -138,14 +134,14 @@ public class AnnotationUtils {
 			}
 		}		
 	}
-	
+
 	/*
 	 * Returns a set of xref identifiers corresponding to the interactants which are involved 
 	 * in binary interaction annotations and which are not human proteins (xeno interactions)
 	 */
 	public static Set<Long> getXrefIdsForInteractionsInteractants(List<Annotation> annotations){
 		if(annotations == null) return null;
-		Set<Long> xrefIds = new HashSet<Long>(); 
+		Set<Long> xrefIds = new HashSet<>();
 		for(Annotation a : annotations){
 			if (a.getAPICategory()==AnnotationApiModel.BINARY_INTERACTION) {
 				for (AnnotationProperty p: a.getProperties()) {
@@ -161,7 +157,7 @@ public class AnnotationUtils {
 
 	public static Set<Long> getPublicationIdsForAnnotations(List<Annotation> annotations) {
 
-		Set<Long> publicationIds = new HashSet<Long>(); 
+		Set<Long> publicationIds = new HashSet<>();
 		for(Annotation a : annotations){
 			for(AnnotationEvidence e : a.getEvidences()){
 				if(e.isResourceAPublication()){
@@ -185,20 +181,25 @@ public class AnnotationUtils {
 			} 
 			else if (annot.getAPICategory()==AnnotationApiModel.COFACTOR) {
 				convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_COFACTOR);
+				List<AnnotationEvidence> evidencesToRemove = convertEvidenceToExternalBioObject(annot);
+
+				annot.getEvidences().removeAll(evidencesToRemove);
 			}
 			else if (annot.getAPICategory()==AnnotationApiModel.DISEASE) {
 				convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_ALTERNATIVE_DISEASE_TERM);
 			}
 		}
 	}
-	
 
-	private static void convertType2EvidenceToProperty(Annotation annot, String propertyName) {
-		Iterator<AnnotationEvidence> evIt = annot.getEvidences().iterator();
-		while (evIt.hasNext()) {
-			AnnotationEvidence evi = evIt.next();
+	private static List<AnnotationEvidence> convertType2EvidenceToProperty(Annotation annot, String propertyName) {
+
+		List<AnnotationEvidence> toRemove = new ArrayList<>();
+
+		for (AnnotationEvidence evi : annot.getEvidences()) {
 			if (evi.getResourceAssociationType().equals("relative")) {
+
 				AnnotationProperty p = new AnnotationProperty();
+
 				p.setAnnotationId(annot.getAnnotationId());
 				p.setAccession(evi.getResourceAccession());
 				p.setName(propertyName);
@@ -206,10 +207,39 @@ public class AnnotationUtils {
 				p.setValueType(AnnotationProperty.VALUE_TYPE_RIF);
 				if (annot.getProperties()==null) annot.setProperties(new ArrayList<AnnotationProperty>());
 				annot.getProperties().add(p);
-				evIt.remove();
+
+				toRemove.add(evi);
 			}
 		}
-		
+
+		return toRemove;
 	}
 
+	private static List<AnnotationEvidence> convertEvidenceToExternalBioObject(Annotation annot) {
+
+		List<AnnotationEvidence> toRemove = new ArrayList<>();
+
+		for (AnnotationEvidence evi : annot.getEvidences()) {
+
+			if (evi.getResourceAssociationType().equals("relative")) {
+
+				annot.setBioObject(newExternalBioObject(evi));
+
+				toRemove.add(evi);
+			}
+		}
+
+		return toRemove;
+	}
+
+	static BioObject newExternalBioObject(AnnotationEvidence evi) {
+
+		BioObject bo = new BioObjectExternal(BioObject.Kind.CHEMICAL);
+
+		bo.setId(evi.getResourceId());
+		bo.setAccession(evi.getResourceAccession());
+		bo.setDatabase(evi.getResourceDb());
+
+		return bo;
+	}
 }
