@@ -16,9 +16,9 @@ public class StringUtils {
 		return new StringCaseFormatter(string);
 	}
 
-	public static String toCamelCase(final String inputString, boolean avoidFirst) {
+	public static String toCamelCase(final String inputString, boolean firstLetterFirstWordInLowerCase) {
 
-		return new StringCaseFormatter(inputString).camel(avoidFirst).format();
+		return new StringCaseFormatter(inputString).camel(firstLetterFirstWordInLowerCase).format();
 	}
 
 	public static String camelToKebabCase(String inputString){
@@ -29,6 +29,11 @@ public class StringUtils {
 	public static String camelToSnakeCase(String inputString) {
 
 		return new StringCaseFormatter(inputString).snake().format();
+	}
+
+	public static String snakeToKebabCase(String inputString) {
+
+		return new StringCaseFormatter(inputString).camel().kebab().format();
 	}
 
 	/**

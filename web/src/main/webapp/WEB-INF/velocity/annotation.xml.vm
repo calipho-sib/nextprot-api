@@ -14,11 +14,11 @@
 
 	#if($annotation.getBioObject())
 		#set($bioObject = $annotation.getBioObject())
-        <interactant nature='new StringCaseFormatter($bioObject.getBioType().toString()).camel().kebab().format()'>
+        <interactant nature='$StringUtils.snakeToKebabCase($bioObject.getBioType().toString())'>
             #if($bioObject.getResourceType().toString().equals("EXTERNAL"))
                 <xref-ref resource-internal-ref='$bioObject.getId()'/>
 			#elseif($bioObject.getResourceType().toString().equals("INTERNAL"))
-                <ref accession='$bioObject.getAccession()' database='$bioObject.getDatabase()'/>
+                <ref accession='$bioObject.getAccession()' database='nextProt'/>
 			#end
         </interactant>
 	#end
