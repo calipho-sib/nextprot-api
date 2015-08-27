@@ -17,7 +17,7 @@ annotation:$annotation-uri a :$annotation-type;
 #set($pmodel=false)
 #set($pmodel=$annotation.getPropertyApiModel($prop))
 #if($pmodel)
-  :$pmodel.getApiName() "$prop.getValue()"^^xsd:$pmodel.getRdfDataType();
+  :$pmodel.getCamelName() "$pmodel.formatValue($prop.getValue())"^^xsd:$pmodel.getRdfDataType();
 #end
 #end
 #if($annotation.getVariant())

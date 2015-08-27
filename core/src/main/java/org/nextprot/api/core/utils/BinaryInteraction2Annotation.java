@@ -2,10 +2,18 @@ package org.nextprot.api.core.utils;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.domain.*;
-import org.nextprot.api.core.domain.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.nextprot.api.core.domain.Interactant;
+import org.nextprot.api.core.domain.Interaction;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 
 
 public class BinaryInteraction2Annotation {
@@ -15,7 +23,7 @@ public class BinaryInteraction2Annotation {
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation core object
 		// - - - - - - - - - - - - - - - - - - - - 
-		Long annotId = inter.getId() + 30_000_000_000L;
+		Long annotId = inter.getId() ;
 		
 		Annotation annot = new Annotation();
 		annot.setAnnotationId(annotId);
@@ -26,7 +34,7 @@ public class BinaryInteraction2Annotation {
 		annot.setParentXref(null);
 		annot.setQualityQualifier(inter.getQuality());
 		annot.setSynonym(null);
-		annot.setUniqueName("AN"+ entryName.substring(3) + "_BI_" + inter.getId());
+		annot.setUniqueName("AN"+ entryName.substring(3) + "_BI_" + annotId);
 		annot.setVariant(null);
 		
 		// - - - - - - - - - - - - - - - - - - - - 

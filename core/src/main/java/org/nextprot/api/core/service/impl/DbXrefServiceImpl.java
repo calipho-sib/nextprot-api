@@ -4,6 +4,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
+
+import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.XrefAnnotationMapping;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
@@ -59,6 +61,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		return xrefs;
 	}
 	
+
 	private List<Annotation> convertXrefsIntoAnnotations(List<DbXref> xrefs, String entryName) {
 
 		List<Isoform> isoforms = isoService.findIsoformsByEntryName(entryName);
@@ -80,7 +83,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		Annotation annotation = new Annotation();
 
 		annotation.setProperties(new ArrayList<AnnotationProperty>());
-		annotation.setAnnotationId(xref.getDbXrefId() + 10_000_000_000L);
+		annotation.setAnnotationId(xref.getDbXrefId() + IdentifierOffset.XREF_ANNOTATION_OFFSET);
 
 		XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
 		annotation.setCategory(xam.getAnnotCat());
@@ -106,7 +109,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		evidence.setAnnotationId(xrefAnnotation.getAnnotationId());
 		XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(pxref.getDatabaseName());
-		evidence.setEvidenceId(xrefAnnotation.getAnnotationId() + 20_000_000_000L);
+		evidence.setEvidenceId(xrefAnnotation.getAnnotationId() + IdentifierOffset.XREF_ANNOTATION_EVIDENCE_OFFSET);
 		evidence.setAssignedBy(xam.getSrcName());
 		evidence.setResourceId(pxref.getDbXrefId());
 		evidence.setResourceAccession(pxref.getAccession());

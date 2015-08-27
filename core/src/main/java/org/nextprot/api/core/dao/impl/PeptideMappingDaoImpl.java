@@ -1,13 +1,6 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.PeptideMappingAnnotationMapping;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
@@ -25,6 +18,10 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 @Repository
 public class PeptideMappingDaoImpl implements PeptideMappingDao {
@@ -153,7 +150,8 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 			@Override
 			public Map<String,Object> mapRow(ResultSet resultSet, int row) throws SQLException {
 				Map<String,Object> peptideMapping = new HashMap<>();
-				peptideMapping.put(KEY_ANNOTATION_ID, resultSet.getLong("annotation_id") + 50_000_000_000L );
+				
+				peptideMapping.put(KEY_ANNOTATION_ID, resultSet.getLong("annotation_id") + IdentifierOffset.PEPTIDE_MAPPING_ANNOTATION_OFFSET );
 				peptideMapping.put(KEY_QUALITY_QUALIFIER,resultSet.getString("quality_qualifier"));
 				peptideMapping.put(KEY_PEP_UNIQUE_NAME,resultSet.getString("pep_unique_name"));
 				peptideMapping.put(KEY_ISO_UNIQUE_NAME,resultSet.getString("iso_unique_name"));
@@ -184,6 +182,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 		for (AnnotationProperty p: props) {
 			String pepKey = p.getAccession();
 			if (!result.containsKey(pepKey)) result.put(pepKey, new ArrayList<AnnotationProperty>());
+			p.setAccession(null);
 			result.get(pepKey).add(p);
 		}
 		return result;
@@ -204,6 +203,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 			public AnnotationEvidence mapRow(ResultSet resultSet, int row) throws SQLException {
 				AnnotationEvidence evidence = new AnnotationEvidence();
 				evidence.setAnnotationId(0); // set later by service
+				evidence.setEvidenceId(resultSet.getLong("evidence_id") +  IdentifierOffset.PEPTIDE_MAPPING_ANNOTATION_EVIDENCE_OFFSET);
 				evidence.setAssignedBy(resultSet.getString("assigned_by"));
 				evidence.setAssignmentMethod(pmam.getAssignmentMethod());
 				evidence.setEvidenceCodeAC(pmam.getEcoAC());

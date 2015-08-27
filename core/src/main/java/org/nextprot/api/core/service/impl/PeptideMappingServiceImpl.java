@@ -1,11 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.collect.ImmutableList;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.PeptideMappingDao;
@@ -13,18 +8,14 @@ import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PeptideNamesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableList;
+import java.util.*;
 
 @Service
 public class PeptideMappingServiceImpl implements PeptideMappingService {
@@ -33,7 +24,6 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	@Autowired private PeptideMappingDao peptideMappingDao;
 	@Autowired private PeptideNamesService peptideNamesService;
 
-	
 	@Override
 	@Cacheable("natural-peptides")
 	public List<PeptideMapping> findNaturalPeptideMappingByMasterUniqueName(String uniqueName) {
@@ -43,9 +33,6 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<PeptideMapping>().addAll(peps).build();
-
-
-
 	}
 	
 	@Override
@@ -59,10 +46,6 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		return new ImmutableList.Builder<PeptideMapping>().addAll(peps).build();
 
 	}
-		
-	
-	
-
 
 	private List<PeptideMapping> findPeptideMappingByMasterId(Long id, boolean isNatural) {
 
@@ -107,14 +90,11 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		return new ArrayList<PeptideMapping>(mergeMap.values());
 	}
 	
-
 	/*
 	 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 	 * new interface
 	 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 	 */
-	
-	
 	@Override
 	@Cacheable("natural-peptide-mapping-annotations")
 	public List<Annotation> findNaturalPeptideMappingAnnotationsByMasterUniqueName(String uniqueName) {
@@ -130,7 +110,6 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		return findPeptideMappingAnnotationsByMasterUniqueName(uniqueName,false);
 	}
 
-	
 	private List<Annotation> findPeptideMappingAnnotationsByMasterUniqueName(String uniqueName, boolean withNatural) {
 	
 		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);		
@@ -153,8 +132,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 		
 	}
-	
-	
+
 	static void attachPeptidePropertiesToAnnotations(List<Annotation> annotations, Map<String, List<AnnotationProperty>> propMap) {
 		for (Annotation annot: annotations) {
 			AnnotationProperty pepNameProperty = annot.getProperties().get(0); // WARNING: we expect first property in list be the "peptide name" property !
@@ -271,7 +249,8 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 				annot.setQualityQualifier(quality);
 				annot.setTargetingIsoforms(new ArrayList<AnnotationIsoformSpecificity>());
 				String entry = iso.substring(0, iso.indexOf('-'));
-				annot.setUniqueName("AN_" + entry + "_" + pep + "_" + rank);
+				String nature = isNatural ? "_NATUR": "_SYNTH";
+				annot.setUniqueName("AN_" + entry + "_" + annot.getAnnotationId() + nature);
 
 				// add peptide name property
 				List<AnnotationProperty> props = new ArrayList<>(); 
