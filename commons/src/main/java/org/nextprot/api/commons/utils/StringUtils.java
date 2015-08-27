@@ -9,71 +9,26 @@ import java.util.regex.Pattern;
 public class StringUtils {
 
 	private static final Pattern NON_ASCIIDASH = Pattern.compile("[^\\w-]");
-	private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
-	
-	/**
-	 * Replaces the white spaces and the "-" and transform the String in camel
-	 * case
-	 *
-	 * @see <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles">https://en.wikipedia.org/wiki/Letter_case#Special_case_styles</a>
-	 *
-	 * @param inputString
-	 *            The string to be transformed
-	 * @param avoidFirst
-	 *            Define true if you want to discard the first word
-	 * @return The transformed string in camel case
-	 */
-	public static String toCamelCase(final String inputString,
-			boolean avoidFirst) {
-		if (inputString == null)
-			return null;
+	private static final Pattern WHITESPACE = Pattern.compile("\\s");
 
-		final StringBuilder ret = new StringBuilder(inputString.length());
+	public static XCaseBuilder createXCaseBuilder(String string) {
 
-		for (final String word : inputString.replaceAll("_", " ").split("[ -]")) {
-			if (avoidFirst) {
-				ret.append(word.toLowerCase());
-				avoidFirst = false;
-				continue;
-			}
-			if (!word.isEmpty() && !avoidFirst) {
-				ret.append(word.substring(0, 1).toUpperCase());
-				ret.append(word.substring(1).toLowerCase());
-			}
-		}
-
-		return ret.toString();
+		return new XCaseBuilder(string);
 	}
 
-	/**
-	 * Replaces the Capital letters with lower letters and prefixed with a hyphen if not in the beginning of the string.
-	 * For instance PTM info becomes ptm-info and modifiedResidue becomes modified-residue
-	 *
-	 * @see <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles">https://en.wikipedia.org/wiki/Letter_case#Special_case_styles</a>
-	 *
-	 * @param s raw string
-	 * @return the string processed
-	 */
-	public static String camelToKebabCase(String s){
-		return camelToLetterCase(s, "-");
+	public static String toCamelCase(final String inputString, boolean avoidFirst) {
+
+		return new XCaseBuilder(inputString).camel(avoidFirst).build();
 	}
 
-	/**
-	 * Replaces the Capital letters with lower letters and prefixed with a underscore if not in the beginning of the string.
-	 * For instance PTM info becomes ptm_info and modifiedResidue becomes modified_residue
-	 *
-	 * @see <a href="https://en.wikipedia.org/wiki/Letter_case#Special_case_styles">https://en.wikipedia.org/wiki/Letter_case#Special_case_styles</a>
-	 *
-	 * @param s raw string
-	 * @return the string processed
-	 */
-	public static String camelToSnakeCase(String s){
-		return camelToLetterCase(s, "_");
+	public static String camelToKebabCase(String inputString){
+
+		return new XCaseBuilder(inputString).kebab().build();
 	}
 
-	private static String camelToLetterCase(String s, String delimitor) {
+	public static String camelToSnakeCase(String inputString) {
 
-		return s.trim().replaceAll("(\\p{Ll})(\\p{Lu})","$1 $2").replaceAll(" ", delimitor).toLowerCase();
+		return new XCaseBuilder(inputString).snake().build();
 	}
 
 	/**
@@ -153,7 +108,7 @@ public class StringUtils {
 	static public String removePlus(String s) {
     	return s.replace("+", "");
     }
-    	
+
 	static public String capitalizeFirstLetter(String input){
 		return input.substring(0, 1).toUpperCase() + input.substring(1);
 	}
