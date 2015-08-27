@@ -1,6 +1,8 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
@@ -8,26 +10,18 @@ import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
 @EntryFieldBuilder
-public class CVFieldBuilder implements FieldBuilder {
+public class CVFieldBuilder extends FieldBuilder {
 
+	Set <String> cv_acs = new HashSet<String>();
+	Set <String> cv_ancestors_acs = new HashSet<String>();
+	Set <String> cv_synonyms = new HashSet<String>();
+	Set <String> cv_tissues = new HashSet<String>();
+	
 	@Override
-	public <T> T build(Entry entry, Fields field, Class<T> requiredType) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	protected void init(Entry entry) {
 
-	@Override
-	public Collection<Fields> getSupportedFields() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-/*	public CVFieldBuilder(Entry entry) {
-		init(entry);
-	}*/
-/*
-	private void init(Entry entry) {
-
+		/*
+	
 		List<Annotation> annots = entry.getAnnotations();
 		int cvac_cnt = 0;
 		for (Annotation currannot : annots) {
@@ -47,24 +41,40 @@ public class CVFieldBuilder implements FieldBuilder {
 				}
 			}
 		}
+		
+		
+				// Final CV acs, ancestors and synonyms
+		for (String cvac : cv_acs) {
+			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
+			String category = term.getOntology();
+			//System.out.println(cvac + ": " + category);
+			//if(term == null) System.err.println("problem with " + cvac);
+			//else { System.err.println(cvac);
+			List<String> ancestors = term.getAncestorAccession();
+			if(ancestors != null) 
+			  for (String ancestor : ancestors)
+                  cv_ancestors_acs.add(ancestor); // No duplicate: this is a Set
+			List<String> synonyms = term.getSynonyms();
+			if(synonyms != null) { //if (term.getOntology().startsWith("Go")) System.err.println("adding: " + synonyms.get(0));
+			  for (String synonym : synonyms)
+                  cv_synonyms.add(synonym.trim()); // No duplicate: this is a Set
+			      }
+		}
+		// Index generated sets
+		for (String ancestorac : cv_ancestors_acs) {
+			doc.addField("cv_ancestors_acs", ancestorac);
+			doc.addField("cv_ancestors", this.terminologyservice.findTerminologyByAccession(ancestorac).getName());
+		}
 
-	}
-
-	@Override
-	public <T> T build(Entry entry, Fields field, Class<T> requiredType) {
-
-		if (field.equals(Fields.CV_ACS))
-			return requiredType.cast(chrLoc);
-		if (field.equals(Fields.CV_NAMES))
-			return requiredType.cast(chrLocS);
-
-		throw new NextProtException("Unsupported type " + field);
+		for (String synonym : cv_synonyms) {
+			doc.addField("cv_synonyms", synonym);
+		}*/
 
 	}
 
 	@Override
 	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.CHR_LOC, Fields.CHR_LOC_S, Fields.GENE_BAND);
+		return null;
 	}
-*/
+
 }

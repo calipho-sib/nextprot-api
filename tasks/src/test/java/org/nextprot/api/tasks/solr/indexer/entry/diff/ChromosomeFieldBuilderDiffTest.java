@@ -1,4 +1,4 @@
-package org.nextprot.api.tasks.solr.indexer.entry.impl;
+package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -14,6 +14,7 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
@@ -28,7 +29,8 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		Iterator<String> entriesIt = entries.iterator();
 
 		int i = 0;
-		while(entriesIt.hasNext() && i < 100){
+		while(entriesIt.hasNext() && i < 1){
+			i++;
 			String entryName = entriesIt.next();
 			Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withChromosomalLocations());
 
@@ -45,8 +47,9 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		
 		Fields field = Fields.CHR_LOC;
 
-		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder(entry);
-		String chrLocValue = cfb.build(entry, field, String.class);
+		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
+		cfb.initializeBuilder(entry);
+		String chrLocValue = cfb.getFieldValue(field, String.class);
 		
 		String expectedValues = (String) getValueForFieldInCurrentSolrImplementation(entryName, field);
 		assertEquals(expectedValues, chrLocValue);
@@ -58,8 +61,10 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		
 		Fields field = Fields.CHR_LOC_S;
 
-		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder(entry);
-		Integer chrLocValue = cfb.build(entry, field, Integer.class);
+		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
+		cfb.initializeBuilder(entry);
+		
+		Integer chrLocValue = cfb.getFieldValue(field, Integer.class);
 		
 		Integer expectedValue = (Integer) getValueForFieldInCurrentSolrImplementation(entryName, field);
 		
@@ -73,8 +78,9 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		
 		Fields field = Fields.GENE_BAND;
 
-		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder(entry);
-		List<String> geneBandValues = cfb.build(entry, field, List.class);
+		ChromosomeFieldBuilder cfb = new ChromosomeFieldBuilder();
+		cfb.initializeBuilder(entry);
+		List<String> geneBandValues = cfb.getFieldValue(field, List.class);
 		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entryName, field);
 		
 		assertEquals(expectedValues.size(), 1); // Even it if maps to many genes we only take the 1st one
