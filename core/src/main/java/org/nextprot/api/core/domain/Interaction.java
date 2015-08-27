@@ -30,7 +30,24 @@ public class Interaction implements Serializable, IsoformSpecific {
 	private String evidenceCodeAC="ECO:0000353";
 	private String evidenceCodeName="physical interaction evidence used in manual assertion";
 
+	@ApiObjectField(description = "The quality (can be gold or silver)")
+	private String quality;
+
+	@ApiObjectField(description = "The interaction database")
+	private String evidenceXrefDB;
 	
+	@ApiObjectField(description = "The accession code of the interaction")
+	private String evidenceXrefAC;
+
+	@ApiObjectField(description = "The url of the interaction")
+	private String evidenceXrefURL;
+
+	@ApiObjectField(description = "The number of experiments")
+	private int numberOfExperiments;
+	
+	@ApiObjectField(description = "The interactants")
+	private List<Interactant> interactants;
+
 	public String getEvidenceCodeAC() {
 		return evidenceCodeAC;
 	}
@@ -55,26 +72,8 @@ public class Interaction implements Serializable, IsoformSpecific {
 		this.selfInteraction = selfInteraction;
 	}
 
-	@ApiObjectField(description = "The quality (can be gold or silver)")
-	private String quality;
-
-	@ApiObjectField(description = "The interaction database")
-	private String evidenceXrefDB;
-	
-	@ApiObjectField(description = "The accession code of the interaction")
-	private String evidenceXrefAC;
-
-	@ApiObjectField(description = "The url of the interaction")
-	private String evidenceXrefURL;
-
-	@ApiObjectField(description = "The number of experiments")
-	private int numberOfExperiments;
-	
-	@ApiObjectField(description = "The interactants")
-	private List<Interactant> interactants;
-
 	public Interaction() {
-		interactants = new ArrayList<Interactant>();
+		interactants = new ArrayList<>();
 	}
 	
 	public Long getEvidenceId() {
