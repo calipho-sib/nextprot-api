@@ -10,10 +10,17 @@ import org.junit.Test;
 public class StringUtilsTest {
 
     @Test
-    public void testCamelCase() {
+    public void testXCaseBuilderCamelCase() {
 
-        String cc = StringUtils.createXCaseBuilder("nextprot-anatomy-cv").camel(false).build();
+        String cc = StringUtils.createXCaseBuilder("nextprot-anatomy-cv").camel(false).format();
         Assert.assertEquals("NextprotAnatomyCv", cc);
+    }
+
+    @Test
+    public void testSnakeCase() {
+
+        String cc = StringUtils.camelToSnakeCase("NextprotAnatomyCv");
+        Assert.assertEquals("nextprot_anatomy_cv", cc);
     }
 
     @Test

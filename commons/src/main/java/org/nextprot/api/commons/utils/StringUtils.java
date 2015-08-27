@@ -11,24 +11,24 @@ public class StringUtils {
 	private static final Pattern NON_ASCIIDASH = Pattern.compile("[^\\w-]");
 	private static final Pattern WHITESPACE = Pattern.compile("\\s");
 
-	public static XCaseBuilder createXCaseBuilder(String string) {
+	public static StringCaseFormatter createXCaseBuilder(String string) {
 
-		return new XCaseBuilder(string);
+		return new StringCaseFormatter(string);
 	}
 
 	public static String toCamelCase(final String inputString, boolean avoidFirst) {
 
-		return new XCaseBuilder(inputString).camel(avoidFirst).build();
+		return new StringCaseFormatter(inputString).camel(avoidFirst).format();
 	}
 
 	public static String camelToKebabCase(String inputString){
 
-		return new XCaseBuilder(inputString).kebab().build();
+		return new StringCaseFormatter(inputString).kebab().format();
 	}
 
 	public static String camelToSnakeCase(String inputString) {
 
-		return new XCaseBuilder(inputString).snake().build();
+		return new StringCaseFormatter(inputString).snake().format();
 	}
 
 	/**
