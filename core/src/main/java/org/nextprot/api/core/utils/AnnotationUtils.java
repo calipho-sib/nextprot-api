@@ -176,18 +176,22 @@ public class AnnotationUtils {
 	 */
 	public static void convertType2EvidencesToProperties(List<Annotation> annotations) {
 		for (Annotation annot: annotations) {
+
+			List<AnnotationEvidence> evidencesToRemove = null;
+
 			if (annot.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
-				convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_DIFFERING_SEQUENCE);
+				evidencesToRemove = convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_DIFFERING_SEQUENCE);
 			} 
 			else if (annot.getAPICategory()==AnnotationApiModel.COFACTOR) {
 				convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_COFACTOR);
-				List<AnnotationEvidence> evidencesToRemove = convertEvidenceToExternalBioObject(annot);
-
-				annot.getEvidences().removeAll(evidencesToRemove);
+				evidencesToRemove = convertEvidenceToExternalBioObject(annot);
 			}
 			else if (annot.getAPICategory()==AnnotationApiModel.DISEASE) {
-				convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_ALTERNATIVE_DISEASE_TERM);
+				evidencesToRemove = convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_ALTERNATIVE_DISEASE_TERM);
 			}
+
+			if (evidencesToRemove != null)
+				annot.getEvidences().removeAll(evidencesToRemove);
 		}
 	}
 
