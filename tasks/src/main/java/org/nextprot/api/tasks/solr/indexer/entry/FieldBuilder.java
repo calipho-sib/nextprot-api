@@ -1,7 +1,9 @@
 package org.nextprot.api.tasks.solr.indexer.entry;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.nextprot.api.commons.exception.NPreconditions;
@@ -11,7 +13,7 @@ import org.nextprot.api.solr.index.EntryIndex.Fields;
 public abstract class FieldBuilder {
 
 	boolean initialized = false;
-	private Map<String, Object> fields = new HashMap<>();
+	private Map<Fields, Object> fields = new HashMap<>();
 
 	abstract public Collection<Fields> getSupportedFields();
 
@@ -20,8 +22,19 @@ public abstract class FieldBuilder {
 		initialized = true;
 	}
 	
-	protected void putField(Fields field, Object value){
-		this.fields.put(field.getName(), value);
+	protected void addField(Fields field, Object value){
+		NPreconditions.checkTrue(getSupportedFields().contains(field), "The field "+ field.name() + " is not supported in " + getClass().getName());
+
+		if(!fields.containsKey(field) && field.getClazz().equals(List.class)){
+			fields.put(field, new ArrayList<String>());
+		}
+
+		if(field.getClazz().equals(List.class)){
+			((List) fields.get(field)).add(value); //multiValued = true
+		}else {
+			this.fields.put(field, value);
+		}
+
 	}
 	
 	protected abstract void init(Entry entry);
@@ -31,7 +44,7 @@ public abstract class FieldBuilder {
 		//If it has not been yet initialized
 		NPreconditions.checkTrue(initialized, "The builder has not been yet initialized, invoke 'initializeBuilder' method");
 
-		return requiredType.cast(fields.get(field.getName()));
+		return requiredType.cast(fields.get(field));
 		
 	}
 

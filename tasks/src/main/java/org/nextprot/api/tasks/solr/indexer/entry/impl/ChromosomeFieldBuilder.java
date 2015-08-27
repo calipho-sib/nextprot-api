@@ -1,6 +1,5 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -18,26 +17,20 @@ public class ChromosomeFieldBuilder extends FieldBuilder {
 	@Override
 	protected void init(Entry entry) {
 
-		String chrLoc = null;
-		Integer chrLocS = -1;
-		List<String> geneBand = new ArrayList<>();
 
 		List<ChromosomalLocation> chrlocs = entry.getChromosomalLocations();
+		String chrLoc = null;
 		for (ChromosomalLocation currloc : chrlocs) {
 			if (chrLoc == null)
 				chrLoc = currloc.getChromosome();
 			String band = currloc.getBand();
 			if (band != null) {
 				chrLoc += band;
-				geneBand.add(band);
+				addField(Fields.GENE_BAND, band);
 			}
 		}
-		chrLocS = sortChr(chrLoc);
-		
-		super.putField(Fields.CHR_LOC, chrLoc);
-		super.putField(Fields.CHR_LOC_S, chrLocS);
-		super.putField(Fields.GENE_BAND, geneBand);
-
+		addField(Fields.CHR_LOC, chrLoc);
+		addField(Fields.CHR_LOC_S, sortChr(chrLoc));
 	}
 
 	@Override

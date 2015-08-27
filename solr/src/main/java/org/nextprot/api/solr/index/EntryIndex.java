@@ -187,16 +187,16 @@ public class EntryIndex extends IndexTemplate {
 	
 	
 	public enum Fields implements IndexField {
-		ID("id","id"), // public name for id is necessary for executeIdQuery() otherwise the id: of the query string is escaped
-		PROTEIN_EXISTENCE("protein_existence"),
-		PE_LEVEL("pe_level","pe"),			
-		PUBLI_CURATED_COUNT("publi_curated_count"),
-		PUBLI_LARGE_SCALE_COUNT("publi_large_scale_count"),
-		PUBLI_COMPUTED_COUNT("publi_computed_count"),
-		INFORMATIONAL_SCORE("informational_score"),
-		FILTERS("filters"),
-		EC_NAME("ec_name"),
-		FUNCTION_DESC("function_desc", List.class),
+		ID("id","id", String.class), // public name for id is necessary for executeIdQuery() otherwise the id: of the query string is escaped
+		PROTEIN_EXISTENCE("protein_existence", String.class),
+		PE_LEVEL("pe_level","pe", Integer.class),			
+		PUBLI_CURATED_COUNT("publi_curated_count", Integer.class),
+		PUBLI_LARGE_SCALE_COUNT("publi_large_scale_count", Integer.class),
+		PUBLI_COMPUTED_COUNT("publi_computed_count", Integer.class),
+		INFORMATIONAL_SCORE("informational_score", Float.class),
+		FILTERS("filters", String.class),
+		EC_NAME("ec_name", String.class),
+		FUNCTION_DESC("function_desc", List.class), //List<String>
 		CHR_LOC("chr_loc", String.class),
 		CHR_LOC_S("chr_loc_s", Long.class),
 		ISOFORM_NUM("isoform_num"),
@@ -214,6 +214,7 @@ public class EntryIndex extends IndexTemplate {
 		RECOMMENDED_GENE_NAMES_S("recommended_gene_names_s"),
 		ALTERNATIVE_GENE_NAMES("alternative_gene_names"),
 		ORF_NAMES("orf_names"),
+		REGION_NAME("region_name"),
 		FAMILY_NAMES("family_names"),
 		FAMILY_NAMES_S("family_names_s"),
 		ANNOTATIONS("annotations", List.class),

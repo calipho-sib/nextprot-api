@@ -1,53 +1,65 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
-
 @EntryFieldBuilder
-public class XrefFieldBuilder extends FieldBuilder{
-	
+public class XrefFieldBuilder extends FieldBuilder {
+
 	@Override
-	protected void init(Entry entry){
-		
-		/*
+	protected void init(Entry entry) {
+
+		String id = entry.getUniqueName();
+
 		// Xrefs
 		List<DbXref> xrefs = entry.getXrefs();
 		for (DbXref xref : xrefs) {
-			String acc =  xref.getAccession();
+			String acc = xref.getAccession();
 			String db = xref.getDatabaseName();
-			//System.err.println(db+":"+acc);
-			//if(db.equals("IntAct")) System.err.println("id " +  xref.getDbXrefId() + ": " +  xref.getPropertyValue("gene designation")); 
-			//if(db.equals("neXtProt")) {
-			//	if(acc.equals(id)) continue; // Internal stuff like NX_VG_10_51732257_248
-			//	String gen = xref.getPropertyValue("gene designation");
-			//	System.err.println("nonxeno: " + gen);
-			//}
-			if((db.equals("UniProt") || db.equals("neXtProt")) && !id.contains(acc)) { // wrong for nextprot gene designation -> protein name
+
+			// wrong for nextprot gene designation -> protein name
+			if ((db.equals("UniProt") || db.equals("neXtProt")) && !id.contains(acc)) {
 				String gen = xref.getPropertyValue("gene designation");
-				if(gen != null && gen != "-") { gen = gen.toUpperCase(); System.err.println(acc + ": " + gen); doc.addField("interactions", gen);}
-				//else System.err.println("no gene for: " + acc );
-				} 
-			if(db.equals("HPA") && !acc.contains("ENSG")) doc.addField("antibody", acc);
-			else if(db.equals("PeptideAtlas") || db.equals("SRMAtlas")) doc.addField("peptide", acc + ", " + db + ":" + acc);
-			else if(db.equals("Ensembl")) doc.addField("ensembl", acc);
-			else doc.addField("xrefs", acc + ", " + db + ":" + acc);
+				if (gen != null && gen != "-") {
+					gen = gen.toUpperCase();
+					addField(Fields.INTERACTIONS, gen);
+				}
+			}
+
+			if (db.equals("HPA") && !acc.contains("ENSG")) {
+				addField(Fields.ANTIBODY, acc);
+			} else if (db.equals("PeptideAtlas") || db.equals("SRMAtlas")) {
+				addField(Fields.PEPTIDE, acc + ", " + db + ":" + acc);
+			} else if (db.equals("Ensembl")) {
+				addField(Fields.ENSEMBL, acc);
+			} else
+				addField(Fields.XREFS, acc + ", " + db + ":" + acc);
+
 		}
-		*/
-				
+
+		for (Publication currpubli : entry.getPublications()) {
+			Set<DbXref> pubxrefs = currpubli.getDbXrefs();
+			for (DbXref pubxref : pubxrefs) {
+				String acc = pubxref.getAccession();
+				String db = pubxref.getDatabaseName();
+				addField(Fields.XREFS, acc + ", " + db + ":" + acc);
+			}
+		}
+
 	}
-	
-	
 
 	@Override
 	public Collection<Fields> getSupportedFields() {
-		return null;
+		return Arrays.asList(Fields.XREFS);
 	}
-	
-
 
 }
