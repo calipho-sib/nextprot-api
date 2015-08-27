@@ -14,7 +14,7 @@ public class BioComplexTest {
         BioComplex bioComplex = new BioComplex(new BioIsoform(), new BioIsoform(), new BioObjectExternal(BioObject.BioType.CHEMICAL));
 
         Assert.assertEquals(3, bioComplex.size());
-        Assert.assertEquals(BioObject.BioType.GROUP, bioComplex.getBioType());
+        Assert.assertEquals(BioObject.BioType.COMPLEX, bioComplex.getBioType());
         Assert.assertEquals(BioObject.ResourceType.MIXED, bioComplex.getResourceType());
     }
 }

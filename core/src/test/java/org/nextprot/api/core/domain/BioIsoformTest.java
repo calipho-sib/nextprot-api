@@ -15,7 +15,7 @@ public class BioIsoformTest {
         bioIsoform.setAccession("NX_P01308-1");
 
         Assert.assertEquals("neXtProt", bioIsoform.getDatabase());
-        Assert.assertEquals(BioObject.BioType.ISOFORM, bioIsoform.getBioType());
+        Assert.assertEquals(BioObject.BioType.PROTEIN_ISOFORM, bioIsoform.getBioType());
         Assert.assertEquals("NX_P01308-1", bioIsoform.getAccession());
         Assert.assertEquals(BioObject.ResourceType.INTERNAL, bioIsoform.getResourceType());
     }

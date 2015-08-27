@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
  */
 public abstract class BioObject<T> {
 
-    public enum BioType { CHEMICAL, PROTEIN, ISOFORM, GROUP }
+    public enum BioType { CHEMICAL, PROTEIN_ENTRY, PROTEIN_ISOFORM, COMPLEX }
     public enum ResourceType { INTERNAL, EXTERNAL, MIXED }
 
     private long id;

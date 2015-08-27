@@ -16,7 +16,7 @@ public class BioComplex extends BioObject<List<BioObject<?>>> {
 
     protected BioComplex(BioObject<?> bioObject, BioObject<?>... others) {
 
-        super(BioType.GROUP, deduceResourceType(bioObject, others));
+        super(BioType.COMPLEX, deduceResourceType(bioObject, others));
 
         this.bioObjects = new ArrayList<>();
 
