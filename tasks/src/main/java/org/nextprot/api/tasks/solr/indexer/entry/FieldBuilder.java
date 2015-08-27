@@ -22,6 +22,7 @@ public abstract class FieldBuilder {
 		initialized = true;
 	}
 	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected void addField(Fields field, Object value){
 		NPreconditions.checkTrue(getSupportedFields().contains(field), "The field "+ field.name() + " is not supported in " + getClass().getName());
 
