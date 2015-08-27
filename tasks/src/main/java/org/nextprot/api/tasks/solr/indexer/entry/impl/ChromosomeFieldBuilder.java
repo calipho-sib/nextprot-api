@@ -34,9 +34,9 @@ public class ChromosomeFieldBuilder extends FieldBuilder {
 		}
 		chrLocS = sortChr(chrLoc);
 		
-		super.put(Fields.CHR_LOC, chrLoc);
-		super.put(Fields.CHR_LOC_S, chrLocS);
-		super.put(Fields.GENE_BAND, geneBand);
+		super.putField(Fields.CHR_LOC, chrLoc);
+		super.putField(Fields.CHR_LOC_S, chrLocS);
+		super.putField(Fields.GENE_BAND, geneBand);
 
 	}
 

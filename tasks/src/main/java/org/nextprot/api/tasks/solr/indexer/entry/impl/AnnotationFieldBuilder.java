@@ -36,8 +36,8 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 			}
 		}
 		
-		super.put(Fields.ANNOTATIONS, annotations);
-		super.put(Fields.FUNCTION_DESC, functionDesc);
+		super.putField(Fields.ANNOTATIONS, annotations);
+		super.putField(Fields.FUNCTION_DESC, functionDesc);
 
 	}
 

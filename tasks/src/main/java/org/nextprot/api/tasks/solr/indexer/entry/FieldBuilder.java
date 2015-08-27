@@ -20,7 +20,7 @@ public abstract class FieldBuilder {
 		initialized = true;
 	}
 	
-	protected void put(Fields field, Object value){
+	protected void putField(Fields field, Object value){
 		this.fields.put(field.getName(), value);
 	}
 	

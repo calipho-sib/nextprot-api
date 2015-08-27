@@ -1,5 +1,6 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.nextprot.api.core.domain.Entry;
@@ -14,29 +15,36 @@ public class OverviewFieldBuilder extends FieldBuilder {
 	@Override
 	protected void init(Entry entry) {
 
-		/*
+		Overview ovv = entry.getOverview();
 		String id = entry.getUniqueName();
 
-		//Integer pe_level = 0;
-		doc.addField("id", id);
-		doc.addField("idsp0", id);
-		doc.addField("recommended_ac", id.substring(3));
-		Overview ovv = entry.getOverview(); 
-		doc.addField("protein_existence", ovv.getProteinExistence());
+		putField(Fields.ID, id);
+		putField(Fields.IDSP0, id);
+		putField(Fields.RECOMMENDED_AC, id.substring(3));
+		
+		
+		putField(Fields.PROTEIN_EXISTENCE, ovv.getProteinExistence());
 		int pe_level = ovv.getProteinExistenceLevel(); // Will be used to compute informational score
-		doc.addField("pe_level", pe_level);
-		//doc.addField("isoform_num", entry.getIsoforms().size());
+		putField(Fields.PE_LEVEL, pe_level);
+	
 		String precname = ovv.getMainProteinName();
-		//System.err.println(id + " " + precname);
-		doc.addField("recommended_name", precname);
-		doc.addField("recommended_name_s", precname);
-		 */
+		putField(Fields.RECOMMENDED_NAME, precname);
+		putField(Fields.RECOMMENDED_NAME_S, precname);
 
 	}
 
 	@Override
 	public Collection<Fields> getSupportedFields() {
-		return null;
+		return Arrays.asList(Fields.ID, 
+							 Fields.IDSP0, 
+							 Fields.RECOMMENDED_AC, 
+							 
+							 Fields.PROTEIN_EXISTENCE, 
+							 
+							 Fields.PE_LEVEL, 
+							 
+							 Fields.RECOMMENDED_NAME, 
+							 Fields.RECOMMENDED_NAME_S);
 	}
 
 }
