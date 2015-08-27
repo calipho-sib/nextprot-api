@@ -8,33 +8,37 @@ import java.util.Set;
 
 import org.nextprot.api.commons.utils.StringUtils;
 
-public class AnnotationPropertyApiModel {
+public class PropertyApiModel {
 	
 	private String dbName; // name of the property in db
 	private String apiName; // CAMEL CASE "base" name of property in api for both xml, json and ttl
 	private String datatype;
 	
-	public static Map<AnnotationApiModel,Set<AnnotationPropertyApiModel>> anno2props;
+	public static Map<AnnotationApiModel,Set<PropertyApiModel>> anno2props;
 	static {
-		anno2props=new HashMap<AnnotationApiModel,Set<AnnotationPropertyApiModel>>();
+		anno2props=new HashMap<AnnotationApiModel,Set<PropertyApiModel>>();
 		anno2props.put(AnnotationApiModel.PDB_MAPPING,
-				new HashSet<AnnotationPropertyApiModel>(Arrays.asList(
-						new AnnotationPropertyApiModel("resolution","resolution","double"), 
-						new AnnotationPropertyApiModel("method"))));
+				new HashSet<PropertyApiModel>(Arrays.asList(
+						new PropertyApiModel("resolution","resolution","double"), 
+						new PropertyApiModel("method"))));
 		anno2props.put(AnnotationApiModel.PEPTIDE_MAPPING,
-				new HashSet<AnnotationPropertyApiModel>(Arrays.asList(
-						new AnnotationPropertyApiModel("peptide name","peptideName","string"), 
-						new AnnotationPropertyApiModel("is proteotypic", "proteotypic", "boolean"))));
+				new HashSet<PropertyApiModel>(Arrays.asList(
+						new PropertyApiModel("peptide name","peptideName","string"), 
+						new PropertyApiModel("is proteotypic", "proteotypic", "boolean"))));
 		anno2props.put(AnnotationApiModel.SRM_PEPTIDE_MAPPING,
-				new HashSet<AnnotationPropertyApiModel>(Arrays.asList(
-						new AnnotationPropertyApiModel("peptide name","peptideName","string"), 
-						new AnnotationPropertyApiModel("is proteotypic", "proteotypic", "boolean"))));
+				new HashSet<PropertyApiModel>(Arrays.asList(
+						new PropertyApiModel("peptide name","peptideName","string"), 
+						new PropertyApiModel("is proteotypic", "proteotypic", "boolean"))));
+		anno2props.put(AnnotationApiModel.BINARY_INTERACTION,
+				new HashSet<PropertyApiModel>(Arrays.asList(
+						new PropertyApiModel("selfInteraction","selfInteraction","boolean")))) ; 
+						//new AnnotationPropertyApiModel("numberOfExperiments","numberOfExperiments","integer"))));
 		
 		// add other annotation - property links below
 		// ...
 	}
 		
-	public static Set<AnnotationPropertyApiModel> getPropertySet(AnnotationApiModel aModel) {
+	public static Set<PropertyApiModel> getPropertySet(AnnotationApiModel aModel) {
 		if (anno2props.containsKey(aModel)) {
 			return anno2props.get(aModel);
 		} else {
@@ -42,9 +46,9 @@ public class AnnotationPropertyApiModel {
 		}
 	}
 	
-	public static AnnotationPropertyApiModel getPropertyByDbName(AnnotationApiModel aModel, String dbName) {
+	public static PropertyApiModel getPropertyByDbName(AnnotationApiModel aModel, String dbName) {
 		if (! anno2props.containsKey(aModel)) return null;
-		for (AnnotationPropertyApiModel prop: anno2props.get(aModel)) {
+		for (PropertyApiModel prop: anno2props.get(aModel)) {
 			if (dbName.equals(prop.dbName)) return prop;
 		} 
 		return null;
@@ -54,7 +58,7 @@ public class AnnotationPropertyApiModel {
 	 * simplest c'tor
 	 * @param dbName
 	 */
-	public AnnotationPropertyApiModel(String dbName) {
+	public PropertyApiModel(String dbName) {
 		this.dbName=dbName;
 		this.apiName=dbName;
 		this.datatype="string";
@@ -66,7 +70,7 @@ public class AnnotationPropertyApiModel {
 	 * @param apiName
 	*/
 	 
-	public AnnotationPropertyApiModel(String dbName, String apiName,String datatype) {
+	public PropertyApiModel(String dbName, String apiName,String datatype) {
 		this.dbName=dbName;
 		this.apiName=apiName;
 		this.datatype=datatype;

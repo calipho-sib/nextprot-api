@@ -307,7 +307,7 @@ public class AnnotationEvidence implements Serializable {
 	 */
 	public Set<String> getPropertiesNames() {
 		// do an intersection between properties we want to show and properties we have
-		Set<String> propsOk = new HashSet<String>(Arrays.asList("expressionLevel","antibodies acc"));
+		Set<String> propsOk = new HashSet<String>(Arrays.asList("expressionLevel","antibodies acc", "numberOfExperiments"));
 		propsOk.retainAll(propertiesMap.keySet());
 		// return the intersection
 		return propsOk;
@@ -315,7 +315,7 @@ public class AnnotationEvidence implements Serializable {
 	
 	/**
 	 * 
-	 * @param name a proprty name
+	 * @param name a property name
 	 * @return a string representing the property value associated to name
 	 */
 	public String getPropertyValue(String name) {

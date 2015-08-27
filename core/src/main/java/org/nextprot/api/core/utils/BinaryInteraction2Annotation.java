@@ -67,14 +67,24 @@ public class BinaryInteraction2Annotation {
 		evi.setResourceId(inter.getEvidenceResourceId());
 		evi.setResourceType("database");									
 		
-		evi.setProperties(new ArrayList<AnnotationEvidenceProperty>()); 
+		// - - - - - - - - - - - - - - - - - - - - 
+		// evidence property: number of experiments
+		// - - - - - - - - - - - - - - - - - - - - 
+		AnnotationEvidenceProperty evp = new AnnotationEvidenceProperty();
+		evp.setEvidenceId(evp.getEvidenceId());
+		evp.setPropertyName("numberOfExperiments");
+		evp.setPropertyValue(""+inter.getNumberOfExperiments());
+		List<AnnotationEvidenceProperty> evProps = new ArrayList<>();
+		evProps.add(evp);
+		evi.setProperties(evProps); 
+		
 		evidences.add(evi);
 		annot.setEvidences(evidences);
 
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation properties
 		// - - - - - - - - - - - - - - - - - - - - 
-		// interactants are represented as properties
+		// annotation property: interactant
 		// - - - - - - - - - - - - - - - - - - - - 
 		List<AnnotationProperty> anProps = new ArrayList<AnnotationProperty>();
 		AnnotationProperty p1 = new AnnotationProperty();
@@ -91,13 +101,13 @@ public class BinaryInteraction2Annotation {
 		}
 		anProps.add(p1);
 		// - - - - - - - - - - - - - - - - - - - - 
-		// number of experiments
+		// annotation property: self interaction
 		// - - - - - - - - - - - - - - - - - - - - 
-		AnnotationProperty p2 = new AnnotationProperty();
-		p2.setAnnotationId(annotId);
-		p2.setName("numberOfExperiments");
-		p2.setValue(""+inter.getNumberOfExperiments());
-		anProps.add(p2);
+		AnnotationProperty p3 = new AnnotationProperty();
+		p3.setAnnotationId(annotId);
+		p3.setName("selfInteraction");
+		p3.setValue(""+inter.isSelfInteraction());
+		anProps.add(p3);
 		annot.setProperties(anProps);
 		
 		// - - - - - - - - - - - - - - - - - - - - 

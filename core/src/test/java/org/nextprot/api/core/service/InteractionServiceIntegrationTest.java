@@ -81,9 +81,11 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 			assertTrue(evi.getQualityQualifier().equals("GOLD") || evi.getQualityQualifier().equals("SILVER"));	
 			assertTrue(evi.getResourceAccession().contains("EBI-")  && evi.getResourceAccession().contains("1569435") );
 			assertTrue(evi.getResourceDb().equals("IntAct"));
-			 
+			
+			if (annot.getEvidences().get(0).getPropertyValue("numberOfExperiments") != null) numberOfExperiments++;
+			
 			for (AnnotationProperty prop: annot.getProperties()) {
-				if (prop.getName().equals("numberOfExperiments")) numberOfExperiments++;
+				//if (prop.getName().equals("numberOfExperiments")) numberOfExperiments++;
 				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_ENTRY_AC)) entryacs++;
 				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_ISO_AC)) isoacs++;
 				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) resourceinternalrefs++;				

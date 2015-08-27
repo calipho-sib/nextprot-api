@@ -8,5 +8,3 @@
 #parse("turtle/schema-database-list.ttl.vm")
 #parse("turtle/schema-datasource-list.ttl.vm")
 #parse("turtle/schema-experimental-context.ttl.vm")
-#parse("turtle/schema-interaction.ttl.vm")
-#parse("turtle/schema-mappings.ttl.vm")

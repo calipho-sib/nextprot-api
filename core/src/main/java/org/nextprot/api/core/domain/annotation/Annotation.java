@@ -2,7 +2,7 @@ package org.nextprot.api.core.domain.annotation;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
 import org.nextprot.api.core.domain.IsoformSpecificity;
@@ -189,14 +189,14 @@ public class Annotation implements Serializable, IsoformSpecific {
 	/*
 	 * returns API model of a property of this annotation 
 	 */
-	public AnnotationPropertyApiModel getPropertyApiModel(String dbName) {
+	public PropertyApiModel getPropertyApiModel(String dbName) {
 		return this.apiCategory.getPropertyByDbName(dbName);
 	}
 	
 	/*
 	 * returns API model of a property of this annotation 
 	 */
-	public AnnotationPropertyApiModel getPropertyApiModel(AnnotationProperty prop) {
+	public PropertyApiModel getPropertyApiModel(AnnotationProperty prop) {
 		return this.apiCategory.getPropertyByDbName(prop.getName());
 	}
 
