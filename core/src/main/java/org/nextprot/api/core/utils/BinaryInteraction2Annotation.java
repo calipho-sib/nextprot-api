@@ -138,10 +138,15 @@ public class BinaryInteraction2Annotation {
 
 	static BioObject newBioObject(Interactant interactant) {
 
-		BioObject be = (interactant.isIsoform()) ? new BioIsoform() : new BioEntry();
+		BioObject be;
+
+		if (interactant.isNextprot())
+			be = (interactant.isIsoform()) ? new BioIsoform() : new BioEntry();
+		else
+			be = new BioObjectExternal((interactant.isIsoform()) ? BioObject.BioType.PROTEIN_ISOFORM : BioObject.BioType.PROTEIN_ENTRY);
 
 		be.setId(interactant.getXrefId());
-		be.setAccession(interactant.getNextprotAccession());
+		be.setAccession((interactant.isNextprot()) ? interactant.getNextprotAccession() : interactant.getAccession());
 		be.setDatabase(interactant.getDatabase());
 
 		return be;
