@@ -33,7 +33,7 @@ public class OverviewFieldBuilder extends FieldBuilder {
 
 	@Override
 	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.ID, Fields.IDSP0, Fields.RECOMMENDED_AC, Fields.PROTEIN_EXISTENCE, Fields.RECOMMENDED_NAME, Fields.RECOMMENDED_NAME_S);
+		return Arrays.asList(Fields.ID, Fields.IDSP0, Fields.PE_LEVEL, Fields.RECOMMENDED_AC, Fields.PROTEIN_EXISTENCE, Fields.RECOMMENDED_NAME, Fields.RECOMMENDED_NAME_S);
 	}
 
 }

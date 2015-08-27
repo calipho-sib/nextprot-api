@@ -18,22 +18,11 @@ public class XrefFieldBuilder extends FieldBuilder {
 	@Override
 	protected void init(Entry entry) {
 
-		String id = entry.getUniqueName();
-
 		// Xrefs
 		List<DbXref> xrefs = entry.getXrefs();
 		for (DbXref xref : xrefs) {
 			String acc = xref.getAccession();
 			String db = xref.getDatabaseName();
-
-			// wrong for nextprot gene designation -> protein name
-			if ((db.equals("UniProt") || db.equals("neXtProt")) && !id.contains(acc)) {
-				String gen = xref.getPropertyValue("gene designation");
-				if (gen != null && gen != "-") {
-					gen = gen.toUpperCase();
-					addField(Fields.INTERACTIONS, gen);
-				}
-			}
 
 			if (db.equals("HPA") && !acc.contains("ENSG")) {
 				addField(Fields.ANTIBODY, acc);
@@ -59,7 +48,7 @@ public class XrefFieldBuilder extends FieldBuilder {
 
 	@Override
 	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.XREFS);
+		return Arrays.asList(Fields.XREFS, Fields.ENSEMBL, Fields.ANTIBODY);
 	}
 
 }

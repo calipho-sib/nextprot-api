@@ -64,7 +64,7 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 
 	@Override
 	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.INFORMATIONAL_SCORE);
+		return Arrays.asList(Fields.PUBLICATIONS, Fields.PUBLI_COMPUTED_COUNT, Fields.PUBLI_CURATED_COUNT, Fields.PUBLI_LARGE_SCALE_COUNT, Fields.INFORMATIONAL_SCORE);
 	}
 
 }

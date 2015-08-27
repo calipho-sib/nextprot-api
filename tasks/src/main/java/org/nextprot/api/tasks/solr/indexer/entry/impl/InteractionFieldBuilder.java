@@ -1,7 +1,10 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
@@ -14,6 +17,25 @@ public class InteractionFieldBuilder extends FieldBuilder{
 	@Override
 	protected void init(Entry entry){
 
+		String id = entry.getUniqueName();
+		
+		//Gets interactions using xrefs
+		List<DbXref> xrefs = entry.getXrefs();
+		for (DbXref xref : xrefs) {
+			String acc = xref.getAccession();
+			String db = xref.getDatabaseName();
+
+			// wrong for nextprot gene designation -> protein name
+			if ((db.equals("UniProt") || db.equals("neXtProt")) && !id.contains(acc)) {
+				String gen = xref.getPropertyValue("gene designation");
+				if (gen != null && gen != "-") {
+					gen = gen.toUpperCase();
+					addField(Fields.INTERACTIONS, gen);
+				}
+			}
+		}
+		
+		
 		/*
 		List<Interaction> interactions = entry.getInteractions();
 		//System.err.println(interactions.size() + " interactions");
@@ -36,15 +58,14 @@ public class InteractionFieldBuilder extends FieldBuilder{
 			    	 //System.err.println("propval: " + xref1.getPropertyValue("gene designation"));
 			}
 			//doc.addField("interactions", interaction.getAccession());
-		}
-		*/
-
+		}*/
+		
 				
 	}
 	
 	@Override
 	public Collection<Fields> getSupportedFields() {
-		return null;
+		return Arrays.asList(Fields.INTERACTIONS);
 	}
 	
 
