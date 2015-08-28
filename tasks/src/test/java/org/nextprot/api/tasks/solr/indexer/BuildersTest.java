@@ -19,7 +19,7 @@ public class BuildersTest extends CoreUnitBaseTest {
 		
 		StringBuilder sb = new StringBuilder();
 		for(Fields f : Fields.values()){
-			if(!map.containsKey(f)){
+			if(!f.equals(Fields.SCORE) && !f.equals(Fields.TEXT) && !map.containsKey(f)){
 				sb.append(f + ",");
 			}
 		}

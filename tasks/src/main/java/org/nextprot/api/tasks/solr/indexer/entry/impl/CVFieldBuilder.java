@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.TerminologyService;
@@ -25,17 +26,12 @@ public class CVFieldBuilder extends FieldBuilder {
 		Set <String> cv_acs = new HashSet<String>();
 		Set <String> cv_ancestors_acs = new HashSet<String>();
 		Set <String> cv_synonyms = new HashSet<String>();
-		Set <String> cv_tissues = new HashSet<String>();
 
 		List<Annotation> annots = entry.getAnnotations();
 		int cvac_cnt = 0;
 		for (Annotation currannot : annots) {
 			String category = currannot.getCategory();
-			if (category.equals("tissue specificity")) {
-				// No duplicates this is a Set
-				cv_tissues.add(currannot.getCvTermAccessionCode()); 
-				cv_tissues.add(currannot.getCvTermName()); 
-			} else {
+			if(!category.equals("tissue specificity")) {
 				String cvac = currannot.getCvTermAccessionCode();
 				if (cvac != null) {
 					addField(Fields.CV_ACS, cvac);
@@ -46,8 +42,12 @@ public class CVFieldBuilder extends FieldBuilder {
 			}
 		}
 		
+		for (Family family : entry.getOverview().getFamilies()) { 
+			addField(Fields.CV_ACS, family.getAccession());
+			cv_acs.add(family.getAccession());
+		}
 		
-				// Final CV acs, ancestors and synonyms
+		// Final CV acs, ancestors and synonyms
 		for (String cvac : cv_acs) {
 			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
 			String category = term.getOntology();
@@ -91,6 +91,9 @@ public class CVFieldBuilder extends FieldBuilder {
 			   }
 		}
 		addField(Fields.EC_NAME, ec_names);
+		
+		
+		
 	}
 
 
