@@ -22,3 +22,14 @@
 		</xref-list>
 	#end
 </publication>
+<citation type="$publication.publicationType.toLowerCase()" date="$publication.getPublicationYear()" name="#if($publication.cvJournal.name)$publication.cvJournal.name#end" volume="$publication.volume" first="$publication.firstPage" last="$publication.lastPage">
+	<title>
+	    <![CDATA[$publication.title]]>
+	</title>
+	<authorList>
+    	<consortium name="The C. elegans sequencing consortium"/>
+	</authorList>
+
+	<dbReference type="PubMed" id="$publication.publicationId"/>
+	<dbReference type="DOI" id="10.1126/science.282.5396.2012"/>
+</citation>
