@@ -12,6 +12,16 @@ import org.nextprot.api.solr.index.EntryIndex.Fields;
 
 public abstract class FieldBuilder {
 
+	boolean isGold = false;
+	
+	public boolean isGold() {
+		return isGold;
+	}
+
+	public void setGold(boolean isGold) {
+		this.isGold = isGold;
+	}
+
 	boolean initialized = false;
 	private Map<Fields, Object> fields = new HashMap<>();
 
