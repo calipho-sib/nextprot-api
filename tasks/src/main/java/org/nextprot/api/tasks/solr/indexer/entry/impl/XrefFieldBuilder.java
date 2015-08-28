@@ -26,13 +26,12 @@ public class XrefFieldBuilder extends FieldBuilder {
 
 			if (db.equals("HPA") && !acc.contains("ENSG")) {
 				addField(Fields.ANTIBODY, acc);
-			} else if (db.equals("PeptideAtlas") || db.equals("SRMAtlas")) {
-				addField(Fields.PEPTIDE, acc + ", " + db + ":" + acc);
 			} else if (db.equals("Ensembl")) {
 				addField(Fields.ENSEMBL, acc);
-			} else
+			} else if (!(db.equals("PeptideAtlas") || db.equals("SRMAtlas"))) {
 				addField(Fields.XREFS, acc + ", " + db + ":" + acc);
-
+			}
+	
 		}
 
 		for (Publication currpubli : entry.getPublications()) {

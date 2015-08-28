@@ -12,7 +12,7 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({"dev", "cache"})
+@ActiveProfiles({"dev"})
 public class SolrDiffTest extends CoreUnitBaseTest {
 
 	HttpSolrServer solr = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npentries1");

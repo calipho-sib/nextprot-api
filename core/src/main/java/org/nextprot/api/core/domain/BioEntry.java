@@ -5,7 +5,9 @@ package org.nextprot.api.core.domain;
  */
 public class BioEntry extends BioObject<Entry> {
 
-    public BioEntry() {
+	private static final long serialVersionUID = -4467381395705179479L;
+
+	public BioEntry() {
 
         super(BioType.PROTEIN_ENTRY, ResourceType.INTERNAL);
 

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @ApiObject(name = "peptide", description = "The peptide mapping")
+@Deprecated
 public class PeptideMapping implements Serializable, IsoformSpecific {
 
 	private static final long serialVersionUID = 7304469815021872304L;

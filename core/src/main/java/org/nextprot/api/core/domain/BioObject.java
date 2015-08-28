@@ -1,5 +1,7 @@
 package org.nextprot.api.core.domain;
 
+import java.io.Serializable;
+
 import com.google.common.base.Preconditions;
 
 /**
@@ -7,9 +9,11 @@ import com.google.common.base.Preconditions;
  *
  * Created by fnikitin on 26/08/15.
  */
-public abstract class BioObject<T> {
+public abstract class BioObject<T> implements Serializable{
 
-    public enum BioType { CHEMICAL, PROTEIN_ENTRY, PROTEIN_ISOFORM, COMPLEX }
+	private static final long serialVersionUID = -7804620350625047683L;
+
+	public enum BioType { CHEMICAL, PROTEIN_ENTRY, PROTEIN_ISOFORM, COMPLEX }
     public enum ResourceType { INTERNAL, EXTERNAL, MIXED }
 
     private long id;
