@@ -17,6 +17,9 @@ public class InteractionFieldBuilder extends FieldBuilder{
 	@Override
 	protected void init(Entry entry){
 
+		
+		//WAIT FOR BIO OBJECTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		
 		String id = entry.getUniqueName();
 		
 		//Gets interactions using xrefs
@@ -35,6 +38,7 @@ public class InteractionFieldBuilder extends FieldBuilder{
 			}
 		}
 		
+		//WAIT FOR BIO OBJECTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		
 		/*
 		List<Interaction> interactions = entry.getInteractions();
@@ -60,6 +64,7 @@ public class InteractionFieldBuilder extends FieldBuilder{
 			//doc.addField("interactions", interaction.getAccession());
 		}*/
 		
+		//WAIT FOR BIO OBJECTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				
 	}
 	

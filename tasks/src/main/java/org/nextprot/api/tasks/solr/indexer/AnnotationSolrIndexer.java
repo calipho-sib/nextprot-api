@@ -39,6 +39,11 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 			doc.addField(f.getName(), o);
 		}
 
+		//Reset all fields builders
+		for (Fields f : Fields.values()) {
+			fieldsBuilderMap.get(f).reset();
+		}
+
 		return doc;
 	}
 

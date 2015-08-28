@@ -4,15 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Test;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationFieldBuilder;
@@ -28,26 +25,16 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	@Test
 	public void testAnnotationsAndFunctionalDescriptions() {
 
-		Set<String> entries = masterIdentifierService.findUniqueNames();
-		Iterator<String> entriesIt = entries.iterator();
-
-		int i = 0;
-		while (entriesIt.hasNext() && i < 10) {
-
-			String entryName = entriesIt.next();
-			System.out.print(i++);
-			System.out.println(entryName);
-
-			Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withAnnotations());
-
-			//testAnnotations(entryName, entry);
-			testFunctionalDesc(entryName, entry);
+		for(int i=0; i < 1; i++){
+			Entry entry = getEntry(i);
+			System.out.println(entry.getUniqueName());
+			testFunctionalDesc(entry);
+			//testAnnotations(entry);
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
-	public void testFunctionalDesc(String entryName, Entry entry) {
+	public void testFunctionalDesc(Entry entry) {
 
 		Fields field = Fields.FUNCTION_DESC;
 
@@ -55,7 +42,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 		afb.initializeBuilder(entry);
 		List<String> functionalDescriptions = afb.getFieldValue(field, List.class);
 
-		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entryName, field);
+		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), field);
 
 		if (!((expectedValues == null) && (functionalDescriptions == null))) {
 			assertEquals(functionalDescriptions.size(), expectedValues.size());
@@ -67,7 +54,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void testAnnotations(String entryName, Entry entry) {
+	public void testAnnotations(Entry entry) {
 
 		Fields field = Fields.ANNOTATIONS;
 
@@ -75,7 +62,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 		afb.initializeBuilder(entry);
 
 		List<String> annotations = afb.getFieldValue(field, List.class);
-		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entryName, field);
+		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), field);
 		List<String> expectedValues = new ArrayList<String>();
 
 		for (String s : expectedRawValues) {

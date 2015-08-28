@@ -18,8 +18,10 @@ public abstract class FieldBuilder {
 	abstract public Collection<Fields> getSupportedFields();
 
 	public final void initializeBuilder(Entry entry) {
-		init(entry);
-		initialized = true;
+		if(!initialized){
+			init(entry);
+			initialized = true;
+		}
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -47,6 +49,11 @@ public abstract class FieldBuilder {
 
 		return requiredType.cast(fields.get(field));
 
+	}
+	
+	public final void reset() {
+		initialized = false;
+		fields.clear();
 	}
 
 }
