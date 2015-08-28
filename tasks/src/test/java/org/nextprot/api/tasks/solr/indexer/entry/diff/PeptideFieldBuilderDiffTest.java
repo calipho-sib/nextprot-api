@@ -54,28 +54,27 @@ public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 		Set<String> peptideSet = new TreeSet<String>(peptides);
 		Set<String> rawPeptideSet = new TreeSet<String>(rawPeptides);
 
-		System.out.println(rawPeptideSet.size());
-		System.out.println(peptideSet.size());
-		
-		rawPeptideSet.removeAll(peptideSet);
-		
-		System.out.println(rawPeptideSet);
-
-		//Assert.assertEquals(peptideSet.size(), rawPeptideSet.size());
-		//Assert.assertEquals(peptideSet, rawPeptideSet);
-
-
-	}
-	
-	
-	static Set<String> cleanRawData(List<String> expectedPeptides) {
-		Set<String> cleanedData = new HashSet<String>();
-		for(String peptide : expectedPeptides){
-			String pepAux = peptide.replaceAll("PeptideAtlas:", "");
-			cleanedData.add(pepAux.substring(0, pepAux.indexOf(",")));
+		//  On Kant there are some PubMed Ids taken as well, why? Does this make sense? See with PAM
+		/*NX_Q96I99
+		265
+		262
+		[PubMed:19413330, PubMed:21139048, PubMed:23236377]
+		*/	
+		if(rawPeptideSet.size() > peptideSet.size()){
+			rawPeptideSet.removeAll(peptideSet);
+			String msg = "Raw peptides contains more data: " + rawPeptideSet;
+			System.err.println(msg); Assert.fail(msg);
 		}
-		return cleanedData;
+
+		if(peptideSet.size() > rawPeptides.size()){
+			peptideSet.removeAll(rawPeptideSet);
+			String msg = "Peptides contains more data: " + peptideSet;
+			System.err.println(msg); Assert.fail(msg);
+		}
+		
+		Assert.assertEquals(peptideSet.size(), rawPeptideSet.size());
+		Assert.assertEquals(peptideSet, rawPeptideSet);
+
 	}
-
-
+	
 }
