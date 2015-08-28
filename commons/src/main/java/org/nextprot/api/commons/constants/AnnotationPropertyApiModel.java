@@ -1,25 +1,32 @@
 package org.nextprot.api.commons.constants;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import org.nextprot.api.commons.utils.StringUtils;
+
+import java.util.*;
 
 public class AnnotationPropertyApiModel {
 	
 	private String dbName; // name of the property in db
-	private String apiName; // "base" name of property in api for both xml, json and ttl
+	private String apiName; // CAMEL CASE "base" name of property in api for both xml, json and ttl
 	private String datatype;
 	
 	public static Map<AnnotationApiModel,Set<AnnotationPropertyApiModel>> anno2props;
 	static {
-		anno2props=new HashMap<AnnotationApiModel,Set<AnnotationPropertyApiModel>>();
+		anno2props=new HashMap<>();
 		anno2props.put(AnnotationApiModel.PDB_MAPPING,
-				new HashSet<AnnotationPropertyApiModel>(Arrays.asList(
+				new HashSet<>(Arrays.asList(
 						new AnnotationPropertyApiModel("resolution","resolution","double"), 
 						new AnnotationPropertyApiModel("method"))));
-		// add other links annotation - property links below
+		anno2props.put(AnnotationApiModel.PEPTIDE_MAPPING,
+				new HashSet<>(Arrays.asList(
+						new AnnotationPropertyApiModel("peptide name","peptideName","string"), 
+						new AnnotationPropertyApiModel("is proteotypic", "proteotypic", "boolean"))));
+		anno2props.put(AnnotationApiModel.SRM_PEPTIDE_MAPPING,
+				new HashSet<>(Arrays.asList(
+						new AnnotationPropertyApiModel("peptide name","peptideName","string"), 
+						new AnnotationPropertyApiModel("is proteotypic", "proteotypic", "boolean"))));
+		
+		// add other annotation - property links below
 		// ...
 	}
 		
@@ -64,14 +71,53 @@ public class AnnotationPropertyApiModel {
 	public String getDbName() {
 		return dbName;
 	}
-	public String getApiName() {
+		
+	/*
+	 * for ttl format
+	 */
+	public String getCamelName() {
 		return apiName;
 	}		
+
+	/*
+	 * for XML format
+	 */
+	public String getKebabName() {
+		return StringUtils.camelToKebabCase(apiName);
+	}		
+	
 	public String getDataType() {
 		return datatype;
 	}
 	public String getRdfDataType() {
 		return getDataType();
+	}
+	
+	
+	
+	/** 
+	 * useful to rework / format the value provided in some special cases 
+	 * @param value
+	 * @return
+	 */
+	public String formatValue(String value) {
+		
+		if (value!=null && datatype.equals("boolean")) {
+			
+			String v2 = value.toLowerCase();
+			if (v2.startsWith("y") || v2.equals("1") || value.startsWith("t")) { 
+				return "true"; 
+			} else if (v2.startsWith("n") || v2.equals("0") || value.startsWith("f")) {
+				return "false";
+			} else {
+				return value;
+			}
+			
+			
+		} else {
+			return value; 
+		}
+		
 	}
 		
 

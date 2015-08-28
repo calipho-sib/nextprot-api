@@ -1,24 +1,19 @@
 package org.nextprot.api.web.controller;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.export.ExportUtils;
-import org.nextprot.api.core.service.export.format.NPFileFormat;
-import org.nextprot.api.core.service.export.format.EntryBlocks;
-import org.nextprot.api.rdf.service.SparqlEndpoint;
-import org.nextprot.api.rdf.service.SparqlService;
+import org.nextprot.api.core.service.export.format.EntryBlock;
+import org.nextprot.api.core.service.export.format.FileFormat;
 import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
-import org.nextprot.api.user.service.UserQueryService;
 import org.nextprot.api.web.service.ExportService;
-import org.nextprot.api.web.service.QueryBuilderService;
 import org.nextprot.api.web.service.SearchService;
+import org.nextprot.api.web.service.impl.writer.NPEntryStreamWriter;
+import org.nextprot.api.web.service.impl.writer.NPEntryWriterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -30,8 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.util.*;
 import java.util.concurrent.Future;
 
@@ -46,8 +39,6 @@ import java.util.concurrent.Future;
 // "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
 public class ExportController {
 
-    private static final Log Logger = LogFactory.getLog(ExportController.class);
-
     @Autowired
     private ExportService exportService;
 
@@ -57,19 +48,15 @@ public class ExportController {
     @Autowired
     private UserProteinListService proteinListService;
 
-    @Autowired
-    private QueryBuilderService queryBuilderService;
-
     @ApiMethod(path = "/export/entries/all", verb = ApiVerb.GET, description = "Exports all entries", produces = {MediaType.APPLICATION_XML_VALUE, "text/turtle"})
     @RequestMapping("/export/entries/all")
     public void exportAllEntries(HttpServletResponse response, HttpServletRequest request) {
 
-        NPFileFormat format = NPFileFormat.valueOf(request);
+        FileFormat format = FileFormat.valueOf(request);
         response.setHeader("Content-Disposition", "attachment; filename=\"NXEntries." + format.getExtension() + "\"");
 
         List<Future<File>> futures = exportService.exportAllEntries(format);
-        ExportUtils.printOutput(new LinkedList<Future<File>>(futures), response);
-
+        ExportUtils.printOutput(new LinkedList<>(futures), response);
     }
 
     @ApiMethod(path = "/export/entries/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Exports the whole chromosome", produces = {MediaType.APPLICATION_XML_VALUE, "text/turtle"})
@@ -77,12 +64,11 @@ public class ExportController {
     public void exportEntriesByChromosome(HttpServletResponse response, HttpServletRequest request,
                                           @ApiQueryParam(name = "chromosome", description = "The number of the chromosome. For example, the chromosome 21", allowedvalues = {"21"}) @PathVariable("chromosome") String chromosome) {
 
-        NPFileFormat format = NPFileFormat.valueOf(request);
+        FileFormat format = FileFormat.valueOf(request);
         response.setHeader("Content-Disposition", "attachment; filename=\"NXChromosome" + chromosome + "." + format.getExtension() + "\"");
 
-        List<Future<File>> futures = exportService.exportEntriesOfChromossome(chromosome, format);
-        ExportUtils.printOutput(new LinkedList<Future<File>>(futures), response);
-
+        List<Future<File>> futures = exportService.exportEntriesOfChromosome(chromosome, format);
+        ExportUtils.printOutput(new LinkedList<>(futures), response);
     }
 
     @ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries from a list")
@@ -119,17 +105,6 @@ public class ExportController {
         }
     }
 
-    @Autowired
-    private UserQueryService userQueryService;
-    @Autowired
-    private SparqlService sparqlService;
-    @Autowired
-    private SparqlEndpoint sparqlEndpoint;
-    @Autowired
-    private SolrService solrService;
-    @Autowired
-    private SolrService queryService;
-
     @RequestMapping(value = "/export/entries/{view}", method = {RequestMethod.GET})
     public void streamEntriesSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query,
                                      @RequestParam(value = "listId", required = false) String listId, @RequestParam(value = "queryId", required = false) String queryId,
@@ -138,8 +113,8 @@ public class ExportController {
                                      @RequestParam(value = "quality", required = false) String quality, @RequestParam(value = "limit", required = false) Integer limit, Model model) {
         QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort, order, limit);
 
-        NPFileFormat format = NPFileFormat.valueOf(request);
-        exportEntries(format, response, view, qr);
+        FileFormat format = FileFormat.valueOf(request);
+        streamEntries(format, response, view, qr);
     }
 
     @RequestMapping(value = "/export/entries", method = {RequestMethod.GET})
@@ -150,55 +125,60 @@ public class ExportController {
                               @RequestParam(value = "quality", required = false) String quality, @RequestParam(value = "limit", required = false) Integer limit, Model model) {
         QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, filter, quality, sort, order, limit);
 
-        NPFileFormat format = NPFileFormat.valueOf(request);
-        exportEntries(format, response, "entry", qr);
+        FileFormat format = FileFormat.valueOf(request);
+        streamEntries(format, response, "entry", qr);
     }
 
-    private void exportEntries(NPFileFormat format, HttpServletResponse response, String viewName, QueryRequest queryRequest) {
+    private List<String> getAccessions(QueryRequest queryRequest) {
 
-        Writer writer = null;
+        Set<String> accessionsSet = searchService.getAccessions(queryRequest);
+        List<String> accessions;
+
+        if (queryRequest.getSort() != null || queryRequest.getOrder() != null) {
+            //TODO This is very slow and is highly memory intensive please review the way of sorting this using only the asking for ids. See the SearchServiceTest
+            accessions = searchService.sortAccessions(queryRequest, accessionsSet);
+        } else {
+            accessions = new ArrayList<>(accessionsSet);
+            Collections.sort(accessions);
+        }
+
+        return accessions;
+    }
+
+    private void streamEntries(FileFormat format, HttpServletResponse response, String viewName, QueryRequest queryRequest) {
+
+        setResponseHeader(format, viewName, queryRequest, response);
+        List<String> entries = getAccessions(queryRequest);
+
+        NPEntryStreamWriter writer = null;
 
         try {
-            writer = newStreamWriter(format, viewName, queryRequest, response);
+            writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream());
 
-            Set<String> accessionsSet = searchService.getAccessions(queryRequest);
-            List<String> accessions;
-
-            if (queryRequest.getSort() != null || queryRequest.getOrder() != null) {
-                //TODO This is very slow and is highly memory intensive please review the way of sorting this using only the asking for ids. See the SearchServiceTest
-                accessions = searchService.sortAccessions(queryRequest, accessionsSet);
-            } else {
-                accessions = new ArrayList<>(accessionsSet);
-                Collections.sort(accessions);
-            }
-
-            exportService.streamResults(format, writer, viewName, accessions);
+            exportService.streamResults(writer, viewName, entries);
         } catch (IOException e) {
-
             e.printStackTrace();
-            throw new NextProtException("Failed to stream "+format.getExtension());
+            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
         } finally {
             try {
                 if (writer != null) writer.close();
             } catch (IOException e) {
                 e.printStackTrace();
-                throw new NextProtException("Failed to close stream "+format.getExtension());
+                throw new NextProtException("closing "+format.getExtension()+" stream failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
             }
         }
     }
 
-    private Writer newStreamWriter(NPFileFormat format, String viewName, QueryRequest queryRequest, HttpServletResponse response) throws IOException {
+    private void setResponseHeader(FileFormat format, String viewName, QueryRequest queryRequest, HttpServletResponse response) {
 
         String filename = getFilename(queryRequest, viewName, format);
 
-        if (!format.equals(NPFileFormat.JSON)) {
+        if (!format.equals(FileFormat.JSON)) {
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
         }
-
-        return new OutputStreamWriter(response.getOutputStream(), "UTF-8");
     }
 
-    private String getFilename(QueryRequest queryRequest, String viewName, NPFileFormat format) {
+    private String getFilename(QueryRequest queryRequest, String viewName, FileFormat format) {
         if (queryRequest.hasNextProtQuery()) {
             return "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
         } else if (queryRequest.hasList()) {
@@ -236,6 +216,6 @@ public class ExportController {
     @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
     @ResponseBody
     public Map<String, Set<String>> getXMLTemplates() {
-        return EntryBlocks.getFormatViews();
+        return EntryBlock.getFormatViews();
     }
 }

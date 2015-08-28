@@ -117,6 +117,7 @@ public class SolrServiceImpl implements SolrService {
 		solrQuery.setRows(0);
 		solrQuery.set("facet", true);
 		solrQuery.set("facet.field", "id");
+		solrQuery.set("facet.method", "enum");
 		solrQuery.set("facet.query", solrReadyQueryString);
 		solrQuery.set("facet.limit", 30000);
 		logSolrQuery("buildSolrIdQuery",solrQuery);

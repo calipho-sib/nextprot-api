@@ -1,7 +1,6 @@
 package org.nextprot.api.user.utils;
 
 import com.google.common.collect.Sets;
-
 import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -10,9 +9,17 @@ import org.nextprot.api.user.service.UserProteinListService.Operator;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+
+/**
+ * This utility class provides methods operating on <tt>UserProteinList</tt> instances
+ *
+ * @author fnikitin
+ * @author dteixeira
+ */
 public class UserProteinListUtils {
 
 	/**
@@ -38,7 +45,7 @@ public class UserProteinListUtils {
 
 		NPreconditions.checkTrue(!l1.equals(l2), "Can't make combination with the same lists");
 
-		Set<String> combined = new HashSet<String>();
+		Set<String> combined = new HashSet<>();
 
 		if (operator.equals(Operator.AND)) {
 			combined.addAll(Sets.intersection(l1.getAccessionNumbers(), l2.getAccessionNumbers()));
@@ -86,7 +93,7 @@ public class UserProteinListUtils {
 		NPreconditions.checkNotNull(validAccessionNumbers, "The valid accession numbers should not be null");
 		NPreconditions.checkTrue(!validAccessionNumbers.isEmpty(), "The valid accession numbers should not be null");
 
-		Set<String> accessions = new HashSet<String>();
+		Set<String> collector = new HashSet<>();
 
 		BufferedReader br = new BufferedReader(reader);
 
@@ -94,23 +101,17 @@ public class UserProteinListUtils {
 		int ln = 0;
 		while ((line = br.readLine()) != null) {
 
-			String trimmed = line.trim().toUpperCase();
+			try {
+				checkFormatAndCollectValidAccessionNumber(line, collector, validAccessionNumbers);
+			} catch (EntryNotFoundException e) {
 
-			if (line.charAt(0) != '#') {
-
-				if (!trimmed.startsWith("NX_"))
-					trimmed = "NX_" + trimmed;
-
-				if (!validAccessionNumbers.contains(trimmed))
-					throw new EntryNotFoundException("at line " + (ln + 1) +  ": entry " + trimmed + " was not found");
-
-				accessions.add(trimmed);
+				throw new EntryNotFoundException("at line " + (ln + 1) + ": ", e.getEntry());
 			}
 
 			ln++;
 		}
 
-		return accessions;
+		return collector;
 	}
 
 	/**
@@ -142,6 +143,54 @@ public class UserProteinListUtils {
 			throw new NextProtException(e);
 		}
 
-		return new HashSet<String>();
+		return new HashSet<>();
+	}
+
+	/**
+	 * Apply nextprot format on if needed and check for validity
+	 *
+ 	 * @param uncheckedAccessionNumbers set of accession numbers to check
+	 * @param validAccessionNumbers set of all valid entries
+	 * @return a well formatted set of accession numbers
+	 */
+	public static Set<String> checkAndFormatAccessionNumbers(Collection<String> uncheckedAccessionNumbers, Set<String> validAccessionNumbers) {
+
+		NPreconditions.checkNotNull(uncheckedAccessionNumbers, "The collection of accessions should not be null");
+		NPreconditions.checkNotNull(validAccessionNumbers, "The valid accession numbers should not be null");
+		NPreconditions.checkTrue(!validAccessionNumbers.isEmpty(), "The valid accession numbers should not be null");
+
+		Set<String> collector = new HashSet<>(uncheckedAccessionNumbers.size());
+
+		for (String uncheckedAccessionNumber : uncheckedAccessionNumbers) {
+
+			checkFormatAndCollectValidAccessionNumber(uncheckedAccessionNumber, collector, validAccessionNumbers);
+		}
+
+		return collector;
+	}
+
+	/**
+	 * Apply nextprot format on uncheckedAccessionNumber if needed, check for validity and give it to collector
+	 *
+	 * @param uncheckedAccessionNumber accession number to check for validity
+	 * @param allNPAccessionNumbers set of all valid entries
+	 * @param validAccessionNumberCollector a collector of all valid accession numbers
+	 * @throws EntryNotFoundException if invalid accession number
+	 */
+	public static void checkFormatAndCollectValidAccessionNumber(String uncheckedAccessionNumber, Set<String> validAccessionNumberCollector, Set<String> allNPAccessionNumbers) {
+
+		NPreconditions.checkNotNull(allNPAccessionNumbers, "The collector should not be null");
+
+		String trimmed = uncheckedAccessionNumber.trim().toUpperCase();
+
+		if (uncheckedAccessionNumber.charAt(0) != '#') {
+
+			if (!trimmed.startsWith("NX_"))
+				trimmed = "NX_" + trimmed;
+
+			if (!allNPAccessionNumbers.contains(trimmed)) throw new EntryNotFoundException(uncheckedAccessionNumber);
+
+			validAccessionNumberCollector.add(trimmed);
+		}
 	}
 }

@@ -1,11 +1,11 @@
 package org.nextprot.api.core.dao;
 
-import java.util.List;
-import java.util.Set;
-
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.PublicationDbXref;
+
+import java.util.List;
+import java.util.Set;
 
 public interface DbXrefDao {
 
@@ -15,6 +15,7 @@ public interface DbXrefDao {
 	
 	List<DbXref> findDbXrefsByMaster(String uniqueName);
 
+	/** Find DbXrefs that have to be converted in Annotations */
 	List<DbXref> findDbXrefsAsAnnotByMaster(String uniqueName);
 	
 	List<DbXrefProperty> findDbXrefsProperties(List<Long> resourceIds);

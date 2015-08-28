@@ -3,6 +3,7 @@ package org.nextprot.api.core.service.impl;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
@@ -47,8 +48,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
 	@Autowired private EntryPropertiesService entryPropertiesService;	
 
-	private Map<String, Object> objectLocks = new ConcurrentHashMap<String, Object>();
-	
+	private static Map<String, Object> objectLocks = new ConcurrentHashMap<String, Object>();
 		
 	@Override
 	public Entry build(EntryConfig entryConfig) {
@@ -57,10 +57,12 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 		Entry entry = new Entry(entryName);
 
 		//Lock per entry in case the cache is not set yet (should be quite) fast thougth
-		synchronized (objectLocks.get(entryName)){
+		synchronized (getOrPutSynchronizer(entryName)){
 
-			//Always set properties about the entry
-			entry.setProperties(entryPropertiesService.findEntryProperties(entryName));
+			//Always set properties about the entry, unless it was explicitly said not to set them
+			if(!entryConfig.hasNoProperties()){
+				entry.setProperties(entryPropertiesService.findEntryProperties(entryName));
+			}
 		
 			if(entryConfig.hasOverview()){
 				entry.setOverview(this.overviewService.findOverviewByEntry(entryName));
@@ -89,10 +91,10 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			if(entryConfig.hasAntibodyMappings()){
 				entry.setAntibodyMappings(this.antibodyMappingService.findAntibodyMappingByUniqueName(entryName));
 			}
-			if(entryConfig.hasPeptideMappings()){
+			if(entryConfig.hasSubPart(AnnotationApiModel.PEPTIDE_MAPPING)){
 				entry.setPeptideMappings(this.peptideMappingService.findNaturalPeptideMappingByMasterUniqueName(entryName));
 			}
-			if(entryConfig.hasSrmPeptideMappings()){
+			if(entryConfig.hasSubPart(AnnotationApiModel.SRM_PEPTIDE_MAPPING)){
 				entry.setSrmPeptideMappings(this.peptideMappingService.findSyntheticPeptideMappingByMasterUniqueName(entryName));
 			}
 			if(entryConfig.hasExperimentalContext()){
@@ -105,40 +107,51 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setEnzymes(terminologyService.findEnzymeByMaster(entryName));
 			}
 			
-			if(entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart()){ //TODO should be added in annotation list
-				setEntryAdditionalInformation(entry); //adds isoforms, publications, xrefs and experimental contexts
+			if((entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart())){ //TODO should be added in annotation list
+				setEntryAdditionalInformation(entry, entryConfig); //adds isoforms, publications, xrefs and experimental contexts
 			} 
 
 		}
-		
 		//CPU Intensive
 		if(entryConfig.hasSubPart()){ //TODO should be added in annotation list
-			
-			if(entryConfig.hasSubPart()){
-				return EntryUtils.filterEntryBySubPart(entry, entryConfig.getSubpart());
-			}else return entry;
-			
+				return EntryUtils.filterEntryBySubPart(entry, entryConfig);
 		} else {
 			return entry;
 		}
 
 	}
 	
-	private void setEntryAdditionalInformation(Entry entry){
+	private static Object getOrPutSynchronizer(String entryName) {
+		if(objectLocks.containsKey(entryName)){
+			return objectLocks.get(entryName);
+		}else {
+			Object o = new Object();
+			objectLocks.put(entryName, o);
+			return o;
+		}
+	}
+
+	private void setEntryAdditionalInformation(Entry entry, EntryConfig config){
+
 		if(entry.getAnnotations() == null || entry.getAnnotations().isEmpty()){
 			entry.setAnnotations(this.annotationService.findAnnotations(entry.getUniqueName()));
 		}
-		if(entry.getIsoforms() == null || entry.getIsoforms().isEmpty()){
-			entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entry.getUniqueName()));
-		}
-		if(entry.getPublications() == null || entry.getPublications().isEmpty()){
-			entry.setPublications(this.publicationService.findPublicationsByMasterUniqueName(entry.getUniqueName()));
-		}
-		if(entry.getXrefs() == null || entry.getXrefs().isEmpty()){
-			entry.setXrefs(this.xrefService.findDbXrefsByMaster(entry.getUniqueName()));
-		}
-		if(entry.getExperimentalContexts() == null || entry.getExperimentalContexts().isEmpty()){
-			entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entry.getUniqueName()));
+		
+		if(!config.hasNoAdditionalReferences()){
+
+			if(entry.getIsoforms() == null || entry.getIsoforms().isEmpty()){
+				entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entry.getUniqueName()));
+			}
+			if(entry.getPublications() == null || entry.getPublications().isEmpty()){
+				entry.setPublications(this.publicationService.findPublicationsByMasterUniqueName(entry.getUniqueName()));
+			}
+			if(entry.getXrefs() == null || entry.getXrefs().isEmpty()){
+				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entry.getUniqueName()));
+			}
+			if(entry.getExperimentalContexts() == null || entry.getExperimentalContexts().isEmpty()){
+				entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entry.getUniqueName()));
+			}
+
 		}
 	}
 

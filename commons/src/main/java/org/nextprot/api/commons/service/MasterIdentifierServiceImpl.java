@@ -1,15 +1,14 @@
 package org.nextprot.api.commons.service;
 
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.Sets;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Sets;
+import java.util.List;
+import java.util.Set;
 
 @Lazy
 @Service
@@ -19,8 +18,8 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 
 	@Override
 	@Cacheable("master-unique-names-chromossome")
-	public List<String> findUniqueNamesOfChromossome(String chromossome) {
-		return this.masterIdentifierDao.findUniqueNamesOfChromossome(chromossome);
+	public List<String> findUniqueNamesOfChromosome(String chromosome) {
+		return this.masterIdentifierDao.findUniqueNamesOfChromosome(chromosome);
 	}
 
 	@Override

@@ -1,22 +1,21 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
-
-import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.AnnotationUtils;
 import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.nextprot.api.core.utils.PublicationUtils;
 import org.nextprot.api.core.utils.XrefUtils;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Set;
+
 public class EntryUtils implements Serializable{
 	
 	private static final long serialVersionUID = 3009334685615648172L;
 
-	public static Entry filterEntryBySubPart(Entry entry, AnnotationApiModel annotationCategory) {
-		
+	public static Entry filterEntryBySubPart(Entry entry, EntryConfig config) {
 		
 		List<Annotation> annotations;
 		List<DbXref> xrefs;
@@ -24,20 +23,24 @@ public class EntryUtils implements Serializable{
 		List<ExperimentalContext> experimentalContexts;
 		
 		// Filter if necessary
-		if (annotationCategory != null) {
-			
-			annotations = AnnotationUtils.filterAnnotationsByCategory(entry.getAnnotations(), annotationCategory);
-			Set<Long> xrefIds = AnnotationUtils.getXrefIdsForAnnotations(annotations);
-			xrefIds.addAll(AnnotationUtils.getXrefIdsForInteractionsInteractants(annotations));
-			xrefs = XrefUtils.filterXrefsByIds(entry.getXrefs(), xrefIds);
-			publications = PublicationUtils.filterPublicationsByIds(entry.getPublications(), AnnotationUtils.getPublicationIdsForAnnotations(annotations));
+		if (config.getSubpart() != null) {
 
-			experimentalContexts = ExperimentalContextUtil.filterExperimentalContextsByIds(entry.getExperimentalContexts(), AnnotationUtils.getExperimentalContextIdsForAnnotations(annotations));
+			annotations = AnnotationUtils.filterAnnotationsByCategory(entry.getAnnotations(), config.getSubpart());
 			entry.setAnnotations(annotations);
-			entry.setXrefs(xrefs);
-			entry.setPublications(publications);
-			entry.setExperimentalContexts(experimentalContexts);
+			
+			if(!config.hasNoAdditionalReferences()){ //In case we don't care about xrefs, publications and experimental contexts (will be faster)
 
+				Set<Long> xrefIds = AnnotationUtils.getXrefIdsForAnnotations(annotations);
+
+				xrefIds.addAll(AnnotationUtils.getXrefIdsForInteractionsInteractants(annotations));
+				xrefIds.addAll(AnnotationUtils.getXrefIdsFromAnnotations(annotations));
+				xrefs = XrefUtils.filterXrefsByIds(entry.getXrefs(), xrefIds);
+				publications = PublicationUtils.filterPublicationsByIds(entry.getPublications(), AnnotationUtils.getPublicationIdsForAnnotations(annotations));
+				experimentalContexts = ExperimentalContextUtil.filterExperimentalContextsByIds(entry.getExperimentalContexts(), AnnotationUtils.getExperimentalContextIdsForAnnotations(annotations));
+				entry.setXrefs(xrefs);
+				entry.setPublications(publications);
+				entry.setExperimentalContexts(experimentalContexts);
+			}
 		}
 		
 		return entry;

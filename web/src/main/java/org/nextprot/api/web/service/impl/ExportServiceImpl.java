@@ -1,23 +1,5 @@
 package org.nextprot.api.web.service.impl;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -26,57 +8,60 @@ import org.apache.velocity.app.VelocityEngine;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.ReleaseInfoService;
-import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.service.export.format.NPFileFormat;
+import org.nextprot.api.core.service.export.format.FileFormat;
 import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.service.ExportService;
+import org.nextprot.api.web.service.impl.writer.NPEntryStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
+import javax.annotation.PostConstruct;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 @Service
 public class ExportServiceImpl implements ExportService {
 
+	private static final Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
+	private static final String REPOSITORY_PATH = "repository";
+	private static final String[] CHROMOSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
 
-	@Autowired  private EntryBuilderService entryBuilderService;
-	@Autowired  private MasterIdentifierService masterIdentifierService;
-	@Autowired  private VelocityConfig velocityConfig;
-	@Autowired  private TerminologyService terminologyService;
-	@Autowired  private ReleaseInfoService releaseInfoService;
+	@Autowired
+	private EntryBuilderService entryBuilderService;
+	@Autowired
+	private MasterIdentifierService masterIdentifierService;
+	@Autowired
+	private VelocityConfig velocityConfig;
+	@Autowired
+	private ReleaseInfoService releaseInfoService;
 	
 	private int numberOfWorkers = 8;
-
-	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
-
 	private ExecutorService executor = null;
 
-	private static String REPOSITORY_PATH = "repository";
-
-	private final String[] CHROMOSSOMES = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "X", "Y", "MT", "unknown" };
-
-	/*
-	 * @Autowired private VelocityConfig config;
-	 */
-
 	@Override
-	public List<Future<File>> exportAllEntries(NPFileFormat format) {
-		List<String> uniqueNames = new ArrayList<String>();
-		for (String chrm : CHROMOSSOMES) {
-			uniqueNames.addAll(this.masterIdentifierService.findUniqueNamesOfChromossome(chrm));
+	public List<Future<File>> exportAllEntries(FileFormat format) {
+		List<String> uniqueNames = new ArrayList<>();
+		for (String chrm : CHROMOSOMES) {
+			uniqueNames.addAll(this.masterIdentifierService.findUniqueNamesOfChromosome(chrm));
 		}
 		return exportEntries(uniqueNames, format);
 	}
 
 	@Override
-	public List<Future<File>> exportEntriesOfChromossome(String chromossome, NPFileFormat format) {
-		List<String> uniqueNames = this.masterIdentifierService.findUniqueNamesOfChromossome(chromossome);
+	public List<Future<File>> exportEntriesOfChromosome(String chromossome, FileFormat format) {
+		List<String> uniqueNames = this.masterIdentifierService.findUniqueNamesOfChromosome(chromossome);
 		return exportEntries(uniqueNames, format);
 	}
 
 	@Override
-	public List<Future<File>> exportEntries(Collection<String> uniqueNames, NPFileFormat format) {
-		List<Future<File>> futures = new ArrayList<Future<File>>();
+	public List<Future<File>> exportEntries(Collection<String> uniqueNames, FileFormat format) {
+		List<Future<File>> futures = new ArrayList<>();
 		futures.add(exportSubPart(SubPart.HEADER, format));
 		for (String uniqueName : uniqueNames) {
 			futures.add(exportEntry(uniqueName, format));
@@ -90,12 +75,12 @@ public class ExportServiceImpl implements ExportService {
 		executor = Executors.newFixedThreadPool(numberOfWorkers);
 	}
 
-	private Future<File> exportSubPart(SubPart part, NPFileFormat format) {
+	private Future<File> exportSubPart(SubPart part, FileFormat format) {
 		return executor.submit(new ExportSubPartTask(velocityConfig.getVelocityEngine(), part, format));
 	}
 
 	@Override
-	public Future<File> exportEntry(String uniqueName, NPFileFormat format) {
+	public Future<File> exportEntry(String uniqueName, FileFormat format) {
 		return executor.submit(new ExportEntryTask(this.entryBuilderService, velocityConfig.getVelocityEngine(), uniqueName, format));
 	}
 
@@ -107,10 +92,11 @@ public class ExportServiceImpl implements ExportService {
 		private VelocityEngine ve;
 		private EntryBuilderService entryBuilderService;
 
-		public ExportEntryTask(EntryBuilderService entryBuilderService, VelocityEngine ve, String entryName, NPFileFormat format) {
+		public ExportEntryTask(EntryBuilderService entryBuilderService, VelocityEngine ve, String entryName, FileFormat format) {
 			this.ve = ve;
 			this.entryBuilderService = entryBuilderService;
 			this.filename = REPOSITORY_PATH + "/" + format.name() + "/" + entryName + "." + format.getExtension();
+			//noinspection ResultOfMethodCallIgnored
 			new File(filename).getParentFile().mkdirs();
 			this.entryName = entryName;
 			this.format = format.getExtension();
@@ -134,10 +120,10 @@ public class ExportServiceImpl implements ExportService {
 
 			checkFormatConstraints();
 			Template template;
-			VelocityContext context = null;
+			VelocityContext context;
 			try {
 
-				if (format.equals(NPFileFormat.TURTLE.getExtension())) {
+				if (format.equals(FileFormat.TURTLE.getExtension())) {
 					template = ve.getTemplate("turtle/entry." + format + ".vm");
 				} else {
 					template = ve.getTemplate("entry." + format + ".vm");
@@ -157,34 +143,34 @@ public class ExportServiceImpl implements ExportService {
 			}
 
 			return f;
-
 		}
 
 	}
 
 	enum SubPart {
 		HEADER, FOOTER
-	};
+	}
 
 	static class ExportSubPartTask implements Callable<File> {
 
-		private NPFileFormat npFormat;
+		private FileFormat npFormat;
 		private String format;
 		private VelocityEngine ve;
 		private String filename;
 		private SubPart part;
 
-		public ExportSubPartTask(VelocityEngine ve, SubPart part, NPFileFormat format) {
+		public ExportSubPartTask(VelocityEngine ve, SubPart part, FileFormat format) {
 			this.npFormat = format;
 			this.ve = ve;
 			this.part = part;
 			this.format = format.getExtension();
 			this.filename = REPOSITORY_PATH + "/" + format.name() + "/" + part.name() + "." + format.getExtension();
+			//noinspection ResultOfMethodCallIgnored
 			new File(filename).getParentFile().mkdirs();
 		}
 
 		public void checkFormatConstraints() {
-			if (!(npFormat.equals(NPFileFormat.TURTLE) || npFormat.equals(NPFileFormat.XML))) {
+			if (!(npFormat.equals(FileFormat.TURTLE) || npFormat.equals(FileFormat.XML))) {
 				throw new RuntimeException("A format should be specified (xml or ttl)");
 			}
 		}
@@ -199,17 +185,17 @@ public class ExportServiceImpl implements ExportService {
 
 			checkFormatConstraints();
 			Template template = null;
-			VelocityContext context = null;
+			VelocityContext context;
 			try {
 
 				if (part.equals(SubPart.HEADER)) {
-					if (format.equals(NPFileFormat.TURTLE.getExtension())) {
+					if (format.equals(FileFormat.TURTLE.getExtension())) {
 						template = ve.getTemplate("turtle/prefix.ttl.vm");
 					} else {
 						template = ve.getTemplate("exportStart.xml.vm");
 					}
 				} else if (part.equals(SubPart.FOOTER)) {
-					if (format.equals(NPFileFormat.XML.getExtension())) {
+					if (format.equals(FileFormat.XML.getExtension())) {
 						template = ve.getTemplate("exportEnd.xml.vm");
 					}
 				}
@@ -232,24 +218,28 @@ public class ExportServiceImpl implements ExportService {
 			}
 
 			return f;
-
 		}
-
 	}
 
 	@Override
 	public void clearRepository() {
 
 		LOGGER.info("Cleaning export service repository at path: " + REPOSITORY_PATH);
-		if (new File(REPOSITORY_PATH).exists()) {
-			for (File file : new File(REPOSITORY_PATH).listFiles())
-				file.delete();
+
+		File repo = new File(REPOSITORY_PATH);
+
+		if (repo.exists()) {
+
+			File[] files = repo.listFiles();
+
+			if (files != null) {
+				for (File file : files) {
+					//noinspection ResultOfMethodCallIgnored
+					file.delete();
+				}
+			}
 		}
 
-	}
-
-	public int getNumberOfWorkers() {
-		return numberOfWorkers;
 	}
 
 	@Value("${export.workers.count}")
@@ -258,17 +248,12 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	@Override
-	public void streamResults(NPFileFormat format, Writer stream, String viewName, List<String> accessions) throws IOException {
+	public void streamResults(NPEntryStreamWriter writer, String viewName, List<String> accessions) throws IOException {
 
-		NPStreamExporter exporter = NPFileExporter.valueOf(format).getNPStreamExporter();
+		Map<String, Object> map = new HashMap<>();
+		map.put(ExportService.ENTRIES_COUNT_PARAM, accessions.size());
+		map.put("release", releaseInfoService.findReleaseContents());
 
-		exporter.setTerminologyService(terminologyService);
-		
-		if(format.equals(NPFileFormat.XML)){
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("entriesCount", accessions.size());
-			map.put("release", releaseInfoService.findReleaseContents());
-			exporter.export(accessions, stream, viewName, map);
-		}else exporter.export(accessions, stream, viewName, null);
+		writer.write(accessions, map);
 	}
 }

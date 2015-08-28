@@ -7,4 +7,4 @@ inner join nextprot.db_xrefs xrefs on (gene.db_xref_id = xrefs.resource_id)
 inner join nextprot.cv_databases dbs on (xrefs.cv_database_id = dbs.cv_id)   
 where mapping_types.cv_name = 'MASTER_SEQUENCE_GENE'  
 and master.unique_name = :unique_name
-				
+and accession !~ '^(NX_)?VG_.+'

@@ -23,6 +23,7 @@ public class IsoformMapping implements Serializable{
 
 	private String bioSequence;
 
+	// list of gene regions mapping the isoform protein
 	private List<Entry<Integer,Integer>> positionsOfIsoformOnReferencedGene;
 	private List<TranscriptMapping> transcriptMappings;
 	

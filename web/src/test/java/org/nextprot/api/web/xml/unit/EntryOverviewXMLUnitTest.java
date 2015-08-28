@@ -43,7 +43,7 @@ public class EntryOverviewXMLUnitTest extends WebUnitBaseTest {
 		assertEquals("ABCD", recommendedNodes.item(0).getTextContent());
 		NodeList alternativeNodeList = XMLUnitUtils.getMatchingNodes(output, "entry/overview/gene-list/gene/gene-name[@type='synonym']");
 		assertEquals("EFGH", alternativeNodeList.item(0).getTextContent());
-		NodeList orfNodeList = XMLUnitUtils.getMatchingNodes(output, "entry/overview/gene-list/gene/gene-name[@type='ORFName']");
+		NodeList orfNodeList = XMLUnitUtils.getMatchingNodes(output, "entry/overview/gene-list/gene/gene-name[@type='ORF']");
 		assertEquals("IJKL", orfNodeList.item(0).getTextContent());
 
 	}

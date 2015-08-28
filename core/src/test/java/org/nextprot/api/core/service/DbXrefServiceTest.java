@@ -33,7 +33,7 @@ public class DbXrefServiceTest {
 	private DbXrefDao dbXRefDao;
 
 	@Mock
-	private PeptideMappingService peptideMappingService;
+	private PeptideNamesService peptideNamesService;
 
 	@Before
 	public void init() throws FileNotFoundException, DataSetException {
@@ -61,7 +61,7 @@ public class DbXrefServiceTest {
 	public void verifyFindDbXrefsByMaster()  {
 		xrefService.findDbXrefsByMaster("NX_P12345");
 
-		verify(peptideMappingService).findAllPeptideNamesByMasterId(anyString());
+		verify(peptideNamesService).findAllPeptideNamesByMasterId(anyString());
 		verify(dbXRefDao, times(0)).findPeptideXrefs(anyListOf(String.class));
 		verify(dbXRefDao).findEntryAnnotationsEvidenceXrefs("NX_P12345");
 		verify(dbXRefDao).findEntryAttachedXrefs("NX_P12345");

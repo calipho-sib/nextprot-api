@@ -1,19 +1,19 @@
 package org.nextprot.api.core.service;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.domain.Interaction;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class DbXrefServiceIntegrationTest extends CoreUnitBaseTest {
@@ -55,6 +55,7 @@ having sum(a.cnt)=1
 		assertTrue(annot.getCategory().equals(AnnotationApiModel.PATHWAY.getDbAnnotationTypeName()));
 		assertTrue(annot.getAPICategory()==AnnotationApiModel.PATHWAY);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
+		Assert.assertEquals("Intraflagellar transport", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
 			assertTrue(spec.getSpecificity().equals("UNKNOWN"));
 		}
@@ -64,6 +65,8 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("REACT_268024"));
 		assertTrue(evi.getResourceDb().equals("Reactome"));
+
+		Assert.assertTrue(annotations.get(0).getProperties().isEmpty());
 	}
 	
 	@Test
@@ -74,6 +77,7 @@ having sum(a.cnt)=1
 		assertTrue(annot.getCategory().equals(AnnotationApiModel.PATHWAY.getDbAnnotationTypeName()));
 		assertTrue(annot.getAPICategory()==AnnotationApiModel.PATHWAY);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
+		Assert.assertEquals("Ubiquitin mediated proteolysis", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
 			assertTrue(spec.getSpecificity().equals("UNKNOWN"));
 		}
@@ -83,6 +87,8 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("hsa04120+134111"));
 		assertTrue(evi.getResourceDb().equals("KEGGPathway"));
+
+		Assert.assertTrue(annotations.get(0).getProperties().isEmpty());
 	}
 	
 	@Test
@@ -93,6 +99,7 @@ having sum(a.cnt)=1
 		assertTrue(annot.getCategory().equals(AnnotationApiModel.DISEASE.getDbAnnotationTypeName()));
 		assertTrue(annot.getAPICategory()==AnnotationApiModel.DISEASE);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
+		Assert.assertEquals("Kallmann syndrome", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
 			assertTrue(spec.getSpecificity().equals("UNKNOWN"));
 		}
@@ -102,11 +109,9 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("478"));
 		assertTrue(evi.getResourceDb().equals("Orphanet"));
+
+		Assert.assertTrue(annotations.get(0).getProperties().isEmpty());
 	}
-	
-/**
- * 	
- */
 	
 	@Test
 	public void shouldReturn_1_DrugBankXrefAsAnnotation() {
@@ -116,6 +121,7 @@ having sum(a.cnt)=1
 		assertTrue(annot.getCategory().equals(AnnotationApiModel.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName()));
 		assertTrue(annot.getAPICategory()==AnnotationApiModel.SMALL_MOLECULE_INTERACTION);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
+		Assert.assertEquals("Pseudoephedrine", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
 			assertTrue(spec.getSpecificity().equals("UNKNOWN"));
 		}
@@ -125,8 +131,41 @@ having sum(a.cnt)=1
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("DB00852"));
 		assertTrue(evi.getResourceDb().equals("DrugBank"));
-	}
-	
 
+		Assert.assertTrue(annotations.get(0).getProperties().isEmpty());
+	}
+
+	@Test
+	public void reactomeXrefShouldHaveEmptyProperties() {
+
+		assertEmptyProperties("NX_A0AVF1", 42610527);
+	}
+
+	@Test
+	public void KEGGPathwayXrefShouldHaveEmptyProperties() {
+
+		assertEmptyProperties("NX_A1L167", 14559832);
+	}
+
+	@Test
+	public void orphanetXrefShouldHaveEmptyProperties() {
+
+		assertEmptyProperties("NX_A0PJY2", 1077769);
+	}
+
+	@Test
+	public void drugBankXrefShouldHaveEmptyProperties() {
+
+		assertEmptyProperties("NX_Q9Y2D1", 983678);
+	}
+
+	private void assertEmptyProperties(String entryName, long propertyId) {
+
+		List<DbXref> dbxrefs = this.xrefService.findDbXrefsByMaster(entryName);
+
+		for (DbXref xref : dbxrefs)
+			if (xref.getDbXrefId() == propertyId)
+				Assert.assertTrue(xref.getProperties().isEmpty());
+	}
 	
 }

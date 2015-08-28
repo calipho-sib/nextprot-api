@@ -15,10 +15,10 @@
 		#end
 		</authors>
 		#if($publication.dbXrefs.size() > 0)
-		<xrefs>
+		<xref-list>
 		#foreach($xref in $publication.dbXrefs)
 			#parse('xref.xml.vm')								
 		#end
-		</xrefs>
+		</xref-list>
 	#end
 </publication>

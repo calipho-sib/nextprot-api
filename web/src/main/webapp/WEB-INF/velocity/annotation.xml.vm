@@ -1,8 +1,6 @@
-<annotation quality-qualifier='$annotation.getQualityQualifier()' #if($annotation.synonym)accession="$annotation.synonym" database='neXtProt'#end>
+<annotation quality='$annotation.getQualityQualifier()' #if($annotation.synonym)accession="$annotation.synonym" database='neXtProt'#end>
 	#if($annotation.getCvTermName())
-    <cv-term accession='$annotation.getCvTermAccessionCode()'>
-    	<cv-name>$annotation.getCvTermName()</cv-name>
-    </cv-term>
+    <cv-term accession='$annotation.getCvTermAccessionCode()' terminology='$StringUtils.camelToKebabCase($annotation.getCvApiName())'>$annotation.getCvTermName()</cv-term>
     #end
 	#if($annotation.getDescription())
     <description>
@@ -13,12 +11,24 @@
 	#if($annotation.getVariant())
     	<variant original='$annotation.getVariant().getOriginal()' variation='$annotation.getVariant().getVariant()' />
 	#end
+
+	#if($annotation.getBioObject())
+		#set($bioObject = $annotation.getBioObject())
+        <interactant nature='$StringUtils.snakeToKebabCase($bioObject.getBioType().toString())'>
+            #if($bioObject.getResourceType().toString().equals("EXTERNAL"))
+                <xref-ref resource-internal-ref='$bioObject.getId()'/>
+			#elseif($bioObject.getResourceType().toString().equals("INTERNAL"))
+                <ref accession='$bioObject.getAccession()' database='nextProt'/>
+			#end
+        </interactant>
+	#end
+
 	## might have no properties so need to check
 	#if(($annotation.getProperties()) && ($annotation.getProperties().size() > 0))
     <property-list>
         #foreach($property in $annotation.getProperties())
 			#if(!$property.getName().equals("rank"))
-				<property property-name='$property.getName()'  value='$property.getValue()' #if($property.getValueType()) value-type='$property.getValueType()' #end #if($property.getAccession()) accession='$property.getAccession()' #end />
+				<property name='$property.getName()' value='$property.getValue()' #if($property.getValueType()) value-type='$property.getValueType()' #end #if($property.getAccession()) accession='$property.getAccession()' #end />
 			#end
 		#end
     </property-list>
@@ -27,11 +37,11 @@
     <evidence-list>
         #foreach($evidence in $annotation.getEvidences())
 			## should include qualifier-type='$evidence.getQualifierType()' 
-			<evidence is-negative='$evidence.isNegativeEvidence()' evidence-code='$evidence.getEvidenceCodeAC()' resource-internal-ref='$evidence.getResourceId()'  resource-assoc-type='$evidence.getResourceAssociationType()' #if($evidence.getQualityQualifier()) quality-qualifier='$evidence.getQualityQualifier()' #end resource-type='$evidence.getResourceType()' #if($evidence.getExperimentalContextId()>0) experimental-context-internal-ref='$evidence.getExperimentalContextId()' #end #if($evidence.getAssignedBy()) source-internal-ref='$evidence.getAssignedBy()' #end >
+			<evidence is-negative='$evidence.isNegativeEvidence()' evidence-code='$evidence.getEvidenceCodeAC()' resource-internal-ref='$evidence.getResourceId()'  resource-assoc-type='$evidence.getResourceAssociationType()' #if($evidence.getQualityQualifier()) quality='$evidence.getQualityQualifier()' #end resource-type='$evidence.getResourceType()' #if($evidence.getExperimentalContextId()>0) experimental-context-internal-ref='$evidence.getExperimentalContextId()' #end #if($evidence.getAssignedBy()) source-internal-ref='$evidence.getAssignedBy()' #end >
 				#if($evidence.getPropertiesNames())
 					<property-list>
 						#foreach($pk in $evidence.getPropertiesNames())
-							<property property-name="$pk" value="$evidence.getPropertyValue($pk)" />
+							<property name="$pk" value="$evidence.getPropertyValue($pk)" />
 						#end
 					</property-list>
 				#end
