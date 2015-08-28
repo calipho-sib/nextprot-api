@@ -14,14 +14,16 @@ import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 import org.reflections.Reflections;
 
-public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
+abstract class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 
 	private Map<Fields, FieldBuilder> fieldsBuilderMap = null;
 	private TerminologyService terminologyservice;
 	private DbXrefService dbxrefservice;
-
-	public AnnotationSolrIndexer(String url) {
+	private boolean isGold;
+	
+	public EntryBaseSolrIndexer(String url, boolean isGold) {
 		super(url);
+		this.isGold = isGold;
 	}
 
 	@Override
@@ -34,6 +36,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 
 		for (Fields f : Fields.values()) {
 			FieldBuilder fb = fieldsBuilderMap.get(f);
+			fb.setGold(isGold);
 			fb.initializeBuilder(entry);
 			Object o = fb.getFieldValue(f, f.getClazz());
 			doc.addField(f.getName(), o);

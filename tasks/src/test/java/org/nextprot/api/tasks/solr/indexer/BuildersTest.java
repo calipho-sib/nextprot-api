@@ -15,7 +15,7 @@ public class BuildersTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldCoverAllSolrFields() {
 		Map<Fields, FieldBuilder> map = new HashMap<>();
-		AnnotationSolrIndexer.initializeFieldBuilders(map);
+		EntrySolrIndexer.initializeFieldBuilders(map);
 		
 		StringBuilder sb = new StringBuilder();
 		for(Fields f : Fields.values()){

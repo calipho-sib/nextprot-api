@@ -8,7 +8,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.tasks.solr.indexer.AnnotationSolrIndexer;
+import org.nextprot.api.tasks.solr.indexer.EntrySolrIndexer;
 
 public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 
@@ -30,7 +30,7 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=\"http://localhost:8983/solr/npentries1\"");
 		logger.info("Solr server: " + solrServer); 
 
-		AnnotationSolrIndexer indexer = new AnnotationSolrIndexer(solrServer);
+		EntrySolrIndexer indexer = new EntrySolrIndexer(solrServer);
 		// Get an access to some needed services
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
 		indexer.setDbxrefservice(getBean(DbXrefService.class));
