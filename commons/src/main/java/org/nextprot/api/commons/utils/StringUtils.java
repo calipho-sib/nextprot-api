@@ -10,6 +10,7 @@ public class StringUtils {
 
 	private static final Pattern NON_ASCIIDASH = Pattern.compile("[^\\w-]");
 	private static final Pattern WHITESPACE = Pattern.compile("\\s");
+	private static final AuthorNameFormatter AUTHOR_NAME_FORMATTER = new AuthorNameFormatter();
 
 	public static StringCaseFormatter createXCaseBuilder(String string) {
 
@@ -126,13 +127,9 @@ public class StringUtils {
 		  return input.matches("\\d+");  //match a number with optional '-' and decimal.
 	}
 
-	public static String formatForenameInitials(String forename) {
+	public static final AuthorNameFormatter getAuthorNameFormatter() {
 
-		String[] parts = forename.split("[-\\s]");
-
-
-
-		return forename;
+		return AUTHOR_NAME_FORMATTER;
 	}
 
 	/**

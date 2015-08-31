@@ -1,42 +1,19 @@
-<publication type="$publication.publicationType" id="$publication.publicationId">
-		#set($UNESCAPED_CDATA = $publication.title)
-		<title>
-			<![CDATA[$UNESCAPED_CDATA]]>
-		</title>
-		<journal name="#if($publication.cvJournal.name)$publication.cvJournal.name#end" volume="$publication.volume" issue="$publication.issue" year="$publication.getPublicationYear()"/>
-		<pages first="$publication.firstPage" last="$publication.lastPage" />
-		<authors>
-		#foreach($author in $publication.authors)
-			#if($author.isPerson())
-				<person name="$author.foreName $author.lastName" suffix="$author.suffix"/>
-			#else
-				<consortium name="$author.lastName"/>
-			#end
-		#end
-		</authors>
-		#if($publication.dbXrefs.size() > 0)
-		<xref-list>
-		#foreach($xref in $publication.dbXrefs)
-			#parse('xref.xml.vm')								
-		#end
-		</xref-list>
-	#end
-</publication>
-<publication2 type="$publication.publicationType.toLowerCase()" date="$publication.getPublicationYear()" name="#if($publication.cvJournal.name)$publication.cvJournal.name#end" volume="$publication.volume" first="$publication.firstPage" last="$publication.lastPage">
+<publication type="$publication.publicationType.toLowerCase()" date="$publication.getPublicationYear()" name="#if($publication.cvJournal.name)$publication.cvJournal.name#end" volume="$publication.volume" first="$publication.firstPage" last="$publication.lastPage">
 	<title>
 	    <![CDATA[$publication.title]]>
 	</title>
 	<author-list>
 		#foreach($author in $publication.authors)
 			#if($author.isPerson())
-                <person name="$author.lastName $StringUtils.formatForenameInitials($author.foreName)"/>
+                <person name="$author.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($author.foreName)"/>
 			#else
                 <consortium name="$author.lastName"/>
 			#end
 		#end
-		<consortium name="The C. elegans sequencing consortium"/>
 	</author-list>
-
-	<dbReference type="PubMed" id="$publication.publicationId"/>
-	<dbReference type="DOI" id="10.1126/science.282.5396.2012"/>
-</publication2>
+    <xref-list>
+		#foreach($xref in $publication.dbXrefs)
+			#parse('xref.xml.vm')
+		#end
+    </xref-list>
+</publication>

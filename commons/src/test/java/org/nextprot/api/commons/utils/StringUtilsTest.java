@@ -72,10 +72,4 @@ public class StringUtilsTest {
 
         Assert.assertEquals(expectedText, StringUtils.wrapText(text, 60));
     }
-
-    @Test
-    public void testFormatForenameInitials() {
-
-        Assert.assertEquals("J.-C.", StringUtils.formatForenameInitials("Jean-Christophe"));
-    }
 }
