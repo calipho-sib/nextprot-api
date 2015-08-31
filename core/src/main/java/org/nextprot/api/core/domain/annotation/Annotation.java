@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain.annotation;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
@@ -245,8 +246,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public void setUniqueName(String uniqueName) {
 		this.uniqueName = uniqueName;
 	}
-	
-	
+
 	public int getStartPositionForIsoform(String isoformName) {
 		if(targetingIsoformsMap != null){
 			Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
@@ -280,31 +280,36 @@ public class Annotation implements Serializable, IsoformSpecific {
 	}
 	
 	/**
-	 * @return true if at least one evidence is showing any kind of detection (low, medium, high or positive) else false
+	 * Return true if annotation has at least one evidence showing any kind of detection (low, medium, high or positive) else false
+	 *
+	 * @return an optional boolean or absent if no expression info
 	 */
-	public boolean isExpressionLevelDetected() {
+	public Optional<Boolean> isExpressionLevelDetected() {
 
-		if (evidences == null || evidences.isEmpty())
-			return false;
+		Optional<Boolean> booleanOptional = Optional.absent();
 
-		for (AnnotationEvidence evidence : evidences) {
+		if (evidences != null) {
 
-			String level = evidence.getExpressionLevel();
+			for (AnnotationEvidence evidence : evidences) {
 
-			if (level != null) {
+				String level = evidence.getExpressionLevel();
 
-				switch (level) {
+				if (level != null) {
 
-					case "": // not sure about that, should return false imo
-					case "low":
-					case "medium":
-					case "high":
-					case "positive":
-						return true;
+					switch (level) {
+
+						case "low":
+						case "medium":
+						case "high":
+						case "positive":
+							return Optional.of(Boolean.TRUE);
+						default:
+							booleanOptional = Optional.of(Boolean.FALSE);
+					}
 				}
 			}
 		}
 
-		return false;
+		return booleanOptional;
 	}
 }

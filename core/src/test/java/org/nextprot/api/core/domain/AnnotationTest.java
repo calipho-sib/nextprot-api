@@ -17,7 +17,7 @@ public class AnnotationTest {
 		List<AnnotationEvidence> evidences = new ArrayList<>();
 		evidences.add(buildEvidence("high"));
 		a.setEvidences(evidences);
-		Assert.assertTrue(a.isExpressionLevelDetected());
+		Assert.assertTrue(a.isExpressionLevelDetected().isPresent());
 	}
 
 	@Test
@@ -27,7 +27,8 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("high"));
 		evidences.add(buildEvidence("high"));
 		a.setEvidences(evidences);
-		Assert.assertTrue(a.isExpressionLevelDetected());
+		Assert.assertTrue(a.isExpressionLevelDetected().isPresent());
+		Assert.assertTrue(a.isExpressionLevelDetected().get());
 	}
 
 	@Test
@@ -37,7 +38,8 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("high"));
 		evidences.add(buildEvidence("low"));
 		a.setEvidences(evidences);
-		Assert.assertTrue(a.isExpressionLevelDetected());
+		Assert.assertTrue(a.isExpressionLevelDetected().isPresent());
+		Assert.assertTrue(a.isExpressionLevelDetected().get());
 	}
 
 	@Test
@@ -47,7 +49,8 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("high"));
 		evidences.add(buildEvidence("positive"));
 		a.setEvidences(evidences);
-		Assert.assertTrue(a.isExpressionLevelDetected());
+		Assert.assertTrue(a.isExpressionLevelDetected().isPresent());
+		Assert.assertTrue(a.isExpressionLevelDetected().get());
 	}
 
 	@Test
@@ -56,7 +59,8 @@ public class AnnotationTest {
 		List<AnnotationEvidence> evidences = new ArrayList<>();
 		evidences.add(buildEvidence("negative"));
 		a.setEvidences(evidences);
-		Assert.assertTrue(!a.isExpressionLevelDetected());
+		Assert.assertTrue(a.isExpressionLevelDetected().isPresent());
+		Assert.assertTrue(!a.isExpressionLevelDetected().get());
 	}
 
 	@Test
@@ -66,7 +70,8 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("negative"));
 		evidences.add(buildEvidence("negative"));
 		a.setEvidences(evidences);
-		Assert.assertTrue(!a.isExpressionLevelDetected());
+		Assert.assertTrue(a.isExpressionLevelDetected().isPresent());
+		Assert.assertTrue(!a.isExpressionLevelDetected().get());
 	}
 
 	/*
@@ -79,7 +84,8 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("negative"));
 		evidences.add(buildEvidence("positive"));
 		a.setEvidences(evidences);
-		Assert.assertTrue(a.isExpressionLevelDetected());
+		Assert.assertTrue(a.isExpressionLevelDetected().isPresent());
+		Assert.assertTrue(a.isExpressionLevelDetected().get());
 	}
 
 	/*
@@ -91,7 +97,7 @@ public class AnnotationTest {
 		List<AnnotationEvidence> evidences = new ArrayList<>();
 		evidences.add(new AnnotationEvidence());
 		a.setEvidences(evidences);
-		Assert.assertTrue(!a.isExpressionLevelDetected());
+		Assert.assertTrue(!a.isExpressionLevelDetected().isPresent());
 	}
 
 	/*
@@ -102,17 +108,17 @@ public class AnnotationTest {
 		Annotation a = new Annotation();
 		List<AnnotationEvidence> evidences = new ArrayList<>();
 		a.setEvidences(evidences);
-		Assert.assertTrue(!a.isExpressionLevelDetected());
+		Assert.assertTrue(!a.isExpressionLevelDetected().isPresent());
 	}
 
-	// not sure about that, should return false imo
 	@Test
 	public void testEmptyExpressionLevel() {
 		Annotation a = new Annotation();
 		List<AnnotationEvidence> evidences = new ArrayList<>();
 		evidences.add(buildEvidence(""));
 		a.setEvidences(evidences);
-		Assert.assertTrue(a.isExpressionLevelDetected());
+		Assert.assertTrue(a.isExpressionLevelDetected().isPresent());
+		Assert.assertTrue(!a.isExpressionLevelDetected().get());
 	}
 
 	@Test
@@ -121,11 +127,12 @@ public class AnnotationTest {
 		List<AnnotationEvidence> evidences = new ArrayList<>();
 		evidences.add(buildEvidence("not detected"));
 		a.setEvidences(evidences);
-		Assert.assertTrue(!a.isExpressionLevelDetected());
+		Assert.assertTrue(a.isExpressionLevelDetected().isPresent());
+		Assert.assertTrue(!a.isExpressionLevelDetected().get());
 	}
 
 	/*
-	 * at leat one detected, low, high or medium => detected !
+	 * at least one detected, low, high or medium => detected !
 	 */
 	@Test
 	public void testNotDetectedAndPositive() {
@@ -134,7 +141,8 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("not detected"));
 		evidences.add(buildEvidence("positive"));
 		a.setEvidences(evidences);
-		Assert.assertTrue(a.isExpressionLevelDetected());
+		Assert.assertTrue(a.isExpressionLevelDetected().isPresent());
+		Assert.assertTrue(a.isExpressionLevelDetected().get());
 	}
 
 	private AnnotationEvidence buildEvidence(String level) {
