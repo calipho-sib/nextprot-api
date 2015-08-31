@@ -53,23 +53,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 	private BioObject bioObject;
 	
 	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsAsAnnotationsByEntry()
-
-	final static Map<String, String> commonExpressionPredicat= new HashMap<String, String>();
-	
-	static{
-		
-		/*
-		 * i changed the predicate names to be compatible with predicate hierarchy
-		 */
-		
-		commonExpressionPredicat.put("", 	   	"detectedExpression");
-		commonExpressionPredicat.put("High",   	"detectedExpression");
-		commonExpressionPredicat.put("Low",    	"detectedExpression");
-		commonExpressionPredicat.put("Medium", 	"detectedExpression");
-		commonExpressionPredicat.put("Positive","detectedExpression");
-		commonExpressionPredicat.put("Negative","undetectedExpression");
-	}	
-	
 	
 	public String toString() {
 		return uniqueName + ": "  + 
@@ -297,30 +280,31 @@ public class Annotation implements Serializable, IsoformSpecific {
 	}
 	
 	/**
-	 * pam 16.11. 2015, harmonization with data model:
-	 * selects expression level consensus:
-	 * - detectedExpression if any evidence is either low, high, medium or positive
-	 * - undetectedExpression if all evidences are negative or not detected
-	 * - null if no data is found 
-	 * @return "detectedExpression", "undetectedExpression" or null
+	 * @return true if at least one evidence is showing any kind of detection (low, medium, high or positive) else false
 	 */
-	public String getConsensusExpressionLevelPredicat(){
-		if(evidences != null){
-			String level="";
-			// make sure we have evidences otherwise error breaks ttl generation
-			if (evidences.size()==0) 
-				return null;
-			// check if there is expression info
-			if ((level=evidences.get(0).getExpressionLevel())==null)
-				return null;
-			level=commonExpressionPredicat.get(level);
-			for(AnnotationEvidence e:evidences){
-				if(!level.equals(commonExpressionPredicat.get(e.getExpressionLevel()))) {
-					return commonExpressionPredicat.get(""); // default 
+	public boolean isExpressionLevelDetected() {
+
+		if (evidences == null || evidences.isEmpty())
+			return false;
+
+		for (AnnotationEvidence evidence : evidences) {
+
+			String level = evidence.getExpressionLevel();
+
+			if (level != null) {
+
+				switch (level) {
+
+					case "": // not sure about that, should return false imo
+					case "low":
+					case "medium":
+					case "high":
+					case "positive":
+						return true;
 				}
 			}
-			return level;
-		}else return null;
-	}
+		}
 
+		return false;
+	}
 }

@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -7,8 +8,6 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class AnnotationTest {
 
@@ -18,7 +17,7 @@ public class AnnotationTest {
 		List<AnnotationEvidence> evidences = new ArrayList<>();
 		evidences.add(buildEvidence("high"));
 		a.setEvidences(evidences);
-        assertEquals("detectedExpression", a.getConsensusExpressionLevelPredicat());
+		Assert.assertTrue(a.isExpressionLevelDetected());
 	}
 
 	@Test
@@ -28,7 +27,7 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("high"));
 		evidences.add(buildEvidence("high"));
 		a.setEvidences(evidences);
-        assertEquals("detectedExpression", a.getConsensusExpressionLevelPredicat());
+		Assert.assertTrue(a.isExpressionLevelDetected());
 	}
 
 	@Test
@@ -38,7 +37,7 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("high"));
 		evidences.add(buildEvidence("low"));
 		a.setEvidences(evidences);
-        assertEquals("detectedExpression", a.getConsensusExpressionLevelPredicat());
+		Assert.assertTrue(a.isExpressionLevelDetected());
 	}
 
 	@Test
@@ -48,7 +47,7 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("high"));
 		evidences.add(buildEvidence("positive"));
 		a.setEvidences(evidences);
-        assertEquals("detectedExpression", a.getConsensusExpressionLevelPredicat());
+		Assert.assertTrue(a.isExpressionLevelDetected());
 	}
 
 	@Test
@@ -57,7 +56,7 @@ public class AnnotationTest {
 		List<AnnotationEvidence> evidences = new ArrayList<>();
 		evidences.add(buildEvidence("negative"));
 		a.setEvidences(evidences);
-        assertEquals("undetectedExpression", a.getConsensusExpressionLevelPredicat());
+		Assert.assertTrue(!a.isExpressionLevelDetected());
 	}
 
 	@Test
@@ -67,7 +66,7 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("negative"));
 		evidences.add(buildEvidence("negative"));
 		a.setEvidences(evidences);
-        assertEquals("undetectedExpression", a.getConsensusExpressionLevelPredicat());
+		Assert.assertTrue(!a.isExpressionLevelDetected());
 	}
 
 	/*
@@ -80,9 +79,9 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("negative"));
 		evidences.add(buildEvidence("positive"));
 		a.setEvidences(evidences);
-		assertEquals("detectedExpression", a.getConsensusExpressionLevelPredicat());
+		Assert.assertTrue(a.isExpressionLevelDetected());
 	}
-	
+
 	/*
 	 * occurs for every annotation not being a :ExpressionProfile
 	 */
@@ -92,7 +91,7 @@ public class AnnotationTest {
 		List<AnnotationEvidence> evidences = new ArrayList<>();
 		evidences.add(new AnnotationEvidence());
 		a.setEvidences(evidences);
-        assertEquals(null, a.getConsensusExpressionLevelPredicat());
+		Assert.assertTrue(!a.isExpressionLevelDetected());
 	}
 
 	/*
@@ -103,7 +102,17 @@ public class AnnotationTest {
 		Annotation a = new Annotation();
 		List<AnnotationEvidence> evidences = new ArrayList<>();
 		a.setEvidences(evidences);
-        assertEquals(null, a.getConsensusExpressionLevelPredicat());
+		Assert.assertTrue(!a.isExpressionLevelDetected());
+	}
+
+	// not sure about that, should return false imo
+	@Test
+	public void testEmptyExpressionLevel() {
+		Annotation a = new Annotation();
+		List<AnnotationEvidence> evidences = new ArrayList<>();
+		evidences.add(buildEvidence(""));
+		a.setEvidences(evidences);
+		Assert.assertTrue(a.isExpressionLevelDetected());
 	}
 
 	@Test
@@ -112,7 +121,7 @@ public class AnnotationTest {
 		List<AnnotationEvidence> evidences = new ArrayList<>();
 		evidences.add(buildEvidence("not detected"));
 		a.setEvidences(evidences);
-		assertEquals("undetectedExpression", a.getConsensusExpressionLevelPredicat());
+		Assert.assertTrue(!a.isExpressionLevelDetected());
 	}
 
 	/*
@@ -125,14 +134,14 @@ public class AnnotationTest {
 		evidences.add(buildEvidence("not detected"));
 		evidences.add(buildEvidence("positive"));
 		a.setEvidences(evidences);
-		assertEquals("detectedExpression", a.getConsensusExpressionLevelPredicat());
+		Assert.assertTrue(a.isExpressionLevelDetected());
 	}
 
 	private AnnotationEvidence buildEvidence(String level) {
 		AnnotationEvidenceProperty p = new AnnotationEvidenceProperty();
 		p.setPropertyName("expressionLevel");
 		p.setPropertyValue(level);
-		List<AnnotationEvidenceProperty> props = new ArrayList<AnnotationEvidenceProperty>();
+		List<AnnotationEvidenceProperty> props = new ArrayList<>();
 		props.add(p);
 		AnnotationEvidence ev = new AnnotationEvidence();
 		ev.setProperties(props);
