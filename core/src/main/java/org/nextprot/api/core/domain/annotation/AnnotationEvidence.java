@@ -15,12 +15,6 @@ public class AnnotationEvidence implements Serializable {
 	// map uniprot evidence code with ECO
 	final static Map<String, String> evidenceInfo = new HashMap<>();
 
-	// map expressionLevel
-	final static Map<String, String> expressionLevelInfo = new HashMap<>();
-
-	// map integrationLevel
-	final static Map<String, String> integrationLevelInfo = new HashMap<>();
-
 	// evidence properties mapping
 	private Map<String, String> propertiesMap= new HashMap<>();
 
@@ -31,10 +25,6 @@ public class AnnotationEvidence implements Serializable {
 		evidenceInfo.put("PROBABLE", "IC");   // IC=inferred by curator
 		evidenceInfo.put("POTENTIAL", "IEA"); // IEA=Inferred from Electronic Annotation
 		evidenceInfo.put("BY_SIMILARITY", "ISS"); // ISS=Inferred from Sequence or Structural Similarity
-
-		integrationLevelInfo.put("integrated", "Integrated");
-		integrationLevelInfo.put("selected", "Selected");
-		integrationLevelInfo.put("single", "Single");		
 	}
 
 	private long resourceId;
@@ -429,7 +419,7 @@ public class AnnotationEvidence implements Serializable {
 	}
 
 	public String getIntegrationLevel() {
-		return expressionLevelInfo.get(extractProperty("integrationLevel"));
+		return extractProperty("integrationLevel");
 	}
 
 	public String getAssignmentMethod() {
