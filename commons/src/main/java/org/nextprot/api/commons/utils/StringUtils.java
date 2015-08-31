@@ -126,6 +126,15 @@ public class StringUtils {
 		  return input.matches("\\d+");  //match a number with optional '-' and decimal.
 	}
 
+	public static String formatForenameInitials(String forename) {
+
+		String[] parts = forename.split("[-\\s]");
+
+
+
+		return forename;
+	}
+
 	/**
 	 * Recursively format text with lines of <code>max</code> length.
 	 *

@@ -22,14 +22,21 @@
 		</xref-list>
 	#end
 </publication>
-<citation type="$publication.publicationType.toLowerCase()" date="$publication.getPublicationYear()" name="#if($publication.cvJournal.name)$publication.cvJournal.name#end" volume="$publication.volume" first="$publication.firstPage" last="$publication.lastPage">
+<publication2 type="$publication.publicationType.toLowerCase()" date="$publication.getPublicationYear()" name="#if($publication.cvJournal.name)$publication.cvJournal.name#end" volume="$publication.volume" first="$publication.firstPage" last="$publication.lastPage">
 	<title>
 	    <![CDATA[$publication.title]]>
 	</title>
-	<authorList>
-    	<consortium name="The C. elegans sequencing consortium"/>
-	</authorList>
+	<author-list>
+		#foreach($author in $publication.authors)
+			#if($author.isPerson())
+                <person name="$author.lastName $StringUtils.formatForenameInitials($author.foreName)"/>
+			#else
+                <consortium name="$author.lastName"/>
+			#end
+		#end
+		<consortium name="The C. elegans sequencing consortium"/>
+	</author-list>
 
 	<dbReference type="PubMed" id="$publication.publicationId"/>
 	<dbReference type="DOI" id="10.1126/science.282.5396.2012"/>
-</citation>
+</publication2>
