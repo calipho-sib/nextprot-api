@@ -13,40 +13,19 @@ public class AnnotationEvidence implements Serializable {
 	private static final long serialVersionUID = 2856324820767690302L;
 
 	// map uniprot evidence code with ECO
-	final static Map<String, String> evidenceInfo = new HashMap<String, String>();
-
-	// map expressionLevel
-	final static Map<String, String> expressionLevelInfo = new HashMap<String, String>();
-
-	// map integrationLevel
-	final static Map<String, String> integrationLevelInfo = new HashMap<String, String>();
+	final static Map<String, String> evidenceInfo = new HashMap<>();
 
 	// evidence properties mapping
-	private Map<String, String> propertiesMap= new HashMap<String, String>();
+	private Map<String, String> propertiesMap= new HashMap<>();
 
-	static{
+	static {
 		
-		//
 		// map uniprot evidence code with ECO
 		evidenceInfo.put("UNKNOWN", "EXP");
 		evidenceInfo.put("PROBABLE", "IC");   // IC=inferred by curator
 		evidenceInfo.put("POTENTIAL", "IEA"); // IEA=Inferred from Electronic Annotation
 		evidenceInfo.put("BY_SIMILARITY", "ISS"); // ISS=Inferred from Sequence or Structural Similarity
-
-		//
-		// map expressionLevel
-		expressionLevelInfo.put("high", "High");
-		expressionLevelInfo.put("low", "Low");
-		expressionLevelInfo.put("medium", "Medium");
-		expressionLevelInfo.put("not detected", "Negative");
-		expressionLevelInfo.put("positive", "Positive");
-		expressionLevelInfo.put("negative", "Negative");
-
-		integrationLevelInfo.put("integrated", "Integrated");
-		integrationLevelInfo.put("selected", "Selected");
-		integrationLevelInfo.put("single", "Single");		
 	}
-	
 
 	private long resourceId;
 	private String resourceType;
@@ -65,8 +44,6 @@ public class AnnotationEvidence implements Serializable {
 	private String evidenceCodeAC;
 	private String evidenceCodeName;
 
-	
-	
 	public String getEvidenceCodeAC() {
 		return evidenceCodeAC;
 	}
@@ -307,7 +284,7 @@ public class AnnotationEvidence implements Serializable {
 	 */
 	public Set<String> getPropertiesNames() {
 		// do an intersection between properties we want to show and properties we have
-		Set<String> propsOk = new HashSet<String>(Arrays.asList("expressionLevel","antibodies acc"));
+		Set<String> propsOk = new HashSet<>(Arrays.asList("expressionLevel","antibodies acc"));
 		propsOk.retainAll(propertiesMap.keySet());
 		// return the intersection
 		return propsOk;
@@ -315,7 +292,7 @@ public class AnnotationEvidence implements Serializable {
 	
 	/**
 	 * 
-	 * @param name a proprty name
+	 * @param name a property name
 	 * @return a string representing the property value associated to name
 	 */
 	public String getPropertyValue(String name) {
@@ -438,11 +415,11 @@ public class AnnotationEvidence implements Serializable {
 	}
 	
 	public String getExpressionLevel() {
-		return expressionLevelInfo.get(extractProperty("expressionLevel"));
+		return extractProperty("expressionLevel");
 	}
 
 	public String getIntegrationLevel() {
-		return expressionLevelInfo.get(extractProperty("integrationLevel"));
+		return extractProperty("integrationLevel");
 	}
 
 	public String getAssignmentMethod() {
