@@ -1,14 +1,13 @@
 package org.nextprot.api.core.domain;
 
+import org.jsondoc.core.annotation.ApiObject;
+import org.jsondoc.core.annotation.ApiObjectField;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
-
-import org.jsondoc.core.annotation.ApiObject;
-import org.jsondoc.core.annotation.ApiObjectField;
-import org.nextprot.api.core.utils.TerminologyUtils;
 
 @ApiObject(name = "publication", description = "A publication")
 public class Publication implements Serializable{
@@ -24,7 +23,7 @@ public class Publication implements Serializable{
 	@ApiObjectField(description = "The title of the publication")
 	private String title;
 
-	@ApiObjectField(description = "The asbtract text")
+	@ApiObjectField(description = "The abstract text")
 	private String abstractText;
 
 	@ApiObjectField(description = "The journal volume")
@@ -195,7 +194,7 @@ public class Publication implements Serializable{
 	public void setTextDate(String textDate) {
 		this.textDate = textDate;
 	}
-	
+
 	public CvJournal getCvJournal() {
 		return cvJournal;
 	}
