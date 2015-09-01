@@ -11,9 +11,11 @@
 			#end
 		#end
 	</author-list>
+	#if($publication.dbXrefs.size() > 0)
     <xref-list>
 		#foreach($xref in $publication.dbXrefs)
 			#parse('xref.xml.vm')
 		#end
     </xref-list>
+	#end
 </publication>
