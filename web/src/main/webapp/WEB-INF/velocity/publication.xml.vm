@@ -1,4 +1,4 @@
-<publication type="$publication.publicationType.toLowerCase()" date="$publication.getPublicationYear()" name="#if($publication.cvJournal.name)$publication.cvJournal.name#end" volume="$publication.volume" first="$publication.firstPage" last="$publication.lastPage">
+<publication type="$publication.publicationType.toLowerCase()" #if(!$publication.getPublicationYear().equals("0001"))date="$publication.getPublicationYear()"#end #if($publication.cvJournal.name)name="$publication.cvJournal.name"#end #if(!$publication.volume.isEmpty())volume="$publication.volume"#end #if(!$publication.firstPage.isEmpty())first="$publication.firstPage"#end #if(!$publication.lastPage.isEmpty())last="$publication.lastPage"#end>
 	<title>
 	    <![CDATA[$publication.title]]>
 	</title>
