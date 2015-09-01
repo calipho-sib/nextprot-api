@@ -37,9 +37,11 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		doc.addField("filters", filters);
 		doc.addField("title", publi.getTitle());
 		doc.addField("title_s", publi.getTitle());
-		doc.addField("date", publi.getPublicationDate());
-		if (publi.getPublicationDate() != null)
+
+		if (publi.getPublicationDate() != null) {
+			doc.addField("date", publi.getPublicationDate());
 			doc.addField("year", publi.getPublicationYear());
+		}
 		doc.addField("first_page", publi.getFirstPage());
 		doc.addField("last_page", publi.getLastPage());
 		doc.addField("volume", publi.getVolume());
