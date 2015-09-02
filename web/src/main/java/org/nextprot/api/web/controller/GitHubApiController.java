@@ -1,6 +1,9 @@
 package org.nextprot.api.web.controller;
 
+import java.util.List;
+
 import org.kohsuke.github.GHTree;
+import org.nextprot.api.web.domain.NextProtNews;
 import org.nextprot.api.web.service.GitHubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,5 +29,12 @@ public class GitHubApiController {
 	public String accessPage(@PathVariable("folder") String folder, @PathVariable("page") String page) {
 		return githubService.getPage(folder, page);
 	}
+
+	@ResponseBody
+	@RequestMapping(value = "/git/news", method = { RequestMethod.GET })
+	public List<NextProtNews> accessGitNews() {
+		return githubService.getNews();
+	}
+	
 
 }
