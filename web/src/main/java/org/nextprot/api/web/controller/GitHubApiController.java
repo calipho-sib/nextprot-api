@@ -31,10 +31,9 @@ public class GitHubApiController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/git/news", method = { RequestMethod.GET })
+	@RequestMapping(value = "/news", method = { RequestMethod.GET })
 	public List<NextProtNews> accessGitNews() {
 		return githubService.getNews();
 	}
-	
 
 }
