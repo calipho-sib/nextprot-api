@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -86,9 +87,9 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 			
 			for (AnnotationProperty prop: annot.getProperties()) {
 				//if (prop.getName().equals("numberOfExperiments")) numberOfExperiments++;
-				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_ENTRY_AC)) entryacs++;
-				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_ISO_AC)) isoacs++;
-				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) resourceinternalrefs++;				
+				if (prop.getName().equals(PropertyApiModel.NAME_INTERACTANT) && prop.getValueType().equals(PropertyApiModel.VALUE_TYPE_ENTRY_AC)) entryacs++;
+				if (prop.getName().equals(PropertyApiModel.NAME_INTERACTANT) && prop.getValueType().equals(PropertyApiModel.VALUE_TYPE_ISO_AC)) isoacs++;
+				if (prop.getName().equals(PropertyApiModel.NAME_INTERACTANT) && prop.getValueType().equals(PropertyApiModel.VALUE_TYPE_RIF)) resourceinternalrefs++;				
 			}
 		}
 		assertTrue(numberOfExperiments==4);

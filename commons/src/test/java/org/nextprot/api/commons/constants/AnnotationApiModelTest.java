@@ -10,18 +10,6 @@ import java.util.Set;
 
 public class AnnotationApiModelTest {
 
-	@Test
-	public void testPdbMappingProperties() {
-		Assert.assertEquals(2, AnnotationApiModel.PDB_MAPPING.getProperties().size());
-		Assert.assertNotNull(AnnotationApiModel.PDB_MAPPING.getPropertyByDbName("resolution"));
-		Assert.assertNotNull(AnnotationApiModel.PDB_MAPPING.getPropertyByDbName("method"));
-		Assert.assertNull(AnnotationApiModel.PDB_MAPPING.getPropertyByDbName("unexistingpropertydbname"));
-	}
-
-	@Test
-	public void testDomainInfoProperties() {
-		Assert.assertNull(AnnotationApiModel.DOMAIN_INFO.getProperties());
-	}
 
 	@Test
 	public void testIsLeaf() {

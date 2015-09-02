@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
@@ -82,9 +83,9 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		
 		Assert.assertEquals("AC-0002", p.getAccession());  // used to build the annotation description
 		Assert.assertEquals(1234, p.getAnnotationId());
-		Assert.assertEquals(AnnotationProperty.NAME_DIFFERING_SEQUENCE, p.getName());
+		Assert.assertEquals(PropertyApiModel.NAME_DIFFERING_SEQUENCE, p.getName());
 		Assert.assertEquals(String.valueOf(ev2.getResourceId()), p.getValue());
-		Assert.assertEquals(AnnotationProperty.VALUE_TYPE_RIF, p.getValueType());
+		Assert.assertEquals(PropertyApiModel.VALUE_TYPE_RIF, p.getValueType());
 				 
 		// <property property-name="differing sequence" value="2222" value-type="resource-internal-ref" accession="AC-0002"/>
 		// <property property-name="interactant" value="16867031" value-type="resource-internal-ref" accession="Q77M19"/>
@@ -155,9 +156,9 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		
 		Assert.assertEquals("AC-0002", p.getAccession());  // used to build the annotation description
 		Assert.assertEquals(1234, p.getAnnotationId());
-		Assert.assertEquals(AnnotationProperty.NAME_COFACTOR, p.getName());
+		Assert.assertEquals(PropertyApiModel.NAME_COFACTOR, p.getName());
 		Assert.assertEquals(String.valueOf(ev2.getResourceId()), p.getValue());
-		Assert.assertEquals(AnnotationProperty.VALUE_TYPE_RIF, p.getValueType());
+		Assert.assertEquals(PropertyApiModel.VALUE_TYPE_RIF, p.getValueType());
 				 
 		// <property property-name="differing sequence" value="2222" value-type="resource-internal-ref" accession="AC-0002"/>
 		// <property property-name="interactant" value="16867031" value-type="resource-internal-ref" accession="Q77M19"/>
@@ -226,9 +227,9 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		
 		Assert.assertEquals("AC-0002", p.getAccession());  // used to build the annotation description
 		Assert.assertEquals(1234, p.getAnnotationId());
-		Assert.assertEquals(AnnotationProperty.NAME_ALTERNATIVE_DISEASE_TERM, p.getName());
+		Assert.assertEquals(PropertyApiModel.NAME_ALTERNATIVE_DISEASE_TERM, p.getName());
 		Assert.assertEquals(String.valueOf(ev2.getResourceId()), p.getValue());
-		Assert.assertEquals(AnnotationProperty.VALUE_TYPE_RIF, p.getValueType());
+		Assert.assertEquals(PropertyApiModel.VALUE_TYPE_RIF, p.getValueType());
 				 
 		// <property property-name="differing sequence" value="2222" value-type="resource-internal-ref" accession="AC-0002"/>
 		// <property property-name="interactant" value="16867031" value-type="resource-internal-ref" accession="Q77M19"/>

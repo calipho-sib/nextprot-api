@@ -410,14 +410,6 @@ public enum AnnotationApiModel implements Serializable {
 		return /*this.getDbId() + " : " +*/ this.getDbAnnotationTypeName();
 	}
 
-	public Set<PropertyApiModel> getProperties() {
-		return PropertyApiModel.getPropertySet(this);
-	}
-
-	public PropertyApiModel getPropertyByDbName(String dbName) {
-		return PropertyApiModel.getPropertyByDbName(this, dbName);
-	}
-
 	// used by velocity
 	public String getAnnotationCategoryHierarchyForXML() {
 

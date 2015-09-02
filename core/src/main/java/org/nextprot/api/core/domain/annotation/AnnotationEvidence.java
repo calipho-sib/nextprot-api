@@ -306,12 +306,21 @@ public class AnnotationEvidence implements Serializable {
 	 * @return a set of property names related to the evidence and that are allowed to be shown
 	 */
 	public Set<String> getPropertiesNames() {
+		/*
 		// do an intersection between properties we want to show and properties we have
 		Set<String> propsOk = new HashSet<String>(Arrays.asList("expressionLevel","antibodies acc", "numberOfExperiments"));
 		propsOk.retainAll(propertiesMap.keySet());
 		// return the intersection
 		return propsOk;
+		*/
+		return propertiesMap==null ? null : propertiesMap.keySet(); 
 	}
+	
+	
+	public String getPropertyRawValue(String name) {
+		return propertiesMap.get(name);
+	}
+	
 	
 	/**
 	 * 
@@ -340,30 +349,13 @@ public class AnnotationEvidence implements Serializable {
 
 	}
 
-	/**
-	 * obsolete, see http://issues.isb-sib.ch/browse/CALIPHOMISC-140
-	 */
-	// public String getAssignedByFromProperties(){ return
-	// extractProperty("assigned by");
-	// }
-
-	
-	/**
-	 * used for subcellular location from GFP-cDNA@EMBL the EMBL accession used
-	 * for the subcellular location experiences is not displayed not used in ttl
-	 * template
-	 * 
-	 * not used in ttl template
-	 */
-	public String getEMBL() {
-		return extractProperty("EMBL");
-	}
 
 	/**
 	 * See http://issues.isb-sib.ch/browse/CALIPHOMISC-142 for more details
 	 * 
 	 * @return 2 possible values: colocalizes_with / contributes_to
 	 */
+	@Deprecated
 	public String getGoQualifier() {
 		return extractProperty("go_qualifier");
 	}
@@ -386,6 +378,7 @@ public class AnnotationEvidence implements Serializable {
 	 * 
 	 * @return Example: NB4, HL60, ...
 	 */
+	@Deprecated
 	public String getCL() {
 		return extractProperty("CL");
 	}
@@ -421,6 +414,7 @@ public class AnnotationEvidence implements Serializable {
 	 * not used in ttl template
 	 * @return
 	 */
+	@Deprecated
 	public String getSampleId() {
 		return extractProperty("sample id");
 	}
@@ -433,16 +427,17 @@ public class AnnotationEvidence implements Serializable {
 
 	 * @return Example: Lys-CSC, Cys-Glyco-CSC,Lys-CSC
 	 */
+	@Deprecated
 	public String getSP() {
 		return extractProperty("SP");
 	}
-	
+	@Deprecated
 	public String getExpressionLevel() {
 		return expressionLevelInfo.get(extractProperty("expressionLevel"));
 	}
-
+	@Deprecated
 	public String getIntegrationLevel() {
-		return expressionLevelInfo.get(extractProperty("integrationLevel"));
+		return integrationLevelInfo.get(extractProperty("integrationLevel"));
 	}
 
 	public String getAssignmentMethod() {

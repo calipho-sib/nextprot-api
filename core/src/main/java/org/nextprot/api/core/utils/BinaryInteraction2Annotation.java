@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.Interactant;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.Isoform;
@@ -91,12 +92,12 @@ public class BinaryInteraction2Annotation {
 		Interactant interactant=BinaryInteraction2Annotation.getInteractant(inter);
 		p1.setAccession(interactant.getAccession());
 		p1.setAnnotationId(annotId);
-		p1.setName(AnnotationProperty.NAME_INTERACTANT);
+		p1.setName(PropertyApiModel.NAME_INTERACTANT);
 		if (interactant.isNextprot()) {
-			p1.setValueType(interactant.isIsoform() ? AnnotationProperty.VALUE_TYPE_ISO_AC : AnnotationProperty.VALUE_TYPE_ENTRY_AC);
+			p1.setValueType(interactant.isIsoform() ? PropertyApiModel.VALUE_TYPE_ISO_AC : PropertyApiModel.VALUE_TYPE_ENTRY_AC);
 			p1.setValue(interactant.getNextprotAccession());
 		} else {
-			p1.setValueType(AnnotationProperty.VALUE_TYPE_RIF);
+			p1.setValueType(PropertyApiModel.VALUE_TYPE_RIF);
 			p1.setValue(""+interactant.getXrefId());			
 		}
 		anProps.add(p1);

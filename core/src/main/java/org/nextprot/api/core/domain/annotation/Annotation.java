@@ -186,19 +186,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.variant = variant;
 	}
 
-	/*
-	 * returns API model of a property of this annotation 
-	 */
-	public PropertyApiModel getPropertyApiModel(String dbName) {
-		return this.apiCategory.getPropertyByDbName(dbName);
-	}
-	
-	/*
-	 * returns API model of a property of this annotation 
-	 */
-	public PropertyApiModel getPropertyApiModel(AnnotationProperty prop) {
-		return this.apiCategory.getPropertyByDbName(prop.getName());
-	}
 
 	public List<AnnotationProperty> getProperties() {
 		return properties;

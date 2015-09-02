@@ -15,10 +15,11 @@ annotation:$annotation-uri a :$annotation-type;
 #foreach($prop in $annotation.getProperties())
 ## don't remove the presetting to false in next line otherewise problems (pam)
 #set($pmodel=false)
-#set($pmodel=$annotation.getPropertyApiModel($prop))
+#set($pmodel=$NXUtils.getTtlPropertyWriter($annotation.getAPICategory(), $prop.getName()))
 #if($pmodel)
-  :$pmodel.getCamelName() "$pmodel.formatValue($prop.getValue())"^^xsd:$pmodel.getRdfDataType();
-#end
+#set($UNESCAPED_CDATA = $pmodel.formatValue($prop.getValue()))
+  :$pmodel.getName() $UNESCAPED_CDATA ;
+#end	
 #end
 #if($annotation.getVariant())
 #set($variant=$annotation.getVariant()) 

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -39,7 +40,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(annot.getCategory().equals(AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName()));
     	AnnotationProperty prop = annot.getProperties().get(0);
     	assertTrue(prop.getAnnotationId()==annotId);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME));
     	assertTrue(prop.getValue().equals("NX_PEPT00113713"));
     	assertTrue(annot.getQualityQualifier().equals("GOLD"));
     	assertTrue(annot.getTargetingIsoformsMap().size()==2);
@@ -76,7 +77,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(annot.getCategory().equals(AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName()));
     	AnnotationProperty prop = annot.getProperties().get(0);
     	assertTrue(prop.getAnnotationId()==annotId);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME));
     	assertTrue(prop.getValue().equals("NX_PEPT00113713"));
     	assertTrue(annot.getQualityQualifier().equals("GOLD"));
     	assertTrue(annot.getTargetingIsoformsMap().size()==1);
@@ -94,7 +95,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(annot.getCategory().equals(AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName()));
     	prop = annot.getProperties().get(0);
     	assertTrue(prop.getAnnotationId()==annotId2);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME));
     	assertTrue(prop.getValue().equals("NX_PEPT00113713"));
     	assertTrue(annot.getQualityQualifier().equals("GOLD"));
     	assertTrue(annot.getTargetingIsoformsMap().size()==1);
@@ -138,13 +139,13 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 
     	prop = annot.getProperties().get(0);
     	assertTrue(prop.getAnnotationId()==annotId);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME));
     	assertTrue(prop.getValue().equals("NX_PEPT00113713"));
     	
     	prop = annot.getProperties().get(1);
     	System.out.println("annotationid in prop:" + prop.getAnnotationId());
     	assertTrue(prop.getAnnotationId()==annotId);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_PROTEOTYPICITY));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY));
     	assertTrue(prop.getValue().equals("Y"));
     	
 
@@ -154,13 +155,13 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 
     	prop = annot.getProperties().get(0);
     	assertTrue(prop.getAnnotationId()==annotId2);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME));
     	assertTrue(prop.getValue().equals("NX_PEPT00113713"));
     	
     	prop = annot.getProperties().get(1);
     	System.out.println("annotationid in prop:" + prop.getAnnotationId());
     	assertTrue(prop.getAnnotationId()==annotId2);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_PROTEOTYPICITY));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY));
     	assertTrue(prop.getValue().equals("Y"));
     }
 	
@@ -297,11 +298,11 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(annot.getProperties().size()==2);
     	prop = annot.getProperties().get(0);
     	assertTrue(prop.getAnnotationId()==annotId1);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME));
     	assertTrue(prop.getValue().equals(pep1));
     	prop = annot.getProperties().get(1);
     	assertTrue(prop.getAnnotationId()==annotId1);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_PROTEOTYPICITY));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY));
     	assertTrue(prop.getValue().equals("Y"));
     	
        	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -339,11 +340,11 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(annot.getProperties().size()==2);
     	prop = annot.getProperties().get(0);
     	assertTrue(prop.getAnnotationId()==annotId2);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME));
     	assertTrue(prop.getValue().equals(pep1));
     	prop = annot.getProperties().get(1);
     	assertTrue(prop.getAnnotationId()==annotId2);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_PROTEOTYPICITY));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY));
     	assertTrue(prop.getValue().equals("Y"));
 
        	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -374,11 +375,11 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(annot.getProperties().size()==2);
     	prop = annot.getProperties().get(0);
     	assertTrue(prop.getAnnotationId()==annotId3);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME));
     	assertTrue(prop.getValue().equals(pep2));
     	prop = annot.getProperties().get(1);
     	assertTrue(prop.getAnnotationId()==annotId3);
-    	assertTrue(prop.getName().equals(AnnotationProperty.NAME_PEPTIDE_PROTEOTYPICITY));
+    	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY));
     	assertTrue(prop.getValue().equals("N"));
     	
    	
