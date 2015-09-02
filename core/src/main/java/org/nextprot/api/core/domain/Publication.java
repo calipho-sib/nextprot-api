@@ -2,7 +2,7 @@ package org.nextprot.api.core.domain;
 
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
-import org.nextprot.api.core.utils.DateFormatter;
+import org.nextprot.api.commons.utils.DateFormatter;
 
 import java.io.Serializable;
 import java.util.Date;

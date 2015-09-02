@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils;
+package org.nextprot.api.commons.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

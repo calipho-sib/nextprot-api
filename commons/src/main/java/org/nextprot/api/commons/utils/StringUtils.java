@@ -127,7 +127,7 @@ public class StringUtils {
 		  return input.matches("\\d+");  //match a number with optional '-' and decimal.
 	}
 
-	public static final AuthorNameFormatter getAuthorNameFormatter() {
+	public static AuthorNameFormatter getAuthorNameFormatter() {
 
 		return AUTHOR_NAME_FORMATTER;
 	}

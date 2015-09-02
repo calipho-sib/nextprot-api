@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils;
+package org.nextprot.api.commons.utils;
 
 import org.junit.Assert;
 import org.junit.Test;
