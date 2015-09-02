@@ -1,9 +1,11 @@
 package org.nextprot.api.web.domain;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class NextProtNews implements Comparable<NextProtNews>{
 	
+	public static String DATE_FORMAT =  "yyyy-MM-dd";
 	private String title;
 	private Date publicationDate;
 	private String url;
@@ -16,6 +18,10 @@ public class NextProtNews implements Comparable<NextProtNews>{
 		this.title = title;
 	}
 
+	public String getPublicationDateFormatted() {
+		return (new SimpleDateFormat(DATE_FORMAT)).format(publicationDate);
+	}
+	
 	public Date getPublicationDate() {
 		return publicationDate;
 	}

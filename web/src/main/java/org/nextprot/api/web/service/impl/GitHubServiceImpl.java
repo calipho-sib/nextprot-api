@@ -147,7 +147,7 @@ public class GitHubServiceImpl implements GitHubService {
 		
 		try { // Parse the date
 		
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); 
+			DateFormat df = new SimpleDateFormat(NextProtNews.DATE_FORMAT); 
 			Date date = df.parse(elements[0].trim());
 			result.setPublicationDate(date);
 
