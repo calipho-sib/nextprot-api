@@ -2,9 +2,9 @@ package org.nextprot.api.core.domain;
 
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.core.utils.DateFormatter;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
@@ -92,8 +92,7 @@ public class Publication implements Serializable{
 	@ApiObjectField(description = "The associated cross references")
 	protected Set<DbXref> dbXrefs;
 	
-	private final SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");  
-	
+	private final DateFormatter yearFormatter = new DateFormatter();
 
 	public long getPublicationId() {
 		return id;
@@ -140,7 +139,11 @@ public class Publication implements Serializable{
 	}
 
 	public String getPublicationYear() {
-		return this.yearFormat.format(this.publicationDate);
+
+		if (publicationDate == null)
+			return null;
+
+		return yearFormatter.format(publicationDate, DateFormatter.YEAR_PRECISION);
 	}
 	
 	public void setPublicationDate(Date publicationDate) {

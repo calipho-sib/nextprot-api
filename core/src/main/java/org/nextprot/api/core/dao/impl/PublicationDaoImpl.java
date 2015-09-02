@@ -4,6 +4,7 @@ import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.utils.DateFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -13,15 +14,12 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Repository
 public class PublicationDaoImpl implements PublicationDao {
 
-	private final static SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
-	private final static SimpleDateFormat YEAR_MONTH_FORMAT = new SimpleDateFormat("yyyy-MM");
-	private final static SimpleDateFormat YEAR_MONTH_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+	private final static DateFormatter DATE_FORMATTER = new DateFormatter();
 
 	@Autowired private SQLDictionary sqlDictionary;
 
@@ -45,21 +43,6 @@ public class PublicationDaoImpl implements PublicationDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper());
 	}
 
-	private static SimpleDateFormat getDateFormat(int cvDatePrecisionId) {
-
-		switch (cvDatePrecisionId) {
-
-			case 10:
-				return YEAR_MONTH_DATE_FORMAT;
-			case 30:
-				return YEAR_MONTH_FORMAT;
-			case 60:
-				return YEAR_FORMAT;
-			default:
-				return YEAR_FORMAT;
-		}
-	}
-
 	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {
 
 		public Publication mapRow(ResultSet resultSet, int row) throws SQLException {
@@ -74,7 +57,7 @@ public class PublicationDaoImpl implements PublicationDao {
 				Date date = resultSet.getDate("publication_date");
 
 				publication.setPublicationDate(date);
-				publication.setTextDate(getDateFormat(cvDatePrecisionId).format(date));
+				publication.setTextDate(DATE_FORMATTER.format(date, cvDatePrecisionId));
 			}
 
 			publication.setId(resultSet.getLong("resource_id"));
