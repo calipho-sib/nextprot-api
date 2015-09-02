@@ -12,6 +12,8 @@ import java.util.Set;
  */
 public class BioComplex extends BioObject<List<BioObject<?>>> {
 
+    private static final long serialVersionUID = 0L;
+
     private final List<BioObject<?>> bioObjects;
 
     protected BioComplex(BioObject<?> bioObject, BioObject<?>... others) {

@@ -1,16 +1,10 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.commons.utils.DateFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -18,8 +12,14 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+
 @Repository
 public class PublicationDaoImpl implements PublicationDao {
+
+	private final static DateFormatter DATE_FORMATTER = new DateFormatter();
 
 	@Autowired private SQLDictionary sqlDictionary;
 
@@ -27,7 +27,7 @@ public class PublicationDaoImpl implements PublicationDao {
 	private DataSourceServiceLocator dsLocator;
 
 	public List<Long> findSortedPublicationIdsByMasterId(Long masterId) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("identifierId", masterId);
 		params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
 
@@ -36,13 +36,12 @@ public class PublicationDaoImpl implements PublicationDao {
 	}
 
 	public List<Publication> findSortedPublicationsByMasterId(Long masterId) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("identifierId", masterId);
 		params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
 
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper());
 	}
-
 
 	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {
 
@@ -50,12 +49,22 @@ public class PublicationDaoImpl implements PublicationDao {
 
 			// Need to use a mapper, but it is not so bad if we don't want to use reflection since the database may use different names
 			Publication publication = new Publication();
+
+			int cvDatePrecisionId = resultSet.getInt("cv_date_precision_id");
+
+			if (cvDatePrecisionId != 1) {
+
+				Date date = resultSet.getDate("publication_date");
+
+				publication.setPublicationDate(date);
+				publication.setTextDate(DATE_FORMATTER.format(date, cvDatePrecisionId));
+			}
+
 			publication.setId(resultSet.getLong("resource_id"));
 			publication.setMD5(resultSet.getString("md5"));
 			publication.setAbstractText(resultSet.getString("abstract_text"));
 			publication.setVolume(resultSet.getString("volume"));
 			publication.setIssue(resultSet.getString("issue"));
-			publication.setPublicationDate(resultSet.getDate("publication_date"));
 			publication.setFirstPage(resultSet.getString("first_page"));
 			publication.setLastPage(resultSet.getString("last_page"));
 			

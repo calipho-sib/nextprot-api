@@ -7,6 +7,8 @@ package org.nextprot.api.core.domain;
  */
 public class BioObjectExternal extends BioObject<DbXref> {
 
+    private static final long serialVersionUID = 0L;
+
     public BioObjectExternal(BioType bioType) {
 
         super(bioType, ResourceType.EXTERNAL);

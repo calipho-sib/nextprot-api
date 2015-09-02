@@ -38,7 +38,7 @@ public class GeneDAOImpl implements GeneDAO {
 			ChromosomalLocation chromosomalLocation = new ChromosomalLocation();
 			chromosomalLocation.setChromosome(resultSet.getString("chromosome"));
 			String accession = resultSet.getString("accession");
-			chromosomalLocation.setAccession((accession.matches("^(NX_)?VG_.+")) ? "" : accession);
+			chromosomalLocation.setAccession((accession.matches("^(NX_)?ENSG.+$")) ? accession : "");
 			chromosomalLocation.setBand(resultSet.getString("band"));
 			chromosomalLocation.setStrand(resultSet.getInt("strand"));
 			chromosomalLocation.setFirstPosition(resultSet.getInt("firstPosition"));

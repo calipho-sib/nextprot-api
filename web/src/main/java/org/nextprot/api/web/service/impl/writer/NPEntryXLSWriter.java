@@ -129,7 +129,7 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
 
     public static NPEntryXLSWriter newNPEntryXLSWriter(OutputStream os, String viewName) {
 
-        if (viewName.equals("isoform"))
+        if (viewName.equals("isoforms"))
             return new NPEntryIsoformXLSWriter(os);
         else
             return new NPEntryOverviewXLSWriter(os);
