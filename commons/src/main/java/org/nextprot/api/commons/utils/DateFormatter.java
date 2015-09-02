@@ -10,10 +10,6 @@ import java.util.Date;
  */
 public class DateFormatter {
 
-    private final static SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
-    private final static SimpleDateFormat YEAR_MONTH_FORMAT = new SimpleDateFormat("yyyy-MM");
-    private final static SimpleDateFormat YEAR_MONTH_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
-
     public final static int DAY_PRECISION = 10;
     public final static int MONTH_PRECISION = 30;
     public final static int YEAR_PRECISION = 60;
@@ -45,13 +41,13 @@ public class DateFormatter {
         switch (cvDatePrecisionId) {
 
             case 10:
-                return YEAR_MONTH_DATE_FORMAT;
+                return new SimpleDateFormat("yyyy-MM-dd");
             case 30:
-                return YEAR_MONTH_FORMAT;
+                return new SimpleDateFormat("yyyy-MM");
             case 60:
-                return YEAR_FORMAT;
+                return new SimpleDateFormat("yyyy");
             default:
-                return YEAR_FORMAT;
+                return new SimpleDateFormat("yyyy");
         }
     }
 }
