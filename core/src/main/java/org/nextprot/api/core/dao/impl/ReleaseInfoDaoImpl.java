@@ -22,7 +22,7 @@ public class ReleaseInfoDaoImpl implements ReleaseInfoDao {
 		@Override
 		public int compare(ReleaseContentsDataSource ds1, ReleaseContentsDataSource ds2) {
 
-			return ds1.getSource().compareTo(ds2.getSource());
+			return ds1.getSource().compareToIgnoreCase(ds2.getSource());
 		}
 	};
 
