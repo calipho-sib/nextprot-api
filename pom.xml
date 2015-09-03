@@ -337,6 +337,10 @@
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
+						<manifestEntries>
+							<mode>development</mode>
+							<build>1322</build>
+						</manifestEntries>
                     </archive>
                 </configuration>
             </plugin>

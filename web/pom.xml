@@ -128,6 +128,28 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>exec-maven-plugin</artifactId>
+				<groupId>org.codehaus.mojo</groupId>
+				<executions>
+					<execution>
+						<id>Fetch number of git commits</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>git</executable>
+							<arguments>
+								<argument>rev-list</argument>
+								<argument>HEAD</argument>
+								<argument>--count</argument>
+							</arguments>
+							<outputFile>target/classes/buildNumber.txt</outputFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>
