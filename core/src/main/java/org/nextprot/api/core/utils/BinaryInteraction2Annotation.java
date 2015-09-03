@@ -1,10 +1,11 @@
 package org.nextprot.api.core.utils;
 
+import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.domain.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.Interactant;
 import org.nextprot.api.core.domain.Interaction;
@@ -40,7 +41,7 @@ public class BinaryInteraction2Annotation {
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation evidences
 		// - - - - - - - - - - - - - - - - - - - - 
-		List<AnnotationEvidence> evidences = new ArrayList<AnnotationEvidence>();
+		List<AnnotationEvidence> evidences = new ArrayList<>();
 		AnnotationEvidence evi = new AnnotationEvidence();
 		evi.setAnnotationId(annot.getAnnotationId());
 		evi.setAssignedBy(inter.getEvidenceDatasource());
@@ -87,7 +88,7 @@ public class BinaryInteraction2Annotation {
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation property: interactant
 		// - - - - - - - - - - - - - - - - - - - - 
-		List<AnnotationProperty> anProps = new ArrayList<AnnotationProperty>();
+		List<AnnotationProperty> anProps = new ArrayList<>();
 		AnnotationProperty p1 = new AnnotationProperty();
 		Interactant interactant=BinaryInteraction2Annotation.getInteractant(inter);
 		p1.setAccession(interactant.getAccession());
@@ -100,6 +101,9 @@ public class BinaryInteraction2Annotation {
 			p1.setValueType(PropertyApiModel.VALUE_TYPE_RIF);
 			p1.setValue(""+interactant.getXrefId());			
 		}
+
+		annot.setBioObject(newBioObject(interactant));
+
 		anProps.add(p1);
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation property: self interaction
@@ -114,7 +118,7 @@ public class BinaryInteraction2Annotation {
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation isoform specificity
 		// - - - - - - - - - - - - - - - - - - - - 
-		List<AnnotationIsoformSpecificity> isospecs = new ArrayList<AnnotationIsoformSpecificity>(); 
+		List<AnnotationIsoformSpecificity> isospecs = new ArrayList<>();
 		for (Isoform iso: isoforms) {
 			AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
 			spec.setAnnotationId(annotId);
@@ -136,7 +140,7 @@ public class BinaryInteraction2Annotation {
 	 * @param inter
 	 * @return
 	 */
-	public static Interactant getInteractant(Interaction inter) {
+	static Interactant getInteractant(Interaction inter) {
 		Interactant interactant=null;
 		if (inter.isSelfInteraction()) {
 			interactant = inter.getInteractants().get(0);
@@ -150,7 +154,20 @@ public class BinaryInteraction2Annotation {
 		}
 		return interactant; // should never be null
 	}
-	
-	
-	
+
+	static BioObject newBioObject(Interactant interactant) {
+
+		BioObject be;
+
+		if (interactant.isNextprot())
+			be = (interactant.isIsoform()) ? new BioIsoform() : new BioEntry();
+		else
+			be = new BioObjectExternal((interactant.isIsoform()) ? BioObject.BioType.PROTEIN_ISOFORM : BioObject.BioType.PROTEIN_ENTRY);
+
+		be.setId(interactant.getXrefId());
+		be.setAccession((interactant.isNextprot()) ? interactant.getNextprotAccession() : interactant.getAccession());
+		be.setDatabase(interactant.getDatabase());
+
+		return be;
+	}
 }

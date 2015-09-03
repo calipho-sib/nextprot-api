@@ -11,6 +11,18 @@
 	#if($annotation.getVariant())
     	<variant original='$annotation.getVariant().getOriginal()' variation='$annotation.getVariant().getVariant()' />
 	#end
+
+	#if($annotation.getBioObject())
+		#set($bioObject = $annotation.getBioObject())
+        <interactant nature='$StringUtils.snakeToKebabCase($bioObject.getBioType().toString())'>
+            #if($bioObject.getResourceType().toString().equals("EXTERNAL"))
+                <xref-ref resource-internal-ref='$bioObject.getId()'/>
+			#elseif($bioObject.getResourceType().toString().equals("INTERNAL"))
+                <ref accession='$bioObject.getAccession()' database='nextProt'/>
+			#end
+        </interactant>
+	#end
+
 	## might have no properties so need to check
 	#if(($annotation.getProperties()) && ($annotation.getProperties().size() > 0))
     <property-list>

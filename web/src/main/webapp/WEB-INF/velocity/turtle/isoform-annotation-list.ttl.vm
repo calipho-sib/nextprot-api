@@ -22,8 +22,14 @@ isoform:$isoform-name a :Isoform;
 isoform:$isoform-name :$parentPredicate annotation:$annotation-uri .
 #end
 isoform:$isoform-name :$annotation.rdfPredicate annotation:$annotation-uri .
-#if($annotation.getConsensusExpressionLevelPredicat())
-isoform:$isoform-name :$annotation.getConsensusExpressionLevelPredicat() annotation:$annotation-uri .
+## special case for expression
+#if($annotation.isExpressionLevelDetected().isPresent())
+isoform:$isoform-name #if($annotation.isExpressionLevelDetected().get()):detectedExpression#else:undetectedExpression#end annotation:$annotation-uri .
 #end
+
+##if($annotation.getConsensusExpressionLevelPredicat())
+## isoform:$isoform-name :$annotation.getConsensusExpressionLevelPredicat() annotation:$annotation-uri .
+##end
+
 #parse("turtle/isoform-annotation.ttl.vm")
 #end

@@ -47,38 +47,38 @@ public class PropertyApiModel {
 	
 	private static Map<AnnotationApiModel,Set<PropertyApiModel>> anno2props;
 	static {
-		anno2props=new HashMap<AnnotationApiModel,Set<PropertyApiModel>>();
+		anno2props=new HashMap<>();
 
 		anno2props.put(AnnotationApiModel.GLYCOSYLATION_SITE,
-				new HashSet<PropertyApiModel>(Arrays.asList(
+				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_CELL_LINE,"cellLine","string", true, true, Parent.EVIDENCE)))); 
 
 		anno2props.put(AnnotationApiModel.GO_MOLECULAR_FUNCTION,
-				new HashSet<PropertyApiModel>(Arrays.asList(
+				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_GO_QUALIFIER,"goQualifier","string", true, true, Parent.EVIDENCE)))); 
 		anno2props.put(AnnotationApiModel.GO_CELLULAR_COMPONENT,
-				new HashSet<PropertyApiModel>(Arrays.asList(
+				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_GO_QUALIFIER,"goQualifier","string", true, true, Parent.EVIDENCE)))); 
 		
 		anno2props.put(AnnotationApiModel.EXPRESSION_PROFILE,
-				new HashSet<PropertyApiModel>(Arrays.asList(
+				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_ANTIBODIES_ACC,"antibodiesAcc","string", true, true, Parent.EVIDENCE), 
 						new PropertyApiModel(NAME_EXPRESSION_LEVEL,"expressionLevel","string", true, true, Parent.EVIDENCE), 
 						new PropertyApiModel(NAME_INTEGRATION_LEVEL,"integrationLevel","string", true, true, Parent.EVIDENCE)))); 
 		anno2props.put(AnnotationApiModel.PDB_MAPPING,
-				new HashSet<PropertyApiModel>(Arrays.asList(
+				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_RESOLUTION,"resolution","double", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_METHOD, "method", "string", true, true, Parent.ANNOTATION))));
 		anno2props.put(AnnotationApiModel.PEPTIDE_MAPPING,
-				new HashSet<PropertyApiModel>(Arrays.asList(
+				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_PEPTIDE_NAME,"peptideName","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_PROTEOTYPICITY, "proteotypic", "boolean", true, true, Parent.ANNOTATION))));
 		anno2props.put(AnnotationApiModel.SRM_PEPTIDE_MAPPING,
-				new HashSet<PropertyApiModel>(Arrays.asList(
+				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_PEPTIDE_NAME,"peptideName","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_PROTEOTYPICITY, "proteotypic", "boolean", true, true, Parent.ANNOTATION))));
 		anno2props.put(AnnotationApiModel.BINARY_INTERACTION,
-				new HashSet<PropertyApiModel>(Arrays.asList(
+				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_SELF_INTERACTION,"selfInteraction","boolean", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_NUMBER_EXPERIMENTS,"numberOfExperiments","integer", true, true, Parent.EVIDENCE))));
 		
