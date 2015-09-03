@@ -42,32 +42,6 @@ public class EntrySpecialAnnotationsXMLIntegrationTest extends WebIntegrationBas
 	  }
 	  
 	  @Test
-	  public void shouldWorkForCofactorAnnotation() throws Exception {
-
-		  //Tests issue CALIPHOMISC-277 https://issues.isb-sib.ch/browse/CALIPHOMISC-277
-		  
-	      // the cofactor annotation selected in this test comes with a "relative" evidence 
-		  // which should be replaced with "cofactor" property 
-		  // pointing to an xref defining the term
-
-		  ResultActions actions = this.mockMvc.perform(get("/entry/NX_Q9GZT9/cofactor.xml"));
-		  String xml = actions.andReturn().getResponse().getContentAsString();
-		  String propXpath = "entry//annotation-category[@category='cofactor']/annotation/property-list/property[@name='cofactor' and @accession='CHEBI:29033']";
-		  actions.andExpect(xpath(propXpath).exists());
-	      	      
-	      // testing that any "relative" evidence was removed
-	      actions.andExpect(xpath(propXpath + "/../../evidence-list/evidence[@resource-assoc-type='relative']").doesNotExist());
-	      
-	      // getting the value of the "cofactor" property
-		  String value = XMLUnitUtils.getMatchingNodes(xml, propXpath).item(0).getAttributes().getNamedItem("value").getNodeValue();
-		 
-		  // testing that the xref pointed by the property is included in the xml
-		  String xrefPath = "entry/xref-list/xref[@internal-id='"+ value + "']";
-		  actions.andExpect(xpath(xrefPath).exists());
-		  
-	  }
-	  
-	  @Test
 	  public void shouldWorkForSequenceCautionAnnotation() throws Exception {
 
 		  //Tests issue CALIPHOMISC-277 https://issues.isb-sib.ch/browse/CALIPHOMISC-277
@@ -96,33 +70,5 @@ public class EntrySpecialAnnotationsXMLIntegrationTest extends WebIntegrationBas
 		  actions.andExpect(xpath(xrefPath).exists());
 		  
 	  }
-	  
-	  @Test
-	  public void shouldWorkForBinaryInteractionAnnotation() throws Exception {
-
-		  //Tests issue CALIPHOMISC-302 https://issues.isb-sib.ch/browse/CALIPHOMISC-302
-		  
-	      // the "binary-interaction" annotation selected in this test 
-		  // should contain an "interactant" property
-		  // pointing to an xref defining the interactant (interactant is not an antry nor an isoform contained in nextprot)
-
-		  ResultActions actions = this.mockMvc.perform(get("/entry/NX_P03372/binary-interaction.xml"));
-		  String xml = actions.andReturn().getResponse().getContentAsString();
-		  String propXpath = "entry//annotation-category[@category='binary-interaction']/annotation/property-list/property[@name='interactant' and @value-type='resource-internal-ref' and @accession='Q81LD0']";
-		  actions.andExpect(xpath(propXpath).exists());
-	      	      	      
-	      // getting the value of the "interactant" property
-		  String value = XMLUnitUtils.getMatchingNodes(xml, propXpath).item(0).getAttributes().getNamedItem("value").getNodeValue();
-		 
-		  // testing that the xref pointed by the property is included in the xml
-		  String xrefPath = "entry/xref-list/xref[@internal-id='"+ value + "']";
-		  actions.andExpect(xpath(xrefPath).exists());
-		  
-	  }
-	  
-  
-	
-
-
 }
 
