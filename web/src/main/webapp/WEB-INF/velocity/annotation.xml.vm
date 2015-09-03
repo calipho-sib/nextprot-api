@@ -18,7 +18,7 @@
             #if($bioObject.getResourceType().toString().equals("EXTERNAL"))
                 <xref-ref resource-internal-ref='$bioObject.getId()'/>
 			#elseif($bioObject.getResourceType().toString().equals("INTERNAL"))
-                <ref accession='$bioObject.getAccession()' database='nextProt'/>
+                <ref accession='$bioObject.getAccession()' database='neXtProt'/>
 			#end
         </interactant>
 	#end
