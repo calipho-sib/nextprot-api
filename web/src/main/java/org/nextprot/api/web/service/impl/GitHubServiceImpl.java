@@ -1,13 +1,16 @@
 package org.nextprot.api.web.service.impl;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,6 +40,9 @@ public class GitHubServiceImpl implements GitHubService {
 
 	
 	private String githubToken = null;
+	
+	private Map<String, String> newsFileNames = new HashMap<>();
+	
 
 	// will refresh every minute, because anonymous calls are limited to 60
 	// calls per hour
@@ -55,12 +61,16 @@ public class GitHubServiceImpl implements GitHubService {
 	@Override
 	@Cacheable(value = "github-pages")
 	public String getPage(String folder, String page) {
-		// Not sure if this keeps a connection (if not this can be done on the
-		// postconstruct)
+		
+		String finalPage = page;
+		if("news".equalsIgnoreCase(folder)){
+			finalPage = getCorrespondingPageForNews(page);
+		}
+		
 		try {
 			GitHub github = getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			GHContent content = repo.getFileContent(folder + "/" + page + ".md", "master");
+			GHContent content = repo.getFileContent(folder + "/" + finalPage + ".md", "master");
 			return content.getContent();
 
 		} catch (IOException e) {
@@ -68,6 +78,29 @@ public class GitHubServiceImpl implements GitHubService {
 			throw new NextProtException("Documentation not available, sorry for the inconvenience");
 		}
 
+	}
+	
+	private String getCorrespondingPageForNews(String url) {
+
+		String correspondingPage = url; // I don't like very much this code...
+										// discuss how to do this better
+		if (newsFileNames.isEmpty()) {
+			getNews();
+		}
+
+		if (newsFileNames.containsKey(url)) { // corresponds to URL
+			correspondingPage = newsFileNames.get(url); // some processing for
+														// the final page in
+														// case of news
+		} else {
+			getNews(); // will reload newsFileNames
+			if (newsFileNames.containsKey(url)) { // try a second time
+				correspondingPage = newsFileNames.get(url);
+			} else {
+				throw new NextProtException(url + " not found");
+			}
+		}
+		return correspondingPage;
 	}
 
 	@Override
@@ -97,12 +130,16 @@ public class GitHubServiceImpl implements GitHubService {
 			GitHub github =  getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
 			GHTree tree = repo.getTreeRecursive("master", 1);
+			newsFileNames.clear();
 			for(GHTreeEntry te : tree.getTree()){
 				if(te.getPath().startsWith("news")){ //Add only file on news
-					if(te.getType().equalsIgnoreCase("blob")){ // file 
-						NextProtNews n = parseGitHubNewsFilePath(te.getPath().replaceAll("news/", ""));
+					if(te.getType().equalsIgnoreCase("blob")){ // file
+						String fileName = te.getPath().replaceAll("news/", "");
+						NextProtNews n = parseGitHubNewsFilePath(fileName);
 						if(n != null){
 							news.add(n);
+							String fileEncoded = URLEncoder.encode(fileName.replace(".md", ""), "UTF-8").replace("+", "%20");
+							newsFileNames.put(n.getUrl(), fileEncoded);
 						}
 					}
 				}
@@ -123,6 +160,7 @@ public class GitHubServiceImpl implements GitHubService {
 		this.githubToken = githubToken;
 	}
 
+	
 	static NextProtNews parseGitHubNewsFilePath(String filePath){
 		
 		NextProtNews result = new NextProtNews();
@@ -147,7 +185,7 @@ public class GitHubServiceImpl implements GitHubService {
 		
 		try { // Parse the date
 		
-			DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); 
+			DateFormat df = new SimpleDateFormat(NextProtNews.DATE_FORMAT); 
 			Date date = df.parse(elements[0].trim());
 			result.setPublicationDate(date);
 

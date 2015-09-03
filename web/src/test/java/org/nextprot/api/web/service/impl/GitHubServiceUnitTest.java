@@ -26,7 +26,9 @@ public class GitHubServiceUnitTest extends WebUnitBaseTest {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd"); 
 		Date date = df.parse("2015-08-25");
 
-    	assertTrue(n.getPublicationDate().equals(date));
+		assertTrue(n.getPublicationDate().equals(date));
+    	assertTrue(n.getPublicationDateFormatted().equals("2015-08-25"));
+
     }
     
     
