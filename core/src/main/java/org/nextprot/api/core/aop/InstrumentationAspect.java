@@ -305,9 +305,13 @@ public class InstrumentationAspect {
 		sb.append(System.currentTimeMillis());
 		sb.append(";");
 		sb.append("exception=");
+		sb.append(e.getClass().getName());
 		sb.append(";");
-		if (e.getMessage() != null)
+		if (e.getMessage() != null){
+			sb.append("exceptionMsg=");
 			sb.append(e.getMessage().trim().replaceAll("=", "").replaceAll(";", "="));
+			sb.append(";");
+		}
 		return sb;
 	}
 
