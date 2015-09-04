@@ -11,7 +11,7 @@
 
 	<appender name="requestsFileAppender" class="org.apache.log4j.RollingFileAppender">
 		<param name="file" value="log/requests.log" />
-		<param name="MaxFileSize" value="20MB" />
+		<param name="MaxFileSize" value="200MB" />
 		<param name="MaxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %m%n" />
