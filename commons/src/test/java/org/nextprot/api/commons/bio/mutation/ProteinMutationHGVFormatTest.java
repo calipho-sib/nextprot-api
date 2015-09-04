@@ -292,7 +292,7 @@ public class ProteinMutationHGVFormatTest {
         Assert.assertEquals(330, pm.getFirstAffectedAminoAcidPos());
         Assert.assertEquals(331, pm.getLastAffectedAminoAcidPos());
         Assert.assertTrue(pm.getMutation() instanceof DeletionAndInsertion);
-        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("F"), (AminoAcidCode[])  pm.getMutation().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("F"), (AminoAcidCode[]) pm.getMutation().getValue());
     }
 
     @Test
@@ -405,4 +405,59 @@ public class ProteinMutationHGVFormatTest {
         Assert.assertTrue(pm.getMutation() instanceof DeletionAndInsertion);
         Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("SSDG"), (AminoAcidCode[]) pm.getMutation().getValue());
     }
+
+    @Test
+    public void testParseAATerSubstitutionFix1() throws Exception {
+
+        ProteinMutation pm = format.parse("p.*104E", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+
+        Assert.assertEquals(AminoAcidCode.Stop, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.Stop, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(104, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Substitution);
+        Assert.assertEquals(AminoAcidCode.GlutamicAcid, pm.getMutation().getValue());
+    }
+
+    @Test
+    public void testParseAATerSubstitutionFix2() throws Exception {
+
+        ProteinMutation pm = format.parse("p.Ter104Glu", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+
+        Assert.assertEquals(AminoAcidCode.Stop, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.Stop, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(104, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Substitution);
+        Assert.assertEquals(AminoAcidCode.GlutamicAcid, pm.getMutation().getValue());
+    }
+
+    /*
+    @Test
+    public void testParseAAInsertionFix1() throws Exception {
+
+        ProteinMutation pm = format.parse("p.C136_A137insGM", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+    }
+
+    @Test
+    public void testParseAAInsertionFix2() throws Exception {
+
+        ProteinMutation pm = format.parse("p.V774_C775insHV", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+    }
+
+    @Test
+    public void testParseAAInsertionFix3() throws Exception {
+
+        ProteinMutation pm = format.parse("p.L681_I682insTPYEGMPGH", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+    }
+
+    @Test
+     public void testParseAAFsFix() throws Exception {
+
+        ProteinMutation pm = format.parse("p.E61fs", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+    }
+
+    @Test
+    public void testParseAATerSubstitutionFix5() throws Exception {
+
+        ProteinMutation pm = format.parse("p.Y553_K558>", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+    }*/
 }

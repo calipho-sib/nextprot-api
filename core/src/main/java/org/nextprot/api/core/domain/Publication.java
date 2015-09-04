@@ -91,8 +91,6 @@ public class Publication implements Serializable{
 
 	@ApiObjectField(description = "The associated cross references")
 	protected Set<DbXref> dbXrefs;
-	
-	private final DateFormatter yearFormatter = new DateFormatter();
 
 	public long getPublicationId() {
 		return id;
@@ -143,7 +141,7 @@ public class Publication implements Serializable{
 		if (publicationDate == null)
 			return null;
 
-		return yearFormatter.format(publicationDate, DateFormatter.YEAR_PRECISION);
+		return new DateFormatter().format(publicationDate, DateFormatter.YEAR_PRECISION);
 	}
 	
 	public void setPublicationDate(Date publicationDate) {

@@ -184,7 +184,6 @@ public class AnnotationUtils {
 				evidencesToRemove = convertType2EvidenceToProperty(annot, PropertyApiModel.NAME_DIFFERING_SEQUENCE);
 			} 
 			else if (annot.getAPICategory()==AnnotationApiModel.COFACTOR) {
-				convertType2EvidenceToProperty(annot, PropertyApiModel.NAME_COFACTOR);
 				evidencesToRemove = convertEvidenceToExternalBioObject(annot);
 			}
 			else if (annot.getAPICategory()==AnnotationApiModel.DISEASE) {

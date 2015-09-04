@@ -2,19 +2,10 @@ package org.nextprot.api.core.utils;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.nextprot.api.commons.constants.PropertyApiModel;
-import org.nextprot.api.core.domain.Interactant;
-import org.nextprot.api.core.domain.Interaction;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 
 
 public class BinaryInteraction2Annotation {
@@ -89,23 +80,10 @@ public class BinaryInteraction2Annotation {
 		// annotation property: interactant
 		// - - - - - - - - - - - - - - - - - - - - 
 		List<AnnotationProperty> anProps = new ArrayList<>();
-		AnnotationProperty p1 = new AnnotationProperty();
-		Interactant interactant=BinaryInteraction2Annotation.getInteractant(inter);
-		p1.setAccession(interactant.getAccession());
-		p1.setAnnotationId(annotId);
-		p1.setName(PropertyApiModel.NAME_INTERACTANT);
-		if (interactant.isNextprot()) {
-			p1.setValueType(interactant.isIsoform() ? PropertyApiModel.VALUE_TYPE_ISO_AC : PropertyApiModel.VALUE_TYPE_ENTRY_AC);
-			p1.setValue(interactant.getNextprotAccession());
-		} else {
-			p1.setValueType(PropertyApiModel.VALUE_TYPE_RIF);
-			p1.setValue(""+interactant.getXrefId());			
-		}
 
-		annot.setBioObject(newBioObject(interactant));
+		annot.setBioObject(newBioObject(BinaryInteraction2Annotation.getInteractant(inter)));
 
-		anProps.add(p1);
-		// - - - - - - - - - - - - - - - - - - - - 
+		// - - - - - - - - - - - - - - - - - - - -
 		// annotation property: self interaction
 		// - - - - - - - - - - - - - - - - - - - - 
 		AnnotationProperty p3 = new AnnotationProperty();

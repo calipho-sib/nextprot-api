@@ -45,6 +45,8 @@ public class NPEntryWriterFactory {
                 return new NPEntryFastaStreamWriter(new OutputStreamWriter(os, UTF_8));
             case PEFF:
                 return new NPEntryPeffStreamWriter(new OutputStreamWriter(os, UTF_8));
+            case TURTLE:
+                return new NPEntryTTLStreamWriter(new OutputStreamWriter(os, UTF_8), view);
             default:
                 throw new NextProtException("No NPEntryStreamWriter implementation for "+format);
         }
