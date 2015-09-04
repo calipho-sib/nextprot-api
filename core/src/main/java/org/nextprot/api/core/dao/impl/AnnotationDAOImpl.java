@@ -193,17 +193,13 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 				property.setAnnotationId(resultSet.getLong("annotation_id"));
 				property.setAccession(resultSet.getString("accession"));
-				property.setName(resultSet.getString("property_name"));
-				property.setValue(resultSet.getString("property_value"));
+				setPropertyNameValue(property, resultSet.getString("property_name"), resultSet.getString("property_value"));
+
 				return property;
 			}
 		});
 	}
 
-	/* 
-	 * we temporarily don't care about mutations in this hgvs format (Pam)
-	 * 
-	 * 
 	static void setPropertyNameValue(AnnotationProperty property, String name, String value) {
 
 		property.setName(name);
@@ -217,5 +213,4 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			throw new NextProtException(e);
 		}
 	}
-	*/
 }
