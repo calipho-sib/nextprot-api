@@ -92,4 +92,11 @@ public class AuthorNameFormatterTest {
         Assert.assertEquals("Sr.", formatter.formatSuffix("Sr"));
     }
 
+    @Test
+    public void testFormatPublicationForenameEmptyWithSuffixNull() {
+
+        Assert.assertEquals("", formatter.formatForenameInitials("", null));
+    }
+
+    
 }

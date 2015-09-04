@@ -36,7 +36,7 @@ public class AuthorNameFormatter {
                 sb.delete(sb.length()-1, sb.length());
             }
             // standard name
-            else {
+            else if (name.length()>0) {
 
                 sb.append(name.charAt(0));
                 sb.append('.');
