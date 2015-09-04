@@ -23,6 +23,14 @@ public class StringUtilsTest {
         Assert.assertEquals("nextprot_anatomy_cv", cc);
     }
 
+    
+    @Test
+    public void testToCamelCase() {
+        String cc = StringUtils.toCamelCase("full name", true);
+        Assert.assertEquals("fullName", cc);
+    }
+
+    
     @Test
     public void testSlugReplaceWSPunctuations() {
 

@@ -17,10 +17,31 @@ public class StringUtils {
 		return new StringCaseFormatter(string);
 	}
 
-	public static String toCamelCase(final String inputString, boolean firstLetterFirstWordInLowerCase) {
+	public static String toCamelCase(final String inputString, boolean avoidFirst) {
+		if (inputString == null)
+			return null;
 
-		return new StringCaseFormatter(inputString).camel(firstLetterFirstWordInLowerCase).format();
+		final StringBuilder ret = new StringBuilder(inputString.length());
+
+		for (final String word : inputString.replaceAll("_", " ").split("[ -]")) {
+			if (avoidFirst) {
+				ret.append(word.toLowerCase());
+				avoidFirst = false;
+				continue;
+			}
+			if (!word.isEmpty() && !avoidFirst) {
+				ret.append(word.substring(0, 1).toUpperCase());
+				ret.append(word.substring(1).toLowerCase());
+			}
+		}
+
+		return ret.toString();
 	}
+	
+	/*TODO make sure this works... I have added a test on StringUtils.testToCamelCase  full name to fullName 
+	public static String toCamelCase(final String inputString, boolean firstLetterFirstWordInLowerCase) {
+		return new StringCaseFormatter(inputString).camel(firstLetterFirstWordInLowerCase).format();
+	}*/
 
 	public static String camelToKebabCase(String inputString){
 
