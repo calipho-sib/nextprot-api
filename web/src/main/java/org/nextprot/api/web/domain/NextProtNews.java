@@ -5,7 +5,6 @@ import java.util.Date;
 
 public class NextProtNews implements Comparable<NextProtNews>{
 	
-	public static String DATE_FORMAT =  "yyyy-MM-dd";
 	private String title;
 	private Date publicationDate;
 	private String url;
@@ -19,7 +18,7 @@ public class NextProtNews implements Comparable<NextProtNews>{
 	}
 
 	public String getPublicationDateFormatted() {
-		return (new SimpleDateFormat(DATE_FORMAT)).format(publicationDate);
+		return (new SimpleDateFormat("MMM dd, yyyy")).format(publicationDate);
 	}
 	
 	public Date getPublicationDate() {
