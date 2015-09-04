@@ -2,9 +2,10 @@ package org.nextprot.api.core.service.fluent;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 
-public class EntryConfig {
+public class EntryConfig implements KeyValueRepresentation{
 	
 	private boolean overview, publications, genomicMappings, xrefs, keywords, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, antibodyMappings, experimentalContext;
 	private boolean enzymes;
@@ -215,6 +216,25 @@ public class EntryConfig {
 
 	public boolean hasSubPart(AnnotationApiModel subpart) {
 		return subpart.equals(this.subpart);
+	}
+
+	@Override
+	public String toKeyValueString() {
+		StringBuilder sb = new StringBuilder();
+		if(this.hasSubPart()){
+			sb.append("subpart=" + subpart + ";");
+		}
+		if(generalAnnotations){
+			sb.append("annotations=true");
+		}
+		if(xrefs){
+			sb.append("xrefs=true");
+		}
+		if(experimentalContext){
+			sb.append("experimentalContexts=true");
+		}
+
+		return sb.toString();
 	}
 
 
