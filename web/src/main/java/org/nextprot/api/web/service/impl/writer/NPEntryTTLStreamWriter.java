@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.velocity.Template;
+import org.nextprot.api.web.NXVelocityContext;
 
 /**
  * Created by dteixeira
@@ -32,6 +34,8 @@ public class NPEntryTTLStreamWriter extends NPEntryVelocityBasedStreamWriter {
 
     @Override
     protected void writeHeader(Map<String, Object> params) throws IOException {
+        Template headerTemplate = velocityConfig.getVelocityEngine().getTemplate("turtle/prefix.ttl.vm");
+        headerTemplate.merge(new NXVelocityContext(params), getStream());
     }
 
 }
