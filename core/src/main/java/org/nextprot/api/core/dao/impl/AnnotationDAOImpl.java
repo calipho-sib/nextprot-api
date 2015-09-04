@@ -193,7 +193,10 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 				property.setAnnotationId(resultSet.getLong("annotation_id"));
 				property.setAccession(resultSet.getString("accession"));
-				setPropertyNameValue(property, resultSet.getString("property_name"), resultSet.getString("property_value"));
+				property.setName(resultSet.getString("property_name"));
+				property.setValue(resultSet.getString("property_value"));
+				// quick fix to prevent errors in generating hgvs format because we dont need it for the moment (property will be hidden)
+				//setPropertyNameValue(property, resultSet.getString("property_name"), resultSet.getString("property_value"));
 
 				return property;
 			}
