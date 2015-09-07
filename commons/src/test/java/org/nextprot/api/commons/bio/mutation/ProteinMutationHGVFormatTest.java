@@ -1,6 +1,7 @@
 package org.nextprot.api.commons.bio.mutation;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 
@@ -430,34 +431,31 @@ public class ProteinMutationHGVFormatTest {
         Assert.assertEquals(AminoAcidCode.GlutamicAcid, pm.getMutation().getValue());
     }
 
-    /*
     @Test
-    public void testParseAAInsertionFix1() throws Exception {
+    public void testParseAAInsertionFix() throws Exception {
 
         ProteinMutation pm = format.parse("p.C136_A137insGM", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
+
+        Assert.assertEquals(AminoAcidCode.Cysteine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(AminoAcidCode.Alanine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(136, pm.getFirstAffectedAminoAcidPos());
+        Assert.assertEquals(137, pm.getLastAffectedAminoAcidPos());
+        Assert.assertTrue(pm.getMutation() instanceof Insertion);
+        Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("GM"), (AminoAcidCode[]) pm.getMutation().getValue());
+        Assert.assertEquals(136, ((Insertion)pm.getMutation()).getInsertAfterPos());
     }
 
+    @Ignore
     @Test
-    public void testParseAAInsertionFix2() throws Exception {
-
-        ProteinMutation pm = format.parse("p.V774_C775insHV", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
-    }
-
-    @Test
-    public void testParseAAInsertionFix3() throws Exception {
-
-        ProteinMutation pm = format.parse("p.L681_I682insTPYEGMPGH", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
-    }
-
-    @Test
-     public void testParseAAFsFix() throws Exception {
+    public void testParseAAFsFix() throws Exception {
 
         ProteinMutation pm = format.parse("p.E61fs", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
     }
 
+    @Ignore
     @Test
     public void testParseAATerSubstitutionFix5() throws Exception {
 
         ProteinMutation pm = format.parse("p.Y553_K558>", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
-    }*/
+    }
 }

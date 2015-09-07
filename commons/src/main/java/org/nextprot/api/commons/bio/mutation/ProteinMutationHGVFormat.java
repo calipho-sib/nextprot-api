@@ -24,6 +24,7 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
     private static final Pattern FRAMESHIFT_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)>?(\\d+)$");
     private static final Pattern DELETION_INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?delins((?:[A-Z\\*]([a-z]{2})?)+)$");
     private static final Pattern DELETION_INSERTION_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?(?:delins|>)((?:[A-Z\\*]([a-z]{2})?)+)$");
+    private static final Pattern INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)_([A-Z])([a-z]{2})?(\\d+)ins((?:[A-Z\\*]([a-z]{2})?)+)$");
 
     public enum ParsingMode {
 
@@ -117,6 +118,7 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
         if (mutation == null) mutation = buildDeletion(source, builder, mode);
         if (mutation == null) mutation = buildFrameshift(source, builder, mode);
         if (mutation == null) mutation = buildDeletionInsertion(source, builder, mode);
+        if (mutation == null) mutation = buildInsertion(source, builder, mode);
 
         if (mutation == null) throw new ParseException(source + " is not a valid protein mutation", 0);
 
@@ -204,6 +206,27 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
 
             return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
                     .deletedAndInserts(insertedAAs).build();
+        }
+
+        return null;
+    }
+
+    private ProteinMutation buildInsertion(String source, ProteinMutation.FluentBuilder builder, ParsingMode mode) {
+
+        Matcher m =  INSERTION_PATTERN.matcher(source);
+
+        if (m.matches()) {
+
+            AminoAcidCode affectedAAFirst = valueOfAminoAcidCode(m.group(1), m.group(2));
+            int affectedAAPosFirst = Integer.parseInt(m.group(3));
+
+            AminoAcidCode affectedAALast = valueOfAminoAcidCode(m.group(4), m.group(5));
+            int affectedAAPosLast = Integer.parseInt(m.group(6));
+
+            AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfCodeSequence(m.group(7));
+
+            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
+                    .inserts(insertedAAs).build();
         }
 
         return null;
