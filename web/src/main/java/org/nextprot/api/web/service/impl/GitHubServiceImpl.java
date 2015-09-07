@@ -20,6 +20,7 @@ import org.kohsuke.github.GHTree;
 import org.kohsuke.github.GHTree.GHTreeEntry;
 import org.kohsuke.github.GitHub;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.web.domain.NextProtNews;
 import org.nextprot.api.web.service.GitHubService;
 import org.springframework.beans.factory.annotation.Value;
@@ -169,9 +170,9 @@ public class GitHubServiceImpl implements GitHubService {
 			return null;
 		}
 		
-		String[] elements = filePath.split("\\|");
-		if(elements.length != 3){
-			LOGGER.warn("Number of elements is different than 3 != " + elements.length + " " + elements);
+		String[] elements = filePath.split("\\/");
+		if(elements.length != 4){
+			LOGGER.warn("Number of elements is different than 4 != " + elements.length + " " + elements);
 			return null;
 		}
 		
@@ -185,8 +186,8 @@ public class GitHubServiceImpl implements GitHubService {
 		
 		try { // Parse the date
 		
-			DateFormat df = new SimpleDateFormat(NextProtNews.DATE_FORMAT); 
-			Date date = df.parse(elements[0].trim());
+			DateFormat df = new SimpleDateFormat("yyyy/MM/dd"); 
+			Date date = df.parse(elements[0] + "/" +  elements[1] + "/" +  elements[2]);
 			result.setPublicationDate(date);
 
 		} catch (ParseException e) {
@@ -196,8 +197,9 @@ public class GitHubServiceImpl implements GitHubService {
 		}
 
 		//Gets url and title
-		result.setUrl(elements[1].trim());
-		result.setTitle(elements[2].replace(".md", "").trim());
+		String title = elements[3].replace(".md", "").trim();
+		result.setTitle(title);
+		result.setUrl(StringUtils.slug(title).replace("_", "-").toLowerCase());
 
 		return result;
 	}
