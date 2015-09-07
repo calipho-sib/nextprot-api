@@ -26,7 +26,7 @@ public class NPEntryOverviewXLSWriterTest extends WebIntegrationBaseTest {
         writer.close();
 
         assertXLSEquals(out, new String[] { "acc. code", "protein name", "gene name(s)", "chromosome", "proteomics", "disease",	"structure", "#isof.", "#variants", "#PTMS", "mutagenesis", "tissue expr.", "PE" },
-                new Object[] { "NX_P48730","Casein kinase I isoform delta","CSNK1D","17q25.3","yes","yes","yes",2.0,41.0,8.0,"yes","yes","Evidence at protein level"});
+                new Object[] { "NX_P48730","Casein kinase I isoform delta","CSNK1D","17q25.3","yes","yes","yes",2.0,54.0,8.0,"yes","yes","Evidence at protein level"});
     }
 
     //@Test
