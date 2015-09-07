@@ -184,7 +184,9 @@ public class TranscriptExonsAnalyser {
 
             sb.append(") must be less than size (").append(exonOutOfBoundError.getIsoformLength()).append(")");
 
-            LOGGER.error(sb.toString());
+            //TODO there is a bug in mapping transcript <-> isoform (should be fixed in the database)
+            //Should be solved with: https://issues.isb-sib.ch/browse/NEXTPROT-1005
+            LOGGER.warn(sb.toString());
         }
     }
 }
