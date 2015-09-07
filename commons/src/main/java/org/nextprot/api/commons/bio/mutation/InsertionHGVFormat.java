@@ -16,7 +16,7 @@ public class InsertionHGVFormat implements MutationEffectFormat<Insertion> {
     private static final Pattern INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)_([A-Z])([a-z]{2})?(\\d+)ins((?:[A-Z\\*]([a-z]{2})?)+)$");
 
     @Override
-    public ProteinMutation parseWithMode(String source, ProteinMutation.FluentBuilder builder, ProteinMutationHGVFormat.ParsingMode mode) {
+    public ProteinMutation parseWithMode(String source, ProteinMutation.FluentBuilder builder, AbstractProteinMutationFormat.ParsingMode mode) {
 
         Matcher m =  INSERTION_PATTERN.matcher(source);
 

@@ -9,5 +9,5 @@ public interface MutationEffectFormat<M extends Mutation> {
 
     void format(StringBuilder sb, M mutation, ProteinMutationFormat.AACodeType type);
 
-    ProteinMutation parseWithMode(String source, ProteinMutation.FluentBuilder builder, ProteinMutationHGVFormat.ParsingMode mode) throws ParseException;
+    ProteinMutation parseWithMode(String source, ProteinMutation.FluentBuilder builder, AbstractProteinMutationFormat.ParsingMode mode) throws ParseException;
 }
