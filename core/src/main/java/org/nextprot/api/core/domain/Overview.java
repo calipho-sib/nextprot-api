@@ -378,7 +378,11 @@ public class Overview implements Serializable{
 					LOGGER.error("Failed to compare enum values for other qualifier " + o.qualifier + e.getMessage());
 				}
 			}
-			
+
+			//orf cases
+			if("orf".equalsIgnoreCase(o.category)){ return -1;}
+			if("orf".equalsIgnoreCase(this.category)){return 1;}
+				
 			return thisValue - otherValue;
 		}
 		

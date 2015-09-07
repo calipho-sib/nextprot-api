@@ -48,14 +48,6 @@ public class EntityNameDaoImpl implements EntityNameDao {
 	}
 
 
-	@Override
-	@Deprecated //TODO remove this when orf gene names included in view_master_identifier_names
-	public List<EntityName> findORFGeneNames(String uniqueName) {
-		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
-		List<EntityName> entityNames = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("orf-gene-names"), namedParameters, new EntryNameRowMapper());
-		return entityNames;
-	}
-
 	
 	@Override
 	public List<EntityName> findAlternativeChainNames(String uniqueName) {

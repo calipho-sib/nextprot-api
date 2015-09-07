@@ -115,4 +115,20 @@ public class ProteinMutationTest {
         Assert.assertTrue(pm.getMutation() instanceof DeletionAndInsertion);
         Assert.assertArrayEquals(new AminoAcidCode[] { AminoAcidCode.Serine, AminoAcidCode.Serine, AminoAcidCode.AsparticAcid, AminoAcidCode.Glycine }, (AminoAcidCode[]) pm.getMutation().getValue());
     }
+
+    @Test
+    public void testBuildInsertion() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 2, AminoAcidCode.Methionine, 3).inserts(AminoAcidCode.Glutamine, AminoAcidCode.Serine, AminoAcidCode.Lysine).build();
+
+        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstAffectedAminoAcidCode());
+        Assert.assertEquals(2, pm.getFirstAffectedAminoAcidPos());
+
+        Assert.assertEquals(AminoAcidCode.Methionine, pm.getLastAffectedAminoAcidCode());
+        Assert.assertEquals(3, pm.getLastAffectedAminoAcidPos());
+
+        Assert.assertTrue(pm.getMutation() instanceof Insertion);
+        Assert.assertEquals(2, ((Insertion)pm.getMutation()).getInsertAfterPos());
+        Assert.assertArrayEquals(new AminoAcidCode[] { AminoAcidCode.Glutamine, AminoAcidCode.Serine, AminoAcidCode.Lysine }, (AminoAcidCode[]) pm.getMutation().getValue());
+    }
 }

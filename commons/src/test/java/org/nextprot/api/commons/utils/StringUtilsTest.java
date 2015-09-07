@@ -30,7 +30,6 @@ public class StringUtilsTest {
         Assert.assertEquals("fullName", cc);
     }
 
-    
     @Test
     public void testSlugReplaceWSPunctuations() {
 

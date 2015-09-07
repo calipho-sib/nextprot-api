@@ -44,10 +44,24 @@ public class StringCaseFormatterTest {
     }
 
     @Test
+    public void testCamelCase5() {
+
+        String cc = new StringCaseFormatter("full name").camel(true).format();
+        Assert.assertEquals("fullName", cc);
+    }
+
+    @Test
     public void testCamelCaseIdempotent() {
 
         String cc = new StringCaseFormatter("nextprotAnatomyCv").camel(true).format();
         Assert.assertEquals("nextprotAnatomyCv", cc);
+    }
+
+    @Test
+    public void testCamelCaseIdempotent2() {
+
+        String cc = new StringCaseFormatter("fullName").camel(true).format();
+        Assert.assertEquals("fullName", cc);
     }
 
     @Test
