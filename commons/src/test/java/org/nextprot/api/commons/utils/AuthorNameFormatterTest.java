@@ -99,7 +99,7 @@ public class AuthorNameFormatterTest {
     }
 
     @Test
-    public void testFormatPublicationForenameEmptyWithSuffixNull() {
+    public void testFormatPublicationWithForenameContainingMultipleSpaces() {
 
         Assert.assertEquals("J.P.", formatter.formatForenameInitials("Jean   Paul"));
     }
