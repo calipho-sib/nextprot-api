@@ -63,7 +63,7 @@ having sum(a.cnt)=1
 		AnnotationEvidence evi = annot.getEvidences().get(0);
 		assertTrue(evi.getAssignedBy().equals("Uniprot"));
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
-		assertTrue(evi.getResourceAccession().equals("REACT_268024"));
+		assertTrue(evi.getResourceAccession().equals("R-HSA-5620924"));
 		assertTrue(evi.getResourceDb().equals("Reactome"));
 
 		Assert.assertTrue(annotations.get(0).getProperties().isEmpty());
