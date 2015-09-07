@@ -1,12 +1,10 @@
-package org.nextprot.api.commons.bio.mutation;
+package org.nextprot.api.commons.bio.mutation.hgv;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.mutation.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.nextprot.api.commons.bio.mutation.ProteinMutationHGVFormat.formatAminoAcidCode;
-import static org.nextprot.api.commons.bio.mutation.ProteinMutationHGVFormat.valueOfAminoAcidCode;
 
 /**
  * Created by fnikitin on 07/09/15.
@@ -22,10 +20,10 @@ public class InsertionHGVFormat implements MutationEffectFormat<Insertion> {
 
         if (m.matches()) {
 
-            AminoAcidCode affectedAAFirst = valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAAFirst = AbstractProteinMutationFormat.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPosFirst = Integer.parseInt(m.group(3));
 
-            AminoAcidCode affectedAALast = valueOfAminoAcidCode(m.group(4), m.group(5));
+            AminoAcidCode affectedAALast = AbstractProteinMutationFormat.valueOfAminoAcidCode(m.group(4), m.group(5));
             int affectedAAPosLast = Integer.parseInt(m.group(6));
 
             AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfCodeSequence(m.group(7));
@@ -40,6 +38,6 @@ public class InsertionHGVFormat implements MutationEffectFormat<Insertion> {
     @Override
     public void format(StringBuilder sb, Insertion mutation, ProteinMutationFormat.AACodeType type) {
 
-        sb.append("ins").append(formatAminoAcidCode(type, mutation.getValue()));
+        sb.append("ins").append(AbstractProteinMutationFormat.formatAminoAcidCode(type, mutation.getValue()));
     }
 }

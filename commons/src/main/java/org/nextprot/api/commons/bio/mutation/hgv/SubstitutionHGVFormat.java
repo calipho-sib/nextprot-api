@@ -1,12 +1,13 @@
-package org.nextprot.api.commons.bio.mutation;
+package org.nextprot.api.commons.bio.mutation.hgv;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.mutation.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.nextprot.api.commons.bio.mutation.ProteinMutationHGVFormat.formatAminoAcidCode;
-import static org.nextprot.api.commons.bio.mutation.ProteinMutationHGVFormat.valueOfAminoAcidCode;
+import static org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat.formatAminoAcidCode;
+import static org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat.valueOfAminoAcidCode;
 
 /**
  * Created by fnikitin on 07/09/15.

@@ -1,4 +1,6 @@
-package org.nextprot.api.commons.bio.mutation;
+package org.nextprot.api.commons.bio.mutation.hgv;
+
+import org.nextprot.api.commons.bio.mutation.*;
 
 /**
  * <code>ProteinMutationHGVFormat</code> can format and parse

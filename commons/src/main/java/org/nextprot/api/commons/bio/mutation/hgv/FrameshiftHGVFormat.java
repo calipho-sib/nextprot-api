@@ -1,12 +1,10 @@
-package org.nextprot.api.commons.bio.mutation;
+package org.nextprot.api.commons.bio.mutation.hgv;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.mutation.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.nextprot.api.commons.bio.mutation.ProteinMutationHGVFormat.formatAminoAcidCode;
-import static org.nextprot.api.commons.bio.mutation.ProteinMutationHGVFormat.valueOfAminoAcidCode;
 
 /**
  * Created by fnikitin on 07/09/15.
@@ -23,7 +21,7 @@ public class FrameshiftHGVFormat implements MutationEffectFormat<Frameshift> {
 
         if (m.matches()) {
 
-            AminoAcidCode affectedAA = valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAA = AbstractProteinMutationFormat.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPos = Integer.parseInt(m.group(3));
 
             return builder.aminoAcid(affectedAA, affectedAAPos).thenFrameshift(Integer.parseInt(m.group(4))).build();
@@ -35,7 +33,7 @@ public class FrameshiftHGVFormat implements MutationEffectFormat<Frameshift> {
     @Override
     public void format(StringBuilder sb, Frameshift mutation, ProteinMutationFormat.AACodeType type) {
 
-        sb.append("fs").append(formatAminoAcidCode(type, AminoAcidCode.Stop)).append(mutation.getValue());
+        sb.append("fs").append(AbstractProteinMutationFormat.formatAminoAcidCode(type, AminoAcidCode.Stop)).append(mutation.getValue());
 
     }
 }

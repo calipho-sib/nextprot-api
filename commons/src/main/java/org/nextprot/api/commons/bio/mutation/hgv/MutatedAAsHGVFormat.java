@@ -1,4 +1,8 @@
-package org.nextprot.api.commons.bio.mutation;
+package org.nextprot.api.commons.bio.mutation.hgv;
+
+import org.nextprot.api.commons.bio.mutation.MutatedAAsFormat;
+import org.nextprot.api.commons.bio.mutation.ProteinMutation;
+import org.nextprot.api.commons.bio.mutation.ProteinMutationFormat;
 
 import static org.nextprot.api.commons.bio.mutation.AbstractProteinMutationFormat.formatAminoAcidCode;
 

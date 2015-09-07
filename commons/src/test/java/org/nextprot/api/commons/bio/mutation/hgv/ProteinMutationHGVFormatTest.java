@@ -1,9 +1,11 @@
-package org.nextprot.api.commons.bio.mutation;
+package org.nextprot.api.commons.bio.mutation.hgv;
 
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.mutation.*;
+import org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat;
 
 public class ProteinMutationHGVFormatTest {
 

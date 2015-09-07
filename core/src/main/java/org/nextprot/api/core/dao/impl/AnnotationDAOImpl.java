@@ -1,6 +1,6 @@
 package org.nextprot.api.core.dao.impl;
 import org.nextprot.api.commons.bio.mutation.ProteinMutationFormat;
-import org.nextprot.api.commons.bio.mutation.ProteinMutationHGVFormat;
+import org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;

@@ -6,6 +6,8 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import java.text.ParseException;
 
 /**
+ * A base class for parsing and formatting ProteinMutation
+ *
  * Created by fnikitin on 07/09/15.
  */
 public abstract class AbstractProteinMutationFormat implements ProteinMutationFormat {
@@ -96,7 +98,7 @@ public abstract class AbstractProteinMutationFormat implements ProteinMutationFo
     protected abstract MutationEffectFormat<DeletionAndInsertion> getDeletionInsertionFormat();
     protected abstract MutationEffectFormat<Frameshift> getFrameshiftFormat();
 
-    static String formatAminoAcidCode(AACodeType type, AminoAcidCode... aas) {
+    public static String formatAminoAcidCode(AACodeType type, AminoAcidCode... aas) {
 
         StringBuilder sb = new StringBuilder();
 
@@ -109,7 +111,7 @@ public abstract class AbstractProteinMutationFormat implements ProteinMutationFo
         return sb.toString();
     }
 
-    static AminoAcidCode valueOfAminoAcidCode(String code1, String code2and3) {
+    public static AminoAcidCode valueOfAminoAcidCode(String code1, String code2and3) {
 
         if (code2and3 == null) return AminoAcidCode.valueOfCode(code1);
 
