@@ -10,9 +10,7 @@ import java.text.ParseException;
  */
 public interface ProteinMutationFormat {
 
-    enum AACodeType {
-        ONE_LETTER, THREE_LETTER
-    }
+    enum AACodeType { ONE_LETTER, THREE_LETTER }
 
     /**
      * Formats a <code>ProteinMutation</code>.

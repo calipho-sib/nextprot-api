@@ -4,8 +4,6 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 
 import java.text.ParseException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * <code>ProteinMutationHGVFormat</code> can format and parse
@@ -15,60 +13,45 @@ import java.util.regex.Pattern;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class ProteinMutationHGVFormat implements ProteinMutationFormat {
+public class ProteinMutationHGVFormat extends AbstractProteinMutationFormat {
 
-    private static final Pattern SUBSTITUTION_PATTERN = Pattern.compile("^p\\.([A-Z*])([a-z]{2})?(\\d+)([A-Z*])([a-z]{2})?$");
-    private static final Pattern DELETION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?del$");
-    private static final Pattern DELETION_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?del.*$");
-    private static final Pattern FRAMESHIFT_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)(\\d+)$");
-    private static final Pattern FRAMESHIFT_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)>?(\\d+)$");
-    private static final Pattern DELETION_INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?delins((?:[A-Z\\*]([a-z]{2})?)+)$");
-    private static final Pattern DELETION_INSERTION_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?(?:delins|>)((?:[A-Z\\*]([a-z]{2})?)+)$");
-    private static final Pattern INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)_([A-Z])([a-z]{2})?(\\d+)ins((?:[A-Z\\*]([a-z]{2})?)+)$");
+    public enum ParsingMode { STRICT, PERMISSIVE }
 
-    public enum ParsingMode {
+    private final MutatedAAsFormat mutatedAAsFormat = new MutatedAAsHGVFormat();
+    private final InsertionHGVFormat insertionHGVFormat = new InsertionHGVFormat();
+    private final SubstitutionHGVFormat subtitutionHGVFormat = new SubstitutionHGVFormat();
+    private final DeletionHGVFormat deletionHGVFormat = new DeletionHGVFormat();
+    private final DeletionInsertionHGVFormat deletionInsertionHGVFormat = new DeletionInsertionHGVFormat();
+    private final FrameshiftHGVFormat frameshiftHGVFormat = new FrameshiftHGVFormat();
 
-        STRICT, PERMISSIVE
-    }
-
-    public String format(ProteinMutation mutation) {
-        return format(mutation, AACodeType.ONE_LETTER);
+    @Override
+    protected MutatedAAsFormat getAffectedAAsFormat() {
+        return mutatedAAsFormat;
     }
 
     @Override
-    public String format(ProteinMutation mutation, AACodeType type) {
-
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("p.");
-
-        // affected amino-acid(s)
-        sb.append(formatAminoAcidCode(type, mutation.getFirstAffectedAminoAcidCode()));
-        sb.append(mutation.getFirstAffectedAminoAcidPos());
-        if (mutation.isAminoAcidRange())
-            sb.append("_").append(formatAminoAcidCode(type, mutation.getLastAffectedAminoAcidCode())).append(mutation.getLastAffectedAminoAcidPos());
-
-        // mutation effect
-        if (mutation.getMutation() instanceof Deletion) sb.append("del");
-        else if (mutation.getMutation() instanceof Substitution) sb.append(formatAminoAcidCode(type, (AminoAcidCode)mutation.getMutation().getValue()));
-        else if (mutation.getMutation() instanceof DeletionAndInsertion) sb.append("delins").append(formatAminoAcidCode(type, (AminoAcidCode[]) mutation.getMutation().getValue()));
-        else if (mutation.getMutation() instanceof Insertion) sb.append("ins").append(formatAminoAcidCode(type, (AminoAcidCode[]) mutation.getMutation().getValue()));
-        else if (mutation.getMutation() instanceof Frameshift) sb.append("fs").append(formatAminoAcidCode(type, AminoAcidCode.Stop)).append(mutation.getMutation().getValue());
-
-        return sb.toString();
+    protected MutationEffectFormat<Substitution> getSubstitutionFormat() {
+        return subtitutionHGVFormat;
     }
 
-    private String formatAminoAcidCode(AACodeType type, AminoAcidCode... aas) {
+    @Override
+    protected MutationEffectFormat<Insertion> getInsertionFormat() {
+        return insertionHGVFormat;
+    }
 
-        StringBuilder sb = new StringBuilder();
+    @Override
+    protected MutationEffectFormat<Deletion> getDeletionFormat() {
+        return deletionHGVFormat;
+    }
 
-        for (AminoAcidCode aa : aas) {
+    @Override
+    protected MutationEffectFormat<DeletionAndInsertion> getDeletionInsertionFormat() {
+        return deletionInsertionHGVFormat;
+    }
 
-            if (type == AACodeType.ONE_LETTER) sb.append(String.valueOf(aa.get1LetterCode()));
-            else sb.append(String.valueOf(aa.get3LetterCode()));
-        }
-
-        return sb.toString();
+    @Override
+    protected MutationEffectFormat<Frameshift> getFrameshiftFormat() {
+        return frameshiftHGVFormat;
     }
 
     /**
@@ -113,123 +96,22 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
 
     private ProteinMutation parseWithMode(String source, ProteinMutation.FluentBuilder builder, ParsingMode mode) throws ParseException {
 
-        ProteinMutation mutation = buildSubstitution(source, builder);
+        ProteinMutation mutation = subtitutionHGVFormat.parseWithMode(source, builder, mode);
 
-        // TODO: I would have preferred to find an elegant way to do the following...
-        if (mutation == null) mutation = buildDeletion(source, builder, mode);
-        if (mutation == null) mutation = buildFrameshift(source, builder, mode);
-        if (mutation == null) mutation = buildDeletionInsertion(source, builder, mode);
-        if (mutation == null) mutation = buildInsertion(source, builder, mode);
+        if (mutation == null) mutation = deletionHGVFormat.parseWithMode(source, builder, mode);
+        if (mutation == null) mutation = frameshiftHGVFormat.parseWithMode(source, builder, mode);
+        if (mutation == null) mutation = deletionInsertionHGVFormat.parseWithMode(source, builder, mode);
+        if (mutation == null) mutation = insertionHGVFormat.parseWithMode(source, builder, mode);
 
         if (mutation == null) throw new ParseException(source + " is not a valid protein mutation", 0);
 
         return mutation;
     }
 
-    private AminoAcidCode valueOfAminoAcidCode(String code1, String code2and3) {
+    static AminoAcidCode valueOfAminoAcidCode(String code1, String code2and3) {
 
         if (code2and3 == null) return AminoAcidCode.valueOfCode(code1);
 
         return AminoAcidCode.valueOfCode(code1+code2and3);
-    }
-
-    private ProteinMutation buildSubstitution(String source, ProteinMutation.FluentBuilder builder) {
-
-        Matcher m = SUBSTITUTION_PATTERN.matcher(source);
-
-        if (m.matches()) {
-
-            AminoAcidCode affectedAA = valueOfAminoAcidCode(m.group(1), m.group(2));
-            int affectedAAPos = Integer.parseInt(m.group(3));
-
-            AminoAcidCode substitutedAA = valueOfAminoAcidCode(m.group(4), m.group(5));
-
-            return builder.aminoAcid(affectedAA, affectedAAPos).substitutedBy(substitutedAA).build();
-        }
-
-        return null;
-    }
-
-    private ProteinMutation buildDeletion(String source, ProteinMutation.FluentBuilder builder, ParsingMode mode) {
-
-        Matcher m = (mode == ParsingMode.STRICT) ? DELETION_PATTERN.matcher(source) : DELETION_PATTERN_PERMISSIVE.matcher(source);
-
-        if (m.matches()) {
-
-            AminoAcidCode affectedAAFirst = valueOfAminoAcidCode(m.group(1), m.group(2));
-            int affectedAAPosFirst = Integer.parseInt(m.group(3));
-
-            if (m.group(4) == null) {
-
-                return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst).deleted().build();
-            }
-
-            AminoAcidCode affectedAALast = valueOfAminoAcidCode(m.group(4), m.group(5));
-            int affectedAAPosLast = Integer.parseInt(m.group(6));
-
-            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast).deleted().build();
-        }
-
-        return null;
-    }
-
-    private ProteinMutation buildFrameshift(String source, ProteinMutation.FluentBuilder builder, ParsingMode mode) {
-
-        Matcher m = (mode == ParsingMode.STRICT) ? FRAMESHIFT_PATTERN.matcher(source) : FRAMESHIFT_PATTERN_PERMISSIVE.matcher(source);
-
-        if (m.matches()) {
-
-            AminoAcidCode affectedAA = valueOfAminoAcidCode(m.group(1), m.group(2));
-            int affectedAAPos = Integer.parseInt(m.group(3));
-
-            return builder.aminoAcid(affectedAA, affectedAAPos).thenFrameshift(Integer.parseInt(m.group(4))).build();
-        }
-
-        return null;
-    }
-
-    private ProteinMutation buildDeletionInsertion(String source, ProteinMutation.FluentBuilder builder, ParsingMode mode) {
-
-        Matcher m = (mode == ParsingMode.STRICT) ? DELETION_INSERTION_PATTERN.matcher(source) : DELETION_INSERTION_PATTERN_PERMISSIVE.matcher(source);
-
-        if (m.matches()) {
-
-            AminoAcidCode affectedAAFirst = valueOfAminoAcidCode(m.group(1), m.group(2));
-            int affectedAAPosFirst = Integer.parseInt(m.group(3));
-
-            AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfCodeSequence(m.group(7));
-
-            if (m.group(4) == null) return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst)
-                    .deletedAndInserts(insertedAAs).build();
-
-            AminoAcidCode affectedAALast = valueOfAminoAcidCode(m.group(4), m.group(5));
-            int affectedAAPosLast = Integer.parseInt(m.group(6));
-
-            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
-                    .deletedAndInserts(insertedAAs).build();
-        }
-
-        return null;
-    }
-
-    private ProteinMutation buildInsertion(String source, ProteinMutation.FluentBuilder builder, ParsingMode mode) {
-
-        Matcher m =  INSERTION_PATTERN.matcher(source);
-
-        if (m.matches()) {
-
-            AminoAcidCode affectedAAFirst = valueOfAminoAcidCode(m.group(1), m.group(2));
-            int affectedAAPosFirst = Integer.parseInt(m.group(3));
-
-            AminoAcidCode affectedAALast = valueOfAminoAcidCode(m.group(4), m.group(5));
-            int affectedAAPosLast = Integer.parseInt(m.group(6));
-
-            AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfCodeSequence(m.group(7));
-
-            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
-                    .inserts(insertedAAs).build();
-        }
-
-        return null;
     }
 }
