@@ -25,6 +25,9 @@ public interface ProteinMutationBuilder {
         /** delete all affected amino-acids */
         ProteinMutationBuilder deleted();
 
+        /** inserts given aas after specific AA */
+        ProteinMutationBuilder inserts(AminoAcidCode... aas);
+
         /** delete all affected amino-acids and inserts given aas */
         ProteinMutationBuilder deletedAndInserts(AminoAcidCode... aas);
     }
