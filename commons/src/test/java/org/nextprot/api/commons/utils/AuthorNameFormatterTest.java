@@ -93,10 +93,14 @@ public class AuthorNameFormatterTest {
     }
 
     @Test
-    public void testFormatPublicationForenameEmptyWithSuffixNull() {
+    public void testFormatPublicationForenameEmpty() {
 
-        Assert.assertEquals("", formatter.formatForenameInitials("", null));
+        Assert.assertEquals("", formatter.formatForenameInitials("  "));
     }
 
-    
+    @Test
+    public void testFormatPublicationForenameEmptyWithSuffixNull() {
+
+        Assert.assertEquals("J.P.", formatter.formatForenameInitials("Jean   Paul"));
+    }
 }
