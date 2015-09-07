@@ -21,7 +21,7 @@ public class AuthorNameFormatter {
         StringBuilder sb = new StringBuilder();
 
         // split names
-        for (String name : forename.split("[\\s]")) {
+        for (String name : forename.split("\\s")) {
 
             // composed name
             if (name.contains("-")) {
