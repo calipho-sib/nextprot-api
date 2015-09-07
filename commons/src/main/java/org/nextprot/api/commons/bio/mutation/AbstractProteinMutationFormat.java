@@ -8,6 +8,10 @@ import java.text.ParseException;
 /**
  * A base class for parsing and formatting ProteinMutation
  *
+ * A ProteinMutation is composed of 2 parts:
+ * - the affected part locating the amino-acids that have to be mutated
+ * - the mutation itself
+ *
  * Created by fnikitin on 07/09/15.
  */
 public abstract class AbstractProteinMutationFormat implements ProteinMutationFormat {
@@ -23,10 +27,10 @@ public abstract class AbstractProteinMutationFormat implements ProteinMutationFo
 
         StringBuilder sb = new StringBuilder();
 
-        // affected amino acids
+        // format affected amino acids
         getAffectedAAsFormat().format(sb, mutation, type);
 
-        // mutation
+        // format mutation
         if (mutation.getMutation() instanceof Deletion) getDeletionFormat().format(sb, (Deletion) mutation.getMutation(), type);
         else if (mutation.getMutation() instanceof Substitution) getSubstitutionFormat().format(sb, (Substitution) mutation.getMutation(), type);
         else if (mutation.getMutation() instanceof DeletionAndInsertion) getDeletionInsertionFormat().format(sb, (DeletionAndInsertion) mutation.getMutation(), type);

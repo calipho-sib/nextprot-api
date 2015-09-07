@@ -7,6 +7,8 @@ import org.nextprot.api.commons.bio.mutation.ProteinMutationFormat;
 import static org.nextprot.api.commons.bio.mutation.AbstractProteinMutationFormat.formatAminoAcidCode;
 
 /**
+ * HGV implementation of mutated aas
+ *
  * Created by fnikitin on 07/09/15.
  */
 public class MutatedAAsHGVFormat implements MutatedAAsFormat {
@@ -16,7 +18,6 @@ public class MutatedAAsHGVFormat implements MutatedAAsFormat {
 
         sb.append("p.");
 
-        // affected amino-acid(s)
         sb.append(formatAminoAcidCode(type, proteinMutation.getFirstAffectedAminoAcidCode()));
         sb.append(proteinMutation.getFirstAffectedAminoAcidPos());
         if (proteinMutation.isAminoAcidRange())

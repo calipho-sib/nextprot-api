@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * Insertions add one or more aas after one existing aa
@@ -32,6 +33,20 @@ public class Insertion implements Mutation<AminoAcidCode[]> {
     public AminoAcidCode[] getValue() {
 
         return Arrays.copyOf(aas, aas.length);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Insertion)) return false;
+        Insertion insertion = (Insertion) o;
+        return Objects.equals(insertAfterPos, insertion.insertAfterPos) &&
+                Objects.equals(aas, insertion.aas);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(insertAfterPos, aas);
     }
 
     public int getInsertAfterPos() {
