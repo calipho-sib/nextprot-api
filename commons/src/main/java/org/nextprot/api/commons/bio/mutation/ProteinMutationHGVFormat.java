@@ -52,6 +52,7 @@ public class ProteinMutationHGVFormat implements ProteinMutationFormat {
         if (mutation.getMutation() instanceof Deletion) sb.append("del");
         else if (mutation.getMutation() instanceof Substitution) sb.append(formatAminoAcidCode(type, (AminoAcidCode)mutation.getMutation().getValue()));
         else if (mutation.getMutation() instanceof DeletionAndInsertion) sb.append("delins").append(formatAminoAcidCode(type, (AminoAcidCode[]) mutation.getMutation().getValue()));
+        else if (mutation.getMutation() instanceof Insertion) sb.append("ins").append(formatAminoAcidCode(type, (AminoAcidCode[]) mutation.getMutation().getValue()));
         else if (mutation.getMutation() instanceof Frameshift) sb.append("fs").append(formatAminoAcidCode(type, AminoAcidCode.Stop)).append(mutation.getMutation().getValue());
 
         return sb.toString();

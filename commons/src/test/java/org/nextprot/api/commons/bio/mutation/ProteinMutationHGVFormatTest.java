@@ -408,7 +408,7 @@ public class ProteinMutationHGVFormatTest {
     }
 
     @Test
-    public void testParseAATerSubstitutionFix1() throws Exception {
+    public void testParseAATerSubstitutionFixCode1() throws Exception {
 
         ProteinMutation pm = format.parse("p.*104E", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
 
@@ -420,7 +420,7 @@ public class ProteinMutationHGVFormatTest {
     }
 
     @Test
-    public void testParseAATerSubstitutionFix2() throws Exception {
+    public void testParseAATerSubstitutionFixCode3() throws Exception {
 
         ProteinMutation pm = format.parse("p.Ter104Glu", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
 
@@ -432,7 +432,23 @@ public class ProteinMutationHGVFormatTest {
     }
 
     @Test
-    public void testParseAAInsertionFix() throws Exception {
+    public void testFormatSubstitutionFixCode1() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcid(AminoAcidCode.Stop, 104).substitutedBy(AminoAcidCode.GlutamicAcid).build();
+
+        Assert.assertEquals("p.*104E", format.format(pm));
+    }
+
+    @Test
+    public void testFormatSubstitutionFixCode3() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcid(AminoAcidCode.Stop, 104).substitutedBy(AminoAcidCode.GlutamicAcid).build();
+
+        Assert.assertEquals("p.Ter104Glu", format.format(pm, ProteinMutationFormat.AACodeType.THREE_LETTER));
+    }
+
+    @Test
+    public void testParseInsertion() throws Exception {
 
         ProteinMutation pm = format.parse("p.C136_A137insGM", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
 
@@ -443,6 +459,22 @@ public class ProteinMutationHGVFormatTest {
         Assert.assertTrue(pm.getMutation() instanceof Insertion);
         Assert.assertArrayEquals(AminoAcidCode.valueOfCodeSequence("GM"), (AminoAcidCode[]) pm.getMutation().getValue());
         Assert.assertEquals(136, ((Insertion)pm.getMutation()).getInsertAfterPos());
+    }
+
+    @Test
+    public void testFormatInsertionCode1() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcids(AminoAcidCode.Cysteine, 136, AminoAcidCode.Alanine, 137).inserts(AminoAcidCode.Glycine, AminoAcidCode.Methionine).build();
+
+        Assert.assertEquals("p.C136_A137insGM", format.format(pm));
+    }
+
+    @Test
+    public void testFormatInsertionCode3() throws Exception {
+
+        ProteinMutation pm = new ProteinMutation.FluentBuilder().aminoAcids(AminoAcidCode.Cysteine, 136, AminoAcidCode.Alanine, 137).inserts(AminoAcidCode.Glycine, AminoAcidCode.Methionine).build();
+
+        Assert.assertEquals("p.Cys136_Ala137insGlyMet", format.format(pm, ProteinMutationFormat.AACodeType.THREE_LETTER));
     }
 
     @Ignore
