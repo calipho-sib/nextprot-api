@@ -198,7 +198,7 @@
 	<script id="main" type="text/x-handlebars-template">
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="https://github.com/calipho-sib/nextprot-api/releases"
-				   target="_blank"><i class="icon-tag"></i>Version: {{version}} (build {{build}} )</a></li>
+				   target="_blank"><i class="icon-tag"></i>Version: {{version}}</a></li>
 			</a>
 			</li>
 		</ul>
