@@ -145,7 +145,7 @@
 								<argument>HEAD</argument>
 								<argument>--count</argument>
 							</arguments>
-							<outputFile>target/classes/buildNumber.txt</outputFile>
+							<outputFile>target/classes/git-commit-count.txt</outputFile>
 						</configuration>
 					</execution>
 				</executions>

@@ -1,14 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
-
-import javax.servlet.ServletContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
@@ -18,6 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.ServletContext;
+import java.io.*;
+import java.util.Arrays;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
 @Service
 class ReleaseInfoServiceImpl implements ReleaseInfoService {
@@ -49,7 +46,21 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 		    Manifest mf = new Manifest();
 	    	mf.read(new FileInputStream(manifestFile));
 		    Attributes atts = mf.getMainAttributes();
-		    return atts.getValue("Implementation-Version");
+
+			String implVersion = atts.getValue("Implementation-Version");
+			String gitCommitCount = readFile(appServerHome+"/WEB-INF/classes/", atts.getValue("gitCommitCountFile"));
+
+			if (gitCommitCount != null) {
+
+				Attributes.Name attName = new Attributes.Name("Git-Commit-Count");
+				atts.put(attName, gitCommitCount);
+
+				implVersion = implVersion.replace("-SNAPSHOT", " (build " + gitCommitCount+")");
+			}
+
+			atts.remove(new Attributes.Name("gitCommitCountFile"));
+
+			return implVersion;
 	    } catch (IOException e) {
 	    	if(Arrays.asList(env.getActiveProfiles()).contains("pro")){
 		    	LOGGER.warn("PRODUCTION ENVIRONMENT SHOULD BE A WAR WITH META INF" +  e.getMessage());
@@ -59,4 +70,17 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 		}
 	}
 
+	private String readFile(String dir, String filename) throws IOException {
+
+		File file = new File(dir+filename);
+
+		if (file.isFile()) {
+
+			BufferedReader br = new BufferedReader(new FileReader(dir + filename));
+
+			return br.readLine();
+		}
+
+		return null;
+	}
 }

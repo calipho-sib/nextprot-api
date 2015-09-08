@@ -338,8 +338,7 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
 						<manifestEntries>
-							<mode>development</mode>
-							<build>1322</build>
+							<gitCommitCountFile>git-commit-count.txt</gitCommitCountFile>
 						</manifestEntries>
                     </archive>
                 </configuration>
