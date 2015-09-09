@@ -113,8 +113,6 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 		if (accs != null && !accs.isEmpty()) {
 
-			//Easy way of doing it
-			proteinListDao.deleteAllProteinListItems(proteinList.getId());
 			proteinListDao.createUserProteinListItems(proteinList.getId(), proteinList.getAccessionNumbers());
 		}
 
