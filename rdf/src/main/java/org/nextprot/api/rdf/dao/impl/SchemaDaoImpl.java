@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class SchemaDaoImpl implements SchemaDao {
 
+	
 	@Autowired private DataSourceServiceLocator dsLocator;
 
 	@Autowired
@@ -147,14 +148,24 @@ public class SchemaDaoImpl implements SchemaDao {
 		List<NameDescr> nds = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("schema-instantiated-annotation-list"), params, new ParameterizedRowMapper<NameDescr>() {
 			@Override
 			public NameDescr mapRow(ResultSet rs, int row) throws SQLException {
-				return new NameDescr(rs.getString("cv_name"), rs.getString("description"));
+				NameDescr nd = new NameDescr(rs.getString("cv_name"), rs.getString("description"));
+				//System.out.println("rs.cv_name=" + nd.name + " description="+ nd.descr);
+				return nd;
 			}
 		});
 		// inject descriptions found in db into the OWLAnnotationCategory enum values
-		for (NameDescr nd : nds) AnnotationApiModel.getByDbAnnotationTypeName(nd.name).setDescription(nd.descr);
+		for (NameDescr nd : nds) {
+			AnnotationApiModel m = AnnotationApiModel.getByDbAnnotationTypeName(nd.name);
+			//System.out.println("before descr: " + m.toString());
+			m.setDescription(nd.descr);
+			//System.out.println("after descr: " + m.toString());
+			//AnnotationApiModel.getByDbAnnotationTypeName(nd.name).setDescription(nd.descr);
+		}
 		// encapsulate OWLAnnotationCategory into OWLAnnotation to be compatible with the rest
 		List<OWLAnnotation> annotations = new ArrayList<OWLAnnotation>();
-		for (AnnotationApiModel cat: AnnotationApiModel.values()) annotations.add(new OWLAnnotation(cat));
+		for (AnnotationApiModel cat: AnnotationApiModel.values()) {
+			annotations.add(new OWLAnnotation(cat));
+		}
 		return annotations;	
 	}
 	
