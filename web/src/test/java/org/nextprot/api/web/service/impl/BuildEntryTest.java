@@ -32,7 +32,7 @@ public class BuildEntryTest extends WebIntegrationBaseTest {
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_Q6ZTC4").withGenomicMappings().withChromosomalLocations().withXrefs());
 
 		Assert.assertEquals(1, entry.getChromosomalLocations().size());
-		Assert.assertTrue(entry.getChromosomalLocations().get(0).getAccession().isEmpty());
+		Assert.assertTrue(!entry.getChromosomalLocations().get(0).getAccession().isEmpty());
 		Assert.assertTrue(entry.getGenomicMappings().isEmpty());
 		for (DbXref xref : entry.getXrefs()) {
 			Assert.assertTrue(!xref.getAccession().matches("NX_VG.+"));
@@ -45,7 +45,7 @@ public class BuildEntryTest extends WebIntegrationBaseTest {
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_O00370").withGenomicMappings().withChromosomalLocations().withXrefs());
 
 		Assert.assertEquals(1, entry.getChromosomalLocations().size());
-		Assert.assertTrue(entry.getChromosomalLocations().get(0).getAccession().isEmpty());
+		Assert.assertTrue(!entry.getChromosomalLocations().get(0).getAccession().isEmpty());
 		Assert.assertTrue(entry.getGenomicMappings().isEmpty());
 		for (DbXref xref : entry.getXrefs()) {
 			Assert.assertTrue(!xref.getAccession().matches("VG.+"));
@@ -58,7 +58,7 @@ public class BuildEntryTest extends WebIntegrationBaseTest {
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_Q96PT3").withGenomicMappings().withChromosomalLocations().withXrefs());
 
 		Assert.assertEquals(1, entry.getChromosomalLocations().size());
-		Assert.assertTrue(entry.getChromosomalLocations().get(0).getAccession().isEmpty());
+		Assert.assertTrue(!entry.getChromosomalLocations().get(0).getAccession().isEmpty());
 		Assert.assertEquals(1, entry.getGenomicMappings().size());
 	}
 }
