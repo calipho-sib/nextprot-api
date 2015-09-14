@@ -18,7 +18,7 @@ public abstract class BioList extends BioObject<List<BioObject<?>>> {
 
     protected BioList(BioType bioType, BioObject<?> bioObject, BioObject<?>... others) {
 
-        super(bioType, deduceResourceType(bioObject, others));
+        super(bioType, deduceResourceType(bioObject, others), null);
 
         this.bioObjects = new ArrayList<>();
 

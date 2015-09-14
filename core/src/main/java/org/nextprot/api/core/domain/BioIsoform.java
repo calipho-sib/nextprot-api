@@ -11,6 +11,6 @@ public class BioIsoform extends BioObject<Isoform> {
 
     public BioIsoform() {
 
-        super(BioType.PROTEIN_ISOFORM, ResourceType.INTERNAL);
+        super(BioType.PROTEIN_ISOFORM, ResourceType.INTERNAL, NEXTPROT);
     }
 }

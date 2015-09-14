@@ -16,6 +16,7 @@ public class BioListTest {
         Assert.assertEquals(3, bioComplex.size());
         Assert.assertEquals(BioObject.BioType.COMPLEX, bioComplex.getBioType());
         Assert.assertEquals(BioObject.ResourceType.MIXED, bioComplex.getResourceType());
+        Assert.assertNull(bioComplex.getDatabase());
     }
 
     /*
@@ -86,5 +87,6 @@ public class BioListTest {
         Assert.assertEquals(3, bioGroup.size());
         Assert.assertEquals(BioObject.BioType.GROUP, bioGroup.getBioType());
         Assert.assertEquals(BioObject.ResourceType.MIXED, bioGroup.getResourceType());
+        Assert.assertNull(bioGroup.getDatabase());
     }
 }

@@ -11,8 +11,6 @@ public class BioObjectExternal extends BioObject<DbXref> {
 
     public BioObjectExternal(BioType bioType, String database) {
 
-        super(bioType, ResourceType.EXTERNAL);
-
-        setDatabase(database);
+        super(bioType, ResourceType.EXTERNAL, database);
     }
 }
