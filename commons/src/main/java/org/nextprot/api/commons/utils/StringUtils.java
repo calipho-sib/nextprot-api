@@ -10,17 +10,18 @@ public class StringUtils {
 
 	private static final Pattern NON_ASCIIDASH = Pattern.compile("[^\\w-]");
 	private static final Pattern WHITESPACE = Pattern.compile("\\s");
+	private static final AuthorNameFormatter AUTHOR_NAME_FORMATTER = new AuthorNameFormatter();
 
 	public static StringCaseFormatter createXCaseBuilder(String string) {
 
 		return new StringCaseFormatter(string);
 	}
 
-	public static String toCamelCase(final String inputString, boolean firstLetterFirstWordInLowerCase) {
+	public static String toCamelCase(String inputString, boolean firstLetterFirstWordInLowerCase) {
 
 		return new StringCaseFormatter(inputString).camel(firstLetterFirstWordInLowerCase).format();
 	}
-
+	
 	public static String camelToKebabCase(String inputString){
 
 		return new StringCaseFormatter(inputString).kebab().format();
@@ -124,6 +125,11 @@ public class StringUtils {
 	
 	static public boolean isWholeNumber(String input){
 		  return input.matches("\\d+");  //match a number with optional '-' and decimal.
+	}
+
+	public static AuthorNameFormatter getAuthorNameFormatter() {
+
+		return AUTHOR_NAME_FORMATTER;
 	}
 
 	/**

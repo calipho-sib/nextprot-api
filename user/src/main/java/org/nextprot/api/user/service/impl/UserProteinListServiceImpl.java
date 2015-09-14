@@ -1,5 +1,6 @@
 package org.nextprot.api.user.service.impl;
 
+import com.google.common.collect.Sets;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.commons.resource.AllowedAnonymous;
@@ -105,7 +106,7 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 	@Override
 	@Transactional
-	public UserProteinList updateUserProteinList(UserProteinList proteinList) {
+	public void updateUserProteinList(UserProteinList proteinList) {
 
 		proteinListDao.updateUserProteinListMetadata(proteinList);
 
@@ -113,12 +114,13 @@ public class UserProteinListServiceImpl implements UserProteinListService {
 
 		if (accs != null && !accs.isEmpty()) {
 
-			//Easy way of doing it
-			proteinListDao.deleteAllProteinListItems(proteinList.getId());
-			proteinListDao.createUserProteinListItems(proteinList.getId(), proteinList.getAccessionNumbers());
-		}
+			UserProteinList currentProteinList = proteinListDao.getUserProteinListById(proteinList.getId());
 
-		return proteinListDao.getUserProteinListById(proteinList.getId());
+			Set<String> accsToInsert = Sets.difference(accs, currentProteinList.getAccessionNumbers());
+
+			if (!accsToInsert.isEmpty())
+				proteinListDao.createUserProteinListItems(proteinList.getId(), accsToInsert);
+		}
 	}
 
 	@Override

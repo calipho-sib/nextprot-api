@@ -105,6 +105,11 @@ public class ProteinMutation {
             }
 
             @Override
+            public ProteinMutationBuilder inserts(AminoAcidCode... aas) {
+                return new InsertionBuilderProtein(dataCollector, aas);
+            }
+
+            @Override
             public ProteinMutationBuilder deletedAndInserts(AminoAcidCode... aas) {
                 return new DeletionInsertionBuilderProtein(dataCollector, aas);
             }
@@ -158,6 +163,21 @@ public class ProteinMutation {
                 super(dataCollector);
 
                 dataCollector.setMutation(new DeletionAndInsertion(aas));
+            }
+
+            @Override
+            public ProteinMutation build() {
+
+                return new ProteinMutation(this);
+            }
+        }
+
+        class InsertionBuilderProtein extends ProteinMutationBuilderImpl {
+
+            InsertionBuilderProtein(DataCollector dataCollector, AminoAcidCode... aas) {
+                super(dataCollector);
+
+                dataCollector.setMutation(new Insertion(dataCollector.getFirstAffectedAminoAcidPos(), aas));
             }
 
             @Override

@@ -10,18 +10,6 @@ import java.util.Set;
 
 public class AnnotationApiModelTest {
 
-	@Test
-	public void testPdbMappingProperties() {
-		Assert.assertEquals(2, AnnotationApiModel.PDB_MAPPING.getProperties().size());
-		Assert.assertNotNull(AnnotationApiModel.PDB_MAPPING.getPropertyByDbName("resolution"));
-		Assert.assertNotNull(AnnotationApiModel.PDB_MAPPING.getPropertyByDbName("method"));
-		Assert.assertNull(AnnotationApiModel.PDB_MAPPING.getPropertyByDbName("unexistingpropertydbname"));
-	}
-
-	@Test
-	public void testDomainInfoProperties() {
-		Assert.assertNull(AnnotationApiModel.DOMAIN_INFO.getProperties());
-	}
 
 	@Test
 	public void testIsLeaf() {
@@ -101,7 +89,7 @@ public class AnnotationApiModelTest {
 		Set<String> atns = new HashSet<>();
 		for (AnnotationApiModel cat: AnnotationApiModel.values()) {
 			if (atns.contains(cat.getDbAnnotationTypeName())) {
-				System.out.println("ERROR: OWLAnnotationCategory.getDbAnnotationTypeName " + cat.getDbAnnotationTypeName() +  " is not unique" );
+				System.out.println("ERROR: AnnotationApiModel.getDbAnnotationTypeName " + cat.getDbAnnotationTypeName() +  " is not unique" );
 			} else {
 				atns.add(cat.getDbAnnotationTypeName());
 			}
@@ -114,7 +102,7 @@ public class AnnotationApiModelTest {
 		Set<Integer> atns = new HashSet<>();
 		for (AnnotationApiModel cat: AnnotationApiModel.values()) {
 			if (atns.contains(cat.getDbId())) {
-				System.out.println("ERROR: OWLAnnotationCategory.getDbId " + cat.getDbId() +  " is not unique" );
+				System.out.println("ERROR: AnnotationApiModel.getDbId " + cat.getDbId() +  " is not unique" );
 			} else {
 				atns.add(cat.getDbId());
 			}
@@ -123,11 +111,11 @@ public class AnnotationApiModelTest {
 	}
 
 	@Test
-	public void testRdfTypeNameUnicity() {
+	public void testApiTypeNameUnicity() {
 		Set<String> atns = new HashSet<>();
 		for (AnnotationApiModel cat: AnnotationApiModel.values()) {
 			if (atns.contains(cat.getApiTypeName())) {
-				System.out.println("ERROR: OWLAnnotationCategory.getRdfTypeName " + cat.getApiTypeName() +  " is not unique" );
+				System.out.println("ERROR: AnnotationApiModel.getApiTypeName " + cat.getApiTypeName() +  " is not unique" );
 			} else {
 				atns.add(cat.getApiTypeName());
 			}

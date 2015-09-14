@@ -37,8 +37,7 @@ public class GeneDAOImpl implements GeneDAO {
 		public ChromosomalLocation mapRow(ResultSet resultSet, int row) throws SQLException {
 			ChromosomalLocation chromosomalLocation = new ChromosomalLocation();
 			chromosomalLocation.setChromosome(resultSet.getString("chromosome"));
-			String accession = resultSet.getString("accession");
-			chromosomalLocation.setAccession((accession.matches("^(NX_)?VG_.+")) ? "" : accession);
+			chromosomalLocation.setAccession(resultSet.getString("accession"));
 			chromosomalLocation.setBand(resultSet.getString("band"));
 			chromosomalLocation.setStrand(resultSet.getInt("strand"));
 			chromosomalLocation.setFirstPosition(resultSet.getInt("firstPosition"));

@@ -2,18 +2,10 @@ package org.nextprot.api.core.utils;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.nextprot.api.core.domain.Interactant;
-import org.nextprot.api.core.domain.Interaction;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 
 
 public class BinaryInteraction2Annotation {
@@ -68,40 +60,37 @@ public class BinaryInteraction2Annotation {
 		evi.setResourceId(inter.getEvidenceResourceId());
 		evi.setResourceType("database");									
 		
-		evi.setProperties(new ArrayList<AnnotationEvidenceProperty>()); 
+		// - - - - - - - - - - - - - - - - - - - - 
+		// evidence property: number of experiments
+		// - - - - - - - - - - - - - - - - - - - - 
+		AnnotationEvidenceProperty evp = new AnnotationEvidenceProperty();
+		evp.setEvidenceId(evp.getEvidenceId());
+		evp.setPropertyName("numberOfExperiments");
+		evp.setPropertyValue(""+inter.getNumberOfExperiments());
+		List<AnnotationEvidenceProperty> evProps = new ArrayList<>();
+		evProps.add(evp);
+		evi.setProperties(evProps); 
+		
 		evidences.add(evi);
 		annot.setEvidences(evidences);
 
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation properties
 		// - - - - - - - - - - - - - - - - - - - - 
-		// interactants are represented as properties
+		// annotation property: interactant
 		// - - - - - - - - - - - - - - - - - - - - 
 		List<AnnotationProperty> anProps = new ArrayList<>();
-		AnnotationProperty p1 = new AnnotationProperty();
-		Interactant interactant=BinaryInteraction2Annotation.getInteractant(inter);
-		p1.setAccession(interactant.getAccession());
-		p1.setAnnotationId(annotId);
-		p1.setName(AnnotationProperty.NAME_INTERACTANT);
-		if (interactant.isNextprot()) {
-			p1.setValueType(interactant.isIsoform() ? AnnotationProperty.VALUE_TYPE_ISO_AC : AnnotationProperty.VALUE_TYPE_ENTRY_AC);
-			p1.setValue(interactant.getNextprotAccession());
-		} else {
-			p1.setValueType(AnnotationProperty.VALUE_TYPE_RIF);
-			p1.setValue(""+interactant.getXrefId());			
-		}
 
-		annot.setBioObject(newBioObject(interactant));
+		annot.setBioObject(newBioObject(BinaryInteraction2Annotation.getInteractant(inter)));
 
-		anProps.add(p1);
+		// - - - - - - - - - - - - - - - - - - - -
+		// annotation property: self interaction
 		// - - - - - - - - - - - - - - - - - - - - 
-		// number of experiments
-		// - - - - - - - - - - - - - - - - - - - - 
-		AnnotationProperty p2 = new AnnotationProperty();
-		p2.setAnnotationId(annotId);
-		p2.setName("numberOfExperiments");
-		p2.setValue(""+inter.getNumberOfExperiments());
-		anProps.add(p2);
+		AnnotationProperty p3 = new AnnotationProperty();
+		p3.setAnnotationId(annotId);
+		p3.setName("selfInteraction");
+		p3.setValue(""+inter.isSelfInteraction());
+		anProps.add(p3);
 		annot.setProperties(anProps);
 		
 		// - - - - - - - - - - - - - - - - - - - - 

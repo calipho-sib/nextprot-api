@@ -2,6 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.IsoformSpecificity;
@@ -136,7 +137,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	static void attachPeptidePropertiesToAnnotations(List<Annotation> annotations, Map<String, List<AnnotationProperty>> propMap) {
 		for (Annotation annot: annotations) {
 			AnnotationProperty pepNameProperty = annot.getProperties().get(0); // WARNING: we expect first property in list be the "peptide name" property !
-			if (!pepNameProperty.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME)) {
+			if (!pepNameProperty.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME)) {
 				throw new RuntimeException("Found unexpected property name:" + pepNameProperty.getName());
 			}
 			String pepName = pepNameProperty.getValue();
@@ -155,7 +156,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	static List<AnnotationProperty> cloneUsefulPropertiesForAnnotation(List<AnnotationProperty> peptideProperties, Long annotationId) {
 		List<AnnotationProperty> result = new ArrayList<>();
 		for (AnnotationProperty pp: peptideProperties) {
-			if (pp.getName().equals(AnnotationProperty.NAME_PEPTIDE_PROTEOTYPICITY)) {
+			if (pp.getName().equals(PropertyApiModel.NAME_PEPTIDE_PROTEOTYPICITY)) {
 				AnnotationProperty ap = new AnnotationProperty();
 				ap.setAnnotationId(annotationId);
 				ap.setAccession(pp.getAccession());
@@ -171,7 +172,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	static void attachPeptideEvidencesToAnnotations(List<Annotation> annotations, Map<String, List<AnnotationEvidence>> evidences) {
 		for (Annotation annot: annotations) {
 			AnnotationProperty pepNameProperty = annot.getProperties().get(0);  // WARNING: we expect first property in list be the "peptide name" property !
-			if (!pepNameProperty.getName().equals(AnnotationProperty.NAME_PEPTIDE_NAME)) {
+			if (!pepNameProperty.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME)) {
 				throw new RuntimeException("Found unexpected property name:" + pepNameProperty.getName());
 			}
 			String pepName = pepNameProperty.getValue();
@@ -256,7 +257,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 				List<AnnotationProperty> props = new ArrayList<>(); 
 				AnnotationProperty prop = new AnnotationProperty();
 				prop.setAnnotationId(annotationId);
-				prop.setName(AnnotationProperty.NAME_PEPTIDE_NAME);
+				prop.setName(PropertyApiModel.NAME_PEPTIDE_NAME);
 				prop.setValue(pep);
 				props.add(prop);
 				annot.setProperties(props);

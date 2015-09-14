@@ -2,6 +2,9 @@ package org.nextprot.api.commons.utils;
 
 import com.google.common.base.Preconditions;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  *
  * https://en.wikipedia.org/wiki/Letter_case#Special_case_styles
@@ -9,6 +12,8 @@ import com.google.common.base.Preconditions;
  * Created by fnikitin on 27/08/15.
  */
 public class StringCaseFormatter {
+
+    private final static Pattern DELIMITOR_PATTERN = Pattern.compile("[_\\-\\s]");
 
     private String string;
 
@@ -77,29 +82,35 @@ public class StringCaseFormatter {
         return this;
     }
 
-    private String toCamelCase(final String inputString, boolean firstLetterLowerCase) {
+    private String toCamelCase(final String inputString, boolean firstLetterFirstWordInLowerCase) {
 
         if (inputString == null)
             return null;
 
-        if (inputString.indexOf('_') == -1 && inputString.indexOf('-') == -1)
-            return inputString;
+        Matcher matcher = DELIMITOR_PATTERN.matcher(inputString);
 
-        final StringBuilder ret = new StringBuilder(inputString.length());
+        // Do nothing if inputString does not contains delimitors
+        if (!matcher.find()) return inputString;
 
-        for (final String word : inputString.replaceAll("_", " ").split("[ -]")) {
-            if (firstLetterLowerCase) {
-                ret.append(word.toLowerCase());
-                firstLetterLowerCase = false;
-                continue;
-            }
+        StringBuilder sb = new StringBuilder(inputString.length());
+
+        for (String word : inputString.split("[-_\\s]")) {
+
             if (!word.isEmpty()) {
-                ret.append(word.substring(0, 1).toUpperCase());
-                ret.append(word.substring(1).toLowerCase());
+
+                if (firstLetterFirstWordInLowerCase) {
+
+                    sb.append(word.toLowerCase());
+                    firstLetterFirstWordInLowerCase = false;
+                } else {
+
+                    sb.append(word.substring(0, 1).toUpperCase());
+                    sb.append(word.substring(1).toLowerCase());
+                }
             }
         }
 
-        return ret.toString();
+        return sb.toString();
     }
 
     private String camelToKebabCase(String s){
@@ -112,7 +123,7 @@ public class StringCaseFormatter {
 
     private String camelToLetterCase(String s, String delimitor) {
 
-        return s.trim().replaceAll("(\\p{Ll})(\\p{Lu})","$1 $2").replaceAll(" ", delimitor).toLowerCase();
+        return s.trim().replaceAll("(\\p{Lower})(\\p{Upper})","$1"+delimitor+"$2").toLowerCase();
     }
 
     /**

@@ -1,6 +1,7 @@
 package org.nextprot.api.core.utils;
 
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObjectExternal;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -113,13 +114,13 @@ public class AnnotationUtils {
 
 		for(Annotation a : annotations){
 			if (a.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
-				addXrefIdRelatedToAnnotationPropertyName(a, AnnotationProperty.NAME_DIFFERING_SEQUENCE, xrefIds);
+				addXrefIdRelatedToAnnotationPropertyName(a, PropertyApiModel.NAME_DIFFERING_SEQUENCE, xrefIds);
 			}
 			else if (a.getAPICategory()==AnnotationApiModel.COFACTOR) {
 				xrefIds.add(a.getBioObject().getId());
 			}
 			else if (a.getAPICategory()==AnnotationApiModel.DISEASE) {
-				addXrefIdRelatedToAnnotationPropertyName(a, AnnotationProperty.NAME_ALTERNATIVE_DISEASE_TERM, xrefIds);
+				addXrefIdRelatedToAnnotationPropertyName(a, PropertyApiModel.NAME_ALTERNATIVE_DISEASE_TERM, xrefIds);
 			}
 		}
 		return xrefIds;
@@ -128,7 +129,7 @@ public class AnnotationUtils {
 	private static void addXrefIdRelatedToAnnotationPropertyName(Annotation a, String propName, Set<Long> xrefIds) {
 		for (AnnotationProperty p: a.getProperties()) {
 			if (p.getName().equals(propName)) {
-				if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) {
+				if (p.getValueType().equals(PropertyApiModel.VALUE_TYPE_RIF)) {
 					xrefIds.add(Long.parseLong(p.getValue()));
 				}
 			}
@@ -145,8 +146,8 @@ public class AnnotationUtils {
 		for(Annotation a : annotations){
 			if (a.getAPICategory()==AnnotationApiModel.BINARY_INTERACTION) {
 				for (AnnotationProperty p: a.getProperties()) {
-					if (p.getName().equals(AnnotationProperty.NAME_INTERACTANT)) {
-						if (p.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
+					if (p.getName().equals(PropertyApiModel.NAME_INTERACTANT)) {
+						if (p.getValueType().equals(PropertyApiModel.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
 					}
 				}
 			}
@@ -180,14 +181,13 @@ public class AnnotationUtils {
 			List<AnnotationEvidence> evidencesToRemove = null;
 
 			if (annot.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
-				evidencesToRemove = convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_DIFFERING_SEQUENCE);
+				evidencesToRemove = convertType2EvidenceToProperty(annot, PropertyApiModel.NAME_DIFFERING_SEQUENCE);
 			} 
 			else if (annot.getAPICategory()==AnnotationApiModel.COFACTOR) {
-				convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_COFACTOR);
 				evidencesToRemove = convertEvidenceToExternalBioObject(annot);
 			}
 			else if (annot.getAPICategory()==AnnotationApiModel.DISEASE) {
-				evidencesToRemove = convertType2EvidenceToProperty(annot, AnnotationProperty.NAME_ALTERNATIVE_DISEASE_TERM);
+				evidencesToRemove = convertType2EvidenceToProperty(annot, PropertyApiModel.NAME_ALTERNATIVE_DISEASE_TERM);
 			}
 
 			if (evidencesToRemove != null)
@@ -208,7 +208,7 @@ public class AnnotationUtils {
 				p.setAccession(evi.getResourceAccession());
 				p.setName(propertyName);
 				p.setValue(""+evi.getResourceId());
-				p.setValueType(AnnotationProperty.VALUE_TYPE_RIF);
+				p.setValueType(PropertyApiModel.VALUE_TYPE_RIF);
 				if (annot.getProperties()==null) annot.setProperties(new ArrayList<AnnotationProperty>());
 				annot.getProperties().add(p);
 

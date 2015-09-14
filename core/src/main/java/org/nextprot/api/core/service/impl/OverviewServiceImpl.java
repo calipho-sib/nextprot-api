@@ -38,7 +38,6 @@ class OverviewServiceImpl implements OverviewService {
 			overview.setHistory(history.get(0));
 
 		List<Overview.EntityName> entityNames = this.entryNameDao.findNames(uniqueName);
-		entityNames.addAll(entryNameDao.findORFGeneNames(uniqueName));
 		entityNames.addAll(entryNameDao.findAlternativeChainNames(uniqueName));
 		
 		setNamesInOverview(entityNames, overview);

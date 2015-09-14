@@ -1,2 +1,2 @@
 #parse('turtle/isoform-annotation-list.ttl.vm')
-#parse('turtle/isoform-interaction-list.ttl.vm')
+

@@ -70,7 +70,9 @@ public class UserProteinListController {
 	@ResponseBody
 	public UserProteinList updateUserProteinList(@PathVariable("listid") String id, @RequestBody UserProteinList proteinList) {
 		proteinList.setId(Long.parseLong(id));
-		return this.proteinListService.updateUserProteinList(proteinList);
+		proteinListService.updateUserProteinList(proteinList);
+
+		return proteinListService.getUserProteinListById(proteinList.getId());
 	}
 
 	//Delete a list

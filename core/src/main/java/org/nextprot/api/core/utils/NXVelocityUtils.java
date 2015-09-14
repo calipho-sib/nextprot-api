@@ -3,6 +3,8 @@ package org.nextprot.api.core.utils;
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.PropertyApiModel;
+import org.nextprot.api.commons.constants.PropertyWriter;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -88,4 +90,14 @@ public class NXVelocityUtils {
 
 		return sb.toString();
 	}
+	
+	public static PropertyWriter getXMLPropertyWriter(AnnotationApiModel aModel, String propertyDbName) {
+		return PropertyApiModel.getXMLWriter(aModel, propertyDbName);
+	}
+	public static PropertyWriter getTtlPropertyWriter(AnnotationApiModel aModel, String propertyDbName) {
+		return PropertyApiModel.getTtlWriter(aModel, propertyDbName);
+	}
+
+	
+	
 }

@@ -315,7 +315,26 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		UserProteinList userProteinList = new ObjectMapper().readValue(responseString, new TypeReference<UserProteinList>() { });
 
 		assertEquals(23, userProteinList.getOwnerId());
-		assertEquals(Sets.newHashSet("NX_45465"), userProteinList.getAccessionNumbers());
+		assertEquals(Sets.newHashSet("NX_45465", "NX_P05185", "NX_Q8N5Z0", "NX_Q14239"), userProteinList.getAccessionNumbers());
+	}
+
+	@Test
+	public void leonardShouldBeAbleToUpdateHisProteinListWithDuplicateAccessionNumber() throws Exception {
+
+		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
+
+		String content = "{\"id\":0,\"name\":\"leonardslist1\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\",\"NX_P05185\"],\"entriesCount\":2,\"ownerId\":0,\"owner\":\"leonard\",\"ownerName\":\"leonard\"}";
+
+		// UserProteinList updateUserProteinListMetadata()
+		String responseString = this.mockMvc.perform(put("/user/me/lists/157").header("Authorization", "Bearer " + leonardToken)
+				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+
+		UserProteinList userProteinList = new ObjectMapper().readValue(responseString, new TypeReference<UserProteinList>() { });
+
+		assertEquals(23, userProteinList.getOwnerId());
+		assertEquals(Sets.newHashSet("NX_45465", "NX_P05185", "NX_Q8N5Z0", "NX_Q14239"), userProteinList.getAccessionNumbers());
 	}
 
 	@Test

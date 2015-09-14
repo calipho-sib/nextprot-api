@@ -1,19 +1,19 @@
 package org.nextprot.api.core.service;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class InteractionServiceIntegrationTest extends CoreUnitBaseTest {
@@ -64,7 +64,6 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 	@Test
 	public void shouldReturn4AnnotationsWithProperties() {
 		List<Annotation> annots = this.interactionService.findInteractionsAsAnnotationsByEntry("NX_Q9UNQ0");
-		System.out.println("annot count: " + annots.size());
 		assertTrue(annots.size() == 4);
 		int numberOfExperiments = 0;
 		int entryacs = 0;
@@ -81,18 +80,20 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 			assertTrue(evi.getQualityQualifier().equals("GOLD") || evi.getQualityQualifier().equals("SILVER"));	
 			assertTrue(evi.getResourceAccession().contains("EBI-")  && evi.getResourceAccession().contains("1569435") );
 			assertTrue(evi.getResourceDb().equals("IntAct"));
-			 
+			
+			if (annot.getEvidences().get(0).getPropertyValue("numberOfExperiments") != null) numberOfExperiments++;
+			
 			for (AnnotationProperty prop: annot.getProperties()) {
-				if (prop.getName().equals("numberOfExperiments")) numberOfExperiments++;
-				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_ENTRY_AC)) entryacs++;
-				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_ISO_AC)) isoacs++;
-				if (prop.getName().equals(AnnotationProperty.NAME_INTERACTANT) && prop.getValueType().equals(AnnotationProperty.VALUE_TYPE_RIF)) resourceinternalrefs++;				
+				//if (prop.getName().equals("numberOfExperiments")) numberOfExperiments++;
+				if (prop.getName().equals(PropertyApiModel.NAME_INTERACTANT) && prop.getValueType().equals(PropertyApiModel.VALUE_TYPE_ENTRY_AC)) entryacs++;
+				if (prop.getName().equals(PropertyApiModel.NAME_INTERACTANT) && prop.getValueType().equals(PropertyApiModel.VALUE_TYPE_ISO_AC)) isoacs++;
+				if (prop.getName().equals(PropertyApiModel.NAME_INTERACTANT) && prop.getValueType().equals(PropertyApiModel.VALUE_TYPE_RIF)) resourceinternalrefs++;				
 			}
 		}
 		assertTrue(numberOfExperiments==4);
-		assertTrue(entryacs==2);
-		assertTrue(isoacs==1);
-		assertTrue(resourceinternalrefs==1);
+		assertTrue(entryacs==0);
+		assertTrue(isoacs==0);
+		assertTrue(resourceinternalrefs==0);
 		assertTrue(self==1);
 	}
 
@@ -118,20 +119,4 @@ limit 10
 	 * NX_Q6ZMQ8 should contain an interaction with P61810 having the specificity SPECIFIC 
 	 * Note that other isoform SPECIFIC interactions (as annotations) exist for this entry.
 	 */
-	@Test
-	public void shouldReturnAnAnnotationsWIthIsoformSpecificitySpecific() {
-		List<Annotation> annots = this.interactionService.findInteractionsAsAnnotationsByEntry("NX_Q6ZMQ8");
-		for (Annotation annot: annots) {
-			for (AnnotationProperty prop : annot.getProperties()) {
-				// the interactant accession identifies the annotation
-				if (prop.getAccession() !=null && prop.getAccession().equals("P61810")) {  
-					AnnotationIsoformSpecificity spec = annot.getTargetingIsoformsMap().get("NX_Q6ZMQ8-2");
-					assertTrue(spec.getSpecificity().equals("SPECIFIC"));
-					return;
-				}
-			}
-		}
-		assertTrue(false);
-	}
-	
 }

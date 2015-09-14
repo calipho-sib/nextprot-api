@@ -6,6 +6,8 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import java.util.Arrays;
 
 /**
+ * Deletion/insertions (delins) replace one or more aas with one or more other aas
+ *
  * Created by fnikitin on 10/07/15.
  */
 public class DeletionAndInsertion implements Mutation<AminoAcidCode[]> {

@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class AnnotationEvidenceProperty implements Serializable{
 
 	private static final long serialVersionUID = -7303345938169180717L;
+	
 	private long evidenceId;
 	private String propertyName;
 	private String propertyValue;

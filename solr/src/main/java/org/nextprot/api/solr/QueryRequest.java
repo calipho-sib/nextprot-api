@@ -11,6 +11,7 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 
 	private String query;
 	private String listOwner;
+	private String chromosome = null; //chromosome
 	private String listId = null; //list id
 	private String queryId = null; //nextprot query id
 
@@ -237,6 +238,14 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 		this.mode = mode;
 	}
 
+	public String getChromosome() {
+		return chromosome;
+	}
+
+	public void setChromosome(String chromosome) {
+		this.chromosome = chromosome;
+	}
+	
 	@Override
 	public String toKeyValueString() {
 		StringBuilder sb = new StringBuilder();
@@ -250,6 +259,10 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 				sb.append("query=" + this.query + ";");
 		}
 		return sb.toString();
+	}
+
+	public boolean hasChromosome() {
+		return chromosome != null;
 	}
 
 }

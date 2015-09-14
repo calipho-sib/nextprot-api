@@ -337,6 +337,9 @@
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
+						<manifestEntries>
+							<gitCommitCountFile>git-commit-count.txt</gitCommitCountFile>
+						</manifestEntries>
                     </archive>
                 </configuration>
             </plugin>

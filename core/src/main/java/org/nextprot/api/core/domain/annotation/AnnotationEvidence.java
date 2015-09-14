@@ -1,9 +1,7 @@
 package org.nextprot.api.core.domain.annotation;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,40 +11,19 @@ public class AnnotationEvidence implements Serializable {
 	private static final long serialVersionUID = 2856324820767690302L;
 
 	// map uniprot evidence code with ECO
-	final static Map<String, String> evidenceInfo = new HashMap<String, String>();
-
-	// map expressionLevel
-	final static Map<String, String> expressionLevelInfo = new HashMap<String, String>();
-
-	// map integrationLevel
-	final static Map<String, String> integrationLevelInfo = new HashMap<String, String>();
+	final static Map<String, String> evidenceInfo = new HashMap<>();
 
 	// evidence properties mapping
-	private Map<String, String> propertiesMap= new HashMap<String, String>();
+	private Map<String, String> propertiesMap= new HashMap<>();
 
-	static{
+	static {
 		
-		//
 		// map uniprot evidence code with ECO
 		evidenceInfo.put("UNKNOWN", "EXP");
 		evidenceInfo.put("PROBABLE", "IC");   // IC=inferred by curator
 		evidenceInfo.put("POTENTIAL", "IEA"); // IEA=Inferred from Electronic Annotation
 		evidenceInfo.put("BY_SIMILARITY", "ISS"); // ISS=Inferred from Sequence or Structural Similarity
-
-		//
-		// map expressionLevel
-		expressionLevelInfo.put("high", "High");
-		expressionLevelInfo.put("low", "Low");
-		expressionLevelInfo.put("medium", "Medium");
-		expressionLevelInfo.put("not detected", "Negative");
-		expressionLevelInfo.put("positive", "Positive");
-		expressionLevelInfo.put("negative", "Negative");
-
-		integrationLevelInfo.put("integrated", "Integrated");
-		integrationLevelInfo.put("selected", "Selected");
-		integrationLevelInfo.put("single", "Single");		
 	}
-	
 
 	private long resourceId;
 	private String resourceType;
@@ -65,8 +42,6 @@ public class AnnotationEvidence implements Serializable {
 	private String evidenceCodeAC;
 	private String evidenceCodeName;
 
-	
-	
 	public String getEvidenceCodeAC() {
 		return evidenceCodeAC;
 	}
@@ -306,16 +281,29 @@ public class AnnotationEvidence implements Serializable {
 	 * @return a set of property names related to the evidence and that are allowed to be shown
 	 */
 	public Set<String> getPropertiesNames() {
+		/*
 		// do an intersection between properties we want to show and properties we have
-		Set<String> propsOk = new HashSet<String>(Arrays.asList("expressionLevel","antibodies acc"));
+<<<<<<< HEAD
+		Set<String> propsOk = new HashSet<String>(Arrays.asList("expressionLevel","antibodies acc", "numberOfExperiments"));
+=======
+		Set<String> propsOk = new HashSet<>(Arrays.asList("expressionLevel","antibodies acc"));
+>>>>>>> develop
 		propsOk.retainAll(propertiesMap.keySet());
 		// return the intersection
 		return propsOk;
+		*/
+		return propertiesMap==null ? null : propertiesMap.keySet(); 
 	}
+	
+	
+	public String getPropertyRawValue(String name) {
+		return propertiesMap.get(name);
+	}
+	
 	
 	/**
 	 * 
-	 * @param name a proprty name
+	 * @param name a property name
 	 * @return a string representing the property value associated to name
 	 */
 	public String getPropertyValue(String name) {
@@ -340,30 +328,13 @@ public class AnnotationEvidence implements Serializable {
 
 	}
 
-	/**
-	 * obsolete, see http://issues.isb-sib.ch/browse/CALIPHOMISC-140
-	 */
-	// public String getAssignedByFromProperties(){ return
-	// extractProperty("assigned by");
-	// }
-
-	
-	/**
-	 * used for subcellular location from GFP-cDNA@EMBL the EMBL accession used
-	 * for the subcellular location experiences is not displayed not used in ttl
-	 * template
-	 * 
-	 * not used in ttl template
-	 */
-	public String getEMBL() {
-		return extractProperty("EMBL");
-	}
 
 	/**
 	 * See http://issues.isb-sib.ch/browse/CALIPHOMISC-142 for more details
 	 * 
 	 * @return 2 possible values: colocalizes_with / contributes_to
 	 */
+	@Deprecated
 	public String getGoQualifier() {
 		return extractProperty("go_qualifier");
 	}
@@ -386,6 +357,7 @@ public class AnnotationEvidence implements Serializable {
 	 * 
 	 * @return Example: NB4, HL60, ...
 	 */
+	@Deprecated
 	public String getCL() {
 		return extractProperty("CL");
 	}
@@ -421,6 +393,7 @@ public class AnnotationEvidence implements Serializable {
 	 * not used in ttl template
 	 * @return
 	 */
+	@Deprecated
 	public String getSampleId() {
 		return extractProperty("sample id");
 	}
@@ -433,16 +406,17 @@ public class AnnotationEvidence implements Serializable {
 
 	 * @return Example: Lys-CSC, Cys-Glyco-CSC,Lys-CSC
 	 */
+	@Deprecated
 	public String getSP() {
 		return extractProperty("SP");
 	}
-	
+	@Deprecated
 	public String getExpressionLevel() {
-		return expressionLevelInfo.get(extractProperty("expressionLevel"));
+		return extractProperty("expressionLevel");
 	}
-
+	@Deprecated
 	public String getIntegrationLevel() {
-		return expressionLevelInfo.get(extractProperty("integrationLevel"));
+		return extractProperty("integrationLevel");
 	}
 
 	public String getAssignmentMethod() {

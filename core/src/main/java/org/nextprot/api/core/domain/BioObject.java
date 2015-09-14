@@ -1,19 +1,21 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-
 import com.google.common.base.Preconditions;
+
+import java.io.Serializable;
 
 /**
  * A wrapper over biological domain object
  *
  * Created by fnikitin on 26/08/15.
  */
-public abstract class BioObject<T> implements Serializable{
+public abstract class BioObject<T> implements Serializable {
 
-	private static final long serialVersionUID = -7804620350625047683L;
+    private static final long serialVersionUID = 0L;
 
-	public enum BioType { CHEMICAL, PROTEIN_ENTRY, PROTEIN_ISOFORM, COMPLEX }
+    protected static final String NEXTPROT = "neXtProt";
+
+    public enum BioType { CHEMICAL, PROTEIN_ENTRY, PROTEIN_ISOFORM, COMPLEX }
     public enum ResourceType { INTERNAL, EXTERNAL, MIXED }
 
     private long id;
@@ -21,7 +23,7 @@ public abstract class BioObject<T> implements Serializable{
     private String database;
     private final BioType bioType;
     private final ResourceType resourceType;
-    private T content;
+    transient private T content;
 
     protected BioObject(BioType bioType, ResourceType resourceType) {
 
