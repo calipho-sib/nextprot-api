@@ -57,6 +57,8 @@ public abstract class BioObject<T> implements Serializable {
     }
 
     public void setDatabase(String database) {
+
+        Preconditions.checkNotNull(database);
         this.database = database;
     }
 
