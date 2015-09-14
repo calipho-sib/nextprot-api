@@ -7,10 +7,12 @@ package org.nextprot.api.core.domain;
  */
 public class BioObjectExternal extends BioObject<DbXref> {
 
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
-    public BioObjectExternal(BioType bioType) {
+    public BioObjectExternal(BioType bioType, String database) {
 
         super(bioType, ResourceType.EXTERNAL);
+
+        setDatabase(database);
     }
 }
