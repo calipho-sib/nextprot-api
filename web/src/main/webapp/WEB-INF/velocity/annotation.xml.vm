@@ -14,13 +14,28 @@
 
 	#if($annotation.getBioObject())
 		#set($bioObject = $annotation.getBioObject())
-        <interactant nature='$StringUtils.snakeToKebabCase($bioObject.getBioType().toString())'>
-            #if($bioObject.getResourceType().toString().equals("EXTERNAL"))
-                <xref-ref resource-internal-ref='$bioObject.getId()'/>
-			#elseif($bioObject.getResourceType().toString().equals("INTERNAL"))
-                <ref accession='$bioObject.getAccession()' database='neXtProt'/>
+		#set($bioType = $bioObject.getBioType().toString())
+		#set($resourceType = $bioObject.getResourceType().toString())
+
+		#if($bioObject.size() == 1)
+			#if($resourceType == "EXTERNAL")
+                <biological-object bio-type='$StringUtils.snakeToKebabCase($bioType)' resource-internal-ref='$bioObject.getId()'/>
+			#elseif($resourceType == "INTERNAL")
+                <biological-object bio-type='$StringUtils.snakeToKebabCase($bioType)' accession='$bioObject.getAccession()' database='neXtProt'/>
 			#end
-        </interactant>
+		#else
+            <biological-object bio-type='$StringUtils.snakeToKebabCase($bioType)'>
+                <biological-object-list>
+				#foreach($bo in $bioObject.getContent())
+					#if($resourceType == "EXTERNAL")
+                        <biological-object bio-type='$StringUtils.snakeToKebabCase($bo.getBioType().toString())' resource-internal-ref='$bo.getId()'/>
+					#elseif($resourceType == "INTERNAL")
+                        <biological-object bio-type='$StringUtils.snakeToKebabCase($bo.getBioType().toString())' accession='$bo.getAccession()' database='neXtProt'/>
+					#end
+				#end
+                </biological-object-list>
+            </biological-object>
+		#end
 	#end
 
 	## might have no properties so need to check
