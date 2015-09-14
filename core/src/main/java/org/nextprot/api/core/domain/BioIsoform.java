@@ -7,12 +7,10 @@ package org.nextprot.api.core.domain;
  */
 public class BioIsoform extends BioObject<Isoform> {
 
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
     public BioIsoform() {
 
         super(BioType.PROTEIN_ISOFORM, ResourceType.INTERNAL);
-
-        setDatabase(NEXTPROT);
     }
 }

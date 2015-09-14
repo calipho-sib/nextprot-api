@@ -13,7 +13,7 @@ public abstract class BioObject<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected static final String NEXTPROT = "neXtProt";
+    private static final String NEXTPROT = "neXtProt";
 
     public enum BioType { CHEMICAL, PROTEIN, PROTEIN_ISOFORM, COMPLEX, GROUP}
     public enum ResourceType { INTERNAL, EXTERNAL, MIXED }
@@ -31,6 +31,9 @@ public abstract class BioObject<T> implements Serializable {
 
         this.bioType = bioType;
         this.resourceType = resourceType;
+
+        if (resourceType == ResourceType.INTERNAL)
+            this.database = NEXTPROT;
     }
 
     public long getId() {
