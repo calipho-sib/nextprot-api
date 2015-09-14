@@ -75,7 +75,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 
 		assertEquals(annotations.size(), expectedValues.size());
 
-		// TODO remove "reference proteome"
+		// TODO remove "reference proteome", unless already in stopwords
 		for (int i = 0; i < annotations.size(); i++) {
 			assertEquals(annotations.get(i), expectedValues.get(i));
 		}
