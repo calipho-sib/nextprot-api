@@ -20,6 +20,7 @@ public class BioEntryTest {
         Assert.assertEquals(BioObject.BioType.PROTEIN_ENTRY, bioEntry.getBioType());
         Assert.assertEquals("NX_P01308", bioEntry.getAccession());
         Assert.assertEquals(BioObject.ResourceType.INTERNAL, bioEntry.getResourceType());
+        Assert.assertEquals(1, bioEntry.size());
     }
 
     @Test

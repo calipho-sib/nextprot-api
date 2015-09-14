@@ -11,11 +11,11 @@ import java.io.Serializable;
  */
 public abstract class BioObject<T> implements Serializable {
 
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
     protected static final String NEXTPROT = "neXtProt";
 
-    public enum BioType { CHEMICAL, PROTEIN_ENTRY, PROTEIN_ISOFORM, COMPLEX }
+    public enum BioType { CHEMICAL, PROTEIN_ENTRY, PROTEIN_ISOFORM, COMPLEX, GROUP}
     public enum ResourceType { INTERNAL, EXTERNAL, MIXED }
 
     private long id;
@@ -63,6 +63,10 @@ public abstract class BioObject<T> implements Serializable {
 
     public ResourceType getResourceType() {
         return resourceType;
+    }
+
+    public int size() {
+        return 1;
     }
 
     public T getContent() {
