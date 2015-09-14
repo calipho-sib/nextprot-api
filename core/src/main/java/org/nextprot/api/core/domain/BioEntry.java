@@ -7,12 +7,10 @@ package org.nextprot.api.core.domain;
  */
 public class BioEntry extends BioObject<Entry> {
 
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
     public BioEntry() {
 
-        super(BioType.PROTEIN_ENTRY, ResourceType.INTERNAL);
-
-        setDatabase(NEXTPROT);
+        super(BioType.PROTEIN, ResourceType.INTERNAL, NEXTPROT);
     }
 }

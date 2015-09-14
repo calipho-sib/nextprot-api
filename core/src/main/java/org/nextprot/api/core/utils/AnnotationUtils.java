@@ -238,11 +238,10 @@ public class AnnotationUtils {
 
 	static BioObject newExternalBioObject(AnnotationEvidence evi) {
 
-		BioObject bo = new BioObjectExternal(BioObject.BioType.CHEMICAL);
+		BioObject bo = new BioObjectExternal(BioObject.BioType.CHEMICAL, evi.getResourceDb());
 
 		bo.setId(evi.getResourceId());
 		bo.setAccession(evi.getResourceAccession());
-		bo.setDatabase(evi.getResourceDb());
 
 		return bo;
 	}

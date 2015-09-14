@@ -21,9 +21,9 @@ public class BinaryInteraction2AnnotationTest {
 
         BioObject bo = BinaryInteraction2Annotation.newBioObject(interactant);
         Assert.assertEquals("NX_P61626", bo.getAccession());
-        Assert.assertEquals("nextProt", bo.getDatabase());
+        Assert.assertEquals("neXtProt", bo.getDatabase());
         Assert.assertEquals(123L, bo.getId());
-        Assert.assertEquals(BioObject.BioType.PROTEIN_ENTRY, bo.getBioType());
+        Assert.assertEquals(BioObject.BioType.PROTEIN, bo.getBioType());
         Assert.assertTrue(bo instanceof BioEntry);
     }
 
@@ -39,7 +39,7 @@ public class BinaryInteraction2AnnotationTest {
 
         BioObject bo = BinaryInteraction2Annotation.newBioObject(interactant);
         Assert.assertEquals("NX_P61626-1", bo.getAccession());
-        Assert.assertEquals("nextProt", bo.getDatabase());
+        Assert.assertEquals("neXtProt", bo.getDatabase());
         Assert.assertEquals(123L, bo.getId());
         Assert.assertEquals(BioObject.BioType.PROTEIN_ISOFORM, bo.getBioType());
         Assert.assertTrue(bo instanceof BioIsoform);
@@ -59,7 +59,7 @@ public class BinaryInteraction2AnnotationTest {
         Assert.assertEquals("Q81LD0", bo.getAccession());
         Assert.assertEquals("UniProt", bo.getDatabase());
         Assert.assertEquals(15642964L, bo.getId());
-        Assert.assertEquals(BioObject.BioType.PROTEIN_ENTRY, bo.getBioType());
+        Assert.assertEquals(BioObject.BioType.PROTEIN, bo.getBioType());
         Assert.assertTrue(bo instanceof BioObjectExternal);
     }
 }

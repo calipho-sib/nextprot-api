@@ -11,26 +11,27 @@ import java.io.Serializable;
  */
 public abstract class BioObject<T> implements Serializable {
 
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
     protected static final String NEXTPROT = "neXtProt";
 
-    public enum BioType { CHEMICAL, PROTEIN_ENTRY, PROTEIN_ISOFORM, COMPLEX }
+    public enum BioType { CHEMICAL, PROTEIN, PROTEIN_ISOFORM, COMPLEX, GROUP}
     public enum ResourceType { INTERNAL, EXTERNAL, MIXED }
 
     private long id;
     private String accession;
-    private String database;
+    private final String database;
     private final BioType bioType;
     private final ResourceType resourceType;
     transient private T content;
 
-    protected BioObject(BioType bioType, ResourceType resourceType) {
+    protected BioObject(BioType bioType, ResourceType resourceType, String database) {
 
         Preconditions.checkNotNull(bioType);
 
         this.bioType = bioType;
         this.resourceType = resourceType;
+        this.database = database;
     }
 
     public long getId() {
@@ -53,16 +54,16 @@ public abstract class BioObject<T> implements Serializable {
         return database;
     }
 
-    public void setDatabase(String database) {
-        this.database = database;
-    }
-
     public BioType getBioType() {
         return bioType;
     }
 
     public ResourceType getResourceType() {
         return resourceType;
+    }
+
+    public int size() {
+        return 1;
     }
 
     public T getContent() {

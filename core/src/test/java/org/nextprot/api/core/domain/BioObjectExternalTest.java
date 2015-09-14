@@ -11,7 +11,7 @@ public class BioObjectExternalTest {
     @Test
     public void testMolecule() {
 
-        BioObjectExternal bioExternal = new BioObjectExternal(BioObject.BioType.CHEMICAL);
+        BioObjectExternal bioExternal = new BioObjectExternal(BioObject.BioType.CHEMICAL, "ChEBI");
         bioExternal.setId(2763273);
 
         Assert.assertEquals(BioObject.BioType.CHEMICAL, bioExternal.getBioType());

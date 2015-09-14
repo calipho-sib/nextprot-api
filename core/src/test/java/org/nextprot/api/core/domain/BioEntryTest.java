@@ -17,9 +17,10 @@ public class BioEntryTest {
         bioEntry.setAccession("NX_P01308");
 
         Assert.assertEquals("neXtProt", bioEntry.getDatabase());
-        Assert.assertEquals(BioObject.BioType.PROTEIN_ENTRY, bioEntry.getBioType());
+        Assert.assertEquals(BioObject.BioType.PROTEIN, bioEntry.getBioType());
         Assert.assertEquals("NX_P01308", bioEntry.getAccession());
         Assert.assertEquals(BioObject.ResourceType.INTERNAL, bioEntry.getResourceType());
+        Assert.assertEquals(1, bioEntry.size());
     }
 
     @Test
@@ -33,7 +34,7 @@ public class BioEntryTest {
         BioEntry be = deserialize("tempdata.ser", BioEntry.class);
 
         Assert.assertEquals("neXtProt", be.getDatabase());
-        Assert.assertEquals(BioObject.BioType.PROTEIN_ENTRY, be.getBioType());
+        Assert.assertEquals(BioObject.BioType.PROTEIN, be.getBioType());
         Assert.assertEquals("NX_P01308", be.getAccession());
         Assert.assertEquals(BioObject.ResourceType.INTERNAL, be.getResourceType());
         Assert.assertNull(be.getContent());
