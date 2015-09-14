@@ -15,7 +15,7 @@ public abstract class BioObject<T> implements Serializable {
 
     protected static final String NEXTPROT = "neXtProt";
 
-    public enum BioType { CHEMICAL, PROTEIN_ENTRY, PROTEIN_ISOFORM, COMPLEX, GROUP}
+    public enum BioType { CHEMICAL, PROTEIN, PROTEIN_ISOFORM, COMPLEX, GROUP}
     public enum ResourceType { INTERNAL, EXTERNAL, MIXED }
 
     private long id;

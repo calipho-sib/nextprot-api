@@ -11,7 +11,7 @@ public class BioEntry extends BioObject<Entry> {
 
     public BioEntry() {
 
-        super(BioType.PROTEIN_ENTRY, ResourceType.INTERNAL);
+        super(BioType.PROTEIN, ResourceType.INTERNAL);
 
         setDatabase(NEXTPROT);
     }
