@@ -17,7 +17,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
 
-@Ignore
+//@Ignore
 public class RunAllSparqlQueriesApp {
 
 	//This will log on release-info folder in a file called sparql-queries.tsv
@@ -27,43 +27,14 @@ public class RunAllSparqlQueriesApp {
 	//private static final String SPARQL_ENDPOINT = "http://godel:8890/sparql";
 	private static final String QUERIES_URL = "http://alpha-api.nextprot.org/queries/tutorial.json?snorql=true";
 	//private static final String QUERIES_URL = "https://api.nextprot.org/queries/tutorial.json?snorql=true";
+	
+	private static final String PREFIXES_URL = "http://alpha-api.nextprot.org/sparql-prefixes";
+	//private static final String PREFIXES_URL = "http://localhost:8080/nextprot-api-web/sparql-prefixes";
+
 
 	public static void main(String[] args) throws Exception {
-/*
-		String prefixes = "PREFIX :<http://nextprot.org/rdf#>\n" + "PREFIX annotation:<http://nextprot.org/rdf/annotation/>\n" + "PREFIX context:<http://nextprot.org/rdf/context/>\n"
-				+ "PREFIX cv:<http://nextprot.org/rdf/terminology/>\n" + "PREFIX db:<http://nextprot.org/rdf/db/>\n" + "PREFIX dc:<http://purl.org/dc/elements/1.1/>\n"
-				+ "PREFIX dcterms:<http://purl.org/dc/terms/>\n" + "PREFIX entry:<http://nextprot.org/rdf/entry/>\n" + "PREFIX evidence:<http://nextprot.org/rdf/evidence/>\n"
-				+ "PREFIX foaf:<http://xmlns.com/foaf/0.1/>\n" + "PREFIX gene:<http://nextprot.org/rdf/gene/>\n" + "PREFIX identifier:<http://nextprot.org/rdf/identifier/>\n"
-				+ "PREFIX isoform:<http://nextprot.org/rdf/isoform/>\n" + "PREFIX mo:<http://purl.org/ontology/mo/>\n" + "PREFIX ov:<http://open.vocab.org/terms/>\n"
-				+ "PREFIX owl:<http://www.w3.org/2002/07/owl#>\n" + "PREFIX publication:<http://nextprot.org/rdf/publication/>\n" + "PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
-				+ "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>\n" + "PREFIX sim:<http://purl.org/ontology/similarity/>\n" + "PREFIX source:<http://nextprot.org/rdf/source/>\n"
-				+ "PREFIX xref:<http://nextprot.org/rdf/xref/>\n" + "PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>";$
-				*/
 		
-		String prefixes = "PREFIX :<http://nextprot.org/rdf#>\n" + 
-				"PREFIX annotation:<http://nextprot.org/rdf/annotation/>\n" + 
-				"PREFIX context:<http://nextprot.org/rdf/context/>\n" + 
-				"PREFIX cv:<http://nextprot.org/rdf/terminology/>\n" + 
-				"PREFIX db:<http://nextprot.org/rdf/db/>\n" + 
-				"PREFIX dc:<http://purl.org/dc/elements/1.1/>\n" + 
-				"PREFIX dcterms:<http://purl.org/dc/terms/>\n" + 
-				"PREFIX entry:<http://nextprot.org/rdf/entry/>\n" + 
-				"PREFIX evidence:<http://nextprot.org/rdf/evidence/>\n" + 
-				"PREFIX foaf:<http://xmlns.com/foaf/0.1/>\n" + 
-				"PREFIX gene:<http://nextprot.org/rdf/gene/>\n" + 
-				"PREFIX identifier:<http://nextprot.org/rdf/identifier/>\n" + 
-				"PREFIX isoform:<http://nextprot.org/rdf/isoform/>\n" + 
-				"PREFIX mo:<http://purl.org/ontology/mo/>\n" + 
-				"PREFIX ov:<http://open.vocab.org/terms/>\n" + 
-				"PREFIX owl:<http://www.w3.org/2002/07/owl#>\n" + 
-				"PREFIX publication:<http://nextprot.org/rdf/publication/>\n" + 
-				"PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" + 
-				"PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>\n" + 
-				"PREFIX sim:<http://purl.org/ontology/similarity/>\n" + 
-				"PREFIX source:<http://nextprot.org/rdf/source/>\n" + 
-				"PREFIX term:<http://nextprot.org/rdf/terminology/>\n" + 
-				"PREFIX xref:<http://nextprot.org/rdf/xref/>\n" + 
-				"PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>";
+		String prefixes = getSparqlPrefixes();
 
 		boolean testFailed = false;
 
@@ -108,6 +79,20 @@ public class RunAllSparqlQueriesApp {
 
 	}
 
+	
+
+	private static String getSparqlPrefixes() throws Exception {
+
+		ObjectMapper mapper = new ObjectMapper();
+		URL queriesUrl = new URL(PREFIXES_URL);
+		List<String> prefixes = mapper.readValue(queriesUrl, new TypeReference<List<String>>() {});
+		StringBuilder sb = new StringBuilder();
+		for(String pref : prefixes)
+			sb.append(pref).append("\n");
+		return sb.toString();
+	}
+
+	
 	private static List<UserQuery> getSparqlQueries() throws Exception {
 
 		ObjectMapper mapper = new ObjectMapper();
