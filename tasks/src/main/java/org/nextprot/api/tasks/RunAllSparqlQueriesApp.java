@@ -23,7 +23,7 @@ public class RunAllSparqlQueriesApp {
 	//This will log on release-info folder in a file called sparql-queries.tsv
 	private static final Log LOGGER = LogFactory.getLog(RunAllSparqlQueriesApp.class);
 
-	private static final String SPARQL_ENDPOINT = "http://kant:8890/sparql";
+	private static final String SPARQL_ENDPOINT = "http://uat-web2:8890/sparql";
 	//private static final String SPARQL_ENDPOINT = "http://godel:8890/sparql";
 	private static final String QUERIES_URL = "http://alpha-api.nextprot.org/queries/tutorial.json?snorql=true";
 	//private static final String QUERIES_URL = "https://api.nextprot.org/queries/tutorial.json?snorql=true";
@@ -41,6 +41,8 @@ public class RunAllSparqlQueriesApp {
 		List<UserQuery> queries = getSparqlQueries();
 		System.out.println("Found " + queries.size() + " queries") ;
 		
+		int exceptionCount=0;
+		int zeroResultsCount=0;
 		for (UserQuery q : queries) {
 
 			// if (q.getUserQueryId()!=124) continue;
@@ -56,14 +58,17 @@ public class RunAllSparqlQueriesApp {
 				// System.out.println("\n\nsparqlQuery=\n"+sparqlQuery +1
 				// "\n---------------");
 				resultsCount = executeQuery(sparqlQuery);
+				if (resultsCount==0) zeroResultsCount++;
 
 			} catch (Exception e) {
 				e.printStackTrace();
+				exceptionCount++;
 				errorMessage = e.getLocalizedMessage();
 			} finally {
 
 				if (resultsCount == 0) {
 					testFailed = true;
+					
 				}
 
 				long timeSpent = ((System.currentTimeMillis() - start) / 1000);
@@ -75,6 +80,10 @@ public class RunAllSparqlQueriesApp {
 
 		}
 
+		LOGGER.info("Query count:" + queries.size() );
+		LOGGER.info("OK count:" + (queries.size() - exceptionCount - zeroResultsCount) );
+		LOGGER.info("Exception count:" + exceptionCount );
+		LOGGER.info("ZeroResult count:" + zeroResultsCount );
 		assertFalse(testFailed);
 
 	}
@@ -107,7 +116,7 @@ public class RunAllSparqlQueriesApp {
 		QueryExecution qExec = null;
 		try {
 			qExec = QueryExecutionFactory.sparqlService(SPARQL_ENDPOINT, query);
-			qExec.setTimeout(2 * 60 * 1000); //2 min
+			qExec.setTimeout(10 * 60 * 1000); //10 min
 			
 			ResultSet rs = qExec.execSelect();
 			while (rs.hasNext()) {
