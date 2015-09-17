@@ -1,19 +1,6 @@
 package org.nextprot.api.core.service;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -21,7 +8,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles({ "dev" })
 public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
