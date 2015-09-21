@@ -49,15 +49,15 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 		for (String entryName: entryNames) {
 			List<Annotation> annotations = this.pmService.findNaturalPeptideMappingAnnotationsByMasterUniqueName(entryName);
 			List<Isoform> isoforms = isoService.findIsoformsByEntryName(entryName);
-			computeCoverage(isoforms, annotations, false);
-			computeCoverage(isoforms, annotations, true);
+			computeCoverage(isoforms, annotations, false, true);
+			computeCoverage(isoforms, annotations, true, true);
 		}
 		assertTrue(true);
 		
 	}
 	
 
-    @Ignore
+    //@Ignore
     @Test
 	public void shouldComputeHTML4Highlight() throws FileNotFoundException {
 		
@@ -80,8 +80,11 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 		for (String entryName: entryNames) {
 			List<Annotation> annotations = this.pmService.findNaturalPeptideMappingAnnotationsByMasterUniqueName(entryName);
 			List<Isoform> isoforms = isoService.findIsoformsByEntryName(entryName);
+
 			for (Isoform iso: isoforms) {
-				String html = getHighlightHTML(iso, annotations);
+				String cpep = computeCoverage(iso, annotations, false, false);
+				String ctyp = computeCoverage(iso, annotations, true, false);
+				String html = getHighlightHTML(iso, annotations, cpep, ctyp);
 				sb.append(html);
 			}
 		}
@@ -94,7 +97,7 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 	}
 	
 	
-	private void computeCoverage(Isoform iso, List<Annotation> annotations, boolean proteotypic) {
+	private String computeCoverage(Isoform iso, List<Annotation> annotations, boolean proteotypic, boolean sysout) {
 		String name = iso.getUniqueName();
 		int isoLength = iso.getSequenceLength();
 		int[] coverage = new int[isoLength];
@@ -110,7 +113,8 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 		float rateRounded = Math.round(rate * 100.0f) / 100.0f;
 		String sep = "\t";
 		String title = proteotypic ? "proteotypic coverage" : "peptide coverage";
-		System.out.println(name + sep + title  + sep + isoLength + sep + covered + sep + rateRounded);
+		if (sysout) System.out.println(name + sep + title  + sep + isoLength + sep + covered + sep + rateRounded);
+		return (name + " " + title  + " iso-length = " + isoLength + " covered = " + covered + " % : " + rateRounded);
 		// System.out.println(getCoverageString(coverage) + "\n");
 	}
 
@@ -128,18 +132,16 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 		for (Chunk chunk: chunks) {
 			System.out.println(chunk);
 		}
-		String html = getHighlightHTML(name, iso.getSequence(), chunks);
+		String html = getHighlightHTML(name, iso.getSequence(), chunks, "turlu", "chouette");
 		System.out.println(html);
 	}
 
-	private String getHighlightHTML(Isoform iso, List<Annotation> annotations) {
+	private String getHighlightHTML(Isoform iso, List<Annotation> annotations, String cpep, String ctyp) {
 		String name = iso.getUniqueName();
-		int isoLength = iso.getSequenceLength();
 		int[] coverage = getHighlightCoverage(iso, annotations);
 		
 		List<Chunk> chunks = getHighlightChunks(iso.getSequence(),coverage);
-		// for (Chunk chunk: chunks)  System.out.println(chunk);
-		String html = getHighlightHTML(name, iso.getSequence(), chunks);
+		String html = getHighlightHTML(name, iso.getSequence(), chunks, cpep, ctyp);
 		return html;
 	}
 
@@ -178,9 +180,9 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 	}
 	
 	
-	private void computeCoverage(List<Isoform> isoforms, List<Annotation> annotations, boolean proteotypic) {
+	private void computeCoverage(List<Isoform> isoforms, List<Annotation> annotations, boolean proteotypic, boolean sysout) {
 		for (Isoform iso: isoforms) {
-			computeCoverage( iso, annotations, proteotypic);
+			computeCoverage( iso, annotations, proteotypic, sysout);
 		}
 	}
 	
@@ -211,9 +213,12 @@ public class PeptideMappingServiceIntegrationTest extends CoreUnitBaseTest {
 		return sb.toString();
 	}
 
-	private String getHighlightHTML(String iso, String seq, List<Chunk> chunks) {
+	private String getHighlightHTML(String iso, String seq, List<Chunk> chunks,String cpep, String ctyp) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("<h3>" + iso + "</h3>\n");
+		String entry = iso.split("-")[0];
+		sb.append("<h3><a target=\"_blank\" href=\"http://alpha-search.nextprot.org/entry/" + entry + "/view/peptides\">" + iso + "</a></h3>\n");
+		sb.append("<p>"+ cpep + "</p>");
+		sb.append("<p>"+ ctyp + "</p>");
 		int oldLine=-1;
 		for (Chunk chunk: chunks) {
 			if (oldLine<chunk.line) {
