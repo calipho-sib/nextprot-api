@@ -3,6 +3,8 @@ package org.nextprot.api.core.service;
 import java.util.List;
 import java.util.Set;
 
+import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.Terminology;
 
 
@@ -50,7 +52,15 @@ public interface TerminologyService {
 	 */
 	public List<Terminology> findEnzymeByMaster(String entryName);
 
-	public List<Terminology> findTerminologyByAccessions(Set<String> terminologyAccessions);	
+	public List<Terminology> findTerminologyByAccessions(Set<String> terminologyAccessions);
 
-	
+	/**
+	 * Returns a tree for a given terminology
+	 * @param terminology
+	 * @return
+	 */
+	List<Tree<Terminology>> findTerminologyTreeList(TerminologyCv terminologyCv, int maxDepth);
+
+	public List<String> findTerminologyNamesList();
+
 }

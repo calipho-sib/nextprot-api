@@ -180,6 +180,8 @@ public class Terminology implements Serializable {
 
 	public static class TermProperty implements Serializable {
 
+		private static final long serialVersionUID = 5662052927182501529L;
+		
 		private long termId;
 		private String propertyName;
 		private String propertyValue;
