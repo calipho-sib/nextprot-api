@@ -52,11 +52,13 @@ public class CvJournalDaoImpl implements CvJournalDao {
 			journal.setJournalId(resultSet.getLong("cv_id"));
 			journal.setAbbrev(resultSet.getString("iso_abbrev"));
 			journal.setName(resultSet.getString("journal_name"));
+			journal.setNLMid(resultSet.getString("nlmid"));
 			return journal;
 		}
 		
 	}
 	
+	// Why two row mappers (JournalRowMapper and PublicationCvJournalRowMapper) ?
 	private static class PublicationCvJournalRowMapper implements ParameterizedRowMapper<PublicationCvJournal>{
 
 		@Override
@@ -64,7 +66,9 @@ public class CvJournalDaoImpl implements CvJournalDao {
 			PublicationCvJournal journal = new PublicationCvJournal();
 			journal.setJournalId(resultSet.getLong("cv_id"));
 			journal.setName(resultSet.getString("journal_name"));
+			journal.setAbbrev(resultSet.getString("iso_abbrev"));
 			journal.setPublicationId(resultSet.getLong("publication_id"));
+			journal.setNLMid(resultSet.getString("nlmid"));
 			return journal;
 		}
 	}
