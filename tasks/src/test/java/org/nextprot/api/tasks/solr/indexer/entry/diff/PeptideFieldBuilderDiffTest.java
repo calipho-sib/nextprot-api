@@ -16,7 +16,7 @@ public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 	@Test
 	public void testPeptides() {
 
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 10; i++) {
 			Entry entry = getEntry(i);
 			System.out.println(entry.getUniqueName());
 			testPeptides(entry);

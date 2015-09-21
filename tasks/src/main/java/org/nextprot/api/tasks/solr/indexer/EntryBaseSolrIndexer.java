@@ -1,5 +1,7 @@
 package org.nextprot.api.tasks.solr.indexer;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -72,6 +74,18 @@ abstract class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 		for (Class<?> c : entryFieldBuilderClasses) {
 			try {
 				FieldBuilder fb = (FieldBuilder) c.newInstance();
+
+				/*try {
+					Method method = c.getMethod("setTerminologyService", TerminologyService.class);
+					method.invoke(c, this.terminologyservice);
+				}catch(NoSuchMethodException m){
+					
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}*/
+								
 				if(fb.getSupportedFields() != null){
 					for (Fields f : fb.getSupportedFields()) {
 						NPreconditions.checkTrue(!(fieldsBuilderMap.containsKey(f)), "The field " + f.getName() + " is supported by several builders: " + fb.getClass() + ", " + fieldsBuilderMap.get(f));
@@ -83,5 +97,6 @@ abstract class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 			}
 		}
 	}
+	
 
 }

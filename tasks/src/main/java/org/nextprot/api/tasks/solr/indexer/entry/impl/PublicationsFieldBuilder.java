@@ -25,21 +25,22 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 		int publi_computed_count = 0;
 		int publi_curated_count = 0;
 		int publi_large_scale_count = 0;
+		String Jinfo = "";
 		for (Publication currpubli : publications) {
 			if(currpubli.getIsComputed() == true) publi_computed_count++;
 			if(currpubli.getIsCurated() == true) publi_curated_count++;
 			if(currpubli.getIsLargeScale() == true) publi_large_scale_count++;
+			if(currpubli.getCvJournal() != null) {
+				System.err.println("pubid: " + currpubli.getPublicationId());
+				System.err.println("jid: " + currpubli.getCvJournal().getJournalId());
+			   Jinfo = currpubli.getCvJournal().getName() + " - " + currpubli.getCvJournal().getAbbrev();
+				System.err.println(Jinfo);			   
+			}
 			String title = currpubli.getTitle();
 			if(title.length() > 0) addField(Fields.PUBLICATIONS,title);
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();
 			for (PublicationAuthor currauthor : authors) {
 				addField(Fields.PUBLICATIONS, currauthor.getLastName() + " " + currauthor.getForeName() + " " + currauthor.getInitials());
-			}
-			Set<DbXref> pubxrefs = currpubli.getDbXrefs();
-			for (DbXref pubxref : pubxrefs) {
-				String acc =  pubxref.getAccession();
-				String db = pubxref.getDatabaseName();
-				addField(Fields.XREFS, acc + ", " + db + ":" + acc);
 			}
 		}
 		
