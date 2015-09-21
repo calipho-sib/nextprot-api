@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration debug="true"
+	xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+	<appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd MMM yyyy HH:mm:ss} %5p %c{1} - %m%n" />
+		</layout>
+	</appender>
+
+	<appender name="sparqlQueriesFileAppender" class="org.apache.log4j.FileAppender">
+		<param name="append" value="false" /> <!-- will start a refreshed file -->
+		<param name="file" value="../release-info/sparql-queries.tsv" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="org.nextprot.api.tasks.RunAllSparqlQueriesApp">
+		<level value="INFO" />
+		<appender-ref ref="sparqlQueriesFileAppender" />
+	</logger>
+
+	<!-- root element must be below all others otherwise errors -->
+	<root>
+		<level value="INFO" />
+		<appender-ref ref="consoleAppender" />
+	</root>
+
+</log4j:configuration>

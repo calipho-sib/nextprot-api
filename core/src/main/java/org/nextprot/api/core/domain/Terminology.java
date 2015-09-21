@@ -22,6 +22,7 @@ public class Terminology implements Serializable {
 	//private List<String> sameAs = new ArrayList<>();
 
 	private List<String> parentAccession;
+	private List<String> childAccession;
 	private List<DbXref> xrefs;
 	private List<String> synonyms;
 	private List<TermProperty> properties;
@@ -90,6 +91,20 @@ public class Terminology implements Serializable {
 
 	public void setOntology(String ontology) {
 		this.ontology = ontology;
+	}
+
+	
+	
+	public List<String> getChildAccession() {
+		return childAccession;
+	}
+
+	public void setChildAccession(String accession) {
+		if (accession == null)
+			return;
+		List<String> all = Arrays.asList(accession.split("\\|"));
+		this.childAccession = all;
+
 	}
 
 	public List<String> getAncestorAccession() {

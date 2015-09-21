@@ -93,7 +93,7 @@ public class InstrumentationAspect {
 			// Proceed to method invocation
 			try {
 
-				LOGGER.info("aspect=before;" + sb);
+				//LOGGER.info("aspect=before;" + sb);
 				Object result = pjp.proceed();
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addResultParameters(sb, result);
@@ -151,7 +151,7 @@ public class InstrumentationAspect {
 			try {
 
 				Object result = pjp.proceed();
-				LOGGER.info("aspect=before;" + sb);
+				//LOGGER.info("aspect=before;" + sb);
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addResultParameters(sb, result);
 				serviceRequestId.remove();
@@ -207,7 +207,7 @@ public class InstrumentationAspect {
 			long start = System.currentTimeMillis();
 			try {
 
-				LOGGER.info("aspect=before;" + sb);
+				//LOGGER.info("aspect=before;" + sb);
 				Object result = pjp.proceed();
 				addTimeElapsed(sb, System.currentTimeMillis() - start);
 				addResultParameters(sb, result);
