@@ -51,6 +51,7 @@ public class CvJournalDaoImpl implements CvJournalDao {
 			CvJournal journal = new CvJournal();
 			journal.setJournalId(resultSet.getLong("cv_id"));
 			journal.setAbbrev(resultSet.getString("iso_abbrev"));
+			journal.setMedAbbrev(resultSet.getString("med_abbrev"));
 			journal.setName(resultSet.getString("journal_name"));
 			journal.setNLMid(resultSet.getString("nlmid"));
 			return journal;
@@ -67,6 +68,7 @@ public class CvJournalDaoImpl implements CvJournalDao {
 			journal.setJournalId(resultSet.getLong("cv_id"));
 			journal.setName(resultSet.getString("journal_name"));
 			journal.setAbbrev(resultSet.getString("iso_abbrev"));
+			journal.setMedAbbrev(resultSet.getString("med_abbrev"));
 			journal.setPublicationId(resultSet.getLong("publication_id"));
 			journal.setNLMid(resultSet.getString("nlmid"));
 			return journal;
