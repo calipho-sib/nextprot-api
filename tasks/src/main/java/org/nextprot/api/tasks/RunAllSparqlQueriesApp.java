@@ -17,7 +17,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
 
-//@Ignore
+@Ignore
 public class RunAllSparqlQueriesApp {
 
 	//This will log on release-info folder in a file called sparql-queries.tsv
