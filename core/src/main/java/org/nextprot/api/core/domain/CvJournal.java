@@ -8,7 +8,8 @@ public class CvJournal implements Serializable{
 
 	private Long journalId;	// Internal journal id
 	private String name;	// Official journal name
-	private String abbrev;	// Medline journal abbreviation
+	private String abbrev;	// ISO journal abbreviation
+	private String med_abbrev;	// Medline journal abbreviation
 	private String nlmid;	// The National Library of Medicine id, eg: http://www.ncbi.nlm.nih.gov/nlmcatalog/?term=0404511
 	// WE are missing issn and e-isnn
 	
@@ -34,6 +35,14 @@ public class CvJournal implements Serializable{
 	
 	public void setAbbrev(String abbrev) {
 		this.abbrev = abbrev;
+	}
+	
+	public String getMedAbbrev() {
+		return med_abbrev;
+	}
+	
+	public void setMedAbbrev(String medabbrev) {
+		this.med_abbrev = medabbrev;
 	}
 	
 	public String getNLMid() {
