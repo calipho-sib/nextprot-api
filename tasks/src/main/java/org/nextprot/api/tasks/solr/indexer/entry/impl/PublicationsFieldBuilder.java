@@ -26,21 +26,30 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 		int publi_curated_count = 0;
 		int publi_large_scale_count = 0;
 		String Jinfo = "";
+		
 		for (Publication currpubli : publications) {
 			if(currpubli.getIsComputed() == true) publi_computed_count++;
 			if(currpubli.getIsCurated() == true) publi_curated_count++;
 			if(currpubli.getIsLargeScale() == true) publi_large_scale_count++;
 			if(currpubli.getCvJournal() != null) {
-				System.err.println("pubid: " + currpubli.getPublicationId());
-				System.err.println("jid: " + currpubli.getCvJournal().getJournalId());
-			   Jinfo = currpubli.getCvJournal().getName() + " - " + currpubli.getCvJournal().getAbbrev();
-				System.err.println(Jinfo);			   
+				//System.err.println("pubid: " + currpubli.getPublicationId());
+				//System.err.println("jid: " + currpubli.getCvJournal().getJournalId());
+				addField(Fields.PUBLICATIONS,currpubli.getCvJournal().getNLMid());
+				//if(currpubli.getCvJournal().getName().contains("Nature genetics")) System.err.println("pubid: " + currpubli.getPublicationId());
+				Jinfo = currpubli.getCvJournal().getName() + " - " + currpubli.getCvJournal().getMedAbbrev(); // Index name and abbrev in the same token
+				addField(Fields.PUBLICATIONS,Jinfo);
+			//System.err.println(Jinfo);			   
 			}
 			String title = currpubli.getTitle();
 			if(title.length() > 0) addField(Fields.PUBLICATIONS,title);
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();
 			for (PublicationAuthor currauthor : authors) {
-				addField(Fields.PUBLICATIONS, currauthor.getLastName() + " " + currauthor.getForeName() + " " + currauthor.getInitials());
+				String forename = currauthor.getForeName();
+				if(forename.contains(".")) // Submission author
+					addField(Fields.PUBLICATIONS, currauthor.getLastName() + "  " + currauthor.getInitials());
+				else
+					addField(Fields.PUBLICATIONS, currauthor.getLastName() + " " + currauthor.getForeName() + " " + currauthor.getInitials());
+				//if(currauthor.getLastName().contains("Consortium")) System.err.println(currauthor.getLastName());
 			}
 		}
 		
