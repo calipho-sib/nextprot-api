@@ -12,6 +12,7 @@ import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -40,7 +41,7 @@ public class TerminologyDaoImpl implements TerminologyDao {
 		return terms.get(0);
 	}
 	
-	public List<Terminology> findTermByAccessionAndTerminology(String accession) {
+	public List<Terminology> findTermByAccessionAndTerminology(String accession, String terminology) {
 		throw new RuntimeException("Not implemented");
 	}
 
@@ -99,5 +100,10 @@ public class TerminologyDaoImpl implements TerminologyDao {
 			term.setXrefs(TerminologyUtils.convertToXrefs(resultSet.getString("xref")));
 			return term;
 		}
+	}
+
+	@Override
+	public List<String> findTerminologyNamesList() {
+		return  new JdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("terminology-names"), String.class);
 	}
 }
