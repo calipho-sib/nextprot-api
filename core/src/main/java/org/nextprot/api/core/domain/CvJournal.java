@@ -6,10 +6,11 @@ public class CvJournal implements Serializable{
 
 	private static final long serialVersionUID = -8793476383094626534L;
 
-	private Long journalId;
-	private String name;
-	private String abbrev;
-	private String nlmid;
+	private Long journalId;	// Internal journal id
+	private String name;	// Official journal name
+	private String abbrev;	// Medline journal abbreviation
+	private String nlmid;	// The National Library of Medicine id, eg: http://www.ncbi.nlm.nih.gov/nlmcatalog/?term=0404511
+	// WE are missing issn and e-isnn
 	
 	public Long getJournalId() {
 		return journalId;
