@@ -66,7 +66,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 		List<String> expectedValues = new ArrayList<String>();
 
 		for (String s : expectedRawValues) {
-			String aux = getDescriptionFromRawData(s);
+			String aux = getValueFromRawData(s,"description");
 			expectedValues.add(aux);
 		}
 
@@ -84,31 +84,8 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Test
 	public void testCleanRawData() {
-		String result = getDescriptionFromRawData("<p><b>anno_name : </b>caution</p><p><b>anno_qualname : </b>GOLD</p><p><b>description : </b>Product of a dubious CDS prediction.</p>");
+		String result = getValueFromRawData("<p><b>anno_name : </b>caution</p><p><b>anno_qualname : </b>GOLD</p><p><b>description : </b>Product of a dubious CDS prediction.</p>","description");
 		assertEquals("Product of a dubious CDS prediction.", result);
-	}
-
-	/**
-	 * This removes all other elements, example:
-	 * 
-	 * 
-	 * <b>anno_name : </b>mature protein <b>anno_qualname : </b>GOLD
-	 * <b>description : </b>Putative uncharacterized protein HSD52
-	 * <b>an_synonyms : </b>PRO_0000342680 <b>anno_name : </b>uniprot keyword
-	 * <b>anno_qualname : </b>GOLD <b>description : </b>Complete proteome
-	 * <b>cv_ancestors_acs : </b>KW-0181 <b>cv_ac : </b>KW-0181 <b>cv_name :
-	 * </b>Complete proteome
-	 */
-	static String getDescriptionFromRawData(String html) {
-		String aux = "";
-		aux = html.replaceAll("<p>|</p>", "");
-		String[] btags = aux.split("<b>");
-		for (String bt : btags) {
-			if (bt.startsWith("description")) {
-				return bt.substring(bt.indexOf("</b>") + 4);
-			}
-		}
-		return null;
 	}
 
 }
