@@ -21,7 +21,8 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		 //for(int i=0; i < 10; i++){ testPublications(getEntry(i)); }
 		 
 
-		Entry entry = getEntry("NX_Q96I99");
+		//Entry entry = getEntry("NX_Q96I99");
+		Entry entry = getEntry("NX_P61604");
 		testPublications(entry);
 
 	}
@@ -42,21 +43,25 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 			
 			if(s.startsWith("<p>")) {
 				// like <p><b>title : </b>Mapping the hallmarks of lung adenocarcinoma with massively parallel sequencing.</p><p><b>journal</b> : Cell - Cell</p><p><b>nlmid:</b>0413066</p><p><b>authors : </b>Imielinski Marcin M",
-				indextoken = getValueFromRawData(s,"title : ");
-			if(indextoken != null) expectedValues.add(indextoken);
-			indextoken = getValueFromRawData(s,"journal");
-			if(indextoken != null) expectedValues.add(indextoken.substring(3)); 
-			indextoken = getValueFromRawData(s,"nlmid:");
-			if(indextoken != null) expectedValues.add(indextoken);
-			indextoken = getValueFromRawData(s,"authors : ");
-			if(indextoken != null) expectedValues.add(indextoken);
-			}
+				indextoken = getValueFromRawData(s,"title");
+				if(indextoken != null && indextoken.length() > 1) expectedValues.add(indextoken);
+				indextoken = getValueFromRawData(s,"journal");
+				if(indextoken != null) expectedValues.add(indextoken.substring(3)); 
+				indextoken = getValueFromRawData(s,"nlmid");
+				if(indextoken != null) expectedValues.add(indextoken);
+				indextoken = getValueFromRawData(s,"authors");
+				if(indextoken != null) expectedValues.add(indextoken);
+				}
 			else if(s.endsWith("</p>")) expectedValues.add(s.substring(0,s.indexOf("</p>"))); // like "Meyerson Matthew M</p>"
 			else expectedValues.add(s);
 		}
 		
 		//Assert.assertEquals( expectedValues.size(), PublicationSet.size());
 		//Set<String> expectedPubliscopy = new TreeSet<String>(expectedPublis);
+		/*for(String elem : PublicationSet)
+			System.out.println(elem);
+		System.err.println(PublicationSet.size() + " elements in the new index");*/
+		
 		Set<String> PublicationSetcopy = new TreeSet<String>(PublicationSet);
 		
 		PublicationSet.removeAll(expectedValues);
@@ -79,15 +84,5 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		//Assert.assertEquals(getValueForFieldInCurrentSolrImplementation(entryName, Fields.INFORMATIONAL_SCORE), pfb.getFieldValue(Fields.INFORMATIONAL_SCORE, Float.class));
 	}
 
-	static String getValueFromRawData(String html, String subfield) {
-		String aux = "";
-		aux = html.replaceAll("<p>|</p>", "");
-		String[] btags = aux.split("<b>");
-		for (String bt : btags) {
-			if (bt.startsWith(subfield)) {
-				return bt.substring(bt.indexOf("</b>") + 4);
-			}
-		}
-		return null;
-	}
+
 }
