@@ -42,6 +42,7 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 			//System.err.println(Jinfo);			   
 			}
 			String title = currpubli.getTitle();
+			System.err.println(currpubli.getIsLargeScale() + " " + title);
 			if(title.length() > 0) addField(Fields.PUBLICATIONS,title);
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();
 			for (PublicationAuthor currauthor : authors) {
