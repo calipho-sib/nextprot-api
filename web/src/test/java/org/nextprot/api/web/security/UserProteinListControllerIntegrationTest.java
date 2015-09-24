@@ -1,27 +1,31 @@
 package org.nextprot.api.web.security;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.junit.Test;
-import org.nextprot.api.user.domain.UserProteinList;
-import org.nextprot.api.web.dbunit.base.mvc.MVCBaseSecurityTest;
-import org.springframework.http.MediaType;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.google.common.collect.Sets;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.nextprot.api.commons.dao.MasterIdentifierDao;
+import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.user.domain.UserProteinList;
+import org.nextprot.api.web.dbunit.base.mvc.MVCBaseSecurityTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Tests GET, PUT, POST, DELETE for 3 different scenarios (anonymous, owner and other logged user) 
@@ -30,6 +34,20 @@ import com.google.common.collect.Sets;
  */
 @DatabaseSetup(value = "UserProteinListControllerIntegrationTest.xml", type = DatabaseOperation.INSERT)
 public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTest {
+
+	@InjectMocks
+	@Autowired
+	private MasterIdentifierService masterIdentifierService;
+
+	@Mock
+	private MasterIdentifierDao masterIdentifierDao;
+
+	@Before
+	public void init() {
+
+		MockitoAnnotations.initMocks(this);
+		when(masterIdentifierDao.findUniqueNames()).thenReturn(Arrays.asList("NX_45465"));
+	}
 
 	// --------------------------------- POST -------------------------------------------------------------
 
@@ -255,7 +273,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		UserProteinList userProteinList = new ObjectMapper().readValue(responseString, new TypeReference<UserProteinList>() { });
 
 		assertEquals(23, userProteinList.getOwnerId());
-		assertEquals(Sets.newHashSet("NX_Q14239","NX_P05185"), userProteinList.getAccessionNumbers());
+		assertEquals(Sets.newHashSet("NX_Q14239", "NX_P05185"), userProteinList.getAccessionNumbers());
 	}
 
 	//This test should not be relevant anymore if we don't specify id
@@ -297,7 +315,26 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 		UserProteinList userProteinList = new ObjectMapper().readValue(responseString, new TypeReference<UserProteinList>() { });
 
 		assertEquals(23, userProteinList.getOwnerId());
-		assertEquals(Sets.newHashSet("NX_45465"), userProteinList.getAccessionNumbers());
+		assertEquals(Sets.newHashSet("NX_45465", "NX_P05185", "NX_Q8N5Z0", "NX_Q14239"), userProteinList.getAccessionNumbers());
+	}
+
+	@Test
+	public void leonardShouldBeAbleToUpdateHisProteinListWithDuplicateAccessionNumber() throws Exception {
+
+		String leonardToken = generateTokenWithExpirationDate("leonard", 1, TimeUnit.DAYS, Arrays.asList("ROLE_USER"));
+
+		String content = "{\"id\":0,\"name\":\"leonardslist1\",\"description\":\"no desc\",\"accessionNumbers\":[\"NX_45465\",\"NX_P05185\"],\"entriesCount\":2,\"ownerId\":0,\"owner\":\"leonard\",\"ownerName\":\"leonard\"}";
+
+		// UserProteinList updateUserProteinListMetadata()
+		String responseString = this.mockMvc.perform(put("/user/me/lists/157").header("Authorization", "Bearer " + leonardToken)
+				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(content))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+
+		UserProteinList userProteinList = new ObjectMapper().readValue(responseString, new TypeReference<UserProteinList>() { });
+
+		assertEquals(23, userProteinList.getOwnerId());
+		assertEquals(Sets.newHashSet("NX_45465", "NX_P05185", "NX_Q8N5Z0", "NX_Q14239"), userProteinList.getAccessionNumbers());
 	}
 
 	@Test

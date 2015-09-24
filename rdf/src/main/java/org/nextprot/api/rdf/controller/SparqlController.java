@@ -1,14 +1,17 @@
 package org.nextprot.api.rdf.controller;
 
 import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.rdf.service.SparqlProxyEndpoint;
+import org.nextprot.api.rdf.utils.SparqlDictionary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +29,10 @@ public class SparqlController {
 
 	@Autowired
 	private SparqlProxyEndpoint sparqlProxyEndpoint;
+
+	@Autowired
+	private SparqlDictionary sparqlDictionary;
+
 	
 	@RequestMapping("/sparql")
 	@ResponseBody
@@ -35,6 +42,12 @@ public class SparqlController {
 			throw new NextProtException("Please provide a SPARQL query");
 		}
 		return this.sparqlProxyEndpoint.sparql(body, queryString);
+	}
+
+	@RequestMapping(value ="/sparql-prefixes", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ResponseBody
+	public List<String> sparqlPrefixes() {
+		return sparqlDictionary.getSparqlPrefixesList();
 	}
 
 

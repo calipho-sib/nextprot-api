@@ -23,8 +23,10 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 	@Override
 	public EntryProperties findEntryProperties(String uniqueName) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("entry-properties"), namedParameters, new EntryPropertyRowMapper());
-
+		NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dsLocator.getDataSource());
+		EntryProperties ep = template.queryForObject(sqlDictionary.getSQLQuery("entry-properties"), namedParameters, new EntryPropertyRowMapper());
+		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("entry-references-count"), namedParameters, new EntryPropertyRowAppender(ep));
+		return ep;
 	}
 	
 	static class EntryPropertyRowMapper implements ParameterizedRowMapper<EntryProperties> {
@@ -49,6 +51,31 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 			properties.setFilterproteomics(resultSet.getInt("proteomic") != -1);
 			properties.setFilterexpressionprofile(resultSet.getInt("expression") != -1);
 			return properties;
+		}
+		
+	}
+	
+	
+	static class EntryPropertyRowAppender implements ParameterizedRowMapper<Void> {
+		
+		private EntryProperties ep = null;
+		
+		EntryPropertyRowAppender(EntryProperties ep){
+			this.ep = ep;
+		}
+
+		@Override
+		public Void mapRow(ResultSet resultSet, int row) throws SQLException {
+
+			ep.setReferencesCuratedPublicationsCount(resultSet.getInt("references_curated_publications_count"));
+			ep.setReferencesAdditionalPublicationsCount(resultSet.getInt("references_additional_publications_count"));
+			ep.setReferencesPatentsCount(resultSet.getInt("references_patents_count"));
+			ep.setReferencesSubmissionsCount(resultSet.getInt("references_submissions_count"));
+			ep.setReferencesWebResourcesCount(resultSet.getInt("references_web_resources_count"));
+			ep.setReferencesCount(resultSet.getInt("references_count"));
+
+			return null;
+
 		}
 		
 	}

@@ -1,6 +1,13 @@
 package org.nextprot.api.web.xml.unit;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.nextprot.api.core.domain.release.ReleaseContents;
+import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
+import org.nextprot.api.web.service.ExportService;
+import org.nextprot.api.web.service.impl.writer.NPEntryVelocityBasedStreamWriter;
+import org.nextprot.api.web.service.impl.writer.NPEntryXMLStreamWriter;
+import org.nextprot.api.web.utils.XMLUnitUtils;
+import org.w3c.dom.NodeList;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
@@ -9,13 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-import org.nextprot.api.core.domain.release.ReleaseContents;
-import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
-import org.nextprot.api.web.service.impl.NPStreamExporter;
-import org.nextprot.api.web.service.impl.XMLStreamExporter;
-import org.nextprot.api.web.utils.XMLUnitUtils;
-import org.w3c.dom.NodeList;
+import static org.junit.Assert.assertEquals;
 
 public class ExportXMLHeaderTest extends WebUnitBaseTest {
 	
@@ -24,20 +25,26 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
 
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        NPStreamExporter exporter = new XMLStreamExporter();
+        NPEntryVelocityBasedStreamWriter exporter = new NPEntryXMLStreamWriter(writer, "overview");
         
-        Map<String, Object> map = new HashMap<String, Object>();        map.put("queryString", "something");        map.put("entriesCount", 2);
-        ReleaseContents rc = new ReleaseContents();        rc.setApiRelease("api-test-version");        rc.setDatabaseRelease("database-test-version");        map.put("release", rc);
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("queryString", "something");
+        map.put(ExportService.ENTRIES_COUNT_PARAM, 2);
+
+        ReleaseContents rc = new ReleaseContents();
+        rc.setApiRelease("api-test-version");
+        rc.setDatabaseRelease("database-test-version");
+
+        map.put("release", rc);
         
-        exporter.export(new ArrayList<String>(), writer, "overview", map);
+        exporter.write(new ArrayList<String>(), map);
 
         NodeList dbReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/header/release/nextprot/database-release");
         assertEquals(dbReleaseNodes.item(0).getTextContent(), "database-test-version");
         NodeList apiReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/header/release/nextprot/api-release");
         assertEquals(apiReleaseNodes.item(0).getTextContent(), "api-test-version");
-        NodeList entriesCountNode = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/header/entries-count");
+        NodeList entriesCountNode = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/header/number-of-entries");
         assertEquals(entriesCountNode.item(0).getTextContent(), "2");
-
     }
-
 }

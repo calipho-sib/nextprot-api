@@ -12,13 +12,35 @@ annotation:$annotation-uri a :$annotation-type;
   rdfs:comment "$StringUtils.clean($annotation.getDescription())"^^xsd:string;
 #end
 #end
+
+#if($annotation.getBioObject())
+#set($bioObject = $annotation.getBioObject())
+#set($bioType = $bioObject.getBioType().toString())
+#set($resourceType = $bioObject.getResourceType().toString())
+#if($resourceType == "EXTERNAL")
+  :interactant [
+    rdf:type :Xref ;
+    :provenance db:$bioObject.database ;
+    :accession "$bioObject.accession"^^xsd:string ;
+##  :url "value needs to be provided from dao ?"^^xsd:string ;
+#if($bioType == "PROTEIN")    skos:exactMatch uniprot:$bioObject.accession ;
+#end 
+### chebi not yet available as rdf 
+###else $bioObject.accession.toLowerCase()#end ;
+  ] ;
+#elseif($resourceType == "INTERNAL")
+  :interactant#if($bioType == "PROTEIN") entry:#else isoform:#end$bioObject.accession ;
+#end
+#end
+
 #foreach($prop in $annotation.getProperties())
 ## don't remove the presetting to false in next line otherewise problems (pam)
 #set($pmodel=false)
-#set($pmodel=$annotation.getPropertyApiModel($prop))
+#set($pmodel=$NXUtils.getTtlPropertyWriter($annotation.getAPICategory(), $prop.getName()))
 #if($pmodel)
-  :$pmodel.getApiName() "$prop.getValue()"^^xsd:$pmodel.getRdfDataType();
-#end
+#set($UNESCAPED_CDATA = $pmodel.formatValue($prop.getValue()))
+  :$pmodel.getName() $UNESCAPED_CDATA ;
+#end	
 #end
 #if($annotation.getVariant())
 #set($variant=$annotation.getVariant()) 

@@ -1,5 +1,6 @@
 package org.nextprot.api.rdf.utils;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.nextprot.api.commons.exception.NextProtException;
@@ -46,6 +47,10 @@ public class SparqlDictionary extends FilePatternDictionary {
 	@Override
 	protected String getLocation() {
 		return "classpath*:sparql-queries/**/*.rq";
+	}
+
+	public List<String> getSparqlPrefixesList() {
+		return Arrays.asList(getSparqlPrefixes().split("\n"));
 	}
 
 }

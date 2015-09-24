@@ -4,7 +4,7 @@
 
 	<groupId>org.nextprot</groupId>
 	<artifactId>nextprot-api-master</artifactId>
-	<version>0.1.7</version>
+	<version>0.1.8-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>An API to access and search for nextprot data</description>
 	<url>https://api.nextprot.org</url>
@@ -185,13 +185,17 @@
 			<artifactId>diffutils</artifactId>
 			<version>1.2.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>2.2.9</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.skyscreamer</groupId>
+			<artifactId>jsonassert</artifactId>
+			<version>1.2.3</version>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- For the documentation using JSONDOC -->
 		<dependency>
@@ -292,7 +296,6 @@
 			<version>2.4.9</version>
 		</dependency>
 
-
 		<!-- manage git info -->
 		<dependency>
 			<groupId>com.lukegb.mojo</groupId>
@@ -334,6 +337,9 @@
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
+						<manifestEntries>
+							<gitCommitCountFile>git-commit-count.txt</gitCommitCountFile>
+						</manifestEntries>
                     </archive>
                 </configuration>
             </plugin>

@@ -11,6 +11,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchQueryException;
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
@@ -56,6 +57,9 @@ public class SearchServiceImpl implements SearchService {
 	private SolrConfiguration configuration;
 	@Autowired
 	private QueryBuilderService queryBuilderService;
+	@Autowired
+	private MasterIdentifierService masterIdentifierService;
+
 
 
 
@@ -65,6 +69,11 @@ public class SearchServiceImpl implements SearchService {
 			
 			Logger.debug("queryRequest.hasAccs()");
 			return new HashSet<String>(queryRequest.getAccs());
+
+		} else if (queryRequest.hasChromosome()) {
+			
+			Logger.debug("queryRequest.hasChromosome()");
+			return new HashSet<String>(this.masterIdentifierService.findUniqueNamesOfChromosome(queryRequest.getChromosome()));
 
 		} else if (queryRequest.hasList()) {
 			

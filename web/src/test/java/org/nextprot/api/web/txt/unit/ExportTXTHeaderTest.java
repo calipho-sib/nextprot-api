@@ -1,16 +1,5 @@
 package org.nextprot.api.web.txt.unit;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -20,8 +9,19 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.ExportService;
-import org.nextprot.api.web.service.impl.NPStreamExporter;
-import org.nextprot.api.web.service.impl.TXTStreamExporter;
+import org.nextprot.api.web.service.impl.writer.NPEntryVelocityBasedStreamWriter;
+import org.nextprot.api.web.service.impl.writer.NPEntryTXTStreamWriter;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 /**
  * Adding test for txt export (including header)
@@ -46,12 +46,12 @@ public class ExportTXTHeaderTest extends WebUnitBaseTest {
     	
     	ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        NPStreamExporter exporter = new TXTStreamExporter();
+        NPEntryVelocityBasedStreamWriter exporter = new NPEntryTXTStreamWriter(writer);
         exporter.setEntryBuilderService(entryBuilderMockService);
 
         Map<String, Object> map = new HashMap<String, Object>(); map.put(ExportService.ENTRIES_COUNT_PARAM, 2);
         when(entryBuilderMockService.build(any(EntryConfig.class))).thenReturn(new Entry("NX_1")).thenReturn(new Entry("NX_2"));
-        exporter.export(Arrays.asList("NX_1", "NX_2"), writer, "entry", map);
+        exporter.write(Arrays.asList("NX_1", "NX_2"), map);
        
         String[] rows = out.toString().split("\n");
         assertEquals(rows[0], "#nb entries=2");

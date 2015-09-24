@@ -32,7 +32,7 @@ public class MasterIdentifierController {
 	@RequestMapping(value = "/master-identifiers/chromosome/{chromosome}", method = { RequestMethod.GET })
 	public List<String> masterIdentifiersPerChromosome(
 			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "master-isoform-mapping"}) @PathVariable("chromosome")  String chromosome) {
-		return new ArrayList<String>(masterIdentifierService.findUniqueNamesOfChromossome(chromosome));
+		return new ArrayList<String>(masterIdentifierService.findUniqueNamesOfChromosome(chromosome));
 	}
 
 }

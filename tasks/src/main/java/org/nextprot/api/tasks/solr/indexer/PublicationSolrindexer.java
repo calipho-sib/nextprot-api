@@ -2,16 +2,16 @@ package org.nextprot.api.tasks.solr.indexer;
 
 //import java.util.List;
 
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.SortedSet;
-
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.utils.TerminologyUtils;
+
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.SortedSet;
 
 public class PublicationSolrindexer extends SolrIndexer<Publication>{
 
@@ -37,8 +37,11 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		doc.addField("filters", filters);
 		doc.addField("title", publi.getTitle());
 		doc.addField("title_s", publi.getTitle());
-		doc.addField("date", publi.getPublicationDate());
-		doc.addField("year", publi.getPublicationYear());
+
+		if (publi.getPublicationDate() != null) {
+			doc.addField("date", publi.getPublicationDate());
+			doc.addField("year", publi.getPublicationYear());
+		}
 		doc.addField("first_page", publi.getFirstPage());
 		doc.addField("last_page", publi.getLastPage());
 		doc.addField("volume", publi.getVolume());

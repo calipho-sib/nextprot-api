@@ -14,7 +14,7 @@ public class GenomicMapping implements Serializable{
 
 	public GenomicMapping() {
 
-		isoformMappings = new ArrayList<IsoformMapping>();
+		isoformMappings = new ArrayList<>();
 	}
 
 	public String getDatabase() {
@@ -48,5 +48,4 @@ public class GenomicMapping implements Serializable{
 	public void setIsoformMappings(List<IsoformMapping> isoformMappings) {
 		this.isoformMappings = isoformMappings;
 	}
-
 }

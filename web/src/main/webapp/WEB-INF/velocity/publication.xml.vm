@@ -1,24 +1,21 @@
-<publication type="$publication.publicationType" id="$publication.publicationId">
-		#set($UNESCAPED_CDATA = $publication.title)
-		<title>
-			<![CDATA[$UNESCAPED_CDATA]]>
-		</title>
-		<journal name="#if($publication.cvJournal.name)$publication.cvJournal.name#end" volume="$publication.volume" issue="$publication.issue" year="$publication.getPublicationYear()"/>
-		<pages first="$publication.firstPage" last="$publication.lastPage" />
-		<authors>
+<publication type="$publication.publicationType.toLowerCase()" #if($publication.getPublicationDate())date="$publication.getTextDate()"#end #if($publication.cvJournal.name)name="$publication.cvJournal.name"#end #if(!$publication.volume.isEmpty())volume="$publication.volume"#end #if(!$publication.firstPage.isEmpty())first="$publication.firstPage"#end #if(!$publication.lastPage.isEmpty())last="$publication.lastPage"#end internal-id="$publication.publicationId">
+	<title>
+	    <![CDATA[$publication.title]]>
+	</title>
+	<author-list>
 		#foreach($author in $publication.authors)
 			#if($author.isPerson())
-				<person name="$author.foreName $author.lastName" suffix="$author.suffix"/>
+                <person name="$author.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($author.foreName)"/>
 			#else
-				<consortium name="$author.lastName"/>
+                <consortium name="$author.lastName"/>
 			#end
 		#end
-		</authors>
-		#if($publication.dbXrefs.size() > 0)
-		<xrefs>
+	</author-list>
+	#if($publication.dbXrefs.size() > 0)
+    <xref-list>
 		#foreach($xref in $publication.dbXrefs)
-			#parse('xref.xml.vm')								
+			#parse('xref.xml.vm')
 		#end
-		</xrefs>
+    </xref-list>
 	#end
 </publication>

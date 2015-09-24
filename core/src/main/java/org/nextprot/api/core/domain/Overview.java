@@ -1,18 +1,12 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.Pair;
+
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Overview implements Serializable{
 
@@ -27,7 +21,7 @@ public class Overview implements Serializable{
 	private static Map<String,PE> peMap;
     static {
     	// key: as stored in db, value: as to be displayed
-    	peMap = new HashMap<String,PE>();
+    	peMap = new HashMap<>();
     	peMap.put("protein level", new PE("Evidence_at_protein_level",1));
     	peMap.put("transcript level", new PE("Evidence_at_transcript_level",2));
     	peMap.put("homology", new PE("Inferred_from_homology",3));
@@ -36,7 +30,6 @@ public class Overview implements Serializable{
     }	
 	private History history;
 	private List<Family> families;
-	private List<BioPhysicalChemicalProperty> bioPhyChemProps;
 	private List<EntityName> proteinNames;
 	private List<EntityName> geneNames;
 	private List<EntityName> functionalRegionNames;
@@ -127,26 +120,6 @@ public class Overview implements Serializable{
 	public void setFamilies(List<Family> families) {
 		this.families = families;
 	}
-
-	public List<BioPhysicalChemicalProperty> getBioPhyChemProps() {
-		return bioPhyChemProps;
-	}
-
-	public void setBioPhyChemProps(List<BioPhysicalChemicalProperty> bioPhyChemProps) {
-		this.bioPhyChemProps = bioPhyChemProps;
-	}
-
-
-	public static class BioPhysicalChemicalProperty extends Pair<String, String> {
-
-		private static final long serialVersionUID = -2328152726989401916L;
-
-		public BioPhysicalChemicalProperty(String first, String second) {
-			super(first, second);
-		}
-		
-	}
-
 
 	public static class History implements Serializable {
 
@@ -405,7 +378,11 @@ public class Overview implements Serializable{
 					LOGGER.error("Failed to compare enum values for other qualifier " + o.qualifier + e.getMessage());
 				}
 			}
-			
+
+			//orf cases
+			if("orf".equalsIgnoreCase(o.category)){ return -1;}
+			if("orf".equalsIgnoreCase(this.category)){return 1;}
+				
 			return thisValue - otherValue;
 		}
 		

@@ -2,9 +2,11 @@
 	#foreach($isospec in $target-isoform-list.values())
 		<target-isoform accession="$isospec.isoformName" specificity='$isospec.specificity'>
 		#if($isospec.isPositional())
-			<position-list>
-				<position #if($isospec.getFirstPosition() > 0) start='$isospec.getFirstPosition()' #{else}startStatus='unknown'#end #if($isospec.getLastPosition() > 0) end='$isospec.getLastPosition()' #{else}endStatus='unknown'#end />
-			</position-list>
+            <location #if($annotation.getAPICategory().getDbId() == 1022) type='disulfide-bond'
+			#elseif($annotation.getAPICategory().getDbId() == 1023) type='cross-link' #end>
+				#if($isospec.getFirstPosition() > 0)<begin position='$isospec.getFirstPosition()' #else<begin status='unknown'#end/>
+				#if($isospec.getLastPosition() > 0)<end position='$isospec.getLastPosition()' #else<end status='unknown'#end/>
+            </location>
 		#end
 		</target-isoform>
 	#end

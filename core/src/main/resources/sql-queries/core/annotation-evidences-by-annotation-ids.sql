@@ -29,8 +29,9 @@ left join nextprot.cv_quality_qualifiers q on (q.cv_id = assoc.cv_quality_qualif
 left join nextprot.cv_terms eco on (assoc.evidence_code_id=eco.cv_id)
 left join nextprot.db_xrefs ecoxr on (eco.db_xref_id=ecoxr.resource_id)
 -- evidence with type 1 (source) are now ignored (Anne)
--- evidence with type 2 (relative) should become part of annotation itself (later)
-where assoc.cv_type_id in (3)
+-- evidence with type 2 (relative) exist for cofactor, sequence caution, and disease annotation types:
+-- they are turned into properties and to build the description of the annotation, see CALIPHOMISC-277
+where assoc.cv_type_id in (3,2)
 and assoc.annotation_id in (:ids) 
 
 

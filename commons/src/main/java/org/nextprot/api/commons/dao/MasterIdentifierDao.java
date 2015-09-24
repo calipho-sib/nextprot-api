@@ -6,7 +6,7 @@ public interface MasterIdentifierDao {
 
 	Long findIdByUniqueName(String uniqueName);
 	
-	List<String> findUniqueNamesOfChromossome(String chromossome);
+	List<String> findUniqueNamesOfChromosome(String chromosome);
 
 	List<String> findMasterSequenceUniqueNames();
 

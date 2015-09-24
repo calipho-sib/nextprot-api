@@ -1,17 +1,11 @@
 package org.nextprot.api.core.utils;
 
+import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.annotation.*;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.domain.Interactant;
-import org.nextprot.api.core.domain.Interaction;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 
 
 public class BinaryInteraction2Annotation {
@@ -21,7 +15,7 @@ public class BinaryInteraction2Annotation {
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation core object
 		// - - - - - - - - - - - - - - - - - - - - 
-		Long annotId = inter.getId() + 30000000000L;
+		Long annotId = inter.getId() ;
 		
 		Annotation annot = new Annotation();
 		annot.setAnnotationId(annotId);
@@ -32,13 +26,13 @@ public class BinaryInteraction2Annotation {
 		annot.setParentXref(null);
 		annot.setQualityQualifier(inter.getQuality());
 		annot.setSynonym(null);
-		annot.setUniqueName("AN"+ entryName.substring(3) + "_BI_" + inter.getId());
+		annot.setUniqueName("AN"+ entryName.substring(3) + "_BI_" + annotId);
 		annot.setVariant(null);
 		
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation evidences
 		// - - - - - - - - - - - - - - - - - - - - 
-		List<AnnotationEvidence> evidences = new ArrayList<AnnotationEvidence>();
+		List<AnnotationEvidence> evidences = new ArrayList<>();
 		AnnotationEvidence evi = new AnnotationEvidence();
 		evi.setAnnotationId(annot.getAnnotationId());
 		evi.setAssignedBy(inter.getEvidenceDatasource());
@@ -66,43 +60,43 @@ public class BinaryInteraction2Annotation {
 		evi.setResourceId(inter.getEvidenceResourceId());
 		evi.setResourceType("database");									
 		
-		evi.setProperties(new ArrayList<AnnotationEvidenceProperty>()); 
+		// - - - - - - - - - - - - - - - - - - - - 
+		// evidence property: number of experiments
+		// - - - - - - - - - - - - - - - - - - - - 
+		AnnotationEvidenceProperty evp = new AnnotationEvidenceProperty();
+		evp.setEvidenceId(evp.getEvidenceId());
+		evp.setPropertyName("numberOfExperiments");
+		evp.setPropertyValue(""+inter.getNumberOfExperiments());
+		List<AnnotationEvidenceProperty> evProps = new ArrayList<>();
+		evProps.add(evp);
+		evi.setProperties(evProps); 
+		
 		evidences.add(evi);
 		annot.setEvidences(evidences);
 
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation properties
 		// - - - - - - - - - - - - - - - - - - - - 
-		// interactants are represented as properties
+		// annotation property: interactant
 		// - - - - - - - - - - - - - - - - - - - - 
-		List<AnnotationProperty> anProps = new ArrayList<AnnotationProperty>();
-		AnnotationProperty p1 = new AnnotationProperty();
-		Interactant interactant=BinaryInteraction2Annotation.getInteractant(inter);
-		p1.setAccession(interactant.getAccession());
-		p1.setAnnotationId(annotId);
-		p1.setName(AnnotationProperty.NAME_INTERACTANT);
-		if (interactant.isNextprot()) {
-			p1.setValueType(interactant.isIsoform() ? AnnotationProperty.VALUE_TYPE_ISO_AC : AnnotationProperty.VALUE_TYPE_ENTRY_AC);
-			p1.setValue(interactant.getNextprotAccession());
-		} else {
-			p1.setValueType(AnnotationProperty.VALUE_TYPE_RIF);
-			p1.setValue(""+interactant.getXrefId());			
-		}
-		anProps.add(p1);
+		List<AnnotationProperty> anProps = new ArrayList<>();
+
+		annot.setBioObject(newBioObject(BinaryInteraction2Annotation.getInteractant(inter)));
+
+		// - - - - - - - - - - - - - - - - - - - -
+		// annotation property: self interaction
 		// - - - - - - - - - - - - - - - - - - - - 
-		// number of experiments
-		// - - - - - - - - - - - - - - - - - - - - 
-		AnnotationProperty p2 = new AnnotationProperty();
-		p2.setAnnotationId(annotId);
-		p2.setName("numberOfExperiments");
-		p2.setValue(""+inter.getNumberOfExperiments());
-		anProps.add(p2);
+		AnnotationProperty p3 = new AnnotationProperty();
+		p3.setAnnotationId(annotId);
+		p3.setName("selfInteraction");
+		p3.setValue(""+inter.isSelfInteraction());
+		anProps.add(p3);
 		annot.setProperties(anProps);
 		
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation isoform specificity
 		// - - - - - - - - - - - - - - - - - - - - 
-		List<AnnotationIsoformSpecificity> isospecs = new ArrayList<AnnotationIsoformSpecificity>(); 
+		List<AnnotationIsoformSpecificity> isospecs = new ArrayList<>();
 		for (Isoform iso: isoforms) {
 			AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
 			spec.setAnnotationId(annotId);
@@ -124,7 +118,7 @@ public class BinaryInteraction2Annotation {
 	 * @param inter
 	 * @return
 	 */
-	public static Interactant getInteractant(Interaction inter) {
+	static Interactant getInteractant(Interaction inter) {
 		Interactant interactant=null;
 		if (inter.isSelfInteraction()) {
 			interactant = inter.getInteractants().get(0);
@@ -138,7 +132,19 @@ public class BinaryInteraction2Annotation {
 		}
 		return interactant; // should never be null
 	}
-	
-	
-	
+
+	static BioObject newBioObject(Interactant interactant) {
+
+		BioObject be;
+
+		if (interactant.isNextprot())
+			be = (interactant.isIsoform()) ? new BioIsoform() : new BioEntry();
+		else
+			be = new BioObjectExternal((interactant.isIsoform()) ? BioObject.BioType.PROTEIN_ISOFORM : BioObject.BioType.PROTEIN, interactant.getDatabase());
+
+		be.setId(interactant.getXrefId());
+		be.setAccession((interactant.isNextprot()) ? interactant.getNextprotAccession() : interactant.getAccession());
+
+		return be;
+	}
 }

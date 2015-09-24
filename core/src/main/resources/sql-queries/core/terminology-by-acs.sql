@@ -12,7 +12,14 @@
 inner join nextprot.cv_term_relationships root_r on (parent.cv_id=root_r.object_id)
 inner join nextprot.cv_terms root on (root_r.subject_id=root.cv_id)    
 inner join nextprot.db_xrefs xrefr on (root.db_xref_id=xrefr.resource_id) 
-     where xrefr.accession=nextprot.db_xrefs.accession)  as ancestor, 
+     where xrefr.accession=nextprot.db_xrefs.accession  and parent.cv_status_id=1)  as ancestor, 
+-- get children
+  (select string_agg(cx.accession,'|') 
+    from nextprot.cv_term_relationships r 
+    inner join nextprot.cv_terms child on (child.cv_id=r.subject_id)
+    inner join nextprot.db_xrefs cx on (child.db_xref_id=cx.resource_id)
+    where nextprot.cv_terms.cv_id=r.object_id and child.cv_status_id=1
+  ) as children,
 -- get xrefs
    (select string_agg(cat.cv_name || ', ' || db.cv_name || ', ' || ref.accession || ', ' || db.link_url, ' | ') 
      from nextprot.cv_term_db_xref_assoc tra 
