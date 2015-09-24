@@ -47,10 +47,7 @@ class TerminologyServiceImpl implements TerminologyService {
 	public List<Tree<Terminology>> findTerminologyTreeList(TerminologyCv terminologyCv, int maxDepth) {
 
 		List<Terminology> terms = findTerminologyByOntology(terminologyCv.name());
-		long start = System.currentTimeMillis();
-		//System.err.println("Building " + terminologyCv + " for a total of " + terms.size());
 		List<Tree<Terminology>>  result =  TerminologyUtils.convertTerminologyListToTreeList(terms, maxDepth);
-		//System.err.println("Done in "  + (System.currentTimeMillis() - start) + " ms");
 		return result;
 	}
 	

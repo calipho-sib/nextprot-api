@@ -115,7 +115,7 @@ public class JSONDocRoleController extends JSONDocController {
 					// adding subparts
 					for (AnnotationApiModel model : AnnotationApiModel.values()) {
 
-						String name = model.getApiTypeName().toLowerCase().replaceAll("_", "-");
+						String name = model.getApiTypeName();
 						String path = "/entry/{entry}/" + StringUtils.camelToKebabCase(name);
 						String description = "Exports only the " + name + " from an entry, located on the hierarchy: " + model.getHierarchy();
 
@@ -126,24 +126,6 @@ public class JSONDocRoleController extends JSONDocController {
 
 			}
 
-			{ //////////////////////////// Appends documentation to Terminology Controller ////////////////////////////
-
-				ApiMethodDoc met = getMethodOfType(apiDocs, "Terminology");
-				// Adds terminology
-				for (ApiDoc apiDoc : filterApiDocsFor(apiDocs, "Terminology")) {
-
-					// adding terminologies
-					for (TerminologyCv t : TerminologyCv.values()) {
-
-						String name = t.name();
-						String path = "/terminology/" + StringUtils.camelToKebabCase(name);
-						String description = "Gets terminology " + name;
-
-						apiDoc.getMethods().add(cloneMethodDoc(met, path, description, false, false));
-					}
-				}
-
-			}
 		}
 	}
 
