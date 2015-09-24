@@ -29,20 +29,18 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 			Entry entry = getEntry(i);
 			System.out.println(entry.getUniqueName());
 			testFunctionalDesc(entry);
-			//testAnnotations(entry);
+			testAnnotations(entry);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void testFunctionalDesc(Entry entry) {
 
-		Fields field = Fields.FUNCTION_DESC;
-
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
 		afb.initializeBuilder(entry);
-		List<String> functionalDescriptions = afb.getFieldValue(field, List.class);
+		List<String> functionalDescriptions = afb.getFieldValue(Fields.FUNCTION_DESC, List.class);
 
-		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), field);
+		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), Fields.FUNCTION_DESC);
 
 		if (!((expectedValues == null) && (functionalDescriptions == null))) {
 			assertEquals(functionalDescriptions.size(), expectedValues.size());
@@ -56,18 +54,17 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	@SuppressWarnings("unchecked")
 	public void testAnnotations(Entry entry) {
 
-		Fields field = Fields.ANNOTATIONS;
-
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
 		afb.initializeBuilder(entry);
 
-		List<String> annotations = afb.getFieldValue(field, List.class);
-		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), field);
+		List<String> annotations = afb.getFieldValue(Fields.ANNOTATIONS, List.class);
+		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), Fields.ANNOTATIONS);
 		List<String> expectedValues = new ArrayList<String>();
 
 		for (String s : expectedRawValues) {
 			String aux = getValueFromRawData(s,"description");
-			expectedValues.add(aux);
+			if(aux != null) //System.err.println("extracting desc from: " + s);
+			  expectedValues.add(aux);
 		}
 
 		Collections.sort(annotations);
