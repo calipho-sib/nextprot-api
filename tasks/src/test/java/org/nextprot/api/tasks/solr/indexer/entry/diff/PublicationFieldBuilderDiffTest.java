@@ -73,16 +73,28 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		for(String elem : expectedValues)
 			System.out.println(elem);
 		
+		//Assert.assertTrue( expectedValues.size()==0 && PublicationSet.size()==0);
 		
-		//String expectedPE = (String) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PROTEIN_EXISTENCE);
-		//Assert.assertEquals(getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_CURATED_COUNT), pfb.getFieldValue(Fields.PUBLI_CURATED_COUNT, Integer.class));
+		int pubCount, expectedPubCount;
+		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_CURATED_COUNT);
+		pubCount = pfb.getFieldValue(Fields.PUBLI_CURATED_COUNT, Integer.class);
+		System.err.println("PUBLI_CURATED_COUNT: " + expectedPubCount + " Now: " + pubCount);
+		//Assert.assertEquals(expectedPubCount, pubCount);
 
-		//Assert.assertEquals(getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_COMPUTED_COUNT), pfb.getFieldValue(Fields.PUBLI_COMPUTED_COUNT, Integer.class));
+		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_COMPUTED_COUNT);
+		pubCount = pfb.getFieldValue(Fields.PUBLI_COMPUTED_COUNT, Integer.class);
+		System.err.println("PUBLI_COMPUTED_COUNT: " + expectedPubCount + " Now: " + pubCount);
+		//Assert.assertEquals(expectedPubCount, pubCount);
 
-		//Assert.assertEquals(getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_LARGE_SCALE_COUNT), pfb.getFieldValue(Fields.PUBLI_LARGE_SCALE_COUNT, Integer.class));
+		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_LARGE_SCALE_COUNT);
+		pubCount = pfb.getFieldValue(Fields.PUBLI_LARGE_SCALE_COUNT, Integer.class);
+		System.err.println("PUBLI_LARGE_SCALE_COUNT: " + expectedPubCount + " Now: " + pubCount);
+		//Assert.assertEquals(expectedPubCount, pubCount);
 
-		//Assert.assertEquals(getValueForFieldInCurrentSolrImplementation(entryName, Fields.INFORMATIONAL_SCORE), pfb.getFieldValue(Fields.INFORMATIONAL_SCORE, Float.class));
+		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.INFORMATIONAL_SCORE);
+		pubCount = pfb.getFieldValue(Fields.INFORMATIONAL_SCORE, Integer.class);
+		System.err.println("INFORMATIONAL_SCORE: " + expectedPubCount + " Now: " + pubCount);
+		Assert.assertEquals(expectedPubCount, pubCount);
 	}
-
 
 }
