@@ -1,19 +1,13 @@
 package org.nextprot.api.core.dao.impl;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
+import org.nextprot.api.commons.bio.mutation.ProteinMutationFormat;
+import org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.impl.spring.BatchNamedParameterJdbcTemplate;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.domain.annotation.AnnotationVariant;
+import org.nextprot.api.core.domain.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -21,9 +15,16 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Component;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.List;
+
 
 @Component
 public class AnnotationDAOImpl implements AnnotationDAO {
+
+	private static ProteinMutationHGVFormat MUTATION_HGV_FORMAT = new ProteinMutationHGVFormat();
 
 	@Autowired private SQLDictionary sqlDictionary;
 
@@ -44,6 +45,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			annotation.setQualityQualifier(resultSet.getString("quality_qualifier"));
 			annotation.setCvTermName(resultSet.getString("cv_term_name"));
 			annotation.setCvTermAccessionCode(resultSet.getString("cv_term_accession"));
+			annotation.setCvApiName(resultSet.getString("cv_api_name"));
 			annotation.setSynonym(resultSet.getString("synonym"));
 			annotation.setUniqueName(resultSet.getString("annotation_unique_name"));
 
@@ -188,13 +190,30 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			public AnnotationProperty mapRow(ResultSet resultSet, int row) throws SQLException {
 			
 				AnnotationProperty property = new AnnotationProperty();
+
 				property.setAnnotationId(resultSet.getLong("annotation_id"));
+				property.setAccession(resultSet.getString("accession"));
 				property.setName(resultSet.getString("property_name"));
 				property.setValue(resultSet.getString("property_value"));
-				property.setAccession(resultSet.getString("accession"));
+				// quick fix to prevent errors in generating hgvs format because we dont need it for the moment (property will be hidden)
+				//setPropertyNameValue(property, resultSet.getString("property_name"), resultSet.getString("property_value"));
+
 				return property;
 			}
 		});
+	}
 
+	static void setPropertyNameValue(AnnotationProperty property, String name, String value) {
+
+		property.setName(name);
+		try {
+			property.setValue((name.equals("mutation AA")) ?
+					// TODO: 'mutation AA' property comes from COSMIC. Some values could be not corrected formatter according to the last version v2.0 of HGV
+					// This reformatting should be done at NP integration time, even better, this should be done by COSMIC guys !
+					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, ProteinMutationHGVFormat.ParsingMode.PERMISSIVE), ProteinMutationFormat.AACodeType.THREE_LETTER)
+					: value);
+		} catch (ParseException e) {
+			throw new NextProtException(e);
+		}
 	}
 }

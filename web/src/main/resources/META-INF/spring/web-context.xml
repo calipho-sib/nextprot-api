@@ -82,6 +82,7 @@
 				<entry key="fasta" value="text/fasta" />
 				<!--<entry key="peff" value="text/peff" />-->
 				<entry key="txt" value="text/plain" />
+				<entry key="xls" value="application/vnd.ms-excel" />
 			</map>
 		</property>
 	</bean>
@@ -135,6 +136,7 @@
 				<bean
 					class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
 					<property name="contentType" value="application/json;charset=UTF-8" />
+					<property name="prettyPrint" value="true" />
 				</bean>
 			</list>
 		</property>

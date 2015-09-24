@@ -1,10 +1,12 @@
 package org.nextprot.api.core.domain.annotation;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.constants.AnnotationPropertyApiModel;
+import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
+import org.nextprot.api.core.domain.IsoformSpecificity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.Map;
 
 public class Annotation implements Serializable, IsoformSpecific {
 
+	
 	private static final long serialVersionUID = -1576387963315643702L;
 
 	private String uniqueName;
@@ -22,7 +25,9 @@ public class Annotation implements Serializable, IsoformSpecific {
 	private String cvTermAccessionCode;
 
 	private String cvTermName;
-		
+
+	private String cvApiName;
+
 	private String description;
 
 	private String category;
@@ -39,28 +44,16 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private List<AnnotationEvidence> evidences;
 
+	@Deprecated // use target isoform map
 	private Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap;
+	
+	private Map<String, IsoformSpecificity> targetIsoformsMap;
 
 	private List<AnnotationProperty> properties;
+
+	private BioObject bioObject;
 	
 	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsAsAnnotationsByEntry()
-
-	final static Map<String, String> commonExpressionPredicat= new HashMap<String, String>();
-	
-	static{
-		
-		/*
-		 * i changed the predicate names to be compatible with predicate hierarchy
-		 */
-		
-		commonExpressionPredicat.put("", 	   	"detectedExpression");
-		commonExpressionPredicat.put("High",   	"detectedExpression");
-		commonExpressionPredicat.put("Low",    	"detectedExpression");
-		commonExpressionPredicat.put("Medium", 	"detectedExpression");
-		commonExpressionPredicat.put("Positive","detectedExpression");
-		commonExpressionPredicat.put("Negative","undetectedExpression");
-	}	
-	
 	
 	public String toString() {
 		return uniqueName + ": "  + 
@@ -102,6 +95,14 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.cvTermName = cvTermName;
 	}
 
+	public String getCvApiName() {
+		return cvApiName;
+	}
+
+	public void setCvApiName(String cvApiName) {
+		this.cvApiName = cvApiName;
+	}
+
 	public String getQualityQualifier() {
 		return qualityQualifier;
 	}
@@ -131,11 +132,15 @@ public class Annotation implements Serializable, IsoformSpecific {
 	}
 
 	public String getApiTypeName() {
-		return apiCategory.getApiTypeName();
+		if(apiCategory != null){
+			return apiCategory.getApiTypeName();
+		}else return null;
 	}
 
 	public String getRdfPredicate() {
-		return apiCategory.getRdfPredicate();
+		if(apiCategory != null){
+			return apiCategory.getRdfPredicate();
+		}else return null;
 	}
 	
 	public AnnotationApiModel getAPICategory() {
@@ -143,15 +148,22 @@ public class Annotation implements Serializable, IsoformSpecific {
 	}
 	
 	public List<String> getParentPredicates() {
-		List<String> list = new ArrayList<String>();
-		for (AnnotationApiModel cat : apiCategory.getAllParentsButRoot()) list.add(cat.getRdfPredicate());
-		return list;
+		if(apiCategory!= null){
+			List<String> list = new ArrayList<String>();
+			for (AnnotationApiModel cat : apiCategory.getAllParentsButRoot()) list.add(cat.getRdfPredicate());
+			return list;
+		}else return null;
 	}
 			
 	public void setCategory(String category) {
 		this.category = category;
 		this.apiCategory=AnnotationApiModel.getByDbAnnotationTypeName(category);
 	}
+	
+	public void setCategoryOnly(String category) {
+		this.category = category;
+	}
+
 
 	public AnnotationVariant getVariant() {
 		return variant;
@@ -161,19 +173,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.variant = variant;
 	}
 
-	/*
-	 * returns API model of a property of this annotation 
-	 */
-	public AnnotationPropertyApiModel getPropertyApiModel(String dbName) {
-		return this.apiCategory.getPropertyByDbName(dbName);
-	}
-	
-	/*
-	 * returns API model of a property of this annotation 
-	 */
-	public AnnotationPropertyApiModel getPropertyApiModel(AnnotationProperty prop) {
-		return this.apiCategory.getPropertyByDbName(prop.getName());
-	}
 
 	public List<AnnotationProperty> getProperties() {
 		return properties;
@@ -202,15 +201,29 @@ public class Annotation implements Serializable, IsoformSpecific {
 		}else return false;
 	}
 
+	@Deprecated //Use setTargetIsoformsMap instead
 	public void setTargetingIsoforms(List<AnnotationIsoformSpecificity> targetingIsoforms) {
 		this.targetingIsoformsMap = new HashMap<String, AnnotationIsoformSpecificity>();
 		for (AnnotationIsoformSpecificity isospecAnnot : targetingIsoforms) {
 			targetingIsoformsMap.put(isospecAnnot.getIsoformName(), isospecAnnot);
 		}
 	}
+	
+	//This new method replaces setTargetingIsoforms
+	public void setTargetIsoformsMap(List<IsoformSpecificity> targetingIsoforms) {
+		this.targetIsoformsMap = new HashMap<String, IsoformSpecificity>();
+		for (IsoformSpecificity isospecAnnot : targetingIsoforms) {
+			targetIsoformsMap.put(isospecAnnot.getIsoformAc(), isospecAnnot);
+		}
+	}
 
+	@Deprecated
 	public Map<String, AnnotationIsoformSpecificity> getTargetingIsoformsMap() {
 		return targetingIsoformsMap;
+	}
+	
+	public Map<String, IsoformSpecificity> getTargetIsoformsMap() {
+		return targetIsoformsMap;
 	}
 
 	public String getUniqueName() {
@@ -220,44 +233,70 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public void setUniqueName(String uniqueName) {
 		this.uniqueName = uniqueName;
 	}
-	
+
 	public int getStartPositionForIsoform(String isoformName) {
-		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
-		return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
+		if(targetingIsoformsMap != null){
+			Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
+			return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
+		}else {
+			Preconditions.checkArgument(targetIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
+			return this.targetIsoformsMap.get(isoformName).getPositions().get(0).getFirst();
+		}
 	}
 	
 	public String getSpecificityForIsoform(String isoformName) {
 		return this.targetingIsoformsMap.get(isoformName).getSpecificity();
 	}
-	
+
+	public BioObject getBioObject() {
+		return bioObject;
+	}
+
+	public void setBioObject(BioObject bioObject) {
+		this.bioObject = bioObject;
+	}
+
 	public int getEndPositionForIsoform(String isoformName) {
+		if(targetingIsoformsMap != null){
 		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
-		return this.targetingIsoformsMap.get(isoformName).getLastPosition();
+			return this.targetingIsoformsMap.get(isoformName).getLastPosition();
+		}else {
+			Preconditions.checkArgument(targetIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
+			return this.targetIsoformsMap.get(isoformName).getPositions().get(0).getSecond();
+		}
 	}
 	
 	/**
-	 * pam 16.11. 2015, harmonization with data model:
-	 * selects expression level consensus:
-	 * - detectedExpression if any evidence is either low, high, medium or positive
-	 * - undetectedExpression if all evidences are negative or not detected
-	 * - null if no data is found 
-	 * @return "detectedExpression", "undetectedExpression" or null
+	 * Return true if annotation has at least one evidence showing any kind of detection (low, medium, high or positive) else false
+	 *
+	 * @return an optional boolean or absent if no expression info
 	 */
-	public String getConsensusExpressionLevelPredicat(){
-		String level="";
-		// make sure we have evidences otherwise error breaks ttl generation
-		if (evidences.size()==0) 
-			return null;
-		// check if there is expression info
-		if ((level=evidences.get(0).getExpressionLevel())==null)
-			return null;
-		level=commonExpressionPredicat.get(level);
-		for(AnnotationEvidence e:evidences){
-			if(!level.equals(commonExpressionPredicat.get(e.getExpressionLevel()))) {
-				return commonExpressionPredicat.get(""); // default 
+	public Optional<Boolean> isExpressionLevelDetected() {
+
+		Optional<Boolean> booleanOptional = Optional.absent();
+
+		if (evidences != null) {
+
+			for (AnnotationEvidence evidence : evidences) {
+
+				String level = evidence.getExpressionLevel();
+
+				if (level != null) {
+
+					switch (level) {
+
+						case "low":
+						case "medium":
+						case "high":
+						case "positive":
+							return Optional.of(Boolean.TRUE);
+						default:
+							booleanOptional = Optional.of(Boolean.FALSE);
+					}
+				}
 			}
 		}
-		return level;
-	}
 
+		return booleanOptional;
+	}
 }

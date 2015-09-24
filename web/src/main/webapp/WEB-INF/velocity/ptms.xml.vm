@@ -1,7 +1,0 @@
-<ptms>
-	#foreach($ptm in $ptms)
-		<ptm isoformAccession="$ptm.isoformAccession" quality="$ptm.quality" description="$ptm.description" evidence="" firstPosition="$ptm.firstPosition" lastPosition="$ptm.lastPosition">
-			<modification name="$ptm.cvName" accession="$ptm.accession"/>
-		</ptm>
-	#end
-</ptms>

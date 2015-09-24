@@ -7,6 +7,9 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties({"StringUtils", "NXUtils"})
 public class NXVelocityContext extends VelocityContext {
 
 	public NXVelocityContext() {

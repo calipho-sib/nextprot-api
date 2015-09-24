@@ -1,13 +1,13 @@
 package org.nextprot.api.user.service;
 
-import java.util.List;
-
 import org.nextprot.api.commons.exception.ResourceNotFoundException;
 import org.nextprot.api.user.domain.UserProteinList;
 
+import java.util.List;
+
 public interface UserProteinListService {
 
-	public enum Operator {
+	enum Operator {
 		AND, OR, NOT_IN
 	}
 
@@ -31,7 +31,7 @@ public interface UserProteinListService {
 
 	UserProteinList createUserProteinList(UserProteinList proteinList);
 
-	UserProteinList updateUserProteinList(UserProteinList proteinList);
+	void updateUserProteinList(UserProteinList proteinList);
 
 	void deleteUserProteinList(UserProteinList proteinList);
 

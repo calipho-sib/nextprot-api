@@ -20,18 +20,6 @@ evidence:$evidence-uri
 #if($evidence.getAssignedBy())
   :assignedBy source:$StringUtils.slug($evidence.getAssignedBy());
 #end
-#if($evidence.getGoQualifier())
-  :goQualifier "$evidence.getGoQualifier()"^^xsd:string;
-#end
-#if($evidence.getCL())
-  :cellLine "$evidence.getCL()"^^xsd:string;
-#end
-#if($evidence.getExpressionLevel())
-  :expressionLevel :$evidence.getExpressionLevel();
-#end
-#if($evidence.getIntegrationLevel())
-  :integrationLevel :$evidence.getIntegrationLevel();
-#end
 #if($evidence.getExperimentalContextId()>0)
   :experimentalContext context:$evidence.getExperimentalContextId();
 #end
@@ -49,6 +37,16 @@ evidence:$evidence-uri
     :provenance db:$StringUtils.slug($evidence.resourceDb); 
    ] ;
 #end
+
+#foreach($pname in $evidence.getPropertiesNames())
+#set($epw=false)
+#set($epw=$NXUtils.getTtlPropertyWriter($annotation.getAPICategory(), $pname))
+#if($epw)
+#set($UNESCAPED_CDATA = $epw.formatValue($evidence.getPropertyRawValue($pname)))
+  :$epw.getName() $UNESCAPED_CDATA ;
+#end
+#end 
+
 ## next property is useful for debug purpose
 #if($evidence.getResourceAssociationType())
   :assocType "$evidence.getResourceAssociationType()"^^xsd:string;

@@ -1,8 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -10,6 +7,9 @@ import org.nextprot.api.core.service.EntryService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 class EntryServiceImpl implements EntryService {
@@ -31,8 +31,8 @@ class EntryServiceImpl implements EntryService {
 	}
 
 	@Override
-	public List<Entry> findEntriesByChromossome(String chromossome) {
-		List<String> uniqueNames = this.masterIdentifierService.findUniqueNamesOfChromossome(chromossome);
+	public List<Entry> findEntriesByChromosome(String chromosome) {
+		List<String> uniqueNames = this.masterIdentifierService.findUniqueNamesOfChromosome(chromosome);
 		
 		List<Entry> entries = new ArrayList<Entry>();
 		
@@ -42,8 +42,8 @@ class EntryServiceImpl implements EntryService {
 	}
 
 	@Override
-	public List<String> findEntryNamesByChromossome(String chromossome) {
-		return this.masterIdentifierService.findUniqueNamesOfChromossome(chromossome);
+	public List<String> findEntryNamesByChromosome(String chromosome) {
+		return this.masterIdentifierService.findUniqueNamesOfChromosome(chromosome);
 	}
 
 

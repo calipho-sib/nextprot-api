@@ -145,6 +145,10 @@ public class DbXref implements Serializable {
 	// }
 	//
 
+	private DbXrefProperty retrievePropertyByName(String name) {
+    	return  getPropertyByName(name);
+	}
+	
 	/**
 	 * COPIED FROM DATAMODEL
 	 * 
@@ -158,10 +162,10 @@ public class DbXref implements Serializable {
 		
 		//link to a web page
 		if (db.equals("WEBINFO")) {
-			return this.getAccession();
+			return getAccession();
 		}
 		
-		String templateURL = this.getLinkUrl();
+		String templateURL = getLinkUrl();
 		if (StringUtils.isEmpty(templateURL) && !CvDatabasePreferredLink.dbHasPreferredLink(db)) return "";
 		
 		if (!templateURL.startsWith("http")) {
@@ -186,33 +190,59 @@ public class DbXref implements Serializable {
 			}
 		}
         if (db.equals("Cosmic")) {
-//            ResourceProperty property = retrievePropertyByName("type");
-        	DbXrefProperty property = getPropertyByName("type");
-            // sample type by default (cellosaurus)
-            if (property == null || property.getValue().equals("sample id")) {
-                templateURL = CvDatabasePreferredLink.COSMIC_SAMPLE.getLink();
+            if (primaryId.startsWith("COSM")) {
+                templateURL = CvDatabasePreferredLink.COSMIC_MUTATION.getLink();                
+                primaryId = primaryId.replaceFirst("COSM", "");
             }
-            else if (property.getValue().equals("mutation id")) {
-                templateURL = CvDatabasePreferredLink.COSMIC_MUTATION.getLink();
+            else if (primaryId.startsWith("COSS")) {
+                templateURL = CvDatabasePreferredLink.COSMIC_SAMPLE.getLink();                
+                primaryId = primaryId.replaceFirst("COSS", "");
             }
-            else if (property.getValue().equals("gene name")) {
-                templateURL = CvDatabasePreferredLink.COSMIC_GENE.getLink();
+            else {
+                templateURL = CvDatabasePreferredLink.COSMIC_GENE.getLink();                
             }
+        }
+        else if (db.equals("Clinvar")) {
+            if (primaryId.matches("RCV\\d+")) {
+                templateURL = CvDatabasePreferredLink.CLINVAR_MUTATION.getLink();                
+            }
+            else {
+                templateURL = CvDatabasePreferredLink.CLINVAR_GENE.getLink();                
+            }
+        }
+        if (db.equals("PIR")) {
+            DbXrefProperty property = retrievePropertyByName("entry name");
+            primaryId = property.getValue();
         }
 		
 		if (db.equals("GermOnline")) {
 			templateURL = CvDatabasePreferredLink.GERMONLINE.getLink();
 		}
 
+		if (db.equals("Genevestigator")) {
+            templateURL = CvDatabasePreferredLink.GENEVESTIGATOR.getLink();
+        }
+
         if (db.equals("HPA")) {
             if (primaryId.startsWith("ENSG")) {
-                templateURL = CvDatabasePreferredLink.HPA_GENE.getLink();
+                if (primaryId.endsWith("subcellular")) {
+                    templateURL = CvDatabasePreferredLink.HPA_SUBCELL.getLink();
+                }
+                else {
+                    templateURL = CvDatabasePreferredLink.HPA_GENE.getLink();                    
+                }
             }
             else {
                 templateURL = CvDatabasePreferredLink.HPA_ANTIBODY.getLink();
             }
         }
 
+		if (db.equals("Genevisible")) {
+			// organism always human: hardcode it
+			templateURL = templateURL.replaceFirst("%s1", primaryId);
+			templateURL = templateURL.replaceFirst("%s2", "HS");
+			return templateURL;
+		}
 		if (db.equals("UniGene")) {
 			// organism always human: hardcode it
 			templateURL = templateURL.replaceFirst("%s1", "Hs");
@@ -226,7 +256,7 @@ public class DbXref implements Serializable {
 			return templateURL;
 		}
 		if (db.equals("IntAct")) {
-			if (this.getAccession().startsWith("EBI")) {
+			if (getAccession().startsWith("EBI")) {
 				templateURL = CvDatabasePreferredLink.INTACT_BINARY.getLink();
 			}
 		}
@@ -236,43 +266,82 @@ public class DbXref implements Serializable {
 			templateURL = CvDatabasePreferredLink.PROSITE.getLink();
 		}
 		if (db.equals("HSSP")) {
-//			ResourceProperty pdbAccession = this.retrievePropertyByName("PDB accession");
-			DbXrefProperty pdbAccession = getPropertyByName("type");
+			DbXrefProperty pdbAccession = this.retrievePropertyByName("PDB accession");
 			if ( pdbAccession!= null && pdbAccession.getValue()!=null) {
-				primaryId = getPropertyByName("PDB accession").getValue().toLowerCase();
+				primaryId = this.retrievePropertyByName("PDB accession").getValue().toLowerCase();
 			} else {
-				primaryId = this.getAccession().toLowerCase();
+				primaryId = accession.toLowerCase();
 			}
 			
 		}
 		
 		if (db.equals("Bgee")) {
-			if (this.getAccession().startsWith("ENSG"))
-			    templateURL = templateURL.replace("uniprot_id", "page=gene&action=expression&gene_id");
+			if (accession.contains("ENSG"))
+			    templateURL = templateURL.replace("uniprot_id=", "page=expression&action=data&");
 		}
-//		if (db.equals("PeptideAtlas")) {
-//		    if (accession.length() > 6)
-//		        templateURL = "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetPeptide?searchWithinThis=Peptide+Name&searchForThis=%s&action=QUERY";
-//		}
+
+		if (db.equals("PeptideAtlas")) {
+            // protein URL
+		    if (!accession.startsWith("PAp")) {
+                templateURL = "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetProtein?protein_name=%s;organism_name=Human;action=GO";
+		    }
+            // peptide URL
+		    else {
+                templateURL = "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetPeptide?searchWithinThis=Peptide+Name&searchForThis=%s;organism_name=Human";
+		    }
+		}
+
+		if (db.equals("SRMAtlas")) {
+            primaryId = retrievePropertyByName("sequence").getValue();
+        }
+
 		if (db.equals("PDB")) {
 			// Overwrite native dbxref raw link w a more user-friendly one
 			templateURL = CvDatabasePreferredLink.PDB.getLink();
 		}
 		if (db.equals("WEBINFO")) {
-			templateURL = this.getAccession();
+			templateURL = accession;
 			if (!templateURL.startsWith("http")) {
 				templateURL = "http://" + templateURL;
 			}
 			return templateURL;
 		}
+
+//		Db_URL: http://www2.idac.tohoku.ac.jp/dep/ccr/TKGdate/TKGvo10%n/%s.html
+//	        Note: n% is the second digit of the cell line AC and %s is the cell line AC without the 'TKG'
+//	        Example: for "DR   TKG; TKG 0377": n%=3 s%=0377
+        if (db.equals("TKG")) {
+            templateURL = templateURL.replaceAll("%n", String.valueOf(primaryId.charAt(1)));
+        }
+
+//        Db_URL: https://www.aidsreagent.org/reagentdetail.cfm?t=cell_lines&id=%s
+//            Note: %s is the value after the dash in the DR line.
+//            Example: for "DR   NIH-ARP; 11411-223": s%=223
+        if (db.equals("NIH-ARP")) {
+            primaryId = primaryId.replaceAll("^.+-", "");
+        }
+
+//        Db_URL: http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=%s&aid=%t&lang=en
+//            Note: %s and %t are respectively the values before and after the dash in the DR line.
+//            Example: for "DR   CGH-DB; 9029-4": s%=9029, t%=4
+        if (db.equals("CGH-DB")) {
+            templateURL = templateURL.replaceAll("%t", primaryId.replaceAll("^.+-", ""));
+            primaryId = primaryId.replaceAll("-.+$", "");
+        }
 		
 		if (db.equals("IFO") || db.equals("JCRB")) {
 			primaryId = primaryId.toLowerCase();
 		}
+
+        if (this.getLinkUrl().contains("purl.obolibrary.org/obo")) {
+            primaryId = primaryId.replaceFirst(":", "_");
+        }
+
 		// general case
 		if (templateURL.matches(".*%s\\b.*")) {
 			return templateURL.replaceAll("\"", "").replaceAll("%s", primaryId);
 		}
+
 		// failed: return home url for db
 		return this.getUrl();
 	}

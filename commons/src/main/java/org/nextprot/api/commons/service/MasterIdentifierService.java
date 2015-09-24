@@ -6,7 +6,7 @@ import java.util.Set;
 public interface MasterIdentifierService {
 
 	Long findIdByUniqueName(String uniqueName);
-	List<String> findUniqueNamesOfChromossome(String chromossome);
+	List<String> findUniqueNamesOfChromosome(String chromosome);
 	Set<String> findUniqueNames();
 
 }

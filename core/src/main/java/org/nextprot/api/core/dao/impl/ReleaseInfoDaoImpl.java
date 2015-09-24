@@ -1,24 +1,30 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
-import org.nextprot.api.core.domain.release.ReleaseDataSources;
 import org.nextprot.api.core.domain.release.ReleaseContentsDataSource;
+import org.nextprot.api.core.domain.release.ReleaseDataSources;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+
 @Repository
 public class ReleaseInfoDaoImpl implements ReleaseInfoDao {
+
+	private static final Comparator<ReleaseContentsDataSource> DATA_SOURCE_COMPARATOR = new Comparator<ReleaseContentsDataSource>() {
+		@Override
+		public int compare(ReleaseContentsDataSource ds1, ReleaseContentsDataSource ds2) {
+
+			return ds1.getSource().compareToIgnoreCase(ds2.getSource());
+		}
+	};
 
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
@@ -27,10 +33,15 @@ public class ReleaseInfoDaoImpl implements ReleaseInfoDao {
 
 	@Override
 	public List<ReleaseContentsDataSource> findReleaseInfoDataSources() {
-		Map<String, Object> params = new HashMap<String, Object>();
+
+		Map<String, Object> params = new HashMap<>();
+
 		params.put("cvNames", ReleaseDataSources.getDistinctCvNamesExcept(ReleaseDataSources.PeptideAtlas));
 		List<ReleaseContentsDataSource> ds = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("release-contents"), params, new ReleaseInfoRowMapper(null));
 		ds.addAll(new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("release-contents-peptide-atlas"), params, new ReleaseInfoRowMapper(ReleaseDataSources.PeptideAtlas)));
+
+		Collections.sort(ds, DATA_SOURCE_COMPARATOR);
+
 		return ds;
 	}
 

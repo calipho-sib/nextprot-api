@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated //Use IsoformSpecificity instead
 public class AnnotationIsoformSpecificity implements Serializable {
 
 	private static final long serialVersionUID = 6722074138296019849L;

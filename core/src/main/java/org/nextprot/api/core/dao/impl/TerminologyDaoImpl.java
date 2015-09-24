@@ -2,6 +2,7 @@ package org.nextprot.api.core.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -11,6 +12,7 @@ import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -26,17 +28,23 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	
 	@Override
 	public Terminology findTerminologyByAccession(String accession) {
-		SqlParameterSource params = new MapSqlParameterSource("accession", accession);
+		Set<String> acs = new HashSet<String>();
+		acs.add(accession);
+		SqlParameterSource params = new MapSqlParameterSource("accessions", acs);
 		List<Terminology> terms = new NamedParameterJdbcTemplate(
-				dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-ac"), params, new DbTermRowMapper());
+				dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-acs"), params, new DbTermRowMapper());
 		
 		// TODO with Daniel: send appropriate exception if terms.size() > 1 => ambiguous accession
-		// TODO normally only database + accession is supposed to be unique !!!!
+		// TODO normally only terminology + accession is supposed to be unique !!!!
 		if (terms.size()==0)
 			return null;			
 		return terms.get(0);
 	}
 	
+	public List<Terminology> findTermByAccessionAndTerminology(String accession, String terminology) {
+		throw new RuntimeException("Not implemented");
+	}
+
 	
 	@Override
 	public List<Terminology> findTerminologyByAccessions(Set<String> accessions) {
@@ -88,8 +96,14 @@ public class TerminologyDaoImpl implements TerminologyDao {
 			term.setProperties(TerminologyUtils.convertToProperties(resultSet.getString("properties"), term.getId(), term.getAccession()));
 			term.setOntology(resultSet.getString("ontology"));
 			term.setAncestorAccession(resultSet.getString("ancestor"));
+			term.setChildAccession(resultSet.getString("children"));
 			term.setXrefs(TerminologyUtils.convertToXrefs(resultSet.getString("xref")));
 			return term;
 		}
+	}
+
+	@Override
+	public List<String> findTerminologyNamesList() {
+		return  new JdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("terminology-names"), String.class);
 	}
 }

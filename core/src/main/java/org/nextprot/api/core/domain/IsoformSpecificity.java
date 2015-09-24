@@ -18,7 +18,6 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 	@Deprecated
 	private String deprecatedIsoformName;
 	private String isoformMainName;
-	private String sortableName;
 	private String isoformAc;
 	
 	public void setIsoformAc(String isoformAc) {
@@ -28,6 +27,11 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 
 	private List<Pair<Integer, Integer>> positions;
 
+	/**
+	 * 
+	 * @param isoformName should be Iso 1
+	 * @param isoformAc should be NX_Q5VYM1-1
+	 */
 	public IsoformSpecificity(String isoformName, String isoformAc) {
 		this.isoformMainName = isoformName;
 		this.isoformAc = isoformAc;
@@ -40,21 +44,7 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 	}
 
 	public void setIsoformMainName(String isoformMainName) {
-		
 		this.isoformMainName = isoformMainName;
-		this.sortableName = isoformMainName; // by default: same as isoformMainName
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-		// special case for sortable name when name ends with numeric value
-		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-		if (isoformMainName != null && isoformMainName.startsWith("Iso ")) {
-			String nb = isoformMainName.substring(4);
-			try {
-				Integer.parseInt(nb);
-				while (nb.length()<3) nb = "0" + nb;
-				this.sortableName = "Iso "+ nb;
-			} 
-			catch (Exception e) { }
-		} 
 	}
 	
 	public String getIsoformMainName() {
@@ -105,16 +95,26 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 		return sb.toString();
 	}
 	
-	
-	public String getSortableName() {
-		return sortableName;
-	}
-	
-	
 	@Override
 	public int compareTo(IsoformSpecificity o) {
-		return this.getSortableName().compareTo(o.getSortableName());
+		String sn1 = buildSortableNameFromMainName(this.getIsoformMainName());
+		String sn2 = buildSortableNameFromMainName(o.getIsoformMainName());
+		return sn1.compareTo(sn2);
 	}
 
+	static String buildSortableNameFromMainName(String name) {
+		if (name==null) name="";
+		String sortableName = name; // by default: same as name
+		if (name.startsWith("Iso ")) {
+			String nb = name.substring(4);
+			try {
+				Integer.parseInt(nb);
+				while (nb.length()<3) nb = "0" + nb;
+				sortableName = "Iso "+ nb;
+			} 
+			catch (Exception e) { }
+		} 
+		return sortableName;
+	}
 
 }

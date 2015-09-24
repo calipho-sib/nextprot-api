@@ -12,10 +12,18 @@ publication:$publication.getMD5() a :Publication;
     :journal "$publication.cvJournal.name"^^xsd:string; 
 #end
     :volume "$publication.getVolume()"^^xsd:string;
+#if($publication.getIssue() && $publication.getIssue() != '')
     :issue "$publication.getIssue()"^^xsd:string; 
+#end
+#if($publication.getPublicationYear())
     :year "$publication.getPublicationYear()"^^xsd:string;
+#end
+#if($publication.getFirstPage() && $publication.getFirstPage() != '')
     :firstPage "$publication.getFirstPage()"^^xsd:string; 
+#end
+#if($publication.getLastPage() && $publication.getLastPage() != '')
     :lastPage "$publication.getLastPage()"^^xsd:string;
+#end
 #foreach($author in $publication.authors)
 #if($author.isPerson())
     :author[ a :Person;

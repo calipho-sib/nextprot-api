@@ -19,6 +19,7 @@ where pept_master.mapped_identifier_id = peptide.identifier_id
   and iso_master.mapped_identifier_id = pept_iso.reference_identifier_id 
   and iso_master.mapped_identifier_id = iso.identifier_id 
   and mp.annotation_id = pept_iso.annotation_id 
+  and pept_master.cv_quality_qualifier_id in (10,50) -- GOLD and SILVER only
   and prop.identifier_id=peptide.identifier_id and prop.cv_property_name_id in (:propNameIds) and prop.property_value='Y'
   and pept_master.reference_identifier_id = :id
  

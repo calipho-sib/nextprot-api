@@ -3,11 +3,11 @@
 		<peptide-mapping>
 			<peptide accession='$peptide.peptideUniqueName' database='neXtProt' is-proteotypic='$peptide.isProteotypic()' is-natural='$peptide.isNatural()'/> 
 ##			#if($peptide.properties && $peptide.properties.size() > 0) 													
-##				<properties>
+##				<property-list>
 ##					#foreach($prop in $peptide.properties)
-##						<property property-name="$prop.name" value="$prop.value"/>
+##						<property name="$prop.name" value="$prop.value"/>
 ##					#end
-##				</properties>
+##				</property-list>
 ##			#end
 			#set($target-isoform-list = $peptide.isoformSpecificity)
 			#parse('target-isoform-list.xml.vm')			

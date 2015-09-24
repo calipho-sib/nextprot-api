@@ -29,7 +29,11 @@ public class OWLAnnotation implements Serializable{
 	public String getLabel(){
 		return cat.getRdfLabel();
 	}
+	@Deprecated
 	public String getRdfTypeName(){
+		return cat.getApiTypeName();
+	}
+	public String getApiTypeName(){
 		return cat.getApiTypeName();
 	}
 	public AnnotationApiModel getParent() {

@@ -2,13 +2,22 @@ package org.nextprot.api.core.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.Tree;
+import org.nextprot.api.core.aop.InstrumentationAspect;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Terminology;
 //import org.nextprot.api.core.domain.TerminologyProperty;
 
 public class TerminologyUtils {
+
+	private static final Log LOGGER = LogFactory.getLog(TerminologyUtils.class);
 
 	public static List<Terminology.TermProperty> convertToProperties(String propliststring, Long termid, String termacc) {
 
@@ -22,7 +31,9 @@ public class TerminologyUtils {
 			// The splitter is ':=' since both ':' and '=' can occur alone within field
 			List<String> currprop = Arrays.asList(propertystring.split(":="));
 			if(currprop.size() != 2) {
-			   System.err.println("Problem with property in " + termacc + ": " + propertystring);
+			   String msg = "Problem with property in " + termacc + ": " + propertystring + " propString: " + propertystring;
+			   LOGGER.warn(msg);
+			   System.err.println(msg);
 			   continue;
 			}
 			Terminology.TermProperty property = new Terminology.TermProperty();
@@ -125,4 +136,55 @@ public class TerminologyUtils {
 		}
 		return sameas;
 	}
+
+	public static Map<String, Terminology> convertToTerminologyMap(List<Terminology> terms) {
+		Map<String, Terminology> termMap = new HashMap<>();
+		for(Terminology term: terms){
+			termMap.put(term.getAccession(), term);
+		}
+		return termMap;
+	}
+
+		
+	public static List<Tree<Terminology>> convertTerminologyListToTreeList(List<Terminology> terms, final int maxDepth) {
+		
+		List<Tree<Terminology>> trees = new ArrayList<Tree<Terminology>>();
+		
+		for(Terminology term: terms){
+			if((term.getAncestorAccession() == null) || (term.getAncestorAccession().isEmpty())){
+				trees.add(new Tree<Terminology>(term));
+			}
+		}
+		
+		for(Tree<Terminology> tree : trees){
+			populateTree(tree.getRoot(), convertToTerminologyMap(terms), 0, maxDepth);
+		}
+		
+		return trees;
+		
+	}
+	
+	static void populateTree(Tree.Node<Terminology> currentNode, Map<String, Terminology> termMap, int depth, final int maxDepth) {
+
+		if(depth > maxDepth) return;
+
+		if(depth > 100) throw new NextProtException("Getting stuck in building graph");
+		
+		if(currentNode.getValue() == null || currentNode.getValue().getChildAccession() == null || currentNode.getValue().getChildAccession().isEmpty()) {
+			return;
+		}
+		
+		for(String childAccession : currentNode.getValue().getChildAccession()){
+			Terminology childTerm = termMap.get(childAccession);
+			if(currentNode.getChildren() == null){
+				currentNode.setChildren(new ArrayList<Tree.Node<Terminology>>());
+			}
+			Tree.Node<Terminology> childNode = new Tree.Node<Terminology>(childTerm);
+			currentNode.getChildren().add(childNode);
+			
+			populateTree(childNode, termMap, depth+1, maxDepth);
+		}
+		
+	}
+
 }

@@ -7,91 +7,91 @@
 #if($entry.overview.proteinNames)
     <protein-name-list>
 ## ----------------- RECOMMENDED-NAME ------------------------------
-<recommended-name>
+        <recommended-name>
     #set ( $recommendedName = $entry.getOverview().getRecommendedProteinName() )
-    <protein-name qualifier="#if($recommendedName.getQualifier())$recommendedName.getQualifier()#end">$recommendedName.name</protein-name>
+            <protein-name qualifier="#if($recommendedName.getQualifier())$recommendedName.getQualifier()#end">$recommendedName.name</protein-name>
 	#if($recommendedName.synonyms)
 	    #foreach($synName in $recommendedName.synonyms)
-	    <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
+	        <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
 	    #end
 	#end
-</recommended-name>
+        </recommended-name>
 ## ----------------- ALTERNATIVE-NAMES (LIST) ------------------------------
-<alternative-name-list>
+        <alternative-name-list>
     #foreach($entityName in $entry.overview.alternativeProteinNames)
-        <alternative-name>
-	        <protein-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</protein-name>
+            <alternative-name>
+                <protein-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</protein-name>
 			#if($entityName.synonyms)
 			    #foreach($synName in $entityName.synonyms)
 			    <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
 			    #end
 			#end
-        </alternative-name>
+            </alternative-name>
     #end
-</alternative-name-list>
-</protein-name-list>
+        </alternative-name-list>
+    </protein-name-list>
 #end
 
 ## ----------------- CLEAVED REGION NAMES ------------------------------
 #if($entry.overview.cleavedRegionNames)
-<chain-list> 
+    <chain-list>
     #foreach($entityName in $entry.overview.cleavedRegionNames)
-    <chain>
-        <recommended-name>
-	        <chain-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</chain-name>
-	   </recommended-name>
+        <chain>
+            <recommended-name>
+	            <chain-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</chain-name>
+            </recommended-name>
 	   #if($entityName.synonyms)
-	    <alternative-name-list>
+	        <alternative-name-list>
 	    #foreach($synonym in $entityName.synonyms)
-	        <alternative-name>
-		        <chain-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</chain-name>
-		   </alternative-name>
+	            <alternative-name>
+		            <chain-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</chain-name>
+                </alternative-name>
 		#end
-	    </alternative-name-list>
+	        </alternative-name-list>
 	    #end
-    </chain>
+        </chain>
 	#end
-</chain-list> 
+    </chain-list>
 #end
 
 ## ----------------- FUNCTIONAL REGION NAMES ---------------------------
 #if($entry.overview.functionalRegionNames)
-<region-list> 
+    <region-list>
     #foreach($entityName in $entry.overview.functionalRegionNames)
-    <region>
-        <recommended-name>
-	        <region-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</region-name>
-	   </recommended-name>
+        <region>
+            <recommended-name>
+	            <region-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</region-name>
+	        </recommended-name>
 	   #if($entityName.synonyms)
-	    <alternative-name-list>
+	        <alternative-name-list>
 	    #foreach($synonym in $entityName.synonyms)
-	        <alternative-name>
-		        <region-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</region-name>
-		   </alternative-name>
+	            <alternative-name>
+		            <region-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</region-name>
+		        </alternative-name>
 		#end
-	    </alternative-name-list>
+	        </alternative-name-list>
 	    #end
-    </region>
+        </region>
 	#end
-</region-list> 
+    </region-list>
 #end
 
 ## ----------------- GENE NAMES ----------------------------------------
 #if($entry.overview.geneNames)
-<gene-list>
+    <gene-list>
     #foreach($entityName in $entry.overview.geneNames)
         <gene>
             <gene-name type="primary">$entityName.name</gene-name>
             #foreach($synonym in $entityName.synonyms)
             #if($synonym.category.equals('ORF'))
-		        <gene-name type="ORF">$synonym.name</gene-name>
+                <gene-name type="ORF">$synonym.name</gene-name>
 		    #else
 		        <gene-name type="synonym">$synonym.name</gene-name>
             #end
             #end
         </gene>
     #end
-</gene-list>
+    </gene-list>
 #end
 ## ----------------- FAMILIES ------------------------------------------
 #if($entry.overview.families.size() > 0)
@@ -110,12 +110,12 @@
     </biophysicochemical-properties>
 #end
 ## ----------------- HISTORY ----------------------------------------
-<history>
+    <history>
     #if($entry.overview.history.nextprotIntegrationDate)
-        <history-entry database="neXtProt" integrated="$entry.overview.history.getFormattedNextprotIntegrationDate()" updated="$entry.overview.history.getFormattedNextprotUpdateDate()"/>
+        <entry-history database="neXtProt" integrated="$entry.overview.history.getFormattedNextprotIntegrationDate()" updated="$entry.overview.history.getFormattedNextprotUpdateDate()"/>
     #end
     #if($entry.overview.history.uniprotIntegrationDate)
-        <history-entry database="UniProtKB" integrated="$entry.overview.history.getFormattedUniprotIntegrationDate()" updated="$entry.overview.history.getFormattedUniprotUpdateDate()" version="$entry.overview.history.uniprotVersion" last-sequence-update="$entry.overview.history.lastSequenceUpdate" sequence-version="$entry.overview.history.sequenceVersion"/>
+        <entry-history database="UniProtKB" integrated="$entry.overview.history.getFormattedUniprotIntegrationDate()" updated="$entry.overview.history.getFormattedUniprotUpdateDate()" version="$entry.overview.history.uniprotVersion" last-sequence-update="$entry.overview.history.lastSequenceUpdate" sequence-version="$entry.overview.history.sequenceVersion"/>
     #end
-</history>
+    </history>
 </overview>
