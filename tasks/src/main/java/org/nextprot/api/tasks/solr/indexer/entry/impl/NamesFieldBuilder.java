@@ -24,7 +24,7 @@ public class NamesFieldBuilder extends FieldBuilder {
 		Overview ovv = entry.getOverview();
 		
 		//TODO Daniel repeated code in CvFieldBuilder
-		Set <String> cv_acs = new HashSet<String>();
+		/*Set <String> cv_acs = new HashSet<String>();
 		for (Annotation currannot : entry.getAnnotations()) {
 			String category = currannot.getCategory();
 			if(!category.equals("tissue specificity")) {
@@ -33,7 +33,7 @@ public class NamesFieldBuilder extends FieldBuilder {
 					cv_acs.add(cvac); 
 				}
 			}
-		}
+		}*/
 
 		
 		List <EntityName> altnames = null;
@@ -43,7 +43,8 @@ public class NamesFieldBuilder extends FieldBuilder {
 				List <EntityName> paltnames = altname.getSynonyms();
 				if(paltnames != null )
 				for (EntityName paltfullname : paltnames) {
-				    addField(Fields.ALTERNATIVE_NAMES, paltfullname.getName());
+					if(!paltfullname.getType().equals("enzyme name")) // Enzymes are delt with elsewhere
+						addField(Fields.ALTERNATIVE_NAMES, paltfullname.getName());
 				    List <EntityName> paltshortnames = paltfullname.getSynonyms();
 				    if(paltshortnames != null )
 				    for (EntityName paltshortname : paltshortnames) {
@@ -55,6 +56,7 @@ public class NamesFieldBuilder extends FieldBuilder {
 		altnames = ovv.getAdditionalNames(); // special names (INN, allergens)
 		if(altnames != null )
 			for (EntityName altname : altnames) {
+				//System.err.println(altname.getName());
 				addField(Fields.ALTERNATIVE_NAMES, altname.getName());
 			}
 		
@@ -81,8 +83,11 @@ public class NamesFieldBuilder extends FieldBuilder {
 				List <EntityName> genesynonames = currname.getSynonyms();
 				if(genesynonames != null)
 				for (EntityName genesynoname : genesynonames) {
-				addField(Fields.ALTERNATIVE_GENE_NAMES, genesynoname.getName());
-			    //System.err.println("syn: " + genesynoname.getName()); 
+					if(genesynoname.getType().equals("open reading frame"))
+						addField(Fields.ORF_NAMES, genesynoname.getName());
+					else
+						addField(Fields.ALTERNATIVE_GENE_NAMES, genesynoname.getName());
+			    //System.err.println(genesynoname.getName() + " syn type: " + genesynoname.getType()); 
 				}
 			}
 		}
