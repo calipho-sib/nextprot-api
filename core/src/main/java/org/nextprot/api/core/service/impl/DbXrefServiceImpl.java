@@ -152,7 +152,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 	}
 
 	@Override
-	@Cacheable("xrefs-as-annot")
 	/** Convert dbxrefs of type XrefAnnotationMapping into annotation for the given entry */
 	public List<Annotation> findDbXrefsAsAnnotationsByEntry(String entryName) {
 

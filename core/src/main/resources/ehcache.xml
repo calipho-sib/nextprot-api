@@ -84,10 +84,6 @@
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
 		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
-	<cache name="xrefs-as-annot" overflowToOffHeap="false" overflowToDisk="true"
-		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
-		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
-	</cache>
 	<cache name="keywords" overflowToOffHeap="false" overflowToDisk="true"
 		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
 		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
