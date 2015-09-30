@@ -326,10 +326,11 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	private Query buildQuery(String indexName, String configurationName, QueryRequest request) {
-		// Logger.debug("calling buildQuery() with indexName=" + indexName +
-		// ", configName=" + configurationName + ", request=" +
-		// request.toPrettyString());
-		return buildQuery(indexName, configurationName, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
+		Logger.debug("calling buildQuery() with indexName=" + indexName + ", configName=" + configurationName) ;
+		Logger.debug("\n--------------\nQueryRequest:\n--------------\n"+request.toPrettyString()+"\n--------------");
+		Query q = buildQuery(indexName, configurationName, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
+		Logger.debug("\n--------------\nQuery:\n--------------\n" + q.toPrettyString() + "\n--------------");
+		return q;
 	}
 
 	private Query buildQuery(String indexName, String configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
