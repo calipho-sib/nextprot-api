@@ -18,11 +18,9 @@ import org.nextprot.api.tasks.solr.indexer.entry.impl.XrefFieldBuilder;
 public class xrefFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Test
-	public void testIdentifiers() {
+	public void testXrefs() {
 
-		/*for(int i=0; i < 10; i++){
-			testXrefs(getEntry(i));
-		} */
+		//for(int i=0; i < 10; i++){ testXrefs(getEntry(i)); } 
 		
 		Entry entry = getEntry("NX_P20592");
 		testXrefs(entry);

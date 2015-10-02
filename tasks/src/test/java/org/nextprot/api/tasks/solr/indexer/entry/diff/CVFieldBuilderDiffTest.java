@@ -21,13 +21,11 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 	@Test
 	public void testCVs() {
 
-		/*for(int i=0; i < 10; i++){
-			testCVs(getEntry(i)); 
-		} */
+		for(int i=0; i < 10; i++){ 	testCVs(getEntry(i)); } 
 		
 		//Entry entry = getEntry("NX_P20592");
-		Entry entry = getEntry("NX_P14060");
-		testCVs(entry);
+		//Entry entry = getEntry("NX_P14060");
+		//testCVs(entry);
 	
 	}
 
@@ -80,9 +78,13 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 		Assert.assertEquals(expectedCVancestors.size(), CvancestorsSet.size());
 		
 		// CV_SYNONYMS
-		Set<String> expectedSynonyms = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.CV_SYNONYMS));
-		Set<String> SynonymsSet = new TreeSet<String>(cfb.getFieldValue(Fields.CV_SYNONYMS, List.class));
-		Assert.assertEquals(expectedSynonyms.size(), SynonymsSet.size());
+		List<String> synolist = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.CV_SYNONYMS);
+		if(synolist != null)  {
+			Set<String> expectedSynonyms = new TreeSet<String>(synolist);
+			Set<String> SynonymsSet = new TreeSet<String>(cfb.getFieldValue(Fields.CV_SYNONYMS, List.class));
+			//Assert.assertEquals(expectedSynonyms.size(), SynonymsSet.size());
+			Assert.assertEquals(expectedSynonyms, SynonymsSet);
+		}
 		
 		// CV_NAMES
 		Set<String> expectedCVNames = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.CV_NAMES));
@@ -94,7 +96,7 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 			System.err.println(expectedCVNames);
 		}
 		
-		// EC_NAME -> current solr impementation doesn't index ECs for multifunctional enzymes (eg:NX_P14060) discuss with PAM
+		// EC_NAME -> current solr implementation doesn't index ECs for multifunctional enzymes (eg:NX_P14060) discuss with PAM
 		String expected = (String) getValueForFieldInCurrentSolrImplementation(entryName, Fields.EC_NAME);
 		if(expected != null)  {
 			String ECsString = cfb.getFieldValue(Fields.EC_NAME, String.class);
