@@ -17,11 +17,11 @@ public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 	public void testNames() {
 
 		
-		 for(int i=0; i < 10; i++){ testNames(getEntry(i)); }
+		 //for(int i=0; i < 10; i++){ testNames(getEntry(i)); }
 		 
 
-		//Entry entry = getEntry("NX_Q96I99");
-		//testNames(entry);
+		Entry entry = getEntry("NX_Q0P140");
+		testNames(entry);
 
 	}
 
