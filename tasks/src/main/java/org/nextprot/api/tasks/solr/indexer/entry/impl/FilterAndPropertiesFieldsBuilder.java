@@ -35,7 +35,7 @@ public class FilterAndPropertiesFieldsBuilder extends FieldBuilder{
 		if(props.getFiltermutagenesis()) filters += "filtermutagenesis ";
 		if(props.getFilterproteomics()) filters += "filterproteomics ";
 		if(filters.length() > 0) {
-			addField(Fields.FILTERS, filters);
+			addField(Fields.FILTERS, filters.trim());
 		}
 		addField(Fields.AA_LENGTH, props.getMaxSeqLen()); // max length among all isoforms
 				

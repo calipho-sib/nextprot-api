@@ -77,21 +77,22 @@ public class NamesFieldBuilder extends FieldBuilder {
 		List <EntityName> genenames = ovv.getGeneNames();
 		if(genenames != null ) {
 			String maingenename = ovv.getMainGeneName(); // TODO: check for multigene entries
-			addField(Fields.RECOMMENDED_GENE_NAMES, maingenename);
-			addField(Fields.RECOMMENDED_GENE_NAMES_S, maingenename);
+			if(maingenename != null); {
+				addField(Fields.RECOMMENDED_GENE_NAMES, maingenename);
+				addField(Fields.RECOMMENDED_GENE_NAMES_S, maingenename);
+				}
 			for (EntityName currname : genenames) {
 				List <EntityName> genesynonames = currname.getSynonyms();
 				if(genesynonames != null)
 				for (EntityName genesynoname : genesynonames) {
-					if(genesynoname.getType().equals("open reading frame"))
+					if(genesynoname.getType().equals("open reading frame")) // Pb: genesynonames is empty when there is no official gene name (NX_Q0P140/HSD52)
 						addField(Fields.ORF_NAMES, genesynoname.getName());
 					else
 						addField(Fields.ALTERNATIVE_GENE_NAMES, genesynoname.getName());
-			    //System.err.println(genesynoname.getName() + " syn type: " + genesynoname.getType()); 
-				}
+				} else System.err.println("no genesynonames");
 			}
 		}
-		//else System.err.println("no gene names for: " + id);
+		//else System.err.println("no gene names for: " + entry.getUniqueName());
 		
 		List<Family> families = ovv.getFamilies();
 		String allfamilies = null;
@@ -102,7 +103,7 @@ public class NamesFieldBuilder extends FieldBuilder {
 				allfamilies += " | " + family.getName();
 			}
 		}
-		if (allfamilies == null) {
+		if (allfamilies != null) {
 			addField(Fields.FAMILY_NAMES, allfamilies);
 			addField(Fields.FAMILY_NAMES_S, allfamilies);
 		}

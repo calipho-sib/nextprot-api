@@ -92,8 +92,8 @@ public class CVFieldBuilder extends FieldBuilder {
 			cvac_cnt++;
 			cv_acs.add(currenzyme.getAccession());
 			addField(Fields.CV_NAMES, currenzyme.getName());
-			ec_names += "EC " + currenzyme.getAccession() + ", ";
-			
+			if(ec_names != "") ec_names += ", ";
+			ec_names += "EC " + currenzyme.getAccession();
 			List <String> synonyms = currenzyme.getSynonyms();
 			if(synonyms != null)
 			   for (String synonym : synonyms) {
