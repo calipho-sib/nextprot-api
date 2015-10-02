@@ -1,5 +1,6 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -81,15 +82,18 @@ public class NamesFieldBuilder extends FieldBuilder {
 				addField(Fields.RECOMMENDED_GENE_NAMES, maingenename);
 				addField(Fields.RECOMMENDED_GENE_NAMES_S, maingenename);
 				}
+			
+			List <String> orfnames = getORFNames(ovv);
+			if(orfnames != null) for( String orfname : orfnames){ addField(Fields.ORF_NAMES, orfname);}
+			
 			for (EntityName currname : genenames) {
+				
 				List <EntityName> genesynonames = currname.getSynonyms();
 				if(genesynonames != null)
 				for (EntityName genesynoname : genesynonames) {
-					if(genesynoname.getType().equals("open reading frame")) // Pb: genesynonames is empty when there is no official gene name (NX_Q0P140/HSD52)
-						addField(Fields.ORF_NAMES, genesynoname.getName());
-					else
+					if(!genesynoname.getType().equals("open reading frame")) // Pb: genesynonames is empty when there is no official gene name (NX_Q0P140/HSD52)
 						addField(Fields.ALTERNATIVE_GENE_NAMES, genesynoname.getName());
-				} else System.err.println("no genesynonames");
+				}
 			}
 		}
 		//else System.err.println("no gene names for: " + entry.getUniqueName());
@@ -110,6 +114,22 @@ public class NamesFieldBuilder extends FieldBuilder {
 
 		//TODO ORF NAMES are missing
 	
+	}
+	
+	static List<String> getORFNames (Overview ovv){
+		
+		List<String> orfnames = new ArrayList<String>();
+		for(EntityName gn : ovv.getGeneNames()){
+			if(gn.getCategory().equals("ORF")){
+				orfnames.add(gn.getName());
+			}
+			List<EntityName> synonyms = gn.getSynonyms();
+			if(synonyms != null)
+				for(EntityName syn: gn.getSynonyms()){
+					if(syn.getCategory().equals("ORF"))	orfnames.add(syn.getName());
+					}
+		}
+		return orfnames;
 	}
 
 	@Override

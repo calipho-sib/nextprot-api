@@ -22,10 +22,12 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 			String category = currannot.getCategory();
 			if (category.equals("function")){
 				addField(Fields.FUNCTION_DESC, currannot.getDescription());
-			}else {
+			}
+			// We also should exclude uninformative category 'sequence conflict'
+			else if(!currannot.getCategory().equals("tissue specificity")) {//System.err.println(currannot.getCategory());
 				String desc = currannot.getDescription();
 				if (desc != null) {
-					addField(Fields.ANNOTATIONS, desc);
+					addField(Fields.ANNOTATIONS, currannot.getCategory() + ": " + desc);
 				}
 			}
 		}
