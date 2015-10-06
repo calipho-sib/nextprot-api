@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.junit.Test;
 import org.nextprot.api.commons.service.MasterIdentifierService;
@@ -29,7 +31,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 			//Entry entry = getEntry(i);
 			Entry entry = getEntry("NX_P02751");
 			System.out.println(entry.getUniqueName());
-			testFunctionalDesc(entry);
+			//testFunctionalDesc(entry);
 			testAnnotations(entry);
 		}
 		
@@ -70,19 +72,33 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 			String aux = getValueFromRawData(s,"description");
 			if(aux != null) //System.err.println("extracting desc from: " + s);
 			  expectedValues.add(aux);
+			aux = getValueFromRawData(s,"an_synonyms");
+			if(aux != null) //System.err.println("extracting an_synonym from: " + s);
+			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			aux = getValueFromRawData(s,"sequence_variant_mutation_aa");
+			if(aux != null) //System.err.println("extracting an_synonym from: " + s);
+			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
 		}
 
-		Collections.sort(annotations);
-		Collections.sort(expectedValues);
+		Set<String> expectedValues2 = new TreeSet<String>(expectedValues);
+		Set<String> annotations2 = new TreeSet<String>(annotations);
+		Set<String> annotations3 = new TreeSet<String>(annotations);
+		//Collections.sort(annotations);
+		//Collections.sort(expectedValues);
 
+		annotations2.removeAll(expectedValues2);
+		System.err.println("Only in current (" + annotations2.size() + ") : " + annotations2);
+
+		expectedValues2.removeAll(annotations3);
+		System.err.println("Only in previous solr (" + expectedValues2.size() + ") : " + expectedValues2);
 		//assertEquals(annotations.size(), expectedValues.size());
 
 		// TODO remove "reference proteome", unless already in stopwords
 		for (int i = 0; i < annotations.size(); i++) {
-			System.err.println(annotations.get(i));
+			//System.err.println(annotations.get(i));
 			//assertEquals(annotations.get(i), expectedValues.get(i));
 		}
-		System.err.println(expectedValues);
+		//System.err.println(expectedValues);
 		assertEquals(expectedValues.size(), annotations.size());
 	}
 
@@ -90,6 +106,12 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	public void testCleanRawData() {
 		String result = getValueFromRawData("<p><b>anno_name : </b>caution</p><p><b>anno_qualname : </b>GOLD</p><p><b>description : </b>Product of a dubious CDS prediction.</p>","description");
 		assertEquals("Product of a dubious CDS prediction.", result);
+	}
+
+	@Test
+	public void testSortedValueFromPipeSeparatedField() {
+		String result = getSortedValueFromPipeSeparatedField("cosmic:COSM4859577 | cosmic:COSM1149023 | cosmic:COSM720040");
+		assertEquals("cosmic:COSM1149023 | cosmic:COSM4859577 | cosmic:COSM720040", result);
 	}
 
 }
