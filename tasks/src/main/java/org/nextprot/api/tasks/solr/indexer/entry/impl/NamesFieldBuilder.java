@@ -87,11 +87,10 @@ public class NamesFieldBuilder extends FieldBuilder {
 			if(orfnames != null) for( String orfname : orfnames){ addField(Fields.ORF_NAMES, orfname);}
 			
 			for (EntityName currname : genenames) {
-				
 				List <EntityName> genesynonames = currname.getSynonyms();
 				if(genesynonames != null)
 				for (EntityName genesynoname : genesynonames) {
-					if(!genesynoname.getType().equals("open reading frame")) // Pb: genesynonames is empty when there is no official gene name (NX_Q0P140/HSD52)
+					if(!genesynoname.getType().equals("open reading frame"))
 						addField(Fields.ALTERNATIVE_GENE_NAMES, genesynoname.getName());
 				}
 			}
@@ -117,7 +116,6 @@ public class NamesFieldBuilder extends FieldBuilder {
 	}
 	
 	static List<String> getORFNames (Overview ovv){
-		
 		List<String> orfnames = new ArrayList<String>();
 		for(EntityName gn : ovv.getGeneNames()){
 			if(gn.getCategory().equals("ORF")){
