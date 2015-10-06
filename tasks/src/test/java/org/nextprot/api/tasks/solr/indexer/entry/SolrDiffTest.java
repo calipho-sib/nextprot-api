@@ -2,6 +2,9 @@ package org.nextprot.api.tasks.solr.indexer.entry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.Arrays;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -97,5 +100,18 @@ public class SolrDiffTest extends CoreUnitBaseTest implements InitializingBean {
 			}
 		}
 		return null;
+	}
+
+	public static String getSortedValueFromPipeSeparatedField(String pipefield) {
+		String aux = "";
+
+		if(!pipefield.contains("|")) return pipefield;
+
+		SortedSet<String> sset = new TreeSet<String>(Arrays.asList(pipefield.split(" \\| ")));
+		for(String elem: sset) {
+			if(aux != "") aux += " | ";
+			aux += elem;
+		}
+		return(aux);
 	}
 }
