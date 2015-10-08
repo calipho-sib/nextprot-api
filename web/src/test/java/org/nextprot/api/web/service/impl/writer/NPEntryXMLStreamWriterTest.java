@@ -37,6 +37,7 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
     }
 
     @Test
+    //@Ignore //TODO change this for more maintenable code
     public void testWriteXML() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -152,8 +153,8 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
         		"    </copyright>\n" + 
         		"</nextprot-export>\n";
 
-        XMLAssert.assertEquals(expectedXmlOutput, out.toString());
-        //Assert.assertEquals(expectedXmlOutput, out.toString());
+        //XMLAssert.assertEquals(expectedXmlOutput, out.toString());
+        Assert.assertEquals(expectedXmlOutput, out.toString());
     }
 
     @Test
