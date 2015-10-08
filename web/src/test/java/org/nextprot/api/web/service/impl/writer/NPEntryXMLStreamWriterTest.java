@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Arrays;
 
+import org.custommonkey.xmlunit.XMLAssert;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,7 +37,6 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
     }
 
     @Test
-    @Ignore //TODO change this for more maintenable code
     public void testWriteXML() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -152,7 +152,8 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
         		"    </copyright>\n" + 
         		"</nextprot-export>\n";
 
-        Assert.assertEquals(expectedXmlOutput, out.toString());
+        XMLAssert.assertEquals(expectedXmlOutput, out.toString());
+        //Assert.assertEquals(expectedXmlOutput, out.toString());
     }
 
     @Test
