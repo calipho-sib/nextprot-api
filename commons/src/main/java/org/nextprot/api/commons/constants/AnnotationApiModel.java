@@ -46,6 +46,7 @@ public enum AnnotationApiModel implements Serializable {
 	MEDICAL(-13, "Medical", "medical", "Medical", GENERAL_ANNOTATION),
 	KEYWORD(-14, "Keyword", "keyword", "Keywords", GENERAL_ANNOTATION),
 
+
 	//TEST1(-1111,"test1","test1","test1", new OWLAnnotationCategory[]{POSITIONAL_ANNOTATION, GENERAL_ANNOTATION}),
 
 	// ENZYME_CLASSIFICATION and FAMILY_NAME temporarily appear in the entry overview via another mechanism
@@ -115,12 +116,14 @@ public enum AnnotationApiModel implements Serializable {
 	BETA_STRAND(1026, "beta strand", "betaStrand", "beta strand", SECONDARY_STRUCTURE),
 
 	VARIANT(1027, "sequence variant", "variant", "variant", POSITIONAL_ANNOTATION),
-	VARIANT_INFO(1045, "polymorphism", "variantInfo", "VariantInfo", POSITIONAL_ANNOTATION),
 
 	MUTAGENESIS(1028, "mutagenesis site", "mutagenesis", "mutagenesis", POSITIONAL_ANNOTATION),
 	SEQUENCE_CONFLICT(1029, "sequence conflict", "sequenceConflict", "sequence conflict", POSITIONAL_ANNOTATION),
 
 	// instances of general annotations
+	
+	VARIANT_INFO(1045, "polymorphism", "variantInfo", "VariantInfo", GENERAL_ANNOTATION),
+
 	INDUCTION(1042, "induction", "induction", "induction", GENERAL_ANNOTATION),
 	//BIOTECHNOLOGY(1050,"biotechnology", "biotechnology", "biotechnology", new OWLAnnotationCategory[]{GENERAL_ANNOTATION }),  // OK: only 5 annotations exist, so moved to miscellaneous
 	MISCELLANEOUS(1052, "miscellaneous", "miscellaneous", "miscellaneous", GENERAL_ANNOTATION),
