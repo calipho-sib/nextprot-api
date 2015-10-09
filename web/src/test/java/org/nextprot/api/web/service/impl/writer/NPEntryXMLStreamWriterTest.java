@@ -1,17 +1,19 @@
 package org.nextprot.api.web.service.impl.writer;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
-import org.nextprot.api.web.utils.XMLUnitUtils;
-import org.w3c.dom.NodeList;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
+import org.nextprot.api.web.utils.XMLUnitUtils;
+import org.w3c.dom.NodeList;
 
 /**
  * Created by fnikitin on 12/08/15.
@@ -35,6 +37,7 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
     }
 
     @Test
+    //@Ignore //TODO change this for more maintenable code
     public void testWriteXML() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -150,6 +153,7 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
         		"    </copyright>\n" + 
         		"</nextprot-export>\n";
 
+        //XMLAssert.assertEquals(expectedXmlOutput, out.toString());
         Assert.assertEquals(expectedXmlOutput, out.toString());
     }
 
