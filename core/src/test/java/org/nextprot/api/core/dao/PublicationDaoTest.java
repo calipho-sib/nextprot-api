@@ -20,7 +20,7 @@ public class PublicationDaoTest extends CoreUnitBaseTest {
 	@Test
 	public void testFindSortedPublicationsByMasterId() {
 		List<Publication> publications = this.publicationDao.findSortedPublicationsByMasterId(100L);
-		assertEquals(6, publications.size()); // if we exclude PIR pub - entry associations
+		//assertEquals(6, publications.size()); // if we exclude PIR pub - entry associations
 		assertEquals(7, publications.size()); // if we include PIR pub - entry associations
 	}
 
