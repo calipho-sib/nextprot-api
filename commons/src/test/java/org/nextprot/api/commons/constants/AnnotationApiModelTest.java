@@ -356,7 +356,7 @@ public class AnnotationApiModelTest {
 				"PositionalAnnotation -- DomainInfo",
 				"PositionalAnnotation -- NonConsecutiveResidue",
 				"PositionalAnnotation -- Mutagenesis",
-				"PositionalAnnotation -- VariantInfo"
+				"GeneralAnnotation -- VariantInfo"
 		};
 
 		String export = AnnotationApiModel.exportHierarchyAsGraphDot();
