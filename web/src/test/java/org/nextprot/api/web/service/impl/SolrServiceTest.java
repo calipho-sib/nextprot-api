@@ -70,8 +70,8 @@ public class SolrServiceTest extends WebUnitBaseTest {
 		// we should ALSO get some results
 		assertTrue(numFound>0); 
     }
+	
 	@Test
-
 	public void shoulReturnSomeTermsWhenStopWordsAreIncludedInQuery() throws Exception {
     	QueryRequest qr;
     	Query q;
@@ -96,5 +96,6 @@ public class SolrServiceTest extends WebUnitBaseTest {
 		// we should ALSO get some results
 		assertTrue(numFound>0); 
     }
+
 
 }
