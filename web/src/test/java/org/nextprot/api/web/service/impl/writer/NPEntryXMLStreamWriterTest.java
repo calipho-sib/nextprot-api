@@ -151,8 +151,7 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
         		"    </copyright>\n" + 
         		"</nextprot-export>\n";
 
-        XMLAssert.assertEquals(expectedXmlOutput, out.toString());
-        //Assert.assertEquals(expectedXmlOutput, out.toString());
+        XMLAssert.assertXMLEqual(expectedXmlOutput, out.toString());
     }
 
     @Test
