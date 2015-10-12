@@ -90,19 +90,7 @@ public class StringCaseFormatter {
         Matcher matcher = DELIMITOR_PATTERN.matcher(inputString);
 
         // Do nothing if inputString does not contains delimitors
-        if (!matcher.find()) {
-
-        	if(firstLetterFirstWordInLowerCase){
-            	return inputString.toLowerCase();
-        	}else {
-        		
-        		String result = "";
-        		result += inputString.substring(0, 1).toUpperCase();
-        		result += inputString.substring(1).toLowerCase();
-        		return result;
-        		
-        	}
-        }
+        if (!matcher.find()) return inputString;
 
         StringBuilder sb = new StringBuilder(inputString.length());
 

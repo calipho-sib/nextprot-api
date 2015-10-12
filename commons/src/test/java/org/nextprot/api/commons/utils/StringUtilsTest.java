@@ -31,30 +31,6 @@ public class StringUtilsTest {
     }
     
     @Test
-    public void testToCamelCaseAllCapital() {
-        String cc = StringUtils.toCamelCase("PUBLICATION", true);
-        Assert.assertEquals("publication", cc);
-    }
-    
-    @Test
-    public void testToCamelCaseAllCapitalFalse() {
-        String cc = StringUtils.toCamelCase("PUBLICATION", false);
-        Assert.assertEquals("Publication", cc);
-    }
-
-    @Test
-    public void testToCamelCaseAllLowerTrue() {
-        String cc = StringUtils.toCamelCase("publication", true);
-        Assert.assertEquals("publication", cc);
-    }
-
-    @Test
-    public void testToCamelCaseAllLowerFalse() {
-        String cc = StringUtils.toCamelCase("publication", false);
-        Assert.assertEquals("Publication", cc);
-    }
-
-    @Test
     public void testSlugReplaceWSPunctuations() {
 
         String cc = StringUtils.slug("nextprot: anatomy;cv");
