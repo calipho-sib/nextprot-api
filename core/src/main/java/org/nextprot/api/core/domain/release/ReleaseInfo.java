@@ -3,13 +3,22 @@ package org.nextprot.api.core.domain.release;
 import java.io.Serializable;
 import java.util.List;
 
-public class ReleaseContents implements Serializable{
+public class ReleaseInfo implements Serializable{
 
 	private static final long serialVersionUID = 2368364380055302455L;
 
 	private String databaseRelease;
 	private String apiRelease;
 	private List<ReleaseContentsDataSource> datasources;
+	private List<ReleaseStatsTag> tagStatistics;
+	
+	public List<ReleaseStatsTag> getTagStatistics() {
+		return tagStatistics;
+	}
+
+	public void setTagStatistics(List<ReleaseStatsTag> tagStatistics) {
+		this.tagStatistics = tagStatistics;
+	}
 
 	public String getDatabaseRelease() {
 		return databaseRelease;

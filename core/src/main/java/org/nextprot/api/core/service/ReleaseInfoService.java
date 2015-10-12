@@ -1,9 +1,8 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.core.domain.release.ReleaseContents;
+import org.nextprot.api.core.domain.release.ReleaseInfo;
 
 public interface ReleaseInfoService {
 
-	public ReleaseContents findReleaseContents();
-
+	public ReleaseInfo findReleaseInfo();
 }
