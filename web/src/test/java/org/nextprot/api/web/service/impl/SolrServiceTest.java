@@ -1,16 +1,12 @@
 package org.nextprot.api.web.service.impl;
 
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SearchResult;
-import org.nextprot.api.solr.SolrConfiguration;
-import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.solr.*;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.junit.Assert.assertTrue;
 
 public class SolrServiceTest extends WebUnitBaseTest {
 
@@ -29,7 +25,7 @@ public class SolrServiceTest extends WebUnitBaseTest {
     	qr.setQuery("polo like");
     	q = queryBuilderService.buildQueryForSearch(qr, "publication");
     	result = service.executeQuery(q);
-		numFound = result.getNumFound();
+		numFound = result.getFound();
 		
 		// we should get some results
 		assertTrue(numFound>0); 
@@ -38,7 +34,7 @@ public class SolrServiceTest extends WebUnitBaseTest {
     	qr.setQuery("polo like in the of");
     	q = queryBuilderService.buildQueryForSearch(qr, "publication");
     	result = service.executeQuery(q);
-		numFound = result.getNumFound();
+		numFound = result.getFound();
 		
 		// we should ALSO get some results
 		assertTrue(numFound>0); 
@@ -56,7 +52,7 @@ public class SolrServiceTest extends WebUnitBaseTest {
     	qr.setQuery("insulin");
     	q = queryBuilderService.buildQueryForSearch(qr, "entry");
     	result = service.executeQuery(q);
-		numFound = result.getNumFound();
+		numFound = result.getFound();
 		
 		// we should get some results
 		assertTrue(numFound>0); 
@@ -65,7 +61,7 @@ public class SolrServiceTest extends WebUnitBaseTest {
     	qr.setQuery("insulin in the of");
     	q = queryBuilderService.buildQueryForSearch(qr, "entry");
     	result = service.executeQuery(q);
-		numFound = result.getNumFound();
+		numFound = result.getFound();
 		
 		// we should ALSO get some results
 		assertTrue(numFound>0); 
@@ -82,7 +78,7 @@ public class SolrServiceTest extends WebUnitBaseTest {
     	qr.setQuery("brain");
     	q = queryBuilderService.buildQueryForSearch(qr, "term");
     	result = service.executeQuery(q);
-		numFound = result.getNumFound();
+		numFound = result.getFound();
 		
 		// we should get some results
 		assertTrue(numFound>0); 
@@ -91,7 +87,7 @@ public class SolrServiceTest extends WebUnitBaseTest {
     	qr.setQuery("brain in the of");
     	q = queryBuilderService.buildQueryForSearch(qr, "term");
     	result = service.executeQuery(q);
-		numFound = result.getNumFound();
+		numFound = result.getFound();
 		
 		// we should ALSO get some results
 		assertTrue(numFound>0); 
