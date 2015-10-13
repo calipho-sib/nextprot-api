@@ -1,27 +1,14 @@
 package org.nextprot.api.web.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import com.google.common.base.Joiner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SearchResult;
-import org.nextprot.api.solr.SearchResult.SearchResultFacet;
-import org.nextprot.api.solr.SearchResult.SearchResultItem;
-import org.nextprot.api.solr.SolrConfiguration;
-import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.solr.*;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -32,23 +19,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Joiner;
+import java.util.*;
 
 @Service
 @Lazy
 public class SearchServiceImpl implements SearchService {
 
+	private final Log Logger = LogFactory.getLog(SearchServiceImpl.class);
+
 	@Autowired
 	private SolrService solrService;
 
-	private final Log Logger = LogFactory.getLog(SearchServiceImpl.class);
 	@Autowired
 	private SolrService queryService;
 	@Autowired
 	private SparqlService sparqlService;
 	@Autowired
 	private SparqlEndpoint sparqlEndpoint;
-
 	@Autowired
 	private UserQueryService userQueryService;
 	@Autowired
@@ -60,20 +47,17 @@ public class SearchServiceImpl implements SearchService {
 	@Autowired
 	private MasterIdentifierService masterIdentifierService;
 
-
-
-
 	@Override
 	public Set<String> getAccessions(QueryRequest queryRequest) {
 		if (queryRequest.hasAccs()) {
 			
 			Logger.debug("queryRequest.hasAccs()");
-			return new HashSet<String>(queryRequest.getAccs());
+			return new HashSet<>(queryRequest.getAccs());
 
 		} else if (queryRequest.hasChromosome()) {
 			
 			Logger.debug("queryRequest.hasChromosome()");
-			return new HashSet<String>(this.masterIdentifierService.findUniqueNamesOfChromosome(queryRequest.getChromosome()));
+			return new HashSet<>(this.masterIdentifierService.findUniqueNamesOfChromosome(queryRequest.getChromosome()));
 
 		} else if (queryRequest.hasList()) {
 			
@@ -84,11 +68,11 @@ public class SearchServiceImpl implements SearchService {
 		} else if (queryRequest.hasNextProtQuery()) {
 		
 			UserQuery uq  = userQueryService.getUserQueryByPublicId(queryRequest.getQueryId());
-			return new HashSet<String>(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
+			return new HashSet<>(sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
 		
 		} else if (queryRequest.hasSparql()) {
 		
-			return new HashSet<String>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
+			return new HashSet<>(sparqlService.findEntries(queryRequest.getSparql(), sparqlEndpoint.getUrl(), queryRequest.getSparqlTitle()));
 		
 		} else {
 
@@ -97,12 +81,11 @@ public class SearchServiceImpl implements SearchService {
 			if((queryRequest.getQuality() == null) || (queryRequest.getQuality().equals(""))){
 				queryRequest.setQuality("gold");
 			}
-			Set<String> accesions =  getAccessionsForSimple(queryRequest);
+			Set<String> accessions =  getAccessionsForSimple(queryRequest);
 			queryRequest.setQuality(originalQuality);
-			return accesions;
-			
-		}
 
+			return accessions;
+		}
 	}
 
 	@Override
@@ -116,9 +99,9 @@ public class SearchServiceImpl implements SearchService {
 			Query query = queryBuilderService.buildQueryForSearchIndexes("entry", "pl_search", queryRequest);
 			SearchResult result = this.solrService.executeQuery(query);
 
-			List<SearchResultItem> results = result.getResults();
-			for (SearchResultItem res : results) {
-				String entry = (String) res.getProperties().get("id");
+			List<Map<String, Object>> results = result.getResults();
+			for (Map<String, Object> res : results) {
+				String entry = (String) res.get("id");
 				sortedAccessions.add(entry);
 			}
 
@@ -130,14 +113,12 @@ public class SearchServiceImpl implements SearchService {
 	}
 	
 	private Set<String> getAccessionsForSimple(QueryRequest queryRequest) {
-		Set<String> set = new LinkedHashSet<String>();
+		Set<String> set = new LinkedHashSet<>();
 		try {
 			Query query = this.queryBuilderService.buildQueryForSearchIndexes("entry", "simple", queryRequest);
 			SearchResult results = solrService.executeIdQuery(query);
-			Map<String, SearchResultFacet> facets = results.getFacets();
-			SearchResultFacet srf = facets.get("id");
-			for (Pair<String, Long> f : srf.getFoundFacetFields()) {
-				String entry = f.getFirst();
+			for (Map<String, Object> f : results.getFoundFacets("id")) {
+				String entry = (String) f.get("name");
 				set.add(entry);
 			}
 		} catch (SearchQueryException e) {
