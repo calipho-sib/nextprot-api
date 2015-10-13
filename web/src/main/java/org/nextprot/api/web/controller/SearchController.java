@@ -63,7 +63,7 @@ public class SearchController {
 	@ApiMethod(path = "/autocomplete/{index}", verb = ApiVerb.GET, description = "")
 	@RequestMapping(value="/autocomplete/{index}", method={RequestMethod.GET, RequestMethod.POST})
 	public String autocomplete(
-			@ApiQueryParam(name="index", allowedvalues={"entry", "terms", "publication"}, required=true) @PathVariable("index") String indexName, 
+			@ApiQueryParam(name="index", allowedvalues={"entry", "term", "publication"}, required=true) @PathVariable("index") String indexName,
 			@ApiQueryParam(name="query", description="Search query", required=true) @RequestParam(value="query", required=true) String queryString,
 			@ApiQueryParam(name="quality", description="Quality GOLD/BRONZE") @RequestParam(value="quality", required=false) String quality, 
 			@ApiQueryParam(name="sort") @RequestParam(value="sort", required=false) String sort,
