@@ -2,14 +2,14 @@
 	<elapsedTime>${result.elapsedTime}</elapsedTime>
 	<entity>${result.entity}</entity>
 	<index>${result.index}</index>
-	<score>${result.maxScore}</score>
-	<found>${result.numFound}</found>
+	<score>${result.score}</score>
+	<found>${result.found}</found>
 	<rows>${result.rows}</rows>
 	<page>${result.page}</page>
 	<results>
 		#foreach($res in $result.results)
 			<result>
-				#foreach($prop in $res.properties.entrySet()) 
+				#foreach($prop in $res.entrySet())
 					<$prop.getKey()>$prop.getValue()</$prop.getKey()>
 				#end
 			</result>
