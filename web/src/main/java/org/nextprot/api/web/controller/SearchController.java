@@ -1,20 +1,14 @@
 package org.nextprot.api.web.controller;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.google.common.base.Joiner;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchQueryException;
-import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.solr.Query;
-import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SearchResult;
-import org.nextprot.api.solr.SolrConfiguration;
-import org.nextprot.api.solr.SolrService;
+import org.nextprot.api.solr.*;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserQueryService;
@@ -24,13 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import com.google.common.base.Joiner;
+import java.util.HashSet;
+import java.util.Set;
 
 @Lazy
 @Controller
@@ -51,32 +42,24 @@ public class SearchController {
 	private UserQueryTutorialDictionary userQueryTutorialDictionary;
 	
 	@RequestMapping(value = "/search/{index}", method = { RequestMethod.POST })
-	public String search(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest, Model model) {
-		
-		model.addAttribute("StringUtils", StringUtils.class);
-		
-		if(this.queryService.checkAvailableIndex(indexName)) {
-			
+	@ResponseBody
+	public SearchResult search(@PathVariable("index") String indexName, @RequestBody QueryRequest queryRequest) {
+
+		if (this.queryService.checkAvailableIndex(indexName)) {
+
 			Query query = queryBuilderService.buildQueryForSearch(queryRequest, indexName);
-						
-			SearchResult result;
+
 			try {
-				result = this.queryService.executeQuery(query);
-				model.addAttribute("result", result);
-				model.addAttribute("StringUtils", StringUtils.class);
+				return queryService.executeQuery(query);
 			} catch (SearchQueryException e) {
-				e.printStackTrace();
-				model.addAttribute("errormessage", e.getMessage());
-				return "exception";
+
+				throw new NextProtException(e);
 			}
-			
-			return "search";
 		} else {
-			model.addAttribute("errormessage", "index "+indexName+" not available");
-			return "exception";
+			throw new NextProtException("errormessage: index " + indexName + " not available");
 		}
 	}
-	
+
 	@ApiMethod(path = "/autocomplete/{index}", verb = ApiVerb.GET, description = "")
 	@RequestMapping(value="/autocomplete/{index}", method={RequestMethod.GET, RequestMethod.POST})
 	public String autocomplete(
@@ -138,6 +121,7 @@ public class SearchController {
 				}
 				
 				result = this.queryService.executeIdQuery(query);
+				model.addAttribute("SearchResult", SearchResult.class);
 				model.addAttribute("result", result);
 
 			} catch (SearchQueryException e) {
