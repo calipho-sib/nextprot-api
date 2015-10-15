@@ -98,6 +98,14 @@ public class NXVelocityUtils {
 		return PropertyApiModel.getTtlWriter(aModel, propertyDbName);
 	}
 
-	
+	public static boolean isDisulfideBond(Annotation annotation) {
+
+		return annotation.getAPICategory() == AnnotationApiModel.DISULFIDE_BOND;
+	}
+
+	public static boolean isCrossLink(Annotation annotation) {
+
+		return annotation.getAPICategory() == AnnotationApiModel.CROSS_LINK;
+	}
 	
 }
