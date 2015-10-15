@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-@Deprecated //Use IsoformSpecificity instead
 public class AnnotationIsoformSpecificity implements Serializable {
 
 	private static final long serialVersionUID = 6722074138296019849L;
@@ -19,12 +18,12 @@ public class AnnotationIsoformSpecificity implements Serializable {
 		specificityInfo.put("BY DEFAULT", "BY_DEFAULT");
 		specificityInfo.put("SPECIFIC", "SPECIFIC");
 	}
-	
+
 	private long annotationId; 
-	// if firstPosition = 0, it means that it is unknown (first_pos=null in db)
-	private int firstPosition = 0; // should be at least 1
-	// if lastPosition = 0, it means that it is unknown (last_pos=null in db)
-	private int lastPosition = 0;
+	// if firstPosition = null, it means that it is unknown (same as db representation)
+	private Integer firstPosition; // should be at least 1
+	// if lastPosition = null, it means that it is unknown (same as db representation)
+	private Integer lastPosition;
 	private String isoformName;
 	private String specificity; // cv_name related to annotation_protein_assoc.cv_specificity_qualifier_type_id
 
@@ -45,18 +44,20 @@ public class AnnotationIsoformSpecificity implements Serializable {
 		this.annotationId = annotationId;
 	}
 
-	public int getFirstPosition() {
+	/** @return the first position or null if unknown */
+	public Integer getFirstPosition() {
 		return firstPosition;
 	}
 
-	public void setFirstPosition(int firstPosition) {
+	public void setFirstPosition(Integer firstPosition) {
 		this.firstPosition = firstPosition;
 	}
 
-	public int getLastPosition() {
+	/** @return the first position or null if unknown */
+	public Integer getLastPosition() {
 		// 0 means unknown
-		if (lastPosition==0) {
-			return 0; 
+		if (lastPosition==null) {
+			return null;
 		// since the firstPosition is incremented when loaded from the database, this check deals with the case when first == last
 		// for annotations of type variant-insertion ...
 		} else 	if(firstPosition > lastPosition) {
@@ -66,17 +67,17 @@ public class AnnotationIsoformSpecificity implements Serializable {
 		}
 	}
 
-	public void setLastPosition(int lastPosition) {
+	public void setLastPosition(Integer lastPosition) {
 		this.lastPosition = lastPosition;
 	}
 
 	// todo a helper method here?
 	public boolean isPositional() {
 
-		if (firstPosition != 0)
+		if (firstPosition != null)
 			return true;
 
-		if (lastPosition != 0)
+		if (lastPosition != null)
 			return true;
 
 		return false;

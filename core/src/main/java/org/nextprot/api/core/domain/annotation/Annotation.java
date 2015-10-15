@@ -44,7 +44,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private List<AnnotationEvidence> evidences;
 
-	@Deprecated // use target isoform map
 	private Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap;
 	
 	private Map<String, IsoformSpecificity> targetIsoformsMap;
@@ -149,7 +148,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 	
 	public List<String> getParentPredicates() {
 		if(apiCategory!= null){
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			for (AnnotationApiModel cat : apiCategory.getAllParentsButRoot()) list.add(cat.getRdfPredicate());
 			return list;
 		}else return null;
@@ -203,7 +202,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	@Deprecated //Use setTargetIsoformsMap instead
 	public void setTargetingIsoforms(List<AnnotationIsoformSpecificity> targetingIsoforms) {
-		this.targetingIsoformsMap = new HashMap<String, AnnotationIsoformSpecificity>();
+		this.targetingIsoformsMap = new HashMap<>();
 		for (AnnotationIsoformSpecificity isospecAnnot : targetingIsoforms) {
 			targetingIsoformsMap.put(isospecAnnot.getIsoformName(), isospecAnnot);
 		}
@@ -211,13 +210,12 @@ public class Annotation implements Serializable, IsoformSpecific {
 	
 	//This new method replaces setTargetingIsoforms
 	public void setTargetIsoformsMap(List<IsoformSpecificity> targetingIsoforms) {
-		this.targetIsoformsMap = new HashMap<String, IsoformSpecificity>();
+		this.targetIsoformsMap = new HashMap<>();
 		for (IsoformSpecificity isospecAnnot : targetingIsoforms) {
 			targetIsoformsMap.put(isospecAnnot.getIsoformAc(), isospecAnnot);
 		}
 	}
 
-	@Deprecated
 	public Map<String, AnnotationIsoformSpecificity> getTargetingIsoformsMap() {
 		return targetingIsoformsMap;
 	}
