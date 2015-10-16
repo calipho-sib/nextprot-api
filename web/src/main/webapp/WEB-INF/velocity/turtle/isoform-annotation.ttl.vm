@@ -55,10 +55,10 @@ annotation:$annotation-uri a :$annotation-type;
 #end
 #end    
 #end
-#if($annotation.getStartPositionForIsoform($isoform-name) != 0)
+#if($annotation.getStartPositionForIsoform($isoform-name))
   :start "$annotation.getStartPositionForIsoform($isoform-name)"^^xsd:integer;
 #end
-#if($annotation.getEndPositionForIsoform($isoform-name) != 0)
+#if($annotation.getEndPositionForIsoform($isoform-name))
   :end "$annotation.getEndPositionForIsoform($isoform-name)"^^xsd:integer;
 #end
   .     
