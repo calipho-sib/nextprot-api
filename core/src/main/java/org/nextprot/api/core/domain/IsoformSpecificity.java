@@ -1,16 +1,17 @@
 package org.nextprot.api.core.domain;
 
+import org.nextprot.api.commons.utils.Pair;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.nextprot.api.commons.utils.Pair;
 
 /**
  * Try to be a generic specificity for annotations, antibodies and peptides
  * @author mpereira
  *
  */
+@Deprecated
 public class IsoformSpecificity implements Serializable, Comparable<IsoformSpecificity>{
 
 	private static final long serialVersionUID = -6617265777393722080L;
@@ -79,7 +80,7 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 	
 	public void addPosition(Pair<Integer, Integer> position) {
 		if(this.positions == null)
-			this.positions = new ArrayList<Pair<Integer,Integer>>();
+			this.positions = new ArrayList<>();
 		this.positions.add(position);
 	}
 	
