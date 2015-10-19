@@ -1,15 +1,21 @@
 package org.nextprot.api.core.domain.annotation;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class AnnotationIsoformSpecificity implements Serializable {
+public class AnnotationIsoformSpecificity implements Serializable, Comparable<AnnotationIsoformSpecificity> {
 
 	private static final long serialVersionUID = 6722074138296019849L;
 
+	private static final DecimalFormat ISO_NUMBER_FORMATTER = new DecimalFormat("000");
+	private static final Pattern ISO_PATTERN = Pattern.compile("Iso (\\d+)");
+
 	// annotation isoform specificity mapping
-	private static Map<String, String> specificityInfo= new HashMap<String, String>();
+	private static Map<String, String> specificityInfo= new HashMap<>();
 	
 	static{
 		//
@@ -25,8 +31,10 @@ public class AnnotationIsoformSpecificity implements Serializable {
 	// if lastPosition = null, it means that it is unknown (same as db representation)
 	private Integer lastPosition;
 	private String isoformName;
+	private String isoformAc;
 	private String specificity; // cv_name related to annotation_protein_assoc.cv_specificity_qualifier_type_id
 
+	private String _comparableName;
 	
 	public String getSpecificity() {
 		return specificityInfo.get(specificity);
@@ -89,7 +97,29 @@ public class AnnotationIsoformSpecificity implements Serializable {
 	}
 
 	public void setIsoformName(String isoformName) {
-		this.isoformName = isoformName;
+		this.isoformName = (isoformName != null) ? isoformName : "";
+		_comparableName = (this.isoformName.startsWith("Iso ")) ? formatIsoName(this.isoformName) : this.isoformName;
 	}
 
+	static String formatIsoName(String name) {
+
+		Matcher matcher = ISO_PATTERN.matcher(name);
+
+		if (matcher.find()) {
+
+			return "Iso "+ISO_NUMBER_FORMATTER.format(Integer.parseInt(matcher.group(1)));
+		}
+
+		return name;
+	}
+
+	public String getIsoformAc() {
+		return isoformAc;
+	}
+
+	@Override
+	public int compareTo(AnnotationIsoformSpecificity other) {
+
+		return _comparableName.compareTo(other._comparableName);
+	}
 }
