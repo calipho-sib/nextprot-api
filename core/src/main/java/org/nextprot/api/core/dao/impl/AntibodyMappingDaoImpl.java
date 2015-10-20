@@ -1,23 +1,23 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AntibodyMappingDao;
 import org.nextprot.api.core.domain.AntibodyMapping;
-import org.nextprot.api.core.domain.IsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
@@ -35,18 +35,24 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
 		List<AntibodyMapping> flatmaps =  new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("antibodies-by-id"), namedParams, new RowMapper<AntibodyMapping>() {
 			@Override
 			public AntibodyMapping mapRow(ResultSet resultSet, int row) throws SQLException {
+
 				AntibodyMapping antibodyMapping = new AntibodyMapping();
 				antibodyMapping.setXrefId(resultSet.getLong("db_xref_id"));
 				antibodyMapping.setAntibodyUniqueName(resultSet.getString("antibody_unique_name"));
 				antibodyMapping.setAssignedBy(resultSet.getString("antibody_src"));
-				IsoformSpecificity isoformSpecificity = new IsoformSpecificity(resultSet.getString("iso_unique_name"));
-				isoformSpecificity.addPosition(resultSet.getInt("first_pos"), resultSet.getInt("last_pos"));
+
+				AnnotationIsoformSpecificity isoformSpecificity = new AnnotationIsoformSpecificity();
+				isoformSpecificity.setIsoformName(resultSet.getString("iso_unique_name"));
+
+				isoformSpecificity.setFirstPosition(resultSet.getInt("first_pos"));
+				isoformSpecificity.setLastPosition(resultSet.getInt("last_pos"));
+
 				antibodyMapping.addIsoformSpecificity(isoformSpecificity);
 				return antibodyMapping;
 			}
 		});
 		// step 2 - one object per antibody with nested isoform specs, spec with nested map positions
-		Map<String,AntibodyMapping> mergedmap = new HashMap<String,AntibodyMapping>();
+		Map<String,AntibodyMapping> mergedmap = new HashMap<>();
 		for (AntibodyMapping map : flatmaps) {
 			String ab = map.getAntibodyUniqueName();
 			if (!mergedmap.containsKey(ab)) {
@@ -56,6 +62,6 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
 				mapIn.addIsoformSpecificity(map.getFirstIsoformSpecificity());
 			}
 		}
-		return new ArrayList<AntibodyMapping>(mergedmap.values());
+		return new ArrayList<>(mergedmap.values());
 	}
 }
