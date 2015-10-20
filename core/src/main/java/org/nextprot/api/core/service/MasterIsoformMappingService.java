@@ -1,11 +1,10 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.IsoformSpecificity;
 
 import java.util.List;
 
 public interface MasterIsoformMappingService {
 
-	List<AnnotationIsoformSpecificity> findMasterIsoformMappingByEntryName(String uniqueName);
-
+	List<IsoformSpecificity> findMasterIsoformMappingByEntryName(String uniqueName);
 }
