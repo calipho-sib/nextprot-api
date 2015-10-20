@@ -30,14 +30,12 @@
     ];	
     
 #end
-#foreach($pos in $spec.positions)
-    :position [ 
-      rdf:type :MappingPosition ;
-      :start "$pos.first"^^xsd:integer ;
-      :end "$pos.second"^^xsd:integer ;
-    ];
-#end
-  .
+  :position [
+    rdf:type :MappingPosition ;
+    :start "$spec.getFirstPosition()"^^xsd:integer ;
+    :end "$spec.getLastPosition()"^^xsd:integer ;
+  ];
+.
   
 #end
 #end
