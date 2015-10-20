@@ -5,12 +5,12 @@ import org.nextprot.api.commons.constants.PeptideMappingAnnotationMapping;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.PeptideMappingDao;
-import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
@@ -39,7 +39,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 	 */
 	
 	private List<PeptideMapping> findPeptidesByMasterId(Long id, List<Long> propNameIds) {
-		Map<String,Object> params = new HashMap<String,Object>();
+		Map<String,Object> params = new HashMap<>();
 		params.put("id", id);
 		params.put("propNameIds", propNameIds);
 		SqlParameterSource namedParams = new MapSqlParameterSource(params);
@@ -49,8 +49,10 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 			public PeptideMapping mapRow(ResultSet resultSet, int row) throws SQLException {
 				PeptideMapping peptideMapping = new PeptideMapping();
 				peptideMapping.setPeptideUniqueName(resultSet.getString("pep_unique_name"));
-				IsoformSpecificity spec = new IsoformSpecificity(resultSet.getString("iso_unique_name"));
-				spec.addPosition(resultSet.getInt("first_pos"), resultSet.getInt("last_pos"));
+				AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
+				spec.setIsoformName(resultSet.getString("iso_unique_name"));
+				spec.setFirstPosition(resultSet.getInt("first_pos"));
+				spec.setLastPosition(resultSet.getInt("last_pos"));
 				peptideMapping.addIsoformSpecificity(spec);
 				return peptideMapping;
 			}

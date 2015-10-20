@@ -5,7 +5,6 @@ import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.PeptideMappingDao;
-import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
@@ -55,13 +54,13 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			this.peptideMappingDao.findSyntheticPeptidesByMasterId(id) ;
 
 		// key=peptide,value=mapping with 1-n isospecs, 1-n evidences, 1-n properties
-		Map<String, PeptideMapping> mergeMap = new HashMap<String, PeptideMapping>();
+		Map<String, PeptideMapping> mergeMap = new HashMap<>();
 
 		if (allMapping.size() > 0) {
 			String key = null;
-			List<String> peptideNames = new ArrayList<String>();
+			List<String> peptideNames = new ArrayList<>();
 
-			Iterator<IsoformSpecificity> it = null;
+			Iterator<AnnotationIsoformSpecificity> it;
 			for (PeptideMapping mapping : allMapping) {
 				key = mapping.getPeptideUniqueName();
 
@@ -88,7 +87,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 				mergeMap.get(prop.getPeptideName()).addProperty(prop);
 		}
 
-		return new ArrayList<PeptideMapping>(mergeMap.values());
+		return new ArrayList<>(mergeMap.values());
 	}
 	
 	/*

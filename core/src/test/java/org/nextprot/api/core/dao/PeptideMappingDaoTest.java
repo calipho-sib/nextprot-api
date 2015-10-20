@@ -1,20 +1,19 @@
 package org.nextprot.api.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.Test;
+import org.nextprot.api.core.domain.PeptideMapping;
+import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-import org.nextprot.api.commons.utils.Pair;
-import org.nextprot.api.core.domain.PeptideMapping;
-import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @DatabaseSetup(value = "PeptideMappingDaoTest.xml", type = DatabaseOperation.INSERT)
 public class PeptideMappingDaoTest extends CoreUnitBaseTest {
@@ -28,10 +27,9 @@ public class PeptideMappingDaoTest extends CoreUnitBaseTest {
 		assertEquals(1, mappings.size());
 		assertEquals("NX_PEPT12345678", mappings.get(0).getPeptideUniqueName());
 		assertEquals(1, mappings.get(0).getIsoformSpecificity().size());
-		List<Pair<Integer, Integer>> positions = mappings.get(0).getIsoformSpecificity().get("NX_P12345-1").getPositions();
-		assertEquals(1, positions.size());
-		assertTrue(2 == positions.get(0).getFirst());
-		assertTrue(1000 == positions.get(0).getSecond());
+		AnnotationIsoformSpecificity isospec = mappings.get(0).getIsoformSpecificity().get("NX_P12345-1");
+		assertTrue(2 == isospec.getFirstPosition());
+		assertTrue(1000 == isospec.getLastPosition());
 	}
 	
 	@Test
