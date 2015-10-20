@@ -14,13 +14,11 @@
   :$mapping-iri rdf:type :SrmPeptideMapping ;  
     :peptideName "$pep-name"^^xsd:string ;
     :proteotypic "$pep.isProteotypic()"^^xsd:boolean ;
-#foreach($pos in $spec.positions)
-    :position [ 
+    :position [
       rdf:type :MappingPosition ;    
-      :start "$pos.first"^^xsd:integer ;
-      :end "$pos.second"^^xsd:integer ;
+      :start "$spec.getFirstPosition()"^^xsd:integer ;
+      :end "$spec.getLastPosition()"^^xsd:integer ;
     ];
-#end
 #foreach($evi in $pep.evidences)
     :evidence [
       rdf:type :Evidence ;

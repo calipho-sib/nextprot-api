@@ -1,13 +1,9 @@
 <target-isoform-list>
 	#foreach($target in $target-isoform-list)
 		<target-isoform accession='$target.isoformName'>
-			#if($target.positions)
-				<position-list>
-					#foreach($position in $target.positions)
-						<position start="$position.getFirst()" end="$position.getSecond()"/>
-					#end
-				</position-list>
-			#end
+			<position-list>
+				<position start="$target.getFirstPosition()" end="$target.getLastPosition()"/>
+			</position-list>
 		</target-isoform>
 	#end
 </target-isoform-list>
