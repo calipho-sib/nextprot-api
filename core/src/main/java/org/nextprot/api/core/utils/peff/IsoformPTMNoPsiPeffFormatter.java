@@ -1,6 +1,6 @@
 package org.nextprot.api.core.utils.peff;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.EnumSet;
@@ -14,7 +14,7 @@ class IsoformPTMNoPsiPeffFormatter extends IsoformPTMPeffFormatter {
 
     IsoformPTMNoPsiPeffFormatter() {
 
-        super(EnumSet.of(AnnotationApiModel.GLYCOSYLATION_SITE, AnnotationApiModel.SELENOCYSTEINE), PeffKey.MOD_RES);
+        super(EnumSet.of(AnnotationCategory.GLYCOSYLATION_SITE, AnnotationCategory.SELENOCYSTEINE), PeffKey.MOD_RES);
     }
 
     @Override

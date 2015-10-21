@@ -7,8 +7,8 @@ package org.nextprot.api.commons.constants;
 
 public enum PeptideMappingAnnotationMapping  {
 
-	PEPTIDE_MAPPING(AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0001096", "mass spectrometry evidence"),
-	SRM_PEPTIDE_MAPPING(AnnotationApiModel.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0001096", "mass spectrometry evidence")
+	PEPTIDE_MAPPING(AnnotationCategory.PEPTIDE_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0001096", "mass spectrometry evidence"),
+	SRM_PEPTIDE_MAPPING(AnnotationCategory.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0001096", "mass spectrometry evidence")
 	;
 
 	private final String annotCat;

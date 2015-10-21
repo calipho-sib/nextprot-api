@@ -8,7 +8,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 
 import org.apache.commons.lang.StringUtils;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
@@ -121,7 +121,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 			Annotation annotation = new Annotation();
 
-			AnnotationApiModel model = AnnotationApiModel.getByDbAnnotationTypeName(property.getName());
+			AnnotationCategory model = AnnotationCategory.getByDbAnnotationTypeName(property.getName());
 			String description = property.getValue();
 
 			

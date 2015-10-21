@@ -8,22 +8,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class AnnotationApiModelTest {
+public class AnnotationCategoryTest {
 
 
 	@Test
 	public void testIsLeaf() {
-		Assert.assertEquals(true, AnnotationApiModel.PDB_MAPPING.isLeaf());
-		Assert.assertEquals(false, AnnotationApiModel.GENERAL_ANNOTATION.isLeaf());
-		Assert.assertEquals(true, AnnotationApiModel.FUNCTION_INFO.isLeaf());
-		Assert.assertEquals(false, AnnotationApiModel.GENERIC_EXPRESSION.isLeaf());
+		Assert.assertEquals(true, AnnotationCategory.PDB_MAPPING.isLeaf());
+		Assert.assertEquals(false, AnnotationCategory.GENERAL_ANNOTATION.isLeaf());
+		Assert.assertEquals(true, AnnotationCategory.FUNCTION_INFO.isLeaf());
+		Assert.assertEquals(false, AnnotationCategory.GENERIC_EXPRESSION.isLeaf());
 		
 	}
 
 	@Test
 	public void testUnknownAnnotationTypeName() {
 		try {
-			AnnotationApiModel.getByDbAnnotationTypeName("unexisting annotation type name");
+			AnnotationCategory.getByDbAnnotationTypeName("unexisting annotation type name");
 			Assert.assertTrue(false);
 		} catch (RuntimeException e) {
 			Assert.assertTrue(true);
@@ -33,7 +33,7 @@ public class AnnotationApiModelTest {
 	@Test
 	public void testKnownAnnotationTypeName() {
 		try {
-			AnnotationApiModel.getByDbAnnotationTypeName("pathway");
+			AnnotationCategory.getByDbAnnotationTypeName("pathway");
 			Assert.assertTrue(true);
 		} catch (RuntimeException e) {
 			Assert.assertTrue(false);
@@ -43,84 +43,84 @@ public class AnnotationApiModelTest {
 	@Test
 	public void testUniqueParents() {
 
-		Assert.assertNull(AnnotationApiModel.ROOT.getParent());
+		Assert.assertNull(AnnotationCategory.ROOT.getParent());
 
-		for (AnnotationApiModel model : AnnotationApiModel.values()) {
+		for (AnnotationCategory model : AnnotationCategory.values()) {
 
-			if (model != AnnotationApiModel.ROOT)
+			if (model != AnnotationCategory.ROOT)
 				Assert.assertNotNull(model.getParent());
 		}
 	}
 
 	@Test
 	public void testEnzymeRegulationParents() {
-		AnnotationApiModel cat = AnnotationApiModel.getByDbAnnotationTypeName("enzyme regulation");
-		Assert.assertTrue(cat.getParent() == AnnotationApiModel.GENERIC_INTERACTION);
+		AnnotationCategory cat = AnnotationCategory.getByDbAnnotationTypeName("enzyme regulation");
+		Assert.assertTrue(cat.getParent() == AnnotationCategory.GENERIC_INTERACTION);
 	}
 	
 	@Test
 	public void testPathwayParents() {
-		AnnotationApiModel cat = AnnotationApiModel.getByDbAnnotationTypeName("pathway");
-		Assert.assertTrue(cat.getParent() == AnnotationApiModel.GENERIC_FUNCTION);
+		AnnotationCategory cat = AnnotationCategory.getByDbAnnotationTypeName("pathway");
+		Assert.assertTrue(cat.getParent() == AnnotationCategory.GENERIC_FUNCTION);
 	}
 
 	@Test
 	public void testFunctionChildren() {
-		AnnotationApiModel cat = AnnotationApiModel.GENERIC_FUNCTION;
-		Assert.assertTrue(cat.getChildren().contains(AnnotationApiModel.FUNCTION_INFO));
-		Assert.assertTrue(cat.getChildren().contains(AnnotationApiModel.CATALYTIC_ACTIVITY));
-		Assert.assertTrue(cat.getChildren().contains(AnnotationApiModel.PATHWAY));
-		Assert.assertTrue(cat.getChildren().contains(AnnotationApiModel.GO_BIOLOGICAL_PROCESS));
-		Assert.assertTrue(cat.getChildren().contains(AnnotationApiModel.GO_MOLECULAR_FUNCTION));
+		AnnotationCategory cat = AnnotationCategory.GENERIC_FUNCTION;
+		Assert.assertTrue(cat.getChildren().contains(AnnotationCategory.FUNCTION_INFO));
+		Assert.assertTrue(cat.getChildren().contains(AnnotationCategory.CATALYTIC_ACTIVITY));
+		Assert.assertTrue(cat.getChildren().contains(AnnotationCategory.PATHWAY));
+		Assert.assertTrue(cat.getChildren().contains(AnnotationCategory.GO_BIOLOGICAL_PROCESS));
+		Assert.assertTrue(cat.getChildren().contains(AnnotationCategory.GO_MOLECULAR_FUNCTION));
 		Assert.assertEquals(5, cat.getChildren().size());
 	}
 	
 	@Test
 	public void testRootChildren() {
-		Set<AnnotationApiModel> children = AnnotationApiModel.ROOT.getChildren();
-		Assert.assertTrue(children.contains(AnnotationApiModel.NAME));
-		Assert.assertTrue(children.contains(AnnotationApiModel.GENERAL_ANNOTATION));
-		Assert.assertTrue(children.contains(AnnotationApiModel.POSITIONAL_ANNOTATION));
+		Set<AnnotationCategory> children = AnnotationCategory.ROOT.getChildren();
+		Assert.assertTrue(children.contains(AnnotationCategory.NAME));
+		Assert.assertTrue(children.contains(AnnotationCategory.GENERAL_ANNOTATION));
+		Assert.assertTrue(children.contains(AnnotationCategory.POSITIONAL_ANNOTATION));
 		Assert.assertTrue(children.size() == 3);
 	}
 	
 	@Test
 	public void testDbAnnotationTypeNameUnicity() {
 		Set<String> atns = new HashSet<>();
-		for (AnnotationApiModel cat: AnnotationApiModel.values()) {
+		for (AnnotationCategory cat: AnnotationCategory.values()) {
 			if (atns.contains(cat.getDbAnnotationTypeName())) {
-				System.out.println("ERROR: AnnotationApiModel.getDbAnnotationTypeName " + cat.getDbAnnotationTypeName() +  " is not unique" );
+				System.out.println("ERROR: AnnotationCategory.getDbAnnotationTypeName " + cat.getDbAnnotationTypeName() +  " is not unique" );
 			} else {
 				atns.add(cat.getDbAnnotationTypeName());
 			}
 		}
-		Assert.assertTrue(AnnotationApiModel.values().length == atns.size());
+		Assert.assertTrue(AnnotationCategory.values().length == atns.size());
 	}
 	
 	@Test
 	public void testDbIdUnicity() {
 		Set<Integer> atns = new HashSet<>();
-		for (AnnotationApiModel cat: AnnotationApiModel.values()) {
+		for (AnnotationCategory cat: AnnotationCategory.values()) {
 			if (atns.contains(cat.getDbId())) {
-				System.out.println("ERROR: AnnotationApiModel.getDbId " + cat.getDbId() +  " is not unique" );
+				System.out.println("ERROR: AnnotationCategory.getDbId " + cat.getDbId() +  " is not unique" );
 			} else {
 				atns.add(cat.getDbId());
 			}
 		}
-		Assert.assertTrue(AnnotationApiModel.values().length == atns.size());
+		Assert.assertTrue(AnnotationCategory.values().length == atns.size());
 	}
 
 	@Test
 	public void testApiTypeNameUnicity() {
 		Set<String> atns = new HashSet<>();
-		for (AnnotationApiModel cat: AnnotationApiModel.values()) {
+		for (AnnotationCategory cat: AnnotationCategory.values()) {
 			if (atns.contains(cat.getApiTypeName())) {
-				System.out.println("ERROR: AnnotationApiModel.getApiTypeName " + cat.getApiTypeName() +  " is not unique" );
+				System.out.println("ERROR: AnnotationCategory.getApiTypeName " + cat.getApiTypeName() +  " is not unique" );
 			} else {
 				atns.add(cat.getApiTypeName());
 			}
 		}
-		Assert.assertTrue(AnnotationApiModel.values().length == atns.size());
+		Assert.assertTrue(AnnotationCategory.values().length == atns.size());
 	}
 	
 	/*
@@ -129,46 +129,46 @@ public class AnnotationApiModelTest {
 	 */
 	@Test
 	public void testEquals() {
-		Set<AnnotationApiModel> s = new HashSet<>();
+		Set<AnnotationCategory> s = new HashSet<>();
 		// add each enum values twice
-		for (AnnotationApiModel c: AnnotationApiModel.values()) s.add(c);
-		for (AnnotationApiModel c: AnnotationApiModel.values()) s.add(c);		
+		for (AnnotationCategory c: AnnotationCategory.values()) s.add(c);
+		for (AnnotationCategory c: AnnotationCategory.values()) s.add(c);
 		// and then check at the end that we have only one of each in the set
-		int expected = AnnotationApiModel.values().length;
+		int expected = AnnotationCategory.values().length;
 		System.out.println("Expected number of OWLCategories = " + expected);
 		Assert.assertTrue(s.size() == expected);
 	}
 
 	@Test
 	public void testTopologyAllChildren() {
-		Set<AnnotationApiModel> c = AnnotationApiModel.TOPOLOGY.getAllChildren();
-		Assert.assertTrue(c.contains(AnnotationApiModel.TRANSMEMBRANE_REGION));
-		Assert.assertTrue(c.contains(AnnotationApiModel.INTRAMEMBRANE_REGION));
-		Assert.assertTrue(c.contains(AnnotationApiModel.TOPOLOGICAL_DOMAIN));
+		Set<AnnotationCategory> c = AnnotationCategory.TOPOLOGY.getAllChildren();
+		Assert.assertTrue(c.contains(AnnotationCategory.TRANSMEMBRANE_REGION));
+		Assert.assertTrue(c.contains(AnnotationCategory.INTRAMEMBRANE_REGION));
+		Assert.assertTrue(c.contains(AnnotationCategory.TOPOLOGICAL_DOMAIN));
 		Assert.assertTrue(c.size() == 3);
 	}
 	
 	@Test
 	public void testTopologicalDomainAllChildren() {
-		Set<AnnotationApiModel> c = AnnotationApiModel.TOPOLOGICAL_DOMAIN.getAllChildren();
+		Set<AnnotationCategory> c = AnnotationCategory.TOPOLOGICAL_DOMAIN.getAllChildren();
 		Assert.assertTrue(c.size() == 0);
 	}
 		
 	@Test
 	public void testNameAllChildren() {
-		Set<AnnotationApiModel> cs = AnnotationApiModel.NAME.getAllChildren();
+		Set<AnnotationCategory> cs = AnnotationCategory.NAME.getAllChildren();
 		System.out.println("Name all children:"+cs.size());
-		Assert.assertTrue(cs.contains(AnnotationApiModel.FAMILY_NAME));
-		//assertTrue(cs.contains(AnnotationApiModel.ENZYME_CLASSIFICATION)); // is now a child of general annotiation
+		Assert.assertTrue(cs.contains(AnnotationCategory.FAMILY_NAME));
+		//assertTrue(cs.contains(AnnotationCategory.ENZYME_CLASSIFICATION)); // is now a child of general annotiation
 	}
 	
 	@Test
 	public void testGeneralAnnotationAllChildren() {
 		// get all children of general annotation
-		Set<AnnotationApiModel> cs = AnnotationApiModel.GENERAL_ANNOTATION.getAllChildren();
+		Set<AnnotationCategory> cs = AnnotationCategory.GENERAL_ANNOTATION.getAllChildren();
 		// build a new set of children containing...
-		Set<AnnotationApiModel> cs2 = new HashSet<>();
-		for (AnnotationApiModel aam: AnnotationApiModel.GENERAL_ANNOTATION.getChildren()) {
+		Set<AnnotationCategory> cs2 = new HashSet<>();
+		for (AnnotationCategory aam: AnnotationCategory.GENERAL_ANNOTATION.getChildren()) {
 			// ... each direct child of general annotation
 			cs2.add(aam);
 			// ... together with direct child of each child (we assume we have two child level only)
@@ -184,16 +184,16 @@ public class AnnotationApiModelTest {
 	@Test
 	public void testRootsAllChildrenConsistency() {
 		// set of roots
-		Set<AnnotationApiModel> r = AnnotationApiModel.ROOT.getChildren();
+		Set<AnnotationCategory> r = AnnotationCategory.ROOT.getChildren();
 		System.out.println("Roots :"+ r.size());
 		// set of children of each root
-		Set<AnnotationApiModel> s1 = AnnotationApiModel.GENERAL_ANNOTATION.getAllChildren();
+		Set<AnnotationCategory> s1 = AnnotationCategory.GENERAL_ANNOTATION.getAllChildren();
 		System.out.println("Positional annotations :"+ s1.size());
-		Set<AnnotationApiModel> s2 = AnnotationApiModel.POSITIONAL_ANNOTATION.getAllChildren();
+		Set<AnnotationCategory> s2 = AnnotationCategory.POSITIONAL_ANNOTATION.getAllChildren();
 		System.out.println("General annotations :"+ s2.size());
-		Set<AnnotationApiModel> s3 = AnnotationApiModel.NAME.getAllChildren();
+		Set<AnnotationCategory> s3 = AnnotationCategory.NAME.getAllChildren();
 		System.out.println("Names :"+ s3.size());
-		int count = AnnotationApiModel.values().length - 1;
+		int count = AnnotationCategory.values().length - 1;
 		System.out.println("Roots and children :"+ (r.size()+s1.size()+ s2.size()+s3.size()));
 		System.out.println("Full count :" + count);
 		// we assume that no child has more than one root parent (but it is not forbidden)
@@ -203,41 +203,41 @@ public class AnnotationApiModelTest {
 
 	@Test
 	public void testPositionalAnnotationAllParents() {
-		Set<AnnotationApiModel> cs = AnnotationApiModel.POSITIONAL_ANNOTATION.getAllParents();
-		Assert.assertTrue(cs.contains(AnnotationApiModel.ROOT));
+		Set<AnnotationCategory> cs = AnnotationCategory.POSITIONAL_ANNOTATION.getAllParents();
+		Assert.assertTrue(cs.contains(AnnotationCategory.ROOT));
 		Assert.assertTrue(cs.size() == 1);
 	}
 	
 	@Test
 	public void testActiveSiteAllParents() {
-		Set<AnnotationApiModel> cs = AnnotationApiModel.ACTIVE_SITE.getAllParents();
-		Assert.assertTrue(cs.contains(AnnotationApiModel.GENERIC_SITE));
-		Assert.assertTrue(cs.contains(AnnotationApiModel.POSITIONAL_ANNOTATION));
-		Assert.assertTrue(cs.contains(AnnotationApiModel.ROOT));
+		Set<AnnotationCategory> cs = AnnotationCategory.ACTIVE_SITE.getAllParents();
+		Assert.assertTrue(cs.contains(AnnotationCategory.GENERIC_SITE));
+		Assert.assertTrue(cs.contains(AnnotationCategory.POSITIONAL_ANNOTATION));
+		Assert.assertTrue(cs.contains(AnnotationCategory.ROOT));
 		Assert.assertTrue(cs.size() == 3);
 	}
 	
 	@Test
 	public void testEnzymeRegulationAllParents() {
-		Set<AnnotationApiModel> cs = AnnotationApiModel.ENZYME_REGULATION.getAllParents();
-		Assert.assertTrue(cs.contains(AnnotationApiModel.GENERIC_INTERACTION));
-		Assert.assertTrue(cs.contains(AnnotationApiModel.GENERAL_ANNOTATION));
-		Assert.assertTrue(cs.contains(AnnotationApiModel.ROOT));
+		Set<AnnotationCategory> cs = AnnotationCategory.ENZYME_REGULATION.getAllParents();
+		Assert.assertTrue(cs.contains(AnnotationCategory.GENERIC_INTERACTION));
+		Assert.assertTrue(cs.contains(AnnotationCategory.GENERAL_ANNOTATION));
+		Assert.assertTrue(cs.contains(AnnotationCategory.ROOT));
 		Assert.assertEquals(3, cs.size());
 	}
 	
 	@Test
 	public void testEnzymeRegulationAllParentsButRoot() {
-		Set<AnnotationApiModel> cs = AnnotationApiModel.ENZYME_REGULATION.getAllParentsButRoot();
-		Assert.assertTrue(cs.contains(AnnotationApiModel.GENERIC_INTERACTION));
-		Assert.assertTrue(cs.contains(AnnotationApiModel.GENERAL_ANNOTATION));
+		Set<AnnotationCategory> cs = AnnotationCategory.ENZYME_REGULATION.getAllParentsButRoot();
+		Assert.assertTrue(cs.contains(AnnotationCategory.GENERIC_INTERACTION));
+		Assert.assertTrue(cs.contains(AnnotationCategory.GENERAL_ANNOTATION));
 		Assert.assertEquals(2, cs.size());
 	}
 
 	@Test
 	public void testGetSortedAnnotationCategories() {
 
-		List<AnnotationApiModel> categories = AnnotationApiModel.getSortedCategories();
+		List<AnnotationCategory> categories = AnnotationCategory.getSortedCategories();
 
 		Assert.assertEquals(96, categories.size());
 	}
@@ -245,27 +245,27 @@ public class AnnotationApiModelTest {
 	@Test
 	public void testGetAllParents() {
 
-		Assert.assertEquals(Sets.newHashSet(AnnotationApiModel.ROOT, AnnotationApiModel.POSITIONAL_ANNOTATION, AnnotationApiModel.GENERIC_SITE),
-				AnnotationApiModel.CLEAVAGE_SITE.getAllParents());
+		Assert.assertEquals(Sets.newHashSet(AnnotationCategory.ROOT, AnnotationCategory.POSITIONAL_ANNOTATION, AnnotationCategory.GENERIC_SITE),
+				AnnotationCategory.CLEAVAGE_SITE.getAllParents());
 	}
 
 	@Test
 	public void testGetAllParentsButRoot() {
 
-		Assert.assertEquals(Sets.newHashSet(AnnotationApiModel.POSITIONAL_ANNOTATION, AnnotationApiModel.GENERIC_SITE),
-				AnnotationApiModel.CLEAVAGE_SITE.getAllParentsButRoot());
+		Assert.assertEquals(Sets.newHashSet(AnnotationCategory.POSITIONAL_ANNOTATION, AnnotationCategory.GENERIC_SITE),
+				AnnotationCategory.CLEAVAGE_SITE.getAllParentsButRoot());
 	}
 
 	@Test
 	public void testGetPathToRoot() {
 
-		Assert.assertEquals("positional-annotation:generic-site", AnnotationApiModel.ACTIVE_SITE.getPathToRoot(':'));
+		Assert.assertEquals("positional-annotation:generic-site", AnnotationCategory.ACTIVE_SITE.getPathToRoot(':'));
 	}
 
 	@Test
 	public void testInstanciatedCategories() {
 
-		Assert.assertEquals(64, AnnotationApiModel.getInstantiatedCategories().size());
+		Assert.assertEquals(64, AnnotationCategory.getInstantiatedCategories().size());
 	}
 
 	@Test
@@ -359,7 +359,7 @@ public class AnnotationApiModelTest {
 				"GeneralAnnotation -- VariantInfo"
 		};
 
-		String export = AnnotationApiModel.exportHierarchyAsGraphDot();
+		String export = AnnotationCategory.exportHierarchyAsGraphDot();
 
 		for (String expectedEdge : expectedEdges) {
 			Assert.assertTrue(export.contains(expectedEdge));
@@ -369,20 +369,20 @@ public class AnnotationApiModelTest {
 	@Test
 	public void testValueofBioPhysChem() {
 
-		Assert.assertEquals(AnnotationApiModel.ABSORPTION_MAX, AnnotationApiModel.getByDbAnnotationTypeName("absorption max"));
-		Assert.assertEquals(AnnotationApiModel.ABSORPTION_NOTE, AnnotationApiModel.getByDbAnnotationTypeName("absorption note"));
-		Assert.assertEquals(AnnotationApiModel.KINETIC_KM, AnnotationApiModel.getByDbAnnotationTypeName("kinetic KM"));
-		Assert.assertEquals(AnnotationApiModel.KINETIC_NOTE, AnnotationApiModel.getByDbAnnotationTypeName("kinetic note"));
-		Assert.assertEquals(AnnotationApiModel.KINETIC_VMAX, AnnotationApiModel.getByDbAnnotationTypeName("kinetic Vmax"));
-		Assert.assertEquals(AnnotationApiModel.PH_DEPENDENCE, AnnotationApiModel.getByDbAnnotationTypeName("pH dependence"));
-		Assert.assertEquals(AnnotationApiModel.REDOX_POTENTIAL, AnnotationApiModel.getByDbAnnotationTypeName("redox potential"));
-		Assert.assertEquals(AnnotationApiModel.TEMPERATURE_DEPENDENCE, AnnotationApiModel.getByDbAnnotationTypeName("temperature dependence"));
+		Assert.assertEquals(AnnotationCategory.ABSORPTION_MAX, AnnotationCategory.getByDbAnnotationTypeName("absorption max"));
+		Assert.assertEquals(AnnotationCategory.ABSORPTION_NOTE, AnnotationCategory.getByDbAnnotationTypeName("absorption note"));
+		Assert.assertEquals(AnnotationCategory.KINETIC_KM, AnnotationCategory.getByDbAnnotationTypeName("kinetic KM"));
+		Assert.assertEquals(AnnotationCategory.KINETIC_NOTE, AnnotationCategory.getByDbAnnotationTypeName("kinetic note"));
+		Assert.assertEquals(AnnotationCategory.KINETIC_VMAX, AnnotationCategory.getByDbAnnotationTypeName("kinetic Vmax"));
+		Assert.assertEquals(AnnotationCategory.PH_DEPENDENCE, AnnotationCategory.getByDbAnnotationTypeName("pH dependence"));
+		Assert.assertEquals(AnnotationCategory.REDOX_POTENTIAL, AnnotationCategory.getByDbAnnotationTypeName("redox potential"));
+		Assert.assertEquals(AnnotationCategory.TEMPERATURE_DEPENDENCE, AnnotationCategory.getByDbAnnotationTypeName("temperature dependence"));
 	}
 
 	@Test
 	public void testApiNamesDoesNotContainSpaces() {
 
-		for (AnnotationApiModel model : AnnotationApiModel.values()) {
+		for (AnnotationCategory model : AnnotationCategory.values()) {
 
 			Assert.assertTrue(!model.getApiTypeName().contains(" "));
 		}

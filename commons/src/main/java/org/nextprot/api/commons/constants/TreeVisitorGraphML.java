@@ -13,13 +13,13 @@ public class TreeVisitorGraphML extends AbstractTreeVisitor {
     }
 
     @Override
-    protected void writeNode(AnnotationApiModel node) {
+    protected void writeNode(AnnotationCategory node) {
 
         sb.append("\t\t<node id=\"").append(StringUtils.camelToKebabCase(node.getApiTypeName())).append("\"/>\n");
     }
 
     @Override
-    protected void writeEdge(AnnotationApiModel parent, AnnotationApiModel child) {
+    protected void writeEdge(AnnotationCategory parent, AnnotationCategory child) {
 
         sb.append("\t\t<edge id=\"").append(parent.getApiTypeName()).append(".").append(child.getApiTypeName()).append("\" source=\"").append(StringUtils.camelToKebabCase(parent.getApiTypeName()))
                 .append("\" target=\"").append(StringUtils.camelToKebabCase(child.getApiTypeName())).append("\"/>\n");

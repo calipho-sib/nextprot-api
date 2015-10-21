@@ -2,7 +2,7 @@ package org.nextprot.api.core.service;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -52,8 +52,8 @@ having sum(a.cnt)=1
 		List<Annotation> annotations = this.xrefService.findDbXrefsAsAnnotationsByEntry("NX_A0AVF1");
 		assertTrue(annotations.size() == 1);
 		Annotation annot = annotations.get(0);
-		assertTrue(annot.getCategory().equals(AnnotationApiModel.PATHWAY.getDbAnnotationTypeName()));
-		assertTrue(annot.getAPICategory()==AnnotationApiModel.PATHWAY);
+		assertTrue(annot.getCategory().equals(AnnotationCategory.PATHWAY.getDbAnnotationTypeName()));
+		assertTrue(annot.getAPICategory()== AnnotationCategory.PATHWAY);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
 		Assert.assertEquals("Intraflagellar transport", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
@@ -74,8 +74,8 @@ having sum(a.cnt)=1
 		List<Annotation> annotations = this.xrefService.findDbXrefsAsAnnotationsByEntry("NX_A1L167");
 		assertTrue(annotations.size() == 1);
 		Annotation annot = annotations.get(0);
-		assertTrue(annot.getCategory().equals(AnnotationApiModel.PATHWAY.getDbAnnotationTypeName()));
-		assertTrue(annot.getAPICategory()==AnnotationApiModel.PATHWAY);
+		assertTrue(annot.getCategory().equals(AnnotationCategory.PATHWAY.getDbAnnotationTypeName()));
+		assertTrue(annot.getAPICategory()== AnnotationCategory.PATHWAY);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
 		Assert.assertEquals("Ubiquitin mediated proteolysis", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
@@ -96,8 +96,8 @@ having sum(a.cnt)=1
 		List<Annotation> annotations = this.xrefService.findDbXrefsAsAnnotationsByEntry("NX_A0PJY2");
 		assertTrue(annotations.size() == 1);
 		Annotation annot = annotations.get(0);
-		assertTrue(annot.getCategory().equals(AnnotationApiModel.DISEASE.getDbAnnotationTypeName()));
-		assertTrue(annot.getAPICategory()==AnnotationApiModel.DISEASE);
+		assertTrue(annot.getCategory().equals(AnnotationCategory.DISEASE.getDbAnnotationTypeName()));
+		assertTrue(annot.getAPICategory()== AnnotationCategory.DISEASE);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
 		Assert.assertEquals("Kallmann syndrome", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
@@ -118,8 +118,8 @@ having sum(a.cnt)=1
 		List<Annotation> annotations = this.xrefService.findDbXrefsAsAnnotationsByEntry("NX_Q9Y2D1");
 		assertTrue(annotations.size() == 1);
 		Annotation annot = annotations.get(0);
-		assertTrue(annot.getCategory().equals(AnnotationApiModel.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName()));
-		assertTrue(annot.getAPICategory()==AnnotationApiModel.SMALL_MOLECULE_INTERACTION);
+		assertTrue(annot.getCategory().equals(AnnotationCategory.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName()));
+		assertTrue(annot.getAPICategory()== AnnotationCategory.SMALL_MOLECULE_INTERACTION);
 		assertTrue(annot.getQualityQualifier().equals("GOLD"));
 		Assert.assertEquals("Pseudoephedrine", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {

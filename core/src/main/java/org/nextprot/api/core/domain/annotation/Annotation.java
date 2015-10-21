@@ -2,7 +2,7 @@ package org.nextprot.api.core.domain.annotation;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
@@ -39,7 +39,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private String synonym;
 	
-	private AnnotationApiModel apiCategory;
+	private AnnotationCategory apiCategory;
 
 	private List<AnnotationEvidence> evidences;
 
@@ -141,7 +141,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 		}else return null;
 	}
 	
-	public AnnotationApiModel getAPICategory() {
+	public AnnotationCategory getAPICategory() {
 		return apiCategory;
 	}
 
@@ -149,14 +149,14 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public List<String> getParentPredicates() {
 		if(apiCategory!= null){
 			List<String> list = new ArrayList<>();
-			for (AnnotationApiModel cat : apiCategory.getAllParentsButRoot()) list.add(cat.getRdfPredicate());
+			for (AnnotationCategory cat : apiCategory.getAllParentsButRoot()) list.add(cat.getRdfPredicate());
 			return list;
 		}else return null;
 	}
 			
 	public void setCategory(String category) {
 		this.category = category;
-		this.apiCategory=AnnotationApiModel.getByDbAnnotationTypeName(category);
+		this.apiCategory= AnnotationCategory.getByDbAnnotationTypeName(category);
 	}
 	
 	public void setCategoryOnly(String category) {

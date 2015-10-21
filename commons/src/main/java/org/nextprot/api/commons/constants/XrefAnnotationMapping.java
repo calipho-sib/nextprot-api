@@ -7,10 +7,10 @@ package org.nextprot.api.commons.constants;
 
 public enum XrefAnnotationMapping  {
 
-	ORPHANET(84,"Orphanet", "disease", AnnotationApiModel.DISEASE.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated", "IC","ECO:0000305", "curator inference used in manual assertion"),
-	REACTOME(112, "Reactome", "pathway name", AnnotationApiModel.PATHWAY.getDbAnnotationTypeName(), 2, "Uniprot","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"), 
-	DRUGBANK(27,"DrugBank", "generic name", AnnotationApiModel.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
-	KEGGPATHWAY(186,"KEGGPathway",  "pathway name", AnnotationApiModel.PATHWAY.getDbAnnotationTypeName(), 1, "NextProt","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"), // ALTERNATIVE SOURCE = 2 , "NextProt integration"
+	ORPHANET(84,"Orphanet", "disease", AnnotationCategory.DISEASE.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated", "IC","ECO:0000305", "curator inference used in manual assertion"),
+	REACTOME(112, "Reactome", "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 2, "Uniprot","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
+	DRUGBANK(27,"DrugBank", "generic name", AnnotationCategory.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
+	KEGGPATHWAY(186,"KEGGPathway",  "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 1, "NextProt","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"), // ALTERNATIVE SOURCE = 2 , "NextProt integration"
 	;
 
 	private final int xrefDbId; 

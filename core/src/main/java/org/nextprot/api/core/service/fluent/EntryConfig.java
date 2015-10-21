@@ -1,6 +1,6 @@
 package org.nextprot.api.core.service.fluent;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.core.service.export.format.EntryBlock;
@@ -11,7 +11,7 @@ public class EntryConfig implements KeyValueRepresentation{
 	private boolean enzymes;
 	private boolean withoutAdditionalReferences = false; // by default we put xrefs, publications, experimental contexts
 	private boolean withoutProperties = false; //by default we get properties
-	private AnnotationApiModel subpart;
+	private AnnotationCategory subpart;
 	private final String entryName;
 
 	private EntryConfig(String entryName) {
@@ -94,7 +94,7 @@ public class EntryConfig implements KeyValueRepresentation{
 		return this.enzymes;
 	}
 
-	public AnnotationApiModel getSubpart() {
+	public AnnotationCategory getSubpart() {
 		return subpart;
 	}
 
@@ -182,7 +182,7 @@ public class EntryConfig implements KeyValueRepresentation{
 		}
 		else {
 			try{
-				subpart = AnnotationApiModel.getDecamelizedAnnotationTypeName(blockOrSubpart);
+				subpart = AnnotationCategory.getDecamelizedAnnotationTypeName(blockOrSubpart);
 			} catch (IllegalArgumentException ec) {
 				throw new NextProtException("Block or subpart " + blockOrSubpart + " not found. Please look into...");
 			}
@@ -214,7 +214,7 @@ public class EntryConfig implements KeyValueRepresentation{
 	}
 
 
-	public boolean hasSubPart(AnnotationApiModel subpart) {
+	public boolean hasSubPart(AnnotationCategory subpart) {
 		return subpart.equals(this.subpart);
 	}
 

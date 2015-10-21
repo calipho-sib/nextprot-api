@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -45,14 +45,14 @@ public class AnnotationDaoTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldTurnBiotechnologyAnnotationToMiscellaneous() {
 		List<Annotation> annotations = annotationDAO.findAnnotationsByEntryName("NX_O43474");
-		assertEquals(annotations.get(0).getCategory(),AnnotationApiModel.MISCELLANEOUS.getDbAnnotationTypeName());
+		assertEquals(annotations.get(0).getCategory(), AnnotationCategory.MISCELLANEOUS.getDbAnnotationTypeName());
 		assertEquals(annotations.size(),1);		
 	}
 	
 	@Test
 	public void shouldTurnTransmembraneAnnotationToIntramembrane() {
 		List<Annotation> annotations = annotationDAO.findAnnotationsByEntryName("NX_P51797");
-		assertEquals(annotations.get(0).getCategory(),AnnotationApiModel.INTRAMEMBRANE_REGION.getDbAnnotationTypeName());
+		assertEquals(annotations.get(0).getCategory(), AnnotationCategory.INTRAMEMBRANE_REGION.getDbAnnotationTypeName());
 		assertEquals(annotations.size(),1);		
 	}
 		
@@ -61,8 +61,8 @@ public class AnnotationDaoTest extends CoreUnitBaseTest {
 		List<Annotation> annotations = annotationDAO.findAnnotationsByEntryName("NX_Q6P4F2");
 		List<String> list = new ArrayList<String>();
 		for (Annotation an: annotations) list.add(an.getCategory());
-		assertEquals(list.contains(AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName()), true);
-		assertEquals(list.contains(AnnotationApiModel.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName()), true);
+		assertEquals(list.contains(AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName()), true);
+		assertEquals(list.contains(AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName()), true);
 		assertEquals(annotations.size(),2);		
 	}
 	

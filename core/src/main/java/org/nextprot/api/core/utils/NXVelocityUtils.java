@@ -2,7 +2,7 @@ package org.nextprot.api.core.utils;
 
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.constants.PropertyWriter;
 import org.nextprot.api.core.domain.Entry;
@@ -21,13 +21,13 @@ public class NXVelocityUtils {
         throw new AssertionError();
     }
 
-	public static List<Annotation> getAnnotationsByCategory(Entry entry, AnnotationApiModel annotationCategory) {
+	public static List<Annotation> getAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory) {
 		return AnnotationUtils.filterAnnotationsByCategory(entry.getAnnotations(), annotationCategory, false);
 	}
 	
 	public static boolean hasInteractions(Entry entry) {
 		if (!entry.getInteractions().isEmpty()) return true;
-		if (!getAnnotationsByCategory(entry, AnnotationApiModel.SMALL_MOLECULE_INTERACTION).isEmpty()) return true;
+		if (!getAnnotationsByCategory(entry, AnnotationCategory.SMALL_MOLECULE_INTERACTION).isEmpty()) return true;
 		return false;
 	}
 	
@@ -35,12 +35,12 @@ public class NXVelocityUtils {
 		if ((entry.getPeptideMappings() != null) && !entry.getPeptideMappings().isEmpty()) return true;
 		if ((entry.getSrmPeptideMappings() != null) && !entry.getSrmPeptideMappings().isEmpty()) return true;
 		if ((entry.getAntibodyMappings() != null) && !entry.getAntibodyMappings().isEmpty()) return true;
-		if ((entry.getAnnotations() != null) && !getAnnotationsByCategory(entry, AnnotationApiModel.PDB_MAPPING).isEmpty()) return true;
+		if ((entry.getAnnotations() != null) && !getAnnotationsByCategory(entry, AnnotationCategory.PDB_MAPPING).isEmpty()) return true;
 		return false;
 	}
 	
-	public static List<AnnotationApiModel> getAnnotationCategories() {
-		return AnnotationApiModel.getSortedCategories();
+	public static List<AnnotationCategory> getAnnotationCategories() {
+		return AnnotationCategory.getSortedCategories();
 	}
 
 	/**
@@ -91,21 +91,21 @@ public class NXVelocityUtils {
 		return sb.toString();
 	}
 	
-	public static PropertyWriter getXMLPropertyWriter(AnnotationApiModel aModel, String propertyDbName) {
+	public static PropertyWriter getXMLPropertyWriter(AnnotationCategory aModel, String propertyDbName) {
 		return PropertyApiModel.getXMLWriter(aModel, propertyDbName);
 	}
-	public static PropertyWriter getTtlPropertyWriter(AnnotationApiModel aModel, String propertyDbName) {
+	public static PropertyWriter getTtlPropertyWriter(AnnotationCategory aModel, String propertyDbName) {
 		return PropertyApiModel.getTtlWriter(aModel, propertyDbName);
 	}
 
 	public static boolean isDisulfideBond(Annotation annotation) {
 
-		return annotation.getAPICategory() == AnnotationApiModel.DISULFIDE_BOND;
+		return annotation.getAPICategory() == AnnotationCategory.DISULFIDE_BOND;
 	}
 
 	public static boolean isCrossLink(Annotation annotation) {
 
-		return annotation.getAPICategory() == AnnotationApiModel.CROSS_LINK;
+		return annotation.getAPICategory() == AnnotationCategory.CROSS_LINK;
 	}
 	
 }

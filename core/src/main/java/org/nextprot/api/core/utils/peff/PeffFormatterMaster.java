@@ -1,7 +1,7 @@
 package org.nextprot.api.core.utils.peff;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -13,7 +13,7 @@ import java.util.*;
  */
 public class PeffFormatterMaster {
 
-    private final Map<AnnotationApiModel, PeffFormatter> formatterByAnnotationType;
+    private final Map<AnnotationCategory, PeffFormatter> formatterByAnnotationType;
     private final Map<PeffFormatter, List<Annotation>> annotationsByFormatter;
     private final List<PeffFormatter> formatterList;
 
@@ -60,7 +60,7 @@ public class PeffFormatterMaster {
 
         for (IsoformAnnotationPeffFormatter formatter : formatters) {
 
-            for (AnnotationApiModel model : formatter.getSupportedApiModels()) {
+            for (AnnotationCategory model : formatter.getSupportedApiModels()) {
 
                 formatterByAnnotationType.put(model, formatter);
             }

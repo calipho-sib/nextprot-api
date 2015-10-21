@@ -1,7 +1,7 @@
 package org.nextprot.api.core.dao.impl;
 import org.nextprot.api.commons.bio.mutation.ProteinMutationFormat;
 import org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
@@ -72,18 +72,18 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			String category = rs.getString("category");			
 			
     		if (category.equals("biotechnology")) {
-				category=AnnotationApiModel.MISCELLANEOUS.getDbAnnotationTypeName();
+				category= AnnotationCategory.MISCELLANEOUS.getDbAnnotationTypeName();
 				
 			} else if (category.equals("transmembrane region")) {
 				int termId = rs.getInt("cv_term_id");
-				if (termId==51748) category = AnnotationApiModel.INTRAMEMBRANE_REGION.getDbAnnotationTypeName();
+				if (termId==51748) category = AnnotationCategory.INTRAMEMBRANE_REGION.getDbAnnotationTypeName();
 				
 			} else if (category.equals("transit peptide")) {
 				int termId = rs.getInt("cv_term_id");
 				if (termId==51743) {
-					category = AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
+					category = AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
 				} else if (termId==51744) {
-					category = AnnotationApiModel.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
+					category = AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
 				}
 			}
 			return category;

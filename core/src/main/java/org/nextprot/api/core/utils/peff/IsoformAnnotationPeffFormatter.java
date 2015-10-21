@@ -1,7 +1,7 @@
 package org.nextprot.api.core.utils.peff;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.HashMap;
@@ -15,12 +15,12 @@ import java.util.Set;
  */
 abstract class IsoformAnnotationPeffFormatter implements PeffFormatter {
 
-    private static final Map<AnnotationApiModel, PeffFormatter> map = new HashMap<>();
+    private static final Map<AnnotationCategory, PeffFormatter> map = new HashMap<>();
 
-    protected final Set<AnnotationApiModel> supportedApiModels;
+    protected final Set<AnnotationCategory> supportedApiModels;
     protected final PeffKey peffKey;
 
-    protected IsoformAnnotationPeffFormatter(Set<AnnotationApiModel> supportedApiModels, PeffKey peffKey) {
+    protected IsoformAnnotationPeffFormatter(Set<AnnotationCategory> supportedApiModels, PeffKey peffKey) {
 
         Preconditions.checkNotNull(supportedApiModels);
         Preconditions.checkNotNull(peffKey);
@@ -28,13 +28,13 @@ abstract class IsoformAnnotationPeffFormatter implements PeffFormatter {
         this.supportedApiModels = supportedApiModels;
         this.peffKey = peffKey;
 
-        for (AnnotationApiModel model : supportedApiModels) {
+        for (AnnotationCategory model : supportedApiModels) {
 
             map.put(model, this);
         }
     }
 
-    public Set<AnnotationApiModel> getSupportedApiModels() {
+    public Set<AnnotationCategory> getSupportedApiModels() {
 
         return supportedApiModels;
     }

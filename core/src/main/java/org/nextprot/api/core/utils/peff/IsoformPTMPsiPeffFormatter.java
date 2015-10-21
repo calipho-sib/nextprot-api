@@ -1,6 +1,6 @@
 package org.nextprot.api.core.utils.peff;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.EnumSet;
@@ -14,7 +14,7 @@ class IsoformPTMPsiPeffFormatter extends IsoformPTMPeffFormatter {
 
     public IsoformPTMPsiPeffFormatter() {
 
-        super(EnumSet.of(AnnotationApiModel.MODIFIED_RESIDUE, AnnotationApiModel.CROSS_LINK, AnnotationApiModel.LIPIDATION_SITE), PeffKey.MOD_RES_PSI);
+        super(EnumSet.of(AnnotationCategory.MODIFIED_RESIDUE, AnnotationCategory.CROSS_LINK, AnnotationCategory.LIPIDATION_SITE), PeffKey.MOD_RES_PSI);
     }
 
     @Override

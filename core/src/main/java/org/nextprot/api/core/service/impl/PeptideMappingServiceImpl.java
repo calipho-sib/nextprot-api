@@ -1,7 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.PeptideMappingDao;
@@ -237,8 +237,8 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			Integer lastPos = (Integer)record.get(PeptideMappingDao.KEY_LAST_POS);
 			String quality = (String)record.get(PeptideMappingDao.KEY_QUALITY_QUALIFIER);
 			String category = (isNatural ? 
-					AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName() : 
-					AnnotationApiModel.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName());
+					AnnotationCategory.PEPTIDE_MAPPING.getDbAnnotationTypeName() :
+					AnnotationCategory.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName());
 
 			// if annot never seen before, put it into the map and initialize it
 			if (!annotationMap.containsKey(annotationId)) {
