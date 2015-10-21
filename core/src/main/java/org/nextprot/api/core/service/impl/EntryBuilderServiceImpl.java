@@ -90,10 +90,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			}
 
             //This will be deprecated in the future
-            if(entryConfig.hasSubPart(AnnotationCategory.ANTIBODY_MAPPING)){
-				entry.setAntibodyMappings(this.antibodyMappingService.findAntibodyMappingByUniqueName(entryName));
-			}
-			if(entryConfig.hasSubPart(AnnotationCategory.PEPTIDE_MAPPING)){
+            if(entryConfig.hasSubPart(AnnotationCategory.PEPTIDE_MAPPING)){
 				entry.setPeptideMappings(this.peptideMappingService.findNaturalPeptideMappingByMasterUniqueName(entryName));
 			}
 			if(entryConfig.hasSubPart(AnnotationCategory.SRM_PEPTIDE_MAPPING)){

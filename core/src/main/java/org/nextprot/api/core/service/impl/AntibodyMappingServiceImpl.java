@@ -5,6 +5,7 @@ import java.util.List;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.AntibodyMappingDao;
 import org.nextprot.api.core.domain.AntibodyMapping;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,13 @@ class AntibodyMappingServiceImpl implements AntibodyMappingService {
 		}
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<AntibodyMapping>().addAll(mappings).build();
+	}
+	
+	
+	@Override
+	public List<Annotation> findAntibodyMappingAnnotationsByUniqueName(String entryName) {
+		Long masterId = this.masterIdentifierService.findIdByUniqueName(entryName);
+		return this.antibodyMappingDao.findAntibodyMappingAnnotationsById(masterId);
 	}
 	
 }
