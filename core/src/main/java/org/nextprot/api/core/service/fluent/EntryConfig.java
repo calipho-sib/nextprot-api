@@ -7,7 +7,7 @@ import org.nextprot.api.core.service.export.format.EntryBlock;
 
 public class EntryConfig implements KeyValueRepresentation{
 	
-	private boolean overview, publications, genomicMappings, xrefs, keywords, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, antibodyMappings, experimentalContext;
+	private boolean overview, publications, genomicMappings, xrefs, keywords, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, experimentalContext;
 	private boolean enzymes;
 	private boolean withoutAdditionalReferences = false; // by default we put xrefs, publications, experimental contexts
 	private boolean withoutProperties = false; //by default we get properties
@@ -74,10 +74,6 @@ public class EntryConfig implements KeyValueRepresentation{
 		return generalAnnotations;
 	}
 
-	public boolean hasAntibodyMappings() {
-		return antibodyMappings;
-	}
-
 	public boolean hasExperimentalContext() {
 		return experimentalContext;
 	}
@@ -138,10 +134,6 @@ public class EntryConfig implements KeyValueRepresentation{
 		this.generalAnnotations = true; return this;
 	}
 
-	public EntryConfig withAntibodyMappings() {
-		this.antibodyMappings = true; return this;
-	}
-
 	public EntryConfig withExperimentalContexts() {
 		this.experimentalContext = true; return this;
 	}
@@ -162,8 +154,7 @@ public class EntryConfig implements KeyValueRepresentation{
 	public EntryConfig withEverything() {
 		this.withOverview().withAnnotations().withPublications().withXrefs().withKeywords()
 		.withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
-		.withTargetIsoforms().withAntibodyMappings()
-		.withExperimentalContexts().withEnzymes();
+		.withTargetIsoforms().withExperimentalContexts().withEnzymes();
 		return this;
 	}
 
@@ -204,9 +195,6 @@ public class EntryConfig implements KeyValueRepresentation{
 			case GENOMIC_MAPPING: this.withGenomicMappings(); break;
 			case ISOFORM: this.withTargetIsoforms(); break;
 			case ANNOTATION: this.withAnnotations(); break;
-			case ANTIBODY:  this.withAntibodyMappings(); break;
-			//case PEPTIDE_MAPPING: this.withPeptideMappings(); break;
-			//case SRM_PEPTIDE_MAPPING:  this.withSrmPeptideMappings(); break;
 			case EXPERIMENTAL_CONTEXT: this.withExperimentalContexts(); break;
 			default: {throw new NextProtException(block + " block not found");}
 		}

@@ -88,7 +88,9 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			if(entryConfig.hasGeneralAnnotations()){
 				entry.setAnnotations(this.annotationService.findAnnotations(entryName));
 			}
-			if(entryConfig.hasAntibodyMappings()){
+
+            //This will be deprecated in the future
+            if(entryConfig.hasSubPart(AnnotationCategory.ANTIBODY_MAPPING)){
 				entry.setAntibodyMappings(this.antibodyMappingService.findAntibodyMappingByUniqueName(entryName));
 			}
 			if(entryConfig.hasSubPart(AnnotationCategory.PEPTIDE_MAPPING)){
@@ -97,6 +99,8 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			if(entryConfig.hasSubPart(AnnotationCategory.SRM_PEPTIDE_MAPPING)){
 				entry.setSrmPeptideMappings(this.peptideMappingService.findSyntheticPeptideMappingByMasterUniqueName(entryName));
 			}
+            ///////
+
 			if(entryConfig.hasExperimentalContext()){
 				entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entryName));
 			}
