@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
-	
-		
-	
-	<!--  Antibody Master  -->
-	<mapping_annotations annotation_id="51" reference_identifier_id="596889" mapped_identifier_id="11" cv_type_id="5" /> 
-	
-	<!-- 	 Antibody Iso  -->
-	<mapping_annotations annotation_id="60" reference_identifier_id="16" mapped_identifier_id="11" cv_type_id="6" /> 
-		
-	<!--  Iso Master  -->	
-	<mapping_annotations annotation_id="70" reference_identifier_id="596889" mapped_identifier_id="16" cv_type_id="4" /> 
-	
-	<mapping_positions annotation_id="60" position_id="20" first_pos="1" last_pos="1000"/>
-	
-	<!-- 	ISO 	-->
-	<sequence_identifiers identifier_id="16" cv_type_id="2" unique_name="NX_P12345-1"  datasource_id="0" />
 
-	<!-- 	ANTIBODY 	-->
-	<sequence_identifiers identifier_id="11" cv_type_id="6" unique_name="NX_HPA004932" datasource_id="5"  />
+	<!-- Antibody Masters -->
+	<mapping_annotations annotation_id="9547085" reference_identifier_id="636535" mapped_identifier_id="3127922" cv_type_id="5" />
+	<mapping_annotations annotation_id="4049518" reference_identifier_id="636535" mapped_identifier_id="1565006" cv_type_id="5" />
 
-	<!-- 	Master 	-->
-	<sequence_identifiers identifier_id="596889" cv_type_id="1" unique_name="NX_P12345" datasource_id="0" db_xref_id="3434634"/>
+	<!-- Antibody Isos  -->
+	<mapping_annotations annotation_id="9547084" reference_identifier_id="636537" mapped_identifier_id="3127922" cv_type_id="6" />
+	<mapping_annotations annotation_id="9547086" reference_identifier_id="636536" mapped_identifier_id="3127922" cv_type_id="6" />
+	<mapping_annotations annotation_id="4049516" reference_identifier_id="636536" mapped_identifier_id="1565006" cv_type_id="6" />
+	<mapping_annotations annotation_id="4049517" reference_identifier_id="636537" mapped_identifier_id="1565006" cv_type_id="6" />
 
-	
-</dataset>	
+	<!-- Iso Master  -->
+	<mapping_annotations annotation_id="656672" reference_identifier_id="636535" mapped_identifier_id="636536" cv_type_id="4" />
+	<mapping_annotations annotation_id="656673" reference_identifier_id="636535" mapped_identifier_id="636537" cv_type_id="4" />
+
+	<!-- ANTIBODY 	-->
+	<sequence_identifiers identifier_id="3127922" cv_type_id="6" unique_name="NX_HPA036303" db_xref_id="39235676" datasource_id="5" />
+	<sequence_identifiers identifier_id="1565006" cv_type_id="6" unique_name="NX_HPA036302" db_xref_id="17201575" datasource_id="5" />
+
+	<!-- ISO 	-->
+	<sequence_identifiers identifier_id="636536" cv_type_id="2" unique_name="NX_P06213-1"  db_xref_id="2785049" datasource_id="0" />
+	<sequence_identifiers identifier_id="636537" cv_type_id="2" unique_name="NX_P06213-2"  db_xref_id="2785050" datasource_id="0" />
+
+	<!-- Positions -->
+	<mapping_positions annotation_id="9547084" position_id="10665974" first_pos="245" last_pos="326"/>
+	<mapping_positions annotation_id="9547086" position_id="10665977" first_pos="245" last_pos="326"/>
+	<mapping_positions annotation_id="4049516" position_id="6199259" first_pos="607" last_pos="742"/>
+	<mapping_positions annotation_id="4049517" position_id="6199260" first_pos="607" last_pos="742"/>
+
+</dataset>
