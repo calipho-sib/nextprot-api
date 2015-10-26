@@ -28,9 +28,6 @@ public class AnnotationUtils {
 	
 	/**
 	 * Filter annotation by its category
-	 * @param annotations
-	 * @param annotationCategory
-	 * @return
 	 */
 	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationCategory annotationCategory) {
 		return filterAnnotationsByCategory(annotations,  annotationCategory, true);
@@ -38,14 +35,12 @@ public class AnnotationUtils {
 	
 	/**
 	 * Filter annotation by its category
-	 * @param annotations
-	 * @param annotationCategory
-	 * @param withChildren if true, annotations having a category which is a child of annotationCategory are included in the list 
+	 * @param withChildren if true, annotations having a category which is a child of annotationCategory are included in the list
 	 * @return a list of annotations
 	 */
 	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationCategory annotationCategory, boolean withChildren) {
 		if(annotations == null) return null;
-		List<Annotation> annotationList = new ArrayList<Annotation>(); 
+		List<Annotation> annotationList = new ArrayList<>();
 			for(Annotation a : annotations){
 			if(a.getAPICategory() != null) {
 				if (a.getAPICategory().equals(annotationCategory)) {
@@ -63,7 +58,7 @@ public class AnnotationUtils {
 	
 	
 	public static Set<Long> getExperimentalContextIdsForAnnotations(List<Annotation> annotations) {
-		Set<Long> ecIds = new HashSet<Long>(); 
+		Set<Long> ecIds = new HashSet<>();
 		for(Annotation a : annotations){
 			for(AnnotationEvidence e : a.getEvidences()) {
 				Long ecId = e.getExperimentalContextId();
@@ -77,10 +72,10 @@ public class AnnotationUtils {
 	
 	public static List<Annotation> filterAnnotationsBetweenPositions(int start, int end, List<Annotation> annotations, String isoform) {
 		if(annotations == null) return null;
-		List<Annotation> finalAnnotations = new ArrayList<Annotation>();
+		List<Annotation> finalAnnotations = new ArrayList<>();
 		for (Annotation annot : annotations) {
 			if (annot.isAnnotationPositionalForIsoform(isoform)) {
-				int isoStartPosition, isoEndPosition = -1;
+				int isoStartPosition, isoEndPosition;
 				isoStartPosition = annot.getStartPositionForIsoform(isoform);
 				isoEndPosition = annot.getEndPositionForIsoform(isoform);
 				if ((isoStartPosition >= start) && (isoEndPosition <= end)) {
@@ -93,7 +88,7 @@ public class AnnotationUtils {
 	
 	public static Set<Long> getXrefIdsForAnnotations(List<Annotation> annotations){
 		if(annotations == null) return null;
-		Set<Long> xrefIds = new HashSet<Long>(); 
+		Set<Long> xrefIds = new HashSet<>();
 		for(Annotation a : annotations){
 			for(AnnotationEvidence e : a.getEvidences()){
 				if(e.isResourceAXref()){
