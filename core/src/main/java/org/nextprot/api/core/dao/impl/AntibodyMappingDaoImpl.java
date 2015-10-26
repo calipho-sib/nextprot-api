@@ -33,7 +33,7 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
 		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("antibodies-by-id"), namedParams, rowMapper);
 		return rowMapper.getAnnotations();
 	}
-	
+
 	private static class AntibodyRowMapper implements RowMapper<Annotation>{
 		
 		Map<Long, Annotation> annotationsMap = new HashMap<>();
@@ -42,18 +42,17 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
 		public Annotation mapRow(ResultSet resultSet, int row) throws SQLException {
 
 			Long annotationId = resultSet.getLong("annotation_id");
+            String isoName = resultSet.getString("iso_unique_name");
 
 			if (!annotationsMap.containsKey(annotationId)){
 
                 Annotation annotation = new Annotation();
-				annotation.setAnnotationId(annotationId);
+                annotation.setUniqueName("AN_"+resultSet.getString("resource_ac")+"_"+annotationId); // AN_HPA039796_000890
+                annotation.setAnnotationId(annotationId);
 				annotation.setCategory(AnnotationCategory.ANTIBODY_MAPPING);
                 annotation.setQualityQualifier("GOLD"); // TODO: IS THIS KIND OF INFO ACCESSIBLE ?
 				annotation.setTargetingIsoforms(new ArrayList<AnnotationIsoformSpecificity>());
 
-                // From template antibody-list.xml.vm:
-                //  <evidence is-negative='false' evidence-code='ECO:0000154' resource-assoc-type='evidence' resource-internal-ref='$xref.dbXrefId'
-                //   resource-type='database' source-internal-ref='$antibody.assignedBy' #set($UNESCAPED_CDATA = $xref.resolvedUrl) />
                 AnnotationEvidence evidence = new AnnotationEvidence();
                 evidence.setAnnotationId(annotationId);
                 evidence.setNegativeEvidence(false);
@@ -62,13 +61,13 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
                 evidence.setResourceType("database");
                 evidence.setResourceId(resultSet.getLong("db_xref_id"));
                 evidence.setAssignedBy(resultSet.getString("antibody_src"));
+                evidence.setResourceDb(resultSet.getString("resource_db"));
 
                 annotation.setEvidences(Collections.singletonList(evidence));
 
                 annotationsMap.put(annotationId, annotation);
 			}
 
-			String isoName = resultSet.getString("iso_unique_name");
 			Annotation annotation = annotationsMap.get(annotationId);
 
 			AnnotationIsoformSpecificity isoSpecificity = new AnnotationIsoformSpecificity();
