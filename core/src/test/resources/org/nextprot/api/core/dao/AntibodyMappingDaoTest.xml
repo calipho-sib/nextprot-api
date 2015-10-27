@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+<dataset>
 
 	<!-- Antibody Masters -->
 	<mapping_annotations annotation_id="9547085" reference_identifier_id="636535" mapped_identifier_id="3127922" cv_type_id="5" />
@@ -30,4 +29,7 @@
 	<mapping_positions annotation_id="4049516" position_id="6199259" first_pos="607" last_pos="742"/>
 	<mapping_positions annotation_id="4049517" position_id="6199260" first_pos="607" last_pos="742"/>
 
+    <db_xrefs accession="HPA036303" resource_id="39235676" cv_database_id="60"/>
+    <db_xrefs accession="HPA036302" resource_id="17201575" cv_database_id="60"/>
+    <cv_databases cv_id="60" cv_name="HPA" description="Human Protein Atlas" url="http://www.proteinatlas.org/" db_code="DB-0046" link_url="http://www.proteinatlas.org/tissue_profile.php?antibody_id=%s" cv_category_id="31"/>
 </dataset>
