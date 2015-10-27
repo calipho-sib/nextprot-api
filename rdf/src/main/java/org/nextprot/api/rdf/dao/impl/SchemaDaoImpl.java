@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.rdf.dao.SchemaDao;
@@ -141,9 +141,9 @@ public class SchemaDaoImpl implements SchemaDao {
 	@Override
 	public List<OWLAnnotation> findAllAnnotation() {
 		// get description for annotations that exist in db
-		AnnotationApiModel[] cats = AnnotationApiModel.values(); 
+		AnnotationCategory[] cats = AnnotationCategory.values();
 		List<Long> typeIds = new ArrayList<Long>();
-		for (AnnotationApiModel cat: cats) typeIds.add(new Long(cat.getDbId()));
+		for (AnnotationCategory cat: cats) typeIds.add(new Long(cat.getDbId()));
 		SqlParameterSource params = new MapSqlParameterSource("typeIds", typeIds);
 		List<NameDescr> nds = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("schema-instantiated-annotation-list"), params, new ParameterizedRowMapper<NameDescr>() {
 			@Override
@@ -155,15 +155,15 @@ public class SchemaDaoImpl implements SchemaDao {
 		});
 		// inject descriptions found in db into the OWLAnnotationCategory enum values
 		for (NameDescr nd : nds) {
-			AnnotationApiModel m = AnnotationApiModel.getByDbAnnotationTypeName(nd.name);
+			AnnotationCategory m = AnnotationCategory.getByDbAnnotationTypeName(nd.name);
 			//System.out.println("before descr: " + m.toString());
 			m.setDescription(nd.descr);
 			//System.out.println("after descr: " + m.toString());
-			//AnnotationApiModel.getByDbAnnotationTypeName(nd.name).setDescription(nd.descr);
+			//AnnotationCategory.getByDbAnnotationTypeName(nd.name).setDescription(nd.descr);
 		}
 		// encapsulate OWLAnnotationCategory into OWLAnnotation to be compatible with the rest
 		List<OWLAnnotation> annotations = new ArrayList<OWLAnnotation>();
-		for (AnnotationApiModel cat: AnnotationApiModel.values()) {
+		for (AnnotationCategory cat: AnnotationCategory.values()) {
 			annotations.add(new OWLAnnotation(cat));
 		}
 		return annotations;	

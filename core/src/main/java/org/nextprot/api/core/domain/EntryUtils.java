@@ -23,7 +23,7 @@ public class EntryUtils implements Serializable{
 		List<ExperimentalContext> experimentalContexts;
 		
 		// Filter if necessary
-		if (config.getSubpart() != null) {
+  		if (config.hasSubPart()) {
 
 			annotations = AnnotationUtils.filterAnnotationsByCategory(entry.getAnnotations(), config.getSubpart());
 			entry.setAnnotations(annotations);

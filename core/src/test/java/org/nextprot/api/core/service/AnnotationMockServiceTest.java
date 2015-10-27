@@ -64,6 +64,9 @@ public class AnnotationMockServiceTest {
 	@Mock
 	private BioPhyChemPropsDao bioPhyChemPropsDao;
 
+	@Mock
+	private AntibodyMappingService antibodyMappingService;
+
 	@Before
 	public void init() throws FileNotFoundException, DataSetException {
 

@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
-
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.XrefAnnotationMapping;
 import org.nextprot.api.core.dao.DbXrefDao;
@@ -14,6 +13,7 @@ import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.service.AntibodyResourceIdsService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideNamesService;
@@ -30,6 +30,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 	@Autowired private DbXrefDao dbXRefDao;
 	@Autowired private PeptideNamesService peptideNamesService;
+	@Autowired private AntibodyResourceIdsService antibodyResourceIdsService;
 	@Autowired private IsoformService isoService;
 
 	private static final Function<DbXref, Long> DB_XREF_LONG_FUNCTION = new Function<DbXref, Long>() {
@@ -190,9 +191,9 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		// now merge xrefs associated to the entry by annot, interact, mappings, etc. in the tree set 
 		Set<DbXref> xrefs = new TreeSet<>(comparator);
-		List<String> peptideNames = this.peptideNamesService.findAllPeptideNamesByMasterId(entryName);
 
-		xrefs.addAll(peptideNames.size()>0 ? this.dbXRefDao.findPeptideXrefs(peptideNames) :  new HashSet<DbXref>());
+		addPeptideXrefs(entryName, xrefs);
+		addAntibodyXrefs(entryName, xrefs);
 		xrefs.addAll(this.dbXRefDao.findEntryAnnotationsEvidenceXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryAttachedXrefs(entryName));
 		xrefs.addAll(this.dbXRefDao.findEntryIdentifierXrefs(entryName));
@@ -207,6 +208,18 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<DbXref>().addAll(xrefList).build();
+	}
+
+	private void addPeptideXrefs(String entryName, Set<DbXref> xrefs) {
+
+		List<String> names = peptideNamesService.findAllPeptideNamesByMasterId(entryName);
+		xrefs.addAll(names.size()>0 ? dbXRefDao.findPeptideXrefs(names) : new HashSet<DbXref>());
+	}
+
+	private void addAntibodyXrefs(String entryName, Set<DbXref> xrefs) {
+
+		List<Long> ids = antibodyResourceIdsService.findAllAntibodyIdsByMasterId(entryName);
+		xrefs.addAll(ids.size()>0 ? dbXRefDao.findAntibodyXrefs(ids) : new HashSet<DbXref>());
 	}
 
 	private void attachPropertiesToXrefs(List<DbXref> xrefs, String uniqueName, boolean fetchXrefAnnotationMappingProperties) {

@@ -1,6 +1,6 @@
 package org.nextprot.api.core.utils;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObjectExternal;
@@ -28,24 +28,19 @@ public class AnnotationUtils {
 	
 	/**
 	 * Filter annotation by its category
-	 * @param annotations
-	 * @param annotationCategory
-	 * @return
 	 */
-	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationApiModel annotationCategory) {
+	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationCategory annotationCategory) {
 		return filterAnnotationsByCategory(annotations,  annotationCategory, true);
 	}
 	
 	/**
 	 * Filter annotation by its category
-	 * @param annotations
-	 * @param annotationCategory
-	 * @param withChildren if true, annotations having a category which is a child of annotationCategory are included in the list 
+	 * @param withChildren if true, annotations having a category which is a child of annotationCategory are included in the list
 	 * @return a list of annotations
 	 */
-	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationApiModel annotationCategory, boolean withChildren) {
+	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationCategory annotationCategory, boolean withChildren) {
 		if(annotations == null) return null;
-		List<Annotation> annotationList = new ArrayList<Annotation>(); 
+		List<Annotation> annotationList = new ArrayList<>();
 			for(Annotation a : annotations){
 			if(a.getAPICategory() != null) {
 				if (a.getAPICategory().equals(annotationCategory)) {
@@ -63,7 +58,7 @@ public class AnnotationUtils {
 	
 	
 	public static Set<Long> getExperimentalContextIdsForAnnotations(List<Annotation> annotations) {
-		Set<Long> ecIds = new HashSet<Long>(); 
+		Set<Long> ecIds = new HashSet<>();
 		for(Annotation a : annotations){
 			for(AnnotationEvidence e : a.getEvidences()) {
 				Long ecId = e.getExperimentalContextId();
@@ -77,10 +72,10 @@ public class AnnotationUtils {
 	
 	public static List<Annotation> filterAnnotationsBetweenPositions(int start, int end, List<Annotation> annotations, String isoform) {
 		if(annotations == null) return null;
-		List<Annotation> finalAnnotations = new ArrayList<Annotation>();
+		List<Annotation> finalAnnotations = new ArrayList<>();
 		for (Annotation annot : annotations) {
 			if (annot.isAnnotationPositionalForIsoform(isoform)) {
-				int isoStartPosition, isoEndPosition = -1;
+				int isoStartPosition, isoEndPosition;
 				isoStartPosition = annot.getStartPositionForIsoform(isoform);
 				isoEndPosition = annot.getEndPositionForIsoform(isoform);
 				if ((isoStartPosition >= start) && (isoEndPosition <= end)) {
@@ -93,7 +88,7 @@ public class AnnotationUtils {
 	
 	public static Set<Long> getXrefIdsForAnnotations(List<Annotation> annotations){
 		if(annotations == null) return null;
-		Set<Long> xrefIds = new HashSet<Long>(); 
+		Set<Long> xrefIds = new HashSet<>();
 		for(Annotation a : annotations){
 			for(AnnotationEvidence e : a.getEvidences()){
 				if(e.isResourceAXref()){
@@ -113,13 +108,13 @@ public class AnnotationUtils {
 		Set<Long> xrefIds = new HashSet<>();
 
 		for(Annotation a : annotations){
-			if (a.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
+			if (a.getAPICategory()== AnnotationCategory.SEQUENCE_CAUTION) {
 				addXrefIdRelatedToAnnotationPropertyName(a, PropertyApiModel.NAME_DIFFERING_SEQUENCE, xrefIds);
 			}
-			else if (a.getAPICategory()==AnnotationApiModel.COFACTOR) {
+			else if (a.getAPICategory()== AnnotationCategory.COFACTOR) {
 				xrefIds.add(a.getBioObject().getId());
 			}
-			else if (a.getAPICategory()==AnnotationApiModel.DISEASE) {
+			else if (a.getAPICategory()== AnnotationCategory.DISEASE) {
 				addXrefIdRelatedToAnnotationPropertyName(a, PropertyApiModel.NAME_ALTERNATIVE_DISEASE_TERM, xrefIds);
 			}
 		}
@@ -144,7 +139,7 @@ public class AnnotationUtils {
 		if(annotations == null) return null;
 		Set<Long> xrefIds = new HashSet<>();
 		for(Annotation a : annotations){
-			if (a.getAPICategory()==AnnotationApiModel.BINARY_INTERACTION) {
+			if (a.getAPICategory()== AnnotationCategory.BINARY_INTERACTION) {
 				for (AnnotationProperty p: a.getProperties()) {
 					if (p.getName().equals(PropertyApiModel.NAME_INTERACTANT)) {
 						if (p.getValueType().equals(PropertyApiModel.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
@@ -180,13 +175,13 @@ public class AnnotationUtils {
 
 			List<AnnotationEvidence> evidencesToRemove = null;
 
-			if (annot.getAPICategory()==AnnotationApiModel.SEQUENCE_CAUTION) {
+			if (annot.getAPICategory()== AnnotationCategory.SEQUENCE_CAUTION) {
 				evidencesToRemove = convertType2EvidenceToProperty(annot, PropertyApiModel.NAME_DIFFERING_SEQUENCE);
 			} 
-			else if (annot.getAPICategory()==AnnotationApiModel.COFACTOR) {
+			else if (annot.getAPICategory()== AnnotationCategory.COFACTOR) {
 				evidencesToRemove = convertEvidenceToExternalBioObject(annot);
 			}
-			else if (annot.getAPICategory()==AnnotationApiModel.DISEASE) {
+			else if (annot.getAPICategory()== AnnotationCategory.DISEASE) {
 				evidencesToRemove = convertType2EvidenceToProperty(annot, PropertyApiModel.NAME_ALTERNATIVE_DISEASE_TERM);
 			}
 

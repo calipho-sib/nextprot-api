@@ -13,7 +13,7 @@ public class TreeVisitorDot extends AbstractTreeVisitor {
     }
 
     @Override
-    protected void writeEdge(AnnotationApiModel parent, AnnotationApiModel child) {
+    protected void writeEdge(AnnotationCategory parent, AnnotationCategory child) {
 
         sb.append("\t");
         sb.append(parent.getApiTypeName());

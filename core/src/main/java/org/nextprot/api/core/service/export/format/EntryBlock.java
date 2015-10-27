@@ -1,6 +1,6 @@
 package org.nextprot.api.core.service.export.format;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 
 import java.util.*;
@@ -17,11 +17,7 @@ public enum EntryBlock {
 	CHROMOSOMAL_LOCATION(FileFormat.XML),
 	EXPERIMENTAL_CONTEXT(FileFormat.XML),
 	GENOMIC_MAPPING(FileFormat.XML),
-	//INTERACTION(NPFileFormat.XML),  // now treated as annotation subpart (CALIPHOMISC-302)
-	ISOFORM(FileFormat.XML),
-	ANTIBODY(FileFormat.XML);
-	//PEPTIDE_MAPPING(NPFileFormat.XML),
-	//SRM_PEPTIDE_MAPPING(NPFileFormat.XML);
+	ISOFORM(FileFormat.XML);
 	
 	private List<FileFormat> supportedFormats = null;
 
@@ -59,21 +55,21 @@ public enum EntryBlock {
 				if (v.supportedFormats.contains(format)) {
 					formatViews.get(format.name().toLowerCase()).add(v.getURLFormat());
 					if(v.equals(ANNOTATION)){
-						getAnnotationHierarchy(AnnotationApiModel.ROOT, formatViews.get(format.name().toLowerCase()), 0);
+						getAnnotationHierarchy(AnnotationCategory.ROOT, formatViews.get(format.name().toLowerCase()), 0);
 					}
 				}
 			}
 		}
 	}
 	
-	private static void getAnnotationHierarchy(AnnotationApiModel a, Set<String> list, int inc) {
+	private static void getAnnotationHierarchy(AnnotationCategory a, Set<String> list, int inc) {
 		if(inc > 0) {
 			String name = new String(new char[inc]).replace('\0', '-') + StringUtils.camelToKebabCase(a.getApiTypeName());
 			list.add(name);
 		}
 		
 		int nextInc = inc + 1;
-		for (AnnotationApiModel c : a.getChildren()) {
+		for (AnnotationCategory c : a.getChildren()) {
 			getAnnotationHierarchy(c, list, nextInc);
 		}
 	}

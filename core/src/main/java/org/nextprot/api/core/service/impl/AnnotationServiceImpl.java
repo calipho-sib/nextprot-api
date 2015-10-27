@@ -1,14 +1,15 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
@@ -16,8 +17,13 @@ import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.PtmDao;
 import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.InteractionService;
 import org.nextprot.api.core.service.PeptideMappingService;
@@ -26,8 +32,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.security.InvalidParameterException;
-import java.util.*;
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
@@ -39,7 +49,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private BioPhyChemPropsDao bioPhyChemPropsDao;
 	@Autowired private IsoformDAO isoformDAO;
 	@Autowired private PeptideMappingService peptideMappingService;
-
+	@Autowired private AntibodyMappingService antibodyMappingService;
+	
 	@Override
 	@Cacheable("annotations")
 	public List<Annotation> findAnnotations(String entryName) {
@@ -105,6 +116,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(this.interactionService.findInteractionsAsAnnotationsByEntry(entryName));
 		annotations.addAll(this.peptideMappingService.findNaturalPeptideMappingAnnotationsByMasterUniqueName(entryName));
 		annotations.addAll(this.peptideMappingService.findSyntheticPeptideMappingAnnotationsByMasterUniqueName(entryName));		
+		annotations.addAll(this.antibodyMappingService.findAntibodyMappingAnnotationsByUniqueName(entryName));		
+
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
@@ -121,7 +134,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 			Annotation annotation = new Annotation();
 
-			AnnotationApiModel model = AnnotationApiModel.getByDbAnnotationTypeName(property.getName());
+			AnnotationCategory model = AnnotationCategory.getByDbAnnotationTypeName(property.getName());
 			String description = property.getValue();
 
 			

@@ -1,7 +1,7 @@
 package org.nextprot.api.core.service;
 
 import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -72,7 +72,7 @@ order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry)
 		int self=0;
 		for (Annotation annot: annots) {
 			assertTrue(annot.getCategory().equals("BinaryInteraction"));
-			assertTrue(annot.getAPICategory() == AnnotationApiModel.BINARY_INTERACTION);
+			assertTrue(annot.getAPICategory() == AnnotationCategory.BINARY_INTERACTION);
 			assertTrue(annot.getEvidences().size()==1);
 			AnnotationEvidence evi = annot.getEvidences().get(0);
 			evi.getAssignedBy().equals("IntAct");

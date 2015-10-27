@@ -8,8 +8,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.solr.common.SolrInputDocument;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.dao.impl.DbXrefDaoImpl;
 //import org.biojavax.bio.seq.io.UniProtCommentParser.Interaction;
 //import org.nextprot.api.core.domain.AntibodyMapping;
 import org.nextprot.api.core.domain.ChromosomalLocation;

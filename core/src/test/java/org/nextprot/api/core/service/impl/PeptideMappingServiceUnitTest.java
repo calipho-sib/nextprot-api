@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -36,8 +36,8 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(annotationMap.size()==1);
     	Annotation annot = annotationMap.get(annotId);
     	assertTrue(annot.getAnnotationId()==annotId);
-    	assertTrue(annot.getAPICategory()==AnnotationApiModel.PEPTIDE_MAPPING);
-    	assertTrue(annot.getCategory().equals(AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName()));
+    	assertTrue(annot.getAPICategory()== AnnotationCategory.PEPTIDE_MAPPING);
+    	assertTrue(annot.getCategory().equals(AnnotationCategory.PEPTIDE_MAPPING.getDbAnnotationTypeName()));
     	AnnotationProperty prop = annot.getProperties().get(0);
     	assertTrue(prop.getAnnotationId()==annotId);
     	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME));
@@ -73,8 +73,8 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	// checking first annotation
     	Annotation annot = annotationMap.get(annotId);
     	assertTrue(annot.getAnnotationId()==annotId);
-    	assertTrue(annot.getAPICategory()==AnnotationApiModel.PEPTIDE_MAPPING);
-    	assertTrue(annot.getCategory().equals(AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName()));
+    	assertTrue(annot.getAPICategory()== AnnotationCategory.PEPTIDE_MAPPING);
+    	assertTrue(annot.getCategory().equals(AnnotationCategory.PEPTIDE_MAPPING.getDbAnnotationTypeName()));
     	AnnotationProperty prop = annot.getProperties().get(0);
     	assertTrue(prop.getAnnotationId()==annotId);
     	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME));
@@ -91,8 +91,8 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 		// checking second annotation
     	annot = annotationMap.get(annotId2);
     	assertTrue(annot.getAnnotationId()==annotId2);
-    	assertTrue(annot.getAPICategory()==AnnotationApiModel.PEPTIDE_MAPPING);
-    	assertTrue(annot.getCategory().equals(AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName()));
+    	assertTrue(annot.getAPICategory()== AnnotationCategory.PEPTIDE_MAPPING);
+    	assertTrue(annot.getCategory().equals(AnnotationCategory.PEPTIDE_MAPPING.getDbAnnotationTypeName()));
     	prop = annot.getProperties().get(0);
     	assertTrue(prop.getAnnotationId()==annotId2);
     	assertTrue(prop.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME));
