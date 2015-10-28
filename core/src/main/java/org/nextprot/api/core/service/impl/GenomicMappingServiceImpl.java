@@ -3,18 +3,25 @@ package org.nextprot.api.core.service.impl;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.*;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import org.nextprot.api.core.dao.GeneDAO;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.service.GenomicMappingService;
+import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.exon.ExonsAnalysisLogger;
 import org.nextprot.api.core.utils.exon.TranscriptExonsAnalyser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
@@ -196,11 +203,14 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		}
 	}
 
-	private static class IsoformMappingComparator implements Comparator<IsoformMapping> {
+    static class IsoformMappingComparator implements Comparator<IsoformMapping> {
+
+        final private IsoformUtils.ByIsoformUniqueNameComparator comparator = new IsoformUtils.ByIsoformUniqueNameComparator();
 
 		@Override
 		public int compare(IsoformMapping im1, IsoformMapping im2) {
-			return im1.getUniqueName().compareTo(im2.getUniqueName());
+
+			return comparator.compare(im1.getUniqueName(), im2.getUniqueName());
 		}
 	}
 }
