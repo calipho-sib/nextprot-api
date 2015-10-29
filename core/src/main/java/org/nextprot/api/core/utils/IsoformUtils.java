@@ -72,8 +72,8 @@ public class IsoformUtils {
 	public static class IsoformComparator implements Comparator<Isoform> {
 
         private static final Pattern numPat = Pattern.compile("\\d+");
-        private static final Pattern prefixNumPat = Pattern.compile("^(\\d+)\\w+$");
-        private static final Pattern suffixNumPat = Pattern.compile("^(\\w+)(\\d+)?$");
+        private static final Pattern prefixNumPat = Pattern.compile("^(\\d+)[a-zA-Z\\s]+$");
+        private static final Pattern suffixNumPat = Pattern.compile("^([a-zA-Z\\s]+)(\\d+)?$");
 
 		@Override
 		public int compare(Isoform iso1, Isoform iso2) {
@@ -90,7 +90,7 @@ public class IsoformUtils {
                 // compare prefixes first
                 int comp = comparePrefixNumbers(name1, name2);
 
-                // if same prefix compare stems then suffixes
+                // if same prefixes or no prefixes
                 if (comp == 0) {
 
                     comp = compareStemThenSuffixNumbers(name1, name2);
@@ -129,7 +129,7 @@ public class IsoformUtils {
                 return 1;
             }
 
-            // no prefix number -> compare stems
+            // no prefix number found -> compare stems
             return 0;
 		}
 
@@ -148,10 +148,21 @@ public class IsoformUtils {
                 // same stem compare suffix numbers
                 if (comp == 0) {
 
-                    int num1 = Integer.parseInt(suffMatcher1.group(2));
-                    int num2 = Integer.parseInt(suffMatcher2.group(2));
+                    if (suffMatcher1.group(2) != null && suffMatcher2.group(2) != null) {
 
-                    comp = num1 - num2;
+                        int num1 = Integer.parseInt(suffMatcher1.group(2));
+                        int num2 = Integer.parseInt(suffMatcher2.group(2));
+
+                        comp = num1 - num2;
+                    }
+                    else if (suffMatcher1.group(2) != null) {
+
+                        comp = 1;
+                    }
+                    else {
+
+                        comp = -1;
+                    }
                 }
 
                 return comp;

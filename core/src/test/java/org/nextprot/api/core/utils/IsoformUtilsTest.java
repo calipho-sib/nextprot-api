@@ -48,7 +48,7 @@ public class IsoformUtilsTest {
     @Test
     public void testSortIsoform() throws Exception {
 
-        List<Isoform> list = createIsoforms("2AB", "2AC", "2BC", "2A", "2B", "2C", "Iso 2", "1ABC",
+        List<Isoform> list = createIsoforms("2AB", "2AC", "2BC", "2A", "2B", "2C", "Iso 2", "1ABC", "Iso 12",
                 "3ABC", "3AB", "3AC", "1AB", "3BC", "3A", "3B", "3C", "Iso 3", "4ABC", "4AB", "4AC", "4BC",
                 "4A", "1AC", "4B", "4C", "Iso 4", "1BC", "1A", "1B", "1C", "Iso 1", "2ABC", "11AC", "ABC34 iso");
 
@@ -62,7 +62,7 @@ public class IsoformUtilsTest {
                 "2A", "2AB", "2ABC", "2AC", "2B", "2BC", "2C",
                 "3A", "3AB", "3ABC", "3AC", "3B", "3BC", "3C",
                 "4A", "4AB", "4ABC", "4AC", "4B", "4BC", "4C",
-                "11AC", "ABC34 iso", "Iso 1", "Iso 2", "Iso 3", "Iso 4"), new ArrayList<>(Collections2.transform(list, new Function<Isoform, String>() {
+                "11AC", "ABC34 iso", "Iso 1", "Iso 2", "Iso 3", "Iso 4", "Iso 12"), new ArrayList<>(Collections2.transform(list, new Function<Isoform, String>() {
 
             @Nullable
             @Override
