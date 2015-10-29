@@ -4,6 +4,8 @@ import org.nextprot.api.core.domain.Isoform;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -58,5 +60,104 @@ public class IsoformUtils {
 
 			return uniqueName1.compareTo(uniqueName2);
 		}
+	}
+
+    /**
+     * Comparison done as follow :
+     * The first isoform is always the canonical one, the remaining are sorted according to main entity names with the following criteria:
+     * 1. if number prefix found -> numerically compared
+     * 2. then lexicographically
+     * 3. if number suffix found -> numerically compared
+     **/
+	public static class IsoformComparator implements Comparator<Isoform> {
+
+        Pattern numPat = Pattern.compile("\\d+");
+		Pattern prefixNumPat = Pattern.compile("^(\\d+)\\w+$");
+		Pattern suffixNumPat = Pattern.compile("^(\\w+)(\\d+)?$");
+
+		@Override
+		public int compare(Isoform iso1, Isoform iso2) {
+
+			// 1st criterium: canonical isoform comes first
+			if (iso1.isCanonicalIsoform()) { return -1; }
+			if (iso2.isCanonicalIsoform()) { return 1; }
+
+			String name1 = iso1.getMainEntityName().getValue();
+			String name2 = iso2.getMainEntityName().getValue();
+
+			if (numPat.matcher(name1).find() || numPat.matcher(name2).find()) {
+
+                // compare prefixes first
+                int comp = comparePrefixNumbers(name1, name2);
+
+                // if same prefix compare stems then suffixes
+                if (comp == 0) {
+
+                    comp = compareStemThenSuffixNumbers(name1, name2);
+                }
+
+                return comp;
+			}
+            else { return name1.compareTo(name2); }
+		}
+
+		private int comparePrefixNumbers(String name1, String name2) {
+
+			Matcher preMatcher1 = prefixNumPat.matcher(name1);
+			Matcher preMatcher2 = prefixNumPat.matcher(name2);
+
+            boolean isName1HasPrefixNumber = preMatcher1.find();
+            boolean isName2HasPrefixNumber = preMatcher2.find();
+
+            if (isName1HasPrefixNumber && isName2HasPrefixNumber) {
+
+                int num1 = Integer.parseInt(preMatcher1.group(1));
+                int num2 = Integer.parseInt(preMatcher2.group(1));
+
+                return num1 - num2;
+            }
+
+            // name 1 comes first
+            else if (isName1HasPrefixNumber) {
+
+                return -1;
+            }
+
+            // name 2 comes first
+            else if (isName2HasPrefixNumber) {
+
+                return 1;
+            }
+
+            // no prefix number -> compare stems
+            return 0;
+		}
+
+        private int compareStemThenSuffixNumbers(String name1, String name2) {
+
+            Matcher suffMatcher1 = suffixNumPat.matcher(name1);
+            Matcher suffMatcher2 = suffixNumPat.matcher(name2);
+
+            if (suffMatcher1.find() && suffMatcher2.find()) {
+
+                String stem1 = suffMatcher1.group(1);
+                String stem2 = suffMatcher2.group(1);
+
+                int comp = stem1.compareTo(stem2);
+
+                // same stem compare suffix numbers
+                if (comp == 0) {
+
+                    int num1 = Integer.parseInt(suffMatcher1.group(2));
+                    int num2 = Integer.parseInt(suffMatcher2.group(2));
+
+                    comp = num1 - num2;
+                }
+
+                return comp;
+            }
+
+            return name1.compareTo(name2);
+        }
 	}
 }
