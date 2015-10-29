@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
-import org.nextprot.api.core.utils.NXVelocityUtils;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
