@@ -71,9 +71,9 @@ public class IsoformUtils {
      **/
 	public static class IsoformComparator implements Comparator<Isoform> {
 
-        Pattern numPat = Pattern.compile("\\d+");
-		Pattern prefixNumPat = Pattern.compile("^(\\d+)\\w+$");
-		Pattern suffixNumPat = Pattern.compile("^(\\w+)(\\d+)?$");
+        private static final Pattern numPat = Pattern.compile("\\d+");
+        private static final Pattern prefixNumPat = Pattern.compile("^(\\d+)\\w+$");
+        private static final Pattern suffixNumPat = Pattern.compile("^(\\w+)(\\d+)?$");
 
 		@Override
 		public int compare(Isoform iso1, Isoform iso2) {

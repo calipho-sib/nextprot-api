@@ -203,14 +203,17 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 		}
 	}
 
+    /**
+     * Comparison done by isoforms defined in IsoformUtils.IsoformComparator
+     */
     static class IsoformMappingComparator implements Comparator<IsoformMapping> {
 
-        final private IsoformUtils.ByIsoformUniqueNameComparator comparator = new IsoformUtils.ByIsoformUniqueNameComparator();
+        final private IsoformUtils.IsoformComparator comparator = new IsoformUtils.IsoformComparator();
 
 		@Override
 		public int compare(IsoformMapping im1, IsoformMapping im2) {
 
-			return comparator.compare(im1.getUniqueName(), im2.getUniqueName());
+			return comparator.compare(im1.getIsoform(), im2.getIsoform());
 		}
 	}
 }
