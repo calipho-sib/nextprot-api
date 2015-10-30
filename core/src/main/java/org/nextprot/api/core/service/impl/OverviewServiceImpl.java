@@ -69,7 +69,7 @@ class OverviewServiceImpl implements OverviewService {
 			for(IsoformEntityName syn : isoform.getSynonyms()){
 
 				EntityName s = new EntityName();
-				s.setMain(true);
+				s.setMain(false);
 				s.setName(syn.getValue());
 				name.setType(syn.getType());
 				name.setQualifier(syn.getQualifier());
