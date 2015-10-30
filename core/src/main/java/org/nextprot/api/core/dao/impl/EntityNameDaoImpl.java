@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.EntityNameDao;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.Overview.EntityName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -33,7 +33,7 @@ public class EntityNameDaoImpl implements EntityNameDao {
 
 		@Override
 		public EntityName mapRow(ResultSet resultSet, int row) throws SQLException {
-			EntityName entryName = new Overview.EntityName();
+			EntityName entryName = new EntityName();
 			entryName.setClazz(Overview.EntityNameClass.getValue(resultSet.getString("name_class")));
 			entryName.setCategory(resultSet.getString("category"));
 			entryName.setType(resultSet.getString("name_type"));

@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.Overview.EntityName;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.utils.XMLUnitUtils;
 import org.w3c.dom.NodeList;
@@ -24,7 +24,7 @@ public class EntryOverviewXMLUnitTest extends WebUnitBaseTest {
 		// Create an entry for test purposes
 		Entry entry = new Entry("my-test-entry");
 		Overview overview = new Overview();	entry.setOverview(overview);
-		List<EntityName> names = new ArrayList<Overview.EntityName>();	overview.setGeneNames(names);
+		List<EntityName> names = new ArrayList<EntityName>();	overview.setGeneNames(names);
 		EntityName mainName = new EntityName(); mainName.setMain(true); mainName.setName("ABCD"); 
 		EntityName synonym = new EntityName(); synonym.setMain(false); synonym.setName("EFGH");
 		EntityName orf = new EntityName(); orf.setMain(false); orf.setName("IJKL");	orf.setCategory("ORF"); 

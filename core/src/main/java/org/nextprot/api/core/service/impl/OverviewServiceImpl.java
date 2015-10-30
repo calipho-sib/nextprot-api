@@ -5,12 +5,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.EntityNameDao;
 import org.nextprot.api.core.dao.HistoryDao;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.IsoformEntityName;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.Overview.EntityName;
 import org.nextprot.api.core.domain.Overview.EntityNameClass;
 import org.nextprot.api.core.domain.Overview.History;
 import org.nextprot.api.core.service.FamilyService;
@@ -43,7 +43,7 @@ class OverviewServiceImpl implements OverviewService {
 		if (history != null && history.size() != 0)
 			overview.setHistory(history.get(0));
 
-		List<Overview.EntityName> entityNames = this.entryNameDao.findNames(uniqueName);
+		List<EntityName> entityNames = this.entryNameDao.findNames(uniqueName);
 		entityNames.addAll(entryNameDao.findAlternativeChainNames(uniqueName));
 		
 		setNamesInOverview(entityNames, overview);
@@ -85,7 +85,7 @@ class OverviewServiceImpl implements OverviewService {
 
 	}
 	
-	private void setNamesInOverview(List<Overview.EntityName> entityNames, Overview overview){
+	private void setNamesInOverview(List<EntityName> entityNames, Overview overview){
 
 		Map<String, EntityName> entityMap = Maps.uniqueIndex(entityNames, new Function<EntityName, String>() {
 			@Override
@@ -107,7 +107,7 @@ class OverviewServiceImpl implements OverviewService {
 			}
 		}
 
-		List<EntityName> mutableEntityNames = new ArrayList<Overview.EntityName>(mutableEntityMap.values());
+		List<EntityName> mutableEntityNames = new ArrayList<EntityName>(mutableEntityMap.values());
 
 		for (EntityName entityName : mutableEntityMap.values())
 			if (entityName.getParentId() != null)
