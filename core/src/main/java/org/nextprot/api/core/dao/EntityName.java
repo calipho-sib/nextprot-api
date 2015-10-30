@@ -19,26 +19,16 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 	private String qualifier;
 	private String id;
 	private String category;
+	private String name;
+	private String parentId;
+	private List<EntityName> synonyms;
+	
 	public String getCategory() {
 		return category;
 	}
 
 	public void setCategory(String category) {
 		this.category = category;
-	}
-
-	private String name;
-	private String parentId;
-	private List<EntityName> synonyms;
-
-	public String getComposedName(){
-		String qualifier="", type=getType();
-		if(getQualifier()!=null){
-			qualifier=getQualifier();
-//			return qualifier+type.substring(0, 1).toUpperCase() + type.substring(1);
-			return qualifier+" "+type;
-		}
-		return getType();
 	}
 	
 	public Boolean isMain() {
@@ -142,6 +132,18 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 	
 	private static enum QualifierValue {
 		FULL, SHORT, EC, ALLERGEN, CD_ANTIGEN, INN 
+	}
+
+	
+
+	public String getComposedName(){
+		String qualifier="", type=getType();
+		if(getQualifier()!=null){
+			qualifier=getQualifier();
+//			return qualifier+type.substring(0, 1).toUpperCase() + type.substring(1);
+			return qualifier+" "+type;
+		}
+		return getType();
 	}
 
 	
