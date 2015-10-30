@@ -8,6 +8,7 @@ import java.io.Serializable;
  * @author dteixeira
  *
  */
+@Deprecated //THIS IS WAY TOO MUCH SIMILAR TO OVERVIEW.ENTITYNAME, this one should be removed
 public class IsoformEntityName implements Serializable{
 
 	private static final long serialVersionUID = 1326005085947657873L;

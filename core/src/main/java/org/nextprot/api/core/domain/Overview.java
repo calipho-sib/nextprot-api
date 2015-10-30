@@ -34,9 +34,17 @@ public class Overview implements Serializable{
 	private List<EntityName> geneNames;
 	private List<EntityName> functionalRegionNames;
 	private List<EntityName> cleavedRegionNames;
-
 	private List<EntityName> additionalNames;
+	private List<EntityName> isoformNames;
 	
+	public List<EntityName> getIsoformNames() {
+		return isoformNames;
+	}
+
+	public void setIsoformNames(List<EntityName> isoformNames) {
+		this.isoformNames = isoformNames;
+	}
+
 	public History getHistory() {
 		return history;
 	}
@@ -317,16 +325,6 @@ public class Overview implements Serializable{
 			this.id = synonymId;
 		}
 
-		@Deprecated //TODO fix this on nextprot-js and remove deprecated
-		public String getSynonymId() {
-			return id;
-		}
-
-		@Deprecated //TODO fix this on nextprot-js and remove deprecated
-		public String getSynonymName() {
-			return name;
-		}
-		
 		public String getName() {
 			return name;
 		}
