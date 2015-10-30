@@ -21,6 +21,10 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 	private String category;
 	private String name;
 	private String parentId;
+	
+	//TODO Is this the same as saying parentName??? Is this really needed for isoforms????
+	private String mainEntityName;
+	
 	private List<EntityName> synonyms;
 	
 	public String getCategory() {
@@ -146,5 +150,23 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 		return getType();
 	}
 
+	@Deprecated //Fix javascript client and remove this method
+	public String getValue() {
+		return name;
+	}
+	@Deprecated //Fix javascript client and remove this method
+	public void setValue(String value) {
+		this.name = value;
+	}
+
+	//TODO Is this the same as saying parentName??? Is this really needed for isoforms????
+	public void setMainEntityName(String mainEntityName) {
+		this.mainEntityName = mainEntityName;
+	}
+
+	//TODO Is this the same as saying parentName??? Is this really needed for isoforms????
+	public String getMainEntityName() {
+		return this.mainEntityName;
+	}
 	
 }

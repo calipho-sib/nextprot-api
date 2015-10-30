@@ -9,7 +9,6 @@ import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.EntityNameDao;
 import org.nextprot.api.core.dao.HistoryDao;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformEntityName;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.EntityNameClass;
 import org.nextprot.api.core.domain.Overview.History;
@@ -66,7 +65,7 @@ class OverviewServiceImpl implements OverviewService {
 			name.setQualifier(isoform.getMainEntityName().getQualifier());
 			name.setSynonyms(new ArrayList<EntityName>());
 
-			for(IsoformEntityName syn : isoform.getSynonyms()){
+			for(EntityName syn : isoform.getSynonyms()){
 
 				EntityName s = new EntityName();
 				s.setMain(false);

@@ -2,9 +2,9 @@ package org.nextprot.api.core.service.impl;
 
 import java.util.List;
 
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformEntityName;
 import org.nextprot.api.core.service.IsoformService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,10 +26,10 @@ class IsoformServiceImpl implements IsoformService {
 	@Cacheable("isoforms")
 	public List<Isoform> findIsoformsByEntryName(String entryName) {
 		List<Isoform> isoforms = isoformDAO.findIsoformsByEntryName(entryName);
-		List<IsoformEntityName> synonyms = isoformDAO.findIsoformsSynonymsByEntryName(entryName);
+		List<EntityName> synonyms = isoformDAO.findIsoformsSynonymsByEntryName(entryName);
 		
 		//Groups the synonyms by their main isoform
-		Multimap<String, IsoformEntityName> synonymsMultiMap = Multimaps.index(synonyms, new SynonymFunction());
+		Multimap<String, EntityName> synonymsMultiMap = Multimaps.index(synonyms, new SynonymFunction());
 		for (Isoform isoform : isoforms) {
 			isoform.setSynonyms(synonymsMultiMap.get(isoform.getUniqueName()));
 		}
@@ -38,8 +38,8 @@ class IsoformServiceImpl implements IsoformService {
 		return new ImmutableList.Builder<Isoform>().addAll(isoforms).build();
 	}
 	
-	private class SynonymFunction implements Function<IsoformEntityName, String> {
-		public String apply(IsoformEntityName isoformSynonym) {
+	private class SynonymFunction implements Function<EntityName, String> {
+		public String apply(EntityName isoformSynonym) {
 			return isoformSynonym.getMainEntityName();
 		}
 	}

@@ -3,7 +3,6 @@ package org.nextprot.api.core.dao;
 import java.util.List;
 
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformEntityName;
 
 /**
  * Returns information about the isoforms and their synonyms
@@ -24,6 +23,6 @@ public interface IsoformDAO {
 	 * @param entryName the name of the master entry
 	 * @return the list of synoyms
 	 */
-    List<IsoformEntityName> findIsoformsSynonymsByEntryName(String entryName); 
+    List<EntityName> findIsoformsSynonymsByEntryName(String entryName); 
 
 }
