@@ -1,11 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.TerminologyDao;
@@ -19,6 +13,12 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Repository
 public class TerminologyDaoImpl implements TerminologyDao {
 
@@ -28,7 +28,7 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	
 	@Override
 	public Terminology findTerminologyByAccession(String accession) {
-		Set<String> acs = new HashSet<String>();
+		Set<String> acs = new HashSet<>();
 		acs.add(accession);
 		SqlParameterSource params = new MapSqlParameterSource("accessions", acs);
 		List<Terminology> terms = new NamedParameterJdbcTemplate(
@@ -50,26 +50,23 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	public List<Terminology> findTerminologyByAccessions(Set<String> accessions) {
 		
 		SqlParameterSource params = new MapSqlParameterSource("accessions", accessions);
-		List<Terminology> terms = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-acs"), params, new DbTermRowMapper());
-		return terms;
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-acs"), params, new DbTermRowMapper());
 	}
 
 
 	public List<Terminology> findTerminologyByOntology(String ontology) {
 		SqlParameterSource params = new MapSqlParameterSource("ontology", ontology);
-		List<Terminology> terms=new NamedParameterJdbcTemplate(
+		return new NamedParameterJdbcTemplate(
 				dsLocator.getDataSource()).query(
 						sqlDictionary.getSQLQuery("terminology-by-ontology"), params, new DbTermRowMapper());
-		return terms;
 	}
 
 	@Override
 	public List<Terminology> findAllTerminology() {
 		SqlParameterSource params = new MapSqlParameterSource();
-		List<Terminology> terms=new NamedParameterJdbcTemplate(
+		return new NamedParameterJdbcTemplate(
 				dsLocator.getDataSource()).query(
 						sqlDictionary.getSQLQuery("terminology-all"), params, new DbTermRowMapper());
-		return terms;
 	}
 	
 	
