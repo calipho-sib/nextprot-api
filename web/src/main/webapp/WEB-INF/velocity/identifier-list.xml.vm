@@ -1,5 +1,5 @@
 <identifier-list>
 #foreach($id in $entry.identifiers)
-    <identifier type="$id.type" #if($id.database) database="$id.database" #end>$id.name</identifier>
+    <identifier type="$id.type" #if($id.database) database="$id.database" #end category="$id.getDatabaseCategory()">$id.name</identifier>
 #end
 </identifier-list>
