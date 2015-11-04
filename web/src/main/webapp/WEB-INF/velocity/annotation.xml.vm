@@ -1,4 +1,4 @@
-<annotation quality='$annotation.getQualityQualifier()' #if($annotation.synonym)accession="$annotation.synonym" database='neXtProt'#end>
+<annotation quality='$annotation.getQualityQualifier()'>
 	#if($annotation.getCvTermName())
     <cv-term accession='$annotation.getCvTermAccessionCode()' terminology='$StringUtils.camelToKebabCase($annotation.getCvApiName())'>$annotation.getCvTermName()</cv-term>
     #end
