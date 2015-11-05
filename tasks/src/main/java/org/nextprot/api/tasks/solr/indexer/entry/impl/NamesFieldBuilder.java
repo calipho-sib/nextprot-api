@@ -49,7 +49,7 @@ public class NamesFieldBuilder extends FieldBuilder {
 				    List <EntityName> paltshortnames = paltfullname.getSynonyms();
 				    if(paltshortnames != null )
 				    for (EntityName paltshortname : paltshortnames) {
-				    	addField(Fields.ALTERNATIVE_NAMES, paltshortname.getName());
+				    if(!paltshortname.getType().equals("enzyme name")) addField(Fields.ALTERNATIVE_NAMES, paltshortname.getName());
 				    }
 				}
 			}
