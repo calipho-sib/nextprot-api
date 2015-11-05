@@ -40,6 +40,8 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private String synonym;
 	
+	private List<String> synonyms;
+
 	private AnnotationApiModel apiCategory;
 
 	private List<AnnotationEvidence> evidences;
@@ -188,6 +190,14 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	public void setSynonym(String synonym) {
 		this.synonym = synonym;
+	}
+
+	public List<String> getAllSynonyms() {
+		return synonyms;
+	}
+
+	public void setAllSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
 	}
 
 	@Override
