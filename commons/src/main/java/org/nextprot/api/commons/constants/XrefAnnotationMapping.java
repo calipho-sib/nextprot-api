@@ -24,6 +24,7 @@ public enum XrefAnnotationMapping  {
 	private final String qualifierType;
 	private final String ecoAC;
 	private final String ecoName;
+	private final String ontology = "EvidenceCodeOntologyCv";
 			
 	XrefAnnotationMapping(final int xrefDbId, final String xrefDbName,
 			final String xrefPropName, final String annotCat, final int srcId, final String srcName,
@@ -84,7 +85,11 @@ public enum XrefAnnotationMapping  {
 	public String getQualifierType() {
 		return qualifierType;
 	}
-		
+
+	public String getOntology() {
+		return ontology;
+	}
+
 	public static XrefAnnotationMapping getByDatabaseName(String dbName) {
 		for (XrefAnnotationMapping m : XrefAnnotationMapping.values()) {
 			if(m.xrefDbName.equals(dbName)) return m;
