@@ -25,7 +25,7 @@ public class OverviewFieldBuilderDiffTest extends SolrDiffTest {
 
 	public void testOverview(Entry entry) {
 		String entryName = entry.getUniqueName();
-
+		System.out.println("Testing " + entryName);
 		OverviewFieldBuilder ofb = new OverviewFieldBuilder();
 		ofb.initializeBuilder(entry);
 		
