@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.AnnotationFieldBuilder;
@@ -23,13 +24,16 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	private EntryBuilderService entryBuilderService = null;
 	@Autowired
 	private MasterIdentifierService masterIdentifierService = null;
+	@Autowired
+	TerminologyService terminologyService;
 
 	@Test
 	public void testAnnotationsAndFunctionalDescriptions() {
 
 		for(int i=0; i < 1; i++){
 			//Entry entry = getEntry(i);
-			Entry entry = getEntry("NX_P02751");
+			Entry entry = getEntry("NX_P11532");
+			//Entry entry = getEntry("P42680");
 			System.out.println(entry.getUniqueName());
 			//testFunctionalDesc(entry);
 			testAnnotations(entry);
@@ -41,6 +45,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	public void testFunctionalDesc(Entry entry) {
 
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
+		afb.setTerminologyservice(terminologyService);
 		afb.initializeBuilder(entry);
 		List<String> functionalDescriptions = afb.getFieldValue(Fields.FUNCTION_DESC, List.class);
 
@@ -62,6 +67,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	public void testAnnotations(Entry entry) {
 
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
+		afb.setTerminologyservice(terminologyService);
 		afb.initializeBuilder(entry);
 
 		List<String> annotations = afb.getFieldValue(Fields.ANNOTATIONS, List.class);
@@ -76,15 +82,28 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 			if(aux != null) //System.err.println("extracting an_synonym from: " + s);
 			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
 			aux = getValueFromRawData(s,"sequence_variant_mutation_aa");
-			if(aux != null) //System.err.println("extracting an_synonym from: " + s);
+			if(aux != null) 
+			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			aux = getValueFromRawData(s,"cv_ancestors");
+			if(aux != null) 
+			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			aux = getValueFromRawData(s,"cv_ac");
+			if(aux != null) 
+			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			aux = getValueFromRawData(s,"cv_name");
+			if(aux != null) 
+			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			aux = getValueFromRawData(s,"cv_synonyms");
+			if(aux != null) 
+			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			aux = getValueFromRawData(s,"sequence_caution_conflict_type");
+			if(aux != null) 
 			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
 		}
 
 		Set<String> expectedValues2 = new TreeSet<String>(expectedValues);
 		Set<String> annotations2 = new TreeSet<String>(annotations);
 		Set<String> annotations3 = new TreeSet<String>(annotations);
-		//Collections.sort(annotations);
-		//Collections.sort(expectedValues);
 
 		annotations2.removeAll(expectedValues2);
 		System.err.println("Only in current (" + annotations2.size() + ") : " + annotations2);
