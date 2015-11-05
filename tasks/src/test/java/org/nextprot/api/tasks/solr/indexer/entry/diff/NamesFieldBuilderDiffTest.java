@@ -20,7 +20,7 @@ public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 		 //for(int i=0; i < 10; i++){ testNames(getEntry(i)); }
 		 
 
-		Entry entry = getEntry("NX_Q0P140");
+		Entry entry = getEntry("NX_P19099");
 		testNames(entry);
 
 	}
@@ -31,6 +31,8 @@ public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 		System.out.println("Testing: " + entryName);
 		NamesFieldBuilder nfb = new NamesFieldBuilder();
 		nfb.initializeBuilder(entry);
+		
+		// RECOMMENDED_NAME are indexed and tested with the overviewFieldBuilder
 		
 		List<String> altnamelist = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ALTERNATIVE_NAMES);
 		Set<String> expectedAltnames = null;
