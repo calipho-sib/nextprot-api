@@ -89,6 +89,8 @@ public class ReleaseInfoDaoImpl implements ReleaseInfoDao {
 			tagStat.setCount(resultSet.getInt("count"));
 			tagStat.setDescription(resultSet.getString("description"));
 			tagStat.setTag(resultSet.getString("tag"));
+			tagStat.setCategroy(resultSet.getString("category"));
+			tagStat.setSortOrder(resultSet.getInt("sort_order"));			
 			return tagStat;
 		}
 

@@ -8,7 +8,21 @@ public class ReleaseStatsTag implements Serializable{
 	
 	private String tag, description;
 	private int count;
+	private String categroy;
+	private int sortOrder;
 	
+	public String getCategroy() {
+		return categroy;
+	}
+	public void setCategroy(String categroy) {
+		this.categroy = categroy;
+	}
+	public int getSortOrder() {
+		return sortOrder;
+	}
+	public void setSortOrder(int sortOrder) {
+		this.sortOrder = sortOrder;
+	}
 	public String getTag() {
 		return tag;
 	}
