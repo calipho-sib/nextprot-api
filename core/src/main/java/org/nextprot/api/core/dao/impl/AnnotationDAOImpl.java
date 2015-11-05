@@ -132,7 +132,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			public AnnotationEvidence mapRow(ResultSet resultSet, int row) throws SQLException {
 					
 				AnnotationEvidence evidence = new AnnotationEvidence();
-				evidence.setOntology(resultSet.getString("ontology"));
+				evidence.setEvidenceCodeOntology(resultSet.getString("ontology"));
 				evidence.setNegativeEvidence(resultSet.getBoolean("is_negative_evidence"));
 				evidence.setAnnotationId(resultSet.getLong("annotation_id"));
 				evidence.setResourceId(resultSet.getLong("resource_id"));

@@ -209,6 +209,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 				evidence.setAssignedBy(resultSet.getString("assigned_by"));
 				evidence.setAssignmentMethod(pmam.getAssignmentMethod());
 				evidence.setEvidenceCodeAC(pmam.getEcoAC());
+				evidence.setEvidenceCodeOntology(pmam.getEcoOntology());
 				evidence.setEvidenceCodeName(pmam.getEcoName());
 				evidence.setExperimentalContextId(null);
 				evidence.setNegativeEvidence(false);

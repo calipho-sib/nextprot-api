@@ -41,7 +41,7 @@ public class AnnotationEvidence implements Serializable {
 	private String assignmentMethod;
 	private String evidenceCodeAC;
 	private String evidenceCodeName;
-	private String ontology;
+	private String evidenceCodeOntology;
 
 	public String getEvidenceCodeAC() {
 		return evidenceCodeAC;
@@ -428,11 +428,11 @@ public class AnnotationEvidence implements Serializable {
 		this.assignmentMethod = assignmentMethod;
 	}
 
-	public String getOntology() {
-		return ontology;
+	public String getEvidenceCodeOntology() {
+		return evidenceCodeOntology;
 	}
 
-	public void setOntology(String ontology) {
-		this.ontology = ontology;
+	public void setEvidenceCodeOntology(String ontology) {
+		this.evidenceCodeOntology = ontology;
 	}
 }
