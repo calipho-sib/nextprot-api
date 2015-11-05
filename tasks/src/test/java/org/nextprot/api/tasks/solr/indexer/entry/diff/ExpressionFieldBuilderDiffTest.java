@@ -26,13 +26,13 @@ public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 	@Test
 	public void testExpression() {
 
-		/*for(int i=0; i < 10; i++){
+		for(int i=0; i < 10; i++){
 			testExpression(getEntry(i)); 
-		} */
+		} 
 		
-		Entry entry = getEntry("NX_P20592");
+		//Entry entry = getEntry("NX_P20592");
 		//Entry entry = getEntry("NX_Q6PK18");
-		testExpression(entry);
+		//testExpression(entry);
 	
 	}
 
