@@ -22,7 +22,7 @@ public class NXVelocityUtils {
     }
 
 	public static List<Annotation> getAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory) {
-		return AnnotationUtils.filterAnnotationsByCategory(entry.getAnnotations(), annotationCategory, false);
+		return AnnotationUtils.filterAnnotationsByCategory(entry, annotationCategory, false);
 	}
 	
 	public static boolean hasInteractions(Entry entry) {
