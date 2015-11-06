@@ -24,9 +24,8 @@ public enum XrefAnnotationMapping  {
 	private final String qualifierType;
 	private final String ecoAC;
 	private final String ecoName;
-	private final String ecoOntology = "EvidenceCodeOntologyCv";
-			
-	XrefAnnotationMapping(final int xrefDbId, final String xrefDbName,
+
+    XrefAnnotationMapping(final int xrefDbId, final String xrefDbName,
 			final String xrefPropName, final String annotCat, final int srcId, final String srcName,
 			final String qualityQualifier, final String assignMethod, final String qualifierType, String ecoAC, String ecoName) {
 		
@@ -87,7 +86,7 @@ public enum XrefAnnotationMapping  {
 	}
 
 	public String getEcoOntology() {
-		return ecoOntology;
+        return "EvidenceCodeOntologyCv";
 	}
 
 	public static XrefAnnotationMapping getByDatabaseName(String dbName) {

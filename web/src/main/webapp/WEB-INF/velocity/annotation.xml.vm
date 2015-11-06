@@ -54,7 +54,7 @@
 			## should include qualifier-type='$evidence.getQualifierType()' 
 			<evidence is-negative='$evidence.isNegativeEvidence()' resource-internal-ref='$evidence.getResourceId()'  resource-assoc-type='$evidence.getResourceAssociationType()' #if($evidence.getQualityQualifier()) quality='$evidence.getQualityQualifier()' #end resource-type='$evidence.getResourceType()' #if($evidence.getExperimentalContextId()>0) experimental-context-internal-ref='$evidence.getExperimentalContextId()' #end #if($evidence.getAssignedBy()) source-internal-ref='$evidence.getAssignedBy()' #end >
 				#if($evidence.getPropertiesNames())
-                    <cv-term accession="$evidence.getEvidenceCodeAC()" terminology="$StringUtils.camelToKebabCase($evidence.getOntology())">$evidence.getEvidenceCodeName()</cv-term>
+                    <cv-term accession="$evidence.getEvidenceCodeAC()" terminology="$StringUtils.camelToKebabCase($evidence.getEvidenceCodeOntology())">$evidence.getEvidenceCodeName()</cv-term>
                     <property-list>
 						#foreach($pk in $evidence.getPropertiesNames())
 							<property name="$pk" value="$evidence.getPropertyValue($pk)" />
