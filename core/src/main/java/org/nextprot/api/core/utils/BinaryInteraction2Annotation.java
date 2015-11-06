@@ -44,6 +44,7 @@ public class BinaryInteraction2Annotation {
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 		// see https://issues.isb-sib.ch/browse/NEXTPROT-921
 		evi.setEvidenceCodeAC("ECO:0000353");
+		evi.setEvidenceCodeOntology("EvidenceCodeOntologyCv");
 		evi.setEvidenceCodeName("Physical interaction evidence used in manual assertion");
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 		evi.setEvidenceId(inter.getEvidenceId());

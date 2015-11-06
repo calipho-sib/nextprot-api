@@ -206,6 +206,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			annEvi.setResourceDescription(pepEvi.getResourceDescription());
 			annEvi.setResourceId(pepEvi.getResourceId());
 			annEvi.setResourceType(pepEvi.getResourceType());
+			annEvi.setEvidenceCodeOntology(pepEvi.getEvidenceCodeOntology());
 			if (pepEvi.getPropertiesNames()!=null) {
 				List<AnnotationEvidenceProperty> props = new ArrayList<>();
 				for (String n: pepEvi.getPropertiesNames()) {
