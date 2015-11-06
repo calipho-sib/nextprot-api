@@ -1,5 +1,6 @@
 package org.nextprot.api.core.utils;
 
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 
 import java.util.Comparator;
@@ -29,6 +30,22 @@ public class IsoformUtils {
 		}
 		return null;
 	}
+
+    /**
+     * Get the canonical isoform of the given entry
+     * @param entry the entry to fetch canonical isoform
+     * @return the canonical isoform else null
+     */
+    public static Isoform getCanonicalIsoform(Entry entry) {
+
+        for (Isoform isoform : entry.getIsoforms()) {
+
+            if (isoform.isCanonicalIsoform())
+                return isoform;
+        }
+
+        return null;
+    }
 
 	/**
 	 * Compare isoform names by lexicographic order of master accession then numerically by isoform number.
