@@ -4,6 +4,8 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObjectExternal;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
@@ -13,24 +15,61 @@ import java.util.*;
 
 public class AnnotationUtils {
 
-	private static Comparator<Annotation> COMPARATOR;
+	public static class AnnotationComparator implements Comparator<Annotation> {
 
+        private final String canonicalIsoformUniqueName;
 
-	static {
-		COMPARATOR = new Comparator<Annotation>() {
-			@Override
-			public int compare(Annotation a1, Annotation a2) {
+        public AnnotationComparator(Isoform canonicalIsoform) {
 
-				return Long.compare(a1.getAnnotationId(), a2.getAnnotationId());
-			}
-		};
-	}
-	
+            this.canonicalIsoformUniqueName = canonicalIsoform.getUniqueName();
+        }
+
+        @Override
+        public int compare(Annotation a1, Annotation a2) {
+
+            // 1. canonical begin positions in ascending order
+            Integer begin1 = a1.getStartPositionForIsoform(canonicalIsoformUniqueName);
+            Integer begin2 = a2.getStartPositionForIsoform(canonicalIsoformUniqueName);
+
+            // TODO: UNKNOWN BEGIN COMES FIRST? (see with pam)
+            if (begin1 == null)
+                return -1;
+            if (begin2 == null)
+                return 1;
+
+            int cmp = begin1.compareTo(begin2);
+
+            if (cmp == 0) {
+
+                // 2. canonical end positions in descending order (most inclusive comed first)
+                Integer end1 = a1.getEndPositionForIsoform(canonicalIsoformUniqueName);
+                Integer end2 = a2.getEndPositionForIsoform(canonicalIsoformUniqueName);
+
+                // TODO: UNKNOWN END COMES LAST? (see with pam)
+                if (end1 == null)
+                    return 1;
+                if (end2 == null)
+                    return -1;
+
+                cmp = end2.compareTo(end1);
+            }
+
+            if (cmp == 0) {
+
+                // 3. annotation id in ascending order
+                cmp = Long.compare(a1.getAnnotationId(), a2.getAnnotationId());
+            }
+
+            return cmp;
+        }
+    }
+
 	/**
 	 * Filter annotation by its category
 	 */
-	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationCategory annotationCategory) {
-		return filterAnnotationsByCategory(annotations,  annotationCategory, true);
+	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory) {
+
+        return filterAnnotationsByCategory(entry, annotationCategory, true);
 	}
 	
 	/**
@@ -38,20 +77,32 @@ public class AnnotationUtils {
 	 * @param withChildren if true, annotations having a category which is a child of annotationCategory are included in the list
 	 * @return a list of annotations
 	 */
-	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationCategory annotationCategory, boolean withChildren) {
-		if(annotations == null) return null;
-		List<Annotation> annotationList = new ArrayList<>();
-			for(Annotation a : annotations){
-			if(a.getAPICategory() != null) {
-				if (a.getAPICategory().equals(annotationCategory)) {
+	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory, boolean withChildren) {
+
+        Isoform canonicalIsoform = IsoformUtils.getCanonicalIsoform(entry);
+
+        List<Annotation> annotations = entry.getAnnotations();
+
+		if (annotations == null) return null;
+
+        List<Annotation> annotationList = new ArrayList<>();
+
+        for (Annotation a : annotations){
+
+            if (a.getAPICategory() != null) {
+
+                if (a.getAPICategory().equals(annotationCategory)) {
 					annotationList.add(a);
-				} else if (withChildren && a.getAPICategory().isChildOf(annotationCategory) ) {
+				}
+                else if (withChildren && a.getAPICategory().isChildOf(annotationCategory) ) {
 					annotationList.add(a);
 				}
 			}
 		}
 
-		Collections.sort(annotationList, COMPARATOR);
+        if (canonicalIsoform != null) {
+            Collections.sort(annotationList, new AnnotationComparator(canonicalIsoform));
+        }
 
 		return annotationList;
 	}
