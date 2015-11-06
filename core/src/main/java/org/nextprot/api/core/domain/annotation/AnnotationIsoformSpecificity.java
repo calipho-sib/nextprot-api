@@ -31,7 +31,6 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 	// if lastPosition = null, it means that it is unknown (same as db representation)
 	private Integer lastPosition;
 	private String isoformName;
-	private String isoformAc;
 	private String specificity; // cv_name related to annotation_protein_assoc.cv_specificity_qualifier_type_id
 
 	private String _comparableName;
@@ -111,10 +110,6 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 		}
 
 		return name;
-	}
-
-	public String getIsoformAc() {
-		return isoformAc;
 	}
 
 	@Override
