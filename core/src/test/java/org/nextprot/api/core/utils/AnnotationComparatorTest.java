@@ -3,6 +3,7 @@ package org.nextprot.api.core.utils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -82,10 +83,10 @@ public class AnnotationComparatorTest {
 
         List<Annotation> annotations = new ArrayList<>();
 
-        annotations.add(mockAnnotation(1, "variant", new TargetIsoform("NX_P51610-1", 172, 172)));
-        annotations.add(mockAnnotation(2, "variant", new TargetIsoform("NX_P51610-1", 89, 89)));
-        annotations.add(mockAnnotation(3, "variant", new TargetIsoform("NX_P51610-1", 76, 76)));
-        annotations.add(mockAnnotation(4, "variant", new TargetIsoform("NX_P51610-1", 72, 72)));
+        annotations.add(mockAnnotation(1, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 172, 172)));
+        annotations.add(mockAnnotation(2, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 89, 89)));
+        annotations.add(mockAnnotation(3, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 76, 76)));
+        annotations.add(mockAnnotation(4, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 72, 72)));
 
         Collections.sort(annotations, comparator);
 
@@ -102,11 +103,11 @@ public class AnnotationComparatorTest {
         AnnotationComparator comparator = new AnnotationComparator(canonical);
         List<Annotation> annotations = new ArrayList<>();
 
-        annotations.add(mockAnnotation(1, "variant", new TargetIsoform("NX_P51610-1", 1, 10)));
-        annotations.add(mockAnnotation(2, "variant", new TargetIsoform("NX_P51610-1", 1, 20)));
-        annotations.add(mockAnnotation(3, "variant", new TargetIsoform("NX_P51610-1", 1, 30)));
-        annotations.add(mockAnnotation(4, "variant", new TargetIsoform("NX_P51610-1", 1, 40)));
-        annotations.add(mockAnnotation(5, "variant", new TargetIsoform("NX_P51610-1", 1, 50)));
+        annotations.add(mockAnnotation(1, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 10)));
+        annotations.add(mockAnnotation(2, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 20)));
+        annotations.add(mockAnnotation(3, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 30)));
+        annotations.add(mockAnnotation(4, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 40)));
+        annotations.add(mockAnnotation(5, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 50)));
 
         Collections.sort(annotations, comparator);
 
@@ -123,11 +124,11 @@ public class AnnotationComparatorTest {
         AnnotationComparator comparator = new AnnotationComparator(canonical);
         List<Annotation> annotations = new ArrayList<>();
 
-        annotations.add(mockAnnotation(1, "variant", new TargetIsoform("NX_P51610-1", 1, 10)));
-        annotations.add(mockAnnotation(2, "variant", new TargetIsoform("NX_P51610-1", 1, 20)));
-        annotations.add(mockAnnotation(3, "variant", new TargetIsoform("NX_P51610-1", 1, 30)));
-        annotations.add(mockAnnotation(4, "variant", new TargetIsoform("NX_P51610-1", 1, 30)));
-        annotations.add(mockAnnotation(5, "variant", new TargetIsoform("NX_P51610-1", 1, 30)));
+        annotations.add(mockAnnotation(1, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 10)));
+        annotations.add(mockAnnotation(2, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 20)));
+        annotations.add(mockAnnotation(3, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 30)));
+        annotations.add(mockAnnotation(4, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 30)));
+        annotations.add(mockAnnotation(5, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 30)));
 
         Collections.sort(annotations, comparator);
 
@@ -144,20 +145,32 @@ public class AnnotationComparatorTest {
         AnnotationComparator comparator = new AnnotationComparator(canonical);
         List<Annotation> annotations = new ArrayList<>();
 
-        annotations.add(mockAnnotation(1, "variant", new TargetIsoform("NX_P51610-1", 23, 100), new TargetIsoform("NX_P51610-2", 1, 19),  new TargetIsoform("NX_P51610-3", 1, 129)));
-        annotations.add(mockAnnotation(2, "variant", new TargetIsoform("NX_P51610-1", 2, 10), new TargetIsoform("NX_P51610-2", 1, 5),  new TargetIsoform("NX_P51610-3", 1, 10)));
+        annotations.add(mockAnnotation(1, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 23, 100), new TargetIsoform("NX_P51610-2", 1, 19),  new TargetIsoform("NX_P51610-3", 1, 129)));
+        annotations.add(mockAnnotation(2, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 2, 10), new TargetIsoform("NX_P51610-2", 1, 5),  new TargetIsoform("NX_P51610-3", 1, 10)));
 
         Collections.sort(annotations, comparator);
 
         assertExpectedIds(annotations, 2, 1);
     }
 
-    private static Annotation mockAnnotation(long id, String cat, TargetIsoform... targets) {
+    @Test
+    public void testCannotSortDifferentCat() {
+
+        AnnotationComparator comparator = new AnnotationComparator(Mockito.mock(Isoform.class));
+        List<Annotation> annotations = new ArrayList<>();
+
+        annotations.add(mockAnnotation(1, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 23, 100), new TargetIsoform("NX_P51610-2", 1, 19),  new TargetIsoform("NX_P51610-3", 1, 129)));
+        annotations.add(mockAnnotation(2, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 2, 10), new TargetIsoform("NX_P51610-2", 1, 5),  new TargetIsoform("NX_P51610-3", 1, 10)));
+
+        Collections.sort(annotations, comparator);
+    }
+
+    private static Annotation mockAnnotation(long id, AnnotationCategory cat, TargetIsoform... targets) {
 
         Annotation mock = Mockito.mock(Annotation.class);
 
         Mockito.when(mock.getAnnotationId()).thenReturn(id);
-        Mockito.when(mock.getCategory()).thenReturn(cat);
+        Mockito.when(mock.getAPICategory()).thenReturn(cat);
 
         Map<String, AnnotationIsoformSpecificity> map = new HashMap<>();
         for (TargetIsoform target : targets) {
