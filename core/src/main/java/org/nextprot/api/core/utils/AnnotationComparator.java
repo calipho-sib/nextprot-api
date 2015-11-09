@@ -10,7 +10,17 @@ import java.util.*;
 /**
  * Compare Annotation based on the following criteria:
  *
- * ....
+ * 1. begin asc
+ * 2. then end desc
+ * 3. then annotation_id asc
+ *
+ * if an entry has a single isoform
+ *      use feature position on the given isoform
+ * else (multiple isoform targets):
+ *      if has canonical
+ *          use feature position of the canonical one
+ *      else
+ *          select the minimum feature position to compare with other Annotation
  *
  * Created by fnikitin on 09/11/15.
  */
