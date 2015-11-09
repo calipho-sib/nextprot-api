@@ -26,6 +26,8 @@ public class AnnotationComparator implements Comparator<Annotation> {
     @Override
     public int compare(Annotation a1, Annotation a2) {
 
+        Preconditions.checkArgument(a1.getAPICategory() == a2.getAPICategory());
+
         String isoformName1 = selectIsoform(a1);
         String isoformName2 = selectIsoform(a2);
 
@@ -89,7 +91,7 @@ public class AnnotationComparator implements Comparator<Annotation> {
         if (cmp == 0) {
 
             // UNKNOWN END COMES LAST
-            compare(end1, end2, false);
+            cmp = compare(end1, end2, false);
         }
 
         // 3. annotation id in ascending order
