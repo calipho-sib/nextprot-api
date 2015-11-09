@@ -15,56 +15,7 @@ import java.util.*;
 
 public class AnnotationUtils {
 
-	public static class AnnotationComparator implements Comparator<Annotation> {
-
-        private final String canonicalIsoformUniqueName;
-
-        public AnnotationComparator(Isoform canonicalIsoform) {
-
-            this.canonicalIsoformUniqueName = canonicalIsoform.getUniqueName();
-        }
-
-        @Override
-        public int compare(Annotation a1, Annotation a2) {
-
-            // 1. canonical begin positions in ascending order
-            Integer begin1 = a1.getStartPositionForIsoform(canonicalIsoformUniqueName);
-            Integer begin2 = a2.getStartPositionForIsoform(canonicalIsoformUniqueName);
-
-            // TODO: UNKNOWN BEGIN COMES FIRST? (see with pam)
-            if (begin1 == null)
-                return -1;
-            if (begin2 == null)
-                return 1;
-
-            int cmp = begin1.compareTo(begin2);
-
-            if (cmp == 0) {
-
-                // 2. canonical end positions in descending order (most inclusive comed first)
-                Integer end1 = a1.getEndPositionForIsoform(canonicalIsoformUniqueName);
-                Integer end2 = a2.getEndPositionForIsoform(canonicalIsoformUniqueName);
-
-                // TODO: UNKNOWN END COMES LAST? (see with pam)
-                if (end1 == null)
-                    return 1;
-                if (end2 == null)
-                    return -1;
-
-                cmp = end2.compareTo(end1);
-            }
-
-            if (cmp == 0) {
-
-                // 3. annotation id in ascending order
-                cmp = Long.compare(a1.getAnnotationId(), a2.getAnnotationId());
-            }
-
-            return cmp;
-        }
-    }
-
-	/**
+    /**
 	 * Filter annotation by its category
 	 */
 	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory) {
