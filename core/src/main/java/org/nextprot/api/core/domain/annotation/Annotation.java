@@ -1,7 +1,6 @@
 package org.nextprot.api.core.domain.annotation;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
@@ -225,10 +224,20 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.uniqueName = uniqueName;
 	}
 
+	/** @return the first position or null if unknown */
 	public Integer getStartPositionForIsoform(String isoformName) {
 
-		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
-		return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
+		if (targetingIsoformsMap.containsKey(isoformName))
+			return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
+		return null;
+	}
+
+	/** @return the last position or null if unknown */
+	public Integer getEndPositionForIsoform(String isoformName) {
+
+		if (targetingIsoformsMap.containsKey(isoformName))
+			return this.targetingIsoformsMap.get(isoformName).getLastPosition();
+		return null;
 	}
 
 	// Called from Velocity templates
@@ -244,12 +253,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.bioObject = bioObject;
 	}
 
-	public Integer getEndPositionForIsoform(String isoformName) {
-
-		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
-		return this.targetingIsoformsMap.get(isoformName).getLastPosition();
-	}
-	
 	/**
 	 * Return true if annotation has at least one evidence showing any kind of detection (low, medium, high or positive) else false
 	 *
