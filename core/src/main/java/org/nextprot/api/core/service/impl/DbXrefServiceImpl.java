@@ -117,6 +117,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		evidence.setResourceDb(pxref.getDatabaseName());
 		evidence.setResourceAssociationType("evidence");
 		evidence.setResourceType("database");
+		evidence.setEvidenceCodeOntology(xam.getEcoOntology());
 		evidence.setNegativeEvidence(false);
 		evidence.setExperimentalContextId(null);
 		evidence.setResourceDescription(null);

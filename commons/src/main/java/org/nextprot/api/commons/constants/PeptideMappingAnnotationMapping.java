@@ -17,8 +17,9 @@ public enum PeptideMappingAnnotationMapping  {
 	private final String qualifierType;
 	private final String ecoAC;
 	private final String ecoName;
-			
-	private PeptideMappingAnnotationMapping(
+	private final String ontology = "EvidenceCodeOntologyCv";
+
+	PeptideMappingAnnotationMapping(
 			final String annotCat, 
 			final String qualityQualifier, 
 			final String assignMethod, 
@@ -56,6 +57,8 @@ public enum PeptideMappingAnnotationMapping  {
 	public String getQualifierType() {
 		return qualifierType;
 	}
-			
 
+	public String getEcoOntology() {
+		return ontology;
+	}
 }
