@@ -38,7 +38,7 @@ public class IdentifierDaoImpl implements IdentifierDao {
 
 	@Override
 	public List<Identifier> findIdentifiersByMaster(String uniqueName) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("uniqueName", uniqueName);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("identifiers-by-master-unique-name"), params, new IdentifierRowMapper());
 	}
