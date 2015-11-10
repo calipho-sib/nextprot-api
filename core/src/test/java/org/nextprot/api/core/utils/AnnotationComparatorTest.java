@@ -154,15 +154,43 @@ public class AnnotationComparatorTest {
     }
 
     @Test
-    public void testCannotSortDifferentCat() {
+    public void canonicalAnnotsShouldComesFirst() {
 
-        AnnotationComparator comparator = new AnnotationComparator(Mockito.mock(Isoform.class));
+        Isoform canonical = new Isoform();
+        canonical.setSwissProtDisplayedIsoform(true);
+        canonical.setUniqueName("NX_P51610-1");
+
+        AnnotationComparator comparator = new AnnotationComparator(canonical);
         List<Annotation> annotations = new ArrayList<>();
 
-        annotations.add(mockAnnotation(1, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 23, 100), new TargetIsoform("NX_P51610-2", 1, 19),  new TargetIsoform("NX_P51610-3", 1, 129)));
-        annotations.add(mockAnnotation(2, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 2, 10), new TargetIsoform("NX_P51610-2", 1, 5),  new TargetIsoform("NX_P51610-3", 1, 10)));
+        annotations.add(mockAnnotation(1, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-1", 2, 1423), new TargetIsoform("NX_P51610-4", 2, 1423)));
+        annotations.add(mockAnnotation(2, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-2", 2, 1354)));
+        annotations.add(mockAnnotation(3, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-1", 2, 1323), new TargetIsoform("NX_P51610-4", 2, 1323)));
+        annotations.add(mockAnnotation(4, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-2", 2, 1254)));
+        annotations.add(mockAnnotation(5, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-2", 2, 1226)));
 
         Collections.sort(annotations, comparator);
+
+        assertExpectedIds(annotations, 1, 3, 2, 4, 5);
+    }
+
+    @Test
+    public void shouldSortByAnnotIdIfEqualPos() {
+
+        Isoform canonical = new Isoform();
+        canonical.setSwissProtDisplayedIsoform(true);
+        canonical.setUniqueName("NX_P51610-1");
+
+        AnnotationComparator comparator = new AnnotationComparator(canonical);
+        List<Annotation> annotations = new ArrayList<>();
+
+        annotations.add(mockAnnotation(3, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-3", 2, 1423)));
+        annotations.add(mockAnnotation(2, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-2", 2, 1423)));
+        annotations.add(mockAnnotation(1, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-4", 2, 1423)));
+
+        Collections.sort(annotations, comparator);
+
+        assertExpectedIds(annotations, 1, 2, 3);
     }
 
     private static Annotation mockAnnotation(long id, AnnotationCategory cat, TargetIsoform... targets) {
