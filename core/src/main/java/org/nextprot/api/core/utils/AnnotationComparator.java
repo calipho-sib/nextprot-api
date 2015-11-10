@@ -8,20 +8,33 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import java.util.*;
 
 /**
- * Compare Annotation based on the following criteria:
+ * Comparison function that sort Annotations based on feature positions of selected isoforms.
  *
- * 1. begin asc
- * 2. then end desc
- * 3. then annotation_id asc
+ * <h3>A. Selecting isoform feature positions</h3>
+ * As Annotation can contain multiple isoform targets, we first have to choose one of them
+ * with the following criteria:
  *
- * if an entry has a single isoform
- *      use feature position on the given isoform
- * else (multiple isoform targets):
+ * <pre>
+ * if has a single isoform:
+ *      pick this one
+ * else:
  *      if has canonical
- *          use feature position of the canonical one
+ *          pick the canonical one
  *      else
- *          select the minimum feature position to compare with other Annotation
+ *          select the one with the minimum feature position (see B)
+ * endif
+ * </pre>
  *
+ * The feature positions of the selected isoforms are then compared as below
+ *
+ * <h3>B. Feature position based Annotation comparison</h3>
+ *
+ * <ol>
+ *  <li>canonical isoform target feature comes first</li>
+ *  <li>feature begin ASC</li>
+ *  <li>feature end DESC</li>
+ *  <li>feature annotation_id ASC</li>
+ * </ol>
  * Created by fnikitin on 09/11/15.
  */
 public class AnnotationComparator implements Comparator<Annotation> {
@@ -38,14 +51,24 @@ public class AnnotationComparator implements Comparator<Annotation> {
 
         Preconditions.checkArgument(a1.getAPICategory() == a2.getAPICategory());
 
-        String isoformName1 = selectIsoform(a1);
-        String isoformName2 = selectIsoform(a2);
+        String isoformName1 = selectIsoformNameForComparison(a1);
+        String isoformName2 = selectIsoformNameForComparison(a2);
+
+        boolean isIso1Canonical = isoformName1.equals(canonicalIsoformUniqueName);
+        boolean isIso2Canonical = isoformName2.equals(canonicalIsoformUniqueName);
+
+        if (isIso1Canonical && !isIso2Canonical) {
+            return -1;
+        }
+        else if (!isIso1Canonical && isIso2Canonical) {
+            return 1;
+        }
 
         return compare(a1.getStartPositionForIsoform(isoformName1), a1.getEndPositionForIsoform(isoformName1), a1.getAnnotationId(),
                 a2.getStartPositionForIsoform(isoformName2), a2.getEndPositionForIsoform(isoformName2), a2.getAnnotationId());
     }
 
-    private String selectIsoform(Annotation annotation) {
+    private String selectIsoformNameForComparison(Annotation annotation) {
 
         Map<String, AnnotationIsoformSpecificity> targets = annotation.getTargetingIsoformsMap();
 
