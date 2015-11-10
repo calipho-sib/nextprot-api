@@ -1,5 +1,5 @@
          select pubs.*, pubtypes.cv_name as pub_type, rp.property_value submission_database, 
-  (select p.is_largescale from nextprot.view_paper_scale p where p.publication_id=pubs.resource_id) as is_largescale,   
+  (select pv.large_scale from nextprot.publication_view pv where pv.resource_id=pubs.resource_id limit 1) as is_largescale,         
   (select pv.annotated from nextprot.publication_view pv where pv.resource_id=pubs.resource_id limit 1) as is_curated,   
   (select pv.computed from nextprot.publication_view pv where pv.resource_id=pubs.resource_id limit 1) as is_computed    
   -- TODO: reassess the way we define 'curared/computed' and get rid of the 'limit 1'
