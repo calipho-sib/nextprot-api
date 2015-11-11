@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
@@ -14,6 +15,7 @@ import org.nextprot.api.tasks.solr.indexer.entry.impl.PeptideFieldBuilder;
 public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Test
+	@Ignore
 	public void testPeptides() {
 
 		for (int i = 0; i < 1; i++) {
