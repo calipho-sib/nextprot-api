@@ -15,6 +15,16 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private static final long serialVersionUID = 1L;
 
+	private List<String> synonyms;
+
+	public List<String> getSynonyms() {
+		return synonyms;
+	}
+
+	public void setSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
+	}
+
 	private String uniqueName;
 
 	private String cvTermAccessionCode;

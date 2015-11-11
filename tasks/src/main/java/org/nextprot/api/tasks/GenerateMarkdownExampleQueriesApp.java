@@ -19,6 +19,8 @@ public class GenerateMarkdownExampleQueriesApp {
 			System.out.println("\n");
 
 		}*/
+		
+		ctx.close();
 	}
 
 }

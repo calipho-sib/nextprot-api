@@ -79,8 +79,10 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 		if (file.isFile()) {
 
 			BufferedReader br = new BufferedReader(new FileReader(dir + filename));
+			String line = br.readLine();
 
-			return br.readLine();
+			br.close();
+			return line;
 		}
 
 		return null;

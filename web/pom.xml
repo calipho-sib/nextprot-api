@@ -135,7 +135,7 @@
 				<executions>
 					<execution>
 						<id>Fetch number of git commits</id>
-						<phase>compile</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>

@@ -40,6 +40,11 @@
 			<artifactId>nextprot-api-user</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-solr</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<!-- used for tests -->
 		<dependency>
 			<groupId>org.nextprot</groupId>
