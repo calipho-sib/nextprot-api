@@ -12,6 +12,7 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -58,7 +59,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		ev2.setResourceId(2222);
 		ev2.setResourceType("database");
 
-		List<AnnotationEvidence> evidences = new ArrayList<AnnotationEvidence>();
+		List<AnnotationEvidence> evidences = new ArrayList<>();
 		evidences.add(ev2);
 		evidences.add(ev3);
 		
@@ -71,26 +72,17 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		annot.setEvidences(evidences);
 
 		annot.setDescription("");  // will be modified by convertType2EvidencesToProperties()
-		annot.setProperties(null); // will be modified by convertType2EvidencesToProperties()
 
-		List<Annotation> annotations = new ArrayList<Annotation>();
+		List<Annotation> annotations = new ArrayList<>();
 		annotations.add(annot);
 		
 		AnnotationUtils.convertType2EvidencesToProperties(annotations);
 
 		Assert.assertEquals(1, annotations.get(0).getEvidences().size());  // evidence type 2 should removed
 		Assert.assertEquals(1, annotations.get(0).getProperties().size()); // property should be created (replaces evidence removed)
-		AnnotationProperty p = annotations.get(0).getProperties().get(0);
-		
-		Assert.assertEquals("AC-0002", p.getAccession());  // used to build the annotation description
-		Assert.assertEquals(1234, p.getAnnotationId());
-		Assert.assertEquals(PropertyApiModel.NAME_DIFFERING_SEQUENCE, p.getName());
-		Assert.assertEquals(String.valueOf(ev2.getResourceId()), p.getValue());
-		Assert.assertEquals(PropertyApiModel.VALUE_TYPE_RIF, p.getValueType());
-				 
-		// <property property-name="differing sequence" value="2222" value-type="resource-internal-ref" accession="AC-0002"/>
-		// <property property-name="interactant" value="16867031" value-type="resource-internal-ref" accession="Q77M19"/>
-		
+
+        assertContainsExpectedProperties(annotations.get(0).getProperties(),
+                newAnnotationProperty(1234, "AC-0002", PropertyApiModel.NAME_DIFFERING_SEQUENCE, String.valueOf(ev2.getResourceId()), PropertyApiModel.VALUE_TYPE_RIF));
     }
 
     @Test
@@ -143,7 +135,6 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		annot.setEvidences(evidences);
 
 		annot.setDescription("");  // will be modified by convertType2EvidencesToProperties()
-		annot.setProperties(null); // will be modified by convertType2EvidencesToProperties()
 
 		List<Annotation> annotations = new ArrayList<Annotation>();
 		annotations.add(annot);
@@ -152,17 +143,9 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
 		Assert.assertEquals(1, annotations.get(0).getEvidences().size());  // evidence type 2 should removed
 		Assert.assertEquals(1, annotations.get(0).getProperties().size()); // property should be created (replaces evidence removed)
-		AnnotationProperty p = annotations.get(0).getProperties().get(0);
-		
-		Assert.assertEquals("AC-0002", p.getAccession());  // used to build the annotation description
-		Assert.assertEquals(1234, p.getAnnotationId());
-		Assert.assertEquals(PropertyApiModel.NAME_ALTERNATIVE_DISEASE_TERM, p.getName());
-		Assert.assertEquals(String.valueOf(ev2.getResourceId()), p.getValue());
-		Assert.assertEquals(PropertyApiModel.VALUE_TYPE_RIF, p.getValueType());
-				 
-		// <property property-name="differing sequence" value="2222" value-type="resource-internal-ref" accession="AC-0002"/>
-		// <property property-name="interactant" value="16867031" value-type="resource-internal-ref" accession="Q77M19"/>
-		
+
+        assertContainsExpectedProperties(annotations.get(0).getProperties(),
+                newAnnotationProperty(1234, "AC-0002", PropertyApiModel.NAME_ALTERNATIVE_DISEASE_TERM, String.valueOf(ev2.getResourceId()), PropertyApiModel.VALUE_TYPE_RIF));
     }
     
     @Test
@@ -218,5 +201,26 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		Assert.assertEquals("ChEBI", bo.getDatabase());
 		Assert.assertEquals(39334228, bo.getId());
 		Assert.assertEquals(BioObject.BioType.CHEMICAL, bo.getBioType());
+	}
+
+	public static void assertContainsExpectedProperties(Collection<AnnotationProperty> properties, AnnotationProperty... expectedProperties) {
+
+		for (AnnotationProperty property : expectedProperties) {
+
+			Assert.assertTrue(properties.contains(property));
+		}
+	}
+
+	public static AnnotationProperty newAnnotationProperty(long annotationId, String accession, String name, String value, String valueType) {
+
+		AnnotationProperty property = new AnnotationProperty();
+
+		property.setAnnotationId(annotationId);
+		property.setAccession(accession);
+		property.setName(name);
+		property.setValue(value);
+        property.setValueType(valueType);
+
+		return property;
 	}
 }
