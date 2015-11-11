@@ -208,8 +208,7 @@ public class AnnotationUtils {
 				p.setName(propertyName);
 				p.setValue(""+evi.getResourceId());
 				p.setValueType(PropertyApiModel.VALUE_TYPE_RIF);
-				if (annot.getProperties()==null) annot.setProperties(new ArrayList<AnnotationProperty>());
-				annot.getProperties().add(p);
+				annot.addProperties(Arrays.asList(p));
 
 				toRemove.add(evi);
 			}

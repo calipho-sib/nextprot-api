@@ -1,14 +1,14 @@
 package org.nextprot.api.core.dao;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.Set;
-
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.Set;
+
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class DbXrefDAOIntegrationTest extends CoreUnitBaseTest {
@@ -49,7 +49,7 @@ limit 100
  		assertTrue(xref.getLinkUrl().equals("http://www.uniprot.org/uniprot/%s"));
  		assertTrue(xref.getResolvedUrl().equals("http://www.uniprot.org/uniprot/Q8ZAF0"));
  		assertTrue(xref.getUrl().equals("http://www.uniprot.org/uniprot/"));
- 		//assertTrue(xref.getProperties().equals(""));
+ 		//assertTrue(xref.getPropertiesMap().equals(""));
 	}	
  		
 	

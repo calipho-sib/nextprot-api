@@ -92,7 +92,7 @@ public class BinaryInteraction2Annotation {
 		p3.setName("selfInteraction");
 		p3.setValue(""+inter.isSelfInteraction());
 		anProps.add(p3);
-		annot.setProperties(anProps);
+		annot.addProperties(anProps);
 		
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation isoform specificity
@@ -106,7 +106,7 @@ public class BinaryInteraction2Annotation {
 			spec.setSpecificity(isSpecific ? "SPECIFIC" : "BY DEFAULT");
 			isospecs.add(spec);
 		}
-		annot.setTargetingIsoforms(isospecs);
+		annot.addTargetingIsoforms(isospecs);
 		
 		
 		return annot;

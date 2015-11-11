@@ -83,7 +83,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		Annotation annotation = new Annotation();
 
-		annotation.setProperties(new ArrayList<AnnotationProperty>());
 		annotation.setAnnotationId(xref.getDbXrefId() + IdentifierOffset.XREF_ANNOTATION_OFFSET);
 
 		XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
@@ -98,7 +97,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		annotation.setParentXref(xref);
 
 		annotation.setEvidences(Arrays.asList(newAnnotationEvidence(annotation)));
-		annotation.setTargetingIsoforms(newAnnotationIsoformSpecificityList(isoforms, annotation));
+		annotation.addTargetingIsoforms(newAnnotationIsoformSpecificityList(isoforms, annotation));
 
 		return annotation;
 	}
