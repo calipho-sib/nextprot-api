@@ -1,10 +1,7 @@
 package org.nextprot.api.tasks.solr.indexer.entry;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -15,14 +12,12 @@ import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles({"dev"})
-public class SolrDiffTest extends CoreUnitBaseTest implements InitializingBean {
+
+public class SolrDiffTest extends SolrBuildIntegrationTest implements InitializingBean {
 	
 	@Autowired	private EntryBuilderService entryBuilderService = null;
 	@Autowired	private MasterIdentifierService masterIdentifierService = null;

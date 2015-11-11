@@ -3,9 +3,9 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
 
-public class ChromosomeFieldBuilderUnitTest extends CoreUnitBaseTest {
+public class ChromosomeFieldBuilderUnitTest extends AbstractUnitBaseTest {
 
 	@Test
 	public void testSorting() {

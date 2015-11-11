@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
-public class BuildersTest extends CoreUnitBaseTest {
+public class BuildersTest extends AbstractUnitBaseTest {
 	
 	@Test
 	public void shouldCoverAllSolrFields() {

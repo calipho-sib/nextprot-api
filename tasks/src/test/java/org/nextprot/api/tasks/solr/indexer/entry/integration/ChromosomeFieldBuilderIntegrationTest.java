@@ -8,12 +8,12 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
-import org.nextprot.api.tasks.solr.indexer.entry.SolrIntegrationTest;
+import org.nextprot.api.tasks.solr.indexer.entry.SolrBuildIntegrationTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
-public class ChromosomeFieldBuilderIntegrationTest extends SolrIntegrationTest{
+public class ChromosomeFieldBuilderIntegrationTest extends SolrBuildIntegrationTest{
 
 	@Autowired	private EntryBuilderService entryBuilderService = null;
 	@Autowired	private MasterIdentifierService masterIdentifierService = null;
