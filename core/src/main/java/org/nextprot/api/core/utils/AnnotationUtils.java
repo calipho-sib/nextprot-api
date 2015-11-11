@@ -15,6 +15,8 @@ import java.util.*;
 
 public class AnnotationUtils {
 
+	private static final AnnotationPropertyComparator ANNOTATION_PROPERTY_COMPARATOR = new AnnotationPropertyComparator();
+
     /**
 	 * Filter annotation by its category
 	 */
@@ -206,8 +208,7 @@ public class AnnotationUtils {
 				p.setName(propertyName);
 				p.setValue(""+evi.getResourceId());
 				p.setValueType(PropertyApiModel.VALUE_TYPE_RIF);
-				if (annot.getProperties()==null) annot.setProperties(new ArrayList<AnnotationProperty>());
-				annot.getProperties().add(p);
+				annot.addProperties(Arrays.asList(p));
 
 				toRemove.add(evi);
 			}
@@ -241,5 +242,10 @@ public class AnnotationUtils {
 		bo.setAccession(evi.getResourceAccession());
 
 		return bo;
+	}
+
+	public static AnnotationPropertyComparator getInstanceOfAnnotationPropertyComparator() {
+
+		return ANNOTATION_PROPERTY_COMPARATOR;
 	}
 }

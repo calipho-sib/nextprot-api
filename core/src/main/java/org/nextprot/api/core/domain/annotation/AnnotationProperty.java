@@ -1,6 +1,7 @@
 package org.nextprot.api.core.domain.annotation;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Property of an Annotation
@@ -47,6 +48,23 @@ public class AnnotationProperty implements Serializable {
 	}
 	public void setAccession(String accession) {
 		this.accession = accession;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof AnnotationProperty)) return false;
+		AnnotationProperty that = (AnnotationProperty) o;
+		return annotationId == that.annotationId &&
+				Objects.equals(valueType, that.valueType) &&
+				Objects.equals(name, that.name) &&
+				Objects.equals(value, that.value) &&
+				Objects.equals(accession, that.accession);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(annotationId, valueType, name, value, accession);
 	}
 
 	public String toString() {
