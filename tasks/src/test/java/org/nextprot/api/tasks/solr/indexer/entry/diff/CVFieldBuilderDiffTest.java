@@ -20,7 +20,7 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 	@Test
 	public void testCVs() {
 
-		for(int i=0; i < 10; i++){ 	testCVs(getEntry(i)); } 
+		for(int i=0; i < 1; i++){ 	testCVs(getEntry(i)); } 
 		
 		//Entry entry = getEntry("NX_P20592");
 		//Entry entry = getEntry("NX_P14060");

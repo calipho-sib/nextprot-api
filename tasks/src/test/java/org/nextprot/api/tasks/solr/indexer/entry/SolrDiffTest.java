@@ -16,8 +16,7 @@ import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
-public class SolrDiffTest extends SolrBuildIntegrationTest implements InitializingBean {
+public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements InitializingBean {
 	
 	@Autowired	private EntryBuilderService entryBuilderService = null;
 	@Autowired	private MasterIdentifierService masterIdentifierService = null;

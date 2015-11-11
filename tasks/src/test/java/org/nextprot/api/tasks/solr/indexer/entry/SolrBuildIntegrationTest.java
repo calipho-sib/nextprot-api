@@ -18,6 +18,6 @@ import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
     DirtiesContextTestExecutionListener.class,
     TransactionDbUnitTestExecutionListener.class })
 @ContextConfiguration("classpath:spring/core-context.xml")
-public class SolrBuildIntegrationTest extends AbstractUnitBaseTest {
+public abstract class SolrBuildIntegrationTest extends AbstractUnitBaseTest {
 
 }
