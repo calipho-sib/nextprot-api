@@ -7,6 +7,7 @@ import java.util.List;
 //import java.util.SortedSet;
 //import java.util.TreeSet;
 
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Overview;
@@ -18,7 +19,6 @@ import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
-import org.nextprot.api.tasks.solr.indexer.entry.diff.AnnotationFieldBuilderDiffTest;
 
 @EntryFieldBuilder
 public class AnnotationFieldBuilder extends FieldBuilder {
@@ -29,7 +29,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 	protected void init(Entry entry) {
 
 		List<Annotation> annots = entry.getAnnotations();
-		Overview ovv = entry.getOverview();
+		//Overview ovv = entry.getOverview();
 		for (Annotation currannot : annots) {
 
 			String category = currannot.getCategory();
@@ -76,7 +76,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						if(!allsynonyms.isEmpty()) allsynonyms += " | ";
 						allsynonyms += synonym.trim();
 						}	
-					addField(Fields.ANNOTATIONS,AnnotationFieldBuilderDiffTest.getSortedValueFromPipeSeparatedField(allsynonyms)); 
+					addField(Fields.ANNOTATIONS,StringUtils.getSortedValueFromPipeSeparatedField(allsynonyms)); 
 					}
 					
 					List<String> ancestors = TerminologyUtils.getAllAncestors(cvac, terminologyservice);
@@ -89,7 +89,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 					if(allancestors.endsWith("domain"))	allancestors="domain"; // don't index generic top level ancestors
 					else if(allancestors.endsWith("zinc finger region"))	allancestors="zinc finger region"; // don't index generic top level ancestors
 					else if(allancestors.endsWith("repeat"))	allancestors="repeat"; // don't index generic top level ancestors
-					addField(Fields.ANNOTATIONS, AnnotationFieldBuilderDiffTest.getSortedValueFromPipeSeparatedField(allancestors));	
+					addField(Fields.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allancestors));	
 				}
 				if (category.equals("disease")) {System.err.println("Disease: " + desc);}
 				if (category.equals("mature protein") || category.equals("maturation peptide")) {
@@ -100,10 +100,10 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						else  {
 							List<String> chainsynonyms = currannot.getSynonyms();
 							if(chainsynonyms.size() == 1)
-							  addField(Fields.ANNOTATIONS,AnnotationFieldBuilderDiffTest.getSortedValueFromPipeSeparatedField(desc + " | " + chainid));
+							  addField(Fields.ANNOTATIONS,StringUtils.getSortedValueFromPipeSeparatedField(desc + " | " + chainid));
 							else {
 							  chainid = chainsynonyms.toString().substring(1).replace(",", " |").replace("]", "");
-							  addField(Fields.ANNOTATIONS,AnnotationFieldBuilderDiffTest.getSortedValueFromPipeSeparatedField(chainid));
+							  addField(Fields.ANNOTATIONS,StringUtils.getSortedValueFromPipeSeparatedField(chainid));
 							}
 						}
 						//List <EntityName> altnames = ovv.getProteinNames();
@@ -130,7 +130,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 								//if(currannot.getSynonym().length() == 0) System.err.println(currannot.getCategory() + " : empty desc");
 							}
 						}
-						if(!evidxrefaccs.isEmpty()) addField(Fields.ANNOTATIONS,AnnotationFieldBuilderDiffTest.getSortedValueFromPipeSeparatedField(evidxrefaccs));
+						if(!evidxrefaccs.isEmpty()) addField(Fields.ANNOTATIONS,StringUtils.getSortedValueFromPipeSeparatedField(evidxrefaccs));
 						List<AnnotationProperty> props = currannot.getProperties();
 						for (AnnotationProperty prop : props) if(prop.getName().equals("mutation AA")) {
 							//System.err.println("adding: " + prop.getValue());
