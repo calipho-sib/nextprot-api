@@ -1,7 +1,6 @@
 package org.nextprot.api.core.domain.annotation;
 
 import com.google.common.base.Optional;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
@@ -14,7 +13,6 @@ import java.util.*;
 
 public class Annotation implements Serializable, IsoformSpecific {
 
-	
 	private static final long serialVersionUID = 1L;
 
 	private String uniqueName;
@@ -41,9 +39,9 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private List<AnnotationEvidence> evidences;
 
-	private Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap;
+	private final Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap = new TreeMap<>();
 
-	private Map<String, Collection<AnnotationProperty>> properties = new TreeMap<>();
+	private final Map<String, Collection<AnnotationProperty>> properties = new TreeMap<>();
 
 	private BioObject bioObject;
 	
@@ -243,8 +241,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 		}else return false;
 	}
 
-	public void setTargetingIsoforms(List<AnnotationIsoformSpecificity> targetingIsoforms) {
-		this.targetingIsoformsMap = new HashMap<>();
+	public void addTargetingIsoforms(List<AnnotationIsoformSpecificity> targetingIsoforms) {
 		for (AnnotationIsoformSpecificity isospecAnnot : targetingIsoforms) {
 			targetingIsoformsMap.put(isospecAnnot.getIsoformName(), isospecAnnot);
 		}
