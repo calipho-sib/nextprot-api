@@ -12,7 +12,7 @@ import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.XrefFieldBuilder;
 
-public class xrefFieldBuilderDiffTest extends SolrDiffTest {
+public class CrossRefFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Test
 	@Ignore
