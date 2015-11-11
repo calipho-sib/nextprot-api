@@ -10,7 +10,6 @@ import java.util.List;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
-import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
@@ -131,7 +130,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 							}
 						}
 						if(!evidxrefaccs.isEmpty()) addField(Fields.ANNOTATIONS,StringUtils.getSortedValueFromPipeSeparatedField(evidxrefaccs));
-						List<AnnotationProperty> props = currannot.getProperties();
+						Collection<AnnotationProperty> props = currannot.getProperties();
 						for (AnnotationProperty prop : props) if(prop.getName().equals("mutation AA")) {
 							//System.err.println("adding: " + prop.getValue());
 							addField(Fields.ANNOTATIONS,prop.getValue()); // eg: p.D1685E
