@@ -112,7 +112,6 @@ public class TerminologyDaoImpl implements TerminologyDao {
 
 	@Override
 	public List<String> findEnzymeAcsByMaster(String entryName) {
-		//SqlParameterSource params = new MapSqlParameterSource("entry", entryName);
 		SqlParameterSource params = new MapSqlParameterSource("uniqueName", entryName);
 		List<String> accessions = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("enzyme-by-entry-name"), params, String.class);
 		return accessions;
