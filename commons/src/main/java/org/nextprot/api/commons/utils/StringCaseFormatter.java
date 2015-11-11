@@ -112,6 +112,7 @@ public class StringCaseFormatter {
 
         return sb.toString();
     }
+    
 
     private String camelToKebabCase(String s){
         return camelToLetterCase(s, "-");

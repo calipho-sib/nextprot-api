@@ -12,6 +12,7 @@ import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -26,6 +27,16 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	@Autowired private DataSourceServiceLocator dsLocator;
 	
 	@Override
+	public List<Terminology> findTermByAccessionAndTerminology(String accession, String terminology) {
+		throw new RuntimeException("Not implemented");
+	}
+
+
+	
+	@Override
+	// TODO with Daniel: send appropriate exception if terms.size() > 1 => ambiguous accession
+	// TODO normally only terminology + accession is supposed to be unique !!!!
+	// SHOULD USE findTermByAccessionAndTerminology
 	public Terminology findTerminologyByAccession(String accession) {
 		Set<String> acs = new HashSet<String>();
 		acs.add(accession);
@@ -33,8 +44,6 @@ public class TerminologyDaoImpl implements TerminologyDao {
 		List<Terminology> terms = new NamedParameterJdbcTemplate(
 				dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-acs"), params, new DbTermRowMapper());
 		
-		// TODO with Daniel: send appropriate exception if terms.size() > 1 => ambiguous accession
-		// TODO normally only terminology + accession is supposed to be unique !!!!
 		if (terms.size()==0)
 			return null;			
 		return terms.get(0);
@@ -107,6 +116,11 @@ public class TerminologyDaoImpl implements TerminologyDao {
 		SqlParameterSource params = new MapSqlParameterSource("uniqueName", entryName);
 		List<String> accessions = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("enzyme-by-entry-name"), params, String.class);
 		return accessions;
+	}
+
+	@Override
+	public List<String> findTerminologyNamesList() {
+		return  new JdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("terminology-names"), String.class);
 	}
 
 

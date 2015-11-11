@@ -1,13 +1,13 @@
 package org.nextprot.api.web.xml.integration;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
-
 import org.junit.Test;
 import org.mockito.internal.matchers.GreaterThan;
 import org.mockito.internal.matchers.LessThan;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 public class EntryXMLIntegrationTest extends WebIntegrationBaseTest {
 	
@@ -88,13 +88,11 @@ public class EntryXMLIntegrationTest extends WebIntegrationBaseTest {
 	  this.mockMvc.perform(get("/entry/NX_P03372/experimental-context.xml")).andExpect(xpath("entry/experimental-context-list").exists());
   }
 
-  
-	
-  //TODO These mappings should also contain the xrefs / publications as well...
   @Test
   public void shouldContainAntibody() throws Exception {
-	  ResultActions r = this.mockMvc.perform(get("/entry/NX_P03372/antibody.xml"));
-	  r.andExpect(xpath("entry/mapping-list/mapping-category/@category").string("antibody-mapping"));
+	  ResultActions r = this.mockMvc.perform(get("/entry/NX_P03372/antibody-mapping.xml"));
+	  r.andExpect(xpath("entry/annotation-list/annotation-category/@category").string("antibody-mapping"));
+      r.andExpect(xpath("entry/xref-list/xref//@database").nodeCount(2));
   }
   
   @Test

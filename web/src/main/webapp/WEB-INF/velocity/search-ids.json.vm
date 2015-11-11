@@ -2,13 +2,12 @@
 	"elapsedTime":${result.elapsedTime},
 	"entity":"${result.entity}",
 	"index":"${result.index}",
-	"score":${result.maxScore},
-	"found":${result.numFound},
+	"score":${result.score},
+	"found":${result.found},
 	"rows":${result.rows},
 	"start":${result.start},
 	"ids": [
-		#foreach($field in $result.getFacet("id").getFoundFacetFields())
-		"$field.getFirst()"#if($velocityHasNext),
-#end 
+		#foreach($field in $result.getFoundFacets("id"))
+			"$field.get("name")"#if($velocityHasNext),#end
 		#end]
 }

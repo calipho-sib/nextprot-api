@@ -8,7 +8,7 @@ import java.io.Serializable;
 @ApiObject(name = "identifier", description = "The identifier")
 public class Identifier implements Serializable{
 
-	private static final long serialVersionUID = 5134635208466189617L;
+	private static final long serialVersionUID = 2L;
 
 	@ApiObjectField(description = "The identifier name")
 	private String name;
@@ -16,6 +16,8 @@ public class Identifier implements Serializable{
 	private String type;
 	@ApiObjectField(description = "The identifier database")
 	private String database;
+	@ApiObjectField(description = "The database category")
+	private String category;
 	
 /*
 	private String id;
@@ -65,9 +67,16 @@ public class Identifier implements Serializable{
 	public void setDatabase(String database) {
 		this.database = database;
 	}
-	
-	
-	/**
+
+    public String getDatabaseCategory() {
+        return category;
+    }
+
+    public void setDatabaseCategory(String category) {
+        this.category = category;
+    }
+
+    /**
 	 * Returns a string specifying the provenance of the identifier
 	 * @return the database if not null otherwise returns the type
 	 */

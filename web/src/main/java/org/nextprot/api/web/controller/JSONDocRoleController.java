@@ -1,12 +1,29 @@
 package org.nextprot.api.web.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsondoc.core.pojo.*;
-import org.jsondoc.core.util.JSONDocType;
+import org.jsondoc.core.pojo.ApiDoc;
+import org.jsondoc.core.pojo.ApiMethodDoc;
+import org.jsondoc.core.pojo.ApiParamDoc;
+import org.jsondoc.core.pojo.ApiVerb;
+import org.jsondoc.core.pojo.JSONDoc;
 import org.jsondoc.springmvc.controller.JSONDocController;
 import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.export.format.EntryBlock;
@@ -20,16 +37,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.PostConstruct;
-import java.util.*;
-import java.util.Map.Entry;
-
 @Controller
 public class JSONDocRoleController extends JSONDocController {
 
 	private final static Log LOGGER = LogFactory.getLog(ExportServiceImpl.class);
 
-    private JSONDoc jsonDoc;
+	private JSONDoc jsonDoc;
 
 	public JSONDocRoleController() {
 		super(null, "", null);
@@ -37,73 +50,107 @@ public class JSONDocRoleController extends JSONDocController {
 
 	@Autowired
 	private Environment env;
-	
+
 	@Autowired
 	private ReleaseInfoService releaseInfoService;
-	
-	
-	private static ApiMethodDoc cloneMethodDocWithName(ApiMethodDoc met, String name, String additionalDescription){
+
+	private static ApiMethodDoc cloneMethodDoc(ApiMethodDoc met, String path, String description, boolean xmlSupported, boolean copyPathParam) {
 		ApiMethodDoc m = new ApiMethodDoc();
 		m.setQueryparameters(met.getQueryparameters());
 		Set<String> produces = new HashSet<String>();
-		produces.add(MediaType.APPLICATION_XML_VALUE);
+		if(xmlSupported) produces.add(MediaType.APPLICATION_XML_VALUE);
 		produces.add(MediaType.APPLICATION_JSON_VALUE);
 		m.setProduces(produces);
 		m.setConsumes(met.getConsumes());
 		Set<ApiParamDoc> set = new HashSet<ApiParamDoc>();
-		String[] allowedvalues = {"NX_P01308"};
-		set.add(new ApiParamDoc("entry", "Exports only the " + name + " from an entry. " + additionalDescription,  new JSONDocType("string"),  "true", allowedvalues, null, null));
-		m.setPathparameters(set);
-		m.setPath("/entry/{entry}/" + StringUtils.camelToKebabCase(name));
-		m.setVerb(ApiVerb.GET);
 		
+		if(copyPathParam){
+			ApiParamDoc apd = met.getPathparameters().iterator().next();
+			//	public ApiParamDoc(String name, String description, JSONDocType jsondocType, String required, String[] allowedvalues, String format, String defaultvalue) {
+			set.add(new ApiParamDoc(apd.getName(), description, apd.getJsondocType(), apd.getRequired(), apd.getAllowedvalues(), apd.getFormat(), apd.getDefaultvalue()));
+			m.setPathparameters(set);
+		}
+		
+		m.setQueryparameters(met.getQueryparameters());
+		m.setPath(path);
+		m.setVerb(ApiVerb.GET);
+
 		return m;
 	}
 
 	@PostConstruct
 	public void init() {
-		
+
 		List<String> packages = new ArrayList<String>();
-		packages.addAll(Arrays.asList(new String[] { "org.nextprot.api.commons", 
-				"org.nextprot.api.core", 
-				"org.nextprot.api.rdf", 
-				"org.nextprot.api.solr", 
-				"org.nextprot.api.user",
+		packages.addAll(Arrays.asList(new String[] { "org.nextprot.api.commons", "org.nextprot.api.core", "org.nextprot.api.rdf", "org.nextprot.api.solr", "org.nextprot.api.user",
 				"org.nextprot.api.web" }));
-		
-		String version = releaseInfoService.findReleaseContents().getApiRelease();
-		for(String profile : env.getActiveProfiles()){
-			if(profile.equalsIgnoreCase("build")){
+
+		String version = releaseInfoService.findReleaseInfo().getApiRelease();
+		for (String profile : env.getActiveProfiles()) {
+			if (profile.equalsIgnoreCase("build")) {
 				packages.add("org.nextprot.api.build");
 				break;
 			}
 		}
-		
+
 		jsonDoc = new SpringJSONDocScanner().getJSONDoc(version, "", packages);
-		for(Set<ApiDoc> apiDocs: jsonDoc.getApis().values()) {
-			for(ApiDoc apiDoc: apiDocs) {
-				ApiMethodDoc met = null;
-				if(apiDoc.getName().equals("Entry") && apiDoc.getMethods() != null && !apiDoc.getMethods().isEmpty()) {
-					met = apiDoc.getMethods().iterator().next();
-				}
-				
-				if (apiDoc.getName().equals("Entry")) {
+		for (Set<ApiDoc> apiDocs : jsonDoc.getApis().values()) {
 
-					//adding blocks
-					for (EntryBlock block: EntryBlock.values()) {
-						if(!block.equals(EntryBlock.FULL_ENTRY))
-							apiDoc.getMethods().add(cloneMethodDocWithName(met, block.name().toLowerCase().replaceAll("_", "-"), ""));
+			{ //////////////////////////// Appends documentation to Entry Controller ////////////////////////////
+
+				ApiMethodDoc met = getMethodOfType(apiDocs, "Entry");
+				for (ApiDoc apiDoc : filterApiDocsFor(apiDocs, "Entry")) {
+
+					// adding blocks
+					for (EntryBlock block : EntryBlock.values()) {
+						if (!block.equals(EntryBlock.FULL_ENTRY)) {
+							String name = block.name().toLowerCase().replaceAll("_", "-");
+							String path = "/entry/{entry}/" + StringUtils.camelToKebabCase(name);
+							apiDoc.getMethods().add(cloneMethodDoc(met, path, "", true, true));
+						}
 					}
 
-					
-					//adding subparts
-					for (AnnotationApiModel model: AnnotationApiModel.values()) {
-						String additionalDescription = "It locates on the hierarchy: " + model.getHierarchy();
-						apiDoc.getMethods().add(cloneMethodDocWithName(met, StringUtils.camelToKebabCase(model.getApiTypeName()), additionalDescription));
+					// adding subparts
+					for (AnnotationCategory model : AnnotationCategory.values()) {
+
+						String name = model.getApiTypeName();
+						String path = "/entry/{entry}/" + StringUtils.camelToKebabCase(name);
+						String description = "Exports only the " + name + " from an entry, located on the hierarchy: " + model.getHierarchy();
+
+						apiDoc.getMethods().add(cloneMethodDoc(met, path, description, true, true));
 					}
+
 				}
+
+			}
+
+		}
+	}
+
+	private static ApiMethodDoc getMethodOfType(Collection<ApiDoc> apiDocs, String type) {
+
+		// Adds terminology
+		for (ApiDoc apiDoc : apiDocs) {
+			if (apiDoc.getName().equals(type) && apiDoc.getMethods() != null && !apiDoc.getMethods().isEmpty()) {
+				return apiDoc.getMethods().iterator().next();
 			}
 		}
+
+		return null;
+
+	}
+
+	private static Collection<ApiDoc> filterApiDocsFor(Collection<ApiDoc> apiDocs, String type) {
+
+		List<ApiDoc> docs = new ArrayList<ApiDoc>();
+		for (ApiDoc apiDoc : apiDocs) {
+			if (apiDoc.getName().equals(type)) {
+				docs.add(apiDoc);
+			}
+		}
+
+		return docs;
+
 	}
 
 	@RequestMapping(value = JSONDocController.JSONDOC_DEFAULT_PATH, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -116,40 +163,40 @@ public class JSONDocRoleController extends JSONDocController {
 		}
 
 		Map<String, Set<ApiDoc>> contextApis = new TreeMap<String, Set<ApiDoc>>();
-		for(Entry<String, Set<ApiDoc>> apis: jsonDoc.getApis().entrySet()) {
+		for (Entry<String, Set<ApiDoc>> apis : jsonDoc.getApis().entrySet()) {
 
 			// For each class annotation (ApiDoc)
 			Set<ApiDoc> contextApiDocs = new TreeSet<ApiDoc>();
-//				boolean devMode = false;
-//				if (env != null) {
-//					String[] pfs = env.getActiveProfiles();
-//					if (pfs != null) {
-//						for (String e : pfs) {
-//							if (e.equalsIgnoreCase("dev")) {
-//								devMode = true;
-//								break;
-//							}
-//						}
-//					}
-//				}
+			// boolean devMode = false;
+			// if (env != null) {
+			// String[] pfs = env.getActiveProfiles();
+			// if (pfs != null) {
+			// for (String e : pfs) {
+			// if (e.equalsIgnoreCase("dev")) {
+			// devMode = true;
+			// break;
+			// }
+			// }
+			// }
+			// }
 			for (ApiDoc apiDoc : apis.getValue()) {
 
-				// Check authorization at class level 
-				if (apiDoc.getAuth() == null || apiDoc.getAuth().equals("ROLE_ANONYMOUS") || 
-						(contextRoles != null && !Collections.disjoint(contextRoles, apiDoc.getAuth().getRoles()))) {
+				// Check authorization at class level
+				if (apiDoc.getAuth() == null || apiDoc.getAuth().equals("ROLE_ANONYMOUS") || (contextRoles != null && !Collections.disjoint(contextRoles, apiDoc.getAuth().getRoles()))) {
 
 					// For each method annotation (ApiMethodDoc)
 					Set<ApiMethodDoc> contextApiMethodDocs = new TreeSet<ApiMethodDoc>();
 					for (ApiMethodDoc apiMethodDoc : apiDoc.getMethods()) {
-					
-						// Check authorization at method level 
-						if (apiMethodDoc.getAuth() == null || apiMethodDoc.getAuth().equals("ROLE_ANONYMOUS") ||
-								contextRoles != null && !Collections.disjoint(contextRoles, apiMethodDoc.getAuth().getRoles())) {
+
+						// Check authorization at method level
+						if (apiMethodDoc.getAuth() == null || apiMethodDoc.getAuth().equals("ROLE_ANONYMOUS") || contextRoles != null
+								&& !Collections.disjoint(contextRoles, apiMethodDoc.getAuth().getRoles())) {
 							contextApiMethodDocs.add(apiMethodDoc);
 						}
 					}
 					if (!contextApiMethodDocs.isEmpty()) {
-						//Create a copy of apiDoc but with methods according to contextRoles
+						// Create a copy of apiDoc but with methods according to
+						// contextRoles
 						ApiDoc tmpApiDoc = new ApiDoc();
 						tmpApiDoc.setDescription(apiDoc.getDescription());
 						tmpApiDoc.setName(apiDoc.getName());
@@ -164,17 +211,16 @@ public class JSONDocRoleController extends JSONDocController {
 			}
 			if (!contextApiDocs.isEmpty()) {
 				contextApis.put(apis.getKey(), contextApiDocs);
-				LOGGER.info("Add \"" + apis.getKey() + "\" Api to the current user");						
+				LOGGER.info("Add \"" + apis.getKey() + "\" Api to the current user");
 			}
 		}
-		
-		JSONDoc contextJSONDoc = new JSONDoc(releaseInfoService.findReleaseContents().getApiRelease(), "");
+
+		JSONDoc contextJSONDoc = new JSONDoc(releaseInfoService.findReleaseInfo().getApiRelease(), "");
 		contextJSONDoc.setApis(contextApis);
 		contextJSONDoc.setObjects(jsonDoc.getObjects());
 		contextJSONDoc.setFlows(jsonDoc.getFlows());
 
 		return contextJSONDoc;
 	}
-	
 
 }

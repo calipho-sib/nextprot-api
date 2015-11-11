@@ -2,7 +2,7 @@ package org.nextprot.api.core.utils;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -66,7 +66,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		Annotation annot = new Annotation();
 		annot.setAnnotationId(annotId);
 		annot.setUniqueName("some_sequence_caution_annotation");
-		annot.setCategory(AnnotationApiModel.SEQUENCE_CAUTION.getDbAnnotationTypeName());
+		annot.setCategory(AnnotationCategory.SEQUENCE_CAUTION.getDbAnnotationTypeName());
 		annot.setQualityQualifier("GOLD");
 		annot.setEvidences(evidences);
 
@@ -138,7 +138,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		Annotation annot = new Annotation();
 		annot.setAnnotationId(annotId);
 		annot.setUniqueName("some_disease_annotation");
-		annot.setCategory(AnnotationApiModel.DISEASE.getDbAnnotationTypeName());
+		annot.setCategory(AnnotationCategory.DISEASE.getDbAnnotationTypeName());
 		annot.setQualityQualifier("GOLD");
 		annot.setEvidences(evidences);
 

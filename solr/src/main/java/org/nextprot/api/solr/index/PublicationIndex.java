@@ -28,7 +28,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.FIRST_PAGE)
 				.add(PubField.LAST_PAGE)
 				.add(PubField.ABSTRACT)
-				.add(PubField.VOLUME)
+				.add(PubField.VOLUME) // to be used for for display & search 
 				.add(PubField.TYPE)
 				.add(PubField.PRETTY_JOURNAL) // contains only iso abbr to be displayed
 				.add(PubField.SOURCE)
@@ -40,7 +40,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.YEAR, 16)
 				.add(PubField.TITLE, 16)
 				.add(PubField.ABSTRACT, 4)
-				.add(PubField.VOLUME, 4)
+				.add(PubField.VOLUME, 4) // to be used for search (DO NOT USE volume_s which is not a text_split0)
 				.add(PubField.TYPE, 16)
 				.add(PubField.JOURNAL, 8) // contain both full name and iso abbr
 				.add(PubField.SOURCE, 8)
@@ -51,7 +51,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.YEAR, 160)
 				.add(PubField.TITLE, 160)
 				.add(PubField.ABSTRACT, 40)
-				.add(PubField.VOLUME, 40)
+				.add(PubField.VOLUME, 40)  // to be used for search (DO NOT USE volume_s which is not a text_split0)
 				.add(PubField.TYPE, 160)
 				.add(PubField.JOURNAL, 80) // contain both full name and iso abbr
 				.add(PubField.SOURCE, 80)
@@ -71,7 +71,7 @@ public class PublicationIndex extends IndexTemplate {
 		SortConfig sortConfig = SortConfig.create("default", new Pair[] {
 				Pair.create(PubField.YEAR, ORDER.desc),
 				Pair.create(PubField.PRETTY_JOURNAL, ORDER.asc),
-				Pair.create(PubField.VOLUME, ORDER.asc),
+				Pair.create(PubField.VOLUME_S, ORDER.asc),  // do not use VOLUME cos text_split0 (tokenized field) is not sortable !
 				Pair.create(PubField.FIRST_PAGE, ORDER.asc),
 		});
 
@@ -128,21 +128,23 @@ public class PublicationIndex extends IndexTemplate {
 	
 	public static enum PubField implements IndexField {
 		ID("id"), 
+		IDSP0("idsp0"),                   // searchable (text_split0)
 		AC("ac"), 
-		VOLUME("volume","volume"), 
+		VOLUME_S("volume_s"),             // sortable (string)
+		VOLUME("volume", "volume"),       // searchable, also used for display by UI (text_split0)
 		FIRST_PAGE("first_page"), 
 		LAST_PAGE("last_page"), 
 		YEAR("year","year"), 
 		DATE("date"), 
-		TITLE("title","title"), 
-		TITLE_S("title_s"),
+		TITLE("title","title"),           // searchable, displayable (text_split0)
+		TITLE_S("title_s"),               // sortable (string)
 		ABSTRACT("abstract","abstract"), 
 		TYPE("type"), 
-		JOURNAL("journal","journal"), 
-		PRETTY_JOURNAL("pretty_journal"), 
+		JOURNAL("journal","journal"),     // searchable (text_split0)
+		PRETTY_JOURNAL("pretty_journal"), // displayable (string)
 		SOURCE("source"), 
-		AUTHORS("authors","author"), 
-		PRETTY_AUTHORS("pretty_authors"), 
+		AUTHORS("authors","author"),      // searchable (text_split0)
+		PRETTY_AUTHORS("pretty_authors"), // displayable  (also text_split0 but formatted)
 		FILTERS("filters"), 
 		TEXT("text");
 		

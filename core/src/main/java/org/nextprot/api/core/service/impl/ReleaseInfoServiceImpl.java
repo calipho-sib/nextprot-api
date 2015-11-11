@@ -3,7 +3,7 @@ package org.nextprot.api.core.service.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
-import org.nextprot.api.core.domain.release.ReleaseContents;
+import org.nextprot.api.core.domain.release.ReleaseInfo;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -28,11 +28,13 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 	
 	@Override
 	@Cacheable("release-contents")
-	public ReleaseContents findReleaseContents() {
-		ReleaseContents ri = new ReleaseContents();
+	public ReleaseInfo findReleaseInfo() {
+		ReleaseInfo ri = new ReleaseInfo();
 		ri.setDatabaseRelease(releaseInfoDao.findDatabaseRelease());
 		ri.setApiRelease(this.getApiVersion());
 		ri.setDatasources(releaseInfoDao.findReleaseInfoDataSources());
+		ri.setTagStatistics(releaseInfoDao.findTagStatistics());
+
 		return ri;
 	}
 
@@ -77,8 +79,10 @@ class ReleaseInfoServiceImpl implements ReleaseInfoService {
 		if (file.isFile()) {
 
 			BufferedReader br = new BufferedReader(new FileReader(dir + filename));
+			String line = br.readLine();
 
-			return br.readLine();
+			br.close();
+			return line;
 		}
 
 		return null;

@@ -133,7 +133,6 @@
 	<identifier_resource_assoc assoc_id="2" identifier_id="100" resource_id="302" datasource_id="2"/>
 	<identifier_resource_assoc assoc_id="3" identifier_id="100" resource_id="304" datasource_id="2"/>
 	<identifier_resource_assoc assoc_id="4" identifier_id="100" resource_id="305" datasource_id="13"/>
-
-	<identifier_resource_assoc assoc_id="5" identifier_id="100" resource_id="301" datasource_id="9"/>
-	<identifier_resource_assoc assoc_id="6" identifier_id="100" resource_id="306" datasource_id="9"/>
+	<identifier_resource_assoc assoc_id="5" identifier_id="100" resource_id="301" datasource_id="9"/>  <!-- PIR datasource -->
+	<identifier_resource_assoc assoc_id="6" identifier_id="100" resource_id="306" datasource_id="9"/>  <!-- PIR datasource only for this pub -->
 </dataset>	

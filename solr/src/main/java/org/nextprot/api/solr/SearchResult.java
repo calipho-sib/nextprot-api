@@ -1,39 +1,33 @@
 package org.nextprot.api.solr;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import org.nextprot.api.commons.utils.StringUtils;
 
-import org.nextprot.api.commons.utils.Pair;
+import java.util.*;
 
 /**
  * Encapsulate Solr result. 
  * Enables us to take what we need for the initial Solr class
  * 
  * @author mpereira
+ * @author fnikitin
  *
  */
 public class SearchResult  {
+
 	private long elapsedTime;
 	private String entity;
 	private String index;
-	private float maxScore;
-	private long numFound;
+	private float score;
+	private long found;
 	private int start;
 	private int rows;
-	private List<SearchResultItem> results;
-	private Map<String, SearchResultFacet> facets;
-	
-	private SearchResultSpellcheck spellcheck;
+	private List<Map<String, Object>> results;
+	private Map<String, List<Map<String, Object>>> facets;
+	private Map<String, Object> spellcheck;
 	
 	public SearchResult() { 
-		this.results = new ArrayList<SearchResultItem>();
-		this.facets = new HashMap<String, SearchResult.SearchResultFacet>();
+		this.results = new ArrayList<>();
+		this.facets = new HashMap<>();
 	}
 	
 	public SearchResult(String entity, String index) {
@@ -42,11 +36,6 @@ public class SearchResult  {
 		this.index = index;
 	}
 	
-	public SearchResult(long elapsedTime, List<SearchResultItem> results) {
-		this.elapsedTime = elapsedTime;
-		this.results = results;
-	}
-
 	public long getElapsedTime() {
 		return elapsedTime;
 	}
@@ -71,20 +60,20 @@ public class SearchResult  {
 		this.index = index;
 	}
 
-	public float getMaxScore() {
-		return maxScore;
+	public float getScore() {
+		return score;
 	}
 
-	public void setMaxScore(float score) {
-		this.maxScore = score;
+	public void setScore(float score) {
+		this.score = score;
 	}
 	
-	public long getNumFound() {
-		return this.numFound;
+	public long getFound() {
+		return this.found;
 	}
 
-	public void setNumFound(long numFound) {
-		this.numFound = numFound;
+	public void setFound(long found) {
+		this.found = found;
 	}
 
 	public int getStart() {
@@ -103,128 +92,157 @@ public class SearchResult  {
 		this.rows = rows;
 	}
 
-	public List<SearchResultItem> getResults() {
+	public List<Map<String, Object>> getResults() {
 		return results;
 	}
 
-	public void setResults(List<SearchResultItem> results) {
+	public void setResults(List<Map<String, Object>> results) {
 		this.results = results;
 	}
 
-	public void addSearchResultFacet(SearchResultFacet facet) {
-		if(this.facets == null) 
-			this.facets = new HashMap<String, SearchResult.SearchResultFacet>();
-		this.facets.put(facet.getName(), facet);
-	}
-	
-	public Map<String, SearchResultFacet> getFacets() {
-		return this.facets;
-	}
-	
-	public SearchResultFacet getFacet(String name) {
-		if(this.facets.containsKey(name))
-			return this.facets.get(name);
-		return null;
-	}
-	
-	public void setSpellCheck(SearchResultSpellcheck spellcheck) {
-		this.spellcheck = spellcheck; 
+	public void addSearchResultFacet(Facet facet) {
+		if(this.facets == null)
+			this.facets = new HashMap<>();
+
+		this.facets.put(facet.getName(), facet.getFacetFields());
 	}
 
-	public SearchResultSpellcheck getSpellcheck() {
-		return this.spellcheck;
+	public Map<String, List<Map<String, Object>>> getFacets() {
+		return this.facets;
+	}
+
+	public List<Map<String, Object>> getFilters() {
+		return getFacet("filters");
+	}
+
+	public List<Map<String, Object>> getFacet(String name) {
+		if(this.facets.containsKey(name))
+			return this.facets.get(name);
+		return new ArrayList<>();
+	}
+
+	public List<Map<String, Object>> getFoundFacets(String name) {
+		List<Map<String, Object>> found = new ArrayList<>();
+
+		for(Map<String, Object> p : getFacet(name))
+			if((Long)p.get(Facet.FIELD_COUNT) > 0)
+				found.add(p);
+
+		return found;
 	}
 	
+	public void setSpellCheck(Spellcheck spellcheck) {
+		this.spellcheck = spellcheck.getContent();
+	}
+
+	public Map<String, Object> getSpellcheck() {
+
+		if (spellcheck == null)
+			return Spellcheck.newEmptyMap();
+
+		return spellcheck;
+	}
+
+	Set<Map<String, Object>> getCollations() {
+
+		if (spellcheck != null && spellcheck.containsKey(Spellcheck.COLLATIONS))
+			return (Set<Map<String, Object>>) spellcheck.get(Spellcheck.COLLATIONS);
+		return new HashSet<>();
+	}
+
+	Map<String, List<String>> getSuggestions() {
+
+		if (spellcheck != null && spellcheck.containsKey(Spellcheck.SUGGESTIONS))
+			return (Map<String, List<String>>) spellcheck.get(Spellcheck.SUGGESTIONS);
+		return new HashMap<>();
+	}
+
 	public String toString() {
 		return "results: "+this.results.size()+" facets: "+this.facets.size();
 	}
 	
-	/**
-	 * Represents one item in the Solr results
-	 *  
-	 * @author mpereira
-	 *
-	 */
-	public static class SearchResultItem {
-		private Map<String, Object> properties;
-		
-		public SearchResultItem() { 
-			this.properties = new HashMap<String, Object>(); 
-		}
-		
-		public void addProperty(String name, Object value) {
-			this.properties.put(name, value);
-		}
+	public static class Facet {
+		public static final String FIELD_NAME = "name";
+		public static final String FIELD_COUNT = "count";
 
-		public Map<String, Object> getProperties() {
-			return properties;
-		}
-
-		public void setProperties(Map<String, Object> properties) {
-			this.properties = properties;
-		}
-		
-	}
-	
-	public static class SearchResultFacet {
 		private String name;
-		private List<Pair<String, Long>> facetFields;
+		private List<Map<String, Object>> facetFields;
 		
-		public SearchResultFacet(String name) {
+		public Facet(String name) {
 			this.name = name;
-			this.facetFields = new ArrayList<Pair<String,Long>>();
+			this.facetFields = new ArrayList<>();
 		}
 		
 		public String getName() {
 			return this.name;
 		}
 		
-		public void addFacetField(String fieldName, Long fieldCount) {
-			this.facetFields.add(Pair.create(fieldName, fieldCount));
+		public void addFacetField(String fieldName, long fieldCount) {
+			Map<String, Object> map = new HashMap<>();
+			map.put(FIELD_NAME, fieldName);
+			map.put(FIELD_COUNT, fieldCount);
+			facetFields.add(map);
 		}
 
-		public List<Pair<String, Long>> getFacetFields() {
+		public List<Map<String, Object>> getFacetFields() {
 			return facetFields;
 		}
-		
-		public List<Pair<String, Long>> getFoundFacetFields() {
-			List<Pair<String, Long>> foundFields = new ArrayList<Pair<String, Long>>();
-			for(Pair<String, Long> p : this.facetFields)
-				if(p.getSecond() > 0) 
-					foundFields.add(p);
-			
-			//System.out.println("FOUND: "+ foundFields.size());
-			return foundFields;
-		}
-		
 	}
-	
-	public static class SearchResultSpellcheck {
-		private SortedSet<Pair<String, Long>> collations = new TreeSet<Pair<String, Long>>(new CollationComparator());
-		private Map<String, List<String>> suggestions = new HashMap<String, List<String>>();
-		
-		public void addCollation(String collation, long hits) {
-			this.collations.add(Pair.create(collation, hits));
+
+	public static class Spellcheck {
+
+		private static final String COLLATIONS = "collations";
+		private static final String SUGGESTIONS = "suggestions";
+		public static final String COLLATION_QUERY = "query";
+		public static final String COLLATION_HITS = "hits";
+
+		private Map<String, Object> content = new HashMap<>();
+
+		private Set<Map<String, Object>> collations = new TreeSet<>(new CollationComparator());
+		private Map<String, List<String>> suggestions = new HashMap<>();
+
+		public Spellcheck() {
+
+			content.put(COLLATIONS, collations);
+			content.put(SUGGESTIONS, suggestions);
 		}
-		
+
+		public void addCollation(String collation, long hits) {
+
+			Map<String, Object> hitsMap = new HashMap<>();
+			hitsMap.put(COLLATION_QUERY, StringUtils.removePlus(collation));
+			hitsMap.put(COLLATION_HITS, hits);
+
+			this.collations.add(hitsMap);
+		}
+
+		public static Map<String, Object> newEmptyMap() {
+
+			Map<String, Object> map = new HashMap<>();
+
+			map.put(COLLATIONS, new HashSet<>());
+			map.put(SUGGESTIONS, new HashMap<>());
+
+			return map;
+		}
+
+		public Map<String, Object> getContent() {
+			return content;
+		}
+
+		Set<Map<String, Object>> getCollations() {
+			return collations;
+		}
+
 		public void addSuggestions(String token, List<String> alternatives) {
 			this.suggestions.put(token, alternatives);
 		}
 
-		public Set<Pair<String, Long>> getCollations() {
-			return collations;
-		}
+		class CollationComparator implements Comparator<Map<String, Object>> {
 
-		public Map<String, List<String>> getSuggestions() {
-			return suggestions;
-		}
+			public int compare(Map<String, Object> m1, Map<String, Object> m2) {
 
-
-
-		class CollationComparator implements Comparator<Pair<String, Long>> {
-
-			public int compare(Pair<String, Long> o1, Pair<String, Long> o2) {
-				return o2.getSecond().compareTo(o1.getSecond());
+				return ((Long)m2.get(COLLATION_HITS)).compareTo((Long)m1.get(COLLATION_HITS));
 			}
 		}
 	}

@@ -1,6 +1,6 @@
 package org.nextprot.api.core.utils;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.*;
 
@@ -19,7 +19,7 @@ public class BinaryInteraction2Annotation {
 		
 		Annotation annot = new Annotation();
 		annot.setAnnotationId(annotId);
-		annot.setCategory(AnnotationApiModel.BINARY_INTERACTION.getDbAnnotationTypeName());
+		annot.setCategory(AnnotationCategory.BINARY_INTERACTION.getDbAnnotationTypeName());
 		annot.setCvTermAccessionCode(null);
 		annot.setCvTermName(null);
 		annot.setDescription(null);
@@ -44,6 +44,7 @@ public class BinaryInteraction2Annotation {
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 		// see https://issues.isb-sib.ch/browse/NEXTPROT-921
 		evi.setEvidenceCodeAC("ECO:0000353");
+		evi.setEvidenceCodeOntology("EvidenceCodeOntologyCv");
 		evi.setEvidenceCodeName("Physical interaction evidence used in manual assertion");
 		// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 		evi.setEvidenceId(inter.getEvidenceId());

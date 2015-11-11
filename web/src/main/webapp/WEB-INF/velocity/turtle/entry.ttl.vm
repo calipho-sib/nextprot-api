@@ -43,11 +43,6 @@ isoform:$isoform-name :canonicalIsoform "false"^^xsd:boolean .
 ## Xrefs & Identifiers
 #parse('turtle/entry-references.ttl.vm')
 
-
-## antibody mappings
-#parse('turtle/antibody-list.ttl.vm')
-
-
 ## peptide mappings
 #parse('turtle/peptide-list.ttl.vm')
 

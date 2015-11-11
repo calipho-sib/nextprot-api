@@ -1,6 +1,6 @@
 package org.nextprot.api.core.utils.peff;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
@@ -15,7 +15,7 @@ class IsoformVariationPeffFormatter extends IsoformAnnotationPeffFormatter {
 
     public IsoformVariationPeffFormatter() {
 
-        super(EnumSet.of(AnnotationApiModel.VARIANT), PeffKey.VARIANT);
+        super(EnumSet.of(AnnotationCategory.VARIANT), PeffKey.VARIANT);
     }
 
     @Override

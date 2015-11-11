@@ -7,8 +7,8 @@ package org.nextprot.api.commons.constants;
 
 public enum PeptideMappingAnnotationMapping  {
 
-	PEPTIDE_MAPPING(AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0001096", "mass spectrometry evidence"),
-	SRM_PEPTIDE_MAPPING(AnnotationApiModel.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0001096", "mass spectrometry evidence")
+	PEPTIDE_MAPPING(AnnotationCategory.PEPTIDE_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0001096", "mass spectrometry evidence"),
+	SRM_PEPTIDE_MAPPING(AnnotationCategory.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0001096", "mass spectrometry evidence")
 	;
 
 	private final String annotCat;
@@ -17,8 +17,9 @@ public enum PeptideMappingAnnotationMapping  {
 	private final String qualifierType;
 	private final String ecoAC;
 	private final String ecoName;
-			
-	private PeptideMappingAnnotationMapping(
+	private final String ontology = "EvidenceCodeOntologyCv";
+
+	PeptideMappingAnnotationMapping(
 			final String annotCat, 
 			final String qualityQualifier, 
 			final String assignMethod, 
@@ -56,6 +57,8 @@ public enum PeptideMappingAnnotationMapping  {
 	public String getQualifierType() {
 		return qualifierType;
 	}
-			
 
+	public String getEcoOntology() {
+		return ontology;
+	}
 }

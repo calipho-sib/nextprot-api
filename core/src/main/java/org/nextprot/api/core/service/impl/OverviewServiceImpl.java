@@ -1,25 +1,28 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.EntityNameDao;
 import org.nextprot.api.core.dao.HistoryDao;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.Overview.EntityName;
 import org.nextprot.api.core.domain.Overview.EntityNameClass;
 import org.nextprot.api.core.domain.Overview.History;
 import org.nextprot.api.core.service.FamilyService;
+import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 @Service
 class OverviewServiceImpl implements OverviewService {
@@ -27,6 +30,8 @@ class OverviewServiceImpl implements OverviewService {
 	@Autowired private HistoryDao historyDao;
 	@Autowired private EntityNameDao entryNameDao;
 	@Autowired private FamilyService familyService;
+	@Autowired private IsoformService isoformService;
+	
 
 	@Override
 	@Cacheable("overview")
@@ -37,17 +42,49 @@ class OverviewServiceImpl implements OverviewService {
 		if (history != null && history.size() != 0)
 			overview.setHistory(history.get(0));
 
-		List<Overview.EntityName> entityNames = this.entryNameDao.findNames(uniqueName);
+		List<EntityName> entityNames = this.entryNameDao.findNames(uniqueName);
 		entityNames.addAll(entryNameDao.findAlternativeChainNames(uniqueName));
 		
 		setNamesInOverview(entityNames, overview);
 
 		overview.setFamilies(this.familyService.findFamilies(uniqueName));
-
+		overview.setIsoformNames(convertIsoNamestoOverviewName(isoformService.findIsoformsByEntryName(uniqueName)));
+		
 		return overview;
 	}
 	
-	private void setNamesInOverview(List<Overview.EntityName> entityNames, Overview overview){
+	private static List<EntityName> convertIsoNamestoOverviewName(List<Isoform> isoforms){
+		
+		List<EntityName> isoNames = new ArrayList<EntityName>();
+		for(Isoform isoform : isoforms){
+			
+			EntityName name = new EntityName();
+			name.setMain(true);
+			name.setName(isoform.getMainEntityName().getValue());
+			name.setType(isoform.getMainEntityName().getType());
+			name.setQualifier(isoform.getMainEntityName().getQualifier());
+			name.setSynonyms(new ArrayList<EntityName>());
+
+			for(EntityName syn : isoform.getSynonyms()){
+
+				EntityName s = new EntityName();
+				s.setMain(false);
+				s.setName(syn.getValue());
+				name.setType(syn.getType());
+				name.setQualifier(syn.getQualifier());
+				
+				name.getSynonyms().add(s);
+			}
+			
+			isoNames.add(name);
+
+		}
+		
+		return isoNames;
+
+	}
+	
+	private void setNamesInOverview(List<EntityName> entityNames, Overview overview){
 
 		Map<String, EntityName> entityMap = Maps.uniqueIndex(entityNames, new Function<EntityName, String>() {
 			@Override
@@ -69,7 +106,7 @@ class OverviewServiceImpl implements OverviewService {
 			}
 		}
 
-		List<EntityName> mutableEntityNames = new ArrayList<Overview.EntityName>(mutableEntityMap.values());
+		List<EntityName> mutableEntityNames = new ArrayList<EntityName>(mutableEntityMap.values());
 
 		for (EntityName entityName : mutableEntityMap.values())
 			if (entityName.getParentId() != null)
@@ -81,7 +118,8 @@ class OverviewServiceImpl implements OverviewService {
 				return entryName.getClazz();
 			}
 		});
-
+		
+		
 		for (EntityNameClass en : entryNameMap.keySet()) {
 
 			switch (en) {

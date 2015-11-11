@@ -17,19 +17,25 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
 
-//@Ignore
+@Ignore
 public class RunAllSparqlQueriesApp {
 
 	//This will log on release-info folder in a file called sparql-queries.tsv
 	private static final Log LOGGER = LogFactory.getLog(RunAllSparqlQueriesApp.class);
 
-	private static final String SPARQL_ENDPOINT = "http://uat-web2:8890/sparql";
+	//private static final String SPARQL_ENDPOINT = "http://kant:8890/sparql";
+	private static final String SPARQL_ENDPOINT = "http://build-api.nextprot.org/sparql";
+	//private static final String SPARQL_ENDPOINT = "http://uat-web2:8890/sparql";
 	//private static final String SPARQL_ENDPOINT = "http://godel:8890/sparql";
-	private static final String QUERIES_URL = "http://alpha-api.nextprot.org/queries/tutorial.json?snorql=true";
+	
+	//private static final String QUERIES_URL = "http://alpha-api.nextprot.org/queries/tutorial.json?snorql=true";
+	//private static final String QUERIES_URL = "http://localhost:8080/nextprot-api-web/queries/tutorial.json?snorql=true";
+	private static final String QUERIES_URL = "http://build-api.nextprot.org/queries/tutorial.json?snorql=true";
 	//private static final String QUERIES_URL = "https://api.nextprot.org/queries/tutorial.json?snorql=true";
 	
-	private static final String PREFIXES_URL = "http://alpha-api.nextprot.org/sparql-prefixes";
+	//private static final String PREFIXES_URL = "http://alpha-api.nextprot.org/sparql-prefixes";
 	//private static final String PREFIXES_URL = "http://localhost:8080/nextprot-api-web/sparql-prefixes";
+	private static final String PREFIXES_URL = "http://build-api.nextprot.org/sparql-prefixes";
 
 
 	public static void main(String[] args) throws Exception {
@@ -45,7 +51,7 @@ public class RunAllSparqlQueriesApp {
 		int zeroResultsCount=0;
 		for (UserQuery q : queries) {
 
-			// if (q.getUserQueryId()!=124) continue;
+			//if (q.getUserQueryId()<31 || q.getUserQueryId()>40) continue;
 
 			long start = System.currentTimeMillis();
 			String errorMessage = "";

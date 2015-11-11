@@ -2,6 +2,7 @@ package org.nextprot.api.core.domain;
 
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -20,9 +21,7 @@ public class AntibodyMapping implements Serializable, IsoformSpecific {
 	private List<DbXref> xrefs;
 
 	@ApiObjectField(description = "Information about the isoform specificity")
-	private Map<String, IsoformSpecificity> isoformSpecificity = new HashMap<String, IsoformSpecificity>();
-
-	//private List<IsoformSpecificity> isoformSpecificity;
+	private Map<String, AnnotationIsoformSpecificity> isoformSpecificity = new HashMap<>();
 
 	private Long xrefId;
 	private String assignedBy;
@@ -82,12 +81,11 @@ public class AntibodyMapping implements Serializable, IsoformSpecific {
 	}
 	*/
 	
-	public Map<String, IsoformSpecificity> getIsoformSpecificity() {
+	public Map<String, AnnotationIsoformSpecificity> getIsoformSpecificity() {
 		return this.isoformSpecificity;
 	}
 
-	public void setIsoformSpecificity(
-			Map<String, IsoformSpecificity> isoformSpecificity) {
+	public void setIsoformSpecificity(Map<String, AnnotationIsoformSpecificity> isoformSpecificity) {
 		this.isoformSpecificity = isoformSpecificity;
 	}
 
@@ -98,19 +96,22 @@ public class AntibodyMapping implements Serializable, IsoformSpecific {
 	 * and the mapping positions grouped by isoform specificity at step 2
 	 * @return
 	 */
-	public IsoformSpecificity getFirstIsoformSpecificity() {
+	public AnnotationIsoformSpecificity getFirstIsoformSpecificity() {
 		if (isoformSpecificity.entrySet().size()==0) return null;
 		return isoformSpecificity.entrySet().iterator().next().getValue();
 	}
 	
-	public void addIsoformSpecificity(IsoformSpecificity newIsoformSpecificity) {
+	public void addIsoformSpecificity(AnnotationIsoformSpecificity newIsoformSpecificity) {
 		String isoName = newIsoformSpecificity.getIsoformName();
 		//System.out.println("adding specificity:" + newIsoformSpecificity);
 		//for (IsoformSpecificity isp: this.isoformSpecificity.values()) System.out.println("among existing: "+ isp.toString());
 		if(this.isoformSpecificity.containsKey(isoName)) { // add position
 			//System.out.println("specificity already exists for this isoform");
-			IsoformSpecificity isospec = this.isoformSpecificity.get(isoName);
-			isospec.addPosition(newIsoformSpecificity.getPositions().get(0));
+			AnnotationIsoformSpecificity isospec = this.isoformSpecificity.get(isoName);
+
+			isospec.setFirstPosition(newIsoformSpecificity.getFirstPosition());
+			isospec.setLastPosition(newIsoformSpecificity.getLastPosition());
+
 			//System.out.println("merged specificity: " + isospec.toString());
 		} else {
 			//System.out.println("specificity does NOT exist for this isoform");
@@ -134,7 +135,7 @@ public class AntibodyMapping implements Serializable, IsoformSpecific {
 		StringBuffer sb = new StringBuffer();
 		sb.append("AntibodyMapping for " + this.antibodyUniqueName + "\n");
 		sb.append("xrefId: " + this.xrefId + "\n");
-		for (IsoformSpecificity spec: this.isoformSpecificity.values()) sb.append(spec.toString()+"\n");
+		for (AnnotationIsoformSpecificity spec: this.isoformSpecificity.values()) sb.append(spec.toString()+"\n");
 		return sb.toString();
 	}
 	

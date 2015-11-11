@@ -1,4 +1,5 @@
-select  assoc.is_negative_evidence, 
+select  cvcat.cv_api_name as ontology,
+        assoc.is_negative_evidence,
         assoc.annotation_id,
         assoc.experimental_context_id,
         q.cv_name as quality_qualifier,
@@ -28,6 +29,7 @@ left join nextprot.cv_databases cv_db on (dbxrefs.cv_database_id = cv_db.cv_id)
 left join nextprot.cv_quality_qualifiers q on (q.cv_id = assoc.cv_quality_qualifier_id) 
 left join nextprot.cv_terms eco on (assoc.evidence_code_id=eco.cv_id)
 left join nextprot.db_xrefs ecoxr on (eco.db_xref_id=ecoxr.resource_id)
+left join nextprot.cv_term_categories cvcat on (eco.cv_category_id = cvcat.cv_id)
 -- evidence with type 1 (source) are now ignored (Anne)
 -- evidence with type 2 (relative) exist for cofactor, sequence caution, and disease annotation types:
 -- they are turned into properties and to build the description of the annotation, see CALIPHOMISC-277

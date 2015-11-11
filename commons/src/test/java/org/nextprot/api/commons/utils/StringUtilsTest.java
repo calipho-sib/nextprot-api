@@ -31,7 +31,7 @@ public class StringUtilsTest {
         String cc = StringUtils.toCamelCase("full name", true);
         Assert.assertEquals("fullName", cc);
     }
-
+    
     @Test
     public void testSlugReplaceWSPunctuations() {
 

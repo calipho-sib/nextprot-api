@@ -1,6 +1,6 @@
 package org.nextprot.api.core.utils.peff;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
@@ -13,7 +13,7 @@ import java.util.Set;
  */
 abstract class IsoformPTMPeffFormatter extends IsoformAnnotationPeffFormatter {
 
-    protected IsoformPTMPeffFormatter(Set<AnnotationApiModel> supportedApiModel, PeffKey peffKey) {
+    protected IsoformPTMPeffFormatter(Set<AnnotationCategory> supportedApiModel, PeffKey peffKey) {
 
         super(supportedApiModel, peffKey);
     }

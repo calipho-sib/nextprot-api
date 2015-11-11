@@ -2,18 +2,10 @@ package org.nextprot.api.core.dao;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Interaction;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;

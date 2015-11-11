@@ -14,7 +14,7 @@ select p1.* as id, pubtypes.cv_name as pub_type, rp.property_value as submission
                   where ira.identifier_id = :identifierId   
                     and ira.resource_id = p.resource_id 
                     and ira.datasource_id = ds.cv_id 
-                    and ds.cv_name != 'PIR'
+                    --and ds.cv_name != 'PIR'
                     and p.cv_publication_type_id in (:publicationTypes) 
                   union 
                  select p.resource_id as id 

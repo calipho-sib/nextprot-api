@@ -1,12 +1,10 @@
 package org.nextprot.api.core.domain.annotation;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
-import org.nextprot.api.core.domain.IsoformSpecificity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,6 +17,16 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	
 	private static final long serialVersionUID = -1576387963315643702L;
+
+	private List<String> synonyms;
+
+	public List<String> getSynonyms() {
+		return synonyms;
+	}
+
+	public void setSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
+	}
 
 	private String uniqueName;
 
@@ -40,16 +48,11 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private String synonym;
 	
-	private List<String> synonyms;
-
-	private AnnotationApiModel apiCategory;
+	private AnnotationCategory apiCategory;
 
 	private List<AnnotationEvidence> evidences;
 
-	@Deprecated // use target isoform map
 	private Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap;
-	
-	private Map<String, IsoformSpecificity> targetIsoformsMap;
 
 	private List<AnnotationProperty> properties;
 
@@ -133,33 +136,42 @@ public class Annotation implements Serializable, IsoformSpecific {
 		return category;
 	}
 
+	// Called from Velocity templates
 	public String getApiTypeName() {
 		if(apiCategory != null){
 			return apiCategory.getApiTypeName();
 		}else return null;
 	}
 
+	// Called from Velocity templates
 	public String getRdfPredicate() {
 		if(apiCategory != null){
 			return apiCategory.getRdfPredicate();
 		}else return null;
 	}
 	
-	public AnnotationApiModel getAPICategory() {
+	public AnnotationCategory getAPICategory() {
 		return apiCategory;
 	}
-	
+
+	// Called from Velocity templates
 	public List<String> getParentPredicates() {
 		if(apiCategory!= null){
-			List<String> list = new ArrayList<String>();
-			for (AnnotationApiModel cat : apiCategory.getAllParentsButRoot()) list.add(cat.getRdfPredicate());
+			List<String> list = new ArrayList<>();
+			for (AnnotationCategory cat : apiCategory.getAllParentsButRoot()) list.add(cat.getRdfPredicate());
 			return list;
 		}else return null;
 	}
-			
+	
+	public void setCategory(AnnotationCategory category) {
+		//wtf???? names are not coherent...
+		this.apiCategory= category;
+		this.category = category.getApiTypeName();
+	}
+	
 	public void setCategory(String category) {
 		this.category = category;
-		this.apiCategory=AnnotationApiModel.getByDbAnnotationTypeName(category);
+		this.apiCategory= AnnotationCategory.getByDbAnnotationTypeName(category);
 	}
 	
 	public void setCategoryOnly(String category) {
@@ -192,14 +204,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.synonym = synonym;
 	}
 
-	public List<String> getAllSynonyms() {
-		return synonyms;
-	}
-
-	public void setAllSynonyms(List<String> synonyms) {
-		this.synonyms = synonyms;
-	}
-
 	@Override
 	public boolean isSpecificForIsoform(String isoform) {
 		return targetingIsoformsMap.containsKey(isoform);
@@ -211,29 +215,15 @@ public class Annotation implements Serializable, IsoformSpecific {
 		}else return false;
 	}
 
-	@Deprecated //Use setTargetIsoformsMap instead
 	public void setTargetingIsoforms(List<AnnotationIsoformSpecificity> targetingIsoforms) {
-		this.targetingIsoformsMap = new HashMap<String, AnnotationIsoformSpecificity>();
+		this.targetingIsoformsMap = new HashMap<>();
 		for (AnnotationIsoformSpecificity isospecAnnot : targetingIsoforms) {
 			targetingIsoformsMap.put(isospecAnnot.getIsoformName(), isospecAnnot);
 		}
 	}
 	
-	//This new method replaces setTargetingIsoforms
-	public void setTargetIsoformsMap(List<IsoformSpecificity> targetingIsoforms) {
-		this.targetIsoformsMap = new HashMap<String, IsoformSpecificity>();
-		for (IsoformSpecificity isospecAnnot : targetingIsoforms) {
-			targetIsoformsMap.put(isospecAnnot.getIsoformAc(), isospecAnnot);
-		}
-	}
-
-	@Deprecated
 	public Map<String, AnnotationIsoformSpecificity> getTargetingIsoformsMap() {
 		return targetingIsoformsMap;
-	}
-	
-	public Map<String, IsoformSpecificity> getTargetIsoformsMap() {
-		return targetIsoformsMap;
 	}
 
 	public String getUniqueName() {
@@ -244,16 +234,23 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.uniqueName = uniqueName;
 	}
 
-	public int getStartPositionForIsoform(String isoformName) {
-		if(targetingIsoformsMap != null){
-			Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
+	/** @return the first position or null if unknown */
+	public Integer getStartPositionForIsoform(String isoformName) {
+
+		if (targetingIsoformsMap.containsKey(isoformName))
 			return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
-		}else {
-			Preconditions.checkArgument(targetIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
-			return this.targetIsoformsMap.get(isoformName).getPositions().get(0).getFirst();
-		}
+		return null;
 	}
-	
+
+	/** @return the last position or null if unknown */
+	public Integer getEndPositionForIsoform(String isoformName) {
+
+		if (targetingIsoformsMap.containsKey(isoformName))
+			return this.targetingIsoformsMap.get(isoformName).getLastPosition();
+		return null;
+	}
+
+	// Called from Velocity templates
 	public String getSpecificityForIsoform(String isoformName) {
 		return this.targetingIsoformsMap.get(isoformName).getSpecificity();
 	}
@@ -266,16 +263,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.bioObject = bioObject;
 	}
 
-	public int getEndPositionForIsoform(String isoformName) {
-		if(targetingIsoformsMap != null){
-		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
-			return this.targetingIsoformsMap.get(isoformName).getLastPosition();
-		}else {
-			Preconditions.checkArgument(targetIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
-			return this.targetIsoformsMap.get(isoformName).getPositions().get(0).getSecond();
-		}
-	}
-	
 	/**
 	 * Return true if annotation has at least one evidence showing any kind of detection (low, medium, high or positive) else false
 	 *

@@ -4,7 +4,7 @@
 
 	<groupId>org.nextprot</groupId>
 	<artifactId>nextprot-api-master</artifactId>
-	<version>0.1.8-SNAPSHOT</version>
+	<version>0.4.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>An API to access and search for nextprot data</description>
 	<url>https://api.nextprot.org</url>
@@ -21,7 +21,12 @@
 		<project.version>${project.version}</project.version>
 		<spring-security.version>3.2.5.RELEASE</spring-security.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+        <sonar.language>java</sonar.language>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>  <!-- Ensure you run mvn install before sonar:sonar -->
+        <sonar.java.codeCoveragePlugin>jacoco</sonar.java.codeCoveragePlugin>
+        <sonar.surefire.reportsPath>/target/surefire-reports</sonar.surefire.reportsPath>
+        <sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>    <!-- This is the default, put here to be explicit -->
+    </properties>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -327,6 +332,15 @@
 	</dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>2.6</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -360,6 +374,26 @@
                 <configuration>
                     <updateReleaseInfo>true</updateReleaseInfo>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.4.201502262128</version>
+                <executions>
+                    <execution>
+                        <id>pre-unit-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

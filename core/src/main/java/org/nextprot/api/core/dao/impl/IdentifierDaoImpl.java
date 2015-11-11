@@ -1,11 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.IdentifierDao;
@@ -15,15 +9,36 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Repository
 public class IdentifierDaoImpl implements IdentifierDao {
-	
+
+	private static final Map<String, String> DB_TYPE_NP1_NAMES;
+
+	static {
+		DB_TYPE_NP1_NAMES = new HashMap<>();
+
+		// See https://issues.isb-sib.ch/browse/CALIPHOMISC-359
+		DB_TYPE_NP1_NAMES.put("UNIPROT", "UniProtKB");
+		DB_TYPE_NP1_NAMES.put("CLONE_NAME", "CLONE NAMES");
+		DB_TYPE_NP1_NAMES.put("MICROARRAY_PROBE", "MICROARRAY PROBE IDENTIFIERS");
+		DB_TYPE_NP1_NAMES.put("NCBI", "NCBI");
+		DB_TYPE_NP1_NAMES.put("ACCESSION_CODE", "ACCESSION CODES");
+		DB_TYPE_NP1_NAMES.put("ADDITIONAL_IDENTIFIER", "ADDITIONAL IDENTIFIERS");
+		DB_TYPE_NP1_NAMES.put("ENSEMBL", "ENSEMBL");
+	}
+
 	@Autowired private DataSourceServiceLocator dsLocator;
 	@Autowired private SQLDictionary sqlDictionary;
-	
+
 	@Override
 	public List<Identifier> findIdentifiersByMaster(String uniqueName) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("uniqueName", uniqueName);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("identifiers-by-master-unique-name"), params, new IdentifierRowMapper());
 	}
@@ -36,6 +51,9 @@ public class IdentifierDaoImpl implements IdentifierDao {
 			identifier.setName(resultSet.getString("identifier_name"));
 			identifier.setType(resultSet.getString("type"));
 			identifier.setDatabase(resultSet.getString("db_name"));
+
+			String typeClass = resultSet.getString("type_class");
+			identifier.setDatabaseCategory((DB_TYPE_NP1_NAMES.containsKey(typeClass)) ? DB_TYPE_NP1_NAMES.get(typeClass) : typeClass);
 			//identifier.setId(resultSet.getString("identifier_id"));
 			//identifier.setSynonymId(resultSet.getLong("syn_id"));
 			//identifier.setXrefId(resultSet.getLong("xref_id"));

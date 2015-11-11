@@ -6,7 +6,7 @@ entry:$entry.getUniqueName()
 #foreach($family in $entry.overview.families)
     :family [
        rdf:type :FamilyInfo ;
-       :accession cv:$StringUtils.slug($family.accession) ;
+       :term cv:$StringUtils.slug($family.accession) ;
 #if($family.region)
        :region "$family.region"^^xsd:string ;
 #end

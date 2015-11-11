@@ -7,12 +7,9 @@ import java.util.List;
 //import java.util.SortedSet;
 //import java.util.TreeSet;
 
-
-
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.Overview.EntityName;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
@@ -101,7 +98,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						//System.err.println(  currannot.getAllSynonyms().size() + " synonyms: " +  currannot.getAllSynonyms());
 						if(chainid.contains("-")) addField(Fields.ANNOTATIONS,chainid); // Uniprot FT id, like PRO_0000019235, shouldn't be called a synonym
 						else  {
-							List<String> chainsynonyms = currannot.getAllSynonyms();
+							List<String> chainsynonyms = currannot.getSynonyms();
 							if(chainsynonyms.size() == 1)
 							  addField(Fields.ANNOTATIONS,AnnotationFieldBuilderDiffTest.getSortedValueFromPipeSeparatedField(desc + " | " + chainid));
 							else {

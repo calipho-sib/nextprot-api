@@ -1,11 +1,10 @@
 package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.PeptideMappingDao;
-import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
@@ -55,13 +54,13 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			this.peptideMappingDao.findSyntheticPeptidesByMasterId(id) ;
 
 		// key=peptide,value=mapping with 1-n isospecs, 1-n evidences, 1-n properties
-		Map<String, PeptideMapping> mergeMap = new HashMap<String, PeptideMapping>();
+		Map<String, PeptideMapping> mergeMap = new HashMap<>();
 
 		if (allMapping.size() > 0) {
 			String key = null;
-			List<String> peptideNames = new ArrayList<String>();
+			List<String> peptideNames = new ArrayList<>();
 
-			Iterator<IsoformSpecificity> it = null;
+			Iterator<AnnotationIsoformSpecificity> it;
 			for (PeptideMapping mapping : allMapping) {
 				key = mapping.getPeptideUniqueName();
 
@@ -88,7 +87,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 				mergeMap.get(prop.getPeptideName()).addProperty(prop);
 		}
 
-		return new ArrayList<PeptideMapping>(mergeMap.values());
+		return new ArrayList<>(mergeMap.values());
 	}
 	
 	/*
@@ -207,6 +206,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			annEvi.setResourceDescription(pepEvi.getResourceDescription());
 			annEvi.setResourceId(pepEvi.getResourceId());
 			annEvi.setResourceType(pepEvi.getResourceType());
+			annEvi.setEvidenceCodeOntology(pepEvi.getEvidenceCodeOntology());
 			if (pepEvi.getPropertiesNames()!=null) {
 				List<AnnotationEvidenceProperty> props = new ArrayList<>();
 				for (String n: pepEvi.getPropertiesNames()) {
@@ -238,8 +238,8 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			Integer lastPos = (Integer)record.get(PeptideMappingDao.KEY_LAST_POS);
 			String quality = (String)record.get(PeptideMappingDao.KEY_QUALITY_QUALIFIER);
 			String category = (isNatural ? 
-					AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName() : 
-					AnnotationApiModel.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName());
+					AnnotationCategory.PEPTIDE_MAPPING.getDbAnnotationTypeName() :
+					AnnotationCategory.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName());
 
 			// if annot never seen before, put it into the map and initialize it
 			if (!annotationMap.containsKey(annotationId)) {

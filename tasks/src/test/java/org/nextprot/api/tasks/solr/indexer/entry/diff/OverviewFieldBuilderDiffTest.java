@@ -1,7 +1,5 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;

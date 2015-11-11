@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformEntityName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -72,7 +72,7 @@ public class IsoformDAOImpl implements IsoformDAO {
 			isoform.setSwissProtDisplayedIsoform(resultSet.getBoolean("is_swissprot_display"));
 
 			// Set the main entity
-			IsoformEntityName mainEntity = new IsoformEntityName();
+			EntityName mainEntity = new EntityName();
 			mainEntity.setQualifier(null); // always null in data
 			mainEntity.setType("name");    // can be "name" or "accession code" but we want it to be "name" ! 
 			mainEntity.setValue(resultSet.getString("synonym_name"));
@@ -98,7 +98,7 @@ public class IsoformDAOImpl implements IsoformDAO {
 	}
 
 	@Override
-	public List<IsoformEntityName> findIsoformsSynonymsByEntryName(String entryName) {
+	public List<EntityName> findIsoformsSynonymsByEntryName(String entryName) {
 
 		String sql = sqlDictionary.getSQLQuery("isoforms-synonyms-by-entry-name");
 		
@@ -107,12 +107,12 @@ public class IsoformDAOImpl implements IsoformDAO {
 
 	}
 
-	private static class EntityNameRowMapper implements ParameterizedRowMapper<IsoformEntityName> {
+	private static class EntityNameRowMapper implements ParameterizedRowMapper<EntityName> {
 
 		@Override
-		public IsoformEntityName mapRow(ResultSet resultSet, int row) throws SQLException {
+		public EntityName mapRow(ResultSet resultSet, int row) throws SQLException {
 
-			IsoformEntityName entityName = new IsoformEntityName();
+			EntityName entityName = new EntityName();
 			entityName.setQualifier(resultSet.getString("syn_qualifier"));
 			entityName.setType(resultSet.getString("syn_type"));
 			entityName.setValue(resultSet.getString("synonym_name"));

@@ -3,15 +3,12 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.Overview.EntityName;
-import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;

@@ -3,7 +3,6 @@ package org.nextprot.api.tasks.solr.indexer.entry.diff;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;

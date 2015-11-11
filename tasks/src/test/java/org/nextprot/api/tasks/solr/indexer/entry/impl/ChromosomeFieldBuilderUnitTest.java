@@ -4,7 +4,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeFieldBuilder;
 
 public class ChromosomeFieldBuilderUnitTest extends CoreUnitBaseTest {
 
