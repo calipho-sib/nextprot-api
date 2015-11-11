@@ -9,6 +9,7 @@ import java.util.TreeSet;
 
 import org.junit.Test;
 import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.TerminologyService;
@@ -79,25 +80,25 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 			  expectedValues.add(aux);
 			aux = getValueFromRawData(s,"an_synonyms");
 			if(aux != null) //System.err.println("extracting an_synonym from: " + s);
-			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			  expectedValues.add(StringUtils.getSortedValueFromPipeSeparatedField(aux));
 			aux = getValueFromRawData(s,"sequence_variant_mutation_aa");
 			if(aux != null) 
-			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			  expectedValues.add(StringUtils.getSortedValueFromPipeSeparatedField(aux));
 			aux = getValueFromRawData(s,"cv_ancestors");
 			if(aux != null) 
-			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			  expectedValues.add(StringUtils.getSortedValueFromPipeSeparatedField(aux));
 			aux = getValueFromRawData(s,"cv_ac");
 			if(aux != null) 
-			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			  expectedValues.add(StringUtils.getSortedValueFromPipeSeparatedField(aux));
 			aux = getValueFromRawData(s,"cv_name");
 			if(aux != null) 
-			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			  expectedValues.add(StringUtils.getSortedValueFromPipeSeparatedField(aux));
 			aux = getValueFromRawData(s,"cv_synonyms");
 			if(aux != null) 
-			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			  expectedValues.add(StringUtils.getSortedValueFromPipeSeparatedField(aux));
 			aux = getValueFromRawData(s,"sequence_caution_conflict_type");
 			if(aux != null) 
-			  expectedValues.add(getSortedValueFromPipeSeparatedField(aux));
+			  expectedValues.add(StringUtils.getSortedValueFromPipeSeparatedField(aux));
 		}
 
 		Set<String> expectedValues2 = new TreeSet<String>(expectedValues);
@@ -126,10 +127,5 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 		assertEquals("Product of a dubious CDS prediction.", result);
 	}
 
-	@Test
-	public void testSortedValueFromPipeSeparatedField() {
-		String result = getSortedValueFromPipeSeparatedField("cosmic:COSM4859577 | cosmic:COSM1149023 | cosmic:COSM720040");
-		assertEquals("cosmic:COSM1149023 | cosmic:COSM4859577 | cosmic:COSM720040", result);
-	}
 
 }

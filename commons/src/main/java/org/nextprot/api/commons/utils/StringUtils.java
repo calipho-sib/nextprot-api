@@ -4,6 +4,9 @@ import com.google.common.base.Preconditions;
 
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.util.Arrays;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 public class StringUtils {
@@ -202,4 +205,19 @@ public class StringUtils {
 	public static String removeHtmlTags(String htmlString){
 		return htmlString.replaceAll("\\<.*?>","");
 	}
+	
+	
+	public static String getSortedValueFromPipeSeparatedField(String pipefield) {
+		String aux = "";
+
+		if(!pipefield.contains("|")) return pipefield;
+
+		SortedSet<String> sset = new TreeSet<String>(Arrays.asList(pipefield.split(" \\| ")));
+		for(String elem: sset) {
+			if(aux != "") aux += " | ";
+			aux += elem;
+		}
+		return(aux);
+	}
+
 }

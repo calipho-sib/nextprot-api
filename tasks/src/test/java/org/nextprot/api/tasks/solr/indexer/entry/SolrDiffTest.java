@@ -102,16 +102,4 @@ public class SolrDiffTest extends CoreUnitBaseTest implements InitializingBean {
 		return null;
 	}
 
-	public static String getSortedValueFromPipeSeparatedField(String pipefield) {
-		String aux = "";
-
-		if(!pipefield.contains("|")) return pipefield;
-
-		SortedSet<String> sset = new TreeSet<String>(Arrays.asList(pipefield.split(" \\| ")));
-		for(String elem: sset) {
-			if(aux != "") aux += " | ";
-			aux += elem;
-		}
-		return(aux);
-	}
 }
