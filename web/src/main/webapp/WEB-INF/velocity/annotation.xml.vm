@@ -39,18 +39,21 @@
 	#end
 
 	## might have no properties so need to check
-	#if(($annotation.getProperties()) && ($annotation.getProperties().size() > 0))
+	#set($annotationProperties = $annotation.getProperties())
+	#if(($annotationProperties) && ($annotationProperties.size() > 0))
     <property-list>
-        #foreach($property in $annotation.getProperties())
+        #foreach($property in $annotationProperties)
 			#if(!$property.getName().equals("rank"))
 				<property name='$property.getName()' value='$property.getValue()' #if($property.getValueType()) value-type='$property.getValueType()' #end #if($property.getAccession()) accession='$property.getAccession()' #end />
 			#end
 		#end
     </property-list>
 	#end
-    #if($annotation.getEvidences())
+
+	#set($annotationEvidence = $annotation.getEvidences())
+    #if($annotationEvidence && ($annotationEvidence.size() > 0) )
     <evidence-list>
-        #foreach($evidence in $annotation.getEvidences())
+        #foreach($evidence in $annotationEvidence)
 			## should include qualifier-type='$evidence.getQualifierType()' 
 			<evidence is-negative='$evidence.isNegativeEvidence()' resource-internal-ref='$evidence.getResourceId()'  resource-assoc-type='$evidence.getResourceAssociationType()' #if($evidence.getQualityQualifier()) quality='$evidence.getQualityQualifier()' #end resource-type='$evidence.getResourceType()' #if($evidence.getExperimentalContextId()>0) experimental-context-internal-ref='$evidence.getExperimentalContextId()' #end #if($evidence.getAssignedBy()) source-internal-ref='$evidence.getAssignedBy()' #end >
 				#if($evidence.getPropertiesNames())
