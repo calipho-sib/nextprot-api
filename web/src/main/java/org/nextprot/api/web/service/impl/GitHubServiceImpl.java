@@ -41,6 +41,7 @@ public class GitHubServiceImpl implements GitHubService {
 
 	
 	private String githubToken = null;
+	private String githubDocBranch = null;
 	
 	private Map<String, String> newsFileNames = new HashMap<>();
 	
@@ -71,7 +72,7 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GitHub github = getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			GHContent content = repo.getFileContent(folder + "/" + finalPage + ".md", "master");
+			GHContent content = repo.getFileContent(folder + "/" + finalPage + ".md", githubDocBranch);
 			return content.getContent();
 
 		} catch (IOException e) {
@@ -111,7 +112,7 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GitHub github =  getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			return repo.getTreeRecursive("master", 1);
+			return repo.getTreeRecursive(githubDocBranch, 1);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -130,7 +131,7 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GitHub github =  getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			GHTree tree = repo.getTreeRecursive("master", 1);
+			GHTree tree = repo.getTreeRecursive(githubDocBranch, 1);
 			newsFileNames.clear();
 			for(GHTreeEntry te : tree.getTree()){
 				if(te.getPath().startsWith("news")){ //Add only file on news
@@ -159,6 +160,11 @@ public class GitHubServiceImpl implements GitHubService {
 	@Value("${github.accesstoken}")
 	public void setGithubToken(String githubToken) {
 		this.githubToken = githubToken;
+	}
+
+	@Value("${github.doc.branch}")
+	public void setGithubDocBranch(String githubDocBranch) {
+		this.githubDocBranch = githubDocBranch;
 	}
 
 	
