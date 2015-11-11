@@ -1,38 +1,10 @@
-#set($f1=false)
-#set($f2=false)
-#set($f3=false)
-#set($reg=false)
-
-#if($family.level=='Superfamily') #set($f1=$family) #end
-#if($family.parent.level=='Superfamily') #set($f1=$family.parent) #end
-#if($family.parent.parent.level=='Superfamily') #set($f1=$family.parent.parent) #end
-
-#if($family.level=='Family') #set($f2=$family) #end
-#if($family.parent.level=='Family') #set($f2=$family.parent) #end
-#if($family.parent.parent.level=='Family') #set($f2=$family.parent.parent) #end
-
-#if($family.level=='Subfamily') #set($f3=$family) #end
-#if($family.parent.level=='Subfamily') #set($f3=$family.parent) #end
-#if($family.parent.parent.level=='Subfamily') #set($f3=$family.parent.parent) #end
-
-#if($f1.region) #set($reg=$f1.region) #end
-#if($f2.region) #set($reg=$f2.region) #end
-#if($f3.region) #set($reg=$f3.region) #end
-
-<family>
-#if($reg) 
-	<family-region>$reg</family-region>
-#end
-	<family-name-list>
-#if($f1)
-		<family-name type="$f1.level" accession="$f1.accession">$f1.name</family-name>
-#end
-#if($f2)
-		<family-name type="$f2.level" accession="$f2.accession">$f2.name</family-name>
-#end
-#if($f3)
-		<family-name type="$f3.level" accession="$f3.accession">$f3.name</family-name>
-#end	
-	</family-name-list>
+#if(!$hierarchy.isEmpty())
+#set($currentFamily=$hierarchy.remove(0))
+<family level="$currentFamily.level">
+    <cv-term accession="$currentFamily.accession" terminology="uniprot-family-cv">$currentFamily.name</cv-term>
+    #if($currentFamily.region)
+        <family-region>$currentFamily.region</family-region>
+    #end
+    #parse("family.xml.vm")
 </family>
-
+#end
