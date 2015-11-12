@@ -1,8 +1,6 @@
 package org.nextprot.api.core.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Family implements Serializable{
 
@@ -83,27 +81,6 @@ public class Family implements Serializable{
 	
 	public String getLevel() {
 		return level;
-	}
-
-    /**
-     * @return a list of Family instances from root family to this family
-     */
-	public List<Family> getHierarchyFromRoot() {
-
-		List<Family> hierarchy = new ArrayList<>();
-
-        hierarchy.add(this);
-
-        Family directParent = parent;
-
-        while (directParent != null) {
-
-            hierarchy.add(0, directParent);
-
-            directParent = directParent.parent;
-        }
-
-		return hierarchy;
 	}
 
 	public String toString() {

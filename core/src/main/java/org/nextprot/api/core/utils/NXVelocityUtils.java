@@ -6,11 +6,13 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.constants.PropertyWriter;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.peff.PeffFormatterMaster;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class NXVelocityUtils {
@@ -107,5 +109,25 @@ public class NXVelocityUtils {
 
 		return annotation.getAPICategory() == AnnotationCategory.CROSS_LINK;
 	}
-	
+
+	/**
+	 * @return a list of Family instances from root family to this family
+	 */
+	public static List<Family> getFamilyHierarchyFromRoot(Family family) {
+
+		List<Family> hierarchy = new ArrayList<>();
+
+		hierarchy.add(family);
+
+		Family directParent = family.getParent();
+
+		while (directParent != null) {
+
+			hierarchy.add(0, directParent);
+
+			directParent = directParent.getParent();
+		}
+
+		return hierarchy;
+	}
 }
