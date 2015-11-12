@@ -101,6 +101,7 @@
 #if($entry.overview.families.size() > 0)
     <family-list>
         #foreach($family in $entry.overview.families)
+            #set($hierarchy=$family.getHierarchyFromRoot())
             #parse("family.xml.vm")
         #end
     </family-list>
