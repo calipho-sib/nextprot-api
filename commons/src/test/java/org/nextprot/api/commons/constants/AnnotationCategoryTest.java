@@ -387,4 +387,26 @@ public class AnnotationCategoryTest {
 			Assert.assertTrue(!model.getApiTypeName().contains(" "));
 		}
 	}
+
+	@Test
+	public void testGetAnnotationCategoryHierarchyForXML() {
+
+		for (AnnotationCategory model : AnnotationCategory.values()) {
+
+            String cat = model.getAnnotationCategoryHierarchyForXML();
+
+            Assert.assertTrue("'"+cat+"' unexpectly contains space", !cat.contains(" "));
+		}
+	}
+
+    @Test
+    public void testGetAnnotationCategoryNameForXML() {
+
+        for (AnnotationCategory model : AnnotationCategory.values()) {
+
+            String cat = model.getAnnotationCategoryNameForXML();
+
+            Assert.assertTrue("'"+cat+"' unexpectly contains space", !cat.contains(" "));
+        }
+    }
 }
