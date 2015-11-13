@@ -1,8 +1,12 @@
-package org.nextprot.api.commons.constants;
+package org.nextprot.api.tasks.commons;
 
+import org.nextprot.api.commons.constants.AbstractTreeVisitor;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 
 /**
+ * Export tree as graphml format (http://graphml.graphdrawing.org/).
+ *
  * Created by fnikitin on 17/06/15.
  */
 public class TreeVisitorGraphML extends AbstractTreeVisitor {
