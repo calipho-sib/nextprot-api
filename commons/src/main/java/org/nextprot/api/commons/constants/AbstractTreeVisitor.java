@@ -3,9 +3,11 @@ package org.nextprot.api.commons.constants;
 import org.nextprot.api.commons.utils.TreeVisitor;
 
 /**
+ * A base class to export AnnotationCategory element in a tree
+ *
  * Created by fnikitin on 17/06/15.
  */
-abstract class AbstractTreeVisitor implements TreeVisitor<AnnotationCategory> {
+public abstract class AbstractTreeVisitor implements TreeVisitor<AnnotationCategory> {
 
     protected final StringBuilder sb;
     private final String name;
