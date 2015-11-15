@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Component;
+import java.util.Arrays;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,6 +48,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			annotation.setCvTermAccessionCode(resultSet.getString("cv_term_accession"));
 			annotation.setCvApiName(resultSet.getString("cv_api_name"));
 			annotation.setSynonym(resultSet.getString("synonym"));
+			if (resultSet.getString("synonyms") != null) annotation.setSynonyms(Arrays.asList(resultSet.getString("synonyms").split("\\|")));
 			annotation.setUniqueName(resultSet.getString("annotation_unique_name"));
 
 			// Set the variant if it exists

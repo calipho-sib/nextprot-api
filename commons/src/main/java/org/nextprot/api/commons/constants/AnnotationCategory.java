@@ -1,8 +1,8 @@
 package org.nextprot.api.commons.constants;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.StringCaseFormatter;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.commons.utils.TreeVisitor;
 
 import java.io.Serializable;
 import java.util.*;
@@ -402,7 +402,8 @@ public enum AnnotationCategory implements Serializable {
 		if (parent != null && parent != ROOT) {
 			parent.getPathToRoot(sb, delimitor);
 
-			sb.append(StringUtils.camelToKebabCase(parent.getDbAnnotationTypeName()) + delimitor);
+			sb.append(new StringCaseFormatter(parent.getDbAnnotationTypeName()).camel().kebab().format());
+			sb.append(delimitor);
 		}
 	}
 
@@ -423,14 +424,5 @@ public enum AnnotationCategory implements Serializable {
 	// used by velocity
 	public String getAnnotationCategoryNameForXML() {
 		return StringUtils.camelToKebabCase(getApiTypeName());
-	}
-
-	public static String exportHierarchyAsGraphDot() {
-
-		TreeVisitor<AnnotationCategory> visitor = new TreeVisitorDot("annotationTypes");
-
-		visitor.visit(ROOT);
-
-		return visitor.asString();
 	}
 }

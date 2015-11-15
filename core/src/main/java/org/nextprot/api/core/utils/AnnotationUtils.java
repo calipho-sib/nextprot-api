@@ -4,6 +4,8 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObjectExternal;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
@@ -13,24 +15,14 @@ import java.util.*;
 
 public class AnnotationUtils {
 
-	private static Comparator<Annotation> COMPARATOR;
+	private static final AnnotationPropertyComparator ANNOTATION_PROPERTY_COMPARATOR = new AnnotationPropertyComparator();
 
-
-	static {
-		COMPARATOR = new Comparator<Annotation>() {
-			@Override
-			public int compare(Annotation a1, Annotation a2) {
-
-				return Long.compare(a1.getAnnotationId(), a2.getAnnotationId());
-			}
-		};
-	}
-	
-	/**
+    /**
 	 * Filter annotation by its category
 	 */
-	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationCategory annotationCategory) {
-		return filterAnnotationsByCategory(annotations,  annotationCategory, true);
+	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory) {
+
+        return filterAnnotationsByCategory(entry, annotationCategory, true);
 	}
 	
 	/**
@@ -38,20 +30,32 @@ public class AnnotationUtils {
 	 * @param withChildren if true, annotations having a category which is a child of annotationCategory are included in the list
 	 * @return a list of annotations
 	 */
-	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationCategory annotationCategory, boolean withChildren) {
-		if(annotations == null) return null;
-		List<Annotation> annotationList = new ArrayList<>();
-			for(Annotation a : annotations){
-			if(a.getAPICategory() != null) {
-				if (a.getAPICategory().equals(annotationCategory)) {
+	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory, boolean withChildren) {
+
+        Isoform canonicalIsoform = IsoformUtils.getCanonicalIsoform(entry);
+
+        List<Annotation> annotations = entry.getAnnotations();
+
+		if (annotations == null) return null;
+
+        List<Annotation> annotationList = new ArrayList<>();
+
+        for (Annotation a : annotations){
+
+            if (a.getAPICategory() != null) {
+
+                if (a.getAPICategory().equals(annotationCategory)) {
 					annotationList.add(a);
-				} else if (withChildren && a.getAPICategory().isChildOf(annotationCategory) ) {
+				}
+                else if (withChildren && a.getAPICategory().isChildOf(annotationCategory) ) {
 					annotationList.add(a);
 				}
 			}
 		}
 
-		Collections.sort(annotationList, COMPARATOR);
+        if (canonicalIsoform != null) {
+            Collections.sort(annotationList, new AnnotationComparator(canonicalIsoform));
+        }
 
 		return annotationList;
 	}
@@ -204,8 +208,7 @@ public class AnnotationUtils {
 				p.setName(propertyName);
 				p.setValue(""+evi.getResourceId());
 				p.setValueType(PropertyApiModel.VALUE_TYPE_RIF);
-				if (annot.getProperties()==null) annot.setProperties(new ArrayList<AnnotationProperty>());
-				annot.getProperties().add(p);
+				annot.addProperties(Arrays.asList(p));
 
 				toRemove.add(evi);
 			}
@@ -239,5 +242,10 @@ public class AnnotationUtils {
 		bo.setAccession(evi.getResourceAccession());
 
 		return bo;
+	}
+
+	public static AnnotationPropertyComparator getInstanceOfAnnotationPropertyComparator() {
+
+		return ANNOTATION_PROPERTY_COMPARATOR;
 	}
 }

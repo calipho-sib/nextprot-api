@@ -10,6 +10,7 @@ dbx.accession cv_term_accession,
 v.variant_sequence variant_sequence,   
 v.original_sequence original_sequence,
 syn.synonym_name synonym,
+(select string_agg(allsyn.synonym_name,'|') from nextprot.annotation_synonyms allsyn where allsyn.annotation_id = a.annotation_id ) as synonyms,
 cvtc.cv_api_name cv_api_name
 from nextprot.annotations a 
 inner join nextprot.sequence_identifiers si on (si.identifier_id = a.identifier_id)

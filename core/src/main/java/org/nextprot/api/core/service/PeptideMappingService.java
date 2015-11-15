@@ -6,6 +6,7 @@ import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 
+@Deprecated
 public interface PeptideMappingService {
 
 	// old interface (soon obsolete)

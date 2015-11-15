@@ -1,23 +1,29 @@
 package org.nextprot.api.core.domain.annotation;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
+import org.nextprot.api.core.utils.AnnotationUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class Annotation implements Serializable, IsoformSpecific {
 
-	
-	private static final long serialVersionUID = -1576387963315643702L;
+	private static final long serialVersionUID = 1L;
+
+	private List<String> synonyms;
+
+	public List<String> getSynonyms() {
+		return synonyms;
+	}
+
+	public void setSynonyms(List<String> synonyms) {
+		this.synonyms = synonyms;
+	}
 
 	private String uniqueName;
 
@@ -43,9 +49,9 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private List<AnnotationEvidence> evidences;
 
-	private Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap;
+	private final Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap = new TreeMap<>();
 
-	private List<AnnotationProperty> properties;
+	private final Map<String, Collection<AnnotationProperty>> properties = new TreeMap<>();
 
 	private BioObject bioObject;
 	
@@ -178,13 +184,52 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.variant = variant;
 	}
 
-
-	public List<AnnotationProperty> getProperties() {
-		return properties;
+    /**
+     * Get an immutable map of AnnotationProperty collection
+     */
+	public Map<String, Collection<AnnotationProperty>> getPropertiesMap() {
+		return Collections.unmodifiableMap(properties);
 	}
 
-	public void setProperties(List<AnnotationProperty> properties) {
-		this.properties = properties;
+    /**
+     * Get an immutable collection of AnnotationProperty by key
+     * @param key the key to access properties
+     */
+    public Collection<AnnotationProperty> getPropertiesByKey(String key) {
+        return Collections.unmodifiableCollection(properties.get(key));
+    }
+
+    /**
+     * Get an immutable collection of AnnotationProperty
+     */
+    public Collection<AnnotationProperty> getProperties() {
+
+        Collection<AnnotationProperty> props = new ArrayList<>();
+
+        for (Collection<AnnotationProperty> collection : properties.values()) {
+
+            props.addAll(collection);
+        }
+
+        return Collections.unmodifiableCollection(props);
+    }
+
+    /**
+     * Add properties into the map
+     * @param props properties to add
+     */
+	public void addProperties(Collection<AnnotationProperty> props) {
+
+        for (AnnotationProperty property : props) {
+
+            String propertyName = property.getName();
+
+            if (!properties.containsKey(propertyName)) {
+                properties.put(propertyName, new TreeSet<>(AnnotationUtils.getInstanceOfAnnotationPropertyComparator()));
+            }
+
+            properties.get(propertyName).add(property);
+        }
 	}
 
 	public String getSynonym() {
@@ -206,8 +251,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 		}else return false;
 	}
 
-	public void setTargetingIsoforms(List<AnnotationIsoformSpecificity> targetingIsoforms) {
-		this.targetingIsoformsMap = new HashMap<>();
+	public void addTargetingIsoforms(List<AnnotationIsoformSpecificity> targetingIsoforms) {
 		for (AnnotationIsoformSpecificity isospecAnnot : targetingIsoforms) {
 			targetingIsoformsMap.put(isospecAnnot.getIsoformName(), isospecAnnot);
 		}
@@ -225,10 +269,20 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.uniqueName = uniqueName;
 	}
 
+	/** @return the first position or null if unknown */
 	public Integer getStartPositionForIsoform(String isoformName) {
 
-		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName), isoformName + " is not contained");
-		return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
+		if (targetingIsoformsMap.containsKey(isoformName))
+			return this.targetingIsoformsMap.get(isoformName).getFirstPosition();
+		return null;
+	}
+
+	/** @return the last position or null if unknown */
+	public Integer getEndPositionForIsoform(String isoformName) {
+
+		if (targetingIsoformsMap.containsKey(isoformName))
+			return this.targetingIsoformsMap.get(isoformName).getLastPosition();
+		return null;
 	}
 
 	// Called from Velocity templates
@@ -244,12 +298,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.bioObject = bioObject;
 	}
 
-	public Integer getEndPositionForIsoform(String isoformName) {
-
-		Preconditions.checkArgument(targetingIsoformsMap.containsKey(isoformName));
-		return this.targetingIsoformsMap.get(isoformName).getLastPosition();
-	}
-	
 	/**
 	 * Return true if annotation has at least one evidence showing any kind of detection (low, medium, high or positive) else false
 	 *

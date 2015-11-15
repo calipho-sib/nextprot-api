@@ -25,7 +25,7 @@ public class EntryUtils implements Serializable{
 		// Filter if necessary
   		if (config.hasSubPart()) {
 
-			annotations = AnnotationUtils.filterAnnotationsByCategory(entry.getAnnotations(), config.getSubpart());
+			annotations = AnnotationUtils.filterAnnotationsByCategory(entry, config.getSubpart());
 			entry.setAnnotations(annotations);
 			
 			if(!config.hasNoAdditionalReferences()){ //In case we don't care about xrefs, publications and experimental contexts (will be faster)

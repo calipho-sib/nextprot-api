@@ -185,7 +185,7 @@ public class PepXServiceImpl implements PepXService {
 				
 			}
 			
-			annotation.setTargetingIsoforms(Arrays.asList(is));
+			annotation.addTargetingIsoforms(Arrays.asList(is));
 			finalAnnotations.add(annotation);
 		}
 

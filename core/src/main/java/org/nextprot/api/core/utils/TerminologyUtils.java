@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
+import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,6 +16,7 @@ import org.nextprot.api.core.aop.InstrumentationAspect;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Terminology;
 //import org.nextprot.api.core.domain.TerminologyProperty;
+import org.nextprot.api.core.service.TerminologyService;
 
 public class TerminologyUtils {
 
@@ -47,6 +50,42 @@ public class TerminologyUtils {
 		return properties;
 	}
 
+	public static List<String> getAllAncestors(String cvterm, TerminologyService terminologyservice) {
+		Set<String> finalSet = new TreeSet<String>();
+		Set<String> multiParentSet = new TreeSet<String>();
+		Set<String> multiSetCurrent = new TreeSet<String>();
+		List<String> mylist = Arrays.asList("XXX");
+		String currTerm = cvterm;
+		
+		//if(cvterm.contains("TS-0576")) System.err.println("lookin for ancestors of " + cvterm);
+		while(mylist.size() > 0) {
+			mylist = terminologyservice.findTerminologyByAccession(currTerm).getAncestorAccession();
+			if(mylist == null) break;
+			if(mylist.size() > 1) for (int i=1; i<mylist.size(); i++) multiParentSet.add(mylist.get(i));
+			currTerm = mylist.get(0);
+			finalSet.add(currTerm);
+		}
+		
+		while(!multiParentSet.isEmpty()) {
+			multiSetCurrent.clear();
+			multiSetCurrent.addAll(multiParentSet);
+			for(String cv : multiSetCurrent) {
+				finalSet.add(cv);
+				multiParentSet.remove(cv);
+				mylist = terminologyservice.findTerminologyByAccession(cv).getAncestorAccession();
+				if(mylist == null) break;
+				while(mylist != null && mylist.size() > 0) {
+				if(mylist.size() > 1) for (int i=1; i<mylist.size(); i++) multiParentSet.add(mylist.get(i));
+				currTerm = mylist.get(0);
+				finalSet.add(currTerm);
+				mylist = terminologyservice.findTerminologyByAccession(currTerm).getAncestorAccession();
+				}
+			}
+		}
+		
+		return(new ArrayList<String>(finalSet));	
+	}
+	
 	public static List<DbXref> convertToXrefs (String xrefsstring) {
 
 		if (xrefsstring == null) return null;

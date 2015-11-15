@@ -81,7 +81,11 @@
     <gene-list>
     #foreach($entityName in $entry.overview.geneNames)
         <gene>
+        	#if($entityName.category.equals('ORF'))
+            <gene-name type="ORF">$entityName.name</gene-name>
+		    #else
             <gene-name type="primary">$entityName.name</gene-name>
+            #end
             #foreach($synonym in $entityName.synonyms)
             #if($synonym.category.equals('ORF'))
                 <gene-name type="ORF">$synonym.name</gene-name>
@@ -97,6 +101,7 @@
 #if($entry.overview.families.size() > 0)
     <family-list>
         #foreach($family in $entry.overview.families)
+            #set($hierarchy=$NXUtils.getFamilyHierarchyFromRoot($family))
             #parse("family.xml.vm")
         #end
     </family-list>

@@ -50,6 +50,9 @@ public class PopulateRDBMSWithQueriesApp {
 
 			userQueryService.createUserQuery(uq);
 		}*/
+		
+		ctx.close();
+
 	}
 
 }

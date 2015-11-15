@@ -19,13 +19,27 @@ public class AntibodyMappingDaoTest extends CoreUnitBaseTest {
 	@Autowired
 	private AntibodyMappingDao antibodyMappingDao;
 
+	
+	private static Annotation getAnnotationByUniqueName(String uniqueName, List<Annotation> annotations) {
+		
+		for(Annotation a : annotations){
+			if(a.getUniqueName().equals(uniqueName)){
+				return a;
+			}
+		}
+		
+		return null;
+		
+	}
+
+	
 	@Test
 	public void testFindAntibodiesById() {
 		List<Annotation> annotations = this.antibodyMappingDao.findAntibodyMappingAnnotationsById(636535L);
 		Assert.assertEquals(2, annotations.size());
 
-		Annotation annotation = annotations.get(0);
-
+		Annotation annotation = getAnnotationByUniqueName("AN_HPA036302_4049518", annotations);
+		
 		Assert.assertEquals(AnnotationCategory.ANTIBODY_MAPPING, annotation.getAPICategory());
 		Assert.assertEquals("AN_HPA036302_4049518", annotation.getUniqueName());
 		Assert.assertEquals("GOLD", annotation.getQualityQualifier());
@@ -48,7 +62,7 @@ public class AntibodyMappingDaoTest extends CoreUnitBaseTest {
 		Assert.assertEquals(742, annotation.getTargetingIsoformsMap().get("NX_P06213-1").getLastPosition().intValue());
 		Assert.assertEquals(742, annotation.getTargetingIsoformsMap().get("NX_P06213-2").getLastPosition().intValue());
 
-		annotation = annotations.get(1);
+		annotation = getAnnotationByUniqueName("AN_HPA036303_9547085", annotations);
 
 		Assert.assertEquals(AnnotationCategory.ANTIBODY_MAPPING, annotation.getAPICategory());
 		Assert.assertEquals("AN_HPA036303_9547085", annotation.getUniqueName());
