@@ -151,4 +151,34 @@ public class SolrServiceTest  {
 		List<Map<String, Object>> found = result.getFoundFacets("id");
 		assertEquals(12, found.size());
 	}
+	
+    @Test
+    public void testPublicationSearchByPubmedId() throws Exception {
+    	// {"filter": "", "quality": "gold", "query": "PEX19", "sparql": null, "sort": "", "order": "", "mode": null, "rows": 50}
+    	QueryRequest qr = new QueryRequest();
+    	qr.setQuery("11167787"); // some existing pubmed id
+    	qr.setQuality("");
+    	qr.setRows("50");
+    	qr.setSort("");
+    	qr.setMode(null);
+    	qr.setSparql(null);
+    	qr.setOrder("");
+    	qr.setFilter("");
+    	Query q = service.buildQueryForSearchIndexes( "publication", "simple",  qr);
+		SearchResult result = service.executeQuery(q);
+		long numFound = result.getFound();
+		if (debug) System.out.println("numFound="+numFound);
+		// we check that there is 1 hit found 
+		assertTrue(numFound==1);
+//		Map<String,Object> doc = result.getResults().get(0);
+//		for (String k: doc.keySet()) {
+//			System.out.println("field:" + k);
+//			System.out.println("class:" +doc.get(k).getClass().toString());
+//			System.out.println("value:" + doc.get(k));
+//			System.out.println("----------------------");
+//		}
+    }
+	
+	
 }
+
