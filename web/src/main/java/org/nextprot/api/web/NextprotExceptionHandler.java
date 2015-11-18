@@ -1,12 +1,10 @@
 package org.nextprot.api.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.exception.ResourceNotFoundException;
-import org.nextprot.api.commons.exception.ConcurrentRequestsException;
-import org.nextprot.api.commons.exception.EntryNotFoundException;
-import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.exception.NotAuthorizedException;
+import org.nextprot.api.commons.exception.*;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -17,7 +15,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Advice class to deal with exception. No stack trace should be returned to the
@@ -29,6 +28,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class NextprotExceptionHandler {
 
 	private static final Log LOGGER = LogFactory.getLog(NextprotExceptionHandler.class);
+
+	private static final String UNKNOWN_ENTRIES_KEY = "MissingEntries";
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(NotAuthorizedException.class)
@@ -101,8 +102,27 @@ public class NextprotExceptionHandler {
 	@ResponseBody
 	public RestErrorResponse handle(EntryNotFoundException ex) {
 		LOGGER.warn("Entry not found exception " + ex.getLocalizedMessage());
-		return getResponseError(ex);
+		RestErrorResponse response = getResponseError(ex);
+
+        Set<String> set = new HashSet<>();
+        set.add(ex.getEntry());
+
+        response.setProperty(UNKNOWN_ENTRIES_KEY, set);
+
+		return response;
 	}
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(EntrySetNotFoundException.class)
+    @ResponseBody
+    public RestErrorResponse handle(EntrySetNotFoundException ex) {
+        LOGGER.warn("Entry set not found exception " + ex.getLocalizedMessage());
+        RestErrorResponse response = getResponseError(ex);
+
+        response.setProperty(UNKNOWN_ENTRIES_KEY, ex.getEntrySet());
+
+        return response;
+    }
 
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	@ExceptionHandler(AccessDeniedException.class)
@@ -130,7 +150,5 @@ public class NextprotExceptionHandler {
 		RestErrorResponse rer = new RestErrorResponse();
 		rer.setMessage(message);
 		return rer;
-
 	}
-
 }
