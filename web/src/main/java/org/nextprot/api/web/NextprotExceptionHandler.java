@@ -29,7 +29,7 @@ public class NextprotExceptionHandler {
 
 	private static final Log LOGGER = LogFactory.getLog(NextprotExceptionHandler.class);
 
-	private static final String UNKNOWN_ENTRIES_KEY = "MissingEntries";
+	private static final String ENTRIES_NOT_FOUND = "entriesNotFound";
 
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	@ExceptionHandler(NotAuthorizedException.class)
@@ -107,7 +107,7 @@ public class NextprotExceptionHandler {
         Set<String> set = new HashSet<>();
         set.add(ex.getEntry());
 
-        response.setProperty(UNKNOWN_ENTRIES_KEY, set);
+        response.setProperty(ENTRIES_NOT_FOUND, (HashSet)set);
 
 		return response;
 	}
@@ -119,7 +119,7 @@ public class NextprotExceptionHandler {
         LOGGER.warn("Entry set not found exception " + ex.getLocalizedMessage());
         RestErrorResponse response = getResponseError(ex);
 
-        response.setProperty(UNKNOWN_ENTRIES_KEY, ex.getEntrySet());
+        response.setProperty(ENTRIES_NOT_FOUND, (HashSet)ex.getEntrySet());
 
         return response;
     }

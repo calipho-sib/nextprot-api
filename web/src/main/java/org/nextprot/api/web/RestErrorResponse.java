@@ -11,7 +11,7 @@ public class RestErrorResponse implements Serializable{
 	private String type;
 	//TODO include maven version
 	private String about = "neXtProt API - https://api.nextprot.org";
-	private final Map<String, Object> properties = new HashMap<>();
+	private final Map<String, Serializable> properties = new HashMap<>();
 
 	public String getMessage() {
 		return message;
@@ -29,11 +29,11 @@ public class RestErrorResponse implements Serializable{
 		this.type = type;
 	}
 
-    public Map<String, Object> getProperties() {
+    public Map<String, Serializable> getProperties() {
         return properties;
     }
 
-	public void setProperty(String key, Object value) {
+	public void setProperty(String key, Serializable value) {
 		properties.put(key, value);
 	}
 
