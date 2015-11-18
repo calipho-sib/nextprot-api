@@ -2,7 +2,7 @@ package org.nextprot.api.user.utils;
 
 import com.google.common.collect.Sets;
 import org.junit.Test;
-import org.nextprot.api.commons.exception.EntryNotFoundException;
+import org.nextprot.api.commons.exception.EntrySetNotFoundException;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -138,7 +138,7 @@ public class UserProteinListUtilsTest {
         assertTrue(set.isEmpty());
     }
 
-    @Test(expected = EntryNotFoundException.class)
+    @Test(expected = EntrySetNotFoundException.class)
     public void testParseAccessionNumbers2() throws IOException {
 
         StringReader reader = new StringReader("NX_P123\nNX_P456\nNX_P321");

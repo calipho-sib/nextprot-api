@@ -2,6 +2,7 @@ package org.nextprot.api.user.utils;
 
 import com.google.common.collect.Sets;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
+import org.nextprot.api.commons.exception.EntrySetNotFoundException;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.user.domain.UserProteinList;
@@ -84,8 +85,8 @@ public class UserProteinListUtils {
 	 * @return a set of valid accession numbers
 	 * @throws IOException
 	 *             if input exception occurred
-	 * @throws EntryNotFoundException
-	 *             if at least one entry was not found in validAccessionNumbers
+	 * @throws EntrySetNotFoundException
+	 *             if entries was not found in validAccessionNumbers
 	 */
 	public static Set<String> parseAccessionNumbers(Reader reader, Set<String> validAccessionNumbers) throws IOException {
 
@@ -93,25 +94,28 @@ public class UserProteinListUtils {
 		NPreconditions.checkNotNull(validAccessionNumbers, "The valid accession numbers should not be null");
 		NPreconditions.checkTrue(!validAccessionNumbers.isEmpty(), "The valid accession numbers should not be null");
 
-		Set<String> collector = new HashSet<>();
+		Set<String> foundEntries = new HashSet<>();
 
 		BufferedReader br = new BufferedReader(reader);
 
 		String line;
-		int ln = 0;
+
+        Set<String> unknownEntries = new HashSet<>();
+
 		while ((line = br.readLine()) != null) {
 
 			try {
-				checkFormatAndCollectValidAccessionNumber(line, collector, validAccessionNumbers);
+				checkFormatAndCollectValidAccessionNumber(line, foundEntries, validAccessionNumbers);
 			} catch (EntryNotFoundException e) {
 
-				throw new EntryNotFoundException("at line " + (ln + 1) + ": ", e.getEntry());
+                unknownEntries.add(e.getEntry());
 			}
-
-			ln++;
 		}
 
-		return collector;
+        if (!unknownEntries.isEmpty())
+            throw new EntrySetNotFoundException(unknownEntries);
+
+		return foundEntries;
 	}
 
 	/**
@@ -129,7 +133,7 @@ public class UserProteinListUtils {
 	 * @throws IOException
 	 *             input exception occurred
 	 */
-	public static Set<String> parseAccessionNumbers(MultipartFile file, Set<String> validAccessionNumbers) throws NextProtException{
+	public static Set<String> parseAccessionNumbers(MultipartFile file, Set<String> validAccessionNumbers) throws NextProtException {
 
 		NPreconditions.checkNotNull(file, "The uploaded file should not be null");
 
