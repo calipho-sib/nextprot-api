@@ -52,5 +52,11 @@ public class GitHubServiceUnitTest extends WebUnitBaseTest {
     	Assert.assertEquals(url, "press-release-the-sib-swiss-institute-of-bioinformatics");
     }
 
+    @Test
+    public void shouldNormalizeTitleToUrl2() throws Exception {
+    	String url = GitHubServiceImpl.normalizeTitleToUrl("nextprot 3.0");
+    	Assert.assertEquals(url, "nextprot-30");
+    }
+
 
 }

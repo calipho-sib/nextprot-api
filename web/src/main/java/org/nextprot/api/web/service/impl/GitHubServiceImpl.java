@@ -198,7 +198,7 @@ public class GitHubServiceImpl implements GitHubService {
 
 		} catch (ParseException e) {
 			LOGGER.warn("Failed to parse the date for file" + filePath + " " + e.getMessage());
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 
@@ -212,8 +212,8 @@ public class GitHubServiceImpl implements GitHubService {
 	
 	public static String normalizeTitleToUrl(String title){
 		
-		String charClass = "!?:;.,/(){}\\";
-		String url = StringUtils.slug(title, "-").toLowerCase();
+		String charClass = "!?:;,/(){}\\\\";
+		String url = StringUtils.slug(title, "[" + charClass + "]", "-").toLowerCase();
 		String url1 = url.replaceAll("[" + charClass + "-]+$", "");
 		String url2 = url1.replaceAll("^[" + charClass + "-]+", "");
 

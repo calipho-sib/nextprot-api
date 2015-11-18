@@ -47,15 +47,15 @@ public class StringUtils {
 	 * @param unicode
 	 * @return
 	 */
-	public static String slug(String unicode, String c) {
+	public static String slug(String unicode, String pattern, String replaceChar) {
 
-		String nowhitespace = WHITESPACE.matcher(unicode).replaceAll(c);
-		String normalized = Normalizer.normalize(nowhitespace, Form.NFD).replaceAll("[:;.,/(){}\\\\]", c);
+		String nowhitespace = WHITESPACE.matcher(unicode).replaceAll(replaceChar);
+		String normalized = Normalizer.normalize(nowhitespace, Form.NFD).replaceAll(pattern, replaceChar);
 
 		return NON_ASCIIDASH.matcher(normalized).replaceAll("");
 	}
 	public static String slug(String unicode) {
-		return slug(unicode, "_");
+		return slug(unicode, "[:;.,/(){}\\\\]",  "_");
 	}
 
 	static public String clean(String input) {
