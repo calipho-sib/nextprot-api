@@ -205,9 +205,19 @@ public class GitHubServiceImpl implements GitHubService {
 		//Gets url and title
 		String title = elements[3].replace(".md", "").trim();
 		result.setTitle(title);
-		result.setUrl(StringUtils.slug(title).replace("_", "-").toLowerCase());
+		result.setUrl(normalizeTitleToUrl(title));
 
 		return result;
+	}
+	
+	public static String normalizeTitleToUrl(String title){
+		
+		String charClass = "!?:;.,/(){}\\";
+		String url = StringUtils.slug(title, "-").toLowerCase();
+		String url1 = url.replaceAll("[" + charClass + "-]+$", "");
+		String url2 = url1.replaceAll("^[" + charClass + "-]+", "");
+
+		return url2.replaceAll("-{2,}", "-"); // replaces 
 	}
 
 }
