@@ -147,9 +147,15 @@ public class PepXServiceImpl implements PepXService {
 
 				if ((validAnnotations == null) || validAnnotations.isEmpty()) {
 					
-					throw new NextProtException("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
+					LOGGER.warn("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
+					continue;
+					
+					//We used to throw an exception, but now we just skip
+					//throw new NextProtException("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
 				
-				} else if (validAnnotations.size() > 1) {
+				}
+				
+				if (validAnnotations.size() > 1) {
 
 					LOGGER.warn("There is more than 1 valid variant (" + validAnnotations.size() + ") for isoform (returning the 1st) " + isoformName + " between position " + startPeptidePosition + " and " + endPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
 
