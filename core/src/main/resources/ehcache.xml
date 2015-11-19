@@ -183,7 +183,9 @@
 		statistics="true">
 	</cache>
 
+	<!-- Proxies -->
 	<cache name="sparql-proxy" overflowToOffHeap="false" maxEntriesLocalHeap="100"  eternal="true" statistics="true"/>
+	<cache name="pdb-proxy" overflowToOffHeap="false" maxEntriesLocalHeap="10"  eternal="true" statistics="true"/>
 
 
 	<!-- GitHub Pages -->
