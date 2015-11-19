@@ -72,7 +72,13 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GitHub github = getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			GHContent content = repo.getFileContent(folder + "/" + finalPage + ".md", githubDocBranch);
+			GHContent content = null;
+			String  extension = ".md";
+			if(folder.contains("json")){ //if folder contains json
+				extension = ".json";
+			}
+			content = repo.getFileContent(folder + "/" + finalPage + extension, githubDocBranch);
+
 			return content.getContent();
 
 		} catch (IOException e) {
