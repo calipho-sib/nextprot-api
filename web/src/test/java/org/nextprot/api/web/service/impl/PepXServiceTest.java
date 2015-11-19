@@ -42,6 +42,27 @@ public class PepXServiceTest extends WebUnitBaseTest {
 	}
 	
 	
+	@Test
+	public void shouldReturnAnEmptyArrayWhenThePeptideIsNotContainedInTheSequence() throws Exception {
+
+			String peptide = "GANAP";
+			boolean modeIsoleucine = true;
+
+			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>("Iso-1", null)); //not positional since there is no position
+			@SuppressWarnings("unchecked")
+			List<Annotation> annotations = mock(List.class);
+			Isoform isoform = mock(Isoform.class);
+			when(isoform.getUniqueName()).thenReturn("Iso-1");
+			when(isoform.getSequence()).thenReturn("AAAAAA");//Sequence does not contain the peptide
+			
+			List<Isoform> isoforms = Arrays.asList(isoform);
+
+			List<Annotation> result = PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, isosAndPositions, annotations, isoforms);
+			assertTrue(result.isEmpty());
+
+	}
+	
+	/* Specification have changed now it should be empty look at: #shouldReturnAnEmptyArrayWhenThePeptideIsNotContainedInTheSequence
 	@Test(expected=NextProtException.class)
 	public void shouldThrowAnExceptionWhenThePeptideIsNotContainedInTheSequence() throws Exception {
 
@@ -65,7 +86,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 				throw e; //success tests
 			}else fail();
 		}
-	}
+	}*/
 	
 	@Test
 	public void shouldGiveAnAnnotationWithVariantWhenPresent() throws Exception {

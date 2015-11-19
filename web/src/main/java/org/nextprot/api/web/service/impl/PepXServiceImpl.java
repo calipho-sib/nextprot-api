@@ -181,7 +181,17 @@ public class PepXServiceImpl implements PepXService {
 				
 				Isoform iso = IsoformUtils.getIsoformByIsoName(isoforms, isoformName);
 				String sequence = (iso != null) ? iso.getSequence() : null;
-				NPreconditions.checkTrue(PeptideUtils.isPeptideContainedInTheSequence(peptide, sequence, modeIsoleucine), "PepX returned a peptide (" + peptide + ") for an isoform (" + isoformName + ") that is not in the current isoform in neXtProt");
+				
+				boolean isPeptideContained = PeptideUtils.isPeptideContainedInTheSequence(peptide, sequence, modeIsoleucine);
+				
+				if(!isPeptideContained){
+					continue;
+				}else {
+					LOGGER.warn("PepX returned a peptide (" + peptide + ") for an isoform (" + isoformName + ") that is not in the current isoform in neXtProt");
+				}
+				
+				//We used to throw an exception, but this would break the program (the algorithm could be improved to detect the specific case where pepx return a peptide of length 6 and generate a real error on other cases)
+				//NPreconditions.checkTrue(isPeptideContained, "PepX returned a peptide (" + peptide + ") for an isoform (" + isoformName + ") that is not in the current isoform in neXtProt");
 				
 			}
 			
