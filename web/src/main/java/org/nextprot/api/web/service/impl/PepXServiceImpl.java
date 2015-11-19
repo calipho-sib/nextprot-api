@@ -233,4 +233,26 @@ public class PepXServiceImpl implements PepXService {
 		return resultAnnotations;
 	}
 
+	/*
+
+	We started to filter out the results because 
+	
+	3 peptides showing error with pepX :
+	- IHTGEKP
+	- PYKCEECGK
+	- RIHTGEKPYK
+	
+	ex erreur : http://dev-api.nextprot.org/entries/search/peptide?peptide=IHTGEKP&modeIL=true&clientInfo=nextprotTeam&applicationName=PeptideViewer
+	
+	Mis a part l'erreur qu'on a vu hier comme quoi ce premier peptide n'existait pas dans l'entrée Q96MM3,
+	je tiens à noter que ces 3 peptides donnés en exemple sont trouvés à plusieurs positions dans l'isoform d'origine : NX_Q05481
+	Mais je sais pas si ca joue vraiment.
+	
+	http://localhost:9000/app/?nxentry=NX_P46976&env=dev
+	
+	3 peptides working with pepX : 
+	- TLTTNDAYAK
+	- LVVLATPQVSDSMR
+	- GALVLGSSL
+	 */
 }
