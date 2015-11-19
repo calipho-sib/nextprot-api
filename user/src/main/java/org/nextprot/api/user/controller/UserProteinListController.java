@@ -103,10 +103,11 @@ public class UserProteinListController {
 	@ApiMethod(path = "/user/me/lists/{listid}/upload", verb = ApiVerb.POST, description = "Uploads a user protein list for the current logged user", produces = {MediaType.APPLICATION_JSON_VALUE}, consumes = { MediaType.APPLICATION_JSON_VALUE})
 	@RequestMapping(value = "/user/me/lists/{listid}/upload", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
-	public void uploadProteinList(@RequestParam("file") MultipartFile file, @PathVariable(value = "listid") long listId) throws IOException {
+	public void uploadProteinList(@RequestParam("file") MultipartFile file, @PathVariable(value = "listid") long listId, @RequestParam(value = "ignoreNotFoundEntries", defaultValue = "false") boolean ignoreNotFoundEntries) throws IOException {
 
 		UserProteinList pl = proteinListService.getUserProteinListById(listId);
-		Set<String> acs = UserProteinListUtils.parseAccessionNumbers(file, masterIdentifierService.findUniqueNames());
+
+		Set<String> acs = UserProteinListUtils.parseAccessionNumbers(file, masterIdentifierService.findUniqueNames(), ignoreNotFoundEntries);
 		pl.addAccessions(acs);
 		
 		this.proteinListService.updateUserProteinList(pl);

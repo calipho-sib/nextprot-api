@@ -68,27 +68,27 @@ public class UserProteinListUtils {
 		return combinedProteinList;
 	}
 
-	/**
-	 * Extract the set of accession numbers from uploaded file. Only nextprot
-	 * and uniprot accession numbers found in {@code validAccessionNumbers} are
-	 * allowed.
-	 *
-	 * <p>
-	 * uniprot accession numbers should be converted in nextprot (prefixed with
-	 * "NX_")
-	 * </p>
-	 *
-	 * @param reader
-	 *            the reader
-	 * @param validAccessionNumbers
-	 *            a set of possible nextprot accession numbers
-	 * @return a set of valid accession numbers
-	 * @throws IOException
-	 *             if input exception occurred
-	 * @throws EntrySetNotFoundException
-	 *             if entries was not found in validAccessionNumbers
-	 */
-	public static Set<String> parseAccessionNumbers(Reader reader, Set<String> validAccessionNumbers) throws IOException {
+    /**
+     * Extract the set of accession numbers from uploaded file. Only nextprot
+     * and uniprot accession numbers found in {@code validAccessionNumbers} are
+     * allowed.
+     *
+     * <p>
+     * uniprot accession numbers should be converted in nextprot (prefixed with
+     * "NX_")
+     * </p>
+     *
+     * @param reader the reader
+     * @param validAccessionNumbers a set of possible nextprot accession numbers
+     * @param ignoreEntryNotFoundException if true this method ignores EntryNotFoundException else throw it
+     *
+     * @return a set of valid accession numbers
+     * @throws IOException
+     *             if input exception occurred
+     * @throws EntrySetNotFoundException
+     *             if entries was not found in validAccessionNumbers
+     */
+	public static Set<String> parseAccessionNumbers(Reader reader, Set<String> validAccessionNumbers, boolean ignoreEntryNotFoundException) throws IOException {
 
 		NPreconditions.checkNotNull(reader, "The reader should not be null");
 		NPreconditions.checkNotNull(validAccessionNumbers, "The valid accession numbers should not be null");
@@ -112,28 +112,33 @@ public class UserProteinListUtils {
 			}
 		}
 
-        if (!unknownEntries.isEmpty())
+        if (!ignoreEntryNotFoundException && !unknownEntries.isEmpty())
             throw new EntrySetNotFoundException(unknownEntries);
 
 		return foundEntries;
 	}
+
+    public static Set<String> parseAccessionNumbers(Reader reader, Set<String> validAccessionNumbers) throws IOException {
+
+        return parseAccessionNumbers(reader, validAccessionNumbers, false);
+    }
 
 	/**
 	 * Extract set of accession numbers from uploaded file. Only nextprot or
 	 * uniprot accession numbers allowed.
 	 *
 	 * <p>
-	 * uniprot accession numbers should be converted in nextprot (prefixed with
-	 * "NX_")
+	 * uniprot accession numbers should be converted in nextprot (prefixed with "NX_")
 	 * </p>
 	 *
-	 * @param file
-	 *            the uploaded file
+	 * @param file the uploaded file
+	 * @param ignoreEntryNotFoundException if true this method ignores EntryNotFoundException else throw it
+	 *
 	 * @return a set of accession numbers
 	 * @throws IOException
 	 *             input exception occurred
 	 */
-	public static Set<String> parseAccessionNumbers(MultipartFile file, Set<String> validAccessionNumbers) throws NextProtException {
+	public static Set<String> parseAccessionNumbers(MultipartFile file, Set<String> validAccessionNumbers, boolean ignoreEntryNotFoundException) throws NextProtException {
 
 		NPreconditions.checkNotNull(file, "The uploaded file should not be null");
 
@@ -141,7 +146,7 @@ public class UserProteinListUtils {
 		try {
 			inputStream = file.getInputStream();
 			if (file.getInputStream() != null)
-				return parseAccessionNumbers(new InputStreamReader(inputStream), validAccessionNumbers);
+				return parseAccessionNumbers(new InputStreamReader(inputStream), validAccessionNumbers, ignoreEntryNotFoundException);
 
 		} catch (IOException e) {
 			throw new NextProtException(e);
@@ -165,10 +170,19 @@ public class UserProteinListUtils {
 
 		Set<String> collector = new HashSet<>(uncheckedAccessionNumbers.size());
 
-		for (String uncheckedAccessionNumber : uncheckedAccessionNumbers) {
+		Set<String> unknownEntries = new HashSet<>();
 
-			checkFormatAndCollectValidAccessionNumber(uncheckedAccessionNumber, collector, validAccessionNumbers);
+		for (String uncheckedAccessionNumber : uncheckedAccessionNumbers) {
+			try {
+				checkFormatAndCollectValidAccessionNumber(uncheckedAccessionNumber, collector, validAccessionNumbers);
+			} catch (EntryNotFoundException e) {
+
+				unknownEntries.add(e.getEntry());
+			}
 		}
+
+		if (!unknownEntries.isEmpty())
+			throw new EntrySetNotFoundException(unknownEntries);
 
 		return collector;
 	}

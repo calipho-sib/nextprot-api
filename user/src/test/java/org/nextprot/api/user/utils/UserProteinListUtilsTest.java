@@ -139,13 +139,23 @@ public class UserProteinListUtilsTest {
     }
 
     @Test(expected = EntrySetNotFoundException.class)
-    public void testParseAccessionNumbers2() throws IOException {
+    public void testParseAccessionNumbers() throws IOException {
 
         StringReader reader = new StringReader("NX_P123\nNX_P456\nNX_P321");
 
         Set<String> set = UserProteinListUtils.parseAccessionNumbers(reader, Sets.newHashSet("NX_P123", "NX_P321"));
 
         assertEquals(Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"), set);
+    }
+
+    @Test
+    public void testParseAccessionNumbersIgnoreNotFoundException() throws IOException {
+
+        StringReader reader = new StringReader("NX_P123\nNX_P456\nNX_P321");
+
+        Set<String> set = UserProteinListUtils.parseAccessionNumbers(reader, Sets.newHashSet("NX_P123", "NX_P321"), true);
+
+        assertEquals(Sets.newHashSet("NX_P123", "NX_P321"), set);
     }
 
     @Test
@@ -170,9 +180,18 @@ public class UserProteinListUtilsTest {
     }
 
     @Test
-    public void testCheckAndFormatAccessionNumbers() throws IOException {
+    public void testCheckAndFormatAccessionNumbersWithCommentedElement() throws IOException {
 
         Set<String> validAccessions = UserProteinListUtils.checkAndFormatAccessionNumbers(Arrays.asList("P123", "P456", "NX_P321", "#dewfref"),
+                Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"));
+
+        assertEquals(Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"), validAccessions);
+    }
+
+    @Test(expected = EntrySetNotFoundException.class)
+    public void testCheckAndFormatAccessionNumbers2() throws IOException {
+
+        Set<String> validAccessions = UserProteinListUtils.checkAndFormatAccessionNumbers(Arrays.asList("P123", "P456", "NX_P321", "dewfref"),
                 Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"));
 
         assertEquals(Sets.newHashSet("NX_P123", "NX_P456", "NX_P321"), validAccessions);
