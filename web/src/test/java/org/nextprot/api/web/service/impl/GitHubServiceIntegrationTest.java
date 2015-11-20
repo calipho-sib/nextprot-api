@@ -28,7 +28,7 @@ public class GitHubServiceIntegrationTest extends WebIntegrationBaseTest {
 
 	@Test
 	public void testGitHubNews() throws Exception {
-		String content = ghService.getPage("news", "google-oauth-support");
+		String content = ghService.getPage("news", "september-2015-nextprot-release");
 		assertTrue(!content.isEmpty());
 	}
 

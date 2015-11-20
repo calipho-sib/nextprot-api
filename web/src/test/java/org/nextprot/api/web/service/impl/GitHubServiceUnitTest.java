@@ -1,12 +1,13 @@
 package org.nextprot.api.web.service.impl;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.domain.NextProtNews;
@@ -43,6 +44,18 @@ public class GitHubServiceUnitTest extends WebUnitBaseTest {
     public void shouldReturnNullIfDateIsNotInCorrectFormat() throws Exception {
     	NextProtNews n = GitHubServiceImpl.parseGitHubNewsFilePath("2014/August/25/Google OAuth Support.md");
     	assertTrue(n == null);
+    }
+
+    @Test
+    public void shouldNormalizeTitleToUrl() throws Exception {
+    	String url = GitHubServiceImpl.normalizeTitleToUrl("!Press release: The SIB - Swiss Institute of Bioinformatics?");
+    	Assert.assertEquals(url, "press-release-the-sib-swiss-institute-of-bioinformatics");
+    }
+
+    @Test
+    public void shouldNormalizeTitleToUrl2() throws Exception {
+    	String url = GitHubServiceImpl.normalizeTitleToUrl("nextprot 3.0");
+    	Assert.assertEquals(url, "nextprot-30");
     }
 
 
