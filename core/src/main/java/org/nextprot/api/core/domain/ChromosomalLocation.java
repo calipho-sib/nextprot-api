@@ -122,38 +122,40 @@ public class ChromosomalLocation implements Serializable {
 
 	public static String toString(List<ChromosomalLocation> locations) {
 
-		Set<ChromosomalLocation> chromosomalLocations = new TreeSet<>(new ChromosomalLocationComparator());
-
-        chromosomalLocations.addAll(locations);
-
         StringBuilder sb = new StringBuilder();
-        StringBuilder sb2 = new StringBuilder();
 
-        for (ChromosomalLocation location : chromosomalLocations) {
+		if (locations != null) {
 
-            sb2.delete(0, sb2.length());
+            Set<ChromosomalLocation> chromosomalLocations = new TreeSet<>(new ChromosomalLocationComparator());
+            chromosomalLocations.addAll(locations);
 
-            String chromosome = location.getChromosome();
-            String band = location.getBand();
+            StringBuilder sb2 = new StringBuilder();
+            for (ChromosomalLocation location : chromosomalLocations) {
 
-            if (chromosome != null && !chromosome.equals("unknown")) {
-                sb2.append(chromosome);
-            }
-            if (band != null && !band.equals("unknown")) {
-                sb2.append(band);
-            }
+				sb2.delete(0, sb2.length());
 
-            if (sb2.length() == 0) {
-                sb2.append("unknown");
-            }
+				String chromosome = location.getChromosome();
+				String band = location.getBand();
 
-            sb.append(sb2);
-            sb.append(", ");
-        }
+				if (chromosome != null && !chromosome.equals("unknown")) {
+					sb2.append(chromosome);
+				}
+				if (band != null && !band.equals("unknown")) {
+					sb2.append(band);
+				}
 
-        if (sb.length()>0) {
-            sb.delete(sb.length()-2, sb.length());
-        }
+				if (sb2.length() == 0) {
+					sb2.append("unknown");
+				}
+
+				sb.append(sb2);
+				sb.append(", ");
+			}
+
+			if (sb.length() > 0) {
+				sb.delete(sb.length() - 2, sb.length());
+			}
+		}
 
 		return sb.toString();
 	}

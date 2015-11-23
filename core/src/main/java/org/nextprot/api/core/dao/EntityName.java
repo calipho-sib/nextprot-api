@@ -173,14 +173,17 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 
 		StringBuilder sb = new StringBuilder();
 
-		for (EntityName entityName : entityNameList) {
+		if (entityNameList != null) {
 
-			sb.append(entityName.getName());
-			sb.append(", ");
-		}
+			for (EntityName entityName : entityNameList) {
 
-		if (sb.length()>0) {
-			sb.delete(sb.length()-2, sb.length());
+				sb.append(entityName.getName());
+				sb.append(", ");
+			}
+
+			if (sb.length() > 0) {
+				sb.delete(sb.length() - 2, sb.length());
+			}
 		}
 
 		return sb.toString();
