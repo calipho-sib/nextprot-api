@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.Tree;
+import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.aop.InstrumentationAspect;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Terminology;
@@ -57,7 +58,6 @@ public class TerminologyUtils {
 		List<String> mylist = Arrays.asList("XXX");
 		String currTerm = cvterm;
 		
-		//if(cvterm.contains("TS-0576")) System.err.println("lookin for ancestors of " + cvterm);
 		while(mylist.size() > 0) {
 			mylist = terminologyservice.findTerminologyByAccession(currTerm).getAncestorAccession();
 			if(mylist == null) break;
@@ -190,7 +190,7 @@ public class TerminologyUtils {
 		List<Tree<Terminology>> trees = new ArrayList<Tree<Terminology>>();
 		
 		for(Terminology term: terms){
-			if((term.getAncestorAccession() == null) || (term.getAncestorAccession().isEmpty())){
+			if((term.getAncestorAccession() == null) || (term.getAncestorAccession().isEmpty())){ //root
 				trees.add(new Tree<Terminology>(term));
 			}
 		}
@@ -219,11 +219,56 @@ public class TerminologyUtils {
 				currentNode.setChildren(new ArrayList<Tree.Node<Terminology>>());
 			}
 			Tree.Node<Terminology> childNode = new Tree.Node<Terminology>(childTerm);
+			childNode.setParents(Arrays.asList(currentNode));
 			currentNode.getChildren().add(childNode);
 			
 			populateTree(childNode, termMap, depth+1, maxDepth);
 		}
 		
+	}
+	
+	private static void appendAncestor(Node<Terminology> node, Set<String> result) {
+		
+		result.add(node.getValue().getAccession());
+		
+		if(node.getParents() != null && !node.getParents().isEmpty()){
+			for(Node<Terminology> parent : node.getParents()){
+				appendAncestor(parent, result);
+			}
+		}
+		
+	}
+	
+	public static Set<String> getAncestorSets(Tree<Terminology> tree, String accession) {
+		Set<String> result = new TreeSet<String>();
+		List<Node<Terminology>> nodes = getNodeListByName(tree, accession);
+		
+		for(Node<Terminology> node : nodes){
+			appendAncestor(node, result);
+		}
+
+		result.remove(accession); // a term is not it's own ancestor
+		return result;
+	}
+	
+	public static List<Node<Terminology>> getNodeListByName(Tree<Terminology> tree, String accession) {
+		List<Node<Terminology>> result = new ArrayList<>();
+		getNodeListByNameAndPopulateResult(result, tree.getRoot(), accession);
+		return result;
+		
+	}
+
+	private static void getNodeListByNameAndPopulateResult(List<Node<Terminology>> currentResult, Node<Terminology> node, String accession) {
+		if(node.getValue().getAccession().equals(accession)){
+			currentResult.add(node);
+			return;
+		}
+		
+		if(node.getChildren() != null && !node.getChildren().isEmpty()){
+			for(Node<Terminology> child : node.getChildren()){
+				getNodeListByNameAndPopulateResult(currentResult, child, accession);
+			}
+		}
 	}
 
 }

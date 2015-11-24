@@ -15,16 +15,16 @@ import org.nextprot.api.tasks.solr.indexer.entry.impl.PublicationsFieldBuilder;
 public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Test
-	@Ignore
+	//@Ignore
 	public void testPublications() {
 
 		
-		 //for(int i=0; i < 10; i++){ testPublications(getEntry(i)); }
+		 for(int i=0; i < 10; i++){ testPublications(getEntry(i)); }
 		 
 
 		//Entry entry = getEntry("NX_Q96I99");
-		Entry entry = getEntry("NX_P61604");
-		testPublications(entry);
+		//Entry entry = getEntry("NX_P61604");
+		//testPublications(entry);
 
 	}
 
@@ -42,22 +42,27 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		for (String s : expectedPublisRaw) {
 			String indextoken;
 			
+			// Many values in current index end with spaces -> trimming
 			if(s.startsWith("<p>")) {
 				// like <p><b>title : </b>Mapping the hallmarks of lung adenocarcinoma with massively parallel sequencing.</p><p><b>journal</b> : Cell - Cell</p><p><b>nlmid:</b>0413066</p><p><b>authors : </b>Imielinski Marcin M",
 				indextoken = getValueFromRawData(s,"title");
-				if(indextoken != null && indextoken.length() > 1) expectedValues.add(indextoken);
+				if(indextoken != null && indextoken.length() > 1) {
+					// Titles from foreign lanuage journals are often enclosed in square brackets, they are stripped in the api but not in current index
+					if(indextoken.startsWith("[")) indextoken = indextoken.substring(1, indextoken.length()-1);
+					expectedValues.add(indextoken);
+				}
 				indextoken = getValueFromRawData(s,"journal");
 				if(indextoken != null) expectedValues.add(indextoken.substring(3)); 
 				indextoken = getValueFromRawData(s,"nlmid");
 				if(indextoken != null) expectedValues.add(indextoken);
 				indextoken = getValueFromRawData(s,"authors");
-				if(indextoken != null) expectedValues.add(indextoken);
+				if(indextoken != null) expectedValues.add(indextoken.trim());
 				}
-			else if(s.endsWith("</p>")) expectedValues.add(s.substring(0,s.indexOf("</p>"))); // like "Meyerson Matthew M</p>"
-			else expectedValues.add(s);
+			else if(s.endsWith("</p>")) expectedValues.add(s.substring(0,s.indexOf("</p>")).trim()); // like "Meyerson Matthew M</p>"
+			else expectedValues.add(s.trim());
 		}
 		
-		//Assert.assertEquals( expectedValues.size(), PublicationSet.size());
+		Assert.assertEquals( expectedValues.size(), PublicationSet.size());
 		//Set<String> expectedPubliscopy = new TreeSet<String>(expectedPublis);
 		/*for(String elem : PublicationSet)
 			System.out.println(elem);
@@ -92,10 +97,10 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		System.err.println("PUBLI_LARGE_SCALE_COUNT: " + expectedPubCount + " Now: " + pubCount);
 		//Assert.assertEquals(expectedPubCount, pubCount);
 
-		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.INFORMATIONAL_SCORE);
-		pubCount = pfb.getFieldValue(Fields.INFORMATIONAL_SCORE, Integer.class);
-		System.err.println("INFORMATIONAL_SCORE: " + expectedPubCount + " Now: " + pubCount);
-		Assert.assertEquals(expectedPubCount, pubCount);
+		float expectedScore = (float) getValueForFieldInCurrentSolrImplementation(entryName, Fields.INFORMATIONAL_SCORE);
+		float score = pfb.getFieldValue(Fields.INFORMATIONAL_SCORE, Float.class);
+		System.err.println("INFORMATIONAL_SCORE: " + expectedScore + " Now: " + score);
+		//Assert.assertEquals(expectedScore, score, 0.001);
 	}
 
 }

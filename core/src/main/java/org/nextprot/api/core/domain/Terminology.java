@@ -11,7 +11,7 @@ import java.util.List;
 import org.nextprot.api.core.utils.TerminologyUtils;
 
 public class Terminology implements Serializable {
-
+    
 	private static final long serialVersionUID = 4404147147281845675L;
 
 	private Long id;

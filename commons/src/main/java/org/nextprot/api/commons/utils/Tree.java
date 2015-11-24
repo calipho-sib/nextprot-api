@@ -57,4 +57,24 @@ public class Tree<T> implements Serializable{
 		}
        
     }
+	
+	private void printNode(Node<T> node, int currentDepth, int maxDepth){
+		
+		if(currentDepth >= maxDepth) return;
+		
+		if(node == null){
+			return;
+		}
+		System.out.println(node.getValue());
+		if(node.getChildren() != null && !node.getChildren().isEmpty()){
+			for(Node<T> child : node.getChildren()){
+				printNode(child, currentDepth+1, maxDepth);
+			}
+		}
+	}
+
+	public void printTree(int maxDepth){
+		printNode(getRoot(), 0, maxDepth);
+	}
+	
 }

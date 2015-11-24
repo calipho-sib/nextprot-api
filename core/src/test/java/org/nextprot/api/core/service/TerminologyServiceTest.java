@@ -10,12 +10,15 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
+import org.nextprot.api.commons.utils.Tree;
+import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+
 
 @ActiveProfiles({"dev"})
 public class TerminologyServiceTest extends CoreUnitBaseTest {
@@ -87,6 +90,16 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	}
 	
 
+	@Test
+	public void shoudGetAllAncestors() { 
+		List<Tree<Terminology>> trees = this.terminologyService.findTerminologyTreeList(TerminologyCv.GoBiologicalProcessCv, 10);
+		Tree<Terminology> tree = trees.get(0);
+		
+		assertEquals(69,TerminologyUtils.getAncestorSets(tree, "GO:1902667").size());
+		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
+	}
+	
+	
 	
 	@Test
 	public void shouldReturnTerminologies() {
