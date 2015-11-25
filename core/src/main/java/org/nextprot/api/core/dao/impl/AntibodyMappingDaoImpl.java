@@ -58,6 +58,7 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
                 evidence.setNegativeEvidence(false);
                 evidence.setEvidenceCodeAC("ECO:0000154");
 				evidence.setEvidenceCodeOntology("EvidenceCodeOntologyCv");
+				evidence.setEvidenceCodeName("heterologous protein expression evidence");
                 evidence.setResourceAssociationType("evidence");
                 evidence.setResourceType("database");
                 evidence.setResourceId(resultSet.getLong("db_xref_id"));
