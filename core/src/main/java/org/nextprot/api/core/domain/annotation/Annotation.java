@@ -279,9 +279,12 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	/** @return the last position or null if unknown */
 	public Integer getEndPositionForIsoform(String isoformName) {
-
-		if (targetingIsoformsMap.containsKey(isoformName))
+		if (targetingIsoformsMap.containsKey(isoformName)) {
+			//System.out.println(isoformName);
+			//System.out.println("start: " + this.targetingIsoformsMap.get(isoformName).getFirstPosition());
+			//System.out.println(" end: " + this.targetingIsoformsMap.get(isoformName).getLastPosition());
 			return this.targetingIsoformsMap.get(isoformName).getLastPosition();
+		}
 		return null;
 	}
 

@@ -60,6 +60,7 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 		this.firstPosition = firstPosition;
 	}
 
+	
 	/** @return the first position or null if unknown */
 	public Integer getLastPosition() {
 		// 0 means unknown
@@ -67,7 +68,7 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 			return null;
 		// since the firstPosition is incremented when loaded from the database, this check deals with the case when first == last
 		// for annotations of type variant-insertion ...
-		} else 	if(firstPosition > lastPosition) {
+		} else 	if(firstPosition !=null && firstPosition > lastPosition) {
 			return lastPosition + 1; // ... lastPosition should be the same as firstPosition in case of variant-insertion			
 		} else {
 			return lastPosition;
