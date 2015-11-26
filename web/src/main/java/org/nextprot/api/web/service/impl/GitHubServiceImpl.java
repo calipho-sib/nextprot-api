@@ -41,6 +41,7 @@ public class GitHubServiceImpl implements GitHubService {
 
 	
 	private String githubToken = null;
+	private String githubDocBranch = null;
 	
 	private Map<String, String> newsFileNames = new HashMap<>();
 	
@@ -71,7 +72,13 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GitHub github = getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			GHContent content = repo.getFileContent(folder + "/" + finalPage + ".md", "master");
+			GHContent content = null;
+			String  extension = ".md";
+			if(folder.contains("json")){ //if folder contains json
+				extension = ".json";
+			}
+			content = repo.getFileContent(folder + "/" + finalPage + extension, githubDocBranch);
+
 			return content.getContent();
 
 		} catch (IOException e) {
@@ -111,7 +118,7 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GitHub github =  getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			return repo.getTreeRecursive("master", 1);
+			return repo.getTreeRecursive(githubDocBranch, 1);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -130,7 +137,7 @@ public class GitHubServiceImpl implements GitHubService {
 		try {
 			GitHub github =  getGitHubConnection();
 			GHRepository repo = github.getRepository("calipho-sib/nextprot-docs");
-			GHTree tree = repo.getTreeRecursive("master", 1);
+			GHTree tree = repo.getTreeRecursive(githubDocBranch, 1);
 			newsFileNames.clear();
 			for(GHTreeEntry te : tree.getTree()){
 				if(te.getPath().startsWith("news")){ //Add only file on news
@@ -159,6 +166,11 @@ public class GitHubServiceImpl implements GitHubService {
 	@Value("${github.accesstoken}")
 	public void setGithubToken(String githubToken) {
 		this.githubToken = githubToken;
+	}
+
+	@Value("${github.doc.branch}")
+	public void setGithubDocBranch(String githubDocBranch) {
+		this.githubDocBranch = githubDocBranch;
 	}
 
 	
@@ -192,16 +204,26 @@ public class GitHubServiceImpl implements GitHubService {
 
 		} catch (ParseException e) {
 			LOGGER.warn("Failed to parse the date for file" + filePath + " " + e.getMessage());
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 
 		//Gets url and title
 		String title = elements[3].replace(".md", "").trim();
 		result.setTitle(title);
-		result.setUrl(StringUtils.slug(title).replace("_", "-").toLowerCase());
+		result.setUrl(normalizeTitleToUrl(title));
 
 		return result;
+	}
+	
+	public static String normalizeTitleToUrl(String title){
+		
+		String charClass = "!?:;,/(){}\\\\";
+		String url = StringUtils.slug(title, "[" + charClass + "]", "-").toLowerCase();
+		String url1 = url.replaceAll("[" + charClass + "-]+$", "");
+		String url2 = url1.replaceAll("^[" + charClass + "-]+", "");
+
+		return url2.replaceAll("-{2,}", "-"); // replaces 
 	}
 
 }

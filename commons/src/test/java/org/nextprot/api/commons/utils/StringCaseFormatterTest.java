@@ -112,4 +112,11 @@ public class StringCaseFormatterTest {
         String string = new StringCaseFormatter("PROTEIN-ENTRY").camel(false).snake().whispering().format();
         Assert.assertEquals("protein_entry", string);
     }
+
+    @Test
+    public void testKebabCase2() {
+
+        String cc = new StringCaseFormatter("positional-annotation;secondary structure").camel().kebab().format();
+        Assert.assertEquals("positional-annotation;secondary-structure", cc);
+    }
 }

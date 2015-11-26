@@ -147,9 +147,15 @@ public class PepXServiceImpl implements PepXService {
 
 				if ((validAnnotations == null) || validAnnotations.isEmpty()) {
 					
-					throw new NextProtException("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
+					LOGGER.warn("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
+					continue;
+					
+					//We used to throw an exception, but now we just skip
+					//throw new NextProtException("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
 				
-				} else if (validAnnotations.size() > 1) {
+				}
+				
+				if (validAnnotations.size() > 1) {
 
 					LOGGER.warn("There is more than 1 valid variant (" + validAnnotations.size() + ") for isoform (returning the 1st) " + isoformName + " between position " + startPeptidePosition + " and " + endPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
 
@@ -181,7 +187,17 @@ public class PepXServiceImpl implements PepXService {
 				
 				Isoform iso = IsoformUtils.getIsoformByIsoName(isoforms, isoformName);
 				String sequence = (iso != null) ? iso.getSequence() : null;
-				NPreconditions.checkTrue(PeptideUtils.isPeptideContainedInTheSequence(peptide, sequence, modeIsoleucine), "PepX returned a peptide (" + peptide + ") for an isoform (" + isoformName + ") that is not in the current isoform in neXtProt");
+				
+				boolean isPeptideContained = PeptideUtils.isPeptideContainedInTheSequence(peptide, sequence, modeIsoleucine);
+				
+				if(!isPeptideContained){
+					continue;
+				}else {
+					LOGGER.warn("PepX returned a peptide (" + peptide + ") for an isoform (" + isoformName + ") that is not in the current isoform in neXtProt");
+				}
+				
+				//We used to throw an exception, but this would break the program (the algorithm could be improved to detect the specific case where pepx return a peptide of length 6 and generate a real error on other cases)
+				//NPreconditions.checkTrue(isPeptideContained, "PepX returned a peptide (" + peptide + ") for an isoform (" + isoformName + ") that is not in the current isoform in neXtProt");
 				
 			}
 			
@@ -217,4 +233,26 @@ public class PepXServiceImpl implements PepXService {
 		return resultAnnotations;
 	}
 
+	/*
+
+	We started to filter out the results because 
+	
+	3 peptides showing error with pepX :
+	- IHTGEKP
+	- PYKCEECGK
+	- RIHTGEKPYK
+	
+	ex erreur : http://dev-api.nextprot.org/entries/search/peptide?peptide=IHTGEKP&modeIL=true&clientInfo=nextprotTeam&applicationName=PeptideViewer
+	
+	Mis a part l'erreur qu'on a vu hier comme quoi ce premier peptide n'existait pas dans l'entrée Q96MM3,
+	je tiens à noter que ces 3 peptides donnés en exemple sont trouvés à plusieurs positions dans l'isoform d'origine : NX_Q05481
+	Mais je sais pas si ca joue vraiment.
+	
+	http://localhost:9000/app/?nxentry=NX_P46976&env=dev
+	
+	3 peptides working with pepX : 
+	- TLTTNDAYAK
+	- LVVLATPQVSDSMR
+	- GALVLGSSL
+	 */
 }

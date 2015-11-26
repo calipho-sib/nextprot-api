@@ -67,6 +67,48 @@ public class AdminController {
 		return result;
 	}
 	
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "/admin/cache/github-doc/clear", produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(path = "/admin/cache/github-doc/clear", verb = ApiVerb.GET, description = "Clears the documentation cache")
+	public List<String> clearDocCache(HttpServletRequest request) {
+
+		LOGGER.debug("Request to clear cache from " + request.getRemoteAddr());
+		List<String> result = new ArrayList<String>();
+		try {
+
+			if (cacheManager != null) {
+
+				if (cacheManager.getCacheNames() == null){
+					result.add("caches not found");
+					return result;
+				}
+
+
+				for(String cacheName : cacheManager.getCacheNames()){
+					if(cacheName.toLowerCase().startsWith("github-")){
+						cacheManager.getCache(cacheName).clear();
+						result.add(cacheName + " cleared");
+					}
+					
+				}
+	
+			} else {
+				result.add("no cache manager found");
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+			result.add(e.getLocalizedMessage());
+			return result;
+		}
+
+		return result;
+	}
+
+	
 	@ResponseBody
 	@RequestMapping(value = "/admin/cache/{cacheName}/clear", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ApiMethod(path = "/admin/cache/{cacheName}/clear", verb = ApiVerb.GET, description = "Clears the cache")

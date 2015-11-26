@@ -47,9 +47,12 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 				String forename = currauthor.getForeName();
 				if(forename.contains(".")) // Submission author
 					addField(Fields.PUBLICATIONS, currauthor.getLastName() + "  " + currauthor.getInitials());
-				else // trim not to add spaces when forename/initials are empty
-					addField(Fields.PUBLICATIONS, (currauthor.getLastName() + " " + currauthor.getForeName() + " " + currauthor.getInitials()).trim());
+				else if(!forename.isEmpty() ) // trim not to add spaces when forename/initials are empty
+					addField(Fields.PUBLICATIONS, (currauthor.getLastName() + " " + forename + " " + currauthor.getInitials()).trim());
+				else
+					addField(Fields.PUBLICATIONS, (currauthor.getLastName() + " " + currauthor.getInitials()).trim());
 				//if(currauthor.getLastName().contains("Consortium")) System.err.println(currauthor.getLastName());
+				if(currauthor.getLastName().contains("Bergsten")) System.err.println("id: " + currpubli.getPublicationId() + " type: " + currpubli.getPublicationType() + " " + currauthor.getLastName());
 			}
 		}
 		

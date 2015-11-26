@@ -36,7 +36,6 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		pfb.initializeBuilder(entry);
 		
 		Set<String> expectedPublisRaw = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLICATIONS));
-		Set<String> PublicationSet = new TreeSet<String>(pfb.getFieldValue(Fields.PUBLICATIONS, List.class));
 		Set<String> expectedValues = new TreeSet<String>();
 
 		for (String s : expectedPublisRaw) {
@@ -49,24 +48,32 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 				if(indextoken != null && indextoken.length() > 1) {
 					// Titles from foreign lanuage journals are often enclosed in square brackets, they are stripped in the api but not in current index
 					if(indextoken.startsWith("[")) indextoken = indextoken.substring(1, indextoken.length()-1);
-					expectedValues.add(indextoken);
+					expectedValues.add(removeDoubleSpace(indextoken, "title"));
 				}
 				indextoken = getValueFromRawData(s,"journal");
 				if(indextoken != null) expectedValues.add(indextoken.substring(3)); 
 				indextoken = getValueFromRawData(s,"nlmid");
-				if(indextoken != null) expectedValues.add(indextoken);
+				if(indextoken != null) expectedValues.add(removeDoubleSpace(indextoken, "nlmid"));
 				indextoken = getValueFromRawData(s,"authors");
-				if(indextoken != null) expectedValues.add(indextoken.trim());
+				if(indextoken != null) expectedValues.add(removeDoubleSpace(indextoken,"authors"));
 				}
-			else if(s.endsWith("</p>")) expectedValues.add(s.substring(0,s.indexOf("</p>")).trim()); // like "Meyerson Matthew M</p>"
-			else expectedValues.add(s.trim());
+			else if(s.endsWith("</p>")) {
+				indextoken = s.substring(0,s.indexOf("</p>")).trim();
+				expectedValues.add(removeDoubleSpace(indextoken, "unknown field")); // like "Meyerson Matthew M</p>"
+			}
+			else expectedValues.add(removeDoubleSpace(s, "unknown field 2"));
 		}
 		
-		Assert.assertEquals( expectedValues.size(), PublicationSet.size());
 		//Set<String> expectedPubliscopy = new TreeSet<String>(expectedPublis);
 		/*for(String elem : PublicationSet)
 			System.out.println(elem);
-		System.err.println(PublicationSet.size() + " elements in the new index");*/
+		System.err.println(PublicationSet.size() + " elements in the new index"); */
+		
+		Set<String> tmpset = new TreeSet<String>(pfb.getFieldValue(Fields.PUBLICATIONS, List.class));
+		TreeSet<String> PublicationSet = new TreeSet<>();
+		for (String s: tmpset) {
+			PublicationSet.add(removeDoubleSpace(s, "new index data"));
+		}
 		
 		Set<String> PublicationSetcopy = new TreeSet<String>(PublicationSet);
 		
@@ -79,6 +86,7 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		for(String elem : expectedValues)
 			System.out.println(elem);
 		
+		Assert.assertEquals( expectedValues.size(), PublicationSet.size());
 		//Assert.assertTrue( expectedValues.size()==0 && PublicationSet.size()==0);
 		
 		int pubCount, expectedPubCount;
@@ -101,6 +109,22 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		float score = pfb.getFieldValue(Fields.INFORMATIONAL_SCORE, Float.class);
 		System.err.println("INFORMATIONAL_SCORE: " + expectedScore + " Now: " + score);
 		//Assert.assertEquals(expectedScore, score, 0.001);
+	}
+	
+	private String removeDoubleSpace(String s, String fname) {
+		//System.out.println(fname + " avant:<" + s + ">");
+		if (s.contains("Cancer Genome Atlas Research")) System.out.println(fname + " ascii: " + (int)s.charAt(s.length()-2)+ " " + (int)s.charAt(s.length()-1));
+		s.trim();
+		if (s.contains("Cancer Genome Atlas Research")) System.out.println(fname + " ascii after trim: " + (int)s.charAt(s.length()-2)+ " " + (int)s.charAt(s.length()-1));
+		int lng=s.length();
+		while(true) {
+			s = s.replaceAll("  ", " ");
+			if (s.length()==lng) break;
+			lng=s.length();
+		}
+		//System.out.println(fname + " apres:<" + s + ">");
+		if (s.contains("Cancer Genome Atlas Research")) System.out.println(fname + " ascii: " + (int)s.charAt(s.length()-2) + " " + (int)s.charAt(s.length()-1));
+		return s;
 	}
 
 }

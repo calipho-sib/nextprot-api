@@ -1,4 +1,7 @@
-package org.nextprot.api.commons.constants;
+package org.nextprot.api.tasks.commons;
+
+import org.nextprot.api.commons.constants.AbstractTreeVisitor;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 
 /**
  * Export tree as graph dot format (http://www.graphviz.org/content/dot-language).
@@ -6,6 +9,7 @@ package org.nextprot.api.commons.constants;
  * Created by fnikitin on 17/06/15.
  */
 public class TreeVisitorDot extends AbstractTreeVisitor {
+
     //dot -Teps annotations.dot -o annotations.ps; pstopdf annotations.ps annotations.pdf
     public TreeVisitorDot(String graphName) {
 

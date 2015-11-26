@@ -1,5 +1,13 @@
 package org.nextprot.api.web.service.impl;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -7,14 +15,6 @@ import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class PepXServiceTest extends WebUnitBaseTest {
 
@@ -42,6 +42,27 @@ public class PepXServiceTest extends WebUnitBaseTest {
 	}
 	
 	
+	@Test
+	public void shouldReturnAnEmptyArrayWhenThePeptideIsNotContainedInTheSequence() throws Exception {
+
+			String peptide = "GANAP";
+			boolean modeIsoleucine = true;
+
+			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>("Iso-1", null)); //not positional since there is no position
+			@SuppressWarnings("unchecked")
+			List<Annotation> annotations = mock(List.class);
+			Isoform isoform = mock(Isoform.class);
+			when(isoform.getUniqueName()).thenReturn("Iso-1");
+			when(isoform.getSequence()).thenReturn("AAAAAA");//Sequence does not contain the peptide
+			
+			List<Isoform> isoforms = Arrays.asList(isoform);
+
+			List<Annotation> result = PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, isosAndPositions, annotations, isoforms);
+			assertTrue(result.isEmpty());
+
+	}
+	
+	/* Specification have changed now it should be empty look at: #shouldReturnAnEmptyArrayWhenThePeptideIsNotContainedInTheSequence
 	@Test(expected=NextProtException.class)
 	public void shouldThrowAnExceptionWhenThePeptideIsNotContainedInTheSequence() throws Exception {
 
@@ -65,7 +86,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 				throw e; //success tests
 			}else fail();
 		}
-	}
+	}*/
 	
 	@Test
 	public void shouldGiveAnAnnotationWithVariantWhenPresent() throws Exception {
@@ -91,10 +112,33 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			assertTrue(pepxAnnots.get(0).getVariant().getVariant().equals("P"));
 			assertTrue(pepxAnnots.get(0).getStartPositionForIsoform(isoName) == 158);
 			assertTrue(pepxAnnots.get(0).getEndPositionForIsoform(isoName) == 158);
+	}
+
+
+	@Test
+	public void shouldReturnAnEmptryListIfTheVariantIsNotConaintedInThePeptide() throws Exception {
+
+			//Taking example NX_Q9H6T3
+			String peptide = "GANAP";
+			boolean modeIsoleucine = true;
+			String isoName = "NX_Q9H6T3-3";
+
+			Isoform isoform = mock(Isoform.class);
+			when(isoform.getUniqueName()).thenReturn(isoName);
+			//https://cdn.rawgit.com/calipho-sib/sequence-viewer/master/examples/simple.html (check that page to format the sequence)
+			//GANAL is present instead of GANAP
+			when(isoform.getSequence()).thenReturn("MDADPYNPVLPTNRASAYFRLKKFAVAESDCNLAVALNRSYTKAYSRRGAARFALQKLEEAKKDYERVLELEPNNFEATNELRKISQALASKENSYPKEADIVIKSTEGERKQIEAQQNKQQAISEKDRGNGFFKEGKYERAIECYTRGIAADGANALLPANRAMAYLKIQKYEEAEKDCTQAILLDGSYSKAFARRGTARTFLGKLNEAKQDFETVLLLEPGNKQAVTELSKIKKELIEKGHWDDVFLDSTQRQNVVKPIDNPPHPGSTKPLKKVIIEETGNLIQTIDVPDSTTAAAPENNPINLANVIAATGTTSKKNSSQDDLFPTSDTPRAKVLKIEEVSDTSSLQPQASLKQDVCQSYSEKMPIEIEQKPAQFATTVLPPIPANSFQLESDFRQLKSSPDMLYQYLKQIEPSLYPKLFQKNLDPDVFNQIVKILHDFYIEKEKPLLIFEILQRLSELKRFDMAVMFMSETEKKIARALFNHIDKSGLKDSSVEELKKRYGG"); 
+			
+			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>(isoName, 154)); //Position of the begin of peptide
+			List<Annotation> annots = Arrays.asList(getMockedAnnotation("L", "Z", 158, isoName, true));
+			List<Isoform> isoforms = Arrays.asList(isoform);
+
+			List<Annotation> result = PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, isosAndPositions, annots, isoforms); //empty or null annotations
+			assertTrue(result.isEmpty());
 
 	}
-	
-	
+
+	/*Specification has changed look at: shouldReturnAnEmptryListIfTheVariantIsNotConaintedInThePeptide
 	@Test(expected=NextProtException.class)
 	public void shouldGiveAnExceptionIfTheVariantIsNotConaintedInThePeptide() throws Exception {
 		try {
@@ -121,7 +165,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			}else fail();
 		}
 
-	}
+	}*/
 
 	
 	@Test(expected=NextProtException.class)

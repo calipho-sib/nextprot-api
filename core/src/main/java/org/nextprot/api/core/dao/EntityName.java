@@ -1,12 +1,12 @@
 package org.nextprot.api.core.dao;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.domain.Overview.EntityNameClass;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EntityName implements Serializable, Comparable<EntityName>{
 
@@ -168,5 +168,24 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 	public String getMainEntityName() {
 		return this.mainEntityName;
 	}
-	
+
+	public static String toString(List<EntityName> entityNameList) {
+
+		StringBuilder sb = new StringBuilder();
+
+		if (entityNameList != null) {
+
+			for (EntityName entityName : entityNameList) {
+
+				sb.append(entityName.getName());
+				sb.append(", ");
+			}
+
+			if (sb.length() > 0) {
+				sb.delete(sb.length() - 2, sb.length());
+			}
+		}
+
+		return sb.toString();
+	}
 }

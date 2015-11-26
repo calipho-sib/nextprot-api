@@ -10,6 +10,7 @@ import org.nextprot.api.solr.IndexParameter;
 import org.nextprot.api.solr.IndexTemplate;
 import org.nextprot.api.solr.SortConfig;
 
+
 public class PublicationIndex extends IndexTemplate {
 	
 	public PublicationIndex() {
@@ -23,7 +24,7 @@ public class PublicationIndex extends IndexTemplate {
 		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.FL)
 				.add(PubField.ID)
 				.add(PubField.AC)
-				.add(PubField.DATE)
+				.add(PubField.YEAR)
 				.add(PubField.TITLE)
 				.add(PubField.FIRST_PAGE)
 				.add(PubField.LAST_PAGE)

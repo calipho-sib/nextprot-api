@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -28,6 +29,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	TerminologyService terminologyService;
 
 	@Test
+	@Ignore
 	public void testAnnotationsAndFunctionalDescriptions() {
 
 		for(int i=0; i < 1; i++){
