@@ -1,14 +1,15 @@
 package org.nextprot.api.commons.constants;
 
 /**
- * Description: Used to turn peptide mapping and srm peptide mapping into Annotations<br> * 
+ * Description: Used to turn peptide mapping, srm peptide mapping, antibody mapping into Annotations<br> * 
  * @author Pam
  */
 
-public enum PeptideMappingAnnotationMapping  {
+public enum AnnotationMapping2Annotation  {
 
 	PEPTIDE_MAPPING(AnnotationCategory.PEPTIDE_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0001096", "mass spectrometry evidence"),
-	SRM_PEPTIDE_MAPPING(AnnotationCategory.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0001096", "mass spectrometry evidence")
+	SRM_PEPTIDE_MAPPING(AnnotationCategory.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0001096", "mass spectrometry evidence"),
+	ANTIBODY_MAPPING(AnnotationCategory.ANTIBODY_MAPPING.getDbAnnotationTypeName(), "GOLD", "IC", "curated", "ECO:0000154", "heterologous protein expression evidence")
 	;
 
 	private final String annotCat;
@@ -19,7 +20,7 @@ public enum PeptideMappingAnnotationMapping  {
 	private final String ecoName;
 	private final String ontology = "EvidenceCodeOntologyCv";
 
-	PeptideMappingAnnotationMapping(
+	AnnotationMapping2Annotation(
 			final String annotCat, 
 			final String qualityQualifier, 
 			final String assignMethod, 

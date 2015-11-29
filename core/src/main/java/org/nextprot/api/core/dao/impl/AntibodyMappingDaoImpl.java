@@ -1,6 +1,8 @@
 package org.nextprot.api.core.dao.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.commons.constants.AnnotationMapping2Annotation;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AntibodyMappingDao;
@@ -41,37 +43,44 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
 		@Override
 		public Annotation mapRow(ResultSet resultSet, int row) throws SQLException {
 
-			Long annotationId = resultSet.getLong("annotation_id");
+			Long tmpId = resultSet.getLong("annotation_id");
+			Long annotId = tmpId + IdentifierOffset.ANTIBODY_MAPPING_ANNOTATION_OFFSET;
+			Long evidenceId = tmpId + IdentifierOffset.ANTIBODY_MAPPING_ANNOTATION_EVIDENCE_OFFSET;
+			String annotUniqueName = "AN_"+resultSet.getString("resource_ac")+"_"+annotId; // AN_HPA039796_000890
+			final AnnotationMapping2Annotation amam = AnnotationMapping2Annotation.ANTIBODY_MAPPING;
+					
             String isoName = resultSet.getString("iso_unique_name");
 
-			if (!annotationsMap.containsKey(annotationId)){
+			if (!annotationsMap.containsKey(annotId)){
 
                 Annotation annotation = new Annotation();
-                annotation.setUniqueName("AN_"+resultSet.getString("resource_ac")+"_"+annotationId); // AN_HPA039796_000890
-                annotation.setAnnotationId(annotationId);
+                
+                annotation.setAnnotationId(annotId);
+                annotation.setUniqueName(annotUniqueName); 
 				annotation.setCategory(AnnotationCategory.ANTIBODY_MAPPING);
                 annotation.setQualityQualifier("GOLD"); // TODO: IS THIS KIND OF INFO ACCESSIBLE ?
 				annotation.addTargetingIsoforms(new ArrayList<AnnotationIsoformSpecificity>());
 
                 AnnotationEvidence evidence = new AnnotationEvidence();
-                evidence.setAnnotationId(annotationId);
+                evidence.setAnnotationId(annotId);
                 evidence.setNegativeEvidence(false);
-                evidence.setEvidenceCodeAC("ECO:0000154");
-				evidence.setEvidenceCodeOntology("EvidenceCodeOntologyCv");
-				evidence.setEvidenceCodeName("heterologous protein expression evidence");
+				evidence.setAssignmentMethod(amam.getAssignmentMethod());
+				evidence.setEvidenceCodeAC(amam.getEcoAC());
+				evidence.setEvidenceCodeOntology(amam.getEcoOntology());
+				evidence.setEvidenceCodeName(amam.getEcoName());
                 evidence.setResourceAssociationType("evidence");
                 evidence.setResourceAccession(resultSet.getString("resource_ac"));
                 evidence.setResourceType("database");
                 evidence.setResourceId(resultSet.getLong("db_xref_id"));
                 evidence.setAssignedBy(resultSet.getString("antibody_src"));
                 evidence.setResourceDb(resultSet.getString("resource_db"));
-
+                evidence.setEvidenceId(evidenceId);
                 annotation.setEvidences(Collections.singletonList(evidence));
 
-                annotationsMap.put(annotationId, annotation);
+                annotationsMap.put(annotId, annotation);
 			}
 
-			Annotation annotation = annotationsMap.get(annotationId);
+			Annotation annotation = annotationsMap.get(annotId);
 
 			AnnotationIsoformSpecificity isoSpecificity = new AnnotationIsoformSpecificity();
 

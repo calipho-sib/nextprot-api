@@ -5,7 +5,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import org.nextprot.api.commons.constants.IdentifierOffset;
-import org.nextprot.api.commons.constants.XrefAnnotationMapping;
+import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
@@ -85,7 +85,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		annotation.setAnnotationId(xref.getDbXrefId() + IdentifierOffset.XREF_ANNOTATION_OFFSET);
 
-		XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(xref.getDatabaseName());
+		Xref2Annotation xam = Xref2Annotation.getByDatabaseName(xref.getDatabaseName());
 		annotation.setCategory(xam.getAnnotCat());
 		annotation.setDescription(xref.getPropertyValue(xam.getXrefPropName())); // copy of some xref property
 		annotation.setQualityQualifier(xam.getQualityQualifier());
@@ -108,7 +108,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		DbXref pxref = xrefAnnotation.getParentXref();
 
 		evidence.setAnnotationId(xrefAnnotation.getAnnotationId());
-		XrefAnnotationMapping xam = XrefAnnotationMapping.getByDatabaseName(pxref.getDatabaseName());
+		Xref2Annotation xam = Xref2Annotation.getByDatabaseName(pxref.getDatabaseName());
 		evidence.setEvidenceId(xrefAnnotation.getAnnotationId() + IdentifierOffset.XREF_ANNOTATION_EVIDENCE_OFFSET);
 		evidence.setAssignedBy(xam.getSrcName());
 		evidence.setResourceId(pxref.getDbXrefId());
@@ -236,7 +236,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		for (DbXref xref : xrefs) {
 			if (!fetchXrefAnnotationMappingProperties)
-				xref.setProperties((!XrefAnnotationMapping.hasName(xref.getDatabaseName())) ? new ArrayList<>(propsMap.get(xref.getDbXrefId())) : new ArrayList<DbXrefProperty>());
+				xref.setProperties((!Xref2Annotation.hasName(xref.getDatabaseName())) ? new ArrayList<>(propsMap.get(xref.getDbXrefId())) : new ArrayList<DbXrefProperty>());
 			else
 				xref.setProperties(new ArrayList<>(propsMap.get(xref.getDbXrefId())));
 			xref.setResolvedUrl(resolveLinkTarget(uniqueName, xref));

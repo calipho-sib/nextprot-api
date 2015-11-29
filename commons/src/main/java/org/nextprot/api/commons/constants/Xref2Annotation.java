@@ -5,7 +5,7 @@ package org.nextprot.api.commons.constants;
  * @author Pam
  */
 
-public enum XrefAnnotationMapping  {
+public enum Xref2Annotation  {
 
 	ORPHANET(84,"Orphanet", "disease", AnnotationCategory.DISEASE.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated", "IC","ECO:0000305", "curator inference used in manual assertion"),
 	REACTOME(112, "Reactome", "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 2, "Uniprot","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
@@ -25,7 +25,7 @@ public enum XrefAnnotationMapping  {
 	private final String ecoAC;
 	private final String ecoName;
 
-    XrefAnnotationMapping(final int xrefDbId, final String xrefDbName,
+    Xref2Annotation(final int xrefDbId, final String xrefDbName,
 			final String xrefPropName, final String annotCat, final int srcId, final String srcName,
 			final String qualityQualifier, final String assignMethod, final String qualifierType, String ecoAC, String ecoName) {
 		
@@ -89,8 +89,8 @@ public enum XrefAnnotationMapping  {
         return "EvidenceCodeOntologyCv";
 	}
 
-	public static XrefAnnotationMapping getByDatabaseName(String dbName) {
-		for (XrefAnnotationMapping m : XrefAnnotationMapping.values()) {
+	public static Xref2Annotation getByDatabaseName(String dbName) {
+		for (Xref2Annotation m : Xref2Annotation.values()) {
 			if(m.xrefDbName.equals(dbName)) return m;
 		}
 		throw new RuntimeException("Could not find XrefAnnotationMapping for database name: " + dbName);
@@ -98,7 +98,7 @@ public enum XrefAnnotationMapping  {
 
 	public static boolean hasName(String name) {
 
-		for (XrefAnnotationMapping m : XrefAnnotationMapping.values()) {
+		for (Xref2Annotation m : Xref2Annotation.values()) {
 			if(m.xrefDbName.equals(name)) return true;
 		}
 

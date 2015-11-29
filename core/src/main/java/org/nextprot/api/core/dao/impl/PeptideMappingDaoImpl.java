@@ -1,7 +1,7 @@
 package org.nextprot.api.core.dao.impl;
 
 import org.nextprot.api.commons.constants.IdentifierOffset;
-import org.nextprot.api.commons.constants.PeptideMappingAnnotationMapping;
+import org.nextprot.api.commons.constants.AnnotationMapping2Annotation;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.PeptideMappingDao;
@@ -195,7 +195,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 	public Map<String,List<AnnotationEvidence>> findPeptideAnnotationEvidencesMap(List<String> names, boolean natural) {
 
 		String datasourceClause = natural ? " ds.cv_name != 'SRMAtlas'" : " ds.cv_name  = 'SRMAtlas'";  
-		final PeptideMappingAnnotationMapping pmam = natural ? PeptideMappingAnnotationMapping.PEPTIDE_MAPPING : PeptideMappingAnnotationMapping.SRM_PEPTIDE_MAPPING;
+		final AnnotationMapping2Annotation pmam = natural ? AnnotationMapping2Annotation.PEPTIDE_MAPPING : AnnotationMapping2Annotation.SRM_PEPTIDE_MAPPING;
 		String sql = sqlDictionary.getSQLQuery("peptide-evidences-by-peptide-names").replace(":datasourceClause", datasourceClause);
 		Map<String,Object> params = new HashMap<String,Object>();
 		params.put("names", names);

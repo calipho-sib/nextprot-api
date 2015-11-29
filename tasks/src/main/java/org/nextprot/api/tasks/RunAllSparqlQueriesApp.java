@@ -23,8 +23,8 @@ public class RunAllSparqlQueriesApp {
 	//This will log on release-info folder in a file called sparql-queries.tsv
 	private static final Log LOGGER = LogFactory.getLog(RunAllSparqlQueriesApp.class);
 
-	//private static final String SPARQL_ENDPOINT = "http://kant:8890/sparql";
-	private static final String SPARQL_ENDPOINT = "http://build-api.nextprot.org/sparql";
+	private static final String SPARQL_ENDPOINT = "http://kant:8890/sparql";
+	//private static final String SPARQL_ENDPOINT = "http://build-api.nextprot.org/sparql";
 	//private static final String SPARQL_ENDPOINT = "http://uat-web2:8890/sparql";
 	//private static final String SPARQL_ENDPOINT = "http://godel:8890/sparql";
 	
