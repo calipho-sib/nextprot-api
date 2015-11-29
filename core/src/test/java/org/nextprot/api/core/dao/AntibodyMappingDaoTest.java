@@ -2,9 +2,11 @@ package org.nextprot.api.core.dao;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +40,20 @@ public class AntibodyMappingDaoTest extends CoreUnitBaseTest {
 		List<Annotation> annotations = this.antibodyMappingDao.findAntibodyMappingAnnotationsById(636535L);
 		Assert.assertEquals(2, annotations.size());
 
-		Annotation annotation = getAnnotationByUniqueName("AN_HPA036302_4049518", annotations);
+		long tmpId = 4049518L;
+		long annotId = tmpId + IdentifierOffset.ANTIBODY_MAPPING_ANNOTATION_OFFSET;
+		long evidenceId = tmpId + IdentifierOffset.ANTIBODY_MAPPING_ANNOTATION_EVIDENCE_OFFSET;
+		//String annotUniqueName = "AN_"+resultSet.getString("resource_ac")+"_"+annotId; // AN_HPA039796_000890
+		
+		String annotUniqueName = "AN_HPA036302_" + annotId; // old = AN_HPA036302_4049518"
+		Annotation annotation = getAnnotationByUniqueName(annotUniqueName, annotations);
 		
 		Assert.assertEquals(AnnotationCategory.ANTIBODY_MAPPING, annotation.getAPICategory());
-		Assert.assertEquals("AN_HPA036302_4049518", annotation.getUniqueName());
+		Assert.assertEquals(annotUniqueName, annotation.getUniqueName());
 		Assert.assertEquals("GOLD", annotation.getQualityQualifier());
-		Assert.assertEquals(4049518, annotation.getAnnotationId());
+		Assert.assertEquals(annotId, annotation.getAnnotationId());
 		Assert.assertEquals(1, annotation.getEvidences().size());
-		Assert.assertEquals(4049518, annotation.getEvidences().get(0).getAnnotationId());
+		Assert.assertEquals(annotId, annotation.getEvidences().get(0).getAnnotationId());
 		Assert.assertEquals(17201575, annotation.getEvidences().get(0).getResourceId());
 		Assert.assertEquals("database", annotation.getEvidences().get(0).getResourceType());
 		Assert.assertEquals("Human protein atlas", annotation.getEvidences().get(0).getAssignedBy());
@@ -62,14 +70,18 @@ public class AntibodyMappingDaoTest extends CoreUnitBaseTest {
 		Assert.assertEquals(742, annotation.getTargetingIsoformsMap().get("NX_P06213-1").getLastPosition().intValue());
 		Assert.assertEquals(742, annotation.getTargetingIsoformsMap().get("NX_P06213-2").getLastPosition().intValue());
 
-		annotation = getAnnotationByUniqueName("AN_HPA036303_9547085", annotations);
+		tmpId = 9547085;
+		annotId = tmpId + IdentifierOffset.ANTIBODY_MAPPING_ANNOTATION_OFFSET;
+		evidenceId = tmpId + IdentifierOffset.ANTIBODY_MAPPING_ANNOTATION_EVIDENCE_OFFSET;
+		annotUniqueName = "AN_HPA036303_" + annotId;
+		annotation = getAnnotationByUniqueName(annotUniqueName, annotations); // old "AN_HPA036303_9547085"
 
 		Assert.assertEquals(AnnotationCategory.ANTIBODY_MAPPING, annotation.getAPICategory());
-		Assert.assertEquals("AN_HPA036303_9547085", annotation.getUniqueName());
+		Assert.assertEquals(annotUniqueName, annotation.getUniqueName());
 		Assert.assertEquals("GOLD", annotation.getQualityQualifier());
-		Assert.assertEquals(9547085, annotation.getAnnotationId());
+		Assert.assertEquals(annotId, annotation.getAnnotationId());
 		Assert.assertEquals(1, annotation.getEvidences().size());
-		Assert.assertEquals(9547085, annotation.getEvidences().get(0).getAnnotationId());
+		Assert.assertEquals(annotId, annotation.getEvidences().get(0).getAnnotationId());
 		Assert.assertEquals(39235676, annotation.getEvidences().get(0).getResourceId());
 		Assert.assertEquals("database", annotation.getEvidences().get(0).getResourceType());
 		Assert.assertEquals("HPA", annotation.getEvidences().get(0).getResourceDb());
