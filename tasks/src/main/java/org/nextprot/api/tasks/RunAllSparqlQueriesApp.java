@@ -29,13 +29,13 @@ public class RunAllSparqlQueriesApp {
 	//private static final String SPARQL_ENDPOINT = "http://godel:8890/sparql";
 	
 	//private static final String QUERIES_URL = "http://alpha-api.nextprot.org/queries/tutorial.json?snorql=true";
-	//private static final String QUERIES_URL = "http://localhost:8080/nextprot-api-web/queries/tutorial.json?snorql=true";
-	private static final String QUERIES_URL = "http://build-api.nextprot.org/queries/tutorial.json?snorql=true";
+	private static final String QUERIES_URL = "http://localhost:8080/nextprot-api-web/queries/tutorial.json?snorql=true";
+	//private static final String QUERIES_URL = "http://build-api.nextprot.org/queries/tutorial.json?snorql=true";
 	//private static final String QUERIES_URL = "https://api.nextprot.org/queries/tutorial.json?snorql=true";
 	
 	//private static final String PREFIXES_URL = "http://alpha-api.nextprot.org/sparql-prefixes";
-	//private static final String PREFIXES_URL = "http://localhost:8080/nextprot-api-web/sparql-prefixes";
-	private static final String PREFIXES_URL = "http://build-api.nextprot.org/sparql-prefixes";
+	private static final String PREFIXES_URL = "http://localhost:8080/nextprot-api-web/sparql-prefixes";
+	//private static final String PREFIXES_URL = "http://build-api.nextprot.org/sparql-prefixes";
 
 
 	public static void main(String[] args) throws Exception {
@@ -122,7 +122,7 @@ public class RunAllSparqlQueriesApp {
 		QueryExecution qExec = null;
 		try {
 			qExec = QueryExecutionFactory.sparqlService(SPARQL_ENDPOINT, query);
-			qExec.setTimeout(10 * 60 * 1000); //10 min
+			qExec.setTimeout(20 * 60 * 1000); //20 min
 			
 			ResultSet rs = qExec.execSelect();
 			while (rs.hasNext()) {
