@@ -252,7 +252,7 @@ public class ExportServiceImpl implements ExportService {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put(ExportService.ENTRIES_COUNT_PARAM, accessions.size());
-		map.put("release", releaseInfoService.findReleaseContents());
+		map.put("release", releaseInfoService.findReleaseInfo());
 
 		writer.write(accessions, map);
 	}

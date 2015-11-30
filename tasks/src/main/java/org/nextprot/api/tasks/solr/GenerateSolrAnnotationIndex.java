@@ -1,6 +1,5 @@
 package org.nextprot.api.tasks.solr;
 
-//import java.util.List;
 import java.util.Set;
 
 import org.nextprot.api.commons.exception.NPreconditions;
@@ -8,9 +7,8 @@ import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.tasks.solr.indexer.AnnotationSolrIndexer;
+import org.nextprot.api.tasks.solr.indexer.EntrySolrIndexer;
 
 public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 
@@ -32,7 +30,8 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=\"http://localhost:8983/solr/npentries1\"");
 		logger.info("Solr server: " + solrServer); 
 
-		AnnotationSolrIndexer indexer = new AnnotationSolrIndexer(solrServer);
+		EntrySolrIndexer indexer = new EntrySolrIndexer(solrServer);
+		// Get an access to some needed services
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
 		indexer.setDbxrefservice(getBean(DbXrefService.class));
 		
@@ -50,13 +49,13 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		logger.info("indexing " + allentryids.size() +  " entries...");
 		for (String id : allentryids) {
 			//System.err.println("id: " + id);
-			//Entry currentry = entryService.findEntry("NX_Q86SQ0");
-			//Entry currentry = entryService.findEntry("NX_Q08426");
+			//Entry currentry = entryBuilderService.buildWithEverything("NX_O60729");
+			//Entry currentry = entryBuilderService.buildWithEverything("NX_Q3LXA3");
 			Entry currentry = entryBuilderService.buildWithEverything(id);
 			indexer.add(currentry);
 			ecnt++;
 			if((ecnt % 100) == 0) System.err.println(ecnt + "...");
-			if(ecnt >= 100) break;
+			if(ecnt >= 1000) break;
 		}
 		
 		indexer.addRemaing();

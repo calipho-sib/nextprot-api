@@ -1,6 +1,6 @@
 package org.nextprot.api.core.utils.peff;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
@@ -12,17 +12,17 @@ import java.util.Map;
  */
 class IsoformProcessingProductPeffFormatter extends IsoformAnnotationPeffFormatter {
 
-    private static final Map<AnnotationApiModel, String> PSI_PEFF_MAP;
+    private static final Map<AnnotationCategory, String> PSI_PEFF_MAP;
 
     static {
 
         PSI_PEFF_MAP = new HashMap<>();
 
-        PSI_PEFF_MAP.put(AnnotationApiModel.SIGNAL_PEPTIDE, "SIGNAL");
-        PSI_PEFF_MAP.put(AnnotationApiModel.MATURATION_PEPTIDE, "PROPEP");
-        PSI_PEFF_MAP.put(AnnotationApiModel.MATURE_PROTEIN, "CHAIN");
-        PSI_PEFF_MAP.put(AnnotationApiModel.PEROXISOME_TRANSIT_PEPTIDE, "TRANSIT");
-        PSI_PEFF_MAP.put(AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE, "TRANSIT");
+        PSI_PEFF_MAP.put(AnnotationCategory.SIGNAL_PEPTIDE, "SIGNAL");
+        PSI_PEFF_MAP.put(AnnotationCategory.MATURATION_PEPTIDE, "PROPEP");
+        PSI_PEFF_MAP.put(AnnotationCategory.MATURE_PROTEIN, "CHAIN");
+        PSI_PEFF_MAP.put(AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE, "TRANSIT");
+        PSI_PEFF_MAP.put(AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE, "TRANSIT");
     }
 
     IsoformProcessingProductPeffFormatter() {

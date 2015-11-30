@@ -133,7 +133,15 @@
 	<identifier_resource_assoc assoc_id="2" identifier_id="100" resource_id="302" datasource_id="2"/>
 	<identifier_resource_assoc assoc_id="3" identifier_id="100" resource_id="304" datasource_id="2"/>
 	<identifier_resource_assoc assoc_id="4" identifier_id="100" resource_id="305" datasource_id="13"/>
+	<identifier_resource_assoc assoc_id="5" identifier_id="100" resource_id="301" datasource_id="9"/>  <!-- PIR datasource -->
+	<identifier_resource_assoc assoc_id="6" identifier_id="100" resource_id="306" datasource_id="9"/>  <!-- PIR datasource only for this pub -->
 
-	<identifier_resource_assoc assoc_id="5" identifier_id="100" resource_id="301" datasource_id="9"/>
-	<identifier_resource_assoc assoc_id="6" identifier_id="100" resource_id="306" datasource_id="9"/>
+	<view_master_publication_assoc pub_id="301" entry_id="100" pf_largescale="0" pf_cited="0" pf_uncited="1" pub_type_id="10" />
+	<view_master_publication_assoc pub_id="302" entry_id="100" pf_largescale="0" pf_cited="1" pf_uncited="0" pub_type_id="10" />
+	<view_master_publication_assoc pub_id="303" entry_id="100" pf_largescale="0" pf_cited="1" pf_uncited="0" pub_type_id="10" />
+	<view_master_publication_assoc pub_id="304" entry_id="100" pf_largescale="0" pf_cited="0" pf_uncited="1" pub_type_id="10" />
+	<view_master_publication_assoc pub_id="305" entry_id="100" pf_largescale="0" pf_cited="0" pf_uncited="1" pub_type_id="10" />
+	<view_master_publication_assoc pub_id="306" entry_id="100" pf_largescale="0" pf_cited="0" pf_uncited="1" pub_type_id="10" />
+	<view_master_publication_assoc pub_id="307" entry_id="100" pf_largescale="0" pf_cited="1" pf_uncited="0" pub_type_id="10" />
+
 </dataset>	

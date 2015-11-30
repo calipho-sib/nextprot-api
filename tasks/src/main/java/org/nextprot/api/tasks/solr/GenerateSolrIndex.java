@@ -10,7 +10,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @ Generic Solr indexer for the three cores (Annotation, Publications and Terminology
  */
 public abstract class GenerateSolrIndex {
-    // To disable the cache temporarily: comment-out the cahemanager variable and references, and remove 'cache' from the "spring.profiles.active" properties
+    // To disable the cache temporarily: comment-out the cachemanager variable and references, and remove 'cache' from the "spring.profiles.active" properties
 	private CacheManager cacheManager = null;
 	private ClassPathXmlApplicationContext ctx = null;
 	protected Logger logger = Logger.getLogger(GenerateSolrIndex.class);

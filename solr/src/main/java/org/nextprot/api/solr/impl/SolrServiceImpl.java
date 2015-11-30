@@ -20,9 +20,8 @@ import org.nextprot.api.commons.exception.SearchConnectionException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.solr.*;
-import org.nextprot.api.solr.SearchResult.SearchResultFacet;
-import org.nextprot.api.solr.SearchResult.SearchResultItem;
-import org.nextprot.api.solr.SearchResult.SearchResultSpellcheck;
+import org.nextprot.api.solr.SearchResult.Facet;
+import org.nextprot.api.solr.SearchResult.Spellcheck;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -217,14 +216,15 @@ public class SolrServiceImpl implements SolrService {
 
 		SolrDocumentList docs = response.getResults();
 		Logger.debug("Response doc size:" + docs.size());
-		List<SearchResultItem> res = new ArrayList<SearchResultItem>();
+		List<Map<String, Object>> res = new ArrayList<>();
 
-		SearchResultItem item = null;
+		Map<String, Object> item = null;
 		for (SolrDocument doc : docs) {
 
-			item = new SearchResult.SearchResultItem();
+			item = new HashMap<>();
+
 			for (Entry<String, Object> e : doc.entrySet())
-				item.addProperty(e.getKey(), e.getValue());
+				item.put(e.getKey(), e.getValue());
 
 			res.add(item);
 		}
@@ -235,20 +235,20 @@ public class SolrServiceImpl implements SolrService {
 
 		results.setRows(query.getRows());
 		results.setElapsedTime(response.getElapsedTime());
-		results.setNumFound(docs.getNumFound());
+		results.setFound(docs.getNumFound());
 
 		if (docs.getMaxScore() != null)
-			results.setMaxScore(docs.getMaxScore());
+			results.setScore(docs.getMaxScore());
 
 		// Facets
 
 		List<FacetField> facetFields = response.getFacetFields();
 		Logger.debug("Response facet fields:" + facetFields.size());
 		if (facetFields != null) {
-			SearchResultFacet facet = null;
+			Facet facet = null;
 
 			for (FacetField ff : facetFields) {
-				facet = new SearchResultFacet(ff.getName());
+				facet = new Facet(ff.getName());
 				Logger.debug("Response facet field:" + ff.getName() + " count:" + ff.getValueCount());
 
 				for (Count c : ff.getValues())
@@ -262,7 +262,7 @@ public class SolrServiceImpl implements SolrService {
 		SpellCheckResponse spellcheckResponse = response.getSpellCheckResponse();
 
 		if (spellcheckResponse != null) {
-			SearchResultSpellcheck spellcheckResult = new SearchResultSpellcheck();
+			Spellcheck spellcheckResult = new Spellcheck();
 
 			List<Suggestion> suggestions = spellcheckResponse.getSuggestions();
 			List<Collation> collations = spellcheckResponse.getCollatedResults();
@@ -326,10 +326,11 @@ public class SolrServiceImpl implements SolrService {
 	}
 
 	private Query buildQuery(String indexName, String configurationName, QueryRequest request) {
-		// Logger.debug("calling buildQuery() with indexName=" + indexName +
-		// ", configName=" + configurationName + ", request=" +
-		// request.toPrettyString());
-		return buildQuery(indexName, configurationName, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
+		Logger.debug("calling buildQuery() with indexName=" + indexName + ", configName=" + configurationName) ;
+		Logger.debug("\n--------------\nQueryRequest:\n--------------\n"+request.toPrettyString()+"\n--------------");
+		Query q = buildQuery(indexName, configurationName, request.getQuery(), request.getQuality(), request.getSort(), request.getOrder(), request.getStart(), request.getRows(), request.getFilter());
+		Logger.debug("\n--------------\nQuery:\n--------------\n" + q.toPrettyString() + "\n--------------");
+		return q;
 	}
 
 	private Query buildQuery(String indexName, String configuration, String queryString, String quality, String sort, String order, String start, String rows, String filter) {
@@ -363,11 +364,11 @@ public class SolrServiceImpl implements SolrService {
 	@Override
 	public List<String> executeQueryAndGetAccessions(Query query) {
 
-		List<String> accessions = new ArrayList<String>();
+		List<String> accessions = new ArrayList<>();
 		try {
 			SearchResult result = executeQuery(query);
-			for (SearchResultItem item : result.getResults()) {
-				accessions.add((String) item.getProperties().get("id"));
+			for (Map<String, Object> item : result.getResults()) {
+				accessions.add((String) item.get("id"));
 			}
 		} catch (SearchQueryException e) {
 			e.printStackTrace();

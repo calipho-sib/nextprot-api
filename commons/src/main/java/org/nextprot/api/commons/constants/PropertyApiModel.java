@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.nextprot.api.commons.utils.StringUtils;
-
 public class PropertyApiModel {
 	
 	protected String dbName; // name of the property in db
@@ -45,39 +43,39 @@ public class PropertyApiModel {
 	
 	private static enum Parent { EVIDENCE, ANNOTATION }
 	
-	private static Map<AnnotationApiModel,Set<PropertyApiModel>> anno2props;
+	private static Map<AnnotationCategory,Set<PropertyApiModel>> anno2props;
 	static {
 		anno2props=new HashMap<>();
 
-		anno2props.put(AnnotationApiModel.GLYCOSYLATION_SITE,
+		anno2props.put(AnnotationCategory.GLYCOSYLATION_SITE,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_CELL_LINE,"cellLine","string", true, true, Parent.EVIDENCE)))); 
 
-		anno2props.put(AnnotationApiModel.GO_MOLECULAR_FUNCTION,
+		anno2props.put(AnnotationCategory.GO_MOLECULAR_FUNCTION,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_GO_QUALIFIER,"goQualifier","string", true, true, Parent.EVIDENCE)))); 
-		anno2props.put(AnnotationApiModel.GO_CELLULAR_COMPONENT,
+		anno2props.put(AnnotationCategory.GO_CELLULAR_COMPONENT,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_GO_QUALIFIER,"goQualifier","string", true, true, Parent.EVIDENCE)))); 
 		
-		anno2props.put(AnnotationApiModel.EXPRESSION_PROFILE,
+		anno2props.put(AnnotationCategory.EXPRESSION_PROFILE,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_ANTIBODIES_ACC,"antibodiesAcc","string", true, true, Parent.EVIDENCE), 
 						new PropertyApiModel(NAME_EXPRESSION_LEVEL,"expressionLevel","string", true, true, Parent.EVIDENCE), 
 						new PropertyApiModel(NAME_INTEGRATION_LEVEL,"integrationLevel","string", true, true, Parent.EVIDENCE)))); 
-		anno2props.put(AnnotationApiModel.PDB_MAPPING,
+		anno2props.put(AnnotationCategory.PDB_MAPPING,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_RESOLUTION,"resolution","double", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_METHOD, "method", "string", true, true, Parent.ANNOTATION))));
-		anno2props.put(AnnotationApiModel.PEPTIDE_MAPPING,
+		anno2props.put(AnnotationCategory.PEPTIDE_MAPPING,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_PEPTIDE_NAME,"peptideName","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_PROTEOTYPICITY, "proteotypic", "boolean", true, true, Parent.ANNOTATION))));
-		anno2props.put(AnnotationApiModel.SRM_PEPTIDE_MAPPING,
+		anno2props.put(AnnotationCategory.SRM_PEPTIDE_MAPPING,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_PEPTIDE_NAME,"peptideName","string", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_PEPTIDE_PROTEOTYPICITY, "proteotypic", "boolean", true, true, Parent.ANNOTATION))));
-		anno2props.put(AnnotationApiModel.BINARY_INTERACTION,
+		anno2props.put(AnnotationCategory.BINARY_INTERACTION,
 				new HashSet<>(Arrays.asList(
 						new PropertyApiModel(NAME_SELF_INTERACTION,"selfInteraction","boolean", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_NUMBER_EXPERIMENTS,"numberOfExperiments","integer", true, true, Parent.EVIDENCE))));
@@ -87,7 +85,7 @@ public class PropertyApiModel {
 	}
 
 	
-	public static PropertyWriter getXMLWriter(AnnotationApiModel aModel, String propertyDbName) {
+	public static PropertyWriter getXMLWriter(AnnotationCategory aModel, String propertyDbName) {
 		if (! anno2props.containsKey(aModel)) return null;
 		for (PropertyApiModel prop: anno2props.get(aModel)) {
 			if (propertyDbName.equals(prop.dbName)) {
@@ -97,7 +95,7 @@ public class PropertyApiModel {
 		return null;
 	}
 
-	public static PropertyWriter getTtlWriter(AnnotationApiModel aModel, String propertyDbName) {
+	public static PropertyWriter getTtlWriter(AnnotationCategory aModel, String propertyDbName) {
 		if (! anno2props.containsKey(aModel)) return null;
 		for (PropertyApiModel prop: anno2props.get(aModel)) {
 			if (propertyDbName.equals(prop.dbName)) {

@@ -1,14 +1,14 @@
 package org.nextprot.api.core.domain;
 
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.util.Collection;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
-import org.nextprot.api.core.utils.NXVelocityUtils;
-
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.util.Collection;
+import org.nextprot.api.core.dao.EntityName;
 
 
 public class Isoform implements Serializable {
@@ -25,9 +25,9 @@ public class Isoform implements Serializable {
 
 	private boolean swissProtDisplayedIsoform;
 
-	private IsoformEntityName mainEntityName;
+	private EntityName mainEntityName;
 
-	private Collection<IsoformEntityName> synonyms;
+	private Collection<EntityName> synonyms;
 	
 	@Deprecated
 	public String getIsoelectricPointAsString() {
@@ -87,19 +87,19 @@ public class Isoform implements Serializable {
 		this.swissProtDisplayedIsoform = swissProtDisplayedIsoform;
 	}
 
-	public IsoformEntityName getMainEntityName() {
+	public EntityName getMainEntityName() {
 		return mainEntityName;
 	}
 
-	public void setMainEntityName(IsoformEntityName mainEntityName) {
+	public void setMainEntityName(EntityName mainEntityName) {
 		this.mainEntityName = mainEntityName;
 	}
 
-	public Collection<IsoformEntityName> getSynonyms() {
+	public Collection<EntityName> getSynonyms() {
 		return synonyms;
 	}
 
-	public void setSynonyms(Collection<IsoformEntityName> synonyms) {
+	public void setSynonyms(Collection<EntityName> synonyms) {
 		this.synonyms = synonyms;
 	}
 }

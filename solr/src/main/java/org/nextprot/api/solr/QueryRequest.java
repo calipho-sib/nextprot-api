@@ -188,6 +188,12 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 		builder.append("sparqlTitle  : "+this.sparqlTitle+"\n");
 		builder.append("sparqlEngine : "+this.sparqlEngine+"\n");
 		builder.append("sparql       : "+this.sparql+"\n");
+		builder.append("chromosome   : "+this.chromosome+"\n");
+		builder.append("listId       : "+this.listId+"\n");
+		builder.append("queryId       : "+this.queryId+"\n");
+		builder.append("listId       : "+this.listId+"\n");
+
+		
 		return builder.toString();
 	}
 

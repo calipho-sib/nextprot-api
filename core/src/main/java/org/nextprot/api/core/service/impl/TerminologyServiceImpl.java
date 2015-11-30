@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -7,7 +8,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
-import org.nextprot.api.core.dao.EnzymeDao;
 import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
@@ -24,7 +24,6 @@ class TerminologyServiceImpl implements TerminologyService {
 	private static final Log LOGGER = LogFactory.getLog(TerminologyServiceImpl.class);
 
 	@Autowired private TerminologyDao terminologyDao;
-	@Autowired private EnzymeDao enzymeDao;
 	
 	@Override
 	@Cacheable("terminology-by-accession")
@@ -72,10 +71,12 @@ class TerminologyServiceImpl implements TerminologyService {
 	@Override
 	@Cacheable("enzyme-terminology") //TODO there should be an utiliy method on entry to get the enzymes...
 	public List<Terminology> findEnzymeByMaster(String entryName) {
-		List<Terminology> terms =  enzymeDao.findEnzymeByMaster(entryName);
-		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
-		return new ImmutableList.Builder<Terminology>().addAll(terms).build();
-
+		Set<String> accessions = new HashSet<String>(terminologyDao.findEnzymeAcsByMaster(entryName));
+		if(!accessions.isEmpty()){ //is found accessions gets the corresponding terminology
+			List<Terminology> terms =  terminologyDao.findTerminologyByAccessions(accessions);
+			//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
+			return new ImmutableList.Builder<Terminology>().addAll(terms).build();
+		}else return new ImmutableList.Builder<Terminology>().build(); //returns empty list
 	}
 
 	@Override

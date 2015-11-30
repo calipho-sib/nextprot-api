@@ -1,11 +1,10 @@
 package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.PeptideMappingDao;
-import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.PeptideMapping;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
 import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
@@ -55,13 +54,13 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			this.peptideMappingDao.findSyntheticPeptidesByMasterId(id) ;
 
 		// key=peptide,value=mapping with 1-n isospecs, 1-n evidences, 1-n properties
-		Map<String, PeptideMapping> mergeMap = new HashMap<String, PeptideMapping>();
+		Map<String, PeptideMapping> mergeMap = new HashMap<>();
 
 		if (allMapping.size() > 0) {
 			String key = null;
-			List<String> peptideNames = new ArrayList<String>();
+			List<String> peptideNames = new ArrayList<>();
 
-			Iterator<IsoformSpecificity> it = null;
+			Iterator<AnnotationIsoformSpecificity> it;
 			for (PeptideMapping mapping : allMapping) {
 				key = mapping.getPeptideUniqueName();
 
@@ -88,7 +87,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 				mergeMap.get(prop.getPeptideName()).addProperty(prop);
 		}
 
-		return new ArrayList<PeptideMapping>(mergeMap.values());
+		return new ArrayList<>(mergeMap.values());
 	}
 	
 	/*
@@ -117,7 +116,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		boolean withSynthetic = ! withNatural;
 		List<Map<String, Object>> records = this.peptideMappingDao.findPeptideMappingAnnotationsByMasterId(masterId, withNatural, withSynthetic);
 		Map<Long,Annotation> annotationMap = buildAnnotationMapFromRecords(records, withNatural);		
-		List<Annotation> annotations = new ArrayList<Annotation>(annotationMap.values());
+		List<Annotation> annotations = new ArrayList<>(annotationMap.values());
 		if (annotations.size()==0) return annotations;
 		
 		List<String> pepNames = this.peptideNamesService.findAllPeptideNamesByMasterId(uniqueName);
@@ -134,21 +133,50 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		
 	}
 
+    // TODO: REFACTOR ME, I'M NOT DRY! (COPY/PASTED FROM METHOD BELOW)
 	static void attachPeptidePropertiesToAnnotations(List<Annotation> annotations, Map<String, List<AnnotationProperty>> propMap) {
+
 		for (Annotation annot: annotations) {
-			AnnotationProperty pepNameProperty = annot.getProperties().get(0); // WARNING: we expect first property in list be the "peptide name" property !
-			if (!pepNameProperty.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME)) {
-				throw new RuntimeException("Found unexpected property name:" + pepNameProperty.getName());
+
+			if (!annot.getPropertiesMap().containsKey(PropertyApiModel.NAME_PEPTIDE_NAME)) {
+				throw new RuntimeException("Cannot found property name " + PropertyApiModel.NAME_PEPTIDE_NAME);
 			}
+
+			Collection<AnnotationProperty> properties = annot.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_NAME);
+
+			AnnotationProperty pepNameProperty = properties.iterator().next(); // WARNING: we expect first property in list be the "peptide name" property !
+
 			String pepName = pepNameProperty.getValue();
 			if (!propMap.containsKey(pepName)) {
 				throw new RuntimeException("Found no props for peptide with name:" + pepName);
 			}
 			List<AnnotationProperty> props = cloneUsefulPropertiesForAnnotation(propMap.get(pepName), annot.getAnnotationId());
-			annot.getProperties().addAll(props);
+			annot.addProperties(props);
 		}
 	}
-	
+
+    // TODO: REFACTOR ME, I'M NOT DRY! (COPY/PASTED FROM METHOD ABOVE)
+    static void attachPeptideEvidencesToAnnotations(List<Annotation> annotations, Map<String, List<AnnotationEvidence>> evidences) {
+
+        for (Annotation annot: annotations) {
+
+            if (!annot.getPropertiesMap().containsKey(PropertyApiModel.NAME_PEPTIDE_NAME)) {
+                throw new RuntimeException("Cannot found property name " + PropertyApiModel.NAME_PEPTIDE_NAME);
+            }
+
+            Collection<AnnotationProperty> properties = annot.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_NAME);
+
+            AnnotationProperty pepNameProperty = properties.iterator().next(); // WARNING: we expect first property in list be the "peptide name" property !
+
+            String pepName = pepNameProperty.getValue();
+            if (!evidences.containsKey(pepName)) {
+                throw new RuntimeException("Found no evidence for peptide with name:" + pepName);
+            }
+            List<AnnotationEvidence> clonedList = cloneEvidencesForAnnotation(evidences.get(pepName), annot.getAnnotationId());
+            annot.setEvidences(clonedList);
+        }
+    }
+
 	/*
 	 * clone the property 'is proteotypic' and sets its annotation id
 	 * and return a list containing this "cloned" property
@@ -167,22 +195,6 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			}
 		}
 		return result;
-	}
-	
-	static void attachPeptideEvidencesToAnnotations(List<Annotation> annotations, Map<String, List<AnnotationEvidence>> evidences) {
-		for (Annotation annot: annotations) {
-			AnnotationProperty pepNameProperty = annot.getProperties().get(0);  // WARNING: we expect first property in list be the "peptide name" property !
-			if (!pepNameProperty.getName().equals(PropertyApiModel.NAME_PEPTIDE_NAME)) {
-				throw new RuntimeException("Found unexpected property name:" + pepNameProperty.getName());
-			}
-			String pepName = pepNameProperty.getValue();
-			if (!evidences.containsKey(pepName)) {
-				throw new RuntimeException("Found no evidence for peptide with name:" + pepName);
-			}
-			List<AnnotationEvidence> peptideEvidences = evidences.get(pepName); 
-			List<AnnotationEvidence> clonedList = cloneEvidencesForAnnotation(peptideEvidences, annot.getAnnotationId());
-			annot.setEvidences(clonedList);
-		}
 	}
 	
 	static List<AnnotationEvidence> cloneEvidencesForAnnotation(List<AnnotationEvidence> peptideEvidences, Long annotationId) {
@@ -207,6 +219,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			annEvi.setResourceDescription(pepEvi.getResourceDescription());
 			annEvi.setResourceId(pepEvi.getResourceId());
 			annEvi.setResourceType(pepEvi.getResourceType());
+			annEvi.setEvidenceCodeOntology(pepEvi.getEvidenceCodeOntology());
 			if (pepEvi.getPropertiesNames()!=null) {
 				List<AnnotationEvidenceProperty> props = new ArrayList<>();
 				for (String n: pepEvi.getPropertiesNames()) {
@@ -238,8 +251,8 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			Integer lastPos = (Integer)record.get(PeptideMappingDao.KEY_LAST_POS);
 			String quality = (String)record.get(PeptideMappingDao.KEY_QUALITY_QUALIFIER);
 			String category = (isNatural ? 
-					AnnotationApiModel.PEPTIDE_MAPPING.getDbAnnotationTypeName() : 
-					AnnotationApiModel.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName());
+					AnnotationCategory.PEPTIDE_MAPPING.getDbAnnotationTypeName() :
+					AnnotationCategory.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName());
 
 			// if annot never seen before, put it into the map and initialize it
 			if (!annotationMap.containsKey(annotationId)) {
@@ -248,7 +261,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 				annot.setAnnotationId(annotationId);
 				annot.setCategory(category);
 				annot.setQualityQualifier(quality);
-				annot.setTargetingIsoforms(new ArrayList<AnnotationIsoformSpecificity>());
+				annot.addTargetingIsoforms(new ArrayList<AnnotationIsoformSpecificity>());
 				String entry = iso.substring(0, iso.indexOf('-'));
 				String nature = isNatural ? "_NATUR": "_SYNTH";
 				annot.setUniqueName("AN_" + entry + "_" + annot.getAnnotationId() + nature);
@@ -260,7 +273,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 				prop.setName(PropertyApiModel.NAME_PEPTIDE_NAME);
 				prop.setValue(pep);
 				props.add(prop);
-				annot.setProperties(props);
+				annot.addProperties(props);
 
 			}
 			// add isoform specificity
@@ -278,5 +291,4 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		return annotationMap;
 		
 	}
-
 }

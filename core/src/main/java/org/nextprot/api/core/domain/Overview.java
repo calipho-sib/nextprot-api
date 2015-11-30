@@ -1,12 +1,18 @@
 package org.nextprot.api.core.domain;
 
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
-
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import org.nextprot.api.core.dao.EntityName;
 
 public class Overview implements Serializable{
 
@@ -34,9 +40,17 @@ public class Overview implements Serializable{
 	private List<EntityName> geneNames;
 	private List<EntityName> functionalRegionNames;
 	private List<EntityName> cleavedRegionNames;
-
 	private List<EntityName> additionalNames;
+	private List<EntityName> isoformNames;
 	
+	public List<EntityName> getIsoformNames() {
+		return isoformNames;
+	}
+
+	public void setIsoformNames(List<EntityName> isoformNames) {
+		this.isoformNames = isoformNames;
+	}
+
 	public History getHistory() {
 		return history;
 	}
@@ -46,9 +60,9 @@ public class Overview implements Serializable{
 	 * @return the recommended name as full and its synonyms (shorts ent ECs) if they exists
 	 */
 	public EntityName getRecommendedProteinName() {
-		EntityName recommendedName = new Overview.EntityName();
+		EntityName recommendedName = new EntityName();
 		for(EntityName name : this.proteinNames){
-			if(name.isMain){
+			if(name.isMain()){
 				recommendedName.setCategory(name.getCategory());
 				recommendedName.setClazz(name.getClazz());
 				recommendedName.setId(name.getId());
@@ -58,7 +72,7 @@ public class Overview implements Serializable{
 				recommendedName.setQualifier(name.getQualifier());
 				recommendedName.setType(name.getType());
 				if(name.getSynonyms() != null){
-					recommendedName.setSynonyms(new ArrayList<Overview.EntityName>());
+					recommendedName.setSynonyms(new ArrayList<EntityName>());
 					for(EntityName sname : name.getSynonyms()){
 						if(!sname.getQualifier().equals("full")){
 							recommendedName.getSynonyms().add(sname); //add the short and children
@@ -76,9 +90,9 @@ public class Overview implements Serializable{
 	 * @return
 	 */
 	public List<EntityName> getAlternativeProteinNames() {
-		List<EntityName> result = new ArrayList<Overview.EntityName>();
+		List<EntityName> result = new ArrayList<EntityName>();
 		for(EntityName name : this.proteinNames){
-			if(name.isMain){
+			if(name.isMain()){
 				if(name.getSynonyms() != null){
 					for(EntityName sname : name.getSynonyms()){
 						if(sname.getQualifier().equals("full")){
@@ -246,153 +260,6 @@ public class Overview implements Serializable{
 		}
 	}
 	
-	public static class EntityName implements Serializable, Comparable<EntityName>{
-
-		private static final long serialVersionUID = -6510772648061413417L;
-		private Boolean isMain;
-		private EntityNameClass clazz;
-		private String type;
-		private String qualifier;
-		private String id;
-		private String category;
-		public String getCategory() {
-			return category;
-		}
-
-		public void setCategory(String category) {
-			this.category = category;
-		}
-
-		private String name;
-		private String parentId;
-		private List<EntityName> synonyms;
-
-		public String getComposedName(){
-			String qualifier="", type=getType();
-			if(getQualifier()!=null){
-				qualifier=getQualifier();
-//				return qualifier+type.substring(0, 1).toUpperCase() + type.substring(1);
-				return qualifier+" "+type;
-			}
-			return getType();
-		}
-		
-		public Boolean isMain() {
-			return isMain;
-		}
-		
-		public void setMain(Boolean isMain) {
-			this.isMain = isMain;
-		}
-		
-		public EntityNameClass getClazz() {
-			return clazz;
-		}
-
-		public void setClazz(EntityNameClass clazz) {
-			this.clazz = clazz;
-		}
-
-		public String getType() {
-			return type;
-		}
-		
-		public void setType(String type) {
-			this.type = type;
-		}
-		
-		public String getQualifier() {
-			return qualifier;
-		}
-		
-		public void setQualifier(String qualifier) {
-			this.qualifier = qualifier;
-		}
-		
-		public String getId() {
-			return id;
-		}
-
-		public void setId(String synonymId) {
-			this.id = synonymId;
-		}
-
-		@Deprecated //TODO fix this on nextprot-js and remove deprecated
-		public String getSynonymId() {
-			return id;
-		}
-
-		@Deprecated //TODO fix this on nextprot-js and remove deprecated
-		public String getSynonymName() {
-			return name;
-		}
-		
-		public String getName() {
-			return name;
-		}
-		
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public String getParentId() {
-			return parentId;
-		}
-
-		public void setParentId(String parentId) {
-			this.parentId = parentId;
-		}
-
-		public List<EntityName> getSynonyms() {
-			return synonyms;
-		}
-		
-		public void setSynonyms(List<EntityName> synonyms) {
-			this.synonyms = synonyms;
-		}
-		
-		public void addSynonym(EntityName synonym) {
-			if(this.synonyms == null)
-				this.synonyms = new ArrayList<EntityName>();
-			this.synonyms.add(synonym);
-		}
-
-		@Override
-		public int compareTo(EntityName o) {
-			int thisValue = 10;
-			if(this.qualifier != null){
-				try {
-					thisValue = QualifierValue.valueOf(this.qualifier.replaceAll("\\s+","_").toUpperCase()).ordinal();
-				}catch (IllegalArgumentException e){
-					e.printStackTrace();
-					LOGGER.error("Failed to compare enum values for this qualifier " + this.qualifier + e.getMessage());
-				}
-			}
-			
-			int otherValue = 10;
-			if(o.qualifier != null){
-				try {
-					otherValue = QualifierValue.valueOf(o.qualifier.replaceAll("\\s+","_").toUpperCase()).ordinal();
-				}catch (IllegalArgumentException e){
-					e.printStackTrace();
-					LOGGER.error("Failed to compare enum values for other qualifier " + o.qualifier + e.getMessage());
-				}
-			}
-
-			//orf cases
-			if("orf".equalsIgnoreCase(o.category)){ return -1;}
-			if("orf".equalsIgnoreCase(this.category)){return 1;}
-				
-			return thisValue - otherValue;
-		}
-		
-		private static enum QualifierValue {
-			FULL, SHORT, EC, ALLERGEN, CD_ANTIGEN, INN 
-		}
-
-	
-		
-	}
 	
 	public static enum EntityNameClass {
 		PROTEIN_NAMES("proteinNames"),

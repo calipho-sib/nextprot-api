@@ -82,7 +82,7 @@ public class Family implements Serializable{
 	public String getLevel() {
 		return level;
 	}
-	
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		sb.append("id       : " + this.getFamilyId() + "\n");

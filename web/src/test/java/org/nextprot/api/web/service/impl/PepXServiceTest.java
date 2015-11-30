@@ -24,8 +24,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 
 		String peptide = "GANAP";
 		boolean modeIsoleucine = true;
-		String entryName = "NX_FAKE_ENTRY";
-		
+
 		List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>("Iso-1", null));
 		@SuppressWarnings("unchecked") List<Annotation> annotations = mock(List.class);
 		Isoform isoform = mock(Isoform.class);
@@ -33,25 +32,22 @@ public class PepXServiceTest extends WebUnitBaseTest {
 		when(isoform.getSequence()).thenReturn("AGANAPA");
 		
 		List<Isoform> isoforms = Arrays.asList(isoform);
-		
 
-		List<Annotation> virtualAnnotations = PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, annotations, isoforms);
+		List<Annotation> virtualAnnotations = PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, isosAndPositions, annotations, isoforms);
 		Annotation annot = virtualAnnotations.get(0);
 		assertTrue(annot.getCategory().equals("pepx-virtual-annotation"));
 		assertTrue(annot.getVariant() == null);
-		assertTrue(annot.getTargetIsoformsMap().keySet().contains("Iso-1"));
+		assertTrue(annot.getTargetingIsoformsMap().keySet().contains("Iso-1"));
 		
 	}
 	
 	
-	@Test(expected=NextProtException.class)
-	public void shouldThrowAnExceptionWhenThePeptideIsNotContainedInTheSequence() throws Exception {
+	@Test
+	public void shouldReturnAnEmptyArrayWhenThePeptideIsNotContainedInTheSequence() throws Exception {
 
-		try {
 			String peptide = "GANAP";
 			boolean modeIsoleucine = true;
-			String entryName = "NX_FAKE_ENTRY";
-			
+
 			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>("Iso-1", null)); //not positional since there is no position
 			@SuppressWarnings("unchecked")
 			List<Annotation> annotations = mock(List.class);
@@ -61,14 +57,36 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			
 			List<Isoform> isoforms = Arrays.asList(isoform);
 
-			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, annotations, isoforms);
+			List<Annotation> result = PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, isosAndPositions, annotations, isoforms);
+			assertTrue(result.isEmpty());
+
+	}
+	
+	/* Specification have changed now it should be empty look at: #shouldReturnAnEmptyArrayWhenThePeptideIsNotContainedInTheSequence
+	@Test(expected=NextProtException.class)
+	public void shouldThrowAnExceptionWhenThePeptideIsNotContainedInTheSequence() throws Exception {
+
+		try {
+			String peptide = "GANAP";
+			boolean modeIsoleucine = true;
+
+			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>("Iso-1", null)); //not positional since there is no position
+			@SuppressWarnings("unchecked")
+			List<Annotation> annotations = mock(List.class);
+			Isoform isoform = mock(Isoform.class);
+			when(isoform.getUniqueName()).thenReturn("Iso-1");
+			when(isoform.getSequence()).thenReturn("AAAAAA");//Sequence does not contain the peptide
+			
+			List<Isoform> isoforms = Arrays.asList(isoform);
+
+			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, isosAndPositions, annotations, isoforms);
 
 		}catch(NextProtException e){
 			if(e.getMessage().contains("that is not in the current isoform in neXtProt")){
 				throw e; //success tests
 			}else fail();
 		}
-	}
+	}*/
 	
 	@Test
 	public void shouldGiveAnAnnotationWithVariantWhenPresent() throws Exception {
@@ -76,7 +94,6 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			//Taking example NX_Q9H6T3
 			String peptide = "GANAP";
 			boolean modeIsoleucine = true;
-			String entryName = "NX_Q9H6T3";
 			String isoName = "NX_Q9H6T3-3";
 
 			Isoform isoform = mock(Isoform.class);
@@ -89,24 +106,21 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			List<Annotation> annots = Arrays.asList(getMockedAnnotation("L", "P", 158, isoName, true));
 			List<Isoform> isoforms = Arrays.asList(isoform);
 
-			List<Annotation> pepxAnnots = PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, annots, isoforms); //empty or null annotations
+			List<Annotation> pepxAnnots = PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, isosAndPositions, annots, isoforms); //empty or null annotations
 			assertTrue(pepxAnnots.size() == 1);
 			assertTrue(pepxAnnots.get(0).getVariant().getOriginal().equals("L"));
 			assertTrue(pepxAnnots.get(0).getVariant().getVariant().equals("P"));
 			assertTrue(pepxAnnots.get(0).getStartPositionForIsoform(isoName) == 158);
 			assertTrue(pepxAnnots.get(0).getEndPositionForIsoform(isoName) == 158);
-
 	}
-	
-	
-	@Test(expected=NextProtException.class)
-	public void shouldGiveAnExceptionIfTheVariantIsNotConaintedInThePeptide() throws Exception {
-		try {
+
+
+	@Test
+	public void shouldReturnAnEmptryListIfTheVariantIsNotConaintedInThePeptide() throws Exception {
 
 			//Taking example NX_Q9H6T3
 			String peptide = "GANAP";
 			boolean modeIsoleucine = true;
-			String entryName = "NX_Q9H6T3";
 			String isoName = "NX_Q9H6T3-3";
 
 			Isoform isoform = mock(Isoform.class);
@@ -119,14 +133,39 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			List<Annotation> annots = Arrays.asList(getMockedAnnotation("L", "Z", 158, isoName, true));
 			List<Isoform> isoforms = Arrays.asList(isoform);
 
-			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, annots, isoforms); //empty or null annotations
+			List<Annotation> result = PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, isosAndPositions, annots, isoforms); //empty or null annotations
+			assertTrue(result.isEmpty());
+
+	}
+
+	/*Specification has changed look at: shouldReturnAnEmptryListIfTheVariantIsNotConaintedInThePeptide
+	@Test(expected=NextProtException.class)
+	public void shouldGiveAnExceptionIfTheVariantIsNotConaintedInThePeptide() throws Exception {
+		try {
+
+			//Taking example NX_Q9H6T3
+			String peptide = "GANAP";
+			boolean modeIsoleucine = true;
+			String isoName = "NX_Q9H6T3-3";
+
+			Isoform isoform = mock(Isoform.class);
+			when(isoform.getUniqueName()).thenReturn(isoName);
+			//https://cdn.rawgit.com/calipho-sib/sequence-viewer/master/examples/simple.html (check that page to format the sequence)
+			//GANAL is present instead of GANAP
+			when(isoform.getSequence()).thenReturn("MDADPYNPVLPTNRASAYFRLKKFAVAESDCNLAVALNRSYTKAYSRRGAARFALQKLEEAKKDYERVLELEPNNFEATNELRKISQALASKENSYPKEADIVIKSTEGERKQIEAQQNKQQAISEKDRGNGFFKEGKYERAIECYTRGIAADGANALLPANRAMAYLKIQKYEEAEKDCTQAILLDGSYSKAFARRGTARTFLGKLNEAKQDFETVLLLEPGNKQAVTELSKIKKELIEKGHWDDVFLDSTQRQNVVKPIDNPPHPGSTKPLKKVIIEETGNLIQTIDVPDSTTAAAPENNPINLANVIAATGTTSKKNSSQDDLFPTSDTPRAKVLKIEEVSDTSSLQPQASLKQDVCQSYSEKMPIEIEQKPAQFATTVLPPIPANSFQLESDFRQLKSSPDMLYQYLKQIEPSLYPKLFQKNLDPDVFNQIVKILHDFYIEKEKPLLIFEILQRLSELKRFDMAVMFMSETEKKIARALFNHIDKSGLKDSSVEELKKRYGG"); 
+			
+			List<Pair<String, Integer>> isosAndPositions = Arrays.asList(new Pair<String, Integer>(isoName, 154)); //Position of the begin of peptide
+			List<Annotation> annots = Arrays.asList(getMockedAnnotation("L", "Z", 158, isoName, true));
+			List<Isoform> isoforms = Arrays.asList(isoform);
+
+			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, isosAndPositions, annots, isoforms); //empty or null annotations
 		}catch(NextProtException e){
 			if(e.getMessage().contains("No valid variants found for isoform ")){
 				throw e; //success tests
 			}else fail();
 		}
 
-	}
+	}*/
 
 	
 	@Test(expected=NextProtException.class)
@@ -136,7 +175,6 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			//Taking example NX_Q9H6T3
 			String peptide = "GANAP";
 			boolean modeIsoleucine = true;
-			String entryName = "NX_Q9H6T3";
 			String isoName = "NX_Q9H6T3-3";
 
 			Isoform isoform = mock(Isoform.class);
@@ -150,7 +188,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			List<Annotation> annots = Arrays.asList(getMockedAnnotation("O", "P", 158, isoName, true));
 			List<Isoform> isoforms = Arrays.asList(isoform);
 
-			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, annots, isoforms); //empty or null annotations
+			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, isosAndPositions, annots, isoforms); //empty or null annotations
 		}catch(NextProtException e){
 			if(e.getMessage().contains("The amino acid")){
 				throw e; //success tests
@@ -169,7 +207,6 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			//Taking example NX_Q9H6T3
 			String peptide = "GANAP";
 			boolean modeIsoleucine = true;
-			String entryName = "NX_Q9H6T3";
 			String isoName = "NX_Q9H6T3-3";
 
 			Isoform iso1 = mock(Isoform.class);
@@ -180,7 +217,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 			List<Annotation> annots = Arrays.asList(getMockedAnnotation("L", "P", 158, isoName, true));
 			List<Isoform> isoforms = Arrays.asList(iso1);
 
-			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entryName, isosAndPositions, annots, isoforms); //empty or null annotations
+			PepXServiceImpl.buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, isosAndPositions, annots, isoforms); //empty or null annotations
 
 
 		}catch(NextProtException e){

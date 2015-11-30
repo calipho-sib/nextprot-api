@@ -41,6 +41,7 @@ public class AnnotationEvidence implements Serializable {
 	private String assignmentMethod;
 	private String evidenceCodeAC;
 	private String evidenceCodeName;
+	private String evidenceCodeOntology;
 
 	public String getEvidenceCodeAC() {
 		return evidenceCodeAC;
@@ -283,11 +284,7 @@ public class AnnotationEvidence implements Serializable {
 	public Set<String> getPropertiesNames() {
 		/*
 		// do an intersection between properties we want to show and properties we have
-<<<<<<< HEAD
-		Set<String> propsOk = new HashSet<String>(Arrays.asList("expressionLevel","antibodies acc", "numberOfExperiments"));
-=======
 		Set<String> propsOk = new HashSet<>(Arrays.asList("expressionLevel","antibodies acc"));
->>>>>>> develop
 		propsOk.retainAll(propertiesMap.keySet());
 		// return the intersection
 		return propsOk;
@@ -427,4 +424,11 @@ public class AnnotationEvidence implements Serializable {
 		this.assignmentMethod = assignmentMethod;
 	}
 
+	public String getEvidenceCodeOntology() {
+		return evidenceCodeOntology;
+	}
+
+	public void setEvidenceCodeOntology(String ontology) {
+		this.evidenceCodeOntology = ontology;
+	}
 }

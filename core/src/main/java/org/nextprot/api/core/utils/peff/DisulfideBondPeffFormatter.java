@@ -1,6 +1,6 @@
 package org.nextprot.api.core.utils.peff;
 
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
@@ -14,7 +14,7 @@ import java.util.Set;
  */
 class DisulfideBondPeffFormatter extends IsoformPTMPeffFormatter {
 
-    private static final Set<AnnotationApiModel> SUPPORTED_MODELS = EnumSet.of(AnnotationApiModel.DISULFIDE_BOND);
+    private static final Set<AnnotationCategory> SUPPORTED_MODELS = EnumSet.of(AnnotationCategory.DISULFIDE_BOND);
 
     DisulfideBondPeffFormatter() {
 

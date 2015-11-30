@@ -64,5 +64,7 @@ public class NPEntryIsoformXLSWriterTest extends WebIntegrationBaseTest {
                     Assert.assertEquals(expectedRow[i], valuesRow.getCell(i).getStringCellValue());
             }
         }
+        
+        workbook.close();
     }
 }

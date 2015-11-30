@@ -4,9 +4,13 @@ import com.google.common.base.Preconditions;
 
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.util.Arrays;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 public class StringUtils {
+	
 
 	private static final Pattern NON_ASCIIDASH = Pattern.compile("[^\\w-]");
 	private static final Pattern WHITESPACE = Pattern.compile("\\s");
@@ -43,13 +47,15 @@ public class StringUtils {
 	 * @param unicode
 	 * @return
 	 */
-	public static String slug(String unicode) {
+	public static String slug(String unicode, String pattern, String replaceChar) {
 
-		String nowhitespace = WHITESPACE.matcher(unicode).replaceAll("_");
-		String normalized = Normalizer.normalize(nowhitespace, Form.NFD)
-				.replaceAll("[:;.,/(){}\\\\]", "_");
+		String nowhitespace = WHITESPACE.matcher(unicode).replaceAll(replaceChar);
+		String normalized = Normalizer.normalize(nowhitespace, Form.NFD).replaceAll(pattern, replaceChar);
 
 		return NON_ASCIIDASH.matcher(normalized).replaceAll("");
+	}
+	public static String slug(String unicode) {
+		return slug(unicode, "[:;.,/(){}\\\\]",  "_");
 	}
 
 	static public String clean(String input) {
@@ -198,4 +204,23 @@ public class StringUtils {
 			return wrapTextRec(tail, maxLineLen, sb);
 		}
 	}
+	
+	public static String removeHtmlTags(String htmlString){
+		return htmlString.replaceAll("\\<.*?>","");
+	}
+	
+	
+	public static String getSortedValueFromPipeSeparatedField(String pipefield) {
+		String aux = "";
+
+		if(!pipefield.contains("|")) return pipefield;
+
+		SortedSet<String> sset = new TreeSet<String>(Arrays.asList(pipefield.split(" \\| ")));
+		for(String elem: sset) {
+			if(aux != "") aux += " | ";
+			aux += elem;
+		}
+		return(aux);
+	}
+
 }

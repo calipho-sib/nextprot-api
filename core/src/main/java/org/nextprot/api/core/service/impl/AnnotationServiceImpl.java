@@ -6,9 +6,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-
 import org.apache.commons.lang.StringUtils;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
@@ -17,10 +16,7 @@ import org.nextprot.api.core.dao.PtmDao;
 import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.*;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.InteractionService;
-import org.nextprot.api.core.service.PeptideMappingService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.utils.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -39,7 +35,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private BioPhyChemPropsDao bioPhyChemPropsDao;
 	@Autowired private IsoformDAO isoformDAO;
 	@Autowired private PeptideMappingService peptideMappingService;
-
+	@Autowired private AntibodyMappingService antibodyMappingService;
+	
 	@Override
 	@Cacheable("annotations")
 	public List<Annotation> findAnnotations(String entryName) {
@@ -73,7 +70,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			Multimap<Long, AnnotationIsoformSpecificity> isoformsByAnnotationId = Multimaps.index(isoforms, new AnnotationIsoformFunction());
 	
 			for (Annotation annotation : annotations) {
-				annotation.setTargetingIsoforms(new ArrayList<>(isoformsByAnnotationId.get(annotation.getAnnotationId())));
+				annotation.addTargetingIsoforms(new ArrayList<>(isoformsByAnnotationId.get(annotation.getAnnotationId())));
 			}
 	
 			// Properties
@@ -81,7 +78,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			Multimap<Long, AnnotationProperty> propertiesByAnnotationId = Multimaps.index(properties, new AnnotationPropertyFunction());
 	
 			for (Annotation annotation : annotations) {
-				annotation.setProperties(new ArrayList<>(propertiesByAnnotationId.get(annotation.getAnnotationId())));
+				annotation.addProperties(propertiesByAnnotationId.get(annotation.getAnnotationId()));
 			}
 			// Removes annotations which do not map to any isoform, 
 			// this may happen in case where the annotation has been seen in a peptide and the annotation was propagated to the master, 
@@ -105,6 +102,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(this.interactionService.findInteractionsAsAnnotationsByEntry(entryName));
 		annotations.addAll(this.peptideMappingService.findNaturalPeptideMappingAnnotationsByMasterUniqueName(entryName));
 		annotations.addAll(this.peptideMappingService.findSyntheticPeptideMappingAnnotationsByMasterUniqueName(entryName));		
+		annotations.addAll(this.antibodyMappingService.findAntibodyMappingAnnotationsByUniqueName(entryName));		
+
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
@@ -121,7 +120,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 			Annotation annotation = new Annotation();
 
-			AnnotationApiModel model = AnnotationApiModel.getByDbAnnotationTypeName(property.getName());
+			AnnotationCategory model = AnnotationCategory.getByDbAnnotationTypeName(property.getName());
 			String description = property.getValue();
 
 			
@@ -132,7 +131,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 			annotation.setQualityQualifier("GOLD");
 			annotation.setUniqueName(entryName + "_" + model.getApiTypeName());
-			annotation.setTargetingIsoforms(newAnnotationIsoformSpecificityList(annotation.getAnnotationId(), isoforms));
+			annotation.addTargetingIsoforms(newAnnotationIsoformSpecificityList(annotation.getAnnotationId(), isoforms));
 
 			annotations.add(annotation);
 		}
@@ -284,13 +283,13 @@ public class AnnotationServiceImpl implements AnnotationService {
 	}
 
 	private static SortedSet<AnnotationProperty> getSortedPositions(Annotation annotation) {
-		SortedSet<AnnotationProperty> sortedPositions = new TreeSet<AnnotationProperty>(new Comparator<AnnotationProperty>() {
+		SortedSet<AnnotationProperty> sortedPositions = new TreeSet<>(new Comparator<AnnotationProperty>() {
 			public int compare(AnnotationProperty p1, AnnotationProperty p2) {
 				return Integer.valueOf(p1.getValue()).compareTo(Integer.valueOf(p2.getValue()));
 			}
 		});
 
-		List<AnnotationProperty> conflictPositions = new ArrayList<AnnotationProperty>();
+		List<AnnotationProperty> conflictPositions = new ArrayList<>();
 		for (AnnotationProperty ap : annotation.getProperties()) {
 			if (ap.getName().equals("position"))
 				conflictPositions.add(ap);

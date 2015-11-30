@@ -1,7 +1,7 @@
 package org.nextprot.api.rdf.domain;
 
 import org.jsondoc.core.annotation.ApiObject;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -10,14 +10,14 @@ import java.util.Set;
 public class OWLAnnotation implements Serializable{
 
 	private static final long serialVersionUID = 4404147147281845675L;
-	private AnnotationApiModel cat;
+	private AnnotationCategory cat;
 
-	public OWLAnnotation(AnnotationApiModel cat) {
+	public OWLAnnotation(AnnotationCategory cat) {
 		this.cat=cat;
 	}
 	
 	public OWLAnnotation(String dbAnnotationTypeName) {
-		this.cat=AnnotationApiModel.getByDbAnnotationTypeName(dbAnnotationTypeName);
+		this.cat= AnnotationCategory.getByDbAnnotationTypeName(dbAnnotationTypeName);
 	}
 	
 	public Integer getDbId () {
@@ -36,13 +36,13 @@ public class OWLAnnotation implements Serializable{
 	public String getApiTypeName(){
 		return cat.getApiTypeName();
 	}
-	public AnnotationApiModel getParent() {
+	public AnnotationCategory getParent() {
 		return cat.getParent();
 	}
-	public Set<AnnotationApiModel> getAllParents() {
+	public Set<AnnotationCategory> getAllParents() {
 		return cat.getAllParents();
 	}
-	public Set<AnnotationApiModel> getAllParentsButRoot() {
+	public Set<AnnotationCategory> getAllParentsButRoot() {
 		return cat.getAllParentsButRoot();
 	}
 	public String getDescription() {

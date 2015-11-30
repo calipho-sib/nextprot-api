@@ -1,39 +1,15 @@
 package org.nextprot.api.tasks.solr.indexer;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.apache.solr.common.SolrInputDocument;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.core.dao.impl.DbXrefDaoImpl;
-//import org.biojavax.bio.seq.io.UniProtCommentParser.Interaction;
-//import org.nextprot.api.core.domain.AntibodyMapping;
-import org.nextprot.api.core.domain.ChromosomalLocation;
-import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryProperties;
-import org.nextprot.api.core.domain.Family;
-import org.nextprot.api.core.domain.Identifier;
-import org.nextprot.api.core.domain.Interactant;
-import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.Overview.EntityName;
-import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.domain.Terminology;
-import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.service.DbXrefService;
-//import org.nextprot.api.core.service.TerminologyService;
-//import org.nextprot.api.import org.nextprot.api.core.domain.AntibodyMapping;
-//import org.nextprot.api.core.utils.TerminologyUtils;
-//import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.TerminologyService;
+
+import java.util.*;
 
 
 public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
@@ -164,8 +140,8 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		Set<DbXref> intactdbrefs = dao.findEntryInteractionInteractantsXrefs(id);
 		if(intactdbrefs != null)
 		for (DbXref intactdbref : intactdbrefs) {	
-			System.err.println(intactdbref.getProperties());
-			List<DbXrefProperty> xrefprops =  intactdbref.getProperties();
+			System.err.println(intactdbref.getPropertiesMap());
+			List<DbXrefProperty> xrefprops =  intactdbref.getPropertiesMap();
 			for (DbXrefProperty xrefprop : xrefprops) {
 				if(xrefprop.getName().equals("gene designation")) {
 					System.err.println("gene: " + xrefprop.getValue());
@@ -180,7 +156,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 			//System.err.println(category);
 			 if(category.contains("Binary"))  {
 				//System.err.println(category + " : " + currannot.getUniqueName());
-				List<AnnotationProperty> annotprops =  currannot.getProperties();
+				Collection<AnnotationProperty> annotprops =  currannot.getProperties();
 				for (AnnotationProperty annotprop : annotprops) {
 					if(annotprop.getName().equals("interactant")) {
 						//int dbrefid = Integer.parseInt(annotprop.getValue());
@@ -328,7 +304,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		//doc.addField("region_name", entry.()); corresponds to 'includes' activity
 		
 		/*	
-		List<Terminology.TermProperty> properties = terminology.getProperties();
+		List<Terminology.TermProperty> properties = terminology.getPropertiesMap();
 		if (properties != null) {
 			doc.addField("properties",TerminologyUtils.convertPropertiesToString(properties));
 		} */

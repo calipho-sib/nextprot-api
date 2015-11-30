@@ -3,9 +3,11 @@ package org.nextprot.api.commons.constants;
 import org.nextprot.api.commons.utils.TreeVisitor;
 
 /**
+ * A base class to export AnnotationCategory element in a tree
+ *
  * Created by fnikitin on 17/06/15.
  */
-abstract class AbstractTreeVisitor implements TreeVisitor<AnnotationApiModel> {
+public abstract class AbstractTreeVisitor implements TreeVisitor<AnnotationCategory> {
 
     protected final StringBuilder sb;
     private final String name;
@@ -17,11 +19,11 @@ abstract class AbstractTreeVisitor implements TreeVisitor<AnnotationApiModel> {
     }
 
     @Override
-    public void visit(AnnotationApiModel node) {
+    public void visit(AnnotationCategory node) {
 
         writeNode(node);
 
-        for (AnnotationApiModel child : node.getChildren()) {
+        for (AnnotationCategory child : node.getChildren()) {
 
             writeEdge(node, child);
 
@@ -34,8 +36,8 @@ abstract class AbstractTreeVisitor implements TreeVisitor<AnnotationApiModel> {
         return name;
     }
 
-    protected void writeNode(AnnotationApiModel parent) {
+    protected void writeNode(AnnotationCategory parent) {
     }
 
-    protected abstract void writeEdge(AnnotationApiModel parent, AnnotationApiModel child);
+    protected abstract void writeEdge(AnnotationCategory parent, AnnotationCategory child);
 }

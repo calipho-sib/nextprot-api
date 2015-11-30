@@ -56,5 +56,8 @@ public class NPEntryOverviewXLSWriterTest extends WebIntegrationBaseTest {
             else
                 Assert.assertEquals(values[i], valuesRow.getCell(i).getStringCellValue());
         }
+        
+        workbook.close();
+
     }
 }

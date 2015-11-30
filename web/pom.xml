@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>nextprot-api-master</artifactId>
 		<groupId>org.nextprot</groupId>
-		<version>0.3.1</version>
+		<version>0.4.0-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -56,7 +56,6 @@
 			<artifactId>github-api</artifactId>
 			<version>1.69.69</version>
 		</dependency>
-
 		<!-- access microsoft format files -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -126,6 +125,29 @@
 						<goals>
 							<goal>stop</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.4.0</version>
+				<groupId>org.codehaus.mojo</groupId>
+				<executions>
+					<execution>
+						<id>Fetch number of git commits</id>
+						<phase>package</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>git</executable>
+							<arguments>
+								<argument>rev-list</argument>
+								<argument>HEAD</argument>
+								<argument>--count</argument>
+							</arguments>
+							<outputFile>target/classes/git-commit-count.txt</outputFile>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

@@ -2,9 +2,11 @@ package org.nextprot.api.core.dao.impl;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.dao.ReleaseInfoDao;
 import org.nextprot.api.core.domain.release.ReleaseContentsDataSource;
 import org.nextprot.api.core.domain.release.ReleaseDataSources;
+import org.nextprot.api.core.domain.release.ReleaseStatsTag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -50,6 +52,11 @@ public class ReleaseInfoDaoImpl implements ReleaseInfoDao {
 		return new JdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("nextprot-release"), String.class);
 	}
 
+	@Override
+	public List<ReleaseStatsTag> findTagStatistics() {
+		return new JdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("release-stats"), new ReleaseStatsTagRowMapper());
+	}
+
 	private static class ReleaseInfoRowMapper implements ParameterizedRowMapper<ReleaseContentsDataSource> {
 		
 		private ReleaseDataSources datasource;
@@ -74,4 +81,18 @@ public class ReleaseInfoDaoImpl implements ReleaseInfoDao {
 
 	}
 
+	private static class ReleaseStatsTagRowMapper implements ParameterizedRowMapper<ReleaseStatsTag> {
+		
+		@Override
+		public ReleaseStatsTag mapRow(ResultSet resultSet, int row) throws SQLException {
+			ReleaseStatsTag tagStat = new ReleaseStatsTag();
+			tagStat.setCount(resultSet.getInt("count"));
+			tagStat.setDescription(resultSet.getString("description"));
+			tagStat.setTag(resultSet.getString("tag"));
+			tagStat.setCategroy(resultSet.getString("category"));
+			tagStat.setSortOrder(resultSet.getInt("sort_order"));			
+			return tagStat;
+		}
+
+	}
 }

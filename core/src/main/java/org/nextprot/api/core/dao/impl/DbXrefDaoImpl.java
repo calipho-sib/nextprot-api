@@ -222,7 +222,10 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		return new HashSet<>(xrefs);
 	}
 
-
-
-
+	@Override
+	public Set<DbXref> findAntibodyXrefs(List<Long> ids) {
+		SqlParameterSource namedParams = new MapSqlParameterSource("ids", ids);
+		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-antibody-ids"), namedParams, new DbXRefRowMapper());
+		return new HashSet<>(xrefs);
+	}
 }

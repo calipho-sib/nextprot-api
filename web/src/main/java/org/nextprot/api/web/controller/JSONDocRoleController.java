@@ -21,11 +21,9 @@ import org.jsondoc.core.pojo.ApiMethodDoc;
 import org.jsondoc.core.pojo.ApiParamDoc;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.jsondoc.core.pojo.JSONDoc;
-import org.jsondoc.core.util.JSONDocType;
 import org.jsondoc.springmvc.controller.JSONDocController;
 import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
-import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.export.format.EntryBlock;
@@ -87,7 +85,7 @@ public class JSONDocRoleController extends JSONDocController {
 		packages.addAll(Arrays.asList(new String[] { "org.nextprot.api.commons", "org.nextprot.api.core", "org.nextprot.api.rdf", "org.nextprot.api.solr", "org.nextprot.api.user",
 				"org.nextprot.api.web" }));
 
-		String version = releaseInfoService.findReleaseContents().getApiRelease();
+		String version = releaseInfoService.findReleaseInfo().getApiRelease();
 		for (String profile : env.getActiveProfiles()) {
 			if (profile.equalsIgnoreCase("build")) {
 				packages.add("org.nextprot.api.build");
@@ -113,7 +111,7 @@ public class JSONDocRoleController extends JSONDocController {
 					}
 
 					// adding subparts
-					for (AnnotationApiModel model : AnnotationApiModel.values()) {
+					for (AnnotationCategory model : AnnotationCategory.values()) {
 
 						String name = model.getApiTypeName();
 						String path = "/entry/{entry}/" + StringUtils.camelToKebabCase(name);
@@ -217,7 +215,7 @@ public class JSONDocRoleController extends JSONDocController {
 			}
 		}
 
-		JSONDoc contextJSONDoc = new JSONDoc(releaseInfoService.findReleaseContents().getApiRelease(), "");
+		JSONDoc contextJSONDoc = new JSONDoc(releaseInfoService.findReleaseInfo().getApiRelease(), "");
 		contextJSONDoc.setApis(contextApis);
 		contextJSONDoc.setObjects(jsonDoc.getObjects());
 		contextJSONDoc.setFlows(jsonDoc.getFlows());

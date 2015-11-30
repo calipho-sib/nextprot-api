@@ -2,6 +2,7 @@ package org.nextprot.api.core.domain;
 
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @ApiObject(name = "peptide", description = "The peptide mapping")
+@Deprecated
 public class PeptideMapping implements Serializable, IsoformSpecific {
 
 	private static final long serialVersionUID = 7304469815021872304L;
@@ -21,12 +23,12 @@ public class PeptideMapping implements Serializable, IsoformSpecific {
 	private List<PeptideEvidence> evidences;
 	
 	@ApiObjectField(description = "The peptide isoform specificity")
-	private Map<String, IsoformSpecificity> isoformSpecificity;
+	private Map<String, AnnotationIsoformSpecificity> isoformSpecificity;
 
 	private List<PeptideProperty> properties;
 	
 	public PeptideMapping() {
-		this.isoformSpecificity = new HashMap<String, IsoformSpecificity>();
+		this.isoformSpecificity = new HashMap<>();
 	}
 	
 	public String getPeptideUniqueName() {
@@ -38,13 +40,13 @@ public class PeptideMapping implements Serializable, IsoformSpecific {
 	}
 	
 	public void addProperty(PeptideProperty prop) {
-		if (this.properties==null) this.properties= new ArrayList<PeptideProperty>();
+		if (this.properties==null) this.properties= new ArrayList<>();
 		this.properties.add(prop);
 	}
 	
 	public void addEvidence(PeptideEvidence evidence) {
 		if(this.evidences == null)
-			this.evidences = new ArrayList<PeptideMapping.PeptideEvidence>();
+			this.evidences = new ArrayList<>();
 		this.evidences.add(evidence);
 	}
 	
@@ -52,32 +54,20 @@ public class PeptideMapping implements Serializable, IsoformSpecific {
 		return this.evidences;
 	}
 	
-	public Map<String, IsoformSpecificity> getIsoformSpecificity() {
+	public Map<String, AnnotationIsoformSpecificity> getIsoformSpecificity() {
 		return this.isoformSpecificity;
 	}
 
-	public void setIsoformSpecificity(
-			Map<String, IsoformSpecificity> isoformSpecificity) {
+	public void setIsoformSpecificity(Map<String, AnnotationIsoformSpecificity> isoformSpecificity) {
 		this.isoformSpecificity = isoformSpecificity;
 	}
-
 	
-	public void addIsoformSpecificityOld(IsoformSpecificity newIsoformSpecificity) {
-		IsoformSpecificity iso = null;
-		
-		if(this.isoformSpecificity.containsKey(newIsoformSpecificity.getIsoformName())) { // add position
-			iso = this.isoformSpecificity.get(newIsoformSpecificity.getIsoformName());
-			iso.addPosition(newIsoformSpecificity.getPositions().get(0));
-			this.isoformSpecificity.put(newIsoformSpecificity.getIsoformName(), iso);
-		} else this.isoformSpecificity.put(newIsoformSpecificity.getIsoformName(), newIsoformSpecificity);
-	}
-	
-	
-	public void addIsoformSpecificity(IsoformSpecificity newIsoformSpecificity) {
+	public void addIsoformSpecificity(AnnotationIsoformSpecificity newIsoformSpecificity) {
 		String isoName = newIsoformSpecificity.getIsoformName();
 		if(this.isoformSpecificity.containsKey(isoName)) { // add position
-			IsoformSpecificity isospec = this.isoformSpecificity.get(isoName);
-			isospec.addPosition(newIsoformSpecificity.getPositions().get(0));
+			AnnotationIsoformSpecificity isospec = this.isoformSpecificity.get(isoName);
+			isospec.setFirstPosition(newIsoformSpecificity.getFirstPosition());
+			isospec.setLastPosition(newIsoformSpecificity.getLastPosition());
 		} else {
 			this.isoformSpecificity.put(isoName, newIsoformSpecificity);
 		}

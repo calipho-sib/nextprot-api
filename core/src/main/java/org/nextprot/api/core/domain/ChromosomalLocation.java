@@ -1,9 +1,11 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.core.utils.ChromosomalLocationComparator;
+
+import java.io.Serializable;
+import java.util.*;
 
 @ApiObject(name = "chromosomal-location", description = "The chromosomal location")
 public class ChromosomalLocation implements Serializable {
@@ -118,4 +120,43 @@ public class ChromosomalLocation implements Serializable {
 		this.lastPosition = lastPosition;
 	}
 
+	public static String toString(List<ChromosomalLocation> locations) {
+
+        StringBuilder sb = new StringBuilder();
+
+		if (locations != null) {
+
+            Set<ChromosomalLocation> chromosomalLocations = new TreeSet<>(new ChromosomalLocationComparator());
+            chromosomalLocations.addAll(locations);
+
+            StringBuilder sb2 = new StringBuilder();
+            for (ChromosomalLocation location : chromosomalLocations) {
+
+				sb2.delete(0, sb2.length());
+
+				String chromosome = location.getChromosome();
+				String band = location.getBand();
+
+				if (chromosome != null && !chromosome.equals("unknown")) {
+					sb2.append(chromosome);
+				}
+				if (band != null && !band.equals("unknown")) {
+					sb2.append(band);
+				}
+
+				if (sb2.length() == 0) {
+					sb2.append("unknown");
+				}
+
+				sb.append(sb2);
+				sb.append(", ");
+			}
+
+			if (sb.length() > 0) {
+				sb.delete(sb.length() - 2, sb.length());
+			}
+		}
+
+		return sb.toString();
+	}
 }

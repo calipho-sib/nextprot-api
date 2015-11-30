@@ -1,15 +1,18 @@
 package org.nextprot.api.web;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RestErrorResponse implements Serializable{
 
-	private static final long serialVersionUID = 7820195778216393136L;
+	private static final long serialVersionUID = 1L;
 	private String message;
 	private String type;
 	//TODO include maven version
 	private String about = "neXtProt API - https://api.nextprot.org";
-	
+	private final Map<String, Serializable> properties = new HashMap<>();
+
 	public String getMessage() {
 		return message;
 	}
@@ -24,6 +27,14 @@ public class RestErrorResponse implements Serializable{
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+    public Map<String, Serializable> getProperties() {
+        return properties;
+    }
+
+	public void setProperty(String key, Serializable value) {
+		properties.put(key, value);
 	}
 
 	public String getAbout() {

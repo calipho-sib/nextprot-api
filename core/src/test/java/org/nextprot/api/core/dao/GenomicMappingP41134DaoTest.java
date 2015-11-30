@@ -2,6 +2,7 @@ package org.nextprot.api.core.dao;
 
 import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Exon;
 import org.nextprot.api.core.domain.GenomicMapping;
@@ -35,6 +36,7 @@ public class GenomicMappingP41134DaoTest extends CoreUnitBaseTest {
 		assertEquals("ENSG00000125968", gm.getAccession());
 	}
 
+	@Ignore
 	@Test
 	public void shouldGetTranscriptMapping() throws Exception {
 		List<TranscriptMapping> tms = geneDAO.findTranscriptsByIsoformNames(Arrays.asList("NX_P41134-1", "NX_P41134-2"));

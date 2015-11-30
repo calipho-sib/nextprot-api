@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Use this one to run the tests -->
-<!DOCTYPE dataset SYSTEM "file:src/test/resources/nextprot.dtd">
 <!-- Use this one to autocomplete -->
 <!-- <!DOCTYPE dataset SYSTEM "../../../../../nextprot.dtd"> -->
 <!-- Use the dbunit_insert_helper.sql to generate the statements -->

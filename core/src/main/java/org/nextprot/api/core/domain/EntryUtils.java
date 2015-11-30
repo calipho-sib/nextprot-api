@@ -23,9 +23,9 @@ public class EntryUtils implements Serializable{
 		List<ExperimentalContext> experimentalContexts;
 		
 		// Filter if necessary
-		if (config.getSubpart() != null) {
+  		if (config.hasSubPart()) {
 
-			annotations = AnnotationUtils.filterAnnotationsByCategory(entry.getAnnotations(), config.getSubpart());
+			annotations = AnnotationUtils.filterAnnotationsByCategory(entry, config.getSubpart());
 			entry.setAnnotations(annotations);
 			
 			if(!config.hasNoAdditionalReferences()){ //In case we don't care about xrefs, publications and experimental contexts (will be faster)

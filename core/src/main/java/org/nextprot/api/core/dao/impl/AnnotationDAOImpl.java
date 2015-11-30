@@ -1,7 +1,7 @@
 package org.nextprot.api.core.dao.impl;
 import org.nextprot.api.commons.bio.mutation.ProteinMutationFormat;
 import org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat;
-import org.nextprot.api.commons.constants.AnnotationApiModel;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Component;
+import java.util.Arrays;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -47,6 +48,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			annotation.setCvTermAccessionCode(resultSet.getString("cv_term_accession"));
 			annotation.setCvApiName(resultSet.getString("cv_api_name"));
 			annotation.setSynonym(resultSet.getString("synonym"));
+			if (resultSet.getString("synonyms") != null) annotation.setSynonyms(Arrays.asList(resultSet.getString("synonyms").split("\\|")));
 			annotation.setUniqueName(resultSet.getString("annotation_unique_name"));
 
 			// Set the variant if it exists
@@ -72,18 +74,18 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			String category = rs.getString("category");			
 			
     		if (category.equals("biotechnology")) {
-				category=AnnotationApiModel.MISCELLANEOUS.getDbAnnotationTypeName();
+				category= AnnotationCategory.MISCELLANEOUS.getDbAnnotationTypeName();
 				
 			} else if (category.equals("transmembrane region")) {
 				int termId = rs.getInt("cv_term_id");
-				if (termId==51748) category = AnnotationApiModel.INTRAMEMBRANE_REGION.getDbAnnotationTypeName();
+				if (termId==51748) category = AnnotationCategory.INTRAMEMBRANE_REGION.getDbAnnotationTypeName();
 				
 			} else if (category.equals("transit peptide")) {
 				int termId = rs.getInt("cv_term_id");
 				if (termId==51743) {
-					category = AnnotationApiModel.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
+					category = AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
 				} else if (termId==51744) {
-					category = AnnotationApiModel.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
+					category = AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
 				}
 			}
 			return category;
@@ -107,8 +109,8 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 			AnnotationIsoformSpecificity annotation = new AnnotationIsoformSpecificity();
 			annotation.setAnnotationId(resultSet.getLong("annotation_id"));
-			annotation.setFirstPosition(resultSet.getInt("first_pos"));  // the SQL increments first_pos by 1
-			annotation.setLastPosition(resultSet.getInt("last_pos"));
+			annotation.setFirstPosition((Integer)resultSet.getObject("first_pos"));  // the SQL increments first_pos by 1
+			annotation.setLastPosition((Integer)resultSet.getObject("last_pos"));
 			annotation.setIsoformName(resultSet.getString("unique_name"));
 			annotation.setSpecificity(resultSet.getString("iso_specificity"));
 			return annotation;
@@ -132,6 +134,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			public AnnotationEvidence mapRow(ResultSet resultSet, int row) throws SQLException {
 					
 				AnnotationEvidence evidence = new AnnotationEvidence();
+				evidence.setEvidenceCodeOntology(resultSet.getString("ontology"));
 				evidence.setNegativeEvidence(resultSet.getBoolean("is_negative_evidence"));
 				evidence.setAnnotationId(resultSet.getLong("annotation_id"));
 				evidence.setResourceId(resultSet.getLong("resource_id"));

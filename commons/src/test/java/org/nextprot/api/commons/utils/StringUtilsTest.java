@@ -1,6 +1,8 @@
 package org.nextprot.api.commons.utils;
 
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,6 +11,8 @@ import org.junit.Test;
  */
 public class StringUtilsTest {
 
+	
+    
     @Test
     public void testXCaseBuilderCamelCase() {
 
@@ -29,7 +33,7 @@ public class StringUtilsTest {
         String cc = StringUtils.toCamelCase("full name", true);
         Assert.assertEquals("fullName", cc);
     }
-
+    
     @Test
     public void testSlugReplaceWSPunctuations() {
 
@@ -79,4 +83,17 @@ public class StringUtilsTest {
 
         Assert.assertEquals(expectedText, StringUtils.wrapText(text, 60));
     }
+    
+    @Test
+    public void testHtmlTagsRemoval() {
+        String cc = StringUtils.removeHtmlTags("<hello>world</hello>");
+        Assert.assertEquals("world", cc);
+    }
+    
+	@Test
+	public void testSortedValueFromPipeSeparatedField() {
+		String result = StringUtils.getSortedValueFromPipeSeparatedField("cosmic:COSM4859577 | cosmic:COSM1149023 | cosmic:COSM720040");
+		assertEquals("cosmic:COSM1149023 | cosmic:COSM4859577 | cosmic:COSM720040", result);
+	}
+
 }

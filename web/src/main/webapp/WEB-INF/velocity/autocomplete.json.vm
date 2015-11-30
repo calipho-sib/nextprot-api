@@ -2,10 +2,10 @@
 	"elapsedTime":${result.elapsedTime},
 	"entity":"${result.entity}",
 	"index":"${result.index}",
-	#foreach($facet in $result.getFacets().values())
+	#foreach($prop in $result.getFacets().entrySet())
 	"autocomplete": [
-		#foreach($field in $facet.getFacetFields())
-		{ "name":"$field.getFirst()", "count":$field.getSecond() } #if($velocityHasNext), #end 
+		#foreach($map in $prop.getValue())
+		{ "name":"$map.get("name")", "count":$map.get("count") } #if($velocityHasNext), #end
 		 
 		#end
 	]

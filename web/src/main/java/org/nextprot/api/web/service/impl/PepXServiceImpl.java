@@ -1,18 +1,5 @@
 package org.nextprot.api.web.service.impl;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NPreconditions;
@@ -20,8 +7,8 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -32,6 +19,13 @@ import org.nextprot.api.web.service.PepXService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.*;
 
 @Service
 public class PepXServiceImpl implements PepXService {
@@ -51,7 +45,7 @@ public class PepXServiceImpl implements PepXService {
 	@Override
 	public List<Entry> findEntriesWithPeptides(String peptide, boolean modeIsoleucine) {
 
-		List<Entry> entries = new ArrayList<Entry>();
+		List<Entry> entries = new ArrayList<>();
 
 		Map<String, List<Pair<String, Integer>>> entriesMap = getPepXResponse(peptide, modeIsoleucine);
 
@@ -59,7 +53,7 @@ public class PepXServiceImpl implements PepXService {
 		for (String entryName : entriesNames) {
 			EntryConfig targetIsoconf = EntryConfig.newConfig(entryName).withTargetIsoforms().with("variant").withOverview().withoutAdditionalReferences().withoutProperties(); // .with("variant")
 			Entry entry = entryBuilderService.build(targetIsoconf);
-			List<Annotation> virtualAnnotations = buildEntryWithVirtualAnnotations(peptide, modeIsoleucine,  entry.getUniqueName(), entriesMap.get(entryName), entry.getAnnotations(), entry.getIsoforms());
+			List<Annotation> virtualAnnotations = buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entriesMap.get(entryName), entry.getAnnotations(), entry.getIsoforms());
 
 			if((virtualAnnotations != null) && (!virtualAnnotations.isEmpty())){
 
@@ -105,7 +99,7 @@ public class PepXServiceImpl implements PepXService {
 						entriesMap.put(currentEntry, new ArrayList<Pair<String, Integer>>());
 					}
 					Integer position = (ei.length == 3) ? (Integer.valueOf(ei[2])) : null;
-					entriesMap.get(currentEntry).add(new Pair<String, Integer>(currentEntry + "-" + isoNumber, position));
+					entriesMap.get(currentEntry).add(new Pair<>(currentEntry + "-" + isoNumber, position));
 				} else {
 					throw new NextProtException("Unexpected format from pepX on row " + i + ": " + acs[i]);
 				}
@@ -113,8 +107,6 @@ public class PepXServiceImpl implements PepXService {
 
 			in.close();
 
-		} catch (MalformedURLException e) {
-			throw new NextProtException(e);
 		} catch (IOException e) {
 			throw new NextProtException(e);
 		}
@@ -125,7 +117,7 @@ public class PepXServiceImpl implements PepXService {
 	
 	//This method is static friendly so that it can be tested ////////////////////////////////
 	//CrossedCheckedWithEntryVariantsAndIsoforms
-	static List<Annotation> buildEntryWithVirtualAnnotations(String peptide, boolean modeIsoleucine, String uniqueName, List<Pair<String, Integer>> isoformNamesAndOptionalPosition, List<Annotation> varAnnotations, List<Isoform> isoforms) {
+	static List<Annotation> buildEntryWithVirtualAnnotations(String peptide, boolean modeIsoleucine, List<Pair<String, Integer>> isoformNamesAndOptionalPosition, List<Annotation> varAnnotations, List<Isoform> isoforms) {
 
 		
 		List<Annotation> finalAnnotations = new ArrayList<>();
@@ -138,7 +130,8 @@ public class PepXServiceImpl implements PepXService {
 			annotation.setCvTermName(peptide);
 			annotation.setDescription("This virtual annotation describes the peptide " + peptide + " found in " + isoformName);
 
-			IsoformSpecificity is = new IsoformSpecificity(null, isoformName);
+			AnnotationIsoformSpecificity is = new AnnotationIsoformSpecificity();
+			is.setIsoformName(isoformName);
 			if (isoNameAndOptionalPosition.getSecond() != null) {// It means there is a variant!!!
 
 				int startPeptidePosition = isoNameAndOptionalPosition.getSecond();
@@ -154,17 +147,25 @@ public class PepXServiceImpl implements PepXService {
 
 				if ((validAnnotations == null) || validAnnotations.isEmpty()) {
 					
-					throw new NextProtException("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
+					LOGGER.warn("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
+					continue;
+					
+					//We used to throw an exception, but now we just skip
+					//throw new NextProtException("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
 				
-				} else if (validAnnotations.size() > 1) {
+				}
+				
+				if (validAnnotations.size() > 1) {
 
 					LOGGER.warn("There is more than 1 valid variant (" + validAnnotations.size() + ") for isoform (returning the 1st) " + isoformName + " between position " + startPeptidePosition + " and " + endPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
 
 					//Takes only the first valid
 					int startPos = validAnnotations.get(0).getStartPositionForIsoform(isoformName);
 					int endPos = validAnnotations.get(0).getEndPositionForIsoform(isoformName);
-					
-					is.setPositions(Arrays.asList(new Pair<Integer, Integer>(startPos, endPos)));
+
+					is.setFirstPosition(startPos);
+					is.setLastPosition(endPos);
+
 					AnnotationVariant var = validAnnotations.get(0).getVariant();
 					annotation.setVariant(var);
 
@@ -173,8 +174,10 @@ public class PepXServiceImpl implements PepXService {
 
 					int startPos = validAnnotations.get(0).getStartPositionForIsoform(isoformName);
 					int endPos = validAnnotations.get(0).getEndPositionForIsoform(isoformName);
-					
-					is.setPositions(Arrays.asList(new Pair<Integer, Integer>(startPos, endPos)));
+
+					is.setFirstPosition(startPos);
+					is.setLastPosition(endPos);
+
 					AnnotationVariant var = validAnnotations.get(0).getVariant();
 					annotation.setVariant(var);
 
@@ -183,12 +186,22 @@ public class PepXServiceImpl implements PepXService {
 			}else { //No variant
 				
 				Isoform iso = IsoformUtils.getIsoformByIsoName(isoforms, isoformName);
-				String sequence = iso.getSequence();
-				NPreconditions.checkTrue(PeptideUtils.isPeptideContainedInTheSequence(peptide, sequence, modeIsoleucine), "PepX returned a peptide (" + peptide + ") for an isoform (" + isoformName + ") that is not in the current isoform in neXtProt");
+				String sequence = (iso != null) ? iso.getSequence() : null;
+				
+				boolean isPeptideContained = PeptideUtils.isPeptideContainedInTheSequence(peptide, sequence, modeIsoleucine);
+				
+				if(!isPeptideContained){
+					continue;
+				}else {
+					LOGGER.warn("PepX returned a peptide (" + peptide + ") for an isoform (" + isoformName + ") that is not in the current isoform in neXtProt");
+				}
+				
+				//We used to throw an exception, but this would break the program (the algorithm could be improved to detect the specific case where pepx return a peptide of length 6 and generate a real error on other cases)
+				//NPreconditions.checkTrue(isPeptideContained, "PepX returned a peptide (" + peptide + ") for an isoform (" + isoformName + ") that is not in the current isoform in neXtProt");
 				
 			}
 			
-			annotation.setTargetIsoformsMap(Arrays.asList(is));
+			annotation.addTargetingIsoforms(Arrays.asList(is));
 			finalAnnotations.add(annotation);
 		}
 
@@ -220,4 +233,26 @@ public class PepXServiceImpl implements PepXService {
 		return resultAnnotations;
 	}
 
+	/*
+
+	We started to filter out the results because 
+	
+	3 peptides showing error with pepX :
+	- IHTGEKP
+	- PYKCEECGK
+	- RIHTGEKPYK
+	
+	ex erreur : http://dev-api.nextprot.org/entries/search/peptide?peptide=IHTGEKP&modeIL=true&clientInfo=nextprotTeam&applicationName=PeptideViewer
+	
+	Mis a part l'erreur qu'on a vu hier comme quoi ce premier peptide n'existait pas dans l'entrée Q96MM3,
+	je tiens à noter que ces 3 peptides donnés en exemple sont trouvés à plusieurs positions dans l'isoform d'origine : NX_Q05481
+	Mais je sais pas si ca joue vraiment.
+	
+	http://localhost:9000/app/?nxentry=NX_P46976&env=dev
+	
+	3 peptides working with pepX : 
+	- TLTTNDAYAK
+	- LVVLATPQVSDSMR
+	- GALVLGSSL
+	 */
 }

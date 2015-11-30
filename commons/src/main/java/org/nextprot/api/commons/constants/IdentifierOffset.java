@@ -24,4 +24,7 @@ public class IdentifierOffset {
 	public final static long PEPTIDE_MAPPING_ANNOTATION_OFFSET = 700_000_000_000L;
 	public final static long PEPTIDE_MAPPING_ANNOTATION_EVIDENCE_OFFSET = 800_000_000_000L;
 	
+	public final static long ANTIBODY_MAPPING_ANNOTATION_OFFSET = 1_100_000_000_000L;
+	public final static long ANTIBODY_MAPPING_ANNOTATION_EVIDENCE_OFFSET = 1_200_000_000_000L;
+	
 }

@@ -1,5 +1,6 @@
 package org.nextprot.api.web.service.impl.writer;
 
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.export.format.EntryBlock;
@@ -24,7 +25,7 @@ public class NPEntryOverviewXLSWriter extends NPEntryXLSWriter {
 
         @Override
         public String[] getFieldNames() {
-            return new String[] { "acc. code", "protein name", "gene name(s)", "chromosome", "proteomics", "disease",	"structure", "#isof.", "#variants", "#PTMS", "mutagenesis", "tissue expr.", "PE" };
+            return new String[]{"acc. code", "protein name", "gene name(s)", "chromosome", "proteomics", "disease", "structure", "#isof.", "#variants", "#PTMS", "mutagenesis", "tissue expr.", "PE"};
         }
 
         @Override
@@ -34,9 +35,8 @@ public class NPEntryOverviewXLSWriter extends NPEntryXLSWriter {
 
             values[0] = entry.getUniqueName();
             values[1] = entry.getOverview().getMainProteinName();
-            values[2] = entry.getOverview().getMainGeneName();
-            ChromosomalLocation location = entry.getChromosomalLocations().get(0);
-            values[3] = location.getChromosome() + location.getBand();
+            values[2] = EntityName.toString(entry.getOverview().getGeneNames());
+            values[3] = ChromosomalLocation.toString(entry.getChromosomalLocations());
             values[4] = booleanToYesNoString(entry.getProperties().getFilterproteomics());
             values[5] = booleanToYesNoString(entry.getProperties().getFilterdisease());
             values[6] = booleanToYesNoString(entry.getProperties().getFilterstructure());

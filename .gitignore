@@ -1,3 +1,5 @@
+/out
+bin
 repository
 np.db.data.properties
 np.db.rdf.properties
@@ -20,3 +22,4 @@ MANIFEST.MF
 .settings
 rebel.xml
 npapi.log.bck
+highlight-coverage-peptide-chromosome-y.html
