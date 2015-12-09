@@ -50,7 +50,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		List<PublicationDbXref> xrefs = this.dbXRefDao.findDbXRefByPublicationIds(publicationIds);
 		
 		for(PublicationDbXref xref : xrefs)
-			xref.setResolvedUrl(xref.resolveLinkTarget());
+			xref.setResolvedUrl(xref.getResolvedUrl());
 
 		return xrefs;
 	}
@@ -246,7 +246,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	private String resolveLinkTarget(String primaryId, DbXref xref) {
 		primaryId = primaryId.startsWith("NX_") ? primaryId.substring(3) : primaryId;
 		if (! xref.getLinkUrl().contains("%u")) {
-			return xref.resolveLinkTarget();
+			return xref.getResolvedUrl();
 		}
 
 		String templateURL = xref.getLinkUrl();

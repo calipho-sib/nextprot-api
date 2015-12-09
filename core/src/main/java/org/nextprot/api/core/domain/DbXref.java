@@ -1,11 +1,11 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+
+import java.io.Serializable;
+import java.util.List;
 
 @ApiObject(name = "xref", description = "A cross reference")
 public class DbXref implements Serializable {
@@ -155,7 +155,7 @@ public class DbXref implements Serializable {
 	 * @return the link to the xref datbase for the current element (protocol
 	 *         not included)
 	 */
-	public String resolveLinkTarget() {
+	private String resolveLinkTarget() {
 		// Deal 1rst with special cases
 		String primaryId = this.getAccession();
 		String db = this.getDatabaseName();
