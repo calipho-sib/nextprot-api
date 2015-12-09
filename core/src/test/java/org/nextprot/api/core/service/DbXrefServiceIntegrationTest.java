@@ -159,6 +159,63 @@ having sum(a.cnt)=1
 		assertEmptyProperties("NX_Q9Y2D1", 983678);
 	}
 
+    @Test
+    public void testPercentSignSTypeLinkHasUrlCorrectlyResolved() {
+
+        List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_P01308");
+
+        Assert.assertEquals(1116, xrefs.size());
+
+        for (DbXref xref : xrefs) {
+
+            if (xref.getDbXrefId() == 1272250) {
+
+                Assert.assertEquals("http://www.ncbi.nlm.nih.gov/protein/%s", xref.getLinkUrl());
+                Assert.assertEquals("http://www.ncbi.nlm.nih.gov/protein/NP_000198.1", xref.getResolvedUrl());
+
+                break;
+            }
+        }
+    }
+
+	@Test
+	public void testPercentSignUTypeLinkHasUrlCorrectlyResolved() {
+
+		List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_P01308");
+
+		Assert.assertEquals(1116, xrefs.size());
+
+		for (DbXref xref : xrefs) {
+
+			if (xref.getDbXrefId() == 16387756) {
+
+				Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=%u&db=HOGENOM", xref.getLinkUrl());
+				Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=P01308&db=HOGENOM", xref.getResolvedUrl());
+
+                break;
+			}
+		}
+	}
+
+	@Test
+	public void testBrendaTypeLinkHasUrlCorrectlyResolved() {
+
+		List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_Q9BXA6");
+
+		Assert.assertEquals(519, xrefs.size());
+
+		for (DbXref xref : xrefs) {
+
+			if (xref.getDbXrefId() == 964246) {
+
+				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s", xref.getLinkUrl());
+				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.1", xref.getResolvedUrl());
+
+                break;
+			}
+		}
+	}
+
 	private void assertEmptyProperties(String entryName, long propertyId) {
 
 		List<DbXref> dbxrefs = this.xrefService.findDbXrefsByMaster(entryName);
