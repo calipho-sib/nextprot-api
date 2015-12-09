@@ -148,14 +148,15 @@ public class DbXref implements Serializable {
 	private DbXrefProperty retrievePropertyByName(String name) {
     	return  getPropertyByName(name);
 	}
-	
-	/**
-	 * COPIED FROM DATAMODEL
-	 * 
-	 * @return the link to the xref datbase for the current element (protocol
-	 *         not included)
-	 */
+
+    /**
+     * COPIED FROM DATAMODEL
+     *
+     * @return the link to the xref datbase for the current element (protocol
+     *         not included)
+     */
 	private String resolveLinkTarget() {
+
 		// Deal 1rst with special cases
 		String primaryId = this.getAccession();
 		String db = this.getDatabaseName();
@@ -345,8 +346,35 @@ public class DbXref implements Serializable {
 		// failed: return home url for db
 		return this.getUrl();
 	}
-	
-	
+
+    public static String resolvePercentULinkTarget(String uniqueName, DbXref xref) {
+
+        if (!xref.getLinkUrl().contains("%u")) {
+            return xref.getResolvedUrl();
+        }
+
+        String primaryId = uniqueName.startsWith("NX_") ? uniqueName.substring(3) : uniqueName;
+
+        String templateURL = xref.getLinkUrl();
+        if (!templateURL.startsWith("http")) {
+            templateURL = "http://" + templateURL;
+        }
+
+        if (xref.getDatabaseName().equalsIgnoreCase("brenda")) {
+            if (xref.getAccession().startsWith("BTO")) {
+                templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s", xref.getAccession().replace(":", "_"));
+            }
+            else {
+                templateURL = templateURL.replaceFirst("%s1", xref.getAccession());
+
+                // organism always human: hardcoded as "247"
+                templateURL = templateURL.replaceFirst("%s2", "247");
+            }
+        }
+
+        return templateURL.replaceAll("%u", primaryId);
+    }
+
 	private DbXrefProperty getPropertyByName(String propertyName) {
 		if(this.getProperties() != null)
 			for(DbXrefProperty prop : this.getProperties())

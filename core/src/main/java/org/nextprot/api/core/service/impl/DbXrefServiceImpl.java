@@ -7,12 +7,14 @@ import com.google.common.collect.*;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.core.dao.DbXrefDao;
-import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.PublicationDbXref;
-import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.AntibodyResourceIdsService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.IsoformService;
@@ -239,36 +241,11 @@ public class DbXrefServiceImpl implements DbXrefService {
 				xref.setProperties((!Xref2Annotation.hasName(xref.getDatabaseName())) ? new ArrayList<>(propsMap.get(xref.getDbXrefId())) : new ArrayList<DbXrefProperty>());
 			else
 				xref.setProperties(new ArrayList<>(propsMap.get(xref.getDbXrefId())));
-			xref.setResolvedUrl(resolveLinkTarget(uniqueName, xref));
-		}
-	}
 
-	private String resolveLinkTarget(String primaryId, DbXref xref) {
-		primaryId = primaryId.startsWith("NX_") ? primaryId.substring(3) : primaryId;
-		if (! xref.getLinkUrl().contains("%u")) {
-			return xref.getResolvedUrl();
-		}
-
-		String templateURL = xref.getLinkUrl();
-		if (!templateURL.startsWith("http")) {
-			templateURL = "http://" + templateURL;
-		}
-		
-		if (xref.getDatabaseName().equalsIgnoreCase("brenda")) {
-			if (xref.getAccession().startsWith("BTO")) {
-			    String accession = xref.getAccession().replace(":", "_");
-				templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s", accession);
-			}
-			else {
-				templateURL = templateURL.replaceFirst("%s1", xref.getAccession());
-				String organismId = "247";
-				// this.retrievePropertyByName("organism name").getPropertyValue();
-				// organism always human: hardcode it
-				templateURL = templateURL.replaceFirst("%s2", organismId);
+			if (xref.getLinkUrl().contains("%u")) {
+				xref.setResolvedUrl(DbXref.resolvePercentULinkTarget(uniqueName, xref));
 			}
 		}
-
-		return templateURL.replaceAll("%u", primaryId);
 	}
 
 	@Override
