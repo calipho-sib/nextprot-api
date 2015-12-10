@@ -7,6 +7,7 @@ import com.google.common.collect.*;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.core.dao.DbXrefDao;
+import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.Isoform;
@@ -230,6 +231,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		Collection<DbXrefProperty> shownProperties = Collections2.filter(dbXRefDao.findDbXrefsProperties(xrefIds), DB_XREF_EXCLUDING_HIDDEN_PROPERTIES_PREDICATE);
 
+		xrefs.addAll(createMissingDbXrefs(xrefs));
+
 		Multimap<Long, DbXrefProperty> propsMap = Multimaps.index(shownProperties, new Function<DbXrefProperty, Long>() {
 			public Long apply(DbXrefProperty prop) {
 				return prop.getDbXrefId();
@@ -247,6 +250,46 @@ public class DbXrefServiceImpl implements DbXrefService {
 			}
 		}
 	}
+
+	/**
+	 * Create dynamically missing xrefs from specific properties
+	 *
+	 * @param xrefs a list of xrefs
+	 * @return the new created list
+     */
+	private List<DbXref> createMissingDbXrefs(List<DbXref> xrefs) {
+
+		List<DbXref> newXrefs = new ArrayList<>();
+
+		for (DbXref xref : xrefs) {
+
+			if ("RefSeq".equals(xref.getDatabaseName())) {
+				for (DbXrefProperty property : xref.getProperties()) {
+
+					if ("nucleotide sequence ID".equals(property.getName())) {
+						newXrefs.add(createRefSeqNucleotideDbXrefFromDbXrefProperty(property));
+					}
+				}
+			}
+		}
+
+		return newXrefs;
+	}
+
+    private DbXref createRefSeqNucleotideDbXrefFromDbXrefProperty(DbXrefProperty property) {
+
+        DbXref dbXRef = new DbXref();
+
+        dbXRef.setDbXrefId(IdentifierOffset.XREF_PROPERTY_OFFSET +property.getPropertyId());
+        dbXRef.setAccession(property.getValue());
+        dbXRef.setDatabaseCategory("Sequence databases");
+        dbXRef.setDatabaseName(CvDatabasePreferredLink.REFSEQ_NUCLEOTIDE.getDbName());
+        dbXRef.setUrl(CvDatabasePreferredLink.REFSEQ_NUCLEOTIDE.getLink());
+        dbXRef.setLinkUrl("http://www.ncbi.nlm.nih.gov/nuccore/"+property.getValue());
+        dbXRef.setProperties(new ArrayList<DbXrefProperty>());
+
+        return dbXRef;
+    }
 
 	@Override
 	public List<DbXref> findDbXrefByAccession(String accession) {
