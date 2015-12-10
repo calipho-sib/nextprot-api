@@ -32,13 +32,14 @@ public enum CvDatabasePreferredLink {
     COSMIC_GENE("Cosmic", "http://cancer.sanger.ac.uk/cosmic/gene/overview?ln=%s"),
     CLINVAR_MUTATION("Clinvar", "http://www.ncbi.nlm.nih.gov/clinvar/%s"),
     CLINVAR_GENE("Clinvar", "http://www.ncbi.nlm.nih.gov/clinvar/?term=%s"),
-	GENEVESTIGATOR("Genevestigator", "http://genevisible.com/tissues/HS/UniProt/%s");
+	GENEVESTIGATOR("Genevestigator", "http://genevisible.com/tissues/HS/UniProt/%s"),
+	REFSEQ_NUCLEOTIDE("RefSeq Nucleotide", "http://www.ncbi.nlm.nih.gov/nuccore/%s");
 
 	private final String dbName;
 	private final String link;
 
 
-	private CvDatabasePreferredLink(final String dbName ,final String link) {
+    CvDatabasePreferredLink(final String dbName ,final String link) {
 		this.dbName = dbName;
 		this.link = link;
 	}
