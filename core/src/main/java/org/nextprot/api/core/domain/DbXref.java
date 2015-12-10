@@ -5,6 +5,7 @@ import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 @ApiObject(name = "xref", description = "A cross reference")
@@ -32,7 +33,7 @@ public class DbXref implements Serializable {
 	private String resolvedUrl;
 
 	@ApiObjectField(description = "A list of properties. A property contains an accession, a property name and a value.")
-	private List<DbXrefProperty> properties;
+	private List<DbXrefProperty> properties = Collections.emptyList();
 
 	public Long getDbXrefId() {
 		return dbXrefId;
