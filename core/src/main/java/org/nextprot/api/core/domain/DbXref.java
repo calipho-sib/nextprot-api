@@ -156,7 +156,7 @@ public class DbXref implements Serializable {
      * @return the link to the xref datbase for the current element (protocol
      *         not included)
      */
-	private String resolveLinkTarget() {
+	String resolveLinkTarget() {
 
 		// Deal 1rst with special cases
 		String primaryId = this.getAccession();
@@ -227,6 +227,7 @@ public class DbXref implements Serializable {
 
         if (db.equals("HPA")) {
             if (primaryId.startsWith("ENSG")) {
+				// TODO: WHAT IS THE DIFFERENCE ??
                 if (primaryId.endsWith("subcellular")) {
                     templateURL = CvDatabasePreferredLink.HPA_SUBCELL.getLink();
                 }
@@ -238,6 +239,8 @@ public class DbXref implements Serializable {
                 templateURL = CvDatabasePreferredLink.HPA_ANTIBODY.getLink();
             }
         }
+
+		// TODO: Should The following db templates be tested for emptiness and valid format ??
 
 		if (db.equals("Genevisible")) {
 			// organism always human: hardcode it
@@ -261,12 +264,16 @@ public class DbXref implements Serializable {
 			if (getAccession().startsWith("EBI")) {
 				templateURL = CvDatabasePreferredLink.INTACT_BINARY.getLink();
 			}
+			// TODO: Should we add "http://www.ebi.ac.uk/intact/pages/interactions/interactions.xhtml?query=%s" into
+			// TODO: CvDatabasePreferredLink ??
 		}
 		
 		if (db.equals("PROSITE")) {
 			// Overwrite native dbxref raw link w a more user-friendly one
 			templateURL = CvDatabasePreferredLink.PROSITE.getLink();
 		}
+
+		// TODO: obsolete xref ? no entry found
 		if (db.equals("HSSP")) {
 			DbXrefProperty pdbAccession = this.retrievePropertyByName("PDB accession");
 			if ( pdbAccession!= null && pdbAccession.getValue()!=null) {
@@ -301,6 +308,7 @@ public class DbXref implements Serializable {
 			// Overwrite native dbxref raw link w a more user-friendly one
 			templateURL = CvDatabasePreferredLink.PDB.getLink();
 		}
+		// WTF???
 		if (db.equals("WEBINFO")) {
 			templateURL = accession;
 			if (!templateURL.startsWith("http")) {
@@ -335,7 +343,8 @@ public class DbXref implements Serializable {
 			primaryId = primaryId.toLowerCase();
 		}
 
-        if (this.getLinkUrl().contains("purl.obolibrary.org/obo")) {
+		// the following replace concerns the dbs CLO, PRO, FMA, Uberon and CL
+		if (this.getLinkUrl().contains("purl.obolibrary.org/obo")) {
             primaryId = primaryId.replaceFirst(":", "_");
         }
 
@@ -362,10 +371,12 @@ public class DbXref implements Serializable {
         }
 
         if (xref.getDatabaseName().equalsIgnoreCase("brenda")) {
+			// TODO: obsolete kind of brenda accession number ? no entry found
             if (xref.getAccession().startsWith("BTO")) {
                 templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s", xref.getAccession().replace(":", "_"));
             }
             else {
+				// TODO: WTF ??? no %s1 and no %s2 in templateURL!!!
                 templateURL = templateURL.replaceFirst("%s1", xref.getAccession());
 
                 // organism always human: hardcoded as "247"
