@@ -19,8 +19,12 @@ public abstract class DbXrefURLBaseResolver {
             return "";
         }
 
+        beforeResolution(xref);
+
         return resolveTemplateURL(getTemplateUrl(xref), getPrimaryId(xref));
     }
+
+    protected void beforeResolution(DbXref xref) {}
 
     protected String resolveTemplateURL(String templateURL, String primaryId) {
 
