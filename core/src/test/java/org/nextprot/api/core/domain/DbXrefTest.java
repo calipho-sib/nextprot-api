@@ -31,6 +31,22 @@ public class DbXrefTest {
         Assert.assertEquals("", xref.resolveLinkTarget());
     }
 
+    @Test
+    public void testResolveEmbl() throws Exception {
+
+        DbXref xref = createDbXref("AF009225", "EMBL", "http://www.ebi.ac.uk/ena/data/view/%s");
+
+        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AF009225", xref.resolveLinkTarget());
+    }
+
+    @Test
+    public void testResolveEmblWithDotAccession() throws Exception {
+
+        DbXref xref = createDbXref("CAH72401.1", "EMBL", "whatever");
+
+        Assert.assertEquals("http://www.ebi.ac.uk/cgi-bin/dbfetch?db=emblcds&id=CAH72401", xref.resolveLinkTarget());
+    }
+
     // entry/NX_Q9BXA6/xref.json
     @Test
     public void testResolveEnsemblENSG() throws Exception {
@@ -378,7 +394,7 @@ public class DbXrefTest {
         Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.21", xref.resolveLinkTarget());
     }
 
-    private static DbXref createDbXref(String accession, String dbName, String linkURL) {
+    public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();
 
@@ -389,7 +405,7 @@ public class DbXrefTest {
         return xref;
     }
 
-    private static DbXref.DbXrefProperty createDbXrefProperty(String name, String value) {
+    public static DbXref.DbXrefProperty createDbXrefProperty(String name, String value) {
 
         DbXref.DbXrefProperty prop = new DbXref.DbXrefProperty();
 
