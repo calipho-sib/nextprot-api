@@ -20,7 +20,7 @@ public class EnsemblXrefURLResolver extends DbXrefURLBaseResolver {
             return CvDatabasePreferredLink.ENSEMBL_GENE.getLink();
         }
         else {
-            throw new UnresolvedXrefURLException("unknown accession number "+accession+": could not find template URL'");
+            throw new UnresolvedXrefURLException("unknown accession number '"+accession+"': valid identifier should have prefix ENST, ENSP or ENSG");
         }
     }
 }

@@ -7,8 +7,9 @@ import org.nextprot.api.core.domain.DbXref;
 
 import java.util.Collections;
 
-import static org.nextprot.api.core.domain.DbXrefTest.createDbXref;
-import static org.nextprot.api.core.domain.DbXrefTest.createDbXrefProperty;
+import static org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest.createDbXref;
+import static org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest.createDbXrefProperty;
+
 
 public class PirXrefURLResolverTest {
 

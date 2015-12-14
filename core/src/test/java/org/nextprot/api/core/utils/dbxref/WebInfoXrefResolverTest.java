@@ -3,7 +3,8 @@ package org.nextprot.api.core.utils.dbxref;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.DbXrefTest;
+
+import static org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest.createDbXref;
 
 public class WebInfoXrefResolverTest {
 
@@ -12,7 +13,7 @@ public class WebInfoXrefResolverTest {
 
         DbXrefURLBaseResolver resolver = new WebInfoXrefURLResolver();
 
-        DbXref xref = DbXrefTest.createDbXref("babebibobu", "WEBINFO", "");
+        DbXref xref = createDbXref("babebibobu", "WEBINFO", "");
 
         Assert.assertEquals("babebibobu", resolver.resolve(xref));
     }

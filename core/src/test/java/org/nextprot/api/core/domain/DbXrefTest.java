@@ -5,6 +5,9 @@ import org.junit.Test;
 
 import java.util.Collections;
 
+import static org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest.createDbXref;
+import static org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest.createDbXrefProperty;
+
 public class DbXrefTest {
 
     @Test
@@ -392,26 +395,5 @@ public class DbXrefTest {
 
         DbXref xref = createDbXref("2.7.11.21", "BRENDA", "whatever");
         Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.21", xref.resolveLinkTarget());
-    }
-
-    public static DbXref createDbXref(String accession, String dbName, String linkURL) {
-
-        DbXref xref = new DbXref();
-
-        xref.setAccession(accession);
-        xref.setDatabaseName(dbName);
-        xref.setLinkUrl(linkURL);
-
-        return xref;
-    }
-
-    public static DbXref.DbXrefProperty createDbXrefProperty(String name, String value) {
-
-        DbXref.DbXrefProperty prop = new DbXref.DbXrefProperty();
-
-        prop.setName(name);
-        prop.setValue(value);
-
-        return prop;
     }
 }
