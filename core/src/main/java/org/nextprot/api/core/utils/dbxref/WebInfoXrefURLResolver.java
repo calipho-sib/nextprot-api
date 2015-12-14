@@ -3,7 +3,8 @@ package org.nextprot.api.core.utils.dbxref;
 
 import org.nextprot.api.core.domain.DbXref;
 
-public class WebInfoXrefURLResolver extends DbXrefURLBaseResolver {
+
+class WebInfoXrefURLResolver extends DbXrefURLBaseResolver {
 
     @Override
     public String resolve(DbXref xref) {

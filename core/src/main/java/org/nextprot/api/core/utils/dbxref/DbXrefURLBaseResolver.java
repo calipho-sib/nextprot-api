@@ -7,9 +7,12 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.XRefDatabase;
 
 /**
- * Base class that resolve DbXref URLs
+ * Base class resolving DbXref linked URLs.
+ *
+ * <h4>Warning</h4>
+ * Each implementations should be stateless or synchronized as they are reusable and potentially multithreaded.
  */
-public abstract class DbXrefURLBaseResolver {
+abstract class DbXrefURLBaseResolver {
 
     public String resolve(DbXref xref) {
 
@@ -19,12 +22,8 @@ public abstract class DbXrefURLBaseResolver {
             return "";
         }
 
-        beforeResolution(xref);
-
         return resolveTemplateURL(getTemplateUrl(xref), getPrimaryId(xref));
     }
-
-    protected void beforeResolution(DbXref xref) {}
 
     protected String resolveTemplateURL(String templateURL, String primaryId) {
 

@@ -2,7 +2,8 @@ package org.nextprot.api.core.utils.dbxref;
 
 import org.nextprot.api.core.domain.DbXref;
 
-public class PirXrefURLResolver extends DbXrefURLBaseResolver {
+
+class PirXrefURLResolver extends DbXrefURLBaseResolver {
 
     @Override
     protected String getPrimaryId(DbXref xref) {

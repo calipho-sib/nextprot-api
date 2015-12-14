@@ -4,7 +4,7 @@ import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 
 
-public class EmblXrefURLResolver extends DbXrefURLBaseResolver {
+class EmblXrefURLResolver extends DbXrefURLBaseResolver {
 
     @Override
     protected String getPrimaryId(DbXref xref) {
