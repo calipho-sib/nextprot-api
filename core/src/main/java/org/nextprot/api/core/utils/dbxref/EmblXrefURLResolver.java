@@ -3,22 +3,15 @@ package org.nextprot.api.core.utils.dbxref;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 
+
 public class EmblXrefURLResolver extends DbXrefURLBaseResolver {
-
-    private boolean isCDS;
-
-    @Override
-    protected void beforeResolution(DbXref xref) {
-
-        isCDS = xref.getAccession().indexOf('.') > 0;
-    }
 
     @Override
     protected String getPrimaryId(DbXref xref) {
 
         String primaryId = xref.getAccession();
 
-        if (isCDS) {
+        if (xref.getAccession().indexOf('.') > 0) {
             primaryId = primaryId.split("\\.")[0];
         }
 
@@ -30,7 +23,7 @@ public class EmblXrefURLResolver extends DbXrefURLBaseResolver {
 
         String templateURL = super.getTemplateUrl(xref);
 
-        if (isCDS) {
+        if (xref.getAccession().indexOf('.') > 0) {
             templateURL = CvDatabasePreferredLink.EMBL.getLink();
         }
 
