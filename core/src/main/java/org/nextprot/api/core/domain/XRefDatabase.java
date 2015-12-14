@@ -104,7 +104,7 @@ public enum XRefDatabase {
             case "RefSeq":
                 return REF_SEQ;
             default:
-                throw new IllegalArgumentException("cannot find enum for "+name);
+                throw new IllegalArgumentException("cannot find XRefDatabase "+name);
 
         }
     }
