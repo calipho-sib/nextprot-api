@@ -1,6 +1,7 @@
 package org.nextprot.api.core.utils.dbxref;
 
 import com.google.common.base.Preconditions;
+import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.XRefDatabase;
 
@@ -21,12 +22,16 @@ public class DbXrefURLResolver {
     private DbXrefURLResolver() {
 
         resolvers = new HashMap<>();
-        resolvers.put(XRefDatabase.WEBINFO,  new WebInfoXrefURLResolver());
-        resolvers.put(XRefDatabase.COSMIC,   new CosmicXrefURLResolver());
-        resolvers.put(XRefDatabase.EMBL,     new EmblXrefURLResolver());
-        resolvers.put(XRefDatabase.ENSEMBL,  new EnsemblXrefURLResolver());
-        resolvers.put(XRefDatabase.PIR,      new PirXrefURLResolver());
-        resolvers.put(XRefDatabase.CLINVAR,  new ClinvarXrefURLResolver());
+        resolvers.put(XRefDatabase.WEBINFO,        new WebInfoXrefURLResolver());
+        resolvers.put(XRefDatabase.COSMIC,         new CosmicXrefURLResolver());
+        resolvers.put(XRefDatabase.EMBL,           new EmblXrefURLResolver());
+        resolvers.put(XRefDatabase.ENSEMBL,        new EnsemblXrefURLResolver());
+        resolvers.put(XRefDatabase.PIR,            new PirXrefURLResolver());
+        resolvers.put(XRefDatabase.CLINVAR,        new ClinvarXrefURLResolver());
+        resolvers.put(XRefDatabase.GERMONLINE,     new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GERMONLINE));
+        resolvers.put(XRefDatabase.GENEVESTIGATOR, new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GENEVESTIGATOR));
+        resolvers.put(XRefDatabase.PROSITE,        new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PROSITE));
+        resolvers.put(XRefDatabase.PDB,            new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PDB));
     }
 
     public static DbXrefURLResolver getInstance() {

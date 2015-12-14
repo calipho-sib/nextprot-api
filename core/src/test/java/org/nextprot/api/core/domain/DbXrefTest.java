@@ -164,6 +164,10 @@ public class DbXrefTest {
     public void testResolveGenevestigator() throws Exception {
 
         Assert.fail("not yet tested");
+
+        DbXref xref = createDbXref("", "Genevestigator", "whatever");
+
+        Assert.assertEquals("", xref.resolveLinkTarget());
     }
 
     // entry/NX_Q9BXA6/xref.json

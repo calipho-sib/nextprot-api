@@ -150,6 +150,42 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://pir.georgetown.edu/cgi-bin/nbrfget?uid=A40718", resolver.resolveUrl(xref));
     }
 
+    // entry/NX_Q9BXA6/xref.json
+    @Test
+    public void testResolveGermOnline() throws Exception {
+
+        DbXref xref = createDbXref("ENSG00000178093", "GermOnline", "whatever");
+
+        Assert.assertEquals("http://www.germonline.org/Homo_sapiens/geneview?gene=ENSG00000178093", resolver.resolveUrl(xref));
+    }
+
+    @Test
+    public void testResolveGenevestigator() throws Exception {
+
+        Assert.fail("not yet tested");
+
+        DbXref xref = createDbXref("", "Genevestigator", "whatever");
+
+        Assert.assertEquals("", resolver.resolveUrl(xref));
+    }
+
+    @Test
+    public void testResolveProsite() throws Exception {
+
+        DbXref xref = createDbXref("PS50853", "PROSITE", "whatever");
+
+        Assert.assertEquals("http://prosite.expasy.org/cgi-bin/prosite/prosite-search-ac?PS50853", resolver.resolveUrl(xref));
+    }
+
+    // entry/NX_P01308/xref.json
+    @Test
+    public void testResolvePDB() throws Exception {
+
+        DbXref xref = createDbXref("1A7F", "PDB", "whatever");
+
+        Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolveUrl(xref));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();
