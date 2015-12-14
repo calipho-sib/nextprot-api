@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * It is backed by a map that associate a XRefDatabase to an instance of DbXrefURLBaseResolver.
  *
- * Each implementations of DbXrefURLBaseResolver are stateless as method resolveUrl(url) can be invoked concurrently.
+ * Each implementations of DbXrefURLBaseResolver are stateless as method resolve(url) can be invoked concurrently.
  */
 public class DbXrefURLResolver {
 
@@ -54,7 +54,7 @@ public class DbXrefURLResolver {
      * @return a resolved url
      * @throws UnresolvedXrefURLException if url cannot be resolved
      */
-    public String resolveUrl(DbXref xref) {
+    public String resolve(DbXref xref) {
 
         Preconditions.checkNotNull(xref);
 

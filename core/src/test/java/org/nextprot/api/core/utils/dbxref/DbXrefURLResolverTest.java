@@ -22,7 +22,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("babebibobu", "WEBINFO", "");
 
-        Assert.assertEquals("babebibobu", resolver.resolveUrl(xref));
+        Assert.assertEquals("babebibobu", resolver.resolve(xref));
     }
 
     @Test (expected = IllegalArgumentException.class)
@@ -30,7 +30,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("babebibobu", "unknownDb", "");
 
-        Assert.assertEquals("", resolver.resolveUrl(xref));
+        Assert.assertEquals("", resolver.resolve(xref));
     }
 
     @Test
@@ -38,7 +38,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("AF009225", "EMBL", "http://www.ebi.ac.uk/ena/data/view/%s");
 
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AF009225", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AF009225", resolver.resolve(xref));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("CAH72401.1", "EMBL", "whatever");
 
-        Assert.assertEquals("http://www.ebi.ac.uk/cgi-bin/dbfetch?db=emblcds&id=CAH72401", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://www.ebi.ac.uk/cgi-bin/dbfetch?db=emblcds&id=CAH72401", resolver.resolve(xref));
     }
 
     // entry/NX_Q9BXA6/xref.json
@@ -55,7 +55,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("ENSG00000178093", "Ensembl", "whatever");
 
-        Assert.assertEquals("http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=ENSG00000178093", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=ENSG00000178093", resolver.resolve(xref));
     }
 
     // entry/NX_Q9BXA6/xref.json
@@ -64,7 +64,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("ENSP00000466056", "Ensembl", "whatever");
 
-        Assert.assertEquals("http://www.ensembl.org/Homo_sapiens/Transcript/ProteinSummary?db=core;p=ENSP00000466056", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://www.ensembl.org/Homo_sapiens/Transcript/ProteinSummary?db=core;p=ENSP00000466056", resolver.resolve(xref));
     }
 
     // entry/NX_Q9BXA6/xref.json
@@ -73,7 +73,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("ENST00000587522", "Ensembl", "whatever");
 
-        Assert.assertEquals("http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=ENST00000587522", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=ENST00000587522", resolver.resolve(xref));
     }
 
     @Test (expected = UnresolvedXrefURLException.class)
@@ -81,7 +81,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("EST00000587522", "Ensembl", "whatever");
 
-        Assert.assertNull(resolver.resolveUrl(xref));
+        Assert.assertNull(resolver.resolve(xref));
     }
 
     // entry/NX_Q9BXA6/xref.json
@@ -90,7 +90,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("COSM1172604", "Cosmic", "whatever");
 
-        Assert.assertEquals("http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=1172604", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=1172604", resolver.resolve(xref));
     }
 
     // entry/NX_?????/xref.json
@@ -99,7 +99,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("COSS1172604", "Cosmic", "whatever");
 
-        Assert.assertEquals("http://cancer.sanger.ac.uk/cosmic/sample/overview?id=1172604", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://cancer.sanger.ac.uk/cosmic/sample/overview?id=1172604", resolver.resolve(xref));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("HCFC1", "Cosmic", "whatever");
 
-        Assert.assertEquals("http://cancer.sanger.ac.uk/cosmic/gene/overview?ln=HCFC1", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://cancer.sanger.ac.uk/cosmic/gene/overview?ln=HCFC1", resolver.resolve(xref));
     }
 
     @Test
@@ -117,7 +117,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("HCFC1", "Clinvar", "url.whatever");
 
-        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/clinvar/", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/clinvar/", resolver.resolve(xref));
     }
 
     // entry/NX_P51610/xref.json
@@ -128,7 +128,7 @@ public class DbXrefURLResolverTest {
 
         xref.setProperties(Collections.singletonList(createDbXrefProperty("entry name", "A40718")));
 
-        Assert.assertEquals("http://pir.georgetown.edu/cgi-bin/nbrfget?uid=A40718", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://pir.georgetown.edu/cgi-bin/nbrfget?uid=A40718", resolver.resolve(xref));
     }
 
     // entry/NX_P51610/xref.json
@@ -139,7 +139,7 @@ public class DbXrefURLResolverTest {
 
         xref.setProperties(Collections.singletonList(createDbXrefProperty("entry name", "A40718")));
 
-        Assert.assertEquals("http://pir.georgetown.edu/cgi-bin/nbrfget?uid=A40718", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://pir.georgetown.edu/cgi-bin/nbrfget?uid=A40718", resolver.resolve(xref));
     }
 
     @Test (expected = UnresolvedXrefURLException.class)
@@ -147,7 +147,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("babebibobu", "PIR", "pir.georgetown.edu/cgi-bin/nbrfget?uid=%s");
 
-        Assert.assertEquals("http://pir.georgetown.edu/cgi-bin/nbrfget?uid=A40718", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://pir.georgetown.edu/cgi-bin/nbrfget?uid=A40718", resolver.resolve(xref));
     }
 
     // entry/NX_Q9BXA6/xref.json
@@ -156,7 +156,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("ENSG00000178093", "GermOnline", "whatever");
 
-        Assert.assertEquals("http://www.germonline.org/Homo_sapiens/geneview?gene=ENSG00000178093", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://www.germonline.org/Homo_sapiens/geneview?gene=ENSG00000178093", resolver.resolve(xref));
     }
 
     @Test
@@ -166,7 +166,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("", "Genevestigator", "whatever");
 
-        Assert.assertEquals("", resolver.resolveUrl(xref));
+        Assert.assertEquals("", resolver.resolve(xref));
     }
 
     @Test
@@ -174,7 +174,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("PS50853", "PROSITE", "whatever");
 
-        Assert.assertEquals("http://prosite.expasy.org/cgi-bin/prosite/prosite-search-ac?PS50853", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://prosite.expasy.org/cgi-bin/prosite/prosite-search-ac?PS50853", resolver.resolve(xref));
     }
 
     // entry/NX_P01308/xref.json
@@ -183,7 +183,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("1A7F", "PDB", "whatever");
 
-        Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolveUrl(xref));
+        Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolve(xref));
     }
 
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
