@@ -272,6 +272,24 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://prosite.expasy.org/cgi-bin/prosite/prosite-search-ac?PS50853", resolver.resolve(xref));
     }
 
+    // entry/P51610/xref.json
+    @Test
+    public void testResolveBgeeENSG() throws Exception {
+
+        DbXref xref = createDbXref("ENSG00000172534", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
+
+        Assert.assertEquals("http://bgee.unil.ch/bgee/bgee?page=expression&action=data&ENSG00000172534", resolver.resolve(xref));
+    }
+
+    // entry/P51610/xref.json
+    @Test
+    public void testResolveBgeeNoENSG() throws Exception {
+
+        DbXref xref = createDbXref("P51610", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
+
+        Assert.assertEquals("http://bgee.unil.ch/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();
