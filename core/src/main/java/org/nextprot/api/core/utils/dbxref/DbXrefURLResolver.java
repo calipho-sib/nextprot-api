@@ -26,6 +26,7 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.EMBL,     new EmblXrefURLResolver());
         resolvers.put(XRefDatabase.ENSEMBL,  new EnsemblXrefURLResolver());
         resolvers.put(XRefDatabase.PIR,      new PirXrefURLResolver());
+        resolvers.put(XRefDatabase.CLINVAR,  new ClinvarXrefURLResolver());
     }
 
     public static DbXrefURLResolver getInstance() {

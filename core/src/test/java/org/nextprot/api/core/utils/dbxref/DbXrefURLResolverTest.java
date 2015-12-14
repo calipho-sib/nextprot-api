@@ -110,6 +110,15 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://cancer.sanger.ac.uk/cosmic/gene/overview?ln=HCFC1", resolver.resolveUrl(xref));
     }
 
+    @Test
+    public void testResolveClinvar() throws Exception {
+
+        Assert.fail("not yet tested");
+
+        DbXref xref = createDbXref("HCFC1", "Clinvar", "url.whatever");
+
+        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/clinvar/", resolver.resolveUrl(xref));
+    }
 
     // entry/NX_P51610/xref.json
     @Test
