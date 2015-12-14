@@ -32,6 +32,7 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.GENEVESTIGATOR, new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GENEVESTIGATOR));
         resolvers.put(XRefDatabase.PROSITE,        new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PROSITE));
         resolvers.put(XRefDatabase.PDB,            new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PDB));
+        resolvers.put(XRefDatabase.HPA,            new HpaXrefURLResolver());
     }
 
     public static DbXrefURLResolver getInstance() {

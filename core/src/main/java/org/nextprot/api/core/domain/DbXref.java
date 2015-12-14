@@ -227,7 +227,6 @@ public class DbXref implements Serializable {
 
         if (db.equals("HPA")) {
             if (primaryId.startsWith("ENSG")) {
-				// TODO: WHAT IS THE DIFFERENCE ??
                 if (primaryId.endsWith("subcellular")) {
                     templateURL = CvDatabasePreferredLink.HPA_SUBCELL.getLink();
                 }

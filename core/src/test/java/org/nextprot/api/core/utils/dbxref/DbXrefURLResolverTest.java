@@ -186,6 +186,33 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolve(xref));
     }
 
+    // entry/NX_Q9BXA6/xref.json
+    @Test
+    public void testResolveHPAGene() throws Exception {
+
+        DbXref xref = createDbXref("ENSG00000254647", "HPA", "whatever");
+
+        Assert.assertEquals("http://www.proteinatlas.org/ENSG00000254647", resolver.resolve(xref));
+    }
+
+    // entry/NX_P51610/xref.json
+    @Test
+    public void testResolveHPASubcellular() throws Exception {
+
+        DbXref xref = createDbXref("ENSG00000254647/subcellular", "HPA", "whatever");
+
+        Assert.assertEquals("http://www.proteinatlas.org/ENSG00000254647/subcellular", resolver.resolve(xref));
+    }
+
+    // entry/NX_P51610/xref.json
+    @Test
+    public void testResolveHPAAntibody() throws Exception {
+
+        DbXref xref = createDbXref("HPA018312", "HPA", "whatever");
+
+        Assert.assertEquals("http://www.proteinatlas.org/search/HPA018312", resolver.resolve(xref));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();
