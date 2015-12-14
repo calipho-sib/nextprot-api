@@ -39,8 +39,8 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.INTACT,         new IntactXrefURLResolver());
         resolvers.put(XRefDatabase.HSSP,           new HsspXrefURLResolver());
         resolvers.put(XRefDatabase.BGEE,           new BgeeXrefURLResolver());
-        resolvers.put(XRefDatabase.PEPTIDE_ATLAS,  null);
-        resolvers.put(XRefDatabase.SRM_ATLAS,      null);
+        resolvers.put(XRefDatabase.PEPTIDE_ATLAS,  new PeptideAtlasXrefURLResolver());
+        resolvers.put(XRefDatabase.SRM_ATLAS,      new SrmAtlasXrefURLResolver());
         resolvers.put(XRefDatabase.TKG,            null);
         resolvers.put(XRefDatabase.NIH_ARP,        null);
         resolvers.put(XRefDatabase.CGH_DB,         null);

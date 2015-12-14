@@ -290,6 +290,34 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://bgee.unil.ch/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
     }
 
+    // entry/NX_P01308/xref.json
+    @Test
+    public void testResolvePeptideAtlasPap() throws Exception {
+
+        DbXref xref = createDbXref("PAp00001490", "PeptideAtlas", "whatever");
+
+        Assert.assertEquals("https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetPeptide?searchWithinThis=Peptide+Name&searchForThis=PAp00001490;organism_name=Human", resolver.resolve(xref));
+    }
+
+    // entry/NX_P01308/xref.json
+    @Test
+    public void testResolvePeptideAtlasNoPap() throws Exception {
+
+        DbXref xref = createDbXref("P01308", "PeptideAtlas", "whatever");
+
+        Assert.assertEquals("https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetProtein?protein_name=P01308;organism_name=Human;action=GO", resolver.resolve(xref));
+    }
+
+    // entry/NX_P01308/xref.json
+    @Test
+    public void testResolveSRMAtlas() throws Exception {
+
+        DbXref xref = createDbXref("PAp00968082", "SRMAtlas", "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetTransitions?organism_name=Human;default_search=1;peptide_sequence_constraint=%s;apply_action=QUERY");
+        xref.setProperties(Collections.singletonList(createDbXrefProperty("sequence", "GFFYTPK")));
+
+        Assert.assertEquals("https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetTransitions?organism_name=Human;default_search=1;peptide_sequence_constraint=GFFYTPK;apply_action=QUERY",resolver.resolve(xref));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();

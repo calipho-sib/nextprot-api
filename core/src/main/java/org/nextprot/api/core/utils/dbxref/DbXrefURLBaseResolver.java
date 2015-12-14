@@ -36,6 +36,7 @@ abstract class DbXrefURLBaseResolver {
     }
 
     protected String getPrimaryId(DbXref xref) {
+
         return xref.getAccession();
     }
 
