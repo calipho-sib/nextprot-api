@@ -3,7 +3,7 @@ package org.nextprot.api.core.utils.dbxref;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 
-public class ComicXrefURLResolver extends DbXrefURLBaseResolver {
+public class CosmicXrefURLResolver extends DbXrefURLBaseResolver {
 
     private enum Type {
 
@@ -31,21 +31,11 @@ public class ComicXrefURLResolver extends DbXrefURLBaseResolver {
     @Override
     protected String getTemplateUrl(DbXref xref) {
 
-        String templateURL = xref.getLinkUrl();
-
-        switch (type) {
-
-            case COSM:
-                templateURL = CvDatabasePreferredLink.COSMIC_MUTATION.getLink();
-                break;
-            case COSS:
-                templateURL = CvDatabasePreferredLink.COSMIC_SAMPLE.getLink();
-                break;
-            case OTHER:
-                templateURL = CvDatabasePreferredLink.COSMIC_GENE.getLink();
-        }
-
-        return templateURL;
+        if (type == Type.COSM)
+            return CvDatabasePreferredLink.COSMIC_MUTATION.getLink();
+        else if (type == Type.COSS)
+            return CvDatabasePreferredLink.COSMIC_SAMPLE.getLink();
+        return CvDatabasePreferredLink.COSMIC_GENE.getLink();
     }
 
     @Override

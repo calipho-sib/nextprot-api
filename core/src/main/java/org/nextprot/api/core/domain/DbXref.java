@@ -387,7 +387,7 @@ public class DbXref implements Serializable {
         return templateURL.replaceAll("%u", primaryId);
     }
 
-	private DbXrefProperty getPropertyByName(String propertyName) {
+	public DbXrefProperty getPropertyByName(String propertyName) {
 		if(this.getProperties() != null)
 			for(DbXrefProperty prop : this.getProperties())
 				if(prop.getName().equals(propertyName))

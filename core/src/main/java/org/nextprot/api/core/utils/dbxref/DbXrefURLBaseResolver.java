@@ -40,7 +40,16 @@ public abstract class DbXrefURLBaseResolver {
         return xref.getAccession();
     }
 
-    protected abstract String getTemplateUrl(DbXref xref);
+    protected String getTemplateUrl(DbXref xref) {
+
+        String templateURL = xref.getLinkUrl();
+
+        if (!templateURL.startsWith("http")) {
+            templateURL = "http://" + templateURL;
+        }
+
+        return templateURL;
+    }
 
     protected XRefDatabase getXRefDatabase(DbXref xref) {
         return XRefDatabase.valueOfDbName(xref.getDatabaseName());

@@ -7,14 +7,14 @@ import org.nextprot.api.core.domain.DbXref;
 
 import static org.nextprot.api.core.domain.DbXrefTest.createDbXref;
 
-public class ComicXrefURLResolverTest {
+public class CosmicXrefURLResolverTest {
 
     private DbXrefURLBaseResolver resolver;
 
     @Before
     public void setup() {
 
-        resolver = new ComicXrefURLResolver();
+        resolver = new CosmicXrefURLResolver();
     }
 
     // entry/NX_Q9BXA6/xref.json

@@ -30,7 +30,7 @@ public class EmblXrefURLResolver extends DbXrefURLBaseResolver {
     @Override
     protected String getTemplateUrl(DbXref xref) {
 
-        String templateURL = xref.getLinkUrl();
+        String templateURL = super.getTemplateUrl(xref);
 
         if (isCDS) {
             templateURL = CvDatabasePreferredLink.EMBL.getLink();
