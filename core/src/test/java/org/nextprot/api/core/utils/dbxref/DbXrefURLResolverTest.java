@@ -230,6 +230,14 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://genevisible.com/tissues/HS/UniProt/P51610", resolver.resolve(xref));
     }
 
+    @Test
+    public void testResolveUniGene() throws Exception {
+
+        DbXref xref = createDbXref("Hs.83634", "UniGene", "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%s1&CID=%s2");
+
+        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=Hs&CID=83634", resolver.resolve(xref));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();

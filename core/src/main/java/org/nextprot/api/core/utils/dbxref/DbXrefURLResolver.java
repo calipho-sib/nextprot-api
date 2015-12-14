@@ -34,7 +34,7 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.PDB,            new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PDB));
         resolvers.put(XRefDatabase.HPA,            new HpaXrefURLResolver());
         resolvers.put(XRefDatabase.GENEVISIBLE,    new GenevisibleXrefURLResolver());
-        resolvers.put(XRefDatabase.UNI_GENE,       null);
+        resolvers.put(XRefDatabase.UNI_GENE,       new UnigeneXrefURLResolver());
         resolvers.put(XRefDatabase.UCSC,           null);
         resolvers.put(XRefDatabase.INTACT,         null);
         resolvers.put(XRefDatabase.HSSP,           null);
