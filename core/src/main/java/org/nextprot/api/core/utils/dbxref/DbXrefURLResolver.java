@@ -8,28 +8,46 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This singleton resolves DbXref url by delegating to DbXrefURLBaseResolver implementations
+ * This singleton resolves DbXref url by delegating to DbXrefURLBaseResolver implementations.
+ *
+ * It is backed by a map that associate a XRefDatabase to an instance of DbXrefURLBaseResolver.
+ *
+ * Each implementations of DbXrefURLBaseResolver are stateless as method resolveUrl(url) can be invoked concurrently.
  */
 public class DbXrefURLResolver {
-
-    private static final DbXrefURLResolver INSTANCE = new DbXrefURLResolver();
 
     private final Map<XRefDatabase, DbXrefURLBaseResolver> resolvers;
 
     private DbXrefURLResolver() {
 
         resolvers = new HashMap<>();
-        resolvers.put(XRefDatabase.WEBINFO, new WebInfoXrefURLResolver());
-        resolvers.put(XRefDatabase.COSMIC, new CosmicXrefURLResolver());
-        resolvers.put(XRefDatabase.EMBL, new EmblXrefURLResolver());
-        resolvers.put(XRefDatabase.ENSEMBL, new EnsemblXrefURLResolver());
-        resolvers.put(XRefDatabase.PIR, new PirXrefURLResolver());
+        resolvers.put(XRefDatabase.WEBINFO,  new WebInfoXrefURLResolver());
+        resolvers.put(XRefDatabase.COSMIC,   new CosmicXrefURLResolver());
+        resolvers.put(XRefDatabase.EMBL,     new EmblXrefURLResolver());
+        resolvers.put(XRefDatabase.ENSEMBL,  new EnsemblXrefURLResolver());
+        resolvers.put(XRefDatabase.PIR,      new PirXrefURLResolver());
     }
 
     public static DbXrefURLResolver getInstance() {
-        return INSTANCE;
+        return Loader.INSTANCE;
     }
 
+    /**
+     * Does a thread-safe lazy-initialization of the instance without explicit synchronization
+     * @see <a href="http://stackoverflow.com/questions/11165852/java-singleton-and-synchronization">java-singleton-and-synchronization</a>
+     */
+    private static class Loader {
+
+        private static DbXrefURLResolver INSTANCE = new DbXrefURLResolver();
+    }
+
+    /**
+     * Resolve xref linked url
+     *
+     * @param xref the xref containing linked url to resolved
+     * @return a resolved url
+     * @throws UnresolvedXrefURLException if url cannot be resolved
+     */
     public String resolveUrl(DbXref xref) {
 
         Preconditions.checkNotNull(xref);
@@ -40,6 +58,6 @@ public class DbXrefURLResolver {
             return resolvers.get(db).resolve(xref);
         }
 
-        throw new UnresolvedXrefURLException("xref id "+xref.getAccession()+": no resolver found (db: "+xref.getDatabaseName()+")");
+        throw new UnresolvedXrefURLException("xref id "+xref.getAccession()+": no resolver found for unknown linked db "+xref.getDatabaseName());
     }
 }
