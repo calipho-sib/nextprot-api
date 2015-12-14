@@ -33,6 +33,19 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.PROSITE,        new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PROSITE));
         resolvers.put(XRefDatabase.PDB,            new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PDB));
         resolvers.put(XRefDatabase.HPA,            new HpaXrefURLResolver());
+        resolvers.put(XRefDatabase.GENEVISIBLE,    new GenevisibleXrefURLResolver());
+        resolvers.put(XRefDatabase.UNI_GENE,       null);
+        resolvers.put(XRefDatabase.UCSC,           null);
+        resolvers.put(XRefDatabase.INTACT,         null);
+        resolvers.put(XRefDatabase.HSSP,           null);
+        resolvers.put(XRefDatabase.BGEE,           null);
+        resolvers.put(XRefDatabase.PEPTIDE_ATLAS,  null);
+        resolvers.put(XRefDatabase.SRM_ATLAS,      null);
+        resolvers.put(XRefDatabase.TKG,            null);
+        resolvers.put(XRefDatabase.NIH_ARP,        null);
+        resolvers.put(XRefDatabase.CGH_DB,         null);
+        resolvers.put(XRefDatabase.IFO,            null);
+        resolvers.put(XRefDatabase.JCRB,           null);
     }
 
     public static DbXrefURLResolver getInstance() {

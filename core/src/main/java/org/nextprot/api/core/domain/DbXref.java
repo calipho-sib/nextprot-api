@@ -342,6 +342,7 @@ public class DbXref implements Serializable {
 			primaryId = primaryId.toLowerCase();
 		}
 
+		// TODO: ???
 		// the following replace concerns the dbs CLO, PRO, FMA, Uberon and CL
 		if (this.getLinkUrl().contains("purl.obolibrary.org/obo")) {
             primaryId = primaryId.replaceFirst(":", "_");
