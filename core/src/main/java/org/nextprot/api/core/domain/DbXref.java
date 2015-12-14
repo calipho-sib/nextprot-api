@@ -255,8 +255,8 @@ public class DbXref implements Serializable {
 		}
 		if (db.equals("UCSC")) {
 			// organism always human: hardcode it
-			templateURL = templateURL.replaceFirst("%s2", "human");
 			templateURL = templateURL.replaceFirst("%s1", primaryId);
+            templateURL = templateURL.replaceFirst("%s2", "human");
 			return templateURL;
 		}
 		if (db.equals("IntAct")) {
