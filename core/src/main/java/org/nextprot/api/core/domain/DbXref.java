@@ -263,8 +263,6 @@ public class DbXref implements Serializable {
 			if (getAccession().startsWith("EBI")) {
 				templateURL = CvDatabasePreferredLink.INTACT_BINARY.getLink();
 			}
-			// TODO: Should we add "http://www.ebi.ac.uk/intact/pages/interactions/interactions.xhtml?query=%s" into
-			// TODO: CvDatabasePreferredLink ??
 		}
 		
 		if (db.equals("PROSITE")) {

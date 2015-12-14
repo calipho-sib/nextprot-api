@@ -36,7 +36,7 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.GENEVISIBLE,    new GenevisibleXrefURLResolver());
         resolvers.put(XRefDatabase.UNI_GENE,       new UnigeneXrefURLResolver());
         resolvers.put(XRefDatabase.UCSC,           new UcscXrefURLResolver());
-        resolvers.put(XRefDatabase.INTACT,         null);
+        resolvers.put(XRefDatabase.INTACT,         new IntactXrefURLResolver());
         resolvers.put(XRefDatabase.HSSP,           null);
         resolvers.put(XRefDatabase.BGEE,           null);
         resolvers.put(XRefDatabase.PEPTIDE_ATLAS,  null);

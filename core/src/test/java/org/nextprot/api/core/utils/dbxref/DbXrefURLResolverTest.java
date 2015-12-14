@@ -246,6 +246,22 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://genome.ucsc.edu/cgi-bin/hgGene?hgg_gene=uc004fjp.3&org=human", resolver.resolve(xref));
     }
 
+    @Test
+    public void testResolveIntAct() throws Exception {
+
+        DbXref xref = createDbXref("EBI-1644164,EBI-396176", "IntAct", "whatever");
+
+        Assert.assertEquals("http://www.ebi.ac.uk/intact/search/do/search?binary=EBI-1644164,EBI-396176", resolver.resolve(xref));
+    }
+
+    @Test
+    public void testResolveIntActNoEBIId() throws Exception {
+
+        DbXref xref = createDbXref("P51610", "IntAct", "http://www.ebi.ac.uk/intact/pages/interactions/interactions.xhtml?query=%s");
+
+        Assert.assertEquals("http://www.ebi.ac.uk/intact/pages/interactions/interactions.xhtml?query=P51610", resolver.resolve(xref));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();
