@@ -50,19 +50,13 @@ public class DbXrefServiceImpl implements DbXrefService {
 	
 	@Override
 	public List<PublicationDbXref> findDbXRefByPublicationIds(List<Long> publicationIds) {
-		List<PublicationDbXref> xrefs = this.dbXRefDao.findDbXRefByPublicationIds(publicationIds);
-		
-		for(PublicationDbXref xref : xrefs)
-			xref.setResolvedUrl(xref.getResolvedUrl());
-
-		return xrefs;
+		return dbXRefDao.findDbXRefByPublicationIds(publicationIds);
 	}
 	
 
 	@Override
 	public List<DbXref> findDbXRefByIds(List<Long> resourceIds) {
-		List<DbXref> xrefs = this.dbXRefDao.findDbXRefByIds(resourceIds);
-		return xrefs;
+		return dbXRefDao.findDbXRefByIds(resourceIds);
 	}
 	
 
@@ -99,7 +93,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		annotation.setUniqueName("AN_" + entryName.substring(3) + "_XR_" + String.valueOf(xref.getDbXrefId()));
 		annotation.setParentXref(xref);
 
-		annotation.setEvidences(Arrays.asList(newAnnotationEvidence(annotation)));
+		annotation.setEvidences(Collections.singletonList(newAnnotationEvidence(annotation)));
 		annotation.addTargetingIsoforms(newAnnotationIsoformSpecificityList(isoforms, annotation));
 
 		return annotation;
@@ -176,7 +170,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	 */
 	private List<DbXref> findDbXrefsConvertibleIntoAnnotationByEntry(String uniqueName) {
 
-		return this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
+		return dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
 	}
 
 	@Override
@@ -293,32 +287,26 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 	@Override
 	public List<DbXref> findDbXrefByAccession(String accession) {
-		List<DbXref> xrefs = this.dbXRefDao.findDbXrefByAccession(accession);
-		
-//		for(DbXref xref : xrefs)
-//			xref.setResolvedUrl(resolveLinkTarget(xref));
 
-		return xrefs;	
+		return dbXRefDao.findDbXrefByAccession(accession);
 	}
 
 	@Override
 	public List<DbXref> findAllDbXrefs() {
-		List<DbXref> xrefs = this.dbXRefDao.findAllDbXrefs();
-		
-//		for(DbXref xref : xrefs)
-//			xref.setResolvedUrl(resolveLinkTarget(xref));
 
-		return xrefs;
+		return dbXRefDao.findAllDbXrefs();
 	}
 
 	@Override
 	public List<DbXref> findDbXRefByResourceId(Long resourceId) {
-		return this.dbXRefDao.findDbXrefByResourceId(resourceId);
+
+		return dbXRefDao.findDbXrefByResourceId(resourceId);
 	}
 
 	@Override
 	public List<Long> getAllDbXrefsIds() {
-		return this.dbXRefDao.getAllDbXrefsIds();
+
+		return dbXRefDao.getAllDbXrefsIds();
 	}
 
 	private static class DbXrefExcludedPropertyPredicate implements Predicate<DbXrefProperty> {
