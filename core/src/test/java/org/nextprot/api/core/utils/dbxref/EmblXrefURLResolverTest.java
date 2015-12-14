@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
 
-import static org.nextprot.api.core.domain.DbXrefTest.createDbXref;
+import static org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest.createDbXref;
 
 public class EmblXrefURLResolverTest {
 

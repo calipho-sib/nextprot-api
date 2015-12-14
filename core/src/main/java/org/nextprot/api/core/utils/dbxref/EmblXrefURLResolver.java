@@ -10,9 +10,7 @@ public class EmblXrefURLResolver extends DbXrefURLBaseResolver {
     @Override
     protected void beforeResolution(DbXref xref) {
 
-        if (xref.getAccession().indexOf('.') > 0) {
-            isCDS = true;
-        }
+        isCDS = xref.getAccession().indexOf('.') > 0;
     }
 
     @Override
