@@ -15,7 +15,7 @@ public abstract class DbXrefURLBaseResolver {
 
         Preconditions.checkNotNull(xref);
 
-        if (StringUtils.isEmpty(getTemplateUrl(xref)) && !CvDatabasePreferredLink.isDbHasPreferredLink(getXRefDatabase(xref))) {
+        if (StringUtils.isEmpty(xref.getLinkUrl()) && !CvDatabasePreferredLink.isDbHasPreferredLink(getXRefDatabase(xref))) {
             return "";
         }
 
