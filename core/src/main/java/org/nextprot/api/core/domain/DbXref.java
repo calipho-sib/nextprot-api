@@ -146,10 +146,6 @@ public class DbXref implements Serializable {
 	// }
 	//
 
-	private DbXrefProperty retrievePropertyByName(String name) {
-    	return  getPropertyByName(name);
-	}
-
     /**
      * COPIED FROM DATAMODEL
      *
@@ -213,7 +209,7 @@ public class DbXref implements Serializable {
             }
         }
         if (db.equals("PIR")) {
-            DbXrefProperty property = retrievePropertyByName("entry name");
+            DbXrefProperty property = this.getPropertyByName("entry name");
             primaryId = property.getValue();
         }
 		
@@ -272,9 +268,9 @@ public class DbXref implements Serializable {
 
 		// TODO: obsolete xref ? no entry found
 		if (db.equals("HSSP")) {
-			DbXrefProperty pdbAccession = this.retrievePropertyByName("PDB accession");
+			DbXrefProperty pdbAccession = this.getPropertyByName("PDB accession");
 			if ( pdbAccession!= null && pdbAccession.getValue()!=null) {
-				primaryId = this.retrievePropertyByName("PDB accession").getValue().toLowerCase();
+				primaryId = this.getPropertyByName("PDB accession").getValue().toLowerCase();
 			} else {
 				primaryId = accession.toLowerCase();
 			}
@@ -298,7 +294,7 @@ public class DbXref implements Serializable {
 		}
 
 		if (db.equals("SRMAtlas")) {
-            primaryId = retrievePropertyByName("sequence").getValue();
+            primaryId = getPropertyByName("sequence").getValue();
         }
 
 		if (db.equals("PDB")) {

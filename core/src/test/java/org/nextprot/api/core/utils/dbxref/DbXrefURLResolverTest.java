@@ -262,6 +262,16 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://www.ebi.ac.uk/intact/pages/interactions/interactions.xhtml?query=P51610", resolver.resolve(xref));
     }
 
+    @Test
+    public void testResolveHSSP() throws Exception {
+
+        Assert.fail();
+
+        DbXref xref = createDbXref("PS50853", "HSSP", "whatever");
+
+        Assert.assertEquals("http://prosite.expasy.org/cgi-bin/prosite/prosite-search-ac?PS50853", resolver.resolve(xref));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();
