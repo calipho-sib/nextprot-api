@@ -20,7 +20,7 @@ public class DbXrefTest {
 
         DbXref xref = createDbXref("babebibobu", "Ensembl", "www.ensembl.org/id/%s");
 
-        Assert.assertEquals("http://www.ensembl.org/id/%s", xref.resolveLinkTarget());
+        Assert.assertEquals("http://www.ensembl.org/id/babebibobu", xref.resolveLinkTarget());
     }
 
     @Test
