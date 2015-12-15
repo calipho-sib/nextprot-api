@@ -265,7 +265,7 @@ public class DbXrefURLResolverTest {
     @Test
     public void testResolveHSSP() throws Exception {
 
-        Assert.fail();
+        Assert.fail("not yet tested");
 
         DbXref xref = createDbXref("PS50853", "HSSP", "whatever");
 
@@ -331,7 +331,7 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("0377", "TKG", "http://www2.idac.tohoku.ac.jp/dep/ccr/TKGdate/TKGvo10n/%s.html");
 
-        Assert.assertEquals("http://www2.idac.tohoku.ac.jp/dep/ccr/TKGdate/TKGvo103/0377.html", resolver.resolve(xref));
+        resolver.resolve(xref);
     }
 
     @Test
@@ -347,7 +347,31 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("11411_223", "NIH-ARP", "https://www.aidsreagent.org/reagentdetail.cfm?t=cell_lines&id=%s");
 
-        Assert.assertEquals("https://www.aidsreagent.org/reagentdetail.cfm?t=cell_lines&id=223", resolver.resolve(xref));
+        resolver.resolve(xref);
+    }
+
+    @Test
+    public void testResolveCGH_DB() throws Exception {
+
+        DbXref xref = createDbXref("9029-4", "CGH-DB", "http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=%s&aid=%t&lang=en");
+
+        Assert.assertEquals("http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=9029&aid=4&lang=en", resolver.resolve(xref));
+    }
+
+    @Test (expected = UnresolvedXrefURLException.class)
+    public void testResolveCGH_DBMissingDashInAccessionNumber() throws Exception {
+
+        DbXref xref = createDbXref("90294", "CGH-DB", "http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=%s&aid=%t&lang=en");
+
+        resolver.resolve(xref);
+    }
+
+    @Test (expected = UnresolvedXrefURLException.class)
+    public void testResolveCGH_DBMissingPlaceHolder() throws Exception {
+
+        DbXref xref = createDbXref("9029-4", "CGH-DB", "http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=%s&aid=t&lang=en");
+
+        resolver.resolve(xref);
     }
 
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {

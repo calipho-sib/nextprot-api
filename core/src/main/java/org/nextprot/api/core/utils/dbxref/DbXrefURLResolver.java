@@ -43,7 +43,7 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.SRM_ATLAS,      new SrmAtlasXrefURLResolver());
         resolvers.put(XRefDatabase.TKG,            new TkgXrefURLResolver());
         resolvers.put(XRefDatabase.NIH_ARP,        new NihArpXrefURLResolver());
-        resolvers.put(XRefDatabase.CGH_DB,         null);
+        resolvers.put(XRefDatabase.CGH_DB,         new CghDbArpXrefURLResolver());
         resolvers.put(XRefDatabase.IFO,            null);
         resolvers.put(XRefDatabase.JCRB,           null);
     }
