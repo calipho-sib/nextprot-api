@@ -322,24 +322,25 @@ public class DbXrefTest {
     @Test
     public void testResolveTKG() throws Exception {
 
-        Assert.fail("cannot find entry example");
-        DbXref xref = createDbXref("1A7F", "TKG", "whatever");
+        DbXref xref = createDbXref("0377", "TKG", "http://www2.idac.tohoku.ac.jp/dep/ccr/TKGdate/TKGvo10%n/%s.html");
 
-        Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=1A7F", xref.resolveLinkTarget());
+        Assert.assertEquals("http://www2.idac.tohoku.ac.jp/dep/ccr/TKGdate/TKGvo103/0377.html", xref.resolveLinkTarget());
     }
 
     @Test
     public void testResolveNIH_ARP() throws Exception {
 
-        Assert.fail("cannot find entry example");
-        DbXref xref = createDbXref("1A7F", "NIH-ARP", "whatever");
+        DbXref xref = createDbXref("11411-223", "NIH-ARP", "https://www.aidsreagent.org/reagentdetail.cfm?t=cell_lines&id=%s");
+
+        Assert.assertEquals("https://www.aidsreagent.org/reagentdetail.cfm?t=cell_lines&id=223", xref.resolveLinkTarget());
     }
 
     @Test
     public void testResolveCGH_DB() throws Exception {
 
-        Assert.fail("cannot find entry example");
-        DbXref xref = createDbXref("1A7F", "CGH-DB", "whatever");
+        DbXref xref = createDbXref("9029-4", "CGH-DB", "http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=%s&aid=%t&lang=en");
+
+        Assert.assertEquals("http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=9029&aid=4&lang=en", xref.resolveLinkTarget());
     }
 
     @Test
