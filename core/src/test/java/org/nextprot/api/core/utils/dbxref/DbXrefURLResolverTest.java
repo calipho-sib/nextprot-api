@@ -374,6 +374,20 @@ public class DbXrefURLResolverTest {
         resolver.resolve(xref);
     }
 
+    @Test
+    public void testResolveIFO() throws Exception {
+
+        DbXref xref = createDbXref("IFO1234", "IFO", "whatever/%s");
+        Assert.assertEquals("http://whatever/ifo1234", resolver.resolve(xref));
+    }
+
+    @Test
+    public void testResolveJCRB() throws Exception {
+
+        DbXref xref = createDbXref("JCRB1234", "JCRB", "whatever/%s");
+        Assert.assertEquals("http://whatever/jcrb1234", resolver.resolve(xref));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();
