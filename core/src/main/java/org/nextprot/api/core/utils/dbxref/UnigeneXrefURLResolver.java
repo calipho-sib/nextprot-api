@@ -2,7 +2,7 @@ package org.nextprot.api.core.utils.dbxref;
 
 import org.nextprot.api.core.domain.DbXref;
 
-class UnigeneXrefURLResolver extends PlaceHoldersXrefURLResolver {
+class UnigeneXrefURLResolver extends S1S2PlaceHoldersXrefURLResolver {
 
     @Override
     protected String getPrimaryId(DbXref xref) {
@@ -11,12 +11,12 @@ class UnigeneXrefURLResolver extends PlaceHoldersXrefURLResolver {
     }
 
     @Override
-    protected String getFirstPlaceHolderValue(String primaryId) {
+    protected String getS1PlaceHolderValue(String primaryId) {
         return "Hs";
     }
 
     @Override
-    protected String getSecondPlaceHolderValue(String primaryId) {
+    protected String getS2PlaceHolderValue(String primaryId) {
         return primaryId;
     }
 }

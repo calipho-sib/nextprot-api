@@ -27,12 +27,12 @@ abstract class DbXrefURLBaseResolver {
 
     protected String resolveTemplateURL(String templateURL, String primaryId) {
 
-        // general case
         if (templateURL.matches(".*%s\\b.*")) {
+
             return templateURL.replaceAll("\"", "").replaceAll("%s", primaryId);
         }
 
-        throw new UnresolvedXrefURLException("could not resolve template URL '" + templateURL + "' with primary id '" + primaryId + "'");
+        throw new UnresolvedXrefURLException("placeholder '%s' is missing: could not resolve template URL '" + templateURL + "' with primary id '" + primaryId + "'");
     }
 
     protected String getPrimaryId(DbXref xref) {

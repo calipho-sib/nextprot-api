@@ -318,6 +318,22 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetTransitions?organism_name=Human;default_search=1;peptide_sequence_constraint=GFFYTPK;apply_action=QUERY",resolver.resolve(xref));
     }
 
+    @Test
+    public void testResolveTKG() throws Exception {
+
+        DbXref xref = createDbXref("0377", "TKG", "http://www2.idac.tohoku.ac.jp/dep/ccr/TKGdate/TKGvo10%n/%s.html");
+
+        Assert.assertEquals("http://www2.idac.tohoku.ac.jp/dep/ccr/TKGdate/TKGvo103/0377.html", resolver.resolve(xref));
+    }
+
+    @Test(expected = UnresolvedXrefURLException.class)
+    public void testResolveTKGMissingPlaceHolderN() throws Exception {
+
+        DbXref xref = createDbXref("0377", "TKG", "http://www2.idac.tohoku.ac.jp/dep/ccr/TKGdate/TKGvo10n/%s.html");
+
+        Assert.assertEquals("http://www2.idac.tohoku.ac.jp/dep/ccr/TKGdate/TKGvo103/0377.html", resolver.resolve(xref));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();
