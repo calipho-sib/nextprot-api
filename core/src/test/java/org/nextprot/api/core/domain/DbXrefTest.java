@@ -344,6 +344,20 @@ public class DbXrefTest {
     }
 
     @Test
+    public void testResolveIFOMock() throws Exception {
+
+        DbXref xref = createDbXref("IFO1234", "IFO", "whatever/%s");
+        Assert.assertEquals("http://whatever/ifo1234", xref.resolveLinkTarget());
+    }
+
+    @Test
+    public void testResolveJCRBMock() throws Exception {
+
+        DbXref xref = createDbXref("JCRB1234", "JCRB", "whatever/%s");
+        Assert.assertEquals("http://whatever/jcrb1234", xref.resolveLinkTarget());
+    }
+
+    @Test
     public void testResolveIFO() throws Exception {
 
         Assert.fail("cannot find entry example");
