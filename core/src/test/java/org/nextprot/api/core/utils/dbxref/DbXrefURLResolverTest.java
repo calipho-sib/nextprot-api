@@ -334,6 +334,22 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://www2.idac.tohoku.ac.jp/dep/ccr/TKGdate/TKGvo103/0377.html", resolver.resolve(xref));
     }
 
+    @Test
+    public void testResolveNIH_ARP() throws Exception {
+
+        DbXref xref = createDbXref("11411-223", "NIH-ARP", "https://www.aidsreagent.org/reagentdetail.cfm?t=cell_lines&id=%s");
+
+        Assert.assertEquals("https://www.aidsreagent.org/reagentdetail.cfm?t=cell_lines&id=223", resolver.resolve(xref));
+    }
+
+    @Test (expected = UnresolvedXrefURLException.class)
+    public void testResolveNIH_ARPMissingDash() throws Exception {
+
+        DbXref xref = createDbXref("11411_223", "NIH-ARP", "https://www.aidsreagent.org/reagentdetail.cfm?t=cell_lines&id=%s");
+
+        Assert.assertEquals("https://www.aidsreagent.org/reagentdetail.cfm?t=cell_lines&id=223", resolver.resolve(xref));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();
