@@ -18,7 +18,7 @@ class CosmicXrefURLResolver extends DbXrefURLBaseResolver {
     }
 
     @Override
-    protected String getPrimaryId(DbXref xref) {
+    protected String getAccessionNumber(DbXref xref) {
 
         String accession = xref.getAccession();
 

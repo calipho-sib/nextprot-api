@@ -5,7 +5,7 @@ import org.nextprot.api.core.domain.DbXref;
 class SrmAtlasXrefURLResolver extends DbXrefURLBaseResolver {
 
     @Override
-    protected String getPrimaryId(DbXref xref) {
+    protected String getAccessionNumber(DbXref xref) {
 
         String primaryId = xref.getPropertyByName("sequence").getValue();
 

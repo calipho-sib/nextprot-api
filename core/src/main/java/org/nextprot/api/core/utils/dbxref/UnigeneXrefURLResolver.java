@@ -5,7 +5,7 @@ import org.nextprot.api.core.domain.DbXref;
 class UnigeneXrefURLResolver extends S1S2PlaceHoldersXrefURLResolver {
 
     @Override
-    protected String getPrimaryId(DbXref xref) {
+    protected String getAccessionNumber(DbXref xref) {
 
         return xref.getAccession().split("\\.")[1];
     }

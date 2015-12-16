@@ -5,7 +5,7 @@ import org.nextprot.api.core.domain.DbXref;
 class LowerCaseAccessionXrefURLResolver extends DbXrefURLBaseResolver {
 
     @Override
-    protected String getPrimaryId(DbXref xref) {
+    protected String getAccessionNumber(DbXref xref) {
 
         return xref.getAccession().toLowerCase();
     }

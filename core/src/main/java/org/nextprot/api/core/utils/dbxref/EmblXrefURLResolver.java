@@ -7,7 +7,7 @@ import org.nextprot.api.core.domain.DbXref;
 class EmblXrefURLResolver extends DbXrefURLBaseResolver {
 
     @Override
-    protected String getPrimaryId(DbXref xref) {
+    protected String getAccessionNumber(DbXref xref) {
 
         String primaryId = xref.getAccession();
 

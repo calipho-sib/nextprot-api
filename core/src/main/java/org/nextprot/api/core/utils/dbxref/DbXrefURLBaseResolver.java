@@ -22,7 +22,7 @@ abstract class DbXrefURLBaseResolver {
             return "";
         }
 
-        return resolveTemplateURL(getTemplateUrl(xref), getPrimaryId(xref));
+        return resolveTemplateURL(getTemplateUrl(xref), getAccessionNumber(xref));
     }
 
     protected String resolveTemplateURL(String templateURL, String primaryId) {
@@ -35,7 +35,7 @@ abstract class DbXrefURLBaseResolver {
         throw new UnresolvedXrefURLException("placeholder '%s' is missing: could not resolve template URL '" + templateURL + "' with primary id '" + primaryId + "'");
     }
 
-    protected String getPrimaryId(DbXref xref) {
+    protected String getAccessionNumber(DbXref xref) {
 
         return xref.getAccession();
     }

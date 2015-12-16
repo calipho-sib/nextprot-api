@@ -9,7 +9,7 @@ class WebInfoXrefURLResolver extends DbXrefURLBaseResolver {
     @Override
     public String resolve(DbXref xref) {
 
-        return getPrimaryId(xref);
+        return getAccessionNumber(xref);
     }
 
     @Override

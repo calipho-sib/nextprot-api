@@ -356,13 +356,14 @@ public class DbXrefTest {
     public void testResolveIFO() throws Exception {
 
         DbXref xref = createDbXref("1A7F", "IFO", "whatever");
+        Assert.assertEquals("http://whatever/jcrb1234", xref.resolveLinkTarget());
     }
 
     @Test
     public void testResolveJCRB() throws Exception {
 
-        Assert.fail("cannot find entry example");
         DbXref xref = createDbXref("1A7F", "JCRB", "whatever");
+        Assert.assertEquals("http://whatever/jcrb1234", xref.resolveLinkTarget());
     }
 
     // entry/NX_Q9BXA6/xref.json

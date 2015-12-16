@@ -5,7 +5,7 @@ import org.nextprot.api.core.domain.DbXref;
 class HsspXrefURLResolver extends DbXrefURLBaseResolver {
 
     @Override
-    protected String getPrimaryId(DbXref xref) {
+    protected String getAccessionNumber(DbXref xref) {
 
         DbXref.DbXrefProperty pdbAccession = xref.getPropertyByName("PDB accession");
 
