@@ -20,6 +20,7 @@ public class DbXrefURLResolver {
 
     private final Map<XRefDatabase, DbXrefURLBaseResolver> resolvers;
     private final DbXrefURLBaseResolver oboResolver;
+    private final DbXrefURLBaseResolver defaultResolver = new DbXrefURLBaseResolver();
 
     private DbXrefURLResolver() {
 
@@ -48,7 +49,6 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.CGH_DB,         new CghDbArpXrefURLResolver());
         resolvers.put(XRefDatabase.IFO,            new JcrbXrefURLResolver());
         resolvers.put(XRefDatabase.JCRB,           new JcrbXrefURLResolver());
-        resolvers.put(XRefDatabase.BRENDA,         new DbXrefURLBaseResolver());
 
         oboResolver = new OboLibraryXrefURLResolver();
     }
@@ -85,8 +85,9 @@ public class DbXrefURLResolver {
         else if (xref.getLinkUrl().contains("purl.obolibrary.org/obo")) {
             return oboResolver.resolve(xref);
         }
-
-        throw new UnresolvedXrefURLException("xref id "+xref.getAccession()+": no resolver found for unknown linked db "+xref.getDatabaseName());
+        else {
+            return defaultResolver.resolve(xref);
+        }
     }
 
     public String resolveWithAccession(DbXref xref, String accession) {

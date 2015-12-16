@@ -20,6 +20,7 @@ import org.nextprot.api.core.service.AntibodyResourceIdsService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideNamesService;
+import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -240,7 +241,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 				xref.setProperties(new ArrayList<>(propsMap.get(xref.getDbXrefId())));
 
 			if (xref.getLinkUrl().contains("%u")) {
-				xref.setResolvedUrl(DbXref.resolvePercentULinkTarget(uniqueName, xref));
+				xref.setResolvedUrl(DbXrefURLResolver.getInstance().resolveWithAccession(xref, uniqueName));
 			}
 		}
 	}

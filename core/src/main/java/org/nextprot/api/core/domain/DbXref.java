@@ -3,6 +3,7 @@ package org.nextprot.api.core.domain;
 import org.apache.commons.lang.StringUtils;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -84,8 +85,8 @@ public class DbXref implements Serializable {
 	}
 	
 	public String getResolvedUrl() {
-		if (resolvedUrl==null){
-			resolvedUrl=this.resolveLinkTarget();
+		if (resolvedUrl == null) {
+			resolvedUrl = DbXrefURLResolver.getInstance().resolve(this);
 		}
 		return resolvedUrl;
 	}
@@ -109,49 +110,13 @@ public class DbXref implements Serializable {
 		this.properties = properties;
 	}
 
-	// private DbXrefProperty getProperty(String name) {
-	// for(DbXrefProperty prop : this.properties)
-	// if(prop.getName().equals(name)) return prop;
-	// return null;
-	// }
-
-	// public String resolveLinkTarget(String primaryId) {
-	// primaryId = primaryId.startsWith("NX_") ? primaryId.substring(3) :
-	// primaryId;
-	// if (!this.linkUrl.contains("%u")) {
-	// return resolveLinkTarget();
-	// }
-	//
-	// String templateURL = this.linkUrl;
-	// if (!templateURL.startsWith("http")) {
-	// templateURL = "http://" + templateURL;
-	// }
-	//
-	// if (this.databaseName.equalsIgnoreCase("brenda")) {
-	// if (getAccession().startsWith("BTO")) {
-	// String accession = getAccession().replace(":", "_");
-	// templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s",
-	// accession);
-	// }
-	// else {
-	// templateURL = templateURL.replaceFirst("%s1", getAccession());
-	// String organismId = "247";
-	// // this.retrievePropertyByName("organism name").getPropertyValue();
-	// // organism always human: hardcode it
-	// templateURL = templateURL.replaceFirst("%s2", organismId);
-	// }
-	// }
-	//
-	// return templateURL.replaceAll("%u", primaryId);
-	// }
-	//
-
     /**
      * COPIED FROM DATAMODEL
      *
      * @return the link to the xref datbase for the current element (protocol
      *         not included)
      */
+	@Deprecated
 	String resolveLinkTarget() {
 
 		// Deal 1rst with special cases
@@ -352,6 +317,7 @@ public class DbXref implements Serializable {
 		return this.getUrl();
 	}
 
+	@Deprecated
     public static String resolvePercentULinkTarget(String uniqueName, DbXref xref) {
 
         if (!xref.getLinkUrl().contains("%u")) {
