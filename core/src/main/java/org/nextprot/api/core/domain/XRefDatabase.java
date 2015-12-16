@@ -35,18 +35,28 @@ public enum XRefDatabase {
     JCRB("JCRB"),
     BRENDA("Brenda"),
     PROTEOPEDIA("PROTEOPEDIA"),
-    REF_SEQ("RefSeq"),
+    REF_SEQ("RefSeq", "http://www.ncbi.nlm.nih.gov/refseq/"),
     OBO("OBO")
     ;
 
     private final String name;
+    private final String url;
 
     XRefDatabase(String name) {
+        this(name, "");
+    }
+
+    XRefDatabase(String name, String url) {
         this.name = name;
+        this.url = url;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     /**

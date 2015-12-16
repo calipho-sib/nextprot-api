@@ -7,11 +7,8 @@ import com.google.common.collect.*;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.core.dao.DbXrefDao;
-import org.nextprot.api.core.domain.CvDatabasePreferredLink;
-import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
@@ -226,8 +223,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		Collection<DbXrefProperty> shownProperties = Collections2.filter(dbXRefDao.findDbXrefsProperties(xrefIds), DB_XREF_EXCLUDING_HIDDEN_PROPERTIES_PREDICATE);
 
-		xrefs.addAll(createMissingDbXrefs(xrefs));
-
 		Multimap<Long, DbXrefProperty> propsMap = Multimaps.index(shownProperties, new Function<DbXrefProperty, Long>() {
 			public Long apply(DbXrefProperty prop) {
 				return prop.getDbXrefId();
@@ -244,6 +239,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 				xref.setResolvedUrl(DbXrefURLResolver.getInstance().resolveWithAccession(xref, uniqueName));
 			}
 		}
+
+		xrefs.addAll(createMissingDbXrefs(xrefs));
 	}
 
 	/**
@@ -279,8 +276,8 @@ public class DbXrefServiceImpl implements DbXrefService {
         dbXRef.setAccession(property.getValue());
         dbXRef.setDatabaseCategory("Sequence databases");
         dbXRef.setDatabaseName(CvDatabasePreferredLink.REFSEQ_NUCLEOTIDE.getDbName());
-        dbXRef.setUrl(CvDatabasePreferredLink.REFSEQ_NUCLEOTIDE.getLink());
-        dbXRef.setLinkUrl("http://www.ncbi.nlm.nih.gov/nuccore/"+property.getValue());
+		dbXRef.setUrl(XRefDatabase.REF_SEQ.getUrl());
+        dbXRef.setLinkUrl(CvDatabasePreferredLink.REFSEQ_NUCLEOTIDE.getLink());
         dbXRef.setProperties(new ArrayList<DbXrefProperty>());
 
         return dbXRef;
