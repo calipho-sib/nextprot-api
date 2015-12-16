@@ -1,5 +1,7 @@
 package org.nextprot.api.core.domain;
 
+import com.google.common.base.Optional;
+
 /**
  * Databases referenced in DbXref
  *
@@ -33,11 +35,11 @@ public enum XRefDatabase {
     JCRB("JCRB"),
     BRENDA("Brenda"),
     PROTEOPEDIA("PROTEOPEDIA"),
-    REF_SEQ("RefSeq")
+    REF_SEQ("RefSeq"),
+    OBO("OBO")
     ;
 
     private final String name;
-
 
     XRefDatabase(String name) {
         this.name = name;
@@ -47,6 +49,11 @@ public enum XRefDatabase {
         return name;
     }
 
+    /**
+     * Get a XRefDatabase enum from name
+     * @param name the enum name
+     * @return XRefDatabase enum or null if not found
+     */
     public static XRefDatabase valueOfDbName(String name) {
 
         switch(name) {
@@ -103,9 +110,20 @@ public enum XRefDatabase {
                 return PROTEOPEDIA;
             case "RefSeq":
                 return REF_SEQ;
+            case "OBO":
+                return OBO;
             default:
-                throw new IllegalArgumentException("cannot find XRefDatabase "+name);
-
+                return null;
         }
+    }
+
+    /**
+     * Get an optional XRefDatabas enum from name
+     * @param name the enum name
+     * @return XRefDatabase enum of absent if not found
+     */
+    public static Optional<XRefDatabase> optionalValueOfDbName(String name) {
+
+        return Optional.fromNullable(valueOfDbName(name));
     }
 }

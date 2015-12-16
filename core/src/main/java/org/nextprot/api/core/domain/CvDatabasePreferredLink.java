@@ -25,7 +25,9 @@ public enum CvDatabasePreferredLink {
 	GENEVESTIGATOR(XRefDatabase.GENEVESTIGATOR, "http://genevisible.com/tissues/HS/UniProt/%s"),
 	REFSEQ_NUCLEOTIDE(XRefDatabase.REF_SEQ, "http://www.ncbi.nlm.nih.gov/nuccore/%s"),
 	PEPTIDE_ATLAS_PROTEIN(XRefDatabase.PEPTIDE_ATLAS, "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetProtein?protein_name=%s;organism_name=Human;action=GO"),
-	PEPTIDE_ATLAS_PEPTIDE(XRefDatabase.PEPTIDE_ATLAS, "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetPeptide?searchWithinThis=Peptide+Name&searchForThis=%s;organism_name=Human");
+	PEPTIDE_ATLAS_PEPTIDE(XRefDatabase.PEPTIDE_ATLAS, "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetPeptide?searchWithinThis=Peptide+Name&searchForThis=%s;organism_name=Human"),
+	OBO(XRefDatabase.OBO, "http://purl.obolibrary.org/obo/%s");
+	;
 
 	private final XRefDatabase dbName;
 	private final String link;

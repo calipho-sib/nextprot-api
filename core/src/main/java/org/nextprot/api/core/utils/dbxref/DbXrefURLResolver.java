@@ -1,5 +1,6 @@
 package org.nextprot.api.core.utils.dbxref;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
@@ -18,6 +19,7 @@ import java.util.Map;
 public class DbXrefURLResolver {
 
     private final Map<XRefDatabase, DbXrefURLBaseResolver> resolvers;
+    private final DbXrefURLBaseResolver oboResolver;
 
     private DbXrefURLResolver() {
 
@@ -46,6 +48,8 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.CGH_DB,         new CghDbArpXrefURLResolver());
         resolvers.put(XRefDatabase.IFO,            new LowerCaseAccessionXrefURLResolver());
         resolvers.put(XRefDatabase.JCRB,           new LowerCaseAccessionXrefURLResolver());
+
+        oboResolver = new OboLibraryXrefURLResolver();
     }
 
     public static DbXrefURLResolver getInstance() {
@@ -72,10 +76,13 @@ public class DbXrefURLResolver {
 
         Preconditions.checkNotNull(xref);
 
-        XRefDatabase db = XRefDatabase.valueOfDbName(xref.getDatabaseName());
+        Optional<XRefDatabase> db = XRefDatabase.optionalValueOfDbName(xref.getDatabaseName());
 
-        if (resolvers.containsKey(db)) {
-            return resolvers.get(db).resolve(xref);
+        if (db.isPresent() && resolvers.containsKey(db.get())) {
+            return resolvers.get(db.get()).resolve(xref);
+        }
+        else if (xref.getLinkUrl().contains("purl.obolibrary.org/obo")) {
+            return oboResolver.resolve(xref);
         }
 
         throw new UnresolvedXrefURLException("xref id "+xref.getAccession()+": no resolver found for unknown linked db "+xref.getDatabaseName());

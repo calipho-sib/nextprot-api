@@ -207,14 +207,6 @@ public class DbXrefTest {
     }
 
     @Test
-    public void testResolveGenevisibleBadTemplate() throws Exception {
-
-        DbXref xref = createDbXref("P51610", "Genevisible", "whatever");
-
-        Assert.assertEquals("http://genevisible.com/tissues/HS/UniProt/P51610", xref.resolveLinkTarget());
-    }
-
-    @Test
     public void testResolveUniGene() throws Exception {
 
         DbXref xref = createDbXref("Hs.83634", "UniGene", "http://www.ncbi.nlm.nih.gov/UniGene/clust.cgi?ORG=%s1&CID=%s2");
@@ -375,38 +367,24 @@ public class DbXrefTest {
     @Test
     public void testResolvePRO() throws Exception {
 
-        DbXref xref = createDbXref("PR:Q9BXA6", "PRO", "http://purl.obolibrary.org/obo/PR_%u");
+        DbXref xref = createDbXref("PR:000028527", "PRO", "http://purl.obolibrary.org/obo/PR_%u");
 
         // cannot resolve %u here !!
-        Assert.assertEquals("http://purl.obolibrary.org/obo/PR_Q9BXA6", xref.resolveLinkTarget());
+        Assert.assertEquals("http://purl.obolibrary.org/obo/PR_000028527", xref.resolveLinkTarget());
     }
 
     @Test
     public void testResolveCLO() throws Exception {
 
-        Assert.fail("cannot find entry example");
-        DbXref xref = createDbXref("PR:Q9BXA6", "CLO", "http://purl.obolibrary.org/obo/PR_%u");
+        DbXref xref = createDbXref("CLO:0000031", "CLO", "purl.obolibrary.org/obo/%s");
+        Assert.assertEquals("http://purl.obolibrary.org/obo/CLO_0000031", xref.resolveLinkTarget());
     }
 
     @Test
     public void testResolveFMA() throws Exception {
 
-        Assert.fail("cannot find entry example");
-        DbXref xref = createDbXref("PR:Q9BXA6", "FMA", "http://purl.obolibrary.org/obo/PR_%u");
-    }
-
-    @Test
-    public void testResolveCL() throws Exception {
-
-        Assert.fail("cannot find entry example");
-        DbXref xref = createDbXref("PR:Q9BXA6", "CL", "http://purl.obolibrary.org/obo/PR_%u");
-    }
-
-    @Test
-    public void testResolveUberon() throws Exception {
-
-        Assert.fail("cannot find entry example");
-        DbXref xref = createDbXref("PR:Q9BXA6", "Uberon", "http://purl.obolibrary.org/obo/PR_%u");
+        DbXref xref = createDbXref("FMA:62955", "FMA", "http://purl.obolibrary.org/obo/%s");
+        Assert.assertEquals("http://purl.obolibrary.org/obo/FMA_62955", xref.resolveLinkTarget());
     }
 
     @Test

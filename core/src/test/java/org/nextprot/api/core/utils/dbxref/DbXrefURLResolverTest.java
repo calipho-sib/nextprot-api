@@ -25,7 +25,7 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("babebibobu", resolver.resolve(xref));
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test (expected = UnresolvedXrefURLException.class)
     public void testUnknownDbNameAndEmptyURL() throws Exception {
 
         DbXref xref = createDbXref("babebibobu", "unknownDb", "");
@@ -386,6 +386,28 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("JCRB1234", "JCRB", "whatever/%s");
         Assert.assertEquals("http://whatever/jcrb1234", resolver.resolve(xref));
+    }
+
+    @Test
+    public void testResolvePRO() throws Exception {
+
+        DbXref xref = createDbXref("PR:000028527", "PRO", "http://purl.obolibrary.org/obo/PR_%u");
+
+        Assert.assertEquals("http://purl.obolibrary.org/obo/PR_000028527", resolver.resolve(xref));
+    }
+
+    @Test
+    public void testResolveCLO() throws Exception {
+
+        DbXref xref = createDbXref("CLO:0000031", "CLO", "purl.obolibrary.org/obo/%s");
+        Assert.assertEquals("http://purl.obolibrary.org/obo/CLO_0000031", resolver.resolve(xref));
+    }
+
+    @Test
+    public void testResolveFMA() throws Exception {
+
+        DbXref xref = createDbXref("FMA:62955", "FMA", "http://purl.obolibrary.org/obo/%s");
+        Assert.assertEquals("http://purl.obolibrary.org/obo/FMA_62955", resolver.resolve(xref));
     }
 
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
