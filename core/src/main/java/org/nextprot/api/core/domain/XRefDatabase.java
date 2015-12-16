@@ -56,43 +56,43 @@ public enum XRefDatabase {
      */
     public static XRefDatabase valueOfDbName(String name) {
 
-        switch(name) {
+        switch(name.toUpperCase()) {
 
             case "WEBINFO":
                 return WEBINFO;
             case "EMBL":
                 return EMBL;
-            case "Ensembl":
+            case "ENSEMBL":
                 return ENSEMBL;
-            case "Cosmic":
+            case "COSMIC":
                 return COSMIC;
-            case "Clinvar":
+            case "CLINVAR":
                 return CLINVAR;
             case "PIR":
                 return PIR;
-            case "GermOnline":
+            case "GERMONLINE":
                 return GERMONLINE;
             case "HPA":
                 return HPA;
-            case "Genevisible":
+            case "GENEVISIBLE":
                 return GENEVISIBLE;
-            case "Genevestigator":
+            case "GENEVESTIGATOR":
                 return GENEVESTIGATOR;
-            case "UniGene":
+            case "UNIGENE":
                 return UNI_GENE;
             case "UCSC":
                 return UCSC;
-            case "IntAct":
+            case "INTACT":
                 return INTACT;
             case "PROSITE":
                 return PROSITE;
             case "HSSP":
                 return HSSP;
-            case "Bgee":
+            case "BGEE":
                 return BGEE;
-            case "PeptideAtlas":
+            case "PEPTIDEATLAS":
                 return PEPTIDE_ATLAS;
-            case "SRMAtlas":
+            case "SRMATLAS":
                 return SRM_ATLAS;
             case "PDB":
                 return PDB;
@@ -106,11 +106,11 @@ public enum XRefDatabase {
                 return IFO;
             case "JCRB":
                 return JCRB;
-            case "Brenda":
+            case "BRENDA":
                 return BRENDA;
             case "PROTEOPEDIA":
                 return PROTEOPEDIA;
-            case "RefSeq":
+            case "REFSEQ":
                 return REF_SEQ;
             case "OBO":
                 return OBO;

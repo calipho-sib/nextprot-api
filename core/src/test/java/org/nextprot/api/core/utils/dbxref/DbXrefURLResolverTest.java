@@ -413,6 +413,20 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://purl.obolibrary.org/obo/FMA_62955", resolver.resolve(xref));
     }
 
+    @Test
+    public void testResolveBrenda() throws Exception {
+
+        DbXref xref = createDbXref("2.7.11.21", "BRENDA", "http://www.brenda-enzymes.org/enzyme.php?ecno=%s");
+        Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.21", resolver.resolve(xref));
+    }
+
+    @Test
+    public void testResolveHogenom() throws Exception {
+
+        DbXref xref = createDbXref("HOG000007899", "HOGENOM", "http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=%u&db=HOGENOM");
+        Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=Q8NBS9&db=HOGENOM", resolver.resolveWithAccession(xref, "NX_Q8NBS9"));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();

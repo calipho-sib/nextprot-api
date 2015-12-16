@@ -48,6 +48,7 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.CGH_DB,         new CghDbArpXrefURLResolver());
         resolvers.put(XRefDatabase.IFO,            new JcrbXrefURLResolver());
         resolvers.put(XRefDatabase.JCRB,           new JcrbXrefURLResolver());
+        resolvers.put(XRefDatabase.BRENDA,         new DbXrefURLBaseResolver());
 
         oboResolver = new OboLibraryXrefURLResolver();
     }
@@ -86,5 +87,34 @@ public class DbXrefURLResolver {
         }
 
         throw new UnresolvedXrefURLException("xref id "+xref.getAccession()+": no resolver found for unknown linked db "+xref.getDatabaseName());
+    }
+
+    public String resolveWithAccession(DbXref xref, String accession) {
+
+        if (!xref.getLinkUrl().contains("%u")) {
+            return resolve(xref);
+        }
+
+        accession = accession.startsWith("NX_") ? accession.substring(3) : accession;
+        String templateURL = xref.getLinkUrl();
+
+        if (!templateURL.startsWith("http")) {
+            templateURL = "http://" + templateURL;
+        }
+
+        if (xref.getDatabaseName().equalsIgnoreCase("brenda")) {
+
+            if (xref.getAccession().startsWith("BTO")) {
+                templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s", xref.getAccession().replace(":", "_"));
+            }
+            else {
+                templateURL = templateURL.replaceFirst("%s1", xref.getAccession());
+
+                // organism always human: hardcoded as "247"
+                templateURL = templateURL.replaceFirst("%s2", "247");
+            }
+        }
+
+        return templateURL.replaceAll("%u", accession);
     }
 }

@@ -12,7 +12,7 @@ import org.nextprot.api.core.domain.XRefDatabase;
  * <h4>Warning</h4>
  * Each implementations should be stateless or synchronized as they are reusable and potentially multithreaded.
  */
-abstract class DbXrefURLBaseResolver {
+class DbXrefURLBaseResolver {
 
     public String resolve(DbXref xref) {
 
