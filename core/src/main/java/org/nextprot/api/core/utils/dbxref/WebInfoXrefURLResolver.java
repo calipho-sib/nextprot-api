@@ -13,7 +13,7 @@ class WebInfoXrefURLResolver extends DbXrefURLBaseResolver {
     }
 
     @Override
-    protected String getTemplateUrl(DbXref xref) {
+    protected String getTemplateURL(DbXref xref) {
         return "";
     }
 }

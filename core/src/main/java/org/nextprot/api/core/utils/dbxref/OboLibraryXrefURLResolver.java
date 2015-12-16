@@ -20,7 +20,7 @@ class OboLibraryXrefURLResolver extends DbXrefURLBaseResolver {
     }
 
     @Override
-    protected String getTemplateUrl(DbXref xref) {
+    protected String getTemplateURL(DbXref xref) {
 
         return CvDatabasePreferredLink.OBO.getLink();
     }

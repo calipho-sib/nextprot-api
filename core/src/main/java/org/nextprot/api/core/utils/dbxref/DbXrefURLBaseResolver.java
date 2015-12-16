@@ -1,10 +1,7 @@
 package org.nextprot.api.core.utils.dbxref;
 
 import com.google.common.base.Preconditions;
-import org.apache.commons.lang.StringUtils;
-import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.XRefDatabase;
 
 /**
  * Base class resolving DbXref linked URLs.
@@ -18,16 +15,12 @@ class DbXrefURLBaseResolver {
 
         Preconditions.checkNotNull(xref);
 
-        if (StringUtils.isEmpty(xref.getLinkUrl()) && !CvDatabasePreferredLink.isDbHasPreferredLink(getXRefDatabase(xref))) {
-            return "";
-        }
-
-        return resolveTemplateURL(getTemplateUrl(xref), getAccessionNumber(xref));
+        return resolveTemplateURL(getTemplateURL(xref), getAccessionNumber(xref));
     }
 
     protected String resolveTemplateURL(String templateURL, String accession) {
 
-        if (templateURL.matches(".*%s\\b.*")) {
+        if (templateURL.contains("%s")) {
 
             return templateURL.replaceAll("\"", "").replaceAll("%s", accession);
         }
@@ -40,7 +33,7 @@ class DbXrefURLBaseResolver {
         return xref.getAccession();
     }
 
-    protected String getTemplateUrl(DbXref xref) {
+    protected String getTemplateURL(DbXref xref) {
 
         String templateURL = xref.getLinkUrl();
 
@@ -49,9 +42,5 @@ class DbXrefURLBaseResolver {
         }
 
         return templateURL;
-    }
-
-    private XRefDatabase getXRefDatabase(DbXref xref) {
-        return XRefDatabase.valueOfDbName(xref.getDatabaseName());
     }
 }

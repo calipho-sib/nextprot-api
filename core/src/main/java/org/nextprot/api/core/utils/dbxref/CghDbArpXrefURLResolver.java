@@ -19,14 +19,14 @@ class CghDbArpXrefURLResolver extends DbXrefURLBaseResolver {
     }
 
     @Override
-    protected String getTemplateUrl(DbXref xref) {
+    protected String getTemplateURL(DbXref xref) {
 
         String accession = xref.getAccession();
 
         if (accession.contains("-")) {
             accession = accession.replaceAll("^.+-", "");
 
-            String templateURL = super.getTemplateUrl(xref);
+            String templateURL = super.getTemplateURL(xref);
 
             if (templateURL.contains("%t"))
                 return templateURL.replaceAll("%t", accession.replaceAll("^.+-", ""));

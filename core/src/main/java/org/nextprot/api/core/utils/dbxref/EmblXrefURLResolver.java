@@ -19,9 +19,9 @@ class EmblXrefURLResolver extends DbXrefURLBaseResolver {
     }
 
     @Override
-    protected String getTemplateUrl(DbXref xref) {
+    protected String getTemplateURL(DbXref xref) {
 
-        String templateURL = super.getTemplateUrl(xref);
+        String templateURL = super.getTemplateURL(xref);
 
         if (xref.getAccession().indexOf('.') > 0) {
             templateURL = CvDatabasePreferredLink.EMBL.getLink();

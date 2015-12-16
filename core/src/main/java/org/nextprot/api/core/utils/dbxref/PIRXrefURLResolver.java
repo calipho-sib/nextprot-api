@@ -13,6 +13,6 @@ class PirXrefURLResolver extends DbXrefURLBaseResolver {
         if (property != null)
             return property.getValue();
 
-        throw new UnresolvedXrefURLException("missing primary id: could not find 'entry name' property");
+        throw new UnresolvedXrefURLException("missing accession number: could not find 'entry name' property");
     }
 }

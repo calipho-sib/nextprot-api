@@ -7,7 +7,7 @@ import org.nextprot.api.core.domain.DbXref;
 class EnsemblXrefURLResolver extends DbXrefURLBaseResolver {
 
     @Override
-    protected String getTemplateUrl(DbXref xref) {
+    protected String getTemplateURL(DbXref xref) {
 
         String accession = xref.getAccession();
 

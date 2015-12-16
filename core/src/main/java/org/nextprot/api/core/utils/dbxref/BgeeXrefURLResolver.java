@@ -5,10 +5,10 @@ import org.nextprot.api.core.domain.DbXref;
 class BgeeXrefURLResolver extends DbXrefURLBaseResolver {
 
     @Override
-    protected String getTemplateUrl(DbXref xref) {
+    protected String getTemplateURL(DbXref xref) {
 
         String accession = xref.getAccession();
-        String templateURL = super.getTemplateUrl(xref);
+        String templateURL = super.getTemplateURL(xref);
 
         if (accession.contains("ENSG"))
             templateURL = templateURL.replace("uniprot_id=", "page=expression&action=data&");

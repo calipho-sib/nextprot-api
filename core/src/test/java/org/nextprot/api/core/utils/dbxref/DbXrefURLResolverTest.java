@@ -25,12 +25,12 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("babebibobu", resolver.resolve(xref));
     }
 
-    @Test
+    @Test (expected = UnresolvedXrefURLException.class)
     public void testUnknownDbNameAndEmptyURL() throws Exception {
 
         DbXref xref = createDbXref("babebibobu", "unknownDb", "");
 
-        Assert.assertEquals("", resolver.resolve(xref));
+        resolver.resolve(xref);
     }
 
     @Test
