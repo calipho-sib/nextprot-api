@@ -10,7 +10,7 @@ import org.nextprot.api.core.domain.XRefDatabase;
  * Base class resolving DbXref linked URLs.
  *
  * <h4>Warning</h4>
- * Each implementations should be stateless or synchronized as they are reusable and potentially multithreaded.
+ * Each implementations should be stateless or synchronized as they are reusable and potentially multithreadable.
  */
 class DbXrefURLBaseResolver {
 
@@ -25,14 +25,14 @@ class DbXrefURLBaseResolver {
         return resolveTemplateURL(getTemplateUrl(xref), getAccessionNumber(xref));
     }
 
-    protected String resolveTemplateURL(String templateURL, String primaryId) {
+    protected String resolveTemplateURL(String templateURL, String accession) {
 
         if (templateURL.matches(".*%s\\b.*")) {
 
-            return templateURL.replaceAll("\"", "").replaceAll("%s", primaryId);
+            return templateURL.replaceAll("\"", "").replaceAll("%s", accession);
         }
 
-        throw new UnresolvedXrefURLException("placeholder '%s' is missing: could not resolve template URL '" + templateURL + "' with primary id '" + primaryId + "'");
+        throw new UnresolvedXrefURLException("placeholder '%s' is missing: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
     }
 
     protected String getAccessionNumber(DbXref xref) {
@@ -51,7 +51,7 @@ class DbXrefURLBaseResolver {
         return templateURL;
     }
 
-    protected XRefDatabase getXRefDatabase(DbXref xref) {
+    private XRefDatabase getXRefDatabase(DbXref xref) {
         return XRefDatabase.valueOfDbName(xref.getDatabaseName());
     }
 }

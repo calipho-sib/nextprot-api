@@ -260,6 +260,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 					if ("nucleotide sequence ID".equals(property.getName())) {
 						newXrefs.add(createRefSeqNucleotideDbXrefFromDbXrefProperty(property));
+						break;
 					}
 				}
 			}
