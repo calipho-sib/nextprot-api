@@ -25,11 +25,9 @@ public class ConstantLinkXrefURLResolverTest {
 
         DbXrefURLBaseResolver resolver = new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GENEVESTIGATOR);
 
-        Assert.fail("not yet tested");
+        DbXref xref = createDbXref("P01308", "Genevestigator", "whatever");
 
-        DbXref xref = createDbXref("", "Genevestigator", "whatever");
-
-        Assert.assertEquals("", resolver.resolve(xref));
+        Assert.assertEquals("http://genevisible.com/tissues/HS/UniProt/P01308", resolver.resolve(xref));
     }
 
     @Test

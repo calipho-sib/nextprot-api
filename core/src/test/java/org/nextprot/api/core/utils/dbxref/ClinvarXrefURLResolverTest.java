@@ -20,10 +20,8 @@ public class ClinvarXrefURLResolverTest {
     @Test
     public void testResolveClinvar() throws Exception {
 
-        Assert.fail("not yet tested");
-
         DbXref xref = createDbXref("HCFC1", "Clinvar", "url.whatever");
 
-        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/clinvar/", resolver.resolve(xref));
+        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/clinvar/?term=HCFC1", resolver.resolve(xref));
     }
 }

@@ -76,6 +76,8 @@ public enum XRefDatabase {
                 return HPA;
             case "Genevisible":
                 return GENEVISIBLE;
+            case "Genevestigator":
+                return GENEVESTIGATOR;
             case "UniGene":
                 return UNI_GENE;
             case "UCSC":

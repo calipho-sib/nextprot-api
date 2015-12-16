@@ -113,11 +113,9 @@ public class DbXrefURLResolverTest {
     @Test
     public void testResolveClinvar() throws Exception {
 
-        Assert.fail("not yet tested");
-
         DbXref xref = createDbXref("HCFC1", "Clinvar", "url.whatever");
 
-        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/clinvar/", resolver.resolve(xref));
+        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/clinvar/?term=HCFC1", resolver.resolve(xref));
     }
 
     // entry/NX_P51610/xref.json
@@ -162,11 +160,9 @@ public class DbXrefURLResolverTest {
     @Test
     public void testResolveGenevestigator() throws Exception {
 
-        Assert.fail("not yet tested");
+        DbXref xref = createDbXref("P01308", "Genevestigator", "whatever");
 
-        DbXref xref = createDbXref("", "Genevestigator", "whatever");
-
-        Assert.assertEquals("", resolver.resolve(xref));
+        Assert.assertEquals("http://genevisible.com/tissues/HS/UniProt/P01308", resolver.resolve(xref));
     }
 
     @Test
@@ -265,11 +261,18 @@ public class DbXrefURLResolverTest {
     @Test
     public void testResolveHSSP() throws Exception {
 
-        Assert.fail("not yet tested");
+        DbXref xref = createDbXref("PS50853", "HSSP", "%s");
 
-        DbXref xref = createDbXref("PS50853", "HSSP", "whatever");
+        Assert.assertEquals("http://ps50853", resolver.resolve(xref));
+    }
 
-        Assert.assertEquals("http://prosite.expasy.org/cgi-bin/prosite/prosite-search-ac?PS50853", resolver.resolve(xref));
+    @Test
+    public void testResolveHSSPWithPDB() throws Exception {
+
+        DbXref xref = createDbXref("PS50853", "HSSP", "%s");
+        xref.setProperties(Collections.singletonList(createDbXrefProperty("PDB accession", "1A7F")));
+
+        Assert.assertEquals("http://1a7f", resolver.resolve(xref));
     }
 
     // entry/P51610/xref.json

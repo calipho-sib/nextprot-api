@@ -5,7 +5,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
 
+import java.util.Collections;
+
 import static org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest.createDbXref;
+import static org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest.createDbXrefProperty;
 
 public class HsspXrefURLResolverTest {
 
@@ -20,18 +23,17 @@ public class HsspXrefURLResolverTest {
     @Test
     public void testResolveHSSP() throws Exception {
 
-        DbXref xref = createDbXref("PS50853", "HSSP", "whatever");
+        DbXref xref = createDbXref("PS50853", "HSSP", "%s");
 
-        Assert.assertEquals("http://prosite.expasy.org/cgi-bin/prosite/prosite-search-ac?PS50853", resolver.resolve(xref));
+        Assert.assertEquals("http://ps50853", resolver.resolve(xref));
     }
 
     @Test
-    public void testResolveHSSP2() throws Exception {
+    public void testResolveHSSPWithPDB() throws Exception {
 
-        Assert.fail();
+        DbXref xref = createDbXref("PS50853", "HSSP", "%s");
+        xref.setProperties(Collections.singletonList(createDbXrefProperty("PDB accession", "1A7F")));
 
-        DbXref xref = createDbXref("PS50853", "HSSP", "whatever");
-
-        Assert.assertEquals("http://prosite.expasy.org/cgi-bin/prosite/prosite-search-ac?PS50853", resolver.resolve(xref));
+        Assert.assertEquals("http://1a7f", resolver.resolve(xref));
     }
 }
