@@ -331,7 +331,8 @@ public class DbXref implements Serializable {
             templateURL = templateURL.replaceAll("%t", primaryId.replaceAll("^.+-", ""));
             primaryId = primaryId.replaceAll("-.+$", "");
         }
-		
+		// jcrb: http://cellbank.nibio.go.jp/~cellbank/en/search_res_list.cgi?KEYWOD=%s
+		// ifo:  http://cellbank.nibio.go.jp/~cellbank/cgi-bin/search_res_det.cgi?RNO=%s
 		if (db.equals("IFO") || db.equals("JCRB")) {
 			primaryId = primaryId.toLowerCase();
 		}

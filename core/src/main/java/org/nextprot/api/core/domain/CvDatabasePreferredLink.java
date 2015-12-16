@@ -26,7 +26,9 @@ public enum CvDatabasePreferredLink {
 	REFSEQ_NUCLEOTIDE(XRefDatabase.REF_SEQ, "http://www.ncbi.nlm.nih.gov/nuccore/%s"),
 	PEPTIDE_ATLAS_PROTEIN(XRefDatabase.PEPTIDE_ATLAS, "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetProtein?protein_name=%s;organism_name=Human;action=GO"),
 	PEPTIDE_ATLAS_PEPTIDE(XRefDatabase.PEPTIDE_ATLAS, "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetPeptide?searchWithinThis=Peptide+Name&searchForThis=%s;organism_name=Human"),
-	OBO(XRefDatabase.OBO, "http://purl.obolibrary.org/obo/%s");
+	OBO(XRefDatabase.OBO, "http://purl.obolibrary.org/obo/%s"),
+	JCRB(XRefDatabase.JCRB, "http://cellbank.nibio.go.jp/~cellbank/en/search_res_list.cgi?KEYWOD=%s"),
+	IFO(XRefDatabase.IFO, "http://cellbank.nibio.go.jp/~cellbank/cgi-bin/search_res_det.cgi?RNO=%s")
 	;
 
 	private final XRefDatabase dbName;

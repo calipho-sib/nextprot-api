@@ -355,15 +355,15 @@ public class DbXrefTest {
     @Test
     public void testResolveIFO() throws Exception {
 
-        DbXref xref = createDbXref("1A7F", "IFO", "whatever");
-        Assert.assertEquals("http://whatever/jcrb1234", xref.resolveLinkTarget());
+        DbXref xref = createDbXref("IFO1234", "IFO", "http://cellbank.nibio.go.jp/~cellbank/cgi-bin/search_res_det.cgi?RNO=%s");
+        Assert.assertEquals("http://cellbank.nibio.go.jp/~cellbank/cgi-bin/search_res_det.cgi?RNO=ifo1234", xref.resolveLinkTarget());
     }
 
     @Test
     public void testResolveJCRB() throws Exception {
 
-        DbXref xref = createDbXref("1A7F", "JCRB", "whatever");
-        Assert.assertEquals("http://whatever/jcrb1234", xref.resolveLinkTarget());
+        DbXref xref = createDbXref("JCRB1234", "JCRB", "http://cellbank.nibio.go.jp/~cellbank/en/search_res_list.cgi?KEYWOD=%s");
+        Assert.assertEquals("http://cellbank.nibio.go.jp/~cellbank/en/search_res_list.cgi?KEYWOD=jcrb1234", xref.resolveLinkTarget());
     }
 
     // entry/NX_Q9BXA6/xref.json

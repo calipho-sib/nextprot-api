@@ -381,14 +381,14 @@ public class DbXrefURLResolverTest {
     public void testResolveIFO() throws Exception {
 
         DbXref xref = createDbXref("IFO1234", "IFO", "whatever/%s");
-        Assert.assertEquals("http://whatever/ifo1234", resolver.resolve(xref));
+        Assert.assertEquals("http://cellbank.nibio.go.jp/~cellbank/cgi-bin/search_res_det.cgi?RNO=ifo1234", resolver.resolve(xref));
     }
 
     @Test
     public void testResolveJCRB() throws Exception {
 
         DbXref xref = createDbXref("JCRB1234", "JCRB", "whatever/%s");
-        Assert.assertEquals("http://whatever/jcrb1234", resolver.resolve(xref));
+        Assert.assertEquals("http://cellbank.nibio.go.jp/~cellbank/en/search_res_list.cgi?KEYWOD=jcrb1234", resolver.resolve(xref));
     }
 
     @Test
