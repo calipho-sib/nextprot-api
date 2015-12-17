@@ -9,14 +9,11 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.nextprot.api.core.utils.dbxref.DbXrefUrlVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Writer;
-import java.net.*;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -244,136 +241,17 @@ having sum(a.cnt)=1
 	//@Test
 	public void logAllEntriesXrefUrlStatus() throws IOException {
 
-		Set<String> visitedLinkedURLs = new HashSet<>();
-
-		PrintWriter pw = new PrintWriter("/tmp/allentries-xrefs-url.tsv");
-		PrintWriter log = new PrintWriter("/tmp/allentries-xrefs-url.log");
-
 		Set<String> allEntryAcs = masterIdentifierService.findUniqueNames();
 
-		pw.write("entry ac\tdb\txref ac\turl\thttp status\tresolved url\thttp status\n");
+		DbXrefUrlVisitor visitor = new DbXrefUrlVisitor("/tmp/allentries-xrefs-url.tsv", "/tmp/allentries-xrefs-url.log");
 
-		int count=0;
 		for (String entryAc : allEntryAcs) {
 
-			List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster(entryAc);
-
-			for (DbXref xref : xrefs) {
-
-				if ((count % 50) == 0) {
-					pw.flush();
-				}
-
-				String resolvedUrl = xref.getResolvedUrl();
-
-				String linkedURL = xref.getLinkUrl();
-
-				if (!visitedLinkedURLs.contains(linkedURL)) {
-
-					Response response = requestUrls(xref, log);
-
-					int j=0;
-					int tries = 3;
-					while (response.getResolvedUrlHttpStatus().equals("TIMEOUT") && j<tries) {
-
-						response = requestUrls(xref, log);
-						j++;
-					}
-
-					String db = xref.getDatabaseName();
-					String xrefAc = xref.getAccession();
-					String url = xref.getUrl();
-
-					pw.write(entryAc);
-					pw.write("\t");
-					pw.write(db);
-					pw.write("\t");
-					pw.write(xrefAc);
-					pw.write("\t");
-					pw.write(url);
-					pw.write("\t");
-					pw.write(response.getUrlHttpStatus());
-					pw.write("\t");
-					pw.write(resolvedUrl);
-					pw.write("\t");
-					pw.write(response.getResolvedUrlHttpStatus());
-					pw.write("\n");
-
-					visitedLinkedURLs.add(linkedURL);
-
-					count++;
-				}
-			}
+			visitor.visit(entryAc, this.xrefService.findDbXrefsByMaster(entryAc));
 		}
 
-		pw.flush();
-		pw.close();
-	}
-
-	private Response requestUrls(DbXref xref, Writer log) throws IOException {
-
-		String url = xref.getUrl();
-		String urlHttpStatus = getResponseCode(url, log);
-		String resolvedUrlHttpStatus = getResponseCode(xref.getResolvedUrl(), log);
-
-		return new Response(urlHttpStatus, resolvedUrlHttpStatus);
-	}
-
-	private static class Response {
-
-		String urlHttpStatus;
-		String resolvedUrlHttpStatus;
-
-		public Response(String urlHttpStatus, String resolvedUrlHttpStatus) {
-			this.urlHttpStatus = urlHttpStatus;
-			this.resolvedUrlHttpStatus = resolvedUrlHttpStatus;
-		}
-
-		public String getUrlHttpStatus() {
-			return urlHttpStatus;
-		}
-
-		public String getResolvedUrlHttpStatus() {
-			return resolvedUrlHttpStatus;
-		}
-
-	}
-
-	public String getResponseCode(String url, Writer log) throws IOException {
-
-		String response;
-		HttpURLConnection con = null;
-
-		try {
-			URL obj = new URL(url);
-			con = (HttpURLConnection) obj.openConnection();
-
-			con.setRequestMethod("HEAD");
-			con.setRequestProperty("User-Agent", "Mozilla/5.0");
-			con.setConnectTimeout(5000);
-			con.connect();
-
-			log.write("Http HEAD request "+url+"\n");
-			response = String.valueOf(con.getResponseCode());
-
-		} catch (SocketTimeoutException e) {
-			log.write(e.getMessage()+"\n");
-			response = "TIMEOUT";
-		} catch (ProtocolException e) {
-			log.write(e.getMessage()+"\n");
-			response = "PROTOCOL";
-		} catch (MalformedURLException e) {
-			log.write(e.getMessage()+"\n");
-			response = "MALFORMEDURL";
-		} catch (IOException e) {
-			log.write(e.getMessage()+"\n");
-			response = "IO";
-		}
-
-		if (con != null)
-			con.disconnect();
-
-		return response;
+		visitor.flush();
+		visitor.close();
 	}
 
 	private void assertEmptyProperties(String entryName, long propertyId) {
