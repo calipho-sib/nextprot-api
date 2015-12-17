@@ -1,6 +1,9 @@
 package org.nextprot.api.core.domain;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public enum CvDatabasePreferredLink {
 	
 	BRENDA_BTO(XRefDatabase.BRENDA,"http://purl.obolibrary.org/obo/%s"),
@@ -31,22 +34,22 @@ public enum CvDatabasePreferredLink {
 	IFO(XRefDatabase.IFO, "http://cellbank.nibio.go.jp/~cellbank/cgi-bin/search_res_det.cgi?RNO=%s")
 	;
 
-	private final XRefDatabase dbName;
+	private final XRefDatabase db;
 	private final String link;
 
-    CvDatabasePreferredLink(final XRefDatabase dbName , final String link) {
-		this.dbName = dbName;
+    CvDatabasePreferredLink(final XRefDatabase db , final String link) {
+		this.db = db;
 		this.link = link;
 	}
 
 	// ----------------- Instance methods ----------------- //
 
     public XRefDatabase getDb() {
-        return dbName;
+        return db;
     }
 
 	public String getDbName() {
-    	return dbName.getName();
+    	return db.getName();
     }
 
 
@@ -57,20 +60,26 @@ public enum CvDatabasePreferredLink {
 	// ----------------- Class methods ----------------- //
 	 
 	public static boolean dbHasPreferredLink(String dbName) {
-		for (CvDatabasePreferredLink l : CvDatabasePreferredLink.values()) {
-			if (l.getDbName().toLowerCase().equals(dbName.toLowerCase())) 
-				return true;
-		}
-		return false;
+
+		return !getCvDatabasePreferredLinks(dbName).isEmpty();
 	}
 
-    public static boolean isDbHasPreferredLink(XRefDatabase dbName) {
+	public static List<CvDatabasePreferredLink> getCvDatabasePreferredLinks(String dbName) {
 
-        for (CvDatabasePreferredLink l : CvDatabasePreferredLink.values()) {
-            if (l.getDb()== dbName) return true;
-        }
+		List<CvDatabasePreferredLink> list = new ArrayList<>();
 
-        return false;
-    }
+		XRefDatabase xRefDatabase = XRefDatabase.valueOfDbName(dbName);
+
+		if (xRefDatabase != null) {
+
+			for (CvDatabasePreferredLink l : CvDatabasePreferredLink.values()) {
+
+				if (l.getDb() == xRefDatabase)
+					list.add(l);
+			}
+		}
+
+		return list;
+	}
 	
 }
