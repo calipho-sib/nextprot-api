@@ -3,6 +3,7 @@ package org.nextprot.api.core.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -11,16 +12,21 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class DbXrefServiceIntegrationTest extends CoreUnitBaseTest {
 
-	@Autowired
-	private DbXrefService xrefService;
-
+	@Autowired private DbXrefService xrefService;
+	@Autowired private MasterIdentifierService masterIdentifierService;
 /*
  * This query finds entries having a single xref among 'Orphanet', 'KEGGPathway' , 'Reactome' and 'DrugBank'
  * It is convenient for tests: we know we get a single annotation from xrefs for a given entry
@@ -214,6 +220,159 @@ having sum(a.cnt)=1
                 break;
 			}
 		}
+	}
+
+	//@Test
+	public void testAllEntriesDbXrefs() {
+
+		Set<String> allEntryNames = masterIdentifierService.findUniqueNames();
+
+		for (String entryName : allEntryNames) {
+
+			List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster(entryName);
+
+			for (DbXref xref : xrefs) {
+
+				Assert.assertTrue(!xref.getAccession().isEmpty());
+				Assert.assertTrue(!xref.getUrl().isEmpty());
+				Assert.assertTrue(!xref.getLinkUrl().isEmpty());
+				Assert.assertTrue(!xref.getResolvedUrl().isEmpty());
+			}
+		}
+	}
+
+	//@Test
+	public void logAllEntriesXrefUrlStatus() throws FileNotFoundException {
+
+		Set<String> visitedLinkedURLs = new HashSet<>();
+
+		PrintWriter pw = new PrintWriter("/tmp/allentries-xrefs-url.tsv");
+
+		Set<String> allEntryAcs = masterIdentifierService.findUniqueNames();
+
+		pw.write("entry ac\tdb\txref ac\turl\thttp status\tresolved url\thttp status\n");
+
+		int count=0;
+		for (String entryAc : allEntryAcs) {
+
+			List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster(entryAc);
+
+			for (DbXref xref : xrefs) {
+
+				if ((count % 50) == 0) {
+					pw.flush();
+				}
+
+				String resolvedUrl = xref.getResolvedUrl();
+
+				String linkedURL = xref.getLinkUrl();
+
+				if (!visitedLinkedURLs.contains(linkedURL)) {
+
+					Response response = requestUrls(xref);
+
+					int j=0;
+					int tries = 3;
+					while (response.getResolvedUrlHttpStatus().equals("TIMEOUT") && j<tries) {
+
+						response = requestUrls(xref);
+						j++;
+					}
+
+					String db = xref.getDatabaseName();
+					String xrefAc = xref.getAccession();
+					String url = xref.getUrl();
+
+					pw.write(entryAc);
+					pw.write("\t");
+					pw.write(db);
+					pw.write("\t");
+					pw.write(xrefAc);
+					pw.write("\t");
+					pw.write(url);
+					pw.write("\t");
+					pw.write(response.getUrlHttpStatus());
+					pw.write("\t");
+					pw.write(resolvedUrl);
+					pw.write("\t");
+					pw.write(response.getResolvedUrlHttpStatus());
+					pw.write("\n");
+
+					visitedLinkedURLs.add(linkedURL);
+
+					count++;
+				}
+			}
+		}
+
+		pw.flush();
+		pw.close();
+	}
+
+	private Response requestUrls(DbXref xref) {
+
+		String url = xref.getUrl();
+		String urlHttpStatus = getResponseCode(url);
+		String resolvedUrlHttpStatus = getResponseCode(xref.getResolvedUrl());
+
+		return new Response(urlHttpStatus, resolvedUrlHttpStatus);
+	}
+
+	private static class Response {
+
+		String urlHttpStatus;
+		String resolvedUrlHttpStatus;
+
+		public Response(String urlHttpStatus, String resolvedUrlHttpStatus) {
+			this.urlHttpStatus = urlHttpStatus;
+			this.resolvedUrlHttpStatus = resolvedUrlHttpStatus;
+		}
+
+		public String getUrlHttpStatus() {
+			return urlHttpStatus;
+		}
+
+		public String getResolvedUrlHttpStatus() {
+			return resolvedUrlHttpStatus;
+		}
+
+	}
+
+	public String getResponseCode(String url)  {
+
+		String response;
+		HttpURLConnection con = null;
+
+		try {
+			URL obj = new URL(url);
+			con = (HttpURLConnection) obj.openConnection();
+
+			con.setRequestMethod("HEAD");
+			con.setRequestProperty("User-Agent", "Mozilla/5.0");
+			con.setConnectTimeout(5000);
+			con.connect();
+
+			System.out.println("Http HEAD request "+url);
+			response = String.valueOf(con.getResponseCode());
+
+		} catch (SocketTimeoutException e) {
+			System.err.println(e.getMessage());
+			response = "TIMEOUT";
+		} catch (ProtocolException e) {
+			System.err.println(e.getMessage());
+			response = "PROTOCOL";
+		} catch (MalformedURLException e) {
+			System.err.println(e.getMessage());
+			response = "MALFORMEDURL";
+		} catch (IOException e) {
+			System.err.println(e.getMessage());
+			response = "IO";
+		}
+
+		if (con != null)
+			con.disconnect();
+
+		return response;
 	}
 
 	private void assertEmptyProperties(String entryName, long propertyId) {
