@@ -12,9 +12,9 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.*;
 import java.util.HashSet;
 import java.util.List;
@@ -242,11 +242,12 @@ having sum(a.cnt)=1
 	}
 
 	//@Test
-	public void logAllEntriesXrefUrlStatus() throws FileNotFoundException {
+	public void logAllEntriesXrefUrlStatus() throws IOException {
 
 		Set<String> visitedLinkedURLs = new HashSet<>();
 
 		PrintWriter pw = new PrintWriter("/tmp/allentries-xrefs-url.tsv");
+		PrintWriter log = new PrintWriter("/tmp/allentries-xrefs-url.log");
 
 		Set<String> allEntryAcs = masterIdentifierService.findUniqueNames();
 
@@ -269,13 +270,13 @@ having sum(a.cnt)=1
 
 				if (!visitedLinkedURLs.contains(linkedURL)) {
 
-					Response response = requestUrls(xref);
+					Response response = requestUrls(xref, log);
 
 					int j=0;
 					int tries = 3;
 					while (response.getResolvedUrlHttpStatus().equals("TIMEOUT") && j<tries) {
 
-						response = requestUrls(xref);
+						response = requestUrls(xref, log);
 						j++;
 					}
 
@@ -309,11 +310,11 @@ having sum(a.cnt)=1
 		pw.close();
 	}
 
-	private Response requestUrls(DbXref xref) {
+	private Response requestUrls(DbXref xref, Writer log) throws IOException {
 
 		String url = xref.getUrl();
-		String urlHttpStatus = getResponseCode(url);
-		String resolvedUrlHttpStatus = getResponseCode(xref.getResolvedUrl());
+		String urlHttpStatus = getResponseCode(url, log);
+		String resolvedUrlHttpStatus = getResponseCode(xref.getResolvedUrl(), log);
 
 		return new Response(urlHttpStatus, resolvedUrlHttpStatus);
 	}
@@ -338,7 +339,7 @@ having sum(a.cnt)=1
 
 	}
 
-	public String getResponseCode(String url)  {
+	public String getResponseCode(String url, Writer log) throws IOException {
 
 		String response;
 		HttpURLConnection con = null;
@@ -352,20 +353,20 @@ having sum(a.cnt)=1
 			con.setConnectTimeout(5000);
 			con.connect();
 
-			System.out.println("Http HEAD request "+url);
+			log.write("Http HEAD request "+url+"\n");
 			response = String.valueOf(con.getResponseCode());
 
 		} catch (SocketTimeoutException e) {
-			System.err.println(e.getMessage());
+			log.write(e.getMessage()+"\n");
 			response = "TIMEOUT";
 		} catch (ProtocolException e) {
-			System.err.println(e.getMessage());
+			log.write(e.getMessage()+"\n");
 			response = "PROTOCOL";
 		} catch (MalformedURLException e) {
-			System.err.println(e.getMessage());
+			log.write(e.getMessage()+"\n");
 			response = "MALFORMEDURL";
 		} catch (IOException e) {
-			System.err.println(e.getMessage());
+			log.write(e.getMessage()+"\n");
 			response = "IO";
 		}
 
