@@ -15,6 +15,8 @@ class DbXrefURLBaseResolver {
 
         Preconditions.checkNotNull(xref);
 
+        xref.setLinkUrl(getTemplateURL(xref));
+
         return resolveTemplateURL(getTemplateURL(xref), getAccessionNumber(xref));
     }
 
