@@ -15,9 +15,11 @@ class DbXrefURLBaseResolver {
 
         Preconditions.checkNotNull(xref);
 
-        xref.setLinkUrl(getTemplateURL(xref));
+        String template = getTemplateURL(xref);
 
-        return resolveTemplateURL(getTemplateURL(xref), getAccessionNumber(xref));
+        xref.setLinkUrl(template);
+
+        return resolveTemplateURL(template, getAccessionNumber(xref));
     }
 
     protected String resolveTemplateURL(String templateURL, String accession) {
