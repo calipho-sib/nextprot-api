@@ -248,6 +248,7 @@ having sum(a.cnt)=1
 		for (String entryAc : allEntryAcs) {
 
 			visitor.visit(entryAc, this.xrefService.findDbXrefsByMaster(entryAc));
+			visitor.flush();
 		}
 
 		visitor.flush();
