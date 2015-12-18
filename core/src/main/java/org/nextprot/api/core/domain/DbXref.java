@@ -1,11 +1,13 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
+
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 @ApiObject(name = "xref", description = "A cross reference")
 public class DbXref implements Serializable {
@@ -32,7 +34,7 @@ public class DbXref implements Serializable {
 	private String resolvedUrl;
 
 	@ApiObjectField(description = "A list of properties. A property contains an accession, a property name and a value.")
-	private List<DbXrefProperty> properties;
+	private List<DbXrefProperty> properties = Collections.emptyList();
 
 	public Long getDbXrefId() {
 		return dbXrefId;
@@ -83,8 +85,8 @@ public class DbXref implements Serializable {
 	}
 	
 	public String getResolvedUrl() {
-		if (resolvedUrl==null){
-			resolvedUrl=this.resolveLinkTarget();
+		if (resolvedUrl == null) {
+			resolvedUrl = DbXrefURLResolver.getInstance().resolve(this);
 		}
 		return resolvedUrl;
 	}
@@ -108,54 +110,15 @@ public class DbXref implements Serializable {
 		this.properties = properties;
 	}
 
-	// private DbXrefProperty getProperty(String name) {
-	// for(DbXrefProperty prop : this.properties)
-	// if(prop.getName().equals(name)) return prop;
-	// return null;
-	// }
+    /**
+     * COPIED FROM DATAMODEL
+     *
+     * @return the link to the xref datbase for the current element (protocol
+     *         not included)
+     */
+	@Deprecated
+	String resolveLinkTarget() {
 
-	// public String resolveLinkTarget(String primaryId) {
-	// primaryId = primaryId.startsWith("NX_") ? primaryId.substring(3) :
-	// primaryId;
-	// if (!this.linkUrl.contains("%u")) {
-	// return resolveLinkTarget();
-	// }
-	//
-	// String templateURL = this.linkUrl;
-	// if (!templateURL.startsWith("http")) {
-	// templateURL = "http://" + templateURL;
-	// }
-	//
-	// if (this.databaseName.equalsIgnoreCase("brenda")) {
-	// if (getAccession().startsWith("BTO")) {
-	// String accession = getAccession().replace(":", "_");
-	// templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s",
-	// accession);
-	// }
-	// else {
-	// templateURL = templateURL.replaceFirst("%s1", getAccession());
-	// String organismId = "247";
-	// // this.retrievePropertyByName("organism name").getPropertyValue();
-	// // organism always human: hardcode it
-	// templateURL = templateURL.replaceFirst("%s2", organismId);
-	// }
-	// }
-	//
-	// return templateURL.replaceAll("%u", primaryId);
-	// }
-	//
-
-	private DbXrefProperty retrievePropertyByName(String name) {
-    	return  getPropertyByName(name);
-	}
-	
-	/**
-	 * COPIED FROM DATAMODEL
-	 * 
-	 * @return the link to the xref datbase for the current element (protocol
-	 *         not included)
-	 */
-	public String resolveLinkTarget() {
 		// Deal 1rst with special cases
 		String primaryId = this.getAccession();
 		String db = this.getDatabaseName();
@@ -211,7 +174,7 @@ public class DbXref implements Serializable {
             }
         }
         if (db.equals("PIR")) {
-            DbXrefProperty property = retrievePropertyByName("entry name");
+            DbXrefProperty property = this.getPropertyByName("entry name");
             primaryId = property.getValue();
         }
 		
@@ -237,6 +200,8 @@ public class DbXref implements Serializable {
             }
         }
 
+		// TODO: Should The following db templates be tested for emptiness and valid format ??
+
 		if (db.equals("Genevisible")) {
 			// organism always human: hardcode it
 			templateURL = templateURL.replaceFirst("%s1", primaryId);
@@ -251,8 +216,8 @@ public class DbXref implements Serializable {
 		}
 		if (db.equals("UCSC")) {
 			// organism always human: hardcode it
-			templateURL = templateURL.replaceFirst("%s2", "human");
 			templateURL = templateURL.replaceFirst("%s1", primaryId);
+            templateURL = templateURL.replaceFirst("%s2", "human");
 			return templateURL;
 		}
 		if (db.equals("IntAct")) {
@@ -265,10 +230,12 @@ public class DbXref implements Serializable {
 			// Overwrite native dbxref raw link w a more user-friendly one
 			templateURL = CvDatabasePreferredLink.PROSITE.getLink();
 		}
+
+		// TODO: obsolete xref ? no entry found
 		if (db.equals("HSSP")) {
-			DbXrefProperty pdbAccession = this.retrievePropertyByName("PDB accession");
+			DbXrefProperty pdbAccession = this.getPropertyByName("PDB accession");
 			if ( pdbAccession!= null && pdbAccession.getValue()!=null) {
-				primaryId = this.retrievePropertyByName("PDB accession").getValue().toLowerCase();
+				primaryId = this.getPropertyByName("PDB accession").getValue().toLowerCase();
 			} else {
 				primaryId = accession.toLowerCase();
 			}
@@ -292,13 +259,14 @@ public class DbXref implements Serializable {
 		}
 
 		if (db.equals("SRMAtlas")) {
-            primaryId = retrievePropertyByName("sequence").getValue();
+            primaryId = getPropertyByName("sequence").getValue();
         }
 
 		if (db.equals("PDB")) {
 			// Overwrite native dbxref raw link w a more user-friendly one
 			templateURL = CvDatabasePreferredLink.PDB.getLink();
 		}
+		// WTF???
 		if (db.equals("WEBINFO")) {
 			templateURL = accession;
 			if (!templateURL.startsWith("http")) {
@@ -328,12 +296,15 @@ public class DbXref implements Serializable {
             templateURL = templateURL.replaceAll("%t", primaryId.replaceAll("^.+-", ""));
             primaryId = primaryId.replaceAll("-.+$", "");
         }
-		
+		// jcrb: http://cellbank.nibio.go.jp/~cellbank/en/search_res_list.cgi?KEYWOD=%s
+		// ifo:  http://cellbank.nibio.go.jp/~cellbank/cgi-bin/search_res_det.cgi?RNO=%s
 		if (db.equals("IFO") || db.equals("JCRB")) {
 			primaryId = primaryId.toLowerCase();
 		}
 
-        if (this.getLinkUrl().contains("purl.obolibrary.org/obo")) {
+		// TODO: ???
+		// the following replace concerns the dbs CLO, PRO, FMA, Uberon and CL
+		if (this.getLinkUrl().contains("purl.obolibrary.org/obo")) {
             primaryId = primaryId.replaceFirst(":", "_");
         }
 
@@ -345,9 +316,39 @@ public class DbXref implements Serializable {
 		// failed: return home url for db
 		return this.getUrl();
 	}
-	
-	
-	private DbXrefProperty getPropertyByName(String propertyName) {
+
+	@Deprecated
+    public static String resolvePercentULinkTarget(String uniqueName, DbXref xref) {
+
+        if (!xref.getLinkUrl().contains("%u")) {
+            return xref.getResolvedUrl();
+        }
+
+        String primaryId = uniqueName.startsWith("NX_") ? uniqueName.substring(3) : uniqueName;
+
+        String templateURL = xref.getLinkUrl();
+        if (!templateURL.startsWith("http")) {
+            templateURL = "http://" + templateURL;
+        }
+
+        if (xref.getDatabaseName().equalsIgnoreCase("brenda")) {
+			// TODO: obsolete kind of brenda accession number ? no entry found
+            if (xref.getAccession().startsWith("BTO")) {
+                templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s", xref.getAccession().replace(":", "_"));
+            }
+            else {
+				// TODO: WTF ??? no %s1 and no %s2 in templateURL!!!
+                templateURL = templateURL.replaceFirst("%s1", xref.getAccession());
+
+                // organism always human: hardcoded as "247"
+                templateURL = templateURL.replaceFirst("%s2", "247");
+            }
+        }
+
+        return templateURL.replaceAll("%u", primaryId);
+    }
+
+	public DbXrefProperty getPropertyByName(String propertyName) {
 		if(this.getProperties() != null)
 			for(DbXrefProperty prop : this.getProperties())
 				if(prop.getName().equals(propertyName))

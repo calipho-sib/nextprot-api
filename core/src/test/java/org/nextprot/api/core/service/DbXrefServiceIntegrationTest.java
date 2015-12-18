@@ -3,24 +3,27 @@ package org.nextprot.api.core.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.nextprot.api.core.utils.dbxref.DbXrefUrlVisitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class DbXrefServiceIntegrationTest extends CoreUnitBaseTest {
 
-	@Autowired
-	private DbXrefService xrefService;
-
+	@Autowired private DbXrefService xrefService;
+	@Autowired private MasterIdentifierService masterIdentifierService;
 /*
  * This query finds entries having a single xref among 'Orphanet', 'KEGGPathway' , 'Reactome' and 'DrugBank'
  * It is convenient for tests: we know we get a single annotation from xrefs for a given entry
@@ -157,6 +160,99 @@ having sum(a.cnt)=1
 	public void drugBankXrefShouldHaveEmptyProperties() {
 
 		assertEmptyProperties("NX_Q9Y2D1", 983678);
+	}
+
+    @Test
+    public void testPercentSignSTypeLinkHasUrlCorrectlyResolved() {
+
+        List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_P01308");
+
+        Assert.assertEquals(1120, xrefs.size());
+
+        for (DbXref xref : xrefs) {
+
+            if (xref.getDbXrefId() == 1272250) {
+
+                Assert.assertEquals("http://www.ncbi.nlm.nih.gov/protein/%s", xref.getLinkUrl());
+                Assert.assertEquals("http://www.ncbi.nlm.nih.gov/protein/NP_000198.1", xref.getResolvedUrl());
+
+                break;
+            }
+        }
+    }
+
+	@Test
+	public void testPercentSignUTypeLinkHasUrlCorrectlyResolved() {
+
+		List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_P01308");
+
+		Assert.assertEquals(1120, xrefs.size());
+
+		for (DbXref xref : xrefs) {
+
+			if (xref.getDbXrefId() == 16387756) {
+
+				Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=%u&db=HOGENOM", xref.getLinkUrl());
+				Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=P01308&db=HOGENOM", xref.getResolvedUrl());
+
+                break;
+			}
+		}
+	}
+
+	@Test
+	public void testBrendaTypeLinkHasUrlCorrectlyResolved() {
+
+		List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_Q9BXA6");
+
+		Assert.assertEquals(520, xrefs.size());
+
+		for (DbXref xref : xrefs) {
+
+			if (xref.getDbXrefId() == 964246) {
+
+				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s", xref.getLinkUrl());
+				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.1", xref.getResolvedUrl());
+
+                break;
+			}
+		}
+	}
+
+	//@Test
+	public void testAllEntriesDbXrefs() {
+
+		Set<String> allEntryNames = masterIdentifierService.findUniqueNames();
+
+		for (String entryName : allEntryNames) {
+
+			List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster(entryName);
+
+			for (DbXref xref : xrefs) {
+
+				Assert.assertTrue(!xref.getAccession().isEmpty());
+				Assert.assertTrue(!xref.getUrl().isEmpty());
+				Assert.assertTrue(!xref.getLinkUrl().isEmpty());
+				Assert.assertTrue(!xref.getResolvedUrl().isEmpty());
+			}
+		}
+	}
+
+	//@Test
+	public void logAllEntriesXrefUrlStatus() throws IOException {
+
+		Set<String> allEntryAcs = masterIdentifierService.findUniqueNames();
+
+		DbXrefUrlVisitor visitor = new DbXrefUrlVisitor("/tmp/allentries-xrefs-url.tsv", "/tmp/allentries-xrefs-url.log");
+
+		for (String entryAc : allEntryAcs) {
+
+			visitor.visit(entryAc, this.xrefService.findDbXrefsByMaster(entryAc));
+			visitor.flush();
+		}
+
+		visitor.flush();
+		visitor.close();
 	}
 
 	private void assertEmptyProperties(String entryName, long propertyId) {

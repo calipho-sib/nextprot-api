@@ -1,53 +1,55 @@
 package org.nextprot.api.core.domain;
 
 
-
-/**
- * Title:        CvDatabaseLinks.java<br>
- * Description:  Preferred links for som databases<br>
- * Copyright:    Copyright (c) 2010<br>
- * Company:      GeneBio<br>
- *
- * @author Catherine<br>
- */
+import java.util.ArrayList;
+import java.util.List;
 
 public enum CvDatabasePreferredLink {
 	
-	BRENDA_BTO("Brenda","http://purl.obolibrary.org/obo/%s"),
-//    BRENDA_BTO("Brenda","http://www.brenda-enzymes.org/ontology/inc/tree/result_option.php4?tissue=1&id_go=%s"),
-	EMBL("EMBL", "http://www.ebi.ac.uk/cgi-bin/dbfetch?db=emblcds&id=%s"),
-	ENSEMBL_GENE("Ensembl","http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=%s"),
-	ENSEMBL_TRANSCRIPT("Ensembl","http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=%s"),
-	ENSEMBL_PROTEIN("Ensembl", "http://www.ensembl.org/Homo_sapiens/Transcript/ProteinSummary?db=core;p=%s"),
-	GERMONLINE("GermOnline","http://www.germonline.org/Homo_sapiens/geneview?gene=%s"),
-	INTACT_BINARY("IntAct","http://www.ebi.ac.uk/intact/search/do/search?binary=%s"),
-	PROSITE("Prosite", "http://prosite.expasy.org/cgi-bin/prosite/prosite-search-ac?%s"),
-	PDB("PDB", "http://www.pdb.org/pdb/explore/explore.do?pdbId=%s"),
-	PROTEOPEDIA("Proteopedia","http://www.proteopedia.org/wiki/index.php/%s"),
-	HPA_GENE("HPA", "http://www.proteinatlas.org/%s"),
-    HPA_SUBCELL("HPA", "http://www.proteinatlas.org/%s"),
-    HPA_ANTIBODY("HPA", "http://www.proteinatlas.org/search/%s"),
-    COSMIC_SAMPLE("Cosmic", "http://cancer.sanger.ac.uk/cosmic/sample/overview?id=%s"),
-    COSMIC_MUTATION("Cosmic", "http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=%s"),
-    COSMIC_GENE("Cosmic", "http://cancer.sanger.ac.uk/cosmic/gene/overview?ln=%s"),
-    CLINVAR_MUTATION("Clinvar", "http://www.ncbi.nlm.nih.gov/clinvar/%s"),
-    CLINVAR_GENE("Clinvar", "http://www.ncbi.nlm.nih.gov/clinvar/?term=%s"),
-	GENEVESTIGATOR("Genevestigator", "http://genevisible.com/tissues/HS/UniProt/%s");
+	BRENDA_BTO(XRefDatabase.BRENDA,"http://purl.obolibrary.org/obo/%s"),
+//    BRENDA_BTO(DatabaseName.BRENDA,"http://www.brenda-enzymes.org/ontology/inc/tree/result_option.php4?tissue=1&id_go=%s"),
+	EMBL(XRefDatabase.EMBL, "http://www.ebi.ac.uk/cgi-bin/dbfetch?db=emblcds&id=%s"),
+	ENSEMBL_GENE(XRefDatabase.ENSEMBL,"http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=%s"),
+	ENSEMBL_TRANSCRIPT(XRefDatabase.ENSEMBL,"http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=%s"),
+	ENSEMBL_PROTEIN(XRefDatabase.ENSEMBL, "http://www.ensembl.org/Homo_sapiens/Transcript/ProteinSummary?db=core;p=%s"),
+	GERMONLINE(XRefDatabase.GERMONLINE,"http://www.germonline.org/Homo_sapiens/geneview?gene=%s"),
+	INTACT_BINARY(XRefDatabase.INTACT,"http://www.ebi.ac.uk/intact/search/do/search?binary=%s"),
+	PROSITE(XRefDatabase.PROSITE, "http://prosite.expasy.org/cgi-bin/prosite/prosite-search-ac?%s"),
+	PDB(XRefDatabase.PDB, "http://www.pdb.org/pdb/explore/explore.do?pdbId=%s"),
+	PROTEOPEDIA(XRefDatabase.PROTEOPEDIA,"http://www.proteopedia.org/wiki/index.php/%s"),
+	HPA_GENE(XRefDatabase.HPA, "http://www.proteinatlas.org/%s"),
+    HPA_SUBCELL(XRefDatabase.HPA, "http://www.proteinatlas.org/%s"),
+    HPA_ANTIBODY(XRefDatabase.HPA, "http://www.proteinatlas.org/search/%s"),
+    COSMIC_SAMPLE(XRefDatabase.COSMIC, "http://cancer.sanger.ac.uk/cosmic/sample/overview?id=%s"),
+    COSMIC_MUTATION(XRefDatabase.COSMIC, "http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=%s"),
+    COSMIC_GENE(XRefDatabase.COSMIC, "http://cancer.sanger.ac.uk/cosmic/gene/overview?ln=%s"),
+    CLINVAR_MUTATION(XRefDatabase.CLINVAR, "http://www.ncbi.nlm.nih.gov/clinvar/%s"),
+    CLINVAR_GENE(XRefDatabase.CLINVAR, "http://www.ncbi.nlm.nih.gov/clinvar/?term=%s"),
+	GENEVESTIGATOR(XRefDatabase.GENEVESTIGATOR, "http://genevisible.com/tissues/HS/UniProt/%s"),
+	REFSEQ_NUCLEOTIDE(XRefDatabase.REF_SEQ, "http://www.ncbi.nlm.nih.gov/nuccore/%s"),
+	PEPTIDE_ATLAS_PROTEIN(XRefDatabase.PEPTIDE_ATLAS, "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetProtein?protein_name=%s;organism_name=Human;action=GO"),
+	PEPTIDE_ATLAS_PEPTIDE(XRefDatabase.PEPTIDE_ATLAS, "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetPeptide?searchWithinThis=Peptide+Name&searchForThis=%s;organism_name=Human"),
+	OBO(XRefDatabase.OBO, "http://purl.obolibrary.org/obo/%s"),
+	JCRB(XRefDatabase.JCRB, "http://cellbank.nibio.go.jp/~cellbank/en/search_res_list.cgi?KEYWOD=%s"),
+	IFO(XRefDatabase.IFO, "http://cellbank.nibio.go.jp/~cellbank/cgi-bin/search_res_det.cgi?RNO=%s")
+	;
 
-	private final String dbName;
+	private final XRefDatabase db;
 	private final String link;
 
-
-	private CvDatabasePreferredLink(final String dbName ,final String link) {
-		this.dbName = dbName;
+    CvDatabasePreferredLink(final XRefDatabase db , final String link) {
+		this.db = db;
 		this.link = link;
 	}
 
-
 	// ----------------- Instance methods ----------------- //
 
+    public XRefDatabase getDb() {
+        return db;
+    }
+
 	public String getDbName() {
-    	return dbName;
+    	return db.getName();
     }
 
 
@@ -57,12 +59,27 @@ public enum CvDatabasePreferredLink {
 
 	// ----------------- Class methods ----------------- //
 	 
-	public static Boolean dbHasPreferredLink(String dbName) {
-		for (CvDatabasePreferredLink l : CvDatabasePreferredLink.values()) {
-			if (l.getDbName().toLowerCase().equals(dbName.toLowerCase())) 
-				return true;
+	public static boolean dbHasPreferredLink(String dbName) {
+
+		return !getCvDatabasePreferredLinks(dbName).isEmpty();
+	}
+
+	public static List<CvDatabasePreferredLink> getCvDatabasePreferredLinks(String dbName) {
+
+		List<CvDatabasePreferredLink> list = new ArrayList<>();
+
+		XRefDatabase xRefDatabase = XRefDatabase.valueOfDbName(dbName);
+
+		if (xRefDatabase != null) {
+
+			for (CvDatabasePreferredLink l : CvDatabasePreferredLink.values()) {
+
+				if (l.getDb() == xRefDatabase)
+					list.add(l);
+			}
 		}
-		return false;
+
+		return list;
 	}
 	
 }
