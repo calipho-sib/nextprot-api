@@ -39,6 +39,15 @@ public class DbXrefServiceImpl implements DbXrefService {
 			return xref.getDbXrefId();
 		}
 	};
+
+	private static final Predicate<DbXref> DB_XREF_ENST_PREDICATE = new Predicate<DbXref>() {
+		@Override
+		public boolean apply(DbXref xref) {
+
+			return xref.getAccession().startsWith("ENST");
+		}
+	};
+
 	private static final Predicate<DbXrefProperty> DB_XREF_EXCLUDING_HIDDEN_PROPERTIES_PREDICATE = new DbXrefExcludedPropertyPredicate(Sets.newHashSet("status", "match status", "organism ID", "organism name"));
 
 	@Override
@@ -229,6 +238,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 			}
 		});
 
+		Map<Long, List<DbXrefProperty>> ensemblPropertiesMap = getDbXrefEnsemblInfos(uniqueName, xrefs);
+
 		for (DbXref xref : xrefs) {
 			if (!fetchXrefAnnotationMappingProperties)
 				xref.setProperties((!Xref2Annotation.hasName(xref.getDatabaseName())) ? new ArrayList<>(propsMap.get(xref.getDbXrefId())) : new ArrayList<DbXrefProperty>());
@@ -238,9 +249,54 @@ public class DbXrefServiceImpl implements DbXrefService {
 			if (xref.getLinkUrl().contains("%u")) {
 				xref.setResolvedUrl(DbXrefURLResolver.getInstance().resolveWithAccession(xref, uniqueName));
 			}
+
+			if (ensemblPropertiesMap.containsKey(xref.getDbXrefId())) {
+
+				xref.addProperties(ensemblPropertiesMap.get(xref.getDbXrefId()));
+			}
 		}
 
 		xrefs.addAll(createMissingDbXrefs(xrefs));
+	}
+
+	private List<DbXrefProperty> createDbXrefEnsemblProperties(DbXref.EnsemblInfos ensemblInfos) {
+
+		List<DbXrefProperty> list = new ArrayList<>();
+
+		DbXrefProperty geneProperty = new DbXrefProperty();
+		geneProperty.setDbXrefId(ensemblInfos.getXrefId());
+		geneProperty.setName("nxmapped gene ID");
+		// TODO: set properly a unique property id
+		geneProperty.setPropertyId(0L);
+		geneProperty.setValue(ensemblInfos.getGeneAc());
+
+		DbXrefProperty proteinProperty = new DbXrefProperty();
+		proteinProperty.setDbXrefId(ensemblInfos.getXrefId());
+		proteinProperty.setName("nxmapped protein sequence ID");
+		// TODO: set properly a unique property id
+		proteinProperty.setPropertyId(0L);
+		proteinProperty.setValue(ensemblInfos.getProteinAc());
+
+		list.add(geneProperty);
+		list.add(proteinProperty);
+
+		return list;
+	}
+
+	private Map<Long, List<DbXrefProperty>> getDbXrefEnsemblInfos(String uniqueName, List<DbXref> xrefs) {
+
+		// TODO: TRANSFORM TO JAVA 8 LAMBDA
+		List<Long> ensemblRefIds = Lists.transform(new ArrayList<>(Collections2.filter(xrefs, DB_XREF_ENST_PREDICATE)), DB_XREF_LONG_FUNCTION);
+
+		List<DbXref.EnsemblInfos> ensemblXRefInfosList = dbXRefDao.findDbXrefEnsemblInfos(uniqueName, ensemblRefIds);
+
+		Map<Long, List<DbXrefProperty>> map = new HashMap<>();
+		for (DbXref.EnsemblInfos infos : ensemblXRefInfosList) {
+
+			map.put(infos.getXrefId(), createDbXrefEnsemblProperties(infos));
+		}
+
+		return map;
 	}
 
 	/**
