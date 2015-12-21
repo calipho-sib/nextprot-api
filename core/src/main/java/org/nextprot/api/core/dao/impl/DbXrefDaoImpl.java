@@ -90,18 +90,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		Map<String, Object> params = new HashMap<>();
 		params.put("resourceIds", resourceIds);
 		
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(findPropertiesByResourceIds, params, new RowMapper<DbXrefProperty>() {
-
-			@Override
-			public DbXrefProperty mapRow(ResultSet resultSet, int row) throws SQLException {
-				DbXrefProperty prop = new DbXref.DbXrefProperty();
-				prop.setDbXrefId(resultSet.getLong("resource_id"));
-				prop.setPropertyId(resultSet.getLong("resource_property_id"));
-				prop.setName(resultSet.getString("property_name"));
-				prop.setValue(resultSet.getString("property_value"));
-				return prop;
-			}
-		});
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(findPropertiesByResourceIds, params, new DbXrefPropertyRowMapper());
 	}
 
 	@Override
@@ -134,6 +123,19 @@ public class DbXrefDaoImpl implements DbXrefDao {
 			dbXRef.setUrl(resultSet.getString("database_url"));
 			dbXRef.setLinkUrl(resultSet.getString("database_link"));
 			return dbXRef;
+		}
+	}
+
+	private static class DbXrefPropertyRowMapper implements ParameterizedRowMapper<DbXrefProperty> {
+
+		@Override
+		public DbXrefProperty mapRow(ResultSet resultSet, int row) throws SQLException {
+			DbXrefProperty prop = new DbXref.DbXrefProperty();
+			prop.setDbXrefId(resultSet.getLong("resource_id"));
+			prop.setPropertyId(resultSet.getLong("resource_property_id"));
+			prop.setName(resultSet.getString("property_name"));
+			prop.setValue(resultSet.getString("property_value"));
+			return prop;
 		}
 	}
 	
