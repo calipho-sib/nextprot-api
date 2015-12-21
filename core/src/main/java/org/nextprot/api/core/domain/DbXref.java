@@ -99,6 +99,11 @@ public class DbXref implements Serializable {
 		return properties;
 	}
 
+	public void addProperties(List<DbXrefProperty> props) {
+
+		properties.addAll(props);
+	}
+
 	public String getPropertyValue(String name) {
 		for (DbXrefProperty prop: properties) {
 			if (name.equals(prop.getName())) return prop.getValue();
@@ -397,6 +402,37 @@ public class DbXref implements Serializable {
 
 		public void setValue(String value) {
 			this.value = value;
+		}
+	}
+
+	public static class EnsemblInfos {
+
+		private final long xrefId;
+		private final String geneAc;
+		private final String transcriptAc;
+		private final String proteinAc;
+
+		public EnsemblInfos(long xrefId, String geneAc, String transcriptAc, String proteinAc) {
+			this.xrefId = xrefId;
+			this.geneAc = geneAc;
+			this.transcriptAc = transcriptAc;
+			this.proteinAc = proteinAc;
+		}
+
+		public long getXrefId() {
+			return xrefId;
+		}
+
+		public String getGeneAc() {
+			return geneAc;
+		}
+
+		public String getTranscriptAc() {
+			return transcriptAc;
+		}
+
+		public String getProteinAc() {
+			return proteinAc;
 		}
 	}
 
