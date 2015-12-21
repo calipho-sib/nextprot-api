@@ -60,12 +60,28 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-as-annot-by-master"), namedParams, new DbXRefRowMapper());
 	}
 	
-	
+
+	@Override
 	public List<DbXrefProperty> findDbXrefsProperties(List<Long> resourceIds) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("resourceIds", resourceIds);
 
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-props-by-resource-ids"), params, new DbXrefPropertyRowMapper());
+	}
+
+	@Override
+	public List<DbXref.EnsemblInfos> findDbXrefEnsemblInfos(String uniqueName, List<Long> xrefIds) {
+
+		if (!xrefIds.isEmpty()) {
+
+			Map<String, Object> params = new HashMap<>();
+			params.put("uniqueName", uniqueName);
+			params.put("xrefIds", xrefIds);
+
+			return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("ensembl-props-by-xref-accession"), params, new EnsemblInfosRowMapper());
+		}
+
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -110,6 +126,19 @@ public class DbXrefDaoImpl implements DbXrefDao {
 			prop.setName(resultSet.getString("property_name"));
 			prop.setValue(resultSet.getString("property_value"));
 			return prop;
+		}
+	}
+
+	private static class EnsemblInfosRowMapper implements ParameterizedRowMapper<DbXref.EnsemblInfos> {
+
+		@Override
+		public DbXref.EnsemblInfos mapRow(ResultSet resultSet, int row) throws SQLException {
+
+			return new DbXref.EnsemblInfos(
+					resultSet.getLong("db_xref_id"),
+					resultSet.getString("gene_ac"),
+					resultSet.getString("transcript_ac"),
+					resultSet.getString("protein_ac"));
 		}
 	}
 	
