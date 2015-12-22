@@ -71,11 +71,15 @@ class DbXrefURLBaseResolver {
             }
         }
 
-        if (templateURL.contains("%")) {
+        // GermOnline	http://www.germonline.org/%s/geneview?gene=%s
+        // SOURCE	https://puma.princeton.edu/cgi-bin/source/sourceResult?criteria=%s&choice=Gene&option=Symbol&organism=%s
+        // TODO: we should not have database link with multiple occurrence of %s that are either a stamp and a value !!!!
+        // ChiTaRS db template: http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&%s=1
+
+        if (templateURL.matches("^.+%[a-zA-Z].*$")) {
 
             throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
         }
-
 
         return templateURL;
     }
@@ -100,6 +104,10 @@ class DbXrefURLBaseResolver {
 
         public DefaultStampSResolver() {
             super("s");
+        }
+
+        protected String resolve(String templateURL, String accession) {
+            return templateURL.replaceAll(getStamp(), accession);
         }
     }
 

@@ -497,6 +497,21 @@ public class DbXrefURLResolverTest {
         resolver.resolveWithAccession(xref, "NX_Q96I99");
     }
 
+    @Test
+    public void testResolveCCLE() throws Exception {
+
+        DbXref xref = createDbXref("Q8ZAF0", "CCLE", "www.broadinstitute.org/ccle/cell%20lines/%s");
+        Assert.assertEquals("http://www.broadinstitute.org/ccle/cell%20lines/Q8ZAF0", resolver.resolve(xref));
+    }
+
+    // TODO: we should not have database link with multiple occurrence of %s that are either a stamp and a value !!!!
+    @Test
+    public void testResolveChitars() throws Exception {
+
+        DbXref xref = createDbXref("ESR1", "ChiTaRS", "http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&%s=1");
+        Assert.assertEquals("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=ESR1&ESR1=1", resolver.resolve(xref));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();
