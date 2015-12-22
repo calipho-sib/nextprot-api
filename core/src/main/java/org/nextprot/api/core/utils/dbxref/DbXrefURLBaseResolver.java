@@ -8,6 +8,12 @@ import org.nextprot.api.core.domain.DbXref;
  *
  * <h4>Warning</h4>
  * Each implementations should be stateless or synchronized as they are reusable and potentially multithreadable.
+ *
+ * TODO: Refactor this class:
+ *
+ * Linked urls of each db may contain different single occurrence of any stamps (%s, %u, %n, ...) that should be resolved separately.
+ *
+ *
  */
 class DbXrefURLBaseResolver {
 
@@ -24,12 +30,18 @@ class DbXrefURLBaseResolver {
 
     protected String resolveTemplateURL(String templateURL, String accession) {
 
-        if (templateURL.contains("%s")) {
+        templateURL = templateURL.replaceAll("\"", "");
 
-            return templateURL.replaceAll("\"", "").replaceAll("%s", accession);
+        if (templateURL.contains("%s")) {
+            return resolveStampS(templateURL, accession);
         }
 
         throw new UnresolvedXrefURLException("placeholder '%s' is missing: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+    }
+
+    protected String resolveStampS(String templateURL, String accession) {
+
+        return templateURL.replaceFirst("%s", accession);
     }
 
     protected String getAccessionNumber(DbXref xref) {

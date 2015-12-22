@@ -476,6 +476,20 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://www.uniprot.org/uniprot/%s", xref.getLinkUrl());
     }
 
+    @Test
+    public void testResolveWithAccessionRuleBase() throws Exception {
+
+        DbXref xref = createDbXref("RU003306", "RuleBase", "http://services.uniprot.org/supplement/%u/%s");
+        Assert.assertEquals("http://services.uniprot.org/supplement/Q8NCW0/RU003306", resolver.resolveWithAccession(xref, "NX_Q8NCW0"));
+    }
+
+    @Test
+    public void testResolveWithAccessionUniPathway() throws Exception {
+
+        DbXref xref = createDbXref("UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%u");
+        Assert.assertEquals("http://www.unipathway.org?upid=UPA00223&entryac=Q96I99", resolver.resolveWithAccession(xref, "NX_Q96I99"));
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();

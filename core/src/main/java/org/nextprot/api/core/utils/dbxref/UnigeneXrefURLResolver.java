@@ -2,7 +2,7 @@ package org.nextprot.api.core.utils.dbxref;
 
 import org.nextprot.api.core.domain.DbXref;
 
-class UnigeneXrefURLResolver extends S1S2PlaceHoldersXrefURLResolver {
+class UnigeneXrefURLResolver extends StampsS1S2XrefURLResolver {
 
     @Override
     protected String getAccessionNumber(DbXref xref) {
@@ -11,12 +11,12 @@ class UnigeneXrefURLResolver extends S1S2PlaceHoldersXrefURLResolver {
     }
 
     @Override
-    protected String getS1PlaceHolderValue(String primaryId) {
+    protected String getS1StampValue(String primaryId) {
         return "Hs";
     }
 
     @Override
-    protected String getS2PlaceHolderValue(String primaryId) {
+    protected String getS2StampValue(String primaryId) {
         return primaryId;
     }
 }

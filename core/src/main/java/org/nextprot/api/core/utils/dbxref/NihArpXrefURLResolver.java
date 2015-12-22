@@ -12,7 +12,7 @@ class NihArpXrefURLResolver extends DbXrefURLBaseResolver {
         // Db_URL: https://www.aidsreagent.org/reagentdetail.cfm?t=cell_lines&id=%s
         //   Note: %s is the value after the dash in the DR line.
         //   Example: for "DR   NIH-ARP; 11411-223": s%=223
-        if (accession.contains("-")) return accession.replaceAll("^.+-", "");
+        if (accession.contains("-")) return accession.replaceFirst("^.+-", "");
 
         throw new UnresolvedXrefURLException("'-' is missing in accession number '"+accession+"'");
     }
