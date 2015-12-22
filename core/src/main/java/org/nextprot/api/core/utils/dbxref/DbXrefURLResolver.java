@@ -90,6 +90,15 @@ public class DbXrefURLResolver {
         }
     }
 
+    /**
+     * Call method resolve(xref) then continue resolution by replacing %u with accession
+     *
+     * @param xref the xref containing linked url to resolved
+     * @param accession the accession to replace %u from template
+     * @return resolved url
+     * @throws UnresolvedXrefURLException if url cannot be resolved
+     */
+    // TODO: this implementation is ugly and should be refactored
     public String resolveWithAccession(DbXref xref, String accession) {
 
         if (xref.getLinkUrl().contains("%u")) {

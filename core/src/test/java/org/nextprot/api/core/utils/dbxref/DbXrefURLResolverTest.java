@@ -490,6 +490,13 @@ public class DbXrefURLResolverTest {
         Assert.assertEquals("http://www.unipathway.org?upid=UPA00223&entryac=Q96I99", resolver.resolveWithAccession(xref, "NX_Q96I99"));
     }
 
+    @Test(expected = UnresolvedXrefURLException.class)
+    public void testResolveWithAccessionUniPathwayMissingStampW() throws Exception {
+
+        DbXref xref = createDbXref("UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%w");
+        resolver.resolveWithAccession(xref, "NX_Q96I99");
+    }
+
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {
 
         DbXref xref = new DbXref();
