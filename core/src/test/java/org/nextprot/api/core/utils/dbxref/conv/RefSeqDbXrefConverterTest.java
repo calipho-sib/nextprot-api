@@ -9,7 +9,7 @@ import org.nextprot.api.core.domain.XRefDatabase;
 import java.util.Collections;
 import java.util.List;
 
-import static org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest.createDbXref;
+import static org.nextprot.api.core.utils.dbxref.conv.DbXrefConverterTest.createDbXref;
 import static org.nextprot.api.core.utils.dbxref.conv.DbXrefConverterTest.createDbXrefProperty;
 
 public class RefSeqDbXrefConverterTest {
@@ -19,7 +19,7 @@ public class RefSeqDbXrefConverterTest {
 
         DbXrefPropertyToXrefConverter converter = new RefSeqDbXrefConverter();
 
-        DbXref xref = createDbXref("NP_000198.1", XRefDatabase.REF_SEQ.getName(), "http://www.ncbi.nlm.nih.gov/protein/%s");
+        DbXref xref = createDbXref("NP_000198.1", XRefDatabase.REF_SEQ.getName(), "http://www.ncbi.nlm.nih.gov/protein/%s", "http://www.ncbi.nlm.nih.gov/refseq/");
         xref.setProperties(Collections.singletonList(createDbXrefProperty(5309676, "nucleotide sequence ID", "NM_000207.2")));
 
         List<DbXref> xrefs = converter.convert(xref);
