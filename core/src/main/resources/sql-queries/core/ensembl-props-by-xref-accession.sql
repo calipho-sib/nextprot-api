@@ -1,4 +1,7 @@
-select tx.resource_id as db_xref_id, m.identifier_id as entry_id,  m.unique_name as entry_ac,  gx.accession as gene_ac,tx.accession as transcript_ac , px.accession as protein_ac,
+select tx.resource_id as db_xref_id, m.identifier_id as entry_id,
+ m.unique_name as entry_ac,gx.accession as gene_ac,
+ tx.accession as transcript_ac , px.accession as protein_ac,
+ gt.annotation_id as gt_link_id, tp.assoc_id as tp_link_id
 from nextprot.sequence_identifiers m
   inner join nextprot.mapping_annotations mg on (m.identifier_id = mg.mapped_identifier_id and mg.cv_type_id = 3)
   inner join nextprot.sequence_identifiers g on (mg.reference_identifier_id = g.identifier_id and g.cv_type_id = 3)
