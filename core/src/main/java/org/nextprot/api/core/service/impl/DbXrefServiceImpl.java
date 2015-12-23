@@ -7,8 +7,11 @@ import com.google.common.collect.*;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.core.dao.DbXrefDao;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.PublicationDbXref;
+import org.nextprot.api.core.domain.XRefDatabase;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
@@ -19,6 +22,7 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideNamesService;
 import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
 import org.nextprot.api.core.utils.dbxref.conv.DbXrefConverter;
+import org.nextprot.api.core.utils.dbxref.conv.EnsemblXrefPropertyConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -260,41 +264,19 @@ public class DbXrefServiceImpl implements DbXrefService {
 		xrefs.addAll(createMissingDbXrefs(xrefs));
 	}
 
-	private List<DbXrefProperty> createDbXrefEnsemblProperties(DbXref.EnsemblInfos ensemblInfos) {
-
-		List<DbXrefProperty> list = new ArrayList<>();
-
-		DbXrefProperty geneProperty = new DbXrefProperty();
-		geneProperty.setDbXrefId(ensemblInfos.getXrefId());
-		geneProperty.setName("nxmapped gene ID");
-		// TODO: set properly a unique property id
-		geneProperty.setPropertyId(0L);
-		geneProperty.setValue(ensemblInfos.getGeneAc());
-
-		DbXrefProperty proteinProperty = new DbXrefProperty();
-		proteinProperty.setDbXrefId(ensemblInfos.getXrefId());
-		proteinProperty.setName("nxmapped protein sequence ID");
-		// TODO: set properly a unique property id
-		proteinProperty.setPropertyId(0L);
-		proteinProperty.setValue(ensemblInfos.getProteinAc());
-
-		list.add(geneProperty);
-		list.add(proteinProperty);
-
-		return list;
-	}
 
 	private Map<Long, List<DbXrefProperty>> getDbXrefEnsemblInfos(String uniqueName, List<DbXref> xrefs) {
 
 		// TODO: TRANSFORM TO JAVA 8 LAMBDA
 		List<Long> ensemblRefIds = Lists.transform(new ArrayList<>(Collections2.filter(xrefs, DB_XREF_ENST_PREDICATE)), DB_XREF_LONG_FUNCTION);
-
 		List<DbXref.EnsemblInfos> ensemblXRefInfosList = dbXRefDao.findDbXrefEnsemblInfos(uniqueName, ensemblRefIds);
+
+		EnsemblXrefPropertyConverter converter = EnsemblXrefPropertyConverter.getInstance();
 
 		Map<Long, List<DbXrefProperty>> map = new HashMap<>();
 		for (DbXref.EnsemblInfos infos : ensemblXRefInfosList) {
 
-			map.put(infos.getXrefId(), createDbXrefEnsemblProperties(infos));
+			map.put(infos.getTranscriptXrefId(), converter.convert(infos));
 		}
 
 		return map;

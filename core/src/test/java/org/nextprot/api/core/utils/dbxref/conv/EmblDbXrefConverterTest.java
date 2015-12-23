@@ -80,32 +80,32 @@ public class EmblDbXrefConverterTest {
         List<DbXref> xrefs = converter.convert(xref);
         Assert.assertEquals(8, xrefs.size());
 
-        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935564, "M27429", XRefDatabase.EMBL.getName(),
+        assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935564, "M27429", XRefDatabase.EMBL.getName(),
                 "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27429");
-        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935565, "M27428", XRefDatabase.EMBL.getName(),
+        assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935565, "M27428", XRefDatabase.EMBL.getName(),
                 "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27428");
-        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935566, "M27427", XRefDatabase.EMBL.getName(),
+        assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935566, "M27427", XRefDatabase.EMBL.getName(),
                 "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27427");
-        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935567, "M27426", XRefDatabase.EMBL.getName(),
+        assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935567, "M27426", XRefDatabase.EMBL.getName(),
                 "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27426");
-        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935568, "M27425", XRefDatabase.EMBL.getName(),
+        assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935568, "M27425", XRefDatabase.EMBL.getName(),
                 "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27425");
-        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935569, "M27424", XRefDatabase.EMBL.getName(),
+        assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935569, "M27424", XRefDatabase.EMBL.getName(),
                 "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27424");
-        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935570, "M27423", XRefDatabase.EMBL.getName(),
+        assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935570, "M27423", XRefDatabase.EMBL.getName(),
                 "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27423");
-        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935572, "M27430", XRefDatabase.EMBL.getName(),
+        assertProducedXrefListContains(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935572, "M27430", XRefDatabase.EMBL.getName(),
                 "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27430");
     }
 
-    private void assertProducedXrefsContain(List<DbXref> producedXrefs, long expectedId, String expectedAccession, String expectedDbName,
+    private void assertProducedXrefListContains(List<DbXref> producedXrefs, long expectedId, String expectedAccession, String expectedDbName,
                               String expectedDbCategory, String expectedUrl, String expectedLinkUrl, String expectedResolvedUrl) {
 
         DbXref xrefToCheck = null;
 
         for (DbXref producedXref : producedXrefs) {
 
-            if (producedXref.getDbXrefId().longValue() == expectedId) {
+            if (producedXref.getDbXrefId() == expectedId) {
 
                 xrefToCheck = producedXref;
                 break;
