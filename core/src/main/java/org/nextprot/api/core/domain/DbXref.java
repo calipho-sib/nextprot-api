@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.lang.StringUtils;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
@@ -410,32 +411,42 @@ public class DbXref implements Serializable {
 
 	public static class EnsemblInfos {
 
-		private final long xrefId;
+		private final long transcriptXrefId;
 		private final String geneAc;
-		private final String transcriptAc;
 		private final String proteinAc;
+		private final long genePropertyId;
+		private final long proteinPropertyId;
 
-		public EnsemblInfos(long xrefId, String geneAc, String transcriptAc, String proteinAc) {
-			this.xrefId = xrefId;
+		public EnsemblInfos(long transcriptXrefId, String geneAc, String proteinAc, long genePropertyId, long proteinPropertyId) {
+
+			Preconditions.checkArgument(geneAc.startsWith("ENSG"));
+			Preconditions.checkArgument(proteinAc.startsWith("ENSP"));
+
+			this.transcriptXrefId = transcriptXrefId;
 			this.geneAc = geneAc;
-			this.transcriptAc = transcriptAc;
 			this.proteinAc = proteinAc;
+			this.genePropertyId = genePropertyId;
+			this.proteinPropertyId = proteinPropertyId;
 		}
 
-		public long getXrefId() {
-			return xrefId;
+		public long getTranscriptXrefId() {
+			return transcriptXrefId;
 		}
 
 		public String getGeneAc() {
 			return geneAc;
 		}
 
-		public String getTranscriptAc() {
-			return transcriptAc;
-		}
-
 		public String getProteinAc() {
 			return proteinAc;
+		}
+
+		public long getGenePropertyId() {
+			return genePropertyId;
+		}
+
+		public long getProteinPropertyId() {
+			return proteinPropertyId;
 		}
 	}
 
