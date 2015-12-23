@@ -9,6 +9,8 @@ public enum CvDatabasePreferredLink {
 	BRENDA_BTO(XRefDatabase.BRENDA,"http://purl.obolibrary.org/obo/%s"),
 //    BRENDA_BTO(DatabaseName.BRENDA,"http://www.brenda-enzymes.org/ontology/inc/tree/result_option.php4?tissue=1&id_go=%s"),
 	EMBL(XRefDatabase.EMBL, "http://www.ebi.ac.uk/cgi-bin/dbfetch?db=emblcds&id=%s"),
+	EMBL_GENE(XRefDatabase.EMBL, "http://www.ebi.ac.uk/ena/data/view/%s"),
+	EMBL_PROTEIN(XRefDatabase.EMBL, "http://www.ebi.ac.uk/ena/data/view/%s"),
 	ENSEMBL_GENE(XRefDatabase.ENSEMBL,"http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=%s"),
 	ENSEMBL_TRANSCRIPT(XRefDatabase.ENSEMBL,"http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=%s"),
 	ENSEMBL_PROTEIN(XRefDatabase.ENSEMBL, "http://www.ensembl.org/Homo_sapiens/Transcript/ProteinSummary?db=core;p=%s"),
