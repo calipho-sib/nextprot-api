@@ -13,7 +13,7 @@ class CghDbArpXrefURLResolver extends DbXrefURLBaseResolver {
         //   Note: %s and %t are respectively the values before and after the dash in the DR line.
         //   Example: for "DR   CGH-DB; 9029-4": s%=9029, t%=4
         if (accession.contains("-"))
-            return accession.replaceAll("-.+$", "");
+            return accession.replaceFirst("-.+$", "");
 
         throw new UnresolvedXrefURLException("'-' is missing in accession number '"+accession+"'");
     }
@@ -24,12 +24,12 @@ class CghDbArpXrefURLResolver extends DbXrefURLBaseResolver {
         String accession = xref.getAccession();
 
         if (accession.contains("-")) {
-            accession = accession.replaceAll("^.+-", "");
+            accession = accession.replaceFirst("^.+-", "");
 
             String templateURL = super.getTemplateURL(xref);
 
             if (templateURL.contains("%t"))
-                return templateURL.replaceAll("%t", accession.replaceAll("^.+-", ""));
+                return templateURL.replaceFirst("%t", accession.replaceFirst("^.+-", ""));
 
             throw new UnresolvedXrefURLException("placeholder '%t' is missing: could not resolve template URL '"+templateURL+"'");
         }

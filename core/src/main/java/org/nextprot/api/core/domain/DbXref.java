@@ -15,6 +15,7 @@ public class DbXref implements Serializable {
 	private static final long serialVersionUID = 2316953378438971441L;
 
 	@ApiObjectField(description = "The neXtProt identifier")
+	// TODO: unecessary primitive wrapping
 	private Long dbXrefId;
 
 	@ApiObjectField(description = "The accession code of the cross reference")
@@ -36,10 +37,12 @@ public class DbXref implements Serializable {
 	@ApiObjectField(description = "A list of properties. A property contains an accession, a property name and a value.")
 	private List<DbXrefProperty> properties = Collections.emptyList();
 
+	// TODO: unecessary primitive wrapping
 	public Long getDbXrefId() {
 		return dbXrefId;
 	}
 
+	// TODO: unecessary primitive wrapping
 	public void setDbXrefId(Long dbXrefId) {
 		this.dbXrefId = dbXrefId;
 	}

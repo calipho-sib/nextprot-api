@@ -46,10 +46,10 @@ public class DbXrefURLResolverTest {
     @Test
     public void testResolveEmblWithDotAccession() throws Exception {
 
-        DbXref xref = createDbXref("CAH72401.1", "EMBL", "whatever");
+        DbXref xref = createDbXref("CAH72401.1", "EMBL", "http://www.ebi.ac.uk/ena/data/view/%s");
 
-        Assert.assertEquals("http://www.ebi.ac.uk/cgi-bin/dbfetch?db=emblcds&id=CAH72401", resolver.resolve(xref));
-        Assert.assertEquals("http://www.ebi.ac.uk/cgi-bin/dbfetch?db=emblcds&id=%s", xref.getLinkUrl());
+        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/CAH72401", resolver.resolve(xref));
+        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/%s", xref.getLinkUrl());
     }
 
     // entry/NX_Q9BXA6/xref.json
@@ -474,6 +474,42 @@ public class DbXrefURLResolverTest {
         DbXref xref = createDbXref("Q8ZAF0", "UniProt", "http://www.uniprot.org/uniprot/%s");
         Assert.assertEquals("http://www.uniprot.org/uniprot/Q8ZAF0", resolver.resolve(xref));
         Assert.assertEquals("http://www.uniprot.org/uniprot/%s", xref.getLinkUrl());
+    }
+
+    @Test
+    public void testResolveWithAccessionRuleBase() throws Exception {
+
+        DbXref xref = createDbXref("RU003306", "RuleBase", "http://services.uniprot.org/supplement/%u/%s");
+        Assert.assertEquals("http://services.uniprot.org/supplement/Q8NCW0/RU003306", resolver.resolveWithAccession(xref, "NX_Q8NCW0"));
+    }
+
+    @Test
+    public void testResolveWithAccessionUniPathway() throws Exception {
+
+        DbXref xref = createDbXref("UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%u");
+        Assert.assertEquals("http://www.unipathway.org?upid=UPA00223&entryac=Q96I99", resolver.resolveWithAccession(xref, "NX_Q96I99"));
+    }
+
+    @Test(expected = UnresolvedXrefURLException.class)
+    public void testResolveWithAccessionUniPathwayMissingStampW() throws Exception {
+
+        DbXref xref = createDbXref("UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%w");
+        resolver.resolveWithAccession(xref, "NX_Q96I99");
+    }
+
+    @Test
+    public void testResolveCCLE() throws Exception {
+
+        DbXref xref = createDbXref("Q8ZAF0", "CCLE", "www.broadinstitute.org/ccle/cell%20lines/%s");
+        Assert.assertEquals("http://www.broadinstitute.org/ccle/cell%20lines/Q8ZAF0", resolver.resolve(xref));
+    }
+
+    // TODO: we should not have database link with multiple occurrence of %s that are either a stamp and a value !!!!
+    @Test
+    public void testResolveChitars() throws Exception {
+
+        DbXref xref = createDbXref("ESR1", "ChiTaRS", "http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&%s=1");
+        Assert.assertEquals("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=ESR1&ESR1=1", resolver.resolve(xref));
     }
 
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {

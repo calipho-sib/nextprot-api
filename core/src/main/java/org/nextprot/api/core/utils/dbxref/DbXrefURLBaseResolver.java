@@ -3,13 +3,43 @@ package org.nextprot.api.core.utils.dbxref;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.DbXref;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Base class resolving DbXref linked URLs.
  *
  * <h4>Warning</h4>
  * Each implementations should be stateless or synchronized as they are reusable and potentially multithreadable.
+ *
+ * <h4>Note</h4>
+ * Linked urls of each db may contain different single occurrence of any stamps (%s, %u, %n, ...) that should be resolved separately.
  */
 class DbXrefURLBaseResolver {
+
+    private final Map<String, StampBaseResolver> stampResolvers;
+
+    public interface StampResolverFactory {
+
+        Set<StampBaseResolver> createStampResolvers();
+    }
+
+    public DbXrefURLBaseResolver() {
+
+        this(new DefaultStampResolverFactory());
+    }
+
+    public DbXrefURLBaseResolver(StampResolverFactory factory) {
+
+        stampResolvers = new HashMap<>();
+
+        for (StampBaseResolver resolver : factory.createStampResolvers()) {
+
+            stampResolvers.put(resolver.getStamp(), resolver);
+        }
+    }
 
     public String resolve(DbXref xref) {
 
@@ -22,14 +52,36 @@ class DbXrefURLBaseResolver {
         return resolveTemplateURL(template, getAccessionNumber(xref));
     }
 
-    protected String resolveTemplateURL(String templateURL, String accession) {
+    private String resolveTemplateURL(String templateURL, String accession) {
 
-        if (templateURL.contains("%s")) {
+        templateURL = templateURL.replaceAll("\"", "");
 
-            return templateURL.replaceAll("\"", "").replaceAll("%s", accession);
+        for (Map.Entry<String, StampBaseResolver> entry : stampResolvers.entrySet()) {
+
+            String stamp = entry.getKey();
+            StampBaseResolver stampResolver = entry.getValue();
+
+            if (templateURL.contains(stamp)) {
+
+                templateURL = stampResolver.resolve(templateURL, accession);
+            }
+            else {
+
+                throw new UnresolvedXrefURLException("stamp '"+stamp+"' is missing: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+            }
         }
 
-        throw new UnresolvedXrefURLException("placeholder '%s' is missing: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+        // GermOnline	http://www.germonline.org/%s/geneview?gene=%s
+        // SOURCE	https://puma.princeton.edu/cgi-bin/source/sourceResult?criteria=%s&choice=Gene&option=Symbol&organism=%s
+        // TODO: we should not have database link with multiple occurrence of %s that are either a stamp and a value !!!!
+        // ChiTaRS db template: http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&%s=1
+
+        if (templateURL.matches("^.+%[a-zA-Z].*$")) {
+
+            throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+        }
+
+        return templateURL;
     }
 
     protected String getAccessionNumber(DbXref xref) {
@@ -46,5 +98,29 @@ class DbXrefURLBaseResolver {
         }
 
         return templateURL;
+    }
+
+    static class DefaultStampSResolver extends StampBaseResolver {
+
+        public DefaultStampSResolver() {
+            super("s");
+        }
+
+        protected String resolve(String templateURL, String accession) {
+            return templateURL.replaceAll(getStamp(), accession);
+        }
+    }
+
+    private static class DefaultStampResolverFactory implements StampResolverFactory {
+
+        @Override
+        public Set<StampBaseResolver> createStampResolvers() {
+
+            Set<StampBaseResolver> stampResolvers = new HashSet<>(1);
+
+            stampResolvers.add(new DefaultStampSResolver());
+
+            return stampResolvers;
+        }
     }
 }

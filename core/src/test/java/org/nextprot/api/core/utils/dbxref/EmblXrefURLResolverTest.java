@@ -28,8 +28,8 @@ public class EmblXrefURLResolverTest {
     @Test
     public void testResolveEmblWithDotAccession() throws Exception {
 
-        DbXref xref = createDbXref("CAH72401.1", "EMBL", "whatever");
+        DbXref xref = createDbXref("CAH72401.1", "EMBL", "http://www.ebi.ac.uk/ena/data/view/%s");
 
-        Assert.assertEquals("http://www.ebi.ac.uk/cgi-bin/dbfetch?db=emblcds&id=CAH72401", resolver.resolve(xref));
+        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/CAH72401", resolver.resolve(xref));
     }
 }

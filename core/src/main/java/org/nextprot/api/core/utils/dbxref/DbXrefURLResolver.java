@@ -90,32 +90,43 @@ public class DbXrefURLResolver {
         }
     }
 
+    /**
+     * Call method resolve(xref) then continue resolution by replacing %u with accession
+     *
+     * @param xref the xref containing linked url to resolved
+     * @param accession the accession to replace %u from template
+     * @return resolved url
+     * @throws UnresolvedXrefURLException if url cannot be resolved
+     */
+    // TODO: this implementation is ugly and should be refactored
     public String resolveWithAccession(DbXref xref, String accession) {
 
-        if (!xref.getLinkUrl().contains("%u")) {
-            return resolve(xref);
-        }
+        if (xref.getLinkUrl().contains("%u")) {
 
-        accession = accession.startsWith("NX_") ? accession.substring(3) : accession;
-        String templateURL = xref.getLinkUrl();
+            accession = accession.startsWith("NX_") ? accession.substring(3) : accession;
+            String templateURL = xref.getLinkUrl();
 
-        if (!templateURL.startsWith("http")) {
-            templateURL = "http://" + templateURL;
-        }
-
-        if (xref.getDatabaseName().equalsIgnoreCase("brenda")) {
-
-            if (xref.getAccession().startsWith("BTO")) {
-                templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s", xref.getAccession().replace(":", "_"));
+            if (!templateURL.startsWith("http")) {
+                templateURL = "http://" + templateURL;
             }
-            else {
-                templateURL = templateURL.replaceFirst("%s1", xref.getAccession());
 
-                // organism always human: hardcoded as "247"
-                templateURL = templateURL.replaceFirst("%s2", "247");
+            if (xref.getDatabaseName().equalsIgnoreCase("brenda")) {
+
+                if (xref.getAccession().startsWith("BTO")) {
+                    templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s", xref.getAccession().replace(":", "_"));
+                } else {
+                    templateURL = templateURL.replaceFirst("%s1", xref.getAccession());
+
+                    // organism always human: hardcoded as "247"
+                    templateURL = templateURL.replaceFirst("%s2", "247");
+                }
             }
+
+            String resolved = templateURL.replaceFirst("%u", accession);
+
+            return resolved.replaceFirst("%s", xref.getAccession());
         }
 
-        return templateURL.replaceAll("%u", accession);
+        return resolve(xref);
     }
 }

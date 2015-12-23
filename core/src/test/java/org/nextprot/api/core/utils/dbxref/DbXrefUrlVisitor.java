@@ -74,7 +74,7 @@ public class DbXrefUrlVisitor implements Closeable, Flushable {
                 pw.write("\n");
 
                 if (!response.isUrlOK()) addUrlStatus(response, db+" => "+url);
-                if (!response.isResolvedUrlOK()) addUrlStatus(response, db+" => "+resolvedUrl);
+                if (!response.isResolvedUrlOK()) addResolvedUrlStatus(response, db+" => "+resolvedUrl);
 
                 visitedLinkedURLs.add(linkedURL);
             }
@@ -88,6 +88,15 @@ public class DbXrefUrlVisitor implements Closeable, Flushable {
             dbxrefNon200HttpStatusMap.put(response.getUrlHttpStatus(), new HashSet<String>());
         }
         dbxrefNon200HttpStatusMap.get(response.getUrlHttpStatus()).add(url);
+    }
+
+    private void addResolvedUrlStatus(Response response, String url) {
+
+        if (!dbxrefNon200HttpStatusMap.containsKey(response.getResolvedUrlHttpStatus())) {
+
+            dbxrefNon200HttpStatusMap.put(response.getResolvedUrlHttpStatus(), new HashSet<String>());
+        }
+        dbxrefNon200HttpStatusMap.get(response.getResolvedUrlHttpStatus()).add(url);
     }
 
     @Override

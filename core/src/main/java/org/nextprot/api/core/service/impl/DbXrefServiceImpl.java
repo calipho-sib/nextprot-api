@@ -18,6 +18,7 @@ import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideNamesService;
 import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
+import org.nextprot.api.core.utils.dbxref.conv.DbXrefConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -311,34 +312,15 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		for (DbXref xref : xrefs) {
 
-			if ("RefSeq".equals(xref.getDatabaseName())) {
-				for (DbXrefProperty property : xref.getProperties()) {
+			if (XRefDatabase.REF_SEQ.getName().equals(xref.getDatabaseName()) ||
+				XRefDatabase.EMBL.getName().equals(xref.getDatabaseName())) {
 
-					if ("nucleotide sequence ID".equals(property.getName())) {
-						newXrefs.add(createRefSeqNucleotideDbXrefFromDbXrefProperty(property));
-						break;
-					}
-				}
+				newXrefs.addAll(DbXrefConverter.getInstance().convert(xref));
 			}
 		}
 
 		return newXrefs;
 	}
-
-    private DbXref createRefSeqNucleotideDbXrefFromDbXrefProperty(DbXrefProperty property) {
-
-        DbXref dbXRef = new DbXref();
-
-        dbXRef.setDbXrefId(IdentifierOffset.XREF_PROPERTY_OFFSET +property.getPropertyId());
-        dbXRef.setAccession(property.getValue());
-        dbXRef.setDatabaseCategory("Sequence databases");
-        dbXRef.setDatabaseName(CvDatabasePreferredLink.REFSEQ_NUCLEOTIDE.getDbName());
-		dbXRef.setUrl(XRefDatabase.REF_SEQ.getUrl());
-        dbXRef.setLinkUrl(CvDatabasePreferredLink.REFSEQ_NUCLEOTIDE.getLink());
-        dbXRef.setProperties(new ArrayList<DbXrefProperty>());
-
-        return dbXRef;
-    }
 
 	@Override
 	public List<DbXref> findDbXrefByAccession(String accession) {
