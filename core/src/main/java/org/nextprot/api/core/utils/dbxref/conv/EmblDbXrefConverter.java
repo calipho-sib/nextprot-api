@@ -18,18 +18,18 @@ class EmblDbXrefConverter implements DbXrefPropertyToXrefConverter {
 
             if ("genomic sequence ID".equals(property.getName())) {
 
-                list.add(createEmblDbXrefGenSeqFromDbXrefProperty(xref, property));
+                list.add(createEmblDbXrefFromDbXrefProperty(xref, property, CvDatabasePreferredLink.EMBL_GENE));
             }
             else if ("protein sequence ID".equals(property.getName())) {
 
-                list.add(createEmblDbXrefProtSeqFromDbXrefProperty(xref, property));
+                list.add(createEmblDbXrefFromDbXrefProperty(xref, property, CvDatabasePreferredLink.EMBL_PROTEIN));
             }
         }
 
         return list;
     }
 
-    private DbXref createEmblDbXrefGenSeqFromDbXrefProperty(DbXref xref, DbXref.DbXrefProperty property) {
+    private DbXref createEmblDbXrefFromDbXrefProperty(DbXref xref, DbXref.DbXrefProperty property, CvDatabasePreferredLink preferredLink) {
 
         DbXref dbXRef = new DbXref();
 
@@ -38,22 +38,7 @@ class EmblDbXrefConverter implements DbXrefPropertyToXrefConverter {
         dbXRef.setDatabaseCategory("Sequence databases");
         dbXRef.setDatabaseName(CvDatabasePreferredLink.EMBL_GENE.getDbName());
         dbXRef.setUrl(xref.getUrl());
-        dbXRef.setLinkUrl(CvDatabasePreferredLink.EMBL_GENE.getLink());
-        dbXRef.setProperties(new ArrayList<DbXref.DbXrefProperty>());
-
-        return dbXRef;
-    }
-
-    private DbXref createEmblDbXrefProtSeqFromDbXrefProperty(DbXref xref, DbXref.DbXrefProperty property) {
-
-        DbXref dbXRef = new DbXref();
-
-        dbXRef.setDbXrefId(IdentifierOffset.XREF_PROPERTY_OFFSET +property.getPropertyId());
-        dbXRef.setAccession(property.getValue());
-        dbXRef.setDatabaseCategory("Sequence databases");
-        dbXRef.setDatabaseName(CvDatabasePreferredLink.EMBL_PROTEIN.getDbName());
-        dbXRef.setUrl(xref.getUrl());
-        dbXRef.setLinkUrl(CvDatabasePreferredLink.EMBL_PROTEIN.getLink());
+        dbXRef.setLinkUrl(preferredLink.getLink());
         dbXRef.setProperties(new ArrayList<DbXref.DbXrefProperty>());
 
         return dbXRef;

@@ -17,7 +17,7 @@ public class DbXrefConverterTest {
 
         DbXrefPropertyToXrefConverter converter = DbXrefConverter.getInstance();
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("NP_000198.1", XRefDatabase.REF_SEQ.getName(), "http://www.ncbi.nlm.nih.gov/protein/%s");
+        DbXref xref = createDbXref("NP_000198.1", XRefDatabase.REF_SEQ.getName(), "http://www.ncbi.nlm.nih.gov/protein/%s", "http://www.ncbi.nlm.nih.gov/refseq/");
         xref.setProperties(Collections.singletonList(createDbXrefProperty(5309676, "nucleotide sequence ID", "NM_000207.2")));
 
         List<DbXref> xrefs = converter.convert(xref);

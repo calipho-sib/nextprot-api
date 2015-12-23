@@ -6,6 +6,7 @@ import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.XRefDatabase;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -56,5 +57,70 @@ public class EmblDbXrefConverterTest {
         Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/%s", ref.getLinkUrl());
         Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AAW83741", ref.getResolvedUrl());
         Assert.assertEquals("http://www.ebi.ac.uk/ena", ref.getUrl());
+    }
+
+    @Test
+    public void testConvertFromMultipleProps() {
+
+        EmblDbXrefConverter converter = new EmblDbXrefConverter();
+
+        DbXref xref = createDbXref("AY899304", XRefDatabase.EMBL.getName(), "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena");
+        xref.setProperties(Arrays.asList(
+                createDbXrefProperty(1935564, "genomic sequence ID", "M27429"),
+                createDbXrefProperty(1935565, "genomic sequence ID", "M27428"),
+                createDbXrefProperty(1935566, "genomic sequence ID", "M27427"),
+                createDbXrefProperty(1935567, "genomic sequence ID", "M27426"),
+                createDbXrefProperty(1935568, "genomic sequence ID", "M27425"),
+                createDbXrefProperty(1935569, "genomic sequence ID", "M27424"),
+                createDbXrefProperty(1935570, "genomic sequence ID", "M27423"),
+                createDbXrefProperty(1935571, "molecule type", "protein"),
+                createDbXrefProperty(1935572, "genomic sequence ID", "M27430")
+        ));
+
+        List<DbXref> xrefs = converter.convert(xref);
+        Assert.assertEquals(8, xrefs.size());
+
+        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935564, "M27429", XRefDatabase.EMBL.getName(),
+                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27429");
+        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935565, "M27428", XRefDatabase.EMBL.getName(),
+                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27428");
+        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935566, "M27427", XRefDatabase.EMBL.getName(),
+                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27427");
+        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935567, "M27426", XRefDatabase.EMBL.getName(),
+                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27426");
+        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935568, "M27425", XRefDatabase.EMBL.getName(),
+                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27425");
+        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935569, "M27424", XRefDatabase.EMBL.getName(),
+                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27424");
+        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935570, "M27423", XRefDatabase.EMBL.getName(),
+                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27423");
+        assertProducedXrefsContain(xrefs, IdentifierOffset.XREF_PROPERTY_OFFSET + 1935572, "M27430", XRefDatabase.EMBL.getName(),
+                "Sequence databases", "http://www.ebi.ac.uk/ena", "http://www.ebi.ac.uk/ena/data/view/%s", "http://www.ebi.ac.uk/ena/data/view/M27430");
+    }
+
+    private void assertProducedXrefsContain(List<DbXref> producedXrefs, long expectedId, String expectedAccession, String expectedDbName,
+                              String expectedDbCategory, String expectedUrl, String expectedLinkUrl, String expectedResolvedUrl) {
+
+        DbXref xrefToCheck = null;
+
+        for (DbXref producedXref : producedXrefs) {
+
+            if (producedXref.getDbXrefId().longValue() == expectedId) {
+
+                xrefToCheck = producedXref;
+                break;
+            }
+        }
+
+        Assert.assertNotNull(xrefToCheck);
+
+        Assert.assertEquals(expectedId, xrefToCheck.getDbXrefId().longValue());
+        Assert.assertEquals(expectedAccession, xrefToCheck.getAccession());
+        Assert.assertTrue(xrefToCheck.getProperties().isEmpty());
+        Assert.assertEquals(expectedDbName, xrefToCheck.getDatabaseName());
+        Assert.assertEquals(expectedDbCategory, xrefToCheck.getDatabaseCategory());
+        Assert.assertEquals(expectedUrl, xrefToCheck.getUrl());
+        Assert.assertEquals(expectedLinkUrl, xrefToCheck.getLinkUrl());
+        Assert.assertEquals(expectedResolvedUrl, xrefToCheck.getResolvedUrl());
     }
 }
