@@ -137,8 +137,9 @@ public class DbXrefDaoImpl implements DbXrefDao {
 			return new DbXref.EnsemblInfos(
 					resultSet.getLong("db_xref_id"),
 					resultSet.getString("gene_ac"),
-					resultSet.getString("transcript_ac"),
-					resultSet.getString("protein_ac"));
+					resultSet.getLong("gt_link_id"),
+					resultSet.getString("protein_ac"),
+					resultSet.getLong("tp_link_id"));
 		}
 	}
 	

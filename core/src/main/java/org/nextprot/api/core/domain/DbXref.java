@@ -417,7 +417,7 @@ public class DbXref implements Serializable {
 		private final long genePropertyId;
 		private final long proteinPropertyId;
 
-		public EnsemblInfos(long transcriptXrefId, String geneAc, String proteinAc, long genePropertyId, long proteinPropertyId) {
+		public EnsemblInfos(long transcriptXrefId, String geneAc, long genePropertyId, String proteinAc, long proteinPropertyId) {
 
 			Preconditions.checkArgument(geneAc.startsWith("ENSG"));
 			Preconditions.checkArgument(proteinAc.startsWith("ENSP"));
