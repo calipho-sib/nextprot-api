@@ -3,7 +3,6 @@ package org.nextprot.api.core.utils.dbxref.conv;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.XRefDatabase;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,13 +17,13 @@ class RefSeqDbXrefConverter implements DbXrefPropertyToXrefConverter {
 
             if ("nucleotide sequence ID".equals(property.getName())) {
 
-                return Collections.singletonList(createRefSeqNucleotideDbXrefFromDbXrefProperty(property));
+                return Collections.singletonList(createRefSeqNucleotideDbXrefFromDbXrefProperty(xref, property));
             }
         }
         return new ArrayList<>();
     }
 
-    private DbXref createRefSeqNucleotideDbXrefFromDbXrefProperty(DbXref.DbXrefProperty property) {
+    private DbXref createRefSeqNucleotideDbXrefFromDbXrefProperty(DbXref xref, DbXref.DbXrefProperty property) {
 
         DbXref dbXRef = new DbXref();
 
@@ -32,7 +31,7 @@ class RefSeqDbXrefConverter implements DbXrefPropertyToXrefConverter {
         dbXRef.setAccession(property.getValue());
         dbXRef.setDatabaseCategory("Sequence databases");
         dbXRef.setDatabaseName(CvDatabasePreferredLink.REFSEQ_NUCLEOTIDE.getDbName());
-        dbXRef.setUrl(XRefDatabase.REF_SEQ.getUrl());
+        dbXRef.setUrl(xref.getUrl());
         dbXRef.setLinkUrl(CvDatabasePreferredLink.REFSEQ_NUCLEOTIDE.getLink());
         dbXRef.setProperties(new ArrayList<DbXref.DbXrefProperty>());
 
