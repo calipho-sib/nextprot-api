@@ -53,8 +53,9 @@ public class DbXrefServiceImpl implements DbXrefService {
 		}
 	};
 
-	private static final Predicate<DbXrefProperty> DB_XREF_EXCLUDING_HIDDEN_PROPERTIES_PREDICATE = new DbXrefExcludedPropertyPredicate(Sets.newHashSet("status", "match status", "organism ID", "organism name"));
+	private static final Predicate<DbXrefProperty> DB_XREF_EXCLUDING_HIDDEN_PROPERTIES_PREDICATE = new DbXrefExcludedPropertyPredicate(Sets.newHashSet("match status", "organism ID", "organism name"));
 
+	
 	@Override
 	public List<DbXref> findDbXRefByPublicationId(Long publicationId) {
 		return this.dbXRefDao.findDbXRefsByPublicationId(publicationId);
