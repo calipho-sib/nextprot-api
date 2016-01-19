@@ -1,9 +1,12 @@
 package org.nextprot.api.commons.constants;
 
 import com.google.common.collect.Sets;
+
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -138,6 +141,23 @@ public class AnnotationCategoryTest {
 		System.out.println("Expected number of OWLCategories = " + expected);
 		Assert.assertTrue(s.size() == expected);
 	}
+	
+	//@Test
+	public void testShowLeaves() {
+		AnnotationCategory[] acs = AnnotationCategory.values();
+		List<String> leaves = new ArrayList<String>();
+		for (AnnotationCategory ac: acs) {
+			if (ac.getChildren().size()==0) {
+				leaves.add(ac.getAnnotationCategoryNameForXML());
+			}
+		}
+		Collections.sort(leaves);
+		for (String s: leaves) {
+			System.out.println(s);
+		}
+			
+	}
+		
 
 	@Test
 	public void testTopologyAllChildren() {
