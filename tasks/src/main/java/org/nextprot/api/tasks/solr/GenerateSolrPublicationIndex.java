@@ -44,11 +44,11 @@ public class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 		for (Long id : allpubids) {
 			//System.err.println("id: " + id);
 			Publication currpub = publicationService.findPublicationById(id);
+			if(currpub.getPublicationType().equals("ARTICLE"))
+			{
 			indexer.add(currpub);
 			pubcnt++;
-			if(currpub.getPublicationType().equals("ARTICLE")) artcnt++;
-			else if(currpub.getPublicationType().equals("SUBMISSION")) submcnt++;
-			else othercnt++;
+			}
 			if((pubcnt % 1000)==0) System.err.println(pubcnt + " publications done");
 			//if(pubcnt >= 350000) break;
 		}
@@ -58,7 +58,7 @@ public class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 		logger.info("comitting");
 		indexer.commit();
 		logger.info(pubcnt + " publications indexed..." + (System.currentTimeMillis()-start)/1000 + " seconds...");
-		System.err.println(pubcnt + " publications indexed: " + artcnt + " articles, " + submcnt + " submissions, " + othercnt + " other.");
+		System.err.println(pubcnt + " publications indexed.");
 		System.err.println("All this in " + (System.currentTimeMillis()-start)/1000 + " seconds...");
 		
 	}
