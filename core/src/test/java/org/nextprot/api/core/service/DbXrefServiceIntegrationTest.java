@@ -167,7 +167,7 @@ having sum(a.cnt)=1
 
         List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_P01308");
 
-        Assert.assertEquals(1154, xrefs.size());
+        Assert.assertEquals(1131, xrefs.size());
 
         for (DbXref xref : xrefs) {
 
@@ -186,7 +186,7 @@ having sum(a.cnt)=1
 
 		List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_P01308");
 
-		Assert.assertEquals(1154, xrefs.size());
+		Assert.assertEquals(1131, xrefs.size());
 
 		for (DbXref xref : xrefs) {
 
@@ -205,7 +205,7 @@ having sum(a.cnt)=1
 
 		List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_Q9BXA6");
 
-		Assert.assertEquals(538, xrefs.size());
+		Assert.assertEquals(527, xrefs.size());
 
 		for (DbXref xref : xrefs) {
 
