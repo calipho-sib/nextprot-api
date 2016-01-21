@@ -25,6 +25,7 @@ public class XrefFieldBuilder extends FieldBuilder {
 			String db = xref.getDatabaseName();
 
 			if (db.equals("HPA") && !acc.contains("ENSG")) { // HPA with ENSG are for expression
+				//System.err.println(acc);
 				addField(Fields.ANTIBODY, acc);
 			}
             if (db.equals("Ensembl")) {
@@ -33,6 +34,7 @@ public class XrefFieldBuilder extends FieldBuilder {
             if (!(db.equals("PeptideAtlas") || db.equals("SRMAtlas"))) {
 				//addField(Fields.XREFS, acc + ", " + db + ":" + acc);
 				addField(Fields.XREFS,db + ":" + acc + ", " + acc);
+				//System.err.println(db + " -> " + xref.getDatabaseCategory());
 			}
 	
 		}
