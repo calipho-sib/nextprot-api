@@ -259,7 +259,7 @@ public class AnnotationCategoryTest {
 
 		List<AnnotationCategory> categories = AnnotationCategory.getSortedCategories();
 
-		Assert.assertEquals(97, categories.size());
+		Assert.assertEquals(98, categories.size());
 	}
 
 	@Test
@@ -285,7 +285,7 @@ public class AnnotationCategoryTest {
 	@Test
 	public void testInstanciatedCategories() {
 
-		Assert.assertEquals(64, AnnotationCategory.getInstantiatedCategories().size());
+		Assert.assertEquals(65, AnnotationCategory.getInstantiatedCategories().size());
 	}
 
 	@Test

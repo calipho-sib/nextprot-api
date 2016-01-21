@@ -75,8 +75,9 @@ public enum AnnotationCategory implements Serializable {
 
 	INITIATOR_METHIONINE(1000, "initiator methionine", "initiatorMethionine", "Initiator methionine", PROCESSING_PRODUCT),
 	SIGNAL_PEPTIDE(1001, "signal peptide", "signalPeptide", "signal peptide", PROCESSING_PRODUCT),
-	//TRANSIT_PEPTIDE(1002,"transit peptide", "transitPeptide", "transit peptide", new OWLAnnotationCategory[]{PROCESSING_PRODUCT }), // split into mitochondrial & peroxisome // db annotation split into types of 2 next lines
-
+	
+	// split into mitochondrial & peroxisome db annotation NORMALLY split into types of 2 next lines
+	TRANSIT_PEPTIDE(1002,"transit peptide", "transitPeptide", "transit peptide", PROCESSING_PRODUCT), 
 	PEROXISOME_TRANSIT_PEPTIDE(-10021, "peroxisome transit peptide", "peroxisomeTransitPeptide", "Peroxisome transit peptide", PROCESSING_PRODUCT),
 	MITOCHONDRIAL_TRANSIT_PEPTIDE(-10022, "mitochondrial transit peptide", "mitochondrialTransitPeptide", "Mitochondrial transit peptide", PROCESSING_PRODUCT),
 	MATURATION_PEPTIDE(1003, "maturation peptide", "propeptide", "maturation peptide", PROCESSING_PRODUCT),
