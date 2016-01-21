@@ -3,9 +3,11 @@ package org.nextprot.api.core.domain;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.commons.utils.DateFormatter;
+import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -55,10 +57,14 @@ public class Publication implements Serializable{
 
 	@ApiObjectField(description = "Curated Publications")
 	private Boolean isCurated;
-	// TODO: reassess the way we define 'curared/computed' and get rid of the 'limit 1' in publication-by-ressource.sql
+	// TODO: reassess the way we define 'curated/computed' and get rid of the 'limit 1' in publication-by-ressource.sql, done ?
+	// Refs cited in UniProt should be 'curated' even if not (yet) attached to a specific annotation
 	@ApiObjectField(description = "Computed Publications")
 	private Boolean isComputed;
 	
+	@ApiObjectField(description = "A journal name catched from properties when cvjournal is absent")
+	private String journal_from_properties;
+
 	public Boolean getIsLargeScale() {
 		return isLargeScale;
 	}
@@ -220,7 +226,14 @@ public class Publication implements Serializable{
 		this.dbXrefs = dbXrefs;
 	}
 
-	
+	public String getJournal_from_properties() {
+		return journal_from_properties;
+	}
+
+	public void setJournal_from_properties(String journal_from_properties) {
+		this.journal_from_properties = journal_from_properties;
+	}
+
 	public String toString() {
 		
 		StringBuilder sb = new StringBuilder();
@@ -251,10 +264,12 @@ public class Publication implements Serializable{
 		sb.append("authorsCnt=");
 		sb.append((this.authors != null) ? this.authors.size() : "null");
 		sb.append("\n");
+		sb.append("date=");
+		sb.append(this.publicationDate.toString());
+		sb.append("\n");
 		
 		return sb.toString();
 
 	}
-
 
 }
