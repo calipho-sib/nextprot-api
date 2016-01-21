@@ -94,16 +94,27 @@ public class PublicationDaoImpl implements PublicationDao {
 			} else {
 				publication.setPublicationType(pubType);
 				publication.setTitle(resultSet.getString("title"));
+				String jprop = resultSet.getString("journal_from_property");
+				if(jprop != null)
+				  //System.err.println("jprop: " + jprop);
+					publication.setJournal_from_properties(jprop);
 			}
 
+			// Post-process title
 			String title = publication.getTitle();
 			if (title.startsWith("["))
 				title = title.substring(1);
 			if (title.endsWith("]"))
 				title = title.substring(0, title.length() - 1);
-
-			publication.setTitle(title.replace("[", "(").replace("]", ")"));
-
+			if(title.length() > 1)
+			  {
+			  String penultimate = title.substring(title.length() - 2,title.length() - 1);
+			  if(penultimate.equals("]")) // Sometimes the closing bracket is inconstantly placed before the final dot (eg: pubid 10665637)
+				 title = title.substring(0, title.length() - 2) + ".";
+			  }
+			
+			//publication.setTitle(title.replace("[", "(").replace("]", ")")); // Replace internal square brackets by parenthesis (don't know why)
+			publication.setTitle(title); 
 			return publication;
 		}
 	}
