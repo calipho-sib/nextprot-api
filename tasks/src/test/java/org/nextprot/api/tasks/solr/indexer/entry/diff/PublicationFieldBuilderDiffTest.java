@@ -59,9 +59,9 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 				}
 			else if(s.endsWith("</p>")) {
 				indextoken = s.substring(0,s.indexOf("</p>")).trim();
-				expectedValues.add(removeDoubleSpace(indextoken, "unknown field")); // like "Meyerson Matthew M</p>"
+				expectedValues.add(removeDoubleSpace(indextoken, "unknown subfield")); // like "Meyerson Matthew M</p>"
 			}
-			else expectedValues.add(removeDoubleSpace(s, "unknown field 2"));
+			else expectedValues.add(removeDoubleSpace(s, "unknown subfield 2"));
 		}
 		
 		//Set<String> expectedPubliscopy = new TreeSet<String>(expectedPublis);
@@ -77,14 +77,14 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		
 		Set<String> PublicationSetcopy = new TreeSet<String>(PublicationSet);
 		
-		PublicationSet.removeAll(expectedValues);
+		/* PublicationSet.removeAll(expectedValues);
 		System.err.println(PublicationSet.size() + " elements are only in the new index");
 		for(String elem : PublicationSet)
 			System.out.println(elem);
 		expectedValues.removeAll(PublicationSetcopy);
 		System.err.println("\n" + expectedValues.size() + " elements are only in the old index");
 		for(String elem : expectedValues)
-			System.out.println(elem);
+			System.out.println(elem); */
 		
 		Assert.assertEquals( expectedValues.size(), PublicationSet.size());
 		//Assert.assertTrue( expectedValues.size()==0 && PublicationSet.size()==0);
@@ -92,30 +92,29 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 		int pubCount, expectedPubCount;
 		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_CURATED_COUNT);
 		pubCount = pfb.getFieldValue(Fields.PUBLI_CURATED_COUNT, Integer.class);
-		System.err.println("PUBLI_CURATED_COUNT: " + expectedPubCount + " Now: " + pubCount);
-		//Assert.assertEquals(expectedPubCount, pubCount);
+		//System.err.println("PUBLI_CURATED_COUNT: " + expectedPubCount + " Now: " + pubCount);
+		Assert.assertEquals(expectedPubCount, pubCount);
 
 		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_COMPUTED_COUNT);
 		pubCount = pfb.getFieldValue(Fields.PUBLI_COMPUTED_COUNT, Integer.class);
-		System.err.println("PUBLI_COMPUTED_COUNT: " + expectedPubCount + " Now: " + pubCount);
-		//Assert.assertEquals(expectedPubCount, pubCount);
+		//System.err.println("PUBLI_COMPUTED_COUNT: " + expectedPubCount + " Now: " + pubCount);
+		Assert.assertEquals(expectedPubCount, pubCount);
 
 		expectedPubCount = (int) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PUBLI_LARGE_SCALE_COUNT);
 		pubCount = pfb.getFieldValue(Fields.PUBLI_LARGE_SCALE_COUNT, Integer.class);
-		System.err.println("PUBLI_LARGE_SCALE_COUNT: " + expectedPubCount + " Now: " + pubCount);
-		//Assert.assertEquals(expectedPubCount, pubCount);
+		//System.err.println("PUBLI_LARGE_SCALE_COUNT: " + expectedPubCount + " Now: " + pubCount);
+		Assert.assertEquals(expectedPubCount, pubCount);
 
 		float expectedScore = (float) getValueForFieldInCurrentSolrImplementation(entryName, Fields.INFORMATIONAL_SCORE);
 		float score = pfb.getFieldValue(Fields.INFORMATIONAL_SCORE, Float.class);
-		System.err.println("INFORMATIONAL_SCORE: " + expectedScore + " Now: " + score);
-		//Assert.assertEquals(expectedScore, score, 0.001);
+		//System.err.println("INFORMATIONAL_SCORE: " + expectedScore + " Now: " + score);
+		Assert.assertEquals(expectedScore, score, 0.001);
 	}
 	
 	private String removeDoubleSpace(String s, String fname) {
 		//System.out.println(fname + " avant:<" + s + ">");
-		if (s.contains("Cancer Genome Atlas Research")) System.out.println(fname + " ascii: " + (int)s.charAt(s.length()-2)+ " " + (int)s.charAt(s.length()-1));
+		//if (s.contains("Cancer Genome Atlas Research")) System.out.println(fname + " ascii: " + (int)s.charAt(s.length()-2)+ " " + (int)s.charAt(s.length()-1));
 		s.trim();
-		if (s.contains("Cancer Genome Atlas Research")) System.out.println(fname + " ascii after trim: " + (int)s.charAt(s.length()-2)+ " " + (int)s.charAt(s.length()-1));
 		int lng=s.length();
 		while(true) {
 			s = s.replaceAll("  ", " ");
@@ -123,7 +122,7 @@ public class PublicationFieldBuilderDiffTest extends SolrDiffTest {
 			lng=s.length();
 		}
 		//System.out.println(fname + " apres:<" + s + ">");
-		if (s.contains("Cancer Genome Atlas Research")) System.out.println(fname + " ascii: " + (int)s.charAt(s.length()-2) + " " + (int)s.charAt(s.length()-1));
+		//if (s.contains("Cancer Genome Atlas Research")) System.out.println(fname + " ascii: " + (int)s.charAt(s.length()-2) + " " + (int)s.charAt(s.length()-1));
 		return s;
 	}
 
