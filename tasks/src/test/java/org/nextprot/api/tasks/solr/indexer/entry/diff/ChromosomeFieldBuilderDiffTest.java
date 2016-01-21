@@ -1,17 +1,26 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.ChromosomeFieldBuilder;
 
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
+
+	@Test
+	public void chromosomalLocationNX_P43686ShouldGiveSameIndexAsSolrIndex() {
+
+		Entry entry = getEntry("NX_P43686");
+		testChrLoc(entry);
+		testChrLocS(entry);
+		testGeneBand(entry);
+	}
 
 	@Test
 	public void testChromsomalLocation() {
@@ -26,7 +35,7 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 	}
 
 	
-	public void testChrLoc(Entry entry) {
+	private void testChrLoc(Entry entry) {
 		
 		Fields field = Fields.CHR_LOC;
 
@@ -38,9 +47,9 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		assertEquals(expectedValues, chrLocValue);
 
 	}
-	
-	
-	public void testChrLocS(Entry entry) {
+
+
+	private void testChrLocS(Entry entry) {
 		
 		Fields field = Fields.CHR_LOC_S;
 
