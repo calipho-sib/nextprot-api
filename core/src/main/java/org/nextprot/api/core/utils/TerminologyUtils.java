@@ -93,8 +93,9 @@ public class TerminologyUtils {
 		List<DbXref> xrefs = new ArrayList<DbXref>();
 		List<String> allxrefs = Arrays.asList(xrefsstring.split(" \\| "));
 		for (String onexref: allxrefs) {
-			
-			List<String> fields = Arrays.asList(onexref.split(", "));
+			// The field separator from upstream SQL is a # since commas can occur in accessions
+			List<String> fields = Arrays.asList(onexref.split("# "));
+			//List<String> fields = Arrays.asList(onexref.split(", "));
 			String dbcat = fields.get(0);
 			String db = fields.get(1);
 			String acc = fields.get(2);
@@ -121,7 +122,8 @@ public class TerminologyUtils {
         int i = properties.size();
 		for (Terminology.TermProperty property : properties) {
 			sb.append(property.getPropertyName());
-			sb.append(":=");
+			//sb.append(":=");
+			sb.append(":");
 			sb.append(property.getPropertyValue());
 			if(--i != 0)
 			  sb.append(" | ");
