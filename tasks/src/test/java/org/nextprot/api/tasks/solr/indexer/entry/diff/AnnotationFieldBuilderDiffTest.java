@@ -29,15 +29,15 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	TerminologyService terminologyService;
 
 	@Test
-	@Ignore
+	//@Ignore
 	public void testAnnotationsAndFunctionalDescriptions() {
 
-		for(int i=0; i < 1; i++){
-			//Entry entry = getEntry(i);
-			Entry entry = getEntry("NX_P11532");
+		for(int i=0; i < 10; i++){
+			Entry entry = getEntry(i);
+			//Entry entry = getEntry("NX_P11532");
 			//Entry entry = getEntry("P42680");
 			System.out.println(entry.getUniqueName());
-			//testFunctionalDesc(entry);
+			testFunctionalDesc(entry);
 			testAnnotations(entry);
 		}
 		
@@ -50,16 +50,15 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 		afb.setTerminologyservice(terminologyService);
 		afb.initializeBuilder(entry);
 		List<String> functionalDescriptions = afb.getFieldValue(Fields.FUNCTION_DESC, List.class);
-
 		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), Fields.FUNCTION_DESC);
 
 		if (!((expectedValues == null) && (functionalDescriptions == null))) {
 			//System.out.println(expectedValues);
 			//System.err.println(functionalDescriptions);
-			//assertEquals(functionalDescriptions.size(), expectedValues.size());
+			assertEquals(functionalDescriptions.size(), expectedValues.size());
 			// Only one functionalDescription is indexed in current solr implementation (eg: NX_P02751)
 			if (!functionalDescriptions.isEmpty()) {
-				//assertEquals(functionalDescriptions.get(0), expectedValues.get(0));
+				assertEquals(functionalDescriptions.get(0), expectedValues.get(0));
 			}
 		}
 
@@ -117,7 +116,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 		// TODO remove "reference proteome", unless already in stopwords
 		for (int i = 0; i < annotations.size(); i++) {
 			//System.err.println(annotations.get(i));
-			//assertEquals(annotations.get(i), expectedValues.get(i));
+			assertEquals(annotations.get(i), expectedValues.get(i));
 		}
 		//System.err.println(expectedValues);
 		assertEquals(expectedValues.size(), annotations.size());
