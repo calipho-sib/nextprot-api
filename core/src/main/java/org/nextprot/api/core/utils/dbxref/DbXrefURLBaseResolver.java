@@ -3,6 +3,8 @@ package org.nextprot.api.core.utils.dbxref;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.DbXref;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -76,9 +78,20 @@ class DbXrefURLBaseResolver {
         // TODO: we should not have database link with multiple occurrence of %s that are either a stamp and a value !!!!
         // ChiTaRS db template: http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&%s=1
 
-        if (templateURL.matches("^.+%[a-zA-Z].*$")) {
+        // the resolver should not throw an exception for URL-encoding character:
+        //   ex: http://en.wikipedia.org/wiki/Thymosin_%CE%B11 -> http://en.wikipedia.org/wiki/Thymosin_α1
+        // solution:
+        //   decode URL-encoding character first as it match the following predicate
+        try {
+            String decoded = URLDecoder.decode(templateURL, "UTF-8");
 
-            throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+            if (decoded.matches("^.+%[a-zA-Z].*$")) {
+
+                throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+            }
+        } catch (UnsupportedEncodingException e) {
+
+            throw new UnresolvedXrefURLException("unsupported URL encoding: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
         }
 
         return templateURL;
