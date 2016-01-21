@@ -52,7 +52,7 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 				else
 					addField(Fields.PUBLICATIONS, (currauthor.getLastName() + " " + currauthor.getInitials()).trim());
 				//if(currauthor.getLastName().contains("Consortium")) System.err.println(currauthor.getLastName());
-				if(currauthor.getLastName().contains("Bergsten")) System.err.println("id: " + currpubli.getPublicationId() + " type: " + currpubli.getPublicationType() + " " + currauthor.getLastName());
+				//if(currauthor.getLastName().contains("Bergsten")) System.err.println("id: " + currpubli.getPublicationId() + " type: " + currpubli.getPublicationType() + " " + currauthor.getLastName());
 			}
 		}
 		
