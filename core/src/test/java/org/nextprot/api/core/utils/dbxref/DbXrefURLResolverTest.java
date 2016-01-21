@@ -498,6 +498,13 @@ public class DbXrefURLResolverTest {
     }
 
     @Test
+    public void testResolveWithUrlEncodingShouldNotThrowUnresolvedXrefURLException() throws Exception {
+
+        DbXref xref = createDbXref("Thymosin_%CE%B11", "UniPathway", "http://en.wikipedia.org/wiki/%s");
+        resolver.resolveWithAccession(xref, "http://en.wikipedia.org/wiki/Thymosin_%CE%B11");
+    }
+
+    @Test
     public void testResolveCCLE() throws Exception {
 
         DbXref xref = createDbXref("Q8ZAF0", "CCLE", "www.broadinstitute.org/ccle/cell%20lines/%s");

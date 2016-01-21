@@ -3,6 +3,8 @@ package org.nextprot.api.core.utils.dbxref;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.DbXref;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,6 +20,8 @@ import java.util.Set;
  * Linked urls of each db may contain different single occurrence of any stamps (%s, %u, %n, ...) that should be resolved separately.
  */
 class DbXrefURLBaseResolver {
+
+    private static final String UNRESOLVED_URL_REGEXP = "^.+%[a-zA-Z].*$";
 
     private final Map<String, StampBaseResolver> stampResolvers;
 
@@ -76,9 +80,29 @@ class DbXrefURLBaseResolver {
         // TODO: we should not have database link with multiple occurrence of %s that are either a stamp and a value !!!!
         // ChiTaRS db template: http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&%s=1
 
-        if (templateURL.matches("^.+%[a-zA-Z].*$")) {
+        try {
 
-            throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+            if (templateURL.matches(UNRESOLVED_URL_REGEXP)) {
+
+                // the resolver should not throw an exception for URL-encoding character:
+                //   ex: http://en.wikipedia.org/wiki/Thymosin_%CE%B11 -> http://en.wikipedia.org/wiki/Thymosin_α1
+                // solution:
+                //   decode URL-encoding character first as it match the following predicate
+                try {
+                    String decoded = URLDecoder.decode(templateURL, "UTF-8");
+
+                    if (decoded.matches(UNRESOLVED_URL_REGEXP))
+                        throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+                }
+                // TODO: URLDecoder gives me no choice of catching RuntimeException, a URL matcher would have been great here
+                catch (IllegalArgumentException e) {
+
+                    throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+                }
+            }
+        } catch (UnsupportedEncodingException e) {
+
+            throw new UnresolvedXrefURLException("unsupported URL encoding: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
         }
 
         return templateURL;
