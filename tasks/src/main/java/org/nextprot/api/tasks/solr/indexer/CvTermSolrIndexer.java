@@ -17,10 +17,13 @@ public class CvTermSolrIndexer extends SolrIndexer<Terminology> {
 
 	@Override
 	public SolrInputDocument convertToSolrDocument(Terminology terminology) {
+		
+		if (terminology.getOntology().equals("OrganelleCv")) return null; // CaliphoMisc-194, ignore this ontology
+		if (terminology.getOntology().equals("NextprotAnnotationCv")) return null; // CaliphoMisc-194, ignore this ontology
 		SolrInputDocument doc = new SolrInputDocument();
 		doc.addField("id", terminology.getId());
 		doc.addField("ac", terminology.getAccession());
-		String filters=terminology.getOntology().replaceAll("[ _-]", "").toLowerCase().replaceAll("uniprot", "up").replaceAll("nextprot", "aanp");
+		String filters=terminology.getOntologyAltname().replaceAll("[ _-]", "").toLowerCase().replaceAll("uniprot", "up").replaceAll("nextprot", "aanp");
 		doc.addField("filters", filters);
 		doc.addField("name", terminology.getName());
 		doc.addField("name_s", terminology.getName().toLowerCase());
