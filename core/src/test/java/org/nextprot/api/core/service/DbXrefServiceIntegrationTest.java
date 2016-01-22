@@ -167,8 +167,6 @@ having sum(a.cnt)=1
 
         List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_P01308");
 
-        Assert.assertEquals(1131, xrefs.size());
-
         for (DbXref xref : xrefs) {
 
             if (xref.getDbXrefId() == 1272250) {
@@ -186,8 +184,6 @@ having sum(a.cnt)=1
 
 		List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_P01308");
 
-		Assert.assertEquals(1131, xrefs.size());
-
 		for (DbXref xref : xrefs) {
 
 			if (xref.getDbXrefId() == 16387756) {
@@ -204,8 +200,6 @@ having sum(a.cnt)=1
 	public void testBrendaTypeLinkHasUrlCorrectlyResolved() {
 
 		List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster("NX_Q9BXA6");
-
-		Assert.assertEquals(527, xrefs.size());
 
 		for (DbXref xref : xrefs) {
 
@@ -263,5 +257,4 @@ having sum(a.cnt)=1
 			if (xref.getDbXrefId() == propertyId)
 				Assert.assertTrue(xref.getProperties().isEmpty());
 	}
-	
 }
