@@ -1,13 +1,13 @@
 package org.nextprot.api.core.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.nextprot.api.core.domain.EntryProperties;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles("dev")
 public class EntryPropertiesIntegrationDaoTest extends CoreUnitBaseTest {
@@ -23,13 +23,11 @@ public class EntryPropertiesIntegrationDaoTest extends CoreUnitBaseTest {
 		assertTrue(props.getIsoformCount() > 2);
 		assertTrue(props.getMaxSeqLen() > 760);
 		assertTrue(props.getInteractionCount() > 17);
+		assertTrue(props.getFiltermutagenesis());
+		assertTrue(props.getFilterstructure());
+		assertTrue(props.getFilterdisease());
+		assertTrue(props.getFilterproteomics());
+		assertTrue(props.getFilterexpressionprofile());
 		assertTrue(props.getMutagenesisCount() > 12);
-		assertEquals(true, props.getFiltermutagenesis());
-		assertEquals(true, props.getFilterstructure());
-		assertEquals(true, props.getFilterdisease());
-		assertEquals(true, props.getFilterproteomics());
-		assertEquals(true, props.getFilterexpressionprofile());
-		//System.err.println("int: " + props.getInteractionCount());
 	}
-
 }
