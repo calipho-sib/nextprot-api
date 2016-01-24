@@ -4,15 +4,14 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 
 import java.io.*;
 import java.util.Arrays;
 
-/**
- * Created by fnikitin on 12/08/15.
- */
+@Ignore
 public class NPEntryOverviewXLSWriterTest extends WebIntegrationBaseTest {
 
     @Test

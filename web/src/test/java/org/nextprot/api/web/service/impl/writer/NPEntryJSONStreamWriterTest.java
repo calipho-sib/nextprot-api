@@ -1,5 +1,6 @@
 package org.nextprot.api.web.service.impl.writer;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -7,6 +8,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 
+@Ignore
 public class NPEntryJSONStreamWriterTest extends WebIntegrationBaseTest {
 
     @Test
