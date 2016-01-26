@@ -42,7 +42,7 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 			res = resultSet.getInt("varcnt");
 			properties.setVarCount(res == -1? 0:res);
 			res = resultSet.getInt("mutcnt");
-			properties.setMutagenesisCount(res == -1? 0:res);
+			properties.setFiltermutagenesis(res == -1? 0:res);
 			res = resultSet.getInt("intcnt");
 			properties.setInteractionCount(res == -1? 0:res);
 			properties.setMaxSeqLen(resultSet.getInt("maxlen"));

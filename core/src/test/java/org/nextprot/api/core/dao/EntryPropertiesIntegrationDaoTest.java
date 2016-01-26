@@ -28,6 +28,5 @@ public class EntryPropertiesIntegrationDaoTest extends CoreUnitBaseTest {
 		assertTrue(props.getFilterdisease());
 		assertTrue(props.getFilterproteomics());
 		assertTrue(props.getFilterexpressionprofile());
-		assertTrue(props.getMutagenesisCount() > 12);
 	}
 }

@@ -10,7 +10,6 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 	private int ptmCount;
 	private int varCount;
 	private int isoformCount;
-	private int mutagenesisCount;
 	private int interactionCount;
 
 	private int maxSeqLen;
@@ -113,12 +112,9 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 	public void setInteractionCount(int interactionCount) {
 		this.interactionCount = interactionCount;
 	}
-	public int getMutagenesisCount() {
-		return mutagenesisCount;
-	}
 
-	public void setMutagenesisCount(int mutagenesisCount) {
-		this.mutagenesisCount = mutagenesisCount;
+	public void setFiltermutagenesis(int mutagenesisCount) {
+		// a value > 0 means we have mutagenesis otherwise 0 means we don't have any
 		this.filtermutagenesis = mutagenesisCount > 0? true:false;
 	}
 
