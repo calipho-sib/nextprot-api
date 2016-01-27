@@ -25,6 +25,7 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 	//TODO Is this the same as saying parentName??? Is this really needed for isoforms????
 	private String mainEntityName;
 
+	private List<EntityName> recommendedEntityNames = new ArrayList<>();
 	private List<EntityName> synonyms = new ArrayList<>();
 	
 	public String getCategory() {
@@ -89,6 +90,12 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
+	}
+
+	public List<EntityName> getOtherRecommendedEntityNames() { return recommendedEntityNames; }
+
+	public void addOtherRecommendedEntityName(EntityName recommendedName) {
+		this.recommendedEntityNames.add(recommendedName);
 	}
 
 	public List<EntityName> getSynonyms() {
