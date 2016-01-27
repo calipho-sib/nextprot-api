@@ -96,7 +96,13 @@ class OverviewServiceImpl implements OverviewService {
 
 			parentId = entityName.getParentId();
 			if (parentId != null && mutableEntityMap.containsKey(parentId)) {
-				mutableEntityMap.get(parentId).addSynonym(entityName);
+
+				if (entityName.isMain()) {
+					mutableEntityMap.get(parentId).addOtherRecommendedEntityName(entityName);
+				}
+				else {
+					mutableEntityMap.get(parentId).addSynonym(entityName);
+				}
 			} else {
 				mutableEntityMap.put(entityName.getId(), entityName);
 			}
