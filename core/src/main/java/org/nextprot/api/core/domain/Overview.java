@@ -63,11 +63,14 @@ public class Overview implements Serializable{
 				recommendedName.setParentId(name.getParentId());
 				recommendedName.setQualifier(name.getQualifier());
 				recommendedName.setType(name.getType());
-				if(name.getSynonyms() != null){
-					for(EntityName sname : name.getSynonyms()){
-						if(!sname.getQualifier().equals("full")){
-							recommendedName.addSynonym(sname); //add the short and children
-						}
+				for(EntityName sname : name.getSynonyms()){
+					if(!sname.getQualifier().equals("full")){
+						recommendedName.addSynonym(sname); //add the short and children
+					}
+				}
+				for(EntityName sname : name.getOtherRecommendedEntityNames()){
+					if(!sname.getQualifier().equals("full")){
+						recommendedName.addOtherRecommendedEntityName(sname); //add the short and children
 					}
 				}
 			}
