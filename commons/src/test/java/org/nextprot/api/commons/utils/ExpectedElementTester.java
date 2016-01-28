@@ -21,7 +21,7 @@ public abstract class ExpectedElementTester<T, K> {
     }
 
     /**
-     * @return true if expected element was found
+     * @return true if expected element was found with expected valid values
      * @param coll the collection to fetch expected element
      * @param expectedElementKey the expected element key
      * @param expectedElementValues the element values
