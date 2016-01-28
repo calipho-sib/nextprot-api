@@ -6,14 +6,14 @@ import org.junit.Test;
 
 import java.util.*;
 
-public class ExpectedElementTesterTest {
+public class CollectionContentTesterTest {
 
     @Test
     public void foundValidElement() throws Exception {
 
         List<Person> persons = Arrays.asList(new Person("bob", 23), new Person("jon", 29), new Person("loki", 450));
 
-        ExpectedElementTester<Person, String> tester = new ExpectedElementTester<Person, String>(persons) {
+        CollectionContentTester<Person, String> tester = new CollectionContentTester<Person, String>(persons) {
 
             @Override
             protected Function<Person, String> createElementToKeyFunc() {
@@ -36,7 +36,7 @@ public class ExpectedElementTesterTest {
         expectedPersonProps.put("name", "jon");
         expectedPersonProps.put("age", 29);
 
-        Assert.assertTrue(tester.containsWithExpectedContent("jon29", expectedPersonProps));
+        Assert.assertTrue(tester.hasElementWithContent("jon29", expectedPersonProps));
     }
 
     private static class Person {

@@ -3,7 +3,7 @@ package org.nextprot.api.core.dao;
 import com.google.common.base.Function;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.commons.utils.ExpectedElementTester;
+import org.nextprot.api.commons.utils.CollectionContentTester;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,11 +49,11 @@ limit 100
 
 		Map<String, Object> expectedProps = newExpectedProps("Q8ZAF0", "Sequence databases", "UniProt",
 				"http://www.uniprot.org/uniprot/%s", "http://www.uniprot.org/uniprot/Q8ZAF0", "http://www.uniprot.org/uniprot/");
-		Assert.assertTrue(tester.containsWithExpectedContent(15645061L, expectedProps));
+		Assert.assertTrue(tester.hasElementWithContent(15645061L, expectedProps));
 
 		expectedProps = newExpectedProps("P61021", "Sequence databases", "UniProt",
 				"http://www.uniprot.org/uniprot/%s", "http://www.uniprot.org/uniprot/P61021", "http://www.uniprot.org/uniprot/");
-		Assert.assertTrue(tester.containsWithExpectedContent(29231790L, expectedProps));
+		Assert.assertTrue(tester.hasElementWithContent(29231790L, expectedProps));
 	}
 
 	private static Map<String, Object> newExpectedProps(String accession, String dbCat, String dbName, String linkUrl, String resolvedUrl, String url) {
@@ -70,7 +70,7 @@ limit 100
 		return expectedProps;
 	}
 
-	private static class ExpectedDbXrefTester extends ExpectedElementTester<DbXref, Long> {
+	private static class ExpectedDbXrefTester extends CollectionContentTester<DbXref, Long> {
 
 		ExpectedDbXrefTester(Collection<DbXref> observedCollection) {
 			super(observedCollection);

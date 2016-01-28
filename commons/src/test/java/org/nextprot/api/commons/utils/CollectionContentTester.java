@@ -1,6 +1,7 @@
 package org.nextprot.api.commons.utils;
 
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
 
 import java.util.Collection;
 import java.util.Map;
@@ -11,23 +12,25 @@ import java.util.Map;
  *
  * Created by fnikitin on 22/01/16.
  */
-public abstract class ExpectedElementTester<T, K> {
+public abstract class CollectionContentTester<T, K> {
 
     private final Function<T, K> elementToKeyFunc;
-    private final Collection<T> observedCollection;
+    private final Collection<T> collection;
 
-    protected ExpectedElementTester(Collection<T> observedCollection) {
+    protected CollectionContentTester(Collection<T> collection) {
+
+        Preconditions.checkNotNull(collection);
 
         elementToKeyFunc = createElementToKeyFunc();
-        this.observedCollection = observedCollection;
+        this.collection = collection;
     }
 
     /**
-     * @return true if expected element was found with expected content
+     * @return true if expected element was found in collection with expected content
      * @param expectedElementKey the expected element key
      * @param expectedElementValues the element values
      */
-    public boolean containsWithExpectedContent(K expectedElementKey, Map<String, Object> expectedElementValues) {
+    public boolean hasElementWithContent(K expectedElementKey, Map<String, Object> expectedElementValues) {
 
         T foundElement = getElementFromKey(expectedElementKey);
 
@@ -35,19 +38,19 @@ public abstract class ExpectedElementTester<T, K> {
     }
 
     /**
-     * @return element with given key from a collection of T objects
-     * @param expectedElementKey the expected element key
+     * Extract element from the collection with the given key
+     * @param elementKey the element key
+     * @return element with given key from the collection of T objects
      */
-    private T getElementFromKey(K expectedElementKey) {
+    private T getElementFromKey(K elementKey) {
 
-        for (T element : observedCollection) {
+        for (T element : collection) {
 
-            if (expectedElementKey.equals(elementToKeyFunc.apply(element))) {
+            if (elementKey.equals(elementToKeyFunc.apply(element))) {
 
                 return element;
             }
         }
-
         return null;
     }
 
