@@ -116,56 +116,6 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 	}
 
 	@Test
-	public void testNamesForP12830() {
-
-		Overview overview = overviewService.findOverviewByEntry("NX_P12830");
-
-		/// protein names
-		EntityName recName = overview.getRecommendedProteinName();
-		assertEntityNameEquals(recName, Overview.EntityNameClass.PROTEIN_NAMES, "PR_716672", "Cadherin-1");
-
-		// recommended names
-		Assert.assertTrue(new EntityNameCollectionTester(recName.getOtherRecommendedEntityNames()).contains(Collections.<EntityName>emptyList()));
-
-		// synonyms
-		Assert.assertTrue(new EntityNameCollectionTester(recName.getSynonyms()).contains(Collections.<EntityName>emptyList()));
-
-		// alternative names
-		Assert.assertTrue(new EntityNameCollectionTester(overview.getAlternativeProteinNames()).contains(Arrays.asList(
-				mockEntityName("PR_716679", "CAM 120/80", "protein", "full"),
-				mockEntityNameWithSynonyms("PR_716676", "Epithelial cadherin", "protein", "full", Arrays.asList(mockEntityName("PR_716680", "E-cadherin", "protein", "short"))),
-				mockEntityName("PR_716670", "Uvomorulin", "protein", "full"),
-				mockEntityName("PR_716675", "CD324", "CD antigen", "CD antigen")
-				)
-		));
-
-		/// gene names
-		List<EntityName> geneNames = overview.getGeneNames();
-		Assert.assertEquals(1, geneNames.size());
-
-		assertEntityNameEquals(geneNames.get(0), Overview.EntityNameClass.GENE_NAMES, "PR_1172655", "CDH1");
-		Assert.assertTrue(new EntityNameCollectionTester(geneNames.get(0).getOtherRecommendedEntityNames()).contains(Collections.<EntityName>emptyList()));
-
-		Assert.assertTrue(new EntityNameCollectionTester(geneNames.get(0).getSynonyms()).contains(Arrays.asList(
-						mockEntityName("PR_1172653", "CDHE", "gene name"),
-						mockEntityName("PR_1172654", "UVO", "gene name")
-				)
-		));
-
-		/// chain names
-		List<EntityName> chainNames = overview.getCleavedRegionNames();
-		Assert.assertEquals(3, chainNames.size());
-
-		assertEntityNameEquals(chainNames.get(0), Overview.EntityNameClass.CLEAVED_REGION_NAMES, "MP_12154221", "E-Cad/CTF3");
-		assertEntityNameEquals(chainNames.get(1), Overview.EntityNameClass.CLEAVED_REGION_NAMES, "MP_12154222", "E-Cad/CTF2");
-		assertEntityNameEquals(chainNames.get(2), Overview.EntityNameClass.CLEAVED_REGION_NAMES, "MP_12154220", "E-Cad/CTF1");
-
-		Assert.assertTrue(new EntityNameCollectionTester(chainNames.get(0).getOtherRecommendedEntityNames()).contains(Collections.<EntityName>emptyList()));
-		Assert.assertTrue(new EntityNameCollectionTester(chainNames.get(1).getOtherRecommendedEntityNames()).contains(Collections.<EntityName>emptyList()));
-		Assert.assertTrue(new EntityNameCollectionTester(chainNames.get(2).getOtherRecommendedEntityNames()).contains(Collections.<EntityName>emptyList()));
-	}
-
-	@Test
 	public void testChainNamesForP51659() {
 
 		Overview overview = overviewService.findOverviewByEntry("NX_P51659");
@@ -174,22 +124,17 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		List<EntityName> chainNames = overview.getCleavedRegionNames();
 		Assert.assertEquals(2, chainNames.size());
 
-		assertEntityNameEquals(chainNames.get(0), Overview.EntityNameClass.CLEAVED_REGION_NAMES, "MP_12154770", "(3R)-hydroxyacyl-CoA dehydrogenase");
-		Assert.assertTrue(new EntityNameCollectionTester(chainNames.get(0).getOtherRecommendedEntityNames()).contains(Arrays.asList(
-				mockEntityName("MP_12154769", "1.1.1.n12", "chain", "EC")
-			)
-		));
-
-		assertEntityNameEquals(chainNames.get(1), Overview.EntityNameClass.CLEAVED_REGION_NAMES, "MP_12154767", "Enoyl-CoA hydratase 2");
-		Assert.assertTrue(new EntityNameCollectionTester(chainNames.get(1).getOtherRecommendedEntityNames()).contains(Arrays.asList(
-				mockEntityName("MP_12154768", "4.2.1.107", "chain", "EC"),
-				mockEntityName("MP_12154765", "4.2.1.119", "chain", "EC")
-			)
-		));
-		Assert.assertTrue(new EntityNameCollectionTester(chainNames.get(1).getSynonyms()).contains(Arrays.asList(
-				mockEntityName("MP_12154766", "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "chain", "full")
-			)
-		));
+		Assert.assertTrue(new EntityNameCollectionTester(chainNames).contains(Arrays.asList(
+				mockEntityNameWithOtherRecNames("MP_12154770", "(3R)-hydroxyacyl-CoA dehydrogenase", "protein", "full", Collections.singletonList(
+						mockEntityName("MP_12154769", "1.1.1.n12", "chain", "EC")
+				)),
+				mockEntityNameWithSynonymsAndOtherRecNames("MP_12154767", "Enoyl-CoA hydratase 2", "protein", "full", Collections.singletonList(
+						mockEntityName("MP_12154766", "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "chain", "full")
+				), Arrays.asList(
+						mockEntityName("MP_12154768", "4.2.1.107", "chain", "EC"),
+						mockEntityName("MP_12154765", "4.2.1.119", "chain", "EC")
+				))
+		)));
 	}
 
 	private static EntityName mockEntityName(String id, String name, String category) {
@@ -215,6 +160,25 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		EntityName entityName = mockEntityName(id, name, category, qualifier);
 
 		Mockito.when(entityName.getSynonyms()).thenReturn(synonyms);
+
+		return entityName;
+	}
+
+	private static EntityName mockEntityNameWithOtherRecNames(String id, String name, String category, String qualifier, List<EntityName> recNames) {
+
+		EntityName entityName = mockEntityName(id, name, category, qualifier);
+
+		Mockito.when(entityName.getOtherRecommendedEntityNames()).thenReturn(recNames);
+
+		return entityName;
+	}
+
+	private static EntityName mockEntityNameWithSynonymsAndOtherRecNames(String id, String name, String category, String qualifier, List<EntityName> synonyms, List<EntityName> recNames) {
+
+		EntityName entityName = mockEntityName(id, name, category, qualifier);
+
+		Mockito.when(entityName.getSynonyms()).thenReturn(synonyms);
+		Mockito.when(entityName.getOtherRecommendedEntityNames()).thenReturn(recNames);
 
 		return entityName;
 	}
@@ -250,12 +214,13 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 					expected.getName().equals(element.getName()) &&
 					expected.getCategory().equals(element.getCategory()) &&
 					Objects.equals(expected.getQualifier(), element.getQualifier()) &&
-					hasSynonyms(element, expected);
+					hasSynonyms(element, expected) &&
+					hasRecommendedNames(element, expected);
 		}
 
 		private boolean hasSynonyms(EntityName element, EntityName expected) {
 
-			EntityCollectionNameNoSynonymTester synonymTester = new EntityCollectionNameNoSynonymTester(element.getSynonyms());
+			EntityNameCollectionSimpleTester synonymTester = new EntityNameCollectionSimpleTester(element.getSynonyms());
 
 			for (EntityName expectedSynonym : expected.getSynonyms()) {
 
@@ -265,11 +230,24 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 
 			return true;
 		}
+
+		private boolean hasRecommendedNames(EntityName element, EntityName expected) {
+
+			EntityNameCollectionSimpleTester simpleTester = new EntityNameCollectionSimpleTester(element.getOtherRecommendedEntityNames());
+
+			for (EntityName expectedRecName : expected.getOtherRecommendedEntityNames()) {
+
+				if (!simpleTester.contains(expectedRecName))
+					return false;
+			}
+
+			return true;
+		}
 	}
 
-	private static class EntityCollectionNameNoSynonymTester extends CollectionTester<EntityName, String> {
+	private static class EntityNameCollectionSimpleTester extends CollectionTester<EntityName, String> {
 
-		EntityCollectionNameNoSynonymTester(Collection<EntityName> synonyms) {
+		EntityNameCollectionSimpleTester(Collection<EntityName> synonyms) {
 			super(synonyms);
 		}
 
