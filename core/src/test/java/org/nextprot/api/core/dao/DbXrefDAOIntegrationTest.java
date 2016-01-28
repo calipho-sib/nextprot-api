@@ -3,15 +3,15 @@ package org.nextprot.api.core.dao;
 import com.google.common.base.Function;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.commons.utils.CollectionContentTester;
+import org.mockito.Mockito;
+import org.nextprot.api.commons.utils.CollectionTester;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 @ActiveProfiles({ "dev" })
@@ -45,34 +45,35 @@ limit 100
 
 		Set<DbXref> xrefs = xrefdao.findEntryInteractionInteractantsXrefs("NX_A0JNW5");
 
-		ExpectedDbXrefTester tester = new ExpectedDbXrefTester(xrefs);
+		DbXrefCollectionTester tester = new DbXrefCollectionTester(xrefs);
 
-		Map<String, Object> expectedProps = newExpectedProps("Q8ZAF0", "Sequence databases", "UniProt",
-				"http://www.uniprot.org/uniprot/%s", "http://www.uniprot.org/uniprot/Q8ZAF0", "http://www.uniprot.org/uniprot/");
-		Assert.assertTrue(tester.hasElementWithContent(15645061L, expectedProps));
-
-		expectedProps = newExpectedProps("P61021", "Sequence databases", "UniProt",
-				"http://www.uniprot.org/uniprot/%s", "http://www.uniprot.org/uniprot/P61021", "http://www.uniprot.org/uniprot/");
-		Assert.assertTrue(tester.hasElementWithContent(29231790L, expectedProps));
+		Assert.assertTrue(tester.contains(Arrays.asList(
+				mockDbXref(15645061L, "Q8ZAF0", "Sequence databases", "UniProt",
+					"http://www.uniprot.org/uniprot/%s", "http://www.uniprot.org/uniprot/Q8ZAF0", "http://www.uniprot.org/uniprot/"),
+				mockDbXref(29231790L, "P61021", "Sequence databases", "UniProt",
+					"http://www.uniprot.org/uniprot/%s", "http://www.uniprot.org/uniprot/P61021", "http://www.uniprot.org/uniprot/")
+			)
+		));
 	}
 
-	private static Map<String, Object> newExpectedProps(String accession, String dbCat, String dbName, String linkUrl, String resolvedUrl, String url) {
+	private static DbXref mockDbXref(long id, String accession, String dbCat, String dbName, String linkUrl, String resolvedUrl, String url) {
 
-		Map<String, Object> expectedProps = new HashMap<>();
+		DbXref dbxref = Mockito.mock(DbXref.class);
 
-		expectedProps.put("accession", accession);
-		expectedProps.put("dbCat", dbCat);
-		expectedProps.put("dbName", dbName);
-		expectedProps.put("linkUrl", linkUrl);
-		expectedProps.put("resolvedUrl", resolvedUrl);
-		expectedProps.put("url", url);
+		Mockito.when(dbxref.getDbXrefId()).thenReturn(id);
+		Mockito.when(dbxref.getAccession()).thenReturn(accession);
+		Mockito.when(dbxref.getDatabaseCategory()).thenReturn(dbCat);
+		Mockito.when(dbxref.getDatabaseName()).thenReturn(dbName);
+		Mockito.when(dbxref.getLinkUrl()).thenReturn(linkUrl);
+		Mockito.when(dbxref.getResolvedUrl()).thenReturn(resolvedUrl);
+		Mockito.when(dbxref.getUrl()).thenReturn(url);
 
-		return expectedProps;
+		return dbxref;
 	}
 
-	private static class ExpectedDbXrefTester extends CollectionContentTester<DbXref, Long> {
+	private static class DbXrefCollectionTester extends CollectionTester<DbXref, Long> {
 
-		ExpectedDbXrefTester(Collection<DbXref> observedCollection) {
+		DbXrefCollectionTester(Collection<DbXref> observedCollection) {
 			super(observedCollection);
 		}
 
@@ -88,14 +89,14 @@ limit 100
 		}
 
 		@Override
-		protected boolean hasExpectedContent(DbXref dbxref, Map<String, Object> expectedElementValues) {
+		protected boolean isEquals(DbXref dbxref, DbXref expectedElement) {
 
-			return expectedElementValues.get("accession").equals(dbxref.getAccession()) &&
-					expectedElementValues.get("dbCat").equals(dbxref.getDatabaseCategory()) &&
-				expectedElementValues.get("dbName").equals(dbxref.getDatabaseName()) &&
-				expectedElementValues.get("linkUrl").equals(dbxref.getLinkUrl()) &&
-				expectedElementValues.get("resolvedUrl").equals(dbxref.getResolvedUrl()) &&
-				expectedElementValues.get("url").equals(dbxref.getUrl());
+			return expectedElement.getAccession().equals(dbxref.getAccession()) &&
+					expectedElement.getDatabaseCategory().equals(dbxref.getDatabaseCategory()) &&
+					expectedElement.getDatabaseName().equals(dbxref.getDatabaseName()) &&
+					expectedElement.getLinkUrl().equals(dbxref.getLinkUrl()) &&
+					expectedElement.getResolvedUrl().equals(dbxref.getResolvedUrl()) &&
+					expectedElement.getUrl().equals(dbxref.getUrl());
 		}
 	}
 }
