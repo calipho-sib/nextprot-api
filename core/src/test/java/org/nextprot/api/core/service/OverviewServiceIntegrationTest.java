@@ -137,6 +137,30 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		)));
 	}
 
+	@Test
+	public void testFunctionalRegionsForP26439() {
+
+		Overview overview = overviewService.findOverviewByEntry("NX_P26439");
+
+		List<EntityName> regionNames = overview.getFunctionalRegionNames();
+		Assert.assertEquals(2, regionNames.size());
+
+		Assert.assertTrue(new EntityNameCollectionTester(regionNames).contains(Arrays.asList(
+				mockEntityNameWithSynonymsAndOtherRecNames("PR_891643", "Steroid Delta-isomerase", "region name", "full", Collections.singletonList(
+						mockEntityName("PR_891650", "Delta-5-3-ketosteroid isomerase", "region name", "full")
+				), Collections.singletonList(
+						mockEntityName("PR_2473847", "5.3.3.1", "EC", "EC")
+				)),
+				mockEntityNameWithSynonymsAndOtherRecNames("PR_891656", "3-beta-hydroxy-Delta(5)-steroid dehydrogenase", "region name", "full", Arrays.asList(
+						mockEntityName("PR_891645", "3-beta-hydroxy-5-ene steroid dehydrogenase", "region name", "full"),
+						mockEntityName("PR_891655", "Progesterone reductase", "region name", "full")
+				), Collections.singletonList(
+						mockEntityName("PR_2473846", "1.1.1.145", "EC", "EC")
+				))
+		)));
+
+	}
+
 	private static EntityName mockEntityName(String id, String name, String category) {
 
 		return mockEntityName(id, name, category, null);

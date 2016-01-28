@@ -42,9 +42,6 @@ public abstract class CollectionTester<E, K> {
      */
     public boolean contains(Collection<E> expectedElements) {
 
-        if (expectedElements.size() != collectionToTest.size())
-            return false;
-
         for (E expectedElement : expectedElements) {
 
             if (!contains(expectedElement)) return false;
