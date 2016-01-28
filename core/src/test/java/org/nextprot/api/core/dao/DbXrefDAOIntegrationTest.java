@@ -9,6 +9,7 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -44,15 +45,15 @@ limit 100
 
 		Set<DbXref> xrefs = xrefdao.findEntryInteractionInteractantsXrefs("NX_A0JNW5");
 
-		ExpectedDbXrefTester tester = new ExpectedDbXrefTester();
+		ExpectedDbXrefTester tester = new ExpectedDbXrefTester(xrefs);
 
 		Map<String, Object> expectedProps = newExpectedProps("Q8ZAF0", "Sequence databases", "UniProt",
 				"http://www.uniprot.org/uniprot/%s", "http://www.uniprot.org/uniprot/Q8ZAF0", "http://www.uniprot.org/uniprot/");
-		Assert.assertTrue(tester.testElement(xrefs, 15645061L, expectedProps));
+		Assert.assertTrue(tester.containsWithExpectedContent(15645061L, expectedProps));
 
 		expectedProps = newExpectedProps("P61021", "Sequence databases", "UniProt",
 				"http://www.uniprot.org/uniprot/%s", "http://www.uniprot.org/uniprot/P61021", "http://www.uniprot.org/uniprot/");
-		Assert.assertTrue(tester.testElement(xrefs, 29231790L, expectedProps));
+		Assert.assertTrue(tester.containsWithExpectedContent(29231790L, expectedProps));
 	}
 
 	private static Map<String, Object> newExpectedProps(String accession, String dbCat, String dbName, String linkUrl, String resolvedUrl, String url) {
@@ -69,7 +70,11 @@ limit 100
 		return expectedProps;
 	}
 
-	public static class ExpectedDbXrefTester extends ExpectedElementTester<DbXref, Long> {
+	private static class ExpectedDbXrefTester extends ExpectedElementTester<DbXref, Long> {
+
+		ExpectedDbXrefTester(Collection<DbXref> observedCollection) {
+			super(observedCollection);
+		}
 
 		@Override
 		protected Function<DbXref, Long> createElementToKeyFunc() {
@@ -83,7 +88,7 @@ limit 100
 		}
 
 		@Override
-		protected boolean isValidContent(DbXref dbxref, Map<String, Object> expectedElementValues) {
+		protected boolean hasExpectedContent(DbXref dbxref, Map<String, Object> expectedElementValues) {
 
 			return expectedElementValues.get("accession").equals(dbxref.getAccession()) &&
 					expectedElementValues.get("dbCat").equals(dbxref.getDatabaseCategory()) &&

@@ -11,7 +11,9 @@ public class ExpectedElementTesterTest {
     @Test
     public void foundValidElement() throws Exception {
 
-        ExpectedElementTester<Person, String> tester = new ExpectedElementTester<Person, String>() {
+        List<Person> persons = Arrays.asList(new Person("bob", 23), new Person("jon", 29), new Person("loki", 450));
+
+        ExpectedElementTester<Person, String> tester = new ExpectedElementTester<Person, String>(persons) {
 
             @Override
             protected Function<Person, String> createElementToKeyFunc() {
@@ -24,18 +26,17 @@ public class ExpectedElementTesterTest {
             }
 
             @Override
-            protected boolean isValidContent(Person element, Map<String, Object> expectedElementValues) {
+            protected boolean hasExpectedContent(Person element, Map<String, Object> expectedElementValues) {
 
                 return expectedElementValues.get("name").equals(element.getName()) && expectedElementValues.get("age").equals(element.getAge());
             }
         };
 
-        List<Person> persons = Arrays.asList(new Person("bob", 23), new Person("jon", 29), new Person("loki", 450));
         Map<String, Object> expectedPersonProps = new HashMap<>();
         expectedPersonProps.put("name", "jon");
         expectedPersonProps.put("age", 29);
 
-        Assert.assertTrue(tester.testElement(persons, "jon29", expectedPersonProps));
+        Assert.assertTrue(tester.containsWithExpectedContent("jon29", expectedPersonProps));
     }
 
     private static class Person {

@@ -14,33 +14,33 @@ import java.util.Map;
 public abstract class ExpectedElementTester<T, K> {
 
     private final Function<T, K> elementToKeyFunc;
+    private final Collection<T> observedCollection;
 
-    public ExpectedElementTester() {
+    protected ExpectedElementTester(Collection<T> observedCollection) {
 
         elementToKeyFunc = createElementToKeyFunc();
+        this.observedCollection = observedCollection;
     }
 
     /**
-     * @return true if expected element was found with expected valid values
-     * @param coll the collection to fetch expected element
+     * @return true if expected element was found with expected content
      * @param expectedElementKey the expected element key
      * @param expectedElementValues the element values
      */
-    public boolean testElement(Collection<T> coll, K expectedElementKey, Map<String, Object> expectedElementValues) {
+    public boolean containsWithExpectedContent(K expectedElementKey, Map<String, Object> expectedElementValues) {
 
-        T foundElement = getElementFromKey(coll, expectedElementKey);
+        T foundElement = getElementFromKey(expectedElementKey);
 
-        return foundElement != null && isValidContent(foundElement, expectedElementValues);
+        return foundElement != null && hasExpectedContent(foundElement, expectedElementValues);
     }
 
     /**
      * @return element with given key from a collection of T objects
-     * @param coll the collection to fetch expected element
      * @param expectedElementKey the expected element key
      */
-    private T getElementFromKey(Collection<T> coll, K expectedElementKey) {
+    private T getElementFromKey(K expectedElementKey) {
 
-        for (T element : coll) {
+        for (T element : observedCollection) {
 
             if (expectedElementKey.equals(elementToKeyFunc.apply(element))) {
 
@@ -51,7 +51,15 @@ public abstract class ExpectedElementTester<T, K> {
         return null;
     }
 
+    /**
+     * @return a function that extract key from an element
+     */
     protected abstract Function<T, K> createElementToKeyFunc();
 
-    protected abstract boolean isValidContent(T element, Map<String, Object> expectedElementValues);
+    /**
+     * @return true if object contains given expected values
+     * @param object the object to test content
+     * @param expectedValues the object's expected values
+     */
+    protected abstract boolean hasExpectedContent(T object, Map<String, Object> expectedValues);
 }
