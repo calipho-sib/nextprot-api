@@ -30,8 +30,13 @@ public class AuthorNameFormatter {
 
                 for (int i=0 ; i<composedName.length ; i++) {
 
-                    sb.append(composedName[i].charAt(0));
-                    sb.append(".-");
+                    if (!composedName[i].isEmpty()) {
+
+                        sb.append(composedName[i].charAt(0));
+                        sb.append(".");
+                    }
+
+                    sb.append("-");
                 }
                 sb.delete(sb.length()-1, sb.length());
             }
