@@ -50,6 +50,8 @@ public class PublicationDaoImpl implements PublicationDao {
 			// Need to use a mapper, but it is not so bad if we don't want to use reflection since the database may use different names
 			Publication publication = new Publication();
 
+			String pubType = resultSet.getString("pub_type");
+
 			int cvDatePrecisionId = resultSet.getInt("cv_date_precision_id");
 
 			if (cvDatePrecisionId != 1) {
@@ -63,7 +65,11 @@ public class PublicationDaoImpl implements PublicationDao {
 			publication.setId(resultSet.getLong("resource_id"));
 			publication.setMD5(resultSet.getString("md5"));
 			publication.setAbstractText(resultSet.getString("abstract_text"));
-			publication.setVolume(resultSet.getString("volume"));
+			if (!"BOOK".equals(pubType)) {
+				publication.setVolume(resultSet.getString("volume"));
+			} else {
+				publication.setVolume("");
+			}
 			publication.setIssue(resultSet.getString("issue"));
 			publication.setFirstPage(resultSet.getString("first_page"));
 			publication.setLastPage(resultSet.getString("last_page"));
@@ -73,7 +79,6 @@ public class PublicationDaoImpl implements PublicationDao {
 			publication.setIsCurated(resultSet.getLong("is_curated")>0);
 			publication.setIsComputed(resultSet.getLong("is_computed")>0);
 
-			String pubType = resultSet.getString("pub_type");
 			if (pubType.equals("ONLINE PUBLICATION")) {
 				// In case it is a online publication
 				publication.setPublicationType("ONLINE_PUBLICATION");
@@ -107,7 +112,7 @@ public class PublicationDaoImpl implements PublicationDao {
 			return publication;
 		}
 	}
-	
+
 	private static class LongRowMapper implements ParameterizedRowMapper<Long> {
 		public Long mapRow(ResultSet resultSet, int row) throws SQLException {
 			return resultSet.getLong("pub_id");
