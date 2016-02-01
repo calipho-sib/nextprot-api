@@ -3,6 +3,7 @@ package org.nextprot.api.core.dao.impl;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.PublicationDao;
+import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.commons.utils.DateFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,9 +66,13 @@ public class PublicationDaoImpl implements PublicationDao {
 			publication.setId(resultSet.getLong("resource_id"));
 			publication.setMD5(resultSet.getString("md5"));
 			publication.setAbstractText(resultSet.getString("abstract_text"));
+			// TODO: yet hack again; book should'nt be a publication! (weirdo db !!!)
 			if (!"BOOK".equals(pubType)) {
 				publication.setVolume(resultSet.getString("volume"));
 			} else {
+				CvJournal book = new CvJournal();
+				book.setName(resultSet.getString("volume"));
+				publication.setCvJournal(book);
 				publication.setVolume("");
 			}
 			publication.setIssue(resultSet.getString("issue"));
