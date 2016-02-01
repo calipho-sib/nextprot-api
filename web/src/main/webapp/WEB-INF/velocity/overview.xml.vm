@@ -31,6 +31,31 @@
     #end
         </alternative-name-list>
 
+## ----------------- CLEAVED REGION NAMES ------------------------------
+    #if($entry.overview.cleavedRegionNames)
+        <chain-list>
+            #foreach($entityName in $entry.overview.cleavedRegionNames)
+                <chain>
+                    <recommended-name>
+                        <chain-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</chain-name>
+                        #foreach($otherEntity in $entityName.getOtherRecommendedEntityNames())
+                            <chain-name qualifier="#if($otherEntity.getQualifier())$otherEntity.getQualifier()#end">$otherEntity.name</chain-name>
+                        #end
+                    </recommended-name>
+                    #if($entityName.synonyms)
+                        <alternative-name-list>
+                            #foreach($synonym in $entityName.synonyms)
+                                <alternative-name>
+                                    <chain-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</chain-name>
+                                </alternative-name>
+                            #end
+                        </alternative-name-list>
+                    #end
+                </chain>
+            #end
+        </chain-list>
+    #end
+
 ## ----------------- FUNCTIONAL REGION NAMES ---------------------------
     #if($entry.overview.functionalRegionNames)
         <region-list>
@@ -56,31 +81,6 @@
         </region-list>
     #end
     </protein-name-list>
-#end
-
-## ----------------- CLEAVED REGION NAMES ------------------------------
-#if($entry.overview.cleavedRegionNames)
-    <chain-list>
-    #foreach($entityName in $entry.overview.cleavedRegionNames)
-        <chain>
-            <recommended-name>
-	            <chain-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</chain-name>
-                #foreach($otherEntity in $entityName.getOtherRecommendedEntityNames())
-                    <chain-name qualifier="#if($otherEntity.getQualifier())$otherEntity.getQualifier()#end">$otherEntity.name</chain-name>
-                #end
-            </recommended-name>
-	   #if($entityName.synonyms)
-	        <alternative-name-list>
-	    #foreach($synonym in $entityName.synonyms)
-	            <alternative-name>
-		            <chain-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</chain-name>
-                </alternative-name>
-		#end
-	        </alternative-name-list>
-	    #end
-        </chain>
-	#end
-    </chain-list>
 #end
 
 ## ----------------- GENE NAMES ----------------------------------------
