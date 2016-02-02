@@ -84,8 +84,7 @@ public class PublicationServiceImpl implements PublicationService {
 				return author.getPublicationId();
 			}
 		});
-		
-		
+
 		Map<Long, PublicationCvJournal> journalMap = Maps.uniqueIndex(cvJournals, new Function<PublicationCvJournal, Long>() {
 			@Override
 			public Long apply(PublicationCvJournal journal) {
@@ -93,11 +92,13 @@ public class PublicationServiceImpl implements PublicationService {
 			}
 		});
 
-		long publicationId = -1;
-		for(Publication publication : publications) {
-			publicationId = publication.getPublicationId();
+		for (Publication publication : publications) {
+			long publicationId = publication.getPublicationId();
 			SortedSet<PublicationAuthor> authorSet = new TreeSet<>(authorMap.get(publicationId));
+
+			publication.setEditors(splitEditorsFromAuthors(authorSet));
 			publication.setAuthors(authorSet);
+
 			publication.setDbXrefs(new HashSet<DbXref>(xrefMap.get(publicationId)));
 			PublicationCvJournal journal = journalMap.get(publicationId);
 			if (journal != null)
@@ -107,7 +108,25 @@ public class PublicationServiceImpl implements PublicationService {
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Publication>().addAll(publications).build();
 	}
-	
+
+
+	private SortedSet<PublicationAuthor> splitEditorsFromAuthors(SortedSet<PublicationAuthor> publicationPersons) {
+
+		SortedSet<PublicationAuthor> editors = new TreeSet<>();
+
+		for (PublicationAuthor person : publicationPersons) {
+
+			if (person.isEditor()) {
+
+				editors.add(person);
+			}
+		}
+
+		publicationPersons.removeAll(editors);
+
+		return editors;
+	}
+
 	@Autowired
 	public void setPublicationDao(PublicationDao publicationDao) {
 		this.publicationDao = publicationDao;
