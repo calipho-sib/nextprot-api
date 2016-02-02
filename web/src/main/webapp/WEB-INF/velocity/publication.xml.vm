@@ -2,10 +2,17 @@
 	<title>
 	    <![CDATA[$publication.title]]>
 	</title>
+#if(!$publication.editors.isEmpty())
+    <editor-list>
+		#foreach($editors in $publication.editors)
+			<person name="$editors.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($editors.foreName)"/>
+		#end
+    </editor-list>
+#end
 	<author-list>
 		#foreach($author in $publication.authors)
 			#if($author.isPerson())
-                <person name="$author.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($author.foreName)"/>
+				<person name="$author.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($author.foreName)"/>
 			#else
                 <consortium name="$author.lastName"/>
 			#end

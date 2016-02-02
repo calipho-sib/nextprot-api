@@ -89,6 +89,9 @@ public class Publication implements Serializable{
 	@ApiObjectField(description = "The list of authors")
 	protected SortedSet<PublicationAuthor> authors;
 
+	@ApiObjectField(description = "The list of editors")
+	protected SortedSet<PublicationAuthor> editors;
+
 	@ApiObjectField(description = "The associated cross references")
 	protected Set<DbXref> dbXrefs;
 
@@ -208,8 +211,16 @@ public class Publication implements Serializable{
 		return authors;
 	}
 
+	public SortedSet<PublicationAuthor> getEditors() {
+		return editors;
+	}
+
 	public void setAuthors(SortedSet<PublicationAuthor> authors) {
 		this.authors = authors;
+	}
+
+	public void setEditors(SortedSet<PublicationAuthor> editors) {
+		this.editors = editors;
 	}
 
 	public Set<DbXref> getDbXrefs() {
@@ -220,7 +231,6 @@ public class Publication implements Serializable{
 		this.dbXrefs = dbXrefs;
 	}
 
-	
 	public String toString() {
 		
 		StringBuilder sb = new StringBuilder();
@@ -250,6 +260,9 @@ public class Publication implements Serializable{
 		sb.append("\n");
 		sb.append("authorsCnt=");
 		sb.append((this.authors != null) ? this.authors.size() : "null");
+		sb.append("\n");
+		sb.append("editorsCnt=");
+		sb.append((this.editors != null) ? this.editors.size() : "null");
 		sb.append("\n");
 		
 		return sb.toString();
