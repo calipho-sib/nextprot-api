@@ -15,6 +15,7 @@ public class PublicationAuthor implements Comparable<PublicationAuthor>, Seriali
 	private String suffix="";
 	private Integer rank;
 	private boolean person;
+	private boolean isEditor;
 	
 	private Long publicationId;
 	
@@ -92,6 +93,12 @@ public class PublicationAuthor implements Comparable<PublicationAuthor>, Seriali
 	public void setPerson(boolean person) {
 		this.person = person;
 	}
-	
-	
+
+	public boolean isEditor() {
+		return isEditor;
+	}
+
+	public void setEditor(boolean editor) {
+		isEditor = editor;
+	}
 }
