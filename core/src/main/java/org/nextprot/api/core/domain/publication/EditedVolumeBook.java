@@ -12,12 +12,18 @@ public class EditedVolumeBook extends BookMediumLocator<BookLocation> implements
 
     private static final long serialVersionUID = 0L;
 
-    public EditedVolumeBook(PublicationType publicationType) {
-        super(publicationType);
-    }
+    @ApiObjectField(description = "The publisher name")
+    private String publisher;
+
+    @ApiObjectField(description = "The publisher city")
+    private String city;
 
     @ApiObjectField(description = "The list of editors")
     private SortedSet<PublicationAuthor> editors = new TreeSet<>();
+
+    public EditedVolumeBook(PublicationType publicationType) {
+        super(publicationType);
+    }
 
     public boolean hasEditors() {
         return !editors.isEmpty();
@@ -29,6 +35,22 @@ public class EditedVolumeBook extends BookMediumLocator<BookLocation> implements
 
     public void addEditors(Set<PublicationAuthor> editors) {
         this.editors.addAll(editors);
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     @Override
