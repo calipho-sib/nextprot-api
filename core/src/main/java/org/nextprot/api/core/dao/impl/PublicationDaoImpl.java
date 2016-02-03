@@ -5,8 +5,8 @@ import com.google.common.collect.Maps;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.commons.utils.SQLDictionary;
-import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.dao.JournalDao;
+import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.publication.Journal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,26 +43,35 @@ public class PublicationDaoImpl implements PublicationDao {
 
 	@Override
 	public List<Publication> findSortedPublicationsByMasterId(Long masterId) {
-		Map<String, Object> params = new HashMap<>();
-		params.put("identifierId", masterId);
-		params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
+		Map<String, Object> paramsNoBooks = new HashMap<>();
+		paramsNoBooks.put("identifierId", masterId);
+		paramsNoBooks.put("publicationTypes", Arrays.asList(10, 20, 40, 50, 60, 70, 80));
+
+		Map<String, Object> paramsBooksOnly = new HashMap<>();
+		paramsBooksOnly.put("identifierId", masterId);
+		paramsBooksOnly.put("publicationTypes", Arrays.asList(30));
 
 		List<Long> publicationIds = findSortedPublicationIdsByMasterId(masterId);
 
 		// get all journals found for all publication ids
 		List<Journal> journals = journalDao.findJournalsByPublicationIds(publicationIds);
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
+		List<Publication> publications = new ArrayList<>();
+
+		publications.addAll(new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), paramsNoBooks, new PublicationRowMapper(journals)));
+		publications.addAll(new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-book-sorted-for-master"), paramsBooksOnly, new PublicationRowMapper(journals)));
+
+		return publications;
 	}
 
 	@Override
 	public Publication findPublicationById(long publicationId) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("resourceId", publicationId);
 
-		// get all journals found for publication id
-		List<Journal> cvJournals = journalDao.findJournalsByPublicationIds(Collections.singletonList(publicationId));
+		// get the journal found for publication id
+		List<Journal> journals = journalDao.findJournalsByPublicationIds(Collections.singletonList(publicationId));
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper(cvJournals));
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper(journals));
 	}
 
 	@Override
@@ -119,6 +128,13 @@ public class PublicationDaoImpl implements PublicationDao {
 	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {
 
 		private final Map<Long, Journal> journalMap;
+
+		PublicationRowMapper(Journal journal) {
+
+			journalMap = new HashMap<>(1);
+
+			journalMap.put(journal.getPublicationId(), journal);
+		}
 
 		PublicationRowMapper(List<Journal> journals) {
 
