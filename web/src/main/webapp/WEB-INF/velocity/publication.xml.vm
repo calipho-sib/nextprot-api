@@ -1,8 +1,8 @@
-<publication type="$publication.publicationType.toLowerCase()" #if($publication.getPublicationDate())date="$publication.getTextDate()"#end #if($publication.cvJournal.name)name="$publication.cvJournal.name"#end #if(!$publication.volume.isEmpty())volume="$publication.volume"#end #if(!$publication.firstPage.isEmpty())first="$publication.firstPage"#end #if(!$publication.lastPage.isEmpty())last="$publication.lastPage"#end internal-id="$publication.publicationId">
+<publication type="$publication.publicationType.toLowerCase()" #if($publication.getPublicationDate())date="$publication.getTextDate()"#end #if($publication.isLocatedInPublicationMedium())	name="$publication.getPublicationMediumName()" #if($publication.isLocalizableInBookMedium()) #if($publication.isPublishedInScientificJournal()) volume="$publication.getVolume()" #end first="$publication.getFirstPage()" last="$publication.getLastPage()" #end #end internal-id="$publication.publicationId">
 	<title>
 	    <![CDATA[$publication.title]]>
 	</title>
-#if(!$publication.editors.isEmpty())
+#if($publication.hasEditors())
     <editor-list>
 		#foreach($editors in $publication.editors)
 			<person name="$editors.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($editors.foreName)"/>

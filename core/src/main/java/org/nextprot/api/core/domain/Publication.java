@@ -3,8 +3,10 @@ package org.nextprot.api.core.domain;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.commons.utils.DateFormatter;
+import org.nextprot.api.core.domain.publication.*;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
@@ -19,24 +21,12 @@ public class Publication implements Serializable{
 
 	@ApiObjectField(description = "The MD5 of the publication")
 	private String md5;
-	
+
 	@ApiObjectField(description = "The title of the publication")
 	private String title;
 
 	@ApiObjectField(description = "The abstract text")
 	private String abstractText;
-
-	@ApiObjectField(description = "The journal volume")
-	private String volume;
-
-	@ApiObjectField(description = "The journal issue")
-	private String issue;
-
-	@ApiObjectField(description = "The first page")
-	private String firstPage;
-
-	@ApiObjectField(description = "The last page")
-	private String lastPage;
 
 	@ApiObjectField(description = "The type")
 	private String publicationType;
@@ -55,10 +45,35 @@ public class Publication implements Serializable{
 
 	@ApiObjectField(description = "Curated Publications")
 	private Boolean isCurated;
+
 	// TODO: reassess the way we define 'curared/computed' and get rid of the 'limit 1' in publication-by-ressource.sql
 	@ApiObjectField(description = "Computed Publications")
 	private Boolean isComputed;
-	
+
+	@ApiObjectField(description = "The list of authors")
+	protected SortedSet<PublicationAuthor> authors;
+
+	@ApiObjectField(description = "The associated cross references")
+	protected Set<DbXref> dbXrefs;
+
+	private PublicationMedium publicationMedium;
+
+	public boolean isLocatedInPublicationMedium() {
+		return publicationMedium != null;
+	}
+
+	public boolean isPublishedInScientificJournal() {
+		return isLocatedInPublicationMedium() && publicationMedium instanceof Journal;
+	}
+
+	public boolean isPublishedInEditedVolumeBook() {
+		return isLocatedInPublicationMedium() && publicationMedium instanceof EditedVolumeBook;
+	}
+
+	public boolean isLocalizableInBookMedium() {
+		return isLocatedInPublicationMedium() && publicationMedium instanceof BookMediumLocator;
+	}
+
 	public Boolean getIsLargeScale() {
 		return isLargeScale;
 	}
@@ -82,18 +97,6 @@ public class Publication implements Serializable{
 	public void setIsComputed(Boolean isComputed) {
 		this.isComputed = isComputed;
 	}
-
-	@ApiObjectField(description = "The journal")
-	protected CvJournal cvJournal;
-
-	@ApiObjectField(description = "The list of authors")
-	protected SortedSet<PublicationAuthor> authors;
-
-	@ApiObjectField(description = "The list of editors")
-	protected SortedSet<PublicationAuthor> editors;
-
-	@ApiObjectField(description = "The associated cross references")
-	protected Set<DbXref> dbXrefs;
 
 	public long getPublicationId() {
 		return id;
@@ -152,37 +155,41 @@ public class Publication implements Serializable{
 	}
 
 	public String getVolume() {
-		return volume;
-	}
 
-	public void setVolume(String volume) {
-		this.volume = volume;
+		if (isPublishedInScientificJournal())
+			return ((Journal) publicationMedium).getLocation().getVolume();
+		else
+			return "";
 	}
 
 	public String getIssue() {
-		return issue;
+
+		if (isPublishedInScientificJournal())
+			return ((Journal) publicationMedium).getLocation().getIssue();
+		else
+			return "";
 	}
 
-	public void setIssue(String issue) {
-		this.issue = issue;
+	public boolean hasEditors() {
+		return isPublishedInEditedVolumeBook() && ((EditedVolumeBook) publicationMedium).hasEditors();
 	}
 
 	public String getFirstPage() {
-		return firstPage;
-	}
 
-	public void setFirstPage(String firstPage) {
-		this.firstPage = firstPage;
+		if (isLocalizableInBookMedium())
+			return ((BookMediumLocator) publicationMedium).getLocation().getFirstPage();
+		else
+			return "";
 	}
 
 	public String getLastPage() {
-		return lastPage;
+
+		if (isLocalizableInBookMedium())
+			return ((BookMediumLocator) publicationMedium).getLocation().getLastPage();
+		else
+			return "";
 	}
 
-	public void setLastPage(String lastPage) {
-		this.lastPage = lastPage;
-	}
-	
 	public String getPublicationType() {
 		return publicationType;
 	}
@@ -199,28 +206,77 @@ public class Publication implements Serializable{
 		this.textDate = textDate;
 	}
 
-	public CvJournal getCvJournal() {
-		return cvJournal;
+	public Journal getJournal() {
+
+		return (isPublishedInScientificJournal()) ? (Journal) publicationMedium : null;
 	}
 
-	public void setCvJournal(CvJournal cvJournal) {
-		this.cvJournal = cvJournal;
+	public PublicationMedium getPublicationMedium() {
+		return publicationMedium;
+	}
+
+	public String getPublicationMediumName() {
+		return (isLocatedInPublicationMedium()) ? publicationMedium.getName() : null;
+	}
+
+	public void setJournal(Journal journal, String volume, String issue, String firstPage, String lastPage) {
+
+		JournalLocation location = new JournalLocation();
+
+		location.setFirstPage(firstPage);
+		location.setLastPage(lastPage);
+		location.setVolume(volume);
+		location.setIssue(issue);
+
+		journal.setLocation(location);
+
+		this.publicationMedium = journal;
+	}
+
+	public void setEditedVolumeBook(String name, String firstPage, String lastPage) {
+
+		EditedVolumeBook book = new EditedVolumeBook(PublicationType.valueOfName(publicationType));
+		book.setName(name);
+
+		BookLocation location = new BookLocation();
+
+		location.setFirstPage(firstPage);
+		location.setLastPage(lastPage);
+
+		book.setLocation(location);
+
+		this.publicationMedium = book;
+	}
+
+	public void setOnlineResource(String name, String url) {
+
+		WebPublicationPage webPage = new WebPublicationPage(PublicationType.valueOfName(publicationType));
+		webPage.setName(name);
+		webPage.setUrl(url);
+
+		this.publicationMedium = webPage;
 	}
 
 	public SortedSet<PublicationAuthor> getAuthors() {
 		return authors;
 	}
 
-	public SortedSet<PublicationAuthor> getEditors() {
-		return editors;
-	}
-
 	public void setAuthors(SortedSet<PublicationAuthor> authors) {
 		this.authors = authors;
 	}
 
+	public Set<PublicationAuthor> getEditors() {
+		if (isPublishedInEditedVolumeBook())
+			return ((EditedVolumeBook) publicationMedium).getEditors();
+		else
+			return Collections.emptySet();
+	}
+
 	public void setEditors(SortedSet<PublicationAuthor> editors) {
-		this.editors = editors;
+
+		if (isPublishedInEditedVolumeBook()) {
+			((EditedVolumeBook) publicationMedium).addEditors(editors);
+		}
 	}
 
 	public Set<DbXref> getDbXrefs() {
@@ -248,26 +304,21 @@ public class Publication implements Serializable{
 		sb.append((this.submission != null) ? this.submission : "null");
 		sb.append("\n");
 		sb.append("volume=");
-		sb.append(this.volume);
+		sb.append(getVolume());
 		sb.append("; issue=");
-		sb.append(this.issue);
+		sb.append(getIssue());
 		sb.append("\n");
 		sb.append("pub_type=");
 		sb.append(this.publicationType);
 		sb.append("\n");
 		sb.append("journal=");
-		sb.append(this.cvJournal);
+		sb.append(this.publicationMedium);
 		sb.append("\n");
 		sb.append("authorsCnt=");
 		sb.append((this.authors != null) ? this.authors.size() : "null");
 		sb.append("\n");
-		sb.append("editorsCnt=");
-		sb.append((this.editors != null) ? this.editors.size() : "null");
-		sb.append("\n");
-		
+
 		return sb.toString();
 
 	}
-
-
 }
