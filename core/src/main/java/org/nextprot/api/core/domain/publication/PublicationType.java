@@ -22,7 +22,7 @@ public enum PublicationType {
             case "THESIS":
                 return THESIS;
             case "SUBMISSION":
-                return ARTICLE;
+                return SUBMISSION;
             case "ONLINE_PUBLICATION":
             case "ONLINE PUBLICATION":
                 return ONLINE_PUBLICATION;

@@ -227,7 +227,8 @@ public class PublicationDaoImpl implements PublicationDao {
 
 			// volume is only defined in "article" and "online publication"
 			if ("BOOK".equals(pubType)) {
-				publication.setEditedVolumeBook(resultSet.getString("volume"), resultSet.getString("first_page"), resultSet.getString("last_page"));
+				publication.setEditedVolumeBook(resultSet.getString("volume"), resultSet.getString("publisher"), resultSet.getString("city"),
+						resultSet.getString("first_page"), resultSet.getString("last_page"));
 			}
 			else if ("ARTICLE".equals(pubType)) {
 				Journal journal = journalMap.get(publication.getPublicationId());

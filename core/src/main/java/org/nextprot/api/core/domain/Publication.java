@@ -170,10 +170,6 @@ public class Publication implements Serializable{
 			return "";
 	}
 
-	public boolean hasEditors() {
-		return isPublishedInEditedVolumeBook() && ((EditedVolumeBook) publicationMedium).hasEditors();
-	}
-
 	public String getFirstPage() {
 
 		if (isLocalizableInBookMedium())
@@ -188,6 +184,18 @@ public class Publication implements Serializable{
 			return ((BookMediumLocator) publicationMedium).getLocation().getLastPage();
 		else
 			return "";
+	}
+
+	public String getPublisherName() {
+		if (isPublishedInEditedVolumeBook())
+			return ((EditedVolumeBook) publicationMedium).getPublisher();
+		return "";
+	}
+
+	public String getPublisherCity() {
+		if (isPublishedInEditedVolumeBook())
+			return ((EditedVolumeBook) publicationMedium).getCity();
+		return "";
 	}
 
 	public String getPublicationType() {
@@ -233,10 +241,12 @@ public class Publication implements Serializable{
 		this.publicationMedium = journal;
 	}
 
-	public void setEditedVolumeBook(String name, String firstPage, String lastPage) {
+	public void setEditedVolumeBook(String name, String publisher, String city, String firstPage, String lastPage) {
 
 		EditedVolumeBook book = new EditedVolumeBook(PublicationType.valueOfName(publicationType));
 		book.setName(name);
+		book.setPublisher(publisher);
+		book.setCity(city);
 
 		BookLocation location = new BookLocation();
 
@@ -265,11 +275,14 @@ public class Publication implements Serializable{
 		this.authors = authors;
 	}
 
+	public boolean hasEditors() {
+		return isPublishedInEditedVolumeBook() && ((EditedVolumeBook) publicationMedium).hasEditors();
+	}
+
 	public Set<PublicationAuthor> getEditors() {
 		if (isPublishedInEditedVolumeBook())
 			return ((EditedVolumeBook) publicationMedium).getEditors();
-		else
-			return Collections.emptySet();
+		return Collections.emptySet();
 	}
 
 	public void setEditors(SortedSet<PublicationAuthor> editors) {
