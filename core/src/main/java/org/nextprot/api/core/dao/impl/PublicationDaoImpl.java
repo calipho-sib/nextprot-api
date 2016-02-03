@@ -1,11 +1,14 @@
 package org.nextprot.api.core.dao.impl;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
+import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.PublicationDao;
-import org.nextprot.api.core.domain.CvJournal;
+import org.nextprot.api.core.dao.JournalDao;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.commons.utils.DateFormatter;
+import org.nextprot.api.core.domain.publication.Journal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -17,41 +20,150 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+
 @Repository
 public class PublicationDaoImpl implements PublicationDao {
 
 	private final static DateFormatter DATE_FORMATTER = new DateFormatter();
 
 	@Autowired private SQLDictionary sqlDictionary;
+	@Autowired private JournalDao journalDao;
 
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
 
+	@Override
 	public List<Long> findSortedPublicationIdsByMasterId(Long masterId) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("identifierId", masterId);
 		params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
 
-		List<Long> ids = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, Long.class);
-		return ids;
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new LongRowMapper("resource_id"));
 	}
 
+	@Override
 	public List<Publication> findSortedPublicationsByMasterId(Long masterId) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("identifierId", masterId);
 		params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper());
+		List<Long> publicationIds = findSortedPublicationIdsByMasterId(masterId);
+
+		// get all journals found for all publication ids
+		List<Journal> journals = journalDao.findJournalsByPublicationIds(publicationIds);
+
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
+	}
+
+	@Override
+	public Publication findPublicationById(long publicationId) {
+		SqlParameterSource namedParameters = new MapSqlParameterSource("resourceId", publicationId);
+
+		// get all journals found for publication id
+		List<Journal> cvJournals = journalDao.findJournalsByPublicationIds(Collections.singletonList(publicationId));
+
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper(cvJournals));
+	}
+
+	@Override
+	public List<Publication> findPublicationByTitle(String title) {
+		List<Long> ids = findPublicationIdsByTitle(title);
+
+		if (!ids.isEmpty()) {
+			return Collections.singletonList(findPublicationById(ids.get(0)));
+		}
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public Publication findPublicationByMD5(String md5) {
+		List<Long> ids = findPublicationIdsByMD5(md5);
+
+		if (!ids.isEmpty()) {
+			return findPublicationById(ids.get(0));
+		}
+
+		return null;
+	}
+
+	private List<Long> findPublicationIdsByTitle(String title) {
+		SqlParameterSource namedParameters = new MapSqlParameterSource("title", title);
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("publication-id-by-title"), namedParameters, Long.class);
+	}
+
+	private List<Long> findPublicationIdsByMD5(String title) {
+		SqlParameterSource namedParameters = new MapSqlParameterSource("title", title);
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("publication-id-by-md5"), namedParameters, Long.class);
+	}
+
+	@Override
+	public List<Long> findAllPublicationsIds() {
+		SqlParameterSource namedParameters = new MapSqlParameterSource();
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-allids"), namedParameters, new LongRowMapper("pub_id"));
+	}
+
+	private static class LongRowMapper implements ParameterizedRowMapper<Long> {
+
+		private final String columnName;
+
+		LongRowMapper(String columnName) {
+			this.columnName = columnName;
+		}
+
+		public Long mapRow(ResultSet resultSet, int row) throws SQLException {
+			return resultSet.getLong(columnName);
+		}
 	}
 
 	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {
 
+		private final Map<Long, Journal> journalMap;
+
+		PublicationRowMapper(List<Journal> journals) {
+
+			this.journalMap = Maps.uniqueIndex(journals, new Function<Journal, Long>() {
+				@Override
+				public Long apply(Journal journal) {
+					return journal.getPublicationId();
+				}
+			});;
+		}
+
 		public Publication mapRow(ResultSet resultSet, int row) throws SQLException {
 
-			// Need to use a mapper, but it is not so bad if we don't want to use reflection since the database may use different names
 			Publication publication = new Publication();
 
-			String pubType = resultSet.getString("pub_type");
+			// set publication id
+			publication.setId(resultSet.getLong("resource_id"));
+
+			// set publication md5
+			publication.setMD5(resultSet.getString("md5"));
+
+			// set publication abstract
+			publication.setAbstractText(resultSet.getString("abstract_text"));
+
+			// set publication type
+			setPublicationType(publication, resultSet);
+
+			// set publication date
+			setPublicationDate(publication, resultSet);
+
+			// set publication details
+			publication.setIsLargeScale(resultSet.getLong("is_largescale")>0);
+			publication.setIsCurated(resultSet.getLong("is_curated")>0);
+			publication.setIsComputed(resultSet.getLong("is_computed")>0);
+
+			// set infos on publication medium, volume, issue, pages, journal, book...
+			setPublicationMedium(publication, resultSet);
+
+			// set publication title
+			setPublicationTitle(publication, resultSet);
+
+			return publication;
+		}
+
+		private void setPublicationDate(Publication publication, ResultSet resultSet) throws SQLException {
 
 			int cvDatePrecisionId = resultSet.getInt("cv_date_precision_id");
 
@@ -62,47 +174,41 @@ public class PublicationDaoImpl implements PublicationDao {
 				publication.setPublicationDate(date);
 				publication.setTextDate(DATE_FORMATTER.format(date, cvDatePrecisionId));
 			}
+		}
 
-			publication.setId(resultSet.getLong("resource_id"));
-			publication.setMD5(resultSet.getString("md5"));
-			publication.setAbstractText(resultSet.getString("abstract_text"));
-			// TODO: yet hack again; book should'nt be a publication! (weirdo db !!!)
-			if (!"BOOK".equals(pubType)) {
-				publication.setVolume(resultSet.getString("volume"));
-			} else {
-				CvJournal book = new CvJournal();
-				book.setName(resultSet.getString("volume"));
-				publication.setCvJournal(book);
-				publication.setVolume("");
-			}
-			publication.setIssue(resultSet.getString("issue"));
-			publication.setFirstPage(resultSet.getString("first_page"));
-			publication.setLastPage(resultSet.getString("last_page"));
-			
-			// add publication details
-			publication.setIsLargeScale(resultSet.getLong("is_largescale")>0);
-			publication.setIsCurated(resultSet.getLong("is_curated")>0);
-			publication.setIsComputed(resultSet.getLong("is_computed")>0);
+		private void setPublicationType(Publication publication, ResultSet resultSet) throws SQLException {
+
+			String pubType = resultSet.getString("pub_type");
 
 			if (pubType.equals("ONLINE PUBLICATION")) {
-				// In case it is a online publication
 				publication.setPublicationType("ONLINE_PUBLICATION");
-				publication.setTitle(resultSet.getString("volume"));
 			} else if (pubType.equals("SUBMISSION")) {
 				publication.setPublicationType(pubType);
+			} else {
+				publication.setPublicationType(pubType);
+			}
+		}
+
+		private void setPublicationTitle(Publication publication, ResultSet resultSet) throws SQLException {
+
+			String pubType = publication.getPublicationType();
+
+			if (pubType.equals("ONLINE_PUBLICATION")) {
+				// In case it is a online publication
+				publication.setTitle(resultSet.getString("volume"));
+			} else if (pubType.equals("SUBMISSION")) {
 				String title = resultSet.getString("title");
 				publication.setTitle(title);
 
 				String subDB = "Submitted to " + resultSet.getString("submission_database");
 				if (subDB != null) {
-					if (!title.startsWith(subDB)) { // add the submission database is necessary 
+					if (!title.startsWith(subDB)) { // add the submission database is necessary
 						//publication.setTitle(subDB + title);
 						publication.setSubmission(subDB);
 					}
-				} 
+				}
 
 			} else {
-				publication.setPublicationType(pubType);
 				publication.setTitle(resultSet.getString("title"));
 			}
 
@@ -113,45 +219,24 @@ public class PublicationDaoImpl implements PublicationDao {
 				title = title.substring(0, title.length() - 1);
 
 			publication.setTitle(title.replace("[", "(").replace("]", ")"));
+		}
 
-			return publication;
+		private void setPublicationMedium(Publication publication, ResultSet resultSet) throws SQLException {
+
+			String pubType = publication.getPublicationType();
+
+			// volume is only defined in "article" and "online publication"
+			if ("BOOK".equals(pubType)) {
+				publication.setEditedVolumeBook(resultSet.getString("volume"), resultSet.getString("first_page"), resultSet.getString("last_page"));
+			}
+			else if ("ARTICLE".equals(pubType)) {
+				Journal journal = journalMap.get(publication.getPublicationId());
+				publication.setJournal(journal, resultSet.getString("volume"), resultSet.getString("issue"),
+						resultSet.getString("first_page"), resultSet.getString("last_page"));
+			}
+			else if ("ONLINE_PUBLICATION".equals(pubType)) {
+				publication.setOnlineResource(resultSet.getString("volume"), resultSet.getString("title"));
+			}
 		}
 	}
-
-	private static class LongRowMapper implements ParameterizedRowMapper<Long> {
-		public Long mapRow(ResultSet resultSet, int row) throws SQLException {
-			return resultSet.getLong("pub_id");
-		}
-	}
-	
-	public Publication findPublicationById(long id) {
-		SqlParameterSource namedParameters = new MapSqlParameterSource("resourceId", id);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper());
-	}
-
-	public List<Publication> findPublicationByTitle(String title) {
-		SqlParameterSource namedParameters = new MapSqlParameterSource("title", title);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper());
-	}
-	
-
-	@Override
-	public Publication findPublicationByMD5(String md5) {
-
-		// Spring advantages: No need to open / close connection or to worry about result set...
-		// We can use named parameters which are less error prone
-		SqlParameterSource namedParameters = new MapSqlParameterSource("md5", md5);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("publication-by-md5"), namedParameters, new PublicationRowMapper());
-	}
-
-	@Override
-	public List<Long> findAllPublicationsIds() {
-		//String sql= "select pubs.resource_id pub_id\n" + 
-		//		"           from nextprot.publications pubs\n" + 
-		//		"     inner join  nextprot.cv_publication_types pubtypes on ( pubs.cv_publication_type_id = pubtypes.cv_id)";
-		SqlParameterSource namedParameters = new MapSqlParameterSource();
-		//return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sql, namedParameters, new LongRowMapper());	
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-allids"), namedParameters, new LongRowMapper());	
-	}
-
 }

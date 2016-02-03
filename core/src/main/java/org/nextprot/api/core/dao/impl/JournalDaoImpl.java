@@ -2,9 +2,9 @@ package org.nextprot.api.core.dao.impl;
 
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
-import org.nextprot.api.core.dao.JournalLocatorDao;
+import org.nextprot.api.core.dao.JournalDao;
 import org.nextprot.api.core.domain.publication.PublicationType;
-import org.nextprot.api.core.domain.publication.JournalLocator;
+import org.nextprot.api.core.domain.publication.Journal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class JournalLocatorDaoImpl implements JournalLocatorDao {
+public class JournalDaoImpl implements JournalDao {
 	
 	@Autowired private SQLDictionary sqlDictionary;
 
 	@Autowired private DataSourceServiceLocator dsLocator;
 	
 	@Override
-	public List<JournalLocator> findScientificJournalsByPublicationIds(List<Long> publicationIds) {
+	public List<Journal> findJournalsByPublicationIds(List<Long> publicationIds) {
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("publicationIds", publicationIds);
@@ -33,12 +33,12 @@ public class JournalLocatorDaoImpl implements JournalLocatorDao {
 	}
 	
 	// Why two row mappers (JournalRowMapper and PublicationCvJournalRowMapper) ?
-	private static class PublicationCvJournalRowMapper implements ParameterizedRowMapper<JournalLocator>{
+	private static class PublicationCvJournalRowMapper implements ParameterizedRowMapper<Journal>{
 
 		@Override
-		public JournalLocator mapRow(ResultSet resultSet, int row) throws SQLException {
+		public Journal mapRow(ResultSet resultSet, int row) throws SQLException {
 
-			JournalLocator journal = new JournalLocator(PublicationType.ARTICLE);
+			Journal journal = new Journal(PublicationType.ARTICLE);
 
 			journal.setJournalId(resultSet.getLong("cv_id"));
 			journal.setName(resultSet.getString("journal_name"));

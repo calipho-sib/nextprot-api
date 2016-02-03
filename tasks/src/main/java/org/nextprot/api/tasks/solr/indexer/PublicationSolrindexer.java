@@ -2,16 +2,16 @@ package org.nextprot.api.tasks.solr.indexer;
 
 //import java.util.List;
 
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.SortedSet;
-
 import org.apache.solr.common.SolrInputDocument;
-import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
+import org.nextprot.api.core.domain.publication.Journal;
 import org.nextprot.api.core.utils.TerminologyUtils;
+
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.SortedSet;
 
 public class PublicationSolrindexer extends SolrIndexer<Publication>{
 
@@ -48,7 +48,7 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		doc.addField("abstract", publi.getAbstractText());
 		doc.addField("type", publi.getPublicationType());
 		//doc.addField("source", rs.getString("source"));
-		CvJournal journal = publi.getCvJournal();
+		Journal journal = publi.getJournal();
 		if(journal != null) { // TODO: rename "pretty_journal" to "abbrev_journal"
 			String jfield = journal.getName();
 			String jabbrev = journal.getAbbrev();

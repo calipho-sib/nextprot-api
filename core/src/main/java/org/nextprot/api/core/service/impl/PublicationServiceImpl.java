@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.*;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.dao.AuthorDao;
-import org.nextprot.api.core.dao.CvJournalDao;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.*;
@@ -25,12 +24,11 @@ public class PublicationServiceImpl implements PublicationService {
 	@Autowired private AuthorDao authorDao;
 	@Autowired private DbXrefDao dbXrefDao;
 	@Autowired private DbXrefService dbXrefService;
-	@Autowired private CvJournalDao cvJournalDao;
 
 	@Cacheable("publications-get-by-id")
 	public Publication findPublicationById(long id) {
 		Publication publication = this.publicationDao.findPublicationById(id); // Basic fields
-		loadAuthorsXrefAndCvJournal(publication); // add non-basic fields to object
+		loadAuthorsAndXrefs(publication); // add non-basic fields to object
 		return publication;
 	}
 
@@ -49,7 +47,7 @@ public class PublicationServiceImpl implements PublicationService {
 		List<Publication> publications = this.publicationDao.findSortedPublicationsByMasterId(masterId);
 		
 		for(Publication publication : publications) {
-			loadAuthorsXrefAndCvJournal(publication);			
+			loadAuthorsAndXrefs(publication);
 		}
 		
 		return publications;
@@ -69,8 +67,7 @@ public class PublicationServiceImpl implements PublicationService {
 		
 		List<PublicationDbXref> xrefs = this.dbXrefService.findDbXRefByPublicationIds(publicationIds);
 		List<PublicationAuthor> authors = this.authorDao.findAuthorsByPublicationIds(publicationIds);
-		List<PublicationCvJournal> cvJournals = this.cvJournalDao.findCvJournalsByPublicationIds(publicationIds);
-		
+
 		Multimap<Long, PublicationDbXref> xrefMap = Multimaps.index(xrefs, new Function<PublicationDbXref, Long>() {
 			@Override
 			public Long apply(PublicationDbXref xref) {
@@ -85,24 +82,15 @@ public class PublicationServiceImpl implements PublicationService {
 			}
 		});
 
-		Map<Long, PublicationCvJournal> journalMap = Maps.uniqueIndex(cvJournals, new Function<PublicationCvJournal, Long>() {
-			@Override
-			public Long apply(PublicationCvJournal journal) {
-				return journal.getPublicationId();
-			}
-		});
-
 		for (Publication publication : publications) {
 			long publicationId = publication.getPublicationId();
+
 			SortedSet<PublicationAuthor> authorSet = new TreeSet<>(authorMap.get(publicationId));
+			SortedSet<PublicationAuthor> editors = splitEditorsFromAuthors(authorSet);
 
-			publication.setEditors(splitEditorsFromAuthors(authorSet));
+			publication.setEditors(editors);
 			publication.setAuthors(authorSet);
-
 			publication.setDbXrefs(new HashSet<DbXref>(xrefMap.get(publicationId)));
-			PublicationCvJournal journal = journalMap.get(publicationId);
-			if (journal != null)
-				publication.setCvJournal(journal);
 		}
 		
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
@@ -135,18 +123,15 @@ public class PublicationServiceImpl implements PublicationService {
 	@Override
 	public Publication findPublicationByMD5(String md5) {
 		Publication publication = this.publicationDao.findPublicationByMD5(md5);
-		loadAuthorsXrefAndCvJournal(publication);
+		loadAuthorsAndXrefs(publication);
 		return publication;
 	}
 
 
-	private void loadAuthorsXrefAndCvJournal(Publication p){
+	private void loadAuthorsAndXrefs(Publication p){
 		long publicationId = p.getPublicationId();
 		p.setAuthors(new TreeSet<>(this.authorDao.findAuthorsByPublicationId(publicationId)));
 		p.setDbXrefs(new HashSet<>(this.dbXrefDao.findDbXRefsByPublicationId(publicationId)));
-
-		List<CvJournal> res = this.cvJournalDao.findByPublicationId(publicationId);
-		if(res.size() > 0) p.setCvJournal(res.get(0));		
 	}
 
 	@Override

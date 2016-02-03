@@ -20,7 +20,7 @@ public class PublicationAuthor implements Comparable<PublicationAuthor>, Seriali
 	private Long publicationId;
 	
 	public String toString(){
-		return String.format("{lastName=%s,foreName=%s,suffix=%s,rank=%d,person=%b}", lastName,foreName,suffix,rank,person);
+		return String.format("{lastName=%s,foreName=%s,suffix=%s,rank=%d,person=%b,editor=%b}", lastName,foreName,suffix,rank,person,isEditor);
 	}
 	
 	public Long getAuthorId() {

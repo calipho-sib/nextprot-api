@@ -2,13 +2,13 @@ package org.nextprot.api.core.domain.publication;
 
 import java.io.Serializable;
 
-public class WebPublicationMedium extends PublicationMedium implements Serializable {
+public class WebPublicationPage extends PublicationMedium implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
     private String url;
 
-    public WebPublicationMedium(PublicationType publicationType) {
+    public WebPublicationPage(PublicationType publicationType) {
         super(publicationType);
     }
 

@@ -2,7 +2,7 @@ package org.nextprot.api.core.domain.publication;
 
 import java.io.Serializable;
 
-public class JournalLocator extends BookMediumLocator<JournalLocation> implements Serializable {
+public class Journal extends BookMediumLocator<JournalLocation> implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
@@ -13,7 +13,7 @@ public class JournalLocator extends BookMediumLocator<JournalLocation> implement
     // WE are missing issn and e-isnn
     private long publicationId = -1L;
 
-    public JournalLocator(PublicationType publicationType) {
+    public Journal(PublicationType publicationType) {
         super(publicationType);
     }
 

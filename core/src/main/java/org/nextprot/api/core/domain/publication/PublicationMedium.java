@@ -10,7 +10,7 @@ import org.jsondoc.core.annotation.ApiObjectField;
  */
 public abstract class PublicationMedium {
 
-    @ApiObjectField(description = "The resource locator name")
+    @ApiObjectField(description = "The publication medium name")
     private String name;
 
     PublicationMedium(PublicationType publicationType) {

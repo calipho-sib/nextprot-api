@@ -8,11 +8,11 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class EditedVolumeBookLocator extends BookMediumLocator<BookLocation> implements Serializable {
+public class EditedVolumeBook extends BookMediumLocator<BookLocation> implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
-    public EditedVolumeBookLocator(PublicationType publicationType) {
+    public EditedVolumeBook(PublicationType publicationType) {
         super(publicationType);
     }
 
