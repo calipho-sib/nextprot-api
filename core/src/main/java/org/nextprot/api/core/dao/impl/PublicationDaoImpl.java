@@ -97,8 +97,8 @@ public class PublicationDaoImpl implements PublicationDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("publication-id-by-title"), namedParameters, Long.class);
 	}
 
-	private List<Long> findPublicationIdsByMD5(String title) {
-		SqlParameterSource namedParameters = new MapSqlParameterSource("title", title);
+	private List<Long> findPublicationIdsByMD5(String md5) {
+		SqlParameterSource namedParameters = new MapSqlParameterSource("md5", md5);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("publication-id-by-md5"), namedParameters, Long.class);
 	}
 
