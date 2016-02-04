@@ -1,17 +1,17 @@
 <publication type="$publication.publicationType.toLowerCase()" #if($publication.getPublicationDate())date="$publication.getTextDate()"#end #if($publication.isLocalizable()) name="$publication.getPublicationLocationName()" #if($publication.isLocalizableInBookMedium()) #if($publication.isLocatedInScientificJournal()) volume="$publication.getVolume()" #end first="$publication.getFirstPage()" last="$publication.getLastPage()"		#if($publication.isLocatedInEditedVolumeBook()) publisher="$publication.getPublisherName()" city="$publication.getPublisherCity()" #end	#end	#end internal-id="$publication.publicationId">
-#if($publication.hasTitle())
+	#if($publication.hasTitle())
 	<title>
 	    <![CDATA[$publication.title]]>
 	</title>
-#end
-#if($publication.hasEditors())
+	#end
+	#if($publication.hasEditors())
     <editor-list>
 		#foreach($editors in $publication.editors)
 			<person name="$editors.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($editors.foreName)"/>
 		#end
     </editor-list>
-#end
-#if($publication.hasAuthors())
+	#end
+	#if($publication.hasAuthors())
 	<author-list>
 		#foreach($author in $publication.authors)
 			#if($author.isPerson())
@@ -21,8 +21,8 @@
 			#end
 		#end
 	</author-list>
-#end
-	#if($publication.dbXrefs.size() > 0)
+	#end
+	#if($publication.hasDbXrefs())
     <xref-list>
 		#foreach($xref in $publication.dbXrefs)
 			#parse('xref.xml.vm')

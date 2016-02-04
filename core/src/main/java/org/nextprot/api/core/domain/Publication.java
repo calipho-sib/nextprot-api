@@ -301,6 +301,10 @@ public class Publication implements Serializable{
 		}
 	}
 
+	public boolean hasDbXrefs() {
+		return dbXrefs != null && !dbXrefs.isEmpty();
+	}
+
 	public Set<DbXref> getDbXrefs() {
 		return dbXrefs;
 	}
