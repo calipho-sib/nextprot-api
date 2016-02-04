@@ -8,7 +8,10 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class EditedVolumeBook extends BookMediumLocator<BookLocation> implements Serializable {
+/**
+ * An edited volume book is a collection of chapters contributed by different authors and harmonized by an or many editor(s)
+ */
+public class EditedVolumeBookLocation extends BookLocation implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
@@ -21,7 +24,7 @@ public class EditedVolumeBook extends BookMediumLocator<BookLocation> implements
     @ApiObjectField(description = "The list of editors")
     private SortedSet<PublicationAuthor> editors = new TreeSet<>();
 
-    public EditedVolumeBook(PublicationType publicationType) {
+    public EditedVolumeBookLocation(PublicationType publicationType) {
         super(publicationType);
     }
 
@@ -54,7 +57,7 @@ public class EditedVolumeBook extends BookMediumLocator<BookLocation> implements
     }
 
     @Override
-    PublicationType getExpectedPublicationType() {
+    PublicationType getPublicationType() {
         return PublicationType.BOOK;
     }
 }

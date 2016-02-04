@@ -1,16 +1,48 @@
 package org.nextprot.api.core.domain.publication;
 
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.core.domain.PublicationCvJournal;
 
-public class JournalLocation extends BookLocation {
+import java.io.Serializable;
+
+public class JournalLocation extends BookLocation implements Serializable {
 
     private static final long serialVersionUID = 0L;
+
+    private PublicationCvJournal journal;
 
     @ApiObjectField(description = "The journal volume")
     private String volume;
 
     @ApiObjectField(description = "The journal issue")
     private String issue;
+
+    public JournalLocation(PublicationCvJournal journal, PublicationType publicationType) {
+        super(publicationType);
+
+        this.journal = journal;
+        this.setName(journal.getName());
+    }
+
+    public long getJournalId() {
+        return journal.getJournalId();
+    }
+
+    public String getAbbrev() {
+        return journal.getAbbrev();
+    }
+
+    public String getMedAbbrev() {
+        return journal.getMedAbbrev();
+    }
+
+    public String getNLMid() {
+        return journal.getNLMid();
+    }
+
+    public long getPublicationId() {
+        return journal.getPublicationId();
+    }
 
     public String getVolume() {
         return volume;
@@ -26,5 +58,10 @@ public class JournalLocation extends BookLocation {
 
     public void setIssue(String issue) {
         this.issue = issue;
+    }
+
+    @Override
+    PublicationType getPublicationType() {
+        return PublicationType.ARTICLE;
     }
 }
