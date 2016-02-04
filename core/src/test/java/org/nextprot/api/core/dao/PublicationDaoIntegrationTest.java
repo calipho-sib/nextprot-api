@@ -78,10 +78,18 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 	}
 
 	@Test
-	public void testMissingJournalName() {
+	public void testMissingTitle() {
 
-		Publication publication = publicationDao.findPublicationById(7089529L);
+		Publication publication = publicationDao.findPublicationById(3183815L);
 
-		Assert.assertEquals("Stem Cells", publication.getPublicationLocationName());
+		Assert.assertTrue(!publication.hasTitle());
+	}
+
+	@Test
+	public void testMissingAuthors() {
+
+		Publication publication = publicationDao.findPublicationById(3183815L);
+
+		Assert.assertTrue(!publication.hasAuthors());
 	}
 }

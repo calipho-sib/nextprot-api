@@ -120,7 +120,11 @@ public class Publication implements Serializable{
 	public void setMD5(String md5) {
 		this.md5 = md5;
 	}
-	
+
+	public boolean hasTitle() {
+		return title != null && !title.isEmpty();
+	}
+
 	public String getTitle() {
 		return title;
 	}
@@ -266,6 +270,10 @@ public class Publication implements Serializable{
 		webPage.setUrl(url);
 
 		this.publicationLocation = webPage;
+	}
+
+	public boolean hasAuthors() {
+		return authors != null && !authors.isEmpty();
 	}
 
 	public SortedSet<PublicationAuthor> getAuthors() {

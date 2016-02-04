@@ -199,9 +199,8 @@ public class PublicationDaoImpl implements PublicationDao {
 			String pubType = publication.getPublicationType();
 
 			if (pubType.equals("ONLINE_PUBLICATION")) {
-				// In case it is a online publication
 				String titleForWebPage = resultSet.getString("title_for_web_resource");
-				publication.setTitle((titleForWebPage != null) ? titleForWebPage : publication.getPublicationLocationName());
+				publication.setTitle((titleForWebPage != null) ? titleForWebPage : "");
 			} else if (pubType.equals("SUBMISSION")) {
 				String title = resultSet.getString("title");
 				publication.setTitle(title);
