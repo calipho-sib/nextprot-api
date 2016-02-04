@@ -30,12 +30,12 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 			if(currpubli.getIsComputed() == true) publi_computed_count++;
 			if(currpubli.getIsCurated() == true) publi_curated_count++;
 			if(currpubli.getIsLargeScale() == true) publi_large_scale_count++;
-			if(currpubli.getJournal() != null) {
+			if(currpubli.getJournalLocation() != null) {
 				//System.err.println("pubid: " + currpubli.getPublicationId());
 				//System.err.println("jid: " + currpubli.getCvJournal().getJournalId());
-				addField(Fields.PUBLICATIONS,currpubli.getJournal().getNLMid());
+				addField(Fields.PUBLICATIONS,currpubli.getJournalLocation().getNLMid());
 				//if(currpubli.getCvJournal().getName().contains("Nature genetics")) System.err.println("pubid: " + currpubli.getPublicationId());
-				Jinfo = currpubli.getJournal().getName() + " - " + currpubli.getJournal().getMedAbbrev(); // Index name and abbrev in the same token
+				Jinfo = currpubli.getJournalLocation().getName() + " - " + currpubli.getJournalLocation().getMedAbbrev(); // Index name and abbrev in the same token
 				addField(Fields.PUBLICATIONS,Jinfo);
 			//System.err.println(Jinfo);			   
 			}

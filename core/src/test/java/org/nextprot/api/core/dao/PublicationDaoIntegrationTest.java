@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.EditedVolumeBook;
-import org.nextprot.api.core.domain.publication.Journal;
+import org.nextprot.api.core.domain.publication.EditedVolumeBookLocation;
+import org.nextprot.api.core.domain.publication.JournalLocation;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.nextprot.api.core.domain.publication.WebPublicationPage;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
@@ -27,16 +27,16 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 
 		Assert.assertEquals(PublicationType.ARTICLE, PublicationType.valueOfName(publication.getPublicationType()));
 		Assert.assertTrue(publication.isLocalizableInBookMedium());
-		Assert.assertTrue(publication.isPublishedInScientificJournal());
-		Assert.assertTrue(!publication.isPublishedInEditedVolumeBook());
+		Assert.assertTrue(publication.isLocatedInScientificJournal());
+		Assert.assertTrue(!publication.isLocatedInEditedVolumeBook());
 		Assert.assertEquals("Molecular basis of fibrinogen Naples associated with defective thrombin binding and thrombophilia. Homozygous substitution of B beta 68 Ala----Thr.", publication.getTitle());
 		Assert.assertEquals("1992-07", publication.getTextDate());
-		Assert.assertTrue(publication.getPublicationMedium() instanceof Journal);
-		Assert.assertEquals("The Journal of clinical investigation", publication.getPublicationMediumName());
-		Assert.assertEquals("238", ((Journal)publication.getPublicationMedium()).getLocation().getFirstPage());
-		Assert.assertEquals("244", ((Journal)publication.getPublicationMedium()).getLocation().getLastPage());
-		Assert.assertEquals("90", ((Journal)publication.getPublicationMedium()).getLocation().getVolume());
-		Assert.assertEquals("1", ((Journal)publication.getPublicationMedium()).getLocation().getIssue());
+		Assert.assertTrue(publication.getPublicationLocation() instanceof JournalLocation);
+		Assert.assertEquals("The Journal of clinical investigation", publication.getPublicationLocationName());
+		Assert.assertEquals("238", ((JournalLocation)publication.getPublicationLocation()).getFirstPage());
+		Assert.assertEquals("244", ((JournalLocation)publication.getPublicationLocation()).getLastPage());
+		Assert.assertEquals("90", ((JournalLocation)publication.getPublicationLocation()).getVolume());
+		Assert.assertEquals("1", ((JournalLocation)publication.getPublicationLocation()).getIssue());
 	}
 
 	@Test
@@ -46,12 +46,12 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 
 		Assert.assertEquals(PublicationType.BOOK, PublicationType.valueOfName(publication.getPublicationType()));
 		Assert.assertTrue(publication.isLocalizableInBookMedium());
-		Assert.assertTrue(!publication.isPublishedInScientificJournal());
-		Assert.assertTrue(publication.isPublishedInEditedVolumeBook());
-		Assert.assertTrue(publication.getPublicationMedium() instanceof EditedVolumeBook);
+		Assert.assertTrue(!publication.isLocatedInScientificJournal());
+		Assert.assertTrue(publication.isLocatedInEditedVolumeBook());
+		Assert.assertTrue(publication.getPublicationLocation() instanceof EditedVolumeBookLocation);
 		Assert.assertEquals("Plenum Press", publication.getPublisherName());
 		Assert.assertEquals("New York", publication.getPublisherCity());
-		Assert.assertEquals("Fibrinogen, thrombosis, coagulation and fibrinolysis", publication.getPublicationMediumName());
+		Assert.assertEquals("Fibrinogen, thrombosis, coagulation and fibrinolysis", publication.getPublicationLocationName());
 		Assert.assertEquals("39", publication.getFirstPage());
 		Assert.assertEquals("48", publication.getLastPage());
 		Assert.assertEquals("1991", publication.getTextDate());
@@ -64,8 +64,8 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 
 		Assert.assertEquals(PublicationType.ONLINE_PUBLICATION, PublicationType.valueOfName(publication.getPublicationType()));
 		Assert.assertTrue(!publication.isLocalizableInBookMedium());
-		Assert.assertEquals("SHMPD", publication.getPublicationMedium().getName());
-		Assert.assertEquals("http://shmpd.bii.a-star.edu.sg/gene.php?genestart=A&genename=BRCA1", ((WebPublicationPage)publication.getPublicationMedium()).getUrl());
+		Assert.assertEquals("SHMPD", publication.getPublicationLocation().getName());
+		Assert.assertEquals("http://shmpd.bii.a-star.edu.sg/gene.php?genestart=A&genename=BRCA1", ((WebPublicationPage)publication.getPublicationLocation()).getUrl());
 		Assert.assertEquals("The Singapore human mutation and polymorphism database", publication.getTitle());
 	}
 
@@ -75,5 +75,13 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 		Long id = masterIdentifierDao.findIdByUniqueName("NX_P02675"); // NX_P02675 -> 582546
 		List<Long> pubs = publicationDao.findSortedPublicationIdsByMasterId(id);
 		Assert.assertTrue(!pubs.isEmpty());
+	}
+
+	@Test
+	public void testMissingJournalName() {
+
+		Publication publication = publicationDao.findPublicationById(7089529L);
+
+		Assert.assertEquals("Stem Cells", publication.getPublicationLocationName());
 	}
 }

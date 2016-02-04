@@ -2,7 +2,10 @@ package org.nextprot.api.core.domain.publication;
 
 import java.io.Serializable;
 
-public class WebPublicationPage extends PublicationMedium implements Serializable {
+/**
+ * An online publication is accessible from the web
+ */
+public class WebPublicationPage extends PublicationLocation implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
@@ -21,7 +24,7 @@ public class WebPublicationPage extends PublicationMedium implements Serializabl
     }
 
     @Override
-    PublicationType getExpectedPublicationType() {
+    PublicationType getPublicationType() {
         return PublicationType.ONLINE_PUBLICATION;
     }
 }

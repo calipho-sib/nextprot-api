@@ -6,7 +6,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
-import org.nextprot.api.core.domain.publication.Journal;
+import org.nextprot.api.core.domain.publication.JournalLocation;
 import org.nextprot.api.core.utils.TerminologyUtils;
 
 import java.util.ArrayList;
@@ -48,10 +48,10 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		doc.addField("abstract", publi.getAbstractText());
 		doc.addField("type", publi.getPublicationType());
 		//doc.addField("source", rs.getString("source"));
-		Journal journal = publi.getJournal();
-		if(journal != null) { // TODO: rename "pretty_journal" to "abbrev_journal"
-			String jfield = journal.getName();
-			String jabbrev = journal.getAbbrev();
+		JournalLocation journalLocation = publi.getJournalLocation();
+		if(journalLocation != null) { // TODO: rename "pretty_journal" to "abbrev_journal"
+			String jfield = journalLocation.getName();
+			String jabbrev = journalLocation.getAbbrev();
 			if(!jfield.equals(jabbrev)) jfield += " " + jabbrev;
 			doc.addField("journal", jfield); 
 			doc.addField("pretty_journal", jabbrev); 

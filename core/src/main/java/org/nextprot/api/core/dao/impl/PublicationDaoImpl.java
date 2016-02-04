@@ -2,13 +2,16 @@ package org.nextprot.api.core.dao.impl;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.commons.utils.SQLDictionary;
-import org.nextprot.api.core.dao.JournalDao;
+import org.nextprot.api.core.dao.CvJournalDao;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.Publication;
-import org.nextprot.api.core.domain.publication.Journal;
+import org.nextprot.api.core.domain.PublicationCvJournal;
+import org.nextprot.api.core.domain.publication.JournalLocation;
+import org.nextprot.api.core.domain.publication.PublicationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -24,10 +27,12 @@ import java.util.*;
 @Repository
 public class PublicationDaoImpl implements PublicationDao {
 
+	private static final Logger LOGGER = Logger.getLogger(PublicationDaoImpl.class);
+
 	private final static DateFormatter DATE_FORMATTER = new DateFormatter();
 
 	@Autowired private SQLDictionary sqlDictionary;
-	@Autowired private JournalDao journalDao;
+	@Autowired private CvJournalDao journalDao;
 
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
@@ -50,7 +55,7 @@ public class PublicationDaoImpl implements PublicationDao {
 		List<Long> publicationIds = findSortedPublicationIdsByMasterId(masterId);
 
 		// get all journals found for all publication ids
-		List<Journal> journals = journalDao.findJournalsByPublicationIds(publicationIds);
+		List<PublicationCvJournal> journals = journalDao.findCvJournalsByPublicationIds(publicationIds);
 
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
 	}
@@ -60,7 +65,7 @@ public class PublicationDaoImpl implements PublicationDao {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("resourceId", publicationId);
 
 		// get the journal found for publication id
-		List<Journal> journals = journalDao.findJournalsByPublicationIds(Collections.singletonList(publicationId));
+		List<PublicationCvJournal> journals = journalDao.findCvJournalsByPublicationIds(Collections.singletonList(publicationId));
 
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper(journals));
 	}
@@ -118,13 +123,13 @@ public class PublicationDaoImpl implements PublicationDao {
 
 	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {
 
-		private final Map<Long, Journal> journalMap;
+		private final Map<Long, PublicationCvJournal> journalMap;
 
-		PublicationRowMapper(List<Journal> journals) {
+		PublicationRowMapper(List<PublicationCvJournal> journals) {
 
-			this.journalMap = Maps.uniqueIndex(journals, new Function<Journal, Long>() {
+			this.journalMap = Maps.uniqueIndex(journals, new Function<PublicationCvJournal, Long>() {
 				@Override
-				public Long apply(Journal journal) {
+				public Long apply(PublicationCvJournal journal) {
 					return journal.getPublicationId();
 				}
 			});;
@@ -155,7 +160,7 @@ public class PublicationDaoImpl implements PublicationDao {
 			publication.setIsComputed(resultSet.getLong("is_computed")>0);
 
 			// set infos on publication medium, volume, issue, pages, journal, book...
-			setPublicationMedium(publication, resultSet);
+			setPublicationLocation(publication, resultSet);
 
 			// set publication title
 			setPublicationTitle(publication, resultSet);
@@ -196,7 +201,7 @@ public class PublicationDaoImpl implements PublicationDao {
 			if (pubType.equals("ONLINE_PUBLICATION")) {
 				// In case it is a online publication
 				String titleForWebPage = resultSet.getString("title_for_web_resource");
-				publication.setTitle((titleForWebPage != null) ? titleForWebPage : publication.getPublicationMediumName());
+				publication.setTitle((titleForWebPage != null) ? titleForWebPage : publication.getPublicationLocationName());
 			} else if (pubType.equals("SUBMISSION")) {
 				String title = resultSet.getString("title");
 				publication.setTitle(title);
@@ -222,22 +227,28 @@ public class PublicationDaoImpl implements PublicationDao {
 			publication.setTitle(title.replace("[", "(").replace("]", ")"));
 		}
 
-		private void setPublicationMedium(Publication publication, ResultSet resultSet) throws SQLException {
+		private void setPublicationLocation(Publication publication, ResultSet resultSet) throws SQLException {
 
-			String pubType = publication.getPublicationType();
+			PublicationType pubType = PublicationType.valueOfName(publication.getPublicationType());
 
-			// volume is only defined in "article" and "online publication"
-			if ("BOOK".equals(pubType)) {
-				publication.setEditedVolumeBook(resultSet.getString("volume"), resultSet.getString("publisher"), resultSet.getString("city"),
+			switch (pubType) {
+				case BOOK:
+					publication.setEditedVolumeBookLocation(resultSet.getString("volume"), resultSet.getString("publisher"), resultSet.getString("city"),
 						resultSet.getString("first_page"), resultSet.getString("last_page"));
-			}
-			else if ("ARTICLE".equals(pubType)) {
-				Journal journal = journalMap.get(publication.getPublicationId());
-				publication.setJournal(journal, resultSet.getString("volume"), resultSet.getString("issue"),
-						resultSet.getString("first_page"), resultSet.getString("last_page"));
-			}
-			else if ("ONLINE_PUBLICATION".equals(pubType)) {
-				publication.setOnlineResource(resultSet.getString("volume"), resultSet.getString("title"));
+					break;
+				case ARTICLE:
+					if (journalMap.containsKey(publication.getPublicationId())) {
+
+						JournalLocation journalLocation = new JournalLocation(journalMap.get(publication.getPublicationId()), PublicationType.ARTICLE);
+
+						publication.setJournalLocation(journalLocation, resultSet.getString("volume"), resultSet.getString("issue"),
+								resultSet.getString("first_page"), resultSet.getString("last_page"));
+					} else {
+						LOGGER.error("Article with id '"+publication.getPublicationId()+"' could not be located in a journal");
+					}
+					break;
+				case ONLINE_PUBLICATION:
+					publication.setOnlineResourceLocation(resultSet.getString("volume"), resultSet.getString("title"));
 			}
 		}
 	}

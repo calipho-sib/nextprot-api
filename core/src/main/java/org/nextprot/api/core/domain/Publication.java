@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain;
 
+import com.google.common.base.Preconditions;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.commons.utils.DateFormatter;
@@ -56,22 +57,28 @@ public class Publication implements Serializable{
 	@ApiObjectField(description = "The associated cross references")
 	protected Set<DbXref> dbXrefs;
 
-	private PublicationMedium publicationMedium;
+	private PublicationLocation publicationLocation;
 
-	public boolean isLocatedInPublicationMedium() {
-		return publicationMedium != null;
+	public boolean isLocalizable() {
+		return publicationLocation != null;
 	}
 
-	public boolean isPublishedInScientificJournal() {
-		return isLocatedInPublicationMedium() && publicationMedium instanceof Journal;
+	public boolean isLocatedInScientificJournal() {
+		return isLocalizable() && publicationLocation instanceof JournalLocation;
 	}
 
-	public boolean isPublishedInEditedVolumeBook() {
-		return isLocatedInPublicationMedium() && publicationMedium instanceof EditedVolumeBook;
+	/**
+	 * @return true if found in a edited volume book
+     */
+	public boolean isLocatedInEditedVolumeBook() {
+		return isLocalizable() && publicationLocation instanceof EditedVolumeBookLocation;
 	}
 
+	/**
+	 * @return true if found in a standard book (a journal or a edited volume book)
+     */
 	public boolean isLocalizableInBookMedium() {
-		return isLocatedInPublicationMedium() && publicationMedium instanceof BookMediumLocator;
+		return isLocalizable() && publicationLocation instanceof BookLocation;
 	}
 
 	public Boolean getIsLargeScale() {
@@ -156,16 +163,16 @@ public class Publication implements Serializable{
 
 	public String getVolume() {
 
-		if (isPublishedInScientificJournal())
-			return ((Journal) publicationMedium).getLocation().getVolume();
+		if (isLocatedInScientificJournal())
+			return ((JournalLocation) publicationLocation).getVolume();
 		else
 			return "";
 	}
 
 	public String getIssue() {
 
-		if (isPublishedInScientificJournal())
-			return ((Journal) publicationMedium).getLocation().getIssue();
+		if (isLocatedInScientificJournal())
+			return ((JournalLocation) publicationLocation).getIssue();
 		else
 			return "";
 	}
@@ -173,7 +180,7 @@ public class Publication implements Serializable{
 	public String getFirstPage() {
 
 		if (isLocalizableInBookMedium())
-			return ((BookMediumLocator) publicationMedium).getLocation().getFirstPage();
+			return ((BookLocation) publicationLocation).getFirstPage();
 		else
 			return "";
 	}
@@ -181,20 +188,20 @@ public class Publication implements Serializable{
 	public String getLastPage() {
 
 		if (isLocalizableInBookMedium())
-			return ((BookMediumLocator) publicationMedium).getLocation().getLastPage();
+			return ((BookLocation) publicationLocation).getLastPage();
 		else
 			return "";
 	}
 
 	public String getPublisherName() {
-		if (isPublishedInEditedVolumeBook())
-			return ((EditedVolumeBook) publicationMedium).getPublisher();
+		if (isLocatedInEditedVolumeBook())
+			return ((EditedVolumeBookLocation) publicationLocation).getPublisher();
 		return "";
 	}
 
 	public String getPublisherCity() {
-		if (isPublishedInEditedVolumeBook())
-			return ((EditedVolumeBook) publicationMedium).getCity();
+		if (isLocatedInEditedVolumeBook())
+			return ((EditedVolumeBookLocation) publicationLocation).getCity();
 		return "";
 	}
 
@@ -214,57 +221,51 @@ public class Publication implements Serializable{
 		this.textDate = textDate;
 	}
 
-	public Journal getJournal() {
+	public JournalLocation getJournalLocation() {
 
-		return (isPublishedInScientificJournal()) ? (Journal) publicationMedium : null;
+		return (isLocatedInScientificJournal()) ? (JournalLocation) publicationLocation : null;
 	}
 
-	public PublicationMedium getPublicationMedium() {
-		return publicationMedium;
+	public PublicationLocation getPublicationLocation() {
+		return publicationLocation;
 	}
 
-	public String getPublicationMediumName() {
-		return (isLocatedInPublicationMedium()) ? publicationMedium.getName() : null;
+	public String getPublicationLocationName() {
+		return (isLocalizable()) ? publicationLocation.getName() : null;
 	}
 
-	public void setJournal(Journal journal, String volume, String issue, String firstPage, String lastPage) {
+	public void setJournalLocation(JournalLocation journalLocation, String volume, String issue, String firstPage, String lastPage) {
 
-		JournalLocation location = new JournalLocation();
+		Preconditions.checkNotNull(journalLocation);
 
-		location.setFirstPage(firstPage);
-		location.setLastPage(lastPage);
-		location.setVolume(volume);
-		location.setIssue(issue);
+		journalLocation.setFirstPage(firstPage);
+		journalLocation.setLastPage(lastPage);
+		journalLocation.setVolume(volume);
+		journalLocation.setIssue(issue);
 
-		journal.setLocation(location);
-
-		this.publicationMedium = journal;
+		this.publicationLocation = journalLocation;
 	}
 
-	public void setEditedVolumeBook(String name, String publisher, String city, String firstPage, String lastPage) {
+	public void setEditedVolumeBookLocation(String name, String publisher, String city, String firstPage, String lastPage) {
 
-		EditedVolumeBook book = new EditedVolumeBook(PublicationType.valueOfName(publicationType));
+		EditedVolumeBookLocation book = new EditedVolumeBookLocation(PublicationType.valueOfName(publicationType));
+
 		book.setName(name);
 		book.setPublisher(publisher);
 		book.setCity(city);
+		book.setFirstPage(firstPage);
+		book.setLastPage(lastPage);
 
-		BookLocation location = new BookLocation();
-
-		location.setFirstPage(firstPage);
-		location.setLastPage(lastPage);
-
-		book.setLocation(location);
-
-		this.publicationMedium = book;
+		this.publicationLocation = book;
 	}
 
-	public void setOnlineResource(String name, String url) {
+	public void setOnlineResourceLocation(String name, String url) {
 
 		WebPublicationPage webPage = new WebPublicationPage(PublicationType.valueOfName(publicationType));
 		webPage.setName(name);
 		webPage.setUrl(url);
 
-		this.publicationMedium = webPage;
+		this.publicationLocation = webPage;
 	}
 
 	public SortedSet<PublicationAuthor> getAuthors() {
@@ -276,19 +277,19 @@ public class Publication implements Serializable{
 	}
 
 	public boolean hasEditors() {
-		return isPublishedInEditedVolumeBook() && ((EditedVolumeBook) publicationMedium).hasEditors();
+		return isLocatedInEditedVolumeBook() && ((EditedVolumeBookLocation) publicationLocation).hasEditors();
 	}
 
 	public Set<PublicationAuthor> getEditors() {
-		if (isPublishedInEditedVolumeBook())
-			return ((EditedVolumeBook) publicationMedium).getEditors();
+		if (isLocatedInEditedVolumeBook())
+			return ((EditedVolumeBookLocation) publicationLocation).getEditors();
 		return Collections.emptySet();
 	}
 
 	public void setEditors(SortedSet<PublicationAuthor> editors) {
 
-		if (isPublishedInEditedVolumeBook()) {
-			((EditedVolumeBook) publicationMedium).addEditors(editors);
+		if (isLocatedInEditedVolumeBook()) {
+			((EditedVolumeBookLocation) publicationLocation).addEditors(editors);
 		}
 	}
 
@@ -325,7 +326,7 @@ public class Publication implements Serializable{
 		sb.append(this.publicationType);
 		sb.append("\n");
 		sb.append("journal=");
-		sb.append(this.publicationMedium);
+		sb.append(this.publicationLocation);
 		sb.append("\n");
 		sb.append("authorsCnt=");
 		sb.append((this.authors != null) ? this.authors.size() : "null");
