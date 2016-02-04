@@ -43,25 +43,16 @@ public class PublicationDaoImpl implements PublicationDao {
 
 	@Override
 	public List<Publication> findSortedPublicationsByMasterId(Long masterId) {
-		Map<String, Object> paramsNoBooks = new HashMap<>();
-		paramsNoBooks.put("identifierId", masterId);
-		paramsNoBooks.put("publicationTypes", Arrays.asList(10, 20, 40, 50, 60, 70, 80));
-
-		Map<String, Object> paramsBooksOnly = new HashMap<>();
-		paramsBooksOnly.put("identifierId", masterId);
-		paramsBooksOnly.put("publicationTypes", Arrays.asList(30));
+		Map<String, Object> params = new HashMap<>();
+		params.put("identifierId", masterId);
+		params.put("publicationTypes", Arrays.asList(10, 20, 30, 40, 50, 60, 70, 80));
 
 		List<Long> publicationIds = findSortedPublicationIdsByMasterId(masterId);
 
 		// get all journals found for all publication ids
 		List<Journal> journals = journalDao.findJournalsByPublicationIds(publicationIds);
 
-		List<Publication> publications = new ArrayList<>();
-
-		publications.addAll(new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), paramsNoBooks, new PublicationRowMapper(journals)));
-		publications.addAll(new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-book-sorted-for-master"), paramsBooksOnly, new PublicationRowMapper(journals)));
-
-		return publications;
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
 	}
 
 	@Override
@@ -128,13 +119,6 @@ public class PublicationDaoImpl implements PublicationDao {
 	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {
 
 		private final Map<Long, Journal> journalMap;
-
-		PublicationRowMapper(Journal journal) {
-
-			journalMap = new HashMap<>(1);
-
-			journalMap.put(journal.getPublicationId(), journal);
-		}
 
 		PublicationRowMapper(List<Journal> journals) {
 
@@ -211,7 +195,8 @@ public class PublicationDaoImpl implements PublicationDao {
 
 			if (pubType.equals("ONLINE_PUBLICATION")) {
 				// In case it is a online publication
-				publication.setTitle(resultSet.getString("volume"));
+				String titleForWebPage = resultSet.getString("title_for_web_resource");
+				publication.setTitle((titleForWebPage != null) ? titleForWebPage : publication.getPublicationMediumName());
 			} else if (pubType.equals("SUBMISSION")) {
 				String title = resultSet.getString("title");
 				publication.setTitle(title);
