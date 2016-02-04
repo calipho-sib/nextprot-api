@@ -6,8 +6,8 @@
 	#end
 	#if($publication.hasEditors())
     <editor-list>
-		#foreach($editors in $publication.editors)
-			<person name="$editors.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($editors.foreName)"/>
+		#foreach($editor in $publication.editors)
+			<person name="$editor.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($editor.foreName)"/>
 		#end
     </editor-list>
 	#end
