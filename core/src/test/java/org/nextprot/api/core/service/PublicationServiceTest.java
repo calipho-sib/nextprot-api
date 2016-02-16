@@ -146,8 +146,8 @@ public class PublicationServiceTest {
 		assertEquals(2, publications.get(1).getDbXrefs().size());
 		
 		// Journals
-		assertEquals("Pretty Revue of Science", publications.get(0).getCvJournal().getName());
-		assertEquals("Revue of Science", publications.get(1).getCvJournal().getName());
+		assertEquals("Pretty Revue of Science", publications.get(0).getJournalLocation().getName());
+		assertEquals("Revue of Science", publications.get(1).getJournalLocation().getName());
 		
 	}
 }
