@@ -1,6 +1,8 @@
 package org.nextprot.api.core.utils.dbxref;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.core.domain.DbXref;
 
 import java.io.UnsupportedEncodingException;
@@ -20,6 +22,8 @@ import java.util.Set;
  * Linked urls of each db may contain different single occurrence of any stamps (%s, %u, %n, ...) that should be resolved separately.
  */
 class DbXrefURLBaseResolver {
+
+    private static final Log LOGGER = LogFactory.getLog(DbXrefURLBaseResolver.class);
 
     private static final String UNRESOLVED_URL_REGEXP = "^.+%[a-zA-Z].*$";
 
@@ -53,7 +57,13 @@ class DbXrefURLBaseResolver {
 
         xref.setLinkUrl(template);
 
-        return resolveTemplateURL(template, getAccessionNumber(xref));
+        try {
+            return resolveTemplateURL(template, getAccessionNumber(xref));
+        } catch (Exception ex) {
+
+            LOGGER.warn(xref.getAccession()+" - " + ex.getLocalizedMessage());
+            return "None";
+        }
     }
 
     private String resolveTemplateURL(String templateURL, String accession) {
