@@ -1,10 +1,9 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.EntityNameDao;
 import org.nextprot.api.core.dao.HistoryDao;
@@ -19,19 +18,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.util.*;
 
 @Service
 class OverviewServiceImpl implements OverviewService {
+
+	private final static Comparator<EntityName> BY_NAME_COMPARATOR = new Comparator<EntityName>() {
+		@Override
+		public int compare(EntityName en1, EntityName en2) {
+			return en1.getName().compareTo(en2.getName());
+		}
+	};
 
 	@Autowired private HistoryDao historyDao;
 	@Autowired private EntityNameDao entryNameDao;
 	@Autowired private FamilyService familyService;
 	@Autowired private IsoformService isoformService;
-	
 
 	@Override
 	@Cacheable("overview")
@@ -55,7 +57,7 @@ class OverviewServiceImpl implements OverviewService {
 	
 	private static List<EntityName> convertIsoNamestoOverviewName(List<Isoform> isoforms){
 		
-		List<EntityName> isoNames = new ArrayList<EntityName>();
+		List<EntityName> isoNames = new ArrayList<>();
 		for(Isoform isoform : isoforms){
 			
 			EntityName name = new EntityName();
@@ -75,9 +77,9 @@ class OverviewServiceImpl implements OverviewService {
 				
 				name.getSynonyms().add(s);
 			}
+			Collections.sort(name.getSynonyms(), BY_NAME_COMPARATOR);
 			
 			isoNames.add(name);
-
 		}
 		
 		return isoNames;
@@ -94,7 +96,7 @@ class OverviewServiceImpl implements OverviewService {
 		});
 
 		Map<String, EntityName> mutableEntityMap = Maps.newHashMap(entityMap);
-		String parentId = null;
+		String parentId;
 
 		for (EntityName entityName : entityMap.values()) {
 
@@ -106,7 +108,7 @@ class OverviewServiceImpl implements OverviewService {
 			}
 		}
 
-		List<EntityName> mutableEntityNames = new ArrayList<EntityName>(mutableEntityMap.values());
+		List<EntityName> mutableEntityNames = new ArrayList<>(mutableEntityMap.values());
 
 		for (EntityName entityName : mutableEntityMap.values())
 			if (entityName.getParentId() != null)
@@ -118,8 +120,7 @@ class OverviewServiceImpl implements OverviewService {
 				return entryName.getClazz();
 			}
 		});
-		
-		
+
 		for (EntityNameClass en : entryNameMap.keySet()) {
 
 			switch (en) {
@@ -145,12 +146,10 @@ class OverviewServiceImpl implements OverviewService {
 			}
 			}
 		}
-		
-	
 	}
 	
 	private static List<EntityName> getSortedList(Multimap<Overview.EntityNameClass, EntityName> entryMap, EntityNameClass en){
-		List<EntityName> list = new ArrayList<EntityName>(entryMap.get(en));
+		List<EntityName> list = new ArrayList<>(entryMap.get(en));
 		for(EntityName e : list){
 			if(e.getSynonyms() != null){
 				Collections.sort(e.getSynonyms());

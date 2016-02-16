@@ -32,6 +32,21 @@
     </protein-name-list>
 #end
 
+#if($entry.overview.isoformNames)
+    <isoform-name-list>
+    #foreach($isoformName in $entry.overview.isoformNames)
+        <isoform>
+            <isoform-name iso-name-type="recommended">$isoformName.name</isoform-name>
+            #if($isoformName.synonyms)
+                #foreach($synName in $isoformName.synonyms)
+                    <isoform-name iso-name-type="alternative">$synName.name</isoform-name>
+                #end
+            #end
+        </isoform>
+    #end
+    </isoform-name-list>
+#end
+
 ## ----------------- CLEAVED REGION NAMES ------------------------------
 #if($entry.overview.cleavedRegionNames)
     <chain-list>
