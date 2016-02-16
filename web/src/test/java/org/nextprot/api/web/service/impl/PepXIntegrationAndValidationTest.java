@@ -1,6 +1,5 @@
 package org.nextprot.api.web.service.impl;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.core.domain.Entry;
@@ -21,7 +20,6 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
 
-	@Ignore
     @Test
     public void testPepXService() throws Exception {
     	
