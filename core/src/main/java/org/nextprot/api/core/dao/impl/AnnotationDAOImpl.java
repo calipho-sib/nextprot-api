@@ -84,8 +84,12 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 				int termId = rs.getInt("cv_term_id");
 				if (termId==51743) {
 					category = AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
+					//System.out.println("transit peptide => mito");
 				} else if (termId==51744) {
 					category = AnnotationCategory.PEROXISOME_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
+					//System.out.println("transit peptide => perox");
+				} else {
+					//System.out.println("transit peptide => ???");					
 				}
 			}
 			return category;

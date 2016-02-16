@@ -1,14 +1,17 @@
 package org.nextprot.api.core.dao;
 
+import com.google.common.base.Function;
+import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.commons.utils.ExpectedElementTester;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
-
-import static org.junit.Assert.assertTrue;
 
 @ActiveProfiles({ "dev" })
 public class DbXrefDAOIntegrationTest extends CoreUnitBaseTest {
@@ -36,22 +39,58 @@ limit 100
 
  */
 	
-	
 	@Test
-	public void shouldReturn_1_XenoInteractantXref() {
- 		Set<DbXref> xrefs = xrefdao.findEntryInteractionInteractantsXrefs("NX_A0JNW5");
- 		assertTrue(xrefs.size()==1);
- 		DbXref xref = xrefs.iterator().next();
- 		xref.getAccession().equals("Q8ZAF0");
- 		assertTrue(xref.getDatabaseCategory().equals("Sequence databases"));
- 		assertTrue(xref.getDatabaseName().equals("UniProt"));
- 		assertTrue(xref.getDbXrefId()==15645061L);
- 		assertTrue(xref.getLinkUrl().equals("http://www.uniprot.org/uniprot/%s"));
- 		assertTrue(xref.getResolvedUrl().equals("http://www.uniprot.org/uniprot/Q8ZAF0"));
- 		assertTrue(xref.getUrl().equals("http://www.uniprot.org/uniprot/"));
- 		//assertTrue(xref.getPropertiesMap().equals(""));
-	}	
- 		
-	
-	
+	public void shouldReturn_2_XenoInteractantXrefs() {
+
+		Set<DbXref> xrefs = xrefdao.findEntryInteractionInteractantsXrefs("NX_A0JNW5");
+
+		ExpectedDbXrefTester tester = new ExpectedDbXrefTester();
+
+		Map<String, Object> expectedProps = newExpectedProps("Q8ZAF0", "Sequence databases", "UniProt",
+				"http://www.uniprot.org/uniprot/%s", "http://www.uniprot.org/uniprot/Q8ZAF0", "http://www.uniprot.org/uniprot/");
+		Assert.assertTrue(tester.testElement(xrefs, 15645061L, expectedProps));
+
+		expectedProps = newExpectedProps("P61021", "Sequence databases", "UniProt",
+				"http://www.uniprot.org/uniprot/%s", "http://www.uniprot.org/uniprot/P61021", "http://www.uniprot.org/uniprot/");
+		Assert.assertTrue(tester.testElement(xrefs, 29231790L, expectedProps));
+	}
+
+	private static Map<String, Object> newExpectedProps(String accession, String dbCat, String dbName, String linkUrl, String resolvedUrl, String url) {
+
+		Map<String, Object> expectedProps = new HashMap<>();
+
+		expectedProps.put("accession", accession);
+		expectedProps.put("dbCat", dbCat);
+		expectedProps.put("dbName", dbName);
+		expectedProps.put("linkUrl", linkUrl);
+		expectedProps.put("resolvedUrl", resolvedUrl);
+		expectedProps.put("url", url);
+
+		return expectedProps;
+	}
+
+	public static class ExpectedDbXrefTester extends ExpectedElementTester<DbXref, Long> {
+
+		@Override
+		protected Function<DbXref, Long> createElementToKeyFunc() {
+
+			return new Function<DbXref, Long>() {
+				@Override
+				public Long apply(DbXref xref) {
+					return xref.getDbXrefId();
+				}
+			};
+		}
+
+		@Override
+		protected boolean isValidContent(DbXref dbxref, Map<String, Object> expectedElementValues) {
+
+			return expectedElementValues.get("accession").equals(dbxref.getAccession()) &&
+					expectedElementValues.get("dbCat").equals(dbxref.getDatabaseCategory()) &&
+				expectedElementValues.get("dbName").equals(dbxref.getDatabaseName()) &&
+				expectedElementValues.get("linkUrl").equals(dbxref.getLinkUrl()) &&
+				expectedElementValues.get("resolvedUrl").equals(dbxref.getResolvedUrl()) &&
+				expectedElementValues.get("url").equals(dbxref.getUrl());
+		}
+	}
 }

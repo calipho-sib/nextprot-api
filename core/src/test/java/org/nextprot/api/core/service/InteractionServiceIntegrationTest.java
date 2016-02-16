@@ -3,9 +3,11 @@ package org.nextprot.api.core.service;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
+import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,23 +23,21 @@ public class InteractionServiceIntegrationTest extends CoreUnitBaseTest {
 	@Autowired
 	private InteractionService interactionService;
 
-	@Test
-	public void shouldReturn4BinaryInteractions() {
-		List<Interaction> interactions = this.interactionService.findInteractionsByEntry("NX_Q9UNQ0");
-		System.out.println("interaction count: " + interactions.size());
-		assertTrue(interactions.size() == 4);
-	}
-	
-	
 /*
  * This queries retrieves entries with their 
  * - count of xeno interactions
  * - count of self interactions
  * - count of interactions with another protein entry defined in nextprot
- * - count of interactions whicth another protein isoform defined in nextprot
+ * - count of interactions whih another protein isoform defined in nextprot
+ * - count of isoform specific interactions 
  * 
-select accession, sum(has_xeno) as xenos, sum(has_self) as selves, sum(has_iso) as isos, sum(has_entry) as entries from (
+ *  and can be used to find test examples
+ *  
+select entry_ac, sum(is_iso_spec) as iso_spec_interactions, sum(has_xeno) as with_xeno, sum(has_self) as with_self, sum(has_iso) as with_isos, 
+sum(has_entry) as entries, sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry) as interaction_count from (
 select xr1.accession, 
+(regexp_split_to_array(xr1.accession,'-'))[1]  as entry_ac,
+case when xr1.accession like '%-%' then 1 else 0 end as is_iso_spec,
 case when inter.is_xeno then 1 else 0 end as has_xeno,
 case when interactant1.is_self_interaction then 1 else 0 end as has_self,
 case when inter.is_xeno is false and interactant1.is_self_interaction is false and xr2.accession ilike '%-%' then 1 else 0 end as has_iso,
@@ -47,56 +47,100 @@ inner join partnership_partner_assoc interactant1 on (inter.partnership_id=inter
 inner join db_xrefs xr1 on (interactant1.db_xref_id=xr1.resource_id)
 left outer join partnership_partner_assoc interactant2 on (inter.partnership_id=interactant2.partnership_id and interactant1.assoc_id != interactant2.assoc_id or interactant2.assoc_id is null)
 left outer join db_xrefs xr2 on (interactant2.db_xref_id=xr2.resource_id)
---limit 10
 ) a 
-group by accession
+group by entry_ac
 having sum(has_xeno)>0 and sum(has_self)>0 and sum(has_iso)>0 and sum(has_entry)>0
 order by sum(has_xeno)+ sum(has_self)+ sum(has_iso)+ sum(has_entry) 
 */
 	
 	/*
-	 * NX_Q9UNQ0 should contain 4 interactions: one of each type:
+	 * NX_Q9UNQ0 should contain at least 1 interactions of each type:
 	 * - self interaction 
 	 * - xeno interaction (interaction with a protein not defined in nextprot, see resourceinternalrefs
 	 * - interaction with another nextprot entry
 	 * - interaction with another nextprot specific isoform
+	 * and there should at least 1 interaction declared as isoform specific
+	 * 
+	 * see query above to find other examples if necessary in future releases
+	 * 
 	 */
 	@Test
-	public void shouldReturn4AnnotationsWithProperties() {
-		List<Annotation> annots = this.interactionService.findInteractionsAsAnnotationsByEntry("NX_Q9UNQ0");
-		assertTrue(annots.size() == 4);
+	public void shouldDealWithAnyInteractionSpecialInteraction() {
+		String entry_ac="NX_Q9UNQ0";
+		List<Annotation> annots = this.interactionService.findInteractionsAsAnnotationsByEntry(entry_ac);
 		int numberOfExperiments = 0;
-		int entryacs = 0;
-		int isoacs = 0;
-		int resourceinternalrefs = 0;
-		int self=0;
+		int withNxEntries = 0;
+		int withNxIsos = 0;
+		int withSelf = 0;
+		int withXrefs = 0;
+		int isoSpecs = 0;
+		
 		for (Annotation annot: annots) {
+			
+			/*
+			System.out.println("partner " + annot.getBioObject().getAccession() +
+					" " + annot.getBioObject().getBioType() + " / " + annot.getBioObject().getResourceType());
+			*/
+
+			// basic checks
 			assertTrue(annot.getCategory().equals("BinaryInteraction"));
 			assertTrue(annot.getAPICategory() == AnnotationCategory.BINARY_INTERACTION);
+			
+			// partners 
+			if (isAnnotationASelfInteraction(annot, entry_ac)) withSelf ++;
+			if (isAnnotationAnInteractionWithAnExternalXrefAsPartner(annot)) withXrefs++;
+			if (isAnnotationAnInteractionWithaNextprotEntryAsPartner(annot, entry_ac)) withNxEntries++;
+			if (isAnnotationAnInteractionWithANextprotIsoformAsPartner(annot)) withNxIsos++;
+
+			// specificity of annotation subject
+			if (isAnnotationAnInteractionWithANextprotIsoformAsSubject(annot)) isoSpecs++;
+			
+			// evidences
 			assertTrue(annot.getEvidences().size()==1);
 			AnnotationEvidence evi = annot.getEvidences().get(0);
-			evi.getAssignedBy().equals("IntAct");
-			if (evi.getResourceAccession().equals("EBI-1569435,EBI-1569435")) self++;
-			assertTrue(evi.getQualityQualifier().equals("GOLD") || evi.getQualityQualifier().equals("SILVER"));	
-			assertTrue(evi.getResourceAccession().contains("EBI-")  && evi.getResourceAccession().contains("1569435") );
+			assertTrue(evi.getQualityQualifier().equals("GOLD") || evi.getQualityQualifier().equals("SILVER"));
 			assertTrue(evi.getResourceDb().equals("IntAct"));
-			
 			if (annot.getEvidences().get(0).getPropertyValue("numberOfExperiments") != null) numberOfExperiments++;
 			
-			for (AnnotationProperty prop: annot.getProperties()) {
-				//if (prop.getName().equals("numberOfExperiments")) numberOfExperiments++;
-				if (prop.getName().equals(PropertyApiModel.NAME_INTERACTANT) && prop.getValueType().equals(PropertyApiModel.VALUE_TYPE_ENTRY_AC)) entryacs++;
-				if (prop.getName().equals(PropertyApiModel.NAME_INTERACTANT) && prop.getValueType().equals(PropertyApiModel.VALUE_TYPE_ISO_AC)) isoacs++;
-				if (prop.getName().equals(PropertyApiModel.NAME_INTERACTANT) && prop.getValueType().equals(PropertyApiModel.VALUE_TYPE_RIF)) resourceinternalrefs++;				
-			}
 		}
-		assertTrue(numberOfExperiments==4);
-		assertTrue(entryacs==0);
-		assertTrue(isoacs==0);
-		assertTrue(resourceinternalrefs==0);
-		assertTrue(self==1);
+		/*
+		System.out.println("numberOfExperiments:" + numberOfExperiments);
+		System.out.println("withNxEntries:" + withNxEntries);
+		System.out.println("withNxIsos:" + withNxIsos);
+		System.out.println("withSelf:" + withSelf );
+		System.out.println("withXrefs:" + withXrefs );
+		System.out.println("isoSpecs:" + isoSpecs );
+		*/
+		assertTrue(numberOfExperiments==annots.size()); // should exist for each interaction
+		assertTrue(withNxEntries >= 1); // 8 cases
+		assertTrue(withNxIsos >= 1); // 1 case
+		assertTrue(withXrefs >= 1); // 10 cases
+		assertTrue(withSelf == 1);  // 1 case
+		assertTrue(isoSpecs > 1);  // 16 cases
 	}
 
+	private boolean isAnnotationASelfInteraction(Annotation annot, String entry_ac) {
+		return annot.getBioObject().getAccession().equals(entry_ac);
+	}
+	private boolean isAnnotationAnInteractionWithAnExternalXrefAsPartner(Annotation annot) {
+		return annot.getBioObject().getResourceType().equals(BioObject.ResourceType.EXTERNAL);
+	}
+	private boolean isAnnotationAnInteractionWithaNextprotEntryAsPartner(Annotation annot, String entry_ac) {
+		return annot.getBioObject().getResourceType().equals(BioObject.ResourceType.INTERNAL) &&
+				annot.getBioObject().getBioType().equals(BioObject.BioType.PROTEIN) &&
+				! annot.getBioObject().getAccession().equals(entry_ac);
+	}
+	private boolean isAnnotationAnInteractionWithANextprotIsoformAsPartner(Annotation annot) {
+		return annot.getBioObject().getBioType().equals(BioObject.BioType.PROTEIN_ISOFORM);
+	}
+	private boolean isAnnotationAnInteractionWithANextprotIsoformAsSubject(Annotation annot) {
+		for (AnnotationIsoformSpecificity spec : annot.getTargetingIsoformsMap().values()) {
+			if (spec.getSpecificity().equals("SPECIFIC")) return true;
+		}
+		return false;
+	}
+	
+	
 	
 /*
  * This query retrieves isoforms that are annotated as having as specific interaction with 

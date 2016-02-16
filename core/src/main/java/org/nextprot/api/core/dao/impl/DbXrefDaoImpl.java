@@ -26,30 +26,6 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
 	
-	private final String getAllXrefIds = "select resource_id from nextprot.db_xrefs order by resource_id  ";
-
-	private final String sqlHeader = "select x.resource_id, dbs.cv_name database_name, dbs.url database_url, dbs.link_url database_link, cat.cv_name database_category, x.accession ";
-		
-	private final String findDbXRefByIds = sqlHeader + " from nextprot.db_xrefs x " + 
-			"inner join nextprot.cv_databases dbs on x.cv_database_id = dbs.cv_id " +
-			"inner join nextprot.cv_database_categories cat on cat.cv_id = dbs.cv_category_id " +
-			"where x.resource_id in (:resourceIds) ";
-	
-	private final String findDbXRefByPublicationIds = sqlHeader + ", assoc.publication_id " +
-			"from nextprot.db_xrefs x " + 
-			"inner join nextprot.publication_db_xref_assoc assoc on assoc.db_xref_id = x.resource_id " +
-			"inner join nextprot.cv_databases dbs on x.cv_database_id = dbs.cv_id " +
-			"inner join nextprot.cv_database_categories cat on cat.cv_id = dbs.cv_category_id " +
-			"where assoc.publication_id in (:publicationIds) ";
-	
-	private final String findPropertiesByResourceIds = "select * " +
-			"from nextprot.resource_properties rp " +
-			"where rp.resource_id in (:resourceIds);";
-	
-	
-	
-	
-	
 	@Override
 	public List<DbXref> findDbXRefsByPublicationId(Long publicationId) {
 		Map<String, Object> params = new HashMap<>();
@@ -61,16 +37,15 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	public List<PublicationDbXref> findDbXRefByPublicationIds(List<Long> publicationIds) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("publicationIds", publicationIds);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(findDbXRefByPublicationIds, params, new PublicationDbXRefRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-publication-ids"), params, new PublicationDbXRefRowMapper());
 	}
-	
+
 	@Override
 	public List<DbXref> findDbXRefByIds(List<Long> resourceIds) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("resourceIds", resourceIds);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(findDbXRefByIds, params, new DbXRefRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-resource-ids"), params, new DbXRefRowMapper());
 	}
-	
 	
 	@Override
 	public List<DbXref> findDbXrefsByMaster(String uniqueName) {
@@ -85,38 +60,42 @@ public class DbXrefDaoImpl implements DbXrefDao {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-as-annot-by-master"), namedParams, new DbXRefRowMapper());
 	}
 	
-	
+
+	@Override
 	public List<DbXrefProperty> findDbXrefsProperties(List<Long> resourceIds) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("resourceIds", resourceIds);
-		
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(findPropertiesByResourceIds, params, new RowMapper<DbXrefProperty>() {
 
-			@Override
-			public DbXrefProperty mapRow(ResultSet resultSet, int row) throws SQLException {
-				DbXrefProperty prop = new DbXref.DbXrefProperty();
-				prop.setDbXrefId(resultSet.getLong("resource_id"));
-				prop.setPropertyId(resultSet.getLong("resource_property_id"));
-				prop.setName(resultSet.getString("property_name"));
-				prop.setValue(resultSet.getString("property_value"));
-				return prop;
-			}
-		});
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-props-by-resource-ids"), params, new DbXrefPropertyRowMapper());
+	}
+
+	@Override
+	public List<DbXref.EnsemblInfos> findDbXrefEnsemblInfos(String uniqueName, List<Long> xrefIds) {
+
+		if (!xrefIds.isEmpty()) {
+
+			Map<String, Object> params = new HashMap<>();
+			params.put("uniqueName", uniqueName);
+			params.put("xrefIds", xrefIds);
+
+			return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("ensembl-props-by-xref-accession"), params, new EnsemblInfosRowMapper());
+		}
+
+		return new ArrayList<>();
 	}
 
 	@Override
 	public List<Long> getAllDbXrefsIds() {
 		// warning: doean't work: too many rows, memory error... should simply return a jdbc resultset 
 		Map<String, Object> params = new HashMap<>();
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(getAllXrefIds, params, new RowMapper<Long>() {
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-all-ids"), params, new RowMapper<Long>() {
 			@Override
 			public Long mapRow(ResultSet resultSet, int row) throws SQLException {
 				return resultSet.getLong("resource_id");
 			}
 		});
 	}
-	
-	
+
 	private static class DbXRefRowMapper implements ParameterizedRowMapper<DbXref> {
 
 		@Override
@@ -134,6 +113,33 @@ public class DbXrefDaoImpl implements DbXrefDao {
 			dbXRef.setUrl(resultSet.getString("database_url"));
 			dbXRef.setLinkUrl(resultSet.getString("database_link"));
 			return dbXRef;
+		}
+	}
+
+	private static class DbXrefPropertyRowMapper implements ParameterizedRowMapper<DbXrefProperty> {
+
+		@Override
+		public DbXrefProperty mapRow(ResultSet resultSet, int row) throws SQLException {
+			DbXrefProperty prop = new DbXref.DbXrefProperty();
+			prop.setDbXrefId(resultSet.getLong("resource_id"));
+			prop.setPropertyId(resultSet.getLong("resource_property_id"));
+			prop.setName(resultSet.getString("property_name"));
+			prop.setValue(resultSet.getString("property_value"));
+			return prop;
+		}
+	}
+
+	private static class EnsemblInfosRowMapper implements ParameterizedRowMapper<DbXref.EnsemblInfos> {
+
+		@Override
+		public DbXref.EnsemblInfos mapRow(ResultSet resultSet, int row) throws SQLException {
+
+			return new DbXref.EnsemblInfos(
+					resultSet.getLong("db_xref_id"),
+					resultSet.getString("gene_ac"),
+					resultSet.getLong("gt_link_id"),
+					resultSet.getString("protein_ac"),
+					resultSet.getLong("tp_link_id"));
 		}
 	}
 	

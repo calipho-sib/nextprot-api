@@ -1,6 +1,7 @@
 package org.nextprot.api.web.service.impl.writer;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.utils.XMLUnitUtils;
@@ -13,9 +14,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by fnikitin on 12/08/15.
- */
+@Ignore
 public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
 
     @Test

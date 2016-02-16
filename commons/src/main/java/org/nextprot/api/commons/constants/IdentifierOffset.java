@@ -26,5 +26,8 @@ public class IdentifierOffset {
 	
 	public final static long ANTIBODY_MAPPING_ANNOTATION_OFFSET = 1_100_000_000_000L;
 	public final static long ANTIBODY_MAPPING_ANNOTATION_EVIDENCE_OFFSET = 1_200_000_000_000L;
-	
+
+	public final static long XREF_PROPERTY_OFFSET = 1_300_000_000_000L;
+	public final static long XREF_ENSEMBL_GENE_PROPERTY_OFFSET = 1_400_000_000_000L;
+	public final static long XREF_ENSEMBL_PROTEIN_PROPERTY_OFFSET = 1_500_000_000_000L;
 }

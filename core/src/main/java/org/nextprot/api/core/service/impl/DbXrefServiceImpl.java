@@ -7,16 +7,22 @@ import com.google.common.collect.*;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.core.dao.DbXrefDao;
-import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.PublicationDbXref;
-import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.domain.XRefDatabase;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.AntibodyResourceIdsService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideNamesService;
+import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
+import org.nextprot.api.core.utils.dbxref.conv.DbXrefConverter;
+import org.nextprot.api.core.utils.dbxref.conv.EnsemblXrefPropertyConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -38,8 +44,18 @@ public class DbXrefServiceImpl implements DbXrefService {
 			return xref.getDbXrefId();
 		}
 	};
-	private static final Predicate<DbXrefProperty> DB_XREF_EXCLUDING_HIDDEN_PROPERTIES_PREDICATE = new DbXrefExcludedPropertyPredicate(Sets.newHashSet("status", "match status", "organism ID", "organism name"));
 
+	private static final Predicate<DbXref> DB_XREF_ENST_PREDICATE = new Predicate<DbXref>() {
+		@Override
+		public boolean apply(DbXref xref) {
+
+			return xref.getAccession().startsWith("ENST");
+		}
+	};
+
+	private static final Predicate<DbXrefProperty> DB_XREF_EXCLUDING_HIDDEN_PROPERTIES_PREDICATE = new DbXrefExcludedPropertyPredicate(Sets.newHashSet("match status", "organism ID", "organism name"));
+
+	
 	@Override
 	public List<DbXref> findDbXRefByPublicationId(Long publicationId) {
 		return this.dbXRefDao.findDbXRefsByPublicationId(publicationId);
@@ -47,19 +63,13 @@ public class DbXrefServiceImpl implements DbXrefService {
 	
 	@Override
 	public List<PublicationDbXref> findDbXRefByPublicationIds(List<Long> publicationIds) {
-		List<PublicationDbXref> xrefs = this.dbXRefDao.findDbXRefByPublicationIds(publicationIds);
-		
-		for(PublicationDbXref xref : xrefs)
-			xref.setResolvedUrl(xref.resolveLinkTarget());
-
-		return xrefs;
+		return dbXRefDao.findDbXRefByPublicationIds(publicationIds);
 	}
 	
 
 	@Override
 	public List<DbXref> findDbXRefByIds(List<Long> resourceIds) {
-		List<DbXref> xrefs = this.dbXRefDao.findDbXRefByIds(resourceIds);
-		return xrefs;
+		return dbXRefDao.findDbXRefByIds(resourceIds);
 	}
 	
 
@@ -96,7 +106,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		annotation.setUniqueName("AN_" + entryName.substring(3) + "_XR_" + String.valueOf(xref.getDbXrefId()));
 		annotation.setParentXref(xref);
 
-		annotation.setEvidences(Arrays.asList(newAnnotationEvidence(annotation)));
+		annotation.setEvidences(Collections.singletonList(newAnnotationEvidence(annotation)));
 		annotation.addTargetingIsoforms(newAnnotationIsoformSpecificityList(isoforms, annotation));
 
 		return annotation;
@@ -173,7 +183,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 	 */
 	private List<DbXref> findDbXrefsConvertibleIntoAnnotationByEntry(String uniqueName) {
 
-		return this.dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
+		return dbXRefDao.findDbXrefsAsAnnotByMaster(uniqueName);
 	}
 
 	@Override
@@ -234,71 +244,89 @@ public class DbXrefServiceImpl implements DbXrefService {
 			}
 		});
 
+		Map<Long, List<DbXrefProperty>> ensemblPropertiesMap = getDbXrefEnsemblInfos(uniqueName, xrefs);
+
 		for (DbXref xref : xrefs) {
 			if (!fetchXrefAnnotationMappingProperties)
 				xref.setProperties((!Xref2Annotation.hasName(xref.getDatabaseName())) ? new ArrayList<>(propsMap.get(xref.getDbXrefId())) : new ArrayList<DbXrefProperty>());
 			else
 				xref.setProperties(new ArrayList<>(propsMap.get(xref.getDbXrefId())));
-			xref.setResolvedUrl(resolveLinkTarget(uniqueName, xref));
+
+			if (xref.getLinkUrl().contains("%u")) {
+				xref.setResolvedUrl(DbXrefURLResolver.getInstance().resolveWithAccession(xref, uniqueName));
+			}
+
+			if (ensemblPropertiesMap.containsKey(xref.getDbXrefId())) {
+
+				xref.addProperties(ensemblPropertiesMap.get(xref.getDbXrefId()));
+			}
 		}
+
+		xrefs.addAll(createMissingDbXrefs(xrefs));
 	}
 
-	private String resolveLinkTarget(String primaryId, DbXref xref) {
-		primaryId = primaryId.startsWith("NX_") ? primaryId.substring(3) : primaryId;
-		if (! xref.getLinkUrl().contains("%u")) {
-			return xref.resolveLinkTarget();
+
+	private Map<Long, List<DbXrefProperty>> getDbXrefEnsemblInfos(String uniqueName, List<DbXref> xrefs) {
+
+		// TODO: TRANSFORM TO JAVA 8 LAMBDA
+		List<Long> ensemblRefIds = Lists.transform(new ArrayList<>(Collections2.filter(xrefs, DB_XREF_ENST_PREDICATE)), DB_XREF_LONG_FUNCTION);
+		List<DbXref.EnsemblInfos> ensemblXRefInfosList = dbXRefDao.findDbXrefEnsemblInfos(uniqueName, ensemblRefIds);
+
+		EnsemblXrefPropertyConverter converter = EnsemblXrefPropertyConverter.getInstance();
+
+		Map<Long, List<DbXrefProperty>> map = new HashMap<>();
+		for (DbXref.EnsemblInfos infos : ensemblXRefInfosList) {
+
+			map.put(infos.getTranscriptXrefId(), converter.convert(infos));
 		}
 
-		String templateURL = xref.getLinkUrl();
-		if (!templateURL.startsWith("http")) {
-			templateURL = "http://" + templateURL;
-		}
-		
-		if (xref.getDatabaseName().equalsIgnoreCase("brenda")) {
-			if (xref.getAccession().startsWith("BTO")) {
-			    String accession = xref.getAccession().replace(":", "_");
-				templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s", accession);
-			}
-			else {
-				templateURL = templateURL.replaceFirst("%s1", xref.getAccession());
-				String organismId = "247";
-				// this.retrievePropertyByName("organism name").getPropertyValue();
-				// organism always human: hardcode it
-				templateURL = templateURL.replaceFirst("%s2", organismId);
+		return map;
+	}
+
+	/**
+	 * Create dynamically missing xrefs from specific properties
+	 *
+	 * @param xrefs a list of xrefs
+	 * @return the new created list
+     */
+	private List<DbXref> createMissingDbXrefs(List<DbXref> xrefs) {
+
+		List<DbXref> newXrefs = new ArrayList<>();
+
+		for (DbXref xref : xrefs) {
+
+			if (XRefDatabase.REF_SEQ.getName().equals(xref.getDatabaseName()) ||
+				XRefDatabase.EMBL.getName().equals(xref.getDatabaseName())) {
+
+				newXrefs.addAll(DbXrefConverter.getInstance().convert(xref));
 			}
 		}
 
-		return templateURL.replaceAll("%u", primaryId);
+		return newXrefs;
 	}
 
 	@Override
 	public List<DbXref> findDbXrefByAccession(String accession) {
-		List<DbXref> xrefs = this.dbXRefDao.findDbXrefByAccession(accession);
-		
-//		for(DbXref xref : xrefs)
-//			xref.setResolvedUrl(resolveLinkTarget(xref));
 
-		return xrefs;	
+		return dbXRefDao.findDbXrefByAccession(accession);
 	}
 
 	@Override
 	public List<DbXref> findAllDbXrefs() {
-		List<DbXref> xrefs = this.dbXRefDao.findAllDbXrefs();
-		
-//		for(DbXref xref : xrefs)
-//			xref.setResolvedUrl(resolveLinkTarget(xref));
 
-		return xrefs;
+		return dbXRefDao.findAllDbXrefs();
 	}
 
 	@Override
 	public List<DbXref> findDbXRefByResourceId(Long resourceId) {
-		return this.dbXRefDao.findDbXrefByResourceId(resourceId);
+
+		return dbXRefDao.findDbXrefByResourceId(resourceId);
 	}
 
 	@Override
 	public List<Long> getAllDbXrefsIds() {
-		return this.dbXRefDao.getAllDbXrefsIds();
+
+		return dbXRefDao.getAllDbXrefsIds();
 	}
 
 	private static class DbXrefExcludedPropertyPredicate implements Predicate<DbXrefProperty> {
