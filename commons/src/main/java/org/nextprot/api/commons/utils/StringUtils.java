@@ -10,8 +10,8 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 public class StringUtils {
-	
 
+	public static final String CR_LF = "\r\n";
 	private static final Pattern NON_ASCIIDASH = Pattern.compile("[^\\w-]");
 	private static final Pattern WHITESPACE = Pattern.compile("\\s");
 	private static final AuthorNameFormatter AUTHOR_NAME_FORMATTER = new AuthorNameFormatter();
@@ -145,46 +145,12 @@ public class StringUtils {
 	 * @param maxLineLen the maximum line length
 	 * @return formatted text
 	 */
-	public static String wrapTextRec(String text, int maxLineLen) {
-
-		Preconditions.checkNotNull(text);
-		Preconditions.checkArgument(maxLineLen > 0);
-
-		return wrapTextRec(text, maxLineLen, new StringBuilder());
-	}
-
-	/**
-	 * Format text with lines of <code>max</code> length
-	 *
-	 * @param text the text to format
-	 * @param maxLineLen the maximum line length
-	 * @return formatted text
-	 */
 	public static String wrapText(String text, int maxLineLen) {
 
 		Preconditions.checkNotNull(text);
 		Preconditions.checkArgument(maxLineLen > 0);
 
-		StringBuilder sb = new StringBuilder();
-
-		int textLen = text.length();
-
-		int begin=0;
-		while (begin<textLen) {
-
-			int end = begin + maxLineLen;
-
-			if (end > textLen) {
-				sb.append(text.substring(begin));
-				break;
-			}
-
-			sb.append(text.substring(begin, end)).append("\n");
-
-			begin = end;
-		}
-
-		return sb.toString();
+		return wrapTextRec(text, maxLineLen, new StringBuilder());
 	}
 
 	static String wrapTextRec(String text, int maxLineLen, StringBuilder sb) {
@@ -199,7 +165,7 @@ public class StringUtils {
 			String head = text.substring(0, maxLineLen);
 			String tail = text.substring(maxLineLen);
 
-			sb.append(head).append("\n");
+			sb.append(head).append(CR_LF);
 
 			return wrapTextRec(tail, maxLineLen, sb);
 		}
@@ -215,7 +181,7 @@ public class StringUtils {
 
 		if(!pipefield.contains("|")) return pipefield;
 
-		SortedSet<String> sset = new TreeSet<String>(Arrays.asList(pipefield.split(" \\| ")));
+		SortedSet<String> sset = new TreeSet<>(Arrays.asList(pipefield.split(" \\| ")));
 		for(String elem: sset) {
 			if(aux != "") aux += " | ";
 			aux += elem;

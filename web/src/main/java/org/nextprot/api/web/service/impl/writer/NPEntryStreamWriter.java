@@ -22,7 +22,7 @@ public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
      * @param stream an output stream
      *
      */
-    public NPEntryStreamWriter(S stream) {
+    NPEntryStreamWriter(S stream) {
 
         Preconditions.checkNotNull(stream);
 
@@ -32,7 +32,7 @@ public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
     /**
      * @return the output stream (should be closed outside this class).
      */
-    protected final S getStream() {
+    final S getStream() {
 
         return stream;
     }
@@ -74,7 +74,7 @@ public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
     }
 
     /** Writing initiated */
-    public void init() {}
+    private void init() {}
 
     /** Write header to the output stream (to be overridden by if needed) */
     protected void writeHeader(Map<String, Object> headerParams) throws IOException {}
