@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+
 @Service
 class OverviewServiceImpl implements OverviewService {
 
@@ -65,7 +66,6 @@ class OverviewServiceImpl implements OverviewService {
 			name.setName(isoform.getMainEntityName().getValue());
 			name.setType(isoform.getMainEntityName().getType());
 			name.setQualifier(isoform.getMainEntityName().getQualifier());
-			name.setSynonyms(new ArrayList<EntityName>());
 
 			for(EntityName syn : isoform.getSynonyms()){
 
@@ -83,7 +83,6 @@ class OverviewServiceImpl implements OverviewService {
 		}
 		
 		return isoNames;
-
 	}
 	
 	private void setNamesInOverview(List<EntityName> entityNames, Overview overview){
@@ -102,7 +101,13 @@ class OverviewServiceImpl implements OverviewService {
 
 			parentId = entityName.getParentId();
 			if (parentId != null && mutableEntityMap.containsKey(parentId)) {
-				mutableEntityMap.get(parentId).addSynonym(entityName);
+
+				if (entityName.isMain()) {
+					mutableEntityMap.get(parentId).addOtherRecommendedEntityName(entityName);
+				}
+				else {
+					mutableEntityMap.get(parentId).addSynonym(entityName);
+				}
 			} else {
 				mutableEntityMap.put(entityName.getId(), entityName);
 			}
@@ -124,26 +129,26 @@ class OverviewServiceImpl implements OverviewService {
 		for (EntityNameClass en : entryNameMap.keySet()) {
 
 			switch (en) {
-			case PROTEIN_NAMES: {
-				overview.setProteinNames(getSortedList(entryNameMap, en));
-				break;
-			}
-			case GENE_NAMES: {
-				overview.setGeneNames(getSortedList(entryNameMap, en));
-				break;
-			}
-			case CLEAVED_REGION_NAMES: {
-				overview.setCleavedRegionNames(getSortedList(entryNameMap, en));
-				break;
-			}
-			case ADDITIONAL_NAMES: {
-				overview.setAdditionalNames(getSortedList(entryNameMap, en));
-				break;
-			}
-			case FUNCTIONAL_REGION_NAMES: {
-				overview.setFunctionalRegionNames(getSortedList(entryNameMap, en));
-				break;
-			}
+				case PROTEIN_NAMES: {
+					overview.setProteinNames(getSortedList(entryNameMap, en));
+					break;
+				}
+				case GENE_NAMES: {
+					overview.setGeneNames(getSortedList(entryNameMap, en));
+					break;
+				}
+				case CLEAVED_REGION_NAMES: {
+					overview.setCleavedRegionNames(getSortedList(entryNameMap, en));
+					break;
+				}
+				case ADDITIONAL_NAMES: {
+					overview.setAdditionalNames(getSortedList(entryNameMap, en));
+					break;
+				}
+				case FUNCTIONAL_REGION_NAMES: {
+					overview.setFunctionalRegionNames(getSortedList(entryNameMap, en));
+					break;
+				}
 			}
 		}
 	}

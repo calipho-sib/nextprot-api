@@ -12,7 +12,7 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 
 	private static final Log LOGGER = LogFactory.getLog(EntityName.class);
 
-	private static final long serialVersionUID = -6510772648061413417L;
+	private static final long serialVersionUID = 2L;
 	private Boolean isMain;
 	private EntityNameClass clazz;
 	private String type;
@@ -24,8 +24,9 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 	
 	//TODO Is this the same as saying parentName??? Is this really needed for isoforms????
 	private String mainEntityName;
-	
-	private List<EntityName> synonyms;
+
+	private List<EntityName> recommendedEntityNames = new ArrayList<>();
+	private List<EntityName> synonyms = new ArrayList<>();
 	
 	public String getCategory() {
 		return category;
@@ -91,18 +92,22 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 		this.parentId = parentId;
 	}
 
+	public List<EntityName> getOtherRecommendedEntityNames() { return recommendedEntityNames; }
+
+	public void addOtherRecommendedEntityName(EntityName recommendedName) {
+		this.recommendedEntityNames.add(recommendedName);
+	}
+
 	public List<EntityName> getSynonyms() {
 		return synonyms;
 	}
-	
-	public void setSynonyms(List<EntityName> synonyms) {
-		this.synonyms = synonyms;
-	}
-	
+
 	public void addSynonym(EntityName synonym) {
-		if(this.synonyms == null)
-			this.synonyms = new ArrayList<EntityName>();
 		this.synonyms.add(synonym);
+	}
+
+	public void addAllSynonyms(List<EntityName> synonyms) {
+		this.synonyms.addAll(synonyms);
 	}
 
 	@Override
@@ -137,8 +142,6 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 	private static enum QualifierValue {
 		FULL, SHORT, EC, ALLERGEN, CD_ANTIGEN, INN 
 	}
-
-	
 
 	public String getComposedName(){
 		String qualifier="", type=getType();

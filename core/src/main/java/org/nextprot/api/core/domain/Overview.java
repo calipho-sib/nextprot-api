@@ -1,28 +1,20 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.dao.EntityName;
 
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 public class Overview implements Serializable{
 
-	private static final long serialVersionUID = 3393680983821185971L;
-	private static final Log LOGGER = LogFactory.getLog(Overview.class);
+	private static final long serialVersionUID = 2L;
 
 	private static class PE {
 		String name;
 		int level;
-		public PE(String name, int level) {this.name=name; this.level=level;}
+		PE(String name, int level) {this.name=name; this.level=level;}
 	}
 	private static Map<String,PE> peMap;
     static {
@@ -71,12 +63,14 @@ public class Overview implements Serializable{
 				recommendedName.setParentId(name.getParentId());
 				recommendedName.setQualifier(name.getQualifier());
 				recommendedName.setType(name.getType());
-				if(name.getSynonyms() != null){
-					recommendedName.setSynonyms(new ArrayList<EntityName>());
-					for(EntityName sname : name.getSynonyms()){
-						if(!sname.getQualifier().equals("full")){
-							recommendedName.getSynonyms().add(sname); //add the short and children
-						}
+				for(EntityName sname : name.getSynonyms()){
+					if(!sname.getQualifier().equals("full")){
+						recommendedName.addSynonym(sname); //add the short and children
+					}
+				}
+				for(EntityName sname : name.getOtherRecommendedEntityNames()){
+					if(!sname.getQualifier().equals("full")){
+						recommendedName.addOtherRecommendedEntityName(sname); //add the short and children
 					}
 				}
 			}
@@ -90,7 +84,7 @@ public class Overview implements Serializable{
 	 * @return
 	 */
 	public List<EntityName> getAlternativeProteinNames() {
-		List<EntityName> result = new ArrayList<EntityName>();
+		List<EntityName> result = new ArrayList<>();
 		for(EntityName name : this.proteinNames){
 			if(name.isMain()){
 				if(name.getSynonyms() != null){
