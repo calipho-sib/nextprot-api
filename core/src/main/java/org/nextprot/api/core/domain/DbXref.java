@@ -2,6 +2,8 @@ package org.nextprot.api.core.domain;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
@@ -12,6 +14,8 @@ import java.util.List;
 
 @ApiObject(name = "xref", description = "A cross reference")
 public class DbXref implements Serializable {
+
+	private static final Log LOGGER = LogFactory.getLog(DbXref.class);
 
 	private static final long serialVersionUID = 2316953378438971441L;
 
@@ -90,7 +94,14 @@ public class DbXref implements Serializable {
 	
 	public String getResolvedUrl() {
 		if (resolvedUrl == null) {
-			resolvedUrl = DbXrefURLResolver.getInstance().resolve(this);
+			try {
+				resolvedUrl = DbXrefURLResolver.getInstance().resolve(this);
+			} catch (Exception ex) {
+
+				LOGGER.warn("xref "+accession+" (db:"+databaseName+") - " + ex.getLocalizedMessage());
+				resolvedUrl = "None";
+			}
+
 		}
 		return resolvedUrl;
 	}
