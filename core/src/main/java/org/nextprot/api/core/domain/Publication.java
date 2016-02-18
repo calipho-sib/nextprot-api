@@ -238,6 +238,11 @@ public class Publication implements Serializable{
 		return (isLocalizable()) ? publicationLocation.getName() : null;
 	}
 
+	public void setEmptyJournalLocation() {
+
+		this.publicationLocation = new JournalLocation();
+	}
+
 	public void setJournalLocation(JournalLocation journalLocation, String volume, String issue, String firstPage, String lastPage) {
 
 		Preconditions.checkNotNull(journalLocation);
