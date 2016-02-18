@@ -238,13 +238,13 @@ public class PublicationDaoImpl implements PublicationDao {
 				case ARTICLE:
 					if (journalMap.containsKey(publication.getPublicationId())) {
 
-						JournalLocation journalLocation = new JournalLocation(journalMap.get(publication.getPublicationId()));
+						JournalLocation journalLocation = new JournalLocation();
 
+						journalLocation.setJournal(journalMap.get(publication.getPublicationId()));
 						publication.setJournalLocation(journalLocation, resultSet.getString("volume"), resultSet.getString("issue"),
 								resultSet.getString("first_page"), resultSet.getString("last_page"));
 					} else {
 						LOGGER.error("Article with id '"+publication.getPublicationId()+"' could not be located in a journal");
-						publication.setEmptyJournalLocation();
 					}
 					break;
 				case ONLINE_PUBLICATION:

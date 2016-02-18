@@ -10,10 +10,6 @@ public abstract class BookLocation extends PublicationLocation {
     @ApiObjectField(description = "The last page")
     private String lastPage;
 
-    BookLocation(PublicationType publicationType) {
-        super(publicationType);
-    }
-
     public String getFirstPage() {
         return firstPage;
     }

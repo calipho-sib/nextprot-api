@@ -1,6 +1,5 @@
 package org.nextprot.api.core.domain.publication;
 
-import com.google.common.base.Preconditions;
 import org.jsondoc.core.annotation.ApiObjectField;
 
 /**
@@ -13,13 +12,7 @@ public abstract class PublicationLocation {
     @ApiObjectField(description = "The publication container name")
     private String name;
 
-    PublicationLocation(PublicationType publicationType) {
-
-        Preconditions.checkNotNull(getPublicationType());
-        Preconditions.checkNotNull(publicationType);
-
-        Preconditions.checkState(getPublicationType() == publicationType);
-    }
+    public PublicationLocation() { }
 
     public void setName(String name) {
         this.name = name;

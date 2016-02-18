@@ -24,10 +24,6 @@ public class EditedVolumeBookLocation extends BookLocation implements Serializab
     @ApiObjectField(description = "The list of editors")
     private SortedSet<PublicationAuthor> editors = new TreeSet<>();
 
-    public EditedVolumeBookLocation(PublicationType publicationType) {
-        super(publicationType);
-    }
-
     public boolean hasEditors() {
         return !editors.isEmpty();
     }

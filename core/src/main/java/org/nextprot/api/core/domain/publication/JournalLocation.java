@@ -17,17 +17,6 @@ public class JournalLocation extends BookLocation implements Serializable {
     @ApiObjectField(description = "The journal issue")
     private String issue;
 
-    public JournalLocation(PublicationCvJournal journal) {
-        super(PublicationType.ARTICLE);
-
-        this.journal = journal;
-        this.setName(journal.getName());
-    }
-
-    public JournalLocation() {
-        super(PublicationType.ARTICLE);
-    }
-
     public long getJournalId() {
         return journal.getJournalId();
     }
@@ -64,8 +53,11 @@ public class JournalLocation extends BookLocation implements Serializable {
         this.issue = issue;
     }
 
-    @Override
     PublicationType getPublicationType() {
         return PublicationType.ARTICLE;
+    }
+
+    public void setJournal(PublicationCvJournal journal) {
+        this.journal = journal;
     }
 }

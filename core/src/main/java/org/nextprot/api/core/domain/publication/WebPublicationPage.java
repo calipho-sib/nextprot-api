@@ -11,10 +11,6 @@ public class WebPublicationPage extends PublicationLocation implements Serializa
 
     private String url;
 
-    public WebPublicationPage(PublicationType publicationType) {
-        super(publicationType);
-    }
-
     public String getUrl() {
         return url;
     }

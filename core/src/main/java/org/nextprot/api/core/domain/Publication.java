@@ -257,7 +257,7 @@ public class Publication implements Serializable{
 
 	public void setEditedVolumeBookLocation(String name, String publisher, String city, String firstPage, String lastPage) {
 
-		EditedVolumeBookLocation book = new EditedVolumeBookLocation(PublicationType.valueOfName(publicationType));
+		EditedVolumeBookLocation book = new EditedVolumeBookLocation();
 
 		book.setName(name);
 		book.setPublisher(publisher);
@@ -270,7 +270,7 @@ public class Publication implements Serializable{
 
 	public void setOnlineResourceLocation(String name, String url) {
 
-		WebPublicationPage webPage = new WebPublicationPage(PublicationType.valueOfName(publicationType));
+		WebPublicationPage webPage = new WebPublicationPage();
 		webPage.setName(name);
 		webPage.setUrl(url);
 
