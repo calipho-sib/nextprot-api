@@ -137,10 +137,10 @@ public class PublicationServiceImpl implements PublicationService {
 	 */
 	private void setAuthorsEditorsAndXrefs(Publication publication, Collection<PublicationAuthor> authorsAndEditors, Collection<? extends DbXref> xrefs){
 
-		SortedSet<PublicationAuthor> authorsAndEditorSet = new TreeSet<>(authorsAndEditors);
+		Set<PublicationAuthor> authorsAndEditorSet = new TreeSet<>(authorsAndEditors);
 
-		publication.setAuthors(Sets.filter(authorsAndEditorSet, AUTHOR_PREDICATE));
-		publication.setEditors(Sets.filter(authorsAndEditorSet, EDITOR_PREDICATE));
+		publication.setAuthors(new TreeSet<>(Sets.filter(authorsAndEditorSet, AUTHOR_PREDICATE)));
+		publication.setEditors(new TreeSet<>(Sets.filter(authorsAndEditorSet, EDITOR_PREDICATE)));
 		publication.setDbXrefs(new HashSet<>(xrefs));
 	}
 }
