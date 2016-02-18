@@ -59,5 +59,6 @@ public class JournalLocation extends BookLocation implements Serializable {
 
     public void setJournal(PublicationCvJournal journal) {
         this.journal = journal;
+        this.setName(journal.getName());
     }
 }
