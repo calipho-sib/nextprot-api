@@ -11,7 +11,7 @@ import java.util.List;
 import org.nextprot.api.core.utils.TerminologyUtils;
 
 public class Terminology implements Serializable {
-
+    
 	private static final long serialVersionUID = 4404147147281845675L;
 
 	private Long id;
@@ -19,6 +19,7 @@ public class Terminology implements Serializable {
 	private String name;
 	private String description;
 	private String ontology;
+	private String ontologyAltname;
 	//private List<String> sameAs = new ArrayList<>();
 
 	private List<String> parentAccession;
@@ -93,6 +94,13 @@ public class Terminology implements Serializable {
 		this.ontology = ontology;
 	}
 
+	public String getOntologyAltname() {
+			return ontologyAltname;
+	}
+
+	public void setOntologyAltname(String ontologyAltname) {
+		this.ontologyAltname = ontologyAltname;
+	}
 	
 	
 	public List<String> getChildAccession() {
@@ -170,6 +178,9 @@ public class Terminology implements Serializable {
 		sb.append("\n");
 		sb.append("ontology=");
 		sb.append(this.ontology);
+		sb.append("\n");
+		sb.append("ontologyAltname=");
+		sb.append(this.ontologyAltname);
 		sb.append("\n");
 		sb.append("ancestors=");
 		sb.append(this.parentAccession);

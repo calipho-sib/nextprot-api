@@ -75,6 +75,7 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 		Set<String> expectedCVancestors = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.CV_ANCESTORS));
 		Set<String> CvancestorsSet = new TreeSet<String>(cfb.getFieldValue(Fields.CV_ANCESTORS, List.class));
 		Assert.assertEquals(expectedCVancestors.size(), CvancestorsSet.size());
+		System.err.println("CV ancestors OK");
 		
 		// CV_SYNONYMS
 		List<String> synolist = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.CV_SYNONYMS);

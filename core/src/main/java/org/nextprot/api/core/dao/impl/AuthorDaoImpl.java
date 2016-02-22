@@ -48,10 +48,11 @@ public class AuthorDaoImpl implements AuthorDao {
 			author.setAuthorId(resultSet.getLong("pubauthor_id"));
 			author.setLastName(resultSet.getString("last_name"));
 			author.setInitials(resultSet.getString("initials"));
-			String name = resultSet.getString("fore_name").isEmpty() ? resultSet.getString("initials")  : resultSet.getString("fore_name");
+			//String name = resultSet.getString("fore_name").isEmpty() ? resultSet.getString("initials")  : resultSet.getString("fore_name");
+			// copiing initials when forename is empty was causing discrepencies in new solr indexes
+			author.setForeName(resultSet.getString("fore_name"));
 			author.setPerson(resultSet.getBoolean("is_person"));
 			author.setEditor(resultSet.getBoolean("is_editor"));
-			author.setForeName(name);
 			author.setSuffix(resultSet.getString("suffix"));
 			author.setRank(resultSet.getInt("rank"));
 			return author;

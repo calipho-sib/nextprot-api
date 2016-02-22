@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Terminology;
@@ -57,10 +59,15 @@ public class CVFieldBuilder extends FieldBuilder {
 			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
 			String category = term.getOntology();
 			List<String> ancestors = TerminologyUtils.getAllAncestors(term.getAccession(), terminologyservice);
+			Tree<Terminology> tree = this.terminologyservice.findTerminologyTreeList(TerminologyCv.valueOf(category), 10).get(0);
+
+			Set<String> ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
+			if(ancestors.size() != ancestors2.size()) System.err.println(cvac + " old: " + ancestors.size() + " new: " + ancestors2.size());
 			//System.err.println(ancestors.size() + " ancestors");
 			if(ancestors != null) 
+				//cv_ancestors_acs.addAll(ancestors);
 			  for (String ancestor : ancestors) {
-                  cv_ancestors_acs.add(ancestor); // No duplicate: this is a Set
+                  cv_ancestors_acs.add(ancestor); 
 			  }
 			List<String> synonyms = term.getSynonyms();
 			if(synonyms != null) { //if (term.getOntology().startsWith("Go")) System.err.println("adding: " + synonyms.get(0));

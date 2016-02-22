@@ -26,8 +26,10 @@ public abstract class SolrIndexer<T> {
 	public void add(T t) {
 
 		try {
-
-			docs.add(this.convertToSolrDocument(t));
+			SolrInputDocument doc = this.convertToSolrDocument(t); 
+			if (doc ==null) return;
+			
+			docs.add(doc);
 
 			if (docs.size() % BATCH_SIZE == 0) {
 				// System.err.println("sent " +docs.size() + " docs to solr so far");

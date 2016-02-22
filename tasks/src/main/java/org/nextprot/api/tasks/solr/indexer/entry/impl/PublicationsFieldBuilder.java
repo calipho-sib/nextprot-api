@@ -40,22 +40,26 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 			//System.err.println(Jinfo);			   
 			}
 			String title = currpubli.getTitle();
-			System.err.println(currpubli.getIsLargeScale() + " " + title);
+			//System.err.println("LS:" + currpubli.getIsLargeScale() + " " + title);
 			if(title.length() > 0) addField(Fields.PUBLICATIONS,title);
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();
 			for (PublicationAuthor currauthor : authors) {
 				String forename = currauthor.getForeName();
 				if(forename.contains(".")) // Submission author
 					addField(Fields.PUBLICATIONS, currauthor.getLastName() + "  " + currauthor.getInitials());
+				else if(!forename.isEmpty() ) // trim not to add spaces when forename/initials are empty
+					addField(Fields.PUBLICATIONS, (currauthor.getLastName() + " " + forename + " " + currauthor.getInitials()).trim());
 				else
-					addField(Fields.PUBLICATIONS, currauthor.getLastName() + " " + currauthor.getForeName() + " " + currauthor.getInitials());
+					addField(Fields.PUBLICATIONS, (currauthor.getLastName() + " " + currauthor.getInitials()).trim());
 				//if(currauthor.getLastName().contains("Consortium")) System.err.println(currauthor.getLastName());
+				//if(currauthor.getLastName().contains("Bergsten")) System.err.println("id: " + currpubli.getPublicationId() + " type: " + currpubli.getPublicationType() + " " + currauthor.getLastName());
 			}
 		}
 		
-		if(publi_computed_count > 0) addField(Fields.PUBLI_COMPUTED_COUNT, publi_computed_count);
-		if(publi_curated_count > 0) addField(Fields.PUBLI_CURATED_COUNT, publi_curated_count);
-		if(publi_large_scale_count > 0) addField(Fields.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
+		//if(publi_computed_count > 0) addField(Fields.PUBLI_COMPUTED_COUNT, publi_computed_count);
+		addField(Fields.PUBLI_COMPUTED_COUNT, publi_computed_count);
+		addField(Fields.PUBLI_CURATED_COUNT, publi_curated_count);
+		addField(Fields.PUBLI_LARGE_SCALE_COUNT, publi_large_scale_count);
 
 		// Based on the publications and the protein existence level we can compute informational score
 		int pe_level = entry.getOverview().getProteinExistenceLevel(); 
