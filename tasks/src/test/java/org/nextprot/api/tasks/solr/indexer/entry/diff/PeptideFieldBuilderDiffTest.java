@@ -18,9 +18,8 @@ public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 	@Ignore
 	public void testPeptides() {
 
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 10; i++) {
 			Entry entry = getEntry(i);
-			System.out.println(entry.getUniqueName());
 			testPeptides(entry);
 		}
 
@@ -33,6 +32,7 @@ public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 	public void testPeptides(Entry entry) {
 
 		String entryName = entry.getUniqueName();
+		System.out.println("Testing " + entryName);
 
 		Fields field = Fields.PEPTIDE;
 
