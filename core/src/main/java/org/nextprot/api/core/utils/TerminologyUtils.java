@@ -93,16 +93,20 @@ public class TerminologyUtils {
 			String db = fields.get(1);
 			String acc = fields.get(2);
 			String id = fields.get(3);
-			String linkurl = "nolink.org/%s";
-			if(fields.size() > 4) {linkurl = fields.get(4);}
+			String url = fields.get(4);
+			String linkurl = fields.get(5);
+
 			DbXref dbref = new DbXref();
+
 			dbref.setDatabaseName(db);
 			dbref.setAccession(acc);
 			dbref.setDatabaseCategory(dbcat);
+			dbref.setUrl(url);
 			dbref.setLinkUrl(linkurl);
 			dbref.setDbXrefId(Long.parseLong(id));
 			xrefs.add(dbref);
-			}
+		}
+
 		return xrefs;
 		
 	}
