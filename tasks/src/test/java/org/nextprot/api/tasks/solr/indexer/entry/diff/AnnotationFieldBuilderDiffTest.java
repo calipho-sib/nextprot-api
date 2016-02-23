@@ -29,7 +29,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	TerminologyService terminologyService;
 
 	@Test
-	//@Ignore
+	@Ignore
 	public void testAnnotationsAndFunctionalDescriptions() {
 
 		for(int i=0; i < 10; i++){
