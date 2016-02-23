@@ -31,7 +31,7 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 	public void testPublis() {
 		List<Long> allpubids = publicationService.findAllPublicationIds();
 		//System.err.println(allpubids.size() + " publications");
-		for(int i=0; i < 500; i++)
+		for(int i=0; i < 100; i++)
 		  {
 		  Long pubid = allpubids.get(i);
 		  String pubtype = publicationService.findPublicationById(pubid).getPublicationType();
