@@ -26,14 +26,16 @@ public class PublicationServiceImpl implements PublicationService {
 	private final static Predicate<PublicationAuthor> EDITOR_PREDICATE = new Predicate<PublicationAuthor>() {
 		@Override
 		public boolean apply(PublicationAuthor contributor) {
-			return contributor.isPerson() && contributor.isEditor();
+			//return contributor.isPerson() && contributor.isEditor();
+			return contributor.isEditor();
 		}
 	};
 
 	private final static Predicate<PublicationAuthor> AUTHOR_PREDICATE = new Predicate<PublicationAuthor>() {
 		@Override
 		public boolean apply(PublicationAuthor contributor) {
-			return contributor.isPerson() && !contributor.isEditor();
+			//return contributor.isPerson() && !contributor.isEditor();
+			return  !contributor.isEditor();
 		}
 	};
 

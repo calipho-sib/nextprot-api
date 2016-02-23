@@ -1,13 +1,5 @@
 package org.nextprot.api.core.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
-import java.util.TreeSet;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -16,8 +8,11 @@ import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.aop.InstrumentationAspect;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Terminology;
-//import org.nextprot.api.core.domain.TerminologyProperty;
 import org.nextprot.api.core.service.TerminologyService;
+
+import java.util.*;
+
+//import org.nextprot.api.core.domain.TerminologyProperty;
 
 public class TerminologyUtils {
 
@@ -90,26 +85,39 @@ public class TerminologyUtils {
 
 		if (xrefsstring == null) return null;
 		// Builds DbXref list from String of xrefs formatted as "dbcat, db, acc, linkurl" quartetss separated by pipes
-		List<DbXref> xrefs = new ArrayList<DbXref>();
+		List<DbXref> xrefs = new ArrayList<>();
 		List<String> allxrefs = Arrays.asList(xrefsstring.split(" \\| "));
-		for (String onexref: allxrefs) {
-			// The field separator from upstream SQL is a # since commas can occur in accessions
-			List<String> fields = Arrays.asList(onexref.split("# "));
-			//List<String> fields = Arrays.asList(onexref.split(", "));
-			String dbcat = fields.get(0);
-			String db = fields.get(1);
-			String acc = fields.get(2);
-			String linkurl = "nolink.org/%s";
-			if(fields.size() > 3) {linkurl = fields.get(3);}
-			//else {System.err.println("No link for: " + onexref);}
+		for (String onexref: allxrefs) {			
+			List<String> fields = Arrays.asList(onexref.split("\\^ "));
+
 			DbXref dbref = new DbXref();
-			dbref.setDatabaseName(db);
-			dbref.setAccession(acc);
-			dbref.setDatabaseCategory(dbcat);
-			dbref.setLinkUrl(linkurl);
-			//dbref.setDbXrefId(?);
-			xrefs.add(dbref);
+
+			dbref.setDatabaseCategory(fields.get(0));
+			dbref.setDatabaseName(fields.get(1));
+			dbref.setAccession(fields.get(2));
+			dbref.setDbXrefId(Long.parseLong(fields.get(3)));
+
+			String url = null;
+			String linkurl = null;
+
+			if (fields.size() > 4) {
+				url = fields.get(4);
+				if (fields.size() > 5)
+					linkurl = fields.get(5);
 			}
+
+			if (url == null || url.isEmpty() || url.equalsIgnoreCase("none")) {
+				dbref.setUrl("None");
+				dbref.setLinkUrl("None");
+				dbref.setResolvedUrl("None");
+			}
+			else {
+				dbref.setUrl(url);
+				dbref.setLinkUrl(linkurl);
+			}
+			xrefs.add(dbref);
+		}
+
 		return xrefs;
 		
 	}
