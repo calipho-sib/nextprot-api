@@ -3,9 +3,6 @@ package org.nextprot.api.commons.utils;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * Created by fnikitin on 31/08/15.
- */
 public class AuthorNameFormatterTest {
 
     private AuthorNameFormatter formatter = new AuthorNameFormatter();
@@ -102,5 +99,11 @@ public class AuthorNameFormatterTest {
     public void testFormatPublicationWithForenameContainingMultipleSpaces() {
 
         Assert.assertEquals("J.P.", formatter.formatForenameInitials("Jean   Paul"));
+    }
+
+    @Test
+    public void testWeirdFormatFromP02741() {
+
+        Assert.assertEquals("C.P.-Y.", formatter.formatForenameInitials("Christine P -Y"));
     }
 }

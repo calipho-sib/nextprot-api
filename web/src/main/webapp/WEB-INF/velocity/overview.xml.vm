@@ -10,11 +10,12 @@
         <recommended-name>
     #set ( $recommendedName = $entry.getOverview().getRecommendedProteinName() )
             <protein-name qualifier="#if($recommendedName.getQualifier())$recommendedName.getQualifier()#end">$recommendedName.name</protein-name>
-	#if($recommendedName.synonyms)
-	    #foreach($synName in $recommendedName.synonyms)
-	        <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
+	    #foreach($otherEntity in $recommendedName.getOtherRecommendedEntityNames())
+	        <protein-name qualifier="#if($otherEntity.getQualifier())$otherEntity.getQualifier()#end">$otherEntity.name</protein-name>
 	    #end
-	#end
+        #foreach($synName in $recommendedName.synonyms)
+            <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
+        #end
         </recommended-name>
 ## ----------------- ALTERNATIVE-NAMES (LIST) ------------------------------
         <alternative-name-list>
@@ -29,51 +30,72 @@
             </alternative-name>
     #end
         </alternative-name-list>
-    </protein-name-list>
+
+#if($entry.overview.isoformNames)
+    <isoform-name-list>
+    #foreach($isoformName in $entry.overview.isoformNames)
+        <isoform>
+            <isoform-name iso-name-type="recommended">$isoformName.name</isoform-name>
+            #if($isoformName.synonyms)
+                #foreach($synName in $isoformName.synonyms)
+                    <isoform-name iso-name-type="alternative">$synName.name</isoform-name>
+                #end
+            #end
+        </isoform>
+    #end
+    </isoform-name-list>
 #end
 
 ## ----------------- CLEAVED REGION NAMES ------------------------------
-#if($entry.overview.cleavedRegionNames)
-    <chain-list>
-    #foreach($entityName in $entry.overview.cleavedRegionNames)
-        <chain>
-            <recommended-name>
-	            <chain-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</chain-name>
-            </recommended-name>
-	   #if($entityName.synonyms)
-	        <alternative-name-list>
-	    #foreach($synonym in $entityName.synonyms)
-	            <alternative-name>
-		            <chain-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</chain-name>
-                </alternative-name>
-		#end
-	        </alternative-name-list>
-	    #end
-        </chain>
-	#end
-    </chain-list>
-#end
+    #if($entry.overview.cleavedRegionNames)
+        <chain-list>
+            #foreach($entityName in $entry.overview.cleavedRegionNames)
+                <chain>
+                    <recommended-name>
+                        <chain-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</chain-name>
+                        #foreach($otherEntity in $entityName.getOtherRecommendedEntityNames())
+                            <chain-name qualifier="#if($otherEntity.getQualifier())$otherEntity.getQualifier()#end">$otherEntity.name</chain-name>
+                        #end
+                    </recommended-name>
+                    #if($entityName.synonyms)
+                        <alternative-name-list>
+                            #foreach($synonym in $entityName.synonyms)
+                                <alternative-name>
+                                    <chain-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</chain-name>
+                                </alternative-name>
+                            #end
+                        </alternative-name-list>
+                    #end
+                </chain>
+            #end
+        </chain-list>
+    #end
 
 ## ----------------- FUNCTIONAL REGION NAMES ---------------------------
-#if($entry.overview.functionalRegionNames)
-    <region-list>
-    #foreach($entityName in $entry.overview.functionalRegionNames)
-        <region>
-            <recommended-name>
-	            <region-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</region-name>
-	        </recommended-name>
-	   #if($entityName.synonyms)
-	        <alternative-name-list>
-	    #foreach($synonym in $entityName.synonyms)
-	            <alternative-name>
-		            <region-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</region-name>
-		        </alternative-name>
-		#end
-	        </alternative-name-list>
-	    #end
-        </region>
-	#end
-    </region-list>
+    #if($entry.overview.functionalRegionNames)
+        <region-list>
+            #foreach($entityName in $entry.overview.functionalRegionNames)
+                <region>
+                    <recommended-name>
+                        <region-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</region-name>
+                        #foreach($otherEntity in $entityName.getOtherRecommendedEntityNames())
+                            <region-name qualifier="#if($otherEntity.getQualifier())$otherEntity.getQualifier()#end">$otherEntity.name</region-name>
+                        #end
+                    </recommended-name>
+                    #if($entityName.synonyms)
+                        <alternative-name-list>
+                            #foreach($synonym in $entityName.synonyms)
+                                <alternative-name>
+                                    <region-name qualifier="#if($synonym.getQualifier())$synonym.getQualifier()#end">$synonym.name</region-name>
+                                </alternative-name>
+                            #end
+                        </alternative-name-list>
+                    #end
+                </region>
+            #end
+        </region-list>
+    #end
+    </protein-name-list>
 #end
 
 ## ----------------- GENE NAMES ----------------------------------------

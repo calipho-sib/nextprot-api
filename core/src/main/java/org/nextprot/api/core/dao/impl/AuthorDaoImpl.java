@@ -1,9 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AuthorDao;
@@ -14,6 +10,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 @Repository
 public class AuthorDaoImpl implements AuthorDao {
@@ -50,6 +50,7 @@ public class AuthorDaoImpl implements AuthorDao {
 			author.setInitials(resultSet.getString("initials"));
 			String name = resultSet.getString("fore_name").isEmpty() ? resultSet.getString("initials")  : resultSet.getString("fore_name");
 			author.setPerson(resultSet.getBoolean("is_person"));
+			author.setEditor(resultSet.getBoolean("is_editor"));
 			author.setForeName(name);
 			author.setSuffix(resultSet.getString("suffix"));
 			author.setRank(resultSet.getInt("rank"));
@@ -66,6 +67,7 @@ public class AuthorDaoImpl implements AuthorDao {
 			author.setInitials(resultSet.getString("initials"));
 			author.setLastName(resultSet.getString("last_name"));
 			author.setPerson(resultSet.getBoolean("is_person"));
+			author.setEditor(resultSet.getBoolean("is_editor"));
 			String name = resultSet.getString("fore_name").isEmpty() ? resultSet.getString("initials")  : resultSet.getString("fore_name");
 			author.setForeName(name);
 			author.setSuffix(resultSet.getString("suffix"));

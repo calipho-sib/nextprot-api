@@ -8,7 +8,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.dao.AuthorDao;
-import org.nextprot.api.core.dao.CvJournalDao;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.Publication;
@@ -44,9 +43,6 @@ public class PublicationServiceTest {
 	@Mock
 	private DbXrefService dbXrefService;
 
-	@Mock
-	private CvJournalDao cvJournalDao;
-
 	@Before
 	public void init() {
 		MockitoAnnotations.initMocks(this);
@@ -65,7 +61,6 @@ public class PublicationServiceTest {
 		verify(publicationDao).findPublicationById(100L);
 		verify(authorDao).findAuthorsByPublicationId(1L);
 		verify(dbXrefDao).findDbXRefsByPublicationId(1L);
-		verify(cvJournalDao).findByPublicationId(1L);
 	}
 
 	@Ignore
@@ -92,7 +87,6 @@ public class PublicationServiceTest {
 		verify(publicationDao).findSortedPublicationsByMasterId(100L);
 		verify(authorDao, times(2)).findAuthorsByPublicationId(anyLong());
 		verify(dbXrefDao, times(2)).findDbXRefsByPublicationId(anyLong());
-		verify(cvJournalDao, times(2)).findByPublicationId(anyLong());
 	}
 
 	@Ignore
@@ -120,7 +114,6 @@ public class PublicationServiceTest {
 
 		verify(dbXrefService).findDbXRefByPublicationIds(Arrays.asList(1L));
 		verify(authorDao).findAuthorsByPublicationIds(Arrays.asList(1L));
-		verify(cvJournalDao).findCvJournalsByPublicationIds(Arrays.asList(1L));
 	}
 
 	@Ignore
@@ -146,8 +139,8 @@ public class PublicationServiceTest {
 		assertEquals(2, publications.get(1).getDbXrefs().size());
 		
 		// Journals
-		assertEquals("Pretty Revue of Science", publications.get(0).getCvJournal().getName());
-		assertEquals("Revue of Science", publications.get(1).getCvJournal().getName());
+		assertEquals("Pretty Revue of Science", publications.get(0).getJournalLocation().getName());
+		assertEquals("Revue of Science", publications.get(1).getJournalLocation().getName());
 		
 	}
 }

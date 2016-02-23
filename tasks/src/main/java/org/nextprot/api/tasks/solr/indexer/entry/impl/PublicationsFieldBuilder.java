@@ -1,16 +1,16 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.SortedSet;
-
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.SortedSet;
 
 @EntryFieldBuilder
 public class PublicationsFieldBuilder extends FieldBuilder {
@@ -30,12 +30,12 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 			if(currpubli.getIsComputed() == true) publi_computed_count++;
 			if(currpubli.getIsCurated() == true) publi_curated_count++;
 			if(currpubli.getIsLargeScale() == true) publi_large_scale_count++;
-			if(currpubli.getCvJournal() != null) {
+			if(currpubli.getJournalLocation() != null) {
 				//System.err.println("pubid: " + currpubli.getPublicationId());
 				//System.err.println("jid: " + currpubli.getCvJournal().getJournalId());
-				addField(Fields.PUBLICATIONS,currpubli.getCvJournal().getNLMid());
+				addField(Fields.PUBLICATIONS,currpubli.getJournalLocation().getNLMid());
 				//if(currpubli.getCvJournal().getName().contains("Nature genetics")) System.err.println("pubid: " + currpubli.getPublicationId());
-				Jinfo = currpubli.getCvJournal().getName() + " - " + currpubli.getCvJournal().getMedAbbrev(); // Index name and abbrev in the same token
+				Jinfo = currpubli.getJournalLocation().getName() + " - " + currpubli.getJournalLocation().getMedAbbrev(); // Index name and abbrev in the same token
 				addField(Fields.PUBLICATIONS,Jinfo);
 			//System.err.println(Jinfo);			   
 			}

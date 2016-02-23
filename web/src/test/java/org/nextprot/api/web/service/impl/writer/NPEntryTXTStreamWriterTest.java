@@ -1,6 +1,7 @@
 package org.nextprot.api.web.service.impl.writer;
 
 import org.junit.Test;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.service.ExportService;
 
@@ -13,9 +14,6 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Created by fnikitin on 12/08/15.
- */
 public class NPEntryTXTStreamWriterTest extends WebIntegrationBaseTest {
 
     @Test
@@ -32,6 +30,6 @@ public class NPEntryTXTStreamWriterTest extends WebIntegrationBaseTest {
 
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"), params);
 
-        assertEquals("#nb entries=2\nNX_P06213\nNX_P01308\n", out.toString());
+        assertEquals("#nb entries=2"+ StringUtils.CR_LF +"NX_P06213"+ StringUtils.CR_LF+"NX_P01308"+ StringUtils.CR_LF, out.toString());
     }
 }
