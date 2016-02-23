@@ -44,6 +44,7 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 			if(title.length() > 0) addField(Fields.PUBLICATIONS,title);
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();
 			for (PublicationAuthor currauthor : authors) {
+				//System.err.println("author: " + currauthor.toString());
 				String forename = currauthor.getForeName();
 				if(forename.contains(".")) // Submission author
 					addField(Fields.PUBLICATIONS, currauthor.getLastName() + "  " + currauthor.getInitials());
