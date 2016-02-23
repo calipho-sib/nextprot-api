@@ -31,7 +31,7 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 	public void testPublis() {
 		List<Long> allpubids = publicationService.findAllPublicationIds();
 		//System.err.println(allpubids.size() + " publications");
-		for(int i=0; i < 12000; i++)
+		for(int i=0; i < 500; i++)
 		  {
 		  Long pubid = allpubids.get(i);
 		  String pubtype = publicationService.findPublicationById(pubid).getPublicationType();
@@ -39,7 +39,7 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 		    testPublicationData(pubid);
 		  } 
 		
-		//testPublicationData(710790); // date precision 60 
+		//testPublicationData(6850164); 
 		//testPublicationData(710790); // date precision 60 
 		//testPublicationData(6725923); // date precision 10
 		//testPublicationData(7115344); // not in prev index
@@ -47,7 +47,8 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 
 	
 	public void testPublicationData(long pubid) {
-		
+		// Following pub ids have an affiliation which is embedded in the author's field
+		// if(pubid == 6850164 || pubid == 37476626 || pubid == 39173492 || pubid == 42825961 || pubid == 6945504 || pubid == 28036837) return;
 		String entry = Long.toString(pubid);
 		//System.err.println("Testing publi: " + entry);
 		SolrInputDocument solrDoc = pubindexer.convertToSolrDocument(publicationService.findPublicationById(pubid));
