@@ -88,22 +88,33 @@ public class TerminologyUtils {
 		List<String> allxrefs = Arrays.asList(xrefsstring.split(" \\| "));
 		for (String onexref: allxrefs) {
 			
-			List<String> fields = Arrays.asList(onexref.split(", "));
-			String dbcat = fields.get(0);
-			String db = fields.get(1);
-			String acc = fields.get(2);
-			String id = fields.get(3);
-			String url = fields.get(4);
-			String linkurl = fields.get(5);
+			List<String> fields = Arrays.asList(onexref.split("\\^ "));
 
 			DbXref dbref = new DbXref();
 
-			dbref.setDatabaseName(db);
-			dbref.setAccession(acc);
-			dbref.setDatabaseCategory(dbcat);
-			dbref.setUrl(url);
-			dbref.setLinkUrl(linkurl);
-			dbref.setDbXrefId(Long.parseLong(id));
+			dbref.setDatabaseCategory(fields.get(0));
+			dbref.setDatabaseName(fields.get(1));
+			dbref.setAccession(fields.get(2));
+			dbref.setDbXrefId(Long.parseLong(fields.get(3)));
+
+			String url = null;
+			String linkurl = null;
+
+			if (fields.size() > 4) {
+				url = fields.get(4);
+				if (fields.size() > 5)
+					linkurl = fields.get(5);
+			}
+
+			if (url == null || url.isEmpty() || url.equalsIgnoreCase("none")) {
+				dbref.setUrl("None");
+				dbref.setLinkUrl("None");
+				dbref.setResolvedUrl("None");
+			}
+			else {
+				dbref.setUrl(url);
+				dbref.setLinkUrl(linkurl);
+			}
 			xrefs.add(dbref);
 		}
 
