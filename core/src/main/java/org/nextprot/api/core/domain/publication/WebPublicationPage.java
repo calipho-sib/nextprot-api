@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * An online publication is accessible from the web
  */
-public class WebPublicationPage extends PublicationLocation implements Serializable {
+public class WebPublicationPage extends PublicationResourceLocator implements Serializable {
 
     private static final long serialVersionUID = 0L;
 

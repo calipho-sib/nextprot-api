@@ -11,7 +11,7 @@ import org.nextprot.api.core.dao.PublicationDao;
 import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationCvJournal;
-import org.nextprot.api.core.domain.publication.JournalLocation;
+import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.core.domain.publication.PublicationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -161,7 +161,7 @@ public class PublicationDaoImpl implements PublicationDao {
 			publication.setIsComputed(resultSet.getLong("is_computed")>0);
 
 			// set infos on publication medium, volume, issue, pages, journal, book...
-			setPublicationLocation(publication, resultSet);
+			setPublicationLocator(publication, resultSet);
 
 			// set publication title
 			setPublicationTitle(publication, resultSet);
@@ -231,7 +231,7 @@ public class PublicationDaoImpl implements PublicationDao {
 			publication.setTitle(title);
 		}
 
-		private void setPublicationLocation(Publication publication, ResultSet resultSet) throws SQLException {
+		private void setPublicationLocator(Publication publication, ResultSet resultSet) throws SQLException {
 
 			PublicationType pubType = PublicationType.valueOfName(publication.getPublicationType());
 
@@ -244,7 +244,7 @@ public class PublicationDaoImpl implements PublicationDao {
 					publication.setOnlineResourceLocation(resultSet.getString("volume"), resultSet.getString("title"));
 					break;
 				case ARTICLE:
-					JournalLocation journalLocation = new JournalLocation();
+					JournalResourceLocator journalLocation = new JournalResourceLocator();
 					CvJournal journal;
 
 					if (pubIdToJournalMap.containsKey(publication.getPublicationId())) {
@@ -263,7 +263,7 @@ public class PublicationDaoImpl implements PublicationDao {
 						}
 					}
 					journalLocation.setJournal(journal);
-					publication.setJournalLocation(journalLocation, resultSet.getString("volume"), resultSet.getString("issue"),
+					publication.setJournalResourceLocator(journalLocation, resultSet.getString("volume"), resultSet.getString("issue"),
 							resultSet.getString("first_page"), resultSet.getString("last_page"));
 			}
 		}
