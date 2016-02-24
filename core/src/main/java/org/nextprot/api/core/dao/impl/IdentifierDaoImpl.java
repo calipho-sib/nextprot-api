@@ -1,5 +1,7 @@
 package org.nextprot.api.core.dao.impl;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.IdentifierDao;
@@ -9,8 +11,10 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +44,20 @@ public class IdentifierDaoImpl implements IdentifierDao {
 	public List<Identifier> findIdentifiersByMaster(String uniqueName) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("uniqueName", uniqueName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("identifiers-by-master-unique-name"), params, new IdentifierRowMapper());
+
+		List<Identifier> ids = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("identifiers-by-master-unique-name"), params, new IdentifierRowMapper());
+
+		// See CALIPHOMISC-489
+		return new ArrayList<>(Collections2.filter(ids, new Predicate<Identifier>() {
+			@Override
+			public boolean apply(@Nullable Identifier identifier) {
+
+				if ("Ensembl".equals(identifier.getDatabase()) && !identifier.getName().startsWith("ENSG")) {
+					return false;
+				}
+				return true;
+			}
+		}));
 	}
 	
 	private static class IdentifierRowMapper implements ParameterizedRowMapper<Identifier> {
@@ -54,9 +71,7 @@ public class IdentifierDaoImpl implements IdentifierDao {
 
 			String typeClass = resultSet.getString("type_class");
 			identifier.setDatabaseCategory((DB_TYPE_NP1_NAMES.containsKey(typeClass)) ? DB_TYPE_NP1_NAMES.get(typeClass) : typeClass);
-			//identifier.setId(resultSet.getString("identifier_id"));
-			//identifier.setSynonymId(resultSet.getLong("syn_id"));
-			//identifier.setXrefId(resultSet.getLong("xref_id"));
+
 			return identifier;
 		}
 		
