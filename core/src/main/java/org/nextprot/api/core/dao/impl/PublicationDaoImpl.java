@@ -173,6 +173,7 @@ public class PublicationDaoImpl implements PublicationDao {
 
 			int cvDatePrecisionId = resultSet.getInt("cv_date_precision_id");
 
+			// There is no date defined for online publication
 			if (cvDatePrecisionId != 1) {
 
 				Date date = resultSet.getDate("publication_date");
