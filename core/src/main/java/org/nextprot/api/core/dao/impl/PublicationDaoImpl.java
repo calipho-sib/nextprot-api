@@ -8,6 +8,7 @@ import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.CvJournalDao;
 import org.nextprot.api.core.dao.PublicationDao;
+import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationCvJournal;
 import org.nextprot.api.core.domain.publication.JournalLocation;
@@ -123,11 +124,11 @@ public class PublicationDaoImpl implements PublicationDao {
 
 	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {
 
-		private final Map<Long, PublicationCvJournal> journalMap;
+		private final Map<Long, PublicationCvJournal> pubIdToJournalMap;
 
 		PublicationRowMapper(List<PublicationCvJournal> journals) {
 
-			this.journalMap = Maps.uniqueIndex(journals, new Function<PublicationCvJournal, Long>() {
+			this.pubIdToJournalMap = Maps.uniqueIndex(journals, new Function<PublicationCvJournal, Long>() {
 				@Override
 				public Long apply(PublicationCvJournal journal) {
 					return journal.getPublicationId();
@@ -196,46 +197,38 @@ public class PublicationDaoImpl implements PublicationDao {
 
 		private void setPublicationTitle(Publication publication, ResultSet resultSet) throws SQLException {
 
-			String pubType = publication.getPublicationType();
+			String title;
 
-			if (pubType.equals("ONLINE_PUBLICATION")) {
-				String titleForWebPage = resultSet.getString("title_for_web_resource");
-				publication.setTitle((titleForWebPage != null) ? titleForWebPage : "");
-			} else if (pubType.equals("SUBMISSION")) {
-				String title = resultSet.getString("title");
-				publication.setTitle(title);
+			switch(PublicationType.valueOfName(publication.getPublicationType())) {
+				case ONLINE_PUBLICATION:
+					String titleForWebPage = resultSet.getString("title_for_web_resource");
+					title = (titleForWebPage != null) ? titleForWebPage : "";
+					break;
+				case SUBMISSION:
+					title = resultSet.getString("title");
 
-				String subDB = "Submitted to " + resultSet.getString("submission_database");
-				if (subDB != null) {
+					String subDB = "Submitted to " + resultSet.getString("submission_database");
 					if (!title.startsWith(subDB)) { // add the submission database is necessary
-						//publication.setTitle(subDB + title);
 						publication.setSubmission(subDB);
 					}
-				}
-
-			} else {
-				publication.setTitle(resultSet.getString("title"));
-				String jprop = resultSet.getString("journal_from_property");
-				if(jprop != null)
-				  //System.err.println("jprop: " + jprop);
-					publication.setJournal_from_properties(jprop);
+					break;
+				default:
+					title = resultSet.getString("title");
 			}
 
 			// Post-process title
-			String title = publication.getTitle();
 			if (title.startsWith("["))
 				title = title.substring(1);
 			if (title.endsWith("]"))
 				title = title.substring(0, title.length() - 1);
 
 			if(title.length() > 1) {
-			  String penultimate = title.substring(title.length() - 2,title.length() - 1);
-			  if(penultimate.equals("]")) // Sometimes the closing bracket is inconstantly placed before the final dot (eg: pubid 10665637)
-				 title = title.substring(0, title.length() - 2) + ".";
+			  	String penultimate = title.substring(title.length() - 2,title.length() - 1);
+			  	if(penultimate.equals("]")) // Sometimes the closing bracket is inconstantly placed before the final dot (eg: pubid 10665637)
+					title = title.substring(0, title.length() - 2) + ".";
 			}
 			
-			//publication.setTitle(title.replace("[", "(").replace("]", ")")); // Replace internal square brackets by parenthesis (don't know why)
-			publication.setTitle(title); 
+			publication.setTitle(title);
 		}
 
 		private void setPublicationLocation(Publication publication, ResultSet resultSet) throws SQLException {
@@ -247,20 +240,31 @@ public class PublicationDaoImpl implements PublicationDao {
 					publication.setEditedVolumeBookLocation(resultSet.getString("volume"), resultSet.getString("publisher"), resultSet.getString("city"),
 						resultSet.getString("first_page"), resultSet.getString("last_page"));
 					break;
-				case ARTICLE:
-					if (journalMap.containsKey(publication.getPublicationId())) {
-
-						JournalLocation journalLocation = new JournalLocation();
-
-						journalLocation.setJournal(journalMap.get(publication.getPublicationId()));
-						publication.setJournalLocation(journalLocation, resultSet.getString("volume"), resultSet.getString("issue"),
-								resultSet.getString("first_page"), resultSet.getString("last_page"));
-					} else {
-						LOGGER.error("Article with id '"+publication.getPublicationId()+"' could not be located in a journal");
-					}
-					break;
 				case ONLINE_PUBLICATION:
 					publication.setOnlineResourceLocation(resultSet.getString("volume"), resultSet.getString("title"));
+					break;
+				case ARTICLE:
+					JournalLocation journalLocation = new JournalLocation();
+					CvJournal journal;
+
+					if (pubIdToJournalMap.containsKey(publication.getPublicationId())) {
+
+						journal = pubIdToJournalMap.get(publication.getPublicationId());
+					} else {
+						String journalName = resultSet.getString("journal_from_property");
+
+						if (journalName != null) {
+							journal = new CvJournal();
+							journal.setName(journalName);
+						}
+						else {
+							LOGGER.error("Article with publication id '" + publication.getPublicationId() + "' could not be located in a journal");
+							break;
+						}
+					}
+					journalLocation.setJournal(journal);
+					publication.setJournalLocation(journalLocation, resultSet.getString("volume"), resultSet.getString("issue"),
+							resultSet.getString("first_page"), resultSet.getString("last_page"));
 			}
 		}
 	}
