@@ -6,7 +6,7 @@ import org.nextprot.api.core.domain.PublicationCvJournal;
 
 import java.io.Serializable;
 
-public class JournalLocation extends BookLocation implements Serializable {
+public class JournalResourceLocator extends BookResourceLocator implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
