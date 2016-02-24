@@ -17,6 +17,7 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 
 	// TODO: @Ignore should be removed and this test fixed
 	@Ignore
+	@Test
 	public void testXrefs() {
 
 		for(int i=0; i < 10; i++){ testXrefs(getEntry(i)); } 
