@@ -150,6 +150,10 @@ public class Publication implements Serializable{
 		this.abstractText = abstractText;
 	}
 
+	public boolean hasPublicationDate() {
+		return publicationDate != null;
+	}
+
 	public Date getPublicationDate() {
 		return publicationDate;
 	}
@@ -344,10 +348,13 @@ public class Publication implements Serializable{
 		sb.append("authorsCnt=");
 		sb.append((this.authors != null) ? this.authors.size() : "null");
 		sb.append("\n");
-		sb.append("date=");
-		sb.append(this.publicationDate.toString());
-		sb.append("\n");
-		
+		// date is not defined for online publication type
+		if (hasPublicationDate()) {
+			sb.append("date=");
+			sb.append(this.publicationDate.toString());
+			sb.append("\n");
+		}
+
 		return sb.toString();
 	}
 }
