@@ -1,7 +1,6 @@
 package org.nextprot.api.tasks.solr.indexer.entry.diff;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
@@ -14,18 +13,13 @@ import java.util.TreeSet;
 
 public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 
-	// TODO: @Ignore should be removed and this test fixed
-	@Ignore
 	@Test
 	public void testNames() {
 
-		
 		 for(int i=0; i < 10; i++){ testNames(getEntry(i)); }
-		 
 
 		//Entry entry = getEntry("NX_P19099");
 		//testNames(entry);
-
 	}
 
 	public void testNames(Entry entry) {
