@@ -16,11 +16,16 @@ import java.util.TreeSet;
 public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 
 	// TODO: @Ignore should be removed and this test fixed
+	// TODO: testXrefs() should be called against a precise list of entries (see also NamesFieldBuilderDiffTest)
 	@Ignore
 	@Test
 	public void testXrefs() {
 
-		for(int i=0; i < 10; i++){ testXrefs(getEntry(i)); } 
+		// worked on jenkins failed locally with from the list below:
+		// Testing: NX_P20592
+		// Testing: NX_P20591 (testXrefs() failed for this one)
+
+		for(int i=0; i < 10; i++){ testXrefs(getEntry(i)); }
 		
 		//Entry entry = getEntry("NX_P20592");
 		//testXrefs(entry);
