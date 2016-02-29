@@ -8,9 +8,8 @@
 	Copyright (c) 2016 SIB Swiss Institute of Bioinformatics
 	Distributed under the Creative Commons Attribution-NoDerivs License
 *******************************************************************************-->
-<xs:schema targetNamespace="http://www.nextprot.org" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://www.nextprot.org" elementFormDefault="qualified">
-		   
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
 	<!-- Root element nextprot export definition begins -->
 	<xs:element name="nextprot-export">
 		<xs:annotation>
@@ -53,7 +52,7 @@
         </xs:annotation>	
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="neXtProt" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="nextprot" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="data-source-list" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
@@ -61,21 +60,21 @@
 	<!-- Release element definition ends -->
 
 	<!-- neXtProt element definition begins -->
-	<xs:element name="neXtProt">
+	<xs:element name="nextprot">
         <xs:annotation>
             <xs:documentation>Describes the neXtProt release.</xs:documentation>
         </xs:annotation>
 	    <xs:complexType>
 			<xs:sequence>
 				<xs:element ref="database-release" minOccurs="1" maxOccurs="1"/> 	
-				<xs:element ref="application-release"  minOccurs="1" maxOccurs="1"/> 	   
+				<xs:element ref="api-release"  minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
 	<!-- neXtProt definition ends -->	
 
 	<xs:element name="database-release" type="xs:date"/>	
-	<xs:element name="application-release" type="xs:normalizedString"/>
+	<xs:element name="api-release" type="xs:normalizedString"/>
 	
     <!-- Data source list element definition begins -->
     <xs:element name="data-source-list">
@@ -302,7 +301,11 @@
             <xs:documentation>Describes a protein name.</xs:documentation>
         </xs:annotation>
 		<xs:complexType>
-			<xs:attribute ref="qualifier" use="required"/>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute type="xs:string" name="qualifier" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
 		</xs:complexType>
 	</xs:element>	
     <!-- Protein name definition ends -->	
