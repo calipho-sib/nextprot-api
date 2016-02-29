@@ -20,7 +20,7 @@
 	<aop:aspectj-autoproxy />
 
 
-	<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean"
+	<!--<bean class="org.springframework.beans.factory.config.PropertiesFactoryBean"
 		id="pom">
 		<property name="locations">
 			<list>
@@ -28,6 +28,7 @@
 			</list>
 		</property>
 	</bean>
+	-->
 
 	<beans profile="!unit">
 		<bean id="serviceEntryValidation" class="org.nextprot.api.core.service.aop.ServiceEntryValidation" />
