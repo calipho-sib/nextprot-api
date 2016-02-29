@@ -1,821 +1,1347 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!-- *****************************************************************************
+	XML Schema Definition (XSD) for the neXtProt XML
+
+	Version: 	1.0
+	Date:		2016/01/25
+
+	Copyright (c) 2016 SIB Swiss Institute of Bioinformatics
+	Distributed under the Creative Commons Attribution-NoDerivs License
+*******************************************************************************-->
+<xs:schema targetNamespace="http://www.nextprot.org" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns="http://www.nextprot.org" elementFormDefault="qualified">
+		   
+	<!-- Root element nextprot export definition begins -->
 	<xs:element name="nextprot-export">
 		<xs:annotation>
-			<xs:documentation>NextProt schema</xs:documentation>
+			<xs:documentation>Describes the neXtProt XML export file.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<!--TODO   <xs:element ref="header" /> -->
-				<xs:element ref="entry-list" />
+				<xs:element ref="header" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="entry-list" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="copyright" minOccurs="0" maxOccurs="1"/>				
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="url" type="xs:string" />
-	<xs:element name="header">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="dbName" />
-				<xs:element ref="numberOfEntries" />
-				<xs:element ref="release" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="dbName" type="xs:normalizedString" />
-	<xs:element name="numberOfEntries" type="xs:integer" />
+    <!-- Root element nextprot export definition ends -->			 
+
+    <xs:element name="copyright" type="xs:string"/>
+	
+    <!-- Header element definition begins -->
+    <xs:element name="header">
+        <xs:annotation>
+            <xs:documentation>Describes the header.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="database-name" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="number-of-entries" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="release" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!-- Header definition ends -->	
+
+	<xs:element name="database-name" type="xs:normalizedString"/>
+	<xs:element name="number-of-entries" type="xs:integer"/>
+	
+	<!-- Release element definition begins -->	
 	<xs:element name="release">
+        <xs:annotation>
+            <xs:documentation>Describes the release.</xs:documentation>
+        </xs:annotation>	
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element ref="neXtProt" />
-				<xs:element ref="dataSources" />
+				<xs:element ref="neXtProt" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="data-source-list" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
+	<!-- Release element definition ends -->
+
+	<!-- neXtProt element definition begins -->
 	<xs:element name="neXtProt">
-		<xs:complexType>
+        <xs:annotation>
+            <xs:documentation>Describes the neXtProt release.</xs:documentation>
+        </xs:annotation>
+	    <xs:complexType>
 			<xs:sequence>
-				<xs:element ref="databaseRelease" />
-				<xs:element ref="applicationRelease" />
+				<xs:element ref="database-release" minOccurs="1" maxOccurs="1"/> 	
+				<xs:element ref="application-release"  minOccurs="1" maxOccurs="1"/> 	   
 			</xs:sequence>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="databaseRelease" type="xs:date" />
-	<xs:element name="applicationRelease" type="xs:string" />
-	<xs:element name="dataSources">
+	<!-- neXtProt definition ends -->	
+
+	<xs:element name="database-release" type="xs:date"/>	
+	<xs:element name="application-release" type="xs:normalizedString"/>
+	
+    <!-- Data source list element definition begins -->
+    <xs:element name="data-source-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of neXtProt data sources.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="data-source" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!-- Data source list definition ends -->	
+
+    <!-- Data source element definition begins -->	
+	<xs:element name="data-source">
+        <xs:annotation>
+            <xs:documentation>Describes a data source.</xs:documentation>
+        </xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="dataSource" />
+				<xs:element ref="url" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
+			<xs:attribute name="source" type="xs:normalizedString" use="required"/>
+			<xs:attribute name="description" type="xs:normalizedString" use="required"/>
+			<xs:attribute name="release" type="xs:normalizedString" use="required"/>
+			<xs:attribute name="last-import-date" type="xs:date" use="required"/>
+		</xs:complexType>
+	</xs:element>	
+    <!-- Data source definition ends -->
+
+	<xs:element name="url" type="xs:string"/>
+	
+    <!-- Entry list element definition begins -->
+    <xs:element name="entry-list">
+        <xs:annotation>
+            <xs:documentation>Describes a collection of neXtProt entries.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="entry" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!-- Entry list definition ends -->
+	
+	<!-- Entry element definition begins -->
+    <xs:element name="entry"> 
+        <xs:annotation>
+            <xs:documentation>Describes a neXtProt entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>    
+                <xs:element ref="overview" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="isoform-list" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="chromosomal-location-list" minOccurs="1" maxOccurs="1"/>  
+				<xs:element ref="genomic-mapping-list" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="identifier-list" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="annotation-list" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="publication-list" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="xref-list" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="experimental-context-list" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+			<xs:attribute ref="accession" use="required"/>
+			<xs:attribute ref="database" use="required"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="dataSource">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="url" />
+    <!-- Entry definition ends -->
+
+	<!-- Overview element definition begins -->
+    <xs:element name="overview">
+        <xs:annotation>
+            <xs:documentation>Describes the overview for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="protein-existence" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="protein-name-list" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="gene-list" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="family-list" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="history" minOccurs="1" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!-- Overview definition ends -->
+
+	<!-- Protein existence element definition begins -->
+    <xs:element name="protein-existence">
+        <xs:annotation>
+            <xs:documentation>Describes the protein existence value for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:attribute name="value" use="required"> 
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Evidence_at_protein_level"/>
+						<xs:enumeration value="Evidence_at_transcript_level"/>
+						<xs:enumeration value="Inferred_from_homology"/>
+						<xs:enumeration value="Predicted"/>
+						<xs:enumeration value="Uncertain"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <!-- Protein existence definition ends -->	
+
+	<!-- Protein name list element definition begins -->
+    <xs:element name="protein-name-list">
+        <xs:annotation>
+            <xs:documentation>Describes the names for the protein and parts thereof.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="recommended-name" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="alternative-name-list" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="chain-list" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="region-list" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
-			<xs:attribute name="source" use="required" type="xs:normalizedString" />
-			<xs:attribute name="description" use="required" type="xs:normalizedString" />
-			<xs:attribute name="release" use="required" type="xs:normalizedString" />
-			<xs:attribute name="last_import_date" use="required" type="xs:date" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="entry-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="entry" maxOccurs="unbounded" />
+        </xs:complexType>
+    </xs:element>	
+    <!-- Protein name list definition ends -->
+
+	<!-- Recommended name element definition begins -->
+    <xs:element name="recommended-name">
+        <xs:annotation>
+            <xs:documentation>Describes the recommended protein names for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="protein-name"/>
+				<xs:element ref="chain-name"/>
+				<xs:element ref="region-name"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Recommended name definition ends -->
+
+	<!-- Alternative name list element definition begins -->
+    <xs:element name="alternative-name-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of alternative protein names for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="alternative-name" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="entry">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="overview" />
-				<xs:element ref="isoform-list" />
-				<xs:element ref="annotations" />
-				<xs:element ref="keywords" />
-				<xs:element ref="interaction-list" minOccurs="0" />
-				<xs:element ref="chromosomal-location-list" minOccurs="0" />
-				<xs:element ref="genomic-mapping-list" minOccurs="0" />
-				<xs:element ref="identifiers" minOccurs="0" />
-				<xs:element ref="publications" minOccurs="0" />
-				<xs:element ref="xrefs" />
-				<xs:element ref="peptide-list" minOccurs="0"/>
-				<xs:element ref="antibody-list" minOccurs="0"/>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Alternative name list definition ends -->	
+
+	<!-- Alternative name element definition begins -->
+    <xs:element name="alternative-name">
+        <xs:annotation>
+            <xs:documentation>Describes the alternative protein names for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:choice>
+                <xs:element ref="protein-name"/>
+				<xs:element ref="chain-name"/>
+				<xs:element ref="region-name"/>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Alternative name definition ends -->
+
+	<!-- Chain list element definition begins -->
+    <xs:element name="chain-list">
+        <xs:annotation>
+            <xs:documentation>Describes the chains obtained upon cleavage for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="chain" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attribute name="accession" use="required" type="xs:normalizedString" />
-			<xs:attribute name="database" use="required" type="xs:normalizedString" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="overview">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="protein-existence" />
-				<xs:element ref="protein-name-list" />
-				<xs:element ref="additional-name-list" minOccurs="0"/>
-				<xs:element ref="functional-region-name-list" minOccurs="0"/>
-				<xs:element ref="cleaved-region-name-list" />
-				<xs:element ref="gene-name-list" />
-				<xs:element ref="family-list" minOccurs="0" />
-				<xs:element ref="history" />
+        </xs:complexType>
+    </xs:element>	
+    <!-- Chain list definition ends -->
+
+	<!-- Chain element definition begins -->
+    <xs:element name="chain">
+        <xs:annotation>
+            <xs:documentation>Describes a chain obtained upon cleavage for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="recommended-name" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="alternative-name-list" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="protein-existence">
-		<xs:complexType>
- 			<xs:attribute name="value" type="xs:string" /> 
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="additional-name-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="entity-name" maxOccurs="unbounded" />
+        </xs:complexType>
+    </xs:element>	
+    <!-- Chain definition ends -->	
+	
+	<!-- Region list element definition begins -->
+    <xs:element name="region-list">
+        <xs:annotation>
+            <xs:documentation>Describes the regions ("domains") for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="region" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="functional-region-name-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="entity-name" maxOccurs="unbounded" />
+        </xs:complexType>
+    </xs:element>	
+    <!-- Region list definition ends -->
+	
+	<!-- Region element definition begins -->
+    <xs:element name="region">
+        <xs:annotation>
+            <xs:documentation>Describes a regions ("domain") for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="recommended-name" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="alternative-name-list" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="biophysicochemical-properties">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="entity-name" maxOccurs="unbounded" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="cleaved-region-name-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="entity-name" maxOccurs="unbounded" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="protein-name-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="entity-name" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Region definition ends -->	
+	
+    <!-- Protein name element definition begins -->	
 	<xs:element name="protein-name">
+        <xs:annotation>
+            <xs:documentation>Describes a protein name.</xs:documentation>
+        </xs:annotation>
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="entity-name" />
+			<xs:attribute ref="qualifier" use="required"/>
+		</xs:complexType>
+	</xs:element>	
+    <!-- Protein name definition ends -->	
+
+    <!-- Chain name element definition begins -->	
+	<xs:element name="chain-name">
+        <xs:annotation>
+            <xs:documentation>Describes a protein chain name.</xs:documentation>
+        </xs:annotation>
+		<xs:complexType>
+			<xs:attribute ref="qualifier" use="required"/>
+		</xs:complexType>
+	</xs:element>	
+    <!-- Chain name definition ends -->	
+	
+    <!-- Region name element definition begins -->	
+	<xs:element name="region-name">
+        <xs:annotation>
+            <xs:documentation>Describes a protein region name.</xs:documentation>
+        </xs:annotation>
+		<xs:complexType>
+			<xs:attribute ref="qualifier" use="required"/>
+		</xs:complexType>
+	</xs:element>	
+    <!-- Region name definition ends -->	
+
+	<!-- Gene list element definition begins -->
+    <xs:element name="gene-list">
+        <xs:annotation>
+            <xs:documentation>Describes the genes for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="gene" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="additionalNames">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="entity-name" maxOccurs="unbounded" />
+        </xs:complexType>
+    </xs:element>	
+    <!-- Gene list definition ends -->
+
+	<!-- Gene element definition begins -->
+    <xs:element name="gene">
+        <xs:annotation>
+            <xs:documentation>Describes a gene.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="gene-name" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="functionalRegionNames">
+        </xs:complexType>
+    </xs:element>	
+    <!-- Gene definition ends -->
+
+    <!-- Gene name element definition begins -->	
+	<xs:element name="gene-name">
+        <xs:annotation>
+            <xs:documentation>Describes a gene name.</xs:documentation>
+        </xs:annotation>
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="entity-name" maxOccurs="unbounded" />
+			<xs:attribute name="type" use="required">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="primary"/>
+                        <xs:enumeration value="synonym"/>
+                        <xs:enumeration value="ordered locus"/>
+                        <xs:enumeration value="ORF"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:attribute>
+		</xs:complexType>
+	</xs:element>	
+    <!-- Gene name definition ends -->
+
+	<!-- Family list element definition begins -->
+    <xs:element name="family-list">
+        <xs:annotation>
+            <xs:documentation>Describes the protein families to which the entry belongs.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="family" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="gene-name-list">
-		<xs:complexType>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Family list definition ends -->
+	
+	<!-- Family element definition begins -->	
+    <xs:element name="family">
+        <xs:annotation>
+            <xs:documentation>Describes a protein family.</xs:documentation>
+        </xs:annotation>
+		<xs:complexType>      
 			<xs:sequence>
-				<xs:element ref="entity-name" minOccurs="1" />
+			    <xs:element ref="cv-term" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="family-region" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="family" minOccurs="0" maxOccurs="1" />
 			</xs:sequence>
+			<xs:attribute name="family-type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Superfamily"/>
+						<xs:enumeration value="Family"/>
+						<xs:enumeration value="Subfamily"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="entity-name">
-		<xs:complexType>
-			<xs:choice minOccurs="0" maxOccurs="unbounded">
-				<xs:element ref="synonyms" />
-			</xs:choice>
-			<xs:attribute name="value" type="xs:string" />
-			<xs:attribute name="is-main" use="required" type="xs:boolean" />
-			<xs:attribute name="qualifier" use="required" />
-			<xs:attribute name="type" use="required" type="nameType" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="synonyms">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="entity-name" />
+    </xs:element>	
+    <!-- Family definition ends -->	
+
+	<xs:element name="family-region" type="xs:string"/>	
+	
+	<!-- History element definition begins -->
+    <xs:element name="history">
+        <xs:annotation>
+            <xs:documentation>Describes the historical.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="entry-history" maxOccurs="2"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:simpleType name="nameType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="name" />
-			<xs:enumeration value="region name" />
-			<xs:enumeration value="enzyme name" />
-			<xs:enumeration value="gene name" />
-			<xs:enumeration value="allergen" />
-			<xs:enumeration value="CD antigen" />
-			<xs:enumeration value="International Nonproprietary Name" />
-			<xs:enumeration value="open reading frame" />
-			<xs:enumeration value="clone name" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:element name="family-list">
+        </xs:complexType>
+	</xs:element>	
+    <!-- History definition ends -->
+
+	<!-- Entry history element definition begins -->
+    <xs:element name="entry-history">
+        <xs:annotation>
+            <xs:documentation>Describes the history of a database entry.</xs:documentation>
+        </xs:annotation>
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="family" maxOccurs="unbounded" />
+			<xs:attribute ref="database" use="required"/>   
+			<xs:attribute name="integrated" type="xs:date" use="required"/>
+			<xs:attribute name="updated" type="xs:date" use="required"/>
+			<xs:attribute name="version" type="xs:integer" use="optional"/>
+			<xs:attribute name="last-sequence-update" type="xs:date" use="optional"/>
+			<xs:attribute name="sequence-version" type="xs:integer" use="optional"/>
+		</xs:complexType>
+    </xs:element>	
+    <!-- Entry history definition ends -->
+
+	<!-- Isoform list element definition begins -->
+    <xs:element name="isoform-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of isoforms for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="isoform" minOccurs="1" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="family">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="family-name" />
+        </xs:complexType>
+    </xs:element>	
+    <!-- Isoform list definition ends -->
+
+	<!-- Isoform element definition begins -->
+    <xs:element name="isoform">
+        <xs:annotation>
+            <xs:documentation>Describes an isoform of the entry. The attribute "canonical-isoform" describes the canonical isoform for the entry (synonym for swissprot-displayed-isoform).</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="entity-name" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element ref="sequence" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
-			<xs:attribute name="accession" use="required" type="xs:normalizedString" />
+			<xs:attribute ref="accession" use="required"/>
+			<xs:attribute ref="database" use="required"/>     
+			<xs:attribute name="canonical-isoform" type="xs:boolean" use="optional" default="false"/>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="family-name" type="xs:string" />
-	<xs:element name="history">
+    </xs:element>	
+    <!-- Isoform definition ends -->
+
+	<xs:element name="sequence" type="xs:string"/>	
+	
+	<!-- Entity name element definition begins -->
+    <xs:element name="entity-name">
+        <xs:annotation>
+            <xs:documentation>Describes an entity.</xs:documentation>
+        </xs:annotation>
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="history-entry" maxOccurs="2" />
+			<xs:attribute name="type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="name"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="value" type="xs:string" use="required"/>     
+			<xs:attribute name="is-main" type="xs:boolean" use="required"/>
+			<xs:attribute ref="qualifier" use="required"/>
+		</xs:complexType>
+    </xs:element>	
+    <!-- Entity name definition ends -->
+
+	<!-- Chromosomal location list element definition begins -->
+    <xs:element name="chromosomal-location-list">
+        <xs:annotation>
+            <xs:documentation>Describes the chromosomal locations for the gene coding for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="chromosomal-location"  minOccurs="1" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="history-entry">
+        </xs:complexType>
+    </xs:element>	
+    <!-- Chromosomal location list definition ends -->
+
+	<!-- Chromosomal location definition begins -->
+    <xs:element name="chromosomal-location">
+        <xs:annotation>
+            <xs:documentation>Describes a chromosomal location.</xs:documentation>
+        </xs:annotation>
 		<xs:complexType>
-			<xs:attribute name="database" use="required" />
-			<xs:attribute name="integrated" type="xs:date" use="required" />
-			<xs:attribute name="updated" type="xs:date" use="required" />
-			<xs:attribute name="version" type="xs:integer" use="optional" />
-			<xs:attribute name="last-sequence-update" type="xs:date" use="optional" />
-			<xs:attribute name="sequence-version" type="xs:integer" use="optional" />
+			<xs:attribute name="chromosome" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="1"/>
+						<xs:enumeration value="2"/>
+						<xs:enumeration value="3"/>
+						<xs:enumeration value="4"/>
+						<xs:enumeration value="5"/>
+						<xs:enumeration value="6"/>
+						<xs:enumeration value="7"/>
+						<xs:enumeration value="8"/>
+						<xs:enumeration value="9"/>
+						<xs:enumeration value="10"/>
+						<xs:enumeration value="11"/>
+						<xs:enumeration value="12"/>
+						<xs:enumeration value="13"/>
+						<xs:enumeration value="14"/>
+						<xs:enumeration value="15"/>
+						<xs:enumeration value="16"/>
+						<xs:enumeration value="17"/>
+						<xs:enumeration value="18"/>
+						<xs:enumeration value="19"/>
+						<xs:enumeration value="20"/>
+						<xs:enumeration value="21"/>
+						<xs:enumeration value="22"/>
+						<xs:enumeration value="X"/>
+						<xs:enumeration value="Y"/>
+						<xs:enumeration value="MT"/>
+						<xs:enumeration value="unknown"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>				
+			<xs:attribute name="band" type="xs:string" use="required"/>   
+			<xs:attribute name="strand" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:enumeration value="-1"/> <!-- minus strand -->
+						<xs:enumeration value="0"/> <!-- strand not known -->
+						<xs:enumeration value="1"/> <!-- plus strand -->
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute ref="accession" use="required"/>
+			<xs:attribute name="gene-start" type="xs:long" use="required"/>
+			<xs:attribute name="gene-end" type="xs:long" use="required"/>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="value" type="xs:string" />
-	<xs:element name="annotations">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="annotationList" />
+    </xs:element>	
+    <!-- Chromosomal location definition ends -->
+
+	<!-- Genomic mapping list element definition begins -->
+    <xs:element name="genomic-mapping-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of sequence mappings to the genome for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="genomic-mapping" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="annotationList">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="annotation" />
+        </xs:complexType>
+    </xs:element>	
+    <!-- Genomic mapping list definition ends -->
+
+	<!-- Genomic mapping element definition begins -->
+    <xs:element name="genomic-mapping">
+        <xs:annotation>
+            <xs:documentation>Describes a sequence mapping to the genome for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="isoform-mapping-list" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
-			<xs:attribute name="category" use="required" type="annotationType" />
+			<xs:attribute ref="accession" use="required"/>
+			<xs:attribute ref="database" use="required"/>
 		</xs:complexType>
-	</xs:element>
-	<xs:simpleType name="annotationType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="active site" />
-			<xs:enumeration value="allergen" />
-			<xs:enumeration value="amino acid modification" />
-			<xs:enumeration value="beta strand" />
-			<xs:enumeration value="binding site" />
-			<xs:enumeration value="biotechnology" />
-			<xs:enumeration value="calcium-binding region" />
-			<xs:enumeration value="catalytic activity" />
-			<xs:enumeration value="caution" />
-			<xs:enumeration value="cleavage site" />
-			<xs:enumeration value="coding sequence" />
-			<xs:enumeration value="cofactor" />
-			<xs:enumeration value="coiled-coil region" />
-			<xs:enumeration value="compositionally biased region" />
-			<xs:enumeration value="cross-link" />
-			<xs:enumeration value="developmental stage" />
-			<xs:enumeration value="disease" />
-			<xs:enumeration value="disulfide bond" />
-			<xs:enumeration value="DNA-binding region" />
-			<xs:enumeration value="domain" />
-			<xs:enumeration value="domain information" />
-			<xs:enumeration value="domain name" />
-			<xs:enumeration value="enzyme classification" />
-			<xs:enumeration value="enzyme regulation" />
-			<xs:enumeration value="expression info" />
-			<xs:enumeration value="family name" />
-			<xs:enumeration value="function" />
-			<xs:enumeration value="glycosylation site" />
-			<xs:enumeration value="go biological process" />
-			<xs:enumeration value="go cellular component" />
-			<xs:enumeration value="go molecular function" />
-			<xs:enumeration value="helix" />
-			<xs:enumeration value="induction" />
-			<xs:enumeration value="initiator methionine" />
-			<xs:enumeration value="interacting region" />
-			<xs:enumeration value="lipid moiety-binding region" />
-			<xs:enumeration value="maturation peptide" />
-			<xs:enumeration value="mature protein" />
-			<xs:enumeration value="metal ion-binding site" />
-			<xs:enumeration value="miscellaneous" />
-			<xs:enumeration value="mutagenesis site" />
-			<xs:enumeration value="non-consecutive residues" />
-			<xs:enumeration value="non-standard amino acid" />
-			<xs:enumeration value="non-terminal residue" />
-			<xs:enumeration value="nucleotide phosphate-binding region" />
-			<xs:enumeration value="pathway" />
-			<xs:enumeration value="pharmaceutical" />
-			<xs:enumeration value="polymorphism" />
-			<xs:enumeration value="PTM" />
-			<xs:enumeration value="region of interest" />
-			<xs:enumeration value="repeat" />
-			<xs:enumeration value="sequence caution" />
-			<xs:enumeration value="sequence conflict" />
-			<xs:enumeration value="sequence variant" />
-			<xs:enumeration value="short sequence motif" />
-			<xs:enumeration value="signal peptide" />
-			<xs:enumeration value="similarity" />
-			<xs:enumeration value="site" />
-			<xs:enumeration value="subcellular location" />
-			<xs:enumeration value="subcellular location info" />
-			<xs:enumeration value="subunit" />
-			<xs:enumeration value="tissue specificity" />
-			<xs:enumeration value="topological domain" />
-			<xs:enumeration value="transit peptide" />
-			<xs:enumeration value="transmembrane region" />
-			<xs:enumeration value="turn" />
-			<xs:enumeration value="uniprot keyword" />
-			<xs:enumeration value="unsure residue" />
-			<xs:enumeration value="zinc finger region" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:element name="annotation">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element minOccurs="0" ref="cvTerm" />
-				<xs:element minOccurs="0" ref="description" />
-				<xs:element minOccurs="0" ref="variant" />
-				<xs:element minOccurs="0" ref="properties" />
-				<xs:element minOccurs="0" ref="experimentalEvidences" />
-				<xs:element minOccurs="0" ref="evidences" />
-				<xs:element minOccurs="0" ref="target-isoform-list" />
+    </xs:element>	
+    <!-- Genomic mapping definition ends -->	
+	
+	<!-- Isoform mapping list definition begins -->
+    <xs:element name="isoform-mapping-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of sequence mappings to the genome for the isoforms of the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="isoform-mapping" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attribute name="uniqueName" use="optional" type="xs:NCName"/>
-			<xs:attribute name="qualityQualifier" use="required" type="qualityType" />
-		</xs:complexType>
-	</xs:element>
-	<xs:simpleType name="qualityType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="GOLD" />
-			<xs:enumeration value="SILVER" />
-			<xs:enumeration value="BRONZE" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:element name="cvTerm">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="cvName" type="xs:string" />
+        </xs:complexType>
+	</xs:element>	
+    <!-- Isoform mapping list definition ends -->	
+
+	<!-- Isoform mapping element definition begins -->
+    <xs:element name="isoform-mapping">
+        <xs:annotation>
+            <xs:documentation>Describes the sequence mappings to the genome for an isoform of the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="transcript-mapping-list" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
-			<xs:attribute name="accession" use="required" type="xs:normalizedString" />
+			<xs:attribute ref="accession" use="required"/>
+			<xs:attribute name="main-name" type="xs:string" use="required"/>	
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="description" type="xs:string" />
-	<xs:element name="variant">
-		<xs:complexType>
-			<xs:attribute name="original" use="optional" type="xs:string" />
-			<xs:attribute name="variation" use="optional" type="xs:string" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="evidences">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="evidence" />
+    </xs:element>	
+    <!-- Isoform mapping definition ends -->
+
+	<!-- Transcript mapping list definition begins -->
+    <xs:element name="transcript-mapping-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of transcript sequence mappings to the genome.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="transcript-mapping" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="evidence">
-		<xs:complexType>
-			<xs:attribute name="isNegative" use="required" type="xs:boolean" />
-			<xs:attribute name="qualifierType" use="required" type="evidenceType" />
-			<xs:attribute name="resourceAssocType" use="required" type="assocType" />
-			<xs:attribute name="resourceRef" use="required" type="xs:integer" />
-		</xs:complexType>
-	</xs:element>
-	<xs:simpleType name="evidenceType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="POTENTIAL" />
-			<xs:enumeration value="PROBABLE" />
-			<xs:enumeration value="BY_SIMILARITY" />
-			<xs:enumeration value="UNKNOWN" />
-			<xs:enumeration value="EXP" />
-			<xs:enumeration value="IDA" />
-			<xs:enumeration value="IPI" />
-			<xs:enumeration value="IMP" />
-			<xs:enumeration value="IGI" />
-			<xs:enumeration value="IEP" />
-			<xs:enumeration value="ISS" />
-			<xs:enumeration value="ISO" />
-			<xs:enumeration value="ISA" />
-			<xs:enumeration value="ISM" />
-			<xs:enumeration value="IGC" />
-			<xs:enumeration value="RCA" />
-			<xs:enumeration value="TAS" />
-			<xs:enumeration value="NAS" />
-			<xs:enumeration value="IC" />
-			<xs:enumeration value="ND" />
-			<xs:enumeration value="IEA" />
-			<xs:enumeration value="NR" />
-			<xs:enumeration value="IBA" />
-			<xs:enumeration value="IBD" />
-			<xs:enumeration value="IKR" />
-			<xs:enumeration value="IRD" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="assocType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="source" />
-			<xs:enumeration value="relative" />
-			<xs:enumeration value="evidence" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:element name="experimentalEvidences">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="experimentalEvidence" />
+        </xs:complexType>
+	</xs:element>	
+    <!-- Transcript mapping list definition ends -->
+
+	<!-- Transcript mapping element definition begins -->
+    <xs:element name="transcript-mapping">
+        <xs:annotation>
+            <xs:documentation>Describes a transcript sequence mapping to the genome.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="transcript-protein"/>
+                <xs:element ref="exon-list" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
+			<xs:attribute ref="accession" use="required"/>
+			<xs:attribute ref="database" use="required"/>
+			<xs:attribute ref="quality" use="required"/>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="experimentalEvidence">
+    </xs:element>	
+    <!-- Transcript mapping definition ends -->
+
+	<!-- Transcript protein element definition begins -->
+    <xs:element name="transcript-protein">
+        <xs:annotation>
+            <xs:documentation>Describes a protein sequence to which the transcript sequence maps.</xs:documentation>
+        </xs:annotation>
 		<xs:complexType>
-			<xs:attribute name="method" use="required" type="xs:normalizedString" />
-			<xs:attribute name="result" use="required" type="xs:normalizedString" />
+			<xs:attribute ref="accession" use="required"/>
+			<xs:attribute ref="database" use="required"/>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="properties">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="property" />
+    </xs:element>	
+    <!-- Transcript protein definition ends -->
+
+	<!-- Exon list definition begins -->
+    <xs:element name="exon-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of exons to which the transcript sequence maps.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="exon" minOccurs="1" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="property">
-		<xs:complexType>
-			<xs:attribute name="accession" use="optional" type="xs:normalizedString" />
-			<xs:attribute name="propertyName" use="required" type="xs:normalizedString" />
-			<xs:attribute name="value" use="required" type="xs:normalizedString" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="target-isoform-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="target-isoform" />
+        </xs:complexType>
+	</xs:element>	
+    <!-- Exon list definition ends -->
+
+	<!-- Exon element definition begins -->
+    <xs:element name="exon">
+        <xs:annotation>
+            <xs:documentation>Describes an exon.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="position-on-gene" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="amino-acid" minOccurs="0" maxOccurs="2"/>
 			</xs:sequence>
+			<xs:attribute name="rank" type="xs:positiveInteger" use="required"/>
+			<xs:attribute name="coding-status" use="required">
+				<xs:simpleType>  
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="START"/>
+						<xs:enumeration value="CODING"/>
+						<xs:enumeration value="STOP"/>
+						<xs:enumeration value="STOP_ONLY"/>
+						<xs:enumeration value="MONO"/>
+						<xs:enumeration value="NONE"/>
+						<xs:enumeration value="NOT_CODING"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute ref="accession" use="required"/>
+			<xs:attribute ref="database" use="required"/>
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="target-isoform">
+    </xs:element>	
+    <!-- Exon definition ends -->
+
+	<!-- Position on gene element definition begins -->
+	<xs:element name="position-on-gene">
+        <xs:annotation>
+            <xs:documentation>Describes the position on the gene.</xs:documentation>
+        </xs:annotation>
 		<xs:complexType>
-			<xs:sequence>
-				<xs:element minOccurs="0" ref="positions" />
-			</xs:sequence>
-			<xs:attribute name="accession" use="required" type="xs:normalizedString" />
+			<xs:attribute name="begin" type="xs:integer" use="required"/>
+			<xs:attribute name="end" type="xs:integer" use="required"/>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="positions">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="2" ref="position" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="position" type="positionType" />
-	<xs:complexType name="positionType">
-		<xs:attribute name="first" use="optional" type="xs:integer" />
-		<xs:attribute name="firstStatus" use="optional" default="certain" type="positionStatusType" />
-		<xs:attribute name="last" use="optional" type="xs:integer" />
-		<xs:attribute name="lastStatus" use="optional" default="certain" type="positionStatusType" />
-	</xs:complexType>
-	<xs:simpleType name="positionStatusType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="certain" />
-			<xs:enumeration value="unknown" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:element name="keywords">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element minOccurs="0" maxOccurs="unbounded" ref="keyword" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="keyword">
-		<xs:complexType>
-			<xs:attribute name="accession" use="required" type="xs:NCName" />
-			<xs:attribute name="kwName" use="required" type="xs:normalizedString" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="interaction-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="interaction" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="interaction">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="interactionXref" />
-				<xs:element maxOccurs="unbounded" ref="interactant" />
-				<xs:element minOccurs="0" ref="interactantXref" />
-				<xs:element ref="experiment-count" />
-			</xs:sequence>
-			<xs:attribute name="quality" use="required" type="qualityType" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="interactionXref">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="url" />
-			</xs:sequence>
-			<xs:attribute name="accession" use="required" />
-			<xs:attribute name="database" use="required" type="xs:NCName" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="interactant">
-		<xs:complexType>
-			<xs:attribute name="uniqueName" use="required" type="xs:NCName" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="interactantXref">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="url" />
-			</xs:sequence>
-			<xs:attribute name="accession" use="required" type="xs:NCName" />
-			<xs:attribute name="database" use="required" type="xs:NCName" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="experiment-count" type="xs:integer" />
-	<xs:element name="isoform-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="isoform" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="isoform">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="entity-name" minOccurs="0" />
-				<xs:element ref="sequence" />
-			</xs:sequence>
-			<xs:attribute name="swissprotDisplayedIsoform" type="xs:boolean" />
-			<xs:attribute name="accession" use="required" type="xs:NCName" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="sequence" type="xs:string" />
-	<xs:element name="chromosomal-location-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="chromosomal-location" minOccurs="0" maxOccurs="unbounded" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="chromosomal-location">
-		<xs:complexType>
-			<xs:attribute name="chromosome" use="required" type="xs:string" />
-			<xs:attribute name="band" type="xs:string" />
-			<xs:attribute name="strand" type="xs:integer" />
-			<xs:attribute name="accession" type="xs:NCName" />
-			<xs:attribute name="begin" type="xs:long" />
-			<xs:attribute name="end" type="xs:long" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="genomic-mapping-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element minOccurs="1" ref="genomic-mapping" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="genomic-mapping">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element minOccurs="1" ref="isoform-mapping-list" />
-			</xs:sequence>
-			<xs:attribute name="ensembl-gene" use="required" type="xs:NCName" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="isoform-mapping-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element minOccurs="0" maxOccurs="unbounded" ref="isoform-mapping" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="isoform-mapping">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="transcript-mapping-list" minOccurs="0" maxOccurs="unbounded" />
-			</xs:sequence>
-			<xs:attribute name="accession" use="required" type="xs:NCName" />
-			<xs:attribute name="main-name" use="required" type="xs:NCName" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="transcript-mapping-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element minOccurs="0" maxOccurs="unbounded" ref="transcript-mapping" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="transcript-mapping">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="exon-list" minOccurs="0" maxOccurs="1" />
-			</xs:sequence>
-			<xs:attribute name="ensembl-transcript" use="required" type="xs:NCName" />
-			<xs:attribute name="ensembl-protein" use="optional" type="xs:NCName" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="exon-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="exon" minOccurs="1" maxOccurs="unbounded"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="exon">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="position-on-gene" minOccurs="1" maxOccurs="1" />
-				<xs:element ref="amino-acid" minOccurs="0" maxOccurs="2" />
-			</xs:sequence>
-			<xs:attribute name="coding-status" use="required" type="codingStatusType" />
-			<xs:attribute name="ensembl-exon" use="optional" type="xs:NCName" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="position-on-gene"> 
-		<xs:complexType>
-			<xs:attribute name="begin" use="required" type="xs:integer" />
-			<xs:attribute name="end" use="required" type="xs:integer" />
-		</xs:complexType>
-	</xs:element>
+    <!-- Position on gene definition ends -->	
+
+	<!-- Amino acid element definition begins -->	
 	<xs:element name="amino-acid">
 		<xs:complexType>
-			<xs:attribute name="sequence" use="required" type="xs:NCName" />
-			<xs:attribute name="sequence-position" use="required" type="xs:integer" />
-			<xs:attribute name="phase" use="required" type="phaseValues" />
-		</xs:complexType>
-	</xs:element>
-	<xs:simpleType name="codingStatusType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="START" />
-			<xs:enumeration value="CODING" />
-			<xs:enumeration value="STOP" />
-			<xs:enumeration value="STOP_ONLY" />
-			<xs:enumeration value="MONO" />
-			<xs:enumeration value="NONE" />
-			<xs:enumeration value="NOT_CODING" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="rankType">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="first" />
-			<xs:enumeration value="last" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:simpleType name="phaseValues">
-		<xs:restriction base="xs:integer">
-			<xs:enumeration value="0" />
-			<xs:enumeration value="1" />
-			<xs:enumeration value="2" />
-		</xs:restriction>
-	</xs:simpleType>
-	<xs:element name="identifiers">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="identifier" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="identifier">
-		<xs:complexType>
-			<xs:attribute name="type" use="required" type="xs:string" />
-			<xs:attribute name="name" use="required" type="xs:string" />
-			<xs:attribute name="database" use="optional" type="xs:string" />
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="publications">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element minOccurs="0" maxOccurs="unbounded" ref="publication" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="publication">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="title" />
-				<xs:element ref="journal" />
-				<xs:element ref="pages" />
-				<xs:element ref="authors" />
-				<xs:element minOccurs="0" ref="xrefs" />
-			</xs:sequence>
-			<xs:attribute name="id" use="required" type="xs:integer">
-				<xs:annotation>
-					<xs:documentation>The id attribute is used to reference the publication within the XML
-						through resourceRef.
-					</xs:documentation>
-				</xs:annotation>
+			<xs:attribute name="rank" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="first"/>
+						<xs:enumeration value="last"/>
+					</xs:restriction>
+				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute name="type" use="required" type="xs:string" />
-			<!-- <xs:attribute name="type" use="required" type="xs:NCName" /> -->
+			<xs:attribute name="sequence-position" type="xs:integer" use="required"/>
+			<xs:attribute name="phase" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:integer">
+						<xs:enumeration value="0"/>
+						<xs:enumeration value="1"/>
+						<xs:enumeration value="2"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>	
+			<xs:attribute name="value" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="A"/> <!-- Alanine (Ala) -->
+						<xs:enumeration value="C"/> <!-- Cysteine (Cys) -->
+						<xs:enumeration value="D"/> <!-- Aspartate (Asp) -->
+						<xs:enumeration value="E"/> <!-- Glutamate (Glu) -->
+						<xs:enumeration value="F"/> <!-- Phenylalanine (Phe) -->
+						<xs:enumeration value="G"/> <!-- Glycine (Gly) -->
+						<xs:enumeration value="H"/> <!-- Histidine (His) -->
+						<xs:enumeration value="I"/> <!-- Isoleucine (Ile) -->
+						<xs:enumeration value="K"/> <!-- Lysine (Lys) -->
+						<xs:enumeration value="L"/> <!-- Leucine (Leu) -->
+						<xs:enumeration value="M"/> <!-- Methionine (Met) -->
+						<xs:enumeration value="N"/> <!-- Asparagine (Asn) -->
+						<xs:enumeration value="P"/> <!-- Proline (Pro) -->
+						<xs:enumeration value="Q"/> <!-- Glutamine (Gln) -->
+						<xs:enumeration value="R"/> <!-- Arginine (Arg)-->						
+						<xs:enumeration value="S"/> <!-- Serine (Ser) -->
+						<xs:enumeration value="T"/> <!-- Threonine (Thr) -->
+						<xs:enumeration value="U"/> <!-- Selenocysteine (Sec) -->
+						<xs:enumeration value="W"/> <!-- Tryptophan (Trp) -->						
+						<xs:enumeration value="Y"/> <!-- Tyrosine (Tyr) -->
+						<xs:enumeration value="V"/> <!-- Valine (Val) -->
+						<xs:enumeration value="X"/> <!-- Any amino acid (Xaa) -->
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>			
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="title" type="xs:string" />
-	<xs:element name="journal">
+    <!-- Amino acid definition ends -->
+	
+	<!-- Identifier list element definition begins -->
+    <xs:element name="identifier-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of identifiers for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="identifier" maxOccurs="unbounded"/>
+			</xs:sequence>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Identifier list definition ends -->
+
+	<!-- Identifier definition begins -->
+    <xs:element name="identifier">
+        <xs:annotation>
+            <xs:documentation>Describes an identifier.</xs:documentation>
+        </xs:annotation>
 		<xs:complexType>
-			<xs:attribute name="issue" use="required" />
-			<xs:attribute name="name" use="required" />
-			<xs:attribute name="volume" use="required" />
-			<xs:attribute name="year" use="required" type="xs:integer" />
+			<xs:attribute name="type" type="xs:string" use="required"/>
+			<xs:attribute name="category" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="ACCESSION CODES"/>
+						<xs:enumeration value="ADDITIONAL IDENTIFIERS"/>
+						<xs:enumeration value="CLONE NAMES"/>						
+						<xs:enumeration value="ENSEMBL"/>
+						<xs:enumeration value="MICROARRAY PROBE IDENTIFIERS"/>
+						<xs:enumeration value="NCBI"/>
+						<xs:enumeration value="UniProtKB"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>	
+			<xs:attribute ref="database" use="optional"/>      
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="pages">
-		<xs:complexType>
-			<xs:attribute name="first" use="required" />
-			<xs:attribute name="last" use="required" />
+    </xs:element>	
+    <!-- Identifier definition ends -->
+
+	<!-- Annotation list element definition begins -->
+    <xs:element name="annotation-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of annotations for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="annotation-category" maxOccurs="unbounded"/>
+			</xs:sequence>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Annotation list definition ends -->
+
+	<!-- Annotation category element definition begins -->
+    <xs:element name="annotation-category">
+        <xs:annotation>
+            <xs:documentation>Describes the categories of annotations for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="annotation" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="category" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="absorption-max"/>
+						<xs:enumeration value="absorption-note"/>
+						<xs:enumeration value="active-site"/>
+						<xs:enumeration value="allergen"/>
+						<xs:enumeration value="antibody-mapping"/>
+						<xs:enumeration value="beta-strand"/>
+						<xs:enumeration value="binary-interaction"/>
+						<xs:enumeration value="binding-site"/>
+						<xs:enumeration value="calcium-binding-region"/>
+						<xs:enumeration value="catalytic-activity"/>
+						<xs:enumeration value="caution"/>
+						<xs:enumeration value="cleavage-site"/>
+						<xs:enumeration value="cofactor"/>
+						<xs:enumeration value="coiled-coil-region"/>
+						<xs:enumeration value="compositionally-biased-region"/>
+						<xs:enumeration value="cross-link"/>
+						<xs:enumeration value="developmental-stage-info"/>
+						<xs:enumeration value="disease"/>
+						<xs:enumeration value="disulfide-bond"/>
+						<xs:enumeration value="dna-binding-region"/>
+						<xs:enumeration value="domain"/>
+						<xs:enumeration value="domain-info"/>
+						<xs:enumeration value="enzyme-classification"/>
+						<xs:enumeration value="enzyme-regulation"/>
+						<xs:enumeration value="expression-info"/>
+						<xs:enumeration value="expression-profile"/>
+						<xs:enumeration value="function-info"/>
+						<xs:enumeration value="glycosylation-site"/>
+						<xs:enumeration value="go-biological-process"/>
+						<xs:enumeration value="go-cellular-component"/>
+						<xs:enumeration value="go-molecular-function"/>
+						<xs:enumeration value="helix"/>
+						<xs:enumeration value="induction"/>
+						<xs:enumeration value="initiator-methionine"/>
+						<xs:enumeration value="interacting-region"/>
+						<xs:enumeration value="interaction-info"/>
+						<xs:enumeration value="intramembrane-region"/>
+						<xs:enumeration value="kinetic-km"/>
+						<xs:enumeration value="kinetic-note"/>
+						<xs:enumeration value="kinetic-vmax"/>
+						<xs:enumeration value="lipidation-site"/>
+						<xs:enumeration value="mature-protein"/>
+						<xs:enumeration value="metal-binding-site"/>
+						<xs:enumeration value="miscellaneous"/>
+						<xs:enumeration value="miscellaneous-region"/>
+						<xs:enumeration value="miscellaneous-site"/>
+						<xs:enumeration value="mitochondrial-transit-peptide"/>
+						<xs:enumeration value="modified-residue"/>
+						<xs:enumeration value="mutagenesis"/>
+						<xs:enumeration value="non-consecutive-residue"/>
+						<xs:enumeration value="non-terminal-residue"/>
+						<xs:enumeration value="nucleotide-phosphate-binding-region"/>
+						<xs:enumeration value="pathway"/>
+						<xs:enumeration value="pdb-mapping"/>
+						<xs:enumeration value="peptide-mapping"/>
+						<xs:enumeration value="peroxisome-transit-peptide"/>
+						<xs:enumeration value="ph-dependence"/>
+						<xs:enumeration value="pharmaceutical"/>
+						<xs:enumeration value="propeptide"/>
+						<xs:enumeration value="ptm-info"/>
+						<xs:enumeration value="redox-potential"/>
+						<xs:enumeration value="repeat"/>
+						<xs:enumeration value="selenocysteine"/>
+						<xs:enumeration value="sequence-caution"/>
+						<xs:enumeration value="sequence-conflict"/>
+						<xs:enumeration value="short-sequence-motif"/>
+						<xs:enumeration value="signal-peptide"/>
+						<xs:enumeration value="small-molecule-interaction"/>
+						<xs:enumeration value="srm-peptide-mapping"/>
+						<xs:enumeration value="subcellular-location"/>
+						<xs:enumeration value="subcellular-location-note"/>
+						<xs:enumeration value="temperature-dependence"/>
+						<xs:enumeration value="topological-domain"/>
+						<xs:enumeration value="transmembrane-region"/>
+						<xs:enumeration value="turn"/>
+						<xs:enumeration value="uniprot-keyword"/>
+						<xs:enumeration value="variant"/>
+						<xs:enumeration value="variant-info"/>
+						<xs:enumeration value="zinc-finger-region"/>
+					</xs:restriction>
+				</xs:simpleType>	
+			</xs:attribute>
+			<xs:attribute name="hierarchy" type="xs:string" use="required"/>   
 		</xs:complexType>
-	</xs:element>
-	<xs:element name="authors">
+    </xs:element>	
+    <!-- Annotation category definition ends -->
+
+	<!-- Annotation element definition begins -->
+    <xs:element name="annotation">
+        <xs:annotation>
+            <xs:documentation>Describes an annotation.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="cv-term" minOccurs="0"/>
+                <xs:element ref="description" minOccurs="0"/>
+                <xs:element ref="property-list" minOccurs="0"/>
+                <xs:element ref="evidence-list" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="target-isoform-list" minOccurs="1" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute ref="quality" use="required"/>       
+		</xs:complexType>
+    </xs:element>	
+    <!-- Annotation definition ends -->	
+
+	<xs:element name="description" type="xs:string"/>	
+	
+	<!-- Controlled vocabulary (cv) term element definition begins -->
+    <xs:element name="cv-term">
+        <xs:annotation>
+            <xs:documentation>Describes a controlled vocabulary term.</xs:documentation>
+        </xs:annotation>
 		<xs:complexType>
+			<xs:attribute name="terminology" type="xs:string" use="required"/>
+			<xs:attribute ref="accession" use="required"/>     
+		</xs:complexType>
+    </xs:element>	
+    <!-- cv term definition ends -->
+
+	<!-- Property list element definition begins -->
+    <xs:element name="property-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of properties.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="property" minOccurs="1"/>
+			</xs:sequence>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Property list definition ends -->
+
+	<!-- Property element definition begins -->
+    <xs:element name="property">
+        <xs:annotation>
+            <xs:documentation>Describes a property.</xs:documentation>
+        </xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="name" type="xs:normalizedString" use="required"/>
+			<xs:attribute name="value" type="xs:normalizedString" use="required"/>   
+			<xs:attribute name="value-type" type="xs:normalizedString" use="optional"/>
+			<xs:attribute ref="accession" use="optional"/>      
+		</xs:complexType>
+    </xs:element>	
+    <!-- Property term definition ends -->
+
+	<!-- Evidence list element definition begins -->
+    <xs:element name="evidence-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of evidences.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="evidence" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Evidence list definition ends -->
+
+	<!-- Evidence element definition begins -->
+    <xs:element name="evidence">
+        <xs:annotation>
+            <xs:documentation>Describes an evidence.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="property-list" minOccurs="0"/>
+			</xs:sequence>
+			<xs:attribute name="is-negative" type="xs:boolean" use="required"/>
+			<xs:attribute name="resource-internal-ref" type="xs:integer" use="required"/>
+			<xs:attribute name="resource-assoc-type" use="required">  
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="source" />
+						<xs:enumeration value="relative" />
+						<xs:enumeration value="evidence" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute ref="quality" use="required"/>
+			<xs:attribute name="resource-type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="database" />
+						<xs:enumeration value="publication" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>	
+			<xs:attribute name="source-internal-ref" type="xs:string" use="required"/>       
+		</xs:complexType>
+    </xs:element>	
+    <!-- Evidence definition ends -->
+
+	<!-- Target isoform list element definition begins -->
+    <xs:element name="target-isoform-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of target isoforms.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="target-isoform" minOccurs="1"/>
+			</xs:sequence>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Target isoform list definition ends -->
+
+	<!-- Target isoform element definition begins -->
+    <xs:element name="target-isoform">
+        <xs:annotation>
+            <xs:documentation>Describes a target isoform.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="location" minOccurs="1" maxOccurs="1"/>  
+			</xs:sequence>
+			<xs:attribute ref="accession" use="required"/>      
+			<xs:attribute name="specificity" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="BY_DEFAULT"/>
+						<xs:enumeration value="SPECIFIC"/>
+						<xs:enumeration value="UNKNOWN"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+    </xs:element>	
+    <!-- Target isoform definition ends -->
+
+	<!-- Location element definition begins -->
+    <xs:element name="location">
+        <xs:annotation>
+            <xs:documentation>Describes the location of a protein feature in a target isoform.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="begin"/>
+                <xs:element ref="end"/>
+			</xs:sequence>
+			<xs:attribute name="type" use="optional" default="range">  
+				<xs:simpleType>
+					<xs:restriction base="xs:string">			
+						<xs:enumeration value="cross-link"/>
+						<xs:enumeration value="disulfide-bond"/>
+						<xs:enumeration value="range"/>
+					</xs:restriction>	
+				</xs:simpleType>
+			</xs:attribute>			
+		</xs:complexType>
+    </xs:element>	
+    <!-- Location definition ends -->
+
+	<!-- Begin element definition begins -->
+    <xs:element name="begin">
+        <xs:annotation>
+            <xs:documentation>Describes the position where protein feature begins.</xs:documentation>
+        </xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="position" type="xs:integer" use="optional"/>
+			<xs:attribute ref="status" use="optional" default="ok"/>
+        </xs:complexType>
+	</xs:element>	
+    <!-- Begin definition ends -->
+	
+	<!-- End element definition begins -->
+    <xs:element name="end">
+        <xs:annotation>
+            <xs:documentation>Describes the position where protein feature ends.</xs:documentation>
+        </xs:annotation>
+		<xs:complexType>
+			<xs:attribute name="position" type="xs:integer" use="optional"/>
+			<xs:attribute ref="status" use="optional" default="ok"/>
+		</xs:complexType>
+	</xs:element>	
+    <!-- End definition ends -->	
+	
+	<!-- Publication list element definition begins -->
+    <xs:element name="publication-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of publications for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="publication" maxOccurs="unbounded"/>
+			</xs:sequence>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Publication list definition ends -->
+
+	<!-- Publication element definition begins -->
+    <xs:element name="publication">
+        <xs:annotation>
+            <xs:documentation>Describes a publication.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+			<xs:sequence>
+				<xs:element ref="title" minOccurs="0"/>
+				<xs:element ref="editor-list" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="author-list" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="xref-list" minOccurs="0" maxOccurs="unbounded"/>
+			</xs:sequence>
+			<xs:attribute name="publication-type" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="article"/>
+						<xs:enumeration value="book"/>
+						<xs:enumeration value="document"/>
+						<xs:enumeration value="online publication"/>
+						<xs:enumeration value="patent"/>
+						<xs:enumeration value="submission"/>
+						<xs:enumeration value="thesis"/>
+						<xs:enumeration value="unpublished observation"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="date" use="optional">
+				<xs:simpleType>
+					<xs:union memberTypes="xs:date xs:gYearMonth xs:gYear"/>
+				</xs:simpleType>
+			</xs:attribute>	
+			<xs:attribute name="name" type="xs:string" use="optional"/>
+			<xs:attribute name="volume" type="xs:string" use="optional"/>
+			<xs:attribute name="first" type="xs:string" use="optional"/>
+			<xs:attribute name="last" type="xs:string" use="optional"/>
+			<xs:attribute name="publisher" type="xs:string" use="optional"/>
+			<xs:attribute name="city" type="xs:string" use="optional"/>
+			<xs:attribute ref="database" use="optional"/>
+			<xs:attribute name="patent" type="xs:string" use="optional"/>
+			<xs:attribute name="institute" type="xs:string" use="optional"/>
+			<xs:attribute name="country" type="xs:string" use="optional"/>
+			<xs:attribute name="internal-id" type="xs:integer" use="required"/>		
+        </xs:complexType>
+	</xs:element>	
+    <!-- Publication definition ends -->
+
+	<xs:element name="title" type="xs:string"/>	
+
+	<xs:element name="editor-list">
+		<xs:annotation>
+			<xs:documentation>Describes the editors of a publication.</xs:documentation>
+		</xs:annotation>
+        <xs:complexType>		
 			<xs:choice maxOccurs="unbounded">
-				<xs:element minOccurs="0" maxOccurs="unbounded" ref="person" />
-				<xs:element minOccurs="0" maxOccurs="unbounded" ref="consortium" />
+				<xs:element ref="consortium"/>
+				<xs:element ref="person"/>
 			</xs:choice>
-		</xs:complexType>
+        </xs:complexType>
 	</xs:element>
-	<xs:element name="person">
-		<xs:complexType>
-			<xs:attribute name="name" use="required" />
-			<xs:attribute name="suffix" use="required" />
-		</xs:complexType>
+	
+	<xs:element name="author-list">
+		<xs:annotation>
+			<xs:documentation>Describes the authors of a publication.</xs:documentation>
+		</xs:annotation>
+        <xs:complexType>
+			<xs:choice maxOccurs="unbounded">
+				<xs:element ref="consortium"/>
+				<xs:element ref="person"/>
+			</xs:choice>
+        </xs:complexType>
 	</xs:element>
+	
 	<xs:element name="consortium">
-		<xs:complexType>
-			<xs:attribute name="name" use="required" />
-		</xs:complexType>
+		<xs:annotation>
+			<xs:documentation>Describes a consortium.</xs:documentation>
+		</xs:annotation>
+        <xs:complexType>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+        </xs:complexType>
 	</xs:element>
-	<xs:element name="xrefs">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="xref" />
+	
+	<xs:element name="person">
+		<xs:annotation>
+			<xs:documentation>Describes a person.</xs:documentation>
+		</xs:annotation>
+        <xs:complexType>
+			<xs:attribute name="name" type="xs:string" use="required"/>
+        </xs:complexType>
+	</xs:element>
+		
+	<!-- Cross-reference list element definition begins -->
+    <xs:element name="xref-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of cross-references for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="xref" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	<xs:element name="xref">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="properties" minOccurs="0" />
-				<xs:element ref="url" />
+        </xs:complexType>
+    </xs:element>	
+    <!-- Cross-reference list definition ends -->
+
+	<!-- Cross-reference element definition begins -->
+    <xs:element name="xref">
+        <xs:annotation>
+            <xs:documentation>Describes a cross-reference.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+				<xs:element ref="description" minOccurs="0"/>			
+				<xs:element ref="property-list" minOccurs="0"/>
+				<xs:element ref="url" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
-			<xs:attribute name="database" use="required" type="xs:string" />
-			<xs:attribute name="category" use="required" type="xs:string" />
-			<xs:attribute name="accession" use="required" type="xs:string" />
-			<xs:attribute name="id" use="required" type="xs:integer" />
+			<xs:attribute ref="database" use="required"/>
+			<xs:attribute name="xref-category" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="2D gel databases"/>						
+						<xs:enumeration value="3D structure databases"/>
+						<xs:enumeration value="Antibody databases"/>
+						<xs:enumeration value="Cell line collections"/>
+						<xs:enumeration value="Cell line databases/resources"/>
+						<xs:enumeration value="Chemistry"/>
+						<xs:enumeration value="Enzyme and pathway databases"/>
+						<xs:enumeration value="Family and domain databases"/>
+						<xs:enumeration value="Gene expression databases"/>
+						<xs:enumeration value="Genome annotation databases"/>
+						<xs:enumeration value="Ontologies"/>
+						<xs:enumeration value="Organism-specific databases"/>
+						<xs:enumeration value="Other"/>
+						<xs:enumeration value="PTM databases"/>
+						<xs:enumeration value="Phylogenomic databases"/>
+						<xs:enumeration value="Polymorphism and mutation databases"/>
+						<xs:enumeration value="Protein family/group databases"/>
+						<xs:enumeration value="Protein-protein interaction databases"/>
+						<xs:enumeration value="Proteomic databases"/>
+						<xs:enumeration value="Protocols and materials databases"/>
+						<xs:enumeration value="Publication databases"/>
+						<xs:enumeration value="Sequence databases"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute ref="accession" use="required"/>
+			<xs:attribute name="internal-id" type="xs:integer" use="required"/>       
 		</xs:complexType>
-	</xs:element>
-	
-	<!-- 	peptides  -->
-	<xs:element name="peptide-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="peptide"/>
+    </xs:element>	
+    <!-- Cross-reference definition ends -->
+
+	<!-- Experimental context list element definition begins -->
+    <xs:element name="experimental-context-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection of experimental contexts.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="experimental-context" minOccurs="1" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	
-	<xs:element name="peptide">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element minOccurs="0" ref="evidencesPep" />
-				<xs:element maxOccurs="unbounded" ref="target-isoform-list"/>
+        </xs:complexType>
+    </xs:element>	
+    <!-- Experimental context list definition ends -->
+
+	<!-- Experimental context element definition begins -->
+    <xs:element name="experimental-context">
+        <xs:annotation>
+            <xs:documentation>Describes an experimental context.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+				<xs:element ref="cv-term-list" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
-			<xs:attribute name="uniqueName" use="required" type="xs:string"/>
+			<xs:attribute name="internal-id" type="xs:integer" use="required"/>			
 		</xs:complexType>
-	</xs:element>
-	
-	<xs:element name="evidencesPep" >
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="evidencePep"/>
+    </xs:element>	
+    <!-- Experimental context definition ends -->
+
+	<!-- cv term list element definition begins -->
+    <xs:element name="cv-term-list">
+        <xs:annotation>
+            <xs:documentation>Describes a collection of controlled vocabulary (CV) terms.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+				<xs:element ref="cv-term" minOccurs="1" maxOccurs="unbounded"/>
 			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
+        </xs:complexType>
+    </xs:element>	
+    <!-- cv term list definition ends -->
 	
-	<!-- TODO Should this be different from evidence !!!!!!!!!!!!!!!!!!! ???????????????????????????????????? -->
-	<xs:element name="evidencePep">
-		<xs:complexType>
-			<xs:attribute name="accession" use="required" type="xs:string"/>
-			<xs:attribute name="database" use="required" type="xs:string"/>
-			<xs:attribute name="assignedBy" use="required" type="xs:string"/>
-		</xs:complexType>
-	</xs:element>
-	
-	
-	<!-- antibodies -->
-	<xs:element name="antibody-list">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" ref="antibody"/>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	
-	<xs:element name="antibody">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element maxOccurs="unbounded" name="url" type="xs:string"/>
-				<xs:element maxOccurs="unbounded" ref="target-isoform-list"/>
-			</xs:sequence>
-			<xs:attribute name="uniqueName" use="required" type="xs:string"/>
-			
-		</xs:complexType>
-	</xs:element>
-	
+    <!-- Definition of attributes used more than once starts  -->
+    <xs:attribute name="accession" type="xs:normalizedString"/>
+	<xs:attribute name="database" type="xs:normalizedString"/>
+	<xs:attribute name="qualifier">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="full"/>
+				<xs:enumeration value="short"/>
+				<xs:enumeration value="EC"/>
+				<xs:enumeration value="allergen"/>
+				<xs:enumeration value="CD antigen"/>
+				<xs:enumeration value="INN"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>		
+	<xs:attribute name="quality">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="GOLD"/>
+				<xs:enumeration value="SILVER"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>	
+	<xs:attribute name="status">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="ok"/>
+				<xs:enumeration value="uncertain"/>
+				<xs:enumeration value="unknown"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:attribute>		
+    <!-- Definition of attributes used more than once ends  -->
+	 
 </xs:schema>
-
-
