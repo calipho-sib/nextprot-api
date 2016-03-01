@@ -510,18 +510,18 @@
             <xs:documentation>Describes an isoform of the entry. The attribute "canonical-isoform" describes the canonical isoform for the entry (synonym for swissprot-displayed-isoform).</xs:documentation>
         </xs:annotation>
         <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="sequence" minOccurs="1" maxOccurs="1"/>
-			</xs:sequence>
-			<xs:attribute ref="accession" use="required"/>
-			<xs:attribute ref="database" use="required"/>
-			<xs:attribute name="canonical-isoform" type="xs:boolean" use="optional" default="false"/>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="name" type="xs:string" use="required"/>
+		    	    <xs:attribute ref="accession" use="required"/>
+			        <xs:attribute ref="database" use="required"/>
+		    	    <xs:attribute name="canonical-isoform" type="xs:boolean" use="optional" default="false"/>
+                </xs:extension>
+            </xs:simpleContent>
 		</xs:complexType>
     </xs:element>	
     <!-- Isoform definition ends -->
 
-	<xs:element name="sequence" type="xs:string"/>	
-	
 	<!-- Entity name element definition begins -->
     <xs:element name="entity-name">
         <xs:annotation>
@@ -835,6 +835,8 @@
             <xs:documentation>Describes an identifier.</xs:documentation>
         </xs:annotation>
 		<xs:complexType>
+            <xs:simpleType>
+            <xs:restriction base="xs:string">
 			<xs:attribute name="type" type="xs:string" use="required"/>
 			<xs:attribute name="category" use="required">
 				<xs:simpleType>
@@ -849,7 +851,7 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>	
-			<xs:attribute ref="database" use="optional"/>      
+			<xs:attribute ref="database" use="optional"/>
 		</xs:complexType>
     </xs:element>	
     <!-- Identifier definition ends -->
