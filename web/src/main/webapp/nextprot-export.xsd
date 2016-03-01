@@ -129,7 +129,7 @@
         <xs:complexType>
             <xs:sequence>    
                 <xs:element ref="overview" minOccurs="1" maxOccurs="1"/>
-				<xs:element ref="isoform-list" minOccurs="1" maxOccurs="1"/>
+				<xs:element ref="isoform-sequence-list" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="chromosomal-location-list" minOccurs="1" maxOccurs="1"/>  
 				<xs:element ref="genomic-mapping-list" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="identifier-list" minOccurs="1" maxOccurs="1"/>
@@ -192,7 +192,8 @@
                 <xs:element ref="recommended-name" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="alternative-name-list" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="chain-list" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="region-list" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="region-list" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="isoform-list" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
         </xs:complexType>
     </xs:element>	
@@ -208,6 +209,7 @@
                 <xs:element ref="protein-name"/>
 				<xs:element ref="chain-name"/>
 				<xs:element ref="region-name"/>
+                <xs:element ref="isoform-name"/>
             </xs:choice>
         </xs:complexType>
     </xs:element>	
@@ -224,7 +226,7 @@
 			</xs:sequence>
         </xs:complexType>
     </xs:element>	
-    <!-- Alternative name list definition ends -->	
+    <!-- Alternative name list definition ends -->
 
 	<!-- Alternative name element definition begins -->
     <xs:element name="alternative-name">
@@ -234,6 +236,9 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="protein-name" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="region-name" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="chain-name" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="isoform-name" minOccurs="1" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>	
@@ -291,8 +296,36 @@
 			</xs:sequence>
         </xs:complexType>
     </xs:element>	
-    <!-- Region definition ends -->	
-	
+    <!-- Region definition ends -->
+
+    <!-- Isoform list element definition begins -->
+    <xs:element name="isoform-list">
+        <xs:annotation>
+            <xs:documentation>Describes the isoforms for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="isoform" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!-- Isoform list definition ends -->
+
+    <!-- Isoform element definition begins -->
+    <xs:element name="isoform">
+        <xs:annotation>
+            <xs:documentation>Describes an isoform for the entry.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="recommended-name" minOccurs="1" maxOccurs="1"/>
+                <xs:element ref="alternative-name-list" minOccurs="0" maxOccurs="1"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <!-- Isoform definition ends -->
+
+
     <!-- Protein name element definition begins -->	
 	<xs:element name="protein-name">
         <xs:annotation>
@@ -328,9 +361,20 @@
 			<xs:attribute ref="qualifier" use="required"/>
 		</xs:complexType>
 	</xs:element>	
-    <!-- Region name definition ends -->	
+    <!-- Region name definition ends -->
 
-	<!-- Gene list element definition begins -->
+    <!-- Isoform name element definition begins -->
+    <xs:element name="isoform-name">
+        <xs:annotation>
+            <xs:documentation>Describes a protein isoform name.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:attribute ref="qualifier" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <!-- Isoform name definition ends -->
+
+    <!-- Gene list element definition begins -->
     <xs:element name="gene-list">
         <xs:annotation>
             <xs:documentation>Describes the genes for the entry.</xs:documentation>
@@ -444,31 +488,30 @@
     </xs:element>	
     <!-- Entry history definition ends -->
 
-	<!-- Isoform list element definition begins -->
-    <xs:element name="isoform-list">
+	<!-- Isoform sequence list element definition begins -->
+    <xs:element name="isoform-sequence-list">
         <xs:annotation>
-            <xs:documentation>Describes the collection of isoforms for the entry.</xs:documentation>
+            <xs:documentation>Describes the collection of isoforms sequence for the entry.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="isoform" minOccurs="1" maxOccurs="unbounded"/>
+                <xs:element ref="isoform-sequence" minOccurs="1" maxOccurs="unbounded"/>
 			</xs:sequence>
         </xs:complexType>
     </xs:element>	
-    <!-- Isoform list definition ends -->
+    <!-- Isoform sequence list definition ends -->
 
 	<!-- Isoform element definition begins -->
-    <xs:element name="isoform">
+    <xs:element name="isoform-sequence">
         <xs:annotation>
             <xs:documentation>Describes an isoform of the entry. The attribute "canonical-isoform" describes the canonical isoform for the entry (synonym for swissprot-displayed-isoform).</xs:documentation>
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="entity-name" minOccurs="0" maxOccurs="unbounded"/>
                 <xs:element ref="sequence" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 			<xs:attribute ref="accession" use="required"/>
-			<xs:attribute ref="database" use="required"/>     
+			<xs:attribute ref="database" use="required"/>
 			<xs:attribute name="canonical-isoform" type="xs:boolean" use="optional" default="false"/>
 		</xs:complexType>
     </xs:element>	
