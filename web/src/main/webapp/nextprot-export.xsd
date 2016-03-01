@@ -234,12 +234,12 @@
             <xs:documentation>Describes the alternative protein names for the entry.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="protein-name" minOccurs="1" maxOccurs="unbounded"/>
-                <xs:element ref="region-name" minOccurs="1" maxOccurs="unbounded"/>
-                <xs:element ref="chain-name" minOccurs="1" maxOccurs="unbounded"/>
-                <xs:element ref="isoform-name" minOccurs="1" maxOccurs="unbounded"/>
-            </xs:sequence>
+            <xs:choice maxOccurs="unbounded">
+                <xs:element ref="protein-name"/>
+                <xs:element ref="region-name"/>
+                <xs:element ref="chain-name"/>
+                <xs:element ref="isoform-name"/>
+            </xs:choice>
         </xs:complexType>
     </xs:element>	
     <!-- Alternative name definition ends -->
