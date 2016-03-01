@@ -191,9 +191,9 @@
             <xs:sequence>
                 <xs:element ref="recommended-name" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="alternative-name-list" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="isoform-list" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="chain-list" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="region-list" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="isoform-list" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
         </xs:complexType>
     </xs:element>	
@@ -339,7 +339,7 @@
             </xs:simpleContent>
 		</xs:complexType>
 	</xs:element>	
-    <!-- Protein name definition ends -->	
+    <!-- Protein name definition ends -->
 
     <!-- Chain name element definition begins -->	
 	<xs:element name="chain-name">
@@ -347,7 +347,11 @@
             <xs:documentation>Describes a protein chain name.</xs:documentation>
         </xs:annotation>
 		<xs:complexType>
-			<xs:attribute ref="qualifier" use="required"/>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+			        <xs:attribute ref="qualifier" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
 		</xs:complexType>
 	</xs:element>	
     <!-- Chain name definition ends -->	
@@ -357,9 +361,13 @@
         <xs:annotation>
             <xs:documentation>Describes a protein region name.</xs:documentation>
         </xs:annotation>
-		<xs:complexType>
-			<xs:attribute ref="qualifier" use="required"/>
-		</xs:complexType>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute ref="qualifier" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
 	</xs:element>	
     <!-- Region name definition ends -->
 
