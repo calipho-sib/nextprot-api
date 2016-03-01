@@ -204,7 +204,7 @@
             <xs:documentation>Describes the recommended protein names for the entry.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
-            <xs:choice>
+            <xs:choice maxOccurs="unbounded" minOccurs="0">
                 <xs:element ref="protein-name"/>
 				<xs:element ref="chain-name"/>
 				<xs:element ref="region-name"/>
@@ -232,11 +232,9 @@
             <xs:documentation>Describes the alternative protein names for the entry.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
-            <xs:choice>
-                <xs:element ref="protein-name"/>
-				<xs:element ref="chain-name"/>
-				<xs:element ref="region-name"/>
-            </xs:choice>
+            <xs:sequence>
+                <xs:element ref="protein-name" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
         </xs:complexType>
     </xs:element>	
     <!-- Alternative name definition ends -->
