@@ -369,7 +369,11 @@
             <xs:documentation>Describes a protein isoform name.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
-            <xs:attribute ref="qualifier" use="required"/>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute type="xs:string" name="qualifier" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
         </xs:complexType>
     </xs:element>
     <!-- Isoform name definition ends -->
@@ -394,31 +398,30 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="gene-name" maxOccurs="unbounded"/>
+                <xs:element name="gene-name" type="gene-nameType" maxOccurs="unbounded"/>
 			</xs:sequence>
         </xs:complexType>
     </xs:element>	
     <!-- Gene definition ends -->
 
-    <!-- Gene name element definition begins -->	
-	<xs:element name="gene-name">
-        <xs:annotation>
-            <xs:documentation>Describes a gene name.</xs:documentation>
-        </xs:annotation>
-		<xs:complexType>
-			<xs:attribute name="type" use="required">
-                <xs:simpleType>
-                    <xs:restriction base="xs:string">
-                        <xs:enumeration value="primary"/>
-                        <xs:enumeration value="synonym"/>
-                        <xs:enumeration value="ordered locus"/>
-                        <xs:enumeration value="ORF"/>
-                    </xs:restriction>
-                </xs:simpleType>
-            </xs:attribute>
-		</xs:complexType>
-	</xs:element>	
-    <!-- Gene name definition ends -->
+    <!-- Gene name type definition begins -->
+    <xs:complexType name="gene-nameType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="type" use="required">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="primary"/>
+                            <xs:enumeration value="synonym"/>
+                            <xs:enumeration value="ordered locus"/>
+                            <xs:enumeration value="ORF"/>
+                        </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <!-- Gene name type definition ends -->
 
 	<!-- Family list element definition begins -->
     <xs:element name="family-list">
