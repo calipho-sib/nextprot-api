@@ -835,23 +835,25 @@
             <xs:documentation>Describes an identifier.</xs:documentation>
         </xs:annotation>
 		<xs:complexType>
-            <xs:simpleType>
-            <xs:restriction base="xs:string">
-			<xs:attribute name="type" type="xs:string" use="required"/>
-			<xs:attribute name="category" use="required">
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:enumeration value="ACCESSION CODES"/>
-						<xs:enumeration value="ADDITIONAL IDENTIFIERS"/>
-						<xs:enumeration value="CLONE NAMES"/>						
-						<xs:enumeration value="ENSEMBL"/>
-						<xs:enumeration value="MICROARRAY PROBE IDENTIFIERS"/>
-						<xs:enumeration value="NCBI"/>
-						<xs:enumeration value="UniProtKB"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:attribute>	
-			<xs:attribute ref="database" use="optional"/>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="type" type="xs:string" use="required"/>
+                    <xs:attribute name="category" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="ACCESSION CODES"/>
+                                <xs:enumeration value="ADDITIONAL IDENTIFIERS"/>
+                                <xs:enumeration value="CLONE NAMES"/>
+                                <xs:enumeration value="ENSEMBL"/>
+                                <xs:enumeration value="MICROARRAY PROBE IDENTIFIERS"/>
+                                <xs:enumeration value="NCBI"/>
+                                <xs:enumeration value="UniProtKB"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute ref="database" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
 		</xs:complexType>
     </xs:element>	
     <!-- Identifier definition ends -->
