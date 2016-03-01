@@ -994,9 +994,9 @@
 			<xs:attribute ref="quality" use="required"/>       
 		</xs:complexType>
     </xs:element>	
-    <!-- Annotation definition ends -->	
+    <!-- Annotation definition ends -->
 
-	<xs:element name="description" type="xs:string"/>	
+	<xs:element name="description" type="xs:string"/>
 	
 	<!-- Controlled vocabulary (cv) term element definition begins -->
     <xs:element name="cv-term">
@@ -1004,8 +1004,12 @@
             <xs:documentation>Describes a controlled vocabulary term.</xs:documentation>
         </xs:annotation>
 		<xs:complexType>
-			<xs:attribute name="terminology" type="xs:string" use="required"/>
-			<xs:attribute ref="accession" use="required"/>     
+            <xs:simpleContent>
+            <xs:extension base="xs:string">
+    			<xs:attribute name="terminology" type="xs:string" use="required"/>
+	    		<xs:attribute ref="accession" use="required"/>
+            </xs:extension>
+            </xs:simpleContent>
 		</xs:complexType>
     </xs:element>	
     <!-- cv term definition ends -->
@@ -1057,6 +1061,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
+                <xs:element ref="cv-term" minOccurs="0"/>
                 <xs:element ref="property-list" minOccurs="0"/>
 			</xs:sequence>
 			<xs:attribute name="is-negative" type="xs:boolean" use="required"/>
