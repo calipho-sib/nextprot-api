@@ -987,6 +987,7 @@
             <xs:sequence>
                 <xs:element ref="cv-term" minOccurs="0"/>
                 <xs:element ref="description" minOccurs="0"/>
+                <xs:element ref="biological-object" minOccurs="0"/>
                 <xs:element ref="property-list" minOccurs="0"/>
                 <xs:element ref="evidence-list" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="target-isoform-list" minOccurs="1" maxOccurs="1"/>
@@ -1013,6 +1014,19 @@
 		</xs:complexType>
     </xs:element>	
     <!-- cv term definition ends -->
+
+    <xs:element name="biological-object">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute type="xs:string" name="bio-type" use="required"/>
+                    <xs:attribute type="xs:string" name="accession" use="optional"/>
+                    <xs:attribute type="xs:string" name="database" use="optional"/>
+                    <xs:attribute type="xs:int" name="resource-internal-ref" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
 
 	<!-- Property list element definition begins -->
     <xs:element name="property-list">
