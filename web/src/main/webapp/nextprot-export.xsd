@@ -1083,7 +1083,8 @@
 						<xs:enumeration value="publication" />
 					</xs:restriction>
 				</xs:simpleType>
-			</xs:attribute>	
+			</xs:attribute>
+            <xs:attribute name="experimental-context-internal-ref" type="xs:string" use="optional"/>
 			<xs:attribute name="source-internal-ref" type="xs:string" use="required"/>       
 		</xs:complexType>
     </xs:element>	
