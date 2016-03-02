@@ -214,6 +214,25 @@ public class Annotation implements Serializable, IsoformSpecific {
         return Collections.unmodifiableCollection(props);
     }
 
+	/**
+	 * Get an immutable collection of AnnotationProperty with the exception of propertyName
+     */
+	public Collection<AnnotationProperty> getPropertiesExceptName(String propertyName) {
+
+		Collection<AnnotationProperty> filterProps = new ArrayList<>();
+
+		Collection<AnnotationProperty> props = getProperties();
+
+		for (AnnotationProperty prop : props) {
+			if(!prop.getName().equals(propertyName)) {
+
+				filterProps.add(prop);
+			}
+		}
+
+		return Collections.unmodifiableCollection(filterProps);
+	}
+
     /**
      * Add properties into the map
      * @param props properties to add
