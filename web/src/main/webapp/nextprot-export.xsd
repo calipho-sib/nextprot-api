@@ -1105,7 +1105,7 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
-			<xs:attribute ref="quality" use="required"/>
+			<xs:attribute ref="quality" use="optional"/>
 			<xs:attribute name="resource-type" use="required">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
