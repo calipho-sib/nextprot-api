@@ -1228,13 +1228,13 @@
 				<xs:element ref="author-list" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="xref-list" minOccurs="0" maxOccurs="unbounded"/>
 			</xs:sequence>
-			<xs:attribute name="publication-type" use="required">
+			<xs:attribute name="type" use="required">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:enumeration value="article"/>
 						<xs:enumeration value="book"/>
 						<xs:enumeration value="document"/>
-						<xs:enumeration value="online publication"/>
+						<xs:enumeration value="online_publication"/>
 						<xs:enumeration value="patent"/>
 						<xs:enumeration value="submission"/>
 						<xs:enumeration value="thesis"/>
@@ -1331,7 +1331,7 @@
 				<xs:element ref="url" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 			<xs:attribute ref="database" use="required"/>
-			<xs:attribute name="xref-category" use="required">
+			<xs:attribute name="category" use="required">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:enumeration value="2D gel databases"/>						
