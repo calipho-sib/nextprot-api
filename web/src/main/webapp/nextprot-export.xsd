@@ -988,6 +988,7 @@
                 <xs:element ref="cv-term" minOccurs="0"/>
                 <xs:element ref="description" minOccurs="0"/>
                 <xs:element ref="biological-object" minOccurs="0"/>
+                <xs:element ref="variant" minOccurs="0"/>
                 <xs:element ref="property-list" minOccurs="0"/>
                 <xs:element ref="evidence-list" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="target-isoform-list" minOccurs="1" maxOccurs="1"/>
@@ -1015,6 +1016,7 @@
     </xs:element>	
     <!-- cv term definition ends -->
 
+    <!-- Biological object element definition begins -->
     <xs:element name="biological-object">
         <xs:complexType>
             <xs:simpleContent>
@@ -1027,6 +1029,7 @@
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
+    <!-- Biological object definition ends -->
 
 	<!-- Property list element definition begins -->
     <xs:element name="property-list">
@@ -1054,6 +1057,19 @@
 		</xs:complexType>
     </xs:element>	
     <!-- Property term definition ends -->
+
+    <!-- Variant element definition begins -->
+    <xs:element name="variant">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute type="xs:string" name="original" use="required"/>
+                    <xs:attribute type="xs:string" name="variation" use="required"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <!-- Variant definition ends -->
 
 	<!-- Evidence list element definition begins -->
     <xs:element name="evidence-list">
