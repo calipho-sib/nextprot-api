@@ -1437,6 +1437,7 @@
 	<xs:attribute name="quality">
 		<xs:simpleType>
 			<xs:restriction base="xs:string">
+                <xs:enumeration value="BRONZE"/>
 				<xs:enumeration value="GOLD"/>
 				<xs:enumeration value="SILVER"/>
 			</xs:restriction>
