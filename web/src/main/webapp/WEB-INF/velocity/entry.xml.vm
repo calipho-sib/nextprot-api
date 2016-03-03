@@ -5,7 +5,7 @@
     #if($entry.genomicMappings) #parse('genomic-mapping-list.xml.vm') #end
     #if($entry.identifiers) #parse('identifier-list.xml.vm') #end
     #if($entry.annotations) #parse('annotation-list.xml.vm') #end
-    ## #if($NXUtils.hasMappings($entry)) #parse('mapping-list.xml.vm') #end
+    #if($NXUtils.hasMappings($entry)) #parse('mapping-list.xml.vm') #end
     #if($entry.publications) #parse('publication-list.xml.vm') #end
     #if($entry.xrefs) #parse('xref-list.xml.vm') #end
 	#if($entry.experimentalContexts) #parse('experimental-context-list.xml.vm') #end	
