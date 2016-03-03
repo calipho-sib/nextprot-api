@@ -191,9 +191,9 @@
             <xs:sequence>
                 <xs:element ref="recommended-name" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="alternative-name-list" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="isoform-list" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="chain-list" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="region-list" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="isoform-list" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
         </xs:complexType>
     </xs:element>	

@@ -31,30 +31,6 @@
     #end
         </alternative-name-list>
 
-    #if($entry.overview.isoformNames)
-        <isoform-list>
-            #foreach($entityName in $entry.overview.isoformNames)
-                <isoform>
-                    <recommended-name>
-                        <isoform-name>$entityName.name</isoform-name>
-                        #foreach($otherEntity in $entityName.getOtherRecommendedEntityNames())
-                            <isoform-name>$otherEntity.name</isoform-name>
-                        #end
-                    </recommended-name>
-                    #if(!$entityName.synonyms.isEmpty())
-                        <alternative-name-list>
-                          <alternative-name>
-                            #foreach($synonym in $entityName.synonyms)
-                                <isoform-name>$synonym.name</isoform-name>
-                            #end
-                            </alternative-name>
-                        </alternative-name-list>
-                    #end
-                </isoform>
-            #end
-        </isoform-list>
-    #end
-
 ## ----------------- CLEAVED REGION NAMES ------------------------------
     #if($entry.overview.cleavedRegionNames)
         <chain-list>
@@ -104,6 +80,31 @@
             #end
         </region-list>
     #end
+
+    #if($entry.overview.isoformNames)
+        <isoform-list>
+            #foreach($entityName in $entry.overview.isoformNames)
+                <isoform>
+                    <recommended-name>
+                        <isoform-name>$entityName.name</isoform-name>
+                        #foreach($otherEntity in $entityName.getOtherRecommendedEntityNames())
+                            <isoform-name>$otherEntity.name</isoform-name>
+                        #end
+                    </recommended-name>
+                    #if(!$entityName.synonyms.isEmpty())
+                        <alternative-name-list>
+                            <alternative-name>
+                                #foreach($synonym in $entityName.synonyms)
+                                    <isoform-name>$synonym.name</isoform-name>
+                                #end
+                            </alternative-name>
+                        </alternative-name-list>
+                    #end
+                </isoform>
+            #end
+        </isoform-list>
+    #end
+
     </protein-name-list>
 #end
 
