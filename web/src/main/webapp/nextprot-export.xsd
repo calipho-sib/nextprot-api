@@ -191,7 +191,7 @@
             <xs:sequence>
                 <xs:element ref="recommended-name" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="alternative-name-list" minOccurs="0" maxOccurs="1"/>
-                <xs:element ref="isoform-list" minOccurs="0" maxOccurs="1"/>
+                <xs:element ref="isoform-list" minOccurs="1" maxOccurs="1"/>
 				<xs:element ref="chain-list" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="region-list" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
@@ -334,7 +334,7 @@
 		<xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="xs:string">
-                    <xs:attribute type="xs:string" name="qualifier" use="required"/>
+                    <xs:attribute ref="qualifier" use="required"/>
                 </xs:extension>
             </xs:simpleContent>
 		</xs:complexType>
@@ -406,30 +406,35 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element name="gene-name" type="gene-nameType" maxOccurs="unbounded"/>
+                <xs:element ref="gene-name" maxOccurs="unbounded"/>
 			</xs:sequence>
         </xs:complexType>
     </xs:element>	
     <!-- Gene definition ends -->
 
-    <!-- Gene name type definition begins -->
-    <xs:complexType name="gene-nameType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="type" use="required">
-                    <xs:simpleType>
-                        <xs:restriction base="xs:string">
-                            <xs:enumeration value="primary"/>
-                            <xs:enumeration value="synonym"/>
-                            <xs:enumeration value="ordered locus"/>
-                            <xs:enumeration value="ORF"/>
-                        </xs:restriction>
-                  </xs:simpleType>
-                </xs:attribute>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
-    <!-- Gene name type definition ends -->
+    <!-- Gene name element definition begins -->
+    <xs:element name="gene-name">
+        <xs:annotation>
+            <xs:documentation>Describes a gene name.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="type" use="required">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="primary"/>
+                                <xs:enumeration value="synonym"/>
+                                <xs:enumeration value="ordered locus"/>
+                                <xs:enumeration value="ORF"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+    <!-- Gene name definition ends -->
 
 	<!-- Family list element definition begins -->
     <xs:element name="family-list">
@@ -502,7 +507,7 @@
 	<!-- Isoform sequence list element definition begins -->
     <xs:element name="isoform-sequence-list">
         <xs:annotation>
-            <xs:documentation>Describes the collection of isoforms sequence for the entry.</xs:documentation>
+            <xs:documentation>Describes the collection of isoform sequences for the entry.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
@@ -1021,7 +1026,7 @@
         <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="xs:string">
-                    <xs:attribute type="xs:string" name="bio-type" use="required"/>
+                    <xs:attribute type="xs:string" name="bio-type" use="required"/> <!-- <xs:enumeration value="protein"/> ... -->
                     <xs:attribute type="xs:string" name="accession" use="optional"/>
                     <xs:attribute type="xs:string" name="database" use="optional"/>
                     <xs:attribute type="xs:int" name="resource-internal-ref" use="optional"/>
