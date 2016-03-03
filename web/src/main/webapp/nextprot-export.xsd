@@ -2,13 +2,12 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
-	Version: 	1.0
-	Date:		2016/01/25
+	Date:		2016/03/03
 
 	Copyright (c) 2016 SIB Swiss Institute of Bioinformatics
 	Distributed under the Creative Commons Attribution-NoDerivs License
 *******************************************************************************-->
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema version="1.0" attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 	<!-- Root element nextprot export definition begins -->
 	<xs:element name="nextprot-export">
