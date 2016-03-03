@@ -1,18 +1,7 @@
-<isoform-list>
+<isoform-sequence-list>
 	#foreach($isoform in $entry.isoforms)
-	<isoform accession='$isoform.uniqueName' database='neXtProt' #if($isoform.isSwissProtDisplayedIsoform()) canonical-isoform='true' #end>
-	#if($isoform.mainEntityName)
-	<entity-name type='$isoform.mainEntityName.type' value='$isoform.mainEntityName.value' is-main='true' qualifier='#if($isoform.mainEntityName.qualifier)$isoform.mainEntityName.qualifier#end'>
-		#if($isoform.synonyms.size() > 0)
-		<synonym-list>
-			#foreach($synonym in $isoform.synonyms)
-              <entity-name type='$synonym.type' value='$synonym.value' is-main='false' qualifier='#if($synonym.qualifier)$synonym.qualifier#end'/>
-			#end
-        </synonym-list>
-        #end
-	</entity-name>
+	<isoform-sequence name='$isoform.mainEntityName.value' accession='$isoform.uniqueName' database='neXtProt' #if($isoform.isSwissProtDisplayedIsoform()) canonical-isoform='true' #end>
+		$isoform.sequence
+	</isoform-sequence>
 	#end
-	<sequence>$isoform.sequence</sequence>
-	</isoform>
-	#end
-</isoform-list>
+</isoform-sequence-list>
