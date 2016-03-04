@@ -6,7 +6,7 @@ import org.junit.Test;
 public class FamilyTest {
 
     @Test
-    public void settingNameShouldSetLevel() throws Exception {
+    public void settingNameShouldSetLevelFamily() throws Exception {
 
         Family family = new Family();
         family.setName("bla family");
@@ -15,7 +15,7 @@ public class FamilyTest {
     }
 
     @Test
-    public void settingNameShouldSetLevel2() throws Exception {
+    public void settingNameShouldSetLevelSubfamily() throws Exception {
 
         Family family = new Family();
         family.setName("bla subfamily");
@@ -24,7 +24,7 @@ public class FamilyTest {
     }
 
     @Test
-    public void settingNameShouldSetLevel3() throws Exception {
+    public void settingNameShouldSetLevelSuperfamily() throws Exception {
 
         Family family = new Family();
         family.setName("bla superfamily");
@@ -33,7 +33,16 @@ public class FamilyTest {
     }
 
     @Test
-    public void settingNameShouldSetLevel4() throws Exception {
+    public void settingNameShouldSetLevelSubsubfamily() throws Exception {
+
+        Family family = new Family();
+        family.setName("GABRD sub-subfamily");
+
+        Assert.assertEquals("Subsubfamily", family.getLevel());
+    }
+
+    @Test
+    public void settingNameShouldSetLevelUnknown() throws Exception {
 
         Family family = new Family();
         family.setName("bla");
