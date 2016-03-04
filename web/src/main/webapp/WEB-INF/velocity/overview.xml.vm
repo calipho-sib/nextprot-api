@@ -18,6 +18,7 @@
         #end
         </recommended-name>
 ## ----------------- ALTERNATIVE-NAMES (LIST) ------------------------------
+    #if(!$entry.overview.alternativeProteinNames.isEmpty())
         <alternative-name-list>
     #foreach($entityName in $entry.overview.alternativeProteinNames)
             <alternative-name>
@@ -30,6 +31,7 @@
             </alternative-name>
     #end
         </alternative-name-list>
+    #end
 
 ## ----------------- CLEAVED REGION NAMES ------------------------------
     #if($entry.overview.cleavedRegionNames)
