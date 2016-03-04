@@ -2,7 +2,7 @@
     #if($entry.overview) #parse('overview.xml.vm') #end
     #if($entry.isoforms) #parse('isoform-list.xml.vm') #end
     #if($entry.chromosomalLocations) #parse('chromosomal-location-list.xml.vm') #end
-    #if($entry.genomicMappings) #parse('genomic-mapping-list.xml.vm') #end
+    #if($entry.genomicMappings && !$entry.genomicMappings.isEmpty()) #parse('genomic-mapping-list.xml.vm') #end
     #if($entry.identifiers) #parse('identifier-list.xml.vm') #end
     #if($entry.annotations) #parse('annotation-list.xml.vm') #end
     #if($NXUtils.hasMappings($entry)) #parse('mapping-list.xml.vm') #end
