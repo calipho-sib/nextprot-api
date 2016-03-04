@@ -968,7 +968,8 @@
 						<xs:enumeration value="subcellular-location-note"/>
 						<xs:enumeration value="temperature-dependence"/>
 						<xs:enumeration value="topological-domain"/>
-						<xs:enumeration value="transmembrane-region"/>
+                        <xs:enumeration value="transit-peptide"/>
+                        <xs:enumeration value="transmembrane-region"/>
 						<xs:enumeration value="turn"/>
 						<xs:enumeration value="uniprot-keyword"/>
 						<xs:enumeration value="variant"/>
