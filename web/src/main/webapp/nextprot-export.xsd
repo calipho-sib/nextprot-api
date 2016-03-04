@@ -465,6 +465,7 @@
 						<xs:enumeration value="Superfamily"/>
 						<xs:enumeration value="Family"/>
 						<xs:enumeration value="Subfamily"/>
+                        <xs:enumeration value="Subsubfamily"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
