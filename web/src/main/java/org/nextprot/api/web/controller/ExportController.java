@@ -44,31 +44,6 @@ public class ExportController {
     @Autowired
     private UserProteinListService proteinListService;
 
-    /*
-    @ApiMethod(path = "/export/entries/all", verb = ApiVerb.GET, description = "Exports all entries", produces = {MediaType.APPLICATION_XML_VALUE, "text/turtle"})
-    @RequestMapping("/export/entries/all")
-    public void exportAllEntries(HttpServletResponse response, HttpServletRequest request) {
-
-        FileFormat format = FileFormat.valueOf(request);
-        response.setHeader("Content-Disposition", "attachment; filename=\"NXEntries." + format.getExtension() + "\"");
-
-        List<Future<File>> futures = exportService.exportAllEntries(format);
-        ExportUtils.printOutput(new LinkedList<>(futures), response);
-    }
-
-    @ApiMethod(path = "/export/entries/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Exports the whole chromosome", produces = {MediaType.APPLICATION_XML_VALUE, "text/turtle"})
-    @RequestMapping("/export/entries/chromosome/{chromosome}")
-    public void exportEntriesByChromosome(HttpServletResponse response, HttpServletRequest request,
-                                          @ApiQueryParam(name = "chromosome", description = "The number of the chromosome. For example, the chromosome 21", allowedvalues = {"21"}) @PathVariable("chromosome") String chromosome) {
-
-        FileFormat format = FileFormat.valueOf(request);
-        response.setHeader("Content-Disposition", "attachment; filename=\"NXChromosome" + chromosome + "." + format.getExtension() + "\"");
-
-        List<Future<File>> futures = exportService.exportEntriesOfChromosome(chromosome, format);
-        ExportUtils.printOutput(new LinkedList<>(futures), response);
-    }*/
-
-
     @RequestMapping(value = "/export/entries/{view}", method = {RequestMethod.GET})
     public void streamEntriesSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response,
                                      @RequestParam(value = "query", required = false) String query,
@@ -123,9 +98,6 @@ public class ExportController {
 
         setResponseHeader(format, viewName, queryRequest, response);
         List<String> entries = getAccessions(queryRequest);
-
-        if (entries.isEmpty())
-            throw new NextProtException(format.getExtension()+" streaming aborted: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
 
         NPEntryStreamWriter writer = null;
 
