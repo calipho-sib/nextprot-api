@@ -4,7 +4,6 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.service.export.ExportUtils;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.FileFormat;
 import org.nextprot.api.solr.QueryRequest;
@@ -16,17 +15,14 @@ import org.nextprot.api.web.service.impl.writer.NPEntryStreamWriter;
 import org.nextprot.api.web.service.impl.writer.NPEntryWriterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Future;
 
 /**
  * Controller class responsible to extract in streaming
@@ -120,6 +116,9 @@ public class ExportController {
 
         setResponseHeader(format, viewName, queryRequest, response);
         List<String> entries = getAccessions(queryRequest);
+
+        if (entries.isEmpty())
+            throw new NextProtException(format.getExtension()+" streaming aborted: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
 
         NPEntryStreamWriter writer = null;
 
