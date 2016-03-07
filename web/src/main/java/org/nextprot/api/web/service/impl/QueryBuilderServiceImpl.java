@@ -1,8 +1,6 @@
 package org.nextprot.api.web.service.impl;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.google.common.base.Joiner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -10,7 +8,6 @@ import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.Query;
 import org.nextprot.api.solr.QueryRequest;
-import org.nextprot.api.solr.SolrConfiguration;
 import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
@@ -20,7 +17,8 @@ import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Joiner;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -43,8 +41,6 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 	private UserQueryService userQueryService;
 	@Autowired
 	private UserProteinListService proteinListService;
-	@Autowired
-	private SolrConfiguration configuration;
 
 	private static final Log Logger = LogFactory.getLog(QueryBuilderServiceImpl.class);
 
@@ -52,24 +48,16 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 	public Query buildQueryForSearch(QueryRequest queryRequest, String indexName) {
 
 		Logger.debug(queryRequest.toPrettyString());
-		
-		if (queryRequest.hasAccs()) {
-			Logger.debug("queryRequest.hasAccs()");
-			Set<String> accessions = new HashSet<String>(queryRequest.getAccs());
-			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
-			queryRequest.setQuery(queryString);
-			return queryService.buildQueryForSearchIndexes(indexName, "pl_search", queryRequest);
 
-		} else if (queryRequest.hasList()) {
+		if (queryRequest.hasList()) {
 			Logger.debug("queryRequest.hasList()");
 			UserProteinList proteinList = null;
 			if(StringUtils.isWholeNumber(queryRequest.getListId())){ //Private id is used
 				proteinList = this.proteinListService.getUserProteinListById(Long.valueOf(queryRequest.getListId()));
-			}else { //public id is used
+			} else { //public id is used
 				proteinList = this.proteinListService.getUserProteinListByPublicId(queryRequest.getListId());
 			}
 
-			
 			Set<String> accessions = proteinList.getAccessionNumbers();
 
 			String queryString = "id:" + (accessions.size() > 1 ? "(" + Joiner.on(" ").join(accessions) + ")" : accessions.iterator().next());
