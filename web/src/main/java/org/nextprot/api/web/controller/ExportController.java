@@ -70,27 +70,34 @@ public class ExportController {
 
 
     @RequestMapping(value = "/export/entries/{view}", method = {RequestMethod.GET})
-    public void streamEntriesSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query,
-                                     @RequestParam(value = "listId", required = false) String listId, @RequestParam(value = "queryId", required = false) String queryId,
+    public void streamEntriesSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response,
+                                     @RequestParam(value = "query", required = false) String query,
+                                     @RequestParam(value = "listId", required = false) String listId,
+                                     @RequestParam(value = "queryId", required = false) String queryId,
                                      @RequestParam(value = "sparql", required = false) String sparql, 
                                      @RequestParam(value = "chromosome", required = false) String chromosome, 
                                      @RequestParam(value = "filter", required = false) String filter,
-                                     @RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "order", required = false) String order,
-                                     @RequestParam(value = "quality", required = false) String quality, @RequestParam(value = "limit", required = false) Integer limit, Model model) {
-        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order, limit);
+                                     @RequestParam(value = "sort", required = false) String sort,
+                                     @RequestParam(value = "order", required = false) String order,
+                                     @RequestParam(value = "quality", required = false) String quality, Model model) {
+        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
 
         FileFormat format = FileFormat.valueOf(request);
         streamEntries(format, response, view, qr);
     }
 
     @RequestMapping(value = "/export/entries", method = {RequestMethod.GET})
-    public void streamEntries(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query,
+    public void streamEntries(HttpServletRequest request, HttpServletResponse response,
+                              @RequestParam(value = "query", required = false) String query,
     						  @RequestParam(value = "chromosome", required = false) String chromosome, 
-    						  @RequestParam(value = "listId", required = false) String listId, @RequestParam(value = "queryId", required = false) String queryId,
-                              @RequestParam(value = "sparql", required = false) String sparql, @RequestParam(value = "filter", required = false) String filter,
-                              @RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "order", required = false) String order,
-                              @RequestParam(value = "quality", required = false) String quality, @RequestParam(value = "limit", required = false) Integer limit, Model model) {
-        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order, limit);
+    						  @RequestParam(value = "listId", required = false) String listId,
+                              @RequestParam(value = "queryId", required = false) String queryId,
+                              @RequestParam(value = "sparql", required = false) String sparql,
+                              @RequestParam(value = "filter", required = false) String filter,
+                              @RequestParam(value = "sort", required = false) String sort,
+                              @RequestParam(value = "order", required = false) String order,
+                              @RequestParam(value = "quality", required = false) String quality, Model model) {
+        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
 
         FileFormat format = FileFormat.valueOf(request);
         streamEntries(format, response, "entry", qr);
@@ -164,7 +171,7 @@ public class ExportController {
         }
     }
 
-    private static QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order, Integer limit) {
+    private static QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order) {
 
         QueryRequest qr = new QueryRequest();
         qr.setQuery(query);
