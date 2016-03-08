@@ -1,4 +1,5 @@
 <genomic-mapping accession='$genomicMapping.accession' database='$genomicMapping.database'>
+	#if(!$genomicMapping.isoformMappings.isEmpty())
 	<isoform-mapping-list>
 		#foreach($isoformMapping in $genomicMapping.isoformMappings)
 		<isoform-mapping accession="$isoformMapping.uniqueName" main-name="$isoformMapping.isoform.mainEntityName.value">
@@ -27,4 +28,5 @@
 		</isoform-mapping>
 		#end
 	</isoform-mapping-list>
+	#end
 </genomic-mapping>
