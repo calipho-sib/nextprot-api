@@ -45,7 +45,6 @@ public class CVtermCoreFullDiffTest extends SolrDiffTest {
 		testCVData(terminologyService.findTerminologyByAccession("C115440")); // NCI thesaurus
 		testCVData(terminologyService.findTerminologyByAccession("EV:0300000"));
 		testCVData(terminologyService.findTerminologyByAccession("DO-00859")); 
-		testCVData(terminologyService.findTerminologyByAccession("pyruvate, phosphate dikinase regulatory protein family"));
 	}
 
 	
