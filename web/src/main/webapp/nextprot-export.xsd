@@ -8,6 +8,8 @@
 	Distributed under the Creative Commons Attribution-NoDerivs License
 *******************************************************************************-->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://api.nextprot.org"
+           xmlns="https://api.nextprot.org"
            elementFormDefault="qualified"
            version="1.0">
 

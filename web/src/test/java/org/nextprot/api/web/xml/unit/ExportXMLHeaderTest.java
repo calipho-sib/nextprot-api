@@ -40,11 +40,11 @@ public class ExportXMLHeaderTest extends WebUnitBaseTest {
         
         exporter.write(new ArrayList<String>(), map);
 
-        NodeList dbReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/header/release/nextprot/database-release");
+        NodeList dbReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='database-release']");
         assertEquals(dbReleaseNodes.item(0).getTextContent(), "database-test-version");
-        NodeList apiReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/header/release/nextprot/api-release");
+        NodeList apiReleaseNodes = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='api-release']");
         assertEquals(apiReleaseNodes.item(0).getTextContent(), "api-test-version");
-        NodeList entriesCountNode = XMLUnitUtils.getMatchingNodes(out.toString(), "nextprot-export/header/number-of-entries");
+        NodeList entriesCountNode = XMLUnitUtils.getMatchingNodes(out.toString(), "//*[local-name()='number-of-entries']");
         assertEquals(entriesCountNode.item(0).getTextContent(), "2");
     }
 }
