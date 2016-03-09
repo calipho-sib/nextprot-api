@@ -229,7 +229,7 @@ public class SolrServiceImpl implements SolrService {
 			res.add(item);
 		}
 
-		results.setResults(res);
+		results.addAllResults(res);
 		if (query.getStart() != null)
 			results.setStart(query.getStart());
 
