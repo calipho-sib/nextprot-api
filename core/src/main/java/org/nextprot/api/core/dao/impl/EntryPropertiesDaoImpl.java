@@ -22,8 +22,10 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 	
 	@Override
 	public EntryProperties findEntryProperties(String uniqueName) {
+		
 		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
 		NamedParameterJdbcTemplate template = new NamedParameterJdbcTemplate(dsLocator.getDataSource());
+		
 		EntryProperties ep = template.queryForObject(sqlDictionary.getSQLQuery("entry-properties"), namedParameters, new EntryPropertyRowMapper());
 		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("entry-references-count"), namedParameters, new EntryPropertyRowAppender(ep));
 		return ep;
@@ -73,6 +75,7 @@ public class EntryPropertiesDaoImpl implements EntryPropertiesDao {
 			ep.setReferencesSubmissionsCount(resultSet.getInt("references_submissions_count"));
 			ep.setReferencesWebResourcesCount(resultSet.getInt("references_web_resources_count"));
 			ep.setReferencesCount(resultSet.getInt("references_count"));
+			ep.setProteinExistenceInfo(resultSet.getString("pe_info"));
 
 			return null;
 

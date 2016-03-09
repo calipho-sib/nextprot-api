@@ -106,6 +106,10 @@ public class Overview implements Serializable{
 		return result;
 	}
 
+		
+	public String getProteinExistenceInfo() {
+		return this.history.getProteinExistenceInfo();
+	}
 	
 	public String getProteinExistence() {
 		return this.history.getProteinExistence();
@@ -134,7 +138,7 @@ public class Overview implements Serializable{
 		private static final long serialVersionUID = 778801504825937620L;
 
 		@Deprecated
-		private String proteinExistence;
+		private String proteinExistence, proteinExistenceInfo;
 		private Date nextprotIntegrationDate;
 		private Date nextprotUpdateDate;
 		private Date uniprotIntegrationDate;
@@ -154,6 +158,11 @@ public class Overview implements Serializable{
 			return Overview.peMap.get(proteinExistence).name;
 		}
 
+		@Deprecated //Should use overview instead
+		public String getProteinExistenceInfo() {
+			return proteinExistenceInfo;
+		}
+
 		/**
 		 * 
 		 * @return the string stored in the db (not the one to be displayed, experted, etc...)
@@ -171,6 +180,11 @@ public class Overview implements Serializable{
 		@Deprecated //Should use overview instead
 		public int getProteinExistenceLevel() {
 			return Overview.peMap.get(proteinExistence).level;
+		}
+
+		@Deprecated //Should use overview instead
+		public void setProteinExistenceInfo(String proteinExistenceInfo) {
+			this.proteinExistenceInfo = proteinExistenceInfo;
 		}
 
 		/**

@@ -75,6 +75,12 @@ public class Entry implements KeyValueRepresentation{
 		return overview;
 	}
 
+	public String getProteinExistenceInfo() {
+		if(this.properties != null){
+			return this.properties.getProteinExistenceInfo();
+		} return null;
+	}
+	
 	public String getProteinExistence() {
 		if(this.overview != null){
 			return this.overview.getProteinExistence();
