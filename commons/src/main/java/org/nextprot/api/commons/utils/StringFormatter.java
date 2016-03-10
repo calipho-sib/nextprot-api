@@ -6,60 +6,62 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Fluently format a string.
  *
  * https://en.wikipedia.org/wiki/Letter_case#Special_case_styles
  *
  * Created by fnikitin on 27/08/15.
  */
-public class StringCaseFormatter {
+public class StringFormatter {
 
     private final static Pattern DELIMITOR_PATTERN = Pattern.compile("[_\\-\\s]");
 
-    private String string;
+    private String stringToFormat;
 
-    public StringCaseFormatter(String string) {
+    public StringFormatter(String stringToFormat) {
 
-        Preconditions.checkNotNull(string);
-        this.string = string;
+        Preconditions.checkNotNull(stringToFormat);
+
+        this.stringToFormat = stringToFormat;
     }
 
     /**
      * Remove spaces, hyphens and underscores and the first letter of each word is capitalised except the first one
      */
-    public StringCaseFormatter camel() {
+    public StringFormatter camel() {
 
-        return camel(true);
+        return camelFirstWordLetterLowerCase(true);
     }
 
     /**
      * Remove spaces, hyphens and underscores and the first letter of each word is capitalised (the first letter
      * case is decided from parameter <code>firstLetterFirstWordInLowerCase</code>)
      *
-     * @param firstLetterFirstWordInLowerCase true if the 1st letter of the first word has to be in lower case
+     * @param firstWordLetterInLowerCase true if the 1st letter of the first word has to be in lower case
      */
-    public StringCaseFormatter camel(boolean firstLetterFirstWordInLowerCase) {
+    public StringFormatter camelFirstWordLetterLowerCase(boolean firstWordLetterInLowerCase) {
 
-        string = toCamelCase(string, firstLetterFirstWordInLowerCase);
+        stringToFormat = toCamelCase(stringToFormat, firstWordLetterInLowerCase);
 
         return this;
     }
 
     /**
-     * Replaces the Capital letters with lower letters and prefixed with a hyphen if not in the beginning of the string.
+     * Replaces the Capital letters with lower letters and prefixed with a hyphen if not in the beginning of the stringToFormat.
      */
-    public StringCaseFormatter kebab() {
+    public StringFormatter kebab() {
 
-        string = camelToKebabCase(string);
+        stringToFormat = camelToKebabCase(stringToFormat);
 
         return this;
     }
 
     /**
-     * Replaces the Capital letters with lower letters and prefixed with an underscore if not in the beginning of the string.
+     * Replaces the Capital letters with lower letters and prefixed with an underscore if not in the beginning of the stringToFormat.
      */
-    public StringCaseFormatter snake() {
+    public StringFormatter snake() {
 
-        string = camelToSnakeCase(string);
+        stringToFormat = camelToSnakeCase(stringToFormat);
 
         return this;
     }
@@ -67,18 +69,18 @@ public class StringCaseFormatter {
     /**
      * Converts all characters to upper case
      */
-    public StringCaseFormatter yelling() {
+    public StringFormatter yelling() {
 
-        string = string.toUpperCase();
+        stringToFormat = stringToFormat.toUpperCase();
         return this;
     }
 
     /**
      * Converts all characters to lower case
      */
-    public StringCaseFormatter whispering() {
+    public StringFormatter whispering() {
 
-        string = string.toLowerCase();
+        stringToFormat = stringToFormat.toLowerCase();
         return this;
     }
 
@@ -112,7 +114,6 @@ public class StringCaseFormatter {
 
         return sb.toString();
     }
-    
 
     private String camelToKebabCase(String s){
         return camelToLetterCase(s, "-");
@@ -127,11 +128,8 @@ public class StringCaseFormatter {
         return s.trim().replaceAll("(\\p{Lower})(\\p{Upper})","$1"+delimitor+"$2").toLowerCase();
     }
 
-    /**
-     * @return the transformed string
-     */
     public String format() {
 
-        return string;
+        return stringToFormat;
     }
 }

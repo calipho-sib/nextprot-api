@@ -16,29 +16,29 @@ public class StringUtils {
 	private static final Pattern WHITESPACE = Pattern.compile("\\s");
 	private static final AuthorNameFormatter AUTHOR_NAME_FORMATTER = new AuthorNameFormatter();
 
-	public static StringCaseFormatter createXCaseBuilder(String string) {
+	public static StringFormatter createXCaseBuilder(String string) {
 
-		return new StringCaseFormatter(string);
+		return new StringFormatter(string);
 	}
 
-	public static String toCamelCase(String inputString, boolean firstLetterFirstWordInLowerCase) {
+	public static String toCamelCase(String inputString, boolean firstWordLetterLowerCase) {
 
-		return new StringCaseFormatter(inputString).camel(firstLetterFirstWordInLowerCase).format();
+		return new StringFormatter(inputString).camelFirstWordLetterLowerCase(firstWordLetterLowerCase).format();
 	}
 	
 	public static String camelToKebabCase(String inputString){
 
-		return new StringCaseFormatter(inputString).kebab().format();
+		return new StringFormatter(inputString).kebab().format();
 	}
 
 	public static String camelToSnakeCase(String inputString) {
 
-		return new StringCaseFormatter(inputString).snake().format();
+		return new StringFormatter(inputString).snake().format();
 	}
 
 	public static String snakeToKebabCase(String inputString) {
 
-		return new StringCaseFormatter(inputString).camel().kebab().format();
+		return new StringFormatter(inputString).camel().kebab().format();
 	}
 
 	/**

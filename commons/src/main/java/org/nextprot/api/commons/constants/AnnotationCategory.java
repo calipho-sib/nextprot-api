@@ -1,7 +1,7 @@
 package org.nextprot.api.commons.constants;
 
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.StringCaseFormatter;
+import org.nextprot.api.commons.utils.StringFormatter;
 import org.nextprot.api.commons.utils.StringUtils;
 
 import java.io.Serializable;
@@ -403,7 +403,7 @@ public enum AnnotationCategory implements Serializable {
 		if (parent != null && parent != ROOT) {
 			parent.getPathToRoot(sb, delimitor);
 
-			sb.append(new StringCaseFormatter(parent.getDbAnnotationTypeName()).camel().kebab().format());
+			sb.append(new StringFormatter(parent.getDbAnnotationTypeName()).camel().kebab().format());
 			sb.append(delimitor);
 		}
 	}
