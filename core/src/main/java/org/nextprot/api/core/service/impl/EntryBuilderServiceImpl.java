@@ -1,32 +1,17 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
-import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.AntibodyMappingService;
-import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryPropertiesService;
-import org.nextprot.api.core.service.ExperimentalContextService;
-import org.nextprot.api.core.service.GeneService;
-import org.nextprot.api.core.service.GenomicMappingService;
-import org.nextprot.api.core.service.IdentifierService;
-import org.nextprot.api.core.service.InteractionService;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.KeywordService;
-import org.nextprot.api.core.service.OverviewService;
-import org.nextprot.api.core.service.PeptideMappingService;
-import org.nextprot.api.core.service.PublicationService;
-import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
@@ -34,7 +19,6 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private OverviewService overviewService;
 	@Autowired private PublicationService publicationService;
 	@Autowired private DbXrefService xrefService;
-	@Autowired private KeywordService kwService;
 	@Autowired private IdentifierService identifierService;
 	@Autowired private GeneService geneService;
 	@Autowired private GenomicMappingService genomicMappingService;
@@ -48,7 +32,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
 	@Autowired private EntryPropertiesService entryPropertiesService;	
 
-	private static Map<String, Object> objectLocks = new ConcurrentHashMap<String, Object>();
+	private static Map<String, Object> objectLocks = new ConcurrentHashMap<>();
 		
 	@Override
 	public Entry build(EntryConfig entryConfig) {

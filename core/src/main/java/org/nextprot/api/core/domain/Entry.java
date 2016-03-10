@@ -1,13 +1,12 @@
 package org.nextprot.api.core.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonInclude(Include.NON_NULL)
 public class Entry implements KeyValueRepresentation{
@@ -21,8 +20,6 @@ public class Entry implements KeyValueRepresentation{
 	private List<Publication> publications;
 
 	private List<DbXref> xrefs;
-
-	private List<Keyword> keywords;
 
 	private List<Identifier> identifiers;
 
@@ -112,14 +109,6 @@ public class Entry implements KeyValueRepresentation{
 
 	public void setXrefs(List<DbXref> xrefs) {
 		this.xrefs = xrefs;
-	}
-
-	public List<Keyword> getKeywords() {
-		return keywords;
-	}
-
-	public void setKeywords(List<Keyword> keywords) {
-		this.keywords = keywords;
 	}
 
 	public List<Identifier> getIdentifiers() {

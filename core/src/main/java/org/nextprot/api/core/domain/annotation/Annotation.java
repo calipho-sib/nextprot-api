@@ -31,6 +31,10 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private String cvTermName;
 
+	private String cvTermType;
+
+	private String cvTermDescription;
+
 	private String cvApiName;
 
 	private String description;
@@ -95,6 +99,22 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	public void setCvTermName(String cvTermName) {
 		this.cvTermName = cvTermName;
+	}
+
+	public String getCvTermType() {
+		return cvTermType;
+	}
+
+	public void setCvTermType(String cvTermType) {
+		this.cvTermType = cvTermType;
+	}
+
+	public String getCvTermDescription() {
+		return cvTermDescription;
+	}
+
+	public void setCvTermDescription(String cvTermDescription) {
+		this.cvTermDescription = cvTermDescription;
 	}
 
 	public String getCvApiName() {
