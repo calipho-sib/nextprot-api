@@ -66,7 +66,7 @@ having sum(a.cnt)=1
 		}
 		assertTrue(annot.getEvidences().size()==1);
 		AnnotationEvidence evi = annot.getEvidences().get(0);
-		assertTrue(evi.getAssignedBy().equals("Uniprot"));
+		assertTrue(evi.getAssignedBy().equals("Reactome"));
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("R-HSA-5620924"));
 		assertTrue(evi.getResourceDb().equals("Reactome"));
@@ -88,7 +88,7 @@ having sum(a.cnt)=1
 		}
 		assertTrue(annot.getEvidences().size()==1);
 		AnnotationEvidence evi = annot.getEvidences().get(0);
-		assertTrue(evi.getAssignedBy().equals("NextProt"));
+		assertTrue(evi.getAssignedBy().equals("KEGG_PTW"));
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("hsa04120+134111"));
 		assertTrue(evi.getResourceDb().equals("KEGGPathway"));
@@ -110,7 +110,7 @@ having sum(a.cnt)=1
 		}
 		assertTrue(annot.getEvidences().size()==1);
 		AnnotationEvidence evi = annot.getEvidences().get(0);
-		assertTrue(evi.getAssignedBy().equals("Uniprot"));
+		assertTrue(evi.getAssignedBy().equals("Orphanet"));
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("478"));
 		assertTrue(evi.getResourceDb().equals("Orphanet"));
@@ -132,7 +132,7 @@ having sum(a.cnt)=1
 		}
 		assertTrue(annot.getEvidences().size()==1);
 		AnnotationEvidence evi = annot.getEvidences().get(0);
-		assertTrue(evi.getAssignedBy().equals("Uniprot"));
+		assertTrue(evi.getAssignedBy().equals("DrugBank"));
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("DB00852"));
 		assertTrue(evi.getResourceDb().equals("DrugBank"));
