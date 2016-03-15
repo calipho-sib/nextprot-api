@@ -71,7 +71,6 @@ public class SearchController {
 			@ApiQueryParam(name="sort") @RequestParam(value="sort", required=false) String sort,
 			@ApiQueryParam(name="order") @RequestParam(value="order", required=false) String order,
 			@ApiQueryParam(name="start") @RequestParam(value="start", required=false) String start, 
-			@ApiQueryParam(name="rows") @RequestParam(value="rows", required=false) String rows,
 			@RequestParam(value="filter", required=false) String filter) {
 		
 		if (this.queryService.checkAvailableIndex(indexName)) {
@@ -101,7 +100,7 @@ public class SearchController {
 		for (List<Map<String, Object>> value : facets.values()) {
 
 			for (Map<String, Object> map : value) {
-				autocompleteResult.addResult((String) map.get("name"), (Long)map.get("count"));
+				autocompleteResult.addResult((String) map.get("name"), ((Long) map.get("count")).intValue());
 			}
 		}
 

@@ -1,5 +1,7 @@
 package org.nextprot.api.solr;
 
+import org.apache.commons.collections.map.HashedMap;
+
 import java.util.*;
 
 /**
@@ -10,15 +12,10 @@ public class AutocompleteSearchResult {
 	private long elapsedTime;
 	private String entity;
 	private String index;
-	private final Map<Long, Set<String>> autocomplete;
+	private final Map<String, Integer> autocomplete;
 
 	public AutocompleteSearchResult() {
-		autocomplete = new TreeMap<>(new Comparator<Long>() {
-			@Override
-			public int compare(Long l1, Long l2) {
-				return l2.compareTo(l1);
-			}
-		});
+		autocomplete = new HashedMap();
 	}
 	
 	public long getElapsedTime() {
@@ -45,17 +42,13 @@ public class AutocompleteSearchResult {
 		this.index = index;
 	}
 
-	public Map<Long, Set<String>> getAutocomplete() {
+	public Map<String, Integer> getAutocomplete() {
 		return autocomplete;
 	}
 
-	public void addResult(String name, long count) {
+	public void addResult(String name, int count) {
 
-		if (!autocomplete.containsKey(count)) {
-			autocomplete.put(count, new HashSet<String>());
-		}
-
-		autocomplete.get(count).add(name);
+		autocomplete.put(name, count);
 	}
 }
 
