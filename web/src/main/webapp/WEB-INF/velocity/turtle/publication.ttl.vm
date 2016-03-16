@@ -20,7 +20,7 @@ publication:$publication.getMD5() a :Publication;
     :volume "$publication.getVolume()"^^xsd:string;
     :issue "$publication.getIssue()"^^xsd:string;
 #else
-    :publisher "$publication.getPublisherName()"^^xsd:string;
+    #if($publication.getPublisherName()):publisher "$publication.getPublisherName()"^^xsd:string;#end
     :city "$publication.getPublisherCity()"^^xsd:string;
 #end
     :firstPage "$publication.getFirstPage()"^^xsd:string;
