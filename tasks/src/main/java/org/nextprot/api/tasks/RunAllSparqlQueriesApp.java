@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Ignore;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.utils.UserQueryUtils;
 
@@ -20,7 +19,6 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
 
-//@Ignore
 public class RunAllSparqlQueriesApp {
 
 	//This will log on release-info folder in a file called sparql-queries.tsv
