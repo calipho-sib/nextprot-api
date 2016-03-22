@@ -17,7 +17,7 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
 
-@Ignore
+//@Ignore
 public class RunAllSparqlQueriesApp {
 
 	//This will log on release-info folder in a file called sparql-queries.tsv
@@ -122,7 +122,7 @@ public class RunAllSparqlQueriesApp {
 		QueryExecution qExec = null;
 		try {
 			qExec = QueryExecutionFactory.sparqlService(SPARQL_ENDPOINT, query);
-			qExec.setTimeout(20 * 60 * 1000); //20 min
+			qExec.setTimeout(30 * 60 * 1000); //30 min
 			
 			ResultSet rs = qExec.execSelect();
 			while (rs.hasNext()) {
