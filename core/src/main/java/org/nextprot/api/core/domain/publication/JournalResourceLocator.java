@@ -1,15 +1,16 @@
 package org.nextprot.api.core.domain.publication;
 
 import org.jsondoc.core.annotation.ApiObjectField;
+import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.PublicationCvJournal;
 
 import java.io.Serializable;
 
-public class JournalLocation extends BookLocation implements Serializable {
+public class JournalResourceLocator extends BookResourceLocator implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
-    private PublicationCvJournal journal;
+    private CvJournal journal;
 
     @ApiObjectField(description = "The journal volume")
     private String volume;
@@ -17,8 +18,17 @@ public class JournalLocation extends BookLocation implements Serializable {
     @ApiObjectField(description = "The journal issue")
     private String issue;
 
+    public boolean hasJournalId() {
+        return journal.hasJournalId();
+    }
+
+    /**
+     * @return journal id or -1 if not exist
+     */
     public long getJournalId() {
-        return journal.getJournalId();
+        if (journal.hasJournalId())
+            return journal.getJournalId();
+        return -1;
     }
 
     public String getAbbrev() {
@@ -33,8 +43,17 @@ public class JournalLocation extends BookLocation implements Serializable {
         return journal.getNLMid();
     }
 
+    public boolean hasPublicationId() {
+        return journal instanceof PublicationCvJournal;
+    }
+
+    /**
+     * @return publication id or -1 if not exist
+     */
     public long getPublicationId() {
-        return journal.getPublicationId();
+        if (journal instanceof PublicationCvJournal)
+            return ((PublicationCvJournal)journal).getPublicationId();
+        return -1;
     }
 
     public String getVolume() {
@@ -57,7 +76,7 @@ public class JournalLocation extends BookLocation implements Serializable {
         return PublicationType.ARTICLE;
     }
 
-    public void setJournal(PublicationCvJournal journal) {
+    public void setJournal(CvJournal journal) {
         this.journal = journal;
         this.setName(journal.getName());
     }

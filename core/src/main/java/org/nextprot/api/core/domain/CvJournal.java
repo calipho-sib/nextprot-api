@@ -12,7 +12,11 @@ public class CvJournal implements Serializable{
 	private String med_abbrev;	// Medline journal abbreviation
 	private String nlmid;	// The National Library of Medicine id, eg: http://www.ncbi.nlm.nih.gov/nlmcatalog/?term=0404511
 	// WE are missing issn and e-isnn
-	
+
+	public boolean hasJournalId() {
+		return journalId != null;
+	}
+
 	public Long getJournalId() {
 		return journalId;
 	}

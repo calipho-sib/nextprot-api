@@ -155,7 +155,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 			Collection<IsoformMapping> mappings = Collections2.filter(isoformMappings, new IsoformMappingPredicate(genomicMapping.getGeneSeqId()));
 
-			genomicMapping.getIsoformMappings().addAll(mappings);
+			genomicMapping.addAllIsoformMappings(mappings);
 
 			Collections.sort(genomicMapping.getIsoformMappings(), ISOFORM_MAPPING_COMPARATOR);
 		}

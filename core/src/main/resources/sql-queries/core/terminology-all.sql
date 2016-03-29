@@ -21,7 +21,6 @@ inner join nextprot.db_xrefs xrefr on (root.db_xref_id=xrefr.resource_id)
     inner join nextprot.db_xrefs cx on (child.db_xref_id=cx.resource_id)
     where nextprot.cv_terms.cv_id=r.object_id and child.cv_status_id=1
   ) as children,
-
 -- get other_xrefs
    (select string_agg(cat.cv_name || '^ ' || db.cv_name || '^ ' || ref.accession || '^ ' || ref.resource_id || '^ ' || db.url || '^ ' || db.link_url , ' | ')
      from nextprot.cv_term_db_xref_assoc tra 
@@ -32,6 +31,6 @@ inner join nextprot.db_xrefs xrefr on (root.db_xref_id=xrefr.resource_id)
      from nextprot.cv_terms
 inner join nextprot.db_xrefs on (nextprot.cv_terms.db_xref_id = nextprot.db_xrefs.resource_id)
 inner join nextprot.cv_term_categories on (nextprot.cv_terms.cv_category_id = nextprot.cv_term_categories.cv_id)
- where  nextprot.cv_terms.cv_status_id=1 -- We don't take obsolete terms
+where  nextprot.cv_terms.cv_status_id=1 -- We don't take obsolete terms
 order by nextprot.cv_term_categories.cv_api_name
   

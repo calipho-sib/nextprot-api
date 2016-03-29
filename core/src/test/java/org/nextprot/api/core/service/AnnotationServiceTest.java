@@ -34,7 +34,7 @@ public class AnnotationServiceTest extends CoreUnitBaseTest {
 		assertEquals("GOLD", a.getQualityQualifier());
 		assertEquals(1, a.getEvidences().size());
 		AnnotationEvidence evi = a.getEvidences().get(0);
-		assertEquals("Uniprot", evi.getAssignedBy());
+		assertEquals("Orphanet", evi.getAssignedBy());
 		assertEquals("curated", evi.getAssignmentMethod());
 		assertEquals("IC", evi.getQualifierType());
 		assertEquals(false, evi.isNegativeEvidence());

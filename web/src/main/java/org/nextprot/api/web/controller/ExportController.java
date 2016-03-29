@@ -4,7 +4,7 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.service.export.ExportUtils;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.FileFormat;
 import org.nextprot.api.solr.QueryRequest;
@@ -16,17 +16,14 @@ import org.nextprot.api.web.service.impl.writer.NPEntryStreamWriter;
 import org.nextprot.api.web.service.impl.writer.NPEntryWriterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.Future;
 
 /**
  * Controller class responsible to extract in streaming
@@ -48,56 +45,76 @@ public class ExportController {
     @Autowired
     private UserProteinListService proteinListService;
 
-    /*
-    @ApiMethod(path = "/export/entries/all", verb = ApiVerb.GET, description = "Exports all entries", produces = {MediaType.APPLICATION_XML_VALUE, "text/turtle"})
-    @RequestMapping("/export/entries/all")
-    public void exportAllEntries(HttpServletResponse response, HttpServletRequest request) {
-
-        FileFormat format = FileFormat.valueOf(request);
-        response.setHeader("Content-Disposition", "attachment; filename=\"NXEntries." + format.getExtension() + "\"");
-
-        List<Future<File>> futures = exportService.exportAllEntries(format);
-        ExportUtils.printOutput(new LinkedList<>(futures), response);
-    }
-
-    @ApiMethod(path = "/export/entries/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Exports the whole chromosome", produces = {MediaType.APPLICATION_XML_VALUE, "text/turtle"})
-    @RequestMapping("/export/entries/chromosome/{chromosome}")
-    public void exportEntriesByChromosome(HttpServletResponse response, HttpServletRequest request,
-                                          @ApiQueryParam(name = "chromosome", description = "The number of the chromosome. For example, the chromosome 21", allowedvalues = {"21"}) @PathVariable("chromosome") String chromosome) {
-
-        FileFormat format = FileFormat.valueOf(request);
-        response.setHeader("Content-Disposition", "attachment; filename=\"NXChromosome" + chromosome + "." + format.getExtension() + "\"");
-
-        List<Future<File>> futures = exportService.exportEntriesOfChromosome(chromosome, format);
-        ExportUtils.printOutput(new LinkedList<>(futures), response);
-    }*/
-
-
     @RequestMapping(value = "/export/entries/{view}", method = {RequestMethod.GET})
-    public void streamEntriesSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query,
-                                     @RequestParam(value = "listId", required = false) String listId, @RequestParam(value = "queryId", required = false) String queryId,
+    public void streamEntriesSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response,
+                                     @RequestParam(value = "query", required = false) String query,
+                                     @RequestParam(value = "listId", required = false) String listId,
+                                     @RequestParam(value = "queryId", required = false) String queryId,
                                      @RequestParam(value = "sparql", required = false) String sparql, 
                                      @RequestParam(value = "chromosome", required = false) String chromosome, 
                                      @RequestParam(value = "filter", required = false) String filter,
-                                     @RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "order", required = false) String order,
-                                     @RequestParam(value = "quality", required = false) String quality, @RequestParam(value = "limit", required = false) Integer limit, Model model) {
-        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order, limit);
+                                     @RequestParam(value = "sort", required = false) String sort,
+                                     @RequestParam(value = "order", required = false) String order,
+                                     @RequestParam(value = "quality", required = false) String quality, Model model) {
+        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
 
         FileFormat format = FileFormat.valueOf(request);
         streamEntries(format, response, view, qr);
     }
 
     @RequestMapping(value = "/export/entries", method = {RequestMethod.GET})
-    public void streamEntries(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "query", required = false) String query,
+    public void streamEntries(HttpServletRequest request, HttpServletResponse response,
+                              @RequestParam(value = "query", required = false) String query,
     						  @RequestParam(value = "chromosome", required = false) String chromosome, 
-    						  @RequestParam(value = "listId", required = false) String listId, @RequestParam(value = "queryId", required = false) String queryId,
-                              @RequestParam(value = "sparql", required = false) String sparql, @RequestParam(value = "filter", required = false) String filter,
-                              @RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "order", required = false) String order,
-                              @RequestParam(value = "quality", required = false) String quality, @RequestParam(value = "limit", required = false) Integer limit, Model model) {
-        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order, limit);
+    						  @RequestParam(value = "listId", required = false) String listId,
+                              @RequestParam(value = "queryId", required = false) String queryId,
+                              @RequestParam(value = "sparql", required = false) String sparql,
+                              @RequestParam(value = "filter", required = false) String filter,
+                              @RequestParam(value = "sort", required = false) String sort,
+                              @RequestParam(value = "order", required = false) String order,
+                              @RequestParam(value = "quality", required = false) String quality, Model model) {
+        QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
 
         FileFormat format = FileFormat.valueOf(request);
         streamEntries(format, response, "entry", qr);
+    }
+
+    @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
+    @ResponseBody
+    public Map<String, Set<String>> getXMLTemplates() {
+        return EntryBlock.getFormatViews();
+    }
+
+    @ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries accessions from a list")
+    @RequestMapping("/export/lists/{listId}")
+    public void exportList(HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
+
+        UserProteinList pl = this.proteinListService.getUserProteinListByPublicId(listId);
+        String fileName = pl.getName() + ".txt";
+
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+        // TODO should this be secured or not? for now let's say not...
+        // 2 ways of doing it: either add the token in the header or generate a
+        // secret value for each list that is created
+
+        // http://alpha-api.nextprot.org/export/lists/3C5KYA1M
+        try {
+            if (pl.getDescription() != null) {
+                response.getWriter().write("#" + pl.getDescription() + StringUtils.CR_LF);
+            }
+
+            if (pl.getAccessionNumbers() != null) {
+                Iterator<String> sIt = pl.getAccessionNumbers().iterator();
+                while (sIt.hasNext()) {
+                    response.getWriter().write(sIt.next());
+                    response.getWriter().write(StringUtils.CR_LF);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new NextProtException(e.getMessage());
+        }
     }
 
     private List<String> getAccessions(QueryRequest queryRequest) {
@@ -165,7 +182,7 @@ public class ExportController {
         }
     }
 
-    private static QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order, Integer limit) {
+    private static QueryRequest getQueryRequest(String query, String listId, String queryId, String sparql, String chromosome, String filter, String quality, String sort, String order) {
 
         QueryRequest qr = new QueryRequest();
         qr.setQuery(query);
@@ -188,45 +205,5 @@ public class ExportController {
         qr.setOrder(order);
         qr.setQuality(quality);
         return qr;
-    }
-
-    @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
-    @ResponseBody
-    public Map<String, Set<String>> getXMLTemplates() {
-        return EntryBlock.getFormatViews();
-    }
-
-    @ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries accessions from a list")
-    @RequestMapping("/export/lists/{listId}")
-    public void exportList(Model model, HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
-
-        UserProteinList pl = this.proteinListService.getUserProteinListByPublicId(listId);
-        String fileName = pl.getName() + ".txt";
-
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-
-        // TODO should this be secured or not? for now let's say not...
-        // 2 ways of doing it: either add the token in the header or generate a
-        // secret value for each list that is created
-
-        try {
-            if (pl.getDescription() != null) {
-                response.getWriter().write("#" + pl.getDescription() + "\n");
-            }
-
-            if (pl.getAccessionNumbers() != null) {
-                Iterator<String> sIt = pl.getAccessionNumbers().iterator();
-                while (sIt.hasNext()) {
-                    response.getWriter().write(sIt.next());
-                    if (sIt.hasNext()) {
-                        response.getWriter().write("\n");
-                    }
-
-                }
-            }
-
-        } catch (Exception e) {
-            throw new NextProtException(e.getMessage());
-        }
     }
 }

@@ -11,7 +11,7 @@ import java.util.TreeSet;
 /**
  * An edited volume book is a collection of chapters contributed by different authors and harmonized by an or many editor(s)
  */
-public class EditedVolumeBookLocation extends BookLocation implements Serializable {
+public class EditedVolumeBookResourceLocator extends BookResourceLocator implements Serializable {
 
     private static final long serialVersionUID = 0L;
 

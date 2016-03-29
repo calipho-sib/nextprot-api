@@ -4,13 +4,17 @@ import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.EntityNameDao;
+import org.nextprot.api.core.dao.EntryPropertiesDao;
 import org.nextprot.api.core.dao.HistoryDao;
+import org.nextprot.api.core.domain.EntryProperties;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.EntityNameClass;
 import org.nextprot.api.core.domain.Overview.History;
+import org.nextprot.api.core.service.EntryPropertiesService;
 import org.nextprot.api.core.service.FamilyService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.OverviewService;
@@ -35,6 +39,8 @@ class OverviewServiceImpl implements OverviewService {
 	@Autowired private EntityNameDao entryNameDao;
 	@Autowired private FamilyService familyService;
 	@Autowired private IsoformService isoformService;
+	@Autowired private EntryPropertiesDao entryPropertiesDao;
+	
 
 	@Override
 	@Cacheable("overview")
@@ -52,6 +58,9 @@ class OverviewServiceImpl implements OverviewService {
 
 		overview.setFamilies(this.familyService.findFamilies(uniqueName));
 		overview.setIsoformNames(convertIsoNamestoOverviewName(isoformService.findIsoformsByEntryName(uniqueName)));
+		
+		EntryProperties props = entryPropertiesDao.findEntryProperties(uniqueName);
+		overview.getHistory().setProteinExistenceInfo(props.getProteinExistenceInfo());
 		
 		return overview;
 	}

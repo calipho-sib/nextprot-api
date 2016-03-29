@@ -11,7 +11,7 @@ public class StringUtilsTest {
     @Test
     public void testXCaseBuilderCamelCase() {
 
-        String cc = StringUtils.createXCaseBuilder("nextprot-anatomy-cv").camel(false).format();
+        String cc = StringUtils.createXCaseBuilder("nextprot-anatomy-cv").camelFirstWordLetterLowerCase(false).format();
         Assert.assertEquals("NextprotAnatomyCv", cc);
     }
 

@@ -59,6 +59,6 @@ public class BuildEntryTest extends WebIntegrationBaseTest {
 
 		Assert.assertEquals(1, entry.getChromosomalLocations().size());
 		Assert.assertTrue(!entry.getChromosomalLocations().get(0).getAccession().isEmpty());
-		Assert.assertEquals(1, entry.getGenomicMappings().size());
+		Assert.assertTrue(entry.getGenomicMappings().isEmpty());
 	}
 }

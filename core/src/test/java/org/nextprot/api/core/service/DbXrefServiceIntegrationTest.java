@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -24,6 +25,7 @@ public class DbXrefServiceIntegrationTest extends CoreUnitBaseTest {
 
 	@Autowired private DbXrefService xrefService;
 	@Autowired private MasterIdentifierService masterIdentifierService;
+	@Autowired private TerminologyService terminologyService;
 /*
  * This query finds entries having a single xref among 'Orphanet', 'KEGGPathway' , 'Reactome' and 'DrugBank'
  * It is convenient for tests: we know we get a single annotation from xrefs for a given entry
@@ -64,7 +66,7 @@ having sum(a.cnt)=1
 		}
 		assertTrue(annot.getEvidences().size()==1);
 		AnnotationEvidence evi = annot.getEvidences().get(0);
-		assertTrue(evi.getAssignedBy().equals("Uniprot"));
+		assertTrue(evi.getAssignedBy().equals("Reactome"));
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("R-HSA-5620924"));
 		assertTrue(evi.getResourceDb().equals("Reactome"));
@@ -86,7 +88,7 @@ having sum(a.cnt)=1
 		}
 		assertTrue(annot.getEvidences().size()==1);
 		AnnotationEvidence evi = annot.getEvidences().get(0);
-		assertTrue(evi.getAssignedBy().equals("NextProt"));
+		assertTrue(evi.getAssignedBy().equals("KEGG_PTW"));
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("hsa04120+134111"));
 		assertTrue(evi.getResourceDb().equals("KEGGPathway"));
@@ -108,7 +110,7 @@ having sum(a.cnt)=1
 		}
 		assertTrue(annot.getEvidences().size()==1);
 		AnnotationEvidence evi = annot.getEvidences().get(0);
-		assertTrue(evi.getAssignedBy().equals("Uniprot"));
+		assertTrue(evi.getAssignedBy().equals("Orphanet"));
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("478"));
 		assertTrue(evi.getResourceDb().equals("Orphanet"));
@@ -130,7 +132,7 @@ having sum(a.cnt)=1
 		}
 		assertTrue(annot.getEvidences().size()==1);
 		AnnotationEvidence evi = annot.getEvidences().get(0);
-		assertTrue(evi.getAssignedBy().equals("Uniprot"));
+		assertTrue(evi.getAssignedBy().equals("DrugBank"));
 		assertTrue(evi.getEvidenceCodeAC().equals("ECO:0000305"));
 		assertTrue(evi.getResourceAccession().equals("DB00852"));
 		assertTrue(evi.getResourceDb().equals("DrugBank"));
@@ -214,34 +216,32 @@ having sum(a.cnt)=1
 	}
 
 	//@Test
-	public void testAllEntriesDbXrefs() {
-
-		Set<String> allEntryNames = masterIdentifierService.findUniqueNames();
-
-		for (String entryName : allEntryNames) {
-
-			List<DbXref> xrefs = this.xrefService.findDbXrefsByMaster(entryName);
-
-			for (DbXref xref : xrefs) {
-
-				Assert.assertTrue(!xref.getAccession().isEmpty());
-				Assert.assertTrue(!xref.getUrl().isEmpty());
-				Assert.assertTrue(!xref.getLinkUrl().isEmpty());
-				Assert.assertTrue(!xref.getResolvedUrl().isEmpty());
-			}
-		}
-	}
-
-	//@Test
 	public void logAllEntriesXrefUrlStatus() throws IOException {
 
 		Set<String> allEntryAcs = masterIdentifierService.findUniqueNames();
 
-		DbXrefUrlVisitor visitor = new DbXrefUrlVisitor("/tmp/allentries-xrefs-url.tsv", "/tmp/allentries-xrefs-url.log");
+		DbXrefUrlVisitor visitor = new DbXrefUrlVisitor("/tmp/allentries-xrefs-url.tsv",
+				"/tmp/allentries-xrefs-url.log");
 
 		for (String entryAc : allEntryAcs) {
 
 			visitor.visit(entryAc, this.xrefService.findDbXrefsByMaster(entryAc));
+			visitor.flush();
+		}
+
+		visitor.flush();
+		visitor.close();
+	}
+
+	//@Test
+	public void testAllTerminologyDbXrefs() throws IOException {
+
+		DbXrefUrlVisitor visitor = new DbXrefUrlVisitor("/tmp/allterminologies-xrefs-url.tsv",
+				"/tmp/allterminologies-xrefs-url.log");
+
+		for (Terminology terminology : terminologyService.findAllTerminology()) {
+
+			visitor.visit(terminology.getAccession(), terminology.getXrefs());
 			visitor.flush();
 		}
 

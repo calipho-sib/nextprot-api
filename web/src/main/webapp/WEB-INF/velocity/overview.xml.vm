@@ -18,11 +18,12 @@
         #end
         </recommended-name>
 ## ----------------- ALTERNATIVE-NAMES (LIST) ------------------------------
+    #if(!$entry.overview.alternativeProteinNames.isEmpty())
         <alternative-name-list>
     #foreach($entityName in $entry.overview.alternativeProteinNames)
             <alternative-name>
                 <protein-name qualifier="#if($entityName.getQualifier())$entityName.getQualifier()#end">$entityName.name</protein-name>
-			#if($entityName.synonyms)
+			#if(!$entityName.synonyms.isEmpty())
 			    #foreach($synName in $entityName.synonyms)
 			    <protein-name qualifier="#if($synName.getQualifier())$synName.getQualifier()#end">$synName.name</protein-name>
 			    #end
@@ -30,21 +31,7 @@
             </alternative-name>
     #end
         </alternative-name-list>
-
-#if($entry.overview.isoformNames)
-    <isoform-name-list>
-    #foreach($isoformName in $entry.overview.isoformNames)
-        <isoform>
-            <isoform-name iso-name-type="recommended">$isoformName.name</isoform-name>
-            #if($isoformName.synonyms)
-                #foreach($synName in $isoformName.synonyms)
-                    <isoform-name iso-name-type="alternative">$synName.name</isoform-name>
-                #end
-            #end
-        </isoform>
     #end
-    </isoform-name-list>
-#end
 
 ## ----------------- CLEAVED REGION NAMES ------------------------------
     #if($entry.overview.cleavedRegionNames)
@@ -57,7 +44,7 @@
                             <chain-name qualifier="#if($otherEntity.getQualifier())$otherEntity.getQualifier()#end">$otherEntity.name</chain-name>
                         #end
                     </recommended-name>
-                    #if($entityName.synonyms)
+                    #if(!$entityName.synonyms.isEmpty())
                         <alternative-name-list>
                             #foreach($synonym in $entityName.synonyms)
                                 <alternative-name>
@@ -82,7 +69,7 @@
                             <region-name qualifier="#if($otherEntity.getQualifier())$otherEntity.getQualifier()#end">$otherEntity.name</region-name>
                         #end
                     </recommended-name>
-                    #if($entityName.synonyms)
+                    #if(!$entityName.synonyms.isEmpty())
                         <alternative-name-list>
                             #foreach($synonym in $entityName.synonyms)
                                 <alternative-name>
@@ -95,6 +82,31 @@
             #end
         </region-list>
     #end
+
+    #if($entry.overview.isoformNames)
+        <isoform-list>
+            #foreach($entityName in $entry.overview.isoformNames)
+                <isoform>
+                    <recommended-name>
+                        <isoform-name>$entityName.name</isoform-name>
+                        #foreach($otherEntity in $entityName.getOtherRecommendedEntityNames())
+                            <isoform-name>$otherEntity.name</isoform-name>
+                        #end
+                    </recommended-name>
+                    #if(!$entityName.synonyms.isEmpty())
+                        <alternative-name-list>
+                            <alternative-name>
+                                #foreach($synonym in $entityName.synonyms)
+                                    <isoform-name>$synonym.name</isoform-name>
+                                #end
+                            </alternative-name>
+                        </alternative-name-list>
+                    #end
+                </isoform>
+            #end
+        </isoform-list>
+    #end
+
     </protein-name-list>
 #end
 

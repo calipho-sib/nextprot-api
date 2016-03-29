@@ -21,6 +21,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Lazy
@@ -56,41 +58,55 @@ public class SearchController {
 				throw new NextProtException(e);
 			}
 		} else {
-			throw new NextProtException("errormessage: index " + indexName + " not available");
+			throw new NextProtException("error: index " + indexName + " is not available");
 		}
 	}
 
 	@ApiMethod(path = "/autocomplete/{index}", verb = ApiVerb.GET, description = "")
 	@RequestMapping(value="/autocomplete/{index}", method={RequestMethod.GET, RequestMethod.POST})
-	public String autocomplete(
+	public AutocompleteSearchResult autocomplete(
 			@ApiQueryParam(name="index", allowedvalues={"entry", "term", "publication"}, required=true) @PathVariable("index") String indexName,
 			@ApiQueryParam(name="query", description="Search query", required=true) @RequestParam(value="query", required=true) String queryString,
 			@ApiQueryParam(name="quality", description="Quality GOLD/BRONZE") @RequestParam(value="quality", required=false) String quality, 
 			@ApiQueryParam(name="sort") @RequestParam(value="sort", required=false) String sort,
 			@ApiQueryParam(name="order") @RequestParam(value="order", required=false) String order,
 			@ApiQueryParam(name="start") @RequestParam(value="start", required=false) String start, 
-			@ApiQueryParam(name="rows") @RequestParam(value="rows", required=false) String rows,
-			@RequestParam(value="filter", required=false) String filter,
-			Model model) {
+			@RequestParam(value="filter", required=false) String filter) {
 		
-		if(this.queryService.checkAvailableIndex(indexName)) {
+		if (this.queryService.checkAvailableIndex(indexName)) {
 
 			Query q = this.queryBuilderService.buildQueryForAutocomplete(indexName, queryString, quality, sort, order, start, "0", filter);
-			SearchResult result;
+
 			try {
-				result = this.queryService.executeQuery(q);
-				model.addAttribute("result", result);
+				return convert(queryService.executeQuery(q));
 			} catch (SearchQueryException e) {
-				e.printStackTrace();
-				model.addAttribute("errormessage", e.getMessage());
-				return "exception";
+				throw new NextProtException(e);
 			}
-			
+		} else {
+			throw new NextProtException("error: index " + indexName + " is not available");
 		}
-		return "autocomplete";
 	}
-	
-	
+
+	private static AutocompleteSearchResult convert(SearchResult searchResult) {
+
+		AutocompleteSearchResult autocompleteResult = new AutocompleteSearchResult();
+
+		autocompleteResult.setElapsedTime(searchResult.getElapsedTime());
+		autocompleteResult.setEntity(searchResult.getEntity());
+		autocompleteResult.setIndex(searchResult.getIndex());
+
+		Map<String, List<Map<String, Object>>> facets = searchResult.getFacets();
+
+		for (List<Map<String, Object>> value : facets.values()) {
+
+			for (Map<String, Object> map : value) {
+				autocompleteResult.addResult((String) map.get("name"), ((Long) map.get("count")).intValue());
+			}
+		}
+
+		return autocompleteResult;
+	}
+
 	/**
 	 * @param indexName
 	 * @param queryRequest

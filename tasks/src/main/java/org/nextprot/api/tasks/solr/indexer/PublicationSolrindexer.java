@@ -6,7 +6,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
-import org.nextprot.api.core.domain.publication.JournalLocation;
+import org.nextprot.api.core.domain.publication.JournalResourceLocator;
 import org.nextprot.api.core.utils.TerminologyUtils;
 
 import java.util.ArrayList;
@@ -52,17 +52,26 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		//doc.addField("source", rs.getString("source"));
 		//This source feature is either PubMed (99.99%) or UniProt for published articles with no PMID, it is useless for the indexes since
 		// another way to get those is to query ac without pubmed ac:(-pubmed)
-		JournalLocation journalLocation = publi.getJournalLocation();
-		if(journalLocation != null) { // TODO: rename "pretty_journal" to "abbrev_journal"
-			String jfield = journalLocation.getName();
-			String jabbrev = journalLocation.getAbbrev();
-			jfield += " " + jabbrev;
 
-			doc.addField("journal", jfield); 
-			doc.addField("pretty_journal", jabbrev); 
+		if (publi.isLocatedInScientificJournal()) {
+
+			JournalResourceLocator journal = publi.getJournalResourceLocator();
+			String jfield = journal.getName();
+
+			if (journal.hasJournalId()) {
+
+				String jabbrev = journal.getAbbrev();
+				jfield += " " + jabbrev;
+
+				// TODO: rename "pretty_journal" to "abbrev_journal"
+				doc.addField("pretty_journal", jabbrev);
+			}
+
+			doc.addField("journal", jfield);
 		}
-		else if(publi.getJournal_from_properties() != null)
-			doc.addField("journal", publi.getJournal_from_properties()); 
+		// no need the following anymore as journal name is now accessible from journal
+		//else if(publi.getJournal_from_properties() != null)
+		//	doc.addField("journal", publi.getJournal_from_properties());
 
 		SortedSet<PublicationAuthor> authorset = publi.getAuthors();
 		if (authorset != null) {
@@ -85,4 +94,8 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		
 		return doc;
 	}
+
+	/**
+	 *
+	 */
 }

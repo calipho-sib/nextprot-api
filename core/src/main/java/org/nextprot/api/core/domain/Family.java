@@ -72,7 +72,12 @@ public class Family implements Serializable{
 		else if (name.endsWith(" subfamily")) {
 			this.level = "Subfamily";			// 143 cases
 			this.name = name.substring(0,name.length() - 10);
-		} else {
+		}
+		else if (name.endsWith(" sub-subfamily")) {
+			this.level = "Subsubfamily";
+			this.name = name.substring(0,name.length() - 14);
+		}
+		else {
 			this.level = "";					//  0 case, but who knows...
 			this.name = name;
 		}

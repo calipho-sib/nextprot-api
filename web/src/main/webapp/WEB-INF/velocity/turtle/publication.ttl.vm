@@ -11,7 +11,7 @@ publication:$publication.getMD5() a :Publication;
 #end
     :pubType "$publication.getPublicationType()"^^xsd:string;
 #if($publication.isLocalizable())
-    :journal "$publication.getPublicationLocationName()"^^xsd:string;
+    :journal "$publication.getPublicationLocatorName()"^^xsd:string;
 #if($publication.getPublicationYear())
     :year "$publication.getPublicationYear()"^^xsd:string;
 #end
@@ -20,7 +20,7 @@ publication:$publication.getMD5() a :Publication;
     :volume "$publication.getVolume()"^^xsd:string;
     :issue "$publication.getIssue()"^^xsd:string;
 #else
-    :publisher "$publication.getPublisherName()"^^xsd:string;
+    #if($publication.getPublisherName()):publisher "$publication.getPublisherName()"^^xsd:string;#end
     :city "$publication.getPublisherCity()"^^xsd:string;
 #end
     :firstPage "$publication.getFirstPage()"^^xsd:string;

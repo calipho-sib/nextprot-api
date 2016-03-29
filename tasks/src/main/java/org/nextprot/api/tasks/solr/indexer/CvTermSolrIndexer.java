@@ -22,7 +22,7 @@ public class CvTermSolrIndexer extends SolrIndexer<Terminology> {
 		if (ontology.equals("OrganelleCv")) return null; // CaliphoMisc-194, ignore this ontology
 		else if (ontology.equals("NextprotAnnotationCv")) return null; // CaliphoMisc-194, ignore this ontology
 		else if (ontology.equals("UniprotFamilyCv")) return null; 
-		
+
 		SolrInputDocument doc = new SolrInputDocument();
 		doc.addField("id", terminology.getId());
 		doc.addField("ac", terminology.getAccession());

@@ -7,17 +7,19 @@ package org.nextprot.api.commons.constants;
 
 public enum Xref2Annotation  {
 
-	ORPHANET(84,"Orphanet", "disease", AnnotationCategory.DISEASE.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated", "IC","ECO:0000305", "curator inference used in manual assertion"),
-	REACTOME(112, "Reactome", "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 2, "Uniprot","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
-	DRUGBANK(27,"DrugBank", "generic name", AnnotationCategory.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),2,"Uniprot","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
-	KEGGPATHWAY(186,"KEGGPathway",  "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 1, "NextProt","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"), // ALTERNATIVE SOURCE = 2 , "NextProt integration"
+	ORPHANET("Orphanet", "disease", AnnotationCategory.DISEASE.getDbAnnotationTypeName(),
+			"Orphanet","GOLD","curated", "IC","ECO:0000305", "curator inference used in manual assertion"),
+	REACTOME("Reactome", "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 
+			"Reactome","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
+	DRUGBANK("DrugBank", "generic name", AnnotationCategory.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),
+			"DrugBank","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
+	KEGGPATHWAY("KEGGPathway",  "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 
+			"KEGG_PTW","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion")
 	;
 
-	private final int xrefDbId; 
-	private final String xrefDbName;
+	private final String xrefDbName; // refers to an existing cv_name in cv_databases table
 	private final String annotCat;
-	private final int srcId;
-	private final String srcName;
+	private final String srcName;    // refers to an existing cv_name in cv_datasources table
 	private final String xrefPropName;
 	private final String qualityQualifier;
 	private final String assignmentMethod;
@@ -25,15 +27,13 @@ public enum Xref2Annotation  {
 	private final String ecoAC;
 	private final String ecoName;
 
-    Xref2Annotation(final int xrefDbId, final String xrefDbName,
-			final String xrefPropName, final String annotCat, final int srcId, final String srcName,
+    Xref2Annotation(final String xrefDbName,
+			final String xrefPropName, final String annotCat, final String srcName,
 			final String qualityQualifier, final String assignMethod, final String qualifierType, String ecoAC, String ecoName) {
 		
-		this.xrefDbId=xrefDbId;
 		this.xrefDbName=xrefDbName;
 		this.xrefPropName=xrefPropName;
 		this.annotCat=annotCat;
-		this.srcId=srcId;
 		this.srcName=srcName;
 		this.qualityQualifier=qualityQualifier;
 		this.qualifierType=qualifierType;
@@ -50,10 +50,6 @@ public enum Xref2Annotation  {
 		return ecoName;
 	}
 
-	public int getXrefDbId() {
-		return xrefDbId;
-	}
-
 	public String getXrefDbName() {
 		return xrefDbName;
 	}
@@ -63,10 +59,6 @@ public enum Xref2Annotation  {
 
 	public String getAnnotCat() {
 		return annotCat;
-	}
-
-	public int getSrcId() {
-		return srcId;
 	}
 
 	public String getSrcName() {

@@ -110,10 +110,6 @@ public class EntryConfig implements KeyValueRepresentation{
 		this.xrefs = true; return this;
 	}
 
-	public EntryConfig withKeywords() {
-		this.keywords = true; return this;
-	}
-
 	public EntryConfig withIdentifiers() {
 		this.identifiers = true; return this;
 	}
@@ -152,7 +148,7 @@ public class EntryConfig implements KeyValueRepresentation{
 	}
 
 	public EntryConfig withEverything() {
-		this.withOverview().withAnnotations().withPublications().withXrefs().withKeywords()
+		this.withOverview().withAnnotations().withPublications().withXrefs()
 		.withIdentifiers().withChromosomalLocations().withGenomicMappings().withInteractions()
 		.withTargetIsoforms().withExperimentalContexts().withEnzymes();
 		return this;

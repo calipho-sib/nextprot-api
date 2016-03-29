@@ -1,9 +1,9 @@
 package org.nextprot.api.solr;
 
+import org.nextprot.api.commons.utils.KeyValueRepresentation;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.nextprot.api.commons.utils.KeyValueRepresentation;
 
 //TODO ? @JsonIgnoreProperties({ "sparqlTitle", "sparqlEngine" })
 public class QueryRequest implements Serializable, KeyValueRepresentation {
@@ -31,7 +31,6 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 		this.queryId = queryId;
 	}
 
-	private List<String> accs;
 	private String quality;
 	private String sort;
 	private String order;
@@ -65,18 +64,6 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 
 	public void setListOwner(String owner) {
 		this.listOwner = owner;
-	}
-
-	public List<String> getAccs() {
-		return accs;
-	}
-
-	public boolean hasAccs() {
-		return this.accs != null && this.accs.size() > 0;
-	}
-
-	public void setAccs(List<String> accs) {
-		this.accs = accs;
 	}
 
 	public String getQuality() {
@@ -170,13 +157,6 @@ public class QueryRequest implements Serializable, KeyValueRepresentation {
 		StringBuilder builder = new StringBuilder();
 		builder.append("listOwner    : "+this.listOwner+"\n");
 		builder.append("list         : "+this.listId+"\n");
-		builder.append("accs         : ");
-		if (accs==null) {
-			builder.append("null");
-		} else {
-			for (String ac:accs) builder.append(ac  + " ");
-		}
-		builder.append("\n");
 		builder.append("query        : "+this.query+"\n");
 		builder.append("quality      : "+this.quality+"\n");
 		builder.append("start        : "+this.start+"\n");

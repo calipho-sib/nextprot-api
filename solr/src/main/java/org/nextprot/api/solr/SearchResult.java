@@ -96,8 +96,9 @@ public class SearchResult  {
 		return results;
 	}
 
-	public void setResults(List<Map<String, Object>> results) {
-		this.results = results;
+	public void addAllResults(List<Map<String, Object>> results) {
+
+		this.results.addAll(results);
 	}
 
 	public void addSearchResultFacet(Facet facet) {

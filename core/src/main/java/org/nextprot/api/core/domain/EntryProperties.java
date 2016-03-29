@@ -7,6 +7,7 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 	
 	private static final long serialVersionUID = -1331815504528958900L;
 	private String proteinExistence;
+	private String proteinExistenceInfo;
 	private int ptmCount;
 	private int varCount;
 	private int isoformCount;
@@ -157,6 +158,14 @@ public class EntryProperties  implements Serializable { //TODO daniel asks: shou
 
 	public void setProteinExistence(String proteinExistence) {
 		this.proteinExistence = proteinExistence;
+	}
+
+	public String getProteinExistenceInfo() {
+		return proteinExistenceInfo;
+	}
+
+	public void setProteinExistenceInfo(String proteinExistenceInfo) {
+		this.proteinExistenceInfo = proteinExistenceInfo;
 	}
 
 }

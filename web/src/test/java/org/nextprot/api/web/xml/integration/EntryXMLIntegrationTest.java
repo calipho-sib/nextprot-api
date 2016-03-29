@@ -14,8 +14,7 @@ public class EntryXMLIntegrationTest extends WebIntegrationBaseTest {
   @Test
   public void shouldContainIsoform() throws Exception {
 	  this.mockMvc.perform(get("/entry/NX_P06213/isoform.xml")).andExpect(status().isOk())
-	  	.andExpect(xpath("/entry/isoform-list/isoform/sequence").exists())
-	  	.andExpect(xpath("/entry/isoform-list/isoform").nodeCount(2));
+	  	.andExpect(xpath("/entry/isoform-sequence-list/isoform-sequence").nodeCount(2));
   }
   
   @Test

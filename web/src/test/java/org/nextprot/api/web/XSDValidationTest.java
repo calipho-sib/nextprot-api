@@ -1,15 +1,5 @@
 package org.nextprot.api.web;
 
-import static org.junit.Assert.fail;
-
-import java.io.File;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -17,6 +7,15 @@ import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.service.ExportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.File;
+
+import static org.junit.Assert.fail;
 
 @Ignore
 @ActiveProfiles(profiles = {"cache"})
@@ -39,7 +38,7 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 		try {
 
 			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			schema = factory.newSchema(new StreamSource(new File("src/main/webapp/nextprot-export.xsd")));
+			schema = factory.newSchema(new StreamSource(new File("src/main/webapp/nextprot-export-v1.xsd")));
 
 			File f = new File("tmp.xml");
 			StreamSource xmlFile = new StreamSource(f);

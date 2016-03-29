@@ -2,6 +2,7 @@ package org.nextprot.api.core.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class GenomicMapping implements Serializable{
@@ -45,7 +46,8 @@ public class GenomicMapping implements Serializable{
 		return isoformMappings;
 	}
 
-	public void setIsoformMappings(List<IsoformMapping> isoformMappings) {
-		this.isoformMappings = isoformMappings;
+	public boolean addAllIsoformMappings(Collection<IsoformMapping> mappings) {
+
+		return isoformMappings.addAll(mappings);
 	}
 }

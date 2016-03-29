@@ -2,7 +2,7 @@ package org.nextprot.api.core.domain.publication;
 
 import org.jsondoc.core.annotation.ApiObjectField;
 
-public abstract class BookLocation extends PublicationLocation {
+public abstract class BookResourceLocator extends PublicationResourceLocator {
 
     @ApiObjectField(description = "The first page")
     private String firstPage;
