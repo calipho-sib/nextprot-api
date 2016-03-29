@@ -19,10 +19,10 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 	//@Ignore
 	public void testXrefs() {
 
-		for(int i=0; i < 10; i++){ testXrefs(getEntry(i)); } 
+		//for(int i=0; i < 10; i++){ testXrefs(getEntry(i)); } 
 		
-		//Entry entry = getEntry("NX_P20592");
-		//testXrefs(entry);
+		Entry entry = getEntry("NX_P20592");
+		testXrefs(entry);
 	
 	}
 
@@ -30,11 +30,11 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 	public void testXrefs(Entry entry) {
 		
 		String entryName = entry.getUniqueName();
+		int newcnt=0, comcnt=0, misscnt=0;
 		System.out.println("Testing: " + entryName);
 		XrefFieldBuilder xfb = new XrefFieldBuilder();
 		xfb.initializeBuilder(entry);
 		
-		// Xrefs to HPA antibodies temporarily not in the API
 		List<String> expectedABs = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ANTIBODY);
 		if(expectedABs != null) {
 		  Collections.sort(expectedABs);
@@ -48,14 +48,13 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		if(expectedEnsembl != null)
 		  Assert.assertEquals(xfb.getFieldValue(Fields.ENSEMBL, List.class).size(), expectedEnsembl.size());
 
-		List<String> expectedXrefs = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.XREFS);
-		Set<String> expectedxrefSet = new TreeSet<String>(expectedXrefs);
-		//System.err.println(expectedxrefSet + "\n" + expectedxrefSet.size() + " elems expected");
+		Set<String> expectedxrefSet = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.XREFS));
 		Set<String> xrefSet = new TreeSet<String>(xfb.getFieldValue(Fields.XREFS, List.class));
-		//System.err.println(xrefSet + "\n" + xrefSet.size() + " elems now");
-		//for(String elem : xrefSet) if(elem.contains("HPAxxx")) System.err.println(elem);
-		//System.err.println(expectedXrefs.size() + " -> " + xrefSet.size());
-		//System.err.println("xrefSet: " + xrefSet);
+		for(String elem : xrefSet) if(!expectedxrefSet.contains(elem))
+			{System.err.println("NEW: " + elem); newcnt += 1;}
+		//else {System.err.println("COMMON: " + elem); comcnt += 1;}
+		for(String elem : expectedxrefSet) if(!xrefSet.contains(elem)) {System.err.println("MISSING: " + elem); misscnt += 1;}
+		System.err.println("COMMON: " + comcnt + " MISSING: " + misscnt + " NEW: " + newcnt);
 		if (xrefSet.size() < expectedxrefSet.size()) {
 			// Several issues there:
 			// 1) missing pubmeds and DOIs -> the ones comming from additional refs (they will be added to entry publications)
@@ -67,6 +66,7 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 			//Assert.fail(msg);
 		}
 		else if (xrefSet.size() > expectedxrefSet.size()) {
+			System.err.println("removing " + expectedxrefSet.size() + " expected xrefs");
 			xrefSet.removeAll(expectedxrefSet);
 			String msg = "Xrefs from API contains more data: " + xrefSet;
 			System.err.println(msg);

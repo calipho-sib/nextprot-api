@@ -45,6 +45,7 @@ public class PublicationSolrindexer extends SolrIndexer<Publication>{
 		doc.addField("first_page", publi.getFirstPage());
 		doc.addField("last_page", publi.getLastPage());
 		doc.addField("volume", publi.getVolume());
+		doc.addField("volume_s", publi.getVolume());
 		doc.addField("abstract", publi.getAbstractText());
 		doc.addField("type", publi.getPublicationType());
 

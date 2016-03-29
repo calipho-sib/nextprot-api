@@ -64,6 +64,7 @@ public class CVFieldBuilder extends FieldBuilder {
 		Tree<Terminology> tree = null;
 		Set<String> ancestors2 = null;
 		for (String cvac : cv_acs) {
+			System.err.println(cvac);
 			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
 			String category = term.getOntology();
 			//System.err.println("category: " + category);

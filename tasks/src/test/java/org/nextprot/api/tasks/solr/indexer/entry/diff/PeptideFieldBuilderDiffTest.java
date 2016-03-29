@@ -16,11 +16,11 @@ public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 	@Test
 	public void testPeptides() {
 
-		for (int i = 0; i < 10; i++) {
+		for (int i = 10; i < 0; i++) {
 			Entry entry = getEntry(i);
 			testPeptides(entry);
 		}
-		//Entry entry = getEntry("NX_Q96I99");
+		//Entry entry = getEntry("NX_P43686");
 		//testPeptides(entry);
 	}
 

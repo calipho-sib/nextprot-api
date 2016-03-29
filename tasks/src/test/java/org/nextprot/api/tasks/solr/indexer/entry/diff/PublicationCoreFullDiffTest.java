@@ -31,7 +31,7 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 	public void testPublis() {
 		List<Long> allpubids = publicationService.findAllPublicationIds();
 		//System.err.println(allpubids.size() + " publications");
-		for(int i=0; i < 100; i++)
+		for(int i=0; i < 0; i++)
 		  {
 		  Long pubid = allpubids.get(i);
 		  String pubtype = publicationService.findPublicationById(pubid).getPublicationType();
@@ -39,7 +39,7 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 		    testPublicationData(pubid);
 		  } 
 		
-		//testPublicationData(6850164); 
+		testPublicationData(7047618); 
 		//testPublicationData(710790); // date precision 60 
 		//testPublicationData(6725923); // date precision 10
 		//testPublicationData(7115344); // not in prev index
@@ -77,7 +77,7 @@ public class PublicationCoreFullDiffTest extends SolrDiffTest {
 		Assert.assertEquals(expected, solrDoc.getFieldValue("year"));
 		
 		expected = (String) getValueForFieldInCurrentSolrImplementation(entry, PubField.VOLUME);
-		//System.err.println("volume: " + expected);
+		System.err.println("volume: " + solrDoc.getFieldValue("volume"));
 		Assert.assertEquals(expected, solrDoc.getFieldValue("volume"));
 		
 		expected = (String) getValueForFieldInCurrentSolrImplementation(entry, PubField.FIRST_PAGE);

@@ -23,7 +23,7 @@ public class XrefFieldBuilder extends FieldBuilder {
 		for (DbXref xref : xrefs) {
 			String acc = xref.getAccession();
 			String db = xref.getDatabaseName();
-
+			if (db.equals("neXtProtSubmission")) continue;
 			if (db.equals("HPA") && !acc.contains("ENSG")) { // HPA with ENSG are for expression
 				//System.err.println(acc);
 				addField(Fields.ANTIBODY, acc);
@@ -31,10 +31,12 @@ public class XrefFieldBuilder extends FieldBuilder {
             if (db.equals("Ensembl")) {
 				addField(Fields.ENSEMBL, acc);
 			} 
-            if (!(db.equals("PeptideAtlas") || db.equals("SRMAtlas"))) {
-				//addField(Fields.XREFS, acc + ", " + db + ":" + acc);
-				addField(Fields.XREFS,db + ":" + acc + ", " + acc);
-				//System.err.println(db + " -> " + xref.getDatabaseCategory());
+            if (!(db.equals("PeptideAtlas") || db.equals("SRMAtlas"))) { // These are indexed under the 'peptide' field
+            	//if(!acc.startsWith("EBI-")) // These are indexed under the 'interaction' field
+				   addField(Fields.XREFS,db + ":" + acc + ", " + acc);
+				//if(db.equals("IntAct"))
+				  //System.err.println(acc);
+				  //System.err.println(db + " -> " + xref.getDatabaseCategory());
 			}
 	
 		}
@@ -44,8 +46,8 @@ public class XrefFieldBuilder extends FieldBuilder {
 			for (DbXref pubxref : pubxrefs) {
 				String acc = pubxref.getAccession();
 				String db = pubxref.getDatabaseName();
-				//addField(Fields.XREFS, acc + ", " + db + ":" + acc);
-				addField(Fields.XREFS,db + ":" + acc + ", " + acc);
+				if (!db.equals("neXtProtSubmission")) 
+				   addField(Fields.XREFS,db + ":" + acc + ", " + acc);
 			}
 		}
 

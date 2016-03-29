@@ -18,11 +18,12 @@ public abstract class GenerateSolrIndex {
 	protected void launch(String[] args) {
 		try {
 
-			System.setProperty("spring.profiles.active", "dev, cache");
+			System.setProperty("spring.profiles.active", "dev");
+			//System.setProperty("spring.profiles.active", "dev, cache");
 			ctx = new ClassPathXmlApplicationContext(
 					"classpath:spring/commons-context.xml",
 					"classpath:spring/core-context.xml");
-			cacheManager = ctx.getBean(CacheManager.class);
+			//cacheManager = ctx.getBean(CacheManager.class);
 
 			start(args);
 
