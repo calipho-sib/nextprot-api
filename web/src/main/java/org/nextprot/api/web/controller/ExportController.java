@@ -4,6 +4,7 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.FileFormat;
 import org.nextprot.api.solr.QueryRequest;
@@ -76,6 +77,44 @@ public class ExportController {
 
         FileFormat format = FileFormat.valueOf(request);
         streamEntries(format, response, "entry", qr);
+    }
+
+    @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
+    @ResponseBody
+    public Map<String, Set<String>> getXMLTemplates() {
+        return EntryBlock.getFormatViews();
+    }
+
+    @ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries accessions from a list")
+    @RequestMapping("/export/lists/{listId}")
+    public void exportList(HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
+
+        UserProteinList pl = this.proteinListService.getUserProteinListByPublicId(listId);
+        String fileName = pl.getName() + ".txt";
+
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+        // TODO should this be secured or not? for now let's say not...
+        // 2 ways of doing it: either add the token in the header or generate a
+        // secret value for each list that is created
+
+        // http://alpha-api.nextprot.org/export/lists/3C5KYA1M
+        try {
+            if (pl.getDescription() != null) {
+                response.getWriter().write("#" + pl.getDescription() + StringUtils.CR_LF);
+            }
+
+            if (pl.getAccessionNumbers() != null) {
+                Iterator<String> sIt = pl.getAccessionNumbers().iterator();
+                while (sIt.hasNext()) {
+                    response.getWriter().write(sIt.next());
+                    response.getWriter().write(StringUtils.CR_LF);
+                }
+            }
+
+        } catch (Exception e) {
+            throw new NextProtException(e.getMessage());
+        }
     }
 
     private List<String> getAccessions(QueryRequest queryRequest) {
@@ -166,45 +205,5 @@ public class ExportController {
         qr.setOrder(order);
         qr.setQuality(quality);
         return qr;
-    }
-
-    @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
-    @ResponseBody
-    public Map<String, Set<String>> getXMLTemplates() {
-        return EntryBlock.getFormatViews();
-    }
-
-    @ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries accessions from a list")
-    @RequestMapping("/export/lists/{listId}")
-    public void exportList(Model model, HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
-
-        UserProteinList pl = this.proteinListService.getUserProteinListByPublicId(listId);
-        String fileName = pl.getName() + ".txt";
-
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
-
-        // TODO should this be secured or not? for now let's say not...
-        // 2 ways of doing it: either add the token in the header or generate a
-        // secret value for each list that is created
-
-        try {
-            if (pl.getDescription() != null) {
-                response.getWriter().write("#" + pl.getDescription() + "\n");
-            }
-
-            if (pl.getAccessionNumbers() != null) {
-                Iterator<String> sIt = pl.getAccessionNumbers().iterator();
-                while (sIt.hasNext()) {
-                    response.getWriter().write(sIt.next());
-                    if (sIt.hasNext()) {
-                        response.getWriter().write("\n");
-                    }
-
-                }
-            }
-
-        } catch (Exception e) {
-            throw new NextProtException(e.getMessage());
-        }
     }
 }
