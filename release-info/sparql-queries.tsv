@@ -1,134 +1,137 @@
-2016-03-22 15:25:31,855 NXQ_00001	5	4895	Proteins phosphorylated and located in the cytoplasm	
-2016-03-22 15:25:32,165 NXQ_00002	0	3785	Proteins that are located in both the cytoplasm and in the nucleus	
-2016-03-22 15:25:32,457 NXQ_00003	0	976	Proteins with 7 transmembrane regions	
-2016-03-22 15:26:08,506 NXQ_00004	36	57	Proteins highly expressed in brain but not expressed in testis	
-2016-03-22 15:26:08,601 NXQ_00005	0	911	Proteins located in mitochondrion and that lack a transit peptide	
-2016-03-22 15:26:08,889 NXQ_00006	0	70	Proteins whose genes are on chromosome 13 and are associated with a disease	
-2016-03-22 15:26:09,081 NXQ_00007	0	253	Proteins associated with diseases that are associated with cardiovascular aspects	
-2016-03-22 15:26:09,246 NXQ_00008	0	5	Proteins whose genes are less than 50000 bp away from the location of the gene coding for protein p53	
-2016-03-22 15:26:11,807 NXQ_00009	2	491	Proteins with 3 disulfide bonds and that are not annotated as hormones 	
-2016-03-22 15:26:11,917 NXQ_00010	0	1973	Proteins that are glycosylated and are not located in the membrane	
-2016-03-22 15:26:15,397 NXQ_00011	3	1545	Proteins that are expressed in liver and involved in transport	
-2016-03-22 15:26:16,905 NXQ_00012	1	8	Proteins that interact with protein RBM17 and that are involved in splicing	
-2016-03-22 15:26:17,171 NXQ_00013	0	30	Proteins that have a protein kinase domain but lack protein kinase activity	
-2016-03-22 15:26:17,199 NXQ_00014	0	9	Proteins with one SH2 and two SH3 domains	
-2016-03-22 15:26:19,240 NXQ_00015	2	132	Proteins with a PDZ domain that interact with at least one protein which is expressed in brain	
-2016-03-22 15:26:24,134 NXQ_00016	4	164	Proteins with a mature chain of less than 1000 amino acids which are secreted and do not contain cysteines in the mature chain	
-2016-03-22 15:26:24,616 NXQ_00017	0	1049	Proteins larger than 1000 amino acids that are located in the nucleus and expressed in the nervous system	
-2016-03-22 15:26:24,674 NXQ_00018	0	291	Proteins that are acetylated and methylated and located in the nucleus	
-2016-03-22 15:26:24,797 NXQ_00019	0	21	Proteins with more than 12 WD repeats (ie: with at least two beta-propellers)	
-2016-03-22 15:26:38,620 NXQ_00020	13	5	Proteins with at least 2 HPA antibodies whose genes are located on chromosome 21 and that are highly expressed at IHC level in heart	
-2016-03-22 15:26:38,651 NXQ_00021	0	117	Proteins with at least one HPA antibody that are located in the peroxisome	
-2016-03-22 15:26:38,717 NXQ_00022	0	2084	Proteins with no function annotated 	
-2016-03-22 15:26:39,977 NXQ_00023	1	1710	Proteins that are involved in transport and located in a membrane and that are not glycosylated (experimentally or predicted)	
-2016-03-22 15:26:43,795 NXQ_00024	3	721	Proteins with more than 10 reported interactions (of 'gold' quality)	
-2016-03-22 15:26:50,726 NXQ_00025	6	546	Proteins with at least 50 interactors that are not associated with a disease	
-2016-03-22 15:26:51,051 NXQ_00026	0	5049	Proteins interacting with at least one protein which are located in the mitochondrion	
-2016-03-22 15:26:51,399 NXQ_00027	0	328	Proteins with one or more glycosylation sites reported in PubMed:20570859 or PubMed:14760718	
-2016-03-22 15:26:55,758 NXQ_00028	4	1441	Proteins associated with a disease but without a disease-linked variant	
-2016-03-22 15:26:58,003 NXQ_00029	2	124	Proteins anchored to the membrane via a GPI-anchor	
-2016-03-22 15:26:58,169 NXQ_00030	0	376	Proteins whose gene is located in chromosome 2 that belongs to families with at least 5 members in the human proteome	
-2016-03-22 15:26:58,244 NXQ_00031	0	92	Proteins with more than 10 alternative isoforms	
-2016-03-22 15:26:58,607 NXQ_00032	0	313	Proteins with a coiled coil region and that are involved in transcription but do not contain a bZIP domain	
-2016-03-22 15:26:58,876 NXQ_00033	0	270	Proteins with at least one phosphotyrosine but no phosphoserine or phosphothreonine	
-2016-03-22 15:26:58,986 NXQ_00034	0	234	Proteins with at least one homeobox domain and with at least one variant in the homeobox domain(s)	
-2016-03-22 15:26:59,051 NXQ_00035	0	570	Proteins located in the mitochondrion and which are enzymes	
-2016-03-22 15:26:59,089 NXQ_00036	0	272	Proteins that are oxidoreductases and that bind to NAD/NADP	
-2016-03-22 15:26:59,126 NXQ_00037	0	469	Proteins that bind RNA but do not contain a RRM domain	
-2016-03-22 15:26:59,183 NXQ_00038	0	26	Proteins with at least one selenocysteine in their sequence	
-2016-03-22 15:26:59,406 NXQ_00039	0	394	Proteins with a mutagenesis in a position that correspond to an annotated active site	
-2016-03-22 15:26:59,573 NXQ_00040	0	440	Proteins that are enzymes and with at least one mutagenesis site that decrease or abolish activity	
-2016-03-22 15:27:02,505 NXQ_00041	2	365	Proteins that are annotated with GO "F" (function) terms prefixed by "Not"	
-2016-03-22 15:27:02,814 NXQ_00042	0	697	Proteins that bind a metal and are secreted	
-2016-03-22 15:27:03,384 NXQ_00043	0	1268	Proteins that bind zinc and are not oxidoreductase and not involved in transcription	
-2016-03-22 15:27:03,577 NXQ_00044	0	92	Proteins involved in the Reactome pathway "Respiratory electron transport"	
-2016-03-22 15:27:03,682 NXQ_00045	0	830	Proteins with an active site that is a proton acceptor	
-2016-03-22 15:27:06,218 NXQ_00047	2	26	Proteins with a gene name that starts with "CLDN"	
-2016-03-22 15:27:09,060 NXQ_00048	2	500	Proteins with at least one variant of the type "C->X" (Cys to anything else) that are linked to one or more diseases	
-2016-03-22 15:27:10,293 NXQ_00049	1	16	Proteins with at least one variant of the types "A->R" or "R->A"	
-2016-03-22 15:27:10,565 NXQ_00051	0	1819	Proteins that have at least one 3D structure solved by NMR	
-2016-03-22 15:27:11,321 NXQ_00052	0	267	Proteins with a sequence that does not contain a lysine in the mature region	
-2016-03-22 15:27:13,691 NXQ_00053	2	786	Proteins which are involved in cell adhesion according to GO with an evidence which is not used in automatic assertion nor a sequence similarity evidence used in manual assertion	
-2016-03-22 15:27:13,859 NXQ_00054	0	100	Proteins which are "Receptor binding" according to GO and have the Swiss-Prot keyword "Immunity"	
-2016-03-22 15:27:13,875 NXQ_00055	0	6	Proteins which have genes of length greater than 2 million bp	
-2016-03-22 15:27:17,224 NXQ_00057	3	1056	Proteins that are located in the mitochondrion with an experimental evidence originating not from HPA or DKFZ-GFP	
-2016-03-22 15:27:21,759 NXQ_00058	4	971	Proteins which are located on the genome next to a protein which is involved in spermatogenesis	
-2016-03-22 15:54:27,329 NXQ_00059	1625	91	Proteins that are glycosylated and phosphorylated on an extracellular topological domain	
-2016-03-22 15:54:28,058 NXQ_00060	0	2534	Proteins which have one or more negatively charged residue in a transmembrane domain	
-2016-03-22 15:54:28,303 NXQ_00061	0	1638	Proteins which have at least one 3D structure that spans the complete sequence of the mature protein	
-2016-03-22 15:54:28,389 NXQ_00062	0	1803	Proteins which have at least one zinc finger of any subtype	
-2016-03-22 15:54:28,484 NXQ_00063	0	72	Proteins that have at least one RRM RNA-binding domain and either no GO "RNA binding" or a GO "RNA binding" with evidence cv:ECO_0000501 or cv:ECO_0000250	
-2016-03-22 15:54:28,742 NXQ_00064	0	1284	Proteins which are enzymes and that have an incomplete EC number	
-2016-03-22 15:54:28,773 NXQ_00065	0	389	Proteins that have more than one catalytic activity	
-2016-03-22 15:54:30,061 NXQ_00066	1	31	Proteins that are cytoplasmic with alternate O-glycosylation or phosphorylation at the same positions	
-2016-03-22 15:54:30,717 NXQ_00067	0	602	Proteins with alternative acetylation or Ubl conjugation (SUMO or Ubiquitin) at the same positions	
-2016-03-22 15:54:30,831 NXQ_00068	0	2290	Proteins with a protein existence "At transcript level" (PE=2)	
-2016-03-22 15:54:31,269 NXQ_00069	0	53	Proteins phosphorylated by SRC	
-2016-03-22 15:54:31,328 NXQ_00070	0	431	Proteins secreted but without a signal sequence	
-2016-03-22 15:54:31,787 NXQ_00072	0	18570	Proteins with a cross-reference to CCDS	
-2016-03-22 15:54:32,235 NXQ_00073	0	12176	Proteins with no known (annotated) domain	
-2016-03-22 15:54:34,979 NXQ_00074	2	11490	Proteins belonging to a family with at least two members in the human proteome	
-2016-03-22 15:54:48,220 NXQ_00075	13	993	Proteins which have been detected in the HUPO liver proteome set but not the HUPO plasma proteome set	
-2016-03-22 15:54:48,305 NXQ_00076	0	1270	Proteins which are located in mitochondrion and have at least one HPA antibody and exist in at least one proteome identification sets	
-2016-03-22 15:54:54,555 NXQ_00077	6	4108	Proteins which are expressed in liver according to IHC data but not found in HUPO liver proteome set	
-2016-03-22 15:54:54,720 NXQ_00078	0	1594	Proteins which have been identified in at least one proteomics set and that are secreted	
-2016-03-22 15:54:54,875 NXQ_00079	0	3849	Proteins with at least one 3D structure and that are phosphorylated	
-2016-03-22 15:54:55,151 NXQ_00080	0	4366	Proteins with at least one 3D structure of resolution less than 3 Angstroms	
-2016-03-22 15:54:55,192 NXQ_00081	0	188	Proteins with at least one 3D structure and that are located in the mitochondrion and are linked with a disease	
-2016-03-22 15:54:55,261 NXQ_00082	0	149	Proteins whose genes are on chromosome 21 that have "gold" variants not associated with a disease	
-2016-03-22 15:55:03,996 NXQ_00083	8	1	Proteins whose genes are on chromosome 11 that are expressed only in liver	
-2016-03-22 15:55:04,044 NXQ_00084	0	132	Proteins whose genes are on chromosome 18 and that are experimentally (cv:ECO_0000269) known to be glycosylated or phosphorylated or acetylated	
-2016-03-22 15:55:04,131 NXQ_00085	0	416	Proteins with Poly-Proline stretches	
-2016-03-22 15:55:04,223 NXQ_00086	0	367	Proteins whose genes are located in chromosome 2 region from 2p12 to 2p24.2	
-2016-03-22 15:55:04,381 NXQ_00087	0	188	Proteins whose genes are on chromosome X and which do not have a ortholog in mouse	
-2016-03-22 15:55:12,355 NXQ_00089	7	62	Protein that have a signal sequence which is not cleaved	
-2016-03-22 15:55:20,494 NXQ_00090	8	62	Proteins which are linked to a disease and that do not have orthologs/paralogs in mouse	
-2016-03-22 15:55:21,111 NXQ_00092	0	2	Proteins with a sequence containing "FF.QYE" where "." is any single amino-acid	
-2016-03-22 15:55:21,913 NXQ_00093	0	275	Proteins with a sequence containing "FF.+QYE" where ".+" is any peptide of any length	
-2016-03-22 15:55:24,434 NXQ_00094	2	11	Proteins which are targets of antipsychotic drugs and highly expressed in brain	
-2016-03-22 15:55:31,286 NXQ_00096	6	69	Proteins which are targets of drugs for cardiac therapy	
-2016-03-22 15:55:31,654 NXQ_00097	0	39	Proteins located on chromosome 2 and having at least one variant in a phosphorylated tyrosine	
-2016-03-22 15:56:21,686 NXQ_00099	50	8479	Proteins that have at least one PTM in a position of a variant	
-2016-03-22 15:56:27,463 NXQ_00100	5	11895	Proteins expressed in liver and that have COSMIC variants associated with liver/hepatic cancer	
-2016-03-22 15:56:29,461 NXQ_00103	1	217	Proteins that do not have a cross-reference to an Ensembl ENSG	
-2016-03-22 15:56:29,516 NXQ_00104	0	31	Proteins whose gene is on chromosome 21 with at least one cross-reference to Orphanet	
-2016-03-22 15:56:33,382 NXQ_00105	3	13971	Proteins with at least one cross-reference to the ProteinModelPortal but no cross-references to PDB	
-2016-03-22 15:56:33,433 NXQ_00106	0	80	Proteins annotated as glycosylated but with no recorded glycosylation site	
-2016-03-22 15:56:33,722 NXQ_00107	0	227	Proteins with a protein existence not "At protein level" (PE=1) and with a HGNC approved gene name that contains "orf"	
-2016-03-22 15:56:33,797 NXQ_00108	0	95	Proteins that have a 3D structure in PDB that overlap by at least 50 amino acids with a SH3 domain	
-2016-03-22 15:56:36,550 NXQ_00109	2	267	Proteins that have a MS-identified proteotypic peptide that maps partly or fully into a signal sequence	
-2016-03-22 15:56:36,675 NXQ_00111	0	686	Proteins with one transmembrane domain and no annotated topology	
-2016-03-22 15:56:41,405 NXQ_00112	4	1739	Proteins located in nucleus and nowhere else	
-2016-03-22 15:56:44,026 NXQ_00113	2	15262	Proteins with protein existence "At protein level" (PE=1) and at least one proteotypic peptide	
-2016-03-22 15:56:44,781 NXQ_00117	0	19279	Proteins with at least one sequence variant	
-2016-03-22 15:57:05,113 NXQ_00118	20	18526	Proteins with at least one somatic variant	
-2016-03-22 15:57:05,206 NXQ_00119	0	3480	Proteins with at least one annotated mutagenesis site	
-2016-03-22 15:57:07,390 NXQ_00124	2	10	What are the 10 most frequent families with member count	
-2016-03-22 15:57:07,933 NXQ_00125	0	467	Domains that are entirely covered by 3D structures	
-2016-03-22 15:58:06,312 NXQ_00126	58	10600	Peptides that are potential neo N-termini from undescribed isoforms	
-2016-03-22 15:58:06,409 NXQ_00127	0	800	Proteins with at least one known SUMOylation site	
-2016-03-22 15:58:06,500 NXQ_00128	0	165	Proteins whose gene is annotated to be induced by interferons	
-2016-03-22 15:58:07,788 NXQ_00130	1	14	Proteins with a DNA-binding region but not located in the nucleus	
-2016-03-22 15:58:07,801 NXQ_00131	0	1	Terms of controlled vocabularies containing some word(s)	
-2016-03-22 16:00:01,099 NXQ_00132	113	1523	Proteins with a 3D structure in complex with another human protein which is not reported as binary interactant	
-2016-03-22 16:00:01,130 NXQ_00134	0	25	Proteins with the longest poly-AA stretches	
-2016-03-22 16:00:01,154 NXQ_00135	0	7	Proteins involved in both Wnt and Hippo signaling pathways	
-2016-03-22 16:00:01,546 NXQ_00136	0	127	Proteins whose sequence was updated in 2014	
-2016-03-22 16:00:02,055 NXQ_00137	0	1221	Proteins that potentially interact with Class I PDZ domains (whose C-terminal sequence has a PDZ-binding consensus)	
-2016-03-22 16:00:02,246 NXQ_00138	0	14	Proteins with 10 or more gold interactions with SH3 domain-containing proteins	
-2016-03-22 16:00:03,452 NXQ_00139	1	188	Protein kinases which are drug targets according to CHEMBL	
-2016-03-22 16:01:06,702 NXQ_00140	63	0	Proteins that interact with viral proteins	Error making the query, see cause for details
-2016-03-22 16:10:34,186 NXQ_00141	567	0	Human proteins highly expressed in brain and observed in a PDB struture involving a virus protein	Error making the query, see cause for details
-2016-03-22 16:13:36,547 NXQ_00143	182	104	Proteins for which none of the reported proteotypic peptides is from PeptideAtlas	
-2016-03-22 16:13:36,570 NXQ_00144	0	1	Proteins that contains a sequence "QHP" and the P is amidated	
-2016-03-22 16:13:36,651 NXQ_00145	0	47	Proteins which include a mature chain of less or equal to 50 amino acid residues whose C-terminus is amidated	
-2016-03-22 16:34:23,996 NXQ_00146	1247	2	Proteins having at least 2 proteotypic peptides of 7 or 8aa but no proteotypic peptide >= 9 aa	
-2016-03-22 16:34:24,067 NXQ_00202	0	1099	Proteins with from 2 to 4 transmembrane regions	
-2016-03-22 16:34:24,281 NXQ_00203	0	4850	Proteins with a mature chain of from 300 to 400 residues	
-2016-03-22 16:34:24,468 NXQ_00204	0	2949	Proteins with protein existence "At transcript level" (PE=2) or "Inferred from homology" (PE=3) or "Predicted" (PE=4)	
-2016-03-22 16:34:24,492 NXQ_00208	0	128	Proteins which are ion channels and are associated with a disease	
-2016-03-22 16:34:29,743 NXQ_00209	5	35273	Glycosylation sites and cross links positions on SwissProt canonical isoforms	
-2016-03-22 16:34:29,743 Query count:130
-2016-03-22 16:34:29,743 OK count:128
-2016-03-22 16:34:29,744 Exception count:2
-2016-03-22 16:34:29,744 ZeroResult count:0
+NXQ_00001	6	4895	Proteins phosphorylated and located in the cytoplasm	
+NXQ_00002	0	3785	Proteins that are located in both the cytoplasm and in the nucleus	
+NXQ_00003	0	976	Proteins with 7 transmembrane regions	
+NXQ_00004	35	57	Proteins highly expressed in brain but not expressed in testis	
+NXQ_00005	0	911	Proteins located in mitochondrion and that lack a transit peptide	
+NXQ_00006	0	70	Proteins whose genes are on chromosome 13 and are associated with a disease	
+NXQ_00007	0	253	Proteins associated with diseases that are associated with cardiovascular aspects	
+NXQ_00008	0	5	Proteins whose genes are less than 50000 bp away from the location of the gene coding for protein p53	
+NXQ_00009	0	491	Proteins with 3 disulfide bonds and that are not annotated as hormones 	
+NXQ_00010	0	1973	Proteins that are glycosylated and are not located in the membrane	
+NXQ_00011	6	1545	Proteins that are expressed in liver and involved in transport	
+NXQ_00012	0	8	Proteins that interact with protein RBM17 and that are involved in splicing	
+NXQ_00013	0	30	Proteins that have a protein kinase domain but lack protein kinase activity	
+NXQ_00014	0	9	Proteins with one SH2 and two SH3 domains	
+NXQ_00015	2	132	Proteins with a PDZ domain that interact with at least one protein which is expressed in brain	
+NXQ_00016	3	164	Proteins with a mature chain of less than 1000 amino acids which are secreted and do not contain cysteines in the mature chain	
+NXQ_00017	0	1049	Proteins larger than 1000 amino acids that are located in the nucleus and expressed in the nervous system	
+NXQ_00018	0	291	Proteins that are acetylated and methylated and located in the nucleus	
+NXQ_00019	0	21	Proteins with more than 12 WD repeats (ie: with at least two beta-propellers)	
+NXQ_00020	14	5	Proteins with at least 2 HPA antibodies whose genes are located on chromosome 21 and that are highly expressed at IHC level in heart	
+NXQ_00021	0	117	Proteins with at least one HPA antibody that are located in the peroxisome	
+NXQ_00022	0	2084	Proteins with no function annotated 	
+NXQ_00023	2	1710	Proteins that are involved in transport and located in a membrane and that are not glycosylated (experimentally or predicted)	
+NXQ_00024	1	721	Proteins with more than 10 reported interactions (of 'gold' quality)	
+NXQ_00025	5	546	Proteins with at least 50 interactors that are not associated with a disease	
+NXQ_00026	0	5049	Proteins interacting with at least one protein which are located in the mitochondrion	
+NXQ_00027	0	328	Proteins with one or more glycosylation sites reported in PubMed:20570859 or PubMed:14760718	
+NXQ_00028	6	1441	Proteins associated with a disease but without a disease-linked variant	
+NXQ_00029	2	124	Proteins anchored to the membrane via a GPI-anchor	
+NXQ_00030	0	376	Proteins whose gene is located in chromosome 2 that belongs to families with at least 5 members in the human proteome	
+NXQ_00031	0	92	Proteins with more than 10 alternative isoforms	
+NXQ_00032	0	313	Proteins with a coiled coil region and that are involved in transcription but do not contain a bZIP domain	
+NXQ_00033	0	270	Proteins with at least one phosphotyrosine but no phosphoserine or phosphothreonine	
+NXQ_00034	0	234	Proteins with at least one homeobox domain and with at least one variant in the homeobox domain(s)	
+NXQ_00035	0	570	Proteins located in the mitochondrion and which are enzymes	
+NXQ_00036	0	272	Proteins that are oxidoreductases and that bind to NAD/NADP	
+NXQ_00037	0	469	Proteins that bind RNA but do not contain a RRM domain	
+NXQ_00038	0	26	Proteins with at least one selenocysteine in their sequence	
+NXQ_00039	0	394	Proteins with a mutagenesis in a position that correspond to an annotated active site	
+NXQ_00040	0	440	Proteins that are enzymes and with at least one mutagenesis site that decrease or abolish activity	
+NXQ_00041	3	365	Proteins that are annotated with GO "F" (function) terms prefixed by "Not"	
+NXQ_00042	0	697	Proteins that bind a metal and are secreted	
+NXQ_00043	0	1268	Proteins that bind zinc and are not oxidoreductase and not involved in transcription	
+NXQ_00044	0	92	Proteins involved in the Reactome pathway "Respiratory electron transport"	
+NXQ_00045	0	830	Proteins with an active site that is a proton acceptor	
+NXQ_00047	4	26	Proteins with a gene name that starts with "CLDN"	
+NXQ_00048	3	500	Proteins with at least one variant of the type "C->X" (Cys to anything else) that are linked to one or more diseases	
+NXQ_00049	2	16	Proteins with at least one variant of the types "A->R" or "R->A"	
+NXQ_00051	0	1819	Proteins that have at least one 3D structure solved by NMR	
+NXQ_00052	0	267	Proteins with a sequence that does not contain a lysine in the mature region	
+NXQ_00053	1	786	Proteins which are involved in cell adhesion according to GO with an evidence which is not used in automatic assertion nor a sequence similarity evidence used in manual assertion	
+NXQ_00054	0	100	Proteins which are "Receptor binding" according to GO and have the Swiss-Prot keyword "Immunity"	
+NXQ_00055	0	6	Proteins which have genes of length greater than 2 million bp	
+NXQ_00057	2	1056	Proteins that are located in the mitochondrion with an experimental evidence originating not from HPA or DKFZ-GFP	
+NXQ_00058	4	971	Proteins which are located on the genome next to a protein which is involved in spermatogenesis	
+NXQ_00059	7	91	Proteins that are glycosylated and phosphorylated on an extracellular topological domain	
+NXQ_00060	0	2534	Proteins which have one or more negatively charged residue in a transmembrane domain	
+NXQ_00061	0	1638	Proteins which have at least one 3D structure that spans the complete sequence of the mature protein	
+NXQ_00062	0	1803	Proteins which have at least one zinc finger of any subtype	
+NXQ_00063	0	72	Proteins that have at least one RRM RNA-binding domain and either no GO "RNA binding" or a GO "RNA binding" with evidence cv:ECO_0000501 or cv:ECO_0000250	
+NXQ_00064	0	1284	Proteins which are enzymes and that have an incomplete EC number	
+NXQ_00065	0	389	Proteins that have more than one catalytic activity	
+NXQ_00066	1	31	Proteins that are cytoplasmic with alternate O-glycosylation or phosphorylation at the same positions	
+NXQ_00067	0	602	Proteins with alternative acetylation or Ubl conjugation (SUMO or Ubiquitin) at the same positions	
+NXQ_00068	0	2290	Proteins with a protein existence "At transcript level" (PE=2)	
+NXQ_00069	0	53	Proteins phosphorylated by SRC	
+NXQ_00070	0	431	Proteins secreted but without a signal sequence	
+NXQ_00072	0	18570	Proteins with a cross-reference to CCDS	
+NXQ_00073	0	12176	Proteins with no known (annotated) domain	
+NXQ_00074	2	11490	Proteins belonging to a family with at least two members in the human proteome	
+NXQ_00075	10	993	Proteins which have been detected in the HUPO liver proteome set but not the HUPO plasma proteome set	
+NXQ_00076	0	1270	Proteins which are located in mitochondrion and have at least one HPA antibody and exist in at least one proteome identification sets	
+NXQ_00077	9	4108	Proteins which are expressed in liver according to IHC data but not found in HUPO liver proteome set	
+NXQ_00078	0	1594	Proteins which have been identified in at least one proteomics set and that are secreted	
+NXQ_00079	0	3849	Proteins with at least one 3D structure and that are phosphorylated	
+NXQ_00080	0	4366	Proteins with at least one 3D structure of resolution less than 3 Angstroms	
+NXQ_00081	0	188	Proteins with at least one 3D structure and that are located in the mitochondrion and are linked with a disease	
+NXQ_00082	5	149	Proteins whose genes are on chromosome 21 that have "gold" variants not associated with a disease	
+NXQ_00083	2	1	Proteins whose genes are on chromosome 11 that are expressed only in liver	
+NXQ_00084	0	132	Proteins whose genes are on chromosome 18 and that are experimentally (cv:ECO_0000269) known to be glycosylated or phosphorylated or acetylated	
+NXQ_00085	0	416	Proteins with Poly-Proline stretches	
+NXQ_00086	0	367	Proteins whose genes are located in chromosome 2 region from 2p12 to 2p24.2	
+NXQ_00087	0	188	Proteins whose genes are on chromosome X and which do not have a ortholog in mouse	
+NXQ_00089	8	62	Protein that have a signal sequence which is not cleaved	
+NXQ_00090	8	62	Proteins which are linked to a disease and that do not have orthologs/paralogs in mouse	
+NXQ_00092	0	2	Proteins with a sequence containing "FF.QYE" where "." is any single amino-acid	
+NXQ_00093	0	275	Proteins with a sequence containing "FF.+QYE" where ".+" is any peptide of any length	
+NXQ_00094	2	11	Proteins which are targets of antipsychotic drugs and highly expressed in brain	
+NXQ_00096	7	69	Proteins which are targets of drugs for cardiac therapy	
+NXQ_00097	3	39	Proteins located on chromosome 2 and having at least one variant in a phosphorylated tyrosine	
+NXQ_00099	48	8479	Proteins that have at least one PTM in a position of a variant	
+NXQ_00100	6	11895	Proteins expressed in liver and that have COSMIC variants associated with liver/hepatic cancer	
+NXQ_00103	1	217	Proteins that do not have a cross-reference to an Ensembl ENSG	
+NXQ_00104	0	31	Proteins whose gene is on chromosome 21 with at least one cross-reference to Orphanet	
+NXQ_00105	4	13971	Proteins with at least one cross-reference to the ProteinModelPortal but no cross-references to PDB	
+NXQ_00106	0	80	Proteins annotated as glycosylated but with no recorded glycosylation site	
+NXQ_00107	0	227	Proteins with a protein existence not "At protein level" (PE=1) and with a HGNC approved gene name that contains "orf"	
+NXQ_00108	0	95	Proteins that have a 3D structure in PDB that overlap by at least 50 amino acids with a SH3 domain	
+NXQ_00109	3	262	Proteins that have a MS-identified proteotypic peptide that maps partly or fully into a signal sequence	
+NXQ_00111	0	686	Proteins with one transmembrane domain and no annotated topology	
+NXQ_00112	4	1739	Proteins located in nucleus and nowhere else	
+NXQ_00113	2	15262	Proteins with protein existence "At protein level" (PE=1) and at least one proteotypic peptide	
+NXQ_00117	0	19279	Proteins with at least one sequence variant	
+NXQ_00118	11	18526	Proteins with at least one somatic variant	
+NXQ_00119	0	3480	Proteins with at least one annotated mutagenesis site	
+NXQ_00124	2	10	What are the 10 most frequent families with member count	
+NXQ_00125	0	467	Domains that are entirely covered by 3D structures	
+NXQ_00126	55	10600	Peptides that are potential neo N-termini from undescribed isoforms	
+NXQ_00127	0	800	Proteins with at least one known SUMOylation site	
+NXQ_00128	0	165	Proteins whose gene is annotated to be induced by interferons	
+NXQ_00130	0	14	Proteins with a DNA-binding region but not located in the nucleus	
+NXQ_00131	0	1	Terms of controlled vocabularies containing some word(s)	
+NXQ_00132	115	1523	Proteins with a 3D structure in complex with another human protein which is not reported as binary interactant	
+NXQ_00134	0	25	Proteins with the longest poly-AA stretches	
+NXQ_00135	0	7	Proteins involved in both Wnt and Hippo signaling pathways	
+NXQ_00136	0	127	Proteins whose sequence was updated in 2014	
+NXQ_00137	0	1221	Proteins that potentially interact with Class I PDZ domains (whose C-terminal sequence has a PDZ-binding consensus)	
+NXQ_00138	0	14	Proteins with 10 or more gold interactions with SH3 domain-containing proteins	
+NXQ_00139	0	188	Protein kinases which are drug targets according to CHEMBL	
+NXQ_00140	63	0	Proteins that interact with viral proteins	Error making the query, see cause for details
+NXQ_00141	567	0	Human proteins highly expressed in brain and observed in a PDB struture involving a virus protein	Error making the query, see cause for details
+NXQ_00143	174	104	Proteins for which none of the reported proteotypic peptides is from PeptideAtlas	
+NXQ_00144	0	1	Proteins that contains a sequence "QHP" and the P is amidated	
+NXQ_00145	0	47	Proteins which include a mature chain of less or equal to 50 amino acid residues whose C-terminus is amidated	
+NXQ_00146	5	2	Proteins having at least 2 proteotypic peptides of 7 or 8aa but no proteotypic peptide >= 9 aa	
+NXQ_00202	0	1099	Proteins with from 2 to 4 transmembrane regions	
+NXQ_00203	0	4850	Proteins with a mature chain of from 300 to 400 residues	
+NXQ_00204	0	2949	Proteins with protein existence "At transcript level" (PE=2) or "Inferred from homology" (PE=3) or "Predicted" (PE=4)	
+NXQ_00208	0	128	Proteins which are ion channels and are associated with a disease	
+NXQ_00209	5	35273	Glycosylation sites and cross links positions on SwissProt canonical isoforms	
+Summary
+Started at       : Thu Mar 31 17:48:40 CEST 2016
+Ended at         : Thu Mar 31 18:09:51 CEST 2016
+Run query count  : 130
+OK count         : 128
+Exception count  : 2
+ZeroResult count : 0
