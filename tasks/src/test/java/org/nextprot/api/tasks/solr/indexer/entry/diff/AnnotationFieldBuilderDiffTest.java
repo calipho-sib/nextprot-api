@@ -29,12 +29,12 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	TerminologyService terminologyService;
 
 	@Test
-	@Ignore
+	//@Ignore
 	public void testAnnotationsAndFunctionalDescriptions() {
 
 		for(int i=0; i < 10; i++){
-			Entry entry = getEntry(i);
-			//Entry entry = getEntry("NX_P11532");
+			//Entry entry = getEntry(i);
+			Entry entry = getEntry("NX_Q8IWA4");
 			//Entry entry = getEntry("P42680");
 			System.out.println(entry.getUniqueName());
 			testFunctionalDesc(entry);
@@ -47,7 +47,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	public void testFunctionalDesc(Entry entry) {
 
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
-		afb.setTerminologyservice(terminologyService);
+		afb.setTerminologyService(terminologyService);
 		afb.initializeBuilder(entry);
 		List<String> functionalDescriptions = afb.getFieldValue(Fields.FUNCTION_DESC, List.class);
 		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), Fields.FUNCTION_DESC);
@@ -68,7 +68,7 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	public void testAnnotations(Entry entry) {
 
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
-		afb.setTerminologyservice(terminologyService);
+		afb.setTerminologyService(terminologyService);
 		afb.initializeBuilder(entry);
 
 		List<String> annotations = afb.getFieldValue(Fields.ANNOTATIONS, List.class);

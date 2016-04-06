@@ -20,11 +20,11 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 	@Test
 	public void testCVs() {
 
-		for(int i=0; i < 10; i++){ 	testCVs(getEntry(i)); } 
+		//for(int i=0; i < 10; i++){ 	testCVs(getEntry(i)); } 
 		
 		//Entry entry = getEntry("NX_P20594");
-		//Entry entry = getEntry("NX_P14060");
-		//testCVs(entry);
+		Entry entry = getEntry("NX_P14060");
+		testCVs(entry);
 	
 	}
 
@@ -35,7 +35,7 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 
 		System.out.println("Testing: " + entryName);
 		CVFieldBuilder cfb = new CVFieldBuilder();
-		cfb.setTerminologyservice(terminologyService);
+		cfb.setTerminologyService(terminologyService);
 		cfb.initializeBuilder(entry);
 		
 		// CV_ACS

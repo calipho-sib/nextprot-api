@@ -16,10 +16,12 @@ public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 	@Test
 	public void testPeptides() {
 
-		for (int i = 10; i < 0; i++) {
-			Entry entry = getEntry(i);
-			testPeptides(entry);
-		}
+		String[] test_list = {"NX_Q8IWA4", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_O00115","NX_Q7Z6P3",
+				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
+
+		for(int i=0; i < 12; i++){ testPeptides(getEntry(test_list[i])); }
+		//for(int i=0; i < 80; i++){ testPeptides(getEntry(i)); } // 'random' entries
+
 		//Entry entry = getEntry("NX_P43686");
 		//testPeptides(entry);
 	}
@@ -31,7 +33,10 @@ public class PeptideFieldBuilderDiffTest extends SolrDiffTest {
 
 		PeptideFieldBuilder pfb = new PeptideFieldBuilder();
 		pfb.initializeBuilder(entry);
-		Set<String> peptideSet = new TreeSet<String>(pfb.getFieldValue(Fields.PEPTIDE, List.class));
+		List<String> peptideList = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PEPTIDE);
+		if(peptideList == null) return; // No peptides in this entry
+		
+		Set<String> peptideSet = new TreeSet<String>(peptideList);
 		Set<String> expectedPeptideSet = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.PEPTIDE));
 
 		if (expectedPeptideSet.size() > peptideSet.size()) {

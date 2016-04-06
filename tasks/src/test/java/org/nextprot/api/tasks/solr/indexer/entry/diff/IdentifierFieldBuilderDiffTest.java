@@ -29,6 +29,7 @@ public class IdentifierFieldBuilderDiffTest extends SolrDiffTest {
 		
 		String entryName = entry.getUniqueName();
 
+		System.out.println("Testing: " + entryName);
 		IdentifierFieldBuilder ifb = new IdentifierFieldBuilder();
 		ifb.initializeBuilder(entry);
 		

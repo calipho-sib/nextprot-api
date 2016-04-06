@@ -17,18 +17,15 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 
 	// TODO: @Ignore should be removed and this test fixed
 	// TODO: testXrefs() should be called against a precise list of entries (see also NamesFieldBuilderDiffTest)
-	@Ignore
+	//@Ignore
 	@Test
 	public void testXrefs() {
+		String[] test_list = {"NX_Q8IWA4", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_O00115","NX_Q7Z6P3",
+				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
 
-		// worked on jenkins failed locally with from the list below:
-		// Testing: NX_P20592
-		// Testing: NX_P20591 (testXrefs() failed for this one)
+		for(int i=0; i < 12; i++){ testXrefs(getEntry(test_list[i])); } 
+		// for(int i=0; i < 10; i++){	testXrefs(getEntry(i));	} // 'random' entries
 
-		for(int i=0; i < 10; i++){ 
-			testXrefs(getEntry(i)); 
-		}
-		
 		//Entry entry = getEntry("NX_P20592");
 		//testXrefs(entry);
 
@@ -39,6 +36,7 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		
 		String entryName = entry.getUniqueName();
 		int newcnt=0, comcnt=0, misscnt=0;
+		
 		System.out.println("Testing: " + entryName);
 		XrefFieldBuilder xfb = new XrefFieldBuilder();
 		xfb.initializeBuilder(entry);
