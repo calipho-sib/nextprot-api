@@ -22,8 +22,6 @@ import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 @EntryFieldBuilder
 public class AnnotationFieldBuilder extends FieldBuilder {
 	
-	private TerminologyService terminologyservice;
-
 	@Override
 	protected void init(Entry entry) {
 
@@ -34,6 +32,14 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 			String category = currannot.getCategory();
 			if (category.equals("function")){
 				addField(Fields.FUNCTION_DESC, currannot.getDescription());
+			}
+			if (category.equals("expression info")) {
+				List<AnnotationEvidence> evlist = currannot.getEvidences();
+				for (AnnotationEvidence evidence : evlist) { 
+					String CAB = evidence.getPropertyValue("antibodies acc");
+					if(CAB != null) System.err.println(CAB);
+				}
+				
 			}
 			// We also should exclude uninformative category 'sequence conflict'
 			if(!category.equals("tissue specificity") && !category.contains("kinetic")) {//These values are indexed under other fields
@@ -165,7 +171,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 		return Arrays.asList(Fields.ANNOTATIONS, Fields.FUNCTION_DESC);
 	}
 
-	public void setTerminologyservice(TerminologyService terminologyservice) {
-		this.terminologyservice = terminologyservice;
-	}
+	//public void setTerminologyservice(TerminologyService terminologyservice) {
+	//	this.terminologyservice = terminologyservice;
+	//}
 }

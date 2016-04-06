@@ -13,7 +13,6 @@ import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
@@ -21,8 +20,6 @@ import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
 @EntryFieldBuilder
 public class CVFieldBuilder extends FieldBuilder {
-
-	private TerminologyService terminologyservice;
 
 	@Override
 	protected void init(Entry entry) {
@@ -64,7 +61,6 @@ public class CVFieldBuilder extends FieldBuilder {
 		Tree<Terminology> tree = null;
 		Set<String> ancestors2 = null;
 		for (String cvac : cv_acs) {
-			System.err.println(cvac);
 			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
 			String category = term.getOntology();
 			//System.err.println("category: " + category);
@@ -132,10 +128,4 @@ public class CVFieldBuilder extends FieldBuilder {
 		return Arrays.asList(Fields.CV_ANCESTORS_ACS, Fields.CV_ANCESTORS, Fields.CV_SYNONYMS, Fields.CV_NAMES, Fields.CV_ACS, Fields.EC_NAME);
 	}
 	
-
-	public void setTerminologyservice(TerminologyService terminologyservice) {
-		this.terminologyservice = terminologyservice;
-	}
-
-
 }

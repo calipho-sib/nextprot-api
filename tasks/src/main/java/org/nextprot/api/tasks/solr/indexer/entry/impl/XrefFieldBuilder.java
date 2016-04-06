@@ -2,12 +2,15 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
@@ -25,7 +28,7 @@ public class XrefFieldBuilder extends FieldBuilder {
 			String db = xref.getDatabaseName();
 			if (db.equals("neXtProtSubmission")) continue;
 			if (db.equals("HPA") && !acc.contains("ENSG")) { // HPA with ENSG are for expression
-				//System.err.println(acc);
+				//System.err.println("AB: " + acc);
 				addField(Fields.ANTIBODY, acc);
 			}
             if (db.equals("Ensembl")) {
@@ -50,6 +53,24 @@ public class XrefFieldBuilder extends FieldBuilder {
 				   addField(Fields.XREFS,db + ":" + acc + ", " + acc);
 			}
 		}
+
+		// It is weird to have to go thru this to get the CAB antibodies, they should come with getXrefs()
+		Set<String> CABSet = new HashSet<String>();
+		List<Annotation> annots = entry.getAnnotations();
+		for (Annotation currannot : annots) {
+			String category = currannot.getCategory();
+			if (category.equals("expression info")) {
+				List<AnnotationEvidence> evlist = currannot.getEvidences();
+				for (AnnotationEvidence evidence : evlist) { 
+					String CAB = evidence.getPropertyValue("antibodies acc");
+					if(CAB != null && CAB.startsWith("CAB"))
+						CABSet.add(CAB);
+				}
+			}
+		}
+		if(CABSet.size() > 0) 
+		  for (String CAB : CABSet)
+			  addField(Fields.ANTIBODY, CAB);
 
 	}
 

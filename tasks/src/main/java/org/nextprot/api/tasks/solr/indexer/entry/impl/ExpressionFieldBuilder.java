@@ -12,7 +12,6 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
@@ -20,9 +19,6 @@ import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
 @EntryFieldBuilder
 public class ExpressionFieldBuilder extends FieldBuilder {
-
-	private TerminologyService terminologyservice;
-
 
 	@Override
 	protected void init(Entry entry) {
@@ -76,9 +72,4 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 		return Arrays.asList(Fields.EXPRESSION);
 	}
 	
-	public void setTerminologyservice(TerminologyService terminologyservice) {
-		this.terminologyservice = terminologyservice;
-	}
-
-
 }

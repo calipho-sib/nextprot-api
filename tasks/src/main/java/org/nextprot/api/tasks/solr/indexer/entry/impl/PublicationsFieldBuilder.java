@@ -26,7 +26,7 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 		int publi_large_scale_count = 0;
 		String Jinfo = "";
 		
-		System.err.println(publications.size() + " publis");
+		//System.err.println(publications.size() + " publis");
 		for (Publication currpubli : publications) {
 			if(currpubli.getIsComputed() == true) publi_computed_count++;
 			if(currpubli.getIsCurated() == true) publi_curated_count++;
@@ -40,7 +40,6 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 				//System.err.println("jid: " + currpubli.getCvJournal().getJournalId());
 				if (journalLocator.hasJournalId())
 					addField(Fields.PUBLICATIONS, journalLocator.getNLMid());
-				//if(currpubli.getCvJournal().getName().contains("Nature genetics")) System.err.println("pubid: " + currpubli.getPublicationId());
 
 				Jinfo = currpubli.getJournalResourceLocator().getName();
 				if (journalLocator.hasJournalId())
@@ -51,6 +50,7 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 			String title = currpubli.getTitle();
 			//System.err.println("LS:" + currpubli.getIsLargeScale() + " " + title);
 			if(title.length() > 0) addField(Fields.PUBLICATIONS,title);
+			//if(title.contains("Combination of chemical genetics")) System.err.println(currpubli.getPublicationId());
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();
 			for (PublicationAuthor currauthor : authors) {
 				//System.err.println("author: " + currauthor.toString());
