@@ -32,9 +32,14 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	//@Ignore
 	public void testAnnotationsAndFunctionalDescriptions() {
 
+		String[] test_list = {"NX_Q8IWA4", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_O00115","NX_Q7Z6P3",
+				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
+
 		for(int i=0; i < 10; i++){
-			//Entry entry = getEntry(i);
+			//Entry entry = getEntry(test_list[i]); 
+			//Entry entry = getEntry(i); // 'random' entry
 			Entry entry = getEntry("NX_Q8IWA4");
+			//Entry entry = getEntry("P42680");
 			//Entry entry = getEntry("P42680");
 			System.out.println(entry.getUniqueName());
 			testFunctionalDesc(entry);
