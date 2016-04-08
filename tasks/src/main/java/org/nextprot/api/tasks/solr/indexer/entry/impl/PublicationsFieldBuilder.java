@@ -20,6 +20,7 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 	protected void init(Entry entry) {
 
 		// Publications
+		// Shouldn't Xrefs to PubMed and DOIs be also indexed here ?
 		List<Publication> publications = entry.getPublications();
 		int publi_computed_count = 0;
 		int publi_curated_count = 0;
