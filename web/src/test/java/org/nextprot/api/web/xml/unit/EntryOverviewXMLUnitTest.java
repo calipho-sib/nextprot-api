@@ -1,11 +1,5 @@
 package org.nextprot.api.web.xml.unit;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Test;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
@@ -13,6 +7,12 @@ import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.utils.XMLUnitUtils;
 import org.w3c.dom.NodeList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class EntryOverviewXMLUnitTest extends WebUnitBaseTest {
 
@@ -28,7 +28,7 @@ public class EntryOverviewXMLUnitTest extends WebUnitBaseTest {
 		EntityName mainName = new EntityName(); mainName.setMain(true); mainName.setName("ABCD"); 
 		EntityName synonym = new EntityName(); synonym.setMain(false); synonym.setName("EFGH");
 		EntityName orf = new EntityName(); orf.setMain(false); orf.setName("IJKL");	orf.setCategory("ORF"); 
-		mainName.setSynonyms(Arrays.asList(synonym, orf));
+		mainName.addAllSynonyms(Arrays.asList(synonym, orf));
 		names.add(mainName);
 		
 

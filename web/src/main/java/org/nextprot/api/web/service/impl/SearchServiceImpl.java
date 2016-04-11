@@ -49,12 +49,8 @@ public class SearchServiceImpl implements SearchService {
 
 	@Override
 	public Set<String> getAccessions(QueryRequest queryRequest) {
-		if (queryRequest.hasAccs()) {
-			
-			Logger.debug("queryRequest.hasAccs()");
-			return new HashSet<>(queryRequest.getAccs());
 
-		} else if (queryRequest.hasChromosome()) {
+		if (queryRequest.hasChromosome()) {
 			
 			Logger.debug("queryRequest.hasChromosome()");
 			return new HashSet<>(this.masterIdentifierService.findUniqueNamesOfChromosome(queryRequest.getChromosome()));

@@ -1,29 +1,33 @@
 #if($prefix)
 #parse("turtle/prefix.ttl.vm")
-
 #end
 publication:$publication.getMD5() a :Publication;
 #if($publication.getIsLargeScale())
     rdf:type :LargeScalePublication;
 #end
+#if($publication.hasTitle())
 #set($UNESCAPED_CDATA = $publication.title)
     :title """$StringUtils.clean($UNESCAPED_CDATA)"""^^xsd:string;
-#if($publication.cvJournal.name)    
-    :journal "$publication.cvJournal.name"^^xsd:string; 
 #end
-    :volume "$publication.getVolume()"^^xsd:string;
-#if($publication.getIssue() && $publication.getIssue() != '')
-    :issue "$publication.getIssue()"^^xsd:string; 
-#end
+    :pubType "$publication.getPublicationType()"^^xsd:string;
+#if($publication.isLocalizable())
+    :journal "$publication.getPublicationLocatorName()"^^xsd:string;
 #if($publication.getPublicationYear())
     :year "$publication.getPublicationYear()"^^xsd:string;
 #end
-#if($publication.getFirstPage() && $publication.getFirstPage() != '')
-    :firstPage "$publication.getFirstPage()"^^xsd:string; 
+#if($publication.isLocalizableInBookMedium())
+#if($publication.isLocatedInScientificJournal())
+    :volume "$publication.getVolume()"^^xsd:string;
+    :issue "$publication.getIssue()"^^xsd:string;
+#else
+    #if($publication.getPublisherName()):publisher "$publication.getPublisherName()"^^xsd:string;#end
+    :city "$publication.getPublisherCity()"^^xsd:string;
 #end
-#if($publication.getLastPage() && $publication.getLastPage() != '')
+    :firstPage "$publication.getFirstPage()"^^xsd:string;
     :lastPage "$publication.getLastPage()"^^xsd:string;
 #end
+#end
+#if($publication.hasAuthors())
 #foreach($author in $publication.authors)
 #if($author.isPerson())
     :author[ a :Person;
@@ -36,18 +40,26 @@ publication:$publication.getMD5() a :Publication;
     ];
 #else
     :author[ a :Consortium;
-	      :name "$author.getLastName()"^^xsd:string;
+      :name "$author.getLastName()"^^xsd:string;
     ];
 #end
 #end
-#if($publication.getDbXrefs() && $publication.getDbXrefs().size() > 0)
+#end
+#if($publication.hasEditors())
+#foreach($editor in $publication.editors)
+    :editor[ a :Person;
+#if(!$editor.suffix.equals(""))
+      :name "$editor.getForeName() $editor.getLastName() $editor.getSuffix()"^^xsd:string;
+      :suffix "$editor.getSuffix()"^^xsd:string;
+#else
+      :name "$editor.getForeName() $editor.getLastName()"^^xsd:string;
+#end
+    ];
+#end
+#end
+#if($publication.hasDbXrefs())
 #foreach($xref in $publication.getDbXrefs())
-##    :fromXref [:accession "$xref.getAccession()"^^xsd:string; :db db:$StringUtils.slug($xref.getDatabaseName())];
     :from "$StringUtils.slug($xref.getDatabaseName()):$xref.getAccession()"^^xsd:string;
 #end
-###foreach($xref in $publication.dbXrefs)
-##    owl:sameAs "$xref.getResolvedUrl()"^^xsd:anyURI;
-###end
 #end
     .
-

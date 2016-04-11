@@ -12,7 +12,9 @@ import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.solr.index.CvIndex.CvField;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.solr.index.PublicationIndex.PubField;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,32 +23,48 @@ public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements I
 	@Autowired	private EntryBuilderService entryBuilderService = null;
 	@Autowired	private MasterIdentifierService masterIdentifierService = null;
 
-	HttpSolrServer solr = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npentries1");
+	HttpSolrServer solrEntries = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npentries1");
+	HttpSolrServer solrPublications = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/nppublications1");
+	HttpSolrServer solrCvs = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npcvs1");
 
-	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, Fields field) {
+	
+	
+	private Object getValueForFieldInCurrentSolrImplementation(HttpSolrServer solrCore, String entryName, String fieldName) {
 
 		List<Object> result = new ArrayList<Object>();
 
 		try {
 			SolrQuery query = new SolrQuery();
 			query.setQuery("id:" + entryName);
-			query.setFields(field.getName());
+			query.setFields(fieldName);
 			QueryResponse response;
-			response = solr.query(query);
+			response = solrCore.query(query);
 			SolrDocumentList solrResults = response.getResults();
 
 			for (int i = 0; i < solrResults.size(); ++i) {
-				result.add(solrResults.get(i).get(field.getName()));
+				result.add(solrResults.get(i).get(fieldName));
 			}
 		} catch (SolrServerException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
-		
-		return result.get(0);
+		if(result.size() == 0) return null; // Otherwise it could generate a IndexOutOfBoundsException !!
+		return result.get(0); 
 	}
 	
+	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, Fields field) {
+		return getValueForFieldInCurrentSolrImplementation(solrEntries, entryName, field.getName());
+	}
 
+	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, PubField field) {
+		return getValueForFieldInCurrentSolrImplementation(solrPublications, entryName, field.getName());
+	}
+
+	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, CvField field) {
+		return getValueForFieldInCurrentSolrImplementation(solrCvs, entryName, field.getName());
+	}
+
+	
 	private List<String> entries = null;
 	
 	protected Entry getEntry(String entryName){

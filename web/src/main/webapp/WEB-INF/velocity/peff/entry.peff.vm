@@ -4,6 +4,6 @@
 #set ( $entrySequenceVersion = $entry.getOverview().getHistory().getSequenceVersion() )
 #set ( $entryVersion = $entry.getOverview().getHistory().getUniprotVersion() )
 #foreach($isoform in $entry.isoforms)
-$NXUtils.buildPeffHeader($entry, $isoform, $protName, $geneName, $entrySequenceVersion, $entryVersion, $entryProteinExistence)
-$StringUtils.wrapText($isoform.getSequence(), 60)
+$NXUtils.buildPeffHeader($entry, $isoform, $protName, $geneName, $entrySequenceVersion, $entryVersion, $entryProteinExistence)${CR}
+$StringUtils.wrapText($isoform.getSequence(), 60)${CR}
 #end

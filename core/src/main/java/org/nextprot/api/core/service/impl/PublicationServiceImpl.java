@@ -1,21 +1,15 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.*;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.dao.AuthorDao;
-import org.nextprot.api.core.dao.CvJournalDao;
 import org.nextprot.api.core.dao.DbXrefDao;
 import org.nextprot.api.core.dao.PublicationDao;
-import org.nextprot.api.core.domain.CvJournal;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.PublicationAuthor;
-import org.nextprot.api.core.domain.PublicationCvJournal;
 import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.PublicationService;
@@ -23,28 +17,38 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.util.*;
 
 
 @Service
 public class PublicationServiceImpl implements PublicationService {
+
+	private final static Predicate<PublicationAuthor> EDITOR_PREDICATE = new Predicate<PublicationAuthor>() {
+		@Override
+		public boolean apply(PublicationAuthor contributor) {
+			//return contributor.isPerson() && contributor.isEditor();
+			return contributor.isEditor();
+		}
+	};
+
+	private final static Predicate<PublicationAuthor> AUTHOR_PREDICATE = new Predicate<PublicationAuthor>() {
+		@Override
+		public boolean apply(PublicationAuthor contributor) {
+			//return contributor.isPerson() && !contributor.isEditor();
+			return  !contributor.isEditor();
+		}
+	};
 
 	@Autowired private MasterIdentifierDao masterIdentifierDao;
 	@Autowired private PublicationDao publicationDao;
 	@Autowired private AuthorDao authorDao;
 	@Autowired private DbXrefDao dbXrefDao;
 	@Autowired private DbXrefService dbXrefService;
-	@Autowired private CvJournalDao cvJournalDao;
 
 	@Cacheable("publications-get-by-id")
 	public Publication findPublicationById(long id) {
 		Publication publication = this.publicationDao.findPublicationById(id); // Basic fields
-		loadAuthorsXrefAndCvJournal(publication); // add non-basic fields to object
+		loadAuthorsAndXrefs(publication); // add non-basic fields to object
 		return publication;
 	}
 
@@ -52,8 +56,7 @@ public class PublicationServiceImpl implements PublicationService {
 	public List<Publication> findPublicationByTitle(String title) {
 		return publicationDao.findPublicationByTitle(title);
 	}
-	
-	
+
 	/**
 	 * TO REMOVE
 	 */
@@ -63,7 +66,7 @@ public class PublicationServiceImpl implements PublicationService {
 		List<Publication> publications = this.publicationDao.findSortedPublicationsByMasterId(masterId);
 		
 		for(Publication publication : publications) {
-			loadAuthorsXrefAndCvJournal(publication);			
+			loadAuthorsAndXrefs(publication);
 		}
 		
 		return publications;
@@ -83,8 +86,7 @@ public class PublicationServiceImpl implements PublicationService {
 		
 		List<PublicationDbXref> xrefs = this.dbXrefService.findDbXRefByPublicationIds(publicationIds);
 		List<PublicationAuthor> authors = this.authorDao.findAuthorsByPublicationIds(publicationIds);
-		List<PublicationCvJournal> cvJournals = this.cvJournalDao.findCvJournalsByPublicationIds(publicationIds);
-		
+
 		Multimap<Long, PublicationDbXref> xrefMap = Multimaps.index(xrefs, new Function<PublicationDbXref, Long>() {
 			@Override
 			public Long apply(PublicationDbXref xref) {
@@ -98,28 +100,17 @@ public class PublicationServiceImpl implements PublicationService {
 				return author.getPublicationId();
 			}
 		});
-		
-		
-		Map<Long, PublicationCvJournal> journalMap = Maps.uniqueIndex(cvJournals, new Function<PublicationCvJournal, Long>() {
-			@Override
-			public Long apply(PublicationCvJournal journal) {
-				return journal.getPublicationId();
-			}
-		});
 
-		long publicationId = -1;
-		for(Publication publication : publications) {
-			publicationId = publication.getPublicationId();
-			SortedSet<PublicationAuthor> authorSet = new TreeSet<>(authorMap.get(publicationId));
-			publication.setAuthors(authorSet);
-			publication.setDbXrefs(new HashSet<DbXref>(xrefMap.get(publicationId)));
-			publication.setCvJournal(journalMap.get(publicationId));
+		for (Publication publication : publications) {
+			long publicationId = publication.getPublicationId();
+
+			setAuthorsEditorsAndXrefs(publication, authorMap.get(publicationId), xrefMap.get(publicationId));
 		}
 		
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Publication>().addAll(publications).build();
 	}
-	
+
 	@Autowired
 	public void setPublicationDao(PublicationDao publicationDao) {
 		this.publicationDao = publicationDao;
@@ -128,18 +119,8 @@ public class PublicationServiceImpl implements PublicationService {
 	@Override
 	public Publication findPublicationByMD5(String md5) {
 		Publication publication = this.publicationDao.findPublicationByMD5(md5);
-		loadAuthorsXrefAndCvJournal(publication);
+		loadAuthorsAndXrefs(publication);
 		return publication;
-	}
-
-
-	private void loadAuthorsXrefAndCvJournal(Publication p){
-		long publicationId = p.getPublicationId();
-		p.setAuthors(new TreeSet<>(this.authorDao.findAuthorsByPublicationId(publicationId)));
-		p.setDbXrefs(new HashSet<>(this.dbXrefDao.findDbXRefsByPublicationId(publicationId)));
-
-		List<CvJournal> res = this.cvJournalDao.findByPublicationId(publicationId);
-		if(res.size() > 0) p.setCvJournal(res.get(0));		
 	}
 
 	@Override
@@ -147,5 +128,21 @@ public class PublicationServiceImpl implements PublicationService {
 		return publicationDao.findAllPublicationsIds();
 	}
 
+	private void loadAuthorsAndXrefs(Publication publication){
+		long publicationId = publication.getPublicationId();
 
+		setAuthorsEditorsAndXrefs(publication, authorDao.findAuthorsByPublicationId(publicationId), dbXrefDao.findDbXRefsByPublicationId(publicationId));
+	}
+
+	/**
+	 * Extract editors from authors, set authors, editors and xrefs to publication
+	 */
+	private void setAuthorsEditorsAndXrefs(Publication publication, Collection<PublicationAuthor> authorsAndEditors, Collection<? extends DbXref> xrefs){
+
+		Set<PublicationAuthor> authorsAndEditorSet = new TreeSet<>(authorsAndEditors);
+
+		publication.setAuthors(new TreeSet<>(Sets.filter(authorsAndEditorSet, AUTHOR_PREDICATE)));
+		publication.setEditors(new TreeSet<>(Sets.filter(authorsAndEditorSet, EDITOR_PREDICATE)));
+		publication.setDbXrefs(new HashSet<>(xrefs));
+	}
 }

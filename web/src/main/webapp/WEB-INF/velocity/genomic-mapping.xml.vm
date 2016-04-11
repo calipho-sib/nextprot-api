@@ -1,14 +1,16 @@
 <genomic-mapping accession='$genomicMapping.accession' database='$genomicMapping.database'>
+	#if(!$genomicMapping.isoformMappings.isEmpty())
 	<isoform-mapping-list>
 		#foreach($isoformMapping in $genomicMapping.isoformMappings)
 		<isoform-mapping accession="$isoformMapping.uniqueName" main-name="$isoformMapping.isoform.mainEntityName.value">
+			#if(!$isoformMapping.getTranscriptMappings().isEmpty())
 			<transcript-mapping-list>
 				#foreach($transcriptMapping in $isoformMapping.transcriptMappings)
 				<transcript-mapping accession='$transcriptMapping.accession' database='$transcriptMapping.database' quality='$transcriptMapping.quality'>
 					<transcript-protein accession='$transcriptMapping.proteinId' database='$transcriptMapping.database'/>
 					<exon-list>
 						#foreach($exon in $transcriptMapping.exons)
-			   			<exon rank='$exon.rank'#if($exon.codingStatus) coding-status='$exon.codingStatus'#end accession='$exon.accession' database='$transcriptMapping.database'>
+			   			<exon rank='$exon.rank' #if($exon.codingStatus)coding-status='$exon.codingStatus'#end accession='$exon.accession' database='$transcriptMapping.database'>
 							<position-on-gene begin='$exon.firstPositionOnGene' end='$exon.lastPositionOnGene' />
 							#if($exon.getFirstAminoAcid())
 								<amino-acid rank='first' sequence-position='$exon.firstAminoAcid.position' phase='$exon.firstAminoAcid.phase' value='$exon.firstAminoAcid.base'/>
@@ -22,7 +24,9 @@
 				</transcript-mapping>
 				#end
 			</transcript-mapping-list>
+			#end
 		</isoform-mapping>
 		#end
 	</isoform-mapping-list>
+	#end
 </genomic-mapping>

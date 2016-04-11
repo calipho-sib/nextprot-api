@@ -1,10 +1,13 @@
 package org.nextprot.api.core.domain;
 
+import com.google.common.base.Preconditions;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.commons.utils.DateFormatter;
+import org.nextprot.api.core.domain.publication.*;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
 import java.util.SortedSet;
@@ -19,24 +22,12 @@ public class Publication implements Serializable{
 
 	@ApiObjectField(description = "The MD5 of the publication")
 	private String md5;
-	
+
 	@ApiObjectField(description = "The title of the publication")
 	private String title;
 
 	@ApiObjectField(description = "The abstract text")
 	private String abstractText;
-
-	@ApiObjectField(description = "The journal volume")
-	private String volume;
-
-	@ApiObjectField(description = "The journal issue")
-	private String issue;
-
-	@ApiObjectField(description = "The first page")
-	private String firstPage;
-
-	@ApiObjectField(description = "The last page")
-	private String lastPage;
 
 	@ApiObjectField(description = "The type")
 	private String publicationType;
@@ -55,10 +46,42 @@ public class Publication implements Serializable{
 
 	@ApiObjectField(description = "Curated Publications")
 	private Boolean isCurated;
+
 	// TODO: reassess the way we define 'curared/computed' and get rid of the 'limit 1' in publication-by-ressource.sql
+	// Refs cited in UniProt should be 'curated' even if not (yet) attached to a specific annotation
 	@ApiObjectField(description = "Computed Publications")
 	private Boolean isComputed;
 	
+	@ApiObjectField(description = "The list of authors")
+	protected SortedSet<PublicationAuthor> authors;
+
+	@ApiObjectField(description = "The associated cross references")
+	protected Set<DbXref> dbXrefs;
+
+	private PublicationResourceLocator publicationResourceLocator;
+
+	public boolean isLocalizable() {
+		return publicationResourceLocator != null;
+	}
+
+	public boolean isLocatedInScientificJournal() {
+		return isLocalizable() && publicationResourceLocator instanceof JournalResourceLocator;
+	}
+
+	/**
+	 * @return true if found in a edited volume book
+     */
+	public boolean isLocatedInEditedVolumeBook() {
+		return isLocalizable() && publicationResourceLocator instanceof EditedVolumeBookResourceLocator;
+	}
+
+	/**
+	 * @return true if found in a standard book (a journal or a edited volume book)
+     */
+	public boolean isLocalizableInBookMedium() {
+		return isLocalizable() && publicationResourceLocator instanceof BookResourceLocator;
+	}
+
 	public Boolean getIsLargeScale() {
 		return isLargeScale;
 	}
@@ -83,15 +106,6 @@ public class Publication implements Serializable{
 		this.isComputed = isComputed;
 	}
 
-	@ApiObjectField(description = "The journal")
-	protected CvJournal cvJournal;
-
-	@ApiObjectField(description = "The list of authors")
-	protected SortedSet<PublicationAuthor> authors;
-
-	@ApiObjectField(description = "The associated cross references")
-	protected Set<DbXref> dbXrefs;
-
 	public long getPublicationId() {
 		return id;
 	}
@@ -107,7 +121,11 @@ public class Publication implements Serializable{
 	public void setMD5(String md5) {
 		this.md5 = md5;
 	}
-	
+
+	public boolean hasTitle() {
+		return title != null && !title.isEmpty();
+	}
+
 	public String getTitle() {
 		return title;
 	}
@@ -132,6 +150,10 @@ public class Publication implements Serializable{
 		this.abstractText = abstractText;
 	}
 
+	public boolean hasPublicationDate() {
+		return publicationDate != null;
+	}
+
 	public Date getPublicationDate() {
 		return publicationDate;
 	}
@@ -149,37 +171,49 @@ public class Publication implements Serializable{
 	}
 
 	public String getVolume() {
-		return volume;
-	}
 
-	public void setVolume(String volume) {
-		this.volume = volume;
+		if (isLocatedInScientificJournal())
+			return ((JournalResourceLocator) publicationResourceLocator).getVolume();
+		else
+			return "";
 	}
 
 	public String getIssue() {
-		return issue;
-	}
 
-	public void setIssue(String issue) {
-		this.issue = issue;
+		if (isLocatedInScientificJournal())
+			return ((JournalResourceLocator) publicationResourceLocator).getIssue();
+		else
+			return "";
 	}
 
 	public String getFirstPage() {
-		return firstPage;
-	}
 
-	public void setFirstPage(String firstPage) {
-		this.firstPage = firstPage;
+		if (isLocalizableInBookMedium())
+			return ((BookResourceLocator) publicationResourceLocator).getFirstPage();
+		else
+			return "";
 	}
 
 	public String getLastPage() {
-		return lastPage;
+
+		if (isLocalizableInBookMedium())
+			return ((BookResourceLocator) publicationResourceLocator).getLastPage();
+		else
+			return "";
 	}
 
-	public void setLastPage(String lastPage) {
-		this.lastPage = lastPage;
+	public String getPublisherName() {
+		if (isLocatedInEditedVolumeBook())
+			return ((EditedVolumeBookResourceLocator) publicationResourceLocator).getPublisher();
+		return "";
 	}
-	
+
+	public String getPublisherCity() {
+		if (isLocatedInEditedVolumeBook())
+			return ((EditedVolumeBookResourceLocator) publicationResourceLocator).getCity();
+		return "";
+	}
+
 	public String getPublicationType() {
 		return publicationType;
 	}
@@ -196,12 +230,55 @@ public class Publication implements Serializable{
 		this.textDate = textDate;
 	}
 
-	public CvJournal getCvJournal() {
-		return cvJournal;
+	public JournalResourceLocator getJournalResourceLocator() {
+
+		return (isLocatedInScientificJournal()) ? (JournalResourceLocator) publicationResourceLocator : null;
 	}
 
-	public void setCvJournal(CvJournal cvJournal) {
-		this.cvJournal = cvJournal;
+	public PublicationResourceLocator getPublicationResourceLocator() {
+		return publicationResourceLocator;
+	}
+
+	public String getPublicationLocatorName() {
+		return (isLocalizable()) ? publicationResourceLocator.getName() : null;
+	}
+
+	public void setJournalResourceLocator(JournalResourceLocator journalLocation, String volume, String issue, String firstPage, String lastPage) {
+
+		Preconditions.checkNotNull(journalLocation);
+
+		journalLocation.setFirstPage(firstPage);
+		journalLocation.setLastPage(lastPage);
+		journalLocation.setVolume(volume);
+		journalLocation.setIssue(issue);
+
+		this.publicationResourceLocator = journalLocation;
+	}
+
+	public void setEditedVolumeBookLocation(String name, String publisher, String city, String firstPage, String lastPage) {
+
+		EditedVolumeBookResourceLocator book = new EditedVolumeBookResourceLocator();
+
+		book.setName(name);
+		book.setPublisher(publisher);
+		book.setCity(city);
+		book.setFirstPage(firstPage);
+		book.setLastPage(lastPage);
+
+		this.publicationResourceLocator = book;
+	}
+
+	public void setOnlineResourceLocation(String name, String url) {
+
+		WebPublicationPage webPage = new WebPublicationPage();
+		webPage.setName(name);
+		webPage.setUrl(url);
+
+		this.publicationResourceLocator = webPage;
+	}
+
+	public boolean hasAuthors() {
+		return authors != null && !authors.isEmpty();
 	}
 
 	public SortedSet<PublicationAuthor> getAuthors() {
@@ -212,6 +289,27 @@ public class Publication implements Serializable{
 		this.authors = authors;
 	}
 
+	public boolean hasEditors() {
+		return isLocatedInEditedVolumeBook() && ((EditedVolumeBookResourceLocator) publicationResourceLocator).hasEditors();
+	}
+
+	public Set<PublicationAuthor> getEditors() {
+		if (isLocatedInEditedVolumeBook())
+			return ((EditedVolumeBookResourceLocator) publicationResourceLocator).getEditors();
+		return Collections.emptySet();
+	}
+
+	public void setEditors(SortedSet<PublicationAuthor> editors) {
+
+		if (isLocatedInEditedVolumeBook()) {
+			((EditedVolumeBookResourceLocator) publicationResourceLocator).addEditors(editors);
+		}
+	}
+
+	public boolean hasDbXrefs() {
+		return dbXrefs != null && !dbXrefs.isEmpty();
+	}
+
 	public Set<DbXref> getDbXrefs() {
 		return dbXrefs;
 	}
@@ -220,7 +318,6 @@ public class Publication implements Serializable{
 		this.dbXrefs = dbXrefs;
 	}
 
-	
 	public String toString() {
 		
 		StringBuilder sb = new StringBuilder();
@@ -238,23 +335,26 @@ public class Publication implements Serializable{
 		sb.append((this.submission != null) ? this.submission : "null");
 		sb.append("\n");
 		sb.append("volume=");
-		sb.append(this.volume);
+		sb.append(getVolume());
 		sb.append("; issue=");
-		sb.append(this.issue);
+		sb.append(getIssue());
 		sb.append("\n");
 		sb.append("pub_type=");
 		sb.append(this.publicationType);
 		sb.append("\n");
 		sb.append("journal=");
-		sb.append(this.cvJournal);
+		sb.append(this.publicationResourceLocator);
 		sb.append("\n");
 		sb.append("authorsCnt=");
 		sb.append((this.authors != null) ? this.authors.size() : "null");
 		sb.append("\n");
-		
+		// date is not defined for online publication type
+		if (hasPublicationDate()) {
+			sb.append("date=");
+			sb.append(this.publicationDate.toString());
+			sb.append("\n");
+		}
+
 		return sb.toString();
-
 	}
-
-
 }

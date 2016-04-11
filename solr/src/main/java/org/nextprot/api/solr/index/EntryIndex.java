@@ -289,7 +289,4 @@ public class EntryIndex extends IndexTemplate {
 	}
 
 
-
-
-
 }

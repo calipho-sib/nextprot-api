@@ -32,7 +32,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.VOLUME) // to be used for for display & search 
 				.add(PubField.TYPE)
 				.add(PubField.PRETTY_JOURNAL) // contains only iso abbr to be displayed
-				.add(PubField.SOURCE)
+				//.add(PubField.SOURCE)
 				.add(PubField.PRETTY_AUTHORS)				
 				.add(PubField.FILTERS));
 		
@@ -44,7 +44,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.VOLUME, 4) // to be used for search (DO NOT USE volume_s which is not a text_split0)
 				.add(PubField.TYPE, 16)
 				.add(PubField.JOURNAL, 8) // contain both full name and iso abbr
-				.add(PubField.SOURCE, 8)
+				//.add(PubField.SOURCE, 8)
 				.add(PubField.AUTHORS, 8));
 		
 		defaultConfig.addConfigSet(FieldConfigSet.create(IndexParameter.PF)
@@ -55,7 +55,7 @@ public class PublicationIndex extends IndexTemplate {
 				.add(PubField.VOLUME, 40)  // to be used for search (DO NOT USE volume_s which is not a text_split0)
 				.add(PubField.TYPE, 160)
 				.add(PubField.JOURNAL, 80) // contain both full name and iso abbr
-				.add(PubField.SOURCE, 80)
+				//.add(PubField.SOURCE, 80)
 				.add(PubField.AUTHORS, 80));
 	
 
@@ -130,7 +130,7 @@ public class PublicationIndex extends IndexTemplate {
 	public static enum PubField implements IndexField {
 		ID("id"), 
 		IDSP0("idsp0"),                   // searchable (text_split0)
-		AC("ac"), 
+		AC("ac"), 						  // PMIDs + DOIs
 		VOLUME_S("volume_s"),             // sortable (string)
 		VOLUME("volume", "volume"),       // searchable, also used for display by UI (text_split0)
 		FIRST_PAGE("first_page"), 
@@ -143,10 +143,10 @@ public class PublicationIndex extends IndexTemplate {
 		TYPE("type"), 
 		JOURNAL("journal","journal"),     // searchable (text_split0)
 		PRETTY_JOURNAL("pretty_journal"), // displayable (string)
-		SOURCE("source"), 
+		//SOURCE("source"), 
 		AUTHORS("authors","author"),      // searchable (text_split0)
 		PRETTY_AUTHORS("pretty_authors"), // displayable  (also text_split0 but formatted)
-		FILTERS("filters"), 
+		FILTERS("filters"), 			  // Computed, curated, largescale
 		TEXT("text");
 		
 		private String name;

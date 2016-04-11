@@ -1,4 +1,4 @@
-	package org.nextprot.api.web.service.impl.writer;
+package org.nextprot.api.web.service.impl.writer;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
-/**
+import static org.nextprot.api.commons.utils.StringUtils.CR_LF;
+
+    /**
  * Streams entries in TXT format
  *
  * Created by fnikitin on 28/04/15.
@@ -27,7 +29,7 @@ public class NPEntryTXTStreamWriter extends NPEntryVelocityBasedStreamWriter {
     protected void writeHeader(Map<String, Object> params) throws IOException {
 
         if (params != null && params.containsKey(ExportService.ENTRIES_COUNT_PARAM))
-            getStream().write("#nb entries=" + params.get(ExportService.ENTRIES_COUNT_PARAM) + "\n");
+            getStream().write("#nb entries=" + params.get(ExportService.ENTRIES_COUNT_PARAM) + CR_LF);
     	else
             LOGGER.warn("Entries count parameter not found, header discarded...");
     }

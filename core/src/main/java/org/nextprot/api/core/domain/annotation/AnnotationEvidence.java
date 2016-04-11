@@ -1,10 +1,7 @@
 package org.nextprot.api.core.domain.annotation;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class AnnotationEvidence implements Serializable {
 
@@ -289,7 +286,7 @@ public class AnnotationEvidence implements Serializable {
 		// return the intersection
 		return propsOk;
 		*/
-		return propertiesMap==null ? null : propertiesMap.keySet(); 
+		return propertiesMap==null ? new HashSet<String>() : propertiesMap.keySet();
 	}
 	
 	

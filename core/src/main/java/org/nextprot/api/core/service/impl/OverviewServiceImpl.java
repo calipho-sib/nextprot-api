@@ -1,17 +1,20 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.EntityNameDao;
+import org.nextprot.api.core.dao.EntryPropertiesDao;
 import org.nextprot.api.core.dao.HistoryDao;
+import org.nextprot.api.core.domain.EntryProperties;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.EntityNameClass;
 import org.nextprot.api.core.domain.Overview.History;
+import org.nextprot.api.core.service.EntryPropertiesService;
 import org.nextprot.api.core.service.FamilyService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.OverviewService;
@@ -19,18 +22,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.util.*;
+
 
 @Service
 class OverviewServiceImpl implements OverviewService {
+
+	private final static Comparator<EntityName> BY_NAME_COMPARATOR = new Comparator<EntityName>() {
+		@Override
+		public int compare(EntityName en1, EntityName en2) {
+			return en1.getName().compareTo(en2.getName());
+		}
+	};
 
 	@Autowired private HistoryDao historyDao;
 	@Autowired private EntityNameDao entryNameDao;
 	@Autowired private FamilyService familyService;
 	@Autowired private IsoformService isoformService;
+	@Autowired private EntryPropertiesDao entryPropertiesDao;
 	
 
 	@Override
@@ -50,12 +59,15 @@ class OverviewServiceImpl implements OverviewService {
 		overview.setFamilies(this.familyService.findFamilies(uniqueName));
 		overview.setIsoformNames(convertIsoNamestoOverviewName(isoformService.findIsoformsByEntryName(uniqueName)));
 		
+		EntryProperties props = entryPropertiesDao.findEntryProperties(uniqueName);
+		overview.getHistory().setProteinExistenceInfo(props.getProteinExistenceInfo());
+		
 		return overview;
 	}
 	
 	private static List<EntityName> convertIsoNamestoOverviewName(List<Isoform> isoforms){
 		
-		List<EntityName> isoNames = new ArrayList<EntityName>();
+		List<EntityName> isoNames = new ArrayList<>();
 		for(Isoform isoform : isoforms){
 			
 			EntityName name = new EntityName();
@@ -63,7 +75,6 @@ class OverviewServiceImpl implements OverviewService {
 			name.setName(isoform.getMainEntityName().getValue());
 			name.setType(isoform.getMainEntityName().getType());
 			name.setQualifier(isoform.getMainEntityName().getQualifier());
-			name.setSynonyms(new ArrayList<EntityName>());
 
 			for(EntityName syn : isoform.getSynonyms()){
 
@@ -75,13 +86,12 @@ class OverviewServiceImpl implements OverviewService {
 				
 				name.getSynonyms().add(s);
 			}
+			Collections.sort(name.getSynonyms(), BY_NAME_COMPARATOR);
 			
 			isoNames.add(name);
-
 		}
 		
 		return isoNames;
-
 	}
 	
 	private void setNamesInOverview(List<EntityName> entityNames, Overview overview){
@@ -94,19 +104,25 @@ class OverviewServiceImpl implements OverviewService {
 		});
 
 		Map<String, EntityName> mutableEntityMap = Maps.newHashMap(entityMap);
-		String parentId = null;
+		String parentId;
 
 		for (EntityName entityName : entityMap.values()) {
 
 			parentId = entityName.getParentId();
 			if (parentId != null && mutableEntityMap.containsKey(parentId)) {
-				mutableEntityMap.get(parentId).addSynonym(entityName);
+
+				if (entityName.isMain()) {
+					mutableEntityMap.get(parentId).addOtherRecommendedEntityName(entityName);
+				}
+				else {
+					mutableEntityMap.get(parentId).addSynonym(entityName);
+				}
 			} else {
 				mutableEntityMap.put(entityName.getId(), entityName);
 			}
 		}
 
-		List<EntityName> mutableEntityNames = new ArrayList<EntityName>(mutableEntityMap.values());
+		List<EntityName> mutableEntityNames = new ArrayList<>(mutableEntityMap.values());
 
 		for (EntityName entityName : mutableEntityMap.values())
 			if (entityName.getParentId() != null)
@@ -118,39 +134,36 @@ class OverviewServiceImpl implements OverviewService {
 				return entryName.getClazz();
 			}
 		});
-		
-		
+
 		for (EntityNameClass en : entryNameMap.keySet()) {
 
 			switch (en) {
-			case PROTEIN_NAMES: {
-				overview.setProteinNames(getSortedList(entryNameMap, en));
-				break;
-			}
-			case GENE_NAMES: {
-				overview.setGeneNames(getSortedList(entryNameMap, en));
-				break;
-			}
-			case CLEAVED_REGION_NAMES: {
-				overview.setCleavedRegionNames(getSortedList(entryNameMap, en));
-				break;
-			}
-			case ADDITIONAL_NAMES: {
-				overview.setAdditionalNames(getSortedList(entryNameMap, en));
-				break;
-			}
-			case FUNCTIONAL_REGION_NAMES: {
-				overview.setFunctionalRegionNames(getSortedList(entryNameMap, en));
-				break;
-			}
+				case PROTEIN_NAMES: {
+					overview.setProteinNames(getSortedList(entryNameMap, en));
+					break;
+				}
+				case GENE_NAMES: {
+					overview.setGeneNames(getSortedList(entryNameMap, en));
+					break;
+				}
+				case CLEAVED_REGION_NAMES: {
+					overview.setCleavedRegionNames(getSortedList(entryNameMap, en));
+					break;
+				}
+				case ADDITIONAL_NAMES: {
+					overview.setAdditionalNames(getSortedList(entryNameMap, en));
+					break;
+				}
+				case FUNCTIONAL_REGION_NAMES: {
+					overview.setFunctionalRegionNames(getSortedList(entryNameMap, en));
+					break;
+				}
 			}
 		}
-		
-	
 	}
 	
 	private static List<EntityName> getSortedList(Multimap<Overview.EntityNameClass, EntityName> entryMap, EntityNameClass en){
-		List<EntityName> list = new ArrayList<EntityName>(entryMap.get(en));
+		List<EntityName> list = new ArrayList<>(entryMap.get(en));
 		for(EntityName e : list){
 			if(e.getSynonyms() != null){
 				Collections.sort(e.getSynonyms());

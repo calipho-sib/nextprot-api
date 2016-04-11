@@ -15,6 +15,6 @@
 #set ($geneName = "-" )##When there is no gene name
 #end
 #foreach($isoform in $entry.isoforms)
->nxp|$isoform.getUniqueName()|$geneName|$protName|$isoform.getMainEntityName().getValue()
-$StringUtils.wrapText($isoform.getSequence(), 60)
+>nxp|$isoform.getUniqueName()|$geneName|$protName|$isoform.getMainEntityName().getValue()${CR}
+$StringUtils.wrapText($isoform.getSequence(), 60)${CR}
 #end

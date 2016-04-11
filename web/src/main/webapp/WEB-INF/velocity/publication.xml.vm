@@ -1,17 +1,28 @@
-<publication type="$publication.publicationType.toLowerCase()" #if($publication.getPublicationDate())date="$publication.getTextDate()"#end #if($publication.cvJournal.name)name="$publication.cvJournal.name"#end #if(!$publication.volume.isEmpty())volume="$publication.volume"#end #if(!$publication.firstPage.isEmpty())first="$publication.firstPage"#end #if(!$publication.lastPage.isEmpty())last="$publication.lastPage"#end internal-id="$publication.publicationId">
+<publication type="$publication.publicationType.toLowerCase()" #if($publication.hasPublicationDate())date="$publication.getTextDate()"#end #if($publication.isLocalizable()) name="$publication.getPublicationLocatorName()" #if($publication.isLocalizableInBookMedium()) #if($publication.isLocatedInScientificJournal()) volume="$publication.getVolume()" #end first="$publication.getFirstPage()" last="$publication.getLastPage()"		#if($publication.isLocatedInEditedVolumeBook()) #if($publication.getPublisherName())publisher="$publication.getPublisherName()"#end city="$publication.getPublisherCity()" #end	#end	#end internal-id="$publication.publicationId">
+	#if($publication.hasTitle())
 	<title>
 	    <![CDATA[$publication.title]]>
 	</title>
+	#end
+	#if($publication.hasEditors())
+    <editor-list>
+		#foreach($editor in $publication.editors)
+			<person name="$editor.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($editor.foreName)"/>
+		#end
+    </editor-list>
+	#end
+	#if($publication.hasAuthors())
 	<author-list>
 		#foreach($author in $publication.authors)
 			#if($author.isPerson())
-                <person name="$author.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($author.foreName)"/>
+				<person name="$author.lastName $StringUtils.getAuthorNameFormatter().formatForenameInitials($author.foreName)"/>
 			#else
                 <consortium name="$author.lastName"/>
 			#end
 		#end
 	</author-list>
-	#if($publication.dbXrefs.size() > 0)
+	#end
+	#if($publication.hasDbXrefs())
     <xref-list>
 		#foreach($xref in $publication.dbXrefs)
 			#parse('xref.xml.vm')

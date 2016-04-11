@@ -6,10 +6,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
@@ -37,6 +40,11 @@ public class CVFieldBuilder extends FieldBuilder {
 			if(!category.equals("tissue specificity")) {
 				String cvac = currannot.getCvTermAccessionCode();
 				if (cvac != null) {
+					if(category.startsWith("go ")) {
+						List<AnnotationEvidence> evlist = currannot.getEvidences();
+						// We don't index negative annotations
+						if(evlist.size() == 1 && evlist.get(0).isNegativeEvidence()) continue;
+					}
 					addField(Fields.CV_ACS, cvac);
 					cvac_cnt++;
 					cv_acs.add(cvac); // No duplicates: this is a Set, will be used for synonyms and ancestors
@@ -53,14 +61,31 @@ public class CVFieldBuilder extends FieldBuilder {
 		}
 		
 		// Final CV acs, ancestors and synonyms
+		Tree<Terminology> tree = null;
+		Set<String> ancestors2 = null;
 		for (String cvac : cv_acs) {
 			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
 			String category = term.getOntology();
+			//System.err.println("category: " + category);
 			List<String> ancestors = TerminologyUtils.getAllAncestors(term.getAccession(), terminologyservice);
-			//System.err.println(ancestors.size() + " ancestors");
+			List<Tree<Terminology>> treeList = this.terminologyservice.findTerminologyTreeList(TerminologyCv.valueOf(category), 10);
+			if(treeList.isEmpty()) {
+				ancestors2.clear();
+			}
+			else {
+			tree = treeList.get(0);
+			ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
+			}
+			//Set<String> ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
+			if(ancestors.size() != ancestors2.size()) {
+				// Differences for FA-, KW-, SL-,  DO-, and enzymes...
+				//System.err.println(cvac + " old method: " + ancestors.size() + " new method: " + ancestors2.size());
+				//System.err.println(ancestors);
+			}
 			if(ancestors != null) 
+				//cv_ancestors_acs.addAll(ancestors);
 			  for (String ancestor : ancestors) {
-                  cv_ancestors_acs.add(ancestor); // No duplicate: this is a Set
+                  cv_ancestors_acs.add(ancestor); 
 			  }
 			List<String> synonyms = term.getSynonyms();
 			if(synonyms != null) { //if (term.getOntology().startsWith("Go")) System.err.println("adding: " + synonyms.get(0));
@@ -97,8 +122,6 @@ public class CVFieldBuilder extends FieldBuilder {
 			   }
 		}
 		addField(Fields.EC_NAME, ec_names);
-		
-		
 		
 	}
 

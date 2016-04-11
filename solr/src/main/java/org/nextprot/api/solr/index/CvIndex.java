@@ -67,7 +67,7 @@ public class CvIndex extends IndexTemplate {
 		defaultConfig.addOtherParameter("defType", "edismax")
 			.addOtherParameter("facet", "true")
 			.addOtherParameter("facet.field", "filters")
-			.addOtherParameter("facet.limit", "20")
+			.addOtherParameter("facet.limit", "10")
 			.addOtherParameter("facet.method", "enum")
 			.addOtherParameter("facet.mincount", "1")
 			.addOtherParameter("facet.sort", "count");
@@ -89,7 +89,7 @@ public class CvIndex extends IndexTemplate {
 		autocompleteConfig.addOtherParameter("defType", "edismax")
 			.addOtherParameter("facet", "true")
 			.addOtherParameter("facet.field", "text")
-			.addOtherParameter("facet.limit", "20")
+			.addOtherParameter("facet.limit", "10")
 			.addOtherParameter("facet.method", "enum")
 			.addOtherParameter("facet.mincount", "1")
 			.addOtherParameter("facet.sort", "count")
