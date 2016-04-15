@@ -1,7 +1,7 @@
 {
 	"params": {
 		"modeIL": true,
-		"pep": "TKMGLYYSYFK"
+		"pep": "TKMGLYYSYFK,TKMGL"
 	},
 	"peptideMatches": [{
 		"peptide": "TKMGLYYSYFK",

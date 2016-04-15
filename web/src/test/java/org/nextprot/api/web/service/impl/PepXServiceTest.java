@@ -5,8 +5,10 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -15,9 +17,32 @@ import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
+import org.nextprot.api.web.domain.PepXResponse;
+import org.nextprot.api.web.domain.PepxUtils;
 
 public class PepXServiceTest extends WebUnitBaseTest {
 
+	
+	@Test
+	public void shouldParsePep() throws Exception {
+
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource("org/nextprot/api/pepx/pepxResponse.json").getFile());
+		
+		Scanner scanner = new Scanner(file, "UTF-8" );
+		String content = scanner.useDelimiter("\\A").next();
+		scanner.close();
+		
+		PepXResponse pepXResponse = PepxUtils.parsePepxResponse(content);
+		
+		assertTrue(((Boolean)pepXResponse.getParams().get("modeIL")) == true);
+		assertTrue((pepXResponse.getParams().get("pep")).equals("TKMGLYYSYFK,TKMGL"));
+			
+		assertTrue((pepXResponse.getPeptideMatch("TKMGLYYSYFK").getEntryMatches().size() == 2));
+		assertTrue((pepXResponse.getPeptideMatch("TKMGL").getEntryMatches().size() == 4));
+		
+	}
+	
 
 	@Test
 	public void shouldBuildAnEntryWithVirtualAnnotations() throws Exception {
