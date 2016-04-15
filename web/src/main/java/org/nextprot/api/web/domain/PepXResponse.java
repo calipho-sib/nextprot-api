@@ -2,8 +2,10 @@ package org.nextprot.api.web.domain;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 
@@ -11,7 +13,7 @@ public class PepXResponse {
 
 	
 	private Map<String, Object> params = new HashMap<>();
-	private List<PeptideMatch> peptideMatches = new ArrayList<PeptideMatch>();
+	private List<PepXMatch> peptideMatches = new ArrayList<PepXMatch>();
 
 	
 	public Map<String, Object> getParams() {
@@ -20,25 +22,42 @@ public class PepXResponse {
 	public void setParams(Map<String, Object> params) {
 		this.params = params;
 	}
-	public List<PeptideMatch>  getPeptideMatches() {
+	public List<PepXMatch>  getPeptideMatches() {
 		return peptideMatches;
 	}
-	public void setPeptideMatches(List<PeptideMatch> peptideMatches) {
+	public void setPeptideMatches(List<PepXMatch> peptideMatches) {
  		this.peptideMatches = peptideMatches;
 	}
 
-	public PeptideMatch getPeptideMatch(String peptide) {
-		for(PeptideMatch pepMatch : peptideMatches){
+	public PepXMatch getPeptideMatch(String peptide) {
+		for(PepXMatch pepMatch : peptideMatches){
 			if(pepMatch.getPeptide().equals(peptide))
 				return pepMatch;
 		}
 		return null;
 	}
 	
-	public static class PeptideMatch {
+	
+	public Set<String> getEntriesNames() {
+		Set<String> entryNames = new HashSet<>();
+		for(PepXMatch pepXMatch : peptideMatches){
+			entryNames.addAll(pepXMatch.getEntryNamesMatches());
+		}
+		return entryNames;
+	}
+	
+	public Set<String> getPeptidesForEntry(String entryName) {
+		Set<String> peptides = new HashSet<>();
+		for(PepXMatch pep: peptideMatches){
+			peptides.add(pep.getPeptide());
+		}
+		return peptides;
+	}
+	
+	public static class PepXMatch {
 
 		private String peptide;
-		private List<Object> entryMatches = new ArrayList<Object>();
+		private List<PepXEntryMatch> entryMatches = new ArrayList<PepXEntryMatch>();
 		
 		public String getPeptide() {
 			return peptide;
@@ -46,14 +65,83 @@ public class PepXResponse {
 		public void setPeptide(String peptide) {
 			this.peptide = peptide;
 		}
-		public List<Object> getEntryMatches() {
+		public List<PepXEntryMatch> getEntryMatches() {
 			return entryMatches;
 		}
-		public void setEntryMatches(List<Object> entryMatches) {
+		public void setEntryMatches(List<PepXEntryMatch> entryMatches) {
 			this.entryMatches = entryMatches;
+		}
+		public List<String> getEntryNamesMatches() {
+			List<String> entryNames = new ArrayList<>();
+			for(PepXEntryMatch pepxEntryMatch : entryMatches){
+				entryNames.add(pepxEntryMatch.getEntryName());
+			}
+			return entryNames;
+		}
+
+		
+		public PepXEntryMatch getPepxMatchesForEntry(String entryName) {
+			for(PepXEntryMatch pepxEntryMatch : entryMatches){
+				if(pepxEntryMatch.getEntryName().equals(entryName)){
+					return pepxEntryMatch;
+				}
+			}
+			return null;
 		}
 
 	}
+
+	public static class PepXIsoformMatch {
+		
+		public PepXIsoformMatch(){};
+
+		public PepXIsoformMatch(String isoformName){
+			this.isoformName = isoformName;
+		};
+		
+		public PepXIsoformMatch(String isoformName, Integer position){
+			this.isoformName = isoformName;
+			this.position = position;
+		};
+
+		private String isoformName;
+		private Integer position = null;
+
+		public String getIsoformName() {
+			return isoformName;
+		}
+		public void setIsoformName(String isoformName) {
+			this.isoformName = isoformName;
+		}
+		public Integer getPosition() {
+			return position;
+		}
+		public void setPosition(Integer position) {
+			this.position = position;
+		}
+
+	}
+
+	public static class PepXEntryMatch {
+
+		private String entryName;
+		private List<PepXIsoformMatch> isoforms = new ArrayList<PepXIsoformMatch>();
+
+		public String getEntryName() {
+			return entryName;
+		}
+		public void setEntryName(String entryName) {
+			this.entryName = entryName;
+		}
+		public List<PepXIsoformMatch> getIsoforms() {
+			return isoforms;
+		}
+		public void setIsoforms(List<PepXIsoformMatch> isoforms) {
+			this.isoforms = isoforms;
+		}
+
+	}
+
 
 
 }

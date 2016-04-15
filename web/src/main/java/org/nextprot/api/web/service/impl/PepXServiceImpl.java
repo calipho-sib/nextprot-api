@@ -1,8 +1,17 @@
 package org.nextprot.api.web.service.impl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.core.domain.Entry;
@@ -15,18 +24,14 @@ import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.AnnotationUtils;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.PeptideUtils;
+import org.nextprot.api.web.domain.PepXResponse;
+import org.nextprot.api.web.domain.PepXResponse.PepXEntryMatch;
+import org.nextprot.api.web.domain.PepXResponse.PepXIsoformMatch;
 import org.nextprot.api.web.domain.PepxUtils;
 import org.nextprot.api.web.service.PepXService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.*;
 
 @Service
 public class PepXServiceImpl implements PepXService {
@@ -44,17 +49,23 @@ public class PepXServiceImpl implements PepXService {
 	}
 
 	@Override
-	public List<Entry> findEntriesWithPeptides(String peptide, boolean modeIsoleucine) {
+	public List<Entry> findEntriesWithPeptides(String peptides, boolean modeIsoleucine) {
 
 		List<Entry> entries = new ArrayList<>();
 
-		Map<String, List<Pair<String, Integer>>> entriesMap = getPepXResponse(peptide, modeIsoleucine);
+		PepXResponse pepXResponse = getPepXResponse(peptides, modeIsoleucine);
 
-		Set<String> entriesNames = entriesMap.keySet();
+		Set<String> entriesNames = pepXResponse.getEntriesNames();
 		for (String entryName : entriesNames) {
 			EntryConfig targetIsoconf = EntryConfig.newConfig(entryName).withTargetIsoforms().with("variant").withOverview().withoutAdditionalReferences().withoutProperties(); // .with("variant")
 			Entry entry = entryBuilderService.build(targetIsoconf);
-			List<Annotation> virtualAnnotations = buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, entriesMap.get(entryName), entry.getAnnotations(), entry.getIsoforms());
+
+			List<Annotation> virtualAnnotations = new ArrayList<>();
+			Set<String> peptidesForEntry = pepXResponse.getPeptidesForEntry(entryName);
+			for(String peptide : peptidesForEntry){
+				PepXEntryMatch pepxEntryMatch = pepXResponse.getPeptideMatch(peptide).getPepxMatchesForEntry(entryName);
+				virtualAnnotations.addAll(buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, pepxEntryMatch.getIsoforms(), entry.getAnnotations(), entry.getIsoforms()));
+			}
 
 			if((virtualAnnotations != null) && (!virtualAnnotations.isEmpty())){
 
@@ -72,7 +83,7 @@ public class PepXServiceImpl implements PepXService {
 	}
 
 	// 
-	private Object getPepXResponse(String peptides, boolean modeIsoleucine) {
+	private PepXResponse getPepXResponse(String peptides, boolean modeIsoleucine) {
 		
 		String httpRequest = pepXUrl + (modeIsoleucine ? ("?mode=IL&pep=" + peptides) : ("?pep=" + peptides)) + "&format=JSON";
 
@@ -81,15 +92,16 @@ public class PepXServiceImpl implements PepXService {
 			URL pepXUrl = new URL(httpRequest);
 			URLConnection px = pepXUrl.openConnection();
 			BufferedReader in = new BufferedReader(new InputStreamReader(px.getInputStream()));
-			String inputLine;
+			String line;
 			StringBuilder sb = new StringBuilder();
-			while ((inputLine = in.readLine()) != null) {
-				sb.append(inputLine);
+			while ((line = in.readLine()) != null) {
+				sb.append(line);
 			}
 			in.close();
 			
-			return PepxUtils.parsePepxResponse(inputLine);
-
+			return PepxUtils.parsePepxResponse(sb.toString());
+				
+		
 		} catch (IOException e) {
 			throw new NextProtException(e);
 		}
@@ -99,13 +111,13 @@ public class PepXServiceImpl implements PepXService {
 	
 	//This method is static friendly so that it can be tested ////////////////////////////////
 	//CrossedCheckedWithEntryVariantsAndIsoforms
-	static List<Annotation> buildEntryWithVirtualAnnotations(String peptide, boolean modeIsoleucine, List<Pair<String, Integer>> isoformNamesAndOptionalPosition, List<Annotation> varAnnotations, List<Isoform> isoforms) {
+	static List<Annotation> buildEntryWithVirtualAnnotations(String peptide, boolean modeIsoleucine, List<PepXIsoformMatch> pepXisoforms, List<Annotation> varAnnotations, List<Isoform> isoforms) {
 
 		
 		List<Annotation> finalAnnotations = new ArrayList<>();
-		for (Pair<String, Integer> isoNameAndOptionalPosition : isoformNamesAndOptionalPosition) {
+		for (PepXIsoformMatch isoNameAndOptionalPosition : pepXisoforms) {
 			
-			String isoformName = isoNameAndOptionalPosition.getFirst();
+			String isoformName = isoNameAndOptionalPosition.getIsoformName();
 			
 			Annotation annotation = new Annotation();
 			annotation.setCategoryOnly("pepx-virtual-annotation");
@@ -114,9 +126,9 @@ public class PepXServiceImpl implements PepXService {
 
 			AnnotationIsoformSpecificity is = new AnnotationIsoformSpecificity();
 			is.setIsoformName(isoformName);
-			if (isoNameAndOptionalPosition.getSecond() != null) {// It means there is a variant!!!
+			if (isoNameAndOptionalPosition.getPosition() != null) {// It means there is a variant!!!
 
-				int startPeptidePosition = isoNameAndOptionalPosition.getSecond();
+				int startPeptidePosition = isoNameAndOptionalPosition.getPosition();
 				int endPeptidePosition = startPeptidePosition + peptide.length();
 				List<Annotation> variantAnnotations = AnnotationUtils.filterAnnotationsBetweenPositions(startPeptidePosition, endPeptidePosition, varAnnotations, isoformName);
 
