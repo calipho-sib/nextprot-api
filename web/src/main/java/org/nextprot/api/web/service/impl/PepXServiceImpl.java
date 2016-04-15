@@ -15,6 +15,7 @@ import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.AnnotationUtils;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.PeptideUtils;
+import org.nextprot.api.web.domain.PepxUtils;
 import org.nextprot.api.web.service.PepXService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,10 +71,10 @@ public class PepXServiceImpl implements PepXService {
 
 	}
 
-	private Map<String, List<Pair<String, Integer>>> getPepXResponse(String peptide, boolean modeIsoleucine) {
-
-		Map<String, List<Pair<String, Integer>>> entriesMap = new HashMap<>();
-		String httpRequest = pepXUrl + (modeIsoleucine ? ("?mode=IL&pep=" + peptide) : ("?pep=" + peptide));
+	// 
+	private Object getPepXResponse(String peptides, boolean modeIsoleucine) {
+		
+		String httpRequest = pepXUrl + (modeIsoleucine ? ("?mode=IL&pep=" + peptides) : ("?pep=" + peptides)) + "&format=JSON";
 
 		try {
 
@@ -85,37 +86,14 @@ public class PepXServiceImpl implements PepXService {
 			while ((inputLine = in.readLine()) != null) {
 				sb.append(inputLine);
 			}
-
-			String[] acs = sb.toString().split("<br>");
-			NPreconditions.checkTrue(acs[0].toLowerCase().contains("searching"), "Unexpected format from pepX on the first row: " + acs[0]);
-			for (int i = 1; i < acs.length; i++) { // Do not take 1st row
-				// Note: the output contains 2 occurrences of the following line :
-				// Note: "PEPTIDE: N match(s)"
-				// Note: encompassing the entry list.
-				// Note: the following condition was always exiting the loop and never get the list of entries
-				if(acs[i].contains("match")) continue; //break; // sometimes
-				
-				String[] ei = acs[i].split("-");
-				String currentEntry = "NX_" + ei[0];
-				int isoNumber = Integer.valueOf(ei[1]);
-				if (ei.length == 2 || ei.length == 3) {
-					if (!entriesMap.containsKey(currentEntry)) {
-						entriesMap.put(currentEntry, new ArrayList<Pair<String, Integer>>());
-					}
-					Integer position = (ei.length == 3) ? (Integer.valueOf(ei[2])) : null;
-					entriesMap.get(currentEntry).add(new Pair<>(currentEntry + "-" + isoNumber, position));
-				} else {
-					throw new NextProtException("Unexpected format from pepX on row " + i + ": " + acs[i]);
-				}
-			}
-
 			in.close();
+			
+			return PepxUtils.parsePepxResponse(inputLine);
 
 		} catch (IOException e) {
 			throw new NextProtException(e);
 		}
 
-		return entriesMap;
 	}
 	
 	

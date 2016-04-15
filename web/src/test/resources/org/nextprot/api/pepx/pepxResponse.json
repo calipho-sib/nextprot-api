@@ -1,0 +1,55 @@
+{
+	"params": {
+		"modeIL": true,
+		"pep": "TKMGLYYSYFK"
+	},
+	"peptideMatches": [{
+		"peptide": "TKMGLYYSYFK",
+		"entryMatches": [{
+			"entryName": "Q6NUT2",
+			"isoforms": [{
+				"isoformName": "Q6NUT2-1",
+				"position": 148
+			}]
+		}, {
+			"entryName": "Q2PZI1",
+			"isoforms": [{
+				"isoformName": "Q2PZI1-1",
+				"position": 62
+			}, {
+				"isoformName": "Q2PZI1-2",
+				"position": null
+			}]
+		}]
+	}, {
+		"peptide": "TKMGL",
+		"entryMatches": [{
+			"entryName": "Q6NUT2",
+			"isoforms": [{
+				"isoformName": "Q6NUT2-1",
+				"position": 148
+			}]
+		}, {
+			"entryName": "Q2PZI1",
+			"isoforms": [{
+				"isoformName": "Q2PZI1-1",
+				"position": 62
+			}, {
+				"isoformName": "Q2PZI1-2",
+				"position": null
+			}]
+		}, {
+			"entryName": "Q9UKT4",
+			"isoforms": [{
+				"isoformName": "Q9UKT4-1",
+				"position": 237
+			}]
+		}, {
+			"entryName": "Q6NXN4",
+			"isoforms": [{
+				"isoformName": "Q6NXN4-1",
+				"position": null
+			}]
+		}]
+	}]
+}
