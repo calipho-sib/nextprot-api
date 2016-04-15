@@ -13,7 +13,6 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -64,7 +63,9 @@ public class PepXServiceImpl implements PepXService {
 			Set<String> peptidesForEntry = pepXResponse.getPeptidesForEntry(entryName);
 			for(String peptide : peptidesForEntry){
 				PepXEntryMatch pepxEntryMatch = pepXResponse.getPeptideMatch(peptide).getPepxMatchesForEntry(entryName);
-				virtualAnnotations.addAll(buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, pepxEntryMatch.getIsoforms(), entry.getAnnotations(), entry.getIsoforms()));
+				if(pepxEntryMatch != null && pepxEntryMatch.getIsoforms() != null && pepxEntryMatch.getIsoforms().size() > 0){
+					virtualAnnotations.addAll(buildEntryWithVirtualAnnotations(peptide, modeIsoleucine, pepxEntryMatch.getIsoforms(), entry.getAnnotations(), entry.getIsoforms()));
+				}
 			}
 
 			if((virtualAnnotations != null) && (!virtualAnnotations.isEmpty())){
@@ -82,7 +83,6 @@ public class PepXServiceImpl implements PepXService {
 
 	}
 
-	// 
 	private PepXResponse getPepXResponse(String peptides, boolean modeIsoleucine) {
 		
 		String httpRequest = pepXUrl + (modeIsoleucine ? ("?mode=IL&pep=" + peptides) : ("?pep=" + peptides)) + "&format=JSON";
@@ -141,7 +141,7 @@ public class PepXServiceImpl implements PepXService {
 
 				if ((validAnnotations == null) || validAnnotations.isEmpty()) {
 					
-					LOGGER.warn("No valid variants found for isoform " + isoformName + " at position" + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
+					LOGGER.warn("No valid variants found for isoform " + isoformName + " at position " + startPeptidePosition + " for peptide " + peptide + " in mode IL:" + modeIsoleucine);
 					continue;
 					
 					//We used to throw an exception, but now we just skip
@@ -185,9 +185,8 @@ public class PepXServiceImpl implements PepXService {
 				boolean isPeptideContained = PeptideUtils.isPeptideContainedInTheSequence(peptide, sequence, modeIsoleucine);
 				
 				if(!isPeptideContained){
-					continue;
-				}else {
 					LOGGER.warn("PepX returned a peptide (" + peptide + ") for an isoform (" + isoformName + ") that is not in the current isoform in neXtProt");
+					continue;
 				}
 				
 				//We used to throw an exception, but this would break the program (the algorithm could be improved to detect the specific case where pepx return a peptide of length 6 and generate a real error on other cases)

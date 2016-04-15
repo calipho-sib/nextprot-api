@@ -96,11 +96,11 @@ public class PepXResponse {
 		public PepXIsoformMatch(){};
 
 		public PepXIsoformMatch(String isoformName){
-			this.isoformName = isoformName;
+			setIsoformName(isoformName);
 		};
 		
 		public PepXIsoformMatch(String isoformName, Integer position){
-			this.isoformName = isoformName;
+			setIsoformName(isoformName);
 			this.position = position;
 		};
 
@@ -111,7 +111,9 @@ public class PepXResponse {
 			return isoformName;
 		}
 		public void setIsoformName(String isoformName) {
-			this.isoformName = isoformName;
+			if(!isoformName.startsWith("NX_")){
+				this.isoformName = "NX_" + isoformName;
+			}else this.isoformName = isoformName;
 		}
 		public Integer getPosition() {
 			return position;

@@ -16,6 +16,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.PeptideUtils;
 import org.nextprot.api.web.dbunit.base.mvc.WebUnitBaseTest;
 import org.nextprot.api.web.domain.PepXResponse;
 import org.nextprot.api.web.domain.PepXResponse.PepXEntryMatch;
@@ -25,6 +26,8 @@ import org.nextprot.api.web.domain.PepxUtils;
 
 public class PepXServiceTest extends WebUnitBaseTest {
 
+	private static final String ISO_NAME = "NX_P01234-1";
+	
 	@Test
 	public void shouldParsePep() throws Exception {
 
@@ -75,12 +78,12 @@ public class PepXServiceTest extends WebUnitBaseTest {
 		boolean modeIsoleucine = true;
 		
 		PepXIsoformMatch pepXIsoformMatch = new PepXIsoformMatch();
-		pepXIsoformMatch.setIsoformName("Iso-1");
+		pepXIsoformMatch.setIsoformName(ISO_NAME);
 		
 		@SuppressWarnings("unchecked")
 		List<Annotation> annotations = mock(List.class);
 		Isoform isoform = mock(Isoform.class);
-		when(isoform.getUniqueName()).thenReturn("Iso-1");
+		when(isoform.getUniqueName()).thenReturn(ISO_NAME);
 		when(isoform.getSequence()).thenReturn("AGANAPA");
 
 		List<Isoform> isoforms = Arrays.asList(isoform);
@@ -89,7 +92,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 		Annotation annot = virtualAnnotations.get(0);
 		assertTrue(annot.getCategory().equals("pepx-virtual-annotation"));
 		assertTrue(annot.getVariant() == null);
-		assertTrue(annot.getTargetingIsoformsMap().keySet().contains("Iso-1"));
+		assertTrue(annot.getTargetingIsoformsMap().keySet().contains(ISO_NAME));
 
 	}
 
@@ -99,13 +102,13 @@ public class PepXServiceTest extends WebUnitBaseTest {
 		String peptide = "GANAP";
 		boolean modeIsoleucine = true;
 
-		PepXIsoformMatch pepXIsoformMatch = new PepXIsoformMatch("Iso-1");
+		PepXIsoformMatch pepXIsoformMatch = new PepXIsoformMatch(ISO_NAME);
 		
 		
 		@SuppressWarnings("unchecked")
 		List<Annotation> annotations = mock(List.class);
 		Isoform isoform = mock(Isoform.class);
-		when(isoform.getUniqueName()).thenReturn("Iso-1");
+		when(isoform.getUniqueName()).thenReturn(ISO_NAME);
 		when(isoform.getSequence()).thenReturn("AAAAAA");// Sequence does not
 															// contain the
 															// peptide
@@ -315,35 +318,31 @@ public class PepXServiceTest extends WebUnitBaseTest {
 
 	@Test
 	public void shouldReturnAValidAnnotationIfTheVariantIsContainedInThePeptipeAndItIsSpecificToTheIsoform() throws Exception {
-		String isoName = "iso-1";
-		List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "D", 5, isoName, true));
-		List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("DDF", true, annots, isoName, "ABCDEFGHI");
+		List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "D", 5, ISO_NAME, true));
+		List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("DDF", true, annots, ISO_NAME, "ABCDEFGHI");
 
 		assertTrue(resultAnnots.size() == 1);
 	}
 
 	@Test
 	public void shouldNotReturnAValidAnnotationIfItIsNotSpecificToTheIsoform() throws Exception {
-		String isoName = "iso-1";
-		List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "D", 5, isoName, true));
+		List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "D", 5, ISO_NAME, true));
 		List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("DDF", true, annots, "another-iso-name", "ABCDEFGHI");
 		assertTrue(resultAnnots.size() == 0);
 	}
 
 	@Test
 	public void shouldNotReturnAValidAnnotationIfTheVariantIsNotContainedInThePeptide() throws Exception {
-		String isoName = "iso-1";
-		List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "Z", 4, isoName, true));
-		List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("DDF", true, annots, isoName, "ABCDEFGHI");
+		List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "Z", 4, ISO_NAME, true));
+		List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("DDF", true, annots, ISO_NAME, "ABCDEFGHI");
 		assertTrue(resultAnnots.size() == 0);
 	}
 
 	@Test(expected = NextProtException.class)
 	public void shouldThrowAnExceptionIfTheOriginalAminoAcidIsNotInTheSequenceAtThatPosition() throws Exception {
 		try {
-			String isoName = "iso-1";
-			List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "D", 4, isoName, true));
-			List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("DDF", true, annots, isoName, "ABCDEFGHI");
+			List<Annotation> annots = Arrays.asList(getMockedAnnotation("E", "D", 4, ISO_NAME, true));
+			List<Annotation> resultAnnots = PepXServiceImpl.filterValidVariantAnnotations("DDF", true, annots, ISO_NAME, "ABCDEFGHI");
 			assertTrue(resultAnnots.size() == 0);
 
 		} catch (NextProtException e) {
