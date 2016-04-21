@@ -116,12 +116,15 @@ public class PepXResponse {
 			}else this.isoformName = isoformName;
 		}
 		public Integer getPosition() {
-			return position;
+			if(position != null && position == 0) {
+				return null; // If position =0 we assume it is null (don't exist)
+			}else return position;
 		}
 		public void setPosition(Integer position) {
-			this.position = position;
+			if(position == 0){
+				this.position = null;
+			}else  this.position = position;
 		}
-
 	}
 
 	public static class PepXEntryMatch {
