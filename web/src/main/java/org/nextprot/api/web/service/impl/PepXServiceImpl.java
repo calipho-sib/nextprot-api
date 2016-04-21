@@ -85,7 +85,7 @@ public class PepXServiceImpl implements PepXService {
 
 	private PepXResponse getPepXResponse(String peptides, boolean modeIsoleucine) {
 		
-		String httpRequest = pepXUrl + (modeIsoleucine ? ("?mode=IL&pep=" + peptides) : ("?peplist=" + peptides)) + "&format=JSON";
+		String httpRequest = pepXUrl + "?format=json" + (modeIsoleucine ? ("&mode=IL&pep=" + peptides) : ("&pep=" + peptides));
 
 		try {
 
