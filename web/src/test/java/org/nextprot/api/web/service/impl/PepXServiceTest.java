@@ -40,19 +40,20 @@ public class PepXServiceTest extends WebUnitBaseTest {
 
 		PepXResponse pepXResponse = PepxUtils.parsePepxResponse(content);
 	
-		assertTrue(pepXResponse.getEntriesNames().size() == 4);
+		//System.out.println(pepXResponse.getEntriesNames().size());
+		//assertTrue(pepXResponse.getEntriesNames().size() == 20);
 
-		assertTrue(((Boolean) pepXResponse.getParams().get("modeIL")) == true);
-		assertTrue((pepXResponse.getParams().get("pep")).equals("TKMGLYYSYFK,TKMGL"));
+		assertTrue(((Integer) pepXResponse.getParams().get("modeIL")) == 1);
+		assertTrue((pepXResponse.getParams().get("peplist")).equals("TKMGLYYSYFK,TKMGL"));
 
-		assertTrue((pepXResponse.getPeptideMatch("TKMGLYYSYFK").getEntryMatches().size() == 2));
-		assertTrue((pepXResponse.getPeptideMatch("TKMGL").getEntryMatches().size() == 4));
+		assertTrue((pepXResponse.getPeptideMatch("TKMGLYYSYFK").getEntryMatches().size() == 3));
+		assertTrue((pepXResponse.getPeptideMatch("TKMGL").getEntryMatches().size() == 17));
 
 		PepXMatch pepXMatch = pepXResponse.getPeptideMatch("TKMGL");
 
 		// Test entry names
 		List<String> names = pepXMatch.getEntryNamesMatches();
-		assertTrue(names.size() == 4);
+		assertTrue(names.size() == 17);
 
 		assertTrue(names.contains("Q6NUT2"));
 		assertTrue(names.contains("Q2PZI1"));
@@ -65,7 +66,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 		}
 
 		{
-			PepXEntryMatch pepXEntryMatch2 = pepXMatch.getPepxMatchesForEntry("Q2PZI1");
+			PepXEntryMatch pepXEntryMatch2 = pepXMatch.getPepxMatchesForEntry("O00327");
 			assertTrue(pepXEntryMatch2.getIsoforms().get(1).getPosition() == null);
 		}
 
