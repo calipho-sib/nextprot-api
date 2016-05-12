@@ -1,6 +1,5 @@
 package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class InteractionFieldBuilder extends FieldBuilder{
 	@Override
 	protected void init(Entry entry){
 
-		
+		// Not used for now, and maybe never, the interactions are collected in the CVfieldBuilder
 		//WAIT FOR BIO OBJECTS !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		
 		String id = entry.getUniqueName();
