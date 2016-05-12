@@ -59,9 +59,9 @@ public interface TerminologyService {
 	 * @param terminology
 	 * @return
 	 */
-	List<Tree<Terminology>> findTerminologyTreeList(TerminologyCv terminologyCv, int maxDepth);
+	List<Tree<Terminology>> findTerminologyTreeList(TerminologyCv terminologyCv);
 
 	public List<String> findTerminologyNamesList();
 
-	public Set<String> getAncestorSets(Tree<Terminology> tree, String accession);
+	public Set<String> getAncestorSets(List<Tree<Terminology>> trees, String accession);
 }

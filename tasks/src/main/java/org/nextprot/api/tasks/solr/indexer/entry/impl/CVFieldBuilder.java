@@ -68,16 +68,13 @@ public class CVFieldBuilder extends FieldBuilder {
 			String category = term.getOntology();
 			//System.err.println("category: " + category);
 			List<String> ancestors = TerminologyUtils.getAllAncestors(term.getAccession(), terminologyservice);
-			List<Tree<Terminology>> treeList = this.terminologyservice.findTerminologyTreeList(TerminologyCv.valueOf(category), 10);
+			List<Tree<Terminology>> treeList = this.terminologyservice.findTerminologyTreeList(TerminologyCv.valueOf(category));
 			if(treeList.isEmpty()) 	ancestors2.clear();
-			else {
-			tree = treeList.get(0);
-			ancestors2 = this.terminologyservice.getAncestorSets(tree, term.getAccession());
-			}
+			ancestors2 = this.terminologyservice.getAncestorSets(treeList, term.getAccession());
 			//Set<String> ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
 			if(ancestors.size() != ancestors2.size()) {
 				// Differences for FA-, KW-, SL-,  DO-, and enzymes...
-				System.err.println(cvac + " old method: " + ancestors.size() + " new method: " + ancestors2.size());
+				System.err.println(cvac + " old method: " + ancestors.size() + " new method: " + ancestors2.size() + " category" + category);
 				//System.err.println(ancestors);
 			}
 			if(ancestors != null) 

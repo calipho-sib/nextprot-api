@@ -2,21 +2,16 @@ package org.nextprot.api.core.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.List;
 
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
-import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.commons.utils.Tree;
-import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 
@@ -92,20 +87,31 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 
 	@Test
 	public void shoudGetAllAncestors() { 
-		List<Tree<Terminology>> trees = this.terminologyService.findTerminologyTreeList(TerminologyCv.GoBiologicalProcessCv, 10);
-		Tree<Terminology> tree = trees.get(0);
-		
-		assertEquals(69,this.terminologyService.getAncestorSets(tree, "GO:1902667").size());
+		List<Tree<Terminology>> trees = this.terminologyService.findTerminologyTreeList(TerminologyCv.GoBiologicalProcessCv);
+		assertEquals(69,this.terminologyService.getAncestorSets(trees, "GO:1902667").size());
 		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
 	}
 	
+
+	@Test
+	public void shoudGetAllAncestorsForNextprotDomains() { 
+		List<Tree<Terminology>> trees = this.terminologyService.findTerminologyTreeList(TerminologyCv.NextprotDomainCv);
+		assertEquals(4,this.terminologyService.getAncestorSets(trees, "DO-00218").size());
+	}
+
+	@Test
+	public void shoudGetAllAncestorsForUnipathwayCv() { 
+		List<Tree<Terminology>> trees = this.terminologyService.findTerminologyTreeList(TerminologyCv.UnipathwayCv);
+		assertEquals(10,this.terminologyService.getAncestorSets(trees, "UPA00781").size());
+		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
+	}
 	
 	
 	@Test
 	public void shouldReturnTerminologies() {
 		for(TerminologyCv t : TerminologyCv.values()){
 			if(!t.equals(TerminologyCv.CellosaurusCv)){
-				this.terminologyService.findTerminologyTreeList(t, 10);
+				this.terminologyService.findTerminologyTreeList(t);
 			}
 		}
 	}

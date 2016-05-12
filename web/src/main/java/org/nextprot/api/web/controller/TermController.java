@@ -28,12 +28,9 @@ public class TermController {
 	@RequestMapping(value = "/terminology-tree/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Tree<Terminology>> getTerminologyTree(
 			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
-			@PathVariable("terminology") String terminology ,
+			@PathVariable("terminology") String terminology) {
 
-			@ApiPathParam(name = "maxDepth", description = "The max depth",  allowedvalues = { "1"})
-		@RequestParam(value = "maxDepth", required = false) Integer maxDepth) {
-
-		return terminolgyService.findTerminologyTreeList(TerminologyCv.getTerminologyOf(terminology), (maxDepth == null) ? 100 : Integer.valueOf(maxDepth));
+		return terminolgyService.findTerminologyTreeList(TerminologyCv.getTerminologyOf(terminology));
 	}
 
 	@ApiMethod(path = "/terminology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)

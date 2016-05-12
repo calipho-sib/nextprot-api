@@ -55,12 +55,14 @@ class TerminologyServiceImpl implements TerminologyService {
 	}
 
 	@Cacheable("terminology-ancestor-sets")
-	public Set<String> getAncestorSets(Tree<Terminology> tree, String accession) {
+	public Set<String> getAncestorSets(List<Tree<Terminology>> trees, String accession) {
 		Set<String> result = new TreeSet<String>();
-		List<Node<Terminology>> nodes = TerminologyUtils.getNodeListByName(tree, accession);
-
-		for (Node<Terminology> node : nodes) {
-			appendAncestor(node, result);
+		
+		for(Tree<Terminology> tree : trees){
+			List<Node<Terminology>> nodes = TerminologyUtils.getNodeListByName(tree, accession);
+			for (Node<Terminology> node : nodes) {
+				appendAncestor(node, result);
+			}
 		}
 
 		result.remove(accession); // a term is not it's own ancestor
@@ -69,10 +71,9 @@ class TerminologyServiceImpl implements TerminologyService {
 
 	@Override
 	@Cacheable("terminology-tree-depth")
-	public List<Tree<Terminology>> findTerminologyTreeList(TerminologyCv terminologyCv, int maxDepth) {
-
+	public List<Tree<Terminology>> findTerminologyTreeList(TerminologyCv terminologyCv) {
 		List<Terminology> terms = findTerminologyByOntology(terminologyCv.name());
-		List<Tree<Terminology>> result = TerminologyUtils.convertTerminologyListToTreeList(terms, maxDepth);
+		List<Tree<Terminology>> result = TerminologyUtils.convertTerminologyListToTreeList(terms, 1000);
 		return result;
 	}
 
