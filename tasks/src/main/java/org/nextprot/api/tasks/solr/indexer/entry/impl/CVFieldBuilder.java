@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
@@ -58,17 +59,17 @@ public class CVFieldBuilder extends FieldBuilder {
 		}
 		
 		// Final CV acs, ancestors and synonyms
+		System.err.println("cumputing CV ancestors for " +  cv_acs.size() + " terms...");
 		Tree<Terminology> tree = null;
-		Set<String> ancestors2 = null;
+		//Set<String> ancestors2 = null;
+		Set<String> ancestors2 = new TreeSet<String>();
 		for (String cvac : cv_acs) {
 			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
 			String category = term.getOntology();
 			//System.err.println("category: " + category);
 			List<String> ancestors = TerminologyUtils.getAllAncestors(term.getAccession(), terminologyservice);
 			List<Tree<Terminology>> treeList = this.terminologyservice.findTerminologyTreeList(TerminologyCv.valueOf(category), 10);
-			if(treeList.isEmpty()) {
-				ancestors2.clear();
-			}
+			if(treeList.isEmpty()) 	ancestors2.clear();
 			else {
 			tree = treeList.get(0);
 			ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
@@ -76,7 +77,7 @@ public class CVFieldBuilder extends FieldBuilder {
 			//Set<String> ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
 			if(ancestors.size() != ancestors2.size()) {
 				// Differences for FA-, KW-, SL-,  DO-, and enzymes...
-				//System.err.println(cvac + " old method: " + ancestors.size() + " new method: " + ancestors2.size());
+				System.err.println(cvac + " old method: " + ancestors.size() + " new method: " + ancestors2.size());
 				//System.err.println(ancestors);
 			}
 			if(ancestors != null) 
@@ -98,6 +99,7 @@ public class CVFieldBuilder extends FieldBuilder {
 			addField(Fields.CV_ANCESTORS_ACS, ancestorac);
 			addField(Fields.CV_ANCESTORS, this.terminologyservice.findTerminologyByAccession(ancestorac).getName());
 		}
+		System.err.println("CV ancestors done.");
 
 		for (String synonym : cv_synonyms) {
 			addField(Fields.CV_SYNONYMS, synonym);
