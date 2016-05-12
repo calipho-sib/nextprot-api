@@ -26,7 +26,7 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 		int publi_curated_count = 0;
 		int publi_large_scale_count = 0;
 		String Jinfo = "";
-		
+
 		//System.err.println(publications.size() + " publis");
 		for (Publication currpubli : publications) {
 			if(currpubli.getIsComputed() == true) publi_computed_count++;
