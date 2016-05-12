@@ -33,7 +33,7 @@ mvn test
 	</li>
 	<li>
 		<a href="http://www.ej-technologies.com/products/jprofiler/overview.html" target="_blank">
-		             <img alt="Java Profiler" height="30" src="https://d325ruyeyianrs.cloudfront.net//mgJIoWeBGjESI3wvaduBhyUarReoVzS8Qq2ppfxyUVv.png"/> 
+		             <img alt="Java Profiler" height="30" src="http://blog.idrsolutions.com/wp-content/uploads/2013/09/logo_jprofiler01.gif"/> 
 		</a>
 	</li>
 </ul>

@@ -1,5 +1,7 @@
 package org.nextprot.api.core.domain.publication;
 
+import java.io.Serializable;
+
 import org.jsondoc.core.annotation.ApiObjectField;
 
 /**
@@ -7,8 +9,10 @@ import org.jsondoc.core.annotation.ApiObjectField;
  *
  * Created by fnikitin on 03/02/16.
  */
-public abstract class PublicationResourceLocator {
+public abstract class PublicationResourceLocator  implements Serializable {
 
+    private static final long serialVersionUID = 0L;
+		
     @ApiObjectField(description = "The publication container name")
     private String name;
 

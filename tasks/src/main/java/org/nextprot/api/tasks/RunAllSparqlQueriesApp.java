@@ -3,11 +3,13 @@ package org.nextprot.api.tasks;
 import static org.junit.Assert.assertFalse;
 
 import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.Ignore;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.utils.UserQueryUtils;
 
@@ -17,7 +19,6 @@ import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.ResultSet;
 
-@Ignore
 public class RunAllSparqlQueriesApp {
 
 	//This will log on release-info folder in a file called sparql-queries.tsv
@@ -38,25 +39,43 @@ public class RunAllSparqlQueriesApp {
 	//private static final String PREFIXES_URL = "http://build-api.nextprot.org/sparql-prefixes";
 
 
+	/**
+	 * Run all SPARQL queries that are public (excludes *.unpub files) 
+	 * unless queries to be run are specified in args
+	 * 
+	 * @param args optional query name(s) to be run separated by a space i.e NXQ_00005 NXQ_00006
+	 * 
+	 * @throws Exception
+	 */
 	public static void main(String[] args) throws Exception {
 		
 		String prefixes = getSparqlPrefixes();
 
+		Map queryMap = new HashMap();
+		for (int i=0;i<args.length;i++) queryMap.put(args[i], null);
+		
 		boolean testFailed = false;
 
 		List<UserQuery> queries = getSparqlQueries();
 		System.out.println("Found " + queries.size() + " queries") ;
+		Date d1 = new Date(System.currentTimeMillis());
 		
 		int exceptionCount=0;
 		int zeroResultsCount=0;
+		int cnt=0;
 		for (UserQuery q : queries) {
 
 			//if (q.getUserQueryId()<31 || q.getUserQueryId()>40) continue;
 
+			// ---------------------------------------------------------------------------
+			// if args are defined then skip queries taht are not in args 
+			// ---------------------------------------------------------------------------
+			if (args.length > 0 && ! queryMap.containsKey(q.getPublicId())) continue; 
+			// ---------------------------------------------------------------------------
+			cnt++;
 			long start = System.currentTimeMillis();
 			String errorMessage = "";
 			int resultsCount = 0;
-
 			try {
 
 				String sparqlQuery = prefixes + "\n" + q.getSparql();
@@ -86,10 +105,13 @@ public class RunAllSparqlQueriesApp {
 
 		}
 
-		LOGGER.info("Query count:" + queries.size() );
-		LOGGER.info("OK count:" + (queries.size() - exceptionCount - zeroResultsCount) );
-		LOGGER.info("Exception count:" + exceptionCount );
-		LOGGER.info("ZeroResult count:" + zeroResultsCount );
+		LOGGER.info("Summary");
+		LOGGER.info("Started at       : " + d1);
+		LOGGER.info("Ended at         : " + new Date(System.currentTimeMillis()));
+		LOGGER.info("Run query count  : " + cnt );
+		LOGGER.info("OK count         : " + (queries.size() - exceptionCount - zeroResultsCount) );
+		LOGGER.info("Exception count  : " + exceptionCount );
+		LOGGER.info("ZeroResult count : " + zeroResultsCount );
 		assertFalse(testFailed);
 
 	}
@@ -122,7 +144,7 @@ public class RunAllSparqlQueriesApp {
 		QueryExecution qExec = null;
 		try {
 			qExec = QueryExecutionFactory.sparqlService(SPARQL_ENDPOINT, query);
-			qExec.setTimeout(20 * 60 * 1000); //20 min
+			qExec.setTimeout(30 * 60 * 1000); //30 min
 			
 			ResultSet rs = qExec.execSelect();
 			while (rs.hasNext()) {
