@@ -35,6 +35,8 @@ public abstract class FieldBuilder {
 
 	public final void initializeBuilder(Entry entry) {
 		if(!initialized){
+			System.err.println("initializing FieldBuilder: " + this.toString());
+
 			init(entry);
 			initialized = true;
 		}
