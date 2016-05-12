@@ -70,7 +70,8 @@ public class InteractionFieldBuilder extends FieldBuilder{
 	
 	@Override
 	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.INTERACTIONS);
+		//return Arrays.asList(Fields.INTERACTIONS);
+		return null;
 	}
 	
 
