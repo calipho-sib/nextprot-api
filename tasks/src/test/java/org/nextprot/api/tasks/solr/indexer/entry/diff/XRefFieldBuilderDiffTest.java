@@ -16,19 +16,18 @@ import java.util.TreeSet;
 public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 
 	// TODO: @Ignore should be removed and this test fixed
-	// TODO: testXrefs() should be called against a precise list of entries (see also NamesFieldBuilderDiffTest)
 	//@Ignore
 	@Test
 	public void testXrefs() {
 		String[] test_list = {"NX_O00116", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_O00115","NX_Q7Z6P3",
 				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
 
-		//for(int i=0; i < 12; i++){ testXrefs(getEntry(test_list[i])); } 
+		for(int i=0; i < 12; i++){ testXrefs(getEntry(test_list[i])); } 
 		// for(int i=1000; i < 2000; i++){	testXrefs(getEntry(i));	} // 'random' entries
 
-		Entry entry = getEntry("NX_O00422"); 
+		//Entry entry = getEntry("NX_O00422"); 
 		//Entry entry = getEntry("NX_Q8NGP9"); // 
-		testXrefs(entry); 
+		//testXrefs(entry); 
 
 	}
 
