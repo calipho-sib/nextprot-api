@@ -12,6 +12,7 @@ import org.nextprot.api.core.service.TerminologyService;
 import java.util.*;
 
 
+// !!! This is an old approach for the entry solr index, will be deleted soon
 public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 	
 	private TerminologyService terminologyservice;

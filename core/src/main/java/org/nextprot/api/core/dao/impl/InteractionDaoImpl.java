@@ -76,6 +76,7 @@ public class InteractionDaoImpl implements InteractionDAO {
 			//And another entry, that may be present in nextprot or not
 			Interactant otherInteractant = new Interactant();
 			otherInteractant.setAccession(resultSet.getString("interactant_unique_name"));
+			otherInteractant.setGenename(resultSet.getString("interactant_genename"));
 			otherInteractant.setXrefId(resultSet.getLong("interactant_xref_id"));
 			otherInteractant.setDatabase(resultSet.getString("interactant_database"));
 			otherInteractant.setUrl(resultSet.getString("interactant_url"));

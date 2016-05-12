@@ -9,6 +9,7 @@ public class Interactant implements Serializable {
 	private String url;
 	private String database;
 	private String accession;
+	private String genename;
 	private Long xrefId;
 	
 	
@@ -61,6 +62,10 @@ public class Interactant implements Serializable {
 		return accession;
 	}
 	
+	public String getGenename() {
+		return genename;
+	}
+	
 	public String getNextprotAccession() {
 		if (isNextprot() && ! accession.startsWith("NX_")) {
 			return "NX_"+accession;
@@ -73,6 +78,10 @@ public class Interactant implements Serializable {
 
 	public void setAccession(String accession) {
 		this.accession = accession;
+	}
+
+	public void setGenename(String genename) {
+		this.genename = genename;
 	}
 
 	public boolean isNextprot() {

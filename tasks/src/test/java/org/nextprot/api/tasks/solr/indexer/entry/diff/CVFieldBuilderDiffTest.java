@@ -19,8 +19,10 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 
 	@Test
 	public void testCVs() {
+		String[] test_list = {"NX_O00116", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_O00115","NX_Q7Z6P3",
+				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
 
-		for(int i=0; i < 10; i++){ 	testCVs(getEntry(i)); } 
+		for(int i=0; i < 12; i++){ 	testCVs(getEntry(test_list[i])); } 
 		
 		//Entry entry = getEntry("NX_P20594");
 		//Entry entry = getEntry("NX_P14060");
@@ -35,7 +37,7 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 
 		System.out.println("Testing: " + entryName);
 		CVFieldBuilder cfb = new CVFieldBuilder();
-		cfb.setTerminologyservice(terminologyService);
+		cfb.setTerminologyService(terminologyService);
 		cfb.initializeBuilder(entry);
 		
 		// CV_ACS

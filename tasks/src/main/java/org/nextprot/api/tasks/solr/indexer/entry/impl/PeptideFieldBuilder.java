@@ -2,10 +2,12 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
@@ -19,15 +21,16 @@ public class PeptideFieldBuilder extends FieldBuilder{
 		for (Annotation currannot : entry.getAnnotations()) {
 			String category = currannot.getCategory();
 			if (category.contains("peptide mapping")){
-				//System.err.println(currannot.);
+				List<AnnotationEvidence> evList = currannot.getEvidences();
+				for (AnnotationEvidence currEv : evList) {
+					String db = currEv.getResourceDb();
+					if(!db.equals("neXtProtSubmission")) {
+					   if(db.equals("PubMed")) addField(Fields.PEPTIDE, db + ":" + currEv.getResourceAccession());
+					   else addField(Fields.PEPTIDE, db + ":" + currEv.getResourceAccession() + ", " + currEv.getResourceAccession());
+					}
+				}
 			}
 		}
-		for(DbXref xf : entry.getXrefs()){
-			if("PeptideAtlas".equals(xf.getDatabaseName()) || "SRMAtlas".equals(xf.getDatabaseName())){
-				addField(Fields.PEPTIDE, xf.getDatabaseName() + ":" + xf.getAccession() + ", " + xf.getAccession());
-			}
-		}
-				
 	}
 	
 	@Override
