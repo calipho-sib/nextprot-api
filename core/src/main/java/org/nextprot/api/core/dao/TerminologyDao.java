@@ -3,23 +3,23 @@ package org.nextprot.api.core.dao;
 import java.util.List;
 import java.util.Set;
 
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 
 public interface TerminologyDao {
 
-	Terminology findTerminologyByAccession(String accession);
+	CvTerm findTerminologyByAccession(String accession);
 
-	List<Terminology> findTerminologByTitle(String title); // Not implemented
+	List<CvTerm> findTerminologByTitle(String title); // Not implemented
 
-	List<Terminology> findTerminologyByName(String name); // Not implemented
+	List<CvTerm> findTerminologyByName(String name); // Not implemented
 	
-	List<Terminology> findTerminologyByOntology(String ontology);
+	List<CvTerm> findTerminologyByOntology(String ontology);
 
-	List<Terminology> findAllTerminology();
+	List<CvTerm> findAllTerminology();
 
-	List<Terminology> findTerminologyByAccessions(Set<String> accessions);
+	List<CvTerm> findTerminologyByAccessions(Set<String> accessions);
 
-	List<Terminology> findTermByAccessionAndTerminology(String accession, String terminology);
+	List<CvTerm> findTermByAccessionAndTerminology(String accession, String terminology);
 
 	List<String> findTerminologyNamesList();
 

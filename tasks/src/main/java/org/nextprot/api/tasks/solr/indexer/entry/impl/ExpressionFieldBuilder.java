@@ -9,7 +9,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.utils.TerminologyUtils;
@@ -42,7 +42,7 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 		for (String cv : cv_tissues) {
 			//cv_tissues_final.add(cv); // No duplicate: this is a Set
 			if(cv.startsWith("TS-")) {
-				Terminology term = terminologyservice.findTerminologyByAccession(cv);
+				CvTerm term = terminologyservice.findTerminologyByAccession(cv);
 				//if(cv_tissues_final.contains(cv)) System.err.println(cv + " already seen");
 				//else System.err.println(cv);
 				cv_tissues_final.add(cv); // No duplicate: this is a Set

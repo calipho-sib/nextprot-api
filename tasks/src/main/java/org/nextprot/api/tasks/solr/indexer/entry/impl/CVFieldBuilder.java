@@ -11,7 +11,7 @@ import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.utils.TerminologyUtils;
@@ -60,15 +60,15 @@ public class CVFieldBuilder extends FieldBuilder {
 		
 		// Final CV acs, ancestors and synonyms
 		System.err.println("cumputing CV ancestors for " +  cv_acs.size() + " terms...");
-		Tree<Terminology> tree = null;
+		Tree<CvTerm> tree = null;
 		//Set<String> ancestors2 = null;
 		Set<String> ancestors2 = new TreeSet<String>();
 		for (String cvac : cv_acs) {
-			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
+			CvTerm term = this.terminologyservice.findTerminologyByAccession(cvac);
 			String category = term.getOntology();
 			//System.err.println("category: " + category);
 			List<String> ancestors = TerminologyUtils.getAllAncestors(term.getAccession(), terminologyservice);
-			List<Tree<Terminology>> treeList = this.terminologyservice.findTerminologyTreeList(TerminologyCv.valueOf(category));
+			List<Tree<CvTerm>> treeList = this.terminologyservice.findTerminologyTreeList(TerminologyCv.valueOf(category));
 			if(treeList.isEmpty()) 	ancestors2.clear();
 			ancestors2 = this.terminologyservice.getAncestorSets(treeList, term.getAccession());
 			//Set<String> ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
@@ -103,9 +103,9 @@ public class CVFieldBuilder extends FieldBuilder {
 		}
 		
 		
-		List<Terminology> enzymes = entry.getEnzymes();
+		List<CvTerm> enzymes = entry.getEnzymes();
 		String ec_names = "";
-		for (Terminology currenzyme : enzymes) {
+		for (CvTerm currenzyme : enzymes) {
 			cvac_cnt++;
 			cv_acs.add(currenzyme.getAccession());
 			addField(Fields.CV_NAMES, currenzyme.getName());

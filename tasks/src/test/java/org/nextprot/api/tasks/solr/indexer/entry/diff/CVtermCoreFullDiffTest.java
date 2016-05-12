@@ -3,7 +3,7 @@ package org.nextprot.api.tasks.solr.indexer.entry.diff;
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.CvIndex.CvField;
 import org.nextprot.api.tasks.solr.indexer.CvTermSolrIndexer;
@@ -15,7 +15,7 @@ public class CVtermCoreFullDiffTest extends SolrDiffTest {
 
 	@Autowired TerminologyService terminologyService;
 	
-	SolrIndexer<Terminology> cvindexer = new CvTermSolrIndexer("http://localhost:8983/solr/npcvs1");
+	SolrIndexer<CvTerm> cvindexer = new CvTermSolrIndexer("http://localhost:8983/solr/npcvs1");
 
 	@Test
 	public void testCVs() {
@@ -48,7 +48,7 @@ public class CVtermCoreFullDiffTest extends SolrDiffTest {
 	}
 
 	
-	public void testCVData(Terminology term) {
+	public void testCVData(CvTerm term) {
 		
 		long id = term.getId();
 		String entry = term.getAccession();

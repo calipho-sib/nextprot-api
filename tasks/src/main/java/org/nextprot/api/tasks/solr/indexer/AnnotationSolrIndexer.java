@@ -211,8 +211,8 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 			//else System.err.println("type: " + idtype);
 		}
 		
-		List<Terminology> enzymes = entry.getEnzymes();
-		for (Terminology currenzyme : enzymes) {
+		List<CvTerm> enzymes = entry.getEnzymes();
+		for (CvTerm currenzyme : enzymes) {
 			//System.err.println(id + " fromenz: " + currenzyme.getAccession());
 			doc.addField("cv_acs", currenzyme.getAccession());
 			cvac_cnt++;
@@ -312,7 +312,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		
 		// Final CV acs, ancestors and synonyms
 		for (String cvac : cv_acs) {
-			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
+			CvTerm term = this.terminologyservice.findTerminologyByAccession(cvac);
 			String category = term.getOntology();
 			//System.out.println(cvac + ": " + category);
 			//if(term == null) System.err.println("problem with " + cvac);
@@ -342,7 +342,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		for (String cv : cv_tissues) {
 			cv_tissues_final.add(cv); // No duplicate: this is a Set
 			if(cv.startsWith("TS-")) {
-				Terminology term = this.terminologyservice.findTerminologyByAccession(cv);
+				CvTerm term = this.terminologyservice.findTerminologyByAccession(cv);
 				List<String> ancestors = term.getAncestorAccession();
 				if(ancestors != null) 
 				  for (String ancestorac : ancestors) {

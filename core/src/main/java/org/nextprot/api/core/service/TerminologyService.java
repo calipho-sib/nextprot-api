@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 
 
 public interface TerminologyService {
@@ -15,53 +15,53 @@ public interface TerminologyService {
 	 * @param id
 	 * @return
 	 */
-	public Terminology findTerminologyByAccession(String accession);
+	public CvTerm findTerminologyByAccession(String accession);
 	
 	/**
 	 * Gets terms by title case insensitive
 	 * @param title
 	 * @return
 	 */
-	public List<Terminology> findTerminologByTitle(String title);
+	public List<CvTerm> findTerminologByTitle(String title);
 	
 	/**
 	 * Retrieves terms by name
 	 * @param name
 	 * @return
 	 */
-	public List<Terminology> findTerminologyByName(String name);	
+	public List<CvTerm> findTerminologyByName(String name);	
 
 	/**
 	 * Retrieves terms by ontology
 	 * @param the name of ontology
 	 * @return
 	 */
-	public List<Terminology> findTerminologyByOntology(String ontology);	
+	public List<CvTerm> findTerminologyByOntology(String ontology);	
 	
 	
 	/**
 	 * Retrieves terms sorted by ontology
 	 * @return
 	 */
-	public List<Terminology> findAllTerminology();
+	public List<CvTerm> findAllTerminology();
 
 	/**
 	 * Gets enzyme terminologies
 	 * @param entryName
 	 * @return
 	 */
-	public List<Terminology> findEnzymeByMaster(String entryName);
+	public List<CvTerm> findEnzymeByMaster(String entryName);
 
-	public List<Terminology> findTerminologyByAccessions(Set<String> terminologyAccessions);
+	public List<CvTerm> findTerminologyByAccessions(Set<String> terminologyAccessions);
 
 	/**
 	 * Returns a tree for a given terminology
 	 * @param terminology
 	 * @return
 	 */
-	List<Tree<Terminology>> findTerminologyTreeList(TerminologyCv terminologyCv);
+	List<Tree<CvTerm>> findTerminologyTreeList(TerminologyCv terminologyCv);
 
 	public List<String> findTerminologyNamesList();
 
-	public Set<String> getAncestorSets(List<Tree<Terminology>> trees, String accession);
+	public Set<String> getAncestorSets(List<Tree<CvTerm>> trees, String accession);
 }

@@ -3,7 +3,7 @@ package org.nextprot.api.tasks.solr;
 import java.util.List;
 
 import org.nextprot.api.commons.exception.NPreconditions;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.tasks.solr.indexer.CvTermSolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
@@ -28,10 +28,10 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 		logger.info("Solr server: " + solrServer); 
 		
 		String ontologyToReindex = System.getProperty("solr.ontology"); // eg: java -Dsolr.ontology="UniprotFamilyCv" (don't forget CamelCasing)
-		SolrIndexer<Terminology> indexer = new CvTermSolrIndexer(solrServer);
+		SolrIndexer<CvTerm> indexer = new CvTermSolrIndexer(solrServer);
 		//logger.info("removing all solr terminology records");
 		
-		List<Terminology> allterms;
+		List<CvTerm> allterms;
 		if (ontologyToReindex == null) { // No arg: index all ontologies
 			System.err.println("indexing: all ontologies");
 			logger.info("indexing all terminologies");
@@ -44,7 +44,7 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 			allterms = terminologyService.findTerminologyByOntology(ontologyToReindex);
 		}
 
-		for (Terminology t : allterms) {
+		for (CvTerm t : allterms) {
 			indexer.add(t);
 			termcnt++;
 		}
