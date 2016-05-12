@@ -12,6 +12,7 @@ import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
 import org.nextprot.api.core.dao.TerminologyDao;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +31,8 @@ class TerminologyServiceImpl implements TerminologyService {
 
 	@Override
 	@Cacheable("terminology-by-accession")
-	public CvTerm findTerminologyByAccession(String accession) {
+	public CvTerm findCvTermByAccession(String accession) {
 		return terminologyDao.findTerminologyByAccession(accession);
-	}
-
-	@Override
-	public List<CvTerm> findTerminologByTitle(String title) {
-		return terminologyDao.findTerminologByTitle(title);
-	}
-
-	@Override
-	public List<CvTerm> findTerminologyByName(String name) {
-		return terminologyDao.findTerminologyByName(name);
 	}
 
 	private static void appendAncestor(Node<CvTerm> node, Set<String> result) {
@@ -54,6 +45,7 @@ class TerminologyServiceImpl implements TerminologyService {
 
 	}
 
+	//TODO TRY TO PLACE THIS ELSEWHERE, BUT PROBABLY SHOULD BE CACHED!
 	@Cacheable("terminology-ancestor-sets")
 	public Set<String> getAncestorSets(List<Tree<CvTerm>> trees, String accession) {
 		Set<String> result = new TreeSet<String>();
@@ -71,15 +63,15 @@ class TerminologyServiceImpl implements TerminologyService {
 
 	@Override
 	@Cacheable("terminology-tree-depth")
-	public List<Tree<CvTerm>> findTerminologyTreeList(TerminologyCv terminologyCv) {
-		List<CvTerm> terms = findTerminologyByOntology(terminologyCv.name());
-		List<Tree<CvTerm>> result = TerminologyUtils.convertTerminologyListToTreeList(terms, 1000);
-		return result;
+	public Terminology findTerminology(TerminologyCv terminologyCv) {
+		List<CvTerm> terms = findCvTermsByOntology(terminologyCv.name());
+		List<Tree<CvTerm>> result = TerminologyUtils.convertCvTermsToTerminology(terms, 1000);
+		return new Terminology(result, terminologyCv);
 	}
 
 	@Override
 	@Cacheable("terminology-by-ontology")
-	public List<CvTerm> findTerminologyByOntology(String ontology) {
+	public List<CvTerm> findCvTermsByOntology(String ontology) {
 		List<CvTerm> terms = terminologyDao.findTerminologyByOntology(ontology);
 		// returns a immutable list when the result is cacheable (this prevents
 		// modifying the cache, since the cache returns a reference) copy on
@@ -90,7 +82,7 @@ class TerminologyServiceImpl implements TerminologyService {
 
 	@Override
 	@Cacheable("terminology-all")
-	public List<CvTerm> findAllTerminology() {
+	public List<CvTerm> findAllCVTerms() {
 		List<CvTerm> terms = terminologyDao.findAllTerminology();
 		// returns a immutable list when the result is cacheable (this prevents
 		// modifying the cache, since the cache returns a reference) copy on
@@ -119,7 +111,7 @@ class TerminologyServiceImpl implements TerminologyService {
 	}
 
 	@Override
-	public List<CvTerm> findTerminologyByAccessions(Set<String> terminologyAccessions) {
+	public List<CvTerm> findCvTermsByAccessions(Set<String> terminologyAccessions) {
 		List<CvTerm> terms = terminologyDao.findTerminologyByAccessions(terminologyAccessions);
 		// returns a immutable list when the result is cacheable (this prevents
 		// modifying the cache, since the cache returns a reference) copy on

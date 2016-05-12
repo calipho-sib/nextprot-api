@@ -239,7 +239,7 @@ having sum(a.cnt)=1
 		DbXrefUrlVisitor visitor = new DbXrefUrlVisitor("/tmp/allterminologies-xrefs-url.tsv",
 				"/tmp/allterminologies-xrefs-url.log");
 
-		for (CvTerm terminology : terminologyService.findAllTerminology()) {
+		for (CvTerm terminology : terminologyService.findAllCVTerms()) {
 
 			visitor.visit(terminology.getAccession(), terminology.getXrefs());
 			visitor.flush();

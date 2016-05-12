@@ -20,7 +20,7 @@ public class TerminologyModMapper {
 
         Preconditions.checkNotNull(modName);
 
-        CvTerm term = terminologyService.findTerminologyByAccession(modName);
+        CvTerm term = terminologyService.findCvTermByAccession(modName);
 
         if (term == null) {
             Logger.warn("no term found for " + modName);

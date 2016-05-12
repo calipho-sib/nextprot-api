@@ -64,18 +64,18 @@ public class CVFieldBuilder extends FieldBuilder {
 		//Set<String> ancestors2 = null;
 		Set<String> ancestors2 = new TreeSet<String>();
 		for (String cvac : cv_acs) {
-			CvTerm term = this.terminologyservice.findTerminologyByAccession(cvac);
+			CvTerm term = this.terminologyservice.findCvTermByAccession(cvac);
 			String category = term.getOntology();
 			//System.err.println("category: " + category);
 			List<String> ancestors = TerminologyUtils.getAllAncestors(term.getAccession(), terminologyservice);
-			List<Tree<CvTerm>> treeList = this.terminologyservice.findTerminologyTreeList(TerminologyCv.valueOf(category));
+			List<Tree<CvTerm>> treeList = this.terminologyservice.findTerminology(TerminologyCv.valueOf(category));
 			if(treeList.isEmpty()) 	ancestors2.clear();
 			ancestors2 = this.terminologyservice.getAncestorSets(treeList, term.getAccession());
 			//Set<String> ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
 			if(ancestors.size() != ancestors2.size()) {
 				// Differences for FA-, KW-, SL-,  DO-, and enzymes...
 				System.err.println(cvac + " old method: " + ancestors.size() + " new method: " + ancestors2.size() + " category" + category);
-				//System.err.println(ancestors);
+				System.err.println(ancestors);
 			}
 			if(ancestors != null) 
 				//cv_ancestors_acs.addAll(ancestors);
@@ -94,7 +94,7 @@ public class CVFieldBuilder extends FieldBuilder {
 		// Index generated sets
 		for (String ancestorac : cv_ancestors_acs) {
 			addField(Fields.CV_ANCESTORS_ACS, ancestorac);
-			addField(Fields.CV_ANCESTORS, this.terminologyservice.findTerminologyByAccession(ancestorac).getName());
+			addField(Fields.CV_ANCESTORS, this.terminologyservice.findCvTermByAccession(ancestorac).getName());
 		}
 		System.err.println("CV ancestors done.");
 

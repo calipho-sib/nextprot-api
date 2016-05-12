@@ -9,10 +9,6 @@ public interface TerminologyDao {
 
 	CvTerm findTerminologyByAccession(String accession);
 
-	List<CvTerm> findTerminologByTitle(String title); // Not implemented
-
-	List<CvTerm> findTerminologyByName(String name); // Not implemented
-	
 	List<CvTerm> findTerminologyByOntology(String ontology);
 
 	List<CvTerm> findAllTerminology();

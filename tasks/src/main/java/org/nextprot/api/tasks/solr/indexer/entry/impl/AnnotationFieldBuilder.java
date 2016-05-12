@@ -97,7 +97,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 				if (cvac != null) { 
 					addField(Fields.ANNOTATIONS, cvac);
 					addField(Fields.ANNOTATIONS,  currannot.getCvTermName());
-					List<String> synonyms = this.terminologyservice.findTerminologyByAccession(cvac).getSynonyms();
+					List<String> synonyms = this.terminologyservice.findCvTermByAccession(cvac).getSynonyms();
 					if(synonyms != null) {
 						String allsynonyms="";
 						for (String synonym : synonyms) {
@@ -111,7 +111,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						String allancestors="";
 						for (String ancestor : ancestors) {
 						if(!allancestors.isEmpty()) allancestors += " | ";
-						String ancestorname = this.terminologyservice.findTerminologyByAccession(ancestor).getName();
+						String ancestorname = this.terminologyservice.findCvTermByAccession(ancestor).getName();
 						allancestors += ancestorname;
 						//System.err.println("allancestors: " + allancestors);
 				        }
@@ -194,7 +194,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						}
 					}
 				// Sonetimes these synonymes are wrong eg: NX_Q6NUT3 -> Major facilitator (TC 2.A.1) superfamily
-				List<String> famsynonyms = this.terminologyservice.findTerminologyByAccession(ac).getSynonyms();
+				List<String> famsynonyms = this.terminologyservice.findCvTermByAccession(ac).getSynonyms();
 				if(famsynonyms != null) for(String famsynonym : famsynonyms)
 					addField(Fields.ANNOTATIONS,  famsynonym.trim());
 				}

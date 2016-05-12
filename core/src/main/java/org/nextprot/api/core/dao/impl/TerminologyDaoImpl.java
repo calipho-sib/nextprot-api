@@ -80,16 +80,6 @@ public class TerminologyDaoImpl implements TerminologyDao {
 		return terms;
 	}
 	
-	
-	@Override
-	public List<CvTerm> findTerminologByTitle(String title) {
-		throw new RuntimeException("Not implemented");
-	}
-
-	@Override
-	public List<CvTerm> findTerminologyByName(String name) {
-		throw new RuntimeException("Not implemented");
-	}
 
 	private static class DbTermRowMapper implements ParameterizedRowMapper<CvTerm> {
 

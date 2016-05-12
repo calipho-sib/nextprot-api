@@ -42,7 +42,7 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 		for (String cv : cv_tissues) {
 			//cv_tissues_final.add(cv); // No duplicate: this is a Set
 			if(cv.startsWith("TS-")) {
-				CvTerm term = terminologyservice.findTerminologyByAccession(cv);
+				CvTerm term = terminologyservice.findCvTermByAccession(cv);
 				//if(cv_tissues_final.contains(cv)) System.err.println(cv + " already seen");
 				//else System.err.println(cv);
 				cv_tissues_final.add(cv); // No duplicate: this is a Set
@@ -52,7 +52,7 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 				  for (String ancestorac : ancestors) {
 					  //if(cv.equals("TS-0079")) System.err.println("blood ancestor: " + ancestorac);
 					  cv_tissues_final.add(ancestorac);  // No duplicate: this is a Set
-					  cv_tissues_final.add(terminologyservice.findTerminologyByAccession(ancestorac).getName());  // No duplicate: this is a Set
+					  cv_tissues_final.add(terminologyservice.findCvTermByAccession(ancestorac).getName());  // No duplicate: this is a Set
 				  }
 				List<String> synonyms = term.getSynonyms();
 				if(synonyms != null) for (String synonym : synonyms)  cv_tissues_final.add(synonym); 

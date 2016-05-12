@@ -67,7 +67,7 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 			terminologyAccessions.add(ec.getDevelopmentalStageAC());
 		}
 		
-		List<CvTerm> terms = terminologyService.findTerminologyByAccessions(terminologyAccessions);
+		List<CvTerm> terms = terminologyService.findCvTermsByAccessions(terminologyAccessions);
 		Map<String, CvTerm> map = new HashMap<>();
 		for(CvTerm term : terms){
 			map.put(term.getAccession(), term);

@@ -36,12 +36,12 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 			System.err.println("indexing: all ontologies");
 			logger.info("indexing all terminologies");
 			indexer.clearDatabase("");
-			allterms = terminologyService.findAllTerminology();
+			allterms = terminologyService.findAllCVTerms();
 		} else { // Index ontology given as VM argument
 			System.err.println("indexing: " + ontologyToReindex);
 			logger.info("indexing terminology: " + ontologyToReindex);
 			indexer.clearDatabase("filters:" + ontologyToReindex);
-			allterms = terminologyService.findTerminologyByOntology(ontologyToReindex);
+			allterms = terminologyService.findCvTermsByOntology(ontologyToReindex);
 		}
 
 		for (CvTerm t : allterms) {

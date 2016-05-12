@@ -1,16 +1,22 @@
 package org.nextprot.api.core.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
-import org.nextprot.api.core.aop.InstrumentationAspect;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
-
-import java.util.*;
 
 //import org.nextprot.api.core.domain.TerminologyProperty;
 
@@ -54,7 +60,7 @@ public class TerminologyUtils {
 		String currTerm = cvterm;
 		
 		while(mylist.size() > 0) {
-			mylist = terminologyservice.findTerminologyByAccession(currTerm).getAncestorAccession();
+			mylist = terminologyservice.findCvTermByAccession(currTerm).getAncestorAccession();
 			if(mylist == null) break;
 			if(mylist.size() > 1) for (int i=1; i<mylist.size(); i++) multiParentSet.add(mylist.get(i));
 			currTerm = mylist.get(0);
@@ -67,13 +73,13 @@ public class TerminologyUtils {
 			for(String cv : multiSetCurrent) {
 				finalSet.add(cv);
 				multiParentSet.remove(cv);
-				mylist = terminologyservice.findTerminologyByAccession(cv).getAncestorAccession();
+				mylist = terminologyservice.findCvTermByAccession(cv).getAncestorAccession();
 				if(mylist == null) break;
 				while(mylist != null && mylist.size() > 0) {
 				if(mylist.size() > 1) for (int i=1; i<mylist.size(); i++) multiParentSet.add(mylist.get(i));
 				currTerm = mylist.get(0);
 				finalSet.add(currTerm);
-				mylist = terminologyservice.findTerminologyByAccession(currTerm).getAncestorAccession();
+				mylist = terminologyservice.findCvTermByAccession(currTerm).getAncestorAccession();
 				}
 			}
 		}
@@ -195,21 +201,44 @@ public class TerminologyUtils {
 	}
 
 		
-	public static List<Tree<CvTerm>> convertTerminologyListToTreeList(List<CvTerm> terms, final int maxDepth) {
+	public static Terminology convertCvTermsToTerminology(List<CvTerm> terms, final int maxDepth) {
 		
-		List<Tree<CvTerm>> trees = new ArrayList<Tree<CvTerm>>();
+		String topLevelTermPrefix = "CVAN";
+		
+		Terminology terminology = new Terminology();
 		
 		for(CvTerm term: terms){
+			
+			
+			
+			
+			//System.err.println(term.getAccession() +  " " + term.getAncestorAccession());
 			if((term.getAncestorAccession() == null) || (term.getAncestorAccession().isEmpty())){ //root
-				trees.add(new Tree<CvTerm>(term));
+				terminology.addTreeRoot(term);
+			} else {
+				
+				//For example DO-00218 from the terminology NextprotDomain, has as ancestor the top level terminology cv annotation (CVAN)
+				boolean localRoot = false;
+				if(!term.getAccession().startsWith(topLevelTermPrefix)){ //TOP Level domain (case where other terminologies link to this one)
+						for(String ancestorAccession : term.getAncestorAccession()){
+							if(ancestorAccession.startsWith(topLevelTermPrefix)){
+								localRoot = true;
+								break;
+							}
+						}
+				}
+				
+				if(localRoot){
+					terminology.addTreeRoot(term);
+				}
 			}
 		}
 		
-		for(Tree<CvTerm> tree : trees){
+		for(Tree<CvTerm> tree : terminology){
 			populateTree(tree.getRoot(), convertToTerminologyMap(terms), 0, maxDepth);
 		}
 		
-		return trees;
+		return terminology;
 		
 	}
 	
@@ -225,14 +254,19 @@ public class TerminologyUtils {
 		
 		for(String childAccession : currentNode.getValue().getChildAccession()){
 			CvTerm childTerm = termMap.get(childAccession);
-			if(currentNode.getChildren() == null){
-				currentNode.setChildren(new ArrayList<Tree.Node<CvTerm>>());
+			if(childTerm != null) { // may be null in case of the terminology being another one like DO
+
+				if(currentNode.getChildren() == null){
+					currentNode.setChildren(new ArrayList<Tree.Node<CvTerm>>());
+				}
+				
+				Tree.Node<CvTerm> childNode = new Tree.Node<CvTerm>(childTerm);
+				childNode.setParents(Arrays.asList(currentNode));
+				currentNode.getChildren().add(childNode);
+				
+				populateTree(childNode, termMap, depth+1, maxDepth);
+				
 			}
-			Tree.Node<CvTerm> childNode = new Tree.Node<CvTerm>(childTerm);
-			childNode.setParents(Arrays.asList(currentNode));
-			currentNode.getChildren().add(childNode);
-			
-			populateTree(childNode, termMap, depth+1, maxDepth);
 		}
 		
 	}
@@ -245,10 +279,12 @@ public class TerminologyUtils {
 	}
 
 	private static void getNodeListByNameAndPopulateResult(List<Node<CvTerm>> currentResult, Node<CvTerm> node, String accession) {
+
 		if(node.getValue().getAccession().equals(accession)){
-			currentResult.add(node);
-			return;
-		}
+				currentResult.add(node);
+				return;
+			}
+		
 		
 		if(node.getChildren() != null && !node.getChildren().isEmpty()){
 			for(Node<CvTerm> child : node.getChildren()){

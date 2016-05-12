@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,25 +29,25 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	}
 		@Test
 	public void shouldReturnAUniprotKeywordId() {
-		CvTerm term = this.terminologyService.findTerminologyByAccession("KW-0732");
+		CvTerm term = this.terminologyService.findCvTermByAccession("KW-0732");
 	assertEquals("UniprotKeywordCv", term.getOntology());
 	}
 	
 	@Test
 	public void shouldReturnAUniprotSubcell() {
-		CvTerm term = this.terminologyService.findTerminologyByAccession("SL-0276");
+		CvTerm term = this.terminologyService.findCvTermByAccession("SL-0276");
 		assertEquals("UniprotSubcellularLocationCv", term.getOntology());
 	}
 	
 	@Test
 	public void shouldReturnAUniprotDomain() {
-		CvTerm term = this.terminologyService.findTerminologyByAccession("DO-00031");
+		CvTerm term = this.terminologyService.findCvTermByAccession("DO-00031");
 	assertEquals("NextprotDomainCv", term.getOntology());
 	}
 	
 	@Test
 	public void shouldReturnAGOTerm() {
-		CvTerm term = this.terminologyService.findTerminologyByAccession("GO:2000145");
+		CvTerm term = this.terminologyService.findCvTermByAccession("GO:2000145");
 		//System.out.println(term.toString());
 		assertEquals("GoBiologicalProcessCv", term.getOntology());
 		assertEquals(2, term.getSynonyms().size());
@@ -54,7 +55,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void shouldReturnACellosaurusTerm() {
-		CvTerm term = this.terminologyService.findTerminologyByAccession("CVCL_J530");
+		CvTerm term = this.terminologyService.findCvTermByAccession("CVCL_J530");
 		//System.out.println(term.toString());
 		assertEquals("CellosaurusCv", term.getOntology());
 		assertEquals(5, term.getXrefs().size());
@@ -64,13 +65,13 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void shouldReturnTheHierarchy() {
-		CvTerm term = this.terminologyService.findTerminologyByAccession("KW-0906");
+		CvTerm term = this.terminologyService.findCvTermByAccession("KW-0906");
 		assertEquals(3, term.getAncestorAccession().size()); // Nuclear pore complex has 3 parents
 	}
 
 	@Test
 	public void shouldReturnAValidCategory() {
-		CvTerm term = this.terminologyService.findTerminologyByAccession("DO-00861");
+		CvTerm term = this.terminologyService.findCvTermByAccession("DO-00861");
 		String propval = "";
 		for (CvTerm.TermProperty property : term.getProperties()) {
 			if(property.getPropertyName().equals("Feature category")) propval=property.getPropertyValue(); 
@@ -80,28 +81,36 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 
 	@Test
 	public void shouldReturnUniprotFamilies() {
-		List<CvTerm> terms = this.terminologyService.findTerminologyByOntology("UniprotFamilyCv");
+		List<CvTerm> terms = this.terminologyService.findCvTermsByOntology("UniprotFamilyCv");
 		assertTrue(terms.size() > 9700);
 	}
 	
 
 	@Test
 	public void shoudGetAllAncestors() { 
-		List<Tree<CvTerm>> trees = this.terminologyService.findTerminologyTreeList(TerminologyCv.GoBiologicalProcessCv);
+		List<Tree<CvTerm>> trees = this.terminologyService.findTerminology(TerminologyCv.GoBiologicalProcessCv);
 		assertEquals(69,this.terminologyService.getAncestorSets(trees, "GO:1902667").size());
 		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
 	}
 	
 
 	@Test
-	public void shoudGetAllAncestorsForNextprotDomains() { 
-		List<Tree<CvTerm>> trees = this.terminologyService.findTerminologyTreeList(TerminologyCv.NextprotDomainCv);
-		assertEquals(4,this.terminologyService.getAncestorSets(trees, "DO-00218").size());
+	public void shouldNotGetAnyAncestorForNextprotDomain() { // This is a particular case, because nextprot domains are attached to annotation cv ontology 
+		Terminology terminology = this.terminologyService.findTerminology(TerminologyCv.NextprotDomainCv);
+		assertTrue(terminology.getRootsCount() > 800); // all domains are roots (no hierarchy) and the super parent is the annotation CVAN_0106
+		assertEquals(0,this.terminologyService.getAncestorSets(terminology, "DO-00218").size());
+	}
+	
+	
+	@Test
+	public void shoudGetAllAncestorsForAChildOfCvan() { 
+		Terminology terminology = this.terminologyService.findTerminology(TerminologyCv.NextprotAnnotationCv);
+		assertEquals(3,this.terminologyService.getAncestorSets(terminology, "CVAN_0106").size());
 	}
 
 	@Test
 	public void shoudGetAllAncestorsForUnipathwayCv() { 
-		List<Tree<CvTerm>> trees = this.terminologyService.findTerminologyTreeList(TerminologyCv.UnipathwayCv);
+		List<Tree<CvTerm>> trees = this.terminologyService.findTerminology(TerminologyCv.UnipathwayCv);
 		assertEquals(10,this.terminologyService.getAncestorSets(trees, "UPA00781").size());
 		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
 	}
@@ -111,7 +120,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	public void shouldReturnTerminologies() {
 		for(TerminologyCv t : TerminologyCv.values()){
 			if(!t.equals(TerminologyCv.CellosaurusCv)){
-				this.terminologyService.findTerminologyTreeList(t);
+				this.terminologyService.findTerminology(t);
 			}
 		}
 	}
@@ -119,7 +128,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldReturnAllTerms()  {
 		int sameascnt = 0, refcnt = 0, maxref = 0;
-		List<CvTerm> terms = this.terminologyService.findAllTerminology();
+		List<CvTerm> terms = this.terminologyService.findAllCVTerms();
 		assertTrue(terms.size() > 145000); 
 		for(CvTerm term : terms)  {
 			List<String> sameas = term.getSameAs();

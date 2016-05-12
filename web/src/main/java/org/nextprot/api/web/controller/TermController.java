@@ -30,7 +30,7 @@ public class TermController {
 			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
 			@PathVariable("terminology") String terminology) {
 
-		return terminolgyService.findTerminologyTreeList(TerminologyCv.getTerminologyOf(terminology));
+		return terminolgyService.findTerminology(TerminologyCv.getTerminologyOf(terminology));
 	}
 
 	@ApiMethod(path = "/terminology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,7 +39,7 @@ public class TermController {
 			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
 			@PathVariable("terminology") String terminology) {
 
-		return terminolgyService.findTerminologyByOntology(TerminologyCv.getTerminologyOf(terminology).name());
+		return terminolgyService.findCvTermsByOntology(TerminologyCv.getTerminologyOf(terminology).name());
 	}
 	
 	
