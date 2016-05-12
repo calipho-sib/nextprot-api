@@ -9,6 +9,8 @@ import java.util.Set;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Interactant;
+import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -23,6 +25,7 @@ public class XrefFieldBuilder extends FieldBuilder {
 	@Override
 	protected void init(Entry entry) {
 
+		String[] extraNameCat = { "entry name", "family name", "allergen name", "reaction ID", "toxin name" };
 		// Xrefs
 		List<DbXref> xrefs = entry.getXrefs();
 		for (DbXref xref : xrefs) {
@@ -37,6 +40,12 @@ public class XrefFieldBuilder extends FieldBuilder {
             if (db.equals("Ensembl")) {
 				addField(Fields.ENSEMBL, acc);
 			} 
+            /*if (db.equals("IntAct")) {
+            	//xref.
+				   List<DbXrefProperty> xrefprops = xref.getProperties();
+				   for(DbXrefProperty prop : xrefprops)
+				  System.err.println(db + ":" + acc + " -> " + prop.getName() + "=" + prop.getValue());
+			} */
             // There is an inconsistency in the way EMBL xref properties are managed: 
             // for genomic sequences EAW78410.1 -> molecule type=protein, the pid appears as an individual xref
             // and the EMBL acc is a property EAW78410.1 -> genomic sequence ID=CH471052
@@ -76,14 +85,18 @@ public class XrefFieldBuilder extends FieldBuilder {
 				  //System.err.println(db + " -> " + xref.getDatabaseCategory());
 				   }
 				   // maybe process all these cases with category "Family and domain databases"
-				   else if(db.equals("InterPro") || db.equals("Pfam") || db.equals("PROSITE") || db.equals("TIGRFAMs") || db.equals("SMART")
-						   || db.equals("PRINTS") || db.equals("HAMAP") || db.equals("PeroxiBase") || db.equals("PIRSF") || db.equals("PIR")) {
+				   /*else if(db.equals("Ensembl")) {
 					   // Also add db entry names
 					   addField(Fields.XREFS,db + ":" + acc + ", " + acc);
-					   addField(Fields.XREFS,db + ":" + xref.getPropertyValue("entry name") + ", " + xref.getPropertyValue("entry name"));
+					   List<DbXrefProperty> xrefprops = xref.getProperties();
+					   for(DbXrefProperty prop : xrefprops)
+					   //System.err.println(db + " -> " + xref.getPropertyValue("nxmapped protein sequence ID"));
+					   System.err.println(prop.getName() + ": " + prop.getValue());
+					   //addField(Fields.XREFS,db + ":" + xref.getPropertyValue("entry name") + ", " + xref.getPropertyValue("entry name"));
 					   //addField(Fields.XREFS,"entry name:" + xref.getPropertyValue("entry name") + ", " + xref.getPropertyValue("entry name"));
+					   // What are the propnames "protein sequence ID" and "nxmapped protein sequence ID", why 2 with same value in NX_Q8NGP9 ?
 				   }
-				   else if(db.equals("TCDB") || db.equals("CAZy") || db.equals("ESTHER")) {
+				    else if(db.equals("TCDB") || db.equals("CAZy") || db.equals("ESTHER")) {
 					   // Also add db entry names
 					   addField(Fields.XREFS,db + ":" + acc + ", " + acc);
 					   addField(Fields.XREFS,db + ":" + xref.getPropertyValue("family name") + ", " + xref.getPropertyValue("family name"));
@@ -95,8 +108,18 @@ public class XrefFieldBuilder extends FieldBuilder {
 					   if(reactID != null)
 						   addField(Fields.XREFS,db + ":" + reactID + ", " + reactID);
 					      //System.err.println(db + ":" + acc + " -> " + prop.getName() + "=" + prop.getValue());
+				   }*/
+				   else {
+					   addField(Fields.XREFS,db + ":" + acc + ", " + acc);
+					   for(String category: extraNameCat) {
+						   String extraName = xref.getPropertyValue(category);
+						   if(extraName != null) { // Can be found for dbs: "InterPro", "Pfam", "PROSITE"), "TIGRFAMs", "SMART", "PRINTS", "HAMAP",
+							   // "PeroxiBase", "PIRSF", "PIR", "TCDB", "CAZy", "ESTHER", UniPathway
+							   addField(Fields.XREFS,db + ":" + extraName + ", " + extraName); 
+							   break;
+						   }
+					   }
 				   }
-				   else addField(Fields.XREFS,db + ":" + acc + ", " + acc);
 			}
 	
 		}
@@ -123,7 +146,6 @@ public class XrefFieldBuilder extends FieldBuilder {
 			}
 			else if (category.equals("pathway")) { // Same remark
 				//DbXref parentXref = currannot.getParentXref();
-				//if(parentXref != null && parentXref.getDatabaseName().equals("Reactome"))
 					addField(Fields.XREFS,"Pathway:" + currannot.getDescription() + ", " + currannot.getDescription());
 				//System.err.println(parentXref.getDatabaseName());
 				//System.err.println(currannot.getDescription());
@@ -152,13 +174,10 @@ public class XrefFieldBuilder extends FieldBuilder {
 				}
 			}*/
 			else if (category.equals("SmallMoleculeInteraction")) { // Same remark
-				//DbXref parentXref = currannot.getParentXref();
-				//if(parentXref != null && parentXref.getDatabaseName().equals("Orphanet")) {
-					//String disName = parentXref.getPropertyValue("disease");
 				  addField(Fields.XREFS,"generic name:" + currannot.getDescription() + ", " + currannot.getDescription());
 				  //System.err.println(currannot.getDescription());
 				//}
-			} //else if(category.contains("subcel")) System.err.println(category);
+			}
 		}
 		if(CABSet.size() > 0) 
 		  for (String CAB : CABSet) {
@@ -178,18 +197,32 @@ public class XrefFieldBuilder extends FieldBuilder {
 			Set<DbXref> pubxrefs = currpubli.getDbXrefs();
 			for (DbXref pubxref : pubxrefs) {
 				String acc = pubxref.getAccession().trim(); // It happens to have a trailing \t (like 10.1080/13547500802063240 in NX_P14635)
-				//if(acc.startsWith("10.1080")) System.err.println(acc);
 				String db = pubxref.getDatabaseName();
 				//if (!db.equals("neXtProtSubmission"))
 				   addField(Fields.XREFS,db + ":" + acc + ", " + acc);
 			}
 		}
 
+		List<Interaction> interactions = entry.getInteractions();
+		//System.err.println(interactions.size() + " interactions");
+		for (Interaction currinteraction : interactions) {
+			//System.err.println(currinteraction.getEvidenceXrefAC()); // EBI-372273,EBI-603319
+			//doc.addField("interactions", currinteraction.getEvidenceXrefAC());
+			List<Interactant> interactants = currinteraction.getInteractants();
+			for (Interactant currinteractant : interactants) {
+				if(currinteractant.getGenename() != null) // otherwise it is the entry itself
+			     //System.err.println(currinteractant.getNextprotAccession() + " " + currinteractant.getGenename());
+				 addField(Fields.INTERACTIONS,"AC: " + currinteractant.getNextprotAccession() + " gene: " + currinteractant.getGenename() + " refs: " + currinteraction.getEvidenceXrefAC());
+				else if(currinteraction.isSelfInteraction() == true)
+					addField(Fields.INTERACTIONS,"selfInteraction");
+			}
+		}
 	}
 
 	@Override
 	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.XREFS, Fields.ENSEMBL, Fields.ANTIBODY);
+		//return Arrays.asList(Fields.XREFS, Fields.ENSEMBL, Fields.ANTIBODY);
+		return Arrays.asList(Fields.XREFS, Fields.ENSEMBL, Fields.ANTIBODY, Fields.INTERACTIONS);
 	}
 
 }
