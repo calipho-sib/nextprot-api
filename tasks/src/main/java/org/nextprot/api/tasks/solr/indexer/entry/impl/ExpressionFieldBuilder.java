@@ -22,7 +22,6 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 
 	@Override
 	protected void init(Entry entry) {
-
 		//Extract the tissues where there is expression ....
 		Set <String> cv_tissues = new HashSet<String>();
 		for (Annotation currannot : entry.getAnnotations()) {
