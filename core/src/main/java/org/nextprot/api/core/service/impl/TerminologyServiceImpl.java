@@ -26,9 +26,8 @@ class TerminologyServiceImpl implements TerminologyService {
 	@Autowired private TerminologyDao terminologyDao;
 	
 	@Override
-	//@Cacheable("terminology-by-accession")
+	@Cacheable("terminology-by-accession")
 	public Terminology findTerminologyByAccession(String accession) {
-		System.err.println("calling dao for: " + accession);
 		return terminologyDao.findTerminologyByAccession(accession);
 	}
 
