@@ -38,10 +38,8 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	// TODO normally only terminology + accession is supposed to be unique !!!!
 	// SHOULD USE findTermByAccessionAndTerminology
 	public Terminology findTerminologyByAccession(String accession) {
-		System.err.println("ac: " + accession);
 		Set<String> acs = new HashSet<String>();
 		acs.add(accession);
-		System.err.println(acs);
 		SqlParameterSource params = new MapSqlParameterSource("accessions", acs);
 		List<Terminology> terms = new NamedParameterJdbcTemplate(
 				dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-acs"), params, new DbTermRowMapper());
