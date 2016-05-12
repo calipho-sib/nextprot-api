@@ -95,7 +95,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		List<Tree<Terminology>> trees = this.terminologyService.findTerminologyTreeList(TerminologyCv.GoBiologicalProcessCv, 10);
 		Tree<Terminology> tree = trees.get(0);
 		
-		assertEquals(69,TerminologyUtils.getAncestorSets(tree, "GO:1902667").size());
+		assertEquals(69,this.terminologyService.getAncestorSets(tree, "GO:1902667").size());
 		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
 	}
 	

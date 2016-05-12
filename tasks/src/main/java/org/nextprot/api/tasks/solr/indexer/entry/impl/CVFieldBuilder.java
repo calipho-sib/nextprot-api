@@ -74,7 +74,7 @@ public class CVFieldBuilder extends FieldBuilder {
 			}
 			else {
 			tree = treeList.get(0);
-			ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
+			ancestors2 = this.terminologyservice.getAncestorSets(tree, term.getAccession());
 			}
 			//Set<String> ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
 			if(ancestors.size() != ancestors2.size()) {

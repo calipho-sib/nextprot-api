@@ -63,4 +63,5 @@ public interface TerminologyService {
 
 	public List<String> findTerminologyNamesList();
 
+	public Set<String> getAncestorSets(Tree<Terminology> tree, String accession);
 }

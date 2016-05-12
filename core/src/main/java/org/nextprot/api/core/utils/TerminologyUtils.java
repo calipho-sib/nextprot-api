@@ -237,30 +237,6 @@ public class TerminologyUtils {
 		
 	}
 	
-	private static void appendAncestor(Node<Terminology> node, Set<String> result) {
-		
-		result.add(node.getValue().getAccession());
-		
-		if(node.getParents() != null && !node.getParents().isEmpty()){
-			for(Node<Terminology> parent : node.getParents()){
-				appendAncestor(parent, result);
-			}
-		}
-		
-	}
-	
-	public static Set<String> getAncestorSets(Tree<Terminology> tree, String accession) {
-		Set<String> result = new TreeSet<String>();
-		List<Node<Terminology>> nodes = getNodeListByName(tree, accession);
-		
-		for(Node<Terminology> node : nodes){
-			appendAncestor(node, result);
-		}
-
-		result.remove(accession); // a term is not it's own ancestor
-		return result;
-	}
-	
 	public static List<Node<Terminology>> getNodeListByName(Tree<Terminology> tree, String accession) {
 		List<Node<Terminology>> result = new ArrayList<>();
 		getNodeListByNameAndPopulateResult(result, tree.getRoot(), accession);
