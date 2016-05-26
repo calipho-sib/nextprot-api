@@ -3,7 +3,7 @@ package org.nextprot.api.web.controller;
 import com.google.common.base.Preconditions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ public class TerminologyModMapper {
 
         Preconditions.checkNotNull(modName);
 
-        Terminology term = terminologyService.findTerminologyByAccession(modName);
+        CvTerm term = terminologyService.findCvTermByAccession(modName);
 
         if (term == null) {
             Logger.warn("no term found for " + modName);

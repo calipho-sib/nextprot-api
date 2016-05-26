@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -239,7 +239,7 @@ having sum(a.cnt)=1
 		DbXrefUrlVisitor visitor = new DbXrefUrlVisitor("/tmp/allterminologies-xrefs-url.tsv",
 				"/tmp/allterminologies-xrefs-url.log");
 
-		for (Terminology terminology : terminologyService.findAllTerminology()) {
+		for (CvTerm terminology : terminologyService.findAllCVTerms()) {
 
 			visitor.visit(terminology.getAccession(), terminology.getXrefs());
 			visitor.flush();

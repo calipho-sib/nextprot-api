@@ -12,6 +12,7 @@ import org.nextprot.api.core.service.TerminologyService;
 import java.util.*;
 
 
+// !!! This is an old approach for the entry solr index, will be deleted soon
 public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 	
 	private TerminologyService terminologyservice;
@@ -210,8 +211,8 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 			//else System.err.println("type: " + idtype);
 		}
 		
-		List<Terminology> enzymes = entry.getEnzymes();
-		for (Terminology currenzyme : enzymes) {
+		List<CvTerm> enzymes = entry.getEnzymes();
+		for (CvTerm currenzyme : enzymes) {
 			//System.err.println(id + " fromenz: " + currenzyme.getAccession());
 			doc.addField("cv_acs", currenzyme.getAccession());
 			cvac_cnt++;
@@ -311,7 +312,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		
 		// Final CV acs, ancestors and synonyms
 		for (String cvac : cv_acs) {
-			Terminology term = this.terminologyservice.findTerminologyByAccession(cvac);
+			CvTerm term = this.terminologyservice.findCvTermByAccession(cvac);
 			String category = term.getOntology();
 			//System.out.println(cvac + ": " + category);
 			//if(term == null) System.err.println("problem with " + cvac);
@@ -329,7 +330,7 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		// Index generated sets
 		for (String ancestorac : cv_ancestors_acs) {
 			doc.addField("cv_ancestors_acs", ancestorac);
-			doc.addField("cv_ancestors", this.terminologyservice.findTerminologyByAccession(ancestorac).getName());
+			doc.addField("cv_ancestors", this.terminologyservice.findCvTermByAccession(ancestorac).getName());
 		}
 
 		for (String synonym : cv_synonyms) {
@@ -341,12 +342,12 @@ public class AnnotationSolrIndexer extends SolrIndexer<Entry> {
 		for (String cv : cv_tissues) {
 			cv_tissues_final.add(cv); // No duplicate: this is a Set
 			if(cv.startsWith("TS-")) {
-				Terminology term = this.terminologyservice.findTerminologyByAccession(cv);
+				CvTerm term = this.terminologyservice.findCvTermByAccession(cv);
 				List<String> ancestors = term.getAncestorAccession();
 				if(ancestors != null) 
 				  for (String ancestorac : ancestors) {
 					  cv_tissues_final.add(ancestorac);  // No duplicate: this is a Set
-					  cv_tissues_final.add(this.terminologyservice.findTerminologyByAccession(ancestorac).getName());  // No duplicate: this is a Set
+					  cv_tissues_final.add(this.terminologyservice.findCvTermByAccession(ancestorac).getName());  // No duplicate: this is a Set
 				  }
 				List<String> synonyms = term.getSynonyms();
 				if(synonyms != null) for (String synonym : synonyms)  cv_tissues_final.add(synonym); 

@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 
-@ActiveProfiles({"dev"})
+@ActiveProfiles({"dev", "cache"})
 @TransactionConfiguration(defaultRollback = true)
 @Transactional
 @TestExecutionListeners({ DependencyInjectionTestExecutionListener.class,

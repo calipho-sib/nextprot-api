@@ -1,0 +1,172 @@
+{
+	"params": {
+		"peplist": "TKMGLYYSYFK,TKMGL",
+		"modeIL": 1
+	},
+	"peptideMatches": [{
+		"peptide": "TKMGLYYSYFK",
+		"entryMatches": [{
+			"entryName": "Q2PZI1",
+			"isoforms": [{
+				"isoformName": "Q2PZI1-1",
+				"position": 62
+			}]
+		}, {
+			"entryName": "Q6NUT2",
+			"isoforms": [{
+				"isoformName": "Q6NUT2-1",
+				"position": 148
+			}]
+		}, {
+			"entryName": "Q6NXN4",
+			"isoforms": [{
+				"isoformName": "Q6NXN4-1",
+				"position": 0
+			}]
+		}]
+	}, {
+		"peptide": "TKMGL",
+		"entryMatches": [{
+			"entryName": "O00327",
+			"isoforms": [{
+				"isoformName": "O00327-1",
+				"position": 0
+			}, {
+				"isoformName": "O00327-2",
+				"position": 0
+			}, {
+				"isoformName": "O00327-6",
+				"position": 0
+			}, {
+				"isoformName": "O00327-7",
+				"position": 0
+			}, {
+				"isoformName": "O00327-8",
+				"position": 0
+			}, {
+				"isoformName": "O00327-9",
+				"position": 0
+			}]
+		}, {
+			"entryName": "O15205",
+			"isoforms": [{
+				"isoformName": "O15205-1",
+				"position": 121
+			}]
+		}, {
+			"entryName": "Q15363",
+			"isoforms": [{
+				"isoformName": "Q15363-1",
+				"position": 0
+			}]
+		}, {
+			"entryName": "Q2PZI1",
+			"isoforms": [{
+				"isoformName": "Q2PZI1-1",
+				"position": 62
+			}]
+		}, {
+			"entryName": "Q4ZHG4",
+			"isoforms": [{
+				"isoformName": "Q4ZHG4-1",
+				"position": 0
+			}, {
+				"isoformName": "Q4ZHG4-2",
+				"position": 0
+			}]
+		}, {
+			"entryName": "Q6NUT2",
+			"isoforms": [{
+				"isoformName": "Q6NUT2-1",
+				"position": 148
+			}]
+		}, {
+			"entryName": "Q6NXN4",
+			"isoforms": [{
+				"isoformName": "Q6NXN4-1",
+				"position": 0
+			}]
+		}, {
+			"entryName": "Q86YC2",
+			"isoforms": [{
+				"isoformName": "Q86YC2-1",
+				"position": 694
+			}]
+		}, {
+			"entryName": "Q8IVL0",
+			"isoforms": [{
+				"isoformName": "Q8IVL0-1",
+				"position": 656
+			}, {
+				"isoformName": "Q8IVL0-2",
+				"position": 656
+			}, {
+				"isoformName": "Q8IVL0-3",
+				"position": 656
+			}]
+		}, {
+			"entryName": "Q8IWZ8",
+			"isoforms": [{
+				"isoformName": "Q8IWZ8-1",
+				"position": 516
+			}]
+		}, {
+			"entryName": "Q8N878",
+			"isoforms": [{
+				"isoformName": "Q8N878-1",
+				"position": 219
+			}, {
+				"isoformName": "Q8N878-2",
+				"position": 151
+			}]
+		}, {
+			"entryName": "Q92562",
+			"isoforms": [{
+				"isoformName": "Q92562-1",
+				"position": 76
+			}]
+		}, {
+			"entryName": "Q9UKT4",
+			"isoforms": [{
+				"isoformName": "Q9UKT4-1",
+				"position": 237
+			}, {
+				"isoformName": "Q9UKT4-2",
+				"position": 191
+			}]
+		}, {
+			"entryName": "Q9ULE3",
+			"isoforms": [{
+				"isoformName": "Q9ULE3-1",
+				"position": 356
+			}, {
+				"isoformName": "Q9ULE3-2",
+				"position": 356
+			}]
+		}, {
+			"entryName": "Q9ULI1",
+			"isoforms": [{
+				"isoformName": "Q9ULI1-1",
+				"position": 668
+			}]
+		}, {
+			"entryName": "Q9Y285",
+			"isoforms": [{
+				"isoformName": "Q9Y285-1",
+				"position": 396
+			}, {
+				"isoformName": "Q9Y285-2",
+				"position": 365
+			}]
+		}, {
+			"entryName": "Q9Y566",
+			"isoforms": [{
+				"isoformName": "Q9Y566-1",
+				"position": 176
+			}, {
+				"isoformName": "Q9Y566-3",
+				"position": 176
+			}]
+		}]
+	}]
+}

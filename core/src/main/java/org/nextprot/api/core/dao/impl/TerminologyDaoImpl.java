@@ -3,7 +3,7 @@ package org.nextprot.api.core.dao.impl;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.TerminologyDao;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +27,7 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	@Autowired private DataSourceServiceLocator dsLocator;
 	
 	@Override
-	public List<Terminology> findTermByAccessionAndTerminology(String accession, String terminology) {
+	public List<CvTerm> findTermByAccessionAndTerminology(String accession, String terminology) {
 		throw new RuntimeException("Not implemented");
 	}
 
@@ -37,11 +37,11 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	// TODO with Daniel: send appropriate exception if terms.size() > 1 => ambiguous accession
 	// TODO normally only terminology + accession is supposed to be unique !!!!
 	// SHOULD USE findTermByAccessionAndTerminology
-	public Terminology findTerminologyByAccession(String accession) {
+	public CvTerm findTerminologyByAccession(String accession) {
 		Set<String> acs = new HashSet<String>();
 		acs.add(accession);
 		SqlParameterSource params = new MapSqlParameterSource("accessions", acs);
-		List<Terminology> terms = new NamedParameterJdbcTemplate(
+		List<CvTerm> terms = new NamedParameterJdbcTemplate(
 				dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-acs"), params, new DbTermRowMapper());
 		
 		if (terms.size()==0)
@@ -49,53 +49,43 @@ public class TerminologyDaoImpl implements TerminologyDao {
 		return terms.get(0);
 	}
 	
-	public List<Terminology> findTermByAccessionAndTerminology(String accession) {
+	public List<CvTerm> findTermByAccessionAndTerminology(String accession) {
 		throw new RuntimeException("Not implemented");
 	}
 
 	
 	@Override
-	public List<Terminology> findTerminologyByAccessions(Set<String> accessions) {
+	public List<CvTerm> findTerminologyByAccessions(Set<String> accessions) {
 		
 		SqlParameterSource params = new MapSqlParameterSource("accessions", accessions);
-		List<Terminology> terms = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-acs"), params, new DbTermRowMapper());
+		List<CvTerm> terms = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("terminology-by-acs"), params, new DbTermRowMapper());
 		return terms;
 	}
 
 
-	public List<Terminology> findTerminologyByOntology(String ontology) {
+	public List<CvTerm> findTerminologyByOntology(String ontology) {
 		SqlParameterSource params = new MapSqlParameterSource("ontology", ontology);
-		List<Terminology> terms=new NamedParameterJdbcTemplate(
+		List<CvTerm> terms=new NamedParameterJdbcTemplate(
 				dsLocator.getDataSource()).query(
 						sqlDictionary.getSQLQuery("terminology-by-ontology"), params, new DbTermRowMapper());
 		return terms;
 	}
 
 	@Override
-	public List<Terminology> findAllTerminology() {
+	public List<CvTerm> findAllTerminology() {
 		SqlParameterSource params = new MapSqlParameterSource();
-		List<Terminology> terms=new NamedParameterJdbcTemplate(
+		List<CvTerm> terms=new NamedParameterJdbcTemplate(
 				dsLocator.getDataSource()).query(
 						sqlDictionary.getSQLQuery("terminology-all"), params, new DbTermRowMapper());
 		return terms;
 	}
 	
-	
-	@Override
-	public List<Terminology> findTerminologByTitle(String title) {
-		throw new RuntimeException("Not implemented");
-	}
 
-	@Override
-	public List<Terminology> findTerminologyByName(String name) {
-		throw new RuntimeException("Not implemented");
-	}
-
-	private static class DbTermRowMapper implements ParameterizedRowMapper<Terminology> {
+	private static class DbTermRowMapper implements ParameterizedRowMapper<CvTerm> {
 
 		@Override
-		public Terminology mapRow(ResultSet resultSet, int row) throws SQLException {
-			Terminology term = new Terminology();
+		public CvTerm mapRow(ResultSet resultSet, int row) throws SQLException {
+			CvTerm term = new CvTerm();
 			term.setId(resultSet.getLong("id"));
 			term.setAccession(resultSet.getString("accession"));
 			term.setDescription(resultSet.getString("description"));

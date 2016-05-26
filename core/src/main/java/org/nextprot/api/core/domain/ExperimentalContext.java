@@ -9,14 +9,14 @@ public class ExperimentalContext implements Serializable{
 	// The experimental context identifier
 	private Long contextId; // primary key
 	
-	private Terminology tissue;
-	private Terminology developmentalStage;
-	private Terminology cellLine;
-	private Terminology disease;
-	private Terminology organelle;
+	private CvTerm tissue;
+	private CvTerm developmentalStage;
+	private CvTerm cellLine;
+	private CvTerm disease;
+	private CvTerm organelle;
 	
 	// The experimental context detection method (ECO code)
-	private Terminology detectionMethod;  // ECO code
+	private CvTerm detectionMethod;  // ECO code
 
 	//The experimental context metadata document identifier (md5)
 	private String metadataAC;  // md5 of publication
@@ -29,65 +29,65 @@ public class ExperimentalContext implements Serializable{
 		this.contextId = contextId;
 	}
 
-	public Terminology getTissue() {
+	public CvTerm getTissue() {
 		return tissue;
 	}
 	public String getTissueAC() {
 		return (tissue != null) ? tissue.getAccession() : null;
 	}
-	public void setTissue(Terminology tissue) {
+	public void setTissue(CvTerm tissue) {
 		this.tissue = tissue;
 	}
 
-	public Terminology getDevelopmentalStage() {
+	public CvTerm getDevelopmentalStage() {
 		return developmentalStage;
 	}
 	public String getDevelopmentalStageAC() {
 		return (developmentalStage != null) ? developmentalStage.getAccession() : null;
 	}
-	public void setDevelopmentalStage(Terminology developmentalStage) {
+	public void setDevelopmentalStage(CvTerm developmentalStage) {
 		this.developmentalStage = developmentalStage;
 	}
 
-	public Terminology getCellLine() {
+	public CvTerm getCellLine() {
 		return cellLine;
 	}
 	public String getCellLineAC() {
 		return (cellLine != null) ? cellLine.getAccession() : null;
 	}
 
-	public void setCellLine(Terminology cellLine) {
+	public void setCellLine(CvTerm cellLine) {
 		this.cellLine = cellLine;
 	}
 
-	public Terminology getDisease() {
+	public CvTerm getDisease() {
 		return disease;
 	}
 	public String getDiseaseAC() {
 		return (disease != null) ? disease.getAccession() : null;
 	}
-	public void setDisease(Terminology disease) {
+	public void setDisease(CvTerm disease) {
 		this.disease = disease;
 	}
 
-	public Terminology getOrganelle() {
+	public CvTerm getOrganelle() {
 		return organelle;
 	}
 	public String getOrganelleAC() {
 		return (organelle != null) ? organelle.getAccession() : null;
 	}
 
-	public void setOrganelle(Terminology organelle) {
+	public void setOrganelle(CvTerm organelle) {
 		this.organelle = organelle;
 	}
 
-	public Terminology getDetectionMethod() {
+	public CvTerm getDetectionMethod() {
 		return detectionMethod;
 	}
 	public String getDetectionMethodAC() {
 		return (detectionMethod != null) ? detectionMethod.getAccession() : null;
 	}
-	public void setDetectionMethod(Terminology detectionMethod) {
+	public void setDetectionMethod(CvTerm detectionMethod) {
 		this.detectionMethod = detectionMethod;
 	}
 	public String getMetadataAC() {

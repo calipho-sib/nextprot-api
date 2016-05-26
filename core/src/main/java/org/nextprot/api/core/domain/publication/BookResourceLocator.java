@@ -1,9 +1,13 @@
 package org.nextprot.api.core.domain.publication;
 
+import java.io.Serializable;
+
 import org.jsondoc.core.annotation.ApiObjectField;
 
-public abstract class BookResourceLocator extends PublicationResourceLocator {
+public abstract class BookResourceLocator extends PublicationResourceLocator  implements Serializable {
 
+    private static final long serialVersionUID = 0L;
+	
     @ApiObjectField(description = "The first page")
     private String firstPage;
 

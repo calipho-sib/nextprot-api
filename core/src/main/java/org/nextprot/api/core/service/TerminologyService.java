@@ -5,62 +5,59 @@ import java.util.Set;
 
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Terminology;
 
-
 public interface TerminologyService {
-	
+
 	/**
 	 * Gets terminology by accession
+	 * 
 	 * @param id
 	 * @return
 	 */
-	public Terminology findTerminologyByAccession(String accession);
-	
-	/**
-	 * Gets terms by title case insensitive
-	 * @param title
-	 * @return
-	 */
-	public List<Terminology> findTerminologByTitle(String title);
-	
-	/**
-	 * Retrieves terms by name
-	 * @param name
-	 * @return
-	 */
-	public List<Terminology> findTerminologyByName(String name);	
+	public CvTerm findCvTermByAccession(String accession);
+
 
 	/**
 	 * Retrieves terms by ontology
-	 * @param the name of ontology
+	 * 
+	 * @param the
+	 *            name of ontology
 	 * @return
 	 */
-	public List<Terminology> findTerminologyByOntology(String ontology);	
-	
-	
-	/**
-	 * Retrieves terms sorted by ontology
-	 * @return
-	 */
-	public List<Terminology> findAllTerminology();
-
-	/**
-	 * Gets enzyme terminologies
-	 * @param entryName
-	 * @return
-	 */
-	public List<Terminology> findEnzymeByMaster(String entryName);
-
-	public List<Terminology> findTerminologyByAccessions(Set<String> terminologyAccessions);
+	public List<CvTerm> findCvTermsByOntology(String ontology);
 
 	/**
 	 * Returns a tree for a given terminology
+	 * 
 	 * @param terminology
 	 * @return
 	 */
-	List<Tree<Terminology>> findTerminologyTreeList(TerminologyCv terminologyCv, int maxDepth);
+	Terminology findTerminology(TerminologyCv terminologyCv);
+	
+	/**
+	 * Retrieves terms sorted by ontology
+	 * 
+	 * @return
+	 */
+	public List<CvTerm> findAllCVTerms();
+
+	/**
+	 * Gets enzyme terminologies
+	 * 
+	 * @param entryName
+	 * @return
+	 */
+	public List<CvTerm> findEnzymeByMaster(String entryName);
+
+	public List<CvTerm> findCvTermsByAccessions(Set<String> terminologyAccessions);
+
+
 
 	public List<String> findTerminologyNamesList();
 
+
+	//TODO TRY TO PLACE THIS ELSEWHERE, BUT PROBABLY SHOULD BE CACHED!
+	public Set<String> getAncestorSets(List<Tree<CvTerm>> trees, String accession);
 }

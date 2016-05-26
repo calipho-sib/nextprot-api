@@ -4,7 +4,7 @@ import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.ExperimentalContextDao;
 import org.nextprot.api.core.domain.ExperimentalContext;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -55,10 +55,10 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 			return ec;
 		}
 
-		private Terminology asTerminology(String ac) {
+		private CvTerm asTerminology(String ac) {
 
 			if (ac != null) {
-				Terminology term = new Terminology();
+				CvTerm term = new CvTerm();
 				term.setAccession(ac);
 				return term;
 			}

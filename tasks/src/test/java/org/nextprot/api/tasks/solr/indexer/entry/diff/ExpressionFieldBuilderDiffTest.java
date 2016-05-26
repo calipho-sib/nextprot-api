@@ -14,9 +14,6 @@ import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.ExpressionFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-//import org.nextprot.api.tasks.solr.indexer.entry.impl.IdentifierFieldBuilder;
-//import org.nextprot.api.tasks.solr.indexer.entry.impl.OverviewFieldBuilder;
-//import org.nextprot.api.tasks.solr.indexer.entry.impl.XrefFieldBuilder;
 
 public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 
@@ -25,9 +22,11 @@ public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 	@Test
 	public void testExpression() {
 
-		for(int i=0; i < 10; i++){
-			testExpression(getEntry(i)); 
-		} 
+		String[] test_list = {"NX_Q8IWA4", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_O00115","NX_Q7Z6P3",
+				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
+
+		for(int i=0; i < 12; i++){ testExpression(getEntry(test_list[i])); } 
+		// for(int i=0; i < 10; i++){	testExpression(getEntry(i));	} // 'random' entries
 		
 		//Entry entry = getEntry("NX_P20592");
 		//Entry entry = getEntry("NX_Q6PK18");
@@ -42,19 +41,9 @@ public class ExpressionFieldBuilderDiffTest extends SolrDiffTest {
 
 		System.out.println("Testing: " + entryName);
 		ExpressionFieldBuilder efb = new ExpressionFieldBuilder();
-		efb.setTerminologyservice(terminologyService);
+		efb.setTerminologyService(terminologyService);
 		efb.initializeBuilder(entry);
 		
-		// Xrefs to HPA antibodies temporarily not in the API
-		/*List<String> expectedABs = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ANTIBODY);
-		if(expectedABs != null) {
-		  Collections.sort(expectedABs);
-		  List<String> currentABs = xfb.getFieldValue(Fields.ANTIBODY, List.class);
-		  Collections.sort(currentABs);
-		  Assert.assertEquals(expectedABs, currentABs);
-		}*/
-		
-
 		List<String> explist = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.EXPRESSION);
 		Set<String> expectedExpression = null;
 		Set<String> exprSet = null;

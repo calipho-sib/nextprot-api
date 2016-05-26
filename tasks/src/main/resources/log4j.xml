@@ -13,7 +13,7 @@
 		<param name="append" value="false" /> <!-- will start a refreshed file -->
 		<param name="file" value="../release-info/sparql-queries.tsv" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d %m%n" />
+			<param name="ConversionPattern" value="%m%n" />
 		</layout>
 	</appender>
 
