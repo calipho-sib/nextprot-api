@@ -212,6 +212,10 @@ public class PepXServiceImpl implements PepXService {
 					StringBuilder sequenceWithVariant = new StringBuilder(originalSequence);
 					int variantPosition = varAnnot.getStartPositionForIsoform(isoformName) - 1;
 					char originalAA = originalSequence.charAt(variantPosition);
+					// pepx doesn't handle variant of type insert
+					if(varAnnot.getVariant().getOriginal().length()==0){
+						continue;
+					}
 					if(originalAA != varAnnot.getVariant().getOriginal().charAt(0)){
 						throw new NextProtException("The amino acid " + originalAA + " is not present on the sequence of the isoform (position) " + "(" + isoformName + ")" + variantPosition );
 					}
