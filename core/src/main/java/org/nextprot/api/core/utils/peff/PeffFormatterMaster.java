@@ -72,7 +72,7 @@ public class PeffFormatterMaster {
 
     private PeffFormatter getFormatter(Annotation annotation) {
 
-        Preconditions.checkArgument(formatterByAnnotationType.containsKey(annotation.getAPICategory()));
+        Preconditions.checkArgument(formatterByAnnotationType.containsKey(annotation.getAPICategory()), "missing key "+annotation.getAPICategory());
 
         return formatterByAnnotationType.get(annotation.getAPICategory());
     }
@@ -128,9 +128,11 @@ public class PeffFormatterMaster {
 
         for (Annotation annotation : entry.getAnnotationsByIsoform(isoform.getUniqueName())) {
 
-            List<Annotation> annots = annotationsByFormatter.get(getFormatter(annotation));
+            if (formatterByAnnotationType.containsKey(annotation.getAPICategory())) {
+                List<Annotation> annots = annotationsByFormatter.get(getFormatter(annotation));
 
-            annots.add(annotation);
+                annots.add(annotation);
+            }
         }
     }
 }
