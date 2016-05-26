@@ -8,6 +8,7 @@ import org.nextprot.api.commons.constants.PropertyWriter;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.peff.PeffFormatterMaster;
 
@@ -74,20 +75,25 @@ public class NXVelocityUtils {
 	 *
 	 * @param entry the entry to find variant from
 	 * @param isoform the isoform to find variant of
-	 * @param sv sequence version
-	 * @param ev entry version
-	 * @param pe protein existence level
 	 * @return a PEFF formatted header
 	 */
-	public static String buildPeffHeader(Entry entry, Isoform isoform, String protName, String geneName, String sv, String ev, String pe) {
+	public static String buildPeffHeader(Entry entry, Isoform isoform) {
 
-		StringBuilder sb = new StringBuilder(">nxp:");
+		StringBuilder sb = new StringBuilder().append(isoform.getUniqueName())
+				.append(" \\DbUniqueId=").append(isoform.getUniqueName());
 
-		sb.append(isoform.getUniqueName()).append(" \\DbUniqueId=").append(isoform.getUniqueName());
-		if (protName != null) sb.append("\\Pname=").append(protName);
-		if (geneName != null) sb.append("\\Gname=").append(geneName);
-		sb.append("\\NcbiTaxId=9606 \\TaxName=Homo Sapiens \\Length=").append(isoform.getSequence().length());
-		sb.append("\\SV=").append(sv).append("\\EV=").append(ev).append("\\PE=").append(pe);
+		Overview overview = entry.getOverview();
+
+		if (overview.hasMainProteinName())
+			sb.append("\\Pname=").append(overview.getMainProteinName());
+		if (overview.hasMainGeneName())
+			sb.append("\\Gname=").append(overview.getMainGeneName());
+
+		sb.append("\\NcbiTaxId=9606 \\TaxName=Homo Sapiens \\Length=").append(isoform.getSequence().length())
+				.append("\\SV=").append(overview.getHistory().getSequenceVersion())
+				.append("\\EV=").append(overview.getHistory().getUniprotVersion())
+				.append("\\PE=").append(overview.getProteinExistenceLevel());
+
 		sb.append(PEFF_FORMATTER.formatIsoformAnnotations(entry, isoform));
 
 		return sb.toString();
