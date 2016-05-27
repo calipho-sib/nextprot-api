@@ -3,7 +3,7 @@ package org.nextprot.api.tasks.solr.indexer.entry.diff;
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.CvIndex.CvField;
 import org.nextprot.api.tasks.solr.indexer.CvTermSolrIndexer;
@@ -15,7 +15,7 @@ public class CVtermCoreFullDiffTest extends SolrDiffTest {
 
 	@Autowired TerminologyService terminologyService;
 	
-	SolrIndexer<Terminology> cvindexer = new CvTermSolrIndexer("http://localhost:8983/solr/npcvs1");
+	SolrIndexer<CvTerm> cvindexer = new CvTermSolrIndexer("http://localhost:8983/solr/npcvs1");
 
 	@Test
 	public void testCVs() {
@@ -24,31 +24,31 @@ public class CVtermCoreFullDiffTest extends SolrDiffTest {
 		//for(int i=0; i < allterms.size(); i++){ 	if(i%1000 == 0) System.err.println(i + "..."); testCVData(allterms.get(i)); } 
 		
 		//test samples from different CVs
-		testCVData(terminologyService.findTerminologyByAccession("CVCL_1286"));
-		testCVData(terminologyService.findTerminologyByAccession("CVCA_0010"));
-		testCVData(terminologyService.findTerminologyByAccession("CVME_0007"));
-		testCVData(terminologyService.findTerminologyByAccession("FA-00011"));
-		testCVData(terminologyService.findTerminologyByAccession("CVTO_0008"));
-		testCVData(terminologyService.findTerminologyByAccession("2.1.1.293"));
-		testCVData(terminologyService.findTerminologyByAccession("TS-1154"));
-		testCVData(terminologyService.findTerminologyByAccession("UPA00483"));
-		testCVData(terminologyService.findTerminologyByAccession("176400")); // OMIM
-		testCVData(terminologyService.findTerminologyByAccession("SL-0015"));
-		testCVData(terminologyService.findTerminologyByAccession("KW-0597"));
-		testCVData(terminologyService.findTerminologyByAccession("D029242")); // Mesh
-		testCVData(terminologyService.findTerminologyByAccession("PTM-0254"));
-		testCVData(terminologyService.findTerminologyByAccession("GO:0005044"));
-		testCVData(terminologyService.findTerminologyByAccession("GO:1990722"));
-		testCVData(terminologyService.findTerminologyByAccession("GO:1901926"));
-		testCVData(terminologyService.findTerminologyByAccession("DI-01854"));
-		testCVData(terminologyService.findTerminologyByAccession("HsapDO:0000037"));
-		testCVData(terminologyService.findTerminologyByAccession("C115440")); // NCI thesaurus
-		testCVData(terminologyService.findTerminologyByAccession("EV:0300000"));
-		testCVData(terminologyService.findTerminologyByAccession("DO-00859")); 
+		testCVData(terminologyService.findCvTermByAccession("CVCL_1286"));
+		testCVData(terminologyService.findCvTermByAccession("CVCA_0010"));
+		testCVData(terminologyService.findCvTermByAccession("CVME_0007"));
+		testCVData(terminologyService.findCvTermByAccession("FA-00011"));
+		testCVData(terminologyService.findCvTermByAccession("CVTO_0008"));
+		testCVData(terminologyService.findCvTermByAccession("2.1.1.293"));
+		testCVData(terminologyService.findCvTermByAccession("TS-1154"));
+		testCVData(terminologyService.findCvTermByAccession("UPA00483"));
+		testCVData(terminologyService.findCvTermByAccession("176400")); // OMIM
+		testCVData(terminologyService.findCvTermByAccession("SL-0015"));
+		testCVData(terminologyService.findCvTermByAccession("KW-0597"));
+		testCVData(terminologyService.findCvTermByAccession("D029242")); // Mesh
+		testCVData(terminologyService.findCvTermByAccession("PTM-0254"));
+		testCVData(terminologyService.findCvTermByAccession("GO:0005044"));
+		testCVData(terminologyService.findCvTermByAccession("GO:1990722"));
+		testCVData(terminologyService.findCvTermByAccession("GO:1901926"));
+		testCVData(terminologyService.findCvTermByAccession("DI-01854"));
+		testCVData(terminologyService.findCvTermByAccession("HsapDO:0000037"));
+		testCVData(terminologyService.findCvTermByAccession("C115440")); // NCI thesaurus
+		testCVData(terminologyService.findCvTermByAccession("EV:0300000"));
+		testCVData(terminologyService.findCvTermByAccession("DO-00859")); 
 	}
 
 	
-	public void testCVData(Terminology term) {
+	public void testCVData(CvTerm term) {
 		
 		long id = term.getId();
 		String entry = term.getAccession();

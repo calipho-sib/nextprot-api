@@ -3,7 +3,7 @@ package org.nextprot.api.tasks.solr;
 import java.util.List;
 
 import org.nextprot.api.commons.exception.NPreconditions;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.tasks.solr.indexer.CvTermSolrIndexer;
 import org.nextprot.api.tasks.solr.indexer.SolrIndexer;
@@ -28,23 +28,23 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 		logger.info("Solr server: " + solrServer); 
 		
 		String ontologyToReindex = System.getProperty("solr.ontology"); // eg: java -Dsolr.ontology="UniprotFamilyCv" (don't forget CamelCasing)
-		SolrIndexer<Terminology> indexer = new CvTermSolrIndexer(solrServer);
+		SolrIndexer<CvTerm> indexer = new CvTermSolrIndexer(solrServer);
 		//logger.info("removing all solr terminology records");
 		
-		List<Terminology> allterms;
+		List<CvTerm> allterms;
 		if (ontologyToReindex == null) { // No arg: index all ontologies
 			System.err.println("indexing: all ontologies");
 			logger.info("indexing all terminologies");
 			indexer.clearDatabase("");
-			allterms = terminologyService.findAllTerminology();
+			allterms = terminologyService.findAllCVTerms();
 		} else { // Index ontology given as VM argument
 			System.err.println("indexing: " + ontologyToReindex);
 			logger.info("indexing terminology: " + ontologyToReindex);
 			indexer.clearDatabase("filters:" + ontologyToReindex);
-			allterms = terminologyService.findTerminologyByOntology(ontologyToReindex);
+			allterms = terminologyService.findCvTermsByOntology(ontologyToReindex);
 		}
 
-		for (Terminology t : allterms) {
+		for (CvTerm t : allterms) {
 			indexer.add(t);
 			termcnt++;
 		}

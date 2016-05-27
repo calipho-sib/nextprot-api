@@ -8,7 +8,7 @@ import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,23 +26,20 @@ public class TermController {
 	
 	@ApiMethod(path = "/terminology-tree/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/terminology-tree/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Tree<Terminology>> getTerminologyTree(
+	public List<Tree<CvTerm>> getTerminologyTree(
 			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
-			@PathVariable("terminology") String terminology ,
+			@PathVariable("terminology") String terminology) {
 
-			@ApiPathParam(name = "maxDepth", description = "The max depth",  allowedvalues = { "1"})
-		@RequestParam(value = "maxDepth", required = false) Integer maxDepth) {
-
-		return terminolgyService.findTerminologyTreeList(TerminologyCv.getTerminologyOf(terminology), (maxDepth == null) ? 100 : Integer.valueOf(maxDepth));
+		return terminolgyService.findTerminology(TerminologyCv.getTerminologyOf(terminology));
 	}
 
 	@ApiMethod(path = "/terminology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/terminology/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Terminology> getTerminology(
+	public List<CvTerm> getTerminology(
 			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
 			@PathVariable("terminology") String terminology) {
 
-		return terminolgyService.findTerminologyByOntology(TerminologyCv.getTerminologyOf(terminology).name());
+		return terminolgyService.findCvTermsByOntology(TerminologyCv.getTerminologyOf(terminology).name());
 	}
 	
 	

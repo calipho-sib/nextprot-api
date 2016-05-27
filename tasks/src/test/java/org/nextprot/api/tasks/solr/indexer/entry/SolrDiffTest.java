@@ -24,6 +24,7 @@ public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements I
 	@Autowired	private MasterIdentifierService masterIdentifierService = null;
 
 	HttpSolrServer solrEntries = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npentries1");
+	//HttpSolrServer solrEntries = new HttpSolrServer("http://uat-web2.isb-sib.ch:8983/solr/npentries1");
 	HttpSolrServer solrPublications = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/nppublications1");
 	HttpSolrServer solrCvs = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npcvs1");
 

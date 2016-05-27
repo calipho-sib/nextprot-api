@@ -50,6 +50,8 @@ public class EntryIndex extends IndexTemplate {
 			.add(Fields.FILTERS)
 			.add(Fields.RECOMMENDED_AC)
 			.add(Fields.RECOMMENDED_NAME)
+			.add(Fields.CD_ANTIGEN)
+			.add(Fields.INTERNATIONAL_NAME)
 			.add(Fields.UNIPROT_NAME)
 			.add(Fields.RECOMMENDED_GENE_NAMES)
 			.add(Fields.GENE_BAND)
@@ -67,6 +69,8 @@ public class EntryIndex extends IndexTemplate {
 			.add(Fields.IDSP0,64)
 			.add(Fields.RECOMMENDED_AC, 8)
 			.add(Fields.RECOMMENDED_NAME, 32)
+			.add(Fields.CD_ANTIGEN)
+			.add(Fields.INTERNATIONAL_NAME)
 			.add(Fields.UNIPROT_NAME, 16)
 			.add(Fields.ALTERNATIVE_ACS, 8)
 			.add(Fields.ALTERNATIVE_NAMES, 16)
@@ -85,6 +89,8 @@ public class EntryIndex extends IndexTemplate {
 			.add(Fields.IDSP0,640)
 			.add(Fields.RECOMMENDED_AC, 80)
 			.add(Fields.RECOMMENDED_NAME, 320)
+			.add(Fields.CD_ANTIGEN)
+			.add(Fields.INTERNATIONAL_NAME)
 			.add(Fields.UNIPROT_NAME, 160)
 			.add(Fields.ALTERNATIVE_ACS, 80)
 			.add(Fields.ALTERNATIVE_NAMES, 160)
@@ -198,7 +204,8 @@ public class EntryIndex extends IndexTemplate {
 		EC_NAME("ec_name", String.class),
 		FUNCTION_DESC("function_desc", List.class), //List<String>
 		CHR_LOC("chr_loc", String.class),
-		CHR_LOC_S("chr_loc_s", Long.class),
+		//CHR_LOC_S("chr_loc_s", Long.class),
+		CHR_LOC_S("chr_loc_s", Integer.class),
 		ISOFORM_NUM("isoform_num", Integer.class),
 		PTM_NUM("ptm_num", Integer.class),
 		VAR_NUM("var_num", Integer.class),
@@ -207,6 +214,8 @@ public class EntryIndex extends IndexTemplate {
 		RECOMMENDED_AC("recommended_ac","ac", String.class),
 		RECOMMENDED_NAME("recommended_name", String.class),
 		RECOMMENDED_NAME_S("recommended_name_s", String.class), 
+		CD_ANTIGEN("cd_antigen", List.class), 
+		INTERNATIONAL_NAME("international_name", List.class), 
 		UNIPROT_NAME("uniprot_name", List.class), //Why is it defined as an array???
 		ALTERNATIVE_ACS("alternative_acs", List.class),
 		ALTERNATIVE_NAMES("alternative_names", List.class),

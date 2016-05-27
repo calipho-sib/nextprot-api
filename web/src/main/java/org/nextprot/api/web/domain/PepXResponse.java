@@ -49,7 +49,9 @@ public class PepXResponse {
 	public Set<String> getPeptidesForEntry(String entryName) {
 		Set<String> peptides = new HashSet<>();
 		for(PepXMatch pep: peptideMatches){
-			peptides.add(pep.getPeptide());
+			if (pep.getEntryNamesMatches().contains(entryName)) {
+				peptides.add(pep.getPeptide());
+			}
 		}
 		return peptides;
 	}

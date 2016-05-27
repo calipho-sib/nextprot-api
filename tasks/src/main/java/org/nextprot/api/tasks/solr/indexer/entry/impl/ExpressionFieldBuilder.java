@@ -9,10 +9,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
@@ -21,12 +20,8 @@ import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 @EntryFieldBuilder
 public class ExpressionFieldBuilder extends FieldBuilder {
 
-	private TerminologyService terminologyservice;
-
-
 	@Override
 	protected void init(Entry entry) {
-
 		//Extract the tissues where there is expression ....
 		Set <String> cv_tissues = new HashSet<String>();
 		for (Annotation currannot : entry.getAnnotations()) {
@@ -47,7 +42,7 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 		for (String cv : cv_tissues) {
 			//cv_tissues_final.add(cv); // No duplicate: this is a Set
 			if(cv.startsWith("TS-")) {
-				Terminology term = terminologyservice.findTerminologyByAccession(cv);
+				CvTerm term = terminologyservice.findCvTermByAccession(cv);
 				//if(cv_tissues_final.contains(cv)) System.err.println(cv + " already seen");
 				//else System.err.println(cv);
 				cv_tissues_final.add(cv); // No duplicate: this is a Set
@@ -57,7 +52,7 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 				  for (String ancestorac : ancestors) {
 					  //if(cv.equals("TS-0079")) System.err.println("blood ancestor: " + ancestorac);
 					  cv_tissues_final.add(ancestorac);  // No duplicate: this is a Set
-					  cv_tissues_final.add(terminologyservice.findTerminologyByAccession(ancestorac).getName());  // No duplicate: this is a Set
+					  cv_tissues_final.add(terminologyservice.findCvTermByAccession(ancestorac).getName());  // No duplicate: this is a Set
 				  }
 				List<String> synonyms = term.getSynonyms();
 				if(synonyms != null) for (String synonym : synonyms)  cv_tissues_final.add(synonym); 
@@ -76,9 +71,4 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 		return Arrays.asList(Fields.EXPRESSION);
 	}
 	
-	public void setTerminologyservice(TerminologyService terminologyservice) {
-		this.terminologyservice = terminologyservice;
-	}
-
-
 }

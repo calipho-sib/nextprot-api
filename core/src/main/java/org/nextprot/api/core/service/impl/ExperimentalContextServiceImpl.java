@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.nextprot.api.core.dao.ExperimentalContextDao;
 import org.nextprot.api.core.domain.ExperimentalContext;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.ExperimentalContextService;
@@ -67,9 +67,9 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 			terminologyAccessions.add(ec.getDevelopmentalStageAC());
 		}
 		
-		List<Terminology> terms = terminologyService.findTerminologyByAccessions(terminologyAccessions);
-		Map<String, Terminology> map = new HashMap<>();
-		for(Terminology term : terms){
+		List<CvTerm> terms = terminologyService.findCvTermsByAccessions(terminologyAccessions);
+		Map<String, CvTerm> map = new HashMap<>();
+		for(CvTerm term : terms){
 			map.put(term.getAccession(), term);
 		}
 
@@ -79,7 +79,7 @@ class ExperimentalContextServiceImpl implements ExperimentalContextService {
 
 	}
 
-	private void updateTerminologies(ExperimentalContext ec, Map<String, Terminology> map) {
+	private void updateTerminologies(ExperimentalContext ec, Map<String, CvTerm> map) {
 
 		if (ec.getCellLine() != null) ec.setCellLine(map.get(ec.getCellLineAC()));
 		if (ec.getTissue() != null) ec.setTissue(map.get(ec.getTissueAC()));

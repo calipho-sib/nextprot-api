@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Family;
@@ -22,17 +21,6 @@ public class NamesFieldBuilder extends FieldBuilder {
 		Overview ovv = entry.getOverview();
 		
 		//TODO Daniel repeated code in CvFieldBuilder
-		/*Set <String> cv_acs = new HashSet<String>();
-		for (Annotation currannot : entry.getAnnotations()) {
-			String category = currannot.getCategory();
-			if(!category.equals("tissue specificity")) {
-				String cvac = currannot.getCvTermAccessionCode();
-				if (cvac != null) {
-					cv_acs.add(cvac); 
-				}
-			}
-		}*/
-
 		
 		List <EntityName> altnames = null;
 		altnames = ovv.getProteinNames();
@@ -45,8 +33,8 @@ public class NamesFieldBuilder extends FieldBuilder {
 						addField(Fields.ALTERNATIVE_NAMES, paltfullname.getName());
 				    List <EntityName> paltshortnames = paltfullname.getSynonyms();
 				    if(paltshortnames != null )
-				    for (EntityName paltshortname : paltshortnames) {
-				    if(!paltshortname.getType().equals("enzyme name")) addField(Fields.ALTERNATIVE_NAMES, paltshortname.getName());
+				      for (EntityName paltshortname : paltshortnames) {
+				        if(!paltshortname.getType().equals("enzyme name")) addField(Fields.ALTERNATIVE_NAMES, paltshortname.getName());
 				    }
 				}
 			}
@@ -56,19 +44,26 @@ public class NamesFieldBuilder extends FieldBuilder {
 			for (EntityName altname : altnames) {
 				//System.err.println(altname.getName());
 				addField(Fields.ALTERNATIVE_NAMES, altname.getName());
+				String nametype = altname.getType();
+		    	if(nametype.equals("CD antigen"))  
+				  addField(Fields.CD_ANTIGEN, altname.getName());
+		    	else if(nametype.equals("International Nonproprietary Names"))  
+				  addField(Fields.CD_ANTIGEN, altname.getName());
 			}
 		
 		altnames = ovv.getFunctionalRegionNames(); // The enzymatic activities of a multifunctional enzyme (maybe redundent with getEnzymes)
 		if(altnames != null )
 			for (EntityName altname : altnames) {
 				addField(Fields.REGION_NAME, altname.getName()); // region_name should be renamed activity_name
-				// Synonyms allready collected in the getEnzymes loop
-				// List <EntityName> paltnames = altname.getSynonyms();
-				// if(paltnames != null )
-				// for (EntityName ecname : paltnames) {
-				    //doc.addField("ec_name", ecname.getName());
-				//	System.err.println(id + " fromincludes: " + ecname.getName());
-				//} 
+				List <EntityName> paltnames = altname.getSynonyms();
+				if(paltnames != null )
+				 for (EntityName ecname : paltnames) {
+				    addField(Fields.REGION_NAME, ecname.getName());
+				    List <EntityName> shortnames = ecname.getSynonyms();
+				    if(shortnames != null ){
+				    	for (EntityName xname : shortnames)	addField(Fields.REGION_NAME, xname.getName());
+				    }
+				} 
 			}
 		
 		// Gene names, synonyms and orf names
@@ -96,20 +91,15 @@ public class NamesFieldBuilder extends FieldBuilder {
 		
 		List<Family> families = ovv.getFamilies();
 		String allfamilies = null;
-		for (Family family : families) { // alternatively use a multivalue solr field
-			if (allfamilies == null){
-				allfamilies = family.getName();
-			} else {
-				allfamilies += " | " + family.getName();
-			}
+		for (Family family : families) { // We choose to index the descriptions (like "Belongs to the DNase II family") instead of the names
+			if (allfamilies == null) allfamilies = family.getDescription(); // allfamilies = family.getName();
+			else allfamilies += " , " + family.getDescription();
 		}
+
 		if (allfamilies != null) {
 			addField(Fields.FAMILY_NAMES, allfamilies);
 			addField(Fields.FAMILY_NAMES_S, allfamilies);
 		}
-
-		//TODO ORF NAMES are missing
-	
 	}
 	
 	static List<String> getORFNames (Overview ovv){
@@ -129,7 +119,7 @@ public class NamesFieldBuilder extends FieldBuilder {
 
 	@Override
 	public Collection<Fields> getSupportedFields() {
-		return Arrays.asList(Fields.ORF_NAMES, Fields.FAMILY_NAMES, Fields.FAMILY_NAMES_S, Fields.ALTERNATIVE_GENE_NAMES, Fields.RECOMMENDED_GENE_NAMES, Fields.RECOMMENDED_GENE_NAMES_S, Fields.REGION_NAME, Fields.ALTERNATIVE_NAMES);
+		return Arrays.asList(Fields.INTERNATIONAL_NAME, Fields.CD_ANTIGEN, Fields.ORF_NAMES, Fields.FAMILY_NAMES, Fields.FAMILY_NAMES_S, Fields.ALTERNATIVE_GENE_NAMES, Fields.RECOMMENDED_GENE_NAMES, Fields.RECOMMENDED_GENE_NAMES_S, Fields.REGION_NAME, Fields.ALTERNATIVE_NAMES);
 	}
 
 }

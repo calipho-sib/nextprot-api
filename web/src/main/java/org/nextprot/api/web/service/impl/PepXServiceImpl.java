@@ -212,20 +212,34 @@ public class PepXServiceImpl implements PepXService {
 					StringBuilder sequenceWithVariant = new StringBuilder(originalSequence);
 					int variantPosition = varAnnot.getStartPositionForIsoform(isoformName) - 1;
 					char originalAA = originalSequence.charAt(variantPosition);
+					// pepx doesn't handle variant of type insert
+					if(varAnnot.getVariant().getOriginal().length()==0){
+						continue;
+					}
 					if(originalAA != varAnnot.getVariant().getOriginal().charAt(0)){
 						throw new NextProtException("The amino acid " + originalAA + " is not present on the sequence of the isoform (position) " + "(" + isoformName + ")" + variantPosition );
 					}
-					sequenceWithVariant.setCharAt(variantPosition, varAnnot.getVariant().getVariant().charAt(0));
-					if(PeptideUtils.isPeptideContainedInTheSequence(peptide, sequenceWithVariant.toString(), modeIsoLeucine)){//Check if the peptide is present with the sequence with the variant
-						resultAnnotations.add(varAnnot);
+					String variantAA = varAnnot.getVariant().getVariant();
+					if (varAnnot.getVariant().getOriginal().length()==1) { // pepx only handles single substitution or deletion
+						if (variantAA.length()==1) { // substitution 1 aa
+							sequenceWithVariant.setCharAt(variantPosition, varAnnot.getVariant().getVariant().charAt(0));
+							if(PeptideUtils.isPeptideContainedInTheSequence(peptide, sequenceWithVariant.toString(), modeIsoLeucine)){//Check if the peptide is present with the sequence with the variant
+								resultAnnotations.add(varAnnot);
+							}
+						} else if (variantAA.length()==0) { // deletion of 1 aa
+							sequenceWithVariant.deleteCharAt(variantPosition);
+							if(PeptideUtils.isPeptideContainedInTheSequence(peptide, sequenceWithVariant.toString(), modeIsoLeucine)){//Check if the peptide is present with the sequence with the variant
+								resultAnnotations.add(varAnnot);
+							}
+						}
 					}
 				}
 			}
-
 		}
 		return resultAnnotations;
 	}
-
+	
+	
 	/*
 
 	We started to filter out the results because 

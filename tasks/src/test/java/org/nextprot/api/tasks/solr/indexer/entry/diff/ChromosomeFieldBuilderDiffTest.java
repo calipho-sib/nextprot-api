@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 
@@ -108,7 +107,7 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		String expectedValue = (String) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), field);
 		expectedSet.addAll(Arrays.asList(expectedValue.replace(",","").split(" ")));
 
-		showActualAndExpectedValues(expectedSet,actualSet, "chr_loc");
+		//showActualAndExpectedValues(expectedSet,actualSet, "chr_loc");
 
 		assertEquals(expectedSet,actualSet);
 
@@ -156,7 +155,7 @@ public class ChromosomeFieldBuilderDiffTest extends SolrDiffTest {
 		List<String> expectedValues = (List<String>) getValueForFieldInCurrentSolrImplementation(entry.getUniqueName(), field);
 		for (String s: expectedValues) expectedSet.addAll(Arrays.asList(s.split(" ")));
 		
-		showActualAndExpectedValues(expectedSet,actualSet, "gene_band");
+		//showActualAndExpectedValues(expectedSet,actualSet, "gene_band");
 		
 		assertEquals(expectedSet,actualSet);
 
