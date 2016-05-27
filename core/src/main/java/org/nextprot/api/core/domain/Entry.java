@@ -43,6 +43,8 @@ public class Entry implements KeyValueRepresentation{
 	
 	private List<ExperimentalContext> experimentalContexts;
 
+	private List<ModifiedEntry> entryFormsAnnotations;
+
 
 	public List<ExperimentalContext> getExperimentalContexts() {
 		return experimentalContexts;
