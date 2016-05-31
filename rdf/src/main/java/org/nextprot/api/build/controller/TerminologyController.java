@@ -23,7 +23,7 @@ public class TerminologyController {
 	@RequestMapping("/rdf/terminology/{term}")
 	public String findOneTerm(
 			@PathVariable("term") String accession, Model model) {
-		model.addAttribute("terminology", this.terminologyService.findTerminologyByAccession(accession));
+		model.addAttribute("terminology", this.terminologyService.findCvTermByAccession(accession));
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "term";
 	}
@@ -33,7 +33,7 @@ public class TerminologyController {
 	@RequestMapping("/rdf/terminology/ontology/{ontology}")
 	public String findAllTermByOntology(
 			@PathVariable("ontology") String ontology, Model model) {
-		model.addAttribute("termList", this.terminologyService.findTerminologyByOntology(ontology));
+		model.addAttribute("termList", this.terminologyService.findCvTermsByOntology(ontology));
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "term-list";
 	}
@@ -42,7 +42,7 @@ public class TerminologyController {
 	@ApiMethod(path = "/rdf/terminology", verb = ApiVerb.GET, description = "Exports the whole neXtProt terminology ordered by the name of the controlled vocabulary, this includes: The ontology, the name, the description and the parent instance.", produces = {"text/turtle"})
 	@RequestMapping("/rdf/terminology")
 	public String findAllTermOrderedByOntology(Model model) {
-		model.addAttribute("termList", this.terminologyService.findAllTerminology());
+		model.addAttribute("termList", this.terminologyService.findAllCVTerms());
 		model.addAttribute("StringUtils", StringUtils.class);
 		return "term-list";
 	}

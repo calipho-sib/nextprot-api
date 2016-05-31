@@ -35,8 +35,11 @@ abstract class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 		SolrInputDocument doc = new SolrInputDocument();
 
 		for (Fields f : Fields.values()) {
+			//System.err.println("field: " + f.toString());
+			if(f.toString() == "TEXT" || f.toString() == "SCORE") continue; // Directly computed by SOLR
 			FieldBuilder fb = fieldsBuilderMap.get(f);
 			fb.setGold(isGold);
+			fb.setTerminologyService(terminologyservice);
 			fb.initializeBuilder(entry);
 			Object o = fb.getFieldValue(f, f.getClazz());
 			doc.addField(f.getName(), o);
@@ -44,6 +47,7 @@ abstract class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 
 		//Reset all fields builders
 		for (Fields f : Fields.values()) {
+			if(f.toString() == "TEXT" || f.toString() == "SCORE") continue; // Directly computed by SOLR
 			fieldsBuilderMap.get(f).reset();
 		}
 

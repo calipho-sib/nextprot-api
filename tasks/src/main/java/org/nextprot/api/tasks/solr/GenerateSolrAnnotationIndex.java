@@ -29,7 +29,6 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		String solrServer = System.getProperty("solr.server");
 		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=\"http://localhost:8983/solr/npentries1\"");
 		logger.info("Solr server: " + solrServer); 
-
 		EntrySolrIndexer indexer = new EntrySolrIndexer(solrServer);
 		// Get an access to some needed services
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
@@ -48,14 +47,15 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		System.err.println("indexing " + allentryids.size() +  " entries...");
 		logger.info("indexing " + allentryids.size() +  " entries...");
 		for (String id : allentryids) {
-			//System.err.println("id: " + id);
+			System.err.println("id: " + id);
 			//Entry currentry = entryBuilderService.buildWithEverything("NX_O60729");
 			//Entry currentry = entryBuilderService.buildWithEverything("NX_Q3LXA3");
 			Entry currentry = entryBuilderService.buildWithEverything(id);
 			indexer.add(currentry);
 			ecnt++;
 			if((ecnt % 100) == 0) System.err.println(ecnt + "...");
-			if(ecnt >= 1000) break;
+			if(ecnt >= 3) break;
+			//if(ecnt >= 1000) break;
 		}
 		
 		indexer.addRemaing();

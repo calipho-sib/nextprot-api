@@ -39,7 +39,7 @@ public class Entry implements KeyValueRepresentation{
 
 	private List<Interaction> interactions;
 
-	private List<Terminology> enzymes;
+	private List<CvTerm> enzymes;
 	
 	private List<ExperimentalContext> experimentalContexts;
 
@@ -195,11 +195,11 @@ public class Entry implements KeyValueRepresentation{
 		this.annotations = annotations;
 	}
 
-	public void setEnzymes(List<Terminology> enzymes) {
+	public void setEnzymes(List<CvTerm> enzymes) {
 		this.enzymes=enzymes;
 	}
 
-	public List<Terminology> getEnzymes(){
+	public List<CvTerm> getEnzymes(){
 		return enzymes;
 	}
 

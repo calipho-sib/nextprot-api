@@ -8,11 +8,13 @@ import java.util.Map;
 
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 
 public abstract class FieldBuilder {
 
 	boolean isGold = false;
+	protected TerminologyService terminologyservice = null;
 	
 	public boolean isGold() {
 		return isGold;
@@ -22,6 +24,10 @@ public abstract class FieldBuilder {
 		this.isGold = isGold;
 	}
 
+	public void setTerminologyService(TerminologyService terminologyservice) {
+		this.terminologyservice = terminologyservice;
+	}
+
 	boolean initialized = false;
 	private Map<Fields, Object> fields = new HashMap<>();
 
@@ -29,6 +35,7 @@ public abstract class FieldBuilder {
 
 	public final void initializeBuilder(Entry entry) {
 		if(!initialized){
+			//System.err.println("initializing FieldBuilder: " + this.toString());
 			init(entry);
 			initialized = true;
 		}

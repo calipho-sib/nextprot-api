@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Terminology;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.utils.TerminologyUtils;
 
 
-public class CvTermSolrIndexer extends SolrIndexer<Terminology> {
+public class CvTermSolrIndexer extends SolrIndexer<CvTerm> {
 	
 
 	public CvTermSolrIndexer(String url) {
@@ -16,11 +16,13 @@ public class CvTermSolrIndexer extends SolrIndexer<Terminology> {
 	}
 
 	@Override
-	public SolrInputDocument convertToSolrDocument(Terminology terminology) {
+	public SolrInputDocument convertToSolrDocument(CvTerm terminology) {
 		
-		if (terminology.getOntology().equals("OrganelleCv")) return null; // CaliphoMisc-194, ignore this ontology
-		if (terminology.getOntology().equals("NextprotAnnotationCv")) return null; // CaliphoMisc-194, ignore this ontology
-		if (terminology.getOntology().equals("UniprotFamilyCv")) return null; // CaliphoMisc-116, ignore this ontology
+		String ontology = terminology.getOntology();
+		if (ontology.equals("OrganelleCv")) return null; // CaliphoMisc-194, ignore this ontology
+		else if (ontology.equals("NextprotAnnotationCv")) return null; // CaliphoMisc-194, ignore this ontology
+		else if (ontology.equals("UniprotFamilyCv")) return null; 
+
 		SolrInputDocument doc = new SolrInputDocument();
 		doc.addField("id", terminology.getId());
 		doc.addField("ac", terminology.getAccession());
@@ -38,7 +40,7 @@ public class CvTermSolrIndexer extends SolrIndexer<Terminology> {
 			doc.addField("synonyms",sb.toString());
 		}
 		
-		List<Terminology.TermProperty> properties = terminology.getProperties();
+		List<CvTerm.TermProperty> properties = terminology.getProperties();
 		if (properties != null) {
 			doc.addField("properties",TerminologyUtils.convertPropertiesToString(properties));
 		}
