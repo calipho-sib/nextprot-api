@@ -16,4 +16,11 @@ public interface DataSourceServiceLocator {
 	 */
 	public DataSource getUserDataSource();
 
+
+	/**
+	 * Gets the data source related to the statements
+	 * @return
+	 */
+	public DataSource getStatementsDataSource();
+	
 }

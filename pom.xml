@@ -46,6 +46,7 @@
 
 	<modules>
 		<module>commons</module>
+		<module>annotation-builder</module>
 		<module>user</module>
 		<module>core</module>
 		<module>rdf</module>

@@ -8,7 +8,14 @@ public class DataSourceServiceLocatorImpl implements DataSourceServiceLocator {
 	
 	private DataSource dataSource;
 	private DataSource userDataSource;
+	private DataSource statementsDataSource;
 	
+	public DataSource getStatementsDataSource() {
+		return statementsDataSource;
+	}
+	public void setStatementsDataSource(DataSource statementsDataSource) {
+		this.statementsDataSource = statementsDataSource;
+	}
 	public DataSource getDataSource() {
 		return dataSource;
 	}
