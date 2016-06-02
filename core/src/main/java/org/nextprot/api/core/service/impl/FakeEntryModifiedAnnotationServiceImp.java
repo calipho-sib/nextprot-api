@@ -26,7 +26,10 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 			modifiedEntries.add(getRandomModifiedEntry(entry, normalAnnotationReferedIds));
 		}
 		
-		List<Annotation> filteredAnnotations = entry.getAnnotations().stream().
+		List<Annotation> normalAnnotations = new ArrayList<Annotation>();
+		normalAnnotations.addAll(entry.getAnnotations());
+		
+		List<Annotation> filteredAnnotations = normalAnnotations.stream().
 				filter(a -> normalAnnotationReferedIds.contains(a.getAnnotationId())).collect(Collectors.toList());
 		entry.setAnnotations(filteredAnnotations);
 		
