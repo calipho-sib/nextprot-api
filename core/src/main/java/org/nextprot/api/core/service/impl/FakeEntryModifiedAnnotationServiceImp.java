@@ -16,18 +16,30 @@ import org.springframework.stereotype.Service;
 @Service
 public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnotationService {
 
+	long seed = 0L;
 	@Override
 	public List<ModifiedEntry> findAnnotationsForModifiedEntry(Entry entry) {
 
+		seed = entry.getUniqueName().hashCode();
+		
 		List<ModifiedEntry> modifiedEntries = new ArrayList<>();
 		List<Long> normalAnnotationReferedIds = new ArrayList<Long>();
+		List<Annotation> variantAnnotations = AnnotationUtils.filterAnnotationsByCategory(entry, AnnotationCategory.VARIANT);
 		
 		for (int i = 0; i < 10; i++){
-			modifiedEntries.add(getRandomModifiedEntry(entry, normalAnnotationReferedIds));
+			
+			int varNum = getRandomVariantNumber();
+			List<Annotation> variants = new ArrayList<>();
+			for(int j=0; j<varNum; j++){
+				Annotation variant = getRandomCategoryAnnotation(variantAnnotations);
+				variants.add(variant); 
+			}
+			modifiedEntries.add(getRandomModifiedEntry(entry, variants, normalAnnotationReferedIds));
 		}
 		
 		List<Annotation> normalAnnotations = new ArrayList<Annotation>();
 		normalAnnotations.addAll(entry.getAnnotations());
+		
 		
 		List<Annotation> filteredAnnotations = normalAnnotations.stream().
 				filter(a -> normalAnnotationReferedIds.contains(a.getAnnotationId())).collect(Collectors.toList());
@@ -36,12 +48,14 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 		return modifiedEntries;
 	}
 
-	private ModifiedEntry getRandomModifiedEntry(Entry entry, List<Long> ids) {
+	private ModifiedEntry getRandomModifiedEntry(Entry entry, List<Annotation> variants, List<Long> ids) {
 
 		ModifiedEntry me = new ModifiedEntry();
 		me.annotations = new ArrayList<>();
-		me.subjectName = entry.getOverview().getMainGeneName() + "Val " + getRandomPosition() + " Ser";
-
+		me.subjectComponents = new ArrayList<>();
+		me.subjectComponents.addAll(variants);
+		
+		//me.subjectName = entry.getOverview().getMainGeneName() + "Val " + getRandomPosition() + " Ser";
 		
 		for (int i = 0; i < 3; i++) {
 			Annotation a = new Annotation();
@@ -64,14 +78,19 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 
 	private Annotation getRandomCategoryAnnotation(List<Annotation> categoryAnnotations) {
 		
-		Random random = new Random();
+		Random random = new Random(seed);
 		int index = random.nextInt(categoryAnnotations.size());
 		return categoryAnnotations.get(index);
 		
 	}
+	
+	private int getRandomVariantNumber() {
+		Random rand = new Random(seed);
+		return 1 + rand.nextInt((3 - 1) + 1);
+	}
 
 	private int getRandomPosition() {
-		Random rand = new Random();
+		Random rand = new Random(seed);
 		return 1 + rand.nextInt((2000 - 1) + 1);
 
 	}
@@ -79,7 +98,7 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 	private AnnotationCategory getRandomCategory() {
 
 		final AnnotationCategory[] proper_noun = { AnnotationCategory.GO_BIOLOGICAL_PROCESS, AnnotationCategory.GO_MOLECULAR_FUNCTION, AnnotationCategory.GO_CELLULAR_COMPONENT };
-		Random random = new Random();
+		Random random = new Random(seed);
 		int index = random.nextInt(proper_noun.length);
 		return proper_noun[index];
 	}
@@ -87,7 +106,7 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 	private String getRandomImpact() {
 
 		final String[] proper_noun = { "Increase", "Decrease", "NoImpact", "Impact", "Gain" };
-		Random random = new Random();
+		Random random = new Random(seed);
 		int index = random.nextInt(proper_noun.length);
 		return proper_noun[index];
 	}
