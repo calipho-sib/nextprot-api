@@ -24,10 +24,12 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 		
 		for (int i = 0; i < 10; i++){
 			modifiedEntries.add(getRandomModifiedEntry(entry, normalAnnotationReferedIds));
-			List<Annotation> filteredAnnotations = entry.getAnnotations().stream().
-					filter(a -> normalAnnotationReferedIds.contains(a.getAnnotationId())).collect(Collectors.toList());
-			entry.setAnnotations(filteredAnnotations);
 		}
+		
+		List<Annotation> filteredAnnotations = entry.getAnnotations().stream().
+				filter(a -> normalAnnotationReferedIds.contains(a.getAnnotationId())).collect(Collectors.toList());
+		entry.setAnnotations(filteredAnnotations);
+		
 		return modifiedEntries;
 	}
 
