@@ -19,10 +19,21 @@ public class EntryModifiedController {
 	@Autowired	private EntryBuilderService entryBuilderService;
 
 	@RequestMapping("/entry/{entryname}/modified-entry-annotation")
-	public String getSubPart(@PathVariable("entryname") String entryName, Model model) {
+	public String getSubPart(@PathVariable("entryname") String entryName, @PathVariable("pub") Boolean pub, @PathVariable("xref") Boolean xref,  @PathVariable("xp") Boolean xp,  Model model) {
 		
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withAnnotations().withModifiedEntryAnnotations().withOverview().withTargetIsoforms());
 		model.addAttribute("entry", entry);
+		if(pub == null || !pub){
+			entry.setPublications(null);
+		}
+		if(xp == null || !xp){
+			entry.setExperimentalContexts(null);
+		}
+
+		if(xref == null || !xref){
+			entry.setXrefs(null);
+		}
+
 		return "entry";
 	}
 }
