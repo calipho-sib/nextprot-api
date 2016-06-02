@@ -1,6 +1,7 @@
 package org.nextprot.api.web.controller;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiQueryParam;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -19,7 +20,7 @@ public class EntryModifiedController {
 	@Autowired	private EntryBuilderService entryBuilderService;
 
 	@RequestMapping("/entry/{entryname}/modified-entry-annotation")
-	public String getSubPart(@PathVariable("entryname") String entryName, @PathVariable("pub") Boolean pub, @PathVariable("xref") Boolean xref,  @PathVariable("xp") Boolean xp,  Model model) {
+	public String getSubPart(@PathVariable("entryname") String entryName, @ApiQueryParam(name = "pub", required = false) Boolean pub, @ApiQueryParam(name = "xref", required = false) Boolean xref, @ApiQueryParam(name = "xp", required = false) Boolean xp,  Model model) {
 		
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withAnnotations().withModifiedEntryAnnotations().withOverview().withTargetIsoforms());
 		model.addAttribute("entry", entry);
