@@ -3,6 +3,7 @@ package org.nextprot.api.core.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
@@ -19,12 +20,18 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 	public List<ModifiedEntry> findAnnotationsForModifiedEntry(Entry entry) {
 
 		List<ModifiedEntry> modifiedEntries = new ArrayList<>();
-		for (int i = 0; i < 10; i++)
-			modifiedEntries.add(getRandomModifiedEntry(entry));
+		List<Long> normalAnnotationReferedIds = new ArrayList<Long>();
+		
+		for (int i = 0; i < 10; i++){
+			modifiedEntries.add(getRandomModifiedEntry(entry, normalAnnotationReferedIds));
+			List<Annotation> filteredAnnotations = entry.getAnnotations().stream().
+					filter(a -> normalAnnotationReferedIds.contains(a.getAnnotationId())).collect(Collectors.toList());
+			entry.setAnnotations(filteredAnnotations);
+		}
 		return modifiedEntries;
 	}
 
-	private ModifiedEntry getRandomModifiedEntry(Entry entry) {
+	private ModifiedEntry getRandomModifiedEntry(Entry entry, List<Long> ids) {
 
 		ModifiedEntry me = new ModifiedEntry();
 		me.annotations = new ArrayList<>();
@@ -40,12 +47,15 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 			List<Annotation> categoryAnnotations = AnnotationUtils.filterAnnotationsByCategory(entry, category);
 			Annotation randomAnnotation = getRandomCategoryAnnotation(categoryAnnotations);
 			a.setNormalAnnotationReferenceId(randomAnnotation.getAnnotationId());
+			ids.add(randomAnnotation.getAnnotationId());
 			me.annotations.add(a);
 
 		}
 
 		return me;
 	}
+	
+	
 
 	private Annotation getRandomCategoryAnnotation(List<Annotation> categoryAnnotations) {
 		
