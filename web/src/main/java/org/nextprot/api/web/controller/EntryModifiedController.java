@@ -21,7 +21,7 @@ public class EntryModifiedController {
 	@RequestMapping("/entry/{entryname}/modified-entry-annotation")
 	public String getSubPart(@PathVariable("entryname") String entryName, Model model) {
 		
-		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withModifiedEntryAnnotations().withOverview().withTargetIsoforms());
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withAnnotations().withModifiedEntryAnnotations().withOverview().withTargetIsoforms());
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
