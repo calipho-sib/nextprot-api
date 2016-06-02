@@ -30,6 +30,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService experimentalContextService;
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
+	@Autowired private EntryModifiedAnnotationService entryModifiedAnnotationService; 
 	@Autowired private EntryPropertiesService entryPropertiesService;	
 
 	private static Map<String, Object> objectLocks = new ConcurrentHashMap<>();
@@ -90,6 +91,10 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			}
 			if(entryConfig.hasEnzymes()){
 				entry.setEnzymes(terminologyService.findEnzymeByMaster(entryName));
+			}
+			
+			if(entryConfig.hasAnnotationsForModifiedEntry()){
+				entry.setModifiedEntryAnnotations(entryModifiedAnnotationService.findAnnotationsForModifiedEntry(entryName));
 			}
 			
 			if((entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart())){ //TODO should be added in annotation list

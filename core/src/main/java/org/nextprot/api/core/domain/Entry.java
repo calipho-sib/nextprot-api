@@ -46,6 +46,14 @@ public class Entry implements KeyValueRepresentation{
 	private List<ModifiedEntry> modifiedEntryAnnotations;
 
 
+	public List<ModifiedEntry> getModifiedEntryAnnotations() {
+		return modifiedEntryAnnotations;
+	}
+
+	public void setModifiedEntryAnnotations(List<ModifiedEntry> modifiedEntryAnnotations) {
+		this.modifiedEntryAnnotations = modifiedEntryAnnotations;
+	}
+
 	public List<ExperimentalContext> getExperimentalContexts() {
 		return experimentalContexts;
 	}
