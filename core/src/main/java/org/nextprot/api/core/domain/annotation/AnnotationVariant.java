@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nextprot.api.commons.bio.AminoAcidCode;
+
 
 public class AnnotationVariant implements Serializable {
 
@@ -13,15 +15,36 @@ public class AnnotationVariant implements Serializable {
 	private String rawDescription;
 	private String description = null; // set by parsing rawDescription
 	private List<String> diseaseTerms = null; // set by parsing rawDescription
+	public String getOriginalAminoAcid() {
+		return originalAminoAcid;
+	}
+
+	public void setOriginalAminoAcid(String originalAminoAcid) {
+		this.originalAminoAcid = originalAminoAcid;
+	}
+
+	public String getVariantAminoAcid() {
+		return variantAminoAcid;
+	}
+
+	public void setVariantAminoAcid(String variantAminoAcid) {
+		this.variantAminoAcid = variantAminoAcid;
+	}
+
+
+	private String originalAminoAcid;
+	private String variantAminoAcid;
 	
 	public AnnotationVariant(String original, String variant, String rawDescription) {
 		super();
 		this.original = original;
+		this.originalAminoAcid = AminoAcidCode.valueOfCode1AA(original.charAt(0)).get3LetterCode();
 		this.variant = variant;
+		this.variantAminoAcid = AminoAcidCode.valueOfCode1AA(variant.charAt(0)).get3LetterCode();
 		this.rawDescription = rawDescription;
 		parseRawDescription();
 	}
-	
+
 	public String getOriginal() {
 		return original;
 	}
