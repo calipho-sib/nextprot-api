@@ -93,13 +93,15 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setEnzymes(terminologyService.findEnzymeByMaster(entryName));
 			}
 			
-			if(entryConfig.hasAnnotationsForModifiedEntry()){
-				entry.setModifiedEntryAnnotations(entryModifiedAnnotationService.findAnnotationsForModifiedEntry(entryName));
-			}
-			
 			if((entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart())){ //TODO should be added in annotation list
 				setEntryAdditionalInformation(entry, entryConfig); //adds isoforms, publications, xrefs and experimental contexts
 			} 
+			
+
+			if(entryConfig.hasAnnotationsForModifiedEntry()){
+				entry.setModifiedEntryAnnotations(entryModifiedAnnotationService.findAnnotationsForModifiedEntry(entry));
+			}
+			
 
 		}
 		//CPU Intensive

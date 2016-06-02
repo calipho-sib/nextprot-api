@@ -166,7 +166,11 @@ public enum AnnotationCategory implements Serializable {
 	KINETIC_NOTE(-21, "kinetic note", "kineticNote", "kinetic note", BIOPHYSICOCHEMICAL_PROPERTY),
 	PH_DEPENDENCE(-22, "pH dependence", "phDependence", "phDependence", BIOPHYSICOCHEMICAL_PROPERTY),
 	REDOX_POTENTIAL(-23, "redox potential", "redoxPotential", "redoxPotential", BIOPHYSICOCHEMICAL_PROPERTY),
-	TEMPERATURE_DEPENDENCE(-24, "temperature dependence", "temperatureDependence", "temperatureDependence", BIOPHYSICOCHEMICAL_PROPERTY);
+	TEMPERATURE_DEPENDENCE(-24, "temperature dependence", "temperatureDependence", "temperatureDependence", BIOPHYSICOCHEMICAL_PROPERTY),
+	
+	IMPACT(-99999, "impact", "impact", "impact", GENERAL_ANNOTATION),
+
+	;
 
 	private final Integer dbId; // if positive, identifies a real record of the table nextprot.cv_terms (category annotation_type)
 	private final String dbAnnotationTypeName; // if dbId is positive, dbAnnotationTypeName is an exact match of the corresponding record in nextprot.cv_terms 

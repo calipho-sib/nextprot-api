@@ -44,6 +44,9 @@ public class Annotation implements Serializable, IsoformSpecific {
 	private String qualityQualifier;
 
 	private long annotationId;
+	
+	/** Field used when an annotation refers to another annotation */
+	private long normalAnnotationReferenceId;
 
 	private AnnotationVariant variant;
 
@@ -373,4 +376,15 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 		return booleanOptional;
 	}
+	
+	
+
+	public long getNormalAnnotationReferenceId() {
+		return normalAnnotationReferenceId;
+	}
+
+	public void setNormalAnnotationReferenceId(long normalAnnotationReferenceId) {
+		this.normalAnnotationReferenceId = normalAnnotationReferenceId;
+	}
+
 }
