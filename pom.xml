@@ -46,12 +46,12 @@
 
 	<modules>
 		<module>commons</module>
-		<module>annotation-builder</module>
 		<module>user</module>
 		<module>core</module>
 		<module>rdf</module>
 		<module>solr</module>
 		<module>security</module>
+		<module>annotation-builder</module>
 		<module>web</module>
 		<module>test-diff-rdf-db</module>
 		<module>tasks</module>
