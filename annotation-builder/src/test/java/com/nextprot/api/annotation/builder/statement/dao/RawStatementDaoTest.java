@@ -18,7 +18,7 @@ public class RawStatementDaoTest extends CoreUnitBaseTest {
 
 	@Test
 	public void findAllMappedStatements() {
-		List rows = rawStatementDao.findRawStatements();
+		List rows = rawStatementDao.findImpactRawStatements();
 		System.out.println(rows.size());
 	}
 

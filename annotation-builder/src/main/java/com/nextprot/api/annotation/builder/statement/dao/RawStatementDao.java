@@ -5,7 +5,11 @@ import java.util.List;
 import org.nextprot.commons.statements.RawStatement;
 
 public interface RawStatementDao {
-	
-	List<RawStatement> findRawStatements();
+
+	List<RawStatement> findNormalRawStatements();
+
+	List<RawStatement> findImpactRawStatements();
+
+	List<RawStatement> findRawStatementsByAnnotHash(String annotHash);
 
 }

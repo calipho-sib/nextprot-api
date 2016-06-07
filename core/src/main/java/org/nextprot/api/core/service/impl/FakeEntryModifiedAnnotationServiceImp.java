@@ -16,11 +16,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnotationService {
 
-	long seed = 0L;
 	@Override
 	public List<ModifiedEntry> findAnnotationsForModifiedEntry(Entry entry) {
-
-		seed = entry.getUniqueName().hashCode();
 		
 		List<ModifiedEntry> modifiedEntries = new ArrayList<>();
 		List<Long> normalAnnotationReferedIds = new ArrayList<Long>();
@@ -78,19 +75,19 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 
 	private Annotation getRandomCategoryAnnotation(List<Annotation> categoryAnnotations) {
 		
-		Random random = new Random(seed);
+		Random random = new Random();
 		int index = random.nextInt(categoryAnnotations.size());
 		return categoryAnnotations.get(index);
 		
 	}
 	
 	private int getRandomVariantNumber() {
-		Random rand = new Random(seed);
+		Random rand = new Random();
 		return 1 + rand.nextInt((3 - 1) + 1);
 	}
 
 	private int getRandomPosition() {
-		Random rand = new Random(seed);
+		Random rand = new Random();
 		return 1 + rand.nextInt((2000 - 1) + 1);
 
 	}
@@ -98,7 +95,7 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 	private AnnotationCategory getRandomCategory() {
 
 		final AnnotationCategory[] proper_noun = { AnnotationCategory.GO_BIOLOGICAL_PROCESS, AnnotationCategory.GO_MOLECULAR_FUNCTION, AnnotationCategory.GO_CELLULAR_COMPONENT };
-		Random random = new Random(seed);
+		Random random = new Random();
 		int index = random.nextInt(proper_noun.length);
 		return proper_noun[index];
 	}
@@ -106,7 +103,7 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 	private String getRandomImpact() {
 
 		final String[] proper_noun = { "Increase", "Decrease", "NoImpact", "Impact", "Gain" };
-		Random random = new Random(seed);
+		Random random = new Random();
 		int index = random.nextInt(proper_noun.length);
 		return proper_noun[index];
 	}

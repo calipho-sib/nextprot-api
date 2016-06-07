@@ -12,28 +12,28 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.nextprot.api.annotation.builder.statement.service.RawStatementService;
+
 @Lazy
 @Controller
 @Api(name = "EntryModified", description = "For example: may include an entry with one or several variants.")
 public class EntryModifiedController {
 
 	@Autowired	private EntryBuilderService entryBuilderService;
-
+	@Autowired	private RawStatementService rawStatementService;
+	
 	@RequestMapping("/entry/{entryname}/modified-entry-annotation")
 	public String getSubPart(@PathVariable("entryname") String entryName, @ApiQueryParam(name = "pub", required = false) Boolean pub, @ApiQueryParam(name = "xref", required = false) Boolean xref, @ApiQueryParam(name = "xp", required = false) Boolean xp,  Model model) {
 		
-		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withAnnotations().withModifiedEntryAnnotations().withOverview().withTargetIsoforms());
-		model.addAttribute("entry", entry);
-		if(pub == null || !pub){
-			entry.setPublications(null);
-		}
-		if(xp == null || !xp){
-			entry.setExperimentalContexts(null);
-		}
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withTargetIsoforms());
 
-		if(xref == null || !xref){
-			entry.setXrefs(null);
-		}
+		entry.setAnnotations(rawStatementService.getNormalAnnotations(entryName));
+		entry.setModifiedEntryAnnotations(rawStatementService.getModifiedEntryAnnotation(entryName));
+		model.addAttribute("entry", entry);
+
+		if(pub == null || !pub){ entry.setPublications(null);}
+		if(xp == null || !xp){ entry.setExperimentalContexts(null); }
+		if(xref == null || !xref){ entry.setXrefs(null); }
 
 		return "entry";
 	}

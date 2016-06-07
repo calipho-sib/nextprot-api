@@ -4,11 +4,23 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
 
-	<!-- Use alway copy on write and read -->
-
+	<!-- Use always copy on write and read -->
 
 	<diskStore path="cache" />
 	<!-- Configuring cache for master identifier service -->
+
+	<cache name="raw-statements" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true" >
+	</cache>
+	
+	<cache name="raw-statements-by-annot-hash" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true" >
+	</cache>
+	
 	<cache name="master-unique-names-chromossome"
 		maxEntriesLocalHeap="24" eternal="true" statistics="true"/>
 
