@@ -29,7 +29,7 @@ public class RawStatementDaoImpl implements RawStatementDao {
 	public List<RawStatement> findImpactRawStatements() {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("source", "bioeditor");
-		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements where annotation_category = 'impact-annotation'", params,
+		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements where annotation_category = 'impact'", params,
 				new BeanPropertyRowMapper(RawStatement.class));
 	}
 
@@ -46,7 +46,7 @@ public class RawStatementDaoImpl implements RawStatementDao {
 	public List<RawStatement> findNormalRawStatements() {
 			Map<String, Object> params = new HashMap<String, Object>();
 			//Add entry
-			return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements ms where annotation_category != 'impact-annotation'", params,
+			return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements ms where annotation_category != 'impact'", params,
 					new BeanPropertyRowMapper(RawStatement.class));
 	}
 

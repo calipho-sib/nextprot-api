@@ -18,5 +18,6 @@ public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 		List<ModifiedEntry> modifiedEntry = rawStatementService.getModifiedEntryAnnotation("NX_P38398");
 		System.out.println(modifiedEntry.size());
 	}
+	
 
 }
