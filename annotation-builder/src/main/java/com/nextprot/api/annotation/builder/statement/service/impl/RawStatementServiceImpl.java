@@ -67,7 +67,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 			if(statements.size() != 1){
 				System.err.println("ups getting " + statements.size() + " statements");
 			}
-			
+
 			RawStatement statement = statements.get(0);
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getAnnotation_category()));
 			annotation.setCategory(category);
@@ -104,8 +104,9 @@ public class RawStatementServiceImpl implements RawStatementService {
 		String variant = statement.getVariant_variation_amino_acid();
 		String description = statement.getAnnot_name();
 		
-		AnnotationVariant annotationVariant = new AnnotationVariant(original, variant, description);
+		AnnotationVariant annotationVariant = new AnnotationVariant(original, variant);
 		annotation.setVariant(annotationVariant);
+		annotation.setDescription(description);
 		annotation.setCategory(AnnotationCategory.VARIANT);
 		return annotation;
 	}

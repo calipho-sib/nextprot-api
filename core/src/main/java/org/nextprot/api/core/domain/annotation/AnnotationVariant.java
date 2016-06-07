@@ -34,6 +34,14 @@ public class AnnotationVariant implements Serializable {
 
 	private String originalAminoAcid;
 	private String variantAminoAcid;
+
+	
+	@Deprecated //TODO See with Fred AminoAcidCode which can be null, -, multiple ...
+	public AnnotationVariant(String original, String variant) {
+		this.original = original;
+		this.variant = variant;
+	}
+
 	
 	public AnnotationVariant(String original, String variant, String rawDescription) {
 		super();
