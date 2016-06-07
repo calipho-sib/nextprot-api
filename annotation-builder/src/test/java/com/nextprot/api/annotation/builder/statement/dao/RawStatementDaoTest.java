@@ -3,15 +3,11 @@ package com.nextprot.api.annotation.builder.statement.dao;
 import java.util.List;
 
 import org.junit.Test;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import com.nextprot.api.annotation.builder.AnnotationBuilderBaseTest;
 
-@ActiveProfiles({ "dev" })
-@Ignore
-public class RawStatementDaoTest extends CoreUnitBaseTest {
+public class RawStatementDaoTest extends AnnotationBuilderBaseTest {
 
 	@Autowired
 	private RawStatementDao rawStatementDao;

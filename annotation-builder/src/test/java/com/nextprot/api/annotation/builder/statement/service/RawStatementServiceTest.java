@@ -4,15 +4,11 @@ import java.util.List;
 
 import org.junit.Test;
 import org.nextprot.api.core.domain.ModifiedEntry;
-import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import com.nextprot.api.annotation.builder.AnnotationBuilderBaseTest;
 
-@ActiveProfiles({ "dev", "cache" })
-@Ignore
-public class RawStatementServiceTest extends CoreUnitBaseTest {
+public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 
 	@Autowired
 	private RawStatementService rawStatementService;
