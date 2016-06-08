@@ -20,6 +20,12 @@
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		statistics="true" >
 	</cache>
+
+	<cache name="normal-statements-by-entry-name" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true" >
+	</cache>
 	
 	<cache name="master-unique-names-chromossome"
 		maxEntriesLocalHeap="24" eternal="true" statistics="true"/>
