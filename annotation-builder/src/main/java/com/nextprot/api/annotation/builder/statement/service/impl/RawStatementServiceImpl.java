@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioNormalAnnotation;
@@ -21,6 +22,8 @@ import com.nextprot.api.annotation.builder.statement.service.RawStatementService
 
 @Service
 public class RawStatementServiceImpl implements RawStatementService {
+
+	private Logger logger = Logger.getLogger(RawStatementServiceImpl.class);
 
 	@Autowired
 	public RawStatementDao rawStatementDao;
@@ -39,17 +42,25 @@ public class RawStatementServiceImpl implements RawStatementService {
 			List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectKey);
 			IsoformAnnotation subjectVariant = buildVariantAnnotation(subjectVariantStatements);
 
-			// Impact annotations
-			List<IsoformAnnotation> impactAnnotations = buildAnnotationList(impactStatementsByModifiedEntry.get(subjectKey));
+			System.err.println("");
+			
+			if(subjectVariant == null){
+				logger.error("Did not found variants for hash: " + subjectKey);
+			}else {
+				
+				// Impact annotations
+				List<IsoformAnnotation> impactAnnotations = buildAnnotationList(impactStatementsByModifiedEntry.get(subjectKey));
 
-			ModifiedEntry me = new ModifiedEntry();
-			me.setSubjectComponents(Arrays.asList(subjectVariant)); // TODO
-																	// change
-																	// this when
-																	// multiple
-																	// variants
-			me.setAnnotations(impactAnnotations);
-			modifiedEntries.add(me);
+				ModifiedEntry me = new ModifiedEntry();
+				me.setSubjectComponents(Arrays.asList(subjectVariant)); // TODO
+																		// change
+																		// this when
+																		// multiple
+																		// variants
+				me.setAnnotations(impactAnnotations);
+				modifiedEntries.add(me);
+
+			}
 
 		});
 
@@ -97,6 +108,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 		if (subjectVariantStatements.size() != 1) {
 			System.err.println("ups getting " + subjectVariantStatements.size() + " variants");
+			return null;
 		}
 		RawStatement statement = subjectVariantStatements.get(0);
 
