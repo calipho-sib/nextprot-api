@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -32,7 +33,7 @@ public class Entry implements KeyValueRepresentation{
 	@Deprecated
 	private List<Annotation> annotations;
 
-	private Map<String, List<Annotation>> isoformAnnotations;
+	private Map<String, List<IsoformAnnotation>> isoformAnnotations;
 
 	private List<PeptideMapping> peptideMappings;
 	
@@ -264,11 +265,11 @@ public class Entry implements KeyValueRepresentation{
 		return sb.toString();
 	}
 
-	public Map<String, List<Annotation>> getIsoformAnnotations() {
+	public Map<String, List<IsoformAnnotation>> getIsoformAnnotations() {
 		return isoformAnnotations;
 	}
 
-	public void setIsoformAnnotations(Map<String, List<Annotation>> isoformAnnotations) {
+	public void setIsoformAnnotations(Map<String, List<IsoformAnnotation>> isoformAnnotations) {
 		this.isoformAnnotations = isoformAnnotations;
 	}
 }

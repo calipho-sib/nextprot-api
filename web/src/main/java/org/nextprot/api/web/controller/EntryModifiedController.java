@@ -36,6 +36,8 @@ public class EntryModifiedController {
 		annotationsByIsoforms.put(entryName + "-1", rawStatementService.getNormalAnnotations(entryName));
 		entry.setModifiedEntryAnnotations(rawStatementService.getModifiedEntryAnnotation(entryName));
 		
+		entry.setIsoformAnnotations(annotationsByIsoforms);
+		
 		model.addAttribute("entry", entry);
 
 		if(pub == null || !pub){ entry.setPublications(null);}
