@@ -15,9 +15,13 @@ public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 
 	@Test
 	public void findAllMappedStatements() {
-		List<ModifiedEntry> modifiedEntry = rawStatementService.getModifiedEntryAnnotation("NX_P38398");
+		List<ModifiedEntry> modifiedEntry = rawStatementService.getModifiedEntryAnnotation("NX_Q9BX63");
 		System.out.println(modifiedEntry.size());
 	}
-	
 
+	@Test
+	public void findAllNormalAnnotations() {
+		List isoformAnnotations = rawStatementService.getNormalAnnotations("NX_Q9BX63");
+		System.out.println(isoformAnnotations.size());
+	}
 }
