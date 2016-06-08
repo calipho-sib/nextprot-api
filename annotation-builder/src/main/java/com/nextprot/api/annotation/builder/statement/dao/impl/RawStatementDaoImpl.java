@@ -31,7 +31,7 @@ public class RawStatementDaoImpl implements RawStatementDao {
 		params.put("source", "bioeditor");
 		params.put("entry_accession", entryName);
 
-		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements where annotation_category = 'phenotype' and entry_acccession = :entry_accession", params,
+		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements where annotation_category = 'phenotype' and entry_accession = :entry_accession", params,
 				new BeanPropertyRowMapper(RawStatement.class));
 	}
 
@@ -50,7 +50,7 @@ public class RawStatementDaoImpl implements RawStatementDao {
 			params.put("entry_accession", entryName);
 
 			//Add entry
-			return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements ms where annotation_category != 'phenotype' and entry_acccession = :entry_accession", params,
+			return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements ms where annotation_category != 'phenotype' and entry_accession = :entry_accession", params,
 					new BeanPropertyRowMapper(RawStatement.class));
 	}
 
