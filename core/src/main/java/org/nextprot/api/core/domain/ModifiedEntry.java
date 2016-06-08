@@ -2,14 +2,14 @@ package org.nextprot.api.core.domain;
 
 import java.util.List;
 
-import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 
 public class ModifiedEntry { //Sous class de Entry.java ?
 
 	//public Entry parent; ?
 	public String subjectName;
-	public List<Annotation> subjectComponents; // For example subject components 
-	public List<Annotation> annotations;
+	public List<IsoformAnnotation> subjectComponents; // For example subject components 
+	public List<IsoformAnnotation> annotations;
 	
 	public String getSubjectName() {
 		return subjectName;
@@ -17,16 +17,16 @@ public class ModifiedEntry { //Sous class de Entry.java ?
 	public void setSubjectName(String subjectName) {
 		this.subjectName = subjectName;
 	}
-	public List<Annotation> getSubjectComponents() {
+	public List<IsoformAnnotation> getSubjectComponents() {
 		return subjectComponents;
 	}
-	public void setSubjectComponents(List<Annotation> subjectComponents) {
+	public void setSubjectComponents(List<IsoformAnnotation> subjectComponents) {
 		this.subjectComponents = subjectComponents;
 	}
-	public List<Annotation> getAnnotations() {
+	public List<IsoformAnnotation> getAnnotations() {
 		return annotations;
 	}
-	public void setAnnotations(List<Annotation> annotations) {
+	public void setAnnotations(List<IsoformAnnotation> annotations) {
 		this.annotations = annotations;
 	}
 

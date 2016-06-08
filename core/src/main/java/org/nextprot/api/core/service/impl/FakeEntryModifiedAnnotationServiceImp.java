@@ -9,10 +9,11 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.ModifiedEntry;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.api.core.service.EntryModifiedAnnotationService;
 import org.nextprot.api.core.utils.AnnotationUtils;
 import org.springframework.stereotype.Service;
-
+/*
 @Service
 public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnotationService {
 
@@ -61,7 +62,7 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 
 			AnnotationCategory category = getRandomCategory();
 			List<Annotation> categoryAnnotations = AnnotationUtils.filterAnnotationsByCategory(entry, category);
-			Annotation randomAnnotation = getRandomCategoryAnnotation(categoryAnnotations);
+			IsoformAnnotation randomAnnotation = getRandomCategoryAnnotation(categoryAnnotations);
 			a.setNormalAnnotationReferenceId(randomAnnotation.getAnnotationId());
 			ids.add(randomAnnotation.getAnnotationId());
 			me.annotations.add(a);
@@ -73,7 +74,7 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 	
 	
 
-	private Annotation getRandomCategoryAnnotation(List<Annotation> categoryAnnotations) {
+	private IsoformAnnotation getRandomCategoryAnnotation(List<IsoformAnnotation> categoryAnnotations) {
 		
 		Random random = new Random();
 		int index = random.nextInt(categoryAnnotations.size());
@@ -109,3 +110,4 @@ public class FakeEntryModifiedAnnotationServiceImp implements EntryModifiedAnnot
 	}
 
 }
+*/

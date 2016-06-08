@@ -44,9 +44,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 	private String qualityQualifier;
 
 	private long annotationId;
-	
-	/** Field used when an annotation refers to another annotation */
-	private long normalAnnotationReferenceId;
 
 	private AnnotationVariant variant;
 
@@ -64,8 +61,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 	
 	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsAsAnnotationsByEntry()
 
-	private String annotationHash;
-	
 	public String toString() {
 		return uniqueName + ": "  + 
 				"cvTermAccessionCode:" + cvTermAccessionCode +
@@ -379,25 +374,5 @@ public class Annotation implements Serializable, IsoformSpecific {
 		return booleanOptional;
 	}
 	
-	
-
-	public long getNormalAnnotationReferenceId() {
-		return normalAnnotationReferenceId;
-	}
-
-	public void setNormalAnnotationHash(String annotationHash) {
-		this.annotationHash = annotationHash;
-	}
-	public void setNormalAnnotationReferenceId(long normalAnnotationReferenceId) {
-		this.normalAnnotationReferenceId = normalAnnotationReferenceId;
-	}
-
-	public String getAnnotationHash() {
-		return annotationHash;
-	}
-
-	public void setAnnotationHash(String annotationHash) {
-		this.annotationHash = annotationHash;
-	}
 
 }

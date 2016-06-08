@@ -1,12 +1,14 @@
 package org.nextprot.api.core.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
 public class Entry implements KeyValueRepresentation{
@@ -27,7 +29,10 @@ public class Entry implements KeyValueRepresentation{
 
 	private List<Isoform> isoforms;
 
+	@Deprecated
 	private List<Annotation> annotations;
+
+	private Map<String, List<Annotation>> isoformAnnotations;
 
 	private List<PeptideMapping> peptideMappings;
 	
@@ -257,5 +262,13 @@ public class Entry implements KeyValueRepresentation{
 		sb.append("publications-count=" + ((this.publications != null) ? this.publications.size() : 0) + ";");
 		sb.append("xrefs-count=" + ((this.xrefs != null) ? this.xrefs.size() : 0) + ";");
 		return sb.toString();
+	}
+
+	public Map<String, List<Annotation>> getIsoformAnnotations() {
+		return isoformAnnotations;
+	}
+
+	public void setIsoformAnnotations(Map<String, List<Annotation>> isoformAnnotations) {
+		this.isoformAnnotations = isoformAnnotations;
 	}
 }
