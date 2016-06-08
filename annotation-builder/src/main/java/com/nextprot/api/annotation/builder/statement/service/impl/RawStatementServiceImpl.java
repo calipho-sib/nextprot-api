@@ -29,7 +29,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 	public List<ModifiedEntry> getModifiedEntryAnnotation(String entryName) {
 
 		List<ModifiedEntry> modifiedEntries = new ArrayList<ModifiedEntry>();
-		List<RawStatement> impactstatements = rawStatementDao.findImpactRawStatements();
+		List<RawStatement> impactstatements = rawStatementDao.findPhenotypeRawStatements();
 
 		Map<String, List<RawStatement>> impactStatementsByModifiedEntry = impactstatements.stream().collect(Collectors.groupingBy(RawStatement::getBiological_subject_annot_hash));
 

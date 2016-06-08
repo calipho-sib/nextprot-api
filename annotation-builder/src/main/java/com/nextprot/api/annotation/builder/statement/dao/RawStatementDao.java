@@ -8,7 +8,7 @@ public interface RawStatementDao {
 
 	List<RawStatement> findNormalRawStatements();
 
-	List<RawStatement> findImpactRawStatements();
+	List<RawStatement> findPhenotypeRawStatements();
 
 	List<RawStatement> findRawStatementsByAnnotHash(String annotHash);
 

@@ -14,7 +14,7 @@ public class RawStatementDaoTest extends AnnotationBuilderBaseTest {
 
 	@Test
 	public void findAllMappedStatements() {
-		List rows = rawStatementDao.findImpactRawStatements();
+		List rows = rawStatementDao.findPhenotypeRawStatements();
 		System.out.println(rows.size());
 	}
 
