@@ -6,9 +6,9 @@ import org.nextprot.commons.statements.RawStatement;
 
 public interface RawStatementDao {
 
-	List<RawStatement> findNormalRawStatements();
+	List<RawStatement> findNormalRawStatements(String entryName);
 
-	List<RawStatement> findPhenotypeRawStatements();
+	List<RawStatement> findPhenotypeRawStatements(String entryName);
 
 	List<RawStatement> findRawStatementsByAnnotHash(String annotHash);
 

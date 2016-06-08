@@ -26,10 +26,12 @@ public class RawStatementDaoImpl implements RawStatementDao {
 
 	@Override
 	@Cacheable("raw-statements")
-	public List<RawStatement> findPhenotypeRawStatements() {
+	public List<RawStatement> findPhenotypeRawStatements(String entryName) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("source", "bioeditor");
-		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements where annotation_category = 'phenotype'", params,
+		params.put("entry_accession", entryName);
+
+		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements where annotation_category = 'phenotype' and entry_acccession = :entry_accession", params,
 				new BeanPropertyRowMapper(RawStatement.class));
 	}
 
@@ -43,10 +45,12 @@ public class RawStatementDaoImpl implements RawStatementDao {
 	}
 
 	@Override
-	public List<RawStatement> findNormalRawStatements() {
+	public List<RawStatement> findNormalRawStatements(String entryName) {
 			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("entry_accession", entryName);
+
 			//Add entry
-			return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements ms where annotation_category != 'phenotype'", params,
+			return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query("select * from mapped_statements ms where annotation_category != 'phenotype' and entry_acccession = :entry_accession", params,
 					new BeanPropertyRowMapper(RawStatement.class));
 	}
 
