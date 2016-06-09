@@ -413,6 +413,10 @@ public class AnnotationEvidence implements Serializable {
 		return extractProperty("integrationLevel");
 	}
 
+	public String getAntibodies() {
+		return extractProperty("antibodies acc");
+	}
+
 	public String getAssignmentMethod() {
 		return assignmentMethod;
 	}
