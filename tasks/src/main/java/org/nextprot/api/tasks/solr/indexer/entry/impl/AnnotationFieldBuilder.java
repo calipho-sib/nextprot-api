@@ -34,30 +34,27 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 		for (Annotation currannot : annots) {
 
 			String category = currannot.getCategory();
+			String quality = currannot.getQualityQualifier();
+			
 			if (category.equals("function")){
 				addField(Fields.FUNCTION_DESC, currannot.getDescription());
 			}
 
 			// We also should exclude uninformative category 'sequence conflict'
-			if(!category.equals("tissue specificity") && !category.contains("kinetic")) {//These values are indexed under other fields
+			if(!category.equals("tissue specificity")) {//These values are indexed under other fields
 				String desc = currannot.getDescription();
 				//if (desc != null) 	addField(Fields.ANNOTATIONS, currannot.getCategory() + ": " + desc); glycosylation site
 				if(category.equals("glycosylation site")) {
 					String xref = currannot.getSynonym();
 					if(xref != null)
-						// It is actually not a synonyme but the carbohydrate id from glycosuitedb !
+						// It is actually not a synonym but the carbohydrate id from glycosuitedb !
 						addField(Fields.ANNOTATIONS, xref);
 				}
-				/*if(category.contains("BinaryInteraction")) {
-					   Collection<AnnotationProperty> props = currannot.getProperties();
-					   for(AnnotationProperty prop : props)
-					  System.err.println(prop.getName() + "=" + prop.getValue());
-				}*/
+
 				if(category.equals("DNA-binding region")) addField(Fields.ANNOTATIONS, category);
 				if (desc != null) {	//System.err.println(category + ": " + desc);
 					if (category.equals("sequence caution")) {
 						int stringpos=0;
-						//System.err.println("raw: " + desc);
 						desc = desc.split(":")[1].substring(1); // The sequence AAH70170 differs from that shown. Reason: miscellaneous discrepancy
 						String[] desclevels = desc.split("\\.");
 						String mainreason = desclevels[0];
@@ -68,7 +65,6 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						//System.err.println("mainreason: " + mainreason);
 						addField(Fields.ANNOTATIONS, mainreason); 
 						
-						//if((stringpos=desc.indexOf(" at position")) != -1) {desc=desc.substring(0,stringpos);/*System.err.println( "desc: " + desc);*/}
 						if(desclevels.length > 1) {
 							if(stringpos > 0) // mainreason truncated
 								desc = desc.substring(desc.indexOf(".") + 2);
@@ -79,22 +75,32 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 							//System.err.println("newdesc " + desc);
 							addField(Fields.ANNOTATIONS, desc);
 							}
-						/*if(desc.startsWith("miscellaneous")) addField(Fields.ANNOTATIONS, "miscellaneous discrepancy");
-						else if(desc.startsWith("frameshift")) addField(Fields.ANNOTATIONS, "frameshift");
-						if((stringpos=desc.indexOf("Translation")) != -1) desc=desc.substring(stringpos);
-						else if((stringpos=desc.indexOf(". ")) != -1) desc=desc.substring(stringpos+2); */
 					}
 					//System.err.println(category);
 					if((category.equals("sequence variant") || category.equals("mutagenesis site")) && desc.startsWith("Missing"))
 						// Remove variation descriptor (Missing)
 						desc = desc.substring(8); // don't index variant status
-					if(!category.startsWith("go") && desc.length() > 1)
-						addField(Fields.ANNOTATIONS, desc); // go will be indexed via cvac, not description
+					if(!category.startsWith("go") && desc.length() > 1) {
+						if(!this.isGold() || quality.equals("GOLD"))
+						   addField(Fields.ANNOTATIONS, desc); // go will be indexed via cvac, not description
+					    }
 					// in pathway and disease new annotations may appear due to transformation of specific xrefs (orphanet...) into annotations in the api
 				}
+				//if(category.contains("info")) System.err.println(category + ": " + currannot.getQualityQualifier());
 				String cvac = currannot.getCvTermAccessionCode();
 				//System.err.println(currannot.getCategory());
-				if (cvac != null) { 
+				if (cvac != null) {
+					if(cvac.startsWith("GO:")) {
+						boolean allnegative = true;
+					  // We don't index negative annotations
+					  for(AnnotationEvidence ev : currannot.getEvidences())
+						allnegative = allnegative & ev.isNegativeEvidence();
+					  if(allnegative == true) {
+					  	System.err.println(cvac + ": skipped (all evidences are negative)");
+						continue;
+					  }
+					}
+					if(!this.isGold() || quality.equals("GOLD")) {
 					addField(Fields.ANNOTATIONS, cvac);
 					addField(Fields.ANNOTATIONS,  currannot.getCvTermName());
 					List<String> synonyms = this.terminologyservice.findCvTermByAccession(cvac).getSynonyms();
@@ -111,18 +117,18 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						String allancestors="";
 						for (String ancestor : ancestors) {
 						if(!allancestors.isEmpty()) allancestors += " | ";
+						allancestors += ancestor + " | "; // adding Ac
 						String ancestorname = this.terminologyservice.findCvTermByAccession(ancestor).getName();
 						allancestors += ancestorname;
-						//System.err.println("allancestors: " + allancestors);
 				        }
-					//System.err.println("allancestors len: " + allancestors.length());	
+					//if(allancestors.length() > 0) System.err.println(allancestors);	
 					if(allancestors.endsWith(" domain"))	allancestors="domain"; // don't index generic top level ancestors
 					else if(allancestors.endsWith("zinc finger region"))	allancestors="zinc finger region"; // don't index generic top level ancestors
 					else if(allancestors.endsWith("repeat"))	allancestors="repeat"; // don't index generic top level ancestors
 					if(allancestors.length() > 1) //System.err.println("adding: " + allancestors);
 						addField(Fields.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allancestors));
 				}
-				//if (category.equals("disease")) {System.err.println("Disease: " + desc);}
+				}
 				if (category.equals("mature protein") || category.equals("maturation peptide")) {
 					String chainid = currannot.getSynonym();
 					if(chainid != null) {
