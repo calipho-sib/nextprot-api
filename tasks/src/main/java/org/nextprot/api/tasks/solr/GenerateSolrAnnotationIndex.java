@@ -32,6 +32,7 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		EntrySolrIndexer indexer = new EntrySolrIndexer(solrServer);
 		// Get an access to some needed services
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
+		indexer.setEntryBuilderService(getBean(EntryBuilderService.class));
 		indexer.setDbxrefservice(getBean(DbXrefService.class));
 		
 		// Remove previous indexes
@@ -46,16 +47,17 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		allentryids = MasterEntryService.findUniqueNames();
 		System.err.println("indexing " + allentryids.size() +  " entries...");
 		logger.info("indexing " + allentryids.size() +  " entries...");
+
 		for (String id : allentryids) {
-			System.err.println("id: " + id);
 			//Entry currentry = entryBuilderService.buildWithEverything("NX_O60729");
-			//Entry currentry = entryBuilderService.buildWithEverything("NX_Q3LXA3");
+			ecnt++;
+			//if(ecnt < 5000) continue;
+			//System.err.println("id: " + id);
 			Entry currentry = entryBuilderService.buildWithEverything(id);
 			indexer.add(currentry);
-			ecnt++;
 			if((ecnt % 100) == 0) System.err.println(ecnt + "...");
-			if(ecnt >= 3) break;
-			//if(ecnt >= 1000) break;
+			//if(ecnt >= 1 ) break;
+			//if(ecnt >= 5000) break;
 		}
 		
 		indexer.addRemaing();
