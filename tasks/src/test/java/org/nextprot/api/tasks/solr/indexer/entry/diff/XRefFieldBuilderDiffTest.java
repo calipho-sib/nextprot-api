@@ -4,9 +4,12 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.XrefFieldBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,15 +17,17 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class XRefFieldBuilderDiffTest extends SolrDiffTest {
-
+	
+	@Autowired EntryBuilderService entryBuilderService;
+	
 	// TODO: @Ignore should be removed and this test fixed
 	//@Ignore
 	@Test
 	public void testXrefs() {
-		String[] test_list = {"NX_O00116", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_O00115","NX_Q7Z6P3",
-				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
+		String[] test_list = {"NX_Q8N7I0", "NX_O00115","NX_O00116","NX_E5RQL4","NX_P32418","NX_Q7Z6P3",
+				"NX_Q7Z713", "NX_P22102", "NX_P10415", "NX_Q6PI97", "NX_Q8NDZ0", "NX_O15056"};
 
-		for(int i=0; i < 12; i++){ testXrefs(getEntry(test_list[i])); } 
+		for(int i=0; i < test_list.length; i++){ testXrefs(getEntry(test_list[i])); } 
 		// for(int i=1000; i < 2000; i++){	testXrefs(getEntry(i));	} // 'random' entries
 
 		//Entry entry = getEntry("NX_O00422"); 
@@ -39,6 +44,7 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		
 		System.out.println("Testing: " + entryName);
 		XrefFieldBuilder xfb = new XrefFieldBuilder();
+		xfb.setEntryBuilderService(entryBuilderService);
 		xfb.initializeBuilder(entry);
 		
 		List<String> expectedABs = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ANTIBODY);
