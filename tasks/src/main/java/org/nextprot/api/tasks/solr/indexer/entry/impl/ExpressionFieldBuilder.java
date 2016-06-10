@@ -31,13 +31,15 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 				for(AnnotationEvidence ev : currannot.getEvidences()) if(!ev.isNegativeEvidence()) {allnegative = false; break;}
 				if(!allnegative) {
 				// No duplicates this is a Set
-				cv_tissues.add(currannot.getCvTermAccessionCode());
-				cv_tissues.add(currannot.getCvTermName());
+				if(!this.isGold() || currannot.getQualityQualifier().equals("GOLD")) {
+					cv_tissues.add(currannot.getCvTermAccessionCode());
+					cv_tissues.add(currannot.getCvTermName());
+					}
 				} //else System.err.println("No expression: " + currannot.getCvTermAccessionCode());
 			}
 		}
 
-		// Expression
+		// Expression (without stages and expression_levels)
 		SortedSet <String> cv_tissues_final = new TreeSet<String>();
 		for (String cv : cv_tissues) {
 			//cv_tissues_final.add(cv); // No duplicate: this is a Set
