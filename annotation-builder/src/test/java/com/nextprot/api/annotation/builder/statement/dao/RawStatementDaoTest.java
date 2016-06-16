@@ -1,9 +1,11 @@
 package com.nextprot.api.annotation.builder.statement.dao;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
+import org.nextprot.commons.statements.RawStatement;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nextprot.api.annotation.builder.AnnotationBuilderBaseTest;
@@ -22,8 +24,10 @@ public class RawStatementDaoTest extends AnnotationBuilderBaseTest {
 
 	@Test
 	public void findAllNormalStatements() {
-		List rows = rawStatementDao.findNormalRawStatements("NX_Q9BX63");
-		System.out.println(rows.size());
+		AtomicInteger i = new AtomicInteger(0);
+		List<RawStatement> statements = rawStatementDao.findNormalRawStatements("NX_Q9BX63");
+		statements.stream().forEach(s -> System.out.println(i.getAndIncrement() + " - " + s.getAnnot_hash()));
+		List<RawStatement> statement = statements.stream().filter(s -> s.getAnnot_hash().equals("c075d4a6b44e95faec7d8b109166744b")).collect(Collectors.toList());
 	}
 
 

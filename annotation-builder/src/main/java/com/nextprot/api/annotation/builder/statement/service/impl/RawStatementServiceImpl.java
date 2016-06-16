@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.BioNormalAnnotation;
+import org.nextprot.api.core.domain.BioGenericObject;
 import org.nextprot.api.core.domain.ModifiedEntry;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
@@ -68,15 +68,19 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 	}
 
-	private static List<IsoformAnnotation> buildAnnotationList(List<RawStatement> impactStatements) {
+	private static List<IsoformAnnotation> buildAnnotationList(List<RawStatement> flatStatements) {
 
 		List<IsoformAnnotation> annotations = new ArrayList<>();
-		Map<String, List<RawStatement>> impactStatementsByAnnotationHash = impactStatements.stream().collect(Collectors.groupingBy(RawStatement::getAnnot_hash));
+		Map<String, List<RawStatement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(RawStatement::getAnnot_hash));
 
-		impactStatementsByAnnotationHash.keySet().forEach(annotationHash -> {
+		flatStatementsByAnnotationHash.keySet().forEach(annotationHash -> {
+			
+			if(annotationHash.equals("c075d4a6b44e95faec7d8b109166744b")){
+				System.err.println("I am here");
+			}
 
 			IsoformAnnotation isoAnnotation = new IsoformAnnotation();
-			List<RawStatement> statements = impactStatementsByAnnotationHash.get(annotationHash);
+			List<RawStatement> statements = flatStatementsByAnnotationHash.get(annotationHash);
 			if (statements.size() != 1) {
 				System.err.println("ups getting " + statements.size() + " statements");
 			}
@@ -92,9 +96,20 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 			isoAnnotation.setAnnotationHash(statement.getAnnot_hash());
 			if ((statement.getBiological_object_annot_hash() != null) && (statement.getBiological_object_annot_hash().length() > 0)) {
-				BioNormalAnnotation normalAnnotationBioObjectRef = new BioNormalAnnotation();
-				normalAnnotationBioObjectRef.setAnnotationHash(statement.getBiological_object_annot_hash());
-				isoAnnotation.setBioObject(normalAnnotationBioObjectRef);
+				if(category.equals(AnnotationCategory.PHENOTYPE)){
+
+					BioGenericObject bioObject = new BioGenericObject();
+					bioObject.setAnnotationHash(statement.getBiological_object_annot_hash());
+					isoAnnotation.setBioObject(bioObject);
+					
+				}else if (category.equals(AnnotationCategory.BINARY_INTERACTION)){
+
+					BioGenericObject bioObject = new BioGenericObject();
+					bioObject.setAccession(statement.getBiological_object_accession());
+					bioObject.setType(statement.getBiological_object_type());
+					isoAnnotation.setBioObject(bioObject);
+
+				}
 			}
 
 			annotations.add(isoAnnotation);
