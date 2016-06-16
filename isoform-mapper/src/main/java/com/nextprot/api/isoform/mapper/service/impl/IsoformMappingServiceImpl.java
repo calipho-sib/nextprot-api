@@ -1,13 +1,14 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
-import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.IsoformFeatureMapping;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.api.commons.bio.mutation.AbstractProteinMutationFormat;
 import org.nextprot.api.commons.bio.mutation.ProteinMutation;
 import org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,19 +21,30 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     @Autowired
     public OverviewService overviewService;
 
+    @Autowired
+    public MasterIsoformMappingService masterIsoformMappingService;
+
     @Override
     public IsoformFeatureMapping validateFeature(String featureName, AnnotationCategory annotationCategory, String nextprotAccession, boolean propagate) {
 
-        // only variant by now (TODO: ptm to implement)
-        Preconditions.checkArgument(annotationCategory == AnnotationCategory.VARIANT);
+        if (annotationCategory == AnnotationCategory.VARIANT)
+            return validateVariant(featureName, nextprotAccession, propagate);
+        else if (annotationCategory == AnnotationCategory.PTM_INFO)
+            throw new IllegalStateException("ptm validation not yet implemented");
+        else
+            throw new IllegalArgumentException("cannot handle annotation category "+annotationCategory);
+    }
+
+    public IsoformFeatureMapping validateVariant(String featureName, String nextprotAccession, boolean propagate) {
 
         IsoformFeatureMapping mapping = new IsoformFeatureMapping();
 
         try {
-            GeneNameAndProteinMutation mutation = GeneNameAndProteinMutation.parseHGV(featureName);
+            ProteinMutationBuilder builder = new ProteinMutationBuilder(featureName, nextprotAccession, overviewService);
+            ProteinMutation mutation = builder.getProteinMutation();
 
             //1) Validate
-            if (validate(nextprotAccession, mutation)) {
+            if (validateIsoformPosition(mutation)) {
 
                 //2) propagate if flag = true returns a map with N isoforms
                 if (propagate) {
@@ -55,14 +67,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         return mapping;
     }
 
-    private boolean validate(String nextprotAccession, GeneNameAndProteinMutation mutation) {
-
-        // 1. get overview of entry, check gene name is as expected
-        Overview overview = overviewService.findOverviewByEntry(nextprotAccession);
-
-        // TODO: check if genename contained in gene name list instead
-        if (!overview.getMainGeneName().equals(mutation.getGeneName()))
-            return false;
+    private boolean validateIsoformPosition(ProteinMutation mutation) {
 
         // 2. check AA exists in isoform at specified position
 
@@ -77,31 +82,33 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
     }
 
-    static class GeneNameAndProteinMutation {
+    private static class ProteinMutationBuilder {
 
         private final String geneName;
         private final ProteinMutation proteinMutation;
-        private final static ProteinMutationHGVFormat PROTEIN_MUTATION_HGV_FORMAT = new ProteinMutationHGVFormat();
+        private final ProteinMutationHGVFormat PROTEIN_MUTATION_HGV_FORMAT = new ProteinMutationHGVFormat();
 
-        GeneNameAndProteinMutation(String geneName, ProteinMutation proteinMutation) {
-            this.geneName = geneName;
-            this.proteinMutation = proteinMutation;
-        }
-
-        static GeneNameAndProteinMutation parseHGV(String mutation) throws ParseException {
+        ProteinMutationBuilder(String mutation, String nextprotAccession, OverviewService overviewService) throws ParseException {
 
             String[] geneNameAndHGV = mutation.split("-");
 
-            String geneName = geneNameAndHGV[0];
-            String hgvProtein = geneNameAndHGV[1];
+            if (!validateGeneName(nextprotAccession, geneNameAndHGV[0], overviewService)) {
+                throw new NextProtException(nextprotAccession + " does not comes from gene " + geneNameAndHGV[0]);
+            }
 
-            ProteinMutation proteinMutation = PROTEIN_MUTATION_HGV_FORMAT.parse(hgvProtein, AbstractProteinMutationFormat.ParsingMode.PERMISSIVE);
-
-            return new GeneNameAndProteinMutation(geneName, proteinMutation);
+            proteinMutation = PROTEIN_MUTATION_HGV_FORMAT.parse(geneNameAndHGV[1], AbstractProteinMutationFormat.ParsingMode.PERMISSIVE);
+            geneName = geneNameAndHGV[0];
         }
 
-        public String getGeneName() {
-            return geneName;
+        private boolean validateGeneName(String nextprotAccession, String geneName, OverviewService overviewService) {
+
+            // 1. get overview of entry, check gene name is as expected
+            Overview overview = overviewService.findOverviewByEntry(nextprotAccession);
+
+            // TODO: check if genename contained in gene name list instead
+            if (!overview.getMainGeneName().equals(geneName))
+                return false;
+            return true;
         }
 
         public ProteinMutation getProteinMutation() {

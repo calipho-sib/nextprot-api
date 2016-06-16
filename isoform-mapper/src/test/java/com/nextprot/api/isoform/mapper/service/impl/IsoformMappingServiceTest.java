@@ -4,31 +4,18 @@ import com.nextprot.api.isoform.mapper.domain.IsoformFeatureMapping;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.mutation.ProteinMutation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
     @Autowired
+    public OverviewService overviewService;
+
+    @Autowired
     private IsoformMappingService service;
-
-    @Test
-    public void shouldParseGeneNameAndHGV() throws Exception {
-
-        IsoformMappingServiceImpl.GeneNameAndProteinMutation group =
-                IsoformMappingServiceImpl.GeneNameAndProteinMutation.parseHGV("SCN11A-p.Leu1158Pro");
-
-        Assert.assertEquals("SCN11A", group.getGeneName());
-
-        ProteinMutation mutation = group.getProteinMutation();
-        Assert.assertEquals(AminoAcidCode.Leucine, mutation.getFirstAffectedAminoAcidCode());
-        Assert.assertEquals(AminoAcidCode.Leucine, mutation.getLastAffectedAminoAcidCode());
-        Assert.assertEquals(1158, mutation.getFirstAffectedAminoAcidPos());
-        Assert.assertEquals(1158, mutation.getLastAffectedAminoAcidPos());
-    }
 
     // http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=4408659
     @Test
