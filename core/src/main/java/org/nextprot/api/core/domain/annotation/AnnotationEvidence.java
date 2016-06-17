@@ -413,6 +413,11 @@ public class AnnotationEvidence implements Serializable {
 		return extractProperty("integrationLevel");
 	}
 
+	
+	public String getIntensity() {
+		return extractProperty("intensity");
+	}
+	
 	public String getAssignmentMethod() {
 		return assignmentMethod;
 	}

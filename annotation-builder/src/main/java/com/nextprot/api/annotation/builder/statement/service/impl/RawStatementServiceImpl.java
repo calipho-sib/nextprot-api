@@ -11,6 +11,8 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioGenericObject;
 import org.nextprot.api.core.domain.ModifiedEntry;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.RawStatement;
@@ -43,18 +45,19 @@ public class RawStatementServiceImpl implements RawStatementService {
 			IsoformAnnotation subjectVariant = buildVariantAnnotation(subjectVariantStatements);
 
 			System.err.println("");
-			
-			if(subjectVariant == null){
+
+			if (subjectVariant == null) {
 				logger.error("Did not found variants for hash: " + subjectKey);
-			}else {
-				
+			} else {
+
 				// Impact annotations
 				List<IsoformAnnotation> impactAnnotations = buildAnnotationList(impactStatementsByModifiedEntry.get(subjectKey));
 
 				ModifiedEntry me = new ModifiedEntry();
 				me.setSubjectComponents(Arrays.asList(subjectVariant)); // TODO
 																		// change
-																		// this when
+																		// this
+																		// when
 																		// multiple
 																		// variants
 				me.setAnnotations(impactAnnotations);
@@ -68,41 +71,53 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 	}
 
+	private static List<AnnotationEvidence> buildAnnotationEvidences(List<RawStatement> rawStatements) {
+		return rawStatements.stream().map(s -> {
+			AnnotationEvidence evidence = new AnnotationEvidence();
+			evidence.setResourceAssociationType("evidence");
+			if(s.getExp_context_property_intensity() != null){
+				AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
+				prop.setPropertyName("intensity");
+				prop.setPropertyValue(s.getExp_context_property_intensity());
+				evidence.setProperties(Arrays.asList(prop));
+			}
+			return evidence;
+		}).collect(Collectors.toList());
+		
+	}
+
 	private static List<IsoformAnnotation> buildAnnotationList(List<RawStatement> flatStatements) {
 
 		List<IsoformAnnotation> annotations = new ArrayList<>();
 		Map<String, List<RawStatement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(RawStatement::getAnnot_hash));
 
 		flatStatementsByAnnotationHash.keySet().forEach(annotationHash -> {
-			
-			if(annotationHash.equals("c075d4a6b44e95faec7d8b109166744b")){
-				System.err.println("I am here");
-			}
 
 			IsoformAnnotation isoAnnotation = new IsoformAnnotation();
 			List<RawStatement> statements = flatStatementsByAnnotationHash.get(annotationHash);
-			if (statements.size() != 1) {
-				System.err.println("ups getting " + statements.size() + " statements");
-			}
 
 			RawStatement statement = statements.get(0);
+			
+			isoAnnotation.setEvidences(buildAnnotationEvidences(statements));
+
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getAnnotation_category()));
 			isoAnnotation.setCategory(category);
 
 			isoAnnotation.setCvTermName(statement.getAnnot_cv_term_name());
+			isoAnnotation.setDescription(statement.getAnnot_description());
 			isoAnnotation.setCvTermAccessionCode(statement.getAnnot_cv_term_accession());
 			// TODO this should be called terminology I guess! not setCVApiName
 			isoAnnotation.setCvApiName(statement.getAnnot_cv_term_terminology());
 
 			isoAnnotation.setAnnotationHash(statement.getAnnot_hash());
 			if ((statement.getBiological_object_annot_hash() != null) && (statement.getBiological_object_annot_hash().length() > 0)) {
-				if(category.equals(AnnotationCategory.PHENOTYPE)){
+				if (category.equals(AnnotationCategory.PHENOTYPE)) {
 
 					BioGenericObject bioObject = new BioGenericObject();
 					bioObject.setAnnotationHash(statement.getBiological_object_annot_hash());
 					isoAnnotation.setBioObject(bioObject);
-					
-				}else if (category.equals(AnnotationCategory.BINARY_INTERACTION)){
+
+				} else if (category.equals(AnnotationCategory.BINARY_INTERACTION)) {
 
 					BioGenericObject bioObject = new BioGenericObject();
 					bioObject.setAccession(statement.getBiological_object_accession());
@@ -135,7 +150,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 			isoAnnotation.setLocationCanonicalBegin(positionBeginCanononical);
 		} catch (Exception e) {
 		}
-		
+
 		try {
 			Integer positionEndCanononical = Integer.valueOf(statement.getAnnot_loc_end_canonical_ref());
 			isoAnnotation.setLocationCanonicalBegin(positionEndCanononical);
