@@ -1,11 +1,15 @@
 package org.nextprot.api.core.domain.annotation;
 
+import java.util.List;
 import java.util.Map;
 
 public class IsoformAnnotation extends Annotation{
 	
 	private static final long serialVersionUID = -4313083647205665053L;
 
+	private String subjectName;
+	private List<String> subjectComponents;
+	
 	private Integer locationCanonicalBegin;
 	private Integer locationGenomicBegin;
 
@@ -81,6 +85,22 @@ public class IsoformAnnotation extends Annotation{
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}
+
+	public String getSubjectName() {
+		return subjectName;
+	}
+
+	public void setSubjectName(String subjectName) {
+		this.subjectName = subjectName;
+	}
+
+	public List<String> getSubjectComponents() {
+		return subjectComponents;
+	}
+
+	public void setSubjectComponents(List<String> subjectComponents) {
+		this.subjectComponents = subjectComponents;
 	}
 
 }

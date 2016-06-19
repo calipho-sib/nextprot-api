@@ -3,10 +3,10 @@ package org.nextprot.api.core.service;
 import java.util.List;
 
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.ModifiedEntry;
+import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 
 public interface EntryModifiedAnnotationService {
 
-	List<ModifiedEntry> findAnnotationsForModifiedEntry(Entry entry);
+	List<IsoformAnnotation> findAnnotationsForModifiedEntry(Entry entry);
 
 }

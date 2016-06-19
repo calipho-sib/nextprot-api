@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioGenericObject;
-import org.nextprot.api.core.domain.ModifiedEntry;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
@@ -26,49 +25,39 @@ import com.nextprot.api.annotation.builder.statement.service.RawStatementService
 @Service
 public class RawStatementServiceImpl implements RawStatementService {
 
-	private Logger logger = Logger.getLogger(RawStatementServiceImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(RawStatementServiceImpl.class);
 
 	@Autowired
 	public RawStatementDao rawStatementDao;
 
 	@Cacheable("modified-entry-annotations")
-	public List<ModifiedEntry> getModifiedEntryAnnotation(String entryName) {
+	@Override
+	public List<IsoformAnnotation> getModifiedIsoformAnnotationsByIsoform(String entryName) {
 
-		List<ModifiedEntry> modifiedEntries = new ArrayList<ModifiedEntry>();
-		List<RawStatement> impactstatements = rawStatementDao.findPhenotypeRawStatements(entryName);
+		List<IsoformAnnotation> annotations = new ArrayList<>();
 
-		Map<String, List<RawStatement>> impactStatementsByModifiedEntry = impactstatements.stream().collect(Collectors.groupingBy(RawStatement::getBiological_subject_annot_hash));
+		List<RawStatement> phenotypeStatements = rawStatementDao.findPhenotypeRawStatements(entryName);
 
-		impactStatementsByModifiedEntry.keySet().forEach(subjectKey -> {
+		Map<String, List<RawStatement>> impactStatementsBySubject = phenotypeStatements.stream().collect(Collectors.groupingBy(RawStatement::getBiological_subject_annot_hash));
 
-			// Subject (VD) , variant
-			List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectKey);
+		impactStatementsBySubject.keySet().forEach(subjectAnnotationHash -> {
+
+			List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectAnnotationHash);
 			IsoformAnnotation subjectVariant = buildVariantAnnotation(subjectVariantStatements);
 
-			System.err.println("");
+			// Impact annotations
+			List<RawStatement> impactStatements = impactStatementsBySubject.get(subjectAnnotationHash);
+			List<IsoformAnnotation> impactAnnotations = buildAnnotationList(impactStatements);
+			impactAnnotations.stream().forEach(ia -> {
+				ia.setSubjectName(entryName + "-1 " + subjectVariant.getAnnotationUniqueName());
+				ia.setSubjectComponents(Arrays.asList(subjectAnnotationHash));
+			});
 
-			if (subjectVariant == null) {
-				logger.error("Did not found variants for hash: " + subjectKey);
-			} else {
-
-				// Impact annotations
-				List<IsoformAnnotation> impactAnnotations = buildAnnotationList(impactStatementsByModifiedEntry.get(subjectKey));
-
-				ModifiedEntry me = new ModifiedEntry();
-				me.setSubjectComponents(Arrays.asList(subjectVariant)); // TODO
-																		// change
-																		// this
-																		// when
-																		// multiple
-																		// variants
-				me.setAnnotations(impactAnnotations);
-				modifiedEntries.add(me);
-
-			}
+			annotations.addAll(impactAnnotations);
 
 		});
 
-		return modifiedEntries;
+		return annotations;
 
 	}
 
@@ -76,7 +65,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 		return rawStatements.stream().map(s -> {
 			AnnotationEvidence evidence = new AnnotationEvidence();
 			evidence.setResourceAssociationType("evidence");
-			if(s.getExp_context_property_intensity() != null){
+			if (s.getExp_context_property_intensity() != null) {
 				AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
 				prop.setPropertyName("intensity");
 				prop.setPropertyValue(s.getExp_context_property_intensity());
@@ -84,7 +73,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 			}
 			return evidence;
 		}).collect(Collectors.toList());
-		
+
 	}
 
 	private static List<IsoformAnnotation> buildAnnotationList(List<RawStatement> flatStatements) {
@@ -98,7 +87,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 			List<RawStatement> statements = flatStatementsByAnnotationHash.get(annotationHash);
 
 			RawStatement statement = statements.get(0);
-			
+
 			isoAnnotation.setEvidences(buildAnnotationEvidences(statements));
 
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getAnnotation_category()));
@@ -111,14 +100,20 @@ public class RawStatementServiceImpl implements RawStatementService {
 			isoAnnotation.setCvApiName(statement.getAnnot_cv_term_terminology());
 
 			isoAnnotation.setAnnotationHash(statement.getAnnot_hash());
-			if ((statement.getBiological_object_annot_hash() != null) && (statement.getBiological_object_annot_hash().length() > 0) ||
-				(statement.getBiological_object_accession() != null && (statement.getBiological_object_accession().length() > 0))) {
+			if ((statement.getBiological_object_annot_hash() != null) && (statement.getBiological_object_annot_hash().length() > 0)
+					|| (statement.getBiological_object_accession() != null && (statement.getBiological_object_accession().length() > 0))) {
 
-					BioGenericObject bioObject = new BioGenericObject();
-					bioObject.setAccession(statement.getBiological_object_accession()); // In case of interactions
-					bioObject.setType(statement.getBiological_object_type());
-					bioObject.setAnnotationHash(statement.getBiological_object_annot_hash()); // In case of phenotypes
-					isoAnnotation.setBioObject(bioObject);
+				BioGenericObject bioObject = new BioGenericObject();
+				bioObject.setAccession(statement.getBiological_object_accession()); // In
+																					// case
+																					// of
+																					// interactions
+				bioObject.setType(statement.getBiological_object_type());
+				bioObject.setAnnotationHash(statement.getBiological_object_annot_hash()); // In
+																							// case
+																							// of
+																							// phenotypes
+				isoAnnotation.setBioObject(bioObject);
 
 			}
 
@@ -144,12 +139,14 @@ public class RawStatementServiceImpl implements RawStatementService {
 			Integer positionBeginCanononical = Integer.valueOf(statement.getAnnot_loc_begin_canonical_ref());
 			isoAnnotation.setLocationCanonicalBegin(positionBeginCanononical);
 		} catch (Exception e) {
+			LOGGER.warn("Did not convert begin position " + statement.getAnnot_loc_begin_canonical_ref());
 		}
 
 		try {
 			Integer positionEndCanononical = Integer.valueOf(statement.getAnnot_loc_end_canonical_ref());
-			isoAnnotation.setLocationCanonicalBegin(positionEndCanononical);
+			isoAnnotation.setLocationCanonicalEnd(positionEndCanononical);
 		} catch (Exception e) {
+			LOGGER.warn("Did not convert end position " + statement.getAnnot_loc_begin_canonical_ref());
 		}
 
 		String description = statement.getAnnot_name();
@@ -157,14 +154,17 @@ public class RawStatementServiceImpl implements RawStatementService {
 		AnnotationVariant annotationVariant = new AnnotationVariant(original, variant);
 		isoAnnotation.setVariant(annotationVariant);
 		isoAnnotation.setDescription(description);
+		isoAnnotation.setAnnotationUniqueName(original + " -> " + variant);
 		isoAnnotation.setCategory(AnnotationCategory.VARIANT);
 		return isoAnnotation;
 	}
 
 	@Override
 	public List<IsoformAnnotation> getNormalAnnotations(String entryName) {
-		List<RawStatement> normalStatement = rawStatementDao.findNormalRawStatements(entryName);
-		return buildAnnotationList(normalStatement);
+		List<RawStatement> normalStatements = rawStatementDao.findNormalRawStatements(entryName);
+		List<IsoformAnnotation> normalAnnotations = buildAnnotationList(normalStatements);
+		normalAnnotations.stream().forEach(a -> a.setSubjectName(entryName + "-1"));
+		return normalAnnotations;
 	}
 
 }

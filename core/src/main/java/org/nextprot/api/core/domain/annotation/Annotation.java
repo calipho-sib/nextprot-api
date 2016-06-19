@@ -2,6 +2,7 @@ package org.nextprot.api.core.domain.annotation;
 
 import com.google.common.base.Optional;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
@@ -151,6 +152,11 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	public String getCategory() {
 		return category;
+	}
+	
+
+	public String getCategoryName() {
+		return getApiTypeName();
 	}
 
 	// Called from Velocity templates
@@ -372,6 +378,10 @@ public class Annotation implements Serializable, IsoformSpecific {
 		}
 
 		return booleanOptional;
+	}
+	
+	public String getKebabCategoryName() {
+		return StringUtils.camelToKebabCase(category);
 	}
 	
 
