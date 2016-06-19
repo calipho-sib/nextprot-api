@@ -43,13 +43,16 @@ public class RawStatementServiceImpl implements RawStatementService {
 		impactStatementsBySubject.keySet().forEach(subjectAnnotationHash -> {
 
 			List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectAnnotationHash);
-			IsoformAnnotation subjectVariant = buildVariantAnnotation(subjectVariantStatements);
+			List<IsoformAnnotation> variants = buildAnnotationList(subjectVariantStatements);
+			if(variants.size() != 1){
+				LOGGER.error("Found more or less than one variant for a given subject" + subjectAnnotationHash);
+			}
 
 			// Impact annotations
 			List<RawStatement> impactStatements = impactStatementsBySubject.get(subjectAnnotationHash);
 			List<IsoformAnnotation> impactAnnotations = buildAnnotationList(impactStatements);
 			impactAnnotations.stream().forEach(ia -> {
-				ia.setSubjectName(entryName + "-1 " + subjectVariant.getAnnotationUniqueName());
+				ia.setSubjectName(entryName + "-1 " + variants.get(0).getAnnotationUniqueName());
 				ia.setSubjectComponents(Arrays.asList(subjectAnnotationHash));
 			});
 
@@ -92,12 +95,16 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getAnnotation_category()));
 			isoAnnotation.setCategory(category);
+			
+			if(category.equals(AnnotationCategory.VARIANT)) 
+				setVariantAttributes(isoAnnotation, statement);
 
 			isoAnnotation.setCvTermName(statement.getAnnot_cv_term_name());
 			isoAnnotation.setDescription(statement.getAnnot_description());
 			isoAnnotation.setCvTermAccessionCode(statement.getAnnot_cv_term_accession());
 			// TODO this should be called terminology I guess! not setCVApiName
 			isoAnnotation.setCvApiName(statement.getAnnot_cv_term_terminology());
+			isoAnnotation.setAnnotationUniqueName(statement.getAnnot_name());
 
 			isoAnnotation.setAnnotationHash(statement.getAnnot_hash());
 			if ((statement.getBiological_object_annot_hash() != null) && (statement.getBiological_object_annot_hash().length() > 0)
@@ -123,40 +130,27 @@ public class RawStatementServiceImpl implements RawStatementService {
 		return annotations;
 	}
 
-	private static IsoformAnnotation buildVariantAnnotation(List<RawStatement> subjectVariantStatements) {
-		IsoformAnnotation isoAnnotation = new IsoformAnnotation();
+	private static void setVariantAttributes(IsoformAnnotation annotation, RawStatement variantStatement) {
 
-		if (subjectVariantStatements.size() != 1) {
-			System.err.println("ups getting " + subjectVariantStatements.size() + " variants");
-			return null;
-		}
-		RawStatement statement = subjectVariantStatements.get(0);
-
-		String original = statement.getVariant_original_amino_acid();
-		String variant = statement.getVariant_variation_amino_acid();
-
-		try {
-			Integer positionBeginCanononical = Integer.valueOf(statement.getAnnot_loc_begin_canonical_ref());
-			isoAnnotation.setLocationCanonicalBegin(positionBeginCanononical);
-		} catch (Exception e) {
-			LOGGER.warn("Did not convert begin position " + statement.getAnnot_loc_begin_canonical_ref());
-		}
-
-		try {
-			Integer positionEndCanononical = Integer.valueOf(statement.getAnnot_loc_end_canonical_ref());
-			isoAnnotation.setLocationCanonicalEnd(positionEndCanononical);
-		} catch (Exception e) {
-			LOGGER.warn("Did not convert end position " + statement.getAnnot_loc_begin_canonical_ref());
-		}
-
-		String description = statement.getAnnot_name();
-
+		String original = variantStatement.getVariant_original_amino_acid();
+		String variant = variantStatement.getVariant_variation_amino_acid();
 		AnnotationVariant annotationVariant = new AnnotationVariant(original, variant);
-		isoAnnotation.setVariant(annotationVariant);
-		isoAnnotation.setDescription(description);
-		isoAnnotation.setAnnotationUniqueName(original + " -> " + variant);
-		isoAnnotation.setCategory(AnnotationCategory.VARIANT);
-		return isoAnnotation;
+		annotation.setVariant(annotationVariant);
+
+		try {
+			Integer positionBeginCanononical = Integer.valueOf(variantStatement.getAnnot_loc_begin_canonical_ref());
+			annotation.setLocationCanonicalBegin(positionBeginCanononical);
+		} catch (Exception e) {
+			LOGGER.warn("Did not convert begin position " + variantStatement.getAnnot_loc_begin_canonical_ref());
+		}
+
+		try {
+			Integer positionEndCanononical = Integer.valueOf(variantStatement.getAnnot_loc_end_canonical_ref());
+			annotation.setLocationCanonicalEnd(positionEndCanononical);
+		} catch (Exception e) {
+			LOGGER.warn("Did not convert end position " + variantStatement.getAnnot_loc_begin_canonical_ref());
+		}
+
 	}
 
 	@Override
