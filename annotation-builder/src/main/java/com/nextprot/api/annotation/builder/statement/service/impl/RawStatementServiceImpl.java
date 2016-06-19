@@ -17,6 +17,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.RawStatement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.nextprot.api.annotation.builder.statement.dao.RawStatementDao;
@@ -30,7 +31,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 	@Autowired
 	public RawStatementDao rawStatementDao;
 
-	// @Cacheable("modified-entry-annotations")
+	@Cacheable("modified-entry-annotations")
 	public List<ModifiedEntry> getModifiedEntryAnnotation(String entryName) {
 
 		List<ModifiedEntry> modifiedEntries = new ArrayList<ModifiedEntry>();
