@@ -110,21 +110,15 @@ public class RawStatementServiceImpl implements RawStatementService {
 			isoAnnotation.setCvApiName(statement.getAnnot_cv_term_terminology());
 
 			isoAnnotation.setAnnotationHash(statement.getAnnot_hash());
-			if ((statement.getBiological_object_annot_hash() != null) && (statement.getBiological_object_annot_hash().length() > 0)) {
-				if (category.equals(AnnotationCategory.PHENOTYPE)) {
+			if ((statement.getBiological_object_annot_hash() != null) && (statement.getBiological_object_annot_hash().length() > 0) ||
+				(statement.getBiological_object_accession() != null && (statement.getBiological_object_accession().length() > 0))) {
 
 					BioGenericObject bioObject = new BioGenericObject();
-					bioObject.setAnnotationHash(statement.getBiological_object_annot_hash());
-					isoAnnotation.setBioObject(bioObject);
-
-				} else if (category.equals(AnnotationCategory.BINARY_INTERACTION)) {
-
-					BioGenericObject bioObject = new BioGenericObject();
-					bioObject.setAccession(statement.getBiological_object_accession());
+					bioObject.setAccession(statement.getBiological_object_accession()); // In case of interactions
 					bioObject.setType(statement.getBiological_object_type());
+					bioObject.setAnnotationHash(statement.getBiological_object_annot_hash()); // In case of phenotypes
 					isoAnnotation.setBioObject(bioObject);
 
-				}
 			}
 
 			annotations.add(isoAnnotation);
