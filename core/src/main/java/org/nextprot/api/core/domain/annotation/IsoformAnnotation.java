@@ -28,7 +28,7 @@ public class IsoformAnnotation extends Annotation{
 	
 	@Deprecated
 	public Map<String, AnnotationIsoformSpecificity> getTargetingIsoformsMap() {
-		return super.getTargetingIsoformsMap();
+		return null;
 	}
 
 	public Integer getLocationCanonicalBegin() {
@@ -85,10 +85,6 @@ public class IsoformAnnotation extends Annotation{
 
 	public void setAnnotationHash(String annotationHash) {
 		this.annotationHash = annotationHash;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 
 	public String getSubjectName() {
