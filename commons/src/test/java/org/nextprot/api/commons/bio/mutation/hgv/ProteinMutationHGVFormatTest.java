@@ -5,7 +5,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.mutation.*;
-import org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProteinMutationHGVFormatTest {
 
@@ -492,4 +499,64 @@ public class ProteinMutationHGVFormatTest {
 
         ProteinMutation pm = format.parse("p.Y553_K558>", ProteinMutationHGVFormat.ParsingMode.PERMISSIVE);
     }
+
+    @Test
+    public void parserShouldBeAbleToParseGaussVariantsFromBED() throws IOException {
+
+        String filename = getClass().getResource("gauss_variants.tsv").getFile();
+
+        List<String> errors = collectVariantParsingErrorFromBED(filename);
+
+        Assert.assertEquals(0, errors.size());
+    }
+
+    @Test
+    public void parserShouldBeAbleToParseStraussVariantsFromBED() throws IOException {
+
+        String filename = getClass().getResource("strauss_variants.tsv").getFile();
+
+        List<String> errors = collectVariantParsingErrorFromBED(filename);
+
+        Assert.assertEquals(0, errors.size());
+    }
+
+    private static List<String> collectVariantParsingErrorFromBED(String filename) throws IOException {
+
+        ProteinMutationHGVFormat format = new ProteinMutationHGVFormat();
+
+        List<String> hgvMutations = Files.lines(Paths.get(filename))
+                .filter(line -> !line.contains("Subject"))
+                .map(line -> line.split("\\s+")[0])
+                .map(line -> line.substring(1, line.length()-1))
+                .collect(Collectors.toList());
+
+        List<String> exceptionList = new ArrayList<>();
+
+        for (String variant : hgvMutations) {
+
+            if (!variant.contains("-")) {
+                exceptionList.add(variant+": invalid format");
+                continue;
+            }
+
+            try {
+                int p=variant.lastIndexOf("-");
+                String hgvMutation = variant.substring(p+1);
+
+                if (!format.isValidProteinSequenceVariant(hgvMutation)) {
+                    exceptionList.add(variant+": invalid format");
+                    continue;
+                }
+
+                ProteinMutation mutation = format.parse(hgvMutation, AbstractProteinMutationFormat.ParsingMode.PERMISSIVE);
+                Assert.assertNotNull(mutation);
+
+            } catch (ParseException e) {
+                exceptionList.add(variant+": "+e.getMessage());
+            }
+        }
+
+        return exceptionList;
+    }
+
 }
