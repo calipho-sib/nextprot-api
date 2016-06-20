@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
@@ -263,11 +264,21 @@ public class Entry implements KeyValueRepresentation {
 		return sb.toString();
 	}
 
+	public Map<String, Map<String, List<IsoformAnnotation>>> getModifiedIsoformAnnotations() {
+
+		return isoformAnnotations.stream().filter(ia -> ia.getAPICategory().equals(AnnotationCategory.PHENOTYPE)).
+				collect( 
+						Collectors.groupingBy(
+						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
+								IsoformAnnotation::getKebabCategoryName,  TreeMap::new, Collectors.toList())));
+	}
+
+	
 	public Map<String, Map<String, List<IsoformAnnotation>>> getAnnotationsByIsoformAndCategory() {
 
-		return isoformAnnotations.stream().collect(
+		return isoformAnnotations.stream().filter(ia -> !ia.getAPICategory().equals(AnnotationCategory.PHENOTYPE)).collect(
 				Collectors.groupingBy(
-						IsoformAnnotation::getIsoformName, TreeMap::new, Collectors.groupingBy(
+						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
 								IsoformAnnotation::getKebabCategoryName,  TreeMap::new, Collectors.toList())));
 	}
 
