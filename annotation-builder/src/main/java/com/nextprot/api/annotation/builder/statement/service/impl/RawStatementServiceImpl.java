@@ -43,14 +43,14 @@ public class RawStatementServiceImpl implements RawStatementService {
 		impactStatementsBySubject.keySet().forEach(subjectAnnotationHash -> {
 
 			List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectAnnotationHash);
-			List<IsoformAnnotation> variants = buildAnnotationList(subjectVariantStatements);
+			List<IsoformAnnotation> variants = buildAnnotationList(entryName + "-1" , subjectVariantStatements);
 			if(variants.size() != 1){
 				LOGGER.error("Found more or less than one variant for a given subject" + subjectAnnotationHash);
 			}
 
 			// Impact annotations
 			List<RawStatement> impactStatements = impactStatementsBySubject.get(subjectAnnotationHash);
-			List<IsoformAnnotation> impactAnnotations = buildAnnotationList(impactStatements);
+			List<IsoformAnnotation> impactAnnotations = buildAnnotationList(entryName + "-1", impactStatements);
 			impactAnnotations.stream().forEach(ia -> {
 				ia.setSubjectName(entryName + "-1 " + variants.get(0).getAnnotationUniqueName());
 				ia.setSubjectComponents(Arrays.asList(subjectAnnotationHash));
@@ -79,7 +79,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 	}
 
-	private static List<IsoformAnnotation> buildAnnotationList(List<RawStatement> flatStatements) {
+	private static List<IsoformAnnotation> buildAnnotationList(String isoformName, List<RawStatement> flatStatements) {
 
 		List<IsoformAnnotation> annotations = new ArrayList<>();
 		Map<String, List<RawStatement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(RawStatement::getAnnot_hash));
@@ -99,6 +99,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 			if(category.equals(AnnotationCategory.VARIANT)) 
 				setVariantAttributes(isoAnnotation, statement);
 
+			isoAnnotation.setIsoformName(isoformName);
 			isoAnnotation.setCvTermName(statement.getAnnot_cv_term_name());
 			isoAnnotation.setDescription(statement.getAnnot_description());
 			isoAnnotation.setCvTermAccessionCode(statement.getAnnot_cv_term_accession());
@@ -156,8 +157,8 @@ public class RawStatementServiceImpl implements RawStatementService {
 	@Override
 	public List<IsoformAnnotation> getNormalAnnotations(String entryName) {
 		List<RawStatement> normalStatements = rawStatementDao.findNormalRawStatements(entryName);
-		List<IsoformAnnotation> normalAnnotations = buildAnnotationList(normalStatements);
-		normalAnnotations.stream().forEach(a -> a.setSubjectName(entryName + "-1"));
+		List<IsoformAnnotation> normalAnnotations = buildAnnotationList(entryName + "-1", normalStatements);
+		normalAnnotations.stream().forEach(a -> {a.setSubjectName(entryName + "-1");});
 		return normalAnnotations;
 	}
 
