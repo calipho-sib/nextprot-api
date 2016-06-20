@@ -6,13 +6,15 @@ import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.mutation.*;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProteinMutationHGVFormatTest {
 
@@ -505,9 +507,9 @@ public class ProteinMutationHGVFormatTest {
 
         String filename = getClass().getResource("gauss_variants.tsv").getFile();
 
-        List<String> errors = collectVariantParsingErrorFromBED(filename);
+        Map<String, VariantTypeReport> report = collectVariantParsingReportFromBED(filename);
 
-        Assert.assertEquals(0, errors.size());
+        Assert.assertEquals(0, VariantTypeReport.countParsingErrors(report));
     }
 
     @Test
@@ -515,48 +517,120 @@ public class ProteinMutationHGVFormatTest {
 
         String filename = getClass().getResource("strauss_variants.tsv").getFile();
 
-        List<String> errors = collectVariantParsingErrorFromBED(filename);
+        Map<String, VariantTypeReport> report = collectVariantParsingReportFromBED(filename);
 
-        Assert.assertEquals(0, errors.size());
+        Assert.assertEquals(0, VariantTypeReport.countParsingErrors(report));
     }
 
-    private static List<String> collectVariantParsingErrorFromBED(String filename) throws IOException {
+    private static Map<String, VariantTypeReport> collectVariantParsingReportFromBED(String filename) throws IOException {
 
         ProteinMutationHGVFormat format = new ProteinMutationHGVFormat();
 
-        List<String> hgvMutations = Files.lines(Paths.get(filename))
-                .filter(line -> !line.contains("Subject"))
-                .map(line -> line.split("\\s+")[0])
-                .map(line -> line.substring(1, line.length()-1))
-                .collect(Collectors.toList());
+        BufferedReader br = new BufferedReader(new FileReader(filename));
+        String line;
+        Map<String, String[]> variants = new HashMap<>();
+        br.readLine();
 
-        List<String> exceptionList = new ArrayList<>();
+        Map<String, VariantTypeReport> variantReport = new HashMap<>();
+        HashMap<String, AtomicInteger> atomicCounter = new HashMap<>();
 
-        for (String variant : hgvMutations) {
+        while ( (line = br.readLine()) != null) {
+
+            String[] fields = line.split("\\t+");
+            String key = fields[0].substring(1, fields[0].length()-1);
+            variants.put(key, fields);
+
+            String type = variants.get(key)[5];
+
+            AtomicInteger value = atomicCounter.get(type);
+            if (value != null)
+                value.incrementAndGet();
+            else
+                atomicCounter.put(type, new AtomicInteger(1));
+        }
+
+        for (String variant : variants.keySet()) {
+
+            String type = variants.get(variant)[5];
 
             if (!variant.contains("-")) {
-                exceptionList.add(variant+": invalid format");
-                continue;
+                VariantTypeReport.populateMap(variantReport, type, atomicCounter.get(type).get(), variant + ": missing '-'");
             }
+            else {
+                try {
+                    int p = variant.lastIndexOf("-");
+                    String hgvMutation = variant.substring(p + 1);
 
-            try {
-                int p=variant.lastIndexOf("-");
-                String hgvMutation = variant.substring(p+1);
-
-                if (!format.isValidProteinSequenceVariant(hgvMutation)) {
-                    exceptionList.add(variant+": invalid format");
-                    continue;
+                    if (!format.isValidProteinSequenceVariant(hgvMutation)) {
+                        VariantTypeReport.populateMap(variantReport, type, atomicCounter.get(type).get(), variant + ": invalid format ('p.' expected)");
+                    } else {
+                        ProteinMutation mutation = format.parse(hgvMutation, AbstractProteinMutationFormat.ParsingMode.PERMISSIVE);
+                        Assert.assertNotNull(mutation);
+                    }
+                } catch (ParseException e) {
+                    VariantTypeReport.populateMap(variantReport, type, atomicCounter.get(type).get(), variant + ": " + e.getMessage());
                 }
-
-                ProteinMutation mutation = format.parse(hgvMutation, AbstractProteinMutationFormat.ParsingMode.PERMISSIVE);
-                Assert.assertNotNull(mutation);
-
-            } catch (ParseException e) {
-                exceptionList.add(variant+": "+e.getMessage());
             }
         }
 
-        return exceptionList;
+        return variantReport;
+    }
+
+    public static class VariantTypeReport {
+
+        private final String type;
+        private final List<String> parsingErrorMessages;
+        private final int totalVariantCount;
+
+        public VariantTypeReport(String type, int totalVariantCount) {
+            this.type = type;
+            this.totalVariantCount = totalVariantCount;
+            this.parsingErrorMessages = new ArrayList<>();
+        }
+
+        public static void populateMap(Map<String, VariantTypeReport> variantReport, String type, int totalCount, String message) {
+
+            if (!variantReport.containsKey(type)) variantReport.put(type, new VariantTypeReport(type, totalCount));
+            variantReport.get(type).addParsingErrorMessage(message);
+        }
+
+        public static int countParsingErrors(Map<String, VariantTypeReport> variantReport) {
+
+            int count=0;
+            for (VariantTypeReport report : variantReport.values()) {
+                count += report.countErrors();
+            }
+            return count;
+        }
+
+        public void addParsingErrorMessage(String message) {
+
+            parsingErrorMessages.add(message);
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public List<String> getParsingErrorMessages() {
+            return parsingErrorMessages;
+        }
+
+        public int countErrors() {
+            return parsingErrorMessages.size();
+        }
+
+        public int getTotalVariantCount() {
+            return totalVariantCount;
+        }
+
+        @Override
+        public String toString() {
+            return "Report{" +
+                    "type='" + type + '\'' +
+                    ", total=" + totalVariantCount +
+                    '}';
+        }
     }
 
 }
