@@ -40,7 +40,7 @@ public class CodonNucleotideIndices {
 	 * @return
 	 */
 	public boolean areConsecutive() {
-		if (!has3Nuclotides()) return false;
+		if (!has3Nucleotides()) return false;
 		if (nuNum.get(0)+1 != nuNum.get(1) || nuNum.get(1)+1 != nuNum.get(2) ) {
 			if (debug) System.out.println("nucleotides of codon are not consecutive");
 			return false;
@@ -54,7 +54,7 @@ public class CodonNucleotideIndices {
 	 * @return
 	 */
 	public boolean areInFrame() {
-		if (!has3Nuclotides()) return false;
+		if (!has3Nucleotides()) return false;
 		int isoPos = (nuNum.get(0) + 3) / 3;
 		if ((nuNum.get(1) + 3) / 3 != isoPos || (nuNum.get(2) + 3) / 3 != isoPos) {
 			if (debug) System.out.println("nucleotides not in frame");
@@ -64,7 +64,7 @@ public class CodonNucleotideIndices {
 		}
 	}
 
-	public boolean has3Nuclotides() {
+	public boolean has3Nucleotides() {
 		if (debug && nuNum.size()!=3) System.out.println("codon has not 3 nucleotides");
 		return nuNum.size()==3;
 	}
@@ -74,7 +74,7 @@ public class CodonNucleotideIndices {
 	 * @return
 	 */
 	public boolean isValid() {
-		return has3Nuclotides() && areConsecutive() && areInFrame();
+		return has3Nucleotides() && areConsecutive() && areInFrame();
 	}
 	
 	public Integer getAminoAcidPosition() {
