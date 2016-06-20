@@ -267,7 +267,7 @@ public class Entry implements KeyValueRepresentation {
 
 		return isoformAnnotations.stream().collect(
 				Collectors.groupingBy(
-						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
+						IsoformAnnotation::getIsoformName, TreeMap::new, Collectors.groupingBy(
 								IsoformAnnotation::getKebabCategoryName,  TreeMap::new, Collectors.toList())));
 	}
 
