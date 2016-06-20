@@ -64,7 +64,7 @@ public abstract class AbstractProteinMutationFormat implements ProteinMutationFo
     public ProteinMutation parse(String source, ParsingMode parsingMode) throws ParseException {
 
         Preconditions.checkNotNull(source);
-        Preconditions.checkArgument(source.startsWith("p."), "not a valid protein sequence variant");
+        Preconditions.checkArgument(isValidProteinSequenceVariant(source), source + ": not a valid protein sequence variant");
         Preconditions.checkNotNull(parsingMode);
 
         ProteinMutation.FluentBuilder builder = new ProteinMutation.FluentBuilder();
@@ -78,6 +78,11 @@ public abstract class AbstractProteinMutationFormat implements ProteinMutationFo
 
             throw e;
         }
+    }
+
+    public boolean isValidProteinSequenceVariant(String source) {
+
+        return source.startsWith("p.");
     }
 
     private ProteinMutation parseWithMode(String source, ProteinMutation.FluentBuilder builder, ParsingMode mode) throws ParseException {
