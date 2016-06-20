@@ -1,13 +1,8 @@
 package org.nextprot.api.web.controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +18,7 @@ import com.nextprot.api.annotation.builder.statement.service.RawStatementService
 @Controller
 @Api(name = "EntryModified", description = "For example: may include an entry with one or several variants.")
 public class EntryModifiedController {
-
+	org.nextprot.commons.statements.RawStatement s;
 	@Autowired	private EntryBuilderService entryBuilderService;
 	@Autowired	private RawStatementService rawStatementService;
 	
@@ -32,11 +27,8 @@ public class EntryModifiedController {
 		
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withTargetIsoforms());
 
-		Map<String, List<IsoformAnnotation>> annotationsByIsoforms = new HashMap<>();
-		annotationsByIsoforms.put(entryName + "-1", rawStatementService.getNormalAnnotations(entryName));
-		entry.setModifiedEntryAnnotations(rawStatementService.getModifiedEntryAnnotation(entryName));
-		
-		entry.setIsoformAnnotations(annotationsByIsoforms);
+		entry.addIsoformAnnotations(rawStatementService.getNormalAnnotations(entryName));
+		entry.addIsoformAnnotations(rawStatementService.getModifiedIsoformAnnotationsByIsoform(entryName));
 		
 		model.addAttribute("entry", entry);
 

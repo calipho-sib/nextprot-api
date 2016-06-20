@@ -1,6 +1,7 @@
 package org.nextprot.api.web.controller;
 
 import com.google.common.base.Joiner;
+
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
@@ -10,16 +11,19 @@ import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
 import org.nextprot.api.solr.*;
 import org.nextprot.api.user.domain.UserProteinList;
+import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserQueryService;
 import org.nextprot.api.user.service.impl.UserQueryTutorialDictionary;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +46,29 @@ public class SearchController {
 
 	@Autowired
 	private UserQueryTutorialDictionary userQueryTutorialDictionary;
+	
+
+	/**
+	 * Useful to build the cache for sparql queries on a target api server (typically build-api.nextprot.org)
+	 * @param queryId a query public id
+	 * @return either the number of entries returned by the queries (if query is a snorql only, the number returned will be 0) or an error message
+	 */
+	@RequestMapping(value = "/sparql/run", method = { RequestMethod.GET })
+	@ResponseBody
+	public Map<String,Object> runQuery(@RequestParam(value = "queryId", required = true) String queryId) {
+		Map<String,Object> result = new HashMap<String, Object>();
+		result.put("queryId", queryId);
+		try {
+			UserQuery uq = userQueryService.getUserQueryByPublicId(queryId);
+			List<String> entries = sparqlService.findEntries(uq.getSparql(), sparqlEndpoint.getUrl(), uq.getTitle());
+			result.put("entryCount", entries.size());
+			
+		} catch (Exception e) {
+			result.put("error", e.getMessage());
+		}
+		return result;
+	}
+
 	
 	@RequestMapping(value = "/search/{index}", method = { RequestMethod.POST })
 	@ResponseBody

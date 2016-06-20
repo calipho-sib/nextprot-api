@@ -5,14 +5,15 @@ package org.nextprot.api.core.domain;
  * @author Daniel Teixeira http://github.com/ddtxra
  *
  */
-public class BioNormalAnnotation extends BioObject<Isoform> {
+public class BioGenericObject extends BioObject<Isoform> {
 
 	private static final long serialVersionUID = 1L;
 
 	private String annotationHash;
+	private String accession;
+	private String type;
 	
-	public BioNormalAnnotation() {
-
+	public BioGenericObject() {
 		// TODO for what do we need internat and nextprot?
 		super(BioType.NORMAL_ANNOTATION, ResourceType.INTERNAL, NEXTPROT);
 	}
@@ -23,5 +24,21 @@ public class BioNormalAnnotation extends BioObject<Isoform> {
 
 	public void setAnnotationHash(String annotationHash) {
 		this.annotationHash = annotationHash;
+	}
+
+	public String getAccession() {
+		return accession;
+	}
+
+	public void setAccession(String accession) {
+		this.accession = accession;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 }

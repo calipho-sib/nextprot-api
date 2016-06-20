@@ -184,6 +184,12 @@
 		statistics="true" >
 	</cache>
 
+	<cache name="modified-entry-annotations" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+	</cache>
+
+
 	<!-- Tutorial queries (only in memory) -->
 	<cache name="tutorial-queries" overflowToOffHeap="false"
 		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"

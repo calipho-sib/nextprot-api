@@ -1,9 +1,10 @@
 package com.nextprot.api.annotation.builder.statement.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
-import org.nextprot.api.core.domain.ModifiedEntry;
+import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nextprot.api.annotation.builder.AnnotationBuilderBaseTest;
@@ -15,8 +16,8 @@ public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 
 	@Test
 	public void findAllMappedStatements() {
-		List<ModifiedEntry> modifiedEntry = rawStatementService.getModifiedEntryAnnotation("NX_Q9BX63");
-		System.out.println(modifiedEntry.size());
+		List<IsoformAnnotation> modifiedIsoformAnnotation = rawStatementService.getModifiedIsoformAnnotationsByIsoform("NX_Q9BX63");
+		System.out.println(modifiedIsoformAnnotation.size());
 	}
 
 	@Test
@@ -24,4 +25,5 @@ public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 		List isoformAnnotations = rawStatementService.getNormalAnnotations("NX_Q9BX63");
 		System.out.println(isoformAnnotations.size());
 	}
+	
 }

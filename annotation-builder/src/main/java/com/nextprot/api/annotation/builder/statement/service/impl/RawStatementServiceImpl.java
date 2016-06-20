@@ -9,12 +9,14 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.BioNormalAnnotation;
-import org.nextprot.api.core.domain.ModifiedEntry;
+import org.nextprot.api.core.domain.BioGenericObject;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.RawStatement;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.nextprot.api.annotation.builder.statement.dao.RawStatementDao;
@@ -23,78 +25,104 @@ import com.nextprot.api.annotation.builder.statement.service.RawStatementService
 @Service
 public class RawStatementServiceImpl implements RawStatementService {
 
-	private Logger logger = Logger.getLogger(RawStatementServiceImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(RawStatementServiceImpl.class);
 
 	@Autowired
 	public RawStatementDao rawStatementDao;
 
-	// @Cacheable("modified-entry-annotations")
-	public List<ModifiedEntry> getModifiedEntryAnnotation(String entryName) {
+	@Cacheable("modified-entry-annotations")
+	@Override
+	public List<IsoformAnnotation> getModifiedIsoformAnnotationsByIsoform(String entryName) {
 
-		List<ModifiedEntry> modifiedEntries = new ArrayList<ModifiedEntry>();
-		List<RawStatement> impactstatements = rawStatementDao.findPhenotypeRawStatements(entryName);
+		List<IsoformAnnotation> annotations = new ArrayList<>();
 
-		Map<String, List<RawStatement>> impactStatementsByModifiedEntry = impactstatements.stream().collect(Collectors.groupingBy(RawStatement::getBiological_subject_annot_hash));
+		List<RawStatement> phenotypeStatements = rawStatementDao.findPhenotypeRawStatements(entryName);
 
-		impactStatementsByModifiedEntry.keySet().forEach(subjectKey -> {
+		Map<String, List<RawStatement>> impactStatementsBySubject = phenotypeStatements.stream().collect(Collectors.groupingBy(RawStatement::getBiological_subject_annot_hash));
 
-			// Subject (VD) , variant
-			List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectKey);
-			IsoformAnnotation subjectVariant = buildVariantAnnotation(subjectVariantStatements);
+		impactStatementsBySubject.keySet().forEach(subjectAnnotationHash -> {
 
-			System.err.println("");
-			
-			if(subjectVariant == null){
-				logger.error("Did not found variants for hash: " + subjectKey);
-			}else {
-				
-				// Impact annotations
-				List<IsoformAnnotation> impactAnnotations = buildAnnotationList(impactStatementsByModifiedEntry.get(subjectKey));
-
-				ModifiedEntry me = new ModifiedEntry();
-				me.setSubjectComponents(Arrays.asList(subjectVariant)); // TODO
-																		// change
-																		// this when
-																		// multiple
-																		// variants
-				me.setAnnotations(impactAnnotations);
-				modifiedEntries.add(me);
-
+			List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectAnnotationHash);
+			List<IsoformAnnotation> variants = buildAnnotationList(entryName + "-1" , subjectVariantStatements);
+			if(variants.size() != 1){
+				LOGGER.error("Found more or less than one variant for a given subject" + subjectAnnotationHash);
 			}
+
+			// Impact annotations
+			List<RawStatement> impactStatements = impactStatementsBySubject.get(subjectAnnotationHash);
+			List<IsoformAnnotation> impactAnnotations = buildAnnotationList(entryName + "-1", impactStatements);
+			impactAnnotations.stream().forEach(ia -> {
+				ia.setSubjectName(entryName + "-1 " + variants.get(0).getAnnotationUniqueName());
+				ia.setSubjectComponents(Arrays.asList(subjectAnnotationHash));
+			});
+
+			annotations.addAll(impactAnnotations);
 
 		});
 
-		return modifiedEntries;
+		return annotations;
 
 	}
 
-	private static List<IsoformAnnotation> buildAnnotationList(List<RawStatement> impactStatements) {
+	private static List<AnnotationEvidence> buildAnnotationEvidences(List<RawStatement> rawStatements) {
+		return rawStatements.stream().map(s -> {
+			AnnotationEvidence evidence = new AnnotationEvidence();
+			evidence.setResourceAssociationType("evidence");
+			if (s.getExp_context_property_intensity() != null) {
+				AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
+				prop.setPropertyName("intensity");
+				prop.setPropertyValue(s.getExp_context_property_intensity());
+				evidence.setProperties(Arrays.asList(prop));
+			}
+			return evidence;
+		}).collect(Collectors.toList());
+
+	}
+
+	private static List<IsoformAnnotation> buildAnnotationList(String isoformName, List<RawStatement> flatStatements) {
 
 		List<IsoformAnnotation> annotations = new ArrayList<>();
-		Map<String, List<RawStatement>> impactStatementsByAnnotationHash = impactStatements.stream().collect(Collectors.groupingBy(RawStatement::getAnnot_hash));
+		Map<String, List<RawStatement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(RawStatement::getAnnot_hash));
 
-		impactStatementsByAnnotationHash.keySet().forEach(annotationHash -> {
+		flatStatementsByAnnotationHash.keySet().forEach(annotationHash -> {
 
 			IsoformAnnotation isoAnnotation = new IsoformAnnotation();
-			List<RawStatement> statements = impactStatementsByAnnotationHash.get(annotationHash);
-			if (statements.size() != 1) {
-				System.err.println("ups getting " + statements.size() + " statements");
-			}
+			List<RawStatement> statements = flatStatementsByAnnotationHash.get(annotationHash);
 
 			RawStatement statement = statements.get(0);
+
+			isoAnnotation.setEvidences(buildAnnotationEvidences(statements));
+
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getAnnotation_category()));
 			isoAnnotation.setCategory(category);
+			
+			if(category.equals(AnnotationCategory.VARIANT)) 
+				setVariantAttributes(isoAnnotation, statement);
 
+			isoAnnotation.setIsoformName(isoformName);
 			isoAnnotation.setCvTermName(statement.getAnnot_cv_term_name());
+			isoAnnotation.setDescription(statement.getAnnot_description());
 			isoAnnotation.setCvTermAccessionCode(statement.getAnnot_cv_term_accession());
 			// TODO this should be called terminology I guess! not setCVApiName
 			isoAnnotation.setCvApiName(statement.getAnnot_cv_term_terminology());
+			isoAnnotation.setAnnotationUniqueName(statement.getAnnot_name());
 
 			isoAnnotation.setAnnotationHash(statement.getAnnot_hash());
-			if ((statement.getBiological_object_annot_hash() != null) && (statement.getBiological_object_annot_hash().length() > 0)) {
-				BioNormalAnnotation normalAnnotationBioObjectRef = new BioNormalAnnotation();
-				normalAnnotationBioObjectRef.setAnnotationHash(statement.getBiological_object_annot_hash());
-				isoAnnotation.setBioObject(normalAnnotationBioObjectRef);
+			if ((statement.getBiological_object_annot_hash() != null) && (statement.getBiological_object_annot_hash().length() > 0)
+					|| (statement.getBiological_object_accession() != null && (statement.getBiological_object_accession().length() > 0))) {
+
+				BioGenericObject bioObject = new BioGenericObject();
+				bioObject.setAccession(statement.getBiological_object_accession()); // In
+																					// case
+																					// of
+																					// interactions
+				bioObject.setType(statement.getBiological_object_type());
+				bioObject.setAnnotationHash(statement.getBiological_object_annot_hash()); // In
+																							// case
+																							// of
+																							// phenotypes
+				isoAnnotation.setBioObject(bioObject);
+
 			}
 
 			annotations.add(isoAnnotation);
@@ -103,43 +131,35 @@ public class RawStatementServiceImpl implements RawStatementService {
 		return annotations;
 	}
 
-	private static IsoformAnnotation buildVariantAnnotation(List<RawStatement> subjectVariantStatements) {
-		IsoformAnnotation isoAnnotation = new IsoformAnnotation();
+	private static void setVariantAttributes(IsoformAnnotation annotation, RawStatement variantStatement) {
 
-		if (subjectVariantStatements.size() != 1) {
-			System.err.println("ups getting " + subjectVariantStatements.size() + " variants");
-			return null;
-		}
-		RawStatement statement = subjectVariantStatements.get(0);
-
-		String original = statement.getVariant_original_amino_acid();
-		String variant = statement.getVariant_variation_amino_acid();
-
-		try {
-			Integer positionBeginCanononical = Integer.valueOf(statement.getAnnot_loc_begin_canonical_ref());
-			isoAnnotation.setLocationCanonicalBegin(positionBeginCanononical);
-		} catch (Exception e) {
-		}
-		
-		try {
-			Integer positionEndCanononical = Integer.valueOf(statement.getAnnot_loc_end_canonical_ref());
-			isoAnnotation.setLocationCanonicalBegin(positionEndCanononical);
-		} catch (Exception e) {
-		}
-
-		String description = statement.getAnnot_name();
-
+		String original = variantStatement.getVariant_original_amino_acid();
+		String variant = variantStatement.getVariant_variation_amino_acid();
 		AnnotationVariant annotationVariant = new AnnotationVariant(original, variant);
-		isoAnnotation.setVariant(annotationVariant);
-		isoAnnotation.setDescription(description);
-		isoAnnotation.setCategory(AnnotationCategory.VARIANT);
-		return isoAnnotation;
+		annotation.setVariant(annotationVariant);
+
+		try {
+			Integer positionBeginCanononical = Integer.valueOf(variantStatement.getAnnot_loc_begin_canonical_ref());
+			annotation.setLocationCanonicalBegin(positionBeginCanononical);
+		} catch (Exception e) {
+			LOGGER.warn("Did not convert begin position " + variantStatement.getAnnot_loc_begin_canonical_ref());
+		}
+
+		try {
+			Integer positionEndCanononical = Integer.valueOf(variantStatement.getAnnot_loc_end_canonical_ref());
+			annotation.setLocationCanonicalEnd(positionEndCanononical);
+		} catch (Exception e) {
+			LOGGER.warn("Did not convert end position " + variantStatement.getAnnot_loc_begin_canonical_ref());
+		}
+
 	}
 
 	@Override
 	public List<IsoformAnnotation> getNormalAnnotations(String entryName) {
-		List<RawStatement> normalStatement = rawStatementDao.findNormalRawStatements(entryName);
-		return buildAnnotationList(normalStatement);
+		List<RawStatement> normalStatements = rawStatementDao.findNormalRawStatements(entryName);
+		List<IsoformAnnotation> normalAnnotations = buildAnnotationList(entryName + "-1", normalStatements);
+		normalAnnotations.stream().forEach(a -> {a.setSubjectName(entryName + "-1");});
+		return normalAnnotations;
 	}
 
 }

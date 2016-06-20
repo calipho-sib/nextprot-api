@@ -3,7 +3,10 @@ package org.nextprot.api.core.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
@@ -12,10 +15,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class Entry implements KeyValueRepresentation{
+public class Entry implements KeyValueRepresentation {
 
 	private EntryProperties properties;
-	
+
 	private String uniqueName;
 
 	private Overview overview;
@@ -33,10 +36,10 @@ public class Entry implements KeyValueRepresentation{
 	@Deprecated
 	private List<Annotation> annotations;
 
-	private Map<String, List<IsoformAnnotation>> isoformAnnotations;
+	private List<IsoformAnnotation> isoformAnnotations = new ArrayList<>();
 
 	private List<PeptideMapping> peptideMappings;
-	
+
 	private List<PeptideMapping> srmPeptideMappings;
 
 	private List<AntibodyMapping> antibodyMappings;
@@ -46,19 +49,8 @@ public class Entry implements KeyValueRepresentation{
 	private List<Interaction> interactions;
 
 	private List<CvTerm> enzymes;
-	
+
 	private List<ExperimentalContext> experimentalContexts;
-
-	private List<ModifiedEntry> modifiedEntryAnnotations;
-
-
-	public List<ModifiedEntry> getModifiedEntryAnnotations() {
-		return modifiedEntryAnnotations;
-	}
-
-	public void setModifiedEntryAnnotations(List<ModifiedEntry> modifiedEntryAnnotations) {
-		this.modifiedEntryAnnotations = modifiedEntryAnnotations;
-	}
 
 	public List<ExperimentalContext> getExperimentalContexts() {
 		return experimentalContexts;
@@ -75,9 +67,9 @@ public class Entry implements KeyValueRepresentation{
 	public String getUniqueName() {
 		return uniqueName;
 	}
-	
+
 	public String getUniprotName() {
-	  return uniqueName.substring(3);
+		return uniqueName.substring(3);
 	}
 
 	public void setUniqueName(String uniqueName) {
@@ -89,23 +81,25 @@ public class Entry implements KeyValueRepresentation{
 	}
 
 	public String getProteinExistenceInfo() {
-		if(this.properties != null){
+		if (this.properties != null) {
 			return this.properties.getProteinExistenceInfo();
-		} return null;
-	}
-	
-	public String getProteinExistence() {
-		if(this.overview != null){
-			return this.overview.getProteinExistence();
-		} return null;
-	}
-	
-	public Integer getProteinExistenceLevel() {
-		if(this.overview != null){
-			return this.overview.getProteinExistenceLevel();
-		} return null;
+		}
+		return null;
 	}
 
+	public String getProteinExistence() {
+		if (this.overview != null) {
+			return this.overview.getProteinExistence();
+		}
+		return null;
+	}
+
+	public Integer getProteinExistenceLevel() {
+		if (this.overview != null) {
+			return this.overview.getProteinExistenceLevel();
+		}
+		return null;
+	}
 
 	public void setOverview(Overview overview) {
 		this.overview = overview;
@@ -158,15 +152,15 @@ public class Entry implements KeyValueRepresentation{
 	public List<AntibodyMapping> getAntibodiesByIsoform(String isoform) {
 		return Entry.filterByIsoform(antibodyMappings, isoform);
 	}
-	
+
 	public List<PeptideMapping> getPeptidesByIsoform(String isoform) {
 		return Entry.filterByIsoform(peptideMappings, isoform);
 	}
-	
+
 	public List<PeptideMapping> getSrmPeptidesByIsoform(String isoform) {
 		return Entry.filterByIsoform(srmPeptideMappings, isoform);
 	}
-	
+
 	public List<Annotation> getAnnotationsByIsoform(String isoform) {
 		return Entry.filterByIsoform(annotations, isoform);
 	}
@@ -212,10 +206,10 @@ public class Entry implements KeyValueRepresentation{
 	}
 
 	public void setEnzymes(List<CvTerm> enzymes) {
-		this.enzymes=enzymes;
+		this.enzymes = enzymes;
 	}
 
-	public List<CvTerm> getEnzymes(){
+	public List<CvTerm> getEnzymes() {
 		return enzymes;
 	}
 
@@ -237,9 +231,13 @@ public class Entry implements KeyValueRepresentation{
 
 	/**
 	 * Filter a elements specific of the given isoform
-	 * @param tList the list to filter
-	 * @param isoform the isoform filter applied to the list
-	 * @param <T> the element type that implement the IsoformSpecific interface
+	 * 
+	 * @param tList
+	 *            the list to filter
+	 * @param isoform
+	 *            the isoform filter applied to the list
+	 * @param <T>
+	 *            the element type that implement the IsoformSpecific interface
 	 * @return a filtered list
 	 */
 	private static <T extends IsoformSpecific> List<T> filterByIsoform(List<T> tList, String isoform) {
@@ -248,7 +246,8 @@ public class Entry implements KeyValueRepresentation{
 
 		if (tList != null) {
 			for (T t : tList) {
-				if (t.isSpecificForIsoform(isoform)) list.add(t);
+				if (t.isSpecificForIsoform(isoform))
+					list.add(t);
 			}
 		}
 
@@ -265,11 +264,26 @@ public class Entry implements KeyValueRepresentation{
 		return sb.toString();
 	}
 
-	public Map<String, List<IsoformAnnotation>> getIsoformAnnotations() {
-		return isoformAnnotations;
+	public Map<String, Map<String, List<IsoformAnnotation>>> getModifiedIsoformAnnotations() {
+
+		return isoformAnnotations.stream().filter(ia -> ia.getAPICategory().equals(AnnotationCategory.PHENOTYPE)).
+				collect( 
+						Collectors.groupingBy(
+						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
+								IsoformAnnotation::getKebabCategoryName,  TreeMap::new, Collectors.toList())));
 	}
 
-	public void setIsoformAnnotations(Map<String, List<IsoformAnnotation>> isoformAnnotations) {
-		this.isoformAnnotations = isoformAnnotations;
+	
+	public Map<String, Map<String, List<IsoformAnnotation>>> getAnnotationsByIsoformAndCategory() {
+
+		return isoformAnnotations.stream().filter(ia -> !ia.getAPICategory().equals(AnnotationCategory.PHENOTYPE)).collect(
+				Collectors.groupingBy(
+						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
+								IsoformAnnotation::getKebabCategoryName,  TreeMap::new, Collectors.toList())));
 	}
+
+	public void addIsoformAnnotations(List<IsoformAnnotation> annotations) {
+		this.isoformAnnotations.addAll(annotations);
+	}
+
 }
