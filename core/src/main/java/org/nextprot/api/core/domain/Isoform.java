@@ -3,11 +3,13 @@ package org.nextprot.api.core.domain;
 import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
+import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.core.dao.EntityName;
 
 
@@ -28,7 +30,19 @@ public class Isoform implements Serializable {
 	private EntityName mainEntityName;
 
 	private Collection<EntityName> synonyms;
+
+	private List<NucleotidePositionRange> masterMapping;
 	
+	
+	
+	public List<NucleotidePositionRange> getMasterMapping() {
+		return masterMapping;
+	}
+
+	public void setMasterMapping(List<NucleotidePositionRange> masterMapping) {
+		this.masterMapping = masterMapping;
+	}
+
 	@Deprecated
 	public String getIsoelectricPointAsString() {
 		Double d = DescriptorPI.compute(sequence);
