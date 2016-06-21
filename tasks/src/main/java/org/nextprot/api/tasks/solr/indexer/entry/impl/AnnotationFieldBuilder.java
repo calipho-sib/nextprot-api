@@ -35,7 +35,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 
 			String category = currannot.getCategory();
 			String quality = currannot.getQualityQualifier();
-			
+			//System.err.println(category + ": " + quality);
 			if (category.equals("function")){
 				addField(Fields.FUNCTION_DESC, currannot.getDescription());
 			}
@@ -72,23 +72,21 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 							stringpos=desc.indexOf(mainreason) + mainreason.length();
 						    desc = desc.substring(stringpos+2);
 							}
-							//System.err.println("newdesc " + desc);
 							addField(Fields.ANNOTATIONS, desc);
 							}
 					}
-					//System.err.println(category);
+					
 					if((category.equals("sequence variant") || category.equals("mutagenesis site")) && desc.startsWith("Missing"))
 						// Remove variation descriptor (Missing)
 						desc = desc.substring(8); // don't index variant status
 					if(!category.startsWith("go") && desc.length() > 1) {
 						if(!this.isGold() || quality.equals("GOLD"))
-						   addField(Fields.ANNOTATIONS, desc); // go will be indexed via cvac, not description
+						   {addField(Fields.ANNOTATIONS, desc);if(category.equals("sequence variant")) System.err.println("variant: " + desc);} // go will be indexed via cvac, not description
 					    }
 					// in pathway and disease new annotations may appear due to transformation of specific xrefs (orphanet...) into annotations in the api
-				}
-				//if(category.contains("info")) System.err.println(category + ": " + currannot.getQualityQualifier());
+				} //else System.err.println(category + " no desc...");
+				
 				String cvac = currannot.getCvTermAccessionCode();
-				//System.err.println(currannot.getCategory());
 				if (cvac != null) {
 					if(cvac.startsWith("GO:")) {
 						boolean allnegative = true;
@@ -96,7 +94,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 					  for(AnnotationEvidence ev : currannot.getEvidences())
 						allnegative = allnegative & ev.isNegativeEvidence();
 					  if(allnegative == true) {
-					  	System.err.println(cvac + ": skipped (all evidences are negative)");
+					  	//System.err.println(cvac + ": skipped (all evidences are negative)");
 						continue;
 					  }
 					}
@@ -121,7 +119,6 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						String ancestorname = this.terminologyservice.findCvTermByAccession(ancestor).getName();
 						allancestors += ancestorname;
 				        }
-					//if(allancestors.length() > 0) System.err.println(allancestors);	
 					if(allancestors.endsWith(" domain"))	allancestors="domain"; // don't index generic top level ancestors
 					else if(allancestors.endsWith("zinc finger region"))	allancestors="zinc finger region"; // don't index generic top level ancestors
 					else if(allancestors.endsWith("repeat"))	allancestors="repeat"; // don't index generic top level ancestors
@@ -150,6 +147,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 					} // else System.err.println("chainid null for: " + desc); chainid 's null for the main chain, this is wrong
 				}
 				
+				// variant xrefs and identifiers
 				if (category.contains("variant")) {
 					    String evidxrefaccs = "";
 						List<AnnotationEvidence> evidences = currannot.getEvidences();
@@ -161,20 +159,21 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 								else if(db.equals("dbSNP"))// Just to allow comparison with incoherent current solr implementation
 							      evidxrefaccs += ev.getResourceAccession(); 
 								else evidxrefaccs += currannot.getSynonym(); // Uniprot FT id, like VAR_056577
-								//if(currannot.getSynonym().length() == 0) System.err.println(currannot.getCategory() + " : empty desc");
 							}
 						}
-						if(!evidxrefaccs.isEmpty()) addField(Fields.ANNOTATIONS,StringUtils.getSortedValueFromPipeSeparatedField(evidxrefaccs));
-						Collection<AnnotationProperty> props = currannot.getProperties();
-						for (AnnotationProperty prop : props) if(prop.getName().equals("mutation AA")) {
-							//System.err.println("adding: " + prop.getValue());
-							addField(Fields.ANNOTATIONS,prop.getValue()); // eg: p.D1685E
+						if(!this.isGold() || quality.equals("GOLD")) {
+						  if(!evidxrefaccs.isEmpty()) addField(Fields.ANNOTATIONS,StringUtils.getSortedValueFromPipeSeparatedField(evidxrefaccs));
+						  Collection<AnnotationProperty> props = currannot.getProperties();
+						  for (AnnotationProperty prop : props)
+							  if(prop.getName().equals("mutation AA"))
+								// eg: p.D1685E, it is unclear why this property exists only in cosmic variants
+							    addField(Fields.ANNOTATIONS,prop.getValue());
 						}
 					}
 				}
 			}
 		
-			// Families (why not part of Annotations ?)
+			// Families (why not part of Annotations ?), always GOLD
 			for (Family family : entry.getOverview().getFamilies()) {
 				String ac = family.getAccession();
 				int stringpos = 0;
@@ -194,7 +193,6 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						addField(Fields.ANNOTATIONS,  families[i]);
 						if(families[i].contains(") superfamily")) { // index one more time without parenthesis
 							famdesc = families[i].substring(0, families[i].indexOf("(")) + "superfamily";
-							//System.err.println("famdesc: " + famdesc);
 							addField(Fields.ANNOTATIONS,  famdesc);
 						    }
 						}
