@@ -47,11 +47,11 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         try {
             GeneVariantParser parser = new GeneVariantParser(featureName, nextprotEntry.getEntry());
-            ProteinSequenceVariation mutation = parser.getProteinSequenceVariation();
+            ProteinSequenceVariation variation = parser.getProteinSequenceVariation();
             String geneName = parser.getGeneName();
 
             //1) Validate
-            if (validateIsoformPosition(mutation)) {
+            if (validateIsoformPosition(variation, nextprotEntry.getEntry())) {
 
                 //2) propagate if flag = true returns a map with N isoforms
                 if (propagate) {
@@ -79,10 +79,10 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         throw new IllegalStateException("ptm validation not yet implemented");
     }
 
-    private boolean validateIsoformPosition(ProteinSequenceVariation mutation) {
+    private boolean validateIsoformPosition(ProteinSequenceVariation variation, Entry entry) {
 
         // 2. check AA exists in isoform at specified position
-
+        Propagator propagator = new Propagator(entry);
 
 
         return true;

@@ -1,4 +1,7 @@
-package org.nextprot.api.commons.utils;
+package com.nextprot.api.isoform.mapper.service.impl;
+
+import org.nextprot.api.commons.utils.NucleotidePositionRange;
+import org.nextprot.api.commons.utils.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +22,7 @@ public class PropagatorCore {
 	public static boolean debug = false;
 		
 	public static CodonNucleotideIndices getCodonNucleotidesIndicesInRanges(CodonNucleotidePositions codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
-		
+
 		if (debug) System.out.println("----------------------------------------------------------");
 		int lowNum = 0;
 		CodonNucleotideIndices codonNum = new CodonNucleotideIndices();
@@ -44,12 +47,12 @@ public class PropagatorCore {
 			lowNum=highNum + 1;
 		}
 		if (debug) System.out.println("codon not found in the gene mapping ranges, " + codonNum.size() + " nucleotides found");
-		return codonNum;		
-	}	
-	
-	
+		return codonNum;
+	}
+
+
 	public static CodonNucleotidePositions getCodonNucleotidesPositionsInRanges(int isoformPos, List<NucleotidePositionRange> isoformPositionRangesOnDNA) {
-		int nu1Num = isoformPos * 3 - 3;  
+		int nu1Num = isoformPos * 3 - 3;
 		//if (debug) System.out.println("nu1Num:" + nu1Num);
 		int lowNum = 0;
 		CodonNucleotidePositions result = new CodonNucleotidePositions();
@@ -74,7 +77,7 @@ public class PropagatorCore {
 	/**
 	 * Check that we have amino acid aa(s) in isoform sequence at position pos.
 	 * If aa iss null or empty string we just check that position is < sequence lenght
-	 * @param isoform
+	 * @param sequence
 	 * @param pos position according to bio standard (first pos = 1)
 	 * @param aa 0, 1 or more amino acids (1 char / aa)
 	 * @return

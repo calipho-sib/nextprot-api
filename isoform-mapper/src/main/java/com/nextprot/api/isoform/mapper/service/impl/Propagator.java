@@ -1,10 +1,5 @@
-package org.nextprot.api.web.utils;
+package com.nextprot.api.isoform.mapper.service.impl;
 
-import java.util.List;
-
-import org.nextprot.api.commons.utils.CodonNucleotideIndices;
-import org.nextprot.api.commons.utils.CodonNucleotidePositions;
-import org.nextprot.api.commons.utils.PropagatorCore;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;

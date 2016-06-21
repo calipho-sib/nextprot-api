@@ -1,4 +1,4 @@
-package org.nextprot.api.commons.utils;
+package com.nextprot.api.isoform.mapper.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;

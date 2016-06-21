@@ -1,32 +1,28 @@
 package org.nextprot.api.web.service.impl;
 
+import com.nextprot.api.isoform.mapper.service.impl.CodonNucleotideIndices;
+import com.nextprot.api.isoform.mapper.service.impl.CodonNucleotidePositions;
+import com.nextprot.api.isoform.mapper.service.impl.Propagator;
+import com.nextprot.api.isoform.mapper.service.impl.PropagatorCore;
+import junit.framework.Assert;
+import org.junit.Test;
+import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.commons.utils.NucleotidePositionRange;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import junit.framework.Assert;
-
-import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.commons.utils.CodonNucleotideIndices;
-import org.nextprot.api.commons.utils.CodonNucleotidePositions;
-import org.nextprot.api.commons.utils.NucleotidePositionRange;
-import org.nextprot.api.commons.utils.PropagatorCore;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.IsoformSpecificity;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.service.EntryBuilderService;	
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.service.MasterIsoformMappingService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
-import org.nextprot.api.web.utils.Propagator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles({ "cache" })
 public class PropagatorIntegrationTest extends WebIntegrationBaseTest {

@@ -1,12 +1,11 @@
-package org.nextprot.api.commons.utils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+package com.nextprot.api.isoform.mapper.service.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.commons.utils.NucleotidePositionRange;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 

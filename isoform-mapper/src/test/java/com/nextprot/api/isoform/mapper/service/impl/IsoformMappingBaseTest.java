@@ -17,6 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
     DirtiesContextTestExecutionListener.class,
     TransactionDbUnitTestExecutionListener.class })
 @ContextConfiguration("classpath:spring/core-context.xml")
-public class IsoformMappingBaseTest extends AbstractUnitBaseTest{
+public abstract class IsoformMappingBaseTest extends AbstractUnitBaseTest{
 
 }

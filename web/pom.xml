@@ -77,7 +77,13 @@
 			<artifactId>nextprot-annotation-builder</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-isoform-mapper</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.oracle.jdbc</groupId>
 			<artifactId>ojdbc7</artifactId>
