@@ -4,8 +4,10 @@ import com.nextprot.api.isoform.mapper.domain.IsoformFeatureMapping;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.api.commons.bio.mutation.ProteinMutation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
-import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,7 @@ import java.text.ParseException;
 public class IsoformMappingServiceImpl implements IsoformMappingService {
 
     @Autowired
-    public OverviewService overviewService;
+    private EntryBuilderService entryBuilderService;
 
     @Autowired
     public MasterIsoformMappingService masterIsoformMappingService;
@@ -27,22 +29,24 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     @Override
     public IsoformFeatureMapping validateFeature(String featureName, AnnotationCategory annotationCategory, String nextprotAccession, boolean propagate) {
 
+        NextprotEntry nextprotEntry = NextprotEntry.parseAccession(nextprotAccession, entryBuilderService);
+
         switch (annotationCategory) {
             case VARIANT:
-                return validateVariant(featureName, nextprotAccession, propagate);
+                return validateVariant(featureName, nextprotEntry, propagate);
             case PTM_INFO:
-                return validatePtm(featureName, nextprotAccession, propagate);
+                return validatePtm(featureName, nextprotEntry, propagate);
             default:
                 throw new IllegalArgumentException("cannot handle annotation category " + annotationCategory);
         }
     }
 
-    private IsoformFeatureMapping validateVariant(String featureName, String nextprotAccession, boolean propagate) {
+    private IsoformFeatureMapping validateVariant(String featureName, NextprotEntry nextprotEntry, boolean propagate) {
 
         IsoformFeatureMapping mapping = new IsoformFeatureMapping();
 
         try {
-            GeneVariantParser parser = new GeneVariantParser(featureName, nextprotAccession, overviewService);
+            GeneVariantParser parser = new GeneVariantParser(featureName, nextprotEntry.getEntry());
             ProteinMutation mutation = parser.getProteinMutation();
             String geneName = parser.getGeneName();
 
@@ -70,7 +74,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         return mapping;
     }
 
-    private IsoformFeatureMapping validatePtm(String featureName, String nextprotAccession, boolean propagate) {
+    private IsoformFeatureMapping validatePtm(String featureName, NextprotEntry nextprotEntry, boolean propagate) {
 
         throw new IllegalStateException("ptm validation not yet implemented");
     }
@@ -90,5 +94,45 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
     private void checkRules() {
 
+    }
+
+    private static class NextprotEntry {
+
+        private final Entry entry;
+        private final String isoformAccession;
+
+        private NextprotEntry(Entry entry, String isoformAccession) {
+
+            this.entry = entry;
+            this.isoformAccession = isoformAccession;
+        }
+
+        public static NextprotEntry parseAccession(String accession, EntryBuilderService entryBuilderService) {
+
+            String entryAccession;
+            String isoformAccession = null;
+
+            if (accession.contains("-")) {
+                int colonPosition = accession.indexOf("-");
+                entryAccession = accession.substring(0, colonPosition);
+                isoformAccession = accession.substring(colonPosition);
+
+
+            } else {
+                entryAccession = accession;
+            }
+
+            Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withEverything());
+
+            return new NextprotEntry(entry, isoformAccession);
+        }
+
+        public Entry getEntry() {
+            return entry;
+        }
+
+        public String getIsoformAccession() {
+            return isoformAccession;
+        }
     }
 }
