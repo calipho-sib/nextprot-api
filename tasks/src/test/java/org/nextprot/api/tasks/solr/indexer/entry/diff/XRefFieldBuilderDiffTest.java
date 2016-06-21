@@ -27,7 +27,10 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		String[] test_list = {"NX_Q8N7I0", "NX_O00115","NX_O00116","NX_E5RQL4","NX_P32418","NX_Q7Z6P3",
 				"NX_Q7Z713", "NX_P22102", "NX_P10415", "NX_Q6PI97", "NX_Q8NDZ0", "NX_O15056"};
 
-		for(int i=0; i < test_list.length; i++){ testXrefs(getEntry(test_list[i])); } 
+		for(int i=0; i < test_list.length; i++)
+		    {
+			testXrefs(getEntry(test_list[i]));
+			} 
 		// for(int i=1000; i < 2000; i++){	testXrefs(getEntry(i));	} // 'random' entries
 
 		//Entry entry = getEntry("NX_O00422"); 
