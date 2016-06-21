@@ -33,9 +33,9 @@ public class InteractionFieldBuilder extends FieldBuilder{
 			for (Interactant currinteractant : interactants) {
 				if(currinteractant.getGenename() != null) { // otherwise it is the entry itself
 					interactantAC = currinteractant.getAccession();
-					//System.err.println("itac: " + interactantAC);
 					if(currinteractant.isNextprot()) {
 					  interactantAC = "NX_" + interactantAC.split("-")[0];	
+					  // We need the entryBuilderService to get interactant's recname
 				      recName = entryBuilderService.build(EntryConfig.newConfig(interactantAC).withOverview()).getOverview().getMainProteinName();
 					}
 					else // Xeno interaction
