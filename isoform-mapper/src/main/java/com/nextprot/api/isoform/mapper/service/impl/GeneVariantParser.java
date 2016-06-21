@@ -4,10 +4,11 @@ import org.nextprot.api.commons.bio.mutation.AbstractProteinMutationFormat;
 import org.nextprot.api.commons.bio.mutation.ProteinMutation;
 import org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.Entry;
 
 import java.text.ParseException;
+import java.util.List;
 
 /**
  * Parse gene name and variant
@@ -18,29 +19,32 @@ class GeneVariantParser {
     private final ProteinMutation proteinMutation;
     private final ProteinMutationHGVFormat PROTEIN_MUTATION_HGV_FORMAT = new ProteinMutationHGVFormat();
 
-    GeneVariantParser(String mutation, String nextprotAccession, OverviewService overviewService) throws ParseException {
+    GeneVariantParser(String mutation, Entry entry) throws ParseException {
 
         int colonPosition = mutation.lastIndexOf("-");
         String geneName = mutation.substring(0, colonPosition);
         String hgvMutation = mutation.substring(colonPosition + 1);
 
-        if (!validateGeneName(nextprotAccession, geneName, overviewService)) {
-            throw new NextProtException(nextprotAccession + " does not comes from gene " + geneName);
+        if (!validateGeneName(entry, geneName)) {
+            throw new NextProtException(entry.getUniqueName() + " does not comes from gene " + geneName);
         }
 
         proteinMutation = PROTEIN_MUTATION_HGV_FORMAT.parse(hgvMutation, AbstractProteinMutationFormat.ParsingMode.PERMISSIVE);
         this.geneName = geneName;
     }
 
-    private boolean validateGeneName(String nextprotAccession, String geneName, OverviewService overviewService) {
+    private boolean validateGeneName(Entry entry, String geneName) {
 
-        // 1. get overview of entry, check gene name is as expected
-        Overview overview = overviewService.findOverviewByEntry(nextprotAccession);
+        List<EntityName> geneNames = entry.getOverview().getGeneNames();
 
-        // TODO: check if genename contained in gene name list instead
-        if (!overview.getMainGeneName().equals(geneName))
-            return false;
-        return true;
+        for (EntityName name : geneNames) {
+
+            if (name.getName().equals(geneName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public ProteinMutation getProteinMutation() {

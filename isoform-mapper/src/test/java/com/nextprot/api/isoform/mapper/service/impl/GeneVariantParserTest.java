@@ -7,15 +7,19 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.mutation.Mutation;
 import org.nextprot.api.commons.bio.mutation.ProteinMutation;
 import org.nextprot.api.commons.bio.mutation.Substitution;
+import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.service.OverviewService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GeneVariantParserTest {
 
     @Test
     public void parserShouldExtractGeneNameAndProteinMutation() throws Exception {
 
-        GeneVariantParser parser = new GeneVariantParser("SCN11A-p.Lys1710Thr", "NX_Q9UI33", mockService("SCN11A"));
+        GeneVariantParser parser = new GeneVariantParser("SCN11A-p.Lys1710Thr", mockEntry("SCN11A", "SCN12A", "SNS2"));
         Assert.assertEquals("SCN11A", parser.getGeneName());
         ProteinMutation mutation = parser.getProteinMutation();
         Mutation mutation2 = mutation.getMutation();
@@ -25,14 +29,22 @@ public class GeneVariantParserTest {
         Assert.assertTrue(mutation2 instanceof Substitution);
     }
 
-    private OverviewService mockService(String mainGeneName) {
+    private Entry mockEntry(String... geneNames) {
 
-        OverviewService service = Mockito.mock(OverviewService.class);
+        Entry entry = Mockito.mock(Entry.class);
         Overview overview = Mockito.mock(Overview.class);
-        Mockito.when(overview.getMainGeneName()).thenReturn(mainGeneName);
-        Mockito.when(service.findOverviewByEntry("NX_Q9UI33")).thenReturn(overview);
+        Mockito.when(entry.getOverview()).thenReturn(overview);
 
-        return service;
+        List<EntityName> names = new ArrayList<>();
+        for (String geneName : geneNames) {
+            EntityName entityName = new EntityName();
+            entityName.setName(geneName);
+            names.add(entityName);
+        }
+
+        Mockito.when(overview.getGeneNames()).thenReturn(names);
+
+        return entry;
     }
 
 }
