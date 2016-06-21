@@ -522,6 +522,17 @@ public class ProteinMutationHGVFormatTest {
         Assert.assertEquals(0, VariantTypeReport.countParsingErrors(report));
     }
 
+    private static String[] trimQuotes(String... strs) {
+
+        String[] dest = new String[strs.length];
+
+        for (int i=0 ; i<strs.length ; i++) {
+            dest[i] = strs[i].substring(1, strs[i].length() - 1);
+        }
+
+        return dest;
+    }
+
     private static Map<String, VariantTypeReport> collectVariantParsingReportFromBED(String filename) throws IOException {
 
         ProteinMutationHGVFormat format = new ProteinMutationHGVFormat();
@@ -536,8 +547,9 @@ public class ProteinMutationHGVFormatTest {
 
         while ( (line = br.readLine()) != null) {
 
-            String[] fields = line.split("\\t+");
-            String key = fields[0].substring(1, fields[0].length()-1);
+            String[] fields = trimQuotes(line.split("\\t+"));
+
+            String key = fields[0];
             variants.put(key, fields);
 
             String type = variants.get(key)[5];
@@ -551,10 +563,13 @@ public class ProteinMutationHGVFormatTest {
 
         for (String variant : variants.keySet()) {
 
-            String type = variants.get(variant)[5];
+            String[] fields = variants.get(variant);
+
+            String type = fields[5];
+            String status = fields[18];
 
             if (!variant.contains("-")) {
-                VariantTypeReport.populateMap(variantReport, type, atomicCounter.get(type).get(), variant + ": missing '-'");
+                VariantTypeReport.populateMap(variantReport, type, atomicCounter.get(type).get(), variant + ": missing '-'", status);
             }
             else {
                 try {
@@ -562,13 +577,13 @@ public class ProteinMutationHGVFormatTest {
                     String hgvMutation = variant.substring(p + 1);
 
                     if (!format.isValidProteinSequenceVariant(hgvMutation)) {
-                        VariantTypeReport.populateMap(variantReport, type, atomicCounter.get(type).get(), variant + ": invalid format ('p.' expected)");
+                        VariantTypeReport.populateMap(variantReport, type, atomicCounter.get(type).get(), variant + ": invalid format ('p.' expected)", status);
                     } else {
                         ProteinMutation mutation = format.parse(hgvMutation, AbstractProteinMutationFormat.ParsingMode.PERMISSIVE);
                         Assert.assertNotNull(mutation);
                     }
                 } catch (ParseException e) {
-                    VariantTypeReport.populateMap(variantReport, type, atomicCounter.get(type).get(), variant + ": " + e.getMessage());
+                    VariantTypeReport.populateMap(variantReport, type, atomicCounter.get(type).get(), variant + ": " + e.getMessage(), status);
                 }
             }
         }
@@ -588,10 +603,10 @@ public class ProteinMutationHGVFormatTest {
             this.parsingErrorMessages = new ArrayList<>();
         }
 
-        public static void populateMap(Map<String, VariantTypeReport> variantReport, String type, int totalCount, String message) {
+        public static void populateMap(Map<String, VariantTypeReport> variantReport, String type, int totalCount, String message, String status) {
 
             if (!variantReport.containsKey(type)) variantReport.put(type, new VariantTypeReport(type, totalCount));
-            variantReport.get(type).addParsingErrorMessage(message);
+            variantReport.get(type).addParsingErrorMessage(message+" (status="+status+")");
         }
 
         public static int countParsingErrors(Map<String, VariantTypeReport> variantReport) {
