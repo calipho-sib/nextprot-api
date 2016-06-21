@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nextprot.api.commons.bio.AminoAcidCode;
-
 
 public class AnnotationVariant implements Serializable {
 
@@ -15,40 +13,39 @@ public class AnnotationVariant implements Serializable {
 	private String rawDescription;
 	private String description = null; // set by parsing rawDescription
 	private List<String> diseaseTerms = null; // set by parsing rawDescription
+
+	// TODO: [original|variantAminoAcid never used] ; discuss about the usage of originalAminoAcid and variantAminoAcid as they can be empty, single or multiple
+	/*
 	public String getOriginalAminoAcid() {
 		return originalAminoAcid;
 	}
-
 	public void setOriginalAminoAcid(String originalAminoAcid) {
 		this.originalAminoAcid = originalAminoAcid;
 	}
-
 	public String getVariantAminoAcid() {
 		return variantAminoAcid;
 	}
-
 	public void setVariantAminoAcid(String variantAminoAcid) {
 		this.variantAminoAcid = variantAminoAcid;
 	}
 
-
 	private String originalAminoAcid;
 	private String variantAminoAcid;
+	*/
 
-	
 	@Deprecated //TODO See with Fred AminoAcidCode which can be null, -, multiple ...
 	public AnnotationVariant(String original, String variant) {
 		this.original = original;
 		this.variant = variant;
 	}
 
-	
 	public AnnotationVariant(String original, String variant, String rawDescription) {
 		super();
 		this.original = original;
-		this.originalAminoAcid = AminoAcidCode.valueOfCode1AA(original.charAt(0)).get3LetterCode();
 		this.variant = variant;
-		this.variantAminoAcid = AminoAcidCode.valueOfCode1AA(variant.charAt(0)).get3LetterCode();
+		// Commenting code that is never used: see [original|variantAminoAcid never used] comment above
+		//this.originalAminoAcid = AminoAcidCode.valueOfCode1AA(original.charAt(0)).get3LetterCode();
+		//this.variantAminoAcid = AminoAcidCode.valueOfCode1AA(variant.charAt(0)).get3LetterCode();
 		this.rawDescription = rawDescription;
 		parseRawDescription();
 	}
