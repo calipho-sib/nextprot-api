@@ -53,6 +53,10 @@ public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements I
 		return result.get(0); 
 	}
 	
+	protected Object getValueForFieldInCurrentGoldSolrImplementation(String entryName, Fields field) {
+		return getValueForFieldInCurrentSolrImplementation(solrEntriesGold, entryName, field.getName());
+	}
+
 	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, Fields field) {
 		return getValueForFieldInCurrentSolrImplementation(solrEntries, entryName, field.getName());
 	}
