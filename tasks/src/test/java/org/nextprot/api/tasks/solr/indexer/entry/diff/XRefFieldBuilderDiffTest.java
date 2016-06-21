@@ -8,6 +8,7 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.InteractionFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.XrefFieldBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -60,12 +61,6 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		  //Assert.assertEquals(expectedABs, currentABs);
 		}
 		
-		List<String> expectedInteractions = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.INTERACTIONS);
-		if(expectedInteractions != null) {
-		      Assert.assertEquals(xfb.getFieldValue(Fields.INTERACTIONS, List.class).size(), expectedInteractions.size());
-		}
-
-
 		List<String> expectedEnsembl = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ENSEMBL);
 		if(expectedEnsembl != null) {
 			if(expectedEnsembl.size() > 1 || expectedEnsembl.get(0).startsWith("ENS")) // We don't want housemade ENSEMBL like NX_VG_7_129906380_2933 (NX_Q13166)
@@ -109,5 +104,21 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 			//Assert.fail(msg);
 		}
 		else  Assert.assertTrue(true);
+
+		List<String> expectedInteractions = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.INTERACTIONS);
+		if(expectedInteractions != null) {
+		      //Assert.assertEquals(xfb.getFieldValue(Fields.INTERACTIONS, List.class).size(), expectedInteractions.size());
+			Integer olditcnt = 0, newitcnt = 0;
+			InteractionFieldBuilder ifb = new InteractionFieldBuilder();
+			//ifb.setTerminologyService(terminologyService);
+			ifb.setEntryBuilderService(entryBuilderService);
+			ifb.initializeBuilder(entry);
+			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(Fields.INTERACTIONS, List.class));
+			for(String intactIt : expectedInteractions) if(intactIt.startsWith("<p>Interacts")) olditcnt++;
+			for(String newintactIt : itSet) if(newintactIt.startsWith("AC:") || newintactIt.equals("selfInteraction")) newitcnt++;
+			// There may be one more interaction in the new index (the subunit annotation)
+			Assert.assertEquals(olditcnt, newitcnt);
+		}
+
 	}
 }
