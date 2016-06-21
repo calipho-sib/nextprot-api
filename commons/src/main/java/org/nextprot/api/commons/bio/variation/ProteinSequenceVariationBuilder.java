@@ -1,0 +1,102 @@
+package org.nextprot.api.commons.bio.variation;
+
+import com.google.common.base.Preconditions;
+import org.nextprot.api.commons.bio.AminoAcidCode;
+
+/**
+ * Fluent interface for building <code>ProteinSequenceVariation</code>s
+ *
+ * Created by fnikitin on 09/07/15.
+ */
+public interface ProteinSequenceVariationBuilder {
+
+    /** starting creation */
+    interface StartBuilding {
+
+        /** select a single affected amino-acid residue */
+        SingleAminoAcidMutation aminoAcid(AminoAcidCode affectedAA, int affectedAAPos);
+
+        /** select a range of affected amino-acid residues */
+        AminoAcidMutation aminoAcids(AminoAcidCode firstAffectedAA, int firstAffectedAAPos, AminoAcidCode lastAffectedAA, int lastAffectedAAPos);
+    }
+
+    /** mutations affecting any sequence of amino-acid */
+    interface AminoAcidMutation {
+
+        /** delete all affected amino-acids */
+        ProteinSequenceVariationBuilder deleted();
+
+        /** inserts given aas after specific AA */
+        ProteinSequenceVariationBuilder inserts(AminoAcidCode... aas);
+
+        /** delete all affected amino-acids and inserts given aas */
+        ProteinSequenceVariationBuilder deletedAndInserts(AminoAcidCode... aas);
+    }
+
+    /** mutations affecting only one amino-acid */
+    interface SingleAminoAcidMutation extends AminoAcidMutation {
+
+        /** substitutedBy an amino-acid by another one */
+        ProteinSequenceVariationBuilder substitutedBy(AminoAcidCode aa);
+
+        /** A frameshift appears just after the affected amino-acid leading to a codon stop in this frame */
+        ProteinSequenceVariationBuilder thenFrameshift(int stopCodonPos);
+    }
+
+    /** build an instance of ProteinMutation */
+    ProteinSequenceVariation build();
+
+    /** collect data through the process */
+    DataCollector getDataCollector();
+
+    class DataCollector {
+
+        private AminoAcidCode firstChangingAminoAcid;
+        private int firstChangingAminoAcidPos;
+        private AminoAcidCode lastChangingAminoAcid;
+        private int lastChangingAminoAcidPos;
+        private ProteinSequenceChange proteinSequenceChange;
+
+        public void setFirstChangingAminoAcid(AminoAcidCode firstAffectedAminoAcidCode, int firstAffectedAminoAcidPos) {
+
+            Preconditions.checkNotNull(firstAffectedAminoAcidCode);
+            Preconditions.checkArgument(firstAffectedAminoAcidPos > 0);
+
+            this.firstChangingAminoAcid = firstAffectedAminoAcidCode;
+            this.firstChangingAminoAcidPos = firstAffectedAminoAcidPos;
+        }
+
+        public AminoAcidCode getFirstChangingAminoAcid() {
+            return firstChangingAminoAcid;
+        }
+
+        public int getFirstChangingAminoAcidPos() {
+            return firstChangingAminoAcidPos;
+        }
+
+        public void setLastChangingAminoAcid(AminoAcidCode lastAffectedAminoAcidCode, int lastAffectedAminoAcidPos) {
+
+            Preconditions.checkNotNull(firstChangingAminoAcid);
+            Preconditions.checkArgument(firstChangingAminoAcidPos > 0);
+
+            this.lastChangingAminoAcid = lastAffectedAminoAcidCode;
+            this.lastChangingAminoAcidPos = lastAffectedAminoAcidPos;
+        }
+
+        public AminoAcidCode getLastChangingAminoAcid() {
+            return lastChangingAminoAcid;
+        }
+
+        public int getLastChangingAminoAcidPos() {
+            return lastChangingAminoAcidPos;
+        }
+
+        public ProteinSequenceChange getProteinSequenceChange() {
+            return proteinSequenceChange;
+        }
+
+        public void setProteinSequenceChange(ProteinSequenceChange proteinSequenceChange) {
+            this.proteinSequenceChange = proteinSequenceChange;
+        }
+    }
+}

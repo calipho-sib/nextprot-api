@@ -2,7 +2,7 @@ package com.nextprot.api.isoform.mapper.service.impl;
 
 import com.nextprot.api.isoform.mapper.domain.IsoformFeatureMapping;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
-import org.nextprot.api.commons.bio.mutation.ProteinMutation;
+import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -47,7 +47,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         try {
             GeneVariantParser parser = new GeneVariantParser(featureName, nextprotEntry.getEntry());
-            ProteinMutation mutation = parser.getProteinMutation();
+            ProteinSequenceVariation mutation = parser.getProteinSequenceVariation();
             String geneName = parser.getGeneName();
 
             //1) Validate
@@ -79,7 +79,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         throw new IllegalStateException("ptm validation not yet implemented");
     }
 
-    private boolean validateIsoformPosition(ProteinMutation mutation) {
+    private boolean validateIsoformPosition(ProteinSequenceVariation mutation) {
 
         // 2. check AA exists in isoform at specified position
 

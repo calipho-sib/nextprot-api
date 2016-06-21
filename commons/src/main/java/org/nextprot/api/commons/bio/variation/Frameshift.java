@@ -1,4 +1,4 @@
-package org.nextprot.api.commons.bio.mutation;
+package org.nextprot.api.commons.bio.variation;
 
 import com.google.common.base.Preconditions;
 
@@ -9,7 +9,7 @@ import java.util.Objects;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Frameshift implements Mutation<Integer> {
+public class Frameshift implements ProteinSequenceChange<Integer> {
 
     private final int stopCodonPos;
 

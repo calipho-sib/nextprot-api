@@ -4,9 +4,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.mutation.Mutation;
-import org.nextprot.api.commons.bio.mutation.ProteinMutation;
-import org.nextprot.api.commons.bio.mutation.Substitution;
+import org.nextprot.api.commons.bio.variation.ProteinSequenceChange;
+import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
+import org.nextprot.api.commons.bio.variation.Substitution;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Overview;
@@ -21,12 +21,12 @@ public class GeneVariantParserTest {
 
         GeneVariantParser parser = new GeneVariantParser("SCN11A-p.Lys1710Thr", mockEntry("SCN11A", "SCN12A", "SNS2"));
         Assert.assertEquals("SCN11A", parser.getGeneName());
-        ProteinMutation mutation = parser.getProteinMutation();
-        Mutation mutation2 = mutation.getMutation();
+        ProteinSequenceVariation mutation = parser.getProteinSequenceVariation();
+        ProteinSequenceChange proteinSequenceChange2 = mutation.getProteinSequenceChange();
 
-        Assert.assertEquals(AminoAcidCode.Lysine, mutation.getFirstAffectedAminoAcidCode());
-        Assert.assertEquals(1710, mutation.getFirstAffectedAminoAcidPos());
-        Assert.assertTrue(mutation2 instanceof Substitution);
+        Assert.assertEquals(AminoAcidCode.Lysine, mutation.getFirstChangingAminoAcid());
+        Assert.assertEquals(1710, mutation.getFirstChangingAminoAcidPos());
+        Assert.assertTrue(proteinSequenceChange2 instanceof Substitution);
     }
 
     private Entry mockEntry(String... geneNames) {

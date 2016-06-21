@@ -1,4 +1,4 @@
-package org.nextprot.api.commons.bio.mutation;
+package org.nextprot.api.commons.bio.variation;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Substitution implements Mutation<AminoAcidCode> {
+public class Substitution implements ProteinSequenceChange<AminoAcidCode> {
 
     private final AminoAcidCode aa;
 

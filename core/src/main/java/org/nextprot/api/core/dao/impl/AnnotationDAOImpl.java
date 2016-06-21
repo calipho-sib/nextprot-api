@@ -1,6 +1,6 @@
 package org.nextprot.api.core.dao.impl;
-import org.nextprot.api.commons.bio.mutation.ProteinMutationFormat;
-import org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat;
+import org.nextprot.api.commons.bio.variation.format.ProteinSequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.format.hgvs.ProteinSequenceVariationHGVSFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
@@ -25,7 +25,7 @@ import java.util.List;
 @Component
 public class AnnotationDAOImpl implements AnnotationDAO {
 
-	private static ProteinMutationHGVFormat MUTATION_HGV_FORMAT = new ProteinMutationHGVFormat();
+	private static ProteinSequenceVariationHGVSFormat MUTATION_HGV_FORMAT = new ProteinSequenceVariationHGVSFormat();
 
 	@Autowired private SQLDictionary sqlDictionary;
 
@@ -219,7 +219,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			property.setValue((name.equals("mutation AA")) ?
 					// TODO: 'mutation AA' property comes from COSMIC. Some values could be not corrected formatter according to the last version v2.0 of HGV
 					// This reformatting should be done at NP integration time, even better, this should be done by COSMIC guys !
-					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, ProteinMutationHGVFormat.ParsingMode.PERMISSIVE), ProteinMutationFormat.AACodeType.THREE_LETTER)
+					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE), ProteinSequenceVariationFormat.AACodeType.THREE_LETTER)
 					: value);
 		} catch (ParseException e) {
 			throw new NextProtException(e);

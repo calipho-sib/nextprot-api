@@ -1,11 +1,11 @@
-package org.nextprot.api.commons.bio.mutation;
+package org.nextprot.api.commons.bio.variation;
 
 /**
  * A simple deletion with no associated value.
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Deletion implements Mutation<Object> {
+public class Deletion implements ProteinSequenceChange<Object> {
 
     private static Deletion INSTANCE = new Deletion();
 
