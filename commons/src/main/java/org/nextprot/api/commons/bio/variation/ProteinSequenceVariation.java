@@ -71,6 +71,13 @@ public class ProteinSequenceVariation {
         return Objects.hash(firstChangingAminoAcid, firstChangingAminoAcidPos, lastChangingAminoAcid, lastChangingAminoAcidPos, proteinSequenceChange);
     }
 
+    @Override
+    public String toString() {
+        return firstChangingAminoAcid + "[" + firstChangingAminoAcidPos + "] ... " +
+                lastChangingAminoAcid + "[" + lastChangingAminoAcidPos + "]) -> " +
+                proteinSequenceChange.getValue();
+    }
+
     public static class FluentBuilder implements ProteinSequenceVariationBuilder.StartBuilding {
 
         private final ProteinSequenceVariationBuilder.DataCollector dataCollector;

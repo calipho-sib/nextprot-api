@@ -504,6 +504,7 @@ public class ProteinSequenceVariationHGVSFormatTest {
         ProteinSequenceVariation pm = format.parse("p.Y553_K558>", ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
     }
 
+    @Ignore
     @Test
     public void parserShouldBeAbleToParseGaussVariantsFromBED() throws IOException {
 
@@ -514,6 +515,7 @@ public class ProteinSequenceVariationHGVSFormatTest {
         Assert.assertEquals(0, VariantTypeReport.countParsingErrors(report));
     }
 
+    @Ignore
     @Test
     public void parserShouldBeAbleToParseStraussVariantsFromBED() throws IOException {
 
@@ -522,6 +524,12 @@ public class ProteinSequenceVariationHGVSFormatTest {
         Map<String, VariantTypeReport> report = collectVariantParsingReportFromBED(filename);
 
         Assert.assertEquals(0, VariantTypeReport.countParsingErrors(report));
+    }
+
+    @Test
+    public void parserShouldBeAbleToParseVariantsFromBED() throws IOException {
+
+        parseVariants(getClass().getResource("variants.tsv").getFile());
     }
 
     private static String[] trimQuotes(String... strs) {
@@ -593,7 +601,42 @@ public class ProteinSequenceVariationHGVSFormatTest {
         return variantReport;
     }
 
-    public static class VariantTypeReport {
+    private static void parseVariants(String filename) throws IOException {
+
+        ProteinSequenceVariationHGVSFormat format = new ProteinSequenceVariationHGVSFormat();
+
+        BufferedReader br = new BufferedReader(new FileReader(filename));
+        String variant;
+
+        int parsingErrorCount = 0;
+        int variantCount = 0;
+        while ( (variant = br.readLine()) != null) {
+
+            if (!variant.contains("-")) {
+                System.err.println("missing colon in "+variant);
+            }
+            else {
+
+                int p = variant.lastIndexOf("-");
+                String hgvMutation = variant.substring(p + 1);
+
+                try {
+                    ProteinSequenceVariation mutation = format.parse(hgvMutation, AbstractProteinSequenceVariationFormat.ParsingMode.PERMISSIVE);
+                    //System.out.println(hgvMutation + ": {" +mutation+"}");
+
+                } catch (Exception e) {
+                    parsingErrorCount++;
+                    System.err.println(hgvMutation + ": {" +e.getMessage()+"}");
+                }
+            }
+
+            variantCount++;
+        }
+
+        System.out.println("parsing error: "+parsingErrorCount+"/"+variantCount);
+    }
+
+    private static class VariantTypeReport {
 
         private final String type;
         private final List<String> parsingErrorMessages;
