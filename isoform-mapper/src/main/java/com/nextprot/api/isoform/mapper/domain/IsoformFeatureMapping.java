@@ -10,7 +10,7 @@ public class IsoformFeatureMapping implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private final HashMap<String, IsoformFeatureMapping.IsoformFeature> features;
+	private final HashMap<String, IsoformFeature> features;
 
 	public IsoformFeatureMapping() {
 		features = new HashMap<>();
@@ -43,63 +43,5 @@ public class IsoformFeatureMapping implements Serializable {
 	public int getIsoformFeatureNumber() {
 
 		return features.size();
-	}
-
-	public static class IsoformFeature implements Serializable {
-
-		private static final long serialVersionUID = 1L;
-
-		// TODO: define status according to specifications
-		// TODO: if not mapped give a precision of the step ...
-		// http error code ? ...
-		public enum Status {
-			MAPPED, UNMAPPED
-		}
-
-		private String isoformName;
-		private Integer firstPosition;
-		private Integer lastPosition;
-		private String message;
-		private Status status;
-
-		public String getIsoformName() {
-			return isoformName;
-		}
-
-		public void setIsoformName(String isoformName) {
-			this.isoformName = isoformName;
-		}
-
-		public Integer getFirstPosition() {
-			return firstPosition;
-		}
-
-		public void setFirstPosition(Integer firstPosition) {
-			this.firstPosition = firstPosition;
-		}
-
-		public Integer getLastPosition() {
-			return lastPosition;
-		}
-
-		public void setLastPosition(Integer lastPosition) {
-			this.lastPosition = lastPosition;
-		}
-
-		public String getMessage() {
-			return message;
-		}
-
-		public void setMessage(String message) {
-			this.message = message;
-		}
-
-		public Status getStatus() {
-			return status;
-		}
-
-		public void setStatus(Status status) {
-			this.status = status;
-		}
 	}
 }
