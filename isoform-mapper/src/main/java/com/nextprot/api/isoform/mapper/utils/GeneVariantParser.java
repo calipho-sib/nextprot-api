@@ -3,8 +3,8 @@ package com.nextprot.api.isoform.mapper.utils;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.format.hgvs.ProteinSequenceVariationHGVSFormat;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.dao.EntityName;
-import org.nextprot.api.core.domain.Entry;
 
 import java.text.ParseException;
 import java.util.List;
@@ -17,16 +17,15 @@ public class GeneVariantParser {
     private final String geneName;
     private final ProteinSequenceVariation proteinSequenceVariation;
 
-    public GeneVariantParser(String variant, Entry entry) throws ParseException {
+    public GeneVariantParser(String variant, EntryIsoform entryIsoform) throws ParseException {
 
         int colonPosition = variant.lastIndexOf("-");
-        String geneName = variant.substring(0, colonPosition);
+        String geneName = variant.substring(0, variant.indexOf("-"));
         String hgvVariant = variant.substring(colonPosition + 1);
 
-        // TODO: checking isoform too (ex: WT1-iso4-p.Phe154Ser vs NX_P19544-4)
-        /*if (!validateGeneName(entry, geneName)) {
-            throw new NextProtException(entry.getUniqueName() + " does not comes from gene " + geneName);
-        }*/
+        if (!validateGeneName(entryIsoform, geneName)) {
+            throw new NextProtException(entryIsoform.getEntry().getUniqueName() + " does not comes from gene " + geneName);
+        }
 
         ProteinSequenceVariationHGVSFormat format = new ProteinSequenceVariationHGVSFormat();
         proteinSequenceVariation = format.parse(hgvVariant, AbstractProteinSequenceVariationFormat.ParsingMode.PERMISSIVE);
@@ -34,13 +33,13 @@ public class GeneVariantParser {
         this.geneName = geneName;
     }
 
-    private boolean validateGeneName(Entry entry, String geneName) {
+    private boolean validateGeneName(EntryIsoform entryIsoform, String geneName) {
 
-        List<EntityName> geneNames = entry.getOverview().getGeneNames();
+        List<EntityName> geneNames = entryIsoform.getEntry().getOverview().getGeneNames();
 
         for (EntityName name : geneNames) {
 
-            if (name.getName().equals(geneName)) {
+            if (geneName.startsWith(name.getName())) {
                 return true;
             }
         }
