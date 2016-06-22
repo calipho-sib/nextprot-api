@@ -1,5 +1,6 @@
-package com.nextprot.api.isoform.mapper.service.impl;
+package com.nextprot.api.isoform.mapper.utils;
 
+import com.nextprot.api.isoform.mapper.utils.GeneVariantParser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;

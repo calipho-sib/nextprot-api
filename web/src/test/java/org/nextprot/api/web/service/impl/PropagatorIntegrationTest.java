@@ -1,9 +1,9 @@
 package org.nextprot.api.web.service.impl;
 
-import com.nextprot.api.isoform.mapper.service.impl.CodonNucleotideIndices;
-import com.nextprot.api.isoform.mapper.service.impl.CodonNucleotidePositions;
-import com.nextprot.api.isoform.mapper.service.impl.Propagator;
-import com.nextprot.api.isoform.mapper.service.impl.PropagatorCore;
+import com.nextprot.api.isoform.mapper.utils.CodonNucleotideIndices;
+import com.nextprot.api.isoform.mapper.utils.CodonNucleotidePositions;
+import com.nextprot.api.isoform.mapper.utils.Propagator;
+import com.nextprot.api.isoform.mapper.utils.PropagatorCore;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;

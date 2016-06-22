@@ -1,4 +1,4 @@
-package com.nextprot.api.isoform.mapper.service.impl;
+package com.nextprot.api.isoform.mapper.utils;
 
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.commons.utils.Pair;

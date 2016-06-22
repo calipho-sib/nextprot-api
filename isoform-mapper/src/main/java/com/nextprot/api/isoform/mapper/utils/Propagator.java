@@ -1,4 +1,4 @@
-package com.nextprot.api.isoform.mapper.service.impl;
+package com.nextprot.api.isoform.mapper.utils;
 
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;

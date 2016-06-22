@@ -2,9 +2,12 @@ package com.nextprot.api.isoform.mapper.service.impl;
 
 import com.nextprot.api.isoform.mapper.domain.IsoformFeatureMapping;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import com.nextprot.api.isoform.mapper.utils.GeneVariantParser;
+import com.nextprot.api.isoform.mapper.utils.Propagator;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -12,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -41,6 +46,41 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         }
     }
 
+    private IsoformFeatureMapping.IsoformFeature checkIsoformFeature(Isoform isoform, ProteinSequenceVariation variation) {
+
+        IsoformFeatureMapping.IsoformFeature feature = new IsoformFeatureMapping.IsoformFeature();
+        feature.setFirstPosition(variation.getFirstChangingAminoAcidPos());
+        feature.setIsoformName(isoform.getUniqueName());
+        feature.setLastPosition(variation.getLastChangingAminoAcidPos());
+
+        boolean firstPosCheck = Propagator.checkAminoAcidPosition(isoform, variation.getFirstChangingAminoAcidPos(),
+                String.valueOf(variation.getFirstChangingAminoAcid().get1LetterCode()));
+
+        boolean lastPosCheck = Propagator.checkAminoAcidPosition(isoform, variation.getLastChangingAminoAcidPos(),
+                String.valueOf(variation.getLastChangingAminoAcid().get1LetterCode()));
+
+        if (!firstPosCheck || !lastPosCheck) {
+
+            feature.setMessage("blabalab");
+        }
+
+        return feature;
+    }
+
+    private ProteinSequenceVariation createVariationOnIsoform(ProteinSequenceVariation canonicalIsoformVariation, Propagator propagator) {
+
+        return null;
+    }
+
+    private List<Isoform> getOtherIsoforms(Isoform exceptThisOne) {
+
+        List<Isoform> isoforms = new ArrayList<>();
+
+
+
+        return isoforms;
+    }
+
     private IsoformFeatureMapping validateVariant(String featureName, NextprotEntry nextprotEntry, boolean propagate) {
 
         IsoformFeatureMapping mapping = new IsoformFeatureMapping();
@@ -48,23 +88,30 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         try {
             GeneVariantParser parser = new GeneVariantParser(featureName, nextprotEntry.getEntry());
             ProteinSequenceVariation variation = parser.getProteinSequenceVariation();
-            String geneName = parser.getGeneName();
 
-            //1) Validate
-            if (validateIsoformPosition(variation, nextprotEntry.getEntry())) {
+            Propagator propagator = new Propagator(nextprotEntry.getEntry());
 
-                //2) propagate if flag = true returns a map with N isoforms
-                if (propagate) {
+            if (!nextprotEntry.isIsoform()) {
 
-                    propagate();
-                    //3) check rules
-                    checkRules();
-                }
+                IsoformFeatureMapping.IsoformFeature isoformFeature = checkIsoformFeature(propagator.getCanonicalIsoform(),
+                        variation);
+            }
+            else {
+                Isoform isoform = propagator.getIsoformByName(nextprotEntry.getIsoformAccession());
 
-            } else {
-                // not validated
-                // error message...
+                ProteinSequenceVariation isoformVariation = createVariationOnIsoform(variation, propagator);
 
+                IsoformFeatureMapping.IsoformFeature isoformFeature = checkIsoformFeature(isoform,
+                        isoformVariation);
+            }
+
+            // propagation to other isoforms ?
+            //2) propagate if flag = true returns a map with N isoforms
+            if (propagate) {
+
+                propagate();
+                //3) check rules
+                checkRules();
             }
         } catch (ParseException e) {
 
@@ -89,6 +136,9 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     }
 
     private void propagate() {
+
+        // propagate the feature to other isoforms
+        // need to locate those feature on isoforms
 
     }
 
@@ -133,6 +183,10 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         public String getIsoformAccession() {
             return isoformAccession;
+        }
+
+        public boolean isIsoform() {
+            return isoformAccession != null;
         }
     }
 }

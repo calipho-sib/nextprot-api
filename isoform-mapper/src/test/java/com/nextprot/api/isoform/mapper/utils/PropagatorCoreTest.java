@@ -1,5 +1,8 @@
-package com.nextprot.api.isoform.mapper.service.impl;
+package com.nextprot.api.isoform.mapper.utils;
 
+import com.nextprot.api.isoform.mapper.utils.CodonNucleotideIndices;
+import com.nextprot.api.isoform.mapper.utils.CodonNucleotidePositions;
+import com.nextprot.api.isoform.mapper.utils.PropagatorCore;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.NucleotidePositionRange;

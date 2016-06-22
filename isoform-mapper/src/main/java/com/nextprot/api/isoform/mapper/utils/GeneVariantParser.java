@@ -1,4 +1,4 @@
-package com.nextprot.api.isoform.mapper.service.impl;
+package com.nextprot.api.isoform.mapper.utils;
 
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
@@ -12,12 +12,12 @@ import java.util.List;
 /**
  * Parse and provide gene name and protein sequence variant
  */
-class GeneVariantParser {
+public class GeneVariantParser {
 
     private final String geneName;
     private final ProteinSequenceVariation proteinSequenceVariation;
 
-    GeneVariantParser(String variant, Entry entry) throws ParseException {
+    public GeneVariantParser(String variant, Entry entry) throws ParseException {
 
         int colonPosition = variant.lastIndexOf("-");
         String geneName = variant.substring(0, colonPosition);
