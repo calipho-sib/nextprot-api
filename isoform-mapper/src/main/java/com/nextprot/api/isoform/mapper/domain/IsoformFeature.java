@@ -3,8 +3,7 @@ package com.nextprot.api.isoform.mapper.domain;
 import java.io.Serializable;
 
 /**
- * Validation result of location of feature on isoform and gene.
- * More precisely check location of changing amino-acids and nucleotides.
+ * Result of validation of changing amino-acids on isoform
  *
  * Created by fnikitin on 22/06/16.
  */
