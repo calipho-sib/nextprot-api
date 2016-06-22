@@ -4,6 +4,9 @@ import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class Propagator {
 
 	private Entry entry;
@@ -68,6 +71,17 @@ public class Propagator {
 			if (iso.isCanonicalIsoform()) return iso;
 		}
 		return null;
+	}
+
+	/**
+	 * Get all isoforms except the given one
+	 * @param discardedIsoform isoform to discard
+	 */
+	public List<Isoform> getOtherIsoforms(Isoform discardedIsoform) {
+
+		return entry.getIsoforms().stream()
+				.filter(iso -> !iso.getUniqueName().equals(discardedIsoform.getUniqueName()))
+				.collect(Collectors.toList());
 	}
 	
 	/**
