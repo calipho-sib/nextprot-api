@@ -1,9 +1,6 @@
 package org.nextprot.api.web.service.impl;
 
-import com.nextprot.api.isoform.mapper.utils.CodonNucleotideIndices;
-import com.nextprot.api.isoform.mapper.utils.CodonNucleotidePositions;
-import com.nextprot.api.isoform.mapper.utils.Propagator;
-import com.nextprot.api.isoform.mapper.utils.PropagatorCore;
+import com.nextprot.api.isoform.mapper.utils.*;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -117,10 +114,10 @@ public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
 
 				for (String iso1name : isoExpectedPos.keySet()) {
 					Integer iso1ExpectedPos = isoExpectedPos.get(iso1name);
-					Isoform iso1 = propagator.getIsoformByName(iso1name);
+					Isoform iso1 = EntryIsoform.getIsoformByName(entry, iso1name);
 					if (iso1ExpectedPos != null) {
 
-						CodonNucleotidePositions nuPos = propagator.getMasterCodonNucleotidesPositions(iso1ExpectedPos, iso1);
+						CodonNucleotidePositions nuPos = Propagator.getMasterCodonNucleotidesPositions(iso1ExpectedPos, iso1);
 
 						if (!nuPos.isValid()) {
 							errorOnVariant = true;
@@ -136,7 +133,7 @@ public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
 							String iso2name = iso2.getUniqueName();
 							if (iso2name.equals(iso1name))	continue;
 	
-							CodonNucleotideIndices nuIdx = propagator.getMasterCodonNucleotidesIndices(nuPos, iso2);
+							CodonNucleotideIndices nuIdx = Propagator.getMasterCodonNucleotidesIndices(nuPos, iso2);
 	
 							Integer iso2ActualPos = nuIdx.getAminoAcidPosition();
 							Integer iso2ExpectedPos = isoExpectedPos.get(iso2name);
