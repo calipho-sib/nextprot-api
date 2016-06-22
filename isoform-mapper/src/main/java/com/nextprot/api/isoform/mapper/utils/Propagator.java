@@ -1,6 +1,5 @@
 package com.nextprot.api.isoform.mapper.utils;
 
-import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 
@@ -21,7 +20,7 @@ public class Propagator {
 	}
 	
 	public CodonNucleotidePositions getMasterCodonNucleotidesPositions(int aaPosition, String isoformName) {
-		Isoform isoform = getIsoformByName(isoformName);
+		Isoform isoform = EntryIsoform.getIsoformByName(entry, isoformName);
 		return PropagatorCore.getCodonNucleotidesPositionsInRanges(aaPosition, isoform.getMasterMapping());
 	}
 	
@@ -30,7 +29,7 @@ public class Propagator {
 	}
 	
 	public CodonNucleotideIndices getMasterCodonNucleotidesIndices(CodonNucleotidePositions nuPositions, String isoformName) {
-		Isoform isoform = getIsoformByName(isoformName);
+		Isoform isoform = EntryIsoform.getIsoformByName(entry, isoformName);
 		return PropagatorCore.getCodonNucleotidesIndicesInRanges(nuPositions, isoform.getMasterMapping());
 	}
 	
@@ -38,36 +37,6 @@ public class Propagator {
 		CodonNucleotidePositions cnPositions = PropagatorCore.getCodonNucleotidesPositionsInRanges(srcPosition, srcIsoform.getMasterMapping());
 		CodonNucleotideIndices cnIndices = PropagatorCore.getCodonNucleotidesIndicesInRanges(cnPositions, trgIoform.getMasterMapping());
 		return cnIndices.getAminoAcidPosition();
-	}
-	
-
-	/**
-	 * Return an isoform object having unique name, main name or synonym equals to name 	
-	 * @param name an isocform unique name (ac), main name or synonym
-	 * @return
-	 */
-	public Isoform getIsoformByName(String name) {
-		if (name==null) return null;
-		for (Isoform iso: entry.getIsoforms()) {
-			if (name.equals(iso.getUniqueName())) return iso;
-			EntityName mainEname = iso.getMainEntityName();
-			if (mainEname!=null && name.equals(mainEname.getName())) return iso; 
-			for (EntityName syn: iso.getSynonyms()) {
-				if (name.equals(syn.getName())) return iso;
-			}
-		}
-		return null;		
-	}
-	
-	/**
-	 * Return the canonical isoform of the entry
-	 * @return
-	 */
-	public Isoform getCanonicalIsoform() {
-		for (Isoform iso: entry.getIsoforms()) {
-			if (iso.isCanonicalIsoform()) return iso;
-		}
-		return null;
 	}
 	
 	/**

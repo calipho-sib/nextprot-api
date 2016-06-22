@@ -1,6 +1,7 @@
 package com.nextprot.api.isoform.mapper.utils;
 
 import com.google.common.base.Preconditions;
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -44,12 +45,11 @@ public class EntryIsoform {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withEverything());
         Isoform isoform;
-        Propagator propagator = new Propagator(entry);
 
         if (isoformAccession == null) {
-            isoform = propagator.getCanonicalIsoform();
+            isoform = getCanonicalIsoform(entry);
         } else {
-            isoform = propagator.getIsoformByName(isoformAccession);
+            isoform = getIsoformByName(entry, isoformAccession);
         }
 
         return new EntryIsoform(entry, isoform);
@@ -75,5 +75,45 @@ public class EntryIsoform {
         return entry.getIsoforms().stream()
                 .filter(iso -> !iso.getUniqueName().equals(isoform.getUniqueName()))
                 .collect(Collectors.toList());
+    }
+
+    public Isoform getIsoformByName(String name) {
+
+        return getIsoformByName(entry, name);
+    }
+
+    public Isoform getCanonicalIsoform() {
+
+        return getCanonicalIsoform(entry);
+    }
+
+    /**
+     * Return an isoform object having unique name, main name or synonym equals to name
+     * @param name an isoform unique name (ac), main name or synonym
+     * @return
+     */
+    public static Isoform getIsoformByName(Entry entry, String name) {
+
+        if (name==null) return null;
+        for (Isoform iso: entry.getIsoforms()) {
+            if (name.equals(iso.getUniqueName())) return iso;
+            EntityName mainEname = iso.getMainEntityName();
+            if (mainEname!=null && name.equals(mainEname.getName())) return iso;
+            for (EntityName syn: iso.getSynonyms()) {
+                if (name.equals(syn.getName())) return iso;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return the canonical isoform of the given entry
+     */
+    public static Isoform getCanonicalIsoform(Entry entry) {
+
+        for (Isoform iso: entry.getIsoforms()) {
+            if (iso.isCanonicalIsoform()) return iso;
+        }
+        return null;
     }
 }
