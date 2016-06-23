@@ -4,19 +4,19 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 /**
- * This domain object stores maps entry isoforms to feature informations
+ * This domain object maps an entry isoform to informations about the validation of the reference sequence that change
  */
-public class IsoformFeatureMapping implements Serializable {
+public class IsoformFeatureStatusMapping implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private final HashMap<String, IsoformFeature> features;
+	private final HashMap<String, IsoformFeatureStatus> features;
 
-	public IsoformFeatureMapping() {
+	public IsoformFeatureStatusMapping() {
 		features = new HashMap<>();
 	}
 
-	public void addIsoformFeature(String isoformName, IsoformFeature feature) {
+	public void addIsoformFeature(String isoformName, IsoformFeatureStatus feature) {
 
 		features.put(isoformName, feature);
 	}
@@ -27,7 +27,7 @@ public class IsoformFeatureMapping implements Serializable {
 	 * @param isoformName isoform name
 	 * @return IsoformFeature or null if isoformName was not found
      */
-	public IsoformFeature getIsoformFeature(String isoformName) {
+	public IsoformFeatureStatus getIsoformFeature(String isoformName) {
 
 		return features.get(isoformName);
 	}

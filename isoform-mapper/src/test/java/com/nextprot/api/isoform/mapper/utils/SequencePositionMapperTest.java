@@ -10,79 +10,79 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 
-public class PropagatorCoreTest {
+public class SequencePositionMapperTest {
 
 	@Test
 	public void testCheckSequencePositions() {
 
-		Assert.assertTrue(PropagatorCore.checkSequencePosition("AKT", 1, false));
-		Assert.assertTrue(PropagatorCore.checkSequencePosition("AKT", 2, false));
-		Assert.assertTrue(PropagatorCore.checkSequencePosition("AKT", 3, false));
-		Assert.assertFalse(PropagatorCore.checkSequencePosition("AKT", 4, false));
+		Assert.assertTrue(SequencePositionMapper.checkSequencePosition("AKT", 1, false));
+		Assert.assertTrue(SequencePositionMapper.checkSequencePosition("AKT", 2, false));
+		Assert.assertTrue(SequencePositionMapper.checkSequencePosition("AKT", 3, false));
+		Assert.assertFalse(SequencePositionMapper.checkSequencePosition("AKT", 4, false));
 	}
 
 	@Test
 	public void testCheckSequencePositionInsertion() {
 
-		Assert.assertTrue(PropagatorCore.checkSequencePosition("AKT", 4, true));
+		Assert.assertTrue(SequencePositionMapper.checkSequencePosition("AKT", 4, true));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void firstPositionShouldNotBeZero() {
 
-		PropagatorCore.checkSequencePosition("AKTKLI", 0, false);
+		SequencePositionMapper.checkSequencePosition("AKTKLI", 0, false);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowExceptionWhenNegativePosition() {
 
-		PropagatorCore.checkSequencePosition("AKTKLI", -1, false);
+		SequencePositionMapper.checkSequencePosition("AKTKLI", -1, false);
 	}
 
     @Test
     public void aminoAcidPosTest() {
 
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 1, "A"));
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 3, "T"));
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 6, "I"));
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 7, "T"));
+    	Assert.assertTrue(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 1, "A"));
+    	Assert.assertTrue(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 3, "T"));
+    	Assert.assertTrue(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 6, "I"));
+    	Assert.assertFalse(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 7, "T"));
     	// wrong => false
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 1, "B"));
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 3, "B"));
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 6, "B"));
+    	Assert.assertFalse(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 1, "B"));
+    	Assert.assertFalse(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 3, "B"));
+    	Assert.assertFalse(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 6, "B"));
 
     	// special case with N aas
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 1, "AK"));
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 3, "TK"));
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 5, "LI"));
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 5, "LIT"));
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 6, "IY"));
+    	Assert.assertTrue(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 1, "AK"));
+    	Assert.assertTrue(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 3, "TK"));
+    	Assert.assertTrue(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 5, "LI"));
+    	Assert.assertFalse(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 5, "LIT"));
+    	Assert.assertFalse(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 6, "IY"));
     }
 
 	@Test
 	public void testCheckInsertionPos() {
 
 		// special case with 0 aa (null or length == 0) that is insertion
-		Assert.assertTrue(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 1, null));
-		Assert.assertTrue(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 3, null));
-		Assert.assertTrue(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 6, null));
+		Assert.assertTrue(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 1, null));
+		Assert.assertTrue(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 3, null));
+		Assert.assertTrue(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 6, null));
 
 		// insertion just after the last amino-acid is valid
-		Assert.assertTrue(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 7, null));
+		Assert.assertTrue(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 7, null));
 		// insertion n position after the last amino-acid is not valid
-		Assert.assertFalse(PropagatorCore.checkAminoAcidsFromPosition("AKTKLI", 8, null));
+		Assert.assertFalse(SequencePositionMapper.checkAminoAcidsFromPosition("AKTKLI", 8, null));
 	}
 
 	@Test(expected = NullPointerException.class)
 	public void shouldThrowNPEWhenSequenceIsNull() {
 
-		PropagatorCore.checkAminoAcidsFromPosition(null, 1, "A");
+		SequencePositionMapper.checkAminoAcidsFromPosition(null, 1, "A");
 	}
 
     @Test
     public void geneIsoformPosTest() {
     	
-    	PropagatorCore.debug=true;
+    	SequencePositionMapper.debug=true;
     	
     	// represent two coding regions of DNA mapped to an isoform sequence
     	List<NucleotidePositionRange> genePosRanges = new ArrayList<NucleotidePositionRange>();
@@ -107,7 +107,7 @@ public class PropagatorCoreTest {
     	codonNuPos.addNucleotidePosition(100);
     	codonNuPos.addNucleotidePosition(101);
     	codonNuPos.addNucleotidePosition(102);
-    	result = PropagatorCore.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
     	assertEquals(new Integer(1), result.getAminoAcidPosition());
 
     	// get isoform position of aa corresponding to codon with nucleotides at position 103 104 201
@@ -115,7 +115,7 @@ public class PropagatorCoreTest {
     	codonNuPos.addNucleotidePosition(103);
     	codonNuPos.addNucleotidePosition(104);
     	codonNuPos.addNucleotidePosition(201);
-    	result = PropagatorCore.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
     	assertEquals(new Integer(2), result.getAminoAcidPosition());
 
     	// get isoform position of aa corresponding to codon with nucleotides at position 202 203 204
@@ -123,7 +123,7 @@ public class PropagatorCoreTest {
     	codonNuPos.addNucleotidePosition(202);
     	codonNuPos.addNucleotidePosition(203);
     	codonNuPos.addNucleotidePosition(204);
-    	result = PropagatorCore.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
     	assertEquals(new Integer(3), result.getAminoAcidPosition());
 
     	// trying to find a codon position having NON consecutive nucleotides i.e. at pos 201 203 204
@@ -131,7 +131,7 @@ public class PropagatorCoreTest {
     	codonNuPos.addNucleotidePosition(201);
     	codonNuPos.addNucleotidePosition(203);
     	codonNuPos.addNucleotidePosition(204);
-    	result = PropagatorCore.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
     	assertEquals(false, result.areConsecutive());
     	assertEquals(null, result.getAminoAcidPosition());
 
@@ -141,7 +141,7 @@ public class PropagatorCoreTest {
     	codonNuPos.addNucleotidePosition(101);
     	codonNuPos.addNucleotidePosition(102);
     	codonNuPos.addNucleotidePosition(103);
-    	result = PropagatorCore.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
     	assertEquals(false, result.areInFrame());
     	assertEquals(null, result.getAminoAcidPosition());
 
@@ -151,7 +151,7 @@ public class PropagatorCoreTest {
     	codonNuPos.addNucleotidePosition(102);
     	codonNuPos.addNucleotidePosition(103);
     	codonNuPos.addNucleotidePosition(104);
-    	result = PropagatorCore.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
     	assertEquals(false, result.areInFrame());
     	assertEquals(null, result.getAminoAcidPosition());
 
@@ -161,7 +161,7 @@ public class PropagatorCoreTest {
     	codonNuPos.addNucleotidePosition(77);
     	codonNuPos.addNucleotidePosition(78);
     	codonNuPos.addNucleotidePosition(79);
-    	result = PropagatorCore.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
     	assertEquals(null, result.getAminoAcidPosition());
 
     	// trying to find a codon having nucleotide positions out of the gene mapping ranges
@@ -170,7 +170,7 @@ public class PropagatorCoreTest {
     	codonNuPos.addNucleotidePosition(99);
     	codonNuPos.addNucleotidePosition(100);
     	codonNuPos.addNucleotidePosition(101);
-    	result = PropagatorCore.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
     	assertEquals(null, result.getAminoAcidPosition());
 
     	// trying to find a codon having nucleotide positions out of the gene mapping ranges
@@ -179,7 +179,7 @@ public class PropagatorCoreTest {
     	codonNuPos.addNucleotidePosition(103);
     	codonNuPos.addNucleotidePosition(104);
     	codonNuPos.addNucleotidePosition(105);
-    	result = PropagatorCore.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
     	assertEquals(null, result.getAminoAcidPosition());
     	
     }
@@ -204,33 +204,33 @@ public class PropagatorCoreTest {
     	CodonNucleotidePositions result;
     	
     	// get gene position of each nucl of the codon coding for aa of isoform at pos 1
-    	result = PropagatorCore.getCodonNucleotidesPositionsInRanges(1, ranges);
+    	result = SequencePositionMapper.getCodonNucleotidesPositionsInRanges(1, ranges);
     	assertEquals(new Integer(100), result.get(0));
     	assertEquals(new Integer(101), result.get(1));
     	assertEquals(new Integer(102), result.get(2));
     	assertEquals(true, result.isValid());
 
     	// get gene position of each nucl of the codon coding for aa of isoform at pos 2
-    	result = PropagatorCore.getCodonNucleotidesPositionsInRanges(2, ranges);
+    	result = SequencePositionMapper.getCodonNucleotidesPositionsInRanges(2, ranges);
     	assertEquals(new Integer(103), result.get(0));
     	assertEquals(new Integer(104), result.get(1));
     	assertEquals(new Integer(201), result.get(2));
     	assertEquals(true, result.isValid());
 
     	// get gene position of each nucl of the codon coding for aa of isoform at pos 3
-    	result = PropagatorCore.getCodonNucleotidesPositionsInRanges(3, ranges);
+    	result = SequencePositionMapper.getCodonNucleotidesPositionsInRanges(3, ranges);
     	assertEquals(new Integer(202), result.get(0));
     	assertEquals(new Integer(203), result.get(1));
     	assertEquals(new Integer(204), result.get(2));
     	assertEquals(true, result.isValid());
     	
        	// get gene position of each nucl of the codon coding for aa of isoform at pos 0 (out of range)
-    	result = PropagatorCore.getCodonNucleotidesPositionsInRanges(0, ranges);
+    	result = SequencePositionMapper.getCodonNucleotidesPositionsInRanges(0, ranges);
     	assertEquals(0, result.size());
     	assertEquals(false, result.isValid());
     	
        	// get gene position of each nucl of the codon coding for aa of isoform at pos 4 (out of range)
-    	result = PropagatorCore.getCodonNucleotidesPositionsInRanges(4, ranges);
+    	result = SequencePositionMapper.getCodonNucleotidesPositionsInRanges(4, ranges);
     	assertEquals(0, result.size());
     	assertEquals(false, result.isValid());
     }

@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 @ActiveProfiles({ "cache" })
-public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
+public class IsoformSequencePositionMapperIntegrationTest extends WebIntegrationBaseTest {
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
@@ -83,7 +83,7 @@ public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
 
 	public int getErrorsDuringPropagationOnVariantsOfSingleEntry(String entry_ac) throws Exception {
 
-		PropagatorCore.debug = false;
+		SequencePositionMapper.debug = false;
 
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entry_ac).withEverything());
 
@@ -109,7 +109,7 @@ public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
 				printExpectedPosForEachIsoform(isoExpectedPos, a);
 
 				// now start checking the propagator
-				Propagator propagator = new Propagator(entry);
+				IsoformSequencePositionMapper isoformSequencePositionMapper = new IsoformSequencePositionMapper(entry);
 				boolean errorOnVariant = false;
 
 				for (String iso1name : isoExpectedPos.keySet()) {
@@ -117,7 +117,7 @@ public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
 					Isoform iso1 = EntryIsoform.getIsoformByName(entry, iso1name);
 					if (iso1ExpectedPos != null) {
 
-						CodonNucleotidePositions nuPos = Propagator.getMasterCodonNucleotidesPositions(iso1ExpectedPos, iso1);
+						CodonNucleotidePositions nuPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(iso1ExpectedPos, iso1);
 
 						if (!nuPos.isValid()) {
 							errorOnVariant = true;
@@ -133,7 +133,7 @@ public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
 							String iso2name = iso2.getUniqueName();
 							if (iso2name.equals(iso1name))	continue;
 	
-							CodonNucleotideIndices nuIdx = Propagator.getMasterCodonNucleotidesIndices(nuPos, iso2);
+							CodonNucleotideIndices nuIdx = IsoformSequencePositionMapper.getMasterCodonNucleotidesIndices(nuPos, iso2);
 	
 							Integer iso2ActualPos = nuIdx.getAminoAcidPosition();
 							Integer iso2ExpectedPos = isoExpectedPos.get(iso2name);

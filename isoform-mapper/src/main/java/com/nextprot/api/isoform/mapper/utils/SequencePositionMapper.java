@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-public class PropagatorCore {
+public class SequencePositionMapper {
 
 	/*
 	 * 
@@ -22,7 +22,7 @@ public class PropagatorCore {
 
 	public static boolean debug = false;
 		
-	public static CodonNucleotideIndices getCodonNucleotidesIndicesInRanges(CodonNucleotidePositions codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
+	static CodonNucleotideIndices getCodonNucleotidesIndicesInRanges(CodonNucleotidePositions codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
 
 		if (debug) System.out.println("----------------------------------------------------------");
 		int lowNum = 0;
@@ -52,7 +52,7 @@ public class PropagatorCore {
 	}
 
 
-	public static CodonNucleotidePositions getCodonNucleotidesPositionsInRanges(int isoformPos, List<NucleotidePositionRange> isoformPositionRangesOnDNA) {
+	static CodonNucleotidePositions getCodonNucleotidesPositionsInRanges(int isoformPos, List<NucleotidePositionRange> isoformPositionRangesOnDNA) {
 		int nu1Num = isoformPos * 3 - 3;
 		//if (debug) System.out.println("nu1Num:" + nu1Num);
 		int lowNum = 0;
@@ -84,7 +84,7 @@ public class PropagatorCore {
 	 * @param aas 1 or more amino acids (1 char / aa) (empty or null when it is an insertion)
 	 * @return
 	 */
-	public static boolean checkAminoAcidsFromPosition(String sequence, int pos, String aas) {
+	static boolean checkAminoAcidsFromPosition(String sequence, int pos, String aas) {
 
 		boolean insertionMode = (aas == null) || aas.isEmpty();
 		if (insertionMode) return checkSequencePosition(sequence, pos, true);
@@ -111,7 +111,7 @@ public class PropagatorCore {
 	 * @param insertionMode is true apply insertion rule else apply standard rule
      * @return true if position exists in the given sequence
      */
-	public static boolean checkSequencePosition(String sequence, int pos, boolean insertionMode) {
+	static boolean checkSequencePosition(String sequence, int pos, boolean insertionMode) {
 		Preconditions.checkNotNull(sequence);
 		Preconditions.checkArgument(!sequence.isEmpty());
 		Preconditions.checkArgument(pos>0, pos + ": invalid value (position should start at 1)");
