@@ -1,8 +1,5 @@
 package com.nextprot.api.isoform.mapper.utils;
 
-import com.nextprot.api.isoform.mapper.utils.CodonNucleotideIndices;
-import com.nextprot.api.isoform.mapper.utils.CodonNucleotidePositions;
-import com.nextprot.api.isoform.mapper.utils.PropagatorCore;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
@@ -19,34 +16,32 @@ public class PropagatorCoreTest {
     @Test
     public void aminoAcidPosTest() {
 
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidPosition("AKTKLI", 1, "A"));
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidPosition("AKTKLI", 3, "T"));
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidPosition("AKTKLI", 6, "I"));
+    	Assert.assertTrue(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 1, "A"));
+    	Assert.assertTrue(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 3, "T"));
+    	Assert.assertTrue(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 6, "I"));
     	// out of range => false
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidPosition("AKTKLI", 0, "T"));
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidPosition("AKTKLI", 7, "T"));
+    	Assert.assertFalse(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 0, "T"));
+    	Assert.assertFalse(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 7, "T"));
     	// wrong => false
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidPosition("AKTKLI", 1, "B"));
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidPosition("AKTKLI", 3, "B"));
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidPosition("AKTKLI", 6, "B"));
+    	Assert.assertFalse(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 1, "B"));
+    	Assert.assertFalse(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 3, "B"));
+    	Assert.assertFalse(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 6, "B"));
 
     	// special case with N aas
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidPosition("AKTKLI", 1, "AK"));
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidPosition("AKTKLI", 3, "TK"));
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidPosition("AKTKLI", 5, "LI"));
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidPosition("AKTKLI", 5, "LIT"));
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidPosition("AKTKLI", 6, "IY"));
+    	Assert.assertTrue(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 1, "AK"));
+    	Assert.assertTrue(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 3, "TK"));
+    	Assert.assertTrue(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 5, "LI"));
+    	Assert.assertFalse(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 5, "LIT"));
+    	Assert.assertFalse(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 6, "IY"));
 
     	// special case with 0 aa (null or length == 0)
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidPosition("AKTKLI", 1, null));
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidPosition("AKTKLI", 3, null));
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidPosition("AKTKLI", 6, null));
-    	Assert.assertFalse(PropagatorCore.checkAminoAcidPosition("AKTKLI", 8, null));
+    	Assert.assertTrue(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 1, null));
+    	Assert.assertTrue(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 3, null));
+    	Assert.assertTrue(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 6, null));
+    	Assert.assertFalse(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 8, null));
     	
     	// case to discuss: interpreted as nothing just after the sequence = ok
-    	Assert.assertTrue(PropagatorCore.checkAminoAcidPosition("AKTKLI", 7, null));
-    	
-    	
+    	Assert.assertTrue(PropagatorCore.checkAminoAcidAtPosition("AKTKLI", 7, null));
     }
 
     	
@@ -205,5 +200,15 @@ public class PropagatorCoreTest {
     	assertEquals(0, result.size());
     	assertEquals(false, result.isValid());
     }
-	
+
+	@Test
+	public void testSequencePositions() {
+
+		Assert.assertTrue(!PropagatorCore.checkSequencePosition("AKT", 0));
+		Assert.assertTrue(PropagatorCore.checkSequencePosition("AKT", 1));
+		Assert.assertTrue(PropagatorCore.checkSequencePosition("AKT", 2));
+		Assert.assertTrue(PropagatorCore.checkSequencePosition("AKT", 3));
+		Assert.assertTrue(!PropagatorCore.checkSequencePosition("AKT", 4));
+	}
+
 }

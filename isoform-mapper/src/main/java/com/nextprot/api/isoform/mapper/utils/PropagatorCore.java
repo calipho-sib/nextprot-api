@@ -1,5 +1,6 @@
 package com.nextprot.api.isoform.mapper.utils;
 
+import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.commons.utils.Pair;
 
@@ -82,14 +83,25 @@ public class PropagatorCore {
 	 * @param aa 0, 1 or more amino acids (1 char / aa)
 	 * @return
 	 */
-	public static boolean checkAminoAcidPosition(String sequence, int pos, String aa) {
+	public static boolean checkAminoAcidAtPosition(String sequence, int pos, String aa) {
 		int strPos = pos-1; // converts bio std to geek std
 		int strLng = aa==null ? 0 : aa.length();
 		if (strPos + strLng > sequence.length()) return false;
 		if (aa==null || aa.length()==0) return true;
 		return sequence.indexOf(aa) == strPos;
-	}	
-	
+	}
+
+	/**
+	 * Check that position exists in specified sequence
+	 * @param sequence the amino-acid sequence
+	 * @param pos position according to bio standard (first pos = 1)
+     * @return true if exists
+     */
+	public static boolean checkSequencePosition(String sequence, int pos) {
+		Preconditions.checkNotNull(sequence);
+		return pos <= sequence.length() && pos > 0;
+	}
+
 	public static List<NucleotidePositionRange> getPositionRangesFromEntries(List<Entry<Integer,Integer>> listEntries) {
 		List<NucleotidePositionRange> result = new ArrayList<NucleotidePositionRange>();
 		for (Entry<Integer,Integer> e: listEntries) result.add(new NucleotidePositionRange(e.getKey(), e.getValue()));
