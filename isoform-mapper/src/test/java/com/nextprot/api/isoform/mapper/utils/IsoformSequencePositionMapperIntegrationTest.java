@@ -1,6 +1,6 @@
-package org.nextprot.api.web.service.impl;
+package com.nextprot.api.isoform.mapper.utils;
 
-import com.nextprot.api.isoform.mapper.utils.*;
+import com.nextprot.api.isoform.mapper.service.impl.IsoformMappingBaseTest;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -12,7 +12,6 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -22,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 @ActiveProfiles({ "cache" })
-public class IsoformSequencePositionMapperIntegrationTest extends WebIntegrationBaseTest {
+public class IsoformSequencePositionMapperIntegrationTest extends IsoformMappingBaseTest {
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
