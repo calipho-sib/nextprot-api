@@ -101,6 +101,12 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Assert.assertEquals(expectedStatus, feature.getStatus());
     }*/
 
+    @Test
+    public void testVDList() throws Exception {
+
+        Assert.fail("todo");
+    }
+
     private static void assertIsoformFeatureValid(MappedIsoformsFeatureResult result, String isoformName, Integer expectedFirstPos, Integer expectedLastPos) {
 
         Assert.assertTrue(result.isSuccess());
