@@ -234,4 +234,11 @@ public class SequencePositionMapperTest {
     	assertEquals(0, result.size());
     	assertEquals(false, result.isValid());
     }
+
+	@Test
+	public void checkAminoAcidsFromPositionWhenMultipleD() {
+
+		String sequence = "MDDRCYPVIFPDERNFRPFTSDS";
+		Assert.assertTrue(SequencePositionMapper.checkAminoAcidsFromPosition(sequence, 3, "D"));
+	}
 }

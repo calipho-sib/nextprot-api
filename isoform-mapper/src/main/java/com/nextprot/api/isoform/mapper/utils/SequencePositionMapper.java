@@ -88,7 +88,7 @@ public class SequencePositionMapper {
 
 		boolean insertionMode = (aas == null) || aas.isEmpty();
 		if (insertionMode) return checkSequencePosition(sequence, pos, true);
-		return checkSequencePosition(sequence, pos, false) && (sequence.indexOf(aas) == (pos - 1));
+		return checkSequencePosition(sequence, pos, false) && sequence.startsWith(aas, pos-1);
 	}
 
 	/**
