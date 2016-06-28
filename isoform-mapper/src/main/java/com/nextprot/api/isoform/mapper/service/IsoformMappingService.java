@@ -1,17 +1,29 @@
 package com.nextprot.api.isoform.mapper.service;
 
-import com.nextprot.api.isoform.mapper.domain.IsoformFeatureMapping;
+import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
 public interface IsoformMappingService {
 
 	/**
-	 * @param featureName can be HGVS name example: SCN11A-p.Leu1158Pro or in case of PTM: BRCA1-P-Ser988).
-	 * @param annotationCategory annotation category (VARIANT or PTM)
-	 * @param nextprotAccession if not dash check the canonical else check specified iso (Example: NX_P01308 or NX_P01308-1)
-	 * @param propagate if true
+	 * Check that the specified feature is valid on the given isoform
 	 *
-	 * @return an IsoformFeatureMapping
+	 * @param isoformFeature the feature to validate on the given isoform (can be HGVS name example: SCN11A-p.Leu1158Pro or in case of PTM: BRCA1-P-Ser988)
+	 * @param featureCategory feature category (VARIANT or PTM)
+	 * @param nextprotAccession the accession number of the isoform containing the feature to validate (if accession does
+	 *                            	not contains dash, the implicit isoform is the canonical one [Example: NX_P01308 or NX_P01308-1])
+	 * @return a MappedIsoformsFeatureResult
      */
-	IsoformFeatureMapping validateFeature(String featureName, AnnotationCategory annotationCategory, String nextprotAccession, boolean propagate);
+	MappedIsoformsFeatureResult validateFeature(String isoformFeature, AnnotationCategory featureCategory, String nextprotAccession);
+
+	/**
+	 * Compute the projections of isoform feature on other isoforms.
+	 *
+	 * @param isoformFeature the feature to project or propagate (can be HGVS name example: SCN11A-p.Leu1158Pro or in case of PTM: BRCA1-P-Ser988)
+	 * @param featureCategory feature category (VARIANT or PTM)
+	 * @param nextprotAccession the accession number of the isoform containing the feature to project (if accession does
+	 *                            	not contains dash, the implicit isoform is the canonical one [Example: NX_P01308 or NX_P01308-1])
+     * @return a MappedIsoformsFeatureResult
+     */
+	MappedIsoformsFeatureResult propagateFeature(String isoformFeature, AnnotationCategory featureCategory, String nextprotAccession);
 }
