@@ -8,7 +8,6 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,11 +32,11 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         */
     }
 
-    // TODO: decide if a specific ErrorValue should be produced instead of throwing an NPException
-    @Test(expected = NextProtException.class)
-    public void shouldThrowNPExceptionIfAccessionIncompatibleWithGeneName() throws Exception {
+    @Test
+    public void shouldNotValidateIncompatibleProteinAndGeneName() throws Exception {
 
-        service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, "NX_P01308");
+        MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, "NX_P01308");
+        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName("SCN11A", "NX_P01308"));
     }
 
     @Test
@@ -118,6 +117,5 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Assert.assertFalse(result.isSuccess());
         Assert.assertTrue(result instanceof MappedIsoformsFeatureError);
         MappedIsoformsFeatureError errorResult = (MappedIsoformsFeatureError) result;
-        Assert.assertEquals(expected, errorResult.getErrorValue());
     }
 }

@@ -4,20 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- {
-     "query": {
-     "accession": "NX_P01308",
-     "is-canonical": true,
-     "feature": "SCN11A-p.Leu1158Pro",
-     "feature-type": "VARIANT",
-     "propagate": false
- },
- "success": false,
- "error": {
-     "message": "Invalid ..."
-     "type": "INVALID_POSITION(pos)" or "UNEXPECTED_AA(expected, observed)"
-    }
- }
+ * A mapping result with specified error
  */
 public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
 
@@ -32,17 +19,7 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         this.value = value;
     }
 
-    public ErrorValue getErrorValue() {
-        return value;
-    }
-
-    @Override
-    protected String getContentName() {
-        return "error";
-    }
-
-    @Override
-    protected Object getContentValue() {
+    public ErrorValue getError() {
         return value;
     }
 
@@ -161,6 +138,41 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         @Override
         public int hashCode() {
             return Objects.hash(variant);
+        }
+    }
+
+    public static class IncompatibleGeneAndProteinName extends ErrorValue {
+
+        private final String geneName;
+        private final String proteinName;
+
+        public IncompatibleGeneAndProteinName(String geneName, String proteinName) {
+            super("inconsistent gene and protein names");
+
+            this.geneName = geneName;
+            this.proteinName = proteinName;
+        }
+
+        public String getGeneName() {
+            return geneName;
+        }
+
+        public String getProteinName() {
+            return proteinName;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof IncompatibleGeneAndProteinName)) return false;
+            IncompatibleGeneAndProteinName that = (IncompatibleGeneAndProteinName) o;
+            return Objects.equals(geneName, that.geneName) &&
+                    Objects.equals(proteinName, that.proteinName);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(geneName, proteinName);
         }
     }
 }

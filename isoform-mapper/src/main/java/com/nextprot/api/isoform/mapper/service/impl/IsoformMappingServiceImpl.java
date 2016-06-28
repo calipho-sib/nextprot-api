@@ -5,7 +5,7 @@ import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
 import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureSuccess;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
-import com.nextprot.api.isoform.mapper.utils.GeneVariantBuilder;
+import com.nextprot.api.isoform.mapper.utils.GeneVariantSplitter;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -63,8 +63,15 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         EntryIsoform entryIsoform = EntryIsoform.parseAccession(query.getAccession(), entryBuilderService);
 
         try {
-            GeneVariantBuilder builder = new GeneVariantBuilder(query.getFeature(), entryIsoform.getEntry());
-            ProteinSequenceVariation entryIsoformVariation = builder.getProteinSequenceVariation();
+            GeneVariantSplitter builder = new GeneVariantSplitter(query.getFeature());
+            if (!builder.isValidGeneName(entryIsoform.getEntry())) {
+                MappedIsoformsFeatureError error = new MappedIsoformsFeatureError(query);
+                error.setErrorValue(new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName(builder.getGeneName(),
+                        entryIsoform.getEntry().getUniqueName()));
+                return error;
+            }
+
+            ProteinSequenceVariation entryIsoformVariation = builder.getVariant();
 
             return checkFeatureOnIsoform(query, entryIsoform.getIsoform(), entryIsoformVariation);
         } catch (ParseException e) {
@@ -109,10 +116,6 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
                 ((MappedIsoformsFeatureError)result).setErrorValue(lastPosErrorValue);
             }
         }
-
-        // TODO: I don't like that !
-        result.loadContentValue();
-
         return result;
     }
 

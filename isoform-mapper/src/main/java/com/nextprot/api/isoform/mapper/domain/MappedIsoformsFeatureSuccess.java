@@ -4,44 +4,14 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/*
-{
-"query": {
-    "accession": "NX_Q9UI33",
-    "feature": "SCN11A-p.Leu1158Pro",
-    "feature-type": "VARIANT", // annotation category
-    "propagate": "true"
-},
-"success": true,
-"data": {
-    "NX_Q9UI33-1": {
-        "mapped": true,
-        "range": {
-            "begin": 1158,
-            "end": 1158
-        }
-    },
-    "NX_Q9UI33-2": {
-        "mapped": false
-    },
-    "NX_Q9UI33-3": {
-        "mapped": true,
-        "range": {
-            "begin": 1120,
-            "end": 1120
-            }
-        }
-    }
-}
-*/
 public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
 
-    private final Map<String, MappedIsoformFeatureResult> value;
+    private final Map<String, MappedIsoformFeatureResult> data;
 
     public MappedIsoformsFeatureSuccess(Query query) {
         super(query);
 
-        value = new HashMap<>();
+        data = new HashMap<>();
     }
 
     public void addMappedIsoformFeature(String isoformName, int firstPosition, int lastPosition) {
@@ -51,7 +21,7 @@ public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
         result.setFirstIsoSeqPos(firstPosition);
         result.setLastIsoSeqPos(lastPosition);
 
-        value.put(isoformName, result);
+        data.put(isoformName, result);
     }
 
     public void addNonMappedIsoformFeature(String isoformName) {
@@ -59,7 +29,7 @@ public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
         MappedIsoformFeatureResult result = new MappedIsoformFeatureResult();
         result.setIsoformName(isoformName);
 
-        value.put(isoformName, result);
+        data.put(isoformName, result);
     }
 
     /**
@@ -70,12 +40,12 @@ public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
      */
     public MappedIsoformFeatureResult getMappedIsoformFeatureResult(String isoformName) {
 
-        return value.get(isoformName);
+        return data.get(isoformName);
     }
 
     public boolean hasMappedIsoformFeatureResult(String isoformName) {
 
-        return value.containsKey(isoformName);
+        return data.containsKey(isoformName);
     }
 
     /**
@@ -83,22 +53,16 @@ public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
      */
     public int countMappedIsoformFeatureResults() {
 
-        return value.size();
+        return data.size();
     }
 
-    @Override
-    protected String getContentName() {
-        return "data";
-    }
-
-    @Override
-    protected Object getContentValue() {
-        return value;
+    public Map<String, MappedIsoformFeatureResult> getData() {
+        return data;
     }
 
     @Override
     public boolean isSuccess() {
-        return !value.isEmpty();
+        return !data.isEmpty();
     }
 
     public static class MappedIsoformFeatureResult implements Serializable {
