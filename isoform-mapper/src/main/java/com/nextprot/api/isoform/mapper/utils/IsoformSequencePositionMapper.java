@@ -1,6 +1,5 @@
 package com.nextprot.api.isoform.mapper.utils;
 
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 
 /**
@@ -9,31 +8,11 @@ import org.nextprot.api.core.domain.Isoform;
  */
 public class IsoformSequencePositionMapper {
 
-	private Entry entry;
-	
-	public IsoformSequencePositionMapper(Entry entry) {
-		this.entry=entry;
-	}
-	
-	public Entry getEntry() {
-		return this.getEntry();
-	}
-	
 	public static CodonNucleotidePositions getMasterCodonNucleotidesPositions(int aaPosition, Isoform isoform) {
 		return SequencePositionMapper.getCodonNucleotidesPositionsInRanges(aaPosition, isoform.getMasterMapping());
 	}
 	
-	public CodonNucleotidePositions getMasterCodonNucleotidesPositions(int aaPosition, String isoformName) {
-		Isoform isoform = EntryIsoform.getIsoformByName(entry, isoformName);
-		return SequencePositionMapper.getCodonNucleotidesPositionsInRanges(aaPosition, isoform.getMasterMapping());
-	}
-	
 	public static CodonNucleotideIndices getMasterCodonNucleotidesIndices(CodonNucleotidePositions nuPositions, Isoform isoform) {
-		return SequencePositionMapper.getCodonNucleotidesIndicesInRanges(nuPositions, isoform.getMasterMapping());
-	}
-	
-	public CodonNucleotideIndices getMasterCodonNucleotidesIndices(CodonNucleotidePositions nuPositions, String isoformName) {
-		Isoform isoform = EntryIsoform.getIsoformByName(entry, isoformName);
 		return SequencePositionMapper.getCodonNucleotidesIndicesInRanges(nuPositions, isoform.getMasterMapping());
 	}
 	
@@ -50,4 +29,6 @@ public class IsoformSequencePositionMapper {
 	public static boolean checkSequencePosition(Isoform isoform, int pos, boolean insertionMode) {
 		return SequencePositionMapper.checkSequencePosition(isoform.getSequence(), pos, insertionMode);
 	}
+
+
 }

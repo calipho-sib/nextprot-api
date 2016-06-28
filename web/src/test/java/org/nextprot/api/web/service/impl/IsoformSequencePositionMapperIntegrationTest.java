@@ -108,8 +108,6 @@ public class IsoformSequencePositionMapperIntegrationTest extends WebIntegration
 				Map<String, Integer> isoExpectedPos = getExpectedPosForEachIsoform(entry, a);
 				printExpectedPosForEachIsoform(isoExpectedPos, a);
 
-				// now start checking the propagator
-				IsoformSequencePositionMapper isoformSequencePositionMapper = new IsoformSequencePositionMapper(entry);
 				boolean errorOnVariant = false;
 
 				for (String iso1name : isoExpectedPos.keySet()) {
