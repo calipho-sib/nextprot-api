@@ -77,16 +77,6 @@ public class EntryIsoform {
                 .collect(Collectors.toList());
     }
 
-    public Isoform getIsoformByName(String name) {
-
-        return getIsoformByName(entry, name);
-    }
-
-    public Isoform getCanonicalIsoform() {
-
-        return getCanonicalIsoform(entry);
-    }
-
     /**
      * Return an isoform object having unique name, main name or synonym equals to name
      * @param name an isoform unique name (ac), main name or synonym

@@ -42,7 +42,7 @@ public class IsoformMappingController {
 		return new ResponseEntity<>(result, HttpStatus.OK);
 	}
 
-	/*@ApiMethod(path = "/propagate-feature/{category}", verb = ApiVerb.GET, description = "Validate isoform feature and compute feature propagations on other isoforms", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiMethod(path = "/propagate-feature/{category}", verb = ApiVerb.GET, description = "Validate isoform feature and compute feature propagations on other isoforms", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/propagate-feature/{category}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	public ResponseEntity<MappedIsoformsFeatureResult> propagateIsoformFeature(
 			@ApiPathParam(name = "category", description = "A feature category.",  allowedvalues = { "variant" })
@@ -55,6 +55,6 @@ public class IsoformMappingController {
 		MappedIsoformsFeatureResult result = isoformMappingService.propagateFeature(feature, AnnotationCategory.getDecamelizedAnnotationTypeName(featureCategory), nextprotAccession);
 
 		return new ResponseEntity<>(result, HttpStatus.OK);
-	}*/
+	}
 }
 

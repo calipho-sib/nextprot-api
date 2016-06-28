@@ -1,8 +1,8 @@
 package com.nextprot.api.isoform.mapper.domain;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
 
@@ -11,7 +11,7 @@ public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
     public MappedIsoformsFeatureSuccess(Query query) {
         super(query);
 
-        data = new HashMap<>();
+        data = new TreeMap<>();
     }
 
     public void addMappedIsoformFeature(String isoformName, int firstPosition, int lastPosition) {
