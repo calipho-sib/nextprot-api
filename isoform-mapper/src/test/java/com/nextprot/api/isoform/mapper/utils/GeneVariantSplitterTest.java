@@ -16,36 +16,38 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 
-public class GeneVariantBuilderTest {
+public class GeneVariantSplitterTest {
 
     @Test
     public void shouldExtractGeneNameAndProteinVariation() throws Exception {
 
-        GeneVariantBuilder parser = new GeneVariantBuilder("SCN11A-p.Lys1710Thr",
-                mockEntry("SCN11A", "SCN12A", "SNS2"));
+        GeneVariantSplitter parser = new GeneVariantSplitter("SCN11A-p.Lys1710Thr");
 
         Assert.assertEquals("SCN11A", parser.getGeneName());
-        ProteinSequenceVariation mutation = parser.getProteinSequenceVariation();
+        ProteinSequenceVariation mutation = parser.getVariant();
         ProteinSequenceChange proteinSequenceChange2 = mutation.getProteinSequenceChange();
 
         Assert.assertEquals(AminoAcidCode.Lysine, mutation.getFirstChangingAminoAcid());
         Assert.assertEquals(1710, mutation.getFirstChangingAminoAcidPos());
         Assert.assertTrue(proteinSequenceChange2 instanceof Substitution);
+
+        Assert.assertTrue(parser.isValidGeneName(mockEntry("SCN11A", "SCN12A", "SNS2")));
     }
 
     @Test
     public void shouldExtractGeneNameAndProteinVariation2() throws Exception {
 
-        GeneVariantBuilder parser = new GeneVariantBuilder("WT1-iso4-p.Phe154Ser",
-                mockEntry("WT1"));
+        GeneVariantSplitter parser = new GeneVariantSplitter("WT1-iso4-p.Phe154Ser");
 
         Assert.assertEquals("WT1", parser.getGeneName());
-        ProteinSequenceVariation mutation = parser.getProteinSequenceVariation();
+        ProteinSequenceVariation mutation = parser.getVariant();
         ProteinSequenceChange proteinSequenceChange2 = mutation.getProteinSequenceChange();
 
         Assert.assertEquals(AminoAcidCode.Phenylalanine, mutation.getFirstChangingAminoAcid());
         Assert.assertEquals(154, mutation.getFirstChangingAminoAcidPos());
         Assert.assertTrue(proteinSequenceChange2 instanceof Substitution);
+
+        Assert.assertTrue(parser.isValidGeneName(mockEntry("WT1")));
     }
 
     private Entry mockEntry(String... geneNames) {

@@ -3,7 +3,6 @@ package com.nextprot.api.isoform.mapper.utils;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.format.hgvs.ProteinSequenceVariationHGVSFormat;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 
@@ -13,20 +12,16 @@ import java.util.List;
 /**
  * Parse and provide gene name and protein sequence variant
  */
-public class GeneVariantBuilder {
+public class GeneVariantSplitter {
 
     private final String geneName;
     private final ProteinSequenceVariation proteinSequenceVariation;
 
-    public GeneVariantBuilder(String variant, Entry entry) throws ParseException {
+    public GeneVariantSplitter(String variant) throws ParseException {
 
         int colonPosition = variant.lastIndexOf("-");
         String geneName = variant.substring(0, variant.indexOf("-"));
         String hgvVariant = variant.substring(colonPosition + 1);
-
-        if (!validateGeneName(entry, geneName)) {
-            throw new NextProtException(entry.getUniqueName() + " does not comes from gene " + geneName);
-        }
 
         ProteinSequenceVariationHGVSFormat format = new ProteinSequenceVariationHGVSFormat();
         proteinSequenceVariation = format.parse(hgvVariant, AbstractProteinSequenceVariationFormat.ParsingMode.PERMISSIVE);
@@ -34,7 +29,7 @@ public class GeneVariantBuilder {
         this.geneName = geneName;
     }
 
-    private boolean validateGeneName(Entry entry, String geneName) {
+    public boolean isValidGeneName(Entry entry) {
 
         List<EntityName> geneNames = entry.getOverview().getGeneNames();
 
@@ -48,7 +43,7 @@ public class GeneVariantBuilder {
         return false;
     }
 
-    public ProteinSequenceVariation getProteinSequenceVariation() {
+    public ProteinSequenceVariation getVariant() {
         return proteinSequenceVariation;
     }
 
