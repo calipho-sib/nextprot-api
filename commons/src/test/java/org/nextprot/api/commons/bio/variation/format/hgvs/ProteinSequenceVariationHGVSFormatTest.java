@@ -156,6 +156,18 @@ public class ProteinSequenceVariationHGVSFormatTest {
         Assert.assertEquals(AminoAcidCode.Cysteine, pm.getProteinSequenceChange().getValue());
     }
 
+    @Test(expected = ParseException.class)
+    public void testParseUnknownCode1AA() throws Exception {
+
+        format.parse("p.B54C");
+    }
+
+    @Test(expected = ParseException.class)
+    public void testParseUnknownCode3AA() throws Exception {
+
+        format.parse("p.Mat54Trp");
+    }
+
     @Test
     public void testParseSubstitutionStop() throws Exception {
 
