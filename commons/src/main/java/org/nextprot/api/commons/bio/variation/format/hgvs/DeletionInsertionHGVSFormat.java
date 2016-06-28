@@ -6,6 +6,7 @@ import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVari
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceVariationFormat;
 
+import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +16,7 @@ public class DeletionInsertionHGVSFormat implements ProteinSequenceChangeFormat<
     private static final Pattern DELETION_INSERTION_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?(?:delins|>)((?:[A-Z\\*]([a-z]{2})?)+)$");
 
     @Override
-    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, AbstractProteinSequenceVariationFormat.ParsingMode mode) {
+    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, AbstractProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
 
         Matcher m = (mode == AbstractProteinSequenceVariationFormat.ParsingMode.STRICT) ? DELETION_INSERTION_PATTERN.matcher(source) : DELETION_INSERTION_PATTERN_PERMISSIVE.matcher(source);
 

@@ -1,7 +1,9 @@
 package org.nextprot.api.commons.bio;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Amino-acid 1- and 3-letter symbols
@@ -37,6 +39,16 @@ public enum AminoAcidCode {
 
     private final String code3;
     private final char code1;
+    private final static Set<String> validCodes;
+
+    static {
+        validCodes = new HashSet<>(46);
+        for (AminoAcidCode aac : AminoAcidCode.values()) {
+
+            validCodes.add(String.valueOf(aac.code1));
+            validCodes.add(aac.code3);
+        }
+    }
 
     AminoAcidCode(String code3, char code1) {
 
@@ -50,6 +62,11 @@ public enum AminoAcidCode {
 
     public char get1LetterCode() {
         return code1;
+    }
+
+    public static boolean isCodeValid(String code) {
+
+        return validCodes.contains(code);
     }
 
     public static AminoAcidCode valueOfCode(String code) {

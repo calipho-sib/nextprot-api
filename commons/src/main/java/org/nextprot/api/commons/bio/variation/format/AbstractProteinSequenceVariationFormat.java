@@ -65,8 +65,11 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
     public ProteinSequenceVariation parse(String source, ParsingMode parsingMode) throws ParseException {
 
         Preconditions.checkNotNull(source);
-        Preconditions.checkArgument(isValidProteinSequenceVariant(source), source + ": not a valid protein sequence variant");
         Preconditions.checkNotNull(parsingMode);
+
+        if (!isValidProteinSequenceVariant(source)) {
+            throw new ParseException(source + ": not a valid protein sequence variant", 0);
+        }
 
         ProteinSequenceVariation.FluentBuilder builder = new ProteinSequenceVariation.FluentBuilder();
 
@@ -121,10 +124,17 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
         return sb.toString();
     }
 
-    public static AminoAcidCode valueOfAminoAcidCode(String code1, String code2and3) {
+    public static AminoAcidCode valueOfAminoAcidCode(String code1, String code2and3) throws ParseException {
 
-        if (code2and3 == null) return AminoAcidCode.valueOfCode(code1);
-
+        if (code2and3 == null) {
+            if (!AminoAcidCode.isCodeValid(code1)) {
+                throw new ParseException(code1+": invalid AminoAcidCode", 0);
+            }
+            return AminoAcidCode.valueOfCode(code1);
+        }
+        else if (!AminoAcidCode.isCodeValid(code1 + code2and3)) {
+            throw new ParseException(code1 + code2and3 + ": invalid AminoAcidCode", 2);
+        }
         return AminoAcidCode.valueOfCode(code1 + code2and3);
     }
 }

@@ -6,6 +6,7 @@ import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVari
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceVariationFormat;
 
+import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,7 +19,8 @@ public class SubstitutionHGVSFormat implements ProteinSequenceChangeFormat<Subst
     private static final Pattern SUBSTITUTION_PATTERN = Pattern.compile("^p\\.([A-Z*])([a-z]{2})?(\\d+)([A-Z*])([a-z]{2})?$");
 
     @Override
-    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, AbstractProteinSequenceVariationFormat.ParsingMode mode) {
+    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder,
+                                                  AbstractProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
 
         Matcher m = SUBSTITUTION_PATTERN.matcher(source);
 
