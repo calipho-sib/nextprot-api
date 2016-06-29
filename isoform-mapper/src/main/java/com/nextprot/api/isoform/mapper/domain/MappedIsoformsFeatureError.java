@@ -85,7 +85,7 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         private final String observedAas;
 
         public UnexpectedAminoAcids(String expectedAas, String observedAas) {
-            super("expected="+expectedAas+", observed="+observedAas);
+            super("unexpected amino-acid(s) "+observedAas+" (expected="+expectedAas+")");
 
             this.observedAas = observedAas;
             this.expectedAas = expectedAas;
