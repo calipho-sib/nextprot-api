@@ -44,8 +44,8 @@ public class RawStatementServiceImpl implements RawStatementService {
 		impactStatementsBySubject.keySet().forEach(subjectAnnotationHash -> {
 
 			List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectAnnotationHash);
-			List<IsoformAnnotation> variants = buildAnnotationList(entryName + "-1" , subjectVariantStatements);
-			if(variants.size() != 1){
+			List<IsoformAnnotation> variants = buildAnnotationList(entryName + "-1", subjectVariantStatements);
+			if (variants.size() != 1) {
 				LOGGER.error("Found more or less than one variant for a given subject" + subjectAnnotationHash);
 			}
 
@@ -97,8 +97,8 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getValue(StatementField.ANNOTATION_CATEGORY)));
 			isoAnnotation.setCategory(category);
-			
-			if(category.equals(AnnotationCategory.VARIANT)) 
+
+			if (category.equals(AnnotationCategory.VARIANT))
 				setVariantAttributes(isoAnnotation, statement);
 
 			isoAnnotation.setIsoformName(isoformName);
@@ -121,7 +121,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 				bioObject.setType(bot);
 				bioObject.setAnnotationHash(boah); // In case of phenotypes
 				isoAnnotation.setBioObject(bioObject);
-				
+
 			}
 
 			annotations.add(isoAnnotation);
@@ -159,7 +159,9 @@ public class RawStatementServiceImpl implements RawStatementService {
 	public List<IsoformAnnotation> getNormalAnnotations(String entryName) {
 		List<RawStatement> normalStatements = rawStatementDao.findNormalRawStatements(entryName);
 		List<IsoformAnnotation> normalAnnotations = buildAnnotationList(entryName + "-1", normalStatements);
-		normalAnnotations.stream().forEach(a -> {a.setSubjectName(entryName + "-1");});
+		normalAnnotations.stream().forEach(a -> {
+			a.setSubjectName(entryName + "-1");
+		});
 		return normalAnnotations;
 	}
 
