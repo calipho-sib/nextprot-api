@@ -27,8 +27,9 @@ public class RawStatementDaoImpl implements RawStatementDao {
 	{
 		public RawStatement mapRow(ResultSet rs, int rowNum) throws SQLException {
 			StatementBuilder sfbuilder = StatementBuilder.createNew();
-			for(StatementField field : StatementField.values()){
-				sfbuilder.addStatementField(field, rs.getString(field.name()));
+			for(StatementField key : StatementField.values()){
+				String value = rs.getString(key.name());
+				sfbuilder.addStatementField(key, value);
 			}
 			return sfbuilder.build();
 		}
