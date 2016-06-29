@@ -1,7 +1,7 @@
 package org.nextprot.api.commons.bio.variation.format;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.AminoAcid;
 import org.nextprot.api.commons.bio.variation.*;
 
 import java.text.ParseException;
@@ -65,8 +65,11 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
     public ProteinSequenceVariation parse(String source, ParsingMode parsingMode) throws ParseException {
 
         Preconditions.checkNotNull(source);
-        Preconditions.checkArgument(isValidProteinSequenceVariant(source), source + ": not a valid protein sequence variant");
         Preconditions.checkNotNull(parsingMode);
+
+        if (!isValidProteinSequenceVariant(source)) {
+            throw new ParseException(source + ": not a valid protein sequence variant", 0);
+        }
 
         ProteinSequenceVariation.FluentBuilder builder = new ProteinSequenceVariation.FluentBuilder();
 
@@ -108,11 +111,11 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
     protected abstract ProteinSequenceChangeFormat<DeletionAndInsertion> getDeletionInsertionFormat();
     protected abstract ProteinSequenceChangeFormat<Frameshift> getFrameshiftFormat();
 
-    public static String formatAminoAcidCode(AACodeType type, AminoAcidCode... aas) {
+    public static String formatAminoAcidCode(AACodeType type, AminoAcid... aas) {
 
         StringBuilder sb = new StringBuilder();
 
-        for (AminoAcidCode aa : aas) {
+        for (AminoAcid aa : aas) {
 
             if (type == AACodeType.ONE_LETTER) sb.append(String.valueOf(aa.get1LetterCode()));
             else sb.append(String.valueOf(aa.get3LetterCode()));
@@ -121,10 +124,17 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
         return sb.toString();
     }
 
-    public static AminoAcidCode valueOfAminoAcidCode(String code1, String code2and3) {
+    public static AminoAcid valueOfAminoAcidCode(String code1, String code2and3) throws ParseException {
 
-        if (code2and3 == null) return AminoAcidCode.valueOfCode(code1);
-
-        return AminoAcidCode.valueOfCode(code1 + code2and3);
+        if (code2and3 == null) {
+            if (!AminoAcid.isValidAminoAcid(code1)) {
+                throw new ParseException(code1+": invalid AminoAcidCode", 0);
+            }
+            return AminoAcid.valueOfAminoAcid(code1);
+        }
+        else if (!AminoAcid.isValidAminoAcid(code1 + code2and3)) {
+            throw new ParseException(code1 + code2and3 + ": invalid AminoAcidCode", 2);
+        }
+        return AminoAcid.valueOfAminoAcid(code1 + code2and3);
     }
 }

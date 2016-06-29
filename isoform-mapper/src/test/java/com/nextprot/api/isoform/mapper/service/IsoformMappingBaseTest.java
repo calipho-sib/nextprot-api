@@ -1,4 +1,4 @@
-package com.nextprot.api.isoform.mapper.service.impl;
+package com.nextprot.api.isoform.mapper.service;
 
 import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;

@@ -1,6 +1,6 @@
-package org.nextprot.api.web.service.impl;
+package com.nextprot.api.isoform.mapper.utils;
 
-import com.nextprot.api.isoform.mapper.utils.*;
+import com.nextprot.api.isoform.mapper.service.IsoformMappingBaseTest;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -12,7 +12,6 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -22,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 @ActiveProfiles({ "cache" })
-public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
+public class IsoformSequencePositionMapperIntegrationTest extends IsoformMappingBaseTest {
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
@@ -83,7 +82,7 @@ public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
 
 	public int getErrorsDuringPropagationOnVariantsOfSingleEntry(String entry_ac) throws Exception {
 
-		PropagatorCore.debug = false;
+		SequencePositionMapper.debug = false;
 
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entry_ac).withEverything());
 
@@ -108,8 +107,6 @@ public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
 				Map<String, Integer> isoExpectedPos = getExpectedPosForEachIsoform(entry, a);
 				printExpectedPosForEachIsoform(isoExpectedPos, a);
 
-				// now start checking the propagator
-				Propagator propagator = new Propagator(entry);
 				boolean errorOnVariant = false;
 
 				for (String iso1name : isoExpectedPos.keySet()) {
@@ -117,7 +114,7 @@ public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
 					Isoform iso1 = EntryIsoform.getIsoformByName(entry, iso1name);
 					if (iso1ExpectedPos != null) {
 
-						CodonNucleotidePositions nuPos = Propagator.getMasterCodonNucleotidesPositions(iso1ExpectedPos, iso1);
+						CodonNucleotidePositions nuPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(iso1ExpectedPos, iso1);
 
 						if (!nuPos.isValid()) {
 							errorOnVariant = true;
@@ -133,7 +130,7 @@ public class PropagatorIntegrationTest extends WebIntegrationBaseTest {
 							String iso2name = iso2.getUniqueName();
 							if (iso2name.equals(iso1name))	continue;
 	
-							CodonNucleotideIndices nuIdx = Propagator.getMasterCodonNucleotidesIndices(nuPos, iso2);
+							CodonNucleotideIndices nuIdx = IsoformSequencePositionMapper.getMasterCodonNucleotidesIndices(nuPos, iso2);
 	
 							Integer iso2ActualPos = nuIdx.getAminoAcidPosition();
 							Integer iso2ExpectedPos = isoExpectedPos.get(iso2name);

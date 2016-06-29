@@ -1,14 +1,16 @@
 package org.nextprot.api.commons.bio;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
- * Amino-acid 1- and 3-letter symbols
+ * Amino-acids with their representation in one letter and three letter codes.
  *
  * Created by fnikitin on 09/07/15.
  */
-public enum AminoAcidCode {
+public enum AminoAcid {
 
     Glycine ("Gly", 'G'),
     Proline ("Pro", 'P'),
@@ -37,8 +39,18 @@ public enum AminoAcidCode {
 
     private final String code3;
     private final char code1;
+    private final static Set<String> validCodes;
 
-    AminoAcidCode(String code3, char code1) {
+    static {
+        validCodes = new HashSet<>(46);
+        for (AminoAcid aac : AminoAcid.values()) {
+
+            validCodes.add(String.valueOf(aac.code1));
+            validCodes.add(aac.code3);
+        }
+    }
+
+    AminoAcid(String code3, char code1) {
 
         this.code3 = code3;
         this.code1 = code1;
@@ -52,10 +64,15 @@ public enum AminoAcidCode {
         return code1;
     }
 
-    public static AminoAcidCode valueOfCode(String code) {
+    public static boolean isValidAminoAcid(String code) {
+
+        return validCodes.contains(code);
+    }
+
+    public static AminoAcid valueOfAminoAcid(String code) {
 
         if (code.length() == 1)
-            return valueOfCode1AA(code.charAt(0));
+            return valueOfOneLetterCode(code.charAt(0));
         else {
             switch (code) {
                 case "Gly":
@@ -105,12 +122,12 @@ public enum AminoAcidCode {
                 case "Ter":
                     return Stop;
                 default:
-                    throw new IllegalArgumentException("No enum constant AminoAcidCode." + code);
+                    throw new IllegalArgumentException("No enum constant AminoAcid." + code);
             }
         }
     }
 
-    public static AminoAcidCode valueOfCode1AA(char code) {
+    public static AminoAcid valueOfOneLetterCode(char code) {
 
         switch (code) {
             case 'G': return Glycine;
@@ -136,11 +153,11 @@ public enum AminoAcidCode {
             case 'U': return Selenocysteine;
             case 'O': return Pyrrolysine;
             case '*': return Stop;
-            default: throw new IllegalArgumentException( "No enum constant AminoAcidCode." + code);
+            default: throw new IllegalArgumentException( "No enum constant AminoAcid." + code);
         }
     }
 
-    public static AminoAcidCode[] valueOfCodeSequence(String sequence) {
+    public static AminoAcid[] valueOfOneLetterCodeSequence(String sequence) {
 
         List<Integer> ucs = new ArrayList<>();
 
@@ -149,9 +166,9 @@ public enum AminoAcidCode {
             if (Character.isUpperCase(c) || c == '*') ucs.add(i);
         }
 
-        if (ucs.get(0) != 0) throw new IllegalArgumentException("First amino-acid is not known: Not a valid sequence of AminoAcidCode sequence");
+        if (ucs.get(0) != 0) throw new IllegalArgumentException("First amino-acid is not known: Not a valid sequence of AminoAcid sequence");
 
-        AminoAcidCode[] codes = new AminoAcidCode[ucs.size()];
+        AminoAcid[] codes = new AminoAcid[ucs.size()];
 
         int i=0;
         while (i<ucs.size()) {
@@ -159,7 +176,7 @@ public enum AminoAcidCode {
             int start = ucs.get(i);
             int end = ((i+1) < ucs.size()) ? ucs.get(i+1) : sequence.length();
 
-            codes[i] = AminoAcidCode.valueOfCode(sequence.substring(start, end));
+            codes[i] = AminoAcid.valueOfAminoAcid(sequence.substring(start, end));
 
             i++;
         }

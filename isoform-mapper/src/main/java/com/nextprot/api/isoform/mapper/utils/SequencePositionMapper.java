@@ -1,5 +1,6 @@
 package com.nextprot.api.isoform.mapper.utils;
 
+import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.commons.utils.Pair;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 
-public class PropagatorCore {
+public class SequencePositionMapper {
 
 	/*
 	 * 
@@ -21,7 +22,7 @@ public class PropagatorCore {
 
 	public static boolean debug = false;
 		
-	public static CodonNucleotideIndices getCodonNucleotidesIndicesInRanges(CodonNucleotidePositions codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
+	static CodonNucleotideIndices getCodonNucleotidesIndicesInRanges(CodonNucleotidePositions codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
 
 		if (debug) System.out.println("----------------------------------------------------------");
 		int lowNum = 0;
@@ -51,7 +52,7 @@ public class PropagatorCore {
 	}
 
 
-	public static CodonNucleotidePositions getCodonNucleotidesPositionsInRanges(int isoformPos, List<NucleotidePositionRange> isoformPositionRangesOnDNA) {
+	static CodonNucleotidePositions getCodonNucleotidesPositionsInRanges(int isoformPos, List<NucleotidePositionRange> isoformPositionRangesOnDNA) {
 		int nu1Num = isoformPos * 3 - 3;
 		//if (debug) System.out.println("nu1Num:" + nu1Num);
 		int lowNum = 0;
@@ -76,28 +77,58 @@ public class PropagatorCore {
 	
 	/**
 	 * Check that we have amino acid aa(s) in isoform sequence at position pos.
-	 * If aa iss null or empty string we just check that position is < sequence lenght
-	 * @param sequence
+	 * If aa is null or empty string we just check that position is < sequence length
+	 *
+	 * @param sequence the protein sequence
 	 * @param pos position according to bio standard (first pos = 1)
-	 * @param aa 0, 1 or more amino acids (1 char / aa)
+	 * @param aas 1 or more amino acids (1 char / aa) (empty or null when it is an insertion)
 	 * @return
 	 */
-	public static boolean checkAminoAcidPosition(String sequence, int pos, String aa) {
-		int strPos = pos-1; // converts bio std to geek std
-		int strLng = aa==null ? 0 : aa.length();
-		if (strPos + strLng > sequence.length()) return false;
-		if (aa==null || aa.length()==0) return true;
-		return sequence.indexOf(aa) == strPos;
-	}	
-	
+	static boolean checkAminoAcidsFromPosition(String sequence, int pos, String aas) {
+
+		boolean insertionMode = (aas == null) || aas.isEmpty();
+		if (insertionMode) return checkSequencePosition(sequence, pos, true);
+		return checkSequencePosition(sequence, pos, false) && sequence.startsWith(aas, pos-1);
+	}
+
+	/**
+	 * Check that position exists in specified sequence at given mode.
+	 *
+	 * <h4>Insertion pos mode</h4>
+	 * In insertion mode, insertion will be applied before amino-acid(s) at given position.
+	 * <p>
+	 *   They are 3 valid cases to consider (illustrated with sequence ABCDEF):
+	 *
+	 *   <ol>
+	 *     <li>Before 1st AA: ABPCDEF (pos 1)</li>
+	 *     <li>Internal: PABCDEF (pos 3)</li>
+	 *     <li>After last AA: ABCDEFP (pos 7)</li>
+	 *   </ol>
+	 * </p>
+	 *
+	 * @param sequence the amino-acid sequence
+	 * @param pos position according to bio standard (first pos = 1)
+	 * @param insertionMode is true apply insertion rule else apply standard rule
+     * @return true if position exists in the given sequence
+     */
+	static boolean checkSequencePosition(String sequence, int pos, boolean insertionMode) {
+		Preconditions.checkNotNull(sequence);
+		Preconditions.checkArgument(!sequence.isEmpty());
+		Preconditions.checkArgument(pos>0, pos + ": invalid value (position should start at 1)");
+
+		// An insertion at position p means
+		if (insertionMode) return pos <= sequence.length()+1;
+		return pos <= sequence.length();
+	}
+
 	public static List<NucleotidePositionRange> getPositionRangesFromEntries(List<Entry<Integer,Integer>> listEntries) {
-		List<NucleotidePositionRange> result = new ArrayList<NucleotidePositionRange>();
+		List<NucleotidePositionRange> result = new ArrayList<>();
 		for (Entry<Integer,Integer> e: listEntries) result.add(new NucleotidePositionRange(e.getKey(), e.getValue()));
 		return result;
 	}
 	
 	public static List<NucleotidePositionRange> getPositionRangesFromPairs(List<Pair<Integer,Integer>> listPair) {
-		List<NucleotidePositionRange> result = new ArrayList<NucleotidePositionRange>();
+		List<NucleotidePositionRange> result = new ArrayList<>();
 		for (Pair<Integer,Integer> e: listPair) result.add(new NucleotidePositionRange(e.getFirst(), e.getSecond()));
 		return result;
 	}

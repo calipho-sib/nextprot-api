@@ -44,8 +44,8 @@ public class AnnotationVariant implements Serializable {
 		this.original = original;
 		this.variant = variant;
 		// Commenting code that is never used: see [original|variantAminoAcid never used] comment above
-		//this.originalAminoAcid = AminoAcidCode.valueOfCode1AA(original.charAt(0)).get3LetterCode();
-		//this.variantAminoAcid = AminoAcidCode.valueOfCode1AA(variant.charAt(0)).get3LetterCode();
+		//this.originalAminoAcid = AminoAcidCode.valueOfOneLetterCode(original.charAt(0)).get3LetterCode();
+		//this.variantAminoAcid = AminoAcidCode.valueOfOneLetterCode(variant.charAt(0)).get3LetterCode();
 		this.rawDescription = rawDescription;
 		parseRawDescription();
 	}

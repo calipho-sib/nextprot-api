@@ -1,7 +1,7 @@
 package org.nextprot.api.commons.bio.variation;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.AminoAcid;
 
 /**
  * Fluent interface for building <code>ProteinSequenceVariation</code>s
@@ -14,10 +14,10 @@ public interface ProteinSequenceVariationBuilder {
     interface StartBuilding {
 
         /** select a single affected amino-acid residue */
-        SingleAminoAcidMutation aminoAcid(AminoAcidCode affectedAA, int affectedAAPos);
+        SingleAminoAcidMutation aminoAcid(AminoAcid affectedAA, int affectedAAPos);
 
         /** select a range of affected amino-acid residues */
-        AminoAcidMutation aminoAcids(AminoAcidCode firstAffectedAA, int firstAffectedAAPos, AminoAcidCode lastAffectedAA, int lastAffectedAAPos);
+        AminoAcidMutation aminoAcids(AminoAcid firstAffectedAA, int firstAffectedAAPos, AminoAcid lastAffectedAA, int lastAffectedAAPos);
     }
 
     /** mutations affecting any sequence of amino-acid */
@@ -27,17 +27,17 @@ public interface ProteinSequenceVariationBuilder {
         ProteinSequenceVariationBuilder deleted();
 
         /** inserts given aas after specific AA */
-        ProteinSequenceVariationBuilder inserts(AminoAcidCode... aas);
+        ProteinSequenceVariationBuilder inserts(AminoAcid... aas);
 
         /** delete all affected amino-acids and inserts given aas */
-        ProteinSequenceVariationBuilder deletedAndInserts(AminoAcidCode... aas);
+        ProteinSequenceVariationBuilder deletedAndInserts(AminoAcid... aas);
     }
 
     /** mutations affecting only one amino-acid */
     interface SingleAminoAcidMutation extends AminoAcidMutation {
 
         /** substitutedBy an amino-acid by another one */
-        ProteinSequenceVariationBuilder substitutedBy(AminoAcidCode aa);
+        ProteinSequenceVariationBuilder substitutedBy(AminoAcid aa);
 
         /** A frameshift appears just after the affected amino-acid leading to a codon stop in this frame */
         ProteinSequenceVariationBuilder thenFrameshift(int stopCodonPos);
@@ -51,22 +51,22 @@ public interface ProteinSequenceVariationBuilder {
 
     class DataCollector {
 
-        private AminoAcidCode firstChangingAminoAcid;
+        private AminoAcid firstChangingAminoAcid;
         private int firstChangingAminoAcidPos;
-        private AminoAcidCode lastChangingAminoAcid;
+        private AminoAcid lastChangingAminoAcid;
         private int lastChangingAminoAcidPos;
         private ProteinSequenceChange proteinSequenceChange;
 
-        public void setFirstChangingAminoAcid(AminoAcidCode firstAffectedAminoAcidCode, int firstAffectedAminoAcidPos) {
+        public void setFirstChangingAminoAcid(AminoAcid firstAffectedAminoAcid, int firstAffectedAminoAcidPos) {
 
-            Preconditions.checkNotNull(firstAffectedAminoAcidCode);
+            Preconditions.checkNotNull(firstAffectedAminoAcid);
             Preconditions.checkArgument(firstAffectedAminoAcidPos > 0);
 
-            this.firstChangingAminoAcid = firstAffectedAminoAcidCode;
+            this.firstChangingAminoAcid = firstAffectedAminoAcid;
             this.firstChangingAminoAcidPos = firstAffectedAminoAcidPos;
         }
 
-        public AminoAcidCode getFirstChangingAminoAcid() {
+        public AminoAcid getFirstChangingAminoAcid() {
             return firstChangingAminoAcid;
         }
 
@@ -74,16 +74,16 @@ public interface ProteinSequenceVariationBuilder {
             return firstChangingAminoAcidPos;
         }
 
-        public void setLastChangingAminoAcid(AminoAcidCode lastAffectedAminoAcidCode, int lastAffectedAminoAcidPos) {
+        public void setLastChangingAminoAcid(AminoAcid lastAffectedAminoAcid, int lastAffectedAminoAcidPos) {
 
             Preconditions.checkNotNull(firstChangingAminoAcid);
             Preconditions.checkArgument(firstChangingAminoAcidPos > 0);
 
-            this.lastChangingAminoAcid = lastAffectedAminoAcidCode;
+            this.lastChangingAminoAcid = lastAffectedAminoAcid;
             this.lastChangingAminoAcidPos = lastAffectedAminoAcidPos;
         }
 
-        public AminoAcidCode getLastChangingAminoAcid() {
+        public AminoAcid getLastChangingAminoAcid() {
             return lastChangingAminoAcid;
         }
 
