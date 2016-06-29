@@ -56,6 +56,6 @@ public class MappedIsoformsFeatureResultTest {
                 new MappedIsoformsFeatureResult.Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, true);
 
         MappedIsoformsFeatureError result = new MappedIsoformsFeatureError(query);
-        result.setErrorValue(new MappedIsoformsFeatureError.UnexpectedAminoAcids("A", "P"));
+        result.setErrorValue(new MappedIsoformsFeatureError.UnexpectedAminoAcids("A", "L"));
     }
 }

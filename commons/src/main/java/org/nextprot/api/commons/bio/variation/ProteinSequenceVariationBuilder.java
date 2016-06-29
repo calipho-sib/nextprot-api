@@ -40,7 +40,7 @@ public interface ProteinSequenceVariationBuilder {
         ProteinSequenceVariationBuilder substitutedBy(AminoAcidCode aa);
 
         /** A frameshift appears just after the affected amino-acid leading to a codon stop in this frame */
-        ProteinSequenceVariationBuilder thenFrameshift(int stopCodonPos);
+        ProteinSequenceVariationBuilder thenFrameshift(AminoAcidCode newAminoAcidCode, int newTerminationPosition);
     }
 
     /** build an instance of ProteinMutation */

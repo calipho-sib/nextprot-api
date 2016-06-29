@@ -132,8 +132,8 @@ public class ProteinSequenceVariation {
             }
 
             @Override
-            public ProteinSequenceVariationBuilder thenFrameshift(int stop) {
-                return new FrameshiftBuilderProtein(dataCollector, stop);
+            public ProteinSequenceVariationBuilder thenFrameshift(AminoAcidCode newAminoAcidCode, int newTerminationPosition) {
+                return new FrameshiftBuilderProtein(dataCollector, newAminoAcidCode, newTerminationPosition);
             }
         }
 
@@ -213,10 +213,10 @@ public class ProteinSequenceVariation {
 
         class FrameshiftBuilderProtein extends ProteinSequenceVariationBuilderImpl {
 
-            FrameshiftBuilderProtein(DataCollector dataCollector, int stopCodonPos) {
+            FrameshiftBuilderProtein(DataCollector dataCollector, AminoAcidCode newAminoAcidCode, int newTerminationPosition) {
                 super(dataCollector);
 
-                dataCollector.setProteinSequenceChange(new Frameshift(stopCodonPos));
+                dataCollector.setProteinSequenceChange(new Frameshift(new Frameshift.Change(newAminoAcidCode, newTerminationPosition)));
             }
 
             @Override

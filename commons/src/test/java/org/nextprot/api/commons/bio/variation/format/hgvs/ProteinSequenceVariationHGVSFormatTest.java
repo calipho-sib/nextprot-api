@@ -45,9 +45,9 @@ public class ProteinSequenceVariationHGVSFormatTest {
     @Test
     public void testFormatFrameshift() throws Exception {
 
-        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(1).build();
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(AminoAcidCode.Alanine, 2).build();
 
-        Assert.assertEquals("p.M682fs*1", format.format(pm));
+        Assert.assertEquals("p.M682Afs*2", format.format(pm));
     }
 
     @Test
@@ -102,9 +102,9 @@ public class ProteinSequenceVariationHGVSFormatTest {
     @Test
     public void testFormatFrameshiftCode3() throws Exception {
 
-        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(1).build();
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(AminoAcidCode.Alanine, 2).build();
 
-        Assert.assertEquals("p.Met682fsTer1", format.format(pm, ProteinSequenceVariationFormat.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Met682AlafsTer2", format.format(pm, ProteinSequenceVariationFormat.AACodeType.THREE_LETTER));
     }
 
     @Test

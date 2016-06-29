@@ -56,7 +56,7 @@ public class ProteinSequenceVariationTest {
     @Test
     public void testBuildFrameshift() throws Exception {
 
-        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(1).build();
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(AminoAcidCode.Alanine, 2).build();
 
         Assert.assertEquals(AminoAcidCode.Methionine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(682, pm.getFirstChangingAminoAcidPos());
@@ -65,7 +65,14 @@ public class ProteinSequenceVariationTest {
         Assert.assertEquals(682, pm.getLastChangingAminoAcidPos());
 
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Frameshift);
-        Assert.assertEquals(1, pm.getProteinSequenceChange().getValue());
+        Assert.assertEquals(AminoAcidCode.Alanine, ((Frameshift.Change)pm.getProteinSequenceChange().getValue()).getChangedAminoAcid());
+        Assert.assertEquals(2, ((Frameshift.Change)pm.getProteinSequenceChange().getValue()).getNewTerminationPosition());
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testBuildFrameshiftBadStopPos() throws Exception {
+
+        new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(AminoAcidCode.Alanine, 1).build();
     }
 
     @Test

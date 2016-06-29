@@ -12,20 +12,23 @@ import java.util.regex.Pattern;
 
 public class FrameshiftHGVSFormat implements ProteinSequenceChangeFormat<Frameshift> {
 
-    private static final Pattern FRAMESHIFT_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)(\\d+)$");
-    private static final Pattern FRAMESHIFT_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)>?(\\d+)$");
+    private static final Pattern FRAMESHIFT_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)([A-Z])([a-z]{2})?fs(?:\\*|Ter)(\\d+)$");
+    //private static final Pattern FRAMESHIFT_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)(\\d+)$");
+    //private static final Pattern FRAMESHIFT_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)>?(\\d+)$");
 
     @Override
     public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, AbstractProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
 
-        Matcher m = (mode == AbstractProteinSequenceVariationFormat.ParsingMode.STRICT) ? FRAMESHIFT_PATTERN.matcher(source) : FRAMESHIFT_PATTERN_PERMISSIVE.matcher(source);
+        Matcher m = FRAMESHIFT_PATTERN.matcher(source);
 
         if (m.matches()) {
 
             AminoAcidCode affectedAA = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPos = Integer.parseInt(m.group(3));
 
-            return builder.aminoAcid(affectedAA, affectedAAPos).thenFrameshift(Integer.parseInt(m.group(4))).build();
+            AminoAcidCode newAA = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(4), m.group(5));
+
+            return builder.aminoAcid(affectedAA, affectedAAPos).thenFrameshift(newAA, Integer.parseInt(m.group(6))).build();
         }
 
         return null;
@@ -33,13 +36,16 @@ public class FrameshiftHGVSFormat implements ProteinSequenceChangeFormat<Framesh
 
     @Override
     public boolean matchesWithMode(String source, AbstractProteinSequenceVariationFormat.ParsingMode mode) {
-        return (mode == ProteinSequenceVariationHGVSFormat.ParsingMode.STRICT) ? source.matches(FRAMESHIFT_PATTERN.pattern()) : source.matches(FRAMESHIFT_PATTERN_PERMISSIVE.pattern());
+        return source.matches(FRAMESHIFT_PATTERN.pattern());
     }
 
     @Override
     public void format(StringBuilder sb, Frameshift change, ProteinSequenceVariationFormat.AACodeType type) {
 
-        sb.append("fs").append(AbstractProteinSequenceVariationFormat.formatAminoAcidCode(type, AminoAcidCode.Stop)).append(change.getValue());
-
+        sb
+                .append(AbstractProteinSequenceVariationFormat.formatAminoAcidCode(type, change.getValue().getChangedAminoAcid()))
+                .append("fs")
+                .append(AbstractProteinSequenceVariationFormat.formatAminoAcidCode(type, AminoAcidCode.Stop))
+                .append(change.getValue().getNewTerminationPosition());
     }
 }

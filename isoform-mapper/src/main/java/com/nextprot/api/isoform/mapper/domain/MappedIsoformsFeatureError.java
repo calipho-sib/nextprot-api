@@ -84,7 +84,7 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         private final String expectedAas;
         private final String observedAas;
 
-        public UnexpectedAminoAcids(String expectedAas, String observedAas) {
+        public UnexpectedAminoAcids(String observedAas, String expectedAas) {
             super("unexpected amino-acid(s) "+observedAas+" (expected="+expectedAas+")");
 
             this.observedAas = observedAas;
@@ -149,7 +149,7 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         private final List<String> expectedGeneNames;
 
         public IncompatibleGeneAndProteinName(String geneName, String proteinName, List<String> expectedGeneNames) {
-            super("protein "+proteinName+" is compatible with gene name "+geneName +" (expected gene names: "+
+            super("protein "+proteinName+" is not compatible with gene name "+geneName +" (expected gene names: "+
                     expectedGeneNames+")");
 
             this.geneName = geneName;
