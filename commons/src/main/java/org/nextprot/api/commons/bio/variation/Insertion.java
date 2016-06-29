@@ -14,15 +14,15 @@ import java.util.Objects;
 public class Insertion implements ProteinSequenceChange<AminoAcidCode[]> {
 
     private final int insertAfterPos;
-    private final AminoAcidCode[] aas;
+    private final AminoAcidCode[] insertedAminoAcids;
 
-    public Insertion(int insertAfterPos, AminoAcidCode... aas) {
+    public Insertion(int insertAfterPos, AminoAcidCode... insertedAminoAcids) {
 
-        Preconditions.checkNotNull(aas);
-        Preconditions.checkArgument(aas.length > 0);
+        Preconditions.checkNotNull(insertedAminoAcids);
+        Preconditions.checkArgument(insertedAminoAcids.length > 0);
         Preconditions.checkArgument(insertAfterPos>=0);
 
-        this.aas = aas;
+        this.insertedAminoAcids = insertedAminoAcids;
         this.insertAfterPos = insertAfterPos;
     }
 
@@ -32,7 +32,7 @@ public class Insertion implements ProteinSequenceChange<AminoAcidCode[]> {
     @Override
     public AminoAcidCode[] getValue() {
 
-        return Arrays.copyOf(aas, aas.length);
+        return Arrays.copyOf(insertedAminoAcids, insertedAminoAcids.length);
     }
 
     @Override
@@ -41,12 +41,12 @@ public class Insertion implements ProteinSequenceChange<AminoAcidCode[]> {
         if (!(o instanceof Insertion)) return false;
         Insertion insertion = (Insertion) o;
         return Objects.equals(insertAfterPos, insertion.insertAfterPos) &&
-                Objects.equals(aas, insertion.aas);
+                Objects.equals(insertedAminoAcids, insertion.insertedAminoAcids);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(insertAfterPos, aas);
+        return Objects.hash(insertAfterPos, insertedAminoAcids);
     }
 
     public int getInsertAfterPos() {

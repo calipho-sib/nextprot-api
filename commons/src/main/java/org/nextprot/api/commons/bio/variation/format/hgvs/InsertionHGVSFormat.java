@@ -11,6 +11,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
+/**
+ * Specifications: http://varnomen.hgvs.org/recommendations/protein/variant/insertion/
+ */
 public class InsertionHGVSFormat implements ProteinSequenceChangeFormat<Insertion> {
 
     private static final Pattern INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)_([A-Z])([a-z]{2})?(\\d+)ins((?:[A-Z\\*]([a-z]{2})?)+)$");
@@ -27,6 +30,10 @@ public class InsertionHGVSFormat implements ProteinSequenceChangeFormat<Insertio
 
             AminoAcidCode affectedAALast = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(4), m.group(5));
             int affectedAAPosLast = Integer.parseInt(m.group(6));
+
+            if (affectedAAPosLast != (affectedAAPosFirst+1)) {
+                throw new ParseException("should contain two flanking residues, e.g. Lys23 and Leu24", 0);
+            }
 
             AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfOneLetterCodeSequence(m.group(7));
 
