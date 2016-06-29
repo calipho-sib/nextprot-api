@@ -1,5 +1,6 @@
 package com.nextprot.api.isoform.mapper.service;
 
+import com.google.common.collect.Lists;
 import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureError;
 import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
 import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureSuccess;
@@ -13,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.function.Function;
 
@@ -27,24 +29,19 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Autowired
     private IsoformMappingService service;
 
-    // http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=4408659
     @Test
     public void shouldValidateFeatureOnCanonicalIsoform() throws Exception {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
 
         assertIsoformFeatureValid(result, "NX_Q9UI33-1", 1158, 1158, true);
-        /*assertIsoformFeature(mapping.countMappedIsoformFeatureResults("NX_Q9UI33-1"), 1158, 1158, MappedIsoformFeatureResult.Status.MAPPED);
-        assertIsoformFeature(mapping.countMappedIsoformFeatureResults("NX_Q9UI33-2"), 1158, 1158, MappedIsoformFeatureResult.Status.MAPPED);
-        assertIsoformFeature(mapping.countMappedIsoformFeatureResults("NX_Q9UI33-3"), 1120, 1120, MappedIsoformFeatureResult.Status.MAPPED);
-        */
     }
 
     @Test
     public void shouldNotValidateIncompatibleProteinAndGeneName() throws Exception {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, "NX_P01308");
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName("SCN11A", "NX_P01308"));
+        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName("SCN11A", "NX_P01308", Lists.newArrayList("INS")));
     }
 
     @Test
@@ -99,16 +96,18 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_Q9UI33-3", 1672, 1672, true);
     }
 
-    @Test
-    public void testVDListValidation() throws Exception {
+    //@Test
+    public void validateVDList() throws Exception {
 
         FileInputStream is = new FileInputStream(IsoformMappingServiceTest.class.getResource("vd.tsv").getFile());
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        PrintWriter pw = new PrintWriter("vd-results.tsv");
 
         List<String[]> twoFirstFieldsList = br.lines()
                 .map(to2FirstFields)
                 .collect(toList());
 
+        pw.append("accession\tvariant\tvalid\terror message\n");
         for (String[] twoFields : twoFirstFieldsList) {
 
             String accession = twoFields[0];
@@ -117,13 +116,17 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
             MappedIsoformsFeatureResult result =
                     service.validateFeature(feature, AnnotationCategory.VARIANT, accession);
 
+            pw.append(accession).append("\t").append(feature).append("\t").append(String.valueOf(result.isSuccess()));
+
             if (result.isSuccess()) {
-                System.out.println(accession+"\t"+feature+"\t"+result.isSuccess()+"\t");
+                pw.append("\t");
             } else {
                 MappedIsoformsFeatureError error = (MappedIsoformsFeatureError) result;
-                System.out.println(accession+"\t"+feature+"\t"+result.isSuccess()+"\t"+error.getError().getMessage());
+                pw.append("\t").append(error.getError().getMessage());
             }
+            pw.append("\n");
         }
+        pw.close();
     }
 
     private static Function<String, String[]> to2FirstFields = (line) -> {

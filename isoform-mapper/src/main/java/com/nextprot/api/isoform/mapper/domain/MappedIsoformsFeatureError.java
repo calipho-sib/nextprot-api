@@ -1,6 +1,7 @@
 package com.nextprot.api.isoform.mapper.domain;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -145,12 +146,15 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
 
         private final String geneName;
         private final String proteinName;
+        private final List<String> expectedGeneNames;
 
-        public IncompatibleGeneAndProteinName(String geneName, String proteinName) {
-            super("inconsistent gene and protein names");
+        public IncompatibleGeneAndProteinName(String geneName, String proteinName, List<String> expectedGeneNames) {
+            super("protein "+proteinName+" is compatible with gene name "+geneName +" (expected gene names: "+
+                    expectedGeneNames+")");
 
             this.geneName = geneName;
             this.proteinName = proteinName;
+            this.expectedGeneNames = expectedGeneNames;
         }
 
         public String getGeneName() {
@@ -161,18 +165,23 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
             return proteinName;
         }
 
+        public List<String> getExpectedGeneNames() {
+            return expectedGeneNames;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof IncompatibleGeneAndProteinName)) return false;
             IncompatibleGeneAndProteinName that = (IncompatibleGeneAndProteinName) o;
             return Objects.equals(geneName, that.geneName) &&
-                    Objects.equals(proteinName, that.proteinName);
+                    Objects.equals(proteinName, that.proteinName) &&
+                    Objects.equals(expectedGeneNames, that.expectedGeneNames);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(geneName, proteinName);
+            return Objects.hash(geneName, proteinName, expectedGeneNames);
         }
     }
 }

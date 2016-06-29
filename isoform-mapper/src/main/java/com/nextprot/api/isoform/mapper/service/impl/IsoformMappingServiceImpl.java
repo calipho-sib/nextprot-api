@@ -10,6 +10,7 @@ import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 /**
@@ -73,8 +75,12 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
             GeneVariantSplitter splitter = new GeneVariantSplitter(query.getFeature());
             if (!splitter.isValidGeneName(entryIsoform.getEntry())) {
                 MappedIsoformsFeatureError error = new MappedIsoformsFeatureError(query);
+
+                List<String> expectedGeneNames = entryIsoform.getEntry().getOverview().getGeneNames().stream()
+                        .map(EntityName::getName).collect(Collectors.toList());
+
                 error.setErrorValue(new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName(splitter.getGeneName(),
-                        entryIsoform.getEntry().getUniqueName()));
+                        entryIsoform.getEntry().getUniqueName(), expectedGeneNames));
                 return error;
             }
 
