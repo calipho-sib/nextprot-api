@@ -1,7 +1,7 @@
 package org.nextprot.api.commons.bio.variation;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.bio.AminoAcid;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 
 import java.util.Objects;
 
@@ -15,9 +15,9 @@ import java.util.Objects;
  */
 public class ProteinSequenceVariation {
 
-    private final AminoAcid firstChangingAminoAcid;
+    private final AminoAcidCode firstChangingAminoAcid;
     private final int firstChangingAminoAcidPos;
-    private final AminoAcid lastChangingAminoAcid;
+    private final AminoAcidCode lastChangingAminoAcid;
     private final int lastChangingAminoAcidPos;
     private final ProteinSequenceChange proteinSequenceChange;
 
@@ -30,7 +30,7 @@ public class ProteinSequenceVariation {
         this.proteinSequenceChange = builder.getDataCollector().getProteinSequenceChange();
     }
 
-    public AminoAcid getFirstChangingAminoAcid() {
+    public AminoAcidCode getFirstChangingAminoAcid() {
         return firstChangingAminoAcid;
     }
 
@@ -38,7 +38,7 @@ public class ProteinSequenceVariation {
         return firstChangingAminoAcidPos;
     }
 
-    public AminoAcid getLastChangingAminoAcid() {
+    public AminoAcidCode getLastChangingAminoAcid() {
         return lastChangingAminoAcid;
     }
 
@@ -87,7 +87,7 @@ public class ProteinSequenceVariation {
         }
 
         @Override
-        public ProteinSequenceVariationBuilder.SingleAminoAcidMutation aminoAcid(AminoAcid firstAffectedAminoAcid, int firstAffectedAminoAcidPos) {
+        public ProteinSequenceVariationBuilder.SingleAminoAcidMutation aminoAcid(AminoAcidCode firstAffectedAminoAcid, int firstAffectedAminoAcidPos) {
 
             dataCollector.setFirstChangingAminoAcid(firstAffectedAminoAcid, firstAffectedAminoAcidPos);
             dataCollector.setLastChangingAminoAcid(firstAffectedAminoAcid, firstAffectedAminoAcidPos);
@@ -96,7 +96,7 @@ public class ProteinSequenceVariation {
         }
 
         @Override
-        public ProteinSequenceVariationBuilder.AminoAcidMutation aminoAcids(AminoAcid firstAffectedAminoAcid, int firstAffectedAminoAcidPos, AminoAcid lastAffectedAminoAcid, int lastAffectedAminoAcidPos) {
+        public ProteinSequenceVariationBuilder.AminoAcidMutation aminoAcids(AminoAcidCode firstAffectedAminoAcid, int firstAffectedAminoAcidPos, AminoAcidCode lastAffectedAminoAcid, int lastAffectedAminoAcidPos) {
 
             Preconditions.checkArgument(firstAffectedAminoAcidPos < lastAffectedAminoAcidPos);
 
@@ -114,12 +114,12 @@ public class ProteinSequenceVariation {
             }
 
             @Override
-            public ProteinSequenceVariationBuilder inserts(AminoAcid... aas) {
+            public ProteinSequenceVariationBuilder inserts(AminoAcidCode... aas) {
                 return new InsertionBuilderProtein(dataCollector, aas);
             }
 
             @Override
-            public ProteinSequenceVariationBuilder deletedAndInserts(AminoAcid... aas) {
+            public ProteinSequenceVariationBuilder deletedAndInserts(AminoAcidCode... aas) {
                 return new DeletionInsertionBuilderProtein(dataCollector, aas);
             }
         }
@@ -127,7 +127,7 @@ public class ProteinSequenceVariation {
         class AAMutationActionImpl extends MutationActionImpl implements ProteinSequenceVariationBuilder.SingleAminoAcidMutation {
 
             @Override
-            public ProteinSequenceVariationBuilder substitutedBy(AminoAcid aa) {
+            public ProteinSequenceVariationBuilder substitutedBy(AminoAcidCode aa) {
                 return new SubstitutionBuilderProtein(dataCollector, aa);
             }
 
@@ -168,7 +168,7 @@ public class ProteinSequenceVariation {
 
         class DeletionInsertionBuilderProtein extends ProteinSequenceVariationBuilderImpl {
 
-            DeletionInsertionBuilderProtein(DataCollector dataCollector, AminoAcid... aas) {
+            DeletionInsertionBuilderProtein(DataCollector dataCollector, AminoAcidCode... aas) {
                 super(dataCollector);
 
                 dataCollector.setProteinSequenceChange(new DeletionAndInsertion(aas));
@@ -183,7 +183,7 @@ public class ProteinSequenceVariation {
 
         class InsertionBuilderProtein extends ProteinSequenceVariationBuilderImpl {
 
-            InsertionBuilderProtein(DataCollector dataCollector, AminoAcid... aas) {
+            InsertionBuilderProtein(DataCollector dataCollector, AminoAcidCode... aas) {
                 super(dataCollector);
 
                 dataCollector.setProteinSequenceChange(new Insertion(dataCollector.getFirstChangingAminoAcidPos(), aas));
@@ -198,7 +198,7 @@ public class ProteinSequenceVariation {
 
         class SubstitutionBuilderProtein extends ProteinSequenceVariationBuilderImpl {
 
-            SubstitutionBuilderProtein(DataCollector dataCollector, AminoAcid aa) {
+            SubstitutionBuilderProtein(DataCollector dataCollector, AminoAcidCode aa) {
                 super(dataCollector);
 
                 dataCollector.setProteinSequenceChange(new Substitution(aa));

@@ -10,7 +10,7 @@ import java.util.Set;
  *
  * Created by fnikitin on 09/07/15.
  */
-public enum AminoAcid {
+public enum AminoAcidCode {
 
     Glycine ("Gly", 'G'),
     Proline ("Pro", 'P'),
@@ -43,14 +43,14 @@ public enum AminoAcid {
 
     static {
         validCodes = new HashSet<>(46);
-        for (AminoAcid aac : AminoAcid.values()) {
+        for (AminoAcidCode aac : AminoAcidCode.values()) {
 
             validCodes.add(String.valueOf(aac.code1));
             validCodes.add(aac.code3);
         }
     }
 
-    AminoAcid(String code3, char code1) {
+    AminoAcidCode(String code3, char code1) {
 
         this.code3 = code3;
         this.code1 = code1;
@@ -69,7 +69,7 @@ public enum AminoAcid {
         return validCodes.contains(code);
     }
 
-    public static AminoAcid valueOfAminoAcid(String code) {
+    public static AminoAcidCode valueOfAminoAcid(String code) {
 
         if (code.length() == 1)
             return valueOfOneLetterCode(code.charAt(0));
@@ -127,7 +127,7 @@ public enum AminoAcid {
         }
     }
 
-    public static AminoAcid valueOfOneLetterCode(char code) {
+    public static AminoAcidCode valueOfOneLetterCode(char code) {
 
         switch (code) {
             case 'G': return Glycine;
@@ -157,7 +157,7 @@ public enum AminoAcid {
         }
     }
 
-    public static AminoAcid[] valueOfOneLetterCodeSequence(String sequence) {
+    public static AminoAcidCode[] valueOfOneLetterCodeSequence(String sequence) {
 
         List<Integer> ucs = new ArrayList<>();
 
@@ -168,7 +168,7 @@ public enum AminoAcid {
 
         if (ucs.get(0) != 0) throw new IllegalArgumentException("First amino-acid is not known: Not a valid sequence of AminoAcid sequence");
 
-        AminoAcid[] codes = new AminoAcid[ucs.size()];
+        AminoAcidCode[] codes = new AminoAcidCode[ucs.size()];
 
         int i=0;
         while (i<ucs.size()) {
@@ -176,7 +176,7 @@ public enum AminoAcid {
             int start = ucs.get(i);
             int end = ((i+1) < ucs.size()) ? ucs.get(i+1) : sequence.length();
 
-            codes[i] = AminoAcid.valueOfAminoAcid(sequence.substring(start, end));
+            codes[i] = AminoAcidCode.valueOfAminoAcid(sequence.substring(start, end));
 
             i++;
         }

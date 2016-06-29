@@ -1,7 +1,7 @@
 package org.nextprot.api.commons.bio.variation;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.bio.AminoAcid;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 
 import java.util.Objects;
 
@@ -10,11 +10,11 @@ import java.util.Objects;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Substitution implements ProteinSequenceChange<AminoAcid> {
+public class Substitution implements ProteinSequenceChange<AminoAcidCode> {
 
-    private final AminoAcid aa;
+    private final AminoAcidCode aa;
 
-    public Substitution(AminoAcid aa) {
+    public Substitution(AminoAcidCode aa) {
 
         Preconditions.checkNotNull(aa);
 
@@ -25,7 +25,7 @@ public class Substitution implements ProteinSequenceChange<AminoAcid> {
      * @return the substituent amino-acid
      */
     @Override
-    public AminoAcid getValue() {
+    public AminoAcidCode getValue() {
         return aa;
     }
 

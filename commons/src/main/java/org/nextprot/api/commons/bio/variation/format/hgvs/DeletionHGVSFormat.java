@@ -1,6 +1,6 @@
 package org.nextprot.api.commons.bio.variation.format.hgvs;
 
-import org.nextprot.api.commons.bio.AminoAcid;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.*;
 import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat;
@@ -22,7 +22,7 @@ public class DeletionHGVSFormat implements ProteinSequenceChangeFormat<Deletion>
 
         if (m.matches()) {
 
-            AminoAcid affectedAAFirst = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAAFirst = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPosFirst = Integer.parseInt(m.group(3));
 
             if (m.group(4) == null) {
@@ -30,7 +30,7 @@ public class DeletionHGVSFormat implements ProteinSequenceChangeFormat<Deletion>
                 return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst).deleted().build();
             }
 
-            AminoAcid affectedAALast = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(4), m.group(5));
+            AminoAcidCode affectedAALast = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(4), m.group(5));
             int affectedAAPosLast = Integer.parseInt(m.group(6));
 
             return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast).deleted().build();

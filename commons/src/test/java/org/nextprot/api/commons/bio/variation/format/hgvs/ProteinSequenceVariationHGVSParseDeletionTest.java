@@ -2,7 +2,7 @@ package org.nextprot.api.commons.bio.variation.format.hgvs;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.commons.bio.AminoAcid;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.Deletion;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 
@@ -16,7 +16,7 @@ public class ProteinSequenceVariationHGVSParseDeletionTest {
 
         ProteinSequenceVariation pm = format.parse("p.K73del");
 
-        Assert.assertEquals(AminoAcid.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(73, pm.getFirstChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Deletion);
     }
@@ -26,8 +26,8 @@ public class ProteinSequenceVariationHGVSParseDeletionTest {
 
         ProteinSequenceVariation pm = format.parse("p.K487_L498del");
 
-        Assert.assertEquals(AminoAcid.Lysine, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcid.Leucine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Deletion);
@@ -38,7 +38,7 @@ public class ProteinSequenceVariationHGVSParseDeletionTest {
 
         ProteinSequenceVariation pm = format.parse("p.Lys73del");
 
-        Assert.assertEquals(AminoAcid.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(73, pm.getFirstChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Deletion);
     }
@@ -48,8 +48,8 @@ public class ProteinSequenceVariationHGVSParseDeletionTest {
 
         ProteinSequenceVariation pm = format.parse("p.Lys487_Leu498del");
 
-        Assert.assertEquals(AminoAcid.Lysine, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcid.Leucine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Deletion);
@@ -60,9 +60,9 @@ public class ProteinSequenceVariationHGVSParseDeletionTest {
 
         ProteinSequenceVariation pm = format.parse("p.K487_L498del12", ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
 
-        Assert.assertEquals(AminoAcid.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
-        Assert.assertEquals(AminoAcid.Leucine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastChangingAminoAcid());
         Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Deletion);
     }
@@ -72,9 +72,9 @@ public class ProteinSequenceVariationHGVSParseDeletionTest {
 
         ProteinSequenceVariation pm = format.parse("p.K487_L498delPRAL", ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
 
-        Assert.assertEquals(AminoAcid.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
-        Assert.assertEquals(AminoAcid.Leucine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastChangingAminoAcid());
         Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Deletion);
     }

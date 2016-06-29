@@ -3,7 +3,7 @@ package org.nextprot.api.commons.bio.variation.format.hgvs;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.bio.AminoAcid;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.*;
 import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
 
@@ -40,12 +40,12 @@ public class ProteinSequenceVariationHGVSParseSubstitutionTest {
 
         ProteinSequenceVariation pm = format.parse("p.R54C");
 
-        Assert.assertEquals(AminoAcid.Arginine, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcid.Arginine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastChangingAminoAcid());
         Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(54, pm.getLastChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Substitution);
-        Assert.assertEquals(AminoAcid.Cysteine, pm.getProteinSequenceChange().getValue());
+        Assert.assertEquals(AminoAcidCode.Cysteine, pm.getProteinSequenceChange().getValue());
     }
 
     @Test
@@ -53,12 +53,12 @@ public class ProteinSequenceVariationHGVSParseSubstitutionTest {
 
         ProteinSequenceVariation pm = format.parse("p.R54*");
 
-        Assert.assertEquals(AminoAcid.Arginine, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcid.Arginine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastChangingAminoAcid());
         Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(54, pm.getLastChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Substitution);
-        Assert.assertEquals(AminoAcid.Stop, pm.getProteinSequenceChange().getValue());
+        Assert.assertEquals(AminoAcidCode.Stop, pm.getProteinSequenceChange().getValue());
     }
 
     @Test
@@ -66,12 +66,12 @@ public class ProteinSequenceVariationHGVSParseSubstitutionTest {
 
         ProteinSequenceVariation pm = format.parse("p.Arg54Cys");
 
-        Assert.assertEquals(AminoAcid.Arginine, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcid.Arginine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastChangingAminoAcid());
         Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(54, pm.getLastChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Substitution);
-        Assert.assertEquals(AminoAcid.Cysteine, pm.getProteinSequenceChange().getValue());
+        Assert.assertEquals(AminoAcidCode.Cysteine, pm.getProteinSequenceChange().getValue());
     }
 
     @Test
@@ -79,12 +79,12 @@ public class ProteinSequenceVariationHGVSParseSubstitutionTest {
 
         ProteinSequenceVariation pm = format.parse("p.R54C", ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
 
-        Assert.assertEquals(AminoAcid.Arginine, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcid.Arginine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastChangingAminoAcid());
         Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(54, pm.getLastChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Substitution);
-        Assert.assertEquals(AminoAcid.Cysteine, pm.getProteinSequenceChange().getValue());
+        Assert.assertEquals(AminoAcidCode.Cysteine, pm.getProteinSequenceChange().getValue());
     }
 
     @Test
@@ -92,11 +92,11 @@ public class ProteinSequenceVariationHGVSParseSubstitutionTest {
 
         ProteinSequenceVariation pm = format.parse("p.*104E", ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
 
-        Assert.assertEquals(AminoAcid.Stop, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcid.Stop, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Stop, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Stop, pm.getLastChangingAminoAcid());
         Assert.assertEquals(104, pm.getFirstChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Substitution);
-        Assert.assertEquals(AminoAcid.GlutamicAcid, pm.getProteinSequenceChange().getValue());
+        Assert.assertEquals(AminoAcidCode.GlutamicAcid, pm.getProteinSequenceChange().getValue());
     }
 
     @Test
@@ -104,11 +104,11 @@ public class ProteinSequenceVariationHGVSParseSubstitutionTest {
 
         ProteinSequenceVariation pm = format.parse("p.Ter104Glu", ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
 
-        Assert.assertEquals(AminoAcid.Stop, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcid.Stop, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Stop, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Stop, pm.getLastChangingAminoAcid());
         Assert.assertEquals(104, pm.getFirstChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Substitution);
-        Assert.assertEquals(AminoAcid.GlutamicAcid, pm.getProteinSequenceChange().getValue());
+        Assert.assertEquals(AminoAcidCode.GlutamicAcid, pm.getProteinSequenceChange().getValue());
     }
 
     @Ignore

@@ -3,7 +3,7 @@ package org.nextprot.api.commons.bio.variation.format.hgvs;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.bio.AminoAcid;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.Frameshift;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 
@@ -20,7 +20,7 @@ public class ProteinSequenceVariationHGVSParseFrameshiftTest {
 
         ProteinSequenceVariation pm = format.parse("p.M682fs*1");
 
-        Assert.assertEquals(AminoAcid.Methionine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Methionine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(682, pm.getFirstChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Frameshift);
         Assert.assertEquals(1, pm.getProteinSequenceChange().getValue());
@@ -31,7 +31,7 @@ public class ProteinSequenceVariationHGVSParseFrameshiftTest {
 
         ProteinSequenceVariation pm = format.parse("p.Met682fsTer1");
 
-        Assert.assertEquals(AminoAcid.Methionine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Methionine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(682, pm.getFirstChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Frameshift);
         Assert.assertEquals(1, pm.getProteinSequenceChange().getValue());
@@ -42,7 +42,7 @@ public class ProteinSequenceVariationHGVSParseFrameshiftTest {
 
         ProteinSequenceVariation pm = format.parse("p.S1476fs*>9", ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
 
-        Assert.assertEquals(AminoAcid.Serine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.Serine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(1476, pm.getFirstChangingAminoAcidPos());
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Frameshift);
         Assert.assertEquals(9, pm.getProteinSequenceChange().getValue());

@@ -1,6 +1,6 @@
 package org.nextprot.api.commons.bio.variation.format.hgvs;
 
-import org.nextprot.api.commons.bio.AminoAcid;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.*;
 import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat;
@@ -26,10 +26,10 @@ public class SubstitutionHGVSFormat implements ProteinSequenceChangeFormat<Subst
 
         if (m.matches()) {
 
-            AminoAcid affectedAA = valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAA = valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPos = Integer.parseInt(m.group(3));
 
-            AminoAcid substitutedAA = valueOfAminoAcidCode(m.group(4), m.group(5));
+            AminoAcidCode substitutedAA = valueOfAminoAcidCode(m.group(4), m.group(5));
 
             return builder.aminoAcid(affectedAA, affectedAAPos).substitutedBy(substitutedAA).build();
         }
