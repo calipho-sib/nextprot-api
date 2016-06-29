@@ -41,6 +41,11 @@ public class DeletionInsertionHGVSFormat implements ProteinSequenceChangeFormat<
     }
 
     @Override
+    public boolean matchesWithMode(String source, AbstractProteinSequenceVariationFormat.ParsingMode mode) {
+        return (mode == ProteinSequenceVariationHGVSFormat.ParsingMode.STRICT) ? source.matches(DELETION_INSERTION_PATTERN.pattern()) : source.matches(DELETION_INSERTION_PATTERN_PERMISSIVE.pattern());
+    }
+
+    @Override
     public void format(StringBuilder sb, DeletionAndInsertion change, ProteinSequenceVariationFormat.AACodeType type) {
 
         sb.append("delins").append(AbstractProteinSequenceVariationFormat.formatAminoAcidCode(type, change.getValue()));

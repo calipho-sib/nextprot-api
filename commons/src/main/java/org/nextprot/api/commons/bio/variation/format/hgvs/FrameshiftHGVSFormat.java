@@ -32,6 +32,11 @@ public class FrameshiftHGVSFormat implements ProteinSequenceChangeFormat<Framesh
     }
 
     @Override
+    public boolean matchesWithMode(String source, AbstractProteinSequenceVariationFormat.ParsingMode mode) {
+        return (mode == ProteinSequenceVariationHGVSFormat.ParsingMode.STRICT) ? source.matches(FRAMESHIFT_PATTERN.pattern()) : source.matches(FRAMESHIFT_PATTERN_PERMISSIVE.pattern());
+    }
+
+    @Override
     public void format(StringBuilder sb, Frameshift change, ProteinSequenceVariationFormat.AACodeType type) {
 
         sb.append("fs").append(AbstractProteinSequenceVariationFormat.formatAminoAcidCode(type, AminoAcidCode.Stop)).append(change.getValue());

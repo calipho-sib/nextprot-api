@@ -45,6 +45,11 @@ public class InsertionHGVSFormat implements ProteinSequenceChangeFormat<Insertio
     }
 
     @Override
+    public boolean matchesWithMode(String source, AbstractProteinSequenceVariationFormat.ParsingMode mode) {
+        return source.matches(INSERTION_PATTERN.pattern());
+    }
+
+    @Override
     public void format(StringBuilder sb, Insertion change, ProteinSequenceVariationFormat.AACodeType type) {
 
         sb.append("ins").append(AbstractProteinSequenceVariationFormat.formatAminoAcidCode(type, change.getValue()));

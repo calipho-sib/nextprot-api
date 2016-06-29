@@ -40,6 +40,11 @@ public class DeletionHGVSFormat implements ProteinSequenceChangeFormat<Deletion>
     }
 
     @Override
+    public boolean matchesWithMode(String source, AbstractProteinSequenceVariationFormat.ParsingMode mode) {
+        return (mode == ProteinSequenceVariationHGVSFormat.ParsingMode.STRICT) ? source.matches(DELETION_PATTERN.pattern()) : source.matches(DELETION_PATTERN_PERMISSIVE.pattern());
+    }
+
+    @Override
     public void format(StringBuilder sb, Deletion change, ProteinSequenceVariationFormat.AACodeType type) {
 
         sb.append("del");

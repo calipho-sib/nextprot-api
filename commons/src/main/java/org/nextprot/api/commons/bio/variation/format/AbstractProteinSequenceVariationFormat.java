@@ -5,6 +5,8 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.*;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A base class for parsing and formatting ProteinMutation
@@ -91,16 +93,13 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
 
     private ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, ParsingMode mode) throws ParseException {
 
-        ProteinSequenceVariation mutation = getSubstitutionFormat().parseWithMode(source, builder, mode);
+        for (ProteinSequenceChangeFormat format : getFormats()) {
 
-        if (mutation == null) mutation = getDeletionFormat().parseWithMode(source, builder, mode);
-        if (mutation == null) mutation = getFrameshiftFormat().parseWithMode(source, builder, mode);
-        if (mutation == null) mutation = getDeletionInsertionFormat().parseWithMode(source, builder, mode);
-        if (mutation == null) mutation = getInsertionFormat().parseWithMode(source, builder, mode);
+            if (format.matchesWithMode(source, mode))
+                return format.parseWithMode(source, builder, mode);
+        }
 
-        if (mutation == null) throw new ParseException(source + " is not a valid protein mutation", 0);
-
-        return mutation;
+        throw new ParseException(source + " is not a valid protein mutation", 0);
     }
 
     // delegated formats
@@ -110,6 +109,18 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
     protected abstract ProteinSequenceChangeFormat<Deletion> getDeletionFormat();
     protected abstract ProteinSequenceChangeFormat<DeletionAndInsertion> getDeletionInsertionFormat();
     protected abstract ProteinSequenceChangeFormat<Frameshift> getFrameshiftFormat();
+
+    private List<ProteinSequenceChangeFormat> getFormats() {
+        List<ProteinSequenceChangeFormat> formats = new ArrayList<>();
+
+        formats.add(getSubstitutionFormat());
+        formats.add(getDeletionFormat());
+        formats.add(getFrameshiftFormat());
+        formats.add(getDeletionInsertionFormat());
+        formats.add(getInsertionFormat());
+
+        return formats;
+    }
 
     public static String formatAminoAcidCode(AACodeType type, AminoAcidCode... aas) {
 

@@ -29,4 +29,10 @@ public interface ProteinSequenceChangeFormat<C extends ProteinSequenceChange> {
      * @throws ParseException if parsing error occurs
      */
     ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, AbstractProteinSequenceVariationFormat.ParsingMode mode) throws ParseException;
+
+    /**
+     * Attempts to match the source.
+     * @return  <tt>true</tt> if matches the source
+     */
+    boolean matchesWithMode(String source, AbstractProteinSequenceVariationFormat.ParsingMode mode);
 }

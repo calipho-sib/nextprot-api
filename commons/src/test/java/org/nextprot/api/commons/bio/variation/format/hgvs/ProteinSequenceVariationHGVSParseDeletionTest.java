@@ -10,7 +10,6 @@ public class ProteinSequenceVariationHGVSParseDeletionTest {
 
     ProteinSequenceVariationHGVSFormat format = new ProteinSequenceVariationHGVSFormat();
 
-    ///// DELETIONS
     @Test
     public void testParseAADeletion() throws Exception {
 

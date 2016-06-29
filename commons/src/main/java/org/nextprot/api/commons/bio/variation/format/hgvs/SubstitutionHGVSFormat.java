@@ -38,6 +38,11 @@ public class SubstitutionHGVSFormat implements ProteinSequenceChangeFormat<Subst
     }
 
     @Override
+    public boolean matchesWithMode(String source, AbstractProteinSequenceVariationFormat.ParsingMode mode) {
+        return source.matches(SUBSTITUTION_PATTERN.pattern());
+    }
+
+    @Override
     public void format(StringBuilder sb, Substitution change, ProteinSequenceVariationFormat.AACodeType type) {
 
         sb.append(formatAminoAcidCode(type, change.getValue()));
