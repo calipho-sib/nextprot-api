@@ -1,6 +1,6 @@
 package com.nextprot.api.isoform.mapper.utils;
 
-import com.nextprot.api.isoform.mapper.service.impl.IsoformMappingBaseTest;
+import com.nextprot.api.isoform.mapper.service.IsoformMappingBaseTest;
 import junit.framework.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
