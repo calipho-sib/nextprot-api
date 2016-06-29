@@ -9,19 +9,19 @@
 	<diskStore path="cache" />
 	<!-- Configuring cache for master identifier service -->
 
-	<cache name="raw-statements" overflowToOffHeap="false"
+	<cache name="modified-entry-statements-by-entry-accession" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		statistics="true" >
 	</cache>
 	
-	<cache name="raw-statements-by-annot-hash" overflowToOffHeap="false"
+	<cache name="statements-by-annot-hash" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		statistics="true" >
 	</cache>
 
-	<cache name="normal-statements-by-entry-name" overflowToOffHeap="false"
+	<cache name="entry-statements-by-entry-accession" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		statistics="true" >
