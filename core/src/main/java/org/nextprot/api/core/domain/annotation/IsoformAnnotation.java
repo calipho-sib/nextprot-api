@@ -7,60 +7,37 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
-public class IsoformAnnotation extends Annotation{
-	
+public class IsoformAnnotation extends Annotation {
+
 	private static final long serialVersionUID = -4313083647205665053L;
 
 	private String subjectName;
 	private List<String> subjectComponents;
-	
-	private Integer locationCanonicalBegin;
-	private Integer locationGenomicBegin;
 
-	private Integer locationCanonicalEnd;
-	private Integer locationGenomicEnd;
-	
+	private Integer locationBegin; //TODO should use location or LocationRange object? Rename public method?
+	private Integer locationEnd;
+
+	private List<LocationRange> genomicLocationRanges;
+
 	private String isoformName;
-	
+
 	private String annotationUniqueName;
 	private String annotationHash;
-	
-	
-	@Deprecated
-	public Map<String, AnnotationIsoformSpecificity> getTargetingIsoformsMap() {
-		return null;
-	}
 
 	public Integer getLocationCanonicalBegin() {
-		return locationCanonicalBegin;
+		return locationBegin;
 	}
 
 	public void setLocationCanonicalBegin(Integer locationCanonicalBegin) {
-		this.locationCanonicalBegin = locationCanonicalBegin;
-	}
-
-	public Integer getLocationGenomicBegin() {
-		return locationGenomicBegin;
-	}
-
-	public void setLocationGenomicBegin(Integer locationGenomicBegin) {
-		this.locationGenomicBegin = locationGenomicBegin;
+		this.locationBegin = locationCanonicalBegin;
 	}
 
 	public Integer getLocationCanonicalEnd() {
-		return locationCanonicalEnd;
+		return locationEnd;
 	}
 
 	public void setLocationCanonicalEnd(Integer locationCanonicalEnd) {
-		this.locationCanonicalEnd = locationCanonicalEnd;
-	}
-
-	public Integer getLocationGenomicEnd() {
-		return locationGenomicEnd;
-	}
-
-	public void setLocationGenomicEnd(Integer locationGenomicEnd) {
-		this.locationGenomicEnd = locationGenomicEnd;
+		this.locationEnd = locationCanonicalEnd;
 	}
 
 	public String getIsoformName() {
@@ -102,5 +79,20 @@ public class IsoformAnnotation extends Annotation{
 	public void setSubjectComponents(List<String> subjectComponents) {
 		this.subjectComponents = subjectComponents;
 	}
+
+	public List<LocationRange> getGenomicLocationRanges() {
+		return genomicLocationRanges;
+	}
+
+	public void setGenomicLocationRanges(List<LocationRange> genomicLocationRanges) {
+		this.genomicLocationRanges = genomicLocationRanges;
+	}
+	
+
+	@Deprecated
+	public Map<String, AnnotationIsoformSpecificity> getTargetingIsoformsMap() {
+		return null;
+	}
+
 
 }

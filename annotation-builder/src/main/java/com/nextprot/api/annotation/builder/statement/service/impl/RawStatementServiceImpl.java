@@ -15,6 +15,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.RawStatement;
+import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -68,10 +69,11 @@ public class RawStatementServiceImpl implements RawStatementService {
 		return rawStatements.stream().map(s -> {
 			AnnotationEvidence evidence = new AnnotationEvidence();
 			evidence.setResourceAssociationType("evidence");
-			if (s.getExp_context_property_intensity() != null) {
+			String fieldIntensity = s.getValue(StatementField.EXP_CONTEXT_PROPERTY_INTENSITY);
+			if (fieldIntensity != null) {
 				AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
 				prop.setPropertyName("intensity");
-				prop.setPropertyValue(s.getExp_context_property_intensity());
+				prop.setPropertyValue(fieldIntensity);
 				evidence.setProperties(Arrays.asList(prop));
 			}
 			return evidence;
@@ -93,36 +95,33 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 			isoAnnotation.setEvidences(buildAnnotationEvidences(statements));
 
-			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getAnnotation_category()));
+			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getValue(StatementField.ANNOTATION_CATEGORY)));
 			isoAnnotation.setCategory(category);
 			
 			if(category.equals(AnnotationCategory.VARIANT)) 
 				setVariantAttributes(isoAnnotation, statement);
 
 			isoAnnotation.setIsoformName(isoformName);
-			isoAnnotation.setCvTermName(statement.getAnnot_cv_term_name());
-			isoAnnotation.setDescription(statement.getAnnot_description());
-			isoAnnotation.setCvTermAccessionCode(statement.getAnnot_cv_term_accession());
+			isoAnnotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));
+			isoAnnotation.setDescription(statement.getValue(StatementField.ANNOT_DESCRIPTION));
+			isoAnnotation.setCvTermAccessionCode(statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION));
 			// TODO this should be called terminology I guess! not setCVApiName
-			isoAnnotation.setCvApiName(statement.getAnnot_cv_term_terminology());
-			isoAnnotation.setAnnotationUniqueName(statement.getAnnot_name());
+			isoAnnotation.setCvApiName(statement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
+			isoAnnotation.setAnnotationUniqueName(statement.getValue(StatementField.ANNOT_NAME));
 
 			isoAnnotation.setAnnotationHash(statement.getAnnot_hash());
-			if ((statement.getBiological_object_annot_hash() != null) && (statement.getBiological_object_annot_hash().length() > 0)
-					|| (statement.getBiological_object_accession() != null && (statement.getBiological_object_accession().length() > 0))) {
+			String boah = statement.getValue(StatementField.BIOLOGICAL_OBJECT_ANNOT_HASH);
+			String boa = statement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
+			String bot = statement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);
+
+			if ((boah != null) && (boah.length() > 0) || (boa != null && (boa.length() > 0))) {
 
 				BioGenericObject bioObject = new BioGenericObject();
-				bioObject.setAccession(statement.getBiological_object_accession()); // In
-																					// case
-																					// of
-																					// interactions
-				bioObject.setType(statement.getBiological_object_type());
-				bioObject.setAnnotationHash(statement.getBiological_object_annot_hash()); // In
-																							// case
-																							// of
-																							// phenotypes
+				bioObject.setAccession(boa); // In case of interactions
+				bioObject.setType(bot);
+				bioObject.setAnnotationHash(boah); // In case of phenotypes
 				isoAnnotation.setBioObject(bioObject);
-
+				
 			}
 
 			annotations.add(isoAnnotation);
@@ -133,23 +132,25 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 	private static void setVariantAttributes(IsoformAnnotation annotation, RawStatement variantStatement) {
 
-		String original = variantStatement.getVariant_original_amino_acid();
-		String variant = variantStatement.getVariant_variation_amino_acid();
+		String original = variantStatement.getValue(StatementField.VARIANT_ORIGINAL_AMINO_ACID);
+		String variant = variantStatement.getValue(StatementField.VARIANT_VARIATION_AMINO_ACID);
 		AnnotationVariant annotationVariant = new AnnotationVariant(original, variant);
 		annotation.setVariant(annotationVariant);
 
+		String locBegin = variantStatement.getValue(StatementField.ANNOT_LOC_BEGIN_CANONICAL_REF);
 		try {
-			Integer positionBeginCanononical = Integer.valueOf(variantStatement.getAnnot_loc_begin_canonical_ref());
+			Integer positionBeginCanononical = Integer.valueOf(locBegin);
 			annotation.setLocationCanonicalBegin(positionBeginCanononical);
 		} catch (Exception e) {
-			LOGGER.warn("Did not convert begin position " + variantStatement.getAnnot_loc_begin_canonical_ref());
+			LOGGER.warn("Did not convert begin position " + locBegin);
 		}
 
+		String locEnd = variantStatement.getValue(StatementField.ANNOT_LOC_END_CANONICAL_REF);
 		try {
-			Integer positionEndCanononical = Integer.valueOf(variantStatement.getAnnot_loc_end_canonical_ref());
+			Integer positionEndCanononical = Integer.valueOf(locEnd);
 			annotation.setLocationCanonicalEnd(positionEndCanononical);
 		} catch (Exception e) {
-			LOGGER.warn("Did not convert end position " + variantStatement.getAnnot_loc_begin_canonical_ref());
+			LOGGER.warn("Did not convert end position " + locEnd);
 		}
 
 	}
