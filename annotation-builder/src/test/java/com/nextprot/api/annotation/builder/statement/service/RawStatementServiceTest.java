@@ -1,7 +1,6 @@
 package com.nextprot.api.annotation.builder.statement.service;
 
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
@@ -13,6 +12,7 @@ public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 
 	@Autowired
 	private RawStatementService rawStatementService;
+	
 
 	@Test
 	public void findAllMappedStatements() {
@@ -25,5 +25,7 @@ public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 		List isoformAnnotations = rawStatementService.getNormalAnnotations("NX_Q9BX63");
 		System.out.println(isoformAnnotations.size());
 	}
+	
+	
 	
 }

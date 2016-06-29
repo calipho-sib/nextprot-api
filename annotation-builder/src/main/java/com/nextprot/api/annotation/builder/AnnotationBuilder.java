@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioGenericObject;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -37,6 +38,14 @@ public class AnnotationBuilder {
 
 	}
 
+	public static IsoformAnnotation buildAnnotation(String isoformName, List<RawStatement> flatStatements) {
+		List<IsoformAnnotation> annotations = buildAnnotationList(isoformName, flatStatements);
+		if(annotations.isEmpty() || annotations.size() > 1){
+			throw new NextProtException("Expecting 1 annotation but found " + annotations.size());
+		}
+		return annotations.get(0);
+	}
+
 	public static List<IsoformAnnotation> buildAnnotationList(String isoformName, List<RawStatement> flatStatements) {
 
 		List<IsoformAnnotation> annotations = new ArrayList<>();
@@ -63,9 +72,10 @@ public class AnnotationBuilder {
 			isoAnnotation.setCvTermAccessionCode(statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION));
 			// TODO this should be called terminology I guess! not setCVApiName
 			isoAnnotation.setCvApiName(statement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
-			isoAnnotation.setAnnotationUniqueName(statement.getValue(StatementField.ANNOT_NAME));
 
 			isoAnnotation.setAnnotationHash(statement.getAnnot_hash());
+			isoAnnotation.setAnnotationUniqueName(statement.getValue(StatementField.ANNOT_NAME));
+			
 			String boah = statement.getValue(StatementField.BIOLOGICAL_OBJECT_ANNOT_HASH);
 			String boa = statement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
 			String bot = statement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);

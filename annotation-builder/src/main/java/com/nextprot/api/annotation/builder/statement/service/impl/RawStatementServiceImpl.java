@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
@@ -27,28 +29,32 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 	@Cacheable("modified-entry-annotations")
 	@Override
-	public List<IsoformAnnotation> getModifiedIsoformAnnotationsByIsoform(String entryName) {
+	public List<IsoformAnnotation> getModifiedIsoformAnnotationsByIsoform(String entryAccession) {
 
 		List<IsoformAnnotation> annotations = new ArrayList<>();
 
-		List<RawStatement> phenotypeStatements = rawStatementDao.findPhenotypeRawStatements(entryName);
+		List<RawStatement> phenotypeStatements = rawStatementDao.findPhenotypeRawStatements(entryAccession);
 
 		Map<String, List<RawStatement>> impactStatementsBySubject = phenotypeStatements.stream().collect(Collectors.groupingBy(RawStatement::getBiological_subject_annot_hash));
 
-		impactStatementsBySubject.keySet().forEach(subjectAnnotationHash -> {
+		impactStatementsBySubject.keySet().forEach(subjectComponentsIdentifiers -> {
+			
+			String[] subjectComponentsIdentifiersArray = subjectComponentsIdentifiers.split(",");
+			Set<IsoformAnnotation> subjectVariants = new TreeSet<IsoformAnnotation>(); 
 
-			List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectAnnotationHash);
-			List<IsoformAnnotation> variants = AnnotationBuilder.buildAnnotationList(entryName + "-1", subjectVariantStatements);
-			if (variants.size() != 1) {
-				LOGGER.error("Found more or less than one variant for a given subject" + subjectAnnotationHash);
+			for(String subjectComponentIdentifier : subjectComponentsIdentifiersArray){
+
+				List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectComponentIdentifier);
+				IsoformAnnotation variant = AnnotationBuilder.buildAnnotation(entryAccession + "-1", subjectVariantStatements);
+				subjectVariants.add(variant);
 			}
 
 			// Impact annotations
-			List<RawStatement> impactStatements = impactStatementsBySubject.get(subjectAnnotationHash);
-			List<IsoformAnnotation> impactAnnotations = AnnotationBuilder.buildAnnotationList(entryName + "-1", impactStatements);
+			List<RawStatement> impactStatements = impactStatementsBySubject.get(subjectComponentsIdentifiers);
+			List<IsoformAnnotation> impactAnnotations = AnnotationBuilder.buildAnnotationList(entryAccession + "-1", impactStatements);
 			impactAnnotations.stream().forEach(ia -> {
-				ia.setSubjectName(entryName + "-1 " + variants.get(0).getAnnotationUniqueName());
-				ia.setSubjectComponents(Arrays.asList(subjectAnnotationHash));
+				ia.setSubjectName(entryAccession + "-1 " + subjectVariants.stream().map(v -> v.getAnnotationUniqueName())); //TODO name should be wrong I suppose
+				ia.setSubjectComponents(Arrays.asList(subjectComponentsIdentifiersArray));
 			});
 
 			annotations.addAll(impactAnnotations);
@@ -58,6 +64,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 		return annotations;
 
 	}
+	
 
 
 	@Override
