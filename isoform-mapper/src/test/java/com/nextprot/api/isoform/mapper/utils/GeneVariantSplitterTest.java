@@ -3,7 +3,7 @@ package com.nextprot.api.isoform.mapper.utils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.AminoAcid;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceChange;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.bio.variation.Substitution;
@@ -27,7 +27,7 @@ public class GeneVariantSplitterTest {
         ProteinSequenceVariation mutation = parser.getVariant();
         ProteinSequenceChange proteinSequenceChange2 = mutation.getProteinSequenceChange();
 
-        Assert.assertEquals(AminoAcidCode.Lysine, mutation.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcid.Lysine, mutation.getFirstChangingAminoAcid());
         Assert.assertEquals(1710, mutation.getFirstChangingAminoAcidPos());
         Assert.assertTrue(proteinSequenceChange2 instanceof Substitution);
 
@@ -43,7 +43,7 @@ public class GeneVariantSplitterTest {
         ProteinSequenceVariation mutation = parser.getVariant();
         ProteinSequenceChange proteinSequenceChange2 = mutation.getProteinSequenceChange();
 
-        Assert.assertEquals(AminoAcidCode.Phenylalanine, mutation.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcid.Phenylalanine, mutation.getFirstChangingAminoAcid());
         Assert.assertEquals(154, mutation.getFirstChangingAminoAcidPos());
         Assert.assertTrue(proteinSequenceChange2 instanceof Substitution);
 

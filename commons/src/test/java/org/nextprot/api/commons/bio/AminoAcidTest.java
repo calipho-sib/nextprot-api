@@ -6,83 +6,83 @@ import org.junit.Test;
 /**
  * Created by fnikitin on 09/07/15.
  */
-public class AminoAcidCodeTest {
+public class AminoAcidTest {
 
     @Test
     public void testValueOfCode1Found() throws Exception {
 
-        Assert.assertEquals(AminoAcidCode.Alanine, AminoAcidCode.valueOfCode1AA('A'));
+        Assert.assertEquals(AminoAcid.Alanine, AminoAcid.valueOfOneLetterCode('A'));
     }
 
     @Test
     public void testValueOfCode1AlsoFound() throws Exception {
 
-        Assert.assertEquals(AminoAcidCode.Stop, AminoAcidCode.valueOfCode("*"));
+        Assert.assertEquals(AminoAcid.Stop, AminoAcid.valueOfAminoAcid("*"));
     }
 
     @Test
     public void testValueOfCode3Found() throws Exception {
 
-        Assert.assertEquals(AminoAcidCode.Alanine, AminoAcidCode.valueOfCode("Ala"));
+        Assert.assertEquals(AminoAcid.Alanine, AminoAcid.valueOfAminoAcid("Ala"));
     }
 
     @Test
     public void testValueOfCodeSequenceOk() throws Exception {
 
-        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.Tryptophan, AminoAcidCode.Tryptophan, AminoAcidCode.Alanine, AminoAcidCode.Tyrosine}, AminoAcidCode.valueOfCodeSequence("TrpWAlaY"));
+        Assert.assertArrayEquals(new AminoAcid[]{AminoAcid.Tryptophan, AminoAcid.Tryptophan, AminoAcid.Alanine, AminoAcid.Tyrosine}, AminoAcid.valueOfOneLetterCodeSequence("TrpWAlaY"));
     }
 
     @Test
     public void testValueOfCodeSequence2Ok() throws Exception {
 
-        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.Stop}, AminoAcidCode.valueOfCodeSequence("Ter"));
+        Assert.assertArrayEquals(new AminoAcid[]{AminoAcid.Stop}, AminoAcid.valueOfOneLetterCodeSequence("Ter"));
     }
 
     @Test
     public void testValueOfCodeSequence3Ok() throws Exception {
 
-        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.Threonine, AminoAcidCode.Tyrosine, AminoAcidCode.Stop}, AminoAcidCode.valueOfCodeSequence("TY*"));
+        Assert.assertArrayEquals(new AminoAcid[]{AminoAcid.Threonine, AminoAcid.Tyrosine, AminoAcid.Stop}, AminoAcid.valueOfOneLetterCodeSequence("TY*"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testValueOfCodeSequenceFirstInvalid() throws Exception {
 
-        AminoAcidCode.valueOfCodeSequence("trpWAlaY");
+        AminoAcid.valueOfOneLetterCodeSequence("trpWAlaY");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testValueOfCodeSequenceOtherInvalid() throws Exception {
 
-        AminoAcidCode.valueOfCodeSequence("TrpWalaY");
+        AminoAcid.valueOfOneLetterCodeSequence("TrpWalaY");
     }
 
     @Test
     public void testGetAACode1() throws Exception {
 
-        Assert.assertEquals('A', AminoAcidCode.valueOfCode1AA('A').get1LetterCode());
+        Assert.assertEquals('A', AminoAcid.valueOfOneLetterCode('A').get1LetterCode());
     }
 
     @Test
     public void testGetAACode3() throws Exception {
 
-        Assert.assertEquals("Ala", AminoAcidCode.valueOfCode1AA('A').get3LetterCode());
+        Assert.assertEquals("Ala", AminoAcid.valueOfOneLetterCode('A').get3LetterCode());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testValueOfCode1AANotFound() throws Exception {
 
-        AminoAcidCode.valueOfCode1AA('a');
+        AminoAcid.valueOfOneLetterCode('a');
     }
 
     @Test
      public void testGetStopCode1() throws Exception {
 
-        Assert.assertEquals('*', AminoAcidCode.valueOfCode1AA('*').get1LetterCode());
+        Assert.assertEquals('*', AminoAcid.valueOfOneLetterCode('*').get1LetterCode());
     }
 
     @Test
     public void testGetStopCode3() throws Exception {
 
-        Assert.assertEquals("Ter", AminoAcidCode.valueOfCode1AA('*').get3LetterCode());
+        Assert.assertEquals("Ter", AminoAcid.valueOfOneLetterCode('*').get3LetterCode());
     }
 }

@@ -1,6 +1,6 @@
 package org.nextprot.api.commons.bio.variation.format.hgvs;
 
-import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.AminoAcid;
 import org.nextprot.api.commons.bio.variation.*;
 import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat;
@@ -22,7 +22,7 @@ public class FrameshiftHGVSFormat implements ProteinSequenceChangeFormat<Framesh
 
         if (m.matches()) {
 
-            AminoAcidCode affectedAA = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcid affectedAA = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPos = Integer.parseInt(m.group(3));
 
             return builder.aminoAcid(affectedAA, affectedAAPos).thenFrameshift(Integer.parseInt(m.group(4))).build();
@@ -34,7 +34,7 @@ public class FrameshiftHGVSFormat implements ProteinSequenceChangeFormat<Framesh
     @Override
     public void format(StringBuilder sb, Frameshift change, ProteinSequenceVariationFormat.AACodeType type) {
 
-        sb.append("fs").append(AbstractProteinSequenceVariationFormat.formatAminoAcidCode(type, AminoAcidCode.Stop)).append(change.getValue());
+        sb.append("fs").append(AbstractProteinSequenceVariationFormat.formatAminoAcidCode(type, AminoAcid.Stop)).append(change.getValue());
 
     }
 }
