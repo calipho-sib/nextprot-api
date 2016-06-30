@@ -1,11 +1,13 @@
 DROP TABLE MAPPED_STATEMENTS;
 CREATE TABLE MAPPED_STATEMENTS (
 
+         nextprot_accession VARCHAR2(4000),
          entry_accession VARCHAR2(4000),
          gene_name	 VARCHAR2(4000),
          isoform_accession	 VARCHAR2(4000),
          
          biological_subject_annot_hash VARCHAR2(4000),
+         biological_subject_annot_name VARCHAR2(4000),
          
          annotation_category VARCHAR2(4000),
          annot_cv_term_terminology VARCHAR2(4000),

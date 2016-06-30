@@ -41,7 +41,7 @@ public class AnnotationBuilder {
 	public static IsoformAnnotation buildAnnotation(String isoformName, List<RawStatement> flatStatements) {
 		List<IsoformAnnotation> annotations = buildAnnotationList(isoformName, flatStatements);
 		if(annotations.isEmpty() || annotations.size() > 1){
-			throw new NextProtException("Expecting 1 annotation but found " + annotations.size());
+			throw new NextProtException("Expecting 1 annotation but found " + annotations.size() + " from " + flatStatements.size());
 		}
 		return annotations.get(0);
 	}

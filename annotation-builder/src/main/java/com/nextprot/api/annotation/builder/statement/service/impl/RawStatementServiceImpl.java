@@ -2,6 +2,7 @@ package com.nextprot.api.annotation.builder.statement.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,6 +10,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.RawStatement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +42,19 @@ public class RawStatementServiceImpl implements RawStatementService {
 		impactStatementsBySubject.keySet().forEach(subjectComponentsIdentifiers -> {
 			
 			String[] subjectComponentsIdentifiersArray = subjectComponentsIdentifiers.split(",");
-			Set<IsoformAnnotation> subjectVariants = new TreeSet<IsoformAnnotation>(); 
+			Set<IsoformAnnotation> subjectVariants = new TreeSet<IsoformAnnotation>(new Comparator<IsoformAnnotation>(){
+				@Override
+				public int compare(IsoformAnnotation o1, IsoformAnnotation o2) {
+					return o1.getAnnotationUniqueName().compareTo(o2.getAnnotationUniqueName());
+				}
+			}); 
 
 			for(String subjectComponentIdentifier : subjectComponentsIdentifiersArray){
 
 				List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectComponentIdentifier);
+				if(subjectVariantStatements.isEmpty()){
+					throw new NextProtException("Not found any variant for variant identifier:" + subjectComponentIdentifier);
+				}
 				IsoformAnnotation variant = AnnotationBuilder.buildAnnotation(entryAccession + "-1", subjectVariantStatements);
 				subjectVariants.add(variant);
 			}
@@ -53,7 +63,10 @@ public class RawStatementServiceImpl implements RawStatementService {
 			List<RawStatement> impactStatements = impactStatementsBySubject.get(subjectComponentsIdentifiers);
 			List<IsoformAnnotation> impactAnnotations = AnnotationBuilder.buildAnnotationList(entryAccession + "-1", impactStatements);
 			impactAnnotations.stream().forEach(ia -> {
-				ia.setSubjectName(entryAccession + "-1 " + subjectVariants.stream().map(v -> v.getAnnotationUniqueName())); //TODO name should be wrong I suppose
+				
+				String name = subjectVariants.stream().map(v -> v.getAnnotationUniqueName()).collect(Collectors.joining(" + ")).toString();
+				
+				ia.setSubjectName(entryAccession + "-1 " + name);
 				ia.setSubjectComponents(Arrays.asList(subjectComponentsIdentifiersArray));
 			});
 
