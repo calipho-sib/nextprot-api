@@ -52,7 +52,7 @@ public class ChromosomeFieldBuilder extends FieldBuilder {
 		*/
 	}
 
-	protected void initOld(Entry entry) {
+	/*protected void initOld(Entry entry) {
 
 
 		List<ChromosomalLocation> chrlocs = entry.getChromosomalLocations();
@@ -70,7 +70,7 @@ public class ChromosomeFieldBuilder extends FieldBuilder {
 		addField(Fields.CHR_LOC_S, sortChr(chrLoc));
 		
 		
-	}
+	}*/
 
 	@Override
 	public Collection<Fields> getSupportedFields() {
