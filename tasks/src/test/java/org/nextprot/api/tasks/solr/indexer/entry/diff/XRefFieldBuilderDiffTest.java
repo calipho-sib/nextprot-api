@@ -30,11 +30,11 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 
 		for(int i=0; i < test_list.length; i++)
 		    {
-			testXrefs(getEntry(test_list[i]));
+			//testXrefs(getEntry(test_list[i]));
 			} 
-		// for(int i=1000; i < 2000; i++){	testXrefs(getEntry(i));	} // 'random' entries
+		 for(int i=4500; i < 5000; i++){	testXrefs(getEntry(i));	} // 'random' entries
 
-		//Entry entry = getEntry("NX_O00422"); 
+		//Entry entry = getEntry("NX_P78358"); 
 		//Entry entry = getEntry("NX_Q8NGP9"); // 
 		//testXrefs(entry); 
 
@@ -56,9 +56,7 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		  Collections.sort(expectedABs);
 		  List<String> currentABs = xfb.getFieldValue(Fields.ANTIBODY, List.class);
 		  if(currentABs != null) Collections.sort(currentABs);
-		  // fails with CAB antibodies missing (eg: NX_P78358-CAB013061, NX_P14678-CAB009610, don't know where to grab'em)
-		  // Is it a similar issue as for ENSG/T/P where ids originally from UniProt have been remapped ?
-		  //Assert.assertEquals(expectedABs, currentABs);
+		    Assert.assertEquals(expectedABs, currentABs);
 		}
 		
 		List<String> expectedEnsembl = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ENSEMBL);
@@ -75,11 +73,9 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 			if(!elem.startsWith("journal:")) // For some unknown reasons some journals appear in the xref field of kant (eg:NX_P43686), this is a bug
 			  expectedacOnlySet.add(elem.substring(elem.indexOf(", ")+2));
 		for(String elem : xrefSet) acOnlySet.add(elem.substring(elem.indexOf(", ")+2));
-		//System.err.println();
-		//for(String elem : acOnlySet) if(!expectedacOnlySet.contains(elem)) System.err.println("NEW: " + elem);
 		for(String elem : expectedacOnlySet) if(!acOnlySet.contains(elem) && !elem.startsWith("PAp")) System.err.println("MISS: " + elem);
 		// It looks that for entries that we have re-mapped the original ENSG/T/P from UniProt are not available in the API (eg: ENSG00000279911 -> ENSG00000172459 in NX_Q8NGP9)	
-         // see also : NX_Q9HBT8 ENSP00000408168 ENSP00000458062 ENST00000412988 ENST00000413242
+         // see also : NX_Q9HBT8 ENSP00000408168 ENSP00000458062 ENST00000412988 ENST00000413242, NX_Q8NH49/ENSP00000321506, NX_Q8NGR6/ENST00000304833 ...
 		
 		//for(String elem : xrefSet) if(!expectedxrefSet.contains(elem)) 
 			//{System.err.println("NEW: " + elem); newcnt += 1;}
@@ -110,7 +106,6 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		      //Assert.assertEquals(xfb.getFieldValue(Fields.INTERACTIONS, List.class).size(), expectedInteractions.size());
 			Integer olditcnt = 0, newitcnt = 0;
 			InteractionFieldBuilder ifb = new InteractionFieldBuilder();
-			//ifb.setTerminologyService(terminologyService);
 			ifb.setEntryBuilderService(entryBuilderService);
 			ifb.initializeBuilder(entry);
 			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(Fields.INTERACTIONS, List.class));
