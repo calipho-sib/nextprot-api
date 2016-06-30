@@ -20,9 +20,6 @@ import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
-//import org.nextprot.api.core.service.EntryService;
-//import org.nextprot.api.core.service.TerminologyService;
-//import org.springframework.beans.factory.annotation.Autowired;
 
 @EntryFieldBuilder
 public class XrefFieldBuilder extends FieldBuilder {
@@ -38,7 +35,7 @@ public class XrefFieldBuilder extends FieldBuilder {
 			String db = xref.getDatabaseName();
 			if (db.equals("neXtProtSubmission")) continue;
 			if (db.equals("HPA") && !acc.contains("ENSG")) { // HPA with ENSG are for expression
-				//System.err.println("AB: " + acc);
+				//System.err.println("HPA ab: " + acc);
 				addField(Fields.ANTIBODY, acc);
 			}
             if (db.equals("Ensembl")) {
@@ -94,12 +91,12 @@ public class XrefFieldBuilder extends FieldBuilder {
 		}
 
 		// It is weird to have to go thru this to get the CAB antibodies, they should come with getXrefs()
-		Set<String> CABSet = new HashSet<String>();
+		//Set<String> CABSet = new HashSet<String>();
 		List<Annotation> annots = entry.getAnnotations();
 		for (Annotation currannot : annots) {
 			String category = currannot.getCategory();
 			//System.err.println("Annot: " + category);
-			if (category.equals("expression info") || category.equals("subcellular location")) {
+			/*if (category.equals("expression info") || category.equals("subcellular location")) {
 				List<AnnotationEvidence> evlist = currannot.getEvidences();
 				for (AnnotationEvidence evidence : evlist) { 
 					String AB = evidence.getPropertyValue("antibodies acc");
@@ -112,8 +109,9 @@ public class XrefFieldBuilder extends FieldBuilder {
 						      CABSet.add(CAB);
 					}
 				}
-			}
-			else if (category.equals("pathway")) { // Same remark
+			}*/
+			//else if (category.equals("pathway")) { // Same remark
+			if (category.equals("pathway")) { // Same remark
 				//DbXref parentXref = currannot.getParentXref();
 					addField(Fields.XREFS,"Pathway:" + currannot.getDescription() + ", " + currannot.getDescription());
 				//System.err.println(parentXref.getDatabaseName());
@@ -148,11 +146,11 @@ public class XrefFieldBuilder extends FieldBuilder {
 				//}
 			}
 		}
-		if(CABSet.size() > 0) 
+		/*if(CABSet.size() > 0) 
 		  for (String CAB : CABSet) {
 			  addField(Fields.ANTIBODY, CAB);
-			  addField(Fields.XREFS, "HPA:" + CAB+ ", " + CAB);
-		  }
+			  addField(Fields.XREFS, "HPA:" + CAB + ", " + CAB);
+		  }*/
 
 		// Isoform ids
 		List<Isoform> isoforms = entry.getIsoforms();
