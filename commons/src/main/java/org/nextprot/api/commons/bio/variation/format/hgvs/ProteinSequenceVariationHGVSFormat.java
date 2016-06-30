@@ -5,6 +5,10 @@ import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVari
 import org.nextprot.api.commons.bio.variation.format.ChangingAAsFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * <code>ProteinMutationHGVFormat</code> can format and parse
  * ProteinMutation as recommended by the Human Genome Variation Society
@@ -15,40 +19,36 @@ import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat
  */
 public class ProteinSequenceVariationHGVSFormat extends AbstractProteinSequenceVariationFormat {
 
-    private final ChangingAAsFormat changingAAsFormat = new HGVSFormat();
-    private final InsertionHGVSFormat insertionHGVSFormat = new InsertionHGVSFormat();
-    private final SubstitutionHGVSFormat subtitutionHGVFormat = new SubstitutionHGVSFormat();
-    private final DeletionHGVSFormat deletionHGVSFormat = new DeletionHGVSFormat();
-    private final DeletionInsertionHGVSFormat deletionInsertionHGVSFormat = new DeletionInsertionHGVSFormat();
-    private final FrameshiftHGVSFormat frameshiftHGVSFormat = new FrameshiftHGVSFormat();
+    private final ChangingAAsFormat changingAAsFormat;
+    private final Map<ProteinSequenceChange.Type, ProteinSequenceChangeFormat> changeFormats;
+
+    public ProteinSequenceVariationHGVSFormat() {
+
+        changingAAsFormat = new HGVSFormat();
+        changeFormats = new HashMap<>();
+        changeFormats.put(ProteinSequenceChange.Type.INSERTION, new InsertionHGVSFormat());
+        changeFormats.put(ProteinSequenceChange.Type.DUPLICATION, new DuplicationHGVSFormat());
+        changeFormats.put(ProteinSequenceChange.Type.SUBSTITUTION, new SubstitutionHGVSFormat());
+        changeFormats.put(ProteinSequenceChange.Type.DELETION, new DeletionHGVSFormat());
+        changeFormats.put(ProteinSequenceChange.Type.DELETION_INSERTION, new DeletionInsertionHGVSFormat());
+        changeFormats.put(ProteinSequenceChange.Type.FRAMESHIFT, new FrameshiftHGVSFormat());
+    }
 
     @Override
     protected ChangingAAsFormat getChangingAAsFormat() {
+
         return changingAAsFormat;
     }
 
     @Override
-    protected ProteinSequenceChangeFormat<Substitution> getSubstitutionFormat() {
-        return subtitutionHGVFormat;
+    protected ProteinSequenceChangeFormat getChangeFormat(ProteinSequenceChange.Type changeType) {
+
+        return changeFormats.get(changeType);
     }
 
     @Override
-    protected ProteinSequenceChangeFormat<Insertion> getInsertionFormat() {
-        return insertionHGVSFormat;
-    }
+    protected Collection<ProteinSequenceChange.Type> getAvailableChangeTypes() {
 
-    @Override
-    protected ProteinSequenceChangeFormat<Deletion> getDeletionFormat() {
-        return deletionHGVSFormat;
-    }
-
-    @Override
-    protected ProteinSequenceChangeFormat<DeletionAndInsertion> getDeletionInsertionFormat() {
-        return deletionInsertionHGVSFormat;
-    }
-
-    @Override
-    protected ProteinSequenceChangeFormat<Frameshift> getFrameshiftFormat() {
-        return frameshiftHGVSFormat;
+        return changeFormats.keySet();
     }
 }

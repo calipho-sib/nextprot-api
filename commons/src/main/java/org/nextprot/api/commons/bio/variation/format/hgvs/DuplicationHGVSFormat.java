@@ -1,7 +1,7 @@
 package org.nextprot.api.commons.bio.variation.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.Deletion;
+import org.nextprot.api.commons.bio.variation.Duplication;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceVariationFormat;
@@ -10,15 +10,20 @@ import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DeletionHGVSFormat implements ProteinSequenceChangeFormat<Deletion> {
 
-    private static final Pattern DELETION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?del$");
-    private static final Pattern DELETION_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?del.*$");
+/**
+ * Format: “prefix”“amino_acid(s)+position(s)_deleted”“dup”, e.g. p.Cys76_Glu79dup
+ *
+ * http://varnomen.hgvs.org/recommendations/protein/variant/duplication/
+ */
+public class DuplicationHGVSFormat implements ProteinSequenceChangeFormat<Duplication> {
+
+    private static final Pattern DUPLICATION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?dup$");
 
     @Override
     public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
 
-        Matcher m = (mode == ProteinSequenceVariationHGVSFormat.ParsingMode.STRICT) ? DELETION_PATTERN.matcher(source) : DELETION_PATTERN_PERMISSIVE.matcher(source);
+        Matcher m = DUPLICATION_PATTERN.matcher(source);
 
         if (m.matches()) {
 
@@ -27,13 +32,14 @@ public class DeletionHGVSFormat implements ProteinSequenceChangeFormat<Deletion>
 
             if (m.group(4) == null) {
 
-                return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst).deletes().build();
+                return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst).duplicates().build();
             }
 
             AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
             int affectedAAPosLast = Integer.parseInt(m.group(6));
 
-            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast).deletes().build();
+            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
+                    .duplicates().build();
         }
 
         return null;
@@ -41,12 +47,12 @@ public class DeletionHGVSFormat implements ProteinSequenceChangeFormat<Deletion>
 
     @Override
     public boolean matchesWithMode(String source, ProteinSequenceVariationFormat.ParsingMode mode) {
-        return (mode == ProteinSequenceVariationHGVSFormat.ParsingMode.STRICT) ? source.matches(DELETION_PATTERN.pattern()) : source.matches(DELETION_PATTERN_PERMISSIVE.pattern());
+        return source.matches(DUPLICATION_PATTERN.pattern());
     }
 
     @Override
-    public void format(StringBuilder sb, Deletion change, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, Duplication change, AminoAcidCode.AACodeType type) {
 
-        sb.append("del");
+        sb.append("dup");
     }
 }

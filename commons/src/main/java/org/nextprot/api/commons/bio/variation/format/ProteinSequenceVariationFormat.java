@@ -1,5 +1,6 @@
 package org.nextprot.api.commons.bio.variation.format;
 
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 
 import java.text.ParseException;
@@ -11,7 +12,7 @@ import java.text.ParseException;
  */
 public interface ProteinSequenceVariationFormat {
 
-    enum AACodeType { ONE_LETTER, THREE_LETTER }
+    enum ParsingMode { STRICT, PERMISSIVE }
 
     /**
      * Formats a <code>ProteinSequenceVariation</code>.
@@ -21,7 +22,7 @@ public interface ProteinSequenceVariationFormat {
      *
      * @return a formatter <code>String</>
      */
-    String format(ProteinSequenceVariation variation, AACodeType type);
+    String format(ProteinSequenceVariation variation, AminoAcidCode.AACodeType type);
 
     /**
      * Parses text from the beginning of the given string to produce a ProteinSequenceVariation.

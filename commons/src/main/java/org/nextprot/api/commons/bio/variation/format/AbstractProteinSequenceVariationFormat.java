@@ -1,10 +1,12 @@
 package org.nextprot.api.commons.bio.variation.format;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.bio.AminoAcid;
-import org.nextprot.api.commons.bio.variation.*;
+import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.ProteinSequenceChange;
+import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 
 import java.text.ParseException;
+import java.util.Collection;
 
 /**
  * A base class for parsing and formatting ProteinMutation
@@ -17,26 +19,22 @@ import java.text.ParseException;
  */
 public abstract class AbstractProteinSequenceVariationFormat implements ProteinSequenceVariationFormat {
 
-    public enum ParsingMode { STRICT, PERMISSIVE }
-
     public String format(ProteinSequenceVariation mutation) {
-        return format(mutation, AACodeType.ONE_LETTER);
+        return format(mutation, AminoAcidCode.AACodeType.ONE_LETTER);
     }
 
     @Override
-    public String format(ProteinSequenceVariation variation, AACodeType type) {
+    public String format(ProteinSequenceVariation variation, AminoAcidCode.AACodeType type) {
 
         StringBuilder sb = new StringBuilder();
 
-        // format affected amino acids
+        // format changing amino acids part
         getChangingAAsFormat().format(sb, variation, type);
 
-        // format mutation
-        if (variation.getProteinSequenceChange() instanceof Deletion) getDeletionFormat().format(sb, (Deletion) variation.getProteinSequenceChange(), type);
-        else if (variation.getProteinSequenceChange() instanceof Substitution) getSubstitutionFormat().format(sb, (Substitution) variation.getProteinSequenceChange(), type);
-        else if (variation.getProteinSequenceChange() instanceof DeletionAndInsertion) getDeletionInsertionFormat().format(sb, (DeletionAndInsertion) variation.getProteinSequenceChange(), type);
-        else if (variation.getProteinSequenceChange() instanceof Insertion) getInsertionFormat().format(sb, (Insertion) variation.getProteinSequenceChange(), type);
-        else if (variation.getProteinSequenceChange() instanceof Frameshift) getFrameshiftFormat().format(sb, (Frameshift) variation.getProteinSequenceChange(), type);
+        // format change part
+        //noinspection unchecked
+        getChangeFormat(variation.getProteinSequenceChange().getType())
+                .format(sb, variation.getProteinSequenceChange(), type);
 
         return sb.toString();
     }
@@ -52,6 +50,11 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
     public ProteinSequenceVariation parse(String source) throws ParseException {
 
         return parse(source, ParsingMode.STRICT);
+    }
+
+    public boolean isValidProteinSequenceVariant(String source) {
+
+        return source.startsWith("p.");
     }
 
     /**
@@ -84,57 +87,22 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
         }
     }
 
-    public boolean isValidProteinSequenceVariant(String source) {
-
-        return source.startsWith("p.");
-    }
-
     private ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, ParsingMode mode) throws ParseException {
 
-        ProteinSequenceVariation mutation = getSubstitutionFormat().parseWithMode(source, builder, mode);
+        for (ProteinSequenceChange.Type changeType : getAvailableChangeTypes()) {
 
-        if (mutation == null) mutation = getDeletionFormat().parseWithMode(source, builder, mode);
-        if (mutation == null) mutation = getFrameshiftFormat().parseWithMode(source, builder, mode);
-        if (mutation == null) mutation = getDeletionInsertionFormat().parseWithMode(source, builder, mode);
-        if (mutation == null) mutation = getInsertionFormat().parseWithMode(source, builder, mode);
+            ProteinSequenceChangeFormat format = getChangeFormat(changeType);
 
-        if (mutation == null) throw new ParseException(source + " is not a valid protein mutation", 0);
+            if (format.matchesWithMode(source, mode))
+                return format.parseWithMode(source, builder, mode);
+        }
 
-        return mutation;
+        throw new ParseException(source + " is not a valid protein mutation", 0);
     }
 
-    // delegated formats
     protected abstract ChangingAAsFormat getChangingAAsFormat();
-    protected abstract ProteinSequenceChangeFormat<Substitution> getSubstitutionFormat();
-    protected abstract ProteinSequenceChangeFormat<Insertion> getInsertionFormat();
-    protected abstract ProteinSequenceChangeFormat<Deletion> getDeletionFormat();
-    protected abstract ProteinSequenceChangeFormat<DeletionAndInsertion> getDeletionInsertionFormat();
-    protected abstract ProteinSequenceChangeFormat<Frameshift> getFrameshiftFormat();
+    protected abstract ProteinSequenceChangeFormat getChangeFormat(ProteinSequenceChange.Type changeType);
+    protected abstract Collection<ProteinSequenceChange.Type> getAvailableChangeTypes();
 
-    public static String formatAminoAcidCode(AACodeType type, AminoAcid... aas) {
 
-        StringBuilder sb = new StringBuilder();
-
-        for (AminoAcid aa : aas) {
-
-            if (type == AACodeType.ONE_LETTER) sb.append(String.valueOf(aa.get1LetterCode()));
-            else sb.append(String.valueOf(aa.get3LetterCode()));
-        }
-
-        return sb.toString();
-    }
-
-    public static AminoAcid valueOfAminoAcidCode(String code1, String code2and3) throws ParseException {
-
-        if (code2and3 == null) {
-            if (!AminoAcid.isValidAminoAcid(code1)) {
-                throw new ParseException(code1+": invalid AminoAcidCode", 0);
-            }
-            return AminoAcid.valueOfAminoAcid(code1);
-        }
-        else if (!AminoAcid.isValidAminoAcid(code1 + code2and3)) {
-            throw new ParseException(code1 + code2and3 + ": invalid AminoAcidCode", 2);
-        }
-        return AminoAcid.valueOfAminoAcid(code1 + code2and3);
-    }
 }

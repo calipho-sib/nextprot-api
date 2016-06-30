@@ -1,44 +1,35 @@
 package org.nextprot.api.commons.bio.variation;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.bio.AminoAcid;
-
-import java.util.Objects;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 
 /**
  * Substitution of an amino-acid by another one
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Substitution implements ProteinSequenceChange<AminoAcid> {
+public class Substitution implements ProteinSequenceChange<AminoAcidCode> {
 
-    private final AminoAcid aa;
+    private final AminoAcidCode substitutedAminoAcid;
 
-    public Substitution(AminoAcid aa) {
+    public Substitution(AminoAcidCode substitutedAminoAcid) {
 
-        Preconditions.checkNotNull(aa);
+        Preconditions.checkNotNull(substitutedAminoAcid);
 
-        this.aa = aa;
+        this.substitutedAminoAcid = substitutedAminoAcid;
     }
 
     /**
      * @return the substituent amino-acid
      */
     @Override
-    public AminoAcid getValue() {
-        return aa;
+    public AminoAcidCode getValue() {
+        return substitutedAminoAcid;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Substitution)) return false;
-        Substitution that = (Substitution) o;
-        return aa == that.aa;
-    }
+    public Type getType() {
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(aa);
+        return Type.SUBSTITUTION;
     }
 }

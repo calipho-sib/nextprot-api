@@ -1,6 +1,7 @@
 package org.nextprot.api.commons.bio.variation;
 
 import com.google.common.base.Preconditions;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 
 import java.util.Objects;
 
@@ -9,35 +10,60 @@ import java.util.Objects;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Frameshift implements ProteinSequenceChange<Integer> {
+public class Frameshift implements ProteinSequenceChange<Frameshift.Change> {
 
-    private final int stopCodonPos;
+    private final Change change;
 
-    public Frameshift(int stopCodonPos) {
+    public Frameshift(Change change) {
 
-        Preconditions.checkArgument(stopCodonPos>0);
-
-        this.stopCodonPos = stopCodonPos;
-    }
-
-    /**
-     * @return the position of the codon stop in the new reading frame
-     */
-    @Override
-    public Integer getValue() {
-        return stopCodonPos;
+        this.change = change;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Frameshift)) return false;
-        Frameshift that = (Frameshift) o;
-        return stopCodonPos == that.stopCodonPos;
+    public Change getValue() {
+        return change;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(stopCodonPos);
+    public Type getType() {
+        return Type.FRAMESHIFT;
+    }
+
+    public static class Change {
+
+        private final AminoAcidCode changedAminoAcid;
+        private final int newTerminationPosition;
+
+        public Change(AminoAcidCode changedAminoAcid, int newTerminationPosition) {
+
+            Preconditions.checkArgument(newTerminationPosition>1, "the description of a frame shift variant can not contain " +
+                    "“fsTer1”, such a variant is a nonsense variant (see Substitution). The shortest frame shift variant " +
+                    "possible contains 'fsTer2' (see http://varnomen.hgvs.org/recommendations/protein/variant/frameshift/)");
+            this.changedAminoAcid = changedAminoAcid;
+            this.newTerminationPosition = newTerminationPosition;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof Change)) return false;
+            Change change = (Change) o;
+            return newTerminationPosition == change.newTerminationPosition &&
+                    changedAminoAcid == change.changedAminoAcid;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(changedAminoAcid, newTerminationPosition);
+        }
+
+        public AminoAcidCode getChangedAminoAcid() {
+            return changedAminoAcid;
+
+        }
+
+        public int getNewTerminationPosition() {
+            return newTerminationPosition;
+        }
     }
 }

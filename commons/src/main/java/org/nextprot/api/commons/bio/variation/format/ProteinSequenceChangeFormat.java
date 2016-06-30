@@ -1,5 +1,6 @@
 package org.nextprot.api.commons.bio.variation.format;
 
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceChange;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 
@@ -18,7 +19,7 @@ public interface ProteinSequenceChangeFormat<C extends ProteinSequenceChange> {
      * @param change the ProteinSequenceChange change to format
      * @param type the amino-acid code type
      */
-    void format(StringBuilder sb, C change, ProteinSequenceVariationFormat.AACodeType type);
+    void format(StringBuilder sb, C change, AminoAcidCode.AACodeType type);
 
     /**
      * Parse the source and build ProteinSequenceVariation with given builder
@@ -28,5 +29,12 @@ public interface ProteinSequenceChangeFormat<C extends ProteinSequenceChange> {
      * @return an instance of ProteinSequenceVariation
      * @throws ParseException if parsing error occurs
      */
-    ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, AbstractProteinSequenceVariationFormat.ParsingMode mode) throws ParseException;
+    ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder,
+                                           ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException;
+
+    /**
+     * Attempts to match the source.
+     * @return  <tt>true</tt> if matches the source
+     */
+    boolean matchesWithMode(String source, ProteinSequenceVariationFormat.ParsingMode mode);
 }
