@@ -36,7 +36,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 			String category = currannot.getCategory();
 			String quality = currannot.getQualityQualifier();
 			//System.err.println(category + ": " + quality);
-			if (category.equals("function")){
+			if (category.equals("function")){ // Always GOLD
 				addField(Fields.FUNCTION_DESC, currannot.getDescription());
 			}
 
@@ -52,6 +52,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 				}
 
 				if(category.equals("DNA-binding region")) addField(Fields.ANNOTATIONS, category);
+				if(category.equals("sequence variant")) desc = "Variant " + desc; // We need to index them somehow for the GOLD/SILVER tests
 				if (desc != null) {	//System.err.println(category + ": " + desc);
 					if (category.equals("sequence caution")) {
 						int stringpos=0;
@@ -76,12 +77,15 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 							}
 					}
 					
-					if((category.equals("sequence variant") || category.equals("mutagenesis site")) && desc.startsWith("Missing"))
+					//if((category.equals("sequence variant") || category.equals("mutagenesis site")) && desc.startsWith("Missing"))
 						// Remove variation descriptor (Missing)
-						desc = desc.substring(8); // don't index variant status
-					if(!category.startsWith("go") && desc.length() > 1) {
+						//desc = desc.substring(8);
+					if(!category.startsWith("go") && desc.length() > 1) { // go will be indexed via cvac, not description
 						if(!this.isGold() || quality.equals("GOLD"))
-						   {addField(Fields.ANNOTATIONS, desc);if(category.equals("sequence variant")) System.err.println("variant: " + desc);} // go will be indexed via cvac, not description
+						   {
+						   addField(Fields.ANNOTATIONS, desc);
+						   //if(category.equals("sequence variant")) System.err.println("variant: " + desc);
+						   } 
 					    }
 					// in pathway and disease new annotations may appear due to transformation of specific xrefs (orphanet...) into annotations in the api
 				} //else System.err.println(category + " no desc...");
@@ -188,7 +192,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 				addField(Fields.ANNOTATIONS,  famdesc);
 				//System.err.println("famdesc2: " + famdesc);
 				String[] families = famdesc.split("\\. "); // are there subfamilies ?
-				if(families.length > 1) {
+				if(families.length > 1) { // Always GOLD
 					for(int i=0; i< families.length; i++) {
 						addField(Fields.ANNOTATIONS,  families[i]);
 						if(families[i].contains(") superfamily")) { // index one more time without parenthesis
