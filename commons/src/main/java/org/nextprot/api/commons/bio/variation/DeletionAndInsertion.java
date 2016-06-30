@@ -32,15 +32,7 @@ public class DeletionAndInsertion implements ProteinSequenceChange<AminoAcidCode
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof DeletionAndInsertion)) return false;
-        DeletionAndInsertion that = (DeletionAndInsertion) o;
-        return Arrays.equals(aas, that.aas);
-    }
-
-    @Override
-    public int hashCode() {
-        return Arrays.hashCode(aas);
+    public Type getType() {
+        return Type.DELETION_INSERTION;
     }
 }

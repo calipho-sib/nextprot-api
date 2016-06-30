@@ -1,8 +1,8 @@
 package org.nextprot.api.commons.bio.variation.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.*;
-import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.Insertion;
+import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceVariationFormat;
 
@@ -19,16 +19,16 @@ public class InsertionHGVSFormat implements ProteinSequenceChangeFormat<Insertio
     private static final Pattern INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)_([A-Z])([a-z]{2})?(\\d+)ins((?:[A-Z\\*]([a-z]{2})?)+)$");
 
     @Override
-    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, AbstractProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
 
         Matcher m =  INSERTION_PATTERN.matcher(source);
 
         if (m.matches()) {
 
-            AminoAcidCode affectedAAFirst = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAAFirst = AminoAcidCode.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPosFirst = Integer.parseInt(m.group(3));
 
-            AminoAcidCode affectedAALast = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(4), m.group(5));
+            AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
             int affectedAAPosLast = Integer.parseInt(m.group(6));
 
             if (affectedAAPosLast != (affectedAAPosFirst+1)) {
@@ -45,13 +45,13 @@ public class InsertionHGVSFormat implements ProteinSequenceChangeFormat<Insertio
     }
 
     @Override
-    public boolean matchesWithMode(String source, AbstractProteinSequenceVariationFormat.ParsingMode mode) {
+    public boolean matchesWithMode(String source, ProteinSequenceVariationFormat.ParsingMode mode) {
         return source.matches(INSERTION_PATTERN.pattern());
     }
 
     @Override
-    public void format(StringBuilder sb, Insertion change, ProteinSequenceVariationFormat.AACodeType type) {
+    public void format(StringBuilder sb, Insertion change, AminoAcidCode.AACodeType type) {
 
-        sb.append("ins").append(AbstractProteinSequenceVariationFormat.formatAminoAcidCode(type, change.getValue()));
+        sb.append("ins").append(AminoAcidCode.formatAminoAcidCode(type, change.getValue()));
     }
 }

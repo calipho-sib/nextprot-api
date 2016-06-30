@@ -25,16 +25,8 @@ public class Frameshift implements ProteinSequenceChange<Frameshift.Change> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Frameshift)) return false;
-        Frameshift that = (Frameshift) o;
-        return Objects.equals(change, that.change);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(change);
+    public Type getType() {
+        return Type.FRAMESHIFT;
     }
 
     public static class Change {

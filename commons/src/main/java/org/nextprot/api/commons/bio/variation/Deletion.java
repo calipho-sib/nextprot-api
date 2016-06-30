@@ -21,7 +21,13 @@ public class Deletion implements ProteinSequenceChange<Object> {
      * @return null
      */
     @Override
-    public String getValue() {
+    public Object getValue() {
         return null;
+    }
+
+    @Override
+    public Type getType() {
+
+        return Type.DELETION;
     }
 }

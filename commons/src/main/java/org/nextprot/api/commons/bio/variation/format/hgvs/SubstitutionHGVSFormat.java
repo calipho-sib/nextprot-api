@@ -1,17 +1,14 @@
 package org.nextprot.api.commons.bio.variation.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.*;
+import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
+import org.nextprot.api.commons.bio.variation.Substitution;
 import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat;
-import org.nextprot.api.commons.bio.variation.format.ProteinSequenceVariationFormat;
 
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static org.nextprot.api.commons.bio.variation.format.hgvs.ProteinSequenceVariationHGVSFormat.formatAminoAcidCode;
-import static org.nextprot.api.commons.bio.variation.format.hgvs.ProteinSequenceVariationHGVSFormat.valueOfAminoAcidCode;
 
 
 public class SubstitutionHGVSFormat implements ProteinSequenceChangeFormat<Substitution> {
@@ -26,10 +23,10 @@ public class SubstitutionHGVSFormat implements ProteinSequenceChangeFormat<Subst
 
         if (m.matches()) {
 
-            AminoAcidCode affectedAA = valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPos = Integer.parseInt(m.group(3));
 
-            AminoAcidCode substitutedAA = valueOfAminoAcidCode(m.group(4), m.group(5));
+            AminoAcidCode substitutedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
 
             return builder.aminoAcid(affectedAA, affectedAAPos).substitutedBy(substitutedAA).build();
         }
@@ -43,8 +40,8 @@ public class SubstitutionHGVSFormat implements ProteinSequenceChangeFormat<Subst
     }
 
     @Override
-    public void format(StringBuilder sb, Substitution change, ProteinSequenceVariationFormat.AACodeType type) {
+    public void format(StringBuilder sb, Substitution change, AminoAcidCode.AACodeType type) {
 
-        sb.append(formatAminoAcidCode(type, change.getValue()));
+        sb.append(AminoAcidCode.formatAminoAcidCode(type, change.getValue()));
     }
 }

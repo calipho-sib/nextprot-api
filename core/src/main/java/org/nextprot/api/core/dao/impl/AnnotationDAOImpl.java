@@ -1,5 +1,6 @@
 package org.nextprot.api.core.dao.impl;
-import org.nextprot.api.commons.bio.variation.format.ProteinSequenceVariationFormat;
+
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.format.hgvs.ProteinSequenceVariationHGVSFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -14,11 +15,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Component;
-import java.util.Arrays;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -219,7 +220,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			property.setValue((name.equals("mutation AA")) ?
 					// TODO: 'mutation AA' property comes from COSMIC. Some values could be not corrected formatter according to the last version v2.0 of HGV
 					// This reformatting should be done at NP integration time, even better, this should be done by COSMIC guys !
-					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE), ProteinSequenceVariationFormat.AACodeType.THREE_LETTER)
+					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE), AminoAcidCode.AACodeType.THREE_LETTER)
 					: value);
 		} catch (ParseException e) {
 			throw new NextProtException(e);

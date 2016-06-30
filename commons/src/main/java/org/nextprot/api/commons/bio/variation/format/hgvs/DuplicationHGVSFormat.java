@@ -3,7 +3,6 @@ package org.nextprot.api.commons.bio.variation.format.hgvs;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.Duplication;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
-import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceVariationFormat;
 
@@ -22,13 +21,13 @@ public class DuplicationHGVSFormat implements ProteinSequenceChangeFormat<Duplic
     private static final Pattern DUPLICATION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?dup$");
 
     @Override
-    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, AbstractProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
 
         Matcher m = DUPLICATION_PATTERN.matcher(source);
 
         if (m.matches()) {
 
-            AminoAcidCode affectedAAFirst = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAAFirst = AminoAcidCode.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPosFirst = Integer.parseInt(m.group(3));
 
             if (m.group(4) == null) {
@@ -36,7 +35,7 @@ public class DuplicationHGVSFormat implements ProteinSequenceChangeFormat<Duplic
                 return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst).duplicates().build();
             }
 
-            AminoAcidCode affectedAALast = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(4), m.group(5));
+            AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
             int affectedAAPosLast = Integer.parseInt(m.group(6));
 
             return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
@@ -47,12 +46,12 @@ public class DuplicationHGVSFormat implements ProteinSequenceChangeFormat<Duplic
     }
 
     @Override
-    public boolean matchesWithMode(String source, AbstractProteinSequenceVariationFormat.ParsingMode mode) {
+    public boolean matchesWithMode(String source, ProteinSequenceVariationFormat.ParsingMode mode) {
         return source.matches(DUPLICATION_PATTERN.pattern());
     }
 
     @Override
-    public void format(StringBuilder sb, Duplication change, ProteinSequenceVariationFormat.AACodeType type) {
+    public void format(StringBuilder sb, Duplication change, AminoAcidCode.AACodeType type) {
 
         sb.append("dup");
     }

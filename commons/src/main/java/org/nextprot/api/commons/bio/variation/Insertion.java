@@ -4,7 +4,6 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Insertions add one or more aas after one existing aa
@@ -16,7 +15,7 @@ public class Insertion implements ProteinSequenceChange<AminoAcidCode[]> {
     private final int insertAfterPos;
     private final AminoAcidCode[] insertedAminoAcids;
 
-    public Insertion(int insertAfterPos, AminoAcidCode... insertedAminoAcids) {
+    Insertion(int insertAfterPos, AminoAcidCode... insertedAminoAcids) {
 
         Preconditions.checkNotNull(insertedAminoAcids);
         Preconditions.checkArgument(insertedAminoAcids.length > 0);
@@ -36,17 +35,8 @@ public class Insertion implements ProteinSequenceChange<AminoAcidCode[]> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Insertion)) return false;
-        Insertion insertion = (Insertion) o;
-        return Objects.equals(insertAfterPos, insertion.insertAfterPos) &&
-                Objects.equals(insertedAminoAcids, insertion.insertedAminoAcids);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(insertAfterPos, insertedAminoAcids);
+    public Type getType() {
+        return Type.INSERTION;
     }
 
     public int getInsertAfterPos() {

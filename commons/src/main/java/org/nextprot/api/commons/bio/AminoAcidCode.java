@@ -1,5 +1,6 @@
 package org.nextprot.api.commons.bio;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +37,8 @@ public enum AminoAcidCode {
     Pyrrolysine("Pyl", 'O'),
     Stop("Ter", '*')
     ;
+
+    public enum AACodeType { ONE_LETTER, THREE_LETTER }
 
     private final String code3;
     private final char code1;
@@ -182,5 +185,32 @@ public enum AminoAcidCode {
         }
 
         return codes;
+    }
+
+    public static String formatAminoAcidCode(AACodeType type, AminoAcidCode... aas) {
+
+        StringBuilder sb = new StringBuilder();
+
+        for (AminoAcidCode aa : aas) {
+
+            if (type == AACodeType.ONE_LETTER) sb.append(String.valueOf(aa.get1LetterCode()));
+            else sb.append(String.valueOf(aa.get3LetterCode()));
+        }
+
+        return sb.toString();
+    }
+
+    public static AminoAcidCode valueOfAminoAcidCode(String code1, String code2and3) throws ParseException {
+
+        if (code2and3 == null) {
+            if (!AminoAcidCode.isValidAminoAcid(code1)) {
+                throw new ParseException(code1+": invalid AminoAcidCode", 0);
+            }
+            return AminoAcidCode.valueOfAminoAcid(code1);
+        }
+        else if (!AminoAcidCode.isValidAminoAcid(code1 + code2and3)) {
+            throw new ParseException(code1 + code2and3 + ": invalid AminoAcidCode", 2);
+        }
+        return AminoAcidCode.valueOfAminoAcid(code1 + code2and3);
     }
 }

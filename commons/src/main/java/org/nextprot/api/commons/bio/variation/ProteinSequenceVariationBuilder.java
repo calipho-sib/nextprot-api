@@ -58,7 +58,7 @@ public interface ProteinSequenceVariationBuilder {
         private int firstChangingAminoAcidPos;
         private AminoAcidCode lastChangingAminoAcid;
         private int lastChangingAminoAcidPos;
-        private ProteinSequenceChange proteinSequenceChange;
+        private ProteinSequenceChange<?> proteinSequenceChange;
 
         public void setFirstChangingAminoAcid(AminoAcidCode firstAffectedAminoAcid, int firstAffectedAminoAcidPos) {
 
@@ -94,11 +94,11 @@ public interface ProteinSequenceVariationBuilder {
             return lastChangingAminoAcidPos;
         }
 
-        public ProteinSequenceChange getProteinSequenceChange() {
+        public ProteinSequenceChange<?> getProteinSequenceChange() {
             return proteinSequenceChange;
         }
 
-        public void setProteinSequenceChange(ProteinSequenceChange proteinSequenceChange) {
+        public void setProteinSequenceChange(ProteinSequenceChange<?> proteinSequenceChange) {
             this.proteinSequenceChange = proteinSequenceChange;
         }
     }

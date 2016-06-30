@@ -1,10 +1,10 @@
 package org.nextprot.api.commons.bio.variation.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.*;
+import org.nextprot.api.commons.bio.variation.Frameshift;
+import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.format.ProteinSequenceChangeFormat;
-import org.nextprot.api.commons.bio.variation.format.ProteinSequenceVariationFormat;
 
 import java.text.ParseException;
 import java.util.regex.Matcher;
@@ -23,10 +23,10 @@ public class FrameshiftHGVSFormat implements ProteinSequenceChangeFormat<Framesh
 
         if (m.matches()) {
 
-            AminoAcidCode affectedAA = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPos = Integer.parseInt(m.group(3));
 
-            AminoAcidCode newAA = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(4), m.group(5));
+            AminoAcidCode newAA = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
 
             return builder.aminoAcid(affectedAA, affectedAAPos).thenFrameshift(newAA, Integer.parseInt(m.group(6))).build();
         }
@@ -40,12 +40,12 @@ public class FrameshiftHGVSFormat implements ProteinSequenceChangeFormat<Framesh
     }
 
     @Override
-    public void format(StringBuilder sb, Frameshift change, ProteinSequenceVariationFormat.AACodeType type) {
+    public void format(StringBuilder sb, Frameshift change, AminoAcidCode.AACodeType type) {
 
         sb
-                .append(AbstractProteinSequenceVariationFormat.formatAminoAcidCode(type, change.getValue().getChangedAminoAcid()))
+                .append(AminoAcidCode.formatAminoAcidCode(type, change.getValue().getChangedAminoAcid()))
                 .append("fs")
-                .append(AbstractProteinSequenceVariationFormat.formatAminoAcidCode(type, AminoAcidCode.Stop))
+                .append(AminoAcidCode.formatAminoAcidCode(type, AminoAcidCode.Stop))
                 .append(change.getValue().getNewTerminationPosition());
     }
 }

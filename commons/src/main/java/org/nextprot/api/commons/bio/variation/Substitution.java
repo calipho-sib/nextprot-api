@@ -3,8 +3,6 @@ package org.nextprot.api.commons.bio.variation;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 
-import java.util.Objects;
-
 /**
  * Substitution of an amino-acid by another one
  *
@@ -30,15 +28,8 @@ public class Substitution implements ProteinSequenceChange<AminoAcidCode> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Substitution)) return false;
-        Substitution that = (Substitution) o;
-        return substitutedAminoAcid == that.substitutedAminoAcid;
-    }
+    public Type getType() {
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(substitutedAminoAcid);
+        return Type.SUBSTITUTION;
     }
 }

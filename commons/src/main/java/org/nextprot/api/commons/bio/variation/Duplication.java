@@ -22,6 +22,11 @@ public class Duplication implements ProteinSequenceChange<Integer> {
         return insertAfterPos;
     }
 
+    @Override
+    public Type getType() {
+        return Type.DUPLICATION;
+    }
+
     public int getInsertAfterPos() {
         return insertAfterPos;
     }
