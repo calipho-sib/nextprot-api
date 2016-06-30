@@ -39,10 +39,10 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 		String[] test_list = {"NX_Q13158", "NX_Q06830","NX_Q7Z6P3","NX_E5RQL4","NX_Q14721","NX_Q7Z6P3",
 				"NX_Q7Z713", "NX_P22102", "NX_O00115", "NX_Q13286", "NX_Q9UNK4", "NX_Q9NWT6"};
 
-		//for(int i=0; i < test_list.length; i++){
-		for(int i=0; i < 120; i++){
-			//Entry entry = getEntry(test_list[i]); 
-			Entry entry = getEntry(i); // 'random' entry
+		for(int i=0; i < test_list.length; i++){
+		//for(int i=0; i < 120; i++){
+			Entry entry = getEntry(test_list[i]); 
+			//Entry entry = getEntry(i); // 'random' entry
 		    //Entry entry = getEntry("NX_P20592");
 			System.out.println(entry.getUniqueName());
 			testGoldAnnotations(entry);
@@ -55,51 +55,22 @@ public class AnnotationFieldBuilderGoldDiffTest extends SolrDiffTest {
 
 		String entryName = entry.getUniqueName();
 		
+		// Variants
 		AnnotationFieldBuilder afb = new AnnotationFieldBuilder();
 		afb.setGold(true);
 		afb.setTerminologyService(terminologyService);
 		afb.initializeBuilder(entry);
-
-		List<String> annotations = afb.getFieldValue(Fields.ANNOTATIONS, List.class);
+		Integer oldgoldvarcnt = 0, newgoldvarcnt = 0;
 		List<String> expectedRawValues = (List<String>) getValueForFieldInCurrentGoldSolrImplementation(entryName, Fields.ANNOTATIONS);
-		List<String> expectedValues = new ArrayList<String>();
+		for(String rawAnnot : expectedRawValues)
+			if(rawAnnot.contains(">sequence variant<"))
+				oldgoldvarcnt++;
+		List<String> annotations = afb.getFieldValue(Fields.ANNOTATIONS, List.class);
+		for (String s : annotations)
+			if(s.startsWith("Variant"))
+				newgoldvarcnt++;
+		Assert.assertEquals(oldgoldvarcnt, newgoldvarcnt);
 
-		for (String s : expectedRawValues) {
-			String aux = getValueFromRawData(s,"an_synonyms");
-			if(aux != null) 
-			  expectedValues.add(StringUtils.getSortedValueFromPipeSeparatedField(aux));
-			// check that we have the VAR_ ids (gold) and check that we have no annotation:cosmic*
-			//aux = getValueFromRawData(s,"cv_ac");
-			//if(aux != null) 
-			  //expectedValues.add(StringUtils.getSortedValueFromPipeSeparatedField(aux));
-		}
-
-		Set<String> expectedValues2 = new TreeSet<String>(expectedValues);
-		Set<String> annotations2 = new TreeSet<String>(annotations);
-		Set<String> annotations3 = new TreeSet<String>(annotations);
-		String bigbasket = annotations3.toString().toLowerCase();
-
-		Assert.assertFalse(bigbasket.matches("cosm[0-9]*")); // All cosmic variants are silver
-
-		System.err.println("current: " + expectedValues2);
-		annotations2.removeAll(expectedValues2);
-		System.err.println("Only in current (" + annotations2.size() + ") : " + annotations2);
-
-		expectedValues2.removeAll(annotations3);
-		//System.err.println("Only in previous solr (" + expectedValues2.size() + ") : " + expectedValues2);
-		for(String annot : expectedValues2) {
-			//System.err.println("annot: " + annot);
-			//f(annot.contains("|")) {System.err.println(annot); for(String token : annot.split(" \\| ")) if(!annotations3.contains(token)) System.err.println("MISS: " + token);}
-			if(annot.contains("|")) {
-				for(String token : annot.split(" \\| ")) if(!bigbasket.contains(token.toLowerCase())) System.err.println("MISS token: " + token);
-				}
-			// we miss the useless feature numbering/naming for TMs, etc
-			//else if(!annotations3.contains(annot))
-		}
-		//System.err.println("previous: " + expectedValues.size() + " current: " + annotations.size());
-		assert(expectedValues.size() == annotations.size());
-		Assert.assertFalse(bigbasket.matches("cosm[0-9]*"));
-		
 		// Expression
 		ExpressionFieldBuilder efb = new ExpressionFieldBuilder();
 		efb.setTerminologyService(terminologyService);
