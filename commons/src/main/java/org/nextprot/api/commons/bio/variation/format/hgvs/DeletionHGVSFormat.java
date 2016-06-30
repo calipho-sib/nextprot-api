@@ -27,13 +27,13 @@ public class DeletionHGVSFormat implements ProteinSequenceChangeFormat<Deletion>
 
             if (m.group(4) == null) {
 
-                return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst).deleted().build();
+                return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst).deletes().build();
             }
 
             AminoAcidCode affectedAALast = AbstractProteinSequenceVariationFormat.valueOfAminoAcidCode(m.group(4), m.group(5));
             int affectedAAPosLast = Integer.parseInt(m.group(6));
 
-            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast).deleted().build();
+            return builder.aminoAcids(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast).deletes().build();
         }
 
         return null;

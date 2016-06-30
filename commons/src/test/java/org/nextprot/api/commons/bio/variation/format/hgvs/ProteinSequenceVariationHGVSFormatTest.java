@@ -29,7 +29,7 @@ public class ProteinSequenceVariationHGVSFormatTest {
     @Test
     public void testFormatAADeletion() throws Exception {
 
-        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Lysine, 73).deleted().build();
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Lysine, 73).deletes().build();
 
         Assert.assertEquals("p.K73del", format.format(pm));
     }
@@ -37,7 +37,7 @@ public class ProteinSequenceVariationHGVSFormatTest {
     @Test
     public void testFormatRangeDeletion() throws Exception {
 
-        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 487, AminoAcidCode.Leucine, 498).deleted().build();
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 487, AminoAcidCode.Leucine, 498).deletes().build();
 
         Assert.assertEquals("p.K487_L498del", format.format(pm));
     }
@@ -86,7 +86,7 @@ public class ProteinSequenceVariationHGVSFormatTest {
     @Test
     public void testFormatAADeletionCode3() throws Exception {
 
-        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Lysine, 73).deleted().build();
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Lysine, 73).deletes().build();
 
         Assert.assertEquals("p.Lys73del", format.format(pm, ProteinSequenceVariationFormat.AACodeType.THREE_LETTER));
     }
@@ -94,7 +94,7 @@ public class ProteinSequenceVariationHGVSFormatTest {
     @Test
     public void testFormatRangeDeletionCode3() throws Exception {
 
-        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 487, AminoAcidCode.Leucine, 498).deleted().build();
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 487, AminoAcidCode.Leucine, 498).deletes().build();
 
         Assert.assertEquals("p.Lys487_Leu498del", format.format(pm, ProteinSequenceVariationFormat.AACodeType.THREE_LETTER));
     }

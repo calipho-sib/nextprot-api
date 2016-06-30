@@ -24,10 +24,13 @@ public interface ProteinSequenceVariationBuilder {
     interface AminoAcidMutation {
 
         /** delete all affected amino-acids */
-        ProteinSequenceVariationBuilder deleted();
+        ProteinSequenceVariationBuilder deletes();
 
         /** inserts given aas after specific AA */
         ProteinSequenceVariationBuilder inserts(AminoAcidCode... aas);
+
+        /** duplicates changing aas and insert right after */
+        ProteinSequenceVariationBuilder duplicates();
 
         /** delete all affected amino-acids and inserts given aas */
         ProteinSequenceVariationBuilder deletedAndInserts(AminoAcidCode... aas);

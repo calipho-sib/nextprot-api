@@ -26,7 +26,7 @@ public class ProteinSequenceVariationTest {
     @Test
     public void testBuildAADeletion() throws Exception {
 
-        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Lysine, 73).deleted().build();
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Lysine, 73).deletes().build();
 
         Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(73, pm.getFirstChangingAminoAcidPos());
@@ -41,7 +41,7 @@ public class ProteinSequenceVariationTest {
     @Test
     public void testBuildRangeDeletion() throws Exception {
 
-        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 487, AminoAcidCode.Leucine, 498).deleted().build();
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 487, AminoAcidCode.Leucine, 498).deletes().build();
 
         Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
@@ -134,5 +134,24 @@ public class ProteinSequenceVariationTest {
         Assert.assertTrue(pm.getProteinSequenceChange() instanceof Insertion);
         Assert.assertEquals(2, ((Insertion)pm.getProteinSequenceChange()).getInsertAfterPos());
         Assert.assertArrayEquals(new AminoAcidCode[] { AminoAcidCode.Glutamine, AminoAcidCode.Serine, AminoAcidCode.Lysine }, (AminoAcidCode[]) pm.getProteinSequenceChange().getValue());
+    }
+
+    @Test
+    public void testBuildDuplication() throws Exception {
+
+        /*
+        p.Ala3_Ser5dup (several amino acids): a duplication of amino acids Ala3 to Ser5 in the sequence MetGlyAlaArgSerSerHis to MetGlyAlaArgSerAlaArgSerSerHis
+         */
+
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcids(AminoAcidCode.Alanine, 3, AminoAcidCode.Serine, 5).duplicates().build();
+
+        Assert.assertEquals(AminoAcidCode.Alanine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(3, pm.getFirstChangingAminoAcidPos());
+
+        Assert.assertEquals(AminoAcidCode.Serine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(5, pm.getLastChangingAminoAcidPos());
+
+        Assert.assertTrue(pm.getProteinSequenceChange() instanceof Duplication);
+        Assert.assertEquals(5, ((Duplication)pm.getProteinSequenceChange()).getInsertAfterPos());
     }
 }

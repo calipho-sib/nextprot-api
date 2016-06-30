@@ -109,13 +109,18 @@ public class ProteinSequenceVariation {
         class MutationActionImpl implements ProteinSequenceVariationBuilder.AminoAcidMutation {
 
             @Override
-            public ProteinSequenceVariationBuilder deleted() {
+            public ProteinSequenceVariationBuilder deletes() {
                 return new DeletionBuilderProtein(dataCollector);
             }
 
             @Override
             public ProteinSequenceVariationBuilder inserts(AminoAcidCode... aas) {
                 return new InsertionBuilderProtein(dataCollector, aas);
+            }
+
+            @Override
+            public ProteinSequenceVariationBuilder duplicates() {
+                return new DuplicationBuilderProtein(dataCollector);
             }
 
             @Override
@@ -145,9 +150,18 @@ public class ProteinSequenceVariation {
                 this.dataCollector = dataCollector;
             }
 
+            protected abstract ProteinSequenceChange getProteinSequenceChange();
+
             @Override
             public DataCollector getDataCollector() {
                 return dataCollector;
+            }
+
+            @Override
+            public ProteinSequenceVariation build() {
+
+                dataCollector.setProteinSequenceChange(getProteinSequenceChange());
+                return new ProteinSequenceVariation(this);
             }
         }
 
@@ -155,74 +169,88 @@ public class ProteinSequenceVariation {
 
             DeletionBuilderProtein(DataCollector dataCollector) {
                 super(dataCollector);
-
-                dataCollector.setProteinSequenceChange(Deletion.getInstance());
             }
 
             @Override
-            public ProteinSequenceVariation build() {
-
-                return new ProteinSequenceVariation(this);
-            }
-        }
-
-        class DeletionInsertionBuilderProtein extends ProteinSequenceVariationBuilderImpl {
-
-            DeletionInsertionBuilderProtein(DataCollector dataCollector, AminoAcidCode... aas) {
-                super(dataCollector);
-
-                dataCollector.setProteinSequenceChange(new DeletionAndInsertion(aas));
-            }
-
-            @Override
-            public ProteinSequenceVariation build() {
-
-                return new ProteinSequenceVariation(this);
+            protected ProteinSequenceChange getProteinSequenceChange() {
+                return Deletion.getInstance();
             }
         }
 
         class InsertionBuilderProtein extends ProteinSequenceVariationBuilderImpl {
 
-            InsertionBuilderProtein(DataCollector dataCollector, AminoAcidCode... aas) {
+            private final AminoAcidCode[] insertedAas;
+
+            InsertionBuilderProtein(DataCollector dataCollector, AminoAcidCode... insertedAas) {
                 super(dataCollector);
 
-                dataCollector.setProteinSequenceChange(new Insertion(dataCollector.getFirstChangingAminoAcidPos(), aas));
+                this.insertedAas = insertedAas;
             }
 
             @Override
-            public ProteinSequenceVariation build() {
+            protected ProteinSequenceChange getProteinSequenceChange() {
+                return new Insertion(dataCollector.getFirstChangingAminoAcidPos(), insertedAas);
+            }
 
-                return new ProteinSequenceVariation(this);
+            AminoAcidCode[] getInsertedAas() {
+                return insertedAas;
+            }
+        }
+
+        class DeletionInsertionBuilderProtein extends InsertionBuilderProtein {
+
+            DeletionInsertionBuilderProtein(DataCollector dataCollector, AminoAcidCode... aas) {
+                super(dataCollector, aas);
+            }
+
+            @Override
+            protected ProteinSequenceChange getProteinSequenceChange() {
+                return new DeletionAndInsertion(getInsertedAas());
+            }
+        }
+
+        class DuplicationBuilderProtein extends ProteinSequenceVariationBuilderImpl {
+
+            DuplicationBuilderProtein(DataCollector dataCollector) {
+                super(dataCollector);
+            }
+
+            @Override
+            protected ProteinSequenceChange getProteinSequenceChange() {
+                return new Duplication(dataCollector.getLastChangingAminoAcidPos());
             }
         }
 
         class SubstitutionBuilderProtein extends ProteinSequenceVariationBuilderImpl {
 
-            SubstitutionBuilderProtein(DataCollector dataCollector, AminoAcidCode aa) {
-                super(dataCollector);
+            private final AminoAcidCode substitutedAminoAcid;
 
-                dataCollector.setProteinSequenceChange(new Substitution(aa));
+            SubstitutionBuilderProtein(DataCollector dataCollector, AminoAcidCode substitutedAminoAcid) {
+                super(dataCollector);
+                this.substitutedAminoAcid = substitutedAminoAcid;
             }
 
             @Override
-            public ProteinSequenceVariation build() {
-
-                return new ProteinSequenceVariation(this);
+            protected ProteinSequenceChange getProteinSequenceChange() {
+                return new Substitution(substitutedAminoAcid);
             }
         }
 
         class FrameshiftBuilderProtein extends ProteinSequenceVariationBuilderImpl {
 
+            private final AminoAcidCode newAminoAcidCode;
+            private final int newTerminationPosition;
+
             FrameshiftBuilderProtein(DataCollector dataCollector, AminoAcidCode newAminoAcidCode, int newTerminationPosition) {
                 super(dataCollector);
 
-                dataCollector.setProteinSequenceChange(new Frameshift(new Frameshift.Change(newAminoAcidCode, newTerminationPosition)));
+                this.newAminoAcidCode = newAminoAcidCode;
+                this.newTerminationPosition = newTerminationPosition;
             }
 
             @Override
-            public ProteinSequenceVariation build() {
-
-                return new ProteinSequenceVariation(this);
+            protected ProteinSequenceChange getProteinSequenceChange() {
+                return new Frameshift(new Frameshift.Change(newAminoAcidCode, newTerminationPosition));
             }
         }
     }

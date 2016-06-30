@@ -12,13 +12,13 @@ import java.util.Objects;
  */
 public class Substitution implements ProteinSequenceChange<AminoAcidCode> {
 
-    private final AminoAcidCode aa;
+    private final AminoAcidCode substitutedAminoAcid;
 
-    public Substitution(AminoAcidCode aa) {
+    public Substitution(AminoAcidCode substitutedAminoAcid) {
 
-        Preconditions.checkNotNull(aa);
+        Preconditions.checkNotNull(substitutedAminoAcid);
 
-        this.aa = aa;
+        this.substitutedAminoAcid = substitutedAminoAcid;
     }
 
     /**
@@ -26,7 +26,7 @@ public class Substitution implements ProteinSequenceChange<AminoAcidCode> {
      */
     @Override
     public AminoAcidCode getValue() {
-        return aa;
+        return substitutedAminoAcid;
     }
 
     @Override
@@ -34,11 +34,11 @@ public class Substitution implements ProteinSequenceChange<AminoAcidCode> {
         if (this == o) return true;
         if (!(o instanceof Substitution)) return false;
         Substitution that = (Substitution) o;
-        return aa == that.aa;
+        return substitutedAminoAcid == that.substitutedAminoAcid;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(aa);
+        return Objects.hash(substitutedAminoAcid);
     }
 }
