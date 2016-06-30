@@ -38,6 +38,7 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
         else if (variation.getProteinSequenceChange() instanceof Substitution) getSubstitutionFormat().format(sb, (Substitution) variation.getProteinSequenceChange(), type);
         else if (variation.getProteinSequenceChange() instanceof DeletionAndInsertion) getDeletionInsertionFormat().format(sb, (DeletionAndInsertion) variation.getProteinSequenceChange(), type);
         else if (variation.getProteinSequenceChange() instanceof Insertion) getInsertionFormat().format(sb, (Insertion) variation.getProteinSequenceChange(), type);
+        else if (variation.getProteinSequenceChange() instanceof Duplication) getDuplicationFormat().format(sb, (Duplication) variation.getProteinSequenceChange(), type);
         else if (variation.getProteinSequenceChange() instanceof Frameshift) getFrameshiftFormat().format(sb, (Frameshift) variation.getProteinSequenceChange(), type);
 
         return sb.toString();
@@ -106,6 +107,7 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
     protected abstract ChangingAAsFormat getChangingAAsFormat();
     protected abstract ProteinSequenceChangeFormat<Substitution> getSubstitutionFormat();
     protected abstract ProteinSequenceChangeFormat<Insertion> getInsertionFormat();
+    protected abstract ProteinSequenceChangeFormat<Duplication> getDuplicationFormat();
     protected abstract ProteinSequenceChangeFormat<Deletion> getDeletionFormat();
     protected abstract ProteinSequenceChangeFormat<DeletionAndInsertion> getDeletionInsertionFormat();
     protected abstract ProteinSequenceChangeFormat<Frameshift> getFrameshiftFormat();
@@ -118,6 +120,7 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
         formats.add(getFrameshiftFormat());
         formats.add(getDeletionInsertionFormat());
         formats.add(getInsertionFormat());
+        formats.add(getDuplicationFormat());
 
         return formats;
     }

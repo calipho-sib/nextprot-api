@@ -17,6 +17,7 @@ public class ProteinSequenceVariationHGVSFormat extends AbstractProteinSequenceV
 
     private final ChangingAAsFormat changingAAsFormat = new HGVSFormat();
     private final InsertionHGVSFormat insertionHGVSFormat = new InsertionHGVSFormat();
+    private final DuplicationHGVSFormat duplicationHGVSFormat = new DuplicationHGVSFormat();
     private final SubstitutionHGVSFormat subtitutionHGVFormat = new SubstitutionHGVSFormat();
     private final DeletionHGVSFormat deletionHGVSFormat = new DeletionHGVSFormat();
     private final DeletionInsertionHGVSFormat deletionInsertionHGVSFormat = new DeletionInsertionHGVSFormat();
@@ -35,6 +36,11 @@ public class ProteinSequenceVariationHGVSFormat extends AbstractProteinSequenceV
     @Override
     protected ProteinSequenceChangeFormat<Insertion> getInsertionFormat() {
         return insertionHGVSFormat;
+    }
+
+    @Override
+    protected ProteinSequenceChangeFormat<Duplication> getDuplicationFormat() {
+        return duplicationHGVSFormat;
     }
 
     @Override

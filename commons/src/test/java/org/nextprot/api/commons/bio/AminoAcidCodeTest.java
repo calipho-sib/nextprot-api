@@ -3,9 +3,6 @@ package org.nextprot.api.commons.bio;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * Created by fnikitin on 09/07/15.
- */
 public class AminoAcidCodeTest {
 
     @Test

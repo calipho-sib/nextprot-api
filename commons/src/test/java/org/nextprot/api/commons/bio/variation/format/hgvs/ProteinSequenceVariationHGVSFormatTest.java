@@ -162,4 +162,36 @@ public class ProteinSequenceVariationHGVSFormatTest {
 
         Assert.assertEquals("p.Cys136_Ala137insGlyMet", format.format(pm, ProteinSequenceVariationFormat.AACodeType.THREE_LETTER));
     }
+
+    @Test
+    public void testFormatDuplicationSimpleCode1() throws Exception {
+
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Cysteine, 76).duplicates().build();
+
+        Assert.assertEquals("p.C76dup", format.format(pm, ProteinSequenceVariationFormat.AACodeType.ONE_LETTER));
+    }
+
+    @Test
+    public void testFormatDuplicationSimpleCode3() throws Exception {
+
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcid(AminoAcidCode.Cysteine, 76).duplicates().build();
+
+        Assert.assertEquals("p.Cys76dup", format.format(pm, ProteinSequenceVariationFormat.AACodeType.THREE_LETTER));
+    }
+
+    @Test
+    public void testFormatDuplicationCode1() throws Exception {
+
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcids(AminoAcidCode.Cysteine, 76, AminoAcidCode.GlutamicAcid, 79).duplicates().build();
+
+        Assert.assertEquals("p.C76_E79dup", format.format(pm, ProteinSequenceVariationFormat.AACodeType.ONE_LETTER));
+    }
+
+    @Test
+    public void testFormatDuplicationCode3() throws Exception {
+
+        ProteinSequenceVariation pm = new ProteinSequenceVariation.FluentBuilder().aminoAcids(AminoAcidCode.Cysteine, 76, AminoAcidCode.GlutamicAcid, 79).duplicates().build();
+
+        Assert.assertEquals("p.Cys76_Glu79dup", format.format(pm, ProteinSequenceVariationFormat.AACodeType.THREE_LETTER));
+    }
 }
