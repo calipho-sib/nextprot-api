@@ -22,17 +22,25 @@ public class AnnotationBuilder {
 
 	private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
 
+	private static void addPropertyIfPresent(String propertyValue, String propertyName, AnnotationEvidence evidence) {
+		if (propertyValue != null) {
+			AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
+			prop.setPropertyName(propertyName);
+			prop.setPropertyValue(propertyValue);
+			evidence.setProperties(Arrays.asList(prop));
+		}
+	}
+
 	private static List<AnnotationEvidence> buildAnnotationEvidences(List<RawStatement> rawStatements) {
 		return rawStatements.stream().map(s -> {
 			AnnotationEvidence evidence = new AnnotationEvidence();
 			evidence.setResourceAssociationType("evidence");
-			String fieldIntensity = s.getValue(StatementField.EXP_CONTEXT_PROPERTY_INTENSITY);
-			if (fieldIntensity != null) {
-				AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
-				prop.setPropertyName("intensity");
-				prop.setPropertyValue(fieldIntensity);
-				evidence.setProperties(Arrays.asList(prop));
-			}
+			evidence.setQualityQualifier(s.getValue(StatementField.STATEMENT_QUALITY));
+
+			addPropertyIfPresent(s.getValue(StatementField.EXP_CONTEXT_PROPERTY_INTENSITY), "intensity", evidence);
+			addPropertyIfPresent(s.getValue(StatementField.EXP_CTX_PRPTY_PROTEIN_ORIGIN), "protein-origin", evidence);
+			addPropertyIfPresent(s.getValue(StatementField.ANNOT_SOURCE_ACCESSION), "source-accession", evidence);
+
 			return evidence;
 		}).collect(Collectors.toList());
 
@@ -68,6 +76,7 @@ public class AnnotationBuilder {
 
 			isoAnnotation.setIsoformName(isoformName);
 			isoAnnotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));
+
 			isoAnnotation.setDescription(statement.getValue(StatementField.ANNOT_DESCRIPTION));
 			isoAnnotation.setCvTermAccessionCode(statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION));
 			// TODO this should be called terminology I guess! not setCVApiName
