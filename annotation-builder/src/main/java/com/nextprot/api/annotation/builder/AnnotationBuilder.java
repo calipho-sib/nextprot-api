@@ -22,13 +22,14 @@ public class AnnotationBuilder {
 
 	private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
 
-	private static void addPropertyIfPresent(String propertyValue, String propertyName, AnnotationEvidence evidence) {
+	private static AnnotationEvidenceProperty addPropertyIfPresent(String propertyValue, String propertyName) {
 		if (propertyValue != null) {
 			AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
 			prop.setPropertyName(propertyName);
 			prop.setPropertyValue(propertyValue);
-			evidence.setProperties(Arrays.asList(prop));
+			return prop;
 		}
+		return null;
 	}
 
 	private static List<AnnotationEvidence> buildAnnotationEvidences(List<RawStatement> rawStatements) {
@@ -37,9 +38,12 @@ public class AnnotationBuilder {
 			evidence.setResourceAssociationType("evidence");
 			evidence.setQualityQualifier(s.getValue(StatementField.STATEMENT_QUALITY));
 
-			addPropertyIfPresent(s.getValue(StatementField.EXP_CONTEXT_PROPERTY_INTENSITY), "intensity", evidence);
-			addPropertyIfPresent(s.getValue(StatementField.EXP_CTX_PRPTY_PROTEIN_ORIGIN), "protein-origin", evidence);
-			addPropertyIfPresent(s.getValue(StatementField.ANNOT_SOURCE_ACCESSION), "source-accession", evidence);
+			AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EXP_CONTEXT_PROPERTY_INTENSITY), "intensity");
+			AnnotationEvidenceProperty expContextProperty = addPropertyIfPresent(s.getValue(StatementField.EXP_CTX_PRPTY_PROTEIN_ORIGIN), "protein-origin");
+			AnnotationEvidenceProperty sourceAccession =addPropertyIfPresent(s.getValue(StatementField.ANNOT_SOURCE_ACCESSION), "source-accession");
+
+			//Set properties which are not null
+			evidence.setProperties(Arrays.asList(evidenceProperty, expContextProperty, sourceAccession).stream().filter(p -> p != null).collect(Collectors.toList()));
 
 			return evidence;
 		}).collect(Collectors.toList());
