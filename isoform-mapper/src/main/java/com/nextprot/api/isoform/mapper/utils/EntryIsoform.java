@@ -34,8 +34,8 @@ public class EntryIsoform {
 
         // isoform accession
         if (accession.contains("-")) {
-            int colonPosition = accession.indexOf("-");
-            entryAccession = accession.substring(0, colonPosition);
+            int dashPosition = accession.indexOf("-");
+            entryAccession = accession.substring(0, dashPosition);
             isoformAccession = accession;
         }
         // entry accession
