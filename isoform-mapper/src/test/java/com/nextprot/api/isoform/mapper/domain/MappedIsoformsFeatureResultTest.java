@@ -2,6 +2,7 @@ package com.nextprot.api.isoform.mapper.domain;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
 public class MappedIsoformsFeatureResultTest {
@@ -56,6 +57,9 @@ public class MappedIsoformsFeatureResultTest {
                 new MappedIsoformsFeatureResult.Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, true);
 
         MappedIsoformsFeatureError result = new MappedIsoformsFeatureError(query);
-        result.setErrorValue(new MappedIsoformsFeatureError.InvalidFeatureAminoAcid("NX_Q9UI33", "A", "L"));
+        result.setErrorValue(new MappedIsoformsFeatureError.InvalidFeatureAminoAcid("NX_Q9UI33", 1158,
+                AminoAcidCode.asArray(AminoAcidCode.Alanine),
+                AminoAcidCode.asArray(AminoAcidCode.Leucine),
+                "SCN11A-p.Leu1158Pro"));
     }
 }

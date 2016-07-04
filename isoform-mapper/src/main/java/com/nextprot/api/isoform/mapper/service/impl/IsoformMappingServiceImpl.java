@@ -7,6 +7,7 @@ import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
 import com.nextprot.api.isoform.mapper.utils.GeneVariantSplitter;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -106,10 +107,10 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         MappedIsoformsFeatureResult result;
 
         MappedIsoformsFeatureError.FeatureErrorValue firstPosErrorValue = checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
-                String.valueOf(variation.getFirstChangingAminoAcid().get1LetterCode()));
+                String.valueOf(variation.getFirstChangingAminoAcid().get1LetterCode()), query);
 
         MappedIsoformsFeatureError.FeatureErrorValue lastPosErrorValue = checkIsoformPos(isoform, variation.getLastChangingAminoAcidPos(),
-                String.valueOf(variation.getLastChangingAminoAcid().get1LetterCode()));
+                String.valueOf(variation.getLastChangingAminoAcid().get1LetterCode()), query);
 
         if (firstPosErrorValue == null && lastPosErrorValue == null) {
 
@@ -139,7 +140,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
      * @param aas
      * @return an ErrorValue if invalid else null
      */
-    private MappedIsoformsFeatureError.FeatureErrorValue checkIsoformPos(Isoform isoform, int position, String aas) {
+    private MappedIsoformsFeatureError.FeatureErrorValue checkIsoformPos(Isoform isoform, int position, String aas, MappedIsoformsFeatureResult.Query query) {
 
         boolean insertionMode = (aas == null || aas.isEmpty());
         boolean valid = IsoformSequencePositionMapper.checkSequencePosition(isoform, position, insertionMode);
@@ -152,8 +153,12 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
             valid = IsoformSequencePositionMapper.checkAminoAcidsFromPosition(isoform, position, aas);
 
             if (!valid) {
-                return new MappedIsoformsFeatureError.InvalidFeatureAminoAcid(isoform.getUniqueName(),
-                        isoform.getSequence().substring(position - 1, position + aas.length() - 1), aas);
+
+                String aasOnSequence = isoform.getSequence().substring(position - 1, position + aas.length() - 1);
+
+                return new MappedIsoformsFeatureError.InvalidFeatureAminoAcid(isoform.getUniqueName(), position,
+                        AminoAcidCode.valueOfOneLetterCodeSequence(aasOnSequence),
+                        AminoAcidCode.valueOfOneLetterCodeSequence(aas), query.getFeature());
             }
         }
 

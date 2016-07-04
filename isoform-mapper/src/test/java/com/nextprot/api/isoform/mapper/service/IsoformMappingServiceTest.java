@@ -6,6 +6,7 @@ import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
 import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureSuccess;
 import org.junit.Assert;
 import org.junit.Test;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,9 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Met1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidFeatureAminoAcid("NX_Q9UI33", "L", "M"));
+        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidFeatureAminoAcid("NX_Q9UI33", 1158,
+                AminoAcidCode.asArray(AminoAcidCode.Leucine),
+                AminoAcidCode.asArray(AminoAcidCode.Methionine), "SCN11A-p.Met1158Pro"));
     }
 
     @Test
