@@ -14,7 +14,7 @@ public class MappedIsoformsFeatureResultTest {
 
         Assert.assertEquals("NX_Q9UI33", query.getAccession());
         Assert.assertEquals("SCN11A-p.Leu1158Pro", query.getFeature());
-        Assert.assertEquals("sequence variant", query.getFeatureType());
+        Assert.assertEquals("Variant", query.getFeatureType());
         Assert.assertTrue(query.isPropagate());
     }
 
@@ -46,7 +46,7 @@ public class MappedIsoformsFeatureResultTest {
                 new MappedIsoformsFeatureResult.Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, true);
 
         MappedIsoformsFeatureError result = new MappedIsoformsFeatureError(query);
-        result.setErrorValue(new MappedIsoformsFeatureError.InvalidPosition("invalid position on NX_Q9UI33", 23));
+        result.setErrorValue(new MappedIsoformsFeatureError.InvalidFeaturePosition("invalid position on NX_Q9UI33", 23));
     }
 
     @Test
@@ -56,6 +56,6 @@ public class MappedIsoformsFeatureResultTest {
                 new MappedIsoformsFeatureResult.Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, true);
 
         MappedIsoformsFeatureError result = new MappedIsoformsFeatureError(query);
-        result.setErrorValue(new MappedIsoformsFeatureError.UnexpectedAminoAcids("A", "L"));
+        result.setErrorValue(new MappedIsoformsFeatureError.InvalidFeatureAminoAcid("NX_Q9UI33", "A", "L"));
     }
 }

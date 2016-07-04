@@ -9,18 +9,18 @@ import java.util.Objects;
  */
 public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
 
-    private ErrorValue value;
+    private FeatureErrorValue value;
 
     public MappedIsoformsFeatureError(Query query) {
         super(query);
     }
 
-    public void setErrorValue(ErrorValue value) {
+    public void setErrorValue(FeatureErrorValue value) {
 
         this.value = value;
     }
 
-    public ErrorValue getError() {
+    public FeatureErrorValue getError() {
         return value;
     }
 
@@ -29,13 +29,13 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         return false;
     }
 
-    public static abstract class ErrorValue implements Serializable {
+    public static abstract class FeatureErrorValue implements Serializable {
 
         private static final long serialVersionUID = 1L;
 
         private final String message;
 
-        public ErrorValue(String message) {
+        public FeatureErrorValue(String message) {
             this.message = message;
         }
 
@@ -44,13 +44,13 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         }
     }
 
-    public static class InvalidPosition extends ErrorValue {
+    public static class InvalidFeaturePosition extends FeatureErrorValue {
 
         private final String isoformAccession;
         private final int position;
 
-        public InvalidPosition(String isoformAccession, int position) {
-            super("invalid position "+position+" on sequence of isoform "+isoformAccession);
+        public InvalidFeaturePosition(String isoformAccession, int position) {
+            super("invalid feature position "+position+" in sequence of isoform "+isoformAccession);
 
             this.isoformAccession = isoformAccession;
             this.position = position;
@@ -67,8 +67,8 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof InvalidPosition)) return false;
-            InvalidPosition that = (InvalidPosition) o;
+            if (!(o instanceof InvalidFeaturePosition)) return false;
+            InvalidFeaturePosition that = (InvalidFeaturePosition) o;
             return position == that.position &&
                     Objects.equals(isoformAccession, that.isoformAccession);
         }
@@ -79,47 +79,54 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         }
     }
 
-    public static class UnexpectedAminoAcids extends ErrorValue {
+    public static class InvalidFeatureAminoAcid extends FeatureErrorValue {
 
-        private final String expectedAas;
-        private final String observedAas;
+        private final String isoformAccession;
+        private final String featureAminoAcids;
+        private final String sequenceAminoAcids;
 
-        public UnexpectedAminoAcids(String observedAas, String expectedAas) {
-            super("unexpected amino-acid(s) "+observedAas+" (expected="+expectedAas+")");
+        public InvalidFeatureAminoAcid(String isoformAccession, String sequenceAminoAcids, String featureAminoAcids) {
+            super("invalid feature amino-acid(s) "+featureAminoAcids+" instead of expected "+sequenceAminoAcids+" in sequence of isoform "+isoformAccession);
 
-            this.observedAas = observedAas;
-            this.expectedAas = expectedAas;
+            this.isoformAccession = isoformAccession;
+            this.featureAminoAcids = featureAminoAcids;
+            this.sequenceAminoAcids = sequenceAminoAcids;
         }
 
-        public String getExpectedAas() {
-            return expectedAas;
+        public String getIsoformAccession() {
+            return isoformAccession;
         }
 
-        public String getObservedAas() {
-            return observedAas;
+        public String getFeatureAminoAcids() {
+            return featureAminoAcids;
+        }
+
+        public String getSequenceAminoAcids() {
+            return sequenceAminoAcids;
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof UnexpectedAminoAcids)) return false;
-            UnexpectedAminoAcids that = (UnexpectedAminoAcids) o;
-            return Objects.equals(expectedAas, that.expectedAas) &&
-                    Objects.equals(observedAas, that.observedAas);
+            if (!(o instanceof InvalidFeatureAminoAcid)) return false;
+            InvalidFeatureAminoAcid that = (InvalidFeatureAminoAcid) o;
+            return Objects.equals(isoformAccession, that.isoformAccession) &&
+                    Objects.equals(featureAminoAcids, that.featureAminoAcids) &&
+                    Objects.equals(sequenceAminoAcids, that.sequenceAminoAcids);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(expectedAas, observedAas);
+            return Objects.hash(isoformAccession, featureAminoAcids, sequenceAminoAcids);
         }
     }
 
-    public static class InvalidVariantName extends ErrorValue {
+    public static class InvalidFeatureFormat extends FeatureErrorValue {
 
         private final String variant;
 
-        public InvalidVariantName(String variant) {
-            super("invalid variant name "+variant);
+        public InvalidFeatureFormat(String variant) {
+            super("invalid feature format "+variant);
 
             this.variant = variant;
         }
@@ -131,8 +138,8 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof InvalidVariantName)) return false;
-            InvalidVariantName that = (InvalidVariantName) o;
+            if (!(o instanceof InvalidFeatureFormat)) return false;
+            InvalidFeatureFormat that = (InvalidFeatureFormat) o;
             return Objects.equals(variant, that.variant);
         }
 
@@ -142,7 +149,7 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         }
     }
 
-    public static class IncompatibleGeneAndProteinName extends ErrorValue {
+    public static class IncompatibleGeneAndProteinName extends FeatureErrorValue {
 
         private final String geneName;
         private final String proteinName;

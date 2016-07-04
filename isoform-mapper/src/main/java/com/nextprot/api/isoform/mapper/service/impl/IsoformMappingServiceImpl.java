@@ -90,7 +90,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         } catch (ParseException e) {
 
             MappedIsoformsFeatureError error = new MappedIsoformsFeatureError(query);
-            error.setErrorValue(new MappedIsoformsFeatureError.InvalidVariantName(query.getFeature()));
+            error.setErrorValue(new MappedIsoformsFeatureError.InvalidFeatureFormat(query.getFeature()));
             return error;
         }
     }
@@ -105,10 +105,10 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
                                                               ProteinSequenceVariation variation) {
         MappedIsoformsFeatureResult result;
 
-        MappedIsoformsFeatureError.ErrorValue firstPosErrorValue = checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
+        MappedIsoformsFeatureError.FeatureErrorValue firstPosErrorValue = checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
                 String.valueOf(variation.getFirstChangingAminoAcid().get1LetterCode()));
 
-        MappedIsoformsFeatureError.ErrorValue lastPosErrorValue = checkIsoformPos(isoform, variation.getLastChangingAminoAcidPos(),
+        MappedIsoformsFeatureError.FeatureErrorValue lastPosErrorValue = checkIsoformPos(isoform, variation.getLastChangingAminoAcidPos(),
                 String.valueOf(variation.getLastChangingAminoAcid().get1LetterCode()));
 
         if (firstPosErrorValue == null && lastPosErrorValue == null) {
@@ -139,20 +139,20 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
      * @param aas
      * @return an ErrorValue if invalid else null
      */
-    private MappedIsoformsFeatureError.ErrorValue checkIsoformPos(Isoform isoform, int position, String aas) {
+    private MappedIsoformsFeatureError.FeatureErrorValue checkIsoformPos(Isoform isoform, int position, String aas) {
 
         boolean insertionMode = (aas == null || aas.isEmpty());
         boolean valid = IsoformSequencePositionMapper.checkSequencePosition(isoform, position, insertionMode);
 
         if (!valid) {
-            return new MappedIsoformsFeatureError.InvalidPosition(isoform.getUniqueName(), position);
+            return new MappedIsoformsFeatureError.InvalidFeaturePosition(isoform.getUniqueName(), position);
         }
 
         if (!insertionMode) {
             valid = IsoformSequencePositionMapper.checkAminoAcidsFromPosition(isoform, position, aas);
 
             if (!valid) {
-                return new MappedIsoformsFeatureError.UnexpectedAminoAcids(
+                return new MappedIsoformsFeatureError.InvalidFeatureAminoAcid(isoform.getUniqueName(),
                         isoform.getSequence().substring(position - 1, position + aas.length() - 1), aas);
             }
         }

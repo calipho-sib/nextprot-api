@@ -49,7 +49,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-z.Leu1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidVariantName("SCN11A-z.Leu1158Pro"));
+        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidFeatureFormat("SCN11A-z.Leu1158Pro"));
     }
 
     @Test
@@ -57,7 +57,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Let1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidVariantName("SCN11A-p.Let1158Pro"));
+        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidFeatureFormat("SCN11A-p.Let1158Pro"));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Met1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.UnexpectedAminoAcids("L", "M"));
+        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidFeatureAminoAcid("NX_Q9UI33", "L", "M"));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Leu1158999Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidPosition("NX_Q9UI33-1", 1158999));
+        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidFeaturePosition("NX_Q9UI33-1", 1158999));
     }
 
     @Test
@@ -145,7 +145,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Assert.assertEquals(expectedLastPos, successResult.getMappedIsoformFeatureResult(isoformName).getLastIsoSeqPos());
     }
 
-    private static void assertIsoformFeatureNotValid(MappedIsoformsFeatureResult result, MappedIsoformsFeatureError.ErrorValue expected) {
+    private static void assertIsoformFeatureNotValid(MappedIsoformsFeatureResult result, MappedIsoformsFeatureError.FeatureErrorValue expected) {
 
         Assert.assertFalse(result.isSuccess());
         Assert.assertTrue(result instanceof MappedIsoformsFeatureError);
