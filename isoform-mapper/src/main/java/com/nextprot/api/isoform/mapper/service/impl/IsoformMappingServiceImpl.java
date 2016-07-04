@@ -128,7 +128,10 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
                 return checkFeatureOnIsoform(query, entryIsoform.getIsoform(), entryIsoformVariation);
             } catch (ParseException e) {
 
-                return new MappedIsoformsFeatureError.InvalidFeatureFormat(query, e);
+                String geneName = GeneVariantSplitter.getGeneName(query.getFeature());
+
+                ParseException pe = new ParseException(e.getMessage(), e.getErrorOffset() + geneName.length() + 1);
+                return new MappedIsoformsFeatureError.InvalidFeatureFormat(query, pe);
             }
         }
 

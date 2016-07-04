@@ -64,7 +64,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Assert.assertEquals("invalid feature format: SCN11A-z.Leu1158Pro", ((MappedIsoformsFeatureError)result).getError().getMessage());
         Assert.assertEquals(2, ((MappedIsoformsFeatureError)result).getError().getCauses().size());
         Assert.assertEquals("z.Leu1158Pro: not a valid protein sequence variant", ((MappedIsoformsFeatureError.InvalidFeatureFormat)result).getError().getCause(MappedIsoformsFeatureError.InvalidFeatureFormat.PARSE_ERROR_MESSAGE));
-        Assert.assertEquals(0, ((MappedIsoformsFeatureError.InvalidFeatureFormat)result).getError().getCause(MappedIsoformsFeatureError.InvalidFeatureFormat.PARSE_ERROR_OFFSET));
+        Assert.assertEquals(7, ((MappedIsoformsFeatureError.InvalidFeatureFormat)result).getError().getCause(MappedIsoformsFeatureError.InvalidFeatureFormat.PARSE_ERROR_OFFSET));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Assert.assertEquals("invalid feature format: SCN11A-p.Let1158Pro", ((MappedIsoformsFeatureError)result).getError().getMessage());
         Assert.assertEquals(2, ((MappedIsoformsFeatureError)result).getError().getCauses().size());
         Assert.assertEquals("Let: invalid AminoAcidCode", ((MappedIsoformsFeatureError.InvalidFeatureFormat)result).getError().getCause(MappedIsoformsFeatureError.InvalidFeatureFormat.PARSE_ERROR_MESSAGE));
-        Assert.assertEquals(2, ((MappedIsoformsFeatureError.InvalidFeatureFormat)result).getError().getCause(MappedIsoformsFeatureError.InvalidFeatureFormat.PARSE_ERROR_OFFSET));
+        Assert.assertEquals(9, ((MappedIsoformsFeatureError.InvalidFeatureFormat)result).getError().getCause(MappedIsoformsFeatureError.InvalidFeatureFormat.PARSE_ERROR_OFFSET));
     }
 
     @Test
