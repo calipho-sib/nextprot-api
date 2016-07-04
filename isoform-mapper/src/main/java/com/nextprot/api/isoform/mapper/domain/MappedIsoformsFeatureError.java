@@ -2,28 +2,20 @@ package com.nextprot.api.isoform.mapper.domain;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * A mapping result with specified error
  */
-public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
-
-    private FeatureErrorValue value;
+public abstract class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
 
     public MappedIsoformsFeatureError(Query query) {
         super(query);
     }
 
-    public void setErrorValue(FeatureErrorValue value) {
-
-        this.value = value;
-    }
-
-    public FeatureErrorValue getError() {
-        return value;
+    public MappedIsoformsFeatureError getError() {
+        return this;
     }
 
     @Override
@@ -31,32 +23,23 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
         return false;
     }
 
-    public static abstract class FeatureErrorValue implements Serializable {
+    public abstract String getMessage();
 
-        private static final long serialVersionUID = 1L;
+    public static class InvalidFeaturePosition extends MappedIsoformsFeatureError {
 
-        public abstract String getMessage();
-    }
-
-    public static class InvalidFeaturePosition extends FeatureErrorValue {
-
-        private final String isoformAccession;
         private final int position;
         private final String message;
 
-        public InvalidFeaturePosition(String isoformAccession, int position) {
+        public InvalidFeaturePosition(Query query, int position) {
 
-            this.isoformAccession = isoformAccession;
+            super(query);
+
             this.position = position;
-            this.message = "invalid feature position "+position+" in sequence of isoform "+isoformAccession;
+            this.message = "invalid feature position: position "+position+" is out of bound in sequence of isoform "+query.getAccession();
         }
 
         public int getPosition() {
             return position;
-        }
-
-        public String getIsoformAccession() {
-            return isoformAccession;
         }
 
         @Override
@@ -69,34 +52,30 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
             if (this == o) return true;
             if (!(o instanceof InvalidFeaturePosition)) return false;
             InvalidFeaturePosition that = (InvalidFeaturePosition) o;
-            return position == that.position &&
-                    Objects.equals(isoformAccession, that.isoformAccession);
+            return Objects.equals(message, that.message);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(isoformAccession, position);
+            return Objects.hash(message);
         }
     }
 
-    public static class InvalidFeatureAminoAcid extends FeatureErrorValue {
+    public static class InvalidFeatureAminoAcid extends MappedIsoformsFeatureError {
 
-        private final String isoformAccession;
         private final String featureAminoAcids;
         private final String sequenceAminoAcids;
-        private final String feature;
         private final String message;
         private final int isoformSequencePosition;
 
-        public InvalidFeatureAminoAcid(String isoformAccession, int isoformSequencePosition,
-                                       AminoAcidCode[] sequenceAminoAcidCodes, AminoAcidCode[] featureAminoAcidCodes,
-                                       String feature) {
+        public InvalidFeatureAminoAcid(Query query, int isoformSequencePosition,
+                                       AminoAcidCode[] sequenceAminoAcidCodes, AminoAcidCode[] featureAminoAcidCodes) {
 
-            this.isoformAccession = isoformAccession;
+            super(query);
+
             this.sequenceAminoAcids = AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, sequenceAminoAcidCodes);
             this.featureAminoAcids = AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, featureAminoAcidCodes);
             this.isoformSequencePosition = isoformSequencePosition;
-            this.feature = feature;
 
             this.message = buildErrorMessage(sequenceAminoAcidCodes, featureAminoAcidCodes);
         }
@@ -110,17 +89,12 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
                     .append("found amino-acid").append(sequenceAminoAcidCodes.length > 1 ? "s " : " ").append(this.sequenceAminoAcids)
                     .append(" at position ").append(isoformSequencePosition)
                     .append(" of sequence isoform ")
-                    .append(isoformAccession)
+                    .append(getQuery().getAccession())
                     .append(" instead of ").append(this.featureAminoAcids)
                     .append(" as incorrectly specified in feature '")
-                    .append(feature).append("'");
+                    .append(getQuery().getFeature()).append("'");
 
             return sb.toString();
-        }
-
-
-        public String getIsoformAccession() {
-            return isoformAccession;
         }
 
         public String getFeatureAminoAcids() {
@@ -145,32 +119,24 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
             if (this == o) return true;
             if (!(o instanceof InvalidFeatureAminoAcid)) return false;
             InvalidFeatureAminoAcid that = (InvalidFeatureAminoAcid) o;
-            return isoformSequencePosition == that.isoformSequencePosition &&
-                    Objects.equals(isoformAccession, that.isoformAccession) &&
-                    Objects.equals(featureAminoAcids, that.featureAminoAcids) &&
-                    Objects.equals(sequenceAminoAcids, that.sequenceAminoAcids) &&
-                    Objects.equals(message, that.message);
+            return Objects.equals(message, that.message);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(isoformAccession, featureAminoAcids, sequenceAminoAcids, message, isoformSequencePosition);
+            return Objects.hash(message);
         }
     }
 
-    public static class InvalidFeatureFormat extends FeatureErrorValue {
+    public static class InvalidFeatureFormat extends MappedIsoformsFeatureError {
 
-        private final String feature;
         private final String message;
 
-        public InvalidFeatureFormat(String feature) {
+        public InvalidFeatureFormat(Query query) {
 
-            this.feature = feature;
-            this.message = "invalid feature format: "+feature;
-        }
+            super(query);
 
-        public String getFeature() {
-            return feature;
+            this.message = "invalid feature format: "+query.getFeature();
         }
 
         @Override
@@ -183,36 +149,32 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
             if (this == o) return true;
             if (!(o instanceof InvalidFeatureFormat)) return false;
             InvalidFeatureFormat that = (InvalidFeatureFormat) o;
-            return Objects.equals(feature, that.feature);
+            return Objects.equals(message, that.message);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(feature);
+            return Objects.hash(message);
         }
     }
 
-    public static class IncompatibleGeneAndProteinName extends FeatureErrorValue {
+    public static class IncompatibleGeneAndProteinName extends MappedIsoformsFeatureError {
 
         private final String geneName;
-        private final String proteinName;
         private final List<String> expectedGeneNames;
         private final String message;
 
-        public IncompatibleGeneAndProteinName(String geneName, String proteinName, List<String> expectedGeneNames) {
+        public IncompatibleGeneAndProteinName(Query query, String geneName, List<String> expectedGeneNames) {
+
+            super(query);
 
             this.geneName = geneName;
-            this.proteinName = proteinName;
             this.expectedGeneNames = expectedGeneNames;
-            this.message = "gene/protein incompatibility: protein "+proteinName+" is not compatible with gene "+geneName +" (expected genes: "+ expectedGeneNames+")";
+            this.message = "gene/protein incompatibility: protein "+query.getAccession()+" is not compatible with gene "+geneName +" (expected genes: "+ expectedGeneNames+")";
         }
 
         public String getGeneName() {
             return geneName;
-        }
-
-        public String getProteinName() {
-            return proteinName;
         }
 
         public List<String> getExpectedGeneNames() {
@@ -229,14 +191,12 @@ public class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
             if (this == o) return true;
             if (!(o instanceof IncompatibleGeneAndProteinName)) return false;
             IncompatibleGeneAndProteinName that = (IncompatibleGeneAndProteinName) o;
-            return Objects.equals(geneName, that.geneName) &&
-                    Objects.equals(proteinName, that.proteinName) &&
-                    Objects.equals(expectedGeneNames, that.expectedGeneNames);
+            return Objects.equals(message, that.message);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(geneName, proteinName, expectedGeneNames);
+            return Objects.hash(message);
         }
     }
 }

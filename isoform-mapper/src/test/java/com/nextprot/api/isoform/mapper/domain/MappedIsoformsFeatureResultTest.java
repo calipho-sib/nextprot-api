@@ -1,5 +1,6 @@
 package com.nextprot.api.isoform.mapper.domain;
 
+import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
@@ -46,8 +47,9 @@ public class MappedIsoformsFeatureResultTest {
         MappedIsoformsFeatureResult.Query query =
                 new MappedIsoformsFeatureResult.Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, true);
 
-        MappedIsoformsFeatureError result = new MappedIsoformsFeatureError(query);
-        result.setErrorValue(new MappedIsoformsFeatureError.InvalidFeaturePosition("invalid position on NX_Q9UI33", 23));
+        MappedIsoformsFeatureError result = new MappedIsoformsFeatureError.InvalidFeaturePosition(query, 23);
+        Assert.assertFalse(result.isSuccess());
+        Assert.assertEquals("invalid feature position: position 23 is out of bound in sequence of isoform NX_Q9UI33", result.getMessage());
     }
 
     @Test
@@ -56,10 +58,22 @@ public class MappedIsoformsFeatureResultTest {
         MappedIsoformsFeatureResult.Query query =
                 new MappedIsoformsFeatureResult.Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, true);
 
-        MappedIsoformsFeatureError result = new MappedIsoformsFeatureError(query);
-        result.setErrorValue(new MappedIsoformsFeatureError.InvalidFeatureAminoAcid("NX_Q9UI33", 1158,
-                AminoAcidCode.asArray(AminoAcidCode.Alanine),
-                AminoAcidCode.asArray(AminoAcidCode.Leucine),
-                "SCN11A-p.Leu1158Pro"));
+        MappedIsoformsFeatureError result = new MappedIsoformsFeatureError.InvalidFeatureAminoAcid(query, 1158,
+                AminoAcidCode.asArray(AminoAcidCode.Alanine), AminoAcidCode.asArray(AminoAcidCode.Leucine));
+
+        Assert.assertFalse(result.isSuccess());
+        Assert.assertEquals("invalid feature specification: found amino-acid Ala at position 1158 of sequence isoform NX_Q9UI33 instead of Leu as incorrectly specified in feature 'SCN11A-p.Leu1158Pro'", result.getMessage());
+    }
+
+    @Test
+    public void testOnIncompatibleProteinAndGeneNameError() {
+
+        MappedIsoformsFeatureResult.Query query =
+                new MappedIsoformsFeatureResult.Query("NX_P01308", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, true);
+
+        MappedIsoformsFeatureError result = new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName(query, "SCN11A", Lists.newArrayList("INS"));
+
+        Assert.assertFalse(result.isSuccess());
+        Assert.assertEquals("gene/protein incompatibility: protein NX_P01308 is not compatible with gene SCN11A (expected genes: [INS])", result.getMessage());
     }
 }
