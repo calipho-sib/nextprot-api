@@ -2,20 +2,21 @@ package com.nextprot.api.isoform.mapper.domain;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
- * A mapping result with specified error
+ * A mapping error
  */
 public abstract class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
 
+    private final ErrorValue error;
+
     public MappedIsoformsFeatureError(Query query) {
         super(query);
-    }
-
-    public MappedIsoformsFeatureError getError() {
-        return this;
+        error = new ErrorValue();
     }
 
     @Override
@@ -23,26 +24,33 @@ public abstract class MappedIsoformsFeatureError extends MappedIsoformsFeatureRe
         return false;
     }
 
-    public abstract String getMessage();
+    public ErrorValue getError() {
 
-    public static class InvalidFeaturePosition extends MappedIsoformsFeatureError {
+        return error;
+    }
 
-        private final int position;
-        private final String message;
+    public static class ErrorValue {
 
-        public InvalidFeaturePosition(Query query, int position) {
+        private final Map<String, Object> causes = new HashMap<>();
+        private String message;
 
-            super(query);
-
-            this.position = position;
-            this.message = "invalid feature position: position "+position+" is out of bound in sequence of isoform "+query.getAccession();
+        public Map<String, Object> getCauses() {
+            return causes;
         }
 
-        public int getPosition() {
-            return position;
+        public Object getCause(String key) {
+            return causes.get(key);
         }
 
-        @Override
+        void addCause(String key, Object value) {
+
+            causes.put(key, value);
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
         public String getMessage() {
             return message;
         }
@@ -50,47 +58,62 @@ public abstract class MappedIsoformsFeatureError extends MappedIsoformsFeatureRe
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof InvalidFeaturePosition)) return false;
-            InvalidFeaturePosition that = (InvalidFeaturePosition) o;
-            return Objects.equals(message, that.message);
+            if (!(o instanceof ErrorValue)) return false;
+            ErrorValue value = (ErrorValue) o;
+            return Objects.equals(causes, value.causes) &&
+                    Objects.equals(message, value.message);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(message);
+            return Objects.hash(causes, message);
+        }
+    }
+
+    public static class InvalidFeaturePosition extends MappedIsoformsFeatureError {
+
+        static final String SEQUENCE_POS = "sequence-position";
+
+        public InvalidFeaturePosition(Query query, int position) {
+
+            super(query);
+
+            getError().setMessage("invalid feature position: position "+position+" is out of bound in sequence of isoform "+query.getAccession());
+            getError().addCause(SEQUENCE_POS, position);
+        }
+
+        public int getIsoformSequencePosition() {
+            return (Integer) getError().getCause(InvalidFeaturePosition.SEQUENCE_POS);
         }
     }
 
     public static class InvalidFeatureAminoAcid extends MappedIsoformsFeatureError {
 
-        private final String featureAminoAcids;
-        private final String sequenceAminoAcids;
-        private final String message;
-        private final int isoformSequencePosition;
+        private static final String SEQUENCE_AAS = "sequence-amino-acids";
+        private static final String FEATURE_AAS = "feature-amino-acids";
 
         public InvalidFeatureAminoAcid(Query query, int isoformSequencePosition,
                                        AminoAcidCode[] sequenceAminoAcidCodes, AminoAcidCode[] featureAminoAcidCodes) {
-
             super(query);
 
-            this.sequenceAminoAcids = AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, sequenceAminoAcidCodes);
-            this.featureAminoAcids = AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, featureAminoAcidCodes);
-            this.isoformSequencePosition = isoformSequencePosition;
+            getError().addCause(SEQUENCE_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, sequenceAminoAcidCodes));
+            getError().addCause(FEATURE_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, featureAminoAcidCodes));
+            getError().addCause(InvalidFeaturePosition.SEQUENCE_POS, isoformSequencePosition);
 
-            this.message = buildErrorMessage(sequenceAminoAcidCodes, featureAminoAcidCodes);
+            getError().setMessage(buildErrorMessage(sequenceAminoAcidCodes));
         }
 
-        private String buildErrorMessage(AminoAcidCode[] sequenceAminoAcidCodes, AminoAcidCode[] featureAminoAcidCodes) {
+        private String buildErrorMessage(AminoAcidCode[] sequenceAminoAcidCodes) {
 
             StringBuilder sb = new StringBuilder();
 
             sb
                     .append("invalid feature specification: ")
-                    .append("found amino-acid").append(sequenceAminoAcidCodes.length > 1 ? "s " : " ").append(this.sequenceAminoAcids)
-                    .append(" at position ").append(isoformSequencePosition)
+                    .append("found amino-acid").append(sequenceAminoAcidCodes.length > 1 ? "s " : " ").append(getSequenceAminoAcids())
+                    .append(" at position ").append(getIsoformSequencePosition())
                     .append(" of sequence isoform ")
                     .append(getQuery().getAccession())
-                    .append(" instead of ").append(this.featureAminoAcids)
+                    .append(" instead of ").append(getFeatureAminoAcids())
                     .append(" as incorrectly specified in feature '")
                     .append(getQuery().getFeature()).append("'");
 
@@ -98,105 +121,49 @@ public abstract class MappedIsoformsFeatureError extends MappedIsoformsFeatureRe
         }
 
         public String getFeatureAminoAcids() {
-            return featureAminoAcids;
+            return (String) getError().getCause(FEATURE_AAS);
         }
 
         public String getSequenceAminoAcids() {
-            return sequenceAminoAcids;
+            return (String) getError().getCause(SEQUENCE_AAS);
         }
 
         public int getIsoformSequencePosition() {
-            return isoformSequencePosition;
-        }
-
-        @Override
-        public String getMessage() {
-            return message;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof InvalidFeatureAminoAcid)) return false;
-            InvalidFeatureAminoAcid that = (InvalidFeatureAminoAcid) o;
-            return Objects.equals(message, that.message);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(message);
+            return (Integer) getError().getCause(InvalidFeaturePosition.SEQUENCE_POS);
         }
     }
 
     public static class InvalidFeatureFormat extends MappedIsoformsFeatureError {
 
-        private final String message;
-
         public InvalidFeatureFormat(Query query) {
 
             super(query);
 
-            this.message = "invalid feature format: "+query.getFeature();
-        }
-
-        @Override
-        public String getMessage() {
-            return message;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof InvalidFeatureFormat)) return false;
-            InvalidFeatureFormat that = (InvalidFeatureFormat) o;
-            return Objects.equals(message, that.message);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(message);
+            getError().setMessage("invalid feature format: "+query.getFeature());
         }
     }
 
     public static class IncompatibleGeneAndProteinName extends MappedIsoformsFeatureError {
 
-        private final String geneName;
-        private final List<String> expectedGeneNames;
-        private final String message;
+        private static final String GENE_NAME = "gene-name";
+        private static final String EXPECTED_GENE_NAMES = "expected-gene-names";
 
         public IncompatibleGeneAndProteinName(Query query, String geneName, List<String> expectedGeneNames) {
 
             super(query);
 
-            this.geneName = geneName;
-            this.expectedGeneNames = expectedGeneNames;
-            this.message = "gene/protein incompatibility: protein "+query.getAccession()+" is not compatible with gene "+geneName +" (expected genes: "+ expectedGeneNames+")";
+            getError().addCause(GENE_NAME, geneName);
+            getError().addCause(EXPECTED_GENE_NAMES, expectedGeneNames);
+            getError().setMessage("gene/protein incompatibility: protein "+query.getAccession()+" is not compatible with gene "+geneName +" (expected genes: "+ expectedGeneNames+")");
         }
 
         public String getGeneName() {
-            return geneName;
+            return (String) getError().getCause(GENE_NAME);
         }
 
         public List<String> getExpectedGeneNames() {
-            return expectedGeneNames;
-        }
-
-        @Override
-        public String getMessage() {
-            return message;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof IncompatibleGeneAndProteinName)) return false;
-            IncompatibleGeneAndProteinName that = (IncompatibleGeneAndProteinName) o;
-            return Objects.equals(message, that.message);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(message);
+            //noinspection unchecked
+            return (List<String>) getError().getCause(EXPECTED_GENE_NAMES);
         }
     }
 }
