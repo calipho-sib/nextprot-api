@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.text.ParseException;
 import java.util.List;
 import java.util.function.Function;
 
@@ -48,7 +49,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         MappedIsoformsFeatureResult.Query query = Mockito.mock(MappedIsoformsFeatureResult.Query.class);
         when(query.getAccession()).thenReturn("NX_P01308");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName(query, "SCN11A", Lists.newArrayList("INS")));
+        assertIsoformFeatureNotValid((MappedIsoformsFeatureError) result, new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName(query, "SCN11A", Lists.newArrayList("INS")));
     }
 
     @Test
@@ -59,7 +60,11 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         MappedIsoformsFeatureResult.Query query = Mockito.mock(MappedIsoformsFeatureResult.Query.class);
         when(query.getFeature()).thenReturn("SCN11A-z.Leu1158Pro");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidFeatureFormat(query));
+        Assert.assertFalse(result.isSuccess());
+        Assert.assertEquals("invalid feature format: SCN11A-z.Leu1158Pro", ((MappedIsoformsFeatureError)result).getError().getMessage());
+        Assert.assertEquals(2, ((MappedIsoformsFeatureError)result).getError().getCauses().size());
+        Assert.assertEquals("z.Leu1158Pro: not a valid protein sequence variant", ((MappedIsoformsFeatureError.InvalidFeatureFormat)result).getError().getCause(MappedIsoformsFeatureError.InvalidFeatureFormat.PARSE_ERROR_MESSAGE));
+        Assert.assertEquals(0, ((MappedIsoformsFeatureError.InvalidFeatureFormat)result).getError().getCause(MappedIsoformsFeatureError.InvalidFeatureFormat.PARSE_ERROR_OFFSET));
     }
 
     @Test
@@ -70,7 +75,11 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         MappedIsoformsFeatureResult.Query query = Mockito.mock(MappedIsoformsFeatureResult.Query.class);
         when(query.getFeature()).thenReturn("SCN11A-p.Let1158Pro");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidFeatureFormat(query));
+        Assert.assertFalse(result.isSuccess());
+        Assert.assertEquals("invalid feature format: SCN11A-p.Let1158Pro", ((MappedIsoformsFeatureError)result).getError().getMessage());
+        Assert.assertEquals(2, ((MappedIsoformsFeatureError)result).getError().getCauses().size());
+        Assert.assertEquals("Let: invalid AminoAcidCode", ((MappedIsoformsFeatureError.InvalidFeatureFormat)result).getError().getCause(MappedIsoformsFeatureError.InvalidFeatureFormat.PARSE_ERROR_MESSAGE));
+        Assert.assertEquals(2, ((MappedIsoformsFeatureError.InvalidFeatureFormat)result).getError().getCause(MappedIsoformsFeatureError.InvalidFeatureFormat.PARSE_ERROR_OFFSET));
     }
 
     @Test
@@ -82,7 +91,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         when(query.getAccession()).thenReturn("NX_Q9UI33");
         when(query.getFeature()).thenReturn("SCN11A-p.Met1158Pro");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidFeatureAminoAcid(query, 1158,
+        assertIsoformFeatureNotValid((MappedIsoformsFeatureError) result, new MappedIsoformsFeatureError.InvalidFeatureAminoAcid(query, 1158,
                 AminoAcidCode.asArray(AminoAcidCode.Leucine), AminoAcidCode.asArray(AminoAcidCode.Methionine)));
     }
 
@@ -94,7 +103,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         MappedIsoformsFeatureResult.Query query = Mockito.mock(MappedIsoformsFeatureResult.Query.class);
         when(query.getAccession()).thenReturn("NX_Q9UI33");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidFeaturePosition(query, 1158999));
+        assertIsoformFeatureNotValid((MappedIsoformsFeatureError) result, new MappedIsoformsFeatureError.InvalidFeaturePosition(query, 1158999));
     }
 
     @Test
@@ -166,10 +175,16 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Assert.assertEquals(expectedLastPos, successResult.getMappedIsoformFeatureResult(isoformName).getLastIsoSeqPos());
     }
 
-    private static void assertIsoformFeatureNotValid(MappedIsoformsFeatureResult result, MappedIsoformsFeatureError expected) {
+    private static void assertIsoformFeatureNotValid(MappedIsoformsFeatureError result, MappedIsoformsFeatureError expected) {
 
         Assert.assertFalse(result.isSuccess());
-        Assert.assertTrue(result instanceof MappedIsoformsFeatureError);
-        Assert.assertEquals(expected, result);
+        Assert.assertEquals(expected.getError(), result.getError());
+    }
+
+    private static ParseException mockParseException(String mess) {
+
+        ParseException exception = Mockito.mock(ParseException.class);
+        when(exception.getMessage()).thenReturn(mess);
+        return exception;
     }
 }

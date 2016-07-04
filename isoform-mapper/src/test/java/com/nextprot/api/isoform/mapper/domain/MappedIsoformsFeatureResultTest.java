@@ -49,7 +49,7 @@ public class MappedIsoformsFeatureResultTest {
 
         MappedIsoformsFeatureError result = new MappedIsoformsFeatureError.InvalidFeaturePosition(query, 23);
         Assert.assertFalse(result.isSuccess());
-        Assert.assertEquals("invalid feature position: position 23 is out of bound in sequence of isoform NX_Q9UI33", result.getMessage());
+        Assert.assertEquals("invalid feature position: position 23 is out of bound in sequence of isoform NX_Q9UI33", result.getError().getMessage());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class MappedIsoformsFeatureResultTest {
                 AminoAcidCode.asArray(AminoAcidCode.Alanine), AminoAcidCode.asArray(AminoAcidCode.Leucine));
 
         Assert.assertFalse(result.isSuccess());
-        Assert.assertEquals("invalid feature specification: found amino-acid Ala at position 1158 of sequence isoform NX_Q9UI33 instead of Leu as incorrectly specified in feature 'SCN11A-p.Leu1158Pro'", result.getMessage());
+        Assert.assertEquals("invalid feature specification: found amino-acid Ala at position 1158 of sequence isoform NX_Q9UI33 instead of Leu as incorrectly specified in feature 'SCN11A-p.Leu1158Pro'", result.getError().getMessage());
     }
 
     @Test
@@ -74,6 +74,6 @@ public class MappedIsoformsFeatureResultTest {
         MappedIsoformsFeatureError result = new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName(query, "SCN11A", Lists.newArrayList("INS"));
 
         Assert.assertFalse(result.isSuccess());
-        Assert.assertEquals("gene/protein incompatibility: protein NX_P01308 is not compatible with gene SCN11A (expected genes: [INS])", result.getMessage());
+        Assert.assertEquals("gene/protein incompatibility: protein NX_P01308 is not compatible with gene SCN11A (expected genes: [INS])", result.getError().getMessage());
     }
 }
