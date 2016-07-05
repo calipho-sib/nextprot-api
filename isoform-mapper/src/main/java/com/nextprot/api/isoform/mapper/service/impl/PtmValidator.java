@@ -10,7 +10,7 @@ import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
  *
  * Created by fnikitin on 05/07/16.
  */
-public class PtmValidator implements FeatureValidator {
+class PtmValidator implements FeatureValidator {
 
     @Override
     public MappedIsoformsFeatureResult validate(FeatureQuery query, EntryIsoform entryIsoform) {

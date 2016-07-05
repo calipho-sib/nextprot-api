@@ -46,7 +46,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         AnnotationCategory annotationCategory = AnnotationCategory.getDecamelizedAnnotationTypeName(featureType);
 
-        Optional<FeatureValidator> validator = FeatureValidator.createValidator(annotationCategory);
+        Optional<FeatureValidator> validator = ValidatorFactory.creates(annotationCategory);
 
         if (validator.isPresent())
             return validator.get().validate(query, EntryIsoform.parseAccession(query.getAccession(), entryBuilderService));

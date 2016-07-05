@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  *
  * Created by fnikitin on 05/07/16.
  */
-public class VariantValidator implements FeatureValidator {
+class VariantValidator implements FeatureValidator {
 
     @Override
     public MappedIsoformsFeatureResult validate(FeatureQuery query, EntryIsoform entryIsoform) {
