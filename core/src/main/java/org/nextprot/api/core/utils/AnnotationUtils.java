@@ -1,5 +1,13 @@
 package org.nextprot.api.core.utils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.BioObject;
@@ -9,14 +17,34 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-
-import java.util.*;
+import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 
 
 public class AnnotationUtils {
 
 	private static final AnnotationPropertyComparator ANNOTATION_PROPERTY_COMPARATOR = new AnnotationPropertyComparator();
 
+
+	/**
+	 * This method filters annotations by gold only.
+	 * WARNIIIIIIIIIIIIIIIIIIIIINGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+	 * Careful this method modifies the annotations object!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	 */
+	public static List<IsoformAnnotation> filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(List<IsoformAnnotation > annotations, boolean goldOnly) {
+		if(goldOnly){
+			List<IsoformAnnotation> goldOnlyAnnotations = new ArrayList<IsoformAnnotation>();
+			for(IsoformAnnotation a : annotations){
+				List<AnnotationEvidence> goldOnlyEvidences = a.getEvidences().stream().filter(e -> ((e.getQualityQualifier() == null) || e.getQualityQualifier().toLowerCase().equals("gold"))).collect(Collectors.toList());
+				if(!goldOnlyEvidences.isEmpty()){
+					a.setEvidences(goldOnlyEvidences); ////////////// CAREFUL ANNOTATIONS ARE MODIFIED!!!!!!!!!!!!Should use immutable objects
+					goldOnlyAnnotations.add(a);
+				}
+			}
+			return goldOnlyAnnotations;
+		}else return annotations;
+	}
+	
+	
     /**
 	 * Filter annotation by its category
 	 */

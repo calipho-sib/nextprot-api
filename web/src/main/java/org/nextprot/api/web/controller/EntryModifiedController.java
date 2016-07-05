@@ -5,6 +5,7 @@ import org.jsondoc.core.annotation.ApiQueryParam;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.utils.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
@@ -23,12 +24,14 @@ public class EntryModifiedController {
 	@Autowired	private RawStatementService rawStatementService;
 	
 	@RequestMapping("/entry/{entryname}/modified-entry-annotation")
-	public String getSubPart(@PathVariable("entryname") String entryName, @ApiQueryParam(name = "pub", required = false) Boolean pub, @ApiQueryParam(name = "xref", required = false) Boolean xref, @ApiQueryParam(name = "xp", required = false) Boolean xp,  Model model) {
+	public String getSubPart(@PathVariable("entryname") String entryName, 
+							 @ApiQueryParam(name = "goldOnly", required = false) Boolean goldOnly, 
+							 @ApiQueryParam(name = "pub", required = false) Boolean pub, @ApiQueryParam(name = "xref", required = false) Boolean xref, @ApiQueryParam(name = "xp", required = false) Boolean xp,  Model model) {
 		
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withTargetIsoforms());
 
-		entry.addIsoformAnnotations(rawStatementService.getNormalAnnotations(entryName));
-		entry.addIsoformAnnotations(rawStatementService.getModifiedIsoformAnnotationsByIsoform(entryName));
+		entry.addIsoformAnnotations(AnnotationUtils.filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(rawStatementService.getNormalAnnotations(entryName), goldOnly));
+		entry.addIsoformAnnotations(AnnotationUtils.filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(rawStatementService.getModifiedIsoformAnnotationsByIsoform(entryName), goldOnly));
 		
 		model.addAttribute("entry", entry);
 
