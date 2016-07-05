@@ -10,8 +10,8 @@ public class InvalidFeaturePositionErrorTest {
     @Test
     public void testOnInvalidPositionError() {
 
-        Query query =
-                new Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
+        FeatureQueryImpl query =
+                new FeatureQueryImpl("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
 
         MappedIsoformsFeatureFailure result = new InvalidFeaturePositionFailure(query, 23);
         Assert.assertFalse(result.isSuccess());

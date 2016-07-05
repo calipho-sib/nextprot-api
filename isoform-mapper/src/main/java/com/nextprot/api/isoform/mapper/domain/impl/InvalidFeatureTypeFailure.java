@@ -6,7 +6,7 @@ public class InvalidFeatureTypeFailure extends MappedIsoformsFeatureFailure {
 
     static final String CATEGORY = "featureType";
 
-    public InvalidFeatureTypeFailure(Query query) {
+    public InvalidFeatureTypeFailure(FeatureQueryImpl query) {
 
         super(query);
 

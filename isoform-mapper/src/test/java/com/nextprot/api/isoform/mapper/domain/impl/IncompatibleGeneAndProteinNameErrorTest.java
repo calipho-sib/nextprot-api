@@ -11,8 +11,8 @@ public class IncompatibleGeneAndProteinNameErrorTest {
     @Test
     public void testOnIncompatibleProteinAndGeneNameError() {
 
-        Query query =
-                new Query("NX_P01308", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
+        FeatureQueryImpl query =
+                new FeatureQueryImpl("NX_P01308", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
 
         MappedIsoformsFeatureFailure result = new IncompatibleGeneAndProteinNameFailure(query, "SCN11A", Lists.newArrayList("INS"));
 

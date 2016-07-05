@@ -6,7 +6,7 @@ public class UnknownFeatureTypeFailure extends MappedIsoformsFeatureFailure {
 
     static final String CATEGORY = "featureType";
 
-    public UnknownFeatureTypeFailure(Query query) {
+    public UnknownFeatureTypeFailure(FeatureQueryImpl query) {
 
         super(query);
 

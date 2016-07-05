@@ -46,7 +46,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_P01308");
 
-        Query query = Mockito.mock(Query.class);
+        FeatureQueryImpl query = Mockito.mock(FeatureQueryImpl.class);
         when(query.getAccession()).thenReturn("NX_P01308");
 
         assertIsoformFeatureNotValid((MappedIsoformsFeatureFailure) result, new IncompatibleGeneAndProteinNameFailure(query, "SCN11A", Lists.newArrayList("INS")));
@@ -57,7 +57,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-z.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
-        Query query = Mockito.mock(Query.class);
+        FeatureQueryImpl query = Mockito.mock(FeatureQueryImpl.class);
         when(query.getFeature()).thenReturn("SCN11A-z.Leu1158Pro");
 
         Assert.assertFalse(result.isSuccess());
@@ -72,7 +72,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Let1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
-        Query query = Mockito.mock(Query.class);
+        FeatureQueryImpl query = Mockito.mock(FeatureQueryImpl.class);
         when(query.getFeature()).thenReturn("SCN11A-p.Let1158Pro");
 
         Assert.assertFalse(result.isSuccess());
@@ -87,7 +87,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Met1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
-        Query query = Mockito.mock(Query.class);
+        FeatureQueryImpl query = Mockito.mock(FeatureQueryImpl.class);
         when(query.getAccession()).thenReturn("NX_Q9UI33");
         when(query.getFeature()).thenReturn("SCN11A-p.Met1158Pro");
 
@@ -100,7 +100,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Leu1158999Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
-        Query query = Mockito.mock(Query.class);
+        FeatureQueryImpl query = Mockito.mock(FeatureQueryImpl.class);
         when(query.getAccession()).thenReturn("NX_Q9UI33");
 
         assertIsoformFeatureNotValid((MappedIsoformsFeatureFailure) result, new InvalidFeaturePositionFailure(query, 1158999));

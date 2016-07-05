@@ -3,7 +3,7 @@ package com.nextprot.api.isoform.mapper.service.impl;
 import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
 import com.nextprot.api.isoform.mapper.domain.impl.InvalidFeatureTypeFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.MappedIsoformsFeatureSuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.Query;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryImpl;
 import com.nextprot.api.isoform.mapper.domain.impl.UnknownFeatureTypeFailure;
 import com.nextprot.api.isoform.mapper.service.FeatureValidator;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
@@ -39,7 +39,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     @Override
     public MappedIsoformsFeatureResult validateFeature(String featureName, String featureType, String nextprotAccession) {
 
-        Query query = new Query(nextprotAccession, featureName, featureType, false);
+        FeatureQueryImpl query = new FeatureQueryImpl(nextprotAccession, featureName, featureType, false);
 
         if (!AnnotationCategory.hasAnnotationByApiName(featureType))
             return new UnknownFeatureTypeFailure(query);
