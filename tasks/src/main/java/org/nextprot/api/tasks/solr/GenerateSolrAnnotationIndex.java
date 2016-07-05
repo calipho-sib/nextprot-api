@@ -45,19 +45,14 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		logger.info("getting all entries from API");
 		long start = System.currentTimeMillis();
 		allentryids = MasterEntryService.findUniqueNames();
-		System.err.println("indexing " + allentryids.size() +  " entries...");
 		logger.info("indexing " + allentryids.size() +  " entries...");
 
 		for (String id : allentryids) {
-			//Entry currentry = entryBuilderService.buildWithEverything("NX_O60729");
 			ecnt++;
-			//if(ecnt < 5000) continue;
-			//System.err.println("id: " + id);
 			Entry currentry = entryBuilderService.buildWithEverything(id);
 			indexer.add(currentry);
-			if((ecnt % 100) == 0) System.err.println(ecnt + "...");
-			//if(ecnt >= 1 ) break;
-			//if(ecnt >= 5000) break;
+			if((ecnt % 1000) == 0)
+				logger.info(ecnt +  " entries indexed...");
 		}
 		
 		indexer.addRemaing();
@@ -65,9 +60,6 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		logger.info("comitting");
 		indexer.commit();
 		logger.info(ecnt + " entries indexed..." + (System.currentTimeMillis()-start)/1000 + " seconds...");
-		System.err.println(ecnt + " entries indexed." );
-		System.err.println("All this in " + (System.currentTimeMillis()-start)/1000 + " seconds...");
-		
 	}
 	
 }
