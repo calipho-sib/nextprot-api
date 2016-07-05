@@ -302,6 +302,10 @@ public enum AnnotationCategory implements Serializable {
 		}
 	}
 
+	public static boolean hasAnnotationByApiName(String typeName) {
+		String typeNameInLowerCase = typeName.toLowerCase();
+		return MAP_DECAMELIZED_TYPES.containsKey(typeNameInLowerCase);
+	}
 
 	/**
 	 * Tells if this annotation category is used in the field cv_annotation_type_id of an annotations record
