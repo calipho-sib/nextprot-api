@@ -7,6 +7,7 @@ import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
 import com.nextprot.api.isoform.mapper.utils.GeneVariantSplitter;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -44,9 +46,9 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         switch (annotationCategory) {
             case VARIANT:
-                return validateVariant(query, entryIsoform);
+                return new VariantValidator().validate(query, entryIsoform);
             case PTM_INFO:
-                return validatePtm(query, entryIsoform);
+                throw new IllegalStateException("ptm validation not yet implemented");
             default:
                 throw new IllegalArgumentException("cannot handle annotation category " + annotationCategory);
         }
@@ -57,7 +59,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         MappedIsoformsFeatureResult results = validateFeature(featureName, annotationCategory, nextprotAccession);
 
-        // TODO: DRY: already parsed in other "validateFeature" handler
+        // TODO: Should not break DRY principle: already parsed in other "validateFeature" handler
         EntryIsoform entryIsoform = EntryIsoform.parseAccession(results.getQuery().getAccession(), entryBuilderService);
 
         try {
@@ -67,102 +69,6 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         }
 
         return results;
-    }
-
-    private MappedIsoformsFeatureResult validateVariant(MappedIsoformsFeatureResult.Query query, EntryIsoform entryIsoform) {
-
-        try {
-            GeneVariantSplitter splitter = new GeneVariantSplitter(query.getFeature());
-            if (!splitter.isValidGeneName(entryIsoform.getEntry())) {
-                MappedIsoformsFeatureError error = new MappedIsoformsFeatureError(query);
-
-                List<String> expectedGeneNames = entryIsoform.getEntry().getOverview().getGeneNames().stream()
-                        .map(EntityName::getName).collect(Collectors.toList());
-
-                error.setErrorValue(new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName(splitter.getGeneName(),
-                        entryIsoform.getEntry().getUniqueName(), expectedGeneNames));
-                return error;
-            }
-
-            ProteinSequenceVariation entryIsoformVariation = splitter.getVariant();
-
-            return checkFeatureOnIsoform(query, entryIsoform.getIsoform(), entryIsoformVariation);
-        } catch (ParseException e) {
-
-            MappedIsoformsFeatureError error = new MappedIsoformsFeatureError(query);
-            error.setErrorValue(new MappedIsoformsFeatureError.InvalidVariantName(query.getFeature()));
-            return error;
-        }
-    }
-
-    /**
-     * Check that variating amino-acid(s) on isoform sequence exists and return status report
-     *
-     * @param isoform the isoform to check variating amino-acids
-     * @param variation the variation on which expected changing amino-acids is found
-     */
-    private MappedIsoformsFeatureResult checkFeatureOnIsoform(MappedIsoformsFeatureResult.Query query, Isoform isoform,
-                                                              ProteinSequenceVariation variation) {
-        MappedIsoformsFeatureResult result;
-
-        MappedIsoformsFeatureError.ErrorValue firstPosErrorValue = checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
-                String.valueOf(variation.getFirstChangingAminoAcid().get1LetterCode()));
-
-        MappedIsoformsFeatureError.ErrorValue lastPosErrorValue = checkIsoformPos(isoform, variation.getLastChangingAminoAcidPos(),
-                String.valueOf(variation.getLastChangingAminoAcid().get1LetterCode()));
-
-        if (firstPosErrorValue == null && lastPosErrorValue == null) {
-
-            result = new MappedIsoformsFeatureSuccess(query);
-            ((MappedIsoformsFeatureSuccess)result).addMappedIsoformFeature(isoform.getUniqueName(),
-                    variation.getFirstChangingAminoAcidPos(), variation.getLastChangingAminoAcidPos());
-        } else {
-
-            result = new MappedIsoformsFeatureError(query);
-
-            if (firstPosErrorValue != null) {
-
-                ((MappedIsoformsFeatureError)result).setErrorValue(firstPosErrorValue);
-            }
-            else {
-
-                ((MappedIsoformsFeatureError)result).setErrorValue(lastPosErrorValue);
-            }
-        }
-        return result;
-    }
-
-    /**
-     *
-     * @param isoform
-     * @param position
-     * @param aas
-     * @return an ErrorValue if invalid else null
-     */
-    private MappedIsoformsFeatureError.ErrorValue checkIsoformPos(Isoform isoform, int position, String aas) {
-
-        boolean insertionMode = (aas == null || aas.isEmpty());
-        boolean valid = IsoformSequencePositionMapper.checkSequencePosition(isoform, position, insertionMode);
-
-        if (!valid) {
-            return new MappedIsoformsFeatureError.InvalidPosition(isoform.getUniqueName(), position);
-        }
-
-        if (!insertionMode) {
-            valid = IsoformSequencePositionMapper.checkAminoAcidsFromPosition(isoform, position, aas);
-
-            if (!valid) {
-                return new MappedIsoformsFeatureError.UnexpectedAminoAcids(
-                        isoform.getSequence().substring(position - 1, position + aas.length() - 1), aas);
-            }
-        }
-
-        return null;
-    }
-
-    private MappedIsoformsFeatureResult validatePtm(MappedIsoformsFeatureResult.Query query, EntryIsoform entryIsoform) {
-
-        throw new IllegalStateException("ptm validation not yet implemented");
     }
 
     private void propagate(MappedIsoformsFeatureResult results, EntryIsoform entryIsoform) throws ParseException {
@@ -194,6 +100,105 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
             } else {
                 successResults.addNonMappedIsoformFeature(otherIsoform.getUniqueName());
             }
+        }
+    }
+
+    public interface FeatureValidator {
+
+        MappedIsoformsFeatureResult validate(MappedIsoformsFeatureResult.Query query, EntryIsoform entryIsoform);
+    }
+
+    private static class VariantValidator implements FeatureValidator {
+
+        @Override
+        public MappedIsoformsFeatureResult validate(MappedIsoformsFeatureResult.Query query, EntryIsoform entryIsoform) {
+
+            try {
+                GeneVariantSplitter splitter = new GeneVariantSplitter(query.getFeature());
+                if (!splitter.isValidGeneName(entryIsoform.getEntry())) {
+
+                    List<String> expectedGeneNames = entryIsoform.getEntry().getOverview().getGeneNames().stream()
+                            .map(EntityName::getName).collect(Collectors.toList());
+
+                    return new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName(query, splitter.getGeneName(), expectedGeneNames);
+                }
+
+                ProteinSequenceVariation entryIsoformVariation = splitter.getVariant();
+
+                return checkFeatureOnIsoform(query, entryIsoform.getIsoform(), entryIsoformVariation);
+            } catch (ParseException e) {
+
+                String geneName = GeneVariantSplitter.getGeneName(query.getFeature());
+
+                ParseException pe = new ParseException(e.getMessage(), e.getErrorOffset() + geneName.length() + 1);
+                return new MappedIsoformsFeatureError.InvalidFeatureFormat(query, pe);
+            }
+        }
+
+        /**
+         * Check that variating amino-acid(s) on isoform sequence exists and return result
+         *
+         * @param isoform the isoform to check variating amino-acids
+         * @param variation the variation on which expected changing amino-acids is found
+         */
+        private MappedIsoformsFeatureResult checkFeatureOnIsoform(MappedIsoformsFeatureResult.Query query, Isoform isoform,
+                                                                  ProteinSequenceVariation variation) {
+
+            Optional<MappedIsoformsFeatureError> firstPosError = checkInvalidIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
+                    String.valueOf(variation.getFirstChangingAminoAcid().get1LetterCode()), query);
+
+            Optional<MappedIsoformsFeatureError> lastPosError = checkInvalidIsoformPos(isoform, variation.getLastChangingAminoAcidPos(),
+                    String.valueOf(variation.getLastChangingAminoAcid().get1LetterCode()), query);
+
+            // invalid
+            if (firstPosError.isPresent()) {
+                return firstPosError.get();
+            }
+            else if (lastPosError.isPresent()) {
+                return lastPosError.get();
+            }
+
+            // valid feature
+            else {
+                MappedIsoformsFeatureResult result = new MappedIsoformsFeatureSuccess(query);
+
+                ((MappedIsoformsFeatureSuccess)result).addMappedIsoformFeature(isoform.getUniqueName(),
+                        variation.getFirstChangingAminoAcidPos(), variation.getLastChangingAminoAcidPos());
+
+                return result;
+            }
+        }
+
+        /**
+         *
+         * @param isoform
+         * @param position
+         * @param aas
+         * @return an ErrorValue if invalid else null
+         */
+        private Optional<MappedIsoformsFeatureError> checkInvalidIsoformPos(Isoform isoform, int position, String aas, MappedIsoformsFeatureResult.Query query) {
+
+            boolean insertionMode = (aas == null || aas.isEmpty());
+            boolean valid = IsoformSequencePositionMapper.checkSequencePosition(isoform, position, insertionMode);
+
+            if (!valid) {
+                return Optional.of(new MappedIsoformsFeatureError.InvalidFeaturePosition(query, position));
+            }
+
+            if (!insertionMode) {
+                valid = IsoformSequencePositionMapper.checkAminoAcidsFromPosition(isoform, position, aas);
+
+                if (!valid) {
+
+                    String aasOnSequence = isoform.getSequence().substring(position - 1, position + aas.length() - 1);
+
+                    return Optional.of(new MappedIsoformsFeatureError.InvalidFeatureAminoAcid(query, position,
+                            AminoAcidCode.valueOfOneLetterCodeSequence(aasOnSequence),
+                            AminoAcidCode.valueOfOneLetterCodeSequence(aas)));
+                }
+            }
+
+            return Optional.empty();
         }
     }
 }

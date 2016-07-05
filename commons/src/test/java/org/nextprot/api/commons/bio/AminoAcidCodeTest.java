@@ -82,4 +82,10 @@ public class AminoAcidCodeTest {
 
         Assert.assertEquals("Ter", AminoAcidCode.valueOfOneLetterCode('*').get3LetterCode());
     }
+
+    @Test
+    public void testAsArray() throws Exception {
+
+        Assert.assertArrayEquals(new AminoAcidCode[] {AminoAcidCode.AsparticAcid}, AminoAcidCode.asArray(AminoAcidCode.AsparticAcid));
+    }
 }

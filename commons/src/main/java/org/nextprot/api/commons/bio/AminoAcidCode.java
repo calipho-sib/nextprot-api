@@ -1,5 +1,7 @@
 package org.nextprot.api.commons.bio;
 
+import com.google.common.base.Preconditions;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -185,6 +187,13 @@ public enum AminoAcidCode {
         }
 
         return codes;
+    }
+
+    public static AminoAcidCode[] asArray(AminoAcidCode aminoAcidCode) {
+
+        Preconditions.checkNotNull(aminoAcidCode);
+
+        return new AminoAcidCode[] { aminoAcidCode };
     }
 
     public static String formatAminoAcidCode(AACodeType type, AminoAcidCode... aas) {
