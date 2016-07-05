@@ -20,7 +20,7 @@ public class EntryIsoformTest {
 
         Entry entry = mockEntry("NX_Q9UI33", "NX_Q9UI33-1", "NX_Q9UI33-2", "NX_Q9UI33-3");
 
-        EntryIsoform entryIsoform = EntryIsoform.parseAccession("NX_Q9UI33", mockEntryBuilderService(entry));
+        EntryIsoform entryIsoform = EntryIsoform.parseEntryIsoform("NX_Q9UI33", mockEntryBuilderService(entry));
         Assert.assertEquals(entry, entryIsoform.getEntry());
         Assert.assertEquals("NX_Q9UI33-1", entryIsoform.getIsoform().getUniqueName());
         Assert.assertTrue(entryIsoform.isCanonicalIsoform());
@@ -31,7 +31,7 @@ public class EntryIsoformTest {
 
         Entry entry = mockEntry("NX_Q9UI33", "NX_Q9UI33-1", "NX_Q9UI33-2", "NX_Q9UI33-3");
 
-        EntryIsoform entryIsoform = EntryIsoform.parseAccession("NX_Q9UI33-2", mockEntryBuilderService(entry));
+        EntryIsoform entryIsoform = EntryIsoform.parseEntryIsoform("NX_Q9UI33-2", mockEntryBuilderService(entry));
         Assert.assertEquals(entry, entryIsoform.getEntry());
         Assert.assertEquals("NX_Q9UI33-2", entryIsoform.getIsoform().getUniqueName());
         Assert.assertTrue(!entryIsoform.isCanonicalIsoform());
@@ -42,7 +42,7 @@ public class EntryIsoformTest {
 
         Entry entry = mockEntry("NX_Q9UI33", "NX_Q9UI33-1", "NX_Q9UI33-2", "NX_Q9UI33-3");
 
-        EntryIsoform entryIsoform = EntryIsoform.parseAccession("NX_Q9UI33", mockEntryBuilderService(entry));
+        EntryIsoform entryIsoform = EntryIsoform.parseEntryIsoform("NX_Q9UI33", mockEntryBuilderService(entry));
         List<Isoform> others = entryIsoform.getOtherIsoforms();
         Assert.assertEquals(2, others.size());
         for (Isoform isoform : others) {

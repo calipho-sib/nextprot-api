@@ -24,7 +24,7 @@ public class EntryIsoform {
         this.isoform = isoform;
     }
 
-    public static EntryIsoform parseAccession(String accession, EntryBuilderService entryBuilderService) {
+    public static EntryIsoform parseEntryIsoform(String accession, EntryBuilderService entryBuilderService) {
 
         Preconditions.checkNotNull(accession, "missing accession name (either entry name or isoform name)");
         Preconditions.checkNotNull(entryBuilderService);

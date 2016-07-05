@@ -49,7 +49,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         Optional<FeatureValidator> validator = ValidatorFactory.creates(annotationCategory);
 
         if (validator.isPresent())
-            return validator.get().validate(query, EntryIsoform.parseAccession(query.getAccession(), entryBuilderService));
+            return validator.get().validate(query, EntryIsoform.parseEntryIsoform(query.getAccession(), entryBuilderService));
 
         return new InvalidFeatureTypeFailure(query);
     }
@@ -60,7 +60,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         MappedIsoformsFeatureResult results = validateFeature(featureName, featureType, nextprotAccession);
 
         // TODO: Should not break DRY principle: already parsed in other "validateFeature" handler
-        EntryIsoform entryIsoform = EntryIsoform.parseAccession(results.getQuery().getAccession(), entryBuilderService);
+        EntryIsoform entryIsoform = EntryIsoform.parseEntryIsoform(results.getQuery().getAccession(), entryBuilderService);
 
         try {
             propagate(results, entryIsoform);
