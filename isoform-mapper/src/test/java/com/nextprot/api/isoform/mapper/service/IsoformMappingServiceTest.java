@@ -34,7 +34,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     private IsoformMappingService service;
 
     @Test
-    public void shouldValidateFeatureOnCanonicalIsoform() throws Exception {
+    public void shouldValidateVariantOnCanonicalIsoform() throws Exception {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
 
@@ -83,7 +83,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     }
 
     @Test
-    public void shouldNotValidateIncorrectAAFeatureIsoform() throws Exception {
+    public void shouldNotValidateIncorrectAAVariantIsoform() throws Exception {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Met1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
 
@@ -96,7 +96,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     }
 
     @Test
-    public void shouldNotValidateInvalidPositionFeatureIsoform() throws Exception {
+    public void shouldNotValidateInvalidPositionVariantIsoform() throws Exception {
 
         MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Leu1158999Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
 
@@ -124,6 +124,14 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_Q9UI33-1", 1710, 1710, true);
         assertIsoformFeatureValid(result, "NX_Q9UI33-2", null, null, false);
         assertIsoformFeatureValid(result, "NX_Q9UI33-3", 1672, 1672, true);
+    }
+
+    @Test
+    public void shouldValidatePtmOnCanonicalIsoform() throws Exception {
+
+        MappedIsoformsFeatureResult result = service.validateFeature("BRCA1-P-Ser988", AnnotationCategory.PTM_INFO, "NX_P38398");
+
+        assertIsoformFeatureValid(result, "NX_P38398-1", 988, 988, true);
     }
 
     //@Test
