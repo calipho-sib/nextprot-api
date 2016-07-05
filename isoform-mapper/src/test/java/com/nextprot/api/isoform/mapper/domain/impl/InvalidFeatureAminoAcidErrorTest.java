@@ -1,20 +1,20 @@
 package com.nextprot.api.isoform.mapper.domain.impl;
 
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureError;
+import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureFailure;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
-public class InvalidFeatureAminoAcidTest {
+public class InvalidFeatureAminoAcidErrorTest {
 
     @Test
     public void testOnUnexpectedAminoAcidsError() {
 
         Query query =
-                new Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, true);
+                new Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
 
-        MappedIsoformsFeatureError result = new InvalidFeatureAminoAcid(query, 1158,
+        MappedIsoformsFeatureFailure result = new InvalidFeatureAminoAcidFailure(query, 1158,
                 AminoAcidCode.asArray(AminoAcidCode.Alanine), AminoAcidCode.asArray(AminoAcidCode.Leucine));
 
         Assert.assertFalse(result.isSuccess());

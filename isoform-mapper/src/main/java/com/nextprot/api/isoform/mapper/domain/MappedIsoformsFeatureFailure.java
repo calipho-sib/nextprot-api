@@ -7,11 +7,11 @@ import java.util.Objects;
 /**
  * Feature errors
  */
-public abstract class MappedIsoformsFeatureError extends MappedIsoformsFeatureResult {
+public abstract class MappedIsoformsFeatureFailure extends MappedIsoformsFeatureResult {
 
     private final ErrorValue error;
 
-    public MappedIsoformsFeatureError(FeatureQuery query) {
+    public MappedIsoformsFeatureFailure(FeatureQuery query) {
         super(query);
         error = new ErrorValue();
     }

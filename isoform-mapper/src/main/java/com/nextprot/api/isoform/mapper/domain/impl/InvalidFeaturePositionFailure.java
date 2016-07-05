@@ -1,13 +1,13 @@
 package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureError;
+import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureFailure;
 
-public class InvalidFeaturePosition extends MappedIsoformsFeatureError {
+public class InvalidFeaturePositionFailure extends MappedIsoformsFeatureFailure {
 
     static final String SEQUENCE_POS = "sequencePosition";
 
-    public InvalidFeaturePosition(FeatureQuery query, int position) {
+    public InvalidFeaturePositionFailure(FeatureQuery query, int position) {
 
         super(query);
 

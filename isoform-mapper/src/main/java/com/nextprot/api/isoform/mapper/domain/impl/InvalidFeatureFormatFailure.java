@@ -1,16 +1,16 @@
 package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureError;
+import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureFailure;
 
 import java.text.ParseException;
 
-public class InvalidFeatureFormat extends MappedIsoformsFeatureError {
+public class InvalidFeatureFormatFailure extends MappedIsoformsFeatureFailure {
 
     public static final String PARSE_ERROR_MESSAGE = "parseErrorMessage";
     public static final String PARSE_ERROR_OFFSET = "parseErrorOffset";
 
-    public InvalidFeatureFormat(FeatureQuery query, ParseException parseException) {
+    public InvalidFeatureFormatFailure(FeatureQuery query, ParseException parseException) {
 
         super(query);
 
