@@ -167,4 +167,17 @@ public abstract class MappedIsoformsFeatureError extends MappedIsoformsFeatureRe
             getError().setMessage("gene/protein incompatibility: protein "+query.getAccession()+" is not compatible with gene "+geneName +" (expected genes: "+ expectedGeneNames+")");
         }
     }
+
+    public static class InvalidFeatureType extends MappedIsoformsFeatureError {
+
+        static final String CATEGORY = "featureType";
+
+        public InvalidFeatureType(Query query) {
+
+            super(query);
+
+            getError().setMessage("invalid feature type: cannot validate feature type "+query.getFeatureType());
+            getError().addCause(CATEGORY, query.getFeatureType());
+        }
+    }
 }
