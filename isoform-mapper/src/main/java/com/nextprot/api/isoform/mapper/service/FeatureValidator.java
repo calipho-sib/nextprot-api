@@ -6,19 +6,24 @@ import com.nextprot.api.isoform.mapper.service.impl.VariantValidator;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
+import java.util.Optional;
+
 public interface FeatureValidator {
 
     MappedIsoformsFeatureResult validate(MappedIsoformsFeatureResult.Query query, EntryIsoform entryIsoform);
 
-    static FeatureValidator createValidator(AnnotationCategory annotationCategory) {
+    static Optional<FeatureValidator> createValidator(AnnotationCategory annotationCategory) {
+
+        FeatureValidator validator = null;
 
         switch (annotationCategory) {
             case VARIANT:
-                return new VariantValidator();
+                validator = new VariantValidator();
+                break;
             case GENERIC_PTM:
-                return new PtmValidator();
-            default:
-                throw new IllegalArgumentException("cannot validate feature category " + annotationCategory);
+                validator = new PtmValidator();
         }
+
+        return Optional.ofNullable(validator);
     }
 }
