@@ -1,8 +1,9 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureError;
 import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureSuccess;
+import com.nextprot.api.isoform.mapper.domain.impl.MappedIsoformsFeatureSuccess;
+import com.nextprot.api.isoform.mapper.domain.impl.InvalidFeatureType;
+import com.nextprot.api.isoform.mapper.domain.impl.Query;
 import com.nextprot.api.isoform.mapper.service.FeatureValidator;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
@@ -37,7 +38,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     @Override
     public MappedIsoformsFeatureResult validateFeature(String featureName, AnnotationCategory annotationCategory, String nextprotAccession) {
 
-        MappedIsoformsFeatureResult.Query query = new MappedIsoformsFeatureResult.Query(
+        Query query = new Query(
                 nextprotAccession, featureName, annotationCategory, false);
 
         Optional<FeatureValidator> validator = FeatureValidator.createValidator(annotationCategory);
@@ -45,7 +46,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         if (validator.isPresent())
             return validator.get().validate(query, EntryIsoform.parseAccession(query.getAccession(), entryBuilderService));
 
-        return new MappedIsoformsFeatureError.InvalidFeatureType(query);
+        return new InvalidFeatureType(query);
     }
 
     @Override

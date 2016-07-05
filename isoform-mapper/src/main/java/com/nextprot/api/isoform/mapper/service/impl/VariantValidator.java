@@ -1,8 +1,9 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
+import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
+import com.nextprot.api.isoform.mapper.domain.impl.*;
 import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureError;
 import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureSuccess;
 import com.nextprot.api.isoform.mapper.service.FeatureValidator;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
 import com.nextprot.api.isoform.mapper.utils.GeneVariantSplitter;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 public class VariantValidator implements FeatureValidator {
 
     @Override
-    public MappedIsoformsFeatureResult validate(MappedIsoformsFeatureResult.Query query, EntryIsoform entryIsoform) {
+    public MappedIsoformsFeatureResult validate(FeatureQuery query, EntryIsoform entryIsoform) {
 
         try {
             GeneVariantSplitter splitter = new GeneVariantSplitter(query.getFeature());
@@ -34,7 +35,7 @@ public class VariantValidator implements FeatureValidator {
                 List<String> expectedGeneNames = entryIsoform.getEntry().getOverview().getGeneNames().stream()
                         .map(EntityName::getName).collect(Collectors.toList());
 
-                return new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName(query, splitter.getGeneName(), expectedGeneNames);
+                return new IncompatibleGeneAndProteinName(query, splitter.getGeneName(), expectedGeneNames);
             }
 
             ProteinSequenceVariation entryIsoformVariation = splitter.getVariant();
@@ -45,7 +46,7 @@ public class VariantValidator implements FeatureValidator {
             String geneName = GeneVariantSplitter.getGeneName(query.getFeature());
 
             ParseException pe = new ParseException(e.getMessage(), e.getErrorOffset() + geneName.length() + 1);
-            return new MappedIsoformsFeatureError.InvalidFeatureFormat(query, pe);
+            return new InvalidFeatureFormat(query, pe);
         }
     }
 
@@ -55,7 +56,7 @@ public class VariantValidator implements FeatureValidator {
      * @param isoform   the isoform to check variating amino-acids
      * @param variation the variation on which expected changing amino-acids is found
      */
-    private MappedIsoformsFeatureResult checkFeatureOnIsoform(MappedIsoformsFeatureResult.Query query, Isoform isoform,
+    private MappedIsoformsFeatureResult checkFeatureOnIsoform(FeatureQuery query, Isoform isoform,
                                                               ProteinSequenceVariation variation) {
 
         Optional<MappedIsoformsFeatureError> firstPosError = checkInvalidIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
@@ -88,13 +89,13 @@ public class VariantValidator implements FeatureValidator {
      * @param aas
      * @return an ErrorValue if invalid else null
      */
-    private Optional<MappedIsoformsFeatureError> checkInvalidIsoformPos(Isoform isoform, int position, String aas, MappedIsoformsFeatureResult.Query query) {
+    private Optional<MappedIsoformsFeatureError> checkInvalidIsoformPos(Isoform isoform, int position, String aas, FeatureQuery query) {
 
         boolean insertionMode = (aas == null || aas.isEmpty());
         boolean valid = IsoformSequencePositionMapper.checkSequencePosition(isoform, position, insertionMode);
 
         if (!valid) {
-            return Optional.of(new MappedIsoformsFeatureError.InvalidFeaturePosition(query, position));
+            return Optional.of(new InvalidFeaturePosition(query, position));
         }
 
         if (!insertionMode) {
@@ -104,7 +105,7 @@ public class VariantValidator implements FeatureValidator {
 
                 String aasOnSequence = isoform.getSequence().substring(position - 1, position + aas.length() - 1);
 
-                return Optional.of(new MappedIsoformsFeatureError.InvalidFeatureAminoAcid(query, position,
+                return Optional.of(new InvalidFeatureAminoAcid(query, position,
                         AminoAcidCode.valueOfOneLetterCodeSequence(aasOnSequence),
                         AminoAcidCode.valueOfOneLetterCodeSequence(aas)));
             }

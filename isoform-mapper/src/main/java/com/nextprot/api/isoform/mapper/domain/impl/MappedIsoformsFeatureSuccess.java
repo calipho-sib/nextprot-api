@@ -1,4 +1,7 @@
-package com.nextprot.api.isoform.mapper.domain;
+package com.nextprot.api.isoform.mapper.domain.impl;
+
+import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
+import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -8,7 +11,7 @@ public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
 
     private final Map<String, MappedIsoformFeatureResult> data;
 
-    public MappedIsoformsFeatureSuccess(Query query) {
+    public MappedIsoformsFeatureSuccess(FeatureQuery query) {
         super(query);
 
         data = new TreeMap<>();
