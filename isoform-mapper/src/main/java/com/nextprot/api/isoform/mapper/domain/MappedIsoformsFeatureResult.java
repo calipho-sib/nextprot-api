@@ -41,7 +41,6 @@ public abstract class MappedIsoformsFeatureResult implements Serializable {
 			Preconditions.checkNotNull(feature);
 			Preconditions.checkArgument(!feature.isEmpty(), "feature should be defined");
 			Preconditions.checkNotNull(featureType);
-			Preconditions.checkArgument(featureType == AnnotationCategory.VARIANT);
 
 			this.accession = accession;
 			this.feature = feature;
