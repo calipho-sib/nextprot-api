@@ -10,7 +10,7 @@ public class QueryTest {
     public void testStandardQuery() {
 
         Query query =
-                new Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, true);
+                new Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
 
         Assert.assertEquals("NX_Q9UI33", query.getAccession());
         Assert.assertEquals("SCN11A-p.Leu1158Pro", query.getFeature());

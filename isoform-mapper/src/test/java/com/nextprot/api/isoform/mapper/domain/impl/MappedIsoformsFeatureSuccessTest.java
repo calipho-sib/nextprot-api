@@ -9,7 +9,7 @@ public class MappedIsoformsFeatureSuccessTest {
     public void testOnSuccess() {
 
         Query query =
-                new Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, true);
+                new Query("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
 
         MappedIsoformsFeatureSuccess result = new MappedIsoformsFeatureSuccess(query);
         result.addMappedIsoformFeature("NX_Q9UI33-1", 1158, 1158);

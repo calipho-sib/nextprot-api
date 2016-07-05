@@ -2,7 +2,6 @@ package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import org.nextprot.api.commons.constants.AnnotationCategory;
 
 import java.io.Serializable;
 
@@ -13,7 +12,7 @@ public class Query implements FeatureQuery, Serializable {
     private final String featureType;
     private final boolean propagable;
 
-    public Query(String accession, String feature, AnnotationCategory featureType, boolean propagable) {
+    public Query(String accession, String feature, String featureType, boolean propagable) {
 
         Preconditions.checkNotNull(accession);
         Preconditions.checkArgument(accession.startsWith("NX_"), "should be a nextprot accession number");
@@ -23,7 +22,7 @@ public class Query implements FeatureQuery, Serializable {
 
         this.accession = accession;
         this.feature = feature;
-        this.featureType = featureType.getApiTypeName();
+        this.featureType = featureType;
         this.propagable = propagable;
     }
 

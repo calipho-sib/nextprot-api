@@ -1,9 +1,10 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
 import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
+import com.nextprot.api.isoform.mapper.domain.impl.InvalidFeatureTypeFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.MappedIsoformsFeatureSuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.InvalidFeatureType;
 import com.nextprot.api.isoform.mapper.domain.impl.Query;
+import com.nextprot.api.isoform.mapper.domain.impl.UnknownFeatureTypeFailure;
 import com.nextprot.api.isoform.mapper.service.FeatureValidator;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
@@ -36,23 +37,27 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     public MasterIsoformMappingService masterIsoformMappingService;
 
     @Override
-    public MappedIsoformsFeatureResult validateFeature(String featureName, AnnotationCategory annotationCategory, String nextprotAccession) {
+    public MappedIsoformsFeatureResult validateFeature(String featureName, String featureType, String nextprotAccession) {
 
-        Query query = new Query(
-                nextprotAccession, featureName, annotationCategory, false);
+        Query query = new Query(nextprotAccession, featureName, featureType, false);
+
+        if (!AnnotationCategory.hasAnnotationByApiName(featureType))
+            return new UnknownFeatureTypeFailure(query);
+
+        AnnotationCategory annotationCategory = AnnotationCategory.getDecamelizedAnnotationTypeName(featureType);
 
         Optional<FeatureValidator> validator = FeatureValidator.createValidator(annotationCategory);
 
         if (validator.isPresent())
             return validator.get().validate(query, EntryIsoform.parseAccession(query.getAccession(), entryBuilderService));
 
-        return new InvalidFeatureType(query);
+        return new InvalidFeatureTypeFailure(query);
     }
 
     @Override
-    public MappedIsoformsFeatureResult propagateFeature(String featureName, AnnotationCategory annotationCategory, String nextprotAccession) {
+    public MappedIsoformsFeatureResult propagateFeature(String featureName, String featureType, String nextprotAccession) {
 
-        MappedIsoformsFeatureResult results = validateFeature(featureName, annotationCategory, nextprotAccession);
+        MappedIsoformsFeatureResult results = validateFeature(featureName, featureType, nextprotAccession);
 
         // TODO: Should not break DRY principle: already parsed in other "validateFeature" handler
         EntryIsoform entryIsoform = EntryIsoform.parseAccession(results.getQuery().getAccession(), entryBuilderService);
