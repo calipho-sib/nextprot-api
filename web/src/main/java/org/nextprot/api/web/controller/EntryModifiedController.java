@@ -30,7 +30,7 @@ public class EntryModifiedController {
 		
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withTargetIsoforms());
 
-		entry.addIsoformAnnotations(AnnotationUtils.filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(rawStatementService.getNormalAnnotations(entryName), goldOnly));
+		entry.addIsoformAnnotations(rawStatementService.getNormalAnnotations(entryName));
 		entry.addIsoformAnnotations(AnnotationUtils.filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(rawStatementService.getModifiedIsoformAnnotationsByIsoform(entryName), goldOnly));
 		
 		model.addAttribute("entry", entry);

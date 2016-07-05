@@ -35,7 +35,8 @@ public class AnnotationUtils {
 		if((goldOnly == null) ? false : Boolean.valueOf(goldOnly)){
 			List<IsoformAnnotation> goldOnlyAnnotations = new ArrayList<IsoformAnnotation>();
 			for(IsoformAnnotation a : annotations){
-				List<AnnotationEvidence> goldOnlyEvidences = a.getEvidences().stream().filter(e -> ((e.getQualityQualifier() == null) || e.getQualityQualifier().toLowerCase().equals("gold"))).collect(Collectors.toList());
+				List<AnnotationEvidence> goldOnlyEvidences = a.getEvidences().stream().filter(e -> ((e.getQualityQualifier() == null) || e.getQualityQualifier().toLowerCase().equals("gold"))).
+						collect(Collectors.toList());
 				if(!goldOnlyEvidences.isEmpty()){
 					a.setEvidences(goldOnlyEvidences); ////////////// CAREFUL ANNOTATIONS ARE MODIFIED!!!!!!!!!!!!Should use immutable objects
 					goldOnlyAnnotations.add(a);
