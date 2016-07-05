@@ -30,8 +30,9 @@ public class AnnotationUtils {
 	 * WARNIIIIIIIIIIIIIIIIIIIIINGGGGGGGGGGGGGGGGGGGGGGGGGGGG
 	 * Careful this method modifies the annotations object!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	 */
-	public static List<IsoformAnnotation> filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(List<IsoformAnnotation > annotations, boolean goldOnly) {
-		if(goldOnly){
+	public static List<IsoformAnnotation> filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(List<IsoformAnnotation > annotations, Boolean goldOnly) {
+
+		if((goldOnly == null) ? false : Boolean.valueOf(goldOnly)){
 			List<IsoformAnnotation> goldOnlyAnnotations = new ArrayList<IsoformAnnotation>();
 			for(IsoformAnnotation a : annotations){
 				List<AnnotationEvidence> goldOnlyEvidences = a.getEvidences().stream().filter(e -> ((e.getQualityQualifier() == null) || e.getQualityQualifier().toLowerCase().equals("gold"))).collect(Collectors.toList());
