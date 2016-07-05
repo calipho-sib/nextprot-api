@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A nextprot isoform
+ * A nextprot Entry isoform
  */
 public class EntryIsoform {
 
@@ -19,6 +19,9 @@ public class EntryIsoform {
     private final Isoform isoform;
 
     private EntryIsoform(Entry entry, Isoform isoform) {
+
+        Preconditions.checkNotNull(entry);
+        Preconditions.checkNotNull(isoform);
 
         this.entry = entry;
         this.isoform = isoform;
@@ -29,30 +32,29 @@ public class EntryIsoform {
         Preconditions.checkNotNull(accession, "missing accession name (either entry name or isoform name)");
         Preconditions.checkNotNull(entryBuilderService);
 
-        String entryAccession;
-        String isoformAccession = null;
+        String entryName = parseEntryName(accession);
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
+
+        if (!isIsoformAccession(accession)) {
+            return new EntryIsoform(entry, getCanonicalIsoform(entry));
+        }
+        return new EntryIsoform(entry, getIsoformByName(entry, accession));
+    }
+
+    private static String parseEntryName(String accession) {
 
         // isoform accession
-        if (accession.contains("-")) {
+        if (isIsoformAccession(accession)) {
             int dashPosition = accession.indexOf("-");
-            entryAccession = accession.substring(0, dashPosition);
-            isoformAccession = accession;
+            return accession.substring(0, dashPosition);
         }
         // entry accession
-        else {
-            entryAccession = accession;
-        }
+        return accession;
+    }
 
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withEverything());
-        Isoform isoform;
+    private static boolean isIsoformAccession(String accession) {
 
-        if (isoformAccession == null) {
-            isoform = getCanonicalIsoform(entry);
-        } else {
-            isoform = getIsoformByName(entry, isoformAccession);
-        }
-
-        return new EntryIsoform(entry, isoform);
+        return accession.contains("-");
     }
 
     public Entry getEntry() {

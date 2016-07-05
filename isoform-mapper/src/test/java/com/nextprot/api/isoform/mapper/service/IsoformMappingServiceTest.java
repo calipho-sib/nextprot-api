@@ -126,7 +126,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_Q9UI33-3", 1672, 1672, true);
     }
 
-    @Test
+    //@Test
     public void shouldValidatePtmOnCanonicalIsoform() throws Exception {
 
         MappedIsoformsFeatureResult result = service.validateFeature("BRCA1-P-Ser988", AnnotationCategory.PTM_INFO.getApiTypeName(), "NX_P38398");

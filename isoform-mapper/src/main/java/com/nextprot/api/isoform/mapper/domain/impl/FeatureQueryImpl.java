@@ -10,9 +10,9 @@ public class FeatureQueryImpl implements FeatureQuery, Serializable {
     private final String accession;
     private final String feature;
     private final String featureType;
-    private final boolean propagable;
+    private final boolean propagableFeature;
 
-    public FeatureQueryImpl(String accession, String feature, String featureType, boolean propagable) {
+    public FeatureQueryImpl(String accession, String feature, String featureType, boolean propagableFeature) {
 
         Preconditions.checkNotNull(accession);
         Preconditions.checkArgument(accession.startsWith("NX_"), "should be a nextprot accession number");
@@ -23,7 +23,7 @@ public class FeatureQueryImpl implements FeatureQuery, Serializable {
         this.accession = accession;
         this.feature = feature;
         this.featureType = featureType;
-        this.propagable = propagable;
+        this.propagableFeature = propagableFeature;
     }
 
     @Override
@@ -43,6 +43,6 @@ public class FeatureQueryImpl implements FeatureQuery, Serializable {
 
     @Override
     public boolean isFeaturePropagable() {
-        return propagable;
+        return propagableFeature;
     }
 }
