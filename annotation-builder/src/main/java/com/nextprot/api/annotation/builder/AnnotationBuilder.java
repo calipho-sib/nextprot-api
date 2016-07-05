@@ -43,7 +43,11 @@ public class AnnotationBuilder {
 			AnnotationEvidenceProperty sourceAccession =addPropertyIfPresent(s.getValue(StatementField.ANNOT_SOURCE_ACCESSION), "source-accession");
 
 			//Set properties which are not null
-			evidence.setProperties(Arrays.asList(evidenceProperty, expContextProperty, sourceAccession).stream().filter(p -> p != null).collect(Collectors.toList()));
+			evidence.setProperties(
+					Arrays.asList(evidenceProperty, expContextProperty, sourceAccession)
+						.stream().filter(p -> p != null)
+						.collect(Collectors.toList())
+						);
 
 			return evidence;
 		}).collect(Collectors.toList());
@@ -68,9 +72,9 @@ public class AnnotationBuilder {
 			IsoformAnnotation isoAnnotation = new IsoformAnnotation();
 			List<RawStatement> statements = flatStatementsByAnnotationHash.get(annotationHash);
 
-			RawStatement statement = statements.get(0);
-
 			isoAnnotation.setEvidences(buildAnnotationEvidences(statements));
+
+			RawStatement statement = statements.get(0);
 
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getValue(StatementField.ANNOTATION_CATEGORY)));
 			isoAnnotation.setCategory(category);
