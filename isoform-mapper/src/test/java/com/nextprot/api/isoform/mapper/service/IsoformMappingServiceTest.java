@@ -1,6 +1,7 @@
 package com.nextprot.api.isoform.mapper.service;
 
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import com.nextprot.api.isoform.mapper.domain.*;
 import com.nextprot.api.isoform.mapper.domain.impl.*;
 import org.junit.Assert;
@@ -133,14 +134,46 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     }
 
     //@Test
-    public void validateVDList() throws Exception {
+    public void validateVDList1() throws Exception {
 
-        FileInputStream is = new FileInputStream(IsoformMappingServiceTest.class.getResource("vd.tsv").getFile());
+        String filename = IsoformMappingServiceTest.class.getResource("vd.tsv").getFile();
+
+        validateList(filename, true, service);
+    }
+
+    //@Test
+    public void validateVDList2() throws Exception {
+
+        String filename = IsoformMappingServiceTest.class.getResource("variant-multiple-mutants.csv").getFile();
+
+        validateList(filename, false, service);
+    }
+
+    private static void assertIsoformFeatureValid(FeatureQueryResult result, String isoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
+
+        Assert.assertTrue(result.isSuccess());
+        Assert.assertTrue(result instanceof FeatureQuerySuccess);
+        FeatureQuerySuccess successResult = (FeatureQuerySuccess) result;
+
+        Assert.assertEquals(mapped, successResult.getIsoformFeatureResult(isoformName).isMapped());
+        Assert.assertEquals(expectedFirstPos, successResult.getIsoformFeatureResult(isoformName).getFirstIsoSeqPos());
+        Assert.assertEquals(expectedLastPos, successResult.getIsoformFeatureResult(isoformName).getLastIsoSeqPos());
+    }
+
+    private static void assertIsoformFeatureNotValid(FeatureQueryFailure result, FeatureQueryException expectedException) {
+
+        Assert.assertFalse(result.isSuccess());
+        Assert.assertEquals(expectedException.getError(), result.getError());
+    }
+
+    private static void validateList(String filename, boolean tabSep, IsoformMappingService service) throws Exception {
+
+        FileInputStream is = new FileInputStream(filename);
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        PrintWriter pw = new PrintWriter("vd-results.tsv");
+        PrintWriter pw = new PrintWriter(Files.getNameWithoutExtension(filename)+"-results.tsv");
 
         List<String[]> twoFirstFieldsList = br.lines()
-                .map(to2FirstFields)
+                .map((tabSep) ? to2FirstTabFields : to2FirstCommaFields)
                 .collect(toList());
 
         pw.append("accession\tvariant\tvalid\terror message\n");
@@ -165,25 +198,13 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         pw.close();
     }
 
-    private static Function<String, String[]> to2FirstFields = (line) -> {
+    private static Function<String, String[]> to2FirstTabFields = (line) -> {
         String[] p = line.split("\t");
         return new String[] { p[0], p[1] };
     };
 
-    private static void assertIsoformFeatureValid(FeatureQueryResult result, String isoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
-
-        Assert.assertTrue(result.isSuccess());
-        Assert.assertTrue(result instanceof FeatureQuerySuccess);
-        FeatureQuerySuccess successResult = (FeatureQuerySuccess) result;
-
-        Assert.assertEquals(mapped, successResult.getIsoformFeatureResult(isoformName).isMapped());
-        Assert.assertEquals(expectedFirstPos, successResult.getIsoformFeatureResult(isoformName).getFirstIsoSeqPos());
-        Assert.assertEquals(expectedLastPos, successResult.getIsoformFeatureResult(isoformName).getLastIsoSeqPos());
-    }
-
-    private static void assertIsoformFeatureNotValid(FeatureQueryFailure result, FeatureQueryException expectedException) {
-
-        Assert.assertFalse(result.isSuccess());
-        Assert.assertEquals(expectedException.getError(), result.getError());
-    }
+    private static Function<String, String[]> to2FirstCommaFields = (line) -> {
+        String[] p = line.split(",");
+        return new String[] { p[0], p[1] };
+    };
 }

@@ -1,5 +1,7 @@
 package com.nextprot.api.isoform.mapper.domain;
 
+import org.nextprot.api.core.domain.Isoform;
+
 import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
@@ -17,22 +19,24 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         data = new TreeMap<>();
     }
 
-    public void addMappedFeature(String isoformName, int firstPosition, int lastPosition) {
+    public void addMappedFeature(Isoform isoform, int firstPosition, int lastPosition) {
 
         IsoformFeatureResult result = new IsoformFeatureResult();
-        result.setIsoformName(isoformName);
+        result.setIsoformName(isoform.getUniqueName());
         result.setFirstIsoSeqPos(firstPosition);
         result.setLastIsoSeqPos(lastPosition);
+        result.setCanonical(isoform.isCanonicalIsoform());
 
-        data.put(isoformName, result);
+        data.put(result.getIsoformName(), result);
     }
 
-    public void addUnmappedFeature(String isoformName) {
+    public void addUnmappedFeature(Isoform isoform) {
 
         IsoformFeatureResult result = new IsoformFeatureResult();
-        result.setIsoformName(isoformName);
+        result.setIsoformName(isoform.getUniqueName());
+        result.setCanonical(isoform.isCanonicalIsoform());
 
-        data.put(isoformName, result);
+        data.put(result.getIsoformName(), result);
     }
 
     /**
@@ -62,6 +66,7 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         private String isoformName;
         private Integer firstIsoSeqPos;
         private Integer lastIsoSeqPos;
+        private boolean isCanonical;
 
         public String getIsoformName() {
             return isoformName;
@@ -85,6 +90,14 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
 
         public void setLastIsoSeqPos(Integer lastIsoSeqPos) {
             this.lastIsoSeqPos = lastIsoSeqPos;
+        }
+
+        public boolean isCanonical() {
+            return isCanonical;
+        }
+
+        public void setCanonical(boolean canonical) {
+            isCanonical = canonical;
         }
 
         public boolean isMapped() {

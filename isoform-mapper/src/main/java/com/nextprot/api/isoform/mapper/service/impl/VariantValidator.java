@@ -65,7 +65,7 @@ class VariantValidator implements FeatureValidator {
 
         FeatureQueryResult result = new FeatureQuerySuccess(query);
 
-        ((FeatureQuerySuccess) result).addMappedFeature(isoform.getUniqueName(),
+        ((FeatureQuerySuccess) result).addMappedFeature(isoform,
                 variant.getFirstChangingAminoAcidPos(), variant.getLastChangingAminoAcidPos());
 
         return result;

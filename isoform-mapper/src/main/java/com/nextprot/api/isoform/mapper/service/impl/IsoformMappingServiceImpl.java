@@ -92,9 +92,9 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
                 Integer lastPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
                         isoformFeature.getLastChangingAminoAcidPos(), otherIsoform);
 
-                successResults.addMappedFeature(otherIsoform.getUniqueName(), firstPos, lastPos);
+                successResults.addMappedFeature(otherIsoform, firstPos, lastPos);
             } else {
-                successResults.addUnmappedFeature(otherIsoform.getUniqueName());
+                successResults.addUnmappedFeature(otherIsoform);
             }
         }
     }
