@@ -1,21 +1,21 @@
 package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureFailure;
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 
-public class InvalidFeatureAminoAcidFailure extends MappedIsoformsFeatureFailure {
+public class InvalidFeatureQueryAminoAcidException extends FeatureQueryException {
 
     private static final String SEQUENCE_AAS = "sequenceAminoAcids";
     private static final String FEATURE_AAS = "featureAminoAcids";
 
-    public InvalidFeatureAminoAcidFailure(FeatureQuery query, int isoformSequencePosition,
-                                          AminoAcidCode[] sequenceAminoAcidCodes, AminoAcidCode[] featureAminoAcidCodes) {
+    public InvalidFeatureQueryAminoAcidException(FeatureQuery query, int isoformSequencePosition,
+                                                 AminoAcidCode[] sequenceAminoAcidCodes, AminoAcidCode[] featureAminoAcidCodes) {
         super(query);
 
         getError().addCause(SEQUENCE_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, sequenceAminoAcidCodes));
         getError().addCause(FEATURE_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, featureAminoAcidCodes));
-        getError().addCause(InvalidFeaturePositionFailure.SEQUENCE_POS, isoformSequencePosition);
+        getError().addCause(InvalidFeatureQueryPositionException.SEQUENCE_POS, isoformSequencePosition);
 
         getError().setMessage(buildErrorMessage(sequenceAminoAcidCodes));
     }
@@ -46,6 +46,6 @@ public class InvalidFeatureAminoAcidFailure extends MappedIsoformsFeatureFailure
     }
 
     private int getIsoformSequencePosition() {
-        return (Integer) getError().getCause(InvalidFeaturePositionFailure.SEQUENCE_POS);
+        return (Integer) getError().getCause(InvalidFeatureQueryPositionException.SEQUENCE_POS);
     }
 }

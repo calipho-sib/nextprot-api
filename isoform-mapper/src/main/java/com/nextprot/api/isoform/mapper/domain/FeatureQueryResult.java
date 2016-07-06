@@ -7,13 +7,13 @@ import java.io.Serializable;
 /**
  * Data transfer object that store mapping features results on isoforms
  */
-public abstract class MappedIsoformsFeatureResult implements Serializable {
+public abstract class FeatureQueryResult implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private final FeatureQuery query;
 
-	public MappedIsoformsFeatureResult(FeatureQuery query) {
+	public FeatureQueryResult(FeatureQuery query) {
 
 		Preconditions.checkNotNull(query);
 

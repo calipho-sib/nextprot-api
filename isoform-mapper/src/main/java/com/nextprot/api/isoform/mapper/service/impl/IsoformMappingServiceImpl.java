@@ -1,10 +1,7 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
-import com.nextprot.api.isoform.mapper.domain.impl.InvalidFeatureTypeFailure;
-import com.nextprot.api.isoform.mapper.domain.impl.MappedIsoformsFeatureSuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryImpl;
-import com.nextprot.api.isoform.mapper.domain.impl.UnknownFeatureTypeFailure;
+import com.nextprot.api.isoform.mapper.domain.*;
+import com.nextprot.api.isoform.mapper.domain.impl.*;
 import com.nextprot.api.isoform.mapper.service.FeatureValidator;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
@@ -37,27 +34,29 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     public MasterIsoformMappingService masterIsoformMappingService;
 
     @Override
-    public MappedIsoformsFeatureResult validateFeature(String featureName, String featureType, String nextprotAccession) {
+    public FeatureQueryResult validateFeature(String featureName, String featureType, String nextprotAccession) {
 
-        FeatureQueryImpl query = new FeatureQueryImpl(nextprotAccession, featureName, featureType, false);
+        try {
+            FeatureQuery query = new FeatureQuery(nextprotAccession, featureName, featureType, false);
 
-        if (!AnnotationCategory.hasAnnotationByApiName(featureType))
-            return new UnknownFeatureTypeFailure(query);
+            Optional<FeatureValidator> validator = ValidatorFactory.creates(AnnotationCategory.getDecamelizedAnnotationTypeName(featureType));
 
-        AnnotationCategory annotationCategory = AnnotationCategory.getDecamelizedAnnotationTypeName(featureType);
+            if (validator.isPresent()) {
 
-        Optional<FeatureValidator> validator = ValidatorFactory.creates(annotationCategory);
+                return validator.get().validate(query, EntryIsoform.parseEntryIsoform(query.getAccession(), entryBuilderService));
+            }
 
-        if (validator.isPresent())
-            return validator.get().validate(query, EntryIsoform.parseEntryIsoform(query.getAccession(), entryBuilderService));
+            throw new InvalidFeatureQueryTypeException(query);
+        } catch (FeatureQueryException e) {
 
-        return new InvalidFeatureTypeFailure(query);
+            return new FeatureQueryFailure(e);
+        }
     }
 
     @Override
-    public MappedIsoformsFeatureResult propagateFeature(String featureName, String featureType, String nextprotAccession) {
+    public FeatureQueryResult propagateFeature(String featureName, String featureType, String nextprotAccession) {
 
-        MappedIsoformsFeatureResult results = validateFeature(featureName, featureType, nextprotAccession);
+        FeatureQueryResult results = validateFeature(featureName, featureType, nextprotAccession);
 
         // TODO: Should not break DRY principle: already parsed in other "validateFeature" handler
         EntryIsoform entryIsoform = EntryIsoform.parseEntryIsoform(results.getQuery().getAccession(), entryBuilderService);
@@ -71,11 +70,11 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         return results;
     }
 
-    private void propagate(MappedIsoformsFeatureResult results, EntryIsoform entryIsoform) throws ParseException {
+    private void propagate(FeatureQueryResult results, EntryIsoform entryIsoform) throws ParseException {
 
         if (!results.isSuccess()) { return; }
 
-        MappedIsoformsFeatureSuccess successResults = (MappedIsoformsFeatureSuccess) results;
+        FeatureQuerySuccess successResults = (FeatureQuerySuccess) results;
 
         GeneVariantSplitter splitter = new GeneVariantSplitter(results.getQuery().getFeature());
         ProteinSequenceVariation variant = splitter.getVariant();
@@ -96,9 +95,9 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
                 Integer lastPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
                         variant.getLastChangingAminoAcidPos(), otherIsoform);
 
-                successResults.addMappedIsoformFeature(otherIsoform.getUniqueName(), firstPos, lastPos);
+                successResults.addMappedFeature(otherIsoform.getUniqueName(), firstPos, lastPos);
             } else {
-                successResults.addNonMappedIsoformFeature(otherIsoform.getUniqueName());
+                successResults.addUnmappedFeature(otherIsoform.getUniqueName());
             }
         }
     }

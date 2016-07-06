@@ -4,29 +4,28 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Feature errors
- */
-public abstract class MappedIsoformsFeatureFailure extends MappedIsoformsFeatureResult {
+public abstract class FeatureQueryException extends Exception {
 
-    private final ErrorValue error;
+    private final FeatureQuery query;
+    private final ErrorReason error;
 
-    public MappedIsoformsFeatureFailure(FeatureQuery query) {
-        super(query);
-        error = new ErrorValue();
+    public FeatureQueryException(FeatureQuery query) {
+
+        this.query = query;
+        error = new ErrorReason();
     }
 
-    @Override
-    public boolean isSuccess() {
-        return false;
+    public FeatureQuery getQuery() {
+
+        return query;
     }
 
-    public ErrorValue getError() {
+    public ErrorReason getError() {
 
         return error;
     }
 
-    public static class ErrorValue {
+    public static class ErrorReason {
 
         private final Map<String, Object> causes = new HashMap<>();
         private String message;
@@ -55,8 +54,8 @@ public abstract class MappedIsoformsFeatureFailure extends MappedIsoformsFeature
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (!(o instanceof ErrorValue)) return false;
-            ErrorValue value = (ErrorValue) o;
+            if (!(o instanceof ErrorReason)) return false;
+            ErrorReason value = (ErrorReason) o;
             return Objects.equals(causes, value.causes) &&
                     Objects.equals(message, value.message);
         }
@@ -66,5 +65,4 @@ public abstract class MappedIsoformsFeatureFailure extends MappedIsoformsFeature
             return Objects.hash(causes, message);
         }
     }
-
 }

@@ -1,12 +1,13 @@
 package com.nextprot.api.isoform.mapper.domain.impl;
 
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureFailure;
+import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 
-public class UnknownFeatureTypeFailure extends MappedIsoformsFeatureFailure {
+public class UnknownFeatureQueryTypeException extends FeatureQueryException {
 
     static final String CATEGORY = "featureType";
 
-    public UnknownFeatureTypeFailure(FeatureQueryImpl query) {
+    public UnknownFeatureQueryTypeException(FeatureQuery query) {
 
         super(query);
 

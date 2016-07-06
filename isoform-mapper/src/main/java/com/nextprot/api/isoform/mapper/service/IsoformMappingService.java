@@ -1,6 +1,6 @@
 package com.nextprot.api.isoform.mapper.service;
 
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 
 public interface IsoformMappingService {
 
@@ -13,7 +13,7 @@ public interface IsoformMappingService {
 	 *                            	not contains dash, the implicit isoform is the canonical one [Example: NX_P01308 or NX_P01308-1])
 	 * @return a MappedIsoformsFeatureResult
      */
-	MappedIsoformsFeatureResult validateFeature(String isoformFeature, String featureType, String nextprotAccession);
+	FeatureQueryResult validateFeature(String isoformFeature, String featureType, String nextprotAccession);
 
 	/**
 	 * Compute the projections of isoform feature on other isoforms.
@@ -24,5 +24,5 @@ public interface IsoformMappingService {
 	 *                            	not contains dash, the implicit isoform is the canonical one [Example: NX_P01308 or NX_P01308-1])
      * @return a MappedIsoformsFeatureResult
      */
-	MappedIsoformsFeatureResult propagateFeature(String isoformFeature, String featureType, String nextprotAccession);
+	FeatureQueryResult propagateFeature(String isoformFeature, String featureType, String nextprotAccession);
 }

@@ -1,25 +1,25 @@
-package com.nextprot.api.isoform.mapper.domain.impl;
-
-import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
+package com.nextprot.api.isoform.mapper.domain;
 
 import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
+/**
+ * Contains successful results of a FeatureQuery on an isoform
+ */
+public class FeatureQuerySuccess extends FeatureQueryResult {
 
-    private final Map<String, MappedIsoformFeatureResult> data;
+    private final Map<String, IsoformFeatureResult> data;
 
-    public MappedIsoformsFeatureSuccess(FeatureQuery query) {
+    public FeatureQuerySuccess(FeatureQuery query) {
         super(query);
 
         data = new TreeMap<>();
     }
 
-    public void addMappedIsoformFeature(String isoformName, int firstPosition, int lastPosition) {
+    public void addMappedFeature(String isoformName, int firstPosition, int lastPosition) {
 
-        MappedIsoformFeatureResult result = new MappedIsoformFeatureResult();
+        IsoformFeatureResult result = new IsoformFeatureResult();
         result.setIsoformName(isoformName);
         result.setFirstIsoSeqPos(firstPosition);
         result.setLastIsoSeqPos(lastPosition);
@@ -27,9 +27,9 @@ public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
         data.put(isoformName, result);
     }
 
-    public void addNonMappedIsoformFeature(String isoformName) {
+    public void addUnmappedFeature(String isoformName) {
 
-        MappedIsoformFeatureResult result = new MappedIsoformFeatureResult();
+        IsoformFeatureResult result = new IsoformFeatureResult();
         result.setIsoformName(isoformName);
 
         data.put(isoformName, result);
@@ -41,25 +41,12 @@ public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
      * @param isoformName isoform name
      * @return IsoformFeature or null if isoformName was not found
      */
-    public MappedIsoformFeatureResult getMappedIsoformFeatureResult(String isoformName) {
+    public IsoformFeatureResult getIsoformFeatureResult(String isoformName) {
 
         return data.get(isoformName);
     }
 
-    public boolean hasMappedIsoformFeatureResult(String isoformName) {
-
-        return data.containsKey(isoformName);
-    }
-
-    /**
-     * @return the number of mapped isoform feature result
-     */
-    public int countMappedIsoformFeatureResults() {
-
-        return data.size();
-    }
-
-    public Map<String, MappedIsoformFeatureResult> getData() {
+    public Map<String, IsoformFeatureResult> getData() {
         return data;
     }
 
@@ -68,7 +55,7 @@ public class MappedIsoformsFeatureSuccess extends MappedIsoformsFeatureResult {
         return !data.isEmpty();
     }
 
-    public static class MappedIsoformFeatureResult implements Serializable {
+    public static class IsoformFeatureResult implements Serializable {
 
         private static final long serialVersionUID = 1L;
 
