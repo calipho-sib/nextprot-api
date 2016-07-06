@@ -119,7 +119,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldReturnTerminologies() {
 		for(TerminologyCv t : TerminologyCv.values()){
-			if(!t.equals(TerminologyCv.CellosaurusCv)){
+			if(!t.equals(TerminologyCv.NextprotCellosaurusCv)){
 				this.terminologyService.findTerminology(t);
 			}
 		}
