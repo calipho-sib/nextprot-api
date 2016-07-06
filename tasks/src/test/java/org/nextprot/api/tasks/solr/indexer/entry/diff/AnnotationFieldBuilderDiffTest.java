@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -29,18 +28,14 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	TerminologyService terminologyService;
 
 	@Test
-	//@Ignore
 	public void testAnnotationsAndFunctionalDescriptions() {
 
-		String[] test_list = {"NX_Q8IWA4", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_Q14721","NX_Q7Z6P3",
-				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_Q13286", "NX_Q7Z713", "NX_O15056"};
+		String[] test_list = {"NX_Q8IWA4", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_Q12809","NX_Q7Z6P3",
+				"NX_Q7Z713", "NX_P22102", "NX_Q8IYV9", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
 
-		for(int i=0; i < 12; i++){
+		for(int i=0; i < test_list.length; i++){
 			Entry entry = getEntry(test_list[i]); 
 			//Entry entry = getEntry(i); // 'random' entry
-		    //Entry entry = getEntry("NX_P20592");
-			//Entry entry = getEntry("NX_Q15078");
-			//Entry entry = getEntry("NX_Q13286"); misses plenty
 			System.out.println(entry.getUniqueName());
 			testFunctionalDesc(entry);
 			testAnnotations(entry);

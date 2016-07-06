@@ -57,7 +57,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	public void shouldReturnACellosaurusTerm() {
 		CvTerm term = this.terminologyService.findCvTermByAccession("CVCL_J530");
 		//System.out.println(term.toString());
-		assertEquals("CellosaurusCv", term.getOntology());
+		assertEquals("NextprotCellosaurusCv", term.getOntology());
 		assertEquals(5, term.getXrefs().size());
 		assertEquals(1, term.getFilteredXrefs("Other").size());
 		assertEquals(2, term.getFilteredXrefs("Publication databases").size());

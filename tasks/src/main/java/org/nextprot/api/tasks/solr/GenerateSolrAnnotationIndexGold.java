@@ -8,13 +8,13 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.tasks.solr.indexer.EntrySolrIndexer;
+import org.nextprot.api.tasks.solr.indexer.EntryGoldSolrIndexer;
 
-public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
+public class GenerateSolrAnnotationIndexGold extends GenerateSolrIndex {
 
 	
 	public static void main(String[] args) {
-		GenerateSolrAnnotationIndex i = new GenerateSolrAnnotationIndex();
+		GenerateSolrAnnotationIndexGold i = new GenerateSolrAnnotationIndexGold();
 		i.launch(args);
 	}	    
 
@@ -27,9 +27,9 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		int ecnt = 0;
 		
 		String solrServer = System.getProperty("solr.server");
-		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=\"http://localhost:8983/solr/npentries1\"");
+		NPreconditions.checkNotNull(solrServer, "Please set solr.server variable. For example: java -Dsolr.server=\"http://localhost:8983/solr/npentries1gold\"");
 		logger.info("Solr server: " + solrServer); 
-		EntrySolrIndexer indexer = new EntrySolrIndexer(solrServer);
+		EntryGoldSolrIndexer indexer = new EntryGoldSolrIndexer(solrServer);
 		// Get an access to some needed services
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
 		indexer.setEntryBuilderService(getBean(EntryBuilderService.class));
@@ -45,6 +45,7 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		logger.info("getting all entries from API");
 		long start = System.currentTimeMillis();
 		allentryids = MasterEntryService.findUniqueNames();
+		System.err.println("indexing " + allentryids.size() +  " entries...");
 		logger.info("indexing " + allentryids.size() +  " entries...");
 
 		for (String id : allentryids) {
@@ -52,14 +53,14 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 			Entry currentry = entryBuilderService.buildWithEverything(id);
 			indexer.add(currentry);
 			if((ecnt % 1000) == 0)
-				logger.info(ecnt +  " entries indexed...");
+				logger.info(ecnt +  " entries GOLD-indexed...");
 		}
 		
 		indexer.addRemaing();
 		
 		logger.info("comitting");
 		indexer.commit();
-		logger.info(ecnt + " entries indexed..." + (System.currentTimeMillis()-start)/1000 + " seconds...");
+		logger.info(ecnt + " entries GOLD-indexed..." + (System.currentTimeMillis()-start)/1000 + " seconds...");
 	}
 	
 }

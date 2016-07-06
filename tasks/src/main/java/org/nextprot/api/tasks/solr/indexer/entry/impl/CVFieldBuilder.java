@@ -33,20 +33,27 @@ public class CVFieldBuilder extends FieldBuilder {
 		// CV accessions
 		List<Annotation> annots = entry.getAnnotations();
 		int cvac_cnt = 0;
+		boolean allnegative;
 		for (Annotation currannot : annots) {
 			String category = currannot.getCategory();
-			if(!category.equals("tissue specificity")) {
+			if(!category.equals("tissue specificity")) { // tissue-specific CVs are indexed under 'expression'
 				String cvac = currannot.getCvTermAccessionCode();
 				if (cvac != null) {
 					if(category.startsWith("go ")) {
+						allnegative = true;
 						List<AnnotationEvidence> evlist = currannot.getEvidences();
 						// We don't index negative annotations
-						if(evlist.size() == 1 && evlist.get(0).isNegativeEvidence()) continue;
+						for(AnnotationEvidence ev : evlist)
+							allnegative = allnegative & ev.isNegativeEvidence();
+						if(allnegative == true)
+							continue;
 					}
+					if(!this.isGold() || currannot.getQualityQualifier().equals("GOLD")) {
 					addField(Fields.CV_ACS, cvac);
 					cvac_cnt++;
 					cv_acs.add(cvac); // No duplicates: this is a Set, will be used for synonyms and ancestors
 					addField(Fields.CV_NAMES,  currannot.getCvTermName());
+					}
 				}
 			}
 		}
@@ -59,27 +66,27 @@ public class CVFieldBuilder extends FieldBuilder {
 		}
 		
 		// Final CV acs, ancestors and synonyms
-		System.err.println("cumputing CV ancestors for " +  cv_acs.size() + " terms...");
+		//System.err.println("cumputing CV ancestors for " +  cv_acs.size() + " terms...");
 		Tree<CvTerm> tree = null;
 		//Set<String> ancestors2 = null;
 		Set<String> ancestors2 = new TreeSet<String>();
 		for (String cvac : cv_acs) {
 			CvTerm term = this.terminologyservice.findCvTermByAccession(cvac);
 			String category = term.getOntology();
-			//System.err.println("category: " + category);
 			List<String> ancestors = TerminologyUtils.getAllAncestors(term.getAccession(), terminologyservice);
+			//if(cvac.contains("0008270")) System.err.println(cvac + " " + ancestors.size() + " ancestors");
 			List<Tree<CvTerm>> treeList = this.terminologyservice.findTerminology(TerminologyCv.valueOf(category));
 			if(treeList.isEmpty()) 	ancestors2.clear();
 			ancestors2 = this.terminologyservice.getAncestorSets(treeList, term.getAccession());
 			//Set<String> ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
 			if(ancestors.size() != ancestors2.size()) {
 				// Differences for FA-, KW-, SL-,  DO-, and enzymes...
-				System.err.println(cvac + " old method: " + ancestors.size() + " new method: " + ancestors2.size() + " category" + category);
-				System.err.println(ancestors);
+				//System.err.println(cvac + " old method: " + ancestors.size() + " new method: " + ancestors2.size() + " category" + category);
+				//System.err.println(ancestors);
 			}
 			if(ancestors != null) 
 				//cv_ancestors_acs.addAll(ancestors);
-			  for (String ancestor : ancestors) {
+			  for (String ancestor : ancestors) { //if(cvac.contains("0008270")) System.err.println(cvac + " adding ancestor " + ancestor);
                   cv_ancestors_acs.add(ancestor); 
 			  }
 			List<String> synonyms = term.getSynonyms();
@@ -96,7 +103,7 @@ public class CVFieldBuilder extends FieldBuilder {
 			addField(Fields.CV_ANCESTORS_ACS, ancestorac);
 			addField(Fields.CV_ANCESTORS, this.terminologyservice.findCvTermByAccession(ancestorac).getName());
 		}
-		System.err.println("CV ancestors done.");
+		//System.err.println("CV ancestors done.");
 
 		for (String synonym : cv_synonyms) {
 			addField(Fields.CV_SYNONYMS, synonym);
