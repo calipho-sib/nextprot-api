@@ -6,7 +6,7 @@ import org.nextprot.api.commons.utils.StringUtils;
 public enum TerminologyCv {
 	
 	BgeeDevelopmentalStageCv,
-	CellosaurusCv,
+	NextprotCellosaurusCv,
 	EnzymeClassificationCv,
 	EvidenceCodeOntologyCv,
 	EvocDevelopmentalStageCv,
