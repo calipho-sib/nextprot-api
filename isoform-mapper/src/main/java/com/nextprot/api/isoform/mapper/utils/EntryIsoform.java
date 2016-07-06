@@ -15,14 +15,17 @@ import java.util.stream.Collectors;
  */
 public class EntryIsoform {
 
+    private final String accession;
     private final Entry entry;
     private final Isoform isoform;
 
-    private EntryIsoform(Entry entry, Isoform isoform) {
+    private EntryIsoform(String accession, Entry entry, Isoform isoform) {
 
+        Preconditions.checkNotNull(accession);
         Preconditions.checkNotNull(entry);
         Preconditions.checkNotNull(isoform);
 
+        this.accession = accession;
         this.entry = entry;
         this.isoform = isoform;
     }
@@ -36,9 +39,9 @@ public class EntryIsoform {
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
 
         if (!isIsoformAccession(accession)) {
-            return new EntryIsoform(entry, getCanonicalIsoform(entry));
+            return new EntryIsoform(accession, entry, getCanonicalIsoform(entry));
         }
-        return new EntryIsoform(entry, getIsoformByName(entry, accession));
+        return new EntryIsoform(accession, entry, getIsoformByName(entry, accession));
     }
 
     private static String parseEntryName(String accession) {
@@ -55,6 +58,10 @@ public class EntryIsoform {
     private static boolean isIsoformAccession(String accession) {
 
         return accession.contains("-");
+    }
+
+    public String getAccession() {
+        return accession;
     }
 
     public Entry getEntry() {

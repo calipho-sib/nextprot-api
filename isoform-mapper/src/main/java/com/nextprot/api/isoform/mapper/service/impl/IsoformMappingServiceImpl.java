@@ -37,15 +37,15 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     public FeatureQueryResult validateFeature(String featureName, String featureType, String nextprotAccession) {
 
         try {
-            FeatureQuery query = new FeatureQuery(nextprotAccession, featureName, featureType, false);
+            EntryIsoform isoform = EntryIsoform.parseEntryIsoform(nextprotAccession, entryBuilderService);
+            FeatureQuery query = new FeatureQuery(isoform, featureName, featureType, false);
 
             Optional<FeatureValidator> validator = ValidatorFactory.creates(AnnotationCategory.getDecamelizedAnnotationTypeName(featureType));
 
             if (validator.isPresent()) {
 
-                return validator.get().validate(query, EntryIsoform.parseEntryIsoform(query.getAccession(), entryBuilderService));
+                return validator.get().validate(query, isoform);
             }
-
             throw new InvalidFeatureQueryTypeException(query);
         } catch (FeatureQueryException e) {
 
@@ -58,8 +58,9 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         FeatureQueryResult results = validateFeature(featureName, featureType, nextprotAccession);
 
-        // TODO: Should not break DRY principle: already parsed in other "validateFeature" handler
-        EntryIsoform entryIsoform = EntryIsoform.parseEntryIsoform(results.getQuery().getAccession(), entryBuilderService);
+        if (!results.isSuccess()) return results;
+
+        EntryIsoform entryIsoform = results.getQuery().getEntryIsoform();
 
         try {
             propagate(results, entryIsoform);
@@ -71,8 +72,6 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     }
 
     private void propagate(FeatureQueryResult results, EntryIsoform entryIsoform) throws ParseException {
-
-        if (!results.isSuccess()) { return; }
 
         FeatureQuerySuccess successResults = (FeatureQuerySuccess) results;
 
