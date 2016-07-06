@@ -1,7 +1,9 @@
 package com.nextprot.api.isoform.mapper.utils;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
+import com.nextprot.api.isoform.mapper.domain.IsoformFeature;
+import com.nextprot.api.isoform.mapper.domain.GeneFeaturePair;
+import com.nextprot.api.isoform.mapper.domain.impl.VariantAdapter;
 import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.format.hgvs.ProteinSequenceVariationHGVSFormat;
 import org.nextprot.api.core.dao.EntityName;
@@ -13,12 +15,12 @@ import java.util.List;
 /**
  * Parse and provide gene name and protein sequence variant
  */
-public class GeneVariantSplitter {
+public class GeneVariantPair implements GeneFeaturePair {
 
     private final String geneName;
-    private final ProteinSequenceVariation proteinSequenceVariation;
+    private final IsoformFeature variant;
 
-    public GeneVariantSplitter(String variant) throws ParseException {
+    public GeneVariantPair(String variant) throws ParseException {
 
         String geneName = getGeneName(variant);
 
@@ -26,8 +28,8 @@ public class GeneVariantSplitter {
         String hgvVariant = variant.substring(lastDashPosition + 1);
 
         ProteinSequenceVariationHGVSFormat format = new ProteinSequenceVariationHGVSFormat();
-        proteinSequenceVariation = format.parse(hgvVariant, AbstractProteinSequenceVariationFormat.ParsingMode.PERMISSIVE);
 
+        this.variant = new VariantAdapter(format.parse(hgvVariant, AbstractProteinSequenceVariationFormat.ParsingMode.PERMISSIVE));
         this.geneName = geneName;
     }
 
@@ -45,18 +47,34 @@ public class GeneVariantSplitter {
         return false;
     }
 
-    public ProteinSequenceVariation getVariant() {
-        return proteinSequenceVariation;
-    }
-
-    public String getGeneName() {
-        return geneName;
-    }
-
     public static String getGeneName(String variant) {
 
         Preconditions.checkNotNull(variant);
 
         return variant.substring(0, variant.indexOf("-"));
+    }
+
+    @Override
+    public String getGeneName() {
+        return geneName;
+    }
+
+    @Override
+    public IsoformFeature getFeature() {
+        return variant;
+    }
+
+    public interface GeneFeaturePairParser {
+
+        GeneFeaturePair parse(String variant) throws ParseException;
+    }
+
+    public static class GeneVariantPairParser implements GeneFeaturePairParser {
+
+        @Override
+        public GeneFeaturePair parse(String variant) throws ParseException {
+
+            return new GeneVariantPair(variant);
+        }
     }
 }

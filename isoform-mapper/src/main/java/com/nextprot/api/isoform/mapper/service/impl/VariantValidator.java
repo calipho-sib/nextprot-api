@@ -1,16 +1,15 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
-import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import com.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.*;
+import com.nextprot.api.isoform.mapper.domain.*;
+import com.nextprot.api.isoform.mapper.domain.impl.IncompatibleGeneAndProteinNameException;
+import com.nextprot.api.isoform.mapper.domain.impl.InvalidFeatureQueryAminoAcidException;
+import com.nextprot.api.isoform.mapper.domain.impl.InvalidFeatureQueryFormatException;
+import com.nextprot.api.isoform.mapper.domain.impl.InvalidFeatureQueryPositionException;
 import com.nextprot.api.isoform.mapper.service.FeatureValidator;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
-import com.nextprot.api.isoform.mapper.utils.GeneVariantSplitter;
+import com.nextprot.api.isoform.mapper.utils.GeneVariantPair;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 
@@ -29,21 +28,20 @@ class VariantValidator implements FeatureValidator {
     public FeatureQueryResult validate(FeatureQuery query, EntryIsoform entryIsoform) throws FeatureQueryException {
 
         try {
-            GeneVariantSplitter splitter = new GeneVariantSplitter(query.getFeature());
-            if (!splitter.isValidGeneName(entryIsoform.getEntry())) {
+            GeneVariantPair geneVariantPair = new GeneVariantPair(query.getFeature());
+
+            if (!geneVariantPair.isValidGeneName(entryIsoform.getEntry())) {
 
                 List<String> expectedGeneNames = entryIsoform.getEntry().getOverview().getGeneNames().stream()
                         .map(EntityName::getName).collect(Collectors.toList());
 
-                throw new IncompatibleGeneAndProteinNameException(query, splitter.getGeneName(), expectedGeneNames);
+                throw new IncompatibleGeneAndProteinNameException(query, geneVariantPair.getGeneName(), expectedGeneNames);
             }
+            return checkFeatureOnIsoform(query, entryIsoform.getIsoform(), geneVariantPair.getFeature());
 
-            ProteinSequenceVariation entryIsoformVariation = splitter.getVariant();
-
-            return checkFeatureOnIsoform(query, entryIsoform.getIsoform(), entryIsoformVariation);
         } catch (ParseException e) {
 
-            String geneName = GeneVariantSplitter.getGeneName(query.getFeature());
+            String geneName = GeneVariantPair.getGeneName(query.getFeature());
 
             ParseException pe = new ParseException(e.getMessage(), e.getErrorOffset() + geneName.length() + 1);
             throw new InvalidFeatureQueryFormatException(query, pe);
@@ -53,22 +51,22 @@ class VariantValidator implements FeatureValidator {
     /**
      * Check that variating amino-acid(s) on isoform sequence exists and return result
      *
-     * @param isoform   the isoform to check variating amino-acids
-     * @param variation the variation on which expected changing amino-acids is found
+     * @param isoform the isoform to check variating amino-acids
+     * @param variant the variation on which expected changing amino-acids is found
      */
     private FeatureQueryResult checkFeatureOnIsoform(FeatureQuery query, Isoform isoform,
-                                                     ProteinSequenceVariation variation) throws FeatureQueryException {
+                                                     IsoformFeature variant) throws FeatureQueryException {
 
-        checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
-                String.valueOf(variation.getFirstChangingAminoAcid().get1LetterCode()), query);
+        checkIsoformPos(isoform, variant.getFirstChangingAminoAcidPos(),
+                String.valueOf(variant.getFirstChangingAminoAcid().get1LetterCode()), query);
 
-        checkIsoformPos(isoform, variation.getLastChangingAminoAcidPos(),
-                String.valueOf(variation.getLastChangingAminoAcid().get1LetterCode()), query);
+        checkIsoformPos(isoform, variant.getLastChangingAminoAcidPos(),
+                String.valueOf(variant.getLastChangingAminoAcid().get1LetterCode()), query);
 
         FeatureQueryResult result = new FeatureQuerySuccess(query);
 
         ((FeatureQuerySuccess) result).addMappedFeature(isoform.getUniqueName(),
-                variation.getFirstChangingAminoAcidPos(), variation.getLastChangingAminoAcidPos());
+                variant.getFirstChangingAminoAcidPos(), variant.getLastChangingAminoAcidPos());
 
         return result;
     }

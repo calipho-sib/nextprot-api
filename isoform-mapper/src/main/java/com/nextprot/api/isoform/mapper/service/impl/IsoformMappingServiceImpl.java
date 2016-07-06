@@ -1,13 +1,12 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
 import com.nextprot.api.isoform.mapper.domain.*;
-import com.nextprot.api.isoform.mapper.domain.impl.*;
+import com.nextprot.api.isoform.mapper.domain.impl.InvalidFeatureQueryTypeException;
 import com.nextprot.api.isoform.mapper.service.FeatureValidator;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
-import com.nextprot.api.isoform.mapper.utils.GeneVariantSplitter;
+import com.nextprot.api.isoform.mapper.utils.GeneVariantPair;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
-import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
@@ -40,7 +39,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
             EntryIsoform isoform = EntryIsoform.parseEntryIsoform(nextprotAccession, entryBuilderService);
             FeatureQuery query = new FeatureQuery(isoform, featureName, featureType, false);
 
-            Optional<FeatureValidator> validator = ValidatorFactory.creates(AnnotationCategory.getDecamelizedAnnotationTypeName(featureType));
+            Optional<FeatureValidator> validator = Factory.createsFeatureValidator(AnnotationCategory.getDecamelizedAnnotationTypeName(featureType));
 
             if (validator.isPresent()) {
 
@@ -60,10 +59,8 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         if (!results.isSuccess()) return results;
 
-        EntryIsoform entryIsoform = results.getQuery().getEntryIsoform();
-
         try {
-            propagate(results, entryIsoform);
+            propagate((FeatureQuerySuccess) results);
         } catch (ParseException e) {
             throw new NextProtException(e.getMessage());
         }
@@ -71,14 +68,15 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         return results;
     }
 
-    private void propagate(FeatureQueryResult results, EntryIsoform entryIsoform) throws ParseException {
+    private void propagate(FeatureQuerySuccess successResults) throws ParseException {
 
-        FeatureQuerySuccess successResults = (FeatureQuerySuccess) results;
+        EntryIsoform entryIsoform = successResults.getQuery().getEntryIsoform();
 
-        GeneVariantSplitter splitter = new GeneVariantSplitter(results.getQuery().getFeature());
-        ProteinSequenceVariation variant = splitter.getVariant();
+        GeneVariantPair geneVariantPair = new GeneVariantPair(successResults.getQuery().getFeature());
+
+        IsoformFeature isoformFeature = geneVariantPair.getFeature();
         String expectedAAs = entryIsoform.getIsoform().getSequence().substring(
-                variant.getFirstChangingAminoAcidPos()-1, variant.getLastChangingAminoAcidPos()
+                isoformFeature.getFirstChangingAminoAcidPos()-1, isoformFeature.getLastChangingAminoAcidPos()
         );
 
         // get all others
@@ -88,11 +86,11 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         for (Isoform otherIsoform : others) {
 
             Integer firstPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
-                    variant.getFirstChangingAminoAcidPos(), otherIsoform);
+                    isoformFeature.getFirstChangingAminoAcidPos(), otherIsoform);
 
             if (firstPos != null && IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstPos, expectedAAs)) {
                 Integer lastPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
-                        variant.getLastChangingAminoAcidPos(), otherIsoform);
+                        isoformFeature.getLastChangingAminoAcidPos(), otherIsoform);
 
                 successResults.addMappedFeature(otherIsoform.getUniqueName(), firstPos, lastPos);
             } else {
