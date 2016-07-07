@@ -2,9 +2,9 @@ package com.nextprot.api.isoform.mapper.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
-import com.nextprot.api.isoform.mapper.domain.impl.InvalidNextprotAccessionException;
-import com.nextprot.api.isoform.mapper.domain.impl.UndefinedFeatureQueryException;
-import com.nextprot.api.isoform.mapper.domain.impl.UnknownFeatureQueryTypeException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidNextprotAccessionException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.UndefinedFeatureQueryException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownFeatureQueryTypeException;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 

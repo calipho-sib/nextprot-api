@@ -1,12 +1,16 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
-import com.nextprot.api.isoform.mapper.domain.*;
-import com.nextprot.api.isoform.mapper.domain.impl.InvalidFeatureQueryTypeException;
-import com.nextprot.api.isoform.mapper.service.FeatureValidator;
+import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import com.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
-import com.nextprot.api.isoform.mapper.utils.GeneVariantPair;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
@@ -39,7 +43,8 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
             EntryIsoform isoform = EntryIsoform.parseEntryIsoform(nextprotAccession, entryBuilderService);
             FeatureQuery query = new FeatureQuery(isoform, featureName, featureType, false);
 
-            Optional<FeatureValidator> validator = Factory.createsFeatureValidator(AnnotationCategory.getDecamelizedAnnotationTypeName(featureType));
+            Optional<SequenceFeatureValidator> validator =
+                    FeatureValidatorFactory.createsFeatureValidator(AnnotationCategory.getDecamelizedAnnotationTypeName(featureType));
 
             // TODO: replace get() call with future ifPresentOrElse method (https://dzone.com/articles/java-8-optional-replace-your-get-calls?edition=188596&utm_source=Daily%20Digest&utm_medium=email&utm_campaign=dd%202016-07-06)
             if (validator.isPresent())
@@ -72,11 +77,10 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         EntryIsoform entryIsoform = successResults.getQuery().getEntryIsoform();
 
-        GeneVariantPair geneVariantPair = new GeneVariantPair(successResults.getQuery().getFeature());
+        SequenceVariation variation = successResults.getIsoformSequenceVariation();
 
-        IsoformFeature isoformFeature = geneVariantPair.getFeature();
         String expectedAAs = entryIsoform.getIsoform().getSequence().substring(
-                isoformFeature.getFirstChangingAminoAcidPos()-1, isoformFeature.getLastChangingAminoAcidPos()
+                variation.getFirstChangingAminoAcidPos()-1, variation.getLastChangingAminoAcidPos()
         );
 
         // get all others
@@ -86,11 +90,11 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         for (Isoform otherIsoform : others) {
 
             Integer firstPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
-                    isoformFeature.getFirstChangingAminoAcidPos(), otherIsoform);
+                    variation.getFirstChangingAminoAcidPos(), otherIsoform);
 
             if (firstPos != null && IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstPos, expectedAAs)) {
                 Integer lastPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
-                        isoformFeature.getLastChangingAminoAcidPos(), otherIsoform);
+                        variation.getLastChangingAminoAcidPos(), otherIsoform);
 
                 successResults.addMappedFeature(otherIsoform, firstPos, lastPos);
             } else {

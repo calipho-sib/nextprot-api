@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
-import static com.nextprot.api.isoform.mapper.domain.FeatureQuerySuccessTest.mockEntryIsoform;
+import static com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessTest.mockEntryIsoform;
 
 public class FeatureQueryTest {
 

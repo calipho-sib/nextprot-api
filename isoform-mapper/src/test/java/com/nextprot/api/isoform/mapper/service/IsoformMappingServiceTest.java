@@ -3,7 +3,12 @@ package com.nextprot.api.isoform.mapper.service;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.nextprot.api.isoform.mapper.domain.*;
-import com.nextprot.api.isoform.mapper.domain.impl.*;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryAminoAcidException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryPositionException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -125,10 +130,10 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_Q9UI33-3", 1672, 1672, true);
     }
 
-    //@Test
+    @Test
     public void shouldValidatePtmOnCanonicalIsoform() throws Exception {
 
-        FeatureQueryResult result = service.validateFeature("BRCA1-P-Ser988", AnnotationCategory.PTM_INFO.getApiTypeName(), "NX_P38398");
+        FeatureQueryResult result = service.validateFeature("BRCA1-P-Ser988", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "NX_P38398");
 
         assertIsoformFeatureValid(result, "NX_P38398-1", 988, 988, true);
     }

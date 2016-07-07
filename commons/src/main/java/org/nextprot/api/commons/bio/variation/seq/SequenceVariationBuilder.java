@@ -2,9 +2,10 @@ package org.nextprot.api.commons.bio.variation.seq;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.seq.impl.AminoAcidModification;
 
 /**
- * Fluent interface for building <code>ProteinSequenceVariation</code>s
+ * Fluent interface for building <code>SequenceVariation</code>s
  *
  * Created by fnikitin on 09/07/15.
  */
@@ -36,7 +37,7 @@ public interface SequenceVariationBuilder {
         SequenceVariationBuilder deletedAndInserts(AminoAcidCode... aas);
 
         /** delete all affected amino-acids and inserts given aas */
-        SequenceVariationBuilder modifies(AminoAcidChange change);
+        SequenceVariationBuilder modifies(AminoAcidModification change);
     }
 
     /** mutations affecting only one amino-acid */
