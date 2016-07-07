@@ -1,9 +1,9 @@
 package com.nextprot.api.isoform.mapper.utils;
 
 import com.google.common.base.Preconditions;
-import com.nextprot.api.isoform.mapper.domain.IsoformFeature;
 import com.nextprot.api.isoform.mapper.domain.GeneFeaturePair;
-import com.nextprot.api.isoform.mapper.domain.impl.VariantAdapter;
+import com.nextprot.api.isoform.mapper.domain.IsoformFeature;
+import com.nextprot.api.isoform.mapper.domain.impl.VariantFeature;
 import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.format.hgvs.ProteinSequenceVariationHGVSFormat;
 import org.nextprot.api.core.dao.EntityName;
@@ -29,7 +29,7 @@ public class GeneVariantPair implements GeneFeaturePair {
 
         ProteinSequenceVariationHGVSFormat format = new ProteinSequenceVariationHGVSFormat();
 
-        this.variant = new VariantAdapter(format.parse(hgvVariant, AbstractProteinSequenceVariationFormat.ParsingMode.PERMISSIVE));
+        this.variant = new VariantFeature(format.parse(hgvVariant, AbstractProteinSequenceVariationFormat.ParsingMode.PERMISSIVE));
         this.geneName = geneName;
     }
 
