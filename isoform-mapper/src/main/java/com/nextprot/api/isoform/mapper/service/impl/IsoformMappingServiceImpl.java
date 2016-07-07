@@ -41,11 +41,11 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
             Optional<FeatureValidator> validator = Factory.createsFeatureValidator(AnnotationCategory.getDecamelizedAnnotationTypeName(featureType));
 
-            if (validator.isPresent()) {
-
+            // TODO: replace get() call with future ifPresentOrElse method (https://dzone.com/articles/java-8-optional-replace-your-get-calls?edition=188596&utm_source=Daily%20Digest&utm_medium=email&utm_campaign=dd%202016-07-06)
+            if (validator.isPresent())
                 return validator.get().validate(query, isoform);
-            }
-            throw new InvalidFeatureQueryTypeException(query);
+            else
+                throw new InvalidFeatureQueryTypeException(query);
         } catch (FeatureQueryException e) {
 
             return new FeatureQueryFailure(e);
