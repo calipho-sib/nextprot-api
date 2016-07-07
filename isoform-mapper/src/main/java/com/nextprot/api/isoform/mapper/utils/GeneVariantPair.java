@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.GeneFeaturePair;
 import com.nextprot.api.isoform.mapper.domain.IsoformFeature;
 import com.nextprot.api.isoform.mapper.domain.impl.VariantFeature;
-import org.nextprot.api.commons.bio.variation.format.AbstractProteinSequenceVariationFormat;
-import org.nextprot.api.commons.bio.variation.format.hgvs.ProteinSequenceVariationHGVSFormat;
+import org.nextprot.api.commons.bio.variation.seq.format.AbstractProteinSequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.seq.format.hgvs.ProteinSequenceVariationHGVSFormat;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 

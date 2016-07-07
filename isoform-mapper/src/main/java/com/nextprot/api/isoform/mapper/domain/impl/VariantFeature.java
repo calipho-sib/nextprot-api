@@ -2,7 +2,7 @@ package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.nextprot.api.isoform.mapper.domain.IsoformFeature;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.ProteinSequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
 
 public class VariantFeature implements IsoformFeature {
 
