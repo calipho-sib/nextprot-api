@@ -16,11 +16,13 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +38,7 @@ public class IsoformSequencePositionMapperIntegrationTest extends IsoformMapping
 	private MasterIdentifierService masterIdentifierService;
 
 	
-	//@Test
+	@Test
 	public void testPropagationForVariantsOfAllEntries() throws Exception {
 		openLogger("testPropagationForVariantsOfAllEntries.log");
 		Set<String> acs = masterIdentifierService.findUniqueNames();
@@ -49,10 +51,10 @@ public class IsoformSequencePositionMapperIntegrationTest extends IsoformMapping
 				System.out.println("--- START testing propagation for variants of entry no. " + cnt + ":" + ac);
 				int errorCnt = getErrorsDuringPropagationOnVariantsOfSingleEntry(ac);
 				if (errorCnt>0) entriesWithErrors++;
-				log(ac + (errorCnt==0 ? " OK" : " has " +errorCnt + " ERROR(s)"));
+				log(new Date() + " - " + cnt + " - " + ac + (errorCnt==0 ? " OK" : " has " +errorCnt + " ERROR(s)"));
 				System.out.println("--- END   testing propagation for variants of entry no. " + cnt + ":" + ac + (errorCnt==0 ? ": OK":": with " +errorCnt + " ERRORs"));;
 			}
-			if (ac.equals("NX_Q96QP1")) working=true; // start just after last entry tested
+			if (ac.equals("NX_Q86YS6")) working=true; // start just after last entry tested
 		}
 		log.close();
 		Assert.assertEquals(0, entriesWithErrors);
@@ -61,7 +63,7 @@ public class IsoformSequencePositionMapperIntegrationTest extends IsoformMapping
 	
 /*
  * 
- * last entry tested so far: NX_Q96QP1 OK
+ * last entry tested so far: NX_Q86YS6
  * Known errors so far:
  * 
 NX_O00555 has 1 ERROR(s)
