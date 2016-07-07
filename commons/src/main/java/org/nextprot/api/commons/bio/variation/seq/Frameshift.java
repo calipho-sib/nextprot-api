@@ -10,7 +10,7 @@ import java.util.Objects;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Frameshift implements ProteinSequenceChange<Frameshift.Change> {
+public class Frameshift implements SequenceChange<Frameshift.Change> {
 
     private final Change change;
 

@@ -5,7 +5,7 @@ package org.nextprot.api.commons.bio.variation.seq;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Deletion implements ProteinSequenceChange<Object> {
+public class Deletion implements SequenceChange<Object> {
 
     private static Deletion INSTANCE = new Deletion();
 

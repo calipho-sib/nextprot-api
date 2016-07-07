@@ -2,8 +2,8 @@ package org.nextprot.api.commons.bio.variation.seq.format;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceChange;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.SequenceChange;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -19,12 +19,12 @@ import java.util.Collection;
  */
 public abstract class AbstractProteinSequenceVariationFormat implements ProteinSequenceVariationFormat {
 
-    public String format(ProteinSequenceVariation mutation) {
+    public String format(SequenceVariation mutation) {
         return format(mutation, AminoAcidCode.AACodeType.ONE_LETTER);
     }
 
     @Override
-    public String format(ProteinSequenceVariation variation, AminoAcidCode.AACodeType type) {
+    public String format(SequenceVariation variation, AminoAcidCode.AACodeType type) {
 
         StringBuilder sb = new StringBuilder();
 
@@ -33,8 +33,8 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
 
         // format change part
         //noinspection unchecked
-        getChangeFormat(variation.getProteinSequenceChange().getType())
-                .format(sb, variation.getProteinSequenceChange(), type);
+        getChangeFormat(variation.getSequenceChange().getType())
+                .format(sb, variation.getSequenceChange(), type);
 
         return sb.toString();
     }
@@ -47,7 +47,7 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
      * @exception ParseException if the specified string cannot be parsed.
      */
     @Override
-    public ProteinSequenceVariation parse(String source) throws ParseException {
+    public SequenceVariation parse(String source) throws ParseException {
 
         return parse(source, ParsingMode.STRICT);
     }
@@ -65,7 +65,7 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
      * @return A <code>ProteinMutation</code> parsed from the string.
      * @exception ParseException if the specified string cannot be parsed.
      */
-    public ProteinSequenceVariation parse(String source, ParsingMode parsingMode) throws ParseException {
+    public SequenceVariation parse(String source, ParsingMode parsingMode) throws ParseException {
 
         Preconditions.checkNotNull(source);
         Preconditions.checkNotNull(parsingMode);
@@ -74,7 +74,7 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
             throw new ParseException(source + ": not a valid protein sequence variant", 0);
         }
 
-        ProteinSequenceVariation.FluentBuilder builder = new ProteinSequenceVariation.FluentBuilder();
+        SequenceVariation.FluentBuilder builder = new SequenceVariation.FluentBuilder();
 
         try {
             return parseWithMode(source, builder, ParsingMode.STRICT);
@@ -87,9 +87,9 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
         }
     }
 
-    private ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, ParsingMode mode) throws ParseException {
+    private SequenceVariation parseWithMode(String source, SequenceVariation.FluentBuilder builder, ParsingMode mode) throws ParseException {
 
-        for (ProteinSequenceChange.Type changeType : getAvailableChangeTypes()) {
+        for (SequenceChange.Type changeType : getAvailableChangeTypes()) {
 
             ProteinSequenceChangeFormat format = getChangeFormat(changeType);
 
@@ -101,8 +101,8 @@ public abstract class AbstractProteinSequenceVariationFormat implements ProteinS
     }
 
     protected abstract ChangingAAsFormat getChangingAAsFormat();
-    protected abstract ProteinSequenceChangeFormat getChangeFormat(ProteinSequenceChange.Type changeType);
-    protected abstract Collection<ProteinSequenceChange.Type> getAvailableChangeTypes();
+    protected abstract ProteinSequenceChangeFormat getChangeFormat(SequenceChange.Type changeType);
+    protected abstract Collection<SequenceChange.Type> getAvailableChangeTypes();
 
 
 }

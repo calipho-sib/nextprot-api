@@ -2,22 +2,22 @@ package org.nextprot.api.commons.bio.variation.seq.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.seq.Frameshift;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.seq.format.AbstractProteinSequenceVariationFormat;
-import org.nextprot.api.commons.bio.variation.seq.format.ProteinSequenceChangeFormat;
+import org.nextprot.api.commons.bio.variation.seq.format.SequenceChangeFormat;
 
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FrameshiftHGVSFormat implements ProteinSequenceChangeFormat<Frameshift> {
+public class FrameshiftHGVSFormat implements SequenceChangeFormat<Frameshift> {
 
     private static final Pattern FRAMESHIFT_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)([A-Z])([a-z]{2})?fs(?:\\*|Ter)(\\d+)$");
     //private static final Pattern FRAMESHIFT_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)(\\d+)$");
     //private static final Pattern FRAMESHIFT_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)fs(?:\\*|Ter)>?(\\d+)$");
 
     @Override
-    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, AbstractProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariation.FluentBuilder builder, AbstractProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
 
         Matcher m = FRAMESHIFT_PATTERN.matcher(source);
 

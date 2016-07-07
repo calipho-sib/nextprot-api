@@ -1,7 +1,7 @@
 package org.nextprot.api.commons.bio.variation.seq.format;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
 
 /**
  * Formats amino-acids that change
@@ -10,5 +10,5 @@ import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
  */
 public interface ChangingAAsFormat {
 
-    void format(StringBuilder sb, ProteinSequenceVariation proteinSequenceVariation, AminoAcidCode.AACodeType type);
+    void format(StringBuilder sb, SequenceVariation sequenceVariation, AminoAcidCode.AACodeType type);
 }

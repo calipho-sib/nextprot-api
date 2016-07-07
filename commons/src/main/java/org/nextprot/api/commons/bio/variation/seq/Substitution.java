@@ -8,7 +8,7 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Substitution implements ProteinSequenceChange<AminoAcidCode> {
+public class Substitution implements SequenceChange<AminoAcidCode> {
 
     private final AminoAcidCode substitutedAminoAcid;
 

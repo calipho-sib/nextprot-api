@@ -1,8 +1,8 @@
 package org.nextprot.api.commons.bio.variation.seq.format;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceChange;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.SequenceChange;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
 
 import java.text.ParseException;
 
@@ -11,7 +11,7 @@ import java.text.ParseException;
  *
  * Created by fnikitin on 10/07/15.
  */
-public interface ProteinSequenceChangeFormat<C extends ProteinSequenceChange> {
+public interface SequenceChangeFormat<C extends SequenceChange> {
 
     /**
      * Format the specified change C as String
@@ -29,8 +29,8 @@ public interface ProteinSequenceChangeFormat<C extends ProteinSequenceChange> {
      * @return an instance of ProteinSequenceVariation
      * @throws ParseException if parsing error occurs
      */
-    ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder,
-                                           ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException;
+    SequenceVariation parseWithMode(String source, SequenceVariation.FluentBuilder builder,
+                                    ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException;
 
     /**
      * Attempts to match the source.

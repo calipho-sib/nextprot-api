@@ -2,21 +2,21 @@ package org.nextprot.api.commons.bio.variation.seq.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.seq.DeletionAndInsertion;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
-import org.nextprot.api.commons.bio.variation.seq.format.ProteinSequenceChangeFormat;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.format.SequenceChangeFormat;
 import org.nextprot.api.commons.bio.variation.seq.format.ProteinSequenceVariationFormat;
 
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DeletionInsertionHGVSFormat implements ProteinSequenceChangeFormat<DeletionAndInsertion> {
+public class DeletionInsertionHGVSFormat implements SequenceChangeFormat<DeletionAndInsertion> {
 
     private static final Pattern DELETION_INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?delins((?:[A-Z\\*]([a-z]{2})?)+)$");
     private static final Pattern DELETION_INSERTION_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?(?:delins|>)((?:[A-Z\\*]([a-z]{2})?)+)$");
 
     @Override
-    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariation.FluentBuilder builder, ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
 
         Matcher m = (mode == ProteinSequenceVariationFormat.ParsingMode.STRICT) ? DELETION_INSERTION_PATTERN.matcher(source) : DELETION_INSERTION_PATTERN_PERMISSIVE.matcher(source);
 

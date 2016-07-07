@@ -6,7 +6,7 @@ import org.nextprot.api.commons.bio.variation.seq.format.AbstractProteinSequence
 
 import java.text.ParseException;
 
-public class ProteinSequenceVariationHGVSParseMultiTest {
+public class SequenceVariationHGVSParseMultiTest {
 
     ProteinSequenceVariationHGVSFormat format = new ProteinSequenceVariationHGVSFormat();
 

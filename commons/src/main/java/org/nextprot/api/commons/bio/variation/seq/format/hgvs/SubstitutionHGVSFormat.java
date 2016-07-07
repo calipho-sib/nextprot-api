@@ -1,23 +1,23 @@
 package org.nextprot.api.commons.bio.variation.seq.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.seq.Substitution;
 import org.nextprot.api.commons.bio.variation.seq.format.AbstractProteinSequenceVariationFormat;
-import org.nextprot.api.commons.bio.variation.seq.format.ProteinSequenceChangeFormat;
+import org.nextprot.api.commons.bio.variation.seq.format.SequenceChangeFormat;
 
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class SubstitutionHGVSFormat implements ProteinSequenceChangeFormat<Substitution> {
+public class SubstitutionHGVSFormat implements SequenceChangeFormat<Substitution> {
 
     private static final Pattern SUBSTITUTION_PATTERN = Pattern.compile("^p\\.([A-Z*])([a-z]{2})?(\\d+)([A-Z*])([a-z]{2})?$");
 
     @Override
-    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder,
-                                                  AbstractProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariation.FluentBuilder builder,
+                                           AbstractProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
 
         Matcher m = SUBSTITUTION_PATTERN.matcher(source);
 

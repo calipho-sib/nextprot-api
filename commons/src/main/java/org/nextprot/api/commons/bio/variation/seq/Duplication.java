@@ -7,7 +7,7 @@ package org.nextprot.api.commons.bio.variation.seq;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Duplication implements ProteinSequenceChange<Integer> {
+public class Duplication implements SequenceChange<Integer> {
 
     private final int insertAfterPos;
 

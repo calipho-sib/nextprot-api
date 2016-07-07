@@ -2,8 +2,8 @@ package org.nextprot.api.commons.bio.variation.seq.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.seq.Insertion;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
-import org.nextprot.api.commons.bio.variation.seq.format.ProteinSequenceChangeFormat;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.format.SequenceChangeFormat;
 import org.nextprot.api.commons.bio.variation.seq.format.ProteinSequenceVariationFormat;
 
 import java.text.ParseException;
@@ -14,12 +14,12 @@ import java.util.regex.Pattern;
 /**
  * Specifications: http://varnomen.hgvs.org/recommendations/protein/variant/insertion/
  */
-public class InsertionHGVSFormat implements ProteinSequenceChangeFormat<Insertion> {
+public class InsertionHGVSFormat implements SequenceChangeFormat<Insertion> {
 
     private static final Pattern INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)_([A-Z])([a-z]{2})?(\\d+)ins((?:[A-Z\\*]([a-z]{2})?)+)$");
 
     @Override
-    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariation.FluentBuilder builder, ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
 
         Matcher m =  INSERTION_PATTERN.matcher(source);
 

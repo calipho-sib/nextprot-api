@@ -5,48 +5,48 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.seq.Frameshift;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
 
 import java.text.ParseException;
 
-public class ProteinSequenceVariationHGVSParseFrameshiftTest {
+public class SequenceVariationHGVSParseFrameshiftTest {
 
     ProteinSequenceVariationHGVSFormat format = new ProteinSequenceVariationHGVSFormat();
 
     @Test
     public void testParseFrameshift() throws Exception {
 
-        ProteinSequenceVariation pm = format.parse("p.M682Afs*2");
+        SequenceVariation pm = format.parse("p.M682Afs*2");
 
         Assert.assertEquals(AminoAcidCode.Methionine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(682, pm.getFirstChangingAminoAcidPos());
-        Assert.assertTrue(pm.getProteinSequenceChange() instanceof Frameshift);
-        Assert.assertEquals(AminoAcidCode.Alanine, ((Frameshift.Change)pm.getProteinSequenceChange().getValue()).getChangedAminoAcid());
-        Assert.assertEquals(2, ((Frameshift.Change)pm.getProteinSequenceChange().getValue()).getNewTerminationPosition());
+        Assert.assertTrue(pm.getSequenceChange() instanceof Frameshift);
+        Assert.assertEquals(AminoAcidCode.Alanine, ((Frameshift.Change)pm.getSequenceChange().getValue()).getChangedAminoAcid());
+        Assert.assertEquals(2, ((Frameshift.Change)pm.getSequenceChange().getValue()).getNewTerminationPosition());
     }
 
     @Test
     public void testParseFrameshiftCode3() throws Exception {
 
-        ProteinSequenceVariation pm = format.parse("p.Met682AlafsTer2");
+        SequenceVariation pm = format.parse("p.Met682AlafsTer2");
 
         Assert.assertEquals(AminoAcidCode.Methionine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(682, pm.getFirstChangingAminoAcidPos());
-        Assert.assertTrue(pm.getProteinSequenceChange() instanceof Frameshift);
-        Assert.assertEquals(AminoAcidCode.Alanine, ((Frameshift.Change)pm.getProteinSequenceChange().getValue()).getChangedAminoAcid());
-        Assert.assertEquals(2, ((Frameshift.Change)pm.getProteinSequenceChange().getValue()).getNewTerminationPosition());
+        Assert.assertTrue(pm.getSequenceChange() instanceof Frameshift);
+        Assert.assertEquals(AminoAcidCode.Alanine, ((Frameshift.Change)pm.getSequenceChange().getValue()).getChangedAminoAcid());
+        Assert.assertEquals(2, ((Frameshift.Change)pm.getSequenceChange().getValue()).getNewTerminationPosition());
     }
 
     @Ignore
     @Test
     public void testParseAANonStandardFrameshift() throws Exception {
 
-        ProteinSequenceVariation pm = format.parse("p.S1476fs*>9", ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.S1476fs*>9", ProteinSequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.Serine, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(1476, pm.getFirstChangingAminoAcidPos());
-        Assert.assertTrue(pm.getProteinSequenceChange() instanceof Frameshift);
-        Assert.assertEquals(9, pm.getProteinSequenceChange().getValue());
+        Assert.assertTrue(pm.getSequenceChange() instanceof Frameshift);
+        Assert.assertEquals(9, pm.getSequenceChange().getValue());
     }
 
     @Ignore

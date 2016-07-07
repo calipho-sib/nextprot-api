@@ -8,7 +8,7 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
  *
  * Created by fnikitin on 09/07/15.
  */
-public interface ProteinSequenceVariationBuilder {
+public interface SequenceVariationBuilder {
 
     /** starting creation */
     interface StartBuilding {
@@ -24,30 +24,33 @@ public interface ProteinSequenceVariationBuilder {
     interface AminoAcidMutation {
 
         /** delete all affected amino-acids */
-        ProteinSequenceVariationBuilder deletes();
+        SequenceVariationBuilder deletes();
 
         /** inserts given aas after specific AA */
-        ProteinSequenceVariationBuilder inserts(AminoAcidCode... aas);
+        SequenceVariationBuilder inserts(AminoAcidCode... aas);
 
         /** duplicates changing aas and insert right after */
-        ProteinSequenceVariationBuilder duplicates();
+        SequenceVariationBuilder duplicates();
 
         /** delete all affected amino-acids and inserts given aas */
-        ProteinSequenceVariationBuilder deletedAndInserts(AminoAcidCode... aas);
+        SequenceVariationBuilder deletedAndInserts(AminoAcidCode... aas);
+
+        /** delete all affected amino-acids and inserts given aas */
+        SequenceVariationBuilder modifies(AminoAcidChange change);
     }
 
     /** mutations affecting only one amino-acid */
     interface SingleAminoAcidMutation extends AminoAcidMutation {
 
         /** substitutedBy an amino-acid by another one */
-        ProteinSequenceVariationBuilder substitutedBy(AminoAcidCode aa);
+        SequenceVariationBuilder substitutedBy(AminoAcidCode aa);
 
         /** A frameshift appears just after the affected amino-acid leading to a codon stop in this frame */
-        ProteinSequenceVariationBuilder thenFrameshift(AminoAcidCode newAminoAcidCode, int newTerminationPosition);
+        SequenceVariationBuilder thenFrameshift(AminoAcidCode newAminoAcidCode, int newTerminationPosition);
     }
 
     /** build an instance of ProteinMutation */
-    ProteinSequenceVariation build();
+    SequenceVariation build();
 
     /** collect data through the process */
     DataCollector getDataCollector();
@@ -58,7 +61,7 @@ public interface ProteinSequenceVariationBuilder {
         private int firstChangingAminoAcidPos;
         private AminoAcidCode lastChangingAminoAcid;
         private int lastChangingAminoAcidPos;
-        private ProteinSequenceChange<?> proteinSequenceChange;
+        private SequenceChange<?> sequenceChange;
 
         public void setFirstChangingAminoAcid(AminoAcidCode firstAffectedAminoAcid, int firstAffectedAminoAcidPos) {
 
@@ -94,12 +97,12 @@ public interface ProteinSequenceVariationBuilder {
             return lastChangingAminoAcidPos;
         }
 
-        public ProteinSequenceChange<?> getProteinSequenceChange() {
-            return proteinSequenceChange;
+        public SequenceChange<?> getSequenceChange() {
+            return sequenceChange;
         }
 
-        public void setProteinSequenceChange(ProteinSequenceChange<?> proteinSequenceChange) {
-            this.proteinSequenceChange = proteinSequenceChange;
+        public void setSequenceChange(SequenceChange<?> sequenceChange) {
+            this.sequenceChange = sequenceChange;
         }
     }
 }

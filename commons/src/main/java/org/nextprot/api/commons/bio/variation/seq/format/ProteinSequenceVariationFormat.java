@@ -1,7 +1,7 @@
 package org.nextprot.api.commons.bio.variation.seq.format;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
 
 import java.text.ParseException;
 
@@ -22,7 +22,7 @@ public interface ProteinSequenceVariationFormat {
      *
      * @return a formatter <code>String</>
      */
-    String format(ProteinSequenceVariation variation, AminoAcidCode.AACodeType type);
+    String format(SequenceVariation variation, AminoAcidCode.AACodeType type);
 
     /**
      * Parses text from the beginning of the given string to produce a ProteinSequenceVariation.
@@ -31,5 +31,5 @@ public interface ProteinSequenceVariationFormat {
      * @return A <code>ProteinSequenceVariation</code> parsed from the string.
      * @exception ParseException if the specified string cannot be parsed.
      */
-    ProteinSequenceVariation parse(String source) throws ParseException;
+    SequenceVariation parse(String source) throws ParseException;
 }

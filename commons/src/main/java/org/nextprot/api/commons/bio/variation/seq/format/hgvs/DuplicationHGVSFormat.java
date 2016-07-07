@@ -2,8 +2,8 @@ package org.nextprot.api.commons.bio.variation.seq.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.seq.Duplication;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
-import org.nextprot.api.commons.bio.variation.seq.format.ProteinSequenceChangeFormat;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.format.SequenceChangeFormat;
 import org.nextprot.api.commons.bio.variation.seq.format.ProteinSequenceVariationFormat;
 
 import java.text.ParseException;
@@ -16,12 +16,12 @@ import java.util.regex.Pattern;
  *
  * http://varnomen.hgvs.org/recommendations/protein/variant/duplication/
  */
-public class DuplicationHGVSFormat implements ProteinSequenceChangeFormat<Duplication> {
+public class DuplicationHGVSFormat implements SequenceChangeFormat<Duplication> {
 
     private static final Pattern DUPLICATION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?dup$");
 
     @Override
-    public ProteinSequenceVariation parseWithMode(String source, ProteinSequenceVariation.FluentBuilder builder, ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariation.FluentBuilder builder, ProteinSequenceVariationFormat.ParsingMode mode) throws ParseException {
 
         Matcher m = DUPLICATION_PATTERN.matcher(source);
 

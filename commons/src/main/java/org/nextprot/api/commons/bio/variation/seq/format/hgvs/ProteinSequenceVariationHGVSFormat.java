@@ -3,7 +3,7 @@ package org.nextprot.api.commons.bio.variation.seq.format.hgvs;
 import org.nextprot.api.commons.bio.variation.seq.*;
 import org.nextprot.api.commons.bio.variation.seq.format.AbstractProteinSequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.seq.format.ChangingAAsFormat;
-import org.nextprot.api.commons.bio.variation.seq.format.ProteinSequenceChangeFormat;
+import org.nextprot.api.commons.bio.variation.seq.format.SequenceChangeFormat;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,18 +20,18 @@ import java.util.Map;
 public class ProteinSequenceVariationHGVSFormat extends AbstractProteinSequenceVariationFormat {
 
     private final ChangingAAsFormat changingAAsFormat;
-    private final Map<ProteinSequenceChange.Type, ProteinSequenceChangeFormat> changeFormats;
+    private final Map<SequenceChange.Type, SequenceChangeFormat> changeFormats;
 
     public ProteinSequenceVariationHGVSFormat() {
 
         changingAAsFormat = new HGVSFormat();
         changeFormats = new HashMap<>();
-        changeFormats.put(ProteinSequenceChange.Type.INSERTION, new InsertionHGVSFormat());
-        changeFormats.put(ProteinSequenceChange.Type.DUPLICATION, new DuplicationHGVSFormat());
-        changeFormats.put(ProteinSequenceChange.Type.SUBSTITUTION, new SubstitutionHGVSFormat());
-        changeFormats.put(ProteinSequenceChange.Type.DELETION, new DeletionHGVSFormat());
-        changeFormats.put(ProteinSequenceChange.Type.DELETION_INSERTION, new DeletionInsertionHGVSFormat());
-        changeFormats.put(ProteinSequenceChange.Type.FRAMESHIFT, new FrameshiftHGVSFormat());
+        changeFormats.put(SequenceChange.Type.INSERTION, new InsertionHGVSFormat());
+        changeFormats.put(SequenceChange.Type.DUPLICATION, new DuplicationHGVSFormat());
+        changeFormats.put(SequenceChange.Type.SUBSTITUTION, new SubstitutionHGVSFormat());
+        changeFormats.put(SequenceChange.Type.DELETION, new DeletionHGVSFormat());
+        changeFormats.put(SequenceChange.Type.DELETION_INSERTION, new DeletionInsertionHGVSFormat());
+        changeFormats.put(SequenceChange.Type.FRAMESHIFT, new FrameshiftHGVSFormat());
     }
 
     @Override
@@ -41,13 +41,13 @@ public class ProteinSequenceVariationHGVSFormat extends AbstractProteinSequenceV
     }
 
     @Override
-    protected ProteinSequenceChangeFormat getChangeFormat(ProteinSequenceChange.Type changeType) {
+    protected SequenceChangeFormat getChangeFormat(SequenceChange.Type changeType) {
 
         return changeFormats.get(changeType);
     }
 
     @Override
-    protected Collection<ProteinSequenceChange.Type> getAvailableChangeTypes() {
+    protected Collection<SequenceChange.Type> getAvailableChangeTypes() {
 
         return changeFormats.keySet();
     }

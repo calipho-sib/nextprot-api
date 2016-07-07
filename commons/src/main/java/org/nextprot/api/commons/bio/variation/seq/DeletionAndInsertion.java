@@ -10,7 +10,7 @@ import java.util.Arrays;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class DeletionAndInsertion implements ProteinSequenceChange<AminoAcidCode[]> {
+public class DeletionAndInsertion implements SequenceChange<AminoAcidCode[]> {
 
     private final AminoAcidCode[] aas;
 

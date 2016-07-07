@@ -10,7 +10,7 @@ import java.util.Arrays;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Insertion implements ProteinSequenceChange<AminoAcidCode[]> {
+public class Insertion implements SequenceChange<AminoAcidCode[]> {
 
     private final int insertAfterPos;
     private final AminoAcidCode[] insertedAminoAcids;

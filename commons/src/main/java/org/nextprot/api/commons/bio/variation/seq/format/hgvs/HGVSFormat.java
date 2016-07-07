@@ -1,7 +1,7 @@
 package org.nextprot.api.commons.bio.variation.seq.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.seq.ProteinSequenceVariation;
+import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.seq.format.ChangingAAsFormat;
 
 /**
@@ -12,13 +12,13 @@ import org.nextprot.api.commons.bio.variation.seq.format.ChangingAAsFormat;
 public class HGVSFormat implements ChangingAAsFormat {
 
     @Override
-    public void format(StringBuilder sb, ProteinSequenceVariation proteinSequenceVariation, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, SequenceVariation sequenceVariation, AminoAcidCode.AACodeType type) {
 
         sb.append("p.");
 
-        sb.append(AminoAcidCode.formatAminoAcidCode(type, proteinSequenceVariation.getFirstChangingAminoAcid()));
-        sb.append(proteinSequenceVariation.getFirstChangingAminoAcidPos());
-        if (proteinSequenceVariation.isAminoAcidRange())
-            sb.append("_").append(AminoAcidCode.formatAminoAcidCode(type, proteinSequenceVariation.getLastChangingAminoAcid())).append(proteinSequenceVariation.getLastChangingAminoAcidPos());
+        sb.append(AminoAcidCode.formatAminoAcidCode(type, sequenceVariation.getFirstChangingAminoAcid()));
+        sb.append(sequenceVariation.getFirstChangingAminoAcidPos());
+        if (sequenceVariation.isAminoAcidRange())
+            sb.append("_").append(AminoAcidCode.formatAminoAcidCode(type, sequenceVariation.getLastChangingAminoAcid())).append(sequenceVariation.getLastChangingAminoAcidPos());
     }
 }

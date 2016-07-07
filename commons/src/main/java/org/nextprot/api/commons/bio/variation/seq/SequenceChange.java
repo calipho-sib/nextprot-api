@@ -5,7 +5,7 @@ package org.nextprot.api.commons.bio.variation.seq;
  *
  * Created by fnikitin on 10/07/15.
  */
-public interface ProteinSequenceChange<V> {
+public interface SequenceChange<V> {
 
     enum Type {
         DELETION,
@@ -13,7 +13,8 @@ public interface ProteinSequenceChange<V> {
         FRAMESHIFT,
         INSERTION,
         SUBSTITUTION,
-        DELETION_INSERTION
+        DELETION_INSERTION,
+        PTM
     }
 
     /**
