@@ -40,15 +40,17 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     public FeatureQueryResult validateFeature(String featureName, String featureType, String nextprotAccession) {
 
         try {
-            EntryIsoform isoform = EntryIsoform.parseEntryIsoform(nextprotAccession, entryBuilderService);
-            FeatureQuery query = new FeatureQuery(isoform, featureName, featureType, false);
+            FeatureQuery query = new FeatureQuery(nextprotAccession, featureName, featureType, false);
 
             Optional<SequenceFeatureValidator> validator =
                     FeatureValidatorFactory.createsFeatureValidator(AnnotationCategory.getDecamelizedAnnotationTypeName(featureType));
 
             // TODO: replace get() call with future ifPresentOrElse method (https://dzone.com/articles/java-8-optional-replace-your-get-calls?edition=188596&utm_source=Daily%20Digest&utm_medium=email&utm_campaign=dd%202016-07-06)
-            if (validator.isPresent())
+            if (validator.isPresent()) {
+                EntryIsoform isoform = EntryIsoform.parseEntryIsoform(nextprotAccession, entryBuilderService);
+
                 return validator.get().validate(query, isoform);
+            }
             else
                 throw new InvalidFeatureQueryTypeException(query);
         } catch (FeatureQueryException e) {
@@ -75,7 +77,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
     private void propagate(FeatureQuerySuccess successResults) throws ParseException {
 
-        EntryIsoform entryIsoform = successResults.getQuery().getEntryIsoform();
+        EntryIsoform entryIsoform = successResults.getEntryIsoform();
 
         SequenceVariation variation = successResults.getIsoformSequenceVariation();
 

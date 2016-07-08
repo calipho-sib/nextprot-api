@@ -15,7 +15,7 @@ public class FeatureQuerySuccessTest {
     @Test
     public void testOnSuccess() throws FeatureQueryException {
 
-        FeatureQuery query = new FeatureQuery(mockEntryIsoform("NX_Q9UI33"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
+        FeatureQuery query = new FeatureQuery("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
 
         FeatureQuerySuccess result = new FeatureQuerySuccess(query);
         result.addMappedFeature(mockIsoform("NX_Q9UI33-1", true), 1158, 1158);

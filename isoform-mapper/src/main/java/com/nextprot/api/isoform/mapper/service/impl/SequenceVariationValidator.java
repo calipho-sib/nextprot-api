@@ -42,7 +42,7 @@ public abstract class SequenceVariationValidator implements SequenceFeatureValid
 
                 throw new IncompatibleGeneAndProteinNameException(query, geneVariationPair.getGeneName(), expectedGeneNames);
             }
-            return checkFeatureOnIsoform(query, entryIsoform.getIsoform(), geneVariationPair.getVariation());
+            return checkFeatureOnIsoform(query, entryIsoform, geneVariationPair.getVariation());
 
         } catch (ParseException e) {
 
@@ -58,21 +58,21 @@ public abstract class SequenceVariationValidator implements SequenceFeatureValid
     /**
      * Check that variating amino-acid(s) on isoform sequence exists and return result
      *
-     * @param isoform the isoform to check variating amino-acids
+     * @param entryIsoform the entry isoform to check variating amino-acids
      * @param variation the variation on which expected changing amino-acids is found
      */
-    private FeatureQueryResult checkFeatureOnIsoform(FeatureQuery query, Isoform isoform,
+    private FeatureQueryResult checkFeatureOnIsoform(FeatureQuery query, EntryIsoform entryIsoform,
                                                      SequenceVariation variation) throws FeatureQueryException {
 
-        checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
+        checkIsoformPos(entryIsoform.getIsoform(), variation.getFirstChangingAminoAcidPos(),
                 String.valueOf(variation.getFirstChangingAminoAcid().get1LetterCode()), query);
 
-        checkIsoformPos(isoform, variation.getLastChangingAminoAcidPos(),
+        checkIsoformPos(entryIsoform.getIsoform(), variation.getLastChangingAminoAcidPos(),
                 String.valueOf(variation.getLastChangingAminoAcid().get1LetterCode()), query);
 
         FeatureQuerySuccess result = new FeatureQuerySuccess(query);
 
-        result.setSequenceVariation(isoform, variation);
+        result.setSequenceVariation(entryIsoform, variation);
 
         return result;
     }

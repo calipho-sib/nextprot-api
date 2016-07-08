@@ -1,7 +1,9 @@
 package com.nextprot.api.isoform.mapper.domain.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
 import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
 import org.nextprot.api.core.domain.Isoform;
 
@@ -15,6 +17,7 @@ import java.util.TreeMap;
 public class FeatureQuerySuccess extends FeatureQueryResult {
 
     private final Map<String, IsoformFeatureResult> data;
+    private EntryIsoform entryIsoform;
     private SequenceVariation isoformSequenceVariation;
 
     public FeatureQuerySuccess(FeatureQuery query) {
@@ -23,14 +26,12 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         data = new TreeMap<>();
     }
 
-    public void setSequenceVariation(Isoform isoform, SequenceVariation variation) {
+    public void setSequenceVariation(EntryIsoform entryIsoform, SequenceVariation variation) {
 
         this.isoformSequenceVariation = variation;
-        addMappedFeature(isoform, variation.getFirstChangingAminoAcidPos(), variation.getLastChangingAminoAcidPos());
-    }
+        this.entryIsoform = entryIsoform;
 
-    public SequenceVariation getIsoformSequenceVariation() {
-        return isoformSequenceVariation;
+        addMappedFeature(entryIsoform.getIsoform(), variation.getFirstChangingAminoAcidPos(), variation.getLastChangingAminoAcidPos());
     }
 
     public void addMappedFeature(Isoform isoform, int firstPosition, int lastPosition) {
@@ -66,6 +67,16 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
 
     public Map<String, IsoformFeatureResult> getData() {
         return data;
+    }
+
+    @JsonIgnore
+    public EntryIsoform getEntryIsoform() {
+        return entryIsoform;
+    }
+
+    @JsonIgnore
+    public SequenceVariation getIsoformSequenceVariation() {
+        return isoformSequenceVariation;
     }
 
     @Override
