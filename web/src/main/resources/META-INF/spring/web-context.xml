@@ -11,15 +11,6 @@
 	<import resource="classpath:spring/rdf-context.xml" />
 	<import resource="classpath:META-INF/spring/security-context.xml" />
 
-	<bean id="jaxbMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
-		<property name="classesToBeBound">
-			<list>
-				<value>org.nextprot.api.web.sitemap.domain.SitemapUrlSet</value>
-				<value>org.nextprot.api.web.sitemap.domain.SitemapUrl</value>
-			</list>
-		</property>
-	</bean>
-
 
 	<!-- Make Content Negotiation manager available across all of Spring MVC -->
 	<mvc:annotation-driven> <!--content-negotiation-manager="cnManager" -->
@@ -27,13 +18,7 @@
 		<!-- override spring mvc's defaults converters implementations -->
 		<mvc:message-converters register-defaults="false">
 			<!-- This converter was added for the sitemap.xml using annotation @XmlRootElement -->
-			<bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
-			    <property name="supportedMediaTypes" value="application/xml;charset=UTF-8" />
-				<property name="marshaller">
-					<ref bean="jaxbMarshaller"/>
-				</property> 
-				<property name="unmarshaller"> <bean class="org.springframework.oxm.xstream.XStreamMarshaller"/> </property>  
-			</bean>
+			<bean class="org.nextprot.api.web.xstream.SiteMapMarshaller"></bean>
 			<!-- TODO Described for what is this converter used -->
 			<bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
 				<property name="marshaller">
