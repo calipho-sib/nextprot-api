@@ -60,7 +60,7 @@ public class GenerateSolrAnnotationIndexGold extends GenerateSolrIndex {
 		
 		logger.info("comitting");
 		indexer.commit();
-		logger.info(ecnt + " entries GOLD-indexed..." + (System.currentTimeMillis()-start)/1000 + " seconds...");
+		logger.info(ecnt + " entries GOLD-indexed in " + (System.currentTimeMillis()-start)/1000 + " seconds...END");
 	}
 	
 }
