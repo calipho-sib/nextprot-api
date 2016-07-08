@@ -37,6 +37,7 @@ public class SitemapTest {
 		urlSet.add(new SitemapUrl(base + "/copyright"));
 		urlSet.add(new SitemapUrl(base + "/news"));
 		urlSet.add(new SitemapUrl(base + "/help"));
+		urlSet.add(new SitemapUrl(base + "/copyright"));
 		urlSet.add(new SitemapUrl(base + "/help/simple-search"));
 		for (SitemapUrl siturl : urlSet.getUrls()) System.out.println(siturl.getLoc());
 		Assert.assertEquals(5, urlSet.getUrls().size());
