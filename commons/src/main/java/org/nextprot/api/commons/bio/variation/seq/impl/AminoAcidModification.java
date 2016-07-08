@@ -13,19 +13,19 @@ import java.util.Set;
 public enum AminoAcidModification implements SequenceChange<AminoAcidModification> {
 
     // TODO: should not we had a rule for each modification to occur based on modified aa and sequence neighborhood
-    Acetylation("Ac"),
-    Glycosylation("carb"),
-    Dimethylation("dimethyl"),
-    Geranylgeranylation("ger"),
-    Farnesylation("SFarn"),
-    Myristoylation("myr"),
-    Nitration("nitro"),
-    Phosphorylation("P"),
-    Palmitoylation("palm"),
-    PolyADP_Ribosylation("PAR"),
-    S_Nitrosation("SNO"),
-    SUMOylation("sumo"),
-    Ubiquitination("ubi")
+    ACETYLATION("Ac"),
+    GLYCOSYLATION("carb"),
+    DIMETHYLATION("dimethyl"),
+    GERANYLGERANYLATION("ger"),
+    FARNESYLATION("SFarn"),
+    MYRISTOYLATION("myr"),
+    NITRATION("nitro"),
+    PHOSPHORYLATION("P"),
+    PALMITOYLATION("palm"),
+    POLY_ADP_RIBOSYLATION("PAR"),
+    S_NITROSATION("SNO"),
+    SUMOYLATION("sumo"),
+    UBIQUITINATION("ubi")
     ;
 
     private final static Set<String> validNames;
@@ -67,31 +67,31 @@ public enum AminoAcidModification implements SequenceChange<AminoAcidModificatio
 
         switch (name.toLowerCase()) {
             case "ac":
-                return Acetylation;
+                return ACETYLATION;
             case "carb":
-                return Glycosylation;
+                return GLYCOSYLATION;
             case "dimethyl":
-                return Dimethylation;
+                return DIMETHYLATION;
             case "ger":
-                return Geranylgeranylation;
+                return GERANYLGERANYLATION;
             case "sfarn":
-                return Farnesylation;
+                return FARNESYLATION;
             case "myr":
-                return Myristoylation;
+                return MYRISTOYLATION;
             case "nitro":
-                return Nitration;
+                return NITRATION;
             case "p":
-                return Phosphorylation;
+                return PHOSPHORYLATION;
             case "palm":
-                return Palmitoylation;
+                return PALMITOYLATION;
             case "par":
-                return PolyADP_Ribosylation;
+                return POLY_ADP_RIBOSYLATION;
             case "sno":
-                return S_Nitrosation;
+                return S_NITROSATION;
             case "sumo":
-                return SUMOylation;
+                return SUMOYLATION;
             case "ubi":
-                return Ubiquitination;
+                return UBIQUITINATION;
             default:
                 throw new IllegalArgumentException("No enum constant "+AminoAcidModification.class.getSimpleName()+"." + name);
         }

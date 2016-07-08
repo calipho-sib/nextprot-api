@@ -160,7 +160,7 @@ public class SequenceVariationImplTest {
     @Test
     public void testBuildPtm() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.CYSTEINE, 123).modifies(AminoAcidModification.S_Nitrosation).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.CYSTEINE, 123).modifies(AminoAcidModification.S_NITROSATION).build();
 
         Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(123, pm.getFirstChangingAminoAcidPos());
@@ -168,6 +168,6 @@ public class SequenceVariationImplTest {
         Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(123, pm.getLastChangingAminoAcidPos());
 
-        Assert.assertEquals(AminoAcidModification.S_Nitrosation, pm.getSequenceChange().getValue());
+        Assert.assertEquals(AminoAcidModification.S_NITROSATION, pm.getSequenceChange().getValue());
     }
 }
