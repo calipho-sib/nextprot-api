@@ -6,12 +6,12 @@ import java.util.TreeSet;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="urlsukhjhk")
+@XmlRootElement(name="urls")
 public class SitemapUrlSet  {
 	
 	private Set<SitemapUrl> urls=new TreeSet<SitemapUrl>();
 	
-	@XmlElement(name="myurl")
+	@XmlElement(name="url")
 	public Set<SitemapUrl> getUrls() {
 		return urls;
 	}
