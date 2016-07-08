@@ -21,7 +21,7 @@ public class SitemapTest {
 		String url = "http://aaa.bbb.com/toto";
 		SitemapUrl siturl = new SitemapUrl(url);
 		String expectedDate = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-		System.out.println("expectedDate: " + expectedDate);
+		//System.out.println("expectedDate: " + expectedDate);
 		Assert.assertEquals(url, siturl.getLoc());
 		Assert.assertEquals(expectedDate, siturl.getLastmod());
 		Assert.assertEquals("weekly", siturl.getChangefreq());
@@ -39,7 +39,7 @@ public class SitemapTest {
 		urlSet.add(new SitemapUrl(base + "/help"));
 		urlSet.add(new SitemapUrl(base + "/copyright"));
 		urlSet.add(new SitemapUrl(base + "/help/simple-search"));
-		for (SitemapUrl siturl : urlSet.getUrls()) System.out.println(siturl.getLoc());
+		//for (SitemapUrl siturl : urlSet.getUrls()) System.out.println(siturl.getLoc());
 		Assert.assertEquals(5, urlSet.getUrls().size());
 	}
 
@@ -53,16 +53,12 @@ public class SitemapTest {
 			urlSet.add(new SitemapUrl(base + "/about"));
 			urlSet.add(new SitemapUrl(base + "/copyright"));
 			urlSet.add(new SitemapUrl(base + "/news"));
-
-
-			
-			//SitemapUrl siturl = new SitemapUrl(base + "/toto");
 			
 			JAXBContext jaxbContext = JAXBContext.newInstance(SitemapUrlSet.class);
 			Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
 
 			jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			jaxbMarshaller.marshal(urlSet, System.out);
+			//jaxbMarshaller.marshal(urlSet, System.out);
 
 		} catch (JAXBException e) {
 			e.printStackTrace();

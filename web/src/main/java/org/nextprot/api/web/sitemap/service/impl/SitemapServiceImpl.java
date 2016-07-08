@@ -31,15 +31,10 @@ public class SitemapServiceImpl implements SitemapService {
 		urlSet.add(new SitemapUrl(base + "/help"));
 		urlSet.add(new SitemapUrl(base + "/help/simple-search"));
 		
-/*		Set<String> acs = masterIdentifierService.findUniqueNames();
+		Set<String> acs = masterIdentifierService.findUniqueNames();
 		for (String ac: acs) {
 			urlSet.add(new SitemapUrl(base + "/entry/" + ac + "/function"));
-		}*/
-		
+		}
 		return urlSet;
 	}
-	
-	
-
-
 }
