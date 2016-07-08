@@ -18,7 +18,7 @@ public class InvalidFeatureAminoAcidExceptionTest {
                 new FeatureQuery(mockEntryIsoform("NX_Q9UI33"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
 
         InvalidFeatureQueryAminoAcidException result = new InvalidFeatureQueryAminoAcidException(query, 1158,
-                AminoAcidCode.asArray(AminoAcidCode.Alanine), AminoAcidCode.asArray(AminoAcidCode.Leucine));
+                AminoAcidCode.asArray(AminoAcidCode.ALANINE), AminoAcidCode.asArray(AminoAcidCode.LEUCINE));
 
         Assert.assertEquals("invalid feature specification: found amino-acid Ala at position 1158 of sequence isoform NX_Q9UI33 instead of Leu as incorrectly specified in feature 'SCN11A-p.Leu1158Pro'", result.getError().getMessage());
     }

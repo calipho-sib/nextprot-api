@@ -19,10 +19,10 @@ public class SequenceVariationHGVSParseFrameshiftTest {
 
         SequenceVariation pm = format.parse("p.M682Afs*2");
 
-        Assert.assertEquals(AminoAcidCode.Methionine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(682, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.FRAMESHIFT, pm.getSequenceChange().getType());
-        Assert.assertEquals(AminoAcidCode.Alanine, ((Frameshift.Change)pm.getSequenceChange().getValue()).getChangedAminoAcid());
+        Assert.assertEquals(AminoAcidCode.ALANINE, ((Frameshift.Change)pm.getSequenceChange().getValue()).getChangedAminoAcid());
         Assert.assertEquals(2, ((Frameshift.Change)pm.getSequenceChange().getValue()).getNewTerminationPosition());
     }
 
@@ -31,10 +31,10 @@ public class SequenceVariationHGVSParseFrameshiftTest {
 
         SequenceVariation pm = format.parse("p.Met682AlafsTer2");
 
-        Assert.assertEquals(AminoAcidCode.Methionine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(682, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.FRAMESHIFT, pm.getSequenceChange().getType());
-        Assert.assertEquals(AminoAcidCode.Alanine, ((Frameshift.Change)pm.getSequenceChange().getValue()).getChangedAminoAcid());
+        Assert.assertEquals(AminoAcidCode.ALANINE, ((Frameshift.Change)pm.getSequenceChange().getValue()).getChangedAminoAcid());
         Assert.assertEquals(2, ((Frameshift.Change)pm.getSequenceChange().getValue()).getNewTerminationPosition());
     }
 
@@ -44,7 +44,7 @@ public class SequenceVariationHGVSParseFrameshiftTest {
 
         SequenceVariation pm = format.parse("p.S1476fs*>9", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
 
-        Assert.assertEquals(AminoAcidCode.Serine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.SERINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(1476, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.FRAMESHIFT, pm.getSequenceChange().getType());
         Assert.assertEquals(9, pm.getSequenceChange().getValue());

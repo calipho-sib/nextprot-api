@@ -11,29 +11,29 @@ public class SequenceVariationImplTest {
     @Test
     public void testBuildSubstitution() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Arginine, 54).substitutedBy(AminoAcidCode.Cysteine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.ARGININE, 54).substitutedBy(AminoAcidCode.CYSTEINE).build();
 
-        Assert.assertEquals(AminoAcidCode.Arginine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.ARGININE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
 
-        Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.ARGININE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(54, pm.getLastChangingAminoAcidPos());
 
         Assert.assertTrue(!pm.isMultipleChangingAminoAcids());
 
         Assert.assertTrue(pm.getSequenceChange() instanceof Substitution);
-        Assert.assertEquals(AminoAcidCode.Cysteine, pm.getSequenceChange().getValue());
+        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getSequenceChange().getValue());
     }
 
     @Test
     public void testBuildAADeletion() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Lysine, 73).deletes().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.LYSINE, 73).deletes().build();
 
-        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(73, pm.getFirstChangingAminoAcidPos());
 
-        Assert.assertEquals(AminoAcidCode.Lysine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(73, pm.getLastChangingAminoAcidPos());
 
         Assert.assertTrue(pm.getSequenceChange() instanceof Deletion);
@@ -43,12 +43,12 @@ public class SequenceVariationImplTest {
     @Test
     public void testBuildRangeDeletion() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 487, AminoAcidCode.Leucine, 498).deletes().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.LYSINE, 487, AminoAcidCode.LEUCINE, 498).deletes().build();
 
-        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
 
-        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
 
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
@@ -58,84 +58,84 @@ public class SequenceVariationImplTest {
     @Test
     public void testBuildFrameshift() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(AminoAcidCode.Alanine, 2).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.METHIONINE, 682).thenFrameshift(AminoAcidCode.ALANINE, 2).build();
 
-        Assert.assertEquals(AminoAcidCode.Methionine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(682, pm.getFirstChangingAminoAcidPos());
 
-        Assert.assertEquals(AminoAcidCode.Methionine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(682, pm.getLastChangingAminoAcidPos());
 
         Assert.assertTrue(pm.getSequenceChange() instanceof Frameshift);
-        Assert.assertEquals(AminoAcidCode.Alanine, ((Frameshift.Change)pm.getSequenceChange().getValue()).getChangedAminoAcid());
+        Assert.assertEquals(AminoAcidCode.ALANINE, ((Frameshift.Change)pm.getSequenceChange().getValue()).getChangedAminoAcid());
         Assert.assertEquals(2, ((Frameshift.Change)pm.getSequenceChange().getValue()).getNewTerminationPosition());
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void testBuildFrameshiftBadStopPos() throws Exception {
 
-        new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(AminoAcidCode.Alanine, 1).build();
+        new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.METHIONINE, 682).thenFrameshift(AminoAcidCode.ALANINE, 1).build();
     }
 
     @Test
     public void testBuildDeletion1AaAndInsertion1() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Threonine, 399).deletedAndInserts(AminoAcidCode.Leucine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.THREONINE, 399).deletedAndInserts(AminoAcidCode.LEUCINE).build();
 
-        Assert.assertEquals(AminoAcidCode.Threonine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.THREONINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(399, pm.getFirstChangingAminoAcidPos());
 
-        Assert.assertEquals(AminoAcidCode.Threonine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.THREONINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(399, pm.getLastChangingAminoAcidPos());
 
         Assert.assertTrue(pm.getSequenceChange() instanceof DeletionAndInsertion);
-        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.Leucine}, (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.LEUCINE}, (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
     public void testBuildDeletionMultiAasAndInsertion1() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Leucine, 330, AminoAcidCode.Alanine, 331).deletedAndInserts(AminoAcidCode.Phenylalanine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.LEUCINE, 330, AminoAcidCode.ALANINE, 331).deletedAndInserts(AminoAcidCode.PHENYLALANINE).build();
 
-        Assert.assertEquals(AminoAcidCode.Leucine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(330, pm.getFirstChangingAminoAcidPos());
 
-        Assert.assertEquals(AminoAcidCode.Alanine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.ALANINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(331, pm.getLastChangingAminoAcidPos());
 
         Assert.assertTrue(pm.getSequenceChange() instanceof DeletionAndInsertion);
-        Assert.assertArrayEquals(new AminoAcidCode[] { AminoAcidCode.Phenylalanine }, (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(new AminoAcidCode[] { AminoAcidCode.PHENYLALANINE}, (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
     public void testBuildDeletionMultiAndInsertionMulti() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.AsparticAcid, 419, AminoAcidCode.Arginine, 420).deletedAndInserts(AminoAcidCode.Serine, AminoAcidCode.Serine, AminoAcidCode.AsparticAcid, AminoAcidCode.Glycine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.ASPARTIC_ACID, 419, AminoAcidCode.ARGININE, 420).deletedAndInserts(AminoAcidCode.SERINE, AminoAcidCode.SERINE, AminoAcidCode.ASPARTIC_ACID, AminoAcidCode.GLYCINE).build();
 
-        Assert.assertEquals(AminoAcidCode.AsparticAcid, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.ASPARTIC_ACID, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(419, pm.getFirstChangingAminoAcidPos());
 
-        Assert.assertEquals(AminoAcidCode.Arginine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.ARGININE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(420, pm.getLastChangingAminoAcidPos());
 
         Assert.assertTrue(pm.getSequenceChange() instanceof DeletionAndInsertion);
-        Assert.assertArrayEquals(new AminoAcidCode[] { AminoAcidCode.Serine, AminoAcidCode.Serine, AminoAcidCode.AsparticAcid, AminoAcidCode.Glycine }, (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(new AminoAcidCode[] { AminoAcidCode.SERINE, AminoAcidCode.SERINE, AminoAcidCode.ASPARTIC_ACID, AminoAcidCode.GLYCINE}, (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
     public void testBuildInsertion() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 2, AminoAcidCode.Methionine, 3).inserts(AminoAcidCode.Glutamine, AminoAcidCode.Serine, AminoAcidCode.Lysine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.LYSINE, 2, AminoAcidCode.METHIONINE, 3).inserts(AminoAcidCode.GLUTAMINE, AminoAcidCode.SERINE, AminoAcidCode.LYSINE).build();
 
-        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(2, pm.getFirstChangingAminoAcidPos());
 
-        Assert.assertEquals(AminoAcidCode.Methionine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(3, pm.getLastChangingAminoAcidPos());
 
         Assert.assertTrue(pm.getSequenceChange() instanceof Insertion);
         Assert.assertEquals(2, ((Insertion)pm.getSequenceChange()).getInsertAfterPos());
-        Assert.assertArrayEquals(new AminoAcidCode[] { AminoAcidCode.Glutamine, AminoAcidCode.Serine, AminoAcidCode.Lysine }, (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(new AminoAcidCode[] { AminoAcidCode.GLUTAMINE, AminoAcidCode.SERINE, AminoAcidCode.LYSINE}, (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
@@ -145,12 +145,12 @@ public class SequenceVariationImplTest {
         p.Ala3_Ser5dup (several amino acids): a duplication of amino acids Ala3 to Ser5 in the sequence MetGlyAlaArgSerSerHis to MetGlyAlaArgSerAlaArgSerSerHis
          */
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Alanine, 3, AminoAcidCode.Serine, 5).duplicates().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.ALANINE, 3, AminoAcidCode.SERINE, 5).duplicates().build();
 
-        Assert.assertEquals(AminoAcidCode.Alanine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.ALANINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(3, pm.getFirstChangingAminoAcidPos());
 
-        Assert.assertEquals(AminoAcidCode.Serine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.SERINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(5, pm.getLastChangingAminoAcidPos());
 
         Assert.assertTrue(pm.getSequenceChange() instanceof Duplication);
@@ -160,12 +160,12 @@ public class SequenceVariationImplTest {
     @Test
     public void testBuildPtm() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Cysteine, 123).modifies(AminoAcidModification.S_Nitrosation).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.CYSTEINE, 123).modifies(AminoAcidModification.S_Nitrosation).build();
 
-        Assert.assertEquals(AminoAcidCode.Cysteine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(123, pm.getFirstChangingAminoAcidPos());
 
-        Assert.assertEquals(AminoAcidCode.Cysteine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(123, pm.getLastChangingAminoAcidPos());
 
         Assert.assertEquals(AminoAcidModification.S_Nitrosation, pm.getSequenceChange().getValue());

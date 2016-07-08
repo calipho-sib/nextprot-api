@@ -96,7 +96,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         when(query.getFeature()).thenReturn("SCN11A-p.Met1158Pro");
 
         assertIsoformFeatureNotValid((FeatureQueryFailure) result, new InvalidFeatureQueryAminoAcidException(query, 1158,
-                AminoAcidCode.asArray(AminoAcidCode.Leucine), AminoAcidCode.asArray(AminoAcidCode.Methionine)));
+                AminoAcidCode.asArray(AminoAcidCode.LEUCINE), AminoAcidCode.asArray(AminoAcidCode.METHIONINE)));
     }
 
     @Test

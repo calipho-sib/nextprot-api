@@ -14,7 +14,7 @@ public class AminoAcidModificationBedFormatTest {
     @Test
     public void testFormatWith3LetterCodeAAMod() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Cysteine, 54).modifies(AminoAcidModification.S_Nitrosation).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.CYSTEINE, 54).modifies(AminoAcidModification.S_Nitrosation).build();
 
         Assert.assertEquals("SNO-Cys54", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }
@@ -22,7 +22,7 @@ public class AminoAcidModificationBedFormatTest {
     @Test
     public void testFormatWith1LetterCodeAAMod() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Cysteine, 54).modifies(AminoAcidModification.S_Nitrosation).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.CYSTEINE, 54).modifies(AminoAcidModification.S_Nitrosation).build();
 
         Assert.assertEquals("SNO-C54", format.format(pm, AminoAcidCode.AACodeType.ONE_LETTER));
     }
@@ -32,7 +32,7 @@ public class AminoAcidModificationBedFormatTest {
 
         SequenceVariation pm = format.parse("SNO-Cys54");
 
-        Assert.assertEquals(AminoAcidCode.Cysteine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(AminoAcidModification.S_Nitrosation, pm.getSequenceChange());
     }
@@ -42,7 +42,7 @@ public class AminoAcidModificationBedFormatTest {
 
         SequenceVariation pm = format.parse("SNO-C54");
 
-        Assert.assertEquals(AminoAcidCode.Cysteine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(AminoAcidModification.S_Nitrosation, pm.getSequenceChange());
     }

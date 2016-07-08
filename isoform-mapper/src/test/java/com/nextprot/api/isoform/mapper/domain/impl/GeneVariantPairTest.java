@@ -24,7 +24,7 @@ public class GeneVariantPairTest {
         Assert.assertEquals("SCN11A", pair.getGeneName());
         SequenceVariation variation = pair.getVariation();
 
-        Assert.assertEquals(AminoAcidCode.Lysine, variation.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LYSINE, variation.getFirstChangingAminoAcid());
         Assert.assertEquals(1710, variation.getFirstChangingAminoAcidPos());
 
         Assert.assertTrue(pair.isValidGeneName(mockEntry("SCN11A", "SCN12A", "SNS2")));
@@ -38,7 +38,7 @@ public class GeneVariantPairTest {
         Assert.assertEquals("WT1", pair.getGeneName());
         SequenceVariation variation = pair.getVariation();
 
-        Assert.assertEquals(AminoAcidCode.Phenylalanine, variation.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.PHENYLALANINE, variation.getFirstChangingAminoAcid());
         Assert.assertEquals(154, variation.getFirstChangingAminoAcidPos());
 
         Assert.assertTrue(pair.isValidGeneName(mockEntry("WT1")));

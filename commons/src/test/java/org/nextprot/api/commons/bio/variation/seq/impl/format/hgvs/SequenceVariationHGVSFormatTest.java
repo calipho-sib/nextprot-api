@@ -32,7 +32,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatSubstitution() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Arginine, 54).substitutedBy(AminoAcidCode.Cysteine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.ARGININE, 54).substitutedBy(AminoAcidCode.CYSTEINE).build();
 
         Assert.assertEquals("p.R54C", format.format(pm));
     }
@@ -40,7 +40,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatSubstitutionWithStop() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.GlutamicAcid, 31).substitutedBy(AminoAcidCode.Stop).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.GLUTAMIC_ACID, 31).substitutedBy(AminoAcidCode.STOP).build();
 
         Assert.assertEquals("p.E31*", format.format(pm));
     }
@@ -48,7 +48,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatAADeletion() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Lysine, 73).deletes().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.LYSINE, 73).deletes().build();
 
         Assert.assertEquals("p.K73del", format.format(pm));
     }
@@ -56,7 +56,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatRangeDeletion() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 487, AminoAcidCode.Leucine, 498).deletes().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.LYSINE, 487, AminoAcidCode.LEUCINE, 498).deletes().build();
 
         Assert.assertEquals("p.K487_L498del", format.format(pm));
     }
@@ -64,7 +64,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatFrameshift() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(AminoAcidCode.Alanine, 2).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.METHIONINE, 682).thenFrameshift(AminoAcidCode.ALANINE, 2).build();
 
         Assert.assertEquals("p.M682Afs*2", format.format(pm));
     }
@@ -72,7 +72,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatDeletion1AaAndInsertion1() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Threonine, 399).deletedAndInserts(AminoAcidCode.Leucine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.THREONINE, 399).deletedAndInserts(AminoAcidCode.LEUCINE).build();
 
         Assert.assertEquals("p.T399delinsL", format.format(pm));
     }
@@ -80,7 +80,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatDeletionMultiAasAndInsertion1() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Leucine, 330, AminoAcidCode.Alanine, 331).deletedAndInserts(AminoAcidCode.Phenylalanine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.LEUCINE, 330, AminoAcidCode.ALANINE, 331).deletedAndInserts(AminoAcidCode.PHENYLALANINE).build();
 
         Assert.assertEquals("p.L330_A331delinsF", format.format(pm));
     }
@@ -88,7 +88,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatDeletionMultiAndInsertionMulti() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.AsparticAcid, 419, AminoAcidCode.Arginine, 420).deletedAndInserts(AminoAcidCode.Serine, AminoAcidCode.Serine, AminoAcidCode.AsparticAcid, AminoAcidCode.Glycine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.ASPARTIC_ACID, 419, AminoAcidCode.ARGININE, 420).deletedAndInserts(AminoAcidCode.SERINE, AminoAcidCode.SERINE, AminoAcidCode.ASPARTIC_ACID, AminoAcidCode.GLYCINE).build();
 
         Assert.assertEquals("p.D419_R420delinsSSDG", format.format(pm));
     }
@@ -97,7 +97,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatSubstitutionCode3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Arginine, 54).substitutedBy(AminoAcidCode.Cysteine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.ARGININE, 54).substitutedBy(AminoAcidCode.CYSTEINE).build();
 
         Assert.assertEquals("p.Arg54Cys", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }
@@ -105,7 +105,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatAADeletionCode3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Lysine, 73).deletes().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.LYSINE, 73).deletes().build();
 
         Assert.assertEquals("p.Lys73del", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }
@@ -113,7 +113,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatRangeDeletionCode3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Lysine, 487, AminoAcidCode.Leucine, 498).deletes().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.LYSINE, 487, AminoAcidCode.LEUCINE, 498).deletes().build();
 
         Assert.assertEquals("p.Lys487_Leu498del", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }
@@ -121,7 +121,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatFrameshiftCode3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Methionine, 682).thenFrameshift(AminoAcidCode.Alanine, 2).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.METHIONINE, 682).thenFrameshift(AminoAcidCode.ALANINE, 2).build();
 
         Assert.assertEquals("p.Met682AlafsTer2", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }
@@ -129,7 +129,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatDeletion1AaAndInsertion1Code3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Threonine, 399).deletedAndInserts(AminoAcidCode.Leucine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.THREONINE, 399).deletedAndInserts(AminoAcidCode.LEUCINE).build();
 
         Assert.assertEquals("p.Thr399delinsLeu", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }
@@ -137,7 +137,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatDeletionMultiAasAndInsertion1Code3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Leucine, 330, AminoAcidCode.Alanine, 331).deletedAndInserts(AminoAcidCode.Phenylalanine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.LEUCINE, 330, AminoAcidCode.ALANINE, 331).deletedAndInserts(AminoAcidCode.PHENYLALANINE).build();
 
         Assert.assertEquals("p.Leu330_Ala331delinsPhe", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }
@@ -145,7 +145,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatDeletionMultiAndInsertionMultiCode3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.AsparticAcid, 419, AminoAcidCode.Arginine, 420).deletedAndInserts(AminoAcidCode.Serine, AminoAcidCode.Serine, AminoAcidCode.AsparticAcid, AminoAcidCode.Glycine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.ASPARTIC_ACID, 419, AminoAcidCode.ARGININE, 420).deletedAndInserts(AminoAcidCode.SERINE, AminoAcidCode.SERINE, AminoAcidCode.ASPARTIC_ACID, AminoAcidCode.GLYCINE).build();
 
         Assert.assertEquals("p.Asp419_Arg420delinsSerSerAspGly", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }
@@ -153,7 +153,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatSubstitutionFixCode1() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Stop, 104).substitutedBy(AminoAcidCode.GlutamicAcid).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.STOP, 104).substitutedBy(AminoAcidCode.GLUTAMIC_ACID).build();
 
         Assert.assertEquals("p.*104E", format.format(pm));
     }
@@ -161,7 +161,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatSubstitutionFixCode3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Stop, 104).substitutedBy(AminoAcidCode.GlutamicAcid).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.STOP, 104).substitutedBy(AminoAcidCode.GLUTAMIC_ACID).build();
 
         Assert.assertEquals("p.Ter104Glu", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }
@@ -169,7 +169,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatInsertionCode1() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Cysteine, 136, AminoAcidCode.Alanine, 137).inserts(AminoAcidCode.Glycine, AminoAcidCode.Methionine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.CYSTEINE, 136, AminoAcidCode.ALANINE, 137).inserts(AminoAcidCode.GLYCINE, AminoAcidCode.METHIONINE).build();
 
         Assert.assertEquals("p.C136_A137insGM", format.format(pm));
     }
@@ -177,7 +177,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatInsertionCode3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Cysteine, 136, AminoAcidCode.Alanine, 137).inserts(AminoAcidCode.Glycine, AminoAcidCode.Methionine).build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.CYSTEINE, 136, AminoAcidCode.ALANINE, 137).inserts(AminoAcidCode.GLYCINE, AminoAcidCode.METHIONINE).build();
 
         Assert.assertEquals("p.Cys136_Ala137insGlyMet", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }
@@ -185,7 +185,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatDuplicationSimpleCode1() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Cysteine, 76).duplicates().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.CYSTEINE, 76).duplicates().build();
 
         Assert.assertEquals("p.C76dup", format.format(pm, AminoAcidCode.AACodeType.ONE_LETTER));
     }
@@ -193,7 +193,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatDuplicationSimpleCode3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.Cysteine, 76).duplicates().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcid(AminoAcidCode.CYSTEINE, 76).duplicates().build();
 
         Assert.assertEquals("p.Cys76dup", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }
@@ -201,7 +201,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatDuplicationCode1() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Cysteine, 76, AminoAcidCode.GlutamicAcid, 79).duplicates().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.CYSTEINE, 76, AminoAcidCode.GLUTAMIC_ACID, 79).duplicates().build();
 
         Assert.assertEquals("p.C76_E79dup", format.format(pm, AminoAcidCode.AACodeType.ONE_LETTER));
     }
@@ -209,7 +209,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testFormatDuplicationCode3() throws Exception {
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.Cysteine, 76, AminoAcidCode.GlutamicAcid, 79).duplicates().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilder().aminoAcids(AminoAcidCode.CYSTEINE, 76, AminoAcidCode.GLUTAMIC_ACID, 79).duplicates().build();
 
         Assert.assertEquals("p.Cys76_Glu79dup", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
     }

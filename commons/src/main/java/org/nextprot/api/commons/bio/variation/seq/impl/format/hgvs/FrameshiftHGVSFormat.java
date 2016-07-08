@@ -46,7 +46,7 @@ public class FrameshiftHGVSFormat implements SequenceChangeFormat<Frameshift> {
         sb
                 .append(AminoAcidCode.formatAminoAcidCode(type, change.getValue().getChangedAminoAcid()))
                 .append("fs")
-                .append(AminoAcidCode.formatAminoAcidCode(type, AminoAcidCode.Stop))
+                .append(AminoAcidCode.formatAminoAcidCode(type, AminoAcidCode.STOP))
                 .append(change.getValue().getNewTerminationPosition());
     }
 }

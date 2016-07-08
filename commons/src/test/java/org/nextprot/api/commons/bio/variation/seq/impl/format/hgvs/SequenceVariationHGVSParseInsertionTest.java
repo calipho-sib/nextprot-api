@@ -18,7 +18,7 @@ public class SequenceVariationHGVSParseInsertionTest {
 
         SequenceVariation pm = format.parse("p.C136_A137insGM", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
 
-        assertProteinSequenceVariation(pm, AminoAcidCode.Cysteine, AminoAcidCode.Alanine, 136);
+        assertProteinSequenceVariation(pm, AminoAcidCode.CYSTEINE, AminoAcidCode.ALANINE, 136);
         Assert.assertEquals(SequenceChange.Type.INSERTION, pm.getSequenceChange().getType());
         Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("GM"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
         Assert.assertEquals(136, ((Insertion)pm.getSequenceChange()).getInsertAfterPos());
@@ -47,7 +47,7 @@ public class SequenceVariationHGVSParseInsertionTest {
 
         SequenceVariation pm = format.parse("p.Met1875_Glu1876insMet", SequenceVariationHGVSFormat.ParsingMode.STRICT);
 
-        assertProteinSequenceVariation(pm, AminoAcidCode.Methionine, AminoAcidCode.GlutamicAcid, 1875);
+        assertProteinSequenceVariation(pm, AminoAcidCode.METHIONINE, AminoAcidCode.GLUTAMIC_ACID, 1875);
         Assert.assertEquals(SequenceChange.Type.INSERTION, pm.getSequenceChange().getType());
         Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("M"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
         Assert.assertEquals(1875, ((Insertion)pm.getSequenceChange()).getInsertAfterPos());
@@ -58,7 +58,7 @@ public class SequenceVariationHGVSParseInsertionTest {
 
         SequenceVariation pm = format.parse("p.Lys722_Ala723insTyrLys", SequenceVariationHGVSFormat.ParsingMode.STRICT);
 
-        assertProteinSequenceVariation(pm, AminoAcidCode.Lysine, AminoAcidCode.Alanine, 722);
+        assertProteinSequenceVariation(pm, AminoAcidCode.LYSINE, AminoAcidCode.ALANINE, 722);
         Assert.assertEquals(SequenceChange.Type.INSERTION, pm.getSequenceChange().getType());
         Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("YK"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
         Assert.assertEquals(722, ((Insertion)pm.getSequenceChange()).getInsertAfterPos());

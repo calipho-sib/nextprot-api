@@ -8,37 +8,37 @@ public class AminoAcidCodeTest {
     @Test
     public void testValueOfCode1Found() throws Exception {
 
-        Assert.assertEquals(AminoAcidCode.Alanine, AminoAcidCode.valueOfOneLetterCode('A'));
+        Assert.assertEquals(AminoAcidCode.ALANINE, AminoAcidCode.valueOfOneLetterCode('A'));
     }
 
     @Test
     public void testValueOfCode1AlsoFound() throws Exception {
 
-        Assert.assertEquals(AminoAcidCode.Stop, AminoAcidCode.valueOfAminoAcid("*"));
+        Assert.assertEquals(AminoAcidCode.STOP, AminoAcidCode.valueOfAminoAcid("*"));
     }
 
     @Test
     public void testValueOfCode3Found() throws Exception {
 
-        Assert.assertEquals(AminoAcidCode.Alanine, AminoAcidCode.valueOfAminoAcid("Ala"));
+        Assert.assertEquals(AminoAcidCode.ALANINE, AminoAcidCode.valueOfAminoAcid("Ala"));
     }
 
     @Test
     public void testValueOfCodeSequenceOk() throws Exception {
 
-        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.Tryptophan, AminoAcidCode.Tryptophan, AminoAcidCode.Alanine, AminoAcidCode.Tyrosine}, AminoAcidCode.valueOfOneLetterCodeSequence("TrpWAlaY"));
+        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.TRYPTOPHAN, AminoAcidCode.TRYPTOPHAN, AminoAcidCode.ALANINE, AminoAcidCode.TYROSINE}, AminoAcidCode.valueOfOneLetterCodeSequence("TrpWAlaY"));
     }
 
     @Test
     public void testValueOfCodeSequence2Ok() throws Exception {
 
-        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.Stop}, AminoAcidCode.valueOfOneLetterCodeSequence("Ter"));
+        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.STOP}, AminoAcidCode.valueOfOneLetterCodeSequence("Ter"));
     }
 
     @Test
     public void testValueOfCodeSequence3Ok() throws Exception {
 
-        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.Threonine, AminoAcidCode.Tyrosine, AminoAcidCode.Stop}, AminoAcidCode.valueOfOneLetterCodeSequence("TY*"));
+        Assert.assertArrayEquals(new AminoAcidCode[]{AminoAcidCode.THREONINE, AminoAcidCode.TYROSINE, AminoAcidCode.STOP}, AminoAcidCode.valueOfOneLetterCodeSequence("TY*"));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -86,6 +86,6 @@ public class AminoAcidCodeTest {
     @Test
     public void testAsArray() throws Exception {
 
-        Assert.assertArrayEquals(new AminoAcidCode[] {AminoAcidCode.AsparticAcid}, AminoAcidCode.asArray(AminoAcidCode.AsparticAcid));
+        Assert.assertArrayEquals(new AminoAcidCode[] {AminoAcidCode.ASPARTIC_ACID}, AminoAcidCode.asArray(AminoAcidCode.ASPARTIC_ACID));
     }
 }

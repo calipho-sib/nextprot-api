@@ -15,7 +15,7 @@ public class SequenceVariationHGVSParseDeletionTest {
 
         SequenceVariation pm = format.parse("p.K73del");
 
-        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(73, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
     }
@@ -25,8 +25,8 @@ public class SequenceVariationHGVSParseDeletionTest {
 
         SequenceVariation pm = format.parse("p.K487_L498del");
 
-        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
@@ -37,7 +37,7 @@ public class SequenceVariationHGVSParseDeletionTest {
 
         SequenceVariation pm = format.parse("p.Lys73del");
 
-        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(73, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
     }
@@ -47,8 +47,8 @@ public class SequenceVariationHGVSParseDeletionTest {
 
         SequenceVariation pm = format.parse("p.Lys487_Leu498del");
 
-        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
@@ -59,9 +59,9 @@ public class SequenceVariationHGVSParseDeletionTest {
 
         SequenceVariation pm = format.parse("p.K487_L498del12", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
 
-        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
-        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
     }
@@ -71,9 +71,9 @@ public class SequenceVariationHGVSParseDeletionTest {
 
         SequenceVariation pm = format.parse("p.K487_L498delPRAL", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
 
-        Assert.assertEquals(AminoAcidCode.Lysine, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
-        Assert.assertEquals(AminoAcidCode.Leucine, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
     }
