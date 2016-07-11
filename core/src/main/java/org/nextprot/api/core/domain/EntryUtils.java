@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.AnnotationUtils;
@@ -8,7 +9,9 @@ import org.nextprot.api.core.utils.PublicationUtils;
 import org.nextprot.api.core.utils.XrefUtils;
 
 import java.io.Serializable;
+//import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Set;
 
 public class EntryUtils implements Serializable{
@@ -46,5 +49,32 @@ public class EntryUtils implements Serializable{
 		return entry;
 	}
 
-	
+	public static List<String> getFunctionInfoWithCanonicalFirst(Entry entry) {
+		List<String> fInfoCanonical = new  ArrayList<String>();
+		List<String> fInfoNonCanonical = new  ArrayList<String>();
+		List<Isoform> isos = entry.getIsoforms();
+		String canonicalIso = "";
+		
+		// Get Id of the canonical (swissprotdisplayed) isoform
+		for (Isoform curriso : isos)
+			if(curriso.isCanonicalIsoform()) {
+				canonicalIso = curriso.getUniqueName();
+				break;
+				}	
+		
+		// Get the function annotation and put it in the right basket
+		for (Annotation currannot : entry.getAnnotations()) {
+			if(currannot.getAPICategory().equals(AnnotationCategory.FUNCTION_INFO))
+				if(currannot.isSpecificForIsoform(canonicalIso))
+					fInfoCanonical.add(currannot.getDescription());
+				else
+					fInfoNonCanonical.add(currannot.getDescription());
+		}
+		
+		// Merge the lists in a final unique list with canonical function first
+		//System.err.println("before: " + fInfoCanonical);
+		fInfoCanonical.addAll(fInfoNonCanonical);
+		//System.err.println("after: " + fInfoCanonical);
+		return fInfoCanonical;
+	 }
 }
