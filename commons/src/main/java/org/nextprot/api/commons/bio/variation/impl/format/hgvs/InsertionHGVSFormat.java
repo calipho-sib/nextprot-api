@@ -38,8 +38,8 @@ public class InsertionHGVSFormat implements SequenceChangeFormat<Insertion> {
 
             AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfOneLetterCodeSequence(m.group(7));
 
-            return builder.aminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
-                    .inserts(insertedAAs).build();
+            return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
+                    .thenInsert(insertedAAs).build();
         }
 
         return null;

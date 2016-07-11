@@ -90,7 +90,7 @@ public class SequenceVariationImpl implements SequenceVariation {
         }
 
         @Override
-        public SequenceVariationBuilder.AminoAcidMutation aminoAcid(AminoAcidCode firstAffectedAminoAcid, int firstAffectedAminoAcidPos) {
+        public SequenceVariationBuilder.ChangingAminoAcid selectAminoAcid(AminoAcidCode firstAffectedAminoAcid, int firstAffectedAminoAcidPos) {
 
             dataCollector.setFirstChangingAminoAcid(firstAffectedAminoAcid, firstAffectedAminoAcidPos);
             dataCollector.setLastChangingAminoAcid(firstAffectedAminoAcid, firstAffectedAminoAcidPos);
@@ -99,7 +99,7 @@ public class SequenceVariationImpl implements SequenceVariation {
         }
 
         @Override
-        public SequenceVariationBuilder.AminoAcidRangeMutation aminoAcidRange(AminoAcidCode firstAffectedAminoAcid, int firstAffectedAminoAcidPos, AminoAcidCode lastAffectedAminoAcid, int lastAffectedAminoAcidPos) {
+        public SequenceVariationBuilder.ChangingAminoAcidRange selectAminoAcidRange(AminoAcidCode firstAffectedAminoAcid, int firstAffectedAminoAcidPos, AminoAcidCode lastAffectedAminoAcid, int lastAffectedAminoAcidPos) {
 
             Preconditions.checkArgument(firstAffectedAminoAcidPos < lastAffectedAminoAcidPos);
 
@@ -109,33 +109,33 @@ public class SequenceVariationImpl implements SequenceVariation {
             return new AAMutationActionImpl();
         }
 
-        class MutationActionImpl implements SequenceVariationBuilder.AminoAcidRangeMutation {
+        class MutationActionImpl implements SequenceVariationBuilder.ChangingAminoAcidRange {
 
             @Override
-            public SequenceVariationBuilder deletes() {
+            public SequenceVariationBuilder thenDelete() {
                 return new DeletionBuilder(dataCollector);
             }
 
             @Override
-            public SequenceVariationBuilder inserts(AminoAcidCode... aas) {
+            public SequenceVariationBuilder thenInsert(AminoAcidCode... aas) {
                 return new InsertionBuilder(dataCollector, aas);
             }
 
             @Override
-            public SequenceVariationBuilder duplicates() {
+            public SequenceVariationBuilder thenDuplicate() {
                 return new DuplicationBuilder(dataCollector);
             }
 
             @Override
-            public SequenceVariationBuilder deletedAndInserts(AminoAcidCode... aas) {
+            public SequenceVariationBuilder thenDeleteAndInsert(AminoAcidCode... aas) {
                 return new DeletionInsertionBuilder(dataCollector, aas);
             }
         }
 
-        class AAMutationActionImpl extends MutationActionImpl implements SequenceVariationBuilder.AminoAcidMutation {
+        class AAMutationActionImpl extends MutationActionImpl implements SequenceVariationBuilder.ChangingAminoAcid {
 
             @Override
-            public SequenceVariationBuilder substitutedBy(AminoAcidCode aa) {
+            public SequenceVariationBuilder thenSubstituteWith(AminoAcidCode aa) {
                 return new SubstitutionBuilder(dataCollector, aa);
             }
 
@@ -145,7 +145,7 @@ public class SequenceVariationImpl implements SequenceVariation {
             }
 
             @Override
-            public SequenceVariationBuilder modifies(AminoAcidModification mod) {
+            public SequenceVariationBuilder thenAddModification(AminoAcidModification mod) {
                 return new AminoAcidModificationBuilder(dataCollector, mod);
             }
         }

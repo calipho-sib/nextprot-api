@@ -29,7 +29,7 @@ public class FrameshiftHGVSFormat implements SequenceChangeFormat<Frameshift> {
 
             AminoAcidCode newAA = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
 
-            return builder.aminoAcid(affectedAA, affectedAAPos).thenFrameshift(newAA, Integer.parseInt(m.group(6))).build();
+            return builder.selectAminoAcid(affectedAA, affectedAAPos).thenFrameshift(newAA, Integer.parseInt(m.group(6))).build();
         }
 
         return null;

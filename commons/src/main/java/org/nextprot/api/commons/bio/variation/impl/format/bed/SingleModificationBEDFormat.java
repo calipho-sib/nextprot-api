@@ -33,7 +33,7 @@ public class SingleModificationBEDFormat implements SequenceChangeFormat<AminoAc
             AminoAcidCode affectedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(2), m.group(3));
             int affectedAAPos = Integer.parseInt(m.group(4));
 
-            return builder.aminoAcid(affectedAA, affectedAAPos).modifies(aaChange).build();
+            return builder.selectAminoAcid(affectedAA, affectedAAPos).thenAddModification(aaChange).build();
         }
 
         return null;

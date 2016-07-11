@@ -29,7 +29,7 @@ public class SubstitutionHGVSFormat implements SequenceChangeFormat<Substitution
 
             AminoAcidCode substitutedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
 
-            return builder.aminoAcid(affectedAA, affectedAAPos).substitutedBy(substitutedAA).build();
+            return builder.selectAminoAcid(affectedAA, affectedAAPos).thenSubstituteWith(substitutedAA).build();
         }
 
         return null;

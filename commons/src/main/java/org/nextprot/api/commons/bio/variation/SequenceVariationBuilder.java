@@ -5,7 +5,7 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.impl.AminoAcidModification;
 
 /**
- * Fluent interface for building <code>SequenceVariation</code>s
+ * Fluent interface for building a <code>SequenceVariation</code>
  *
  * Created by fnikitin on 09/07/15.
  */
@@ -21,39 +21,39 @@ public interface SequenceVariationBuilder {
     interface FluentBuilding {
 
         /** select a single affected amino-acid residue */
-        AminoAcidMutation aminoAcid(AminoAcidCode affectedAA, int affectedAAPos);
+        ChangingAminoAcid selectAminoAcid(AminoAcidCode affectedAA, int affectedAAPos);
 
         /** select a range of affected amino-acid residues */
-        AminoAcidRangeMutation aminoAcidRange(AminoAcidCode firstAffectedAA, int firstAffectedAAPos, AminoAcidCode lastAffectedAA, int lastAffectedAAPos);
+        ChangingAminoAcidRange selectAminoAcidRange(AminoAcidCode firstAffectedAA, int firstAffectedAAPos, AminoAcidCode lastAffectedAA, int lastAffectedAAPos);
     }
 
     /** mutations affecting only one amino-acid */
-    interface AminoAcidMutation extends AminoAcidRangeMutation {
+    interface ChangingAminoAcid extends ChangingAminoAcidRange {
 
         /** substitutedBy an amino-acid by another one */
-        SequenceVariationBuilder substitutedBy(AminoAcidCode aa);
+        SequenceVariationBuilder thenSubstituteWith(AminoAcidCode aa);
 
         /** A frameshift appears just after the affected amino-acid leading to a codon stop in this frame */
         SequenceVariationBuilder thenFrameshift(AminoAcidCode newAminoAcidCode, int newTerminationPosition);
 
         /** modifies affected amino-acid with modification */
-        SequenceVariationBuilder modifies(AminoAcidModification modification);
+        SequenceVariationBuilder thenAddModification(AminoAcidModification modification);
     }
 
     /** mutations affecting any sequence of amino-acid */
-    interface AminoAcidRangeMutation {
+    interface ChangingAminoAcidRange {
 
         /** delete all affected amino-acids */
-        SequenceVariationBuilder deletes();
+        SequenceVariationBuilder thenDelete();
 
         /** inserts given aas after specific AA */
-        SequenceVariationBuilder inserts(AminoAcidCode... aas);
+        SequenceVariationBuilder thenInsert(AminoAcidCode... aas);
 
         /** duplicates changing aas and insert right after */
-        SequenceVariationBuilder duplicates();
+        SequenceVariationBuilder thenDuplicate();
 
         /** delete all affected amino-acids and inserts given aas */
-        SequenceVariationBuilder deletedAndInserts(AminoAcidCode... aas);
+        SequenceVariationBuilder thenDeleteAndInsert(AminoAcidCode... aas);
     }
 
     /**

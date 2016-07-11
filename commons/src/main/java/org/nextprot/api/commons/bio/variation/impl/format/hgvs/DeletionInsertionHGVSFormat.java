@@ -28,14 +28,14 @@ public class DeletionInsertionHGVSFormat implements SequenceChangeFormat<Deletio
 
             AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfOneLetterCodeSequence(m.group(7));
 
-            if (m.group(4) == null) return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst)
-                    .deletedAndInserts(insertedAAs).build();
+            if (m.group(4) == null) return builder.selectAminoAcid(affectedAAFirst, affectedAAPosFirst)
+                    .thenDeleteAndInsert(insertedAAs).build();
 
             AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
             int affectedAAPosLast = Integer.parseInt(m.group(6));
 
-            return builder.aminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
-                    .deletedAndInserts(insertedAAs).build();
+            return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
+                    .thenDeleteAndInsert(insertedAAs).build();
         }
 
         return null;

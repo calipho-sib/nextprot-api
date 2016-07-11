@@ -33,14 +33,14 @@ public class DuplicationHGVSFormat implements SequenceChangeFormat<Duplication> 
 
             if (m.group(4) == null) {
 
-                return builder.aminoAcid(affectedAAFirst, affectedAAPosFirst).duplicates().build();
+                return builder.selectAminoAcid(affectedAAFirst, affectedAAPosFirst).thenDuplicate().build();
             }
 
             AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
             int affectedAAPosLast = Integer.parseInt(m.group(6));
 
-            return builder.aminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
-                    .duplicates().build();
+            return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
+                    .thenDuplicate().build();
         }
 
         return null;
