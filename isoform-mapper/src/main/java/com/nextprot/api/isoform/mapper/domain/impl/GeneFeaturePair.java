@@ -2,8 +2,8 @@ package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.GeneVariationPair;
-import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.seq.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 

@@ -1,7 +1,7 @@
 package com.nextprot.api.isoform.mapper.domain.impl;
 
-import org.nextprot.api.commons.bio.variation.seq.SequenceVariationFormat;
-import org.nextprot.api.commons.bio.variation.seq.impl.format.hgvs.SequenceVariationHGVSFormat;
+import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.impl.format.hgvs.SequenceVariationHGVSFormat;
 
 import java.text.ParseException;
 

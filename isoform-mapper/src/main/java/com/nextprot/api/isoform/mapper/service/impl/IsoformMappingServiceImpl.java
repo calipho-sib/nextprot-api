@@ -10,7 +10,7 @@ import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
-import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;

@@ -1,7 +1,7 @@
 package com.nextprot.api.isoform.mapper.domain.impl;
 
-import org.nextprot.api.commons.bio.variation.seq.SequenceVariationFormat;
-import org.nextprot.api.commons.bio.variation.seq.impl.format.bed.AminoAcidModificationBedFormat;
+import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.impl.format.bed.AminoAcidModificationBedFormat;
 
 import java.text.ParseException;
 

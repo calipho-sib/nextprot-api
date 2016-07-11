@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
-import org.nextprot.api.commons.bio.variation.seq.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.core.domain.Isoform;
 
 import java.io.Serializable;
