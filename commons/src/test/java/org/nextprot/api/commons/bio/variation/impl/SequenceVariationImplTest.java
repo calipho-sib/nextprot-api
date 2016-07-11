@@ -170,8 +170,4 @@ public class SequenceVariationImplTest {
 
         Assert.assertEquals(AminoAcidModification.S_NITROSATION, pm.getSequenceChange().getValue());
     }
-
-    @Test
-    public void testBuildPtms() throws Exception {
-    }
 }

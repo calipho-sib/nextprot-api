@@ -2,7 +2,6 @@ package org.nextprot.api.commons.bio.variation.impl.format.bed;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.*;
-import org.nextprot.api.commons.bio.variation.impl.SequenceVariationImpl;
 
 import java.util.Collection;
 import java.util.HashMap;
