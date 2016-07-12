@@ -13,13 +13,13 @@ import java.util.regex.Pattern;
 
 
 /**
- * P-Tyr223       one mod
- * P-Ser21-Ser115 two mods
+ * Parse single PTM with the format:
+ * MOD-AApos (example: P-Tyr223 represents a phosphorylation of tyrosine at position 223)
  */
 public class SingleModificationBEDFormat implements SequenceChangeFormat<AminoAcidModification> {
 
-    // MOD-AApos
-    private static final Pattern PATTERN = Pattern.compile("^(\\w+)-([A-Z*])([a-z]{2})?(\\d+)$");
+    private static final Pattern PATTERN = Pattern.compile("^(\\w+)-([A-Z])([a-z]{2})?(\\d+)$");
+    //private static final Pattern MULTIPLE_PTM_PATTERN = Pattern.compile("^(\\w+)-([A-Z])([a-z]{2})?(\\d+)(-([A-Z])([a-z]{2})?(\\d+))*$");
 
     @Override
     public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder,
@@ -48,7 +48,7 @@ public class SingleModificationBEDFormat implements SequenceChangeFormat<AminoAc
     public void format(StringBuilder sb, AminoAcidModification change, AminoAcidCode.AACodeType type) {
 
         sb
-                .append(change.getValue().getName())
+                .append(change.getName())
                 .append("-");
     }
 }

@@ -7,6 +7,8 @@ import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.impl.AminoAcidModification;
 import org.nextprot.api.commons.bio.variation.impl.SequenceVariationImpl;
 
+import java.text.ParseException;
+
 public class AminoAcidModificationBedFormatTest {
 
     private AminoAcidModificationBedFormat format = new AminoAcidModificationBedFormat();
@@ -41,6 +43,18 @@ public class AminoAcidModificationBedFormatTest {
     public void testParsing1LetterCodeAAFormat() throws Exception {
 
         SequenceVariation pm = format.parse("SNO-C54");
+
+        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidModification.S_NITROSATION, pm.getSequenceChange());
+    }
+
+    // Not yet parsable !
+    @Test(expected = ParseException.class)
+    public void testParsingMultiplePtms() throws Exception {
+
+        // P-Thr265 + P-Thr269 + P-Thr273
+        SequenceVariation pm = format.parse("P-Thr265-Thr269-Thr273");
 
         Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
