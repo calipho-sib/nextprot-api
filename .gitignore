@@ -23,3 +23,5 @@ MANIFEST.MF
 rebel.xml
 npapi.log.bck
 highlight-coverage-peptide-chromosome-y.html
+isoform-mapper/testPropagationForVariantsOfAllEntries.log
+isoform-mapper/testPropagationForVariantsOfAllEntries.log.old

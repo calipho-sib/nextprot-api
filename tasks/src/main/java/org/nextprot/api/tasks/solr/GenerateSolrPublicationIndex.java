@@ -53,7 +53,7 @@ public class GenerateSolrPublicationIndex extends GenerateSolrIndex {
 		
 		logger.info("comitting");
 		indexer.commit();
-		logger.info(pubcnt + " publications indexed..." + (System.currentTimeMillis()-start)/1000 + " seconds...");
+		logger.info(pubcnt + " publications indexed in " + (System.currentTimeMillis()-start)/1000 + " seconds...END");
 	}
 	
 }

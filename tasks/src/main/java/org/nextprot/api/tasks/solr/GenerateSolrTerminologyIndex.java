@@ -54,7 +54,7 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 		
 		logger.info("comitting");
 		indexer.commit();
-		logger.info(termcnt + " terms indexed...");
+		logger.info(termcnt + " terms indexed...END");
 	}
 	
 }

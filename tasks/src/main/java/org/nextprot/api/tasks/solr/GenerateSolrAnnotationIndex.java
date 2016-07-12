@@ -59,7 +59,7 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		
 		logger.info("comitting");
 		indexer.commit();
-		logger.info(ecnt + " entries indexed..." + (System.currentTimeMillis()-start)/1000 + " seconds...");
+		logger.info(ecnt + " entries indexed in " + (System.currentTimeMillis()-start)/1000 + " seconds...END");
 	}
 	
 }
