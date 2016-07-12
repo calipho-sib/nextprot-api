@@ -6,15 +6,16 @@ import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
+import com.nextprot.api.isoform.mapper.service.EntryIsoformFactoryService;
+import com.nextprot.api.isoform.mapper.service.FeatureValidatorFactoryService;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
-import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
+import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,10 +32,13 @@ import java.util.Optional;
 public class IsoformMappingServiceImpl implements IsoformMappingService {
 
     @Autowired
-    private EntryBuilderService entryBuilderService;
+    public MasterIsoformMappingService masterIsoformMappingService;
 
     @Autowired
-    public MasterIsoformMappingService masterIsoformMappingService;
+    public FeatureValidatorFactoryService featureValidatorFactoryService;
+
+    @Autowired
+    public EntryIsoformFactoryService entryIsoformFactoryService;
 
     @Override
     public FeatureQueryResult validateFeature(String featureName, String featureType, String nextprotAccession) {
@@ -43,13 +47,12 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
             FeatureQuery query = new FeatureQuery(nextprotAccession, featureName, featureType, false);
 
             Optional<SequenceFeatureValidator> validator =
-                    FeatureValidatorFactory.createsFeatureValidator(AnnotationCategory.getDecamelizedAnnotationTypeName(featureType));
+                    featureValidatorFactoryService.createsFeatureValidator(AnnotationCategory.getDecamelizedAnnotationTypeName(featureType));
 
             // TODO: replace get() call with future ifPresentOrElse method (https://dzone.com/articles/java-8-optional-replace-your-get-calls?edition=188596&utm_source=Daily%20Digest&utm_medium=email&utm_campaign=dd%202016-07-06)
             if (validator.isPresent()) {
-                EntryIsoform isoform = EntryIsoform.parseEntryIsoform(nextprotAccession, entryBuilderService);
 
-                return validator.get().validate(query, isoform);
+                return validator.get().validate(query, entryIsoformFactoryService.createsEntryIsoform(nextprotAccession));
             }
             else
                 throw new InvalidFeatureQueryTypeException(query);

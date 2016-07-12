@@ -2,7 +2,7 @@ package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import com.nextprot.api.isoform.mapper.utils.EntryIsoform;
+import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;

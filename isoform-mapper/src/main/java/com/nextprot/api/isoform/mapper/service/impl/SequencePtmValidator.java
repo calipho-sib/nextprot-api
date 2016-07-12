@@ -5,7 +5,7 @@ import com.nextprot.api.isoform.mapper.domain.impl.GenePtmPair;
 
 import java.text.ParseException;
 
-public class SequencePtmValidator extends SequenceVariationValidator {
+class SequencePtmValidator extends SequenceVariationValidator {
 
     @Override
     protected GeneVariationPair newGeneVariationPair(String feature) throws ParseException {

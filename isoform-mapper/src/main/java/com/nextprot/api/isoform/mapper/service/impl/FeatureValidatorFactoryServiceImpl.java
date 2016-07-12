@@ -1,22 +1,17 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
+import com.nextprot.api.isoform.mapper.service.FeatureValidatorFactoryService;
 import com.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/**
- * Create FeatureValidators
- */
-public class FeatureValidatorFactory {
+@Service
+public class FeatureValidatorFactoryServiceImpl implements FeatureValidatorFactoryService {
 
-    /**
-     * Creates a new instance of FeatureValidator given an annotation category
-     *
-     * @param annotationCategory annotation category
-     * @return an Optional.empty if not found
-     */
-    public static Optional<SequenceFeatureValidator> createsFeatureValidator(AnnotationCategory annotationCategory) {
+    @Override
+    public Optional<SequenceFeatureValidator> createsFeatureValidator(AnnotationCategory annotationCategory) {
 
         SequenceFeatureValidator validator = null;
 

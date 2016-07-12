@@ -1,11 +1,9 @@
-package com.nextprot.api.isoform.mapper.utils;
+package com.nextprot.api.isoform.mapper.domain;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +17,7 @@ public class EntryIsoform {
     private final Entry entry;
     private final Isoform isoform;
 
-    private EntryIsoform(String accession, Entry entry, Isoform isoform) {
+    public EntryIsoform(String accession, Entry entry, Isoform isoform) {
 
         Preconditions.checkNotNull(accession);
         Preconditions.checkNotNull(entry);
@@ -28,36 +26,6 @@ public class EntryIsoform {
         this.accession = accession;
         this.entry = entry;
         this.isoform = isoform;
-    }
-
-    public static EntryIsoform parseEntryIsoform(String accession, EntryBuilderService entryBuilderService) {
-
-        Preconditions.checkNotNull(accession, "missing accession name (either entry name or isoform name)");
-        Preconditions.checkNotNull(entryBuilderService);
-
-        String entryName = parseEntryName(accession);
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
-
-        if (!isIsoformAccession(accession)) {
-            return new EntryIsoform(accession, entry, getCanonicalIsoform(entry));
-        }
-        return new EntryIsoform(accession, entry, getIsoformByName(entry, accession));
-    }
-
-    private static String parseEntryName(String accession) {
-
-        // isoform accession
-        if (isIsoformAccession(accession)) {
-            int dashPosition = accession.indexOf("-");
-            return accession.substring(0, dashPosition);
-        }
-        // entry accession
-        return accession;
-    }
-
-    private static boolean isIsoformAccession(String accession) {
-
-        return accession.contains("-");
     }
 
     public String getAccession() {
@@ -101,17 +69,6 @@ public class EntryIsoform {
             for (EntityName syn: iso.getSynonyms()) {
                 if (name.equals(syn.getName())) return iso;
             }
-        }
-        return null;
-    }
-
-    /**
-     * Return the canonical isoform of the given entry
-     */
-    public static Isoform getCanonicalIsoform(Entry entry) {
-
-        for (Isoform iso: entry.getIsoforms()) {
-            if (iso.isCanonicalIsoform()) return iso;
         }
         return null;
     }
