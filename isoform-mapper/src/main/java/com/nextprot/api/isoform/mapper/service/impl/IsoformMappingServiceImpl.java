@@ -64,12 +64,12 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         FeatureQueryResult results = validateFeature(featureName, featureType, nextprotAccession);
 
-        if (!results.isSuccess()) return results;
-
-        try {
-            propagate((FeatureQuerySuccess) results);
-        } catch (ParseException e) {
-            throw new NextProtException(e.getMessage());
+        if (results.isSuccess()) {
+            try {
+                propagate((FeatureQuerySuccess) results);
+            } catch (ParseException e) {
+                throw new NextProtException(e.getMessage());
+            }
         }
 
         return results;
