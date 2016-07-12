@@ -24,7 +24,7 @@ public abstract class GeneFeaturePair implements GeneVariationPair {
         String variation = parseVariation(feature);
         SequenceVariationFormat parser = newParser();
 
-        this.variation = parser.parse(variation, SequenceVariationFormat.ParsingMode.PERMISSIVE);
+        this.variation = parser.parse(variation);
         this.geneName = geneName;
     }
 
