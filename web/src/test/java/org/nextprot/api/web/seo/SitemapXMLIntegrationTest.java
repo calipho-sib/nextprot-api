@@ -1,4 +1,4 @@
-package org.nextprot.api.web.sitemap;
+package org.nextprot.api.web.seo;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;

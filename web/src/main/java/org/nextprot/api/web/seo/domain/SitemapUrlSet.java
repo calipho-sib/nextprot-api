@@ -1,4 +1,4 @@
-package org.nextprot.api.web.sitemap.domain;
+package org.nextprot.api.web.seo.domain;
 
 import java.util.Set;
 import java.util.TreeSet;

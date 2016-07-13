@@ -1,7 +1,7 @@
-package org.nextprot.api.web.sitemap.controller;
+package org.nextprot.api.web.seo.controller;
 
-import org.nextprot.api.web.sitemap.domain.SitemapUrlSet;
-import org.nextprot.api.web.sitemap.service.SitemapService;
+import org.nextprot.api.web.seo.domain.SitemapUrlSet;
+import org.nextprot.api.web.seo.service.SitemapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;

@@ -1,4 +1,4 @@
-package org.nextprot.api.web.sitemap;
+package org.nextprot.api.web.seo;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -10,8 +10,8 @@ import javax.xml.bind.Marshaller;
 
 import org.junit.Test;
 import org.junit.Assert;
-import org.nextprot.api.web.sitemap.domain.SitemapUrl;
-import org.nextprot.api.web.sitemap.domain.SitemapUrlSet;
+import org.nextprot.api.web.seo.domain.SitemapUrl;
+import org.nextprot.api.web.seo.domain.SitemapUrlSet;
 
 public class SitemapTest {
 

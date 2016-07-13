@@ -1,4 +1,4 @@
-package org.nextprot.api.web.sitemap.domain;
+package org.nextprot.api.web.seo.domain;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

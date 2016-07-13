@@ -1,7 +1,7 @@
 package org.nextprot.api.web.xstream;
 
-import org.nextprot.api.web.sitemap.domain.SitemapUrl;
-import org.nextprot.api.web.sitemap.domain.SitemapUrlSet;
+import org.nextprot.api.web.seo.domain.SitemapUrl;
+import org.nextprot.api.web.seo.domain.SitemapUrlSet;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;

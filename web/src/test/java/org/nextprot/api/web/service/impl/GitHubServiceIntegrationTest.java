@@ -27,14 +27,26 @@ public class GitHubServiceIntegrationTest extends WebIntegrationBaseTest {
 	}
 
 	@Test
+	public void testGitHubSpecial() throws Exception {
+		String content = ghService.getPage("json-config", "seotags");
+		assertTrue(!content.isEmpty());
+	}
+
+	@Test
 	public void testGitHubNews() throws Exception {
 		String content = ghService.getPage("news", "september-2015-nextprot-release");
 		assertTrue(!content.isEmpty());
 	}
 
 	@Test
-	public void testGitHubPage() throws Exception {
+	public void testGitHubHelp() throws Exception {
 		String content = ghService.getPage("help", "faq");
+		assertTrue(!content.isEmpty());
+	}
+
+	@Test
+	public void testGitHubPage() throws Exception {
+		String content = ghService.getPage("pages", "about");
 		assertTrue(!content.isEmpty());
 	}
 

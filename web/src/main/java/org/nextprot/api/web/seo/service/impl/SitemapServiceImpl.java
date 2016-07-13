@@ -1,11 +1,11 @@
-package org.nextprot.api.web.sitemap.service.impl;
+package org.nextprot.api.web.seo.service.impl;
 
 import java.util.Set;
 
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.web.sitemap.domain.SitemapUrl;
-import org.nextprot.api.web.sitemap.domain.SitemapUrlSet;
-import org.nextprot.api.web.sitemap.service.SitemapService;
+import org.nextprot.api.web.seo.domain.SitemapUrl;
+import org.nextprot.api.web.seo.domain.SitemapUrlSet;
+import org.nextprot.api.web.seo.service.SitemapService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
