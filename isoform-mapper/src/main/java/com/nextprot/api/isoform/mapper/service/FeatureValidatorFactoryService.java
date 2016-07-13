@@ -1,6 +1,6 @@
 package com.nextprot.api.isoform.mapper.service;
 
-import org.nextprot.api.commons.constants.AnnotationCategory;
+import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 
 import java.util.Optional;
 
@@ -12,8 +12,8 @@ public interface FeatureValidatorFactoryService {
     /**
      * Creates a new instance of SequenceFeatureValidator given an annotation category
      *
-     * @param annotationCategory annotation category
+     * @param query feature query
      * @return Optional.empty if not found
      */
-    Optional<SequenceFeatureValidator> createsFeatureValidator(AnnotationCategory annotationCategory);
+    Optional<SequenceFeatureValidator> createsFeatureValidator(FeatureQuery query);
 }
