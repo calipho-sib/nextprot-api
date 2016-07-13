@@ -20,6 +20,10 @@ import java.util.stream.Collectors;
 /**
  * Validate variant type features on isoform sequence
  *
+ * 1. Check that gene name is compatible with protein name
+ * 2. Check that first and last amino-acid(s) described by the feature exists on isoform sequence at given positions
+ * 3. Check that feature rules are valid on the isoform sequence
+ *
  * Created by fnikitin on 05/07/16.
  */
 public abstract class SequenceFeatureValidator {
@@ -31,11 +35,7 @@ public abstract class SequenceFeatureValidator {
     }
 
     /**
-     * Coordinate validation process in the follwing steps:
-     *
-     * 1. Check that gene name is compatible with protein name
-     * 2. Check that first and last amino-acid(s) described by the feature exists on isoform sequence at given positions
-     * 3. Check that feature rules are valid on the isoform sequence
+     * Coordinate validation process in the multiple steps defined in protected methods.
      */
     public FeatureQueryResult validate() throws FeatureQueryException {
 
@@ -65,7 +65,7 @@ public abstract class SequenceFeatureValidator {
      * Check that gene name is compatible with protein name
      * Part of the contract a validator should implement to validate a feature on an isoform sequence
      */
-    protected void checkValidGeneName(GeneVariationPair geneVariationPair) throws IncompatibleGeneAndProteinNameException {
+    private void checkValidGeneName(GeneVariationPair geneVariationPair) throws IncompatibleGeneAndProteinNameException {
 
         Entry entry = query.getEntryIsoform().getEntry();
 
@@ -82,7 +82,7 @@ public abstract class SequenceFeatureValidator {
      *
      * @param variation the variation on which expected changing amino-acids is found
      */
-    protected void checkFeatureAminoAcidOnIsoform(SequenceVariation variation) throws FeatureQueryException {
+    private void checkFeatureAminoAcidOnIsoform(SequenceVariation variation) throws FeatureQueryException {
 
         EntryIsoform entryIsoform = query.getEntryIsoform();
 
@@ -96,7 +96,7 @@ public abstract class SequenceFeatureValidator {
     /**
      * Part of the contract a validator should implement to validate a feature on an isoform sequence
      */
-    protected void checkFeatureRules(SequenceVariation variation) throws FeatureQueryException {
+    private void checkFeatureRules(SequenceVariation variation) throws FeatureQueryException {
 
 
     }
