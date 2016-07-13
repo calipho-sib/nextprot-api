@@ -9,12 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
- * Testing the github service
+ * Testing the seo service
  * 
- * @author dteixeira
+ * @author pmichel
  */
 
-@ActiveProfiles({ "cache" })
+//@ActiveProfiles({ "cache" })
 public class SeoServiceIntegrationTest extends WebIntegrationBaseTest {
 
 	@Autowired
