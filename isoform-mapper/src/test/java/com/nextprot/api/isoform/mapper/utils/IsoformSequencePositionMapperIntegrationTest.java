@@ -2,8 +2,7 @@ package com.nextprot.api.isoform.mapper.utils;
 
 import com.nextprot.api.isoform.mapper.service.IsoformMappingBaseTest;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.service.MasterIdentifierService;
@@ -28,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
 @ActiveProfiles({ "cache" })
 public class IsoformSequencePositionMapperIntegrationTest extends IsoformMappingBaseTest {
 
@@ -38,7 +38,7 @@ public class IsoformSequencePositionMapperIntegrationTest extends IsoformMapping
 	private MasterIdentifierService masterIdentifierService;
 
 	
-	@Test
+	//@Test
 	public void testPropagationForVariantsOfAllEntries() throws Exception {
 		openLogger("testPropagationForVariantsOfAllEntries.log");
 		Set<String> acs = masterIdentifierService.findUniqueNames();
@@ -120,6 +120,54 @@ NX_Q9UJW3 has 1 ERROR(s)
 		Assert.assertEquals(0, errorCnt);
 	}
 
+	@Test
+	public void testSingleVariantPositionOnMaster() throws Exception {
+		
+		// just to be aware of difference between db info and api info
+		
+		String entry_ac = "NX_P01308";
+		String iso_ac = "NX_P01308-1";
+		String variant_ac = "AN_P01308_001839";
+		int expectedBeginPosOnMaster = 430;
+		
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entry_ac).withTargetIsoforms().withAnnotations());
+		for (Annotation a: entry.getAnnotations()) {
+			if (a.getUniqueName().equals(variant_ac)) {
+				int pos = a.getTargetingIsoformsMap().get(iso_ac).getFirstPosition();
+				Isoform iso = EntryIsoform.getIsoformByName(entry, iso_ac);
+				CodonNucleotidePositions nuPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(pos, iso);
+				//System.out.println("isoform position                                               : " + pos);
+				//System.out.println("nuPos is valid                                                 : " + nuPos.isValid());
+				//System.out.println("master position according to iso mapper service                : " + nuPos.get(0));
+				//System.out.println("master position according to table identifier_feature_position : " + expectedBeginPosOnMaster);
+				// we expect a difference of 1 between what we have in db and what we have from api
+				Assert.assertEquals(new Integer(expectedBeginPosOnMaster + 1), new Integer(nuPos.get(0)));
+				return;
+			}
+		}
+		Assert.assertTrue(false);
+		
+		/*
+		 * SQL to get master position for this variant
+		 * 
+		select a.unique_name, a.cv_annotation_type_id, pfp.first_pos,pfp.last_pos,ifp.first_pos as master_frist_pos, ifp.last_pos as master_last_pos from sequence_identifiers si
+		inner join annotations a on (a.identifier_id=si.identifier_id)
+		inner join annotation_protein_assoc apa on (a.annotation_id=apa.annotation_id)
+		inner join protein_feature_positions pfp on (apa.assoc_id=pfp.annotation_protein_id)
+		inner join identifier_feature_positions ifp on (ifp.annotation_id=a.annotation_id)
+		where si.unique_name='NX_P01308' 
+		and pfp.first_pos=20;
+		
+		SQL result:
+		unique_name	        cv_annotation_type_id	first_pos	last_pos	master_frist_pos	master_last_pos
+        AN_P01308_001839    1027                    20          21          430                 433
+		(1 row)
+		
+		 */
+	}
+
+
+	
 	public int getErrorsDuringPropagationOnVariantsOfSingleEntry(String entry_ac) throws Exception {
 
 		SequencePositionMapper.debug = false;
