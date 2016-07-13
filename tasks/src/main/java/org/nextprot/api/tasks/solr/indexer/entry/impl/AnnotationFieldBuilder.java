@@ -3,22 +3,14 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-//import java.util.Set;
-//import java.util.SortedSet;
-//import java.util.TreeSet;
-
-
-
-
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.Family;
-import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
@@ -29,16 +21,23 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 	
 	@Override
 	protected void init(Entry entry) {
+		// Function with canonical first
+		List<String> function_canonical = EntryUtils.getFunctionInfoWithCanonicalFirst(entry);
+		for (String finfo : function_canonical) {
+			addField(Fields.FUNCTION_DESC, finfo);
+			addField(Fields.ANNOTATIONS, finfo);
+			//System.err.println("adding: " + finfo);
+		}
+		
 		List<Annotation> annots = entry.getAnnotations();
-		//Overview ovv = entry.getOverview();
 		for (Annotation currannot : annots) {
-
 			String category = currannot.getCategory();
+			AnnotationCategory apiCategory = currannot.getAPICategory();
 			String quality = currannot.getQualityQualifier();
-			//System.err.println(category + ": " + quality);
-			if (category.equals("function")){ // Always GOLD
-				addField(Fields.FUNCTION_DESC, currannot.getDescription());
-			}
+			
+			if (apiCategory.equals(AnnotationCategory.FUNCTION_INFO))
+				// We just processed this via the EntryUtils dedicated method
+				continue;
 
 			// We also should exclude uninformative category 'sequence conflict'
 			if(!category.equals("tissue specificity")) {//These values are indexed under other fields
@@ -70,16 +69,13 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 							if(stringpos > 0) // mainreason truncated
 								desc = desc.substring(desc.indexOf(".") + 2);
 							else {
-							stringpos=desc.indexOf(mainreason) + mainreason.length();
-						    desc = desc.substring(stringpos+2);
-							}
+							    stringpos=desc.indexOf(mainreason) + mainreason.length();
+						        desc = desc.substring(stringpos+2);
+							    }
 							addField(Fields.ANNOTATIONS, desc);
 							}
 					}
 					
-					//if((category.equals("sequence variant") || category.equals("mutagenesis site")) && desc.startsWith("Missing"))
-						// Remove variation descriptor (Missing)
-						//desc = desc.substring(8);
 					if(!category.startsWith("go") && desc.length() > 1) { // go will be indexed via cvac, not description
 						if(!this.isGold() || quality.equals("GOLD"))
 						   {
@@ -205,8 +201,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 				List<String> famsynonyms = this.terminologyservice.findCvTermByAccession(ac).getSynonyms();
 				if(famsynonyms != null) for(String famsynonym : famsynonyms)
 					addField(Fields.ANNOTATIONS,  famsynonym.trim());
-				}
-
+				}	
 		}
 		
 
