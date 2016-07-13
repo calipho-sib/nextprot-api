@@ -1,9 +1,6 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
-import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import com.nextprot.api.isoform.mapper.domain.GeneVariationPair;
+import com.nextprot.api.isoform.mapper.domain.*;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
 import com.nextprot.api.isoform.mapper.domain.impl.GeneFeaturePair;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
@@ -11,7 +8,6 @@ import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQuery
 import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryPositionException;
 import com.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
-import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
@@ -19,7 +15,6 @@ import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 
 import java.text.ParseException;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -35,20 +30,18 @@ abstract class SequenceVariationValidator implements SequenceFeatureValidator {
         try {
             GeneVariationPair geneVariationPair = newGeneVariationPair(query.getFeature());
 
-            if (!geneVariationPair.isValidGeneName(entryIsoform.getEntry())) {
+            if (geneVariationPair.isValidGeneName(entryIsoform.getEntry())) {
 
-                List<String> expectedGeneNames = entryIsoform.getEntry().getOverview().getGeneNames().stream()
-                        .map(EntityName::getName).collect(Collectors.toList());
-
-                throw new IncompatibleGeneAndProteinNameException(query, geneVariationPair.getGeneName(), expectedGeneNames);
+                return checkFeatureOnIsoform(query, entryIsoform, geneVariationPair.getVariation());
             }
-            return checkFeatureOnIsoform(query, entryIsoform, geneVariationPair.getVariation());
-
+            throw new IncompatibleGeneAndProteinNameException(query, geneVariationPair.getGeneName(),
+                    entryIsoform.getEntry().getOverview().getGeneNames().stream()
+                            .map(EntityName::getName).collect(Collectors.toList()));
         } catch (ParseException e) {
 
-            String geneName = GeneFeaturePair.getGeneName(query.getFeature());
+            ParseException pe = new ParseException(e.getMessage(), e.getErrorOffset() +
+                    GeneFeaturePair.getGeneName(query.getFeature()).length() + 1);
 
-            ParseException pe = new ParseException(e.getMessage(), e.getErrorOffset() + geneName.length() + 1);
             throw new InvalidFeatureQueryFormatException(query, pe);
         }
     }
@@ -78,9 +71,7 @@ abstract class SequenceVariationValidator implements SequenceFeatureValidator {
     }
 
     /**
-     * @param isoform
-     * @param position
-     * @param aas
+     * Check that the given amino-acid(s) exist(s) at the given position of given isoform sequence
      * @throws FeatureQueryException if invalid
      */
     private void checkIsoformPos(Isoform isoform, int position, String aas, FeatureQuery query) throws FeatureQueryException {
@@ -92,17 +83,13 @@ abstract class SequenceVariationValidator implements SequenceFeatureValidator {
             throw new InvalidFeatureQueryPositionException(query, position);
         }
 
-        if (!insertionMode) {
-            valid = IsoformSequencePositionMapper.checkAminoAcidsFromPosition(isoform, position, aas);
+        if (!insertionMode && !IsoformSequencePositionMapper.checkAminoAcidsFromPosition(isoform, position, aas)) {
 
-            if (!valid) {
+            String aasOnSequence = isoform.getSequence().substring(position - 1, position + aas.length() - 1);
 
-                String aasOnSequence = isoform.getSequence().substring(position - 1, position + aas.length() - 1);
-
-                throw new InvalidFeatureQueryAminoAcidException(query, position,
-                        AminoAcidCode.valueOfOneLetterCodeSequence(aasOnSequence),
-                        AminoAcidCode.valueOfOneLetterCodeSequence(aas));
-            }
+            throw new InvalidFeatureQueryAminoAcidException(query, position,
+                    AminoAcidCode.valueOfOneLetterCodeSequence(aasOnSequence),
+                    AminoAcidCode.valueOfOneLetterCodeSequence(aas));
         }
     }
 }

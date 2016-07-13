@@ -40,6 +40,13 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     @Autowired
     public EntryIsoformFactoryService entryIsoformFactoryService;
 
+    /**
+     * Use/Cases
+     *
+     * 1. Deduce isoform from the given nextprotAccession
+     * 2. Check that first and last amino-acid(s) described by the feature exists on isoform sequence at given positions
+     * 3.
+     */
     @Override
     public FeatureQueryResult validateFeature(String featureName, String featureType, String nextprotAccession) {
 
