@@ -1,5 +1,6 @@
 package com.nextprot.api.isoform.mapper.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidNextprotAccessionException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UndefinedFeatureQueryException;
@@ -10,18 +11,18 @@ import java.io.Serializable;
 
 public class FeatureQuery implements Serializable {
 
-    private final String entryAccession;
+    private final EntryIsoform entryIsoform;
     private final String feature;
     private final String featureType;
     private final boolean propagableFeature;
 
-    public FeatureQuery(String entryAccession, String feature, String featureType, boolean propagableFeature) throws FeatureQueryException {
+    public FeatureQuery(EntryIsoform entryIsoform, String feature, String featureType, boolean propagableFeature) throws FeatureQueryException {
 
-        Preconditions.checkNotNull(entryAccession);
+        Preconditions.checkNotNull(entryIsoform);
         Preconditions.checkNotNull(feature);
         Preconditions.checkNotNull(featureType);
 
-        this.entryAccession = entryAccession;
+        this.entryIsoform = entryIsoform;
         this.feature = feature;
         this.featureType = featureType;
         this.propagableFeature = propagableFeature;
@@ -39,11 +40,16 @@ public class FeatureQuery implements Serializable {
             throw new UndefinedFeatureQueryException(this);
     }
 
+    @JsonIgnore
+    public EntryIsoform getEntryIsoform() {
+        return entryIsoform;
+    }
+
     /**
      * @return the nextprot accession number of entry or isoform (example: NX_P01308 or NX_P01308-1)
      */
     public String getAccession() {
-        return entryAccession;
+        return entryIsoform.getAccession();
     }
 
     /**
