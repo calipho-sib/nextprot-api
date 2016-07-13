@@ -1,0 +1,112 @@
+package org.nextprot.api.commons.bio.variation;
+
+import com.google.common.base.Preconditions;
+import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.impl.AminoAcidModification;
+
+/**
+ * Fluent interface for building a <code>SequenceVariation</code>
+ *
+ * Created by fnikitin on 09/07/15.
+ */
+public interface SequenceVariationBuilder {
+
+    /** build an instance of ProteinMutation */
+    SequenceVariation build();
+
+    /** collect data through the process */
+    DataCollector getDataCollector();
+
+    /** start fluent building */
+    interface FluentBuilding {
+
+        /** select a single affected amino-acid residue */
+        ChangingAminoAcid selectAminoAcid(AminoAcidCode affectedAA, int affectedAAPos);
+
+        /** select a range of affected amino-acid residues */
+        ChangingAminoAcidRange selectAminoAcidRange(AminoAcidCode firstAffectedAA, int firstAffectedAAPos, AminoAcidCode lastAffectedAA, int lastAffectedAAPos);
+    }
+
+    /** mutations affecting only one amino-acid */
+    interface ChangingAminoAcid extends ChangingAminoAcidRange {
+
+        /** substitutedBy an amino-acid by another one */
+        SequenceVariationBuilder thenSubstituteWith(AminoAcidCode aa);
+
+        /** A frameshift appears just after the affected amino-acid leading to a codon stop in this frame */
+        SequenceVariationBuilder thenFrameshift(AminoAcidCode newAminoAcidCode, int newTerminationPosition);
+
+        /** modifies affected amino-acid with modification */
+        SequenceVariationBuilder thenAddModification(AminoAcidModification modification);
+    }
+
+    /** mutations affecting any sequence of amino-acid */
+    interface ChangingAminoAcidRange {
+
+        /** delete all affected amino-acids */
+        SequenceVariationBuilder thenDelete();
+
+        /** inserts given aas after specific AA */
+        SequenceVariationBuilder thenInsert(AminoAcidCode... aas);
+
+        /** duplicates changing aas and insert right after */
+        SequenceVariationBuilder thenDuplicate();
+
+        /** delete all affected amino-acids and inserts given aas */
+        SequenceVariationBuilder thenDeleteAndInsert(AminoAcidCode... aas);
+    }
+
+    /**
+     * Collect data to build SequenceVariation
+     */
+    class DataCollector {
+
+        private AminoAcidCode firstChangingAminoAcid;
+        private int firstChangingAminoAcidPos;
+        private AminoAcidCode lastChangingAminoAcid;
+        private int lastChangingAminoAcidPos;
+        private SequenceChange<?> sequenceChange;
+
+        public void setFirstChangingAminoAcid(AminoAcidCode firstAffectedAminoAcid, int firstAffectedAminoAcidPos) {
+
+            Preconditions.checkNotNull(firstAffectedAminoAcid);
+            Preconditions.checkArgument(firstAffectedAminoAcidPos > 0);
+
+            this.firstChangingAminoAcid = firstAffectedAminoAcid;
+            this.firstChangingAminoAcidPos = firstAffectedAminoAcidPos;
+        }
+
+        public AminoAcidCode getFirstChangingAminoAcid() {
+            return firstChangingAminoAcid;
+        }
+
+        public int getFirstChangingAminoAcidPos() {
+            return firstChangingAminoAcidPos;
+        }
+
+        public void setLastChangingAminoAcid(AminoAcidCode lastAffectedAminoAcid, int lastAffectedAminoAcidPos) {
+
+            Preconditions.checkNotNull(firstChangingAminoAcid);
+            Preconditions.checkArgument(firstChangingAminoAcidPos > 0);
+
+            this.lastChangingAminoAcid = lastAffectedAminoAcid;
+            this.lastChangingAminoAcidPos = lastAffectedAminoAcidPos;
+        }
+
+        public AminoAcidCode getLastChangingAminoAcid() {
+            return lastChangingAminoAcid;
+        }
+
+        public int getLastChangingAminoAcidPos() {
+            return lastChangingAminoAcidPos;
+        }
+
+        public SequenceChange<?> getSequenceChange() {
+            return sequenceChange;
+        }
+
+        public void setSequenceChange(SequenceChange<?> sequenceChange) {
+            this.sequenceChange = sequenceChange;
+        }
+    }
+}

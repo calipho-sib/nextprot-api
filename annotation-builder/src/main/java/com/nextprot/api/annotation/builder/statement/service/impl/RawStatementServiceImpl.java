@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.RawStatement;
+import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 		List<RawStatement> phenotypeStatements = rawStatementDao.findPhenotypeRawStatements(entryAccession);
 
-		Map<String, List<RawStatement>> impactStatementsBySubject = phenotypeStatements.stream().collect(Collectors.groupingBy(RawStatement::getBiological_subject_annot_hash));
+		Map<String, List<RawStatement>> impactStatementsBySubject = phenotypeStatements.stream().collect(Collectors.groupingBy(r -> r.getValue(StatementField.BIOLOGICAL_SUBJECT_ANNOT_HASH)));
 
 		impactStatementsBySubject.keySet().forEach(subjectComponentsIdentifiers -> {
 			
@@ -79,7 +80,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 	}
 	
 
-
+	@Cacheable("normal-annotations")
 	@Override
 	public List<IsoformAnnotation> getNormalAnnotations(String entryName) {
 		List<RawStatement> normalStatements = rawStatementDao.findNormalRawStatements(entryName);

@@ -22,17 +22,33 @@ public class AnnotationBuilder {
 
 	private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
 
+	private static AnnotationEvidenceProperty addPropertyIfPresent(String propertyValue, String propertyName) {
+		if (propertyValue != null) {
+			AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
+			prop.setPropertyName(propertyName);
+			prop.setPropertyValue(propertyValue);
+			return prop;
+		}
+		return null;
+	}
+
 	private static List<AnnotationEvidence> buildAnnotationEvidences(List<RawStatement> rawStatements) {
 		return rawStatements.stream().map(s -> {
 			AnnotationEvidence evidence = new AnnotationEvidence();
 			evidence.setResourceAssociationType("evidence");
-			String fieldIntensity = s.getValue(StatementField.EXP_CONTEXT_PROPERTY_INTENSITY);
-			if (fieldIntensity != null) {
-				AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
-				prop.setPropertyName("intensity");
-				prop.setPropertyValue(fieldIntensity);
-				evidence.setProperties(Arrays.asList(prop));
-			}
+			evidence.setQualityQualifier(s.getValue(StatementField.STATEMENT_QUALITY));
+
+			AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EXP_CONTEXT_PROPERTY_INTENSITY), "intensity");
+			AnnotationEvidenceProperty expContextProperty = addPropertyIfPresent(s.getValue(StatementField.EXP_CTX_PRPTY_PROTEIN_ORIGIN), "protein-origin");
+			AnnotationEvidenceProperty sourceAccession =addPropertyIfPresent(s.getValue(StatementField.ANNOT_SOURCE_ACCESSION), "source-accession");
+
+			//Set properties which are not null
+			evidence.setProperties(
+					Arrays.asList(evidenceProperty, expContextProperty, sourceAccession)
+						.stream().filter(p -> p != null)
+						.collect(Collectors.toList())
+						);
+
 			return evidence;
 		}).collect(Collectors.toList());
 
@@ -56,9 +72,9 @@ public class AnnotationBuilder {
 			IsoformAnnotation isoAnnotation = new IsoformAnnotation();
 			List<RawStatement> statements = flatStatementsByAnnotationHash.get(annotationHash);
 
-			RawStatement statement = statements.get(0);
-
 			isoAnnotation.setEvidences(buildAnnotationEvidences(statements));
+
+			RawStatement statement = statements.get(0);
 
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getValue(StatementField.ANNOTATION_CATEGORY)));
 			isoAnnotation.setCategory(category);
@@ -68,6 +84,7 @@ public class AnnotationBuilder {
 
 			isoAnnotation.setIsoformName(isoformName);
 			isoAnnotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));
+
 			isoAnnotation.setDescription(statement.getValue(StatementField.ANNOT_DESCRIPTION));
 			isoAnnotation.setCvTermAccessionCode(statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION));
 			// TODO this should be called terminology I guess! not setCVApiName

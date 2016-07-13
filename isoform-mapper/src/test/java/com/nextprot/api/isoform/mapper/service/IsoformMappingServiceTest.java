@@ -1,11 +1,18 @@
 package com.nextprot.api.isoform.mapper.service;
 
 import com.google.common.collect.Lists;
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureError;
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureResult;
-import com.nextprot.api.isoform.mapper.domain.MappedIsoformsFeatureSuccess;
+import com.google.common.io.Files;
+import com.nextprot.api.isoform.mapper.domain.*;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryAminoAcidException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryPositionException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +26,9 @@ import java.util.List;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
+import static org.mockito.Mockito.when;
 
-@ActiveProfiles({ "dev", "cache" })
+@ActiveProfiles({ "dev" })
 public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
     @Autowired
@@ -30,9 +38,9 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     private IsoformMappingService service;
 
     @Test
-    public void shouldValidateFeatureOnCanonicalIsoform() throws Exception {
+    public void shouldValidateVariantOnCanonicalIsoform() throws Exception {
 
-        MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
+        FeatureQueryResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
         assertIsoformFeatureValid(result, "NX_Q9UI33-1", 1158, 1158, true);
     }
@@ -40,46 +48,72 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldNotValidateIncompatibleProteinAndGeneName() throws Exception {
 
-        MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, "NX_P01308");
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.IncompatibleGeneAndProteinName("SCN11A", "NX_P01308", Lists.newArrayList("INS")));
+        FeatureQueryResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_P01308");
+
+        FeatureQuery query = Mockito.mock(FeatureQuery.class);
+        when(query.getAccession()).thenReturn("NX_P01308");
+
+        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new IncompatibleGeneAndProteinNameException(query, "SCN11A", Lists.newArrayList("INS")));
     }
 
     @Test
     public void shouldNotValidateInvalidVariantName() throws Exception {
 
-        MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-z.Leu1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
+        FeatureQueryResult result = service.validateFeature("SCN11A-z.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidVariantName("SCN11A-z.Leu1158Pro"));
+        FeatureQuery query = Mockito.mock(FeatureQuery.class);
+        when(query.getFeature()).thenReturn("SCN11A-z.Leu1158Pro");
+
+        Assert.assertFalse(result.isSuccess());
+        Assert.assertEquals("invalid feature format: SCN11A-z.Leu1158Pro", ((FeatureQueryFailure)result).getError().getMessage());
+        Assert.assertEquals(2, ((FeatureQueryFailure)result).getError().getCauses().size());
+        Assert.assertEquals("z.Leu1158Pro: not a valid protein sequence variant", ((FeatureQueryFailure)result).getError().getCause(InvalidFeatureQueryFormatException.PARSE_ERROR_MESSAGE));
+        Assert.assertEquals(7, ((FeatureQueryFailure)result).getError().getCause(InvalidFeatureQueryFormatException.PARSE_ERROR_OFFSET));
     }
 
     @Test
     public void shouldNotValidateInvalidAminoAcidCode() throws Exception {
 
-        MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Let1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
+        FeatureQueryResult result = service.validateFeature("SCN11A-p.Let1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidVariantName("SCN11A-p.Let1158Pro"));
+        FeatureQuery query = Mockito.mock(FeatureQuery.class);
+        when(query.getFeature()).thenReturn("SCN11A-p.Let1158Pro");
+
+        Assert.assertFalse(result.isSuccess());
+        Assert.assertEquals("invalid feature format: SCN11A-p.Let1158Pro", ((FeatureQueryFailure)result).getError().getMessage());
+        Assert.assertEquals(2, ((FeatureQueryFailure)result).getError().getCauses().size());
+        Assert.assertEquals("Let: invalid AminoAcidCode", ((FeatureQueryFailure)result).getError().getCause(InvalidFeatureQueryFormatException.PARSE_ERROR_MESSAGE));
+        Assert.assertEquals(9, ((FeatureQueryFailure)result).getError().getCause(InvalidFeatureQueryFormatException.PARSE_ERROR_OFFSET));
     }
 
     @Test
-    public void shouldNotValidateIncorrectAAFeatureIsoform() throws Exception {
+    public void shouldNotValidateIncorrectAAVariantIsoform() throws Exception {
 
-        MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Met1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
+        FeatureQueryResult result = service.validateFeature("SCN11A-p.Met1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.UnexpectedAminoAcids("L", "M"));
+        FeatureQuery query = Mockito.mock(FeatureQuery.class);
+        when(query.getAccession()).thenReturn("NX_Q9UI33");
+        when(query.getFeature()).thenReturn("SCN11A-p.Met1158Pro");
+
+        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new InvalidFeatureQueryAminoAcidException(query, 1158,
+                AminoAcidCode.asArray(AminoAcidCode.LEUCINE), AminoAcidCode.asArray(AminoAcidCode.METHIONINE)));
     }
 
     @Test
-    public void shouldNotValidateInvalidPositionFeatureIsoform() throws Exception {
+    public void shouldNotValidateInvalidPositionVariantIsoform() throws Exception {
 
-        MappedIsoformsFeatureResult result = service.validateFeature("SCN11A-p.Leu1158999Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
+        FeatureQueryResult result = service.validateFeature("SCN11A-p.Leu1158999Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
-        assertIsoformFeatureNotValid(result, new MappedIsoformsFeatureError.InvalidPosition("NX_Q9UI33-1", 1158999));
+        FeatureQuery query = Mockito.mock(FeatureQuery.class);
+        when(query.getAccession()).thenReturn("NX_Q9UI33");
+
+        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new InvalidFeatureQueryPositionException(query, 1158999));
     }
 
     @Test
     public void shouldPropagateVariantToAllIsoforms() throws Exception {
 
-        MappedIsoformsFeatureResult result = service.propagateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT, "NX_Q9UI33");
+        FeatureQueryResult result = service.propagateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
         assertIsoformFeatureValid(result, "NX_Q9UI33-1", 1158, 1158, true);
         assertIsoformFeatureValid(result, "NX_Q9UI33-2", 1158, 1158, true);
@@ -89,22 +123,78 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldPropagateVariantToAllValidIsoforms() throws Exception {
 
-        MappedIsoformsFeatureResult result = service.propagateFeature("SCN11A-p.Lys1710Thr", AnnotationCategory.VARIANT, "NX_Q9UI33");
+        FeatureQueryResult result = service.propagateFeature("SCN11A-p.Lys1710Thr", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
         assertIsoformFeatureValid(result, "NX_Q9UI33-1", 1710, 1710, true);
         assertIsoformFeatureValid(result, "NX_Q9UI33-2", null, null, false);
         assertIsoformFeatureValid(result, "NX_Q9UI33-3", 1672, 1672, true);
     }
 
-    //@Test
-    public void validateVDList() throws Exception {
+    @Test
+    public void shouldValidatePtmOnCanonicalIsoform() throws Exception {
 
-        FileInputStream is = new FileInputStream(IsoformMappingServiceTest.class.getResource("vd.tsv").getFile());
+        FeatureQueryResult result = service.validateFeature("BRCA1-P-Ser988", AnnotationCategory.GENERIC_PTM.getApiTypeName(), "NX_P38398");
+
+        assertIsoformFeatureValid(result, "NX_P38398-1", 988, 988, true);
+    }
+
+    @Test
+    public void shouldValidateInsertionVariantOnCanonicalIsoform() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("MLH1-p.Lys722_Ala723insTyrLys", AnnotationCategory.VARIANT.getApiTypeName(), "NX_P40692");
+
+        assertIsoformFeatureValid(result, "NX_P40692-1", 722, 723, true);
+    }
+
+    @Test
+    public void shouldValidateDeletionVariantOnCanonicalIsoform() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("BRCA2-p.Gly2281_Asp2312del", AnnotationCategory.VARIANT.getApiTypeName(), "NX_P51587");
+
+        assertIsoformFeatureValid(result, "NX_P51587-1", 2281, 2312, true);
+    }
+
+    //@Test
+    public void validateVDList1() throws Exception {
+
+        String filename = IsoformMappingServiceTest.class.getResource("vd.tsv").getFile();
+
+        validateList(filename, true, service);
+    }
+
+    //@Test
+    public void validateVDList2() throws Exception {
+
+        String filename = IsoformMappingServiceTest.class.getResource("variant-multiple-mutants.csv").getFile();
+
+        validateList(filename, false, service);
+    }
+
+    private static void assertIsoformFeatureValid(FeatureQueryResult result, String isoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
+
+        Assert.assertTrue(result.isSuccess());
+        Assert.assertTrue(result instanceof FeatureQuerySuccess);
+        FeatureQuerySuccess successResult = (FeatureQuerySuccess) result;
+
+        Assert.assertEquals(mapped, successResult.getIsoformFeatureResult(isoformName).isMapped());
+        Assert.assertEquals(expectedFirstPos, successResult.getIsoformFeatureResult(isoformName).getFirstIsoSeqPos());
+        Assert.assertEquals(expectedLastPos, successResult.getIsoformFeatureResult(isoformName).getLastIsoSeqPos());
+    }
+
+    private static void assertIsoformFeatureNotValid(FeatureQueryFailure result, FeatureQueryException expectedException) {
+
+        Assert.assertFalse(result.isSuccess());
+        Assert.assertEquals(expectedException.getError(), result.getError());
+    }
+
+    private static void validateList(String filename, boolean tabSep, IsoformMappingService service) throws Exception {
+
+        FileInputStream is = new FileInputStream(filename);
         BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        PrintWriter pw = new PrintWriter("vd-results.tsv");
+        PrintWriter pw = new PrintWriter(Files.getNameWithoutExtension(filename)+"-results.tsv");
 
         List<String[]> twoFirstFieldsList = br.lines()
-                .map(to2FirstFields)
+                .map((tabSep) ? to2FirstTabFields : to2FirstCommaFields)
                 .collect(toList());
 
         pw.append("accession\tvariant\tvalid\terror message\n");
@@ -113,15 +203,15 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
             String accession = twoFields[0];
             String feature = twoFields[1];
 
-            MappedIsoformsFeatureResult result =
-                    service.validateFeature(feature, AnnotationCategory.VARIANT, accession);
+            FeatureQueryResult result =
+                    service.validateFeature(feature, AnnotationCategory.VARIANT.getApiTypeName(), accession);
 
             pw.append(accession).append("\t").append(feature).append("\t").append(String.valueOf(result.isSuccess()));
 
             if (result.isSuccess()) {
                 pw.append("\t");
             } else {
-                MappedIsoformsFeatureError error = (MappedIsoformsFeatureError) result;
+                FeatureQueryFailure error = (FeatureQueryFailure) result;
                 pw.append("\t").append(error.getError().getMessage());
             }
             pw.append("\n");
@@ -129,26 +219,13 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         pw.close();
     }
 
-    private static Function<String, String[]> to2FirstFields = (line) -> {
+    private static Function<String, String[]> to2FirstTabFields = (line) -> {
         String[] p = line.split("\t");
         return new String[] { p[0], p[1] };
     };
 
-    private static void assertIsoformFeatureValid(MappedIsoformsFeatureResult result, String isoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
-
-        Assert.assertTrue(result.isSuccess());
-        Assert.assertTrue(result instanceof MappedIsoformsFeatureSuccess);
-        MappedIsoformsFeatureSuccess successResult = (MappedIsoformsFeatureSuccess) result;
-
-        Assert.assertEquals(mapped, successResult.getMappedIsoformFeatureResult(isoformName).isMapped());
-        Assert.assertEquals(expectedFirstPos, successResult.getMappedIsoformFeatureResult(isoformName).getFirstIsoSeqPos());
-        Assert.assertEquals(expectedLastPos, successResult.getMappedIsoformFeatureResult(isoformName).getLastIsoSeqPos());
-    }
-
-    private static void assertIsoformFeatureNotValid(MappedIsoformsFeatureResult result, MappedIsoformsFeatureError.ErrorValue expected) {
-
-        Assert.assertFalse(result.isSuccess());
-        Assert.assertTrue(result instanceof MappedIsoformsFeatureError);
-        MappedIsoformsFeatureError errorResult = (MappedIsoformsFeatureError) result;
-    }
+    private static Function<String, String[]> to2FirstCommaFields = (line) -> {
+        String[] p = line.split(",");
+        return new String[] { p[0], p[1] };
+    };
 }
