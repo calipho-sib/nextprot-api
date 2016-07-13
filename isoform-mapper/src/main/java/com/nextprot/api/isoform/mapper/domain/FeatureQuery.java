@@ -2,7 +2,6 @@ package com.nextprot.api.isoform.mapper.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidNextprotAccessionException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UndefinedFeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownFeatureQueryTypeException;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -34,8 +33,6 @@ public class FeatureQuery implements Serializable {
 
         if (!AnnotationCategory.hasAnnotationByApiName(featureType))
             throw new UnknownFeatureQueryTypeException(this);
-        else if (!getAccession().startsWith("NX_"))
-            throw new InvalidNextprotAccessionException(this);
         else if (feature.isEmpty())
             throw new UndefinedFeatureQueryException(this);
     }
