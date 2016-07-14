@@ -19,7 +19,7 @@ public class SitemapXMLIntegrationTest extends WebIntegrationBaseTest {
 	@Test
 	public void shouldReturnCorrectElementsForSitemap() throws Exception {
 
-		ResultActions actions = this.mockMvc.perform(get("/sitemap"));
+		ResultActions actions = this.mockMvc.perform(get("/seo/sitemap"));
 		actions.andExpect(xpath( "/ns:urlset",NS).exists());
 		actions.andExpect(xpath( "/ns:urlset/ns:url",NS).exists());
 		actions.andExpect(xpath( "/ns:urlset/ns:url/ns:loc",NS).exists());
@@ -32,7 +32,7 @@ public class SitemapXMLIntegrationTest extends WebIntegrationBaseTest {
 	@Test
 	public void shouldReturnCorrectValuesForSitemap() throws Exception {
 
-		ResultActions actions = this.mockMvc.perform(get("/sitemap"));
+		ResultActions actions = this.mockMvc.perform(get("/seo/sitemap"));
 		actions.andExpect(xpath("/ns:urlset/ns:url/ns:changefreq",NS).string("weekly"));
 		actions.andExpect(xpath("/ns:urlset/ns:url/ns:loc",NS).string(new StringStartsWith("https://search.nextprot.org")));
 
