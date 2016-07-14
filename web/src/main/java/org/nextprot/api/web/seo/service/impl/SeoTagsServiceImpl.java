@@ -1,5 +1,6 @@
 package org.nextprot.api.web.seo.service.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -73,6 +74,21 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 		
 	}
 	
+	@Override
+	public List<SeoTagsAndUrl> getHardCodedSeoTags()  {
+		try {
+			if (hardCodedSeoTags==null) {
+				String content = gitHubService.getPage("json-config", "seotags");
+				ObjectMapper mapper = new ObjectMapper();
+				SeoTagsAndUrl[] tags =  mapper.readValue(content, SeoTagsAndUrl[].class);
+				hardCodedSeoTags = Arrays.asList(tags);
+			}
+			return hardCodedSeoTags;
+		} catch (Exception e) {
+			Logger.error("Could not get hard coded SEO tags from github");
+			return new ArrayList<SeoTagsAndUrl>();
+		}
+	}
 	
 	public SeoTags getHardCodedSeoTag(String url) throws Exception  {
 		for (SeoTagsAndUrl t: getHardCodedSeoTags()) {
@@ -81,15 +97,6 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 		return null;
 	}
 	
-	private List<SeoTagsAndUrl> getHardCodedSeoTags() throws Exception {
-		if (hardCodedSeoTags==null) {
-			String content = gitHubService.getPage("json-config", "seotags");
-			ObjectMapper mapper = new ObjectMapper();
-			SeoTagsAndUrl[] tags =  mapper.readValue(content, SeoTagsAndUrl[].class);
-			hardCodedSeoTags = Arrays.asList(tags);
-		}
-		return hardCodedSeoTags;
-	}
 	
 	
 	private SeoTags getDefaultSeoTags(String[] urlElements) {

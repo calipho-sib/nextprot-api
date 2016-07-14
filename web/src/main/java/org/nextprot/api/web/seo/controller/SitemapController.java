@@ -17,7 +17,7 @@ public class SitemapController {
 	@Autowired
 	private SitemapService sitemapService;
 
-	@RequestMapping(value = "/sitemap", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_XML_VALUE })
+	@RequestMapping(value = "/seo/sitemap", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_XML_VALUE })
 	@ResponseBody
 	public SitemapUrlSet sitemap() {
 
