@@ -5,9 +5,12 @@ import org.nextprot.api.commons.bio.variation.impl.format.bed.AminoAcidModificat
 
 import java.text.ParseException;
 
-public class GenePtmPair extends GeneFeaturePair {
+/**
+ * A post translational modification on an isoform sequence
+ */
+public class SequenceModification extends SequenceFeatureBase {
 
-    public GenePtmPair(String feature) throws ParseException {
+    public SequenceModification(String feature) throws ParseException {
         super(feature);
     }
 
