@@ -28,4 +28,8 @@ public class NucleotidePositionRange implements Serializable {
 	public Integer getUpper() {
 		return upper;
 	}
+	
+	public String toString() {
+		return "Range ["+lower + ","+upper+"]";
+	}
 }

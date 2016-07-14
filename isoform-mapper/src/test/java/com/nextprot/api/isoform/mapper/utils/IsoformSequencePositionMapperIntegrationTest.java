@@ -2,7 +2,8 @@ package com.nextprot.api.isoform.mapper.utils;
 
 import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingBaseTest;
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.service.MasterIdentifierService;
@@ -16,10 +17,17 @@ import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 
 @ActiveProfiles({ "cache" })
 public class IsoformSequencePositionMapperIntegrationTest extends IsoformMappingBaseTest {
@@ -30,28 +38,60 @@ public class IsoformSequencePositionMapperIntegrationTest extends IsoformMapping
 	@Autowired
 	private MasterIdentifierService masterIdentifierService;
 
-	//NX_O00555 causes an error
 	
 	//@Test
 	public void testPropagationForVariantsOfAllEntries() throws Exception {
+		openLogger("testPropagationForVariantsOfAllEntries.log");
 		Set<String> acs = masterIdentifierService.findUniqueNames();
 		int cnt=0;
+		int entriesWithErrors=0;
 		boolean working=false;
 		for (String ac: acs) {
 			cnt++;
 			if (working) {
 				System.out.println("--- START testing propagation for variants of entry no. " + cnt + ":" + ac);
 				int errorCnt = getErrorsDuringPropagationOnVariantsOfSingleEntry(ac);
+				if (errorCnt>0) entriesWithErrors++;
+				log(new Date() + " - " + cnt + " - " + ac + (errorCnt==0 ? " OK" : " has " +errorCnt + " ERROR(s)"));
 				System.out.println("--- END   testing propagation for variants of entry no. " + cnt + ":" + ac + (errorCnt==0 ? ": OK":": with " +errorCnt + " ERRORs"));;
-				Assert.assertEquals(0, errorCnt);
 			}
-			if (ac.equals("NX_P78324")) working=true; // start just after last known error
+			if (ac.equals("NX_Q86YS6")) working=true; // start just after last entry tested
 		}
+		log.close();
+		Assert.assertEquals(0, entriesWithErrors);
 	}
 
 	
-		
+/*
+ * 
+ * last entry tested so far: NX_Q86YS6
+ * Known errors so far:
+ * 
+NX_O00555 has 1 ERROR(s)
+NX_P46937 has 1 ERROR(s)
+NX_P34810 has 1 ERROR(s)
+NX_P33527 has 1 ERROR(s)
+NX_Q9HB55 has 1 ERROR(s)
+NX_P19544 has 1 ERROR(s)
+NX_Q96NU1 has 1 ERROR(s)
+NX_Q8N9B5 has 1 ERROR(s)	
+NX_Q86UR1 has 1 ERROR(s)
+NX_Q9NUA8 has 1 ERROR(s)
+NX_Q9P275 has 1 ERROR(s)
+NX_Q02078 has 1 ERROR(s)
+NX_P78324 has 1 ERROR(s)
+NX_Q9NPQ8 has 1 ERROR(s)
+NX_Q96K49 has 1 ERROR(s)
+NX_Q00653 has 1 ERROR(s)
+NX_Q9UPQ7 has 1 ERROR(s)
+NX_O95825 has 1 ERROR(s)
+NX_Q86VQ3 has 1 ERROR(s)
+NX_Q96QH2 has 1 ERROR(s)
+NX_Q9UJW3 has 1 ERROR(s)
+ */
 	
+
+
 	//@Test
 	public void testPropagationForVariantsOfNX_P78324() throws Exception {
 		// 1. first know error
@@ -81,11 +121,59 @@ public class IsoformSequencePositionMapperIntegrationTest extends IsoformMapping
 		Assert.assertEquals(0, errorCnt);
 	}
 
+	@Test
+	public void testSingleVariantPositionOnMaster() throws Exception {
+		
+		// just to be aware of difference between db info and api info
+		
+		String entry_ac = "NX_P01308";
+		String iso_ac = "NX_P01308-1";
+		String variant_ac = "AN_P01308_001839";
+		int expectedBeginPosOnMaster = 430;
+		
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entry_ac).withTargetIsoforms().withAnnotations());
+		for (Annotation a: entry.getAnnotations()) {
+			if (a.getUniqueName().equals(variant_ac)) {
+				int pos = a.getTargetingIsoformsMap().get(iso_ac).getFirstPosition();
+				Isoform iso = EntryIsoform.getIsoformByName(entry, iso_ac);
+				CodonNucleotidePositions nuPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(pos, iso);
+				//System.out.println("isoform position                                               : " + pos);
+				//System.out.println("nuPos is valid                                                 : " + nuPos.isValid());
+				//System.out.println("master position according to iso mapper service                : " + nuPos.get(0));
+				//System.out.println("master position according to table identifier_feature_position : " + expectedBeginPosOnMaster);
+				// we expect a difference of 1 between what we have in db and what we have from api
+				Assert.assertEquals(new Integer(expectedBeginPosOnMaster + 1), new Integer(nuPos.get(0)));
+				return;
+			}
+		}
+		Assert.assertTrue(false);
+		
+		/*
+		 * SQL to get master position for this variant
+		 * 
+		select a.unique_name, a.cv_annotation_type_id, pfp.first_pos,pfp.last_pos,ifp.first_pos as master_frist_pos, ifp.last_pos as master_last_pos from sequence_identifiers si
+		inner join annotations a on (a.identifier_id=si.identifier_id)
+		inner join annotation_protein_assoc apa on (a.annotation_id=apa.annotation_id)
+		inner join protein_feature_positions pfp on (apa.assoc_id=pfp.annotation_protein_id)
+		inner join identifier_feature_positions ifp on (ifp.annotation_id=a.annotation_id)
+		where si.unique_name='NX_P01308' 
+		and pfp.first_pos=20;
+		
+		SQL result:
+		unique_name	        cv_annotation_type_id	first_pos	last_pos	master_frist_pos	master_last_pos
+        AN_P01308_001839    1027                    20          21          430                 433
+		(1 row)
+		
+		 */
+	}
+
+
+	
 	public int getErrorsDuringPropagationOnVariantsOfSingleEntry(String entry_ac) throws Exception {
 
 		SequencePositionMapper.debug = false;
 
-		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entry_ac).withEverything());
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entry_ac).withTargetIsoforms().withAnnotations());
 
 		int delCount = 0;
 		int subCount = 0;
@@ -123,7 +211,7 @@ public class IsoformSequencePositionMapperIntegrationTest extends IsoformMapping
 							continue;
 						}
 
-						printIsoLengthAndRangesNuCount(iso1.getSequence(), iso1.getMasterMapping());
+						printIsoLengthAndRangesNuCount(iso1.getUniqueName(), iso1.getSequence(), iso1.getMasterMapping());
 						System.out.println("Starting variant propagation from isoform " + iso1name + " at position " + iso1ExpectedPos);
 						System.out.println(getSequenceWithHighlighedPos(iso1.getSequence(), iso1ExpectedPos));
 	
@@ -136,7 +224,7 @@ public class IsoformSequencePositionMapperIntegrationTest extends IsoformMapping
 							Integer iso2ActualPos = nuIdx.getAminoAcidPosition();
 							Integer iso2ExpectedPos = isoExpectedPos.get(iso2name);
 							System.out.println("Variant " + a.getUniqueName() + " position on isoform " + iso2name + " is "	+ iso2ActualPos);
-							printIsoLengthAndRangesNuCount(iso2.getSequence(), iso2.getMasterMapping());
+							printIsoLengthAndRangesNuCount(iso2.getUniqueName(),iso2.getSequence(), iso2.getMasterMapping());
 							if (iso2ExpectedPos != null) System.out.println("Expected:" + getSequenceWithHighlighedPos(iso2.getSequence(), iso2ExpectedPos));
 							if (iso2ActualPos != null)	System.out.println("Actual  :"	+ getSequenceWithHighlighedPos(iso2.getSequence(), iso2ActualPos));
 							
@@ -203,11 +291,12 @@ public class IsoformSequencePositionMapperIntegrationTest extends IsoformMapping
 		}
 	}
 
-	private void printIsoLengthAndRangesNuCount(String isoSeq, List<NucleotidePositionRange> ranges) {
+	private void printIsoLengthAndRangesNuCount(String isoName, String isoSeq, List<NucleotidePositionRange> ranges) {
 		int isoLng = isoSeq.length();
 		int nuCount = getNucleotideCount(ranges);
 		boolean ok = isoLng * 3 == nuCount;
-		System.out.println((ok ? "OK - " : "ERROR4 - ") + "Iso lng in nu:" + isoLng * 3 + " nuCount:" + nuCount);
+		for (NucleotidePositionRange r: ranges) System.out.println(isoName + " has masterMapping range " + r);
+		System.out.println((ok ? "OK - " : "ERROR4 - ") + isoName + " lng in nu:" + isoLng * 3 + " nuCount:" + nuCount);
 	}
 
 	private int getNucleotideCount(List<NucleotidePositionRange> ranges) {
@@ -225,4 +314,20 @@ public class IsoformSequencePositionMapperIntegrationTest extends IsoformMapping
 		sb.insert(pos - 1, '(').insert(pos + 1, ')');
 		return sb.toString();
 	}
+	
+	private BufferedWriter log=null;
+	private void openLogger(String filename) throws Exception {
+		this.log = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(filename))));
+	}
+	private void log(String s) throws IOException {
+		if (log!=null) {
+			log.write(s);
+			log.write("\n");
+			log.flush();
+		}
+	}
+	private void closeLogger() throws IOException {
+		log.close();
+	}
+
 }
