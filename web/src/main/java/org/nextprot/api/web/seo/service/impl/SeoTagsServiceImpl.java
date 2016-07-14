@@ -171,7 +171,7 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 		String h1 = title;
 		
 		// TODO: send something different for each subpage... see with amos
-		String descr = getFirstFunctionInfo(entry);
+		String descr = getFirstFunctionInfo(entry) + ". " + prettySubpage;
 		
 		return new SeoTags(title,descr,h1);
 	}
