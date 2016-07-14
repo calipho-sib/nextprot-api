@@ -15,6 +15,14 @@ public class FeatureQuery implements Serializable {
     private final String featureType;
     private final boolean propagableFeature;
 
+    /**
+     *
+     * @param entryIsoform
+     * @param feature a feature is a gene name associated with a sequence variation
+     * @param featureType
+     * @param propagableFeature
+     * @throws FeatureQueryException
+     */
     public FeatureQuery(EntryIsoform entryIsoform, String feature, String featureType, boolean propagableFeature) throws FeatureQueryException {
 
         Preconditions.checkNotNull(entryIsoform);

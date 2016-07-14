@@ -1,7 +1,7 @@
 package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.google.common.base.Preconditions;
-import com.nextprot.api.isoform.mapper.domain.GeneVariationPair;
+import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
 import org.nextprot.api.core.dao.EntityName;
@@ -11,14 +11,14 @@ import java.text.ParseException;
 import java.util.List;
 
 /**
- * Parse and provide gene name and protein sequence variant
+ * Parse and provide gene name and protein sequence variation
  */
-public abstract class GeneFeaturePair implements GeneVariationPair {
+public abstract class SequenceFeatureBase implements SequenceFeature {
 
     private final String geneName;
     private final SequenceVariation variation;
 
-    public GeneFeaturePair(String feature) throws ParseException {
+    public SequenceFeatureBase(String feature) throws ParseException {
 
         String geneName = parseGeneName(feature);
         String variation = parseVariation(feature);
