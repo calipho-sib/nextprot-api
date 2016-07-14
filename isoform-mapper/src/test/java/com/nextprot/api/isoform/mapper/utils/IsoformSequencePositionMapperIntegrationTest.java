@@ -137,10 +137,17 @@ NX_Q9UJW3 has 1 ERROR(s)
 				int pos = a.getTargetingIsoformsMap().get(iso_ac).getFirstPosition();
 				Isoform iso = EntryIsoform.getIsoformByName(entry, iso_ac);
 				CodonNucleotidePositions nuPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(pos, iso);
-				//System.out.println("isoform position                                               : " + pos);
-				//System.out.println("nuPos is valid                                                 : " + nuPos.isValid());
-				//System.out.println("master position according to iso mapper service                : " + nuPos.get(0));
-				//System.out.println("master position according to table identifier_feature_position : " + expectedBeginPosOnMaster);
+				System.out.println("isoform position                                               : " + pos);
+				System.out.println("nuPos is valid                                                 : " + nuPos.isValid());
+				System.out.println("master position according to iso mapper service                : " + nuPos.get(0));
+				System.out.println("master position according to table identifier_feature_position : " + expectedBeginPosOnMaster);
+				System.out.println("master first_position for Anne                                 : " + (nuPos.get(0)-1));
+				// we then have to gie the last_positon to Anne, there are 2 cases:
+				// case 1: original AAs = single AA
+				// => master last_positon fo Anne = first_position for Anne + 3
+				// case 2: original AAs length has more than one AAs
+				// compute position on master of last AA (same process as above), return nuPos(0)-1 found for iso pos)
+				
 				// we expect a difference of 1 between what we have in db and what we have from api
 				Assert.assertEquals(new Integer(expectedBeginPosOnMaster + 1), new Integer(nuPos.get(0)));
 				return;
