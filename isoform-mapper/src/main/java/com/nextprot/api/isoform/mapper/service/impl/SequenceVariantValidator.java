@@ -9,7 +9,7 @@ import java.text.ParseException;
 
 class SequenceVariantValidator extends SequenceFeatureValidator {
 
-    public SequenceVariantValidator(FeatureQuery query) {
+    SequenceVariantValidator(FeatureQuery query) {
         super(query);
     }
 

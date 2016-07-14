@@ -11,7 +11,7 @@ import java.text.ParseException;
 
 class SequencePtmValidator extends SequenceFeatureValidator {
 
-    public SequencePtmValidator(FeatureQuery query) {
+    SequencePtmValidator(FeatureQuery query) {
         super(query);
     }
 
