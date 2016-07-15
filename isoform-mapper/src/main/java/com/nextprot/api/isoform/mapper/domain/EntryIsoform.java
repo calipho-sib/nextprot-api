@@ -72,4 +72,16 @@ public class EntryIsoform {
         }
         return null;
     }
+
+    public static int getIsoformNumber(Isoform isoform) {
+
+        String accession = isoform.getUniqueName();
+
+        if (accession.contains("-")) {
+
+            return Integer.valueOf(accession.substring(accession.lastIndexOf("-")+1));
+        }
+
+        return -1;
+    }
 }
