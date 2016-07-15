@@ -65,7 +65,7 @@ public class AnnotationBuilder {
 	public static List<IsoformAnnotation> buildAnnotationList(String isoformName, List<RawStatement> flatStatements) {
 
 		List<IsoformAnnotation> annotations = new ArrayList<>();
-		Map<String, List<RawStatement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(RawStatement::getIsoformAnnotationId));
+		Map<String, List<RawStatement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOT_ISO_ID)));
 
 		flatStatementsByAnnotationHash.keySet().forEach(annotationHash -> {
 
@@ -90,7 +90,7 @@ public class AnnotationBuilder {
 			// TODO this should be called terminology I guess! not setCVApiName
 			isoAnnotation.setCvApiName(statement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
 
-			isoAnnotation.setAnnotationHash(statement.getIsoformAnnotationId());
+			isoAnnotation.setAnnotationHash(statement.getValue(StatementField.ANNOT_ISO_ID));
 			isoAnnotation.setAnnotationUniqueName(statement.getValue(StatementField.ANNOT_ISO_UNAME));
 			
 			String boah = statement.getValue(StatementField.OBJECT_ANNOT_ISO_IDS);
