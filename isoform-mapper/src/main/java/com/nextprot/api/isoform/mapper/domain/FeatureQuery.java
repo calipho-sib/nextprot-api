@@ -13,17 +13,15 @@ public class FeatureQuery implements Serializable {
     private final EntryIsoform entryIsoform;
     private final String feature;
     private final String featureType;
-    private final boolean propagableFeature;
+    private boolean propagableFeature;
 
     /**
-     *
      * @param entryIsoform
      * @param feature a feature is a gene name associated with a sequence variation
      * @param featureType
-     * @param propagableFeature
      * @throws FeatureQueryException
      */
-    public FeatureQuery(EntryIsoform entryIsoform, String feature, String featureType, boolean propagableFeature) throws FeatureQueryException {
+    public FeatureQuery(EntryIsoform entryIsoform, String feature, String featureType) throws FeatureQueryException {
 
         Preconditions.checkNotNull(entryIsoform);
         Preconditions.checkNotNull(feature);
@@ -32,7 +30,6 @@ public class FeatureQuery implements Serializable {
         this.entryIsoform = entryIsoform;
         this.feature = feature;
         this.featureType = featureType;
-        this.propagableFeature = propagableFeature;
 
         checkStates();
     }
@@ -76,5 +73,10 @@ public class FeatureQuery implements Serializable {
      */
     public boolean isFeaturePropagable() {
         return propagableFeature;
+    }
+
+    public void setPropagableFeature(boolean propagableFeature) {
+
+        this.propagableFeature = propagableFeature;
     }
 }

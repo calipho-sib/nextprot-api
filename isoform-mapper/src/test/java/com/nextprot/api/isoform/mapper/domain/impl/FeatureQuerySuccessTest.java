@@ -17,7 +17,7 @@ public class FeatureQuerySuccessTest {
     @Test
     public void testOnSuccess() throws FeatureQueryException, ParseException {
 
-        FeatureQuery query = new FeatureQuery(mockEntryIsoform("NX_Q9UI33", "NX_Q9UI33-1"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
+        FeatureQuery query = new FeatureQuery(mockEntryIsoform("NX_Q9UI33", "NX_Q9UI33-1"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
 
         SequenceVariant sequenceVariant = new SequenceVariant("SCN11A-p.Leu1158Pro");
 

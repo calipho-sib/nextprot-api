@@ -14,7 +14,7 @@ public class InvalidFeaturePositionExceptionTest {
     public void testOnInvalidPositionError() throws FeatureQueryException {
 
         FeatureQuery query =
-                new FeatureQuery(mockEntryIsoform("NX_Q9UI33", "NX_Q9UI33-1"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
+                new FeatureQuery(mockEntryIsoform("NX_Q9UI33", "NX_Q9UI33-1"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
 
         InvalidFeatureQueryPositionException result = new InvalidFeatureQueryPositionException(query, 23);
         Assert.assertEquals("invalid feature position: position 23 is out of bound in sequence of isoform NX_Q9UI33", result.getError().getMessage());

@@ -15,7 +15,7 @@ public class IncompatibleGeneAndProteinNameExceptionTest {
     public void testOnIncompatibleProteinAndGeneNameError() throws FeatureQueryException {
 
         FeatureQuery query =
-                new FeatureQuery(mockEntryIsoform("NX_P01308", "NX_Q9UI33-1"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
+                new FeatureQuery(mockEntryIsoform("NX_P01308", "NX_Q9UI33-1"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
 
         IncompatibleGeneAndProteinNameException result = new IncompatibleGeneAndProteinNameException(query, "SCN11A", Lists.newArrayList("INS"));
 
