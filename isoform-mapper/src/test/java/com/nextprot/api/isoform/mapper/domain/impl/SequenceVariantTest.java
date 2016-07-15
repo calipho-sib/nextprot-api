@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Overview;
@@ -13,34 +14,36 @@ import java.util.List;
 
 import static org.mockito.Mockito.when;
 
-public class SequenceVariationTest {
+public class SequenceVariantTest {
 
     @Test
     public void shouldExtractGeneNameAndProteinVariation() throws Exception {
 
-        SequenceVariation pair = new SequenceVariation("SCN11A-p.Lys1710Thr");
+        SequenceVariant variant = new SequenceVariant("SCN11A-p.Lys1710Thr");
 
-        Assert.assertEquals("SCN11A", pair.getGeneName());
-        org.nextprot.api.commons.bio.variation.SequenceVariation variation = pair.getVariation();
+        Assert.assertEquals("SCN11A", variant.getGeneName());
+        SequenceVariation variation = variant.getVariation();
+        Assert.assertEquals("p.Lys1710Thr", variant.getFormattedVariation());
 
         Assert.assertEquals(AminoAcidCode.LYSINE, variation.getFirstChangingAminoAcid());
         Assert.assertEquals(1710, variation.getFirstChangingAminoAcidPos());
 
-        Assert.assertTrue(pair.isValidGeneName(mockEntry("SCN11A", "SCN12A", "SNS2")));
+        Assert.assertTrue(variant.isValidGeneName(mockEntry("SCN11A", "SCN12A", "SNS2")));
     }
 
     @Test
     public void shouldExtractGeneNameAndProteinVariation2() throws Exception {
 
-        SequenceVariation pair = new SequenceVariation("WT1-iso4-p.Phe154Ser");
+        SequenceVariant variant = new SequenceVariant("WT1-iso4-p.Phe154Ser");
 
-        Assert.assertEquals("WT1", pair.getGeneName());
-        org.nextprot.api.commons.bio.variation.SequenceVariation variation = pair.getVariation();
+        Assert.assertEquals("WT1", variant.getGeneName());
+        SequenceVariation variation = variant.getVariation();
+        Assert.assertEquals("p.Phe154Ser", variant.getFormattedVariation());
 
         Assert.assertEquals(AminoAcidCode.PHENYLALANINE, variation.getFirstChangingAminoAcid());
         Assert.assertEquals(154, variation.getFirstChangingAminoAcidPos());
 
-        Assert.assertTrue(pair.isValidGeneName(mockEntry("WT1")));
+        Assert.assertTrue(variant.isValidGeneName(mockEntry("WT1")));
     }
 
     private Entry mockEntry(String... geneNames) {

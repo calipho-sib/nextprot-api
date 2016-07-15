@@ -84,6 +84,8 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         private Integer firstIsoSeqPos;
         private Integer lastIsoSeqPos;
         private boolean isCanonical;
+        // MSH2-p.Ala328Ala on NX_ABCDEF_1 -> MSH2-iso1-p.Ala328Ala
+        //private String isoSpecificFeature;
 
         public String getIsoformName() {
             return isoformName;
