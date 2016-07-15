@@ -38,7 +38,9 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         result.setFirstIsoSeqPos(firstPosition);
         result.setLastIsoSeqPos(lastPosition);
         result.setCanonical(isoform.isCanonicalIsoform());
-        result.setIsoSpecificFeature(feature.formatIsoSpecificFeature(EntryIsoform.getIsoformNumber(isoform)));
+        result.setIsoSpecificFeature(
+                feature.formatIsoSpecificFeature(EntryIsoform.getIsoformNumber(isoform),
+                        firstPosition, lastPosition));
 
         data.put(result.getIsoformName(), result);
     }

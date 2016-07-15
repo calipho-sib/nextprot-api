@@ -51,7 +51,7 @@ public class SequenceVariantTest {
 
         SequenceVariant variant = new SequenceVariant("WT1-p.Phe154Ser");
 
-        Assert.assertEquals("WT1-iso1-p.Phe154Ser", variant.formatIsoSpecificFeature(1));
+        Assert.assertEquals("WT1-iso1-p.Phe154Ser", variant.formatIsoSpecificFeature(1, 154, 154));
     }
 
     @Test
@@ -59,14 +59,14 @@ public class SequenceVariantTest {
 
         SequenceVariant variant = new SequenceVariant("WT1-iso4-p.Phe154Ser");
 
-        Assert.assertEquals("WT1-iso1-p.Phe154Ser", variant.formatIsoSpecificFeature(1));
+        Assert.assertEquals("WT1-iso3-p.Phe120Ser", variant.formatIsoSpecificFeature(3, 120, 120));
     }
 
     @Test (expected = IllegalArgumentException.class)
     public void testIsospecBadIsonumber() throws Exception {
 
         SequenceVariant variant = new SequenceVariant("WT1-iso4-p.Phe154Ser");
-        variant.formatIsoSpecificFeature(0);
+        variant.formatIsoSpecificFeature(0, 154, 154);
     }
 
     private Entry mockEntry(String... geneNames) {
