@@ -138,6 +138,22 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_P38398-1", 988, 988, true);
     }
 
+    @Test
+    public void shouldValidateInsertionVariantOnCanonicalIsoform() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("MLH1-p.Lys722_Ala723insTyrLys", AnnotationCategory.VARIANT.getApiTypeName(), "NX_P40692");
+
+        assertIsoformFeatureValid(result, "NX_P40692-1", 722, 723, true);
+    }
+
+    @Test
+    public void shouldValidateDeletionVariantOnCanonicalIsoform() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("BRCA2-p.Gly2281_Asp2312del", AnnotationCategory.VARIANT.getApiTypeName(), "NX_P51587");
+
+        assertIsoformFeatureValid(result, "NX_P51587-1", 2281, 2312, true);
+    }
+
     //@Test
     public void validateVDList1() throws Exception {
 

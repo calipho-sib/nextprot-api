@@ -1,5 +1,6 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
+import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
@@ -10,10 +11,8 @@ import com.nextprot.api.isoform.mapper.service.EntryIsoformFactoryService;
 import com.nextprot.api.isoform.mapper.service.FeatureValidatorFactoryService;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
-import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
-import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
@@ -44,18 +43,18 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     public FeatureQueryResult validateFeature(String featureName, String featureType, String nextprotAccession) {
 
         try {
-            FeatureQuery query = new FeatureQuery(nextprotAccession, featureName, featureType, false);
+            EntryIsoform entryIsoform = entryIsoformFactoryService.createsEntryIsoform(nextprotAccession);
 
-            Optional<SequenceFeatureValidator> validator =
-                    featureValidatorFactoryService.createsFeatureValidator(AnnotationCategory.getDecamelizedAnnotationTypeName(featureType));
+            FeatureQuery query = new FeatureQuery(entryIsoform, featureName, featureType, false);
+
+            Optional<SequenceFeatureValidator> validator = featureValidatorFactoryService.createsFeatureValidator(query);
 
             // TODO: replace get() call with future ifPresentOrElse method (https://dzone.com/articles/java-8-optional-replace-your-get-calls?edition=188596&utm_source=Daily%20Digest&utm_medium=email&utm_campaign=dd%202016-07-06)
             if (validator.isPresent()) {
 
-                return validator.get().validate(query, entryIsoformFactoryService.createsEntryIsoform(nextprotAccession));
+                return validator.get().validate();
             }
-            else
-                throw new InvalidFeatureQueryTypeException(query);
+            throw new InvalidFeatureQueryTypeException(query);
         } catch (FeatureQueryException e) {
 
             return new FeatureQueryFailure(e);
@@ -80,7 +79,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
     private void propagate(FeatureQuerySuccess successResults) throws ParseException {
 
-        EntryIsoform entryIsoform = successResults.getEntryIsoform();
+        EntryIsoform entryIsoform = successResults.getQuery().getEntryIsoform();
 
         SequenceVariation variation = successResults.getIsoformSequenceVariation();
 
