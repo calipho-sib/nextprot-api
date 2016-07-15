@@ -1,3 +1,4 @@
-select * from mapped_statements ms 
-where annotation_category != 'phenotype' 
-and entry_accession = :entry_accession
+select *
+from mapped_statements_next ms
+where ms.annotation_category != 'phenotype' 
+and ms.entry_accession = :entry_accession

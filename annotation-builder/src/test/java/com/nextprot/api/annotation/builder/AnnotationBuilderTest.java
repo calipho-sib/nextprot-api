@@ -1,6 +1,6 @@
 package com.nextprot.api.annotation.builder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 

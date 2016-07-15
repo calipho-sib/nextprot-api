@@ -38,7 +38,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 		List<RawStatement> phenotypeStatements = rawStatementDao.findPhenotypeRawStatements(entryAccession);
 
-		Map<String, List<RawStatement>> impactStatementsBySubject = phenotypeStatements.stream().collect(Collectors.groupingBy(r -> r.getValue(StatementField.BIOLOGICAL_SUBJECT_ANNOT_HASH)));
+		Map<String, List<RawStatement>> impactStatementsBySubject = phenotypeStatements.stream().collect(Collectors.groupingBy(r -> r.getValue(StatementField.SUBJECT_ANNOT_ISO_IDS)));
 
 		impactStatementsBySubject.keySet().forEach(subjectComponentsIdentifiers -> {
 			
