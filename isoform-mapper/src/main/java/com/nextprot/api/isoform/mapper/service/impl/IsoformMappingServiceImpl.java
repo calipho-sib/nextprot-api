@@ -45,7 +45,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         try {
             EntryIsoform entryIsoform = entryIsoformFactoryService.createsEntryIsoform(nextprotAccession);
 
-            FeatureQuery query = new FeatureQuery(entryIsoform, featureName, featureType, false);
+            FeatureQuery query = new FeatureQuery(entryIsoform, featureName, featureType);
 
             Optional<SequenceFeatureValidator> validator = featureValidatorFactoryService.createsFeatureValidator(query);
 
@@ -79,9 +79,11 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
     private void propagate(FeatureQuerySuccess successResults) throws ParseException {
 
+        successResults.getQuery().setPropagableFeature(true);
+
         EntryIsoform entryIsoform = successResults.getQuery().getEntryIsoform();
 
-        SequenceVariation variation = successResults.getIsoformSequenceVariation();
+        SequenceVariation variation = successResults.getIsoformSequenceFeature().getVariation();
 
         String expectedAAs = entryIsoform.getIsoform().getSequence().substring(
                 variation.getFirstChangingAminoAcidPos()-1, variation.getLastChangingAminoAcidPos()

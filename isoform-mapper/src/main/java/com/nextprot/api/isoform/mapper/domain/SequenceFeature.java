@@ -11,6 +11,12 @@ public interface SequenceFeature {
     /** @return the gene name */
     String getGeneName();
 
+    /** @return the variation as a string */
+    String getFormattedVariation();
+
+    /** format a feature specifically to isoform */
+    String formatIsoSpecificFeature(int isoNumber, int firstAAPos, int lastAAPos);
+
     /** @return the sequence variation */
     SequenceVariation getVariation();
 

@@ -1,9 +1,10 @@
 package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import org.nextprot.api.commons.bio.variation.SequenceVariation;
+import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import org.nextprot.api.core.domain.Isoform;
 
 import java.io.Serializable;
@@ -16,19 +17,18 @@ import java.util.TreeMap;
 public class FeatureQuerySuccess extends FeatureQueryResult {
 
     private final Map<String, IsoformFeatureResult> data;
-    private SequenceVariation isoformSequenceVariation;
+    private final SequenceFeature feature;
 
-    public FeatureQuerySuccess(FeatureQuery query) {
+    public FeatureQuerySuccess(FeatureQuery query, SequenceFeature feature) {
         super(query);
 
         data = new TreeMap<>();
-    }
 
-    public void setSequenceVariation(SequenceVariation variation) {
+        this.feature = feature;
 
-        this.isoformSequenceVariation = variation;
-
-        addMappedFeature(getQuery().getEntryIsoform().getIsoform(), variation.getFirstChangingAminoAcidPos(), variation.getLastChangingAminoAcidPos());
+        addMappedFeature(getQuery().getEntryIsoform().getIsoform(),
+                feature.getVariation().getFirstChangingAminoAcidPos(),
+                feature.getVariation().getLastChangingAminoAcidPos());
     }
 
     public void addMappedFeature(Isoform isoform, int firstPosition, int lastPosition) {
@@ -38,6 +38,9 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         result.setFirstIsoSeqPos(firstPosition);
         result.setLastIsoSeqPos(lastPosition);
         result.setCanonical(isoform.isCanonicalIsoform());
+        result.setIsoSpecificFeature(
+                feature.formatIsoSpecificFeature(EntryIsoform.getIsoformNumber(isoform),
+                        firstPosition, lastPosition));
 
         data.put(result.getIsoformName(), result);
     }
@@ -67,8 +70,8 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
     }
 
     @JsonIgnore
-    public SequenceVariation getIsoformSequenceVariation() {
-        return isoformSequenceVariation;
+    public SequenceFeature getIsoformSequenceFeature() {
+        return feature;
     }
 
     @Override
@@ -84,6 +87,7 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         private Integer firstIsoSeqPos;
         private Integer lastIsoSeqPos;
         private boolean isCanonical;
+        private String isoSpecificFeature;
 
         public String getIsoformName() {
             return isoformName;
@@ -119,6 +123,14 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
 
         public boolean isMapped() {
             return firstIsoSeqPos != null && lastIsoSeqPos != null;
+        }
+
+        public String getIsoSpecificFeature() {
+            return isoSpecificFeature;
+        }
+
+        public void setIsoSpecificFeature(String isoSpecificFeature) {
+            this.isoSpecificFeature = isoSpecificFeature;
         }
     }
 }

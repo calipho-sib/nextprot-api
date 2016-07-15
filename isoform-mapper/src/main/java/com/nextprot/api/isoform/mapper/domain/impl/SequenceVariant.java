@@ -5,9 +5,9 @@ import org.nextprot.api.commons.bio.variation.impl.format.hgvs.SequenceVariation
 
 import java.text.ParseException;
 
-public class SequenceVariation extends SequenceFeatureBase {
+public class SequenceVariant extends SequenceFeatureBase {
 
-    public SequenceVariation(String feature) throws ParseException {
+    public SequenceVariant(String feature) throws ParseException {
         super(feature);
     }
 

@@ -2,6 +2,7 @@ package com.nextprot.api.isoform.mapper.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import com.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
 import com.nextprot.api.isoform.mapper.domain.*;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
