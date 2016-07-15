@@ -65,7 +65,7 @@ public class AnnotationBuilder {
 	public static List<IsoformAnnotation> buildAnnotationList(String isoformName, List<RawStatement> flatStatements) {
 
 		List<IsoformAnnotation> annotations = new ArrayList<>();
-		Map<String, List<RawStatement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(RawStatement::getAnnot_hash));
+		Map<String, List<RawStatement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(RawStatement::getIsoformAnnotationId));
 
 		flatStatementsByAnnotationHash.keySet().forEach(annotationHash -> {
 
@@ -90,10 +90,10 @@ public class AnnotationBuilder {
 			// TODO this should be called terminology I guess! not setCVApiName
 			isoAnnotation.setCvApiName(statement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
 
-			isoAnnotation.setAnnotationHash(statement.getAnnot_hash());
-			isoAnnotation.setAnnotationUniqueName(statement.getValue(StatementField.ANNOT_NAME));
+			isoAnnotation.setAnnotationHash(statement.getIsoformAnnotationId());
+			isoAnnotation.setAnnotationUniqueName(statement.getValue(StatementField.ANNOT_ISO_UNAME));
 			
-			String boah = statement.getValue(StatementField.BIOLOGICAL_OBJECT_ANNOT_HASH);
+			String boah = statement.getValue(StatementField.OBJECT_ANNOT_ISO_IDS);
 			String boa = statement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
 			String bot = statement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);
 

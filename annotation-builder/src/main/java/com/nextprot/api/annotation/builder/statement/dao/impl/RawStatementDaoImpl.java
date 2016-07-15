@@ -27,7 +27,6 @@ public class RawStatementDaoImpl implements RawStatementDao {
 	public List<RawStatement> findPhenotypeRawStatements(String entryName) {
 	
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("source", "bioeditor");
 		params.put("entry_accession", entryName);
 
 		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource())

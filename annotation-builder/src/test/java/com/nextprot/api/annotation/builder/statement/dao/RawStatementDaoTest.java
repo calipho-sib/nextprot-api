@@ -31,8 +31,8 @@ public class RawStatementDaoTest extends AnnotationBuilderBaseTest {
 	public void findAllNormalStatements() {
 		AtomicInteger i = new AtomicInteger(0);
 		List<RawStatement> statements = rawStatementDao.findNormalRawStatements("NX_Q9BX63");
-		statements.stream().forEach(s -> System.out.println(i.getAndIncrement() + " - " + s.getAnnot_hash()));
-		List<RawStatement> statement = statements.stream().filter(s -> s.getAnnot_hash().equals("c075d4a6b44e95faec7d8b109166744b")).collect(Collectors.toList());
+		statements.stream().forEach(s -> System.out.println(i.getAndIncrement() + " - " + s.getIsoformAnnotationId()));
+		List<RawStatement> statement = statements.stream().filter(s -> s.getIsoformAnnotationId().equals("c075d4a6b44e95faec7d8b109166744b")).collect(Collectors.toList());
 	}
 	
 	@Test
