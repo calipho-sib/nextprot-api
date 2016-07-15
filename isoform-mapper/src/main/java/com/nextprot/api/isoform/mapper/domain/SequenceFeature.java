@@ -14,6 +14,9 @@ public interface SequenceFeature {
     /** @return the variation as a string */
     String getFormattedVariation();
 
+    /** format a feature specifically to isoform */
+    String formatIsoSpecificFeature(int isoNumber);
+
     /** @return the sequence variation */
     SequenceVariation getVariation();
 

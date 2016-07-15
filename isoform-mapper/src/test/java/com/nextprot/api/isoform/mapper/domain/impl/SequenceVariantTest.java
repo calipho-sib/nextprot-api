@@ -46,6 +46,29 @@ public class SequenceVariantTest {
         Assert.assertTrue(variant.isValidGeneName(mockEntry("WT1")));
     }
 
+    @Test
+    public void testIsospecFeature() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("WT1-p.Phe154Ser");
+
+        Assert.assertEquals("WT1-iso1-p.Phe154Ser", variant.formatIsoSpecificFeature(1));
+    }
+
+    @Test
+    public void testIsospecFeatureFromIsoFeature() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("WT1-iso4-p.Phe154Ser");
+
+        Assert.assertEquals("WT1-iso1-p.Phe154Ser", variant.formatIsoSpecificFeature(1));
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void testIsospecBadIsonumber() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("WT1-iso4-p.Phe154Ser");
+        variant.formatIsoSpecificFeature(0);
+    }
+
     private Entry mockEntry(String... geneNames) {
 
         Entry entry = Mockito.mock(Entry.class);

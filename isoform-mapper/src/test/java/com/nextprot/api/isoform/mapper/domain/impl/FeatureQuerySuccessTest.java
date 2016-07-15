@@ -8,26 +8,30 @@ import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Isoform;
 
+import java.text.ParseException;
+
 import static org.mockito.Mockito.when;
 
 public class FeatureQuerySuccessTest {
 
     @Test
-    public void testOnSuccess() throws FeatureQueryException {
+    public void testOnSuccess() throws FeatureQueryException, ParseException {
 
-        FeatureQuery query = new FeatureQuery(mockEntryIsoform("NX_Q9UI33"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
+        FeatureQuery query = new FeatureQuery(mockEntryIsoform("NX_Q9UI33", "NX_Q9UI33-1"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), true);
 
-        FeatureQuerySuccess result = new FeatureQuerySuccess(query);
+        SequenceVariant sequenceVariant = new SequenceVariant("SCN11A-p.Leu1158Pro");
+
+        FeatureQuerySuccess result = new FeatureQuerySuccess(query, sequenceVariant);
         result.addMappedFeature(mockIsoform("NX_Q9UI33-1", true), 1158, 1158);
         result.addMappedFeature(mockIsoform("NX_Q9UI33-2", false), 1158, 1158);
         result.addMappedFeature(mockIsoform("NX_Q9UI33-3", false), 1120, 1120);
     }
 
-    public static EntryIsoform mockEntryIsoform(String accession) {
+    public static EntryIsoform mockEntryIsoform(String accession, String isoAccession) {
 
         EntryIsoform entryIsoform = Mockito.mock(EntryIsoform.class);
 
-        Isoform isoform = mockIsoform(accession, true);
+        Isoform isoform = mockIsoform(isoAccession, true);
         when(entryIsoform.getIsoform()).thenReturn(isoform);
         when(entryIsoform.getAccession()).thenReturn(accession);
 

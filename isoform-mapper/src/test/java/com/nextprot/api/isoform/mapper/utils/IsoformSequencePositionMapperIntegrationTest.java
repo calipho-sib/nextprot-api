@@ -1,7 +1,7 @@
 package com.nextprot.api.isoform.mapper.utils;
 
 import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
-import com.nextprot.api.isoform.mapper.service.IsoformMappingBaseTest;
+import com.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
 
 import org.junit.Assert;
 import org.junit.Test;

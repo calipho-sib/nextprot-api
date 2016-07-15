@@ -42,10 +42,7 @@ public abstract class SequenceFeatureValidator {
             checkFeatureChangingAminoAcids(sequenceFeature.getVariation());
             doMoreChecks(sequenceFeature.getVariation());
 
-            FeatureQuerySuccess success = new FeatureQuerySuccess(query);
-            success.setSequenceVariation(sequenceFeature.getVariation());
-
-            return success;
+            return new FeatureQuerySuccess(query, sequenceFeature);
         } catch (ParseException e) {
 
             ParseException pe = new ParseException(e.getMessage(), e.getErrorOffset() +

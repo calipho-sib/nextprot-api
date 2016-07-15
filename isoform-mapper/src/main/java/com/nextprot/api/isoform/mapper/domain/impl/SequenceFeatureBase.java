@@ -58,6 +58,21 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         return formattedVariation;
     }
 
+    @Override
+    public String formatIsoSpecificFeature(int isoNumber) {
+
+        Preconditions.checkArgument(isoNumber>0, isoNumber + ": isoform number should be a positive number");
+
+        StringBuilder sb = new StringBuilder();
+
+        sb
+                .append(geneName)
+                .append("-iso").append(isoNumber).append("-")
+                .append(formattedVariation);
+
+        return sb.toString();
+    }
+
     private String parseGeneName(String feature) {
 
         return getGeneName(feature);
