@@ -11,6 +11,9 @@ public interface SequenceFeature {
     /** @return the gene name */
     String getGeneName();
 
+    /** @return the variation as a string */
+    String getFormattedVariation();
+
     /** @return the sequence variation */
     SequenceVariation getVariation();
 

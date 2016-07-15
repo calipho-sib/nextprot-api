@@ -16,6 +16,7 @@ import java.util.List;
 public abstract class SequenceFeatureBase implements SequenceFeature {
 
     private final String geneName;
+    private final String formattedVariation;
     private final SequenceVariation variation;
 
     public SequenceFeatureBase(String feature) throws ParseException {
@@ -24,10 +25,12 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         String variation = parseVariation(feature);
         SequenceVariationFormat parser = newParser();
 
-        this.variation = parser.parse(variation);
         this.geneName = geneName;
+        this.formattedVariation = variation;
+        this.variation = parser.parse(variation);
     }
 
+    @Override
     public boolean isValidGeneName(Entry entry) {
 
         List<EntityName> geneNames = entry.getOverview().getGeneNames();
@@ -49,7 +52,13 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         return feature.substring(0, feature.indexOf("-"));
     }
 
-    protected String parseGeneName(String feature) {
+    @Override
+    public String getFormattedVariation() {
+
+        return formattedVariation;
+    }
+
+    private String parseGeneName(String feature) {
 
         return getGeneName(feature);
     }
@@ -60,6 +69,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         return feature.substring(lastDashPosition + 1);
     }
 
+    @Override
     public String getGeneName() {
         return geneName;
     }
