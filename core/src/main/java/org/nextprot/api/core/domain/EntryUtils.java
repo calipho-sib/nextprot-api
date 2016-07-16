@@ -15,6 +15,15 @@ public class EntryUtils implements Serializable{
 	
 	private static final long serialVersionUID = 3009334685615648172L;
 
+	
+	public static String getEntryName(String nextprotAccession) {
+		String entryAccession = nextprotAccession;
+		if((nextprotAccession != null) && (nextprotAccession.length() > 0) && (nextprotAccession.contains("-"))){
+			entryAccession = nextprotAccession.substring(0, nextprotAccession.indexOf("-"));
+		}
+		return entryAccession;
+	}
+
 	public static Entry filterEntryBySubPart(Entry entry, EntryConfig config) {
 		
 		List<Annotation> annotations;

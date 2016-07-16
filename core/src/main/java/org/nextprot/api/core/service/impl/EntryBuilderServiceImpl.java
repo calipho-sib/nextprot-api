@@ -37,7 +37,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Override
 	public Entry build(EntryConfig entryConfig) {
 	
-		String entryName = entryConfig.getEntryName();
+		String entryName = EntryUtils.getEntryName(entryConfig.getEntryName());
 		Entry entry = new Entry(entryName);
 
 		//Lock per entry in case the cache is not set yet (should be quite) fast thougth

@@ -32,11 +32,11 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 	@Cacheable("modified-entry-annotations")
 	@Override
-	public List<IsoformAnnotation> getModifiedIsoformAnnotationsByIsoform(String entryAccession) {
+	public List<IsoformAnnotation> getModifiedIsoformAnnotationsByIsoform(String nextprotAccession) {
 
 		List<IsoformAnnotation> annotations = new ArrayList<>();
 
-		List<RawStatement> phenotypeStatements = rawStatementDao.findPhenotypeRawStatements(entryAccession);
+		List<RawStatement> phenotypeStatements = rawStatementDao.findPhenotypeRawStatements(nextprotAccession);
 
 		Map<String, List<RawStatement>> impactStatementsBySubject = phenotypeStatements.stream().collect(Collectors.groupingBy(r -> r.getValue(StatementField.SUBJECT_ANNOT_ISO_IDS)));
 
@@ -52,22 +52,22 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 			for(String subjectComponentIdentifier : subjectComponentsIdentifiersArray){
 
-				List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotHash(subjectComponentIdentifier);
+				List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotIsoId(subjectComponentIdentifier);
 				if(subjectVariantStatements.isEmpty()){
 					throw new NextProtException("Not found any variant for variant identifier:" + subjectComponentIdentifier);
 				}
-				IsoformAnnotation variant = AnnotationBuilder.buildAnnotation(entryAccession + "-1", subjectVariantStatements);
+				IsoformAnnotation variant = AnnotationBuilder.buildAnnotation(nextprotAccession, subjectVariantStatements);
 				subjectVariants.add(variant);
 			}
 
 			// Impact annotations
 			List<RawStatement> impactStatements = impactStatementsBySubject.get(subjectComponentsIdentifiers);
-			List<IsoformAnnotation> impactAnnotations = AnnotationBuilder.buildAnnotationList(entryAccession + "-1", impactStatements);
+			List<IsoformAnnotation> impactAnnotations = AnnotationBuilder.buildAnnotationList(nextprotAccession, impactStatements);
 			impactAnnotations.stream().forEach(ia -> {
 				
 				String name = subjectVariants.stream().map(v -> v.getAnnotationUniqueName()).collect(Collectors.joining(" + ")).toString();
 				
-				ia.setSubjectName(entryAccession + "-1 " + name);
+				ia.setSubjectName(nextprotAccession + " " + name);
 				ia.setSubjectComponents(Arrays.asList(subjectComponentsIdentifiersArray));
 			});
 

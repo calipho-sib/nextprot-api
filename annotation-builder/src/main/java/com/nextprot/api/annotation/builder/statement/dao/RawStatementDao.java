@@ -10,6 +10,8 @@ public interface RawStatementDao {
 
 	List<RawStatement> findPhenotypeRawStatements(String entryName);
 
-	List<RawStatement> findRawStatementsByAnnotHash(String annotHash);
-
+	List<RawStatement> findRawStatementsByAnnotIsoId(String annotIsoId);
+	
+	List<RawStatement> findRawStatementsByAnnotEntryId(String annotEntryId);
+	
 }
