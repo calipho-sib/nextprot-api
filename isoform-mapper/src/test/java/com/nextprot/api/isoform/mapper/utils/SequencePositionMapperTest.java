@@ -102,6 +102,16 @@ public class SequencePositionMapperTest {
     	CodonNucleotideIndices result;
     	CodonNucleotidePositions codonNuPos = new CodonNucleotidePositions();
 
+    	// get isoform pos of aa corresponding to codon with nu at pos 202 203 204
+    	codonNuPos.clear();
+    	codonNuPos.addNucleotidePosition(202);
+    	codonNuPos.addNucleotidePosition(203);
+    	codonNuPos.addNucleotidePosition(204);
+    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	assertEquals(true,result.has3Nucleotides());
+    	assertEquals(new Integer(3), result.getAminoAcidPosition());
+    	
+    	
     	// get isoform position of aa corresponding to codon with nucleotides at position 100,101,102
     	codonNuPos.clear();
     	codonNuPos.addNucleotidePosition(100);

@@ -122,6 +122,34 @@ NX_Q9UJW3 has 1 ERROR(s)
 	}
 
 	@Test
+	public void testSingleVariantWithInvalidNucleotideIndice() throws Exception {
+				
+		String entry_ac = "NX_O00115";
+		String iso_ac = "NX_O00115-1";
+		String variant_ac = "AN_O00115_000472";
+		
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entry_ac).withTargetIsoforms().withAnnotations());
+		for (Annotation a: entry.getAnnotations()) {
+			if (a.getUniqueName().equals(variant_ac)) {
+				int pos = a.getTargetingIsoformsMap().get(iso_ac).getFirstPosition();
+				Isoform iso = EntryIsoform.getIsoformByName(entry, iso_ac);
+				CodonNucleotidePositions nuPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(pos, iso);
+				for (Isoform iso2: entry.getIsoforms()) {
+					if (!iso2.equals(iso)) {
+						CodonNucleotideIndices nuIdx = IsoformSequencePositionMapper.getMasterCodonNucleotidesIndices(nuPos, iso2);
+						Assert.assertEquals(false, nuIdx.has3Nucleotides()); // cannot be projected to iso2
+						Assert.assertEquals(false,nuIdx.areConsecutive());
+						Assert.assertEquals(false,nuIdx.areInFrame());
+						Assert.assertNull(nuIdx.getAminoAcidPosition());
+					}
+				}
+				return;
+			}
+		}
+		Assert.assertTrue(false);
+
+	}	
+	@Test
 	public void testSingleVariantPositionOnMaster() throws Exception {
 		
 		// just to be aware of difference between db info and api info
@@ -227,7 +255,6 @@ NX_Q9UJW3 has 1 ERROR(s)
 							if (iso2name.equals(iso1name))	continue;
 	
 							CodonNucleotideIndices nuIdx = IsoformSequencePositionMapper.getMasterCodonNucleotidesIndices(nuPos, iso2);
-	
 							Integer iso2ActualPos = nuIdx.getAminoAcidPosition();
 							Integer iso2ExpectedPos = isoExpectedPos.get(iso2name);
 							System.out.println("Variant " + a.getUniqueName() + " position on isoform " + iso2name + " is "	+ iso2ActualPos);
