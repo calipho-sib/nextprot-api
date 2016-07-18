@@ -22,7 +22,7 @@ public class SequenceVariantTest {
         SequenceVariant variant = new SequenceVariant("SCN11A-p.Lys1710Thr");
 
         Assert.assertEquals("SCN11A", variant.getGeneName());
-        SequenceVariation variation = variant.getVariation();
+        SequenceVariation variation = variant.getProteinVariation();
         Assert.assertEquals("p.Lys1710Thr", variant.getFormattedVariation());
 
         Assert.assertEquals(AminoAcidCode.LYSINE, variation.getFirstChangingAminoAcid());
@@ -37,7 +37,7 @@ public class SequenceVariantTest {
         SequenceVariant variant = new SequenceVariant("WT1-iso4-p.Phe154Ser");
 
         Assert.assertEquals("WT1", variant.getGeneName());
-        SequenceVariation variation = variant.getVariation();
+        SequenceVariation variation = variant.getProteinVariation();
         Assert.assertEquals("p.Phe154Ser", variant.getFormattedVariation());
 
         Assert.assertEquals(AminoAcidCode.PHENYLALANINE, variation.getFirstChangingAminoAcid());

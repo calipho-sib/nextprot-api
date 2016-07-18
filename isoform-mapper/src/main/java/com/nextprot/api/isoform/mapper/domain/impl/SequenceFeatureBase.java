@@ -101,7 +101,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     }
 
     @Override
-    public SequenceVariation getVariation() {
+    public SequenceVariation getProteinVariation() {
         return variation;
     }
 

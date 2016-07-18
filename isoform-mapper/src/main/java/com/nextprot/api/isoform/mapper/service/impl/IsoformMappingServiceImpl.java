@@ -83,7 +83,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         EntryIsoform entryIsoform = successResults.getQuery().getEntryIsoform();
 
-        SequenceVariation variation = successResults.getIsoformSequenceFeature().getVariation();
+        SequenceVariation variation = successResults.getIsoformSequenceFeature().getProteinVariation();
 
         String expectedAAs = entryIsoform.getIsoform().getSequence().substring(
                 variation.getFirstChangingAminoAcidPos()-1, variation.getLastChangingAminoAcidPos()
