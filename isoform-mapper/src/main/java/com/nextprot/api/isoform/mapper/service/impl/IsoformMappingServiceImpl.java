@@ -95,14 +95,14 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         // propagate the feature to other isoforms
         for (Isoform otherIsoform : others) {
 
-            Integer firstPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
+            Integer firstIsoPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
                     variation.getFirstChangingAminoAcidPos(), otherIsoform);
 
-            if (firstPos != null && IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstPos, expectedAAs)) {
-                Integer lastPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
+            if (firstIsoPos != null && IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, expectedAAs)) {
+                Integer lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
                         variation.getLastChangingAminoAcidPos(), otherIsoform);
 
-                successResults.addMappedFeature(otherIsoform, firstPos, lastPos);
+                successResults.addMappedFeature(otherIsoform, firstIsoPos, lastIsoPos);
             } else {
                 successResults.addUnmappedFeature(otherIsoform);
             }

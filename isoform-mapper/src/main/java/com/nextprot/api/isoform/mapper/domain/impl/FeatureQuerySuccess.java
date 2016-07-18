@@ -5,6 +5,8 @@ import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import com.nextprot.api.isoform.mapper.utils.CodonNucleotidePositions;
+import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.core.domain.Isoform;
 
 import java.io.Serializable;
@@ -31,16 +33,26 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
                 feature.getProteinVariation().getLastChangingAminoAcidPos());
     }
 
-    public void addMappedFeature(Isoform isoform, int firstPosition, int lastPosition) {
+    public void addMappedFeature(Isoform isoform, int firstIsoPosition, int lastIsoPosition) {
 
         IsoformFeatureResult result = new IsoformFeatureResult();
+
         result.setIsoformName(isoform.getUniqueName());
-        result.setBeginIsoformPosition(firstPosition);
-        result.setEndIsoformPosition(lastPosition);
+        result.setBeginIsoformPosition(firstIsoPosition);
+        result.setEndIsoformPosition(lastIsoPosition);
         result.setCanonical(isoform.isCanonicalIsoform());
         result.setIsoSpecificFeature(
                 feature.formatIsoSpecificFeature(EntryIsoform.getIsoformNumber(isoform),
-                        firstPosition, lastPosition));
+                        firstIsoPosition, lastIsoPosition));
+
+        CodonNucleotidePositions beginPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(firstIsoPosition, isoform);
+        CodonNucleotidePositions endPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(lastIsoPosition, isoform);
+
+        if (beginPos.isValid())
+            result.setBeginMasterPosition(beginPos.get(0));
+
+        if (endPos.isValid())
+            result.setEndMasterPosition(endPos.get(2));
 
         data.put(result.getIsoformName(), result);
     }
