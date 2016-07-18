@@ -43,13 +43,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 		System.err.println("Got response from source");
 		Map<String, RawStatement> sourceStatementsById = sourceStatements.stream().collect(Collectors.toMap(RawStatement::getStatementId, Function.identity()));
 
-		// List<RawStatement> sourceStatements =
-		// statementRemoteService.getStatementsForSource("bioeditor");
-
-		// Set<RawStatement> sourceStatementsWithAModifiedSubject =
-		// sourceStatements.stream().filter(s -> s.getSubjectStatementIds() !=
-		// null).collect(Collectors.asList());
-
 		Set<RawStatement> statementsToLoad = new HashSet<RawStatement>();
 
 		for (RawStatement originalStatement : sourceStatements) {
@@ -57,7 +50,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 			String annotCat = originalStatement.getValue(StatementField.ANNOTATION_CATEGORY);
 
 			if ("phenotype".equals(annotCat)) {
-
 
 				String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
 
@@ -68,8 +60,14 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 					String nextprotAccession = variant.getValue(StatementField.NEXTPROT_ACCESSION);
 					String feature = variant.getValue(StatementField.ANNOT_ISO_UNAME);
-					boolean propagate = !feature.matches("\\w+-iso\\d-p.+");
-					List<RawStatement> variantsOnIsoform = getPropagatedStatements(variant, variant.getValue(StatementField.ANNOT_ISO_UNAME), "variant", nextprotAccession, propagate);
+					boolean isoSpecific = !feature.matches("\\w+-iso\\d-p.+");
+					
+					if(!isoSpecific){
+						String isoform = feature.substring(feature.indexOf("-iso")+4, feature.indexOf("-p."));
+						nextprotAccession += "-" + isoform;
+					}
+					
+					List<RawStatement> variantsOnIsoform = getPropagatedStatements(variant, variant.getValue(StatementField.ANNOT_ISO_UNAME), "variant", nextprotAccession, isoSpecific);
 
 					for(RawStatement isoSpecificVariant: variantsOnIsoform){
 						
@@ -137,20 +135,19 @@ public class StatementETLServiceImpl implements StatementETLService {
 		List<RawStatement> rawStatementList = new ArrayList<>();
 
 		for (FeatureQuerySuccess.IsoformFeatureResult isoformFeatureResult : result.getData().values()) {
+			
+			if(isoformFeatureResult.isMapped()){
 
-			RawStatement rs = StatementBuilder.createNew().addMap(statement).addField(StatementField.ISOFORM_ACCESSION, isoformFeatureResult.getIsoformName())
-					.addField(StatementField.RAW_STATEMENT_ID, statement.getStatementId()) // Keep
-																							// a
-																							// reference
-																							// to
-																							// the
-																							// original
-																							// statement
-					.addField(StatementField.ANNOT_LOC_BEGIN_CANONICAL_REF, String.valueOf(isoformFeatureResult.getFirstIsoSeqPos()))
-					.addField(StatementField.ANNOT_LOC_END_CANONICAL_REF, String.valueOf(isoformFeatureResult.getLastIsoSeqPos()))
-					.addField(StatementField.ANNOT_ISO_UNAME, String.valueOf(isoformFeatureResult.getIsoSpecificFeature())).build();
+				RawStatement rs = StatementBuilder.createNew().addMap(statement).addField(StatementField.ISOFORM_ACCESSION, isoformFeatureResult.getIsoformName())
+						.addField(StatementField.RAW_STATEMENT_ID, statement.getStatementId()) // Keep  a reference to the original statement
+						.addField(StatementField.ANNOT_LOC_BEGIN_CANONICAL_REF, String.valueOf(isoformFeatureResult.getFirstIsoSeqPos()))
+						.addField(StatementField.ANNOT_LOC_END_CANONICAL_REF, String.valueOf(isoformFeatureResult.getLastIsoSeqPos()))
+						.addField(StatementField.ANNOT_ISO_UNAME, String.valueOf(isoformFeatureResult.getIsoSpecificFeature())).build();
 
-			rawStatementList.add(rs);
+				rawStatementList.add(rs);
+
+			}
+
 		}
 
 		return rawStatementList;
