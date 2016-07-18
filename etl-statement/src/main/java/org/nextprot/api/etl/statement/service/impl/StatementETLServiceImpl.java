@@ -1,14 +1,9 @@
 package org.nextprot.api.etl.statement.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.nextprot.api.etl.statement.service.RawStatementRemoteService;
 import org.nextprot.api.etl.statement.service.StatementETLService;
@@ -21,10 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
@@ -140,8 +134,10 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 				RawStatement rs = StatementBuilder.createNew().addMap(statement).addField(StatementField.ISOFORM_ACCESSION, isoformFeatureResult.getIsoformName())
 						.addField(StatementField.RAW_STATEMENT_ID, statement.getStatementId()) // Keep  a reference to the original statement
-						.addField(StatementField.ANNOT_LOC_BEGIN_CANONICAL_REF, String.valueOf(isoformFeatureResult.getFirstIsoSeqPos()))
-						.addField(StatementField.ANNOT_LOC_END_CANONICAL_REF, String.valueOf(isoformFeatureResult.getLastIsoSeqPos()))
+						.addField(StatementField.ANNOT_LOC_BEGIN_CANONICAL_REF, String.valueOf(isoformFeatureResult.getBeginIsoformPosition()))
+						.addField(StatementField.ANNOT_LOC_END_CANONICAL_REF, String.valueOf(isoformFeatureResult.getEndIsoformPosition()))
+						.addField(StatementField.ANNOT_LOC_BEGIN_GENOMIC_REF, String.valueOf(isoformFeatureResult.getBeginMasterPosition()))
+						.addField(StatementField.ANNOT_LOC_BEGIN_GENOMIC_REF, String.valueOf(isoformFeatureResult.getEndMasterPosition()))
 						.addField(StatementField.ANNOT_ISO_UNAME, String.valueOf(isoformFeatureResult.getIsoSpecificFeature())).build();
 
 				rawStatementList.add(rs);
