@@ -12,7 +12,7 @@ public class StatementETLServiceTest extends StatementETLServiceBaseTest {
 	private StatementETLService statementSourceCollectorAndLoaderService;
 
 	@Test
-	public void shouldValidateVariantOnCanonicalIsoform() throws Exception {
+	public void shouldETLBioeditorStatements() throws Exception {
 
 		statementSourceCollectorAndLoaderService.etlStatements("bioeditor");
 	}
