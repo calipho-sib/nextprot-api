@@ -168,6 +168,8 @@ public enum AnnotationCategory implements Serializable {
 	REDOX_POTENTIAL(-23, "redox potential", "redoxPotential", "redoxPotential", BIOPHYSICOCHEMICAL_PROPERTY),
 	TEMPERATURE_DEPENDENCE(-24, "temperature dependence", "temperatureDependence", "temperatureDependence", BIOPHYSICOCHEMICAL_PROPERTY),
 	
+
+	PROTEIN_PROPERTY(-99998, "protein-property", "proteinProperty", "protein-property", GENERAL_ANNOTATION),
 	PHENOTYPE(-99999, "phenotype", "phenotype", "phenotype", GENERAL_ANNOTATION),
 
 	;

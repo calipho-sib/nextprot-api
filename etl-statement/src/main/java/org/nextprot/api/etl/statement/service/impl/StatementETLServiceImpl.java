@@ -35,8 +35,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	public String etlStatements(@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "bioeditor" }) @PathVariable("category") String source) {
 
-		//List<RawStatement> sourceStatements = statementRemoteService.getStatementsForSource("bioeditor");
-		List<RawStatement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName("bioeditor", "scn9a");
+		List<RawStatement> sourceStatements = statementRemoteService.getStatementsForSource("bioeditor");
+		//List<RawStatement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName("bioeditor", "scn9a");
 
 		//System.err.println("Got response from source");
 		Map<String, RawStatement> sourceStatementsById = sourceStatements.stream().collect(Collectors.toMap(RawStatement::getStatementId, Function.identity()));
@@ -78,8 +78,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 						RawStatement objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).build();
 
-						RawStatement phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).addAnnotationSubject(subjects)
-								.addAnnotationObject(objectIsoStatement).build();
+						RawStatement phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).
+								addSubjects(subjects)
+								.addObject(objectIsoStatement).build();
 
 
 						//Load subjects
@@ -208,8 +209,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 						.addField(StatementField.RAW_STATEMENT_ID, statement.getStatementId()) // Keep  a reference to the original statement
 						.addField(StatementField.ANNOT_LOC_BEGIN_CANONICAL_REF, String.valueOf(isoformFeatureResult.getBeginIsoformPosition()))
 						.addField(StatementField.ANNOT_LOC_END_CANONICAL_REF, String.valueOf(isoformFeatureResult.getEndIsoformPosition()))
-						.addField(StatementField.ANNOT_LOC_BEGIN_GENOMIC_REF, String.valueOf(isoformFeatureResult.getBeginMasterPosition()))
-						.addField(StatementField.ANNOT_LOC_END_GENOMIC_REF, String.valueOf(isoformFeatureResult.getEndMasterPosition()))
+						.addField(StatementField.ANNOT_LOC_BEGIN_MASTER_REF, String.valueOf(isoformFeatureResult.getBeginMasterPosition()))
+						.addField(StatementField.ANNOT_LOC_END_MASTER_REF, String.valueOf(isoformFeatureResult.getEndMasterPosition()))
 						.addField(StatementField.ISOFORM_CANONICAL, String.valueOf(isoformFeatureResult.isCanonical()))
 						.addField(StatementField.ANNOT_ISO_UNAME, String.valueOf(isoformFeatureResult.getIsoSpecificFeature())).build();
 
