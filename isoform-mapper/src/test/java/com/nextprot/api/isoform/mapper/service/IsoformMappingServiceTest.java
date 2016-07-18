@@ -178,8 +178,8 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         FeatureQuerySuccess successResult = (FeatureQuerySuccess) result;
 
         Assert.assertEquals(mapped, successResult.getIsoformFeatureResult(isoformName).isMapped());
-        Assert.assertEquals(expectedFirstPos, successResult.getIsoformFeatureResult(isoformName).getFirstIsoSeqPos());
-        Assert.assertEquals(expectedLastPos, successResult.getIsoformFeatureResult(isoformName).getLastIsoSeqPos());
+        Assert.assertEquals(expectedFirstPos, successResult.getIsoformFeatureResult(isoformName).getBeginIsoformPosition());
+        Assert.assertEquals(expectedLastPos, successResult.getIsoformFeatureResult(isoformName).getEndIsoformPosition());
     }
 
     private static void assertIsoformFeatureNotValid(FeatureQueryFailure result, FeatureQueryException expectedException) {
