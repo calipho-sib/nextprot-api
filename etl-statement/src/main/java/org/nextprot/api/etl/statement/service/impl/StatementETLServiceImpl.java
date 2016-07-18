@@ -5,6 +5,7 @@ import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.jsondoc.core.annotation.ApiPathParam;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.statement.service.RawStatementRemoteService;
 import org.nextprot.api.etl.statement.service.StatementETLService;
 import org.nextprot.commons.statements.RawStatement;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
@@ -47,47 +49,41 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 				String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
 
-				//TODO Multiple mutants!!!!!
-				if (subjectStatemendIds.length == 1) {
+				Set<RawStatement> subjectStatements = getSubjects(subjectStatemendIds, sourceStatementsById);
 
-					RawStatement variant = sourceStatementsById.get(subjectStatemendIds[0]);
+				String nextprotAcession = subjectStatements.iterator().next().getValue(StatementField.NEXTPROT_ACCESSION);
 
-					String nextprotAccession = variant.getValue(StatementField.NEXTPROT_ACCESSION);
-					String feature = variant.getValue(StatementField.ANNOT_ISO_UNAME);
-					boolean isoSpecific = !feature.matches("\\w+-iso\\d-p.+");
-					
-					if(!isoSpecific){
-						String isoform = feature.substring(feature.indexOf("-iso")+4, feature.indexOf("-p."));
-						nextprotAccession += "-" + isoform;
-					}
-					
-					List<RawStatement> variantsOnIsoform = getPropagatedStatements(variant, variant.getValue(StatementField.ANNOT_ISO_UNAME), "variant", nextprotAccession, isoSpecific);
+				boolean isIsoSpecific = false;
+				if (isSubjectIsoSpecific(subjectStatements)) {
+					nextprotAcession = checkThatSubjectsAreOnSameIsoform(subjectStatements);
+					isIsoSpecific = true;
+				}
 
-					for(RawStatement isoSpecificVariant: variantsOnIsoform){
+				Map<String, List<RawStatement>> variantsOnIsoform = getPropagatedStatements(subjectStatements, nextprotAcession, isIsoSpecific);
+				
+				variantsOnIsoform.keySet().stream().forEach(isoform -> {
 						
-						String isoform = isoSpecificVariant.getValue(StatementField.ISOFORM_ACCESSION);
+						List<RawStatement> subjects = variantsOnIsoform.get(isoform);
 
 						RawStatement objectStatement = sourceStatementsById.get(originalStatement.getObjectStatementId());
 
 						RawStatement objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).build();
 
-						Set<RawStatement> subjects = new HashSet<RawStatement>(Arrays.asList(isoSpecificVariant));
-						
-						RawStatement phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
-								.addField(StatementField.ISOFORM_ACCESSION, isoform)
-								.addAnnotationSubject(subjects)
-								.addAnnotationObject(objectIsoStatement)
-								.build();
+						RawStatement phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).addAnnotationSubject(subjects)
+								.addAnnotationObject(objectIsoStatement).build();
 
-						statementsToLoad.add(isoSpecificVariant);
+
+						//Load subjects
+						subjects.forEach(s -> statementsToLoad.add(s));
+						
+						//Load phenotypes
 						statementsToLoad.add(phenotypeIsoStatement);
+						
+						//Load objects
 						statementsToLoad.add(objectIsoStatement);
 
-					}
-					
-	
-				} else
-					continue;
+
+				});
 
 			}
 
@@ -95,32 +91,94 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		System.err.println("Deleting...");
 		statementLoadService.deleteAll();
-		System.err.println("Loading"  + statementsToLoad.size());
+		System.err.println("Loading" + statementsToLoad.size());
 		statementLoadService.load(statementsToLoad);
-		System.err.println("Finished to load"  + statementsToLoad.size());
+		System.err.println("Finished to load" + statementsToLoad.size());
 
 		return "yo";
 
+	}
+
+	/**
+	 * Returns an exception if there are mixes between subjects
+	 * 
+	 * @param subjects
+	 * @return
+	 */
+	private static String checkThatSubjectsAreOnSameIsoform(Set<RawStatement> subjects) {
+
+		Set<String> isoforms = subjects.stream().map(s -> {
+			return s.getValue(StatementField.NEXTPROT_ACCESSION) + "-" + SequenceVariantUtils.getIsoformNumber(s.getValue(StatementField.ANNOT_ISO_UNAME));
+		}).collect(Collectors.toSet());
+
+		if (isoforms.size() != 1) {
+			throw new NextProtException("Mixing iso numbers for subjects is now allowed");
+		}
+		String isoform = isoforms.iterator().next();
+		if (isoform == null) {
+			throw new NextProtException("Not iso specific subjects are not allowed on isOnSameIsoform");
+		}
+
+		return isoform;
+	}
+
+	/**
+	 * Returns an exception if there are mixes between subjects
+	 * 
+	 * @param subjects
+	 * @return
+	 */
+	private static boolean isSubjectIsoSpecific(Set<RawStatement> subjects) {
+		int isoSpecificSize = subjects.stream().filter(s -> SequenceVariantUtils.isIsoSpecific(s.getValue(StatementField.ANNOT_ISO_UNAME))).collect(Collectors.toList()).size();
+		if (isoSpecificSize == 0) {
+			return false;
+		} else if (isoSpecificSize == subjects.size()) {
+			return true;
+		} else {
+			throw new NextProtException("Mixing iso specific subjects with non-iso specific variants is not allowed");
+		}
+	}
+
+	private static Set<RawStatement> getSubjects(String[] subjectIds, Map<String, RawStatement> sourceStatementsById) {
+		Set<RawStatement> variants = new HashSet<>();
+		for (String subjectId : subjectIds) {
+			RawStatement subjectStatement = sourceStatementsById.get(subjectId);
+			if (subjectStatement == null) {
+				throw new NextProtException("Subject " + subjectId + " not present in the given list");
+			}
+			variants.add(subjectStatement);
+		}
+		return variants;
 	}
 
 	public Set<RawStatement> findSourceStatementsWhereOriginalStatementIsUsedAsSubject(RawStatement originalStatement, Set<RawStatement> sourceStatementsWithAModifiedSubject) {
 		return sourceStatementsWithAModifiedSubject.stream().filter(sm -> sm.getSubjectStatementIds().contains(originalStatement.getStatementId())).collect(Collectors.toSet());
 	}
 
-	private List<RawStatement> getPropagatedStatements(RawStatement variant, String feature, String annotCat, String nextprotAccession, boolean propagate) {
+	private Map<String, List<RawStatement>> getPropagatedStatements(Set<RawStatement> multipleSubjects, String nextprotAccession, boolean propagate) {
 
 		List<RawStatement> result = new ArrayList<>();
 
-		FeatureQueryResult featureQueryResult = isoformMappingService.propagateFeature(feature, annotCat, nextprotAccession);
+		for (RawStatement subject : multipleSubjects) {
 
-		if (featureQueryResult.isSuccess()) {
-			result.addAll(toRawStatementList(variant, (FeatureQuerySuccess) featureQueryResult));
-		} else {
-			FeatureQueryFailure failure = (FeatureQueryFailure) featureQueryResult;
-			System.err.println("Failure for " + variant.getStatementId() + " " + failure.getError().getMessage());
+			FeatureQueryResult featureQueryResult = isoformMappingService.propagateFeature(subject.getValue(StatementField.ANNOT_ISO_UNAME), "variant", nextprotAccession);
+
+			if (featureQueryResult.isSuccess()) {
+				result.addAll(toRawStatementList(subject, (FeatureQuerySuccess) featureQueryResult));
+
+			} else {
+				FeatureQueryFailure failure = (FeatureQueryFailure) featureQueryResult;
+				System.err.println("Failure for " + subject.getStatementId() + " " + failure.getError().getMessage());
+			}
 		}
 
-		return result;
+		// Group the subjects by isoform
+		Map<String, List<RawStatement>> subjectsByIsoform = result.stream().collect(Collectors.groupingBy(s -> (String) s.getValue(StatementField.ISOFORM_ACCESSION)));
+
+		// Filter only subjects that contain all original subjects (the size is
+		// the same). In other words, if 2 multiples mutants can not be mapped
+		// to all isoform, the statement is not valid
+		return subjectsByIsoform.entrySet().stream().filter(map -> map.getValue().size() == multipleSubjects.size()).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
 
 	}
 
@@ -129,8 +187,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 		List<RawStatement> rawStatementList = new ArrayList<>();
 
 		for (FeatureQuerySuccess.IsoformFeatureResult isoformFeatureResult : result.getData().values()) {
-			
-			if(isoformFeatureResult.isMapped()){
+
+			if (isoformFeatureResult.isMapped()) {
 
 				RawStatement rs = StatementBuilder.createNew().addMap(statement).addField(StatementField.ISOFORM_ACCESSION, isoformFeatureResult.getIsoformName())
 						.addField(StatementField.RAW_STATEMENT_ID, statement.getStatementId()) // Keep  a reference to the original statement
@@ -138,6 +196,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 						.addField(StatementField.ANNOT_LOC_END_CANONICAL_REF, String.valueOf(isoformFeatureResult.getEndIsoformPosition()))
 						.addField(StatementField.ANNOT_LOC_BEGIN_GENOMIC_REF, String.valueOf(isoformFeatureResult.getBeginMasterPosition()))
 						.addField(StatementField.ANNOT_LOC_BEGIN_GENOMIC_REF, String.valueOf(isoformFeatureResult.getEndMasterPosition()))
+						.addField(StatementField.ISOFORM_CANONICAL, String.valueOf(isoformFeatureResult.isCanonical()))
 						.addField(StatementField.ANNOT_ISO_UNAME, String.valueOf(isoformFeatureResult.getIsoSpecificFeature())).build();
 
 				rawStatementList.add(rs);
