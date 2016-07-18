@@ -39,8 +39,8 @@ public abstract class SequenceFeatureValidator {
             SequenceFeature sequenceFeature = newSequenceFeature(query.getFeature());
 
             checkFeatureGeneName(sequenceFeature);
-            checkFeatureChangingAminoAcids(sequenceFeature.getVariation());
-            doMoreChecks(sequenceFeature.getVariation());
+            checkFeatureChangingAminoAcids(sequenceFeature.getProteinVariation());
+            doMoreChecks(sequenceFeature.getProteinVariation());
 
             return new FeatureQuerySuccess(query, sequenceFeature);
         } catch (ParseException e) {

@@ -53,6 +53,7 @@
 		<module>security</module>
 		<module>annotation-builder</module>
 		<module>isoform-mapper</module>
+		<module>etl-statement</module>
 		<module>web</module>
 		<module>test-diff-rdf-db</module>
 		<module>tasks</module>

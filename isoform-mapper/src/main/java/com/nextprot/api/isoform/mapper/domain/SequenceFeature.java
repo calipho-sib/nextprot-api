@@ -17,8 +17,8 @@ public interface SequenceFeature {
     /** format a feature specifically to isoform */
     String formatIsoSpecificFeature(int isoNumber, int firstAAPos, int lastAAPos);
 
-    /** @return the sequence variation */
-    SequenceVariation getVariation();
+    /** @return the protein sequence variation */
+    SequenceVariation getProteinVariation();
 
     /** @return true if gene name is referenced in entry */
     boolean isValidGeneName(Entry entry);

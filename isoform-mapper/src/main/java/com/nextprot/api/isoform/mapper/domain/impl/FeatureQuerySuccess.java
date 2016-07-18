@@ -5,6 +5,8 @@ import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import com.nextprot.api.isoform.mapper.utils.CodonNucleotidePositions;
+import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.core.domain.Isoform;
 
 import java.io.Serializable;
@@ -27,20 +29,30 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         this.feature = feature;
 
         addMappedFeature(getQuery().getEntryIsoform().getIsoform(),
-                feature.getVariation().getFirstChangingAminoAcidPos(),
-                feature.getVariation().getLastChangingAminoAcidPos());
+                feature.getProteinVariation().getFirstChangingAminoAcidPos(),
+                feature.getProteinVariation().getLastChangingAminoAcidPos());
     }
 
-    public void addMappedFeature(Isoform isoform, int firstPosition, int lastPosition) {
+    public void addMappedFeature(Isoform isoform, int firstIsoPosition, int lastIsoPosition) {
 
         IsoformFeatureResult result = new IsoformFeatureResult();
+
         result.setIsoformName(isoform.getUniqueName());
-        result.setFirstIsoSeqPos(firstPosition);
-        result.setLastIsoSeqPos(lastPosition);
+        result.setBeginIsoformPosition(firstIsoPosition);
+        result.setEndIsoformPosition(lastIsoPosition);
         result.setCanonical(isoform.isCanonicalIsoform());
         result.setIsoSpecificFeature(
                 feature.formatIsoSpecificFeature(EntryIsoform.getIsoformNumber(isoform),
-                        firstPosition, lastPosition));
+                        firstIsoPosition, lastIsoPosition));
+
+        CodonNucleotidePositions beginPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(firstIsoPosition, isoform);
+        CodonNucleotidePositions endPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(lastIsoPosition, isoform);
+
+        if (beginPos.isValid())
+            result.setBeginMasterPosition(beginPos.get(0));
+
+        if (endPos.isValid())
+            result.setEndMasterPosition(endPos.get(2));
 
         data.put(result.getIsoformName(), result);
     }
@@ -81,11 +93,13 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
 
     public static class IsoformFeatureResult implements Serializable {
 
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 2L;
 
         private String isoformName;
-        private Integer firstIsoSeqPos;
-        private Integer lastIsoSeqPos;
+        private Integer beginIsoformPosition;
+        private Integer endIsoformPosition;
+        private Integer beginMasterPosition;
+        private Integer endMasterPosition;
         private boolean isCanonical;
         private String isoSpecificFeature;
 
@@ -97,20 +111,36 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
             this.isoformName = isoformName;
         }
 
-        public Integer getFirstIsoSeqPos() {
-            return firstIsoSeqPos;
+        public Integer getBeginIsoformPosition() {
+            return beginIsoformPosition;
         }
 
-        public void setFirstIsoSeqPos(Integer firstIsoSeqPos) {
-            this.firstIsoSeqPos = firstIsoSeqPos;
+        public void setBeginIsoformPosition(Integer beginIsoformPosition) {
+            this.beginIsoformPosition = beginIsoformPosition;
         }
 
-        public Integer getLastIsoSeqPos() {
-            return lastIsoSeqPos;
+        public Integer getEndIsoformPosition() {
+            return endIsoformPosition;
         }
 
-        public void setLastIsoSeqPos(Integer lastIsoSeqPos) {
-            this.lastIsoSeqPos = lastIsoSeqPos;
+        public void setEndIsoformPosition(Integer endIsoformPosition) {
+            this.endIsoformPosition = endIsoformPosition;
+        }
+
+        public Integer getBeginMasterPosition() {
+            return beginMasterPosition;
+        }
+
+        public void setBeginMasterPosition(Integer beginMasterPosition) {
+            this.beginMasterPosition = beginMasterPosition;
+        }
+
+        public Integer getEndMasterPosition() {
+            return endMasterPosition;
+        }
+
+        public void setEndMasterPosition(Integer endMasterPosition) {
+            this.endMasterPosition = endMasterPosition;
         }
 
         public boolean isCanonical() {
@@ -122,7 +152,7 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         }
 
         public boolean isMapped() {
-            return firstIsoSeqPos != null && lastIsoSeqPos != null;
+            return beginIsoformPosition != null && endIsoformPosition != null;
         }
 
         public String getIsoSpecificFeature() {
