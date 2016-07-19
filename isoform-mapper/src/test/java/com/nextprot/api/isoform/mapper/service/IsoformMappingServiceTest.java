@@ -155,6 +155,25 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_P51587-1", 2281, 2312, true);
     }
 
+    @Test
+    public void shouldNotFailedWhileValidatingVariantOnCanonicalIsoform() throws Exception {
+
+        FeatureQueryResult result = service.propagateFeature("BRCA1-p.Pro1812Arg", AnnotationCategory.VARIANT.getApiTypeName(), "NX_P38398");
+
+        /*
+NX_P38398-3, pos=1812
+NX_P38398-4, pos=1812
+NX_P38398-5, pos=1812
+NX_P38398-6, pos=1812
+nucleotides not in frame
+NX_P38398-2, pos=1812
+codon has not 3 nucleotides
+NX_P38398-7, pos=1812
+NX_P38398-8, pos=1812
+         */
+        System.out.println(result);
+    }
+
     //@Test
     public void validateVDList1() throws Exception {
 

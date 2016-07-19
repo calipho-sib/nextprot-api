@@ -25,8 +25,6 @@ public class IsoformSequencePositionMapper {
      */
 	public static Integer getProjectedPosition(Isoform srcIsoform, int srcPosition, Isoform trgIsoform) {
 
-		System.out.println(trgIsoform.getUniqueName()+", pos="+srcPosition);
-
 		GeneMasterCodonPosition codonPositionOnMaster =
 				SequencePositionMapper.getCodonPositionOnMaster(srcPosition, srcIsoform.getMasterMapping());
 
