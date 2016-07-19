@@ -22,52 +22,58 @@ public class SequencePositionMapper {
 
 	public static boolean debug = false;
 		
-	static CodonNucleotideIndices getCodonNucleotidesIndicesInRanges(CodonNucleotidePositions codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
+	static TranscriptCodonPosition getCodonPositionOnIsoformTranscript(GeneMasterCodonPosition codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
 
 		if (debug) System.out.println("----------------------------------------------------------");
 		int lowNum = 0;
-		CodonNucleotideIndices codonNum = new CodonNucleotideIndices();
-		codonNum.debug=true;
+		TranscriptCodonPosition codonPosInTranscript = new TranscriptCodonPosition();
+		codonPosInTranscript.debug=true;
 		for (NucleotidePositionRange range: positionsOfIsoformOnDNA) {
 			int nu1Pos = range.getLower();
 			int nu2Pos = range.getUpper();
 			int highNum = lowNum + nu2Pos - nu1Pos ;
 			if (debug) System.out.println("nu1Pos:"+ nu1Pos + " nu2Pos:" + nu2Pos + " lowNum:" + lowNum + " highNum:" + highNum);
 			while (true) {
-				int nuIndex = codonNum.size();
-				int nuPos = codonPos.get(nuIndex);
+				int nuIndex = codonPosInTranscript.size();
+				int nuPos = codonPos.getNucleotidePosition(nuIndex);
 				if (debug) System.out.println("nuPos("+nuIndex+")=" + nuPos);
 				if (nuPos < nu1Pos || nuPos > nu2Pos) break;
 				int nuNum = lowNum + nuPos - nu1Pos;
 				if (debug) System.out.println("adding codon nucelotide number:" + nuNum);
-				codonNum.addNucleotideIndex(nuNum);
-				if (codonNum.size()==3) {
-					return codonNum;
+				codonPosInTranscript.addNucleotideIndex(nuNum);
+				if (codonPosInTranscript.size()==3) {
+					return codonPosInTranscript;
 				}
 			}
 			lowNum=highNum + 1;
 		}
-		if (debug) System.out.println("codon not found in the gene mapping ranges, " + codonNum.size() + " nucleotides found");
-		return codonNum;
+		if (debug) System.out.println("codon not found in the gene mapping ranges, " + codonPosInTranscript.size() + " nucleotides found");
+		return codonPosInTranscript;
 	}
 
-
-	static CodonNucleotidePositions getCodonNucleotidesPositionsInRanges(int isoformPos, List<NucleotidePositionRange> isoformPositionRangesOnDNA) {
-		int nu1Num = isoformPos * 3 - 3;
+	/**
+	 * Get the codon position on gene master that corresponds to the given amino-acid position on isoform
+	 *
+	 * @param isoformPos the aa position on isoform
+	 * @param isoformMasterMapping the list of isoform to gene master mapping
+     * @return the codon position on gene master
+     */
+	static GeneMasterCodonPosition getCodonPositionOnMaster(int isoformPos, List<NucleotidePositionRange> isoformMasterMapping) {
+		int firstNucPos = isoformPos * 3 - 3;
 		//if (debug) System.out.println("nu1Num:" + nu1Num);
 		int lowNum = 0;
-		CodonNucleotidePositions result = new CodonNucleotidePositions();
-		for (NucleotidePositionRange range: isoformPositionRangesOnDNA) {
-			int nu1Pos = range.getLower();
-			int nu2Pos = range.getUpper();
-			int highNum = lowNum + nu2Pos - nu1Pos ;
+		GeneMasterCodonPosition result = new GeneMasterCodonPosition();
+		for (NucleotidePositionRange range: isoformMasterMapping) {
+			int firstRangeNucPos = range.getLower();
+			int lastRangeNucPos = range.getUpper();
+			int highNum = lowNum + lastRangeNucPos - firstRangeNucPos ;
 			//if (debug) System.out.println("nu1Pos:"+ nu1Pos + " nu2Pos:" + nu2Pos + " lowNum:" + lowNum + " highNum:" + highNum);
 			while (true) {
 				int nuIndex = result.size();
-				int nuNum = nu1Num + nuIndex;
+				int nuNum = firstNucPos + nuIndex;
 				//if (debug) System.out.println("nuNum:" + nuNum);
 				if (nuNum < lowNum || nuNum > highNum) break;
-				result.addNucleotidePosition(nu1Pos + nuNum-lowNum);
+				result.addNucleotidePosition(firstRangeNucPos + nuNum-lowNum);
 				if (result.size()==3) return result; 
 			}
 			lowNum=highNum + 1;

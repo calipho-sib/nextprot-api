@@ -99,15 +99,15 @@ public class SequencePositionMapperTest {
     	 * 
     	 */
 
-    	CodonNucleotideIndices result;
-    	CodonNucleotidePositions codonNuPos = new CodonNucleotidePositions();
+    	TranscriptCodonPosition result;
+    	GeneMasterCodonPosition codonNuPos = new GeneMasterCodonPosition();
 
     	// get isoform pos of aa corresponding to codon with nu at pos 202 203 204
     	codonNuPos.clear();
     	codonNuPos.addNucleotidePosition(202);
     	codonNuPos.addNucleotidePosition(203);
     	codonNuPos.addNucleotidePosition(204);
-    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonNuPos, genePosRanges);
     	assertEquals(true,result.has3Nucleotides());
     	assertEquals(new Integer(3), result.getAminoAcidPosition());
     	
@@ -117,7 +117,7 @@ public class SequencePositionMapperTest {
     	codonNuPos.addNucleotidePosition(100);
     	codonNuPos.addNucleotidePosition(101);
     	codonNuPos.addNucleotidePosition(102);
-    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonNuPos, genePosRanges);
     	assertEquals(new Integer(1), result.getAminoAcidPosition());
 
     	// get isoform position of aa corresponding to codon with nucleotides at position 103 104 201
@@ -125,7 +125,7 @@ public class SequencePositionMapperTest {
     	codonNuPos.addNucleotidePosition(103);
     	codonNuPos.addNucleotidePosition(104);
     	codonNuPos.addNucleotidePosition(201);
-    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonNuPos, genePosRanges);
     	assertEquals(new Integer(2), result.getAminoAcidPosition());
 
     	// get isoform position of aa corresponding to codon with nucleotides at position 202 203 204
@@ -133,7 +133,7 @@ public class SequencePositionMapperTest {
     	codonNuPos.addNucleotidePosition(202);
     	codonNuPos.addNucleotidePosition(203);
     	codonNuPos.addNucleotidePosition(204);
-    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonNuPos, genePosRanges);
     	assertEquals(new Integer(3), result.getAminoAcidPosition());
 
     	// trying to find a codon position having NON consecutive nucleotides i.e. at pos 201 203 204
@@ -141,7 +141,7 @@ public class SequencePositionMapperTest {
     	codonNuPos.addNucleotidePosition(201);
     	codonNuPos.addNucleotidePosition(203);
     	codonNuPos.addNucleotidePosition(204);
-    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonNuPos, genePosRanges);
     	assertEquals(false, result.areConsecutive());
     	assertEquals(null, result.getAminoAcidPosition());
 
@@ -151,7 +151,7 @@ public class SequencePositionMapperTest {
     	codonNuPos.addNucleotidePosition(101);
     	codonNuPos.addNucleotidePosition(102);
     	codonNuPos.addNucleotidePosition(103);
-    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonNuPos, genePosRanges);
     	assertEquals(false, result.areInFrame());
     	assertEquals(null, result.getAminoAcidPosition());
 
@@ -161,7 +161,7 @@ public class SequencePositionMapperTest {
     	codonNuPos.addNucleotidePosition(102);
     	codonNuPos.addNucleotidePosition(103);
     	codonNuPos.addNucleotidePosition(104);
-    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonNuPos, genePosRanges);
     	assertEquals(false, result.areInFrame());
     	assertEquals(null, result.getAminoAcidPosition());
 
@@ -171,7 +171,7 @@ public class SequencePositionMapperTest {
     	codonNuPos.addNucleotidePosition(77);
     	codonNuPos.addNucleotidePosition(78);
     	codonNuPos.addNucleotidePosition(79);
-    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonNuPos, genePosRanges);
     	assertEquals(null, result.getAminoAcidPosition());
 
     	// trying to find a codon having nucleotide positions out of the gene mapping ranges
@@ -180,7 +180,7 @@ public class SequencePositionMapperTest {
     	codonNuPos.addNucleotidePosition(99);
     	codonNuPos.addNucleotidePosition(100);
     	codonNuPos.addNucleotidePosition(101);
-    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonNuPos, genePosRanges);
     	assertEquals(null, result.getAminoAcidPosition());
 
     	// trying to find a codon having nucleotide positions out of the gene mapping ranges
@@ -189,7 +189,7 @@ public class SequencePositionMapperTest {
     	codonNuPos.addNucleotidePosition(103);
     	codonNuPos.addNucleotidePosition(104);
     	codonNuPos.addNucleotidePosition(105);
-    	result = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(codonNuPos, genePosRanges);
+    	result = SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonNuPos, genePosRanges);
     	assertEquals(null, result.getAminoAcidPosition());
     	
     }
@@ -211,36 +211,36 @@ public class SequencePositionMapperTest {
     	 * 
     	 */
 
-    	CodonNucleotidePositions result;
+    	GeneMasterCodonPosition result;
     	
     	// get gene position of each nucl of the codon coding for aa of isoform at pos 1
-    	result = SequencePositionMapper.getCodonNucleotidesPositionsInRanges(1, ranges);
-    	assertEquals(new Integer(100), result.get(0));
-    	assertEquals(new Integer(101), result.get(1));
-    	assertEquals(new Integer(102), result.get(2));
+    	result = SequencePositionMapper.getCodonPositionOnMaster(1, ranges);
+    	assertEquals(new Integer(100), result.getNucleotidePosition(0));
+    	assertEquals(new Integer(101), result.getNucleotidePosition(1));
+    	assertEquals(new Integer(102), result.getNucleotidePosition(2));
     	assertEquals(true, result.isValid());
 
     	// get gene position of each nucl of the codon coding for aa of isoform at pos 2
-    	result = SequencePositionMapper.getCodonNucleotidesPositionsInRanges(2, ranges);
-    	assertEquals(new Integer(103), result.get(0));
-    	assertEquals(new Integer(104), result.get(1));
-    	assertEquals(new Integer(201), result.get(2));
+    	result = SequencePositionMapper.getCodonPositionOnMaster(2, ranges);
+    	assertEquals(new Integer(103), result.getNucleotidePosition(0));
+    	assertEquals(new Integer(104), result.getNucleotidePosition(1));
+    	assertEquals(new Integer(201), result.getNucleotidePosition(2));
     	assertEquals(true, result.isValid());
 
     	// get gene position of each nucl of the codon coding for aa of isoform at pos 3
-    	result = SequencePositionMapper.getCodonNucleotidesPositionsInRanges(3, ranges);
-    	assertEquals(new Integer(202), result.get(0));
-    	assertEquals(new Integer(203), result.get(1));
-    	assertEquals(new Integer(204), result.get(2));
+    	result = SequencePositionMapper.getCodonPositionOnMaster(3, ranges);
+    	assertEquals(new Integer(202), result.getNucleotidePosition(0));
+    	assertEquals(new Integer(203), result.getNucleotidePosition(1));
+    	assertEquals(new Integer(204), result.getNucleotidePosition(2));
     	assertEquals(true, result.isValid());
     	
        	// get gene position of each nucl of the codon coding for aa of isoform at pos 0 (out of range)
-    	result = SequencePositionMapper.getCodonNucleotidesPositionsInRanges(0, ranges);
+    	result = SequencePositionMapper.getCodonPositionOnMaster(0, ranges);
     	assertEquals(0, result.size());
     	assertEquals(false, result.isValid());
     	
        	// get gene position of each nucl of the codon coding for aa of isoform at pos 4 (out of range)
-    	result = SequencePositionMapper.getCodonNucleotidesPositionsInRanges(4, ranges);
+    	result = SequencePositionMapper.getCodonPositionOnMaster(4, ranges);
     	assertEquals(0, result.size());
     	assertEquals(false, result.isValid());
     }

@@ -8,18 +8,30 @@ import org.nextprot.api.core.domain.Isoform;
  */
 public class IsoformSequencePositionMapper {
 
-	public static CodonNucleotidePositions getMasterCodonNucleotidesPositions(int aaPosition, Isoform isoform) {
-		return SequencePositionMapper.getCodonNucleotidesPositionsInRanges(aaPosition, isoform.getMasterMapping());
+	public static GeneMasterCodonPosition getCodonPositionsOnMaster(int aaPosition, Isoform isoform) {
+		return SequencePositionMapper.getCodonPositionOnMaster(aaPosition, isoform.getMasterMapping());
 	}
 	
-	public static CodonNucleotideIndices getMasterCodonNucleotidesIndices(CodonNucleotidePositions nuPositions, Isoform isoform) {
-		return SequencePositionMapper.getCodonNucleotidesIndicesInRanges(nuPositions, isoform.getMasterMapping());
+	public static TranscriptCodonPosition getTranscriptCodon(GeneMasterCodonPosition nuPositions, Isoform isoform) {
+		return SequencePositionMapper.getCodonPositionOnIsoformTranscript(nuPositions, isoform.getMasterMapping());
 	}
-	
-	public static Integer getProjectedPosition(Isoform srcIsoform, int srcPosition, Isoform trgIoform) {
-		CodonNucleotidePositions cnPositions = SequencePositionMapper.getCodonNucleotidesPositionsInRanges(srcPosition, srcIsoform.getMasterMapping());
-		CodonNucleotideIndices cnIndices = SequencePositionMapper.getCodonNucleotidesIndicesInRanges(cnPositions, trgIoform.getMasterMapping());
-		return cnIndices.getAminoAcidPosition();
+
+	/**
+	 * Computed the projected position in srcIsoform to trgIsoform
+	 * @param srcIsoform the source isoform
+	 * @param srcPosition the aa position on the src isoform
+	 * @param trgIsoform the isoform to project position on
+     * @return a position on target isoform or null if cannot project
+     */
+	public static Integer getProjectedPosition(Isoform srcIsoform, int srcPosition, Isoform trgIsoform) {
+
+		GeneMasterCodonPosition codonPositionOnMaster =
+				SequencePositionMapper.getCodonPositionOnMaster(srcPosition, srcIsoform.getMasterMapping());
+
+		TranscriptCodonPosition codonPositionOnTranscript =
+				SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonPositionOnMaster, trgIsoform.getMasterMapping());
+
+		return codonPositionOnTranscript.getAminoAcidPosition();
 	}
 
 	public static boolean checkAminoAcidsFromPosition(Isoform isoform, int pos, String aa) {

@@ -133,10 +133,10 @@ NX_Q9UJW3 has 1 ERROR(s)
 			if (a.getUniqueName().equals(variant_ac)) {
 				int pos = a.getTargetingIsoformsMap().get(iso_ac).getFirstPosition();
 				Isoform iso = EntryIsoform.getIsoformByName(entry, iso_ac);
-				CodonNucleotidePositions nuPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(pos, iso);
+				GeneMasterCodonPosition nuPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(pos, iso);
 				for (Isoform iso2: entry.getIsoforms()) {
 					if (!iso2.equals(iso)) {
-						CodonNucleotideIndices nuIdx = IsoformSequencePositionMapper.getMasterCodonNucleotidesIndices(nuPos, iso2);
+						TranscriptCodonPosition nuIdx = IsoformSequencePositionMapper.getTranscriptCodon(nuPos, iso2);
 						Assert.assertEquals(false, nuIdx.has3Nucleotides()); // cannot be projected to iso2
 						Assert.assertEquals(false,nuIdx.areConsecutive());
 						Assert.assertEquals(false,nuIdx.areInFrame());
@@ -164,12 +164,12 @@ NX_Q9UJW3 has 1 ERROR(s)
 			if (a.getUniqueName().equals(variant_ac)) {
 				int pos = a.getTargetingIsoformsMap().get(iso_ac).getFirstPosition();
 				Isoform iso = EntryIsoform.getIsoformByName(entry, iso_ac);
-				CodonNucleotidePositions nuPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(pos, iso);
+				GeneMasterCodonPosition nuPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(pos, iso);
 				System.out.println("isoform position                                               : " + pos);
 				System.out.println("nuPos is valid                                                 : " + nuPos.isValid());
-				System.out.println("master position according to iso mapper service                : " + nuPos.get(0));
+				System.out.println("master position according to iso mapper service                : " + nuPos.getNucleotidePosition(0));
 				System.out.println("master position according to table identifier_feature_position : " + expectedBeginPosOnMaster);
-				System.out.println("master first_position for Anne                                 : " + (nuPos.get(0)-1));
+				System.out.println("master first_position for Anne                                 : " + (nuPos.getNucleotidePosition(0)-1));
 				// we then have to gie the last_positon to Anne, there are 2 cases:
 				// case 1: original AAs = single AA
 				// => master last_positon fo Anne = first_position for Anne + 3
@@ -177,7 +177,7 @@ NX_Q9UJW3 has 1 ERROR(s)
 				// compute position on master of last AA (same process as above), return nuPos(0)-1 found for iso pos)
 				
 				// we expect a difference of 1 between what we have in db and what we have from api
-				Assert.assertEquals(new Integer(expectedBeginPosOnMaster + 1), new Integer(nuPos.get(0)));
+				Assert.assertEquals(new Integer(expectedBeginPosOnMaster + 1), new Integer(nuPos.getNucleotidePosition(0)));
 				return;
 			}
 		}
@@ -238,7 +238,7 @@ NX_Q9UJW3 has 1 ERROR(s)
 					Isoform iso1 = EntryIsoform.getIsoformByName(entry, iso1name);
 					if (iso1ExpectedPos != null) {
 
-						CodonNucleotidePositions nuPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(iso1ExpectedPos, iso1);
+						GeneMasterCodonPosition nuPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(iso1ExpectedPos, iso1);
 
 						if (!nuPos.isValid()) {
 							errorOnVariant = true;
@@ -254,7 +254,7 @@ NX_Q9UJW3 has 1 ERROR(s)
 							String iso2name = iso2.getUniqueName();
 							if (iso2name.equals(iso1name))	continue;
 	
-							CodonNucleotideIndices nuIdx = IsoformSequencePositionMapper.getMasterCodonNucleotidesIndices(nuPos, iso2);
+							TranscriptCodonPosition nuIdx = IsoformSequencePositionMapper.getTranscriptCodon(nuPos, iso2);
 							Integer iso2ActualPos = nuIdx.getAminoAcidPosition();
 							Integer iso2ExpectedPos = isoExpectedPos.get(iso2name);
 							System.out.println("Variant " + a.getUniqueName() + " position on isoform " + iso2name + " is "	+ iso2ActualPos);
