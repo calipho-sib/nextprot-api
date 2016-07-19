@@ -77,6 +77,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         return results;
     }
 
+    // TODO: refactor this method, it is too complex (probably a propagator object)
     private void propagate(FeatureQuerySuccess successResults) throws ParseException {
 
         successResults.getQuery().setPropagableFeature(true);
@@ -98,14 +99,25 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
             Integer firstIsoPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
                     variation.getFirstChangingAminoAcidPos(), otherIsoform);
 
-            if (firstIsoPos != null && IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, expectedAAs)) {
-                Integer lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(),
-                        variation.getLastChangingAminoAcidPos(), otherIsoform);
+            Integer lastIsoPos =
+                    (firstIsoPos != null &&
+                            IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, expectedAAs)) ?
+                            getLastProjectedPosition(firstIsoPos, variation, entryIsoform.getIsoform(), otherIsoform) : null;
 
+            if (firstIsoPos != null && lastIsoPos != null)
                 successResults.addMappedFeature(otherIsoform, firstIsoPos, lastIsoPos);
-            } else {
+            else
                 successResults.addUnmappedFeature(otherIsoform);
-            }
         }
+    }
+
+    private Integer getLastProjectedPosition(int firstIsoPos, SequenceVariation srcIsoformVariation, Isoform srcIsoform, Isoform otherIsoform) {
+
+        if (srcIsoformVariation.isMultipleChangingAminoAcids()) {
+
+            return IsoformSequencePositionMapper.getProjectedPosition(srcIsoform,
+                    srcIsoformVariation.getLastChangingAminoAcidPos(), otherIsoform);
+        }
+        return firstIsoPos;
     }
 }
