@@ -74,7 +74,7 @@ public class TranscriptCodonPosition {
 	 * @return
 	 */
 	public boolean isValid() {
-		return has3Nucleotides() && areConsecutive() && areInFrame();
+		return areConsecutive() && areInFrame();
 	}
 	
 	public Integer getAminoAcidPosition() {
