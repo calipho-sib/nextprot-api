@@ -27,7 +27,6 @@ public class SequencePositionMapper {
 		if (debug) System.out.println("----------------------------------------------------------");
 		int lowNum = 0;
 		TranscriptCodonPosition codonPosInTranscript = new TranscriptCodonPosition();
-		codonPosInTranscript.debug=true;
 		for (NucleotidePositionRange range: positionsOfIsoformOnDNA) {
 			int nu1Pos = range.getLower();
 			int nu2Pos = range.getUpper();

@@ -1,5 +1,8 @@
 package com.nextprot.api.isoform.mapper.utils;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +18,8 @@ import java.util.List;
  */
 public class TranscriptCodonPosition {
 
-	public boolean debug=false;
-	
+    private final Log logger = LogFactory.getLog(TranscriptCodonPosition.class);
+
 	private final List<Integer> nuNum = new ArrayList<>();
 	
 	public Integer get(int index) {
@@ -42,7 +45,7 @@ public class TranscriptCodonPosition {
 	boolean areConsecutive() {
 		if (!has3Nucleotides()) return false;
 		if (nuNum.get(0)+1 != nuNum.get(1) || nuNum.get(1)+1 != nuNum.get(2) ) {
-			if (debug) System.out.println("nucleotides of codon are not consecutive");
+            logger.warn("nucleotides of codon are not consecutive");
 			return false;
 		} else {
 			return true;
@@ -57,7 +60,7 @@ public class TranscriptCodonPosition {
 		if (!has3Nucleotides()) return false;
 		int isoPos = (nuNum.get(0) + 3) / 3;
 		if ((nuNum.get(1) + 3) / 3 != isoPos || (nuNum.get(2) + 3) / 3 != isoPos) {
-			if (debug) System.out.println("nucleotides not in frame");
+			logger.warn("nucleotides not in frame");
 			return false;
 		} else {
 			return true;
@@ -65,11 +68,11 @@ public class TranscriptCodonPosition {
 	}
 
 	boolean has3Nucleotides() {
-		if (debug && nuNum.size()!=3) System.out.println("codon has not 3 nucleotides");
+		if (nuNum.size()!=3) logger.warn("codon has not 3 nucleotides");
 		return nuNum.size()==3;
 	}
-	
-	/**
+
+    /**
 	 * perform all checks
 	 * @return
 	 */
