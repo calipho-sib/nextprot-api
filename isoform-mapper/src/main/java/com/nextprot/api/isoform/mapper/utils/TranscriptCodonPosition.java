@@ -6,25 +6,25 @@ import java.util.List;
 /**
  * Represents the index on gene / master of the nucleotides of a codon
  * @author pmichel
- * 
+ *
  * nuNum      0   1   2   3   4            5   6   7   8  <== Codon nucleotide indices are here
  * exons     |---- exon1 ------|          |-- exon 2 ---|
  * nuPos     100 101 102 103 104          201 202 203 204  
  * codons    |--codon1--|-------codon2-------|--codon3--|
  * 
  */
-public class CodonNucleotideIndices {
+public class TranscriptCodonPosition {
 
 	public boolean debug=false;
 	
-	List<Integer> nuNum = new ArrayList<Integer>();
+	private final List<Integer> nuNum = new ArrayList<>();
 	
 	public Integer get(int index) {
 		return nuNum.get(index);
 	}
 	
 	public void addNucleotideIndex(int index) {
-		nuNum.add(new Integer(index));
+		nuNum.add(index);
 	}
 	
 	public int size() {

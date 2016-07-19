@@ -5,7 +5,7 @@ import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import com.nextprot.api.isoform.mapper.utils.CodonNucleotidePositions;
+import com.nextprot.api.isoform.mapper.utils.GeneMasterCodonPosition;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.core.domain.Isoform;
 
@@ -45,14 +45,16 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
                 feature.formatIsoSpecificFeature(EntryIsoform.getIsoformNumber(isoform),
                         firstIsoPosition, lastIsoPosition));
 
-        CodonNucleotidePositions beginPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(firstIsoPosition, isoform);
-        CodonNucleotidePositions endPos = IsoformSequencePositionMapper.getMasterCodonNucleotidesPositions(lastIsoPosition, isoform);
+        GeneMasterCodonPosition firstCodonOnMaster =
+                IsoformSequencePositionMapper.getCodonPositionsOnMaster(firstIsoPosition, isoform);
 
-        if (beginPos.isValid())
-            result.setBeginMasterPosition(beginPos.get(0));
+        GeneMasterCodonPosition lastCodonOnMaster =
+                IsoformSequencePositionMapper.getCodonPositionsOnMaster(lastIsoPosition, isoform);
 
-        if (endPos.isValid())
-            result.setEndMasterPosition(endPos.get(2));
+        if (firstCodonOnMaster.isValid() && lastCodonOnMaster.isValid()) {
+            result.setBeginMasterPosition(firstCodonOnMaster.getNucleotidePosition(0));
+            result.setEndMasterPosition(lastCodonOnMaster.getNucleotidePosition(2));
+        }
 
         data.put(result.getIsoformName(), result);
     }

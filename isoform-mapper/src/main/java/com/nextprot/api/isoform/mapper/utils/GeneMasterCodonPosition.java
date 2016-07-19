@@ -15,16 +15,16 @@ import java.util.List;
  * 
  *
  */
-public class CodonNucleotidePositions {
+public class GeneMasterCodonPosition {
 
-	List<Integer> nuPos = new ArrayList<Integer>();
+	private final List<Integer> nuPos = new ArrayList<>();
 	
-	public Integer get(int index) {
+	public Integer getNucleotidePosition(int index) {
 		return nuPos.get(index);
 	}
 	
 	public void addNucleotidePosition(int position) {
-		nuPos.add(new Integer(position));
+		nuPos.add(position);
 	}
 	
 	public int size() {
