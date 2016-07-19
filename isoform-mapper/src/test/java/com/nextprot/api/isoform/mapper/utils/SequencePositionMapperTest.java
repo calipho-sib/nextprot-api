@@ -82,8 +82,6 @@ public class SequencePositionMapperTest {
     @Test
     public void geneIsoformPosTest() {
     	
-    	SequencePositionMapper.debug=true;
-    	
     	// represent two coding regions of DNA mapped to an isoform sequence
     	List<NucleotidePositionRange> genePosRanges = new ArrayList<NucleotidePositionRange>();
     	genePosRanges.add(new NucleotidePositionRange(100,104));

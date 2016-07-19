@@ -1,6 +1,8 @@
 package com.nextprot.api.isoform.mapper.utils;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.commons.utils.Pair;
 
@@ -9,6 +11,8 @@ import java.util.List;
 import java.util.Map.Entry;
 
 public class SequencePositionMapper {
+
+	private final static Log logger = LogFactory.getLog(SequencePositionMapper.class);
 
 	/*
 	 * 
@@ -20,25 +24,23 @@ public class SequencePositionMapper {
 	 * 
 	 */
 
-	public static boolean debug = false;
-		
 	static TranscriptCodonPosition getCodonPositionOnIsoformTranscript(GeneMasterCodonPosition codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
 
-		if (debug) System.out.println("----------------------------------------------------------");
+		logger.debug("----------------------------------------------------------");
 		int lowNum = 0;
 		TranscriptCodonPosition codonPosInTranscript = new TranscriptCodonPosition();
 		for (NucleotidePositionRange range: positionsOfIsoformOnDNA) {
 			int nu1Pos = range.getLower();
 			int nu2Pos = range.getUpper();
 			int highNum = lowNum + nu2Pos - nu1Pos ;
-			if (debug) System.out.println("nu1Pos:"+ nu1Pos + " nu2Pos:" + nu2Pos + " lowNum:" + lowNum + " highNum:" + highNum);
+			logger.debug("nu1Pos:"+ nu1Pos + " nu2Pos:" + nu2Pos + " lowNum:" + lowNum + " highNum:" + highNum);
 			while (true) {
 				int nuIndex = codonPosInTranscript.size();
 				int nuPos = codonPos.getNucleotidePosition(nuIndex);
-				if (debug) System.out.println("nuPos("+nuIndex+")=" + nuPos);
+				logger.debug("nuPos("+nuIndex+")=" + nuPos);
 				if (nuPos < nu1Pos || nuPos > nu2Pos) break;
 				int nuNum = lowNum + nuPos - nu1Pos;
-				if (debug) System.out.println("adding codon nucelotide number:" + nuNum);
+				logger.debug("adding codon nucelotide number:" + nuNum);
 				codonPosInTranscript.addNucleotideIndex(nuNum);
 				if (codonPosInTranscript.size()==3) {
 					return codonPosInTranscript;
@@ -46,7 +48,7 @@ public class SequencePositionMapper {
 			}
 			lowNum=highNum + 1;
 		}
-		if (debug) System.out.println("codon not found in the gene mapping ranges, " + codonPosInTranscript.size() + " nucleotides found");
+		logger.debug("codon not found in the gene mapping ranges, " + codonPosInTranscript.size() + " nucleotides found");
 		return codonPosInTranscript;
 	}
 
@@ -87,7 +89,7 @@ public class SequencePositionMapper {
 	 * @param sequence the protein sequence
 	 * @param pos position according to bio standard (first pos = 1)
 	 * @param aas 1 or more amino acids (1 char / aa) (empty or null when it is an insertion)
-	 * @return
+	 * @return true if aas are found at pos in sequence
 	 */
 	static boolean checkAminoAcidsFromPosition(String sequence, int pos, String aas) {
 

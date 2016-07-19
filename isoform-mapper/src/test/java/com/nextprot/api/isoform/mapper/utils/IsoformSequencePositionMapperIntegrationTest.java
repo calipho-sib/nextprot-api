@@ -206,8 +206,6 @@ NX_Q9UJW3 has 1 ERROR(s)
 	
 	public int getErrorsDuringPropagationOnVariantsOfSingleEntry(String entry_ac) throws Exception {
 
-		SequencePositionMapper.debug = false;
-
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entry_ac).withTargetIsoforms().withAnnotations());
 
 		int delCount = 0;
