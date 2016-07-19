@@ -170,9 +170,7 @@ public enum AnnotationCategory implements Serializable {
 	
 
 	PROTEIN_PROPERTY(-99998, "protein-property", "proteinProperty", "protein-property", GENERAL_ANNOTATION),
-	PHENOTYPE(-99999, "phenotype", "phenotype", "phenotype", GENERAL_ANNOTATION),
-
-	;
+	PHENOTYPE(-99999, "phenotype", "phenotype", "phenotype", GENERAL_ANNOTATION);
 
 	private final Integer dbId; // if positive, identifies a real record of the table nextprot.cv_terms (category annotation_type)
 	private final String dbAnnotationTypeName; // if dbId is positive, dbAnnotationTypeName is an exact match of the corresponding record in nextprot.cv_terms 

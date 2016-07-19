@@ -15,7 +15,6 @@ import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.RawStatement;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.nextprot.api.annotation.builder.AnnotationBuilder;
@@ -30,7 +29,6 @@ public class RawStatementServiceImpl implements RawStatementService {
 	@Autowired
 	public RawStatementDao rawStatementDao;
 
-	@Cacheable("modified-entry-annotations")
 	@Override
 	public List<IsoformAnnotation> getModifiedIsoformAnnotationsByIsoform(String nextprotAccession) {
 
@@ -38,6 +36,19 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 		List<RawStatement> phenotypeStatements = rawStatementDao.findPhenotypeRawStatements(nextprotAccession);
 
+		List<String> subjectAnnotIds =  phenotypeStatements.stream().map(s -> {
+			
+			String annotIds = s.getValue(StatementField.SUBJECT_ANNOT_ISO_IDS);
+			
+			return Arrays.asList(annotIds.split(","));
+			
+			
+		}).flatMap(l -> l.stream()).collect(Collectors.toList());
+		
+		List<RawStatement> subjects = rawStatementDao.findRawStatementsByAnnotIsoIds(subjectAnnotIds);
+		Map<String, List<RawStatement>> subjectsByAnnotationId = subjects.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOT_ISO_ID)));
+
+		
 		Map<String, List<RawStatement>> impactStatementsBySubject = phenotypeStatements.stream().collect(Collectors.groupingBy(r -> r.getValue(StatementField.SUBJECT_ANNOT_ISO_IDS)));
 
 		impactStatementsBySubject.keySet().forEach(subjectComponentsIdentifiers -> {
@@ -52,11 +63,11 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 			for(String subjectComponentIdentifier : subjectComponentsIdentifiersArray){
 
-				List<RawStatement> subjectVariantStatements = rawStatementDao.findRawStatementsByAnnotIsoId(subjectComponentIdentifier);
-				if(subjectVariantStatements.isEmpty()){
+				List<RawStatement> subjectVariant = subjectsByAnnotationId.get(subjectComponentIdentifier);
+				if(subjectVariant.isEmpty()){
 					throw new NextProtException("Not found any variant for variant identifier:" + subjectComponentIdentifier);
 				}
-				IsoformAnnotation variant = AnnotationBuilder.buildAnnotation(nextprotAccession, subjectVariantStatements);
+				IsoformAnnotation variant = AnnotationBuilder.buildAnnotation(nextprotAccession, subjectVariant);
 				subjectVariants.add(variant);
 			}
 
@@ -80,7 +91,6 @@ public class RawStatementServiceImpl implements RawStatementService {
 	}
 	
 
-	@Cacheable("normal-annotations")
 	@Override
 	public List<IsoformAnnotation> getNormalAnnotations(String entryName) {
 		List<RawStatement> normalStatements = rawStatementDao.findNormalRawStatements(entryName);

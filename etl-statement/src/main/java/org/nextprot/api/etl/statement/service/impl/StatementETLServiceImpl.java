@@ -1,10 +1,13 @@
 package org.nextprot.api.etl.statement.service.impl;
 
-import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
-import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.statement.service.RawStatementRemoteService;
@@ -18,9 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
@@ -41,7 +46,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 		//System.err.println("Got response from source");
 		Map<String, RawStatement> sourceStatementsById = sourceStatements.stream().collect(Collectors.toMap(RawStatement::getStatementId, Function.identity()));
 
-		Set<RawStatement> statementsToLoad = new HashSet<RawStatement>();
+
+		Set<RawStatement> statementsMappedToIsoformToLoad = new HashSet<RawStatement>();
 
 		for (RawStatement originalStatement : sourceStatements) {
 
@@ -49,51 +55,18 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			if ("phenotype".equals(annotCat)) {
 
-					
-				if(originalStatement.getStatementId().equals("2867942d33772889f62812b24b0f8275")){
-					System.out.println("Yo");
-				}
 
 				String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
-
 				Set<RawStatement> subjectStatements = getSubjects(subjectStatemendIds, sourceStatementsById);
 
 				String nextprotAcession = subjectStatements.iterator().next().getValue(StatementField.NEXTPROT_ACCESSION);
-
 				boolean isIsoSpecific = false;
 				if (isSubjectIsoSpecific(subjectStatements)) {
 					nextprotAcession = checkThatSubjectsAreOnSameIsoform(subjectStatements);
 					isIsoSpecific = true;
 				}
-
-				boolean propagate = !isIsoSpecific;
 				
-				Map<String, List<RawStatement>> variantsOnIsoform = getPropagatedStatements(subjectStatements, nextprotAcession, propagate);
-				
-				variantsOnIsoform.keySet().stream().forEach(isoform -> {
-						
-						List<RawStatement> subjects = variantsOnIsoform.get(isoform);
-
-						RawStatement objectStatement = sourceStatementsById.get(originalStatement.getObjectStatementId());
-
-						RawStatement objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).build();
-
-						RawStatement phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).
-								addSubjects(subjects)
-								.addObject(objectIsoStatement).build();
-
-
-						//Load subjects
-						subjects.forEach(s -> statementsToLoad.add(s));
-						
-						//Load phenotypes
-						statementsToLoad.add(phenotypeIsoStatement);
-						
-						//Load objects
-						statementsToLoad.add(objectIsoStatement);
-
-
-				});
+				statementsMappedToIsoformToLoad.addAll(mapComplexStatementsToIsoforms(originalStatement, sourceStatementsById, subjectStatements, nextprotAcession, !isIsoSpecific)); //If not iso specific propagate
 
 			}
 
@@ -101,14 +74,83 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		System.err.println("Deleting...");
 		statementLoadService.deleteAll();
-		System.err.println("Loading" + statementsToLoad.size());
-		statementLoadService.load(statementsToLoad);
-		System.err.println("Finished to load" + statementsToLoad.size());
+		System.err.println("Loading" + statementsMappedToIsoformToLoad.size());
+		statementLoadService.load(statementsMappedToIsoformToLoad);
+		System.err.println("Finished to load" + statementsMappedToIsoformToLoad.size());
 
 		return "yo";
 
 	}
+	
+	private Set<RawStatement> mapComplexStatementsToIsoforms(RawStatement originalStatement, Map<String, RawStatement> sourceStatementsById, Set<RawStatement> subjectStatements, String nextprotAcession, boolean propagate){
+		
+		Set<RawStatement> statementsToLoad = new HashSet<RawStatement>();
 
+		Map<String, List<RawStatement>> variantsOnIsoform = getPropagatedStatements(subjectStatements, nextprotAcession, propagate);
+		
+		variantsOnIsoform.keySet().stream().forEach(isoform -> {
+				
+				List<RawStatement> subjects = variantsOnIsoform.get(isoform);
+
+				RawStatement objectStatement = sourceStatementsById.get(originalStatement.getObjectStatementId());
+
+				RawStatement objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).build();
+				RawStatement phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).addSubjects(subjects).addObject(objectIsoStatement).build();
+
+
+				//Load subjects
+				subjects.forEach(s -> statementsToLoad.add(s));
+				
+				//Load phenotypes
+				statementsToLoad.add(phenotypeIsoStatement);
+				
+				//Load objects
+				statementsToLoad.add(objectIsoStatement);
+
+
+		});
+		
+		return statementsToLoad;
+
+		
+	}
+
+	
+	
+	private Set<RawStatement> mapComplexStatementsToEntry(RawStatement originalStatement, Map<String, RawStatement> sourceStatementsById, Set<RawStatement> subjectStatements, String nextprotAcession, boolean propagate){
+		
+		Set<RawStatement> statementsToLoad = new HashSet<RawStatement>();
+
+		Map<String, List<RawStatement>> variantsOnIsoform = getPropagatedStatements(subjectStatements, nextprotAcession, propagate);
+
+		variantsOnIsoform.keySet().stream().forEach(isoform -> {
+				
+				List<RawStatement> subjects = variantsOnIsoform.get(isoform);
+
+				RawStatement objectStatement = sourceStatementsById.get(originalStatement.getObjectStatementId());
+
+				RawStatement objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).build();
+				RawStatement phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).addSubjects(subjects).addObject(objectIsoStatement).build();
+
+
+				//Load subjects
+				subjects.forEach(s -> statementsToLoad.add(s));
+				
+				//Load phenotypes
+				statementsToLoad.add(phenotypeIsoStatement);
+				
+				//Load objects
+				statementsToLoad.add(objectIsoStatement);
+
+
+		});
+		
+		return statementsToLoad;
+
+		
+	}
+
+	
 	/**
 	 * Returns an exception if there are mixes between subjects
 	 * 
