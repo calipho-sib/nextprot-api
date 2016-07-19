@@ -15,8 +15,17 @@ public class IsoformSequencePositionMapper {
 	public static TranscriptCodonPosition getTranscriptCodon(GeneMasterCodonPosition nuPositions, Isoform isoform) {
 		return SequencePositionMapper.getCodonPositionOnIsoformTranscript(nuPositions, isoform.getMasterMapping());
 	}
-	
+
+	/**
+	 * Computed the projected position in srcIsoform to trgIsoform
+	 * @param srcIsoform the source isoform
+	 * @param srcPosition the aa position on the src isoform
+	 * @param trgIsoform the isoform to project position on
+     * @return a position on target isoform or null if cannot project
+     */
 	public static Integer getProjectedPosition(Isoform srcIsoform, int srcPosition, Isoform trgIsoform) {
+
+		System.out.println(trgIsoform.getUniqueName()+", pos="+srcPosition);
 
 		GeneMasterCodonPosition codonPositionOnMaster =
 				SequencePositionMapper.getCodonPositionOnMaster(srcPosition, srcIsoform.getMasterMapping());

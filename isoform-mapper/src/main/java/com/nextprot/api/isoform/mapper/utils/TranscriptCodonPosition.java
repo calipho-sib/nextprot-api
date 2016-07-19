@@ -39,7 +39,7 @@ public class TranscriptCodonPosition {
 	 * check that codon nucleotides indices are consecutive
 	 * @return
 	 */
-	public boolean areConsecutive() {
+	boolean areConsecutive() {
 		if (!has3Nucleotides()) return false;
 		if (nuNum.get(0)+1 != nuNum.get(1) || nuNum.get(1)+1 != nuNum.get(2) ) {
 			if (debug) System.out.println("nucleotides of codon are not consecutive");
@@ -53,7 +53,7 @@ public class TranscriptCodonPosition {
 	 * check that nucleotides indices are in same frame (optional check ?)
 	 * @return
 	 */
-	public boolean areInFrame() {
+	boolean areInFrame() {
 		if (!has3Nucleotides()) return false;
 		int isoPos = (nuNum.get(0) + 3) / 3;
 		if ((nuNum.get(1) + 3) / 3 != isoPos || (nuNum.get(2) + 3) / 3 != isoPos) {
@@ -64,7 +64,7 @@ public class TranscriptCodonPosition {
 		}
 	}
 
-	public boolean has3Nucleotides() {
+	boolean has3Nucleotides() {
 		if (debug && nuNum.size()!=3) System.out.println("codon has not 3 nucleotides");
 		return nuNum.size()==3;
 	}
@@ -79,8 +79,7 @@ public class TranscriptCodonPosition {
 	
 	public Integer getAminoAcidPosition() {
 		if (isValid()) {
-			int aaPos = (nuNum.get(0) + 3) / 3;
-			return new Integer(aaPos);
+			return (nuNum.get(0) + 3) / 3;
 		} else {
 			return null;
 		}
