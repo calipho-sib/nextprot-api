@@ -54,9 +54,9 @@ public class EntryIsoform {
                 .collect(Collectors.toList());
     }
 
-    public Isoform getIsoformByAccession(String accession) {
+    public Isoform getIsoformByName(String accession) {
 
-        return EntryIsoform.getIsoformByAccession(entry, accession);
+        return EntryIsoform.getIsoformByName(entry, accession);
     }
 
     /**
@@ -64,7 +64,7 @@ public class EntryIsoform {
      * @param accession an isoform unique name (ac), main name or synonym
      * @return
      */
-    public static Isoform getIsoformByAccession(Entry entry, String accession) {
+    public static Isoform getIsoformByName(Entry entry, String accession) {
 
         if (accession==null) return null;
         for (Isoform iso: entry.getIsoforms()) {

@@ -23,11 +23,19 @@ public class EntryIsoformTest extends IsoformMappingBaseTest {
     }
 
     @Test
-    public void testGetIsoformByName() throws Exception {
+    public void testGetIsoformByAccession() throws Exception {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").withTargetIsoforms());
 
-        Assert.assertEquals("NX_P01308-1", EntryIsoform.getIsoformByAccession(entry, "NX_P01308-1").getUniqueName());
+        Assert.assertEquals("NX_P01308-1", EntryIsoform.getIsoformByName(entry, "NX_P01308-1").getUniqueName());
+    }
+
+    @Test
+    public void testGetIsoformByName() throws Exception {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P06213").withTargetIsoforms());
+
+        Assert.assertEquals("NX_P06213-1", EntryIsoform.getIsoformByName(entry, "Long").getUniqueName());
     }
 
     @Test
