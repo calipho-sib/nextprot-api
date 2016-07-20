@@ -2,6 +2,7 @@ package com.nextprot.api.isoform.mapper.domain.impl;
 
 import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.impl.format.bed.AminoAcidModificationBedFormat;
+import org.nextprot.api.core.domain.Isoform;
 
 import java.text.ParseException;
 
@@ -25,5 +26,15 @@ public class SequenceModification extends SequenceFeatureBase {
     public SequenceVariationFormat newParser() {
 
         return new AminoAcidModificationBedFormat();
+    }
+
+    @Override
+    protected String parseIsoformName(String feature) throws ParseException {
+        return null;
+    }
+
+    @Override
+    protected String formatIsoformFeatureName(Isoform isoform) {
+        return null;
     }
 }

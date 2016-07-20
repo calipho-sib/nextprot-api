@@ -8,10 +8,7 @@ import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryAminoAcidException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryPositionException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -173,20 +170,39 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         validateList(filename, false, service);
     }
 
-    private static void assertIsoformFeatureValid(FeatureQueryResult result, String isoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
+    @Test
+    public void shouldNotValidateIncompatibleIsoforms() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33-2");
+
+        FeatureQuery query = Mockito.mock(FeatureQuery.class);
+        when(query.getAccession()).thenReturn("NX_Q9UI33-2");
+
+        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new IncompatibleIsoformException(query, "NX_Q9UI33-1"));
+    }
+
+    /*@Test
+    public void shouldNotValidateIncompatibleIsoforms2() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("SCN11A-iso2-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
+
+        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new IncompatibleIsoformException(query, "NX_Q9UI33-1"));
+    }*/
+
+    private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
 
         Assert.assertTrue(result.isSuccess());
-        Assert.assertTrue(result instanceof FeatureQuerySuccess);
         FeatureQuerySuccess successResult = (FeatureQuerySuccess) result;
 
-        Assert.assertEquals(mapped, successResult.getIsoformFeatureResult(isoformName).isMapped());
-        Assert.assertEquals(expectedFirstPos, successResult.getIsoformFeatureResult(isoformName).getBeginIsoformPosition());
-        Assert.assertEquals(expectedLastPos, successResult.getIsoformFeatureResult(isoformName).getEndIsoformPosition());
+        Assert.assertNotNull(successResult.getIsoformFeatureResult(featureIsoformName));
+        Assert.assertEquals(mapped, successResult.getIsoformFeatureResult(featureIsoformName).isMapped());
+        Assert.assertEquals(expectedFirstPos, successResult.getIsoformFeatureResult(featureIsoformName).getBeginIsoformPosition());
+        Assert.assertEquals(expectedLastPos, successResult.getIsoformFeatureResult(featureIsoformName).getEndIsoformPosition());
     }
 
     private static void assertIsoformFeatureNotValid(FeatureQueryFailure result, FeatureQueryException expectedException) {
 
-        Assert.assertFalse(result.isSuccess());
+        Assert.assertTrue(!result.isSuccess());
         Assert.assertEquals(expectedException.getError(), result.getError());
     }
 

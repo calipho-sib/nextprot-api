@@ -3,10 +3,7 @@ package com.nextprot.api.isoform.mapper.service;
 import com.nextprot.api.isoform.mapper.domain.*;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
 import com.nextprot.api.isoform.mapper.domain.impl.SequenceFeatureBase;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryAminoAcidException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryPositionException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
@@ -24,7 +21,7 @@ import java.util.stream.Collectors;
  */
 public abstract class SequenceFeatureValidator {
 
-    private final FeatureQuery query;
+    protected final FeatureQuery query;
 
     public SequenceFeatureValidator(FeatureQuery query) {
         this.query = query;
@@ -39,6 +36,7 @@ public abstract class SequenceFeatureValidator {
             SequenceFeature sequenceFeature = newSequenceFeature(query.getFeature());
 
             checkFeatureGeneName(sequenceFeature);
+            checkFeatureIsoformName(sequenceFeature);
             checkFeatureChangingAminoAcids(sequenceFeature.getProteinVariation());
             doMoreChecks(sequenceFeature.getProteinVariation());
 
@@ -75,8 +73,14 @@ public abstract class SequenceFeatureValidator {
 
             throw new IncompatibleGeneAndProteinNameException(query, sequenceFeature.getGeneName(),
                     entry.getOverview().getGeneNames().stream().map(EntityName::getName).collect(Collectors.toList()));
+
         }
     }
+
+    /**
+     * Check that isoform referenced by the feature is compatible with the query
+     */
+    protected void checkFeatureIsoformName(SequenceFeature sequenceFeature) throws IncompatibleIsoformException { }
 
     /**
      * Check that first and last amino-acid(s) described by the feature exists on isoform sequence at given positions

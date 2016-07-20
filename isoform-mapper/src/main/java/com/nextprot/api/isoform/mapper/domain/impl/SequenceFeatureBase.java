@@ -8,6 +8,7 @@ import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Isoform;
 
 import java.text.ParseException;
 import java.util.List;
@@ -18,19 +19,32 @@ import java.util.List;
 public abstract class SequenceFeatureBase implements SequenceFeature {
 
     private final String geneName;
+    private final String isoformName;
     private final String formattedVariation;
     private final SequenceVariation variation;
     private final SequenceVariationFormat parser;
 
     public SequenceFeatureBase(String feature) throws ParseException {
 
-        String geneName = parseGeneName(feature);
+        Preconditions.checkNotNull(feature);
+
         String variation = parseVariation(feature);
         parser = newParser();
 
-        this.geneName = geneName;
+        this.geneName = parseGeneName(feature);
+        this.isoformName = parseIsoformName(feature);
         this.formattedVariation = variation;
         this.variation = parser.parse(variation);
+    }
+
+    protected abstract String formatIsoformFeatureName(Isoform isoform);
+    protected abstract String parseIsoformName(String feature) throws ParseException;
+    protected abstract SequenceVariationFormat newParser();
+
+    protected String parseVariation(String feature) {
+
+        int lastDashPosition = feature.lastIndexOf("-");
+        return feature.substring(lastDashPosition + 1);
     }
 
     @Override
@@ -62,9 +76,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     }
 
     @Override
-    public String formatIsoSpecificFeature(int isoNumber, int firstPos, int lastPos) {
-
-        Preconditions.checkArgument(isoNumber>0, isoNumber + ": isoform number should be a positive number");
+    public String formatIsoSpecificFeature(Isoform isoform, int firstPos, int lastPos) {
 
         // create a new variation specific to the isoform
         SequenceVariationSimple isoVariation = new SequenceVariationSimple();
@@ -74,25 +86,20 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         isoVariation.setLastPos(lastPos);
         isoVariation.setChange(variation.getSequenceChange());
 
-        StringBuilder sb = new StringBuilder();
-
-        sb
+        StringBuilder sb = new StringBuilder()
                 .append(geneName)
-                .append("-iso").append(isoNumber).append("-")
+                .append("-")
+                .append(formatIsoformFeatureName(isoform))
+                .append("-")
                 .append(parser.format(isoVariation, AminoAcidCode.AACodeType.THREE_LETTER));
 
         return sb.toString();
     }
 
+
     private String parseGeneName(String feature) {
 
         return getGeneName(feature);
-    }
-
-    protected String parseVariation(String feature) {
-
-        int lastDashPosition = feature.lastIndexOf("-");
-        return feature.substring(lastDashPosition + 1);
     }
 
     @Override
@@ -101,11 +108,15 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     }
 
     @Override
+    public String getRawIsoformName() {
+
+        return isoformName;
+    }
+
+    @Override
     public SequenceVariation getProteinVariation() {
         return variation;
     }
-
-    protected abstract SequenceVariationFormat newParser();
 
     public static class SequenceVariationSimple implements SequenceVariation {
 

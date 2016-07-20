@@ -43,9 +43,8 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     public FeatureQueryResult validateFeature(String featureName, String featureType, String nextprotAccession) {
 
         try {
-            EntryIsoform entryIsoform = entryIsoformFactoryService.createsEntryIsoform(nextprotAccession);
-
-            FeatureQuery query = new FeatureQuery(entryIsoform, featureName, featureType);
+            FeatureQuery query = new FeatureQuery(entryIsoformFactoryService.createsEntryIsoform(nextprotAccession),
+                    featureName, featureType);
 
             Optional<SequenceFeatureValidator> validator = featureValidatorFactoryService.createsFeatureValidator(query);
 

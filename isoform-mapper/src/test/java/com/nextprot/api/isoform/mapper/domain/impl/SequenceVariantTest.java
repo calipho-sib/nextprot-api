@@ -7,11 +7,13 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessTest.mockIsoform;
 import static org.mockito.Mockito.when;
 
 public class SequenceVariantTest {
@@ -51,7 +53,9 @@ public class SequenceVariantTest {
 
         SequenceVariant variant = new SequenceVariant("WT1-p.Phe154Ser");
 
-        Assert.assertEquals("WT1-iso1-p.Phe154Ser", variant.formatIsoSpecificFeature(1, 154, 154));
+        Isoform isoform = mockIsoform("NX_P19544", "Iso 1", true);
+
+        Assert.assertEquals("WT1-iso1-p.Phe154Ser", variant.formatIsoSpecificFeature(isoform, 154, 154));
     }
 
     @Test
@@ -59,14 +63,9 @@ public class SequenceVariantTest {
 
         SequenceVariant variant = new SequenceVariant("WT1-iso4-p.Phe154Ser");
 
-        Assert.assertEquals("WT1-iso3-p.Phe120Ser", variant.formatIsoSpecificFeature(3, 120, 120));
-    }
+        Isoform isoform = mockIsoform("NX_P19544", "Iso 3", false);
 
-    @Test (expected = IllegalArgumentException.class)
-    public void testIsospecBadIsonumber() throws Exception {
-
-        SequenceVariant variant = new SequenceVariant("WT1-iso4-p.Phe154Ser");
-        variant.formatIsoSpecificFeature(0, 154, 154);
+        Assert.assertEquals("WT1-iso3-p.Phe120Ser", variant.formatIsoSpecificFeature(isoform, 120, 120));
     }
 
     private Entry mockEntry(String... geneNames) {

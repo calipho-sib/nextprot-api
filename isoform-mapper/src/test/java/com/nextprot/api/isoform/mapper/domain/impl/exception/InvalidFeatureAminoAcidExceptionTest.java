@@ -15,7 +15,7 @@ public class InvalidFeatureAminoAcidExceptionTest {
     public void testOnUnexpectedAminoAcidsError() throws FeatureQueryException {
 
         FeatureQuery query =
-                new FeatureQuery(mockEntryIsoform("NX_Q9UI33", "NX_Q9UI33-1"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
+                new FeatureQuery(mockEntryIsoform("NX_Q9UI33", "NX_Q9UI33-1", "Iso 1"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
 
         InvalidFeatureQueryAminoAcidException result = new InvalidFeatureQueryAminoAcidException(query, 1158,
                 AminoAcidCode.asArray(AminoAcidCode.ALANINE), AminoAcidCode.asArray(AminoAcidCode.LEUCINE));

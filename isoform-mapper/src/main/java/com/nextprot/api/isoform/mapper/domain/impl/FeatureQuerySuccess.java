@@ -1,7 +1,6 @@
 package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
@@ -42,7 +41,7 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         result.setEndIsoformPosition(lastIsoPosition);
         result.setCanonical(isoform.isCanonicalIsoform());
         result.setIsoSpecificFeature(
-                feature.formatIsoSpecificFeature(EntryIsoform.getIsoformNumber(isoform),
+                feature.formatIsoSpecificFeature(isoform,
                         firstIsoPosition, lastIsoPosition));
 
         GeneMasterCodonPosition firstCodonOnMaster =
