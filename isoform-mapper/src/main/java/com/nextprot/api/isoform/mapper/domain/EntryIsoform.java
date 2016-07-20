@@ -78,6 +78,17 @@ public class EntryIsoform {
         return null;
     }
 
+    public static Isoform getCanonicalIsoform(Entry entry) {
+
+        for (Isoform iso : entry.getIsoforms()) {
+
+            if (iso.isCanonicalIsoform())
+                return iso;
+        }
+
+        return null;
+    }
+
     public static int getIsoformNumber(Isoform isoform) {
 
         String accession = isoform.getUniqueName();

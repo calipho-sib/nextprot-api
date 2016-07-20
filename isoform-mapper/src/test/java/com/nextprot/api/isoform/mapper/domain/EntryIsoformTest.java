@@ -49,4 +49,13 @@ public class EntryIsoformTest extends IsoformMappingBaseTest {
 
         Assert.assertTrue(entryIsoform.getOtherIsoforms().isEmpty());
     }
+
+    @Test
+    public void testGetCanonicalIsoform() throws Exception {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").withTargetIsoforms());
+
+        Assert.assertNotNull(EntryIsoform.getCanonicalIsoform(entry));
+        Assert.assertEquals("NX_P01308-1", EntryIsoform.getCanonicalIsoform(entry).getUniqueName());
+    }
 }
