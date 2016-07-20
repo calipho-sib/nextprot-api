@@ -54,25 +54,25 @@ public class EntryIsoform {
                 .collect(Collectors.toList());
     }
 
-    public Isoform getIsoformByName(String name) {
+    public Isoform getIsoformByAccession(String accession) {
 
-        return EntryIsoform.getIsoformByName(entry, name);
+        return EntryIsoform.getIsoformByAccession(entry, accession);
     }
 
     /**
      * Return an isoform object having unique name, main name or synonym equals to name
-     * @param name an isoform unique name (ac), main name or synonym
+     * @param accession an isoform unique name (ac), main name or synonym
      * @return
      */
-    public static Isoform getIsoformByName(Entry entry, String name) {
+    public static Isoform getIsoformByAccession(Entry entry, String accession) {
 
-        if (name==null) return null;
+        if (accession==null) return null;
         for (Isoform iso: entry.getIsoforms()) {
-            if (name.equals(iso.getUniqueName())) return iso;
+            if (accession.equals(iso.getUniqueName())) return iso;
             EntityName mainEname = iso.getMainEntityName();
-            if (mainEname!=null && name.equals(mainEname.getName())) return iso;
+            if (mainEname!=null && accession.equals(mainEname.getName())) return iso;
             for (EntityName syn: iso.getSynonyms()) {
-                if (name.equals(syn.getName())) return iso;
+                if (accession.equals(syn.getName())) return iso;
             }
         }
         return null;

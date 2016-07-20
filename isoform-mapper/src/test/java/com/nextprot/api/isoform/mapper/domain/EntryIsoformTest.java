@@ -27,7 +27,7 @@ public class EntryIsoformTest extends IsoformMappingBaseTest {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").withTargetIsoforms());
 
-        Assert.assertEquals("NX_P01308-1", EntryIsoform.getIsoformByName(entry, "NX_P01308-1").getUniqueName());
+        Assert.assertEquals("NX_P01308-1", EntryIsoform.getIsoformByAccession(entry, "NX_P01308-1").getUniqueName());
     }
 
     @Test
