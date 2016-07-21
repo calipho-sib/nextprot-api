@@ -50,6 +50,12 @@ public class SequenceVariationHGVSParseFrameshiftTest {
         Assert.assertEquals(9, pm.getSequenceChange().getValue());
     }
 
+    @Test(expected = ParseException.class)
+    public void testParseFs1ShouldFailed() throws Exception {
+
+        format.parse("p.Met682AlafsTer1", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+    }
+
     @Ignore
     @Test
     public void testParseAAFsFix() throws Exception {

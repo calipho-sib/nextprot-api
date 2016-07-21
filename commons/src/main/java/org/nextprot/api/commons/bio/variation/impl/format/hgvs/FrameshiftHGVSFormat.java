@@ -1,10 +1,7 @@
 package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.SequenceChangeFormat;
-import org.nextprot.api.commons.bio.variation.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
-import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.*;
 import org.nextprot.api.commons.bio.variation.impl.Frameshift;
 
 import java.text.ParseException;
@@ -27,7 +24,11 @@ public class FrameshiftHGVSFormat implements SequenceChangeFormat<Frameshift> {
 
             AminoAcidCode newAA = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
 
-            return builder.selectAminoAcid(affectedAA, affectedAAPos).thenFrameshift(newAA, Integer.parseInt(m.group(6))).build();
+            try {
+                return builder.selectAminoAcid(affectedAA, affectedAAPos).thenFrameshift(newAA, Integer.parseInt(m.group(6))).build();
+            } catch (BuildException e) {
+                throw new ParseException(e.getMessage(), 0);
+            }
         }
 
         return null;

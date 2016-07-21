@@ -1,10 +1,7 @@
 package org.nextprot.api.commons.bio.variation.impl.format.bed;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.SequenceChangeFormat;
-import org.nextprot.api.commons.bio.variation.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
-import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.*;
 import org.nextprot.api.commons.bio.variation.impl.AminoAcidModification;
 
 import java.text.ParseException;
@@ -33,7 +30,11 @@ public class SingleModificationBEDFormat implements SequenceChangeFormat<AminoAc
             AminoAcidCode affectedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(2), m.group(3));
             int affectedAAPos = Integer.parseInt(m.group(4));
 
-            return builder.selectAminoAcid(affectedAA, affectedAAPos).thenAddModification(aaChange).build();
+            try {
+                return builder.selectAminoAcid(affectedAA, affectedAAPos).thenAddModification(aaChange).build();
+            } catch (BuildException e) {
+                throw new ParseException(e.getMessage(), 0);
+            }
         }
 
         return null;

@@ -1,10 +1,7 @@
 package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.SequenceChangeFormat;
-import org.nextprot.api.commons.bio.variation.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
-import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.*;
 import org.nextprot.api.commons.bio.variation.impl.Duplication;
 
 import java.text.ParseException;
@@ -31,16 +28,21 @@ public class DuplicationHGVSFormat implements SequenceChangeFormat<Duplication> 
             AminoAcidCode affectedAAFirst = AminoAcidCode.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPosFirst = Integer.parseInt(m.group(3));
 
-            if (m.group(4) == null) {
+            try {
+                if (m.group(4) == null) {
 
-                return builder.selectAminoAcid(affectedAAFirst, affectedAAPosFirst).thenDuplicate().build();
+                    return builder.selectAminoAcid(affectedAAFirst, affectedAAPosFirst).thenDuplicate().build();
+                }
+
+                AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
+                int affectedAAPosLast = Integer.parseInt(m.group(6));
+
+                return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
+                        .thenDuplicate().build();
             }
-
-            AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
-            int affectedAAPosLast = Integer.parseInt(m.group(6));
-
-            return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
-                    .thenDuplicate().build();
+            catch (BuildException e) {
+                throw new ParseException(e.getMessage(), 0);
+            }
         }
 
         return null;

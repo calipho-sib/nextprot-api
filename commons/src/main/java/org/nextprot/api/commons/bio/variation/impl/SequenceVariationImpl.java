@@ -2,6 +2,7 @@ package org.nextprot.api.commons.bio.variation.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.BuildException;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
@@ -158,7 +159,7 @@ public class SequenceVariationImpl implements SequenceVariation {
                 this.dataCollector = dataCollector;
             }
 
-            protected abstract SequenceChange getProteinSequenceChange();
+            protected abstract SequenceChange getProteinSequenceChange() throws BuildException;
 
             @Override
             public DataCollector getDataCollector() {
@@ -166,7 +167,7 @@ public class SequenceVariationImpl implements SequenceVariation {
             }
 
             @Override
-            public SequenceVariation build() {
+            public SequenceVariation build() throws BuildException {
 
                 dataCollector.setSequenceChange(getProteinSequenceChange());
                 return new SequenceVariationImpl(this);
@@ -257,7 +258,13 @@ public class SequenceVariationImpl implements SequenceVariation {
             }
 
             @Override
-            protected SequenceChange getProteinSequenceChange() {
+            protected SequenceChange getProteinSequenceChange() throws BuildException {
+
+                if (newTerminationPosition <= 1)
+                    throw new BuildException("the description of a frame shift variant can not contain " +
+                            "“fsTer1”, such a variant is a nonsense variant (see Substitution). The shortest frame shift variant " +
+                            "possible contains 'fsTer2' (see http://varnomen.hgvs.org/recommendations/protein/variant/frameshift/)");
+
                 return new Frameshift(new Frameshift.Change(newAminoAcidCode, newTerminationPosition));
             }
         }
@@ -277,4 +284,5 @@ public class SequenceVariationImpl implements SequenceVariation {
             }
         }
     }
+
 }

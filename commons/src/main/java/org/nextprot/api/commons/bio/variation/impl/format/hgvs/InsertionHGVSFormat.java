@@ -1,10 +1,7 @@
 package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.SequenceChangeFormat;
-import org.nextprot.api.commons.bio.variation.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
-import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.*;
 import org.nextprot.api.commons.bio.variation.impl.Insertion;
 
 import java.text.ParseException;
@@ -38,8 +35,12 @@ public class InsertionHGVSFormat implements SequenceChangeFormat<Insertion> {
 
             AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfOneLetterCodeSequence(m.group(7));
 
-            return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
-                    .thenInsert(insertedAAs).build();
+            try {
+                return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
+                        .thenInsert(insertedAAs).build();
+            } catch (BuildException e) {
+                throw new ParseException(e.getMessage(), 0);
+            }
         }
 
         return null;
