@@ -1,4 +1,4 @@
-package com.nextprot.api.isoform.mapper.domain;
+package com.nextprot.api.isoform.mapper.utils;
 
 import com.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
 import org.junit.Assert;
@@ -9,25 +9,19 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class EntryIsoformTest extends IsoformMappingBaseTest {
+import java.util.List;
+
+public class EntryIsoformUtilsTest extends IsoformMappingBaseTest {
 
     @Autowired
     private EntryBuilderService entryBuilderService;
-
-    @Test
-    public void testGetIsoformNumber() throws Exception {
-
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").withTargetIsoforms());
-
-        Assert.assertEquals(1, EntryIsoform.getIsoformNumber(entry.getIsoforms().get(0)));
-    }
 
     @Test
     public void testGetIsoformByAccession() throws Exception {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").withTargetIsoforms());
 
-        Assert.assertEquals("NX_P01308-1", EntryIsoform.getIsoformByName(entry, "NX_P01308-1").getUniqueName());
+        Assert.assertEquals("NX_P01308-1", EntryIsoformUtils.getIsoformByName(entry, "NX_P01308-1").getUniqueName());
     }
 
     @Test
@@ -35,7 +29,7 @@ public class EntryIsoformTest extends IsoformMappingBaseTest {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P06213").withTargetIsoforms());
 
-        Assert.assertEquals("NX_P06213-1", EntryIsoform.getIsoformByName(entry, "Long").getUniqueName());
+        Assert.assertEquals("NX_P06213-1", EntryIsoformUtils.getIsoformByName(entry, "Long").getUniqueName());
     }
 
     @Test
@@ -45,9 +39,21 @@ public class EntryIsoformTest extends IsoformMappingBaseTest {
 
         Isoform isoform = entry.getIsoforms().get(0);
 
-        EntryIsoform entryIsoform = new EntryIsoform("NX_P01308", entry, isoform);
+        Assert.assertTrue(EntryIsoformUtils.getOtherIsoforms(entry, isoform.getUniqueName()).isEmpty());
+    }
 
-        Assert.assertTrue(entryIsoform.getOtherIsoforms().isEmpty());
+    @Test
+    public void testGetOtherIsoforms2() throws Exception {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_Q9UI33").withTargetIsoforms());
+
+        List<Isoform> others = EntryIsoformUtils.getOtherIsoforms(entry, "NX_Q9UI33-1");
+        Assert.assertEquals(2, others.size());
+        for (Isoform isoform : others) {
+            Assert.assertTrue(
+                    isoform.getUniqueName().equals("NX_Q9UI33-2") ||
+                            isoform.getUniqueName().equals("NX_Q9UI33-3") );
+        }
     }
 
     @Test
@@ -55,7 +61,7 @@ public class EntryIsoformTest extends IsoformMappingBaseTest {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").withTargetIsoforms());
 
-        Assert.assertNotNull(EntryIsoform.getCanonicalIsoform(entry));
-        Assert.assertEquals("NX_P01308-1", EntryIsoform.getCanonicalIsoform(entry).getUniqueName());
+        Assert.assertNotNull(EntryIsoformUtils.getCanonicalIsoform(entry));
+        Assert.assertEquals("NX_P01308-1", EntryIsoformUtils.getCanonicalIsoform(entry).getUniqueName());
     }
 }
