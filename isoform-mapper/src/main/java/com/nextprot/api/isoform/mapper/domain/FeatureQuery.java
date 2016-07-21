@@ -5,29 +5,24 @@ import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UndefinedFeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownFeatureQueryTypeException;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.Entry;
 
 import java.io.Serializable;
 
 public class FeatureQuery implements Serializable {
 
-    private final EntryIsoform entryIsoform;
+    private final Entry entry;
     private final String feature;
     private final String featureType;
     private boolean propagableFeature;
 
-    /**
-     * @param entryIsoform
-     * @param feature a feature is a gene name associated with a sequence variation
-     * @param featureType
-     * @throws FeatureQueryException
-     */
-    public FeatureQuery(EntryIsoform entryIsoform, String feature, String featureType) throws FeatureQueryException {
+    public FeatureQuery(Entry entry, String feature, String featureType) throws FeatureQueryException {
 
-        Preconditions.checkNotNull(entryIsoform);
+        Preconditions.checkNotNull(entry);
         Preconditions.checkNotNull(feature);
         Preconditions.checkNotNull(featureType);
 
-        this.entryIsoform = entryIsoform;
+        this.entry = entry;
         this.feature = feature;
         this.featureType = featureType;
 
@@ -43,15 +38,15 @@ public class FeatureQuery implements Serializable {
     }
 
     @JsonIgnore
-    public EntryIsoform getEntryIsoform() {
-        return entryIsoform;
+    public Entry getEntry() {
+        return entry;
     }
 
     /**
-     * @return the nextprot accession number of entry or isoform (example: NX_P01308 or NX_P01308-1)
+     * @return the nextprot entry accession number (example: NX_P01308)
      */
     public String getAccession() {
-        return entryIsoform.getAccession();
+        return entry.getUniqueName();
     }
 
     /**
