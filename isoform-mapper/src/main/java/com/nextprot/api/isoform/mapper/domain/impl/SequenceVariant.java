@@ -41,8 +41,8 @@ public class SequenceVariant extends SequenceFeatureBase {
         String featureIsoname = extractIsonameFromFeature(feature);
 
         // canonical
-        if (featureIsoname.isEmpty()) {
-            return featureIsoname;
+        if (featureIsoname == null) {
+            return null;
         }
         else if (featureIsoname.startsWith("iso")) {
 
@@ -69,7 +69,7 @@ public class SequenceVariant extends SequenceFeatureBase {
     }
 
     /**
-     * @return the isoform part from feature string (empty if canonical)
+     * @return the isoform part from feature string (null if canonical)
      */
     private String extractIsonameFromFeature(String feature) {
 
@@ -82,7 +82,7 @@ public class SequenceVariant extends SequenceFeatureBase {
             return feature.substring(firstIndexOfDash+1, lastIndexOfDash);
         }
 
-        return "";
+        return null;
     }
 
     /*

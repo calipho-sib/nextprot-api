@@ -1,17 +1,18 @@
 package com.nextprot.api.isoform.mapper.utils;
 
 import com.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
-import com.nextprot.api.isoform.mapper.domain.EntryIsoform;
-import com.nextprot.api.isoform.mapper.service.EntryIsoformFactoryService;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class IsoformSequencePositionMapperTest extends IsoformMappingBaseTest {
 
     @Autowired
-    private EntryIsoformFactoryService entryIsoformFactoryService;
+    private EntryBuilderService entryBuilderService;
 
     /*
 NX_P38398-3, pos=1812
@@ -27,18 +28,24 @@ NX_P38398-8, pos=1812
     @Test
     public void getProjectedPositionNotInFrame() throws Exception {
 
-        EntryIsoform entryIsoform = entryIsoformFactoryService.createsEntryIsoform("NX_P38398");
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P38398").withTargetIsoforms());
 
-        Integer position = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(), 1812, entryIsoform.getIsoformByName("NX_P38398-6"));
+        Integer position = IsoformSequencePositionMapper.getProjectedPosition(
+                EntryIsoformUtils.getIsoformByName(entry, "NX_P38398-1"), 1812,
+                EntryIsoformUtils.getIsoformByName(entry, "NX_P38398-6"));
+
         Assert.assertNotNull(position);
     }
 
     @Test
     public void positionOnIso1ShouldNotMapToIso2() throws Exception {
 
-        EntryIsoform entryIsoform = entryIsoformFactoryService.createsEntryIsoform("NX_P38398");
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P38398").withTargetIsoforms());
 
-        Integer position = IsoformSequencePositionMapper.getProjectedPosition(entryIsoform.getIsoform(), 1812, entryIsoform.getIsoformByName("NX_P38398-2"));
+        Integer position = IsoformSequencePositionMapper.getProjectedPosition(
+                EntryIsoformUtils.getIsoformByName(entry, "NX_P38398-1"), 1812,
+                EntryIsoformUtils.getIsoformByName(entry, "NX_P38398-2"));
+
         Assert.assertNull(position);
     }
 }

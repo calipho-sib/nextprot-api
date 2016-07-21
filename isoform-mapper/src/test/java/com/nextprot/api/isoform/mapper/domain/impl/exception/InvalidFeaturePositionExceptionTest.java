@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
-import static com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessTest.mockEntryIsoform;
+import static com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessTest.mockEntry;
 
 public class InvalidFeaturePositionExceptionTest {
 
@@ -14,7 +14,7 @@ public class InvalidFeaturePositionExceptionTest {
     public void testOnInvalidPositionError() throws FeatureQueryException {
 
         FeatureQuery query =
-                new FeatureQuery(mockEntryIsoform("NX_Q9UI33", "NX_Q9UI33-1", "Iso 1"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
+                new FeatureQuery(mockEntry("NX_Q9UI33"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
 
         InvalidFeatureQueryPositionException result = new InvalidFeatureQueryPositionException(query, 23);
         Assert.assertEquals("invalid feature position: position 23 is out of bound in sequence of isoform NX_Q9UI33", result.getError().getMessage());

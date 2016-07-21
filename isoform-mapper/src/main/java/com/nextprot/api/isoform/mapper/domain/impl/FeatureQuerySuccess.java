@@ -27,7 +27,7 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
 
         this.feature = feature;
 
-        addMappedFeature(getQuery().getEntryIsoform().getIsoform(),
+        addMappedFeature(feature.getIsoform(query.getEntry()),
                 feature.getProteinVariation().getFirstChangingAminoAcidPos(),
                 feature.getProteinVariation().getLastChangingAminoAcidPos());
     }

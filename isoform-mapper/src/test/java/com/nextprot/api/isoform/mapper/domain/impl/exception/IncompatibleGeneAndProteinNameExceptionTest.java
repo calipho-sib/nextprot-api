@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
-import static com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessTest.mockEntryIsoform;
+import static com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessTest.mockEntry;
 
 public class IncompatibleGeneAndProteinNameExceptionTest {
 
@@ -15,7 +15,7 @@ public class IncompatibleGeneAndProteinNameExceptionTest {
     public void testOnIncompatibleProteinAndGeneNameError() throws FeatureQueryException {
 
         FeatureQuery query =
-                new FeatureQuery(mockEntryIsoform("NX_P01308", "NX_P01308-1", "Iso 1"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
+                new FeatureQuery(mockEntry("NX_P01308"), "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
 
         IncompatibleGeneAndProteinNameException result = new IncompatibleGeneAndProteinNameException(query, "SCN11A", Lists.newArrayList("INS"));
 

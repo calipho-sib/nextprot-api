@@ -8,12 +8,16 @@ import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.*;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryAminoAcidException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryPositionException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
@@ -170,24 +174,11 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         validateList(filename, false, service);
     }
 
-    @Test
-    public void shouldNotValidateIncompatibleIsoforms() throws Exception {
+    @Test(expected = NextProtException.class)
+    public void shouldThrowExceptionWithIsonumber() throws Exception {
 
-        FeatureQueryResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33-2");
-
-        FeatureQuery query = Mockito.mock(FeatureQuery.class);
-        when(query.getAccession()).thenReturn("NX_Q9UI33-2");
-
-        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new IncompatibleIsoformException(query, "NX_Q9UI33-1"));
+        service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33-2");
     }
-
-    /*@Test
-    public void shouldNotValidateIncompatibleIsoforms2() throws Exception {
-
-        FeatureQueryResult result = service.validateFeature("SCN11A-iso2-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
-
-        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new IncompatibleIsoformException(query, "NX_Q9UI33-1"));
-    }*/
 
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
 

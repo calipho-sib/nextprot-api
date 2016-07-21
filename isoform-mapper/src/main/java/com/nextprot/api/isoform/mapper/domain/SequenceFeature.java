@@ -12,9 +12,6 @@ public interface SequenceFeature {
     /** @return the gene name */
     String getGeneName();
 
-    /** @return the isoform name where lie the feature */
-    String getIsoformName();
-
     /** @return the variation as a string */
     String getFormattedVariation();
 
@@ -26,4 +23,7 @@ public interface SequenceFeature {
 
     /** @return true if gene name is referenced in entry */
     boolean isValidGeneName(Entry entry);
+
+    /** @return the entry isoform where lie the feature or ab */
+    Isoform getIsoform(Entry entry);
 }
