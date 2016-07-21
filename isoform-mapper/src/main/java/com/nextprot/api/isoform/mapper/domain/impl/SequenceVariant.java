@@ -62,6 +62,7 @@ public class SequenceVariant extends SequenceFeatureBase {
 
                     return matcher.group(1)+" "+matcher.group(2);
                 }
+                return name;
             }
         }
 

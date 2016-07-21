@@ -37,6 +37,7 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         IsoformFeatureResult result = new IsoformFeatureResult();
 
         result.setIsoformAccession(isoform.getUniqueName());
+        result.setIsoformName(isoform.getMainEntityName().getName());
         result.setBeginIsoformPosition(firstIsoPosition);
         result.setEndIsoformPosition(lastIsoPosition);
         result.setCanonical(isoform.isCanonicalIsoform());

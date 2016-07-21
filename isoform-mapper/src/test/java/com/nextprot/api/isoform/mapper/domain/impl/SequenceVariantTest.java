@@ -13,6 +13,7 @@ import org.nextprot.api.core.domain.Overview;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessTest.mockEntry;
 import static com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessTest.mockIsoform;
 import static org.mockito.Mockito.when;
 
@@ -30,7 +31,7 @@ public class SequenceVariantTest {
         Assert.assertEquals(AminoAcidCode.LYSINE, variation.getFirstChangingAminoAcid());
         Assert.assertEquals(1710, variation.getFirstChangingAminoAcidPos());
 
-        Assert.assertTrue(variant.isValidGeneName(mockEntry("SCN11A", "SCN12A", "SNS2")));
+        Assert.assertTrue(variant.isValidGeneName(mockEntryWithGenes("SCN11A", "SCN12A", "SNS2")));
     }
 
     @Test
@@ -45,7 +46,7 @@ public class SequenceVariantTest {
         Assert.assertEquals(AminoAcidCode.PHENYLALANINE, variation.getFirstChangingAminoAcid());
         Assert.assertEquals(154, variation.getFirstChangingAminoAcidPos());
 
-        Assert.assertTrue(variant.isValidGeneName(mockEntry("WT1")));
+        Assert.assertTrue(variant.isValidGeneName(mockEntryWithGenes("WT1")));
     }
 
     @Test
@@ -68,7 +69,57 @@ public class SequenceVariantTest {
         Assert.assertEquals("WT1-iso3-p.Phe120Ser", variant.formatIsoSpecificFeature(isoform, 120, 120));
     }
 
-    private Entry mockEntry(String... geneNames) {
+    @Test
+    public void testGetIsoformIso() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("SCN11A-iso2-p.Leu1158Pro");
+
+        Entry entry = mockEntry("NX_P06213",
+                mockIsoform("NX_Q9UI33-1", "Iso 1", true),
+                mockIsoform("NX_Q9UI33-2", "Iso 2", false),
+                mockIsoform("NX_Q9UI33-3", "Iso 3", false));
+
+        Assert.assertEquals("NX_Q9UI33-2", variant.getIsoform(entry).getUniqueName());
+    }
+
+    @Test
+    public void testGetIsoformIsoCanonical() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("SCN11A-p.Leu1158Pro");
+
+        Entry entry = mockEntry("NX_P06213",
+                mockIsoform("NX_Q9UI33-1", "Iso 1", true),
+                mockIsoform("NX_Q9UI33-2", "Iso 2", false),
+                mockIsoform("NX_Q9UI33-3", "Iso 3", false));
+
+        Assert.assertEquals("NX_Q9UI33-1", variant.getIsoform(entry).getUniqueName());
+    }
+
+    @Test
+    public void testGetIsoformNonIso() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("INSR-isoshort-p.Arg113Pro");
+
+        Entry entry = mockEntry("NX_P06213",
+                mockIsoform("NX_P06213-1", "Long", true),
+                mockIsoform("NX_P06213-2", "Short", false));
+
+        Assert.assertEquals("NX_P06213-2", variant.getIsoform(entry).getUniqueName());
+    }
+
+    @Test
+    public void testGetIsoformNonIsoCanonical() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("INSR-p.Arg113Pro");
+
+        Entry entry = mockEntry("NX_P06213",
+                mockIsoform("NX_P06213-1", "Long", true),
+                mockIsoform("NX_P06213-2", "Short", false));
+
+        Assert.assertEquals("NX_P06213-1", variant.getIsoform(entry).getUniqueName());
+    }
+
+    private Entry mockEntryWithGenes(String... geneNames) {
 
         Entry entry = Mockito.mock(Entry.class);
         Overview overview = Mockito.mock(Overview.class);
