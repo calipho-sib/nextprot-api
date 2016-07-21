@@ -27,7 +27,9 @@
 				</property>
 			</bean>
 			<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
-			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="prettyPrint" value="true" />
+			</bean>
 
 		</mvc:message-converters>
 
