@@ -11,5 +11,7 @@ public interface MasterIdentifierDao {
 	List<String> findMasterSequenceUniqueNames();
 
 	List<String> findUniqueNames();
-		
+	
+	List<String> findUniqueNamesByGeneName(String geneName);
+
 }
