@@ -97,6 +97,7 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         private static final long serialVersionUID = 2L;
 
         private String isoformAccession;
+        private String isoformName;
         private Integer beginIsoformPosition;
         private Integer endIsoformPosition;
         private Integer beginMasterPosition;
@@ -110,6 +111,14 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
 
         public void setIsoformAccession(String isoformAccession) {
             this.isoformAccession = isoformAccession;
+        }
+
+        public String getIsoformName() {
+            return isoformName;
+        }
+
+        public void setIsoformName(String isoformName) {
+            this.isoformName = isoformName;
         }
 
         public Integer getBeginIsoformPosition() {
