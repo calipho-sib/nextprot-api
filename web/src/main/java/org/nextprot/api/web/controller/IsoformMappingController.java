@@ -36,7 +36,7 @@ public class IsoformMappingController {
 			@PathVariable("category") String featureCategory, HttpServletRequest request, HttpServletResponse response,
 			@ApiQueryParam(name = "feature", description = "An isoform feature.",  allowedvalues = { "SCN11A-p.Leu1158Pro" })
 			@RequestParam(value = "feature", required = true) String feature,
-			@ApiQueryParam(name = "accession", description = "A nextprot accession: either isoform accession or entry accession when canonical.",  allowedvalues = { "NX_Q9UI33" })
+			@ApiQueryParam(name = "accession", description = "A nextprot entry accession.",  allowedvalues = { "NX_Q9UI33" })
 			@RequestParam(value = "accession", required = true) String nextprotAccession) {
 
 		FeatureQueryResult result = isoformMappingService.validateFeature(feature, featureCategory, nextprotAccession);
@@ -51,7 +51,7 @@ public class IsoformMappingController {
 			@PathVariable("category") String featureCategory, HttpServletRequest request, HttpServletResponse response,
 			@ApiQueryParam(name = "feature", description = "An isoform feature.",  allowedvalues = { "SCN11A-p.Leu1158Pro" })
 			@RequestParam(value = "feature", required = true) String feature,
-			@ApiQueryParam(name = "accession", description = "A nextprot accession: either isoform accession or entry accession when canonical.",  allowedvalues = { "NX_Q9UI33" })
+			@ApiQueryParam(name = "accession", description = "A nextprot entry accession.",  allowedvalues = { "NX_Q9UI33" })
 			@RequestParam(value = "accession", required = true) String nextprotAccession) {
 
 		FeatureQueryResult result = isoformMappingService.propagateFeature(feature, featureCategory, nextprotAccession);
