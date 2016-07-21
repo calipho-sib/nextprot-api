@@ -1,13 +1,10 @@
 package org.nextprot.api.etl.statement.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.etl.statement.service.RawStatementRemoteService;
@@ -21,11 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
-import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
@@ -247,7 +242,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			if (isoformFeatureResult.isMapped()) {
 
-				RawStatement rs = StatementBuilder.createNew().addMap(statement).addField(StatementField.ISOFORM_ACCESSION, isoformFeatureResult.getIsoformName())
+				RawStatement rs = StatementBuilder.createNew().addMap(statement).addField(StatementField.ISOFORM_ACCESSION, isoformFeatureResult.getIsoformAccession())
 						.addField(StatementField.RAW_STATEMENT_ID, statement.getStatementId()) // Keep  a reference to the original statement
 						.addField(StatementField.ANNOT_LOC_BEGIN_CANONICAL_REF, String.valueOf(isoformFeatureResult.getBeginIsoformPosition()))
 						.addField(StatementField.ANNOT_LOC_END_CANONICAL_REF, String.valueOf(isoformFeatureResult.getEndIsoformPosition()))

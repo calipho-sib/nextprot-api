@@ -36,7 +36,7 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
 
         IsoformFeatureResult result = new IsoformFeatureResult();
 
-        result.setIsoformName(isoform.getUniqueName());
+        result.setIsoformAccession(isoform.getUniqueName());
         result.setBeginIsoformPosition(firstIsoPosition);
         result.setEndIsoformPosition(lastIsoPosition);
         result.setCanonical(isoform.isCanonicalIsoform());
@@ -55,16 +55,16 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
             result.setEndMasterPosition(lastCodonOnMaster.getNucleotidePosition(2));
         }
 
-        data.put(result.getIsoformName(), result);
+        data.put(result.getIsoformAccession(), result);
     }
 
     public void addUnmappedFeature(Isoform isoform) {
 
         IsoformFeatureResult result = new IsoformFeatureResult();
-        result.setIsoformName(isoform.getUniqueName());
+        result.setIsoformAccession(isoform.getUniqueName());
         result.setCanonical(isoform.isCanonicalIsoform());
 
-        data.put(result.getIsoformName(), result);
+        data.put(result.getIsoformAccession(), result);
     }
 
     /**
@@ -96,7 +96,7 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
 
         private static final long serialVersionUID = 2L;
 
-        private String isoformName;
+        private String isoformAccession;
         private Integer beginIsoformPosition;
         private Integer endIsoformPosition;
         private Integer beginMasterPosition;
@@ -104,12 +104,12 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         private boolean isCanonical;
         private String isoSpecificFeature;
 
-        public String getIsoformName() {
-            return isoformName;
+        public String getIsoformAccession() {
+            return isoformAccession;
         }
 
-        public void setIsoformName(String isoformName) {
-            this.isoformName = isoformName;
+        public void setIsoformAccession(String isoformAccession) {
+            this.isoformAccession = isoformAccession;
         }
 
         public Integer getBeginIsoformPosition() {
