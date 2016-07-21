@@ -202,8 +202,9 @@ public enum AminoAcidCode {
 
         for (AminoAcidCode aa : aas) {
 
-            if (type == AACodeType.ONE_LETTER) sb.append(String.valueOf(aa.get1LetterCode()));
-            else sb.append(String.valueOf(aa.get3LetterCode()));
+            sb.append((type == AACodeType.ONE_LETTER) ?
+                    String.valueOf(aa.get1LetterCode()) :
+                    String.valueOf(aa.get3LetterCode()));
         }
 
         return sb.toString();
