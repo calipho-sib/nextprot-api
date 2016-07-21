@@ -1,9 +1,15 @@
 package com.nextprot.api.isoform.mapper.service;
 
-import com.nextprot.api.isoform.mapper.domain.*;
+import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
 import com.nextprot.api.isoform.mapper.domain.impl.SequenceFeatureBase;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.*;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryAminoAcidException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryPositionException;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
@@ -36,8 +42,7 @@ public abstract class SequenceFeatureValidator {
             SequenceFeature sequenceFeature = newSequenceFeature(query.getFeature());
 
             checkFeatureGeneName(sequenceFeature);
-            checkFeatureIsoformName(sequenceFeature);
-            checkFeatureChangingAminoAcids(sequenceFeature.getProteinVariation());
+            checkFeatureChangingAminoAcids(sequenceFeature);
             doMoreChecks(sequenceFeature.getProteinVariation());
 
             return new FeatureQuerySuccess(query, sequenceFeature);
@@ -67,7 +72,7 @@ public abstract class SequenceFeatureValidator {
      */
     private void checkFeatureGeneName(SequenceFeature sequenceFeature) throws IncompatibleGeneAndProteinNameException {
 
-        Entry entry = query.getEntryIsoform().getEntry();
+        Entry entry = query.getEntry();
 
         if (!sequenceFeature.isValidGeneName(entry)) {
 
@@ -78,24 +83,19 @@ public abstract class SequenceFeatureValidator {
     }
 
     /**
-     * Check that isoform referenced by the feature is compatible with the query
-     */
-    protected void checkFeatureIsoformName(SequenceFeature sequenceFeature) throws IncompatibleIsoformException { }
-
-    /**
      * Check that first and last amino-acid(s) described by the feature exists on isoform sequence at given positions
      * Part of the contract a validator should implement to validate a feature on an isoform sequence.
-     *
-     * @param variation the variation on which expected changing amino-acids is found
      */
-    private void checkFeatureChangingAminoAcids(SequenceVariation variation) throws FeatureQueryException {
+    private void checkFeatureChangingAminoAcids(SequenceFeature sequenceFeature) throws FeatureQueryException {
 
-        EntryIsoform entryIsoform = query.getEntryIsoform();
+        SequenceVariation variation = sequenceFeature.getProteinVariation();
 
-        checkIsoformPos(entryIsoform.getIsoform(), variation.getFirstChangingAminoAcidPos(),
+        Isoform isoform = sequenceFeature.getIsoform(query.getEntry());
+
+        checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
                 String.valueOf(variation.getFirstChangingAminoAcid().get1LetterCode()), query);
 
-        checkIsoformPos(entryIsoform.getIsoform(), variation.getLastChangingAminoAcidPos(),
+        checkIsoformPos(isoform, variation.getLastChangingAminoAcidPos(),
                 String.valueOf(variation.getLastChangingAminoAcid().get1LetterCode()), query);
     }
 

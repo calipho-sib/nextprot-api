@@ -2,6 +2,7 @@ package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import com.nextprot.api.isoform.mapper.utils.EntryIsoformUtils;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
@@ -38,7 +39,10 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     }
 
     protected abstract String formatIsoformFeatureName(Isoform isoform);
+
+    /** Parse isoform name or null if not found */
     protected abstract String parseIsoformName(String feature) throws ParseException;
+
     protected abstract SequenceVariationFormat newParser();
 
     protected String parseVariation(String feature) {
@@ -60,6 +64,14 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         }
 
         return false;
+    }
+
+    @Override
+    public Isoform getIsoform(Entry entry) {
+
+        return (isoformName != null) ?
+                EntryIsoformUtils.getIsoformByName(entry, isoformName) :
+                EntryIsoformUtils.getCanonicalIsoform(entry);
     }
 
     public static String getGeneName(String feature) {
@@ -107,11 +119,6 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         return geneName;
     }
 
-    @Override
-    public String getIsoformName() {
-
-        return isoformName;
-    }
 
     @Override
     public SequenceVariation getProteinVariation() {
