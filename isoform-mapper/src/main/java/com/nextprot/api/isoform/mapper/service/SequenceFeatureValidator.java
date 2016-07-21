@@ -6,10 +6,7 @@ import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
 import com.nextprot.api.isoform.mapper.domain.impl.SequenceFeatureBase;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryAminoAcidException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryPositionException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
@@ -42,7 +39,9 @@ public abstract class SequenceFeatureValidator {
             SequenceFeature sequenceFeature = newSequenceFeature(query.getFeature());
 
             checkFeatureGeneName(sequenceFeature);
+            checkIsoformExistence(sequenceFeature);
             checkFeatureChangingAminoAcids(sequenceFeature);
+
             doMoreChecks(sequenceFeature.getProteinVariation());
 
             return new FeatureQuerySuccess(query, sequenceFeature);
@@ -52,6 +51,14 @@ public abstract class SequenceFeatureValidator {
                     SequenceFeatureBase.getGeneName(query.getFeature()).length() + 1);
 
             throw new InvalidFeatureQueryFormatException(query, pe);
+        }
+    }
+
+    private void checkIsoformExistence(SequenceFeature sequenceFeature) throws UnknownFeatureIsoformException {
+
+        if (!sequenceFeature.isValidIsoform(query.getEntry())) {
+
+            throw new UnknownFeatureIsoformException(query);
         }
     }
 

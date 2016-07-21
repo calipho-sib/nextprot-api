@@ -2,6 +2,7 @@ package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoformUtils;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
@@ -25,7 +26,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     private final SequenceVariation variation;
     private final SequenceVariationFormat parser;
 
-    public SequenceFeatureBase(String feature) throws ParseException {
+    SequenceFeatureBase(String feature) throws ParseException {
 
         Preconditions.checkNotNull(feature);
 
@@ -67,11 +68,27 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     }
 
     @Override
-    public Isoform getIsoform(Entry entry) {
+    public Isoform getIsoform(Entry entry) throws UnknownIsoformException {
 
-        return (isoformName != null) ?
+        Isoform isoform = (isoformName != null) ?
                 EntryIsoformUtils.getIsoformByName(entry, isoformName) :
                 EntryIsoformUtils.getCanonicalIsoform(entry);
+
+        if (isoform == null) {
+            throw new UnknownIsoformException(isoformName, entry);
+        }
+
+        return isoform;
+    }
+
+    @Override
+    public boolean isValidIsoform(Entry entry) {
+
+        Isoform isoform = (isoformName != null) ?
+                EntryIsoformUtils.getIsoformByName(entry, isoformName) :
+                EntryIsoformUtils.getCanonicalIsoform(entry);
+
+        return isoform != null;
     }
 
     public static String getGeneName(String feature) {
@@ -181,4 +198,5 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
             return change;
         }
     }
+
 }

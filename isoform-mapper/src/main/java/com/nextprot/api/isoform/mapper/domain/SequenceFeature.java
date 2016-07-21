@@ -1,5 +1,6 @@
 package com.nextprot.api.isoform.mapper.domain;
 
+import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -25,5 +26,7 @@ public interface SequenceFeature {
     boolean isValidGeneName(Entry entry);
 
     /** @return the entry isoform where lie the feature or ab */
-    Isoform getIsoform(Entry entry);
+    Isoform getIsoform(Entry entry) throws UnknownIsoformException;
+
+    boolean isValidIsoform(Entry entry);
 }
