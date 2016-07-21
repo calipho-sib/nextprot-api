@@ -12,8 +12,8 @@ public interface SequenceFeature {
     /** @return the gene name */
     String getGeneName();
 
-    /** @return the isoform name as defined in given feature or empty if canonical */
-    String getRawIsoformName();
+    /** @return the isoform name where lie the feature */
+    String getIsoformName();
 
     /** @return the variation as a string */
     String getFormattedVariation();

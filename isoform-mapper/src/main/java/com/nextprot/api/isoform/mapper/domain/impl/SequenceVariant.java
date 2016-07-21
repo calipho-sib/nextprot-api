@@ -25,21 +25,7 @@ public class SequenceVariant extends SequenceFeatureBase {
     @Override
     protected String parseIsoformName(String feature) throws ParseException {
 
-        return convertToNextprotIsoformName(extractIsoformNameFromFeature(feature));
-    }
-
-    private String extractIsoformNameFromFeature(String feature) {
-
-        Preconditions.checkNotNull(feature);
-
-        int firstIndexOfDash = feature.indexOf("-");
-        int lastIndexOfDash = feature.lastIndexOf("-");
-
-        if (firstIndexOfDash < lastIndexOfDash) {
-            return feature.substring(firstIndexOfDash+1, lastIndexOfDash);
-        }
-
-        return "";
+        return convertToNextprotIsoformName(feature);
     }
 
     /*
@@ -50,15 +36,17 @@ public class SequenceVariant extends SequenceFeatureBase {
 
         or empty if canonical
      */
-    private String convertToNextprotIsoformName(String featureIsoformName) throws ParseException {
+    private String convertToNextprotIsoformName(String feature) throws ParseException {
+
+        String featureIsoname = extractIsonameFromFeature(feature);
 
         // canonical
-        if (featureIsoformName.isEmpty()) {
-            return featureIsoformName;
+        if (featureIsoname.isEmpty()) {
+            return featureIsoname;
         }
-        else if (featureIsoformName.startsWith("iso")) {
+        else if (featureIsoname.startsWith("iso")) {
 
-            String name = featureIsoformName.substring(3);
+            String name = featureIsoname.substring(3);
             if (name.matches("\\d+")) {
                 return "Iso "+name;
             }
@@ -77,7 +65,24 @@ public class SequenceVariant extends SequenceFeatureBase {
             }
         }
 
-        throw new ParseException("invalid isoform name: "+featureIsoformName, 0);
+        throw new ParseException("invalid isoform name: "+featureIsoname, 0);
+    }
+
+    /**
+     * @return the isoform part from feature string (empty if canonical)
+     */
+    private String extractIsonameFromFeature(String feature) {
+
+        Preconditions.checkNotNull(feature);
+
+        int firstIndexOfDash = feature.indexOf("-");
+        int lastIndexOfDash = feature.lastIndexOf("-");
+
+        if (firstIndexOfDash < lastIndexOfDash) {
+            return feature.substring(firstIndexOfDash+1, lastIndexOfDash);
+        }
+
+        return "";
     }
 
     /*

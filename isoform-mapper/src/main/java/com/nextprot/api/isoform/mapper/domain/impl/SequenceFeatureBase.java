@@ -108,7 +108,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     }
 
     @Override
-    public String getRawIsoformName() {
+    public String getIsoformName() {
 
         return isoformName;
     }
