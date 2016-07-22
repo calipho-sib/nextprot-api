@@ -70,7 +70,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         Assert.assertFalse(result.isSuccess());
         Assert.assertEquals("invalid feature format: SCN11A-z.Leu1158Pro", ((FeatureQueryFailure)result).getError().getMessage());
-        Assert.assertEquals(2, ((FeatureQueryFailure)result).getError().getCauses().size());
+        Assert.assertEquals(1, ((FeatureQueryFailure)result).getError().getCauses().size());
         Assert.assertEquals("z.Leu1158Pro: not a valid protein sequence variant", ((FeatureQueryFailure)result).getError().getCause(InvalidFeatureQueryFormatException.PARSE_ERROR_MESSAGE));
     }
 
@@ -84,7 +84,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         Assert.assertFalse(result.isSuccess());
         Assert.assertEquals("invalid feature format: SCN11A-p.Let1158Pro", ((FeatureQueryFailure)result).getError().getMessage());
-        Assert.assertEquals(2, ((FeatureQueryFailure)result).getError().getCauses().size());
+        Assert.assertEquals(1, ((FeatureQueryFailure)result).getError().getCauses().size());
         Assert.assertEquals("Let: invalid AminoAcidCode", ((FeatureQueryFailure)result).getError().getCause(InvalidFeatureQueryFormatException.PARSE_ERROR_MESSAGE));
     }
 

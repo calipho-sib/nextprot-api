@@ -13,7 +13,7 @@ public interface SequenceFeature {
     /** @return the gene name */
     String getGeneName();
 
-    /** @return isoform name */
+    /** @return isoform name or null if canonical */
     String getIsoformName();
 
     /** @return the variation as a string */

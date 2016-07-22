@@ -80,6 +80,7 @@ public class SequenceVariantTest {
                 mockIsoform("NX_Q9UI33-3", "Iso 3", false));
 
         Assert.assertEquals("NX_Q9UI33-2", variant.getIsoform(entry).getUniqueName());
+        Assert.assertEquals("Iso 2", variant.getIsoformName());
     }
 
     @Test
@@ -93,6 +94,7 @@ public class SequenceVariantTest {
                 mockIsoform("NX_Q9UI33-3", "Iso 3", false));
 
         Assert.assertEquals("NX_Q9UI33-1", variant.getIsoform(entry).getUniqueName());
+        Assert.assertNull(variant.getIsoformName());
     }
 
     @Test
@@ -105,6 +107,7 @@ public class SequenceVariantTest {
                 mockIsoform("NX_P06213-2", "Short", false));
 
         Assert.assertEquals("NX_P06213-2", variant.getIsoform(entry).getUniqueName());
+        Assert.assertEquals("Short", variant.getIsoformName());
     }
 
     @Test
@@ -117,6 +120,19 @@ public class SequenceVariantTest {
                 mockIsoform("NX_P06213-2", "Short", false));
 
         Assert.assertEquals("NX_P06213-1", variant.getIsoform(entry).getUniqueName());
+        Assert.assertNull(variant.getIsoformName());
+    }
+
+    @Test
+    public void testGetIsoformCaseInsensitive() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("ABL1-isoib-p.Ser439Gly");
+
+        Entry entry = mockEntry("NX_P00519",
+                mockIsoform("NX_P00519-1", "IA", true),
+                mockIsoform("NX_P00519-2", "IB", false));
+
+        Assert.assertEquals("NX_P00519-2", variant.getIsoform(entry).getUniqueName());
     }
 
     private Entry mockEntryWithGenes(String... geneNames) {

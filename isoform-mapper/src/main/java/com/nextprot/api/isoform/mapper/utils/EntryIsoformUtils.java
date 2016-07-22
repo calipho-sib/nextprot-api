@@ -33,9 +33,9 @@ public class EntryIsoformUtils {
         for (Isoform iso: entry.getIsoforms()) {
             if (accession.equals(iso.getUniqueName())) return iso;
             EntityName mainEname = iso.getMainEntityName();
-            if (mainEname!=null && accession.equals(mainEname.getName())) return iso;
+            if (mainEname!=null && accession.equalsIgnoreCase(mainEname.getName())) return iso;
             for (EntityName syn: iso.getSynonyms()) {
-                if (accession.equals(syn.getName())) return iso;
+                if (accession.equalsIgnoreCase(syn.getName())) return iso;
             }
         }
         return null;
