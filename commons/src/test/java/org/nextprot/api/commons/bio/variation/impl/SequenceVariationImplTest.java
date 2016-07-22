@@ -3,7 +3,6 @@ package org.nextprot.api.commons.bio.variation.impl;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.BuildException;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 
@@ -72,7 +71,7 @@ public class SequenceVariationImplTest {
         Assert.assertEquals(2, ((Frameshift.Change)pm.getSequenceChange().getValue()).getNewTerminationPosition());
     }
 
-    @Test (expected = BuildException.class)
+    @Test (expected = IllegalArgumentException.class)
     public void testBuildFrameshiftBadStopPos() throws Exception {
 
         new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.METHIONINE, 682).thenFrameshift(AminoAcidCode.ALANINE, 1).build();

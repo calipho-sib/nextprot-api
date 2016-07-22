@@ -14,12 +14,12 @@ import java.util.regex.Pattern;
  */
 public class InsertionHGVSFormat implements SequenceChangeFormat<Insertion> {
 
-    private static final Pattern INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)_([A-Z])([a-z]{2})?(\\d+)ins((?:[A-Z\\*]([a-z]{2})?)+)$");
+    private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)_([A-Z])([a-z]{2})?(\\d+)ins((?:[A-Z\\*]([a-z]{2})?)+)$");
 
     @Override
     public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariationFormat.ParsingMode mode) throws ParseException {
 
-        Matcher m =  INSERTION_PATTERN.matcher(source);
+        Matcher m =  PATTERN.matcher(source);
 
         if (m.matches()) {
 
@@ -35,12 +35,8 @@ public class InsertionHGVSFormat implements SequenceChangeFormat<Insertion> {
 
             AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfOneLetterCodeSequence(m.group(7));
 
-            try {
-                return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
-                        .thenInsert(insertedAAs).build();
-            } catch (BuildException e) {
-                throw new ParseException(e.getMessage(), 0);
-            }
+            return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
+                    .thenInsert(insertedAAs).build();
         }
 
         return null;
@@ -48,7 +44,7 @@ public class InsertionHGVSFormat implements SequenceChangeFormat<Insertion> {
 
     @Override
     public boolean matchesWithMode(String source, SequenceVariationFormat.ParsingMode mode) {
-        return source.matches(INSERTION_PATTERN.pattern());
+        return source.matches(PATTERN.pattern());
     }
 
     @Override

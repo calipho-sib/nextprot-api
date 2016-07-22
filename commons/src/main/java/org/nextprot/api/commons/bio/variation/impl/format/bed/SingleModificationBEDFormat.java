@@ -16,7 +16,6 @@ import java.util.regex.Pattern;
 public class SingleModificationBEDFormat implements SequenceChangeFormat<AminoAcidModification> {
 
     private static final Pattern PATTERN = Pattern.compile("^(\\w+)-([A-Z])([a-z]{2})?(\\d+)$");
-    //private static final Pattern MULTIPLE_PTM_PATTERN = Pattern.compile("^(\\w+)-([A-Z])([a-z]{2})?(\\d+)(-([A-Z])([a-z]{2})?(\\d+))*$");
 
     @Override
     public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder,
@@ -30,11 +29,7 @@ public class SingleModificationBEDFormat implements SequenceChangeFormat<AminoAc
             AminoAcidCode affectedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(2), m.group(3));
             int affectedAAPos = Integer.parseInt(m.group(4));
 
-            try {
-                return builder.selectAminoAcid(affectedAA, affectedAAPos).thenAddModification(aaChange).build();
-            } catch (BuildException e) {
-                throw new ParseException(e.getMessage(), 0);
-            }
+            return builder.selectAminoAcid(affectedAA, affectedAAPos).thenAddModification(aaChange).build();
         }
 
         return null;

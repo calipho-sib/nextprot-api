@@ -37,9 +37,7 @@ public class Frameshift implements SequenceChange<Frameshift.Change> {
 
         Change(AminoAcidCode changedAminoAcid, int newTerminationPosition) {
 
-            Preconditions.checkArgument(newTerminationPosition>1, "the description of a frame shift variant can not contain " +
-                    "“fsTer1”, such a variant is a nonsense variant (see Substitution). The shortest frame shift variant " +
-                    "possible contains 'fsTer2' (see http://varnomen.hgvs.org/recommendations/protein/variant/frameshift/)");
+            Preconditions.checkArgument(newTerminationPosition>1);
             this.changedAminoAcid = changedAminoAcid;
             this.newTerminationPosition = newTerminationPosition;
         }

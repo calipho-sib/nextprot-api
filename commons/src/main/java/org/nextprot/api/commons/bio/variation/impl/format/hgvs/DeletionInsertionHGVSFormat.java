@@ -10,13 +10,13 @@ import java.util.regex.Pattern;
 
 public class DeletionInsertionHGVSFormat implements SequenceChangeFormat<DeletionAndInsertion> {
 
-    private static final Pattern DELETION_INSERTION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?delins((?:[A-Z\\*]([a-z]{2})?)+)$");
-    private static final Pattern DELETION_INSERTION_PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?(?:delins|>)((?:[A-Z\\*]([a-z]{2})?)+)$");
+    private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?delins((?:[A-Z\\*]([a-z]{2})?)+)$");
+    private static final Pattern PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?(?:delins|>)((?:[A-Z\\*]([a-z]{2})?)+)$");
 
     @Override
     public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariationFormat.ParsingMode mode) throws ParseException {
 
-        Matcher m = (mode == SequenceVariationFormat.ParsingMode.STRICT) ? DELETION_INSERTION_PATTERN.matcher(source) : DELETION_INSERTION_PATTERN_PERMISSIVE.matcher(source);
+        Matcher m = (mode == SequenceVariationFormat.ParsingMode.STRICT) ? PATTERN.matcher(source) : PATTERN_PERMISSIVE.matcher(source);
 
         if (m.matches()) {
 
@@ -25,19 +25,14 @@ public class DeletionInsertionHGVSFormat implements SequenceChangeFormat<Deletio
 
             AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfOneLetterCodeSequence(m.group(7));
 
-            try {
-                if (m.group(4) == null) return builder.selectAminoAcid(affectedAAFirst, affectedAAPosFirst)
-                        .thenDeleteAndInsert(insertedAAs).build();
+            if (m.group(4) == null) return builder.selectAminoAcid(affectedAAFirst, affectedAAPosFirst)
+                    .thenDeleteAndInsert(insertedAAs).build();
 
-                AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
-                int affectedAAPosLast = Integer.parseInt(m.group(6));
+            AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
+            int affectedAAPosLast = Integer.parseInt(m.group(6));
 
-                return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
-                        .thenDeleteAndInsert(insertedAAs).build();
-            } catch (BuildException e) {
-
-                throw new ParseException(e.getMessage(), 0);
-            }
+            return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
+                    .thenDeleteAndInsert(insertedAAs).build();
         }
 
         return null;
@@ -45,7 +40,7 @@ public class DeletionInsertionHGVSFormat implements SequenceChangeFormat<Deletio
 
     @Override
     public boolean matchesWithMode(String source, SequenceVariationFormat.ParsingMode mode) {
-        return (mode == SequenceVariationFormat.ParsingMode.STRICT) ? source.matches(DELETION_INSERTION_PATTERN.pattern()) : source.matches(DELETION_INSERTION_PATTERN_PERMISSIVE.pattern());
+        return (mode == SequenceVariationFormat.ParsingMode.STRICT) ? source.matches(PATTERN.pattern()) : source.matches(PATTERN_PERMISSIVE.pattern());
     }
 
     @Override

@@ -11,13 +11,13 @@ import java.util.regex.Pattern;
 
 public class SubstitutionHGVSFormat implements SequenceChangeFormat<Substitution> {
 
-    private static final Pattern SUBSTITUTION_PATTERN = Pattern.compile("^p\\.([A-Z*])([a-z]{2})?(\\d+)([A-Z*])([a-z]{2})?$");
+    private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z*])([a-z]{2})?(\\d+)([A-Z*])([a-z]{2})?$");
 
     @Override
     public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder,
                                            SequenceVariationFormat.ParsingMode mode) throws ParseException {
 
-        Matcher m = SUBSTITUTION_PATTERN.matcher(source);
+        Matcher m = PATTERN.matcher(source);
 
         if (m.matches()) {
 
@@ -26,11 +26,7 @@ public class SubstitutionHGVSFormat implements SequenceChangeFormat<Substitution
 
             AminoAcidCode substitutedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
 
-            try {
-                return builder.selectAminoAcid(affectedAA, affectedAAPos).thenSubstituteWith(substitutedAA).build();
-            } catch (BuildException e) {
-                throw new ParseException(e.getMessage(), 0);
-            }
+            return builder.selectAminoAcid(affectedAA, affectedAAPos).thenSubstituteWith(substitutedAA).build();
         }
 
         return null;
@@ -38,7 +34,7 @@ public class SubstitutionHGVSFormat implements SequenceChangeFormat<Substitution
 
     @Override
     public boolean matchesWithMode(String source, SequenceVariationFormat.ParsingMode mode) {
-        return source.matches(SUBSTITUTION_PATTERN.pattern());
+        return source.matches(PATTERN.pattern());
     }
 
     @Override

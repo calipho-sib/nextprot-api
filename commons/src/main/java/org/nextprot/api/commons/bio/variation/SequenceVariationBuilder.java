@@ -12,7 +12,7 @@ import org.nextprot.api.commons.bio.variation.impl.AminoAcidModification;
 public interface SequenceVariationBuilder {
 
     /** build an instance of ProteinMutation */
-    SequenceVariation build() throws BuildException;
+    SequenceVariation build();
 
     /** collect data through the process */
     DataCollector getDataCollector();

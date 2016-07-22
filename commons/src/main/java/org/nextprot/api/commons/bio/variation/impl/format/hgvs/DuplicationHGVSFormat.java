@@ -16,33 +16,28 @@ import java.util.regex.Pattern;
  */
 public class DuplicationHGVSFormat implements SequenceChangeFormat<Duplication> {
 
-    private static final Pattern DUPLICATION_PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?dup$");
+    private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?dup$");
 
     @Override
     public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariationFormat.ParsingMode mode) throws ParseException {
 
-        Matcher m = DUPLICATION_PATTERN.matcher(source);
+        Matcher m = PATTERN.matcher(source);
 
         if (m.matches()) {
 
             AminoAcidCode affectedAAFirst = AminoAcidCode.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPosFirst = Integer.parseInt(m.group(3));
 
-            try {
-                if (m.group(4) == null) {
+            if (m.group(4) == null) {
 
-                    return builder.selectAminoAcid(affectedAAFirst, affectedAAPosFirst).thenDuplicate().build();
-                }
-
-                AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
-                int affectedAAPosLast = Integer.parseInt(m.group(6));
-
-                return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
-                        .thenDuplicate().build();
+                return builder.selectAminoAcid(affectedAAFirst, affectedAAPosFirst).thenDuplicate().build();
             }
-            catch (BuildException e) {
-                throw new ParseException(e.getMessage(), 0);
-            }
+
+            AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
+            int affectedAAPosLast = Integer.parseInt(m.group(6));
+
+            return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
+                    .thenDuplicate().build();
         }
 
         return null;
@@ -50,7 +45,7 @@ public class DuplicationHGVSFormat implements SequenceChangeFormat<Duplication> 
 
     @Override
     public boolean matchesWithMode(String source, SequenceVariationFormat.ParsingMode mode) {
-        return source.matches(DUPLICATION_PATTERN.pattern());
+        return source.matches(PATTERN.pattern());
     }
 
     @Override
