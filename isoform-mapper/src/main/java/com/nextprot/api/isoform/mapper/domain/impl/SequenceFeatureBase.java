@@ -136,6 +136,10 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         return geneName;
     }
 
+    @Override
+    public String getIsoformName() {
+        return isoformName;
+    }
 
     @Override
     public SequenceVariation getProteinVariation() {

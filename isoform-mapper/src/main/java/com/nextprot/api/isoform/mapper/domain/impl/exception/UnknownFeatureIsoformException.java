@@ -3,16 +3,18 @@ package com.nextprot.api.isoform.mapper.domain.impl.exception;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 
+import java.util.stream.Collectors;
+
 public class UnknownFeatureIsoformException extends FeatureQueryException {
 
-    private static final String INVALID_FEATURE = "invalidFeature";
+    private static final String UNKNOWN_ISOFORM = "unknownIsoform";
 
-    public UnknownFeatureIsoformException(FeatureQuery query) {
+    public UnknownFeatureIsoformException(FeatureQuery query, String unknownIsoform) {
 
         super(query);
 
-        getError().addCause(INVALID_FEATURE, query.getFeature());
-        getError().setMessage("unknown isoform: isoform defined in feature " + query.getFeature()
-                + " not found in entry "+ query.getAccession());
+        getError().addCause(UNKNOWN_ISOFORM, unknownIsoform);
+        getError().setMessage("unknown isoform: cannot find isoform "+unknownIsoform+" in entry "+ query.getAccession()
+                + " (found isoforms: "+ query.getEntry().getIsoforms().stream().map(iso -> iso.getMainEntityName().getName()).collect(Collectors.toList())+")");
     }
 }

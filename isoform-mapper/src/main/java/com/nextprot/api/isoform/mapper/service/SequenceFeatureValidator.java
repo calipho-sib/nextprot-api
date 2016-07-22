@@ -58,7 +58,7 @@ public abstract class SequenceFeatureValidator {
 
         if (!sequenceFeature.isValidIsoform(query.getEntry())) {
 
-            throw new UnknownFeatureIsoformException(query);
+            throw new UnknownFeatureIsoformException(query, sequenceFeature.getIsoformName());
         }
     }
 

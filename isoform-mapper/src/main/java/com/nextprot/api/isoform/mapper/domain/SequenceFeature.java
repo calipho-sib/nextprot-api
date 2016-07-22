@@ -13,6 +13,9 @@ public interface SequenceFeature {
     /** @return the gene name */
     String getGeneName();
 
+    /** @return isoform name */
+    String getIsoformName();
+
     /** @return the variation as a string */
     String getFormattedVariation();
 

@@ -22,21 +22,17 @@ public class SequenceVariant extends SequenceFeatureBase {
         return new SequenceVariationHGVSFormat();
     }
 
+    /**
+     *
+     *   isoshort  -> Short
+     *   isolong   -> Long
+     *   iso5      -> Iso 5
+     *   isodelta6 -> Delta 6
+     *
+     *   @return null if canonical
+     */
     @Override
     protected String parseIsoformName(String feature) throws ParseException {
-
-        return convertToNextprotIsoformName(feature);
-    }
-
-    /*
-        isoshort  -> Short
-        isolong   -> Long
-        iso5      -> Iso 5
-        isodelta6 -> Delta 6
-
-        or empty if canonical
-     */
-    private String convertToNextprotIsoformName(String feature) throws ParseException {
 
         String featureIsoname = extractIsonameFromFeature(feature);
 
