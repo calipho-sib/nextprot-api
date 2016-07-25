@@ -19,7 +19,7 @@ import com.nextprot.api.annotation.builder.statement.service.RawStatementService
 @Controller
 @Api(name = "EntryModified", description = "For example: may include an entry with one or several variants.")
 public class EntryModifiedController {
-	org.nextprot.commons.statements.RawStatement s;
+
 	@Autowired	private EntryBuilderService entryBuilderService;
 	@Autowired	private RawStatementService rawStatementService;
 	

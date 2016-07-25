@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
-import org.nextprot.commons.statements.RawStatement;
+import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nextprot.api.annotation.builder.AnnotationBuilder;
-import com.nextprot.api.annotation.builder.statement.dao.RawStatementDao;
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import com.nextprot.api.annotation.builder.statement.service.RawStatementService;
 
 @Service
@@ -27,29 +27,28 @@ public class RawStatementServiceImpl implements RawStatementService {
 	private static final Logger LOGGER = Logger.getLogger(RawStatementServiceImpl.class);
 
 	@Autowired
-	public RawStatementDao rawStatementDao;
+	public StatementDao statementDao;
 
 	@Override
 	public List<IsoformAnnotation> getModifiedIsoformAnnotationsByIsoform(String nextprotAccession) {
 
 		List<IsoformAnnotation> annotations = new ArrayList<>();
 
-		List<RawStatement> phenotypeStatements = rawStatementDao.findPhenotypeRawStatements(nextprotAccession);
+		List<Statement> proteoformStatements = statementDao.findPhenotypeStatements(nextprotAccession);
 
-		List<String> subjectAnnotIds =  phenotypeStatements.stream().map(s -> {
+		List<String> subjectAnnotIds =  proteoformStatements.stream().map(s -> {
 			
-			String annotIds = s.getValue(StatementField.SUBJECT_ANNOT_ISO_IDS);
+			String annotIds = s.getValue(StatementField.SUBJECT_ANNOTATION_IDS);
 			
 			return Arrays.asList(annotIds.split(","));
 			
 			
 		}).flatMap(l -> l.stream()).collect(Collectors.toList());
 		
-		List<RawStatement> subjects = rawStatementDao.findRawStatementsByAnnotIsoIds(subjectAnnotIds);
-		Map<String, List<RawStatement>> subjectsByAnnotationId = subjects.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOT_ISO_ID)));
+		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(subjectAnnotIds);
+		Map<String, List<Statement>> subjectsByAnnotationId = subjects.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOTATION_ID)));
 
-		
-		Map<String, List<RawStatement>> impactStatementsBySubject = phenotypeStatements.stream().collect(Collectors.groupingBy(r -> r.getValue(StatementField.SUBJECT_ANNOT_ISO_IDS)));
+		Map<String, List<Statement>> impactStatementsBySubject = proteoformStatements.stream().collect(Collectors.groupingBy(r -> r.getValue(StatementField.SUBJECT_ANNOTATION_IDS)));
 
 		impactStatementsBySubject.keySet().forEach(subjectComponentsIdentifiers -> {
 			
@@ -63,16 +62,17 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 			for(String subjectComponentIdentifier : subjectComponentsIdentifiersArray){
 
-				List<RawStatement> subjectVariant = subjectsByAnnotationId.get(subjectComponentIdentifier);
-				if(subjectVariant.isEmpty()){
-					throw new NextProtException("Not found any variant for variant identifier:" + subjectComponentIdentifier);
+				List<Statement> subjectVariant = subjectsByAnnotationId.get(subjectComponentIdentifier);
+				
+				if((subjectVariant == null) || (subjectVariant.isEmpty())){
+					throw new NextProtException("Not found any subject  identifier:" + subjectComponentIdentifier);
 				}
 				IsoformAnnotation variant = AnnotationBuilder.buildAnnotation(nextprotAccession, subjectVariant);
 				subjectVariants.add(variant);
 			}
 
 			// Impact annotations
-			List<RawStatement> impactStatements = impactStatementsBySubject.get(subjectComponentsIdentifiers);
+			List<Statement> impactStatements = impactStatementsBySubject.get(subjectComponentsIdentifiers);
 			List<IsoformAnnotation> impactAnnotations = AnnotationBuilder.buildAnnotationList(nextprotAccession, impactStatements);
 			impactAnnotations.stream().forEach(ia -> {
 				
@@ -93,7 +93,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 	@Override
 	public List<IsoformAnnotation> getNormalAnnotations(String entryName) {
-		List<RawStatement> normalStatements = rawStatementDao.findNormalRawStatements(entryName);
+		List<Statement> normalStatements = statementDao.findNormalStatements(entryName);
 		List<IsoformAnnotation> normalAnnotations = AnnotationBuilder.buildAnnotationList(entryName + "-1", normalStatements);
 		normalAnnotations.stream().forEach(a -> {
 			a.setSubjectName(entryName + "-1");

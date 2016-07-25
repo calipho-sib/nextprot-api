@@ -16,15 +16,15 @@ public class SequenceVariantUtils {
 	 * @param name
 	 * @return
 	 */
-	public static Integer getIsoformNumber(String featureName) {
+	public static String getIsoformName(String featureName) {
 		
 		if(isIsoSpecific(featureName)){
 
-			Pattern p = Pattern.compile("\\w+-iso(\\d)-p.+");
+			Pattern p = Pattern.compile("\\w+-iso(\\w+)-p.+");
 			Matcher m = p.matcher(featureName);
 
 			if (m.find()) {
-				return Integer.valueOf(m.group(1));
+				return String.valueOf(m.group(1));
 			}
 
 		}

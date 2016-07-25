@@ -8,14 +8,22 @@ public class SequenceVariantUtilsTest {
 
 	@Test
 	public void testGetIsoformNumber() {
-		Integer value = SequenceVariantUtils.getIsoformNumber("WT1-iso4-p.Val380_Gly407del");
-		Assert.assertEquals(Integer.valueOf(4), value);
+		String value = SequenceVariantUtils.getIsoformName("WT1-iso4-p.Val380_Gly407del");
+		Assert.assertEquals("4", value);
+	}
+	
+	
+
+	@Test
+	public void testGetIsoformName() {
+		String value = SequenceVariantUtils.getIsoformName("WT1-isoshort-p.Val380_Gly407del");
+		Assert.assertEquals("short", value);
 	}
 
 	
 	@Test
 	public void testGetIsoformNumberShouldReturnOptional() {
-		Integer value = SequenceVariantUtils.getIsoformNumber("WT1-p.Val432Serfs*87");
+		String value = SequenceVariantUtils.getIsoformName("WT1-p.Val432Serfs*87");
 		Assert.assertNull(value);
 	}
 
