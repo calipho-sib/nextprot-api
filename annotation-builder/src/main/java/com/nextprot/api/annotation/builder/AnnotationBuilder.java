@@ -18,7 +18,7 @@ import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 
-public class AnnotationBuilder {
+abstract class AnnotationBuilder {
 
 	private static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
 

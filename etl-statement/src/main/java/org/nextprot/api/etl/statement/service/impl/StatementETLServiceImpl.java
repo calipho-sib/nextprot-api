@@ -46,9 +46,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Override
 	public String etlStatements(String source) {
 
-		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSource(NextProtSource.BioEditor);
+		List<Statement> sourceStatements = statementRemoteService.getStatementsForSource(NextProtSource.BioEditor);
 		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "msh2");
-		List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
+		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
 
 		//System.err.println("Got response from source");
 		Map<String, Statement> sourceStatementsById = sourceStatements.stream().collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
