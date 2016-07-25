@@ -121,7 +121,7 @@ public class AnnotationBuilder {
 		AnnotationVariant annotationVariant = new AnnotationVariant(original, variant);
 		annotation.setVariant(annotationVariant);
 
-		String locBegin = variantStatement.getValue(StatementField.ANNOT_LOC_BEGIN_CANONICAL_REF);
+		String locBegin = variantStatement.getValue(StatementField.LOCATION_BEGIN);
 		try {
 			Integer positionBeginCanononical = Integer.valueOf(locBegin);
 			annotation.setLocationCanonicalBegin(positionBeginCanononical);
@@ -129,7 +129,7 @@ public class AnnotationBuilder {
 			LOGGER.warn("Did not convert begin position " + locBegin);
 		}
 
-		String locEnd = variantStatement.getValue(StatementField.ANNOT_LOC_END_CANONICAL_REF);
+		String locEnd = variantStatement.getValue(StatementField.LOCATION_END);
 		try {
 			Integer positionEndCanononical = Integer.valueOf(locEnd);
 			annotation.setLocationCanonicalEnd(positionEndCanononical);

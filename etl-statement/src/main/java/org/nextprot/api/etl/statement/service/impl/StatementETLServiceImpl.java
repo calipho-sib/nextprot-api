@@ -1,25 +1,31 @@
 package org.nextprot.api.etl.statement.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.etl.statement.service.StatementETLService;
 import org.nextprot.api.etl.statement.service.StatementRemoteService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.constants.AnnotationType;
 import org.nextprot.commons.statements.constants.NextProtSource;
 import org.nextprot.commons.statements.service.StatementLoaderService;
 import org.nextprot.commons.statements.service.impl.OracleStatementLoaderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
@@ -49,6 +55,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 
 		Set<Statement> statementsMappedToIsoformToLoad = new HashSet<Statement>();
+		Set<Statement> statementsMappedToEntryToLoad = new HashSet<Statement>();
 
 		for (Statement originalStatement : sourceStatements) {
 
@@ -69,7 +76,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 					}else throw new NextProtException("Something wrong occured when checking for iso specificity");
 				}
 				
-					statementsMappedToIsoformToLoad.addAll(mapComplexStatementsToIsoforms(originalStatement, sourceStatementsById, subjectStatements, entryAccession, !isIsoSpecific));
+					statementsMappedToIsoformToLoad.addAll(mapComplexStatements(AnnotationType.ISOFORM, originalStatement, sourceStatementsById, subjectStatements, entryAccession, !isIsoSpecific));
+					statementsMappedToEntryToLoad.addAll(mapComplexStatements(AnnotationType.ENTRY, originalStatement, sourceStatementsById, subjectStatements, entryAccession, !isIsoSpecific));
 					
 				}
 
@@ -77,19 +85,28 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		System.err.println("Deleting...");
 		statementLoadService.deleteStatementsForSource(NextProtSource.BioEditor);
-		System.err.println("Loading" + statementsMappedToIsoformToLoad.size());
+
+		System.err.println("Loading raw statements: " + sourceStatements.size());
+		statementLoadService.loadRawStatementsForSource(new HashSet<>(sourceStatements), NextProtSource.BioEditor);
+
+		System.err.println("Loading iso statements: " + statementsMappedToIsoformToLoad.size());
 		statementLoadService.loadStatementsMappedToIsoSpecAnnotationsForSource(statementsMappedToIsoformToLoad, NextProtSource.BioEditor);
+
+		System.err.println("Loading entry statements: " + statementsMappedToEntryToLoad.size());
+		statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(statementsMappedToEntryToLoad, NextProtSource.BioEditor);
+
 		System.err.println("Finished to load" + statementsMappedToIsoformToLoad.size());
 
+		
 		return "yo";
 
 	}
 	
-	private Set<Statement> mapComplexStatementsToIsoforms(Statement originalStatement, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean propagate){
+	private Set<Statement> mapComplexStatements(AnnotationType type, Statement originalStatement, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean propagate){
 		
 		Set<Statement> statementsToLoad = new HashSet<Statement>();
 
-		Map<String, List<Statement>> variantsOnIsoform = getPropagatedStatements(subjectStatements, nextprotAcession, propagate);
+		Map<String, List<Statement>> variantsOnIsoform = getPropagatedStatements(subjectStatements, nextprotAcession, propagate, type);
 		
 		variantsOnIsoform.keySet().stream().forEach(isoform -> {
 				
@@ -129,40 +146,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 	}
 
 	
-	
-	private Set<Statement> mapComplexStatementsToEntry(Statement originalStatement, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean propagate){
-		
-		Set<Statement> statementsToLoad = new HashSet<Statement>();
-
-		Map<String, List<Statement>> variantsOnIsoform = getPropagatedStatements(subjectStatements, nextprotAcession, propagate);
-
-		variantsOnIsoform.keySet().stream().forEach(isoform -> {
-				
-				List<Statement> subjects = variantsOnIsoform.get(isoform);
-
-				Statement objectStatement = sourceStatementsById.get(originalStatement.getObjectStatementId());
-
-				Statement objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).build();
-				Statement phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).addSubjects(subjects).addObject(objectIsoStatement).build();
-
-
-				//Load subjects
-				subjects.forEach(s -> statementsToLoad.add(s));
-				
-				//Load phenotypes
-				statementsToLoad.add(phenotypeIsoStatement);
-				
-				//Load objects
-				statementsToLoad.add(objectIsoStatement);
-
-
-		});
-		
-		return statementsToLoad;
-
-		
-	}
-
 	
 	/**
 	 * Returns an exception if there are mixes between subjects
@@ -220,7 +203,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 		return sourceStatementsWithAModifiedSubject.stream().filter(sm -> sm.getSubjectStatementIds().contains(originalStatement.getStatementId())).collect(Collectors.toSet());
 	}
 
-	private Map<String, List<Statement>> getPropagatedStatements(Set<Statement> multipleSubjects, String nextprotAccession, boolean propagate) {
+	private Map<String, List<Statement>> getPropagatedStatements(Set<Statement> multipleSubjects, String nextprotAccession, boolean propagate, AnnotationType type) {
 
 		List<Statement> result = new ArrayList<>();
 
@@ -234,7 +217,12 @@ public class StatementETLServiceImpl implements StatementETLService {
 			}
 
 			if (featureQueryResult.isSuccess()) {
-				result.addAll(toStatementList(subject, (FeatureQuerySuccess) featureQueryResult));
+				
+				if(type.equals(AnnotationType.ISOFORM)){
+					result.addAll(mapStatementsToEachIsoform(subject, (FeatureQuerySuccess) featureQueryResult));
+				}else {
+					result.add(mapStatementToEntry(subject, (FeatureQuerySuccess) featureQueryResult));
+				}
 
 			} else {
 				FeatureQueryFailure failure = (FeatureQueryFailure) featureQueryResult;
@@ -252,9 +240,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	}
 
-	private List<Statement> toStatementList(Statement statement, FeatureQuerySuccess result) {
+	private List<Statement> mapStatementsToEachIsoform(Statement statement, FeatureQuerySuccess result) {
 
-		List<Statement> StatementList = new ArrayList<>();
+		List<Statement> statementList = new ArrayList<>();
 
 		for (FeatureQuerySuccess.IsoformFeatureResult isoformFeatureResult : result.getData().values()) {
 
@@ -262,20 +250,104 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 				Statement rs = StatementBuilder.createNew().addMap(statement).addField(StatementField.ISOFORM_ACCESSION, isoformFeatureResult.getIsoformAccession())
 						.addField(StatementField.RAW_STATEMENT_ID, statement.getStatementId()) // Keep  a reference to the original statement
-						.addField(StatementField.ANNOT_LOC_BEGIN_CANONICAL_REF, String.valueOf(isoformFeatureResult.getBeginIsoformPosition()))
-						.addField(StatementField.ANNOT_LOC_END_CANONICAL_REF, String.valueOf(isoformFeatureResult.getEndIsoformPosition()))
-						.addField(StatementField.ANNOT_LOC_BEGIN_MASTER_REF, String.valueOf(isoformFeatureResult.getBeginMasterPosition()))
-						.addField(StatementField.ANNOT_LOC_END_MASTER_REF, String.valueOf(isoformFeatureResult.getEndMasterPosition()))
+						.addField(StatementField.LOCATION_BEGIN, String.valueOf(isoformFeatureResult.getBeginIsoformPosition()))
+						.addField(StatementField.LOCATION_END, String.valueOf(isoformFeatureResult.getEndIsoformPosition()))
+						.addField(StatementField.LOCATION_BEGIN_MASTER, String.valueOf(isoformFeatureResult.getBeginMasterPosition()))
+						.addField(StatementField.LOCATION_END_MASTER, String.valueOf(isoformFeatureResult.getEndMasterPosition()))
 						.addField(StatementField.ISOFORM_CANONICAL, String.valueOf(isoformFeatureResult.isCanonical()))
 						.addField(StatementField.ANNOTATION_NAME, String.valueOf(isoformFeatureResult.getIsoSpecificFeature())).build();
 
-				StatementList.add(rs);
+				statementList.add(rs);
 
 			}
 
 		}
 
-		return StatementList;
+		return statementList;
 	}
+	
+	
+	private Statement mapStatementToEntry(Statement statement, FeatureQuerySuccess result) {
+
+		Map<String, Pair<Integer, Integer>> isoformAndPositions = new TreeMap<>();
+
+		String beginPositionOfCanonicalOrIsoSpec = null;
+		String endPositionOfCanonicalOrIsoSpec = null;
+		
+		String masterBeginPosition = null;
+		String masterEndPosition = null;
+		
+		String isoCanonical = null;
+		
+		for (FeatureQuerySuccess.IsoformFeatureResult isoformFeatureResult : result.getData().values()) {
+			if (isoformFeatureResult.isMapped()) {
+				isoformAndPositions.put(isoformFeatureResult.getIsoformAccession(), new Pair(isoformFeatureResult.getBeginIsoformPosition(), isoformFeatureResult.getEndIsoformPosition()));
+				
+				//Will be set in case that we don't want to propagate to canonical
+				if(beginPositionOfCanonicalOrIsoSpec == null){
+					beginPositionOfCanonicalOrIsoSpec = String.valueOf(isoformFeatureResult.getBeginIsoformPosition());
+				}
+				if(endPositionOfCanonicalOrIsoSpec == null){
+					endPositionOfCanonicalOrIsoSpec = String.valueOf(isoformFeatureResult.getEndIsoformPosition());
+				}
+				
+				//If possible use canonical
+				if (isoformFeatureResult.isCanonical()) {
+					if(isoCanonical != null){
+						throw new NextProtException("Canonical position set already" );
+					}
+					isoCanonical = isoformFeatureResult.getIsoformAccession();
+					beginPositionOfCanonicalOrIsoSpec = String.valueOf(isoformFeatureResult.getBeginIsoformPosition());
+					endPositionOfCanonicalOrIsoSpec = String.valueOf(isoformFeatureResult.getEndIsoformPosition());
+				}
+
+				if(masterBeginPosition == null){
+					masterBeginPosition = String.valueOf(isoformFeatureResult.getBeginMasterPosition());
+				}
+				
+				if(masterEndPosition == null){
+					masterEndPosition = String.valueOf(isoformFeatureResult.getEndMasterPosition());
+				}
+				
+				if(masterBeginPosition != null){
+					if(!masterBeginPosition.equals(String.valueOf(isoformFeatureResult.getBeginMasterPosition()))){
+						throw new NextProtException("Begin master position " + masterBeginPosition + " does not match " + String.valueOf(isoformFeatureResult.getBeginMasterPosition() + " for different isoforms (" + result.getData().values().size() + ") for statement " + statement.getStatementId()));
+					}
+				}
+				
+				if(masterEndPosition != null){
+					if(!masterEndPosition.equals(String.valueOf(isoformFeatureResult.getEndMasterPosition()))){
+						throw new NextProtException("End master position does not match for different isoforms"  + statement.getStatementId());
+					}
+				}
+
+
+
+			}
+
+		}
+		
+		String targetIsoforms = "";
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			targetIsoforms = mapper.writeValueAsString(isoformAndPositions);
+		} catch (JsonProcessingException e) {
+			throw new NextProtException("Failed to convert" + e.getLocalizedMessage());
+		}
+		
+		Statement rs = StatementBuilder.createNew().addMap(statement)
+				.addField(StatementField.RAW_STATEMENT_ID, statement.getStatementId()) // Keep  a reference to the original statement
+				.addField(StatementField.LOCATION_BEGIN, beginPositionOfCanonicalOrIsoSpec)
+				.addField(StatementField.LOCATION_END, endPositionOfCanonicalOrIsoSpec)
+				.addField(StatementField.LOCATION_BEGIN_MASTER, masterBeginPosition)
+				.addField(StatementField.LOCATION_END_MASTER, masterEndPosition)
+				.addField(StatementField.ISOFORM_CANONICAL, isoCanonical)
+				.addField(StatementField.TARGET_ISOFORMS, targetIsoforms)
+				.build();
+
+		return rs;
+	}
+
 
 }
