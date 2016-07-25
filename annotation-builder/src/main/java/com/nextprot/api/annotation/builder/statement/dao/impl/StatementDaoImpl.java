@@ -26,11 +26,13 @@ public class StatementDaoImpl implements StatementDao {
 	
 	private String getSQL(String sqlQueryName){
 		String sql = sqlDictionary.getSQLQuery(sqlQueryName);
-		return sql.replace("mapped_statements", "iso_mapped_statements");
+		sql = sql.replace("mapped_statements", "iso_mapped_statements");
+		sql = sql.replace("entry_accession", "isoform_accession");
+		return sql;
 	}
 	
 	@Override
-	public List<Statement> findPhenotypeStatements(String nextprotAccession) {
+	public List<Statement> findProteoformStatements(String nextprotAccession) {
 
 		String sql = getSQL("modified-statements-by-entry-accession");
 		

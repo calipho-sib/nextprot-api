@@ -8,7 +8,7 @@ public interface StatementDao {
 
 	List<Statement> findNormalStatements(String entryName);
 
-	List<Statement> findPhenotypeStatements(String entryName);
+	List<Statement> findProteoformStatements(String entryName);
 
 	List<Statement> findStatementsByAnnotIsoIds(List<String> ids);
 

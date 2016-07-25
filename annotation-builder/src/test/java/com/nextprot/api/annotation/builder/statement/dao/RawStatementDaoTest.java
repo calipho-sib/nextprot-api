@@ -23,7 +23,7 @@ public class RawStatementDaoTest extends AnnotationBuilderBaseTest {
 
 	@Test
 	public void findAllPhenotypesStatements() {
-		List rows = rawStatementDao.findPhenotypeStatements("NX_Q9BX63");
+		List rows = rawStatementDao.findProteoformStatements("NX_Q9BX63");
 		System.out.println(rows.size());
 	}
 	

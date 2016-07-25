@@ -266,7 +266,7 @@ public class Entry implements KeyValueRepresentation {
 
 	public Map<String, Map<String, List<IsoformAnnotation>>> getModifiedIsoformAnnotations() {
 
-		return isoformAnnotations.stream().filter(ia -> ia.getAPICategory().equals(AnnotationCategory.PHENOTYPE)).
+		return isoformAnnotations.stream().filter(ia -> (ia.getSubjectComponents() != null && !ia.getSubjectComponents().isEmpty())).
 				collect( 
 						Collectors.groupingBy(
 						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
@@ -276,8 +276,9 @@ public class Entry implements KeyValueRepresentation {
 	
 	public Map<String, Map<String, List<IsoformAnnotation>>> getAnnotationsByIsoformAndCategory() {
 
-		return isoformAnnotations.stream().filter(ia -> !ia.getAPICategory().equals(AnnotationCategory.PHENOTYPE)).collect(
-				Collectors.groupingBy(
+		return isoformAnnotations.stream()
+				.filter(ia -> (ia.getSubjectComponents() == null || ia.getSubjectComponents().isEmpty()))
+				.collect(Collectors.groupingBy(
 						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
 								IsoformAnnotation::getKebabCategoryName,  TreeMap::new, Collectors.toList())));
 	}

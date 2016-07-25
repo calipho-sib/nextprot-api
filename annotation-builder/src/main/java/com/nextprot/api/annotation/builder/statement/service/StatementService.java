@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 
-public interface RawStatementService {
+public interface StatementService {
 	
 	/**
 	 * 

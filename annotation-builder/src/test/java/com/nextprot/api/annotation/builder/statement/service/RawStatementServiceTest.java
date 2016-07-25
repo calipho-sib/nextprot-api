@@ -15,7 +15,7 @@ import com.nextprot.api.annotation.builder.AnnotationBuilderBaseTest;
 public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 
 	@Autowired
-	private RawStatementService rawStatementService;
+	private StatementService rawStatementService;
 	
 
 	@Test
@@ -29,6 +29,15 @@ public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 		List isoformAnnotations = rawStatementService.getNormalAnnotations("NX_Q9BX63");
 		System.out.println(isoformAnnotations.size());
 	}
+	
+	
+	@Test
+	public void findModifiedAnnotationsByIsoform() {
+		List isoformAnnotations = rawStatementService.getModifiedIsoformAnnotationsByIsoform("NX_Q15858-3");
+		System.out.println(isoformAnnotations.size());
+	}
+	
+	
 	
 	
 	@Test

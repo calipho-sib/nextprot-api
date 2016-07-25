@@ -19,12 +19,12 @@ import org.springframework.stereotype.Service;
 
 import com.nextprot.api.annotation.builder.AnnotationBuilder;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
-import com.nextprot.api.annotation.builder.statement.service.RawStatementService;
+import com.nextprot.api.annotation.builder.statement.service.StatementService;
 
 @Service
-public class RawStatementServiceImpl implements RawStatementService {
+public class StatementServiceImpl implements StatementService {
 
-	private static final Logger LOGGER = Logger.getLogger(RawStatementServiceImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(StatementServiceImpl.class);
 
 	@Autowired
 	public StatementDao statementDao;
@@ -34,7 +34,7 @@ public class RawStatementServiceImpl implements RawStatementService {
 
 		List<IsoformAnnotation> annotations = new ArrayList<>();
 
-		List<Statement> proteoformStatements = statementDao.findPhenotypeStatements(nextprotAccession);
+		List<Statement> proteoformStatements = statementDao.findProteoformStatements(nextprotAccession);
 
 		List<String> subjectAnnotIds =  proteoformStatements.stream().map(s -> {
 			

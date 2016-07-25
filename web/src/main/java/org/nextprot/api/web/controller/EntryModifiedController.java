@@ -13,7 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.nextprot.api.annotation.builder.statement.service.RawStatementService;
+import com.nextprot.api.annotation.builder.statement.service.StatementService;
 
 @Lazy
 @Controller
@@ -21,7 +21,7 @@ import com.nextprot.api.annotation.builder.statement.service.RawStatementService
 public class EntryModifiedController {
 
 	@Autowired	private EntryBuilderService entryBuilderService;
-	@Autowired	private RawStatementService rawStatementService;
+	@Autowired	private StatementService rawStatementService;
 	
 	@RequestMapping("/entry/{entryname}/modified-entry-annotation")
 	public String getSubPart(@PathVariable("entryname") String entryName, 
