@@ -12,6 +12,7 @@ import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nextprot.api.annotation.builder.EntryAnnotationBuilder;
 import com.nextprot.api.annotation.builder.IsoformAnnotationBuilder;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import com.nextprot.api.annotation.builder.statement.service.StatementService;
@@ -62,8 +63,8 @@ public class StatementServiceImpl implements StatementService {
 
 	@Override
 	public List<Annotation> getNormalEntryAnnotations(String entryAccession) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Statement> normalStatements = statementDao.findNormalStatements(entryAccession);
+		return EntryAnnotationBuilder.buildAnnotationList(entryAccession, normalStatements);
 	}
 
 }
