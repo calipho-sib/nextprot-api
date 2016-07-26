@@ -8,6 +8,8 @@ import org.apache.solr.common.SolrInputDocument;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
@@ -18,6 +20,15 @@ abstract class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 
 	private Map<Fields, FieldBuilder> fieldsBuilderMap = null;
 	private TerminologyService terminologyservice;
+	private EntryBuilderService entryBuilderService;
+	public EntryBuilderService getEntryBuilderService() {
+		return entryBuilderService;
+	}
+
+	public void setEntryBuilderService(EntryBuilderService entryBuilderService) {
+		this.entryBuilderService = entryBuilderService;
+	}
+
 	private DbXrefService dbxrefservice;
 	private boolean isGold;
 	
@@ -40,6 +51,7 @@ abstract class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 			FieldBuilder fb = fieldsBuilderMap.get(f);
 			fb.setGold(isGold);
 			fb.setTerminologyService(terminologyservice);
+			fb.setEntryBuilderService(entryBuilderService);
 			fb.initializeBuilder(entry);
 			Object o = fb.getFieldValue(f, f.getClazz());
 			doc.addField(f.getName(), o);

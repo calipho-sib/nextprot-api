@@ -1,4 +1,10 @@
-# Nextprot API
+# neXtProt - The knowledge resource on human proteins
+
+This is a code repository for the SIB - Swiss Institute of Bioinformatics CALIPHO group neXtProt project
+
+See: http://www.nextprot.org/
+
+# neXtProt API
 
 This project is licensed under the terms of the GNU General Public License, version 2 or any later version (see file LICENSE.txt)
 

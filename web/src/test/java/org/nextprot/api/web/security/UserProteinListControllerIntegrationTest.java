@@ -386,7 +386,7 @@ public class UserProteinListControllerIntegrationTest extends MVCBaseSecurityTes
 	}
 
 	@Test
-	public void othersIsUnauthorizedToDeleteLeonardsProteinList() throws Exception {
+	public void othersAreUnauthorizedToDeleteLeonardsProteinList() throws Exception {
 
 		// void deleteUserProteinList()
 		this.mockMvc.perform(delete("/user/me/lists/157")

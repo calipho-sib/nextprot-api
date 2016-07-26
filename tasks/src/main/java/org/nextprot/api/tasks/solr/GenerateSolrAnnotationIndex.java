@@ -32,6 +32,7 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		EntrySolrIndexer indexer = new EntrySolrIndexer(solrServer);
 		// Get an access to some needed services
 		indexer.setTerminologyservice(getBean(TerminologyService.class));
+		indexer.setEntryBuilderService(getBean(EntryBuilderService.class));
 		indexer.setDbxrefservice(getBean(DbXrefService.class));
 		
 		// Remove previous indexes
@@ -44,28 +45,21 @@ public class GenerateSolrAnnotationIndex extends GenerateSolrIndex {
 		logger.info("getting all entries from API");
 		long start = System.currentTimeMillis();
 		allentryids = MasterEntryService.findUniqueNames();
-		System.err.println("indexing " + allentryids.size() +  " entries...");
 		logger.info("indexing " + allentryids.size() +  " entries...");
+
 		for (String id : allentryids) {
-			System.err.println("id: " + id);
-			//Entry currentry = entryBuilderService.buildWithEverything("NX_O60729");
-			//Entry currentry = entryBuilderService.buildWithEverything("NX_Q3LXA3");
+			ecnt++;
 			Entry currentry = entryBuilderService.buildWithEverything(id);
 			indexer.add(currentry);
-			ecnt++;
-			if((ecnt % 100) == 0) System.err.println(ecnt + "...");
-			if(ecnt >= 3) break;
-			//if(ecnt >= 1000) break;
+			if((ecnt % 1000) == 0)
+				logger.info(ecnt +  " entries indexed...");
 		}
 		
 		indexer.addRemaing();
 		
 		logger.info("comitting");
 		indexer.commit();
-		logger.info(ecnt + " entries indexed..." + (System.currentTimeMillis()-start)/1000 + " seconds...");
-		System.err.println(ecnt + " entries indexed." );
-		System.err.println("All this in " + (System.currentTimeMillis()-start)/1000 + " seconds...");
-		
+		logger.info(ecnt + " entries indexed in " + (System.currentTimeMillis()-start)/1000 + " seconds...END");
 	}
 	
 }

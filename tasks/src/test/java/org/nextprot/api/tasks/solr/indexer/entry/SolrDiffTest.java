@@ -24,7 +24,7 @@ public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements I
 	@Autowired	private MasterIdentifierService masterIdentifierService = null;
 
 	HttpSolrServer solrEntries = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npentries1");
-	//HttpSolrServer solrEntries = new HttpSolrServer("http://uat-web2.isb-sib.ch:8983/solr/npentries1");
+	HttpSolrServer solrEntriesGold = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npentries1gold");
 	HttpSolrServer solrPublications = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/nppublications1");
 	HttpSolrServer solrCvs = new HttpSolrServer("http://kant.isb-sib.ch:8983/solr/npcvs1");
 
@@ -53,6 +53,10 @@ public abstract class SolrDiffTest extends SolrBuildIntegrationTest implements I
 		return result.get(0); 
 	}
 	
+	protected Object getValueForFieldInCurrentGoldSolrImplementation(String entryName, Fields field) {
+		return getValueForFieldInCurrentSolrImplementation(solrEntriesGold, entryName, field.getName());
+	}
+
 	protected Object getValueForFieldInCurrentSolrImplementation(String entryName, Fields field) {
 		return getValueForFieldInCurrentSolrImplementation(solrEntries, entryName, field.getName());
 	}

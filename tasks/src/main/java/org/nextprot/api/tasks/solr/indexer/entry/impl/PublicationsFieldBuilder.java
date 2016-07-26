@@ -51,7 +51,6 @@ public class PublicationsFieldBuilder extends FieldBuilder {
 			String title = currpubli.getTitle();
 			//System.err.println("LS:" + currpubli.getIsLargeScale() + " " + title);
 			if(title.length() > 0) addField(Fields.PUBLICATIONS,title);
-			//if(title.contains("Combination of chemical genetics")) System.err.println(currpubli.getPublicationId());
 			SortedSet<PublicationAuthor> authors = currpubli.getAuthors();
 			for (PublicationAuthor currauthor : authors) {
 				//System.err.println("author: " + currauthor.toString());
