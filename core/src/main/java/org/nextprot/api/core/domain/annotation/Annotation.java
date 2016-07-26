@@ -1,6 +1,14 @@
 package org.nextprot.api.core.domain.annotation;
 
-import com.google.common.base.Optional;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioObject;
@@ -8,11 +16,17 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
 import org.nextprot.api.core.utils.AnnotationUtils;
 
-import java.io.Serializable;
-import java.util.*;
+import com.google.common.base.Optional;
 
-
+//I would love @JsonInclude(Include.NON_NULL)
 public class Annotation implements Serializable, IsoformSpecific {
+
+	private String subjectName;
+	private List<String> subjectComponents;
+	
+	private String annotationName;
+	private String annotationHash;
+
 
 	private static final long serialVersionUID = 1L;
 
@@ -383,6 +397,37 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public String getKebabCategoryName() {
 		return StringUtils.camelToKebabCase(category);
 	}
-	
+
+	public String getSubjectName() {
+		return subjectName;
+	}
+
+	public void setSubjectName(String subjectName) {
+		this.subjectName = subjectName;
+	}
+
+	public List<String> getSubjectComponents() {
+		return subjectComponents;
+	}
+
+	public void setSubjectComponents(List<String> subjectComponents) {
+		this.subjectComponents = subjectComponents;
+	}
+
+	public String getAnnotationName() {
+		return annotationName;
+	}
+
+	public void setAnnotationName(String annotationName) {
+		this.annotationName = annotationName;
+	}
+
+	public String getAnnotationHash() {
+		return annotationHash;
+	}
+
+	public void setAnnotationHash(String annotationHash) {
+		this.annotationHash = annotationHash;
+	}
 
 }

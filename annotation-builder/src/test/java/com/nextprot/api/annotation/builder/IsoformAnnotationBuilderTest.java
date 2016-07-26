@@ -33,7 +33,7 @@ public class IsoformAnnotationBuilderTest {
 		List<Statement> statements = Arrays.asList(sb1, sb2);
 		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
 		
-		IsoformAnnotation annotation = IsoformAnnotationBuilder.buildAnnotation("NX_P01308-1", statements);
+		IsoformAnnotation annotation = IsoformAnnotationBuilder.newBuilder().buildAnnotation("NX_P01308-1", statements);
 
 		assertEquals(annotation.getAPICategory(), AnnotationCategory.GO_CELLULAR_COMPONENT);
 		assertEquals(annotation.getEvidences().size(), 2);
@@ -53,7 +53,7 @@ public class IsoformAnnotationBuilderTest {
 		List<Statement> statements = Arrays.asList(sb1, sb2);
 		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
 		
-		IsoformAnnotationBuilder.buildAnnotation("NX_P01308-1", statements);
+		IsoformAnnotationBuilder.newBuilder().buildAnnotation("NX_P01308-1", statements);
 		
 	}
 

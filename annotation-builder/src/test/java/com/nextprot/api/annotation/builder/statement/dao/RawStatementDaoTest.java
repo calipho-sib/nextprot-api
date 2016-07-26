@@ -12,6 +12,7 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nextprot.api.annotation.builder.AnnotationBuilderBaseTest;
@@ -23,7 +24,7 @@ public class RawStatementDaoTest extends AnnotationBuilderBaseTest {
 
 	@Test
 	public void findAllPhenotypesStatements() {
-		List rows = rawStatementDao.findProteoformStatements("NX_Q9BX63");
+		List rows = rawStatementDao.findProteoformStatements(AnnotationType.ENTRY, "NX_Q9BX63");
 		System.out.println(rows.size());
 	}
 	
@@ -31,7 +32,7 @@ public class RawStatementDaoTest extends AnnotationBuilderBaseTest {
 	@Test
 	public void findAllNormalStatements() {
 		AtomicInteger i = new AtomicInteger(0);
-		List<Statement> statements = rawStatementDao.findNormalStatements("NX_Q9BX63");
+		List<Statement> statements = rawStatementDao.findNormalStatements(AnnotationType.ENTRY, "NX_Q9BX63");
 		statements.stream().forEach(s -> System.out.println(i.getAndIncrement() + " - " + s.getValue(StatementField.ANNOTATION_ID)));
 		List<Statement> statement = statements.stream().filter(s -> s.getValue(StatementField.ANNOTATION_ID).equals("c075d4a6b44e95faec7d8b109166744b")).collect(Collectors.toList());
 	}

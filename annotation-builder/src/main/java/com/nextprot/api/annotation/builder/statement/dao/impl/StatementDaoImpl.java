@@ -6,9 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -24,17 +26,24 @@ public class StatementDaoImpl implements StatementDao {
 	private DataSourceServiceLocator dsLocator;
 
 	
-	private String getSQL(String sqlQueryName){
+	private String getSQL(AnnotationType type, String sqlQueryName){
 		String sql = sqlDictionary.getSQLQuery(sqlQueryName);
-		sql = sql.replace("mapped_statements", "iso_mapped_statements");
+		if(type.equals(AnnotationType.ENTRY)){
+			sql = sql.replace("mapped_statements", "entry_mapped_statements");
+		}else if(type.equals(AnnotationType.ISOFORM)){
+			sql = sql.replace("mapped_statements", "iso_mapped_statements");
+		}else {
+			throw new NextProtException(type + " not supported currently");
+		}
+		
 		sql = sql.replace("entry_accession", "isoform_accession");
 		return sql;
 	}
 	
 	@Override
-	public List<Statement> findProteoformStatements(String nextprotAccession) {
+	public List<Statement> findProteoformStatements(AnnotationType type, String nextprotAccession) {
 
-		String sql = getSQL("modified-statements-by-entry-accession");
+		String sql = getSQL(type, "modified-statements-by-entry-accession");
 		
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("accession", nextprotAccession);
@@ -43,7 +52,7 @@ public class StatementDaoImpl implements StatementDao {
 	}
 
 	@Override
-	public List<Statement> findStatementsByAnnotEntryId(String annotHash) {
+	public List<Statement> findStatementsByAnnotEntryId(AnnotationType type, String annotHash) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("annot_hash", annotHash);
 
@@ -51,7 +60,7 @@ public class StatementDaoImpl implements StatementDao {
 	}
 
 	@Override
-	public List<Statement> findStatementsByAnnotIsoIds(List<String> idList) {
+	public List<Statement> findStatementsByAnnotIsoIds(AnnotationType type, List<String> idList) {
 
 		List<Statement> statements = new ArrayList<>();
 		if(idList == null || idList.isEmpty()) return statements;
@@ -67,7 +76,7 @@ public class StatementDaoImpl implements StatementDao {
 			Map<String, Object> params = new HashMap<String, Object>();
 			params.put("ids", ids.subList(i, toLimit));
 
-			String sql = getSQL("statements-by-annotation-id");
+			String sql = getSQL(type, "statements-by-annotation-id");
 			
 			List<Statement> statementsAux = new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query(sql, params,
 					new StatementMapper());
@@ -79,11 +88,11 @@ public class StatementDaoImpl implements StatementDao {
 	
 
 	@Override
-	public List<Statement> findNormalStatements(String nextprotAccession) {
+	public List<Statement> findNormalStatements(AnnotationType type, String nextprotAccession) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("accession", nextprotAccession);
 
-		String sql = getSQL("statements-by-entry-accession");
+		String sql = getSQL(type, "statements-by-entry-accession");
 		
 		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query(sql, params, new StatementMapper());
 	}

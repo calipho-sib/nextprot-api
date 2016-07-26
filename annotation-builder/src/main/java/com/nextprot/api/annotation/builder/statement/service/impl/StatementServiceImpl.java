@@ -9,6 +9,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,27 +26,28 @@ public class StatementServiceImpl implements StatementService {
 	@Autowired
 	public StatementDao statementDao;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<IsoformAnnotation> getProteoformIsoformAnnotations(String isoformAccession) {
 
-		List<Statement> proteoformStatements = statementDao.findProteoformStatements(isoformAccession);
+		List<Statement> proteoformStatements = statementDao.findProteoformStatements(AnnotationType.ISOFORM, isoformAccession);
 
 		//Collect all subjects
 		List<String> subjectAnnotIds =  proteoformStatements.stream().map(s -> {
 			return Arrays.asList(s.getValue(StatementField.SUBJECT_ANNOTATION_IDS).split(","));
 		}).flatMap(l -> l.stream()).collect(Collectors.toList());
 		
-		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(subjectAnnotIds);
+		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ISOFORM, subjectAnnotIds);
 		
-		return IsoformAnnotationBuilder.buildProteoformIsoformAnnotations(isoformAccession, subjects, proteoformStatements);
+		return IsoformAnnotationBuilder.newBuilder().buildProteoformIsoformAnnotations(isoformAccession, subjects, proteoformStatements);
 
 	}
 	
 
 	@Override
 	public List<IsoformAnnotation> getNormalIsoformAnnotations(String entryAccession) {
-		List<Statement> normalStatements = statementDao.findNormalStatements(entryAccession);
-		List<IsoformAnnotation> normalAnnotations = IsoformAnnotationBuilder.buildAnnotationList(entryAccession, normalStatements);
+		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ISOFORM, entryAccession);
+		List<IsoformAnnotation> normalAnnotations = IsoformAnnotationBuilder.newBuilder().buildAnnotationList(entryAccession, normalStatements);
 		normalAnnotations.stream().forEach(a -> {
 			//Required for group by
 			a.setSubjectName(entryAccession);
@@ -56,15 +58,25 @@ public class StatementServiceImpl implements StatementService {
 
 	@Override
 	public List<Annotation> getProteoformEntryAnnotations(String entryAccession) {
-		// TODO Auto-generated method stub
-		return null;
+
+		List<Statement> proteoformStatements = statementDao.findProteoformStatements(AnnotationType.ENTRY, entryAccession);
+
+		//Collect all subjects
+		List<String> subjectAnnotIds =  proteoformStatements.stream().map(s -> {
+			return Arrays.asList(s.getValue(StatementField.SUBJECT_ANNOTATION_IDS).split(","));
+		}).flatMap(l -> l.stream()).collect(Collectors.toList());
+		
+		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ENTRY, subjectAnnotIds);
+		
+		return EntryAnnotationBuilder.newBuilder().buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
+
 	}
 
 
 	@Override
 	public List<Annotation> getNormalEntryAnnotations(String entryAccession) {
-		List<Statement> normalStatements = statementDao.findNormalStatements(entryAccession);
-		return EntryAnnotationBuilder.buildAnnotationList(entryAccession, normalStatements);
+		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession);
+		return EntryAnnotationBuilder.newBuilder().buildAnnotationList(entryAccession, normalStatements);
 	}
 
 }
