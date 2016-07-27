@@ -27,7 +27,7 @@ public class StatementServiceImpl implements StatementService {
 	@Autowired
 	public StatementDao statementDao;
 
-	@Cacheable("proteform-iso-annotations")
+	@Cacheable("proteoform-iso-annotations")
 	@Override
 	public List<IsoformAnnotation> getProteoformIsoformAnnotations(String isoformAccession) {
 
