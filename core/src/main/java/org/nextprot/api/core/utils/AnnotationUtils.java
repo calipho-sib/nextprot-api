@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
+import org.nextprot.api.commons.constants.QualityQualifier;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObjectExternal;
 import org.nextprot.api.core.domain.Entry;
@@ -90,6 +92,7 @@ public class AnnotationUtils {
 
 		return annotationList;
 	}
+	
 	
 	
 	public static Set<Long> getExperimentalContextIdsForAnnotations(List<Annotation> annotations) {
@@ -304,5 +307,28 @@ public class AnnotationUtils {
 		
 		annotations.addAll(statementAnnotations);
 		return annotations;
+	}
+
+
+
+
+	public static QualityQualifier computeAnnotationQualityBasedOnEvidences(List<AnnotationEvidence> evidences) {
+
+		if(evidences == null || evidences.isEmpty()){
+			throw new NextProtException("Can't compute quality qualifier based on empty / null evidences");
+		}
+
+		for(AnnotationEvidence e : evidences){
+			if(e.getQualityQualifier() == null){
+				throw new NextProtException("Found evidence without any quality");
+			}
+			
+			QualityQualifier q = QualityQualifier.valueOf(e.getQualityQualifier());
+			if(q.equals(QualityQualifier.GOLD)) //If one evidence is GOLD return GOLD
+				return QualityQualifier.GOLD;
+			
+		}
+		
+		return QualityQualifier.SILVER;
 	}
 }
