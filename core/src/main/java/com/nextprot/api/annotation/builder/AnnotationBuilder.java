@@ -18,7 +18,6 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
-import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 
@@ -36,8 +35,9 @@ abstract class AnnotationBuilder<T extends Annotation> {
 		return null;
 	}
 
-	public abstract List<T> buildProteoformIsoformAnnotations (String accession, List<Statement> subjects, List<Statement> proteoformStatements);
-	public List<T> buildProteoformIsoformAnnotations (String accession, List<Statement> subjects, List<Statement> proteoformStatements, Class<T> aClass){
+	protected abstract T newAnnotation ();
+
+	public List<T> buildProteoformIsoformAnnotations (String accession, List<Statement> subjects, List<Statement> proteoformStatements){
 		
 		List<T> annotations = new ArrayList<>();
 
@@ -62,13 +62,13 @@ abstract class AnnotationBuilder<T extends Annotation> {
 				if((subjectVariant == null) || (subjectVariant.isEmpty())){
 					throw new NextProtException("Not found any subject  identifier:" + subjectComponentIdentifier);
 				}
-				T variant = buildAnnotation(accession, subjectVariant, aClass);
+				T variant = buildAnnotation(accession, subjectVariant);
 				subjectVariants.add(variant);
 			}
 
 			// Impact annotations
 			List<Statement> impactStatements = impactStatementsBySubject.get(subjectComponentsIdentifiers);
-			List<T> impactAnnotations = buildAnnotationList(accession, impactStatements, aClass);
+			List<T> impactAnnotations = buildAnnotationList(accession, impactStatements);
 			impactAnnotations.stream().forEach(ia -> {
 				
 				String name = subjectVariants.stream().map(v -> v.getAnnotationName()).collect(Collectors.joining(" + ")).toString();
@@ -124,53 +124,48 @@ abstract class AnnotationBuilder<T extends Annotation> {
 	}
 	
 
-	public abstract T buildAnnotation(String isoformName, List<Statement> statements);
-
-	protected T buildAnnotation(String isoformName, List<Statement> flatStatements, Class<T> aClass) {
-		List<T> annotations = buildAnnotationList(isoformName, flatStatements, aClass);
+	protected T buildAnnotation(String isoformName, List<Statement> flatStatements) {
+		List<T> annotations = buildAnnotationList(isoformName, flatStatements);
 		if(annotations.isEmpty() || annotations.size() > 1){
 			throw new NextProtException("Expecting 1 annotation but found " + annotations.size() + " from " + flatStatements.size());
 		}
 		return annotations.get(0);
 	}
 	
-	public abstract List<T> buildAnnotationList(String isoformName, List<Statement> flatStatements);
-	public List<T> buildAnnotationList(String isoformName, List<Statement> flatStatements, Class<T> aClass) {
+	public List<T> buildAnnotationList(String isoformName, List<Statement> flatStatements) {
 
 		List<T> annotations = new ArrayList<>();
 		Map<String, List<Statement>> flatStatementsByAnnotationHash = flatStatements.stream().collect(Collectors.groupingBy(rs -> rs.getValue(StatementField.ANNOTATION_ID)));
 
-		flatStatementsByAnnotationHash.keySet().forEach(annotationHash -> {
+		flatStatementsByAnnotationHash.entrySet().forEach(entry -> {
 
-			T isoAnnotation;
-			try {
-				isoAnnotation = aClass.newInstance();
-			} catch (Exception e) {
-				throw new NextProtException(e.getMessage());
-			}
-			List<Statement> statements = flatStatementsByAnnotationHash.get(annotationHash);
-
-			isoAnnotation.setEvidences(buildAnnotationEvidences(statements));
+			T annotation = newAnnotation();
+			List<Statement> statements = entry.getValue();
+			
+			annotation.setEvidences(buildAnnotationEvidences(statements));
 
 			Statement statement = statements.get(0);
 
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getValue(StatementField.ANNOTATION_CATEGORY)));
-			isoAnnotation.setCategory(category);
+			annotation.setCategory(category);
 
 			if (category.equals(AnnotationCategory.VARIANT))
-				setVariantAttributes(isoAnnotation, statement);
+				setVariantAttributes(annotation, statement);
 
 			
-			setIsoformName(isoAnnotation, isoformName);
-			isoAnnotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));
+			setIsoformName(annotation, isoformName);
+			annotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));
 
-			isoAnnotation.setDescription(statement.getValue(StatementField.ANNOT_DESCRIPTION));
-			isoAnnotation.setCvTermAccessionCode(statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION));
+			annotation.setDescription(statement.getValue(StatementField.ANNOT_DESCRIPTION));
+			annotation.setCvTermAccessionCode(statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION));
 			// TODO this should be called terminology I guess! not setCVApiName
-			isoAnnotation.setCvApiName(statement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
+			annotation.setCvApiName(statement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
 
-			isoAnnotation.setAnnotationHash(statement.getValue(StatementField.ANNOTATION_ID));
-			isoAnnotation.setAnnotationName(statement.getValue(StatementField.ANNOTATION_NAME));
+			annotation.setAnnotationHash(statement.getValue(StatementField.ANNOTATION_ID));
+			annotation.setAnnotationName(statement.getValue(StatementField.ANNOTATION_NAME));
+	
+			//Check this with PAM (does it need to be a human readable stuff)
+			annotation.setUniqueName(statement.getValue(StatementField.ANNOTATION_ID)); //Does it need a name?
 			
 			String boah = statement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
 			String boa = statement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
@@ -182,11 +177,11 @@ abstract class AnnotationBuilder<T extends Annotation> {
 				bioObject.setAccession(boa); // In case of interactions
 				bioObject.setType(bot);
 				bioObject.setAnnotationHash(boah); // In case of phenotypes
-				isoAnnotation.setBioObject(bioObject);
+				annotation.setBioObject(bioObject);
 
 			}
 
-			annotations.add(isoAnnotation);
+			annotations.add(annotation);
 
 		});
 		return annotations;

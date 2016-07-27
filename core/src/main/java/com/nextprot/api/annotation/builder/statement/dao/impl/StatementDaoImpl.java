@@ -27,16 +27,21 @@ public class StatementDaoImpl implements StatementDao {
 
 	
 	private String getSQL(AnnotationType type, String sqlQueryName){
+
 		String sql = sqlDictionary.getSQLQuery(sqlQueryName);
 		if(type.equals(AnnotationType.ENTRY)){
 			sql = sql.replace("mapped_statements", "entry_mapped_statements");
+
 		}else if(type.equals(AnnotationType.ISOFORM)){
 			sql = sql.replace("mapped_statements", "iso_mapped_statements");
+			sql = sql.replace("entry_accession", "isoform_accession");
+
 		}else {
 			throw new NextProtException(type + " not supported currently");
 		}
+
 		
-		sql = sql.replace("entry_accession", "isoform_accession");
+		System.err.println("Executing query " + sql);
 		return sql;
 	}
 	

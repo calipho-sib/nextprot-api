@@ -51,7 +51,6 @@
 		<module>rdf</module>
 		<module>solr</module>
 		<module>security</module>
-		<module>annotation-builder</module>
 		<module>isoform-mapper</module>
 		<module>etl-statement</module>
 		<module>web</module>

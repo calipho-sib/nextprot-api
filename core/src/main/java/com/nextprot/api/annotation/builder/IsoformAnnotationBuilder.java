@@ -1,7 +1,5 @@
 package com.nextprot.api.annotation.builder;
 
-import java.util.List;
-
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
@@ -42,18 +40,8 @@ public class IsoformAnnotationBuilder extends AnnotationBuilder<IsoformAnnotatio
 	}
 
 	@Override
-	public List<IsoformAnnotation> buildProteoformIsoformAnnotations(String accession, List<Statement> subjects, List<Statement> proteoformStatements) {
-		return super.buildProteoformIsoformAnnotations(accession, subjects, proteoformStatements, IsoformAnnotation.class);
-	}
-
-	@Override
-	public IsoformAnnotation buildAnnotation(String isoformName, List<Statement> statements) {
-		return super.buildAnnotation(isoformName, statements, IsoformAnnotation.class);
-	}
-
-	@Override
-	public List<IsoformAnnotation> buildAnnotationList(String isoformName, List<Statement> statements) {
-		return super.buildAnnotationList(isoformName, statements, IsoformAnnotation.class);
+	protected IsoformAnnotation newAnnotation() {
+		return new IsoformAnnotation();
 	}
 
 }

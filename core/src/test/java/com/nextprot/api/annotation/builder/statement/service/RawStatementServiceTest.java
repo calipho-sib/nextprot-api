@@ -26,7 +26,7 @@ public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 
 	@Test
 	public void findAllNormalAnnotations() {
-		List isoformAnnotations = rawStatementService.getNormalIsoformAnnotations("NX_Q9BX63");
+		List isoformAnnotations = rawStatementService.getNormalEntryAnnotations("NX_Q15858");
 		System.out.println(isoformAnnotations.size());
 	}
 	

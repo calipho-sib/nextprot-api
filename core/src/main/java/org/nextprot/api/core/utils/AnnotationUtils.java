@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -277,5 +278,30 @@ public class AnnotationUtils {
 	public static AnnotationPropertyComparator getInstanceOfAnnotationPropertyComparator() {
 
 		return ANNOTATION_PROPERTY_COMPARATOR;
+	}
+
+
+	public static List<Annotation> merge(List<Annotation> statementAnnotations, List<Annotation> annotations) {
+		//TODO 
+		
+		Map<String, List<Annotation>> annotationsByCategory = annotations.stream().collect(Collectors.groupingBy(Annotation::getCategory));
+		
+		//If You find the annotation on NP1 (annotations) add the evidence (SIMPLE CASE)
+		
+		//If You don't find the annotation on NP1 (annotations) add the new annotation to the list + SET 
+		
+		//If one evidence contains GOLD the annotation is GOLD. (maybe from BioEditor we get variants that are GOLD and in NP1 we have silver ones) so annotation will become GOLD
+		
+		// GO should be easy (go-cellular-component, go-molecular-function, go-biological-process)
+		
+		// variant and mutagenesis should be a bit more complicated but doable (look at origin / positions ... )
+
+		// binary-interaction 66 (may require some adaptation from AnnotationBuilder)
+
+		//small-molecule-interaction	4 (may require some adaptation from AnnotationBuilder, new XREF)
+
+		
+		annotations.addAll(statementAnnotations);
+		return annotations;
 	}
 }

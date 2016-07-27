@@ -1,8 +1,12 @@
 package org.nextprot.api.web.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.AnnotationUtils;
@@ -12,13 +16,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.nextprot.api.annotation.builder.statement.service.StatementService;
 
 @Lazy
 @Controller
 @Api(name = "EntryModified", description = "For example: may include an entry with one or several variants.")
-public class EntryModifiedController {
+public class ProteoformController {
 
 	@Autowired	private EntryBuilderService entryBuilderService;
 	@Autowired	private StatementService rawStatementService;
@@ -40,6 +45,18 @@ public class EntryModifiedController {
 		if(xref == null || !xref){ entry.setXrefs(null); }
 
 		return "entry";
+	}
+	
+	
+	@RequestMapping("/entry/{entryname}/proteoform")
+	@ResponseBody
+	public List<Annotation> getEntryAnnotations(@PathVariable("entryname") String entryName, Model model) {
+
+		List<Annotation> annotations = new ArrayList<Annotation>();
+		annotations.addAll(rawStatementService.getNormalEntryAnnotations(entryName));
+		annotations.addAll(rawStatementService.getProteoformEntryAnnotations(entryName));
+		
+		return annotations;
 	}
 }
 

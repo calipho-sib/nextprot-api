@@ -76,7 +76,15 @@ public class StatementServiceImpl implements StatementService {
 	@Override
 	public List<Annotation> getNormalEntryAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession);
-		return EntryAnnotationBuilder.newBuilder().buildAnnotationList(entryAccession, normalStatements);
+		List<Annotation>  annotations =  EntryAnnotationBuilder.newBuilder().buildAnnotationList(entryAccession, normalStatements);
+		return annotations;
+		
+	}
+
+
+	@Override
+	public List<Annotation> getAnnotations(String entryAccession) {
+		return null;
 	}
 
 }

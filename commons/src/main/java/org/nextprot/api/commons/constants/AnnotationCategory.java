@@ -170,10 +170,9 @@ public enum AnnotationCategory implements Serializable {
 	
 
 	//New categories added with BioEditor integration
-	PROTEIN_PROPERTY(-99998, "protein-property", "proteinProperty", "protein-property", GENERAL_ANNOTATION),
-	VARIATION_IMPACT(-99990, "variation-impact", "variationImpact", "variation-impact", GENERAL_ANNOTATION),
-	FUNCTIONAL_IMPACT(-99991, "functional-impact", "functionalImpact", "functional-impact", VARIATION_IMPACT),
-	PHENOTYPE(-99992, "phenotype", "phenotype", "phenotype", VARIATION_IMPACT); //This one refers to mammalian phenotypes
+	MODIFICATION_EFFECT(-9990, "modification-effect", "modificationEffect", "modificaiton-effect", GENERAL_ANNOTATION),
+	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "mammalian-phenotype", GENERAL_ANNOTATION),
+	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "protein-property", GENERAL_ANNOTATION); //This one refers to mammalian phenotypes
 
 	private final Integer dbId; // if positive, identifies a real record of the table nextprot.cv_terms (category annotation_type)
 	private final String dbAnnotationTypeName; // if dbId is positive, dbAnnotationTypeName is an exact match of the corresponding record in nextprot.cv_terms 
