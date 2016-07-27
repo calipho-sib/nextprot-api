@@ -102,6 +102,13 @@ abstract class AnnotationBuilder<T extends Annotation> {
 						.stream().filter(p -> p != null)
 						.collect(Collectors.toList())
 						);
+			
+			
+			//TODO evidence.setEvidenceCodeAC();
+			//TODO  evidence.setEvidenceCodeName();
+			 evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
+			
+			//TODO create experimental contexts!
 
 			return evidence;
 		}).collect(Collectors.toList());
@@ -152,7 +159,9 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getValue(StatementField.ANNOTATION_CATEGORY)));
 			annotation.setCategory(category);
 
-			setVariantAttributes(annotation, statement);
+			if(category.equals(AnnotationCategory.VARIANT) || category.equals(AnnotationCategory.MUTAGENESIS)){
+				setVariantAttributes(annotation, statement);
+			}
 			setIsoformTargeting(annotation, statement);
 
 			setIsoformName(annotation, isoformName);

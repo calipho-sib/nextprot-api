@@ -28,7 +28,7 @@ public class ProteoformController {
 	@Autowired	private EntryBuilderService entryBuilderService;
 	@Autowired	private StatementService rawStatementService;
 	
-	@RequestMapping("/entry/{entryname}/modified-entry-annotation")
+	@RequestMapping("/entry/{entryname}/proteoform")
 	public String getSubPart(@PathVariable("entryname") String entryName, 
 							 @ApiQueryParam(name = "goldOnly", required = false) Boolean goldOnly, 
 							 @ApiQueryParam(name = "pub", required = false) Boolean pub, @ApiQueryParam(name = "xref", required = false) Boolean xref, @ApiQueryParam(name = "xp", required = false) Boolean xp,  Model model) {
@@ -48,15 +48,5 @@ public class ProteoformController {
 	}
 	
 	
-	@RequestMapping("/entry/{entryname}/proteoform")
-	@ResponseBody
-	public List<Annotation> getEntryAnnotations(@PathVariable("entryname") String entryName, Model model) {
-
-		List<Annotation> annotations = new ArrayList<Annotation>();
-		annotations.addAll(rawStatementService.getNormalEntryAnnotations(entryName));
-		annotations.addAll(rawStatementService.getProteoformEntryAnnotations(entryName));
-		
-		return annotations;
-	}
 }
 

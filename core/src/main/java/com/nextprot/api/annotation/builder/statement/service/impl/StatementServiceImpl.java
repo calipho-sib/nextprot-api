@@ -11,6 +11,7 @@ import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.nextprot.api.annotation.builder.EntryAnnotationBuilder;
@@ -26,7 +27,7 @@ public class StatementServiceImpl implements StatementService {
 	@Autowired
 	public StatementDao statementDao;
 
-	@SuppressWarnings("unchecked")
+	@Cacheable("proteform-iso-annotations")
 	@Override
 	public List<IsoformAnnotation> getProteoformIsoformAnnotations(String isoformAccession) {
 
@@ -44,6 +45,7 @@ public class StatementServiceImpl implements StatementService {
 	}
 	
 
+	@Cacheable("normal-iso-annotations")
 	@Override
 	public List<IsoformAnnotation> getNormalIsoformAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ISOFORM, entryAccession);

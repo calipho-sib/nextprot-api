@@ -305,6 +305,8 @@ public class AnnotationUtils {
 		
 		//Set the correct annotation id to the evidence (AnnotationEvidence.setAnnotationId....)
 		
+		//Set the correct subject componenents if it is in NP1
+		
 		annotations.addAll(statementAnnotations);
 		return annotations;
 	}

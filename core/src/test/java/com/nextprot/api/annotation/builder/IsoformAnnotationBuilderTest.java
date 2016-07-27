@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
+import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementUtil;
@@ -20,12 +21,12 @@ public class IsoformAnnotationBuilderTest {
 	public void shouldReturnOneSingleAnnotationIfTheInfoIsTheSameAndItIsComingFromDifferentSources() {
 		
 		Statement sb1 = StatementBuilder.createNew().
-				addCompulsoryFields("NX_P01308", "NX_P01308-1", "go-cellular-component")
+				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD)
    		  .addCvTerm("go-xxx", "nucleus", "go-cellular-component-cv")
    		  .addSourceInfo("CAVA-VP0920190912", "BioEditor").build();
 		
 		Statement sb2 = StatementBuilder.createNew().
-				addCompulsoryFields("NX_P01308", "NX_P01308-1", "go-cellular-component")
+				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD)
 				.addCvTerm("go-xxx", "nucleus", "go-cellular-component-cv")
 				.addSourceInfo("HPA2222", "HPA").build();
 		
@@ -45,10 +46,10 @@ public class IsoformAnnotationBuilderTest {
 	public void shouldReturnAnExceptionIf2AnnotationsAreExpectedInsteadOfOne() {
 		
 		Statement sb1 = StatementBuilder.createNew().
-		   addCompulsoryFields("NX_P01308", "NX_P01308-1", "go-cellular-component").build();
+				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD).build();
    	
 		Statement sb2 = StatementBuilder.createNew().
-				addCompulsoryFields("NX_P99999", "NX_P99999-1", "go-cellular-component").build();
+				addCompulsaryFields("NX_P99999", "NX_P99999-1", "go-cellular-component", QualityQualifier.GOLD).build();
 	
 		List<Statement> statements = Arrays.asList(sb1, sb2);
 		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
