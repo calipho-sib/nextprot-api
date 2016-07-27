@@ -282,7 +282,7 @@ public class AnnotationUtils {
 
 
 	public static List<Annotation> merge(List<Annotation> statementAnnotations, List<Annotation> annotations) {
-		//TODO 
+		//TODO https://issues.isb-sib.ch/browse/BIOEDITOR-454
 		
 		Map<String, List<Annotation>> annotationsByCategory = annotations.stream().collect(Collectors.groupingBy(Annotation::getCategory));
 		
@@ -299,7 +299,8 @@ public class AnnotationUtils {
 		// binary-interaction 66 (may require some adaptation from AnnotationBuilder)
 
 		//small-molecule-interaction	4 (may require some adaptation from AnnotationBuilder, new XREF)
-
+		
+		//Set the correct annotation id to the evidence (AnnotationEvidence.setAnnotationId....)
 		
 		annotations.addAll(statementAnnotations);
 		return annotations;

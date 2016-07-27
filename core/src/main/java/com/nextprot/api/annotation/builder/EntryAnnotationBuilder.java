@@ -24,8 +24,8 @@ public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 	}
 
 	@Override
-	void setPosition(Annotation annotation, Statement statement) {
-
+	void setIsoformTargeting(Annotation annotation, Statement statement) {
+		
 		List<AnnotationIsoformSpecificity> targetingIsoforms = new ArrayList<AnnotationIsoformSpecificity>();
 		TargetIsoformStatement tis = TargetIsoformSerializer.deSerializeFromJsonString(statement.getValue(StatementField.TARGET_ISOFORMS));
 
@@ -37,6 +37,7 @@ public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 			ais.setIsoformName(isoform);
 			ais.setFirstPosition(tisp.getBegin());
 			ais.setLastPosition(tisp.getEnd());
+			ais.setSpecificity("UNKNOWN");
 
 			targetingIsoforms.add(ais);
 

@@ -14,7 +14,7 @@ public class IsoformAnnotationBuilder extends AnnotationBuilder<IsoformAnnotatio
 	}
 
 	@Override
-	void setPosition(IsoformAnnotation annotation, Statement statement) {
+	void setIsoformTargeting(IsoformAnnotation annotation, Statement statement) {
 		
 		String locBegin = statement.getValue(StatementField.LOCATION_BEGIN);
 		try {

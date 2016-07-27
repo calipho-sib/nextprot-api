@@ -6,6 +6,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.nextprot.api.annotation.builder.statement.service.StatementService;
+
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -18,6 +20,7 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.commons.statements.StatementUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -36,6 +39,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private IsoformDAO isoformDAO;
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private AntibodyMappingService antibodyMappingService;
+	@Autowired private StatementService statementService;
 	
 	@Override
 	@Cacheable("annotations")
@@ -105,6 +109,12 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(this.antibodyMappingService.findAntibodyMappingAnnotationsByUniqueName(entryName));		
 
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
+		
+		annotations.addAll(statementService.getNormalEntryAnnotations(entryName));
+		annotations.addAll(statementService.getProteoformEntryAnnotations(entryName));
+		
+		//MERGE AnnotationUtils.merge(statementAnnotations, annotations)
+		
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();

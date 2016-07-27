@@ -110,7 +110,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 	abstract void setIsoformName(T annotation, String statement);
 
-	abstract void setPosition(T annotation, Statement statement);
+	abstract void setIsoformTargeting(T annotation, Statement statement);
 
 	protected void setVariantAttributes(T annotation, Statement variantStatement) {
 
@@ -118,8 +118,6 @@ abstract class AnnotationBuilder<T extends Annotation> {
 		String variant = variantStatement.getValue(StatementField.VARIANT_VARIATION_AMINO_ACID);
 		AnnotationVariant annotationVariant = new AnnotationVariant(original, variant);
 		annotation.setVariant(annotationVariant);
-
-		setPosition(annotation, variantStatement);
 
 	}
 	
@@ -140,19 +138,22 @@ abstract class AnnotationBuilder<T extends Annotation> {
 		flatStatementsByAnnotationHash.entrySet().forEach(entry -> {
 
 			T annotation = newAnnotation();
+			
 			List<Statement> statements = entry.getValue();
 			
 			annotation.setEvidences(buildAnnotationEvidences(statements));
 
 			Statement statement = statements.get(0);
 
+			annotation.setAnnotationHash(statement.getValue(StatementField.ANNOTATION_ID));
+			annotation.setAnnotationName(statement.getValue(StatementField.ANNOTATION_NAME));
+
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getValue(StatementField.ANNOTATION_CATEGORY)));
 			annotation.setCategory(category);
 
-			if (category.equals(AnnotationCategory.VARIANT))
-				setVariantAttributes(annotation, statement);
+			setVariantAttributes(annotation, statement);
+			setIsoformTargeting(annotation, statement);
 
-			
 			setIsoformName(annotation, isoformName);
 			annotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));
 
