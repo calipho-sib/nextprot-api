@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
-import org.nextprot.api.commons.constants.QualityQualifier;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObjectExternal;
@@ -21,6 +20,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
+import org.nextprot.commons.constants.QualityQualifier;
 
 
 public class AnnotationUtils {
