@@ -31,7 +31,9 @@ import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import com.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import com.nextprot.api.isoform.mapper.utils.EntryIsoformUtils;
 import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 
 @Service
@@ -130,10 +132,29 @@ public class StatementETLServiceImpl implements StatementETLService {
 					
 					String entryAccession = subject.getValue(StatementField.ENTRY_ACCESSION);
 					List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
-					List<String> isoformNames = isoforms.stream().map(Isoform::getUniqueName).collect(Collectors.toList());
+					List<String> isoformNames = isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());
+					
+					String isoSpecificAccession = null;
+
+					if(isIsoSpecific){
+						
+						SequenceVariant sv = null;
+
+						try {
+						
+							sv = new SequenceVariant(subject.getValue(StatementField.ANNOTATION_NAME));
+							Isoform isoSpecific = EntryIsoformUtils.getIsoformByName(isoforms, sv.getIsoformName());
+							isoSpecificAccession = isoSpecific.getIsoformAccession();
+
+						} catch (Exception e) {
+							e.printStackTrace();
+							throw new NextProtException(e.getMessage());
+						}
+						
+					}
 
 					targetIsoformsForObject = TargetIsoformUtils.getTargetIsoformForObjectSerialized(subject, isoformNames);
-					targetIsoformsForPhenotype = TargetIsoformUtils.getTargetIsoformForPhenotypeSerialized(subject, isoformNames, isIsoSpecific);
+					targetIsoformsForPhenotype = TargetIsoformUtils.getTargetIsoformForPhenotypeSerialized(subject, isoformNames, isIsoSpecific, isoSpecificAccession);
 					
 				}
 				

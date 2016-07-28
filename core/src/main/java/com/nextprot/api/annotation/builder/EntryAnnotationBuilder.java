@@ -35,8 +35,8 @@ public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 			ais.setIsoformName(tisp.getIsoformName());
 			ais.setFirstPosition(tisp.getBegin());
 			ais.setLastPosition(tisp.getEnd());
-			ais.setSpecificity("UNKNOWN");//TODO check this with Pascale
-
+			ais.setSpecificity(tisp.getSpecificity());
+			
 			targetingIsoforms.add(ais);
 
 		}

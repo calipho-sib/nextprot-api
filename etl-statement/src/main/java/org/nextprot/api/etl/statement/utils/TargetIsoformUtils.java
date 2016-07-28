@@ -12,7 +12,6 @@ import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 
 import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
-import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 
 public class TargetIsoformUtils {
 	
@@ -34,24 +33,24 @@ public class TargetIsoformUtils {
 	}
 
 	
-	public static String getTargetIsoformForPhenotypeSerialized(Statement subject, List<String> isoformNames, boolean isIsoSpecific) {
-		return TargetIsoformSerializer.serializeToJsonString(getTargetIsoformForPhenotype(subject, isoformNames, isIsoSpecific));
+	public static String getTargetIsoformForPhenotypeSerialized(Statement subject, List<String> isoformNames, boolean isIsoSpecific, String isoSpecificName) {
+		return TargetIsoformSerializer.serializeToJsonString(getTargetIsoformForPhenotype(subject, isoformNames, isIsoSpecific, isoSpecificName));
 	}
 	
-	public static Set<TargetIsoformStatementPosition> getTargetIsoformForPhenotype(Statement subject, List<String> isoformNames, boolean isIsoSpecific) {
+	public static Set<TargetIsoformStatementPosition> getTargetIsoformForPhenotype(Statement subject, List<String> isoformNames, boolean isIsoSpecific, String isoSpecificName) {
 
 		String targetIsoformForSubject = subject.getValue(StatementField.TARGET_ISOFORMS);
 		Set<TargetIsoformStatementPosition> targetIsoformForPhenotype = null;
 
 		// Only for Entry annotations
 		if (targetIsoformForSubject == null) {
-			throw new NextProtException("Can't map to isoforoms if target isoforms is null for the subject");
+			throw new NextProtException("Can't map to isoforms if target isoforms is null for the subject");
 		}
 
 		if (isIsoSpecific) {
 			Set<TargetIsoformStatementPosition> tispSubject = TargetIsoformSerializer.deSerializeFromJsonString(targetIsoformForSubject);
 			//Take the iso from the subject and set it to be Specific and not propagate to others
-			TargetIsoformStatementPosition tisp = new TargetIsoformStatementPosition(tispSubject.iterator().next().getIsoformName(), IsoTargetSpecificity.SPECIFIC.name());
+			TargetIsoformStatementPosition tisp = new TargetIsoformStatementPosition(isoSpecificName, IsoTargetSpecificity.SPECIFIC.name());
 			targetIsoformForPhenotype = new TreeSet<TargetIsoformStatementPosition>(Arrays.asList((tisp)));
 		}else {
 			targetIsoformForPhenotype = getIsosByDefault(isoformNames);
@@ -68,7 +67,7 @@ public class TargetIsoformUtils {
 
 		// Only for Entry annotations
 		if (targetIsoformForSubject == null) {
-			throw new NextProtException("Can't map to isoforoms if target isoforms is null for the subject");
+			throw new NextProtException("Can't map to isofroms if target isoforms is null for the subject");
 		}
 		
 		return getIsosByDefault(isoformNames);

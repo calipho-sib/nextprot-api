@@ -74,7 +74,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 				
 				String name = subjectVariants.stream().map(v -> v.getAnnotationName()).collect(Collectors.joining(" + ")).toString();
 				
-				ia.setSubjectName(accession + " " + name);
+				ia.setSubjectName(name);
 				ia.setSubjectComponents(Arrays.asList(subjectComponentsIdentifiersArray));
 			});
 

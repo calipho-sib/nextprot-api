@@ -27,20 +27,24 @@ public class EntryIsoformUtils {
      * @param accession an isoform unique name (ac), main name or synonym
      * @return
      */
-    public static Isoform getIsoformByName(Entry entry, String accession) {
+    public static Isoform getIsoformByName(Entry entry, String name) {
+    	return getIsoformByName(entry.getIsoforms(), name);
+    }
 
-        if (accession==null) return null;
-        for (Isoform iso: entry.getIsoforms()) {
-            if (accession.equals(iso.getUniqueName())) return iso;
+    public static Isoform getIsoformByName(List<Isoform> isoforms, String name) {
+
+        if (name==null) return null;
+        for (Isoform iso: isoforms) {
+            if (name.equals(iso.getUniqueName())) return iso;
             EntityName mainEname = iso.getMainEntityName();
-            if (mainEname!=null && accession.equalsIgnoreCase(mainEname.getName())) return iso;
+            if (mainEname!=null && name.equalsIgnoreCase(mainEname.getName())) return iso;
             for (EntityName syn: iso.getSynonyms()) {
-                if (accession.equalsIgnoreCase(syn.getName())) return iso;
+                if (name.equalsIgnoreCase(syn.getName())) return iso;
             }
         }
         return null;
     }
-
+    
     public static Isoform getCanonicalIsoform(Entry entry) {
 
         for (Isoform iso : entry.getIsoforms()) {

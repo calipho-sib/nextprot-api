@@ -23,7 +23,7 @@ public class Isoform implements Serializable {
 
 	private String md5;
 	
-	private String uniqueName;
+	private String isoformAccession;
 
 	private boolean swissProtDisplayedIsoform;
 
@@ -56,7 +56,7 @@ public class Isoform implements Serializable {
 			Double d = DescriptorMass.compute(sequence);
 			return String.valueOf(Math.round(d));
 		} catch (Throwable e) {
-			LOGGER.error("Error computing molecular mass of isoform " + uniqueName, e);
+			LOGGER.error("Error computing molecular mass of isoform " + isoformAccession, e);
 			return "0";
 		}
 	}
@@ -69,12 +69,29 @@ public class Isoform implements Serializable {
 		this.md5 = md5;
 	}
 
+	public String getIsoformAccession() {
+		return isoformAccession;
+	}
+	
+	/**
+	 * Use isoform accession
+	 * @return
+	 */
+	@Deprecated
 	public String getUniqueName() {
-		return uniqueName;
+		return isoformAccession;
 	}
 
+	/**
+	 * Use isoform accession
+	 */
+	@Deprecated
 	public void setUniqueName(String uniqueName) {
-		this.uniqueName = uniqueName;
+		this.isoformAccession = uniqueName;
+	}
+
+	public void setIsoformAccession(String isoformAccession) {
+		this.isoformAccession = isoformAccession;
 	}
 
 	public String getSequence() {
