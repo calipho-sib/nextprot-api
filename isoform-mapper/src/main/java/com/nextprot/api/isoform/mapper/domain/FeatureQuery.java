@@ -1,52 +1,64 @@
 package com.nextprot.api.isoform.mapper.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UndefinedFeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownFeatureQueryTypeException;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.commons.exception.NextProtException;
 
 import java.io.Serializable;
 
 public class FeatureQuery implements Serializable {
 
-    private final Entry entry;
+    private final String accession;
     private final String feature;
     private final String featureType;
     private boolean propagableFeature;
 
-    public FeatureQuery(Entry entry, String feature, String featureType) throws FeatureQueryException {
+    public FeatureQuery(String accession, String feature, String featureType) {
 
-        Preconditions.checkNotNull(entry);
         Preconditions.checkNotNull(feature);
         Preconditions.checkNotNull(featureType);
 
-        this.entry = entry;
+        this.accession = accession;
         this.feature = feature;
         this.featureType = featureType;
-
-        checkStates();
     }
 
-    private void checkStates() throws FeatureQueryException {
+    public void checkFeatureQuery() throws FeatureQueryException {
+
+        checkAccessionNotIsoform();
+        checkAnnotationCategoryExists();
+        checkFeatureNonEmpty();
+    }
+
+    private void checkAccessionNotIsoform() {
+
+        if (accession != null && accession.contains("-")) {
+            int dashIndex = accession.indexOf("-");
+
+            throw new NextProtException("Invalid entry accession " + accession
+                    + ": " + accession.substring(0, dashIndex)+" was expected");
+        }
+    }
+
+    private void checkAnnotationCategoryExists() throws FeatureQueryException {
 
         if (!AnnotationCategory.hasAnnotationByApiName(featureType))
             throw new UnknownFeatureQueryTypeException(this);
-        else if (feature.isEmpty())
-            throw new UndefinedFeatureQueryException(this);
     }
 
-    @JsonIgnore
-    public Entry getEntry() {
-        return entry;
+    private void checkFeatureNonEmpty() throws FeatureQueryException {
+
+        if (feature.isEmpty())
+            throw new UndefinedFeatureQueryException(this);
     }
 
     /**
      * @return the nextprot entry accession number (example: NX_P01308)
      */
     public String getAccession() {
-        return entry.getUniqueName();
+        return accession;
     }
 
     /**

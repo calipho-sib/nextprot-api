@@ -1,6 +1,7 @@
 package com.nextprot.api.isoform.mapper.service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
@@ -8,10 +9,7 @@ import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryAminoAcidException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryPositionException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -184,6 +182,45 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         FeatureQueryResult result = service.validateFeature("SCN11A-p-iso4.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
         System.out.println(result);
+    }
+
+    @Test
+    public void shouldValidateWithNoAccession() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        assertIsoformFeatureValid(result, "NX_Q9UI33-1", 1158, 1158, true);
+    }
+
+    @Test
+    public void shouldValidateWithNullAccession() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), null);
+
+        assertIsoformFeatureValid(result, "NX_Q9UI33-1", 1158, 1158, true);
+    }
+
+    @Test
+    public void shouldNotValidateWithGeneNoAccession() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("SCN14A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQuery query = Mockito.mock(FeatureQuery.class);
+        when(query.getAccession()).thenReturn("");
+
+        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new EntryAccessionNotFoundForGeneException(query, "SCN14A"));
+    }
+
+    @Test
+    public void shouldNotValidateWithMultipleAccessions() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("GCNT2-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQuery query = Mockito.mock(FeatureQuery.class);
+        when(query.getAccession()).thenReturn("");
+
+        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new MultipleEntryAccessionForGeneException(query, "GCNT2",
+                Sets.newHashSet("NX_Q06430", "NX_Q8N0V5", "NX_Q8NFS9")));
     }
 
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {

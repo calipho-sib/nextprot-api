@@ -20,14 +20,15 @@ public class FeatureQuerySuccessTest {
     @Test
     public void testOnSuccess() throws FeatureQueryException, ParseException {
 
-        FeatureQuery query = new FeatureQuery(mockEntry("NX_Q9UI33",
-                mockIsoform("NX_Q9UI33-1", "Iso 1", true), mockIsoform("NX_Q9UI33-2", "Iso 2", false),
-                mockIsoform("NX_Q9UI33-3", "Iso 3", false), mockIsoform("NX_Q9UI33-4", "Iso 4", false)),
-                "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
+        FeatureQuery query = new FeatureQuery("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
 
         SequenceVariant sequenceVariant = new SequenceVariant("SCN11A-p.Leu1158Pro");
 
-        FeatureQuerySuccess result = new FeatureQuerySuccess(query, sequenceVariant);
+        Entry entry = mockEntry("NX_Q9UI33",
+                mockIsoform("NX_Q9UI33-1", "Iso 1", true), mockIsoform("NX_Q9UI33-2", "Iso 2", false),
+                mockIsoform("NX_Q9UI33-3", "Iso 3", false), mockIsoform("NX_Q9UI33-4", "Iso 4", false));
+
+        FeatureQuerySuccess result = new FeatureQuerySuccess(entry, query, sequenceVariant);
         result.addMappedFeature(mockIsoform("NX_Q9UI33-1", "Iso 1", true), 1158, 1158);
         result.addMappedFeature(mockIsoform("NX_Q9UI33-3", "Iso 3", false), 1120, 1120);
         result.addUnmappedFeature(mockIsoform("NX_Q9UI33-4", "Iso 4", false));

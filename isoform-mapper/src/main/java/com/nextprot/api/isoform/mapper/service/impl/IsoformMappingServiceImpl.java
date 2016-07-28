@@ -1,19 +1,21 @@
 package com.nextprot.api.isoform.mapper.service.impl;
 
-import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import com.nextprot.api.isoform.mapper.utils.EntryIsoformUtils;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
-import com.nextprot.api.isoform.mapper.service.FeatureValidatorFactoryService;
+import com.nextprot.api.isoform.mapper.domain.impl.SequenceFeatureBase;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFoundForGeneException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.MultipleEntryAccessionForGeneException;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
+import com.nextprot.api.isoform.mapper.utils.EntryIsoformUtils;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -24,7 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 
 
 /**
@@ -37,32 +39,24 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     public MasterIsoformMappingService masterIsoformMappingService;
 
     @Autowired
-    public FeatureValidatorFactoryService featureValidatorFactoryService;
+    private EntryBuilderService entryBuilderService;
 
     @Autowired
-    private EntryBuilderService entryBuilderService;
+    private MasterIdentifierService masterIdentifierService;
 
     @Override
     public FeatureQueryResult validateFeature(String featureName, String featureType, String nextprotEntryAccession) {
 
-        if (nextprotEntryAccession.contains("-")) {
-            int dashIndex = nextprotEntryAccession.indexOf("-");
-
-            throw new NextProtException("Invalid entry accession " + nextprotEntryAccession
-                    + ": " + nextprotEntryAccession.substring(0, dashIndex)+" was expected");
-        }
-
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(nextprotEntryAccession).withTargetIsoforms().withOverview());
+        FeatureQuery query = new FeatureQuery(nextprotEntryAccession, featureName, featureType);
 
         try {
-            FeatureQuery query = new FeatureQuery(entry, featureName, featureType);
+            SequenceFeature sequenceFeature = SequenceFeatureBase.newFeature(query);
 
-            Optional<SequenceFeatureValidator> validator = featureValidatorFactoryService.createsFeatureValidator(query);
+            Entry entry = buildEntryFromAccessionElseFromGene(query, sequenceFeature.getGeneName());
 
-            if (validator.isPresent()) {
-                return validator.get().validate();
-            }
-            throw new InvalidFeatureQueryTypeException(query);
+            SequenceFeatureValidator validator = new SequenceFeatureValidator(entry, query);
+
+            return validator.validate(sequenceFeature);
         } catch (FeatureQueryException e) {
 
             return new FeatureQueryFailure(e);
@@ -94,7 +88,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         SequenceFeature isoFeature = successResults.getIsoformSequenceFeature();
 
-        Isoform featureIsoform = isoFeature.getIsoform(query.getEntry());;
+        Isoform featureIsoform = isoFeature.getIsoform(successResults.getEntry());;
 
         SequenceVariation variation = isoFeature.getProteinVariation();
 
@@ -103,7 +97,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         );
 
         // get all others
-        List<Isoform> others = EntryIsoformUtils.getOtherIsoforms(query.getEntry(), featureIsoform.getUniqueName());
+        List<Isoform> others = EntryIsoformUtils.getOtherIsoforms(successResults.getEntry(), featureIsoform.getUniqueName());
 
         // propagate the feature to other isoforms
         for (Isoform otherIsoform : others) {
@@ -131,5 +125,31 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
                     srcIsoformVariation.getLastChangingAminoAcidPos(), otherIsoform);
         }
         return firstIsoPos;
+    }
+
+    /**
+     * Build entry from entry accession or deduced from geneName if undefined
+     */
+    private Entry buildEntryFromAccessionElseFromGene(FeatureQuery query, String geneName) throws FeatureQueryException {
+
+        String accession = query.getAccession();
+
+        if (accession == null || accession.isEmpty()) {
+
+            Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName);
+
+            if (accessions.isEmpty()) {
+                throw new EntryAccessionNotFoundForGeneException(query, geneName);
+            }
+            else if (accessions.size() > 1) {
+                throw new MultipleEntryAccessionForGeneException(query, geneName, accessions);
+            }
+            // found one single entry accession
+            else {
+                accession = accessions.iterator().next();
+            }
+        }
+
+        return entryBuilderService.build(EntryConfig.newConfig(accession).withTargetIsoforms().withOverview());
     }
 }
