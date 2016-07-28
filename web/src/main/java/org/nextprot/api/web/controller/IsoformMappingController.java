@@ -31,8 +31,8 @@ public class IsoformMappingController {
 			@ApiPathParam(name = "category", description = "A feature category (either 'variant' or 'ptm').",  allowedvalues = { "variant" })
 			@PathVariable("category") String featureCategory, HttpServletRequest request, HttpServletResponse response,
 			@ApiQueryParam(name = "feature", description = "An isoform feature.",  allowedvalues = { "SCN11A-p.Leu1158Pro" })
-			@RequestParam(value = "feature", required = true) String feature,
-			@ApiQueryParam(name = "accession", description = "A nextprot entry accession (deduced by default from feature gene name if not defined).",  allowedvalues = { "NX_Q9UI33" })
+			@RequestParam(value = "feature") String feature,
+			@ApiQueryParam(name = "accession", description = "An optional nextprot entry accession (deduced from feature gene name if undefined).",  allowedvalues = { })
 			@RequestParam(value = "accession", required = false) String nextprotAccession) {
 
 		return isoformMappingService.validateFeature(feature, featureCategory, nextprotAccession);
@@ -45,8 +45,8 @@ public class IsoformMappingController {
 			@ApiPathParam(name = "category", description = "A feature category (either 'variant' or 'ptm').",  allowedvalues = { "variant" })
 			@PathVariable("category") String featureCategory, HttpServletRequest request, HttpServletResponse response,
 			@ApiQueryParam(name = "feature", description = "An isoform feature.",  allowedvalues = { "SCN11A-p.Leu1158Pro" })
-			@RequestParam(value = "feature", required = true) String feature,
-			@ApiQueryParam(name = "accession", description = "A nextprot entry accession (deduced by default from feature gene name if not defined).",  allowedvalues = { "NX_Q9UI33" })
+			@RequestParam(value = "feature") String feature,
+			@ApiQueryParam(name = "accession", description = "An optional nextprot entry accession (deduced from feature gene name if undefined).",  allowedvalues = { })
 			@RequestParam(value = "accession", required = false) String nextprotAccession) {
 
 		return isoformMappingService.propagateFeature(feature, featureCategory, nextprotAccession);

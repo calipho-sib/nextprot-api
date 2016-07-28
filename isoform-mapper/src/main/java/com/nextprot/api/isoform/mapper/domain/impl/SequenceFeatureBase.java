@@ -2,7 +2,10 @@ package com.nextprot.api.isoform.mapper.domain.impl;
 
 import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
 import com.nextprot.api.isoform.mapper.utils.EntryIsoformUtils;
 import org.nextprot.api.commons.bio.AminoAcidCode;
@@ -41,21 +44,26 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         this.variation = parser.parse(variation);
     }
 
-    public static SequenceFeature newFeature(FeatureQuery query) throws ParseException {
+    public static SequenceFeature newFeature(FeatureQuery query) throws FeatureQueryException {
 
-        SequenceFeature sequenceFeature = null;
+        // throw exception if invalid query
+        query.checkFeatureQuery();
 
         AnnotationCategory annotationCategory = AnnotationCategory.getDecamelizedAnnotationTypeName(query.getFeatureType());
 
-        switch (annotationCategory) {
-            case VARIANT:
-                sequenceFeature = new SequenceVariant(query.getFeature());
-                break;
-            case GENERIC_PTM:
-                sequenceFeature = new SequenceModification(query.getFeature());
+        try {
+            switch (annotationCategory) {
+                case VARIANT:
+                    return new SequenceVariant(query.getFeature());
+                case GENERIC_PTM:
+                    return new SequenceModification(query.getFeature());
+                default:
+                    throw new InvalidFeatureQueryTypeException(query);
+            }
         }
-
-        return sequenceFeature;
+        catch (ParseException e) {
+            throw new InvalidFeatureQueryFormatException(query, e);
+        }
     }
 
     protected abstract String formatIsoformFeatureName(Isoform isoform);
