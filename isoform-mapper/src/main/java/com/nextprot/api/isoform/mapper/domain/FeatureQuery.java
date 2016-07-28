@@ -1,28 +1,26 @@
 package com.nextprot.api.isoform.mapper.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UndefinedFeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownFeatureQueryTypeException;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.Entry;
 
 import java.io.Serializable;
 
 public class FeatureQuery implements Serializable {
 
-    private final Entry entry;
+    private final String accession;
     private final String feature;
     private final String featureType;
     private boolean propagableFeature;
 
-    public FeatureQuery(Entry entry, String feature, String featureType) throws FeatureQueryException {
+    public FeatureQuery(String accession, String feature, String featureType) throws FeatureQueryException {
 
-        Preconditions.checkNotNull(entry);
+        Preconditions.checkNotNull(accession);
         Preconditions.checkNotNull(feature);
         Preconditions.checkNotNull(featureType);
 
-        this.entry = entry;
+        this.accession = accession;
         this.feature = feature;
         this.featureType = featureType;
 
@@ -37,16 +35,11 @@ public class FeatureQuery implements Serializable {
             throw new UndefinedFeatureQueryException(this);
     }
 
-    @JsonIgnore
-    public Entry getEntry() {
-        return entry;
-    }
-
     /**
      * @return the nextprot entry accession number (example: NX_P01308)
      */
     public String getAccession() {
-        return entry.getUniqueName();
+        return accession;
     }
 
     /**

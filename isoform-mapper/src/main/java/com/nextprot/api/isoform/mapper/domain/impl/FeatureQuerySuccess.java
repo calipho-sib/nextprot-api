@@ -6,6 +6,7 @@ import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import com.nextprot.api.isoform.mapper.utils.GeneMasterCodonPosition;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 
 import java.io.Serializable;
@@ -19,17 +20,25 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
 
     private final Map<String, IsoformFeatureResult> data;
     private final SequenceFeature feature;
+    private final Entry entry;
 
-    public FeatureQuerySuccess(FeatureQuery query, SequenceFeature feature) {
+    public FeatureQuerySuccess(Entry entry, FeatureQuery query, SequenceFeature feature) {
         super(query);
+
+        this.entry = entry;
 
         data = new TreeMap<>();
 
         this.feature = feature;
 
-        addMappedFeature(feature.getIsoform(query.getEntry()),
+        addMappedFeature(feature.getIsoform(entry),
                 feature.getProteinVariation().getFirstChangingAminoAcidPos(),
                 feature.getProteinVariation().getLastChangingAminoAcidPos());
+    }
+
+    @JsonIgnore
+    public Entry getEntry() {
+        return entry;
     }
 
     public void addMappedFeature(Isoform isoform, int firstIsoPosition, int lastIsoPosition) {
