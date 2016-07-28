@@ -8,8 +8,6 @@ import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
 import com.nextprot.api.isoform.mapper.domain.impl.SequenceFeatureBase;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFoundForGeneException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.MultipleEntryAccessionForGeneException;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
@@ -52,13 +50,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         FeatureQuery query = new FeatureQuery(nextprotEntryAccession, featureName, featureType);
 
         try {
-            // throw exception if invalid query
-            query.checkFeatureQuery();
-
             SequenceFeature sequenceFeature = SequenceFeatureBase.newFeature(query);
-
-            if (sequenceFeature == null)
-                throw new InvalidFeatureQueryTypeException(query);
 
             Entry entry = buildEntryFromAccessionElseFromGene(query, sequenceFeature.getGeneName());
 
@@ -68,9 +60,6 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         } catch (FeatureQueryException e) {
 
             return new FeatureQueryFailure(e);
-        } catch (ParseException e) {
-
-            return new FeatureQueryFailure(new InvalidFeatureQueryFormatException(query, e));
         }
     }
 
