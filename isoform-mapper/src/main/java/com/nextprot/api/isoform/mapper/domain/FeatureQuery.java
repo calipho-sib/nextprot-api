@@ -28,12 +28,12 @@ public class FeatureQuery implements Serializable {
 
     public void checkFeatureQuery() throws FeatureQueryException {
 
-        checkAccession();
-        checkFeatureType();
-        checkFeature();
+        checkAccessionNotIsoform();
+        checkAnnotationCategoryExists();
+        checkFeatureNonEmpty();
     }
 
-    private void checkAccession() {
+    private void checkAccessionNotIsoform() {
 
         if (accession.contains("-")) {
             int dashIndex = accession.indexOf("-");
@@ -43,13 +43,13 @@ public class FeatureQuery implements Serializable {
         }
     }
 
-    private void checkFeatureType() throws FeatureQueryException {
+    private void checkAnnotationCategoryExists() throws FeatureQueryException {
 
         if (!AnnotationCategory.hasAnnotationByApiName(featureType))
             throw new UnknownFeatureQueryTypeException(this);
     }
 
-    private void checkFeature() throws FeatureQueryException {
+    private void checkFeatureNonEmpty() throws FeatureQueryException {
 
         if (feature.isEmpty())
             throw new UndefinedFeatureQueryException(this);
