@@ -1,4 +1,13 @@
-<annotation quality='$annotation.getQualityQualifier()'>
+<annotation quality='$annotation.getQualityQualifier()' annotation-internal-id='$annotation.getAnnotationHash()'>
+	#if($annotation.getSubjectName())
+    <biological-subject name="$annotation.getSubjectName()">
+    	<biological-subject-component-list>
+	    #foreach($component in $annotation.getSubjectComponents())
+		    <biological-subject-component annotation-internal-ref="$component" />
+		#end
+		</biological-subject-component-list>
+   </biological-subject>
+    #end
 	#if($annotation.getCvTermName())
     <cv-term accession='$annotation.getCvTermAccessionCode()' terminology='$StringUtils.camelToKebabCase($annotation.getCvApiName())'>$annotation.getCvTermName()</cv-term>
     #end

@@ -264,7 +264,7 @@ public class Entry implements KeyValueRepresentation {
 		return sb.toString();
 	}
 
-	public Map<String, Map<String, List<IsoformAnnotation>>> getModifiedIsoformAnnotations() {
+	public Map<String, Map<String, List<IsoformAnnotation>>> getProteoformAnnotations() {
 
 		return isoformAnnotations.stream().filter(ia -> (ia.getSubjectComponents() != null && !ia.getSubjectComponents().isEmpty())).
 				collect( 

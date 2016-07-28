@@ -5,11 +5,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObjectExternal;
 import org.nextprot.api.core.domain.Entry;
@@ -18,6 +20,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
+import org.nextprot.commons.constants.QualityQualifier;
 
 
 public class AnnotationUtils {
@@ -89,6 +92,7 @@ public class AnnotationUtils {
 
 		return annotationList;
 	}
+	
 	
 	
 	public static Set<Long> getExperimentalContextIdsForAnnotations(List<Annotation> annotations) {
@@ -277,5 +281,56 @@ public class AnnotationUtils {
 	public static AnnotationPropertyComparator getInstanceOfAnnotationPropertyComparator() {
 
 		return ANNOTATION_PROPERTY_COMPARATOR;
+	}
+
+
+	public static List<Annotation> merge(List<Annotation> statementAnnotations, List<Annotation> annotations) {
+		//TODO https://issues.isb-sib.ch/browse/BIOEDITOR-454
+		
+		Map<String, List<Annotation>> annotationsByCategory = annotations.stream().collect(Collectors.groupingBy(Annotation::getCategory));
+		
+		//If You find the annotation on NP1 (annotations) add the evidence (SIMPLE CASE)
+		
+		//If You don't find the annotation on NP1 (annotations) add the new annotation to the list + SET 
+		
+		//If one evidence contains GOLD the annotation is GOLD. (maybe from BioEditor we get variants that are GOLD and in NP1 we have silver ones) so annotation will become GOLD
+		
+		// GO should be easy (go-cellular-component, go-molecular-function, go-biological-process)
+		
+		// variant and mutagenesis should be a bit more complicated but doable (look at origin / positions ... )
+
+		// binary-interaction 66 (may require some adaptation from AnnotationBuilder)
+
+		//small-molecule-interaction	4 (may require some adaptation from AnnotationBuilder, new XREF)
+		
+		//Set the correct annotation id to the evidence (AnnotationEvidence.setAnnotationId....)
+		
+		//Set the correct subject componenents if it is in NP1
+		
+		annotations.addAll(statementAnnotations);
+		return annotations;
+	}
+
+
+
+
+	public static QualityQualifier computeAnnotationQualityBasedOnEvidences(List<AnnotationEvidence> evidences) {
+
+		if(evidences == null || evidences.isEmpty()){
+			throw new NextProtException("Can't compute quality qualifier based on empty / null evidences");
+		}
+
+		for(AnnotationEvidence e : evidences){
+			if(e.getQualityQualifier() == null){
+				throw new NextProtException("Found evidence without any quality");
+			}
+			
+			QualityQualifier q = QualityQualifier.valueOf(e.getQualityQualifier());
+			if(q.equals(QualityQualifier.GOLD)) //If one evidence is GOLD return GOLD
+				return QualityQualifier.GOLD;
+			
+		}
+		
+		return QualityQualifier.SILVER;
 	}
 }

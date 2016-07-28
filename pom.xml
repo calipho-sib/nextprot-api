@@ -51,7 +51,6 @@
 		<module>rdf</module>
 		<module>solr</module>
 		<module>security</module>
-		<module>annotation-builder</module>
 		<module>isoform-mapper</module>
 		<module>etl-statement</module>
 		<module>web</module>
@@ -67,6 +66,12 @@
 				<artifactId>nextprot-api-commons</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+		    <dependency>
+			<groupId>org.nextprot</groupId>
+    			<artifactId>nextprot-commons</artifactId>
+			<version>0.9.0-SNAPSHOT</version>
+		    </dependency>
+	
 		</dependencies>
 
 	</dependencyManagement>

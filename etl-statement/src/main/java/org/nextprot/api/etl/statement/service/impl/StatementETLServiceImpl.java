@@ -1,22 +1,20 @@
 package org.nextprot.api.etl.statement.service.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.Pair;
 import org.nextprot.api.etl.statement.service.StatementETLService;
 import org.nextprot.api.etl.statement.service.StatementRemoteService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.TargetIsoformStatement;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.nextprot.commons.statements.constants.NextProtSource;
 import org.nextprot.commons.statements.service.StatementLoaderService;
@@ -24,8 +22,7 @@ import org.nextprot.commons.statements.service.impl.OracleStatementLoaderService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
@@ -61,7 +58,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 			String annotCat = originalStatement.getValue(StatementField.ANNOTATION_CATEGORY);
 
-			if ("functional-impact".equals(annotCat) || "phenotype".equals(annotCat)) {
+			if ((originalStatement.getSubjectStatementIds() != null) && (!originalStatement.getSubjectStatementIds().isEmpty())) {
 
 				String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
 				Set<Statement> subjectStatements = getSubjects(subjectStatemendIds, sourceStatementsById);
@@ -112,16 +109,39 @@ public class StatementETLServiceImpl implements StatementETLService {
 				
 				List<Statement> subjects = variantsOnIsoform.get(isoform);
 
+				TargetIsoformStatement targetIsoform = null;
+				//TODO check that they are all the same
+				String targetIsoformJson = subjects.get(0).getValue(StatementField.TARGET_ISOFORMS);
+				String targetIsoformForObjectAndPhenotype = null;
+				if(targetIsoformJson != null){
+					targetIsoform = TargetIsoformSerializer.deSerializeFromJsonString(targetIsoformJson);
+					targetIsoform.resetPositions();
+					targetIsoformForObjectAndPhenotype = "{\"NX_P54278-1\":{\"begin\":null,\"end\":null},\"NX_P54278-2\":{\"begin\":null,\"end\":null},\"NX_P54278-3\":{\"begin\":null,\"end\":null},\"NX_P54278-4\":{\"begin\":null,\"end\":null}}";
+					System.err.println("Fix this here. It should only be for object");
+					//TargetIsoformSerializer.serializeToJsonString(targetIsoform);
+				}
+	
 				//Load objects
 				Statement phenotypeIsoStatement =  null;
 				Statement objectIsoStatement = null;
 
 				Statement objectStatement = sourceStatementsById.get(originalStatement.getObjectStatementId());
 				if(objectStatement != null){
-					objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).build();
-					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).addSubjects(subjects).addObject(objectIsoStatement).build();
+
+					objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
+							.addField(StatementField.ISOFORM_ACCESSION, isoform) //in case of annotation
+							.addField(StatementField.TARGET_ISOFORMS, targetIsoformForObjectAndPhenotype) // in case of entry
+							.build();
+					
+					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
+							.addField(StatementField.ISOFORM_ACCESSION, isoform)
+							.addField(StatementField.TARGET_ISOFORMS, targetIsoformForObjectAndPhenotype) // in case of entry
+							.addSubjects(subjects).addObject(objectIsoStatement).build();
 				}else {
-					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement).addField(StatementField.ISOFORM_ACCESSION, isoform).addSubjects(subjects).build();
+					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
+							.addField(StatementField.ISOFORM_ACCESSION, isoform)
+							.addField(StatementField.TARGET_ISOFORMS, targetIsoformForObjectAndPhenotype) // in case of entry
+							.addSubjects(subjects).build();
 
 				}
 
@@ -269,7 +289,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	
 	private Statement mapStatementToEntry(Statement statement, FeatureQuerySuccess result) {
 
-		Map<String, Pair<Integer, Integer>> isoformAndPositions = new TreeMap<>();
+		TargetIsoformStatement isoformAndPositions = new TargetIsoformStatement();
 
 		String beginPositionOfCanonicalOrIsoSpec = null;
 		String endPositionOfCanonicalOrIsoSpec = null;
@@ -281,7 +301,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 		
 		for (FeatureQuerySuccess.IsoformFeatureResult isoformFeatureResult : result.getData().values()) {
 			if (isoformFeatureResult.isMapped()) {
-				isoformAndPositions.put(isoformFeatureResult.getIsoformAccession(), new Pair(isoformFeatureResult.getBeginIsoformPosition(), isoformFeatureResult.getEndIsoformPosition()));
+				isoformAndPositions.putIsoformPosition(isoformFeatureResult.getIsoformAccession(), isoformFeatureResult.getBeginIsoformPosition(), isoformFeatureResult.getEndIsoformPosition());
 				
 				//Will be set in case that we don't want to propagate to canonical
 				if(beginPositionOfCanonicalOrIsoSpec == null){
@@ -327,14 +347,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		}
 		
-		String targetIsoforms = "";
-		
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			targetIsoforms = mapper.writeValueAsString(isoformAndPositions);
-		} catch (JsonProcessingException e) {
-			throw new NextProtException("Failed to convert" + e.getLocalizedMessage());
-		}
 		
 		Statement rs = StatementBuilder.createNew().addMap(statement)
 				.addField(StatementField.RAW_STATEMENT_ID, statement.getStatementId()) // Keep  a reference to the original statement
@@ -343,7 +355,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 				.addField(StatementField.LOCATION_BEGIN_MASTER, masterBeginPosition)
 				.addField(StatementField.LOCATION_END_MASTER, masterEndPosition)
 				.addField(StatementField.ISOFORM_CANONICAL, isoCanonical)
-				.addField(StatementField.TARGET_ISOFORMS, targetIsoforms)
+				.addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(isoformAndPositions))
 				.build();
 
 		return rs;

@@ -18,7 +18,7 @@ import org.nextprot.api.core.utils.AnnotationUtils;
 
 import com.google.common.base.Optional;
 
-//I would love @JsonInclude(Include.NON_NULL)
+//I would love to do @JsonInclude(Include.NON_NULL)
 public class Annotation implements Serializable, IsoformSpecific {
 
 	private String subjectName;
@@ -26,7 +26,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 	
 	private String annotationName;
 	private String annotationHash;
-
 
 	private static final long serialVersionUID = 1L;
 

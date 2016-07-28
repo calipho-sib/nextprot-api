@@ -193,8 +193,13 @@
 		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
 	</cache>
 
-	<cache name="normal-annotations" overflowToOffHeap="false" overflowToDisk="true"
-		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+	<cache name="normal-iso-annotations" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="60000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+	</cache>
+	
+	<cache name="proteoform-iso-annotations" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="60000"
 		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
 	</cache>
 	
