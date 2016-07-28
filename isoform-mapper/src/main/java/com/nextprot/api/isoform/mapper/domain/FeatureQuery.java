@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UndefinedFeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownFeatureQueryTypeException;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.exception.NextProtException;
 
 import java.io.Serializable;
 
@@ -14,7 +15,7 @@ public class FeatureQuery implements Serializable {
     private final String featureType;
     private boolean propagableFeature;
 
-    public FeatureQuery(String accession, String feature, String featureType) throws FeatureQueryException {
+    public FeatureQuery(String accession, String feature, String featureType) {
 
         Preconditions.checkNotNull(accession);
         Preconditions.checkNotNull(feature);
@@ -23,15 +24,34 @@ public class FeatureQuery implements Serializable {
         this.accession = accession;
         this.feature = feature;
         this.featureType = featureType;
-
-        checkStates();
     }
 
-    private void checkStates() throws FeatureQueryException {
+    public void checkFeatureQuery() throws FeatureQueryException {
+
+        checkAccession();
+        checkFeatureType();
+        checkFeature();
+    }
+
+    private void checkAccession() {
+
+        if (accession.contains("-")) {
+            int dashIndex = accession.indexOf("-");
+
+            throw new NextProtException("Invalid entry accession " + accession
+                    + ": " + accession.substring(0, dashIndex)+" was expected");
+        }
+    }
+
+    private void checkFeatureType() throws FeatureQueryException {
 
         if (!AnnotationCategory.hasAnnotationByApiName(featureType))
             throw new UnknownFeatureQueryTypeException(this);
-        else if (feature.isEmpty())
+    }
+
+    private void checkFeature() throws FeatureQueryException {
+
+        if (feature.isEmpty())
             throw new UndefinedFeatureQueryException(this);
     }
 
