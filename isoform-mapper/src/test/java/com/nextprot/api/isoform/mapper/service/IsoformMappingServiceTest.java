@@ -193,6 +193,14 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     }
 
     @Test
+    public void shouldValidateWithNullAccession() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), null);
+
+        assertIsoformFeatureValid(result, "NX_Q9UI33-1", 1158, 1158, true);
+    }
+
+    @Test
     public void shouldNotValidateWithGeneNoAccession() throws Exception {
 
         FeatureQueryResult result = service.validateFeature("SCN14A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "");

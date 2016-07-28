@@ -17,7 +17,6 @@ public class FeatureQuery implements Serializable {
 
     public FeatureQuery(String accession, String feature, String featureType) {
 
-        Preconditions.checkNotNull(accession);
         Preconditions.checkNotNull(feature);
         Preconditions.checkNotNull(featureType);
 
@@ -35,7 +34,7 @@ public class FeatureQuery implements Serializable {
 
     private void checkAccessionNotIsoform() {
 
-        if (accession.contains("-")) {
+        if (accession != null && accession.contains("-")) {
             int dashIndex = accession.indexOf("-");
 
             throw new NextProtException("Invalid entry accession " + accession
