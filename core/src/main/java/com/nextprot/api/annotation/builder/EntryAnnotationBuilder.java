@@ -2,12 +2,12 @@ package com.nextprot.api.annotation.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.TargetIsoformStatement;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 
 import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
@@ -27,14 +27,12 @@ public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 	void setIsoformTargeting(Annotation annotation, Statement statement) {
 		
 		List<AnnotationIsoformSpecificity> targetingIsoforms = new ArrayList<AnnotationIsoformSpecificity>();
-		TargetIsoformStatement tis = TargetIsoformSerializer.deSerializeFromJsonString(statement.getValue(StatementField.TARGET_ISOFORMS));
+		Set<TargetIsoformStatementPosition> tispSet = TargetIsoformSerializer.deSerializeFromJsonString(statement.getValue(StatementField.TARGET_ISOFORMS));
 
-		for (String isoform : tis.keySet()) {
+		for (TargetIsoformStatementPosition tisp : tispSet) {
 			
-			TargetIsoformStatementPosition tisp = tis.get(isoform);
-
 			AnnotationIsoformSpecificity ais = new AnnotationIsoformSpecificity();
-			ais.setIsoformName(isoform);
+			ais.setIsoformName(tisp.getIsoformName());
 			ais.setFirstPosition(tisp.getBegin());
 			ais.setLastPosition(tisp.getEnd());
 			ais.setSpecificity("UNKNOWN");//TODO check this with Pascale
