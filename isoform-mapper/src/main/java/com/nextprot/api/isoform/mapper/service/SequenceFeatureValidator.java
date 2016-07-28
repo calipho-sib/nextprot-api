@@ -5,7 +5,6 @@ import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.SequenceFeatureBase;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.AminoAcidCode;
@@ -14,7 +13,6 @@ import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 
-import java.text.ParseException;
 import java.util.stream.Collectors;
 
 /**
@@ -22,47 +20,37 @@ import java.util.stream.Collectors;
  *
  * Created by fnikitin on 05/07/16.
  */
-public abstract class SequenceFeatureValidator {
+public class SequenceFeatureValidator {
 
-    protected final FeatureQuery query;
+    private final Entry entry;
+    private final FeatureQuery query;
 
-    public SequenceFeatureValidator(FeatureQuery query) {
+    public SequenceFeatureValidator(Entry entry, FeatureQuery query) {
+        this.entry = entry;
         this.query = query;
     }
 
     /**
      * Coordinate validation process in the multiple steps defined in protected methods.
      */
-    public FeatureQueryResult validate() throws FeatureQueryException {
+    public FeatureQueryResult validate(SequenceFeature sequenceFeature) throws FeatureQueryException {
 
-        try {
-            SequenceFeature sequenceFeature = newSequenceFeature(query.getFeature());
+        checkFeatureGeneName(sequenceFeature);
+        checkIsoformExistence(sequenceFeature);
+        checkFeatureChangingAminoAcids(sequenceFeature);
 
-            checkFeatureGeneName(sequenceFeature);
-            checkIsoformExistence(sequenceFeature);
-            checkFeatureChangingAminoAcids(sequenceFeature);
+        doMoreChecks(sequenceFeature.getProteinVariation());
 
-            doMoreChecks(sequenceFeature.getProteinVariation());
-
-            return new FeatureQuerySuccess(query, sequenceFeature);
-        } catch (ParseException e) {
-
-            ParseException pe = new ParseException(e.getMessage(), e.getErrorOffset() +
-                    SequenceFeatureBase.getGeneName(query.getFeature()).length() + 1);
-
-            throw new InvalidFeatureQueryFormatException(query, pe);
-        }
+        return new FeatureQuerySuccess(entry, query, sequenceFeature);
     }
 
     private void checkIsoformExistence(SequenceFeature sequenceFeature) throws UnknownFeatureIsoformException {
 
-        if (!sequenceFeature.isValidIsoform(query.getEntry())) {
+        if (!sequenceFeature.isValidIsoform(entry)) {
 
-            throw new UnknownFeatureIsoformException(query, sequenceFeature.getIsoformName());
+            throw new UnknownFeatureIsoformException(entry, query, sequenceFeature.getIsoformName());
         }
     }
-
-    protected abstract SequenceFeature newSequenceFeature(String feature) throws ParseException;
 
     /**
      * Do more feature validation (nothing by default). It is supposed to be overiden by validators that need to
@@ -78,8 +66,6 @@ public abstract class SequenceFeatureValidator {
      * Part of the contract a validator should implement to validate a feature on an isoform sequence
      */
     private void checkFeatureGeneName(SequenceFeature sequenceFeature) throws IncompatibleGeneAndProteinNameException {
-
-        Entry entry = query.getEntry();
 
         if (!sequenceFeature.isValidGeneName(entry)) {
 
@@ -97,7 +83,7 @@ public abstract class SequenceFeatureValidator {
 
         SequenceVariation variation = sequenceFeature.getProteinVariation();
 
-        Isoform isoform = sequenceFeature.getIsoform(query.getEntry());
+        Isoform isoform = sequenceFeature.getIsoform(entry);
 
         checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
                 String.valueOf(variation.getFirstChangingAminoAcid().get1LetterCode()), query);
