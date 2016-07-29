@@ -2,6 +2,7 @@ package com.nextprot.api.isoform.mapper.utils;
 
 import com.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -23,6 +24,7 @@ NX_P38398-7, pos=1812
 NX_P38398-8, pos=1812
         */
     // TODO: missing specifications for "nucleotides not in frame" case (see User/story "Check not in frame")
+    @Ignore
     @Test
     public void getProjectedPositionNotInFrame() throws Exception {
 
