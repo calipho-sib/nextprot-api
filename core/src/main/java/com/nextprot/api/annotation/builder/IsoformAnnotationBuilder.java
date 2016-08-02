@@ -1,16 +1,18 @@
 package com.nextprot.api.annotation.builder;
 
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 
 public class IsoformAnnotationBuilder extends AnnotationBuilder<IsoformAnnotation> {
 
-	private IsoformAnnotationBuilder() {
+	private IsoformAnnotationBuilder(TerminologyService terminologyService) {
+		super(terminologyService);
 	};
 
-	public static IsoformAnnotationBuilder newBuilder() {
-		return new IsoformAnnotationBuilder();
+	public static IsoformAnnotationBuilder newBuilder(TerminologyService terminologyService) {
+		return new IsoformAnnotationBuilder(terminologyService);
 	}
 
 	@Override

@@ -14,10 +14,12 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioGenericObject;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.AnnotationUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
@@ -26,6 +28,13 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 	protected static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
 
+	private TerminologyService terminologyService = null;
+	
+	protected AnnotationBuilder(TerminologyService terminologyService){
+		this.terminologyService = terminologyService;
+	}
+	
+	
 	private static AnnotationEvidenceProperty addPropertyIfPresent(String propertyValue, String propertyName) {
 		if (propertyValue != null) {
 			AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
@@ -86,19 +95,20 @@ abstract class AnnotationBuilder<T extends Annotation> {
 		
 	}
 
-	protected static List<AnnotationEvidence> buildAnnotationEvidences(List<Statement> Statements) {
+	protected List<AnnotationEvidence> buildAnnotationEvidences(List<Statement> Statements) {
 		return Statements.stream().map(s -> {
 			AnnotationEvidence evidence = new AnnotationEvidence();
 			evidence.setResourceAssociationType("evidence");
 			evidence.setQualityQualifier(s.getValue(StatementField.EVIDENCE_QUALITY));
 
 			AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
-			AnnotationEvidenceProperty expContextProperty = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "protein-origin");
+			AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
+			AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
 			AnnotationEvidenceProperty sourceAccession =addPropertyIfPresent(s.getValue(StatementField.ANNOT_SOURCE_ACCESSION), "source-accession");
 
 			//Set properties which are not null
 			evidence.setProperties(
-					Arrays.asList(evidenceProperty, expContextProperty, sourceAccession)
+					Arrays.asList(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, sourceAccession)
 						.stream().filter(p -> p != null)
 						.collect(Collectors.toList())
 						);
@@ -110,15 +120,12 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			 String statementEvidenceCode = s.getValue(StatementField.EVIDENCE_CODE);
 			 evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
 			 if(statementEvidenceCode != null){
-
-				 if("ECO:0000006".equals(statementEvidenceCode)){
-					 evidence.setEvidenceCodeName("experimental evidence");
-				 }else if("ECO:0000250".equals(statementEvidenceCode)){
-					 evidence.setEvidenceCodeName("sequence similarity");
+				 CvTerm term = terminologyService.findCvTermByAccession(statementEvidenceCode);
+				 if(term != null){
+					 evidence.setEvidenceCodeName(term.getName());
 				 }else {
-					 throw new NextProtException("Not expecting " + statementEvidenceCode + " at this stage");
+					 throw new NextProtException("Not found " + statementEvidenceCode + " in the database");
 				 }
-
 			 }
 			 
 			 evidence.setNote(s.getValue(StatementField.EVIDENCE_NOTE));

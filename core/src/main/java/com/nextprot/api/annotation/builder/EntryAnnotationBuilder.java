@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
@@ -14,8 +15,12 @@ import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 
 public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 
-	public static EntryAnnotationBuilder newBuilder() {
-		return new EntryAnnotationBuilder();
+	protected EntryAnnotationBuilder(TerminologyService terminologyService) {
+		super(terminologyService);
+	}
+
+	public static EntryAnnotationBuilder newBuilder(TerminologyService terminologyService) {
+		return new EntryAnnotationBuilder(terminologyService);
 	}
 
 	@Override

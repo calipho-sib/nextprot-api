@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.AnnotationType;
@@ -27,6 +28,9 @@ public class StatementServiceImpl implements StatementService {
 	@Autowired
 	public StatementDao statementDao;
 
+	@Autowired
+	public TerminologyService terminologyService;
+	
 	@Cacheable("proteoform-iso-annotations")
 	@Override
 	public List<IsoformAnnotation> getProteoformIsoformAnnotations(String isoformAccession) {
@@ -40,7 +44,7 @@ public class StatementServiceImpl implements StatementService {
 		
 		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ISOFORM, subjectAnnotIds);
 		
-		return IsoformAnnotationBuilder.newBuilder().buildProteoformIsoformAnnotations(isoformAccession, subjects, proteoformStatements);
+		return IsoformAnnotationBuilder.newBuilder(terminologyService).buildProteoformIsoformAnnotations(isoformAccession, subjects, proteoformStatements);
 
 	}
 	
@@ -49,11 +53,11 @@ public class StatementServiceImpl implements StatementService {
 	@Override
 	public List<IsoformAnnotation> getNormalIsoformAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ISOFORM, entryAccession);
-		List<IsoformAnnotation> normalAnnotations = IsoformAnnotationBuilder.newBuilder().buildAnnotationList(entryAccession, normalStatements);
-		normalAnnotations.stream().forEach(a -> {
+		List<IsoformAnnotation> normalAnnotations = IsoformAnnotationBuilder.newBuilder(terminologyService).buildAnnotationList(entryAccession, normalStatements);
+		normalAnnotations.stream().forEach(a -> 
 			//Required for group by
-			a.setSubjectName(entryAccession);
-		});
+			a.setSubjectName(entryAccession)
+		);
 		return normalAnnotations;
 	}
 
@@ -70,7 +74,7 @@ public class StatementServiceImpl implements StatementService {
 		
 		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ENTRY, subjectAnnotIds);
 		
-		return EntryAnnotationBuilder.newBuilder().buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
+		return EntryAnnotationBuilder.newBuilder(terminologyService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
 
 	}
 
@@ -78,7 +82,7 @@ public class StatementServiceImpl implements StatementService {
 	@Override
 	public List<Annotation> getNormalEntryAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession);
-		List<Annotation>  annotations =  EntryAnnotationBuilder.newBuilder().buildAnnotationList(entryAccession, normalStatements);
+		List<Annotation>  annotations =  EntryAnnotationBuilder.newBuilder(terminologyService).buildAnnotationList(entryAccession, normalStatements);
 		return annotations;
 		
 	}
