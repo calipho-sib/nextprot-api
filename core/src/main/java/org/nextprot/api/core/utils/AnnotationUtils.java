@@ -303,7 +303,8 @@ public class AnnotationUtils {
 
 		for (Annotation srcAnnotation : srcAnnotationList) {
 
-			AnnotationFinder finder = AnnotationFinder.newFinder(srcAnnotation.getCategory());
+			AnnotationFinder finder = AnnotationFinder.valueOf(srcAnnotation.getAPICategory());
+
 			Annotation foundAnnotation = finder.find(srcAnnotation, destAnnotationList);
 
 			// not found -> add new annotation
