@@ -1,5 +1,6 @@
 package org.nextprot.api.core.dao.impl;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.TerminologyDao;
@@ -30,11 +31,8 @@ public class TerminologyDaoImpl implements TerminologyDao {
 	public List<CvTerm> findTermByAccessionAndTerminology(String accession, String terminology) {
 		throw new RuntimeException("Not implemented");
 	}
-
-
 	
 	@Override
-	// TODO with Daniel: send appropriate exception if terms.size() > 1 => ambiguous accession
 	// TODO normally only terminology + accession is supposed to be unique !!!!
 	// SHOULD USE findTermByAccessionAndTerminology
 	public CvTerm findTerminologyByAccession(String accession) {
@@ -46,6 +44,9 @@ public class TerminologyDaoImpl implements TerminologyDao {
 		
 		if (terms.size()==0)
 			return null;			
+		else if(terms.size() > 1){
+			throw new NextProtException("Found " + terms.size() + " terms that corresponds to the same accession. Use the method findTerminologyByAccessionForTerminology (accession, terminology) instead");
+		}
 		return terms.get(0);
 	}
 	
