@@ -1,9 +1,10 @@
 package org.nextprot.api.core.utils.annot;
 
+import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -11,23 +12,39 @@ import java.util.Collection;
  *
  * Created by fnikitin on 02/08/16.
  */
-public abstract class AnnotationFinder {
+public class AnnotationFinder implements SimilarityCriteria {
 
-    public static AnnotationFinder newFinder(String category) {
+    private final SimilarityCriteria criteria;
 
-        return newFinder(AnnotationCategory.getByDbAnnotationTypeName(category));
+    public AnnotationFinder(SimilarityCriteria criteria) {
+
+        Preconditions.checkNotNull(criteria);
+
+        this.criteria = criteria;
     }
 
-    public static AnnotationFinder newFinder(AnnotationCategory category) {
+    /**
+     * @return an instance of AnnotationFinder given a category (by hash criteria by default)
+     */
+    public static AnnotationFinder valueOf(AnnotationCategory category) {
 
         switch (category) {
             case GO_BIOLOGICAL_PROCESS:
             case GO_CELLULAR_COMPONENT:
             case GO_MOLECULAR_FUNCTION:
-                return new GOFinder();
+                return new AnnotationFinder(new ByCvTermCriteria());
+            case VARIANT:
+            case MUTAGENESIS:
+                // CV Term + Position + Description + BioObject
+                return new AnnotationFinder(new SimilarityCriteriaList(Arrays.asList(
+                        new ByCvTermCriteria(),
+                        new ByTargetIsoformPositionCriteria(),
+                        new ByDescriptionCriteria(),
+                        new ByBioObjectCriteria()
+                )));
+            default:
+                return new AnnotationFinder(new ByHashCriteria());
         }
-
-        throw new NextProtException("\nCould not find annotation finder for " + category);
     }
 
     /**
@@ -46,11 +63,12 @@ public abstract class AnnotationFinder {
 
     public boolean match(Annotation annotation1, Annotation annotation2) {
 
-        if (annotation1.getCategory().equals(annotation2.getCategory()))
-            return isSimilar(annotation1, annotation2);
-
-        return false;
+        return annotation1.getCategory().equals(annotation2.getCategory()) && isSimilar(annotation1, annotation2);
     }
 
-    protected abstract boolean isSimilar(Annotation annotation1, Annotation annotation2);
+    @Override
+    public boolean isSimilar(Annotation annotation1, Annotation annotation2) {
+
+        return criteria.isSimilar(annotation1, annotation2);
+    }
 }
