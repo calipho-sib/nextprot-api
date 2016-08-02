@@ -12,6 +12,6 @@ public class ByCvTermCriteria implements SimilarityCriteria {
     @Override
     public boolean isSimilar(Annotation annotation1, Annotation annotation2) {
 
-        return annotation1.getCvTermAccessionCode().equals(annotation2.getCvTermAccessionCode());
+        return SimilarityCriteria.isSimilarObjects(annotation1.getCvTermAccessionCode(), annotation2.getCvTermAccessionCode());
     }
 }

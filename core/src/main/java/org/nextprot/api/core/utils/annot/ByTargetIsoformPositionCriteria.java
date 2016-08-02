@@ -7,6 +7,6 @@ public class ByTargetIsoformPositionCriteria implements SimilarityCriteria {
     @Override
     public boolean isSimilar(Annotation annotation1, Annotation annotation2) {
 
-        return annotation1.getTargetingIsoformsMap().equals(annotation2.getTargetingIsoformsMap());
+        return SimilarityCriteria.isSimilarObjects(annotation1.getTargetingIsoformsMap(), annotation2.getTargetingIsoformsMap());
     }
 }

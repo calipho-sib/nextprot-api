@@ -7,6 +7,6 @@ public class ByBioObjectCriteria implements SimilarityCriteria {
     @Override
     public boolean isSimilar(Annotation annotation1, Annotation annotation2) {
 
-        return annotation1.getBioObject().equals(annotation2.getBioObject());
+        return SimilarityCriteria.isSimilarObjects(annotation1.getBioObject(), annotation2.getBioObject());
     }
 }

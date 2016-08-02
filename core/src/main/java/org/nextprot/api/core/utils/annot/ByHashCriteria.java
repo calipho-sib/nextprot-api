@@ -12,6 +12,6 @@ public class ByHashCriteria implements SimilarityCriteria {
     @Override
     public boolean isSimilar(Annotation annotation1, Annotation annotation2) {
 
-        return annotation1.getAnnotationHash().equals(annotation2.getAnnotationHash());
+        return SimilarityCriteria.isSimilarObjects(annotation1.getAnnotationHash(), annotation2.getAnnotationHash());
     }
 }
