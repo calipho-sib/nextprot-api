@@ -1,8 +1,11 @@
 package org.nextprot.api.core.utils.annot;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.commons.constants.QualityQualifier;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class AnnotationMergeImpl implements AnnotationMerger {
@@ -16,8 +19,12 @@ public class AnnotationMergeImpl implements AnnotationMerger {
 
     private void updateEvidences(Annotation target, Annotation source) {
 
+        List<AnnotationEvidence> all = new ArrayList<>(target.getEvidences());
+
         // add only different evidences
-        target.getEvidences().addAll(source.getEvidences().stream().filter(e -> !target.getEvidences().contains(e)).collect(Collectors.toList()));
+        all.addAll(source.getEvidences().stream().filter(e -> !target.getEvidences().contains(e)).collect(Collectors.toList()));
+
+        target.setEvidences(all);
     }
 
     private void updateQualityQualifier(Annotation target) {
