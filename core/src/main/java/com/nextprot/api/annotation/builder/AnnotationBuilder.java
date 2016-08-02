@@ -104,9 +104,21 @@ abstract class AnnotationBuilder<T extends Annotation> {
 						);
 			
 			
-			//TODO evidence.setEvidenceCodeAC();
-			//TODO  evidence.setEvidenceCodeName();
-			 evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
+			 evidence.setEvidenceCodeAC(s.getValue(StatementField.EVIDENCE_CODE));
+			 
+			 //TODO should this be hardcoded in the db for all ECOs or should we request a service at this stage?
+			 String statementEvidenceCode = s.getValue(StatementField.EVIDENCE_CODE);
+			 if(statementEvidenceCode != null && statementEvidenceCode.equals("ECO:0000006")){
+				 evidence.setEvidenceCodeName("experimental evidence");
+				 evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
+			 }else if(statementEvidenceCode.equals("ECO:0000250")){
+				 evidence.setEvidenceCodeName("sequence similarity");
+				 evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
+			 }else if(statementEvidenceCode != null){
+				 throw new NextProtException("Not expecting " + statementEvidenceCode + " at this stage");
+			 }
+			 
+			 evidence.setNote(s.getValue(StatementField.EVIDENCE_NOTE));
 			
 			//TODO create experimental contexts!
 

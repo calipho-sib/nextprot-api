@@ -411,6 +411,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 				.addField(StatementField.LOCATION_END, endPositionOfCanonicalOrIsoSpec)
 				.addField(StatementField.LOCATION_BEGIN_MASTER, masterBeginPosition)
 				.addField(StatementField.LOCATION_END_MASTER, masterEndPosition)
+				.addField(StatementField.ISOFORM_ACCESSION, variationStatement.getValue(StatementField.ENTRY_ACCESSION))
 				.addField(StatementField.ISOFORM_CANONICAL, isoCanonical)
 				.addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(targetIsoforms))
 				.build();

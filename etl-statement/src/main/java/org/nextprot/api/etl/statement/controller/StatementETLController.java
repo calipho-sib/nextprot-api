@@ -20,7 +20,7 @@ public class StatementETLController {
 	@Autowired
 	StatementETLService statementSourceCollectorAndLoaderService;
 
-	@ApiMethod(path = "/statements/load/{source}", verb = ApiVerb.GET, description = "Validate isoform feature", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiMethod(path = "/statements/{source}", verb = ApiVerb.GET, description = "Validate isoform feature", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/statements/{source}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public String loadStatements(@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("category") String source) {
 
