@@ -50,9 +50,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 	private StatementLoaderService statementLoadService = new OracleStatementLoaderServiceImpl();
 
 	@Override
-	public String etlStatements(String source) {
+	public String etlStatements(NextProtSource source) {
 
-		List<Statement> sourceStatements = statementRemoteService.getStatementsForSource(NextProtSource.BioEditor);
+		List<Statement> sourceStatements = statementRemoteService.getStatementsForSource(source);
 		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "msh2");
 		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
 
@@ -89,23 +89,31 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		}
 
-		System.err.println("Deleting...");
+		StringBuilder sb = new StringBuilder();
+		
+		addInfo(sb, "Deleting...");
 		statementLoadService.deleteStatementsForSource(NextProtSource.BioEditor);
 
-		System.err.println("Loading raw statements: " + sourceStatements.size());
+		addInfo(sb, "Loading raw statements: " + sourceStatements.size());
 		statementLoadService.loadRawStatementsForSource(new HashSet<>(sourceStatements), NextProtSource.BioEditor);
 
-		System.err.println("Loading iso statements: " + statementsMappedToIsoformToLoad.size());
+		addInfo(sb, "Loading iso statements: " + statementsMappedToIsoformToLoad.size());
 		statementLoadService.loadStatementsMappedToIsoSpecAnnotationsForSource(statementsMappedToIsoformToLoad, NextProtSource.BioEditor);
 
-		System.err.println("Loading entry statements: " + statementsMappedToEntryToLoad.size());
+		addInfo(sb, "Loading entry statements: " + statementsMappedToEntryToLoad.size());
 		statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(statementsMappedToEntryToLoad, NextProtSource.BioEditor);
 
 		System.err.println("Finished to load" + statementsMappedToIsoformToLoad.size());
 
 		
-		return "yo";
+		return sb.toString();
 
+	}
+	
+	private void addInfo (StringBuilder sb, String info){
+		System.err.println(info);
+		sb.append(info + "\n");
+		
 	}
 
 	
