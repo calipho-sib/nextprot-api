@@ -1,31 +1,29 @@
 package org.nextprot.api.core.utils.annot;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.commons.constants.QualityQualifier;
 
-import java.util.List;
+import java.util.stream.Collectors;
 
 public class AnnotationMergeImpl implements AnnotationMerger {
 
     @Override
     public void update(Annotation target, Annotation source) {
 
-        // add only different evidences
-        target.getEvidences().addAll(source.getEvidences());
-
-        if (hasAtLeastOneGoldEvidence(target.getEvidences()))
-            target.setQualityQualifier(QualityQualifier.GOLD.name());
+        updateEvidences(target, source);
+        updateQualityQualifier(target);
     }
 
-    private boolean hasAtLeastOneGoldEvidence(List<AnnotationEvidence> evidences) {
+    private void updateEvidences(Annotation target, Annotation source) {
 
-        for (AnnotationEvidence evidence : evidences) {
+        // add only different evidences
+        target.getEvidences().addAll(source.getEvidences().stream().filter(e -> !target.getEvidences().contains(e)).collect(Collectors.toList()));
+    }
 
-            if (QualityQualifier.valueOf(evidence.getQualityQualifier()) == QualityQualifier.GOLD)
-                return true;
-        }
+    private void updateQualityQualifier(Annotation target) {
 
-        return false;
+        // reset to gold if there is at least one gold evidence
+        if (target.getEvidences().stream().anyMatch(e -> QualityQualifier.valueOf(e.getQualityQualifier()) == QualityQualifier.GOLD))
+            target.setQualityQualifier(QualityQualifier.GOLD.name());
     }
 }
