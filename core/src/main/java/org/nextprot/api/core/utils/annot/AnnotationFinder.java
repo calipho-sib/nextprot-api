@@ -63,7 +63,7 @@ public class AnnotationFinder implements SimilarityCriteria {
 
     public boolean match(Annotation annotation1, Annotation annotation2) {
 
-        return annotation1.getCategory().equals(annotation2.getCategory()) && isSimilar(annotation1, annotation2);
+        return (annotation1.getAPICategory() == annotation2.getAPICategory()) && isSimilar(annotation1, annotation2);
     }
 
     @Override
