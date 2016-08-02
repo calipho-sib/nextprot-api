@@ -3,6 +3,7 @@ package org.nextprot.api.core.domain;
 import com.google.common.base.Preconditions;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * A wrapper over biological domain object
@@ -72,5 +73,22 @@ public abstract class BioObject<T> implements Serializable {
 
     public void setContent(T content) {
         this.content = content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BioObject)) return false;
+        BioObject<?> bioObject = (BioObject<?>) o;
+        return id == bioObject.id &&
+                Objects.equals(accession, bioObject.accession) &&
+                Objects.equals(database, bioObject.database) &&
+                bioType == bioObject.bioType &&
+                resourceType == bioObject.resourceType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, accession, database, bioType, resourceType);
     }
 }

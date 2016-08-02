@@ -1,14 +1,5 @@
 package org.nextprot.api.core.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -20,7 +11,13 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
+import org.nextprot.api.core.utils.annot.AnnotationFinder;
+import org.nextprot.api.core.utils.annot.AnnotationMergeImpl;
+import org.nextprot.api.core.utils.annot.AnnotationMerger;
 import org.nextprot.commons.constants.QualityQualifier;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class AnnotationUtils {
@@ -284,35 +281,44 @@ public class AnnotationUtils {
 	}
 
 
-	public static List<Annotation> merge(List<Annotation> statementAnnotations, List<Annotation> annotations) {
-		//TODO https://issues.isb-sib.ch/browse/BIOEDITOR-454
-		
-		Map<String, List<Annotation>> annotationsByCategory = annotations.stream().collect(Collectors.groupingBy(Annotation::getCategory));
-		
-		//If You find the annotation on NP1 (annotations) add the evidence (SIMPLE CASE)
-		
-		//If You don't find the annotation on NP1 (annotations) add the new annotation to the list + SET 
-		
-		//If one evidence contains GOLD the annotation is GOLD. (maybe from BioEditor we get variants that are GOLD and in NP1 we have silver ones) so annotation will become GOLD
-		
-		// GO should be easy (go-cellular-component, go-molecular-function, go-biological-process)
-		
-		// variant and mutagenesis should be a bit more complicated but doable (look at origin / positions ... )
+	//If You find the annotation on NP1 (annotations) add the evidence (SIMPLE CASE)
+	//If You don't find the annotation on NP1 (annotations) add the new annotation to the list + SET
+	//If one evidence contains GOLD the annotation is GOLD. (maybe from BioEditor we get variants that are GOLD and in NP1 we have silver ones) so annotation will become GOLD
+	// GO should be easy (go-cellular-component, go-molecular-function, go-biological-process)
+	// variant and mutagenesis should be a bit more complicated but doable (look at origin / positions ... )
+	// binary-interaction 66 (may require some adaptation from AnnotationBuilder)
+	//small-molecule-interaction	4 (may require some adaptation from AnnotationBuilder, new XREF)
+	//Set the correct annotation id to the evidence (AnnotationEvidence.setAnnotationId....)
+	//Set the correct subject componenents if it is in NP1
 
-		// binary-interaction 66 (may require some adaptation from AnnotationBuilder)
+	/**
+	 * Merge source annotations into destination annotations (update destination annotations if needed)
+	 * see specs https://issues.isb-sib.ch/browse/BIOEDITOR-454
+	 * @param srcAnnotationList
+	 * @param destAnnotationList
+     */
+	public static void merge(List<Annotation> srcAnnotationList, List<Annotation> destAnnotationList) {
 
-		//small-molecule-interaction	4 (may require some adaptation from AnnotationBuilder, new XREF)
-		
-		//Set the correct annotation id to the evidence (AnnotationEvidence.setAnnotationId....)
-		
-		//Set the correct subject componenents if it is in NP1
-		
-		annotations.addAll(statementAnnotations);
-		return annotations;
+		AnnotationMerger merger = new AnnotationMergeImpl();
+
+		for (Annotation srcAnnotation : srcAnnotationList) {
+
+			AnnotationFinder finder = AnnotationFinder.valueOf(srcAnnotation.getAPICategory());
+
+			Annotation foundAnnotation = finder.find(srcAnnotation, destAnnotationList);
+
+			// not found -> add new annotation
+			if (foundAnnotation == null) {
+
+				destAnnotationList.add(srcAnnotation);
+			}
+			// found -> update annotation with statementAnnotation
+			else {
+
+				merger.update(foundAnnotation, srcAnnotation);
+			}
+		}
 	}
-
-
-
 
 	public static QualityQualifier computeAnnotationQualityBasedOnEvidences(List<AnnotationEvidence> evidences) {
 

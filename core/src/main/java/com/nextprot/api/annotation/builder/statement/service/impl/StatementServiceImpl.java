@@ -1,9 +1,9 @@
 package com.nextprot.api.annotation.builder.statement.service.impl;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import com.nextprot.api.annotation.builder.EntryAnnotationBuilder;
+import com.nextprot.api.annotation.builder.IsoformAnnotationBuilder;
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import com.nextprot.api.annotation.builder.statement.service.StatementService;
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
@@ -15,10 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.nextprot.api.annotation.builder.EntryAnnotationBuilder;
-import com.nextprot.api.annotation.builder.IsoformAnnotationBuilder;
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
-import com.nextprot.api.annotation.builder.statement.service.StatementService;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StatementServiceImpl implements StatementService {
@@ -90,7 +89,10 @@ public class StatementServiceImpl implements StatementService {
 
 	@Override
 	public List<Annotation> getAnnotations(String entryAccession) {
-		return null;
-	}
 
+		List<Annotation> list = getProteoformEntryAnnotations(entryAccession);
+		list.addAll(getNormalEntryAnnotations(entryAccession));
+
+		return list;
+	}
 }

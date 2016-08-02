@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -111,6 +112,24 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 		}
 
 		return name;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof AnnotationIsoformSpecificity)) return false;
+		AnnotationIsoformSpecificity that = (AnnotationIsoformSpecificity) o;
+		return annotationId == that.annotationId &&
+				Objects.equals(firstPosition, that.firstPosition) &&
+				Objects.equals(lastPosition, that.lastPosition) &&
+				Objects.equals(isoformName, that.isoformName) &&
+				Objects.equals(specificity, that.specificity) &&
+				Objects.equals(_comparableName, that._comparableName);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(annotationId, firstPosition, lastPosition, isoformName, specificity, _comparableName);
 	}
 
 	@Override
