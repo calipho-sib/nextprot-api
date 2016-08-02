@@ -83,7 +83,7 @@ public class JSONDocRoleController extends JSONDocController {
 
 		List<String> packages = new ArrayList<String>();
 		packages.addAll(Arrays.asList(new String[] { "org.nextprot.api.commons", "org.nextprot.api.core", "org.nextprot.api.rdf", "org.nextprot.api.solr", "org.nextprot.api.user",
-				"org.nextprot.api.web" }));
+				"org.nextprot.api.web", "org.nextprot.api.etl"  }));
 
 		String version = releaseInfoService.findReleaseInfo().getApiRelease();
 		for (String profile : env.getActiveProfiles()) {
