@@ -32,18 +32,19 @@ public class AnnotationFinder implements SimilarityCriteria {
             case GO_BIOLOGICAL_PROCESS:
             case GO_CELLULAR_COMPONENT:
             case GO_MOLECULAR_FUNCTION:
-                return new AnnotationFinder(new ByCvTermCriteria());
+                return new AnnotationFinder(new SimilarityCriteriaImpl(Annotation::getCvTermAccessionCode));
             case VARIANT:
             case MUTAGENESIS:
-                // CV Term + Position + Description + BioObject
+                // Annot name + CV Term + Position + Description + BioObject
                 return new AnnotationFinder(new SimilarityCriteriaList(Arrays.asList(
-                        new ByCvTermCriteria(),
-                        new ByTargetIsoformPositionCriteria(),
-                        new ByDescriptionCriteria(),
-                        new ByBioObjectCriteria()
+                        new SimilarityCriteriaImpl(Annotation::getAnnotationName),
+                        new SimilarityCriteriaImpl(Annotation::getCvTermAccessionCode),
+                        new SimilarityCriteriaImpl(Annotation::getTargetingIsoformsMap),
+                        new SimilarityCriteriaImpl(Annotation::getDescription),
+                        new SimilarityCriteriaImpl(Annotation::getBioObject)
                 )));
             default:
-                return new AnnotationFinder(new ByHashCriteria());
+                return new AnnotationFinder(new SimilarityCriteriaImpl(Annotation::getAnnotationHash));
         }
     }
 
