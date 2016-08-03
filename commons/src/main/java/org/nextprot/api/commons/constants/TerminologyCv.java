@@ -35,7 +35,10 @@ public enum TerminologyCv {
 	UniprotPtmCv,
 	UniprotSubcellularLocationCv,
 	UniprotSubcellularOrientationCv,
-	UniprotSubcellularTopologyCv;
+	UniprotSubcellularTopologyCv,
+	NextprotModificationEffectCv,
+	NextprotProteinPropertyCv,
+	MammalianPhenotypeCv;
 	
 
 	public static TerminologyCv getTerminologyOf(String terminology){
