@@ -8,13 +8,18 @@ import org.nextprot.api.core.domain.annotation.Annotation;
  *
  * Created by fnikitin on 02/08/16.
  */
-public class AccessibleObjectSimilarityPredicate implements SimilarityPredicate {
+public class ObjectSimilarityPredicate implements SimilarityPredicate {
 
     private final ObjectAccessor accessor;
 
-    public AccessibleObjectSimilarityPredicate(ObjectAccessor accessor) {
+    public ObjectSimilarityPredicate(ObjectAccessor accessor) {
 
         this.accessor = accessor;
+    }
+
+    public Object getObject(Annotation annotation) {
+
+        return accessor.getObject(annotation);
     }
 
     @Override
@@ -24,18 +29,21 @@ public class AccessibleObjectSimilarityPredicate implements SimilarityPredicate 
     }
 
     /**
-     * @return true if both objects accessible from given annotations are equals () else false
+     * Default implementation of matching objects accessible from annotation (based on equals()).
+     * Extend it if needed.
+     *
+     * @return true if both objects matches else false
      */
     protected boolean match(Annotation annotation1, Annotation annotation2) {
 
-        return AccessibleObjectSimilarityPredicate.equalObjects(accessor.getObject(annotation1),
+        return ObjectSimilarityPredicate.equalObjects(accessor.getObject(annotation1),
                 accessor.getObject(annotation2));
     }
 
     /**
      * @return true if o1 and 02 both null or equals (based on Object.equals contract) else false
      */
-    private static boolean equalObjects(Object o1, Object o2) {
+    public static boolean equalObjects(Object o1, Object o2) {
 
         if (o1 == null || o2 == null)
             return false;

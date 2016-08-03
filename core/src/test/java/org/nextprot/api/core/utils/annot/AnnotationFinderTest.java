@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.nextprot.api.core.utils.annot.AccessibleObjectSimilarityPredicateTest.mockAnnotation;
+import static org.nextprot.api.core.utils.annot.ObjectSimilarityPredicateTest.mockAnnotation;
 
 public class AnnotationFinderTest {
 

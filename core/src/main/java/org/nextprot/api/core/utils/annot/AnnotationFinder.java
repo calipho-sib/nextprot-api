@@ -36,19 +36,19 @@ public class AnnotationFinder {
             case GO_BIOLOGICAL_PROCESS:
             case GO_CELLULAR_COMPONENT:
             case GO_MOLECULAR_FUNCTION:
-                return new AnnotationFinder(new AccessibleObjectSimilarityPredicate(Annotation::getCvTermAccessionCode));
+                return new AnnotationFinder(new ObjectSimilarityPredicate(Annotation::getCvTermAccessionCode));
             case VARIANT:
             case MUTAGENESIS:
                 // Annot name + CV Term + Position + Description + BioObject
                 return new AnnotationFinder(new SimilarityPredicatePipeline(Arrays.asList(
-                        new AccessibleObjectSimilarityPredicate(Annotation::getAnnotationName),
-                        new AccessibleObjectSimilarityPredicate(Annotation::getCvTermAccessionCode),
-                        new AccessibleObjectSimilarityPredicate(Annotation::getTargetingIsoformsMap),
-                        new AccessibleObjectSimilarityPredicate(Annotation::getDescription),
-                        new AccessibleObjectSimilarityPredicate(Annotation::getBioObject)
+                        new ObjectSimilarityPredicate(Annotation::getAnnotationName),
+                        new ObjectSimilarityPredicate(Annotation::getCvTermAccessionCode),
+                        new ObjectSimilarityPredicate(Annotation::getTargetingIsoformsMap),
+                        new ObjectSimilarityPredicate(Annotation::getDescription),
+                        new ObjectSimilarityPredicate(Annotation::getBioObject)
                 )));
             default:
-                return new AnnotationFinder(new AccessibleObjectSimilarityPredicate(Annotation::getAnnotationHash));
+                return new AnnotationFinder(new ObjectSimilarityPredicate(Annotation::getAnnotationHash));
         }
     }
 
