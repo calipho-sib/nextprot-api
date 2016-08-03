@@ -2,7 +2,6 @@ package org.nextprot.api.core.utils.annot;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.mockito.Mockito.when;
+import static org.nextprot.api.core.utils.annot.AccessibleObjectSimilarityPredicateTest.mockAnnotation;
 
 public class AnnotationFinderTest {
 
@@ -73,16 +72,7 @@ public class AnnotationFinderTest {
         Assert.assertEquals("joe", found.getAnnotationName());
     }
 
-    private static Annotation mockAnnotation(AnnotationCategory cat) {
-
-        Annotation annotation = Mockito.mock(Annotation.class);
-
-        when(annotation.getAPICategory()).thenReturn(cat);
-
-        return annotation;
-    }
-
-    private static SimilarityCriteria newApiCatCriteria() {
+    private static SimilarityPredicate newApiCatCriteria() {
 
         return (a1, a2) -> a1.getAPICategory() == a2.getAPICategory();
     }

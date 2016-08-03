@@ -14,12 +14,12 @@ import java.util.Collection;
  */
 public class AnnotationFinder {
 
-    private final SimilarityCriteria criteria;
+    private final SimilarityPredicate criteria;
 
     /**
      * Constructor needs a criteria to find similar annotations
      */
-    public AnnotationFinder(SimilarityCriteria criteria) {
+    public AnnotationFinder(SimilarityPredicate criteria) {
 
         Preconditions.checkNotNull(criteria);
 
@@ -36,19 +36,19 @@ public class AnnotationFinder {
             case GO_BIOLOGICAL_PROCESS:
             case GO_CELLULAR_COMPONENT:
             case GO_MOLECULAR_FUNCTION:
-                return new AnnotationFinder(new SimilarityCriteriaImpl(Annotation::getCvTermAccessionCode));
+                return new AnnotationFinder(new AccessibleObjectSimilarityPredicate(Annotation::getCvTermAccessionCode));
             case VARIANT:
             case MUTAGENESIS:
                 // Annot name + CV Term + Position + Description + BioObject
-                return new AnnotationFinder(new SimilarityCriteriaList(Arrays.asList(
-                        new SimilarityCriteriaImpl(Annotation::getAnnotationName),
-                        new SimilarityCriteriaImpl(Annotation::getCvTermAccessionCode),
-                        new SimilarityCriteriaImpl(Annotation::getTargetingIsoformsMap),
-                        new SimilarityCriteriaImpl(Annotation::getDescription),
-                        new SimilarityCriteriaImpl(Annotation::getBioObject)
+                return new AnnotationFinder(new SimilarityPredicatePipeline(Arrays.asList(
+                        new AccessibleObjectSimilarityPredicate(Annotation::getAnnotationName),
+                        new AccessibleObjectSimilarityPredicate(Annotation::getCvTermAccessionCode),
+                        new AccessibleObjectSimilarityPredicate(Annotation::getTargetingIsoformsMap),
+                        new AccessibleObjectSimilarityPredicate(Annotation::getDescription),
+                        new AccessibleObjectSimilarityPredicate(Annotation::getBioObject)
                 )));
             default:
-                return new AnnotationFinder(new SimilarityCriteriaImpl(Annotation::getAnnotationHash));
+                return new AnnotationFinder(new AccessibleObjectSimilarityPredicate(Annotation::getAnnotationHash));
         }
     }
 
