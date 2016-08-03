@@ -7,6 +7,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.mockito.Mockito.when;
@@ -14,7 +15,7 @@ import static org.mockito.Mockito.when;
 public class AnnotationFinderTest {
 
     @Test
-    public void shouldNotFindAnnotFromEmptyList() throws Exception {
+    public void shouldNotFindAnnotInEmptyList() throws Exception {
 
         AnnotationFinder finder = new AnnotationFinder(newApiCatCriteria());
 
@@ -51,6 +52,25 @@ public class AnnotationFinderTest {
         );
 
         Assert.assertNull(found);
+    }
+
+    @Test
+    public void shouldFindOneAnnotIfMultipleMatches() throws Exception {
+
+        AnnotationFinder finder = new AnnotationFinder(newApiCatCriteria());
+
+        Annotation annot = new Annotation();
+        annot.setAnnotationName("joe");
+        annot.setCategory(AnnotationCategory.VARIANT);
+
+        Annotation found = finder.find(
+                mockAnnotation(AnnotationCategory.VARIANT),
+                Arrays.asList(annot, mockAnnotation(AnnotationCategory.VARIANT))
+        );
+
+        Assert.assertNotNull(found);
+        Assert.assertEquals(AnnotationCategory.VARIANT, found.getAPICategory());
+        Assert.assertEquals("joe", found.getAnnotationName());
     }
 
     private static Annotation mockAnnotation(AnnotationCategory cat) {
