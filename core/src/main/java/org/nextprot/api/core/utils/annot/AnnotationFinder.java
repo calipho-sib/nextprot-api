@@ -8,15 +8,18 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Find annotation in collection of annotations
+ * Find similar annotation in collection of annotations
  *
  * Created by fnikitin on 02/08/16.
  */
-public class AnnotationFinder implements SimilarityCriteria {
+public class AnnotationFinder {
 
-    private final SimilarityCriteria criteria;
+    private final SimilarityPredicate criteria;
 
-    public AnnotationFinder(SimilarityCriteria criteria) {
+    /**
+     * Constructor needs a criteria to find similar annotations
+     */
+    public AnnotationFinder(SimilarityPredicate criteria) {
 
         Preconditions.checkNotNull(criteria);
 
@@ -24,6 +27,7 @@ public class AnnotationFinder implements SimilarityCriteria {
     }
 
     /**
+     * Factory method based on AnnotationCategory.
      * @return an instance of AnnotationFinder given a category (by hash criteria by default)
      */
     public static AnnotationFinder valueOf(AnnotationCategory category) {
@@ -32,43 +36,35 @@ public class AnnotationFinder implements SimilarityCriteria {
             case GO_BIOLOGICAL_PROCESS:
             case GO_CELLULAR_COMPONENT:
             case GO_MOLECULAR_FUNCTION:
-                return new AnnotationFinder(new ByCvTermCriteria());
+                return new AnnotationFinder(new ObjectSimilarityPredicate(Annotation::getCvTermAccessionCode));
             case VARIANT:
             case MUTAGENESIS:
-                // CV Term + Position + Description + BioObject
-                return new AnnotationFinder(new SimilarityCriteriaList(Arrays.asList(
-                        new ByCvTermCriteria(),
-                        new ByTargetIsoformPositionCriteria(),
-                        new ByDescriptionCriteria(),
-                        new ByBioObjectCriteria()
+                // Annot name + CV Term + Position + Description + BioObject
+                return new AnnotationFinder(new SimilarityPredicatePipeline(Arrays.asList(
+                        new ObjectSimilarityPredicate(Annotation::getAnnotationName),
+                        new ObjectSimilarityPredicate(Annotation::getCvTermAccessionCode),
+                        new ObjectSimilarityPredicate(Annotation::getTargetingIsoformsMap),
+                        new ObjectSimilarityPredicate(Annotation::getDescription),
+                        new ObjectSimilarityPredicate(Annotation::getBioObject)
                 )));
             default:
-                return new AnnotationFinder(new ByHashCriteria());
+                return new AnnotationFinder(new ObjectSimilarityPredicate(Annotation::getAnnotationHash));
         }
     }
 
     /**
-     * @return the annotation found from a list of annotations else null
+     * @return the annotation found from a list of annotations or null if not found
+     *
+     * TODO: does find() need to return a collection instead of one instance ?
      */
-    public Annotation find(Annotation annotation, Collection<Annotation> annotations) {
+    public Annotation find(Annotation searchedAnnotation, Collection<Annotation> annotations) {
 
-        for (Annotation annot : annotations) {
+        for (Annotation annotation : annotations) {
 
-            if (match(annotation, annot))
-                return annot;
+            if (criteria.isSimilar(searchedAnnotation, annotation))
+                return annotation;
         }
 
         return null;
-    }
-
-    public boolean match(Annotation annotation1, Annotation annotation2) {
-
-        return (annotation1.getAPICategory() == annotation2.getAPICategory()) && isSimilar(annotation1, annotation2);
-    }
-
-    @Override
-    public boolean isSimilar(Annotation annotation1, Annotation annotation2) {
-
-        return criteria.isSimilar(annotation1, annotation2);
     }
 }
