@@ -7,11 +7,11 @@ import org.nextprot.api.core.domain.annotation.Annotation;
  *
  * Created by fnikitin on 02/08/16.
  */
-public class ByCvTermCriteria implements SimilarityCriteria {
+public class ByCvTermCriteria extends SimilarityCriteriaImpl {
 
     @Override
-    public boolean isSimilar(Annotation annotation1, Annotation annotation2) {
+    public boolean match(Annotation annotation1, Annotation annotation2) {
 
-        return SimilarityCriteria.isSimilarObjects(annotation1.getCvTermAccessionCode(), annotation2.getCvTermAccessionCode());
+        return SimilarityCriteriaImpl.matchObjects(annotation1.getCvTermAccessionCode(), annotation2.getCvTermAccessionCode());
     }
 }

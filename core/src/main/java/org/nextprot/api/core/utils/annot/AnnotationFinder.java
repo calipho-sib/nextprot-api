@@ -50,20 +50,15 @@ public class AnnotationFinder implements SimilarityCriteria {
     /**
      * @return the annotation found from a list of annotations else null
      */
-    public Annotation find(Annotation annotation, Collection<Annotation> annotations) {
+    public Annotation find(Annotation searchedAnnotation, Collection<Annotation> annotations) {
 
-        for (Annotation annot : annotations) {
+        for (Annotation annotation : annotations) {
 
-            if (match(annotation, annot))
-                return annot;
+            if (isSimilar(searchedAnnotation, annotation))
+                return annotation;
         }
 
         return null;
-    }
-
-    public boolean match(Annotation annotation1, Annotation annotation2) {
-
-        return (annotation1.getAPICategory() == annotation2.getAPICategory()) && isSimilar(annotation1, annotation2);
     }
 
     @Override

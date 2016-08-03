@@ -7,11 +7,11 @@ import org.nextprot.api.core.domain.annotation.Annotation;
  *
  * Created by fnikitin on 02/08/16.
  */
-public class ByHashCriteria implements SimilarityCriteria {
+public class ByHashCriteria extends SimilarityCriteriaImpl {
 
     @Override
-    public boolean isSimilar(Annotation annotation1, Annotation annotation2) {
+    public boolean match(Annotation annotation1, Annotation annotation2) {
 
-        return SimilarityCriteria.isSimilarObjects(annotation1.getAnnotationHash(), annotation2.getAnnotationHash());
+        return SimilarityCriteriaImpl.matchObjects(annotation1.getAnnotationHash(), annotation2.getAnnotationHash());
     }
 }
