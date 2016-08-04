@@ -211,8 +211,8 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		evidence.setEvidenceCodeOntology("EvidenceCodeOntologyCv");
 		evidence.setAssignedBy("PINC");
 
-		List<Annotation> srcList = Arrays.asList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
-				Collections.singletonList(evidence), "ECO:0000304"));
+		List<Annotation> srcList = Arrays.asList(mockAnnotationWithHash(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
+				Collections.singletonList(evidence), "ECO:0000304", "hash"));
 		List<Annotation> destList = Arrays.asList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
 				Collections.singletonList(evidence), "ECO:0000304"));
 
@@ -261,8 +261,8 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		evidence1.setEvidenceCodeOntology("EvidenceCodeOntologyCv");
 		evidence1.setAssignedBy("SPONGEBOB");
 
-		List<Annotation> srcList = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
-				Collections.singletonList(evidence2), "ECO:0000304"));
+		List<Annotation> srcList = Collections.singletonList(mockAnnotationWithHash(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
+				Collections.singletonList(evidence2), "ECO:0000304", "hash"));
 		List<Annotation> destList = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
 				Collections.singletonList(evidence1), "ECO:0000304"));
 
@@ -301,6 +301,15 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		annotation.setCategory(cat);
 		annotation.setEvidences(evidences);
 		annotation.setCvTermAccessionCode(cvCode);
+
+		return annotation;
+	}
+
+	private static Annotation mockAnnotationWithHash(AnnotationCategory cat, List<AnnotationEvidence> evidences, String cvCode, String hash) {
+
+		Annotation annotation = mockAnnotation(cat, evidences, cvCode);
+
+		annotation.setAnnotationHash(hash);
 
 		return annotation;
 	}
