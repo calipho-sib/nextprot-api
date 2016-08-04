@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.annot;
+package org.nextprot.api.core.utils.annot.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.annot.SimilarityPredicate;
 
 import static org.mockito.Mockito.when;
 
@@ -59,14 +60,8 @@ public class ObjectSimilarityPredicateTest {
     @Test
     public void shouldBeSimilarBasedOnBioObjectAccessionEquals() throws Exception {
 
-        // testing extensibility
-        SimilarityPredicate predicateBasedOnBioObjectAccessionEquals = new ObjectSimilarityPredicate(Annotation::getBioObject) {
-            @Override
-            protected boolean match(Annotation annotation1, Annotation annotation2) {
-                return ObjectSimilarityPredicate.equalObjects(((BioObject)getObject(annotation1)).getAccession(),
-                        ((BioObject)getObject(annotation2)).getAccession());
-            }
-        };
+        SimilarityPredicate predicateBasedOnBioObjectAccessionEquals = new ObjectSimilarityPredicate(Annotation::getBioObject,
+                (o1, o2) -> ObjectSimilarityPredicate.equalObjects(((BioObject)o1).getAccession(), ((BioObject)o2).getAccession()));
 
         Assert.assertTrue(predicateBasedOnBioObjectAccessionEquals.isSimilar(mockAnnotationWithBioObject("toto", BioObject.BioType.CHEMICAL),
                 mockAnnotationWithBioObject("toto", BioObject.BioType.GROUP)));

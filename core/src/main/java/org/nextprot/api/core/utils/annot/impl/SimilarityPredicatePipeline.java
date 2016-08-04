@@ -1,7 +1,8 @@
-package org.nextprot.api.core.utils.annot;
+package org.nextprot.api.core.utils.annot.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.annot.SimilarityPredicate;
 
 import java.util.List;
 

@@ -1,7 +1,8 @@
-package org.nextprot.api.core.utils.annot;
+package org.nextprot.api.core.utils.annot.impl;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.utils.annot.AnnotationMerger;
 import org.nextprot.commons.constants.QualityQualifier;
 
 import java.util.ArrayList;
