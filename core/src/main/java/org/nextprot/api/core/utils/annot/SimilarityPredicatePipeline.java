@@ -6,24 +6,26 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import java.util.List;
 
 /**
- * Find annotations by cv term accession code
+ * A list of SimilarityPredicate applied with conjunction operator (AND)
  *
  * Created by fnikitin on 02/08/16.
  */
-public class SimilarityCriteriaList implements SimilarityCriteria {
+public class SimilarityPredicatePipeline implements SimilarityPredicate {
 
-    private final List<SimilarityCriteria> criteria;
+    private final List<SimilarityPredicate> criteria;
 
-    public SimilarityCriteriaList(List<SimilarityCriteria> criteria) {
+    public SimilarityPredicatePipeline(List<SimilarityPredicate> criteria) {
 
         Preconditions.checkNotNull(criteria);
+        Preconditions.checkArgument(!criteria.isEmpty());
+
         this.criteria = criteria;
     }
 
     @Override
     public boolean isSimilar(Annotation annotation1, Annotation annotation2) {
 
-        for (SimilarityCriteria criterium : criteria) {
+        for (SimilarityPredicate criterium : criteria) {
 
             if (!criterium.isSimilar(annotation1, annotation2))
                 return false;

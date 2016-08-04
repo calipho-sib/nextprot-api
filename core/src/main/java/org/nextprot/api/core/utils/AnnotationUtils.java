@@ -299,6 +299,7 @@ public class AnnotationUtils {
      */
 	public static void merge(List<Annotation> srcAnnotationList, List<Annotation> destAnnotationList) {
 
+		// TODO: for performance reason merge should return the list of merged annotations without updating state of destAnnotationList
 		AnnotationMerger merger = new AnnotationMergeImpl();
 
 		for (Annotation srcAnnotation : srcAnnotationList) {
