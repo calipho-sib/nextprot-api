@@ -87,6 +87,7 @@ public class StatementServiceImpl implements StatementService {
 	}
 
 
+	@Cacheable("statement-annotations")
 	@Override
 	public List<Annotation> getAnnotations(String entryAccession) {
 
