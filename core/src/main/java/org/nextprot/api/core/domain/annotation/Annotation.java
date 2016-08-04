@@ -399,10 +399,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 		return booleanOptional;
 	}
 	
-	public String getKebabCategoryName() {
-		return StringUtils.camelToKebabCase(category);
-	}
-
 	public String getSubjectName() {
 		return subjectName;
 	}

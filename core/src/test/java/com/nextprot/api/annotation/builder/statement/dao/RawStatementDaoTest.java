@@ -1,6 +1,6 @@
 package com.nextprot.api.annotation.builder.statement.dao;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,27 +23,31 @@ public class RawStatementDaoTest extends AnnotationBuilderBaseTest {
 	private StatementDao rawStatementDao;
 
 	@Test
-	public void findAllPhenotypesStatements() {
-		List rows = rawStatementDao.findProteoformStatements(AnnotationType.ENTRY, "NX_Q9BX63");
-		System.out.println(rows.size());
+	public void findProteformStatementsForEntry() {
+		List<?> rows = rawStatementDao.findProteoformStatements(AnnotationType.ENTRY, "NX_Q15858");
+		assertTrue(rows.size() > 0);
+	}
+	
+	@Test
+	public void findProteformStatementsForIsoform() {
+		List<?> rows = rawStatementDao.findProteoformStatements(AnnotationType.ISOFORM, "NX_Q15858-1");
+		assertTrue(rows.size() > 0);
 	}
 	
 
 	@Test
 	public void findAllNormalStatements() {
-		AtomicInteger i = new AtomicInteger(0);
-		List<Statement> statements = rawStatementDao.findNormalStatements(AnnotationType.ENTRY, "NX_Q9BX63");
-		statements.stream().forEach(s -> System.out.println(i.getAndIncrement() + " - " + s.getValue(StatementField.ANNOTATION_ID)));
-		List<Statement> statement = statements.stream().filter(s -> s.getValue(StatementField.ANNOTATION_ID).equals("c075d4a6b44e95faec7d8b109166744b")).collect(Collectors.toList());
+		List<Statement> statements = rawStatementDao.findNormalStatements(AnnotationType.ENTRY, "NX_Q15858");
+		assertTrue(statements.size() > 0);
 	}
 	
 	@Test
-	public void findPhenotypes(){
-		AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase("phenotype"));
+	public void findModificationEffectCategory(){
+		AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase("modification-effect"));
 		IsoformAnnotation isoAnnotation = new IsoformAnnotation();
 		isoAnnotation.setCategory(category);
 		
-		assertEquals(isoAnnotation.getKebabCategoryName(), "phenotype");
+		assertEquals(isoAnnotation.getCategory(), "modification-effect");
 
 
 	}

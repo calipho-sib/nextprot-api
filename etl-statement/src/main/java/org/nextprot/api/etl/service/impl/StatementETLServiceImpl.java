@@ -87,9 +87,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 		}
 
 		StringBuilder sb = new StringBuilder();
-		
-		addInfo(sb, "Deleting...");
-		statementLoadService.deleteStatementsForSource(NextProtSource.BioEditor);
 
 		addInfo(sb, "Loading raw statements: " + sourceStatements.size());
 		statementLoadService.loadRawStatementsForSource(new HashSet<>(sourceStatements), NextProtSource.BioEditor);
@@ -99,8 +96,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		addInfo(sb, "Loading entry statements: " + statementsMappedToEntryToLoad.size());
 		statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(statementsMappedToEntryToLoad, NextProtSource.BioEditor);
-
-		System.err.println("Finished to load" + statementsMappedToIsoformToLoad.size());
 
 		
 		return sb.toString();

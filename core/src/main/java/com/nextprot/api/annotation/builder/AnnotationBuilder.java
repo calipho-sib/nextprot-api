@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioGenericObject;
@@ -35,11 +36,12 @@ abstract class AnnotationBuilder<T extends Annotation> {
 	}
 	
 	
-	private static AnnotationEvidenceProperty addPropertyIfPresent(String propertyValue, String propertyName) {
+	private static AnnotationEvidenceProperty addPropertyIfPresent(long evidenceId, String propertyValue, String propertyName) {
 		if (propertyValue != null) {
 			AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
 			prop.setPropertyName(propertyName);
 			prop.setPropertyValue(propertyValue);
+			prop.setEvidenceId(evidenceId);
 			return prop;
 		}
 		return null;
@@ -98,13 +100,17 @@ abstract class AnnotationBuilder<T extends Annotation> {
 	protected List<AnnotationEvidence> buildAnnotationEvidences(List<Statement> Statements) {
 		return Statements.stream().map(s -> {
 			AnnotationEvidence evidence = new AnnotationEvidence();
+			
+			long generatedEvidenceId = IdentifierOffset.EVIDENCE_ID_COUNTER_FOR_STATEMENTS.incrementAndGet();
+			evidence.setEvidenceId(generatedEvidenceId); //TODO could this be changed to the statement_id hash if string ?
+
 			evidence.setResourceAssociationType("evidence");
 			evidence.setQualityQualifier(s.getValue(StatementField.EVIDENCE_QUALITY));
 
-			AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
-			AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
-			AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
-			AnnotationEvidenceProperty sourceAccession =addPropertyIfPresent(s.getValue(StatementField.ANNOT_SOURCE_ACCESSION), "source-accession");
+			AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
+			AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
+			AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
+			AnnotationEvidenceProperty sourceAccession = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOT_SOURCE_ACCESSION), "source-accession");
 
 			//Set properties which are not null
 			evidence.setProperties(
