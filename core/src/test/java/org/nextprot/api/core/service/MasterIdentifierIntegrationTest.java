@@ -1,8 +1,5 @@
 package org.nextprot.api.core.service;
 
-import java.util.List;
-import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -10,6 +7,9 @@ import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+import java.util.Set;
 
 @ActiveProfiles({ "dev" })
 public class MasterIdentifierIntegrationTest extends CoreUnitBaseTest {
@@ -38,11 +38,11 @@ public class MasterIdentifierIntegrationTest extends CoreUnitBaseTest {
 	
 	
 	@Test
-	public void shouldFindSeveralAccession() {
+	public void shouldNotFindSeveralAccessionAnymore() {
 
 		Set<String> accession = service.findEntryAccessionByGeneName("GCNT2");
 		System.out.println(accession);
-		Assert.assertEquals(accession.size(), 3);
+		Assert.assertEquals(accession.size(), 1);
 	}
 
 }
