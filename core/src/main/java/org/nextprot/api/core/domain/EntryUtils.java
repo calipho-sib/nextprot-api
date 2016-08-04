@@ -8,7 +8,10 @@ import org.nextprot.api.core.utils.PublicationUtils;
 import org.nextprot.api.core.utils.XrefUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class EntryUtils implements Serializable{
@@ -55,5 +58,17 @@ public class EntryUtils implements Serializable{
 		return entry;
 	}
 
+	
+	public static Map<String,List<Annotation>> getSubjectProteoformAnnotations(Entry entry) {
+		Map<String,List<Annotation>> result = new HashMap<String,List<Annotation>>();
+		for (Annotation annot: entry.getAnnotations()) {
+			if (annot.isProteoformAnnotation()) {
+				String key = annot.getSubjectName();
+				if (!result.containsKey(key)) result.put(key, new ArrayList<Annotation>());
+				result.get(key).add(annot);
+			}
+		}
+		return result;
+	}
 	
 }

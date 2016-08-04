@@ -30,9 +30,7 @@ public class StatementServiceImpl implements StatementService {
 	@Autowired
 	public TerminologyService terminologyService;
 	
-	@Cacheable("proteoform-iso-annotations")
-	@Override
-	public List<IsoformAnnotation> getProteoformIsoformAnnotations(String isoformAccession) {
+	private List<IsoformAnnotation> getProteoformIsoformAnnotations(String isoformAccession) {
 
 		List<Statement> proteoformStatements = statementDao.findProteoformStatements(AnnotationType.ISOFORM, isoformAccession);
 
@@ -48,9 +46,7 @@ public class StatementServiceImpl implements StatementService {
 	}
 	
 
-	@Cacheable("normal-iso-annotations")
-	@Override
-	public List<IsoformAnnotation> getNormalIsoformAnnotations(String entryAccession) {
+	private List<IsoformAnnotation> getNormalIsoformAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ISOFORM, entryAccession);
 		List<IsoformAnnotation> normalAnnotations = IsoformAnnotationBuilder.newBuilder(terminologyService).buildAnnotationList(entryAccession, normalStatements);
 		normalAnnotations.stream().forEach(a -> 
@@ -61,8 +57,7 @@ public class StatementServiceImpl implements StatementService {
 	}
 
 
-	@Override
-	public List<Annotation> getProteoformEntryAnnotations(String entryAccession) {
+	private List<Annotation> getProteoformEntryAnnotations(String entryAccession) {
 
 		List<Statement> proteoformStatements = statementDao.findProteoformStatements(AnnotationType.ENTRY, entryAccession);
 
@@ -78,8 +73,7 @@ public class StatementServiceImpl implements StatementService {
 	}
 
 
-	@Override
-	public List<Annotation> getNormalEntryAnnotations(String entryAccession) {
+	private List<Annotation> getNormalEntryAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession);
 		List<Annotation>  annotations =  EntryAnnotationBuilder.newBuilder(terminologyService).buildAnnotationList(entryAccession, normalStatements);
 		return annotations;
@@ -87,13 +81,21 @@ public class StatementServiceImpl implements StatementService {
 	}
 
 
-	@Cacheable("statement-annotations")
+	@Cacheable("statement-entry-annotations")
 	@Override
 	public List<Annotation> getAnnotations(String entryAccession) {
 
 		List<Annotation> list = getProteoformEntryAnnotations(entryAccession);
 		list.addAll(getNormalEntryAnnotations(entryAccession));
 
+		return list;
+	}
+
+	@Cacheable("statement-iso-annotations")
+	@Override
+	public List<IsoformAnnotation> getIsoformAnnotations(String entryAccession) {
+		List<IsoformAnnotation> list = getProteoformIsoformAnnotations(entryAccession);
+		list.addAll(getNormalIsoformAnnotations(entryAccession));
 		return list;
 	}
 }

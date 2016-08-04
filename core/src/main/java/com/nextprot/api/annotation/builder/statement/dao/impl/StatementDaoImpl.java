@@ -39,9 +39,6 @@ public class StatementDaoImpl implements StatementDao {
 		}else {
 			throw new NextProtException(type + " not supported currently");
 		}
-
-		
-		System.err.println("Executing query " + sql);
 		return sql;
 	}
 	

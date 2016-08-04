@@ -188,8 +188,13 @@
 		statistics="true" >
 	</cache>
 
-	<cache name="statement-annotations" overflowToOffHeap="false" overflowToDisk="true"
-		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="100000"
+	<cache name="statement-iso-annotations" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="60000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+	</cache>
+
+	<cache name="statement-entry-annotations" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="220000"
 		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
 	</cache>
 

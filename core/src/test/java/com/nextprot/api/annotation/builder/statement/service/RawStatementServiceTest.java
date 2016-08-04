@@ -20,20 +20,20 @@ public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 
 	@Test
 	public void findAllMappedStatements() {
-		List<IsoformAnnotation> modifiedIsoformAnnotation = rawStatementService.getProteoformIsoformAnnotations("NX_Q9BX63");
+		List<IsoformAnnotation> modifiedIsoformAnnotation = rawStatementService.getIsoformAnnotations("NX_Q9BX63-1");
 		System.out.println(modifiedIsoformAnnotation.size());
 	}
 
 	@Test
 	public void findAllNormalAnnotations() {
-		List isoformAnnotations = rawStatementService.getNormalEntryAnnotations("NX_Q15858");
+		List isoformAnnotations = rawStatementService.getAnnotations("NX_Q15858");
 		System.out.println(isoformAnnotations.size());
 	}
 	
 	
 	@Test
 	public void findModifiedAnnotationsByIsoform() {
-		List isoformAnnotations = rawStatementService.getProteoformIsoformAnnotations("NX_Q15858-3");
+		List isoformAnnotations = rawStatementService.getIsoformAnnotations("NX_Q15858-3");
 		System.out.println(isoformAnnotations.size());
 	}
 	
@@ -42,7 +42,7 @@ public class RawStatementServiceTest extends AnnotationBuilderBaseTest {
 	
 	@Test
 	public void findPhenotypeAnnotationsGoldOnly() {
-		List<IsoformAnnotation> isoformAnnotations = rawStatementService.getProteoformIsoformAnnotations("NX_Q9UHC1");
+		List<IsoformAnnotation> isoformAnnotations = rawStatementService.getIsoformAnnotations("NX_Q9UHC1");
 		Integer notFilterCount = AnnotationUtils.filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(isoformAnnotations, null).size();
 		Integer notFilterCount2 = AnnotationUtils.filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(isoformAnnotations, false).size();
 		Integer filterCount = AnnotationUtils.filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(isoformAnnotations, true).size();
