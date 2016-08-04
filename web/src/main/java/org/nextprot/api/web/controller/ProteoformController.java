@@ -6,15 +6,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import org.biojavax.bio.seq.io.UniProtCommentParser.Isoform;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.utils.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
@@ -46,18 +43,19 @@ public class ProteoformController {
 
 		response.put("overview", entry.getOverview());
 		response.put("isoforms", entry.getIsoforms());
-		response.put("annotationsByIsoformAndCategory", isoformAnnotations.stream().filter(ia -> (ia.getSubjectComponents() != null && !ia.getSubjectComponents().isEmpty())).
-				collect( 
-						Collectors.groupingBy(
-						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
-								IsoformAnnotation::getKebabCategoryName,  TreeMap::new, Collectors.toList()))));
-
-		
-		response.put("proteoformAnnotations",  proteoformAnnotations.stream()
+		response.put("annotationsByIsoformAndCategory", isoformAnnotations.stream()
 				.filter(ia -> (ia.getSubjectComponents() == null || ia.getSubjectComponents().isEmpty()))
 				.collect(Collectors.groupingBy(
 						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
-								IsoformAnnotation::getKebabCategoryName,  TreeMap::new, Collectors.toList()))));
+								IsoformAnnotation::getApiTypeName,  TreeMap::new, Collectors.toList()))));
+
+		
+		response.put("proteoformAnnotations",  proteoformAnnotations.stream()
+				.filter(ia -> (ia.getSubjectComponents() != null && !ia.getSubjectComponents().isEmpty())).
+				collect( 
+						Collectors.groupingBy(
+						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
+								IsoformAnnotation::getApiTypeName,  TreeMap::new, Collectors.toList()))));
 
 		return response;
 	}
