@@ -11,6 +11,7 @@ import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
@@ -211,6 +212,9 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureNotValid((FeatureQueryFailure) result, new EntryAccessionNotFoundForGeneException(query, "SCN14A"));
     }
 
+    // no more multiple accessions for gene GCNT2
+    // TODO: find another gene with multiple accessions
+    @Ignore
     @Test
     public void shouldNotValidateWithMultipleAccessions() throws Exception {
 
