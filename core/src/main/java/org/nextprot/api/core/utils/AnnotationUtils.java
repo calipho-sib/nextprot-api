@@ -12,7 +12,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.api.core.utils.annot.AnnotationFinder;
-import org.nextprot.api.core.utils.annot.AnnotationMergeImpl;
+import org.nextprot.api.core.utils.annot.impl.AnnotationMergeImpl;
 import org.nextprot.api.core.utils.annot.AnnotationMerger;
 import org.nextprot.commons.constants.QualityQualifier;
 

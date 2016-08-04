@@ -1,5 +1,6 @@
 package org.nextprot.api.core.utils.annot.impl;
 
+import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.SimilarityPredicate;
@@ -13,6 +14,8 @@ public class SimilarityPredicateFactory {
      * @return an instance of SimilarityPredicate given a category
      */
     public static SimilarityPredicate newSimilarityPredicate(AnnotationCategory category) {
+
+        Preconditions.checkNotNull(category);
 
         switch (category) {
             case GO_BIOLOGICAL_PROCESS:
