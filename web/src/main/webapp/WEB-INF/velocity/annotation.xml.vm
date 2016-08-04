@@ -1,4 +1,4 @@
-<annotation quality='$annotation.getQualityQualifier()' annotation-internal-id='$annotation.getAnnotationHash()'>
+<annotation quality='$annotation.getQualityQualifier()' annotation-internal-id='#if($annotation.getAnnotationHash())$annotation.getAnnotationHash()#else$annotation.getAnnotationId()#end'>
 	#if($annotation.getSubjectName())
     <biological-subject name="$annotation.getSubjectName()">
     	<biological-subject-component-list>
@@ -30,7 +30,7 @@
 			#if($resourceType == "EXTERNAL")
                 <biological-object bio-type='$StringUtils.snakeToKebabCase($bioType)' resource-internal-ref='$bioObject.getId()'/>
 			#elseif($resourceType == "INTERNAL")
-                <biological-object bio-type='$StringUtils.snakeToKebabCase($bioType)' accession='$bioObject.getAccession()' database='neXtProt'/>
+                <biological-object bio-type='$StringUtils.snakeToKebabCase($bioType)' #if($bioObject.getAccession()) accession='$bioObject.getAccession()' #else annotation-internal-ref='$bioObject.getAnnotationHash()' #end database='neXtProt'/>
 			#end
 		#else
             <biological-object bio-type='$StringUtils.snakeToKebabCase($bioType)'>

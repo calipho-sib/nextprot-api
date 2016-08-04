@@ -104,6 +104,8 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			long generatedEvidenceId = IdentifierOffset.EVIDENCE_ID_COUNTER_FOR_STATEMENTS.incrementAndGet();
 			evidence.setEvidenceId(generatedEvidenceId); //TODO could this be changed to the statement_id hash if string ?
 
+			evidence.setResourceType("database");//TODO to be checked with Amos and Lydie
+			
 			evidence.setResourceAssociationType("evidence");
 			evidence.setQualityQualifier(s.getValue(StatementField.EVIDENCE_QUALITY));
 
