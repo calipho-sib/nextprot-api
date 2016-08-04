@@ -1,4 +1,4 @@
-package org.nextprot.api.etl.statement.service;
+package org.nextprot.api.etl.service;
 
 import java.util.List;
 

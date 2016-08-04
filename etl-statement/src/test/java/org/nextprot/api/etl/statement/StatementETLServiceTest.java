@@ -1,7 +1,7 @@
 package org.nextprot.api.etl.statement;
 
 import org.junit.Test;
-import org.nextprot.api.etl.statement.service.StatementETLService;
+import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;

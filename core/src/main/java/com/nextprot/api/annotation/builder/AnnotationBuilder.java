@@ -187,12 +187,24 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			setIsoformTargeting(annotation, statement);
 
 			setIsoformName(annotation, isoformName);
-			annotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));
 
 			annotation.setDescription(statement.getValue(StatementField.ANNOT_DESCRIPTION));
-			annotation.setCvTermAccessionCode(statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION));
-			// TODO this should be called terminology I guess! not setCVApiName
-			annotation.setCvApiName(statement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
+
+			String cvTermAccession = statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
+			if(cvTermAccession != null){
+				
+				CvTerm cvTerm = terminologyService.findCvTermByAccession(cvTermAccession);
+				annotation.setCvTermName(cvTerm.getName());
+				annotation.setCvApiName(cvTerm.getOntology());
+							
+			}else {
+
+				LOGGER.error("WTF this is wrong");
+				
+				annotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));
+				annotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
+
+			}
 
 			annotation.setAnnotationHash(statement.getValue(StatementField.ANNOTATION_ID));
 			annotation.setAnnotationName(statement.getValue(StatementField.ANNOTATION_NAME));

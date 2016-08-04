@@ -1,10 +1,10 @@
-package org.nextprot.api.etl.statement.controller;
+package org.nextprot.api.etl.controller;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.etl.statement.service.StatementETLService;
+import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

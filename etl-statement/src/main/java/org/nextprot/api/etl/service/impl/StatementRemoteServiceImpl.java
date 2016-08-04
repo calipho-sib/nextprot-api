@@ -1,10 +1,10 @@
-package org.nextprot.api.etl.statement.service.impl;
+package org.nextprot.api.etl.service.impl;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import org.nextprot.api.etl.statement.service.StatementRemoteService;
+import org.nextprot.api.etl.service.StatementRemoteService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.stereotype.Service;
