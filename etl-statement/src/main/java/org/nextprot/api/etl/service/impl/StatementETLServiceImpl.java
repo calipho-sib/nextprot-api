@@ -1,4 +1,4 @@
-package org.nextprot.api.etl.statement.service.impl;
+package org.nextprot.api.etl.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.etl.statement.service.StatementETLService;
-import org.nextprot.api.etl.statement.service.StatementRemoteService;
-import org.nextprot.api.etl.statement.utils.TargetIsoformUtils;
+import org.nextprot.api.etl.service.StatementETLService;
+import org.nextprot.api.etl.service.StatementRemoteService;
+import org.nextprot.api.etl.utils.TargetIsoformUtils;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
@@ -59,13 +59,10 @@ public class StatementETLServiceImpl implements StatementETLService {
 		//System.err.println("Got response from source");
 		Map<String, Statement> sourceStatementsById = sourceStatements.stream().collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
 
-
 		Set<Statement> statementsMappedToIsoformToLoad = new HashSet<Statement>();
 		Set<Statement> statementsMappedToEntryToLoad = new HashSet<Statement>();
 
 		for (Statement originalStatement : sourceStatements) {
-
-			String annotCat = originalStatement.getValue(StatementField.ANNOTATION_CATEGORY);
 
 			if ((originalStatement.getSubjectStatementIds() != null) && (!originalStatement.getSubjectStatementIds().isEmpty())) {
 

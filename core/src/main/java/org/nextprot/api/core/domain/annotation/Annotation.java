@@ -67,6 +67,8 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private List<AnnotationEvidence> evidences;
 
+	private List<String> indirectEvidenceRefList;
+
 	private final Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap = new TreeMap<>();
 
 	private final Map<String, Collection<AnnotationProperty>> properties = new TreeMap<>();
@@ -431,6 +433,14 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	public void setAnnotationHash(String annotationHash) {
 		this.annotationHash = annotationHash;
+	}
+
+	public List<String> getIndirectEvidenceRefList() {
+		return indirectEvidenceRefList;
+	}
+
+	public void setIndirectEvidenceRefList(List<String> indirectEvidenceRefList) {
+		this.indirectEvidenceRefList = indirectEvidenceRefList;
 	}
 
 }

@@ -1,10 +1,10 @@
-package org.nextprot.api.etl.statement.controller;
+package org.nextprot.api.etl.controller;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.etl.statement.service.StatementETLService;
+import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -22,7 +22,7 @@ public class StatementETLController {
 
 	@ApiMethod(path = "/statements/{source}", verb = ApiVerb.GET, description = "Validate isoform feature", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/statements/{source}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public String loadStatements(@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("category") String source) {
+	public String loadStatements(@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("source") String source) {
 
 		return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOf(source));
 

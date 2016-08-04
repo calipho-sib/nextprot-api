@@ -1,4 +1,4 @@
-package org.nextprot.api.etl.statement.utils;
+package org.nextprot.api.etl.utils;
 
 import java.util.Arrays;
 import java.util.List;
