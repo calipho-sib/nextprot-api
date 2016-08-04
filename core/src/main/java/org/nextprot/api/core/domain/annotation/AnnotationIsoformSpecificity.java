@@ -16,13 +16,15 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 	private static final Pattern ISO_PATTERN = Pattern.compile("Iso (\\d+)");
 
 	// annotation isoform specificity mapping
+	@Deprecated //should use the enum IsoTargetSpecificity
 	private static Map<String, String> specificityInfo= new HashMap<>();
 	
-	static{
+	static{ //TODO this should be removed! Should use 
 		//
 		// map specificity cv_name to entity name
 		specificityInfo.put("UNKNOWN", "UNKNOWN");
 		specificityInfo.put("BY DEFAULT", "BY_DEFAULT");
+		specificityInfo.put("BY_DEFAULT", "BY_DEFAULT");
 		specificityInfo.put("SPECIFIC", "SPECIFIC");
 	}
 
