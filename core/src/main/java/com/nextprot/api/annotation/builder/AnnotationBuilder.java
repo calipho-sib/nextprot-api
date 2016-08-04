@@ -194,16 +194,19 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			if(cvTermAccession != null){
 				
 				CvTerm cvTerm = terminologyService.findCvTermByAccession(cvTermAccession);
-				annotation.setCvTermName(cvTerm.getName());
-				annotation.setCvApiName(cvTerm.getOntology());
+				if(cvTerm != null){
+					annotation.setCvTermName(cvTerm.getName());
+					annotation.setCvApiName(cvTerm.getOntology());
+				}else {
+					LOGGER.error("WTF this is wrong !!! ");
+					annotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));
+					annotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
+				}
 							
 			}else {
-
 				LOGGER.error("WTF this is wrong");
-				
 				annotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));
 				annotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
-
 			}
 
 			annotation.setAnnotationHash(statement.getValue(StatementField.ANNOTATION_ID));
