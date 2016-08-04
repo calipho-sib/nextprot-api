@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiQueryParam;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -31,31 +32,32 @@ public class ProteoformController {
 	
 	@RequestMapping("/entry/{entryname}/proteoform")
 	@ResponseBody
-	public Map<String, Object> getSubPart(@PathVariable("entryname") String entryName, 
+	public Map<String, Object> getSubPart(@PathVariable("entryname") String isoformAccession, 
 							 @ApiQueryParam(name = "goldOnly", required = false) Boolean goldOnly) {
 		
-		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withOverview().withTargetIsoforms());
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(isoformAccession).withOverview().withTargetIsoforms());
 		
 		Map<String, Object> response = new HashMap<>();
 		
-		List<IsoformAnnotation> isoformAnnotations = rawStatementService.getNormalIsoformAnnotations(entryName);
-		List<IsoformAnnotation> proteoformAnnotations = rawStatementService.getProteoformIsoformAnnotations(entryName);
+		List<IsoformAnnotation> isoformAnnotations = rawStatementService.getIsoformAnnotations(isoformAccession);
 
 		response.put("overview", entry.getOverview());
 		response.put("isoforms", entry.getIsoforms());
 		response.put("annotationsByIsoformAndCategory", isoformAnnotations.stream()
-				.filter(ia -> (ia.getSubjectComponents() == null || ia.getSubjectComponents().isEmpty()))
+				.filter(ia -> (!ia.isProteoformAnnotation()))
 				.collect(Collectors.groupingBy(
-						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
-								IsoformAnnotation::getApiTypeName,  TreeMap::new, Collectors.toList()))));
+						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(i -> {
+							return StringUtils.camelToKebabCase(i.getApiTypeName());
+						},  TreeMap::new, Collectors.toList()))));
 
 		
-		response.put("proteoformAnnotations",  proteoformAnnotations.stream()
-				.filter(ia -> (ia.getSubjectComponents() != null && !ia.getSubjectComponents().isEmpty())).
+		response.put("proteoformAnnotations",  isoformAnnotations.stream()
+				.filter(ia -> (ia.isProteoformAnnotation())).
 				collect( 
 						Collectors.groupingBy(
-						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
-								IsoformAnnotation::getApiTypeName,  TreeMap::new, Collectors.toList()))));
+						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(i -> {
+							return StringUtils.camelToKebabCase(i.getApiTypeName());
+						},  TreeMap::new, Collectors.toList()))));
 
 		return response;
 	}

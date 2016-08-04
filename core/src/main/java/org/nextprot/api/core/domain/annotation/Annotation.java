@@ -84,6 +84,10 @@ public class Annotation implements Serializable, IsoformSpecific {
 				" - description:"  + description;
 	}
 	
+	public boolean isProteoformAnnotation() {
+		return (subjectComponents!=null && ! subjectComponents.isEmpty());
+	}
+	
 	public DbXref getParentXref() {
 		return parentXref;
 	}
@@ -204,7 +208,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public void setCategory(AnnotationCategory category) {
 		//wtf???? names are not coherent...
 		this.apiCategory= category;
-		this.category = category.getApiTypeName();
+		this.category = category.getDbAnnotationTypeName();
 	}
 	
 	public void setCategory(String category) {
@@ -395,10 +399,6 @@ public class Annotation implements Serializable, IsoformSpecific {
 		return booleanOptional;
 	}
 	
-	public String getKebabCategoryName() {
-		return StringUtils.camelToKebabCase(category);
-	}
-
 	public String getSubjectName() {
 		return subjectName;
 	}
