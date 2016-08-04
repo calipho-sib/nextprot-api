@@ -4,13 +4,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
@@ -67,7 +68,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private List<AnnotationEvidence> evidences;
 
-	private List<String> indirectEvidenceRefList;
+	private Set<String> indirectEvidenceRefList = null;
 
 	private final Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap = new TreeMap<>();
 
@@ -431,12 +432,15 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.annotationHash = annotationHash;
 	}
 
-	public List<String> getIndirectEvidenceRefList() {
+	public Set<String> getIndirectEvidenceRefList() {
 		return indirectEvidenceRefList;
 	}
-
-	public void setIndirectEvidenceRefList(List<String> indirectEvidenceRefList) {
-		this.indirectEvidenceRefList = indirectEvidenceRefList;
+	
+	public synchronized void addIndirectEvidence(String indirectEvidenceId) {
+		if(indirectEvidenceRefList == null) {
+			indirectEvidenceRefList = new HashSet<String>();
+		}
+		this.indirectEvidenceRefList.add(indirectEvidenceId);
 	}
 
 }

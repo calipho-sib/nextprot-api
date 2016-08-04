@@ -1,17 +1,16 @@
 package org.nextprot.api.etl.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
+import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
+import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
+import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import com.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
+import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementRemoteService;
 import org.nextprot.api.etl.utils.TargetIsoformUtils;
@@ -27,14 +26,9 @@ import org.nextprot.commons.statements.service.impl.OracleStatementLoaderService
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
-import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
-import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
-import com.nextprot.api.isoform.mapper.utils.EntryIsoformUtils;
-import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
@@ -143,7 +137,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 						try {
 						
 							sv = new SequenceVariant(subject.getValue(StatementField.ANNOTATION_NAME));
-							Isoform isoSpecific = EntryIsoformUtils.getIsoformByName(isoforms, sv.getIsoformName());
+							Isoform isoSpecific = IsoformUtils.getIsoformByName(isoforms, sv.getIsoformName());
 							isoSpecificAccession = isoSpecific.getIsoformAccession();
 
 						} catch (Exception e) {

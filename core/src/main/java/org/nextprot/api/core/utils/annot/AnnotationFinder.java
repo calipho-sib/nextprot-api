@@ -3,8 +3,8 @@ package org.nextprot.api.core.utils.annot;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.annot.impl.SimilarityPredicateFactory;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -26,30 +26,9 @@ public class AnnotationFinder {
         this.criteria = criteria;
     }
 
-    /**
-     * Factory method based on AnnotationCategory.
-     * @return an instance of AnnotationFinder given a category (by hash criteria by default)
-     */
     public static AnnotationFinder valueOf(AnnotationCategory category) {
 
-        switch (category) {
-            case GO_BIOLOGICAL_PROCESS:
-            case GO_CELLULAR_COMPONENT:
-            case GO_MOLECULAR_FUNCTION:
-                return new AnnotationFinder(new ObjectSimilarityPredicate(Annotation::getCvTermAccessionCode));
-            case VARIANT:
-            case MUTAGENESIS:
-                // Annot name + CV Term + Position + Description + BioObject
-                return new AnnotationFinder(new SimilarityPredicatePipeline(Arrays.asList(
-                        new ObjectSimilarityPredicate(Annotation::getAnnotationName),
-                        new ObjectSimilarityPredicate(Annotation::getCvTermAccessionCode),
-                        new ObjectSimilarityPredicate(Annotation::getTargetingIsoformsMap),
-                        new ObjectSimilarityPredicate(Annotation::getDescription),
-                        new ObjectSimilarityPredicate(Annotation::getBioObject)
-                )));
-            default:
-                return new AnnotationFinder(new ObjectSimilarityPredicate(Annotation::getAnnotationHash));
-        }
+        return new AnnotationFinder(SimilarityPredicateFactory.newSimilarityPredicate(category));
     }
 
     /**

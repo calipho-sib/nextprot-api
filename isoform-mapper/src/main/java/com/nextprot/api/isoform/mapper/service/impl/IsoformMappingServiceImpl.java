@@ -11,7 +11,6 @@ import com.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFo
 import com.nextprot.api.isoform.mapper.domain.impl.exception.MultipleEntryAccessionForGeneException;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
-import com.nextprot.api.isoform.mapper.utils.EntryIsoformUtils;
 import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -21,6 +20,7 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -97,7 +97,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         );
 
         // get all others
-        List<Isoform> others = EntryIsoformUtils.getOtherIsoforms(successResults.getEntry(), featureIsoform.getUniqueName());
+        List<Isoform> others = IsoformUtils.getOtherIsoforms(successResults.getEntry(), featureIsoform.getUniqueName());
 
         // propagate the feature to other isoforms
         for (Isoform otherIsoform : others) {
