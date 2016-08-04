@@ -21,16 +21,18 @@ public class SimilarityPredicateFactory {
             case GO_BIOLOGICAL_PROCESS:
             case GO_CELLULAR_COMPONENT:
             case GO_MOLECULAR_FUNCTION:
-                return new ObjectSimilarityPredicate(Annotation::getCvTermAccessionCode);
+                // TODO: there is a 'is_negative' field to consider in the future
+                return new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode);
             case VARIANT:
             case MUTAGENESIS:
                 return new SimilarityPredicatePipeline(Arrays.asList(
-                        new ObjectSimilarityPredicate(Annotation::getVariant),
-                        new ObjectSimilarityPredicate(Annotation::getCvTermAccessionCode),
-                        new ObjectSimilarityPredicate(Annotation::getTargetingIsoformsMap)
+                        new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode),
+                        new ObjectSimilarityPredicate<>(Annotation::getVariant,
+                                (v1, v2) -> v1.getOriginal().equals(v2.getOriginal()) && v1.getVariant().equals(v2.getVariant())),
+                        new ObjectSimilarityPredicate<>(Annotation::getTargetingIsoformsMap)
                 ));
             default:
-                return new ObjectSimilarityPredicate(Annotation::getVariant);
+                return new ObjectSimilarityPredicate<>(Annotation::getAnnotationId);
         }
     }
 }

@@ -1,6 +1,7 @@
 
 package org.nextprot.api.core.utils.annot.impl;
 
+import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.ObjectAccessor;
 import org.nextprot.api.core.utils.annot.ObjectMatcher;
@@ -11,24 +12,31 @@ import org.nextprot.api.core.utils.annot.SimilarityPredicate;
  *
  * Created by fnikitin on 02/08/16.
  */
-public class ObjectSimilarityPredicate implements SimilarityPredicate, ObjectAccessor {
+public class ObjectSimilarityPredicate<T> implements SimilarityPredicate, ObjectAccessor<T> {
 
-    private final ObjectAccessor accessor;
-    private final ObjectMatcher matcher;
+    private final ObjectAccessor<T> accessor;
+    private final ObjectMatcher<T> matcher;
 
-    public ObjectSimilarityPredicate(ObjectAccessor accessor) {
+    /**
+     * Default constructor with equals() as matcher
+     * @param accessor T-object accessor
+     */
+    public ObjectSimilarityPredicate(ObjectAccessor<T> accessor) {
 
-        this(accessor, new ObjectEqualMatcher());
+        this(accessor, new ObjectEqualMatcher<>());
     }
 
-    public ObjectSimilarityPredicate(ObjectAccessor accessor, ObjectMatcher matcher) {
+    public ObjectSimilarityPredicate(ObjectAccessor<T> accessor, ObjectMatcher<T> matcher) {
+
+        Preconditions.checkNotNull(accessor);
+        Preconditions.checkNotNull(matcher);
 
         this.accessor = accessor;
         this.matcher = matcher;
     }
 
     @Override
-    public Object getObject(Annotation annotation) {
+    public T getObject(Annotation annotation) {
 
         return accessor.getObject(annotation);
     }
@@ -50,17 +58,4 @@ public class ObjectSimilarityPredicate implements SimilarityPredicate, ObjectAcc
         return o1.equals(o2);
     }
 
-    /**
-     * Default implementation of matching objects accessible from annotation (based on equals()).
-     *
-     * @return true if both objects matches else false
-     */
-    public static class ObjectEqualMatcher implements ObjectMatcher {
-
-        @Override
-        public boolean match(Object o1, Object o2) {
-
-            return ObjectSimilarityPredicate.equalObjects(o1, o2);
-        }
-    }
 }
