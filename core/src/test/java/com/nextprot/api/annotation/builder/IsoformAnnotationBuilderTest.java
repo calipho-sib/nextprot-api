@@ -37,6 +37,9 @@ public class IsoformAnnotationBuilderTest {
 
 		CvTerm cvterm = new CvTerm();
 		cvterm.setName("eco-name-1");
+		cvterm.setOntology("eco-ontology-cv");
+		cvterm.setDescription("some description");
+
 		Mockito.when(terminologyService.findCvTermByAccession(Matchers.anyString())).thenReturn(cvterm);
 
     }

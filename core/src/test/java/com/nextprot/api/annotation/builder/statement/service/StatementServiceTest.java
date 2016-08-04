@@ -46,7 +46,7 @@ public class StatementServiceTest extends AnnotationBuilderBaseTest {
 	
 	@Test
 	public void findPhenotypeAnnotationsGoldOnly() {
-		List<IsoformAnnotation> isoformAnnotations = statementService.getIsoformAnnotations("NX_Q9UHC1");
+		List<IsoformAnnotation> isoformAnnotations = statementService.getIsoformAnnotations("NX_Q15858-3");
 		Integer notFilterCount = AnnotationUtils.filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(isoformAnnotations, null).size();
 		Integer notFilterCount2 = AnnotationUtils.filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(isoformAnnotations, false).size();
 		Integer filterCount = AnnotationUtils.filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(isoformAnnotations, true).size();
