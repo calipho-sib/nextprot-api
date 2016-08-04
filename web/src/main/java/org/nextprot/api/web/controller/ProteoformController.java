@@ -37,6 +37,8 @@ public class ProteoformController {
 		
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(isoformAccession).withOverview().withTargetIsoforms());
 		
+		Map<String, Object> wrapperResponse =  new HashMap<>();
+		
 		Map<String, Object> response = new HashMap<>();
 		
 		List<IsoformAnnotation> isoformAnnotations = rawStatementService.getIsoformAnnotations(isoformAccession);
@@ -59,7 +61,8 @@ public class ProteoformController {
 							return StringUtils.camelToKebabCase(i.getApiTypeName());
 						},  TreeMap::new, Collectors.toList()))));
 
-		return response;
+		wrapperResponse.put("entry", response);
+		return wrapperResponse;
 	}
 	
 }
