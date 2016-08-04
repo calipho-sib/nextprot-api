@@ -1,7 +1,6 @@
 package com.nextprot.api.isoform.mapper.utils;
 
 import com.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -13,19 +12,12 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 
 @ActiveProfiles({ "cache" })
@@ -131,7 +123,7 @@ NX_Q9UJW3 has 1 ERROR(s)
 		for (Annotation a: entry.getAnnotations()) {
 			if (a.getUniqueName().equals(variant_ac)) {
 				int pos = a.getTargetingIsoformsMap().get(iso_ac).getFirstPosition();
-				Isoform iso = EntryIsoformUtils.getIsoformByName(entry, iso_ac);
+				Isoform iso = IsoformUtils.getIsoformByName(entry, iso_ac);
 				GeneMasterCodonPosition nuPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(pos, iso);
 				for (Isoform iso2: entry.getIsoforms()) {
 					if (!iso2.equals(iso)) {
@@ -162,7 +154,7 @@ NX_Q9UJW3 has 1 ERROR(s)
 		for (Annotation a: entry.getAnnotations()) {
 			if (a.getUniqueName().equals(variant_ac)) {
 				int pos = a.getTargetingIsoformsMap().get(iso_ac).getFirstPosition();
-				Isoform iso = EntryIsoformUtils.getIsoformByName(entry, iso_ac);
+				Isoform iso = IsoformUtils.getIsoformByName(entry, iso_ac);
 				GeneMasterCodonPosition nuPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(pos, iso);
 				System.out.println("isoform position                                               : " + pos);
 				System.out.println("nuPos is valid                                                 : " + nuPos.isValid());
@@ -232,7 +224,7 @@ NX_Q9UJW3 has 1 ERROR(s)
 
 				for (String iso1name : isoExpectedPos.keySet()) {
 					Integer iso1ExpectedPos = isoExpectedPos.get(iso1name);
-					Isoform iso1 = EntryIsoformUtils.getIsoformByName(entry, iso1name);
+					Isoform iso1 = IsoformUtils.getIsoformByName(entry, iso1name);
 					if (iso1ExpectedPos != null) {
 
 						GeneMasterCodonPosition nuPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(iso1ExpectedPos, iso1);

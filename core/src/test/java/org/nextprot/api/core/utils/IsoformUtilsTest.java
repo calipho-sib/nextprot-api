@@ -5,7 +5,13 @@ import com.google.common.collect.Collections2;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -13,7 +19,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class IsoformUtilsTest {
+@ActiveProfiles({ "dev" })
+public class IsoformUtilsTest extends CoreUnitBaseTest {
+
+    @Autowired
+    private EntryBuilderService entryBuilderService;
 
     @Test
     public void testNumericSortIsoNamesIfContainDash() throws Exception {
@@ -71,6 +81,63 @@ public class IsoformUtilsTest {
                 return iso.getMainEntityName().getValue();
             }
         })));
+    }
+
+    @Test
+    public void testGetIsoformByAccession() throws Exception {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").withTargetIsoforms());
+
+        Assert.assertEquals("NX_P01308-1", IsoformUtils.getIsoformByName(entry, "NX_P01308-1").getUniqueName());
+    }
+
+    @Test
+    public void testGetIsoformByName() throws Exception {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P06213").withTargetIsoforms());
+
+        Assert.assertEquals("NX_P06213-1", IsoformUtils.getIsoformByName(entry, "Long").getUniqueName());
+    }
+
+    @Test
+    public void testGetOtherIsoforms() throws Exception {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").withTargetIsoforms());
+
+        Isoform isoform = entry.getIsoforms().get(0);
+
+        Assert.assertTrue(IsoformUtils.getOtherIsoforms(entry, isoform.getUniqueName()).isEmpty());
+    }
+
+    @Test
+    public void testGetOtherIsoforms2() throws Exception {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_Q9UI33").withTargetIsoforms());
+
+        List<Isoform> others = IsoformUtils.getOtherIsoforms(entry, "NX_Q9UI33-1");
+        Assert.assertEquals(2, others.size());
+        for (Isoform isoform : others) {
+            Assert.assertTrue(
+                    isoform.getUniqueName().equals("NX_Q9UI33-2") ||
+                            isoform.getUniqueName().equals("NX_Q9UI33-3") );
+        }
+    }
+
+    @Test
+    public void testGetCanonicalIsoform() throws Exception {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").withTargetIsoforms());
+
+        Assert.assertNotNull(IsoformUtils.getCanonicalIsoform(entry));
+        Assert.assertEquals("NX_P01308-1", IsoformUtils.getCanonicalIsoform(entry).getUniqueName());
+    }
+
+    @Test
+    public void testGetIsoformByNameLowerCase() throws Exception {
+
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P06213").withTargetIsoforms());
+
+        Assert.assertEquals("NX_P06213-1", IsoformUtils.getIsoformByName(entry, "long").getUniqueName());
     }
 
     private List<Isoform> createIsoforms(String... mainNames) {

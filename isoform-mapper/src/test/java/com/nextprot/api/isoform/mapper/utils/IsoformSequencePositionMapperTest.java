@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class IsoformSequencePositionMapperTest extends IsoformMappingBaseTest {
@@ -31,8 +32,8 @@ NX_P38398-8, pos=1812
         Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P38398").withTargetIsoforms());
 
         Integer position = IsoformSequencePositionMapper.getProjectedPosition(
-                EntryIsoformUtils.getIsoformByName(entry, "NX_P38398-1"), 1812,
-                EntryIsoformUtils.getIsoformByName(entry, "NX_P38398-6"));
+                IsoformUtils.getIsoformByName(entry, "NX_P38398-1"), 1812,
+                IsoformUtils.getIsoformByName(entry, "NX_P38398-6"));
 
         Assert.assertNotNull(position);
     }
@@ -43,8 +44,8 @@ NX_P38398-8, pos=1812
         Entry entry = entryBuilderService.build(EntryConfig.newConfig("NX_P38398").withTargetIsoforms());
 
         Integer position = IsoformSequencePositionMapper.getProjectedPosition(
-                EntryIsoformUtils.getIsoformByName(entry, "NX_P38398-1"), 1812,
-                EntryIsoformUtils.getIsoformByName(entry, "NX_P38398-2"));
+                IsoformUtils.getIsoformByName(entry, "NX_P38398-1"), 1812,
+                IsoformUtils.getIsoformByName(entry, "NX_P38398-2"));
 
         Assert.assertNull(position);
     }

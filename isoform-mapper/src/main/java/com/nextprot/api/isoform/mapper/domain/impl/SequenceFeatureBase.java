@@ -7,7 +7,6 @@ import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
-import com.nextprot.api.isoform.mapper.utils.EntryIsoformUtils;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
@@ -16,6 +15,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.utils.IsoformUtils;
 
 import java.text.ParseException;
 import java.util.List;
@@ -98,8 +98,8 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     public Isoform getIsoform(Entry entry) throws UnknownIsoformException {
 
         Isoform isoform = (isoformName != null) ?
-                EntryIsoformUtils.getIsoformByName(entry, isoformName) :
-                EntryIsoformUtils.getCanonicalIsoform(entry);
+                IsoformUtils.getIsoformByName(entry, isoformName) :
+                IsoformUtils.getCanonicalIsoform(entry);
 
         if (isoform == null) {
             throw new UnknownIsoformException(isoformName, entry);
@@ -112,8 +112,8 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     public boolean isValidIsoform(Entry entry) {
 
         Isoform isoform = (isoformName != null) ?
-                EntryIsoformUtils.getIsoformByName(entry, isoformName) :
-                EntryIsoformUtils.getCanonicalIsoform(entry);
+                IsoformUtils.getIsoformByName(entry, isoformName) :
+                IsoformUtils.getCanonicalIsoform(entry);
 
         return isoform != null;
     }
