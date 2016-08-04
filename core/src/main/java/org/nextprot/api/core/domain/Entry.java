@@ -288,7 +288,7 @@ public class Entry implements KeyValueRepresentation {
 				.collect(Collectors.groupingBy(Annotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
 						Annotation::getKebabCategoryName, TreeMap::new, Collectors.toList())));
 	}
-
+/*
 	public Map<String, Map<String, List<Annotation>>> getAnnotationsByIsoformAndCategory() {
 
 		return annotations.stream()
@@ -296,7 +296,7 @@ public class Entry implements KeyValueRepresentation {
 				.collect(Collectors.groupingBy(Annotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
 						Annotation::getKebabCategoryName,  TreeMap::new, Collectors.toList())));
 	}
-
+*/
 	public void addIsoformAnnotations(List<IsoformAnnotation> annotations) {
 		this.isoformAnnotations.addAll(annotations);
 	}
