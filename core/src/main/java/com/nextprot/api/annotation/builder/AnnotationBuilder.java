@@ -192,7 +192,9 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 			String cvTermAccession = statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
 			if(cvTermAccession != null){
-				
+
+				annotation.setCvTermAccessionCode(cvTermAccession);
+
 				CvTerm cvTerm = terminologyService.findCvTermByAccession(cvTermAccession);
 				if(cvTerm != null){
 					annotation.setCvTermName(cvTerm.getName());

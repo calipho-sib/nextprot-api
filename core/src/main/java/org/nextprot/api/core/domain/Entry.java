@@ -1,16 +1,13 @@
 package org.nextprot.api.core.domain;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import org.nextprot.api.commons.utils.KeyValueRepresentation;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
+
+import org.nextprot.api.commons.utils.KeyValueRepresentation;
+import org.nextprot.api.core.domain.annotation.Annotation;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_NULL)
 public class Entry implements KeyValueRepresentation {
@@ -31,10 +28,7 @@ public class Entry implements KeyValueRepresentation {
 
 	private List<Isoform> isoforms;
 
-	@Deprecated
 	private List<Annotation> annotations;
-
-	private List<IsoformAnnotation> isoformAnnotations = new ArrayList<>();
 
 	private List<PeptideMapping> peptideMappings;
 
@@ -260,45 +254,6 @@ public class Entry implements KeyValueRepresentation {
 		sb.append("publications-count=" + ((this.publications != null) ? this.publications.size() : 0) + ";");
 		sb.append("xrefs-count=" + ((this.xrefs != null) ? this.xrefs.size() : 0) + ";");
 		return sb.toString();
-	}
-
-	/*public Map<String, Map<String, List<IsoformAnnotation>>> getProteoformAnnotations() {
-
-		return isoformAnnotations.stream().filter(ia -> (ia.getSubjectComponents() != null && !ia.getSubjectComponents().isEmpty())).
-				collect( 
-						Collectors.groupingBy(
-						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
-								IsoformAnnotation::getKebabCategoryName,  TreeMap::new, Collectors.toList())));
-	}
-
-	public Map<String, Map<String, List<IsoformAnnotation>>> getAnnotationsByIsoformAndCategory() {
-
-		return isoformAnnotations.stream()
-				.filter(ia -> (ia.getSubjectComponents() == null || ia.getSubjectComponents().isEmpty()))
-				.collect(Collectors.groupingBy(
-						IsoformAnnotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
-								IsoformAnnotation::getKebabCategoryName,  TreeMap::new, Collectors.toList())));
-	}
-	*/
-
-	public Map<String, Map<String, List<Annotation>>> getProteoformAnnotations() {
-
-		return annotations.stream()
-				.filter(a -> (a.getSubjectComponents() != null && !a.getSubjectComponents().isEmpty()))
-				.collect(Collectors.groupingBy(Annotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
-						Annotation::getKebabCategoryName, TreeMap::new, Collectors.toList())));
-	}
-/*
-	public Map<String, Map<String, List<Annotation>>> getAnnotationsByIsoformAndCategory() {
-
-		return annotations.stream()
-				.filter(a -> (a.getSubjectComponents() == null || a.getSubjectComponents().isEmpty()))
-				.collect(Collectors.groupingBy(Annotation::getSubjectName, TreeMap::new, Collectors.groupingBy(
-						Annotation::getKebabCategoryName,  TreeMap::new, Collectors.toList())));
-	}
-*/
-	public void addIsoformAnnotations(List<IsoformAnnotation> annotations) {
-		this.isoformAnnotations.addAll(annotations);
 	}
 
 }
