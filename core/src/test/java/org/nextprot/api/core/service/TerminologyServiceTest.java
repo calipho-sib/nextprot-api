@@ -56,8 +56,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldReturnACellosaurusTerm() {
 		CvTerm term = this.terminologyService.findCvTermByAccession("CVCL_J530");
-		//System.out.println(term.toString());
-		assertEquals("CellosaurusCv", term.getOntology());
+		assertEquals("NextprotCellosaurusCv", term.getOntology());
 		assertEquals(5, term.getXrefs().size());
 		assertEquals(1, term.getFilteredXrefs("Other").size());
 		assertEquals(2, term.getFilteredXrefs("Publication databases").size());
@@ -89,7 +88,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shoudGetAllAncestors() { 
 		List<Tree<CvTerm>> trees = this.terminologyService.findTerminology(TerminologyCv.GoBiologicalProcessCv);
-		assertEquals(69,this.terminologyService.getAncestorSets(trees, "GO:1902667").size());
+		assertEquals(67,this.terminologyService.getAncestorSets(trees, "GO:1902667").size());
 		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
 	}
 	
@@ -125,7 +124,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		}
 	}
 	
-	@Test
+	//@Test
 	public void shouldReturnAllTerms()  {
 		int sameascnt = 0, refcnt = 0, maxref = 0;
 		List<CvTerm> terms = this.terminologyService.findAllCVTerms();
