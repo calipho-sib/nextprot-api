@@ -3,6 +3,7 @@ package org.nextprot.api.core.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -117,8 +118,8 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void shouldReturnTerminologies() {
-		for(TerminologyCv t : TerminologyCv.values()){
-			if(!t.equals(TerminologyCv.CellosaurusCv)){
+		for(TerminologyCv t : TerminologyCv.values()) {
+			if(!t.equals(TerminologyCv.NextprotCellosaurusCv)) {
 				this.terminologyService.findTerminology(t);
 			}
 		}

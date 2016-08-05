@@ -2,6 +2,8 @@ package org.nextprot.api.core.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.nextprot.api.annotation.builder.statement.service.StatementService;
+
 import org.dbunit.dataset.DataSetException;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,6 +68,9 @@ public class AnnotationMockServiceTest {
 
 	@Mock
 	private AntibodyMappingService antibodyMappingService;
+
+	@Mock
+	private StatementService statementService;
 
 	@Before
 	public void init() throws FileNotFoundException, DataSetException {

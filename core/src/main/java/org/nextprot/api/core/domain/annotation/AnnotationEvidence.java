@@ -419,8 +419,8 @@ public class AnnotationEvidence implements Serializable {
 		return extractProperty("intensity");
 	}
 	
-	public String getProteinOrigin_TODEBUG() {
-		return extractProperty("protein-origin");
+	public String getSubjectProteinOrigin() {
+		return extractProperty("subject-protein-origin");
 	}
 	
 	public String getSourceAccession_TODEBUG() {
