@@ -3,14 +3,14 @@ package org.nextprot.api.core.utils.annot.impl;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.utils.annot.AnnotationMerger;
+import org.nextprot.api.core.utils.annot.AnnotationUpdater;
 import org.nextprot.commons.constants.QualityQualifier;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AnnotationMergeImpl implements AnnotationMerger {
+public class AnnotationUpdaterImpl implements AnnotationUpdater {
 
     @Override
     public void update(Annotation target, Annotation source) {
