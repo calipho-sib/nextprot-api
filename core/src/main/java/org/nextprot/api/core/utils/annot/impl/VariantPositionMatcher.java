@@ -36,11 +36,14 @@ class VariantPositionMatcher implements ObjectMatcher<Map<String, AnnotationIsof
                                                     Set<String> others) {
         for (String isoName : others) {
 
-            if (!m1.containsKey(isoName) || !m2.containsKey(isoName) ||
-                    m1.get(isoName).hasSameIsoformPositions(m2.get(isoName))) {
+            if (!m1.containsKey(isoName) || !m2.containsKey(isoName)) {
 
-                throw new NextProtException("conflicting propagation for "+isoName+": first: "+
-                        m1.get(isoName).getFirstPosition()+ "-" + m1.get(isoName).getLastPosition() +" vs " +
+                throw new NextProtException("missing isoform positions for "+isoName+": map1: "+m1.containsKey(isoName)+", map2: "+m2.containsKey(isoName));
+            }
+            else if (!m1.get(isoName).hasSameIsoformPositions(m2.get(isoName))) {
+
+                throw new NextProtException("conflicting propagation for "+isoName+": map1: "+
+                        m1.get(isoName).getFirstPosition()+ "-" + m1.get(isoName).getLastPosition() +" vs map2: " +
                         m2.get(isoName).getFirstPosition()+ "-" + m2.get(isoName).getLastPosition());
             }
         }
