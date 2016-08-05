@@ -7,7 +7,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
  *
  * Created by fnikitin on 02/08/16.
  */
-public interface AnnotationMerger {
+public interface AnnotationUpdater {
 
     /**
      * Update target annotation with source

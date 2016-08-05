@@ -47,15 +47,4 @@ public class ObjectSimilarityPredicate<T> implements SimilarityPredicate, Object
         return annotation1 == annotation2 || ( annotation1.getAPICategory() == annotation2.getAPICategory() &&
                         matcher.match(accessor.getObject(annotation1), accessor.getObject(annotation2)) );
     }
-
-    /**
-     * @return true if o1 and 02 both null or equals (based on Object.equals contract) else false
-     */
-    public static boolean equalObjects(Object o1, Object o2) {
-
-        if (o1 == null || o2 == null)
-            return false;
-        return o1.equals(o2);
-    }
-
 }

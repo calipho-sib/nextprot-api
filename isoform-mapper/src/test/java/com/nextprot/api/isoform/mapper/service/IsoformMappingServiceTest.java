@@ -227,6 +227,14 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
                 Sets.newHashSet("NX_Q06430", "NX_Q8N0V5", "NX_Q8NFS9")));
     }
 
+    @Test
+    public void shouldValidateMutagenesisOnCanonicalIsoform() throws Exception {
+
+        FeatureQueryResult result = service.validateFeature("ACVR1-p.Gln207Asp", AnnotationCategory.MUTAGENESIS.getApiTypeName(), "");
+
+        assertIsoformFeatureValid(result, "NX_Q04771-1", 207, 207, true);
+    }
+
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
 
         Assert.assertTrue(result.isSuccess());

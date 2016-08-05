@@ -1,9 +1,10 @@
-package org.nextprot.api.core.utils.annot;
+package org.nextprot.api.core.utils.annot.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.annot.SimilarityPredicate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
