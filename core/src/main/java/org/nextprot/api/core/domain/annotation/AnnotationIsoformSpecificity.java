@@ -139,4 +139,10 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 
 		return _comparableName.compareTo(other._comparableName);
 	}
+
+	public boolean hasSameIsoformPositions(AnnotationIsoformSpecificity other) {
+
+		return isoformName.equals(other.isoformName) &&
+				Objects.equals(firstPosition, other.firstPosition) && Objects.equals(lastPosition, other.lastPosition);
+	}
 }
