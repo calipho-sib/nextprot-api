@@ -8,6 +8,8 @@ import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.SimilarityPredicate;
 
+import java.util.Objects;
+
 import static org.mockito.Mockito.when;
 
 public class ObjectSimilarityPredicateTest {
@@ -61,7 +63,7 @@ public class ObjectSimilarityPredicateTest {
     public void shouldBeSimilarBasedOnBioObjectAccessionEquals() throws Exception {
 
         SimilarityPredicate predicateBasedOnBioObjectAccessionEquals = new ObjectSimilarityPredicate(Annotation::getBioObject,
-                (o1, o2) -> ObjectSimilarityPredicate.equalObjects(((BioObject)o1).getAccession(), ((BioObject)o2).getAccession()));
+                (o1, o2) -> Objects.equals(((BioObject)o1).getAccession(), ((BioObject)o2).getAccession()));
 
         Assert.assertTrue(predicateBasedOnBioObjectAccessionEquals.isSimilar(mockAnnotationWithBioObject("toto", BioObject.BioType.CHEMICAL),
                 mockAnnotationWithBioObject("toto", BioObject.BioType.GROUP)));
