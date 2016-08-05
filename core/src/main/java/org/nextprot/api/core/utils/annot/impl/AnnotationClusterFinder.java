@@ -35,7 +35,7 @@ public class AnnotationClusterFinder implements Finder<AnnotationCluster> {
 
         for (AnnotationCluster annotationCluster : annotationClusters) {
 
-            for (Annotation annotation : annotationCluster.getGroup()) {
+            for (Annotation annotation : annotationCluster.getAnnotations()) {
                 if (criteria.isSimilar(searchedAnnotation, annotation))
                     return annotationCluster;
             }

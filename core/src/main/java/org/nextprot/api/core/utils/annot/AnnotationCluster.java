@@ -3,7 +3,6 @@ package org.nextprot.api.core.utils.annot;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class AnnotationCluster {
@@ -37,7 +36,11 @@ public class AnnotationCluster {
         return group.add(annotation);
     }
 
-    public Collection<Annotation> getGroup() {
+    public int size() {
+        return group.size();
+    }
+
+    public List<Annotation> getAnnotations() {
         return group;
     }
 }
