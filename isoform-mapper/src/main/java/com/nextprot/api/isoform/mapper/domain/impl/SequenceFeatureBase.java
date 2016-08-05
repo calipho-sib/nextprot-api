@@ -53,6 +53,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
 
         try {
             switch (annotationCategory) {
+                case MUTAGENESIS:
                 case VARIANT:
                     return new SequenceVariant(query.getFeature());
                 case GENERIC_PTM:

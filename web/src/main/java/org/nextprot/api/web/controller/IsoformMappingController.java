@@ -28,7 +28,7 @@ public class IsoformMappingController {
 	@RequestMapping(value = "/validate-feature/{category}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public FeatureQueryResult validateIsoformFeature(
-			@ApiPathParam(name = "category", description = "A feature category (either 'variant' or 'ptm').",  allowedvalues = { "variant" })
+			@ApiPathParam(name = "category", description = "A feature category (either 'variant', 'mutagenesis' or 'ptm').",  allowedvalues = { "variant" })
 			@PathVariable("category") String featureCategory, HttpServletRequest request, HttpServletResponse response,
 			@ApiQueryParam(name = "feature", description = "An isoform feature.",  allowedvalues = { "SCN11A-p.Leu1158Pro" })
 			@RequestParam(value = "feature") String feature,
@@ -42,7 +42,7 @@ public class IsoformMappingController {
 	@RequestMapping(value = "/propagate-feature/{category}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public FeatureQueryResult propagateIsoformFeature(
-			@ApiPathParam(name = "category", description = "A feature category (either 'variant' or 'ptm').",  allowedvalues = { "variant" })
+			@ApiPathParam(name = "category", description = "A feature category (either 'variant', 'mutagenesis' or 'ptm').",  allowedvalues = { "variant" })
 			@PathVariable("category") String featureCategory, HttpServletRequest request, HttpServletResponse response,
 			@ApiQueryParam(name = "feature", description = "An isoform feature.",  allowedvalues = { "SCN11A-p.Leu1158Pro" })
 			@RequestParam(value = "feature") String feature,
