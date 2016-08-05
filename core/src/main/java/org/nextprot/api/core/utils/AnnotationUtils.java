@@ -11,9 +11,10 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
-import org.nextprot.api.core.utils.annot.AnnotationFinder;
-import org.nextprot.api.core.utils.annot.impl.AnnotationMergeImpl;
-import org.nextprot.api.core.utils.annot.AnnotationMerger;
+import org.nextprot.api.core.utils.annot.AnnotationUpdater;
+import org.nextprot.api.core.utils.annot.Merger;
+import org.nextprot.api.core.utils.annot.impl.AnnotationFinder;
+import org.nextprot.api.core.utils.annot.impl.AnnotationUpdaterImpl;
 import org.nextprot.commons.constants.QualityQualifier;
 
 import java.util.*;
@@ -300,7 +301,7 @@ public class AnnotationUtils {
 	public static void merge(List<Annotation> srcAnnotationList, List<Annotation> destAnnotationList) {
 
 		// TODO: for performance reason merge should return the list of merged annotations without updating state of destAnnotationList
-		AnnotationMerger merger = new AnnotationMergeImpl();
+		AnnotationUpdater updater = new AnnotationUpdaterImpl();
 
 		for (Annotation srcAnnotation : srcAnnotationList) {
 
@@ -316,9 +317,15 @@ public class AnnotationUtils {
 			// found -> update annotation with statementAnnotation
 			else {
 
-				merger.update(foundAnnotation, srcAnnotation);
+				updater.update(foundAnnotation, srcAnnotation);
 			}
 		}
+	}
+
+	/** @return merged annotations */
+	public static List<Annotation> mapReduceMerge(List<Annotation> statementAnnotations, List<Annotation> standardAnnotations) {
+
+		return new Merger().merge(statementAnnotations, standardAnnotations);
 	}
 
 	public static QualityQualifier computeAnnotationQualityBasedOnEvidences(List<AnnotationEvidence> evidences) {
