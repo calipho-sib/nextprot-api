@@ -1,5 +1,6 @@
 package com.nextprot.api.annotation.builder;
 
+import org.junit.Test;
 import org.nextprot.api.commons.dbunit.AbstractUnitBaseTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -19,5 +20,8 @@ import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
     TransactionDbUnitTestExecutionListener.class })
 @ContextConfiguration("classpath:spring/core-context.xml")
 public class AnnotationBuilderBaseTest extends AbstractUnitBaseTest{
+	
+	@Test
+	public void shouldBeARealTest() {}
 
 }

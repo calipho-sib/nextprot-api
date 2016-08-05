@@ -15,4 +15,6 @@ public interface AnnotationService {
 	
 	List<Feature> findPtmsByIsoform(String uniqueName);
 
+	List<Annotation> findAnnotationsExcludingBed(String entryName);
+
 }

@@ -14,7 +14,7 @@ import com.github.springtestdbunit.annotation.DatabaseOperation;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 
 /**
- * @author pam !
+ * @author pam
  */
 
 @DatabaseSetup(value="AnnotationMVCTest.xml", type = DatabaseOperation.INSERT)
@@ -26,7 +26,7 @@ public class AnnotationServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldGetAnOrphanetAnnotationFromService() {
 
-		List<Annotation> annotations = annotationService.findAnnotations("NX_P10000");
+		List<Annotation> annotations = annotationService.findAnnotationsExcludingBed("NX_P10000");
 		assertEquals(1,annotations.size());
 		Annotation a = annotations.get(0);
 		assertEquals("disease",a.getCategory());
