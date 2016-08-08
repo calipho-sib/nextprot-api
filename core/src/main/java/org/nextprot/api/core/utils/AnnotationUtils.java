@@ -11,10 +11,8 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
-import org.nextprot.api.core.utils.annot.AnnotationUpdater;
-import org.nextprot.api.core.utils.annot.Merger;
-import org.nextprot.api.core.utils.annot.impl.AnnotationFinder;
-import org.nextprot.api.core.utils.annot.impl.AnnotationUpdaterImpl;
+import org.nextprot.api.core.utils.annot.impl.AnnotationListMapReduceMerger;
+import org.nextprot.api.core.utils.annot.impl.AnnotationListMergerImpl;
 import org.nextprot.commons.constants.QualityQualifier;
 
 import java.util.*;
@@ -311,51 +309,14 @@ public class AnnotationUtils {
 		return ANNOTATION_PROPERTY_COMPARATOR;
 	}
 
+	public static List<Annotation> merge(List<Annotation> srcAnnotationList, List<Annotation> destAnnotationList) {
 
-	//If You find the annotation on NP1 (annotations) add the evidence (SIMPLE CASE)
-	//If You don't find the annotation on NP1 (annotations) add the new annotation to the list + SET
-	//If one evidence contains GOLD the annotation is GOLD. (maybe from BioEditor we get variants that are GOLD and in NP1 we have silver ones) so annotation will become GOLD
-	// GO should be easy (go-cellular-component, go-molecular-function, go-biological-process)
-	// variant and mutagenesis should be a bit more complicated but doable (look at origin / positions ... )
-	// binary-interaction 66 (may require some adaptation from AnnotationBuilder)
-	//small-molecule-interaction	4 (may require some adaptation from AnnotationBuilder, new XREF)
-	//Set the correct annotation id to the evidence (AnnotationEvidence.setAnnotationId....)
-	//Set the correct subject componenents if it is in NP1
-
-	/**
-	 * Merge source annotations into destination annotations (update destination annotations if needed)
-	 * see specs https://issues.isb-sib.ch/browse/BIOEDITOR-454
-	 * @param srcAnnotationList
-	 * @param destAnnotationList
-     */
-	public static void merge(List<Annotation> srcAnnotationList, List<Annotation> destAnnotationList) {
-
-		// TODO: for performance reason merge should return the list of merged annotations without updating state of destAnnotationList
-		AnnotationUpdater updater = new AnnotationUpdaterImpl();
-
-		for (Annotation srcAnnotation : srcAnnotationList) {
-
-			AnnotationFinder finder = AnnotationFinder.valueOf(srcAnnotation.getAPICategory());
-
-			Annotation foundAnnotation = finder.find(srcAnnotation, destAnnotationList);
-
-			// not found -> add new annotation
-			if (foundAnnotation == null) {
-
-				destAnnotationList.add(srcAnnotation);
-			}
-			// found -> update annotation with statementAnnotation
-			else {
-
-				updater.update(foundAnnotation, srcAnnotation);
-			}
-		}
+		return new AnnotationListMergerImpl().merge(srcAnnotationList, destAnnotationList);
 	}
 
-	/** @return merged annotations */
 	public static List<Annotation> mapReduceMerge(List<Annotation> statementAnnotations, List<Annotation> standardAnnotations) {
 
-		return new Merger().merge(statementAnnotations, standardAnnotations);
+		return new AnnotationListMapReduceMerger().merge(statementAnnotations, standardAnnotations);
 	}
 
 	public static QualityQualifier computeAnnotationQualityBasedOnEvidences(List<AnnotationEvidence> evidences) {
