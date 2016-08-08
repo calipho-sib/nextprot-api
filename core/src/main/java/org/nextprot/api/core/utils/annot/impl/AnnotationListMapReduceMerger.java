@@ -1,5 +1,6 @@
 package org.nextprot.api.core.utils.annot.impl;
 
+import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.AnnotationCluster;
@@ -21,7 +22,19 @@ import java.util.stream.Collectors;
  */
 public class AnnotationListMapReduceMerger implements AnnotationListMerger {
 
-    private final AnnotationMerger updater = new AnnotationUpdater();
+    private final AnnotationMerger annotationMerger;
+
+    public AnnotationListMapReduceMerger() {
+
+        this(new AnnotationUpdater());
+    }
+
+    public AnnotationListMapReduceMerger(AnnotationMerger annotationMerger) {
+
+        Preconditions.checkNotNull(annotationMerger);
+
+        this.annotationMerger = annotationMerger;
+    }
 
     /** @return merged annotations */
     public List<Annotation> merge(List<Annotation> annotations1, List<Annotation> annotations2) {
@@ -88,12 +101,12 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
             return cluster.getAnnotations().get(0);
         else if (cluster.size() == 2)
             // the first annotation is the original one
-            return updater.merge(cluster.getAnnotations().get(0), cluster.getAnnotations().get(1));
+            return annotationMerger.merge(cluster.getAnnotations().get(0), cluster.getAnnotations().get(1));
         else {
             Annotation[] otherSources = new Annotation[cluster.getAnnotations().size() - 2];
             cluster.getAnnotations().subList(2, cluster.getAnnotations().size()).toArray(otherSources);
 
-            return updater.merge(cluster.getAnnotations().get(0), cluster.getAnnotations().get(1), otherSources);
+            return annotationMerger.merge(cluster.getAnnotations().get(0), cluster.getAnnotations().get(1), otherSources);
         }
     }
 }

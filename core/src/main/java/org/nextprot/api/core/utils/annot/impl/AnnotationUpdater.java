@@ -3,71 +3,68 @@ package org.nextprot.api.core.utils.annot.impl;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.utils.annot.AnnotationMerger;
-import org.nextprot.commons.constants.QualityQualifier;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 /**
  * Merge annotations by updating and returning target annotation with source annotations
  */
-public class AnnotationUpdater implements AnnotationMerger {
+public class AnnotationUpdater extends AnnotationBaseMerger {
 
     @Override
-    public Annotation merge(Annotation target, Annotation source, Annotation... otherSources) {
+    protected Annotation getDestAnnotation(Annotation annotation1, Annotation annotation2, Annotation... others) {
 
-        updateEvidences(target, source, otherSources);
-        updateAnnotationHash(target, source, otherSources);
-        updateAnnotationName(target, source);
-
-        updateQualityQualifier(target);
-
-        return target;
+        return annotation1;
     }
 
-    private void updateEvidences(Annotation target, Annotation source, Annotation... otherSources) {
+    @Override
+    protected List<Annotation> getSourceAnnotations(Annotation annotation1, Annotation annotation2, Annotation... others) {
 
-        List<AnnotationEvidence> all = new ArrayList<>(target.getEvidences());
+        List<Annotation> sources = new ArrayList<>();
 
-        all.addAll(source.getEvidences().stream().filter(e -> !target.getEvidences().contains(e)).collect(Collectors.toList()));
+        sources.add(annotation2);
 
-        for (Annotation src : otherSources) {
+        for (Annotation other : others) {
+
+            sources.add(other);
+        }
+
+        return sources;
+    }
+
+    @Override
+    protected void updateDestEvidences(Annotation dest, List<Annotation> sources) {
+
+        List<AnnotationEvidence> all = new ArrayList<>(dest.getEvidences());
+
+        for (Annotation src : sources) {
 
             // add only different evidences
-            all.addAll(src.getEvidences().stream().filter(e -> !target.getEvidences().contains(e)).collect(Collectors.toList()));
+            all.addAll(src.getEvidences().stream().filter(e -> !dest.getEvidences().contains(e)).collect(Collectors.toList()));
         }
 
-        target.setEvidences(all);
+        dest.setEvidences(all);
     }
 
-    private void updateQualityQualifier(Annotation target) {
+    @Override
+    protected void updateDestAnnotationHash(Annotation dest, List<Annotation> sources) {
 
-        // reset to gold if there is at least one gold evidence
-        if (target.getEvidences().stream().anyMatch(e -> QualityQualifier.valueOf(e.getQualityQualifier()) == QualityQualifier.GOLD))
-            target.setQualityQualifier(QualityQualifier.GOLD.name());
-    }
-
-    private void updateAnnotationHash(Annotation target, Annotation source, Annotation... otherSources) {
-
-        String annotationHash = source.getAnnotationHash();
+        String annotationHash = sources.get(0).getAnnotationHash();
 
         if (annotationHash == null || annotationHash.isEmpty())
-            throw new NextProtException("annotation hash was not computed for source "+source.getAnnotationName());
+            throw new NextProtException("annotation hash was not computed for source "+sources.get(0).getAnnotationName());
 
-        if (otherSources.length>0) {
+        checkUniqueAnnotationHash(annotationHash, sources);
 
-            checkUniqueAnnotationHash(annotationHash, otherSources);
-        }
-
-        target.setAnnotationHash(annotationHash);
+        dest.setAnnotationHash(annotationHash);
     }
 
-    private void updateAnnotationName(Annotation target, Annotation source) {
+    @Override
+    protected void updateDestAnnotationName(Annotation dest, List<Annotation> sources) {
 
-        target.setAnnotationName(source.getAnnotationName());
+        dest.setAnnotationName(sources.get(0).getAnnotationName());
     }
 
     /**
@@ -76,7 +73,7 @@ public class AnnotationUpdater implements AnnotationMerger {
      * @return a unique annotation hash
      * @throws NextProtException is similar annotation sources do not have the same annotation hash
      */
-    private void checkUniqueAnnotationHash(String annotationHash, Annotation... sources) {
+    private void checkUniqueAnnotationHash(String annotationHash, List<Annotation> sources) {
 
         for (Annotation source : sources) {
 
@@ -85,7 +82,7 @@ public class AnnotationUpdater implements AnnotationMerger {
             if (hash == null || hash.isEmpty())
                 throw new NextProtException("annotation hash was not computed for source "+source.getAnnotationName());
             else if (!annotationHash.equals(hash)) {
-                throw new NextProtException("annotation hash differ for similar sources "+Arrays.toString(sources)+" (expected: "+annotationHash+")");
+                throw new NextProtException("annotation hash differ for similar sources "+sources+" (expected: "+annotationHash+")");
             }
         }
     }

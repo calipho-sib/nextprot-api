@@ -9,12 +9,5 @@ import org.nextprot.api.core.domain.annotation.Annotation;
  */
 public interface AnnotationMerger {
 
-    /**
-     * Update target annotation with source
-     *
-     * @param target the annotation to merge
-     * @param source the annotation source
-     * @param otherSources the other annotation sources
-     */
-    Annotation merge(Annotation target, Annotation source, Annotation... otherSources);
+    Annotation merge(Annotation annotation1, Annotation annotation2, Annotation... others);
 }
