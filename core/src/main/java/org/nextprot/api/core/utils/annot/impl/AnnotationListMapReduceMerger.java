@@ -1,8 +1,10 @@
 package org.nextprot.api.core.utils.annot.impl;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.AnnotationCluster;
 import org.nextprot.api.core.utils.annot.AnnotationListMerger;
+import org.nextprot.api.core.utils.annot.AnnotationMerger;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
  * </ol>
  */
 public class AnnotationListMapReduceMerger implements AnnotationListMerger {
+
+    private final AnnotationMerger updater = new AnnotationUpdater();
 
     /** @return merged annotations */
     public List<Annotation> merge(List<Annotation> annotations1, List<Annotation> annotations2) {
@@ -54,8 +58,12 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
                 annotationClusters.add(AnnotationCluster.valueOf(srcAnnotation));
             }
             else {
+                try {
+                    foundAnnotationCluster.add(srcAnnotation);
+                } catch (AnnotationCluster.InvalidAnnotationClusterCategoryException e) {
 
-                foundAnnotationCluster.add(srcAnnotation);
+                    throw new NextProtException(e);
+                }
             }
         }
 
@@ -69,17 +77,23 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
      */
     private List<Annotation> reduce(List<AnnotationCluster> annotationClusters) {
 
-        return annotationClusters.stream().map(this::merge).collect(Collectors.toList());
+        return annotationClusters.stream().map(this::doMerge).collect(Collectors.toList());
     }
 
-    // TODO: implement the merge
-    private Annotation merge(AnnotationCluster cluster) {
+    private Annotation doMerge(AnnotationCluster cluster) {
 
-        if (cluster.size() == 1)
+        if (cluster.size() == 0)
+            throw new IllegalStateException("cluster "+ cluster.getCategory()+" should not be empty");
+        else if (cluster.size() == 1)
             return cluster.getAnnotations().get(0);
+        else if (cluster.size() == 2)
+            // the first annotation is the original one
+            return updater.merge(cluster.getAnnotations().get(0), cluster.getAnnotations().get(1));
+        else {
+            Annotation[] otherSources = new Annotation[cluster.getAnnotations().size() - 2];
+            cluster.getAnnotations().subList(2, cluster.getAnnotations().size()).toArray(otherSources);
 
-        // do the merge
-
-        return null;
+            return updater.merge(cluster.getAnnotations().get(0), cluster.getAnnotations().get(1), otherSources);
+        }
     }
 }

@@ -1,13 +1,13 @@
 package org.nextprot.api.core.utils.annot.impl;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.AnnotationUpdater;
+import org.nextprot.api.core.utils.annot.AnnotationMerger;
 import org.nextprot.api.core.utils.annot.AnnotationListMerger;
 
 import java.util.List;
 
 /**
- * Merge source annotations into destination annotations (update destination annotations if needed)
+ * Merge source annotations into destination annotations (merge destination annotations if needed)
  *
  * Created by fnikitin on 08/08/16.
  */
@@ -17,7 +17,7 @@ public class AnnotationListMergerImpl implements AnnotationListMerger {
     public List<Annotation> merge(List<Annotation> srcAnnotationList, List<Annotation> destAnnotationList) {
 
         // TODO: for performance reason merge should return the list of merged annotations without updating state of destAnnotationList
-        AnnotationUpdater updater = new AnnotationUpdaterImpl();
+        AnnotationMerger updater = new AnnotationUpdater();
 
         for (Annotation srcAnnotation : srcAnnotationList) {
 
@@ -30,10 +30,10 @@ public class AnnotationListMergerImpl implements AnnotationListMerger {
 
                 destAnnotationList.add(srcAnnotation);
             }
-            // found -> update annotation with statementAnnotation
+            // found -> merge annotation with statementAnnotation
             else {
 
-                updater.update(foundAnnotation, srcAnnotation);
+                updater.merge(foundAnnotation, srcAnnotation);
             }
         }
 
