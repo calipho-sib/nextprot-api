@@ -120,10 +120,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
-		// merge statement annotations into NP2 annotations
-		if (!ignoreStatements)
-			//annotations = AnnotationUtils.merge(statementService.getAnnotations(entryName), annotations);
-			annotations = AnnotationUtils.mapReduceMerge(statementService.getAnnotations(entryName), annotations);
+		List<Annotation> statementAnnotations = statementService.getAnnotations(entryName);
+
+		if (!ignoreStatements) annotations = AnnotationUtils.mapReduceMerge(statementAnnotations, annotations);
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
@@ -146,7 +145,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			annotation.setAnnotationId(property.getAnnotationId() + IdentifierOffset.BIOPHYSICOCHEMICAL_ANNOTATION_OFFSET);
 			annotation.setCategory(model.getDbAnnotationTypeName());
 			annotation.setDescription(description);
-			annotation.setEvidences(new ArrayList<AnnotationEvidence>());
+			annotation.setEvidences(new ArrayList<>());
 
 			annotation.setQualityQualifier("GOLD");
 			annotation.setUniqueName(entryName + "_" + model.getApiTypeName());

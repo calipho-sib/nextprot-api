@@ -32,6 +32,9 @@ public class SimilarityPredicateFactory {
                         new ObjectSimilarityPredicate<>(Annotation::getTargetingIsoformsMap, new VariantPositionMatcher()
                         )
                 ));
+            case BINARY_INTERACTION:
+            case SMALL_MOLECULE_INTERACTION:
+                return new ObjectSimilarityPredicate<>(Annotation::getBioObject);
             default:
                 return new ObjectSimilarityPredicate<>(Annotation::getUniqueName);
         }
