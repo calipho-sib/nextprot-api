@@ -55,6 +55,8 @@ public class StringUtils {
 		return NON_ASCIIDASH.matcher(normalized).replaceAll("");
 	}
 	public static String slug(String unicode) {
+		//TODO: PAM remove next line (temp fix)
+		if (unicode==null) return "nullValue";
 		return slug(unicode, "[:;.,/(){}\\\\]",  "_");
 	}
 

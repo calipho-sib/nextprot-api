@@ -10,6 +10,7 @@ import org.nextprot.api.core.utils.XrefUtils;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,8 +59,71 @@ public class EntryUtils implements Serializable{
 		return entry;
 	}
 
+
+	//TODO: PAM temporary method
+	public static Set<Proteoform> getProteoformSet(Entry entry, String isoformAc) {
+		
+		Set<Proteoform> result = new HashSet<Proteoform>();
+		for (Annotation annot: entry.getAnnotations()) {
+			if (annot.isProteoformAnnotation()) {
+				if (annot.getTargetingIsoformsMap().containsKey(isoformAc)) {
+					result.add(new Proteoform(isoformAc, annot.getSubjectName(), annot.getSubjectComponents()));
+				}
+			}
+		}
+		return result;
+	}
 	
-	public static Map<String,List<Annotation>> getSubjectProteoformAnnotations(Entry entry) {
+	/**
+	 * Builds a dictionary (HashMap) where the key is the annotation identifier (annotationHash) and the value the annotation itself.
+	 * Annotations with no hash are skipped
+	 * @param entry
+	 * @return a dictionary of annotations where the key is the annotation hash (the annot identifier in BED world)
+	 */
+	public static Map<String,Annotation> getHashAnnotationMap(Entry entry) {
+		
+		Map<String,Annotation> result = new HashMap<String,Annotation>();
+		for (Annotation annot: entry.getAnnotations()) {
+			if (annot.getAnnotationHash() != null && ! annot.getAnnotationHash().isEmpty()) {
+				result.put(annot.getAnnotationHash(), annot);
+			}
+		}
+		return result;
+	}
+		
+	/**
+	 * Returns a dictionary mapping proteoforms to their annotations.
+	 * The key is the proteoform, the value the list of annotations related to it.
+	 * Note that the method is "isoform "aware": only annotations having 
+	 * an AnnotationIsoformSpecificity record in getTargetingIsoformsMap 
+	 * for the isoformAc specified in the parameter are taken into account
+	 * @param entry
+	 * @param isoformAc
+	 * @return
+	 */
+	public static Map<Proteoform,List<Annotation>> getProteoformAnnotationsMap(Entry entry, String isoformAc) {
+		
+		Map<Proteoform,List<Annotation>> result = new HashMap<Proteoform,List<Annotation>>();
+		for (Annotation annot: entry.getAnnotations()) {
+//			System.out.println(AnnotationUtils.toString(annot));
+			if (annot.isProteoformAnnotation()) {
+				//System.out.println("proteo:yes" + annot.getAnnotationHash());
+				if (annot.getTargetingIsoformsMap().containsKey(isoformAc)) {
+					System.out.println("iso "+ isoformAc + ":yes");
+					System.out.println(AnnotationUtils.toString(annot));
+					Proteoform key = new Proteoform(isoformAc, annot.getSubjectName(), annot.getSubjectComponents());
+					if (!result.containsKey(key)) result.put(key, new ArrayList<Annotation>());
+					result.get(key).add(annot);
+				}
+			}
+		}
+		return result;
+	}
+	
+
+/*	
+	public static Map<String,List<Annotation>> getSubjectProteoformAnnotationsMap(Entry entry) {
+		
 		Map<String,List<Annotation>> result = new HashMap<String,List<Annotation>>();
 		for (Annotation annot: entry.getAnnotations()) {
 			if (annot.isProteoformAnnotation()) {
@@ -70,5 +134,5 @@ public class EntryUtils implements Serializable{
 		}
 		return result;
 	}
-	
+*/	
 }

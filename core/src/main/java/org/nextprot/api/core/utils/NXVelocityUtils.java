@@ -6,15 +6,19 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.constants.PropertyWriter;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.domain.Proteoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.peff.PeffFormatterMaster;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class NXVelocityUtils {
 	
@@ -24,6 +28,15 @@ public class NXVelocityUtils {
         throw new AssertionError();
     }
 
+	public static Map<Proteoform,List<Annotation>> getProteoformAnnotationsMap(Entry entry, String isoformAc) {
+		return EntryUtils.getProteoformAnnotationsMap(entry, isoformAc);
+	}
+
+	// TODO: PAM temporary
+	public static Set<Proteoform> getProteoformSet(Entry entry, String isoformAc) {
+		return EntryUtils.getProteoformSet(entry, isoformAc);
+	}
+        
 	public static List<Annotation> getAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory) {
 		return AnnotationUtils.filterAnnotationsByCategory(entry, annotationCategory, false);
 	}

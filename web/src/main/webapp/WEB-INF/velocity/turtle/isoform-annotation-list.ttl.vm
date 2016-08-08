@@ -33,3 +33,19 @@ isoform:$isoform-name #if($annotation.isExpressionLevelDetected().get()):detecte
 
 #parse("turtle/isoform-annotation.ttl.vm")
 #end
+
+# Proteoform set
+#set($pfannot = $NXUtils.getProteoformAnnotationsMap($entry,$isoform-name))
+#foreach($pf in $pfannot.keySet())
+iso: $pf.parentIsoformName - id: $pf.id - label: $pf.label - components: $pf.components
+#foreach($annot in $pfannot.get($pf))
+annot_unique_name: $annot.uniqueName
+#end
+#end
+
+# Proteoform Annotations
+#set($subjectNameMap = $NXUtils.getSubjectProteoformAnnotationsMap($entry))
+#foreach($subj in $subjectNameMap.keySet())
+xxxyyy $subj
+#end
+

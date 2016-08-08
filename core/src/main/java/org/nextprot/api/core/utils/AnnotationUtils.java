@@ -48,6 +48,36 @@ public class AnnotationUtils {
 	}
 	
 	
+	public static String toString(Annotation a) {
+		StringBuilder sb = new StringBuilder();
+		String sep = "\n";
+		sb.append("isProteoformAnnotation      :").append(a.isProteoformAnnotation()).append(sep);
+		sb.append("getAnnotationHash           :").append(a.getAnnotationHash()).append(sep);
+		sb.append("getAnnotationId             :").append(a.getAnnotationId()).append(sep);
+		sb.append("getAnnotationName           :").append(a.getAnnotationName()).append(sep);
+		sb.append("getUniqueName               :").append(a.getUniqueName()).append(sep);
+		sb.append("getSubjectName              :").append(a.getSubjectName()).append(sep);
+		sb.append("getSubjectComponents size   :").append(a.getSubjectComponents()==null ? 0 : a.getSubjectComponents().size()).append(sep);
+		if (a.getSubjectComponents()!=null) {
+			for (String c: a.getSubjectComponents()) 
+				sb.append("- component                 :").append(c).append(sep);
+		}
+		sb.append("getApiTypeName              :").append(a.getApiTypeName()).append(sep);
+		sb.append("getCategory                 :").append(a.getCategory()).append(sep);
+		sb.append("getCategoryName             :").append(a.getCategoryName()).append(sep);
+		sb.append("getCvTermAccessionCode      :").append(a.getCvTermAccessionCode()).append(sep);
+		sb.append("getCvTermName               :").append(a.getCvTermName()).append(sep);
+		sb.append("getEvidences.size           :").append(a.getEvidences()==null ? 0:a.getEvidences().size()).append(sep);
+		if (a.getEvidences()!=null) {
+			for (AnnotationEvidence ae: a.getEvidences()) 
+				sb.append("- evidence                 :").append(ae.getEvidenceId()).append(sep);
+		}
+		sb.append("getTargetingIsoformsMap size:").append(a.getTargetingIsoformsMap()==null ? 0:a.getTargetingIsoformsMap().size()).append(sep);
+		//sb.append("").append(a.).append(sep);
+		return sb.toString();
+	}
+	
+	
     /**
 	 * Filter annotation by its category
 	 */
