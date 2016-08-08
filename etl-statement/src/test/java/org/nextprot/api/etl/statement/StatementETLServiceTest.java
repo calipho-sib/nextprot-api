@@ -15,7 +15,7 @@ public class StatementETLServiceTest extends StatementETLServiceBaseTest {
 	@Test
 	public void shouldETLBioeditorStatements() throws Exception {
 
-		statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.BioEditor);
+		//statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.BioEditor);
 	}
 
 }
