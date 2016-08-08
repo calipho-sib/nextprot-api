@@ -33,7 +33,7 @@ public class SimilarityPredicateFactory {
                         )
                 ));
             default:
-                return new ObjectSimilarityPredicate<>(Annotation::getAnnotationId);
+                return new ObjectSimilarityPredicate<>(Annotation::getUniqueName);
         }
     }
 }

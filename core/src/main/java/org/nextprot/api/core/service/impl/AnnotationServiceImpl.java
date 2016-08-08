@@ -121,7 +121,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
 		// merge statement annotations into NP2 annotations
-		if (!ignoreStatements) AnnotationUtils.merge(statementService.getAnnotations(entryName), annotations);
+		if (!ignoreStatements)
+			//annotations = AnnotationUtils.merge(statementService.getAnnotations(entryName), annotations);
+			annotations = AnnotationUtils.mapReduceMerge(statementService.getAnnotations(entryName), annotations);
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
