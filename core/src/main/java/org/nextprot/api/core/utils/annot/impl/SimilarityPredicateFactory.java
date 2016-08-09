@@ -25,7 +25,7 @@ public class SimilarityPredicateFactory {
                 return new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode);
             case VARIANT:
             case MUTAGENESIS:
-                return new SimilarityPredicatePipeline(Arrays.asList(
+                return new SimilarityPredicateChain(Arrays.asList(
                         new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode),
                         new ObjectSimilarityPredicate<>(Annotation::getVariant,
                                 (v1, v2) -> v1.getOriginal().equals(v2.getOriginal()) && v1.getVariant().equals(v2.getVariant())),

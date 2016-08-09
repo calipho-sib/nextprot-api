@@ -9,12 +9,12 @@ import org.nextprot.api.core.utils.annot.SimilarityPredicate;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class SimilarityPredicatePipelineTest {
+public class SimilarityPredicateChainTest {
 
     @Test
     public void shouldBeSimilarWhenAllPredicateTrue() throws Exception {
 
-        SimilarityPredicate predicate = new SimilarityPredicatePipeline(Arrays.asList(
+        SimilarityPredicate predicate = new SimilarityPredicateChain(Arrays.asList(
                 (annotation1, annotation2) -> true,
                 (annotation1, annotation2) -> true,
                 (annotation1, annotation2) -> true
@@ -26,13 +26,13 @@ public class SimilarityPredicatePipelineTest {
     @Test(expected = IllegalArgumentException.class)
     public void constrShouldThrowExceptionIfEmpty() throws Exception {
 
-        new SimilarityPredicatePipeline(Collections.emptyList());
+        new SimilarityPredicateChain(Collections.emptyList());
     }
 
     @Test
     public void shouldNotBeSimilarWhenAtLeastOnePredicateFalse() throws Exception {
 
-        SimilarityPredicate predicate = new SimilarityPredicatePipeline(Arrays.asList(
+        SimilarityPredicate predicate = new SimilarityPredicateChain(Arrays.asList(
                 (annotation1, annotation2) -> true,
                 (annotation1, annotation2) -> false,
                 (annotation1, annotation2) -> true
