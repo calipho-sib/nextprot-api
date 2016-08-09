@@ -62,24 +62,30 @@ public class StatementExportApp {
 
         StatementExporter exporter = new StatementExporter(statementDao, masterIdentifierService, config.getExporterConfig());
 
+        System.out.print("fetching gene statements...");
         // all genes
         if (config.getGeneListToExport().isEmpty()) exporter.fetchAllGeneStatements();
         // one gene
         else if (config.getGeneListToExport().size() == 1) exporter.fetchGeneStatements(config.getGeneListToExport().get(0));
         // many genes
         else exporter.fetchGeneSetStatements(Sets.newHashSet(config.getGeneListToExport()));
+        System.out.println(" OK");
 
+        System.out.print("exporting gene statements...");
         exporter.exportAsTsvFile(config.getOutputFilename());
+        System.out.println(" OK");
     }
 
     public void startApplicateContext() {
-        System.out.println("starting spring application context...");
+        System.out.print("starting spring application context...");
         config.getSpringConfig().startApplicateContext();
+        System.out.println(" OK");
     }
 
     public void stopApplicateContext() {
-        System.out.println("closing spring application context...");
+        System.out.print("closing spring application context...");
         config.getSpringConfig().stopApplicateContext();
+        System.out.println(" OK");
     }
 
     static class MainConfig {

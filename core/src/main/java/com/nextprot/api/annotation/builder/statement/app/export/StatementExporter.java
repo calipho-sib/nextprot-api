@@ -62,8 +62,7 @@ public class StatementExporter {
 
         Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName);
 
-        if (accessions.isEmpty())
-            System.err.println("ERROR: could not find "+geneName);
+        if (accessions.isEmpty()) System.err.println("ERROR: could not find "+geneName);
 
         accessions.forEach(this::fetchStatementsFromEntryAccession);
     }
@@ -98,8 +97,6 @@ public class StatementExporter {
         PrintWriter pw = new PrintWriter(filename);
         pw.append(exportAsTsvString());
         pw.close();
-
-        System.out.println("statements exported in "+filename);
     }
 
     public Set<String> getFetchedAccessions() {
