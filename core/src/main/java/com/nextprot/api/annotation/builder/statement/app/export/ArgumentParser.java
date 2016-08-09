@@ -9,45 +9,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Parse arguments and set Config object
+ * Parse arguments and provides MainConfig object
  *
  * Created by fnikitin on 09/08/16.
  */
 class ArgumentParser {
 
-    private final StatementExportApp.Config config;
+    private final StatementExportApp.MainConfig config;
 
     ArgumentParser(String[] args) throws ParseException {
 
         this.config = parseArgs(args);
     }
 
-    public StatementExportApp.Config getConfig() {
+    public StatementExportApp.MainConfig getConfig() {
         return config;
     }
 
-    /*
-     * Options:
-     * --profile (default: dev, cache)
-     * --filtered-categories (default: variant, mutagenesis)
-     * --genes (default: all)
-     * --output-file-format (default: tsv)
-     *
-     * Arguments:
-     * --output-file
-     */
     private Options createOptions() {
 
         Options options = new Options();
 
+        //noinspection AccessStaticViaInstance
         options.addOption(OptionBuilder.withArgName("profile").hasArg().withDescription("spring profile (default: dev, cache)").create("p"));
+        //noinspection AccessStaticViaInstance
         options.addOption(OptionBuilder.withArgName("categories").hasArg().withDescription("filtered categories (default: variant, mutagenesis)").create("c"));
+        //noinspection AccessStaticViaInstance
         options.addOption(OptionBuilder.withArgName("genes").hasArg().withDescription("genes to export (all genes are exported if not defined)").create("g"));
 
         return options;
     }
 
-    private StatementExportApp.Config parseArgs(String[] args) throws ParseException {
+    private StatementExportApp.MainConfig parseArgs(String[] args) throws ParseException {
 
         Options options = createOptions();
 
@@ -55,7 +48,7 @@ class ArgumentParser {
 
         CommandLine commandLine = parser.parse(options, args);
 
-        StatementExportApp.Config mainConfig = new StatementExportApp.Config();
+        StatementExportApp.MainConfig mainConfig = new StatementExportApp.MainConfig();
 
         mainConfig.setSpringConfig(parseSpringConfig(commandLine));
         mainConfig.setExporterConfig(parseExporterConfig(commandLine));

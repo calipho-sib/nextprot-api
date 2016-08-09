@@ -13,7 +13,8 @@ import java.io.FileNotFoundException;
 import java.util.List;
 
 /**
- * This application export specified genes statement as tabulation-separation-values format files.
+ * This application exports specified genes statement as tab-delimited files.
+ * It requires one single argument output file path with optional tsv extension.
  *
  * Example of parameters:
  *
@@ -29,7 +30,7 @@ public class StatementExportApp {
 
     protected static final Logger LOGGER = Logger.getLogger(StatementExportApp.class);
 
-    private Config config;
+    private MainConfig config;
 
     private StatementExportApp(String[] args) throws ParseException {
 
@@ -37,16 +38,24 @@ public class StatementExportApp {
         System.out.println(config);
     }
 
+    /**
+     * @param args contains mandatory and optional arguments
+     *  Mandatory : export-file-path
+     *  Optional  :
+     *      -p profile (by default: dev, cache)
+     *      -c filtered-categories (by default: variant, mutagenesis)
+     *      -g genes (by default all genes statements are exported)
+     */
     public static void main(String[] args) throws ParseException, FileNotFoundException {
 
         StatementExportApp app = new StatementExportApp(args);
 
         app.startApplicateContext();
-        app.exportStatements();
+        app.exportGenesStatements();
         app.stopApplicateContext();
     }
 
-    public void exportStatements() throws FileNotFoundException {
+    public void exportGenesStatements() throws FileNotFoundException {
 
         StatementDao statementDao = config.getSpringConfig().getBean(StatementDao.class);
         MasterIdentifierService masterIdentifierService = config.getSpringConfig().getBean(MasterIdentifierService.class);
@@ -73,7 +82,7 @@ public class StatementExportApp {
         config.getSpringConfig().stopApplicateContext();
     }
 
-    static class Config {
+    static class MainConfig {
 
         private SpringConfig springConfig;
         private StatementExporter.Config exporterConfig;
