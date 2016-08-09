@@ -11,11 +11,11 @@ import java.util.List;
  *
  * Created by fnikitin on 02/08/16.
  */
-public class SimilarityPredicatePipeline implements SimilarityPredicate {
+public class SimilarityPredicateChain implements SimilarityPredicate {
 
     private final List<SimilarityPredicate> criteria;
 
-    public SimilarityPredicatePipeline(List<SimilarityPredicate> criteria) {
+    public SimilarityPredicateChain(List<SimilarityPredicate> criteria) {
 
         Preconditions.checkNotNull(criteria);
         Preconditions.checkArgument(!criteria.isEmpty());
