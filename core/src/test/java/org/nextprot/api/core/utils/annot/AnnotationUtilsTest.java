@@ -5,22 +5,37 @@ import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.core.domain.BioObject;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.nextprot.api.core.utils.IsoformUtils;
+import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ActiveProfiles({ "dev", "cache" })
 public class AnnotationUtilsTest extends CoreUnitBaseTest {
+
+	@Autowired
+	private EntryBuilderService entryBuilderService;
 
     @Test
     public void shouldTurnSequenceCautionRelativeEvidenceIntoDifferingSequenceProperty()  {
@@ -201,6 +216,62 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		Assert.assertEquals("ChEBI", bo.getDatabase());
 		Assert.assertEquals(39334228, bo.getId());
 		Assert.assertEquals(BioObject.BioType.CHEMICAL, bo.getBioType());
+	}
+
+	//@Test
+	public void exportMergedAnnotationsForBrca1AndScn9A() throws FileNotFoundException {
+
+		List<String> accessions = Arrays.asList("NX_Q15858", "NX_P38398");
+
+		List<String> headers = Arrays.asList("accession", "uniqueName", "category", "annotationName", "annotationHash", "masterPosition");
+
+		PrintWriter pw = new PrintWriter("mergedBrca1AndScn9AVariants.tsv");
+
+		// write header line
+		pw.append(headers.stream().collect(Collectors.joining("\t"))).append("\n");
+
+		for (String accession : accessions) {
+			Entry entry = entryBuilderService.build(EntryConfig.newConfig(accession).withAnnotations());
+
+			List<Annotation> mergedAnnotations = entry.getAnnotations().stream()
+					.filter(a -> a.getAnnotationHash() != null)
+					.filter(a -> a.getUniqueName().startsWith("AN"))
+					.filter(a -> a.getAPICategory() == AnnotationCategory.VARIANT || a.getAPICategory() == AnnotationCategory.MUTAGENESIS)
+					.collect(Collectors.toList());
+
+			pw.append(exportAnnotationsAsTsvString(entry, mergedAnnotations));
+		}
+
+		pw.close();
+	}
+
+	private String exportAnnotationsAsTsvString(Entry entry, List<Annotation> mergedAnnotations) {
+
+		Isoform canonical = IsoformUtils.getCanonicalIsoform(entry);
+
+		StringBuilder sb = new StringBuilder();
+
+		for (Annotation annotation : mergedAnnotations) {
+
+			List<String> row = Arrays.asList(
+					entry.getUniqueName(),
+					annotation.getUniqueName(),
+					annotation.getAPICategory().getApiTypeName(),
+					annotation.getAnnotationName(),
+					annotation.getAnnotationHash(),
+					String.valueOf(computeMasterPos(canonical, annotation.getTargetingIsoformsMap().get(canonical.getIsoformAccession()).getFirstPosition()))
+			);
+
+			// write annotation line
+			sb.append(row.stream().collect(Collectors.joining("\t"))).append("\n");
+		}
+
+		return sb.toString();
+	}
+
+	private int computeMasterPos(Isoform canonical, Integer integer) {
+
+		return IsoformSequencePositionMapper.getCodonPositionsOnMaster(integer, canonical).getNucleotidePosition(0);
 	}
 
 	public static void assertContainsExpectedProperties(Collection<AnnotationProperty> properties, AnnotationProperty... expectedProperties) {

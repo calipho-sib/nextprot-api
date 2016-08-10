@@ -46,6 +46,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private String description;
 
+	// TODO: apiCategory already exist (DRY)
 	private String category;
 
 	private String qualityQualifier;
@@ -54,6 +55,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private AnnotationVariant variant;
 
+	// TODO: synonyms already exist (DRY)
 	private String synonym;
 	
 	private AnnotationCategory apiCategory;
