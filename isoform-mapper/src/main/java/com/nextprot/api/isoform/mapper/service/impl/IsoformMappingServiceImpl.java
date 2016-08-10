@@ -11,7 +11,7 @@ import com.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFo
 import com.nextprot.api.isoform.mapper.domain.impl.exception.MultipleEntryAccessionForGeneException;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
-import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
+import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;

@@ -1,16 +1,18 @@
-package com.nextprot.api.isoform.mapper.utils;
+package org.nextprot.api.core.utils.seqmap;
 
-import com.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
-public class IsoformSequencePositionMapperTest extends IsoformMappingBaseTest {
+@ActiveProfiles({ "dev" })
+public class IsoformSequencePositionMapperTest extends CoreUnitBaseTest {
 
     @Autowired
     private EntryBuilderService entryBuilderService;

@@ -1,4 +1,4 @@
-package com.nextprot.api.isoform.mapper.utils;
+package org.nextprot.api.core.utils.seqmap;
 
 import org.nextprot.api.core.domain.Isoform;
 
@@ -12,8 +12,8 @@ public class IsoformSequencePositionMapper {
 		return SequencePositionMapper.getCodonPositionOnMaster(aaPosition, isoform.getMasterMapping());
 	}
 	
-	public static CodonNucleotideIndices getTranscriptCodon(GeneMasterCodonPosition nuPositions, Isoform isoform) {
-		return SequencePositionMapper.getCodonPositionOnIsoformTranscript(nuPositions, isoform.getMasterMapping());
+	public static CodonNucleotideIndices getCodonNucleotideIndices(GeneMasterCodonPosition nuPositions, Isoform isoform) {
+		return SequencePositionMapper.getCodonNucleotideIndices(nuPositions, isoform.getMasterMapping());
 	}
 
 	/**
@@ -29,7 +29,7 @@ public class IsoformSequencePositionMapper {
 				SequencePositionMapper.getCodonPositionOnMaster(srcPosition, srcIsoform.getMasterMapping());
 
 		CodonNucleotideIndices codonPositionOnTranscript =
-				SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonPositionOnMaster, trgIsoform.getMasterMapping());
+				SequencePositionMapper.getCodonNucleotideIndices(codonPositionOnMaster, trgIsoform.getMasterMapping());
 
 		return codonPositionOnTranscript.getAminoAcidPosition();
 	}

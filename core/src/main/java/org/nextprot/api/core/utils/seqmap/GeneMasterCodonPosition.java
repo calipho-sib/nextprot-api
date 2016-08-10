@@ -1,4 +1,4 @@
-package com.nextprot.api.isoform.mapper.utils;
+package org.nextprot.api.core.utils.seqmap;
 
 import java.util.ArrayList;
 import java.util.List;

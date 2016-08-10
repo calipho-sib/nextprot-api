@@ -1,4 +1,4 @@
-package com.nextprot.api.isoform.mapper.utils;
+package org.nextprot.api.core.utils.seqmap;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

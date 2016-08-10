@@ -1,4 +1,4 @@
-package com.nextprot.api.isoform.mapper.utils;
+package org.nextprot.api.core.utils.seqmap;
 
 import com.google.common.base.Preconditions;
 import org.apache.commons.logging.Log;
@@ -24,7 +24,7 @@ public class SequencePositionMapper {
 	 * 
 	 */
 
-	static CodonNucleotideIndices getCodonPositionOnIsoformTranscript(GeneMasterCodonPosition codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
+	static CodonNucleotideIndices getCodonNucleotideIndices(GeneMasterCodonPosition codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
 
 		logger.debug("----------------------------------------------------------");
 		int lowNum = 0;

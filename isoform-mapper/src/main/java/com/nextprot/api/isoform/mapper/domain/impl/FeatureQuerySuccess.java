@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import com.nextprot.api.isoform.mapper.utils.GeneMasterCodonPosition;
-import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
+import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
+import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 

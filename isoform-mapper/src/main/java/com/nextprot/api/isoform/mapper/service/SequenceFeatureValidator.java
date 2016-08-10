@@ -6,7 +6,7 @@ import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.*;
-import com.nextprot.api.isoform.mapper.utils.IsoformSequencePositionMapper;
+import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.core.dao.EntityName;
