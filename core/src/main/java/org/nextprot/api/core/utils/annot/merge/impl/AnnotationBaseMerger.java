@@ -41,8 +41,8 @@ public abstract class AnnotationBaseMerger implements AnnotationMerger {
     /** Reset dest qualityqualifier to gold if there is at least one gold evidence */
     private void updateDestQualityQualifier(Annotation dest) {
 
-        if (QualityQualifier.valueOf(dest.getQualityQualifier()) != QualityQualifier.GOLD)
+        if (dest.getQualityQualifier() == null || QualityQualifier.valueOf(dest.getQualityQualifier()) != QualityQualifier.GOLD)
             if (dest.getEvidences().stream().anyMatch(e -> QualityQualifier.valueOf(e.getQualityQualifier()) == QualityQualifier.GOLD))
-                dest.setQualityQualifier(QualityQualifier.GOLD.name());
+                dest.setQualityQualifier(QualityQualifier.GOLD.toString());
     }
 }
