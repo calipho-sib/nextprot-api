@@ -37,6 +37,14 @@ public class StatementExporterTest extends CoreUnitBaseTest {
     }
 
     @Test
+    public void exportUnknownGene() throws FileNotFoundException {
+
+        exporter.fetchGeneStatements("spongebob");
+
+        Assert.assertTrue(exporter.getFetchedAccessions().isEmpty());
+    }
+
+    @Test
     public void exportBrca1Twice() throws FileNotFoundException {
 
         exporter.fetchGeneStatements("brca1");
