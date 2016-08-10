@@ -10,6 +10,7 @@ import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.core.utils.peff.PeffFormatterMaster;
 
 import java.text.DecimalFormat;

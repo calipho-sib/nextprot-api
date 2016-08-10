@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.annot.impl;
+package org.nextprot.api.core.utils.annot.merge.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -6,7 +6,7 @@ import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.SimilarityPredicate;
+import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
 
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.annot;
+package org.nextprot.api.core.utils.annot.merge;
 
 import org.junit.Assert;
 import org.junit.Test;

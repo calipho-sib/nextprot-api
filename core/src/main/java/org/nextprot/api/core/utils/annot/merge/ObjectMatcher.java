@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.annot;
+package org.nextprot.api.core.utils.annot.merge;
 
 /**
  * Define contract to match 2 objects

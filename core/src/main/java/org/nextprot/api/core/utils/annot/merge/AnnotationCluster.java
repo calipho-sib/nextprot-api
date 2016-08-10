@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.annot;
+package org.nextprot.api.core.utils.annot.merge;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationCategory;

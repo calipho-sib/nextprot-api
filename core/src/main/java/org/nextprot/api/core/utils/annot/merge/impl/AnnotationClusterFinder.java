@@ -1,11 +1,11 @@
-package org.nextprot.api.core.utils.annot.impl;
+package org.nextprot.api.core.utils.annot.merge.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.AnnotationCluster;
-import org.nextprot.api.core.utils.annot.Finder;
-import org.nextprot.api.core.utils.annot.SimilarityPredicate;
+import org.nextprot.api.core.utils.annot.merge.AnnotationCluster;
+import org.nextprot.api.core.utils.annot.merge.Finder;
+import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
 
 import java.util.Collection;
 

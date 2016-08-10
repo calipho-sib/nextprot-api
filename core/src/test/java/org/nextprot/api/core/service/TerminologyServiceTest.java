@@ -1,11 +1,5 @@
 package org.nextprot.api.core.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Date;
-import java.util.List;
-
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
@@ -15,6 +9,11 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @ActiveProfiles({"dev"})
@@ -124,7 +123,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 			}
 		}
 	}
-	
+
 	//@Test
 	public void shouldReturnAllTerms()  {
 		int sameascnt = 0, refcnt = 0, maxref = 0;

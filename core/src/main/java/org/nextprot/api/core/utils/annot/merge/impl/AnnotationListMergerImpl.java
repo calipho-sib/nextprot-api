@@ -1,8 +1,8 @@
-package org.nextprot.api.core.utils.annot.impl;
+package org.nextprot.api.core.utils.annot.merge.impl;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.AnnotationMerger;
-import org.nextprot.api.core.utils.annot.AnnotationListMerger;
+import org.nextprot.api.core.utils.annot.merge.AnnotationMerger;
+import org.nextprot.api.core.utils.annot.merge.AnnotationListMerger;
 
 import java.util.List;
 

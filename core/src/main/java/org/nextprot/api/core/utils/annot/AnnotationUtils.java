@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils;
+package org.nextprot.api.core.utils.annot;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
@@ -11,8 +11,9 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
-import org.nextprot.api.core.utils.annot.impl.AnnotationListMapReduceMerger;
-import org.nextprot.api.core.utils.annot.impl.AnnotationListMergerImpl;
+import org.nextprot.api.core.utils.IsoformUtils;
+import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
+import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;
 import org.nextprot.commons.constants.QualityQualifier;
 
 import java.util.*;

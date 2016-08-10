@@ -1,11 +1,11 @@
-package org.nextprot.api.core.utils.annot.impl;
+package org.nextprot.api.core.utils.annot.merge.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.AnnotationCluster;
-import org.nextprot.api.core.utils.annot.AnnotationListMerger;
-import org.nextprot.api.core.utils.annot.AnnotationMerger;
+import org.nextprot.api.core.utils.annot.merge.AnnotationCluster;
+import org.nextprot.api.core.utils.annot.merge.AnnotationListMerger;
+import org.nextprot.api.core.utils.annot.merge.AnnotationMerger;
 
 import java.util.List;
 import java.util.stream.Collectors;

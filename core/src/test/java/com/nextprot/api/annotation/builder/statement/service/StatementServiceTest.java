@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
-import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nextprot.api.annotation.builder.AnnotationBuilderBaseTest;

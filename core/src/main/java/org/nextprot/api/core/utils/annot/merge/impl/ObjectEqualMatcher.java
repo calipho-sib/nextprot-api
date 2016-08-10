@@ -1,7 +1,7 @@
-package org.nextprot.api.core.utils.annot.impl;
+package org.nextprot.api.core.utils.annot.merge.impl;
 
 import com.google.common.base.Objects;
-import org.nextprot.api.core.utils.annot.ObjectMatcher;
+import org.nextprot.api.core.utils.annot.merge.ObjectMatcher;
 
 /**
  * Equals()-based implementation

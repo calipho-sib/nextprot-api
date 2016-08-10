@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.annot;
+package org.nextprot.api.core.utils.annot.merge;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
 

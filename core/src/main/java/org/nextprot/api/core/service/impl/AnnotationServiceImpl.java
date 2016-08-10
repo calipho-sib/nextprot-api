@@ -18,7 +18,7 @@ import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

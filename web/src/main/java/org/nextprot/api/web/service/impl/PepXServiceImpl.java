@@ -20,7 +20,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.PeptideUtils;
 import org.nextprot.api.web.domain.PepXResponse;

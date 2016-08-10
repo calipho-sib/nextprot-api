@@ -1,8 +1,8 @@
-package org.nextprot.api.core.utils.annot.impl;
+package org.nextprot.api.core.utils.annot.merge.impl;
 
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
-import org.nextprot.api.core.utils.annot.ObjectMatcher;
+import org.nextprot.api.core.utils.annot.merge.ObjectMatcher;
 
 import java.util.Map;
 import java.util.Set;

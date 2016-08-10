@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils;
+package org.nextprot.api.core.utils.annot;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.Isoform;

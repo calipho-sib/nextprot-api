@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils;
+package org.nextprot.api.core.utils.annot;
 
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 

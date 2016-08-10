@@ -2,7 +2,7 @@ package org.nextprot.api.core.domain;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.nextprot.api.core.utils.PublicationUtils;
 import org.nextprot.api.core.utils.XrefUtils;
