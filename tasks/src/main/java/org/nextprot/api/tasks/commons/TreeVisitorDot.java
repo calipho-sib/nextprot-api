@@ -8,10 +8,10 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
  *
  * Created by fnikitin on 17/06/15.
  */
-public class TreeVisitorDot extends AbstractTreeVisitor {
+class TreeVisitorDot extends AbstractTreeVisitor {
 
     //dot -Teps annotations.dot -o annotations.ps; pstopdf annotations.ps annotations.pdf
-    public TreeVisitorDot(String graphName) {
+    TreeVisitorDot(String graphName) {
 
         super(graphName);
     }

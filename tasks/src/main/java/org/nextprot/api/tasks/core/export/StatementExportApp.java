@@ -1,6 +1,7 @@
-package com.nextprot.api.annotation.builder.statement.app.export;
+package org.nextprot.api.tasks.core.export;
 
 import com.google.common.collect.Sets;
+import com.nextprot.api.annotation.builder.statement.StatementExporter;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
@@ -28,14 +29,14 @@ import java.util.List;
  */
 public class StatementExportApp {
 
-    protected static final Logger LOGGER = Logger.getLogger(StatementExportApp.class);
+    private static final Logger LOGGER = Logger.getLogger(StatementExportApp.class);
 
     private MainConfig config;
 
     private StatementExportApp(String[] args) throws ParseException {
 
         this.config = new ArgumentParser(args).getConfig();
-        System.out.println(config);
+        LOGGER.info(config);
     }
 
     /**
@@ -62,30 +63,30 @@ public class StatementExportApp {
 
         StatementExporter exporter = new StatementExporter(statementDao, masterIdentifierService, config.getExporterConfig());
 
-        System.out.print("fetching gene statements...");
+        LOGGER.info("fetching gene statements...");
         // all genes
         if (config.getGeneListToExport().isEmpty()) exporter.fetchAllGeneStatements();
         // one gene
         else if (config.getGeneListToExport().size() == 1) exporter.fetchGeneStatements(config.getGeneListToExport().get(0));
         // many genes
         else exporter.fetchGeneSetStatements(Sets.newHashSet(config.getGeneListToExport()));
-        System.out.println(" OK");
+        LOGGER.info("gene statements fetched");
 
-        System.out.print("exporting gene statements...");
+        LOGGER.info("exporting gene statements...");
         exporter.exportAsTsvFile(config.getOutputFilename());
-        System.out.println(" OK");
+        LOGGER.info("gene statements exported");
     }
 
     public void startApplicateContext() {
-        System.out.print("starting spring application context...");
+        LOGGER.info("starting spring application context...");
         config.getSpringConfig().startApplicateContext();
-        System.out.println(" OK");
+        LOGGER.info("spring application context started");
     }
 
     public void stopApplicateContext() {
-        System.out.print("closing spring application context...");
+        LOGGER.info("closing spring application context...");
         config.getSpringConfig().stopApplicateContext();
-        System.out.println(" OK");
+        LOGGER.info("spring application context closed");
     }
 
     static class MainConfig {

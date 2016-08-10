@@ -15,14 +15,14 @@ import java.util.List;
  *
  * Created by fnikitin on 13/11/15.
  */
-public class AnnotationCategoryTreeExporter {
+public class AnnotationCategoryTreeExporterApp {
 
     private static final Options OPTIONS = createOptions();
     private static final String DEFAULT_TREE_NAME = "annotation-category-tree";
 
     private final TreeVisitor<AnnotationCategory> visitor;
 
-    public AnnotationCategoryTreeExporter(TreeVisitor<AnnotationCategory> visitor) {
+    public AnnotationCategoryTreeExporterApp(TreeVisitor<AnnotationCategory> visitor) {
 
         this.visitor = visitor;
     }
@@ -38,7 +38,7 @@ public class AnnotationCategoryTreeExporter {
 
         List<String> argList = new ArrayList<>();
 
-        AnnotationCategoryTreeExporter app = newAnnotationCategoryTreeExporterApp(args, argList);
+        AnnotationCategoryTreeExporterApp app = newAnnotationCategoryTreeExporterApp(args, argList);
 
         String treeContent = app.export();
 
@@ -78,7 +78,7 @@ public class AnnotationCategoryTreeExporter {
         return options;
     }
 
-    private static AnnotationCategoryTreeExporter newAnnotationCategoryTreeExporterApp(String[] args, List<String> arguments) {
+    private static AnnotationCategoryTreeExporterApp newAnnotationCategoryTreeExporterApp(String[] args, List<String> arguments) {
 
         CommandLineParser parser = new PosixParser();
 
@@ -93,7 +93,7 @@ public class AnnotationCategoryTreeExporter {
             if (line.hasOption("help")) {
 
                 HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp(AnnotationCategoryTreeExporter.class.getSimpleName()+ " <file>", OPTIONS );
+                formatter.printHelp(AnnotationCategoryTreeExporterApp.class.getSimpleName()+ " <file>", OPTIONS );
                 System.exit(0);
             }
 
@@ -124,6 +124,6 @@ public class AnnotationCategoryTreeExporter {
             throw new IllegalStateException(exp.getMessage()+": parsing failed.");
         }
 
-        return new AnnotationCategoryTreeExporter(visitor);
+        return new AnnotationCategoryTreeExporterApp(visitor);
     }
 }

@@ -9,9 +9,9 @@ import org.nextprot.api.commons.utils.StringUtils;
  *
  * Created by fnikitin on 17/06/15.
  */
-public class TreeVisitorGraphML extends AbstractTreeVisitor {
+class TreeVisitorGraphML extends AbstractTreeVisitor {
 
-    public TreeVisitorGraphML(String graphName) {
+    TreeVisitorGraphML(String graphName) {
 
         super(graphName);
     }

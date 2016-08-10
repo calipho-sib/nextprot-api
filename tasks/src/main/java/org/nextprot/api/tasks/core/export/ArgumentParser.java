@@ -1,9 +1,11 @@
-package com.nextprot.api.annotation.builder.statement.app.export;
+package org.nextprot.api.tasks.core.export;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.nextprot.api.annotation.builder.statement.StatementExporter;
 import org.apache.commons.cli.*;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,9 +69,6 @@ class ArgumentParser {
     private StatementExportApp.SpringConfig parseSpringConfig(CommandLine commandLine) {
 
         if (commandLine.hasOption("p")) {
-            System.out.print("Option profile is present.  The value is: ");
-            System.out.println(commandLine.getOptionValue("p"));
-
             return new StatementExportApp.SpringConfig(commandLine.getOptionValue("p"));
         }
 
@@ -79,9 +78,6 @@ class ArgumentParser {
     private StatementExporter.Config parseExporterConfig(CommandLine commandLine) {
 
         if (commandLine.hasOption("c")) {
-            System.out.print("Option category is present.  The value is: ");
-            System.out.println(commandLine.getOptionValue("c"));
-
             Iterable<String> categories = Splitter.on(',')
                     .trimResults()
                     .omitEmptyStrings()
@@ -96,9 +92,6 @@ class ArgumentParser {
     private List<String> parseGeneListToExport(CommandLine commandLine) {
 
         if (commandLine.hasOption("g")) {
-            System.out.print("Option gene is present.  The value is: ");
-            System.out.println(commandLine.getOptionValue("g"));
-
             Iterable<String> genes = Splitter.on(',')
                     .trimResults()
                     .omitEmptyStrings()

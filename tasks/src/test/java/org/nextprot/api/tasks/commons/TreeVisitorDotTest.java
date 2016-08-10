@@ -96,7 +96,7 @@ public class TreeVisitorDotTest {
                 "GeneralAnnotation -- VariantInfo"
         };
 
-        AnnotationCategoryTreeExporter app = new AnnotationCategoryTreeExporter(new TreeVisitorDot(""));
+        AnnotationCategoryTreeExporterApp app = new AnnotationCategoryTreeExporterApp(new TreeVisitorDot(""));
 
         String export = app.export();
 
