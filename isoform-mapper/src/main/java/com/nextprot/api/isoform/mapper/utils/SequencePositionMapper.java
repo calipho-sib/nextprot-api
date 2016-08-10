@@ -24,11 +24,11 @@ public class SequencePositionMapper {
 	 * 
 	 */
 
-	static TranscriptCodonPosition getCodonPositionOnIsoformTranscript(GeneMasterCodonPosition codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
+	static CodonNucleotideIndices getCodonPositionOnIsoformTranscript(GeneMasterCodonPosition codonPos, List<NucleotidePositionRange> positionsOfIsoformOnDNA) {
 
 		logger.debug("----------------------------------------------------------");
 		int lowNum = 0;
-		TranscriptCodonPosition codonPosInTranscript = new TranscriptCodonPosition();
+		CodonNucleotideIndices codonPosInTranscript = new CodonNucleotideIndices();
 		for (NucleotidePositionRange range: positionsOfIsoformOnDNA) {
 			int nu1Pos = range.getLower();
 			int nu2Pos = range.getUpper();

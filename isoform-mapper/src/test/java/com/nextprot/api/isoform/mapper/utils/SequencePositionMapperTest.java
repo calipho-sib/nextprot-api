@@ -97,7 +97,7 @@ public class SequencePositionMapperTest {
     	 * 
     	 */
 
-    	TranscriptCodonPosition result;
+    	CodonNucleotideIndices result;
     	GeneMasterCodonPosition codonNuPos = new GeneMasterCodonPosition();
 
     	// get isoform pos of aa corresponding to codon with nu at pos 202 203 204

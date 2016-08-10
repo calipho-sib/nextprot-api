@@ -12,7 +12,7 @@ public class IsoformSequencePositionMapper {
 		return SequencePositionMapper.getCodonPositionOnMaster(aaPosition, isoform.getMasterMapping());
 	}
 	
-	public static TranscriptCodonPosition getTranscriptCodon(GeneMasterCodonPosition nuPositions, Isoform isoform) {
+	public static CodonNucleotideIndices getTranscriptCodon(GeneMasterCodonPosition nuPositions, Isoform isoform) {
 		return SequencePositionMapper.getCodonPositionOnIsoformTranscript(nuPositions, isoform.getMasterMapping());
 	}
 
@@ -28,7 +28,7 @@ public class IsoformSequencePositionMapper {
 		GeneMasterCodonPosition codonPositionOnMaster =
 				SequencePositionMapper.getCodonPositionOnMaster(srcPosition, srcIsoform.getMasterMapping());
 
-		TranscriptCodonPosition codonPositionOnTranscript =
+		CodonNucleotideIndices codonPositionOnTranscript =
 				SequencePositionMapper.getCodonPositionOnIsoformTranscript(codonPositionOnMaster, trgIsoform.getMasterMapping());
 
 		return codonPositionOnTranscript.getAminoAcidPosition();

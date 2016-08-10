@@ -127,7 +127,7 @@ NX_Q9UJW3 has 1 ERROR(s)
 				GeneMasterCodonPosition nuPos = IsoformSequencePositionMapper.getCodonPositionsOnMaster(pos, iso);
 				for (Isoform iso2: entry.getIsoforms()) {
 					if (!iso2.equals(iso)) {
-						TranscriptCodonPosition nuIdx = IsoformSequencePositionMapper.getTranscriptCodon(nuPos, iso2);
+						CodonNucleotideIndices nuIdx = IsoformSequencePositionMapper.getTranscriptCodon(nuPos, iso2);
 						Assert.assertEquals(false, nuIdx.has3Nucleotides()); // cannot be projected to iso2
 						Assert.assertEquals(false,nuIdx.areConsecutive());
 						Assert.assertEquals(false,nuIdx.areInFrame());
@@ -243,7 +243,7 @@ NX_Q9UJW3 has 1 ERROR(s)
 							String iso2name = iso2.getUniqueName();
 							if (iso2name.equals(iso1name))	continue;
 	
-							TranscriptCodonPosition nuIdx = IsoformSequencePositionMapper.getTranscriptCodon(nuPos, iso2);
+							CodonNucleotideIndices nuIdx = IsoformSequencePositionMapper.getTranscriptCodon(nuPos, iso2);
 							Integer iso2ActualPos = nuIdx.getAminoAcidPosition();
 							Integer iso2ExpectedPos = isoExpectedPos.get(iso2name);
 							System.out.println("Variant " + a.getUniqueName() + " position on isoform " + iso2name + " is "	+ iso2ActualPos);

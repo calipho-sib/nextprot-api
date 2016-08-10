@@ -14,11 +14,11 @@ import java.util.List;
  * exons     |---- exon1 ------|          |-- exon 2 ---|
  * nuPos     100 101 102 103 104          201 202 203 204  
  * codons    |--codon1--|-------codon2-------|--codon3--|
- * 
+ *
  */
-public class TranscriptCodonPosition {
+public class CodonNucleotideIndices {
 
-    private final Log logger = LogFactory.getLog(TranscriptCodonPosition.class);
+    private final Log logger = LogFactory.getLog(CodonNucleotideIndices.class);
 
 	private final List<Integer> nuNum = new ArrayList<>();
 	
