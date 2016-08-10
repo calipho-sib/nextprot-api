@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder.statement.app.export;
+package com.nextprot.api.annotation.builder.statement;
 
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class StatementExporter {
 
-    protected static final Logger LOGGER = Logger.getLogger(StatementExporter.class);
+    private static final Logger LOGGER = Logger.getLogger(StatementExporter.class);
 
     private final StatementDao statementDao;
     private final MasterIdentifierService masterIdentifierService;
@@ -62,7 +62,7 @@ public class StatementExporter {
 
         Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName);
 
-        if (accessions.isEmpty()) System.err.println("ERROR: could not find "+geneName);
+        if (accessions.isEmpty()) LOGGER.warn("could not find "+geneName);
 
         accessions.forEach(this::fetchStatementsFromEntryAccession);
     }
@@ -88,7 +88,7 @@ public class StatementExporter {
                 + sb.toString();
     }
 
-    void exportAsTsvFile(String filename) throws FileNotFoundException {
+    public void exportAsTsvFile(String filename) throws FileNotFoundException {
 
         Path path = Paths.get(filename);
 

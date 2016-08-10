@@ -1,4 +1,4 @@
-package com.nextprot.api.annotation.builder.statement.app.export;
+package com.nextprot.api.annotation.builder.statement;
 
 import com.google.common.collect.Sets;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
