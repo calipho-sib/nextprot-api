@@ -1,6 +1,5 @@
 package com.nextprot.api.annotation.builder.statement;
 
-import com.google.common.collect.Sets;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.FileNotFoundException;
+import java.util.Map;
 
 @ActiveProfiles({ "dev", "cache" })
 public class StatementExporterTest extends CoreUnitBaseTest {
@@ -31,50 +31,22 @@ public class StatementExporterTest extends CoreUnitBaseTest {
     @Test
     public void exportBrca1() throws FileNotFoundException {
 
-        exporter.storeGeneStatements("brca1");
-
-        Assert.assertEquals(1, exporter.getFetchedAccessions().size());
+        String content = exporter.exportGeneStatementsAsTsvString("brca1");
+        Assert.assertTrue(content.split("\n").length>1);
     }
 
     @Test
     public void exportUnknownGene() throws FileNotFoundException {
 
-        exporter.storeGeneStatements("spongebob");
-
-        Assert.assertTrue(exporter.getFetchedAccessions().isEmpty());
+        String content = exporter.exportGeneStatementsAsTsvString("spongebob");
+        Assert.assertEquals(1, content.split("\n").length);
     }
 
     @Test
-    public void exportBrca1Twice() throws FileNotFoundException {
+    public void fetchAllGeneNames() throws FileNotFoundException {
 
-        exporter.storeGeneStatements("brca1");
-        int len = exporter.exportAsTsvString().length();
-        exporter.storeGeneStatements("brca1");
+        Map<String, String> map = exporter.exportAllGeneStatementsAsTsvString();
 
-        Assert.assertEquals(len, exporter.exportAsTsvString().length());
-        Assert.assertEquals(1, exporter.getFetchedAccessions().size());
-    }
-
-    @Test
-    public void export2genes() throws FileNotFoundException {
-
-        exporter.storeGeneSetStatements(Sets.newHashSet("brca1", "scn9A"));
-
-        Assert.assertEquals(2, exporter.getFetchedAccessions().size());
-    }
-
-    @Test
-    public void exportAllGenes() throws FileNotFoundException {
-
-        exporter.storeAllGeneStatements();
-
-        Assert.assertEquals(20, exporter.getFetchedAccessions().size());
-    }
-
-    @Test
-    public void exportGene() throws FileNotFoundException {
-
-        exporter.storeGeneStatements("scn3a");
-        exporter.exportAsTsvFile("/tmp/scn3a");
+        Assert.assertEquals(20, map.keySet().size());
     }
 }

@@ -1,6 +1,5 @@
 package org.nextprot.api.tasks.core.export;
 
-import com.google.common.collect.Sets;
 import com.nextprot.api.annotation.builder.statement.StatementExporter;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.apache.commons.cli.ParseException;
@@ -12,6 +11,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This application exports specified genes statement as tab-delimited files.
@@ -41,7 +41,7 @@ public class StatementExportApp {
 
     /**
      * @param args contains mandatory and optional arguments
-     *  Mandatory : export-file-path
+     *  Mandatory : export-dir-path
      *  Optional  :
      *      -p profile (by default: dev, cache)
      *      -c filtered-categories (by default: variant, mutagenesis)
@@ -63,18 +63,25 @@ public class StatementExportApp {
 
         StatementExporter exporter = new StatementExporter(statementDao, masterIdentifierService, config.getExporterConfig());
 
-        LOGGER.info("fetching gene statements...");
-        // all genes
-        if (config.getGeneListToExport().isEmpty()) exporter.storeAllGeneStatements();
-        // one gene
-        else if (config.getGeneListToExport().size() == 1) exporter.storeGeneStatements(config.getGeneListToExport().get(0));
-        // many genes
-        else exporter.storeGeneSetStatements(Sets.newHashSet(config.getGeneListToExport()));
-        LOGGER.info("gene statements fetched");
-
         LOGGER.info("exporting gene statements...");
-        exporter.exportAsTsvFile(config.getOutputFilename());
-        LOGGER.info("gene statements exported");
+
+        // get all genes if no genes were specified
+        if (config.getSpecificGeneListToExport().isEmpty()) {
+
+            Map<String, String> map = exporter.exportAllGeneStatementsAsTsvString();
+            for (String geneName : map.keySet()) {
+
+                exporter.exportAsTsvFile(config.getOutputDirname(), geneName, map.get(geneName));
+                LOGGER.info("gene statements of " + geneName + " exported");
+            }
+        }
+        else {
+            for (String geneName : config.getSpecificGeneListToExport()) {
+
+                exporter.exportAsTsvFile(config.getOutputDirname(), geneName, exporter.exportGeneStatementsAsTsvString(geneName));
+                LOGGER.info("gene statements of " + geneName + " exported");
+            }
+        }
     }
 
     public void startApplicateContext() {
@@ -93,8 +100,8 @@ public class StatementExportApp {
 
         private SpringConfig springConfig;
         private StatementExporter.Config exporterConfig;
-        private List<String> geneListToExport;
-        private String outputFile;
+        private List<String> specificGeneListToExport;
+        private String outputDirname;
 
         SpringConfig getSpringConfig() {
             return springConfig;
@@ -112,20 +119,20 @@ public class StatementExportApp {
             this.exporterConfig = exporterConfig;
         }
 
-        List<String> getGeneListToExport() {
-            return geneListToExport;
+        List<String> getSpecificGeneListToExport() {
+            return specificGeneListToExport;
         }
 
-        void setGeneListToExport(List<String> geneListToExport) {
-            this.geneListToExport = geneListToExport;
+        void setSpecificGeneListToExport(List<String> specificGeneListToExport) {
+            this.specificGeneListToExport = specificGeneListToExport;
         }
 
-        String getOutputFilename() {
-            return outputFile;
+        String getOutputDirname() {
+            return outputDirname;
         }
 
-        void setOutputFilename(String outputFilename) {
-            this.outputFile = outputFilename;
+        void setOutputDirname(String outputDirname) {
+            this.outputDirname = outputDirname;
         }
 
         @Override
@@ -133,8 +140,8 @@ public class StatementExportApp {
             return  "Parameters\n" +
                     " - springConfig     : " + springConfig + "\n" +
                     " - exporterConfig   : " + exporterConfig + "\n" +
-                    " - geneListToExport : " + geneListToExport + "\n" +
-                    " - outputFile       : '" + outputFile + '\'';
+                    " - specificGeneListToExport : " + specificGeneListToExport + "\n" +
+                    " - outputDirname    : '" + outputDirname + '\'';
         }
     }
 

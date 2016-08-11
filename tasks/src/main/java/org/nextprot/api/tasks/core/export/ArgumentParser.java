@@ -5,7 +5,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.nextprot.api.annotation.builder.statement.StatementExporter;
 import org.apache.commons.cli.*;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,14 +53,14 @@ class ArgumentParser {
 
         mainConfig.setSpringConfig(parseSpringConfig(commandLine));
         mainConfig.setExporterConfig(parseExporterConfig(commandLine));
-        mainConfig.setGeneListToExport(parseGeneListToExport(commandLine));
+        mainConfig.setSpecificGeneListToExport(parseGeneListToExport(commandLine));
 
         String[] remainder = commandLine.getArgs();
 
         if (remainder.length != 1)
-            throw new ParseException("missing output filename");
+            throw new ParseException("missing output directory");
 
-        mainConfig.setOutputFilename(remainder[0]);
+        mainConfig.setOutputDirname(remainder[0]);
 
         return mainConfig;
     }
