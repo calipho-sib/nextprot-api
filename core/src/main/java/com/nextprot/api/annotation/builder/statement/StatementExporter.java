@@ -1,7 +1,6 @@
 package com.nextprot.api.annotation.builder.statement;
 
 import com.google.common.base.Preconditions;
-import com.google.common.io.Files;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -13,8 +12,6 @@ import org.nextprot.commons.statements.constants.AnnotationType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,10 +22,7 @@ public class StatementExporter {
     private final StatementDao statementDao;
     private final MasterIdentifierService masterIdentifierService;
 
-    private final StringBuilder sb = new StringBuilder();
-
     private final Config config;
-    private final Set<String> fetchedAccessions;
 
     public StatementExporter(StatementDao statementDao, MasterIdentifierService masterIdentifierService) {
 
@@ -42,73 +36,62 @@ public class StatementExporter {
         this.masterIdentifierService = masterIdentifierService;
 
         this.config = config;
-        this.fetchedAccessions = new HashSet<>();
     }
 
-    public void storeAllGeneStatements() {
-
-        statementDao.findUniqueNames().forEach(this::fetchStatementsFromEntryAccession);
-    }
-
-    public void storeGeneSetStatements(Set<String> geneNames) {
-
-        geneNames.forEach(this::storeGeneStatements);
-    }
-
-    public void storeGeneStatements(String geneName) {
+    public String exportGeneStatementsAsTsvString(String geneName) {
 
         Preconditions.checkNotNull(geneName, "gene name should not be null");
         Preconditions.checkArgument(!geneName.isEmpty(), "gene name should be defined");
 
+        StringBuilder sb = new StringBuilder();
+
+        // header row
+        sb.append(config.fields.stream().map(Enum::name).collect(Collectors.joining("\t"))).append("\n");
+
         Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName);
 
         if (accessions.isEmpty()) LOGGER.warn("could not find "+geneName);
+        accessions.forEach(accession -> fetchAndAppendStatementsFromEntryAccession(accession, sb));
 
-        accessions.forEach(this::fetchStatementsFromEntryAccession);
+        return sb.toString();
     }
 
-    private void fetchStatementsFromEntryAccession(String entryAccession) {
+    public Map<String, String> exportAllGeneStatementsAsTsvString() {
 
-        if (fetchedAccessions.contains(entryAccession)) return;
+        List<String> geneNames = statementDao.findUniqueGeneNames();
+
+        Map<String, String> map = new HashMap<>(geneNames.size());
+
+        for (String geneName : geneNames) {
+
+            // append statement rows
+            map.put(geneName, exportGeneStatementsAsTsvString(geneName));
+        }
+
+        return map;
+    }
+
+    private void fetchAndAppendStatementsFromEntryAccession(String entryAccession, StringBuilder sb) {
 
         List<Statement> statements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession).stream()
                 .filter(statement -> config.categories.contains(AnnotationCategory.getDecamelizedAnnotationTypeName(statement.getValue(StatementField.ANNOTATION_CATEGORY))))
                 .collect(Collectors.toList());
 
         if (!statements.isEmpty()) {
-            appendTsvString(statements);
+            // statement rows
+            for (Statement statement : statements) {
+                sb.append(config.fields.stream().map(statement::getValue).collect(Collectors.joining("\t"))).append("\n");
+            }
         }
-
-        fetchedAccessions.add(entryAccession);
     }
 
-    public String exportAsTsvString() {
+    public void exportAsTsvFile(String directory, String genename, String content) throws FileNotFoundException {
 
-        return config.fields.stream().map(Enum::name).collect(Collectors.joining("\t")) + "\n"
-                + sb.toString();
-    }
-
-    public void exportAsTsvFile(String filename) throws FileNotFoundException {
-
-        Path path = Paths.get(filename);
-
-        filename = path.getParent().toString() + File.separator + Files.getNameWithoutExtension(filename)+".tsv";
+        String filename = directory + File.separator + genename+"_statements.tsv";
 
         PrintWriter pw = new PrintWriter(filename);
-        pw.append(exportAsTsvString());
+        pw.append(content);
         pw.close();
-    }
-
-    public Set<String> getFetchedAccessions() {
-        return fetchedAccessions;
-    }
-
-    private void appendTsvString(List<Statement> statements) {
-
-        for (Statement statement : statements) {
-
-            sb.append(config.fields.stream().map(statement::getValue).collect(Collectors.joining("\t"))).append("\n");
-        }
     }
 
     public static class Config {
