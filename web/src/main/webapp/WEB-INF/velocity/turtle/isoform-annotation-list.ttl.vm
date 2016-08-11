@@ -15,10 +15,10 @@ isoform:$isoform-name a :Isoform;
 
 # Annotations linked to isoform 
 
-#foreach($annotation in $entry.getAnnotationsByIsoform($isoform-name))
-#set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)
-#set($annotation-type = $annotation.apiTypeName)
-#if($annotation-type != "ModificationEffect")
+#foreach($annotation in $entry.getAnnotationsByIsoform($isoform-name)) 
+#set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName) ## used in child template(s)
+#set($annotation-type = $annotation.apiTypeName)                      ## used in child template(s)
+#if($annotation.isWildTypeAnnotation()) ## any type except PP,MP,ME
 #foreach($parentPredicate in $annotation.parentPredicates)
 isoform:$isoform-name :$parentPredicate annotation:$annotation-uri .
 #end ## foreach parentPredicate
@@ -27,25 +27,11 @@ isoform:$isoform-name :$annotation.rdfPredicate annotation:$annotation-uri .
 #if($annotation.isExpressionLevelDetected().isPresent())
 isoform:$isoform-name #if($annotation.isExpressionLevelDetected().get()):detectedExpression#else:undetectedExpression#end annotation:$annotation-uri .
 #end ## end if expression level detected  
+#end ## if is wildtype annotation
+#if (! $annotation.isProteoformAnnotation()) ## any type except ME
 #parse("turtle/isoform-annotation.ttl.vm")
-#end ## if annot type != modif effect
+#end ## if is NOT proteoform annotation
 #end ## annotation
-
-## DEBUG CODE -----------------------
-## used to get info about an annotation from its uniqueName (id
-##set($uniqueNameAnnotMap = $NXUtils.getUniqueNameAnnotationMap($entry))
-##foreach($a in $uniqueNameAnnotMap.values())
-##if($a.apiTypeName == "Variant") 
-##if($a.annotationHash && $a.annotationHash != $a.uniqueName) 
-## zzz merged variant: uniqueName:$a.uniqueName annotationHash:$a.annotationHash
-##elseif ($a.uniqueName.startsWith("AN_"))
-## zzz NP1 variant: uniqueName:$a.uniqueName
-##else
-## zzz BED variant: uniqueName:$a.uniqueName
-##end
-##end
-##end
-## END DEBUG CODE ------------------
 
 
 ## TODO Pam: to be moved in parent template
@@ -64,24 +50,24 @@ proteoform:$pf.id a :Proteoform;
 #foreach($compId in $pf.components)
 #set($annotation = $hashAnnotMap.get($compId))
 #set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)
-#set($annotation-type = $annotation.apiTypeName)
+####set($annotation-type = $annotation.apiTypeName)
   :modification annotation:$annotation-uri ;
 #end ## foreach component
 .
 
-# zzz /Proteoform Annotations
+# zzz Proteoform Annotations
 #foreach($annotation in $ProteoformAnnotationsMap.get($pf))
-#set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)
-#set($annotation-type = $annotation.apiTypeName)
+#set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)    ## used in child template(s)
+#set($annotation-type = $annotation.apiTypeName)                         ## used in child template(s)
 #foreach($parentPredicate in $annotation.parentPredicates)
 proteoform:$pf.id :$parentPredicate annotation:$annotation-uri .
 #end ## foreach parentPredicate
 proteoform:$pf.id :$annotation.rdfPredicate annotation:$annotation-uri .
 
 # vvv Proteoform annotation details
+
 #parse("turtle/isoform-annotation.ttl.vm")
 
 #end ## foreach annotation
-
 #end ## foreach proteoform
 

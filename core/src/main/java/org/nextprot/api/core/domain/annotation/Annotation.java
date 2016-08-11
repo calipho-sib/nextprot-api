@@ -79,9 +79,32 @@ public class Annotation implements Serializable, IsoformSpecific {
 				" - description:"  + description;
 	}
 	
+	
+	/**
+	 * Pam
+	 * Only ModificationEffect annotations directly apply to proteoforms.
+	 * ProteinProperty and MammalianPhenotype also applies to proteoforms BUT indirectly.
+	 * They only appear as the object of a ModificationEffect proteoform annotation (in annot.bio-object.annotationHash).
+	 * @return true if a proteoform (modified isoform) is the subject of the annotation 
+	 */
 	public boolean isProteoformAnnotation() {
 		return (subjectComponents!=null && ! subjectComponents.isEmpty());
 	}
+
+	/**
+	 * Pam
+	 * Some annotation categories should not be linked to an isoform or entry but only to a proteoform.
+     * They only appear as the object of a proteoform ModificationEffect annotation.
+     * I use the term WildType instead of Isoform to avoid confusions. 
+	 * @return true if annotation applies to unmodified isoforms (wild type = isoform)
+	 */
+	public boolean isWildTypeAnnotation() {
+		if (AnnotationCategory.PROTEIN_PROPERTY == this.apiCategory) return false;
+		if (AnnotationCategory.MAMMALIAN_PHENOTYPE == this.apiCategory) return false;
+		if (AnnotationCategory.MODIFICATION_EFFECT == this.apiCategory) return false;
+		return true;
+	}
+	
 	
 	public DbXref getParentXref() {
 		return parentXref;
@@ -351,7 +374,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public String getSpecificityForIsoform(String isoformName) {
 		return this.targetingIsoformsMap.get(isoformName).getSpecificity();
 	}
-
+	
 	public BioObject getBioObject() {
 		return bioObject;
 	}

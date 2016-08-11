@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class EntryUtils implements Serializable{
 	
@@ -87,6 +88,24 @@ public class EntryUtils implements Serializable{
 		}
 		return result;
 	}
+	
+	public static Map<String,Integer> getAnnotationCategoryCountMap(Entry entry) {
+		Map<String,Integer> result = new TreeMap<String,Integer>();
+		for (Annotation annot: entry.getAnnotations()) {
+			String key = annot.getApiTypeName();
+			if (!result.containsKey(key)) result.put(key, new Integer(0));
+			int value = result.get(key).intValue()+1;
+			result.put(key, new Integer(value));
+		}
+		return result;
+	}
+	
+	private static void printMap(Map map) {
+		for (Object k: map.keySet()) {
+			System.out.println(k + " => " + map.get(k));
+		}
+	}
+	
 	/**
 	 * Builds a dictionary (HashMap) where the key is the annotation annotationHash and the value the annotation itself.
 	 * Annotations with no hash are skipped
@@ -94,6 +113,8 @@ public class EntryUtils implements Serializable{
 	 * @return a dictionary of annotations where the key is the annotation hash (= identifier in BED world)
 	 */
 	public static Map<String,Annotation> getHashAnnotationMap(Entry entry) {
+		
+		//printMap(getAnnotationCategoryCountMap(entry));
 		
 		Map<String,Annotation> result = new HashMap<String,Annotation>();
 		for (Annotation annot: entry.getAnnotations()) {

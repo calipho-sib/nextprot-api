@@ -16,22 +16,32 @@ annotation:$annotation-uri a :$annotation-type;
 #if($annotation.getBioObject())
 #set($bioObject = $annotation.getBioObject())
 #set($bioType = $bioObject.getBioType().toString())
-#set($resourceType = $bioObject.getResourceType().toString())
+#set($resourceType = $bioObject.getResourceType().toString())  
 #if($resourceType == "EXTERNAL")
   :interactant [
     rdf:type :Xref ;
     :provenance db:$bioObject.database ;
     :accession "$bioObject.accession"^^xsd:string ;
-##  :url "value needs to be provided from dao ?"^^xsd:string ;
-#if($bioType == "PROTEIN")    skos:exactMatch uniprot:$bioObject.accession ;
-#end 
-### chebi not yet available as rdf 
-###else $bioObject.accession.toLowerCase()#end ;
+#if($bioType == "PROTEIN")
+    skos:exactMatch uniprot:$bioObject.accession ;
+#end ## biotype
   ] ;
 #elseif($resourceType == "INTERNAL")
-  :interactant#if($bioType == "PROTEIN") entry:#else isoform:#end$bioObject.accession ;
-#end
-#end
+#if($bioType == "PROTEIN")
+  :interactant entry:$bioObject.accession ;
+#elseif($bioType == "PROTEIN_ISOFORM")
+  :interactant isoform:$bioObject.accession ;
+#elseif($bioType == "NORMAL_ANNOTATION")
+#set($objectannot = false)
+#set($objectannot-uri = false)
+#set($objectannot = $hashAnnotMap.get($bioObject.annotationHash))
+#set($objectannot-uri =  $isoform-name + "-" + $objectannot.uniqueName)
+DEBUG: annotCat:$annotation.apiTypeName - bioObject = biotype:$bioType - rtype:$resourceType - cat:$objectannot.apiTypeName
+##DEBUG: annotCat:$annotation.category  annot:$annotation.uniqueName - bioObject = biotype:$bioType - rtype:$resourceType - cat:$objectannot.category - uname:$objectannot.uniqueName - hash:$objectannot.annotationHash - uri:$objectannot-uri
+  :impactedObject annotation:$objectannot-uri ;
+#end ## bioType
+#end ## resourceType
+#end ## is bio object
 
 #foreach($prop in $annotation.getProperties())
 ## don't remove the presetting to false in next line otherewise problems (pam)
