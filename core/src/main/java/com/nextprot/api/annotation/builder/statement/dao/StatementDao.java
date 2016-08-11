@@ -15,5 +15,5 @@ public interface StatementDao {
 
 	List<Statement> findStatementsByAnnotEntryId(AnnotationType annotationType, String annotEntryId);
 
-	List<String> findUniqueNames();
+	List<String> findUniqueGeneNames();
 }

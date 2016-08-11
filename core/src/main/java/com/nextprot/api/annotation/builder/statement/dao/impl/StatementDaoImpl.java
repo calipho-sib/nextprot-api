@@ -59,9 +59,9 @@ public class StatementDaoImpl implements StatementDao {
 	}
 
 	@Override
-	public List<String> findUniqueNames() {
+	public List<String> findUniqueGeneNames() {
 
-		return new JdbcTemplate(dsLocator.getStatementsDataSource()).queryForList(sqlDictionary.getSQLQuery("all-entry-accessions"), String.class);
+		return new JdbcTemplate(dsLocator.getStatementsDataSource()).queryForList(sqlDictionary.getSQLQuery("all-gene-names"), String.class);
 	}
 
 	@Override
