@@ -45,17 +45,17 @@ public class StatementExporter {
         this.fetchedAccessions = new HashSet<>();
     }
 
-    public void fetchAllGeneStatements() {
+    public void storeAllGeneStatements() {
 
         statementDao.findUniqueNames().forEach(this::fetchStatementsFromEntryAccession);
     }
 
-    public void fetchGeneSetStatements(Set<String> geneNames) {
+    public void storeGeneSetStatements(Set<String> geneNames) {
 
-        geneNames.forEach(this::fetchGeneStatements);
+        geneNames.forEach(this::storeGeneStatements);
     }
 
-    public void fetchGeneStatements(String geneName) {
+    public void storeGeneStatements(String geneName) {
 
         Preconditions.checkNotNull(geneName, "gene name should not be null");
         Preconditions.checkArgument(!geneName.isEmpty(), "gene name should be defined");
@@ -116,6 +116,7 @@ public class StatementExporter {
         private final Set<AnnotationCategory> categories;
         private final List<StatementField> fields = Arrays.asList(StatementField.GENE_NAME,
                 StatementField.NEXTPROT_ACCESSION,
+                StatementField.ISOFORM_ACCESSION,
                 StatementField.ANNOTATION_CATEGORY,
                 StatementField.ANNOTATION_NAME,
                 StatementField.VARIANT_ORIGINAL_AMINO_ACID,

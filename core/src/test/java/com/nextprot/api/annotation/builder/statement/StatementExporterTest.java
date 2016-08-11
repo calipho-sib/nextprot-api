@@ -31,7 +31,7 @@ public class StatementExporterTest extends CoreUnitBaseTest {
     @Test
     public void exportBrca1() throws FileNotFoundException {
 
-        exporter.fetchGeneStatements("brca1");
+        exporter.storeGeneStatements("brca1");
 
         Assert.assertEquals(1, exporter.getFetchedAccessions().size());
     }
@@ -39,7 +39,7 @@ public class StatementExporterTest extends CoreUnitBaseTest {
     @Test
     public void exportUnknownGene() throws FileNotFoundException {
 
-        exporter.fetchGeneStatements("spongebob");
+        exporter.storeGeneStatements("spongebob");
 
         Assert.assertTrue(exporter.getFetchedAccessions().isEmpty());
     }
@@ -47,9 +47,9 @@ public class StatementExporterTest extends CoreUnitBaseTest {
     @Test
     public void exportBrca1Twice() throws FileNotFoundException {
 
-        exporter.fetchGeneStatements("brca1");
+        exporter.storeGeneStatements("brca1");
         int len = exporter.exportAsTsvString().length();
-        exporter.fetchGeneStatements("brca1");
+        exporter.storeGeneStatements("brca1");
 
         Assert.assertEquals(len, exporter.exportAsTsvString().length());
         Assert.assertEquals(1, exporter.getFetchedAccessions().size());
@@ -58,7 +58,7 @@ public class StatementExporterTest extends CoreUnitBaseTest {
     @Test
     public void export2genes() throws FileNotFoundException {
 
-        exporter.fetchGeneSetStatements(Sets.newHashSet("brca1", "scn9A"));
+        exporter.storeGeneSetStatements(Sets.newHashSet("brca1", "scn9A"));
 
         Assert.assertEquals(2, exporter.getFetchedAccessions().size());
     }
@@ -66,8 +66,15 @@ public class StatementExporterTest extends CoreUnitBaseTest {
     @Test
     public void exportAllGenes() throws FileNotFoundException {
 
-        exporter.fetchAllGeneStatements();
+        exporter.storeAllGeneStatements();
 
         Assert.assertEquals(20, exporter.getFetchedAccessions().size());
+    }
+
+    @Test
+    public void exportGene() throws FileNotFoundException {
+
+        exporter.storeGeneStatements("scn3a");
+        exporter.exportAsTsvFile("/tmp/scn3a");
     }
 }

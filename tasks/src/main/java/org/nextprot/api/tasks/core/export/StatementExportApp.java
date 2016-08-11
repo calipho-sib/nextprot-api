@@ -65,11 +65,11 @@ public class StatementExportApp {
 
         LOGGER.info("fetching gene statements...");
         // all genes
-        if (config.getGeneListToExport().isEmpty()) exporter.fetchAllGeneStatements();
+        if (config.getGeneListToExport().isEmpty()) exporter.storeAllGeneStatements();
         // one gene
-        else if (config.getGeneListToExport().size() == 1) exporter.fetchGeneStatements(config.getGeneListToExport().get(0));
+        else if (config.getGeneListToExport().size() == 1) exporter.storeGeneStatements(config.getGeneListToExport().get(0));
         // many genes
-        else exporter.fetchGeneSetStatements(Sets.newHashSet(config.getGeneListToExport()));
+        else exporter.storeGeneSetStatements(Sets.newHashSet(config.getGeneListToExport()));
         LOGGER.info("gene statements fetched");
 
         LOGGER.info("exporting gene statements...");
