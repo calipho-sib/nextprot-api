@@ -13,4 +13,13 @@ public class BioComplex extends BioList {
 
         super(BioType.COMPLEX, bioObject, others);
     }
+    
+	@Override
+	protected String toBioObjectString() {
+		StringBuilder sb = new StringBuilder("\nUnnamed complex\n");
+		for (BioObject o: getContent()) {
+			sb.append("complex member:").append(o).append("\n");
+		}
+		return sb.toString();
+	}
 }

@@ -35,6 +35,22 @@ public abstract class BioObject<T> implements Serializable {
         this.database = database;
     }
 
+    protected abstract String toBioObjectString();
+    
+    
+    protected String toBaseString() {
+    	{
+        	StringBuilder sb= new StringBuilder();
+        	sb.append("BioObject id:").append(id)
+        	.append(", accession:").append(accession)
+        	.append(", database:").append(database)
+        	.append(", bioType:").append(bioType)
+        	.append("resourceType:").append(resourceType)
+        	.append(" specific content:").append(toBioObjectString());
+        	return sb.toString();
+        }
+    }
+    
     public long getId() {
         return id;
     }

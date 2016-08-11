@@ -13,4 +13,10 @@ public class BioIsoform extends BioObject<Isoform> {
 
         super(BioType.PROTEIN_ISOFORM, ResourceType.INTERNAL, NEXTPROT);
     }
+
+	@Override
+	protected String toBioObjectString() {
+		return "";
+
+	}
 }

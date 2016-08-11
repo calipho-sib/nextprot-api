@@ -49,4 +49,11 @@ public class BioGenericObject extends BioObject<Isoform> {
 	public int hashCode() {
 		return Objects.hash(super.hashCode(), annotationHash, type);
 	}
+
+	@Override
+	protected String toBioObjectString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("BioGenericObject type:").append(type).append(", annotationHash:").append(annotationHash);
+		return sb.toString();
+	}
 }

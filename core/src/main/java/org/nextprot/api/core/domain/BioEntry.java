@@ -13,4 +13,9 @@ public class BioEntry extends BioObject<Entry> {
 
         super(BioType.PROTEIN, ResourceType.INTERNAL, NEXTPROT);
     }
+
+	@Override
+	protected String toBioObjectString() {
+		return "";
+	}
 }

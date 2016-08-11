@@ -13,4 +13,13 @@ public class BioGroup extends BioList {
 
         super(BioType.GROUP, bioObject, others);
     }
+
+	@Override
+	protected String toBioObjectString() {
+		StringBuilder sb = new StringBuilder("\nUnnamed group\n");
+		for (BioObject o: getContent()) {
+			sb.append("group member:").append(o).append("\n");
+		}
+		return sb.toString();
+	}
 }

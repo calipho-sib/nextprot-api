@@ -13,4 +13,12 @@ public class BioObjectExternal extends BioObject<DbXref> {
 
         super(bioType, ResourceType.EXTERNAL, database);
     }
+
+	@Override
+	protected String toBioObjectString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("BioObjectExternal");
+		return sb.toString();
+
+	}
 }

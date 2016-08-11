@@ -55,6 +55,10 @@ public class AnnotationUtils {
 		sb.append("getAnnotationName           :").append(a.getAnnotationName()).append(sep);
 		sb.append("getUniqueName               :").append(a.getUniqueName()).append(sep);
 		sb.append("getSubjectName              :").append(a.getSubjectName()).append(sep);
+
+		sb.append("getDescription              :").append(a.getDescription()).append(sep);
+		sb.append("getBioObject                :").append(a.getBioObject()==null ? "null" : a.getBioObject()).append(sep);
+		
 		sb.append("getSubjectComponents size   :").append(a.getSubjectComponents()==null ? 0 : a.getSubjectComponents().size()).append(sep);
 		if (a.getSubjectComponents()!=null) {
 			for (String c: a.getSubjectComponents()) 
