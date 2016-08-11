@@ -1,21 +1,18 @@
 package com.nextprot.api.annotation.builder.statement.dao.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class StatementDaoImpl implements StatementDao {
@@ -59,6 +56,12 @@ public class StatementDaoImpl implements StatementDao {
 		params.put("annot_hash", annotHash);
 
 		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query(sqlDictionary.getSQLQuery("statements-by-annot-entry-id"), params, new StatementMapper());
+	}
+
+	@Override
+	public List<String> findUniqueNames() {
+
+		return new JdbcTemplate(dsLocator.getStatementsDataSource()).queryForList(sqlDictionary.getSQLQuery("all-entry-accessions"), String.class);
 	}
 
 	@Override

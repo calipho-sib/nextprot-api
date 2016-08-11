@@ -1,9 +1,9 @@
 package com.nextprot.api.annotation.builder.statement.dao;
 
-import java.util.List;
-
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.AnnotationType;
+
+import java.util.List;
 
 public interface StatementDao {
 
@@ -15,4 +15,5 @@ public interface StatementDao {
 
 	List<Statement> findStatementsByAnnotEntryId(AnnotationType annotationType, String annotEntryId);
 
+	List<String> findUniqueNames();
 }

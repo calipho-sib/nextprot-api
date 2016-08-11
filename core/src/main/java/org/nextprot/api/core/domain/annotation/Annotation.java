@@ -1,24 +1,16 @@
 package org.nextprot.api.core.domain.annotation;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
+import com.google.common.base.Optional;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
-import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 
-import com.google.common.base.Optional;
+import java.io.Serializable;
+import java.util.*;
 
+// I would love to encapsulate what varies and only keep what is common there
 //I would love to do @JsonInclude(Include.NON_NULL)
 public class Annotation implements Serializable, IsoformSpecific {
 
@@ -54,6 +46,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private String description;
 
+	// TODO: apiCategory already exist (DRY)
 	private String category;
 
 	private String qualityQualifier;
@@ -62,6 +55,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private AnnotationVariant variant;
 
+	// TODO: synonyms already exist (DRY)
 	private String synonym;
 	
 	private AnnotationCategory apiCategory;
