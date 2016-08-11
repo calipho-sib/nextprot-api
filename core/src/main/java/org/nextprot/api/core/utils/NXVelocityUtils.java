@@ -28,7 +28,14 @@ public class NXVelocityUtils {
         throw new AssertionError();
     }
 
-	public static Map<Proteoform,List<Annotation>> getProteoformAnnotationsMap(Entry entry, String isoformAc) {
+    public static Map<String,Annotation> getUniqueNameAnnotationMap(Entry entry) {
+    	return EntryUtils.getUniqueNameAnnotationMap(entry);
+    }
+    public static Map<String,Annotation> getHashAnnotationMap(Entry entry) {
+    	return EntryUtils.getHashAnnotationMap(entry);
+    }
+    
+    public static Map<Proteoform,List<Annotation>> getProteoformAnnotationsMap(Entry entry, String isoformAc) {
 		return EntryUtils.getProteoformAnnotationsMap(entry, isoformAc);
 	}
 

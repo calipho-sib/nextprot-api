@@ -13,39 +13,75 @@ isoform:$isoform-name a :Isoform;
   ];
   .
 
-# Annotations
+# Annotations linked to isoform 
 
 #foreach($annotation in $entry.getAnnotationsByIsoform($isoform-name))
 #set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)
 #set($annotation-type = $annotation.apiTypeName)
+#if($annotation-type != "ModificationEffect")
 #foreach($parentPredicate in $annotation.parentPredicates)
 isoform:$isoform-name :$parentPredicate annotation:$annotation-uri .
-#end
+#end ## foreach parentPredicate
 isoform:$isoform-name :$annotation.rdfPredicate annotation:$annotation-uri .
 ## special case for expression
 #if($annotation.isExpressionLevelDetected().isPresent())
 isoform:$isoform-name #if($annotation.isExpressionLevelDetected().get()):detectedExpression#else:undetectedExpression#end annotation:$annotation-uri .
-#end
-
-##if($annotation.getConsensusExpressionLevelPredicat())
-## isoform:$isoform-name :$annotation.getConsensusExpressionLevelPredicat() annotation:$annotation-uri .
-##end
-
+#end ## end if expression level detected  
 #parse("turtle/isoform-annotation.ttl.vm")
-#end
+#end ## if annot type != modif effect
+#end ## annotation
 
-# Proteoform set
-#set($pfannot = $NXUtils.getProteoformAnnotationsMap($entry,$isoform-name))
-#foreach($pf in $pfannot.keySet())
-iso: $pf.parentIsoformName - id: $pf.id - label: $pf.label - components: $pf.components
-#foreach($annot in $pfannot.get($pf))
-annot_unique_name: $annot.uniqueName
-#end
-#end
+## DEBUG CODE -----------------------
+## used to get info about an annotation from its uniqueName (id
+##set($uniqueNameAnnotMap = $NXUtils.getUniqueNameAnnotationMap($entry))
+##foreach($a in $uniqueNameAnnotMap.values())
+##if($a.apiTypeName == "Variant") 
+##if($a.annotationHash && $a.annotationHash != $a.uniqueName) 
+## zzz merged variant: uniqueName:$a.uniqueName annotationHash:$a.annotationHash
+##elseif ($a.uniqueName.startsWith("AN_"))
+## zzz NP1 variant: uniqueName:$a.uniqueName
+##else
+## zzz BED variant: uniqueName:$a.uniqueName
+##end
+##end
+##end
+## END DEBUG CODE ------------------
 
-# Proteoform Annotations
-#set($subjectNameMap = $NXUtils.getSubjectProteoformAnnotationsMap($entry))
-#foreach($subj in $subjectNameMap.keySet())
-xxxyyy $subj
-#end
+
+## TODO Pam: to be moved in parent template
+## used to get info about an annotation which is a subject component or a object component
+#set($hashAnnotMap = $NXUtils.getHashAnnotationMap($entry))
+
+
+# xxx Proteoform set
+#set($ProteoformAnnotationsMap = $NXUtils.getProteoformAnnotationsMap($entry,$isoform-name))
+#foreach($pf in $ProteoformAnnotationsMap.keySet())
+isoform:$pf.parentIsoformName :proteoform proteoform:$pf.id .
+
+# yyy Proteoform definition
+proteoform:$pf.id a :Proteoform;
+  rdfs:label "$pf.label"^^xsd::string ;
+#foreach($compId in $pf.components)
+#set($annotation = $hashAnnotMap.get($compId))
+#set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)
+#set($annotation-type = $annotation.apiTypeName)
+  :modification annotation:$annotation-uri ;
+#end ## foreach component
+.
+
+# zzz /Proteoform Annotations
+#foreach($annotation in $ProteoformAnnotationsMap.get($pf))
+#set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)
+#set($annotation-type = $annotation.apiTypeName)
+#foreach($parentPredicate in $annotation.parentPredicates)
+proteoform:$pf.id :$parentPredicate annotation:$annotation-uri .
+#end ## foreach parentPredicate
+proteoform:$pf.id :$annotation.rdfPredicate annotation:$annotation-uri .
+
+# vvv Proteoform annotation details
+#parse("turtle/isoform-annotation.ttl.vm")
+
+#end ## foreach annotation
+
+#end ## foreach proteoform
 

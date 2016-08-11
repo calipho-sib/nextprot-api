@@ -75,10 +75,23 @@ public class EntryUtils implements Serializable{
 	}
 	
 	/**
-	 * Builds a dictionary (HashMap) where the key is the annotation identifier (annotationHash) and the value the annotation itself.
+	 * Builds a dictionary (HashMap) where the key is the annotation uniqueName and the value the annotation itself.
+	 * @param entry
+	 * @return a dictionary of annotations where the key is the annotation uniqueName (= identifier in both NP1 and BED world)
+	 */
+	public static Map<String,Annotation> getUniqueNameAnnotationMap(Entry entry) {
+		
+		Map<String,Annotation> result = new HashMap<String,Annotation>();
+		for (Annotation annot: entry.getAnnotations()) {
+			result.put(annot.getUniqueName(), annot);
+		}
+		return result;
+	}
+	/**
+	 * Builds a dictionary (HashMap) where the key is the annotation annotationHash and the value the annotation itself.
 	 * Annotations with no hash are skipped
 	 * @param entry
-	 * @return a dictionary of annotations where the key is the annotation hash (the annot identifier in BED world)
+	 * @return a dictionary of annotations where the key is the annotation hash (= identifier in BED world)
 	 */
 	public static Map<String,Annotation> getHashAnnotationMap(Entry entry) {
 		
@@ -105,12 +118,8 @@ public class EntryUtils implements Serializable{
 		
 		Map<Proteoform,List<Annotation>> result = new HashMap<Proteoform,List<Annotation>>();
 		for (Annotation annot: entry.getAnnotations()) {
-//			System.out.println(AnnotationUtils.toString(annot));
 			if (annot.isProteoformAnnotation()) {
-				//System.out.println("proteo:yes" + annot.getAnnotationHash());
 				if (annot.getTargetingIsoformsMap().containsKey(isoformAc)) {
-					System.out.println("iso "+ isoformAc + ":yes");
-					System.out.println(AnnotationUtils.toString(annot));
 					Proteoform key = new Proteoform(isoformAc, annot.getSubjectName(), annot.getSubjectComponents());
 					if (!result.containsKey(key)) result.put(key, new ArrayList<Annotation>());
 					result.get(key).add(annot);
@@ -121,18 +130,5 @@ public class EntryUtils implements Serializable{
 	}
 	
 
-/*	
-	public static Map<String,List<Annotation>> getSubjectProteoformAnnotationsMap(Entry entry) {
-		
-		Map<String,List<Annotation>> result = new HashMap<String,List<Annotation>>();
-		for (Annotation annot: entry.getAnnotations()) {
-			if (annot.isProteoformAnnotation()) {
-				String key = annot.getSubjectName();
-				if (!result.containsKey(key)) result.put(key, new ArrayList<Annotation>());
-				result.get(key).add(annot);
-			}
-		}
-		return result;
-	}
-*/	
+
 }

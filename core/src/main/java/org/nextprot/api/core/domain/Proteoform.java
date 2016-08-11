@@ -14,10 +14,10 @@ public class Proteoform {
 	private String label;
 	private List<String> components;
 
-	public Proteoform(String parentIsoformName, String label, List<String> components) {
+	public Proteoform(String parentIsoformName, String subjectName, List<String> subjectComponents) {
 		this.parentIsoformName = parentIsoformName;
-		this.label = label;
-		this.components = components;
+		this.label = parentIsoformName  + " modified with " + subjectName;
+		this.components = subjectComponents;
 		buildId();
 	}
 
