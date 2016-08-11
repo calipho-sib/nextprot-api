@@ -1,5 +1,7 @@
 package org.nextprot.api.core.domain;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
+
 import java.util.Objects;
 
 /**
@@ -17,6 +19,27 @@ public class BioGenericObject extends BioObject<Isoform> {
 	public BioGenericObject() {
 		// TODO for what do we need internat and nextprot?
 		super(BioType.NORMAL_ANNOTATION, ResourceType.INTERNAL, NEXTPROT);
+	}
+
+	public BioGenericObject(BioType bioType, ResourceType resourceType, String database) {
+
+		super(bioType, resourceType, database);
+	}
+
+	public static BioGenericObject valueOf(AnnotationCategory annotationCategory, String database) {
+
+		ResourceType rt = (database.equals(NEXTPROT)) ? ResourceType.INTERNAL : ResourceType.EXTERNAL;
+
+		if (annotationCategory == AnnotationCategory.SMALL_MOLECULE_INTERACTION) {
+
+			return new BioGenericObject(BioType.CHEMICAL, rt, database);
+		}
+		else if (annotationCategory == AnnotationCategory.BINARY_INTERACTION) {
+
+			return new BioGenericObject(BioType.PROTEIN, rt, database);
+		}
+
+		return new BioGenericObject();
 	}
 
 	public String getAnnotationHash() {

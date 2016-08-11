@@ -14,7 +14,7 @@ public abstract class BioObject<T> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    protected static final String NEXTPROT = "neXtProt";
+    public static final String NEXTPROT = "neXtProt";
 
     public enum BioType { CHEMICAL, PROTEIN, PROTEIN_ISOFORM, COMPLEX, GROUP, NORMAL_ANNOTATION} //TODO daniel should this be normal annotation or simply normal?
     public enum ResourceType { INTERNAL, EXTERNAL, MIXED }

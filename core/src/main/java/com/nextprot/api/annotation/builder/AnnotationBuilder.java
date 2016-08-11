@@ -1,20 +1,12 @@
 package com.nextprot.api.annotation.builder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioGenericObject;
+import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -24,6 +16,9 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 abstract class AnnotationBuilder<T extends Annotation> {
 
@@ -228,12 +223,13 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 			if ((boah != null) && (boah.length() > 0) || (boa != null && (boa.length() > 0))) {
 
-				BioGenericObject bioObject = new BioGenericObject();
+				BioGenericObject bioObject = BioGenericObject.valueOf(annotation.getAPICategory(), BioObject.NEXTPROT);
+
 				bioObject.setAccession(boa); // In case of interactions
 				bioObject.setType(bot);
 				bioObject.setAnnotationHash(boah); // In case of phenotypes
-				annotation.setBioObject(bioObject);
 
+				annotation.setBioObject(bioObject);
 			}
 
 			annotation.setQualityQualifier(AnnotationUtils.computeAnnotationQualityBasedOnEvidences(annotation.getEvidences()).name());
