@@ -12,6 +12,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.api.core.utils.IsoformUtils;
+import org.nextprot.api.core.utils.annot.comp.ByIsoformPositionComparator;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;
 import org.nextprot.commons.constants.QualityQualifier;
@@ -21,9 +22,6 @@ import java.util.stream.Collectors;
 
 
 public class AnnotationUtils {
-
-	private static final AnnotationPropertyComparator ANNOTATION_PROPERTY_COMPARATOR = new AnnotationPropertyComparator();
-
 
 	/**
 	 * This method filters annotations by gold only.
@@ -96,36 +94,33 @@ public class AnnotationUtils {
 	 */
 	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory, boolean withChildren) {
 
-        Isoform canonicalIsoform = IsoformUtils.getCanonicalIsoform(entry);
-
         List<Annotation> annotations = entry.getAnnotations();
 
 		if (annotations == null) return null;
 
-        List<Annotation> annotationList = new ArrayList<>();
+        List<Annotation> annotationList = annotations.stream()
+				.filter(a -> a.getAPICategory() == annotationCategory ||
+						(withChildren && a.getAPICategory().isChildOf(annotationCategory)))
+				.collect(Collectors.toList());
 
-        for (Annotation a : annotations){
-
-            if (a.getAPICategory() != null) {
-
-                if (a.getAPICategory().equals(annotationCategory)) {
-					annotationList.add(a);
-				}
-                else if (withChildren && a.getAPICategory().isChildOf(annotationCategory) ) {
-					annotationList.add(a);
-				}
-			}
-		}
-
-        if (canonicalIsoform != null) {
-            Collections.sort(annotationList, new AnnotationComparator(canonicalIsoform));
-        }
+		sortAnnotations(annotationCategory, IsoformUtils.getCanonicalIsoform(entry), annotationList);
 
 		return annotationList;
 	}
-	
-	
-	
+
+	private static void sortAnnotations(AnnotationCategory annotationCategory, Isoform canonicalIsoform, List<Annotation> annotationList) {
+
+		if (canonicalIsoform != null) {
+
+			switch (annotationCategory) {
+
+				default:
+					annotationList.sort(new ByIsoformPositionComparator(canonicalIsoform)
+						.thenComparing(Annotation::getAnnotationId));
+			}
+		}
+	}
+
 	public static Set<Long> getExperimentalContextIdsForAnnotations(List<Annotation> annotations) {
 		Set<Long> ecIds = new HashSet<>();
 		for(Annotation a : annotations){
@@ -307,11 +302,6 @@ public class AnnotationUtils {
 		bo.setAccession(evi.getResourceAccession());
 
 		return bo;
-	}
-
-	public static AnnotationPropertyComparator getInstanceOfAnnotationPropertyComparator() {
-
-		return ANNOTATION_PROPERTY_COMPARATOR;
 	}
 
 	public static List<Annotation> merge(List<Annotation> srcAnnotationList, List<Annotation> destAnnotationList) {
