@@ -1,5 +1,6 @@
 package org.nextprot.api.core.utils;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -37,7 +38,8 @@ public class IsoformUtils {
     /**
      * Get the canonical isoform of the given entry
      * @param entry the entry to fetch canonical isoform
-     * @return the canonical isoform else null
+     * @return the canonical isoform
+     * @throws NextProtException if canonical isoform is missing
      */
     public static Isoform getCanonicalIsoform(Entry entry) {
 
@@ -46,8 +48,7 @@ public class IsoformUtils {
             if (isoform.isCanonicalIsoform())
                 return isoform;
         }
-
-        return null;
+        throw new NextProtException(entry.getUniqueName()+" lacks canonical isoform");
     }
 
     /**
