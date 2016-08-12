@@ -6,13 +6,12 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.BioObjectExternal;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.api.core.utils.IsoformUtils;
-import org.nextprot.api.core.utils.annot.comp.ByIsoformPositionComparator;
+import org.nextprot.api.core.utils.annot.comp.AnnotationComparators;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;
 import org.nextprot.commons.constants.QualityQualifier;
@@ -98,27 +97,11 @@ public class AnnotationUtils {
 
 		if (annotations == null) return null;
 
-        List<Annotation> annotationList = annotations.stream()
+        return annotations.stream()
 				.filter(a -> a.getAPICategory() == annotationCategory ||
 						(withChildren && a.getAPICategory().isChildOf(annotationCategory)))
+				.sorted(AnnotationComparators.newComparator(annotationCategory, IsoformUtils.getCanonicalIsoform(entry)))
 				.collect(Collectors.toList());
-
-		sortAnnotations(annotationCategory, IsoformUtils.getCanonicalIsoform(entry), annotationList);
-
-		return annotationList;
-	}
-
-	private static void sortAnnotations(AnnotationCategory annotationCategory, Isoform canonicalIsoform, List<Annotation> annotationList) {
-
-		if (canonicalIsoform != null) {
-
-			switch (annotationCategory) {
-
-				default:
-					annotationList.sort(new ByIsoformPositionComparator(canonicalIsoform)
-						.thenComparing(Annotation::getAnnotationId));
-			}
-		}
 	}
 
 	public static Set<Long> getExperimentalContextIdsForAnnotations(List<Annotation> annotations) {
