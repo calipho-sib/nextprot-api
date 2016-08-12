@@ -1,6 +1,7 @@
-package org.nextprot.api.core.utils.annot;
+package org.nextprot.api.core.utils.annot.comp;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -10,14 +11,27 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 
 import java.util.*;
 
-public class AnnotationComparatorTest {
+import static org.mockito.Mockito.when;
+
+public class ByIsoformPositionComparatorTest {
+
+    private ByIsoformPositionComparator comparator;
+
+    @Before
+    public void setup() {
+        comparator = new ByIsoformPositionComparator(mockIsoform(true));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstrFromNonCanonicalIsoform() throws Exception {
+
+        comparator = new ByIsoformPositionComparator(mockIsoform(false));
+    }
 
     @Test
     public void testComparePositionAsc() throws Exception {
 
-        AnnotationComparator comparator = new AnnotationComparator(Mockito.mock(Isoform.class));
-
-        int cmp = comparator.compare(2, 25, true);
+        int cmp = comparator.compareNullablePositions(2, 25, true);
 
         Assert.assertTrue(cmp < 0);
     }
@@ -25,9 +39,7 @@ public class AnnotationComparatorTest {
     @Test
     public void testComparePositionDesc() throws Exception {
 
-        AnnotationComparator comparator = new AnnotationComparator(Mockito.mock(Isoform.class));
-
-        int cmp = comparator.compare(2, 25, false);
+        int cmp = comparator.compareNullablePositions(2, 25, false);
 
         Assert.assertTrue(cmp > 0);
     }
@@ -35,9 +47,7 @@ public class AnnotationComparatorTest {
     @Test
     public void testComparePositionWithBeginNull() throws Exception {
 
-        AnnotationComparator comparator = new AnnotationComparator(Mockito.mock(Isoform.class));
-
-        int cmp = comparator.compare(null, 25, true);
+        int cmp = comparator.compareNullablePositions(null, 25, true);
 
         Assert.assertTrue(cmp < 0);
     }
@@ -45,9 +55,7 @@ public class AnnotationComparatorTest {
     @Test
     public void testComparePositionWithBeginNull2() throws Exception {
 
-        AnnotationComparator comparator = new AnnotationComparator(Mockito.mock(Isoform.class));
-
-        int cmp = comparator.compare(19, null, true);
+        int cmp = comparator.compareNullablePositions(19, null, true);
 
         Assert.assertTrue(cmp > 0);
     }
@@ -55,9 +63,7 @@ public class AnnotationComparatorTest {
     @Test
     public void testComparePositionBothNull() throws Exception {
 
-        AnnotationComparator comparator = new AnnotationComparator(Mockito.mock(Isoform.class));
-
-        int cmp = comparator.compare(null, null, true);
+        int cmp = comparator.compareNullablePositions(null, null, true);
 
         Assert.assertTrue(cmp == 0);
     }
@@ -65,9 +71,9 @@ public class AnnotationComparatorTest {
     @Test
     public void testCompareDifferentEnds() throws Exception {
 
-        AnnotationComparator comparator = new AnnotationComparator(Mockito.mock(Isoform.class));
+        int cmp = comparator.compareAnnotByPosition(2, 1012, 2, 1042);
 
-        int cmp = comparator.compare(2, 1012, 1L, 2, 1042, 2L);
+
 
         Assert.assertTrue(cmp > 0);
     }
@@ -75,11 +81,7 @@ public class AnnotationComparatorTest {
     @Test
     public void testCompAnnotsSingleIso() {
 
-        Isoform canonical = new Isoform();
-        canonical.setSwissProtDisplayedIsoform(true);
-        canonical.setUniqueName("NX_P51610-1");
-
-        AnnotationComparator comparator = new AnnotationComparator(canonical);
+        ByIsoformPositionComparator comparator = new ByIsoformPositionComparator(mockIsoform("NX_P51610-1", true));
 
         List<Annotation> annotations = new ArrayList<>();
 
@@ -96,11 +98,7 @@ public class AnnotationComparatorTest {
     @Test
     public void testCompAnnotsSingleIsoSameStartPos() {
 
-        Isoform canonical = new Isoform();
-        canonical.setSwissProtDisplayedIsoform(true);
-        canonical.setUniqueName("NX_P51610-1");
-
-        AnnotationComparator comparator = new AnnotationComparator(canonical);
+        ByIsoformPositionComparator comparator = new ByIsoformPositionComparator(mockIsoform("NX_P51610-1", true));
         List<Annotation> annotations = new ArrayList<>();
 
         annotations.add(mockAnnotation(1, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 10)));
@@ -117,11 +115,7 @@ public class AnnotationComparatorTest {
     @Test
     public void testCompAnnotsSingleIsoSamePos() {
 
-        Isoform canonical = new Isoform();
-        canonical.setSwissProtDisplayedIsoform(true);
-        canonical.setUniqueName("NX_P51610-1");
-
-        AnnotationComparator comparator = new AnnotationComparator(canonical);
+        ByIsoformPositionComparator comparator = new ByIsoformPositionComparator(mockIsoform("NX_P51610-1", true));
         List<Annotation> annotations = new ArrayList<>();
 
         annotations.add(mockAnnotation(1, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 10)));
@@ -138,11 +132,7 @@ public class AnnotationComparatorTest {
     @Test
     public void testCompAnnotsMultipleIsos() {
 
-        Isoform canonical = new Isoform();
-        canonical.setSwissProtDisplayedIsoform(true);
-        canonical.setUniqueName("NX_P51610-1");
-
-        AnnotationComparator comparator = new AnnotationComparator(canonical);
+        ByIsoformPositionComparator comparator = new ByIsoformPositionComparator(mockIsoform("NX_P51610-1", true));
         List<Annotation> annotations = new ArrayList<>();
 
         annotations.add(mockAnnotation(1, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 23, 100), new TargetIsoform("NX_P51610-2", 1, 19),  new TargetIsoform("NX_P51610-3", 1, 129)));
@@ -156,11 +146,7 @@ public class AnnotationComparatorTest {
     @Test
     public void canonicalAnnotsShouldComesFirst() {
 
-        Isoform canonical = new Isoform();
-        canonical.setSwissProtDisplayedIsoform(true);
-        canonical.setUniqueName("NX_P51610-1");
-
-        AnnotationComparator comparator = new AnnotationComparator(canonical);
+        ByIsoformPositionComparator comparator = new ByIsoformPositionComparator(mockIsoform("NX_P51610-1", true));
         List<Annotation> annotations = new ArrayList<>();
 
         annotations.add(mockAnnotation(1, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-1", 2, 1423), new TargetIsoform("NX_P51610-4", 2, 1423)));
@@ -169,7 +155,7 @@ public class AnnotationComparatorTest {
         annotations.add(mockAnnotation(4, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-2", 2, 1254)));
         annotations.add(mockAnnotation(5, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-2", 2, 1226)));
 
-        Collections.sort(annotations, comparator);
+        annotations.sort(comparator);
 
         assertExpectedIds(annotations, 1, 3, 2, 4, 5);
     }
@@ -177,45 +163,59 @@ public class AnnotationComparatorTest {
     @Test
     public void shouldSortByAnnotIdIfEqualPos() {
 
-        Isoform canonical = new Isoform();
-        canonical.setSwissProtDisplayedIsoform(true);
-        canonical.setUniqueName("NX_P51610-1");
-
-        AnnotationComparator comparator = new AnnotationComparator(canonical);
         List<Annotation> annotations = new ArrayList<>();
 
         annotations.add(mockAnnotation(3, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-3", 2, 1423)));
         annotations.add(mockAnnotation(2, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-2", 2, 1423)));
         annotations.add(mockAnnotation(1, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-4", 2, 1423)));
 
-        Collections.sort(annotations, comparator);
+        annotations.sort(new ByIsoformPositionComparator(mockIsoform("NX_P51610-1", true)).thenComparingLong(Annotation::getAnnotationId));
 
         assertExpectedIds(annotations, 1, 2, 3);
+    }
+
+    private static Isoform mockIsoform(boolean isCanonical) {
+
+        Isoform isoform = Mockito.mock(Isoform.class);
+
+        when(isoform.isCanonicalIsoform()).thenReturn(isCanonical);
+
+        return isoform;
+    }
+
+    private static Isoform mockIsoform(String accession, boolean isCanonical) {
+
+        Isoform isoform = Mockito.mock(Isoform.class);
+
+        when(isoform.isCanonicalIsoform()).thenReturn(isCanonical);
+        when(isoform.getIsoformAccession()).thenReturn(accession);
+
+        return isoform;
     }
 
     private static Annotation mockAnnotation(long id, AnnotationCategory cat, TargetIsoform... targets) {
 
         Annotation mock = Mockito.mock(Annotation.class);
 
-        Mockito.when(mock.getAnnotationId()).thenReturn(id);
-        Mockito.when(mock.getAPICategory()).thenReturn(cat);
+        when(mock.getAnnotationId()).thenReturn(id);
+        when(mock.getAPICategory()).thenReturn(cat);
 
         Map<String, AnnotationIsoformSpecificity> map = new HashMap<>();
         for (TargetIsoform target : targets) {
 
             AnnotationIsoformSpecificity specificity = Mockito.mock(AnnotationIsoformSpecificity.class);
-            Mockito.when(specificity.getFirstPosition()).thenReturn(target.getStart());
-            Mockito.when(specificity.getLastPosition()).thenReturn(target.getEnd());
-            Mockito.when(specificity.getIsoformName()).thenReturn(target.getIsoformAccession());
-            Mockito.when(specificity.getAnnotationId()).thenReturn(id);
+            when(specificity.getFirstPosition()).thenReturn(target.getStart());
+            when(specificity.getLastPosition()).thenReturn(target.getEnd());
+            when(specificity.getIsoformName()).thenReturn(target.getIsoformAccession());
+            when(specificity.getAnnotationId()).thenReturn(id);
 
-            Mockito.when(mock.getStartPositionForIsoform(target.getIsoformAccession())).thenReturn(target.getStart());
-            Mockito.when(mock.getEndPositionForIsoform(target.getIsoformAccession())).thenReturn(target.getEnd());
+            when(mock.getStartPositionForIsoform(target.getIsoformAccession())).thenReturn(target.getStart());
+            when(mock.getEndPositionForIsoform(target.getIsoformAccession())).thenReturn(target.getEnd());
 
             map.put(target.getIsoformAccession(), specificity);
         }
 
-        Mockito.when(mock.getTargetingIsoformsMap()).thenReturn(map);
+        when(mock.getTargetingIsoformsMap()).thenReturn(map);
 
         return mock;
     }

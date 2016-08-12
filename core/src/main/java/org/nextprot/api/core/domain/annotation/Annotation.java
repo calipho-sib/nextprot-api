@@ -5,7 +5,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
-import org.nextprot.api.core.utils.annot.AnnotationUtils;
+import org.nextprot.api.core.utils.annot.comp.AnnotationPropertyComparator;
 
 import java.io.Serializable;
 import java.util.*;
@@ -307,7 +307,7 @@ public class Annotation implements Serializable, IsoformSpecific {
             String propertyName = property.getName();
 
             if (!properties.containsKey(propertyName)) {
-                properties.put(propertyName, new TreeSet<>(AnnotationUtils.getInstanceOfAnnotationPropertyComparator()));
+                properties.put(propertyName, new TreeSet<>(new AnnotationPropertyComparator()));
             }
 
             properties.get(propertyName).add(property);
