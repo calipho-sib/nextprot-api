@@ -10,7 +10,6 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
-import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.annot.comp.AnnotationComparators;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;
@@ -100,7 +99,7 @@ public class AnnotationUtils {
         return annotations.stream()
 				.filter(a -> a.getAPICategory() == annotationCategory ||
 						(withChildren && a.getAPICategory().isChildOf(annotationCategory)))
-				.sorted(AnnotationComparators.newComparator(annotationCategory, IsoformUtils.getCanonicalIsoform(entry)))
+				.sorted(AnnotationComparators.newComparator(annotationCategory, entry))
 				.collect(Collectors.toList());
 	}
 
