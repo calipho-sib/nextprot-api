@@ -29,7 +29,6 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 		
 		String ontologyToReindex = System.getProperty("solr.ontology"); // eg: java -Dsolr.ontology="UniprotFamilyCv" (don't forget CamelCasing)
 		SolrIndexer<CvTerm> indexer = new CvTermSolrIndexer(solrServer);
-		//logger.info("removing all solr terminology records");
 		
 		List<CvTerm> allterms;
 		if (ontologyToReindex == null) { // No arg: index all ontologies
@@ -44,17 +43,18 @@ public class GenerateSolrTerminologyIndex extends GenerateSolrIndex {
 			allterms = terminologyService.findCvTermsByOntology(ontologyToReindex);
 		}
 
-		for (CvTerm t : allterms) {
-			indexer.add(t);
+		for (CvTerm term : allterms) {
+			indexer.add(term);
 			termcnt++;
+			if((termcnt % 3000)==0)
+				logger.info(termcnt + "/" + allterms.size() + " cv terms done");
 		}
 
 		indexer.addRemaing();
 		
 		logger.info("comitting");
 		indexer.commit();
-		logger.info(termcnt + " terms indexed...");
-		System.err.println(termcnt + " terms indexed...");
+		logger.info(termcnt + " terms indexed...END");
 	}
 	
 }

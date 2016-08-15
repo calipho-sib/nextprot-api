@@ -39,7 +39,6 @@ public class AnnotationEvidence implements Serializable {
 	private String evidenceCodeAC;
 	private String evidenceCodeName;
 	private String evidenceCodeOntology;
-	private String note;
 
 	public String getEvidenceCodeAC() {
 		return evidenceCodeAC;
@@ -414,19 +413,10 @@ public class AnnotationEvidence implements Serializable {
 		return extractProperty("integrationLevel");
 	}
 
-	
-	public String getIntensity() {
-		return extractProperty("intensity");
+	public String getAntibodies() {
+		return extractProperty("antibodies acc");
 	}
-	
-	public String getSubjectProteinOrigin() {
-		return extractProperty("subject-protein-origin");
-	}
-	
-	public String getSourceAccession_TODEBUG() {
-		return extractProperty("source-accession");
-	}
-	
+
 	public String getAssignmentMethod() {
 		return assignmentMethod;
 	}
@@ -441,45 +431,5 @@ public class AnnotationEvidence implements Serializable {
 
 	public void setEvidenceCodeOntology(String ontology) {
 		this.evidenceCodeOntology = ontology;
-	}
-
-	public String getNote() {
-		return note;
-	}
-
-	public void setNote(String note) {
-		this.note = note;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof AnnotationEvidence)) return false;
-		AnnotationEvidence evidence = (AnnotationEvidence) o;
-		return resourceId == evidence.resourceId &&
-				annotationId == evidence.annotationId &&
-				isNegativeEvidence == evidence.isNegativeEvidence &&
-				evidenceId == evidence.evidenceId &&
-				Objects.equals(propertiesMap, evidence.propertiesMap) &&
-				Objects.equals(resourceType, evidence.resourceType) &&
-				Objects.equals(resourceAccession, evidence.resourceAccession) &&
-				Objects.equals(resourceDb, evidence.resourceDb) &&
-				Objects.equals(resourceDesc, evidence.resourceDesc) &&
-				Objects.equals(publication_md5, evidence.publication_md5) &&
-				Objects.equals(experimentalContextId, evidence.experimentalContextId) &&
-				Objects.equals(qualifierType, evidence.qualifierType) &&
-				Objects.equals(qualityQualifier, evidence.qualityQualifier) &&
-				Objects.equals(assignedBy, evidence.assignedBy) &&
-				Objects.equals(assignmentMethod, evidence.assignmentMethod) &&
-				Objects.equals(evidenceCodeAC, evidence.evidenceCodeAC) &&
-				Objects.equals(evidenceCodeName, evidence.evidenceCodeName) &&
-				Objects.equals(evidenceCodeOntology, evidence.evidenceCodeOntology) &&
-				Objects.equals(note, evidence.note) &&
-				Objects.equals(resourceAssociationType, evidence.resourceAssociationType);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(propertiesMap, resourceId, resourceType, resourceAccession, resourceDb, resourceDesc, publication_md5, experimentalContextId, annotationId, isNegativeEvidence, qualifierType, qualityQualifier, evidenceId, assignedBy, assignmentMethod, evidenceCodeAC, evidenceCodeName, evidenceCodeOntology, note, resourceAssociationType);
 	}
 }

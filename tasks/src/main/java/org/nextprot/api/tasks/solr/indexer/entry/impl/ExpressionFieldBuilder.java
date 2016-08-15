@@ -28,23 +28,26 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 			if (currannot.getCategory().equals("tissue specificity")) {
 				// Check there is a detected expression
 				boolean allnegative = true;
-				for(AnnotationEvidence ev : currannot.getEvidences()) if(!ev.isNegativeEvidence()) {allnegative = false; break;}
+				for(AnnotationEvidence ev : currannot.getEvidences())
+					if(!ev.isNegativeEvidence() && (!this.isGold() || ev.getQualityQualifier().equals("GOLD")))
+						// Only a GOLD positive evidence can invalidate allnegative in the GOLD index
+				      {allnegative = false; break;}
 				if(!allnegative) {
 				// No duplicates this is a Set
-				cv_tissues.add(currannot.getCvTermAccessionCode());
-				cv_tissues.add(currannot.getCvTermName());
+				if(!this.isGold() || currannot.getQualityQualifier().equals("GOLD")) {
+					cv_tissues.add(currannot.getCvTermAccessionCode());
+					cv_tissues.add(currannot.getCvTermName());
+					}
 				} //else System.err.println("No expression: " + currannot.getCvTermAccessionCode());
 			}
 		}
 
-		// Expression
+		// Expression (without stages and expression_levels)
 		SortedSet <String> cv_tissues_final = new TreeSet<String>();
 		for (String cv : cv_tissues) {
 			//cv_tissues_final.add(cv); // No duplicate: this is a Set
 			if(cv.startsWith("TS-")) {
 				CvTerm term = terminologyservice.findCvTermByAccession(cv);
-				//if(cv_tissues_final.contains(cv)) System.err.println(cv + " already seen");
-				//else System.err.println(cv);
 				cv_tissues_final.add(cv); // No duplicate: this is a Set
 				//List<String> ancestors = term.getAncestorAccession();
 				List<String> ancestors = TerminologyUtils.getAllAncestors(term.getAccession(), terminologyservice);

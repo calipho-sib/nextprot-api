@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:mvc="http://www.springframework.org/schema/mvc"
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
 		http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
@@ -12,13 +11,16 @@
 	<import resource="classpath:spring/rdf-context.xml" />
 	<import resource="classpath:META-INF/spring/security-context.xml" />
 
+
 	<!-- Make Content Negotiation manager available across all of Spring MVC -->
-	<mvc:annotation-driven> <!--content-negotiation-manager="cnManager"-->
+	<mvc:annotation-driven> <!--content-negotiation-manager="cnManager" -->
 
 		<!-- override spring mvc's defaults converters implementations -->
- 		<mvc:message-converters register-defaults="false">
-			<bean
-				class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+		<mvc:message-converters register-defaults="false">
+			<!-- This converter was added for the sitemap.xml using annotation @XmlRootElement -->
+			<bean class="org.nextprot.api.web.xstream.SiteMapMarshaller"></bean>
+			<!-- TODO Described for what is this converter used -->
+			<bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
 				<property name="marshaller">
 					<bean class="org.springframework.oxm.xstream.XStreamMarshaller"/>
 				</property>
@@ -37,14 +39,11 @@
 
 	<mvc:default-servlet-handler />
 
-	<!-- BE CAREFULT WITH THIS INTERCEPTOR!!! If everybody in the same room... with same ips...
-	<mvc:interceptors>
-		<bean
-			class="org.nextprot.api.core.aop.interceptor.ConcurrentRequestInterceptor" />
-	</mvc:interceptors>
-	-->
+	<!-- BE CAREFULT WITH THIS INTERCEPTOR!!! If everybody in the same room... 
+		with same ips... <mvc:interceptors> <bean class="org.nextprot.api.core.aop.interceptor.ConcurrentRequestInterceptor" 
+		/> </mvc:interceptors> -->
 
-	<!-- Handles HTTP GET requests for /resources/** by efficiently serving
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
 		up static resources -->
 	<!-- <mvc:resources location="/, classpath:/META-INF/web-resources/" mapping="/resources/**"/> -->
 
@@ -59,21 +58,22 @@
 		<property name="configLocation" value="/WEB-INF/velocity/velocity.properties" />
 	</bean>
 
-	<!-- View resolvers can also be configured with ResourceBundles or XML files.
+	<!-- View resolvers can also be configured with ResourceBundles or XML files. 
 		If you need different view resolving based on Locale, you have to use the 
 		resource bundle resolver. -->
 
 	<bean id="multipartResolver"
 		class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 
-	<!-- The ContentNegotiationManager created by either setup is an implementation of ContentNegotationStrategy that
-		implements the PPA Strategy (path extension, then parameter, then Accept header) described above. -->
+	<!-- The ContentNegotiationManager created by either setup is an implementation 
+		of ContentNegotationStrategy that implements the PPA Strategy (path extension, 
+		then parameter, then Accept header) described above. -->
 	<bean id="contentNegotiationManager"
-		  class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
-		<property name="favorPathExtension" value="true"/>
+		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
+		<property name="favorPathExtension" value="true" />
 		<property name="ignoreAcceptHeader" value="true" />
 		<property name="defaultContentType" value="application/json" />
-		<property name="useJaf" value="false"/>
+		<property name="useJaf" value="false" />
 
 		<property name="mediaTypes">
 			<map>
@@ -82,7 +82,7 @@
 				<entry key="ttl" value="text/turtle" />
 				<entry key="html" value="text/html" />
 				<entry key="fasta" value="text/fasta" />
-				<!--<entry key="peff" value="text/peff" />-->
+				<!--<entry key="peff" value="text/peff" /> -->
 				<entry key="txt" value="text/plain" />
 				<entry key="xls" value="application/vnd.ms-excel" />
 			</map>
@@ -91,41 +91,45 @@
 
 	<bean
 		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-		<property name="contentNegotiationManager" ref="contentNegotiationManager"/>
+		<property name="contentNegotiationManager" ref="contentNegotiationManager" />
 		<property name="viewResolvers">
 			<list>
 				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
-				<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+				<bean
+					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 					<property name="prefix" value="/WEB-INF/jsp/" />
 					<property name="suffix" value=".jsp" />
 				</bean>
-				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<bean
+					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="application/xml;charset=UTF-8" />
 					<property name="cache" value="true" />
 				</bean>
-				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<bean
+					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="application/json;charset=UTF-8" />
 				</bean>
-				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<bean
+					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="turtle/" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/turtle;charset=UTF-8" />
 				</bean>
-				<!--<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
-					<property name="prefix" value="peff/" />
-					<property name="suffix" value=".vm" />
-					<property name="contentType" value="text/peff;charset=UTF-8" />
-				</bean>-->
-				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<!--<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver"> 
+					<property name="prefix" value="peff/" /> <property name="suffix" value=".vm" 
+					/> <property name="contentType" value="text/peff;charset=UTF-8" /> </bean> -->
+				<bean
+					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="fasta/" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/fasta;charset=UTF-8" />
 				</bean>
-				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+				<bean
+					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
 					<property name="prefix" value="txt/" />
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/plain;charset=UTF-8" />

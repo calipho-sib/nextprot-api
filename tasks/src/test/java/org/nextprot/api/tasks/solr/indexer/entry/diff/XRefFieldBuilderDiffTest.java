@@ -4,9 +4,13 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.SolrDiffTest;
+import org.nextprot.api.tasks.solr.indexer.entry.impl.InteractionFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.impl.XrefFieldBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,21 +18,19 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class XRefFieldBuilderDiffTest extends SolrDiffTest {
-
-	// TODO: @Ignore should be removed and this test fixed
-	//@Ignore
+	
+	@Autowired EntryBuilderService entryBuilderService;
+	
 	@Test
 	public void testXrefs() {
-		String[] test_list = {"NX_O00116", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_O00115","NX_Q7Z6P3",
-				"NX_Q7Z713", "NX_P22102", "NX_Q7Z713", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
+		String[] test_list = {"NX_Q8N7I0", "NX_O00115","NX_O00116","NX_E5RQL4","NX_P32418","NX_Q7Z6P3",
+				"NX_Q7Z713", "NX_P22102", "NX_P10415", "NX_Q6PI97", "NX_Q8NDZ0", "NX_O15056"};
 
-		for(int i=0; i < 12; i++){ testXrefs(getEntry(test_list[i])); } 
-		// for(int i=1000; i < 2000; i++){	testXrefs(getEntry(i));	} // 'random' entries
-
-		//Entry entry = getEntry("NX_O00422"); 
-		//Entry entry = getEntry("NX_Q8NGP9"); // 
-		//testXrefs(entry); 
-
+		for(int i=0; i < test_list.length; i++)
+		    {
+			testXrefs(getEntry(test_list[i]));
+			} 
+		 //for(int i=4500; i < 5000; i++){	testXrefs(getEntry(i));	} // 'random' entries
 	}
 
 	
@@ -39,6 +41,7 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		
 		System.out.println("Testing: " + entryName);
 		XrefFieldBuilder xfb = new XrefFieldBuilder();
+		xfb.setEntryBuilderService(entryBuilderService);
 		xfb.initializeBuilder(entry);
 		
 		List<String> expectedABs = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ANTIBODY);
@@ -46,17 +49,9 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 		  Collections.sort(expectedABs);
 		  List<String> currentABs = xfb.getFieldValue(Fields.ANTIBODY, List.class);
 		  if(currentABs != null) Collections.sort(currentABs);
-		  // fails with CAB antibodies missing (eg: NX_P78358-CAB013061, NX_P14678-CAB009610, don't know where to grab'em)
-		  // Is it a similar issue as for ENSG/T/P where ids originally from UniProt have been remapped ?
-		  //Assert.assertEquals(expectedABs, currentABs);
+		    Assert.assertEquals(expectedABs, currentABs);
 		}
 		
-		List<String> expectedInteractions = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.INTERACTIONS);
-		if(expectedInteractions != null) {
-		      Assert.assertEquals(xfb.getFieldValue(Fields.INTERACTIONS, List.class).size(), expectedInteractions.size());
-		}
-
-
 		List<String> expectedEnsembl = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ENSEMBL);
 		if(expectedEnsembl != null) {
 			if(expectedEnsembl.size() > 1 || expectedEnsembl.get(0).startsWith("ENS")) // We don't want housemade ENSEMBL like NX_VG_7_129906380_2933 (NX_Q13166)
@@ -71,11 +66,9 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 			if(!elem.startsWith("journal:")) // For some unknown reasons some journals appear in the xref field of kant (eg:NX_P43686), this is a bug
 			  expectedacOnlySet.add(elem.substring(elem.indexOf(", ")+2));
 		for(String elem : xrefSet) acOnlySet.add(elem.substring(elem.indexOf(", ")+2));
-		//System.err.println();
-		//for(String elem : acOnlySet) if(!expectedacOnlySet.contains(elem)) System.err.println("NEW: " + elem);
 		for(String elem : expectedacOnlySet) if(!acOnlySet.contains(elem) && !elem.startsWith("PAp")) System.err.println("MISS: " + elem);
 		// It looks that for entries that we have re-mapped the original ENSG/T/P from UniProt are not available in the API (eg: ENSG00000279911 -> ENSG00000172459 in NX_Q8NGP9)	
-         // see also : NX_Q9HBT8 ENSP00000408168 ENSP00000458062 ENST00000412988 ENST00000413242
+         // see also : NX_Q9HBT8 ENSP00000408168 ENSP00000458062 ENST00000412988 ENST00000413242, NX_Q8NH49/ENSP00000321506, NX_Q8NGR6/ENST00000304833 ...
 		
 		//for(String elem : xrefSet) if(!expectedxrefSet.contains(elem)) 
 			//{System.err.println("NEW: " + elem); newcnt += 1;}
@@ -100,5 +93,20 @@ public class XRefFieldBuilderDiffTest extends SolrDiffTest {
 			//Assert.fail(msg);
 		}
 		else  Assert.assertTrue(true);
+
+		List<String> expectedInteractions = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.INTERACTIONS);
+		if(expectedInteractions != null) {
+		      //Assert.assertEquals(xfb.getFieldValue(Fields.INTERACTIONS, List.class).size(), expectedInteractions.size());
+			Integer olditcnt = 0, newitcnt = 0;
+			InteractionFieldBuilder ifb = new InteractionFieldBuilder();
+			ifb.setEntryBuilderService(entryBuilderService);
+			ifb.initializeBuilder(entry);
+			Set<String> itSet = new TreeSet<String>(ifb.getFieldValue(Fields.INTERACTIONS, List.class));
+			for(String intactIt : expectedInteractions) if(intactIt.startsWith("<p>Interacts")) olditcnt++;
+			for(String newintactIt : itSet) if(newintactIt.startsWith("AC:") || newintactIt.equals("selfInteraction")) newitcnt++;
+			// There may be one more interaction in the new index (the subunit annotation)
+			Assert.assertEquals(olditcnt, newitcnt);
+		}
+
 	}
 }
