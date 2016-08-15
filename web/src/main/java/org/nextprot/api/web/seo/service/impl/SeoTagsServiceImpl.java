@@ -174,11 +174,12 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withOverview().with("function-info"));
 		String protName = entry.getOverview().getMainProteinName();
 		String geneName = entry.getOverview().getMainGeneName();
-		String title = geneName + " - " + protName + " - " + prettySubpage;
-		String h1 = title;
+		String title = geneName + " - " + protName + " - " + prettySubpage;  // decision NPC 15.08.2016
+		String h1 = geneName + " - " + prettySubpage;                        // decision NPC 15.08.2016
+		
 		
 		// TODO: send something different for each subpage... see with amos
-		String descr = getFirstFunctionInfo(entry) + ". " + prettySubpage;
+		String descr = ac + " - " + title + ". " + getFirstFunctionInfo(entry);
 		
 		return new SeoTags(title,descr,h1);
 	}
