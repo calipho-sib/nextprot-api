@@ -16,7 +16,7 @@ public class ByAnnotationSubjectComparator implements Comparator<Annotation> {
     private final Entry entry;
     private final Map<String, Annotation> annotationByHash;
 
-    public ByAnnotationSubjectComparator(Entry entry) {
+    ByAnnotationSubjectComparator(Entry entry) {
 
         annotationByHash = EntryUtils.getHashAnnotationMap(entry);
         this.entry = entry;

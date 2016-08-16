@@ -9,11 +9,11 @@ import java.util.Comparator;
 /**
  * Compare any annotations containing getVariant() informations
  */
-public class ByVariantComparator implements Comparator<Annotation> {
+class ByVariantComparator implements Comparator<Annotation> {
 
     private final Comparator<Annotation> comparator;
 
-    public ByVariantComparator(Entry entry) {
+    ByVariantComparator(Entry entry) {
 
         comparator = new ByIsoformPositionComparator(IsoformUtils.getCanonicalIsoform(entry))
                 .thenComparing(a -> a.getVariant().getVariant());

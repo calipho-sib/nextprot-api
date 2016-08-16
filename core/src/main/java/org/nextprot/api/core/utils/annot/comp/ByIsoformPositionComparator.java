@@ -35,11 +35,11 @@ import java.util.*;
  * </ol>
  * Created by fnikitin on 09/11/15.
  */
-public class ByIsoformPositionComparator implements Comparator<Annotation> {
+class ByIsoformPositionComparator implements Comparator<Annotation> {
 
     private final String canonicalIsoformUniqueName;
 
-    public ByIsoformPositionComparator(Isoform canonicalIsoform) {
+    ByIsoformPositionComparator(Isoform canonicalIsoform) {
 
         Preconditions.checkNotNull(canonicalIsoform);
         Preconditions.checkArgument(canonicalIsoform.isCanonicalIsoform());
@@ -53,7 +53,7 @@ public class ByIsoformPositionComparator implements Comparator<Annotation> {
         String isoformName1 = selectIsoformNameForComparison(a1);
         String isoformName2 = selectIsoformNameForComparison(a2);
 
-        int cmp = compareIsoformCanonicalFirst(isoformName1, isoformName2);
+        int cmp = compareIsoCanonicalFirstThenByIsoName(isoformName1, isoformName2);
 
         if (cmp != 0) return cmp;
 
@@ -75,7 +75,7 @@ public class ByIsoformPositionComparator implements Comparator<Annotation> {
             return getFirstIsoformSpecificity(targets.values()).getIsoformName();
     }
 
-    AnnotationIsoformSpecificity getFirstIsoformSpecificity(Collection<AnnotationIsoformSpecificity> targets) {
+    private AnnotationIsoformSpecificity getFirstIsoformSpecificity(Collection<AnnotationIsoformSpecificity> targets) {
 
         Preconditions.checkNotNull(targets);
         Preconditions.checkArgument(!targets.isEmpty());
@@ -102,7 +102,7 @@ public class ByIsoformPositionComparator implements Comparator<Annotation> {
         return first;
     }
 
-    private int compareIsoformCanonicalFirst(String isoformName1, String isoformName2) {
+    private int compareIsoCanonicalFirstThenByIsoName(String isoformName1, String isoformName2) {
 
         boolean isIso1Canonical = isoformName1.equals(canonicalIsoformUniqueName);
         boolean isIso2Canonical = isoformName2.equals(canonicalIsoformUniqueName);
@@ -113,8 +113,7 @@ public class ByIsoformPositionComparator implements Comparator<Annotation> {
         else if (!isIso1Canonical && isIso2Canonical) {
             return 1;
         }
-
-        return 0;
+        return isoformName1.compareTo(isoformName2);
     }
 
     /*
