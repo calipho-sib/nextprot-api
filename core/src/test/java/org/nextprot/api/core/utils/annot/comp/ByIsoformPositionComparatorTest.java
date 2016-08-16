@@ -124,7 +124,7 @@ public class ByIsoformPositionComparatorTest {
         annotations.add(mockAnnotation(4, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 30)));
         annotations.add(mockAnnotation(5, AnnotationCategory.VARIANT, new TargetIsoform("NX_P51610-1", 1, 30)));
 
-        Collections.sort(annotations, comparator);
+        Collections.sort(annotations, comparator.thenComparingLong(Annotation::getAnnotationId));
 
         assertExpectedIds(annotations, 3, 4, 5, 2, 1);
     }
@@ -165,13 +165,28 @@ public class ByIsoformPositionComparatorTest {
 
         List<Annotation> annotations = new ArrayList<>();
 
-        annotations.add(mockAnnotation(3, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-3", 2, 1423)));
-        annotations.add(mockAnnotation(2, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-2", 2, 1423)));
-        annotations.add(mockAnnotation(1, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-4", 2, 1423)));
+        annotations.add(mockAnnotation(2, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-3", 2, 1423)));
+        annotations.add(mockAnnotation(1, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-2", 2, 1423)));
+        annotations.add(mockAnnotation(3, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-4", 2, 1423)));
 
-        annotations.sort(new ByIsoformPositionComparator(mockIsoform("NX_P51610-1", true)).thenComparingLong(Annotation::getAnnotationId));
+        annotations.sort(new ByIsoformPositionComparator(mockIsoform("NX_P51610-1", true)));
 
         assertExpectedIds(annotations, 1, 2, 3);
+    }
+
+    @Test
+    public void shouldIsoFirstThenByIsoName() {
+
+        List<Annotation> annotations = new ArrayList<>();
+
+        annotations.add(mockAnnotation(3, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-3", 2, 1423)));
+        annotations.add(mockAnnotation(2, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-2", 2, 1423)));
+        annotations.add(mockAnnotation(4, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-4", 2, 1423)));
+        annotations.add(mockAnnotation(1, AnnotationCategory.MATURE_PROTEIN, new TargetIsoform("NX_P51610-1", 2, 1423)));
+
+        annotations.sort(new ByIsoformPositionComparator(mockIsoform("NX_P51610-1", true)));
+
+        assertExpectedIds(annotations, 1, 2, 3, 4);
     }
 
     private static Isoform mockIsoform(boolean isCanonical) {
@@ -244,7 +259,7 @@ public class ByIsoformPositionComparatorTest {
             this.end = end;
         }
 
-        public String getIsoformAccession() {
+        private String getIsoformAccession() {
             return isoformAccession;
         }
 
