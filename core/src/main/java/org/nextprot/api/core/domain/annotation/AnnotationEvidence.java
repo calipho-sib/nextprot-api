@@ -454,4 +454,36 @@ public class AnnotationEvidence implements Serializable {
 	public String getSourceAccession_TODEBUG() {
 		return extractProperty("source-accession");
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof AnnotationEvidence)) return false;
+		AnnotationEvidence evidence = (AnnotationEvidence) o;
+		return resourceId == evidence.resourceId &&
+				annotationId == evidence.annotationId &&
+				isNegativeEvidence == evidence.isNegativeEvidence &&
+				evidenceId == evidence.evidenceId &&
+				Objects.equals(propertiesMap, evidence.propertiesMap) &&
+				Objects.equals(resourceType, evidence.resourceType) &&
+				Objects.equals(resourceAccession, evidence.resourceAccession) &&
+				Objects.equals(resourceDb, evidence.resourceDb) &&
+				Objects.equals(resourceDesc, evidence.resourceDesc) &&
+				Objects.equals(publication_md5, evidence.publication_md5) &&
+				Objects.equals(experimentalContextId, evidence.experimentalContextId) &&
+				Objects.equals(qualifierType, evidence.qualifierType) &&
+				Objects.equals(qualityQualifier, evidence.qualityQualifier) &&
+				Objects.equals(assignedBy, evidence.assignedBy) &&
+				Objects.equals(assignmentMethod, evidence.assignmentMethod) &&
+				Objects.equals(evidenceCodeAC, evidence.evidenceCodeAC) &&
+				Objects.equals(evidenceCodeName, evidence.evidenceCodeName) &&
+				Objects.equals(evidenceCodeOntology, evidence.evidenceCodeOntology) &&
+				Objects.equals(note, evidence.note) &&
+				Objects.equals(resourceAssociationType, evidence.resourceAssociationType);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(propertiesMap, resourceId, resourceType, resourceAccession, resourceDb, resourceDesc, publication_md5, experimentalContextId, annotationId, isNegativeEvidence, qualifierType, qualityQualifier, evidenceId, assignedBy, assignmentMethod, evidenceCodeAC, evidenceCodeName, evidenceCodeOntology, note, resourceAssociationType);
+	}
 }
