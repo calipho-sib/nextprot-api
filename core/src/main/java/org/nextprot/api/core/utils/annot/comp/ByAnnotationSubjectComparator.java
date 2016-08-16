@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ByAnnotationSubjectComparator implements Comparator<Annotation> {
+class ByAnnotationSubjectComparator implements Comparator<Annotation> {
 
     private final Entry entry;
     private final Map<String, Annotation> annotationByHash;
@@ -25,7 +25,7 @@ public class ByAnnotationSubjectComparator implements Comparator<Annotation> {
     @Override
     public int compare(Annotation a1, Annotation a2) {
 
-        if (a1.getVariant() == null || a2.getVariant() == null)
+        if (a1.getSubjectName() == null || a2.getSubjectName() == null)
             return 0;
 
         List<Annotation> subjectAnnotations1 = a1.getSubjectComponents().stream().map(annotationByHash::get).collect(Collectors.toList());
