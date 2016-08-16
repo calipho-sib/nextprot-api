@@ -4,16 +4,13 @@ import com.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Isoform;
 
 import java.text.ParseException;
-import java.util.Arrays;
 
-import static org.mockito.Mockito.when;
+import static org.nextprot.api.core.domain.EntryUtilsTest.mockEntry;
+import static org.nextprot.api.core.domain.EntryUtilsTest.mockIsoform;
 
 public class FeatureQuerySuccessTest {
 
@@ -36,32 +33,5 @@ public class FeatureQuerySuccessTest {
         Assert.assertEquals("SCN11A-iso1-p.Leu1158Pro", result.getData().get("NX_Q9UI33-1").getIsoSpecificFeature());
         Assert.assertEquals("SCN11A-iso3-p.Leu1120Pro", result.getData().get("NX_Q9UI33-3").getIsoSpecificFeature());
         Assert.assertNull(result.getData().get("NX_Q9UI33-4").getIsoSpecificFeature());
-    }
-
-    public static Entry mockEntry(String accession, Isoform... isoforms) {
-
-        Entry entry = Mockito.mock(Entry.class);
-
-        when(entry.getUniqueName()).thenReturn(accession);
-
-        if (isoforms.length > 0) {
-            when(entry.getIsoforms()).thenReturn(Arrays.asList(isoforms));
-        }
-
-        return entry;
-    }
-
-    public static Isoform mockIsoform(String accession, String name, boolean canonical) {
-
-        Isoform isoform = Mockito.mock(Isoform.class);
-        when(isoform.getUniqueName()).thenReturn(accession);
-        when(isoform.isCanonicalIsoform()).thenReturn(canonical);
-
-        EntityName entityName = Mockito.mock(EntityName.class);
-        when(entityName.getName()).thenReturn(name);
-
-        when(isoform.getMainEntityName()).thenReturn(entityName);
-
-        return isoform;
     }
 }
