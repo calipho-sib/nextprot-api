@@ -1,5 +1,6 @@
 package org.nextprot.api.web.seo.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -128,8 +129,10 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 	}
 	
 	private SeoTags getOneNewsSeoTags(NextProtNews news) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String shortDate = sdf.format(news.getPublicationDate());
 		String title = "News - " + news.getTitle();
-		String h1 = "News - " + news.getTitle();
+		String h1 = "News - " + shortDate;
 		String descr = "News - " + news.getTitle();
 		return new SeoTags(title, descr,h1);
 	}
