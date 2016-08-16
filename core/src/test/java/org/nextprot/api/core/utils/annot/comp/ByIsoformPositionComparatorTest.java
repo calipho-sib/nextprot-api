@@ -71,7 +71,7 @@ public class ByIsoformPositionComparatorTest {
     @Test
     public void testCompareDifferentEnds() throws Exception {
 
-        int cmp = comparator.compareAnnotByPosition(2, 1012, 2, 1042);
+        int cmp = comparator.compareAnnotByNullablePosition(2, 1012, 2, 1042);
 
 
 

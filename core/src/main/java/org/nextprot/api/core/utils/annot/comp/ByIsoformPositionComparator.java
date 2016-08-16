@@ -20,7 +20,7 @@ import java.util.*;
  * else if has canonical
  *      pick the canonical one
  * else
- *      select the one with the minimum feature position (see B)
+ *      select the one with the lowest feature position (see Section B)
  * endif
  * </pre>
  *
@@ -32,7 +32,6 @@ import java.util.*;
  *  <li>canonical isoform target feature comes first</li>
  *  <li>feature begin ASC</li>
  *  <li>feature end DESC</li>
- *  <li>feature annotation_id ASC</li>
  * </ol>
  * Created by fnikitin on 09/11/15.
  */
@@ -58,7 +57,7 @@ public class ByIsoformPositionComparator implements Comparator<Annotation> {
 
         if (cmp != 0) return cmp;
 
-        return compareAnnotByPosition(
+        return compareAnnotByNullablePosition(
                 a1.getStartPositionForIsoform(isoformName1), a1.getEndPositionForIsoform(isoformName1),
                 a2.getStartPositionForIsoform(isoformName2), a2.getEndPositionForIsoform(isoformName2)
         );
@@ -89,7 +88,7 @@ public class ByIsoformPositionComparator implements Comparator<Annotation> {
 
             AnnotationIsoformSpecificity specificity = iter.next();
 
-            int cmp = compareAnnotByPosition(
+            int cmp = compareAnnotByNullablePosition(
                     specificity.getFirstPosition(), specificity.getLastPosition(),
                     first.getFirstPosition(), first.getLastPosition()
             );
@@ -131,7 +130,7 @@ public class ByIsoformPositionComparator implements Comparator<Annotation> {
         [1]   ----------
         [2]   ------
     */
-    int compareAnnotByPosition(Integer begin1, Integer end1, Integer begin2, Integer end2) {
+    int compareAnnotByNullablePosition(Integer begin1, Integer end1, Integer begin2, Integer end2) {
 
         int cmp;
 
