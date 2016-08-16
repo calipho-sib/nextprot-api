@@ -26,7 +26,6 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 		for (String finfo : function_canonical) {
 			addField(Fields.FUNCTION_DESC, finfo);
 			addField(Fields.ANNOTATIONS, finfo);
-			//System.err.println("adding: " + finfo);
 		}
 		
 		List<Annotation> annots = entry.getAnnotations();
@@ -42,7 +41,6 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 			// We also should exclude uninformative category 'sequence conflict'
 			if(!category.equals("tissue specificity")) {//These values are indexed under other fields
 				String desc = currannot.getDescription();
-				//if (desc != null) 	addField(Fields.ANNOTATIONS, currannot.getCategory() + ": " + desc); glycosylation site
 				if(category.equals("glycosylation site")) {
 					String xref = currannot.getSynonym();
 					if(xref != null)
@@ -50,8 +48,20 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						addField(Fields.ANNOTATIONS, xref);
 				}
 
-				if(category.equals("DNA-binding region")) addField(Fields.ANNOTATIONS, category);
-				if(category.equals("sequence variant")) desc = "Variant " + desc; // We need to index them somehow for the GOLD/SILVER tests
+                if(category.equals("modification-effect")) {
+                // Get BED data
+                String subjectName = currannot.getSubjectName();
+                if(subjectName != null) {
+                        // update description with the subject
+                        desc = subjectName + " " + desc;
+                   }
+                }
+                //else if(category.equals("mammalian-phenotype")) {System.err.println("MP: " + currannot.getSubjectName() + " " + currannot.getCvTermAccessionCode() + " " + currannot.getCvTermName());}
+                //else if(category.equals("protein-property")) {System.err.println("PProp: " + currannot.getSubjectName() + " " + currannot.getCvTermAccessionCode() + " " + currannot.getCvTermName());}
+                else if(category.equals("DNA-binding region")) addField(Fields.ANNOTATIONS, category);
+                else if(category.equals("sequence variant"))
+                	// We need to index them somehow for the GOLD/SILVER tests, or do we ? in creates a lot of useless 'variant null' tokens
+                	desc = "Variant " + desc;
 				if (desc != null) {	//System.err.println(category + ": " + desc);
 					if (category.equals("sequence caution")) {
 						int stringpos=0;
@@ -62,7 +72,6 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 							// truncate the position
 							mainreason=mainreason.substring(0,stringpos);
 						}
-						//System.err.println("mainreason: " + mainreason);
 						addField(Fields.ANNOTATIONS, mainreason); 
 						
 						if(desclevels.length > 1) {
@@ -84,7 +93,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						   } 
 					    }
 					// in pathway and disease new annotations may appear due to transformation of specific xrefs (orphanet...) into annotations in the api
-				} //else System.err.println(category + " no desc...");
+				}
 				
 				String cvac = currannot.getCvTermAccessionCode();
 				if (cvac != null) {
@@ -122,7 +131,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 					if(allancestors.endsWith(" domain"))	allancestors="domain"; // don't index generic top level ancestors
 					else if(allancestors.endsWith("zinc finger region"))	allancestors="zinc finger region"; // don't index generic top level ancestors
 					else if(allancestors.endsWith("repeat"))	allancestors="repeat"; // don't index generic top level ancestors
-					if(allancestors.length() > 1) //System.err.println("adding: " + allancestors);
+					if(allancestors.length() > 1)
 						addField(Fields.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allancestors));
 				}
 				}
@@ -140,7 +149,6 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 								for (String syno : chainsynonyms) {
 									chainid += syno + " | ";
 								}
-							  // System.err.println("chainsynonyms: " + StringUtils.getSortedValueFromPipeSeparatedField(chainid));	
 							  addField(Fields.ANNOTATIONS,StringUtils.getSortedValueFromPipeSeparatedField(chainid));
 							}
 						}
@@ -151,14 +159,18 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 				if (category.contains("variant")) {
 					    String evidxrefaccs = "";
 						List<AnnotationEvidence> evidences = currannot.getEvidences();
-						if(evidences != null) for (AnnotationEvidence ev : evidences) {
-							if(ev.isResourceAXref()) {
+						if(evidences != null)
+							for (AnnotationEvidence ev : evidences) {
+							    if(ev.isResourceAXref()) { 
 								String db = ev.getResourceDb();
-								if(!evidxrefaccs.isEmpty()) evidxrefaccs += " | ";
-								if(db.equals("Cosmic"))	 evidxrefaccs += db.toLowerCase() + ":" + ev.getResourceAccession();
-								else if(db.equals("dbSNP"))// Just to allow comparison with incoherent current solr implementation
-							      evidxrefaccs += ev.getResourceAccession(); 
-								else evidxrefaccs += currannot.getSynonym(); // Uniprot FT id, like VAR_056577
+								if(db == null) System.err.println("db is null for evidence in" + ev);
+								else {
+								   if(!evidxrefaccs.isEmpty()) evidxrefaccs += " | ";
+								   if(db.equals("Cosmic"))	 evidxrefaccs += db.toLowerCase() + ":" + ev.getResourceAccession();
+								   else if(db.equals("dbSNP"))// Just to allow comparison with incoherent current solr implementation
+									   evidxrefaccs += ev.getResourceAccession(); 
+								   else evidxrefaccs += currannot.getSynonym(); // Uniprot FT id, like VAR_056577
+								}
 							}
 						}
 						if(!this.isGold() || quality.equals("GOLD")) {
@@ -182,11 +194,9 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 				// There is no get_synonyms() method for families -> can't access PERVR for FA-04785
 				addField(Fields.ANNOTATIONS,  famdesc);
 				stringpos = famdesc.indexOf("elongs to ") + 14;
-				//famdesc = famdesc.substring(stringpos,stringpos+1).toUpperCase() + famdesc.substring(stringpos+1); // Skip the 'Belongs to' and what may come before (eg: NX_P19021)
 				famdesc = famdesc.substring(stringpos); // Skip the 'Belongs to' and what may come before (eg: NX_P19021)
 				famdesc = famdesc.substring(0,famdesc.length()-1); // remove final dot
 				addField(Fields.ANNOTATIONS,  famdesc);
-				//System.err.println("famdesc2: " + famdesc);
 				String[] families = famdesc.split("\\. "); // are there subfamilies ?
 				if(families.length > 1) { // Always GOLD
 					for(int i=0; i< families.length; i++) {
