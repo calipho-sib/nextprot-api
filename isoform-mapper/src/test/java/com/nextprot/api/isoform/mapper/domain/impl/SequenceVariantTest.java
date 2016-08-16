@@ -13,9 +13,9 @@ import org.nextprot.api.core.domain.Overview;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessTest.mockEntry;
-import static com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessTest.mockIsoform;
 import static org.mockito.Mockito.when;
+import static org.nextprot.api.core.domain.EntryUtilsTest.mockEntry;
+import static org.nextprot.api.core.domain.EntryUtilsTest.mockIsoform;
 
 public class SequenceVariantTest {
 
