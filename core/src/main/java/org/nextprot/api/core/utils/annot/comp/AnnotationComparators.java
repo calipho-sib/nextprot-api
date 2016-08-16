@@ -12,10 +12,9 @@ public class AnnotationComparators {
     public static Comparator<Annotation> newComparator(AnnotationCategory annotationCategory, Entry entry) {
 
         switch (annotationCategory) {
-            case GENERIC_PTM:
-            case VARIANT:
             case MUTAGENESIS:
-                return new ByVariantComparator(entry);
+            case VARIANT:
+                return new ByAnnotationVariantComparator(entry);
             case MODIFICATION_EFFECT:
                 return new ByAnnotationSubjectComparator(entry)
                         .thenComparing(Annotation::getDescription);
