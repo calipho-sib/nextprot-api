@@ -442,4 +442,16 @@ public class AnnotationEvidence implements Serializable {
 	public void setNote(String note) {
 		this.note = note;
 	}
+
+	public String getIntensity() {
+		return extractProperty("intensity");
+	}
+
+	public String getSubjectProteinOrigin() {
+		return extractProperty("subject-protein-origin");
+	}
+
+	public String getSourceAccession_TODEBUG() {
+		return extractProperty("source-accession");
+	}
 }
