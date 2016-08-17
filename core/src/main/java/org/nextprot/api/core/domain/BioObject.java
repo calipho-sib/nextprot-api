@@ -16,8 +16,11 @@ public abstract class BioObject<T> implements Serializable {
 
     public static final String NEXTPROT = "neXtProt";
 
-    public enum BioType { CHEMICAL, PROTEIN, PROTEIN_ISOFORM, COMPLEX, GROUP, NORMAL_ANNOTATION} //TODO daniel should this be normal annotation or simply normal?
-    public enum ResourceType { INTERNAL, EXTERNAL, MIXED }
+    public enum BioType { CHEMICAL, PROTEIN, PROTEIN_ISOFORM, COMPLEX, GROUP, ENTRY_ANNOTATION} //TODO daniel should this be normal annotation or simply normal?
+    
+    //When it is internal, it is something that exists in neXtProt (sequence). When it is EXTERNAL it is a xref (link to another db). MIXED when both are 
+    public enum ResourceType { INTERNAL, EXTERNAL, MIXED } 
+    
 
     private long id;
     private String accession;

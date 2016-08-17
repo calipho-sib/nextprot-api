@@ -174,7 +174,6 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			
 			List<Statement> statements = entry.getValue();
 			
-			annotation.setEvidences(buildAnnotationEvidences(statements));
 
 			Statement statement = statements.get(0);
 
@@ -194,6 +193,12 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			annotation.setDescription(statement.getValue(StatementField.ANNOT_DESCRIPTION));
 
 			String cvTermAccession = statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
+
+			//Set the evidences if not Mammalian phenotype or Protein Property https://issues.isb-sib.ch/browse/BIOEDITOR-466
+			if(!(category.equals(AnnotationCategory.MAMMALIAN_PHENOTYPE) || category.equals(AnnotationCategory.PROTEIN_PROPERTY))){
+				annotation.setEvidences(buildAnnotationEvidences(statements));
+			}
+
 			if(cvTermAccession != null){
 
 				annotation.setCvTermAccessionCode(cvTermAccession);
@@ -203,6 +208,12 @@ abstract class AnnotationBuilder<T extends Annotation> {
 					annotation.setCvTermName(cvTerm.getName());
 					annotation.setCvApiName(cvTerm.getOntology());
 					annotation.setCvTermDescription(cvTerm.getDescription());
+
+					if(category.equals(AnnotationCategory.PROTEIN_PROPERTY)){
+						//according to https://issues.isb-sib.ch/browse/BIOEDITOR-466
+						annotation.setDescription(cvTerm.getDescription());
+					}
+					
 				}else {
 					LOGGER.error("cv term was expected to be found " + cvTermAccession);
 					annotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));

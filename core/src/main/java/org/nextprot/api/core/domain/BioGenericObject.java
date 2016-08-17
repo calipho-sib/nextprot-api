@@ -16,13 +16,11 @@ public class BioGenericObject extends BioObject<Isoform> {
 	private String annotationHash;
 	private String type;
 
-	public BioGenericObject() {
-		// TODO for what do we need internat and nextprot?
-		super(BioType.NORMAL_ANNOTATION, ResourceType.INTERNAL, NEXTPROT);
+	BioGenericObject() {
+		super(BioType.ENTRY_ANNOTATION, ResourceType.INTERNAL, NEXTPROT);
 	}
 
 	public BioGenericObject(BioType bioType, ResourceType resourceType, String database) {
-
 		super(bioType, resourceType, database);
 	}
 
@@ -31,11 +29,9 @@ public class BioGenericObject extends BioObject<Isoform> {
 		ResourceType rt = (database.equals(NEXTPROT)) ? ResourceType.INTERNAL : ResourceType.EXTERNAL;
 
 		if (annotationCategory == AnnotationCategory.SMALL_MOLECULE_INTERACTION) {
-
 			return new BioGenericObject(BioType.CHEMICAL, rt, database);
 		}
 		else if (annotationCategory == AnnotationCategory.BINARY_INTERACTION) {
-
 			return new BioGenericObject(BioType.PROTEIN, rt, database);
 		}
 
