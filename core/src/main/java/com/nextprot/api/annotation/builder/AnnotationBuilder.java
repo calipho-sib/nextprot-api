@@ -1,7 +1,6 @@
 package com.nextprot.api.annotation.builder;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.analysis.ar.ArabicAnalyzer;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -110,11 +109,10 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
 			AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
 			AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
-			AnnotationEvidenceProperty sourceAccession = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOT_SOURCE_ACCESSION), "source-accession");
 
 			//Set properties which are not null
 			evidence.setProperties(
-					Arrays.asList(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, sourceAccession)
+					Arrays.asList(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin)
 						.stream().filter(p -> p != null)
 						.collect(Collectors.toList())
 						);
@@ -122,7 +120,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			
 			 evidence.setEvidenceCodeAC(s.getValue(StatementField.EVIDENCE_CODE));
 			 
-			 //TODO should this be hardcoded in the db for all ECOs or should we request a service at this stage?
+			 //TODO this should this be done in the ETL module
 			 String statementEvidenceCode = s.getValue(StatementField.EVIDENCE_CODE);
 			 evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
 			 if(statementEvidenceCode != null){
@@ -198,7 +196,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			String cvTermAccession = statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
 
 			//Set the evidences if not Mammalian phenotype or Protein Property https://issues.isb-sib.ch/browse/BIOEDITOR-466
-			if(ANNOT_CATEGORIES_WITHOUT_EVIDENCES.contains(category)){
+			if(!ANNOT_CATEGORIES_WITHOUT_EVIDENCES.contains(category)){
 				annotation.setEvidences(buildAnnotationEvidences(statements));
 				annotation.setQualityQualifier(AnnotationUtils.computeAnnotationQualityBasedOnEvidences(annotation.getEvidences()).name());
 			}else {
@@ -220,7 +218,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 						//according to https://issues.isb-sib.ch/browse/BIOEDITOR-466
 						annotation.setDescription(cvTerm.getDescription());
 					}else if(category.equals(AnnotationCategory.MAMMALIAN_PHENOTYPE)){
-						annotation.setDescription("Relative to the variant phenotype annotations");
+						annotation.setDescription("Relative to modification-effect annotations");
 					}
 					
 				}else {
