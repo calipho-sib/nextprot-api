@@ -22,7 +22,7 @@ import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.nextprot.commons.statements.constants.NextProtSource;
 import org.nextprot.commons.statements.service.StatementLoaderService;
-import org.nextprot.commons.statements.service.impl.OracleStatementLoaderServiceImpl;
+import org.nextprot.commons.statements.service.impl.JDBCStatementLoaderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +41,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Autowired
 	private IsoformMappingService isoformMappingService;
 
-	private StatementLoaderService statementLoadService = new OracleStatementLoaderServiceImpl();
+	private StatementLoaderService statementLoadService = new JDBCStatementLoaderServiceImpl();
 
 	@Override
 	public String etlStatements(NextProtSource source) {

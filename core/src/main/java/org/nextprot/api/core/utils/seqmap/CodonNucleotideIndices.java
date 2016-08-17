@@ -68,7 +68,7 @@ public class CodonNucleotideIndices {
 	}
 
 	boolean has3Nucleotides() {
-		if (nuNum.size()!=3) logger.warn("codon has not 3 nucleotides");
+		if (nuNum.size()!=3) logger.debug("codon has not 3 nucleotides");
 		return nuNum.size()==3;
 	}
 
