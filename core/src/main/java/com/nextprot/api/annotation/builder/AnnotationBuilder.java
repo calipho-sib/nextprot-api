@@ -118,12 +118,17 @@ abstract class AnnotationBuilder<T extends Annotation> {
 						);
 			
 			
-			 evidence.setEvidenceCodeAC(s.getValue(StatementField.EVIDENCE_CODE));
 			 
-			 //TODO this should this be done in the ETL module
 			 String statementEvidenceCode = s.getValue(StatementField.EVIDENCE_CODE);
+			 evidence.setEvidenceCodeAC(statementEvidenceCode);
+			 evidence.setAssignedBy(s.getValue(StatementField.ASSIGNED_BY));
+			 evidence.setAssignmentMethod(s.getValue(StatementField.ASSIGMENT_METHOD));
+			 evidence.setResourceType(s.getValue(StatementField.RESOURCE_TYPE));
 			 evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
+
+			 
 			 if(statementEvidenceCode != null){
+				 //TODO this should this be done in the ETL module
 				 CvTerm term = terminologyService.findCvTermByAccession(statementEvidenceCode);
 				 if(term != null){
 					 evidence.setEvidenceCodeName(term.getName());
