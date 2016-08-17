@@ -1,6 +1,7 @@
 package com.nextprot.api.annotation.builder;
 
 import org.apache.log4j.Logger;
+import org.apache.lucene.analysis.ar.ArabicAnalyzer;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -25,6 +26,8 @@ abstract class AnnotationBuilder<T extends Annotation> {
 	protected static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
 
 	private TerminologyService terminologyService = null;
+
+	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 	
 	protected AnnotationBuilder(TerminologyService terminologyService){
 		this.terminologyService = terminologyService;
@@ -195,8 +198,12 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			String cvTermAccession = statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
 
 			//Set the evidences if not Mammalian phenotype or Protein Property https://issues.isb-sib.ch/browse/BIOEDITOR-466
-			if(!(category.equals(AnnotationCategory.MAMMALIAN_PHENOTYPE) || category.equals(AnnotationCategory.PROTEIN_PROPERTY))){
+			if(ANNOT_CATEGORIES_WITHOUT_EVIDENCES.contains(category)){
 				annotation.setEvidences(buildAnnotationEvidences(statements));
+				annotation.setQualityQualifier(AnnotationUtils.computeAnnotationQualityBasedOnEvidences(annotation.getEvidences()).name());
+			}else {
+				annotation.setEvidences(new ArrayList<AnnotationEvidence>());
+				annotation.setQualityQualifier(statement.getValue(StatementField.EVIDENCE_QUALITY));
 			}
 
 			if(cvTermAccession != null){
@@ -212,6 +219,8 @@ abstract class AnnotationBuilder<T extends Annotation> {
 					if(category.equals(AnnotationCategory.PROTEIN_PROPERTY)){
 						//according to https://issues.isb-sib.ch/browse/BIOEDITOR-466
 						annotation.setDescription(cvTerm.getDescription());
+					}else if(category.equals(AnnotationCategory.MAMMALIAN_PHENOTYPE)){
+						annotation.setDescription("Relative to the variant phenotype annotations");
 					}
 					
 				}else {
@@ -242,8 +251,6 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 				annotation.setBioObject(bioObject);
 			}
-
-			annotation.setQualityQualifier(AnnotationUtils.computeAnnotationQualityBasedOnEvidences(annotation.getEvidences()).name());
 
 			annotations.add(annotation);
 			
