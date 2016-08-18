@@ -1,12 +1,13 @@
 package com.nextprot.api.annotation.builder.statement.service.impl;
 
-import com.nextprot.api.annotation.builder.EntryAnnotationBuilder;
-import com.nextprot.api.annotation.builder.IsoformAnnotationBuilder;
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
-import com.nextprot.api.annotation.builder.statement.service.StatementService;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
+import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
@@ -15,9 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.nextprot.api.annotation.builder.EntryAnnotationBuilder;
+import com.nextprot.api.annotation.builder.IsoformAnnotationBuilder;
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import com.nextprot.api.annotation.builder.statement.service.StatementService;
 
 @Service
 public class StatementServiceImpl implements StatementService {
@@ -29,6 +31,10 @@ public class StatementServiceImpl implements StatementService {
 
 	@Autowired
 	public TerminologyService terminologyService;
+
+	@Autowired
+	public PublicationService publicationService;
+
 	
 	private List<IsoformAnnotation> getProteoformIsoformAnnotations(String isoformAccession) {
 
@@ -41,14 +47,14 @@ public class StatementServiceImpl implements StatementService {
 		
 		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ISOFORM, subjectAnnotIds);
 		
-		return IsoformAnnotationBuilder.newBuilder(terminologyService).buildProteoformIsoformAnnotations(isoformAccession, subjects, proteoformStatements);
+		return IsoformAnnotationBuilder.newBuilder(terminologyService, publicationService).buildProteoformIsoformAnnotations(isoformAccession, subjects, proteoformStatements);
 
 	}
 	
 
 	private List<IsoformAnnotation> getNormalIsoformAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ISOFORM, entryAccession);
-		List<IsoformAnnotation> normalAnnotations = IsoformAnnotationBuilder.newBuilder(terminologyService).buildAnnotationList(entryAccession, normalStatements);
+		List<IsoformAnnotation> normalAnnotations = IsoformAnnotationBuilder.newBuilder(terminologyService, publicationService).buildAnnotationList(entryAccession, normalStatements);
 		normalAnnotations.stream().forEach(a -> 
 			//Required for group by
 			a.setSubjectName(entryAccession)
@@ -68,14 +74,14 @@ public class StatementServiceImpl implements StatementService {
 		
 		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ENTRY, subjectAnnotIds);
 		
-		return EntryAnnotationBuilder.newBuilder(terminologyService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
+		return EntryAnnotationBuilder.newBuilder(terminologyService, publicationService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
 
 	}
 
 
 	private List<Annotation> getNormalEntryAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession);
-		List<Annotation>  annotations =  EntryAnnotationBuilder.newBuilder(terminologyService).buildAnnotationList(entryAccession, normalStatements);
+		List<Annotation>  annotations =  EntryAnnotationBuilder.newBuilder(terminologyService, publicationService).buildAnnotationList(entryAccession, normalStatements);
 		return annotations;
 		
 	}

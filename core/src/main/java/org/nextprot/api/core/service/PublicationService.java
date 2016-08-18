@@ -48,4 +48,15 @@ public interface PublicationService {
 	 * @return
 	 */	
 	List<Long> findAllPublicationIds();
+	
+	
+	/**
+	 * Find publication ids by database and accession.
+	 * For example to get a publication from PubMed given its id
+	 * @param database PubMed
+	 * @param accession 25923089
+	 * @return
+	 */
+	List<Publication> findPublicationByDatabaseAndAccession(String database, String accession);
+
 }

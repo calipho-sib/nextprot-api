@@ -58,7 +58,7 @@ public class StatementExporter {
 
     public Map<String, String> exportAllGeneStatementsAsTsvString() {
 
-        List<String> geneNames = statementDao.findUniqueGeneNames();
+        List<String> geneNames = statementDao.findAllDistinctValuesforField(StatementField.GENE_NAME);
 
         Map<String, String> map = new HashMap<>(geneNames.size());
 

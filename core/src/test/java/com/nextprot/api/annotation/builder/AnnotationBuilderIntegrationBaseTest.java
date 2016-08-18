@@ -19,7 +19,7 @@ import com.github.springtestdbunit.TransactionDbUnitTestExecutionListener;
     DirtiesContextTestExecutionListener.class,
     TransactionDbUnitTestExecutionListener.class })
 @ContextConfiguration("classpath:spring/core-context.xml")
-public class AnnotationBuilderBaseTest extends AbstractUnitBaseTest{
+public class AnnotationBuilderIntegrationBaseTest extends AbstractUnitBaseTest{
 	
 	@Test
 	public void shouldBeARealTest() {}

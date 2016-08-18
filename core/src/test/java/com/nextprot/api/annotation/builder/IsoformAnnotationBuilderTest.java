@@ -2,22 +2,13 @@ package com.nextprot.api.annotation.builder;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.dbunit.dataset.DataSetException;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
@@ -25,24 +16,12 @@ import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.StatementUtil;
 import org.nextprot.commons.statements.constants.AnnotationType;
 
-public class IsoformAnnotationBuilderTest {
-	
-	@Mock
-	private TerminologyService terminologyService;
-	
-    @Before
-    public void init() throws FileNotFoundException, DataSetException {
+public class IsoformAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 
-        MockitoAnnotations.initMocks(this);
-
-		CvTerm cvterm = new CvTerm();
-		cvterm.setName("eco-name-1");
-		cvterm.setOntology("eco-ontology-cv");
-		cvterm.setDescription("some description");
-
-		Mockito.when(terminologyService.findCvTermByAccession(Matchers.anyString())).thenReturn(cvterm);
-
-    }
+	@Override
+	protected IsoformAnnotationBuilder newAnnotationBuilder(){
+		return IsoformAnnotationBuilder.newBuilder(terminologyService, publicationService);
+	}
 	
 	@Test
 	public void shouldReturnOneSingleAnnotationIfTheInfoIsTheSameAndItIsComingFromDifferentSources() {
@@ -64,7 +43,7 @@ public class IsoformAnnotationBuilderTest {
 		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
 		
 
-		IsoformAnnotation annotation = IsoformAnnotationBuilder.newBuilder(terminologyService).buildAnnotation("NX_P01308-1", statements);
+		IsoformAnnotation annotation = newAnnotationBuilder().buildAnnotation("NX_P01308-1", statements);
 
 		assertEquals(annotation.getAPICategory(), AnnotationCategory.GO_CELLULAR_COMPONENT);
 		assertEquals(annotation.getEvidences().size(), 2);
@@ -85,7 +64,7 @@ public class IsoformAnnotationBuilderTest {
 		List<Statement> statements = Arrays.asList(sb1, sb2);
 		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
 		
-		IsoformAnnotationBuilder.newBuilder(terminologyService).buildAnnotation("NX_P01308-1", statements);
+		newAnnotationBuilder().buildAnnotation("NX_P01308-1", statements);
 		
 	}
 	
@@ -100,7 +79,7 @@ public class IsoformAnnotationBuilderTest {
 		List<Statement> statements = Arrays.asList(sb1);
 		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
 
-		IsoformAnnotation annotation = IsoformAnnotationBuilder.newBuilder(terminologyService).buildAnnotation("NX_P01308-1", statements);
+		IsoformAnnotation annotation = newAnnotationBuilder().buildAnnotation("NX_P01308-1", statements);
 
 		assertEquals(annotation.getAPICategory(), AnnotationCategory.GO_CELLULAR_COMPONENT);
 		assertEquals(annotation.getEvidences().size(), 1);

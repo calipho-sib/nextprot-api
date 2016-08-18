@@ -145,4 +145,10 @@ public class PublicationServiceImpl implements PublicationService {
 		publication.setEditors(new TreeSet<>(Sets.filter(authorsAndEditorSet, EDITOR_PREDICATE)));
 		publication.setDbXrefs(new HashSet<>(xrefs));
 	}
+
+	@Override
+	@Cacheable("publications-by-id-and-accession")
+	public List<Publication> findPublicationByDatabaseAndAccession(String database, String accession) {
+		return publicationDao.findPublicationByDatabaseAndAccession(database, accession);
+	}
 }

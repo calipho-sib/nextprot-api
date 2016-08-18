@@ -5,6 +5,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.commons.statements.Statement;
+import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -59,12 +60,6 @@ public class StatementDaoImpl implements StatementDao {
 	}
 
 	@Override
-	public List<String> findUniqueGeneNames() {
-
-		return new JdbcTemplate(dsLocator.getStatementsDataSource()).queryForList(sqlDictionary.getSQLQuery("all-gene-names"), String.class);
-	}
-
-	@Override
 	public List<Statement> findStatementsByAnnotIsoIds(AnnotationType type, List<String> idList) {
 
 		List<Statement> statements = new ArrayList<>();
@@ -100,6 +95,12 @@ public class StatementDaoImpl implements StatementDao {
 		String sql = getSQL(type, "statements-by-entry-accession");
 		
 		return new NamedParameterJdbcTemplate(dsLocator.getStatementsDataSource()).query(sql, params, new StatementMapper());
+	}
+
+	@Override
+	public List<String> findAllDistinctValuesforField(StatementField field) {
+		String sql = "select distinct " + field.name() + " from nxflat.entry_mapped_statements";
+		return new JdbcTemplate(dsLocator.getStatementsDataSource()).queryForList(sql, String.class);
 	}
 
 }
