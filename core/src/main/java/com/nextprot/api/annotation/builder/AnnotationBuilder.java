@@ -25,6 +25,8 @@ abstract class AnnotationBuilder<T extends Annotation> {
 	protected static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
 
 	private TerminologyService terminologyService = null;
+
+	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 	
 	protected AnnotationBuilder(TerminologyService terminologyService){
 		this.terminologyService = terminologyService;
@@ -107,22 +109,26 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
 			AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
 			AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
-			AnnotationEvidenceProperty sourceAccession = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOT_SOURCE_ACCESSION), "source-accession");
 
 			//Set properties which are not null
 			evidence.setProperties(
-					Arrays.asList(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin, sourceAccession)
+					Arrays.asList(evidenceProperty, expContextSubjectProteinOrigin, expContextObjectProteinOrigin)
 						.stream().filter(p -> p != null)
 						.collect(Collectors.toList())
 						);
 			
 			
-			 evidence.setEvidenceCodeAC(s.getValue(StatementField.EVIDENCE_CODE));
 			 
-			 //TODO should this be hardcoded in the db for all ECOs or should we request a service at this stage?
 			 String statementEvidenceCode = s.getValue(StatementField.EVIDENCE_CODE);
+			 evidence.setEvidenceCodeAC(statementEvidenceCode);
+			 evidence.setAssignedBy(s.getValue(StatementField.ASSIGNED_BY));
+			 evidence.setAssignmentMethod(s.getValue(StatementField.ASSIGMENT_METHOD));
+			 evidence.setResourceType(s.getValue(StatementField.RESOURCE_TYPE));
 			 evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
+
+			 
 			 if(statementEvidenceCode != null){
+				 //TODO this should this be done in the ETL module
 				 CvTerm term = terminologyService.findCvTermByAccession(statementEvidenceCode);
 				 if(term != null){
 					 evidence.setEvidenceCodeName(term.getName());
@@ -195,8 +201,12 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			String cvTermAccession = statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
 
 			//Set the evidences if not Mammalian phenotype or Protein Property https://issues.isb-sib.ch/browse/BIOEDITOR-466
-			if(!(category.equals(AnnotationCategory.MAMMALIAN_PHENOTYPE) || category.equals(AnnotationCategory.PROTEIN_PROPERTY))){
+			if(!ANNOT_CATEGORIES_WITHOUT_EVIDENCES.contains(category)){
 				annotation.setEvidences(buildAnnotationEvidences(statements));
+				annotation.setQualityQualifier(AnnotationUtils.computeAnnotationQualityBasedOnEvidences(annotation.getEvidences()).name());
+			}else {
+				annotation.setEvidences(new ArrayList<AnnotationEvidence>());
+				annotation.setQualityQualifier(statement.getValue(StatementField.EVIDENCE_QUALITY));
 			}
 
 			if(cvTermAccession != null){
@@ -212,6 +222,8 @@ abstract class AnnotationBuilder<T extends Annotation> {
 					if(category.equals(AnnotationCategory.PROTEIN_PROPERTY)){
 						//according to https://issues.isb-sib.ch/browse/BIOEDITOR-466
 						annotation.setDescription(cvTerm.getDescription());
+					}else if(category.equals(AnnotationCategory.MAMMALIAN_PHENOTYPE)){
+						annotation.setDescription("Relative to modification-effect annotations");
 					}
 					
 				}else {
@@ -242,8 +254,6 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 				annotation.setBioObject(bioObject);
 			}
-
-			annotation.setQualityQualifier(AnnotationUtils.computeAnnotationQualityBasedOnEvidences(annotation.getEvidences()).name());
 
 			annotations.add(annotation);
 			
