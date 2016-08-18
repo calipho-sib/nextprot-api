@@ -177,6 +177,7 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withOverview().with("function-info"));
 		String protName = entry.getOverview().getMainProteinName();
 		String geneName = entry.getOverview().getMainGeneName();
+		if (geneName==null || geneName.isEmpty()) geneName = ac;             // decision QC 18.08.2016
 		String title = geneName + " - " + protName + " - " + prettySubpage;  // decision NPC 15.08.2016
 		String h1 = geneName + " - " + prettySubpage;                        // decision NPC 15.08.2016
 		
