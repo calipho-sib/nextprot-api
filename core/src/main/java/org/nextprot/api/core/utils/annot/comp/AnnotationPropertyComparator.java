@@ -12,7 +12,7 @@ import java.util.Comparator;
  */
 public class AnnotationPropertyComparator implements Comparator<AnnotationProperty>, Serializable {
 
-    private static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 1L;
 
     @Override
     public int compare(AnnotationProperty prop1, AnnotationProperty prop2) {
