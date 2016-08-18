@@ -21,11 +21,7 @@
 		<project.version>${project.version}</project.version>
 		<spring-security.version>3.2.5.RELEASE</spring-security.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonar.language>java</sonar.language>
-        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>  <!-- Ensure you run mvn install before sonar:sonar -->
-        <sonar.java.codeCoveragePlugin>jacoco</sonar.java.codeCoveragePlugin>
-        <sonar.surefire.reportsPath>/target/surefire-reports</sonar.surefire.reportsPath>
-        <sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>    <!-- This is the default, put here to be explicit -->
+		<argLine>-Xmx128m</argLine>
     </properties>
 
 	<distributionManagement>
@@ -340,15 +336,6 @@
 	</dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>2.6</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -393,6 +380,15 @@
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<destFile>${jacoco.ut.execution.data.file}</destFile>
+							<!--
+                                Sets the name of the property containing the settings
+                                for JaCoCo runtime agent.
+                            -->
+							<propertyName>surefireArgLine</propertyName>
+						</configuration>
                     </execution>
                     <execution>
                         <id>post-unit-test</id>
