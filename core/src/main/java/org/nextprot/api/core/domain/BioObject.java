@@ -3,16 +3,10 @@ package org.nextprot.api.core.domain;
 import com.google.common.base.Preconditions;
 
 import java.io.Serializable;
-import java.util.Objects;
 
-/**
- * A wrapper over biological domain object
- *
- * Created by fnikitin on 26/08/15.
- */
-public abstract class BioObject<T> implements Serializable {
+public class BioObject implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     public static final String NEXTPROT = "neXtProt";
 
@@ -20,16 +14,14 @@ public abstract class BioObject<T> implements Serializable {
     
     //When it is internal, it is something that exists in neXtProt (sequence). When it is EXTERNAL it is a xref (link to another db). MIXED when both are 
     public enum ResourceType { INTERNAL, EXTERNAL, MIXED } 
-    
 
     private long id;
     private String accession;
     private final String database;
     private final BioType bioType;
     private final ResourceType resourceType;
-    transient private T content;
 
-    protected BioObject(BioType bioType, ResourceType resourceType, String database) {
+    public BioObject(BioType bioType, ResourceType resourceType, String database) {
 
         Preconditions.checkNotNull(bioType);
 
@@ -38,20 +30,32 @@ public abstract class BioObject<T> implements Serializable {
         this.database = database;
     }
 
-    protected abstract String toBioObjectString();
-    
+    public static BioObject internal(BioType bioType) {
+
+        return new BioObject(bioType, ResourceType.INTERNAL, NEXTPROT);
+    }
+
+    public static BioObject external(BioType bioType, String database) {
+
+        return new BioObject(bioType, ResourceType.EXTERNAL, database);
+    }
+
+    protected String toBioObjectString() {
+        return "";
+    }
     
     protected String toBaseString() {
-    	{
-        	StringBuilder sb= new StringBuilder();
-        	sb.append("BioObject id:").append(id)
-        	.append(", accession:").append(accession)
-        	.append(", database:").append(database)
-        	.append(", bioType:").append(bioType)
-        	.append("resourceType:").append(resourceType)
-        	.append(" specific content:").append(toBioObjectString());
-        	return sb.toString();
-        }
+
+        StringBuilder sb= new StringBuilder();
+
+        sb.append("BioObject id:").append(id)
+        .append(", accession:").append(accession)
+        .append(", database:").append(database)
+        .append(", bioType:").append(bioType)
+        .append(", resourceType:").append(resourceType)
+        .append(" specific content:").append(toBioObjectString());
+
+        return sb.toString();
     }
     
     public long getId() {
@@ -84,30 +88,5 @@ public abstract class BioObject<T> implements Serializable {
 
     public int size() {
         return 1;
-    }
-
-    public T getContent() {
-        return content;
-    }
-
-    public void setContent(T content) {
-        this.content = content;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BioObject)) return false;
-        BioObject<?> bioObject = (BioObject<?>) o;
-        return id == bioObject.id &&
-                Objects.equals(accession, bioObject.accession) &&
-                Objects.equals(database, bioObject.database) &&
-                bioType == bioObject.bioType &&
-                resourceType == bioObject.resourceType;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, accession, database, bioType, resourceType);
     }
 }
