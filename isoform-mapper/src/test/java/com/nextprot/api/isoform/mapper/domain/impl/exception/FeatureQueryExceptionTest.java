@@ -11,6 +11,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.EntryUtilsTest;
 
 import java.text.ParseException;
+import java.util.Arrays;
 
 public class FeatureQueryExceptionTest {
 
@@ -101,5 +102,12 @@ public class FeatureQueryExceptionTest {
 
         UnknownFeatureQueryTypeException featureQueryException = new UnknownFeatureQueryTypeException(query);
         Assert.assertEquals("unknown feature type: cannot find feature type CatalyticActivity", featureQueryException.getError().getMessage());
+    }
+
+    @Test
+    public void testMultipleEntryAccessionForGeneException() throws FeatureQueryException {
+
+        MultipleEntryAccessionForGeneException featureQueryException = new MultipleEntryAccessionForGeneException(Mockito.mock(FeatureQuery.class), "roudoudou", Arrays.asList("NX_ROUDOUDOU-1", "NX_ROUDOUDOU-2"));
+        Assert.assertEquals("multiple accessions: too many entry accessions found for gene roudoudou: [NX_ROUDOUDOU-1, NX_ROUDOUDOU-2]", featureQueryException.getError().getMessage());
     }
 }
