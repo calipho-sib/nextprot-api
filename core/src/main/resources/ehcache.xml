@@ -253,4 +253,8 @@
 	<cache name="github-news" maxEntriesLocalHeap="1" eternal="true" statistics="true" />
 
 
+	<!-- Publications for in memory processing during ETL -->
+	<cache name="publications-by-id-and-accession" maxEntriesLocalHeap="1000" statistics="true"/>
+
+
 </ehcache>

@@ -1,6 +1,6 @@
 package com.nextprot.api.annotation.builder.statement.service;
 
-import com.nextprot.api.annotation.builder.AnnotationBuilderBaseTest;
+import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class StatementServiceTest extends AnnotationBuilderBaseTest {
+public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 
 	@Autowired
 	private StatementService statementService;

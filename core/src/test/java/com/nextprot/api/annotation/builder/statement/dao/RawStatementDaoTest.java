@@ -15,9 +15,9 @@ import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.nextprot.api.annotation.builder.AnnotationBuilderBaseTest;
+import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
 
-public class RawStatementDaoTest extends AnnotationBuilderBaseTest {
+public class RawStatementDaoTest extends AnnotationBuilderIntegrationBaseTest {
 
 	@Autowired
 	private StatementDao rawStatementDao;

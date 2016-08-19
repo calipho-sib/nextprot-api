@@ -1,5 +1,15 @@
 package com.nextprot.api.annotation.builder;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -8,28 +18,35 @@ import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.BioGenericObject;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
+import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 abstract class AnnotationBuilder<T extends Annotation> {
 
 	protected static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
 
 	private TerminologyService terminologyService = null;
+	private PublicationService publicationService = null;
 
+	/**
+	 * Flag that indicates that the build should throw an Exception at the first error or just log silently
+	 */
+	private static final boolean STRICT = true;
+
+	
 	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 	
-	protected AnnotationBuilder(TerminologyService terminologyService){
+	protected AnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService){
 		this.terminologyService = terminologyService;
+		this.publicationService = publicationService;
 	}
 	
 	
@@ -105,6 +122,9 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			
 			evidence.setResourceAssociationType("evidence");
 			evidence.setQualityQualifier(s.getValue(StatementField.EVIDENCE_QUALITY));
+			
+			
+			setEvidenceResourceId(evidence, s);
 
 			AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
 			AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
@@ -161,6 +181,20 @@ abstract class AnnotationBuilder<T extends Annotation> {
 	}
 	
 
+
+	void setEvidenceResourceId(AnnotationEvidence evidence, Statement statement) {
+		
+		if(statement.getValue(StatementField.REFERENCE_PUBMED) != null){
+			String pubmedId = statement.getValue(StatementField.REFERENCE_PUBMED);
+			List<Publication> publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
+			if(publication == null || publication.size() != 1){
+				evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, null));
+			}
+			evidence.setResourceId(publication.get(0).getPublicationId());
+		}
+	}
+
+	
 	protected T buildAnnotation(String isoformName, List<Statement> flatStatements) {
 		List<T> annotations = buildAnnotationList(isoformName, flatStatements);
 		if(annotations.isEmpty() || annotations.size() > 1){
@@ -260,6 +294,15 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 		});
 		return annotations;
+	}
+	
+	private Object throwErrorOrReturn(String message, Object returnObject){
+
+		LOGGER.error(message);
+		if(STRICT){
+			throw new NextProtException(message);
+		}else return returnObject;
+
 	}
 
 }
