@@ -83,12 +83,15 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     @Override
     public boolean isValidGeneName(Entry entry) {
 
-        List<EntityName> geneNames = entry.getOverview().getGeneNames();
+        if (geneName != null) {
 
-        for (EntityName name : geneNames) {
+            List<EntityName> geneNames = entry.getOverview().getGeneNames();
 
-            if (geneName.startsWith(name.getName())) {
-                return true;
+            for (EntityName name : geneNames) {
+
+                if (geneName.startsWith(name.getName())) {
+                    return true;
+                }
             }
         }
 
@@ -117,13 +120,6 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
                 IsoformUtils.getCanonicalIsoform(entry);
 
         return isoform != null;
-    }
-
-    public static String getGeneName(String feature) {
-
-        Preconditions.checkNotNull(feature);
-
-        return feature.substring(0, feature.indexOf("-"));
     }
 
     @Override
@@ -156,7 +152,12 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
 
     private String parseGeneName(String feature) {
 
-        return getGeneName(feature);
+        Preconditions.checkNotNull(feature);
+
+        if (feature.contains("-"))
+            return feature.substring(0, feature.indexOf("-"));
+
+        return null;
     }
 
     @Override
