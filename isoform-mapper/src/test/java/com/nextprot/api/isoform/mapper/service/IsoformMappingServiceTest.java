@@ -108,7 +108,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         FeatureQuery query = Mockito.mock(FeatureQuery.class);
         when(query.getAccession()).thenReturn("NX_Q9UI33");
 
-        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new InvalidFeatureQueryPositionException(query, 1158999));
+        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new OutOfBoundSequencePositionException(query, 1158999));
     }
 
     @Test

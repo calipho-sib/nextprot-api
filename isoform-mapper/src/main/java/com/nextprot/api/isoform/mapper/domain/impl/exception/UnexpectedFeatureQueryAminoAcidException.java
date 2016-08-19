@@ -15,7 +15,7 @@ public class UnexpectedFeatureQueryAminoAcidException extends FeatureQueryExcept
 
         getError().addCause(EXPECTED_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, sequenceAminoAcidCodes));
         getError().addCause(FEATURE_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, featureAminoAcidCodes));
-        getError().addCause(InvalidFeatureQueryPositionException.SEQUENCE_POS, sequencePosition);
+        getError().addCause(OutOfBoundSequencePositionException.SEQUENCE_POS, sequencePosition);
 
         getError().setMessage(buildErrorMessage(sequenceAminoAcidCodes));
     }
@@ -31,7 +31,7 @@ public class UnexpectedFeatureQueryAminoAcidException extends FeatureQueryExcept
                 .append(" at position ").append(getIsoformSequencePosition())
                 .append(" of ")
                 .append(getQuery().getAccession())
-                .append(" protein sequence instead of expected ").append(getExpectedAminoAcids());
+                .append(" sequence instead of expected ").append(getExpectedAminoAcids());
 
         return sb.toString();
     }
@@ -45,6 +45,6 @@ public class UnexpectedFeatureQueryAminoAcidException extends FeatureQueryExcept
     }
 
     private int getIsoformSequencePosition() {
-        return (Integer) getError().getCause(InvalidFeatureQueryPositionException.SEQUENCE_POS);
+        return (Integer) getError().getCause(OutOfBoundSequencePositionException.SEQUENCE_POS);
     }
 }

@@ -102,7 +102,7 @@ public class SequenceFeatureValidator {
         boolean valid = IsoformSequencePositionMapper.checkSequencePosition(isoform, position, insertionMode);
 
         if (!valid) {
-            throw new InvalidFeatureQueryPositionException(query, position);
+            throw new OutOfBoundSequencePositionException(query, position);
         }
 
         if (!insertionMode && !IsoformSequencePositionMapper.checkAminoAcidsFromPosition(isoform, position, aas)) {
