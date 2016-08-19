@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
-public class InvalidFeatureAminoAcidExceptionTest {
+public class UnexpectedFeatureQueryAminoAcidExceptionTest {
 
     @Test
     public void testOnUnexpectedAminoAcidsError() throws FeatureQueryException {
@@ -15,9 +15,11 @@ public class InvalidFeatureAminoAcidExceptionTest {
         FeatureQuery query =
                 new FeatureQuery("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
 
-        InvalidFeatureQueryAminoAcidException result = new InvalidFeatureQueryAminoAcidException(query, 1158,
+        UnexpectedFeatureQueryAminoAcidException result = new UnexpectedFeatureQueryAminoAcidException(query, 1158,
                 AminoAcidCode.asArray(AminoAcidCode.ALANINE), AminoAcidCode.asArray(AminoAcidCode.LEUCINE));
 
-        Assert.assertEquals("invalid feature specification: found amino-acid Ala at position 1158 of sequence isoform NX_Q9UI33 instead of Leu as incorrectly specified in feature 'SCN11A-p.Leu1158Pro'", result.getError().getMessage());
+        Assert.assertEquals("Ala", result.getError().getCause("expectedAminoAcids"));
+        Assert.assertEquals("Leu", result.getError().getCause("featureAminoAcids"));
+        Assert.assertEquals(1158, result.getError().getCause("sequencePosition"));
     }
 }

@@ -96,7 +96,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         when(query.getAccession()).thenReturn("NX_Q9UI33");
         when(query.getFeature()).thenReturn("SCN11A-p.Met1158Pro");
 
-        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new InvalidFeatureQueryAminoAcidException(query, 1158,
+        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new UnexpectedFeatureQueryAminoAcidException(query, 1158,
                 AminoAcidCode.asArray(AminoAcidCode.LEUCINE), AminoAcidCode.asArray(AminoAcidCode.METHIONINE)));
     }
 
@@ -182,7 +182,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
 
         FeatureQueryResult result = service.validateFeature("SCN11A-p-iso4.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
-        System.out.println(result);
+        Assert.assertTrue(!result.isSuccess());
     }
 
     @Test
