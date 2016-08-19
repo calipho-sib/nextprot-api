@@ -1,5 +1,6 @@
 package org.nextprot.api.web.seo.service.impl;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -128,8 +129,10 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 	}
 	
 	private SeoTags getOneNewsSeoTags(NextProtNews news) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String shortDate = sdf.format(news.getPublicationDate());
 		String title = "News - " + news.getTitle();
-		String h1 = "News - " + news.getTitle();
+		String h1 = "News - " + shortDate;
 		String descr = "News - " + news.getTitle();
 		return new SeoTags(title, descr,h1);
 	}
@@ -174,11 +177,13 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(ac).withOverview().with("function-info"));
 		String protName = entry.getOverview().getMainProteinName();
 		String geneName = entry.getOverview().getMainGeneName();
-		String title = geneName + " - " + protName + " - " + prettySubpage;
-		String h1 = title;
+		if (geneName==null || geneName.isEmpty()) geneName = ac;             // decision QC 18.08.2016
+		String title = geneName + " - " + protName + " - " + prettySubpage;  // decision NPC 15.08.2016
+		String h1 = geneName + " - " + prettySubpage;                        // decision NPC 15.08.2016
+		
 		
 		// TODO: send something different for each subpage... see with amos
-		String descr = getFirstFunctionInfo(entry) + ". " + prettySubpage;
+		String descr = ac + " - " + title + ". " + getFirstFunctionInfo(entry);
 		
 		return new SeoTags(title,descr,h1);
 	}
