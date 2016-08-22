@@ -15,7 +15,7 @@ public class AnnotationComparators {
             case MUTAGENESIS:
             case VARIANT:
                 return new ByAnnotationVariantComparator(entry);
-            case MODIFICATION_EFFECT:
+            case PHENOTYPE:
                 return new ByAnnotationSubjectComparator(entry)
                         .thenComparing(Annotation::getDescription);
             default:
