@@ -168,11 +168,10 @@ public enum AnnotationCategory implements Serializable {
 	REDOX_POTENTIAL(-23, "redox potential", "redoxPotential", "redoxPotential", BIOPHYSICOCHEMICAL_PROPERTY),
 	TEMPERATURE_DEPENDENCE(-24, "temperature dependence", "temperatureDependence", "temperatureDependence", BIOPHYSICOCHEMICAL_PROPERTY),
 	
-
 	//New categories added with BioEditor integration
-	PHENOTYPE(-9990, "phenotype", "phenotype", "phenotype", GENERAL_ANNOTATION),
+	PHENOTYPIC_VARIATION(-9990, "phenotypic-variation", "phenotypicVariation", "phenotypicVariation", GENERAL_ANNOTATION),
 	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "mammalian-phenotype", GENERAL_ANNOTATION),
-	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "protein-property", GENERAL_ANNOTATION); //This one refers to mammalian phenotypes
+	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "protein-property", GENERAL_ANNOTATION); //to represent stable form
 
 	private final Integer dbId; // if positive, identifies a real record of the table nextprot.cv_terms (category annotation_type)
 	private final String dbAnnotationTypeName; // if dbId is positive, dbAnnotationTypeName is an exact match of the corresponding record in nextprot.cv_terms 

@@ -102,7 +102,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public boolean isWildTypeAnnotation() {
 		if (AnnotationCategory.PROTEIN_PROPERTY == this.apiCategory) return false;
 		if (AnnotationCategory.MAMMALIAN_PHENOTYPE == this.apiCategory) return false;
-		if (AnnotationCategory.PHENOTYPE ==  this.apiCategory) return false;
+		if (AnnotationCategory.PHENOTYPIC_VARIATION ==  this.apiCategory) return false;
 		return true;
 	}
 	
