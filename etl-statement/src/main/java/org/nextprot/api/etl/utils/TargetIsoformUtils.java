@@ -33,11 +33,11 @@ public class TargetIsoformUtils {
 	}
 
 	
-	public static String getTargetIsoformForPhenotypeSerialized(Statement subject, List<String> isoformNames, boolean isIsoSpecific, String isoSpecificName) {
-		return TargetIsoformSerializer.serializeToJsonString(getTargetIsoformForPhenotype(subject, isoformNames, isIsoSpecific, isoSpecificName));
+	public static String getTargetIsoformForPhenotypeSerialized(Statement subject, List<String> isoformNames, boolean isIsoSpecific, String isoSpecificName, String name) {
+		return TargetIsoformSerializer.serializeToJsonString(getTargetIsoformForPhenotype(subject, isoformNames, isIsoSpecific, isoSpecificName, name));
 	}
 	
-	public static Set<TargetIsoformStatementPosition> getTargetIsoformForPhenotype(Statement subject, List<String> isoformNames, boolean isIsoSpecific, String isoSpecificName) {
+	public static Set<TargetIsoformStatementPosition> getTargetIsoformForPhenotype(Statement subject, List<String> isoformNames, boolean isIsoSpecific, String isoSpecificName, String name) {
 
 		String targetIsoformForSubject = subject.getValue(StatementField.TARGET_ISOFORMS);
 		Set<TargetIsoformStatementPosition> targetIsoformForPhenotype = null;

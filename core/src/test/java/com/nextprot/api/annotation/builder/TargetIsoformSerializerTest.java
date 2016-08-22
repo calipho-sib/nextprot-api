@@ -16,7 +16,7 @@ public class TargetIsoformSerializerTest {
 	@Test
 	public void serializeToJsonString() {
 
-		TargetIsoformStatementPosition tis = new TargetIsoformStatementPosition("iso-1", 6, 7, IsoTargetSpecificity.BY_DEFAULT.name());
+		TargetIsoformStatementPosition tis = new TargetIsoformStatementPosition("iso-1", 6, 7, IsoTargetSpecificity.BY_DEFAULT.name(), null);
 
 		String json = TargetIsoformSerializer.serializeToJsonString(new HashSet<>(Arrays.asList(tis)));
 		Set<TargetIsoformStatementPosition> tis2 = TargetIsoformSerializer.deSerializeFromJsonString(json);
