@@ -26,6 +26,7 @@ import org.nextprot.commons.statements.service.impl.JDBCStatementLoaderServiceIm
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -82,14 +83,25 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		StringBuilder sb = new StringBuilder();
 
-		addInfo(sb, "Loading raw statements: " + sourceStatements.size());
-		statementLoadService.loadRawStatementsForSource(new HashSet<>(sourceStatements), NextProtSource.BioEditor);
+		try {
+			addInfo(sb, "Loading raw statements: " + sourceStatements.size());
+			statementLoadService.loadRawStatementsForSource(new HashSet<>(sourceStatements), NextProtSource.BioEditor);
+			addInfo(sb, "Loading iso statements: " + statementsMappedToIsoformToLoad.size());
+			statementLoadService.loadStatementsMappedToIsoSpecAnnotationsForSource(statementsMappedToIsoformToLoad, NextProtSource.BioEditor);
 
-		addInfo(sb, "Loading iso statements: " + statementsMappedToIsoformToLoad.size());
-		statementLoadService.loadStatementsMappedToIsoSpecAnnotationsForSource(statementsMappedToIsoformToLoad, NextProtSource.BioEditor);
+			addInfo(sb, "Loading entry statements: " + statementsMappedToEntryToLoad.size());
+			statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(statementsMappedToEntryToLoad, NextProtSource.BioEditor);
 
-		addInfo(sb, "Loading entry statements: " + statementsMappedToEntryToLoad.size());
-		statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(statementsMappedToEntryToLoad, NextProtSource.BioEditor);
+
+		}catch (SQLException e){
+			String errorResponse = "";
+			errorResponse+= e.getMessage();
+			if( e.getNextException() != null){
+				errorResponse+= e.getNextException().getMessage();
+			}
+			return errorResponse;
+
+		}
 
 		
 		return sb.toString();
@@ -148,7 +160,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 					}
 
 					targetIsoformsForObject = TargetIsoformUtils.getTargetIsoformForObjectSerialized(subject, isoformNames);
-					targetIsoformsForPhenotype = TargetIsoformUtils.getTargetIsoformForPhenotypeSerialized(subject, isoformNames, isIsoSpecific, isoSpecificAccession);
+					targetIsoformsForPhenotype = TargetIsoformUtils.getTargetIsoformForPhenotypeSerialized(subject, isoformNames, isIsoSpecific, isoSpecificAccession, "WTF");
 					
 				}
 				
@@ -343,7 +355,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 						isoformFeatureResult.getIsoformAccession(), 
 						isoformFeatureResult.getBeginIsoformPosition(), 
 						isoformFeatureResult.getEndIsoformPosition(),
-						IsoTargetSpecificity.BY_DEFAULT.name() //Target by default to all variations (the subject is always propagated)
+						IsoTargetSpecificity.BY_DEFAULT.name(), 				//Target by default to all variations (the subject is always propagated)
+						null //name is not set 
 				));
 				
 				//Will be set in case that we don't want to propagate to canonical
