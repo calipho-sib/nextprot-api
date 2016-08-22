@@ -42,7 +42,7 @@ public class PublicationDaoIntegrationTest extends CoreUnitBaseTest {
 	
 	@Test
 	public void testPubMedPublication() {
-		Publication publication = publicationDao.findPublicationByDatabaseAndAccession("PubMed", "25923089").get(0);
+		Publication publication = publicationDao.findPublicationByDatabaseAndAccession("PubMed", "25923089");
 		Assert.assertEquals("Correlation of hepcidin level with insulin resistance and endocrine glands function in major thalassemia.", publication.getTitle());
 	}
 	
