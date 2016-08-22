@@ -1,15 +1,5 @@
 package com.nextprot.api.annotation.builder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -28,6 +18,9 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 abstract class AnnotationBuilder<T extends Annotation> {
 
@@ -186,11 +179,14 @@ abstract class AnnotationBuilder<T extends Annotation> {
 		
 		if(statement.getValue(StatementField.REFERENCE_PUBMED) != null){
 			String pubmedId = statement.getValue(StatementField.REFERENCE_PUBMED);
-			List<Publication> publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-			if(publication == null || publication.size() != 1){
-				evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, null));
+			Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
+
+			if (publication == null) {
+				evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, -1L));
 			}
-			evidence.setResourceId(publication.get(0).getPublicationId());
+			else {
+				evidence.setResourceId(publication.getPublicationId());
+			}
 		}
 	}
 
