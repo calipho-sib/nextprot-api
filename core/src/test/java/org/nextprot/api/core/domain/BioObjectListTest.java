@@ -51,7 +51,7 @@ public class BioObjectListTest {
         BioObject be = BioObject.internal(BioObject.BioType.PROTEIN);
         be.setAccession("NX_Q3L8U1");
 
-        BioObject bi = BioObject.internal(BioObject.BioType.PROTEIN);
+        BioObject bi = BioObject.internal(BioObject.BioType.PROTEIN_ISOFORM);
         bi.setAccession("NX_Q3L8U1-3");
 
         BioObject be2 = BioObject.external(BioObject.BioType.PROTEIN, "UniProt");
