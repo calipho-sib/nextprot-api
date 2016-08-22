@@ -23,13 +23,13 @@ public interface PublicationDao {
 	List<Publication> findSortedPublicationsByMasterId(Long masterId);
 	
 	/**
-	 * Find publication ids by database and accession.
+	 * Find publication id by database and accession.
 	 * For example to get a publication from PubMed given its id
 	 * @param database PubMed
 	 * @param accession 25923089
 	 * @return
 	 */
-	List<Publication> findPublicationByDatabaseAndAccession(String database, String accession);
+	Publication findPublicationByDatabaseAndAccession(String database, String accession);
 	
 	/**
 	 * Finds publication by id
