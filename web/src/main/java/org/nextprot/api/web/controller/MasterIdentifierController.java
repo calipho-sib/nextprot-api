@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @Api(name = "Master Identifiers", description = "Retrieves nextProt idenfitiers")
@@ -33,6 +34,15 @@ public class MasterIdentifierController {
 	public List<String> masterIdentifiersPerChromosome(
 			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "master-isoform-mapping"}) @PathVariable("chromosome")  String chromosome) {
 		return new ArrayList<String>(masterIdentifierService.findUniqueNamesOfChromosome(chromosome));
+	}
+
+	
+	@ApiMethod(path = "/master-identifiers/gene/{geneName}", verb = ApiVerb.GET, description = "Retrieve the identifier", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/master-identifiers/gene/{geneName}", method = { RequestMethod.GET })
+	@ResponseBody
+	public List<String> masterIdentifierByGeneName(
+			@ApiPathParam(name = "geneName", description = "The gene name",  allowedvalues = { "INSR"}) @PathVariable("geneName")  String geneName) {
+		return new ArrayList<String>(masterIdentifierService.findEntryAccessionByGeneName(geneName));
 	}
 
 }
