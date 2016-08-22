@@ -35,6 +35,7 @@ import java.util.*;
  * </ol>
  * Created by fnikitin on 09/11/15.
  */
+@Deprecated // use ByFeaturePositionComparator instead
 class ByIsoformPositionComparator implements Comparator<Annotation> {
 
     private final String canonicalIsoformUniqueName;
@@ -57,7 +58,7 @@ class ByIsoformPositionComparator implements Comparator<Annotation> {
 
         if (cmp != 0) return cmp;
 
-        return compareAnnotByNullablePosition(
+        return ByFeaturePositionComparator.compareAnnotByNullablePosition(
                 a1.getStartPositionForIsoform(isoformName1), a1.getEndPositionForIsoform(isoformName1),
                 a2.getStartPositionForIsoform(isoformName2), a2.getEndPositionForIsoform(isoformName2)
         );
@@ -72,34 +73,7 @@ class ByIsoformPositionComparator implements Comparator<Annotation> {
         else if (targets.containsKey(canonicalIsoformUniqueName))
             return canonicalIsoformUniqueName;
         else
-            return getFirstIsoformSpecificity(targets.values()).getIsoformName();
-    }
-
-    private AnnotationIsoformSpecificity getFirstIsoformSpecificity(Collection<AnnotationIsoformSpecificity> targets) {
-
-        Preconditions.checkNotNull(targets);
-        Preconditions.checkArgument(!targets.isEmpty());
-
-        Iterator<AnnotationIsoformSpecificity> iter = targets.iterator();
-
-        AnnotationIsoformSpecificity first = iter.next();
-
-        while (iter.hasNext()) {
-
-            AnnotationIsoformSpecificity specificity = iter.next();
-
-            int cmp = compareAnnotByNullablePosition(
-                    specificity.getFirstPosition(), specificity.getLastPosition(),
-                    first.getFirstPosition(), first.getLastPosition()
-            );
-
-            if (cmp < 0) {
-
-                first = specificity;
-            }
-        }
-
-        return first;
+            return ByFeaturePositionComparator.getFirstIsoformSpecificity(targets.values()).getIsoformName();
     }
 
     private int compareIsoCanonicalFirstThenByIsoName(String isoformName1, String isoformName2) {
@@ -109,57 +83,9 @@ class ByIsoformPositionComparator implements Comparator<Annotation> {
 
         if (isIso1Canonical && !isIso2Canonical) {
             return -1;
-        }
-        else if (!isIso1Canonical && isIso2Canonical) {
+        } else if (!isIso1Canonical && isIso2Canonical) {
             return 1;
         }
         return isoformName1.compareTo(isoformName2);
-    }
-
-    /*
-        <h2>Comparison contract</h2>
-
-        <h3>Unknown(null) begin comes first</h3>
-
-        [1]   ?-------
-        [2]   i---------
-
-        <h3>Same begins greater ending comes first</h3>
-
-        [1]   ----------
-        [2]   ------
-    */
-    int compareAnnotByNullablePosition(Integer begin1, Integer end1, Integer begin2, Integer end2) {
-
-        int cmp;
-
-        // 1. begin positions in ascending order
-        // UNKNOWN BEGIN COMES FIRST
-        cmp = compareNullablePositions(begin1, begin2, true);
-
-        // 2. end positions in descending order (most inclusive comes first)
-        if (cmp == 0) {
-
-            // UNKNOWN END COMES LAST
-            cmp = compareNullablePositions(end1, end2, false);
-        }
-
-        return cmp;
-    }
-
-    int compareNullablePositions(Integer i1, Integer i2, boolean asc) {
-
-        int cmp;
-
-        if (Objects.equals(i1, i2)) return 0;
-
-        if (i1 == null)
-            cmp = -1;
-        else if (i2 == null)
-            cmp = 1;
-        else
-            cmp = i1.compareTo(i2);
-
-        return (asc) ? cmp : -cmp;
     }
 }
