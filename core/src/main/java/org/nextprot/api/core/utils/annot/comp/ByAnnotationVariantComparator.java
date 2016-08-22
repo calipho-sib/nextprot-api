@@ -1,8 +1,6 @@
 package org.nextprot.api.core.utils.annot.comp;
 
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.IsoformUtils;
 
 import java.util.Comparator;
 
@@ -13,9 +11,10 @@ class ByAnnotationVariantComparator implements Comparator<Annotation> {
 
     private final Comparator<Annotation> comparator;
 
-    ByAnnotationVariantComparator(Entry entry) {
+    ByAnnotationVariantComparator() {
 
-        comparator = new ByIsoformPositionComparator(IsoformUtils.getCanonicalIsoform(entry))
+        comparator = new ByFeaturePositionComparator()
+                .thenComparing(a -> a.getVariant().getOriginal())
                 .thenComparing(a -> a.getVariant().getVariant());
     }
 
