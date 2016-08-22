@@ -14,6 +14,7 @@ import java.util.*;
 //I would love to do @JsonInclude(Include.NON_NULL)
 public class Annotation implements Serializable, IsoformSpecific {
 
+	@Deprecated
 	private String subjectName;
 	private List<String> subjectComponents;
 	
@@ -417,10 +418,12 @@ public class Annotation implements Serializable, IsoformSpecific {
 		return booleanOptional;
 	}
 	
+	@Deprecated
 	public String getSubjectName() {
 		return subjectName;
 	}
 
+	@Deprecated
 	public void setSubjectName(String subjectName) {
 		this.subjectName = subjectName;
 	}
