@@ -170,7 +170,7 @@ public enum AnnotationCategory implements Serializable {
 	
 
 	//New categories added with BioEditor integration
-	MODIFICATION_EFFECT(-9990, "modification-effect", "modificationEffect", "modificaiton-effect", GENERAL_ANNOTATION),
+	PHENOTYPE(-9990, "phenotype", "phenotype", "phenotype", GENERAL_ANNOTATION),
 	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "mammalian-phenotype", GENERAL_ANNOTATION),
 	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "protein-property", GENERAL_ANNOTATION); //This one refers to mammalian phenotypes
 
