@@ -1,7 +1,10 @@
 package org.nextprot.api.core.utils;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.BioObject;
+import org.nextprot.api.core.domain.Interactant;
+import org.nextprot.api.core.domain.Interaction;
+import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.*;
 
 import java.util.ArrayList;
@@ -136,12 +139,9 @@ public class BinaryInteraction2Annotation {
 
 	static BioObject newBioObject(Interactant interactant) {
 
-		BioObject be;
+		BioObject.BioType bioType = (interactant.isIsoform()) ? BioObject.BioType.PROTEIN_ISOFORM : BioObject.BioType.PROTEIN;
 
-		if (interactant.isNextprot())
-			be = (interactant.isIsoform()) ? new BioIsoform() : new BioEntry();
-		else
-			be = new BioObjectExternal((interactant.isIsoform()) ? BioObject.BioType.PROTEIN_ISOFORM : BioObject.BioType.PROTEIN, interactant.getDatabase());
+		BioObject be = (interactant.isNextprot()) ? BioObject.internal(bioType) : BioObject.external(bioType, interactant.getDatabase());
 
 		be.setId(interactant.getXrefId());
 		be.setAccession((interactant.isNextprot()) ? interactant.getNextprotAccession() : interactant.getAccession());

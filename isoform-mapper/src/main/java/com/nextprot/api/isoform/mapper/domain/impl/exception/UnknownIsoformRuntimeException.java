@@ -2,11 +2,11 @@ package com.nextprot.api.isoform.mapper.domain.impl.exception;
 
 import org.nextprot.api.core.domain.Entry;
 
-public class UnknownIsoformException extends RuntimeException {
+public class UnknownIsoformRuntimeException extends RuntimeException {
 
     private final String unknownIsoformName;
 
-    public UnknownIsoformException(String unknownIsoformName, Entry entry) {
+    public UnknownIsoformRuntimeException(String unknownIsoformName, Entry entry) {
 
         super("unknown isoform: " + unknownIsoformName + " not found in entry " + entry.getUniqueName());
 

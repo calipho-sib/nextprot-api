@@ -6,7 +6,7 @@ import com.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import com.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
 import com.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
-import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformException;
+import com.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformRuntimeException;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
@@ -83,12 +83,15 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     @Override
     public boolean isValidGeneName(Entry entry) {
 
-        List<EntityName> geneNames = entry.getOverview().getGeneNames();
+        if (geneName != null) {
 
-        for (EntityName name : geneNames) {
+            List<EntityName> geneNames = entry.getOverview().getGeneNames();
 
-            if (geneName.startsWith(name.getName())) {
-                return true;
+            for (EntityName name : geneNames) {
+
+                if (geneName.startsWith(name.getName())) {
+                    return true;
+                }
             }
         }
 
@@ -96,14 +99,14 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     }
 
     @Override
-    public Isoform getIsoform(Entry entry) throws UnknownIsoformException {
+    public Isoform getIsoform(Entry entry) throws UnknownIsoformRuntimeException {
 
         Isoform isoform = (isoformName != null) ?
                 IsoformUtils.getIsoformByName(entry, isoformName) :
                 IsoformUtils.getCanonicalIsoform(entry);
 
         if (isoform == null) {
-            throw new UnknownIsoformException(isoformName, entry);
+            throw new UnknownIsoformRuntimeException(isoformName, entry);
         }
 
         return isoform;
@@ -117,13 +120,6 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
                 IsoformUtils.getCanonicalIsoform(entry);
 
         return isoform != null;
-    }
-
-    public static String getGeneName(String feature) {
-
-        Preconditions.checkNotNull(feature);
-
-        return feature.substring(0, feature.indexOf("-"));
     }
 
     @Override
@@ -156,7 +152,12 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
 
     private String parseGeneName(String feature) {
 
-        return getGeneName(feature);
+        Preconditions.checkNotNull(feature);
+
+        if (feature.contains("-"))
+            return feature.substring(0, feature.indexOf("-"));
+
+        return null;
     }
 
     @Override

@@ -9,9 +9,9 @@ import java.util.Objects;
  * @author Daniel Teixeira http://github.com/ddtxra
  *
  */
-public class BioGenericObject extends BioObject<Isoform> {
+public class BioGenericObject extends BioObject {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private String annotationHash;
 	private String type;

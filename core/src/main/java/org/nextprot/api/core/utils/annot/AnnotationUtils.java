@@ -4,7 +4,6 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.BioObject;
-import org.nextprot.api.core.domain.BioObjectExternal;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -278,7 +277,7 @@ public class AnnotationUtils {
 
 	static BioObject newExternalBioObject(AnnotationEvidence evi) {
 
-		BioObject bo = new BioObjectExternal(BioObject.BioType.CHEMICAL, evi.getResourceDb());
+		BioObject bo = BioObject.external(BioObject.BioType.CHEMICAL, evi.getResourceDb());
 
 		bo.setId(evi.getResourceId());
 		bo.setAccession(evi.getResourceAccession());

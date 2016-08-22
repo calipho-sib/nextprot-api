@@ -10,6 +10,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,6 +134,12 @@ public class SequenceVariantTest {
                 mockIsoform("NX_P00519-2", "IB", false));
 
         Assert.assertEquals("NX_P00519-2", variant.getIsoform(entry).getUniqueName());
+    }
+
+    @Test(expected = ParseException.class)
+    public void shouldContainValidDashSeparator() throws Exception {
+
+        new SequenceVariant("WT1:p.Phe154Ser");
     }
 
     private Entry mockEntryWithGenes(String... geneNames) {

@@ -3,15 +3,16 @@ package org.nextprot.api.core.domain;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- * Created by fnikitin on 26/08/15.
- */
-public class BioListTest {
+public class BioObjectListTest {
 
     @Test
     public void testComplex() {
 
-        BioComplex bioComplex = new BioComplex(new BioIsoform(), new BioIsoform(), new BioObjectExternal(BioObject.BioType.CHEMICAL, "ChEBI"));
+        BioObjectList bioComplex = new BioObjectList(BioObject.BioType.COMPLEX,
+                BioObject.internal(BioObject.BioType.PROTEIN),
+                BioObject.internal(BioObject.BioType.PROTEIN),
+                BioObject.external(BioObject.BioType.CHEMICAL, "ChEBI")
+        );
 
         Assert.assertEquals(3, bioComplex.size());
         Assert.assertEquals(BioObject.BioType.COMPLEX, bioComplex.getBioType());
@@ -47,22 +48,21 @@ public class BioListTest {
     @Test
     public void testComplex2() {
 
-        BioEntry be = new BioEntry();
+        BioObject be = BioObject.internal(BioObject.BioType.PROTEIN);
         be.setAccession("NX_Q3L8U1");
 
-        BioIsoform bi = new BioIsoform();
+        BioObject bi = BioObject.internal(BioObject.BioType.PROTEIN);
         bi.setAccession("NX_Q3L8U1-3");
 
-        BioObjectExternal be2 = new BioObjectExternal(BioObject.BioType.PROTEIN, "UniProt");
+        BioObject be2 = BioObject.external(BioObject.BioType.PROTEIN, "UniProt");
         be.setAccession("Q81LD0");
 
-        BioObjectExternal chemical = new BioObjectExternal(BioObject.BioType.CHEMICAL, "ChEBI");
+        BioObject chemical = BioObject.external(BioObject.BioType.CHEMICAL, "ChEBI");
         be.setAccession("CHEBI:29033");
 
-        BioComplex bioComplex = new BioComplex(be, bi, be2, chemical);
+        BioObjectList bioComplex = new BioObjectList(BioObject.BioType.COMPLEX, be, bi, be2, chemical);
 
         Assert.assertEquals(4, bioComplex.size());
-        Assert.assertEquals(4, bioComplex.getContent().size());
         Assert.assertEquals(BioObject.BioType.COMPLEX, bioComplex.getBioType());
         Assert.assertEquals(BioObject.ResourceType.MIXED, bioComplex.getResourceType());
 
@@ -77,16 +77,5 @@ public class BioListTest {
 
         Assert.assertEquals(BioObject.ResourceType.EXTERNAL, bioComplex.getContent().get(3).getResourceType());
         Assert.assertEquals(BioObject.BioType.CHEMICAL, bioComplex.getContent().get(3).getBioType());
-    }
-
-    @Test
-    public void testGroup() {
-
-        BioGroup bioGroup = new BioGroup(new BioIsoform(), new BioIsoform(), new BioObjectExternal(BioObject.BioType.CHEMICAL, "ChEBI"));
-
-        Assert.assertEquals(3, bioGroup.size());
-        Assert.assertEquals(BioObject.BioType.GROUP, bioGroup.getBioType());
-        Assert.assertEquals(BioObject.ResourceType.MIXED, bioGroup.getResourceType());
-        Assert.assertNull(bioGroup.getDatabase());
     }
 }
