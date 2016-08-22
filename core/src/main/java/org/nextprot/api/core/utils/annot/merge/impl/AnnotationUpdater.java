@@ -6,7 +6,6 @@ import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Merge annotations by updating and returning target annotation with source annotations
@@ -41,8 +40,8 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
 
         for (Annotation src : sources) {
 
-            // add only different evidences
-            all.addAll(src.getEvidences().stream().filter(e -> !dest.getEvidences().contains(e)).collect(Collectors.toList()));
+            // According to Daniel, all evidences are different
+            all.addAll(src.getEvidences()); //.stream().filter(e -> !dest.getEvidences().contains(e)).collect(Collectors.toList()));
         }
 
         dest.setEvidences(all);

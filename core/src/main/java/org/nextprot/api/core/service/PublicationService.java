@@ -1,9 +1,9 @@
 package org.nextprot.api.core.service;
 
-import java.util.List;
-
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.service.annotation.ValidEntry;
+
+import java.util.List;
 
 
 public interface PublicationService {
@@ -57,6 +57,6 @@ public interface PublicationService {
 	 * @param accession 25923089
 	 * @return
 	 */
-	List<Publication> findPublicationByDatabaseAndAccession(String database, String accession);
+	Publication findPublicationByDatabaseAndAccession(String database, String accession);
 
 }

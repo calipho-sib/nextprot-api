@@ -55,21 +55,6 @@ public class BioGenericObject extends BioObject {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof BioGenericObject)) return false;
-		if (!super.equals(o)) return false;
-		BioGenericObject that = (BioGenericObject) o;
-		return Objects.equals(annotationHash, that.annotationHash) &&
-				Objects.equals(type, that.type);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(super.hashCode(), annotationHash, type);
-	}
-
-	@Override
 	protected String toBioObjectString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("BioGenericObject type:").append(type).append(", annotationHash:").append(annotationHash);

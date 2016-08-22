@@ -1,8 +1,5 @@
 package com.nextprot.api.annotation.builder;
 
-import java.io.FileNotFoundException;
-import java.util.Arrays;
-
 import org.dbunit.dataset.DataSetException;
 import org.junit.Before;
 import org.mockito.Matchers;
@@ -13,6 +10,8 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
+
+import java.io.FileNotFoundException;
 
 public abstract class AnnotationBuilderBastUnitTest {
 
@@ -36,8 +35,8 @@ public abstract class AnnotationBuilderBastUnitTest {
 		Publication pub = new Publication();
 		pub.setId(999);
 
-		Mockito.when(publicationService.findPublicationByDatabaseAndAccession("PubMed", "000")).thenReturn(Arrays.asList()); //Return an empty list if not found
-		Mockito.when(publicationService.findPublicationByDatabaseAndAccession("PubMed", "123")).thenReturn(Arrays.asList(pub));
+		Mockito.when(publicationService.findPublicationByDatabaseAndAccession("PubMed", "000")).thenReturn(null);
+		Mockito.when(publicationService.findPublicationByDatabaseAndAccession("PubMed", "123")).thenReturn(pub);
 
 	}
 	

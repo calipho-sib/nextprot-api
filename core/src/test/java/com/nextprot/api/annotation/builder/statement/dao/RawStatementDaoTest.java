@@ -1,21 +1,18 @@
 package com.nextprot.api.annotation.builder.statement.dao;
 
-import static org.junit.Assert.*;
-
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
+import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class RawStatementDaoTest extends AnnotationBuilderIntegrationBaseTest {
 
@@ -43,16 +40,10 @@ public class RawStatementDaoTest extends AnnotationBuilderIntegrationBaseTest {
 	
 	@Test
 	public void findModificationEffectCategory(){
-		AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase("modification-effect"));
+		AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase("phenotype"));
 		IsoformAnnotation isoAnnotation = new IsoformAnnotation();
 		isoAnnotation.setCategory(category);
 		
-		assertEquals(isoAnnotation.getCategory(), "modification-effect");
-
-
+		assertEquals(isoAnnotation.getCategory(), "phenotype");
 	}
-
-
-
-
 }

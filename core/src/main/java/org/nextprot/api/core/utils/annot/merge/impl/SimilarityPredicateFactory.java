@@ -34,7 +34,7 @@ public class SimilarityPredicateFactory {
                 ));
             case BINARY_INTERACTION:
             case SMALL_MOLECULE_INTERACTION:
-                return new ObjectSimilarityPredicate<>(Annotation::getBioObject);
+                return new ObjectSimilarityPredicate<>(a -> a.getBioObject().getAccession());
             default:
                 return new ObjectSimilarityPredicate<>(Annotation::getUniqueName);
         }

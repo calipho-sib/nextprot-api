@@ -1,7 +1,6 @@
 package com.nextprot.api.annotation.builder;
 
-import java.util.List;
-
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
@@ -10,7 +9,7 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import java.util.List;
 
 public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTest{
 
@@ -26,8 +25,8 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 		pubmedIds.forEach(p -> {
 			if(p != null){ 
 				String pubmedId = p.replace("(PubMed,", "").replace(")", "");
-				List<Publication> pubs = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-				if(pubs.size() != 1){
+				Publication pub = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
+				if(pub == null){
 					System.err.println("Can t find publication for " + pubmedId); 
 				}
 			}
@@ -44,8 +43,8 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 		pubmedIds.forEach(p -> {
 			if(p != null){
 				String pubmedId = p.replace("(PubMed,", "").replace(")", "");
-				List<Publication> pubs = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-				if(pubs.size() != 1){
+				Publication pub = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
+				if(pub == null) {
 					System.err.println("Can t find publication for " + pubmedId); 
 				}
 			}

@@ -1,14 +1,7 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.DateFormatter;
@@ -27,8 +20,9 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 
 @Repository
@@ -90,15 +84,15 @@ public class PublicationDaoImpl implements PublicationDao {
 	
 	
 	@Override
-	public List<Publication> findPublicationByDatabaseAndAccession(String database, String accession) {
+	public Publication findPublicationByDatabaseAndAccession(String database, String accession) {
 
 		List<Long> ids = findPublicationIdsByDatabaseAndAccession(database, accession);
 
 		if (!ids.isEmpty()) {
-			return Collections.singletonList(findPublicationById(ids.get(0)));
+			return findPublicationById(ids.get(0));
 		}
 
-		return Collections.emptyList();
+		return null;
 	}
 
 	@Override
