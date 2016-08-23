@@ -38,7 +38,7 @@ public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 		for (TargetIsoformStatementPosition tisp : tispSet) {
 			
 			AnnotationIsoformSpecificity ais = new AnnotationIsoformSpecificity();
-			ais.setIsoformName(tisp.getIsoformName());
+			ais.setIsoformName(tisp.getIsoformAccession()); //TODO accession or name???
 			ais.setFirstPosition(tisp.getBegin());
 			ais.setLastPosition(tisp.getEnd());
 			ais.setSpecificity(tisp.getSpecificity());

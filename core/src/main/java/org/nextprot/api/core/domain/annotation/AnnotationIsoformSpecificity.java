@@ -101,6 +101,7 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 		return isoformName;
 	}
 
+	//TODO looks like we alway set the accession here. Should be setIsoformAccession instead
 	public void setIsoformName(String isoformName) {
 		this.isoformName = (isoformName != null) ? isoformName : "";
 		_comparableName = (this.isoformName.startsWith("Iso ")) ? formatIsoName(this.isoformName) : this.isoformName;
