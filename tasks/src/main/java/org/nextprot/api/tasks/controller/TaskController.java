@@ -28,12 +28,11 @@ public class TaskController {
 	@Autowired private SolrIndexingService solrIndexerService; 
 	
 	@ResponseBody
-	@RequestMapping(value = "/tasks/solr/indexTerminologies", method = { RequestMethod.GET }, produces = {MediaType.TEXT_PLAIN_VALUE})
-	@ApiMethod(path = "/tasks/solr/indexTerminologies", verb = ApiVerb.GET, description = "Rebuilds the sol index for terminologies")
+	@RequestMapping(value = "/tasks/solr/reindex/terminologies", method = { RequestMethod.GET }, produces = {MediaType.TEXT_PLAIN_VALUE})
+	@ApiMethod(path = "/tasks/solr/reindex/terminologies", verb = ApiVerb.GET, description = "Rebuilds the sol index for terminologies")
 	public String indexTerminologies(HttpServletRequest request) {
 
 		LOGGER.warn("Request to build solr index for terminologies " + request.getRemoteAddr());
-
 		String result;
 		try {
 			result = solrIndexerService.indexTerminologies();
@@ -41,10 +40,25 @@ public class TaskController {
 			e.printStackTrace();
 			LOGGER.error(e.getMessage());
 			result = e.getLocalizedMessage();
-
 		}
 		return result;
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "/tasks/solr/reindex/publications", method = { RequestMethod.GET }, produces = {MediaType.TEXT_PLAIN_VALUE})
+	@ApiMethod(path = "/tasks/solr/reindex/publications", verb = ApiVerb.GET, description = "Rebuilds the sol index for publications")
+	public String indexPublicationss(HttpServletRequest request) {
+
+		LOGGER.warn("Request to build solr index for terminologies " + request.getRemoteAddr());
+		String result;
+		try {
+			result = solrIndexerService.indexPublications();
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOGGER.error(e.getMessage());
+			result = e.getLocalizedMessage();
+		}
+		return result;
+	}
 	
 }
