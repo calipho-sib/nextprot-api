@@ -2,8 +2,11 @@ package org.nextprot.api.core.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.nextprot.api.commons.utils.KeyValueRepresentation;
+import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -139,6 +142,12 @@ public class Entry implements KeyValueRepresentation {
 
 	public List<Annotation> getAnnotations() {
 		return annotations;
+	}
+
+	public Map<String, List<Annotation>> getAnnotationsByCategory() {
+		return annotations.stream().collect(Collectors.groupingBy(a -> {
+			return StringUtils.camelToKebabCase(a.getApiTypeName());
+		}));
 	}
 
 	public List<AntibodyMapping> getAntibodiesByIsoform(String isoform) {
