@@ -1,12 +1,15 @@
 package org.nextprot.api.etl.service.impl;
 
-import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
-import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
-import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
-import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -15,8 +18,6 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementRemoteService;
-import org.nextprot.api.etl.utils.TargetIsoformUtils;
-import org.nextprot.commons.constants.IsoTargetSpecificity;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
@@ -28,11 +29,10 @@ import org.nextprot.commons.statements.service.impl.JDBCStatementLoaderServiceIm
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
+import com.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
+import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
