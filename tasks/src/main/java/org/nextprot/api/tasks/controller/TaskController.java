@@ -5,7 +5,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
-import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
@@ -13,9 +12,7 @@ import org.nextprot.api.tasks.service.SolrIndexingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,9 +40,9 @@ public class TaskController {
 		String result;
 		try {
 			if ("entries".equals(indexName)) {
-				result = solrIndexerService.IndexEntriesChromosome(false, chrName);
+				result = solrIndexerService.indexEntriesChromosome(false, chrName);
 			} else if ("gold-entries".equals(indexName)) {
-				result = solrIndexerService.IndexEntriesChromosome(true, chrName);
+				result = solrIndexerService.indexEntriesChromosome(true, chrName);
 			} else {
 				result = "Error: invalid index name, should be either entries or gold-entries";
 			}

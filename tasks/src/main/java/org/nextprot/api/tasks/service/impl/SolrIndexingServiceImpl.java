@@ -45,13 +45,13 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 	@Autowired private DbXrefService dbxrefService;
 	
 	@Override
-	public String IndexEntriesChromosome(boolean isGold, String chrName) {
+	public String indexEntriesChromosome(boolean isGold, String chrName) {
 
 		long seconds = System.currentTimeMillis() / 1000;
 		StringBuilder info = new StringBuilder();
 		
 		String indexName = isGold ?  GoldEntryIndex.NAME : EntryIndex.NAME;
-		logAndCollect(info, "adding entries to index " + indexName + "from chromosome " + chrName + "...STARTING at " + new Date());
+		logAndCollect(info, "adding entries to index " + indexName + " from chromosome " + chrName + "...STARTING at " + new Date());
 
 		String serverUrl = getServerUrl(indexName);
 		logAndCollect(info,"Solr server: " + serverUrl); 
