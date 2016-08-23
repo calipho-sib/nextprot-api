@@ -145,6 +145,8 @@ public class Entry implements KeyValueRepresentation {
 	}
 
 	public Map<String, List<Annotation>> getAnnotationsByCategory() {
+		if(annotations == null) return null;
+		
 		return annotations.stream().collect(Collectors.groupingBy(a -> {
 			return StringUtils.camelToKebabCase(a.getApiTypeName());
 		}));
