@@ -85,7 +85,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 				}
 				
 					//statementsMappedToIsoformToLoad.addAll(transformStatements(AnnotationType.ISOFORM, originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific));
-					statementsMappedToEntryToLoad.addAll(transformStatements(AnnotationType.ENTRY, originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformName));
+					statementsMappedToEntryToLoad.addAll(transformStatements(AnnotationType.ENTRY, originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession));
 					
 				}
 
