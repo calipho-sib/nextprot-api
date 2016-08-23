@@ -7,6 +7,8 @@ import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
 import com.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
+
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
@@ -34,6 +36,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
+	
+	private static final Logger LOGGER = Logger.getLogger(StatementETLServiceImpl.class);
 
 	@Autowired private IsoformService isoformService;
 	
@@ -49,7 +53,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	public String etlStatements(NextProtSource source) {
 
 		List<Statement> sourceStatements = statementRemoteService.getStatementsForSource(source);
-		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "msh2");
+		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
 		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
 
 		//System.err.println("Got response from source");
@@ -90,6 +94,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 		StringBuilder sb = new StringBuilder();
 
 		try {
+			
 			addInfo(sb, "Loading raw statements: " + sourceStatements.size());
 			statementLoadService.loadRawStatementsForSource(new HashSet<>(sourceStatements), NextProtSource.BioEditor);
 
@@ -158,9 +163,14 @@ public class StatementETLServiceImpl implements StatementETLService {
 		//In case of entry variants have the target isoform property filled
 		Map<String, List<Statement>> subjectsTransformedByEntryOrIsoform = getSubjectsTransformed(type, originalStatement, sourceStatementsById, subjectStatements, nextprotAcession, isIsoSpecific);
 				
-		subjectsTransformedByEntryOrIsoform.keySet().stream().forEach(isoform -> {
+		for(String entryOrIsoform : subjectsTransformedByEntryOrIsoform.keySet()) {
 				
-				List<Statement> subjects = subjectsTransformedByEntryOrIsoform.get(isoform);
+				List<Statement> subjects = subjectsTransformedByEntryOrIsoform.get(entryOrIsoform);
+				
+				if(subjects.isEmpty()){
+					LOGGER.warn("subjects is empty, skip");
+					continue;
+				}
 				
 				String targetIsoformsForObject = null;
 				String targetIsoformsForPhenotype = null;
@@ -172,10 +182,17 @@ public class StatementETLServiceImpl implements StatementETLService {
 					List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
 					List<String> isoformNames = isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());
 					
-					Set<TargetIsoformStatementPosition> targetIsoforms = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(originalStatement, isoformMappingService, subjects, isIsoSpecific, isoSpecificAccession, isoformNames);
-					targetIsoformsForPhenotype= TargetIsoformSerializer.serializeToJsonString(targetIsoforms);
-					 
-					 //targetIsoformsForObject = computeTargetIsoformsForProteoformAnnotation(subjects);
+					Set<TargetIsoformStatementPosition> targetIsoformsForPhenotypeSet = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(originalStatement, isoformMappingService, subjects, isIsoSpecific, isoSpecificAccession, isoformNames);
+					targetIsoformsForPhenotype = TargetIsoformSerializer.serializeToJsonString(targetIsoformsForPhenotypeSet);
+
+					//The same as for phenotype but without the name
+					Set<TargetIsoformStatementPosition> targetIsoformsForObjectSet = new TreeSet<TargetIsoformStatementPosition>();
+					for(TargetIsoformStatementPosition tisp : targetIsoformsForPhenotypeSet){
+						targetIsoformsForObjectSet.add(new TargetIsoformStatementPosition(tisp.getIsoformAccession(), tisp.getSpecificity(), null));
+					}
+					targetIsoformsForObject = TargetIsoformSerializer.serializeToJsonString(targetIsoformsForObjectSet);
+					
+					
 				}
 				
 				
@@ -187,18 +204,18 @@ public class StatementETLServiceImpl implements StatementETLService {
 				if(objectStatement != null){
 
 					objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
-							.addField(StatementField.ISOFORM_ACCESSION, isoform) //in case of annotation
+							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject) // in case of entry
 							.build();
 					
 					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
-							.addField(StatementField.ISOFORM_ACCESSION, isoform) //in case of annotation
+							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
 							.addSubjects(subjects).addObject(objectIsoStatement).build();
 				}else {
 					
 					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
-							.addField(StatementField.ISOFORM_ACCESSION, isoform) //in case of annotation
+							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
 							.addSubjects(subjects).build();
 
@@ -217,7 +234,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 				}
 
 
-		});
+		};
 		
 		return statementsToLoad;
 

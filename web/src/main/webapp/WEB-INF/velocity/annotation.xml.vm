@@ -1,6 +1,6 @@
 <annotation quality='$annotation.getQualityQualifier()' annotation-internal-id='#if($annotation.getAnnotationHash())$annotation.getAnnotationHash()#else$annotation.getAnnotationId()#end'>
 	#if($annotation.getSubjectName())
-    <biological-subject name="$annotation.getSubjectName()">
+    <biological-subject>
     	<biological-subject-component-list>
 	    #foreach($component in $annotation.getSubjectComponents())
 		    <biological-subject-component annotation-internal-ref="$component" />

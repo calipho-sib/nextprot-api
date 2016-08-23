@@ -144,7 +144,9 @@ public class StatementTransformationUtil {
 				result.add(mapVariationStatementToEntry(subject, (FeatureQuerySuccess) featureQueryResult));
 			} else {
 				FeatureQueryFailure failure = (FeatureQueryFailure) featureQueryResult;
-				System.err.println("Failure for " + subject.getStatementId() + " " + failure.getError().getMessage());
+				String message = "Failure for " + subject.getStatementId() + " " + failure.getError().getMessage();
+				LOGGER.error(message);
+				System.err.println(message);
 			}
 		}
 
