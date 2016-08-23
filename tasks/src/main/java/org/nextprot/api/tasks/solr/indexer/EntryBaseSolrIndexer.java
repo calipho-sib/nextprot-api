@@ -9,7 +9,6 @@ import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
