@@ -1,6 +1,5 @@
 package org.nextprot.api.etl.utils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -21,7 +20,7 @@ public class TargetIsoformUtils {
 		Set<TargetIsoformStatementPosition> isoSpecForAllByDefault = new TreeSet<>();
 
 		isoformNames.forEach(i -> {
-			isoSpecForAllByDefault.add(new TargetIsoformStatementPosition(i, IsoTargetSpecificity.BY_DEFAULT.name()));
+			isoSpecForAllByDefault.add(new TargetIsoformStatementPosition(i, IsoTargetSpecificity.BY_DEFAULT.name(), null));
 		});
 		
 		return isoSpecForAllByDefault;
@@ -33,7 +32,7 @@ public class TargetIsoformUtils {
 	}
 
 	
-	public static String getTargetIsoformForPhenotypeSerialized(Statement subject, List<String> isoformNames, boolean isIsoSpecific, String isoSpecificName, String name) {
+	/*public static String getTargetIsoformForPhenotypeSerialized(Statement subject, List<String> isoformNames, boolean isIsoSpecific, String isoSpecificName, String name) {
 		return TargetIsoformSerializer.serializeToJsonString(getTargetIsoformForPhenotype(subject, isoformNames, isIsoSpecific, isoSpecificName, name));
 	}
 	
@@ -50,7 +49,7 @@ public class TargetIsoformUtils {
 		if (isIsoSpecific) {
 			Set<TargetIsoformStatementPosition> tispSubject = TargetIsoformSerializer.deSerializeFromJsonString(targetIsoformForSubject);
 			//Take the iso from the subject and set it to be Specific and not propagate to others
-			TargetIsoformStatementPosition tisp = new TargetIsoformStatementPosition(isoSpecificName, IsoTargetSpecificity.SPECIFIC.name());
+			TargetIsoformStatementPosition tisp = new TargetIsoformStatementPosition(isoSpecificName, IsoTargetSpecificity.SPECIFIC.name(), name);
 			targetIsoformForPhenotype = new TreeSet<TargetIsoformStatementPosition>(Arrays.asList((tisp)));
 		}else {
 			targetIsoformForPhenotype = getIsosByDefault(isoformNames);
@@ -58,7 +57,7 @@ public class TargetIsoformUtils {
 		
 		return targetIsoformForPhenotype;
 
-	}
+	} */
 
 	
 	public static Set<TargetIsoformStatementPosition> getTargetIsoformForObject(Statement subject, List<String> isoformNames) {

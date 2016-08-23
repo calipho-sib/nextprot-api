@@ -1,6 +1,6 @@
 <annotation quality='$annotation.getQualityQualifier()' annotation-internal-id='#if($annotation.getAnnotationHash())$annotation.getAnnotationHash()#else$annotation.getAnnotationId()#end'>
 	#if($annotation.getSubjectName())
-    <biological-subject name="$annotation.getSubjectName()">
+    <biological-subject>
     	<biological-subject-component-list>
 	    #foreach($component in $annotation.getSubjectComponents())
 		    <biological-subject-component annotation-internal-ref="$component" />
@@ -70,6 +70,10 @@
 							<property name="$pk" value="$evidence.getPropertyValue($pk)" />
 						#end
 					</property-list>
+				#end
+				#if($evidence.getNote())
+					#set($UNESCAPED_CDATA = $evidence.getNote())
+					<evidence-note><![CDATA[$UNESCAPED_CDATA]]></evidence-note>
 				#end
 			</evidence>
 		#end

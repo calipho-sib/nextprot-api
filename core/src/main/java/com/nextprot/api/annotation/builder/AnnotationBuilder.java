@@ -180,7 +180,6 @@ abstract class AnnotationBuilder<T extends Annotation> {
 		if(statement.getValue(StatementField.REFERENCE_PUBMED) != null){
 			String pubmedId = statement.getValue(StatementField.REFERENCE_PUBMED);
 			Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-
 			if (publication == null) {
 				evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, -1L));
 			}
@@ -239,7 +238,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 				annotation.setQualityQualifier(statement.getValue(StatementField.EVIDENCE_QUALITY));
 			}
 
-			if(cvTermAccession != null){
+			if(cvTermAccession != null && !cvTermAccession.isEmpty()){
 
 				annotation.setCvTermAccessionCode(cvTermAccession);
 
