@@ -74,6 +74,21 @@ public class AnnotationUtils {
 		//sb.append("").append(a.).append(sep);
 		return sb.toString();
 	}
+
+	
+    /**
+	 * Filter annotation by its hashes
+	 */
+	public static List<Annotation> filterAnnotationsByHashes(Entry entry, Set<String> hashes) {
+
+        List<Annotation> annotations = entry.getAnnotations();
+		if (annotations == null) return null;
+
+		return annotations.stream()
+				.filter(a -> hashes.contains(a.getAnnotationHash()))
+				.collect(Collectors.toList());
+        
+	}
 	
 	
     /**
