@@ -8,6 +8,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,12 +86,12 @@ public class ByAnnotationSubjectComparatorTest {
     @Test
     public void compareAnnotations() throws Exception {
 
-        ByAnnotationSubjectComparator comparator = new ByAnnotationSubjectComparator(mockHashableComparator(
-                mockHashMap(
+        ByAnnotationSubjectComparator comparator = new ByAnnotationSubjectComparator(mockHashMap(
                     mockAnnotation(AnnotationCategory.VARIANT, "hash1"),
                     mockAnnotation(AnnotationCategory.MUTAGENESIS, "hash2")
-                ), 0
-        ));
+                ),
+                mockHashableComparator(0)
+        );
 
         Annotation a1 = new Annotation();
         a1.setSubjectComponents(Collections.singletonList("hash1"));
@@ -123,11 +124,10 @@ public class ByAnnotationSubjectComparatorTest {
         return annotation;
     }
 
-    private static HashableAnnotationComparator mockHashableComparator(Map<String, Annotation> map, int cmpReturn) {
+    private static Comparator<Annotation> mockHashableComparator(int cmpReturn) {
 
-        HashableAnnotationComparator comparator = Mockito.mock(HashableAnnotationComparator.class);
+        Comparator<Annotation> comparator = Mockito.mock(Comparator.class);
 
-        when(comparator.getHashableAnnotations()).thenReturn(map);
         when(comparator.compare(any(Annotation.class), any(Annotation.class))).thenReturn(cmpReturn);
 
         return comparator;
