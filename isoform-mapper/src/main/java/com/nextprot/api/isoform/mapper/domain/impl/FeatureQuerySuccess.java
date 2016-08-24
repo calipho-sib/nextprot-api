@@ -115,6 +115,21 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         private boolean isCanonical;
         private String isoSpecificFeature;
 
+        public IsoformFeatureResult(){
+        	
+        }
+
+        public IsoformFeatureResult(String isoformAccession, String isoformName, Integer beginIsoformPosition, Integer endIsoformPosition, Integer beginMasterPosition, Integer endMasterPosition, boolean isCanonical, String isoSpecificFeature){
+        	this.isoformAccession = isoformAccession;
+        	this.isoformName = isoformName;
+        	this.beginIsoformPosition = beginIsoformPosition;
+        	this.endIsoformPosition = endIsoformPosition;
+        	this.beginMasterPosition = beginMasterPosition;
+        	this.endMasterPosition = endMasterPosition;
+        	this.isCanonical = isCanonical;
+        	this.isoSpecificFeature = isoSpecificFeature;
+        }
+
         public String getIsoformAccession() {
             return isoformAccession;
         }

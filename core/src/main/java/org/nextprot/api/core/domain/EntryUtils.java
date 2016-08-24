@@ -41,6 +41,18 @@ public class EntryUtils implements Serializable{
   		if (config.hasSubPart()) {
 
 			annotations = AnnotationUtils.filterAnnotationsByCategory(entry, config.getSubpart());
+
+			Set<String> dependencyHashes = new HashSet<String>();
+			annotations.stream().filter(a -> a.isProteoformAnnotation()).forEach(a -> {
+				for(String subject : a.getSubjectComponents()){
+					dependencyHashes.add(subject);
+				}
+				dependencyHashes.add(((BioGenericObject)a.getBioObject()).getAnnotationHash());
+			});
+			
+			List<Annotation> dependentAnnotations = AnnotationUtils.filterAnnotationsByHashes(entry, dependencyHashes);
+			annotations.addAll(dependentAnnotations);
+			
 			entry.setAnnotations(annotations);
 			
 			if(!config.hasNoAdditionalReferences()){ //In case we don't care about xrefs, publications and experimental contexts (will be faster)

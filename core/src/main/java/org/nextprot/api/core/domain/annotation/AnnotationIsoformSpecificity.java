@@ -36,6 +36,8 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 	private String isoformName;
 	private String specificity; // cv_name related to annotation_protein_assoc.cv_specificity_qualifier_type_id
 
+	private String name;
+
 	private String _comparableName;
 	
 	public String getSpecificity() {
@@ -99,6 +101,7 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 		return isoformName;
 	}
 
+	//TODO looks like we alway set the accession here. Should be setIsoformAccession instead
 	public void setIsoformName(String isoformName) {
 		this.isoformName = (isoformName != null) ? isoformName : "";
 		_comparableName = (this.isoformName.startsWith("Iso ")) ? formatIsoName(this.isoformName) : this.isoformName;
@@ -144,5 +147,13 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 
 		return isoformName.equals(other.isoformName) &&
 				Objects.equals(firstPosition, other.firstPosition) && Objects.equals(lastPosition, other.lastPosition);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }
