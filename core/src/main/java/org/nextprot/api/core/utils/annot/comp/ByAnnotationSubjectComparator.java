@@ -1,47 +1,106 @@
 package org.nextprot.api.core.utils.annot.comp;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-class ByAnnotationSubjectComparator implements Comparator<Annotation> {
+class ByAnnotationSubjectComparator implements HashableAnnotationComparator {
 
-    private final Entry entry;
     private final Map<String, Annotation> annotationByHash;
+    private final Comparator<Annotation> subjectAnnotationComparator;
 
-    ByAnnotationSubjectComparator(Entry entry) {
+    ByAnnotationSubjectComparator(final Map<String, Annotation> annotationByHash) {
 
-        annotationByHash = EntryUtils.getHashAnnotationMap(entry);
-        this.entry = entry;
+        this(new SubjectComparator(annotationByHash));
+    }
+
+    /**
+     * Construct an instance of ByAnnotationSubjectComparator with a given map of referenced annotations
+     */
+    ByAnnotationSubjectComparator(HashableAnnotationComparator subjectAnnotationComparator) {
+
+        this.annotationByHash = subjectAnnotationComparator.getHashableAnnotations();
+        this.subjectAnnotationComparator = subjectAnnotationComparator;
     }
 
     @Override
-    public int compare(Annotation a1, Annotation a2) {
+    public int compare(final Annotation a1, final Annotation a2) {
 
-        if (a1.getSubjectName() == null || a2.getSubjectName() == null)
-            return 0;
+        if (a1.getSubjectComponents() == null || a2.getSubjectComponents() == null) {
 
-        List<Annotation> subjectAnnotations1 = a1.getSubjectComponents().stream().map(annotationByHash::get).collect(Collectors.toList());
-        List<Annotation> subjectAnnotations2 = a2.getSubjectComponents().stream().map(annotationByHash::get).collect(Collectors.toList());
+            if (a1.getSubjectComponents() == a2.getSubjectComponents())
+                return 0;
+            else if (a1.getSubjectComponents() == null)
+                return 1;
+            else
+                return -1;
+        }
 
-        if (subjectAnnotations1.isEmpty())
-            throw new NextProtException("cannot find subject for annotation "+ AnnotationUtils.toString(a1));
+        return subjectAnnotationComparator.compare(getFirstSubjectAnnotation(a1), getFirstSubjectAnnotation(a2));
+    }
 
-        if (subjectAnnotations2.isEmpty())
-            throw new NextProtException("cannot find subject for annotation "+ AnnotationUtils.toString(a2));
+    private Annotation getFirstSubjectAnnotation(final Annotation a) {
 
-        Annotation annot1 = subjectAnnotations1.get(0);
-        Annotation annot2 = subjectAnnotations2.get(0);
+        List<Annotation> subjectAnnotationList = a.getSubjectComponents().stream()
+                .map(annotationByHash::get)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
-        Comparator<Annotation> comp = AnnotationComparators.newComparator(annot1.getAPICategory(), entry);
+        if (subjectAnnotationList.isEmpty())
+            throw new NextProtException("cannot find subject for annotation "+ AnnotationUtils.toString(a));
 
-        return comp.compare(annot1, annot2);
+        return subjectAnnotationList.get(0);
+    }
+
+    @Override
+    public Map<String, Annotation> getHashableAnnotations() {
+
+        return annotationByHash;
+    }
+
+    private static class SubjectComparator implements HashableAnnotationComparator {
+
+        private final Map<String, Annotation> annotationByHash;
+
+        SubjectComparator(final Map<String, Annotation> annotationByHash) {
+
+            this.annotationByHash = annotationByHash;
+        }
+
+        @Override
+        public int compare(final Annotation sa1, final Annotation sa2) {
+
+            if (sa1.getAPICategory() == null)
+                throw new NextProtException("undefined AnnotationCategory for subject annotation:\n" + AnnotationUtils.toString(sa1));
+
+            if (sa2.getAPICategory() == null)
+                throw new NextProtException("undefined AnnotationCategory for subject annotation:\n" + AnnotationUtils.toString(sa2));
+
+            if (sa1.getAPICategory() == sa2.getAPICategory()) {
+
+                return AnnotationComparators.newComparator(sa1.getAPICategory(), annotationByHash)
+                        .compare(sa1, sa2);
+            } else if (sa1.getAPICategory().getParent() == AnnotationCategory.POSITIONAL_ANNOTATION &&
+                    sa2.getAPICategory().getParent() == AnnotationCategory.POSITIONAL_ANNOTATION) {
+
+                return new ByFeaturePositionComparator()
+                        .compare(sa1, sa2);
+            }
+
+            return sa1.getAPICategory().compareTo(sa2.getAPICategory());
+        }
+
+        @Override
+        public Map<String, Annotation> getHashableAnnotations() {
+
+            return annotationByHash;
+        }
     }
 }
