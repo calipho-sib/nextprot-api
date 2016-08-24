@@ -17,7 +17,7 @@ public class BioGenericObject extends BioObject {
 	private String type;
 
 	BioGenericObject() {
-		super(BioType.ENTRY_ANNOTATION, ResourceType.INTERNAL, NEXTPROT);
+		super(BioType.ENTRY_ANNOTATION, ResourceType.INTERNAL, NEXTPROT_DATABASE);
 	}
 
 	public BioGenericObject(BioType bioType, ResourceType resourceType, String database) {
@@ -26,7 +26,7 @@ public class BioGenericObject extends BioObject {
 
 	public static BioGenericObject valueOf(AnnotationCategory annotationCategory, String database) {
 
-		ResourceType rt = (database.equals(NEXTPROT)) ? ResourceType.INTERNAL : ResourceType.EXTERNAL;
+		ResourceType rt = (database.equals(NEXTPROT_DATABASE)) ? ResourceType.INTERNAL : ResourceType.EXTERNAL;
 
 		if (annotationCategory == AnnotationCategory.SMALL_MOLECULE_INTERACTION) {
 			return new BioGenericObject(BioType.CHEMICAL, rt, database);

@@ -177,6 +177,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 	void setEvidenceResourceId(AnnotationEvidence evidence, Statement statement) {
 		
+		//TODO: should also set resourceType: and resourceAccession + resourceDb if resourceType = 'database' !!!
 		if(statement.getValue(StatementField.REFERENCE_PUBMED) != null){
 			String pubmedId = statement.getValue(StatementField.REFERENCE_PUBMED);
 			Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
@@ -185,6 +186,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			}
 			else {
 				evidence.setResourceId(publication.getPublicationId());
+				evidence.setPublicationMD5(publication.getMD5());
 			}
 		}
 	}
@@ -275,7 +277,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 			if ((boah != null) && (boah.length() > 0) || (boa != null && (boa.length() > 0))) {
 
-				BioGenericObject bioObject = BioGenericObject.valueOf(annotation.getAPICategory(), BioObject.NEXTPROT);
+				BioGenericObject bioObject = BioGenericObject.valueOf(annotation.getAPICategory(), BioObject.NEXTPROT_DATABASE);
 
 				bioObject.setAccession(boa); // In case of interactions
 				bioObject.setType(bot);
