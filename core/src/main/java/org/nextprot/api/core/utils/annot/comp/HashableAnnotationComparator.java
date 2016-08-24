@@ -42,9 +42,10 @@ abstract class HashableAnnotationComparator implements Comparator<Annotation> {
                 return -1;
         }
 
-        return referencedAnnotationComparator.compare(
-                getReferencedAnnotation(getAnnotationHash(a1)), getReferencedAnnotation(getAnnotationHash(a2))
-        );
+        Annotation refAnnot1 = getReferencedAnnotation(getAnnotationHash(a1));
+        Annotation refAnnot2 = getReferencedAnnotation(getAnnotationHash(a2));
+
+        return referencedAnnotationComparator.compare(refAnnot1, refAnnot2);
     }
 
     private Annotation getReferencedAnnotation(final String annotationHash) {
