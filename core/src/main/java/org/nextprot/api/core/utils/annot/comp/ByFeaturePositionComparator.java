@@ -6,6 +6,8 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 
 import java.util.*;
 
+import static org.nextprot.api.core.utils.annot.comp.AnnotationComparators.compareNullableComparableObject;
+
 /**
  * Comparison function that sort Annotations based on feature positions.
  *
@@ -100,31 +102,15 @@ class ByFeaturePositionComparator implements Comparator<Annotation> {
 
         // 1. begin positions in ascending order
         // UNKNOWN BEGIN COMES FIRST
-        cmp = compareNullablePositions(begin1, begin2, true);
+        cmp = compareNullableComparableObject(begin1, begin2, true);
 
         // 2. end positions in descending order (most inclusive comes first)
         if (cmp == 0) {
 
             // UNKNOWN END COMES LAST
-            cmp = compareNullablePositions(end1, end2, false);
+            cmp = compareNullableComparableObject(end1, end2, false);
         }
 
         return cmp;
-    }
-
-    static int compareNullablePositions(Integer i1, Integer i2, boolean asc) {
-
-        int cmp;
-
-        if (Objects.equals(i1, i2)) return 0;
-
-        if (i1 == null)
-            cmp = -1;
-        else if (i2 == null)
-            cmp = 1;
-        else
-            cmp = i1.compareTo(i2);
-
-        return (asc) ? cmp : -cmp;
     }
 }
