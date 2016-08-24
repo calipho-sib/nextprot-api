@@ -70,7 +70,7 @@ public class ByAnnotationSubjectComparatorTest {
     @Test(expected = NextProtException.class)
     public void compareAnnotationsCannotFindOneSubjectAnnot() throws Exception {
 
-        ByAnnotationSubjectComparator comparator = new ByAnnotationSubjectComparator(mockHashMap(
+        ByAnnotationSubjectComparator comparator = new ByAnnotationSubjectComparator(newHashMap(
                 mockAnnotation(AnnotationCategory.VARIANT, "hash1"))
         );
 
@@ -86,7 +86,7 @@ public class ByAnnotationSubjectComparatorTest {
     @Test
     public void compareAnnotations() throws Exception {
 
-        ByAnnotationSubjectComparator comparator = new ByAnnotationSubjectComparator(mockHashMap(
+        ByAnnotationSubjectComparator comparator = new ByAnnotationSubjectComparator(newHashMap(
                     mockAnnotation(AnnotationCategory.VARIANT, "hash1"),
                     mockAnnotation(AnnotationCategory.MUTAGENESIS, "hash2")
                 ),
@@ -102,7 +102,7 @@ public class ByAnnotationSubjectComparatorTest {
         Assert.assertEquals(0, cmp);
     }
 
-    private static Map<String, Annotation> mockHashMap(Annotation... annotations) {
+    public static Map<String, Annotation> newHashMap(Annotation... annotations) {
 
         Map<String, Annotation> map = new HashMap<>();
 
@@ -114,7 +114,7 @@ public class ByAnnotationSubjectComparatorTest {
         return map;
     }
 
-    private static Annotation mockAnnotation(AnnotationCategory annotationCategory, String annotationHash) {
+    public static Annotation mockAnnotation(AnnotationCategory annotationCategory, String annotationHash) {
 
         Annotation annotation = Mockito.mock(Annotation.class);
 
@@ -124,7 +124,7 @@ public class ByAnnotationSubjectComparatorTest {
         return annotation;
     }
 
-    private static Comparator<Annotation> mockHashableComparator(int cmpReturn) {
+    public static Comparator<Annotation> mockHashableComparator(int cmpReturn) {
 
         Comparator<Annotation> comparator = Mockito.mock(Comparator.class);
 
