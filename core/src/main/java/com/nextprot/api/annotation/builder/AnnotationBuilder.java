@@ -32,7 +32,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 	/**
 	 * Flag that indicates that the build should throw an Exception at the first error or just log silently
 	 */
-	private static final boolean STRICT = false;
+	static boolean STRICT = false;
 
 	
 	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));

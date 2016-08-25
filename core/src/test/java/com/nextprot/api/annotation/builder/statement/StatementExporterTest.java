@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.io.FileNotFoundException;
-import java.util.Map;
 
 @ActiveProfiles({ "dev", "cache" })
 public class StatementExporterTest extends CoreUnitBaseTest {
@@ -40,13 +39,5 @@ public class StatementExporterTest extends CoreUnitBaseTest {
 
         String content = exporter.exportGeneStatementsAsTsvString("spongebob");
         Assert.assertEquals(1, content.split("\n").length);
-    }
-
-    @Test
-    public void fetchAllGeneNames() throws FileNotFoundException {
-
-        Map<String, String> map = exporter.exportAllGeneStatementsAsTsvString();
-
-        Assert.assertEquals(20, map.keySet().size());
     }
 }
