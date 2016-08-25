@@ -91,8 +91,6 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			impactAnnotations.stream().forEach(ia -> {
 				
 				String name = subjectVariants.stream().map(v -> v.getAnnotationName()).collect(Collectors.joining(" + ")).toString();
-				
-				ia.setSubjectName(name);
 				ia.setSubjectComponents(Arrays.asList(subjectComponentsIdentifiersArray));
 			});
 
@@ -188,7 +186,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 					evidence.setResourceId(publication.getPublicationId());
 				}
 			}
-		}else {
+		} else {
 			//Create a XREF
 		}
 	}
@@ -279,7 +277,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 			if ((boah != null) && (boah.length() > 0) || (boa != null && (boa.length() > 0))) {
 
-				BioGenericObject bioObject = BioGenericObject.valueOf(annotation.getAPICategory(), BioObject.NEXTPROT);
+				BioGenericObject bioObject = BioGenericObject.valueOf(annotation.getAPICategory(), BioObject.NEXTPROT_DATABASE);
 
 				bioObject.setAccession(boa); // In case of interactions
 				bioObject.setType(bot);

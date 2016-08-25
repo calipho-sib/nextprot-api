@@ -20,7 +20,7 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	@Test
 	public void shouldFindAllPublications() {
 		
-		List<String> pubmedIds = statementDao.findAllDistinctValuesforField(StatementField.REFERENCE_PUBMED);
+		List<String> pubmedIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION, StatementField.REFERENCE_DATABASE, "PubMed");
 		System.out.println("Found " + pubmedIds.size() + " distinct pubmeds");
 		pubmedIds.forEach(p -> {
 			if(p != null){ 
@@ -38,7 +38,7 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	@Test
 	public void shouldFindAllPubmeds() {
 		
-		List<String> pubmedIds = statementDao.findAllDistinctValuesforField(StatementField.REFERENCE_PUBMED);
+		List<String> pubmedIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION, StatementField.REFERENCE_DATABASE , "PubMed");
 		System.out.println("Found " + pubmedIds.size() + " distinct pubmeds");
 		pubmedIds.forEach(p -> {
 			if(p != null){

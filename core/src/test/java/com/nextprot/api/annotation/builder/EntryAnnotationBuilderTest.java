@@ -13,7 +13,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 	@Test
 	public void shouldFindCorrectPublicationId() {
 
-		Statement sb1 = StatementBuilder.createNew().addField(StatementField.REFERENCE_PUBMED, "123").build();
+		Statement sb1 = StatementBuilder.createNew().addField(StatementField.REFERENCE_ACCESSION, "123").build();
 		
 		AnnotationBuilder ab = EntryAnnotationBuilder.newBuilder(terminologyService, publicationService);
 		AnnotationEvidence evidence = new AnnotationEvidence();
@@ -27,7 +27,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 	@Test(expected = NextProtException.class)
 	public void shouldThrowAnExceptionIfInModeStrictAndPublicationIsNotFound() {
 
-		Statement sb1 = StatementBuilder.createNew().addField(StatementField.REFERENCE_PUBMED, "000").build();
+		Statement sb1 = StatementBuilder.createNew().addField(StatementField.REFERENCE_ACCESSION, "000").build();
 		AnnotationBuilder ab = EntryAnnotationBuilder.newBuilder(terminologyService, publicationService);
 		AnnotationEvidence evidence = new AnnotationEvidence();
 		ab.setEvidenceResourceId(evidence, sb1);

@@ -11,6 +11,7 @@ import java.util.TreeMap;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.nextprot.api.core.utils.PublicationUtils;
@@ -81,7 +82,8 @@ public class EntryUtils implements Serializable{
 		for (Annotation annot: entry.getAnnotations()) {
 			if (annot.isProteoformAnnotation()) {
 				if (annot.getTargetingIsoformsMap().containsKey(isoformAc)) {
-					result.add(new Proteoform(isoformAc, annot.getSubjectName(), annot.getSubjectComponents()));
+					AnnotationIsoformSpecificity spec = annot.getTargetingIsoformsMap().get(isoformAc);
+					result.add(new Proteoform(isoformAc, spec.getName(), annot.getSubjectComponents()));
 				}
 			}
 		}
@@ -154,7 +156,8 @@ public class EntryUtils implements Serializable{
 		for (Annotation annot: entry.getAnnotations()) {
 			if (annot.isProteoformAnnotation()) {
 				if (annot.getTargetingIsoformsMap().containsKey(isoformAc)) {
-					Proteoform key = new Proteoform(isoformAc, annot.getSubjectName(), annot.getSubjectComponents());
+					AnnotationIsoformSpecificity spec = annot.getTargetingIsoformsMap().get(isoformAc);
+					Proteoform key = new Proteoform(isoformAc, spec.getName(), annot.getSubjectComponents());
 					if (!result.containsKey(key)) result.put(key, new ArrayList<Annotation>());
 					result.get(key).add(annot);
 				}

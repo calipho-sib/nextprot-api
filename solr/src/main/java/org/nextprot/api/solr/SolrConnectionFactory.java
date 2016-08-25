@@ -31,6 +31,10 @@ public class SolrConnectionFactory {
 		
 	}
 	
+	public String getSolrBaseUrl() {
+		return this.baseSolrUrl;
+	}
+	
 	public SolrServer getServer(String indexName) {
 
 		//optimise starting up

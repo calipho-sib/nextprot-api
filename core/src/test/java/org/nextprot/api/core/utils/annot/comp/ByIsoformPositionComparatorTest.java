@@ -1,7 +1,6 @@
 package org.nextprot.api.core.utils.annot.comp;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -15,67 +14,10 @@ import static org.mockito.Mockito.when;
 
 public class ByIsoformPositionComparatorTest {
 
-    private ByIsoformPositionComparator comparator;
-
-    @Before
-    public void setup() {
-        comparator = new ByIsoformPositionComparator(mockIsoform(true));
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void testConstrFromNonCanonicalIsoform() throws Exception {
 
-        comparator = new ByIsoformPositionComparator(mockIsoform(false));
-    }
-
-    @Test
-    public void testComparePositionAsc() throws Exception {
-
-        int cmp = comparator.compareNullablePositions(2, 25, true);
-
-        Assert.assertTrue(cmp < 0);
-    }
-
-    @Test
-    public void testComparePositionDesc() throws Exception {
-
-        int cmp = comparator.compareNullablePositions(2, 25, false);
-
-        Assert.assertTrue(cmp > 0);
-    }
-
-    @Test
-    public void testComparePositionWithBeginNull() throws Exception {
-
-        int cmp = comparator.compareNullablePositions(null, 25, true);
-
-        Assert.assertTrue(cmp < 0);
-    }
-
-    @Test
-    public void testComparePositionWithBeginNull2() throws Exception {
-
-        int cmp = comparator.compareNullablePositions(19, null, true);
-
-        Assert.assertTrue(cmp > 0);
-    }
-
-    @Test
-    public void testComparePositionBothNull() throws Exception {
-
-        int cmp = comparator.compareNullablePositions(null, null, true);
-
-        Assert.assertTrue(cmp == 0);
-    }
-
-    @Test
-    public void testCompareDifferentEnds() throws Exception {
-
-        int cmp = comparator.compareAnnotByNullablePosition(2, 1012, 2, 1042);
-
-
-
-        Assert.assertTrue(cmp > 0);
+        new ByIsoformPositionComparator(mockIsoform(false));
     }
 
     @Test
@@ -246,7 +188,7 @@ public class ByIsoformPositionComparatorTest {
         }
     }
 
-    private static class TargetIsoform {
+    public static class TargetIsoform {
 
         private final String isoformAccession;
         private final Integer start;
@@ -259,7 +201,7 @@ public class ByIsoformPositionComparatorTest {
             this.end = end;
         }
 
-        private String getIsoformAccession() {
+        public String getIsoformAccession() {
             return isoformAccession;
         }
 

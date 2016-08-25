@@ -8,7 +8,7 @@ public class BioObject implements Serializable {
 
     private static final long serialVersionUID = 2L;
 
-    public static final String NEXTPROT = "neXtProt";
+    public static final String NEXTPROT_DATABASE = "neXtProt"; // ok: this is the cv_name of nextprot in cv_databases (!= cv_datasources)
 
     public enum BioType { CHEMICAL, PROTEIN, PROTEIN_ISOFORM, COMPLEX, GROUP, ENTRY_ANNOTATION} //TODO daniel should this be normal annotation or simply normal?
     
@@ -32,7 +32,7 @@ public class BioObject implements Serializable {
 
     public static BioObject internal(BioType bioType) {
 
-        return new BioObject(bioType, ResourceType.INTERNAL, NEXTPROT);
+        return new BioObject(bioType, ResourceType.INTERNAL, NEXTPROT_DATABASE);
     }
 
     public static BioObject external(BioType bioType, String database) {

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.Entry;
@@ -16,12 +17,15 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
+import org.nextprot.api.tasks.solr.GenerateSolrIndex;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 
 @EntryFieldBuilder
 public class CVFieldBuilder extends FieldBuilder {
 
+	protected Logger logger = Logger.getLogger(GenerateSolrIndex.class);
+	
 	@Override
 	protected void init(Entry entry) {
 
@@ -38,7 +42,10 @@ public class CVFieldBuilder extends FieldBuilder {
 			String category = currannot.getCategory();
 			if(!category.equals("tissue specificity")) { // tissue-specific CVs are indexed under 'expression'
 				String cvac = currannot.getCvTermAccessionCode();
-				if (cvac != null) {
+				if (cvac == null) continue;
+				if (cvac.isEmpty())
+				   logger.warn("CVterm accession empty in " + category + " for " + entry.getUniqueName());
+				else {
 					if(category.startsWith("go ")) {
 						allnegative = true;
 						List<AnnotationEvidence> evlist = currannot.getEvidences();
@@ -68,13 +75,12 @@ public class CVFieldBuilder extends FieldBuilder {
 		// Final CV acs, ancestors and synonyms
 		//System.err.println("cumputing CV ancestors for " +  cv_acs.size() + " terms...");
 		Tree<CvTerm> tree = null;
-		//Set<String> ancestors2 = null;
 		Set<String> ancestors2 = new TreeSet<String>();
 		for (String cvac : cv_acs) {
 			CvTerm term = this.terminologyservice.findCvTermByAccession(cvac);
+			//System.err.println(cvac + ": " + term);
 			String category = term.getOntology();
 			List<String> ancestors = TerminologyUtils.getAllAncestors(term.getAccession(), terminologyservice);
-			//if(cvac.contains("0008270")) System.err.println(cvac + " " + ancestors.size() + " ancestors");
 			List<Tree<CvTerm>> treeList = this.terminologyservice.findTerminology(TerminologyCv.valueOf(category));
 			if(treeList.isEmpty()) 	ancestors2.clear();
 			ancestors2 = this.terminologyservice.getAncestorSets(treeList, term.getAccession());
@@ -85,8 +91,7 @@ public class CVFieldBuilder extends FieldBuilder {
 				//System.err.println(ancestors);
 			}
 			if(ancestors != null) 
-				//cv_ancestors_acs.addAll(ancestors);
-			  for (String ancestor : ancestors) { //if(cvac.contains("0008270")) System.err.println(cvac + " adding ancestor " + ancestor);
+			  for (String ancestor : ancestors) {
                   cv_ancestors_acs.add(ancestor); 
 			  }
 			List<String> synonyms = term.getSynonyms();

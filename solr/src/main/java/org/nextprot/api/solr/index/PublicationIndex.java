@@ -13,8 +13,11 @@ import org.nextprot.api.solr.SortConfig;
 
 public class PublicationIndex extends IndexTemplate {
 	
+	// a way to get it easily from everywhere !
+	static public final String NAME = "publication";
+	
 	public PublicationIndex() {
-		super("publication", "nppublications1");
+		super(PublicationIndex.NAME, "nppublications1");
 	}
 	
 	@Override

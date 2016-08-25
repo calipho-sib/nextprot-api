@@ -31,7 +31,7 @@ annotation:$annotation-uri a :$annotation-type;
   :interactant entry:$bioObject.accession ;
 #elseif($bioType == "PROTEIN_ISOFORM")
   :interactant isoform:$bioObject.accession ;
-#elseif($bioType == "NORMAL_ANNOTATION")
+#elseif($bioType == "ENTRY_ANNOTATION")
 #set($objectannot = false)
 #set($objectannot-uri = false)
 #set($objectannot = $hashAnnotMap.get($bioObject.annotationHash))
