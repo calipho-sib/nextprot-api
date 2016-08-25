@@ -95,13 +95,13 @@ public class PublicationServiceImpl implements PublicationService {
 		
 
 		//Adding publications from flat database
-		List<String> pubmedIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION, StatementField.ENTRY_ACCESSION, uniqueName);
+		List<String> pubmedIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION , StatementField.ENTRY_ACCESSION, uniqueName);
 		for(String pubmed : pubmedIds){
 			if(pubmed != null){
 				Publication pub = this.publicationDao.findPublicationByDatabaseAndAccession("PubMed", pubmed);
 				if(pub == null){
-					System.err.println(pubmed + " can not be found");
-					LOGGER.warn(pubmed + " can not be found");
+					System.err.println("Pubmed " + pubmed + " can not be found");
+					LOGGER.warn("Pubmed " + pubmed + " can not be found");
 				}else {
 					publications.add(pub);
 				}

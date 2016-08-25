@@ -43,11 +43,7 @@ public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 			ais.setFirstPosition(tisp.getBegin());
 			ais.setLastPosition(tisp.getEnd());
 			ais.setSpecificity(tisp.getSpecificity());
-			
-			//For now only set for phenotypic variation, it may be necessary for variants / mutagenesis in the future but not for now.
-			if(annotation.getAPICategory().equals(AnnotationCategory.PHENOTYPIC_VARIATION)){
-				ais.setName(tisp.getName());
-			}
+			ais.setName(tisp.getName());
 			
 			targetingIsoforms.add(ais);
 
