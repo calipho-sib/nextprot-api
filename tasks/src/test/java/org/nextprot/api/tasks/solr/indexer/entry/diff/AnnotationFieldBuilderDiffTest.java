@@ -30,9 +30,13 @@ public class AnnotationFieldBuilderDiffTest extends SolrDiffTest {
 	@Test
 	public void testAnnotationsAndFunctionalDescriptions() {
 
-		String[] test_list = {"NX_Q8IWA4", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_Q12809","NX_Q7Z6P3",
-				"NX_Q7Z713", "NX_P22102", "NX_Q8IYV9", "NX_O00116", "NX_Q7Z713", "NX_O15056"};
+		String[] test_list = {"NX_Q8IWA4", "NX_O00115","NX_Q7Z6P3","NX_E5RQL4","NX_Q12809","NX_Q7Z6P3","NX_Q7Z713",  "NX_P35499",
+				"NX_P22102", "NX_Q8IYV9", "NX_O00116", "NX_Q7Z713", "NX_O15056", "NX_P35498", "NX_Q99250","NX_Q9NY46", "NX_P43246", 
+				"NX_Q9UQD0", "NX_P52701", "NX_P54278"};
 
+		String[] BEDtest_list = {"NX_P35498", "NX_Q99250","NX_Q9NY46", "NX_P35499", "NX_Q14524", "NX_Q01118","NX_Q9UQD0", "NX_Q15858", "NX_Q9Y5Y9", "NX_Q9UI33",
+				"NX_P38398", "NX_P51587","NX_P16422", "NX_P40692", "NX_Q9UHC1", "NX_P43246", "NX_P52701", "NX_P54278"};
+		
 		for(int i=0; i < test_list.length; i++){
 			Entry entry = getEntry(test_list[i]); 
 			//Entry entry = getEntry(i); // 'random' entry
