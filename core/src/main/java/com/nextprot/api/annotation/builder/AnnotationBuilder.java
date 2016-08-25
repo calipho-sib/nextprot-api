@@ -175,7 +175,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 	void setEvidenceResourceId(AnnotationEvidence evidence, Statement statement) {
 		
-		if(statement.getValue(StatementField.REFERENCE_DATABASE).equalsIgnoreCase("PubMed")){
+		if("PubMed".equalsIgnoreCase(statement.getValue(StatementField.REFERENCE_DATABASE))){
 			if(statement.getValue(StatementField.REFERENCE_ACCESSION) != null){
 				String pubmedId = statement.getValue(StatementField.REFERENCE_ACCESSION);
 				Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
