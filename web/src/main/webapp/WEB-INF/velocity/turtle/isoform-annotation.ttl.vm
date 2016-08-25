@@ -36,7 +36,7 @@ annotation:$annotation-uri a :$annotation-type;
 #set($objectannot-uri = false)
 #set($objectannot = $hashAnnotMap.get($bioObject.annotationHash))
 #set($objectannot-uri =  $isoform-name + "-" + $objectannot.uniqueName)
-DEBUG: annotCat:$annotation.apiTypeName - bioObject = biotype:$bioType - rtype:$resourceType - cat:$objectannot.apiTypeName
+##DEBUG: annotCat:$annotation.apiTypeName - bioObject = biotype:$bioType - rtype:$resourceType - cat:$objectannot.apiTypeName
 ##DEBUG: annotCat:$annotation.category  annot:$annotation.uniqueName - bioObject = biotype:$bioType - rtype:$resourceType - cat:$objectannot.category - uname:$objectannot.uniqueName - hash:$objectannot.annotationHash - uri:$objectannot-uri
   :impactedObject annotation:$objectannot-uri ;
 #end ## bioType
