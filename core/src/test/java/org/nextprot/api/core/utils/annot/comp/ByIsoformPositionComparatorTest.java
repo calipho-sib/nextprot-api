@@ -188,7 +188,7 @@ public class ByIsoformPositionComparatorTest {
         }
     }
 
-    private static class TargetIsoform {
+    public static class TargetIsoform {
 
         private final String isoformAccession;
         private final Integer start;
@@ -201,7 +201,7 @@ public class ByIsoformPositionComparatorTest {
             this.end = end;
         }
 
-        private String getIsoformAccession() {
+        public String getIsoformAccession() {
             return isoformAccession;
         }
 

@@ -3,7 +3,6 @@ package com.nextprot.api.annotation.builder.statement.dao;
 import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.AnnotationType;
@@ -40,10 +39,10 @@ public class RawStatementDaoTest extends AnnotationBuilderIntegrationBaseTest {
 	
 	@Test
 	public void findModificationEffectCategory(){
-		AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase("phenotype"));
+		AnnotationCategory category = AnnotationCategory.PHENOTYPIC_VARIATION;
 		IsoformAnnotation isoAnnotation = new IsoformAnnotation();
 		isoAnnotation.setCategory(category);
 		
-		assertEquals(isoAnnotation.getCategory(), "phenotype");
+		assertEquals(isoAnnotation.getCategory(), "phenotypic-variation");
 	}
 }

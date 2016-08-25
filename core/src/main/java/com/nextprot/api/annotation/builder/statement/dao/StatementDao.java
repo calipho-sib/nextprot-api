@@ -19,4 +19,7 @@ public interface StatementDao {
 	List<String> findAllDistinctValuesforField(StatementField field);
 
 	List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, StatementField whereField, String value);
+
+	List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, StatementField whereField, String value, StatementField whereField2, String value2);
+
 }

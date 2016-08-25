@@ -32,7 +32,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 	/**
 	 * Flag that indicates that the build should throw an Exception at the first error or just log silently
 	 */
-	private static final boolean STRICT = false;
+	static boolean STRICT = false;
 
 	
 	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
@@ -91,8 +91,6 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			impactAnnotations.stream().forEach(ia -> {
 				
 				String name = subjectVariants.stream().map(v -> v.getAnnotationName()).collect(Collectors.joining(" + ")).toString();
-				
-				ia.setSubjectName(name);
 				ia.setSubjectComponents(Arrays.asList(subjectComponentsIdentifiersArray));
 			});
 
@@ -177,17 +175,19 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 	void setEvidenceResourceId(AnnotationEvidence evidence, Statement statement) {
 		
-		//TODO: should also set resourceType: and resourceAccession + resourceDb if resourceType = 'database' !!!
-		if(statement.getValue(StatementField.REFERENCE_PUBMED) != null){
-			String pubmedId = statement.getValue(StatementField.REFERENCE_PUBMED);
-			Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-			if (publication == null) {
-				evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, -1L));
+		if("PubMed".equalsIgnoreCase(statement.getValue(StatementField.REFERENCE_DATABASE))){
+			if(statement.getValue(StatementField.REFERENCE_ACCESSION) != null){
+				String pubmedId = statement.getValue(StatementField.REFERENCE_ACCESSION);
+				Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
+				if (publication == null) {
+					evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, -1L));
+				}
+				else {
+					evidence.setResourceId(publication.getPublicationId());
+				}
 			}
-			else {
-				evidence.setResourceId(publication.getPublicationId());
-				evidence.setPublicationMD5(publication.getMD5());
-			}
+		} else {
+			//Create a XREF
 		}
 	}
 

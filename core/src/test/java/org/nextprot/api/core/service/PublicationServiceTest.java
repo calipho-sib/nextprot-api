@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service;
 
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -39,6 +40,9 @@ public class PublicationServiceTest {
 
 	@Mock
 	private DbXrefDao dbXrefDao;
+
+	@Mock
+	private StatementDao statementDao;
 
 	@Mock
 	private DbXrefService dbXrefService;

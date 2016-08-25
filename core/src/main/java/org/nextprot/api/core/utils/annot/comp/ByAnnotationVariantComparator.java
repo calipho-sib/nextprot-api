@@ -1,6 +1,8 @@
 package org.nextprot.api.core.utils.annot.comp;
 
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 
 import java.util.Comparator;
 
@@ -21,8 +23,12 @@ class ByAnnotationVariantComparator implements Comparator<Annotation> {
     @Override
     public int compare(Annotation a1, Annotation a2) {
 
-        if (a1.getVariant() != null && a2.getVariant() != null)
-            return comparator.compare(a1, a2);
-        return 0;
+        if (a1.getVariant() == null)
+            throw new NextProtException("undefined AnnotationVariant for annotation:\n"+ AnnotationUtils.toString(a1));
+
+        if (a2.getVariant() == null)
+            throw new NextProtException("undefined AnnotationVariant for annotation:\n"+ AnnotationUtils.toString(a2));
+
+        return comparator.compare(a1, a2);
     }
 }

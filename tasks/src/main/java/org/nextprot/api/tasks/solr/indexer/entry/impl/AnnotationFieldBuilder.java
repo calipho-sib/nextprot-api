@@ -3,6 +3,8 @@ package org.nextprot.api.tasks.solr.indexer.entry.impl;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
@@ -10,6 +12,7 @@ import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.Family;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
@@ -34,36 +37,28 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 			AnnotationCategory apiCategory = currannot.getAPICategory();
 			String quality = currannot.getQualityQualifier();
 			
-			if (apiCategory.equals(AnnotationCategory.FUNCTION_INFO))
-				// We just processed this via the EntryUtils dedicated method
+			if (apiCategory.equals(AnnotationCategory.FUNCTION_INFO) || apiCategory.equals(AnnotationCategory.EXPRESSION_PROFILE))
+				// We just processed this via the EntryUtils dedicated method, and tissue specificity values are indexed under other fields
 				continue;
 
 			// We also should exclude uninformative category 'sequence conflict'
-			if(!category.equals("tissue specificity")) {//These values are indexed under other fields
-				String desc = currannot.getDescription();
-				if(category.equals("glycosylation site")) {
+			//if(!category.equals("tissue specificity")) {//These values are indexed under other fields
+			//if(!apiCategory.equals(AnnotationCategory.) {//These values are indexed under other fields
+			String desc = currannot.getDescription();
+			if(apiCategory.equals(AnnotationCategory.GLYCOSYLATION_SITE)) {
 					String xref = currannot.getSynonym();
 					if(xref != null)
 						// It is actually not a synonym but the carbohydrate id from glycosuitedb !
 						addField(Fields.ANNOTATIONS, xref);
 				}
 
-                if(category.equals("modification-effect")) {
-                // Get BED data
-                String subjectName = currannot.getSubjectName();
-                if(subjectName != null) {
-                        // update description with the subject
-                        desc = subjectName + " " + desc;
-                   }
-                }
-                //else if(category.equals("mammalian-phenotype")) {System.err.println("MP: " + currannot.getSubjectName() + " " + currannot.getCvTermAccessionCode() + " " + currannot.getCvTermName());}
-                //else if(category.equals("protein-property")) {System.err.println("PProp: " + currannot.getSubjectName() + " " + currannot.getCvTermAccessionCode() + " " + currannot.getCvTermName());}
-                else if(category.equals("DNA-binding region")) addField(Fields.ANNOTATIONS, category);
-                else if(category.equals("sequence variant"))
+			else if(apiCategory.equals(AnnotationCategory.DNA_BINDING_REGION))
+                	addField(Fields.ANNOTATIONS, category);
+            else if(apiCategory.equals(AnnotationCategory.VARIANT))
                 	// We need to index them somehow for the GOLD/SILVER tests, or do we ? in creates a lot of useless 'variant null' tokens
                 	desc = "Variant " + desc;
-				if (desc != null) {	//System.err.println(category + ": " + desc);
-					if (category.equals("sequence caution")) {
+			if (desc != null) {	//System.err.println(category + ": " + desc);
+					if (apiCategory.equals(AnnotationCategory.SEQUENCE_CAUTION)) {
 						int stringpos=0;
 						desc = desc.split(":")[1].substring(1); // The sequence AAH70170 differs from that shown. Reason: miscellaneous discrepancy
 						String[] desclevels = desc.split("\\.");
@@ -88,15 +83,24 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 					if(!category.startsWith("go") && desc.length() > 1) { // go will be indexed via cvac, not description
 						if(!this.isGold() || quality.equals("GOLD"))
 						   {
-						   addField(Fields.ANNOTATIONS, desc);
-						   //if(category.equals("sequence variant")) System.err.println("variant: " + desc);
+							if(apiCategory.equals(AnnotationCategory.PHENOTYPIC_VARIATION)) {
+				                // Get BED data (also get the notes ? )
+				                Map<String,AnnotationIsoformSpecificity>  annotSpecs = currannot.getTargetingIsoformsMap();
+				                for ( Map.Entry<String, AnnotationIsoformSpecificity> mapentry: annotSpecs.entrySet()) {
+				                	String subjectName = mapentry.getValue().getName();
+				                	// update description with the subject for each target isofotm
+				                	addField(Fields.ANNOTATIONS, subjectName + " " + desc);
+				                	//System.err.println("adding: " + subjectName + " " + desc);
+				                	}
+				                }
+							else addField(Fields.ANNOTATIONS, desc);
 						   } 
 					    }
 					// in pathway and disease new annotations may appear due to transformation of specific xrefs (orphanet...) into annotations in the api
 				}
 				
 				String cvac = currannot.getCvTermAccessionCode();
-				if (cvac != null) {
+				if (cvac != null && !cvac.isEmpty()) {
 					if(cvac.startsWith("GO:")) {
 						boolean allnegative = true;
 					  // We don't index negative annotations
@@ -135,7 +139,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						addField(Fields.ANNOTATIONS, StringUtils.getSortedValueFromPipeSeparatedField(allancestors));
 				}
 				}
-				if (category.equals("mature protein") || category.equals("maturation peptide")) {
+				if (apiCategory.equals(AnnotationCategory.MATURE_PROTEIN) || apiCategory.equals(AnnotationCategory.MATURATION_PEPTIDE)) {
 					String chainid = currannot.getSynonym();
 					if(chainid != null) {
 						//System.err.println(  currannot.getAllSynonyms().size() + " synonyms: " +  currannot.getAllSynonyms());
@@ -156,14 +160,14 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 				}
 				
 				// variant xrefs and identifiers
-				if (category.contains("variant")) {
+				if (apiCategory.equals(AnnotationCategory.VARIANT)) {
 					    String evidxrefaccs = "";
 						List<AnnotationEvidence> evidences = currannot.getEvidences();
 						if(evidences != null)
 							for (AnnotationEvidence ev : evidences) {
 							    if(ev.isResourceAXref()) { 
 								String db = ev.getResourceDb();
-								if(db == null) System.err.println("db is null for evidence in" + ev);
+								if(db == null) System.err.println("db is null for evidence in variant annot: " + desc);
 								else {
 								   if(!evidxrefaccs.isEmpty()) evidxrefaccs += " | ";
 								   if(db.equals("Cosmic"))	 evidxrefaccs += db.toLowerCase() + ":" + ev.getResourceAccession();
@@ -182,7 +186,6 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 							    addField(Fields.ANNOTATIONS,prop.getValue());
 						}
 					}
-				}
 			}
 		
 			// Families (why not part of Annotations ?), always GOLD
