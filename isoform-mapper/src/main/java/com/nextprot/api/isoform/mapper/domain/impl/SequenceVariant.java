@@ -9,8 +9,6 @@ import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.nextprot.api.commons.utils.StringUtils.capitalizeFirstLetter;
-
 public class SequenceVariant extends SequenceFeatureBase {
 
     public SequenceVariant(String feature) throws ParseException {
@@ -47,8 +45,9 @@ public class SequenceVariant extends SequenceFeatureBase {
                 return "Iso "+name;
             }
             else {
-                // delta6 -> Delta6
-                name = capitalizeFirstLetter(name);
+                // replace back space from underscore: some isoform names contain spaces that were replaced by underscore
+                // see also method formatIsoformFeatureName()
+                name = name.replace("_", " ");
 
                 // Delta6 -> Delta 6
                 Pattern pat = Pattern.compile("(\\s+)(\\d+)");
@@ -83,18 +82,23 @@ public class SequenceVariant extends SequenceFeatureBase {
     }
 
     /*
-        Short   -> isoshort
-        Long    -> isolong
+        Short   -> isoShort
+        Long    -> isoLong
         Iso 5   -> iso5
-        Delta 6 -> isodelta6
+        Delta 6 -> isoDelta6
+        GTBP-N  -> isoGTBP-N
+        Chain XP32 -> isoChain_XP32
      */
+    @Override
     protected String formatIsoformFeatureName(Isoform isoform) {
 
         String name = isoform.getMainEntityName().getName();
         StringBuilder sb = new StringBuilder();
 
-        if (!name.startsWith("Iso")) sb.append("iso");
-        sb.append(name.toLowerCase().replace(" ", ""));
+        if (name.startsWith("Iso"))
+            sb.append(name.toLowerCase().replace(" ", ""));
+        else
+            sb.append("iso").append(name.replace(" ", "_"));
 
         return sb.toString();
     }
