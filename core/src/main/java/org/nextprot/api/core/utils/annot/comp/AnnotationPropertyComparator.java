@@ -2,7 +2,6 @@ package org.nextprot.api.core.utils.annot.comp;
 
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 
-import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -10,9 +9,7 @@ import java.util.Comparator;
  *
  * Created by fnikitin on 10/11/15.
  */
-public class AnnotationPropertyComparator implements Comparator<AnnotationProperty>, Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class AnnotationPropertyComparator implements Comparator<AnnotationProperty> {
 
     @Override
     public int compare(AnnotationProperty prop1, AnnotationProperty prop2) {

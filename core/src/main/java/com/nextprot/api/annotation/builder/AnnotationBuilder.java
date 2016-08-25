@@ -177,15 +177,16 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 	void setEvidenceResourceId(AnnotationEvidence evidence, Statement statement) {
 		
+		//TODO: should also set resourceType: and resourceAccession + resourceDb if resourceType = 'database' !!!
 		if(statement.getValue(StatementField.REFERENCE_PUBMED) != null){
 			String pubmedId = statement.getValue(StatementField.REFERENCE_PUBMED);
 			Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-
 			if (publication == null) {
 				evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, -1L));
 			}
 			else {
 				evidence.setResourceId(publication.getPublicationId());
+				evidence.setPublicationMD5(publication.getMD5());
 			}
 		}
 	}
@@ -239,7 +240,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 				annotation.setQualityQualifier(statement.getValue(StatementField.EVIDENCE_QUALITY));
 			}
 
-			if(cvTermAccession != null){
+			if(cvTermAccession != null && !cvTermAccession.isEmpty()){
 
 				annotation.setCvTermAccessionCode(cvTermAccession);
 
@@ -276,7 +277,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 			if ((boah != null) && (boah.length() > 0) || (boa != null && (boa.length() > 0))) {
 
-				BioGenericObject bioObject = BioGenericObject.valueOf(annotation.getAPICategory(), BioObject.NEXTPROT);
+				BioGenericObject bioObject = BioGenericObject.valueOf(annotation.getAPICategory(), BioObject.NEXTPROT_DATABASE);
 
 				bioObject.setAccession(boa); // In case of interactions
 				bioObject.setType(bot);

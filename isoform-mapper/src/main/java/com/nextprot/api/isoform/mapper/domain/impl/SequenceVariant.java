@@ -62,7 +62,7 @@ public class SequenceVariant extends SequenceFeatureBase {
             }
         }
 
-        throw new ParseException("invalid isoform name: "+featureIsoname, 0);
+        throw new ParseException("invalid isoform name: "+featureIsoname+" (isoform name should starts with prefix 'iso')", 0);
     }
 
     /**

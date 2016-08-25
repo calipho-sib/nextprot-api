@@ -16,13 +16,13 @@
 	<context:component-scan base-package="org.nextprot.api.rdf" />
 	<context:component-scan base-package="org.nextprot.api.solr" />
 	<context:component-scan base-package="org.nextprot.api.web" />
-	<context:component-scan base-package="org.nextprot.api.tasks" />
 	<context:component-scan base-package="org.nextprot.api.test.rdf" />
 	
 	<!-- should be put in build profile -->
 	<context:component-scan base-package="org.nextprot.api.etl" />
 
 	<beans profile="build">
+		<context:component-scan base-package="org.nextprot.api.tasks" />
 		<context:component-scan base-package="org.nextprot.api.build" />
 	</beans>
 

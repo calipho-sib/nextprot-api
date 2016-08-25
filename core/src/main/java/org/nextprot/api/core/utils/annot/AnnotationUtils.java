@@ -5,6 +5,7 @@ import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
@@ -74,6 +75,21 @@ public class AnnotationUtils {
 		//sb.append("").append(a.).append(sep);
 		return sb.toString();
 	}
+
+	
+    /**
+	 * Filter annotation by its hashes
+	 */
+	public static List<Annotation> filterAnnotationsByHashes(Entry entry, Set<String> hashes) {
+
+        List<Annotation> annotations = entry.getAnnotations();
+		if (annotations == null) return null;
+
+		return annotations.stream()
+				.filter(a -> hashes.contains(a.getAnnotationHash()))
+				.collect(Collectors.toList());
+        
+	}
 	
 	
     /**
@@ -91,15 +107,23 @@ public class AnnotationUtils {
 	 */
 	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory, boolean withChildren) {
 
-        List<Annotation> annotations = entry.getAnnotations();
+		List<Annotation> annotations = entry.getAnnotations();
 
 		if (annotations == null) return null;
 
-        return annotations.stream()
-				.filter(a -> a.getAPICategory() == annotationCategory ||
-						(withChildren && a.getAPICategory().isChildOf(annotationCategory)))
-				.sorted(AnnotationComparators.newComparator(annotationCategory, entry))
+		List<Annotation> filteredAnnotations = annotations.stream()
+				.filter(a -> a.getAPICategory() == annotationCategory || (withChildren && a.getAPICategory().isChildOf(annotationCategory)))
 				.collect(Collectors.toList());
+
+		if (annotationCategory == AnnotationCategory.PHENOTYPIC_VARIATION) {
+
+			Collections.sort(filteredAnnotations, AnnotationComparators.newPhenotypicVariationComparator(EntryUtils.getHashAnnotationMap(entry)));
+		}
+		else {
+			Collections.sort(filteredAnnotations, AnnotationComparators.newComparator(annotationCategory));
+		}
+
+		return filteredAnnotations;
 	}
 
 	public static Set<Long> getExperimentalContextIdsForAnnotations(List<Annotation> annotations) {

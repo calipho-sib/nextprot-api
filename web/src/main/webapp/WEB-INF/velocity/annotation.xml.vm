@@ -71,6 +71,10 @@
 						#end
 					</property-list>
 				#end
+				#if($evidence.getNote())
+					#set($UNESCAPED_CDATA = $evidence.getNote())
+					<evidence-note><![CDATA[$UNESCAPED_CDATA]]></evidence-note>
+				#end
 			</evidence>
 		#end
     </evidence-list>
