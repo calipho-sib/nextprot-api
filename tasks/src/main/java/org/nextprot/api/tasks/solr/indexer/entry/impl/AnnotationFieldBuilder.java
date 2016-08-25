@@ -84,7 +84,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 						if(!this.isGold() || quality.equals("GOLD"))
 						   {
 							if(apiCategory.equals(AnnotationCategory.PHENOTYPIC_VARIATION)) {
-				                // Get BED data
+				                // Get BED data (also get the notes ? )
 				                Map<String,AnnotationIsoformSpecificity>  annotSpecs = currannot.getTargetingIsoformsMap();
 				                for ( Map.Entry<String, AnnotationIsoformSpecificity> mapentry: annotSpecs.entrySet()) {
 				                	String subjectName = mapentry.getValue().getName();
