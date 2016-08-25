@@ -67,13 +67,8 @@ public class PublicationDaoImpl implements PublicationDao {
 
 		// get the journal found for publication id
 		List<PublicationCvJournal> journals = journalDao.findCvJournalsByPublicationIds(Collections.singletonList(publicationId));
-		
-		if(!journals.isEmpty()){
-			return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper(journals));
-		}else {
-			LOGGER.warn("Publication " + publicationId + " not found");
-			return null;
-		}
+
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("publication-by-resourceid"), namedParameters, new PublicationRowMapper(journals));
 	}
 
 	@Override
