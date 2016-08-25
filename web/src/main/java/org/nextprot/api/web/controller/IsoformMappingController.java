@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 
 @Lazy
 @Controller
-@Api(name = "Feature Isoform Mapping", description = "Methods to check and map features over isoforms")
+@Api(name = "Feature Isoform Mapping", description = "Methods to check and map features over isoforms.")
 public class IsoformMappingController {
 
 	@Autowired
@@ -30,7 +30,7 @@ public class IsoformMappingController {
 	public FeatureQueryResult validateIsoformFeature(
 			@ApiPathParam(name = "category", description = "A feature category (either 'variant', 'mutagenesis' or 'ptm').",  allowedvalues = { "variant" })
 			@PathVariable("category") String featureCategory, HttpServletRequest request, HttpServletResponse response,
-			@ApiQueryParam(name = "feature", description = "An isoform feature.",  allowedvalues = { "SCN11A-p.Leu1158Pro" })
+			@ApiQueryParam(name = "feature", description = "An isoform feature ('variant' category uses HGVS format (http://varnomen.hgvs.org/recommendations/protein)).",  allowedvalues = { "SCN11A-p.Leu1158Pro" })
 			@RequestParam(value = "feature") String feature,
 			@ApiQueryParam(name = "accession", description = "An optional nextprot entry accession (deduced from feature gene name if undefined).",  allowedvalues = { })
 			@RequestParam(value = "accession", required = false) String nextprotAccession) {
@@ -44,7 +44,7 @@ public class IsoformMappingController {
 	public FeatureQueryResult propagateIsoformFeature(
 			@ApiPathParam(name = "category", description = "A feature category (either 'variant', 'mutagenesis' or 'ptm').",  allowedvalues = { "variant" })
 			@PathVariable("category") String featureCategory, HttpServletRequest request, HttpServletResponse response,
-			@ApiQueryParam(name = "feature", description = "An isoform feature.",  allowedvalues = { "SCN11A-p.Leu1158Pro" })
+			@ApiQueryParam(name = "feature", description = "An isoform feature ('variant' category uses HGVS format (http://varnomen.hgvs.org/recommendations/protein)).",  allowedvalues = { "SCN11A-p.Leu1158Pro" })
 			@RequestParam(value = "feature") String feature,
 			@ApiQueryParam(name = "accession", description = "An optional nextprot entry accession (deduced from feature gene name if undefined).",  allowedvalues = { })
 			@RequestParam(value = "accession", required = false) String nextprotAccession) {

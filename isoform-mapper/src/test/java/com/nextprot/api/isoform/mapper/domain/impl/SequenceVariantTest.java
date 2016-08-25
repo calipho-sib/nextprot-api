@@ -108,6 +108,19 @@ public class SequenceVariantTest {
                 mockIsoform("NX_P06213-2", "Short", false));
 
         Assert.assertEquals("NX_P06213-2", variant.getIsoform(entry).getUniqueName());
+        Assert.assertEquals("short", variant.getIsoformName());
+    }
+
+    @Test
+    public void testGetIsoformNonIso2() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("INSR-isoShort-p.Arg113Pro");
+
+        Entry entry = mockEntry("NX_P06213",
+                mockIsoform("NX_P06213-1", "Long", true),
+                mockIsoform("NX_P06213-2", "Short", false));
+
+        Assert.assertEquals("NX_P06213-2", variant.getIsoform(entry).getUniqueName());
         Assert.assertEquals("Short", variant.getIsoformName());
     }
 
@@ -142,6 +155,64 @@ public class SequenceVariantTest {
         new SequenceVariant("WT1:p.Phe154Ser");
     }
 
+    @Test
+    public void testFormatIsoformSpecifiqueFeatureTypeIso() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("SCN11A-p.Leu1158Pro");
+
+        Isoform iso = mockIsoform("whatever", "Iso 1", true);
+
+        Assert.assertEquals("iso1", variant.formatIsoformFeatureName(iso));
+    }
+
+    @Test
+    public void testFormatIsoformSpecifiqueFeatureTypeNonIso() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("ABL1-p.Ser439Gly");
+
+        Isoform iso = mockIsoform("whatever", "IA", true);
+
+        Assert.assertEquals("isoIA", variant.formatIsoformFeatureName(iso));
+    }
+
+    @Test
+    public void testFormatIsoformSpecifiqueFeatureTypeNonIsoWithSpace() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("GTF2A1-p.Gln13Thr");
+
+        Isoform iso = mockIsoform("whatever", "37 kDa", true);
+
+        Assert.assertEquals("iso37_kDa", variant.formatIsoformFeatureName(iso));
+    }
+
+    @Test
+    public void testParseSequenceVariantWithPrefixSpace() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("    SCN11A-p.Leu1158Pro");
+
+        Assert.assertEquals("SCN11A", variant.getGeneName());
+    }
+
+    @Test
+    public void testParseSequenceVariantWithSuffixSpaces() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("SCN11A-p.Leu1158Pro          ");
+
+        Assert.assertEquals("p.Leu1158Pro", variant.getFormattedVariation());
+    }
+
+    @Test
+    public void testParseIsoformSpecifiqueFeatureTypeNonIsoWithUnderscore() throws Exception {
+
+        SequenceVariant variant = new SequenceVariant("GTF2A1-iso37_kDa-p.Gln13Thr");
+
+        Assert.assertEquals("GTF2A1", variant.getGeneName());
+        Assert.assertEquals("p.Gln13Thr", variant.getFormattedVariation());
+        Assert.assertEquals("37 kDa", variant.getIsoformName());
+
+        Assert.assertTrue(variant.isValidGeneName(mockEntryWithGenes("GTF2A1", "TF2A1")));
+    }
+
     private Entry mockEntryWithGenes(String... geneNames) {
 
         Entry entry = Mockito.mock(Entry.class);
@@ -159,5 +230,12 @@ public class SequenceVariantTest {
 
         return entry;
     }
+
+    /** Other problematic entries:
+     *
+     *  NX_Q9BX84-7 M6-kinase 3
+     *  NX_O95704-3 III
+     *  NX_P29590-12 PML-12
+     */
 
 }
