@@ -177,15 +177,19 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 	void setEvidenceResourceId(AnnotationEvidence evidence, Statement statement) {
 		
-		if(statement.getValue(StatementField.REFERENCE_PUBMED) != null){
-			String pubmedId = statement.getValue(StatementField.REFERENCE_PUBMED);
-			Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-			if (publication == null) {
-				evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, -1L));
+		if(statement.getValue(StatementField.REFERENCE_DATABASE).equalsIgnoreCase("PubMed")){
+			if(statement.getValue(StatementField.REFERENCE_ACCESSION) != null){
+				String pubmedId = statement.getValue(StatementField.REFERENCE_ACCESSION);
+				Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
+				if (publication == null) {
+					evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, -1L));
+				}
+				else {
+					evidence.setResourceId(publication.getPublicationId());
+				}
 			}
-			else {
-				evidence.setResourceId(publication.getPublicationId());
-			}
+		}else {
+			//Create a XREF
 		}
 	}
 
