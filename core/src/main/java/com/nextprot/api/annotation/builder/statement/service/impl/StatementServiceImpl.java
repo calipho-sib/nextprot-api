@@ -52,15 +52,11 @@ public class StatementServiceImpl implements StatementService {
 	}
 	
 
-	private List<IsoformAnnotation> getNormalIsoformAnnotations(String entryAccession) {
+	/*private List<IsoformAnnotation> getNormalIsoformAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ISOFORM, entryAccession);
 		List<IsoformAnnotation> normalAnnotations = IsoformAnnotationBuilder.newBuilder(terminologyService, publicationService).buildAnnotationList(entryAccession, normalStatements);
-		normalAnnotations.stream().forEach(a -> 
-			//Required for group by
-			a.setSubjectName(entryAccession)
-		);
 		return normalAnnotations;
-	}
+	}*/
 
 
 	private List<Annotation> getProteoformEntryAnnotations(String entryAccession) {
@@ -96,12 +92,12 @@ public class StatementServiceImpl implements StatementService {
 
 		return list;
 	}
-
+/*
 	@Cacheable("statement-iso-annotations")
 	@Override
 	public List<IsoformAnnotation> getIsoformAnnotations(String entryAccession) {
 		List<IsoformAnnotation> list = getProteoformIsoformAnnotations(entryAccession);
 		list.addAll(getNormalIsoformAnnotations(entryAccession));
 		return list;
-	}
+	}*/
 }

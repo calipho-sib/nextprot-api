@@ -26,7 +26,7 @@ import com.nextprot.api.annotation.builder.statement.service.StatementService;
 @Controller
 @Api(name = "EntryModified", description = "For example: may include an entry with one or several variants.")
 public class ProteoformController {
-
+	/*
 	@Autowired	private EntryBuilderService entryBuilderService;
 	@Autowired	private StatementService rawStatementService;
 	
@@ -63,7 +63,7 @@ public class ProteoformController {
 
 		wrapperResponse.put("entry", response);
 		return wrapperResponse;
-	}
+	}*/
 	
 }
 

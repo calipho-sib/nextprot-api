@@ -91,8 +91,6 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			impactAnnotations.stream().forEach(ia -> {
 				
 				String name = subjectVariants.stream().map(v -> v.getAnnotationName()).collect(Collectors.joining(" + ")).toString();
-				
-				ia.setSubjectName(name);
 				ia.setSubjectComponents(Arrays.asList(subjectComponentsIdentifiersArray));
 			});
 
@@ -177,17 +175,19 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 	void setEvidenceResourceId(AnnotationEvidence evidence, Statement statement) {
 		
-		//TODO: should also set resourceType: and resourceAccession + resourceDb if resourceType = 'database' !!!
-		if(statement.getValue(StatementField.REFERENCE_PUBMED) != null){
-			String pubmedId = statement.getValue(StatementField.REFERENCE_PUBMED);
-			Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-			if (publication == null) {
-				evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, -1L));
+		if(statement.getValue(StatementField.REFERENCE_DATABASE).equalsIgnoreCase("PubMed")){
+			if(statement.getValue(StatementField.REFERENCE_ACCESSION) != null){
+				String pubmedId = statement.getValue(StatementField.REFERENCE_ACCESSION);
+				Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
+				if (publication == null) {
+					evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, -1L));
+				}
+				else {
+					evidence.setResourceId(publication.getPublicationId());
+				}
 			}
-			else {
-				evidence.setResourceId(publication.getPublicationId());
-				evidence.setPublicationMD5(publication.getMD5());
-			}
+		} else {
+			//Create a XREF
 		}
 	}
 

@@ -51,7 +51,7 @@ public class AnnotationUtils {
 		sb.append("getAnnotationId             :").append(a.getAnnotationId()).append(sep);
 		sb.append("getAnnotationName           :").append(a.getAnnotationName()).append(sep);
 		sb.append("getUniqueName               :").append(a.getUniqueName()).append(sep);
-		sb.append("getSubjectName              :").append(a.getSubjectName()).append(sep);
+	//	sb.append("getSubjectName              :").append(a.getSubjectName()).append(sep);
 
 		sb.append("getDescription              :").append(a.getDescription()).append(sep);
 		sb.append("getBioObject                :").append(a.getBioObject()==null ? "null" : a.getBioObject()).append(sep);

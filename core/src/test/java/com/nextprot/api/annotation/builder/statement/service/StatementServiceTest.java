@@ -19,12 +19,12 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 
 	@Autowired
 	private StatementService statementService;
-	
+	/*
 	@Test
 	public void findAllMappedStatements() {
 		List<IsoformAnnotation> modifiedIsoformAnnotation = statementService.getIsoformAnnotations("NX_Q9BX63-1");
 		System.out.println(modifiedIsoformAnnotation.size());
-	}
+	}*/
 
 	// TODO: this test do nothing and f90790567dc0650b5737fa62332bb38a does not exist
 	@Ignore
@@ -38,6 +38,7 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 		System.out.println(list.get(0).getSpecificityForIsoform("NX_Q15858-1"));
 	}
 
+	/*
 	@Test
 	public void findModifiedAnnotationsByIsoform() {
 		List isoformAnnotations = statementService.getIsoformAnnotations("NX_Q15858-3");
@@ -55,6 +56,6 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 		assertTrue(filterCount < notFilterCount2);
 		
 	}
-	
+	*/
 	
 }
