@@ -35,6 +35,8 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
 
         Preconditions.checkNotNull(feature);
 
+        feature = feature.trim();
+
         String variation = parseVariation(feature);
         parser = newParser();
 
