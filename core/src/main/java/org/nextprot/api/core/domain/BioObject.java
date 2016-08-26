@@ -11,7 +11,7 @@ public class BioObject implements Serializable {
 	
 	private static final String ANNOTATION_HASH_PROPERTY_NAME =  "annotationHash";
 	
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     public static final String NEXTPROT_DATABASE = "neXtProt"; // ok: this is the cv_name of nextprot in cv_databases (!= cv_datasources)
 
