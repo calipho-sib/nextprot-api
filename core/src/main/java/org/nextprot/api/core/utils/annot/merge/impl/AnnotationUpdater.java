@@ -3,14 +3,19 @@ package org.nextprot.api.core.utils.annot.merge.impl;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Merge annotations by updating and returning target annotation with source annotations
  */
 public class AnnotationUpdater extends AnnotationBaseMerger {
+
+    private static final Logger LOGGER = Logger.getLogger(AnnotationUpdater.class.getName());
 
     @Override
     protected Annotation getDestAnnotation(Annotation annotation1, Annotation annotation2, Annotation... others) {
@@ -56,7 +61,6 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
             throw new NextProtException("annotation hash was not computed for source "+sources.get(0).getAnnotationName());
 
         checkUniqueAnnotationHash(annotationHash, sources);
-
         dest.setAnnotationHash(annotationHash);
     }
 
@@ -64,6 +68,29 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
     protected void updateDestAnnotationName(Annotation dest, List<Annotation> sources) {
 
         dest.setAnnotationName(sources.get(0).getAnnotationName());
+    }
+
+    @Override
+    protected void updateDestIsoformSpecificityName(Annotation dest, List<Annotation> sources) {
+
+        Map<String, AnnotationIsoformSpecificity> destTargetingIsoMap = dest.getTargetingIsoformsMap();
+
+        if (sources.size() > 0) {
+            Map<String, AnnotationIsoformSpecificity> srcTargetingIsoMap = sources.get(0).getTargetingIsoformsMap();
+
+            for (Map.Entry<String, AnnotationIsoformSpecificity> keyValue : srcTargetingIsoMap.entrySet()) {
+
+                if (destTargetingIsoMap.containsKey(keyValue.getKey())) {
+                    destTargetingIsoMap.get(keyValue.getKey()).setName(keyValue.getValue().getName());
+                }
+                else {
+                    LOGGER.severe("expected isoform specificity not found for isoform "+keyValue.getKey());
+                }
+            }
+        }
+        else {
+            LOGGER.warning("too many sources to be used to update annotation isoform specificity names");
+        }
     }
 
     /**

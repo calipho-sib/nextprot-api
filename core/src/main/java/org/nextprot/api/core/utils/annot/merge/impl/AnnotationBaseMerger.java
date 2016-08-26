@@ -17,6 +17,7 @@ public abstract class AnnotationBaseMerger implements AnnotationMerger {
         updateDestEvidences(dest, sources);
         updateDestAnnotationHash(dest, sources);
         updateDestAnnotationName(dest, sources);
+        updateDestIsoformSpecificityName(dest, sources);
 
         updateDestQualityQualifier(dest);
 
@@ -37,6 +38,9 @@ public abstract class AnnotationBaseMerger implements AnnotationMerger {
 
     /** Update dest annotation name */
     protected abstract void updateDestAnnotationName(Annotation dest, List<Annotation> sources);
+
+    /** Update dest isoform specificity name (variant name) */
+    protected abstract void updateDestIsoformSpecificityName(Annotation dest, List<Annotation> sources);
 
     /** Reset dest qualityqualifier to gold if there is at least one gold evidence */
     private void updateDestQualityQualifier(Annotation dest) {
