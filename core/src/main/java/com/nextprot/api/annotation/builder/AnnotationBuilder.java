@@ -289,6 +289,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 				if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
 					if(bioObjectAccession.startsWith("NX_") && BioType.PROTEIN.name().equalsIgnoreCase(bot)){
 						bioObject = BioObject.internal(BioType.PROTEIN);
+						bioObject.setAccession(bioObjectAccession);
 						bioObject.putPropertyNameValue("geneName", statement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
 					}else {
 						throw new NextProtException("Binary Interaction only expects to be a nextprot entry NX_ and found " + bioObjectAccession + " with type " + bot);
