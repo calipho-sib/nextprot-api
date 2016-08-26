@@ -1,7 +1,5 @@
 package org.nextprot.api.tasks.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.annotation.Api;
@@ -18,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Lazy
 @Controller
-@Api(name = "Solr indexing tasks", description = "Solr indexing operations", group="Admin")
+@Api(name = "Solr indexing tasks", description = "Solr indexing operations", group="Task")
 public class TaskController {
 	
 	private static final Log LOGGER = LogFactory.getLog(TaskController.class);
