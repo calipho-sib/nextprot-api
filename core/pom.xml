@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-commons</artifactId>
-			<version>0.9.0-SNAPSHOT</version>
+			<version>LATEST</version>
 		</dependency>
 		
 		<dependency>
