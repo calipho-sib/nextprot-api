@@ -81,6 +81,19 @@ public class PublicationDaoImpl implements PublicationDao {
 
 		return Collections.emptyList();
 	}
+	
+	
+	@Override
+	public Publication findPublicationByDatabaseAndAccession(String database, String accession) {
+
+		List<Long> ids = findPublicationIdsByDatabaseAndAccession(database, accession);
+
+		if (!ids.isEmpty()) {
+			return findPublicationById(ids.get(0));
+		}
+
+		return null;
+	}
 
 	@Override
 	public Publication findPublicationByMD5(String md5) {
@@ -93,6 +106,15 @@ public class PublicationDaoImpl implements PublicationDao {
 		return null;
 	}
 
+	private List<Long> findPublicationIdsByDatabaseAndAccession(String database, String accession) {
+		
+	  MapSqlParameterSource namedParameters = new MapSqlParameterSource();
+	  namedParameters.addValue("database", database);
+	  namedParameters.addValue("accession", accession);
+	  
+  	  return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("publication-id-by-database-and-accession"), namedParameters, Long.class);
+	}
+	
 	private List<Long> findPublicationIdsByTitle(String title) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("title", title);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("publication-id-by-title"), namedParameters, Long.class);

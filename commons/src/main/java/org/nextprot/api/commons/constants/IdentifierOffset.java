@@ -1,5 +1,7 @@
 package org.nextprot.api.commons.constants;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  * Some annotations are built from different tables (annotations, mapping_annotations, partnerships, xrefs,...).
  * To make sure to have no identifier having the same primary key value in two different tables 
@@ -30,4 +32,7 @@ public class IdentifierOffset {
 	public final static long XREF_PROPERTY_OFFSET = 1_300_000_000_000L;
 	public final static long XREF_ENSEMBL_GENE_PROPERTY_OFFSET = 1_400_000_000_000L;
 	public final static long XREF_ENSEMBL_PROTEIN_PROPERTY_OFFSET = 1_500_000_000_000L;
+	
+	public final static AtomicLong EVIDENCE_ID_COUNTER_FOR_STATEMENTS = new AtomicLong(2_000_000_000_000L);
+	
 }

@@ -2,7 +2,7 @@
 	#foreach($target in $target-isoform-list)
 		<target-isoform accession='$target.isoformName'>
 			<position-list>
-				<position start="$target.getFirstPosition()" end="$target.getLastPosition()"/>
+				<position start="$target.getFirstPosition()" end="$target.getLastPosition()" #if($isospec.name)name='$isospec.name'#end/>
 			</position-list>
 		</target-isoform>
 	#end

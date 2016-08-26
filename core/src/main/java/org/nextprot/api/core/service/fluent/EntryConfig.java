@@ -8,6 +8,7 @@ import org.nextprot.api.core.service.export.format.EntryBlock;
 public class EntryConfig implements KeyValueRepresentation{
 	
 	private boolean overview, publications, genomicMappings, xrefs, keywords, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, experimentalContext;
+	private boolean entryModifiedAnnotations;
 	private boolean enzymes;
 	private boolean withoutAdditionalReferences = false; // by default we put xrefs, publications, experimental contexts
 	private boolean withoutProperties = false; //by default we get properties
@@ -88,6 +89,10 @@ public class EntryConfig implements KeyValueRepresentation{
 
 	public boolean hasEnzymes() {
 		return this.enzymes;
+	}
+
+	public boolean hasAnnotationsForModifiedEntry() {
+		return this.entryModifiedAnnotations;
 	}
 
 	public AnnotationCategory getSubpart() {
@@ -219,6 +224,11 @@ public class EntryConfig implements KeyValueRepresentation{
 		}
 
 		return sb.toString();
+	}
+
+	public EntryConfig withModifiedEntryAnnotations() {
+		this.entryModifiedAnnotations = true;
+		return this;
 	}
 
 

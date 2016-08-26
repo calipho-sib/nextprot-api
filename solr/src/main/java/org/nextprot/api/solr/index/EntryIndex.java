@@ -14,8 +14,11 @@ import org.nextprot.api.solr.SortConfig;
 
 public class EntryIndex extends IndexTemplate {
 
+	// a way to get it easily from everywhere !
+	static public final String NAME = "entry";	
+	
 	public EntryIndex() {
-		super("entry", "npentries1");
+		super(EntryIndex.NAME, "npentries1");
 	}
 	
 	protected EntryIndex(String name, String index) {

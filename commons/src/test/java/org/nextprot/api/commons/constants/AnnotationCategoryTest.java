@@ -255,14 +255,6 @@ public class AnnotationCategoryTest {
 	}
 
 	@Test
-	public void testGetSortedAnnotationCategories() {
-
-		List<AnnotationCategory> categories = AnnotationCategory.getSortedCategories();
-
-		Assert.assertEquals(98, categories.size());
-	}
-
-	@Test
 	public void testGetAllParents() {
 
 		Assert.assertEquals(Sets.newHashSet(AnnotationCategory.ROOT, AnnotationCategory.POSITIONAL_ANNOTATION, AnnotationCategory.GENERIC_SITE),
@@ -331,4 +323,16 @@ public class AnnotationCategoryTest {
             Assert.assertTrue("'"+cat+"' unexpectly contains space", !cat.contains(" "));
         }
     }
+
+	@Test
+	public void shouldFindAnnotationCategory() {
+
+		Assert.assertTrue(AnnotationCategory.hasAnnotationByApiName("ptm"));
+	}
+
+	@Test
+	public void shouldNotFindSpongebobAnnotationCategory() {
+
+		Assert.assertFalse(AnnotationCategory.hasAnnotationByApiName("spongeboo"));
+	}
 }

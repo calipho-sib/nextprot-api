@@ -9,4 +9,10 @@ public interface MasterIdentifierService {
 	List<String> findUniqueNamesOfChromosome(String chromosome);
 	Set<String> findUniqueNames();
 
+	/**
+	 * Should result a single accession most of the time
+	 * @param geneNam
+	 * @return
+	 */
+	Set<String> findEntryAccessionByGeneName(String geneName);
 }

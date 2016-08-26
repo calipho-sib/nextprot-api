@@ -1,5 +1,7 @@
 package org.nextprot.api.core.utils;
 
+import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 
@@ -7,6 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 
 /**
@@ -21,6 +24,7 @@ public class IsoformUtils {
 	 * @param isoforms
 	 * @param isoformName
 	 * @return
+     * TODO: check if redundant with getIsoformByName
 	 */
 	public static Isoform getIsoformByIsoName(List<Isoform> isoforms, String isoformName) {
 		//TODO the isoforms should be stored in a map at the level of the Entry
@@ -34,7 +38,8 @@ public class IsoformUtils {
     /**
      * Get the canonical isoform of the given entry
      * @param entry the entry to fetch canonical isoform
-     * @return the canonical isoform else null
+     * @return the canonical isoform
+     * @throws NextProtException if canonical isoform is missing
      */
     public static Isoform getCanonicalIsoform(Entry entry) {
 
@@ -43,7 +48,34 @@ public class IsoformUtils {
             if (isoform.isCanonicalIsoform())
                 return isoform;
         }
+        throw new NextProtException(entry.getUniqueName()+" lacks canonical isoform");
+    }
 
+    /**
+     * Get all isoforms except the given one
+     */
+    public static List<Isoform> getOtherIsoforms(Entry entry, String isoformUniqueName) {
+
+        return entry.getIsoforms().stream()
+                .filter(iso -> !iso.getUniqueName().equals(isoformUniqueName))
+                .collect(Collectors.toList());
+    }
+
+    public static Isoform getIsoformByName(Entry entry, String name) {
+        return getIsoformByName(entry.getIsoforms(), name);
+    }
+
+    public static Isoform getIsoformByName(List<Isoform> isoforms, String name) {
+
+        if (name==null) return null;
+        for (Isoform iso: isoforms) {
+            if (name.equals(iso.getUniqueName())) return iso;
+            EntityName mainEname = iso.getMainEntityName();
+            if (mainEname!=null && name.equalsIgnoreCase(mainEname.getName())) return iso;
+            for (EntityName syn: iso.getSynonyms()) {
+                if (name.equalsIgnoreCase(syn.getName())) return iso;
+            }
+        }
         return null;
     }
 

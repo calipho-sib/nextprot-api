@@ -1,16 +1,18 @@
 package org.nextprot.api.web.security;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.Test;
 import org.nextprot.api.web.dbunit.base.mvc.MVCBaseSecurityTest;
 import org.springframework.http.MediaType;
+
+import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Tests GET, PUT, POST, DELETE for 3 different scenarios (anonymous, owner and other logged user) 
@@ -38,12 +40,12 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 		// Check presence of User subgroups
 		
 		//user stuff
-		assertTrue(this.containsWithKeyValue(responseString, "name", "User Protein Lists"));
 		assertTrue(this.containsWithKeyValue(responseString, "name", "Protein lists"));
+		assertTrue(this.containsWithKeyValue(responseString, "group", "Protein Lists"));
 
 		//public
-		assertTrue(this.containsWithKeyValue(responseString, "name", "User Queries"));
 		assertTrue(this.containsWithKeyValue(responseString, "name", "Queries"));
+		assertTrue(this.containsWithKeyValue(responseString, "group", "Sparql Queries"));
 	}
 
 	@Test
@@ -65,12 +67,12 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 		assertTrue(this.containsWithKeyValue(responseString, "name", "User Application"));
 	
 		//user stuff
-		assertTrue(this.containsWithKeyValue(responseString, "name", "User Protein Lists"));
 		assertTrue(this.containsWithKeyValue(responseString, "name", "Protein lists"));
+		assertTrue(this.containsWithKeyValue(responseString, "group", "Protein Lists"));
 
 		//public
 		assertTrue(this.containsWithKeyValue(responseString, "name", "User Queries"));
-		assertTrue(this.containsWithKeyValue(responseString, "name", "Queries"));
+		assertTrue(this.containsWithKeyValue(responseString, "group", "Sparql Queries"));
 
 	}
 
@@ -117,7 +119,7 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 	 * (for instance, '"name":"User Application"').
 	 */
 	private boolean containsWithKeyValue(String string, String key, String value) {
-		return string.contains("\"" + key + "\":\"" + value +"\"");
+		return doStringMatchRegexpInDotAllMode(".*\"" + key + "\"\\s*:\\s*\"" + value +"\".*", string);
 	}
 	
 	/**
@@ -125,6 +127,15 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 	 * (for instance, '"Admin":[' not succeeded by ']').
 	 */
 	private boolean isMatchRegExpGroup(String string, String groupName) {
-		return  string.matches(".*\""+groupName+"\":\\[[^\\]].*");
+
+		return doStringMatchRegexpInDotAllMode(".*\""+groupName+"\"\\s*:\\s*\\[[^]].*", string);
+	}
+
+	private boolean doStringMatchRegexpInDotAllMode(String regexp, String string) {
+
+		Pattern p = Pattern.compile(regexp, Pattern.DOTALL);
+		Matcher m = p.matcher(string);
+
+		return m.matches();
 	}
 }

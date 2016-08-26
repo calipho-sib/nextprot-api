@@ -1,9 +1,13 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
+import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +25,31 @@ class IsoformServiceImpl implements IsoformService {
 	@Autowired
 	private IsoformDAO isoformDAO;
 
+	
+	@Autowired
+	private MasterIsoformMappingDao masterIsoformMappingDAO;
 
+	
 	@Override
 	@Cacheable("isoforms")
 	public List<Isoform> findIsoformsByEntryName(String entryName) {
 		List<Isoform> isoforms = isoformDAO.findIsoformsByEntryName(entryName);
 		List<EntityName> synonyms = isoformDAO.findIsoformsSynonymsByEntryName(entryName);
-		
+		Map<String,List<NucleotidePositionRange>> isoMasterNuPosRanges = masterIsoformMappingDAO.findMasterIsoformMapping(entryName);
+				
 		//Groups the synonyms by their main isoform
 		Multimap<String, EntityName> synonymsMultiMap = Multimaps.index(synonyms, new SynonymFunction());
 		for (Isoform isoform : isoforms) {
 			isoform.setSynonyms(synonymsMultiMap.get(isoform.getUniqueName()));
+		}
+
+		//Attach master mapping to each isoform
+		for (Isoform isoform : isoforms) {
+			if (isoMasterNuPosRanges.containsKey(isoform.getUniqueName())) {
+				isoform.setMasterMapping(isoMasterNuPosRanges.get(isoform.getUniqueName()));
+			} else {
+				isoform.setMasterMapping(new ArrayList<NucleotidePositionRange>());
+			}
 		}
 		
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming

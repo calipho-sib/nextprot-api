@@ -9,14 +9,13 @@ import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.EntryService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.solr.index.EntryIndex.Fields;
 import org.nextprot.api.tasks.solr.indexer.entry.EntryFieldBuilder;
 import org.nextprot.api.tasks.solr.indexer.entry.FieldBuilder;
 import org.reflections.Reflections;
 
-abstract class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
+public class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 
 	private Map<Fields, FieldBuilder> fieldsBuilderMap = null;
 	private TerminologyService terminologyservice;
@@ -32,7 +31,8 @@ abstract class EntryBaseSolrIndexer extends SolrIndexer<Entry> {
 	private DbXrefService dbxrefservice;
 	private boolean isGold;
 	
-	public EntryBaseSolrIndexer(String url, boolean isGold) {
+	// protected => only sub classes can use c'tor (was abstract class before)
+	protected EntryBaseSolrIndexer(String url, boolean isGold) {
 		super(url);
 		this.isGold = isGold;
 	}

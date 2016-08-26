@@ -1,14 +1,15 @@
 package org.nextprot.api.commons.service;
 
-import com.google.common.collect.Sets;
+import java.util.List;
+import java.util.Set;
+
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.Sets;
 
 @Lazy
 @Service
@@ -34,4 +35,9 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 		return this.masterIdentifierDao.findIdByUniqueName(uniqueName);
 	}
 
+	@Override
+	@Cacheable("entry-accession-by-gene-name")
+	public Set<String> findEntryAccessionByGeneName(String geneName) {
+		return Sets.newHashSet(this.masterIdentifierDao.findUniqueNamesByGeneName(geneName));
+	}
 }

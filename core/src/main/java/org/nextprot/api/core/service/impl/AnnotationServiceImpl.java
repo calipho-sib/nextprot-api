@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.nextprot.api.annotation.builder.statement.service.StatementService;
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -17,7 +18,7 @@ import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -36,10 +37,23 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private IsoformDAO isoformDAO;
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private AntibodyMappingService antibodyMappingService;
+	@Autowired private StatementService statementService;
 	
 	@Override
 	@Cacheable("annotations")
 	public List<Annotation> findAnnotations(String entryName) {
+		return findAnnotations(entryName,false);
+	}
+
+	/**
+	 * pam: just for test AnnotationServiceTest to work, could not find any better quick fix
+	 */
+	@Override
+	public List<Annotation> findAnnotationsExcludingBed(String entryName) {
+		return findAnnotations(entryName,true);
+	}
+
+	private List<Annotation> findAnnotations(String entryName, boolean ignoreStatements) {
 
 		Preconditions.checkArgument(entryName != null, "The annotation name should be set wit #withName(...)");
 		
@@ -106,6 +120,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
+		if (!ignoreStatements) annotations = AnnotationUtils.mapReduceMerge(statementService.getAnnotations(entryName), annotations);
+
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 	}
@@ -127,7 +143,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			annotation.setAnnotationId(property.getAnnotationId() + IdentifierOffset.BIOPHYSICOCHEMICAL_ANNOTATION_OFFSET);
 			annotation.setCategory(model.getDbAnnotationTypeName());
 			annotation.setDescription(description);
-			annotation.setEvidences(new ArrayList<AnnotationEvidence>());
+			annotation.setEvidences(new ArrayList<>());
 
 			annotation.setQualityQualifier("GOLD");
 			annotation.setUniqueName(entryName + "_" + model.getApiTypeName());

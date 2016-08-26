@@ -12,7 +12,7 @@
 	<developers>
 		<developer>
 			<name>NextProt Team</name>
-			<email>ndu@isb-sib.ch</email>
+			<email>ndu@sib.swiss</email>
 		</developer>
 	</developers>
 
@@ -46,6 +46,8 @@
 		<module>rdf</module>
 		<module>solr</module>
 		<module>security</module>
+		<module>isoform-mapper</module>
+		<module>etl-statement</module>
 		<module>web</module>
 		<module>test-diff-rdf-db</module>
 		<module>tasks</module>
@@ -59,6 +61,12 @@
 				<artifactId>nextprot-api-commons</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+		    <dependency>
+			<groupId>org.nextprot</groupId>
+    			<artifactId>nextprot-commons</artifactId>
+			<version>0.9.0-SNAPSHOT</version>
+		    </dependency>
+	
 		</dependencies>
 
 	</dependencyManagement>
@@ -327,15 +335,6 @@
 	</dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>2.6</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -358,8 +357,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>

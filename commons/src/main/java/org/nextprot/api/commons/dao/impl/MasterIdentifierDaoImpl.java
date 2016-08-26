@@ -24,6 +24,12 @@ public class MasterIdentifierDaoImpl implements MasterIdentifierDao {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("uniqueName", uniqueName);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForObject(sqlDictionary.getSQLQuery("master-id-by-name"), namedParameters, Long.class);
 	}
+	
+	@Override
+	public List<String> findUniqueNamesByGeneName(String geneName) {
+		SqlParameterSource namedParameters = new MapSqlParameterSource("geneName", geneName);
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("accessions-by-gene-name"), namedParameters, String.class);
+	}
 
 	@Override
 	public List<String> findUniqueNamesOfChromosome(String chromosome) {

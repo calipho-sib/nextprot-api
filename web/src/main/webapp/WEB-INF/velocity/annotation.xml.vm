@@ -1,4 +1,13 @@
-<annotation quality='$annotation.getQualityQualifier()'>
+<annotation quality='$annotation.getQualityQualifier()' annotation-internal-id='#if($annotation.getAnnotationHash())$annotation.getAnnotationHash()#else$annotation.getAnnotationId()#end'>
+	#if($annotation.getSubjectComponents())
+    <biological-subject>
+    	<biological-subject-component-list>
+	    #foreach($component in $annotation.getSubjectComponents())
+		    <biological-subject-component annotation-internal-ref="$component" />
+		#end
+		</biological-subject-component-list>
+   </biological-subject>
+    #end
 	#if($annotation.getCvTermName())
     <cv-term accession='$annotation.getCvTermAccessionCode()' terminology='$StringUtils.camelToKebabCase($annotation.getCvApiName())'>$annotation.getCvTermName()</cv-term>
     #end
@@ -21,7 +30,7 @@
 			#if($resourceType == "EXTERNAL")
                 <biological-object bio-type='$StringUtils.snakeToKebabCase($bioType)' resource-internal-ref='$bioObject.getId()'/>
 			#elseif($resourceType == "INTERNAL")
-                <biological-object bio-type='$StringUtils.snakeToKebabCase($bioType)' accession='$bioObject.getAccession()' database='neXtProt'/>
+                <biological-object bio-type='$StringUtils.snakeToKebabCase($bioType)' #if($bioObject.getAccession()) accession='$bioObject.getAccession()' #else annotation-internal-ref='$bioObject.getAnnotationHash()' #end database='neXtProt'/>
 			#end
 		#else
             <biological-object bio-type='$StringUtils.snakeToKebabCase($bioType)'>
@@ -61,6 +70,10 @@
 							<property name="$pk" value="$evidence.getPropertyValue($pk)" />
 						#end
 					</property-list>
+				#end
+				#if($evidence.getNote())
+					#set($UNESCAPED_CDATA = $evidence.getNote())
+					<evidence-note><![CDATA[$UNESCAPED_CDATA]]></evidence-note>
 				#end
 			</evidence>
 		#end

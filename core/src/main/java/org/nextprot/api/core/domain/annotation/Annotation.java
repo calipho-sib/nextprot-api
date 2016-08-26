@@ -5,13 +5,19 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.IsoformSpecific;
-import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.annot.comp.AnnotationPropertyComparator;
 
 import java.io.Serializable;
 import java.util.*;
 
-
+// I would love to encapsulate what varies and only keep what is common there
+//I would love to do @JsonInclude(Include.NON_NULL)
 public class Annotation implements Serializable, IsoformSpecific {
+
+	private List<String> subjectComponents;
+	
+	private String annotationName;
+	private String annotationHash;
 
 	private static final long serialVersionUID = 1L;
 
@@ -39,6 +45,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private String description;
 
+	// TODO: apiCategory already exist (DRY)
 	private String category;
 
 	private String qualityQualifier;
@@ -47,11 +54,14 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private AnnotationVariant variant;
 
+	// TODO: synonyms already exist (DRY)
 	private String synonym;
 	
 	private AnnotationCategory apiCategory;
 
 	private List<AnnotationEvidence> evidences;
+
+	private Set<String> indirectEvidenceRefList = null;
 
 	private final Map<String, AnnotationIsoformSpecificity> targetingIsoformsMap = new TreeMap<>();
 
@@ -60,13 +70,40 @@ public class Annotation implements Serializable, IsoformSpecific {
 	private BioObject bioObject;
 	
 	private DbXref parentXref; // non null only when annotation is built from an xref (see AnnotationServiceImpl.getXrefsAsAnnotationsByEntry()
-	
+
 	public String toString() {
 		return uniqueName + ": "  + 
 				"cvTermAccessionCode:" + cvTermAccessionCode +
 				" - cvTermName:" + cvTermName +
 				" - description:"  + description;
 	}
+	
+	
+	/**
+	 * Pam
+	 * Only ModificationEffect annotations directly apply to proteoforms.
+	 * ProteinProperty and MammalianPhenotype also applies to proteoforms BUT indirectly.
+	 * They only appear as the object of a ModificationEffect proteoform annotation (in annot.bio-object.annotationHash).
+	 * @return true if a proteoform (modified isoform) is the subject of the annotation 
+	 */
+	public boolean isProteoformAnnotation() {
+		return (subjectComponents!=null && ! subjectComponents.isEmpty());
+	}
+
+	/**
+	 * Pam
+	 * Some annotation categories should not be linked to an isoform or entry but only to a proteoform.
+     * They only appear as the object of a proteoform ModificationEffect annotation.
+     * I use the term WildType instead of Isoform to avoid confusions. 
+	 * @return true if annotation applies to unmodified isoforms (wild type = isoform)
+	 */
+	public boolean isWildTypeAnnotation() {
+		if (AnnotationCategory.PROTEIN_PROPERTY == this.apiCategory) return false;
+		if (AnnotationCategory.MAMMALIAN_PHENOTYPE == this.apiCategory) return false;
+		if (AnnotationCategory.PHENOTYPIC_VARIATION ==  this.apiCategory) return false;
+		return true;
+	}
+	
 	
 	public DbXref getParentXref() {
 		return parentXref;
@@ -152,6 +189,11 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public String getCategory() {
 		return category;
 	}
+	
+
+	public String getCategoryName() {
+		return getApiTypeName();
+	}
 
 	// Called from Velocity templates
 	public String getApiTypeName() {
@@ -183,7 +225,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public void setCategory(AnnotationCategory category) {
 		//wtf???? names are not coherent...
 		this.apiCategory= category;
-		this.category = category.getApiTypeName();
+		this.category = category.getDbAnnotationTypeName();
 	}
 	
 	public void setCategory(String category) {
@@ -264,7 +306,7 @@ public class Annotation implements Serializable, IsoformSpecific {
             String propertyName = property.getName();
 
             if (!properties.containsKey(propertyName)) {
-                properties.put(propertyName, new TreeSet<>(AnnotationUtils.getInstanceOfAnnotationPropertyComparator()));
+                properties.put(propertyName, new TreeSet<>(new AnnotationPropertyComparator()));
             }
 
             properties.get(propertyName).add(property);
@@ -331,7 +373,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public String getSpecificityForIsoform(String isoformName) {
 		return this.targetingIsoformsMap.get(isoformName).getSpecificity();
 	}
-
+	
 	public BioObject getBioObject() {
 		return bioObject;
 	}
@@ -373,4 +415,40 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 		return booleanOptional;
 	}
+	
+	public List<String> getSubjectComponents() {
+		return subjectComponents;
+	}
+
+	public void setSubjectComponents(List<String> subjectComponents) {
+		this.subjectComponents = subjectComponents;
+	}
+
+	public String getAnnotationName() {
+		return annotationName;
+	}
+
+	public void setAnnotationName(String annotationName) {
+		this.annotationName = annotationName;
+	}
+
+	public String getAnnotationHash() {
+		return annotationHash;
+	}
+
+	public void setAnnotationHash(String annotationHash) {
+		this.annotationHash = annotationHash;
+	}
+
+	public Set<String> getIndirectEvidenceRefList() {
+		return indirectEvidenceRefList;
+	}
+	
+	public synchronized void addIndirectEvidence(String indirectEvidenceId) {
+		if(indirectEvidenceRefList == null) {
+			indirectEvidenceRefList = new HashSet<String>();
+		}
+		this.indirectEvidenceRefList.add(indirectEvidenceId);
+	}
+
 }

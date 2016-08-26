@@ -868,24 +868,28 @@
 
 					
 					//Add suffix for brower call
-					var suffix = "xml";
+					var suffix = ".xml";
 					if (headers["Accept"] == "application/json")
-						suffix = "json";
+						suffix = ".json";
 					if (headers["Accept"] == "text/turtle")
-						suffix = "ttl";
+						suffix = ".ttl";
+					if (headers["Accept"] == "text/plain")
+						suffix = "";
 					if (headers["Accept"] == "text/fasta")
-						suffix = "fasta";
+						suffix = ".fasta";
 					if (headers["Accept"] == "application/vnd.ms-excel")
-						suffix = "xls";
+						suffix = ".xls";
 					//if (headers["Accept"] == "text/peff")
 					//	suffix = "peff";
 
 					if(replacedPath.indexOf('?') != -1){
 						var begin = replacedPath.substring(0, replacedPath.indexOf('?'));
 						var end = replacedPath.substring(replacedPath.indexOf('?'), replacedPath.length);
-						replacedPath = begin + "." + suffix + end; 
+						//replacedPath = begin + "." + suffix + end; 
+						replacedPath = begin + suffix + end; 
 					}else {
-						replacedPath += "." + suffix;
+						replacedPath += suffix;
+						//replacedPath += "." + suffix;
 					}
 					
 					if(replacedPath[0] == "/"){

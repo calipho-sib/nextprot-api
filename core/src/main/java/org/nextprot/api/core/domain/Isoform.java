@@ -1,14 +1,16 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.util.Collection;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
+import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.core.dao.EntityName;
+
+import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.util.Collection;
+import java.util.List;
 
 
 public class Isoform implements Serializable {
@@ -21,14 +23,26 @@ public class Isoform implements Serializable {
 
 	private String md5;
 	
-	private String uniqueName;
+	private String isoformAccession;
 
 	private boolean swissProtDisplayedIsoform;
 
 	private EntityName mainEntityName;
 
 	private Collection<EntityName> synonyms;
+
+	private List<NucleotidePositionRange> masterMapping;
 	
+	
+	
+	public List<NucleotidePositionRange> getMasterMapping() {
+		return masterMapping;
+	}
+
+	public void setMasterMapping(List<NucleotidePositionRange> masterMapping) {
+		this.masterMapping = masterMapping;
+	}
+
 	@Deprecated
 	public String getIsoelectricPointAsString() {
 		Double d = DescriptorPI.compute(sequence);
@@ -38,13 +52,8 @@ public class Isoform implements Serializable {
 
 	@Deprecated
 	public String getMassAsString() {
-		try {
-			Double d = DescriptorMass.compute(sequence);
-			return String.valueOf(Math.round(d));
-		} catch (Throwable e) {
-			LOGGER.error("Error computing molecular mass of isoform " + uniqueName, e);
-			return "0";
-		}
+		Double d = DescriptorMass.compute(sequence);
+		return String.valueOf(Math.round(d));
 	}
 	
 	public String getMd5() {
@@ -55,12 +64,29 @@ public class Isoform implements Serializable {
 		this.md5 = md5;
 	}
 
+	public String getIsoformAccession() {
+		return isoformAccession;
+	}
+	
+	/**
+	 * Use isoform accession
+	 * @return
+	 */
+	@Deprecated
 	public String getUniqueName() {
-		return uniqueName;
+		return isoformAccession;
 	}
 
+	/**
+	 * Use isoform accession
+	 */
+	@Deprecated
 	public void setUniqueName(String uniqueName) {
-		this.uniqueName = uniqueName;
+		this.isoformAccession = uniqueName;
+	}
+
+	public void setIsoformAccession(String isoformAccession) {
+		this.isoformAccession = isoformAccession;
 	}
 
 	public String getSequence() {

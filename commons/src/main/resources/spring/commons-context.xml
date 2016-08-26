@@ -9,16 +9,23 @@
 
 	<context:component-scan base-package="org.nextprot.api.commons" />
 	<context:component-scan base-package="org.nextprot.api.core" />
+	<context:component-scan base-package="com.nextprot.api.annotation.builder" />
+	<context:component-scan base-package="com.nextprot.api.isoform.mapper" />
 	<context:component-scan base-package="org.nextprot.api.user" />
 	<context:component-scan base-package="org.nextprot.api.security" />
 	<context:component-scan base-package="org.nextprot.api.rdf" />
 	<context:component-scan base-package="org.nextprot.api.solr" />
 	<context:component-scan base-package="org.nextprot.api.web" />
-	<context:component-scan base-package="org.nextprot.api.tasks" />
 	<context:component-scan base-package="org.nextprot.api.test.rdf" />
+	
+	<!-- should be put in build profile -->
+	<context:component-scan base-package="org.nextprot.api.etl" />
+
 	<beans profile="build">
+		<context:component-scan base-package="org.nextprot.api.tasks" />
 		<context:component-scan base-package="org.nextprot.api.build" />
 	</beans>
+
 
 
 	<beans profile="unit">
@@ -114,11 +121,12 @@
 	</beans>
 
 	<beans profile="pro,dev">
-
+	
 		<bean id="dataSourceServiceLocator"
 			class="org.nextprot.api.commons.spring.jdbc.impl.DataSourceServiceLocatorImpl">
 			<property name="dataSource" ref="dataSource" />
 			<property name="userDataSource" ref="userDataSource" />
+			<property name="statementsDataSource" ref="statementsDataSource" />
 		</bean>
 
 		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -126,6 +134,17 @@
 			<property name="jdbcUrl" value="${db.data.url}" />
 			<property name="user" value="${db.data.username}" />
 			<property name="password" value="${db.data.password}" />
+			<property name="maxPoolSize" value="${db.data.maxPoolSize}" />
+			<property name="minPoolSize" value="${db.data.minPoolSize}" />
+			<property name="initialPoolSize" value="${db.data.initialPoolSize}" />
+			<property name="autoCommitOnClose" value="false" />
+		</bean>
+
+		<bean id="statementsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+			<property name="driverClass" value="${db.statements.driver}" />
+			<property name="jdbcUrl" value="${db.statements.url}" />
+			<property name="user" value="${db.statements.username}" />
+			<property name="password" value="${db.statements.password}" />
 			<property name="maxPoolSize" value="${db.data.maxPoolSize}" />
 			<property name="minPoolSize" value="${db.data.minPoolSize}" />
 			<property name="initialPoolSize" value="${db.data.initialPoolSize}" />

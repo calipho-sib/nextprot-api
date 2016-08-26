@@ -14,7 +14,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.ExperimentalContextService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;

@@ -17,6 +17,17 @@
 
 	<build>
 		<finalName>nextprot-api-tasks</finalName>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 
 	<dependencies>
@@ -59,5 +70,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>

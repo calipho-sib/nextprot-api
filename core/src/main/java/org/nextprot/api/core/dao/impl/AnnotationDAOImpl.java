@@ -1,6 +1,7 @@
 package org.nextprot.api.core.dao.impl;
-import org.nextprot.api.commons.bio.mutation.ProteinMutationFormat;
-import org.nextprot.api.commons.bio.mutation.hgv.ProteinMutationHGVFormat;
+
+import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.impl.format.hgvs.SequenceVariationHGVSFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
@@ -14,18 +15,18 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Component;
-import java.util.Arrays;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 
 
 @Component
 public class AnnotationDAOImpl implements AnnotationDAO {
 
-	private static ProteinMutationHGVFormat MUTATION_HGV_FORMAT = new ProteinMutationHGVFormat();
+	private static SequenceVariationHGVSFormat MUTATION_HGV_FORMAT = new SequenceVariationHGVSFormat();
 
 	@Autowired private SQLDictionary sqlDictionary;
 
@@ -219,7 +220,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			property.setValue((name.equals("mutation AA")) ?
 					// TODO: 'mutation AA' property comes from COSMIC. Some values could be not corrected formatter according to the last version v2.0 of HGV
 					// This reformatting should be done at NP integration time, even better, this should be done by COSMIC guys !
-					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, ProteinMutationHGVFormat.ParsingMode.PERMISSIVE), ProteinMutationFormat.AACodeType.THREE_LETTER)
+					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE), AminoAcidCode.AACodeType.THREE_LETTER)
 					: value);
 		} catch (ParseException e) {
 			throw new NextProtException(e);
