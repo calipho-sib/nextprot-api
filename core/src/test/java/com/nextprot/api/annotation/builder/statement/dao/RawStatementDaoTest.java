@@ -24,12 +24,6 @@ public class RawStatementDaoTest extends AnnotationBuilderIntegrationBaseTest {
 		assertTrue(rows.size() > 0);
 	}
 	
-	@Test
-	public void findProteformStatementsForIsoform() {
-		List<?> rows = rawStatementDao.findProteoformStatements(AnnotationType.ISOFORM, "NX_Q15858-1");
-		assertTrue(rows.size() > 0);
-	}
-	
 
 	@Test
 	public void findAllNormalStatements() {

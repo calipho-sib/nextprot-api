@@ -49,20 +49,28 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	private StatementLoaderService statementLoadService = new JDBCStatementLoaderServiceImpl();
 
-	@Override
-	public String etlStatements(NextProtSource source) {
-
+	
+	List<Statement> extractStatements(NextProtSource source) {
 		List<Statement> sourceStatements = statementRemoteService.getStatementsForSource(source);
 		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
 		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
+		return sourceStatements;
+		
+	}
+
+		
+	@Override
+	public String etlStatements(NextProtSource source) {
+
+		List<Statement> rawStatements = extractStatements(source);
 
 		//System.err.println("Got response from source");
-		Map<String, Statement> sourceStatementsById = sourceStatements.stream().collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
+		Map<String, Statement> sourceStatementsById = rawStatements.stream().collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
 
 		//Set<Statement> statementsMappedToIsoformToLoad = new HashSet<Statement>();
 		Set<Statement> statementsMappedToEntryToLoad = new HashSet<Statement>();
 
-		for (Statement originalStatement : sourceStatements) {
+		for (Statement originalStatement : rawStatements) {
 
 			if ((originalStatement.getSubjectStatementIds() != null) && (!originalStatement.getSubjectStatementIds().isEmpty())) {
 
@@ -95,8 +103,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 		try {
 			
-			addInfo(sb, "Loading raw statements: " + sourceStatements.size());
-			statementLoadService.loadRawStatementsForSource(new HashSet<>(sourceStatements), NextProtSource.BioEditor);
+			addInfo(sb, "Loading raw statements: " + rawStatements.size());
+			statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), NextProtSource.BioEditor);
 
 			/*addInfo(sb, "Loading iso statements: " + statementsMappedToIsoformToLoad.size());
 			statementLoadService.loadStatementsMappedToIsoSpecAnnotationsForSource(statementsMappedToIsoformToLoad, NextProtSource.BioEditor);*/
