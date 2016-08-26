@@ -1,14 +1,13 @@
 package org.nextprot.api.core.utils.annot.comp;
 
-import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.BioGenericObject;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.AnnotationUtils;
+import static org.nextprot.api.core.utils.annot.comp.AnnotationComparators.compareNullableComparableObject;
 
 import java.util.Comparator;
 import java.util.Map;
 
-import static org.nextprot.api.core.utils.annot.comp.AnnotationComparators.compareNullableComparableObject;
+import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 
 class ByAnnotationBioObjectComparator extends HashableAnnotationComparator {
 
@@ -31,12 +30,11 @@ class ByAnnotationBioObjectComparator extends HashableAnnotationComparator {
     @Override
     protected String getAnnotationHash(Annotation annotation) {
 
-        if (! (annotation.getBioObject() instanceof BioGenericObject) )
+    	String annotHash = annotation.getBioObject().getAnnotationHash();
+    	if(annotHash == null){
             throw new NextProtException("no hash for annotation "+ AnnotationUtils.toString(annotation));
-
-        BioGenericObject bgo = (BioGenericObject) annotation.getBioObject();
-
-        return bgo.getAnnotationHash();
+    	}
+    	return annotHash;
     }
 
     private static class BioObjectComparator implements Comparator<Annotation> {

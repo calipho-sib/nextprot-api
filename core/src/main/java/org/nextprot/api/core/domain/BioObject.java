@@ -1,11 +1,16 @@
 package org.nextprot.api.core.domain;
 
-import com.google.common.base.Preconditions;
-
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.common.base.Preconditions;
 
 public class BioObject implements Serializable {
 
+	
+	private static final String ANNOTATION_HASH_PROPERTY_NAME =  "annotationHash";
+	
     private static final long serialVersionUID = 2L;
 
     public static final String NEXTPROT_DATABASE = "neXtProt"; // ok: this is the cv_name of nextprot in cv_databases (!= cv_datasources)
@@ -20,6 +25,7 @@ public class BioObject implements Serializable {
     private final String database;
     private final BioType bioType;
     private final ResourceType resourceType;
+    private Map<String, String> properties = new HashMap<>();
 
     public BioObject(BioType bioType, ResourceType resourceType, String database) {
 
@@ -86,6 +92,24 @@ public class BioObject implements Serializable {
         return resourceType;
     }
 
+    public void setAnnotationHash(String value) {
+    	this.properties.put(ANNOTATION_HASH_PROPERTY_NAME, value);
+    }
+
+    
+    public void putPropertyNameValue(String name, String value) {
+    	this.properties.put(name, value);
+    }
+
+    public Map<String, String> getProperties() {
+    	return this.properties;
+    }
+
+    public String getAnnotationHash() {
+    	return properties.get(ANNOTATION_HASH_PROPERTY_NAME);
+    }
+
+    
     public int size() {
         return 1;
     }

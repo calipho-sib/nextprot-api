@@ -1,15 +1,14 @@
 package org.nextprot.api.core.utils.annot.comp;
 
+import static org.mockito.Mockito.when;
+import static org.nextprot.api.core.utils.annot.comp.ByAnnotationSubjectComparatorTest.newHashMap;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.BioGenericObject;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
-
-import static org.mockito.Mockito.when;
-import static org.nextprot.api.core.utils.annot.comp.ByAnnotationSubjectComparatorTest.*;
 
 public class ByAnnotationBioObjectComparatorTest {
 
@@ -91,9 +90,9 @@ public class ByAnnotationBioObjectComparatorTest {
         Assert.assertEquals(1, cmp);
     }
 
-    private static BioGenericObject mockBioObject(BioObject.BioType bioType, BioObject.ResourceType resourceType, String hash) {
+    private static BioObject mockBioObject(BioObject.BioType bioType, BioObject.ResourceType resourceType, String hash) {
 
-        BioGenericObject bgo = Mockito.mock(BioGenericObject.class);
+    	BioObject bgo = Mockito.mock(BioObject.class);
 
         when(bgo.getBioType()).thenReturn(bioType);
         when(bgo.getResourceType()).thenReturn(resourceType);

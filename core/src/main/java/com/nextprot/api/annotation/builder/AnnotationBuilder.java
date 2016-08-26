@@ -1,12 +1,22 @@
 package com.nextprot.api.annotation.builder;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
-import org.nextprot.api.core.domain.BioGenericObject;
 import org.nextprot.api.core.domain.BioObject;
+import org.nextprot.api.core.domain.BioObject.BioType;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -18,9 +28,6 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 abstract class AnnotationBuilder<T extends Annotation> {
 
@@ -271,17 +278,28 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			//Check this with PAM (does it need to be a human readable stuff)
 			annotation.setUniqueName(statement.getValue(StatementField.ANNOTATION_ID)); //Does it need a name?
 			
-			String boah = statement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
-			String boa = statement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
+			String bioObjectAnnotationHash = statement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
+			String bioObjectAccession = statement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
 			String bot = statement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);
 
-			if ((boah != null) && (boah.length() > 0) || (boa != null && (boa.length() > 0))) {
+			if ((bioObjectAnnotationHash != null) && (bioObjectAnnotationHash.length() > 0) || (bioObjectAccession != null && (bioObjectAccession.length() > 0))) {
 
-				BioGenericObject bioObject = BioGenericObject.valueOf(annotation.getAPICategory(), BioObject.NEXTPROT_DATABASE);
+				BioObject bioObject = null;
 
-				bioObject.setAccession(boa); // In case of interactions
-				bioObject.setType(bot);
-				bioObject.setAnnotationHash(boah); // In case of phenotypes
+				if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
+					if(bioObjectAccession.startsWith("NX_") && BioType.PROTEIN.name().equalsIgnoreCase(bot)){
+						bioObject = BioObject.internal(BioType.PROTEIN);
+						bioObject.putPropertyNameValue("geneName", statement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
+					}else {
+						throw new NextProtException("Binary Interaction only expects to be a nextprot entry NX_ and found " + bioObjectAccession + " with type " + bot);
+					}
+					
+				}else if (AnnotationCategory.PHENOTYPIC_VARIATION.equals(annotation.getAPICategory())) {
+						bioObject = BioObject.internal(BioType.ENTRY_ANNOTATION);
+						bioObject.setAnnotationHash(bioObjectAnnotationHash);
+				}else {
+					throw new NextProtException("Category not expected for bioobject " + annotation.getAPICategory());
+				}
 
 				annotation.setBioObject(bioObject);
 			}

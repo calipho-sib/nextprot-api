@@ -48,7 +48,7 @@ public class EntryUtils implements Serializable{
 				for(String subject : a.getSubjectComponents()){
 					dependencyHashes.add(subject);
 				}
-				dependencyHashes.add(((BioGenericObject)a.getBioObject()).getAnnotationHash());
+				dependencyHashes.add((a.getBioObject()).getAnnotationHash());
 			});
 			
 			List<Annotation> dependentAnnotations = AnnotationUtils.filterAnnotationsByHashes(entry, dependencyHashes);
