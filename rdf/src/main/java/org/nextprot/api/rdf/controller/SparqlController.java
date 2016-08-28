@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -48,6 +49,11 @@ public class SparqlController {
 	@ResponseBody
 	public List<String> sparqlPrefixes() {
 		return sparqlDictionary.getSparqlPrefixesList();
+	}
+
+	@RequestMapping(value ="/common-prefixes", produces = {"text/turtle"})
+	public String commonPrefixes(Model model) {
+		return "prefix"; //will get prefix.ttl.vm
 	}
 
 
