@@ -39,6 +39,7 @@ public class PropertyApiModel {
 	public static final String NAME_ANTIBODIES_ACC="antibodies acc";
 	public static final String NAME_NUMBER_EXPERIMENTS="numberOfExperiments";
 	public static final String NAME_CELL_LINE="CL";
+	public static final String NAME_INTENSITY="intensity";
 
 	
 	private static enum Parent { EVIDENCE, ANNOTATION }
@@ -80,6 +81,9 @@ public class PropertyApiModel {
 						new PropertyApiModel(NAME_SELF_INTERACTION,"selfInteraction","boolean", true, true, Parent.ANNOTATION), 
 						new PropertyApiModel(NAME_NUMBER_EXPERIMENTS,"numberOfExperiments","integer", true, true, Parent.EVIDENCE))));
 		
+		anno2props.put(AnnotationCategory.PHENOTYPIC_VARIATION,
+				new HashSet<>(Arrays.asList(
+						new PropertyApiModel(NAME_INTENSITY,"intensity","string", false, true, Parent.EVIDENCE)))); 
 		// add other annotation - property links below
 		// ...
 	}
