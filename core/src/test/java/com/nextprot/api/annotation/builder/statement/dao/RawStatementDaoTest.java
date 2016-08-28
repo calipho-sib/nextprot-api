@@ -35,7 +35,7 @@ public class RawStatementDaoTest extends AnnotationBuilderIntegrationBaseTest {
 	public void findModificationEffectCategory(){
 		AnnotationCategory category = AnnotationCategory.PHENOTYPIC_VARIATION;
 		IsoformAnnotation isoAnnotation = new IsoformAnnotation();
-		isoAnnotation.setCategory(category);
+		isoAnnotation.setAnnotationCategory(category);
 		
 		assertEquals(isoAnnotation.getCategory(), "phenotypic-variation");
 	}

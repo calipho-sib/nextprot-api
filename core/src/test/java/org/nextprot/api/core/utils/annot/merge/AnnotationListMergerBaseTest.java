@@ -107,7 +107,7 @@ public abstract class AnnotationListMergerBaseTest<T extends AnnotationListMerge
 
         Annotation annotation = new Annotation();
 
-        annotation.setCategory(cat);
+        annotation.setAnnotationCategory(cat);
         annotation.setEvidences(evidences);
         annotation.setCvTermAccessionCode(cvCode);
 

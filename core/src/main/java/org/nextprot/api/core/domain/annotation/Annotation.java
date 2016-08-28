@@ -222,7 +222,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 		}else return null;
 	}
 	
-	public void setCategory(AnnotationCategory category) {
+	public void setAnnotationCategory(AnnotationCategory category) {
 		//wtf???? names are not coherent...
 		this.apiCategory= category;
 		this.category = category.getDbAnnotationTypeName();

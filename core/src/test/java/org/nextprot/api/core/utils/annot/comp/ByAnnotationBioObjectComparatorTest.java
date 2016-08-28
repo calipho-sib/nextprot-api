@@ -16,12 +16,12 @@ public class ByAnnotationBioObjectComparatorTest {
     public void compareAnnotationsSameBioObjects() throws Exception {
 
         Annotation refAnnot1 = new Annotation();
-        refAnnot1.setCategory(AnnotationCategory.GO_BIOLOGICAL_PROCESS);
+        refAnnot1.setAnnotationCategory(AnnotationCategory.GO_BIOLOGICAL_PROCESS);
         refAnnot1.setAnnotationHash("010a85141bf174a186aaf714676cb397");
         refAnnot1.setCvTermName("transmission of nerve impulse");
 
         Annotation refAnnot2 = new Annotation();
-        refAnnot2.setCategory(AnnotationCategory.GO_BIOLOGICAL_PROCESS);
+        refAnnot2.setAnnotationCategory(AnnotationCategory.GO_BIOLOGICAL_PROCESS);
         refAnnot2.setAnnotationHash("3bffa5c7f436f45d5c9a2aec4757a492");
         refAnnot2.setCvTermName("transmission of nerve impulse");
 
@@ -42,12 +42,12 @@ public class ByAnnotationBioObjectComparatorTest {
     public void compareAnnotationsDiffCat() throws Exception {
 
         Annotation refAnnot1 = new Annotation();
-        refAnnot1.setCategory(AnnotationCategory.GO_CELLULAR_COMPONENT);
+        refAnnot1.setAnnotationCategory(AnnotationCategory.GO_CELLULAR_COMPONENT);
         refAnnot1.setAnnotationHash("010a85141bf174a186aaf714676cb397");
         refAnnot1.setCvTermName("transmission of nerve impulse");
 
         Annotation refAnnot2 = new Annotation();
-        refAnnot2.setCategory(AnnotationCategory.GO_BIOLOGICAL_PROCESS);
+        refAnnot2.setAnnotationCategory(AnnotationCategory.GO_BIOLOGICAL_PROCESS);
         refAnnot2.setAnnotationHash("3bffa5c7f436f45d5c9a2aec4757a492");
         refAnnot2.setCvTermName("spike train");
 
@@ -68,12 +68,12 @@ public class ByAnnotationBioObjectComparatorTest {
     public void compareAnnotationsSameCatDiffCvName() throws Exception {
 
         Annotation refAnnot1 = new Annotation();
-        refAnnot1.setCategory(AnnotationCategory.GO_BIOLOGICAL_PROCESS);
+        refAnnot1.setAnnotationCategory(AnnotationCategory.GO_BIOLOGICAL_PROCESS);
         refAnnot1.setAnnotationHash("010a85141bf174a186aaf714676cb397");
         refAnnot1.setCvTermName("transmission of nerve impulse");
 
         Annotation refAnnot2 = new Annotation();
-        refAnnot2.setCategory(AnnotationCategory.GO_BIOLOGICAL_PROCESS);
+        refAnnot2.setAnnotationCategory(AnnotationCategory.GO_BIOLOGICAL_PROCESS);
         refAnnot2.setAnnotationHash("3bffa5c7f436f45d5c9a2aec4757a492");
         refAnnot2.setCvTermName("spike train");
 

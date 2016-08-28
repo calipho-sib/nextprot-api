@@ -2,44 +2,30 @@ package org.nextprot.api.web.service.impl;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PhenotypicIntegrationVariationJsonTest extends WebIntegrationBaseTest {
 
 	@Test
-	public void shouldMakeit() {
-	}
-	
-	//@Test
-	public void shouldGetPhenotypicVariationAnnotationsForSCN9A() throws Exception {
-		
-		String content = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json")).
-		andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn().getResponse().getContentAsString();
-		ObjectMapper om = new ObjectMapper();
-		Map m = om.readValue(content, Map.class);
-		Entry e = om.readValue(new ObjectMapper().writeValueAsString(m.get("entry")), Entry.class);
-		
+	public void shouldReturnCorrectJsonForPhenotypeViewerPageWithGeneNameInBioObject() throws Exception {
 
-		List<Annotation> binaryInteractionAnnotations = AnnotationUtils.filterAnnotationsByCategory(e, AnnotationCategory.BINARY_INTERACTION, true);
-		boolean foundGeneName = binaryInteractionAnnotations.stream().anyMatch(f -> {
-			return (f.getBioObject().getProperties().get("geneName") != null);
-		});
-		
-		Assert.assertTrue(foundGeneName);
-		
+		String content = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json")).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
+				.getResponse().getContentAsString();
+		ObjectMapper om = new ObjectMapper();
+		JsonNode actualObj = om.readTree(content);
+
+		// Ensures that the viewer of phenotypes are not broken
+		String geneName = actualObj.get("entry").get("annotationsByCategory").get("binary-interaction").get(0).get("bioObject").get("properties").get("geneName").toString();
+
+		System.out.println("gene name " + geneName); // Should print NEDD4L
+		Assert.assertFalse(geneName.isEmpty());
 	}
 
 }

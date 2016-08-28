@@ -61,7 +61,7 @@ public class AnnotationFinderTest {
 
         Annotation annot = new Annotation();
         annot.setAnnotationName("joe");
-        annot.setCategory(AnnotationCategory.VARIANT);
+        annot.setAnnotationCategory(AnnotationCategory.VARIANT);
 
         Annotation found = finder.find(
                 mockAnnotation(AnnotationCategory.VARIANT),

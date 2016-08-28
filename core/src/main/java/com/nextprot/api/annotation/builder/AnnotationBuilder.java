@@ -225,7 +225,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			annotation.setAnnotationName(statement.getValue(StatementField.ANNOTATION_NAME));
 
 			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getValue(StatementField.ANNOTATION_CATEGORY)));
-			annotation.setCategory(category);
+			annotation.setAnnotationCategory(category);
 
 			if(category.equals(AnnotationCategory.VARIANT) || category.equals(AnnotationCategory.MUTAGENESIS)){
 				setVariantAttributes(annotation, statement);
