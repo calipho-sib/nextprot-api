@@ -1,5 +1,13 @@
 package org.nextprot.api.core.utils.annot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -9,40 +17,14 @@ import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
-import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
-import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.annot.comp.AnnotationComparators;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;
 import org.nextprot.commons.constants.QualityQualifier;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 
 public class AnnotationUtils {
 
-	/**
-	 * This method filters annotations by gold only.
-	 * WARNIIIIIIIIIIIIIIIIIIIIINGGGGGGGGGGGGGGGGGGGGGGGGGGGG
-	 * Careful this method modifies the annotations object!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	 */
-	public static List<IsoformAnnotation> filterAnnotationsByGoldOnlyCarefulThisChangesAnnotations(List<IsoformAnnotation > annotations, Boolean goldOnly) {
-
-		if((goldOnly == null) ? false : Boolean.valueOf(goldOnly)){
-			List<IsoformAnnotation> goldOnlyAnnotations = new ArrayList<IsoformAnnotation>();
-			for(IsoformAnnotation a : annotations){
-				List<AnnotationEvidence> goldOnlyEvidences = a.getEvidences().stream().filter(e -> ((e.getQualityQualifier() == null) || e.getQualityQualifier().toLowerCase().equals("gold"))).
-						collect(Collectors.toList());
-				if(!goldOnlyEvidences.isEmpty()){
-					a.setEvidences(goldOnlyEvidences); ////////////// CAREFUL ANNOTATIONS ARE MODIFIED!!!!!!!!!!!!Should use immutable objects
-					goldOnlyAnnotations.add(a);
-				}
-			}
-			return goldOnlyAnnotations;
-		}else return annotations;
-	}
-	
 	
 	public static String toString(Annotation a) {
 		StringBuilder sb = new StringBuilder();
@@ -95,12 +77,17 @@ public class AnnotationUtils {
 	
     /**
 	 * Filter annotation by its category
+	 * WARNING: goldOnly if set to true will change evidences of the annotations (remove any silver evidence if set to true)
 	 */
 	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory, boolean goldOnly) {
 
         return filterAnnotationsByCategory(entry, annotationCategory, true, goldOnly);
 	}
-	
+
+    /**
+	 * Filter annotation of the entry by its category
+	 * WARNING: goldOnly if set to true will change evidences of the annotations (remove any silver evidence if set to true)
+	 */
 	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory, boolean withChildren, boolean goldOnly) {
 		return filterAnnotationsByCategory(entry.getAnnotations(), annotationCategory, withChildren, goldOnly);
 	}
