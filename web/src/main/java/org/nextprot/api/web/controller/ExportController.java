@@ -4,6 +4,7 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.FileFormat;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.*;
 
@@ -44,6 +46,15 @@ public class ExportController {
 
     @Autowired
     private UserProteinListService proteinListService;
+
+    @Autowired
+    private MasterIdentifierService masterIdentifierService;
+
+    @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET})
+    public void streamAllEntries(HttpServletRequest request, HttpServletResponse response, Model model) {
+        FileFormat format = FileFormat.valueOf(request);
+        streamAllEntries(format, response, "entry");
+    }
 
     @RequestMapping(value = "/export/entries/{view}", method = {RequestMethod.GET})
     public void streamEntriesSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response,
@@ -78,6 +89,7 @@ public class ExportController {
         FileFormat format = FileFormat.valueOf(request);
         streamEntries(format, response, "entry", qr);
     }
+
 
     @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
     @ResponseBody
@@ -137,9 +149,7 @@ public class ExportController {
 
         setResponseHeader(format, viewName, queryRequest, response);
         List<String> entries = getAccessions(queryRequest);
-
         NPEntryStreamWriter writer = null;
-
         try {
             writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream());
 
@@ -157,9 +167,39 @@ public class ExportController {
         }
     }
 
+    private void streamAllEntries(FileFormat format, HttpServletResponse response, String viewName) {
+
+        setResponseHeader(format, response);
+        List<String> entries = new ArrayList<String>(masterIdentifierService.findUniqueNames());
+        NPEntryStreamWriter writer = null;
+        try {
+            writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream());
+            exportService.streamResults(writer, viewName, entries);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (all)");
+        } finally {
+            try {
+                if (writer != null) writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new NextProtException("closing "+format.getExtension()+" stream failed: cannot export "+entries.size()+" entries (all)");
+            }
+        }
+    }
+
     private void setResponseHeader(FileFormat format, String viewName, QueryRequest queryRequest, HttpServletResponse response) {
 
         String filename = getFilename(queryRequest, viewName, format);
+
+        if (!format.equals(FileFormat.JSON)) {
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+        }
+    }
+
+    private void setResponseHeader(FileFormat format, HttpServletResponse response) {
+
+        String filename = "nextprot-entries-all"  + "." + format.getExtension();
 
         if (!format.equals(FileFormat.JSON)) {
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
