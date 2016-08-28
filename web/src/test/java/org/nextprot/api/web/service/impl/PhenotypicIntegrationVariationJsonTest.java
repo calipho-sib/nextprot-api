@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PhenotypicIntegrationVariationJsonTest extends WebIntegrationBaseTest {
 
-	@Test
+	//@Test
 	public void shouldGetPhenotypicVariationAnnotationsForSCN9A() throws Exception {
 		
 		String content = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json")).
