@@ -19,6 +19,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PhenotypicIntegrationVariationJsonTest extends WebIntegrationBaseTest {
 
+	@Test
+	public void shouldMakeit() {
+	}
+	
 	//@Test
 	public void shouldGetPhenotypicVariationAnnotationsForSCN9A() throws Exception {
 		
