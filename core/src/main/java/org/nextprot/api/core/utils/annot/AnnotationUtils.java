@@ -10,6 +10,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.annot.comp.AnnotationComparators;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;
@@ -95,29 +96,49 @@ public class AnnotationUtils {
     /**
 	 * Filter annotation by its category
 	 */
-	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory) {
+	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory, boolean goldOnly) {
 
-        return filterAnnotationsByCategory(entry, annotationCategory, true);
+        return filterAnnotationsByCategory(entry, annotationCategory, true, goldOnly);
 	}
 	
+	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory, boolean withChildren, boolean goldOnly) {
+		return filterAnnotationsByCategory(entry.getAnnotations(), annotationCategory, withChildren, goldOnly);
+	}
+
 	/**
 	 * Filter annotation by its category
 	 * @param withChildren if true, annotations having a category which is a child of annotationCategory are included in the list
 	 * @return a list of annotations
 	 */
-	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory, boolean withChildren) {
-
-		List<Annotation> annotations = entry.getAnnotations();
+	public static List<Annotation> filterAnnotationsByCategory(List<Annotation> annotations, AnnotationCategory annotationCategory, boolean withChildren, boolean goldOnly) {
 
 		if (annotations == null) return null;
 
 		List<Annotation> filteredAnnotations = annotations.stream()
-				.filter(a -> a.getAPICategory() == annotationCategory || (withChildren && a.getAPICategory().isChildOf(annotationCategory)))
-				.collect(Collectors.toList());
+				.filter((a) -> {
+					boolean categoryMatch = (annotationCategory == null) || ((a.getAPICategory() == annotationCategory) || (withChildren && a.getAPICategory().isChildOf(annotationCategory)));
+					boolean qualityMatch = true;
+					if(goldOnly){
+						qualityMatch = a.getQualityQualifier().equalsIgnoreCase("GOLD");
+					}
+					return (categoryMatch && qualityMatch);
+				}).collect(Collectors.toList());
+		
+		if(goldOnly){
+			for(Annotation a : filteredAnnotations){
+				List<AnnotationEvidence> evidences = a.getEvidences();
+
+				List<AnnotationEvidence> goldEvidences = evidences.stream().filter(e -> 
+					"GOLD".equalsIgnoreCase(e.getQualityQualifier()) || (e.getQualityQualifier() == null) || e.getQualityQualifier().isEmpty()
+				).collect(Collectors.toList());
+				
+				 //TODO check if this mutable annotation is not breaken in eh cache!!
+				a.setEvidences(goldEvidences);
+			}
+		}
 
 		if (annotationCategory == AnnotationCategory.PHENOTYPIC_VARIATION) {
-
-			Collections.sort(filteredAnnotations, AnnotationComparators.newPhenotypicVariationComparator(EntryUtils.getHashAnnotationMap(entry)));
+			Collections.sort(filteredAnnotations, AnnotationComparators.newPhenotypicVariationComparator(EntryUtils.getHashAnnotationMap(annotations)));
 		}
 		else {
 			Collections.sort(filteredAnnotations, AnnotationComparators.newComparator(annotationCategory));

@@ -140,6 +140,9 @@ public class Entry implements KeyValueRepresentation {
 		this.isoforms = isoforms;
 	}
 
+	/*
+	 * Should use get annotations by category or @json null 
+	 */
 	public List<Annotation> getAnnotations() {
 		return annotations;
 	}

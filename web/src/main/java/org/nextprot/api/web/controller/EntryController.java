@@ -2,9 +2,12 @@ package org.nextprot.api.web.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Lazy
@@ -54,9 +58,13 @@ public class EntryController {
 	}
 
 	@RequestMapping("/entry/{entryname}/{blockOrSubpart}")
-	public String getSubPart(@PathVariable("entryname") String entryName, @PathVariable("blockOrSubpart") String blockOrSubpart, Model model) {
+	public String getSubPart(@PathVariable("entryname") String entryName, 
+							@PathVariable("blockOrSubpart") String blockOrSubpart, 
+							HttpServletRequest request,
+							Model model) {
 		
-		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart));
+		boolean goldOnly = (request.getParameter("gold") != null);
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withGoldOnly(goldOnly));
 		model.addAttribute("entry", entry);
 		return "entry";
 	}

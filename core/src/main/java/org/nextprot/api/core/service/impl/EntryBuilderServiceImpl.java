@@ -100,8 +100,8 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 
 		}
 		//CPU Intensive
-		if(entryConfig.hasSubPart()){ //TODO should be added in annotation list
-				return EntryUtils.filterEntryBySubPart(entry, entryConfig);
+		if(entryConfig.hasSubPart() || entryConfig.hasGoldOnly()){ //TODO should be added in annotation list
+			return EntryUtils.filterEntryBySubPart(entry, entryConfig);
 		} else {
 			return entry;
 		}

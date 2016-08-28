@@ -28,4 +28,20 @@ public class PhenotypicIntegrationVariationJsonTest extends WebIntegrationBaseTe
 		Assert.assertFalse(geneName.isEmpty());
 	}
 
+	
+	@Test
+	public void shouldNotReturnSilverWhenAskingForGoldOnly() throws Exception {
+
+		String content = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json")).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
+				.getResponse().getContentAsString();
+		
+		Assert.assertTrue(content.toUpperCase().contains("SILVER"));
+	
+		//Equivalent to /entry/NX_Q15858/phenotypic-variation.json?gold
+		String goldContent = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json").param("gold", "")).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
+				.getResponse().getContentAsString();
+
+		Assert.assertFalse(goldContent.toUpperCase().contains("SILVER"));
+
+	}
 }

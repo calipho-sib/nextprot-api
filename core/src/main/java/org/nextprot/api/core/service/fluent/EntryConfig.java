@@ -10,6 +10,7 @@ public class EntryConfig implements KeyValueRepresentation{
 	private boolean overview, publications, genomicMappings, xrefs, keywords, identifiers, chromosomalLocations, interactions, targetIsoforms, generalAnnotations, experimentalContext;
 	private boolean entryModifiedAnnotations;
 	private boolean enzymes;
+	private boolean goldOnly = false;
 	private boolean withoutAdditionalReferences = false; // by default we put xrefs, publications, experimental contexts
 	private boolean withoutProperties = false; //by default we get properties
 	private AnnotationCategory subpart;
@@ -83,6 +84,10 @@ public class EntryConfig implements KeyValueRepresentation{
 		return (this.subpart != null);
 	}
 
+	public boolean hasGoldOnly() {
+		return this.goldOnly;
+	}
+
 	public String getEntryName() {
 		return this.entryName;
 	}
@@ -101,6 +106,11 @@ public class EntryConfig implements KeyValueRepresentation{
 
 	public EntryConfig withOverview() {
 		this.overview = true; return this;
+	}
+	
+	public EntryConfig withGoldOnly(boolean goldOnly) {
+		this.goldOnly = goldOnly;
+		return this;
 	}
 
 	public EntryConfig withPublications() {

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -39,9 +40,9 @@ public class EntryUtils implements Serializable{
 		List<ExperimentalContext> experimentalContexts;
 		
 		// Filter if necessary
-  		if (config.hasSubPart()) {
+  		if (config.hasSubPart() || config.hasGoldOnly()) {
 
-			annotations = AnnotationUtils.filterAnnotationsByCategory(entry, config.getSubpart());
+			annotations = AnnotationUtils.filterAnnotationsByCategory(entry, config.getSubpart(), config.hasGoldOnly());
 
 			Set<String> dependencyHashes = new HashSet<String>();
 			annotations.stream().filter(a -> a.isProteoformAnnotation()).forEach(a -> {
@@ -52,7 +53,15 @@ public class EntryUtils implements Serializable{
 			});
 			
 			List<Annotation> dependentAnnotations = AnnotationUtils.filterAnnotationsByHashes(entry, dependencyHashes);
-			annotations.addAll(dependentAnnotations);
+
+			if(config.hasGoldOnly()){
+				Map<AnnotationCategory, List<Annotation>> dependentAnnotationsGroupedByCategory = dependentAnnotations.stream().collect(Collectors.groupingBy(Annotation::getAPICategory));
+				dependentAnnotationsGroupedByCategory.entrySet().forEach(entrySet -> {
+					annotations.addAll(AnnotationUtils.filterAnnotationsByCategory(entrySet.getValue(), entrySet.getKey(), true, config.hasGoldOnly()));
+				});
+			}else {
+				annotations.addAll(dependentAnnotations);
+			}
 			
 			entry.setAnnotations(annotations);
 			
@@ -120,19 +129,23 @@ public class EntryUtils implements Serializable{
 			System.out.println(k + " => " + map.get(k));
 		}
 	}
-	
+
+	public static Map<String,Annotation> getHashAnnotationMap(Entry entry) {
+		return getHashAnnotationMap(entry.getAnnotations());
+	}
+
 	/**
 	 * Builds a dictionary (HashMap) where the key is the annotation annotationHash and the value the annotation itself.
 	 * Annotations with no hash are skipped
 	 * @param entry
 	 * @return a dictionary of annotations where the key is the annotation hash (= identifier in BED world)
 	 */
-	public static Map<String,Annotation> getHashAnnotationMap(Entry entry) {
+	public static Map<String,Annotation> getHashAnnotationMap(List<Annotation> annotations) {
 		
 		//printMap(getAnnotationCategoryCountMap(entry));
 		
 		Map<String,Annotation> result = new HashMap<String,Annotation>();
-		for (Annotation annot: entry.getAnnotations()) {
+		for (Annotation annot: annotations) {
 			if (annot.getAnnotationHash() != null && ! annot.getAnnotationHash().isEmpty()) {
 				result.put(annot.getAnnotationHash(), annot);
 			}
