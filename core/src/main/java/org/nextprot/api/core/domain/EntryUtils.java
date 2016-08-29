@@ -39,12 +39,13 @@ public class EntryUtils implements Serializable{
 		List<Publication> publications;
 		List<ExperimentalContext> experimentalContexts;
 		
-		// Filter if necessary
-  		if (config.hasSubPart() || config.hasGoldOnly() || (entry.getAnnotations() != null) || (!entry.getAnnotations().isEmpty())) {
+		// Filter if necessary (config is applied and there are some annotations)
+  		if ((config.hasSubPart() || config.hasGoldOnly()) && ((entry.getAnnotations() != null)) && (!entry.getAnnotations().isEmpty())) {
 
 			annotations = AnnotationUtils.filterAnnotationsByCategory(entry, config.getSubpart(), config.hasGoldOnly());
 
 			Set<String> dependencyHashes = new HashSet<String>();
+			
 			annotations.stream().filter(a -> a.isProteoformAnnotation()).forEach(a -> {
 				for(String subject : a.getSubjectComponents()){
 					dependencyHashes.add(subject);
