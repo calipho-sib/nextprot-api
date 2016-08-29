@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<nextprot-export xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                 xsi:schemaLocation="https://api.nextprot.org nextprot-export-v1.xsd">
+<nextprot-export xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://api.nextprot.org/nextprot-export-v2.xsd">
     <header>
         <database-name>neXtProt</database-name>
         <number-of-entries>$entriesCount</number-of-entries>
