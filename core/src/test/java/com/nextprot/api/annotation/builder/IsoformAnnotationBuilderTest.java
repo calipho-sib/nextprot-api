@@ -30,18 +30,16 @@ public class IsoformAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD)
    		  .addCvTerm("go-xxx", "nucleus", "go-cellular-component-cv")
     	  .addField(StatementField.EVIDENCE_CODE, "ECO:00001")
-   		  .addSourceInfo("CAVA-VP0920190912", "BioEditor").build();
+   		  .addSourceInfo("CAVA-VP0920190912", "BioEditor").buildWithAnnotationHash(AnnotationType.ISOFORM);
 		
 		Statement sb2 = StatementBuilder.createNew().
 				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD)
 				.addCvTerm("go-xxx", "nucleus", "go-cellular-component-cv")
 				.addField(StatementField.EVIDENCE_CODE, "ECO:00001")
-				.addSourceInfo("HPA2222", "HPA").build();
+				.addSourceInfo("HPA2222", "HPA").buildWithAnnotationHash(AnnotationType.ISOFORM);
 		
 		
 		List<Statement> statements = Arrays.asList(sb1, sb2);
-		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
-		
 
 		IsoformAnnotation annotation = newAnnotationBuilder().buildAnnotation("NX_P01308-1", statements);
 
@@ -56,13 +54,12 @@ public class IsoformAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 	public void shouldReturnAnExceptionIf2AnnotationsAreExpectedInsteadOfOne() {
 		
 		Statement sb1 = StatementBuilder.createNew().
-				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD).build();
-   	
+				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD).buildWithAnnotationHash(AnnotationType.ISOFORM);
+		
 		Statement sb2 = StatementBuilder.createNew().
-				addCompulsaryFields("NX_P99999", "NX_P99999-1", "go-cellular-component", QualityQualifier.GOLD).build();
+				addCompulsaryFields("NX_P99999", "NX_P99999-1", "go-cellular-component", QualityQualifier.GOLD).buildWithAnnotationHash(AnnotationType.ISOFORM);
 	
 		List<Statement> statements = Arrays.asList(sb1, sb2);
-		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
 		
 		newAnnotationBuilder().buildAnnotation("NX_P01308-1", statements);
 		
@@ -74,10 +71,9 @@ public class IsoformAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 		
 		Statement sb1 = StatementBuilder.createNew().
 				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD)
-    	  .addField(StatementField.EVIDENCE_CODE, "ECO:00001").build();
+    	  .addField(StatementField.EVIDENCE_CODE, "ECO:00001").buildWithAnnotationHash(AnnotationType.ISOFORM);
 		
 		List<Statement> statements = Arrays.asList(sb1);
-		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
 
 		IsoformAnnotation annotation = newAnnotationBuilder().buildAnnotation("NX_P01308-1", statements);
 
