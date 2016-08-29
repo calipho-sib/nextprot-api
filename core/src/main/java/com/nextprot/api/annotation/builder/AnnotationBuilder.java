@@ -264,7 +264,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 				annotation.setEvidences(buildAnnotationEvidences(statements));
 				
 				//TODO Remove this when you are able to do XREFs
-				if(((annotation.getEvidences() == null) || ((annotation.getEvidences().isEmpty()))) && (category.equals(AnnotationCategory.VARIANT))){
+				if(((annotation.getEvidences() == null) || ((annotation.getEvidences().isEmpty()))) && (category.equals(AnnotationCategory.VARIANT) || category.equals(AnnotationCategory.MUTAGENESIS))){
 					annotation.setQualityQualifier("GOLD");//All variants from BED are GOLD, and this is a special case when we don't have evidences for VDs.
 				}else {
 					annotation.setQualityQualifier(AnnotationUtils.computeAnnotationQualityBasedOnEvidences(annotation.getEvidences()).name());
