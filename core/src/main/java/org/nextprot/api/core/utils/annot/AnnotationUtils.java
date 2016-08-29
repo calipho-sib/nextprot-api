@@ -119,19 +119,13 @@ public class AnnotationUtils {
 			}
 		}
 
-		sortAnnotations(filteredAnnotations, annotationCategory);
+		if (annotationCategory == AnnotationCategory.PHENOTYPIC_VARIATION) {
+			Collections.sort(filteredAnnotations, AnnotationComparators.newPhenotypicVariationComparator(EntryUtils.getHashAnnotationMap(annotations)));
+		} else {
+			Collections.sort(filteredAnnotations, AnnotationComparators.newComparator(annotationCategory));
+		}
 
 		return filteredAnnotations;
-	}
-
-	private static void sortAnnotations(List<Annotation> annotations, AnnotationCategory annotationCategory) {
-
-		if (annotationCategory == AnnotationCategory.PHENOTYPIC_VARIATION) {
-			Collections.sort(annotations, AnnotationComparators.newPhenotypicVariationComparator(EntryUtils.getHashAnnotationMap(annotations)));
-		}
-		else {
-			Collections.sort(annotations, AnnotationComparators.newComparator(annotationCategory));
-		}
 	}
 
 	public static Set<Long> getExperimentalContextIdsForAnnotations(List<Annotation> annotations) {

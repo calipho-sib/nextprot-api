@@ -18,8 +18,8 @@ public abstract class AnnotationBaseMerger implements AnnotationMerger {
         updateDestAnnotationHash(dest, sources);
         updateDestAnnotationName(dest, sources);
         updateDestIsoformSpecificityName(dest, sources);
-
         updateDestQualityQualifier(dest);
+        updateDestBioObject(dest, sources);
 
         return dest;
     }
@@ -49,4 +49,6 @@ public abstract class AnnotationBaseMerger implements AnnotationMerger {
             if (dest.getEvidences().stream().anyMatch(e -> QualityQualifier.valueOf(e.getQualityQualifier()) == QualityQualifier.GOLD))
                 dest.setQualityQualifier(QualityQualifier.GOLD.toString());
     }
+
+    protected abstract void updateDestBioObject(Annotation dest, List<Annotation> sources);
 }
