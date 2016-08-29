@@ -35,7 +35,7 @@ public class AnnotationExporterTest extends CoreUnitBaseTest {
     public void exportMsh6() throws FileNotFoundException {
 
         String tsv = exporter.exportAnnotationStatsAsTsvString(Collections.singletonList("msh6"));
-        exporter.exportAsTsvFile("./", "msh6", tsv);
+        //exporter.exportAsTsvFile("./", "msh6", tsv);
 
         Assert.assertEquals(34, exporter.getStatisticsMap().size());
     }
@@ -44,7 +44,7 @@ public class AnnotationExporterTest extends CoreUnitBaseTest {
     public void exportAllGenes() throws FileNotFoundException {
 
         String tsv = exporter.exportAllGeneStatementsAsTsvString();
-        exporter.exportAsTsvFile("./", "all-genes", tsv);
+        //exporter.exportAsTsvFile("./", "all-genes", tsv);
 
         Assert.assertEquals(52, exporter.getStatisticsMap().size());
     }
