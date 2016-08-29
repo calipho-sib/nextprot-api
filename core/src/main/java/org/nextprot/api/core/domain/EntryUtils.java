@@ -40,7 +40,7 @@ public class EntryUtils implements Serializable{
 		List<ExperimentalContext> experimentalContexts;
 		
 		// Filter if necessary
-  		if (config.hasSubPart() || config.hasGoldOnly()) {
+  		if (config.hasSubPart() || config.hasGoldOnly() || (entry.getAnnotations() != null) || (!entry.getAnnotations().isEmpty())) {
 
 			annotations = AnnotationUtils.filterAnnotationsByCategory(entry, config.getSubpart(), config.hasGoldOnly());
 
