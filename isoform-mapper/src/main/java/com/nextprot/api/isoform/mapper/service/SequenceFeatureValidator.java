@@ -86,10 +86,10 @@ public class SequenceFeatureValidator {
         Isoform isoform = sequenceFeature.getIsoform(entry);
 
         checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
-                String.valueOf(variation.getFirstChangingAminoAcid().get1LetterCode()), query);
+                variation.getFirstChangingAminoAcid().get1LetterCode(), query);
 
         checkIsoformPos(isoform, variation.getLastChangingAminoAcidPos(),
-                String.valueOf(variation.getLastChangingAminoAcid().get1LetterCode()), query);
+                variation.getLastChangingAminoAcid().get1LetterCode(), query);
     }
 
     /**
