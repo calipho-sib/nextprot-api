@@ -63,7 +63,8 @@ public class EntryController {
 							HttpServletRequest request,
 							Model model) {
 		
-		boolean goldOnly = (request.getParameter("gold") != null);
+		boolean goldOnly = ("true".equalsIgnoreCase(request.getParameter("goldOnly")));
+		
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withGoldOnly(goldOnly));
 		model.addAttribute("entry", entry);
 		return "entry";

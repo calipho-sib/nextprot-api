@@ -38,7 +38,7 @@ public class PhenotypicIntegrationVariationJsonTest extends WebIntegrationBaseTe
 		Assert.assertTrue(content.toUpperCase().contains("SILVER"));
 	
 		//Equivalent to /entry/NX_Q15858/phenotypic-variation.json?gold
-		String goldContent = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json").param("gold", "")).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
+		String goldContent = this.mockMvc.perform(get("/entry/NX_Q15858/phenotypic-variation.json").param("goldOnly", "true")).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
 				.getResponse().getContentAsString();
 
 		Assert.assertFalse(goldContent.toUpperCase().contains("SILVER"));

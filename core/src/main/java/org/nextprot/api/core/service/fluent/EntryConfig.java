@@ -108,8 +108,10 @@ public class EntryConfig implements KeyValueRepresentation{
 		this.overview = true; return this;
 	}
 	
-	public EntryConfig withGoldOnly(boolean goldOnly) {
-		this.goldOnly = goldOnly;
+	public EntryConfig withGoldOnly(Boolean goldOnly) {
+		if(goldOnly != null){
+			this.goldOnly = goldOnly;
+		}
 		return this;
 	}
 
