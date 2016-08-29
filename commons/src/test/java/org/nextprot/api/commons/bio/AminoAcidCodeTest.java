@@ -8,7 +8,7 @@ public class AminoAcidCodeTest {
     @Test
     public void testValueOfCode1Found() throws Exception {
 
-        Assert.assertEquals(AminoAcidCode.ALANINE, AminoAcidCode.valueOfOneLetterCode('A'));
+        Assert.assertEquals(AminoAcidCode.ALANINE, AminoAcidCode.valueOfAminoAcid("A"));
     }
 
     @Test
@@ -56,31 +56,31 @@ public class AminoAcidCodeTest {
     @Test
     public void testGetAACode1() throws Exception {
 
-        Assert.assertEquals('A', AminoAcidCode.valueOfOneLetterCode('A').get1LetterCode());
+        Assert.assertEquals('A', AminoAcidCode.valueOfAminoAcid("A").get1LetterCode());
     }
 
     @Test
     public void testGetAACode3() throws Exception {
 
-        Assert.assertEquals("Ala", AminoAcidCode.valueOfOneLetterCode('A').get3LetterCode());
+        Assert.assertEquals("Ala", AminoAcidCode.valueOfAminoAcid("A").get3LetterCode());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testValueOfCode1AANotFound() throws Exception {
 
-        AminoAcidCode.valueOfOneLetterCode('a');
+        AminoAcidCode.valueOfAminoAcid("a");
     }
 
     @Test
      public void testGetStopCode1() throws Exception {
 
-        Assert.assertEquals('*', AminoAcidCode.valueOfOneLetterCode('*').get1LetterCode());
+        Assert.assertEquals('*', AminoAcidCode.valueOfAminoAcid("*").get1LetterCode());
     }
 
     @Test
     public void testGetStopCode3() throws Exception {
 
-        Assert.assertEquals("Ter", AminoAcidCode.valueOfOneLetterCode('*').get3LetterCode());
+        Assert.assertEquals("Ter", AminoAcidCode.valueOfAminoAcid("*").get3LetterCode());
     }
 
     @Test

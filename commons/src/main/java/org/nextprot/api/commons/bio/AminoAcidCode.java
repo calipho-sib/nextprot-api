@@ -76,89 +76,78 @@ public enum AminoAcidCode {
 
     public static AminoAcidCode valueOfAminoAcid(String code) {
 
-        if (code.length() == 1)
-            return valueOfOneLetterCode(code.charAt(0));
-        else {
-            switch (code) {
-                case "Gly":
-                    return GLYCINE;
-                case "Pro":
-                    return PROLINE;
-                case "Ala":
-                    return ALANINE;
-                case "Val":
-                    return VALINE;
-                case "Leu":
-                    return LEUCINE;
-                case "Ile":
-                    return ISOLEUCINE;
-                case "Met":
-                    return METHIONINE;
-                case "Cys":
-                    return CYSTEINE;
-                case "Phe":
-                    return PHENYLALANINE;
-                case "Tyr":
-                    return TYROSINE;
-                case "Trp":
-                    return TRYPTOPHAN;
-                case "His":
-                    return HISTIDINE;
-                case "Lys":
-                    return LYSINE;
-                case "Arg":
-                    return ARGININE;
-                case "Gln":
-                    return GLUTAMINE;
-                case "Asn":
-                    return ASPARAGINE;
-                case "Glu":
-                    return GLUTAMIC_ACID;
-                case "Asp":
-                    return ASPARTIC_ACID;
-                case "Ser":
-                    return SERINE;
-                case "Thr":
-                    return THREONINE;
-                case "Sec":
-                    return SELENOCYSTEINE;
-                case "Pyl":
-                    return PYRROLYSINE;
-                case "Ter":
-                    return STOP;
-                default:
-                    throw new IllegalArgumentException("No enum constant AminoAcid." + code);
-            }
-        }
-    }
-
-    public static AminoAcidCode valueOfOneLetterCode(char code) {
-
         switch (code) {
-            case 'G': return GLYCINE;
-            case 'P': return PROLINE;
-            case 'A': return ALANINE;
-            case 'V': return VALINE;
-            case 'L': return LEUCINE;
-            case 'I': return ISOLEUCINE;
-            case 'M': return METHIONINE;
-            case 'C': return CYSTEINE;
-            case 'F': return PHENYLALANINE;
-            case 'Y': return TYROSINE;
-            case 'W': return TRYPTOPHAN;
-            case 'H': return HISTIDINE;
-            case 'K': return LYSINE;
-            case 'R': return ARGININE;
-            case 'Q': return GLUTAMINE;
-            case 'N': return ASPARAGINE;
-            case 'E': return GLUTAMIC_ACID;
-            case 'D': return ASPARTIC_ACID;
-            case 'S': return SERINE;
-            case 'T': return THREONINE;
-            case 'U': return SELENOCYSTEINE;
-            case 'O': return PYRROLYSINE;
-            case '*': return STOP;
-            default: throw new IllegalArgumentException( "No enum constant AminoAcid." + code);
+            case "Gly":
+            case "G":
+                return GLYCINE;
+            case "Pro":
+            case "P":
+                return PROLINE;
+            case "Ala":
+            case "A":
+                return ALANINE;
+            case "Val":
+            case "V":
+                return VALINE;
+            case "Leu":
+            case "L":
+                return LEUCINE;
+            case "Ile":
+            case "I":
+                return ISOLEUCINE;
+            case "Met":
+            case "M":
+                return METHIONINE;
+            case "Cys":
+            case "C":
+                return CYSTEINE;
+            case "Phe":
+            case "F":
+                return PHENYLALANINE;
+            case "Tyr":
+            case "Y":
+                return TYROSINE;
+            case "Trp":
+            case "W":
+                return TRYPTOPHAN;
+            case "His":
+            case "H":
+                return HISTIDINE;
+            case "Lys":
+            case "K":
+                return LYSINE;
+            case "Arg":
+            case "R":
+                return ARGININE;
+            case "Gln":
+            case "Q":
+                return GLUTAMINE;
+            case "Asn":
+            case "N":
+                return ASPARAGINE;
+            case "Glu":
+            case "E":
+                return GLUTAMIC_ACID;
+            case "Asp":
+            case "D":
+                return ASPARTIC_ACID;
+            case "Ser":
+            case "S":
+                return SERINE;
+            case "Thr":
+            case "T":
+                return THREONINE;
+            case "Sec":
+            case "U":
+                return SELENOCYSTEINE;
+            case "Pyl":
+            case "O":
+                return PYRROLYSINE;
+            case "Ter":
+            case "*":
+                return STOP;
+            default:
+                throw new IllegalArgumentException("No enum constant AminoAcid." + code);
         }
     }
 
