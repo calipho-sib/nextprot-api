@@ -335,4 +335,12 @@ public class AnnotationCategoryTest {
 
 		Assert.assertFalse(AnnotationCategory.hasAnnotationByApiName("spongeboo"));
 	}
+
+	@Test
+	public void sortCategories() {
+
+		List<AnnotationCategory> cats = AnnotationCategory.getSortedCategories();
+
+		System.out.println(cats);
+	}//cats.stream().map(a -> a.getHierarchy()+"."+a.getApiTypeName()).collect(Collectors.toList())
 }

@@ -1,13 +1,5 @@
 package org.nextprot.api.core.utils.annot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -21,6 +13,9 @@ import org.nextprot.api.core.utils.annot.comp.AnnotationComparators;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;
 import org.nextprot.commons.constants.QualityQualifier;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class AnnotationUtils {
@@ -111,27 +106,32 @@ public class AnnotationUtils {
 					return (categoryMatch && qualityMatch);
 				}).collect(Collectors.toList());
 		
-		if(goldOnly){
-			for(Annotation a : filteredAnnotations){
+		if (goldOnly) {
+			for(Annotation a : filteredAnnotations) {
 				List<AnnotationEvidence> evidences = a.getEvidences();
 
-				List<AnnotationEvidence> goldEvidences = evidences.stream().filter(e -> 
-					"GOLD".equalsIgnoreCase(e.getQualityQualifier()) || (e.getQualityQualifier() == null) || e.getQualityQualifier().isEmpty()
-				).collect(Collectors.toList());
+				List<AnnotationEvidence> goldEvidences = evidences.stream()
+						.filter(e -> "GOLD".equalsIgnoreCase(e.getQualityQualifier()) || (e.getQualityQualifier() == null) || e.getQualityQualifier().isEmpty())
+						.collect(Collectors.toList());
 				
 				 //TODO check if this mutable annotation is not breaken in eh cache!!
 				a.setEvidences(goldEvidences);
 			}
 		}
 
-		if (annotationCategory == AnnotationCategory.PHENOTYPIC_VARIATION) {
-			Collections.sort(filteredAnnotations, AnnotationComparators.newPhenotypicVariationComparator(EntryUtils.getHashAnnotationMap(annotations)));
-		}
-		else {
-			Collections.sort(filteredAnnotations, AnnotationComparators.newComparator(annotationCategory));
-		}
+		sortAnnotations(filteredAnnotations, annotationCategory);
 
 		return filteredAnnotations;
+	}
+
+	private static void sortAnnotations(List<Annotation> annotations, AnnotationCategory annotationCategory) {
+
+		if (annotationCategory == AnnotationCategory.PHENOTYPIC_VARIATION) {
+			Collections.sort(annotations, AnnotationComparators.newPhenotypicVariationComparator(EntryUtils.getHashAnnotationMap(annotations)));
+		}
+		else {
+			Collections.sort(annotations, AnnotationComparators.newComparator(annotationCategory));
+		}
 	}
 
 	public static Set<Long> getExperimentalContextIdsForAnnotations(List<Annotation> annotations) {

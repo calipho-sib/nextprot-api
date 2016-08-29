@@ -248,29 +248,22 @@ public enum AnnotationCategory implements Serializable {
 	 */
 	private static List<AnnotationCategory> sortAnnotationCategories() {
 
-		List<AnnotationCategory> list = new ArrayList<>();
-		AnnotationCategory[] vals = AnnotationCategory.values();
+		List<AnnotationCategory> sortedAnnotations = new ArrayList<>();
 
-		for (AnnotationCategory value : vals) {
-
-			if (!value.equals(AnnotationCategory.FAMILY_NAME)) list.add(value);
+		for (AnnotationCategory category : AnnotationCategory.values()) {
+			if (category.isLeaf() && !category.equals(AnnotationCategory.FAMILY_NAME))
+				sortedAnnotations.add(category);
 		}
 
-		Collections.sort(list, new Comparator<AnnotationCategory>() {
+		Collections.sort(sortedAnnotations, (a1, a2) -> {
+            int cmp = a1.getHierarchy().compareTo(a2.getHierarchy());
+            if (cmp == 0)
+                return a1.apiName.compareTo(a2.apiName);
 
-			@Override
-			public int compare(AnnotationCategory m1, AnnotationCategory m2) {
+            return cmp;
+        });
 
-				int cmp = m1.getHierarchy().compareTo(m2.getHierarchy());
-
-				if (cmp == 0)
-					return m1.getApiTypeName().compareTo(m2.getApiTypeName());
-
-				return cmp;
-			}
-		});
-
-		return list;
+		return sortedAnnotations;
 	}
 
 	public static List<AnnotationCategory> getSortedCategories() {
