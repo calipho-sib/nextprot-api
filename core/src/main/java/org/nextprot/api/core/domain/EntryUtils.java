@@ -85,20 +85,6 @@ public class EntryUtils implements Serializable{
 	}
 
 
-	//TODO: PAM temporary method
-	public static Set<Proteoform> getProteoformSet(Entry entry, String isoformAc) {
-		
-		Set<Proteoform> result = new HashSet<Proteoform>();
-		for (Annotation annot: entry.getAnnotations()) {
-			if (annot.isProteoformAnnotation()) {
-				if (annot.getTargetingIsoformsMap().containsKey(isoformAc)) {
-					AnnotationIsoformSpecificity spec = annot.getTargetingIsoformsMap().get(isoformAc);
-					result.add(new Proteoform(isoformAc, spec.getName(), annot.getSubjectComponents()));
-				}
-			}
-		}
-		return result;
-	}
 	
 	/**
 	 * Builds a dictionary (HashMap) where the key is the annotation uniqueName and the value the annotation itself.
