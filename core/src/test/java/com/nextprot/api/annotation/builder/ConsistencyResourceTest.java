@@ -1,6 +1,8 @@
 package com.nextprot.api.annotation.builder;
 
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import java.util.List;
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
@@ -9,7 +11,7 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 
 public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTest{
 
@@ -28,31 +30,13 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 				Publication pub = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
 				if(pub == null){
 					System.err.println("Can t find publication for " + pubmedId); 
+					Assert.fail("Can t find publication for " + pubmedId);
 				}
 			}
 		});
 
 	}
 
-	
-	@Test
-	public void shouldFindAllPubmeds() {
-		
-		List<String> pubmedIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION, StatementField.REFERENCE_DATABASE , "PubMed");
-		System.out.println("Found " + pubmedIds.size() + " distinct pubmeds");
-		pubmedIds.forEach(p -> {
-			if(p != null){
-				String pubmedId = p.replace("(PubMed,", "").replace(")", "");
-				Publication pub = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-				if(pub == null) {
-					System.err.println("Can t find publication for " + pubmedId); 
-				}
-			}
-		});
-
-	}
-
-	
 
 	@Test
 	public void shouldFindAllTerms() {

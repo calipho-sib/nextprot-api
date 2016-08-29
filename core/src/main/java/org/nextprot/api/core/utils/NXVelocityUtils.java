@@ -1,5 +1,10 @@
 package org.nextprot.api.core.utils;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -14,12 +19,6 @@ import org.nextprot.api.core.domain.Proteoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.core.utils.peff.PeffFormatterMaster;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class NXVelocityUtils {
 	
@@ -38,11 +37,6 @@ public class NXVelocityUtils {
     
     public static Map<Proteoform,List<Annotation>> getProteoformAnnotationsMap(Entry entry, String isoformAc) {
 		return EntryUtils.getProteoformAnnotationsMap(entry, isoformAc);
-	}
-
-	// TODO: PAM temporary
-	public static Set<Proteoform> getProteoformSet(Entry entry, String isoformAc) {
-		return EntryUtils.getProteoformSet(entry, isoformAc);
 	}
         
 	public static List<Annotation> getAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory) {

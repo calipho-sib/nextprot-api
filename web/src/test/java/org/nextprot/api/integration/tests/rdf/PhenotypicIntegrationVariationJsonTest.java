@@ -1,4 +1,4 @@
-package org.nextprot.api.web.service.impl;
+package org.nextprot.api.integration.tests.rdf;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
