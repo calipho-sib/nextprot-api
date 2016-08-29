@@ -1,10 +1,10 @@
 package org.nextprot.api.core.domain;
 
+import com.google.common.base.Preconditions;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.google.common.base.Preconditions;
 
 public class BioObject implements Serializable {
 
@@ -98,7 +98,11 @@ public class BioObject implements Serializable {
 
     
     public void putPropertyNameValue(String name, String value) {
-    	this.properties.put(name, value);
+        this.properties.put(name, value);
+    }
+
+    public String getPropertyValue(String name) {
+        return this.properties.get(name);
     }
 
     public Map<String, String> getProperties() {

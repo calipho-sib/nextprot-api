@@ -1,6 +1,7 @@
 package org.nextprot.api.core.utils.annot.merge.impl;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -90,6 +91,37 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
         }
         else {
             LOGGER.warning("too many sources to be used to update annotation isoform specificity names");
+        }
+    }
+
+    @Override
+    protected void updateDestBioObject(Annotation dest, List<Annotation> sources) {
+
+        BioObject destBioObject = dest.getBioObject();
+
+        for (Annotation src : sources) {
+
+            BioObject srcBioObject = src.getBioObject();
+
+            if (srcBioObject != null && srcBioObject.getProperties() != null) {
+                updateDestBioObjectProperties(destBioObject, srcBioObject.getProperties());
+            }
+        }
+    }
+
+    private void updateDestBioObjectProperties(BioObject destBioObject, Map<String, String> srcBioObjectProperties) {
+
+        Map<String, String> destProperties = destBioObject.getProperties();
+
+        for (Map.Entry<String, String> srcKeyValue : srcBioObjectProperties.entrySet()) {
+
+            if (!destProperties.containsKey(srcKeyValue.getKey())) {
+                destBioObject.putPropertyNameValue(srcKeyValue.getKey(), srcKeyValue.getValue());
+            }
+            else if (!srcKeyValue.getValue().equals(destBioObject.getPropertyValue(srcKeyValue.getKey()))) {
+                throw new NextProtException("unexpected value "+destBioObject.getPropertyValue(srcKeyValue.getKey())
+                        + "for property "+srcKeyValue.getKey() +" (expected: "+srcKeyValue.getValue()+")");
+            }
         }
     }
 
