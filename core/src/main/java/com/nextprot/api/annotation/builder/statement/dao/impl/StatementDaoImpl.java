@@ -111,7 +111,7 @@ public class StatementDaoImpl implements StatementDao {
 
 	@Override
 	public List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, StatementField whereField, String value, StatementField whereField2,String value2) {
-		String sql = "select distinct " + field.name() + " from nxflat.entry_mapped_statements where " + whereField.name() + " = '" + value + " AND '"  + whereField2.name() + " = '" + value2 + "'";
+		String sql = "select distinct " + field.name() + " from nxflat.entry_mapped_statements where " + whereField.name() + " = '" + value + "' AND "  + whereField2.name() + " = '" + value2 + "'";
 		return new JdbcTemplate(dsLocator.getStatementsDataSource()).queryForList(sql, String.class);
 	}
 

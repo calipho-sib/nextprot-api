@@ -86,7 +86,10 @@ public class PublicationServiceImpl implements PublicationService {
 		
 
 		//Adding publications from flat database
-		List<String> pubmedIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION , StatementField.ENTRY_ACCESSION, uniqueName, StatementField.REFERENCE_DATABASE, "PubMed");
+		List<String> pubmedIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION , 
+				StatementField.ENTRY_ACCESSION, uniqueName, 
+				StatementField.REFERENCE_DATABASE, "PubMed");
+		
 		for(String pubmed : pubmedIds){
 			if(pubmed != null){
 				Publication pub = this.publicationDao.findPublicationByDatabaseAndAccession("PubMed", pubmed);
