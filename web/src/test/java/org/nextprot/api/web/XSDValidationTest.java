@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(profiles = {"cache"})
+@Ignore
 public class XSDValidationTest extends WebIntegrationBaseTest {
 
 
