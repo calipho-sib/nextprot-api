@@ -50,12 +50,11 @@ abstract class AnnotationBuilder<T extends Annotation> {
 	}
 	
 	
-	private static AnnotationEvidenceProperty addPropertyIfPresent(long evidenceId, String propertyValue, String propertyName) {
+	private static AnnotationEvidenceProperty addPropertyIfPresent(String propertyValue, String propertyName) {
 		if (propertyValue != null) {
 			AnnotationEvidenceProperty prop = new AnnotationEvidenceProperty();
 			prop.setPropertyName(propertyName);
 			prop.setPropertyValue(propertyValue);
-			prop.setEvidenceId(evidenceId);
 			return prop;
 		}
 		return null;
@@ -110,12 +109,11 @@ abstract class AnnotationBuilder<T extends Annotation> {
 	}
 
 	protected List<AnnotationEvidence> buildAnnotationEvidences(List<Statement> Statements) {
-		return Statements.stream().map(s -> {
+
+		//Ensures there is no repeated evidence!
+		Set<AnnotationEvidence> evidencesSet = Statements.stream().map(s -> {
 			AnnotationEvidence evidence = new AnnotationEvidence();
 			
-			long generatedEvidenceId = IdentifierOffset.EVIDENCE_ID_COUNTER_FOR_STATEMENTS.incrementAndGet();
-			evidence.setEvidenceId(generatedEvidenceId); //TODO could this be changed to the statement_id hash if string ?
-
 			evidence.setResourceType("database");//TODO to be checked with Amos and Lydie
 			
 			evidence.setResourceAssociationType("evidence");
@@ -124,9 +122,9 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			
 			setEvidenceResourceId(evidence, s);
 
-			AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
-			AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
-			AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(generatedEvidenceId, s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
+			AnnotationEvidenceProperty evidenceProperty = addPropertyIfPresent(s.getValue(StatementField.EVIDENCE_INTENSITY), "intensity");
+			AnnotationEvidenceProperty expContextSubjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_SUBJECT_SPECIES), "subject-protein-origin");
+			AnnotationEvidenceProperty expContextObjectProteinOrigin = addPropertyIfPresent(s.getValue(StatementField.ANNOTATION_OBJECT_SPECIES), "object-protein-origin");
 
 			//Set properties which are not null
 			evidence.setProperties(
@@ -160,7 +158,23 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			//TODO create experimental contexts!
 
 			return evidence;
-		}).collect(Collectors.toList());
+		}).collect(Collectors.toSet());
+		
+
+		//Ensures there is no repeated evidence!
+		evidencesSet.forEach(e -> {
+			long generatedEvidenceId = IdentifierOffset.EVIDENCE_ID_COUNTER_FOR_STATEMENTS.incrementAndGet();
+			e.setEvidenceId(generatedEvidenceId);
+		});
+		
+		List<AnnotationEvidence> evidencesFiltered = evidencesSet.stream().filter(e -> e.getResourceId() != -2).collect(Collectors.toList());
+		if(evidencesFiltered.size() < evidencesSet.size()){
+			int total = evidencesSet.size();
+			int removed = total - evidencesFiltered.size();
+			LOGGER.warn("Removed " + removed + " evidence because no resource id from a total of " + total);
+		}
+		
+		return new ArrayList<>(evidencesFiltered);
 
 	}
 
@@ -199,8 +213,9 @@ abstract class AnnotationBuilder<T extends Annotation> {
 				}
 			}
 		} else {
-			System.err.println();
-			//Create a XREF
+			
+			evidence.setResourceId(-2);
+			//evidence.setResourceId(dbXrefService.findDbXrefIdByDatabaseAndAccession(referenceDB, referenceAC));
 		}
 	}
 
@@ -247,7 +262,14 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			//Set the evidences if not Mammalian phenotype or Protein Property https://issues.isb-sib.ch/browse/BIOEDITOR-466
 			if(!ANNOT_CATEGORIES_WITHOUT_EVIDENCES.contains(category)){
 				annotation.setEvidences(buildAnnotationEvidences(statements));
-				annotation.setQualityQualifier(AnnotationUtils.computeAnnotationQualityBasedOnEvidences(annotation.getEvidences()).name());
+				
+				//TODO Remove this when you are able to do XREFs
+				if(((annotation.getEvidences() == null) || ((annotation.getEvidences().isEmpty()))) && (category.equals(AnnotationCategory.VARIANT))){
+					annotation.setQualityQualifier("GOLD");//All variants from BED are GOLD, and this is a special case when we don't have evidences for VDs.
+				}else {
+					annotation.setQualityQualifier(AnnotationUtils.computeAnnotationQualityBasedOnEvidences(annotation.getEvidences()).name());
+				}
+				
 			}else {
 				annotation.setEvidences(new ArrayList<AnnotationEvidence>());
 				annotation.setQualityQualifier(statement.getValue(StatementField.EVIDENCE_QUALITY));
