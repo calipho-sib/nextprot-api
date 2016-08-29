@@ -45,7 +45,7 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 		try {
 
 			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			schema = factory.newSchema(new StreamSource(new File("src/main/webapp/nextprot-export-v1.xsd")));
+			schema = factory.newSchema(new StreamSource(new File("src/main/webapp/nextprot-export-v2.xsd")));
 
 			File f = new File("tmp.xml");
 			StreamSource xmlFile = new StreamSource(f);
