@@ -74,9 +74,9 @@ public class AnnotationExporter {
                     .append("\t")
                     .append((stats.countAnnots(NpBedMergingStats.AnnotType.MERGED)>0) ? toAnnotationString(stats.getAnnots(NpBedMergingStats.AnnotType.MERGED).get(0)) : "")
                     .append("\t")
-                    .append((stats.countAnnots(NpBedMergingStats.AnnotType.UNMERGED_BED)>0) ? toAnnotationString(stats.getAnnots(NpBedMergingStats.AnnotType.UNMERGED_BED).get(0)) : "")
+                    .append((stats.countAnnots(NpBedMergingStats.AnnotType.UNMERGED_BED)>0) ? stats.getAnnots(NpBedMergingStats.AnnotType.UNMERGED_BED).get(0).getUniqueName() : "")
                     .append("\t")
-                    .append((stats.countAnnots(NpBedMergingStats.AnnotType.UNMERGED_NP)>0) ? toAnnotationString(stats.getAnnots(NpBedMergingStats.AnnotType.UNMERGED_NP).get(0)) : "")
+                    .append((stats.countAnnots(NpBedMergingStats.AnnotType.UNMERGED_NP)>0) ? stats.getAnnots(NpBedMergingStats.AnnotType.UNMERGED_NP).get(0).getUniqueName() : "")
                     .append("\n");
         }
 
