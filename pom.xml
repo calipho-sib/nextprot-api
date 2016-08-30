@@ -389,6 +389,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!-- https://deors.wordpress.com/2014/07/04/individual-test-coverage-sonarqube-jacoco/ -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
