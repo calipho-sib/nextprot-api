@@ -55,7 +55,14 @@ public class EntryUtils implements Serializable{
 			
 			List<Annotation> dependentAnnotations = AnnotationUtils.filterAnnotationsByHashes(entry, dependencyHashes);
 
-			annotations.addAll(dependentAnnotations);
+			if(config.hasGoldOnly()){
+				Map<AnnotationCategory, List<Annotation>> dependentAnnotationsGroupedByCategory = dependentAnnotations.stream().collect(Collectors.groupingBy(Annotation::getAPICategory));
+				dependentAnnotationsGroupedByCategory.entrySet().forEach(entrySet -> {
+					annotations.addAll(AnnotationUtils.filterAnnotationsByCategory(entrySet.getValue(), entrySet.getKey(), true, config.hasGoldOnly()));
+				});
+			}else {
+				annotations.addAll(dependentAnnotations);
+			}
 			
 			entry.setAnnotations(annotations);
 			
