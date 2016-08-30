@@ -3,6 +3,8 @@ package org.nextprot.api.core.utils.annot;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
@@ -12,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.io.FileNotFoundException;
 import java.util.Collections;
 
+@Ignore
 @ActiveProfiles({ "dev" })
 public class AnnotationExporterTest extends CoreUnitBaseTest {
 
@@ -30,7 +33,7 @@ public class AnnotationExporterTest extends CoreUnitBaseTest {
         exporter = new AnnotationExporter(entryBuilderService, statementDao, masterIdentifierService);
     }
 
-    //@Test
+    @Test
     public void exportMsh6() throws FileNotFoundException {
 
         String tsv = exporter.exportAnnotationStatsAsTsvString(Collections.singletonList("msh6"));
@@ -39,7 +42,7 @@ public class AnnotationExporterTest extends CoreUnitBaseTest {
         Assert.assertEquals(34, exporter.getStatisticsMap().size());
     }
 
-    //@Test
+    @Test
     public void exportAllGenes() throws FileNotFoundException {
 
         String tsv = exporter.exportAllGeneStatementsAsTsvString();
