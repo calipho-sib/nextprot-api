@@ -84,7 +84,8 @@ public class AnnotationCategoryTest {
 		Assert.assertTrue(children.contains(AnnotationCategory.NAME));
 		Assert.assertTrue(children.contains(AnnotationCategory.GENERAL_ANNOTATION));
 		Assert.assertTrue(children.contains(AnnotationCategory.POSITIONAL_ANNOTATION));
-		Assert.assertTrue(children.size() == 3);
+		Assert.assertTrue(children.contains(AnnotationCategory.VIRTUAL_ANNOTATION));
+		Assert.assertTrue(children.size() == 4);
 	}
 	
 	@Test
@@ -213,12 +214,14 @@ public class AnnotationCategoryTest {
 		System.out.println("General annotations :"+ s2.size());
 		Set<AnnotationCategory> s3 = AnnotationCategory.NAME.getAllChildren();
 		System.out.println("Names :"+ s3.size());
+		Set<AnnotationCategory> s4 = AnnotationCategory.VIRTUAL_ANNOTATION.getAllChildren();
+		System.out.println("Names :"+ s4.size());
 		int count = AnnotationCategory.values().length - 1;
-		System.out.println("Roots and children :"+ (r.size()+s1.size()+ s2.size()+s3.size()));
+		System.out.println("Roots and children :"+ (r.size()+s1.size()+ s2.size()+s3.size()+s4.size()));
 		System.out.println("Full count :" + count);
 		// we assume that no child has more than one root parent (but it is not forbidden)
 		// so the sum of each root shildren set + number of roots should be equal to enum values count
-		Assert.assertTrue(r.size() + s1.size() + s2.size() + s3.size() == count);
+		Assert.assertTrue(r.size() + s1.size() + s2.size() + s3.size() + s4.size() == count);
 	}
 
 	@Test
