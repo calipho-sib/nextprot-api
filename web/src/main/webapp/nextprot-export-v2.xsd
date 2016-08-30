@@ -2,7 +2,9 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
-	Date:		2016/03/03
+	Date:		2016/08/30
+	Description: Major change: Adding phenotypic variation as new annotation category, biological subjects and all related elements and attributes.
+	Version history: https://github.com/calipho-sib/nextprot-api/blob/master/web/src/main/webapp/nextprot-export-v2.xsd
 
 	Copyright (c) 2016 SIB Swiss Institute of Bioinformatics
 	Distributed under the Creative Commons Attribution-NoDerivs License
@@ -952,6 +954,7 @@
 						<xs:enumeration value="peroxisome-transit-peptide"/>
 						<xs:enumeration value="ph-dependence"/>
 						<xs:enumeration value="pharmaceutical"/>
+						<xs:enumeration value="phenotypic-variation"/>
 						<xs:enumeration value="propeptide"/>
 						<xs:enumeration value="ptm-info"/>
 						<xs:enumeration value="redox-potential"/>
@@ -989,6 +992,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
+                <xs:element ref="biological-subject" minOccurs="0"/>
                 <xs:element ref="cv-term" minOccurs="0"/>
                 <xs:element ref="description" minOccurs="0"/>
                 <xs:element ref="biological-object" minOccurs="0"/>
@@ -998,6 +1002,7 @@
                 <xs:element ref="target-isoform-list" minOccurs="1" maxOccurs="1"/>
 			</xs:sequence>
 			<xs:attribute ref="quality" use="required"/>       
+			<xs:attribute name="annotation-internal-id" type="xs:string" use="required"/>      
 		</xs:complexType>
     </xs:element>	
     <!-- Annotation definition ends -->
@@ -1020,6 +1025,40 @@
     </xs:element>	
     <!-- cv term definition ends -->
 
+	<!-- biological subject component element definition begins -->
+	<xs:element name="biological-subject-component">
+		<xs:annotation>
+			<xs:documentation>Describes a biological subject component.</xs:documentation>
+		</xs:annotation>
+        <xs:complexType>
+			<xs:attribute name="annotation-internal-ref" type="xs:string" use="required"/>
+        </xs:complexType>
+	</xs:element>
+	<!-- biological subject component element definition ends -->
+	
+	<!-- biological-subject-component list element definition ends -->
+    <xs:element name="biological-subject-component-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection biological subject components.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="biological-subject-component" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+        </xs:complexType>
+    </xs:element>	
+    <!-- biological-subject-component list definition ends -->
+
+    <!-- Biological subject element definition begins -->
+    <xs:element name="biological-subject">
+         <xs:complexType>
+            <xs:sequence>
+				<xs:element ref="biological-subject-component-list" minOccurs="1" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+    </xs:element>
+    <!-- Biological subject element definition ends -->
+
     <!-- Biological object element definition begins -->
     <xs:element name="biological-object">
         <xs:complexType>
@@ -1031,6 +1070,7 @@
                                 <xs:enumeration value="chemical"/>
                                 <xs:enumeration value="complex"/>
                                 <xs:enumeration value="group"/>
+                                <xs:enumeration value="entry-annotation"/>
                                 <xs:enumeration value="protein"/>
                                 <xs:enumeration value="protein-isoform"/>
                             </xs:restriction>
@@ -1039,6 +1079,7 @@
                     <xs:attribute type="xs:string" name="accession" use="optional"/>
                     <xs:attribute type="xs:string" name="database" use="optional"/>
                     <xs:attribute type="xs:int" name="resource-internal-ref" use="optional"/>
+                    <xs:attribute type="xs:string" name="annotation-internal-ref" use="optional"/>
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>
@@ -1107,6 +1148,7 @@
             <xs:sequence>
                 <xs:element ref="cv-term" minOccurs="0"/>
                 <xs:element ref="property-list" minOccurs="0"/>
+                <xs:element name="evidence-note" type="xs:string" minOccurs="0"/>
 			</xs:sequence>
 			<xs:attribute name="is-negative" type="xs:boolean" use="required"/>
 			<xs:attribute name="resource-internal-ref" type="xs:integer" use="required"/>
@@ -1157,6 +1199,7 @@
                 <xs:element ref="location" minOccurs="0" maxOccurs="1"/>
 			</xs:sequence>
 			<xs:attribute ref="accession" use="required"/>
+			<xs:attribute name="name" use="optional"/>
 			<xs:attribute name="specificity" use="required">
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
