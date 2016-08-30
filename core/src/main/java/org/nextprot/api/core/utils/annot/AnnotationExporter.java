@@ -66,13 +66,17 @@ public class AnnotationExporter {
             sb
                     .append(category)
                     .append("\t")
-                    .append(stats.countMergedAnnots())
+                    .append(stats.countAnnots(NpBedMergingStats.AnnotType.MERGED))
                     .append("\t")
-                    .append(stats.countUnmergedAnnots())
+                    .append(stats.countAnnots(NpBedMergingStats.AnnotType.UNMERGED_BED))
                     .append("\t")
-                    .append((stats.countMergedAnnots()>0) ? toAnnotationString(stats.getMerged().get(0)) : "")
+                    .append(stats.countAnnots(NpBedMergingStats.AnnotType.UNMERGED_NP))
                     .append("\t")
-                    .append((stats.countUnmergedAnnots()>0) ? stats.getUnmerged().get(0) : "")
+                    .append((stats.countAnnots(NpBedMergingStats.AnnotType.MERGED)>0) ? toAnnotationString(stats.getAnnots(NpBedMergingStats.AnnotType.MERGED).get(0)) : "")
+                    .append("\t")
+                    .append((stats.countAnnots(NpBedMergingStats.AnnotType.UNMERGED_BED)>0) ? stats.getAnnots(NpBedMergingStats.AnnotType.UNMERGED_BED).get(0).getUniqueName() : "")
+                    .append("\t")
+                    .append((stats.countAnnots(NpBedMergingStats.AnnotType.UNMERGED_NP)>0) ? stats.getAnnots(NpBedMergingStats.AnnotType.UNMERGED_NP).get(0).getUniqueName() : "")
                     .append("\n");
         }
 
@@ -81,7 +85,7 @@ public class AnnotationExporter {
 
     private String toAnnotationString(Annotation annotation) {
 
-        return annotation.getUniqueName()+"."+annotation.getAnnotationHash();
+        return annotation.getUniqueName()+" | "+annotation.getAnnotationHash();
     }
 
     private void calcAnnotationStatsFromGeneNames(List<String> geneNames) {
@@ -126,16 +130,16 @@ public class AnnotationExporter {
 
                     // merged
                     if (!uniqueName.equals(annotationHash)) {
-                        stats.addMergedAnnot(annotation);
+                        stats.addAnnot(NpBedMergingStats.AnnotType.MERGED, annotation);
                     }
                     // not merged
                     else {
-                        stats.addUnmergedAnnot(annotation);
+                        stats.addAnnot(NpBedMergingStats.AnnotType.UNMERGED_BED, annotation);
                     }
                 }
                 // np1
                 else {
-                    stats.addUnmergedAnnot(annotation);
+                    stats.addAnnot(NpBedMergingStats.AnnotType.UNMERGED_NP, annotation);
                 }
             }
         }
@@ -157,7 +161,7 @@ public class AnnotationExporter {
     public static class Config {
 
         private final Set<AnnotationCategory> categories;
-        private final List<String> fields = Arrays.asList("category", "merged#", "unmerged#", "merged example", "unmerged example");
+        private final List<String> fields = Arrays.asList("category", "merged#", "unmerged_bed#", "unmerged_np1#", "merged_ex", "unmerged_bed_ex", "unmerged_np1_ex");
 
         public Config() {
 
@@ -198,41 +202,32 @@ public class AnnotationExporter {
 
     public static class NpBedMergingStats {
 
-        private List<Annotation> merged = new ArrayList<>();
-        private List<Annotation> unmerged = new ArrayList<>();
-
-        public void addMergedAnnot(Annotation annotation) {
-            merged.add(annotation);
+        public enum AnnotType {
+            MERGED, UNMERGED_BED, UNMERGED_NP
         }
 
-        public void addUnmergedAnnot(Annotation annotation) {
-            unmerged.add(annotation);
+        private Map<AnnotType, List<Annotation>> annots = new HashMap<>();
+
+        NpBedMergingStats() {
+
+            for (AnnotType type : AnnotType.values()) {
+
+                annots.put(type, new ArrayList<>());
+            }
         }
 
-        public int countMergedAnnots() {
-            return merged.size();
+        public void addAnnot(AnnotType type, Annotation annotation) {
+
+            annots.get(type).add(annotation);
         }
 
-        public int countUnmergedAnnots() {
-            return unmerged.size();
+        public int countAnnots(AnnotType type) {
+
+            return annots.get(type).size();
         }
 
-        public List<Annotation> getMerged() {
-            return merged;
-        }
-
-        public List<Annotation> getUnmerged() {
-            return unmerged;
-        }
-
-        @Override
-        public String toString() {
-            return "NpBedMergingStats{" +
-                    "countMergedAnnots=" + countMergedAnnots() +
-                    ((countMergedAnnots()>0) ? " ("+merged +")" : "") +
-                    ", countUnmergedAnnots=" + countUnmergedAnnots() +
-                    ((countUnmergedAnnots()>0) ? " ("+unmerged +")" : "") +
-                    '}';
+        public List<Annotation> getAnnots(AnnotType type) {
+            return annots.get(type);
         }
     }
 }

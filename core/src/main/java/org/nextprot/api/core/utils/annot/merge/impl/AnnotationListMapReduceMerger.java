@@ -6,6 +6,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.merge.AnnotationCluster;
 import org.nextprot.api.core.utils.annot.merge.AnnotationListMerger;
 import org.nextprot.api.core.utils.annot.merge.AnnotationMerger;
+import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +37,7 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
         this.annotationMerger = annotationMerger;
     }
 
+    // throw an exception when cluster size > 2
     /** @return merged annotations */
     public List<Annotation> merge(List<Annotation> annotations1, List<Annotation> annotations2) {
 
@@ -55,31 +57,34 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
     /**
      * Map similar annotations in cluster
      *
-     * @param annotations1 first annotation list
-     * @param annotations2 second annotation list
+     * @param annotationList1 first annotation list
+     * @param annotationList2 second annotation list
      * @return a list of clusters
      */
-    private List<AnnotationCluster> clusterSimilarAnnotations(List<Annotation> annotations1, List<Annotation> annotations2) {
+    private List<AnnotationCluster> clusterSimilarAnnotations(List<Annotation> annotationList1, List<Annotation> annotationList2) {
 
-        List<AnnotationCluster> annotationClusters = AnnotationCluster.valueOfClusters(annotations2);
+        // wrap each annotation from second list in its own cluster
+        List<AnnotationCluster> annotationClusters = AnnotationCluster.valueOfClusters(annotationList2);
 
-        for (Annotation srcAnnotation : annotations1) {
+        for (Annotation annotation : annotationList1) {
 
-            AnnotationClusterFinder finder = AnnotationClusterFinder.valueOf(srcAnnotation.getAPICategory());
+            AnnotationCluster foundAnnotationCluster = null;
 
-            AnnotationCluster foundAnnotationCluster = finder.find(srcAnnotation, annotationClusters);
+            SimilarityPredicate predicate = SimilarityPredicate.newSimilarityPredicate(annotation.getAPICategory());
 
-            if (foundAnnotationCluster == null) {
-
-                annotationClusters.add(AnnotationCluster.valueOf(srcAnnotation));
+            if (predicate != null) {
+                foundAnnotationCluster = new AnnotationClusterFinder(predicate).find(annotation, annotationClusters);
             }
-            else {
-                try {
-                    foundAnnotationCluster.add(srcAnnotation);
-                } catch (AnnotationCluster.InvalidAnnotationClusterCategoryException e) {
 
+            if (foundAnnotationCluster != null) {
+                try {
+                    foundAnnotationCluster.add(annotation);
+                } catch (AnnotationCluster.InvalidAnnotationClusterCategoryException e) {
                     throw new NextProtException(e);
                 }
+            }
+            else {
+                annotationClusters.add(AnnotationCluster.valueOf(annotation));
             }
         }
 

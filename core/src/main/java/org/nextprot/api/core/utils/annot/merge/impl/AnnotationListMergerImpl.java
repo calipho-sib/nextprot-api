@@ -1,8 +1,9 @@
 package org.nextprot.api.core.utils.annot.merge.impl;
 
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.merge.AnnotationMerger;
 import org.nextprot.api.core.utils.annot.merge.AnnotationListMerger;
+import org.nextprot.api.core.utils.annot.merge.AnnotationMerger;
+import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
 
 import java.util.List;
 
@@ -21,18 +22,16 @@ public class AnnotationListMergerImpl implements AnnotationListMerger {
 
         for (Annotation srcAnnotation : srcAnnotationList) {
 
-            AnnotationFinder finder = AnnotationFinder.valueOf(srcAnnotation.getAPICategory());
+            AnnotationFinder finder = new AnnotationFinder(SimilarityPredicate.newSimilarityPredicate(srcAnnotation.getAPICategory()));
 
             Annotation foundAnnotation = finder.find(srcAnnotation, destAnnotationList);
 
             // not found -> add new annotation
             if (foundAnnotation == null) {
-
                 destAnnotationList.add(srcAnnotation);
             }
             // found -> merge annotation with statementAnnotation
             else {
-
                 updater.merge(foundAnnotation, srcAnnotation);
             }
         }
