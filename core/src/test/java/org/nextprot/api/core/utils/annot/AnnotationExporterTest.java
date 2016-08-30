@@ -15,7 +15,7 @@ import java.io.FileNotFoundException;
 import java.util.Collections;
 
 @Ignore
-@ActiveProfiles({ "dev" })
+@ActiveProfiles({ "dev", "cache" })
 public class AnnotationExporterTest extends CoreUnitBaseTest {
 
     @Autowired
@@ -34,7 +34,7 @@ public class AnnotationExporterTest extends CoreUnitBaseTest {
     }
 
     @Test
-    public void exportMsh6() throws FileNotFoundException {
+    public void exportSingleGene() throws FileNotFoundException {
 
         String tsv = exporter.exportAnnotationStatsAsTsvString(Collections.singletonList("msh6"));
         exporter.exportAsTsvFile("./", "msh6", tsv);

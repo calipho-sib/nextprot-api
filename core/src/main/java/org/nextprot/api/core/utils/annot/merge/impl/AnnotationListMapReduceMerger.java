@@ -101,10 +101,7 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
             // the first annotation is the original one
             return annotationMerger.merge(cluster.getAnnotations().get(0), cluster.getAnnotations().get(1));
         else {
-            Annotation[] otherSources = new Annotation[cluster.getAnnotations().size() - 2];
-            cluster.getAnnotations().subList(2, cluster.getAnnotations().size()).toArray(otherSources);
-
-            return annotationMerger.merge(cluster.getAnnotations().get(0), cluster.getAnnotations().get(1), otherSources);
+            throw new NextProtException("cannot merge more than 2 annotations from cluster "+cluster.getAnnotations());
         }
     }
 }

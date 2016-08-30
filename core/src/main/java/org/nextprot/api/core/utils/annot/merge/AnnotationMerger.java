@@ -9,5 +9,5 @@ import org.nextprot.api.core.domain.annotation.Annotation;
  */
 public interface AnnotationMerger {
 
-    Annotation merge(Annotation annotation1, Annotation annotation2, Annotation... others);
+    Annotation merge(Annotation annotation1, Annotation annotation2);
 }
