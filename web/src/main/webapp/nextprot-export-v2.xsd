@@ -3,7 +3,10 @@
 	XML Schema Definition (XSD) for the neXtProt XML
 
 	Date:		2016/08/30
-	Description: Major change: Adding phenotypic variation as new annotation category, biological subjects and all related elements and attributes.
+	Description: Major version change: 
+	1) New annotation categories added: phenotypic-variation, mammalian-phenotype, protein-property
+	2) New element biological-subject and related elements and attributes added.
+	3) New bio-type value added: "entry-annotation" (used to link to other annotations)
 	Version history: https://github.com/calipho-sib/nextprot-api/blob/master/web/src/main/webapp/nextprot-export-v2.xsd
 
 	Copyright (c) 2016 SIB Swiss Institute of Bioinformatics
@@ -937,6 +940,7 @@
 						<xs:enumeration value="kinetic-note"/>
 						<xs:enumeration value="kinetic-vmax"/>
 						<xs:enumeration value="lipidation-site"/>
+						<xs:enumeration value="mammalian-phenotype"/>
 						<xs:enumeration value="mature-protein"/>
 						<xs:enumeration value="metal-binding-site"/>
 						<xs:enumeration value="miscellaneous"/>
@@ -956,6 +960,7 @@
 						<xs:enumeration value="pharmaceutical"/>
 						<xs:enumeration value="phenotypic-variation"/>
 						<xs:enumeration value="propeptide"/>
+						<xs:enumeration value="protein-property"/>
 						<xs:enumeration value="ptm-info"/>
 						<xs:enumeration value="redox-potential"/>
 						<xs:enumeration value="repeat"/>
@@ -992,7 +997,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="biological-subject" minOccurs="0"/>
+                <xs:element ref="biological-subject" minOccurs="0" maxOccurs="1"/>
                 <xs:element ref="cv-term" minOccurs="0"/>
                 <xs:element ref="description" minOccurs="0"/>
                 <xs:element ref="biological-object" minOccurs="0"/>
@@ -1009,6 +1014,40 @@
 
 	<xs:element name="description" type="xs:string"/>
 	
+    <!-- Biological subject element definition begins -->
+    <xs:element name="biological-subject">
+         <xs:complexType>
+            <xs:sequence>
+				<xs:element ref="biological-subject-component-list" minOccurs="1" maxOccurs="1"/>
+			</xs:sequence>
+		</xs:complexType>
+    </xs:element>
+    <!-- Biological subject element definition ends -->
+
+	<!-- biological-subject-component list element definition ends -->
+    <xs:element name="biological-subject-component-list">
+        <xs:annotation>
+            <xs:documentation>Describes the collection biological subject components.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="biological-subject-component" minOccurs="1" maxOccurs="unbounded"/>
+			</xs:sequence>
+        </xs:complexType>
+    </xs:element>	
+    <!-- biological-subject-component list definition ends -->
+
+	<!-- biological subject component element definition begins -->
+	<xs:element name="biological-subject-component">
+		<xs:annotation>
+			<xs:documentation>Describes a biological subject component.</xs:documentation>
+		</xs:annotation>
+        <xs:complexType>
+			<xs:attribute name="annotation-internal-ref" type="xs:string" use="required"/>
+        </xs:complexType>
+	</xs:element>
+	<!-- biological subject component element definition ends -->
+	
 	<!-- Controlled vocabulary (cv) term element definition begins -->
     <xs:element name="cv-term">
         <xs:annotation>
@@ -1024,40 +1063,6 @@
 		</xs:complexType>
     </xs:element>	
     <!-- cv term definition ends -->
-
-	<!-- biological subject component element definition begins -->
-	<xs:element name="biological-subject-component">
-		<xs:annotation>
-			<xs:documentation>Describes a biological subject component.</xs:documentation>
-		</xs:annotation>
-        <xs:complexType>
-			<xs:attribute name="annotation-internal-ref" type="xs:string" use="required"/>
-        </xs:complexType>
-	</xs:element>
-	<!-- biological subject component element definition ends -->
-	
-	<!-- biological-subject-component list element definition ends -->
-    <xs:element name="biological-subject-component-list">
-        <xs:annotation>
-            <xs:documentation>Describes the collection biological subject components.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="biological-subject-component" minOccurs="1" maxOccurs="unbounded"/>
-			</xs:sequence>
-        </xs:complexType>
-    </xs:element>	
-    <!-- biological-subject-component list definition ends -->
-
-    <!-- Biological subject element definition begins -->
-    <xs:element name="biological-subject">
-         <xs:complexType>
-            <xs:sequence>
-				<xs:element ref="biological-subject-component-list" minOccurs="1" maxOccurs="1"/>
-			</xs:sequence>
-		</xs:complexType>
-    </xs:element>
-    <!-- Biological subject element definition ends -->
 
     <!-- Biological object element definition begins -->
     <xs:element name="biological-object">
