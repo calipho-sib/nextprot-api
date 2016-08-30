@@ -1,7 +1,6 @@
 package org.nextprot.api.core.utils.annot.merge.impl;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.merge.Finder;
 import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
@@ -27,11 +26,6 @@ public class AnnotationFinder implements Finder<Annotation> {
         this.criteria = criteria;
     }
 
-    public static AnnotationFinder valueOf(AnnotationCategory category) {
-
-        return new AnnotationFinder(SimilarityPredicateFactory.newSimilarityPredicate(category));
-    }
-
     /**
      * @return the annotation found from a list of annotations or null if not found
      */
@@ -39,7 +33,6 @@ public class AnnotationFinder implements Finder<Annotation> {
     public Annotation find(Annotation searchedAnnotation, Collection<Annotation> annotations) {
 
         for (Annotation annotation : annotations) {
-
             if (criteria.isSimilar(searchedAnnotation, annotation))
                 return annotation;
         }
