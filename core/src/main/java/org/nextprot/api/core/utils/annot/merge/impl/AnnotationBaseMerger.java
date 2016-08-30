@@ -18,7 +18,7 @@ public abstract class AnnotationBaseMerger implements AnnotationMerger {
         updateDestAnnotationHash(dest, sources);
         updateDestAnnotationName(dest, sources);
         updateDestIsoformSpecificityName(dest, sources);
-        updateDestQualityQualifier(dest);
+        updateDestQualityQualifier(dest, sources);
         updateDestBioObject(dest, sources);
 
         return dest;
@@ -42,12 +42,19 @@ public abstract class AnnotationBaseMerger implements AnnotationMerger {
     /** Update dest isoform specificity name (variant name) */
     protected abstract void updateDestIsoformSpecificityName(Annotation dest, List<Annotation> sources);
 
-    /** Reset dest qualityqualifier to gold if there is at least one gold evidence */
-    private void updateDestQualityQualifier(Annotation dest) {
+    /** Reset dest qualityqualifier to gold if there is at least one gold source */
+    private void updateDestQualityQualifier(Annotation dest, List<Annotation> sources) {
 
-        if (dest.getQualityQualifier() == null || QualityQualifier.valueOf(dest.getQualityQualifier()) != QualityQualifier.GOLD)
-            if (dest.getEvidences().stream().anyMatch(e -> QualityQualifier.valueOf(e.getQualityQualifier()) == QualityQualifier.GOLD))
-                dest.setQualityQualifier(QualityQualifier.GOLD.toString());
+        if (dest.getQualityQualifier() == null || QualityQualifier.valueOf(dest.getQualityQualifier()) != QualityQualifier.GOLD) {
+
+            for (Annotation source : sources) {
+
+                if (source.getQualityQualifier() != null && source.getQualityQualifier().equals(QualityQualifier.GOLD.name())) {
+                    dest.setQualityQualifier(QualityQualifier.GOLD.name());
+                    break;
+                }
+            }
+        }
     }
 
     protected abstract void updateDestBioObject(Annotation dest, List<Annotation> sources);

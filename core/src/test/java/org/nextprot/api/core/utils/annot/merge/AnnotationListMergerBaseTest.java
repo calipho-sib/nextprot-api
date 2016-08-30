@@ -29,11 +29,11 @@ public abstract class AnnotationListMergerBaseTest<T extends AnnotationListMerge
     @Test
     public void testMergeTwoIdenticalList()  {
 
-        List<Annotation> list1 = Collections.singletonList(mockAnnotationWithHash(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
-                Collections.singletonList(mockAnnotationEvidence(QualityQualifier.GOLD, "ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304", "hash"));
+        List<Annotation> list1 = Collections.singletonList(mockAnnotationWithHash(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.GOLD,
+                Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304", "hash"));
 
-        List<Annotation> list2 = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
-                Collections.singletonList(mockAnnotationEvidence(QualityQualifier.GOLD, "ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304"));
+        List<Annotation> list2 = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.GOLD,
+                Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304"));
 
         List<Annotation> mergedList = merger.merge(list1, list2);
 
@@ -45,10 +45,10 @@ public abstract class AnnotationListMergerBaseTest<T extends AnnotationListMerge
     @Test
     public void testMergeTwoSameListDifferentEvidence()  {
 
-        List<Annotation> list1 = Collections.singletonList(mockAnnotationWithHash(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
-                Collections.singletonList(mockAnnotationEvidence(QualityQualifier.GOLD, "ECO:0000304", "you can trust sponge bob", "EvidenceCodeOntologyCv", "SPONGEBOB")), "ECO:0000304", "hash"));
-        List<Annotation> list2 = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
-                Collections.singletonList(mockAnnotationEvidence(QualityQualifier.GOLD, "ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304"));
+        List<Annotation> list1 = Collections.singletonList(mockAnnotationWithHash(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.GOLD,
+                Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "you can trust sponge bob", "EvidenceCodeOntologyCv", "SPONGEBOB")), "ECO:0000304", "hash"));
+        List<Annotation> list2 = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.GOLD,
+                Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304"));
 
         List<Annotation> mergedList = merger.merge(list1, list2);
 
@@ -61,26 +61,26 @@ public abstract class AnnotationListMergerBaseTest<T extends AnnotationListMerge
     @Test
     public void qualityQualifierShouldNotTurnGoldAfterMerge()  {
 
-        List<Annotation> list1 = Collections.singletonList(mockAnnotationWithHash(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
-                Collections.singletonList(mockAnnotationEvidence(QualityQualifier.SILVER, "ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304", "hash"));
-        List<Annotation> list2 = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
-                Collections.singletonList(mockAnnotationEvidence(QualityQualifier.SILVER, "ECO:0000304", "you can trust sponge bob", "EvidenceCodeOntologyCv", "SPONGEBOB")), "ECO:0000304"));
+        List<Annotation> list1 = Collections.singletonList(mockAnnotationWithHash(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.SILVER,
+                Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304", "hash"));
+        List<Annotation> list2 = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.SILVER,
+                Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "you can trust sponge bob", "EvidenceCodeOntologyCv", "SPONGEBOB")), "ECO:0000304"));
 
         List<Annotation> mergedList = merger.merge(list1, list2);
 
         Assert.assertEquals(1, list1.size());
         Assert.assertEquals(1, mergedList.size());
         Assert.assertEquals(2, mergedList.get(0).getEvidences().size());
-        Assert.assertNull(mergedList.get(0).getQualityQualifier());
+        Assert.assertEquals(QualityQualifier.SILVER.name(), mergedList.get(0).getQualityQualifier());
     }
 
     @Test
     public void qualityQualifierShouldTurnGoldAfterMerge()  {
 
-        List<Annotation> list1 = Collections.singletonList(mockAnnotationWithHash(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
-                Collections.singletonList(mockAnnotationEvidence(QualityQualifier.SILVER, "ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304", "hash"));
-        List<Annotation> list2 = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS,
-                Collections.singletonList(mockAnnotationEvidence(QualityQualifier.GOLD, "ECO:0000304", "you can trust sponge bob", "EvidenceCodeOntologyCv", "SPONGEBOB")), "ECO:0000304"));
+        List<Annotation> list1 = Collections.singletonList(mockAnnotationWithHash(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.SILVER,
+                Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "traceable author statement used in manual assertion", "EvidenceCodeOntologyCv", "PINC")), "ECO:0000304", "hash"));
+        List<Annotation> list2 = Collections.singletonList(mockAnnotation(AnnotationCategory.GO_BIOLOGICAL_PROCESS, QualityQualifier.GOLD,
+                Collections.singletonList(mockAnnotationEvidence("ECO:0000304", "you can trust sponge bob", "EvidenceCodeOntologyCv", "SPONGEBOB")), "ECO:0000304"));
 
         List<Annotation> mergedList = merger.merge(list1, list2);
 
@@ -90,11 +90,10 @@ public abstract class AnnotationListMergerBaseTest<T extends AnnotationListMerge
         Assert.assertEquals(QualityQualifier.GOLD.toString(), mergedList.get(0).getQualityQualifier());
     }
 
-    private static AnnotationEvidence mockAnnotationEvidence(QualityQualifier qq, String codeAC, String codeName, String codeOntology, String author) {
+    private static AnnotationEvidence mockAnnotationEvidence(String codeAC, String codeName, String codeOntology, String author) {
 
         AnnotationEvidence evidence = new AnnotationEvidence();
 
-        evidence.setQualityQualifier(qq.toString());
         evidence.setEvidenceCodeAC(codeAC);
         evidence.setEvidenceCodeName(codeName);
         evidence.setEvidenceCodeOntology(codeOntology);
@@ -103,20 +102,21 @@ public abstract class AnnotationListMergerBaseTest<T extends AnnotationListMerge
         return evidence;
     }
 
-    private static Annotation mockAnnotation(AnnotationCategory cat, List<AnnotationEvidence> evidences, String cvCode) {
+    private static Annotation mockAnnotation(AnnotationCategory cat, QualityQualifier qq, List<AnnotationEvidence> evidences, String cvCode) {
 
         Annotation annotation = new Annotation();
 
         annotation.setAnnotationCategory(cat);
+        annotation.setQualityQualifier(qq.name());
         annotation.setEvidences(evidences);
         annotation.setCvTermAccessionCode(cvCode);
 
         return annotation;
     }
 
-    private static Annotation mockAnnotationWithHash(AnnotationCategory cat, List<AnnotationEvidence> evidences, String cvCode, String hash) {
+    private static Annotation mockAnnotationWithHash(AnnotationCategory cat, QualityQualifier qq, List<AnnotationEvidence> evidences, String cvCode, String hash) {
 
-        Annotation annotation = mockAnnotation(cat, evidences, cvCode);
+        Annotation annotation = mockAnnotation(cat, qq, evidences, cvCode);
 
         annotation.setAnnotationHash(hash);
 
