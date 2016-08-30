@@ -14,7 +14,6 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.XMLPrettyPrinter;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
@@ -25,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles(profiles = {"cache"})
-@Ignore
 public class XSDValidationTest extends WebIntegrationBaseTest {
 
 
@@ -53,13 +51,12 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 		
             NPEntryStreamWriter<?> writer = new NPEntryXMLStreamWriter(baos, "entry");
 			exportService.streamResults(writer, "entry", Arrays.asList(new String[] { "NX_Q15858" }));
+			//exportService.streamResults(writer, "entry", Arrays.asList(new String[] { "NX_Q6PIU2" })); 
 
 			XMLPrettyPrinter prettyPrinter = new XMLPrettyPrinter();
-			
-			System.err.println(baos.toString());
+			//System.err.println(baos.toString());
 			
 			String prettyXml = prettyPrinter.prettify(baos.toString());
-			System.out.println(prettyXml);
 			PrintWriter out = new PrintWriter(f);
 			out.print(prettyXml);
 			out.close();
@@ -77,36 +74,5 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 			
 		}
 
-
 	}
-	/*
-	
-
-	@Test
-	public void shouldValidateXMLFilewithXSD() throws Exception {
-
-
-			SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			Schema schema = factory.newSchema(new StreamSource(new File("src/main/webapp/nextprot-export-v2.xsd")));
-
-			String xmlContent = this.mockMvc.perform(get("/entry/NX_Q15858.xml")).andReturn().getResponse().getContentAsString();
-
-		    DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		    Document document = parser.parse(xmlContent);
-		    // create a SchemaFactory capable of understanding WXS schemas
-		
-		    // create a Validator instance, which can be used to validate an instance document
-		    Validator validator = schema.newValidator();
-
-		    // validate the DOM tree
-		    try {
-		        validator.validate(new DOMSource(document));
-		    } catch (SAXException e) {
-				fail();
-		    	// instance document is invalid!
-		    }
-
-
-
-	}*/
 }
