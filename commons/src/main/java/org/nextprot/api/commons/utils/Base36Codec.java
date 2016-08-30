@@ -16,6 +16,11 @@ public class Base36Codec {
 
     private static final String BASE36 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+
+    private Base36Codec() {
+        throw new IllegalAccessError("Utility class not meant to be instantiated");
+    }
+
     /**
      * @return the minimum included long
      */
@@ -39,9 +44,9 @@ public class Base36Codec {
      * @return base-36 string
      * @throws IndexOutOfBoundsException if value not in range [0, 2_821_109_900_000[
      */
-    public static String encodeBase36(long value) {
+    public static String encodeBase36(final long value) {
 
-        if(value < 0 || value >= UPPER_RANGE) {
+        if (value < 0 || value >= UPPER_RANGE) {
             throw new IndexOutOfBoundsException("cannot encode " + value + ": long out of bound (valid range: [0, 2_821_109_900_000[)");
         }
 
@@ -51,13 +56,15 @@ public class Base36Codec {
 
         int i=7;
 
-        while(value > 0 && i>=0) {
+        long tmp = value;
 
-            long remainder = value % 36;
+        while(tmp > 0 && i>=0) {
+
+            long remainder = tmp % 36;
 
             buffer[i] = BASE36.charAt((int)remainder);
 
-            value = value/36;
+            tmp = tmp/36;
 
             i--;
         }
