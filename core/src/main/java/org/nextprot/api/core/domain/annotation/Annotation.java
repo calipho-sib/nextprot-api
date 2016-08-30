@@ -230,15 +230,12 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.category = category.getDbAnnotationTypeName();
 	}
 	
+	@Deprecated
+	//Use setAnnotationCategory instead
 	public void setCategory(String category) {
 		this.category = category;
 		this.apiCategory= AnnotationCategory.getByDbAnnotationTypeName(category);
 	}
-	
-	public void setCategoryOnly(String category) {
-		this.category = category;
-	}
-
 
 	public AnnotationVariant getVariant() {
 		return variant;

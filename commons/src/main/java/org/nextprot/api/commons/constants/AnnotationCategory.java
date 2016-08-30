@@ -168,12 +168,17 @@ public enum AnnotationCategory implements Serializable {
 	REDOX_POTENTIAL(-23, "redox potential", "redoxPotential", "redoxPotential", BIOPHYSICOCHEMICAL_PROPERTY),
 	TEMPERATURE_DEPENDENCE(-24, "temperature dependence", "temperatureDependence", "temperatureDependence", BIOPHYSICOCHEMICAL_PROPERTY),
 
-	
 	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "protein-property", GENERAL_ANNOTATION), //to represent stable form
 	//New categories added with BioEditor integration
 	GENERIC_PHENOTYPE(-9999, "generic-phenotype", "genericPhenotype", "genericPhenotype", GENERAL_ANNOTATION),
 	PHENOTYPIC_VARIATION(-9990, "phenotypic-variation", "phenotypicVariation", "phenotypicVariation", GENERIC_PHENOTYPE),
-	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "mammalian-phenotype", GENERIC_PHENOTYPE);
+	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "mammalian-phenotype", GENERIC_PHENOTYPE),
+
+	
+	//Virtual annotations (for pepx)
+	VIRTUAL_ANNOTATION(-70000, "virtual-annotation", "virtualAnnotation", "virtual-annotation", ROOT), //to represent stable form
+	PEPX_VIRTUAL_ANNOTATION(-70001, "pepx-virtual-annotation", "pepxVirtualAnnotation", "pepx-virtual-annotation", VIRTUAL_ANNOTATION);
+
 
 	private final Integer dbId; // if positive, identifies a real record of the table nextprot.cv_terms (category annotation_type)
 	private final String dbAnnotationTypeName; // if dbId is positive, dbAnnotationTypeName is an exact match of the corresponding record in nextprot.cv_terms 

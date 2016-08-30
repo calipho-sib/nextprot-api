@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sun.xml.internal.ws.api.model.wsdl.WSDLBoundOperation.ANONYMOUS;
+
 @Controller
 public class JSONDocRoleController extends JSONDocController {
 
@@ -113,11 +115,15 @@ public class JSONDocRoleController extends JSONDocController {
 					// adding subparts
 					for (AnnotationCategory model : AnnotationCategory.values()) {
 
-						String name = model.getApiTypeName();
-						String path = "/entry/{entry}/" + StringUtils.camelToKebabCase(name);
-						String description = "Exports only the " + name + " from an entry, located on the hierarchy: " + model.getHierarchy();
+						if(!model.equals(AnnotationCategory.VIRTUAL_ANNOTATION) && !model.isChildOf(AnnotationCategory.VIRTUAL_ANNOTATION)){
 
-						apiDoc.getMethods().add(cloneMethodDoc(met, path, description, true, true));
+							String name = model.getApiTypeName();
+							String path = "/entry/{entry}/" + StringUtils.camelToKebabCase(name);
+							String description = "Exports only the " + name + " from an entry, located on the hierarchy: " + model.getHierarchy();
+
+							apiDoc.getMethods().add(cloneMethodDoc(met, path, description, true, true));
+
+						}
 					}
 
 				}
