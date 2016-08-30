@@ -4,6 +4,7 @@ import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
@@ -30,10 +31,10 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 	@Test
 	public void findAllNormalAnnotations() {
 
-		List<Annotation> isoformAnnotations = statementService.getAnnotations("NX_P38398");
-		List<Annotation> list = isoformAnnotations.stream().filter(ia -> ia.getAnnotationHash().equals("94b1dd0219624fbaeb5bac0cdb32b0f6")).collect(Collectors.toList());
-
-		Assert.assertTrue(!list.isEmpty());
+		List<Annotation> isoformAnnotations = statementService.getAnnotations("NX_P52701");
+		List<Annotation> list = isoformAnnotations.stream().filter(a -> a.getAPICategory().equals(AnnotationCategory.PROTEIN_PROPERTY))
+				.collect(Collectors.toList());
+		Assert.assertTrue(list.get(0).getQualityQualifier().equals("GOLD"));
 
 		//System.out.println(list.get(0));
 	}

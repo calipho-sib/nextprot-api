@@ -16,7 +16,9 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	private List<String> subjectComponents;
 	
+	@Deprecated
 	private String annotationName;
+	
 	private String annotationHash;
 
 	private static final long serialVersionUID = 1L;
@@ -424,6 +426,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 		this.subjectComponents = subjectComponents;
 	}
 
+	@Deprecated
 	public String getAnnotationName() {
 		return annotationName;
 	}

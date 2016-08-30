@@ -240,24 +240,24 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			List<Statement> statements = entry.getValue();
 			
 
-			Statement statement = statements.get(0);
+			Statement firstStatement = statements.get(0);
 
-			annotation.setAnnotationHash(statement.getValue(StatementField.ANNOTATION_ID));
-			annotation.setAnnotationName(statement.getValue(StatementField.ANNOTATION_NAME));
+			annotation.setAnnotationHash(firstStatement.getValue(StatementField.ANNOTATION_ID));
+			//annotation.setAnnotationName(firstStatement.getValue(StatementField.ANNOTATION_NAME));
 
-			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(statement.getValue(StatementField.ANNOTATION_CATEGORY)));
+			AnnotationCategory category = AnnotationCategory.getDecamelizedAnnotationTypeName(StringUtils.camelToKebabCase(firstStatement.getValue(StatementField.ANNOTATION_CATEGORY)));
 			annotation.setAnnotationCategory(category);
 
 			if(category.equals(AnnotationCategory.VARIANT) || category.equals(AnnotationCategory.MUTAGENESIS)){
-				setVariantAttributes(annotation, statement);
+				setVariantAttributes(annotation, firstStatement);
 			}
-			setIsoformTargeting(annotation, statement);
+			setIsoformTargeting(annotation, firstStatement);
 
 			setIsoformName(annotation, isoformName);
 
-			annotation.setDescription(statement.getValue(StatementField.ANNOT_DESCRIPTION));
+			annotation.setDescription(firstStatement.getValue(StatementField.ANNOT_DESCRIPTION));
 
-			String cvTermAccession = statement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
+			String cvTermAccession = firstStatement.getValue(StatementField.ANNOT_CV_TERM_ACCESSION);
 
 			//Set the evidences if not Mammalian phenotype or Protein Property https://issues.isb-sib.ch/browse/BIOEDITOR-466
 			if(!ANNOT_CATEGORIES_WITHOUT_EVIDENCES.contains(category)){
@@ -271,8 +271,16 @@ abstract class AnnotationBuilder<T extends Annotation> {
 				}
 				
 			}else {
+				
+				//Case of Protein propert and mammalian phenotypes
 				annotation.setEvidences(new ArrayList<AnnotationEvidence>());
-				annotation.setQualityQualifier(statement.getValue(StatementField.EVIDENCE_QUALITY));
+				
+				boolean foundGold = statements.stream().anyMatch(s -> s.getValue(StatementField.EVIDENCE_QUALITY).equalsIgnoreCase("GOLD"));
+				if(foundGold){
+					annotation.setQualityQualifier("GOLD");
+				}else {
+					annotation.setQualityQualifier("SILVER");
+				}
 			}
 
 			if(cvTermAccession != null && !cvTermAccession.isEmpty()){
@@ -294,21 +302,21 @@ abstract class AnnotationBuilder<T extends Annotation> {
 					
 				}else {
 					LOGGER.error("cv term was expected to be found " + cvTermAccession);
-					annotation.setCvTermName(statement.getValue(StatementField.ANNOT_CV_TERM_NAME));
-					annotation.setCvApiName(statement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
+					annotation.setCvTermName(firstStatement.getValue(StatementField.ANNOT_CV_TERM_NAME));
+					annotation.setCvApiName(firstStatement.getValue(StatementField.ANNOT_CV_TERM_TERMINOLOGY));
 				}
 							
 			}
 
-			annotation.setAnnotationHash(statement.getValue(StatementField.ANNOTATION_ID));
-			annotation.setAnnotationName(statement.getValue(StatementField.ANNOTATION_NAME));
+			annotation.setAnnotationHash(firstStatement.getValue(StatementField.ANNOTATION_ID));
+			annotation.setAnnotationName(firstStatement.getValue(StatementField.ANNOTATION_NAME));
 	
 			//Check this with PAM (does it need to be a human readable stuff)
-			annotation.setUniqueName(statement.getValue(StatementField.ANNOTATION_ID)); //Does it need a name?
+			annotation.setUniqueName(firstStatement.getValue(StatementField.ANNOTATION_ID)); //Does it need a name?
 			
-			String bioObjectAnnotationHash = statement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
-			String bioObjectAccession = statement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
-			String bot = statement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);
+			String bioObjectAnnotationHash = firstStatement.getValue(StatementField.OBJECT_ANNOTATION_IDS);
+			String bioObjectAccession = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_ACCESSION);
+			String bot = firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_TYPE);
 
 			if ((bioObjectAnnotationHash != null) && (bioObjectAnnotationHash.length() > 0) || (bioObjectAccession != null && (bioObjectAccession.length() > 0))) {
 
@@ -318,7 +326,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 					if(bioObjectAccession.startsWith("NX_") && BioType.PROTEIN.name().equalsIgnoreCase(bot)){
 						bioObject = BioObject.internal(BioType.PROTEIN);
 						bioObject.setAccession(bioObjectAccession);
-						bioObject.putPropertyNameValue("geneName", statement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
+						bioObject.putPropertyNameValue("geneName", firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
 					}else {
 						throw new NextProtException("Binary Interaction only expects to be a nextprot entry NX_ and found " + bioObjectAccession + " with type " + bot);
 					}
