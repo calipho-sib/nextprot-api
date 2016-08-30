@@ -21,6 +21,10 @@ public interface SimilarityPredicate {
      */
     boolean isSimilar(Annotation annotation1, Annotation annotation2);
 
+    /**
+     * Static factory method that return a default predicate specific of the given category
+     * @param category the annotation category to estimate similarity
+     */
     static SimilarityPredicate newSimilarityPredicate(AnnotationCategory category) {
 
         Preconditions.checkNotNull(category);
@@ -34,17 +38,20 @@ public interface SimilarityPredicate {
             case VARIANT:
             case MUTAGENESIS:
                 return new SimilarityPredicateChain(Arrays.asList(
-                        new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode),
+                        //new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode),
                         new ObjectSimilarityPredicate<>(Annotation::getVariant,
                                 (v1, v2) -> v1.getOriginal().equals(v2.getOriginal()) && v1.getVariant().equals(v2.getVariant())),
-                        new ObjectSimilarityPredicate<>(Annotation::getTargetingIsoformsMap, new VariantPositionMatcher()
+                        new ObjectSimilarityPredicate<>(Annotation::getTargetingIsoformsMap,
+                                new VariantPositionMatcher()
                         )
                 ));
             case BINARY_INTERACTION:
             case SMALL_MOLECULE_INTERACTION:
-                return new ObjectSimilarityPredicate<>(a -> a.getBioObject().getAccession());
+                return new ObjectSimilarityPredicate<>(Annotation::getBioObject,
+                        (bo1, bo2) -> bo1.getAccession().equals(bo2.getAccession()) && bo1.getDatabase().equalsIgnoreCase(bo2.getDatabase())
+                );
             default:
-                return new ObjectSimilarityPredicate<>(Annotation::getUniqueName);
+                return null;
         }
     }
 }

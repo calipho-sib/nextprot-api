@@ -37,6 +37,7 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
         this.annotationMerger = annotationMerger;
     }
 
+    // throw an exception when cluster size > 2
     /** @return merged annotations */
     public List<Annotation> merge(List<Annotation> annotations1, List<Annotation> annotations2) {
 
@@ -67,23 +68,23 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
 
         for (Annotation annotation : annotationList1) {
 
-            AnnotationClusterFinder finder = new AnnotationClusterFinder(
-                    SimilarityPredicate.newSimilarityPredicate(annotation.getAPICategory())
-            );
+            AnnotationCluster foundAnnotationCluster = null;
 
-            AnnotationCluster foundAnnotationCluster = finder.find(annotation, annotationClusters);
+            SimilarityPredicate predicate = SimilarityPredicate.newSimilarityPredicate(annotation.getAPICategory());
 
-            if (foundAnnotationCluster == null) {
-                annotationClusters.add(AnnotationCluster.valueOf(annotation));
+            if (predicate != null) {
+                foundAnnotationCluster = new AnnotationClusterFinder(predicate).find(annotation, annotationClusters);
             }
-            // add current annotation to cluster composed of similar annotations
-            else {
+
+            if (foundAnnotationCluster != null) {
                 try {
                     foundAnnotationCluster.add(annotation);
                 } catch (AnnotationCluster.InvalidAnnotationClusterCategoryException e) {
-
                     throw new NextProtException(e);
                 }
+            }
+            else {
+                annotationClusters.add(AnnotationCluster.valueOf(annotation));
             }
         }
 
