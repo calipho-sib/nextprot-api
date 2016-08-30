@@ -21,6 +21,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -89,6 +90,11 @@ public class PublicationServiceImpl implements PublicationService {
 		List<String> pubmedIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION , 
 				StatementField.ENTRY_ACCESSION, uniqueName, 
 				StatementField.REFERENCE_DATABASE, "PubMed");
+		
+
+		//Remove from the list of nxFlat the ones already taken
+		Set<String> pubNp1Ids = publications.stream().map(p -> String.valueOf(p.getPublicationId())).collect(Collectors.toSet());
+		pubmedIds.removeAll(pubNp1Ids);
 		
 		for(String pubmed : pubmedIds){
 			if(pubmed != null){
