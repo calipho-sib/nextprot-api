@@ -13,7 +13,6 @@ import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.StatementUtil;
 import org.nextprot.commons.statements.constants.AnnotationType;
 
 public class IsoformAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
@@ -29,19 +28,23 @@ public class IsoformAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 		Statement sb1 = StatementBuilder.createNew().
 				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD)
    		  .addCvTerm("go-xxx", "nucleus", "go-cellular-component-cv")
+    	  .addField(StatementField.REFERENCE_DATABASE, "PubMed")
+    	  .addField(StatementField.REFERENCE_ACCESSION, "123")
     	  .addField(StatementField.EVIDENCE_CODE, "ECO:00001")
-   		  .addSourceInfo("CAVA-VP0920190912", "BioEditor").build();
+			.addField(StatementField.ASSIGNED_BY, "TUTU")
+    	  .addSourceInfo("CAVA-VP0920190912", "BioEditor").buildWithAnnotationHash(AnnotationType.ISOFORM);
 		
 		Statement sb2 = StatementBuilder.createNew().
 				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD)
+		    	  .addField(StatementField.REFERENCE_DATABASE, "PubMed")
+		    	  .addField(StatementField.REFERENCE_ACCESSION, "123")
 				.addCvTerm("go-xxx", "nucleus", "go-cellular-component-cv")
 				.addField(StatementField.EVIDENCE_CODE, "ECO:00001")
-				.addSourceInfo("HPA2222", "HPA").build();
+				.addField(StatementField.ASSIGNED_BY, "TOTO")
+				.addSourceInfo("HPA2222", "HPA").buildWithAnnotationHash(AnnotationType.ISOFORM);
 		
 		
 		List<Statement> statements = Arrays.asList(sb1, sb2);
-		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
-		
 
 		IsoformAnnotation annotation = newAnnotationBuilder().buildAnnotation("NX_P01308-1", statements);
 
@@ -56,13 +59,18 @@ public class IsoformAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 	public void shouldReturnAnExceptionIf2AnnotationsAreExpectedInsteadOfOne() {
 		
 		Statement sb1 = StatementBuilder.createNew().
-				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD).build();
-   	
+				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD)
+		    	  .addField(StatementField.REFERENCE_DATABASE, "PubMed")
+		    	  .addField(StatementField.REFERENCE_ACCESSION, "123")
+				.buildWithAnnotationHash(AnnotationType.ISOFORM);
+		
 		Statement sb2 = StatementBuilder.createNew().
-				addCompulsaryFields("NX_P99999", "NX_P99999-1", "go-cellular-component", QualityQualifier.GOLD).build();
+				addCompulsaryFields("NX_P99999", "NX_P99999-1", "go-cellular-component", QualityQualifier.GOLD)
+		    	  .addField(StatementField.REFERENCE_DATABASE, "PubMed")
+		    	  .addField(StatementField.REFERENCE_ACCESSION, "123")
+				.buildWithAnnotationHash(AnnotationType.ISOFORM);
 	
 		List<Statement> statements = Arrays.asList(sb1, sb2);
-		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
 		
 		newAnnotationBuilder().buildAnnotation("NX_P01308-1", statements);
 		
@@ -74,10 +82,12 @@ public class IsoformAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 		
 		Statement sb1 = StatementBuilder.createNew().
 				addCompulsaryFields("NX_P01308", "NX_P01308-1", "go-cellular-component", QualityQualifier.GOLD)
-    	  .addField(StatementField.EVIDENCE_CODE, "ECO:00001").build();
+    	  .addField(StatementField.EVIDENCE_CODE, "ECO:00001")
+    	  .addField(StatementField.REFERENCE_DATABASE, "PubMed")
+    	  .addField(StatementField.REFERENCE_ACCESSION, "123")
+    	  .buildWithAnnotationHash(AnnotationType.ISOFORM);
 		
 		List<Statement> statements = Arrays.asList(sb1);
-		StatementUtil.computeAndSetAnnotationIdsForRawStatements(statements, AnnotationType.ISOFORM);
 
 		IsoformAnnotation annotation = newAnnotationBuilder().buildAnnotation("NX_P01308-1", statements);
 

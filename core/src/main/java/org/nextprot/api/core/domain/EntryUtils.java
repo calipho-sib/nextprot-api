@@ -39,12 +39,13 @@ public class EntryUtils implements Serializable{
 		List<Publication> publications;
 		List<ExperimentalContext> experimentalContexts;
 		
-		// Filter if necessary
-  		if (config.hasSubPart() || config.hasGoldOnly() || (entry.getAnnotations() != null) || (!entry.getAnnotations().isEmpty())) {
+		// Filter if necessary (config is applied and there are some annotations)
+  		if ((config.hasSubPart() || config.hasGoldOnly()) && ((entry.getAnnotations() != null)) && (!entry.getAnnotations().isEmpty())) {
 
 			annotations = AnnotationUtils.filterAnnotationsByCategory(entry, config.getSubpart(), config.hasGoldOnly());
 
 			Set<String> dependencyHashes = new HashSet<String>();
+			
 			annotations.stream().filter(a -> a.isProteoformAnnotation()).forEach(a -> {
 				for(String subject : a.getSubjectComponents()){
 					dependencyHashes.add(subject);
@@ -84,20 +85,6 @@ public class EntryUtils implements Serializable{
 	}
 
 
-	//TODO: PAM temporary method
-	public static Set<Proteoform> getProteoformSet(Entry entry, String isoformAc) {
-		
-		Set<Proteoform> result = new HashSet<Proteoform>();
-		for (Annotation annot: entry.getAnnotations()) {
-			if (annot.isProteoformAnnotation()) {
-				if (annot.getTargetingIsoformsMap().containsKey(isoformAc)) {
-					AnnotationIsoformSpecificity spec = annot.getTargetingIsoformsMap().get(isoformAc);
-					result.add(new Proteoform(isoformAc, spec.getName(), annot.getSubjectComponents()));
-				}
-			}
-		}
-		return result;
-	}
 	
 	/**
 	 * Builds a dictionary (HashMap) where the key is the annotation uniqueName and the value the annotation itself.

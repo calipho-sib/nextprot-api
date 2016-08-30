@@ -199,10 +199,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 						targetIsoformsForObjectSet.add(new TargetIsoformStatementPosition(tisp.getIsoformAccession(), tisp.getSpecificity(), null));
 					}
 					targetIsoformsForObject = TargetIsoformSerializer.serializeToJsonString(targetIsoformsForObjectSet);
-					
-					
 				}
-				
 				
 				//Load objects
 				Statement phenotypeIsoStatement =  null;
@@ -214,18 +211,27 @@ public class StatementETLServiceImpl implements StatementETLService {
 					objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
 							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject) // in case of entry
-							.build();
+							.buildWithAnnotationHash(type);
 					
 					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
 							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
-							.addSubjects(subjects).addObject(objectIsoStatement).build();
+							.addSubjects(subjects).addObject(objectIsoStatement)							
+							.removeField(StatementField.STATEMENT_ID) 
+							.removeField(StatementField.SUBJECT_STATEMENT_IDS) 
+							.removeField(StatementField.OBJECT_STATEMENT_IDS) 
+							.buildWithAnnotationHash(type);
+
 				}else {
 					
 					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
 							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
-							.addSubjects(subjects).build();
+							.addSubjects(subjects)
+							.removeField(StatementField.STATEMENT_ID) 
+							.removeField(StatementField.SUBJECT_STATEMENT_IDS) 
+							.removeField(StatementField.OBJECT_STATEMENT_IDS) 
+							.buildWithAnnotationHash(type);
 
 				}
 

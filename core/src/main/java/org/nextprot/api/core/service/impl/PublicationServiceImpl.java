@@ -1,11 +1,9 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.*;
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
 import org.nextprot.api.core.dao.AuthorDao;
@@ -22,14 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
+import java.util.*;
 
 
 @Service
@@ -95,13 +86,15 @@ public class PublicationServiceImpl implements PublicationService {
 		
 
 		//Adding publications from flat database
-		List<String> pubmedIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION , StatementField.ENTRY_ACCESSION, uniqueName);
+		List<String> pubmedIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION , 
+				StatementField.ENTRY_ACCESSION, uniqueName, 
+				StatementField.REFERENCE_DATABASE, "PubMed");
+		
 		for(String pubmed : pubmedIds){
 			if(pubmed != null){
 				Publication pub = this.publicationDao.findPublicationByDatabaseAndAccession("PubMed", pubmed);
 				if(pub == null){
-					System.err.println("Pubmed " + pubmed + " can not be found");
-					LOGGER.warn("Pubmed " + pubmed + " can not be found");
+					LOGGER.warn("Pubmed " + pubmed + " cannot be found");
 				}else {
 					publications.add(pub);
 				}

@@ -14,6 +14,7 @@ import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
+import org.nextprot.commons.statements.constants.AnnotationType;
 
 import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
@@ -212,7 +213,7 @@ public class StatementTransformationUtil {
 						.addField(StatementField.LOCATION_BEGIN_MASTER, String.valueOf(isoformFeatureResult.getBeginMasterPosition()))
 						.addField(StatementField.LOCATION_END_MASTER, String.valueOf(isoformFeatureResult.getEndMasterPosition()))
 						.addField(StatementField.ISOFORM_CANONICAL, String.valueOf(isoformFeatureResult.isCanonical()))
-						.addField(StatementField.ANNOTATION_NAME, String.valueOf(isoformFeatureResult.getIsoSpecificFeature())).build();
+						.addField(StatementField.ANNOTATION_NAME, String.valueOf(isoformFeatureResult.getIsoSpecificFeature())).buildWithAnnotationHash(AnnotationType.ISOFORM);
 
 				statementList.add(rs);
 
@@ -312,7 +313,7 @@ public class StatementTransformationUtil {
 				.addField(StatementField.LOCATION_BEGIN, beginPositionOfCanonicalOrIsoSpec).addField(StatementField.LOCATION_END, endPositionOfCanonicalOrIsoSpec)
 				.addField(StatementField.LOCATION_BEGIN_MASTER, masterBeginPosition).addField(StatementField.LOCATION_END_MASTER, masterEndPosition)
 				.addField(StatementField.ISOFORM_ACCESSION, variationStatement.getValue(StatementField.ENTRY_ACCESSION)).addField(StatementField.ISOFORM_CANONICAL, isoCanonical)
-				.addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(targetIsoforms)).build();
+				.addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(targetIsoforms)).buildWithAnnotationHash(AnnotationType.ENTRY);
 
 		return rs;
 	}

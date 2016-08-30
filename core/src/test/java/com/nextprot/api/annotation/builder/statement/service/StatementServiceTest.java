@@ -27,15 +27,15 @@ public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 	}*/
 
 	// TODO: this test do nothing and f90790567dc0650b5737fa62332bb38a does not exist
-	@Ignore
 	@Test
 	public void findAllNormalAnnotations() {
-		List<Annotation> isoformAnnotations = statementService.getAnnotations("NX_Q15858");
-		List<Annotation> list = isoformAnnotations.stream().filter(ia -> ia.getAnnotationHash().equals("f90790567dc0650b5737fa62332bb38a")).collect(Collectors.toList());
+
+		List<Annotation> isoformAnnotations = statementService.getAnnotations("NX_P38398");
+		List<Annotation> list = isoformAnnotations.stream().filter(ia -> ia.getAnnotationHash().equals("94b1dd0219624fbaeb5bac0cdb32b0f6")).collect(Collectors.toList());
 
 		Assert.assertTrue(!list.isEmpty());
 
-		System.out.println(list.get(0).getSpecificityForIsoform("NX_Q15858-1"));
+		//System.out.println(list.get(0));
 	}
 
 	/*
