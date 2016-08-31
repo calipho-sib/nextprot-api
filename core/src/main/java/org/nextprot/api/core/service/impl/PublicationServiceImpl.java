@@ -1,8 +1,7 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
@@ -28,22 +27,6 @@ import java.util.stream.Collectors;
 public class PublicationServiceImpl implements PublicationService {
 
 	private static final Logger LOGGER = Logger.getLogger(PublicationServiceImpl.class);
-
-	private final static Predicate<PublicationAuthor> EDITOR_PREDICATE = new Predicate<PublicationAuthor>() {
-		@Override
-		public boolean apply(PublicationAuthor contributor) {
-			//return contributor.isPerson() && contributor.isEditor();
-			return contributor.isEditor();
-		}
-	};
-
-	private final static Predicate<PublicationAuthor> AUTHOR_PREDICATE = new Predicate<PublicationAuthor>() {
-		@Override
-		public boolean apply(PublicationAuthor contributor) {
-			//return contributor.isPerson() && !contributor.isEditor();
-			return  !contributor.isEditor();
-		}
-	};
 
 	@Autowired private MasterIdentifierDao masterIdentifierDao;
 	@Autowired private PublicationDao publicationDao;
@@ -71,10 +54,8 @@ public class PublicationServiceImpl implements PublicationService {
 	public List<Publication> findPublicationsByMasterId(Long masterId) {
 		
 		List<Publication> publications = this.publicationDao.findSortedPublicationsByMasterId(masterId);
-		
-		for(Publication publication : publications) {
-			loadAuthorsAndXrefs(publication);
-		}
+
+		publications.forEach(this::loadAuthorsAndXrefs);
 		
 		return publications;
 	}
@@ -82,62 +63,56 @@ public class PublicationServiceImpl implements PublicationService {
 	@Override
 	@Cacheable("publications")
 	public List<Publication> findPublicationsByMasterUniqueName(String uniqueName) {
-		Long masterId = this.masterIdentifierDao.findIdByUniqueName(uniqueName);
-		List<Publication> publications = this.publicationDao.findSortedPublicationsByMasterId(masterId);
-		
 
-		//Adding publications from flat database
-		List<String> pubmedIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION , 
-				StatementField.ENTRY_ACCESSION, uniqueName, 
-				StatementField.REFERENCE_DATABASE, "PubMed");
+		List<Publication> publications =
+				publicationDao.findSortedPublicationsByMasterId(masterIdentifierDao.findIdByUniqueName(uniqueName));
 		
+		List<Long> publicationIds = publications.stream().map(Publication::getPublicationId).collect(Collectors.toList());
+		
+		Map<Long, List<PublicationDbXref>> xrefMap = dbXrefService.findDbXRefByPublicationIds(publicationIds).stream()
+				.collect(Collectors.groupingBy(PublicationDbXref::getPublicationId));
 
-		//Remove from the list of nxFlat the ones already taken
-		Set<String> pubNp1Ids = publications.stream().map(p -> String.valueOf(p.getPublicationId())).collect(Collectors.toSet());
-		pubmedIds.removeAll(pubNp1Ids);
-		
-		for(String pubmed : pubmedIds){
-			if(pubmed != null){
-				Publication pub = this.publicationDao.findPublicationByDatabaseAndAccession("PubMed", pubmed);
-				if(pub == null){
-					LOGGER.warn("Pubmed " + pubmed + " cannot be found");
-				}else {
-					publications.add(pub);
-				}
-			}
-		}
-		
-		List<Long> publicationIds = Lists.transform(publications, new Function<Publication, Long>() {
-			public Long apply(Publication publication) {
-				return publication.getPublicationId();
-			}
-		});
-		
-		List<PublicationDbXref> xrefs = this.dbXrefService.findDbXRefByPublicationIds(publicationIds);
-		List<PublicationAuthor> authors = this.authorDao.findAuthorsByPublicationIds(publicationIds);
+		Map<Long, List<PublicationAuthor>> authorMap = authorDao.findAuthorsByPublicationIds(publicationIds).stream()
+				.collect(Collectors.groupingBy(PublicationAuthor::getPublicationId));
 
-		Multimap<Long, PublicationDbXref> xrefMap = Multimaps.index(xrefs, new Function<PublicationDbXref, Long>() {
-			@Override
-			public Long apply(PublicationDbXref xref) {
-				return xref.getPublicationId(); 
-			}
-		});
-		
-		Multimap<Long, PublicationAuthor> authorMap = Multimaps.index(authors, new Function<PublicationAuthor, Long>() {
-			@Override
-			public Long apply(PublicationAuthor author) {
-				return author.getPublicationId();
-			}
-		});
+		publications.addAll(getPublicationsFromNxflat(uniqueName, xrefMap));
 
 		for (Publication publication : publications) {
-			long publicationId = publication.getPublicationId();
-
-			setAuthorsEditorsAndXrefs(publication, authorMap.get(publicationId), xrefMap.get(publicationId));
+			setAuthorsAndEditors(publication, authorMap.get(publication.getPublicationId()));
+			setXrefs(publication, xrefMap.get(publication.getPublicationId()));
 		}
-		
+
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Publication>().addAll(publications).build();
+	}
+
+	private List<Publication> getPublicationsFromNxflat(String uniqueName, Map<Long, List<PublicationDbXref>> np1PublicationXrefs) {
+
+		List<Publication> nxflatPublications = new ArrayList<>();
+
+		// Getting publications from flat database
+		List<String> pubmedIds = this.statementDao.
+				findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION,
+						StatementField.ENTRY_ACCESSION, uniqueName, StatementField.REFERENCE_DATABASE, "PubMed");
+
+		// Searching publication where ids already found in np1 publications
+		List<Long> foundPublicationIds = np1PublicationXrefs.keySet().stream()
+				.filter(pubid -> np1PublicationXrefs.get(pubid).stream().anyMatch(xref -> pubmedIds.contains(xref.getAccession())))
+				.collect(Collectors.toList());
+
+		pubmedIds.stream()
+				.filter(pubmed -> pubmed != null)
+				.forEach(pubmed -> {
+					Publication pub = this.publicationDao.findPublicationByDatabaseAndAccession("PubMed", pubmed);
+						if (pub == null) {
+							LOGGER.warn("Pubmed " + pubmed + " cannot be found");
+						} else if (!foundPublicationIds.contains(pub.getPublicationId())) {
+							nxflatPublications.add(pub);
+						}
+					}
+				);
+
+		return nxflatPublications;
 	}
 
 	@Autowired
@@ -160,19 +135,26 @@ public class PublicationServiceImpl implements PublicationService {
 	private void loadAuthorsAndXrefs(Publication publication){
 		long publicationId = publication.getPublicationId();
 
-		setAuthorsEditorsAndXrefs(publication, authorDao.findAuthorsByPublicationId(publicationId), dbXrefDao.findDbXRefsByPublicationId(publicationId));
+		setAuthorsAndEditors(publication, authorDao.findAuthorsByPublicationId(publicationId));
+		setXrefs(publication, dbXrefDao.findDbXRefsByPublicationId(publicationId));
 	}
 
 	/**
-	 * Extract editors from authors, set authors, editors and xrefs to publication
+	 * Extract editors from authors then set authors, editors
 	 */
-	private void setAuthorsEditorsAndXrefs(Publication publication, Collection<PublicationAuthor> authorsAndEditors, Collection<? extends DbXref> xrefs){
+	private void setAuthorsAndEditors(Publication publication, Collection<PublicationAuthor> authorsAndEditors) {
 
-		Set<PublicationAuthor> authorsAndEditorSet = new TreeSet<>(authorsAndEditors);
+		if (authorsAndEditors != null) {
+			Set<PublicationAuthor> authorsAndEditorSet = new TreeSet<>(authorsAndEditors);
 
-		publication.setAuthors(new TreeSet<>(Sets.filter(authorsAndEditorSet, AUTHOR_PREDICATE)));
-		publication.setEditors(new TreeSet<>(Sets.filter(authorsAndEditorSet, EDITOR_PREDICATE)));
-		publication.setDbXrefs(new HashSet<>(xrefs));
+			publication.setAuthors(new TreeSet<>(Sets.filter(authorsAndEditorSet, pa -> pa != null && !pa.isEditor())));
+			publication.setEditors(new TreeSet<>(Sets.filter(authorsAndEditorSet, pa -> pa != null && pa.isEditor())));
+		}
+	}
+
+	private void setXrefs(Publication publication, Collection<? extends DbXref> xrefs){
+
+		if (xrefs != null) publication.setDbXrefs(new HashSet<>(xrefs));
 	}
 
 	@Override
