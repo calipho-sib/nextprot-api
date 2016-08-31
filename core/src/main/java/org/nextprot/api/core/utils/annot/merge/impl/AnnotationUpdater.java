@@ -9,6 +9,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -55,11 +56,11 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
     @Override
     protected void updateDestIsoformSpecificityName(Annotation dest, Annotation source) {
 
+        checkTargetingIsoformDiscrepancies(dest, source);
+
         Map<String, AnnotationIsoformSpecificity> destTargetingIsoMap = dest.getTargetingIsoformsMap();
 
-        Map<String, AnnotationIsoformSpecificity> srcTargetingIsoMap = source.getTargetingIsoformsMap();
-
-        for (Map.Entry<String, AnnotationIsoformSpecificity> keyValue : srcTargetingIsoMap.entrySet()) {
+        for (Map.Entry<String, AnnotationIsoformSpecificity> keyValue : source.getTargetingIsoformsMap().entrySet()) {
 
             if (destTargetingIsoMap.containsKey(keyValue.getKey())) {
                 destTargetingIsoMap.get(keyValue.getKey()).setName(keyValue.getValue().getName());
@@ -94,6 +95,33 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
             else if (!srcKeyValue.getValue().equals(destBioObject.getPropertyValue(srcKeyValue.getKey()))) {
                 throw new NextProtException("unexpected value "+destBioObject.getPropertyValue(srcKeyValue.getKey())
                         + "for property "+srcKeyValue.getKey() +" (expected: "+srcKeyValue.getValue()+")");
+            }
+        }
+    }
+
+    private void checkTargetingIsoformDiscrepancies(Annotation dest, Annotation source) {
+
+        Map<String, AnnotationIsoformSpecificity> destTargetingIsoMap = dest.getTargetingIsoformsMap();
+        Map<String, AnnotationIsoformSpecificity> srcTargetingIsoMap = source.getTargetingIsoformsMap();
+
+        if (!destTargetingIsoMap.keySet().equals(srcTargetingIsoMap.keySet())) {
+            LOGGER.warning("Category "+dest.getAPICategory()+": different isoform mapping dest="+dest.getUniqueName()+", src="+source.getUniqueName()+", isoforms: src="+srcTargetingIsoMap.keySet()+", dest="+destTargetingIsoMap.keySet());
+        }
+        else {
+            for (Map.Entry<String, AnnotationIsoformSpecificity> entry : destTargetingIsoMap.entrySet()) {
+
+                AnnotationIsoformSpecificity srcValue = srcTargetingIsoMap.get(entry.getKey());
+                AnnotationIsoformSpecificity destValue = destTargetingIsoMap.get(entry.getKey());
+
+                if (!Objects.equals(srcValue.getFirstPosition(), destValue.getFirstPosition())) {
+                    LOGGER.warning("Category "+dest.getAPICategory()+": different first pos dest="+dest.getUniqueName()+", src="+source.getUniqueName()+", pos: src="+srcValue.getFirstPosition()+", dest="+destValue.getFirstPosition());
+                }
+                if (!Objects.equals(srcValue.getLastPosition(), destValue.getLastPosition())) {
+                    LOGGER.warning("Category "+dest.getAPICategory()+": different last pos dest="+dest.getUniqueName()+", src="+source.getUniqueName()+", pos: src="+srcValue.getLastPosition()+", dest="+destValue.getLastPosition());
+                }
+                /*if (!Objects.equals(srcValue.getSpecificity(), destValue.getSpecificity())) {
+                    LOGGER.info("Category "+dest.getAPICategory()+": different specificity dest="+dest.getUniqueName()+", src="+source.getUniqueName()+", spec: src="+srcValue.getSpecificity()+", dest="+destValue.getSpecificity());
+                }*/
             }
         }
     }

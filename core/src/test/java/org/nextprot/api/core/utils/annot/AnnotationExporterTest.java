@@ -15,7 +15,7 @@ import java.io.FileNotFoundException;
 import java.util.Collections;
 
 @Ignore
-@ActiveProfiles({ "dev", "cache" })
+@ActiveProfiles({ "dev" })
 public class AnnotationExporterTest extends CoreUnitBaseTest {
 
     @Autowired
