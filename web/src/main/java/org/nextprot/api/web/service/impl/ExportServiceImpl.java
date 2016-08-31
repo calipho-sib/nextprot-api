@@ -1,5 +1,6 @@
 package org.nextprot.api.web.service.impl;
 
+import com.google.common.base.Preconditions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
@@ -84,27 +85,29 @@ public class ExportServiceImpl implements ExportService {
 		return executor.submit(new ExportEntryTask(this.entryBuilderService, velocityConfig.getVelocityEngine(), uniqueName, format));
 	}
 
-	static class ExportEntryTask implements Callable<File> {
+	private static class ExportEntryTask implements Callable<File> {
 
 		private String format;
 		private String filename;
 		private String entryName;
-		private VelocityEngine ve;
 		private EntryBuilderService entryBuilderService;
+		private final Template template;
 
-		public ExportEntryTask(EntryBuilderService entryBuilderService, VelocityEngine ve, String entryName, FileFormat format) {
-			this.ve = ve;
+		ExportEntryTask(EntryBuilderService entryBuilderService, VelocityEngine ve, String entryName, FileFormat format) {
+
+			Preconditions.checkNotNull(format, "A format should be specified (xml or ttl)");
+
 			this.entryBuilderService = entryBuilderService;
 			this.filename = REPOSITORY_PATH + "/" + format.name() + "/" + entryName + "." + format.getExtension();
 			//noinspection ResultOfMethodCallIgnored
 			new File(filename).getParentFile().mkdirs();
 			this.entryName = entryName;
 			this.format = format.getExtension();
-		}
 
-		public void checkFormatConstraints() {
-			if (format == null) {
-				throw new RuntimeException("A format should be specified (xml or ttl)");
+			if (this.format.equals(FileFormat.TURTLE.getExtension())) {
+				template = ve.getTemplate("turtle/entry." + format + ".vm");
+			} else {
+				template = ve.getTemplate("entry." + format + ".vm");
 			}
 		}
 
@@ -118,27 +121,12 @@ public class ExportServiceImpl implements ExportService {
 
 			LOGGER.info("Building " + filename);
 
-			checkFormatConstraints();
-			Template template;
-			VelocityContext context;
-			try {
+			VelocityContext context = new NXVelocityContext(entryBuilderService.buildWithEverything(entryName));
 
-				if (format.equals(FileFormat.TURTLE.getExtension())) {
-					template = ve.getTemplate("turtle/entry." + format + ".vm");
-				} else {
-					template = ve.getTemplate("entry." + format + ".vm");
-				}
-
-				context = new NXVelocityContext(entryBuilderService.buildWithEverything(entryName));
-
-				FileWriter fw = new FileWriter(filename, true);
-				PrintWriter out = new PrintWriter(new BufferedWriter(fw));
-				template.merge(context, out);
-				out.close();
-
+			try (PrintWriter pw = new PrintWriter(new FileWriter(filename, true))) {
+				template.merge(context, pw);
 			} catch (Exception e) {
 				LOGGER.error("Failed to generate " + entryName + " because of " + e.getMessage());
-				e.printStackTrace();
 				throw e;
 			}
 
@@ -147,11 +135,11 @@ public class ExportServiceImpl implements ExportService {
 
 	}
 
-	enum SubPart {
+	private enum SubPart {
 		HEADER, FOOTER
 	}
 
-	static class ExportSubPartTask implements Callable<File> {
+	private static class ExportSubPartTask implements Callable<File> {
 
 		private FileFormat npFormat;
 		private String format;
@@ -159,7 +147,7 @@ public class ExportServiceImpl implements ExportService {
 		private String filename;
 		private SubPart part;
 
-		public ExportSubPartTask(VelocityEngine ve, SubPart part, FileFormat format) {
+		private ExportSubPartTask(VelocityEngine ve, SubPart part, FileFormat format) {
 			this.npFormat = format;
 			this.ve = ve;
 			this.part = part;
@@ -169,7 +157,7 @@ public class ExportServiceImpl implements ExportService {
 			new File(filename).getParentFile().mkdirs();
 		}
 
-		public void checkFormatConstraints() {
+		private void checkFormatConstraints() {
 			if (!(npFormat.equals(FileFormat.TURTLE) || npFormat.equals(FileFormat.XML))) {
 				throw new RuntimeException("A format should be specified (xml or ttl)");
 			}
