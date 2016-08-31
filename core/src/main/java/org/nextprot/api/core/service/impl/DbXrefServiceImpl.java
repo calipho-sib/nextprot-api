@@ -1,8 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.collect.*;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
@@ -14,7 +12,6 @@ import org.nextprot.api.core.domain.PublicationDbXref;
 import org.nextprot.api.core.domain.XRefDatabase;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
-import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.AntibodyResourceIdsService;
 import org.nextprot.api.core.service.DbXrefService;
@@ -29,33 +26,19 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Lazy
 @Service
 public class DbXrefServiceImpl implements DbXrefService {
+
+	private static final Set<String> HIDDEN_PROPERTY_NAME_SET = Sets.newHashSet("match status", "organism ID", "organism name");
 
 	@Autowired private DbXrefDao dbXRefDao;
 	@Autowired private PeptideNamesService peptideNamesService;
 	@Autowired private AntibodyResourceIdsService antibodyResourceIdsService;
 	@Autowired private IsoformService isoService;
 
-	private static final Function<DbXref, Long> DB_XREF_LONG_FUNCTION = new Function<DbXref, Long>() {
-		public Long apply(DbXref xref) {
-			return xref.getDbXrefId();
-		}
-	};
-
-	private static final Predicate<DbXref> DB_XREF_ENST_PREDICATE = new Predicate<DbXref>() {
-		@Override
-		public boolean apply(DbXref xref) {
-
-			return xref.getAccession().startsWith("ENST");
-		}
-	};
-
-	private static final Predicate<DbXrefProperty> DB_XREF_EXCLUDING_HIDDEN_PROPERTIES_PREDICATE = new DbXrefExcludedPropertyPredicate(Sets.newHashSet("match status", "organism ID", "organism name"));
-
-	
 	@Override
 	public List<DbXref> findDbXRefByPublicationId(Long publicationId) {
 		return this.dbXRefDao.findDbXRefsByPublicationId(publicationId);
@@ -131,7 +114,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 		evidence.setExperimentalContextId(null);
 		evidence.setResourceDescription(null);
 		evidence.setPublicationMD5(null);
-		evidence.setProperties(new ArrayList<AnnotationEvidenceProperty>());
+		evidence.setProperties(new ArrayList<>());
 		evidence.setQualifierType(xam.getQualifierType());
 		evidence.setQualityQualifier(xam.getQualityQualifier());
 		evidence.setAssignmentMethod(xam.getAssignmentMethod());
@@ -191,13 +174,11 @@ public class DbXrefServiceImpl implements DbXrefService {
 	public List<DbXref> findDbXrefsByMaster(String entryName) {
 		
 		// build a comparator for the tree set: order by database name, accession, case insensitive
-		Comparator<DbXref> comparator = new Comparator<DbXref>() {
-			public int compare(DbXref a, DbXref b) {
-				int cmp1 = a.getDatabaseName().toUpperCase().compareTo(b.getDatabaseName().toUpperCase());
-				if (cmp1!=0) return cmp1;
-				return a.getAccession().toUpperCase().compareTo(b.getAccession().toUpperCase());
-			}
-		};
+		Comparator<DbXref> comparator = (a, b) -> {
+            int cmp1 = a.getDatabaseName().toUpperCase().compareTo(b.getDatabaseName().toUpperCase());
+            if (cmp1!=0) return cmp1;
+            return a.getAccession().toUpperCase().compareTo(b.getAccession().toUpperCase());
+        };
 
 		// now merge xrefs associated to the entry by annot, interact, mappings, etc. in the tree set 
 		Set<DbXref> xrefs = new TreeSet<>(comparator);
@@ -223,32 +204,30 @@ public class DbXrefServiceImpl implements DbXrefService {
 	private void addPeptideXrefs(String entryName, Set<DbXref> xrefs) {
 
 		List<String> names = peptideNamesService.findAllPeptideNamesByMasterId(entryName);
-		xrefs.addAll(names.size()>0 ? dbXRefDao.findPeptideXrefs(names) : new HashSet<DbXref>());
+		xrefs.addAll(names.size()>0 ? dbXRefDao.findPeptideXrefs(names) : new HashSet<>());
 	}
 
 	private void addAntibodyXrefs(String entryName, Set<DbXref> xrefs) {
 
 		List<Long> ids = antibodyResourceIdsService.findAllAntibodyIdsByMasterId(entryName);
-		xrefs.addAll(ids.size()>0 ? dbXRefDao.findAntibodyXrefs(ids) : new HashSet<DbXref>());
+		xrefs.addAll(ids.size()>0 ? dbXRefDao.findAntibodyXrefs(ids) : new HashSet<>());
 	}
 
 	private void attachPropertiesToXrefs(List<DbXref> xrefs, String uniqueName, boolean fetchXrefAnnotationMappingProperties) {
 
-		List<Long> xrefIds = Lists.transform(xrefs, DB_XREF_LONG_FUNCTION);
+		List<Long> xrefIds = xrefs.stream().map(DbXref::getDbXrefId).collect(Collectors.toList());
 
-		Collection<DbXrefProperty> shownProperties = Collections2.filter(dbXRefDao.findDbXrefsProperties(xrefIds), DB_XREF_EXCLUDING_HIDDEN_PROPERTIES_PREDICATE);
+		List<DbXrefProperty> shownProperties = dbXRefDao.findDbXrefsProperties(xrefIds).stream()
+			.filter(p -> !HIDDEN_PROPERTY_NAME_SET.contains(p.getName()))
+			.collect(Collectors.toList());
 
-		Multimap<Long, DbXrefProperty> propsMap = Multimaps.index(shownProperties, new Function<DbXrefProperty, Long>() {
-			public Long apply(DbXrefProperty prop) {
-				return prop.getDbXrefId();
-			}
-		});
+		Multimap<Long, DbXrefProperty> propsMap = Multimaps.index(shownProperties, DbXrefProperty::getDbXrefId);
 
 		Map<Long, List<DbXrefProperty>> ensemblPropertiesMap = getDbXrefEnsemblInfos(uniqueName, xrefs);
 
 		for (DbXref xref : xrefs) {
 			if (!fetchXrefAnnotationMappingProperties)
-				xref.setProperties((!Xref2Annotation.hasName(xref.getDatabaseName())) ? new ArrayList<>(propsMap.get(xref.getDbXrefId())) : new ArrayList<DbXrefProperty>());
+				xref.setProperties((!Xref2Annotation.hasName(xref.getDatabaseName())) ? new ArrayList<>(propsMap.get(xref.getDbXrefId())) : new ArrayList<>());
 			else
 				xref.setProperties(new ArrayList<>(propsMap.get(xref.getDbXrefId())));
 
@@ -268,8 +247,8 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 	private Map<Long, List<DbXrefProperty>> getDbXrefEnsemblInfos(String uniqueName, List<DbXref> xrefs) {
 
-		// TODO: TRANSFORM TO JAVA 8 LAMBDA
-		List<Long> ensemblRefIds = Lists.transform(new ArrayList<>(Collections2.filter(xrefs, DB_XREF_ENST_PREDICATE)), DB_XREF_LONG_FUNCTION);
+		List<Long> ensemblRefIds = xrefs.stream().filter(xref -> xref.getAccession().startsWith("ENST")).map(DbXref::getDbXrefId).collect(Collectors.toList());
+
 		List<DbXref.EnsemblInfos> ensemblXRefInfosList = dbXRefDao.findDbXrefEnsemblInfos(uniqueName, ensemblRefIds);
 
 		EnsemblXrefPropertyConverter converter = EnsemblXrefPropertyConverter.getInstance();
@@ -328,21 +307,4 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		return dbXRefDao.getAllDbXrefsIds();
 	}
-
-	private static class DbXrefExcludedPropertyPredicate implements Predicate<DbXrefProperty> {
-
-		private Set<String> excludedProperties;
-
-		public DbXrefExcludedPropertyPredicate(Set<String> excludedProperties) {
-
-			this.excludedProperties = excludedProperties;
-		}
-
-		@Override
-		public boolean apply(DbXrefProperty property) {
-
-			return !excludedProperties.contains(property.getName());
-		}
-	}
-
 }
