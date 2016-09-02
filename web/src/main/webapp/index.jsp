@@ -48,7 +48,7 @@
 							<span class="caret"></span>
 					</a>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="https://search.nextprot.org">Search</a></li>
+							<li><a href="https://www.nextprot.org">Search</a></li>
 							<li><a href="http://snorql.nextprot.org">Snorql</a></li>
 							<li><a href="https://api.nextprot.org">API</a></li>
 						</ul></li>
@@ -1042,7 +1042,7 @@
 		});
 	}
 
-    function buildHref(resource) {
+    function buildHrefOld(resource) {
 
         var hostname=window.location.hostname;
 
@@ -1055,11 +1055,30 @@
         }
     }
 
+    function buildHref(resource) {
+
+        var hostname=window.location.hostname;
+
+        var regexp = /(alpha|dev|build|vit)-api\.nextprot\.org/g;
+        var match = regexp.exec(hostname);
+
+        if (match != null) {
+        	if (match[1]==="vit") {
+				if (resource==="search") return "https://vit-www.nextprot.org";
+				if (resource==="snorql") return "http://vit-snorql.nextprot.org";
+				if (resource==="api") return "https://vit-api.nextprot.org";
+        	} else {
+                return "http://" + match[1] + "-" + resource + ".nextprot.org"
+        	}
+        	
+        }
+    }
+
     function updateResourcesHrefs() {
 
         if (! window.location.protocol.match(/^https$/)) {
 
-            $("a[href^='https://search.nextprot.org']").attr("href", buildHref("search"));
+            $("a[href^='https://www.nextprot.org']").attr("href", buildHref("search"));
             $("a[href^='http://snorql.nextprot.org']").attr("href", buildHref("snorql"));
             $("a[href^='https://api.nextprot.org']").attr("href", buildHref("api"));
         }
