@@ -31,7 +31,7 @@ public class SitemapServiceImpl implements SitemapService {
 	public SitemapUrlSet getSitemapUrlSet() {
 		
 		//TODO set this elsewhere !
-		String base="https://search.nextprot.org";
+		String base="https://www.nextprot.org";
 		
 		SitemapUrlSet urlSet = new SitemapUrlSet();
 

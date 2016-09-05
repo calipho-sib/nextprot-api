@@ -70,8 +70,8 @@ public class SolrIndexingServiceImpl implements SolrIndexingService {
 			ecnt++;
 			Entry currentry = entryBuilderService.buildWithEverything(id);
 			indexer.add(currentry);
-			if((ecnt % 1000) == 0)
-				logAndCollect(info,ecnt + "/" + allentryids.size() + " entries done");
+			if((ecnt % 300) == 0)
+				logAndCollect(info,ecnt + "/" + allentryids.size() + " entries added to index " + indexName + " for chromosome " + chrName);
 		}
 		indexer.addRemaing();
 		
