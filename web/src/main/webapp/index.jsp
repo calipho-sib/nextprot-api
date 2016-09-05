@@ -1058,9 +1058,16 @@
     function buildHref(resource) {
 
         var hostname=window.location.hostname;
+        hostname = 'vit-api.nextprot.org';
+        //hostname = 'api.nextprot.org';
+        //hostname = 'alpha-api.nextprot.org';
+        //hostname = 'dev-api.nextprot.org';
+        //hostname = 'build-api.nextprot.org';
+        console.log("hostname:"+hostname);
 
         var regexp = /(alpha|dev|build|vit)-api\.nextprot\.org/g;
         var match = regexp.exec(hostname);
+        console.log("match:" + match);
 
         if (match != null) {
         	if (match[1]==="vit") {
