@@ -1,6 +1,7 @@
 package org.nextprot.api.commons.bio;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 
 import java.text.ParseException;
 import java.util.*;
@@ -42,22 +43,37 @@ public enum AminoAcidCode {
     XAA("Xaa", "X")
     ;
 
-    public enum AACodeType { ONE_LETTER, THREE_LETTER }
+    /** Type of amino-acid code defined by its number of letters */
+    public enum CodeType {
+
+        ONE_LETTER(1),
+        THREE_LETTER(3)
+        ;
+        private final int len;
+        CodeType(int len) {
+
+            this.len = len;
+        }
+
+        public int getCodeLen() {
+            return len;
+        }
+    }
 
     private final String code3;
     private final String code1;
 
     private static final Map<String, AminoAcidCode> AMINO_ACID_CODE_MAP;
-    private static final Map<AminoAcidCode, EnumSet<AminoAcidCode>> AMINO_ACID_AMBIGUITIES;
-    private static final EnumSet<AminoAcidCode> NON_AMBIGUOUS_AMINO_ACIDS;
-    private static final EnumSet<AminoAcidCode> AMBIGUOUS_AMINO_ACIDS;
+    private static final Map<AminoAcidCode, Set<AminoAcidCode>> AMINO_ACID_AMBIGUITIES;
+    private static final Set<AminoAcidCode> NON_AMBIGUOUS_AMINO_ACIDS;
+    private static final Set<AminoAcidCode> AMBIGUOUS_AMINO_ACIDS;
 
     static {
-        NON_AMBIGUOUS_AMINO_ACIDS = EnumSet.of(GLYCINE, PROLINE, ALANINE, VALINE, LEUCINE, ISOLEUCINE, METHIONINE, CYSTEINE,
+        NON_AMBIGUOUS_AMINO_ACIDS = ImmutableSet.copyOf(EnumSet.of(GLYCINE, PROLINE, ALANINE, VALINE, LEUCINE, ISOLEUCINE, METHIONINE, CYSTEINE,
                 PHENYLALANINE, TYROSINE, THREONINE, TRYPTOPHAN, HISTIDINE, LYSINE, ARGININE, GLUTAMINE, ASPARAGINE,
-                GLUTAMIC_ACID, ASPARTIC_ACID, SERINE, THREONINE, SELENOCYSTEINE, PYRROLYSINE, STOP);
+                GLUTAMIC_ACID, ASPARTIC_ACID, SERINE, THREONINE, SELENOCYSTEINE, PYRROLYSINE, STOP));
 
-        AMBIGUOUS_AMINO_ACIDS = EnumSet.of(ASX, XLE, GLX, XAA);
+        AMBIGUOUS_AMINO_ACIDS = ImmutableSet.copyOf(EnumSet.of(ASX, XLE, GLX, XAA));
 
         AMINO_ACID_CODE_MAP = new HashMap<>(AminoAcidCode.values().length);
         for (AminoAcidCode aac : AminoAcidCode.values()) {
@@ -94,11 +110,19 @@ public enum AminoAcidCode {
     }
 
     /**
+     * @return true if this aminoAcidCode is ambiguous else false
+     */
+    public boolean isAmbiguous() {
+
+        return AMBIGUOUS_AMINO_ACIDS.contains(this);
+    }
+
+    /**
      * @return true if matches the given aminoAcidCode else false
      */
     public boolean match(AminoAcidCode aminoAcidCode) {
 
-        if (AMBIGUOUS_AMINO_ACIDS.contains(this))
+        if (isAmbiguous())
             return AMINO_ACID_AMBIGUITIES.get(this).contains(aminoAcidCode);
         return this == aminoAcidCode;
     }
@@ -122,7 +146,7 @@ public enum AminoAcidCode {
     }
 
     /**
-     * @return set of non ambiguous amino-acids
+     * @return immutable set of non ambiguous amino-acids
      */
     public static Set<AminoAcidCode> nonAmbiguousAminoAcidValues() {
 
@@ -130,38 +154,58 @@ public enum AminoAcidCode {
     }
 
     /**
-     * @return set of ambiguous amino-acids
+     * @return immutable set of ambiguous amino-acids
      */
     public static Set<AminoAcidCode> ambiguousAminoAcidValues() {
 
         return AMBIGUOUS_AMINO_ACIDS;
     }
 
-    public static AminoAcidCode[] valueOfOneLetterCodeSequence(String sequence) {
 
-        List<Integer> ucs = new ArrayList<>();
+    /**
+     * Parse sequence and make an instance of AminoAcidCode array by deducing code type
+     * @param sequence the sequence to parse
+     */
+    public static AminoAcidCode[] valueOfAminoAcidCodeSequence(String sequence) {
 
-        for (int i=0 ; i<sequence.length() ; i++) {
-            char c = sequence.charAt(i);
-            if (Character.isUpperCase(c) || c == '*') ucs.add(i);
+        Preconditions.checkNotNull(sequence);
+
+        if (sequence.length()>=3 && AminoAcidCode.isValidAminoAcid(sequence.substring(0, 3))) {
+
+            return valueOfAminoAcidCodeSequence(sequence, CodeType.THREE_LETTER);
         }
 
-        if (ucs.get(0) != 0) throw new IllegalArgumentException("First amino-acid is not known: Not a valid sequence of AminoAcid sequence");
+        return valueOfAminoAcidCodeSequence(sequence, CodeType.ONE_LETTER);
+    }
 
-        AminoAcidCode[] codes = new AminoAcidCode[ucs.size()];
+    /**
+     * Parse sequence and make an instance of AminoAcidCode array.
+     * @param sequence the sequence to parse
+     * @param codeType the code type
+     */
+    public static AminoAcidCode[] valueOfAminoAcidCodeSequence(String sequence, CodeType codeType) {
 
-        int i=0;
-        while (i<ucs.size()) {
+        Preconditions.checkNotNull(sequence);
+        Preconditions.checkNotNull(codeType);
 
-            int start = ucs.get(i);
-            int end = ((i+1) < ucs.size()) ? ucs.get(i+1) : sequence.length();
+        if ((sequence.length() % codeType.getCodeLen()) != 0) throw new IllegalArgumentException("Invalid sequence length: "+sequence +" length is not a multiple of "+codeType);
 
-            codes[i] = AminoAcidCode.valueOfAminoAcid(sequence.substring(start, end));
+        int aminoAcidCount = sequence.length()/codeType.getCodeLen();
 
-            i++;
+        AminoAcidCode[] aminoAcidCodes = new AminoAcidCode[aminoAcidCount];
+
+        int from=0;
+        int aa_index=0;
+        while (from<=sequence.length()-codeType.getCodeLen()) {
+
+            int to = from+codeType.getCodeLen();
+
+            aminoAcidCodes[aa_index] = AminoAcidCode.valueOfAminoAcid(sequence.substring(from, to));
+            from = to;
+            aa_index++;
         }
 
-        return codes;
+        return aminoAcidCodes;
     }
 
     public static AminoAcidCode[] asArray(AminoAcidCode aminoAcidCode) {
@@ -171,13 +215,13 @@ public enum AminoAcidCode {
         return new AminoAcidCode[] { aminoAcidCode };
     }
 
-    public static String formatAminoAcidCode(AACodeType type, AminoAcidCode... aas) {
+    public static String formatAminoAcidCode(CodeType type, AminoAcidCode... aas) {
 
         StringBuilder sb = new StringBuilder();
 
         for (AminoAcidCode aa : aas) {
 
-            sb.append((type == AACodeType.ONE_LETTER) ? aa.get1LetterCode() : aa.get3LetterCode());
+            sb.append((type == CodeType.ONE_LETTER) ? aa.get1LetterCode() : aa.get3LetterCode());
         }
 
         return sb.toString();
