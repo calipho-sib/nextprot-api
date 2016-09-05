@@ -12,7 +12,7 @@
 	Copyright (c) 2016 SIB Swiss Institute of Bioinformatics
 	Distributed under the Creative Commons Attribution-NoDerivs License
 *******************************************************************************-->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.0">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.0">
 
 	<!-- Root element nextprot export definition begins -->
 	<xs:element name="nextprot-export">
