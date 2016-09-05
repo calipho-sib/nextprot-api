@@ -34,7 +34,7 @@ public class SitemapXMLIntegrationTest extends WebIntegrationBaseTest {
 
 		ResultActions actions = this.mockMvc.perform(get("/seo/sitemap"));
 		actions.andExpect(xpath("/ns:urlset/ns:url/ns:changefreq",NS).string("weekly"));
-		actions.andExpect(xpath("/ns:urlset/ns:url/ns:loc",NS).string(new StringStartsWith("https://search.nextprot.org")));
+		actions.andExpect(xpath("/ns:urlset/ns:url/ns:loc",NS).string(new StringStartsWith("https://www.nextprot.org")));
 
 	}
 }
