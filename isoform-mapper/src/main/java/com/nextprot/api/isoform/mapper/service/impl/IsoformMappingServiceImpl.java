@@ -88,7 +88,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         SequenceFeature isoFeature = successResults.getIsoformSequenceFeature();
 
-        Isoform featureIsoform = isoFeature.getIsoform(successResults.getEntry());;
+        Isoform featureIsoform = isoFeature.getIsoform(successResults.getEntry());
 
         SequenceVariation variation = isoFeature.getProteinVariation();
 

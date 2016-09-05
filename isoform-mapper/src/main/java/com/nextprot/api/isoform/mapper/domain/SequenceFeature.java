@@ -19,17 +19,36 @@ public interface SequenceFeature {
     /** @return the variation as a string */
     String getFormattedVariation();
 
-    /** format a feature specifically to isoform */
+    /**
+     * Format a feature specifically to isoform
+     * @param isoform the specific isoform
+     * @param firstAAPos first position of the feature
+     * @param lastAAPos last position of the feature
+     * @return a format of the feature on the isoform
+     */
     String formatIsoSpecificFeature(Isoform isoform, int firstAAPos, int lastAAPos);
 
     /** @return the protein sequence variation */
     SequenceVariation getProteinVariation();
 
-    /** @return true if gene name is referenced in entry */
+    /**
+     * @param entry entry to validate gene name
+     * @return true if gene name is referenced in entry
+     */
     boolean isValidGeneName(Entry entry);
 
-    /** @return the entry isoform where lie the feature or ab */
-    Isoform getIsoform(Entry entry) throws UnknownIsoformRuntimeException;
-
+    /**
+     * Check that current entry has isoform named getIsoformName()
+     * @param entry entry to validate isoform
+     * @return true if isoform is valid
+     */
     boolean isValidIsoform(Entry entry);
+
+    /**
+     * Get specific entry isoform where lies the feature
+     * @param entry entry from which isoform is accessed
+     * @return the entry isoform
+     * @throws UnknownIsoformRuntimeException
+     */
+    Isoform getIsoform(Entry entry) throws UnknownIsoformRuntimeException;
 }
