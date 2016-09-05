@@ -33,7 +33,7 @@ public class InsertionHGVSFormat implements SequenceChangeFormat<Insertion> {
                 throw new ParseException("should contain two flanking residues, e.g. Lys23 and Leu24", 0);
             }
 
-            AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfOneLetterCodeSequence(m.group(7));
+            AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfAminoAcidCodeSequence(m.group(7));
 
             return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
                     .thenInsert(insertedAAs).build();
@@ -48,7 +48,7 @@ public class InsertionHGVSFormat implements SequenceChangeFormat<Insertion> {
     }
 
     @Override
-    public void format(StringBuilder sb, Insertion change, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, Insertion change, AminoAcidCode.CodeType type) {
 
         sb.append("ins").append(AminoAcidCode.formatAminoAcidCode(type, change.getValue()));
     }

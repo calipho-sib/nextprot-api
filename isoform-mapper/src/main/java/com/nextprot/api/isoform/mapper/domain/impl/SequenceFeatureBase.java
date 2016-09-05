@@ -146,7 +146,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
                 .append("-")
                 .append(formatIsoformFeatureName(isoform))
                 .append("-")
-                .append(parser.format(isoVariation, AminoAcidCode.AACodeType.THREE_LETTER));
+                .append(parser.format(isoVariation, AminoAcidCode.CodeType.THREE_LETTER));
 
         return sb.toString();
     }

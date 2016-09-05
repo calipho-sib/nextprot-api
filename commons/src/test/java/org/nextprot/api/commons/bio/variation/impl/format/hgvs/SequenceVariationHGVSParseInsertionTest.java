@@ -20,7 +20,7 @@ public class SequenceVariationHGVSParseInsertionTest {
 
         assertProteinSequenceVariation(pm, AminoAcidCode.CYSTEINE, AminoAcidCode.ALANINE, 136);
         Assert.assertEquals(SequenceChange.Type.INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("GM"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("GM"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
         Assert.assertEquals(136, ((Insertion)pm.getSequenceChange()).getInsertAfterPos());
     }
 
@@ -49,7 +49,7 @@ public class SequenceVariationHGVSParseInsertionTest {
 
         assertProteinSequenceVariation(pm, AminoAcidCode.METHIONINE, AminoAcidCode.GLUTAMIC_ACID, 1875);
         Assert.assertEquals(SequenceChange.Type.INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("M"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("M"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
         Assert.assertEquals(1875, ((Insertion)pm.getSequenceChange()).getInsertAfterPos());
     }
 
@@ -60,7 +60,7 @@ public class SequenceVariationHGVSParseInsertionTest {
 
         assertProteinSequenceVariation(pm, AminoAcidCode.LYSINE, AminoAcidCode.ALANINE, 722);
         Assert.assertEquals(SequenceChange.Type.INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("YK"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("YK"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
         Assert.assertEquals(722, ((Insertion)pm.getSequenceChange()).getInsertAfterPos());
     }
 

@@ -17,7 +17,7 @@ public interface SequenceChangeFormat<C extends SequenceChange> {
      * @param change the ProteinSequenceChange change to format
      * @param type the amino-acid code type
      */
-    void format(StringBuilder sb, C change, AminoAcidCode.AACodeType type);
+    void format(StringBuilder sb, C change, AminoAcidCode.CodeType type);
 
     /**
      * Parse the source and build ProteinSequenceVariation with given builder

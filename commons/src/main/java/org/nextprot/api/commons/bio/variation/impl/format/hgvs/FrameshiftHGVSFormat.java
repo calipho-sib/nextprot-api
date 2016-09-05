@@ -46,7 +46,7 @@ public class FrameshiftHGVSFormat implements SequenceChangeFormat<Frameshift> {
     }
 
     @Override
-    public void format(StringBuilder sb, Frameshift change, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, Frameshift change, AminoAcidCode.CodeType type) {
 
         sb
                 .append(AminoAcidCode.formatAminoAcidCode(type, change.getValue().getChangedAminoAcid()))

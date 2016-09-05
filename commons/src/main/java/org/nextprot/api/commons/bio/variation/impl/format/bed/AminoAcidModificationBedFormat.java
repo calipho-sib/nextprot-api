@@ -37,7 +37,7 @@ public class AminoAcidModificationBedFormat extends SequenceVariationFormat {
         return changeFormats.keySet();
     }
 
-    public String format(SequenceVariation variation, AminoAcidCode.AACodeType type) {
+    public String format(SequenceVariation variation, AminoAcidCode.CodeType type) {
 
         StringBuilder sb = new StringBuilder();
 

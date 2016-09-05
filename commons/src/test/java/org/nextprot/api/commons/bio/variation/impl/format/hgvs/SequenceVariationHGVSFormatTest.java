@@ -99,7 +99,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.ARGININE, 54).thenSubstituteWith(AminoAcidCode.CYSTEINE).build();
 
-        Assert.assertEquals("p.Arg54Cys", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Arg54Cys", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.LYSINE, 73).thenDelete().build();
 
-        Assert.assertEquals("p.Lys73del", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Lys73del", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
     @Test
@@ -115,7 +115,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcidRange(AminoAcidCode.LYSINE, 487, AminoAcidCode.LEUCINE, 498).thenDelete().build();
 
-        Assert.assertEquals("p.Lys487_Leu498del", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Lys487_Leu498del", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.METHIONINE, 682).thenFrameshift(AminoAcidCode.ALANINE, 2).build();
 
-        Assert.assertEquals("p.Met682AlafsTer2", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Met682AlafsTer2", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.THREONINE, 399).thenDeleteAndInsert(AminoAcidCode.LEUCINE).build();
 
-        Assert.assertEquals("p.Thr399delinsLeu", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Thr399delinsLeu", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
     @Test
@@ -139,7 +139,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcidRange(AminoAcidCode.LEUCINE, 330, AminoAcidCode.ALANINE, 331).thenDeleteAndInsert(AminoAcidCode.PHENYLALANINE).build();
 
-        Assert.assertEquals("p.Leu330_Ala331delinsPhe", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Leu330_Ala331delinsPhe", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcidRange(AminoAcidCode.ASPARTIC_ACID, 419, AminoAcidCode.ARGININE, 420).thenDeleteAndInsert(AminoAcidCode.SERINE, AminoAcidCode.SERINE, AminoAcidCode.ASPARTIC_ACID, AminoAcidCode.GLYCINE).build();
 
-        Assert.assertEquals("p.Asp419_Arg420delinsSerSerAspGly", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Asp419_Arg420delinsSerSerAspGly", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
     @Test
@@ -163,7 +163,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.STOP, 104).thenSubstituteWith(AminoAcidCode.GLUTAMIC_ACID).build();
 
-        Assert.assertEquals("p.Ter104Glu", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Ter104Glu", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
     @Test
@@ -179,7 +179,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcidRange(AminoAcidCode.CYSTEINE, 136, AminoAcidCode.ALANINE, 137).thenInsert(AminoAcidCode.GLYCINE, AminoAcidCode.METHIONINE).build();
 
-        Assert.assertEquals("p.Cys136_Ala137insGlyMet", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Cys136_Ala137insGlyMet", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
     @Test
@@ -187,7 +187,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.CYSTEINE, 76).thenDuplicate().build();
 
-        Assert.assertEquals("p.C76dup", format.format(pm, AminoAcidCode.AACodeType.ONE_LETTER));
+        Assert.assertEquals("p.C76dup", format.format(pm, AminoAcidCode.CodeType.ONE_LETTER));
     }
 
     @Test
@@ -195,7 +195,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.CYSTEINE, 76).thenDuplicate().build();
 
-        Assert.assertEquals("p.Cys76dup", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Cys76dup", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
     @Test
@@ -203,7 +203,7 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcidRange(AminoAcidCode.CYSTEINE, 76, AminoAcidCode.GLUTAMIC_ACID, 79).thenDuplicate().build();
 
-        Assert.assertEquals("p.C76_E79dup", format.format(pm, AminoAcidCode.AACodeType.ONE_LETTER));
+        Assert.assertEquals("p.C76_E79dup", format.format(pm, AminoAcidCode.CodeType.ONE_LETTER));
     }
 
     @Test
@@ -211,6 +211,6 @@ public class SequenceVariationHGVSFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcidRange(AminoAcidCode.CYSTEINE, 76, AminoAcidCode.GLUTAMIC_ACID, 79).thenDuplicate().build();
 
-        Assert.assertEquals("p.Cys76_Glu79dup", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("p.Cys76_Glu79dup", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 }

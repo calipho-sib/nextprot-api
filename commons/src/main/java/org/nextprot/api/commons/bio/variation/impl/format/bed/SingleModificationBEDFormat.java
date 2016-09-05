@@ -41,7 +41,7 @@ public class SingleModificationBEDFormat implements SequenceChangeFormat<AminoAc
     }
 
     @Override
-    public void format(StringBuilder sb, AminoAcidModification change, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, AminoAcidModification change, AminoAcidCode.CodeType type) {
 
         sb
                 .append(change.getName())

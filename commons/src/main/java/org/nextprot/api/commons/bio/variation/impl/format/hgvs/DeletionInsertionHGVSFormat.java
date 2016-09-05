@@ -23,7 +23,7 @@ public class DeletionInsertionHGVSFormat implements SequenceChangeFormat<Deletio
             AminoAcidCode affectedAAFirst = AminoAcidCode.valueOfAminoAcidCode(m.group(1), m.group(2));
             int affectedAAPosFirst = Integer.parseInt(m.group(3));
 
-            AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfOneLetterCodeSequence(m.group(7));
+            AminoAcidCode[] insertedAAs = AminoAcidCode.valueOfAminoAcidCodeSequence(m.group(7));
 
             if (m.group(4) == null) return builder.selectAminoAcid(affectedAAFirst, affectedAAPosFirst)
                     .thenDeleteAndInsert(insertedAAs).build();
@@ -44,7 +44,7 @@ public class DeletionInsertionHGVSFormat implements SequenceChangeFormat<Deletio
     }
 
     @Override
-    public void format(StringBuilder sb, DeletionAndInsertion change, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, DeletionAndInsertion change, AminoAcidCode.CodeType type) {
 
         sb.append("delins").append(AminoAcidCode.formatAminoAcidCode(type, change.getValue()));
     }

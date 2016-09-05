@@ -49,7 +49,7 @@ public class DuplicationHGVSFormat implements SequenceChangeFormat<Duplication> 
     }
 
     @Override
-    public void format(StringBuilder sb, Duplication change, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, Duplication change, AminoAcidCode.CodeType type) {
 
         sb.append("dup");
     }

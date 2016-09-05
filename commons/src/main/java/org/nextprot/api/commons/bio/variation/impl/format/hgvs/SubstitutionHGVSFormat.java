@@ -38,7 +38,7 @@ public class SubstitutionHGVSFormat implements SequenceChangeFormat<Substitution
     }
 
     @Override
-    public void format(StringBuilder sb, Substitution change, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, Substitution change, AminoAcidCode.CodeType type) {
 
         sb.append(AminoAcidCode.formatAminoAcidCode(type, change.getValue()));
     }

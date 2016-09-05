@@ -42,7 +42,7 @@ public class DeletionHGVSFormat implements SequenceChangeFormat<Deletion> {
     }
 
     @Override
-    public void format(StringBuilder sb, Deletion change, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, Deletion change, AminoAcidCode.CodeType type) {
 
         sb.append("del");
     }

@@ -7,7 +7,7 @@ import org.nextprot.api.commons.bio.variation.ChangingAAsFormat;
 public class BEDFormat implements ChangingAAsFormat {
 
     @Override
-    public void format(StringBuilder sb, SequenceVariation sequenceVariation, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, SequenceVariation sequenceVariation, AminoAcidCode.CodeType type) {
 
         // Tyr223
         sb.append(AminoAcidCode.formatAminoAcidCode(type, sequenceVariation.getFirstChangingAminoAcid()));
