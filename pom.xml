@@ -26,7 +26,15 @@
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<sonar.language>java</sonar.language>
+
+		<!-- Sonar -->
+		<!-- The destination file for the code coverage report has to be set to the same value
+             in the parent pom and in each module pom. Then JaCoCo will add up information in
+             the same report, so that, it will give the cross-module code coverage. -->
+		<sonar.jacoco.itReportPath>${project.basedir}/../target/jacoco-it.exec</sonar.jacoco.itReportPath>
     </properties>
 
 	<distributionManagement>
@@ -375,89 +383,56 @@
                     <updateReleaseInfo>true</updateReleaseInfo>
                 </configuration>
             </plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.7.5.201505241946</version>
-				<configuration>
-					<destFile>${sonar.jacoco.reportPath}</destFile>
-					<append>true</append>
-				</configuration>
-				<executions>
-					<execution>
-						<id>pre-unit-test</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>post-unit-test</id>
-						<phase>test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- https://deors.wordpress.com/2014/07/04/individual-test-coverage-sonarqube-jacoco/ -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.13</version>
-				<configuration>
-					<argLine>-XX:-UseSplitVerifier</argLine>
-					<includes>
-						<include>**/*Test.java</include>
-						<include>**/*Tests.java</include>
-					</includes>
-					<excludes>
-						<exclude>**/it/*IT.java</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
         </plugins>
     </build>
 
 	<profiles>
 		<profile>
-			<!-- calculate coverage metrics per test with SonarQube and JaCoCo -->
-			<id>coverage-per-test</id>
+			<id>sonar-coverage</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
 			<build>
+				<pluginManagement>
+					<plugins>
+						<plugin>
+							<groupId>org.jacoco</groupId>
+							<artifactId>jacoco-maven-plugin</artifactId>
+							<version>0.7.5.201505241946</version>
+						</plugin>
+					</plugins>
+				</pluginManagement>
 				<plugins>
 					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.13</version>
+						<groupId>org.jacoco</groupId>
+						<artifactId>jacoco-maven-plugin</artifactId>
 						<configuration>
-							<!-- same configuration as in the regular test execution goal -->
-							<!-- plus argLine parameter configured by JaCoCo prepare-agent -->
-							<argLine>${argLine} -XX:-UseSplitVerifier</argLine>
-							<includes>
-								<include>**/*Test.java</include>
-								<include>**/*Tests.java</include>
-							</includes>
-							<excludes>
-								<exclude>**/it/*IT.java</exclude>
-							</excludes>
-							<!-- new configuration needed for coverage per test -->
-							<properties>
-								<property>
-									<name>listener</name>
-									<value>org.sonar.java.jacoco.JUnitListener</value>
-								</property>
-							</properties>
+							<append>true</append>
 						</configuration>
+						<executions>
+							<execution>
+								<id>agent-for-ut</id>
+								<goals>
+									<goal>prepare-agent</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>agent-for-it</id>
+								<goals>
+									<goal>prepare-agent-integration</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>jacoco-site</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>report</goal>
+								</goals>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>
-			<dependencies>
-				<dependency>
-					<groupId>org.codehaus.sonar-plugins.java</groupId>
-					<artifactId>sonar-jacoco-listeners</artifactId>
-					<version>2.3</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
 		</profile>
 	</profiles>
 </project>
