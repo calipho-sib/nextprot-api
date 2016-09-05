@@ -88,4 +88,48 @@ public class AminoAcidCodeTest {
 
         Assert.assertArrayEquals(new AminoAcidCode[] {AminoAcidCode.ASPARTIC_ACID}, AminoAcidCode.asArray(AminoAcidCode.ASPARTIC_ACID));
     }
+
+    @Test
+    public void testGetXaaCode3() throws Exception {
+
+        Assert.assertEquals(AminoAcidAmbiguityCode.XAA, AminoAcidAmbiguityCode.valueOf("XAA"));
+        Assert.assertEquals("X", AminoAcidAmbiguityCode.XAA.get1LetterCode());
+        Assert.assertEquals("Xaa", AminoAcidAmbiguityCode.XAA.get3LetterCode());
+
+        for (AminoAcidCode aac : AminoAcidCode.values())
+            Assert.assertTrue(AminoAcidAmbiguityCode.XAA.match(aac));
+    }
+
+    @Test
+    public void testGetAsxCode3() throws Exception {
+
+        Assert.assertEquals(AminoAcidAmbiguityCode.ASX, AminoAcidAmbiguityCode.valueOf("ASX"));
+        Assert.assertEquals("B", AminoAcidAmbiguityCode.ASX.get1LetterCode());
+        Assert.assertEquals("Asx", AminoAcidAmbiguityCode.ASX.get3LetterCode());
+
+        Assert.assertTrue(AminoAcidAmbiguityCode.ASX.match(AminoAcidCode.ASPARTIC_ACID));
+        Assert.assertTrue(AminoAcidAmbiguityCode.ASX.match(AminoAcidCode.ASPARAGINE));
+    }
+
+    @Test
+    public void testGetGlxCode3() throws Exception {
+
+        Assert.assertEquals(AminoAcidAmbiguityCode.GLX, AminoAcidAmbiguityCode.valueOf("GLX"));
+        Assert.assertEquals("Z", AminoAcidAmbiguityCode.GLX.get1LetterCode());
+        Assert.assertEquals("Glx", AminoAcidAmbiguityCode.GLX.get3LetterCode());
+
+        Assert.assertTrue(AminoAcidAmbiguityCode.GLX.match(AminoAcidCode.GLUTAMIC_ACID));
+        Assert.assertTrue(AminoAcidAmbiguityCode.GLX.match(AminoAcidCode.GLUTAMINE));
+    }
+
+    @Test
+    public void testGetXleCode3() throws Exception {
+
+        Assert.assertEquals(AminoAcidAmbiguityCode.XLE, AminoAcidAmbiguityCode.valueOf("XLE"));
+        Assert.assertEquals("J", AminoAcidAmbiguityCode.XLE.get1LetterCode());
+        Assert.assertEquals("Xle", AminoAcidAmbiguityCode.XLE.get3LetterCode());
+
+        Assert.assertTrue(AminoAcidAmbiguityCode.XLE.match(AminoAcidCode.ISOLEUCINE));
+        Assert.assertTrue(AminoAcidAmbiguityCode.XLE.match(AminoAcidCode.LEUCINE));
+    }
 }
