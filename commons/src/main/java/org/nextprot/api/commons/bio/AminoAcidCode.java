@@ -34,22 +34,43 @@ public enum AminoAcidCode {
     THREONINE("Thr", "T"),
     SELENOCYSTEINE("Sec", "U"),
     PYRROLYSINE("Pyl", "O"),
-    STOP("Ter", "*")
+    STOP("Ter", "*"),
+    // ambiguous amino-acids
+    ASX("Asx", "B"),
+    XLE("Xle", "J"),
+    GLX("Glx", "Z"),
+    XAA("Xaa", "X")
     ;
 
     public enum AACodeType { ONE_LETTER, THREE_LETTER }
 
     private final String code3;
     private final String code1;
-    private static final Map<String, AminoAcidCode> aminoAcidCodeMap;
+
+    private static final Map<String, AminoAcidCode> AMINO_ACID_CODE_MAP;
+    private static final Map<AminoAcidCode, EnumSet<AminoAcidCode>> AMINO_ACID_AMBIGUITIES;
+    private static final EnumSet<AminoAcidCode> NON_AMBIGUOUS_AMINO_ACIDS;
+    private static final EnumSet<AminoAcidCode> AMBIGUOUS_AMINO_ACIDS;
 
     static {
-        aminoAcidCodeMap = new HashMap<>(AminoAcidCode.values().length);
+        NON_AMBIGUOUS_AMINO_ACIDS = EnumSet.of(GLYCINE, PROLINE, ALANINE, VALINE, LEUCINE, ISOLEUCINE, METHIONINE, CYSTEINE,
+                PHENYLALANINE, TYROSINE, THREONINE, TRYPTOPHAN, HISTIDINE, LYSINE, ARGININE, GLUTAMINE, ASPARAGINE,
+                GLUTAMIC_ACID, ASPARTIC_ACID, SERINE, THREONINE, SELENOCYSTEINE, PYRROLYSINE, STOP);
+
+        AMBIGUOUS_AMINO_ACIDS = EnumSet.of(ASX, XLE, GLX, XAA);
+
+        AMINO_ACID_CODE_MAP = new HashMap<>(AminoAcidCode.values().length);
         for (AminoAcidCode aac : AminoAcidCode.values()) {
 
-            aminoAcidCodeMap.put(aac.get1LetterCode(), aac);
-            aminoAcidCodeMap.put(aac.get3LetterCode(), aac);
+            AMINO_ACID_CODE_MAP.put(aac.get1LetterCode(), aac);
+            AMINO_ACID_CODE_MAP.put(aac.get3LetterCode(), aac);
         }
+
+        AMINO_ACID_AMBIGUITIES  = new HashMap<>(4);
+        AMINO_ACID_AMBIGUITIES.put(ASX, EnumSet.of(ASPARTIC_ACID, ASPARAGINE));
+        AMINO_ACID_AMBIGUITIES.put(XLE, EnumSet.of(LEUCINE, ISOLEUCINE));
+        AMINO_ACID_AMBIGUITIES.put(GLX, EnumSet.of(GLUTAMIC_ACID, GLUTAMINE));
+        AMINO_ACID_AMBIGUITIES.put(XAA, NON_AMBIGUOUS_AMINO_ACIDS);
     }
 
     AminoAcidCode(String code3, String code1) {
@@ -58,24 +79,62 @@ public enum AminoAcidCode {
         this.code1 = code1;
     }
 
+    /**
+     * @return the amino-acid 3-letter code
+     */
     public String get3LetterCode() {
         return code3;
     }
 
+    /**
+     * @return the amino-acid 1-letter code
+     */
     public String get1LetterCode() {
         return code1;
     }
 
-    public static boolean isValidAminoAcid(String code) {
+    /**
+     * @return true if matches the given aminoAcidCode else false
+     */
+    public boolean match(AminoAcidCode aminoAcidCode) {
 
-        return aminoAcidCodeMap.containsKey(code);
+        if (AMBIGUOUS_AMINO_ACIDS.contains(this))
+            return AMINO_ACID_AMBIGUITIES.get(this).contains(aminoAcidCode);
+        return this == aminoAcidCode;
     }
 
+    /**
+     * @return true if amino-acid code is valid (1- or 3-letter code)
+     */
+    public static boolean isValidAminoAcid(String code) {
+
+        return AMINO_ACID_CODE_MAP.containsKey(code);
+    }
+
+    /**
+     * @return an AminoAcidCode given a string
+     */
     public static AminoAcidCode valueOfAminoAcid(String code) {
 
-        if (isValidAminoAcid(code)) return aminoAcidCodeMap.get(code);
+        if (isValidAminoAcid(code)) return AMINO_ACID_CODE_MAP.get(code);
 
         throw new IllegalArgumentException("No enum constant AminoAcid." + code);
+    }
+
+    /**
+     * @return set of non ambiguous amino-acids
+     */
+    public static Set<AminoAcidCode> nonAmbiguousAminoAcidValues() {
+
+        return NON_AMBIGUOUS_AMINO_ACIDS;
+    }
+
+    /**
+     * @return set of ambiguous amino-acids
+     */
+    public static Set<AminoAcidCode> ambiguousAminoAcidValues() {
+
+        return AMBIGUOUS_AMINO_ACIDS;
     }
 
     public static AminoAcidCode[] valueOfOneLetterCodeSequence(String sequence) {
