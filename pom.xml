@@ -17,7 +17,6 @@
 	</developers>
 
 	<properties>
-		<argLine>-Xmx128m</argLine>
 		<spring.version>3.2.13.RELEASE</spring.version>
 		<project.version>${project.version}</project.version>
 		<spring-security.version>3.2.5.RELEASE</spring-security.version>
