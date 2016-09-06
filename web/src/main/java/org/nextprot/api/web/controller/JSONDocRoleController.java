@@ -82,8 +82,16 @@ public class JSONDocRoleController extends JSONDocController {
 	public void init() {
 
 		List<String> packages = new ArrayList<String>();
-		packages.addAll(Arrays.asList(new String[] { "org.nextprot.api.commons", "org.nextprot.api.core", "org.nextprot.api.rdf", "org.nextprot.api.solr", "org.nextprot.api.user",
-				"org.nextprot.api.web", "org.nextprot.api.etl", "org.nextprot.api.tasks"  }));
+		packages.addAll(Arrays.asList(new String[] { 
+				"org.nextprot.api.commons", 
+				"org.nextprot.api.core", 
+				"org.nextprot.api.isoform", 
+				"org.nextprot.api.rdf", 
+				"org.nextprot.api.solr", 
+				"org.nextprot.api.user",
+				"org.nextprot.api.web", 
+				"org.nextprot.api.etl", 
+				"org.nextprot.api.tasks"  }));
 
 		String version = releaseInfoService.findReleaseInfo().getApiRelease();
 		for (String profile : env.getActiveProfiles()) {
@@ -171,18 +179,6 @@ public class JSONDocRoleController extends JSONDocController {
 
 			// For each class annotation (ApiDoc)
 			Set<ApiDoc> contextApiDocs = new TreeSet<ApiDoc>();
-			// boolean devMode = false;
-			// if (env != null) {
-			// String[] pfs = env.getActiveProfiles();
-			// if (pfs != null) {
-			// for (String e : pfs) {
-			// if (e.equalsIgnoreCase("dev")) {
-			// devMode = true;
-			// break;
-			// }
-			// }
-			// }
-			// }
 			for (ApiDoc apiDoc : apis.getValue()) {
 
 				// Check authorization at class level
@@ -192,11 +188,20 @@ public class JSONDocRoleController extends JSONDocController {
 					Set<ApiMethodDoc> contextApiMethodDocs = new TreeSet<ApiMethodDoc>();
 					for (ApiMethodDoc apiMethodDoc : apiDoc.getMethods()) {
 
-						// Check authorization at method level
-						if (apiMethodDoc.getAuth() == null || apiMethodDoc.getAuth().equals("ROLE_ANONYMOUS") || contextRoles != null
+						//Add Iso Mapper Documentation if the user it is an ADMIN (the service doesn't need authentication to work though, it is just for documentation)
+						if(apiDoc.getGroup().equalsIgnoreCase("iso mapper")){
+							
+							if((contextRoles != null) && (contextRoles.contains("ROLE_ADMIN"))){
+								contextApiMethodDocs.add(apiMethodDoc);
+							}
+							
+						}// Check authorization at method level
+						else if (apiMethodDoc.getAuth() == null || apiMethodDoc.getAuth().equals("ROLE_ANONYMOUS") || contextRoles != null
 								&& !Collections.disjoint(contextRoles, apiMethodDoc.getAuth().getRoles())) {
 							contextApiMethodDocs.add(apiMethodDoc);
 						}
+						
+						
 					}
 					if (!contextApiMethodDocs.isEmpty()) {
 						// Create a copy of apiDoc but with methods according to
@@ -212,6 +217,8 @@ public class JSONDocRoleController extends JSONDocController {
 						contextApiDocs.add(tmpApiDoc);
 					}
 				}
+				
+
 			}
 			if (!contextApiDocs.isEmpty()) {
 				contextApis.put(apis.getKey(), contextApiDocs);

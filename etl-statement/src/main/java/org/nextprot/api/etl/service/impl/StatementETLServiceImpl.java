@@ -18,6 +18,9 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementRemoteService;
+import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
+import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
@@ -30,9 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
-import com.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
-import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
-import com.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
