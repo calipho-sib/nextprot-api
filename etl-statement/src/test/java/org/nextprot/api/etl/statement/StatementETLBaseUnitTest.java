@@ -11,10 +11,9 @@ import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.service.StatementRemoteService;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
-
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess.IsoformFeatureResult;
-import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess.IsoformFeatureResult;
+import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 
 public abstract class StatementETLBaseUnitTest {
 
