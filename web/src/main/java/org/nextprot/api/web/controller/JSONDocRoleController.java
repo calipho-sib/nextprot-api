@@ -90,13 +90,13 @@ public class JSONDocRoleController extends JSONDocController {
 				"org.nextprot.api.solr", 
 				"org.nextprot.api.user",
 				"org.nextprot.api.web", 
-				"org.nextprot.api.etl", 
-				"org.nextprot.api.tasks"  }));
+				"org.nextprot.api.etl" }));
 
 		String version = releaseInfoService.findReleaseInfo().getApiRelease();
 		for (String profile : env.getActiveProfiles()) {
 			if (profile.equalsIgnoreCase("build")) {
 				packages.add("org.nextprot.api.build");
+				packages.add("org.nextprot.api.tasks");
 				break;
 			}
 		}
