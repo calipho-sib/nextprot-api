@@ -118,6 +118,8 @@ public enum AminoAcidCode {
     }
 
     /**
+     * Check that the given amino-acid match this amino-acid
+     * @param aminoAcidCode amino-acid to check
      * @return true if matches the given aminoAcidCode else false
      */
     public boolean match(AminoAcidCode aminoAcidCode) {
@@ -128,7 +130,9 @@ public enum AminoAcidCode {
     }
 
     /**
-     * @return true if amino-acid code is valid (1- or 3-letter code)
+     * Check validity of the given amino-acid code string
+     * @param code the amino-acid 1- or 3- letter code
+     * @return true if amino-acid code is valid else false
      */
     public static boolean isValidAminoAcid(String code) {
 
@@ -136,16 +140,20 @@ public enum AminoAcidCode {
     }
 
     /**
+     * Get an instance of AminoAcidCode for the given amino-acid code string
+     * @param code the amino-acid 1- or 3- letter code
      * @return an AminoAcidCode given a string
      */
     public static AminoAcidCode valueOfAminoAcid(String code) {
 
-        if (isValidAminoAcid(code)) return AMINO_ACID_CODE_MAP.get(code);
-
-        throw new IllegalArgumentException("No enum constant AminoAcid." + code);
+        if (!isValidAminoAcid(code)) {
+            throw new IllegalArgumentException("No enum constant AminoAcid." + code);
+        }
+        return AMINO_ACID_CODE_MAP.get(code);
     }
 
     /**
+     * Get the set of non ambiguous amino-acids
      * @return immutable set of non ambiguous amino-acids
      */
     public static Set<AminoAcidCode> nonAmbiguousAminoAcidValues() {
@@ -154,6 +162,7 @@ public enum AminoAcidCode {
     }
 
     /**
+     * Get the set of ambiguous amino-acids
      * @return immutable set of ambiguous amino-acids
      */
     public static Set<AminoAcidCode> ambiguousAminoAcidValues() {
@@ -163,8 +172,9 @@ public enum AminoAcidCode {
 
 
     /**
-     * Parse sequence and make an instance of AminoAcidCode array by deducing code type
+     * Parse sequence and make an instance of AminoAcidCode array (auto CodeType deduction)
      * @param sequence the sequence to parse
+     * @return an array of AminoAcidCode
      */
     public static AminoAcidCode[] valueOfAminoAcidCodeSequence(String sequence) {
 
@@ -179,42 +189,45 @@ public enum AminoAcidCode {
     }
 
     /**
-     * Parse sequence and make an instance of AminoAcidCode array.
+     * Parse sequence and make an instance of AminoAcidCode array
      * @param sequence the sequence to parse
-     * @param codeType the code type
+     * @param codeType the amino-acid code type of the given sequence
+     * @return an array of AminoAcidCode
      */
     public static AminoAcidCode[] valueOfAminoAcidCodeSequence(String sequence, CodeType codeType) {
 
         Preconditions.checkNotNull(sequence);
         Preconditions.checkNotNull(codeType);
 
-        if ((sequence.length() % codeType.getCodeLen()) != 0) throw new IllegalArgumentException("Invalid sequence length: "+sequence +" length is not a multiple of "+codeType);
+        if ((sequence.length() % codeType.getCodeLen()) != 0) {
+
+            throw new IllegalArgumentException("Invalid sequence length: " + sequence + " length is not a multiple of " + codeType);
+        }
 
         int aminoAcidCount = sequence.length()/codeType.getCodeLen();
 
         AminoAcidCode[] aminoAcidCodes = new AminoAcidCode[aminoAcidCount];
 
         int from=0;
-        int aa_index=0;
+        int aaIndex=0;
         while (from<=sequence.length()-codeType.getCodeLen()) {
 
             int to = from+codeType.getCodeLen();
 
-            aminoAcidCodes[aa_index] = AminoAcidCode.valueOfAminoAcid(sequence.substring(from, to));
+            aminoAcidCodes[aaIndex] = AminoAcidCode.valueOfAminoAcid(sequence.substring(from, to));
             from = to;
-            aa_index++;
+            aaIndex++;
         }
 
         return aminoAcidCodes;
     }
 
-    public static AminoAcidCode[] asArray(AminoAcidCode aminoAcidCode) {
-
-        Preconditions.checkNotNull(aminoAcidCode);
-
-        return new AminoAcidCode[] { aminoAcidCode };
-    }
-
+    /**
+     * Format AminoAcidCodes into string
+     * @param type the amino-acid code type (1- or 3- letter code)
+     * @param aas amino-acids to format
+     * @return a formatted string
+     */
     public static String formatAminoAcidCode(CodeType type, AminoAcidCode... aas) {
 
         StringBuilder sb = new StringBuilder();
@@ -227,17 +240,21 @@ public enum AminoAcidCode {
         return sb.toString();
     }
 
-    public static AminoAcidCode valueOfAminoAcidCode(String code1, String code2and3) throws ParseException {
+    /**
+     * Get an instance of AminoAcidCode given
+     * @param code amino-acid code (1- or 3- letters)
+     * @return an AminoAcidCode
+     * @throws ParseException if code is not well formatted
+     */
+    public static AminoAcidCode parseAminoAcidCode(String code) throws ParseException {
 
-        if (code2and3 == null) {
-            if (!AminoAcidCode.isValidAminoAcid(code1)) {
-                throw new ParseException(code1+": invalid AminoAcidCode", 0);
-            }
-            return AminoAcidCode.valueOfAminoAcid(code1);
+        Preconditions.checkNotNull(code);
+        Preconditions.checkArgument(code.length() == 1 || code.length() == 3, "amino-acid code should be in 1 letter or 3 letters format");
+
+        if (!AminoAcidCode.isValidAminoAcid(code)) {
+            throw new ParseException(code+": invalid AminoAcidCode", 0);
         }
-        else if (!AminoAcidCode.isValidAminoAcid(code1 + code2and3)) {
-            throw new ParseException(code1 + code2and3 + ": invalid AminoAcidCode", 2);
-        }
-        return AminoAcidCode.valueOfAminoAcid(code1 + code2and3);
+
+        return AminoAcidCode.valueOfAminoAcid(code);
     }
 }
