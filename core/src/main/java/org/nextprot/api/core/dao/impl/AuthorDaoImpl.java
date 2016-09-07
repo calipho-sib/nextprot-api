@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -33,6 +34,11 @@ public class AuthorDaoImpl implements AuthorDao {
 	@Override
 	public List<PublicationAuthor> findAuthorsByPublicationIds(List<Long> publicationIds) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("publicationIds", publicationIds);
+		
+		if(publicationIds.isEmpty()) {
+			return new ArrayList<PublicationAuthor>();
+		}
+		
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-authors-by-publication-ids"), namedParameters, new PublicationAuthorRowMapper());
 	};
 

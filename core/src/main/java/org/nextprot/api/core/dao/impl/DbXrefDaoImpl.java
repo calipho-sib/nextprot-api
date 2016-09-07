@@ -35,6 +35,10 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	
 	@Override
 	public List<PublicationDbXref> findDbXRefByPublicationIds(List<Long> publicationIds) {
+
+		if(publicationIds.isEmpty()){
+			return new ArrayList<PublicationDbXref>();
+		}
 		Map<String, Object> params = new HashMap<>();
 		params.put("publicationIds", publicationIds);
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-publication-ids"), params, new PublicationDbXRefRowMapper());

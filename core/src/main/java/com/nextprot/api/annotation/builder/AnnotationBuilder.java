@@ -171,7 +171,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 		if(evidencesFiltered.size() < evidencesSet.size()){
 			int total = evidencesSet.size();
 			int removed = total - evidencesFiltered.size();
-			LOGGER.warn("Removed " + removed + " evidence because no resource id from a total of " + total);
+			LOGGER.debug("Removed " + removed + " evidence because no resource id from a total of " + total);
 		}
 		
 		return new ArrayList<>(evidencesFiltered);
