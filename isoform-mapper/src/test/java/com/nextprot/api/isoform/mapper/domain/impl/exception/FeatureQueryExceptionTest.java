@@ -68,7 +68,7 @@ public class FeatureQueryExceptionTest {
                 new FeatureQuery("NX_Q9UI33", "SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName());
 
         UnexpectedFeatureQueryAminoAcidException featureQueryException = new UnexpectedFeatureQueryAminoAcidException(query, 1158,
-                AminoAcidCode.asArray(AminoAcidCode.ALANINE), AminoAcidCode.asArray(AminoAcidCode.LEUCINE));
+        new AminoAcidCode[] { AminoAcidCode.ALANINE }, new AminoAcidCode[] { AminoAcidCode.LEUCINE});
 
         Assert.assertEquals("Ala", featureQueryException.getError().getCause("expectedAminoAcids"));
         Assert.assertEquals("Leu", featureQueryException.getError().getCause("featureAminoAcids"));

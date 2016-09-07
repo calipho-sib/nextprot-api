@@ -6,6 +6,7 @@ import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
 import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.impl.Frameshift;
+import org.nextprot.api.commons.utils.StringUtils;
 
 import java.text.ParseException;
 import java.util.regex.Matcher;
@@ -22,10 +23,10 @@ public class FrameshiftHGVSFormat implements SequenceChangeFormat<Frameshift> {
 
         if (m.matches()) {
 
-            AminoAcidCode affectedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAA = AminoAcidCode.parseAminoAcidCode(StringUtils.concat(m.group(1), m.group(2)));
             int affectedAAPos = Integer.parseInt(m.group(3));
 
-            AminoAcidCode newAA = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
+            AminoAcidCode newAA = AminoAcidCode.parseAminoAcidCode(StringUtils.concat(m.group(4), m.group(5)));
 
             int shift = Integer.parseInt(m.group(6));
 

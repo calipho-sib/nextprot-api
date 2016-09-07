@@ -3,6 +3,7 @@ package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.*;
 import org.nextprot.api.commons.bio.variation.impl.Insertion;
+import org.nextprot.api.commons.utils.StringUtils;
 
 import java.text.ParseException;
 import java.util.regex.Matcher;
@@ -23,10 +24,10 @@ public class InsertionHGVSFormat implements SequenceChangeFormat<Insertion> {
 
         if (m.matches()) {
 
-            AminoAcidCode affectedAAFirst = AminoAcidCode.valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAAFirst = AminoAcidCode.parseAminoAcidCode(StringUtils.concat(m.group(1), m.group(2)));
             int affectedAAPosFirst = Integer.parseInt(m.group(3));
 
-            AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
+            AminoAcidCode affectedAALast = AminoAcidCode.parseAminoAcidCode(StringUtils.concat(m.group(4), m.group(5)));
             int affectedAAPosLast = Integer.parseInt(m.group(6));
 
             if (affectedAAPosLast != (affectedAAPosFirst+1)) {

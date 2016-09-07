@@ -104,7 +104,7 @@ public class AminoAcidCodeTest {
     @Test
     public void testAsArray() throws Exception {
 
-        Assert.assertArrayEquals(new AminoAcidCode[] {AminoAcidCode.ASPARTIC_ACID}, AminoAcidCode.asArray(AminoAcidCode.ASPARTIC_ACID));
+        Assert.assertArrayEquals(new AminoAcidCode[] {AminoAcidCode.ASPARTIC_ACID}, new AminoAcidCode[] { AminoAcidCode.ASPARTIC_ACID} );
     }
 
     @Test

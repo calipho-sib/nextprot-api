@@ -26,7 +26,7 @@ public class SingleModificationBEDFormat implements SequenceChangeFormat<AminoAc
         if (m.matches()) {
 
             AminoAcidModification aaChange = AminoAcidModification.valueOfAminoAcidModification(m.group(1));
-            AminoAcidCode affectedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(2), m.group(3));
+            AminoAcidCode affectedAA = AminoAcidCode.parseAminoAcidCode(m.group(2) + ((m.group(3) != null) ? m.group(3) : ""));
             int affectedAAPos = Integer.parseInt(m.group(4));
 
             return builder.selectAminoAcid(affectedAA, affectedAAPos).thenAddModification(aaChange).build();
