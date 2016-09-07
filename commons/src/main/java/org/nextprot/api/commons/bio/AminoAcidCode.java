@@ -82,7 +82,7 @@ public enum AminoAcidCode {
             AMINO_ACID_CODE_MAP.put(aac.get3LetterCode(), aac);
         }
 
-        AMINO_ACID_AMBIGUITIES  = new HashMap<>(4);
+        AMINO_ACID_AMBIGUITIES = new EnumMap<>(AminoAcidCode.class);
         AMINO_ACID_AMBIGUITIES.put(ASX, EnumSet.of(ASPARTIC_ACID, ASPARAGINE));
         AMINO_ACID_AMBIGUITIES.put(XLE, EnumSet.of(LEUCINE, ISOLEUCINE));
         AMINO_ACID_AMBIGUITIES.put(GLX, EnumSet.of(GLUTAMIC_ACID, GLUTAMINE));
