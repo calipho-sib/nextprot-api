@@ -79,15 +79,14 @@ public class PublicationServiceImpl implements PublicationService {
 
 		publications.addAll(nxflatPublications);
 
+		final Comparator<Publication> comparator = new PublicationComparatorAsc(Publication::getPublicationYear).reversed()
+				.thenComparing((pub1, pub2) -> pub1.getPublicationType().compareTo(pub2.getPublicationType()))
+				.thenComparing(new PublicationComparatorAsc(Publication::getPublicationLocatorName))
+				.thenComparing(new PublicationComparatorAsc(Publication::getVolume, PublicationComparatorAsc.FieldType.NUMBER_TYPE))
+				.thenComparing(new PublicationComparatorAsc(Publication::getFirstPage, PublicationComparatorAsc.FieldType.NUMBER_TYPE));
+
 		// sort according to order with criteria defined in publication-sorted-for-master.sql
-		Collections.sort(publications, (p1, p2) ->
-				new PublicationComparatorAsc(Publication::getPublicationYear).reversed()
-						.thenComparing((pub1, pub2) -> pub1.getPublicationType().compareTo(pub2.getPublicationType()))
-						.thenComparing(new PublicationComparatorAsc(Publication::getPublicationLocatorName))
-						.thenComparing(new PublicationComparatorAsc(Publication::getVolume, PublicationComparatorAsc.FieldType.NUMBER_TYPE))
-						.thenComparing(new PublicationComparatorAsc(Publication::getFirstPage, PublicationComparatorAsc.FieldType.NUMBER_TYPE))
-						.compare(p1, p2)
-		);
+		Collections.sort(publications, comparator);
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Publication>().addAll(publications).build();
@@ -181,7 +180,8 @@ public class PublicationServiceImpl implements PublicationService {
 
 	private void setXrefs(Publication publication, Collection<? extends DbXref> xrefs){
 
-		if (xrefs != null) publication.setDbXrefs(new HashSet<>(xrefs));
+		if (xrefs != null)
+			publication.setDbXrefs(new HashSet<>(xrefs));
 	}
 
 	@Override
