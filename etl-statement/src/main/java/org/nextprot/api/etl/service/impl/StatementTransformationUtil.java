@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
@@ -17,10 +21,6 @@ import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import org.nextprot.commons.statements.constants.AnnotationType;
 
 import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
-import com.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
-import com.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import com.nextprot.api.isoform.mapper.service.IsoformMappingService;
 
 public class StatementTransformationUtil {
 

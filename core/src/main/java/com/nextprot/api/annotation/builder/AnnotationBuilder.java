@@ -141,7 +141,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			 evidence.setAssignmentMethod(s.getValue(StatementField.ASSIGMENT_METHOD));
 			 evidence.setResourceType(s.getValue(StatementField.RESOURCE_TYPE));
 			 evidence.setEvidenceCodeOntology("evidence-code-ontology-cv");
-
+			 evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(StatementField.IS_NEGATIVE)));
 			 
 			 if(statementEvidenceCode != null){
 				 //TODO this should this be done in the ETL module
@@ -171,7 +171,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 		if(evidencesFiltered.size() < evidencesSet.size()){
 			int total = evidencesSet.size();
 			int removed = total - evidencesFiltered.size();
-			LOGGER.warn("Removed " + removed + " evidence because no resource id from a total of " + total);
+			LOGGER.debug("Removed " + removed + " evidence because no resource id from a total of " + total);
 		}
 		
 		return new ArrayList<>(evidencesFiltered);
