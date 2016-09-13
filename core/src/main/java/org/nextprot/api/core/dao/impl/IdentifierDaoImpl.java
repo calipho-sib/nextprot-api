@@ -1,7 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.IdentifierDao;
@@ -11,13 +9,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Repository
 public class IdentifierDaoImpl implements IdentifierDao {
@@ -48,16 +46,10 @@ public class IdentifierDaoImpl implements IdentifierDao {
 		List<Identifier> ids = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("identifiers-by-master-unique-name"), params, new IdentifierRowMapper());
 
 		// See CALIPHOMISC-489
-		return new ArrayList<>(Collections2.filter(ids, new Predicate<Identifier>() {
-			@Override
-			public boolean apply(@Nullable Identifier identifier) {
-
-				if ("Ensembl".equals(identifier.getDatabase()) && !identifier.getName().startsWith("ENSG")) {
-					return false;
-				}
-				return true;
-			}
-		}));
+		return ids.stream()
+				.filter(Objects::nonNull)
+				.filter(i -> !("Ensembl".equals(i.getDatabase()) && !i.getName().startsWith("ENSG")))
+				.collect(Collectors.toList());
 	}
 	
 	private static class IdentifierRowMapper implements ParameterizedRowMapper<Identifier> {
@@ -70,11 +62,9 @@ public class IdentifierDaoImpl implements IdentifierDao {
 			identifier.setDatabase(resultSet.getString("db_name"));
 
 			String typeClass = resultSet.getString("type_class");
-			identifier.setDatabaseCategory((DB_TYPE_NP1_NAMES.containsKey(typeClass)) ? DB_TYPE_NP1_NAMES.get(typeClass) : typeClass);
+			identifier.setDatabaseCategory(DB_TYPE_NP1_NAMES.containsKey(typeClass) ? DB_TYPE_NP1_NAMES.get(typeClass) : typeClass);
 
 			return identifier;
 		}
-		
 	}
-
 }
