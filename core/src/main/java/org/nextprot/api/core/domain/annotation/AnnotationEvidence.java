@@ -1,18 +1,14 @@
 package org.nextprot.api.core.domain.annotation;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
+import java.io.Serializable;
+import java.util.*;
+
 public class AnnotationEvidence implements Serializable {
 
-	private static final long serialVersionUID = 2856324820767690302L;
+	private static final long serialVersionUID = 20160913L;
 
 	// map uniprot evidence code with ECO
 	final static Map<String, String> evidenceInfo = new HashMap<>();
@@ -440,6 +436,23 @@ public class AnnotationEvidence implements Serializable {
 	@Deprecated
 	public String getExpressionLevel() {
 		return extractProperty("expressionLevel");
+	}
+
+	/**
+	 * Return true if evidence shows any kind of detection (low, medium, high or positive) else false
+	 *
+	 * @return an optional boolean or absent if no expression info
+	 */
+	public Optional<Boolean> isExpressionLevelDetected() {
+
+		if (propertiesMap.containsKey("expressionLevel")) {
+
+			String level = extractProperty("expressionLevel");
+
+			return Optional.of("low".equals(level) || "medium".equals(level) || "high".equals(level) || "positive".equals(level));
+		}
+
+		return Optional.empty();
 	}
 
 	@Deprecated

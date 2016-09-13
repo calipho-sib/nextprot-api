@@ -1,6 +1,5 @@
 package org.nextprot.api.core.domain.annotation;
 
-import com.google.common.base.Optional;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.DbXref;
@@ -388,31 +387,21 @@ public class Annotation implements Serializable, IsoformSpecific {
 	 */
 	public Optional<Boolean> isExpressionLevelDetected() {
 
-		Optional<Boolean> booleanOptional = Optional.absent();
+		Optional<Boolean> isDetected = Optional.empty();
 
 		if (evidences != null) {
 
 			for (AnnotationEvidence evidence : evidences) {
 
-				String level = evidence.getExpressionLevel();
+				isDetected = evidence.isExpressionLevelDetected();
 
-				if (level != null) {
-
-					switch (level) {
-
-						case "low":
-						case "medium":
-						case "high":
-						case "positive":
-							return Optional.of(Boolean.TRUE);
-						default:
-							booleanOptional = Optional.of(Boolean.FALSE);
-					}
+				if (isDetected.isPresent() && isDetected.get()) {
+					return Optional.of(Boolean.TRUE);
 				}
 			}
 		}
 
-		return booleanOptional;
+		return isDetected;
 	}
 	
 	public List<String> getSubjectComponents() {
