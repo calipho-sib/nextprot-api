@@ -13,8 +13,7 @@ import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.web.service.ExportService;
 import org.nextprot.api.web.service.SearchService;
-import org.nextprot.api.web.service.impl.writer.NPEntryStreamWriter;
-import org.nextprot.api.web.service.impl.writer.NPEntryWriterFactory;
+import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
@@ -25,7 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
+
+import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
 
 /**
  * Controller class responsible to extract in streaming
@@ -37,8 +37,6 @@ import java.util.logging.Logger;
 // @Api(name = "Export", description =
 // "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
 public class ExportController {
-
-    private final Logger LOGGER = Logger.getLogger(ExportController.class.getName());
 
     @Autowired
     private ExportService exportService;
@@ -125,8 +123,7 @@ public class ExportController {
             }
 
         } catch (Exception e) {
-            LOGGER.severe(e.getMessage());
-            throw new NextProtException(e.getMessage());
+            throw new NextProtException(e.getMessage(), e);
         }
     }
 
@@ -151,12 +148,11 @@ public class ExportController {
         setResponseHeader(format, viewName, queryRequest, response);
         List<String> entries = getAccessions(queryRequest);
 
-        try (NPEntryStreamWriter writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream())) {
+        try (EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, response.getOutputStream())) {
             exportService.streamResults(writer, viewName, entries);
         }
         catch (IOException e) {
-            LOGGER.severe(e.getMessage());
-            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
+            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")", e);
         }
     }
 
@@ -165,12 +161,11 @@ public class ExportController {
         setResponseHeader(format, response);
         List<String> entries = new ArrayList<>(masterIdentifierService.findUniqueNames());
 
-        try (NPEntryStreamWriter writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream())) {
+        try (EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, response.getOutputStream())) {
             exportService.streamResults(writer, viewName, entries);
         }
         catch (IOException e) {
-            LOGGER.severe(e.getMessage());
-            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (all)");
+            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (all)", e);
         }
     }
 

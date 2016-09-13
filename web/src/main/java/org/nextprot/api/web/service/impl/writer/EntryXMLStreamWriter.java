@@ -19,21 +19,22 @@ import java.util.Map;
  * Created by fnikitin on 28/04/15.
  * Daniel added pretty print for xml and xml header
  */
-public class NPEntryXMLStreamWriter extends NPEntryVelocityBasedStreamWriter {
+public class EntryXMLStreamWriter extends EntryVelocityBasedStreamWriter {
 
-    private static final Log LOGGER = LogFactory.getLog(NPEntryXMLStreamWriter.class);
+    private static final Log LOGGER = LogFactory.getLog(EntryXMLStreamWriter.class);
+    private static final String UTF_8 = "UTF-8";
 
     private final XMLPrettyPrinter XMLPrettyPrinter;
 
     private final ByteArrayOutputStream tmpOut;
     private final Writer tmpWriter;
 
-    public NPEntryXMLStreamWriter(OutputStream os, String viewName) {
+    public EntryXMLStreamWriter(OutputStream os, String viewName) throws IOException {
 
-        this(new OutputStreamWriter(os), viewName);
+        this(new OutputStreamWriter(os, UTF_8), viewName);
     }
 
-    public NPEntryXMLStreamWriter(Writer writer, String viewName) {
+    public EntryXMLStreamWriter(Writer writer, String viewName) {
 
         super(writer, "entry.xml.vm", viewName);
 

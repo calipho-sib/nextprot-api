@@ -12,7 +12,7 @@ import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.export.format.FileFormat;
 import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.service.ExportService;
-import org.nextprot.api.web.service.impl.writer.NPEntryStreamWriter;
+import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -236,7 +236,7 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	@Override
-	public void streamResults(NPEntryStreamWriter writer, String viewName, List<String> accessions) throws IOException {
+	public void streamResults(EntryStreamWriter writer, String viewName, List<String> accessions) throws IOException {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put(ExportService.ENTRIES_COUNT_PARAM, accessions.size());

@@ -15,12 +15,12 @@ import java.io.OutputStream;
  *
  * Created by fnikitin on 28/04/15.
  */
-public class NPEntryJSONStreamWriter extends NPEntryOutputStreamWriter {
+public class EntryJSONStreamWriter extends EntryOutputStreamWriter {
 
     private final JsonGenerator generator;
     private final String viewName;
 
-    public NPEntryJSONStreamWriter(OutputStream os, String viewName) throws IOException {
+    public EntryJSONStreamWriter(OutputStream os, String viewName) throws IOException {
 
         super(os);
 

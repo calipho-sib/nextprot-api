@@ -23,7 +23,7 @@ public class NPEntryTXTStreamWriterTest extends WebIntegrationBaseTest {
 
         Writer writer = new PrintWriter(out);
 
-        NPEntryVelocityBasedStreamWriter exporter = new NPEntryTXTStreamWriter(writer);
+        EntryVelocityBasedStreamWriter exporter = new EntryTXTStreamWriter(writer);
 
         Map<String, Object> params = new HashMap<>();
         params.put(ExportService.ENTRIES_COUNT_PARAM, 2);

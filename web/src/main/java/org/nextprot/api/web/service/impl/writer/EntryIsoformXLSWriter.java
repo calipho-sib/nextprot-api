@@ -16,7 +16,7 @@ import java.util.List;
  *
  * Created by fnikitin on 11/08/15.
  */
-public class NPEntryIsoformXLSWriter extends NPEntryXLSWriter {
+public class EntryIsoformXLSWriter extends EntryXLSWriter {
 
     private static class DataProvider implements EntryDataProvider {
 
@@ -61,7 +61,7 @@ public class NPEntryIsoformXLSWriter extends NPEntryXLSWriter {
         }
     }
 
-    public NPEntryIsoformXLSWriter(OutputStream stream) {
+    public EntryIsoformXLSWriter(OutputStream stream) {
 
         super(stream, "Isoforms", new DataProvider());
     }

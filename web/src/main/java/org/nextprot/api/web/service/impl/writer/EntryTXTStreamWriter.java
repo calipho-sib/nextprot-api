@@ -5,6 +5,8 @@ import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.web.service.ExportService;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Map;
 
@@ -16,11 +18,16 @@ import static org.nextprot.api.commons.utils.StringUtils.CR_LF;
  * Created by fnikitin on 28/04/15.
  * Modified by dteixeir on 13/07 to include header
  */
-public class NPEntryTXTStreamWriter extends NPEntryVelocityBasedStreamWriter {
+public class EntryTXTStreamWriter extends EntryVelocityBasedStreamWriter {
 
-	private static final Log LOGGER = LogFactory.getLog(NPEntryTXTStreamWriter.class);
+	private static final Log LOGGER = LogFactory.getLog(EntryTXTStreamWriter.class);
 
-    public NPEntryTXTStreamWriter(Writer writer) {
+    public EntryTXTStreamWriter(OutputStream os) throws IOException {
+
+        this(new OutputStreamWriter(os, UTF_8));
+    }
+
+    public EntryTXTStreamWriter(Writer writer) {
 
         super(writer, "txt/entry.txt.vm", "accession");
     }

@@ -1,6 +1,8 @@
 package org.nextprot.api.web.service.impl.writer;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 /**
@@ -8,9 +10,14 @@ import java.io.Writer;
  *
  * Created by fnikitin on 28/04/15.
  */
-public class NPEntryFastaStreamWriter extends NPEntryVelocityBasedStreamWriter {
+public class EntryFastaStreamWriter extends EntryVelocityBasedStreamWriter {
 
-    public NPEntryFastaStreamWriter(Writer writer) {
+    public EntryFastaStreamWriter(OutputStream os) throws IOException {
+
+        this(new OutputStreamWriter(os, UTF_8));
+    }
+
+    public EntryFastaStreamWriter(Writer writer) {
 
         super(writer, "fasta/entry.fasta.vm", "overview");
     }

@@ -18,8 +18,8 @@ import org.junit.Test;
 import org.nextprot.api.commons.utils.XMLPrettyPrinter;
 import org.nextprot.api.web.dbunit.base.mvc.WebIntegrationBaseTest;
 import org.nextprot.api.web.service.ExportService;
-import org.nextprot.api.web.service.impl.writer.NPEntryStreamWriter;
-import org.nextprot.api.web.service.impl.writer.NPEntryXMLStreamWriter;
+import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
+import org.nextprot.api.web.service.impl.writer.EntryXMLStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -49,7 +49,7 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 			StreamSource xmlFile = new StreamSource(f);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		
-            NPEntryStreamWriter<?> writer = new NPEntryXMLStreamWriter(baos, "entry");
+            EntryStreamWriter<?> writer = new EntryXMLStreamWriter(baos, "entry");
 			exportService.streamResults(writer, "entry", Arrays.asList(new String[] { "NX_Q15858" }));
 			//exportService.streamResults(writer, "entry", Arrays.asList(new String[] { "NX_Q6PIU2" })); 
 
