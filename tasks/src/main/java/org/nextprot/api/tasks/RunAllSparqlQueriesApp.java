@@ -1,23 +1,20 @@
 package org.nextprot.api.tasks;
 
-import static org.junit.Assert.assertFalse;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hp.hpl.jena.query.QueryExecution;
+import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.ResultSet;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.user.domain.UserQuery;
+import org.nextprot.api.user.utils.UserQueryUtils;
 
 import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.nextprot.api.user.domain.UserQuery;
-import org.nextprot.api.user.utils.UserQueryUtils;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.ResultSet;
 
 public class RunAllSparqlQueriesApp {
 
@@ -112,8 +109,9 @@ public class RunAllSparqlQueriesApp {
 		LOGGER.info("OK count         : " + (queries.size() - exceptionCount - zeroResultsCount) );
 		LOGGER.info("Exception count  : " + exceptionCount );
 		LOGGER.info("ZeroResult count : " + zeroResultsCount );
-		assertFalse(testFailed);
-
+		if (testFailed) {
+			throw new IllegalStateException("test failed!");
+		}
 	}
 
 	
