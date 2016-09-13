@@ -18,10 +18,15 @@ public class NPEntryWriterFactory {
 
     private static final String UTF_8 = "UTF-8";
 
+    private NPEntryWriterFactory() {
+        throw new IllegalAccessError("Not instanciable");
+    }
+
     /**
      * Create new instance of streaming NPEntryWriter
      *
      * @param format the output file format
+     * @param view the view for velocity
      * @param os the output stream
      * @return a NPEntryWriter instance
      * @throws UnsupportedEncodingException
@@ -29,7 +34,6 @@ public class NPEntryWriterFactory {
     public static NPEntryStreamWriter newNPEntryStreamWriter(FileFormat format, String view, OutputStream os) throws IOException {
 
         Preconditions.checkNotNull(format);
-        Preconditions.checkNotNull(os);
 
         switch (format) {
 
@@ -48,7 +52,7 @@ public class NPEntryWriterFactory {
             case TURTLE:
                 return new NPEntryTTLStreamWriter(new OutputStreamWriter(os, UTF_8), view);
             default:
-                throw new NextProtException("No NPEntryStreamWriter implementation for "+format);
+                throw new NextProtException("No NPEntryStreamWriter implementation for " + format);
         }
     }
 }

@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * Created by fnikitin on 11/08/15.
  */
-public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
+public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> implements AutoCloseable {
 
     private final S stream;
 

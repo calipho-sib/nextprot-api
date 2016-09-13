@@ -23,9 +23,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Controller class responsible to extract in streaming
@@ -37,6 +37,8 @@ import java.util.*;
 // @Api(name = "Export", description =
 // "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
 public class ExportController {
+
+    private final Logger LOGGER = Logger.getLogger(ExportController.class.getName());
 
     @Autowired
     private ExportService exportService;
@@ -106,7 +108,6 @@ public class ExportController {
 
         response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
-        // TODO should this be secured or not? for now let's say not...
         // 2 ways of doing it: either add the token in the header or generate a
         // secret value for each list that is created
 
@@ -117,14 +118,14 @@ public class ExportController {
             }
 
             if (pl.getAccessionNumbers() != null) {
-                Iterator<String> sIt = pl.getAccessionNumbers().iterator();
-                while (sIt.hasNext()) {
-                    response.getWriter().write(sIt.next());
+                for (String s : pl.getAccessionNumbers()) {
+                    response.getWriter().write(s);
                     response.getWriter().write(StringUtils.CR_LF);
                 }
             }
 
         } catch (Exception e) {
+            LOGGER.severe(e.getMessage());
             throw new NextProtException(e.getMessage());
         }
     }
@@ -149,42 +150,27 @@ public class ExportController {
 
         setResponseHeader(format, viewName, queryRequest, response);
         List<String> entries = getAccessions(queryRequest);
-        NPEntryStreamWriter writer = null;
-        try {
-            writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream());
 
+        try (NPEntryStreamWriter writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream())) {
             exportService.streamResults(writer, viewName, entries);
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        catch (IOException e) {
+            LOGGER.severe(e.getMessage());
             throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
-        } finally {
-            try {
-                if (writer != null) writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new NextProtException("closing "+format.getExtension()+" stream failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
-            }
         }
     }
 
     private void streamAllEntries(FileFormat format, HttpServletResponse response, String viewName) {
 
         setResponseHeader(format, response);
-        List<String> entries = new ArrayList<String>(masterIdentifierService.findUniqueNames());
-        NPEntryStreamWriter writer = null;
-        try {
-            writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream());
+        List<String> entries = new ArrayList<>(masterIdentifierService.findUniqueNames());
+
+        try (NPEntryStreamWriter writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream())) {
             exportService.streamResults(writer, viewName, entries);
-        } catch (IOException e) {
-            e.printStackTrace();
+        }
+        catch (IOException e) {
+            LOGGER.severe(e.getMessage());
             throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (all)");
-        } finally {
-            try {
-                if (writer != null) writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new NextProtException("closing "+format.getExtension()+" stream failed: cannot export "+entries.size()+" entries (all)");
-            }
         }
     }
 
