@@ -8,7 +8,7 @@ import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
  */
 public class FeatureQueryFailure extends FeatureQueryResult {
 
-    private final FeatureQueryException.ErrorReason error;
+    private final transient FeatureQueryException.ErrorReason error;
 
     public FeatureQueryFailure(FeatureQueryException error) {
 
