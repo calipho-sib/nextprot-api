@@ -19,7 +19,7 @@ public class GenerateNXFlatStatementDDLApp {
 	private static String generateOneTable(String tableName) {
 
 		StringBuffer sb = new StringBuffer();
-		//sb.append("DROP TABLE nxflat." + tableName + ";\n");
+		sb.append("DROP TABLE IF EXISTS nxflat." + tableName + ";\n");
 		sb.append("CREATE TABLE nxflat." + tableName + " (\n");
 		for (int i = 0; i < StatementField.values().length; i++) {
 			sb.append("\t" + StatementField.values()[i].name() + " VARCHAR(4000)");
