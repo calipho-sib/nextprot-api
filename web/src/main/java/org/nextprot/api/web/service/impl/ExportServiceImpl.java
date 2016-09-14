@@ -6,6 +6,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.ReleaseInfoService;
@@ -159,7 +160,7 @@ public class ExportServiceImpl implements ExportService {
 
 		private void checkFormatConstraints() {
 			if (!(npFormat.equals(FileFormat.TURTLE) || npFormat.equals(FileFormat.XML))) {
-				throw new RuntimeException("A format should be specified (xml or ttl)");
+				throw new NextProtException("A format should be specified (xml or ttl)");
 			}
 		}
 
@@ -174,34 +175,29 @@ public class ExportServiceImpl implements ExportService {
 			checkFormatConstraints();
 			Template template = null;
 			VelocityContext context;
-			try {
 
-				if (part.equals(SubPart.HEADER)) {
-					if (format.equals(FileFormat.TURTLE.getExtension())) {
-						template = ve.getTemplate("turtle/prefix.ttl.vm");
-					} else {
-						template = ve.getTemplate("exportStart.xml.vm");
-					}
-				} else if (part.equals(SubPart.FOOTER)) {
-					if (format.equals(FileFormat.XML.getExtension())) {
-						template = ve.getTemplate("exportEnd.xml.vm");
-					}
+			if (part.equals(SubPart.HEADER)) {
+				if (format.equals(FileFormat.TURTLE.getExtension())) {
+					template = ve.getTemplate("turtle/prefix.ttl.vm");
+				} else {
+					template = ve.getTemplate("exportStart.xml.vm");
 				}
-
-				if (template == null) {
-					template = ve.getTemplate("blank.vm");
+			} else if (part.equals(SubPart.FOOTER)) {
+				if (format.equals(FileFormat.XML.getExtension())) {
+					template = ve.getTemplate("exportEnd.xml.vm");
 				}
+			}
 
-				context = new VelocityContext();
+			if (template == null) {
+				template = ve.getTemplate("blank.vm");
+			}
 
-				FileWriter fw = new FileWriter(filename, true);
-				PrintWriter out = new PrintWriter(new BufferedWriter(fw));
+			context = new VelocityContext();
+
+			try (FileWriter fw = new FileWriter(filename, true); PrintWriter out = new PrintWriter(new BufferedWriter(fw))) {
 				template.merge(context, out);
-				out.close();
-
 			} catch (Exception e) {
 				LOGGER.error("Failed to generate header because of " + e.getMessage());
-				e.printStackTrace();
 				throw e;
 			}
 
