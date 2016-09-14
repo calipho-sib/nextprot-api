@@ -80,6 +80,16 @@
             <version>3.1</version>
         </dependency>
 
+
+    <!-- H2 DB -->
+    <dependency>
+	<groupId>com.h2database</groupId>
+	<artifactId>h2</artifactId>
+        <version>1.4.191</version>
+	<scope>test</scope>
+    </dependency>
+
+
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-queries</artifactId>
