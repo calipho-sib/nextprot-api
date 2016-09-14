@@ -7,7 +7,7 @@ import java.util.Objects;
 public abstract class FeatureQueryException extends Exception {
 
     private final FeatureQuery query;
-    private final ErrorReason error;
+    private final transient ErrorReason error;
 
     public FeatureQueryException(FeatureQuery query) {
 

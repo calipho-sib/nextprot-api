@@ -20,8 +20,8 @@ import java.util.TreeMap;
 public class FeatureQuerySuccess extends FeatureQueryResult {
 
     private final Map<String, IsoformFeatureResult> data;
-    private final SequenceFeature feature;
-    private final Entry entry;
+    private final transient SequenceFeature feature;
+    private final transient Entry entry;
 
     public FeatureQuerySuccess(Entry entry, FeatureQuery query, SequenceFeature feature) {
         super(query);
@@ -116,6 +116,7 @@ public class FeatureQuerySuccess extends FeatureQueryResult {
         private boolean isCanonical;
         private String isoSpecificFeature;
 
+        // empty constructor for json serialization
         public IsoformFeatureResult(){
         	
         }
