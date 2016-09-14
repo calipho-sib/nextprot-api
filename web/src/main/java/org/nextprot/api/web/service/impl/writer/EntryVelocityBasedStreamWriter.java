@@ -19,7 +19,7 @@ import java.io.Writer;
  *
  * @author fnikitin
  */
-public abstract class NPEntryVelocityBasedStreamWriter extends NPEntryStreamWriter<Writer> {
+public abstract class EntryVelocityBasedStreamWriter extends EntryStreamWriter<Writer> {
 
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
@@ -28,7 +28,7 @@ public abstract class NPEntryVelocityBasedStreamWriter extends NPEntryStreamWrit
     private final Template template;
     private final String viewName;
 
-    public NPEntryVelocityBasedStreamWriter(Writer writer, String templateName, String viewName) {
+    public EntryVelocityBasedStreamWriter(Writer writer, String templateName, String viewName) {
 
         super(writer);
 

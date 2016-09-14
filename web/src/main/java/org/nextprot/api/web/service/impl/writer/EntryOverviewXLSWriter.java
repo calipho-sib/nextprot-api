@@ -14,7 +14,7 @@ import java.util.List;
  *
  * Created by fnikitin on 11/08/15.
  */
-public class NPEntryOverviewXLSWriter extends NPEntryXLSWriter {
+public class EntryOverviewXLSWriter extends EntryXLSWriter {
 
     private static class DataProvider implements EntryDataProvider {
 
@@ -63,7 +63,7 @@ public class NPEntryOverviewXLSWriter extends NPEntryXLSWriter {
         }
     }
 
-    public NPEntryOverviewXLSWriter(OutputStream stream) {
+    public EntryOverviewXLSWriter(OutputStream stream) {
 
         super(stream, "Proteins", new DataProvider());
     }

@@ -22,7 +22,7 @@ import java.util.Map;
  *
  * Created by fnikitin on 11/08/15.
  */
-public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
+public abstract class EntryXLSWriter extends EntryOutputStreamWriter {
 
     private final HSSFWorkbook workbook;
     private final HSSFSheet worksheet;
@@ -113,7 +113,7 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
 
     private final EntryDataProvider entryDataProvider;
 
-    protected NPEntryXLSWriter(OutputStream stream, String sheetName, EntryDataProvider entryDataProvider) {
+    protected EntryXLSWriter(OutputStream stream, String sheetName, EntryDataProvider entryDataProvider) {
 
         super(stream);
 
@@ -127,12 +127,12 @@ public abstract class NPEntryXLSWriter extends NPEntryOutputStreamWriter {
         this.entryDataProvider = entryDataProvider;
     }
 
-    public static NPEntryXLSWriter newNPEntryXLSWriter(OutputStream os, String viewName) {
+    public static EntryXLSWriter newNPEntryXLSWriter(OutputStream os, String viewName) {
 
         if (viewName.equals("isoforms"))
-            return new NPEntryIsoformXLSWriter(os);
+            return new EntryIsoformXLSWriter(os);
         else
-            return new NPEntryOverviewXLSWriter(os);
+            return new EntryOverviewXLSWriter(os);
     }
 
     private static HSSFCellStyle createHLinkStyle(HSSFWorkbook workbook) {

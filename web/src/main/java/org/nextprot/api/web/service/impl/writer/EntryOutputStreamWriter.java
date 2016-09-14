@@ -11,13 +11,13 @@ import java.io.OutputStream;
  *
  * @author fnikitin
  */
-public abstract class NPEntryOutputStreamWriter extends NPEntryStreamWriter<OutputStream> {
+public abstract class EntryOutputStreamWriter extends EntryStreamWriter<OutputStream> {
 
     protected final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
 
     protected EntryBuilderService entryBuilderService;
 
-    public NPEntryOutputStreamWriter(OutputStream os) {
+    public EntryOutputStreamWriter(OutputStream os) {
 
         super(os);
 

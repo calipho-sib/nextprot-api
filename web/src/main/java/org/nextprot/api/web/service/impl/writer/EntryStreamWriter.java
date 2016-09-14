@@ -1,28 +1,31 @@
 package org.nextprot.api.web.service.impl.writer;
 
 import com.google.common.base.Preconditions;
+import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.service.export.format.FileFormat;
 
-import java.io.Closeable;
-import java.io.Flushable;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
 import java.util.Map;
 
 /**
  * A base class for writing entry list into a flushable and closeable stream
  *
+ * @param <S> decorated stream
+ *
  * Created by fnikitin on 11/08/15.
  */
-public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
+public abstract class EntryStreamWriter<S extends Flushable & Closeable> implements AutoCloseable {
+
+    static final String UTF_8 = "UTF-8";
 
     private final S stream;
 
     /**
      * Build writer that flush in the given stream
-     * @param stream an output stream
-     *
+     * @param stream an output stream (this stream will be closed by this writer)
      */
-    NPEntryStreamWriter(S stream) {
+    EntryStreamWriter(S stream) {
 
         Preconditions.checkNotNull(stream);
 
@@ -41,7 +44,6 @@ public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
      * Writes all entries and closes the writer (The stream should be closed outside this class).
      *
      * @param entries the entries to be flush
-     * @throws IOException
      */
     public void write(Collection<String> entries) throws IOException {
 
@@ -54,7 +56,6 @@ public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
      *
      * @param entries the entries to be flush
      * @param headerParams an optionally parameters map for header
-     * @throws IOException
      */
     public void write(Collection<String> entries, Map<String, Object> headerParams) throws IOException {
 
@@ -90,6 +91,43 @@ public abstract class NPEntryStreamWriter<S extends Flushable & Closeable> {
         stream.flush();
     }
 
-    /** Closes the writer (and not the stream) */
-    public void close() throws IOException { }
+    /** Closing the decorated stream */
+    @Override
+    public void close() throws IOException {
+        stream.close();
+    }
+
+    /**
+     * Create new instance of streaming NPEntryWriter
+     *
+     * @param format the output file format
+     * @param view the view for velocity
+     * @param os the output stream
+     * @return a NPEntryWriter instance
+     * @throws UnsupportedEncodingException
+     */
+    public static EntryStreamWriter newAutoCloseableWriter(FileFormat format, String view, OutputStream os) throws IOException {
+
+        Preconditions.checkNotNull(format);
+
+        switch (format) {
+
+            case XML:
+                return new EntryXMLStreamWriter(os, view);
+            case TXT:
+                return new EntryTXTStreamWriter(os);
+            case XLS:
+                return EntryXLSWriter.newNPEntryXLSWriter(os, view);
+            case JSON:
+                return new EntryJSONStreamWriter(os, view);
+            case FASTA:
+                return new EntryFastaStreamWriter(os);
+            case PEFF:
+                return new EntryPeffStreamWriter(os);
+            case TURTLE:
+                return new EntryTTLStreamWriter(os, view);
+            default:
+                throw new NextProtException("No NPEntryStreamWriter implementation for " + format);
+        }
+    }
 }

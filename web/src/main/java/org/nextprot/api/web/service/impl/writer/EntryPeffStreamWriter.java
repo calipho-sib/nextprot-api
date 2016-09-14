@@ -3,6 +3,8 @@ package org.nextprot.api.web.service.impl.writer;
 import org.nextprot.api.core.domain.Entry;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 /**
@@ -10,9 +12,14 @@ import java.io.Writer;
  *
  * Created by fnikitin on 28/04/15.
  */
-public class NPEntryPeffStreamWriter extends NPEntryVelocityBasedStreamWriter {
+public class EntryPeffStreamWriter extends EntryVelocityBasedStreamWriter {
 
-    public NPEntryPeffStreamWriter(Writer writer) {
+    public EntryPeffStreamWriter(OutputStream os) throws IOException {
+
+        this(new OutputStreamWriter(os, UTF_8));
+    }
+
+    public EntryPeffStreamWriter(Writer writer) {
 
         super(writer, "peff/entry.peff.vm", "entry");
     }
