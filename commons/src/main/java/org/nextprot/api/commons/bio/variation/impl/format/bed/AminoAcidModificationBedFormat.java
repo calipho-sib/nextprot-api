@@ -4,7 +4,7 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.*;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class AminoAcidModificationBedFormat extends SequenceVariationFormat {
@@ -15,7 +15,7 @@ public class AminoAcidModificationBedFormat extends SequenceVariationFormat {
     public AminoAcidModificationBedFormat() {
 
         changingAAsFormat = new BEDFormat();
-        changeFormats = new HashMap<>();
+        changeFormats = new EnumMap<>(SequenceChange.Type.class);
         changeFormats.put(SequenceChange.Type.PTM, new SingleModificationBEDFormat());
     }
 
@@ -37,6 +37,7 @@ public class AminoAcidModificationBedFormat extends SequenceVariationFormat {
         return changeFormats.keySet();
     }
 
+    @Override
     public String format(SequenceVariation variation, AminoAcidCode.AACodeType type) {
 
         StringBuilder sb = new StringBuilder();
