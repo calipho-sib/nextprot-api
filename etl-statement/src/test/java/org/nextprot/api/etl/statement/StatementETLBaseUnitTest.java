@@ -1,6 +1,6 @@
 package org.nextprot.api.etl.statement;
 
-import static org.nextprot.api.core.domain.EntryUtilsTest.mockIsoform;
+import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.service.StatementExtractorService;
@@ -18,8 +19,6 @@ import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess.IsoformFeatureResult;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
-
-
 
 public abstract class StatementETLBaseUnitTest {
 
@@ -40,9 +39,8 @@ public abstract class StatementETLBaseUnitTest {
 		MockitoAnnotations.initMocks(this);
 
 		mockIsoMapperService();
-		
-		List<Isoform> isoforms = Arrays.asList(mockIsoform("NX_P43246-1", "Iso 1", true),
-					  mockIsoform("NX_P43246-2", "Iso 2", true));
+
+		List<Isoform> isoforms = Arrays.asList(mockIsoform("NX_P43246-1", "Iso 1", true), mockIsoform("NX_P43246-2", "Iso 2", true));
 
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_P43246")).thenReturn(isoforms);
 
@@ -103,13 +101,11 @@ public abstract class StatementETLBaseUnitTest {
 		}
 
 		///////////////////////////////////// MSH2-p.Gly322Asp
-		mockFeature("MSH2-p.Gly322Asp", "NX_P43246",
-				new IsoformFeatureResult("NX_P43246-1", "Iso 1", 322, 322, 13349, 13351, true, "MSH2-iso1-p.Gly322Asp"),
+		mockFeature("MSH2-p.Gly322Asp", "NX_P43246", new IsoformFeatureResult("NX_P43246-1", "Iso 1", 322, 322, 13349, 13351, true, "MSH2-iso1-p.Gly322Asp"),
 				new IsoformFeatureResult("NX_P43246-2", "Iso 2", 256, 256, 13349, 13351, false, "MSH2-iso2-p.Gly256Asp"));
 
 		///////////////////////////////////// MSH2-p.Asp487Glu
-		mockFeature("MSH2-p.Asp487Glu", "NX_P43246",
-				new IsoformFeatureResult("NX_P43246-1", "Iso 1", 487, 487, 60135, 60137, true, "MSH2-iso1-p.Asp487Glu"),
+		mockFeature("MSH2-p.Asp487Glu", "NX_P43246", new IsoformFeatureResult("NX_P43246-1", "Iso 1", 487, 487, 60135, 60137, true, "MSH2-iso1-p.Asp487Glu"),
 				new IsoformFeatureResult("NX_P43246-2", "Iso 2", 256, 256, 60135, 60137, false, "MSH2-iso2-p.Asp421Glu"));
 
 	}
@@ -124,5 +120,19 @@ public abstract class StatementETLBaseUnitTest {
 
 		Mockito.when(result.getData()).thenReturn(data2);
 		Mockito.when(isoformMappingServiceMocked.propagateFeature(featureName, "variant", entryAccession)).thenReturn(result);
+	}
+
+	private Isoform mockIsoform(String accession, String name, boolean canonical) {
+
+		Isoform isoform = Mockito.mock(Isoform.class);
+		when(isoform.getUniqueName()).thenReturn(accession);
+		when(isoform.isCanonicalIsoform()).thenReturn(canonical);
+
+		EntityName entityName = Mockito.mock(EntityName.class);
+		when(entityName.getName()).thenReturn(name);
+
+		when(isoform.getMainEntityName()).thenReturn(entityName);
+
+		return isoform;
 	}
 }
