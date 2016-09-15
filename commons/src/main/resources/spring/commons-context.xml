@@ -69,10 +69,11 @@
 	        <property name="password" value=""/>
 	    </bean>
 	    
+	    <!-- 
    	    <jdbc:initialize-database data-source="statementsDataSource">
 	        <jdbc:script location="classpath:nxflat-schema.ddl"/>
 	    </jdbc:initialize-database>
-	    
+	     -->
 
 		<beans profile="unit-schema-nextprot">
 

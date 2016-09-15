@@ -89,7 +89,7 @@ public class StatementDaoImpl implements StatementDao {
 
 	@Override
 	public List<Statement> findNormalStatements(AnnotationType type, String nextprotAccession) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("accession", nextprotAccession);
 
 		String sql = getSQL(type, "statements-by-entry-accession");
