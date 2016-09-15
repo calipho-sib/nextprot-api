@@ -62,20 +62,13 @@
 		</bean>
 
 
-		<bean id="statementsDataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-	        <property name="driverClass" value="org.h2.Driver"/>
-	        <property name="url" value="jdbc:h2:mem:test;INIT=create schema if not exists nxflat;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
-	        <property name="username" value="sa"/>
-	        <property name="password" value=""/>
-	    </bean>
-	    
-	    <!-- 
-   	    <jdbc:initialize-database data-source="statementsDataSource">
+		<jdbc:embedded-database id="statementsDataSource" type="H2">
 	        <jdbc:script location="classpath:nxflat-schema.ddl"/>
-	    </jdbc:initialize-database>
-	     -->
+	    </jdbc:embedded-database>
+	    
 
 		<beans profile="unit-schema-nextprot">
+
 
 			<bean id="dbUnitDatabaseConnection"
 				class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
