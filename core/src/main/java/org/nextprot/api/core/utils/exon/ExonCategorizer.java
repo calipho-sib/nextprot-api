@@ -43,9 +43,12 @@ public class ExonCategorizer {
         else if (startPositionExon > endPositionIsoform) {
             // Some kind of hack has probably been done in the db here !!
             // We consider exon to be of kind STOP_ONLY if it is closed to the last coding exon !!
-            if (startPositionExon - endPositionIsoform < 3) codingStatus = ExonCategory.STOP_ONLY;
-            else codingStatus = ExonCategory.NOT_CODING_POST;
-
+            if (startPositionExon - endPositionIsoform < 3) {
+                codingStatus = ExonCategory.STOP_ONLY;
+            }
+            else {
+                codingStatus = ExonCategory.NOT_CODING_POST;
+            }
             // ************ SPI ******************* EPI *******************
             // ********************************************SPE*<EPE>*******
         }
@@ -58,14 +61,14 @@ public class ExonCategorizer {
         }
 
         // end codon
-        else if (endPositionExon >= endPositionIsoform && startPositionExon > startPositionIsoform && startPositionExon <= endPositionIsoform) {
+        else if (endPositionExon >= endPositionIsoform && startPositionExon > startPositionIsoform) {
             codingStatus = ExonCategory.STOP;
             // ************ SPI ******************* EPI *******************
             // *********************<SPE>******************EPE*************
         }
 
         // Case where only one exon can translate the whole isoform
-        else if (startPositionExon <= startPositionIsoform && endPositionExon >= endPositionIsoform) {
+        else if (startPositionExon <= startPositionIsoform) {
             codingStatus = ExonCategory.MONO;
             // ************ SPI ******************* EPI *******************
             // *************SPE**********************************EPE*******
