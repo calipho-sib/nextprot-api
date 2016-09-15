@@ -35,7 +35,7 @@
 			<property name="dataSource" ref="dataSource" />
 			<!-- In unit test we use the same datasource for everything -->
 			<property name="userDataSource" ref="dataSource" />
-			<property name="statementsDataSource" ref="statementsDataSource" />
+			<!-- <property name="statementsDataSource" ref="statementsDataSource" /> -->
 		</bean>
 
 		<bean id="txManager"
@@ -61,10 +61,11 @@
 			<property name="password" value="${db.password}" />
 		</bean>
 
-
+		<!-- 
 		<jdbc:embedded-database id="statementsDataSource" type="H2">
 	        <jdbc:script location="classpath:nxflat-schema.ddl"/>
 	    </jdbc:embedded-database>
+	     -->
 	    
 
 		<beans profile="unit-schema-nextprot">
