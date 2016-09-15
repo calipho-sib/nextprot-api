@@ -17,8 +17,8 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.etl.service.StatementETLService;
+import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.api.etl.service.StatementLoaderService;
-import org.nextprot.api.etl.service.StatementRemoteService;
 import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
@@ -41,7 +41,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Autowired private IsoformService isoformService;
 	
 	@Autowired
-	private StatementRemoteService statementRemoteService;
+	private StatementExtractorService statementRemoteService;
 
 	@Autowired
 	private IsoformMappingService isoformMappingService;
@@ -50,10 +50,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 	private StatementLoaderService statementLoadService = null;
 
 	Set<Statement> extractStatements(NextProtSource source) {
-		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSource(source);
+		return statementRemoteService.getStatementsForSource(source);
 		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
-		List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
-		return new HashSet<>(sourceStatements);
+		//return statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
 	}
 
 
@@ -339,6 +338,16 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	public void setStatementLoadService(StatementLoaderService statementLoadService) {
 		this.statementLoadService = statementLoadService;
+	}
+
+
+
+	public IsoformService getIsoformService() {
+		return isoformService;
+	}
+
+	public void setIsoformService(IsoformService isoformService) {
+		this.isoformService = isoformService;
 	}
 
 

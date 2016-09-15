@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.springframework.core.io.Resource;
@@ -30,36 +28,32 @@ public abstract class FilePatternDictionary {
 
 	protected abstract String getExtension();
 
-	protected Map<String, String> getResourcesMap() {
-		loadResources();//TODO remove this in production
+	protected synchronized Map<String, String> getResourcesMap() {
+		if(resourcesMap == null){
+			loadResources();
+		}
 		return resourcesMap;
 	}
 
 	protected String getResource(String resource) {
-		if (resourcesMap.containsKey(resource)) {
-			return resourcesMap.get(resource);
+		if (getResourcesMap().containsKey(resource)) {
+			return getResourcesMap().get(resource);
 		} else {
 			log.error("NO file found" + resource);
 			throw new NextProtException("Resource " + resource
-					+ " not found on a total of " + resourcesMap.size()
+					+ " not found on a total of " + getResourcesMap().size()
 					+ " resources");
 		}
 	}
 
-	@PostConstruct
-	public void afterPropertiesSet() throws Exception {
-		loadResources();
-	}
-
 	protected void loadResources() {
 
-		resourcesMap = new TreeMap<String, String>();
+		resourcesMap = new TreeMap<>();
 
 		Resource[] resources;
 		try {
-			// ClassLoader cl = this.getClass().getClassLoader();
-			resources = new PathMatchingResourcePatternResolver()
-					.getResources(getLocation());
+			
+			resources = new PathMatchingResourcePatternResolver().getResources(getLocation());
 
 			for (Resource r : resources) {
 				resourcesMap.put(r.getFilename().replace(getExtension(), ""),
@@ -67,8 +61,7 @@ public abstract class FilePatternDictionary {
 			}
 
 		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Error on loading SQL Dict");
+			throw new NextProtException("Error on loading SQL Dict", e);
 		}
 	}
 
