@@ -2,6 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.dao.GeneIdentifierDao;
 import org.nextprot.api.core.service.GeneIdentifierService;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Lazy
@@ -20,11 +24,14 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 	private OverviewService overviewService;
 
 	@Autowired
+	private GeneIdentifierDao geneIdentifierDao;
+
+	@Autowired
 	private MasterIdentifierService masterIdentifierService;
 
 	@Override
-	//@Cacheable("gene-names")
-	public Set<String> findGeneNames() {
+	@Cacheable("all-gene-names")
+	public Set<String> findGeneNamesSlow() {
 
 		Set<String> entryNames = masterIdentifierService.findUniqueNames();
 
@@ -34,6 +41,12 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 				.filter(genes -> !genes.isEmpty())
 				.flatMap(Collection::stream)
 				.collect(Collectors.toSet());
+	}
+
+	@Override
+	public Set<String> findGeneNames() {
+
+		return geneIdentifierDao.findGeneNames();
 	}
 
 	@Override
