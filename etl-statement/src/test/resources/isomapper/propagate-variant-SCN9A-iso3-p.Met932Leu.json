@@ -1,0 +1,55 @@
+{
+  "query" : {
+    "accession" : "",
+    "feature" : "SCN9A-iso3-p.Met932Leu",
+    "featureType" : "variant",
+    "featurePropagable" : true
+  },
+  "data" : {
+    "NX_Q15858-1" : {
+      "isoformAccession" : "NX_Q15858-1",
+      "isoformName" : "Iso 1",
+      "beginIsoformPosition" : 943,
+      "endIsoformPosition" : 943,
+      "beginMasterPosition" : 2917,
+      "endMasterPosition" : 2919,
+      "isoSpecificFeature" : "SCN9A-iso1-p.Met943Leu",
+      "mapped" : true,
+      "canonical" : true
+    },
+    "NX_Q15858-2" : {
+      "isoformAccession" : "NX_Q15858-2",
+      "isoformName" : "Iso 2",
+      "beginIsoformPosition" : 943,
+      "endIsoformPosition" : 943,
+      "beginMasterPosition" : 2917,
+      "endMasterPosition" : 2919,
+      "isoSpecificFeature" : "SCN9A-iso2-p.Met943Leu",
+      "mapped" : true,
+      "canonical" : false
+    },
+    "NX_Q15858-3" : {
+      "isoformAccession" : "NX_Q15858-3",
+      "isoformName" : "Iso 3",
+      "beginIsoformPosition" : 932,
+      "endIsoformPosition" : 932,
+      "beginMasterPosition" : 2917,
+      "endMasterPosition" : 2919,
+      "isoSpecificFeature" : "SCN9A-iso3-p.Met932Leu",
+      "mapped" : true,
+      "canonical" : false
+    },
+    "NX_Q15858-4" : {
+      "isoformAccession" : "NX_Q15858-4",
+      "isoformName" : "Iso 4",
+      "beginIsoformPosition" : 932,
+      "endIsoformPosition" : 932,
+      "beginMasterPosition" : 2917,
+      "endMasterPosition" : 2919,
+      "isoSpecificFeature" : "SCN9A-iso4-p.Met932Leu",
+      "mapped" : true,
+      "canonical" : false
+    }
+  },
+  "success" : true
+}

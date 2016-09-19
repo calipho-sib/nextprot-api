@@ -1,0 +1,33 @@
+{
+  "query" : {
+    "accession" : "",
+    "feature" : "MSH2-p.Asp487Glu",
+    "featureType" : "variant",
+    "featurePropagable" : true
+  },
+  "data" : {
+    "NX_P43246-1" : {
+      "isoformAccession" : "NX_P43246-1",
+      "isoformName" : "Iso 1",
+      "beginIsoformPosition" : 487,
+      "endIsoformPosition" : 487,
+      "beginMasterPosition" : 60135,
+      "endMasterPosition" : 60137,
+      "isoSpecificFeature" : "MSH2-iso1-p.Asp487Glu",
+      "mapped" : true,
+      "canonical" : true
+    },
+    "NX_P43246-2" : {
+      "isoformAccession" : "NX_P43246-2",
+      "isoformName" : "Iso 2",
+      "beginIsoformPosition" : 421,
+      "endIsoformPosition" : 421,
+      "beginMasterPosition" : 60135,
+      "endMasterPosition" : 60137,
+      "isoSpecificFeature" : "MSH2-iso2-p.Asp421Glu",
+      "mapped" : true,
+      "canonical" : false
+    }
+  },
+  "success" : true
+}

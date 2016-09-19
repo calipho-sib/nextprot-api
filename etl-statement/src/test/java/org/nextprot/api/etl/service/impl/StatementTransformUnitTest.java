@@ -22,7 +22,7 @@ public class StatementTransformUnitTest extends StatementETLBaseUnitTest {
 	@Test
 	public void rawStatementsShouldBeWellConvertedToMappedStatements() {
 
-		StatementsLocalExtractor sle = new StatementsLocalExtractor();
+		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
 		Set<Statement> rawStatements = sle.getStatementsForSourceForGeneName(null, "msh2-multiple-mutant");
 
 		Set<Statement> mappedStatements = statementETLServiceMocked.transformStatements(rawStatements);
@@ -51,4 +51,6 @@ public class StatementTransformUnitTest extends StatementETLBaseUnitTest {
 		assertEquals(refAnnots, varAnnots);
 		
 	}
+
+
 }

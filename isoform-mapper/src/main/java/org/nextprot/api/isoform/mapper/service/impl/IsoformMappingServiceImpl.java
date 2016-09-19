@@ -3,10 +3,10 @@ package org.nextprot.api.isoform.mapper.service.impl;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.SequenceFeatureBase;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFoundForGeneException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.MultipleEntryAccessionForGeneException;
@@ -45,7 +45,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     private MasterIdentifierService masterIdentifierService;
 
     @Override
-    public FeatureQueryResult validateFeature(String featureName, String featureType, String nextprotEntryAccession) {
+    public BaseFeatureQueryResult validateFeature(String featureName, String featureType, String nextprotEntryAccession) {
 
         FeatureQuery query = new FeatureQuery(nextprotEntryAccession, featureName, featureType);
 
@@ -59,18 +59,18 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
             return validator.validate(sequenceFeature);
         } catch (FeatureQueryException e) {
 
-            return new FeatureQueryFailure(e);
+            return new FeatureQueryFailureImpl(e);
         }
     }
 
     @Override
-    public FeatureQueryResult propagateFeature(String featureName, String featureType, String nextprotEntryAccession) {
+    public BaseFeatureQueryResult propagateFeature(String featureName, String featureType, String nextprotEntryAccession) {
 
-        FeatureQueryResult results = validateFeature(featureName, featureType, nextprotEntryAccession);
+        BaseFeatureQueryResult results = validateFeature(featureName, featureType, nextprotEntryAccession);
 
         if (results.isSuccess()) {
             try {
-                propagate((FeatureQuerySuccess) results);
+                propagate((FeatureQuerySuccessImpl) results);
             } catch (ParseException e) {
                 throw new NextProtException(e.getMessage());
             }
@@ -80,7 +80,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     }
 
     // TODO: refactor this method, it is too complex (probably a propagator object)
-    private void propagate(FeatureQuerySuccess successResults) throws ParseException {
+    private void propagate(FeatureQuerySuccessImpl successResults) throws ParseException {
 
         FeatureQuery query = successResults.getQuery();
 
