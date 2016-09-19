@@ -29,6 +29,13 @@ public class GeneController {
 		return geneIdentifierService.findGeneNames();
 	}
 
+	@ApiMethod(path = "/gene-identifiers-slow", verb = ApiVerb.GET, description = "Retrieve all gene names found in neXtProt", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/gene-identifiers-slow", method = { RequestMethod.GET })
+	@ResponseBody
+	public Set<String> geneIdentifiersSlow() {
+		return geneIdentifierService.findGeneNamesSlow();
+	}
+
 	@ApiMethod(path = "/gene-identifiers/entry/{entryName}", verb = ApiVerb.GET, description = "Retrieve the identifier", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/gene-identifiers/entry/{entryName}", method = { RequestMethod.GET })
 	@ResponseBody
