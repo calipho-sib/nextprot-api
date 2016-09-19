@@ -22,9 +22,6 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 	@Autowired
 	private OverviewService overviewService;
 
-	/*@Autowired
-	private GeneIdentifierDao geneIdentifierDao;*/
-
 	@Autowired
 	private MasterIdentifierService masterIdentifierService;
 
@@ -41,13 +38,8 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 				.collect(Collectors.toSet());
 	}
 
-	/*@Override
-	public Set<String> findGeneNames() {
-
-		return geneIdentifierDao.findGeneNames();
-	}*/
-
 	@Override
+	@Cacheable("gene-names-by-accession")
 	public Set<String> findGeneNamesByEntryAccession(String entryAccession) {
 
 		List<EntityName> geneNames = overviewService.findOverviewByEntry(entryAccession).getGeneNames();
