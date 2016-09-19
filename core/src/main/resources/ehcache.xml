@@ -41,9 +41,6 @@
 	<cache name="all-gene-names" maxEntriesLocalHeap="1"
 		   eternal="true" statistics="true"/>
 
-	<cache name="gene-names-by-accession" maxEntriesLocalHeap="22000"
-		   eternal="true" statistics="true"/>
-
 	<cache name="entry-accession-by-gene-name" maxEntriesLocalHeap="22000"
 		eternal="true" statistics="true"/>
 

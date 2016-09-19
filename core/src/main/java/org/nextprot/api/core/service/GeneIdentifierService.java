@@ -9,8 +9,6 @@ public interface GeneIdentifierService {
 	 */
 	Set<String> findGeneNames();
 
-	Set<String> findGeneNamesSlow();
-
 	/**
 	 * @return gene name list from given entry accession
 	 */
