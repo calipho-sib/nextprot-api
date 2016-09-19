@@ -9,6 +9,6 @@ public interface StatementETLService {
 	 * @param source
 	 * @return
 	 */
-    String etlStatements(NextProtSource source);
+    String etlStatements(NextProtSource source, boolean load);
     
 }

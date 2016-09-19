@@ -47,7 +47,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Autowired	private StatementLoaderService statementLoadService = null;
 
 	Set<Statement> extractStatements(NextProtSource source) {
-		return statementRemoteService.getStatementsForSource(source);
+		Set<Statement> statements =  statementRemoteService.getStatementsForSource(source);
+		LOGGER.info("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
+		return statements;
 	}
 
 
@@ -67,7 +69,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 				String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
 
 				boolean isIsoSpecific = false;
-				String isoformName = checkThatSubjectIsValid(subjectStatements);
+				String isoformName = validateSubject(subjectStatements);
 				String isoformSpecificAccession = null;
 
 				if (isSubjectIsoSpecific(subjectStatements)) {
@@ -90,17 +92,27 @@ public class StatementETLServiceImpl implements StatementETLService {
 	}
 	
 
-	String loadStatements(Set<Statement> rawStatements, Set<Statement> mappedStatements) {
-
+	String loadStatements(Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load) {
+		
 		StringBuilder sb = new StringBuilder();
 
 		try {
 			
-			addInfo(sb, "Loading raw statements: " + rawStatements.size());
-			statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), NextProtSource.BioEditor);
+			if(load){
+				
+				addInfo(sb, "Loading raw statements: " + rawStatements.size());
+				long start = System.currentTimeMillis();
+				statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), NextProtSource.BioEditor);
+				addInfo(sb, "Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
+		
+				addInfo(sb, "Loading entry statements: " + mappedStatements.size());
+				start = System.currentTimeMillis();
+				statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, NextProtSource.BioEditor);
+				addInfo(sb, "Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
 
-			addInfo(sb, "Loading entry statements: " + mappedStatements.size());
-			statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, NextProtSource.BioEditor);
+			}else {
+				addInfo(sb, "skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements");
+			}
 
 
 		}catch (SQLException e){
@@ -118,11 +130,11 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	
 	@Override
-	public String etlStatements(NextProtSource source) {
+	public String etlStatements(NextProtSource source, boolean load) {
 
 		Set<Statement> rawStatements = extractStatements(source);
 		Set<Statement> mappedStatements = transformStatements(rawStatements);
-		return loadStatements(rawStatements, mappedStatements);
+		return loadStatements(rawStatements, mappedStatements, load);
 		
 	}
 	
@@ -143,9 +155,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 	}
 	
 	private void addInfo (StringBuilder sb, String info){
-		System.err.println(info);
+		LOGGER.info(info);
 		sb.append(info + "\n");
-		
 	}
 
 	private Map<String, List<Statement>> getSubjectsTransformed(AnnotationType type, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific) {
@@ -263,7 +274,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 	 * @param subjects
 	 * @return
 	 */
-	private static String checkThatSubjectIsValid(Set<Statement> subjects) {
+	private static String validateSubject(Set<Statement> subjects) {
 
 		Set<String> isoforms = subjects.stream().map(s -> {
 			return s.getValue(StatementField.NEXTPROT_ACCESSION) + "-" + SequenceVariantUtils.getIsoformName(s.getValue(StatementField.ANNOTATION_NAME));
