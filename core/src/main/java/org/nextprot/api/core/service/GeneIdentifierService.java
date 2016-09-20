@@ -10,7 +10,7 @@ public interface GeneIdentifierService {
 	Set<String> findGeneNames();
 
 	/**
-	 * @return gene name list from given entry accession
+	 * @return gene names coding the given protein
 	 */
 	Set<String> findGeneNamesByEntryAccession(String entryAccession);
 }

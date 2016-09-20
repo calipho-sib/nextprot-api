@@ -16,24 +16,24 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Set;
 
 @Controller
-@Api(name = "Gene Identifiers", description = "Provides gene identifiers")
+@Api(name = "Gene Identifiers", description = "Provides gene names")
 public class GeneController {
 
 	@Autowired
 	private GeneIdentifierService geneIdentifierService;
 
-	@ApiMethod(path = "/gene-identifiers", verb = ApiVerb.GET, description = "Retrieve all gene names found in neXtProt", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiMethod(path = "/gene-identifiers", verb = ApiVerb.GET, description = "Retrieves all gene names found in neXtProt", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/gene-identifiers", method = { RequestMethod.GET })
 	@ResponseBody
 	public Set<String> geneIdentifiers() {
 		return geneIdentifierService.findGeneNames();
 	}
 
-	@ApiMethod(path = "/gene-identifiers/entry/{entryName}", verb = ApiVerb.GET, description = "Retrieve the identifier", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiMethod(path = "/gene-identifiers/entry/{entryName}", verb = ApiVerb.GET, description = "Retrieves the gene names that code the given protein", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/gene-identifiers/entry/{entryName}", method = { RequestMethod.GET })
 	@ResponseBody
 	public Set<String> geneIdentifiersByEntryAccession(
-			@ApiPathParam(name = "entryName", description = "The entry name",  allowedvalues = { "NX_P01308"}) @PathVariable("entryName")  String entryName) {
+			@ApiPathParam(name = "entryName", description = "the neXtProt entry protein name",  allowedvalues = { "NX_P01308"}) @PathVariable("entryName")  String entryName) {
 		return geneIdentifierService.findGeneNamesByEntryAccession(entryName);
 	}
 
