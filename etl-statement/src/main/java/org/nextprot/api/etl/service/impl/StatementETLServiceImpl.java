@@ -40,28 +40,24 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	@Autowired private IsoformService isoformService;
 	
-	@Autowired
-	private StatementExtractorService statementRemoteService;
+	@Autowired	private StatementExtractorService statementRemoteService;
 
-	@Autowired
-	private IsoformMappingService isoformMappingService;
+	@Autowired	private IsoformMappingService isoformMappingService;
 
-	@Autowired
-	private StatementLoaderService statementLoadService = null;
+	@Autowired	private StatementLoaderService statementLoadService = null;
 
 	Set<Statement> extractStatements(NextProtSource source) {
-		return statementRemoteService.getStatementsForSource(source);
-		//List<Statement> sourceStatements = statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
-		//return statementRemoteService.getStatementsForSourceForGeneName(NextProtSource.BioEditor, "scn9a");
+		Set<Statement> statements =  statementRemoteService.getStatementsForSource(source);
+		LOGGER.info("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
+		return statements;
 	}
 
 
-	
 	Set<Statement> transformStatements(Set<Statement> rawStatements) {
 
 		Map<String, Statement> sourceStatementsById = rawStatements.stream().collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
 
-		Set<Statement> statementsMappedToEntryToLoad = new HashSet<Statement>();
+		Set<Statement> statementsMappedToEntryToLoad = new HashSet<>();
 
 		for (Statement originalStatement : rawStatements) {
 
@@ -73,19 +69,18 @@ public class StatementETLServiceImpl implements StatementETLService {
 				String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
 
 				boolean isIsoSpecific = false;
-				String isoformName = null;
+				String isoformName = validateSubject(subjectStatements);
 				String isoformSpecificAccession = null;
 
 				if (isSubjectIsoSpecific(subjectStatements)) {
-					isoformName = checkThatSubjectsAreOnSameIsoform(subjectStatements);
 					if(isoformName != null){
 						isIsoSpecific = true;
 						String featureName = subjectStatements.iterator().next().getValue(StatementField.ANNOTATION_NAME);
 						isoformSpecificAccession = getIsoAccession(featureName, entryAccession);
 					}else throw new NextProtException("Something wrong occured when checking for iso specificity");
+					
 				}
 				
-					//statementsMappedToIsoformToLoad.addAll(transformStatements(AnnotationType.ISOFORM, originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific));
 					statementsMappedToEntryToLoad.addAll(transformStatements(AnnotationType.ENTRY, originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession));
 					
 				}
@@ -95,18 +90,29 @@ public class StatementETLServiceImpl implements StatementETLService {
 		return statementsMappedToEntryToLoad;
 	
 	}
+	
 
-	String loadStatements(Set<Statement> rawStatements, Set<Statement> mappedStatements) {
-
+	String loadStatements(Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load) {
+		
 		StringBuilder sb = new StringBuilder();
 
 		try {
 			
-			addInfo(sb, "Loading raw statements: " + rawStatements.size());
-			statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), NextProtSource.BioEditor);
+			if(load){
+				
+				addInfo(sb, "Loading raw statements: " + rawStatements.size());
+				long start = System.currentTimeMillis();
+				statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), NextProtSource.BioEditor);
+				addInfo(sb, "Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
+		
+				addInfo(sb, "Loading entry statements: " + mappedStatements.size());
+				start = System.currentTimeMillis();
+				statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, NextProtSource.BioEditor);
+				addInfo(sb, "Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
 
-			addInfo(sb, "Loading entry statements: " + mappedStatements.size());
-			statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, NextProtSource.BioEditor);
+			}else {
+				addInfo(sb, "skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements");
+			}
 
 
 		}catch (SQLException e){
@@ -124,13 +130,11 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	
 	@Override
-	public String etlStatements(NextProtSource source) {
+	public String etlStatements(NextProtSource source, boolean load) {
 
 		Set<Statement> rawStatements = extractStatements(source);
 		Set<Statement> mappedStatements = transformStatements(rawStatements);
-		String report = loadStatements(rawStatements, mappedStatements);
-
-		return report;
+		return loadStatements(rawStatements, mappedStatements, load);
 		
 	}
 	
@@ -140,8 +144,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 		try {	
 			sv = new SequenceVariant(featureName); 
 		} catch (ParseException e) {
-			e.printStackTrace();
-			throw new NextProtException(e.getMessage());
+			throw new NextProtException(e);
 		}
 
 		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
@@ -152,12 +155,11 @@ public class StatementETLServiceImpl implements StatementETLService {
 	}
 	
 	private void addInfo (StringBuilder sb, String info){
-		System.err.println(info);
+		LOGGER.info(info);
 		sb.append(info + "\n");
-		
 	}
 
-	private Map<String, List<Statement>> getSubjectsTransformed(AnnotationType type, Statement originalStatement, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific) {
+	private Map<String, List<Statement>> getSubjectsTransformed(AnnotationType type, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific) {
 
 		//In case of entry variants have the target isoform property filled
 		Map<String, List<Statement>> variantsOnIsoform = new HashMap<>();
@@ -177,7 +179,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 		Set<Statement> statementsToLoad = new HashSet<>();
 
 		//In case of entry variants have the target isoform property filled
-		Map<String, List<Statement>> subjectsTransformedByEntryOrIsoform = getSubjectsTransformed(type, originalStatement, sourceStatementsById, subjectStatements, nextprotAcession, isIsoSpecific);
+		Map<String, List<Statement>> subjectsTransformedByEntryOrIsoform = getSubjectsTransformed(type, sourceStatementsById, subjectStatements, nextprotAcession, isIsoSpecific);
 				
 		for(Map.Entry<String, List<Statement>> entry : subjectsTransformedByEntryOrIsoform.entrySet()) {
 				
@@ -211,7 +213,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 				}
 				
 				//Load objects
-				Statement phenotypeIsoStatement =  null;
+				Statement phenotypeIsoStatement;
 				Statement objectIsoStatement = null;
 				Statement objectStatement = sourceStatementsById.get(originalStatement.getObjectStatementId());
 				
@@ -272,14 +274,14 @@ public class StatementETLServiceImpl implements StatementETLService {
 	 * @param subjects
 	 * @return
 	 */
-	private static String checkThatSubjectsAreOnSameIsoform(Set<Statement> subjects) {
+	private static String validateSubject(Set<Statement> subjects) {
 
 		Set<String> isoforms = subjects.stream().map(s -> {
 			return s.getValue(StatementField.NEXTPROT_ACCESSION) + "-" + SequenceVariantUtils.getIsoformName(s.getValue(StatementField.ANNOTATION_NAME));
 		}).collect(Collectors.toSet());
 
 		if (isoforms.size() != 1) {
-			throw new NextProtException("Mixing iso numbers for subjects is now allowed");
+			throw new NextProtException("Mixing iso numbers for subjects is not allowed");
 		}
 		String isoform = isoforms.iterator().next();
 		if (isoform == null) {

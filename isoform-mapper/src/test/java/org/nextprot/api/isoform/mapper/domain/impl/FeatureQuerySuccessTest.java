@@ -6,7 +6,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 
 import java.text.ParseException;
@@ -27,7 +27,7 @@ public class FeatureQuerySuccessTest {
                 mockIsoform("NX_Q9UI33-1", "Iso 1", true), mockIsoform("NX_Q9UI33-2", "Iso 2", false),
                 mockIsoform("NX_Q9UI33-3", "Iso 3", false), mockIsoform("NX_Q9UI33-4", "Iso 4", false));
 
-        FeatureQuerySuccess result = new FeatureQuerySuccess(entry, query, sequenceVariant);
+        FeatureQuerySuccessImpl result = new FeatureQuerySuccessImpl(entry, query, sequenceVariant);
         result.addMappedFeature(mockIsoform("NX_Q9UI33-1", "Iso 1", true), 1158, 1158);
         result.addMappedFeature(mockIsoform("NX_Q9UI33-3", "Iso 3", false), 1120, 1120);
         result.addUnmappedFeature(mockIsoform("NX_Q9UI33-4", "Iso 4", false));

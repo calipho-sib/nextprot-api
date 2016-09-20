@@ -1,16 +1,17 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
 
 /**
  * Feature query failure class contain reason of the error
  */
-public class FeatureQueryFailure extends FeatureQueryResult {
+public class FeatureQueryFailureImpl extends BaseFeatureQueryResult implements FeatureQueryFailure{
 
-    private final transient FeatureQueryException.ErrorReason error;
+	private static final long serialVersionUID = 1L;
+	private final transient FeatureQueryException.ErrorReason error;
 
-    public FeatureQueryFailure(FeatureQueryException error) {
+    public FeatureQueryFailureImpl(FeatureQueryException error) {
 
         super(error.getQuery());
         this.error = error.getError();

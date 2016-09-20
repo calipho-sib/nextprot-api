@@ -9,7 +9,7 @@ import org.nextprot.api.etl.service.StatementDictionary;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.NextProtSource;
 
-public class StatementsLocalExtractor extends StatementExtractorBase {
+public class StatementsExtractorLocalMockImpl extends StatementExtractorBase {
 
 	@Override
 	public Set<Statement> getStatementsForSourceForGeneName(NextProtSource notUsed, String geneName) {

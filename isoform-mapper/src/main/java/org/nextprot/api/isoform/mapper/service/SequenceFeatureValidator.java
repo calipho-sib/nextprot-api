@@ -3,9 +3,9 @@ package org.nextprot.api.isoform.mapper.service;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
@@ -33,7 +33,7 @@ public class SequenceFeatureValidator {
     /**
      * Coordinate validation process in the multiple steps defined in protected methods.
      */
-    public FeatureQueryResult validate(SequenceFeature sequenceFeature) throws FeatureQueryException {
+    public BaseFeatureQueryResult validate(SequenceFeature sequenceFeature) throws FeatureQueryException {
 
         checkFeatureGeneName(sequenceFeature);
         checkIsoformExistence(sequenceFeature);
@@ -41,7 +41,7 @@ public class SequenceFeatureValidator {
 
         doMoreChecks(sequenceFeature.getProteinVariation());
 
-        return new FeatureQuerySuccess(entry, query, sequenceFeature);
+        return new FeatureQuerySuccessImpl(entry, query, sequenceFeature);
     }
 
     private void checkIsoformExistence(SequenceFeature sequenceFeature) throws UnknownFeatureIsoformException {

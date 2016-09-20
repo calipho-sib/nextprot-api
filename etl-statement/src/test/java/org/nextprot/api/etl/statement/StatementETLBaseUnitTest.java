@@ -14,22 +14,17 @@ import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.etl.service.StatementExtractorService;
+import org.nextprot.api.etl.service.impl.IsoformMappingLocalMockImpl;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess.IsoformFeatureResult;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl.IsoformFeatureResult;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 
 public abstract class StatementETLBaseUnitTest {
 
-	@Mock
-	private IsoformService isoformService;
+	@Mock private IsoformService isoformService;
 
-	@Mock
-	private StatementExtractorService statementRemoteService;
-
-	@Mock
-	protected IsoformMappingService isoformMappingServiceMocked;
+	@Mock protected IsoformMappingService isoformMappingServiceMocked;
 
 	protected StatementETLServiceImpl statementETLServiceMocked = null;
 
@@ -45,7 +40,7 @@ public abstract class StatementETLBaseUnitTest {
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_P43246")).thenReturn(isoforms);
 
 		statementETLServiceMocked = new StatementETLServiceImpl();
-		statementETLServiceMocked.setIsoformMappingService(isoformMappingServiceMocked);
+		statementETLServiceMocked.setIsoformMappingService(new IsoformMappingLocalMockImpl());
 		statementETLServiceMocked.setIsoformService(isoformService);
 
 	}
@@ -53,7 +48,7 @@ public abstract class StatementETLBaseUnitTest {
 	private void mockIsoMapperService() {
 
 		{
-			FeatureQuerySuccess result1 = Mockito.mock(FeatureQuerySuccess.class);
+			FeatureQuerySuccessImpl result1 = Mockito.mock(FeatureQuerySuccessImpl.class);
 			Mockito.when(result1.isSuccess()).thenReturn(true);
 			Map<String, IsoformFeatureResult> data1 = new HashMap<String, IsoformFeatureResult>();
 
@@ -69,7 +64,7 @@ public abstract class StatementETLBaseUnitTest {
 
 		{
 
-			FeatureQuerySuccess result2 = Mockito.mock(FeatureQuerySuccess.class);
+			FeatureQuerySuccessImpl result2 = Mockito.mock(FeatureQuerySuccessImpl.class);
 			Mockito.when(result2.isSuccess()).thenReturn(true);
 			Map<String, IsoformFeatureResult> data2 = new HashMap<String, IsoformFeatureResult>();
 
@@ -87,7 +82,7 @@ public abstract class StatementETLBaseUnitTest {
 
 		{
 
-			FeatureQuerySuccess result2 = Mockito.mock(FeatureQuerySuccess.class);
+			FeatureQuerySuccessImpl result2 = Mockito.mock(FeatureQuerySuccessImpl.class);
 			Mockito.when(result2.isSuccess()).thenReturn(true);
 			Map<String, IsoformFeatureResult> data2 = new HashMap<String, IsoformFeatureResult>();
 
@@ -100,26 +95,6 @@ public abstract class StatementETLBaseUnitTest {
 
 		}
 
-		///////////////////////////////////// MSH2-p.Gly322Asp
-		mockFeature("MSH2-p.Gly322Asp", "NX_P43246", new IsoformFeatureResult("NX_P43246-1", "Iso 1", 322, 322, 13349, 13351, true, "MSH2-iso1-p.Gly322Asp"),
-				new IsoformFeatureResult("NX_P43246-2", "Iso 2", 256, 256, 13349, 13351, false, "MSH2-iso2-p.Gly256Asp"));
-
-		///////////////////////////////////// MSH2-p.Asp487Glu
-		mockFeature("MSH2-p.Asp487Glu", "NX_P43246", new IsoformFeatureResult("NX_P43246-1", "Iso 1", 487, 487, 60135, 60137, true, "MSH2-iso1-p.Asp487Glu"),
-				new IsoformFeatureResult("NX_P43246-2", "Iso 2", 256, 256, 60135, 60137, false, "MSH2-iso2-p.Asp421Glu"));
-
-	}
-
-	private void mockFeature(String featureName, String entryAccession, IsoformFeatureResult... results) {
-
-		FeatureQuerySuccess result = Mockito.mock(FeatureQuerySuccess.class);
-		Mockito.when(result.isSuccess()).thenReturn(true);
-		Map<String, IsoformFeatureResult> data2 = new HashMap<String, IsoformFeatureResult>();
-
-		Arrays.asList(results).forEach(r -> data2.put(r.getIsoformAccession(), r));
-
-		Mockito.when(result.getData()).thenReturn(data2);
-		Mockito.when(isoformMappingServiceMocked.propagateFeature(featureName, "variant", entryAccession)).thenReturn(result);
 	}
 
 	private Isoform mockIsoform(String accession, String name, boolean canonical) {
