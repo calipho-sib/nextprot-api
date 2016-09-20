@@ -24,6 +24,7 @@ public class EntryAccessionController {
 
 	@ApiMethod(path = "/entry-accessions", verb = ApiVerb.GET, description = "Retrieve all neXtProt entry accession numbers", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/entry-accessions", method = { RequestMethod.GET })
+	@ResponseBody
 	public List<String> masterIdentifiers() {
 		return new ArrayList<>(masterIdentifierService.findUniqueNames());
 	}
@@ -31,8 +32,9 @@ public class EntryAccessionController {
 	
 	@ApiMethod(path = "/entry-accessions/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Retrieve all neXtProt entry accession numbers of the given chromosome", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/entry-accessions/chromosome/{chromosome}", method = { RequestMethod.GET })
+	@ResponseBody
 	public List<String> masterIdentifiersPerChromosome(
-			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "master-isoform-mapping"}) @PathVariable("chromosome")  String chromosome) {
+			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"}) @PathVariable("chromosome")  String chromosome) {
 		return new ArrayList<>(masterIdentifierService.findUniqueNamesOfChromosome(chromosome));
 	}
 
