@@ -2,6 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.dao.GeneIdentifierDao;
 import org.nextprot.api.core.service.GeneIdentifierService;
 import org.nextprot.api.core.service.OverviewService;
 import org.springframework.beans.factory.annotation.Autowired;
