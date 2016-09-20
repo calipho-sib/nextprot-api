@@ -38,8 +38,10 @@
 	<cache name="master-unique-name" maxEntriesLocalHeap="22000"
 		eternal="true" statistics="true"/>
 
-	<cache name="all-gene-names" maxEntriesLocalHeap="1"
-		   eternal="true" statistics="true"/>
+	<cache name="all-gene-names" overflowToOffHeap="false" overflowToDisk="true"
+		   diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
 
 	<cache name="gene-names-by-accession" maxEntriesLocalHeap="22000"
 		   eternal="true" statistics="true"/>
