@@ -176,7 +176,7 @@
 				</div>
 				<div class="col-md-3">
 					<ul class="nav nav-pills nav-stacked">
-						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2016 SIB</a></li>
+						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2016 SIB Swiss Institute of Bioinformatics</a></li>
 					</ul>
 				</div>
 				<div class="col-md-3">
