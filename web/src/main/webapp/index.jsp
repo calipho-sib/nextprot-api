@@ -171,12 +171,12 @@
 			<div class="col-lg-15">
 				<div class="col-md-3">
 					<ul class="nav nav-pills nav-stacked">
-						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/legal%20disclaimer.md" target="_blank">Legal disclaimer</a></li>
+						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2016 SIB</a></li>
 					</ul>
 				</div>
 				<div class="col-md-3">
 					<ul class="nav nav-pills nav-stacked">
-						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2016 SIB Swiss Institute of Bioinformatics</a></li>
+						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/legal%20disclaimer.md" target="_blank">Legal disclaimer</a></li>
 					</ul>
 				</div>
 				<div class="col-md-3">
@@ -198,7 +198,7 @@
 	<script id="main" type="text/x-handlebars-template">
 		<ul class="nav nav-pills nav-stacked">
 			<li><a href="https://github.com/calipho-sib/nextprot-api/releases"
-				   target="_blank"><i class="icon-tag"></i>Version: {{version}}</a></li>
+				   target="_blank"><i class="icon-tag"></i>v{{version}}</a></li>
 			</a>
 			</li>
 		</ul>
