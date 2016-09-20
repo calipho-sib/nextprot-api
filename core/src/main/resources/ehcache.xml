@@ -46,14 +46,23 @@
 	<cache name="release-contents" maxEntriesLocalHeap="1"
 		eternal="true" statistics="true"/>
 
+	<!-- we have  20'000 proteins * 20 subpages = 400'000 urls -->
+	<!-- we have 200'000 terms    *  4 subpages = 800'000 urls -->
+	<!-- we have 400'000 publis   *  1  subpage = 400'000 urls -->
+	<!-- we have some news, doc, function pates <     500 urls -->
+	<!-- TOTAL 1'600'000 URLS -->
+
+	<cache name="seo-github" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="500"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
 	<!-- Configuring cache for other services -->
 	<cache name="terminology-by-accession" overflowToOffHeap="false"
 		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100"
 		   maxEntriesLocalDisk="200000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		   statistics="true">
 	</cache>
-	
-	
 	
 	<cache name="terminology-by-ontology" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
