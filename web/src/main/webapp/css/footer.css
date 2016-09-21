@@ -1,0 +1,42 @@
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: black;
+    height: 25px;
+    line-height: 25px;
+    font-size: 0.9em;
+    z-index: 1000;
+}
+
+footer, footer a, footer a:visited {
+    /*background-color: black;*/
+    color: white;
+    font-weight: 300;
+    /*    color: #787C7C;*/
+}
+
+footer a.ft-item, footer a.ft-item:focus, footer a.ft-item:visited, footer a.ft-item:hover {
+    color:white;
+}
+
+footer a {
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #FFF;
+}
+
+.ui-version{
+    cursor:pointer;
+}
+
+.ft-item{
+    border-right:1px solid #777;
+    padding:0px 5px;
+}
+.ft-item:last-child{
+    border-left:0px;
+    border-right:0px;
+}
