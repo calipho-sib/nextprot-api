@@ -174,7 +174,7 @@
 					<div class="col-md-12 text-left">
 						<a class="ft-item" href="/copyright">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
 						<a class="ft-item" href="/legal-disclaimer">Legal disclaimer</a>
-						<!--<span class="ft-item ui-version">Data release 2016-08-25</span>-->
+						<span id="reldataspan" class="ft-item ui-version"></span>
 						<span id="maindiv" class="ft-item ui-version"></span>
 						<a class="ft-item" href="https://github.com/calipho-sib/" target="_blank">
 							<span class="fa fa-github" aria-hidden="true"></span> For developers
@@ -186,9 +186,14 @@
 	</div>
 </body>
 
-	<script id="main" type="text/x-handlebars-template">
-			Application release v{{version}}
-	</script>
+<script id="main" type="text/x-handlebars-template">
+	Application release v{{version}}
+</script>
+
+<script id="reldata" type="text/x-handlebars-template">
+	Data release v{{release.databaseRelease}}
+</script>
+
 
 <script id="apis" type="text/x-handlebars-template">
 {{#eachInMap apis}}
@@ -1010,7 +1015,7 @@
 		$('#maindiv').show();
 		$('#side-accordion').show();
 	}
-	
+
 	function fetchdoc(jsondocurl) {
 		console.log("Fetching doc for " + jsondocurl);
 		$.ajax({
@@ -1028,18 +1033,31 @@
 		});
 	}
 
-    function buildHrefOld(resource) {
+	function compileHTMLFromJSONReleaseInfo(release) {
 
-        var hostname=window.location.hostname;
+		var reldata = Handlebars.compile($("#reldata").html());
+		var reldataHTML = reldata(release);
 
-        var regexp = /(alpha|dev|build)-api\.nextprot\.org/g;
-        var match = regexp.exec(hostname);
+		$("#reldataspan").html(reldataHTML);
+		$('#reldataspan').show();
+	}
 
-        if (match != null) {
+	function fetchReleaseInfo() {
+		url = window.location.href.replace("#", "") + '/release-info'
 
-            return "http://" + match[1] + "-" + resource + ".nextprot.org"
-        }
-    }
+		$.ajax({
+			url : url,
+			type: 'GET',
+			dataType: 'json',
+			contentType: "application/json; charset=utf-8",
+			success : function(release) {
+				compileHTMLFromJSONReleaseInfo(release);
+			},
+			error: function(msg) {
+				console.log(msg);
+			}
+		});
+	}
 
     function buildHref(resource) {
 
@@ -1177,6 +1195,7 @@
 		});
 		
 		checkURLExistence();
+		fetchReleaseInfo();
 	});
 </script>
 
