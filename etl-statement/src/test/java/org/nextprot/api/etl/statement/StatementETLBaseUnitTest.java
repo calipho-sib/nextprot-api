@@ -35,9 +35,11 @@ public abstract class StatementETLBaseUnitTest {
 
 		mockIsoMapperService();
 
-		List<Isoform> isoforms = Arrays.asList(mockIsoform("NX_P43246-1", "Iso 1", true), mockIsoform("NX_P43246-2", "Iso 2", true));
+		List<Isoform> isoformsNX_P43246 = Arrays.asList(mockIsoform("NX_P43246-1", "Iso 1", true), mockIsoform("NX_P43246-2", "Iso 2", true));
+		List<Isoform> isoformsNX_P52701 = Arrays.asList(mockIsoform("NX_P52701-1", "GTBP-N", true), mockIsoform("NX_P52701-2", "GTBP-alt", false), mockIsoform("NX_P52701-3", "Iso 3", false), mockIsoform("NX_P52701-4", "Iso 4", false));
 
-		Mockito.when(isoformService.findIsoformsByEntryName("NX_P43246")).thenReturn(isoforms);
+		Mockito.when(isoformService.findIsoformsByEntryName("NX_P43246")).thenReturn(isoformsNX_P43246);
+		Mockito.when(isoformService.findIsoformsByEntryName("NX_P52701")).thenReturn(isoformsNX_P52701);
 
 		statementETLServiceMocked = new StatementETLServiceImpl();
 		statementETLServiceMocked.setIsoformMappingService(new IsoformMappingLocalMockImpl());
@@ -101,6 +103,7 @@ public abstract class StatementETLBaseUnitTest {
 
 		Isoform isoform = Mockito.mock(Isoform.class);
 		when(isoform.getUniqueName()).thenReturn(accession);
+		when(isoform.getIsoformAccession()).thenReturn(accession);
 		when(isoform.isCanonicalIsoform()).thenReturn(canonical);
 
 		EntityName entityName = Mockito.mock(EntityName.class);
