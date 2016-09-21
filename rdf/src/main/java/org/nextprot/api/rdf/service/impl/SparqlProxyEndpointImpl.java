@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -25,12 +26,20 @@ public class SparqlProxyEndpointImpl implements SparqlProxyEndpoint {
 	@Override
 	@Cacheable("sparql-proxy")
 	public ResponseEntity<String> sparql(String body, String queryString) {
+		return sparqlInternal(body, queryString);
+	}
 
-		ResponseEntity<String> responseEntity = null;
+	
+	@Override
+	public ResponseEntity<String> sparqlNoCache(String body, String queryString) {
+		return sparqlInternal(body, queryString);
+	}
 
+	
+	private ResponseEntity<String> sparqlInternal(String body, String queryString) {
+
+		ResponseEntity<String> responseEntity;
 		String url = sparqlEndpoint.getUrl() + ((queryString != null) ? ("?" + queryString) : "");
-		// uri = new URI("http", null, "kant", 8890, request.getRequestURI(),
-		// (qs == null) ? qs : URLDecoder.decode(qs, "UTF-8"), null);
 
 		RestTemplate template = new RestTemplate();
 		try {
@@ -38,14 +47,11 @@ public class SparqlProxyEndpointImpl implements SparqlProxyEndpoint {
 			responseEntity = template.exchange(new URI(url), HttpMethod.GET, new HttpEntity<String>(body), String.class);
 			return responseEntity;
 
-		} catch (HttpClientErrorException e) {
-			throw new NextProtException(e.getResponseBodyAsString());
-		} catch (URISyntaxException e) {
+		} catch (HttpServerErrorException | HttpClientErrorException e) {
+			throw new NextProtException(e.getResponseBodyAsString(), e);
+		} catch (RestClientException | URISyntaxException e) {
 			throw new NextProtException(e);
-		} catch (HttpServerErrorException e) {
-			throw new NextProtException(e.getResponseBodyAsString());
-		}
-
+		} 
 	}
 
 }
