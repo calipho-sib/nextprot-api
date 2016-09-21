@@ -41,7 +41,7 @@ public class SitemapServiceImpl implements SitemapService {
 		}
 
 		// other application urls (help, about, home, portals, ...)
-		for (SeoTagsAndUrl tag: seoTagService.getHardCodedSeoTags()) {
+		for (SeoTagsAndUrl tag: seoTagService.getGitHubSeoTags()) {
 			urlSet.add(new SitemapUrl(base + tag.getUrl()));
 		}
 		
