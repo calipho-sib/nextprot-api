@@ -16,6 +16,7 @@
 <!-- Le styles -->
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/nx-api.css" rel="stylesheet">
+<link href="css/footer.css" rel="stylesheet">
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
@@ -25,7 +26,7 @@
 
 <body>
 
-	<nav class="navbar navbar-inverse navbar-fixed-top">
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -39,7 +40,7 @@
     		</div>
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" ng-controller="HelpCtrl">
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
 
 					<!--  Resources  -->
@@ -101,7 +102,7 @@
 			</div>
 
 		</div>
-	</nav>
+	</div>
 
 	<div class="container-fluid">
 		<div class="row">
@@ -165,43 +166,28 @@
 
 	<!-- Footer
   ================================================== -->
-	<footer class="container text-center small">
-		<hr />
-		<div class="row">
-			<div class="col-lg-15">
-				<div class="col-md-3">
-					<ul class="nav nav-pills nav-stacked">
-						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2016 SIB</a></li>
-					</ul>
-				</div>
-				<div class="col-md-3">
-					<ul class="nav nav-pills nav-stacked">
-						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/legal%20disclaimer.md" target="_blank">Legal disclaimer</a></li>
-					</ul>
-				</div>
-				<div class="col-md-3">
-					<ul class="nav nav-pills nav-stacked">
-						<li><a href="https://github.com/calipho-sib/nextprot-api" target="_blank"><i class="icon-github"></i>For developers</a></li>
-					</ul>
-				</div>
-				<div id="maindiv" style="display:none;" class="col-md-3"></div>
-				<div class="col-md-3">
-					<ul class="nav nav-pills nav-stacked">
-					</ul>
+
+	<div>
+		<footer class="container-fluid small">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="col-md-12 text-left">
+						<a class="ft-item" href="/copyright">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
+						<a class="ft-item" href="/legal-disclaimer">Legal disclaimer</a>
+						<!--<span class="ft-item ui-version">Data release 2016-08-25</span>-->
+						<span id="maindiv" class="ft-item ui-version"></span>
+						<a class="ft-item" href="https://github.com/calipho-sib/" target="_blank">
+							<span class="fa fa-github" aria-hidden="true"></span> For developers
+						</a>
+					</div>
 				</div>
 			</div>
-		</div>
-		<hr />
-	</footer>
-
+		</footer>
+	</div>
+</body>
 
 	<script id="main" type="text/x-handlebars-template">
-		<ul class="nav nav-pills nav-stacked">
-			<li><a href="https://github.com/calipho-sib/nextprot-api/releases"
-				   target="_blank"><i class="icon-tag"></i>v{{version}}</a></li>
-			</a>
-			</li>
-		</ul>
+			Application release v{{version}}
 	</script>
 
 <script id="apis" type="text/x-handlebars-template">
@@ -665,7 +651,7 @@
 <script>
 	var model;
 	var jsondoc = JSON.stringify('_JSONDOC_OFFLINE_PLACEHOLDER_');
-	
+
 	$(document).ready(function() {
 		// This is to check if the '_JSONDOC_OFFLINE_PLACEHOLDER_' has been replaced with content coming from
 		// the result of the jsondoc-maven-plugin
