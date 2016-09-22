@@ -15,7 +15,6 @@ import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 
-import com.hp.hpl.jena.sparql.modify.request.Target;
 import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 
 
@@ -107,6 +106,36 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 	}
 	
 	
+	/**
+	 * When one receive a phenotypic variation whereby the subject is specific,
+	 */
+	@Test
+	public void shouldPropagateVariantButNotPhenotypicVariationOnIsoSpecificVPAnnotations() {
+		
+		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
+		Set<Statement> rawStatements = sle.getStatementsForSourceForGeneName(null, "scn9a-variant-iso-spec");
+
+		//Variant 
+		Set<Statement> mappedStatements =statementETLServiceMocked.transformStatements(rawStatements);
+		Statement variantMappedStatement = mappedStatements.stream().filter(new AnnotationCategoryPredicate(AnnotationCategory.VARIANT)).findFirst().orElseThrow(RuntimeException::new);
+		String variantMappedStatementIsoformJson = variantMappedStatement.getValue(StatementField.TARGET_ISOFORMS);
+		
+
+		Assert.assertEquals(TargetIsoformSerializer.deSerializeFromJsonString(variantMappedStatementIsoformJson).size(), 4);
+		
+		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-1\",\"specificity\":\"BY_DEFAULT\",\"begin\":1460,\"end\":1460,\"name\":\"SCN9A-iso1-p.Phe1460Val\"},{\"isoformAccession\":\"NX_Q15858-2\",\"specificity\":\"BY_DEFAULT\",\"begin\":1460,\"end\":1460,\"name\":\"SCN9A-iso2-p.Phe1460Val\"},{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"BY_DEFAULT\",\"begin\":1449,\"end\":1449,\"name\":\"SCN9A-iso3-p.Phe1449Val\"},{\"isoformAccession\":\"NX_Q15858-4\",\"specificity\":\"BY_DEFAULT\",\"begin\":1449,\"end\":1449,\"name\":\"SCN9A-iso4-p.Phe1449Val\"}]", variantMappedStatementIsoformJson);
+
+		
+		//Phenotypic variation
+		Statement phentypicMappedStatement = mappedStatements.stream().filter(new AnnotationCategoryPredicate(AnnotationCategory.PHENOTYPIC_VARIATION)).findFirst().orElseThrow(RuntimeException::new);
+		String phenotypicMappedStatementIsoformJson = phentypicMappedStatement.getValue(StatementField.TARGET_ISOFORMS);
+
+		Assert.assertEquals(TargetIsoformSerializer.deSerializeFromJsonString(phenotypicMappedStatementIsoformJson).size(), 1);
+		Assert.assertEquals("[{\"isoformAccession\":\"NX_Q15858-3\",\"specificity\":\"SPECIFIC\",\"begin\":null,\"end\":null,\"name\":\"SCN9A-iso3-p.Phe1449Val\"}]", phenotypicMappedStatementIsoformJson);
+		
+		
+	}
+
 	
 	@Test
 	public void shouldThrowAnExceptionIfFeatureNameDoesNotCorrespondToNextprotAccession() {
