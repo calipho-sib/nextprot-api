@@ -40,7 +40,7 @@ public class StatementTransformationUtil {
 			isoformsToBeConsidered.addAll(isoformAccessions);
 		}
 
-		Set<TargetIsoformStatementPosition> result = new TreeSet<TargetIsoformStatementPosition>();
+		Set<TargetIsoformStatementPosition> result = new TreeSet<>();
 
 		for (String isoformAccession : isoformsToBeConsidered) {
 

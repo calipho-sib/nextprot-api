@@ -1,0 +1,55 @@
+{
+  "query" : {
+    "accession" : "",
+    "feature" : "MSH6-p.Thr1219Asp",
+    "featureType" : "variant",
+    "featurePropagable" : true
+  },
+  "data" : {
+    "NX_P52701-1" : {
+      "isoformAccession" : "NX_P52701-1",
+      "isoformName" : "GTBP-N",
+      "beginIsoformPosition" : 1219,
+      "endIsoformPosition" : 1219,
+      "beginMasterPosition" : 3688,
+      "endMasterPosition" : 3690,
+      "isoSpecificFeature" : "MSH6-isoGTBP-N-p.Thr1219Asp",
+      "mapped" : true,
+      "canonical" : true
+    },
+    "NX_P52701-2" : {
+      "isoformAccession" : "NX_P52701-2",
+      "isoformName" : null,
+      "beginIsoformPosition" : null,
+      "endIsoformPosition" : null,
+      "beginMasterPosition" : null,
+      "endMasterPosition" : null,
+      "isoSpecificFeature" : null,
+      "mapped" : false,
+      "canonical" : false
+    },
+    "NX_P52701-3" : {
+      "isoformAccession" : "NX_P52701-3",
+      "isoformName" : "Iso 3",
+      "beginIsoformPosition" : 1089,
+      "endIsoformPosition" : 1089,
+      "beginMasterPosition" : 3688,
+      "endMasterPosition" : 3690,
+      "isoSpecificFeature" : "MSH6-iso3-p.Thr1089Asp",
+      "mapped" : true,
+      "canonical" : false
+    },
+    "NX_P52701-4" : {
+      "isoformAccession" : "NX_P52701-4",
+      "isoformName" : "Iso 4",
+      "beginIsoformPosition" : 917,
+      "endIsoformPosition" : 917,
+      "beginMasterPosition" : 3688,
+      "endMasterPosition" : 3690,
+      "isoSpecificFeature" : "MSH6-iso4-p.Thr917Asp",
+      "mapped" : true,
+      "canonical" : false
+    }
+  },
+  "success" : true
+}

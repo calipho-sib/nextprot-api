@@ -43,7 +43,7 @@ public class IsoformAnnotationBuilder extends AnnotationBuilder<IsoformAnnotatio
 	}
 
 	@Override
-	protected IsoformAnnotation newAnnotation() {
+	public IsoformAnnotation get() {
 		return new IsoformAnnotation();
 	}
 
