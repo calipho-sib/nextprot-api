@@ -250,12 +250,10 @@ public class StatementETLServiceImpl implements StatementETLService {
 				if(objectStatement != null){
 
 					objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
-							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject) // in case of entry
 							.buildWithAnnotationHash(AnnotationType.ENTRY);
 					
 					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
-							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
 							.addSubjects(subjects).addObject(objectIsoStatement)							
 							.removeField(StatementField.STATEMENT_ID) 
@@ -266,7 +264,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 				}else {
 					
 					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
-							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
 							.addSubjects(subjects)
 							.removeField(StatementField.STATEMENT_ID) 
