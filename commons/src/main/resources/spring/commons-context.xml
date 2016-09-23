@@ -34,7 +34,7 @@
 			<property name="dataSource" ref="dataSource" />
 			<!-- In unit test we use the same datasource for everything -->
 			<property name="userDataSource" ref="dataSource" />
-			<property name="statementsDataSource" ref="statementsDataSource" />
+			<!--  <property name="statementsDataSource" ref="statementsDataSource" /> -->
 		</bean>
 
 		<bean id="txManager"
@@ -59,11 +59,13 @@
 			<property name="username" value="${db.username}" />
 			<property name="password" value="${db.password}" />
 		</bean>
-
+		
+		<!-- 
 		<jdbc:embedded-database id="statementsDataSource" type="H2">
 	        <jdbc:script location="classpath:nxflat-create-schema.ddl"/>
 	        <jdbc:script location="classpath:nxflat-statements-schema.ddl"/>
 	    </jdbc:embedded-database>
+	    -->
 	    
 
 		<beans profile="unit-schema-nextprot">
@@ -87,15 +89,17 @@
 
 		</beans>
 
-		<beans profile="unit-schema-nxflat">
+<!-- <beans profile="unit-schema-nxflat">
 
 			<bean id="dbUnitDatabaseConnection"
 				class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
 				<property name="schema" value="nxflat" />
 				<property name="dataSource" ref="statementsDataSource" />
 			</bean>
-
+		
 		</beans>
+		 -->
+		
 	</beans>
 
 	<beans profile="pro">
