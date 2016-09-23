@@ -37,7 +37,6 @@ import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
 	
-	private static final Logger LOGGER = Logger.getLogger(StatementETLServiceImpl.class);
 
 	@Autowired private IsoformService isoformService;
 	
@@ -46,15 +45,56 @@ public class StatementETLServiceImpl implements StatementETLService {
 	@Autowired	private IsoformMappingService isoformMappingService;
 
 	@Autowired	private StatementLoaderService statementLoadService = null;
+	
+	/**
+	 * Adds synchronisation to StringBuilder
+	 */
+	private static class ReportBuilder {
 
-	Set<Statement> extractStatements(NextProtSource source) {
+		private static final Logger LOGGER = Logger.getLogger(StatementETLServiceImpl.class);
+		long start;
+		private StringBuilder builder; //Needs to use buffer to guarantee synchronisation
+		
+		public ReportBuilder (){
+			
+			start = System.currentTimeMillis();
+			builder = new StringBuilder();
+
+		}
+		
+		public synchronized void addInfo(String message){
+			if(builder != null){
+				LOGGER.info(message);
+				builder.append(message + "\n");
+			}
+		}
+		
+		public synchronized void addInfoWithElapsedTime(String message){
+			String messageWithElapsedTime = message + " " + ((System.currentTimeMillis() - start)/1000) + " seconds from the start of ETL process.";
+			addInfo(messageWithElapsedTime);
+		}
+		
+		@Override
+		public synchronized String toString(){
+			return builder.toString();
+		}
+
+		public synchronized void addWarning(String string) {
+			addInfo("WARNING - " + string);
+		}
+	
+		
+	}
+
+	Set<Statement> extractStatements(NextProtSource source, ReportBuilder report) {
+		
 		Set<Statement> statements =  statementRemoteService.getStatementsForSource(source);
-		LOGGER.info("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
+		report.addInfo("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
 		return statements;
 	}
 
 
-	Set<Statement> transformStatements(Set<Statement> rawStatements) {
+	Set<Statement> transformStatements(Set<Statement> rawStatements, ReportBuilder report) {
 
 		Map<String, Statement> sourceStatementsById = rawStatements.stream().collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
 
@@ -79,10 +119,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 						String featureName = subjectStatements.iterator().next().getValue(StatementField.ANNOTATION_NAME);
 						isoformSpecificAccession = getIsoAccession(featureName, entryAccession);
 					}else throw new NextProtException("Something wrong occured when checking for iso specificity");
-					
 				}
 				
-					statementsMappedToEntryToLoad.addAll(transformStatements(originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession));
+					statementsMappedToEntryToLoad.addAll(transformStatements(originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession, report));
 					
 				}
 
@@ -93,49 +132,48 @@ public class StatementETLServiceImpl implements StatementETLService {
 	}
 	
 
-	String loadStatements(Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load) {
-		
-		StringBuilder sb = new StringBuilder();
+	void loadStatements(Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load, ReportBuilder report) {
 
 		try {
 			
 			if(load){
 				
-				addInfo(sb, "Loading raw statements: " + rawStatements.size());
+				report.addInfo("Loading raw statements: " + rawStatements.size());
 				long start = System.currentTimeMillis();
 				statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), NextProtSource.BioEditor);
-				addInfo(sb, "Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
+				report.addInfo("Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
 		
-				addInfo(sb, "Loading entry statements: " + mappedStatements.size());
+				report.addInfo("Loading entry statements: " + mappedStatements.size());
 				start = System.currentTimeMillis();
 				statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, NextProtSource.BioEditor);
-				addInfo(sb, "Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
+				report.addInfo("Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
 
 			}else {
-				addInfo(sb, "skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements");
+				report.addInfo("skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements");
 			}
 
 
 		}catch (SQLException e){
-			String errorResponse = "";
-			errorResponse+= e.getMessage();
-			if( e.getNextException() != null){
-				errorResponse+= e.getNextException().getMessage();
-			}
-			return errorResponse;
-
+			throw new NextProtException("Failed to load " + e);
 		}
 		
-		return sb.toString();
 	}
 
+	
 	
 	@Override
 	public String etlStatements(NextProtSource source, boolean load) {
 
-		Set<Statement> rawStatements = extractStatements(source);
-		Set<Statement> mappedStatements = transformStatements(rawStatements);
-		return loadStatements(rawStatements, mappedStatements, load);
+		ReportBuilder report = new ReportBuilder();
+		
+		Set<Statement> rawStatements = extractStatements(source, report);
+		report.addInfoWithElapsedTime("Finished extraction");
+		Set<Statement> mappedStatements = transformStatements(rawStatements, report);
+		report.addInfoWithElapsedTime("Finished transformation");
+		loadStatements(rawStatements, mappedStatements, load, report);
+		report.addInfoWithElapsedTime("Finished load");
+
+		return report.toString();
 		
 	}
 	
@@ -155,11 +193,6 @@ public class StatementETLServiceImpl implements StatementETLService {
 
 	}
 	
-	private void addInfo (StringBuilder sb, String info){
-		LOGGER.info(info);
-		sb.append(info + "\n");
-	}
-
 	private Map<String, List<Statement>> getSubjectsTransformed(Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific) {
 
 		//In case of entry variants have the target isoform property filled
@@ -171,7 +204,7 @@ public class StatementETLServiceImpl implements StatementETLService {
 		return variantsOnIsoform;
 	}
 	
-	Set<Statement> transformStatements(Statement originalStatement, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific, String isoSpecificAccession){
+	Set<Statement> transformStatements(Statement originalStatement, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific, String isoSpecificAccession, ReportBuilder report){
 		
 		Set<Statement> statementsToLoad = new HashSet<>();
 
@@ -184,7 +217,8 @@ public class StatementETLServiceImpl implements StatementETLService {
 				List<Statement> subjects = entry.getValue();
 				
 				if(subjects.isEmpty()){
-					throw new NextProtException("Empty subjects are not allowed");
+					report.addWarning("Empty subjects are not allowed for " + entry.getKey() + " skipping... case for 1 variant");
+					continue;
 				}
 				
 				String targetIsoformsForObject;

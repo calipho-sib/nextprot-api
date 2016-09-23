@@ -32,7 +32,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 			StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
 			Set<Statement> rawStatements = sle.getStatementsForSourceForGeneName(null, "msh2-msh6-multiple-mutants-on-different-genes");
 
-			statementETLServiceMocked.transformStatements(rawStatements);
+			statementETLServiceMocked.transformStatements(rawStatements, null);
 			
 			fail();
 			
@@ -78,7 +78,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 		Set<Statement> rawStatements = sle.getStatementsForSourceForGeneName(null, "msh6-variant-on-iso1-but-not-on-iso2");
 
 		//Variant 
-		Set<Statement> mappedStatements =statementETLServiceMocked.transformStatements(rawStatements);
+		Set<Statement> mappedStatements =statementETLServiceMocked.transformStatements(rawStatements, null);
 		
 		Statement variantMappedStatement = mappedStatements.stream().filter(new AnnotationCategoryPredicate(VARIANT)).findFirst().orElseThrow(RuntimeException::new);
 		
@@ -116,7 +116,7 @@ public class StatementTransformBDDTest extends StatementETLBaseUnitTest {
 		Set<Statement> rawStatements = sle.getStatementsForSourceForGeneName(null, "scn9a-variant-iso-spec");
 
 		//Variant 
-		Set<Statement> mappedStatements =statementETLServiceMocked.transformStatements(rawStatements);
+		Set<Statement> mappedStatements =statementETLServiceMocked.transformStatements(rawStatements, null);
 		Statement variantMappedStatement = mappedStatements.stream().filter(new AnnotationCategoryPredicate(AnnotationCategory.VARIANT)).findFirst().orElseThrow(RuntimeException::new);
 		String variantMappedStatementIsoformJson = variantMappedStatement.getValue(StatementField.TARGET_ISOFORMS);
 		

@@ -25,7 +25,7 @@ public class StatementTransformUnitTest extends StatementETLBaseUnitTest {
 		StatementsExtractorLocalMockImpl sle = new StatementsExtractorLocalMockImpl();
 		Set<Statement> rawStatements = sle.getStatementsForSourceForGeneName(null, "msh2-multiple-mutant");
 
-		Set<Statement> mappedStatements = statementETLServiceMocked.transformStatements(rawStatements);
+		Set<Statement> mappedStatements = statementETLServiceMocked.transformStatements(rawStatements, null);
 
 		int statementsCount = rawStatements.stream().map(s -> s.getValue(StatementField.STATEMENT_ID)).distinct().collect(Collectors.toList()).size();
 		int annotationsCount = mappedStatements.stream().map(s -> s.getValue(StatementField.ANNOTATION_ID)).distinct().collect(Collectors.toList()).size();
