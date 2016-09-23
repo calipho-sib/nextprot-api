@@ -1,10 +1,10 @@
 package com.nextprot.api.annotation.builder.statement.dao;
 
+import java.util.List;
+
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.AnnotationType;
-
-import java.util.List;
 
 public interface StatementDao {
 
