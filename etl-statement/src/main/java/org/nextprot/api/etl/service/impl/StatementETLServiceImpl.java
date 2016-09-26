@@ -1,331 +1,149 @@
 package org.nextprot.api.etl.service.impl;
 
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
-import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.service.IsoformService;
-import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.etl.service.StatementETLService;
 import org.nextprot.api.etl.service.StatementExtractorService;
 import org.nextprot.api.etl.service.StatementLoaderService;
-import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
-import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
-import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
+import org.nextprot.api.etl.service.StatementTransformerService;
 import org.nextprot.commons.statements.Statement;
-import org.nextprot.commons.statements.StatementBuilder;
-import org.nextprot.commons.statements.StatementField;
-import org.nextprot.commons.statements.TargetIsoformStatementPosition;
-import org.nextprot.commons.statements.constants.AnnotationType;
 import org.nextprot.commons.statements.constants.NextProtSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
-
 @Service
 public class StatementETLServiceImpl implements StatementETLService {
 	
-	private static final Logger LOGGER = Logger.getLogger(StatementETLServiceImpl.class);
-
-	@Autowired private IsoformService isoformService;
+	@Autowired	private StatementExtractorService statementExtractorService;
+	@Autowired	private StatementTransformerService statementTransformerService;
+	@Autowired	private StatementLoaderService statementLoadService;
 	
-	@Autowired	private StatementExtractorService statementRemoteService;
+	/**
+	 * Adds synchronisation to StringBuilder
+	 */
+	public static class ReportBuilder {
 
-	@Autowired	private IsoformMappingService isoformMappingService;
+		private static final Logger LOGGER = Logger.getLogger(StatementETLServiceImpl.class);
+		long start;
+		private StringBuilder builder; //Needs to use buffer to guarantee synchronisation
+		
+		public ReportBuilder (){
+			
+			start = System.currentTimeMillis();
+			builder = new StringBuilder();
 
-	@Autowired	private StatementLoaderService statementLoadService = null;
+		}
+		
+		public synchronized void addInfo(String message){
+			if(builder != null){
+				LOGGER.info(message);
+				builder.append(message + "\n");
+			}
+		}
+		
+		public synchronized void addInfoWithElapsedTime(String message){
+			String messageWithElapsedTime = message + " " + ((System.currentTimeMillis() - start)/1000) + " seconds from the start of ETL process.";
+			addInfo(messageWithElapsedTime);
+		}
+		
+		@Override
+		public synchronized String toString(){
+			return builder.toString();
+		}
 
-	Set<Statement> extractStatements(NextProtSource source) {
-		Set<Statement> statements =  statementRemoteService.getStatementsForSource(source);
-		LOGGER.info("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
+		public synchronized void addWarning(String string) {
+			addInfo("WARNING - " + string);
+		}
+	
+		
+	}
+
+	Set<Statement> extractStatements(NextProtSource source, ReportBuilder report) {
+		
+		Set<Statement> statements =  statementExtractorService.getStatementsForSource(source);
+		report.addInfo("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
 		return statements;
 	}
 
 
-	Set<Statement> transformStatements(Set<Statement> rawStatements) {
-
-		Map<String, Statement> sourceStatementsById = rawStatements.stream().collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
-
-		Set<Statement> statementsMappedToEntryToLoad = new HashSet<>();
-
-		for (Statement originalStatement : rawStatements) {
-
-			if ((originalStatement.getSubjectStatementIds() != null) && (!originalStatement.getSubjectStatementIds().isEmpty())) {
-
-				String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
-				Set<Statement> subjectStatements = getSubjects(subjectStatemendIds, sourceStatementsById);
-
-				String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
-
-				boolean isIsoSpecific = false;
-				String isoformName = validateSubject(subjectStatements);
-				String isoformSpecificAccession = null;
-
-				if (isSubjectIsoSpecific(subjectStatements)) {
-					if(isoformName != null){
-						isIsoSpecific = true;
-						String featureName = subjectStatements.iterator().next().getValue(StatementField.ANNOTATION_NAME);
-						isoformSpecificAccession = getIsoAccession(featureName, entryAccession);
-					}else throw new NextProtException("Something wrong occured when checking for iso specificity");
-					
-				}
-				
-					statementsMappedToEntryToLoad.addAll(transformStatements(originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession));
-					
-				}
-
-		}
+	Set<Statement> transformStatements(Set<Statement> rawStatements, ReportBuilder report) {
 		
-		return statementsMappedToEntryToLoad;
-	
+		Set<Statement> statements =  statementTransformerService.transformStatements(rawStatements, report);
+		report.addInfo("Transformed " + rawStatements.size() + " raw statements to " + statements.size() + " mapped statements ");
+		return statements;
+
 	}
 	
 
-	String loadStatements(Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load) {
-		
-		StringBuilder sb = new StringBuilder();
+	void loadStatements(Set<Statement> rawStatements, Set<Statement> mappedStatements, boolean load, ReportBuilder report) {
 
 		try {
 			
 			if(load){
 				
-				addInfo(sb, "Loading raw statements: " + rawStatements.size());
+				report.addInfo("Loading raw statements: " + rawStatements.size());
 				long start = System.currentTimeMillis();
 				statementLoadService.loadRawStatementsForSource(new HashSet<>(rawStatements), NextProtSource.BioEditor);
-				addInfo(sb, "Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
+				report.addInfo("Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
 		
-				addInfo(sb, "Loading entry statements: " + mappedStatements.size());
+				report.addInfo("Loading entry statements: " + mappedStatements.size());
 				start = System.currentTimeMillis();
 				statementLoadService.loadStatementsMappedToEntrySpecAnnotationsForSource(mappedStatements, NextProtSource.BioEditor);
-				addInfo(sb, "Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
+				report.addInfo("Finish load in " + (System.currentTimeMillis() - start)/1000 + " seconds");
 
 			}else {
-				addInfo(sb, "skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements");
+				report.addInfo("skipping load of " + rawStatements.size() + " raw statements and " + mappedStatements.size() + " mapped statements");
 			}
 
 
 		}catch (SQLException e){
-			String errorResponse = "";
-			errorResponse+= e.getMessage();
-			if( e.getNextException() != null){
-				errorResponse+= e.getNextException().getMessage();
-			}
-			return errorResponse;
-
+			throw new NextProtException("Failed to load " + e);
 		}
 		
-		return sb.toString();
 	}
 
+	
 	
 	@Override
 	public String etlStatements(NextProtSource source, boolean load) {
 
-		Set<Statement> rawStatements = extractStatements(source);
-		Set<Statement> mappedStatements = transformStatements(rawStatements);
-		return loadStatements(rawStatements, mappedStatements, load);
+		ReportBuilder report = new ReportBuilder();
 		
-	}
-	
-	private String getIsoAccession (String featureName, String entryAccession){
-		
-		SequenceVariant sv;
-		try {	
-			sv = new SequenceVariant(featureName); 
-		} catch (ParseException e) {
-			throw new NextProtException(e);
-		}
+		Set<Statement> rawStatements = extractStatements(source, report);
+		report.addInfoWithElapsedTime("Finished extraction");
+		Set<Statement> mappedStatements = transformStatements(rawStatements, report);
+		report.addInfoWithElapsedTime("Finished transformation");
+		loadStatements(rawStatements, mappedStatements, load, report);
+		report.addInfoWithElapsedTime("Finished load");
 
-		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
-		Isoform isoSpecific = IsoformUtils.getIsoformByName(isoforms, sv.getIsoformName());
-		return isoSpecific.getIsoformAccession();
-		
-
-	}
-	
-	private void addInfo (StringBuilder sb, String info){
-		LOGGER.info(info);
-		sb.append(info + "\n");
-	}
-
-	private Map<String, List<Statement>> getSubjectsTransformed(Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific) {
-
-		//In case of entry variants have the target isoform property filled
-		Map<String, List<Statement>> variantsOnIsoform = new HashMap<>();
-
-		List<Statement> result = StatementTransformationUtil.getPropagatedStatementsForEntry(isoformMappingService, subjectStatements, nextprotAcession);
-		variantsOnIsoform.put(nextprotAcession, result);
-		
-		return variantsOnIsoform;
-	}
-	
-	Set<Statement> transformStatements(Statement originalStatement, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific, String isoSpecificAccession){
-		
-		Set<Statement> statementsToLoad = new HashSet<>();
-
-		//In case of entry variants have the target isoform property filled
-		Map<String, List<Statement>> subjectsTransformedByEntryOrIsoform = getSubjectsTransformed(sourceStatementsById, subjectStatements, nextprotAcession, isIsoSpecific);
-				
-		for(Map.Entry<String, List<Statement>> entry : subjectsTransformedByEntryOrIsoform.entrySet()) {
-				
-				String entryOrIsoform = entry.getKey();
-				List<Statement> subjects = entry.getValue();
-				
-				if(subjects.isEmpty()){
-					throw new NextProtException("Empty subjects are not allowed");
-				}
-				
-				String targetIsoformsForObject;
-				String targetIsoformsForPhenotype;
-				
-					
-				String entryAccession = subjects.get(0).getValue(StatementField.ENTRY_ACCESSION);
-
-				List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
-				NPreconditions.checkNotEmpty(isoforms, "Isoforms should not be null for " + entryAccession);
-				
-				List<String> isoformNames = isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());
-				
-				Set<TargetIsoformStatementPosition> targetIsoformsForPhenotypeSet = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(originalStatement, isoformMappingService, subjects, isIsoSpecific, isoSpecificAccession, isoformNames);
-				targetIsoformsForPhenotype = TargetIsoformSerializer.serializeToJsonString(targetIsoformsForPhenotypeSet);
-
-				//The same as for phenotype but without the name
-				Set<TargetIsoformStatementPosition> targetIsoformsForObjectSet = new TreeSet<>();
-				for(TargetIsoformStatementPosition tisp : targetIsoformsForPhenotypeSet){
-					targetIsoformsForObjectSet.add(new TargetIsoformStatementPosition(tisp.getIsoformAccession(), tisp.getSpecificity(), null));
-				}
-				targetIsoformsForObject = TargetIsoformSerializer.serializeToJsonString(targetIsoformsForObjectSet);
-				
-				//Load objects
-				Statement phenotypeIsoStatement;
-				Statement objectIsoStatement = null;
-				Statement objectStatement = sourceStatementsById.get(originalStatement.getObjectStatementId());
-				
-				if(objectStatement != null){
-
-					objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
-							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
-							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject) // in case of entry
-							.buildWithAnnotationHash(AnnotationType.ENTRY);
-					
-					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
-							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
-							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
-							.addSubjects(subjects).addObject(objectIsoStatement)							
-							.removeField(StatementField.STATEMENT_ID) 
-							.removeField(StatementField.SUBJECT_STATEMENT_IDS) 
-							.removeField(StatementField.OBJECT_STATEMENT_IDS) 
-							.buildWithAnnotationHash(AnnotationType.ENTRY);
-
-				}else {
-					
-					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
-							.addField(StatementField.ISOFORM_ACCESSION, entryOrIsoform) //in case of isoform
-							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
-							.addSubjects(subjects)
-							.removeField(StatementField.STATEMENT_ID) 
-							.removeField(StatementField.SUBJECT_STATEMENT_IDS) 
-							.removeField(StatementField.OBJECT_STATEMENT_IDS) 
-							.buildWithAnnotationHash(AnnotationType.ENTRY);
-
-				}
-
-
-				//Load subjects
-				statementsToLoad.addAll(subjects);
-				
-				//Load VPs
-				statementsToLoad.add(phenotypeIsoStatement);
-				
-				//Load objects
-				if(objectIsoStatement != null){
-					statementsToLoad.add(objectIsoStatement);
-				}
-
-
-		}
-		
-		return statementsToLoad;
-
+		return report.toString();
 		
 	}
 
-	
-	
-	/**
-	 * Returns an exception if there are mixes between subjects
-	 * 
-	 * @param subjects
-	 * @return
-	 */
-	private static String validateSubject(Set<Statement> subjects) {
 
-		Set<String> isoforms = subjects.stream().map(s -> {
-			return s.getValue(StatementField.NEXTPROT_ACCESSION) + "-" + SequenceVariantUtils.getIsoformName(s.getValue(StatementField.ANNOTATION_NAME));
-		}).collect(Collectors.toSet());
-
-		if (isoforms.size() != 1) {
-			throw new NextProtException("Mixing iso numbers for subjects is not allowed");
-		}
-		String isoform = isoforms.iterator().next();
-		if (isoform == null) {
-			throw new NextProtException("Not iso specific subjects are not allowed on isOnSameIsoform");
-		}
-
-		return isoform;
+	public StatementExtractorService getStatementExtractorService() {
+		return statementExtractorService;
 	}
 
-	/**
-	 * Returns an exception if there are mixes between subjects
-	 * 
-	 * @param subjects
-	 * @return
-	 */
-	private static boolean isSubjectIsoSpecific(Set<Statement> subjects) {
-		int isoSpecificSize = subjects.stream().filter(s -> SequenceVariantUtils.isIsoSpecific(s.getValue(StatementField.ANNOTATION_NAME))).collect(Collectors.toList()).size();
-		if (isoSpecificSize == 0) {
-			return false;
-		} else if (isoSpecificSize == subjects.size()) {
-			return true;
-		} else {
-			throw new NextProtException("Mixing iso specific subjects with non-iso specific variants is not allowed");
-		}
+
+	@Override
+	public void setStatementExtractorService(StatementExtractorService statementExtractorService) {
+		this.statementExtractorService = statementExtractorService;
 	}
 
-	private static Set<Statement> getSubjects(String[] subjectIds, Map<String, Statement> sourceStatementsById) {
-		Set<Statement> variants = new HashSet<>();
-		for (String subjectId : subjectIds) {
-			Statement subjectStatement = sourceStatementsById.get(subjectId);
-			if (subjectStatement == null) {
-				throw new NextProtException("Subject " + subjectId + " not present in the given list");
-			}
-			variants.add(subjectStatement);
-		}
-		return variants;
+
+	public StatementTransformerService getStatementTransformerService() {
+		return statementTransformerService;
 	}
 
-	public Set<Statement> findSourceStatementsWhereOriginalStatementIsUsedAsSubject(Statement originalStatement, Set<Statement> sourceStatementsWithAModifiedSubject) {
-		return sourceStatementsWithAModifiedSubject.stream().filter(sm -> sm.getSubjectStatementIds().contains(originalStatement.getStatementId())).collect(Collectors.toSet());
-	}
 
-	public IsoformMappingService getIsoformMappingService() {
-		return isoformMappingService;
-	}
-
-	public void setIsoformMappingService(IsoformMappingService isoformMappingService) {
-		this.isoformMappingService = isoformMappingService;
+	@Override
+	public void setStatementTransformerService(StatementTransformerService statementTransformerService) {
+		this.statementTransformerService = statementTransformerService;
 	}
 
 
@@ -334,19 +152,11 @@ public class StatementETLServiceImpl implements StatementETLService {
 	}
 
 
+	@Override
 	public void setStatementLoadService(StatementLoaderService statementLoadService) {
 		this.statementLoadService = statementLoadService;
 	}
-
-
-
-	public IsoformService getIsoformService() {
-		return isoformService;
-	}
-
-	public void setIsoformService(IsoformService isoformService) {
-		this.isoformService = isoformService;
-	}
+	
 
 
 }

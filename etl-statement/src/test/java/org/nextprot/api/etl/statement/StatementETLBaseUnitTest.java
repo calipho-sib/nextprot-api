@@ -16,6 +16,7 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.service.impl.IsoformMappingLocalMockImpl;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
+import org.nextprot.api.etl.service.impl.StatementTranformerServiceImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl.IsoformFeatureResult;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
@@ -28,6 +29,8 @@ public abstract class StatementETLBaseUnitTest {
 
 	protected StatementETLServiceImpl statementETLServiceMocked = null;
 
+	protected StatementTranformerServiceImpl transformerMockedService = null;
+	
 	@Before
 	public void init() {
 
@@ -44,8 +47,13 @@ public abstract class StatementETLBaseUnitTest {
 		Mockito.when(isoformService.findIsoformsByEntryName("NX_Q15858")).thenReturn(isoformsNX_Q15858);
 
 		statementETLServiceMocked = new StatementETLServiceImpl();
-		statementETLServiceMocked.setIsoformMappingService(new IsoformMappingLocalMockImpl());
-		statementETLServiceMocked.setIsoformService(isoformService);
+		
+		transformerMockedService = new StatementTranformerServiceImpl();
+		transformerMockedService.setIsoformMappingService(new IsoformMappingLocalMockImpl());
+		transformerMockedService.setIsoformService(isoformService);
+		
+		statementETLServiceMocked.setStatementTransformerService(transformerMockedService);
+
 
 	}
 

@@ -99,7 +99,6 @@ public class StatementExporter {
         private final Set<AnnotationCategory> categories;
         private final List<StatementField> fields = Arrays.asList(StatementField.GENE_NAME,
                 StatementField.NEXTPROT_ACCESSION,
-                StatementField.ISOFORM_ACCESSION,
                 StatementField.ANNOTATION_CATEGORY,
                 StatementField.ANNOTATION_NAME,
                 StatementField.VARIANT_ORIGINAL_AMINO_ACID,

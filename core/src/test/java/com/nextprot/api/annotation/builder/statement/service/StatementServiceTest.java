@@ -1,20 +1,15 @@
 package com.nextprot.api.annotation.builder.statement.service;
 
-import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
-import org.nextprot.api.core.utils.annot.AnnotationUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Assert;
+import org.junit.Test;
+import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
 
 public class StatementServiceTest extends AnnotationBuilderIntegrationBaseTest {
 
