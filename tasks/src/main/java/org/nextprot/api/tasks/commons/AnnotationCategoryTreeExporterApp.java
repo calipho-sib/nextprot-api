@@ -61,7 +61,7 @@ public class AnnotationCategoryTreeExporterApp {
         Options options = new Options();
 
         Option help = new Option("help", "print this message");
-        Option format = OptionBuilder.withArgName("dot|graphml")
+        Option format = OptionBuilder.withArgName("dot|graphml|labels")
                 .hasArg()
                 .withDescription("format for output tree ('dot' by default)")
                 .create("format");
@@ -90,7 +90,7 @@ public class AnnotationCategoryTreeExporterApp {
 
             arguments.addAll(line.getArgList());
 
-            if (line.hasOption("help")) {
+            if (line.hasOption("help") || true) {
 
                 HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp(AnnotationCategoryTreeExporterApp.class.getSimpleName()+ " <file>", OPTIONS );
@@ -112,11 +112,14 @@ public class AnnotationCategoryTreeExporterApp {
                 else if (format.toLowerCase().equals("dot")) {
                     visitor = new TreeVisitorDot(treeName);
                 }
+                else if (format.toLowerCase().equals("labels")) {
+                    visitor = new TreeVisitorLabels(treeName);
+                }
                 else {
                     throw new IllegalArgumentException(format+": unknown output graph format");
                 }
             } else {
-                visitor = new TreeVisitorDot(treeName);
+                visitor = new TreeVisitorLabels(treeName);
             }
         }
         catch (ParseException exp) {
