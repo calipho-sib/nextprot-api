@@ -195,7 +195,9 @@ public class DbXrefServiceImpl implements DbXrefService {
 		List<DbXref> xrefList = new ArrayList<>(xrefs);
 		
 		// get and attach the properties to the xrefs
-		if (! xrefList.isEmpty()) attachPropertiesToXrefs(xrefList, entryName, false);
+		if (! xrefList.isEmpty()) {
+			attachPropertiesToXrefs(xrefList, entryName, false);
+		}
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<DbXref>().addAll(xrefList).build();
@@ -204,13 +206,13 @@ public class DbXrefServiceImpl implements DbXrefService {
 	private void addPeptideXrefs(String entryName, Set<DbXref> xrefs) {
 
 		List<String> names = peptideNamesService.findAllPeptideNamesByMasterId(entryName);
-		xrefs.addAll(names.size()>0 ? dbXRefDao.findPeptideXrefs(names) : new HashSet<>());
+		xrefs.addAll(!names.isEmpty() ? dbXRefDao.findPeptideXrefs(names) : new HashSet<>());
 	}
 
 	private void addAntibodyXrefs(String entryName, Set<DbXref> xrefs) {
 
 		List<Long> ids = antibodyResourceIdsService.findAllAntibodyIdsByMasterId(entryName);
-		xrefs.addAll(ids.size()>0 ? dbXRefDao.findAntibodyXrefs(ids) : new HashSet<>());
+		xrefs.addAll(!ids.isEmpty() ? dbXRefDao.findAntibodyXrefs(ids) : new HashSet<>());
 	}
 
 	private void attachPropertiesToXrefs(List<DbXref> xrefs, String uniqueName, boolean fetchXrefAnnotationMappingProperties) {

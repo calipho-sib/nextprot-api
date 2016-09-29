@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -102,11 +101,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 	private List<IsoformMapping> findAndSortIsoformAndTranscriptMappings(List<Isoform> isoforms) {
 
 		// map isoName -> isoform
-		ImmutableMap<String, Isoform> isoformsByName = Maps.uniqueIndex(isoforms, new Function<Isoform, String>() {
-			public String apply(Isoform isoform) {
-				return isoform.getUniqueName();
-			}
-		});
+		ImmutableMap<String, Isoform> isoformsByName = Maps.uniqueIndex(isoforms, isoform -> isoform.getUniqueName());
 
 		// Find all transcripts mapping all isoforms
 		List<TranscriptMapping> transcriptMappings = geneDAO.findTranscriptsByIsoformNames(isoformsByName.keySet());
@@ -135,7 +130,7 @@ public class GenomicMappingServiceImpl implements GenomicMappingService {
 
 		List<Exon> exons;
 
-		if (transcriptMapping.getQuality().equalsIgnoreCase("GOLD")) {
+		if ("GOLD".equalsIgnoreCase(transcriptMapping.getQuality())) {
 			exons = geneDAO.findExonsAlignedToTranscriptOfGene(transcriptMapping.getUniqueName(), transcriptMapping.getReferenceGeneUniqueName());
 		} else {
 			exons = geneDAO.findExonsPartiallyAlignedToTranscriptOfGene(transcriptMapping.getIsoformName(), transcriptMapping.getUniqueName(), transcriptMapping.getReferenceGeneUniqueName());
