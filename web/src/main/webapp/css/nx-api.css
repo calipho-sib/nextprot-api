@@ -1,6 +1,7 @@
 body {
 	padding-top: 60px;
 	padding-bottom: 40px;
+	font-family: "Lato","Helvetica Neue", "Helvetica", sans-serif;
 }
 
 .GET {
@@ -104,3 +105,8 @@ table td {
 	overflow-y: scroll;
 	max-height: 75vh;
 }
+
+.small {
+	font-size: 93%;
+}
+
