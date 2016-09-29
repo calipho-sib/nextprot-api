@@ -209,10 +209,8 @@ public class PublicationDaoImpl implements PublicationDao {
 
 			String pubType = resultSet.getString("pub_type");
 
-			if (pubType.equals("ONLINE PUBLICATION")) {
+			if ("ONLINE PUBLICATION".equals(pubType)) {
 				publication.setPublicationType("ONLINE_PUBLICATION");
-			} else if (pubType.equals("SUBMISSION")) {
-				publication.setPublicationType(pubType);
 			} else {
 				publication.setPublicationType(pubType);
 			}

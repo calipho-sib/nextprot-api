@@ -25,7 +25,7 @@ public class AnnotationExporter {
     private final MasterIdentifierService masterIdentifierService;
 
     private final Config config;
-    private final Map<AnnotationCategory, NpBedMergingStats> statisticsMap = new HashMap<>();
+    private final Map<AnnotationCategory, NpBedMergingStats> statisticsMap = new EnumMap<>(AnnotationCategory.class);
 
     public AnnotationExporter(EntryBuilderService entryBuilderService, StatementDao statementDao, MasterIdentifierService masterIdentifierService) {
 
@@ -59,12 +59,12 @@ public class AnnotationExporter {
         calcAnnotationStatsFromGeneNames(geneNames);
 
         // rows
-        for (AnnotationCategory category : statisticsMap.keySet()) {
+        for (Map.Entry<AnnotationCategory, NpBedMergingStats> entry : statisticsMap.entrySet()) {
 
-            NpBedMergingStats stats = statisticsMap.get(category);
+            NpBedMergingStats stats = entry.getValue();
 
             sb
-                    .append(category)
+                    .append(entry.getKey())
                     .append("\t")
                     .append(stats.countAnnots(NpBedMergingStats.AnnotType.MERGED))
                     .append("\t")
@@ -206,7 +206,7 @@ public class AnnotationExporter {
             MERGED, UNMERGED_BED, UNMERGED_NP
         }
 
-        private Map<AnnotType, List<Annotation>> annots = new HashMap<>();
+        private Map<AnnotType, List<Annotation>> annots = new EnumMap<>(AnnotType.class);
 
         NpBedMergingStats() {
 

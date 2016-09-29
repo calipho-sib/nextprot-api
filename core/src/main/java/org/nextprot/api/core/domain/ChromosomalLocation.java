@@ -137,10 +137,10 @@ public class ChromosomalLocation implements Serializable {
 				String chromosome = location.getChromosome();
 				String band = location.getBand();
 
-				if (chromosome != null && !chromosome.equals("unknown")) {
+				if (chromosome != null && !"unknown".equals(chromosome)) {
 					sb2.append(chromosome);
 				}
-				if (band != null && !band.equals("unknown")) {
+				if (band != null && !"unknown".equals(band)) {
 					sb2.append(band);
 				}
 

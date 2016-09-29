@@ -5,8 +5,9 @@ footer {
     background-color: black;
     height: 25px;
     line-height: 25px;
-    font-size: 0.9em;
+    /*font-size: 0.9em;*/
     z-index: 1000;
+    font-family: "Lato","Helvetica Neue", "Helvetica", sans-serif;
 }
 
 footer, footer a, footer a:visited {

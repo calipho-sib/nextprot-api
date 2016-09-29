@@ -1,13 +1,5 @@
 package org.nextprot.api.core.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -17,6 +9,8 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
+
+import java.util.*;
 
 //import org.nextprot.api.core.domain.TerminologyProperty;
 
@@ -59,7 +53,7 @@ public class TerminologyUtils {
 		List<String> mylist = Arrays.asList("XXX");
 		String currTerm = cvterm;
 		
-		while(mylist.size() > 0) {
+		while(!mylist.isEmpty()) {
 			mylist = terminologyservice.findCvTermByAccession(currTerm).getAncestorAccession();
 			if(mylist == null) break;
 			if(mylist.size() > 1) for (int i=1; i<mylist.size(); i++) multiParentSet.add(mylist.get(i));
@@ -75,16 +69,18 @@ public class TerminologyUtils {
 				multiParentSet.remove(cv);
 				mylist = terminologyservice.findCvTermByAccession(cv).getAncestorAccession();
 				if(mylist == null) break;
-				while(mylist != null && mylist.size() > 0) {
-				if(mylist.size() > 1) for (int i=1; i<mylist.size(); i++) multiParentSet.add(mylist.get(i));
-				currTerm = mylist.get(0);
-				finalSet.add(currTerm);
-				mylist = terminologyservice.findCvTermByAccession(currTerm).getAncestorAccession();
+				while(mylist != null && !mylist.isEmpty()) {
+					if(mylist.size() > 1)
+						for (int i=1; i<mylist.size(); i++)
+							multiParentSet.add(mylist.get(i));
+					currTerm = mylist.get(0);
+					finalSet.add(currTerm);
+					mylist = terminologyservice.findCvTermByAccession(currTerm).getAncestorAccession();
 				}
 			}
 		}
 		
-		return(new ArrayList<String>(finalSet));	
+		return(new ArrayList<>(finalSet));
 	}
 	
 	public static List<DbXref> convertToXrefs (String xrefsstring) {
@@ -112,7 +108,7 @@ public class TerminologyUtils {
 					linkurl = fields.get(5);
 			}
 
-			if (url == null || url.isEmpty() || url.equalsIgnoreCase("none")) {
+			if (url == null || url.isEmpty() || "none".equalsIgnoreCase(url)) {
 				dbref.setUrl("None");
 				dbref.setLinkUrl("None");
 				dbref.setResolvedUrl("None");
