@@ -1,11 +1,10 @@
-package org.nextprot.api.web.ui.page;
-
-import java.util.ArrayList;
-import java.util.Arrays;
+package org.nextprot.api.core.utils.entry;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
+
+import java.util.Arrays;
 
 public class InteractionsPageConfig extends SimplePageConfig {
 

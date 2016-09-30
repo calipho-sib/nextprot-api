@@ -1,11 +1,9 @@
-package org.nextprot.api.web.ui.page;
+package org.nextprot.api.core.utils.entry;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
+
+import java.util.ArrayList;
 
 public class ExonsPageConfig extends SimplePageConfig {
 

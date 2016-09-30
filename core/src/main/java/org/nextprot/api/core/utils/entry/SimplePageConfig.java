@@ -1,10 +1,11 @@
-package org.nextprot.api.web.ui.page;
-
-import java.util.List;
+package org.nextprot.api.core.utils.entry;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
+
+import java.util.List;
 
 public abstract class SimplePageConfig {
 	
@@ -22,9 +23,16 @@ public abstract class SimplePageConfig {
 		return xrefs;
 	}
 	
-	public abstract boolean filterOutAnnotation(Annotation a);
-	public abstract boolean filterOutXref(DbXref x);
-	
-	
-	
+	protected abstract boolean filterOutAnnotation(Annotation a);
+	protected abstract boolean filterOutXref(DbXref x);
+
+	public boolean hasContent(Entry entry) {
+
+		return true;
+	}
+
+	public String getPageName() {
+
+		return this.getClass().getSimpleName();
+	}
 }
