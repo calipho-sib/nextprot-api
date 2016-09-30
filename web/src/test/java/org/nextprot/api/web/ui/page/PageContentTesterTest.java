@@ -26,7 +26,7 @@ public class PageContentTesterTest {
     @Test
     public void testAllPageNames() throws Exception {
 
-        Assert.assertTrue(!PageContentTester.getAllTestablePageNames().isEmpty());
+        Assert.assertTrue(!PageContentTester.getAllTestingPageNames().isEmpty());
     }
 
     @Test

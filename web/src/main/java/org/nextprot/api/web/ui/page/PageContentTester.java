@@ -59,9 +59,9 @@ public class PageContentTester {
     }
 
     /**
-     * @return the set of all testable page names
+     * @return the set of all page names testing entry content
      */
-    public static Set<String> getAllTestablePageNames() {
+    public static Set<String> getAllTestingPageNames() {
 
         return ALL_PAGES.stream().map(SimplePageConfig::getPageName).collect(Collectors.toSet());
     }

@@ -11,12 +11,19 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Set;
 
 @Service
 class EntryPageServiceImpl implements EntryPageService {
 
 	@Autowired EntryBuilderService entryBuilderService;
 	@Autowired MasterIdentifierService masterIdentifierService;
+
+	@Override
+	public Set<String> getAllTestingPageNames() {
+
+		return PageContentTester.getAllTestingPageNames();
+	}
 
 	// TODO: configure eh-cache
 	@Cacheable("page-content")
