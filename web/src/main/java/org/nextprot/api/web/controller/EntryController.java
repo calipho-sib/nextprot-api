@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Lazy
 @Controller
@@ -72,12 +73,23 @@ public class EntryController {
 		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
 	}
 
+	// TODO: Should we hide the handlers below ?
+	// TODO: Move the handlers below in a specific controller ?
+
 	@ApiMethod(path = "/entry/{entry}/page-content", verb = ApiVerb.GET, description = "Test entry content to be displayed by pages", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/entry/{entry}/page-content", method = { RequestMethod.GET })
 	@ResponseBody
 	public Map<String, Boolean> testPageContent(@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName) {
 
 		return entryPageService.testEntryContentForPageDisplay(entryName);
+	}
+
+	@ApiMethod(path = "/page-names", verb = ApiVerb.GET, description = "Get the list of all pages that need to test for entry content", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/page-names", method = { RequestMethod.GET })
+	@ResponseBody
+	public Set<String> getAllPageNames() {
+
+		return entryPageService.getAllTestingPageNames();
 	}
 }
 
