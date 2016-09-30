@@ -3,6 +3,7 @@ package org.nextprot.api.web.ui.page;
 import org.nextprot.api.core.domain.Entry;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Test entry content required to display by the page(s)
@@ -41,18 +42,13 @@ public class PageContentTester {
         pages = new HashSet<>();
     }
 
-    static PageContentTester ofPages(Entry entry, Collection<SimplePageConfig> pageConfig) {
+    public static PageContentTester allPages(Entry entry) {
 
         PageContentTester pageContentTester = new PageContentTester(entry);
 
-        pageConfig.forEach(pageContentTester::addPage);
+        ALL_PAGES.forEach(pageContentTester::addPage);
 
         return pageContentTester;
-    }
-
-    public static PageContentTester allPages(Entry entry) {
-
-        return PageContentTester.ofPages(entry, ALL_PAGES);
     }
 
     void addPage(SimplePageConfig page) {
@@ -60,6 +56,14 @@ public class PageContentTester {
         Objects.requireNonNull(page);
 
         pages.add(page);
+    }
+
+    /**
+     * @return the set of all testable page names
+     */
+    public static Set<String> getAllTestablePageNames() {
+
+        return ALL_PAGES.stream().map(SimplePageConfig::getPageName).collect(Collectors.toSet());
     }
 
     /**
