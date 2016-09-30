@@ -1,9 +1,5 @@
 package org.nextprot.api.web.controller;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
@@ -15,25 +11,26 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
+import org.nextprot.api.web.service.EntryPageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 @Lazy
 @Controller
 @Api(name = "Entry", description = "Method to retrieve a complete or partial entry")
 public class EntryController {
 
-	@Autowired	private EntryBuilderService entryBuilderService;
-	@Autowired	private MasterIsoformMappingService masterIsoformMappingService;
-	
+	@Autowired private EntryBuilderService entryBuilderService;
+	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
+	@Autowired private EntryPageService entryPageService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -56,8 +53,8 @@ public class EntryController {
 		return "entry";
 	}
 
-	@RequestMapping("/entry/{entryname}/{blockOrSubpart}")
-	public String getSubPart(@PathVariable("entryname") String entryName, 
+	@RequestMapping("/entry/{entry}/{blockOrSubpart}")
+	public String getSubPart(@PathVariable("entry") String entryName,
 							@PathVariable("blockOrSubpart") String blockOrSubpart, 
 							HttpServletRequest request,
 							Model model) {
@@ -74,7 +71,13 @@ public class EntryController {
 	public List<IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
 		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
 	}
-	
 
+	@ApiMethod(path = "/entry/{entry}/page-content", verb = ApiVerb.GET, description = "Test entry content to be displayed by pages", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/entry/{entry}/page-content", method = { RequestMethod.GET })
+	@ResponseBody
+	public Map<String, Boolean> testPageContent(@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName) {
+
+		return entryPageService.testEntryContentForPageDisplay(entryName);
+	}
 }
 
