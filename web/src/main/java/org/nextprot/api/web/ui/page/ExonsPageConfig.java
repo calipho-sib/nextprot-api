@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.entry;
+package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.annotation.Annotation;
