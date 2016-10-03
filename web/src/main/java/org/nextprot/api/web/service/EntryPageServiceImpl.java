@@ -11,7 +11,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.Set;
 
 @Service
 class EntryPageServiceImpl implements EntryPageService {
@@ -19,8 +18,7 @@ class EntryPageServiceImpl implements EntryPageService {
 	@Autowired EntryBuilderService entryBuilderService;
 	@Autowired MasterIdentifierService masterIdentifierService;
 
-	// TODO: configure eh-cache
-	@Cacheable("page-content")
+	@Cacheable(value="page-content", key="#entryName")
 	@Override
 	public Map<String, Boolean> testEntryContentForPageDisplay(@ValidEntry String entryName) {
 

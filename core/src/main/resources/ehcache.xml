@@ -273,5 +273,15 @@
 	<!-- Publications for in memory processing during ETL -->
 	<cache name="publications-by-id-and-accession" maxEntriesLocalHeap="1000" statistics="true"/>
 
-
+	<!-- -->
+	<cache name="page-content"
+		   maxEntriesLocalHeap="10"
+		   maxEntriesLocalDisk="22000"
+		   eternal="true"
+		   diskSpoolBufferSizeMB="20"
+		   timeToIdleSeconds="300" timeToLiveSeconds="600"
+		   memoryStoreEvictionPolicy="LFU"
+		   transactionalMode="off">
+		<persistence strategy="localTempSwap" />
+	</cache>
 </ehcache>
