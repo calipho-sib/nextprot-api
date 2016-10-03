@@ -29,16 +29,6 @@ public class PageContentTesterTest {
         Assert.assertTrue(!PageContentTester.getAllTestingPageNames().isEmpty());
     }
 
-    @Test
-    public void allPagesShouldBeDisplayed() throws Exception {
-
-        PageContentTester pageContentTester = PageContentTester.allPages(Mockito.mock(Entry.class));
-
-        Map<String, Boolean> map = pageContentTester.testPageContent();
-
-        Assert.assertTrue(map.values().stream().allMatch(Boolean::booleanValue));
-    }
-
     private static SimplePageConfig mockPageConfig(String pageName, boolean bool) {
 
         SimplePageConfig page = Mockito.mock(SimplePageConfig.class);

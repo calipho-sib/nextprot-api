@@ -1,36 +1,33 @@
 package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class PhenotypesPageConfig extends SimplePageConfig {
 
 	private static final PhenotypesPageConfig INSTANCE = new PhenotypesPageConfig();
 
 	public static PhenotypesPageConfig getInstance() { return INSTANCE; }
-	
+
 	private PhenotypesPageConfig() {
-		
-		annotations = Arrays.asList(
+		super("Phenotypes");
+	}
+
+	@Override
+	protected List<AnnotationCategory> getSelectedAnnotationCategoryList() {
+		return Arrays.asList(
 				AnnotationCategory.PHENOTYPIC_VARIATION);
-
-		features = Arrays.asList();
-		
-		xrefs = Arrays.asList();
-
-	}
-	
-	@Override
-	public boolean filterOutAnnotation(Annotation a) {
-		return true;
 	}
 
 	@Override
-	public boolean filterOutXref(DbXref x) {
-		return true;
+	protected List<AnnotationCategory> getSelectedFeatureList() {
+		return Arrays.asList();
 	}
 
+	@Override
+	protected List<String> getSelectedXrefDbNameList() {
+		return Arrays.asList();
+	}
 }
