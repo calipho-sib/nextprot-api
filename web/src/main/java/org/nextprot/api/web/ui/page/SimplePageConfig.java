@@ -9,6 +9,11 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ *
+ *
+ * TODO: change class name
+ */
 public abstract class SimplePageConfig {
 
 	private final String pageName;
@@ -16,8 +21,9 @@ public abstract class SimplePageConfig {
 	private final List<AnnotationCategory> mandatoryFeatureList;
 	private final List<String> mandatoryXrefDbNameList;
 
-	SimplePageConfig(@Nonnull String pageName) {
+	SimplePageConfig(String pageName) {
 
+		Objects.requireNonNull(pageName, "page should have a defined name");
 		Objects.requireNonNull(getSelectedAnnotationCategoryList(), "selected annotation category list should not be null");
 		Objects.requireNonNull(getSelectedXrefDbNameList(), "selected xref db name list should not be null");
 		Objects.requireNonNull(getSelectedFeatureList(), "selected feature list should not be null");
@@ -51,7 +57,7 @@ public abstract class SimplePageConfig {
 	/**
 	 * @return page name
 	 */
-	public String getPageName() {
+	String getPageName() {
 
 		return pageName;
 	}
