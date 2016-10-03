@@ -9,7 +9,7 @@ import java.util.Map;
 
 import static org.mockito.Matchers.any;
 
-public class EntryPageDisplayRequirementsTesterTest {
+public class PageDisplayRequirementsTesterTest {
 
     @Test
     public void shouldDisplayPage() throws Exception {
