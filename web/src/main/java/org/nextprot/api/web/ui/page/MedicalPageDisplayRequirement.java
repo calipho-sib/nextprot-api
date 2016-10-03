@@ -2,21 +2,23 @@ package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class MedicalPageConfig extends SimplePageConfig {
+public class MedicalPageDisplayRequirement extends BasePageDisplayRequirement {
 
-	private static final MedicalPageConfig INSTANCE = new MedicalPageConfig();
+	private static final MedicalPageDisplayRequirement INSTANCE = new MedicalPageDisplayRequirement();
 
-	public static MedicalPageConfig getInstance() { return INSTANCE; }
+	public static MedicalPageDisplayRequirement getInstance() { return INSTANCE; }
 
-	private MedicalPageConfig() {
+	private MedicalPageDisplayRequirement() {
 		super("Medical");
 	}
 
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedAnnotationCategoryList() {
+	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 		return Arrays.asList(
 				AnnotationCategory.DISEASE,
 				AnnotationCategory.VARIANT_INFO,  // = POLYMORPHISM NP1
@@ -26,13 +28,15 @@ public class MedicalPageConfig extends SimplePageConfig {
 		);
 	}
 
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedFeatureList() {
+	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
 		return Arrays.asList(AnnotationCategory.VARIANT); // = SEQ_VARIANT NP1
 	}
 
+	@Nonnull
 	@Override
-	protected List<String> getSelectedXrefDbNameList() {
+	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList("GeneReviews", "CTD", "MIM", "DrugBank", "PharmGKB", "Orphanet",
 				"Allergome", "DMDM", "BioMuta", "MalaCards" );
 	}

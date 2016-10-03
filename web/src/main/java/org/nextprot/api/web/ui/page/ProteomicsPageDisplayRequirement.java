@@ -2,27 +2,30 @@ package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ProteomicsPageConfig extends SimplePageConfig {
+public class ProteomicsPageDisplayRequirement extends BasePageDisplayRequirement {
 
-	private static final ProteomicsPageConfig INSTANCE = new ProteomicsPageConfig();
+	private static final ProteomicsPageDisplayRequirement INSTANCE = new ProteomicsPageDisplayRequirement();
 
-	public static ProteomicsPageConfig getInstance() { return INSTANCE; }
+	public static ProteomicsPageDisplayRequirement getInstance() { return INSTANCE; }
 
-	private ProteomicsPageConfig() {
+	private ProteomicsPageDisplayRequirement() {
 		super("Proteomics");
 	}
 
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedAnnotationCategoryList() {
+	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 		return new ArrayList<>();
 	}
 
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedFeatureList() {
+	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
 		return Arrays.asList(
 				AnnotationCategory.MATURATION_PEPTIDE,
 				AnnotationCategory.MATURE_PROTEIN,
@@ -39,8 +42,9 @@ public class ProteomicsPageConfig extends SimplePageConfig {
 		);
 	}
 
+	@Nonnull
 	@Override
-	protected List<String> getSelectedXrefDbNameList() {
+	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList(
 				"Aarhus/Ghent-2DPAGE","Cornea-2DPAGE","DOSAC-COBS-2DPAGE","OGP","PHCI-2DPAGE",
 				"PMMA-2DPAGE", "REPRODUCTION-2DPAGE", "SWISS-2DPAGE", "Siena-2DPAGE", "UCD-2DPAGE",

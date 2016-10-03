@@ -2,22 +2,24 @@ package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ExpressionPageConfig extends SimplePageConfig {
+public class ExpressionPageDisplayRequirement extends BasePageDisplayRequirement {
 
-	private static final ExpressionPageConfig INSTANCE = new ExpressionPageConfig();
+	private static final ExpressionPageDisplayRequirement INSTANCE = new ExpressionPageDisplayRequirement();
 
-	private ExpressionPageConfig() {
+	private ExpressionPageDisplayRequirement() {
 		super("Expression");
 	}
 
-	public static ExpressionPageConfig getInstance() { return INSTANCE; }
+	public static ExpressionPageDisplayRequirement getInstance() { return INSTANCE; }
 	
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedAnnotationCategoryList() {
+	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 		return Arrays.asList(
 				AnnotationCategory.EXPRESSION_INFO, /*HPA, Uniprot*/
 				AnnotationCategory.INDUCTION,
@@ -25,13 +27,15 @@ public class ExpressionPageConfig extends SimplePageConfig {
 		);
 	}
 
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedFeatureList() {
+	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
 		return new ArrayList<>();
 	}
 
+	@Nonnull
 	@Override
-	protected List<String> getSelectedXrefDbNameList() {
+	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList(
 				"ArrayExpress", "Bgee", "CleanEx", "Genevestigator", "GermOnline",
 				"HPA", "Antibodypedia","ExpressionAtlas","Genevisible");

@@ -2,21 +2,23 @@ package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class SequencePageConfig extends SimplePageConfig {
+public class SequencePageDisplayRequirement extends BasePageDisplayRequirement {
 
-	private static final SequencePageConfig INSTANCE = new SequencePageConfig();
+	private static final SequencePageDisplayRequirement INSTANCE = new SequencePageDisplayRequirement();
 
-	public static SequencePageConfig getInstance() { return INSTANCE; }
+	public static SequencePageDisplayRequirement getInstance() { return INSTANCE; }
 
-	private SequencePageConfig() {
+	private SequencePageDisplayRequirement() {
 		super("Sequence");
 	}
 
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedAnnotationCategoryList() {
+	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 		return Arrays.asList(
 				AnnotationCategory.DOMAIN_INFO, // to check: war PTM in NP1
 				AnnotationCategory.PTM_INFO,
@@ -25,8 +27,9 @@ public class SequencePageConfig extends SimplePageConfig {
 		);
 	}
 
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedFeatureList() {
+	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
 
 		return Arrays.asList(
 
@@ -82,8 +85,9 @@ public class SequencePageConfig extends SimplePageConfig {
 		);
 	}
 
+	@Nonnull
 	@Override
-	protected List<String> getSelectedXrefDbNameList() {
+	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList("CCDS", "eggNOG", "EMBL","Ensembl", "Gene3D", "GlycoSuiteDB", "HOGENOM", "HOVERGEN",
 				"InParanoid", "InterPro", "KEGG", "MGI",
 				"OMA", "OrthoDB", "PANTHER", "Pfam", "PhosphoSite", "PhylomeDB",

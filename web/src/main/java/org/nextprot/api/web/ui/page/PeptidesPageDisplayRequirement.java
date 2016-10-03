@@ -2,26 +2,29 @@ package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class PeptidesPageConfig extends SimplePageConfig {
+public class PeptidesPageDisplayRequirement extends BasePageDisplayRequirement {
 
-	private static final PeptidesPageConfig INSTANCE = new PeptidesPageConfig();
+	private static final PeptidesPageDisplayRequirement INSTANCE = new PeptidesPageDisplayRequirement();
 
-	public static PeptidesPageConfig getInstance() { return INSTANCE; }
+	public static PeptidesPageDisplayRequirement getInstance() { return INSTANCE; }
 
-	private PeptidesPageConfig() {
+	private PeptidesPageDisplayRequirement() {
 		super("Peptides");
 	}
 
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedAnnotationCategoryList() {
+	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 		return Arrays.asList();
 	}
 
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedFeatureList() {
+	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
 		// what else, this is what I see, but not all are in nextprot-viewers/edit/master/lib/featureConfig.json
 		// some hardcoded somewhere ?
 		return Arrays.asList(
@@ -34,8 +37,9 @@ public class PeptidesPageConfig extends SimplePageConfig {
 					AnnotationCategory.SRM_PEPTIDE_MAPPING);
 	}
 
+	@Nonnull
 	@Override
-	protected List<String> getSelectedXrefDbNameList() {
+	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList();
 	}
 }

@@ -2,27 +2,30 @@ package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class StructuresPageConfig extends SimplePageConfig {
+public class StructuresPageDisplayRequirement extends BasePageDisplayRequirement {
 
-	private static final StructuresPageConfig INSTANCE = new StructuresPageConfig();
+	private static final StructuresPageDisplayRequirement INSTANCE = new StructuresPageDisplayRequirement();
 
-	public static StructuresPageConfig getInstance() { return INSTANCE; }
+	public static StructuresPageDisplayRequirement getInstance() { return INSTANCE; }
 
-	private StructuresPageConfig() {
+	private StructuresPageDisplayRequirement() {
 		super("Structures");
 	}
 
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedAnnotationCategoryList() {
+	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 		return new ArrayList<>();
 	}
 
+	@Nonnull
 	@Override
-	protected List<AnnotationCategory> getSelectedFeatureList() {
+	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
 		return Arrays.asList(
 				AnnotationCategory.MISCELLANEOUS_REGION,
 				AnnotationCategory.DOMAIN,
@@ -57,8 +60,9 @@ public class StructuresPageConfig extends SimplePageConfig {
 		);
 	}
 
+	@Nonnull
 	@Override
-	protected List<String> getSelectedXrefDbNameList() {
+	protected List<String> getXrefDbNameWhiteList() {
 		return Arrays.asList("PDB","PDBsum", "ProteinModelPortal","HSSP", "SMR", "ModBase", "DisProt");
 	}
 }

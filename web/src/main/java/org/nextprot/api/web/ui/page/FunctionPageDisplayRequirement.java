@@ -2,22 +2,24 @@ package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FunctionPageConfig extends SimplePageConfig {
+public class FunctionPageDisplayRequirement extends BasePageDisplayRequirement {
 
-	private static final FunctionPageConfig INSTANCE = new FunctionPageConfig();
+	private static final FunctionPageDisplayRequirement INSTANCE = new FunctionPageDisplayRequirement();
 
-	private FunctionPageConfig() {
+	private FunctionPageDisplayRequirement() {
 		super("Function");
 	}
 
-	public static FunctionPageConfig getInstance() { return INSTANCE; }
+	public static FunctionPageDisplayRequirement getInstance() { return INSTANCE; }
 
+	@Nonnull
 	@Override
-	public List<AnnotationCategory> getSelectedAnnotationCategoryList() {
+	public List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 
 		return Arrays.asList(
 				AnnotationCategory.ALLERGEN,
@@ -34,13 +36,15 @@ public class FunctionPageConfig extends SimplePageConfig {
 		);
 	}
 
+	@Nonnull
 	@Override
-	public List<AnnotationCategory> getSelectedFeatureList() {
+	public List<AnnotationCategory> getFeatureCategoryWhiteList() {
 		return new ArrayList<>();
 	}
 
+	@Nonnull
 	@Override
-	public List<String> getSelectedXrefDbNameList() {
+	public List<String> getXrefDbNameWhiteList() {
 
 		return Arrays.asList("BRENDA", "CAZy", "KEGGPathway", "MEROPS", "PeroxiBase",
 				"BioCyc", "Reactome","Pathway_Interaction_DB", "REBASE", "TCDB",
