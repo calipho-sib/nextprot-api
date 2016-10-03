@@ -19,12 +19,6 @@ class EntryPageServiceImpl implements EntryPageService {
 	@Autowired EntryBuilderService entryBuilderService;
 	@Autowired MasterIdentifierService masterIdentifierService;
 
-	@Override
-	public Set<String> getAllTestingPageNames() {
-
-		return PageDisplayTester.getAllTestingPageNames();
-	}
-
 	// TODO: configure eh-cache
 	@Cacheable("page-content")
 	@Override
