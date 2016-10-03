@@ -1,4 +1,4 @@
-package org.nextprot.api.web.ui;
+package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.core.domain.Entry;
 

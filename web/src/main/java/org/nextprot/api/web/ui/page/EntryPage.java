@@ -1,4 +1,4 @@
-package org.nextprot.api.web.ui;
+package org.nextprot.api.web.ui.page;
 
 public enum EntryPage {
 

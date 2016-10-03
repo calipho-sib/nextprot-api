@@ -1,11 +1,11 @@
-package org.nextprot.api.web.ui.page;
+package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.web.ui.EntryPage;
-import org.nextprot.api.web.ui.PageDisplayRequirement;
+import org.nextprot.api.web.ui.page.EntryPage;
+import org.nextprot.api.web.ui.page.PageDisplayRequirement;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.Objects;
  *
  * Subclasses should give get white lists implementation
  */
-public abstract class BasePageDisplayRequirement implements PageDisplayRequirement {
+abstract class BasePageDisplayRequirement implements PageDisplayRequirement {
 
 	private final EntryPage entryPage;
 	private final List<AnnotationCategory> annotationCategoryWhiteList;
@@ -112,19 +112,6 @@ public abstract class BasePageDisplayRequirement implements PageDisplayRequireme
 	 */
 	protected boolean filterOutXrefDbName(DbXref xref) {
 		return false;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof BasePageDisplayRequirement)) return false;
-		BasePageDisplayRequirement that = (BasePageDisplayRequirement) o;
-		return entryPage == that.entryPage;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(entryPage);
 	}
 
 	/**
