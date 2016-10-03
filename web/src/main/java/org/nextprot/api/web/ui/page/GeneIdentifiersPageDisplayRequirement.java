@@ -1,6 +1,7 @@
 package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.web.ui.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class GeneIdentifiersPageDisplayRequirement extends BasePageDisplayRequir
 	public static GeneIdentifiersPageDisplayRequirement getInstance() { return INSTANCE; }
 
 	private GeneIdentifiersPageDisplayRequirement() {
-		super("Gene Identifiers");
+		super(EntryPage.GENE_IDENTIFIERS);
 	}
 
 	@Nonnull

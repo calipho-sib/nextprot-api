@@ -1,6 +1,7 @@
 package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.web.ui.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -13,7 +14,7 @@ public class InteractionsPageDisplayRequirement extends BasePageDisplayRequireme
 	public static InteractionsPageDisplayRequirement getInstance() { return INSTANCE; }
 
 	private InteractionsPageDisplayRequirement() {
-		super("Interactions");
+		super(EntryPage.INTERACTIONS);
 	}
 
 	@Nonnull

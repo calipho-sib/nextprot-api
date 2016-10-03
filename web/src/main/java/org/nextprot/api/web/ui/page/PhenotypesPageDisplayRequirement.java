@@ -1,6 +1,7 @@
 package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.web.ui.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -13,7 +14,7 @@ public class PhenotypesPageDisplayRequirement extends BasePageDisplayRequirement
 	public static PhenotypesPageDisplayRequirement getInstance() { return INSTANCE; }
 
 	private PhenotypesPageDisplayRequirement() {
-		super("Phenotypes");
+		super(EntryPage.PHENOTYPES);
 	}
 
 	@Nonnull

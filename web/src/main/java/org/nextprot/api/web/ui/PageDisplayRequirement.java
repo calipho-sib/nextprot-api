@@ -19,7 +19,7 @@ public interface PageDisplayRequirement {
     boolean doDisplayPage(@Nonnull Entry entry);
 
     /**
-     * @return the page name
+     * @return page
      */
-    String getPageName();
+    EntryPage getPage();
 }

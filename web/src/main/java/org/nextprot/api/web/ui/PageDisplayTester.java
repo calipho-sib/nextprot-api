@@ -56,6 +56,10 @@ public class PageDisplayTester {
 
         Objects.requireNonNull(page);
 
+        if (pages.contains(page)) {
+            throw new IllegalStateException("page requirement "+page.getPage().getLabel()+" already exists");
+        }
+
         pages.add(page);
     }
 
@@ -64,7 +68,7 @@ public class PageDisplayTester {
      */
     public static Set<String> getAllTestingPageNames() {
 
-        return ALL_PAGES.stream().map(PageDisplayRequirement::getPageName).collect(Collectors.toSet());
+        return ALL_PAGES.stream().map(PageDisplayRequirement::getPage).map(EntryPage::getLabel).collect(Collectors.toSet());
     }
 
     /**
@@ -78,10 +82,10 @@ public class PageDisplayTester {
         for (PageDisplayRequirement page : pages) {
 
             if (page.doDisplayPage(entry)) {
-                map.put(page.getPageName(), Boolean.TRUE);
+                map.put(page.getPage().getLabel(), Boolean.TRUE);
             }
             else {
-                map.put(page.getPageName(), Boolean.FALSE);
+                map.put(page.getPage().getLabel(), Boolean.FALSE);
             }
         }
 

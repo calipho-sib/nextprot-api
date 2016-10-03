@@ -1,6 +1,7 @@
 package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.web.ui.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class ExonsPageDisplayRequirement extends BasePageDisplayRequirement {
 	private static final ExonsPageDisplayRequirement INSTANCE = new ExonsPageDisplayRequirement();
 
 	private ExonsPageDisplayRequirement() {
-		super("Exons");
+		super(EntryPage.EXONS);
 	}
 
 	public static ExonsPageDisplayRequirement getInstance() { return INSTANCE; }

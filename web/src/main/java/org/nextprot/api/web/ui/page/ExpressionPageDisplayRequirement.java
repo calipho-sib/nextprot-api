@@ -1,6 +1,7 @@
 package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.web.ui.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class ExpressionPageDisplayRequirement extends BasePageDisplayRequirement
 	private static final ExpressionPageDisplayRequirement INSTANCE = new ExpressionPageDisplayRequirement();
 
 	private ExpressionPageDisplayRequirement() {
-		super("Expression");
+		super(EntryPage.EXPRESSION);
 	}
 
 	public static ExpressionPageDisplayRequirement getInstance() { return INSTANCE; }

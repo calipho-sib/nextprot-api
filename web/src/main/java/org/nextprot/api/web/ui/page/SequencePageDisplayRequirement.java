@@ -1,6 +1,7 @@
 package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.web.ui.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -13,7 +14,7 @@ public class SequencePageDisplayRequirement extends BasePageDisplayRequirement {
 	public static SequencePageDisplayRequirement getInstance() { return INSTANCE; }
 
 	private SequencePageDisplayRequirement() {
-		super("Sequence");
+		super(EntryPage.SEQUENCE);
 	}
 
 	@Nonnull

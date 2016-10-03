@@ -1,6 +1,7 @@
 package org.nextprot.api.web.ui.page;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.web.ui.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class FunctionPageDisplayRequirement extends BasePageDisplayRequirement {
 	private static final FunctionPageDisplayRequirement INSTANCE = new FunctionPageDisplayRequirement();
 
 	private FunctionPageDisplayRequirement() {
-		super("Function");
+		super(EntryPage.FUNCTION);
 	}
 
 	public static FunctionPageDisplayRequirement getInstance() { return INSTANCE; }

@@ -4,6 +4,7 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.web.ui.EntryPage;
 import org.nextprot.api.web.ui.PageDisplayRequirement;
 
 import javax.annotation.Nonnull;
@@ -26,19 +27,19 @@ import java.util.Objects;
  */
 public abstract class BasePageDisplayRequirement implements PageDisplayRequirement {
 
-	private final String pageName;
+	private final EntryPage entryPage;
 	private final List<AnnotationCategory> annotationCategoryWhiteList;
 	private final List<AnnotationCategory> featureCategoryWhiteList;
 	private final List<String> xrefDbNameWhiteList;
 
-	BasePageDisplayRequirement(String pageName) {
+	BasePageDisplayRequirement(EntryPage entryPage) {
 
-		Objects.requireNonNull(pageName, "page should have a defined name");
+		Objects.requireNonNull(entryPage, "page should have a defined name");
 		Objects.requireNonNull(getAnnotationCategoryWhiteList(), "selected annotation category list should not be null");
 		Objects.requireNonNull(getXrefDbNameWhiteList(), "selected xref db name list should not be null");
 		Objects.requireNonNull(getFeatureCategoryWhiteList(), "selected feature list should not be null");
 
-		this.pageName = pageName;
+		this.entryPage = entryPage;
 		annotationCategoryWhiteList = getAnnotationCategoryWhiteList();
 		xrefDbNameWhiteList = getXrefDbNameWhiteList();
 		featureCategoryWhiteList = getFeatureCategoryWhiteList();
@@ -73,11 +74,11 @@ public abstract class BasePageDisplayRequirement implements PageDisplayRequireme
 	}
 
 	/**
-	 * @return the page name
+	 * @return page
 	 */
-	public String getPageName() {
+	public EntryPage getPage() {
 
-		return pageName;
+		return entryPage;
 	}
 
 	/**
@@ -111,6 +112,19 @@ public abstract class BasePageDisplayRequirement implements PageDisplayRequireme
 	 */
 	protected boolean filterOutXrefDbName(DbXref xref) {
 		return false;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof BasePageDisplayRequirement)) return false;
+		BasePageDisplayRequirement that = (BasePageDisplayRequirement) o;
+		return entryPage == that.entryPage;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(entryPage);
 	}
 
 	/**

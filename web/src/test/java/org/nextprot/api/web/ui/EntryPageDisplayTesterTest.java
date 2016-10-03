@@ -10,14 +10,14 @@ import java.util.Map;
 
 import static org.mockito.Matchers.any;
 
-public class PageDisplayTesterTest {
+public class EntryPageDisplayTesterTest {
 
     @Test
     public void shouldDisplayPage() throws Exception {
 
         PageDisplayTester pageDisplayTester = new PageDisplayTester(Mockito.mock(Entry.class));
 
-        pageDisplayTester.addPageRequirement(mockPageConfig("mock", true));
+        pageDisplayTester.addPageRequirement(mockPageConfig(EntryPage.FUNCTION, true));
 
         Map<String, Boolean> map = pageDisplayTester.testPageContent();
 
@@ -30,12 +30,12 @@ public class PageDisplayTesterTest {
         Assert.assertTrue(!PageDisplayTester.getAllTestingPageNames().isEmpty());
     }
 
-    private static BasePageDisplayRequirement mockPageConfig(String pageName, boolean bool) {
+    private static BasePageDisplayRequirement mockPageConfig(EntryPage entryPage, boolean bool) {
 
         BasePageDisplayRequirement page = Mockito.mock(BasePageDisplayRequirement.class);
 
         Mockito.when(page.doDisplayPage(any(Entry.class))).thenReturn(bool);
-        Mockito.when(page.getPageName()).thenReturn(pageName);
+        Mockito.when(page.getPage()).thenReturn(entryPage);
 
         return page;
     }
