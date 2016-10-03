@@ -28,9 +28,6 @@ import java.util.stream.Stream;
 public abstract class BasePageDisplayRequirement implements PageDisplayRequirement {
 
 	private final EntryPage entryPage;
-	private final List<AnnotationCategory> annotationCategoryWhiteList;
-	private final List<AnnotationCategory> featureCategoryWhiteList;
-	private final List<String> xrefDbNameWhiteList;
 
 	BasePageDisplayRequirement(EntryPage entryPage) {
 
@@ -40,9 +37,6 @@ public abstract class BasePageDisplayRequirement implements PageDisplayRequireme
 		Objects.requireNonNull(getFeatureCategoryWhiteList(), "selected feature list should not be null");
 
 		this.entryPage = entryPage;
-		annotationCategoryWhiteList = getAnnotationCategoryWhiteList();
-		xrefDbNameWhiteList = getXrefDbNameWhiteList();
-		featureCategoryWhiteList = getFeatureCategoryWhiteList();
 	}
 
 	/**
@@ -51,31 +45,33 @@ public abstract class BasePageDisplayRequirement implements PageDisplayRequireme
 	 * @param entry the entry to check content
 	 * @return true if page should be display
 	 */
+	@Override
 	public boolean doDisplayPage(@Nonnull Entry entry) {
 
 		// test xrefs
 		if (entry.getXrefs().stream()
 				.filter(xref -> !filterOutXrefDbName(xref))
-				.anyMatch(xr -> xrefDbNameWhiteList.contains(xr.getDatabaseName())))
+				.anyMatch(xr -> getXrefDbNameWhiteList().contains(xr.getDatabaseName())))
 			return true;
 
 		// then annotations
 		if (entry.getAnnotations().stream()
 				.map(Annotation::getAPICategory)
 				.filter(ac -> !filterOutAnnotationCategory(ac))
-				.anyMatch(annotationCategoryWhiteList::contains))
+				.anyMatch(getAnnotationCategoryWhiteList()::contains))
 			return true;
 
 		// then features
 		return entry.getAnnotations().stream()
 				.map(Annotation::getAPICategory)
 				.filter(ac -> !filterOutFeatureCategory(ac))
-				.anyMatch(featureCategoryWhiteList::contains);
+				.anyMatch(getFeatureCategoryWhiteList()::contains);
 	}
 
 	/**
 	 * @return page
 	 */
+	@Override
 	public EntryPage getPage() {
 
 		return entryPage;
