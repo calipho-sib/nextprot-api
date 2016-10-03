@@ -1,7 +1,7 @@
-package org.nextprot.api.web.ui.page;
+package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.EntryPage;
+import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -10,11 +10,7 @@ import java.util.List;
 
 public class ProteomicsPageDisplayRequirement extends BasePageDisplayRequirement {
 
-	private static final ProteomicsPageDisplayRequirement INSTANCE = new ProteomicsPageDisplayRequirement();
-
-	public static ProteomicsPageDisplayRequirement getInstance() { return INSTANCE; }
-
-	private ProteomicsPageDisplayRequirement() {
+	ProteomicsPageDisplayRequirement() {
 		super(EntryPage.PROTEOMICS);
 	}
 

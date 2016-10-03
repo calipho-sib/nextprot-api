@@ -1,7 +1,7 @@
-package org.nextprot.api.web.ui.page;
+package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.EntryPage;
+import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -10,11 +10,7 @@ import java.util.List;
 
 public class StructuresPageDisplayRequirement extends BasePageDisplayRequirement {
 
-	private static final StructuresPageDisplayRequirement INSTANCE = new StructuresPageDisplayRequirement();
-
-	public static StructuresPageDisplayRequirement getInstance() { return INSTANCE; }
-
-	private StructuresPageDisplayRequirement() {
+	StructuresPageDisplayRequirement() {
 		super(EntryPage.STRUCTURES);
 	}
 

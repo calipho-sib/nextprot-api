@@ -1,15 +1,15 @@
-package org.nextprot.api.web.ui.page;
+package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.web.ui.EntryPage;
-import org.nextprot.api.web.ui.PageDisplayRequirement;
+import org.nextprot.api.web.ui.page.EntryPage;
+import org.nextprot.api.web.ui.page.PageDisplayRequirement;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * A base class for page display requirement.
@@ -114,19 +114,6 @@ public abstract class BasePageDisplayRequirement implements PageDisplayRequireme
 		return false;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof BasePageDisplayRequirement)) return false;
-		BasePageDisplayRequirement that = (BasePageDisplayRequirement) o;
-		return entryPage == that.entryPage;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(entryPage);
-	}
-
 	/**
 	 * @return a non null white list of annotation category
 	 */
@@ -142,4 +129,40 @@ public abstract class BasePageDisplayRequirement implements PageDisplayRequireme
 	 */
 	protected abstract @Nonnull List<String> getXrefDbNameWhiteList();
 
+	/**
+	 * This class contains all implementations of BasePageDisplayRequirement
+	 */
+	public static class AllPageDisplayRequirements {
+
+		private static final AllPageDisplayRequirements INSTANCE = new AllPageDisplayRequirements();
+
+		private final Set<PageDisplayRequirement> requirements;
+
+		private AllPageDisplayRequirements() {
+
+			requirements = new HashSet<>();
+			requirements.add(new ExonsPageDisplayRequirement());
+			requirements.add(new ExpressionPageDisplayRequirement());
+			requirements.add(new FunctionPageDisplayRequirement());
+			requirements.add(new GeneIdentifiersPageDisplayRequirement());
+			requirements.add(new IdentifiersPageDisplayRequirement());
+			requirements.add(new InteractionsPageDisplayRequirement());
+			requirements.add(new LocalisationPageDisplayRequirement());
+			requirements.add(new MedicalPageDisplayRequirement());
+			requirements.add(new PeptidesPageDisplayRequirement());
+			requirements.add(new PhenotypesPageDisplayRequirement());
+			requirements.add(new ProteomicsPageDisplayRequirement());
+			requirements.add(new SequencePageDisplayRequirement());
+			requirements.add(new StructuresPageDisplayRequirement());
+		}
+
+		public static AllPageDisplayRequirements getInstance() {
+			return INSTANCE;
+		}
+
+		public Stream<PageDisplayRequirement> getPageRequirements() {
+
+			return requirements.stream();
+		}
+	}
 }

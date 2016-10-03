@@ -5,7 +5,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.web.ui.PageDisplayTester;
+import org.nextprot.api.web.ui.page.PageDisplayRequirementsTester;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,8 @@ class EntryPageServiceImpl implements EntryPageService {
 	@Override
 	public Map<String, Boolean> testEntryContentForPageDisplay(@ValidEntry String entryName) {
 
-		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
+		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
 
-		return PageDisplayTester.allPageRequirements(entry).testPageContent();
+		return PageDisplayRequirementsTester.allPageRequirements(entry).doDisplayPages();
 	}
 }

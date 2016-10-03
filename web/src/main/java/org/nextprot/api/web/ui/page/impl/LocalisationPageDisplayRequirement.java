@@ -1,7 +1,7 @@
-package org.nextprot.api.web.ui.page;
+package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.web.ui.EntryPage;
+import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -10,11 +10,7 @@ import java.util.List;
 
 public class LocalisationPageDisplayRequirement extends BasePageDisplayRequirement {
 
-	private static final LocalisationPageDisplayRequirement INSTANCE = new LocalisationPageDisplayRequirement();
-
-	public static LocalisationPageDisplayRequirement getInstance() { return INSTANCE; }
-
-	private LocalisationPageDisplayRequirement() {
+	LocalisationPageDisplayRequirement() {
 		super(EntryPage.LOCALISATION);
 	}
 
