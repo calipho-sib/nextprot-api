@@ -1,6 +1,7 @@
 package org.nextprot.api.web.ui.page.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
@@ -12,6 +13,14 @@ public class StructuresPageDisplayPredicate extends PageDisplayBasePredicate {
 
 	StructuresPageDisplayPredicate() {
 		super(EntryPage.STRUCTURES);
+	}
+
+	@Override
+	public boolean doDisplayPage(@Nonnull Entry entry) {
+
+		return entry.getXrefs().stream()
+				.filter(xref -> !filterOutXrefDbName(xref))
+				.anyMatch(xr -> getXrefDbNameWhiteList().contains(xr.getDatabaseName()));
 	}
 
 	@Nonnull
