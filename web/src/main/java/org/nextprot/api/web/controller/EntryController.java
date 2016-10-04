@@ -72,10 +72,14 @@ public class EntryController {
 		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
 	}
 
-	@ApiMethod(path = "/entry/{entry}/page-content", verb = ApiVerb.GET, description = "Test entry content displayable by neXtProt entry pages", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/entry/{entry}/page-content", method = { RequestMethod.GET })
+	/**
+	 * Hidden service reporting page displayability used by nextprot ui
+	 * @param entryName the nextprot accession number
+	 * @return a map of page label to boolean
+	 */
+	@RequestMapping(value = "/entry/{entry}/page-display", method = { RequestMethod.GET })
 	@ResponseBody
-	public Map<String, Boolean> testPageContent(@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"}) @PathVariable("entry") String entryName) {
+	public Map<String, Boolean> testPageDisplay(@PathVariable("entry") String entryName) {
 
 		return entryPageService.testEntryContentForPageDisplay(entryName);
 	}

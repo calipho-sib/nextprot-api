@@ -11,12 +11,12 @@ import java.util.Objects;
 /**
  * Tests entry content required to display entry page(s) defined by {@code PageDisplayRequirement}s
  */
-public class PageDisplayRequirementsTester {
+public class PageDisplayTester {
 
     private final Entry entry;
     private final Map<EntryPage, PageDisplayRequirement> registeredPageDisplayRequirements;
 
-    PageDisplayRequirementsTester(Entry entry) {
+    PageDisplayTester(Entry entry) {
 
         Objects.requireNonNull(entry);
 
@@ -29,14 +29,14 @@ public class PageDisplayRequirementsTester {
      * @param entry the entry to test for page display
      * @return an instance of tester
      */
-    public static PageDisplayRequirementsTester allPageRequirements(Entry entry) {
+    public static PageDisplayTester allPageRequirements(Entry entry) {
 
-        PageDisplayRequirementsTester pageDisplayRequirementsTester = new PageDisplayRequirementsTester(entry);
+        PageDisplayTester pageDisplayTester = new PageDisplayTester(entry);
 
         BasePageDisplayRequirement.AllPageDisplayRequirements.getInstance().getPageRequirements()
-                .forEach(pageDisplayRequirementsTester::addRequirement);
+                .forEach(pageDisplayTester::addRequirement);
 
-        return pageDisplayRequirementsTester;
+        return pageDisplayTester;
     }
 
     /**

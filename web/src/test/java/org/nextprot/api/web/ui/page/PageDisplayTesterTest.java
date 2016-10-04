@@ -9,16 +9,16 @@ import java.util.Map;
 
 import static org.mockito.Matchers.any;
 
-public class PageDisplayRequirementsTesterTest {
+public class PageDisplayTesterTest {
 
     @Test
     public void shouldDisplayPage() throws Exception {
 
-        PageDisplayRequirementsTester pageDisplayRequirementsTester = new PageDisplayRequirementsTester(Mockito.mock(Entry.class));
+        PageDisplayTester pageDisplayTester = new PageDisplayTester(Mockito.mock(Entry.class));
 
-        pageDisplayRequirementsTester.addRequirement(mockPageConfig(EntryPage.FUNCTION, true));
+        pageDisplayTester.addRequirement(mockPageConfig(EntryPage.FUNCTION, true));
 
-        Map<String, Boolean> map = pageDisplayRequirementsTester.doDisplayPages();
+        Map<String, Boolean> map = pageDisplayTester.doDisplayPages();
 
         Assert.assertTrue(map.values().stream().allMatch(Boolean::booleanValue));
     }
@@ -26,10 +26,10 @@ public class PageDisplayRequirementsTesterTest {
     @Test(expected = IllegalStateException.class)
     public void cannotMultiplePageRequirementForSameEntryPage() throws Exception {
 
-        PageDisplayRequirementsTester pageDisplayRequirementsTester = new PageDisplayRequirementsTester(Mockito.mock(Entry.class));
+        PageDisplayTester pageDisplayTester = new PageDisplayTester(Mockito.mock(Entry.class));
 
-        pageDisplayRequirementsTester.addRequirement(mockPageConfig(EntryPage.FUNCTION, true));
-        pageDisplayRequirementsTester.addRequirement(mockPageConfig(EntryPage.FUNCTION, true));
+        pageDisplayTester.addRequirement(mockPageConfig(EntryPage.FUNCTION, true));
+        pageDisplayTester.addRequirement(mockPageConfig(EntryPage.FUNCTION, true));
     }
 
     private static PageDisplayRequirement mockPageConfig(EntryPage entryPage, boolean bool) {
