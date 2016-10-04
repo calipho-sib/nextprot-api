@@ -1,6 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
@@ -30,7 +29,7 @@ public class PublicationDaoImpl implements PublicationDao {
 
 	private static final Logger LOGGER = Logger.getLogger(PublicationDaoImpl.class);
 
-	private final static DateFormatter DATE_FORMATTER = new DateFormatter();
+	private static final DateFormatter DATE_FORMATTER = new DateFormatter();
 
 	@Autowired private SQLDictionary sqlDictionary;
 	@Autowired private CvJournalDao journalDao;
@@ -139,6 +138,7 @@ public class PublicationDaoImpl implements PublicationDao {
 			this.columnName = columnName;
 		}
 
+		@Override
 		public Long mapRow(ResultSet resultSet, int row) throws SQLException {
 			return resultSet.getLong(columnName);
 		}
@@ -150,14 +150,10 @@ public class PublicationDaoImpl implements PublicationDao {
 
 		PublicationRowMapper(List<PublicationCvJournal> journals) {
 
-			this.pubIdToJournalMap = Maps.uniqueIndex(journals, new Function<PublicationCvJournal, Long>() {
-				@Override
-				public Long apply(PublicationCvJournal journal) {
-					return journal.getPublicationId();
-				}
-			});;
+			this.pubIdToJournalMap = Maps.uniqueIndex(journals, journal -> journal.getPublicationId());
 		}
 
+		@Override
 		public Publication mapRow(ResultSet resultSet, int row) throws SQLException {
 
 			Publication publication = new Publication();
@@ -218,23 +214,23 @@ public class PublicationDaoImpl implements PublicationDao {
 
 		private void setPublicationTitle(Publication publication, ResultSet resultSet) throws SQLException {
 
+			PublicationType publicationType = PublicationType.valueOfName(publication.getPublicationType());
 			String title;
 
-			switch(PublicationType.valueOfName(publication.getPublicationType())) {
-				case ONLINE_PUBLICATION:
-					String titleForWebPage = resultSet.getString("title_for_web_resource");
-					title = (titleForWebPage != null) ? titleForWebPage : "";
-					break;
-				case SUBMISSION:
-					title = resultSet.getString("title");
-
-					String subDB = "Submitted to " + resultSet.getString("submission_database");
-					if (!title.startsWith(subDB)) { // add the submission database is necessary
-						publication.setSubmission(subDB);
-					}
-					break;
-				default:
-					title = resultSet.getString("title");
+			if (publicationType == PublicationType.ONLINE_PUBLICATION) {
+				String titleForWebPage = resultSet.getString("title_for_web_resource");
+				title = (titleForWebPage != null) ? titleForWebPage : "";
+			}
+			else if (publicationType == PublicationType.SUBMISSION) {
+				String subDB = "Submitted to " + resultSet.getString("submission_database");
+				title = resultSet.getString("title");
+				// add the submission database is necessary
+				if (!title.startsWith(subDB)) {
+					publication.setSubmission(subDB);
+				}
+			}
+			else {
+				title = resultSet.getString("title");
 			}
 
 			// Post-process title
@@ -245,7 +241,7 @@ public class PublicationDaoImpl implements PublicationDao {
 
 			if(title.length() > 1) {
 			  	String penultimate = title.substring(title.length() - 2,title.length() - 1);
-			  	if(penultimate.equals("]")) // Sometimes the closing bracket is inconstantly placed before the final dot (eg: pubid 10665637)
+			  	if("]".equals(penultimate)) // Sometimes the closing bracket is inconstantly placed before the final dot (eg: pubid 10665637)
 					title = title.substring(0, title.length() - 2) + ".";
 			}
 			
@@ -256,36 +252,35 @@ public class PublicationDaoImpl implements PublicationDao {
 
 			PublicationType pubType = PublicationType.valueOfName(publication.getPublicationType());
 
-			switch (pubType) {
-				case BOOK:
-					publication.setEditedVolumeBookLocation(resultSet.getString("volume"), resultSet.getString("publisher"), resultSet.getString("city"),
+			if (pubType == PublicationType.BOOK) {
+				publication.setEditedVolumeBookLocation(resultSet.getString("volume"), resultSet.getString("publisher"), resultSet.getString("city"),
 						resultSet.getString("first_page"), resultSet.getString("last_page"));
-					break;
-				case ONLINE_PUBLICATION:
-					publication.setOnlineResourceLocation(resultSet.getString("volume"), resultSet.getString("title"));
-					break;
-				case ARTICLE:
-					JournalResourceLocator journalLocation = new JournalResourceLocator();
-					CvJournal journal;
+			}
+			else if (pubType == PublicationType.ONLINE_PUBLICATION) {
+				publication.setOnlineResourceLocation(resultSet.getString("volume"), resultSet.getString("title"));
+			}
+			else if (pubType == PublicationType.ARTICLE) {
+				JournalResourceLocator journalLocation = new JournalResourceLocator();
+				CvJournal journal;
 
-					if (pubIdToJournalMap.containsKey(publication.getPublicationId())) {
+				if (pubIdToJournalMap.containsKey(publication.getPublicationId())) {
 
-						journal = pubIdToJournalMap.get(publication.getPublicationId());
-					} else {
-						String journalName = resultSet.getString("journal_from_property");
+					journal = pubIdToJournalMap.get(publication.getPublicationId());
+				} else {
+					String journalName = resultSet.getString("journal_from_property");
 
-						if (journalName != null) {
-							journal = new CvJournal();
-							journal.setName(journalName);
-						}
-						else {
-							LOGGER.error("Article with publication id '" + publication.getPublicationId() + "' could not be located in a journal");
-							break;
-						}
+					if (journalName != null) {
+						journal = new CvJournal();
+						journal.setName(journalName);
 					}
-					journalLocation.setJournal(journal);
-					publication.setJournalResourceLocator(journalLocation, resultSet.getString("volume"), resultSet.getString("issue"),
-							resultSet.getString("first_page"), resultSet.getString("last_page"));
+					else {
+						LOGGER.error("Article with publication id '" + publication.getPublicationId() + "' could not be located in a journal");
+						return;
+					}
+				}
+				journalLocation.setJournal(journal);
+				publication.setJournalResourceLocator(journalLocation, resultSet.getString("volume"), resultSet.getString("issue"),
+						resultSet.getString("first_page"), resultSet.getString("last_page"));
 			}
 		}
 	}
