@@ -9,7 +9,7 @@ import javax.annotation.Nonnull;
  *
  * Created by fnikitin on 03/10/16.
  */
-public interface PageDisplayRequirement {
+public interface PageDisplayPredicate {
 
     /**
      * Check entry content for current page display

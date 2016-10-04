@@ -7,9 +7,9 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class MedicalPageDisplayRequirement extends BasePageDisplayRequirement {
+public class MedicalPageDisplayPredicate extends PageDisplayBasePredicate {
 
-	MedicalPageDisplayRequirement() {
+	MedicalPageDisplayPredicate() {
 		super(EntryPage.MEDICAL);
 	}
 

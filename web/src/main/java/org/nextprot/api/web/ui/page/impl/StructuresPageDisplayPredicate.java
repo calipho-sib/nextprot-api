@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class StructuresPageDisplayRequirement extends BasePageDisplayRequirement {
+public class StructuresPageDisplayPredicate extends PageDisplayBasePredicate {
 
-	StructuresPageDisplayRequirement() {
+	StructuresPageDisplayPredicate() {
 		super(EntryPage.STRUCTURES);
 	}
 

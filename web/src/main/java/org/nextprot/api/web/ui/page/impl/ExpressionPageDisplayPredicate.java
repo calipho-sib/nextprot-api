@@ -8,16 +8,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class IdentifiersPageDisplayRequirement extends BasePageDisplayRequirement {
+public class ExpressionPageDisplayPredicate extends PageDisplayBasePredicate {
 
-	IdentifiersPageDisplayRequirement() {
-		super(EntryPage.PROTEIN_IDENTIFIERS);
+	ExpressionPageDisplayPredicate() {
+		super(EntryPage.EXPRESSION);
 	}
 
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
-		return new ArrayList<>();
+		return Arrays.asList(
+				AnnotationCategory.EXPRESSION_INFO, /*HPA, Uniprot*/
+				AnnotationCategory.INDUCTION,
+				AnnotationCategory.DEVELOPMENTAL_STAGE
+		);
 	}
 
 	@Nonnull
@@ -29,8 +33,8 @@ public class IdentifiersPageDisplayRequirement extends BasePageDisplayRequiremen
 	@Nonnull
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList("CCDS", "GeneCards", "GeneID",  "HGNC", "H-InvDB", "HPA", "HPRD","KEGG","LOC",
-				"MIM",  "NextBio", "PDB", "PharmGKB", "PIR","RefSeq", "UCSC","UniGene",
-				"ChEMBL");
+		return Arrays.asList(
+				"ArrayExpress", "Bgee", "CleanEx", "Genevestigator", "GermOnline",
+				"HPA", "Antibodypedia","ExpressionAtlas","Genevisible");
 	}
 }

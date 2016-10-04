@@ -7,9 +7,9 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class SequencePageDisplayRequirement extends BasePageDisplayRequirement {
+public class SequencePageDisplayPredicate extends PageDisplayBasePredicate {
 
-	SequencePageDisplayRequirement() {
+	SequencePageDisplayPredicate() {
 		super(EntryPage.SEQUENCE);
 	}
 

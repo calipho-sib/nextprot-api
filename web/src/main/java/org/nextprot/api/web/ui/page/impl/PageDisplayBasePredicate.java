@@ -5,31 +5,27 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.web.ui.page.EntryPage;
-import org.nextprot.api.web.ui.page.PageDisplayRequirement;
+import org.nextprot.api.web.ui.page.PageDisplayPredicate;
 
 import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * A base class for page display requirement.
+ * Represents an entry predicate (boolean-valued function) to test displayability of a specific page.
  *
- * A page requirement needs to test data from {@code Entry} with criteria based on:
+ * Predicate should be based on the following entry data:
  * <ul>
  * <li>annotation categories</li>
  * <li>feature categories</li>
  * <li>cross references</li>
  * </ul>
- *
- *
- *
- * Subclasses should give get white lists implementation
  */
-public abstract class BasePageDisplayRequirement implements PageDisplayRequirement {
+public abstract class PageDisplayBasePredicate implements PageDisplayPredicate {
 
 	private final EntryPage entryPage;
 
-	BasePageDisplayRequirement(EntryPage entryPage) {
+	PageDisplayBasePredicate(EntryPage entryPage) {
 
 		Objects.requireNonNull(entryPage, "page should have a defined name");
 		Objects.requireNonNull(getAnnotationCategoryWhiteList(), "selected annotation category list should not be null");
@@ -76,7 +72,6 @@ public abstract class BasePageDisplayRequirement implements PageDisplayRequireme
 
 		return entryPage;
 	}
-
 	/**
 	 * Default implementation (subclasses should override this method if needed)
 	 *
@@ -113,52 +108,52 @@ public abstract class BasePageDisplayRequirement implements PageDisplayRequireme
 	/**
 	 * @return a non null white list of annotation category
 	 */
-	protected abstract @Nonnull List<AnnotationCategory> getAnnotationCategoryWhiteList();
+	@Nonnull protected abstract List<AnnotationCategory> getAnnotationCategoryWhiteList();
 
 	/**
 	 * @return a non null white list of feature category
 	 */
-	protected abstract @Nonnull List<AnnotationCategory> getFeatureCategoryWhiteList();
+	@Nonnull protected abstract List<AnnotationCategory> getFeatureCategoryWhiteList();
 
 	/**
 	 * @return a non null white list of xref database name
 	 */
-	protected abstract @Nonnull List<String> getXrefDbNameWhiteList();
+	@Nonnull protected abstract List<String> getXrefDbNameWhiteList();
 
 	/**
-	 * This class contains all implementations of BasePageDisplayRequirement
+	 * This class contains all different entry page predicates
 	 */
-	public static class AllPageDisplayRequirements {
+	public static class Predicates {
 
-		private static final AllPageDisplayRequirements INSTANCE = new AllPageDisplayRequirements();
+		private static final Predicates INSTANCE = new Predicates();
 
-		private final Set<PageDisplayRequirement> requirements;
+		private final Set<PageDisplayPredicate> predicates;
 
-		private AllPageDisplayRequirements() {
+		private Predicates() {
 
-			requirements = new HashSet<>();
-			requirements.add(new ExonsPageDisplayRequirement());
-			requirements.add(new ExpressionPageDisplayRequirement());
-			requirements.add(new FunctionPageDisplayRequirement());
-			requirements.add(new GeneIdentifiersPageDisplayRequirement());
-			requirements.add(new IdentifiersPageDisplayRequirement());
-			requirements.add(new InteractionsPageDisplayRequirement());
-			requirements.add(new LocalisationPageDisplayRequirement());
-			requirements.add(new MedicalPageDisplayRequirement());
-			requirements.add(new PeptidesPageDisplayRequirement());
-			requirements.add(new PhenotypesPageDisplayRequirement());
-			requirements.add(new ProteomicsPageDisplayRequirement());
-			requirements.add(new SequencePageDisplayRequirement());
-			requirements.add(new StructuresPageDisplayRequirement());
+			predicates = new HashSet<>();
+			predicates.add(new ExonsPageDisplayPredicate());
+			predicates.add(new ExpressionPageDisplayPredicate());
+			predicates.add(new FunctionPageDisplayPredicate());
+			predicates.add(new GeneIdentifiersPageDisplayPredicate());
+			predicates.add(new IdentifiersPageDisplayPredicate());
+			predicates.add(new InteractionsPageDisplayPredicate());
+			predicates.add(new LocalisationPageDisplayPredicate());
+			predicates.add(new MedicalPageDisplayPredicate());
+			predicates.add(new PeptidesPageDisplayPredicate());
+			predicates.add(new PhenotypesPageDisplayPredicate());
+			predicates.add(new ProteomicsPageDisplayPredicate());
+			predicates.add(new SequencePageDisplayPredicate());
+			predicates.add(new StructuresPageDisplayPredicate());
 		}
 
-		public static AllPageDisplayRequirements getInstance() {
+		public static Predicates getInstance() {
 			return INSTANCE;
 		}
 
-		public Stream<PageDisplayRequirement> getPageRequirements() {
+		public Stream<PageDisplayPredicate> getPagePredicates() {
 
-			return requirements.stream();
+			return predicates.stream();
 		}
 	}
 }

@@ -8,33 +8,36 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ExpressionPageDisplayRequirement extends BasePageDisplayRequirement {
+public class LocalisationPageDisplayPredicate extends PageDisplayBasePredicate {
 
-	ExpressionPageDisplayRequirement() {
-		super(EntryPage.EXPRESSION);
+	LocalisationPageDisplayPredicate() {
+		super(EntryPage.LOCALISATION);
 	}
 
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
 		return Arrays.asList(
-				AnnotationCategory.EXPRESSION_INFO, /*HPA, Uniprot*/
-				AnnotationCategory.INDUCTION,
-				AnnotationCategory.DEVELOPMENTAL_STAGE
+				AnnotationCategory.SUBCELLULAR_LOCATION,
+				AnnotationCategory.SUBCELLULAR_LOCATION_NOTE, // = NP1 SUBCELLULAR_LOCATION_INFO,
+				AnnotationCategory.GO_CELLULAR_COMPONENT
 		);
 	}
 
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
-		return new ArrayList<>();
+		return Arrays.asList(
+				AnnotationCategory.TOPOLOGICAL_DOMAIN,
+				AnnotationCategory.TRANSMEMBRANE_REGION,
+				AnnotationCategory.INTRAMEMBRANE_REGION
+		);
 	}
 
 	@Nonnull
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList(
-				"ArrayExpress", "Bgee", "CleanEx", "Genevestigator", "GermOnline",
-				"HPA", "Antibodypedia","ExpressionAtlas","Genevisible");
+		return new ArrayList<>();
 	}
+
 }

@@ -7,9 +7,9 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class PhenotypesPageDisplayRequirement extends BasePageDisplayRequirement {
+public class PhenotypesPageDisplayPredicate extends PageDisplayBasePredicate {
 
-	PhenotypesPageDisplayRequirement() {
+	PhenotypesPageDisplayPredicate() {
 		super(EntryPage.PHENOTYPES);
 	}
 

@@ -4,35 +4,30 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.web.ui.page.EntryPage;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
-public class InteractionsPageDisplayRequirement extends BasePageDisplayRequirement {
+public class ExonsPageDisplayPredicate extends PageDisplayBasePredicate {
 
-	InteractionsPageDisplayRequirement() {
-		super(EntryPage.INTERACTIONS);
+	ExonsPageDisplayPredicate() {
+		super(EntryPage.EXONS);
 	}
 
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getAnnotationCategoryWhiteList() {
-		return Arrays.asList(
-				AnnotationCategory.INTERACTION_INFO, // = NP1 SUBUNIT,
-				AnnotationCategory.MISCELLANEOUS
-		);
+		return new ArrayList<>();
 	}
 
 	@Nonnull
 	@Override
 	protected List<AnnotationCategory> getFeatureCategoryWhiteList() {
-		return Arrays.asList(AnnotationCategory.INTERACTING_REGION);
+		return new ArrayList<>();
 	}
 
 	@Nonnull
 	@Override
 	protected List<String> getXrefDbNameWhiteList() {
-		return Arrays.asList(
-				"BindingDB","DIP","IntAct","MINT","STRING",
-				"SignaLink", "BioGrid","SIGNOR");
+		return new ArrayList<>();
 	}
 }
