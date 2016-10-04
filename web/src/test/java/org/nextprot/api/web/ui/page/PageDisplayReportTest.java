@@ -14,11 +14,10 @@ public class PageDisplayReportTest {
     @Test
     public void shouldDisplayPage() throws Exception {
 
-        PageDisplayReport pageDisplayReport = new PageDisplayReport(Mockito.mock(Entry.class));
+        PageDisplayReport pageDisplayReport = new PageDisplayReport();
 
         pageDisplayReport.addPredicate(mockPageConfig(EntryPage.FUNCTION, true));
-
-        Map<String, Boolean> map = pageDisplayReport.reportDisplayPageStatus();
+        Map<String, Boolean> map = pageDisplayReport.reportDisplayPageStatus(Mockito.mock(Entry.class));
 
         Assert.assertTrue(map.values().stream().allMatch(Boolean::booleanValue));
     }
@@ -26,7 +25,7 @@ public class PageDisplayReportTest {
     @Test(expected = IllegalStateException.class)
     public void cannotMultiplePageRequirementForSameEntryPage() throws Exception {
 
-        PageDisplayReport pageDisplayReport = new PageDisplayReport(Mockito.mock(Entry.class));
+        PageDisplayReport pageDisplayReport = new PageDisplayReport();
 
         pageDisplayReport.addPredicate(mockPageConfig(EntryPage.FUNCTION, true));
         pageDisplayReport.addPredicate(mockPageConfig(EntryPage.FUNCTION, true));

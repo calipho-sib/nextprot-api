@@ -24,6 +24,6 @@ class EntryPageServiceImpl implements EntryPageService {
 
 		Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
 
-		return PageDisplayReport.allPages(entry).reportDisplayPageStatus();
+		return PageDisplayReport.allPages().reportDisplayPageStatus(entry);
 	}
 }

@@ -13,25 +13,19 @@ import java.util.Objects;
  */
 public class PageDisplayReport {
 
-    private final Entry entry;
     private final Map<EntryPage, PageDisplayPredicate> registeredPredicates;
 
-    PageDisplayReport(Entry entry) {
-
-        Objects.requireNonNull(entry);
-
-        this.entry = entry;
+    PageDisplayReport() {
         registeredPredicates = new EnumMap<>(EntryPage.class);
     }
 
     /**
      * Unique entry point to build instance of this class
-     * @param entry the entry to test for page display
      * @return an instance of tester
      */
-    public static PageDisplayReport allPages(Entry entry) {
+    public static PageDisplayReport allPages() {
 
-        PageDisplayReport pageDisplayReport = new PageDisplayReport(entry);
+        PageDisplayReport pageDisplayReport = new PageDisplayReport();
 
         PageDisplayBasePredicate.Predicates.getInstance().getPagePredicates()
                 .forEach(pageDisplayReport::addPredicate);
@@ -58,18 +52,15 @@ public class PageDisplayReport {
      * Test all display requirements for all registered entry pages and report the results in a map of boolean
      * @return for each true if entry provide data needed by the page else false
      */
-    public Map<String, Boolean> reportDisplayPageStatus() {
+    public Map<String, Boolean> reportDisplayPageStatus(Entry entry) {
+
+        Objects.requireNonNull(entry);
 
         Map<String, Boolean> map = new HashMap<>(registeredPredicates.size());
 
         for (PageDisplayPredicate page : registeredPredicates.values()) {
 
-            if (page.doDisplayPage(entry)) {
-                map.put(page.getPage().getLabel(), Boolean.TRUE);
-            }
-            else {
-                map.put(page.getPage().getLabel(), Boolean.FALSE);
-            }
+            map.put(page.getPage().getLabel(), page.doDisplayPage(entry));
         }
 
         return map;
