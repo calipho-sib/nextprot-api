@@ -11,10 +11,15 @@ import java.util.regex.Pattern;
 
 public class StringUtils {
 
-	public static final String CR_LF = "\r\n";
+	private static final String CR = "\r";
+	public static final String CR_LF = CR+"\n";
 	private static final Pattern NON_ASCIIDASH = Pattern.compile("[^\\w-]");
 	private static final Pattern WHITESPACE = Pattern.compile("\\s");
 	private static final AuthorNameFormatter AUTHOR_NAME_FORMATTER = new AuthorNameFormatter();
+
+	private StringUtils() {
+		throw new AssertionError("should not be instanciable");
+	}
 
 	public static StringFormatter createXCaseBuilder(String string) {
 
@@ -188,7 +193,14 @@ public class StringUtils {
 			if(aux != "") aux += " | ";
 			aux += elem;
 		}
-		return(aux);
+		return aux;
 	}
 
+	/**
+	 * Get carriage return (used in velocity template)
+	 * @return carriage return
+	 */
+	public static String getCR() {
+		return CR;
+	}
 }
