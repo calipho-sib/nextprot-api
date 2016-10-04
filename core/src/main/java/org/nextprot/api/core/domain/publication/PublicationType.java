@@ -24,10 +24,8 @@ public enum PublicationType {
             case "SUBMISSION":
                 return SUBMISSION;
             case "ONLINE_PUBLICATION":
-            case "ONLINE PUBLICATION":
                 return ONLINE_PUBLICATION;
             case "UNPUBLISHED_OBSERVATION":
-            case "UNPUBLISHED OBSERVATION":
                 return UNPUBLISHED_OBSERVATION;
             case "DOCUMENT":
                 return DOCUMENT;
