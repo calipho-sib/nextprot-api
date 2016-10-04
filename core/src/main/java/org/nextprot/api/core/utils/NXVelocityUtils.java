@@ -1,31 +1,26 @@
 package org.nextprot.api.core.utils;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.nextprot.api.commons.bio.DescriptorMass;
 import org.nextprot.api.commons.bio.DescriptorPI;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.constants.PropertyWriter;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryUtils;
-import org.nextprot.api.core.domain.Family;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.core.domain.Proteoform;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.core.utils.peff.PeffFormatterMaster;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class NXVelocityUtils {
 	
 	private static final PeffFormatterMaster PEFF_FORMATTER = new PeffFormatterMaster();
 
     private NXVelocityUtils() {
-        throw new AssertionError();
+        throw new AssertionError("should not be instanciable");
     }
 
     public static Map<String,Annotation> getUniqueNameAnnotationMap(Entry entry) {
