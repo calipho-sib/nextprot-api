@@ -30,7 +30,7 @@
 	</logger>
 
 	<logger name="org.nextprot.api.web.CorsFilter">
-		<level value="DEBUG" />
+		<level value="INFO" />
 	</logger>
 
 	<logger name="org.nextprot.api.rdf">
