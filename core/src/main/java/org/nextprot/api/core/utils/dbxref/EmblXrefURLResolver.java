@@ -10,7 +10,7 @@ class EmblXrefURLResolver extends DbXrefURLBaseResolver {
 
         String primaryId = xref.getAccession();
 
-        if (xref.getAccession().indexOf('.') > 0) {
+        if (xref.getAccession().contains(".")) {
             primaryId = primaryId.split("\\.")[0];
         }
 

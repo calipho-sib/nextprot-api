@@ -50,7 +50,7 @@ public class ExportTXTHeaderTest extends WebUnitBaseTest {
         EntryVelocityBasedStreamWriter exporter = new EntryTXTStreamWriter(writer);
         exporter.setEntryBuilderService(entryBuilderMockService);
 
-        Map<String, Object> map = new HashMap<String, Object>(); map.put(ExportService.ENTRIES_COUNT_PARAM, 2);
+        Map<String, Object> map = new HashMap<>(); map.put(ExportService.ENTRIES_COUNT_PARAM, 2);
         when(entryBuilderMockService.build(any(EntryConfig.class))).thenReturn(new Entry("NX_1")).thenReturn(new Entry("NX_2"));
         exporter.write(Arrays.asList("NX_1", "NX_2"), map);
        

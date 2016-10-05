@@ -1,1 +1,1 @@
-$entry.uniqueName${CR}
+$entry.uniqueName$StringUtils.getCR()

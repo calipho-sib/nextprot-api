@@ -15,7 +15,6 @@ public class NXVelocityContext extends VelocityContext {
 		super();
 		put("StringUtils", StringUtils.class);
 		put("NXUtils", NXVelocityUtils.class);
-		put("CR", "\r");
 	}
 
 	public NXVelocityContext(Entry entry) {

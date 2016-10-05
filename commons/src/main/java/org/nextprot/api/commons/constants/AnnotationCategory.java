@@ -337,17 +337,13 @@ public enum AnnotationCategory implements Serializable {
 		return StringUtils.lowerFirstChar(this.apiName);
 	}
 
-/*	
-	@Deprecated //TODO change this for something more generic like #getApiTypeName, since it may be highly used in RDF templates I leave it for now
-	public String getRdfTypeName() {
-		return getApiTypeName();
-	}
-*/
-
 	public String getApiTypeName() {
 		return StringUtils.upperFirstChar(this.apiName);
 	}
 
+	/**
+	 * @deprecated use getLabel() instead
+	 */
 	@Deprecated
 	public String getRdfLabel() {
 		return StringUtils.upperFirstChar(this.label);
