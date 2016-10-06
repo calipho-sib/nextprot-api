@@ -11,6 +11,7 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
+import org.nextprot.api.web.service.EntryPageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
@@ -20,15 +21,16 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 @Lazy
 @Controller
 @Api(name = "Entry", description = "Method to retrieve a complete or partial entry")
 public class EntryController {
 
-	@Autowired	private EntryBuilderService entryBuilderService;
-	@Autowired	private MasterIsoformMappingService masterIsoformMappingService;
-	
+	@Autowired private EntryBuilderService entryBuilderService;
+	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
+	@Autowired private EntryPageService entryPageService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -50,13 +52,13 @@ public class EntryController {
 		return "entry";
 	}
 
-	@RequestMapping("/entry/{entryname}/{blockOrSubpart}")
-	public String getSubPart(@PathVariable("entryname") String entryName, 
+	@RequestMapping("/entry/{entry}/{blockOrSubpart}")
+	public String getSubPart(@PathVariable("entry") String entryName,
 							@PathVariable("blockOrSubpart") String blockOrSubpart, 
 							HttpServletRequest request,
 							Model model) {
 		
-		boolean goldOnly = ("true".equalsIgnoreCase(request.getParameter("goldOnly")));
+		boolean goldOnly = "true".equalsIgnoreCase(request.getParameter("goldOnly"));
 		
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withGoldOnly(goldOnly));
 		model.addAttribute("entry", entry);
@@ -68,7 +70,17 @@ public class EntryController {
 	public List<IsoformSpecificity> getIsoformsMappings(@PathVariable("entry") String entryName) {
 		return masterIsoformMappingService.findMasterIsoformMappingByEntryName(entryName);
 	}
-	
 
+	/**
+	 * Hidden service reporting page displayability used by nextprot ui
+	 * @param entryName the nextprot accession number
+	 * @return a map of page label to boolean
+	 */
+	@RequestMapping(value = "/entry/{entry}/page-display", method = { RequestMethod.GET })
+	@ResponseBody
+	public Map<String, Boolean> testPageDisplay(@PathVariable("entry") String entryName) {
+
+		return entryPageService.testEntryContentForPageDisplay(entryName);
+	}
 }
 

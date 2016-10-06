@@ -274,5 +274,12 @@
 	<!-- Publications for in memory processing during ETL -->
 	<cache name="publications-by-id-and-accession" maxEntriesLocalHeap="1000" statistics="true"/>
 
-
+	<!-- Displayability of entry pages used by ui -->
+	<cache name="page-display"
+		   maxEntriesLocalHeap="10"
+		   maxEntriesLocalDisk="22000"
+		   eternal="true"
+		   memoryStoreEvictionPolicy="LFU">
+		<persistence strategy="localTempSwap" />
+	</cache>
 </ehcache>
