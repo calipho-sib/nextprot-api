@@ -168,7 +168,7 @@ public class PublicationDaoImpl implements PublicationDao {
 			publication.setAbstractText(resultSet.getString("abstract_text"));
 
 			// set publication type
-			setPublicationType(publication, resultSet);
+			publication.setPublicationType(resultSet.getString("pub_type"));
 
 			// set publication date
 			setPublicationDate(publication, resultSet);
@@ -198,17 +198,6 @@ public class PublicationDaoImpl implements PublicationDao {
 
 				publication.setPublicationDate(date);
 				publication.setTextDate(DATE_FORMATTER.format(date, cvDatePrecisionId));
-			}
-		}
-
-		private void setPublicationType(Publication publication, ResultSet resultSet) throws SQLException {
-
-			String pubType = resultSet.getString("pub_type");
-
-			if ("ONLINE PUBLICATION".equals(pubType)) {
-				publication.setPublicationType("ONLINE_PUBLICATION");
-			} else {
-				publication.setPublicationType(pubType);
 			}
 		}
 
