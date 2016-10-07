@@ -168,7 +168,7 @@ public class PublicationDaoImpl implements PublicationDao {
 			publication.setAbstractText(resultSet.getString("abstract_text"));
 
 			// set publication type
-			publication.setPublicationType(resultSet.getString("pub_type"));
+			publication.setPublicationType(PublicationType.valueOfName(resultSet.getString("pub_type")).toString());
 
 			// set publication date
 			setPublicationDate(publication, resultSet);

@@ -1300,7 +1300,7 @@
 						<xs:enumeration value="patent"/>
 						<xs:enumeration value="submission"/>
 						<xs:enumeration value="thesis"/>
-						<xs:enumeration value="unpublished observation"/>
+						<xs:enumeration value="unpublished_observation"/>
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:attribute>
