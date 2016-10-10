@@ -53,27 +53,26 @@
 		<module>tasks</module>
 	</modules>
 
-	<dependencyManagement>
-
-		<dependencies>
-			<dependency>
-				<groupId>org.nextprot</groupId>
-				<artifactId>nextprot-api-commons</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-		    <dependency>
-			<groupId>org.nextprot</groupId>
-    			<artifactId>nextprot-commons</artifactId>
-			<version>RELEASE</version>
-		    </dependency>
-	
-		</dependencies>
-
-	</dependencyManagement>
-
 	<dependencies>
 
+		<!--
+			External neXtProt projects
+		-->
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-commons</artifactId>
+			<version>LATEST</version>
+		</dependency>
 
+		<dependency>
+			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-queries</artifactId>
+			<version>LATEST</version>
+		</dependency>
+
+		<!--
+			Third party libraries
+		-->
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
@@ -81,20 +80,13 @@
         </dependency>
 
 
-    <!-- H2 DB -->
-    <dependency>
-	<groupId>com.h2database</groupId>
-	<artifactId>h2</artifactId>
-        <version>1.4.191</version>
-	<scope>test</scope>
-    </dependency>
-
-
-		<dependency>
-			<groupId>org.nextprot</groupId>
-			<artifactId>nextprot-queries</artifactId>
-			<version>RELEASE</version>
-		</dependency>
+	    <!-- H2 DB -->
+    	<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+        	<version>1.4.191</version>
+			<scope>test</scope>
+    	</dependency>
 
 		<dependency>
 			<groupId>org.biojava</groupId>
