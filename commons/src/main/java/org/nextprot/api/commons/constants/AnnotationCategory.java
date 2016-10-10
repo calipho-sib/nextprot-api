@@ -19,7 +19,7 @@ public enum AnnotationCategory implements Serializable {
 
 	/*
 	 * ENUMs with a negative dbId are virtual annotation types. Virtual means that there is NO annotation in our data of this type
-	 * ENUMs with a positive dbId are annotation types attached to at least one annotation in our data  
+	 * ENUMs with a positive dbId are annotation types attached to at least one annotation in our data
 	 */
 
 	// names 
@@ -50,7 +50,7 @@ public enum AnnotationCategory implements Serializable {
 	//TEST1(-1111,"test1","test1","test1", new OWLAnnotationCategory[]{POSITIONAL_ANNOTATION, GENERAL_ANNOTATION}),
 
 	// ENZYME_CLASSIFICATION and FAMILY_NAME temporarily appear in the entry overview via another mechanism
-	ENZYME_CLASSIFICATION(1065, "enzyme classification", "enzymeClassification", "enzyme classification", GENERAL_ANNOTATION),
+	ENZYME_CLASSIFICATION(1065, "enzyme classification", "enzymeClassification", "Enzyme classification", GENERAL_ANNOTATION),
 
 
 	// instantiated annotation categories with real cv_term id and data existing for them			
@@ -74,104 +74,116 @@ public enum AnnotationCategory implements Serializable {
 	DOMAIN_INFO(1043, "domain information", "domainInfo", "Domain information", POSITIONAL_ANNOTATION),
 
 	INITIATOR_METHIONINE(1000, "initiator methionine", "initiatorMethionine", "Initiator methionine", PROCESSING_PRODUCT),
-	SIGNAL_PEPTIDE(1001, "signal peptide", "signalPeptide", "signal peptide", PROCESSING_PRODUCT),
+	SIGNAL_PEPTIDE(1001, "signal peptide", "signalPeptide", "Signal peptide", PROCESSING_PRODUCT),
 	
 	// split into mitochondrial & peroxisome db annotation NORMALLY split into types of 2 next lines
-	TRANSIT_PEPTIDE(1002,"transit peptide", "transitPeptide", "transit peptide", PROCESSING_PRODUCT), 
+	TRANSIT_PEPTIDE(1002,"transit peptide", "transitPeptide", "Transit peptide", PROCESSING_PRODUCT), 
 	PEROXISOME_TRANSIT_PEPTIDE(-10021, "peroxisome transit peptide", "peroxisomeTransitPeptide", "Peroxisome transit peptide", PROCESSING_PRODUCT),
 	MITOCHONDRIAL_TRANSIT_PEPTIDE(-10022, "mitochondrial transit peptide", "mitochondrialTransitPeptide", "Mitochondrial transit peptide", PROCESSING_PRODUCT),
-	MATURATION_PEPTIDE(1003, "maturation peptide", "propeptide", "maturation peptide", PROCESSING_PRODUCT),
-	MATURE_PROTEIN(1004, "mature protein", "matureProtein", "mature protein", PROCESSING_PRODUCT),
+	MATURATION_PEPTIDE(1003, "maturation peptide", "propeptide", "Maturation peptide", PROCESSING_PRODUCT),
+	MATURE_PROTEIN(1004, "mature protein", "matureProtein", "Mature protein", PROCESSING_PRODUCT),
 
-	TRANSMEMBRANE_REGION(1005, "transmembrane region", "transmembraneRegion", "transmembrane region", TOPOLOGY),
-	INTRAMEMBRANE_REGION(-10051, "intramembrane region", "intramembraneRegion", "intramembrane region", TOPOLOGY), // Note: this annotation type does not exist in db, it is considered a transmembrane region but is linked to the cv_term = "In membrane"
-	TOPOLOGICAL_DOMAIN(1015, "topological domain", "topologicalDomain", "topological domain", TOPOLOGY),
+	TRANSMEMBRANE_REGION(1005, "transmembrane region", "transmembraneRegion", "Transmembrane region", TOPOLOGY),
+	INTRAMEMBRANE_REGION(-10051, "intramembrane region", "intramembraneRegion", "Intramembrane region", TOPOLOGY), // Note: this annotation type does not exist in db, it is considered a transmembrane region but is linked to the cv_term = "In membrane"
+	TOPOLOGICAL_DOMAIN(1015, "topological domain", "topologicalDomain", "Topological domain", TOPOLOGY),
 
-	DOMAIN(1006, "domain", "domain", "domain", REGION),
-	REPEAT(1007, "repeat", "repeat", "repeat", REGION),
-	CALCIUM_BINDING_REGION(1008, "calcium-binding region", "calciumBindingRegion", "calcium-binding region", REGION),
-	ZINC_FINGER_REGION(1009, "zinc finger region", "zincFingerRegion", "zinc finger region", REGION),
+	DOMAIN(1006, "domain", "domain", "Domain", REGION),
+	REPEAT(1007, "repeat", "repeat", "Repeat", REGION),
+	CALCIUM_BINDING_REGION(1008, "calcium-binding region", "calciumBindingRegion", "Calcium-binding region", REGION),
+	ZINC_FINGER_REGION(1009, "zinc finger region", "zincFingerRegion", "Zinc finger region", REGION),
 	DNA_BINDING_REGION(1010, "DNA-binding region", "dnaBindingRegion", "DNA-binding region", REGION),
-	NUCLEOTIDE_PHOSPHATE_BINDING_REGION(1011, "nucleotide phosphate-binding region", "nucleotidePhosphateBindingRegion", "nucleotide phosphate-binding region", REGION),
-	COILED_COIL_REGION(1012, "coiled-coil region", "coiledCoilRegion", "coiled-coil region", REGION),
-	SHORT_SEQUENCE_MOTIF(1013, "short sequence motif", "shortSequenceMotif", "short sequence motif", REGION),
-	COMPOSITIONALLY_BIASED_REGION(1014, "compositionally biased region", "compositionallyBiasedRegion", "compositionally biased region", REGION),
-	MISCELLANEOUS_REGION(11, "region of interest", "miscellaneousRegion", "miscellaneous region", REGION),
-	INTERACTING_REGION(1068, "interacting region", "interactingRegion", "interacting region", REGION),
+	NUCLEOTIDE_PHOSPHATE_BINDING_REGION(1011, "nucleotide phosphate-binding region", "nucleotidePhosphateBindingRegion", "Nucleotide phosphate-binding region", REGION),
+	COILED_COIL_REGION(1012, "coiled-coil region", "coiledCoilRegion", "Coiled-coil region", REGION),
+	SHORT_SEQUENCE_MOTIF(1013, "short sequence motif", "shortSequenceMotif", "Short sequence motif", REGION),
+	COMPOSITIONALLY_BIASED_REGION(1014, "compositionally biased region", "compositionallyBiasedRegion", "Compositionally biased region", REGION),
+	MISCELLANEOUS_REGION(11, "region of interest", "miscellaneousRegion", "Miscellaneous region", REGION),
+	INTERACTING_REGION(1068, "interacting region", "interactingRegion", "Interacting region", REGION),
 
-	ACTIVE_SITE(1016, "active site", "activeSite", "active site", GENERIC_SITE),
-	METAL_BINDING_SITE(1017, "metal ion-binding site", "metalBindingSite", "metal binding site", GENERIC_SITE),
-	BINDING_SITE(1018, "binding site", "bindingSite", "binding site", GENERIC_SITE),
-	CLEAVAGE_SITE(1067, "cleavage site", "cleavageSite", "cleavage site", GENERIC_SITE),
-	MISCELLANEOUS_SITE(12, "site", "miscellaneousSite", "miscellaneous site", GENERIC_SITE),
+	ACTIVE_SITE(1016, "active site", "activeSite", "Active site", GENERIC_SITE),
+	METAL_BINDING_SITE(1017, "metal ion-binding site", "metalBindingSite", "Metal binding site", GENERIC_SITE),
+	BINDING_SITE(1018, "binding site", "bindingSite", "Binding site", GENERIC_SITE),
+	CLEAVAGE_SITE(1067, "cleavage site", "cleavageSite", "Cleavage site", GENERIC_SITE),
+	MISCELLANEOUS_SITE(12, "site", "miscellaneousSite", "Miscellaneous site", GENERIC_SITE),
 
-	SELENOCYSTEINE(1019, "non-standard amino acid", "selenocysteine", "selenocysteine", GENERIC_PTM),
-	LIPIDATION_SITE(1020, "lipid moiety-binding region", "lipidationSite", "lipid moiety-binding region", GENERIC_PTM),
-	GLYCOSYLATION_SITE(1021, "glycosylation site", "glycosylationSite", "glycosylation site", GENERIC_PTM),
-	CROSS_LINK(1023, "cross-link", "crossLink", "cross-link", GENERIC_PTM),
-	DISULFIDE_BOND(1022, "disulfide bond", "disulfideBond", "disulfide bond", GENERIC_PTM),
-	MODIFIED_RESIDUE(13, "amino acid modification", "modifiedResidue", "modified residue", GENERIC_PTM),
+	SELENOCYSTEINE(1019, "non-standard amino acid", "selenocysteine", "Selenocysteine", GENERIC_PTM),
+	LIPIDATION_SITE(1020, "lipid moiety-binding region", "lipidationSite", "Lipid moiety-binding region", GENERIC_PTM),
+	GLYCOSYLATION_SITE(1021, "glycosylation site", "glycosylationSite", "Glycosylation site", GENERIC_PTM),
+	CROSS_LINK(1023, "cross-link", "crossLink", "Cross-link", GENERIC_PTM),
+	DISULFIDE_BOND(1022, "disulfide bond", "disulfideBond", "Disulfide bond", GENERIC_PTM),
+	MODIFIED_RESIDUE(13, "amino acid modification", "modifiedResidue", "Modified residue", GENERIC_PTM),
 	PTM_INFO(1044, "PTM", "ptmInfo", "PTM info", GENERIC_PTM),
 
-	HELIX(1024, "helix", "helix", "helix", SECONDARY_STRUCTURE),
-	TURN(1025, "turn", "turn", "turn", SECONDARY_STRUCTURE),
-	BETA_STRAND(1026, "beta strand", "betaStrand", "beta strand", SECONDARY_STRUCTURE),
+	HELIX(1024, "helix", "helix", "Helix", SECONDARY_STRUCTURE),
+	TURN(1025, "turn", "turn", "Turn", SECONDARY_STRUCTURE),
+	BETA_STRAND(1026, "beta strand", "betaStrand", "Beta strand", SECONDARY_STRUCTURE),
 
-	VARIANT(1027, "sequence variant", "variant", "variant", POSITIONAL_ANNOTATION),
+	VARIANT(1027, "sequence variant", "variant", "Variant", POSITIONAL_ANNOTATION),
 
-	MUTAGENESIS(1028, "mutagenesis site", "mutagenesis", "mutagenesis", POSITIONAL_ANNOTATION),
-	SEQUENCE_CONFLICT(1029, "sequence conflict", "sequenceConflict", "sequence conflict", POSITIONAL_ANNOTATION),
+	MUTAGENESIS(1028, "mutagenesis site", "mutagenesis", "Mutagenesis", POSITIONAL_ANNOTATION),
+	SEQUENCE_CONFLICT(1029, "sequence conflict", "sequenceConflict", "Sequence conflict", POSITIONAL_ANNOTATION),
 
 	// instances of general annotations
 	
-	VARIANT_INFO(1045, "polymorphism", "variantInfo", "VariantInfo", GENERAL_ANNOTATION),
+	VARIANT_INFO(1045, "polymorphism", "variantInfo", "Variant info", GENERAL_ANNOTATION),
 
-	INDUCTION(1042, "induction", "induction", "induction", GENERAL_ANNOTATION),
+	INDUCTION(1042, "induction", "induction", "Induction", GENERAL_ANNOTATION),
 	//BIOTECHNOLOGY(1050,"biotechnology", "biotechnology", "biotechnology", new OWLAnnotationCategory[]{GENERAL_ANNOTATION }),  // OK: only 5 annotations exist, so moved to miscellaneous
-	MISCELLANEOUS(1052, "miscellaneous", "miscellaneous", "miscellaneous", GENERAL_ANNOTATION),
-	CAUTION(1054, "caution", "caution", "caution", GENERAL_ANNOTATION),
-	SEQUENCE_CAUTION(1056, "sequence caution", "sequenceCaution", "sequence caution", GENERAL_ANNOTATION),
-	UNIPROT_KEYWORD(1064, "uniprot keyword", "uniprotKeyword", "uniprot keyword", KEYWORD),
+	MISCELLANEOUS(1052, "miscellaneous", "miscellaneous", "Miscellaneous", GENERAL_ANNOTATION),
+	CAUTION(1054, "caution", "caution", "Caution", GENERAL_ANNOTATION),
+	SEQUENCE_CAUTION(1056, "sequence caution", "sequenceCaution", "Sequence caution", GENERAL_ANNOTATION),
+	UNIPROT_KEYWORD(1064, "uniprot keyword", "uniprotKeyword", "Uniprot keyword", KEYWORD),
 
-	FUNCTION_INFO(1033, "function", "functionInfo", "function info", GENERIC_FUNCTION),
-	CATALYTIC_ACTIVITY(1034, "catalytic activity", "catalyticActivity", "catalytic activity", GENERIC_FUNCTION),
-	COFACTOR(1035, "cofactor", "cofactor", "cofactor", GENERIC_INTERACTION),
-	ENZYME_REGULATION(1036, "enzyme regulation", "enzymeRegulation", "enzyme regulation", GENERIC_INTERACTION),
-	PATHWAY(1038, "pathway", "pathway", "pathway", GENERIC_FUNCTION),
-	GO_MOLECULAR_FUNCTION(1061, "go molecular function", "goMolecularFunction", "go molecular function", GENERIC_FUNCTION),
-	GO_BIOLOGICAL_PROCESS(1062, "go biological process", "goBiologicalProcess", "go biological process", GENERIC_FUNCTION),
+	FUNCTION_INFO(1033, "function", "functionInfo", "Function info", GENERIC_FUNCTION),
+	CATALYTIC_ACTIVITY(1034, "catalytic activity", "catalyticActivity", "Catalytic activity", GENERIC_FUNCTION),
+	COFACTOR(1035, "cofactor", "cofactor", "Cofactor", GENERIC_INTERACTION),
+	ENZYME_REGULATION(1036, "enzyme regulation", "enzymeRegulation", "Enzyme regulation", GENERIC_INTERACTION),
+	PATHWAY(1038, "pathway", "pathway", "Pathway", GENERIC_FUNCTION),
+	GO_MOLECULAR_FUNCTION(1061, "go molecular function", "goMolecularFunction", "GO molecular function", GENERIC_FUNCTION),
+	GO_BIOLOGICAL_PROCESS(1062, "go biological process", "goBiologicalProcess", "GO biological process", GENERIC_FUNCTION),
 
 	SMALL_MOLECULE_INTERACTION(-112, "SmallMoleculeInteraction", "smallMoleculeInteraction", "Small molecule interaction", GENERIC_INTERACTION),
-	INTERACTION_INFO(1037, "subunit", "interactionInfo", "interaction info", GENERIC_INTERACTION),
-	BINARY_INTERACTION(-111, "BinaryInteraction", "binaryInteraction", "binary interaction", GENERIC_INTERACTION), // placeholder for data coming from intact in table db partnership
+	INTERACTION_INFO(1037, "subunit", "interactionInfo", "Interaction info", GENERIC_INTERACTION),
+	BINARY_INTERACTION(-111, "BinaryInteraction", "binaryInteraction", "Binary interaction", GENERIC_INTERACTION), // placeholder for data coming from intact in table db partnership
 
 
-	SUBCELLULAR_LOCATION(1039, "subcellular location", "subcellularLocation", "subcellular location", CELLULAR_COMPONENT),
-	SUBCELLULAR_LOCATION_NOTE(63868, "subcellular location info", "subcellularLocationNote", "subcellular location info", CELLULAR_COMPONENT),
-	GO_CELLULAR_COMPONENT(1063, "go cellular component", "goCellularComponent", "go cellular component", CELLULAR_COMPONENT),
+	SUBCELLULAR_LOCATION(1039, "subcellular location", "subcellularLocation", "Subcellular location", CELLULAR_COMPONENT),
+	SUBCELLULAR_LOCATION_NOTE(63868, "subcellular location info", "subcellularLocationNote", "Subcellular location info", CELLULAR_COMPONENT),
+	GO_CELLULAR_COMPONENT(1063, "go cellular component", "goCellularComponent", "GO cellular component", CELLULAR_COMPONENT),
 
-	DEVELOPMENTAL_STAGE(1041, "developmental stage", "developmentalStageInfo", "developmental stage", GENERIC_EXPRESSION),
-	EXPRESSION_INFO(1055, "expression info", "expressionInfo", "expression info", GENERIC_EXPRESSION),
-	EXPRESSION_PROFILE(1040, "tissue specificity", "expressionProfile", "expression profile (tissue specificity)", GENERIC_EXPRESSION),
+	DEVELOPMENTAL_STAGE(1041, "developmental stage", "developmentalStageInfo", "Developmental stage", GENERIC_EXPRESSION),
+	EXPRESSION_INFO(1055, "expression info", "expressionInfo", "Expression info", GENERIC_EXPRESSION),
+	EXPRESSION_PROFILE(1040, "tissue specificity", "expressionProfile", "Expression profile", GENERIC_EXPRESSION),
 
-	DISEASE(1046, "disease", "disease", "disease", MEDICAL),
-	ALLERGEN(1048, "allergen", "allergen", "allergen", MEDICAL),
-	PHARMACEUTICAL(1051, "pharmaceutical", "pharmaceutical", "pharmaceutical", MEDICAL),
+	DISEASE(1046, "disease", "disease", "Disease", MEDICAL),
+	ALLERGEN(1048, "allergen", "allergen", "Allergen", MEDICAL),
+	PHARMACEUTICAL(1051, "pharmaceutical", "pharmaceutical", "Pharmaceutical", MEDICAL),
 
-	BIOPHYSICOCHEMICAL_PROPERTY(-16, "Biophysicochemical property", "biophysicochemicalProperty", "biophysicochemical property", GENERAL_ANNOTATION),
-	ABSORPTION_MAX(-17, "absorption max", "absorptionMax", "absorption max", BIOPHYSICOCHEMICAL_PROPERTY),
-	ABSORPTION_NOTE(-18, "absorption note", "absorptionNote", "absorption note", BIOPHYSICOCHEMICAL_PROPERTY),
-	KINETIC_KM(-19, "kinetic KM", "kineticKM", "kinetic KM", BIOPHYSICOCHEMICAL_PROPERTY),
-	KINETIC_VMAX(-20, "kinetic Vmax", "kineticVmax", "kinetic Vmax", BIOPHYSICOCHEMICAL_PROPERTY),
-	KINETIC_NOTE(-21, "kinetic note", "kineticNote", "kinetic note", BIOPHYSICOCHEMICAL_PROPERTY),
-	PH_DEPENDENCE(-22, "pH dependence", "phDependence", "phDependence", BIOPHYSICOCHEMICAL_PROPERTY),
-	REDOX_POTENTIAL(-23, "redox potential", "redoxPotential", "redoxPotential", BIOPHYSICOCHEMICAL_PROPERTY),
-	TEMPERATURE_DEPENDENCE(-24, "temperature dependence", "temperatureDependence", "temperatureDependence", BIOPHYSICOCHEMICAL_PROPERTY);
+	BIOPHYSICOCHEMICAL_PROPERTY(-16, "Biophysicochemical property", "biophysicochemicalProperty", "Biophysicochemical property", GENERAL_ANNOTATION),
+	ABSORPTION_MAX(-17, "absorption max", "absorptionMax", "Absorption max", BIOPHYSICOCHEMICAL_PROPERTY),
+	ABSORPTION_NOTE(-18, "absorption note", "absorptionNote", "Absorption note", BIOPHYSICOCHEMICAL_PROPERTY),
+	KINETIC_KM(-19, "kinetic KM", "kineticKM", "Kinetic KM", BIOPHYSICOCHEMICAL_PROPERTY),
+	KINETIC_VMAX(-20, "kinetic Vmax", "kineticVmax", "Kinetic Vmax", BIOPHYSICOCHEMICAL_PROPERTY),
+	KINETIC_NOTE(-21, "kinetic note", "kineticNote", "Kinetic note", BIOPHYSICOCHEMICAL_PROPERTY),
+	PH_DEPENDENCE(-22, "pH dependence", "phDependence", "pH dependence", BIOPHYSICOCHEMICAL_PROPERTY),
+	REDOX_POTENTIAL(-23, "redox potential", "redoxPotential", "redox potential", BIOPHYSICOCHEMICAL_PROPERTY),
+	TEMPERATURE_DEPENDENCE(-24, "temperature dependence", "temperatureDependence", "Temperature dependence", BIOPHYSICOCHEMICAL_PROPERTY),
+
+	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "Protein property", GENERAL_ANNOTATION), //to represent stable form
+	//New categories added with BioEditor integration
+	GENERIC_PHENOTYPE(-9999, "generic-phenotype", "genericPhenotype", "Generic phenotype", GENERAL_ANNOTATION),
+	PHENOTYPIC_VARIATION(-9990, "phenotypic-variation", "phenotypicVariation", "Phenotypic variation", GENERIC_PHENOTYPE),
+	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "Mammalian phenotype", GENERIC_PHENOTYPE),
+
+	
+	//Virtual annotations (for pepx)
+	VIRTUAL_ANNOTATION(-70000, "virtual-annotation", "virtualAnnotation", "Virtual annotation", ROOT), //to represent stable form
+	PEPX_VIRTUAL_ANNOTATION(-70001, "pepx-virtual-annotation", "pepxVirtualAnnotation", "Pepx virtual annotation", VIRTUAL_ANNOTATION);
+
 
 	private final Integer dbId; // if positive, identifies a real record of the table nextprot.cv_terms (category annotation_type)
 	private final String dbAnnotationTypeName; // if dbId is positive, dbAnnotationTypeName is an exact match of the corresponding record in nextprot.cv_terms 
 	private final String apiName; // a string from which an rdf predicate and an rdfs:type name is derived 
-	private final String rdfLabel; // a human readable label for the rdf:type
+	private final String label; // a human readable label for the rdf:type
 	private String description = null; // may be set later from reading values in the db
 
 	private final AnnotationCategory parent;
@@ -189,7 +201,7 @@ public enum AnnotationCategory implements Serializable {
 		this.dbId = dbId;
 		this.dbAnnotationTypeName = dbAnnotationTypeName;
 		this.apiName = apiName;
-		this.rdfLabel = rdfLabel;
+		this.label = rdfLabel;
 		this.parent = parent;
 	}
 
@@ -243,29 +255,22 @@ public enum AnnotationCategory implements Serializable {
 	 */
 	private static List<AnnotationCategory> sortAnnotationCategories() {
 
-		List<AnnotationCategory> list = new ArrayList<>();
-		AnnotationCategory[] vals = AnnotationCategory.values();
+		List<AnnotationCategory> sortedAnnotations = new ArrayList<>();
 
-		for (AnnotationCategory value : vals) {
-
-			if (!value.equals(AnnotationCategory.FAMILY_NAME)) list.add(value);
+		for (AnnotationCategory category : AnnotationCategory.values()) {
+			if (category.isLeaf() && !category.equals(AnnotationCategory.FAMILY_NAME))
+				sortedAnnotations.add(category);
 		}
 
-		Collections.sort(list, new Comparator<AnnotationCategory>() {
+		Collections.sort(sortedAnnotations, (a1, a2) -> {
+            int cmp = a1.getHierarchy().compareTo(a2.getHierarchy());
+            if (cmp == 0)
+                return a1.apiName.compareTo(a2.apiName);
 
-			@Override
-			public int compare(AnnotationCategory m1, AnnotationCategory m2) {
+            return cmp;
+        });
 
-				int cmp = m1.getHierarchy().compareTo(m2.getHierarchy());
-
-				if (cmp == 0)
-					return m1.getApiTypeName().compareTo(m2.getApiTypeName());
-
-				return cmp;
-			}
-		});
-
-		return list;
+		return sortedAnnotations;
 	}
 
 	public static List<AnnotationCategory> getSortedCategories() {
@@ -298,6 +303,10 @@ public enum AnnotationCategory implements Serializable {
 		}
 	}
 
+	public static boolean hasAnnotationByApiName(String typeName) {
+		String typeNameInLowerCase = typeName.toLowerCase();
+		return MAP_DECAMELIZED_TYPES.containsKey(typeNameInLowerCase);
+	}
 
 	/**
 	 * Tells if this annotation category is used in the field cv_annotation_type_id of an annotations record
@@ -328,20 +337,23 @@ public enum AnnotationCategory implements Serializable {
 		return StringUtils.lowerFirstChar(this.apiName);
 	}
 
-/*	
-	@Deprecated //TODO change this for something more generic like #getApiTypeName, since it may be highly used in RDF templates I leave it for now
-	public String getRdfTypeName() {
-		return getApiTypeName();
-	}
-*/
-
 	public String getApiTypeName() {
 		return StringUtils.upperFirstChar(this.apiName);
 	}
 
+	/**
+	 * @deprecated use getLabel() instead
+	 */
 	@Deprecated
 	public String getRdfLabel() {
-		return StringUtils.upperFirstChar(this.rdfLabel);
+		return StringUtils.upperFirstChar(this.label);
+	}
+
+	/*
+	 * For display in feature viewer, etc. as well as as rdf:label object !
+	 */
+	public String getLabel() {
+		return StringUtils.upperFirstChar(this.label);
 	}
 
 	public AnnotationCategory getParent() {

@@ -24,7 +24,7 @@ public class NPEntryPeffStreamWriterTest extends WebIntegrationBaseTest {
 
         Writer writer = new PrintWriter(out);
 
-        NPEntryVelocityBasedStreamWriter exporter = new NPEntryPeffStreamWriter(writer);
+        EntryVelocityBasedStreamWriter exporter = new EntryPeffStreamWriter(writer);
 
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
 

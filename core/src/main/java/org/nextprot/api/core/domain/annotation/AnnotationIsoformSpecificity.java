@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,13 +16,15 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 	private static final Pattern ISO_PATTERN = Pattern.compile("Iso (\\d+)");
 
 	// annotation isoform specificity mapping
+	@Deprecated //should use the enum IsoTargetSpecificity
 	private static Map<String, String> specificityInfo= new HashMap<>();
 	
-	static{
+	static{ //TODO this should be removed! Should use 
 		//
 		// map specificity cv_name to entity name
 		specificityInfo.put("UNKNOWN", "UNKNOWN");
 		specificityInfo.put("BY DEFAULT", "BY_DEFAULT");
+		specificityInfo.put("BY_DEFAULT", "BY_DEFAULT");
 		specificityInfo.put("SPECIFIC", "SPECIFIC");
 	}
 
@@ -32,6 +35,8 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 	private Integer lastPosition;
 	private String isoformName;
 	private String specificity; // cv_name related to annotation_protein_assoc.cv_specificity_qualifier_type_id
+
+	private String name;
 
 	private String _comparableName;
 	
@@ -96,6 +101,7 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 		return isoformName;
 	}
 
+	//TODO looks like we alway set the accession here. Should be setIsoformAccession instead
 	public void setIsoformName(String isoformName) {
 		this.isoformName = (isoformName != null) ? isoformName : "";
 		_comparableName = (this.isoformName.startsWith("Iso ")) ? formatIsoName(this.isoformName) : this.isoformName;
@@ -114,8 +120,40 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof AnnotationIsoformSpecificity)) return false;
+		AnnotationIsoformSpecificity that = (AnnotationIsoformSpecificity) o;
+		return annotationId == that.annotationId &&
+				Objects.equals(firstPosition, that.firstPosition) &&
+				Objects.equals(lastPosition, that.lastPosition) &&
+				Objects.equals(isoformName, that.isoformName) &&
+				Objects.equals(specificity, that.specificity) &&
+				Objects.equals(_comparableName, that._comparableName);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(annotationId, firstPosition, lastPosition, isoformName, specificity, _comparableName);
+	}
+
+	@Override
 	public int compareTo(AnnotationIsoformSpecificity other) {
 
 		return _comparableName.compareTo(other._comparableName);
+	}
+
+	public boolean hasSameIsoformPositions(AnnotationIsoformSpecificity other) {
+
+		return isoformName.equals(other.isoformName) &&
+				Objects.equals(firstPosition, other.firstPosition) && Objects.equals(lastPosition, other.lastPosition);
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 }

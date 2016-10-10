@@ -5,25 +5,35 @@ import org.nextprot.api.commons.bio.DescriptorPI;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.constants.PropertyWriter;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.Family;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.core.utils.peff.PeffFormatterMaster;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class NXVelocityUtils {
 	
 	private static final PeffFormatterMaster PEFF_FORMATTER = new PeffFormatterMaster();
 
     private NXVelocityUtils() {
-        throw new AssertionError();
+        throw new AssertionError("should not be instanciable");
     }
 
+    public static Map<String,Annotation> getUniqueNameAnnotationMap(Entry entry) {
+    	return EntryUtils.getUniqueNameAnnotationMap(entry);
+    }
+    public static Map<String,Annotation> getHashAnnotationMap(Entry entry) {
+    	return EntryUtils.getHashAnnotationMap(entry);
+    }
+    
+    public static Map<Proteoform,List<Annotation>> getProteoformAnnotationsMap(Entry entry, String isoformAc) {
+		return EntryUtils.getProteoformAnnotationsMap(entry, isoformAc);
+	}
+        
 	public static List<Annotation> getAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory) {
 		return AnnotationUtils.filterAnnotationsByCategory(entry, annotationCategory, false);
 	}

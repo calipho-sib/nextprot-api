@@ -21,6 +21,5 @@ PREFIX interaction: <http://nextprot.org/rdf/interaction/>
 PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 PREFIX uniprot: <http://purl.uniprot.org/uniprot/>
 PREFIX unipage: <http://www.uniprot.org/uniprot/>
-
-
+PREFIX proteoform: <http://nextprot.org/rdf/proteoform/>
 

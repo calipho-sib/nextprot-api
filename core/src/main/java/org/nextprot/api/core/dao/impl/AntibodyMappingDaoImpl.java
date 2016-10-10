@@ -57,7 +57,7 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
                 
                 annotation.setAnnotationId(annotId);
                 annotation.setUniqueName(annotUniqueName); 
-				annotation.setCategory(AnnotationCategory.ANTIBODY_MAPPING);
+				annotation.setAnnotationCategory(AnnotationCategory.ANTIBODY_MAPPING);
                 annotation.setQualityQualifier("GOLD"); // TODO: IS THIS KIND OF INFO ACCESSIBLE ?
 				annotation.addTargetingIsoforms(new ArrayList<AnnotationIsoformSpecificity>());
 

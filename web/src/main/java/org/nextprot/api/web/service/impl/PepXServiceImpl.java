@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -20,7 +21,7 @@ import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
-import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.PeptideUtils;
 import org.nextprot.api.web.domain.PepXResponse;
@@ -120,7 +121,7 @@ public class PepXServiceImpl implements PepXService {
 			String isoformName = isoNameAndOptionalPosition.getIsoformName();
 			
 			Annotation annotation = new Annotation();
-			annotation.setCategoryOnly("pepx-virtual-annotation");
+			annotation.setAnnotationCategory(AnnotationCategory.PEPX_VIRTUAL_ANNOTATION);
 			annotation.setCvTermName(peptide);
 			annotation.setDescription("This virtual annotation describes the peptide " + peptide + " found in " + isoformName);
 

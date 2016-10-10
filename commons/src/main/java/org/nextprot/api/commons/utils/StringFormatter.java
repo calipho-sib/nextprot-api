@@ -39,7 +39,7 @@ public class StringFormatter {
      *
      * @param firstWordLetterInLowerCase true if the 1st letter of the first word has to be in lower case
      */
-    public StringFormatter camelFirstWordLetterLowerCase(boolean firstWordLetterInLowerCase) {
+    public StringFormatter camelFirstWordLetterLowerCase(final boolean firstWordLetterInLowerCase) {
 
         stringToFormat = toCamelCase(stringToFormat, firstWordLetterInLowerCase);
 
@@ -84,7 +84,7 @@ public class StringFormatter {
         return this;
     }
 
-    private String toCamelCase(final String inputString, boolean firstLetterFirstWordInLowerCase) {
+    private String toCamelCase(final String inputString, final boolean firstLetterFirstWordInLowerCase) {
 
         if (inputString == null)
             return null;
@@ -96,14 +96,16 @@ public class StringFormatter {
 
         StringBuilder sb = new StringBuilder(inputString.length());
 
+        boolean toLowerCase = firstLetterFirstWordInLowerCase;
+
         for (String word : inputString.split("[-_\\s]")) {
 
             if (!word.isEmpty()) {
 
-                if (firstLetterFirstWordInLowerCase) {
+                if (toLowerCase) {
 
                     sb.append(word.toLowerCase());
-                    firstLetterFirstWordInLowerCase = false;
+                    toLowerCase = false;
                 } else {
 
                     sb.append(word.substring(0, 1).toUpperCase());

@@ -4,9 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.*;
 
-/**
- * Created by fnikitin on 27/08/15.
- */
 public class BinaryInteraction2AnnotationTest {
 
     @Test
@@ -24,7 +21,6 @@ public class BinaryInteraction2AnnotationTest {
         Assert.assertEquals("neXtProt", bo.getDatabase());
         Assert.assertEquals(123L, bo.getId());
         Assert.assertEquals(BioObject.BioType.PROTEIN, bo.getBioType());
-        Assert.assertTrue(bo instanceof BioEntry);
     }
 
     @Test
@@ -42,7 +38,6 @@ public class BinaryInteraction2AnnotationTest {
         Assert.assertEquals("neXtProt", bo.getDatabase());
         Assert.assertEquals(123L, bo.getId());
         Assert.assertEquals(BioObject.BioType.PROTEIN_ISOFORM, bo.getBioType());
-        Assert.assertTrue(bo instanceof BioIsoform);
     }
 
     @Test
@@ -60,6 +55,5 @@ public class BinaryInteraction2AnnotationTest {
         Assert.assertEquals("UniProt", bo.getDatabase());
         Assert.assertEquals(15642964L, bo.getId());
         Assert.assertEquals(BioObject.BioType.PROTEIN, bo.getBioType());
-        Assert.assertTrue(bo instanceof BioObjectExternal);
     }
 }

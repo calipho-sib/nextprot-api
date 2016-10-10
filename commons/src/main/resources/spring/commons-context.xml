@@ -2,24 +2,30 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
  		http://www.springframework.org/schema/context
-		http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd
+		http://www.springframework.org/schema/jdbc
+		http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd">
 
 	<context:component-scan base-package="org.nextprot.api.commons" />
 	<context:component-scan base-package="org.nextprot.api.core" />
+	<context:component-scan base-package="com.nextprot.api.annotation.builder" />
+	<context:component-scan base-package="org.nextprot.api.isoform.mapper" />
 	<context:component-scan base-package="org.nextprot.api.user" />
 	<context:component-scan base-package="org.nextprot.api.security" />
 	<context:component-scan base-package="org.nextprot.api.rdf" />
 	<context:component-scan base-package="org.nextprot.api.solr" />
 	<context:component-scan base-package="org.nextprot.api.web" />
-	<context:component-scan base-package="org.nextprot.api.tasks" />
 	<context:component-scan base-package="org.nextprot.api.test.rdf" />
+
 	<beans profile="build">
+		<context:component-scan base-package="org.nextprot.api.etl" />
+		<context:component-scan base-package="org.nextprot.api.tasks" />
 		<context:component-scan base-package="org.nextprot.api.build" />
 	</beans>
-
 
 	<beans profile="unit">
 
@@ -28,6 +34,7 @@
 			<property name="dataSource" ref="dataSource" />
 			<!-- In unit test we use the same datasource for everything -->
 			<property name="userDataSource" ref="dataSource" />
+			<!--  <property name="statementsDataSource" ref="statementsDataSource" /> -->
 		</bean>
 
 		<bean id="txManager"
@@ -52,9 +59,17 @@
 			<property name="username" value="${db.username}" />
 			<property name="password" value="${db.password}" />
 		</bean>
-
+		
+		<!-- 
+		<jdbc:embedded-database id="statementsDataSource" type="H2">
+	        <jdbc:script location="classpath:nxflat-create-schema.ddl"/>
+	        <jdbc:script location="classpath:nxflat-statements-schema.ddl"/>
+	    </jdbc:embedded-database>
+	    -->
+	    
 
 		<beans profile="unit-schema-nextprot">
+
 
 			<bean id="dbUnitDatabaseConnection"
 				class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
@@ -74,6 +89,17 @@
 
 		</beans>
 
+<!-- <beans profile="unit-schema-nxflat">
+
+			<bean id="dbUnitDatabaseConnection"
+				class="com.github.springtestdbunit.bean.DatabaseDataSourceConnectionFactoryBean">
+				<property name="schema" value="nxflat" />
+				<property name="dataSource" ref="statementsDataSource" />
+			</bean>
+		
+		</beans>
+		 -->
+		
 	</beans>
 
 	<beans profile="pro">
@@ -114,11 +140,12 @@
 	</beans>
 
 	<beans profile="pro,dev">
-
+	
 		<bean id="dataSourceServiceLocator"
 			class="org.nextprot.api.commons.spring.jdbc.impl.DataSourceServiceLocatorImpl">
 			<property name="dataSource" ref="dataSource" />
 			<property name="userDataSource" ref="userDataSource" />
+			<property name="statementsDataSource" ref="statementsDataSource" />
 		</bean>
 
 		<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
@@ -126,6 +153,17 @@
 			<property name="jdbcUrl" value="${db.data.url}" />
 			<property name="user" value="${db.data.username}" />
 			<property name="password" value="${db.data.password}" />
+			<property name="maxPoolSize" value="${db.data.maxPoolSize}" />
+			<property name="minPoolSize" value="${db.data.minPoolSize}" />
+			<property name="initialPoolSize" value="${db.data.initialPoolSize}" />
+			<property name="autoCommitOnClose" value="false" />
+		</bean>
+
+		<bean id="statementsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+			<property name="driverClass" value="${db.statements.driver}" />
+			<property name="jdbcUrl" value="${db.statements.url}" />
+			<property name="user" value="${db.statements.username}" />
+			<property name="password" value="${db.statements.password}" />
 			<property name="maxPoolSize" value="${db.data.maxPoolSize}" />
 			<property name="minPoolSize" value="${db.data.minPoolSize}" />
 			<property name="initialPoolSize" value="${db.data.initialPoolSize}" />

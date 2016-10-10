@@ -7,9 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by fnikitin on 19/10/15.
- */
 public class AnnotationIsoformSpecificityTest {
 
     @Test
@@ -28,6 +25,33 @@ public class AnnotationIsoformSpecificityTest {
     public void testFormatIsoName2NoMatch() throws Exception {
 
         Assert.assertEquals("NX_P01325", AnnotationIsoformSpecificity.formatIsoName("NX_P01325"));
+    }
+
+    @Test
+    public void shouldHaveSameIsoformPositions() throws Exception {
+
+        AnnotationIsoformSpecificity specificity1 = mockAnnotationIsoformSpecificity("NX_Q04771-1", 328, 328);
+        AnnotationIsoformSpecificity specificity2 = mockAnnotationIsoformSpecificity("NX_Q04771-1", 328, 328);
+
+        Assert.assertTrue(specificity1.hasSameIsoformPositions(specificity2));
+    }
+
+    @Test
+    public void shouldNotHaveSameIsoformPositions() throws Exception {
+
+        AnnotationIsoformSpecificity specificity1 = mockAnnotationIsoformSpecificity("NX_Q04771-1", 328, 328);
+        AnnotationIsoformSpecificity specificity2 = mockAnnotationIsoformSpecificity("NX_Q04771-1", 327, 328);
+
+        Assert.assertFalse(specificity1.hasSameIsoformPositions(specificity2));
+    }
+
+    @Test
+    public void shouldHaveSameIsoformNullPositions() throws Exception {
+
+        AnnotationIsoformSpecificity specificity1 = mockAnnotationIsoformSpecificity("NX_Q04771-1", null, null);
+        AnnotationIsoformSpecificity specificity2 = mockAnnotationIsoformSpecificity("NX_Q04771-1", null, null);
+
+        Assert.assertTrue(specificity1.hasSameIsoformPositions(specificity2));
     }
 
     @Test
@@ -54,5 +78,15 @@ public class AnnotationIsoformSpecificityTest {
         }
 
         return specs;
+    }
+
+    private AnnotationIsoformSpecificity mockAnnotationIsoformSpecificity(String name, Integer first, Integer last) {
+
+        AnnotationIsoformSpecificity specificity = new AnnotationIsoformSpecificity();
+        specificity.setIsoformName(name);
+        specificity.setFirstPosition(first);
+        specificity.setLastPosition(last);
+
+        return specificity;
     }
 }

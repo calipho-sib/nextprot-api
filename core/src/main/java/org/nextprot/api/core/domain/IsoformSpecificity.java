@@ -75,7 +75,7 @@ public class IsoformSpecificity implements Serializable, Comparable<IsoformSpeci
 	}
 	
 	public void addPosition(int startPosition, int endPosition) {
-		addPosition(Pair.pair(startPosition, endPosition));
+		addPosition(Pair.create(startPosition, endPosition));
 	}
 	
 	public void addPosition(Pair<Integer, Integer> position) {

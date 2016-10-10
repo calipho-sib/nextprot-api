@@ -4,7 +4,7 @@
 
 	<groupId>org.nextprot</groupId>
 	<artifactId>nextprot-api-master</artifactId>
-	<version>0.9.0</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>An API to access and search for nextprot data</description>
 	<url>https://api.nextprot.org</url>
@@ -12,7 +12,7 @@
 	<developers>
 		<developer>
 			<name>NextProt Team</name>
-			<email>ndu@isb-sib.ch</email>
+			<email>ndu@sib.swiss</email>
 		</developer>
 	</developers>
 
@@ -21,7 +21,7 @@
 		<project.version>${project.version}</project.version>
 		<spring-security.version>3.2.5.RELEASE</spring-security.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+	</properties>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -46,6 +46,8 @@
 		<module>rdf</module>
 		<module>solr</module>
 		<module>security</module>
+		<module>isoform-mapper</module>
+		<module>etl-statement</module>
 		<module>web</module>
 		<module>test-diff-rdf-db</module>
 		<module>tasks</module>
@@ -59,6 +61,12 @@
 				<artifactId>nextprot-api-commons</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+		    <dependency>
+			<groupId>org.nextprot</groupId>
+    			<artifactId>nextprot-commons</artifactId>
+			<version>LATEST</version>
+		    </dependency>
+	
 		</dependencies>
 
 	</dependencyManagement>
@@ -71,6 +79,16 @@
             <artifactId>flyway-core</artifactId>
             <version>3.1</version>
         </dependency>
+
+
+    <!-- H2 DB -->
+    <dependency>
+	<groupId>com.h2database</groupId>
+	<artifactId>h2</artifactId>
+        <version>1.4.191</version>
+	<scope>test</scope>
+    </dependency>
+
 
 		<dependency>
 			<groupId>org.nextprot</groupId>
@@ -279,6 +297,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.11</version>
+            <scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.jayway.jsonpath</groupId>
@@ -294,6 +313,7 @@
 			<groupId>org.dbunit</groupId>
 			<artifactId>dbunit</artifactId>
 			<version>2.4.9</version>
+			<scope>test</scope>
 		</dependency>
 
 		<!-- manage git info -->
@@ -327,15 +347,6 @@
 	</dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>2.6</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -358,8 +369,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -372,5 +383,39 @@
             </plugin>
         </plugins>
     </build>
+
+	<profiles>
+	<profile>
+	    <id>coverage-per-test</id>
+	    <build>
+		<plugins>
+		    <plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<!-- Minimal supported version is 2.4 -->
+			<version>2.13</version>
+			<configuration>
+			    <properties>
+				<property>
+				    <name>listener</name>
+				    <value>org.sonar.java.jacoco.JUnitListener</value>
+				</property>
+			    </properties>
+			</configuration>
+		    </plugin>
+		</plugins>
+	    </build>
+
+	    <dependencies>
+		<dependency>
+		    <groupId>org.sonarsource.java</groupId>
+		    <artifactId>sonar-jacoco-listeners</artifactId>
+		    <version>3.8</version>
+		    <scope>test</scope>
+		</dependency>
+	    </dependencies>
+	</profile>
+    </profiles>
+
 
 </project>

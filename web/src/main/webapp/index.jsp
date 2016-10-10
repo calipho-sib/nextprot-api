@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="">
 <meta name="author" content="">
+	<link href='https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900' rel='stylesheet' type='text/css'>
 
 <script src="js/jquery-1.11.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -16,6 +17,8 @@
 <!-- Le styles -->
 <link href="css/bootstrap.min.css" rel="stylesheet">
 <link href="css/nx-api.css" rel="stylesheet">
+<link href="css/footer.css" rel="stylesheet">
+	<link href="css/font-awesome.min.css" rel="stylesheet">
 
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 <!--[if lt IE 9]>
@@ -25,7 +28,7 @@
 
 <body>
 
-	<nav class="navbar navbar-inverse navbar-fixed-top">
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -39,7 +42,7 @@
     		</div>
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
-			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" ng-controller="HelpCtrl">
+			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
 
 					<!--  Resources  -->
@@ -48,7 +51,7 @@
 							<span class="caret"></span>
 					</a>
 						<ul class="dropdown-menu" role="menu">
-							<li><a href="https://search.nextprot.org">Search</a></li>
+							<li><a href="https://www.nextprot.org">Search</a></li>
 							<li><a href="http://snorql.nextprot.org">Snorql</a></li>
 							<li><a href="https://api.nextprot.org">API</a></li>
 						</ul></li>
@@ -75,7 +78,7 @@
 							</a></li>
 						</ul></li>
 
-					<li ng-class=""><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/about.md" target="_blank">About</a></li>
+					<li ng-class=""><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/nextprot.md" target="_blank">About</a></li>
 					<li ng-class=""><a
 						href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact
 							us</a></li>
@@ -101,7 +104,7 @@
 			</div>
 
 		</div>
-	</nav>
+	</div>
 
 	<div class="container-fluid">
 		<div class="row">
@@ -165,44 +168,34 @@
 
 	<!-- Footer
   ================================================== -->
-	<footer class="container text-center small">
-		<hr />
-		<div class="row">
-			<div class="col-lg-15">
-				<div class="col-md-3">
-					<ul class="nav nav-pills nav-stacked">
-						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/legal%20disclaimer.md" target="_blank">Legal disclaimer</a></li>
-					</ul>
-				</div>
-				<div class="col-md-3">
-					<ul class="nav nav-pills nav-stacked">
-						<li><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2015 SIB</a></li>
-					</ul>
-				</div>
-				<div class="col-md-3">
-					<ul class="nav nav-pills nav-stacked">
-						<li><a href="https://github.com/calipho-sib/nextprot-api" target="_blank"><i class="icon-github"></i>For developers</a></li>
-					</ul>
-				</div>
-				<div id="maindiv" style="display:none;" class="col-md-3"></div>
-				<div class="col-md-3">
-					<ul class="nav nav-pills nav-stacked">
-					</ul>
+
+	<div>
+		<footer class="container-fluid small">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="col-md-12 text-left">
+						<a class="ft-item" href="/copyright">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
+						<a class="ft-item" href="/legal-disclaimer">Legal disclaimer</a>
+						<span id="reldataspan" class="ft-item ui-version"></span>
+						<span id="maindiv" class="ft-item ui-version"></span>
+						<a class="ft-item" href="https://github.com/calipho-sib/" target="_blank">
+							<span class="fa fa-github" aria-hidden="true"></span> For developers
+						</a>
+					</div>
 				</div>
 			</div>
-		</div>
-		<hr />
-	</footer>
+		</footer>
+	</div>
+</body>
 
+<script id="main" type="text/x-handlebars-template">
+	Application release v{{version}}
+</script>
 
-	<script id="main" type="text/x-handlebars-template">
-		<ul class="nav nav-pills nav-stacked">
-			<li><a href="https://github.com/calipho-sib/nextprot-api/releases"
-				   target="_blank"><i class="icon-tag"></i>Version: {{version}}</a></li>
-			</a>
-			</li>
-		</ul>
-	</script>
+<script id="reldata" type="text/x-handlebars-template">
+	Data release {{release.databaseRelease}}
+</script>
+
 
 <script id="apis" type="text/x-handlebars-template">
 {{#eachInMap apis}}
@@ -665,7 +658,7 @@
 <script>
 	var model;
 	var jsondoc = JSON.stringify('_JSONDOC_OFFLINE_PLACEHOLDER_');
-	
+
 	$(document).ready(function() {
 		// This is to check if the '_JSONDOC_OFFLINE_PLACEHOLDER_' has been replaced with content coming from
 		// the result of the jsondoc-maven-plugin
@@ -868,24 +861,28 @@
 
 					
 					//Add suffix for brower call
-					var suffix = "xml";
+					var suffix = ".xml";
 					if (headers["Accept"] == "application/json")
-						suffix = "json";
+						suffix = ".json";
 					if (headers["Accept"] == "text/turtle")
-						suffix = "ttl";
+						suffix = ".ttl";
+					if (headers["Accept"] == "text/plain")
+						suffix = "";
 					if (headers["Accept"] == "text/fasta")
-						suffix = "fasta";
+						suffix = ".fasta";
 					if (headers["Accept"] == "application/vnd.ms-excel")
-						suffix = "xls";
+						suffix = ".xls";
 					//if (headers["Accept"] == "text/peff")
 					//	suffix = "peff";
 
 					if(replacedPath.indexOf('?') != -1){
 						var begin = replacedPath.substring(0, replacedPath.indexOf('?'));
 						var end = replacedPath.substring(replacedPath.indexOf('?'), replacedPath.length);
-						replacedPath = begin + "." + suffix + end; 
+						//replacedPath = begin + "." + suffix + end; 
+						replacedPath = begin + suffix + end; 
 					}else {
-						replacedPath += "." + suffix;
+						replacedPath += suffix;
+						//replacedPath += "." + suffix;
 					}
 					
 					if(replacedPath[0] == "/"){
@@ -1020,7 +1017,7 @@
 		$('#maindiv').show();
 		$('#side-accordion').show();
 	}
-	
+
 	function fetchdoc(jsondocurl) {
 		console.log("Fetching doc for " + jsondocurl);
 		$.ajax({
@@ -1038,16 +1035,48 @@
 		});
 	}
 
+	function compileHTMLFromJSONReleaseInfo(release) {
+
+		var reldata = Handlebars.compile($("#reldata").html());
+		var reldataHTML = reldata(release);
+
+		$("#reldataspan").html(reldataHTML);
+		$('#reldataspan').show();
+	}
+
+	function fetchReleaseInfo() {
+		url = window.location.href.replace("#", "") + '/release-info'
+
+		$.ajax({
+			url : url,
+			type: 'GET',
+			dataType: 'json',
+			contentType: "application/json; charset=utf-8",
+			success : function(release) {
+				compileHTMLFromJSONReleaseInfo(release);
+			},
+			error: function(msg) {
+				console.log(msg);
+			}
+		});
+	}
+
     function buildHref(resource) {
 
         var hostname=window.location.hostname;
-
-        var regexp = /(alpha|dev|build)-api\.nextprot\.org/g;
+        
+        var regexp = /(alpha|dev|build|vit)-api\.nextprot\.org/g;
         var match = regexp.exec(hostname);
-
+        
         if (match != null) {
-
-            return "http://" + match[1] + "-" + resource + ".nextprot.org"
+        	if (match[1]==="vit") {
+				if (resource==="search") return "https://vit-www.nextprot.org";
+				if (resource==="snorql") return "http://vit-snorql.nextprot.org";
+				if (resource==="api") return "https://vit-api.nextprot.org";
+        	} else {
+                return "http://" + match[1] + "-" + resource + ".nextprot.org"
+        	}
+        	
         }
     }
 
@@ -1055,7 +1084,7 @@
 
         if (! window.location.protocol.match(/^https$/)) {
 
-            $("a[href^='https://search.nextprot.org']").attr("href", buildHref("search"));
+            $("a[href^='https://www.nextprot.org']").attr("href", buildHref("search"));
             $("a[href^='http://snorql.nextprot.org']").attr("href", buildHref("snorql"));
             $("a[href^='https://api.nextprot.org']").attr("href", buildHref("api"));
         }
@@ -1168,6 +1197,7 @@
 		});
 		
 		checkURLExistence();
+		fetchReleaseInfo();
 	});
 </script>
 

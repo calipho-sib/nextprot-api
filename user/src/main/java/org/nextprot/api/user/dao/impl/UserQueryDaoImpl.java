@@ -1,7 +1,6 @@
 package org.nextprot.api.user.dao.impl;
 
 import com.google.common.collect.Lists;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -9,7 +8,6 @@ import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.JdbcTemplateUtils;
 import org.nextprot.api.commons.utils.KeyValuesJdbcBatchUpdater;
 import org.nextprot.api.commons.utils.SQLDictionary;
-import org.nextprot.api.commons.utils.SqlBoolean;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.utils.UserQueryUtils;
@@ -197,7 +195,7 @@ public class UserQueryDaoImpl implements UserQueryDao {
 		namedParameters.addValue("title", src.getTitle());
 		namedParameters.addValue("description", src.getDescription());
 		namedParameters.addValue("sparql", src.getSparql());
-		namedParameters.addValue("published", SqlBoolean.toChar(src.getPublished()));
+		namedParameters.addValue("published", src.getPublished() ? 'Y' : 'N');
 
 		NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(dsLocator.getUserDataSource());
 

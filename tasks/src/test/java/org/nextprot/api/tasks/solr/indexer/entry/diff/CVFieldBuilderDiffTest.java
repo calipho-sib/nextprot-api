@@ -49,21 +49,6 @@ public class CVFieldBuilderDiffTest extends SolrDiffTest {
 			System.err.println(CvSet);
 		}
 		Assert.assertEquals(expectedCVs.size(), CvSet.size());
-		   /* if (CvSet.size() < expectedCVs.size()) {
-			   expectedCVs.removeAll(CvSet);
-			Set<String> missingSet = new TreeSet<String>();
-			Set<String> finalmissingSet = new TreeSet<String>(expectedCVs);
-			for(String expectedvalue : expectedCVs) {
-
-			}
-			if(finalmissingSet.size() > 0) {
-			for(String missingvalue : finalmissingSet) System.err.println(missingvalue);
-			String msg = "expression in current solr contains " + finalmissingSet.size() + " more data:";
-			System.err.println(msg);
-			Assert.fail(msg);
-			}
-			else Assert.assertTrue(true);
-		} */
 
 		// CV_ANCESTORS_ACS
 		Set<String> expectedCVancestorsAcs = new TreeSet<String>((List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.CV_ANCESTORS_ACS));

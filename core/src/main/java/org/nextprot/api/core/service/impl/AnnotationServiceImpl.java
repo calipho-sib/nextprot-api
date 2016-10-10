@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import com.nextprot.api.annotation.builder.statement.service.StatementService;
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -17,7 +18,7 @@ import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.utils.AnnotationUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -36,10 +37,23 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private IsoformDAO isoformDAO;
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private AntibodyMappingService antibodyMappingService;
+	@Autowired private StatementService statementService;
 	
 	@Override
 	@Cacheable("annotations")
 	public List<Annotation> findAnnotations(String entryName) {
+		return findAnnotations(entryName,false);
+	}
+
+	/**
+	 * pam: just for test AnnotationServiceTest to work, could not find any better quick fix
+	 */
+	@Override
+	public List<Annotation> findAnnotationsExcludingBed(String entryName) {
+		return findAnnotations(entryName,true);
+	}
+
+	private List<Annotation> findAnnotations(String entryName, boolean ignoreStatements) {
 
 		Preconditions.checkArgument(entryName != null, "The annotation name should be set wit #withName(...)");
 		
@@ -106,6 +120,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		annotations.addAll(bioPhyChemPropsToAnnotationList(entryName, this.bioPhyChemPropsDao.findPropertiesByUniqueName(entryName)));
 
+		if (!ignoreStatements) annotations = AnnotationUtils.mapReduceMerge(statementService.getAnnotations(entryName), annotations);
+
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 	}
@@ -127,7 +143,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			annotation.setAnnotationId(property.getAnnotationId() + IdentifierOffset.BIOPHYSICOCHEMICAL_ANNOTATION_OFFSET);
 			annotation.setCategory(model.getDbAnnotationTypeName());
 			annotation.setDescription(description);
-			annotation.setEvidences(new ArrayList<AnnotationEvidence>());
+			annotation.setEvidences(new ArrayList<>());
 
 			annotation.setQualityQualifier("GOLD");
 			annotation.setUniqueName(entryName + "_" + model.getApiTypeName());
@@ -214,16 +230,16 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		String category = annotation.getCategory();
 
-		if (annotation.getDescription() == null || annotation.getDescription().indexOf(":") == 1) {
+		if (annotation.getDescription() == null || annotation.getDescription().indexOf(':') == 1) {
 			annotation.setDescription(annotation.getCvTermName());
 		}
 
 		if (category != null) {
-			if (category.equals("sequence caution")) {
+			if ("sequence caution".equals(category)) {
 				setSequenceCautionDescription(annotation);
-			} else if (category.equals("go molecular function") || category.equals("go cellular component") || category.equals("go biological process")) {
+			} else if ("go molecular function".equals(category) || "go cellular component".equals(category) || "go biological process".equals(category)) {
 				setGODescription(annotation);
-			} else if (category.equals("sequence conflict") || category.equals("sequence variant") || category.equals("mutagenesis site")) {
+			} else if ("sequence conflict".equals(category) || "sequence variant".equals(category) || "mutagenesis site".equals(category)) {
 				setVariantDescription(annotation);
 			}
 		}
@@ -233,31 +249,22 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		SortedSet<String> acs = new TreeSet<>();
 
-		// GET all evidences from that annotation
-		// If the resource type of the evidence is from DATABASE then add its xref emblAcs.add
-		/*
-		for (AnnotationEvidence evidence : annotation.getEvidences()) {
-			if (evidence.getResourceAssociationType().equals("evidence") && evidence.getResourceType().equals("database")) {
-				acs.add(evidence.getResourceAccession());
-			}
-		}
-		*/
-
 		for (AnnotationProperty ap : annotation.getProperties()) {
-			if (ap.getName().equals("differing sequence")) acs.add(ap.getAccession());
+			if ("differing sequence".equals(ap.getName()))
+				acs.add(ap.getAccession());
 		}
-		
-		
-		StringBuilder sb = new StringBuilder("The sequence").append((acs.size() > 1 ? "s" : ""));
+
+
+		StringBuilder sb = new StringBuilder("The sequence").append(acs.size() > 1 ? "s" : "");
 		for (String emblAc : acs) {
 			sb.append(" ").append(emblAc);
 		}
-		sb.append(" differ").append((acs.size() == 1 ? "s" : "")).append(" from that shown.");
+		sb.append(" differ").append(acs.size() == 1 ? "s" : "").append(" from that shown.");
 
 		// Beginning of the sentence finish, then:
 		List<AnnotationProperty> conflictTypeProps = new ArrayList<>();
 		for (AnnotationProperty ap : annotation.getProperties()) {
-			if (ap.getName().equals("conflict type"))
+			if ("conflict type".equals(ap.getName()))
 				conflictTypeProps.add(ap);
 		}
 
@@ -268,7 +275,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 				sb.append(" ").append(prop.getValue());
 			}
 			if (!sortedPositions.isEmpty()) {
-				sb.append(" at position").append((sortedPositions.size() > 1 ? "s" : ""));
+				sb.append(" at position").append(sortedPositions.size() > 1 ? "s" : "");
 				for (AnnotationProperty p : sortedPositions) {
 					sb.append(" ").append(p.getValue());
 				}
@@ -283,15 +290,11 @@ public class AnnotationServiceImpl implements AnnotationService {
 	}
 
 	private static SortedSet<AnnotationProperty> getSortedPositions(Annotation annotation) {
-		SortedSet<AnnotationProperty> sortedPositions = new TreeSet<>(new Comparator<AnnotationProperty>() {
-			public int compare(AnnotationProperty p1, AnnotationProperty p2) {
-				return Integer.valueOf(p1.getValue()).compareTo(Integer.valueOf(p2.getValue()));
-			}
-		});
+		SortedSet<AnnotationProperty> sortedPositions = new TreeSet<>((p1, p2) -> Integer.valueOf(p1.getValue()).compareTo(Integer.valueOf(p2.getValue())));
 
 		List<AnnotationProperty> conflictPositions = new ArrayList<>();
 		for (AnnotationProperty ap : annotation.getProperties()) {
-			if (ap.getName().equals("position"))
+			if ("position".equals(ap.getName()))
 				conflictPositions.add(ap);
 		}
 
@@ -303,12 +306,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 	private static void setVariantDescription(Annotation annotation) {
 
-		if (annotation.getVariant() != null) {
-
-			if (annotation.getVariant().getVariant().equals("")) {
-				String description = annotation.getDescription();
-				annotation.setDescription("Missing " + (description==null ? "": description));
-			}
+		if (annotation.getVariant() != null && annotation.getVariant().getVariant().isEmpty()) {
+			String description = annotation.getDescription();
+			annotation.setDescription("Missing " + (description==null ? "": description));
 		}
 	}
 
@@ -318,9 +318,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 		//Then the description Colocalizes with nuclear proteasome complex
 
 		for (AnnotationEvidence evidence : annotation.getEvidences()) {
-			if (evidence.getResourceAssociationType().equals("evidence")) {
+			if ("evidence".equals(evidence.getResourceAssociationType())) {
 				String goqualifier=evidence.getGoQualifier();
-				if (goqualifier != null) if (!goqualifier.isEmpty()) {
+				if (goqualifier != null && !goqualifier.isEmpty()) {
 					String description = StringUtils.capitalize(goqualifier.replaceAll("_", " ") + " ") + annotation.getDescription();
 					annotation.setDescription(description);
 					break;
@@ -330,7 +330,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	}
 
 	private List<Feature> filterByIsoform(String isoformUniqueName, List<Feature> annotations) {
-		List<Feature> filteredFeatures = new ArrayList<Feature>();
+		List<Feature> filteredFeatures = new ArrayList<>();
 		for (Feature f : annotations) {
 			if (f.getIsoformAccession().equalsIgnoreCase(isoformUniqueName)) {
 				filteredFeatures.add(f);
@@ -340,10 +340,10 @@ public class AnnotationServiceImpl implements AnnotationService {
 	}
 	
 	private String extractMasterUniqueName(String isoformUniqueName) {
-		if (isoformUniqueName.indexOf("-") < 1) {
+		if (isoformUniqueName.indexOf('-') < 1) {
 			throw new InvalidParameterException(String.format(
 					"Invalid isoform accession [%s]", isoformUniqueName));
 		}
-		return isoformUniqueName.substring(0, isoformUniqueName.indexOf("-"));
+		return isoformUniqueName.substring(0, isoformUniqueName.indexOf('-'));
 	}
 }

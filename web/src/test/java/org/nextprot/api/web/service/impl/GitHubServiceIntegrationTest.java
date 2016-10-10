@@ -46,7 +46,7 @@ public class GitHubServiceIntegrationTest extends WebIntegrationBaseTest {
 
 	@Test
 	public void testGitHubPage() throws Exception {
-		String content = ghService.getPage("pages", "nextprot");
+		String content = ghService.getPage("pages", "what-is-new");
 		assertTrue(!content.isEmpty());
 	}
 

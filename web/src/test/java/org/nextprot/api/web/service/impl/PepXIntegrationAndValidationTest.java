@@ -32,6 +32,8 @@ public class PepXIntegrationAndValidationTest extends WebIntegrationBaseTest {
 				assertTrue(entry.getAnnotations().size()==2);
 			} else if (entry.getUniqueName().equals("NX_Q16609")) {
 				assertTrue(entry.getAnnotations().size()==1);				
+			} else if (entry.getUniqueName().equals("NX_P48544")) {// Check with Alain that this is correct, apparently in UniProt it says: http://www.uniprot.org/uniprot/P48544#sequences TCQARS instead of TCQAWS
+				assertTrue(entry.getAnnotations().size()==1);				
 			} else {
 				assertTrue(false);
 			}

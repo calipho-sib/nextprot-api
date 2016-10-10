@@ -36,7 +36,7 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		));
 
 		// synonyms
-		Assert.assertTrue(new EntityNameCollectionTester(recName.getSynonyms()).contains(Collections.<EntityName>emptyList()));
+		Assert.assertTrue(new EntityNameCollectionTester(recName.getSynonyms()).contains(Collections.emptyList()));
 
 		// alternative names
 		Assert.assertTrue(new EntityNameCollectionTester(overview.getAlternativeProteinNames()).contains(Arrays.asList(
@@ -125,14 +125,14 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		Assert.assertEquals(2, chainNames.size());
 
 		Assert.assertTrue(new EntityNameCollectionTester(chainNames).contains(Arrays.asList(
-				mockEntityNameWithOtherRecNames("MP_12154770", "(3R)-hydroxyacyl-CoA dehydrogenase", "protein", "full", Collections.singletonList(
-						mockEntityName("MP_12154769", "1.1.1.n12", "chain", "EC")
+				mockEntityNameWithOtherRecNames("MP_14034499", "(3R)-hydroxyacyl-CoA dehydrogenase", "protein", "full", Collections.singletonList(
+						mockEntityName("MP_14034498", "1.1.1.n12", "chain", "EC")
 				)),
-				mockEntityNameWithSynonymsAndOtherRecNames("MP_12154767", "Enoyl-CoA hydratase 2", "protein", "full", Collections.singletonList(
-						mockEntityName("MP_12154766", "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "chain", "full")
+				mockEntityNameWithSynonymsAndOtherRecNames("MP_14034503", "Enoyl-CoA hydratase 2", "protein", "full", Collections.singletonList(
+						mockEntityName("MP_14034500", "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "chain", "full")
 				), Arrays.asList(
-						mockEntityName("MP_12154768", "4.2.1.107", "chain", "EC"),
-						mockEntityName("MP_12154765", "4.2.1.119", "chain", "EC")
+						mockEntityName("MP_14034501", "4.2.1.107", "chain", "EC"),
+						mockEntityName("MP_14034502", "4.2.1.119", "chain", "EC")
 				))
 		)));
 	}
@@ -223,12 +223,7 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 
 		@Override
 		protected Function<EntityName, String> createElementToKeyFunc() {
-			return new Function<EntityName, String>() {
-				@Override
-				public String apply(EntityName entityName) {
-					return entityName.getId();
-				}
-			};
+			return entityName -> entityName.getId();
 		}
 
 		@Override

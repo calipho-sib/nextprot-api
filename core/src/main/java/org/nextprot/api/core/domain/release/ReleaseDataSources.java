@@ -30,7 +30,7 @@ public enum ReleaseDataSources {
         SRMAtlas("SRMAtlas", "Human SRMAtlas", "Targeted proteomics assays", "http://www.srmatlas.org/"),
         UniProtGOA("UniProt-GOA", "GO annotations", "Gene Ontology annotations", "http://www.ebi.ac.uk/GOA");
          
-        private String displayName, cvName, description, url; 
+        private final String displayName, cvName, description, url;
 
 		ReleaseDataSources(String displayName, String cvName, String description, String url){
         	this.displayName = displayName;
@@ -43,32 +43,16 @@ public enum ReleaseDataSources {
 			return displayName;
 		}
 
-		public void setDisplayName(String displayName) {
-			this.displayName = displayName;
-		}
-
 		public String getCvName() {
 			return cvName;
-		}
-
-		public void setCvName(String cvName) {
-			this.cvName = cvName;
 		}
 
 		public String getDescription() {
 			return description;
 		}
 
-		public void setDescription(String description) {
-			this.description = description;
-		}
-
 		public String getUrl() {
 			return url;
-		}
-
-		public void setUrl(String url) {
-			this.url = url;
 		}
 
 		public static Set<String> getDistinctCvNames() {

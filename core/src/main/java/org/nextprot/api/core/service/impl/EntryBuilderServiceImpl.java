@@ -37,7 +37,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Override
 	public Entry build(EntryConfig entryConfig) {
 	
-		String entryName = entryConfig.getEntryName();
+		String entryName = EntryUtils.getEntryName(entryConfig.getEntryName());
 		Entry entry = new Entry(entryName);
 
 		//Lock per entry in case the cache is not set yet (should be quite) fast thougth
@@ -95,11 +95,13 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			if((entryConfig.hasGeneralAnnotations() || entryConfig.hasSubPart())){ //TODO should be added in annotation list
 				setEntryAdditionalInformation(entry, entryConfig); //adds isoforms, publications, xrefs and experimental contexts
 			} 
+			
+
 
 		}
 		//CPU Intensive
-		if(entryConfig.hasSubPart()){ //TODO should be added in annotation list
-				return EntryUtils.filterEntryBySubPart(entry, entryConfig);
+		if(entryConfig.hasSubPart() || entryConfig.hasGoldOnly()){ //TODO should be added in annotation list
+			return EntryUtils.filterEntryBySubPart(entry, entryConfig);
 		} else {
 			return entry;
 		}

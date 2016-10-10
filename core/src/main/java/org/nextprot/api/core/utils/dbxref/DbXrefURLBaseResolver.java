@@ -80,32 +80,35 @@ class DbXrefURLBaseResolver {
         // TODO: we should not have database link with multiple occurrence of %s that are either a stamp and a value !!!!
         // ChiTaRS db template: http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&%s=1
 
-        try {
+        if (templateURL.matches(UNRESOLVED_URL_REGEXP)) {
 
-            if (templateURL.matches(UNRESOLVED_URL_REGEXP)) {
-
-                // the resolver should not throw an exception for URL-encoding character:
-                //   ex: http://en.wikipedia.org/wiki/Thymosin_%CE%B11 -> http://en.wikipedia.org/wiki/Thymosin_α1
-                // solution:
-                //   decode URL-encoding character first as it match the following predicate
-                try {
-                    String decoded = URLDecoder.decode(templateURL, "UTF-8");
-
-                    if (decoded.matches(UNRESOLVED_URL_REGEXP))
-                        throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
-                }
-                // TODO: URLDecoder gives me no choice of catching RuntimeException, a URL matcher would have been great here
-                catch (IllegalArgumentException e) {
-
-                    throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
-                }
-            }
-        } catch (UnsupportedEncodingException e) {
-
-            throw new UnresolvedXrefURLException("unsupported URL encoding: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+            handleNonResolvedUrl(templateURL, accession);
         }
 
         return templateURL;
+    }
+
+    private void handleNonResolvedUrl(String templateURL, String accession) {
+
+        // the resolver should not throw an exception for URL-encoding character:
+        //   ex: http://en.wikipedia.org/wiki/Thymosin_%CE%B11 -> http://en.wikipedia.org/wiki/Thymosin_α1
+        // solution:
+        //   decode URL-encoding character first as it match the following predicate
+        try {
+            String decoded = URLDecoder.decode(templateURL, "UTF-8");
+
+            if (decoded.matches(UNRESOLVED_URL_REGEXP))
+                throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'");
+        }
+        // TODO: URLDecoder gives me no choice of catching RuntimeException, a URL matcher would have been great here
+        catch (IllegalArgumentException e) {
+
+            throw new UnresolvedXrefURLException("unresolved stamps: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'", e);
+        }
+        catch (UnsupportedEncodingException e) {
+
+            throw new UnresolvedXrefURLException("unsupported URL encoding: could not resolve template URL '" + templateURL + "' with accession number '" + accession + "'", e);
+        }
     }
 
     protected String getAccessionNumber(DbXref xref) {
@@ -130,6 +133,7 @@ class DbXrefURLBaseResolver {
             super("s");
         }
 
+        @Override
         protected String resolve(String templateURL, String accession) {
             return templateURL.replaceAll(getStamp(), accession);
         }

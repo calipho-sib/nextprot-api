@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,6 +28,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class SparqlController {
 
+	private static final String PREFIX_TEMPLATE = "prefix";
+
 	@Autowired
 	private SparqlProxyEndpoint sparqlProxyEndpoint;
 
@@ -37,61 +40,38 @@ public class SparqlController {
 	@RequestMapping("/sparql")
 	@ResponseBody
 	public ResponseEntity<String> mirrorRest(@RequestBody String body, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
-		String queryString = request.getQueryString();
-		if(request.getParameter("query") == null){
-			throw new NextProtException("Please provide a SPARQL query");
-		}
-		return this.sparqlProxyEndpoint.sparql(body, queryString);
+		return this.sparqlProxyEndpoint.sparql(body, getQueryString(request));
 	}
 
+	
+	
+	@RequestMapping("/sparql-nocache")
+	@ResponseBody
+	public ResponseEntity<String> mirrorRestWithoutCache(@RequestBody String body, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
+		return this.sparqlProxyEndpoint.sparqlNoCache(body, getQueryString(request));
+	}
+
+	
 	@RequestMapping(value ="/sparql-prefixes", produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public List<String> sparqlPrefixes() {
 		return sparqlDictionary.getSparqlPrefixesList();
 	}
-
-
-	/*@Autowired
-	private SparqlService sparqlService;
-
-	@Autowired
-	private SparqlEndpoint sparqlEndpoint;
-	*/
-	/*
-	@RequestMapping(value = "/sparql-nocache", method = { RequestMethod.GET })
-	@ResponseBody
-	public List<String> sparqlNoCache(@RequestParam(value = "sparql", required = true) String queryString, 
-			@RequestParam(value = "sparqlTitle", required = true) String queryTitle,
-			@RequestParam(value = "sparqlEndpoint", required = true) String sparqlEndpoint, 
-			@RequestParam(value = "testId", required = false) String testId, Model model) {
-
-		return sparqlService.findEntriesNoCache(queryString, sparqlEndpoint, queryTitle, testId);
-	}
-
-	@RequestMapping(value = "/sparqlite")
-	@ResponseBody
-	public String sparql(HttpServletRequest request, HttpServletResponse response,
-			
-			@RequestParam(value = "query", required = false) String query, 
-
-			@RequestParam(value = "output", required = false) String output,
-			
-			@RequestParam(value = "testid", required = false) String testid,
-			@RequestParam(value = "title", required = false) String title,
-			@RequestParam(value = "engine", required = false) String engine) {
-
-		String format = output;
-		if(format == null){
-			format = request.getHeader("Accept");
-		}
-		
-		if(engine == null){
-			engine = sparqlEndpoint.getUrl();
-		}
-		
-		return sparqlService.sparqlSelect(query, engine, Integer.parseInt(sparqlEndpoint.getTimeout()), title, testid,  ResultsFormat.guessSyntax(format, ResultsFormat.FMT_RS_XML)).getOutput();
-	}
-	*/
 	
 
+	@RequestMapping(value ="/common-prefixes", produces = {"text/turtle"})
+	public String commonPrefixes(Model model) {
+		return PREFIX_TEMPLATE; 
+	}
+	
+	private static String getQueryString(HttpServletRequest request){
+
+		String queryString = request.getQueryString();
+		if(request.getParameter("query") == null){
+			throw new NextProtException("Please provide a SPARQL query");
+		}
+		
+		return queryString;
+	}
+	
 }

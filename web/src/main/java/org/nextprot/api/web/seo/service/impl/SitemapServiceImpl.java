@@ -31,7 +31,7 @@ public class SitemapServiceImpl implements SitemapService {
 	public SitemapUrlSet getSitemapUrlSet() {
 		
 		//TODO set this elsewhere !
-		String base="https://search.nextprot.org";
+		String base="https://www.nextprot.org";
 		
 		SitemapUrlSet urlSet = new SitemapUrlSet();
 
@@ -41,7 +41,7 @@ public class SitemapServiceImpl implements SitemapService {
 		}
 
 		// other application urls (help, about, home, portals, ...)
-		for (SeoTagsAndUrl tag: seoTagService.getHardCodedSeoTags()) {
+		for (SeoTagsAndUrl tag: seoTagService.getGitHubSeoTags()) {
 			urlSet.add(new SitemapUrl(base + tag.getUrl()));
 		}
 		

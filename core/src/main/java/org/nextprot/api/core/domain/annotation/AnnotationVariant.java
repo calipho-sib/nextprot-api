@@ -13,15 +13,43 @@ public class AnnotationVariant implements Serializable {
 	private String rawDescription;
 	private String description = null; // set by parsing rawDescription
 	private List<String> diseaseTerms = null; // set by parsing rawDescription
-	
+
+	// TODO: [original|variantAminoAcid never used] ; discuss about the usage of originalAminoAcid and variantAminoAcid as they can be empty, single or multiple
+	/*
+	public String getOriginalAminoAcid() {
+		return originalAminoAcid;
+	}
+	public void setOriginalAminoAcid(String originalAminoAcid) {
+		this.originalAminoAcid = originalAminoAcid;
+	}
+	public String getVariantAminoAcid() {
+		return variantAminoAcid;
+	}
+	public void setVariantAminoAcid(String variantAminoAcid) {
+		this.variantAminoAcid = variantAminoAcid;
+	}
+
+	private String originalAminoAcid;
+	private String variantAminoAcid;
+	*/
+
+	@Deprecated //TODO See with Fred AminoAcidCode which can be null, -, multiple ...
+	public AnnotationVariant(String original, String variant) {
+		this.original = original;
+		this.variant = variant;
+	}
+
 	public AnnotationVariant(String original, String variant, String rawDescription) {
 		super();
 		this.original = original;
 		this.variant = variant;
+		// Commenting code that is never used: see [original|variantAminoAcid never used] comment above
+		//this.originalAminoAcid = AminoAcidCode.valueOfOneLetterCode(original.charAt(0)).get3LetterCode();
+		//this.variantAminoAcid = AminoAcidCode.valueOfOneLetterCode(variant.charAt(0)).get3LetterCode();
 		this.rawDescription = rawDescription;
 		parseRawDescription();
 	}
-	
+
 	public String getOriginal() {
 		return original;
 	}

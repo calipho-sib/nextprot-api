@@ -3,29 +3,31 @@ package org.nextprot.api.core.domain;
 import com.google.common.base.Preconditions;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * A wrapper over biological domain object
- *
- * Created by fnikitin on 26/08/15.
- */
-public abstract class BioObject<T> implements Serializable {
+public class BioObject implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+	
+	private static final String ANNOTATION_HASH_PROPERTY_NAME =  "annotationHash";
+	
+    private static final long serialVersionUID = 3L;
 
-    protected static final String NEXTPROT = "neXtProt";
+    public static final String NEXTPROT_DATABASE = "neXtProt"; // ok: this is the cv_name of nextprot in cv_databases (!= cv_datasources)
 
-    public enum BioType { CHEMICAL, PROTEIN, PROTEIN_ISOFORM, COMPLEX, GROUP}
-    public enum ResourceType { INTERNAL, EXTERNAL, MIXED }
+    public enum BioType { CHEMICAL, PROTEIN, PROTEIN_ISOFORM, COMPLEX, GROUP, ENTRY_ANNOTATION} //TODO daniel should this be normal annotation or simply normal?
+    
+    //When it is internal, it is something that exists in neXtProt (sequence). When it is EXTERNAL it is a xref (link to another db). MIXED when both are 
+    public enum ResourceType { INTERNAL, EXTERNAL, MIXED } 
 
     private long id;
     private String accession;
     private final String database;
     private final BioType bioType;
     private final ResourceType resourceType;
-    transient private T content;
+    private Map<String, String> properties = new HashMap<>();
 
-    protected BioObject(BioType bioType, ResourceType resourceType, String database) {
+    public BioObject(BioType bioType, ResourceType resourceType, String database) {
 
         Preconditions.checkNotNull(bioType);
 
@@ -34,6 +36,34 @@ public abstract class BioObject<T> implements Serializable {
         this.database = database;
     }
 
+    public static BioObject internal(BioType bioType) {
+
+        return new BioObject(bioType, ResourceType.INTERNAL, NEXTPROT_DATABASE);
+    }
+
+    public static BioObject external(BioType bioType, String database) {
+
+        return new BioObject(bioType, ResourceType.EXTERNAL, database);
+    }
+
+    protected String toBioObjectString() {
+        return "";
+    }
+    
+    protected String toBaseString() {
+
+        StringBuilder sb= new StringBuilder();
+
+        sb.append("BioObject id:").append(id)
+        .append(", accession:").append(accession)
+        .append(", database:").append(database)
+        .append(", bioType:").append(bioType)
+        .append(", resourceType:").append(resourceType)
+        .append(" specific content:").append(toBioObjectString());
+
+        return sb.toString();
+    }
+    
     public long getId() {
         return id;
     }
@@ -62,15 +92,29 @@ public abstract class BioObject<T> implements Serializable {
         return resourceType;
     }
 
+    public void setAnnotationHash(String value) {
+    	this.properties.put(ANNOTATION_HASH_PROPERTY_NAME, value);
+    }
+
+    
+    public void putPropertyNameValue(String name, String value) {
+        this.properties.put(name, value);
+    }
+
+    public String getPropertyValue(String name) {
+        return this.properties.get(name);
+    }
+
+    public Map<String, String> getProperties() {
+    	return this.properties;
+    }
+
+    public String getAnnotationHash() {
+    	return properties.get(ANNOTATION_HASH_PROPERTY_NAME);
+    }
+
+    
     public int size() {
         return 1;
-    }
-
-    public T getContent() {
-        return content;
-    }
-
-    public void setContent(T content) {
-        this.content = content;
     }
 }

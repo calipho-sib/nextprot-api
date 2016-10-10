@@ -53,10 +53,10 @@ public class Publication implements Serializable{
 	private Boolean isComputed;
 	
 	@ApiObjectField(description = "The list of authors")
-	protected SortedSet<PublicationAuthor> authors;
+	private SortedSet<PublicationAuthor> authors;
 
 	@ApiObjectField(description = "The associated cross references")
-	protected Set<DbXref> dbXrefs;
+	private Set<DbXref> dbXrefs;
 
 	private PublicationResourceLocator publicationResourceLocator;
 
@@ -232,7 +232,7 @@ public class Publication implements Serializable{
 
 	public JournalResourceLocator getJournalResourceLocator() {
 
-		return (isLocatedInScientificJournal()) ? (JournalResourceLocator) publicationResourceLocator : null;
+		return isLocatedInScientificJournal() ? (JournalResourceLocator) publicationResourceLocator : null;
 	}
 
 	public PublicationResourceLocator getPublicationResourceLocator() {
@@ -240,7 +240,7 @@ public class Publication implements Serializable{
 	}
 
 	public String getPublicationLocatorName() {
-		return (isLocalizable()) ? publicationResourceLocator.getName() : null;
+		return isLocalizable() ? publicationResourceLocator.getName() : null;
 	}
 
 	public void setJournalResourceLocator(JournalResourceLocator journalLocation, String volume, String issue, String firstPage, String lastPage) {
@@ -318,6 +318,7 @@ public class Publication implements Serializable{
 		this.dbXrefs = dbXrefs;
 	}
 
+	@Override
 	public String toString() {
 		
 		StringBuilder sb = new StringBuilder();

@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.service.annotation.ValidEntry;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.InitializingBean;
@@ -39,9 +40,13 @@ public class ServiceEntryValidation implements InitializingBean{
 		Object[] arguments = pjp.getArgs();
 		for (Object arg : arguments) {
 			if ((arg != null) && EntryConfig.class.isAssignableFrom(arg.getClass())) {
-				if (!uniqueNames.contains(((EntryConfig) arg).getEntryName())) {
-					LOGGER.error("neXtProt entry " + ((EntryConfig) arg).getEntryName() + " was not found, throwing EntryNotFoundException");
-					throw new EntryNotFoundException(((EntryConfig) arg).getEntryName());
+				
+				String argument = ((EntryConfig) arg).getEntryName();
+				String entryAccession = EntryUtils.getEntryName(argument);
+				
+				if (!uniqueNames.contains(entryAccession)) {
+					LOGGER.error("neXtProt entry " + argument + " was not found, throwing EntryNotFoundException");
+					throw new EntryNotFoundException(argument);
 				}
 			}
 

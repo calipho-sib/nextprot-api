@@ -4,11 +4,30 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
 
-	<!-- Use alway copy on write and read -->
-
+	<!-- Use always copy on write and read -->
 
 	<diskStore path="cache" />
 	<!-- Configuring cache for master identifier service -->
+
+	<cache name="modified-entry-statements-by-entry-accession" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true" >
+	</cache>
+	
+	
+	<cache name="statements-by-annot-hash" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true" >
+	</cache>
+
+	<cache name="entry-statements-by-entry-accession" overflowToOffHeap="false"
+		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		statistics="true" >
+	</cache>
+	
 	<cache name="master-unique-names-chromossome"
 		maxEntriesLocalHeap="24" eternal="true" statistics="true"/>
 
@@ -19,19 +38,39 @@
 	<cache name="master-unique-name" maxEntriesLocalHeap="22000"
 		eternal="true" statistics="true"/>
 
+	<cache name="all-gene-names" overflowToOffHeap="false" overflowToDisk="true"
+		   diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+
+	<cache name="gene-names-by-accession" maxEntriesLocalHeap="22000"
+		   eternal="true" statistics="true"/>
+
+	<cache name="entry-accession-by-gene-name" maxEntriesLocalHeap="22000"
+		eternal="true" statistics="true"/>
+
 	<cache name="read-user" maxEntriesLocalHeap="2000" eternal="true" statistics="true"/>
 
 	<cache name="release-contents" maxEntriesLocalHeap="1"
 		eternal="true" statistics="true"/>
 
+	<!-- we have  20'000 proteins * 20 subpages = 400'000 urls -->
+	<!-- we have 200'000 terms    *  4 subpages = 800'000 urls -->
+	<!-- we have 400'000 publis   *  1  subpage = 400'000 urls -->
+	<!-- we have some news, doc, function pates <     500 urls -->
+	<!-- TOTAL 1'600'000 URLS -->
+
+	<cache name="seo-github" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="500"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+	
 	<!-- Configuring cache for other services -->
 	<cache name="terminology-by-accession" overflowToOffHeap="false"
 		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100"
 		   maxEntriesLocalDisk="200000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		   statistics="true">
 	</cache>
-	
-	
 	
 	<cache name="terminology-by-ontology" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
@@ -166,6 +205,33 @@
 		statistics="true" >
 	</cache>
 
+	<cache name="statement-iso-annotations" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="60000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+	</cache>
+
+	<cache name="statement-entry-annotations" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="220000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+	</cache>
+
+	<cache name="modified-entry-annotations" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+	</cache>
+
+	<cache name="normal-iso-annotations" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="60000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+	</cache>
+	
+	<cache name="proteoform-iso-annotations" overflowToOffHeap="false" overflowToDisk="true"
+		diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="60000"
+		eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true" copyOnRead="true" copyOnWrite="true">
+	</cache>
+	
+
+
 	<!-- Tutorial queries (only in memory) -->
 	<cache name="tutorial-queries" overflowToOffHeap="false"
 		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"
@@ -195,6 +261,7 @@
 	<!-- Proxies -->
 	<cache name="sparql-proxy" overflowToOffHeap="false" maxEntriesLocalHeap="100"  eternal="true" statistics="true"/>
 	<cache name="pdb-proxy" overflowToOffHeap="false" maxEntriesLocalHeap="10"  eternal="true" statistics="true"/>
+	<cache name="pdbx-proxy" overflowToOffHeap="false" maxEntriesLocalHeap="10"  eternal="true" statistics="true"/>
 
 
 	<!-- GitHub Pages -->
@@ -204,4 +271,15 @@
 	<cache name="github-news" maxEntriesLocalHeap="1" eternal="true" statistics="true" />
 
 
+	<!-- Publications for in memory processing during ETL -->
+	<cache name="publications-by-id-and-accession" maxEntriesLocalHeap="1000" statistics="true"/>
+
+	<!-- Displayability of entry pages used by ui -->
+	<cache name="page-display"
+		   maxEntriesLocalHeap="10"
+		   maxEntriesLocalDisk="22000"
+		   eternal="true"
+		   memoryStoreEvictionPolicy="LFU">
+		<persistence strategy="localTempSwap" />
+	</cache>
 </ehcache>

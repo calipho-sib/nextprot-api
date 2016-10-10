@@ -1,25 +1,30 @@
 package org.nextprot.api.core.domain.annotation;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 import java.util.*;
 
 public class AnnotationEvidence implements Serializable {
 
-	private static final long serialVersionUID = 2856324820767690302L;
+	private static final long serialVersionUID = 20160913L;
 
 	// map uniprot evidence code with ECO
 	final static Map<String, String> evidenceInfo = new HashMap<>();
 
 	// evidence properties mapping
-	private Map<String, String> propertiesMap= new HashMap<>();
+	private Map<String, String> propertiesMap = new HashMap<>();
 
 	static {
-		
+
 		// map uniprot evidence code with ECO
 		evidenceInfo.put("UNKNOWN", "EXP");
-		evidenceInfo.put("PROBABLE", "IC");   // IC=inferred by curator
-		evidenceInfo.put("POTENTIAL", "IEA"); // IEA=Inferred from Electronic Annotation
-		evidenceInfo.put("BY_SIMILARITY", "ISS"); // ISS=Inferred from Sequence or Structural Similarity
+		evidenceInfo.put("PROBABLE", "IC"); // IC=inferred by curator
+		evidenceInfo.put("POTENTIAL", "IEA"); // IEA=Inferred from Electronic
+												// Annotation
+		evidenceInfo.put("BY_SIMILARITY", "ISS"); // ISS=Inferred from Sequence
+													// or Structural Similarity
 	}
 
 	private long resourceId;
@@ -39,6 +44,8 @@ public class AnnotationEvidence implements Serializable {
 	private String evidenceCodeAC;
 	private String evidenceCodeName;
 	private String evidenceCodeOntology;
+
+	private String note;
 
 	public String getEvidenceCodeAC() {
 		return evidenceCodeAC;
@@ -95,17 +102,19 @@ public class AnnotationEvidence implements Serializable {
 	}
 
 	/**
-	 * Returns the negative flag of the evidence after taking into account 
-	 * the value of the negative isoform specificity
-	 * @param isoAC an isoform accession
+	 * Returns the negative flag of the evidence after taking into account the
+	 * value of the negative isoform specificity
+	 * 
+	 * @param isoAC
+	 *            an isoform accession
 	 * @return
 	 */
 	public boolean isNegativeEvidence(String isoAC) {
 		String ac = (isoAC.startsWith("NX_") ? isoAC.substring(3) : isoAC);
-		if (getNegativeIsoformSpecificity()==null) {
+		if (getNegativeIsoformSpecificity() == null) {
 			return isNegativeEvidence;
 		} else {
-			return (getNegativeIsoformSpecificity().contains(ac) ? ! isNegativeEvidence : isNegativeEvidence);
+			return (getNegativeIsoformSpecificity().contains(ac) ? !isNegativeEvidence : isNegativeEvidence);
 		}
 	}
 
@@ -124,13 +133,14 @@ public class AnnotationEvidence implements Serializable {
 	}
 
 	/**
-	 * Returns either database or publication //TODO should we put this on enum? 
+	 * Returns either database or publication //TODO should we put this on enum?
+	 * 
 	 * @return
 	 */
 	public String getResourceType() {
 		return resourceType;
 	}
-	
+
 	public boolean isResourceAXref() {
 		return ("database".equals(resourceType));
 	}
@@ -138,7 +148,6 @@ public class AnnotationEvidence implements Serializable {
 	public boolean isResourceAPublication() {
 		return ("publication".equals(resourceType));
 	}
-
 
 	public void setResourceType(String resourceType) {
 		this.resourceType = resourceType;
@@ -153,14 +162,15 @@ public class AnnotationEvidence implements Serializable {
 	}
 
 	public void setResourceDb(String db) {
-		this.resourceDb=db;
+		this.resourceDb = db;
 	}
+
 	public String getResourceDb() {
 		return resourceDb;
 	}
-	
+
 	public void setResourceDescription(String desc) {
-		this.resourceDesc=desc;
+		this.resourceDesc = desc;
 	}
 
 	public String getResourceDescription() {
@@ -176,76 +186,85 @@ public class AnnotationEvidence implements Serializable {
 		propertiesMap.clear();
 		for (AnnotationEvidenceProperty prop : properties) {
 			String name = prop.getPropertyName();
-			String oldVal =  (propertiesMap.containsKey(name) ? propertiesMap.get(name) + ","  : "" );
+			String oldVal = (propertiesMap.containsKey(name) ? propertiesMap.get(name) + "," : "");
 			propertiesMap.put(name, oldVal + prop.getPropertyValue());
 		}
 	}
 
 	/**
-	 * Determines if an evidence has to be taken into account for xml / ttl, ... exports.
-	 * We should only export, publish evidences meeting the following requirements:
-	 * - evidences with type="evidence"
-	 * OR
-	 * - evidences with type="source" and assignedBy="Uniprot"
-	 * See also http://issues.isb-sib.ch/browse/CALIPHOMISC-147
+	 * Determines if an evidence has to be taken into account for xml / ttl, ...
+	 * exports. We should only export, publish evidences meeting the following
+	 * requirements: - evidences with type="evidence" OR - evidences with
+	 * type="source" and assignedBy="Uniprot" See also
+	 * http://issues.isb-sib.ch/browse/CALIPHOMISC-147
+	 * 
 	 * @return
 	 */
 	public boolean isValid() {
 		String typ = getResourceAssociationType();
-		if (typ.equals("evidence")) return true;
-		if (typ.equals("source") && getAssignedBy()!=null && getAssignedBy().equals("Uniprot")) return true;
+		if (typ.equals("evidence"))
+			return true;
+		if (typ.equals("source") && getAssignedBy() != null && getAssignedBy().equals("Uniprot"))
+			return true;
 		return false;
 	}
-	
+
 	/**
-	 * Determines if an evidence is to be applied to an isoform
-	 * See also details in http://issues.isb-sib.ch/browse/CALIPHOMISC-145
+	 * Determines if an evidence is to be applied to an isoform See also details
+	 * in http://issues.isb-sib.ch/browse/CALIPHOMISC-145
+	 * 
 	 * @param isoAC
 	 * @return
 	 */
 	public boolean appliesToIsoform(String isoAC) {
-		if (!isValid()) return false;
+		if (!isValid())
+			return false;
 		boolean result = false;
 		String ac = (isoAC.startsWith("NX_") ? isoAC.substring(3) : isoAC);
-		if (getIsoformSpecificity() == null && getNegativeIsoformSpecificity() == null) result = true;		
-		if (getIsoformSpecificity() != null && getIsoformSpecificity().contains(ac)) result = true;
-		if (getNegativeIsoformSpecificity() != null && getNegativeIsoformSpecificity().contains(ac)) result = true;
+		if (getIsoformSpecificity() == null && getNegativeIsoformSpecificity() == null)
+			result = true;
+		if (getIsoformSpecificity() != null && getIsoformSpecificity().contains(ac))
+			result = true;
+		if (getNegativeIsoformSpecificity() != null && getNegativeIsoformSpecificity().contains(ac))
+			result = true;
 		return result;
 	}
-	
+
 	public long getEvidenceId() {
 		return evidenceId;
 	}
 
 	/**
-	 * Returns an id for the evidence based on the database identifier but adds a prefix "nis" when the evidence
-	 * is said to have a negative isoform specificity for the isoform identified by isoAC.
-	 * This is useful because in such a case the negative flag of the evidence should be inversed. It allows to
-	 * split an evidence into 2 distinct evidences in the context of ttl file generation 
-	 * See also details in http://issues.isb-sib.ch/browse/CALIPHOMISC-145
-	 * @param isoAC an isoform accession
+	 * Returns an id for the evidence based on the database identifier but adds
+	 * a prefix "nis" when the evidence is said to have a negative isoform
+	 * specificity for the isoform identified by isoAC. This is useful because
+	 * in such a case the negative flag of the evidence should be inversed. It
+	 * allows to split an evidence into 2 distinct evidences in the context of
+	 * ttl file generation See also details in
+	 * http://issues.isb-sib.ch/browse/CALIPHOMISC-145
+	 * 
+	 * @param isoAC
+	 *            an isoform accession
 	 * @return
 	 */
 	public String getEvidenceId(String isoAC) {
 		String baseId = "" + evidenceId;
 		String ac = (isoAC.startsWith("NX_") ? isoAC.substring(3) : isoAC);
-		if (getNegativeIsoformSpecificity()==null) {
+		if (getNegativeIsoformSpecificity() == null) {
 			return baseId;
 		} else {
-			return (getNegativeIsoformSpecificity().contains(ac) ? 	"nis"+ baseId : baseId);
+			return (getNegativeIsoformSpecificity().contains(ac) ? "nis" + baseId : baseId);
 		}
 	}
 
 	/*
-	 * 		String ac = (isoAC.startsWith("NX_") ? isoAC.substring(3) : isoAC);
-		if (getNegativeIsoformSpecificity()==null) {
-			return isNegativeEvidence;
-		} else {
-			return (getNegativeIsoformSpecificity().contains(ac) ? ! isNegativeEvidence : isNegativeEvidence);
-		}
-
+	 * String ac = (isoAC.startsWith("NX_") ? isoAC.substring(3) : isoAC); if
+	 * (getNegativeIsoformSpecificity()==null) { return isNegativeEvidence; }
+	 * else { return (getNegativeIsoformSpecificity().contains(ac) ? !
+	 * isNegativeEvidence : isNegativeEvidence); }
+	 * 
 	 */
-	
+
 	public void setEvidenceId(long evidenceId) {
 		this.evidenceId = evidenceId;
 	}
@@ -276,39 +295,41 @@ public class AnnotationEvidence implements Serializable {
 
 	/**
 	 * 
-	 * @return a set of property names related to the evidence and that are allowed to be shown
+	 * @return a set of property names related to the evidence and that are
+	 *         allowed to be shown
 	 */
 	public Set<String> getPropertiesNames() {
 		/*
-		// do an intersection between properties we want to show and properties we have
-		Set<String> propsOk = new HashSet<>(Arrays.asList("expressionLevel","antibodies acc"));
-		propsOk.retainAll(propertiesMap.keySet());
-		// return the intersection
-		return propsOk;
-		*/
-		return propertiesMap==null ? new HashSet<String>() : propertiesMap.keySet();
+		 * // do an intersection between properties we want to show and
+		 * properties we have Set<String> propsOk = new
+		 * HashSet<>(Arrays.asList("expressionLevel","antibodies acc"));
+		 * propsOk.retainAll(propertiesMap.keySet()); // return the intersection
+		 * return propsOk;
+		 */
+		return propertiesMap == null ? new HashSet<String>() : propertiesMap.keySet();
 	}
-	
-	
+
 	public String getPropertyRawValue(String name) {
 		return propertiesMap.get(name);
 	}
-	
-	
+
 	/**
 	 * 
-	 * @param name a property name
+	 * @param name
+	 *            a property name
 	 * @return a string representing the property value associated to name
 	 */
 	public String getPropertyValue(String name) {
 		// special cases first
-		if ("expressionLevel".equals(name)) return getExpressionLevel();
-		if ("integrationLevel".equals(name)) return getIntegrationLevel();
-		//...
+		if ("expressionLevel".equals(name))
+			return getExpressionLevel();
+		if ("integrationLevel".equals(name))
+			return getIntegrationLevel();
+		// ...
 		// general case finally
 		return propertiesMap.get(name);
 	}
-	
+
 	/**
 	 * deploy properties,
 	 * 
@@ -317,11 +338,10 @@ public class AnnotationEvidence implements Serializable {
 	 * 'integrationLevel' order by property_value
 	 */
 	private String extractProperty(String propertyName) {
-		
+
 		return propertiesMap.get(propertyName);
 
 	}
-
 
 	/**
 	 * See http://issues.isb-sib.ch/browse/CALIPHOMISC-142 for more details
@@ -335,11 +355,14 @@ public class AnnotationEvidence implements Serializable {
 
 	/**
 	 * Multiple values for same evidence / property name are comma separated.
-	 * The value of this property is a list of isoform accessions (without NX_ prefix).
-	 * When an isoform is cited in this property it means that the related annotation assertion is FALSE for this isoform.
-	 * In other words the negative property of the evidence has to be inversed for this isoform. 
-	 * See also http://issues.isb-sib.ch/browse/CALIPHOMISC-145
-	 * @return a list of isoform accession without NX_ prefix or null if no specificity is known
+	 * The value of this property is a list of isoform accessions (without NX_
+	 * prefix). When an isoform is cited in this property it means that the
+	 * related annotation assertion is FALSE for this isoform. In other words
+	 * the negative property of the evidence has to be inversed for this
+	 * isoform. See also http://issues.isb-sib.ch/browse/CALIPHOMISC-145
+	 * 
+	 * @return a list of isoform accession without NX_ prefix or null if no
+	 *         specificity is known
 	 */
 	public String getNegativeIsoformSpecificity() {
 		return extractProperty("negative_isoform_specificity");
@@ -358,10 +381,13 @@ public class AnnotationEvidence implements Serializable {
 
 	/**
 	 * Multiple values for same evidence / property name are comma separated.
-	 * The value of this property is a list of isoform accessions (without NX_ prefix).
-	 * When an isoform is cited in this property it means that the related annotation assertion is TRUE for this isoform.
-	 * See also http://issues.isb-sib.ch/browse/CALIPHOMISC-145
-	 * @return a list of isoform accession without NX_ prefix or null if no specificity is known
+	 * The value of this property is a list of isoform accessions (without NX_
+	 * prefix). When an isoform is cited in this property it means that the
+	 * related annotation assertion is TRUE for this isoform. See also
+	 * http://issues.isb-sib.ch/browse/CALIPHOMISC-145
+	 * 
+	 * @return a list of isoform accession without NX_ prefix or null if no
+	 *         specificity is known
 	 */
 	public String getIsoformSpecificity() {
 		return extractProperty("isoform_specificity");
@@ -372,6 +398,7 @@ public class AnnotationEvidence implements Serializable {
 	 * peptide annotation. is not displayed
 	 * 
 	 * not used in ttl template
+	 * 
 	 * @return
 	 */
 	public String getReferenceIdentifierAccession() {
@@ -380,11 +407,12 @@ public class AnnotationEvidence implements Serializable {
 
 	/**
 	 * sample id: used for cosmic variants, keep trace of sample_ids described
-	 * in a publication 
+	 * in a publication
 	 * 
 	 * is not displayed
 	 * 
 	 * not used in ttl template
+	 * 
 	 * @return
 	 */
 	@Deprecated
@@ -397,17 +425,36 @@ public class AnnotationEvidence implements Serializable {
 	 * prop name ! Will be replaced by term in experimental context
 	 * 
 	 * not used in ttl template
-
+	 * 
 	 * @return Example: Lys-CSC, Cys-Glyco-CSC,Lys-CSC
 	 */
 	@Deprecated
 	public String getSP() {
 		return extractProperty("SP");
 	}
+
 	@Deprecated
 	public String getExpressionLevel() {
 		return extractProperty("expressionLevel");
 	}
+
+	/**
+	 * Return true if evidence shows any kind of detection (low, medium, high or positive) else false
+	 *
+	 * @return an optional boolean or absent if no expression info
+	 */
+	public Optional<Boolean> isExpressionLevelDetected() {
+
+		if (propertiesMap.containsKey("expressionLevel")) {
+
+			String level = extractProperty("expressionLevel");
+
+			return Optional.of("low".equals(level) || "medium".equals(level) || "high".equals(level) || "positive".equals(level));
+		}
+
+		return Optional.empty();
+	}
+
 	@Deprecated
 	public String getIntegrationLevel() {
 		return extractProperty("integrationLevel");
@@ -432,4 +479,35 @@ public class AnnotationEvidence implements Serializable {
 	public void setEvidenceCodeOntology(String ontology) {
 		this.evidenceCodeOntology = ontology;
 	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public String getIntensity() {
+		return extractProperty("intensity");
+	}
+
+	public String getSubjectProteinOrigin() {
+		return extractProperty("subject-protein-origin");
+	}
+
+	public String getSourceAccession_TODEBUG() {
+		return extractProperty("source-accession");
+	}
+
+	@Override
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
+	}
+
 }

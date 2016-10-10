@@ -1,10 +1,5 @@
 package org.nextprot.api.core.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
-
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
@@ -14,6 +9,11 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 @ActiveProfiles({"dev"})
@@ -27,10 +27,11 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 		assertEquals(properties.size(), 12);
 		assertEquals(properties.get(3).gettermId(), (long)99999);
 	}
-		@Test
+
+	@Test
 	public void shouldReturnAUniprotKeywordId() {
 		CvTerm term = this.terminologyService.findCvTermByAccession("KW-0732");
-	assertEquals("UniprotKeywordCv", term.getOntology());
+		assertEquals("UniprotKeywordCv", term.getOntology());
 	}
 	
 	@Test
@@ -57,7 +58,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	public void shouldReturnACellosaurusTerm() {
 		CvTerm term = this.terminologyService.findCvTermByAccession("CVCL_J530");
 		//System.out.println(term.toString());
-		assertEquals("CellosaurusCv", term.getOntology());
+		assertEquals("NextprotCellosaurusCv", term.getOntology());
 		assertEquals(5, term.getXrefs().size());
 		assertEquals(1, term.getFilteredXrefs("Other").size());
 		assertEquals(2, term.getFilteredXrefs("Publication databases").size());
@@ -89,7 +90,7 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 	@Test
 	public void shoudGetAllAncestors() { 
 		List<Tree<CvTerm>> trees = this.terminologyService.findTerminology(TerminologyCv.GoBiologicalProcessCv);
-		assertEquals(69,this.terminologyService.getAncestorSets(trees, "GO:1902667").size());
+		assertEquals(67,this.terminologyService.getAncestorSets(trees, "GO:1902667").size());
 		//assertEquals(5,TerminologyUtils.getAncestorSets(tree, "KW-0906").size());
 	}
 	
@@ -124,23 +125,23 @@ public class TerminologyServiceTest extends CoreUnitBaseTest {
 			}
 		}
 	}
-	
+
 	@Test
 	public void shouldReturnAllTerms()  {
 		int sameascnt = 0, refcnt = 0, maxref = 0;
 		List<CvTerm> terms = this.terminologyService.findAllCVTerms();
-		assertTrue(terms.size() > 145000); 
+		assertTrue(terms.size() > 145000);
 		for(CvTerm term : terms)  {
 			List<String> sameas = term.getSameAs();
 			if(sameas != null) {
-				sameascnt++; 
+				sameascnt++;
 			refcnt = sameas.size();
 			if(refcnt > maxref) maxref = refcnt;
 			}
 		}
-		assertTrue(sameascnt > 44000); 
+		assertTrue(sameascnt > 44000);
 		assertEquals(64,maxref);
-	} 
-	
+	}
+
 }
 

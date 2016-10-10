@@ -4,6 +4,7 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.export.format.EntryBlock;
 import org.nextprot.api.core.service.export.format.FileFormat;
@@ -12,8 +13,7 @@ import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.web.service.ExportService;
 import org.nextprot.api.web.service.SearchService;
-import org.nextprot.api.web.service.impl.writer.NPEntryStreamWriter;
-import org.nextprot.api.web.service.impl.writer.NPEntryWriterFactory;
+import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Controller;
@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+
+import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
 
 /**
  * Controller class responsible to extract in streaming
@@ -44,6 +46,15 @@ public class ExportController {
 
     @Autowired
     private UserProteinListService proteinListService;
+
+    @Autowired
+    private MasterIdentifierService masterIdentifierService;
+
+    @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET})
+    public void streamAllEntries(HttpServletRequest request, HttpServletResponse response, Model model) {
+        FileFormat format = FileFormat.valueOf(request);
+        streamAllEntries(format, response, "entry");
+    }
 
     @RequestMapping(value = "/export/entries/{view}", method = {RequestMethod.GET})
     public void streamEntriesSubPart(@PathVariable("view") String view, HttpServletRequest request, HttpServletResponse response,
@@ -79,6 +90,7 @@ public class ExportController {
         streamEntries(format, response, "entry", qr);
     }
 
+
     @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
     @ResponseBody
     public Map<String, Set<String>> getXMLTemplates() {
@@ -94,7 +106,6 @@ public class ExportController {
 
         response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
-        // TODO should this be secured or not? for now let's say not...
         // 2 ways of doing it: either add the token in the header or generate a
         // secret value for each list that is created
 
@@ -105,15 +116,14 @@ public class ExportController {
             }
 
             if (pl.getAccessionNumbers() != null) {
-                Iterator<String> sIt = pl.getAccessionNumbers().iterator();
-                while (sIt.hasNext()) {
-                    response.getWriter().write(sIt.next());
+                for (String s : pl.getAccessionNumbers()) {
+                    response.getWriter().write(s);
                     response.getWriter().write(StringUtils.CR_LF);
                 }
             }
 
         } catch (Exception e) {
-            throw new NextProtException(e.getMessage());
+            throw new NextProtException(e.getMessage(), e);
         }
     }
 
@@ -138,28 +148,39 @@ public class ExportController {
         setResponseHeader(format, viewName, queryRequest, response);
         List<String> entries = getAccessions(queryRequest);
 
-        NPEntryStreamWriter writer = null;
-
-        try {
-            writer = NPEntryWriterFactory.newNPEntryStreamWriter(format, viewName, response.getOutputStream());
-
+        try (EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, response.getOutputStream())) {
             exportService.streamResults(writer, viewName, entries);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
-        } finally {
-            try {
-                if (writer != null) writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-                throw new NextProtException("closing "+format.getExtension()+" stream failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")");
-            }
+        }
+        catch (IOException e) {
+            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (query="+queryRequest.getQuery()+")", e);
+        }
+    }
+
+    private void streamAllEntries(FileFormat format, HttpServletResponse response, String viewName) {
+
+        setResponseHeader(format, response);
+        List<String> entries = new ArrayList<>(masterIdentifierService.findUniqueNames());
+
+        try (EntryStreamWriter writer = newAutoCloseableWriter(format, viewName, response.getOutputStream())) {
+            exportService.streamResults(writer, viewName, entries);
+        }
+        catch (IOException e) {
+            throw new NextProtException(format.getExtension()+" streaming failed: cannot export "+entries.size()+" entries (all)", e);
         }
     }
 
     private void setResponseHeader(FileFormat format, String viewName, QueryRequest queryRequest, HttpServletResponse response) {
 
         String filename = getFilename(queryRequest, viewName, format);
+
+        if (!format.equals(FileFormat.JSON)) {
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+        }
+    }
+
+    private void setResponseHeader(FileFormat format, HttpServletResponse response) {
+
+        String filename = "nextprot-entries-all"  + "." + format.getExtension();
 
         if (!format.equals(FileFormat.JSON)) {
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");

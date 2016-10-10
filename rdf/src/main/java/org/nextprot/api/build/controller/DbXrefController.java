@@ -1,11 +1,5 @@
 package org.nextprot.api.build.controller;
 
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.pojo.ApiVerb;
@@ -20,7 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 
-@Api(name = "DbXref", description = "Method to retriiiieve the list of existing cross references", group="rdf stuff")
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
+import java.util.Locale;
+
+@Api(name = "DbXref", description = "Method to retrieve the list of existing cross references", group="rdf stuff")
 public class DbXrefController {
 	
 	@Autowired private DbXrefService xrService;
@@ -76,7 +75,7 @@ public class DbXrefController {
 	
 	
 	private FileFormat getRequestedFormat(HttpServletRequest request) {
-		FileFormat format = null;
+		FileFormat format;
 		String uri = request.getRequestURI();
 		if (uri.toLowerCase().endsWith(".ttl")) {
 			format = FileFormat.TURTLE;

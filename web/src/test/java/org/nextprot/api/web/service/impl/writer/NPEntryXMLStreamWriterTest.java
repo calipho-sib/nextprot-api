@@ -22,7 +22,7 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Writer writer = new PrintWriter(out);
-        NPEntryXMLStreamWriter exporter = new NPEntryXMLStreamWriter(writer, "overview");
+        EntryXMLStreamWriter exporter = new EntryXMLStreamWriter(writer, "overview");
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
         exporter.close();
         writer.close();
@@ -40,7 +40,7 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
     public void testWriteXML() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        NPEntryXMLStreamWriter writer = new NPEntryXMLStreamWriter(out, "overview");
+        EntryXMLStreamWriter writer = new EntryXMLStreamWriter(out, "overview");
         writer.write(Arrays.asList("NX_P06213", "NX_P01308"));
         writer.close();
         out.close();
@@ -52,7 +52,7 @@ public class NPEntryXMLStreamWriterTest extends WebIntegrationBaseTest {
     public void testWriteXMLPrematureClose() throws Exception {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        NPEntryXMLStreamWriter writer = new NPEntryXMLStreamWriter(out, "overview");
+        EntryXMLStreamWriter writer = new EntryXMLStreamWriter(out, "overview");
         writer.close();
         writer.write(Arrays.asList("NX_P06213"));
         Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +

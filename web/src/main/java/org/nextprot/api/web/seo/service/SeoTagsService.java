@@ -7,9 +7,15 @@ import org.nextprot.api.web.seo.domain.SeoTagsAndUrl;
 
 public interface SeoTagsService {
 	
-	SeoTags getSeoTags(String url);
-
-	List<SeoTagsAndUrl> getHardCodedSeoTags();
-
-
+	// dedicated SEO tags services
+	SeoTags getGitHubSeoTags(String url);
+	SeoTags getDefaultSeoTags(String url);
+	SeoTags getNewsSeoTags(String url);
+	SeoTags getPublicationSeoTags(String url);
+	SeoTags getTermSeoTags(String url);
+	SeoTags getEntrySeoTags(String url);
+	
+	// used for building Sitemap
+	List<SeoTagsAndUrl> getGitHubSeoTags();
+	
 }

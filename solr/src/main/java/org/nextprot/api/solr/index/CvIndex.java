@@ -11,9 +11,12 @@ import org.nextprot.api.solr.IndexTemplate;
 import org.nextprot.api.solr.SortConfig;
 
 public class CvIndex extends IndexTemplate {
-
+	
+	// a way to get it easily from everywhere !
+	static public final String NAME = "term";
+	
 	public CvIndex() {
-		super("term", "npcvs1");
+		super(CvIndex.NAME, "npcvs1");
 	}
 	
 	public Class<? extends ConfigurationName> getConfigNames() {

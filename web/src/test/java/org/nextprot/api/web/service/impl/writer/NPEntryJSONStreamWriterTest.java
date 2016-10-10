@@ -16,7 +16,7 @@ public class NPEntryJSONStreamWriterTest extends WebIntegrationBaseTest {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-        NPEntryOutputStreamWriter exporter = new NPEntryJSONStreamWriter(out, "overview");
+        EntryOutputStreamWriter exporter = new EntryJSONStreamWriter(out, "overview");
 
         exporter.write(Arrays.asList("NX_P06213", "NX_P01308"));
         String output = out.toString();
