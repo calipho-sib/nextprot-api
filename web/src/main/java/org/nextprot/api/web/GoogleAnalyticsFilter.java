@@ -50,8 +50,12 @@ public class GoogleAnalyticsFilter extends OncePerRequestFilter {
 	}
 	
 	private void sendToGoogleAnalytics(HttpServletRequest request) {
-		//should be made async
-		ga.postAsync(generateHit(request));
+		try {
+			//should be made async
+			ga.postAsync(generateHit(request));
+		} catch (Exception e){
+			Logger.error("Failed to send to GA" + e.getMessage());
+		}
 	}
 
 	@Override
@@ -155,7 +159,6 @@ public class GoogleAnalyticsFilter extends OncePerRequestFilter {
 	 */
 	public Optional<String> getClientIP(HttpServletRequest request) {
 
-		System.err.println(request.getRemoteAddr());
 		String ip = request.getHeader("x-forwarded-for"); //May differ from implementations
 		if(ip != null){
 			return Optional.of(ip); 
