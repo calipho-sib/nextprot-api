@@ -51,7 +51,6 @@ public class GoogleAnalyticsFilter extends OncePerRequestFilter {
 	
 	private void sendToGoogleAnalytics(HttpServletRequest request) {
 		try {
-			//should be made async
 			ga.postAsync(generateHit(request));
 		} catch (Exception e){
 			Logger.error("Failed to send to GA" + e.getMessage());
