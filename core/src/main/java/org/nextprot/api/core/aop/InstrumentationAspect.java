@@ -347,7 +347,6 @@ public class InstrumentationAspect {
 		map.put("http-request-local-address",  StringUtils.quote(httpRequest.getLocalAddr()));		
 		map.put("http-request-path-info",  StringUtils.quote(httpRequest.getPathInfo()));		
 		
-		
 		Enumeration<String> params = httpRequest.getParameterNames();
 		while (params.hasMoreElements()) {
 			String paramName = params.nextElement();
@@ -363,7 +362,7 @@ public class InstrumentationAspect {
 	private static Map<String, String> extractSecurityInfo() {
 
 		Authentication a = SecurityContextHolder.getContext().getAuthentication();
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<>();
 
 		if (a != null) {
 
