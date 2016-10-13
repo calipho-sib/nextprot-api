@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,6 +35,7 @@ public class GoogleAnalyticsFilter extends OncePerRequestFilter {
 
 		String clientId = getClientId(request).toString();
 		Logger.debug("Client Id" + clientId);
+		Logger.debug("Sending hit: " + request.getRequestURL().toString());
 		
 		hit.clientId(getClientId(request).toString());
 		
@@ -75,62 +75,15 @@ public class GoogleAnalyticsFilter extends OncePerRequestFilter {
 		this.trackingId = trackingId;
 	}
 	
-	
 	public UUID getClientId(HttpServletRequest request) {
 
-		//Check the Authorisation BEARER (JWT) 
-		/*Optional<UUID> authenticatedUser = getAuthenticationUUID(request);
-		if(authenticatedUser.isPresent()){
-			Logger.debug("Found UUID " + authenticatedUser.get() + " based on authorisation");
-			return authenticatedUser.get();
-		
-		} else {
+		// Keeping just IP + agent method, because some methods may require authentication and others not. And therefore different UUID would be generated.
+		UUID id = getClientUniqueIdentifier(request);
+		//Logger.debug("Found UUID " + id + " based on custom headers");
+		return id;
 
-			//Try to find GA cookie
-			Optional<UUID> requestGA = getGoogleAnalyticsUUID(request);
-			if(requestGA.isPresent()){
+	}	
 
-				Logger.debug("Found UUID " + requestGA.get() + " based on _ga (Google Analytics) cookie present");
-				return requestGA.get();
-				
-			} else { //Generate UUID based on IP on custom headers */
-		
-		
-			// Keeping just  IP + agent method, because some methods may require authentication and others not. And therefore different UUID would be generated.
-			UUID id = getClientUniqueIdentifier(request);
-			Logger.debug("Found UUID " + id + " based on custom headers");
-			return id;
-			
-				
-		/*}}*/
-
-		
-	}
-	
-	private static Optional<UUID> getGoogleAnalyticsUUID(HttpServletRequest request){
-
-		// The _ga cookie should not be found in principle (cookie is stored for www.nextprot.org and not api.nextprot.org)
-		if(request.getCookies() != null){
-			for(Cookie c : request.getCookies()){
-				if("_ga".equalsIgnoreCase(c.getName())){
-					return Optional.of(UUID.nameUUIDFromBytes(c.getValue().getBytes())); // for some reason the value of _ga is not a UUID
-				}
-			}
-		}
-		return Optional.absent();
-	}
-
-	private static Optional<UUID> getAuthenticationUUID(HttpServletRequest request){
-		
-		final String authorizationHeader = request.getHeader("authorization");
-		if(authorizationHeader != null){
-			return Optional.of(UUID.nameUUIDFromBytes(authorizationHeader.getBytes()));
-		}
-		return Optional.absent();
-
-	}
-
-	
 	/**
 	 * Get a client unique identifier created using the headers
 	 * @param request
@@ -139,15 +92,17 @@ public class GoogleAnalyticsFilter extends OncePerRequestFilter {
 	public UUID getClientUniqueIdentifier(HttpServletRequest request) {
 
 		StringBuilder sb = new StringBuilder();
+
+		sb.append(request.getHeader("origin") + "; ");
+		sb.append(request.getHeader("user-agent") + "; ");
+		sb.append(request.getHeader("hostname") + "; ");
+		sb.append(request.getHeader("x-forwarded-for") + "; ");
+		sb.append(request.getRemoteHost() + "; ");
+		sb.append(request.getRemoteUser() + "; ");
+		sb.append(request.getRemoteAddr() + "; ");
 		
-		sb.append(request.getHeader("hostname"));
-		sb.append(request.getHeader("x-forwarded-for"));
-		sb.append(request.getHeader("user-agent"));
-		sb.append(request.getHeader("origin"));
-		sb.append(request.getRemoteHost());
-		sb.append(request.getRemoteUser());
-		sb.append(request.getRemoteAddr());
-			
+		Logger.debug("Building UI based on string " + sb.toString());
+		
 		return UUID.nameUUIDFromBytes(sb.toString().getBytes());
 		
 	}
