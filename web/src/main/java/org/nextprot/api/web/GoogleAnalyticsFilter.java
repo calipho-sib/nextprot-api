@@ -79,7 +79,7 @@ public class GoogleAnalyticsFilter extends OncePerRequestFilter {
 	public UUID getClientId(HttpServletRequest request) {
 
 		//Check the Authorisation BEARER (JWT) 
-		Optional<UUID> authenticatedUser = getAuthenticationUUID(request);
+		/*Optional<UUID> authenticatedUser = getAuthenticationUUID(request);
 		if(authenticatedUser.isPresent()){
 			Logger.debug("Found UUID " + authenticatedUser.get() + " based on authorisation");
 			return authenticatedUser.get();
@@ -93,15 +93,16 @@ public class GoogleAnalyticsFilter extends OncePerRequestFilter {
 				Logger.debug("Found UUID " + requestGA.get() + " based on _ga (Google Analytics) cookie present");
 				return requestGA.get();
 				
-			} else { //Generate UUID based on IP on custom headers
-
-				UUID id = getClientUniqueIdentifier(request);
-				Logger.debug("Found UUID " + id + " based on custom headers");
-				return id;
+			} else { //Generate UUID based on IP on custom headers */
+		
+		
+			// Keeping just  IP + agent method, because some methods may require authentication and others not. And therefore different UUID would be generated.
+			UUID id = getClientUniqueIdentifier(request);
+			Logger.debug("Found UUID " + id + " based on custom headers");
+			return id;
+			
 				
-			}
-
-		}
+		/*}}*/
 
 		
 	}
