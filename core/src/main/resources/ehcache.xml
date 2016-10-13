@@ -60,7 +60,11 @@
 	<!-- we have some news, doc, function pates <     500 urls -->
 	<!-- TOTAL 1'600'000 URLS -->
 
-	<cache name="seo-github" overflowToOffHeap="false"
+	<cache name="seo-github-pages" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="500"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+	<cache name="seo-github-news" overflowToOffHeap="false"
 		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="500"
 		memoryStoreEvictionPolicy="LRU">
 	</cache>
