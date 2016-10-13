@@ -78,7 +78,7 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 	*/
 	
 	@Override
-	@Cacheable(value = "seo-github")
+	@Cacheable(value = "seo-github-pages")
 	public SeoTags getGitHubSeoTags(String url)  {
 		for (SeoTagsAndUrl t: getGitHubSeoTags()) {
 			if (t.getUrl().equals(url)) return (SeoTags)t;
@@ -99,7 +99,7 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 	}
 	
 	@Override
-	@Cacheable(value = "seo-github")
+	@Cacheable(value = "seo-github-news")
 	public SeoTags getNewsSeoTags(String url) {
 		String[] urlElements = RelativeUrlUtils.getPathElements(url);		
 		List<NextProtNews> allNews = gitHubService.getNews();
