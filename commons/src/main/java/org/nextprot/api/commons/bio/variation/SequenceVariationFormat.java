@@ -22,7 +22,7 @@ public abstract class SequenceVariationFormat {
     public enum ParsingMode { STRICT, PERMISSIVE }
 
     public String format(SequenceVariation mutation) {
-        return format(mutation, AminoAcidCode.AACodeType.ONE_LETTER);
+        return format(mutation, AminoAcidCode.CodeType.ONE_LETTER);
     }
 
     /**
@@ -33,7 +33,7 @@ public abstract class SequenceVariationFormat {
      *
      * @return a formatter <code>String</>
      */
-    public String format(SequenceVariation variation, AminoAcidCode.AACodeType type) {
+    public String format(SequenceVariation variation, AminoAcidCode.CodeType type) {
 
         StringBuilder sb = new StringBuilder();
 

@@ -38,7 +38,7 @@ public class AminoAcidModificationBedFormat extends SequenceVariationFormat {
     }
 
     @Override
-    public String format(SequenceVariation variation, AminoAcidCode.AACodeType type) {
+    public String format(SequenceVariation variation, AminoAcidCode.CodeType type) {
 
         StringBuilder sb = new StringBuilder();
 

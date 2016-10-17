@@ -197,6 +197,23 @@ public class StringUtils {
 	}
 
 	/**
+	 * Concatenate strings (null String replaced by "")
+	 * @param strings the strings to concatenate
+	 * @return the concatenated strings
+	 */
+	public static String concat(String... strings) {
+
+		StringBuilder sb = new StringBuilder();
+
+		for (String str : strings) {
+
+			sb.append((str != null) ? str : "");
+		}
+
+		return sb.toString();
+	}
+
+	/**
 	 * Get carriage return (used in velocity template)
 	 * @return carriage return
 	 */

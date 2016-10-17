@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
@@ -20,6 +21,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -77,15 +79,14 @@ public class PublicationServiceImpl implements PublicationService {
 
 		publications.addAll(nxflatPublications);
 
+		final Comparator<Publication> comparator = new PublicationComparatorAsc(Publication::getPublicationYear).reversed()
+				.thenComparing((pub1, pub2) -> pub1.getPublicationType().compareTo(pub2.getPublicationType()))
+				.thenComparing(new PublicationComparatorAsc(Publication::getPublicationLocatorName))
+				.thenComparing(new PublicationComparatorAsc(Publication::getVolume, PublicationComparatorAsc.FieldType.NUMBER_TYPE))
+				.thenComparing(new PublicationComparatorAsc(Publication::getFirstPage, PublicationComparatorAsc.FieldType.NUMBER_TYPE));
+
 		// sort according to order with criteria defined in publication-sorted-for-master.sql
-		Collections.sort(publications, (p1, p2) ->
-				new PublicationYearComparatorDesc()
-							.thenComparing((pub1, pub2) -> pub1.getPublicationType().compareTo(pub2.getPublicationType()))
-							.thenComparing(new PublicationJournalNameComparatorAsc())
-							.thenComparing(new PublicationVolumeComparatorAsc())
-							.thenComparing(new PublicationFirstPageComparatorAsc())
-							.compare(p1, p2)
-		);
+		Collections.sort(publications, comparator);
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Publication>().addAll(publications).build();
@@ -179,7 +180,8 @@ public class PublicationServiceImpl implements PublicationService {
 
 	private void setXrefs(Publication publication, Collection<? extends DbXref> xrefs){
 
-		if (xrefs != null) publication.setDbXrefs(new HashSet<>(xrefs));
+		if (xrefs != null)
+			publication.setDbXrefs(new HashSet<>(xrefs));
 	}
 
 	@Override
@@ -188,110 +190,85 @@ public class PublicationServiceImpl implements PublicationService {
 		return publicationDao.findPublicationByDatabaseAndAccession(database, accession);
 	}
 
-	// TODO: refactor those comparators (fred)
-	private static class PublicationYearComparatorDesc implements Comparator<Publication> {
+	/**
+	 * Base class for comparing Publications in ascending order of String field
+	 */
+	private static class PublicationComparatorAsc implements Comparator<Publication> {
 
-		@Override
-		public int compare(Publication p1, Publication p2) {
+		private enum FieldType {
 
-			String year1 = p1.getPublicationYear();
-			String year2 = p2.getPublicationYear();
-
-			if (Objects.equals(year1, year2) ) {
-				return 0;
-			}
-
-			if (year1 == null || year1.isEmpty()) {
-				return 1;
-			}
-
-			if (year2 == null || year2.isEmpty()) {
-				return -1;
-			}
-
-			return year2.compareTo(year1);
+			STRING_TYPE, NUMBER_TYPE
 		}
-	}
 
-	private static class PublicationJournalNameComparatorAsc implements Comparator<Publication> {
+		private final Function<Publication, String> toFieldStringFunc;
+		private final FieldType fieldType;
 
-		@Override
-		public int compare(Publication p1, Publication p2) {
+		PublicationComparatorAsc(Function<Publication, String> toFieldStringFunc) {
 
-			String name1 = p1.getPublicationLocatorName();
-			String name2 = p2.getPublicationLocatorName();
-
-			if (Objects.equals(name1, name2) ) {
-				return 0;
-			}
-
-			if (name1 == null || name1.isEmpty()) {
-				return 1;
-			}
-
-			if (name2 == null || name2.isEmpty()) {
-				return -1;
-			}
-
-			return name1.compareTo(name2);
+			this(toFieldStringFunc, FieldType.STRING_TYPE);
 		}
-	}
 
-	private static class PublicationVolumeComparatorAsc implements Comparator<Publication> {
+		/**
+		 * @param toFieldStringFunc accept a Publication and produce a String to be compare
+		 * @param fieldType the field type
+		 */
+		PublicationComparatorAsc(Function<Publication, String> toFieldStringFunc, FieldType fieldType) {
 
-		@Override
-		public int compare(Publication p1, Publication p2) {
-
-			String vol1 = p1.getVolume();
-			String vol2 = p2.getVolume();
-
-			if (Objects.equals(vol1, vol2) ) {
-				return 0;
-			}
-
-			if (vol1 == null || vol1.isEmpty()) {
-				return 1;
-			}
-
-			if (vol2 == null || vol2.isEmpty()) {
-				return -1;
-			}
-
-			if (vol1.matches("\\d+") && vol2.matches("\\d+")) {
-
-				return Integer.compare(Integer.parseInt(vol1), Integer.parseInt(vol2));
-			}
-
-			return vol1.compareTo(vol2);
+			Preconditions.checkNotNull(toFieldStringFunc);
+			Preconditions.checkNotNull(fieldType);
+			this.toFieldStringFunc = toFieldStringFunc;
+			this.fieldType = fieldType;
 		}
-	}
-
-	private static class PublicationFirstPageComparatorAsc implements Comparator<Publication> {
 
 		@Override
 		public int compare(Publication p1, Publication p2) {
 
-			String firstPage1 = p1.getFirstPage();
-			String firstPage2 = p2.getFirstPage();
+			String stringField1 = toFieldStringFunc.apply(p1);
+			String stringField2 = toFieldStringFunc.apply(p2);
 
-			if (Objects.equals(firstPage1, firstPage2) ) {
+			if (Objects.equals(stringField1, stringField2) ) {
 				return 0;
 			}
 
-			if (firstPage1 == null || firstPage1.isEmpty()) {
+			if (stringField1 == null || stringField1.isEmpty()) {
 				return 1;
 			}
 
-			if (firstPage2 == null || firstPage2.isEmpty()) {
+			if (stringField2 == null || stringField2.isEmpty()) {
 				return -1;
 			}
 
-			if (firstPage1.matches("\\d+") && firstPage2.matches("\\d+")) {
+			return  (fieldType == FieldType.STRING_TYPE) ? doStringComparison(stringField1, stringField2) : doIntComparison(stringField1, stringField2);
+		}
 
-				return Integer.compare(Integer.parseInt(firstPage1), Integer.parseInt(firstPage2));
+		private int doStringComparison(String string1, String string2) {
+
+			return string1.compareTo(string2);
+		}
+
+		private int doIntComparison(String string1, String string2) {
+
+			boolean isInt1 = string1.matches("\\d+");
+			boolean isInt2 = string2.matches("\\d+");
+
+			// compare ints
+			if (isInt1 && isInt2) {
+
+				return Integer.compare(Integer.parseInt(string1), Integer.parseInt(string2));
 			}
 
-			return firstPage1.compareTo(firstPage2);
+			else if (isInt1) {
+
+				return -1;
+			}
+
+			else if (isInt2) {
+
+				return 1;
+			}
+
+			// compare strings
+			return doStringComparison(string1, string2);
 		}
 	}
 }

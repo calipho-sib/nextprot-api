@@ -110,8 +110,8 @@ public class SequenceFeatureValidator {
             String aasOnSequence = isoform.getSequence().substring(position - 1, position + aas.length() - 1);
 
             throw new UnexpectedFeatureQueryAminoAcidException(query, position,
-                    AminoAcidCode.valueOfOneLetterCodeSequence(aasOnSequence),
-                    AminoAcidCode.valueOfOneLetterCodeSequence(aas));
+                    AminoAcidCode.valueOfAminoAcidCodeSequence(aasOnSequence),
+                    AminoAcidCode.valueOfAminoAcidCodeSequence(aas));
         }
     }
 }

@@ -18,7 +18,7 @@ public class AminoAcidModificationBedFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.CYSTEINE, 54).thenAddModification(AminoAcidModification.S_NITROSATION).build();
 
-        Assert.assertEquals("SNO-Cys54", format.format(pm, AminoAcidCode.AACodeType.THREE_LETTER));
+        Assert.assertEquals("SNO-Cys54", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
     @Test
@@ -26,7 +26,7 @@ public class AminoAcidModificationBedFormatTest {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.CYSTEINE, 54).thenAddModification(AminoAcidModification.S_NITROSATION).build();
 
-        Assert.assertEquals("SNO-C54", format.format(pm, AminoAcidCode.AACodeType.ONE_LETTER));
+        Assert.assertEquals("SNO-C54", format.format(pm, AminoAcidCode.CodeType.ONE_LETTER));
     }
 
     @Test

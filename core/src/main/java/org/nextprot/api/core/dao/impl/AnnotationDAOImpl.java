@@ -210,7 +210,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			property.setValue("mutation AA".equals(name) ?
 					// TODO: 'mutation AA' property comes from COSMIC. Some values could be not corrected formatter according to the last version v2.0 of HGV
 					// This reformatting should be done at NP integration time, even better, this should be done by COSMIC guys !
-					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE), AminoAcidCode.AACodeType.THREE_LETTER)
+					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE), AminoAcidCode.CodeType.THREE_LETTER)
 					: value);
 		} catch (ParseException e) {
 			throw new NextProtException(e);

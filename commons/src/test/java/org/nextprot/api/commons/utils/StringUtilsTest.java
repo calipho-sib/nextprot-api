@@ -73,4 +73,19 @@ public class StringUtilsTest {
 		assertEquals("cosmic:COSM1149023 | cosmic:COSM4859577 | cosmic:COSM720040", result);
 	}
 
+	@Test
+    public void testConcat() {
+
+	    String[] strings = new String[] {"bob", "sponge"};
+
+	    Assert.assertEquals("bobsponge", StringUtils.concat(strings));
+    }
+
+    @Test
+    public void testConcatWithNullString() {
+
+        String[] strings = new String[] {"bob", "sponge", null};
+
+        Assert.assertEquals("bobsponge", StringUtils.concat(strings));
+    }
 }

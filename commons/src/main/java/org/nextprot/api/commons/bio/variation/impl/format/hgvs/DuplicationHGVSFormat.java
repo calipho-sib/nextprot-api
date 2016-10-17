@@ -3,6 +3,7 @@ package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.*;
 import org.nextprot.api.commons.bio.variation.impl.Duplication;
+import org.nextprot.api.commons.utils.StringUtils;
 
 import java.text.ParseException;
 import java.util.regex.Matcher;
@@ -25,7 +26,7 @@ public class DuplicationHGVSFormat implements SequenceChangeFormat<Duplication> 
 
         if (m.matches()) {
 
-            AminoAcidCode affectedAAFirst = AminoAcidCode.valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAAFirst = AminoAcidCode.parseAminoAcidCode(StringUtils.concat(m.group(1), m.group(2)));
             int affectedAAPosFirst = Integer.parseInt(m.group(3));
 
             if (m.group(4) == null) {
@@ -33,7 +34,7 @@ public class DuplicationHGVSFormat implements SequenceChangeFormat<Duplication> 
                 return builder.selectAminoAcid(affectedAAFirst, affectedAAPosFirst).thenDuplicate().build();
             }
 
-            AminoAcidCode affectedAALast = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
+            AminoAcidCode affectedAALast = AminoAcidCode.parseAminoAcidCode(StringUtils.concat(m.group(4), m.group(5)));
             int affectedAAPosLast = Integer.parseInt(m.group(6));
 
             return builder.selectAminoAcidRange(affectedAAFirst, affectedAAPosFirst, affectedAALast, affectedAAPosLast)
@@ -49,7 +50,7 @@ public class DuplicationHGVSFormat implements SequenceChangeFormat<Duplication> 
     }
 
     @Override
-    public void format(StringBuilder sb, Duplication change, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, Duplication change, AminoAcidCode.CodeType type) {
 
         sb.append("dup");
     }

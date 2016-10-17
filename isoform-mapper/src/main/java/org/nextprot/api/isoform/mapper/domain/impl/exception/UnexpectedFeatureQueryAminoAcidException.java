@@ -13,8 +13,8 @@ public class UnexpectedFeatureQueryAminoAcidException extends FeatureQueryExcept
                                                     AminoAcidCode[] sequenceAminoAcidCodes, AminoAcidCode[] featureAminoAcidCodes) {
         super(query);
 
-        getError().addCause(EXPECTED_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, sequenceAminoAcidCodes));
-        getError().addCause(FEATURE_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.AACodeType.THREE_LETTER, featureAminoAcidCodes));
+        getError().addCause(EXPECTED_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.THREE_LETTER, sequenceAminoAcidCodes));
+        getError().addCause(FEATURE_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.THREE_LETTER, featureAminoAcidCodes));
         getError().addCause(OutOfBoundSequencePositionException.SEQUENCE_POS, sequencePosition);
 
         getError().setMessage(buildErrorMessage(sequenceAminoAcidCodes));

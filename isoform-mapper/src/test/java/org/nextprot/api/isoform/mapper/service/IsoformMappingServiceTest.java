@@ -1,15 +1,8 @@
 package org.nextprot.api.isoform.mapper.service;
 
-import static java.util.stream.Collectors.toList;
-import static org.mockito.Mockito.when;
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.function.Function;
-
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.google.common.io.Files;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -21,21 +14,23 @@ import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.isoform.mapper.IsoformMappingBaseTest;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFoundForGeneException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.IncompatibleGeneAndProteinNameException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.MultipleEntryAccessionForGeneException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.OutOfBoundSequencePositionException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.UnexpectedFeatureQueryAminoAcidException;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.google.common.io.Files;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.function.Function;
+
+import static java.util.stream.Collectors.toList;
+import static org.mockito.Mockito.when;
 
 @ActiveProfiles({ "dev" })
 public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
@@ -102,8 +97,8 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         when(query.getAccession()).thenReturn("NX_Q9UI33");
         when(query.getFeature()).thenReturn("SCN11A-p.Met1158Pro");
 
-        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new UnexpectedFeatureQueryAminoAcidException(query, 1158,
-                AminoAcidCode.asArray(AminoAcidCode.LEUCINE), AminoAcidCode.asArray(AminoAcidCode.METHIONINE)));
+        assertIsoformFeatureNotValid((FeatureQueryFailure) result, new UnexpectedFeatureQueryAminoAcidException(query, 1158,
+                new AminoAcidCode[] { AminoAcidCode.LEUCINE }, new AminoAcidCode[] { AminoAcidCode.METHIONINE }));
     }
 
     @Test
@@ -252,7 +247,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Assert.assertEquals(expectedLastPos, successResult.getIsoformFeatureResult(featureIsoformName).getEndIsoformPosition());
     }
 
-    private static void assertIsoformFeatureNotValid(FeatureQueryFailureImpl result, FeatureQueryException expectedException) {
+    private static void assertIsoformFeatureNotValid(FeatureQueryFailure result, FeatureQueryException expectedException) {
 
         Assert.assertTrue(!result.isSuccess());
         Assert.assertEquals(expectedException.getError(), result.getError());

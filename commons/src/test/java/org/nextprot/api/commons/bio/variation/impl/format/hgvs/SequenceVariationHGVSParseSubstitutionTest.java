@@ -17,7 +17,7 @@ public class SequenceVariationHGVSParseSubstitutionTest {
     @Test(expected = ParseException.class)
     public void testParseUnknownCode1AA() throws Exception {
 
-        format.parse("p.B54C");
+        format.parse("p._54C");
     }
 
     @Test(expected = ParseException.class)

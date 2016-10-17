@@ -12,7 +12,7 @@ import org.nextprot.api.commons.bio.variation.ChangingAAsFormat;
 public class HGVSFormat implements ChangingAAsFormat {
 
     @Override
-    public void format(StringBuilder sb, SequenceVariation sequenceVariation, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, SequenceVariation sequenceVariation, AminoAcidCode.CodeType type) {
 
         sb.append("p.");
 

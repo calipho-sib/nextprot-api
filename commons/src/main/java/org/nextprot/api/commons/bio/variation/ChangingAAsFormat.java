@@ -9,5 +9,5 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
  */
 public interface ChangingAAsFormat {
 
-    void format(StringBuilder sb, SequenceVariation sequenceVariation, AminoAcidCode.AACodeType type);
+    void format(StringBuilder sb, SequenceVariation sequenceVariation, AminoAcidCode.CodeType type);
 }
