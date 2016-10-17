@@ -9,11 +9,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
 
 @Lazy
 @Service
@@ -36,6 +34,19 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 				.filter(genes -> !genes.isEmpty())
 				.flatMap(Collection::stream)
 				.collect(Collectors.toSet());
+	}
+
+	@Override
+	@Cacheable("all-entry-gene-names")
+	public Map<String, Set<String>> findEntryGeneNames() {
+
+		Set<String> entryNames = masterIdentifierService.findUniqueNames();
+
+		Map<String, Set<String>> map = new HashMap<>(entryNames.size());
+
+		entryNames.forEach(e -> map.put(e, findGeneNamesByEntryAccession(e)));
+
+		return map;
 	}
 
 	@Override
