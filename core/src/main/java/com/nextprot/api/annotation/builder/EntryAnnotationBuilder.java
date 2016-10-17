@@ -20,6 +20,7 @@ public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 		super(terminologyService, publicationService);
 	}
 
+	
 	public static EntryAnnotationBuilder newBuilder(TerminologyService terminologyService, PublicationService publicationService) {
 		return new EntryAnnotationBuilder(terminologyService, publicationService);
 	}
@@ -53,7 +54,7 @@ public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 	}
 
 	@Override
-	protected Annotation newAnnotation() {
+	public Annotation get() {
 		return new Annotation();
 	}
 

@@ -1,12 +1,12 @@
 package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 
-import org.nextprot.api.commons.bio.variation.*;
-import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.ChangingAAsFormat;
+import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceChangeFormat;
+import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
@@ -25,7 +25,7 @@ public class SequenceVariationHGVSFormat extends SequenceVariationFormat {
     public SequenceVariationHGVSFormat() {
 
         changingAAsFormat = new HGVSFormat();
-        changeFormats = new HashMap<>();
+        changeFormats = new EnumMap<>(SequenceChange.Type.class);
         changeFormats.put(SequenceChange.Type.INSERTION, new InsertionHGVSFormat());
         changeFormats.put(SequenceChange.Type.DUPLICATION, new DuplicationHGVSFormat());
         changeFormats.put(SequenceChange.Type.SUBSTITUTION, new SubstitutionHGVSFormat());

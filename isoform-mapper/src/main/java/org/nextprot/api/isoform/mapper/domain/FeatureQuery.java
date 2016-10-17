@@ -11,10 +11,16 @@ import java.io.Serializable;
 
 public class FeatureQuery implements Serializable {
 
-    private final String accession;
-    private final String feature;
-    private final String featureType;
+	private static final long serialVersionUID = 2016091901L;
+
+	private String accession;
+    private String feature;
+    private String featureType;
     private boolean propagableFeature;
+
+    public FeatureQuery(){
+    	//because of json
+    }
 
     public FeatureQuery(String accession, String feature, String featureType) {
 

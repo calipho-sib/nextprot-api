@@ -20,7 +20,10 @@ import java.util.stream.Collectors;
 
 public class AnnotationUtils {
 
-	
+	private AnnotationUtils() {
+		throw new IllegalAccessError("Utility class");
+	}
+
 	public static String toString(Annotation a) {
 		StringBuilder sb = new StringBuilder();
 		String sep = "\n";
@@ -101,9 +104,9 @@ public class AnnotationUtils {
 					boolean categoryMatch = (annotationCategory == null) || ((a.getAPICategory() == annotationCategory) || (withChildren && a.getAPICategory().isChildOf(annotationCategory)));
 					boolean qualityMatch = true;
 					if(goldOnly){
-						qualityMatch = a.getQualityQualifier().equalsIgnoreCase("GOLD");
+						qualityMatch = "GOLD".equalsIgnoreCase(a.getQualityQualifier());
 					}
-					return (categoryMatch && qualityMatch);
+					return categoryMatch && qualityMatch;
 				}).collect(Collectors.toList());
 		
 		if (goldOnly) {
@@ -194,10 +197,8 @@ public class AnnotationUtils {
 
 	private static void addXrefIdRelatedToAnnotationPropertyName(Annotation a, String propName, Set<Long> xrefIds) {
 		for (AnnotationProperty p: a.getProperties()) {
-			if (p.getName().equals(propName)) {
-				if (p.getValueType().equals(PropertyApiModel.VALUE_TYPE_RIF)) {
-					xrefIds.add(Long.parseLong(p.getValue()));
-				}
+			if (p.getName().equals(propName) && p.getValueType().equals(PropertyApiModel.VALUE_TYPE_RIF)) {
+				xrefIds.add(Long.parseLong(p.getValue()));
 			}
 		}		
 	}
@@ -212,8 +213,8 @@ public class AnnotationUtils {
 		for(Annotation a : annotations){
 			if (a.getAPICategory()== AnnotationCategory.BINARY_INTERACTION) {
 				for (AnnotationProperty p: a.getProperties()) {
-					if (p.getName().equals(PropertyApiModel.NAME_INTERACTANT)) {
-						if (p.getValueType().equals(PropertyApiModel.VALUE_TYPE_RIF)) xrefIds.add(Long.parseLong(p.getValue()));
+					if (p.getName().equals(PropertyApiModel.NAME_INTERACTANT) && p.getValueType().equals(PropertyApiModel.VALUE_TYPE_RIF)) {
+						xrefIds.add(Long.parseLong(p.getValue()));
 					}
 				}
 			}
@@ -266,14 +267,14 @@ public class AnnotationUtils {
 		List<AnnotationEvidence> toRemove = new ArrayList<>();
 
 		for (AnnotationEvidence evi : annot.getEvidences()) {
-			if (evi.getResourceAssociationType().equals("relative")) {
+			if ("relative".equals(evi.getResourceAssociationType())) {
 
 				AnnotationProperty p = new AnnotationProperty();
 
 				p.setAnnotationId(annot.getAnnotationId());
 				p.setAccession(evi.getResourceAccession());
 				p.setName(propertyName);
-				p.setValue(""+evi.getResourceId());
+				p.setValue(Long.toString(evi.getResourceId()));
 				p.setValueType(PropertyApiModel.VALUE_TYPE_RIF);
 				annot.addProperties(Arrays.asList(p));
 
@@ -290,7 +291,7 @@ public class AnnotationUtils {
 
 		for (AnnotationEvidence evi : annot.getEvidences()) {
 
-			if (evi.getResourceAssociationType().equals("relative")) {
+			if ("relative".equals(evi.getResourceAssociationType())) {
 
 				annot.setBioObject(newExternalBioObject(evi));
 

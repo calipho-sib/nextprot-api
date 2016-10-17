@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.etl.statement.StatementETLBaseUnitTest;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
@@ -19,7 +18,6 @@ import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 
 public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
-
 
 	@Test
 	public void shouldComputeCorrectTargetIsoformsForVariants() throws Exception {

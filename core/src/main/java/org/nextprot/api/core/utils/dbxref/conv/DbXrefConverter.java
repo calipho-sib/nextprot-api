@@ -6,7 +6,7 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.XRefDatabase;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +16,7 @@ public class DbXrefConverter implements DbXrefPropertyToXrefConverter {
 
     private DbXrefConverter() {
 
-        converters = new HashMap<>();
+        converters = new EnumMap<>(XRefDatabase.class);
         converters.put(XRefDatabase.REF_SEQ, new RefSeqDbXrefConverter());
         converters.put(XRefDatabase.EMBL, new EmblDbXrefConverter());
     }
@@ -32,6 +32,10 @@ public class DbXrefConverter implements DbXrefPropertyToXrefConverter {
     private static class Loader {
 
         private static DbXrefConverter INSTANCE = new DbXrefConverter();
+
+        private Loader() {
+            throw new IllegalAccessError("Cannot instanciate");
+        }
     }
 
     @Override

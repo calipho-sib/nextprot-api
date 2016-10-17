@@ -10,9 +10,9 @@ import java.util.Date;
  */
 public class DateFormatter {
 
-    public final static int DAY_PRECISION = 10;
-    public final static int MONTH_PRECISION = 30;
-    public final static int YEAR_PRECISION = 60;
+    public static final int DAY_PRECISION = 10;
+    public static final int MONTH_PRECISION = 30;
+    public static final int YEAR_PRECISION = 60;
 
     /**
      * Format date according to precision
@@ -23,10 +23,8 @@ public class DateFormatter {
      */
     public String format(Date date, int cvDatePrecisionId) {
 
-        if (date != null) {
-
-            if (cvDatePrecisionId != 1)
-               return getDateFormat(cvDatePrecisionId).format(date);
+        if (date != null && cvDatePrecisionId != 1) {
+            return getDateFormat(cvDatePrecisionId).format(date);
         }
 
         return "";
@@ -44,8 +42,6 @@ public class DateFormatter {
                 return new SimpleDateFormat("yyyy-MM-dd");
             case 30:
                 return new SimpleDateFormat("yyyy-MM");
-            case 60:
-                return new SimpleDateFormat("yyyy");
             default:
                 return new SimpleDateFormat("yyyy");
         }

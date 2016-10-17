@@ -1,0 +1,9 @@
+[
+{
+  "source" : "bioeditor",
+  "releaseDate" : "2016-08-22",
+  "url" : "http://kant.isb-sib.ch:9000/bioeditor",
+  "entryType" : "gene",
+  "entries" : [ "BRCA1", "BRCA2", "MSH6","SCN11A","SCN4A","MLH1", "PMS2","EPCAM", "SCN2A", "MSH2", "MLH3", "SCN10A", "SCN1A", "SCN5A", "SCN8A", "SCN3A", "SCN9A"]
+}
+]

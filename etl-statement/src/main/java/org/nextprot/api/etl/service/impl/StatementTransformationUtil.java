@@ -9,9 +9,12 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailure;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl.IsoformFeatureResult;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
 import org.nextprot.commons.statements.Statement;
@@ -37,7 +40,7 @@ public class StatementTransformationUtil {
 			isoformsToBeConsidered.addAll(isoformAccessions);
 		}
 
-		Set<TargetIsoformStatementPosition> result = new TreeSet<TargetIsoformStatementPosition>();
+		Set<TargetIsoformStatementPosition> result = new TreeSet<>();
 
 		for (String isoformAccession : isoformsToBeConsidered) {
 
@@ -84,62 +87,13 @@ public class StatementTransformationUtil {
 	
 	}
 
-	/*
-	@Deprecated
-	public static Set<TargetIsoformStatementPosition> computeTargetIsoformsForProteoformAnnotation(IsoformMappingService isoformMappingService, List<Statement> subjects, boolean isIsoSpecific,
-			List<Isoform> isoforms, List<String> isoformNames) {
-
-		// TODO check that the subjects are all the same
-		Statement subject = subjects.get(0);
-
-		String entryAccession = subject.getValue(StatementField.ENTRY_ACCESSION);
-
-		String isoSpecificAccession = null;
-
-		String featureName = subject.getValue(StatementField.ANNOTATION_NAME);
-
-		if (isIsoSpecific) {
-
-			SequenceVariant sv = null;
-
-			try {
-
-				sv = new SequenceVariant(featureName);
-				Isoform isoSpecific = IsoformUtils.getIsoformByName(isoforms, sv.getIsoformName());
-				isoSpecificAccession = isoSpecific.getIsoformAccession();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new NextProtException(e.getMessage());
-			}
-
-		} else {
-
-			FeatureQueryResult featureQueryResult = isoformMappingService.propagateFeature(featureName, "variant", entryAccession);
-			if (featureQueryResult.isSuccess()) {
-				FeatureQuerySuccess response = ((FeatureQuerySuccess) featureQueryResult);
-				response.getData().values().forEach(i -> i.getIsoSpecificFeature());
-			}
-
-		}
-
-		// targetIsoformsForObject =
-		// TargetIsoformUtils.getTargetIsoformForObjectSerialized(subject,
-		// isoformNames);
-
-		return TargetIsoformUtils.getTargetIsoformForPhenotype(subject, isoformNames, isIsoSpecific, isoSpecificAccession, "WTF");
-
-	}
-
-	 */
-	
 	static List<Statement> getPropagatedStatementsForEntry(IsoformMappingService isoformMappingService, Set<Statement> multipleSubjects, String nextprotAccession) {
 
 		List<Statement> result = new ArrayList<>();
 
 		for (Statement subject : multipleSubjects) {
 
-			FeatureQueryResult featureQueryResult = null;
+			FeatureQueryResult featureQueryResult;
 			featureQueryResult = isoformMappingService.propagateFeature(subject.getValue(StatementField.ANNOTATION_NAME), "variant", nextprotAccession);
 			if (featureQueryResult.isSuccess()) {
 				result.add(mapVariationStatementToEntry(subject, (FeatureQuerySuccess) featureQueryResult));
@@ -147,82 +101,16 @@ public class StatementTransformationUtil {
 				FeatureQueryFailure failure = (FeatureQueryFailure) featureQueryResult;
 				String message = "Failure for " + subject.getStatementId() + " " + failure.getError().getMessage();
 				LOGGER.error(message);
-				System.err.println(message);
 			}
 		}
 
 		if (result.size() == multipleSubjects.size()) {
 			return result;
 		} else
-			return new ArrayList<Statement>(); // return an empty list
+			return new ArrayList<>(); // return an empty list
 
 	}
 
-	public static Map<String, List<Statement>> getPropagatedStatementsForIsoform(IsoformMappingService isoformMappingService, Set<Statement> multipleSubjects, String nextprotAccession,
-			boolean propagate) {
-
-		List<Statement> result = new ArrayList<>();
-
-		for (Statement subject : multipleSubjects) {
-
-			FeatureQueryResult featureQueryResult = null;
-			if (propagate) {
-				featureQueryResult = isoformMappingService.propagateFeature(subject.getValue(StatementField.ANNOTATION_NAME), "variant", nextprotAccession);
-			} else {
-				featureQueryResult = isoformMappingService.validateFeature(subject.getValue(StatementField.ANNOTATION_NAME), "variant", nextprotAccession);
-			}
-
-			if (featureQueryResult.isSuccess()) {
-
-				result.addAll(mapStatementsToEachIsoform(subject, (FeatureQuerySuccess) featureQueryResult));
-
-			} else {
-				FeatureQueryFailure failure = (FeatureQueryFailure) featureQueryResult;
-				System.err.println("Failure for " + subject.getStatementId() + " " + failure.getError().getMessage());
-			}
-		}
-
-		// Group the subjects by isoform
-		Map<String, List<Statement>> subjectsByIsoform = result.stream().collect(Collectors.groupingBy(s -> (String) s.getValue(StatementField.ISOFORM_ACCESSION)));
-
-		// Filter only subjects that contain all original subjects (the size is
-		// the same). In other words, if 2 multiples mutants can not be mapped
-		// to all isoform, the statement is not valid
-		return subjectsByIsoform.entrySet().stream().filter(map -> map.getValue().size() == multipleSubjects.size()).collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-
-	}
-
-	static List<Statement> mapStatementsToEachIsoform(Statement statement, FeatureQuerySuccess result) {
-
-		List<Statement> statementList = new ArrayList<>();
-
-		for (FeatureQuerySuccess.IsoformFeatureResult isoformFeatureResult : result.getData().values()) {
-
-			if (isoformFeatureResult.isMapped()) {
-
-				Statement rs = StatementBuilder.createNew().addMap(statement).addField(StatementField.ISOFORM_ACCESSION, isoformFeatureResult.getIsoformAccession())
-						.addField(StatementField.RAW_STATEMENT_ID, statement.getStatementId()) // Keep
-																								// a
-																								// reference
-																								// to
-																								// the
-																								// original
-																								// statement
-						.addField(StatementField.LOCATION_BEGIN, String.valueOf(isoformFeatureResult.getBeginIsoformPosition()))
-						.addField(StatementField.LOCATION_END, String.valueOf(isoformFeatureResult.getEndIsoformPosition()))
-						.addField(StatementField.LOCATION_BEGIN_MASTER, String.valueOf(isoformFeatureResult.getBeginMasterPosition()))
-						.addField(StatementField.LOCATION_END_MASTER, String.valueOf(isoformFeatureResult.getEndMasterPosition()))
-						.addField(StatementField.ISOFORM_CANONICAL, String.valueOf(isoformFeatureResult.isCanonical()))
-						.addField(StatementField.ANNOTATION_NAME, String.valueOf(isoformFeatureResult.getIsoSpecificFeature())).buildWithAnnotationHash(AnnotationType.ISOFORM);
-
-				statementList.add(rs);
-
-			}
-
-		}
-
-		return statementList;
-	}
 
 	/**
 	 * @param variationStatement
@@ -242,7 +130,7 @@ public class StatementTransformationUtil {
 
 		Set<TargetIsoformStatementPosition> targetIsoforms = new TreeSet<TargetIsoformStatementPosition>();
 
-		for (FeatureQuerySuccess.IsoformFeatureResult isoformFeatureResult : result.getData().values()) {
+		for (IsoformFeatureResult isoformFeatureResult : result.getData().values()) {
 			if (isoformFeatureResult.isMapped()) {
 
 				targetIsoforms.add(new TargetIsoformStatementPosition(isoformFeatureResult.getIsoformAccession(), isoformFeatureResult.getBeginIsoformPosition(),
@@ -312,7 +200,7 @@ public class StatementTransformationUtil {
 																																								// statement
 				.addField(StatementField.LOCATION_BEGIN, beginPositionOfCanonicalOrIsoSpec).addField(StatementField.LOCATION_END, endPositionOfCanonicalOrIsoSpec)
 				.addField(StatementField.LOCATION_BEGIN_MASTER, masterBeginPosition).addField(StatementField.LOCATION_END_MASTER, masterEndPosition)
-				.addField(StatementField.ISOFORM_ACCESSION, variationStatement.getValue(StatementField.ENTRY_ACCESSION)).addField(StatementField.ISOFORM_CANONICAL, isoCanonical)
+				.addField(StatementField.ISOFORM_CANONICAL, isoCanonical)
 				.addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(targetIsoforms)).buildWithAnnotationHash(AnnotationType.ENTRY);
 
 		return rs;

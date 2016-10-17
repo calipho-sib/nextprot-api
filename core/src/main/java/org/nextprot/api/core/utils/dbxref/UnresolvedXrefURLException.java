@@ -11,4 +11,8 @@ public class UnresolvedXrefURLException extends NextProtException {
     public UnresolvedXrefURLException(String string) {
         super(string);
     }
+
+    public UnresolvedXrefURLException(String string, Exception e) {
+        super(string, e);
+    }
 }

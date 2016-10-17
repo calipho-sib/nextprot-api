@@ -1,7 +1,7 @@
 package org.nextprot.api.web.service;
 
 import org.nextprot.api.core.service.export.format.FileFormat;
-import org.nextprot.api.web.service.impl.writer.NPEntryStreamWriter;
+import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,5 +50,5 @@ public interface ExportService {
 
 	void clearRepository();
 
-	void streamResults(NPEntryStreamWriter writer, String viewName, List<String> accessions) throws IOException;
+	void streamResults(EntryStreamWriter writer, String viewName, List<String> accessions) throws IOException;
 }

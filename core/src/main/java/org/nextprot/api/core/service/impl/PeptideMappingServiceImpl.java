@@ -3,6 +3,7 @@ package org.nextprot.api.core.service.impl;
 import com.google.common.collect.ImmutableList;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.PeptideMappingDao;
 import org.nextprot.api.core.domain.PeptideMapping;
@@ -56,13 +57,12 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		// key=peptide,value=mapping with 1-n isospecs, 1-n evidences, 1-n properties
 		Map<String, PeptideMapping> mergeMap = new HashMap<>();
 
-		if (allMapping.size() > 0) {
-			String key = null;
+		if (!allMapping.isEmpty()) {
 			List<String> peptideNames = new ArrayList<>();
 
 			Iterator<AnnotationIsoformSpecificity> it;
 			for (PeptideMapping mapping : allMapping) {
-				key = mapping.getPeptideUniqueName();
+				String key = mapping.getPeptideUniqueName();
 
 				if (!mergeMap.containsKey(key)) { // not in the map
 					peptideNames.add(mapping.getPeptideUniqueName());
@@ -117,7 +117,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		List<Map<String, Object>> records = this.peptideMappingDao.findPeptideMappingAnnotationsByMasterId(masterId, withNatural, withSynthetic);
 		Map<Long,Annotation> annotationMap = buildAnnotationMapFromRecords(records, withNatural);		
 		List<Annotation> annotations = new ArrayList<>(annotationMap.values());
-		if (annotations.size()==0) return annotations;
+		if (annotations.isEmpty()) return annotations;
 		
 		List<String> pepNames = this.peptideNamesService.findAllPeptideNamesByMasterId(uniqueName);
 		
@@ -139,7 +139,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 		for (Annotation annot: annotations) {
 
 			if (!annot.getPropertiesMap().containsKey(PropertyApiModel.NAME_PEPTIDE_NAME)) {
-				throw new RuntimeException("Cannot found property name " + PropertyApiModel.NAME_PEPTIDE_NAME);
+				throw new NextProtException("Cannot found property name " + PropertyApiModel.NAME_PEPTIDE_NAME);
 			}
 
 			Collection<AnnotationProperty> properties = annot.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_NAME);
@@ -148,7 +148,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 
 			String pepName = pepNameProperty.getValue();
 			if (!propMap.containsKey(pepName)) {
-				throw new RuntimeException("Found no props for peptide with name:" + pepName);
+				throw new NextProtException("Found no props for peptide with name:" + pepName);
 			}
 			List<AnnotationProperty> props = cloneUsefulPropertiesForAnnotation(propMap.get(pepName), annot.getAnnotationId());
 			annot.addProperties(props);
@@ -161,7 +161,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
         for (Annotation annot: annotations) {
 
             if (!annot.getPropertiesMap().containsKey(PropertyApiModel.NAME_PEPTIDE_NAME)) {
-                throw new RuntimeException("Cannot found property name " + PropertyApiModel.NAME_PEPTIDE_NAME);
+                throw new NextProtException("Cannot found property name " + PropertyApiModel.NAME_PEPTIDE_NAME);
             }
 
             Collection<AnnotationProperty> properties = annot.getPropertiesByKey(PropertyApiModel.NAME_PEPTIDE_NAME);
@@ -170,7 +170,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 
             String pepName = pepNameProperty.getValue();
             if (!evidences.containsKey(pepName)) {
-                throw new RuntimeException("Found no evidence for peptide with name:" + pepName);
+                throw new NextProtException("Found no evidence for peptide with name:" + pepName);
             }
             List<AnnotationEvidence> clonedList = cloneEvidencesForAnnotation(evidences.get(pepName), annot.getAnnotationId());
             annot.setEvidences(clonedList);
@@ -246,13 +246,12 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			Long annotationId = (Long)record.get(PeptideMappingDao.KEY_ANNOTATION_ID);
 			String iso = (String)record.get(PeptideMappingDao.KEY_ISO_UNIQUE_NAME);
 			String pep = (String)record.get(PeptideMappingDao.KEY_PEP_UNIQUE_NAME);
-			Integer rank = (Integer)record.get(PeptideMappingDao.KEY_RANK);
 			Integer firstPos = (Integer)record.get(PeptideMappingDao.KEY_FIRST_POS);
 			Integer lastPos = (Integer)record.get(PeptideMappingDao.KEY_LAST_POS);
 			String quality = (String)record.get(PeptideMappingDao.KEY_QUALITY_QUALIFIER);
-			String category = (isNatural ? 
+			String category = isNatural ?
 					AnnotationCategory.PEPTIDE_MAPPING.getDbAnnotationTypeName() :
-					AnnotationCategory.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName());
+					AnnotationCategory.SRM_PEPTIDE_MAPPING.getDbAnnotationTypeName();
 
 			// if annot never seen before, put it into the map and initialize it
 			if (!annotationMap.containsKey(annotationId)) {

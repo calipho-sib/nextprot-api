@@ -1,12 +1,5 @@
 package org.nextprot.api.core.dao.impl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.commons.utils.Pair;
@@ -19,6 +12,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 public class MasterIsoformMappingDaoImpl implements MasterIsoformMappingDao {
@@ -35,7 +35,7 @@ public class MasterIsoformMappingDaoImpl implements MasterIsoformMappingDao {
 			@Override
 			public IsoformSpecificity mapRow(ResultSet resultSet, int row) throws SQLException {
 				IsoformSpecificity spec = new IsoformSpecificity(null, resultSet.getString("isoform_ac"));
-				spec.addPosition(Pair.pair(resultSet.getInt("first_pos"), resultSet.getInt("last_pos")));
+				spec.addPosition(Pair.create(resultSet.getInt("first_pos"), resultSet.getInt("last_pos")));
 				return spec;
 			}			
 		});

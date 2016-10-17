@@ -29,7 +29,9 @@ import org.nextprot.api.core.utils.annot.AnnotationUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 
-abstract class AnnotationBuilder<T extends Annotation> {
+import com.google.common.base.Supplier;
+
+abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
 	protected static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
 
@@ -59,8 +61,6 @@ abstract class AnnotationBuilder<T extends Annotation> {
 		}
 		return null;
 	}
-
-	protected abstract T newAnnotation ();
 
 	public List<T> buildProteoformIsoformAnnotations (String accession, List<Statement> subjects, List<Statement> proteoformStatements){
 		
@@ -144,7 +144,6 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			 evidence.setNegativeEvidence("true".equalsIgnoreCase(s.getValue(StatementField.IS_NEGATIVE)));
 			 
 			 if(statementEvidenceCode != null){
-				 //TODO this should this be done in the ETL module
 				 CvTerm term = terminologyService.findCvTermByAccession(statementEvidenceCode);
 				 if(term != null){
 					 evidence.setEvidenceCodeName(term.getName());
@@ -156,7 +155,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 			 evidence.setNote(s.getValue(StatementField.EVIDENCE_NOTE));
 			
 			//TODO create experimental contexts!
-
+			 
 			return evidence;
 		}).collect(Collectors.toSet());
 		
@@ -235,7 +234,7 @@ abstract class AnnotationBuilder<T extends Annotation> {
 
 		flatStatementsByAnnotationHash.entrySet().forEach(entry -> {
 
-			T annotation = newAnnotation();
+			T annotation = get();
 			
 			List<Statement> statements = entry.getValue();
 			

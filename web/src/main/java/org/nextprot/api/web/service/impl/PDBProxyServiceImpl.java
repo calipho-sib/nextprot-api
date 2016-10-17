@@ -36,7 +36,26 @@ public class PDBProxyServiceImpl implements PDBProxyService {
 		} catch (IOException e) {
 			throw new NextProtException(e.getMessage());
 		}
+	}
 
+	@Override
+	@Cacheable("pdbx-proxy")
+	public String findPdbxEntry(String id) {
+
+		try {
+
+			 InputStream in = new URL(PDB_URL + id + ".cif").openStream();
+			 return IOUtils.toString( in );
+
+		} catch (HttpClientErrorException e) {
+			throw new NextProtException(e.getResponseBodyAsString());
+		} catch (HttpServerErrorException e) {
+			throw new NextProtException(e.getResponseBodyAsString());
+		} catch (MalformedURLException e) {
+			throw new NextProtException(e.getMessage());
+		} catch (IOException e) {
+			throw new NextProtException(e.getMessage());
+		}
 	}
 
 }

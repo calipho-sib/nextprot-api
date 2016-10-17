@@ -64,12 +64,12 @@ public class Overview implements Serializable{
 				recommendedName.setQualifier(name.getQualifier());
 				recommendedName.setType(name.getType());
 				for(EntityName sname : name.getSynonyms()){
-					if(!sname.getQualifier().equals("full")){
+					if(!"full".equals(sname.getQualifier())){
 						recommendedName.addSynonym(sname); //add the short and children
 					}
 				}
 				for(EntityName sname : name.getOtherRecommendedEntityNames()){
-					if(!sname.getQualifier().equals("full")){
+					if(!"full".equals(sname.getQualifier())){
 						recommendedName.addOtherRecommendedEntityName(sname); //add the short and children
 					}
 				}
@@ -86,12 +86,10 @@ public class Overview implements Serializable{
 	public List<EntityName> getAlternativeProteinNames() {
 		List<EntityName> result = new ArrayList<>();
 		for(EntityName name : this.proteinNames){
-			if(name.isMain()){
-				if(name.getSynonyms() != null){
-					for(EntityName sname : name.getSynonyms()){
-						if(sname.getQualifier().equals("full")){
-							result.add(sname); 
-						}
+			if(name.isMain() && name.getSynonyms() != null){
+				for(EntityName sname : name.getSynonyms()){
+					if("full".equals(sname.getQualifier())){
+						result.add(sname);
 					}
 				}
 			}
@@ -150,39 +148,46 @@ public class Overview implements Serializable{
 		private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		
 		/**
-		 * 
+		 * @deprecated (Should use overview instead)
 		 * @return a string to be displayed in ttl, xml, etc. representing the protein existence
 		 */
-		@Deprecated //Should use overview instead
+		@Deprecated
 		public String getProteinExistence() {
 			return Overview.peMap.get(proteinExistence).name;
 		}
 
-		@Deprecated //Should use overview instead
+		/**
+		 * @deprecated (Should use overview instead)
+		 */
+		@Deprecated
 		public String getProteinExistenceInfo() {
 			return proteinExistenceInfo;
 		}
 
 		/**
-		 * 
+		 * @deprecated (Should use overview instead)
 		 * @return the string stored in the db (not the one to be displayed, experted, etc...)
 		 */
-		@Deprecated //Should use overview instead
+		@Deprecated
 		public String getProteinExistenceRaw() {
 			return this.proteinExistence;
 		}
 
 		/**
-		 * 
+		 * @deprecated (Should use overview instead)
 		 * @return an integer representing the protein existence level between 1 and 5. 
 		 * 1 is the highest level of certainty
 		 */
-		@Deprecated //Should use overview instead
+		@Deprecated
 		public int getProteinExistenceLevel() {
 			return Overview.peMap.get(proteinExistence).level;
 		}
 
-		@Deprecated //Should use overview instead
+		/**
+		 * @deprecated (Should use overview instead)
+		 * @param proteinExistenceInfo
+		 */
+		@Deprecated
 		public void setProteinExistenceInfo(String proteinExistenceInfo) {
 			this.proteinExistenceInfo = proteinExistenceInfo;
 		}
@@ -269,7 +274,7 @@ public class Overview implements Serializable{
 	}
 	
 	
-	public static enum EntityNameClass {
+	public enum EntityNameClass {
 		PROTEIN_NAMES("proteinNames"),
 		GENE_NAMES("geneNames"),
 		FUNCTIONAL_REGION_NAMES("functionalRegionNames"),

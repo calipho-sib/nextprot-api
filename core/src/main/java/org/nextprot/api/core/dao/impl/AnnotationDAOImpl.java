@@ -35,6 +35,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	
 	private static class AnnotationRowMapper implements ParameterizedRowMapper<Annotation> {
 
+		@Override
 		public Annotation mapRow(ResultSet resultSet, int row) throws SQLException {
 
 			Annotation annotation = new Annotation();
@@ -76,14 +77,14 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			
 			String category = rs.getString("category");			
 			
-    		if (category.equals("biotechnology")) {
+    		if ("biotechnology".equals(category)) {
 				category= AnnotationCategory.MISCELLANEOUS.getDbAnnotationTypeName();
 				
-			} else if (category.equals("transmembrane region")) {
+			} else if ("transmembrane region".equals(category)) {
 				int termId = rs.getInt("cv_term_id");
 				if (termId==51748) category = AnnotationCategory.INTRAMEMBRANE_REGION.getDbAnnotationTypeName();
 				
-			} else if (category.equals("transit peptide")) {
+			} else if ("transit peptide".equals(category)) {
 				int termId = rs.getInt("cv_term_id");
 				if (termId==51743) {
 					category = AnnotationCategory.MITOCHONDRIAL_TRANSIT_PEPTIDE.getDbAnnotationTypeName();
@@ -101,7 +102,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	}
 
 
-	
+	@Override
 	public List<Annotation> findAnnotationsByEntryName(String entryName) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("unique_name", entryName);
@@ -112,6 +113,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 	private static class AnnotationIsoformRowMapper implements ParameterizedRowMapper<AnnotationIsoformSpecificity> {
 
+		@Override
 		public AnnotationIsoformSpecificity mapRow(ResultSet resultSet, int row) throws SQLException {
 
 			AnnotationIsoformSpecificity annotation = new AnnotationIsoformSpecificity();
@@ -124,6 +126,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 		}
 	};
 
+	@Override
 	public List<AnnotationIsoformSpecificity> findAnnotationIsoformsByAnnotationIds(List<Long> annotationIds) {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("ids", annotationIds);
@@ -136,32 +139,29 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	@Override
 	public List<AnnotationEvidence> findAnnotationEvidencesByAnnotationIds(List<Long> annotationIds) {
 
-		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidences-by-annotation-ids"), "ids", annotationIds, new ParameterizedRowMapper<AnnotationEvidence>() {
+		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidences-by-annotation-ids"), "ids", annotationIds, (ParameterizedRowMapper<AnnotationEvidence>) (resultSet, row) -> {
 
-			public AnnotationEvidence mapRow(ResultSet resultSet, int row) throws SQLException {
-					
-				AnnotationEvidence evidence = new AnnotationEvidence();
-				evidence.setEvidenceCodeOntology(resultSet.getString("ontology"));
-				evidence.setNegativeEvidence(resultSet.getBoolean("is_negative_evidence"));
-				evidence.setAnnotationId(resultSet.getLong("annotation_id"));
-				evidence.setResourceId(resultSet.getLong("resource_id"));
-				evidence.setQualifierType(resultSet.getString("qualifier_type"));
-				evidence.setResourceAssociationType(resultSet.getString("resource_assoc_type"));
-				evidence.setResourceType(resultSet.getString("resource_type"));
-				evidence.setResourceAccession(resultSet.getString("resource_accession"));
-				evidence.setResourceDb(resultSet.getString("resource_db"));
-				evidence.setResourceDescription(resultSet.getString("resource_desc"));
-				evidence.setPublicationMD5(resultSet.getString("publication_md5"));
-				evidence.setQualityQualifier(resultSet.getString("quality_qualifier"));
-				evidence.setEvidenceId(resultSet.getLong("evidence_id"));
-				evidence.setAssignedBy(resultSet.getString("evidence_assigned_by"));
-				evidence.setExperimentalContextId(resultSet.getLong("experimental_context_id"));
-				evidence.setAssignmentMethod(resultSet.getString("assignment_method"));
-				evidence.setEvidenceCodeAC(resultSet.getString("eco_ac"));
-				evidence.setEvidenceCodeName(resultSet.getString("eco_name"));
-				return evidence;
-			}
-		});
+            AnnotationEvidence evidence = new AnnotationEvidence();
+            evidence.setEvidenceCodeOntology(resultSet.getString("ontology"));
+            evidence.setNegativeEvidence(resultSet.getBoolean("is_negative_evidence"));
+            evidence.setAnnotationId(resultSet.getLong("annotation_id"));
+            evidence.setResourceId(resultSet.getLong("resource_id"));
+            evidence.setQualifierType(resultSet.getString("qualifier_type"));
+            evidence.setResourceAssociationType(resultSet.getString("resource_assoc_type"));
+            evidence.setResourceType(resultSet.getString("resource_type"));
+            evidence.setResourceAccession(resultSet.getString("resource_accession"));
+            evidence.setResourceDb(resultSet.getString("resource_db"));
+            evidence.setResourceDescription(resultSet.getString("resource_desc"));
+            evidence.setPublicationMD5(resultSet.getString("publication_md5"));
+            evidence.setQualityQualifier(resultSet.getString("quality_qualifier"));
+            evidence.setEvidenceId(resultSet.getLong("evidence_id"));
+            evidence.setAssignedBy(resultSet.getString("evidence_assigned_by"));
+            evidence.setExperimentalContextId(resultSet.getLong("experimental_context_id"));
+            evidence.setAssignmentMethod(resultSet.getString("assignment_method"));
+            evidence.setEvidenceCodeAC(resultSet.getString("eco_ac"));
+            evidence.setEvidenceCodeName(resultSet.getString("eco_name"));
+            return evidence;
+        });
 
 	}
 	
@@ -170,24 +170,17 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 	@Override
 	public List<AnnotationEvidenceProperty> findAnnotationEvidencePropertiesByEvidenceIds(List<Long> evidenceIds) {
 		
-		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidence-properties-by-evidence-ids"), "ids", evidenceIds, new ParameterizedRowMapper<AnnotationEvidenceProperty>() {
+		return new BatchNamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-evidence-properties-by-evidence-ids"), "ids", evidenceIds, (ParameterizedRowMapper<AnnotationEvidenceProperty>) (resultSet, row) -> {
 
-			public AnnotationEvidenceProperty mapRow(ResultSet resultSet, int row) throws SQLException {
+            AnnotationEvidenceProperty evidenceProperty = new AnnotationEvidenceProperty();
+            evidenceProperty.setEvidenceId(resultSet.getLong("evidence_id"));
+            evidenceProperty.setPropertyName(resultSet.getString("property_name"));
+            evidenceProperty.setPropertyValue(resultSet.getString("property_value"));
+            return evidenceProperty;
 
-				AnnotationEvidenceProperty evidenceProperty = new AnnotationEvidenceProperty();
-				evidenceProperty.setEvidenceId(resultSet.getLong("evidence_id"));
-				//String pname = resultSet.getString("property_name");
-				evidenceProperty.setPropertyName(resultSet.getString("property_name"));
-				evidenceProperty.setPropertyValue(resultSet.getString("property_value"));
-				return evidenceProperty;
-				
-			}
-		});
-
+        });
 	}
 
-
-	
 	// Annotation Properties /////////////////////////////////////////////////////////////////////////////
 
 	@Override
@@ -195,29 +188,26 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 
 		SqlParameterSource namedParameters = new MapSqlParameterSource("ids", annotationIds);
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-properties-by-annotation-ids"), namedParameters, new ParameterizedRowMapper<AnnotationProperty>() {
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("annotation-properties-by-annotation-ids"), namedParameters, (ParameterizedRowMapper<AnnotationProperty>) (resultSet, row) -> {
 
-			public AnnotationProperty mapRow(ResultSet resultSet, int row) throws SQLException {
-			
-				AnnotationProperty property = new AnnotationProperty();
+            AnnotationProperty property = new AnnotationProperty();
 
-				property.setAnnotationId(resultSet.getLong("annotation_id"));
-				property.setAccession(resultSet.getString("accession"));
-				property.setName(resultSet.getString("property_name"));
-				property.setValue(resultSet.getString("property_value"));
-				// quick fix to prevent errors in generating hgvs format because we dont need it for the moment (property will be hidden)
-				//setPropertyNameValue(property, resultSet.getString("property_name"), resultSet.getString("property_value"));
+            property.setAnnotationId(resultSet.getLong("annotation_id"));
+            property.setAccession(resultSet.getString("accession"));
+            property.setName(resultSet.getString("property_name"));
+            property.setValue(resultSet.getString("property_value"));
+            // quick fix to prevent errors in generating hgvs format because we dont need it for the moment (property will be hidden)
+            //setPropertyNameValue(property, resultSet.getString("property_name"), resultSet.getString("property_value"));
 
-				return property;
-			}
-		});
+            return property;
+        });
 	}
 
 	static void setPropertyNameValue(AnnotationProperty property, String name, String value) {
 
 		property.setName(name);
 		try {
-			property.setValue((name.equals("mutation AA")) ?
+			property.setValue("mutation AA".equals(name) ?
 					// TODO: 'mutation AA' property comes from COSMIC. Some values could be not corrected formatter according to the last version v2.0 of HGV
 					// This reformatting should be done at NP integration time, even better, this should be done by COSMIC guys !
 					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE), AminoAcidCode.CodeType.THREE_LETTER)

@@ -1,0 +1,55 @@
+{
+  "query" : {
+    "accession" : "",
+    "feature" : "MSH6-p.Lys13Thr",
+    "featureType" : "variant",
+    "featurePropagable" : true
+  },
+  "data" : {
+    "NX_P52701-1" : {
+      "isoformAccession" : "NX_P52701-1",
+      "isoformName" : "GTBP-N",
+      "beginIsoformPosition" : 13,
+      "endIsoformPosition" : 13,
+      "beginMasterPosition" : 37,
+      "endMasterPosition" : 39,
+      "isoSpecificFeature" : "MSH6-isoGTBP-N-p.Lys13Thr",
+      "mapped" : true,
+      "canonical" : true
+    },
+    "NX_P52701-2" : {
+      "isoformAccession" : "NX_P52701-2",
+      "isoformName" : "GTBP-alt",
+      "beginIsoformPosition" : 13,
+      "endIsoformPosition" : 13,
+      "beginMasterPosition" : 37,
+      "endMasterPosition" : 39,
+      "isoSpecificFeature" : "MSH6-isoGTBP-alt-p.Lys13Thr",
+      "mapped" : true,
+      "canonical" : false
+    },
+    "NX_P52701-3" : {
+      "isoformAccession" : "NX_P52701-3",
+      "isoformName" : "Iso 3",
+      "beginIsoformPosition" : 13,
+      "endIsoformPosition" : 13,
+      "beginMasterPosition" : 37,
+      "endMasterPosition" : 39,
+      "isoSpecificFeature" : "MSH6-iso3-p.Lys13Thr",
+      "mapped" : true,
+      "canonical" : false
+    },
+    "NX_P52701-4" : {
+      "isoformAccession" : "NX_P52701-4",
+      "isoformName" : null,
+      "beginIsoformPosition" : null,
+      "endIsoformPosition" : null,
+      "beginMasterPosition" : null,
+      "endMasterPosition" : null,
+      "isoSpecificFeature" : null,
+      "mapped" : false,
+      "canonical" : false
+    }
+  },
+  "success" : true
+}

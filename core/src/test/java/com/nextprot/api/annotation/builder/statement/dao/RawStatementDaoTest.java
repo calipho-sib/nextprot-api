@@ -1,17 +1,18 @@
 package com.nextprot.api.annotation.builder.statement.dao;
 
-import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.annotation.IsoformAnnotation;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.nextprot.api.annotation.builder.AnnotationBuilderIntegrationBaseTest;
 
 public class RawStatementDaoTest extends AnnotationBuilderIntegrationBaseTest {
 
@@ -34,7 +35,7 @@ public class RawStatementDaoTest extends AnnotationBuilderIntegrationBaseTest {
 	@Test
 	public void findModificationEffectCategory(){
 		AnnotationCategory category = AnnotationCategory.PHENOTYPIC_VARIATION;
-		IsoformAnnotation isoAnnotation = new IsoformAnnotation();
+		Annotation isoAnnotation = new Annotation();
 		isoAnnotation.setAnnotationCategory(category);
 		
 		assertEquals(isoAnnotation.getCategory(), "phenotypic-variation");

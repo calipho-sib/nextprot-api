@@ -23,4 +23,10 @@ public class PDBController {
 		return this.pdbProxyService.findPdbEntry(entryName);
 	}
 	
+	@RequestMapping(value = "/pdbx/{entry}",  method = { RequestMethod.GET }, produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String mirrorPDBX(@PathVariable("entry") String entryName) throws URISyntaxException {
+		return this.pdbProxyService.findPdbxEntry(entryName);
+	}
+	
 }

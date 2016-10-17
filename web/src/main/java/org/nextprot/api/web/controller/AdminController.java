@@ -87,7 +87,8 @@ public class AdminController {
 
 
 				for(String cacheName : cacheManager.getCacheNames()){
-					if(cacheName.toLowerCase().startsWith("github-")){
+					String name = cacheName.toLowerCase();
+					if(name.startsWith("github-") || name.startsWith("seo-github-") ){
 						cacheManager.getCache(cacheName).clear();
 						result.add(cacheName + " cleared");
 					}

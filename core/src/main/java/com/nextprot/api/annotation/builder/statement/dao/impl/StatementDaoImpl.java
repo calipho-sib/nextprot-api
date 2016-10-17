@@ -25,18 +25,7 @@ public class StatementDaoImpl implements StatementDao {
 
 	
 	private String getSQL(AnnotationType type, String sqlQueryName){
-
 		String sql = sqlDictionary.getSQLQuery(sqlQueryName);
-		if(type.equals(AnnotationType.ENTRY)){
-			sql = sql.replace("mapped_statements", "entry_mapped_statements");
-
-		}else if(type.equals(AnnotationType.ISOFORM)){
-			sql = sql.replace("mapped_statements", "iso_mapped_statements");
-			sql = sql.replace("entry_accession", "isoform_accession");
-
-		}else {
-			throw new NextProtException(type + " not supported currently");
-		}
 		return sql;
 	}
 	
@@ -89,7 +78,7 @@ public class StatementDaoImpl implements StatementDao {
 
 	@Override
 	public List<Statement> findNormalStatements(AnnotationType type, String nextprotAccession) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("accession", nextprotAccession);
 
 		String sql = getSQL(type, "statements-by-entry-accession");
