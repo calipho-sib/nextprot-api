@@ -30,13 +30,6 @@ public class GeneNameController {
 		return geneIdentifierService.findGeneNames();
 	}
 
-	//@ApiMethod(path = "/entry-gene-names", verb = ApiVerb.GET, description = "Retrieves all gene names found in neXtProt", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/entry-gene-names", method = { RequestMethod.GET })
-	@ResponseBody
-	public Map<String, Set<String>> entryGeneIdentifiers() {
-		return geneIdentifierService.findEntryGeneNames();
-	}
-
 	@ApiMethod(path = "/gene-names/entry/{entryAccession}", verb = ApiVerb.GET, description = "Retrieves the gene names that code the given protein", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/gene-names/entry/{entryAccession}", method = { RequestMethod.GET })
 	@ResponseBody

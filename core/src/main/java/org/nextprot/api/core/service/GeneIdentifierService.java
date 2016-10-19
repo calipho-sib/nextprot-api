@@ -11,11 +11,6 @@ public interface GeneIdentifierService {
 	Set<String> findGeneNames();
 
 	/**
-	 * @return all entry/gene names found in neXtProt
-	 */
-	Map<String, Set<String>> findEntryGeneNames();
-
-	/**
 	 * @return gene names coding the given protein
 	 */
 	Set<String> findGeneNamesByEntryAccession(String entryAccession);
