@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.GeneIdentifierDao;
 import org.nextprot.api.core.service.GeneIdentifierService;
@@ -10,7 +9,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -24,35 +26,18 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 	@Autowired
 	private OverviewService overviewService;
 
-	@Autowired
-	private MasterIdentifierService masterIdentifierService;
-
 	@Override
 	@Cacheable("all-gene-names")
 	public Set<String> findGeneNames() {
 
-		Set<String> entryNames = masterIdentifierService.findUniqueNames();
+		/*Set<String> entryNames = masterIdentifierService.findUniqueNames();
 		return entryNames.parallelStream()
 				.map(this::findGeneNamesByEntryAccession)
 				.filter(genes -> !genes.isEmpty())
 				.flatMap(Collection::stream)
-				.collect(Collectors.toSet());
+				.collect(Collectors.toSet());*/
 
-		// TODO: replace the code above by the code below for better performance
-		//return geneIdentifierDao.findGeneNames();
-	}
-
-	@Override
-	@Cacheable("all-entry-gene-names")
-	public Map<String, Set<String>> findEntryGeneNames() {
-
-		Set<String> entryNames = masterIdentifierService.findUniqueNames();
-
-		Map<String, Set<String>> map = new HashMap<>(entryNames.size());
-
-		entryNames.forEach(e -> map.put(e, findGeneNamesByEntryAccession(e)));
-
-		return map;
+		return geneIdentifierDao.findGeneNames();
 	}
 
 	@Override
