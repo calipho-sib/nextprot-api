@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -35,5 +36,11 @@ public class GeneNameController {
 	public Set<String> geneIdentifiersByEntryAccession(
 			@ApiPathParam(name = "entryAccession", description = "the neXtProt entry protein name",  allowedvalues = { "NX_P01308"}) @PathVariable("entryAccession")  String entryAccession) {
 		return geneIdentifierService.findGeneNamesByEntryAccession(entryAccession);
+	}
+
+	@RequestMapping(value = "/entry-gene-names", method = { RequestMethod.GET })
+	@ResponseBody
+	public Map<String, Set<String>> entryGeneIdentifiers() {
+		return geneIdentifierService.findEntryGeneNames();
 	}
 }
