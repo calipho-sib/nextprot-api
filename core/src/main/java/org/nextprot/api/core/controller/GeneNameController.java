@@ -44,4 +44,10 @@ public class GeneNameController {
 			@ApiPathParam(name = "entryAccession", description = "the neXtProt entry protein name",  allowedvalues = { "NX_P01308"}) @PathVariable("entryAccession")  String entryAccession) {
 		return geneIdentifierService.findGeneNamesByEntryAccession(entryAccession);
 	}
+
+	@RequestMapping(value = "/entry-gene-names", method = { RequestMethod.GET })
+	@ResponseBody
+	public Map<String, Set<String>> entryGeneIdentifiers() {
+		return geneIdentifierService.findEntryGeneNames();
+	}
 }

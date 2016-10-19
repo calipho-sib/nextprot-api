@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Repository
 public class GeneIdentifierDaoImpl implements GeneIdentifierDao {
@@ -19,6 +18,28 @@ public class GeneIdentifierDaoImpl implements GeneIdentifierDao {
 
 	@Override
 	public Set<String> findGeneNames() {
-		return new HashSet<>(new JdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("all-gene-names"), String.class));
+		return new TreeSet<>(new JdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("all-gene-names"), String.class));
+	}
+
+	@Override
+	public Map<String, Set<String>> findEntryGeneNames() {
+
+		Map<String, Set<String>> map = new TreeMap<>();
+
+		List<Map<String,Object>> results = new JdbcTemplate(dsLocator.getDataSource())
+				.queryForList(sqlDictionary.getSQLQuery("all-accessions-with-gene-names"));
+
+		for (Map<String,Object> row : results) {
+
+			String entryName = (String) row.get("unique_name");
+			String geneName = (String) row.get("gene_name");
+
+			if (!map.containsKey(entryName)) {
+				map.put(entryName, new HashSet<>());
+			}
+			map.get(entryName).add(geneName);
+		}
+
+		return map;
 	}
 }
