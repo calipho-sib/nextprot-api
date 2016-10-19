@@ -1,4 +1,7 @@
-select distinct synonym_name
-from nextprot.view_master_identifier_names
-where is_main = true
-and name_type = 'gene name'
+select isy.synonym_name as gene_name
+from nextprot.sequence_identifiers sim
+  inner join nextprot.identifier_synonyms isy on (isy.identifier_id = sim.identifier_id and isy.cv_type_id = 100)
+where sim.cv_type_id = 1
+      and sim.cv_status_id = 1
+      and isy.is_main = true
+order by isy.synonym_name
