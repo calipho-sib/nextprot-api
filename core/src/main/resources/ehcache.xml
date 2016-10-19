@@ -43,6 +43,11 @@
 		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
 	</cache>
 
+	<cache name="all-entry-gene-names" overflowToOffHeap="false" overflowToDisk="true"
+		   diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="22000"
+		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	</cache>
+
 	<cache name="gene-names-by-accession" maxEntriesLocalHeap="22000"
 		   eternal="true" statistics="true"/>
 
