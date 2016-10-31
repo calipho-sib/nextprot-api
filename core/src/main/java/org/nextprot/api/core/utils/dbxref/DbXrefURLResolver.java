@@ -105,9 +105,8 @@ public class DbXrefURLResolver {
     // TODO: this implementation is ugly and should be refactored
     public String resolveWithAccession(DbXref xref, String accession) {
 
-        if (xref.getLinkUrl().contains("%u")) {
+        if (xref != null && xref.getLinkUrl() != null && xref.getLinkUrl().contains("%u")) {
 
-            accession = accession.startsWith("NX_") ? accession.substring(3) : accession;
             String templateURL = xref.getLinkUrl();
 
             if (!templateURL.startsWith("http")) {
@@ -126,7 +125,7 @@ public class DbXrefURLResolver {
                 }
             }
 
-            String resolved = templateURL.replaceFirst("%u", accession);
+            String resolved = templateURL.replaceFirst("%u", accession.startsWith("NX_") ? accession.substring(3) : accession);
 
             return resolved.replaceFirst("%s", xref.getAccession());
         }
