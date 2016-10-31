@@ -1,7 +1,5 @@
 package org.nextprot.api.web.seo.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -16,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.HandlerMapping;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static com.hp.hpl.jena.vocabulary.RSS.url;
 
 @Lazy
 @Controller
@@ -56,7 +58,7 @@ public class SeoController {
 			return seoTagsService.getDefaultSeoTags(url);
 			
 		} catch (Exception e) {
-			throw new NextProtException(e);
+			throw new NextProtException("Error while search SEO tags for this page: " + url, e);
 		}
 	
 	}

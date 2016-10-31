@@ -1,14 +1,9 @@
 package org.nextprot.api.web.seo.service.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.RelativeUrlUtils;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
@@ -27,7 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 @Service
@@ -142,6 +140,7 @@ public class SeoTagsServiceImpl implements SeoTagsService {
 		CvTerm term = terminologyService.findCvTermByAccession(ac);
 		String title = term.getAccession() + " - " + getPrettyName(term.getName()) + " - " + prettySubpage;
 		String h1 = title;
+		// TODO: NullPointerException below
 		String descr = term.getOntology() + " " + term.getAccession() + " - " + term.getName() + " - " + prettySubpage;
 		
 		return new SeoTags(title,descr,h1);
