@@ -174,8 +174,8 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="col-md-12 text-left">
-						<a class="ft-item" href="/copyright">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
-						<a class="ft-item" href="/legal-disclaimer">Legal disclaimer</a>
+						<a class="ft-item" href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
+						<a class="ft-item" href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/legal-disclaimer.md" target="_blank">Legal disclaimer</a>
 						<span id="reldataspan" class="ft-item ui-version"></span>
 						<span id="maindiv" class="ft-item ui-version"></span>
 						<a class="ft-item" href="https://github.com/calipho-sib/" target="_blank">
