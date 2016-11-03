@@ -37,7 +37,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-			
+
 		    	<a class="navbar-brand" href="#">neXtProt API</a>
     		</div>
 
@@ -108,11 +108,11 @@
 
 	<div class="container-fluid">
 		<div class="row">
-			
+
 			<div class="col-md-2">
 
 				<div class="panel-group" id="side-accordion" aria-multiselectable="true" style="display: none;">
-					
+
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h4 class="panel-title">
@@ -125,7 +125,7 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="panel panel-default hide">
 						<div class="panel-heading">
 							<h4 class="panel-title">
@@ -138,7 +138,7 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="panel panel-default hide">
 						<div class="panel-heading">
 							<h4 class="panel-title">
@@ -151,21 +151,54 @@
 							</div>
 						</div>
 					</div>
-					
+
 				</div>
-				
+
 			</div>
 
 			<div class="col-md-4">
-				<div id="content"></div>			
+				<div id="content"></div>
 			</div>
-			
+
 			<div class="col-md-6">
-				<div id="testContent"></div>			
+				<div id="testContent"></div>
 			</div>
 		</div>
 	</div>
 
+	<textarea id="copyright" style="display:none;">
+#Copyright notice for neXtProt
+neXtProt is developed by the SIB Swiss Institute of Bioinformatics.
+
+All intellectual property rights on neXtProt, belong to the SIB.
+
+Copyright &copy; 2010-2015 SIB Swiss Institute of Bioinformatics &dash; All rights reserved.
+
+```
+Swiss Institute of Bioinformatics
+CMU - 1 Rue Michel-Servet
+CH-1211 Geneva
+Switzerland
+```
+
+neXtProt provides links to several resources. We recommend to our users to read carefully the copyright notices and legal disclaimer of the said resources.
+
+neXtProt uses the following third parties software:
+
+**Data stores**
+
+* [PostgreSQL](http://www.postgresql.org): Database where sequences, annotations, evidences and terms, as well as user resources (profiles, saved lists and queries) are stored.
+* [Lucene](http://lucene.apache.org)/[solr](http://lucene.apache.org/solr): Full-text search engine for simple search queries.
+* [Virtuoso](http://virtuoso.openlinksw.com): To store RDF data and perform complex SPARQL search queries.
+
+**API**
+
+* [Spring](http://spring.io): Open source web application over Java.
+
+**User interface**
+
+* [AngularJS](https://angularjs.org/): Javascript framework for website interface.
+	</textarea>
 	<!-- Footer
   ================================================== -->
 
@@ -921,7 +954,36 @@
 			});
 		});
 	}
-	
+/*
+	function fetchingMarkdown(page) {
+		var url = "https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/"+page;
+
+		console.log("Fetching markdown " + url);
+
+		$.ajax({
+			url : url,
+			type: 'GET',
+			dataType: 'text',
+			contentType: "text/plain; charset=utf-8",
+			success : function(data) {
+				markdown(data);
+			},
+			error: function(msg) {
+				console.log(msg);
+			}
+		});
+	}
+
+	function markdown(data) {
+
+		//var page = "<!DOCTYPE html> <html> <body> <textarea style=\"display:none;\">"
+		//page += data;
+		//page += "</textarea> <script src='http://strapdownjs.com/v/0.2/strapdown.js'>
+
+		$("#copyright").html(data);
+		$('#copyright').show();
+	}
+*/
 	function buildFromJSONDoc(data) {
 		model = data;
 		var main = Handlebars.compile($("#main").html());
@@ -1097,6 +1159,8 @@
 <!-- Auth0 lock script -->
 <script src="js/lock-7.0.min.js"></script>
 <script src="js/jquery.cookie.js"></script>
+<script src='http://strapdownjs.com/v/0.2/strapdown.js'></script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <script>
 	var lock = null;
@@ -1198,6 +1262,8 @@
 		
 		checkURLExistence();
 		fetchReleaseInfo();
+		//fetchingMarkdown("copyright.md");
+		//fetchingMarkdown("legal-disclaimer.md");
 	});
 </script>
 
