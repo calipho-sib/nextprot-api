@@ -105,7 +105,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 				}
 			}
 	
-			AnnotationUtils.convertType2EvidencesToProperties(annotations); // CALIPHOMISC-277
+			AnnotationUtils.convertRelativeEvidencesToProperties(annotations); // CALIPHOMISC-277
 
 			for (Annotation annot : annotations) {
 				refactorDescription(annot);

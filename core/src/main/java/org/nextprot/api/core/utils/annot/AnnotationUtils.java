@@ -242,19 +242,19 @@ public class AnnotationUtils {
 	 * COFACTOR         => property name = cofactor
 	 * DISEASE          => property name = alternative disease term
 	 */
-	public static void convertType2EvidencesToProperties(List<Annotation> annotations) {
+	public static void convertRelativeEvidencesToProperties(List<Annotation> annotations) {
 		for (Annotation annot: annotations) {
 
 			List<AnnotationEvidence> evidencesToRemove = null;
 
 			if (annot.getAPICategory()== AnnotationCategory.SEQUENCE_CAUTION) {
-				evidencesToRemove = convertType2EvidenceToProperty(annot, PropertyApiModel.NAME_DIFFERING_SEQUENCE);
+				evidencesToRemove = convertRelativeEvidenceToProperty(annot, PropertyApiModel.NAME_DIFFERING_SEQUENCE);
 			} 
 			else if (annot.getAPICategory()== AnnotationCategory.COFACTOR) {
-				evidencesToRemove = convertEvidenceToExternalBioObject(annot);
+				evidencesToRemove = convertRelativeEvidenceToExternalChemicalBioObject(annot);
 			}
 			else if (annot.getAPICategory()== AnnotationCategory.DISEASE) {
-				evidencesToRemove = convertType2EvidenceToProperty(annot, PropertyApiModel.NAME_ALTERNATIVE_DISEASE_TERM);
+				evidencesToRemove = convertRelativeEvidenceToProperty(annot, PropertyApiModel.NAME_ALTERNATIVE_DISEASE_TERM);
 			}
 
 			if (evidencesToRemove != null)
@@ -262,7 +262,7 @@ public class AnnotationUtils {
 		}
 	}
 
-	private static List<AnnotationEvidence> convertType2EvidenceToProperty(Annotation annot, String propertyName) {
+	private static List<AnnotationEvidence> convertRelativeEvidenceToProperty(Annotation annot, String propertyName) {
 
 		List<AnnotationEvidence> toRemove = new ArrayList<>();
 
@@ -285,7 +285,7 @@ public class AnnotationUtils {
 		return toRemove;
 	}
 
-	private static List<AnnotationEvidence> convertEvidenceToExternalBioObject(Annotation annot) {
+	private static List<AnnotationEvidence> convertRelativeEvidenceToExternalChemicalBioObject(Annotation annot) {
 
 		List<AnnotationEvidence> toRemove = new ArrayList<>();
 
@@ -293,7 +293,7 @@ public class AnnotationUtils {
 
 			if ("relative".equals(evi.getResourceAssociationType())) {
 
-				annot.setBioObject(newExternalBioObject(evi));
+				annot.setBioObject(newExternalChemicalBioObject(evi));
 
 				toRemove.add(evi);
 			}
@@ -302,13 +302,13 @@ public class AnnotationUtils {
 		return toRemove;
 	}
 
-	static BioObject newExternalBioObject(AnnotationEvidence evi) {
+	static BioObject newExternalChemicalBioObject(AnnotationEvidence evi) {
 
 		BioObject bo = BioObject.external(BioObject.BioType.CHEMICAL, evi.getResourceDb());
-
 		bo.setId(evi.getResourceId());
 		bo.setAccession(evi.getResourceAccession());
-
+		String chemicalName = evi.getPropertyValue("name");
+		if (chemicalName!=null) bo.getProperties().put("chemical name", chemicalName);
 		return bo;
 	}
 
