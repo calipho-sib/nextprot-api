@@ -1,9 +1,9 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.IsoformDAO;
@@ -14,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 @Service
 class IsoformServiceImpl implements IsoformService {
@@ -48,10 +48,12 @@ class IsoformServiceImpl implements IsoformService {
 			if (isoMasterNuPosRanges.containsKey(isoform.getUniqueName())) {
 				isoform.setMasterMapping(isoMasterNuPosRanges.get(isoform.getUniqueName()));
 			} else {
-				isoform.setMasterMapping(new ArrayList<NucleotidePositionRange>());
+				isoform.setMasterMapping(new ArrayList<>());
 			}
 		}
-		
+
+		Collections.sort(isoforms, (i1, i2) -> i1.getIsoformAccession().compareTo(i2.getIsoformAccession()));
+
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Isoform>().addAll(isoforms).build();
 	}
