@@ -145,7 +145,10 @@ public class BinaryInteraction2Annotation {
 
 		be.setId(interactant.getXrefId());
 		be.setAccession((interactant.isNextprot()) ? interactant.getNextprotAccession() : interactant.getAccession());
-
+		
+		if (interactant.getGenename()!=null) be.getProperties().put("gene name", interactant.getGenename());
+		if (interactant.isNextprot() && interactant.getProteinName()!=null) be.getProperties().put("protein name", interactant.getProteinName());
+		if (interactant.getUrl()!=null) be.getProperties().put("url", interactant.getUrl());
 		return be;
 	}
 }

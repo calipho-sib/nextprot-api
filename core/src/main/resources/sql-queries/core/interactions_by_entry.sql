@@ -20,7 +20,8 @@ interactant_unique_name,
 is_interactant_in_nextprot, 
 interactant_database,	
 interactant_url, 
-interactant_genename
+interactant_genename,
+interactant_protname
 	from (select 
 		inter.partnership_id, inter.md5,
 		(regexp_split_to_array(si.unique_name,'-'))[1]  as entry_name,
@@ -86,7 +87,8 @@ interactant_genename
 	) as number_of_experiments,
 	(select rp.property_value from nextprot.resource_properties rp 
 	where rp.resource_id=pxr.resource_id
-	) as interactant_genename
+	) as interactant_genename,
+	(select psi.display_name) as interactant_protname
 	from nextprot.sequence_identifiers si
 	inner join nextprot.db_xrefs xr on (si.db_xref_id=xr.resource_id)
 	inner join nextprot.cv_databases cvdbs on (xr.cv_database_id=cvdbs.cv_id)
