@@ -2,7 +2,7 @@
 // Copyright (c) 2009-2010 Dominic Baggott
 // Copyright (c) 2009-2010 Ash Berlin
 // Copyright (c) 2011 Christoph Dorn <christoph@christophdorn.com> (http://www.christophdorn.com)
-// Date: 2013-09-15T16:09Z
+// Date: 2013-09-15T16:12Z
 
 (function(expose) {
 
@@ -1734,4 +1734,7 @@
   expose.toHTMLTree = Markdown.toHTMLTree;
   expose.renderJsonML = Markdown.renderJsonML;
 
-})(exports);
+})(function() {
+  window.markdown = {};
+  return window.markdown;
+}());

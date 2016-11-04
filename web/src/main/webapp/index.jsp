@@ -10,6 +10,8 @@
 
 <script src="js/jquery-1.11.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script src="js/markdown.js"></script>
+
 <script type="text/javascript" src="js/handlebars-1.0.0.beta.6.js"></script>
 <script type="text/javascript" src="js/jlinq.js"></script>
 <script type="text/javascript" src="js/prettify.js"></script>
@@ -27,7 +29,6 @@
 </head>
 
 <body>
-
 	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
@@ -38,7 +39,7 @@
 					<span class="icon-bar"></span>
 				</button>
 
-		    	<a class="navbar-brand" href="#">neXtProt API</a>
+		    	<a class="navbar-brand" href="#" onclick="hideMarkdownPreview()">neXtProt API</a>
     		</div>
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
@@ -78,8 +79,8 @@
 							</a></li>
 						</ul></li>
 
-					<li ng-class=""><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/nextprot.md" target="_blank">About</a></li>
-					<li ng-class=""><a
+					<li><a href="javascript:void(0)" onclick="showMarkdownPreview('nextprot')">About</a></li>
+					<li><a
 						href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact
 							us</a></li>
 
@@ -106,7 +107,7 @@
 		</div>
 	</div>
 
-	<div class="container-fluid">
+	<div id="leftpanel" class="container-fluid">
 		<div class="row">
 
 			<div class="col-md-2">
@@ -166,39 +167,8 @@
 		</div>
 	</div>
 
-	<textarea id="copyright" style="display:none;">
-#Copyright notice for neXtProt
-neXtProt is developed by the SIB Swiss Institute of Bioinformatics.
+	<div id="markdown-preview" style="background-color:transparent;margin:30px 30px;"></div>
 
-All intellectual property rights on neXtProt, belong to the SIB.
-
-Copyright &copy; 2010-2015 SIB Swiss Institute of Bioinformatics &dash; All rights reserved.
-
-```
-Swiss Institute of Bioinformatics
-CMU - 1 Rue Michel-Servet
-CH-1211 Geneva
-Switzerland
-```
-
-neXtProt provides links to several resources. We recommend to our users to read carefully the copyright notices and legal disclaimer of the said resources.
-
-neXtProt uses the following third parties software:
-
-**Data stores**
-
-* [PostgreSQL](http://www.postgresql.org): Database where sequences, annotations, evidences and terms, as well as user resources (profiles, saved lists and queries) are stored.
-* [Lucene](http://lucene.apache.org)/[solr](http://lucene.apache.org/solr): Full-text search engine for simple search queries.
-* [Virtuoso](http://virtuoso.openlinksw.com): To store RDF data and perform complex SPARQL search queries.
-
-**API**
-
-* [Spring](http://spring.io): Open source web application over Java.
-
-**User interface**
-
-* [AngularJS](https://angularjs.org/): Javascript framework for website interface.
-	</textarea>
 	<!-- Footer
   ================================================== -->
 
@@ -207,8 +177,8 @@ neXtProt uses the following third parties software:
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="col-md-12 text-left">
-						<a class="ft-item" href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
-						<a class="ft-item" href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/legal-disclaimer.md" target="_blank">Legal disclaimer</a>
+						<a class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('copyright')">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
+						<a class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('legal-disclaimer')">Legal disclaimer</a>
 						<span id="reldataspan" class="ft-item ui-version"></span>
 						<span id="maindiv" class="ft-item ui-version"></span>
 						<a class="ft-item" href="https://github.com/calipho-sib/" target="_blank">
@@ -954,9 +924,9 @@ neXtProt uses the following third parties software:
 			});
 		});
 	}
-/*
-	function fetchingMarkdown(page) {
-		var url = "https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/"+page;
+
+	function showMarkdownPreview(page) {
+		var url = "contents/pages/"+page;
 
 		console.log("Fetching markdown " + url);
 
@@ -966,7 +936,7 @@ neXtProt uses the following third parties software:
 			dataType: 'text',
 			contentType: "text/plain; charset=utf-8",
 			success : function(data) {
-				markdown(data);
+				markdown2html(data);
 			},
 			error: function(msg) {
 				console.log(msg);
@@ -974,16 +944,18 @@ neXtProt uses the following third parties software:
 		});
 	}
 
-	function markdown(data) {
+	function markdown2html(data) {
 
-		//var page = "<!DOCTYPE html> <html> <body> <textarea style=\"display:none;\">"
-		//page += data;
-		//page += "</textarea> <script src='http://strapdownjs.com/v/0.2/strapdown.js'>
-
-		$("#copyright").html(data);
-		$('#copyright').show();
+		$('#markdown-preview').html(markdown.toHTML( data ));
+		$('#leftpanel').hide()
 	}
-*/
+
+	function hideMarkdownPreview() {
+
+		$('#markdown-preview').html("");
+		$('#leftpanel').show()
+	}
+
 	function buildFromJSONDoc(data) {
 		model = data;
 		var main = Handlebars.compile($("#main").html());
@@ -1159,7 +1131,6 @@ neXtProt uses the following third parties software:
 <!-- Auth0 lock script -->
 <script src="js/lock-7.0.min.js"></script>
 <script src="js/jquery.cookie.js"></script>
-<script src='http://strapdownjs.com/v/0.2/strapdown.js'></script>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <script>
@@ -1262,8 +1233,6 @@ neXtProt uses the following third parties software:
 		
 		checkURLExistence();
 		fetchReleaseInfo();
-		//fetchingMarkdown("copyright.md");
-		//fetchingMarkdown("legal-disclaimer.md");
 	});
 </script>
 
