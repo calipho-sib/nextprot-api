@@ -10,10 +10,17 @@ public class Interactant implements Serializable {
 	private String database;
 	private String accession;
 	private String genename;
+	private String proteinName;
 	private Long xrefId;
 	
-	
-	
+	public String getProteinName() {
+		return proteinName;
+	}
+
+	public void setProteinName(String proteinName) {
+		this.proteinName = proteinName;
+	}
+
 	public Long getXrefId() {
 		return xrefId;
 	}
