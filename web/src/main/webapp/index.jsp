@@ -10,6 +10,8 @@
 
 <script src="js/jquery-1.11.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script src="js/markdown.min.js"></script>
+
 <script type="text/javascript" src="js/handlebars-1.0.0.beta.6.js"></script>
 <script type="text/javascript" src="js/jlinq.js"></script>
 <script type="text/javascript" src="js/prettify.js"></script>
@@ -27,7 +29,6 @@
 </head>
 
 <body>
-
 	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
@@ -37,8 +38,8 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-			
-		    	<a class="navbar-brand" href="#">neXtProt API</a>
+
+		    	<a class="navbar-brand" href="#" onclick="hideMarkdownPreview()">neXtProt API</a>
     		</div>
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
@@ -78,8 +79,8 @@
 							</a></li>
 						</ul></li>
 
-					<li ng-class=""><a href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/nextprot.md" target="_blank">About</a></li>
-					<li ng-class=""><a
+					<li><a href="javascript:void(0)" onclick="showMarkdownPreview('nextprot')">About</a></li>
+					<li><a
 						href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact
 							us</a></li>
 
@@ -106,13 +107,13 @@
 		</div>
 	</div>
 
-	<div class="container-fluid">
+	<div id="leftpanel" class="container-fluid">
 		<div class="row">
-			
+
 			<div class="col-md-2">
 
 				<div class="panel-group" id="side-accordion" aria-multiselectable="true" style="display: none;">
-					
+
 					<div class="panel panel-default">
 						<div class="panel-heading">
 							<h4 class="panel-title">
@@ -125,7 +126,7 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="panel panel-default hide">
 						<div class="panel-heading">
 							<h4 class="panel-title">
@@ -138,7 +139,7 @@
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="panel panel-default hide">
 						<div class="panel-heading">
 							<h4 class="panel-title">
@@ -151,20 +152,22 @@
 							</div>
 						</div>
 					</div>
-					
+
 				</div>
-				
+
 			</div>
 
 			<div class="col-md-4">
-				<div id="content"></div>			
+				<div id="content"></div>
 			</div>
-			
+
 			<div class="col-md-6">
-				<div id="testContent"></div>			
+				<div id="testContent"></div>
 			</div>
 		</div>
 	</div>
+
+	<div id="markdown-preview" style="background-color:transparent;margin:30px 30px;"></div>
 
 	<!-- Footer
   ================================================== -->
@@ -174,8 +177,8 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="col-md-12 text-left">
-						<a class="ft-item" href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/copyright.md" target="_blank">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
-						<a class="ft-item" href="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/legal-disclaimer.md" target="_blank">Legal disclaimer</a>
+						<a class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('copyright')">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
+						<a class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('legal-disclaimer')">Legal disclaimer</a>
 						<span id="reldataspan" class="ft-item ui-version"></span>
 						<span id="maindiv" class="ft-item ui-version"></span>
 						<a class="ft-item" href="https://github.com/calipho-sib/" target="_blank">
@@ -921,7 +924,57 @@
 			});
 		});
 	}
-	
+
+	function showMarkdownPreview(page) {
+		var url = "contents/pages/"+page;
+
+		console.log("Fetching markdown " + url);
+
+		$.ajax({
+			url : url,
+			type: 'GET',
+			dataType: 'text',
+			contentType: "text/plain; charset=utf-8",
+			success : function(md) {
+
+				// TODO: Convertion md -> html should be done by handler contents/pages/{page} instead (see https://github.com/sirthias/pegdown)
+				html = md2html(md);
+
+				$('#markdown-preview').html(html);
+				$('#leftpanel').hide()
+			},
+			error: function(msg) {
+				console.log(msg);
+			}
+		});
+	}
+
+	/**
+	 * Convert markdown into html with library markdown.js
+	 * @param md the markdown content to convert
+	 * @returns converted html
+	 */
+	function md2html(md) {
+
+		var html = markdown.toHTML(md);
+
+		// Some bad convertions are corrected below:
+		html = html
+				// 1. correcting bad html entities convertion
+				.replace("&amp;copy;", "&#169;")
+				.replace("&amp;dash;", "&#151;")
+				// 2. correcting incorrect code block convertion
+				.replace(/<p><code>\s*([^<]+)<\/code><\/p>/gi, "<pre><code>$1</code></pre>");
+
+		return html;
+	}
+
+	function hideMarkdownPreview() {
+
+		$('#markdown-preview').html("");
+		$('#leftpanel').show()
+	}
+
 	function buildFromJSONDoc(data) {
 		model = data;
 		var main = Handlebars.compile($("#main").html());
@@ -1097,6 +1150,7 @@
 <!-- Auth0 lock script -->
 <script src="js/lock-7.0.min.js"></script>
 <script src="js/jquery.cookie.js"></script>
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <script>
 	var lock = null;
