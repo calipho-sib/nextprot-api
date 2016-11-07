@@ -59,7 +59,7 @@ having sum(a.cnt)=1
 		Annotation annot = annotations.get(0);
 		assertTrue(annot.getCategory().equals(AnnotationCategory.PATHWAY.getDbAnnotationTypeName()));
 		assertTrue(annot.getAPICategory()== AnnotationCategory.PATHWAY);
-		assertTrue(annot.getQualityQualifier().equals("SILVER"));
+		assertTrue(annot.getQualityQualifier().equals("GOLD"));
 		Assert.assertEquals("Intraflagellar transport", annot.getDescription());
 		for (AnnotationIsoformSpecificity spec: annot.getTargetingIsoformsMap().values()) {
 			assertTrue(spec.getSpecificity().equals("UNKNOWN"));

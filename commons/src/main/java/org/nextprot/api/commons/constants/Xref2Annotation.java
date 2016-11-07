@@ -11,7 +11,7 @@ public enum Xref2Annotation  {
 			"Orphanet","GOLD","curated", "IC","ECO:0000305", "curator inference used in manual assertion"),
 	// GOLD => SILVER, see https://issues.isb-sib.ch/browse/NEXTPROT-1139
 	REACTOME("Reactome", "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 
-			"Reactome","SILVER","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
+			"Reactome","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
 	DRUGBANK("DrugBank", "generic name", AnnotationCategory.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),
 			"DrugBank","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
 	KEGGPATHWAY("KEGGPathway",  "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 
