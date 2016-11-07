@@ -177,10 +177,10 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="col-md-12 text-left">
-						<a class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('copyright')">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
-						<a class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('legal-disclaimer')">Legal disclaimer</a>
-						<span id="reldataspan" class="ft-item ui-version"></span>
-						<span id="maindiv" class="ft-item ui-version"></span>
+						<a id="copyright" class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('copyright')">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
+						<a id="legal-disclaimer" class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('legal-disclaimer')">Legal disclaimer</a>
+						<span id="data-release" class="ft-item"></span>
+						<span id="app-release" class="ft-item"></span>
 						<a class="ft-item" href="https://github.com/calipho-sib/" target="_blank">
 							<span class="fa fa-github" aria-hidden="true"></span> For developers
 						</a>
@@ -979,7 +979,7 @@
 		model = data;
 		var main = Handlebars.compile($("#main").html());
 		var mainHTML = main(data);
-		$("#maindiv").html(mainHTML);
+		$("#app-release").html(mainHTML);
 		
 		var apis = Handlebars.compile($("#apis").html());
 		var apisHTML = apis(data);
@@ -1067,7 +1067,7 @@
 		
 
 		// display sidebar
-		$('#maindiv').show();
+		$('#app-release').show();
 		$('#side-accordion').show();
 	}
 
@@ -1093,8 +1093,8 @@
 		var reldata = Handlebars.compile($("#reldata").html());
 		var reldataHTML = reldata(release);
 
-		$("#reldataspan").html(reldataHTML);
-		$('#reldataspan').show();
+		$("#data-release").html(reldataHTML);
+		$('#data-release').show();
 	}
 
 	function fetchReleaseInfo() {
