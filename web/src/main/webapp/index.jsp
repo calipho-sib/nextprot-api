@@ -10,7 +10,7 @@
 
 <script src="js/jquery-1.11.1.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="js/markdown.js"></script>
+<script src="js/markdown.min.js"></script>
 
 <script type="text/javascript" src="js/handlebars-1.0.0.beta.6.js"></script>
 <script type="text/javascript" src="js/jlinq.js"></script>
@@ -935,8 +935,13 @@
 			type: 'GET',
 			dataType: 'text',
 			contentType: "text/plain; charset=utf-8",
-			success : function(data) {
-				markdown2html(data);
+			success : function(md) {
+
+				// TODO: Convertion md -> html should be done by handler contents/pages/{page} instead (see https://github.com/sirthias/pegdown)
+				html = md2html(md);
+
+				$('#markdown-preview').html(html);
+				$('#leftpanel').hide()
 			},
 			error: function(msg) {
 				console.log(msg);
@@ -944,10 +949,24 @@
 		});
 	}
 
-	function markdown2html(data) {
+	/**
+	 * Convert markdown into html with library markdown.js
+	 * @param md the markdown content to convert
+	 * @returns converted html
+	 */
+	function md2html(md) {
 
-		$('#markdown-preview').html(markdown.toHTML( data ));
-		$('#leftpanel').hide()
+		var html = markdown.toHTML(md);
+
+		// Some bad convertions are corrected below:
+		html = html
+				// 1. correcting bad html entities convertion
+				.replace("&amp;copy;", "&#169;")
+				.replace("&amp;dash;", "&#151;")
+				// 2. correcting incorrect code block convertion
+				.replace(/<p><code>\s*([^<]+)<\/code><\/p>/gi, "<pre><code>$1</code></pre>");
+
+		return html;
 	}
 
 	function hideMarkdownPreview() {
