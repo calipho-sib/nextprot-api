@@ -191,6 +191,8 @@ public class AnnotationEvidence implements Serializable {
 		}
 	}
 
+	public Map<String,String> getProperties() {return this.propertiesMap;}
+	
 	/**
 	 * Determines if an evidence has to be taken into account for xml / ttl, ...
 	 * exports. We should only export, publish evidences meeting the following
@@ -295,8 +297,7 @@ public class AnnotationEvidence implements Serializable {
 
 	/**
 	 * 
-	 * @return a set of property names related to the evidence and that are
-	 *         allowed to be shown
+	 * @return the set of property names, used in velocity templates !!!
 	 */
 	public Set<String> getPropertiesNames() {
 		/*
