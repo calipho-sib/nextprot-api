@@ -15,6 +15,13 @@ public class MainNames implements Serializable{
 	public String getAccession() {
 		return accession;
 	}
+	public String getEntryAccession() {
+		if (accession.contains("-")) {
+			return accession.substring(0,accession.indexOf("-"));
+		} else {
+			return accession;
+		}
+	}
 	public void setAccession(String accession) {
 		this.accession = accession;
 	}

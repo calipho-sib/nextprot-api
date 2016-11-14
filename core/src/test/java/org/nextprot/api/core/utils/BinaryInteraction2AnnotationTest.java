@@ -1,13 +1,56 @@
 package org.nextprot.api.core.utils;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.service.MainNamesService;
 
 public class BinaryInteraction2AnnotationTest {
 
+
+	// mock for MainNamesService (not standard, I know, sorry)
+	private class MyMainNamesService implements MainNamesService {
+
+		private Map<String, MainNames> map;
+		
+		public MyMainNamesService() {
+			map = new HashMap<>();
+			MainNames names1 = new MainNames();
+			names1.setAccession("NX_P61626");
+			names1.setGeneNameList(Arrays.asList(new String[]{"fakegene1"}));
+			names1.setName("fakename1");
+			map.put("NX_P61626", names1);
+			MainNames names2 = new MainNames();
+			names2.setAccession("NX_P61626-1");
+			names2.setGeneNameList(Arrays.asList(new String[]{"fakegene1"}));
+			names2.setName("fakename1-1");
+			map.put("NX_P61626-1", names2);
+			MainNames names3 = new MainNames();
+			names3.setAccession("Q81LD0");
+			names3.setGeneNameList(Arrays.asList(new String[]{"fakegene2"}));
+			names3.setName("fakename2");
+			map.put("Q81LD0", names3);
+		}
+		
+		@Override
+		public Map<String, MainNames> findIsoformOrEntryMainName() {
+			return map;
+		}
+		
+	}
+
+	MainNamesService mainNamesService = new MyMainNamesService();
+	
+	
+	
     @Test
     public void testConvertEvidenceToBioEntry()  {
+    	
+    	
 
         Interactant interactant = new Interactant();
 
@@ -16,7 +59,7 @@ public class BinaryInteraction2AnnotationTest {
         interactant.setNextprot(true);
         interactant.setXrefId(123L);
 
-        BioObject bo = BinaryInteraction2Annotation.newBioObject(interactant);
+        BioObject bo = BinaryInteraction2Annotation.newBioObject(interactant,mainNamesService);
         Assert.assertEquals("NX_P61626", bo.getAccession());
         Assert.assertEquals("neXtProt", bo.getDatabase());
         Assert.assertEquals(123L, bo.getId());
@@ -33,7 +76,7 @@ public class BinaryInteraction2AnnotationTest {
         interactant.setNextprot(true);
         interactant.setXrefId(123L);
 
-        BioObject bo = BinaryInteraction2Annotation.newBioObject(interactant);
+        BioObject bo = BinaryInteraction2Annotation.newBioObject(interactant,mainNamesService);
         Assert.assertEquals("NX_P61626-1", bo.getAccession());
         Assert.assertEquals("neXtProt", bo.getDatabase());
         Assert.assertEquals(123L, bo.getId());
@@ -50,7 +93,7 @@ public class BinaryInteraction2AnnotationTest {
         interactant.setNextprot(false);
         interactant.setXrefId(15642964L);
 
-        BioObject bo = BinaryInteraction2Annotation.newBioObject(interactant);
+        BioObject bo = BinaryInteraction2Annotation.newBioObject(interactant,mainNamesService);
         Assert.assertEquals("Q81LD0", bo.getAccession());
         Assert.assertEquals("UniProt", bo.getDatabase());
         Assert.assertEquals(15642964L, bo.getId());
