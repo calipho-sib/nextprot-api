@@ -136,7 +136,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 			isospec.setAnnotationId(xrefAnnotation.getAnnotationId());
 			isospec.setFirstPosition(null); //According to PAM on Tuesday th 16th in the presence of Pascale and Frederic Nikitin
 			isospec.setLastPosition(null);
-			isospec.setIsoformName(iso.getUniqueName());
+			isospec.setIsoformAccession(iso.getIsoformAccession());
 			isospec.setSpecificity("UNKNOWN");
 
 			isospecs.add(isospec);

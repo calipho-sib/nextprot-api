@@ -281,7 +281,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			spec.setAnnotationId(annotationId);
 			spec.setFirstPosition(firstPos);
 			spec.setLastPosition(lastPos);
-			spec.setIsoformName(iso);
+			spec.setIsoformAccession(iso);
 			spec.setSpecificity("SPECIFIC");
 			annot.getTargetingIsoformsMap().put(iso, spec);
 

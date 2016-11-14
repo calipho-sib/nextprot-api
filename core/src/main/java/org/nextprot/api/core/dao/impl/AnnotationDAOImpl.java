@@ -120,7 +120,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			annotation.setAnnotationId(resultSet.getLong("annotation_id"));
 			annotation.setFirstPosition((Integer)resultSet.getObject("first_pos"));  // the SQL increments first_pos by 1
 			annotation.setLastPosition((Integer)resultSet.getObject("last_pos"));
-			annotation.setIsoformName(resultSet.getString("unique_name"));
+			annotation.setIsoformAccession(resultSet.getString("unique_name"));
 			annotation.setSpecificity(resultSet.getString("iso_specificity"));
 			return annotation;
 		}

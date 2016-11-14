@@ -164,7 +164,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
 
 			spec.setAnnotationId(annotationId);
-			spec.setIsoformName(isoform.getUniqueName());
+			spec.setIsoformAccession(isoform.getIsoformAccession());
 			spec.setSpecificity("UNKNOWN");
 
 			specs.add(spec);
