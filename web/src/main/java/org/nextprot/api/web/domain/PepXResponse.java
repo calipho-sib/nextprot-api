@@ -118,6 +118,14 @@ public class PepXResponse {
 			return isoformAc;
 		}
 		
+		// Should be removed and replaced with setIsoformAccession()
+		// but it will require change in pepx json output format
+		// Only used by json object mapper
+		@Deprecated
+		public void setIsoformName(String isoformAc) {
+			setIsoformAccession( isoformAc) ;
+		}
+		
 		public void setIsoformAccession(String isoformAc) {
 			if(!isoformAc.startsWith("NX_")){
 				this.isoformAc = "NX_" + isoformAc;
