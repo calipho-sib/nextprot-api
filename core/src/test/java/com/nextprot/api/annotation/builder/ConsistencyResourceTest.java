@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 
-//@ActiveProfiles({ "dev", "cache" })
 public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTest{
 
 	@Autowired private StatementDao statementDao;
@@ -64,11 +63,9 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 		System.out.println("Iso cnt:" + isoCnt);
 	}
 
-	//@Test
+	@Test
 	public void shouldFindMainNamesMoreThan100TimesFasterAfterFirstTime() {
 
-		// uncomment cache activation at class declaration above to run this test successfully
-		
 		long t0 = System.currentTimeMillis();
 		Map<String,MainNames> namesMap1 = mainNamesService.findIsoformOrEntryMainName();
 		long t1 = System.currentTimeMillis();
