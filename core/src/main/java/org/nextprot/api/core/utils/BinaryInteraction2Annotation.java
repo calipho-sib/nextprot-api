@@ -155,6 +155,10 @@ public class BinaryInteraction2Annotation {
 			String masterAc = mainNamesService.findIsoformOrEntryMainName().get(ac).getEntryAccession();
 			String proteinName = mainNamesService.findIsoformOrEntryMainName().get(masterAc).getName();
 			be.getProperties().put("proteinName", proteinName);
+			if (interactant.isIsoform()) {
+				String isoName = mainNamesService.findIsoformOrEntryMainName().get(ac).getName();
+				be.getProperties().put("isoformName", isoName);
+			}
 		}
 		if (interactant.getUrl()!=null) be.getProperties().put("url", interactant.getUrl());
 		return be;

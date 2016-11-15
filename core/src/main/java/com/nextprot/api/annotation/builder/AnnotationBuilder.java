@@ -36,9 +36,9 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
 	protected static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
 
-	private TerminologyService terminologyService = null;
-	private PublicationService publicationService = null;
-	private MainNamesService mainNamesService = null;
+	protected TerminologyService terminologyService = null;
+	protected PublicationService publicationService = null;
+	protected MainNamesService mainNamesService = null;
 
 	/**
 	 * Flag that indicates that the build should throw an Exception at the first error or just log silently
@@ -326,6 +326,8 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
 				if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
 					if(bioObjectAccession.startsWith("NX_") && BioType.PROTEIN.name().equalsIgnoreCase(bot)){
+						// note that if we handle BioType.PROTEIN_ISOFORM in the future, we should
+						// add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
 						bioObject = BioObject.internal(BioType.PROTEIN);
 						bioObject.setAccession(bioObjectAccession);						
 						bioObject.putPropertyNameValue("geneName", firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
