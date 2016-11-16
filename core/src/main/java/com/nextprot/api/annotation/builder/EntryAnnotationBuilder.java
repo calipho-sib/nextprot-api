@@ -45,8 +45,7 @@ public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 			ais.setFirstPosition(tisp.getBegin());
 			ais.setLastPosition(tisp.getEnd());
 			ais.setSpecificity(tisp.getSpecificity());
-			String isoName = mainNamesService.findIsoformOrEntryMainName().get(isoAc).getName();
-			ais.setName(isoName);
+			ais.setName(tisp.getName());
 			
 			targetingIsoforms.add(ais);
 

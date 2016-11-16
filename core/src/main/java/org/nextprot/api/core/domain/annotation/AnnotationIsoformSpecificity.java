@@ -162,6 +162,10 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 				Objects.equals(firstPosition, other.firstPosition) && Objects.equals(lastPosition, other.lastPosition);
 	}
 
+	/**
+	 * This is NOT for the isoform name, it is used to set the variant name for example.
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}

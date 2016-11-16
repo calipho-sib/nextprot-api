@@ -105,8 +105,6 @@ public class BinaryInteraction2Annotation {
 		for (Isoform iso: isoforms) {
 			AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
 			spec.setAnnotationId(annotId);
-			String name = mainNamesService.findIsoformOrEntryMainName().get(iso.getIsoformAccession()).getName();
-			spec.setName(name);
 			spec.setIsoformAccession(iso.getIsoformAccession());
 			boolean isSpecific = inter.isInteractionSpecificForIsoform(iso.getIsoformAccession());
 			spec.setSpecificity(isSpecific ? "SPECIFIC" : "BY DEFAULT");
