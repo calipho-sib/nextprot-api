@@ -1,17 +1,14 @@
 package org.nextprot.api.isoform.mapper.domain;
 
 import com.google.common.base.Preconditions;
-
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UndefinedFeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownFeatureQueryTypeException;
 
-import java.io.Serializable;
+public class FeatureQuery implements BaseFeatureQuery {
 
-public class FeatureQuery implements Serializable {
-
-	private static final long serialVersionUID = 2016091901L;
+	private static final long serialVersionUID = 20161116L;
 
 	private String accession;
     private String feature;
@@ -64,6 +61,7 @@ public class FeatureQuery implements Serializable {
     /**
      * @return the nextprot entry accession number (example: NX_P01308)
      */
+    @Override
     public String getAccession() {
         return accession;
     }
@@ -78,6 +76,7 @@ public class FeatureQuery implements Serializable {
     /**
      * @return the annotation category as string
      */
+    @Override
     public String getFeatureType() {
         return featureType;
     }
