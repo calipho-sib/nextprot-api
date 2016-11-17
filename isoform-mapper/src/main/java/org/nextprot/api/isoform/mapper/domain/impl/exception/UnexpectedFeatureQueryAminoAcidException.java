@@ -1,7 +1,7 @@
 package org.nextprot.api.isoform.mapper.domain.impl.exception;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 
 public class UnexpectedFeatureQueryAminoAcidException extends FeatureQueryException {
@@ -9,7 +9,7 @@ public class UnexpectedFeatureQueryAminoAcidException extends FeatureQueryExcept
     private static final String EXPECTED_AAS = "expectedAminoAcids";
     private static final String FEATURE_AAS = "featureAminoAcids";
 
-    public UnexpectedFeatureQueryAminoAcidException(FeatureQuery query, int sequencePosition,
+    public UnexpectedFeatureQueryAminoAcidException(SingleFeatureQuery query, int sequencePosition,
                                                     AminoAcidCode[] sequenceAminoAcidCodes, AminoAcidCode[] featureAminoAcidCodes) {
         super(query);
 

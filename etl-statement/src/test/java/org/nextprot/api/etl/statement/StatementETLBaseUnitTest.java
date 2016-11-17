@@ -1,12 +1,5 @@
 package org.nextprot.api.etl.statement;
 
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -17,9 +10,17 @@ import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.etl.service.impl.IsoformMappingLocalMockImpl;
 import org.nextprot.api.etl.service.impl.StatementETLServiceImpl;
 import org.nextprot.api.etl.service.impl.StatementTranformerServiceImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl.IsoformFeatureResult;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.mockito.Mockito.when;
 
 public abstract class StatementETLBaseUnitTest {
 
@@ -60,7 +61,7 @@ public abstract class StatementETLBaseUnitTest {
 	private void mockIsoMapperService() {
 
 		{
-			FeatureQuerySuccessImpl result1 = Mockito.mock(FeatureQuerySuccessImpl.class);
+			SingleFeatureQuerySuccessImpl result1 = Mockito.mock(SingleFeatureQuerySuccessImpl.class);
 			Mockito.when(result1.isSuccess()).thenReturn(true);
 			Map<String, IsoformFeatureResult> data1 = new HashMap<String, IsoformFeatureResult>();
 
@@ -70,13 +71,13 @@ public abstract class StatementETLBaseUnitTest {
 					new IsoformFeatureResult("NX_Q15858-4", "Iso 4", 848, 848, 2665, 2667, false, "SCN9A-iso4-p.Ile848Thr")).forEach(r -> data1.put(r.getIsoformAccession(), r));
 
 			Mockito.when(result1.getData()).thenReturn(data1);
-			Mockito.when(isoformMappingServiceMocked.propagateFeature("SCN9A-iso3-p.Ile848Thr", "variant", "NX_Q15858")).thenReturn(result1);
+			Mockito.when(isoformMappingServiceMocked.propagateFeature(new SingleFeatureQuery("SCN9A-iso3-p.Ile848Thr", "variant", "NX_Q15858"))).thenReturn(result1);
 		}
 		/////////////////////////
 
 		{
 
-			FeatureQuerySuccessImpl result2 = Mockito.mock(FeatureQuerySuccessImpl.class);
+			SingleFeatureQuerySuccessImpl result2 = Mockito.mock(SingleFeatureQuerySuccessImpl.class);
 			Mockito.when(result2.isSuccess()).thenReturn(true);
 			Map<String, IsoformFeatureResult> data2 = new HashMap<String, IsoformFeatureResult>();
 
@@ -86,7 +87,7 @@ public abstract class StatementETLBaseUnitTest {
 					new IsoformFeatureResult("NX_Q15858-4", "Iso 4", 932, 932, 2917, 2919, false, "SCN9A-iso4-p.Met932Leu")).forEach(r -> data2.put(r.getIsoformAccession(), r));
 
 			Mockito.when(result2.getData()).thenReturn(data2);
-			Mockito.when(isoformMappingServiceMocked.propagateFeature("SCN9A-iso3-p.Met932Leu", "variant", "NX_Q15858")).thenReturn(result2);
+			Mockito.when(isoformMappingServiceMocked.propagateFeature(new SingleFeatureQuery("SCN9A-iso3-p.Met932Leu", "variant", "NX_Q15858"))).thenReturn(result2);
 
 		}
 
@@ -94,7 +95,7 @@ public abstract class StatementETLBaseUnitTest {
 
 		{
 
-			FeatureQuerySuccessImpl result2 = Mockito.mock(FeatureQuerySuccessImpl.class);
+			SingleFeatureQuerySuccessImpl result2 = Mockito.mock(SingleFeatureQuerySuccessImpl.class);
 			Mockito.when(result2.isSuccess()).thenReturn(true);
 			Map<String, IsoformFeatureResult> data2 = new HashMap<String, IsoformFeatureResult>();
 
@@ -103,7 +104,7 @@ public abstract class StatementETLBaseUnitTest {
 					new IsoformFeatureResult("NX_Q15858-3", "Iso 3", 991, 991, 3094, 3096, false, "SCN9A-iso3-p.Val991Leu")).forEach(r -> data2.put(r.getIsoformAccession(), r));
 
 			Mockito.when(result2.getData()).thenReturn(data2);
-			Mockito.when(isoformMappingServiceMocked.propagateFeature("SCN9A-iso3-p.Val991Leu", "variant", "NX_Q15858")).thenReturn(result2);
+			Mockito.when(isoformMappingServiceMocked.propagateFeature(new SingleFeatureQuery("SCN9A-iso3-p.Val991Leu", "variant", "NX_Q15858"))).thenReturn(result2);
 
 		}
 

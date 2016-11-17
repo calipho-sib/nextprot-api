@@ -1,10 +1,13 @@
 package org.nextprot.api.isoform.mapper.domain;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public abstract class FeatureQueryException extends Exception {
+public abstract class FeatureQueryException extends Exception implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private final FeatureQuery query;
     private final transient ErrorReason error;

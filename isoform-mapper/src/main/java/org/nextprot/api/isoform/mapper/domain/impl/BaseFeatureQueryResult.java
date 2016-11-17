@@ -1,32 +1,31 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
+import com.google.common.base.Preconditions;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Data transfer object that store mapping features results on isoforms
  */
-public abstract class BaseFeatureQueryResult implements FeatureQueryResult {
+public abstract class BaseFeatureQueryResult<FQ extends FeatureQuery> implements FeatureQueryResult {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 20161117L;
 
-	private final FeatureQuery query;
+	private final FQ query;
 
 	public BaseFeatureQueryResult() {
 		this.query = null;
 	}
 
-	public BaseFeatureQueryResult(FeatureQuery query) {
+	public BaseFeatureQueryResult(FQ query) {
 
 		Preconditions.checkNotNull(query);
 
 		this.query = query;
 	}
 
-	public FeatureQuery getQuery() {
+	@Override
+	public FQ getQuery() {
 		return query;
 	}
-
 }

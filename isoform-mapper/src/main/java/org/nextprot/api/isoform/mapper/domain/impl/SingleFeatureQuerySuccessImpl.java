@@ -1,14 +1,13 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
-import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
-import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
+import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
+import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -17,14 +16,14 @@ import java.util.TreeMap;
 /**
  * Contains successful results of a FeatureQuery on an isoform
  */
-public class FeatureQuerySuccessImpl extends BaseFeatureQueryResult implements FeatureQuerySuccess {
+public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<SingleFeatureQuery> implements FeatureQuerySuccess {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 20161117L;
 	private final Map<String, IsoformFeatureResult> data;
     private final transient SequenceFeature feature;
     private final transient Entry entry;
     
-    public FeatureQuerySuccessImpl(Entry entry, FeatureQuery query, SequenceFeature feature) {
+    public SingleFeatureQuerySuccessImpl(Entry entry, SingleFeatureQuery query, SequenceFeature feature) {
         super(query);
 
         this.entry = entry;
