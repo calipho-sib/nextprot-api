@@ -35,7 +35,7 @@ public class GoogleAnalyticsFilter extends OncePerRequestFilter {
 			ga = new GoogleAnalytics(gaTrackingID);
 			Logger.info("Google Analytics filter initialized with " + gaTrackingID);
 		}else {
-			Logger.info("Google Analytics not initialized because -D" + GA_TRACKING_ID_SYS_PROP + "=UA-17852148-3 system property was not found.");
+			Logger.info("Google Analytics not initialized because -D" + GA_TRACKING_ID_SYS_PROP + "=UA-17852148-* system property was not found. Place it in the start.ini of the jetty application.");
 		}
 	}
 
