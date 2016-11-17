@@ -43,10 +43,7 @@ public class GoogleAnalyticsFilter extends OncePerRequestFilter {
 
 		PageViewHit hit = new PageViewHit(request.getRequestURL().toString(), request.getPathInfo());
 
-		String clientId = getClientId(request).toString();
-		//Logger.debug("Client Id" + clientId);
 		Logger.debug("Sending hit: " + request.getRequestURL().toString());
-
 		hit.clientId(getClientId(request).toString());
 
 		// Overriding IP if present from the client
@@ -106,7 +103,7 @@ public class GoogleAnalyticsFilter extends OncePerRequestFilter {
 		sb.append(request.getRemoteUser() + "; ");
 		sb.append(request.getRemoteAddr() + "; ");
 
-		Logger.debug("Building UI based on string " + sb.toString());
+		Logger.debug("Building Client ID based on string " + sb.toString());
 
 		return UUID.nameUUIDFromBytes(sb.toString().getBytes());
 
