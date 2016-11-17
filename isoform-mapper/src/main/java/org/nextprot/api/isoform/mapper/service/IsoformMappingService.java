@@ -16,8 +16,8 @@ public interface IsoformMappingService extends FeatureValidator, FeaturePropagat
 	 * @param function the function that process a FeatureQuery and produces FeatureQueryResult
 	 * @return a map of results
 	 */
-	default Map<String, FeatureQueryResult> execMultipleQuery(MultipleFeatureQuery multipleFeatureQuery,
-													   		  Function<SingleFeatureQuery, FeatureQueryResult> function) {
+	default Map<String, FeatureQueryResult> handleMultipleQueries(MultipleFeatureQuery multipleFeatureQuery,
+																  Function<SingleFeatureQuery, FeatureQueryResult> function) {
 
 		Map<String, FeatureQueryResult> results = new HashMap<>(multipleFeatureQuery.getFeatureList().size()+multipleFeatureQuery.getFeatureMaps().size());
 
