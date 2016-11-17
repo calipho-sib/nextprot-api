@@ -19,6 +19,8 @@
 		<mvc:message-converters register-defaults="false">
 			<!-- This converter was added for the sitemap.xml using annotation @XmlRootElement -->
 			<bean class="org.nextprot.api.web.xstream.SiteMapMarshaller"></bean>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+
 			<!-- TODO Described for what is this converter used -->
 			<bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
 				<property name="marshaller">
@@ -28,7 +30,6 @@
 					<bean class="org.springframework.oxm.xstream.XStreamMarshaller"/>
 				</property>
 			</bean>
-			<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
 			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 				<property name="prettyPrint" value="true" />
 			</bean>
