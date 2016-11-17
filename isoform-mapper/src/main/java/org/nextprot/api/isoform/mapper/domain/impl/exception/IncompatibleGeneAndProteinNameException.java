@@ -1,16 +1,16 @@
 package org.nextprot.api.isoform.mapper.domain.impl.exception;
 
-import java.util.List;
-
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+
+import java.util.List;
 
 public class IncompatibleGeneAndProteinNameException extends FeatureQueryException {
 
     private static final String GENE_NAME = "geneName";
     private static final String EXPECTED_GENE_NAMES = "expectedGeneNames";
 
-    public IncompatibleGeneAndProteinNameException(FeatureQuery query, String geneName, List<String> expectedGeneNames) {
+    public IncompatibleGeneAndProteinNameException(SingleFeatureQuery query, String geneName, List<String> expectedGeneNames) {
 
         super(query);
 

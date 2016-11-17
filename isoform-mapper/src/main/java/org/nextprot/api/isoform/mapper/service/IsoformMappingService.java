@@ -1,28 +1,34 @@
 package org.nextprot.api.isoform.mapper.service;
 
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.MultipleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 
-public interface IsoformMappingService {
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
-	/**
-	 * Check that the specified feature is valid on the given entry
-	 *
-	 * @param isoformFeature the feature to validate
-	 * @param featureType feature type (variant or ptm)
-	 * @param nextprotEntryAccession the entry accession number (example: NX_P01308)
-	 * @return a MappedIsoformsFeatureResult
-	 * @throw a NextprotException when it is not an entry accession
-     */
-	FeatureQueryResult validateFeature(String isoformFeature, String featureType, String nextprotEntryAccession);
+public interface IsoformMappingService extends FeatureValidator, FeaturePropagator {
 
 	/**
-	 * Compute the projections of isoform feature on other isoforms.
-	 *
-	 * @param isoformFeature the feature to project or propagate (can be HGVS name example: SCN11A-p.Leu1158Pro or in case of PTM: BRCA1-P-Ser988)
-	 * @param featureType feature category (variant or ptm)
-	 * @param nextprotEntryAccession the entry accession number (example: NX_P01308)
-     * @return a MappedIsoformsFeatureResult
-	 * @throw a NextprotException when it is not an entry accession
-     */
-	FeatureQueryResult propagateFeature(String isoformFeature, String featureType, String nextprotEntryAccession);
+	 * Execute the given single feature query function to each feature query
+	 * @param multipleFeatureQuery multiple feature query
+	 * @param function the function that process a FeatureQuery and produces FeatureQueryResult
+	 * @return a map of results
+	 */
+	default Map<String, FeatureQueryResult> handleMultipleQueries(MultipleFeatureQuery multipleFeatureQuery,
+																  Function<SingleFeatureQuery, FeatureQueryResult> function) {
+
+		Map<String, FeatureQueryResult> results = new HashMap<>(multipleFeatureQuery.getFeatureList().size()+multipleFeatureQuery.getFeatureMaps().size());
+
+		multipleFeatureQuery.getFeatureList().stream()
+				.filter(feature -> !results.containsKey(feature))
+				.forEach(feature -> results.put(feature, function.apply(new SingleFeatureQuery(feature, multipleFeatureQuery.getFeatureType(), multipleFeatureQuery.getAccession()))));
+
+		multipleFeatureQuery.getFeatureMaps().stream()
+				.filter(featureQuery -> !results.containsKey(featureQuery.get("feature")))
+				.forEach(featureQuery -> results.put(featureQuery.get("feature"), function.apply(new SingleFeatureQuery(featureQuery.get("feature"), multipleFeatureQuery.getFeatureType(), featureQuery.get("accession")))));
+
+		return results;
+	}
 }

@@ -4,15 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MultipleFeatureQuery implements BaseFeatureQuery {
+/**
+ * Multiple queries defined from a list and/or a map of features
+ */
+public class MultipleFeatureQuery extends BaseFeatureQuery {
 
-    private static final long serialVersionUID = 20161116L;
+    private static final long serialVersionUID = 20161117L;
 
     private String featureType;
     private String accession;
     private List<String> featureList = new ArrayList<>();
     private List<Map<String, String>> featureMaps = new ArrayList<>();
 
+    @Override
     public List<String> getFeatureList() {
 
         return featureList;
@@ -48,5 +52,12 @@ public class MultipleFeatureQuery implements BaseFeatureQuery {
     public void setFeatureMaps(List<Map<String, String>> featureMaps) {
 
         this.featureMaps.addAll(featureMaps);
+    }
+
+    public void checkFeatureQuery() throws FeatureQueryException {
+
+        checkAccessionNotIsoform();
+        checkAnnotationCategoryExists();
+        checkFeatureNonEmpty();
     }
 }
