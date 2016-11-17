@@ -1,6 +1,8 @@
 package org.nextprot.api.isoform.mapper.domain;
 
 import com.google.common.base.Preconditions;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UndefinedFeatureQueryException;
 
 import java.util.Collections;
@@ -79,5 +81,15 @@ public class SingleFeatureQuery extends BaseFeatureQuery {
     public void setPropagableFeature(boolean propagableFeature) {
 
         this.propagableFeature = propagableFeature;
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
     }
 }

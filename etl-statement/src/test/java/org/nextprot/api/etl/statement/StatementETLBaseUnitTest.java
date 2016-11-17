@@ -63,7 +63,7 @@ public abstract class StatementETLBaseUnitTest {
 		{
 			SingleFeatureQuerySuccessImpl result1 = Mockito.mock(SingleFeatureQuerySuccessImpl.class);
 			Mockito.when(result1.isSuccess()).thenReturn(true);
-			Map<String, IsoformFeatureResult> data1 = new HashMap<String, IsoformFeatureResult>();
+			Map<String, IsoformFeatureResult> data1 = new HashMap<>();
 
 			Arrays.asList(new IsoformFeatureResult("NX_Q15858-1", "Iso 1", 859, 859, 2665, 2667, true, "SCN9A-iso1-p.Ile859Thr"),
 					new IsoformFeatureResult("NX_Q15858-2", "Iso 2", 859, 859, 2665, 2667, false, "SCN9A-iso2-p.Ile859Thr"),
@@ -79,7 +79,7 @@ public abstract class StatementETLBaseUnitTest {
 
 			SingleFeatureQuerySuccessImpl result2 = Mockito.mock(SingleFeatureQuerySuccessImpl.class);
 			Mockito.when(result2.isSuccess()).thenReturn(true);
-			Map<String, IsoformFeatureResult> data2 = new HashMap<String, IsoformFeatureResult>();
+			Map<String, IsoformFeatureResult> data2 = new HashMap<>();
 
 			Arrays.asList(new IsoformFeatureResult("NX_Q15858-1", "Iso 1", 943, 943, 2917, 2919, true, "SCN9A-iso1-p.Met943Leu"),
 					new IsoformFeatureResult("NX_Q15858-2", "Iso 2", 943, 943, 2917, 2919, false, "SCN9A-iso2-p.Met943Leu"),
@@ -97,7 +97,7 @@ public abstract class StatementETLBaseUnitTest {
 
 			SingleFeatureQuerySuccessImpl result2 = Mockito.mock(SingleFeatureQuerySuccessImpl.class);
 			Mockito.when(result2.isSuccess()).thenReturn(true);
-			Map<String, IsoformFeatureResult> data2 = new HashMap<String, IsoformFeatureResult>();
+			Map<String, IsoformFeatureResult> data2 = new HashMap<>();
 
 			// Let's say this one can not be propagated on 2 and 4
 			Arrays.asList(new IsoformFeatureResult("NX_Q15858-1", "Iso 1", 1002, 1002, 3094, 3096, true, "SCN9A-iso1-p.Val1002Leu"),
