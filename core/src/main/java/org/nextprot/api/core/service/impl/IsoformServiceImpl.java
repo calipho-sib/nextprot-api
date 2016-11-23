@@ -10,6 +10,7 @@ import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.MasterIsoformMappingDao;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ class IsoformServiceImpl implements IsoformService {
 			}
 		}
 
-		Collections.sort(isoforms, (i1, i2) -> i1.getIsoformAccession().compareTo(i2.getIsoformAccession()));
+		Collections.sort(isoforms, (i1, i2) -> new IsoformUtils.IsoformComparator().compare(i1, i2));
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Isoform>().addAll(isoforms).build();
