@@ -6,6 +6,7 @@ import org.nextprot.api.core.domain.Interactant;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.service.MainNamesService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class BinaryInteraction2Annotation {
 
-	public static Annotation transform(Interaction inter, String entryName, List<Isoform> isoforms) {
+	public static Annotation transform(Interaction inter, String entryName, List<Isoform> isoforms, MainNamesService mainNamesService) {
 		
 		// - - - - - - - - - - - - - - - - - - - - 
 		// annotation core object
@@ -85,7 +86,7 @@ public class BinaryInteraction2Annotation {
 		// - - - - - - - - - - - - - - - - - - - - 
 		List<AnnotationProperty> anProps = new ArrayList<>();
 
-		annot.setBioObject(newBioObject(BinaryInteraction2Annotation.getInteractant(inter)));
+		annot.setBioObject(newBioObject(BinaryInteraction2Annotation.getInteractant(inter), mainNamesService));
 
 		// - - - - - - - - - - - - - - - - - - - -
 		// annotation property: self interaction
@@ -104,8 +105,8 @@ public class BinaryInteraction2Annotation {
 		for (Isoform iso: isoforms) {
 			AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
 			spec.setAnnotationId(annotId);
-			spec.setIsoformName(iso.getUniqueName());
-			boolean isSpecific = inter.isInteractionSpecificForIsoform(iso.getUniqueName());
+			spec.setIsoformAccession(iso.getIsoformAccession());
+			boolean isSpecific = inter.isInteractionSpecificForIsoform(iso.getIsoformAccession());
 			spec.setSpecificity(isSpecific ? "SPECIFIC" : "BY DEFAULT");
 			isospecs.add(spec);
 		}
@@ -137,7 +138,7 @@ public class BinaryInteraction2Annotation {
 		return interactant; // should never be null
 	}
 
-	static BioObject newBioObject(Interactant interactant) {
+	static BioObject newBioObject(Interactant interactant, MainNamesService mainNamesService) {
 
 		BioObject.BioType bioType = (interactant.isIsoform()) ? BioObject.BioType.PROTEIN_ISOFORM : BioObject.BioType.PROTEIN;
 
@@ -145,7 +146,19 @@ public class BinaryInteraction2Annotation {
 
 		be.setId(interactant.getXrefId());
 		be.setAccession((interactant.isNextprot()) ? interactant.getNextprotAccession() : interactant.getAccession());
-
+		
+		if (interactant.getGenename()!=null) be.getProperties().put("geneName", interactant.getGenename());
+		if (interactant.isNextprot()) {
+			String ac = interactant.getNextprotAccession();
+			String masterAc = mainNamesService.findIsoformOrEntryMainName().get(ac).getEntryAccession();
+			String proteinName = mainNamesService.findIsoformOrEntryMainName().get(masterAc).getName();
+			be.getProperties().put("proteinName", proteinName);
+			if (interactant.isIsoform()) {
+				String isoName = mainNamesService.findIsoformOrEntryMainName().get(ac).getName();
+				be.getProperties().put("isoformName", isoName);
+			}
+		}
+		if (interactant.getUrl()!=null) be.getProperties().put("url", interactant.getUrl());
 		return be;
 	}
 }

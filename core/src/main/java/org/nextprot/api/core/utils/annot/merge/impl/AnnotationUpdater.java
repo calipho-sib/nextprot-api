@@ -119,9 +119,9 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
                 if (!Objects.equals(srcValue.getLastPosition(), destValue.getLastPosition())) {
                     LOGGER.warning("Category "+dest.getAPICategory()+": different last pos dest="+dest.getUniqueName()+", src="+source.getUniqueName()+", pos: src="+srcValue.getLastPosition()+", dest="+destValue.getLastPosition());
                 }
-                /*if (!Objects.equals(srcValue.getSpecificity(), destValue.getSpecificity())) {
-                    LOGGER.info("Category "+dest.getAPICategory()+": different specificity dest="+dest.getUniqueName()+", src="+source.getUniqueName()+", spec: src="+srcValue.getSpecificity()+", dest="+destValue.getSpecificity());
-                }*/
+                if (!Objects.equals(srcValue.getSpecificity(), destValue.getSpecificity())) {
+                    LOGGER.warning("Category "+dest.getAPICategory()+": different specificity dest="+dest.getUniqueName()+", src="+source.getUniqueName()+", spec: src="+srcValue.getSpecificity()+", dest="+destValue.getSpecificity());
+                }
             }
         }
     }

@@ -98,24 +98,38 @@ public class PepXResponse {
 		public PepXIsoformMatch(){};
 
 		public PepXIsoformMatch(String isoformName){
-			setIsoformName(isoformName);
+			setIsoformAccession(isoformName);
 		};
 		
 		public PepXIsoformMatch(String isoformName, Integer position){
-			setIsoformName(isoformName);
+			setIsoformAccession(isoformName);
 			this.position = position;
 		};
 
-		private String isoformName;
+		private String isoformAc;
 		private Integer position = null;
 
+		@Deprecated
 		public String getIsoformName() {
-			return isoformName;
+			return isoformAc;
 		}
-		public void setIsoformName(String isoformName) {
-			if(!isoformName.startsWith("NX_")){
-				this.isoformName = "NX_" + isoformName;
-			}else this.isoformName = isoformName;
+		
+		public String getIsoformAccession() {
+			return isoformAc;
+		}
+		
+		// Should be removed and replaced with setIsoformAccession()
+		// but it will require change in pepx json output format
+		// Only used by json object mapper
+		@Deprecated
+		public void setIsoformName(String isoformAc) {
+			setIsoformAccession( isoformAc) ;
+		}
+		
+		public void setIsoformAccession(String isoformAc) {
+			if(!isoformAc.startsWith("NX_")){
+				this.isoformAc = "NX_" + isoformAc;
+			}else this.isoformAc = isoformAc;
 		}
 		public Integer getPosition() {
 			if(position != null && position == 0) {

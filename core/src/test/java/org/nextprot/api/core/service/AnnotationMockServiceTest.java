@@ -177,7 +177,7 @@ public class AnnotationMockServiceTest {
 
 		Map<Long, String> ids = extractSequenceIdentifiers(extractor);
 		for (AnnotationIsoformSpecificity spec : specs) {
-			spec.setIsoformName(ids.get(spec.getAnnotationId()));
+			spec.setIsoformAccession(ids.get(spec.getAnnotationId()));
 		}
 
 		return specs;

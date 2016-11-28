@@ -77,12 +77,16 @@ public class InteractionDaoImpl implements InteractionDAO {
 			Interactant otherInteractant = new Interactant();
 			otherInteractant.setAccession(resultSet.getString("interactant_unique_name"));
 			otherInteractant.setGenename(resultSet.getString("interactant_genename"));
+			otherInteractant.setProteinName(resultSet.getString("interactant_protname"));
 			otherInteractant.setXrefId(resultSet.getLong("interactant_xref_id"));
 			otherInteractant.setDatabase(resultSet.getString("interactant_database"));
-			otherInteractant.setUrl(resultSet.getString("interactant_url"));
 			otherInteractant.setNextprot(resultSet.getBoolean("is_interactant_in_nextprot"));
+			if (otherInteractant.isNextprot()) {
+				otherInteractant.setUrl("https://www.nextprot.org/entry/" + otherInteractant.getNextprotAccession() + "/interactions");
+			} else {
+				otherInteractant.setUrl(resultSet.getString("interactant_url"));
+			}
 			otherInteractant.setEntryPoint(false);
-
 			
 			//TODO make a unit test for this
 			//Special case for the url

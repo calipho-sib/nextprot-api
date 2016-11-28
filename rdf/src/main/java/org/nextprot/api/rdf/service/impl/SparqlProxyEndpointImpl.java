@@ -8,8 +8,6 @@ import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlProxyEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -25,26 +23,26 @@ public class SparqlProxyEndpointImpl implements SparqlProxyEndpoint {
 
 	@Override
 	@Cacheable("sparql-proxy")
-	public ResponseEntity<String> sparql(String body, String queryString) {
-		return sparqlInternal(body, queryString);
+	public ResponseEntity<String> sparql(String queryString) {
+		return sparqlInternal(queryString);
 	}
 
-	
 	@Override
-	public ResponseEntity<String> sparqlNoCache(String body, String queryString) {
-		return sparqlInternal(body, queryString);
+	public ResponseEntity<String> sparqlNoCache(String queryString) {
+		return sparqlInternal(queryString);
 	}
 
 	
-	private ResponseEntity<String> sparqlInternal(String body, String queryString) {
+	private ResponseEntity<String> sparqlInternal(String queryString) {
 
 		ResponseEntity<String> responseEntity;
 		String url = sparqlEndpoint.getUrl() + ((queryString != null) ? ("?" + queryString) : "");
 
-		RestTemplate template = new RestTemplate();
 		try {
 
-			responseEntity = template.exchange(new URI(url), HttpMethod.GET, new HttpEntity<String>(body), String.class);
+
+			RestTemplate template = new RestTemplate();
+			responseEntity = template.getForEntity(new URI(url), String.class);
 			return responseEntity;
 
 		} catch (HttpServerErrorException | HttpClientErrorException e) {

@@ -33,7 +33,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 				.addField(StatementField.REFERENCE_DATABASE, "PubMed")
 				.addField(StatementField.REFERENCE_ACCESSION, "123").build();
 		
-		AnnotationBuilder ab = EntryAnnotationBuilder.newBuilder(terminologyService, publicationService);
+		AnnotationBuilder ab = EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService);
 		AnnotationEvidence evidence = new AnnotationEvidence();
 		ab.setEvidenceResourceId(evidence, sb1);
 		Assert.assertEquals(evidence.getResourceId(), 999);
@@ -49,7 +49,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 		Statement sb1 = StatementBuilder.createNew()
 				.addField(StatementField.REFERENCE_DATABASE, "PubMed")
 				.addField(StatementField.REFERENCE_ACCESSION, "000").build();
-		AnnotationBuilder ab = EntryAnnotationBuilder.newBuilder(terminologyService, publicationService);
+		AnnotationBuilder ab = EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService);
 		AnnotationEvidence evidence = new AnnotationEvidence();
 		ab.setEvidenceResourceId(evidence, sb1);
 		
@@ -57,7 +57,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 	
 	@Override
 	protected EntryAnnotationBuilder newAnnotationBuilder() {
-		return EntryAnnotationBuilder.newBuilder(terminologyService, publicationService);
+		return EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService);
 	}
 	
 	

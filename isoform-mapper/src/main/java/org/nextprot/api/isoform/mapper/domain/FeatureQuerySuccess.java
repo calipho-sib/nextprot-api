@@ -1,8 +1,8 @@
 package org.nextprot.api.isoform.mapper.domain;
 
-import java.util.Map;
+import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
 
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl.IsoformFeatureResult;
+import java.util.Map;
 
 public interface FeatureQuerySuccess extends FeatureQueryResult{
 	
@@ -11,5 +11,4 @@ public interface FeatureQuerySuccess extends FeatureQueryResult{
 	default boolean isSuccess() {
 		return true;
 	}
-
 }

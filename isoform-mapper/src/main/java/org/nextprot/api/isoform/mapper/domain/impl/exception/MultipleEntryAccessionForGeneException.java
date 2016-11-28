@@ -1,16 +1,16 @@
 package org.nextprot.api.isoform.mapper.domain.impl.exception;
 
-import java.util.Collection;
-
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+
+import java.util.Collection;
 
 public class MultipleEntryAccessionForGeneException extends FeatureQueryException {
 
     private static final String GENE_NAME = "geneName";
     private static final String FOUND_ACCESSIONS = "foundAccessions";
 
-    public MultipleEntryAccessionForGeneException(FeatureQuery query, String geneName, Collection<String> accessions) {
+    public MultipleEntryAccessionForGeneException(SingleFeatureQuery query, String geneName, Collection<String> accessions) {
 
         super(query);
 

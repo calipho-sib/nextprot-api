@@ -91,7 +91,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		List<Annotation> annotations = new ArrayList<>();
 		annotations.add(annot);
 		
-		AnnotationUtils.convertType2EvidencesToProperties(annotations);
+		AnnotationUtils.convertRelativeEvidencesToProperties(annotations);
 
 		Assert.assertEquals(1, annotations.get(0).getEvidences().size());  // evidence type 2 should removed
 		Assert.assertEquals(1, annotations.get(0).getProperties().size()); // property should be created (replaces evidence removed)
@@ -154,7 +154,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		List<Annotation> annotations = new ArrayList<Annotation>();
 		annotations.add(annot);
 		
-		AnnotationUtils.convertType2EvidencesToProperties(annotations);
+		AnnotationUtils.convertRelativeEvidencesToProperties(annotations);
 
 		Assert.assertEquals(1, annotations.get(0).getEvidences().size());  // evidence type 2 should removed
 		Assert.assertEquals(1, annotations.get(0).getProperties().size()); // property should be created (replaces evidence removed)
@@ -211,7 +211,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		ev.setResourceDb("ChEBI");
 		ev.setResourceId(39334228);
 
-		BioObject bo = AnnotationUtils.newExternalBioObject(ev);
+		BioObject bo = AnnotationUtils.newExternalChemicalBioObject(ev);
 		Assert.assertEquals("CHEBI:38290", bo.getAccession());
 		Assert.assertEquals("ChEBI", bo.getDatabase());
 		Assert.assertEquals(39334228, bo.getId());

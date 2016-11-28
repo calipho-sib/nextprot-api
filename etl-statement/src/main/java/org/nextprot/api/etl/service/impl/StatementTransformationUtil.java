@@ -1,20 +1,13 @@
 package org.nextprot.api.etl.service.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
+import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl.IsoformFeatureResult;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.nextprot.commons.constants.IsoTargetSpecificity;
 import org.nextprot.commons.statements.Statement;
@@ -23,7 +16,11 @@ import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import org.nextprot.commons.statements.constants.AnnotationType;
 
-import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class StatementTransformationUtil {
 
@@ -94,7 +91,7 @@ public class StatementTransformationUtil {
 		for (Statement subject : multipleSubjects) {
 
 			FeatureQueryResult featureQueryResult;
-			featureQueryResult = isoformMappingService.propagateFeature(subject.getValue(StatementField.ANNOTATION_NAME), "variant", nextprotAccession);
+			featureQueryResult = isoformMappingService.propagateFeature(new SingleFeatureQuery(subject.getValue(StatementField.ANNOTATION_NAME), "variant", nextprotAccession));
 			if (featureQueryResult.isSuccess()) {
 				result.add(mapVariationStatementToEntry(subject, (FeatureQuerySuccess) featureQueryResult));
 			} else {

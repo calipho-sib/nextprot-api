@@ -33,7 +33,7 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 	private Integer firstPosition; // should be at least 1
 	// if lastPosition = null, it means that it is unknown (same as db representation)
 	private Integer lastPosition;
-	private String isoformName;
+	private String isoformAccession;
 	private String specificity; // cv_name related to annotation_protein_assoc.cv_specificity_qualifier_type_id
 
 	private String name;
@@ -97,14 +97,27 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 
 	}
 
-	public String getIsoformName() {
-		return isoformName;
+	
+	public String getIsoformAccession() {
+		return isoformAccession;
 	}
 
-	//TODO looks like we alway set the accession here. Should be setIsoformAccession instead
+	public void setIsoformAccession(String ac) {
+		this.isoformAccession = (ac != null) ? ac : "";
+		_comparableName = (this.isoformAccession.startsWith("Iso ")) ? formatIsoName(this.isoformAccession) : this.isoformAccession;
+	}
+
+	@Deprecated
+	public String getIsoformName() {
+		return isoformAccession;
+	}
+
+	//TODO looks like we always set the accession here. Should be setIsoformAccession instead
+	// => yes, always used to set ac, never used to set name, so set as deprecated (pam, 11.2016)
+	@Deprecated
 	public void setIsoformName(String isoformName) {
-		this.isoformName = (isoformName != null) ? isoformName : "";
-		_comparableName = (this.isoformName.startsWith("Iso ")) ? formatIsoName(this.isoformName) : this.isoformName;
+		this.isoformAccession = (isoformName != null) ? isoformName : "";
+		_comparableName = (this.isoformAccession.startsWith("Iso ")) ? formatIsoName(this.isoformAccession) : this.isoformAccession;
 	}
 
 	static String formatIsoName(String name) {
@@ -127,14 +140,14 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 		return annotationId == that.annotationId &&
 				Objects.equals(firstPosition, that.firstPosition) &&
 				Objects.equals(lastPosition, that.lastPosition) &&
-				Objects.equals(isoformName, that.isoformName) &&
+				Objects.equals(isoformAccession, that.isoformAccession) &&
 				Objects.equals(specificity, that.specificity) &&
 				Objects.equals(_comparableName, that._comparableName);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(annotationId, firstPosition, lastPosition, isoformName, specificity, _comparableName);
+		return Objects.hash(annotationId, firstPosition, lastPosition, isoformAccession, specificity, _comparableName);
 	}
 
 	@Override
@@ -145,10 +158,14 @@ public class AnnotationIsoformSpecificity implements Serializable, Comparable<An
 
 	public boolean hasSameIsoformPositions(AnnotationIsoformSpecificity other) {
 
-		return isoformName.equals(other.isoformName) &&
+		return isoformAccession.equals(other.isoformAccession) &&
 				Objects.equals(firstPosition, other.firstPosition) && Objects.equals(lastPosition, other.lastPosition);
 	}
 
+	/**
+	 * This is NOT for the isoform name, it is used to set the variant name for example.
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}

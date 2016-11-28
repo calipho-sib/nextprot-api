@@ -6,7 +6,7 @@ import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.XRefDatabase;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
@@ -24,7 +24,7 @@ public class DbXrefURLResolver {
 
     private DbXrefURLResolver() {
 
-        resolvers = new HashMap<>();
+        resolvers = new EnumMap<>(XRefDatabase.class);
         resolvers.put(XRefDatabase.WEBINFO,        new WebInfoXrefURLResolver());
         resolvers.put(XRefDatabase.COSMIC,         new CosmicXrefURLResolver());
         resolvers.put(XRefDatabase.EMBL,           new EmblXrefURLResolver());
@@ -64,6 +64,10 @@ public class DbXrefURLResolver {
     private static class Loader {
 
         private static DbXrefURLResolver INSTANCE = new DbXrefURLResolver();
+
+        private Loader() {
+            throw new IllegalAccessError("Non instanciable");
+        }
     }
 
     /**
@@ -101,16 +105,15 @@ public class DbXrefURLResolver {
     // TODO: this implementation is ugly and should be refactored
     public String resolveWithAccession(DbXref xref, String accession) {
 
-        if (xref.getLinkUrl().contains("%u")) {
+        if (xref != null && xref.getLinkUrl() != null && xref.getLinkUrl().contains("%u")) {
 
-            accession = accession.startsWith("NX_") ? accession.substring(3) : accession;
             String templateURL = xref.getLinkUrl();
 
             if (!templateURL.startsWith("http")) {
                 templateURL = "http://" + templateURL;
             }
 
-            if (xref.getDatabaseName().equalsIgnoreCase("brenda")) {
+            if ("brenda".equalsIgnoreCase(xref.getDatabaseName())) {
 
                 if (xref.getAccession().startsWith("BTO")) {
                     templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s", xref.getAccession().replace(":", "_"));
@@ -122,7 +125,7 @@ public class DbXrefURLResolver {
                 }
             }
 
-            String resolved = templateURL.replaceFirst("%u", accession);
+            String resolved = templateURL.replaceFirst("%u", accession.startsWith("NX_") ? accession.substring(3) : accession);
 
             return resolved.replaceFirst("%s", xref.getAccession());
         }

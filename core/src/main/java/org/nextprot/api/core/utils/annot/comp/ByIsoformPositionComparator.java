@@ -73,7 +73,7 @@ class ByIsoformPositionComparator implements Comparator<Annotation> {
         else if (targets.containsKey(canonicalIsoformUniqueName))
             return canonicalIsoformUniqueName;
         else
-            return ByFeaturePositionComparator.getFirstIsoformSpecificity(targets.values()).getIsoformName();
+            return ByFeaturePositionComparator.getFirstIsoformSpecificity(targets.values()).getIsoformAccession();
     }
 
     private int compareIsoCanonicalFirstThenByIsoName(String isoformName1, String isoformName2) {

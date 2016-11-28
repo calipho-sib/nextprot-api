@@ -1,12 +1,14 @@
 package org.nextprot.api.core.service.impl;
 
 import com.google.common.collect.ImmutableList;
+
 import org.nextprot.api.core.dao.InteractionDAO;
 import org.nextprot.api.core.domain.Interaction;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.InteractionService;
 import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.MainNamesService;
 import org.nextprot.api.core.utils.BinaryInteraction2Annotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,6 +22,7 @@ class InteractionServiceImpl implements InteractionService {
 
 	@Autowired private InteractionDAO interactionDAO;
 	@Autowired private IsoformService isoService;
+	@Autowired private MainNamesService mainNamesService;
 
 	@Override
 	@Cacheable("interactions")
@@ -37,7 +40,7 @@ class InteractionServiceImpl implements InteractionService {
 		List<Isoform> isoforms = this.isoService.findIsoformsByEntryName(entryName);
 		List<Interaction> interactions = this.interactionDAO.findInteractionsByEntry(entryName);
 		for (Interaction inter : interactions) {
-			Annotation annot = BinaryInteraction2Annotation.transform(inter, entryName, isoforms);
+			Annotation annot = BinaryInteraction2Annotation.transform(inter, entryName, isoforms, mainNamesService);
 			annots.add(annot);
 		}
 

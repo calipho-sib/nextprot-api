@@ -20,7 +20,7 @@ public class SequenceVariationHGVSParseDelinsTest {
         Assert.assertEquals(AminoAcidCode.THREONINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(399, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION_INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("L"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("L"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
@@ -33,7 +33,7 @@ public class SequenceVariationHGVSParseDelinsTest {
         Assert.assertEquals(330, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(331, pm.getLastChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION_INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("F"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("F"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class SequenceVariationHGVSParseDelinsTest {
         Assert.assertEquals(419, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(420, pm.getLastChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION_INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("SSDG"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("SSDG"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
@@ -57,7 +57,7 @@ public class SequenceVariationHGVSParseDelinsTest {
         Assert.assertEquals(AminoAcidCode.THREONINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(399, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION_INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("L"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("L"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class SequenceVariationHGVSParseDelinsTest {
         Assert.assertEquals(330, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(331, pm.getLastChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION_INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("F"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("F"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class SequenceVariationHGVSParseDelinsTest {
         Assert.assertEquals(419, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(420, pm.getLastChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION_INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("SSDG"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("SSDG"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
@@ -94,7 +94,7 @@ public class SequenceVariationHGVSParseDelinsTest {
         Assert.assertEquals(AminoAcidCode.THREONINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(399, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION_INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("L"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("L"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class SequenceVariationHGVSParseDelinsTest {
         Assert.assertEquals(330, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(331, pm.getLastChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION_INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("F"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("F"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
@@ -120,7 +120,7 @@ public class SequenceVariationHGVSParseDelinsTest {
         Assert.assertEquals(39, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(40, pm.getLastChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION_INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("*"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("*"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 
     @Test
@@ -133,6 +133,19 @@ public class SequenceVariationHGVSParseDelinsTest {
         Assert.assertEquals(419, pm.getFirstChangingAminoAcidPos());
         Assert.assertEquals(420, pm.getLastChangingAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION_INSERTION, pm.getSequenceChange().getType());
-        Assert.assertArrayEquals(AminoAcidCode.valueOfOneLetterCodeSequence("SSDG"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("SSDG"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
+    }
+
+    @Test
+    public void testParseAmbiguousAminoAcidsFixCALIPHOMISC568() throws Exception {
+
+        SequenceVariation pm = format.parse("p.Phe709delinsXaaTrpXaa", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+
+        Assert.assertEquals(AminoAcidCode.PHENYLALANINE, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(AminoAcidCode.PHENYLALANINE, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(709, pm.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(709, pm.getLastChangingAminoAcidPos());
+        Assert.assertEquals(SequenceChange.Type.DELETION_INSERTION, pm.getSequenceChange().getType());
+        Assert.assertArrayEquals(AminoAcidCode.valueOfAminoAcidCodeSequence("XWX"), (AminoAcidCode[]) pm.getSequenceChange().getValue());
     }
 }

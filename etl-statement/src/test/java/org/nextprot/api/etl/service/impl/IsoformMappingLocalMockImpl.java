@@ -1,32 +1,31 @@
 package org.nextprot.api.etl.service.impl;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.etl.service.IsoMapperDictionary;
+import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl.IsoformFeatureResult;
+import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.etl.service.IsoMapperDictionary;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl.IsoformFeatureResult;
-import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class IsoformMappingLocalMockImpl implements IsoformMappingService {
 
 	@Override
-	public FeatureQueryResult validateFeature(String isoformFeature, String featureType, String nextprotEntryAccession) {
+	public FeatureQueryResult validateFeature(SingleFeatureQuery featureQuery) {
 		throw new NextProtException("Not implemented yet in local mock");
 	}
 
 	@Override
-	public FeatureQueryResult propagateFeature(String isoformFeature, String featureType, String nextprotEntryAccession) {
+	public FeatureQueryResult propagateFeature(SingleFeatureQuery featureQuery) {
 
 		IsoMapperDictionary imd = new IsoMapperDictionary();
-		String json = imd.getIsoMapperResponse("propagate" + "-" + featureType + "-" + isoformFeature);
+		String json = imd.getIsoMapperResponse("propagate" + "-" + featureQuery.getFeatureType() + "-" + featureQuery.getFeature());
 		return new FeatureQuerySuccessResultMock(json);
 
 	}
@@ -35,7 +34,7 @@ public class IsoformMappingLocalMockImpl implements IsoformMappingService {
 
 		private static final long serialVersionUID = 1L;
 		private Map<String, IsoformFeatureResult> data = null;
-		private FeatureQuery query = null;
+		private SingleFeatureQuery query = null;
 
 		@SuppressWarnings("unchecked")
 		public FeatureQuerySuccessResultMock(String json) {
@@ -53,7 +52,7 @@ public class IsoformMappingLocalMockImpl implements IsoformMappingService {
 				ObjectMapper om2 = new ObjectMapper();
 				om2.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-				query = om2.readValue(om2.writeValueAsString(map.get("query")), FeatureQuery.class);
+				query = om2.readValue(om2.writeValueAsString(map.get("query")), SingleFeatureQuery.class);
 
 				for (Map.Entry<String, Object> entry : dataResult.entrySet()) {
 					Object o = entry.getValue();
@@ -69,14 +68,14 @@ public class IsoformMappingLocalMockImpl implements IsoformMappingService {
 			return data;
 		}
 
-		public FeatureQuery getQuery() {
+		public SingleFeatureQuery getQuery() {
 			return query;
 		}
 	}
 
 	public static void main(String[] args) {
 		IsoformMappingLocalMockImpl mi = new IsoformMappingLocalMockImpl();
-		FeatureQueryResult fq = mi.propagateFeature("SCN9A-iso3-p.Met932Leu", "variant", null);
+		FeatureQueryResult fq = mi.propagateFeature(new SingleFeatureQuery("SCN9A-iso3-p.Met932Leu", "variant", null));
 	}
 
 }

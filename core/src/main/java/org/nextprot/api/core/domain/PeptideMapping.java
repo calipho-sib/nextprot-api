@@ -63,7 +63,7 @@ public class PeptideMapping implements Serializable, IsoformSpecific {
 	}
 	
 	public void addIsoformSpecificity(AnnotationIsoformSpecificity newIsoformSpecificity) {
-		String isoName = newIsoformSpecificity.getIsoformName();
+		String isoName = newIsoformSpecificity.getIsoformAccession();
 		if(this.isoformSpecificity.containsKey(isoName)) { // add position
 			AnnotationIsoformSpecificity isospec = this.isoformSpecificity.get(isoName);
 			isospec.setFirstPosition(newIsoformSpecificity.getFirstPosition());

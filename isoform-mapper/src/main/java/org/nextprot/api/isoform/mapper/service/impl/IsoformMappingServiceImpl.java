@@ -1,17 +1,5 @@
 package org.nextprot.api.isoform.mapper.service.impl;
 
-import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
-import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
-import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
-import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.SequenceFeatureBase;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFoundForGeneException;
-import org.nextprot.api.isoform.mapper.domain.impl.exception.MultipleEntryAccessionForGeneException;
-import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
-import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
@@ -21,6 +9,16 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.IsoformUtils;
+import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
+import org.nextprot.api.isoform.mapper.domain.*;
+import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
+import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
+import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.impl.SequenceFeatureBase;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFoundForGeneException;
+import org.nextprot.api.isoform.mapper.domain.impl.exception.MultipleEntryAccessionForGeneException;
+import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
+import org.nextprot.api.isoform.mapper.service.SequenceFeatureValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,9 +43,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     private MasterIdentifierService masterIdentifierService;
 
     @Override
-    public BaseFeatureQueryResult validateFeature(String featureName, String featureType, String nextprotEntryAccession) {
-
-        FeatureQuery query = new FeatureQuery(nextprotEntryAccession, featureName, featureType);
+    public BaseFeatureQueryResult validateFeature(SingleFeatureQuery query) {
 
         try {
             SequenceFeature sequenceFeature = SequenceFeatureBase.newFeature(query);
@@ -64,13 +60,13 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     }
 
     @Override
-    public BaseFeatureQueryResult propagateFeature(String featureName, String featureType, String nextprotEntryAccession) {
+    public BaseFeatureQueryResult propagateFeature(SingleFeatureQuery query) {
 
-        BaseFeatureQueryResult results = validateFeature(featureName, featureType, nextprotEntryAccession);
+        BaseFeatureQueryResult results = validateFeature(query);
 
         if (results.isSuccess()) {
             try {
-                propagate((FeatureQuerySuccessImpl) results);
+                propagate((SingleFeatureQuerySuccessImpl) results);
             } catch (ParseException e) {
                 throw new NextProtException(e.getMessage());
             }
@@ -80,9 +76,9 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     }
 
     // TODO: refactor this method, it is too complex (probably a propagator object)
-    private void propagate(FeatureQuerySuccessImpl successResults) throws ParseException {
+    private void propagate(SingleFeatureQuerySuccessImpl successResults) throws ParseException {
 
-        FeatureQuery query = successResults.getQuery();
+        SingleFeatureQuery query = successResults.getQuery();
 
         query.setPropagableFeature(true);
 
@@ -130,7 +126,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
     /**
      * Build entry from entry accession or deduced from geneName if undefined
      */
-    private Entry buildEntryFromAccessionElseFromGene(FeatureQuery query, String geneName) throws FeatureQueryException {
+    private Entry buildEntryFromAccessionElseFromGene(SingleFeatureQuery query, String geneName) throws FeatureQueryException {
 
         String accession = query.getAccession();
 

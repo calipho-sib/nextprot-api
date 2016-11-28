@@ -1,11 +1,11 @@
 package org.nextprot.api.isoform.mapper.service;
 
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
-import org.nextprot.api.isoform.mapper.domain.impl.FeatureQuerySuccessImpl;
+import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 public class SequenceFeatureValidator {
 
     private final Entry entry;
-    private final FeatureQuery query;
+    private final SingleFeatureQuery query;
 
-    public SequenceFeatureValidator(Entry entry, FeatureQuery query) {
+    public SequenceFeatureValidator(Entry entry, SingleFeatureQuery query) {
         this.entry = entry;
         this.query = query;
     }
@@ -41,7 +41,7 @@ public class SequenceFeatureValidator {
 
         doMoreChecks(sequenceFeature.getProteinVariation());
 
-        return new FeatureQuerySuccessImpl(entry, query, sequenceFeature);
+        return new SingleFeatureQuerySuccessImpl(entry, query, sequenceFeature);
     }
 
     private void checkIsoformExistence(SequenceFeature sequenceFeature) throws UnknownFeatureIsoformException {
@@ -96,7 +96,7 @@ public class SequenceFeatureValidator {
      * Check that the given amino-acid(s) exist(s) at the given position of given isoform sequence
      * @throws FeatureQueryException if invalid
      */
-    private void checkIsoformPos(Isoform isoform, int position, String aas, FeatureQuery query) throws FeatureQueryException {
+    private void checkIsoformPos(Isoform isoform, int position, String aas, SingleFeatureQuery query) throws FeatureQueryException {
 
         boolean insertionMode = (aas == null || aas.isEmpty());
         boolean valid = IsoformSequencePositionMapper.checkSequencePosition(isoform, position, insertionMode);
@@ -110,8 +110,8 @@ public class SequenceFeatureValidator {
             String aasOnSequence = isoform.getSequence().substring(position - 1, position + aas.length() - 1);
 
             throw new UnexpectedFeatureQueryAminoAcidException(query, position,
-                    AminoAcidCode.valueOfOneLetterCodeSequence(aasOnSequence),
-                    AminoAcidCode.valueOfOneLetterCodeSequence(aas));
+                    AminoAcidCode.valueOfAminoAcidCodeSequence(aasOnSequence),
+                    AminoAcidCode.valueOfAminoAcidCodeSequence(aas));
         }
     }
 }

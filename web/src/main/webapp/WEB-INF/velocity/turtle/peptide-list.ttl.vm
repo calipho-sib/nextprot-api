@@ -2,15 +2,15 @@
 # Peptides mappings
 
 #foreach($isoform in $entry.getIsoforms())
-#set($isoform-name =  $isoform.getUniqueName())
-#foreach($pep in $entry.getPeptidesByIsoform($isoform-name))
+#set($isoform-ac =  $isoform.getUniqueName())
+#foreach($pep in $entry.getPeptidesByIsoform($isoform-ac))
 #set($pep-name=$pep.peptideUniqueName) 
-#set($mapping-iri="NATUR-"+$pep-name+"-"+$isoform-name)
+#set($mapping-iri="NATUR-"+$pep-name+"-"+$isoform-ac)
 #foreach($spec in $pep.isoformSpecificity.values())
-#if ($spec.isoformName==$isoform-name) 
-  isoform:$isoform-name :positionalAnnotation :$mapping-iri .
-  isoform:$isoform-name :mapping :$mapping-iri .
-  isoform:$isoform-name :peptideMapping :$mapping-iri .
+#if ($spec.isoformAccession==$isoform-ac) 
+  isoform:$isoform-ac :positionalAnnotation :$mapping-iri .
+  isoform:$isoform-ac :mapping :$mapping-iri .
+  isoform:$isoform-ac :peptideMapping :$mapping-iri .
   :$mapping-iri rdf:type :PeptideMapping ;  
     :peptideName "$pep-name"^^xsd:string ;
     :proteotypic "$pep.isProteotypic()"^^xsd:boolean ;

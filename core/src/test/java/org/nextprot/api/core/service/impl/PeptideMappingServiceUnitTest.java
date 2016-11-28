@@ -42,13 +42,13 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(spec.getAnnotationId()==annotId);
     	assertTrue(spec.getFirstPosition()==881);
     	assertTrue(spec.getLastPosition()==901);
-    	spec.getIsoformName().equals("NX_Q9UGM3-1");
+    	spec.getIsoformAccession().equals("NX_Q9UGM3-1");
     	assertTrue(spec.getSpecificity().equals("SPECIFIC"));
     	spec = annot.getTargetingIsoformsMap().get("NX_Q9UGM3-2");
     	assertTrue(spec.getAnnotationId()==annotId);
     	assertTrue(spec.getFirstPosition()==382);
     	assertTrue(spec.getLastPosition()==402);
-    	spec.getIsoformName().equals("NX_Q9UGM3-2");
+    	spec.getIsoformAccession().equals("NX_Q9UGM3-2");
     	assertTrue(spec.getSpecificity().equals("SPECIFIC"));
     	
     }
@@ -80,7 +80,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(spec.getAnnotationId()==annotId);
     	assertTrue(spec.getFirstPosition()==881);
     	assertTrue(spec.getLastPosition()==901);
-    	spec.getIsoformName().equals("NX_Q9UGM3-1");
+    	spec.getIsoformAccession().equals("NX_Q9UGM3-1");
     	assertTrue(spec.getSpecificity().equals("SPECIFIC"));
     	
 		// checking second annotation
@@ -99,7 +99,7 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
     	assertTrue(spec.getAnnotationId()==annotId2);
     	assertTrue(spec.getFirstPosition()==382);
     	assertTrue(spec.getLastPosition()==402);
-    	spec.getIsoformName().equals("NX_Q9UGM3-1");
+    	spec.getIsoformAccession().equals("NX_Q9UGM3-1");
     	assertTrue(spec.getSpecificity().equals("SPECIFIC"));
     	
     }

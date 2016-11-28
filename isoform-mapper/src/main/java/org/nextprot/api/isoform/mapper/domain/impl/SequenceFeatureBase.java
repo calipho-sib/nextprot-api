@@ -1,7 +1,6 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
 import com.google.common.base.Preconditions;
-
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
@@ -11,9 +10,9 @@ import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.utils.IsoformUtils;
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryFormatException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.InvalidFeatureQueryTypeException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.UnknownIsoformRuntimeException;
@@ -47,7 +46,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         this.variation = parser.parse(variation);
     }
 
-    public static SequenceFeature newFeature(FeatureQuery query) throws FeatureQueryException {
+    public static SequenceFeature newFeature(SingleFeatureQuery query) throws FeatureQueryException {
 
         // throw exception if invalid query
         query.checkFeatureQuery();
@@ -147,7 +146,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
                 .append("-")
                 .append(formatIsoformFeatureName(isoform))
                 .append("-")
-                .append(parser.format(isoVariation, AminoAcidCode.AACodeType.THREE_LETTER));
+                .append(parser.format(isoVariation, AminoAcidCode.CodeType.THREE_LETTER));
 
         return sb.toString();
     }

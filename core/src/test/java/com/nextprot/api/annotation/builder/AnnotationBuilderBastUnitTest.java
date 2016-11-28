@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Publication;
+import org.nextprot.api.core.service.MainNamesService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 
@@ -19,6 +20,8 @@ public abstract class AnnotationBuilderBastUnitTest {
 	protected TerminologyService terminologyService;
 	@Mock
 	protected PublicationService publicationService;
+	@Mock
+	protected MainNamesService mainNamesService;
 
 	@Before
 	public void init() throws FileNotFoundException, DataSetException {
@@ -37,6 +40,9 @@ public abstract class AnnotationBuilderBastUnitTest {
 
 		Mockito.when(publicationService.findPublicationByDatabaseAndAccession("PubMed", "000")).thenReturn(null);
 		Mockito.when(publicationService.findPublicationByDatabaseAndAccession("PubMed", "123")).thenReturn(pub);
+		
+		//unused in tests yet
+		Mockito.when(mainNamesService.findIsoformOrEntryMainName()).thenReturn(null);
 
 	}
 	

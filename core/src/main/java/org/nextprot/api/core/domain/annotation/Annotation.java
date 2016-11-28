@@ -332,7 +332,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 
 	public void addTargetingIsoforms(List<AnnotationIsoformSpecificity> targetingIsoforms) {
 		for (AnnotationIsoformSpecificity isospecAnnot : targetingIsoforms) {
-			targetingIsoformsMap.put(isospecAnnot.getIsoformName(), isospecAnnot);
+			targetingIsoformsMap.put(isospecAnnot.getIsoformAccession(), isospecAnnot);
 		}
 	}
 	

@@ -120,7 +120,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			annotation.setAnnotationId(resultSet.getLong("annotation_id"));
 			annotation.setFirstPosition((Integer)resultSet.getObject("first_pos"));  // the SQL increments first_pos by 1
 			annotation.setLastPosition((Integer)resultSet.getObject("last_pos"));
-			annotation.setIsoformName(resultSet.getString("unique_name"));
+			annotation.setIsoformAccession(resultSet.getString("unique_name"));
 			annotation.setSpecificity(resultSet.getString("iso_specificity"));
 			return annotation;
 		}
@@ -210,7 +210,7 @@ public class AnnotationDAOImpl implements AnnotationDAO {
 			property.setValue("mutation AA".equals(name) ?
 					// TODO: 'mutation AA' property comes from COSMIC. Some values could be not corrected formatter according to the last version v2.0 of HGV
 					// This reformatting should be done at NP integration time, even better, this should be done by COSMIC guys !
-					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE), AminoAcidCode.AACodeType.THREE_LETTER)
+					MUTATION_HGV_FORMAT.format(MUTATION_HGV_FORMAT.parse(value, SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE), AminoAcidCode.CodeType.THREE_LETTER)
 					: value);
 		} catch (ParseException e) {
 			throw new NextProtException(e);

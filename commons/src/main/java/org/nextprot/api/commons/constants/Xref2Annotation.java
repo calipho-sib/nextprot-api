@@ -9,6 +9,7 @@ public enum Xref2Annotation  {
 
 	ORPHANET("Orphanet", "disease", AnnotationCategory.DISEASE.getDbAnnotationTypeName(),
 			"Orphanet","GOLD","curated", "IC","ECO:0000305", "curator inference used in manual assertion"),
+	// GOLD => SILVER, see https://issues.isb-sib.ch/browse/NEXTPROT-1139
 	REACTOME("Reactome", "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 
 			"Reactome","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
 	DRUGBANK("DrugBank", "generic name", AnnotationCategory.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),

@@ -50,7 +50,7 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 				PeptideMapping peptideMapping = new PeptideMapping();
 				peptideMapping.setPeptideUniqueName(resultSet.getString("pep_unique_name"));
 				AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
-				spec.setIsoformName(resultSet.getString("iso_unique_name"));
+				spec.setIsoformAccession(resultSet.getString("iso_unique_name"));
 				spec.setFirstPosition(resultSet.getInt("first_pos"));
 				spec.setLastPosition(resultSet.getInt("last_pos"));
 				peptideMapping.addIsoformSpecificity(spec);

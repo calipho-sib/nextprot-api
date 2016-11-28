@@ -84,7 +84,7 @@ public class AntibodyMappingDaoImpl implements AntibodyMappingDao {
 
 			AnnotationIsoformSpecificity isoSpecificity = new AnnotationIsoformSpecificity();
 
-            isoSpecificity.setIsoformName(isoName);
+            isoSpecificity.setIsoformAccession(isoName);
 			isoSpecificity.setFirstPosition((Integer)resultSet.getObject("first_pos")); // better than using getInt which returns a primitive and can not be null
 			isoSpecificity.setLastPosition((Integer)resultSet.getObject("last_pos"));
             isoSpecificity.setSpecificity("SPECIFIC");

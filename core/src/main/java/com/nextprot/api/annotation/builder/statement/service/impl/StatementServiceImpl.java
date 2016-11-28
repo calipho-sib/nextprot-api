@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.MainNamesService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.Statement;
@@ -33,6 +34,9 @@ public class StatementServiceImpl implements StatementService {
 	@Autowired
 	public PublicationService publicationService;
 
+	@Autowired
+	public MainNamesService mainNamesService;
+
 
 	private List<Annotation> getProteoformEntryAnnotations(String entryAccession) {
 
@@ -45,14 +49,14 @@ public class StatementServiceImpl implements StatementService {
 		
 		List<Statement> subjects = statementDao.findStatementsByAnnotIsoIds(AnnotationType.ENTRY, subjectAnnotIds);
 		
-		return EntryAnnotationBuilder.newBuilder(terminologyService, publicationService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
+		return EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService).buildProteoformIsoformAnnotations(entryAccession, subjects, proteoformStatements);
 
 	}
 
 
 	private List<Annotation> getNormalEntryAnnotations(String entryAccession) {
 		List<Statement> normalStatements = statementDao.findNormalStatements(AnnotationType.ENTRY, entryAccession);
-		List<Annotation>  annotations =  EntryAnnotationBuilder.newBuilder(terminologyService, publicationService).buildAnnotationList(entryAccession, normalStatements);
+		List<Annotation>  annotations =  EntryAnnotationBuilder.newBuilder(terminologyService, publicationService, mainNamesService).buildAnnotationList(entryAccession, normalStatements);
 		return annotations;
 		
 	}

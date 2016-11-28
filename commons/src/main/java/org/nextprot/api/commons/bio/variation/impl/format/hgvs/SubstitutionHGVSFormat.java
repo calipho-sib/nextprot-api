@@ -3,6 +3,7 @@ package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.*;
 import org.nextprot.api.commons.bio.variation.impl.Substitution;
+import org.nextprot.api.commons.utils.StringUtils;
 
 import java.text.ParseException;
 import java.util.regex.Matcher;
@@ -21,10 +22,10 @@ public class SubstitutionHGVSFormat implements SequenceChangeFormat<Substitution
 
         if (m.matches()) {
 
-            AminoAcidCode affectedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(1), m.group(2));
+            AminoAcidCode affectedAA = AminoAcidCode.parseAminoAcidCode(StringUtils.concat(m.group(1), m.group(2)));
             int affectedAAPos = Integer.parseInt(m.group(3));
 
-            AminoAcidCode substitutedAA = AminoAcidCode.valueOfAminoAcidCode(m.group(4), m.group(5));
+            AminoAcidCode substitutedAA = AminoAcidCode.parseAminoAcidCode(StringUtils.concat(m.group(4), m.group(5)));
 
             return builder.selectAminoAcid(affectedAA, affectedAAPos).thenSubstituteWith(substitutedAA).build();
         }
@@ -38,7 +39,7 @@ public class SubstitutionHGVSFormat implements SequenceChangeFormat<Substitution
     }
 
     @Override
-    public void format(StringBuilder sb, Substitution change, AminoAcidCode.AACodeType type) {
+    public void format(StringBuilder sb, Substitution change, AminoAcidCode.CodeType type) {
 
         sb.append(AminoAcidCode.formatAminoAcidCode(type, change.getValue()));
     }

@@ -39,16 +39,16 @@ public class SparqlController {
 	
 	@RequestMapping("/sparql")
 	@ResponseBody
-	public ResponseEntity<String> mirrorRest(@RequestBody String body, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
-		return this.sparqlProxyEndpoint.sparql(body, getQueryString(request));
+	public ResponseEntity<?> mirrorRest(HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
+		return this.sparqlProxyEndpoint.sparql(getQueryString(request));
 	}
 
 	
 	
 	@RequestMapping("/sparql-nocache")
 	@ResponseBody
-	public ResponseEntity<String> mirrorRestWithoutCache(@RequestBody String body, HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
-		return this.sparqlProxyEndpoint.sparqlNoCache(body, getQueryString(request));
+	public ResponseEntity<String> mirrorRestWithoutCache(HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
+		return this.sparqlProxyEndpoint.sparqlNoCache(getQueryString(request));
 	}
 
 	

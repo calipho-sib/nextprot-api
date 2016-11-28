@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../../../../../../com.genebio.nextprot.datamodel/src/main/resources/dbxsd/dataset.xsd">
+
+	<sequence_identifiers identifier_id="1" unique_name="NX_12345" cv_status_id="1" cv_type_id="1" />
+	<sequence_identifiers identifier_id="2" unique_name="NX_12346" cv_status_id="1" cv_type_id="1" />
+	<sequence_identifiers identifier_id="3" unique_name="NX_12347" cv_status_id="1" cv_type_id="1" />
+
+	<sequence_identifiers identifier_id="4" unique_name="NX_12345-1" cv_status_id="1" cv_type_id="2" />
+	<sequence_identifiers identifier_id="5" unique_name="NX_12345-2" cv_status_id="1" cv_type_id="2" />
+	<sequence_identifiers identifier_id="6" unique_name="NX_12346-1" cv_status_id="1" cv_type_id="2" />
+	<sequence_identifiers identifier_id="7" unique_name="NX_12347-1" cv_status_id="1" cv_type_id="2" />
+
+	<isoform_identifier_view master_id="1" isoform_id="4" master_name="Master name 1" unique_name="NX_12345-1" isoform_name="Short" gene_name="GENE1" />
+	<isoform_identifier_view master_id="1" isoform_id="5" master_name="Master name 1" unique_name="NX_12345-2" isoform_name="Long" gene_name="GENE1" />
+	<isoform_identifier_view master_id="2" isoform_id="6" master_name="Master name 2" unique_name="NX_12346-1" isoform_name="1" gene_name="GENE2" />
+	<isoform_identifier_view master_id="3" isoform_id="7" master_name="Master name 3" unique_name="NX_12347-1" isoform_name="Alpha" gene_name="GENE3; GENE4; GENE5" />
+	
+</dataset>

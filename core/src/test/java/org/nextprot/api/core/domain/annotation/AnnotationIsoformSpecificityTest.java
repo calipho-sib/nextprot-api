@@ -63,7 +63,7 @@ public class AnnotationIsoformSpecificityTest {
         int i=0;
         for (AnnotationIsoformSpecificity spec: specs) {
             i++;
-            Assert.assertEquals("Iso " + i, spec.getIsoformName()); // TITIN has Iso 1, Iso 2, ... Iso 13
+            Assert.assertEquals("Iso " + i, spec.getIsoformAccession()); // TITIN has Iso 1, Iso 2, ... Iso 13
         }
     }
 
@@ -73,7 +73,7 @@ public class AnnotationIsoformSpecificityTest {
 
         for (int i=count ; i>0 ; i--) {
             AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
-            spec.setIsoformName("Iso "+i);
+            spec.setIsoformAccession("Iso "+i); // <= should be only accession in there !
             specs.add(spec);
         }
 
@@ -83,7 +83,7 @@ public class AnnotationIsoformSpecificityTest {
     private AnnotationIsoformSpecificity mockAnnotationIsoformSpecificity(String name, Integer first, Integer last) {
 
         AnnotationIsoformSpecificity specificity = new AnnotationIsoformSpecificity();
-        specificity.setIsoformName(name);
+        specificity.setIsoformAccession(name);
         specificity.setFirstPosition(first);
         specificity.setLastPosition(last);
 

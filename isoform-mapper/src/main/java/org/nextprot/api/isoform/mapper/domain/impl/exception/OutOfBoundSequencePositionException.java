@@ -1,13 +1,13 @@
 package org.nextprot.api.isoform.mapper.domain.impl.exception;
 
-import org.nextprot.api.isoform.mapper.domain.FeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 
 public class OutOfBoundSequencePositionException extends FeatureQueryException {
 
     static final String SEQUENCE_POS = "sequencePosition";
 
-    public OutOfBoundSequencePositionException(FeatureQuery query, int position) {
+    public OutOfBoundSequencePositionException(SingleFeatureQuery query, int position) {
 
         super(query);
 

@@ -53,7 +53,7 @@ class ByFeaturePositionComparator implements Comparator<Annotation> {
         if (targets.size() == 1)
             return targets.keySet().iterator().next();
         else
-            return getFirstIsoformSpecificity(targets.values()).getIsoformName();
+            return getFirstIsoformSpecificity(targets.values()).getIsoformAccession();
     }
 
     static AnnotationIsoformSpecificity getFirstIsoformSpecificity(Collection<AnnotationIsoformSpecificity> targets) {

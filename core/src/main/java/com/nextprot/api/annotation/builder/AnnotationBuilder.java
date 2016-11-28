@@ -23,6 +23,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
 import org.nextprot.api.core.domain.annotation.AnnotationVariant;
+import org.nextprot.api.core.service.MainNamesService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
@@ -35,8 +36,9 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
 	protected static final Logger LOGGER = Logger.getLogger(AnnotationBuilder.class);
 
-	private TerminologyService terminologyService = null;
-	private PublicationService publicationService = null;
+	protected TerminologyService terminologyService = null;
+	protected PublicationService publicationService = null;
+	protected MainNamesService mainNamesService = null;
 
 	/**
 	 * Flag that indicates that the build should throw an Exception at the first error or just log silently
@@ -46,9 +48,10 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 	
 	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
 	
-	protected AnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService){
+	protected AnnotationBuilder(TerminologyService terminologyService, PublicationService publicationService, MainNamesService mainNamesService){
 		this.terminologyService = terminologyService;
 		this.publicationService = publicationService;
+		this.mainNamesService = mainNamesService;
 	}
 	
 	
@@ -323,9 +326,13 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
 				if (AnnotationCategory.BINARY_INTERACTION.equals(annotation.getAPICategory())) {
 					if(bioObjectAccession.startsWith("NX_") && BioType.PROTEIN.name().equalsIgnoreCase(bot)){
+						// note that if we handle BioType.PROTEIN_ISOFORM in the future, we should
+						// add the property isoformName as well, see how it's done in BinaryInteraction2Annotation.newBioObject()
 						bioObject = BioObject.internal(BioType.PROTEIN);
-						bioObject.setAccession(bioObjectAccession);
+						bioObject.setAccession(bioObjectAccession);						
 						bioObject.putPropertyNameValue("geneName", firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
+						String proteinName = (String)mainNamesService.findIsoformOrEntryMainName().get(bioObjectAccession).getName();
+						bioObject.putPropertyNameValue("proteinName", proteinName);
 					}else {
 						throw new NextProtException("Binary Interaction only expects to be a nextprot entry NX_ and found " + bioObjectAccession + " with type " + bot);
 					}
@@ -342,10 +349,14 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 
 			annotations.add(annotation);
 			
+			
 
 		});
 		return annotations;
 	}
+	
+	
+	
 	
 	private Object throwErrorOrReturn(String message, Object returnObject){
 

@@ -102,7 +102,7 @@ public class AntibodyMapping implements Serializable, IsoformSpecific {
 	}
 	
 	public void addIsoformSpecificity(AnnotationIsoformSpecificity newIsoformSpecificity) {
-		String isoName = newIsoformSpecificity.getIsoformName();
+		String isoName = newIsoformSpecificity.getIsoformAccession();
 		//System.out.println("adding specificity:" + newIsoformSpecificity);
 		//for (IsoformSpecificity isp: this.isoformSpecificity.values()) System.out.println("among existing: "+ isp.toString());
 		if(this.isoformSpecificity.containsKey(isoName)) { // add position

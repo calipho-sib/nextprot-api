@@ -147,7 +147,7 @@ public class ByAnnotationVariantComparatorTest {
             AnnotationIsoformSpecificity specificity = Mockito.mock(AnnotationIsoformSpecificity.class);
             when(specificity.getFirstPosition()).thenReturn(target.getStart());
             when(specificity.getLastPosition()).thenReturn(target.getEnd());
-            when(specificity.getIsoformName()).thenReturn(target.getIsoformAccession());
+            when(specificity.getIsoformAccession()).thenReturn(target.getIsoformAccession());
 
             when(mock.getStartPositionForIsoform(target.getIsoformAccession())).thenReturn(target.getStart());
             when(mock.getEndPositionForIsoform(target.getIsoformAccession())).thenReturn(target.getEnd());

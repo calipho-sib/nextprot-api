@@ -105,7 +105,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 				}
 			}
 	
-			AnnotationUtils.convertType2EvidencesToProperties(annotations); // CALIPHOMISC-277
+			AnnotationUtils.convertRelativeEvidencesToProperties(annotations); // CALIPHOMISC-277
 
 			for (Annotation annot : annotations) {
 				refactorDescription(annot);
@@ -164,7 +164,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			AnnotationIsoformSpecificity spec = new AnnotationIsoformSpecificity();
 
 			spec.setAnnotationId(annotationId);
-			spec.setIsoformName(isoform.getUniqueName());
+			spec.setIsoformAccession(isoform.getIsoformAccession());
 			spec.setSpecificity("UNKNOWN");
 
 			specs.add(spec);
