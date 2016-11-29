@@ -92,4 +92,9 @@ public class SingleFeatureQuery extends BaseFeatureQuery {
     public boolean equals(Object obj) {
         return EqualsBuilder.reflectionEquals(this, obj);
     }
+
+    public void setAccession(String accession) {
+
+        this.accession = accession;
+    }
 }
