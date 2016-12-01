@@ -22,7 +22,7 @@ public class BlastPController {
 	@RequestMapping(value = "/blastp/{query}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public String runBlastp(
-			@ApiPathParam(name = "query", description = "A protein sequence query).",  allowedvalues = { "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR" })
+			@ApiPathParam(name = "query", description = "A protein sequence query.",  allowedvalues = { "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR" })
 			@PathVariable("query") String query,
 			@RequestParam(value = "debug", required = false) boolean debug) {
 
