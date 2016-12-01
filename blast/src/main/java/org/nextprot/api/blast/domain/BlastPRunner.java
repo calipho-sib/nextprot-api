@@ -10,6 +10,9 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Executes locally installed blastP program with protein sequence query
+ */
 public class BlastPRunner {
 
     private File tempQueryFile;
@@ -20,24 +23,15 @@ public class BlastPRunner {
         this.config = config;
     }
 
-    // prepare input from config: create file from sequence query ?
-    // run blastp external command line program
-    //// blastp -db db/nextprot -query query/NX_P52701_211-239.fasta -outfmt 5
-    // get output string
-    //
-
     public String run(String query) throws NextProtException {
 
         try {
             writeTempQueryFile(query);
 
-            // execute my command
             SystemCommandExecutor commandExecutor = new SystemCommandExecutor(buildCommandLine());
-
             commandExecutor.executeCommand();
 
             StringBuilder stdout = commandExecutor.getStandardOutputFromCommand();
-
             StringBuilder stderr = commandExecutor.getStandardErrorFromCommand();
 
             if (!stderr.toString().isEmpty()) {
@@ -61,7 +55,7 @@ public class BlastPRunner {
 
         command.add(config.getBlastDirPath()+"/blastp");
         command.add("-db");
-        command.add(config.getNextprotDatabasePath());
+        command.add(config.getNextprotDatabasePath()+"/nextprot");
         command.add("-query");
         command.add(tempQueryFile.getAbsolutePath());
         command.add("-outfmt");
