@@ -3,14 +3,20 @@ package org.nextprot.api.blast.service;
 
 import org.nextprot.api.blast.domain.BlastPConfig;
 
-@FunctionalInterface
+import java.util.Map;
+
 public interface BlastPService {
 
     /**
      * Run blastp with the given config
      * @param config the blastp config
-     * @param query the query sequence (fasta)
+     * @param header query header
+     * @param sequence the protein sequence (fasta)
      * @return a json formatted string
      */
-    String runBlastP(BlastPConfig config, String query);
+    String blastProteinSequence(BlastPConfig config, String header, String sequence);
+
+    Map<String, String> blastEntry(BlastPConfig config, String entryName);
+
+    String blastIsoform(BlastPConfig config, String isoformName, Integer from, Integer to);
 }

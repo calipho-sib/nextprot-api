@@ -11,8 +11,7 @@ public class BlastPRunnerTest {
 
         BlastPRunner runner = new BlastPRunner(new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db"));
 
-        String out = runner.run(">subseq 211-239 of NX_P52701\n" +
-                "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
+        String out = runner.run("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
 
         Assert.assertTrue(out.startsWith("{\n\"BlastOutput2\": ["));
     }
@@ -20,8 +19,8 @@ public class BlastPRunnerTest {
     @Test(expected = NextProtException.class)
     public void blastpShouldThrowNPException() throws Exception {
 
-        BlastPRunner runner = new BlastPRunner(new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db"));
+        BlastPRunner runner = new BlastPRunner(new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+", "/Users/fnikitin/data/blast/db"));
 
-        runner.run("subseq 211-239 of NX_P52701\nGTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
+        runner.run("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
     }
 }
