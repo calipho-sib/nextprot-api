@@ -56,11 +56,6 @@ public class Report implements Serializable
         this.program = program;
     }
 
-    public Report withProgram(String program) {
-        this.program = program;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -79,11 +74,6 @@ public class Report implements Serializable
     @JsonProperty("version")
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public Report withVersion(String version) {
-        this.version = version;
-        return this;
     }
 
     /**
@@ -106,11 +96,6 @@ public class Report implements Serializable
         this.reference = reference;
     }
 
-    public Report withReference(String reference) {
-        this.reference = reference;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -129,11 +114,6 @@ public class Report implements Serializable
     @JsonProperty("search_target")
     public void setSearchTarget(SearchTarget searchTarget) {
         this.searchTarget = searchTarget;
-    }
-
-    public Report withSearchTarget(SearchTarget searchTarget) {
-        this.searchTarget = searchTarget;
-        return this;
     }
 
     /**
@@ -156,11 +136,6 @@ public class Report implements Serializable
         this.params = params;
     }
 
-    public Report withParams(Params params) {
-        this.params = params;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -180,10 +155,4 @@ public class Report implements Serializable
     public void setResults(Results results) {
         this.results = results;
     }
-
-    public Report withResults(Results results) {
-        this.results = results;
-        return this;
-    }
-
 }

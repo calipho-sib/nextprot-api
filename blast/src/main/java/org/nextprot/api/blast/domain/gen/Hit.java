@@ -51,11 +51,6 @@ public class Hit implements Serializable
         this.num = num;
     }
 
-    public Hit withNum(int num) {
-        this.num = num;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -74,11 +69,6 @@ public class Hit implements Serializable
     @JsonProperty("description")
     public void setDescription(List<Description> description) {
         this.description = description;
-    }
-
-    public Hit withDescription(List<Description> description) {
-        this.description = description;
-        return this;
     }
 
     /**
@@ -101,11 +91,6 @@ public class Hit implements Serializable
         this.len = len;
     }
 
-    public Hit withLen(int len) {
-        this.len = len;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -125,10 +110,4 @@ public class Hit implements Serializable
     public void setHsps(List<Hsp> hsps) {
         this.hsps = hsps;
     }
-
-    public Hit withHsps(List<Hsp> hsps) {
-        this.hsps = hsps;
-        return this;
-    }
-
 }

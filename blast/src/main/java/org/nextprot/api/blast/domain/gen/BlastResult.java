@@ -44,11 +44,6 @@ public class BlastResult implements Serializable
         this.blastOutput2 = blastOutput2;
     }
 
-    public BlastResult withBlastOutput2(List<BlastOutput2> blastOutput2) {
-        this.blastOutput2 = blastOutput2;
-        return this;
-    }
-
     public static BlastResult fromJson(String json) throws IOException {
 
         ObjectMapper mapper = new ObjectMapper();

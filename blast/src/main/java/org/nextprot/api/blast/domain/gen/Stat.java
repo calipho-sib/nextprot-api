@@ -59,11 +59,6 @@ public class Stat implements Serializable
         this.dbNum = dbNum;
     }
 
-    public Stat withDbNum(int dbNum) {
-        this.dbNum = dbNum;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -82,11 +77,6 @@ public class Stat implements Serializable
     @JsonProperty("db_len")
     public void setDbLen(int dbLen) {
         this.dbLen = dbLen;
-    }
-
-    public Stat withDbLen(int dbLen) {
-        this.dbLen = dbLen;
-        return this;
     }
 
     /**
@@ -109,11 +99,6 @@ public class Stat implements Serializable
         this.hspLen = hspLen;
     }
 
-    public Stat withHspLen(int hspLen) {
-        this.hspLen = hspLen;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -132,11 +117,6 @@ public class Stat implements Serializable
     @JsonProperty("eff_space")
     public void setEffSpace(int effSpace) {
         this.effSpace = effSpace;
-    }
-
-    public Stat withEffSpace(int effSpace) {
-        this.effSpace = effSpace;
-        return this;
     }
 
     /**
@@ -159,11 +139,6 @@ public class Stat implements Serializable
         this.kappa = kappa;
     }
 
-    public Stat withKappa(double kappa) {
-        this.kappa = kappa;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -182,11 +157,6 @@ public class Stat implements Serializable
     @JsonProperty("lambda")
     public void setLambda(double lambda) {
         this.lambda = lambda;
-    }
-
-    public Stat withLambda(double lambda) {
-        this.lambda = lambda;
-        return this;
     }
 
     /**
@@ -208,10 +178,4 @@ public class Stat implements Serializable
     public void setEntropy(double entropy) {
         this.entropy = entropy;
     }
-
-    public Stat withEntropy(double entropy) {
-        this.entropy = entropy;
-        return this;
-    }
-
 }

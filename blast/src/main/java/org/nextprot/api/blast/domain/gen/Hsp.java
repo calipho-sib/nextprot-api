@@ -83,11 +83,6 @@ public class Hsp implements Serializable
         this.num = num;
     }
 
-    public Hsp withNum(int num) {
-        this.num = num;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -106,11 +101,6 @@ public class Hsp implements Serializable
     @JsonProperty("bit_score")
     public void setBitScore(double bitScore) {
         this.bitScore = bitScore;
-    }
-
-    public Hsp withBitScore(double bitScore) {
-        this.bitScore = bitScore;
-        return this;
     }
 
     /**
@@ -133,11 +123,6 @@ public class Hsp implements Serializable
         this.score = score;
     }
 
-    public Hsp withScore(int score) {
-        this.score = score;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -156,11 +141,6 @@ public class Hsp implements Serializable
     @JsonProperty("evalue")
     public void setEvalue(double evalue) {
         this.evalue = evalue;
-    }
-
-    public Hsp withEvalue(double evalue) {
-        this.evalue = evalue;
-        return this;
     }
 
     /**
@@ -183,11 +163,6 @@ public class Hsp implements Serializable
         this.identity = identity;
     }
 
-    public Hsp withIdentity(int identity) {
-        this.identity = identity;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -206,11 +181,6 @@ public class Hsp implements Serializable
     @JsonProperty("positive")
     public void setPositive(int positive) {
         this.positive = positive;
-    }
-
-    public Hsp withPositive(int positive) {
-        this.positive = positive;
-        return this;
     }
 
     /**
@@ -233,11 +203,6 @@ public class Hsp implements Serializable
         this.queryFrom = queryFrom;
     }
 
-    public Hsp withQueryFrom(int queryFrom) {
-        this.queryFrom = queryFrom;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -256,11 +221,6 @@ public class Hsp implements Serializable
     @JsonProperty("query_to")
     public void setQueryTo(int queryTo) {
         this.queryTo = queryTo;
-    }
-
-    public Hsp withQueryTo(int queryTo) {
-        this.queryTo = queryTo;
-        return this;
     }
 
     /**
@@ -283,11 +243,6 @@ public class Hsp implements Serializable
         this.hitFrom = hitFrom;
     }
 
-    public Hsp withHitFrom(int hitFrom) {
-        this.hitFrom = hitFrom;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -306,11 +261,6 @@ public class Hsp implements Serializable
     @JsonProperty("hit_to")
     public void setHitTo(int hitTo) {
         this.hitTo = hitTo;
-    }
-
-    public Hsp withHitTo(int hitTo) {
-        this.hitTo = hitTo;
-        return this;
     }
 
     /**
@@ -333,11 +283,6 @@ public class Hsp implements Serializable
         this.alignLen = alignLen;
     }
 
-    public Hsp withAlignLen(int alignLen) {
-        this.alignLen = alignLen;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -356,11 +301,6 @@ public class Hsp implements Serializable
     @JsonProperty("gaps")
     public void setGaps(int gaps) {
         this.gaps = gaps;
-    }
-
-    public Hsp withGaps(int gaps) {
-        this.gaps = gaps;
-        return this;
     }
 
     /**
@@ -383,11 +323,6 @@ public class Hsp implements Serializable
         this.qseq = qseq;
     }
 
-    public Hsp withQseq(String qseq) {
-        this.qseq = qseq;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -406,11 +341,6 @@ public class Hsp implements Serializable
     @JsonProperty("hseq")
     public void setHseq(String hseq) {
         this.hseq = hseq;
-    }
-
-    public Hsp withHseq(String hseq) {
-        this.hseq = hseq;
-        return this;
     }
 
     /**
@@ -432,10 +362,4 @@ public class Hsp implements Serializable
     public void setMidline(String midline) {
         this.midline = midline;
     }
-
-    public Hsp withMidline(String midline) {
-        this.midline = midline;
-        return this;
-    }
-
 }

@@ -40,10 +40,4 @@ public class Results implements Serializable
     public void setSearch(Search search) {
         this.search = search;
     }
-
-    public Results withSearch(Search search) {
-        this.search = search;
-        return this;
-    }
-
 }

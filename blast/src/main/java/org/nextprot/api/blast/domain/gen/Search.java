@@ -15,6 +15,7 @@ import java.util.List;
 @JsonPropertyOrder({
     "query_id",
     "query_title",
+    "query_seq",
     "query_len",
     "hits",
     "stat"
@@ -26,6 +27,8 @@ public class Search implements Serializable
     private String queryId;
     @JsonProperty("query_title")
     private String queryTitle;
+    @JsonProperty("query_seq")
+    private String querySeq;
     @JsonProperty("query_len")
     private int queryLen;
     @JsonProperty("hits")
@@ -54,23 +57,13 @@ public class Search implements Serializable
         this.queryId = queryId;
     }
 
-    public Search withQueryId(String queryId) {
-        this.queryId = queryId;
-        return this;
-    }
-
-    /**
-     * 
-     * @return
-     *     The queryTitle
-     */
     @JsonProperty("query_title")
     public String getQueryTitle() {
         return queryTitle;
     }
 
     /**
-     * 
+     *
      * @param queryTitle
      *     The query_title
      */
@@ -79,9 +72,14 @@ public class Search implements Serializable
         this.queryTitle = queryTitle;
     }
 
-    public Search withQueryTitle(String queryTitle) {
-        this.queryTitle = queryTitle;
-        return this;
+    @JsonProperty("query_seq")
+    public String getQuerySeq() {
+        return querySeq;
+    }
+
+    @JsonProperty("query_seq")
+    public void setQuerySeq(String querySeq) {
+        this.querySeq = querySeq;
     }
 
     /**
@@ -104,10 +102,6 @@ public class Search implements Serializable
         this.queryLen = queryLen;
     }
 
-    public Search withQueryLen(int queryLen) {
-        this.queryLen = queryLen;
-        return this;
-    }
 
     /**
      * 
@@ -153,10 +147,4 @@ public class Search implements Serializable
     public void setStat(Stat stat) {
         this.stat = stat;
     }
-
-    public Search withStat(Stat stat) {
-        this.stat = stat;
-        return this;
-    }
-
 }

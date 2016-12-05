@@ -40,10 +40,4 @@ public class BlastOutput2 implements Serializable
     public void setReport(Report report) {
         this.report = report;
     }
-
-    public BlastOutput2 withReport(Report report) {
-        this.report = report;
-        return this;
-    }
-
 }

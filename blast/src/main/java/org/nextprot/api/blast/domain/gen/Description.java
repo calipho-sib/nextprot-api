@@ -14,7 +14,11 @@ import java.io.Serializable;
 @JsonPropertyOrder({
     "id",
     "accession",
-    "title"
+    "title",
+    "entry_url",
+    "iso_accession",
+    "protein_name",
+    "gene_name"
 })
 public class Description implements Serializable
 {
@@ -25,6 +29,14 @@ public class Description implements Serializable
     private String accession;
     @JsonProperty("title")
     private String title;
+    @JsonProperty("iso_accession")
+    private String isoAccession;
+    @JsonProperty("entry_accession")
+    private String entryAccession;
+    @JsonProperty("protein_name")
+    private String proteinName;
+    @JsonProperty("gene_name")
+    private String geneName;
     private final static long serialVersionUID = -3670991271422757868L;
 
     /**
@@ -47,11 +59,6 @@ public class Description implements Serializable
         this.id = id;
     }
 
-    public Description withId(String id) {
-        this.id = id;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -70,11 +77,6 @@ public class Description implements Serializable
     @JsonProperty("accession")
     public void setAccession(String accession) {
         this.accession = accession;
-    }
-
-    public Description withAccession(String accession) {
-        this.accession = accession;
-        return this;
     }
 
     /**
@@ -97,9 +99,35 @@ public class Description implements Serializable
         this.title = title;
     }
 
-    public Description withTitle(String title) {
-        this.title = title;
-        return this;
+    public String getIsoAccession() {
+        return isoAccession;
     }
 
+    public void setIsoAccession(String isoAccession) {
+        this.isoAccession = isoAccession;
+    }
+
+    public String getEntryAccession() {
+        return entryAccession;
+    }
+
+    public void setEntryAccession(String entryAccession) {
+        this.entryAccession = entryAccession;
+    }
+
+    public String getProteinName() {
+        return proteinName;
+    }
+
+    public void setProteinName(String proteinName) {
+        this.proteinName = proteinName;
+    }
+
+    public String getGeneName() {
+        return geneName;
+    }
+
+    public void setGeneName(String geneName) {
+        this.geneName = geneName;
+    }
 }

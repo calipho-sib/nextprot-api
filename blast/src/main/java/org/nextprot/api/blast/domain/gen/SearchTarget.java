@@ -40,10 +40,4 @@ public class SearchTarget implements Serializable
     public void setDb(String db) {
         this.db = db;
     }
-
-    public SearchTarget withDb(String db) {
-        this.db = db;
-        return this;
-    }
-
 }

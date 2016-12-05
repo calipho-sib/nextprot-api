@@ -56,11 +56,6 @@ public class Params implements Serializable
         this.matrix = matrix;
     }
 
-    public Params withMatrix(String matrix) {
-        this.matrix = matrix;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -79,11 +74,6 @@ public class Params implements Serializable
     @JsonProperty("expect")
     public void setExpect(int expect) {
         this.expect = expect;
-    }
-
-    public Params withExpect(int expect) {
-        this.expect = expect;
-        return this;
     }
 
     /**
@@ -106,11 +96,6 @@ public class Params implements Serializable
         this.gapOpen = gapOpen;
     }
 
-    public Params withGapOpen(int gapOpen) {
-        this.gapOpen = gapOpen;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -129,11 +114,6 @@ public class Params implements Serializable
     @JsonProperty("gap_extend")
     public void setGapExtend(int gapExtend) {
         this.gapExtend = gapExtend;
-    }
-
-    public Params withGapExtend(int gapExtend) {
-        this.gapExtend = gapExtend;
-        return this;
     }
 
     /**
@@ -156,11 +136,6 @@ public class Params implements Serializable
         this.filter = filter;
     }
 
-    public Params withFilter(String filter) {
-        this.filter = filter;
-        return this;
-    }
-
     /**
      * 
      * @return
@@ -180,10 +155,4 @@ public class Params implements Serializable
     public void setCbs(int cbs) {
         this.cbs = cbs;
     }
-
-    public Params withCbs(int cbs) {
-        this.cbs = cbs;
-        return this;
-    }
-
 }
