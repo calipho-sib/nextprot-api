@@ -11,9 +11,6 @@ import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Service
 public class BlastPServiceImpl implements BlastPService {
 
@@ -27,53 +24,43 @@ public class BlastPServiceImpl implements BlastPService {
     }
 
     @Override
-    public Map<String, String> blastEntry(BlastPConfig config, String entryName) {
+    public String blastIsoform(BlastPConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
 
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withTargetIsoforms());
-
-        Map<String, String> results = new HashMap<>();
-
-        for (Isoform isoform : entry.getIsoforms()) {
-
-            results.put(isoform.getIsoformAccession(), blastIsoform(config, isoform, 0, isoform.getSequenceLength()-1));
-        }
-
-        return results;
-    }
-
-    @Override
-    public String blastIsoform(BlastPConfig config, String isoformName, Integer from, Integer to) {
-
-        if (!isoformName.contains("-")) {
+        if (!isoformAccession.contains("-")) {
             // bad format isoform name
         }
 
-        String entryName = isoformName.split("-")[0];
+        String entryAccession = isoformAccession.split("-")[0];
 
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryName).withTargetIsoforms());
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withTargetIsoforms());
 
-        return blastIsoform(config, IsoformUtils.getIsoformByName(entry, isoformName), from, to);
-    }
+        Isoform isoform = IsoformUtils.getIsoformByName(entry, isoformAccession);
+        String isoformSequence = isoform.getSequence();
 
-    private String blastIsoform(BlastPConfig config, Isoform isoform, Integer from, Integer to) {
+        int begin = (begin1BasedIndex != null) ? begin1BasedIndex : 1;
+        int end = (end1BasedIndex != null) ? end1BasedIndex : isoformSequence.length();
 
-        String sequence = isoform.getSequence();
+        // swap indices if needed
+        if (begin > end) {
 
-        int fromIndex = (from != null) ? from : 0;
-        int toIndex = (to != null) ? to : sequence.length()-1;
-
-        // swap positions
-        if (fromIndex > toIndex) {
-
-            int tmp = fromIndex;
-            fromIndex = toIndex;
-            toIndex = tmp;
+            int tmp = begin;
+            begin = end;
+            end = tmp;
         }
 
-        if (toIndex >= sequence.length()) {
+        if (end > isoformSequence.length()) {
             // out of bound error
         }
 
-        return blastProteinSequence(config, isoform.getIsoformAccession()+": "+fromIndex+"-"+toIndex, sequence.substring(fromIndex, toIndex+1));
+        // format header
+        StringBuilder header = new StringBuilder();
+
+        if (end - begin + 1 < isoformSequence.length()) {
+
+            header.append("Selection of ").append(begin).append("-").append(end).append(" ");
+        }
+        header.append("from protein ").append(entryAccession).append(", isoform ").append(isoform.getMainEntityName().getName());
+
+        return blastProteinSequence(config, header.toString(), isoformSequence.substring(begin-1, end));
     }
 }
