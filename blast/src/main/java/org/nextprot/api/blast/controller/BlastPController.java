@@ -12,8 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @Controller
 @Api(name = "BlastP", description = "Search protein sequence into neXtProt database.", group = "Tools")
 public class BlastPController {
@@ -36,21 +34,6 @@ public class BlastPController {
 		config.setDebugMode(debug);
 
 		return blastPService.blastProteinSequence(config, header, sequence);
-	}
-
-	@ApiMethod(path = "/blastp/entry/{entry}", verb = ApiVerb.GET, description = "Search isoform sequences from neXtProt entry", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/blastp/entry/{entry}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
-	@ResponseBody
-	public Map<String, String> blastEntry(
-			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308.",  allowedvalues = { "NX_P01308" })
-			@PathVariable("entry") String entryName,
-			@RequestParam(value = "debug", required = false) boolean debug) {
-
-		// TODO: get the following paths from properties
-		BlastPConfig config = new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db");
-		config.setDebugMode(debug);
-
-		return blastPService.blastEntry(config, entryName);
 	}
 
     @ApiMethod(path = "/blastp/isoform/{isoform}", verb = ApiVerb.GET, description = "Search isoform sequence from neXtProt isoform accession", produces = MediaType.APPLICATION_JSON_VALUE)
