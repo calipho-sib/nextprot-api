@@ -13,7 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@Api(name = "BlastP", description = "Search protein sequence into neXtProt database.", group = "Tools")
+@Api(name = "Blast", description = "Search protein sequence into neXtProt database.", group = "Tools")
 public class BlastPController {
 
 	@Autowired
