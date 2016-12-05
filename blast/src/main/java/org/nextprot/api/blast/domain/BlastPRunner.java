@@ -1,6 +1,7 @@
 package org.nextprot.api.blast.domain;
 
 import org.nextprot.api.blast.controller.SystemCommandExecutor;
+import org.nextprot.api.blast.domain.gen.BlastResult;
 import org.nextprot.api.commons.exception.NextProtException;
 
 import java.io.File;
@@ -25,7 +26,7 @@ public class BlastPRunner {
         this.config = config;
     }
 
-    public String run(String header, String sequence) throws NextProtException {
+    public BlastResult run(String header, String sequence) throws NextProtException {
 
         try {
             StringBuilder fasta = new StringBuilder();
@@ -47,7 +48,7 @@ public class BlastPRunner {
                 deleteTempQueryFile();
             }
 
-            return stdout.toString();
+            return BlastResult.fromJson(stdout.toString());
         } catch (IOException | InterruptedException e) {
 
             throw new NextProtException("BlastP exception", e);

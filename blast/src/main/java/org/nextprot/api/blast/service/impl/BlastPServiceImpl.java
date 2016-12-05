@@ -2,6 +2,7 @@ package org.nextprot.api.blast.service.impl;
 
 import org.nextprot.api.blast.domain.BlastPConfig;
 import org.nextprot.api.blast.domain.BlastPRunner;
+import org.nextprot.api.blast.domain.gen.BlastResult;
 import org.nextprot.api.blast.service.BlastPService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -18,13 +19,13 @@ public class BlastPServiceImpl implements BlastPService {
     private EntryBuilderService entryBuilderService;
 
     @Override
-    public String blastProteinSequence(BlastPConfig config, String header, String sequence) {
+    public BlastResult blastProteinSequence(BlastPConfig config, String header, String sequence) {
 
         return new BlastPRunner(config).run(header, sequence);
     }
 
     @Override
-    public String blastIsoform(BlastPConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
+    public BlastResult blastIsoformSequence(BlastPConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
 
         if (!isoformAccession.contains("-")) {
             // bad format isoform name
