@@ -7,6 +7,7 @@ import org.nextprot.api.blast.service.BlastPService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +19,20 @@ public class BlastPServiceImpl implements BlastPService {
     @Autowired
     private EntryBuilderService entryBuilderService;
 
+    @Autowired
+    private OverviewService overviewService;
+
     @Override
     public BlastResult blastProteinSequence(BlastPConfig config, String header, String sequence) {
 
-        return new BlastPRunner(config).run(header, sequence);
+        return new BlastPRunner(config).run(header, sequence, overviewService);
     }
 
     @Override
     public BlastResult blastIsoformSequence(BlastPConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
 
         if (!isoformAccession.contains("-")) {
-            // bad format isoform name
+            // TODO: bad format isoform name
         }
 
         String entryAccession = isoformAccession.split("-")[0];
@@ -50,7 +54,7 @@ public class BlastPServiceImpl implements BlastPService {
         }
 
         if (end > isoformSequence.length()) {
-            // out of bound error
+            // TODO: out of bound error
         }
 
         // format header

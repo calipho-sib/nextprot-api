@@ -1,8 +1,10 @@
 package org.nextprot.api.blast.domain;
 
 import org.nextprot.api.blast.controller.SystemCommandExecutor;
-import org.nextprot.api.blast.domain.gen.BlastResult;
+import org.nextprot.api.blast.domain.gen.*;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.service.OverviewService;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +12,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.hp.hpl.jena.sparql.vocabulary.VocabTestQuery.query;
 
@@ -27,6 +31,11 @@ public class BlastPRunner {
     }
 
     public BlastResult run(String header, String sequence) throws NextProtException {
+
+        return run(header, sequence, null);
+    }
+
+    public BlastResult run(String header, String sequence, OverviewService overviewService) throws NextProtException {
 
         try {
             StringBuilder fasta = new StringBuilder();
@@ -48,7 +57,12 @@ public class BlastPRunner {
                 deleteTempQueryFile();
             }
 
-            return BlastResult.fromJson(stdout.toString());
+            BlastResult blastResult = BlastResult.fromJson(stdout.toString());
+
+            if (overviewService == null)
+                return blastResult;
+
+            return new BlastOutputUpdater(overviewService, sequence).update(blastResult);
         } catch (IOException | InterruptedException e) {
 
             throw new NextProtException("BlastP exception", e);
@@ -82,5 +96,67 @@ public class BlastPRunner {
     private void deleteTempQueryFile() throws IOException {
 
         Files.deleteIfExists(tempQueryFile.toPath());
+    }
+
+    /**
+     * Edit original blast output:
+     *
+     * 1. Remove useless fields (ex: blast paper reference)
+     * 2. Add some new fields (ex: sequence query, matching isoform accession,...).
+     */
+    private class BlastOutputUpdater {
+
+        private final OverviewService overviewService;
+        private final String sequence;
+
+        private BlastOutputUpdater(OverviewService overviewService, String sequence) {
+
+            this.overviewService = overviewService;
+            this.sequence = sequence;
+        }
+
+        private BlastResult update(BlastResult originalBlastResult) {
+
+            Report report = originalBlastResult.getBlastOutput2().get(0).getReport();
+
+            // remove useless informations
+            report.setProgram(null);
+            report.setReference(null);
+            report.setSearchTarget(null);
+
+            Search search = report.getResults().getSearch();
+
+            search.setQuerySeq(sequence);
+
+            Pattern titlePattern = Pattern.compile("^.+\\s+(NX_[^|]+)\\|(NX_.+)$");
+
+            for (Hit hit : search.getHits()) {
+
+                for (Description desc : hit.getDescription()) {
+
+                    // remove useless infos
+                    desc.setId(null);
+                    desc.setAccession(null);
+
+                    String old = desc.getTitle();
+                    Matcher matcher = titlePattern.matcher(old);
+                    if (matcher.find()) {
+
+                        String isoformAccession = matcher.group(1);
+                        String entryAccession = matcher.group(2);
+
+                        Overview overview = overviewService.findOverviewByEntry(entryAccession);
+
+                        desc.setTitle(overview.getMainProteinName()+" ("+overview.getMainGeneName()+") ["+isoformAccession+"]");
+                        desc.setEntryAccession(entryAccession);
+                        desc.setIsoAccession(isoformAccession);
+                        desc.setProteinName(overview.getMainProteinName());
+                        desc.setGeneName(overview.getMainGeneName());
+                    }
+                }
+            }
+
+            return originalBlastResult;
+        }
     }
 }
