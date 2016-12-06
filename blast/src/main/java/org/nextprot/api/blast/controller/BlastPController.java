@@ -47,12 +47,38 @@ public class BlastPController {
 			@RequestParam(value = "begin", required = false) Integer begin,
 			@ApiQueryParam(name = "end", description = "The last sequence position (should be <= sequence length)")
 			@RequestParam(value = "end", required = false) Integer end,
+
+			@ApiQueryParam(name = "matrix", description = "Scoring matrix name", allowedvalues = { "BLOSUM62" })
+			@RequestParam(value = "matrix", required = false) String matrix,
+			@ApiQueryParam(name = "expect", description = "Expectation value (E) threshold for saving hits", allowedvalues = { "10" })
+			@RequestParam(value = "expect", required = false) Double expect,
+			@ApiQueryParam(name = "gapopen", description = "Cost to open a gap", allowedvalues = { "11" })
+			@RequestParam(value = "gapopen", required = false) Integer gapOpen,
+			@ApiQueryParam(name = "gapextend", description = "Cost to extend a gap", allowedvalues = { "1" })
+			@RequestParam(value = "gapextend", required = false) Integer gapExtend,
+			@ApiQueryParam(name = "filter", description = "Low complexity filtering", allowedvalues = { "F" })
+			@RequestParam(value = "filter", required = false) String filter,
+
             @RequestParam(value = "debug", required = false) boolean debug) {
 
-        // TODO: get the following paths from properties
-        BlastPConfig config = new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db");
-        config.setDebugMode(debug);
+		BlastPConfig config = newConfig(matrix, expect, gapOpen, gapExtend, filter, debug);
 
         return blastPService.blastIsoformSequence(config, isoform, begin, end);
     }
+
+    private BlastPConfig newConfig(String matrix, Double expect, Integer gapOpen, Integer gapExtend, String filter, boolean debug) {
+
+		// TODO: get the following paths from properties
+		BlastPConfig config = new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db");
+		config.setDebugMode(debug);
+
+		if (matrix != null)
+			config.setMatrix(BlastPConfig.Matrix.valueOf(matrix));
+		config.setExpect(expect);
+		config.setGapOpen(gapOpen);
+		config.setGapExtend(gapExtend);
+		config.setFilter(filter);
+
+		return config;
+	}
 }
