@@ -22,7 +22,7 @@ public class Hit implements Serializable
 {
 
     @JsonProperty("num")
-    private int num;
+    private Integer num;
     @JsonProperty("description")
     private List<Description> description = null;
     @JsonProperty("len")
@@ -37,7 +37,7 @@ public class Hit implements Serializable
      *     The num
      */
     @JsonProperty("num")
-    public int getNum() {
+    public Integer getNum() {
         return num;
     }
 
@@ -47,7 +47,7 @@ public class Hit implements Serializable
      *     The num
      */
     @JsonProperty("num")
-    public void setNum(int num) {
+    public void setNum(Integer num) {
         this.num = num;
     }
 

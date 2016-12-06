@@ -46,6 +46,8 @@ public class BlastResultUpdater {
         updateSearch(search);
 
         for (Hit hit : search.getHits()) {
+
+            updateHit(hit);
             hit.getDescription().forEach(this::updateDescription);
             hit.getHsps().forEach(this::updateHsp);
         }
@@ -55,7 +57,6 @@ public class BlastResultUpdater {
 
     protected void updateReport(Report report) {
 
-        // remove useless infos
         report.setProgram(null);
         report.setReference(null);
         report.setSearchTarget(null);
@@ -67,9 +68,13 @@ public class BlastResultUpdater {
         search.setQuerySeq(sequence);
     }
 
+    protected void updateHit(Hit hit) {
+
+        hit.setNum(null);
+    }
+
     protected void updateDescription(Description description) {
 
-        // remove useless infos
         description.setId(null);
         description.setAccession(null);
 
@@ -99,6 +104,7 @@ public class BlastResultUpdater {
         float identityPercent = (float)hsp.getIdentity()/sequence.length()*100;
 
         hsp.setIdentityPercent(Float.parseFloat(new DecimalFormat("#.##").format(identityPercent)));
+        hsp.setNum(null);
     }
 
     protected void updateStat(Stat stat) {

@@ -33,7 +33,7 @@ public class Hsp implements Serializable
 {
 
     @JsonProperty("num")
-    private int num;
+    private Integer num;
     @JsonProperty("bit_score")
     private double bitScore;
     @JsonProperty("score")
@@ -72,7 +72,7 @@ public class Hsp implements Serializable
      *     The num
      */
     @JsonProperty("num")
-    public int getNum() {
+    public Integer getNum() {
         return num;
     }
 
@@ -82,7 +82,7 @@ public class Hsp implements Serializable
      *     The num
      */
     @JsonProperty("num")
-    public void setNum(int num) {
+    public void setNum(Integer num) {
         this.num = num;
     }
 
