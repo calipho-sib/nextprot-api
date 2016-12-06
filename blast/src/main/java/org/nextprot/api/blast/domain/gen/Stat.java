@@ -30,7 +30,7 @@ public class Stat implements Serializable
     @JsonProperty("hsp_len")
     private Integer hspLen;
     @JsonProperty("eff_space")
-    private Integer effSpace;
+    private Long effSpace;
     @JsonProperty("kappa")
     private Double kappa;
     @JsonProperty("lambda")
@@ -105,7 +105,7 @@ public class Stat implements Serializable
      *     The effSpace
      */
     @JsonProperty("eff_space")
-    public Integer getEffSpace() {
+    public Long getEffSpace() {
         return effSpace;
     }
 
@@ -115,7 +115,7 @@ public class Stat implements Serializable
      *     The eff_space
      */
     @JsonProperty("eff_space")
-    public void setEffSpace(Integer effSpace) {
+    public void setEffSpace(Long effSpace) {
         this.effSpace = effSpace;
     }
 
