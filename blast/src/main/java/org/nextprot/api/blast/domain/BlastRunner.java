@@ -15,11 +15,11 @@ import java.util.List;
 /**
  * Executes locally installed blastP program with protein sequence query
  */
-public class BlastPRunner {
+public class BlastRunner {
 
-    private final BlastPConfig config;
+    private final BlastConfig config;
 
-    public BlastPRunner(BlastPConfig config) {
+    public BlastRunner(BlastConfig config) {
 
         this.config = config;
     }

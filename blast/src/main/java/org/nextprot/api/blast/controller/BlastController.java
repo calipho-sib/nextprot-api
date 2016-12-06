@@ -5,9 +5,9 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.blast.domain.BlastPConfig;
+import org.nextprot.api.blast.domain.BlastConfig;
 import org.nextprot.api.blast.domain.gen.BlastResult;
-import org.nextprot.api.blast.service.BlastPService;
+import org.nextprot.api.blast.service.BlastService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @Api(name = "Blast", description = "Search protein sequence into neXtProt database.", group = "Tools")
-public class BlastPController {
+public class BlastController {
 
 	@Autowired
-	private BlastPService blastPService;
+	private BlastService blastService;
 
 	@ApiMethod(path = "/blastp/seq/{sequence}", verb = ApiVerb.GET, description = "Search protein sequence", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/blastp/seq/{sequence}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -40,9 +40,9 @@ public class BlastPController {
 
 			@RequestParam(value = "debug", required = false) boolean debug) {
 
-		BlastPConfig config = newConfig(matrix, evalue, gapOpen, gapExtend, debug);
+		BlastConfig config = newConfig(matrix, evalue, gapOpen, gapExtend, debug);
 
-		return blastPService.blastProteinSequence(config, header, sequence);
+		return blastService.blastProteinSequence(config, header, sequence);
 	}
 
     @ApiMethod(path = "/blastp/isoform/{isoform}", verb = ApiVerb.GET, description = "Search isoform sequence from neXtProt isoform accession", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -67,19 +67,19 @@ public class BlastPController {
 
             @RequestParam(value = "debug", required = false) boolean debug) {
 
-		BlastPConfig config = newConfig(matrix, evalue, gapOpen, gapExtend, debug);
+		BlastConfig config = newConfig(matrix, evalue, gapOpen, gapExtend, debug);
 
-        return blastPService.blastIsoformSequence(config, isoform, begin, end);
+        return blastService.blastIsoformSequence(config, isoform, begin, end);
     }
 
-    private BlastPConfig newConfig(String matrix, Double evalue, Integer gapOpen, Integer gapExtend, boolean debug) {
+    private BlastConfig newConfig(String matrix, Double evalue, Integer gapOpen, Integer gapExtend, boolean debug) {
 
 		// TODO: get the following paths from properties
-		BlastPConfig config = new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db");
+		BlastConfig config = new BlastConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db");
 		config.setDebugMode(debug);
 
 		if (matrix != null)
-			config.setMatrix(BlastPConfig.Matrix.valueOf(matrix));
+			config.setMatrix(BlastConfig.Matrix.valueOf(matrix));
 		config.setEvalue(evalue);
 		config.setGapOpen(gapOpen);
 		config.setGapExtend(gapExtend);

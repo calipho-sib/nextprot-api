@@ -8,12 +8,12 @@ import org.nextprot.api.commons.exception.NextProtException;
 import java.io.File;
 import java.util.List;
 
-public class BlastPRunnerTest {
+public class BlastRunnerTest {
 
     @Test
     public void blastpShouldFindResult() throws Exception {
 
-        BlastPRunner runner = new BlastPRunner(new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db"));
+        BlastRunner runner = new BlastRunner(new BlastConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db"));
 
         BlastResult blastResult = runner.run("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
 
@@ -23,7 +23,7 @@ public class BlastPRunnerTest {
     @Test(expected = NextProtException.class)
     public void blastpShouldThrowNPException() throws Exception {
 
-        BlastPRunner runner = new BlastPRunner(new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+", "/Users/fnikitin/data/blast/db"));
+        BlastRunner runner = new BlastRunner(new BlastConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+", "/Users/fnikitin/data/blast/db"));
 
         runner.run("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
     }
@@ -31,7 +31,7 @@ public class BlastPRunnerTest {
     @Test
     public void testDefaultCommandLineBuilding() throws Exception {
 
-        BlastPRunner runner = new BlastPRunner(new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db"));
+        BlastRunner runner = new BlastRunner(new BlastConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db"));
 
         File file = new File("/tmp/input.fasta");
         List<String> cl = runner.buildCommandLine(file);
@@ -49,13 +49,13 @@ public class BlastPRunnerTest {
     @Test
     public void testCommandLineBuildingWithParams() throws Exception {
 
-        BlastPConfig config = new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db");
+        BlastConfig config = new BlastConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db");
         config.setEvalue(0.01);
-        config.setMatrix(BlastPConfig.Matrix.BLOSUM45);
+        config.setMatrix(BlastConfig.Matrix.BLOSUM45);
         config.setGapOpen(12);
         config.setGapExtend(2);
 
-        BlastPRunner runner = new BlastPRunner(config);
+        BlastRunner runner = new BlastRunner(config);
 
         File file = new File("/tmp/input.fasta");
         List<String> cl = runner.buildCommandLine(file);

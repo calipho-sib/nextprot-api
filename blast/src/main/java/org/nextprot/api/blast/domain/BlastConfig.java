@@ -3,7 +3,7 @@ package org.nextprot.api.blast.domain;
 import java.io.Serializable;
 
 
-public class BlastPConfig implements Serializable {
+public class BlastConfig implements Serializable {
 
     public enum Matrix {
         BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30, PAM70
@@ -18,7 +18,7 @@ public class BlastPConfig implements Serializable {
     private Integer gapOpen;
     private Integer gapExtend;
 
-    public BlastPConfig(String blastDirPath, String nextprotDatabasePath) {
+    public BlastConfig(String blastDirPath, String nextprotDatabasePath) {
 
         this.blastDirPath = blastDirPath;
         this.nextprotDatabasePath = nextprotDatabasePath;

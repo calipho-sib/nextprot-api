@@ -1,9 +1,9 @@
 package org.nextprot.api.blast.service.impl;
 
-import org.nextprot.api.blast.domain.BlastPConfig;
-import org.nextprot.api.blast.domain.BlastPRunner;
+import org.nextprot.api.blast.domain.BlastConfig;
+import org.nextprot.api.blast.domain.BlastRunner;
 import org.nextprot.api.blast.domain.gen.BlastResult;
-import org.nextprot.api.blast.service.BlastPService;
+import org.nextprot.api.blast.service.BlastService;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 
 @Service
-public class BlastPServiceImpl implements BlastPService {
+public class BlastServiceImpl implements BlastService {
 
     private static final String ISOFORM_REX_EXP= "^NX_[^-]+-\\d+$";
 
@@ -27,13 +27,13 @@ public class BlastPServiceImpl implements BlastPService {
     private MainNamesService mainNamesService;
 
     @Override
-    public BlastResult blastProteinSequence(BlastPConfig config, String header, String sequence) {
+    public BlastResult blastProteinSequence(BlastConfig config, String header, String sequence) {
 
-        return new BlastPRunner(config).run(header, sequence, mainNamesService);
+        return new BlastRunner(config).run(header, sequence, mainNamesService);
     }
 
     @Override
-    public BlastResult blastIsoformSequence(BlastPConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
+    public BlastResult blastIsoformSequence(BlastConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
 
         if (!isoformAccession.matches(ISOFORM_REX_EXP)) {
             throw new NextProtException(isoformAccession+": invalid isoform accession (format: "+ISOFORM_REX_EXP+")");

@@ -46,7 +46,7 @@ public class BlastResultUpdaterTest {
 
     private static BlastResult runBlast() {
 
-        return new BlastPRunner(new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db")).run("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
+        return new BlastRunner(new BlastConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db")).run("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
     }
 
     private static MainNamesService mockMainNamesService() {
