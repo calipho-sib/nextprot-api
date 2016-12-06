@@ -26,7 +26,8 @@ import java.io.Serializable;
     "gaps",
     "qseq",
     "hseq",
-    "midline"
+    "midline",
+    "identity_percent",
 })
 public class Hsp implements Serializable
 {
@@ -61,6 +62,8 @@ public class Hsp implements Serializable
     private String hseq;
     @JsonProperty("midline")
     private String midline;
+    @JsonProperty("identity_percent")
+    private float identityPercent;
     private final static long serialVersionUID = 6273459601101276229L;
 
     /**
@@ -361,5 +364,15 @@ public class Hsp implements Serializable
     @JsonProperty("midline")
     public void setMidline(String midline) {
         this.midline = midline;
+    }
+
+    @JsonProperty("identity_percent")
+    public float getIdentityPercent() {
+        return identityPercent;
+    }
+
+    @JsonProperty("identity_percent")
+    public void setIdentityPercent(float identityPercent) {
+        this.identityPercent = identityPercent;
     }
 }
