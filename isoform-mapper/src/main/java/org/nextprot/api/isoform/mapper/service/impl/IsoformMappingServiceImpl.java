@@ -1,5 +1,6 @@
 package org.nextprot.api.isoform.mapper.service.impl;
 
+import com.google.common.base.Strings;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
@@ -10,11 +11,13 @@ import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.nextprot.api.core.utils.seqmap.IsoformSequencePositionMapper;
-import org.nextprot.api.isoform.mapper.domain.*;
+import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.impl.FeatureQueryFailureImpl;
-import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.SequenceFeatureBase;
+import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.EntryAccessionNotFoundForGeneException;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.MultipleEntryAccessionForGeneException;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
@@ -48,7 +51,11 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         try {
             SequenceFeature sequenceFeature = SequenceFeatureBase.newFeature(query);
 
-            Entry entry = buildEntryFromAccessionElseFromGene(query, sequenceFeature.getGeneName());
+            if (Strings.isNullOrEmpty(query.getAccession()))
+                query.setAccession(findAccessionFromGeneName(query, sequenceFeature.getGeneName()));
+
+            Entry entry = entryBuilderService.build(EntryConfig.newConfig(query.getAccession())
+                    .withTargetIsoforms().withOverview());
 
             SequenceFeatureValidator validator = new SequenceFeatureValidator(entry, query);
 
@@ -89,7 +96,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         SequenceVariation variation = isoFeature.getProteinVariation();
 
         String expectedAAs = featureIsoform.getSequence().substring(
-                variation.getFirstChangingAminoAcidPos()-1, variation.getLastChangingAminoAcidPos()
+                variation.getFirstChangingAminoAcidPos() - 1, variation.getLastChangingAminoAcidPos()
         );
 
         // get all others
@@ -123,29 +130,20 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
         return firstIsoPos;
     }
 
+
     /**
-     * Build entry from entry accession or deduced from geneName if undefined
+     * Find entry accession from geneName
      */
-    private Entry buildEntryFromAccessionElseFromGene(SingleFeatureQuery query, String geneName) throws FeatureQueryException {
+    private String findAccessionFromGeneName(SingleFeatureQuery query, String geneName) throws FeatureQueryException {
 
-        String accession = query.getAccession();
+        Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName);
 
-        if (accession == null || accession.isEmpty()) {
-
-            Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName);
-
-            if (accessions.isEmpty()) {
-                throw new EntryAccessionNotFoundForGeneException(query, geneName);
-            }
-            else if (accessions.size() > 1) {
-                throw new MultipleEntryAccessionForGeneException(query, geneName, accessions);
-            }
-            // found one single entry accession
-            else {
-                accession = accessions.iterator().next();
-            }
+        if (accessions.isEmpty()) {
+            throw new EntryAccessionNotFoundForGeneException(query, geneName);
+        } else if (accessions.size() > 1) {
+            throw new MultipleEntryAccessionForGeneException(query, geneName, accessions);
         }
-
-        return entryBuilderService.build(EntryConfig.newConfig(accession).withTargetIsoforms().withOverview());
+        // found one single entry accession
+        return accessions.iterator().next();
     }
 }

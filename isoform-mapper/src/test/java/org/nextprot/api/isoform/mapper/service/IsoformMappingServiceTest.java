@@ -200,6 +200,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     	FeatureQueryResult result = service.validateFeature(new SingleFeatureQuery("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), null));
 
         assertIsoformFeatureValid(result, "NX_Q9UI33-1", 1158, 1158, true);
+        Assert.assertEquals("NX_Q9UI33", result.getQuery().getAccession());
     }
 
     @Test
