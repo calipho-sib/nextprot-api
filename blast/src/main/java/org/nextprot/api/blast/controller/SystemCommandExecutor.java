@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 // Updated code coming from article http://alvinalexander.com/java/java-exec-processbuilder-process-1
 public class SystemCommandExecutor {
@@ -61,6 +62,10 @@ public class SystemCommandExecutor {
         executor.awaitTermination(10L, TimeUnit.SECONDS);
 
         return process.waitFor();
+    }
+
+    public String getParameterLine() {
+        return commandInformation.subList(5, commandInformation.size()).stream().collect(Collectors.joining(" "));
     }
 
     /**
