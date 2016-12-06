@@ -28,11 +28,19 @@ public class BlastPController {
 			@PathVariable("sequence") String sequence,
 			@ApiPathParam(name = "header", description = "A query header.",  allowedvalues = { "protein sequence query" })
 			@RequestParam(value = "header", defaultValue = "protein sequence query") String header,
+
+			@ApiQueryParam(name = "matrix", description = "Scoring matrix name", allowedvalues = { "BLOSUM62" })
+			@RequestParam(value = "matrix", required = false) String matrix,
+			@ApiQueryParam(name = "evalue", description = "Expected value (E) threshold for saving hits", allowedvalues = { "10" })
+			@RequestParam(value = "evalue", required = false) Double evalue,
+			@ApiQueryParam(name = "gapopen", description = "Cost to open a gap", allowedvalues = { "11" })
+			@RequestParam(value = "gapopen", required = false) Integer gapOpen,
+			@ApiQueryParam(name = "gapextend", description = "Cost to extend a gap", allowedvalues = { "1" })
+			@RequestParam(value = "gapextend", required = false) Integer gapExtend,
+
 			@RequestParam(value = "debug", required = false) boolean debug) {
 
-		// TODO: get the following paths from properties
-		BlastPConfig config = new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db");
-		config.setDebugMode(debug);
+		BlastPConfig config = newConfig(matrix, evalue, gapOpen, gapExtend, debug);
 
 		return blastPService.blastProteinSequence(config, header, sequence);
 	}
