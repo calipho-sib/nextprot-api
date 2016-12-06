@@ -13,11 +13,10 @@ public class BlastPConfig implements Serializable {
     private final String nextprotDatabasePath;
     private boolean isDebugMode = false;
 
-    private Matrix matrix = Matrix.BLOSUM62;
-    private Double expect = 10.;
-    private Integer gapOpen = 11;
-    private Integer gapExtend = 1;
-    private String filter = "F";
+    private Matrix matrix;
+    private Double evalue;
+    private Integer gapOpen;
+    private Integer gapExtend;
 
     public BlastPConfig(String blastDirPath, String nextprotDatabasePath) {
 
@@ -49,15 +48,15 @@ public class BlastPConfig implements Serializable {
         this.matrix = matrix;
     }
 
-    public Double getExpect() {
-        return expect;
+    public Double getEvalue() {
+        return evalue;
     }
 
-    public void setExpect(Double expect) {
-        this.expect = expect;
+    public void setEvalue(Double evalue) {
+        this.evalue = evalue;
     }
 
-    public int getGapOpen() {
+    public Integer getGapOpen() {
         return gapOpen;
     }
 
@@ -71,13 +70,5 @@ public class BlastPConfig implements Serializable {
 
     public void setGapExtend(Integer gapExtend) {
         this.gapExtend = gapExtend;
-    }
-
-    public String getFilter() {
-        return filter;
-    }
-
-    public void setFilter(String filter) {
-        this.filter = filter;
     }
 }

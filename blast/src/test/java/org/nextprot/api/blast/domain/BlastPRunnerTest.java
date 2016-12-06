@@ -45,4 +45,36 @@ public class BlastPRunnerTest {
         Assert.assertEquals("-outfmt", cl.get(5));
         Assert.assertEquals("15", cl.get(6));
     }
+
+    @Test
+    public void testCommandLineBuildingWithParams() throws Exception {
+
+        BlastPConfig config = new BlastPConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db");
+        config.setEvalue(0.01);
+        config.setMatrix(BlastPConfig.Matrix.BLOSUM45);
+        config.setGapOpen(12);
+        config.setGapExtend(2);
+
+        BlastPRunner runner = new BlastPRunner(config);
+
+        File file = new File("/tmp/input.fasta");
+        List<String> cl = runner.buildCommandLine(file);
+
+        Assert.assertEquals(15, cl.size());
+        Assert.assertTrue(cl.get(0).endsWith("blastp"));
+        Assert.assertEquals("-db", cl.get(1));
+        Assert.assertTrue(cl.get(2).endsWith("nextprot"));
+        Assert.assertEquals("-query", cl.get(3));
+        Assert.assertEquals(file.getAbsolutePath(), cl.get(4));
+        Assert.assertEquals("-outfmt", cl.get(5));
+        Assert.assertEquals("15", cl.get(6));
+        Assert.assertEquals("-matrix", cl.get(7));
+        Assert.assertEquals("BLOSUM45", cl.get(8));
+        Assert.assertEquals("-evalue", cl.get(9));
+        Assert.assertEquals("0.01", cl.get(10));
+        Assert.assertEquals("-gapopen", cl.get(11));
+        Assert.assertEquals("12", cl.get(12));
+        Assert.assertEquals("-gapextend", cl.get(13));
+        Assert.assertEquals("2", cl.get(14));
+    }
 }

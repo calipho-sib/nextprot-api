@@ -87,6 +87,23 @@ public class BlastPRunner {
         command.add(inputFile.getAbsolutePath());
         command.add("-outfmt");
         command.add("15");
+        if (config.getMatrix() != null) {
+            command.add("-matrix");
+            command.add(config.getMatrix().toString());
+        }
+        if (config.getEvalue() != null) {
+            command.add("-evalue");
+            command.add(String.valueOf(config.getEvalue()));
+        }
+        if (config.getGapOpen() != null) {
+            command.add("-gapopen");
+            command.add(String.valueOf(config.getGapOpen()));
+        }
+        if (config.getGapExtend() != null) {
+            command.add("-gapextend");
+            command.add(String.valueOf(config.getGapExtend()));
+        }
+
 
         return command;
     }
