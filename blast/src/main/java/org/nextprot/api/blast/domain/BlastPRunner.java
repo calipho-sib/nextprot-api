@@ -19,7 +19,6 @@ import static com.hp.hpl.jena.sparql.vocabulary.VocabTestQuery.query;
  */
 public class BlastPRunner {
 
-    private File tempQueryFile;
     private final BlastPConfig config;
 
     public BlastPRunner(BlastPConfig config) {
@@ -35,9 +34,13 @@ public class BlastPRunner {
     public BlastResult run(String header, String sequence, MainNamesService mainNamesService) {
 
         try {
-            writeTempQueryFile(buildFastaContent(header, sequence));
+            File tempQueryFile = writeTempQueryFile(buildFastaContent(header, sequence));
 
-            BlastResult blastResult = executeBlast(buildCommandLine());
+            BlastResult blastResult = executeBlast(buildCommandLine(tempQueryFile));
+
+            if (!config.isDebugMode()) {
+                Files.deleteIfExists(tempQueryFile.toPath());
+            }
 
             if (mainNamesService != null)
                 new BlastResultUpdater(mainNamesService, sequence).update(blastResult);
@@ -70,14 +73,10 @@ public class BlastPRunner {
             throw new NextProtException("BlastP error when executing " + query + ": " + stderr);
         }
 
-        if (!config.isDebugMode()) {
-            deleteTempQueryFile();
-        }
-
         return BlastResult.fromJson(commandExecutor.getStandardOutputFromCommand().toString());
     }
 
-    private List<String> buildCommandLine() {
+    List<String> buildCommandLine(File inputFile) {
 
         List<String> command = new ArrayList<>();
 
@@ -85,24 +84,21 @@ public class BlastPRunner {
         command.add("-db");
         command.add(config.getNextprotDatabasePath() + "/nextprot");
         command.add("-query");
-        command.add(tempQueryFile.getAbsolutePath());
+        command.add(inputFile.getAbsolutePath());
         command.add("-outfmt");
         command.add("15");
 
         return command;
     }
 
-    private void writeTempQueryFile(String sequenceQuery) throws IOException {
+    private File writeTempQueryFile(String sequenceQuery) throws IOException {
 
-        tempQueryFile = File.createTempFile("blastp_query", "fasta");
+        File tempQueryFile = File.createTempFile("blastp_query", "fasta");
 
         PrintWriter pw = new PrintWriter(tempQueryFile);
         pw.write(sequenceQuery);
         pw.close();
-    }
 
-    private void deleteTempQueryFile() throws IOException {
-
-        Files.deleteIfExists(tempQueryFile.toPath());
+        return tempQueryFile;
     }
 }
