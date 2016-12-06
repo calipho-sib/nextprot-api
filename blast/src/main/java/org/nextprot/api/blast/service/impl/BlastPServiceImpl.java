@@ -7,7 +7,7 @@ import org.nextprot.api.blast.service.BlastPService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.MainNamesService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ public class BlastPServiceImpl implements BlastPService {
     private EntryBuilderService entryBuilderService;
 
     @Autowired
-    private OverviewService overviewService;
+    private MainNamesService mainNamesService;
 
     @Override
     public BlastResult blastProteinSequence(BlastPConfig config, String header, String sequence) {
 
-        return new BlastPRunner(config).run(header, sequence, overviewService);
+        return new BlastPRunner(config).run(header, sequence, mainNamesService);
     }
 
     @Override
