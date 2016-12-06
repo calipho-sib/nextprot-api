@@ -15,8 +15,9 @@ import java.io.Serializable;
     "id",
     "accession",
     "title",
-    "entry_url",
+    "entry_accession",
     "iso_accession",
+    "iso_name",
     "protein_name",
     "gene_name"
 })
@@ -29,10 +30,12 @@ public class Description implements Serializable
     private String accession;
     @JsonProperty("title")
     private String title;
-    @JsonProperty("iso_accession")
-    private String isoAccession;
     @JsonProperty("entry_accession")
     private String entryAccession;
+    @JsonProperty("iso_accession")
+    private String isoAccession;
+    @JsonProperty("iso_name")
+    private String isoName;
     @JsonProperty("protein_name")
     private String proteinName;
     @JsonProperty("gene_name")
@@ -99,34 +102,51 @@ public class Description implements Serializable
         this.title = title;
     }
 
-    public String getIsoAccession() {
-        return isoAccession;
-    }
-
-    public void setIsoAccession(String isoAccession) {
-        this.isoAccession = isoAccession;
-    }
-
+    @JsonProperty("entry_accession")
     public String getEntryAccession() {
         return entryAccession;
     }
 
+    @JsonProperty("entry_accession")
     public void setEntryAccession(String entryAccession) {
         this.entryAccession = entryAccession;
     }
 
+    @JsonProperty("iso_accession")
+    public String getIsoAccession() {
+        return isoAccession;
+    }
+
+    @JsonProperty("iso_accession")
+    public void setIsoAccession(String isoAccession) {
+        this.isoAccession = isoAccession;
+    }
+
+    @JsonProperty("iso_name")
+    public String getIsoName() {
+        return isoName;
+    }
+
+    @JsonProperty("iso_name")
+    public void setIsoName(String isoName) {
+        this.isoName = isoName;
+    }
+    @JsonProperty("protein_name")
     public String getProteinName() {
         return proteinName;
     }
 
+    @JsonProperty("protein_name")
     public void setProteinName(String proteinName) {
         this.proteinName = proteinName;
     }
 
+    @JsonProperty("gene_name")
     public String getGeneName() {
         return geneName;
     }
 
+    @JsonProperty("gene_name")
     public void setGeneName(String geneName) {
         this.geneName = geneName;
     }
