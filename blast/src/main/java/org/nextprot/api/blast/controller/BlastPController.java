@@ -41,11 +41,11 @@ public class BlastPController {
     @RequestMapping(value = "/blastp/isoform/{isoform}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public BlastResult blastIsoform(
-            @ApiPathParam(name = "isoform", description = "The name of a neXtProt isoform.", format = "NX_...-{num}", allowedvalues = { "NX_P01308-1" })
+            @ApiPathParam(name = "isoform", description = "An neXtProt isoform accession.", allowedvalues = { "NX_P01308-1" })
             @PathVariable("isoform") String isoform,
-			@ApiQueryParam(name = "begin", description = "The first sequence position", allowedvalues = { "1" })
+			@ApiQueryParam(name = "begin", description = "The first sequence position (should be strictly positive)")
 			@RequestParam(value = "begin", required = false) Integer begin,
-			@ApiQueryParam(name = "end", description = "The last sequence position")
+			@ApiQueryParam(name = "end", description = "The last sequence position (should be <= sequence length)")
 			@RequestParam(value = "end", required = false) Integer end,
             @RequestParam(value = "debug", required = false) boolean debug) {
 

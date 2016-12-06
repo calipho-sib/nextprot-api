@@ -43,7 +43,7 @@ public class NextprotExceptionHandler {
 	@ExceptionHandler(NextProtException.class)
 	@ResponseBody
 	public RestErrorResponse handle(NextProtException ex) {
-		LOGGER.info("NextProt ok message" + ex.getLocalizedMessage());
+		LOGGER.info("NextProt exception" + ex.getLocalizedMessage());
 		return getResponseError(ex);
 	}
 
@@ -143,7 +143,9 @@ public class NextprotExceptionHandler {
 
 	private static RestErrorResponse getResponseError(Throwable t) {
 		t.printStackTrace();
-		return getResponseErrorMsg(t.getLocalizedMessage());
+		RestErrorResponse errorResponse = getResponseErrorMsg(t.getLocalizedMessage());
+		errorResponse.setType(t.getClass().getSimpleName());
+		return errorResponse;
 	}
 
 	private static RestErrorResponse getResponseErrorMsg(String message) {
