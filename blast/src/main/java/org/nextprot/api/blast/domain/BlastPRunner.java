@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -130,8 +131,10 @@ public class BlastPRunner {
 
             Pattern titlePattern = Pattern.compile("^.+\\s+(NX_[^|]+)\\|(NX_.+)$");
 
+            // HITs
             for (Hit hit : search.getHits()) {
 
+                // DESCRIPTIONs
                 for (Description desc : hit.getDescription()) {
 
                     // remove useless infos
@@ -153,6 +156,13 @@ public class BlastPRunner {
                         desc.setProteinName(overview.getMainProteinName());
                         desc.setGeneName(overview.getMainGeneName());
                     }
+                }
+
+                for (Hsp hsp : hit.getHsps()) {
+
+                    float identityPercent = (float)hsp.getIdentity()/search.getQueryLen()*100;
+
+                    hsp.setIdentityPercent(Float.parseFloat(new DecimalFormat("##.##").format(identityPercent)));
                 }
             }
 
