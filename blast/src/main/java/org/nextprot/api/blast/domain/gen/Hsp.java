@@ -63,7 +63,7 @@ public class Hsp implements Serializable
     @JsonProperty("midline")
     private String midline;
     @JsonProperty("identity_percent")
-    private float identityPercent;
+    private Float identityPercent;
     private final static long serialVersionUID = 6273459601101276229L;
 
     /**
@@ -367,12 +367,12 @@ public class Hsp implements Serializable
     }
 
     @JsonProperty("identity_percent")
-    public float getIdentityPercent() {
+    public Float getIdentityPercent() {
         return identityPercent;
     }
 
     @JsonProperty("identity_percent")
-    public void setIdentityPercent(float identityPercent) {
+    public void setIdentityPercent(Float identityPercent) {
         this.identityPercent = identityPercent;
     }
 }

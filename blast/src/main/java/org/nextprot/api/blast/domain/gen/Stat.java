@@ -28,15 +28,15 @@ public class Stat implements Serializable
     @JsonProperty("db_len")
     private int dbLen;
     @JsonProperty("hsp_len")
-    private int hspLen;
+    private Integer hspLen;
     @JsonProperty("eff_space")
-    private int effSpace;
+    private Integer effSpace;
     @JsonProperty("kappa")
-    private double kappa;
+    private Double kappa;
     @JsonProperty("lambda")
-    private double lambda;
+    private Double lambda;
     @JsonProperty("entropy")
-    private double entropy;
+    private Double entropy;
     private final static long serialVersionUID = 7214475728681675836L;
 
     /**
@@ -85,7 +85,7 @@ public class Stat implements Serializable
      *     The hspLen
      */
     @JsonProperty("hsp_len")
-    public int getHspLen() {
+    public Integer getHspLen() {
         return hspLen;
     }
 
@@ -95,7 +95,7 @@ public class Stat implements Serializable
      *     The hsp_len
      */
     @JsonProperty("hsp_len")
-    public void setHspLen(int hspLen) {
+    public void setHspLen(Integer hspLen) {
         this.hspLen = hspLen;
     }
 
@@ -105,7 +105,7 @@ public class Stat implements Serializable
      *     The effSpace
      */
     @JsonProperty("eff_space")
-    public int getEffSpace() {
+    public Integer getEffSpace() {
         return effSpace;
     }
 
@@ -115,7 +115,7 @@ public class Stat implements Serializable
      *     The eff_space
      */
     @JsonProperty("eff_space")
-    public void setEffSpace(int effSpace) {
+    public void setEffSpace(Integer effSpace) {
         this.effSpace = effSpace;
     }
 
@@ -125,7 +125,7 @@ public class Stat implements Serializable
      *     The kappa
      */
     @JsonProperty("kappa")
-    public double getKappa() {
+    public Double getKappa() {
         return kappa;
     }
 
@@ -135,7 +135,7 @@ public class Stat implements Serializable
      *     The kappa
      */
     @JsonProperty("kappa")
-    public void setKappa(double kappa) {
+    public void setKappa(Double kappa) {
         this.kappa = kappa;
     }
 
@@ -145,7 +145,7 @@ public class Stat implements Serializable
      *     The lambda
      */
     @JsonProperty("lambda")
-    public double getLambda() {
+    public Double getLambda() {
         return lambda;
     }
 
@@ -155,7 +155,7 @@ public class Stat implements Serializable
      *     The lambda
      */
     @JsonProperty("lambda")
-    public void setLambda(double lambda) {
+    public void setLambda(Double lambda) {
         this.lambda = lambda;
     }
 
@@ -165,7 +165,7 @@ public class Stat implements Serializable
      *     The entropy
      */
     @JsonProperty("entropy")
-    public double getEntropy() {
+    public Double getEntropy() {
         return entropy;
     }
 
@@ -175,7 +175,7 @@ public class Stat implements Serializable
      *     The entropy
      */
     @JsonProperty("entropy")
-    public void setEntropy(double entropy) {
+    public void setEntropy(Double entropy) {
         this.entropy = entropy;
     }
 }
