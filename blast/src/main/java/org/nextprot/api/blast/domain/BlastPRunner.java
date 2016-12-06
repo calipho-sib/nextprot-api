@@ -1,7 +1,7 @@
 package org.nextprot.api.blast.domain;
 
 import org.nextprot.api.blast.controller.SystemCommandExecutor;
-import org.nextprot.api.blast.domain.gen.*;
+import org.nextprot.api.blast.domain.gen.BlastResult;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.MainNamesService;
 
@@ -11,8 +11,6 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.hp.hpl.jena.sparql.vocabulary.VocabTestQuery.query;
 
 /**
  * Executes locally installed blastP program with protein sequence query
@@ -70,7 +68,8 @@ public class BlastPRunner {
         String stderr = commandExecutor.getStandardErrorFromCommand().toString();
 
         if (!stderr.isEmpty()) {
-            throw new NextProtException("BlastP error when executing " + query + ": " + stderr);
+            throw new NextProtException("error when running blastp (params='" + commandExecutor.getParameterLine()
+                    + "'), stderr='" + stderr.replace("\n", " ")+"'");
         }
 
         return BlastResult.fromJson(commandExecutor.getStandardOutputFromCommand().toString());
