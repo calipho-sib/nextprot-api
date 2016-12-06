@@ -4,6 +4,7 @@ import org.nextprot.api.blast.domain.BlastPConfig;
 import org.nextprot.api.blast.domain.BlastPRunner;
 import org.nextprot.api.blast.domain.gen.BlastResult;
 import org.nextprot.api.blast.service.BlastPService;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -13,8 +14,11 @@ import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class BlastPServiceImpl implements BlastPService {
+
+    private static final String ISOFORM_REX_EXP= "^NX_[^-]+-\\d+$";
 
     @Autowired
     private EntryBuilderService entryBuilderService;
@@ -31,8 +35,8 @@ public class BlastPServiceImpl implements BlastPService {
     @Override
     public BlastResult blastIsoformSequence(BlastPConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
 
-        if (!isoformAccession.contains("-")) {
-            // TODO: bad format isoform name
+        if (!isoformAccession.matches(ISOFORM_REX_EXP)) {
+            throw new NextProtException(isoformAccession+": invalid isoform accession (format: "+ISOFORM_REX_EXP+")");
         }
 
         String entryAccession = isoformAccession.split("-")[0];
@@ -40,8 +44,13 @@ public class BlastPServiceImpl implements BlastPService {
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withTargetIsoforms());
 
         Isoform isoform = IsoformUtils.getIsoformByName(entry, isoformAccession);
+        if (isoform == null) {
+            throw new NextProtException(isoformAccession+": could not find isoform from entry "+entryAccession);
+        }
+
         String isoformSequence = isoform.getSequence();
 
+        // assign default positions
         int begin = (begin1BasedIndex != null) ? begin1BasedIndex : 1;
         int end = (end1BasedIndex != null) ? end1BasedIndex : isoformSequence.length();
 
@@ -53,8 +62,12 @@ public class BlastPServiceImpl implements BlastPService {
             end = tmp;
         }
 
-        if (end > isoformSequence.length()) {
-            // TODO: out of bound error
+        // check positions
+        if (begin <= 0 || begin > isoformSequence.length()) {
+            throw new NextProtException("begin position "+begin+" is out of bound (should be > 0 and <= "+isoformSequence.length()+")");
+        }
+        if (end <= 0 || end > isoformSequence.length()) {
+            throw new NextProtException("end position "+end+" is out of bound (should be > 0 and <= "+isoformSequence.length()+")");
         }
 
         // format header
