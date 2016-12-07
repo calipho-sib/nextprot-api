@@ -179,9 +179,11 @@ public class PublicationServiceImpl implements PublicationService {
 	}
 
 	private void setXrefs(Publication publication, Collection<? extends DbXref> xrefs){
-
-		if (xrefs != null)
-			publication.setDbXrefs(new HashSet<>(xrefs));
+		if (xrefs == null) {
+			publication.setDbXrefs(new HashSet<>());						
+		} else {
+			publication.setDbXrefs(new HashSet<>(xrefs));			
+		}
 	}
 
 	@Override
