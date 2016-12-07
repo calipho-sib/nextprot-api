@@ -37,7 +37,7 @@ public class BlastResultUpdater {
      * Update BlastResult object
      * @param blastResult the original blast output
      */
-    protected void update(BlastResult blastResult) {
+    public void update(BlastResult blastResult) {
 
         Report report = blastResult.getBlastOutput2().get(0).getReport();
         Search search = report.getResults().getSearch();
