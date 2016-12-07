@@ -3,8 +3,14 @@ package org.nextprot.api.blast.domain;
 import java.io.Serializable;
 
 
+/**
+ * Configuration object for blastp
+ */
 public class BlastConfig implements Serializable {
 
+    /**
+     * Amino acid substitution matrices (see also https://en.wikipedia.org/wiki/Substitution_matrix#Log-odds_matrices)
+     */
     public enum Matrix {
         BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30, PAM70
     }
