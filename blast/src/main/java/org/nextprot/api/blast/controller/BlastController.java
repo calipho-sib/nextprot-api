@@ -59,7 +59,7 @@ public class BlastController {
 			@ApiQueryParam(name = "matrix", description = "Scoring matrix name", allowedvalues = { "BLOSUM62" })
 			@RequestParam(value = "matrix", required = false) String matrix,
 			@ApiQueryParam(name = "evalue", description = "Expected value (E) threshold for saving hits", allowedvalues = { "10" })
-			@RequestParam(value = "evalue", required = false) Double evalue,
+			@RequestParam(value = "evalue", required = false) Double eValue,
 			@ApiQueryParam(name = "gapopen", description = "Cost to open a gap", allowedvalues = { "11" })
 			@RequestParam(value = "gapopen", required = false) Integer gapOpen,
 			@ApiQueryParam(name = "gapextend", description = "Cost to extend a gap", allowedvalues = { "1" })
@@ -67,12 +67,12 @@ public class BlastController {
 
             @RequestParam(value = "debug", required = false) boolean debug) {
 
-		BlastConfig config = newConfig(matrix, evalue, gapOpen, gapExtend, debug);
+		BlastConfig config = newConfig(matrix, eValue, gapOpen, gapExtend, debug);
 
         return blastService.blastIsoformSequence(config, isoform, begin, end);
     }
 
-    private BlastConfig newConfig(String matrix, Double evalue, Integer gapOpen, Integer gapExtend, boolean debug) {
+    private BlastConfig newConfig(String matrix, Double eValue, Integer gapOpen, Integer gapExtend, boolean debug) {
 
 		// TODO: get the following paths from properties
 		BlastConfig config = new BlastConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db");
@@ -80,7 +80,7 @@ public class BlastController {
 
 		if (matrix != null)
 			config.setMatrix(BlastConfig.Matrix.valueOf(matrix));
-		config.setEvalue(evalue);
+		config.setEvalue(eValue);
 		config.setGapOpen(gapOpen);
 		config.setGapExtend(gapExtend);
 
