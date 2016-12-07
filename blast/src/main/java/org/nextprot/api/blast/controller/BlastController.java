@@ -29,7 +29,7 @@ public class BlastController {
 			@ApiPathParam(name = "header", description = "A query header.",  allowedvalues = { "protein sequence query" })
 			@RequestParam(value = "header", defaultValue = "protein sequence query") String header,
 
-			@ApiQueryParam(name = "matrix", description = "Scoring matrix name", allowedvalues = { "BLOSUM62" })
+			@ApiQueryParam(name = "matrix", description = "Scoring matrix name (BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30 or PAM70)", allowedvalues = { "BLOSUM62" })
 			@RequestParam(value = "matrix", required = false) String matrix,
 			@ApiQueryParam(name = "evalue", description = "Expected value (E) threshold for saving hits", allowedvalues = { "10" })
 			@RequestParam(value = "evalue", required = false) Double evalue,
@@ -56,7 +56,7 @@ public class BlastController {
 			@ApiQueryParam(name = "end", description = "The last sequence position (should be <= sequence length)")
 			@RequestParam(value = "end", required = false) Integer end,
 
-			@ApiQueryParam(name = "matrix", description = "Scoring matrix name", allowedvalues = { "BLOSUM62" })
+			@ApiQueryParam(name = "matrix", description = "Scoring matrix name (BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30 or PAM70)", allowedvalues = { "BLOSUM62" })
 			@RequestParam(value = "matrix", required = false) String matrix,
 			@ApiQueryParam(name = "evalue", description = "Expected value (E) threshold for saving hits", allowedvalues = { "10" })
 			@RequestParam(value = "evalue", required = false) Double eValue,
