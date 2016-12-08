@@ -172,9 +172,11 @@ public class PublicationServiceImpl implements PublicationService {
 
 		if (authorsAndEditors != null) {
 			Set<PublicationAuthor> authorsAndEditorSet = new TreeSet<>(authorsAndEditors);
-
 			publication.setAuthors(new TreeSet<>(Sets.filter(authorsAndEditorSet, pa -> pa != null && !pa.isEditor())));
 			publication.setEditors(new TreeSet<>(Sets.filter(authorsAndEditorSet, pa -> pa != null && pa.isEditor())));
+		} else {
+			publication.setAuthors(new TreeSet<>());
+			publication.setEditors(new TreeSet<>());
 		}
 	}
 
