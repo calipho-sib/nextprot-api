@@ -1,4 +1,4 @@
-package org.nextprot.api.blast.domain;
+package org.nextprot.api.blast.service;
 
 import org.nextprot.api.blast.domain.gen.*;
 import org.nextprot.api.core.domain.MainNames;
