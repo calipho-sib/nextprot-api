@@ -64,8 +64,8 @@ public class SystemCommandExecutor {
         return process.waitFor();
     }
 
-    public String getParameterLine() {
-        return commandInformation.subList(5, commandInformation.size()).stream().collect(Collectors.joining(" "));
+    public String getParameterLine(int from) {
+        return commandInformation.subList(from, commandInformation.size()).stream().collect(Collectors.joining(" "));
     }
 
     /**
