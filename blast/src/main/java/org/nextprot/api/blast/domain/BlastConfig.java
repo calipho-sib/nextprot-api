@@ -33,6 +33,20 @@ public class BlastConfig implements Serializable {
         this.nextprotBlastDbPath = nextprotBlastDbPath;
     }
 
+    public static BlastConfig newBlastPConfig(String blastBinPath, String blastDbPath, String matrix, Double eValue, Integer gapOpen, Integer gapExtend) {
+
+        BlastConfig config = new BlastConfig(blastDbPath);
+        config.setBlastBinPath(blastBinPath);
+
+        if (matrix != null)
+            config.setMatrix(BlastConfig.Matrix.valueOf(matrix));
+        config.setEvalue(eValue);
+        config.setGapOpen(gapOpen);
+        config.setGapExtend(gapExtend);
+
+        return config;
+    }
+
     public String getBlastBinPath() {
         return blastBinPath;
     }
