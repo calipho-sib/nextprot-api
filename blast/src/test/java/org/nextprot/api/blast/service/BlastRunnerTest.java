@@ -1,8 +1,9 @@
-package org.nextprot.api.blast.domain;
+package org.nextprot.api.blast.service;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.nextprot.api.blast.domain.BlastConfig;
 import org.nextprot.api.blast.domain.gen.BlastResult;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,15 +20,20 @@ import java.util.List;
 public class BlastRunnerTest {
 
     @Value("${blastp.bin}")
-    private String blastDirPath;
+    private String blastBinPath;
 
     @Value("${blastp.db}")
     private String blastDb;
 
+    private BlastConfig config;
+
     @Test
     public void blastpShouldFindResult() throws Exception {
 
-        BlastRunner runner = new BlastRunner(new BlastConfig(blastDirPath, blastDb));
+        config = new BlastConfig(blastDb);
+        config.setBlastBinPath(blastBinPath);
+
+        BlastRunner runner = new BlastRunner(config);
 
         BlastResult blastResult = runner.run("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
 
@@ -37,7 +43,10 @@ public class BlastRunnerTest {
     @Test(expected = NextProtException.class)
     public void blastpShouldThrowNPException() throws Exception {
 
-        BlastRunner runner = new BlastRunner(new BlastConfig("/work/devtools/blastw", "/Users/fnikitin/data/blast/db"));
+        config = new BlastConfig(blastDb);
+        config.setBlastBinPath("/work/devtools/blastw");
+
+        BlastRunner runner = new BlastRunner(config);
 
         runner.run("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
     }
@@ -45,7 +54,10 @@ public class BlastRunnerTest {
     @Test
     public void testDefaultCommandLineBuilding() throws Exception {
 
-        BlastRunner runner = new BlastRunner(new BlastConfig(blastDirPath, blastDb));
+        config = new BlastConfig(blastDb);
+        config.setBlastBinPath(blastBinPath);
+
+        BlastRunner runner = new BlastRunner(config);
 
         File file = new File("/tmp/input.fasta");
         List<String> cl = runner.buildCommandLine(file);
@@ -63,7 +75,8 @@ public class BlastRunnerTest {
     @Test
     public void testCommandLineBuildingWithParams() throws Exception {
 
-        BlastConfig config = new BlastConfig(blastDirPath, blastDb);
+        config = new BlastConfig(blastDb);
+        config.setBlastBinPath(blastBinPath);
         config.setEvalue(0.01);
         config.setMatrix(BlastConfig.Matrix.BLOSUM45);
         config.setGapOpen(12);

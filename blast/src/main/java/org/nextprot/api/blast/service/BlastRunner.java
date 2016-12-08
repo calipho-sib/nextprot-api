@@ -1,6 +1,7 @@
-package org.nextprot.api.blast.domain;
+package org.nextprot.api.blast.service;
 
 import org.nextprot.api.blast.controller.SystemCommandExecutor;
+import org.nextprot.api.blast.domain.BlastConfig;
 import org.nextprot.api.blast.domain.gen.BlastResult;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.service.MainNamesService;
@@ -79,9 +80,9 @@ public class BlastRunner {
 
         List<String> command = new ArrayList<>();
 
-        command.add(config.getBlastDirPath() + "/blastp");
+        command.add(config.getBlastBinPath());
         command.add("-db");
-        command.add(config.getNextprotDatabasePath() + "/nextprot");
+        command.add(config.getNextprotBlastDbPath());
         command.add("-query");
         command.add(inputFile.getAbsolutePath());
         command.add("-outfmt");
