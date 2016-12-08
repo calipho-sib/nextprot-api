@@ -35,7 +35,7 @@ public class BlastRunnerTest {
 
         BlastRunner runner = new BlastRunner(config);
 
-        BlastResult blastResult = runner.run("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
+        BlastResult blastResult = runner.run(new BlastRunner.Query("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR"));
 
         Assert.assertEquals(1, blastResult.getBlastOutput2().size());
     }
@@ -48,7 +48,7 @@ public class BlastRunnerTest {
 
         BlastRunner runner = new BlastRunner(config);
 
-        runner.run("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
+        runner.run(new BlastRunner.Query("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR"));
     }
 
     @Test
@@ -103,5 +103,13 @@ public class BlastRunnerTest {
         Assert.assertEquals("12", cl.get(12));
         Assert.assertEquals("-gapextend", cl.get(13));
         Assert.assertEquals("2", cl.get(14));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void shouldNotBeAbleToCreateInstance() throws Exception {
+
+        config = new BlastConfig("/tmp/blastdb");
+
+        new BlastRunner(config);
     }
 }

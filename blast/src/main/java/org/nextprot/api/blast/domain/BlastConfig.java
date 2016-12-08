@@ -1,6 +1,7 @@
 package org.nextprot.api.blast.domain;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 
 /**
@@ -15,27 +16,41 @@ public class BlastConfig implements Serializable {
         BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30, PAM70
     }
 
-    private final String blastDirPath;
-    private final String nextprotDatabasePath;
+    private final String nextprotBlastDbPath;
     private boolean isDebugMode = false;
+    private String blastBinPath;
+    private String makeBlastDbBinPath;
 
     private Matrix matrix;
     private Double evalue;
     private Integer gapOpen;
     private Integer gapExtend;
 
-    public BlastConfig(String blastDirPath, String nextprotDatabasePath) {
+    public BlastConfig(String nextprotBlastDbPath) {
 
-        this.blastDirPath = blastDirPath;
-        this.nextprotDatabasePath = nextprotDatabasePath;
+        Objects.requireNonNull(nextprotBlastDbPath, "nextprot blast db path is missing");
+
+        this.nextprotBlastDbPath = nextprotBlastDbPath;
     }
 
-    public String getBlastDirPath() {
-        return blastDirPath;
+    public String getBlastBinPath() {
+        return blastBinPath;
     }
 
-    public String getNextprotDatabasePath() {
-        return nextprotDatabasePath;
+    public void setBlastBinPath(String blastBinPath) {
+        this.blastBinPath = blastBinPath;
+    }
+
+    public String getMakeBlastDbBinPath() {
+        return makeBlastDbBinPath;
+    }
+
+    public void setMakeBlastDbBinPath(String makeBlastDbBinPath) {
+        this.makeBlastDbBinPath = makeBlastDbBinPath;
+    }
+
+    public String getNextprotBlastDbPath() {
+        return nextprotBlastDbPath;
     }
 
     public boolean isDebugMode() {
