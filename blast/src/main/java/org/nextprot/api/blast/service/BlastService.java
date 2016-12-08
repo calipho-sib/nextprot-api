@@ -24,4 +24,11 @@ public interface BlastService {
      * @return the blast result
      */
     BlastResult blastIsoformSequence(BlastConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex);
+
+    /**
+     * Create blast nextprot database
+     * @param config configuration object
+     * @return report
+     */
+    String makeNextprotBlastDb(BlastConfig config);
 }

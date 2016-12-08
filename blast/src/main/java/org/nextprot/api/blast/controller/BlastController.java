@@ -9,6 +9,7 @@ import org.nextprot.api.blast.domain.BlastConfig;
 import org.nextprot.api.blast.domain.gen.BlastResult;
 import org.nextprot.api.blast.service.BlastService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,17 @@ public class BlastController {
 	@Autowired
 	private BlastService blastService;
 
-	@ApiMethod(path = "/blastp/seq/{sequence}", verb = ApiVerb.GET, description = "Search protein sequence", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/blastp/seq/{sequence}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Value("${blastp.bin}")
+    private String blastBinPath;
+
+    @Value("${makeblastdb.bin}")
+    private String makeblastdbBinPath;
+
+    @Value("${blastp.db}")
+    private String blastDbPath;
+
+	@ApiMethod(path = "/blast/seq/{sequence}", verb = ApiVerb.GET, description = "Search protein sequence", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/blast/seq/{sequence}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public BlastResult blastProteinSequence(
 			@ApiPathParam(name = "sequence", description = "A protein sequence query.",  allowedvalues = { "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR" })
@@ -36,17 +46,15 @@ public class BlastController {
 			@ApiQueryParam(name = "gapopen", description = "Cost to open a gap", allowedvalues = { "11" })
 			@RequestParam(value = "gapopen", required = false) Integer gapOpen,
 			@ApiQueryParam(name = "gapextend", description = "Cost to extend a gap", allowedvalues = { "1" })
-			@RequestParam(value = "gapextend", required = false) Integer gapExtend,
+			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
-			@RequestParam(value = "debug", required = false) boolean debug) {
-
-		BlastConfig config = newConfig(matrix, evalue, gapOpen, gapExtend, debug);
+		BlastConfig config = BlastConfig.newBlastPConfig(blastBinPath, blastDbPath, matrix, evalue, gapOpen, gapExtend);
 
 		return blastService.blastProteinSequence(config, header, sequence);
 	}
 
-    @ApiMethod(path = "/blastp/isoform/{isoform}", verb = ApiVerb.GET, description = "Search isoform sequence from neXtProt isoform accession", produces = MediaType.APPLICATION_JSON_VALUE)
-    @RequestMapping(value = "/blastp/isoform/{isoform}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @ApiMethod(path = "/blast/isoform/{isoform}", verb = ApiVerb.GET, description = "Search isoform sequence from neXtProt isoform accession", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/blast/isoform/{isoform}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public BlastResult blastIsoform(
             @ApiPathParam(name = "isoform", description = "An neXtProt isoform accession.", allowedvalues = { "NX_P01308-1" })
@@ -63,27 +71,21 @@ public class BlastController {
 			@ApiQueryParam(name = "gapopen", description = "Cost to open a gap", allowedvalues = { "11" })
 			@RequestParam(value = "gapopen", required = false) Integer gapOpen,
 			@ApiQueryParam(name = "gapextend", description = "Cost to extend a gap", allowedvalues = { "1" })
-			@RequestParam(value = "gapextend", required = false) Integer gapExtend,
+			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
-            @RequestParam(value = "debug", required = false) boolean debug) {
-
-		BlastConfig config = newConfig(matrix, eValue, gapOpen, gapExtend, debug);
+		BlastConfig config = BlastConfig.newBlastPConfig(blastBinPath, blastDbPath, matrix, eValue, gapOpen, gapExtend);
 
         return blastService.blastIsoformSequence(config, isoform, begin, end);
     }
 
-    private BlastConfig newConfig(String matrix, Double eValue, Integer gapOpen, Integer gapExtend, boolean debug) {
+    @ApiMethod(path = "/blast/createdb/", verb = ApiVerb.GET, description = "Create nextprot blast database", produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/blast/createdb", method = {RequestMethod.GET}, produces = {MediaType.TEXT_PLAIN_VALUE})
+    @ResponseBody
+    public String createBlastDb() {
 
-		// TODO: get the following paths from properties
-		BlastConfig config = new BlastConfig("/Users/fnikitin/Applications/ncbi-blast-2.3.0+/bin", "/Users/fnikitin/data/blast/db");
-		config.setDebugMode(debug);
+        BlastConfig config = new BlastConfig(blastDbPath);
+        config.setMakeBlastDbBinPath(makeblastdbBinPath);
 
-		if (matrix != null)
-			config.setMatrix(BlastConfig.Matrix.valueOf(matrix));
-		config.setEvalue(eValue);
-		config.setGapOpen(gapOpen);
-		config.setGapExtend(gapExtend);
-
-		return config;
-	}
+        return blastService.makeNextprotBlastDb(config);
+    }
 }
