@@ -59,6 +59,9 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, 
 
     protected void writeFastaContent(PrintWriter pw, BlastPRunner.Query query) {
 
+        config.setQueryHeader(query.getHeader());
+        config.setSequenceQuery(query.getSequence());
+
         pw.write(new StringBuilder().append(">").append(query.getHeader()).append("\n").toString());
         pw.write(query.getSequence());
     }
