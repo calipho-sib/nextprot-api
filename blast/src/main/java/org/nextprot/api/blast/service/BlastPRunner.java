@@ -1,6 +1,6 @@
 package org.nextprot.api.blast.service;
 
-import org.nextprot.api.blast.domain.BlastConfig;
+import org.nextprot.api.blast.domain.BlastPConfig;
 import org.nextprot.api.blast.domain.gen.BlastResult;
 
 import java.io.File;
@@ -13,12 +13,12 @@ import java.util.Objects;
 /**
  * Executes locally installed blastP program with protein sequence query
  */
-public class BlastRunner extends BlastProgram<BlastRunner.Query, BlastResult> {
+public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, BlastPConfig> {
 
-    public BlastRunner(BlastConfig config) {
+    public BlastPRunner(BlastPConfig config) {
 
         super("blasp", config);
-        Objects.requireNonNull(config.getBlastBinPath(), "blastp binary path is missing");
+        Objects.requireNonNull(config.getBinPath(), "blastp binary path is missing");
     }
 
     protected BlastResult buildFromStdout(String stdout) throws IOException {
@@ -30,7 +30,7 @@ public class BlastRunner extends BlastProgram<BlastRunner.Query, BlastResult> {
 
         List<String> command = new ArrayList<>();
 
-        command.add(config.getBlastBinPath());
+        command.add(config.getBinPath());
         command.add("-db");
         command.add(config.getNextprotBlastDbPath());
         command.add("-query");
@@ -57,12 +57,13 @@ public class BlastRunner extends BlastProgram<BlastRunner.Query, BlastResult> {
         return command;
     }
 
-    protected void writeFastaContent(PrintWriter pw, BlastRunner.Query query){
+    protected void writeFastaContent(PrintWriter pw, BlastPRunner.Query query) {
 
         pw.write(new StringBuilder().append(">").append(query.getHeader()).append("\n").toString());
         pw.write(query.getSequence());
     }
 
+    /** A fasta sequence query */
     public static class Query {
 
         private final String header;

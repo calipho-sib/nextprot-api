@@ -1,6 +1,8 @@
 package org.nextprot.api.blast.service;
 
+import com.google.common.base.Preconditions;
 import org.nextprot.api.blast.domain.gen.*;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.service.MainNamesService;
 
@@ -19,7 +21,8 @@ import java.util.regex.Pattern;
  */
 public class BlastResultUpdater {
 
-    private final static Pattern DESCRIPTION_TITLE_PATTERN = Pattern.compile("^.+\\s+(NX_[^|]+)\\|(NX_.+)$");
+    private final static Pattern ISOFORM_ACCESSION_PATTERN = Pattern.compile("^.+(NX_[^-])(-\\d+).*$");
+    private final static DecimalFormat PERCENT_FORMAT = new DecimalFormat("#.##");
 
     private final MainNamesService mainNamesService;
     private final String sequence;
@@ -28,6 +31,7 @@ public class BlastResultUpdater {
 
         Objects.requireNonNull(mainNamesService);
         Objects.requireNonNull(sequence);
+        Preconditions.checkArgument(!sequence.isEmpty());
 
         this.mainNamesService = mainNamesService;
         this.sequence = sequence;
@@ -38,6 +42,10 @@ public class BlastResultUpdater {
      * @param blastResult the original blast output
      */
     public void update(BlastResult blastResult) {
+
+        if (blastResult == null) {
+            throw new NextProtException("nothing to update: blast result was not defined");
+        }
 
         Report report = blastResult.getBlastOutput2().get(0).getReport();
         Search search = report.getResults().getSearch();
@@ -78,32 +86,40 @@ public class BlastResultUpdater {
         description.setId(null);
         description.setAccession(null);
 
-        String old = description.getTitle();
-        Matcher matcher = DESCRIPTION_TITLE_PATTERN.matcher(old);
+        Matcher matcher = ISOFORM_ACCESSION_PATTERN.matcher(description.getTitle());
 
+        // isoform sequence only
         if (matcher.find()) {
 
-            MainNames entryNames = mainNamesService.findIsoformOrEntryMainName(matcher.group(2));
-            MainNames isoNames = mainNamesService.findIsoformOrEntryMainName(matcher.group(1));
+            String isoformAccession = matcher.group(1);
+            String entryAccession = matcher.group(2);
 
-            String geneName = (!entryNames.getGeneNameList().isEmpty()) ? entryNames.getGeneNameList().get(0) : null;
-            String proteinName = entryNames.getName();
-            String title = proteinName + ((geneName != null) ? " ("+geneName+")":"")+" ["+isoNames.getAccession()+"]";
-
-            description.setTitle(title);
-            description.setEntryAccession(entryNames.getAccession());
-            description.setIsoAccession(isoNames.getAccession());
-            description.setIsoName(isoNames.getName());
-            description.setProteinName(proteinName);
-            description.setGeneName(geneName);
+            setAccessions(description, isoformAccession, entryAccession);
         }
+    }
+
+    private void setAccessions(Description description, String isoAccession, String entryAccession) {
+
+        MainNames entryNames = mainNamesService.findIsoformOrEntryMainName(entryAccession);
+        MainNames isoNames = mainNamesService.findIsoformOrEntryMainName(isoAccession);
+
+        String geneName = (!entryNames.getGeneNameList().isEmpty()) ? entryNames.getGeneNameList().get(0) : null;
+        String proteinName = entryNames.getName();
+        String title = proteinName + ((geneName != null) ? " ("+geneName+")":"")+" ["+isoNames.getAccession()+"]";
+
+        description.setTitle(title);
+        description.setEntryAccession(entryNames.getAccession());
+        description.setIsoAccession(isoNames.getAccession());
+        description.setIsoName(isoNames.getName());
+        description.setProteinName(proteinName);
+        description.setGeneName(geneName);
     }
 
     protected void updateHsp(Hsp hsp) {
 
-        float identityPercent = (float)hsp.getIdentity()/sequence.length()*100;
+        float identityPercent = (float) hsp.getIdentity() / sequence.length() * 100;
 
-        hsp.setIdentityPercent(Float.parseFloat(new DecimalFormat("#.##").format(identityPercent)));
+        hsp.setIdentityPercent(Float.parseFloat(PERCENT_FORMAT.format(identityPercent)));
         hsp.setNum(null);
     }
 

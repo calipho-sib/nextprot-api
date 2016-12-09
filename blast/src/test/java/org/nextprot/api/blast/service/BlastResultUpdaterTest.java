@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.blast.domain.gen.BlastResult;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.service.MainNamesService;
 
@@ -43,6 +44,13 @@ public class BlastResultUpdaterTest {
 
         Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQuerySeq());
         Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
+    }
+
+    @Test(expected = NextProtException.class)
+    public void shouldThrowExceptionWhenUpdateNullResult() throws Exception {
+
+        BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), "WHATEVER");
+        updater.update(null);
     }
 
     private static BlastResult runBlast() throws IOException {
