@@ -15,7 +15,6 @@ import java.util.List;
 @JsonPropertyOrder({
     "query_id",
     "query_title",
-    "query_seq",
     "query_len",
     "hits",
     "stat"
@@ -27,10 +26,8 @@ public class Search implements Serializable
     private String queryId;
     @JsonProperty("query_title")
     private String queryTitle;
-    @JsonProperty("query_seq")
-    private String querySeq;
     @JsonProperty("query_len")
-    private int queryLen;
+    private Integer queryLen;
     @JsonProperty("hits")
     private List<Hit> hits = null;
     @JsonProperty("stat")
@@ -72,23 +69,13 @@ public class Search implements Serializable
         this.queryTitle = queryTitle;
     }
 
-    @JsonProperty("query_seq")
-    public String getQuerySeq() {
-        return querySeq;
-    }
-
-    @JsonProperty("query_seq")
-    public void setQuerySeq(String querySeq) {
-        this.querySeq = querySeq;
-    }
-
     /**
      * 
      * @return
      *     The queryLen
      */
     @JsonProperty("query_len")
-    public int getQueryLen() {
+    public Integer getQueryLen() {
         return queryLen;
     }
 
@@ -98,7 +85,7 @@ public class Search implements Serializable
      *     The query_len
      */
     @JsonProperty("query_len")
-    public void setQueryLen(int queryLen) {
+    public void setQueryLen(Integer queryLen) {
         this.queryLen = queryLen;
     }
 

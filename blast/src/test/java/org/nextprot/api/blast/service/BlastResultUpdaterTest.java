@@ -21,6 +21,8 @@ public class BlastResultUpdaterTest {
         BlastResult blastResult = runBlast();
 
         Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getReference());
+        Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQueryTitle());
+        Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQueryLen());
         Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getStat().getEntropy());
 
         BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), "WHATEVER");
@@ -29,6 +31,8 @@ public class BlastResultUpdaterTest {
         Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getReference());
         Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQueryId());
         Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getStat().getEntropy());
+        Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQueryTitle());
+        Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQueryLen());
     }
 
     @Test
@@ -36,13 +40,11 @@ public class BlastResultUpdaterTest {
 
         BlastResult blastResult = runBlast();
 
-        Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQuerySeq());
         Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
 
         BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), "WHATEVER");
         updater.update(blastResult);
 
-        Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQuerySeq());
         Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
     }
 
