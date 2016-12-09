@@ -14,8 +14,8 @@ public class MultipleEntryAccessionForGeneException extends FeatureQueryExceptio
 
         super(query);
 
-        getError().addCause(GENE_NAME, geneName);
-        getError().addCause(FOUND_ACCESSIONS, accessions);
-        getError().setMessage("multiple accessions: too many entry accessions found for gene " + geneName+": "+accessions);
+        getReason().addCause(GENE_NAME, geneName);
+        getReason().addCause(FOUND_ACCESSIONS, accessions);
+        getReason().setMessage("multiple accessions: too many entry accessions found for gene " + geneName+": "+accessions);
     }
 }

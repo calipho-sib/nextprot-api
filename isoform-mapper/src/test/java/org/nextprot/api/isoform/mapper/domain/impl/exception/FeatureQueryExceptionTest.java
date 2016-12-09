@@ -20,7 +20,7 @@ public class FeatureQueryExceptionTest {
     public void testEntryAccessionNotFoundForGeneException() throws FeatureQueryException {
 
         EntryAccessionNotFoundForGeneException featureQueryException = new EntryAccessionNotFoundForGeneException(Mockito.mock(SingleFeatureQuery.class), "SCN11A");
-        Assert.assertEquals("cannot find entry accession for gene SCN11A", featureQueryException.getError().getMessage());
+        Assert.assertEquals("cannot find entry accession for gene SCN11A", featureQueryException.getReason().getMessage());
     }
 
     @Test
@@ -31,7 +31,7 @@ public class FeatureQueryExceptionTest {
 
         IncompatibleGeneAndProteinNameException featureQueryException = new IncompatibleGeneAndProteinNameException(query, "SCN11A", Lists.newArrayList("INS"));
 
-        Assert.assertEquals("gene->protein incompatibility: protein NX_P01308 is not compatible with gene SCN11A (expected genes: [INS])", featureQueryException.getError().getMessage());
+        Assert.assertEquals("gene->protein incompatibility: protein NX_P01308 is not compatible with gene SCN11A (expected genes: [INS])", featureQueryException.getReason().getMessage());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class FeatureQueryExceptionTest {
 
         InvalidFeatureQueryFormatException featureQueryException = new InvalidFeatureQueryFormatException(query, Mockito.mock(ParseException.class));
 
-        Assert.assertEquals("invalid feature format: SCN11A-p.Leu1158Pro", featureQueryException.getError().getMessage());
+        Assert.assertEquals("invalid feature format: SCN11A-p.Leu1158Pro", featureQueryException.getReason().getMessage());
     }
 
     @Test
@@ -52,14 +52,14 @@ public class FeatureQueryExceptionTest {
                 new SingleFeatureQuery("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
         OutOfBoundSequencePositionException featureQueryException = new OutOfBoundSequencePositionException(query, 23);
-        Assert.assertEquals("out of bound sequence position: position 23 of NX_Q9UI33 sequence", featureQueryException.getError().getMessage());
+        Assert.assertEquals("out of bound sequence position: position 23 of NX_Q9UI33 sequence", featureQueryException.getReason().getMessage());
     }
 
     @Test
     public void testUndefinedFQException() throws FeatureQueryException {
 
         UndefinedFeatureQueryException featureQueryException = new UndefinedFeatureQueryException(Mockito.mock(SingleFeatureQuery.class));
-        Assert.assertEquals("undefined feature", featureQueryException.getError().getMessage());
+        Assert.assertEquals("undefined feature", featureQueryException.getReason().getMessage());
     }
 
     @Test
@@ -71,11 +71,11 @@ public class FeatureQueryExceptionTest {
         UnexpectedFeatureQueryAminoAcidException featureQueryException = new UnexpectedFeatureQueryAminoAcidException(query, 1158,
         new AminoAcidCode[] { AminoAcidCode.ALANINE }, new AminoAcidCode[] { AminoAcidCode.LEUCINE});
 
-        Assert.assertEquals("Ala", featureQueryException.getError().getCause("expectedAminoAcids"));
-        Assert.assertEquals("Leu", featureQueryException.getError().getCause("featureAminoAcids"));
-        Assert.assertEquals(1158, featureQueryException.getError().getCause("sequencePosition"));
+        Assert.assertEquals("Ala", featureQueryException.getReason().getCause("expectedAminoAcids"));
+        Assert.assertEquals("Leu", featureQueryException.getReason().getCause("featureAminoAcids"));
+        Assert.assertEquals(1158, featureQueryException.getReason().getCause("sequencePosition"));
 
-        Assert.assertEquals("unexpected amino-acid: found Leu at position 1158 of NX_Q9UI33 sequence instead of expected Ala", featureQueryException.getError().getMessage());
+        Assert.assertEquals("unexpected amino-acid: found Leu at position 1158 of NX_Q9UI33 sequence instead of expected Ala", featureQueryException.getReason().getMessage());
     }
 
     @Test
@@ -92,7 +92,7 @@ public class FeatureQueryExceptionTest {
                 query,
                 "spongebob");
 
-        Assert.assertEquals("unknown isoform: cannot find isoform spongebob in entry NX_Q9UI33 (existing isoforms: [Iso 1, Iso 2, Iso 3])", featureQueryException.getError().getMessage());
+        Assert.assertEquals("unknown isoform: cannot find isoform spongebob in entry NX_Q9UI33 (existing isoforms: [Iso 1, Iso 2, Iso 3])", featureQueryException.getReason().getMessage());
     }
 
     @Test
@@ -102,13 +102,13 @@ public class FeatureQueryExceptionTest {
                 new SingleFeatureQuery("SCN11A-p.Leu1158Pro", AnnotationCategory.CATALYTIC_ACTIVITY.getApiTypeName(), "NX_Q9UI33");
 
         UnknownFeatureQueryTypeException featureQueryException = new UnknownFeatureQueryTypeException(query);
-        Assert.assertEquals("unknown feature type: cannot find feature type CatalyticActivity", featureQueryException.getError().getMessage());
+        Assert.assertEquals("unknown feature type: cannot find feature type CatalyticActivity", featureQueryException.getReason().getMessage());
     }
 
     @Test
     public void testMultipleEntryAccessionForGeneException() throws FeatureQueryException {
 
         MultipleEntryAccessionForGeneException featureQueryException = new MultipleEntryAccessionForGeneException(Mockito.mock(SingleFeatureQuery.class), "roudoudou", Arrays.asList("NX_ROUDOUDOU-1", "NX_ROUDOUDOU-2"));
-        Assert.assertEquals("multiple accessions: too many entry accessions found for gene roudoudou: [NX_ROUDOUDOU-1, NX_ROUDOUDOU-2]", featureQueryException.getError().getMessage());
+        Assert.assertEquals("multiple accessions: too many entry accessions found for gene roudoudou: [NX_ROUDOUDOU-1, NX_ROUDOUDOU-2]", featureQueryException.getReason().getMessage());
     }
 }

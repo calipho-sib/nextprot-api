@@ -15,10 +15,10 @@ public class UnknownFeatureIsoformException extends FeatureQueryException {
 
         super(query);
 
-        getError().addCause(UNKNOWN_ISOFORM, unknownIsoform);
-        getError().addCause(EXPECTED_ISOFORMS, entry.getIsoforms().stream().map(iso -> iso.getMainEntityName().getName()).collect(Collectors.toList()));
+        getReason().addCause(UNKNOWN_ISOFORM, unknownIsoform);
+        getReason().addCause(EXPECTED_ISOFORMS, entry.getIsoforms().stream().map(iso -> iso.getMainEntityName().getName()).collect(Collectors.toList()));
 
-        getError().setMessage("unknown isoform: cannot find isoform "+unknownIsoform+" in entry "+ query.getAccession()
-                + " (existing isoforms: "+ getError().getCause(EXPECTED_ISOFORMS)+")");
+        getReason().setMessage("unknown isoform: cannot find isoform "+unknownIsoform+" in entry "+ query.getAccession()
+                + " (existing isoforms: "+ getReason().getCause(EXPECTED_ISOFORMS)+")");
     }
 }
