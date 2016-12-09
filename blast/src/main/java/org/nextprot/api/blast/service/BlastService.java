@@ -2,7 +2,7 @@ package org.nextprot.api.blast.service;
 
 
 import org.nextprot.api.blast.domain.BlastPConfig;
-import org.nextprot.api.blast.domain.gen.BlastResult;
+import org.nextprot.api.blast.domain.BlastProgramOutput;
 
 public interface BlastService {
 
@@ -13,7 +13,7 @@ public interface BlastService {
      * @param sequence the protein sequence (fasta)
      * @return the blast result
      */
-    BlastResult blastProteinSequence(BlastPConfig query, String header, String sequence);
+    BlastProgramOutput blastProteinSequence(BlastPConfig query, String header, String sequence);
 
     /**
      * Run blastp on a given isoform sequence
@@ -23,12 +23,12 @@ public interface BlastService {
      * @param end1BasedIndex last index (1-based number)
      * @return the blast result
      */
-    BlastResult blastIsoformSequence(BlastPConfig query, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex);
+    BlastProgramOutput blastIsoformSequence(BlastPConfig query, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex);
 
     /**
      * Create blast nextprot database
      * @param config configuration object
      * @return report
      */
-    String makeNextprotBlastDb(BlastProgram.Config config);
+    BlastProgramOutput makeNextprotBlastDb(BlastProgram.Config config);
 }

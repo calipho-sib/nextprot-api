@@ -2,9 +2,13 @@ package org.nextprot.api.blast.service.impl;
 
 import org.nextprot.api.blast.dao.BlastDAO;
 import org.nextprot.api.blast.domain.BlastPConfig;
+import org.nextprot.api.blast.domain.BlastProgramFailure;
+import org.nextprot.api.blast.domain.BlastProgramOutput;
+import org.nextprot.api.blast.domain.BlastProgramSuccess;
 import org.nextprot.api.blast.domain.gen.BlastResult;
 import org.nextprot.api.blast.service.*;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -30,17 +34,21 @@ public class BlastServiceImpl implements BlastService {
     private BlastDAO blastDAO;
 
     @Override
-    public BlastResult blastProteinSequence(BlastPConfig config, String header, String sequence) {
+    public BlastProgramOutput blastProteinSequence(BlastPConfig config, String header, String sequence) {
 
-        BlastResult result = new BlastPRunner(config).run(new BlastPRunner.Query(header, sequence));
+        try {
+            BlastResult result = new BlastPRunner(config).run(new BlastPRunner.Query(header, sequence));
+            new BlastResultUpdater(mainNamesService, sequence).update(result);
 
-        new BlastResultUpdater(mainNamesService, sequence).update(result);
+            return new BlastProgramSuccess(config, result);
+        } catch (ExceptionWithReason exceptionWithReason) {
 
-        return result;
+            return new BlastProgramFailure(config, exceptionWithReason);
+        }
     }
 
     @Override
-    public BlastResult blastIsoformSequence(BlastPConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
+    public BlastProgramOutput blastIsoformSequence(BlastPConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
 
         if (!isoformAccession.matches(ISOFORM_REX_EXP)) {
             throw new NextProtException(isoformAccession+": invalid isoform accession (format: "+ISOFORM_REX_EXP+")");
@@ -51,8 +59,11 @@ public class BlastServiceImpl implements BlastService {
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withTargetIsoforms());
 
         Isoform isoform = IsoformUtils.getIsoformByName(entry, isoformAccession);
+
         if (isoform == null) {
-            throw new NextProtException(isoformAccession+": could not find isoform from entry "+entryAccession);
+
+            return new BlastProgramFailure(config, ExceptionWithReason.withReason("unknown isoform",
+                    isoformAccession+": could not find isoform from entry "+entryAccession));
         }
 
         String isoformSequence = isoform.getSequence();
@@ -71,10 +82,14 @@ public class BlastServiceImpl implements BlastService {
 
         // check positions
         if (begin <= 0 || begin > isoformSequence.length()) {
-            throw new NextProtException("begin position "+begin+" is out of bound (should be > 0 and <= "+isoformSequence.length()+")");
+
+            return new BlastProgramFailure(config, ExceptionWithReason.withReason("begin sequence position",
+                            begin+" is out of bound (should be > 0 and <= "+isoformSequence.length()+")"));
         }
         if (end <= 0 || end > isoformSequence.length()) {
-            throw new NextProtException("end position "+end+" is out of bound (should be > 0 and <= "+isoformSequence.length()+")");
+
+            return new BlastProgramFailure(config, ExceptionWithReason.withReason("end sequence position",
+                    end+" is out of bound (should be > 0 and <= "+isoformSequence.length()+")"));
         }
 
         // format header
@@ -90,10 +105,17 @@ public class BlastServiceImpl implements BlastService {
     }
 
     @Override
-    public String makeNextprotBlastDb(BlastProgram.Config config) {
+    public BlastProgramOutput makeNextprotBlastDb(BlastProgram.Config config) {
 
         BlastDbMaker runner = new BlastDbMaker(config);
 
-        return runner.run(blastDAO.getAllIsoformSequences());
+        try {
+            String result = runner.run(blastDAO.getAllIsoformSequences());
+
+            return new BlastProgramSuccess(config, result);
+        } catch (ExceptionWithReason exceptionWithReason) {
+
+            return new BlastProgramFailure(config, exceptionWithReason);
+        }
     }
 }
