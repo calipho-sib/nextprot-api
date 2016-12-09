@@ -47,6 +47,7 @@ public class BlastServiceImpl implements BlastService {
         }
     }
 
+    // TODO: refactor this messy method
     @Override
     public BlastProgramOutput blastIsoformSequence(BlastPConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
 

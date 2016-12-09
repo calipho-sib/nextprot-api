@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  */
 public class BlastResultUpdater {
 
-    private final static Pattern ISOFORM_ACCESSION_PATTERN = Pattern.compile("^.+(NX_[^-]+)(-\\d+).*$");
+    private final static Pattern ISOFORM_ACCESSION_PATTERN = Pattern.compile("^.*(NX_[^-]+)(-\\d+).*$");
     private final static DecimalFormat PERCENT_FORMAT = new DecimalFormat("#.##");
 
     private final MainNamesService mainNamesService;
@@ -89,7 +89,6 @@ public class BlastResultUpdater {
 
         Matcher matcher = ISOFORM_ACCESSION_PATTERN.matcher(description.getTitle());
 
-        // isoform sequence only
         if (matcher.find()) {
 
             String entryAccession = matcher.group(1);
