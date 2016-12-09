@@ -17,8 +17,8 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, 
 
     public BlastPRunner(BlastPConfig config) {
 
-        super("blasp", config);
-        Objects.requireNonNull(config.getBinPath(), "blastp binary path is missing");
+        super("blastp", config);
+        Objects.requireNonNull(config.getBinPath(), "binary path is missing");
     }
 
     protected BlastResult buildFromStdout(String stdout) throws IOException {

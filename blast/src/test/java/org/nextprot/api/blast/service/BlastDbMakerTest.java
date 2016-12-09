@@ -55,7 +55,7 @@ public class BlastDbMakerTest {
         Assert.assertTrue(result.contains("Adding sequences from FASTA; added 1 sequences"));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NextProtException.class)
     public void shouldNotBeAbleToCreateInstance() throws Exception {
 
         config = new BlastProgram.Config(null, "/tmp/blastdb");

@@ -101,7 +101,7 @@ public class BlastPRunnerTest {
         Assert.assertEquals("2", cl.get(14));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = NextProtException.class)
     public void shouldNotBeAbleToCreateInstance() throws Exception {
 
         config = new BlastPConfig(null, "/tmp/blastdb");

@@ -5,9 +5,12 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.blast.domain.BlastConfig;
-import org.nextprot.api.blast.domain.gen.BlastResult;
+import org.nextprot.api.blast.domain.BlastPConfig;
+import org.nextprot.api.blast.domain.BlastProgramFailure;
+import org.nextprot.api.blast.domain.BlastProgramOutput;
+import org.nextprot.api.blast.service.BlastProgram;
 import org.nextprot.api.blast.service.BlastService;
+import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -33,7 +36,7 @@ public class BlastController {
 	@ApiMethod(path = "/blast/seq/{sequence}", verb = ApiVerb.GET, description = "Search protein sequence", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/blast/seq/{sequence}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
-	public BlastResult blastProteinSequence(
+	public BlastProgramOutput blastProteinSequence(
 			@ApiPathParam(name = "sequence", description = "A protein sequence query.",  allowedvalues = { "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR" })
 			@PathVariable("sequence") String sequence,
 			@ApiPathParam(name = "header", description = "A query header.",  allowedvalues = { "protein sequence query" })
@@ -41,22 +44,28 @@ public class BlastController {
 
 			@ApiQueryParam(name = "matrix", description = "Scoring matrix name (BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30 or PAM70)", allowedvalues = { "BLOSUM62" })
 			@RequestParam(value = "matrix", required = false) String matrix,
-			@ApiQueryParam(name = "evalue", description = "Expected value (E) threshold for saving hits", allowedvalues = { "10" })
-			@RequestParam(value = "evalue", required = false) Double evalue,
+			@ApiQueryParam(name = "eValue", description = "Expected value (E) threshold for saving hits", allowedvalues = { "10" })
+			@RequestParam(value = "evalue", required = false) Double eValue,
 			@ApiQueryParam(name = "gapopen", description = "Cost to open a gap", allowedvalues = { "11" })
 			@RequestParam(value = "gapopen", required = false) Integer gapOpen,
 			@ApiQueryParam(name = "gapextend", description = "Cost to extend a gap", allowedvalues = { "1" })
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
-		BlastConfig config = BlastConfig.newBlastPConfig(blastBinPath, blastDbPath, matrix, evalue, gapOpen, gapExtend);
+		try {
+			BlastPConfig config = BlastPConfig.all(blastBinPath, blastDbPath, matrix, eValue, gapOpen, gapExtend);
 
-		return blastService.blastProteinSequence(config, header, sequence);
+			return blastService.blastProteinSequence(config, header, sequence);
+		} catch (ExceptionWithReason exceptionWithReason) {
+
+			exceptionWithReason.getReason().setMessage("cannot execute blastp");
+			return new BlastProgramFailure(null, exceptionWithReason);
+		}
 	}
 
     @ApiMethod(path = "/blast/isoform/{isoform}", verb = ApiVerb.GET, description = "Search isoform sequence from neXtProt isoform accession", produces = MediaType.APPLICATION_JSON_VALUE)
     @RequestMapping(value = "/blast/isoform/{isoform}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-    public BlastResult blastIsoform(
+    public BlastProgramOutput blastIsoform(
             @ApiPathParam(name = "isoform", description = "An neXtProt isoform accession.", allowedvalues = { "NX_P01308-1" })
             @PathVariable("isoform") String isoform,
 			@ApiQueryParam(name = "begin", description = "The first sequence position (should be strictly positive)")
@@ -73,19 +82,23 @@ public class BlastController {
 			@ApiQueryParam(name = "gapextend", description = "Cost to extend a gap", allowedvalues = { "1" })
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
-		BlastConfig config = BlastConfig.newBlastPConfig(blastBinPath, blastDbPath, matrix, eValue, gapOpen, gapExtend);
+		try {
+			BlastPConfig config = BlastPConfig.all(blastBinPath, blastDbPath, matrix, eValue, gapOpen, gapExtend);
 
-        return blastService.blastIsoformSequence(config, isoform, begin, end);
+			return blastService.blastIsoformSequence(config, isoform, begin, end);
+		} catch (ExceptionWithReason exceptionWithReason) {
+
+			exceptionWithReason.getReason().setMessage("cannot execute blastp");
+			return new BlastProgramFailure(null, exceptionWithReason);
+		}
     }
 
-    @ApiMethod(path = "/blast/createdb/", verb = ApiVerb.GET, description = "Create nextprot blast database", produces = MediaType.TEXT_PLAIN_VALUE)
-    @RequestMapping(value = "/blast/createdb", method = {RequestMethod.GET}, produces = {MediaType.TEXT_PLAIN_VALUE})
+    @ApiMethod(path = "/blast/createdb/", verb = ApiVerb.GET, description = "Create nextprot blast database", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/blast/createdb", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-    public String createBlastDb() {
+    public BlastProgramOutput createBlastDb() {
 
-        BlastConfig config = new BlastConfig(blastDbPath);
-        config.setMakeBlastDbBinPath(makeblastdbBinPath);
-
-        return blastService.makeNextprotBlastDb(config);
+		BlastProgram.Config config = new BlastProgram.Config(makeblastdbBinPath, blastDbPath);
+		return blastService.makeNextprotBlastDb(config);
     }
 }

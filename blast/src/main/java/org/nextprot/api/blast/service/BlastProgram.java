@@ -1,6 +1,7 @@
 package org.nextprot.api.blast.service;
 
 import org.nextprot.api.blast.controller.SystemCommandExecutor;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 
 import java.io.File;
@@ -41,11 +42,7 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
             return out;
         } catch (IOException | InterruptedException e) {
 
-            ExceptionWithReason ewr = new ExceptionWithReason();
-
-            ewr.getReason().addCause(name+ " exception", e.getMessage());
-
-            throw ewr;
+            throw new NextProtException("could not run "+name, e);
         }
     }
 
@@ -105,17 +102,13 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
         private final String nextprotBlastDbPath;
         private boolean isDebugMode = false;
 
-        public Config(String binPath, String nextprotBlastDbPath) throws ExceptionWithReason {
+        public Config(String binPath, String nextprotBlastDbPath) {
 
-            ExceptionWithReason exceptionWithReason = new ExceptionWithReason();
+            if (binPath == null)
+                throw new NextProtException("Internal error: bin path is missing");
 
-            if (binPath == null) {
-                exceptionWithReason.getReason().addCause("bin path is missing", "");
-            }
-
-            if (nextprotBlastDbPath == null) {
-                exceptionWithReason.getReason().addCause("nextprot blast db path is missing", "");
-            }
+            if (nextprotBlastDbPath == null)
+                throw new NextProtException("Internal error: nextprot blast db path is missing");
 
             this.binPath = binPath;
             this.nextprotBlastDbPath = nextprotBlastDbPath;

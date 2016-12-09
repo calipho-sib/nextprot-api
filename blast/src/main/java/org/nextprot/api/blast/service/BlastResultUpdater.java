@@ -96,6 +96,9 @@ public class BlastResultUpdater {
 
             setAccessions(description, isoformAccession, entryAccession);
         }
+        else {
+            throw new NextProtException("blast db error: could not extract isoform information from header "+description.getTitle());
+        }
     }
 
     private void setAccessions(Description description, String isoAccession, String entryAccession) {

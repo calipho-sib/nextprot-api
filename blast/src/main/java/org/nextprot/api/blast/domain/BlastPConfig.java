@@ -31,7 +31,7 @@ public class BlastPConfig extends BlastProgram.Config {
     private Integer gapOpen;
     private Integer gapExtend;
 
-    public BlastPConfig(String blastPBinPath, String nextprotBlastDbPath) throws ExceptionWithReason {
+    public BlastPConfig(String blastPBinPath, String nextprotBlastDbPath) {
 
         super(blastPBinPath, nextprotBlastDbPath);
     }
