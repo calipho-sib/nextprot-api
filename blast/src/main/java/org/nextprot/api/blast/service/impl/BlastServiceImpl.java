@@ -1,9 +1,9 @@
 package org.nextprot.api.blast.service.impl;
 
-import org.nextprot.api.blast.domain.BlastConfig;
-import org.nextprot.api.blast.domain.BlastRunner;
+import org.nextprot.api.blast.dao.BlastDAO;
+import org.nextprot.api.blast.domain.BlastPConfig;
 import org.nextprot.api.blast.domain.gen.BlastResult;
-import org.nextprot.api.blast.service.BlastService;
+import org.nextprot.api.blast.service.*;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -26,14 +26,21 @@ public class BlastServiceImpl implements BlastService {
     @Autowired
     private MainNamesService mainNamesService;
 
-    @Override
-    public BlastResult blastProteinSequence(BlastConfig config, String header, String sequence) {
+    @Autowired
+    private BlastDAO blastDAO;
 
-        return new BlastRunner(config).run(header, sequence, mainNamesService);
+    @Override
+    public BlastResult blastProteinSequence(BlastPConfig config, String header, String sequence) {
+
+        BlastResult result = new BlastPRunner(config).run(new BlastPRunner.Query(header, sequence));
+
+        new BlastResultUpdater(mainNamesService, sequence).update(result);
+
+        return result;
     }
 
     @Override
-    public BlastResult blastIsoformSequence(BlastConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
+    public BlastResult blastIsoformSequence(BlastPConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
 
         if (!isoformAccession.matches(ISOFORM_REX_EXP)) {
             throw new NextProtException(isoformAccession+": invalid isoform accession (format: "+ISOFORM_REX_EXP+")");
@@ -80,5 +87,13 @@ public class BlastServiceImpl implements BlastService {
         header.append("from protein ").append(entryAccession).append(", isoform ").append(isoform.getMainEntityName().getName());
 
         return blastProteinSequence(config, header.toString(), isoformSequence.substring(begin-1, end));
+    }
+
+    @Override
+    public String makeNextprotBlastDb(BlastProgram.Config config) {
+
+        BlastDbMaker runner = new BlastDbMaker(config);
+
+        return runner.run(blastDAO.getAllIsoformSequences());
     }
 }
