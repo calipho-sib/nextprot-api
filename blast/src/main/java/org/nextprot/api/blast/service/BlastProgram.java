@@ -1,7 +1,7 @@
 package org.nextprot.api.blast.service;
 
 import org.nextprot.api.blast.controller.SystemCommandExecutor;
-import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.ExceptionWithReason;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +27,7 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
         this.config = config;
     }
 
-    public O run(I input) {
+    public O run(I input) throws ExceptionWithReason {
 
         try {
             File tempFastaDbFile = createTempFastaFile(input);
@@ -41,11 +41,15 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
             return out;
         } catch (IOException | InterruptedException e) {
 
-            throw new NextProtException("BlastP exception", e);
+            ExceptionWithReason ewr = new ExceptionWithReason();
+
+            ewr.getReason().addCause(name+ " exception", e.getMessage());
+
+            throw ewr;
         }
     }
 
-    protected O execute(List<String> commandLine) throws IOException, InterruptedException {
+    protected O execute(List<String> commandLine) throws IOException, InterruptedException, ExceptionWithReason {
 
         SystemCommandExecutor commandExecutor = new SystemCommandExecutor(commandLine);
         commandExecutor.executeCommand();
@@ -54,17 +58,11 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
 
         if (!stderr.isEmpty()) {
 
-            StringBuilder sb = new StringBuilder("Error while executing ");
-            sb.append(name);
+            ExceptionWithReason ewr = new ExceptionWithReason();
+            ewr.getReason().addCause(name+ " exception", stderr.replace("\n", " "));
+            ewr.getReason().setMessage("Error while executing "+name);
 
-            String params = (config.isDebugMode()) ? commandExecutor.getParameterLine(0) : commandExecutor.getParameterLine(5);
-
-            if (!params.isEmpty()) {
-                sb.append(", params='").append(params).append("'");
-            }
-            sb.append(", stderr='" + stderr.replace("\n", " ")+"'");
-
-            throw new NextProtException(sb.toString());
+            throw ewr;
         }
 
         return buildFromStdout(commandExecutor.getStandardOutputFromCommand().toString());
@@ -107,10 +105,17 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
         private final String nextprotBlastDbPath;
         private boolean isDebugMode = false;
 
-        public Config(String binPath, String nextprotBlastDbPath) {
+        public Config(String binPath, String nextprotBlastDbPath) throws ExceptionWithReason {
 
-            Objects.requireNonNull(binPath, "bin path is missing");
-            Objects.requireNonNull(nextprotBlastDbPath, "nextprot blast db path is missing");
+            ExceptionWithReason exceptionWithReason = new ExceptionWithReason();
+
+            if (binPath == null) {
+                exceptionWithReason.getReason().addCause("bin path is missing", "");
+            }
+
+            if (nextprotBlastDbPath == null) {
+                exceptionWithReason.getReason().addCause("nextprot blast db path is missing", "");
+            }
 
             this.binPath = binPath;
             this.nextprotBlastDbPath = nextprotBlastDbPath;

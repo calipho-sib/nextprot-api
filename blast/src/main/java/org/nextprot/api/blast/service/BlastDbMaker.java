@@ -1,6 +1,7 @@
 package org.nextprot.api.blast.service;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.ExceptionWithReason;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class BlastDbMaker extends BlastProgram<String, String, BlastProgram.Conf
      * @return makeblastdb report
      * @throws NextProtException if an isoform accession format is not valid
      */
-    public String run(Map<String, String> isoformSequences) {
+    public String run(Map<String, String> isoformSequences) throws ExceptionWithReason {
 
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : isoformSequences.entrySet()) {
