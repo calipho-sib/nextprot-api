@@ -21,8 +21,8 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
 
     private static final Logger LOGGER = Logger.getLogger(BlastProgram.class.getName());
 
-    private String name;
-    protected final C config;
+    private final String name;
+    private final C config;
 
     protected BlastProgram(String name, C config) {
 
@@ -38,12 +38,13 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
             // pre process
             File fastaFile = constructFastaFile(input);
             List<String> commandLine = buildCommandLine(config, fastaFile);
+            preConfig(input, config);
 
             O out = process(commandLine);
 
             // post process
             tearDownFastaFile(fastaFile);
-            updateConfig(config);
+            postConfig(config);
 
             return out;
         } catch (Exception e) {
@@ -93,7 +94,9 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
         }
     }
 
-    private void updateConfig(C config) {
+    protected void preConfig(I input, C config) { }
+
+    protected void postConfig(C config) {
 
         config.setDebugMode(null);
         config.unsetPathes();

@@ -52,9 +52,12 @@ public class BlastController {
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
 		try {
-			BlastPConfig config = BlastPConfig.all(blastBinPath, blastDbPath, matrix, eValue, gapOpen, gapExtend);
+			BlastPConfig config = new BlastPConfig(blastBinPath, blastDbPath);
+			config.setFields(matrix, eValue, gapOpen, gapExtend);
+			config.setQueryHeader(header);
+			config.setSequenceQuery(sequence);
 
-			return blastService.blastProteinSequence(config, header, sequence);
+			return blastService.blastProteinSequence(config);
 		} catch (ExceptionWithReason exceptionWithReason) {
 
 			exceptionWithReason.getReason().setMessage("cannot execute blastp");
@@ -83,9 +86,13 @@ public class BlastController {
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
 		try {
-			BlastPConfig config = BlastPConfig.all(blastBinPath, blastDbPath, matrix, eValue, gapOpen, gapExtend);
+			BlastPConfig.BlastPIsoformConfig config = new BlastPConfig.BlastPIsoformConfig(blastBinPath, blastDbPath);
+			config.setFields(matrix, eValue, gapOpen, gapExtend);
+			config.setIsoformAccession(isoform);
+			config.setBegin(begin);
+			config.setEnd(end);
 
-			return blastService.blastIsoformSequence(config, isoform, begin, end);
+			return blastService.blastIsoformSequence(config);
 		} catch (ExceptionWithReason exceptionWithReason) {
 
 			exceptionWithReason.getReason().setMessage("cannot execute blastp");

@@ -36,22 +36,18 @@ public class BlastPConfig extends BlastProgram.Config {
         super(blastPBinPath, nextprotBlastDbPath);
     }
 
-    public static BlastPConfig all(String blastBinPath, String blastDbPath, String matrix, Double eValue, Integer gapOpen, Integer gapExtend) throws ExceptionWithReason {
-
-        BlastPConfig config = new BlastPConfig(blastBinPath, blastDbPath);
+    public void setFields(String matrix, Double eValue, Integer gapOpen, Integer gapExtend) throws ExceptionWithReason {
 
         if (matrix != null) {
             if (Matrix.hasMatrix(matrix))
-                config.setMatrix(BlastPConfig.Matrix.valueOf(matrix));
+                setMatrix(BlastPConfig.Matrix.valueOf(matrix));
             else {
                 throw ExceptionWithReason.withReason("unknown substitution matrix", matrix);
             }
         }
-        config.setEvalue(eValue);
-        config.setGapOpen(gapOpen);
-        config.setGapExtend(gapExtend);
-
-        return config;
+        setEvalue(eValue);
+        setGapOpen(gapOpen);
+        setGapExtend(gapExtend);
     }
 
     public String getQueryHeader() {
@@ -105,5 +101,41 @@ public class BlastPConfig extends BlastProgram.Config {
 
     public void setGapExtend(Integer gapExtend) {
         this.gapExtend = gapExtend;
+    }
+
+    public static class BlastPIsoformConfig extends BlastPConfig {
+
+        private String isoformAccession;
+        private Integer begin;
+        private Integer end;
+
+        public BlastPIsoformConfig(String blastPBinPath, String nextprotBlastDbPath) {
+
+            super(blastPBinPath, nextprotBlastDbPath);
+        }
+
+        public String getIsoformAccession() {
+            return isoformAccession;
+        }
+
+        public void setIsoformAccession(String isoformAccession) {
+            this.isoformAccession = isoformAccession;
+        }
+
+        public Integer getBegin() {
+            return begin;
+        }
+
+        public void setBegin(Integer begin) {
+            this.begin = begin;
+        }
+
+        public Integer getEnd() {
+            return end;
+        }
+
+        public void setEnd(Integer end) {
+            this.end = end;
+        }
     }
 }

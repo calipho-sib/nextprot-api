@@ -34,11 +34,11 @@ public class BlastServiceImpl implements BlastService {
     private BlastDAO blastDAO;
 
     @Override
-    public BlastProgramOutput blastProteinSequence(BlastPConfig config, String header, String sequence) {
+    public BlastProgramOutput blastProteinSequence(BlastPConfig config) {
 
         try {
-            BlastResult result = new BlastPRunner(config).run(new BlastPRunner.Query(header, sequence));
-            new BlastResultUpdater(mainNamesService, sequence).update(result);
+            BlastResult result = new BlastPRunner(config).run(new BlastPRunner.Query(config.getQueryHeader(), config.getSequenceQuery()));
+            new BlastResultUpdater(mainNamesService, config.getSequenceQuery()).update(result);
 
             return new BlastProgramSuccess(config, result);
         } catch (ExceptionWithReason exceptionWithReason) {
@@ -49,7 +49,11 @@ public class BlastServiceImpl implements BlastService {
 
     // TODO: refactor this messy method
     @Override
-    public BlastProgramOutput blastIsoformSequence(BlastPConfig config, String isoformAccession, Integer begin1BasedIndex, Integer end1BasedIndex) {
+    public BlastProgramOutput blastIsoformSequence(BlastPConfig.BlastPIsoformConfig config) {
+
+        String isoformAccession = config.getIsoformAccession();
+        Integer begin1BasedIndex = config.getBegin();
+        Integer end1BasedIndex = config.getEnd();
 
         if (!isoformAccession.matches(ISOFORM_REX_EXP)) {
             throw new NextProtException(isoformAccession+": invalid isoform accession (format: "+ISOFORM_REX_EXP+")");
@@ -102,7 +106,12 @@ public class BlastServiceImpl implements BlastService {
         }
         header.append("from protein ").append(entryAccession).append(", isoform ").append(isoform.getMainEntityName().getName());
 
-        return blastProteinSequence(config, header.toString(), isoformSequence.substring(begin-1, end));
+        config.setSequenceQuery(isoformSequence.substring(begin-1, end));
+        config.setBegin(begin);
+        config.setEnd(end);
+        config.setQueryHeader(header.toString());
+
+        return blastProteinSequence(config);
     }
 
     @Override
