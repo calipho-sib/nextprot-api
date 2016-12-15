@@ -3,6 +3,7 @@ package org.nextprot.api.web.controller;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
@@ -43,8 +45,10 @@ public class EntryAccessionController {
 	@RequestMapping(value = "/entry-accessions/gene/{geneName}", method = { RequestMethod.GET })
 	@ResponseBody
 	public List<String> masterIdentifierByGeneName(
-			@ApiPathParam(name = "geneName", description = "The gene name",  allowedvalues = { "INSR"}) @PathVariable("geneName")  String geneName) {
-		return new ArrayList<>(masterIdentifierService.findEntryAccessionByGeneName(geneName));
+			@ApiPathParam(name = "geneName", description = "The gene name",  allowedvalues = { "INSR"}) @PathVariable("geneName")  String geneName, 
+			@ApiQueryParam(name = "synonym", description = "Search gene name synonyms if set to true.",  allowedvalues = { "true","false" })
+			@RequestParam(value = "synonym", required = false) String synonym) {
+		return new ArrayList<>(masterIdentifierService.findEntryAccessionByGeneName(geneName,synonym));
 	}
 
 }

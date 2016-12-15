@@ -36,7 +36,7 @@ public class MasterIdentifierServiceImpl implements MasterIdentifierService {
 
 	@Override
 	@Cacheable("entry-accession-by-gene-name")
-	public Set<String> findEntryAccessionByGeneName(String geneName) {
-		return Sets.newTreeSet(this.masterIdentifierDao.findUniqueNamesByGeneName(geneName));
+	public Set<String> findEntryAccessionByGeneName(String geneName, String synonym) {
+		return Sets.newTreeSet(this.masterIdentifierDao.findUniqueNamesByGeneName(geneName, synonym));
 	}
 }
