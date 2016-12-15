@@ -39,22 +39,6 @@ public class BlastDbMakerTest {
                 "nextprot", "-in", "/tmp/input.fasta", "-out", "/tmp/blastdb"), cl);
     }
 
-    @Test
-    public void shouldCreateDb() throws Exception {
-
-        config = new BlastProgram.Config(makeblastdbBinPath, "/tmp/blastdb");
-
-        BlastDbMaker runner = new BlastDbMaker(config);
-
-        String result = runner.run("> subseq 211-239 of NX_P52701\nGTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
-
-        Assert.assertTrue(result.contains("Building a new DB, current time:"));
-        Assert.assertTrue(result.contains("New DB name:   /tmp/blastdb"));
-        Assert.assertTrue(result.contains("New DB title:  nextprot"));
-        Assert.assertTrue(result.contains("Sequence type: Protein"));
-        Assert.assertTrue(result.contains("Adding sequences from FASTA; added 1 sequences"));
-    }
-
     @Test(expected = NextProtException.class)
     public void shouldNotBeAbleToCreateInstance() throws Exception {
 

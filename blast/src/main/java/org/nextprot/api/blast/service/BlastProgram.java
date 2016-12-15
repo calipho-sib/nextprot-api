@@ -11,11 +11,14 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
- * A base object for blast programs
+ * A base object for blast suite programs
  */
 public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
+
+    private static final Logger LOGGER = Logger.getLogger(BlastProgram.class.getName());
 
     private String name;
     protected final C config;
@@ -31,22 +34,34 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
     public O run(I input) throws ExceptionWithReason {
 
         try {
-            File tempFastaDbFile = createTempFastaFile(input);
+            File fastaFile = createFastaFile(input);
 
-            O out = execute(buildCommandLine(tempFastaDbFile));
+            List<String> commandLine = buildCommandLine(fastaFile);
+            O out = execute(commandLine);
 
-            if (!config.isDebugMode()) {
-                Files.deleteIfExists(tempFastaDbFile.toPath());
-            }
+            deleteFastaFile(fastaFile);
 
             return out;
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
 
             throw new NextProtException("could not run "+name, e);
         }
     }
 
-    protected O execute(List<String> commandLine) throws IOException, InterruptedException, ExceptionWithReason {
+    private File createFastaFile(I input) throws Exception {
+
+        File tmpQueryFastaFile = File.createTempFile(name, ".fasta");
+
+        PrintWriter pw = new PrintWriter(tmpQueryFastaFile);
+        writeFastaInput(pw, input);
+        pw.close();
+
+        LOGGER.info("create temporary file "+tmpQueryFastaFile.getName());
+
+        return tmpQueryFastaFile;
+    }
+
+    private O execute(List<String> commandLine) throws IOException, InterruptedException, ExceptionWithReason {
 
         SystemCommandExecutor commandExecutor = new SystemCommandExecutor(commandLine);
         commandExecutor.executeCommand();
@@ -62,36 +77,42 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
             throw ewr;
         }
 
-        return buildFromStdout(commandExecutor.getStandardOutputFromCommand().toString());
+        return buildOutputFromStdout(commandExecutor.getStandardOutputFromCommand().toString());
     }
 
-    private File createTempFastaFile(I input) throws IOException {
+    private void deleteFastaFile(File fastaFile) throws Exception {
 
-        File tempFastaFile = File.createTempFile(name, ".fasta");
+        if (!config.isDebugMode()) {
 
-        PrintWriter pw = new PrintWriter(tempFastaFile);
-        writeFastaContent(pw, input);
-        pw.close();
-
-        return tempFastaFile;
+            LOGGER.info("delete temporary file "+fastaFile.getName());
+            Files.deleteIfExists(fastaFile.toPath());
+        }
     }
 
     /**
      * Build command line to execute by blast program
-     * @param fastaFile a fasta file that need to be created
+     * @param fastaFile the input fasta file
      * @return command line list
      */
     protected abstract List<String> buildCommandLine(File fastaFile);
 
     /**
-     *
-     * @param output the command output
-     * @return
-     * @throws IOException
+     * Build output object from command stdout
+     * @param stdout the command output
+     * @return an object containing output
      */
-    protected abstract O buildFromStdout(String output) throws IOException;
+    protected abstract O buildOutputFromStdout(String stdout) throws IOException;
 
-    protected abstract void writeFastaContent(PrintWriter pw, I input);
+    protected abstract void writeFastaInput(PrintWriter pw, I input);
+
+    void writeFastaInput(PrintWriter pw, String header, String sequence) {
+
+        pw.write(">");
+        pw.write(header);
+        pw.write("\n");
+        pw.write(sequence);
+        pw.write("\n");
+    }
 
     /**
      * Configuration object for blast suite program execution

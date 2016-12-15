@@ -9,11 +9,14 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Executes locally installed blastP program with protein sequence query
  */
 public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, BlastPConfig> {
+
+    private static final Logger LOGGER = Logger.getLogger(BlastPRunner.class.getName());
 
     public BlastPRunner(BlastPConfig config) {
 
@@ -21,12 +24,20 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, 
         Objects.requireNonNull(config.getBinPath(), "binary path is missing");
     }
 
-    protected BlastResult buildFromStdout(String stdout) throws IOException {
+    @Override
+    protected void writeFastaInput(PrintWriter pw, BlastPRunner.Query query) {
+
+        writeFastaInput(pw, query.getHeader(), query.getSequence());
+    }
+
+    @Override
+    protected BlastResult buildOutputFromStdout(String stdout) throws IOException {
 
         return BlastResult.fromJson(stdout);
     }
 
-    protected List<String> buildCommandLine(File inputFile) {
+    @Override
+    protected List<String> buildCommandLine(File fastaFile) {
 
         List<String> command = new ArrayList<>();
 
@@ -34,7 +45,7 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, 
         command.add("-db");
         command.add(config.getNextprotBlastDbPath());
         command.add("-query");
-        command.add(inputFile.getAbsolutePath());
+        command.add(fastaFile.getAbsolutePath());
         command.add("-outfmt");
         command.add("15");
         if (config.getMatrix() != null) {
@@ -55,15 +66,6 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, 
         }
 
         return command;
-    }
-
-    protected void writeFastaContent(PrintWriter pw, BlastPRunner.Query query) {
-
-        config.setQueryHeader(query.getHeader());
-        config.setSequenceQuery(query.getSequence());
-
-        pw.write(new StringBuilder().append(">").append(query.getHeader()).append("\n").toString());
-        pw.write(query.getSequence());
     }
 
     /** A fasta sequence query */

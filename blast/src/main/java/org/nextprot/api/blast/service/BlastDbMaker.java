@@ -1,7 +1,6 @@
 package org.nextprot.api.blast.service;
 
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.commons.utils.ExceptionWithReason;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +13,7 @@ import java.util.Objects;
 /**
  * Create blast database from nextprot sequences
  */
-public class BlastDbMaker extends BlastProgram<String, String, BlastProgram.Config> {
+public class BlastDbMaker extends BlastProgram<Map<String, String>, String, BlastProgram.Config> {
 
     private static final String ISOFORM_REX_EXP= "^NX_[^-]+-\\d+$";
 
@@ -25,29 +24,22 @@ public class BlastDbMaker extends BlastProgram<String, String, BlastProgram.Conf
     }
 
     /**
-     * Make blast db from map of isoform sequences
+     * Create temporary fasta file from map of isoform sequences
      * @param isoformSequences isoform sequences
-     * @return makeblastdb report
-     * @throws NextProtException if an isoform accession format is not valid
      */
-    public String run(Map<String, String> isoformSequences) throws ExceptionWithReason {
+    @Override
+    protected void writeFastaInput(PrintWriter pw, Map<String, String> isoformSequences) {
 
-        StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : isoformSequences.entrySet()) {
 
             if (!entry.getKey().matches(ISOFORM_REX_EXP))
                 throw new NextProtException(entry.getKey()+": invalid isoform accession");
 
-            sb.append(">");
-            sb.append(entry.getKey());
-            sb.append("\n");
-            sb.append(entry.getValue());
-            sb.append("\n");
+            writeFastaInput(pw, entry.getKey(), entry.getValue());
         }
-
-        return run(sb.toString());
     }
 
+    @Override
     protected List<String> buildCommandLine(File fastaFile) {
 
         List<String> command = new ArrayList<>();
@@ -66,14 +58,8 @@ public class BlastDbMaker extends BlastProgram<String, String, BlastProgram.Conf
     }
 
     @Override
-    protected String buildFromStdout(String stdout) throws IOException {
+    protected String buildOutputFromStdout(String stdout) throws IOException {
 
         return stdout;
-    }
-
-
-    protected void writeFastaContent(PrintWriter pw, String content) {
-
-        pw.write(content);
     }
 }
