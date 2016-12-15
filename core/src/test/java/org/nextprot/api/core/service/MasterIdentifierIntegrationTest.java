@@ -29,7 +29,7 @@ public class MasterIdentifierIntegrationTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldFindEntryAccessionByGeneName() {
 
-		Set<String> accession = service.findEntryAccessionByGeneName("ins");
+		Set<String> accession = service.findEntryAccessionByGeneName("ins",null);
 		Assert.assertEquals(accession.size(), 1);
 
 		Assert.assertEquals(accession.iterator().next(), "NX_P01308");
@@ -40,7 +40,7 @@ public class MasterIdentifierIntegrationTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldNotFindSeveralAccessionAnymore() {
 
-		Set<String> accession = service.findEntryAccessionByGeneName("GCNT2");
+		Set<String> accession = service.findEntryAccessionByGeneName("GCNT2",null);
 		System.out.println(accession);
 		Assert.assertEquals(accession.size(), 1);
 	}

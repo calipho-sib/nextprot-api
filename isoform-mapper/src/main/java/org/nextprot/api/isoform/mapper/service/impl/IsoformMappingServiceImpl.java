@@ -136,7 +136,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
      */
     private String findAccessionFromGeneName(SingleFeatureQuery query, String geneName) throws FeatureQueryException {
 
-        Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName);
+        Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName,null);
 
         if (accessions.isEmpty()) {
             throw new EntryAccessionNotFoundForGeneException(query, geneName);

@@ -48,7 +48,7 @@ public class StatementExporter {
         // header row
         sb.append(config.fields.stream().map(Enum::name).collect(Collectors.joining("\t"))).append("\n");
 
-        Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName);
+        Set<String> accessions = masterIdentifierService.findEntryAccessionByGeneName(geneName,null);
 
         if (accessions.isEmpty()) LOGGER.warn("could not find "+geneName);
         accessions.forEach(accession -> fetchAndAppendStatementsFromEntryAccession(accession, sb));
