@@ -33,7 +33,7 @@ public class BlastDbMakerTest {
         BlastDbMaker runner = new BlastDbMaker(config);
 
         File file = new File("/tmp/input.fasta");
-        List<String> cl = runner.buildCommandLine(file);
+        List<String> cl = runner.buildCommandLine(config, file);
 
         Assert.assertEquals(Arrays.asList(makeblastdbBinPath, "-dbtype", "prot", "-title",
                 "nextprot", "-in", "/tmp/input.fasta", "-out", "/tmp/blastdb"), cl);

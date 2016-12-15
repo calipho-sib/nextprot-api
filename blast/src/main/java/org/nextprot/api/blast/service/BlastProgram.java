@@ -36,7 +36,7 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
         try {
             File fastaFile = createFastaFile(input);
 
-            List<String> commandLine = buildCommandLine(fastaFile);
+            List<String> commandLine = buildCommandLine(config, fastaFile);
             O out = execute(commandLine);
 
             deleteFastaFile(fastaFile);
@@ -91,10 +91,11 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
 
     /**
      * Build command line to execute by blast program
+     * @param config input configuration
      * @param fastaFile the input fasta file
      * @return command line list
      */
-    protected abstract List<String> buildCommandLine(File fastaFile);
+    protected abstract List<String> buildCommandLine(C config, File fastaFile);
 
     /**
      * Build output object from command stdout
@@ -103,24 +104,21 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
      */
     protected abstract O buildOutputFromStdout(String stdout) throws IOException;
 
+    /**
+     * Write fasta entries from input object
+     *
+     * @param pw the writer object
+     * @param input the input to extract entries from
+     */
     protected abstract void writeFastaInput(PrintWriter pw, I input);
 
-    void writeFastaInput(PrintWriter pw, String header, String sequence) {
-
-        pw.write(">");
-        pw.write(header);
-        pw.write("\n");
-        pw.write(sequence);
-        pw.write("\n");
-    }
-
     /**
-     * Configuration object for blast suite program execution
+     * Configuration object for program execution
      */
     public static class Config implements Serializable {
 
-        private final String binPath;
-        private final String nextprotBlastDbPath;
+        private String binPath;
+        private String nextprotBlastDbPath;
         private boolean isDebugMode = false;
 
         public Config(String binPath, String nextprotBlastDbPath) {
@@ -150,5 +148,26 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
         public void setDebugMode(boolean debugMode) {
             isDebugMode = debugMode;
         }
+
+        public void unsetPathes() {
+
+            binPath = null;
+            nextprotBlastDbPath = null;
+        }
+    }
+
+    /**
+     * Write a fasta entry
+     * @param pw
+     * @param header
+     * @param sequence
+     */
+    static void writeFastaEntry(PrintWriter pw, String header, String sequence) {
+
+        pw.write(">");
+        pw.write(header);
+        pw.write("\n");
+        pw.write(sequence);
+        pw.write("\n");
     }
 }

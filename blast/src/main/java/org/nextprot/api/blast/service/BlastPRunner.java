@@ -9,14 +9,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 /**
  * Executes locally installed blastP program with protein sequence query
  */
 public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, BlastPConfig> {
-
-    private static final Logger LOGGER = Logger.getLogger(BlastPRunner.class.getName());
 
     public BlastPRunner(BlastPConfig config) {
 
@@ -27,7 +24,10 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, 
     @Override
     protected void writeFastaInput(PrintWriter pw, BlastPRunner.Query query) {
 
-        writeFastaInput(pw, query.getHeader(), query.getSequence());
+        BlastProgram.writeFastaEntry(pw, query.getHeader(), query.getSequence());
+
+        config.setQueryHeader(query.getHeader());
+        config.setSequenceQuery(query.getSequence());
     }
 
     @Override
@@ -37,7 +37,7 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, 
     }
 
     @Override
-    protected List<String> buildCommandLine(File fastaFile) {
+    protected List<String> buildCommandLine(BlastPConfig config, File fastaFile) {
 
         List<String> command = new ArrayList<>();
 
@@ -64,6 +64,9 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, 
             command.add("-gapextend");
             command.add(String.valueOf(config.getGapExtend()));
         }
+
+        // hide informations
+        config.unsetPathes();
 
         return command;
     }

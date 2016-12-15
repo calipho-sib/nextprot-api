@@ -35,12 +35,12 @@ public class BlastDbMaker extends BlastProgram<Map<String, String>, String, Blas
             if (!entry.getKey().matches(ISOFORM_REX_EXP))
                 throw new NextProtException(entry.getKey()+": invalid isoform accession");
 
-            writeFastaInput(pw, entry.getKey(), entry.getValue());
+            BlastProgram.writeFastaEntry(pw, entry.getKey(), entry.getValue());
         }
     }
 
     @Override
-    protected List<String> buildCommandLine(File fastaFile) {
+    protected List<String> buildCommandLine(BlastProgram.Config config, File fastaFile) {
 
         List<String> command = new ArrayList<>();
 

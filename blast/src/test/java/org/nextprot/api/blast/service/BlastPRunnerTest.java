@@ -57,7 +57,10 @@ public class BlastPRunnerTest {
         BlastPRunner runner = new BlastPRunner(config);
 
         File file = new File("/tmp/input.fasta");
-        List<String> cl = runner.buildCommandLine(file);
+        List<String> cl = runner.buildCommandLine(config, file);
+
+        Assert.assertNull(config.getBinPath());
+        Assert.assertNull(config.getNextprotBlastDbPath());
 
         Assert.assertEquals(7, cl.size());
         Assert.assertTrue(cl.get(0).endsWith("blastp"));
@@ -81,7 +84,10 @@ public class BlastPRunnerTest {
         BlastPRunner runner = new BlastPRunner(config);
 
         File file = new File("/tmp/input.fasta");
-        List<String> cl = runner.buildCommandLine(file);
+        List<String> cl = runner.buildCommandLine(config, file);
+
+        Assert.assertNull(config.getBinPath());
+        Assert.assertNull(config.getNextprotBlastDbPath());
 
         Assert.assertEquals(15, cl.size());
         Assert.assertTrue(cl.get(0).endsWith("blastp"));
