@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 public interface BlastProgramOutput extends Serializable {
 
-	BlastProgram.Config getConfig();
+	BlastProgram.Config getQuery();
 
 	boolean isSuccess();
 }

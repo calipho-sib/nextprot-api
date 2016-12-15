@@ -15,7 +15,7 @@ public class BlastProgramFailure implements BlastProgramOutput {
 	}
 
 	@Override
-	public BlastProgram.Config getConfig() {
+	public BlastProgram.Config getQuery() {
 		return config;
 	}
 

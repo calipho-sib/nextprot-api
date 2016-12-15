@@ -16,7 +16,7 @@ public class BlastProgramSuccess<R extends Serializable> implements BlastProgram
 	}
 
 	@Override
-	public BlastProgram.Config getConfig() {
+	public BlastProgram.Config getQuery() {
 		return config;
 	}
 

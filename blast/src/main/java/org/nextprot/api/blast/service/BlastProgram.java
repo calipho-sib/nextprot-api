@@ -1,5 +1,6 @@
 package org.nextprot.api.blast.service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.nextprot.api.blast.controller.SystemCommandExecutor;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
@@ -34,12 +35,15 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
     public O run(I input) throws ExceptionWithReason {
 
         try {
-            File fastaFile = createFastaFile(input);
-
+            // pre process
+            File fastaFile = constructFastaFile(input);
             List<String> commandLine = buildCommandLine(config, fastaFile);
-            O out = execute(commandLine);
 
-            deleteFastaFile(fastaFile);
+            O out = process(commandLine);
+
+            // post process
+            tearDownFastaFile(fastaFile);
+            updateConfig(config);
 
             return out;
         } catch (Exception e) {
@@ -48,7 +52,7 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
         }
     }
 
-    private File createFastaFile(I input) throws Exception {
+    private File constructFastaFile(I input) throws Exception {
 
         File tmpQueryFastaFile = File.createTempFile(name, ".fasta");
 
@@ -61,7 +65,7 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
         return tmpQueryFastaFile;
     }
 
-    private O execute(List<String> commandLine) throws IOException, InterruptedException, ExceptionWithReason {
+    private O process(List<String> commandLine) throws IOException, InterruptedException, ExceptionWithReason {
 
         SystemCommandExecutor commandExecutor = new SystemCommandExecutor(commandLine);
         commandExecutor.executeCommand();
@@ -80,13 +84,19 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
         return buildOutputFromStdout(commandExecutor.getStandardOutputFromCommand().toString());
     }
 
-    private void deleteFastaFile(File fastaFile) throws Exception {
+    private void tearDownFastaFile(File fastaFile) throws Exception {
 
         if (!config.isDebugMode()) {
 
             LOGGER.info("delete temporary file "+fastaFile.getName());
             Files.deleteIfExists(fastaFile.toPath());
         }
+    }
+
+    private void updateConfig(C config) {
+
+        config.setDebugMode(null);
+        config.unsetPathes();
     }
 
     /**
@@ -115,11 +125,12 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
     /**
      * Configuration object for program execution
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Config implements Serializable {
 
         private String binPath;
         private String nextprotBlastDbPath;
-        private boolean isDebugMode = false;
+        private Boolean isDebugMode = false;
 
         public Config(String binPath, String nextprotBlastDbPath) {
 
@@ -141,11 +152,11 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
             return binPath;
         }
 
-        public boolean isDebugMode() {
+        public Boolean isDebugMode() {
             return isDebugMode;
         }
 
-        public void setDebugMode(boolean debugMode) {
+        public void setDebugMode(Boolean debugMode) {
             isDebugMode = debugMode;
         }
 

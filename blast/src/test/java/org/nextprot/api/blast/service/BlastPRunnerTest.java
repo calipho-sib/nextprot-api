@@ -36,6 +36,9 @@ public class BlastPRunnerTest {
 
         BlastResult blastResult = runner.run(new BlastPRunner.Query("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR"));
 
+        Assert.assertNull(config.getBinPath());
+        Assert.assertNull(config.getNextprotBlastDbPath());
+
         Assert.assertEquals(1, blastResult.getBlastOutput2().size());
     }
 
@@ -59,8 +62,8 @@ public class BlastPRunnerTest {
         File file = new File("/tmp/input.fasta");
         List<String> cl = runner.buildCommandLine(config, file);
 
-        Assert.assertNull(config.getBinPath());
-        Assert.assertNull(config.getNextprotBlastDbPath());
+        Assert.assertNotNull(config.getBinPath());
+        Assert.assertNotNull(config.getNextprotBlastDbPath());
 
         Assert.assertEquals(7, cl.size());
         Assert.assertTrue(cl.get(0).endsWith("blastp"));
@@ -86,8 +89,8 @@ public class BlastPRunnerTest {
         File file = new File("/tmp/input.fasta");
         List<String> cl = runner.buildCommandLine(config, file);
 
-        Assert.assertNull(config.getBinPath());
-        Assert.assertNull(config.getNextprotBlastDbPath());
+        Assert.assertNotNull(config.getBinPath());
+        Assert.assertNotNull(config.getNextprotBlastDbPath());
 
         Assert.assertEquals(15, cl.size());
         Assert.assertTrue(cl.get(0).endsWith("blastp"));

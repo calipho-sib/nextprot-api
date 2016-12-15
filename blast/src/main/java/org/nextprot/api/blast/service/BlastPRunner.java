@@ -65,9 +65,6 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, 
             command.add(String.valueOf(config.getGapExtend()));
         }
 
-        // hide informations
-        config.unsetPathes();
-
         return command;
     }
 
