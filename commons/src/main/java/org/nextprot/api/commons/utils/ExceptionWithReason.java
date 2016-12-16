@@ -24,6 +24,14 @@ public class ExceptionWithReason extends Exception implements Serializable {
         return e;
     }
 
+    public static ExceptionWithReason withMessage(String mainCauseMessage) {
+
+        ExceptionWithReason e = new ExceptionWithReason();
+        e.getReason().setMessage(mainCauseMessage);
+
+        return e;
+    }
+
     public Reason getReason() {
 
         return reason;
