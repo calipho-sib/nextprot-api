@@ -17,6 +17,7 @@ import java.io.Serializable;
     "reference",
     "search_target",
     "params",
+    "query_description",
     "results"
 })
 public class Report implements Serializable
@@ -32,6 +33,8 @@ public class Report implements Serializable
     private SearchTarget searchTarget;
     @JsonProperty("params")
     private Params params;
+    @JsonProperty("query_description")
+    private Description queryDescription;
     @JsonProperty("results")
     private Results results;
     private final static long serialVersionUID = -6965323630320685110L;
@@ -134,6 +137,16 @@ public class Report implements Serializable
     @JsonProperty("params")
     public void setParams(Params params) {
         this.params = params;
+    }
+
+    @JsonProperty("query_description")
+    public Description getQueryDescription() {
+        return queryDescription;
+    }
+
+    @JsonProperty("query_description")
+    public void setQueryDescription(Description queryDescription) {
+        this.queryDescription = queryDescription;
     }
 
     /**
