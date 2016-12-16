@@ -46,9 +46,9 @@ public class EntryAccessionController {
 	@ResponseBody
 	public List<String> masterIdentifierByGeneName(
 			@ApiPathParam(name = "geneName", description = "The gene name",  allowedvalues = { "INSR"}) @PathVariable("geneName")  String geneName, 
-			@ApiQueryParam(name = "synonym", description = "Search gene name synonyms if set to true.",  allowedvalues = { "true","false" })
-			@RequestParam(value = "synonym", required = false) String synonym) {
-		return new ArrayList<>(masterIdentifierService.findEntryAccessionByGeneName(geneName,synonym));
+			@ApiQueryParam(name = "synonym", description = "Search gene name synonyms if set to true.",  allowedvalues = { "true", "false" })
+			@RequestParam(value = "synonym", required = false) boolean withSynonyms) {
+		return new ArrayList<>(masterIdentifierService.findEntryAccessionByGeneName(geneName, withSynonyms));
 	}
 
 }

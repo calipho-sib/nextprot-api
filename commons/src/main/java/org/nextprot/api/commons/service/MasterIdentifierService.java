@@ -14,5 +14,5 @@ public interface MasterIdentifierService {
 	 * @param geneNam
 	 * @return
 	 */
-	Set<String> findEntryAccessionByGeneName(String geneName,String synonym);
+	Set<String> findEntryAccessionByGeneName(String geneName, boolean withSynonyms);
 }
