@@ -1,7 +1,8 @@
 package org.nextprot.api.blast.service;
 
-import org.nextprot.api.blast.domain.BlastPConfig;
+import org.nextprot.api.blast.domain.BlastPParams;
 import org.nextprot.api.blast.domain.gen.BlastResult;
+import org.nextprot.api.blast.domain.gen.Report;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,9 +14,9 @@ import java.util.Objects;
 /**
  * Executes locally installed blastP program with protein sequence query
  */
-public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, BlastPConfig> {
+public class BlastPRunner extends BlastProgram<BlastPRunner.Query, Report, BlastPParams> {
 
-    public BlastPRunner(BlastPConfig config) {
+    public BlastPRunner(BlastPParams config) {
 
         super("blastp", config);
         Objects.requireNonNull(config.getBinPath(), "binary path is missing");
@@ -28,20 +29,20 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.Query, BlastResult, 
     }
 
     @Override
-    protected void preConfig(BlastPRunner.Query query, BlastPConfig config) {
+    protected void preConfig(BlastPRunner.Query query, BlastPParams config) {
 
         config.setQueryHeader(query.getHeader());
         config.setSequenceQuery(query.getSequence());
     }
 
     @Override
-    protected BlastResult buildOutputFromStdout(String stdout) throws IOException {
+    protected Report buildOutputFromStdout(String stdout) throws IOException {
 
-        return BlastResult.fromJson(stdout);
+        return BlastResult.fromJson(stdout).getBlastOutput2().get(0).getReport();
     }
 
     @Override
-    protected List<String> buildCommandLine(BlastPConfig config, File fastaFile) {
+    protected List<String> buildCommandLine(BlastPParams config, File fastaFile) {
 
         List<String> command = new ArrayList<>();
 

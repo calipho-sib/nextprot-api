@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 /**
  * A base object for blast suite programs
  */
-public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
+public abstract class BlastProgram<I, O, C extends BlastProgram.Params> {
 
     private static final Logger LOGGER = Logger.getLogger(BlastProgram.class.getName());
 
@@ -43,13 +43,13 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
             O out = process(commandLine);
 
             // post process
-            tearDownFastaFile(fastaFile);
+            destroyFastaFile(fastaFile);
             postConfig(config);
 
             return out;
         } catch (Exception e) {
 
-            throw new NextProtException("could not run "+name, e);
+            throw new NextProtException("error executing "+name, e);
         }
     }
 
@@ -85,7 +85,7 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
         return buildOutputFromStdout(commandExecutor.getStandardOutputFromCommand().toString());
     }
 
-    private void tearDownFastaFile(File fastaFile) throws Exception {
+    private void destroyFastaFile(File fastaFile) throws Exception {
 
         if (!config.isDebugMode()) {
 
@@ -129,13 +129,13 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Config> {
      * Configuration object for program execution
      */
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Config implements Serializable {
+    public static class Params implements Serializable {
 
         private String binPath;
         private String nextprotBlastDbPath;
         private Boolean isDebugMode = false;
 
-        public Config(String binPath, String nextprotBlastDbPath) {
+        public Params(String binPath, String nextprotBlastDbPath) {
 
             if (binPath == null)
                 throw new NextProtException("Internal error: bin path is missing");

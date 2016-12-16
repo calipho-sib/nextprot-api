@@ -1,29 +1,29 @@
 package org.nextprot.api.blast.service;
 
 
-import org.nextprot.api.blast.domain.BlastPConfig;
+import org.nextprot.api.blast.domain.BlastPParams;
 import org.nextprot.api.blast.domain.BlastProgramOutput;
 
 public interface BlastService {
 
     /**
      * Run blastp on a given protein sequence
-     * @param query a blastp query
+     * @param params params needed to execute blastp
      * @return the blast result
      */
-    BlastProgramOutput blastProteinSequence(BlastPConfig query);
+    BlastProgramOutput blastProteinSequence(BlastPParams params);
 
     /**
      * Run blastp on a given isoform sequence
-     * @param query a blastp query
+     * @param params params needed to execute blastp
      * @return the blast result
      */
-    BlastProgramOutput blastIsoformSequence(BlastPConfig.BlastPIsoformConfig query);
+    BlastProgramOutput blastIsoformSequence(BlastPParams.BlastPIsoformParams params);
 
     /**
      * Create blast nextprot database
-     * @param config configuration object
+     * @param params configuration object
      * @return report
      */
-    BlastProgramOutput makeNextprotBlastDb(BlastProgram.Config config);
+    BlastProgramOutput makeNextprotBlastDb(BlastProgram.Params params);
 }

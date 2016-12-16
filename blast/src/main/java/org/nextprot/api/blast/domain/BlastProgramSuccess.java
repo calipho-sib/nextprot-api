@@ -6,21 +6,21 @@ import java.io.Serializable;
 
 public class BlastProgramSuccess<R extends Serializable> implements BlastProgramOutput {
 
-	private final BlastProgram.Config config;
+	private final BlastProgram.Params params;
 	private final R result;
 
-	public BlastProgramSuccess(BlastProgram.Config config, R result) {
+	public BlastProgramSuccess(BlastProgram.Params params, R result) {
 
-		this.config = config;
+		this.params = params;
 		this.result = result;
 	}
 
 	@Override
-	public BlastProgram.Config getQuery() {
-		return config;
+	public BlastProgram.Params getQuery() {
+		return params;
 	}
 
-	public R getResult() {
+	public R getData() {
 
 		return result;
 	}

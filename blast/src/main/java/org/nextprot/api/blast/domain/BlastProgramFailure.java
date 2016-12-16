@@ -5,18 +5,18 @@ import org.nextprot.api.commons.utils.ExceptionWithReason;
 
 public class BlastProgramFailure implements BlastProgramOutput {
 
-	private final BlastProgram.Config config;
+	private final BlastProgram.Params params;
 	private final ExceptionWithReason exceptionWithReason;
 
-	public BlastProgramFailure(BlastProgram.Config config, ExceptionWithReason exceptionWithReason) {
+	public BlastProgramFailure(BlastProgram.Params params, ExceptionWithReason exceptionWithReason) {
 
-		this.config = config;
+		this.params = params;
 		this.exceptionWithReason = exceptionWithReason;
 	}
 
 	@Override
-	public BlastProgram.Config getQuery() {
-		return config;
+	public BlastProgram.Params getQuery() {
+		return params;
 	}
 
 	public ExceptionWithReason.Reason getError() {

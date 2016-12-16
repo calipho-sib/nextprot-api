@@ -5,7 +5,7 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.blast.domain.BlastPConfig;
+import org.nextprot.api.blast.domain.BlastPParams;
 import org.nextprot.api.blast.domain.BlastProgramFailure;
 import org.nextprot.api.blast.domain.BlastProgramOutput;
 import org.nextprot.api.blast.service.BlastProgram;
@@ -52,12 +52,12 @@ public class BlastController {
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
 		try {
-			BlastPConfig config = new BlastPConfig(blastBinPath, blastDbPath);
-			config.setFields(matrix, eValue, gapOpen, gapExtend);
-			config.setQueryHeader(header);
-			config.setSequenceQuery(sequence);
+			BlastPParams params = new BlastPParams(blastBinPath, blastDbPath);
+			params.setFields(matrix, eValue, gapOpen, gapExtend);
+			params.setQueryHeader(header);
+			params.setSequenceQuery(sequence);
 
-			return blastService.blastProteinSequence(config);
+			return blastService.blastProteinSequence(params);
 		} catch (ExceptionWithReason exceptionWithReason) {
 
 			exceptionWithReason.getReason().setMessage("cannot execute blastp");
@@ -86,13 +86,13 @@ public class BlastController {
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
 		try {
-			BlastPConfig.BlastPIsoformConfig config = new BlastPConfig.BlastPIsoformConfig(blastBinPath, blastDbPath);
-			config.setFields(matrix, eValue, gapOpen, gapExtend);
-			config.setIsoformAccession(isoform);
-			config.setBegin(begin);
-			config.setEnd(end);
+			BlastPParams.BlastPIsoformParams params = new BlastPParams.BlastPIsoformParams(blastBinPath, blastDbPath);
+			params.setFields(matrix, eValue, gapOpen, gapExtend);
+			params.setIsoformAccession(isoform);
+			params.setQuerySeqBegin(begin);
+			params.setQuerySeqEnd(end);
 
-			return blastService.blastIsoformSequence(config);
+			return blastService.blastIsoformSequence(params);
 		} catch (ExceptionWithReason exceptionWithReason) {
 
 			exceptionWithReason.getReason().setMessage("cannot execute blastp");
@@ -105,7 +105,7 @@ public class BlastController {
     @ResponseBody
     public BlastProgramOutput createBlastDb() {
 
-		BlastProgram.Config config = new BlastProgram.Config(makeblastdbBinPath, blastDbPath);
-		return blastService.makeNextprotBlastDb(config);
+		BlastProgram.Params params = new BlastProgram.Params(makeblastdbBinPath, blastDbPath);
+		return blastService.makeNextprotBlastDb(params);
     }
 }

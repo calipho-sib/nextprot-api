@@ -13,14 +13,14 @@ import java.util.Objects;
 /**
  * Create blast database from nextprot sequences
  */
-public class BlastDbMaker extends BlastProgram<Map<String, String>, String, BlastProgram.Config> {
+public class BlastDbMaker extends BlastProgram<Map<String, String>, String, BlastProgram.Params> {
 
     private static final String ISOFORM_REX_EXP= "^NX_[^-]+-\\d+$";
 
-    public BlastDbMaker(BlastProgram.Config config) {
+    public BlastDbMaker(Params params) {
 
-        super("makeblastdb", config);
-        Objects.requireNonNull(config.getBinPath(), "makeblastdb binary path is missing");
+        super("makeblastdb", params);
+        Objects.requireNonNull(params.getBinPath(), "makeblastdb binary path is missing");
     }
 
     /**
@@ -40,11 +40,11 @@ public class BlastDbMaker extends BlastProgram<Map<String, String>, String, Blas
     }
 
     @Override
-    protected List<String> buildCommandLine(BlastProgram.Config config, File fastaFile) {
+    protected List<String> buildCommandLine(Params params, File fastaFile) {
 
         List<String> command = new ArrayList<>();
 
-        command.add(config.getBinPath());
+        command.add(params.getBinPath());
         command.add("-dbtype");
         command.add("prot");
         command.add("-title");
@@ -52,7 +52,7 @@ public class BlastDbMaker extends BlastProgram<Map<String, String>, String, Blas
         command.add("-in");
         command.add(fastaFile.getAbsolutePath());
         command.add("-out");
-        command.add(config.getNextprotBlastDbPath());
+        command.add(params.getNextprotBlastDbPath());
 
         return command;
     }
