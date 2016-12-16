@@ -23,17 +23,17 @@ public class BlastDbMakerTest {
     @Value("${makeblastdb.bin}")
     private String makeblastdbBinPath;
 
-    private BlastProgram.Config config;
+    private BlastProgram.Params params;
 
     @Test
     public void testCommandLineBuilding() throws Exception {
 
-        config = new BlastProgram.Config(makeblastdbBinPath, "/tmp/blastdb");
+        params = new BlastProgram.Params(makeblastdbBinPath, "/tmp/blastdb");
 
-        BlastDbMaker runner = new BlastDbMaker(config);
+        BlastDbMaker runner = new BlastDbMaker(params);
 
         File file = new File("/tmp/input.fasta");
-        List<String> cl = runner.buildCommandLine(config, file);
+        List<String> cl = runner.buildCommandLine(params, file);
 
         Assert.assertEquals(Arrays.asList(makeblastdbBinPath, "-dbtype", "prot", "-title",
                 "nextprot", "-in", "/tmp/input.fasta", "-out", "/tmp/blastdb"), cl);
@@ -42,17 +42,17 @@ public class BlastDbMakerTest {
     @Test(expected = NextProtException.class)
     public void shouldNotBeAbleToCreateInstance() throws Exception {
 
-        config = new BlastProgram.Config(null, "/tmp/blastdb");
+        params = new BlastProgram.Params(null, "/tmp/blastdb");
 
-        new BlastDbMaker(config);
+        new BlastDbMaker(params);
     }
 
     @Test
     public void shouldCreateDbFromIsoformSequence() throws Exception {
 
-        config = new BlastProgram.Config(makeblastdbBinPath, "/tmp/blastdb");
+        params = new BlastProgram.Params(makeblastdbBinPath, "/tmp/blastdb");
 
-        BlastDbMaker runner = new BlastDbMaker(config);
+        BlastDbMaker runner = new BlastDbMaker(params);
 
         Map<String, String> sequences = new HashMap<>();
         sequences.put("NX_P01308-1", "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN");
@@ -69,9 +69,9 @@ public class BlastDbMakerTest {
     @Test(expected = NextProtException.class)
     public void shouldNotCreateDbFromSequenceWithBadlyFormattedIsoAccession() throws Exception {
 
-        config = new BlastProgram.Config(makeblastdbBinPath, "/tmp/blastdb");
+        params = new BlastProgram.Params(makeblastdbBinPath, "/tmp/blastdb");
 
-        BlastDbMaker runner = new BlastDbMaker(config);
+        BlastDbMaker runner = new BlastDbMaker(params);
 
         Map<String, String> sequences = new HashMap<>();
         sequences.put("NX_P01308", "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGAGSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN");

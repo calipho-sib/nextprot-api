@@ -1,8 +1,9 @@
 package org.nextprot.api.blast.service;
 
 
-import org.nextprot.api.blast.domain.BlastPParams;
+import org.nextprot.api.blast.domain.BlastIsoformInput;
 import org.nextprot.api.blast.domain.BlastProgramOutput;
+import org.nextprot.api.blast.domain.BlastSequenceInput;
 
 public interface BlastService {
 
@@ -11,14 +12,14 @@ public interface BlastService {
      * @param params params needed to execute blastp
      * @return the blast result
      */
-    BlastProgramOutput blastProteinSequence(BlastPParams params);
+    BlastProgramOutput blastProteinSequence(BlastSequenceInput params);
 
     /**
      * Run blastp on a given isoform sequence
      * @param params params needed to execute blastp
      * @return the blast result
      */
-    BlastProgramOutput blastIsoformSequence(BlastPParams.BlastPIsoformParams params);
+    BlastProgramOutput blastIsoformSequence(BlastIsoformInput params);
 
     /**
      * Create blast nextprot database

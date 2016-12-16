@@ -5,9 +5,7 @@ import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.blast.domain.BlastPParams;
-import org.nextprot.api.blast.domain.BlastProgramFailure;
-import org.nextprot.api.blast.domain.BlastProgramOutput;
+import org.nextprot.api.blast.domain.*;
 import org.nextprot.api.blast.service.BlastProgram;
 import org.nextprot.api.blast.service.BlastService;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
@@ -52,10 +50,10 @@ public class BlastController {
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
 		try {
-			BlastPParams params = new BlastPParams(blastBinPath, blastDbPath);
-			params.setFields(matrix, eValue, gapOpen, gapExtend);
-			params.setQueryHeader(header);
-			params.setSequenceQuery(sequence);
+			BlastSequenceInput params = new BlastSequenceInput(blastBinPath, blastDbPath);
+			params.setHeader(header);
+			params.setSequence(sequence);
+			params.setBlastSearchParams(BlastSearchParams.valueOf(matrix, eValue, gapOpen, gapExtend));
 
 			return blastService.blastProteinSequence(params);
 		} catch (ExceptionWithReason exceptionWithReason) {
@@ -86,11 +84,11 @@ public class BlastController {
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
 		try {
-			BlastPParams.BlastPIsoformParams params = new BlastPParams.BlastPIsoformParams(blastBinPath, blastDbPath);
-			params.setFields(matrix, eValue, gapOpen, gapExtend);
+			BlastIsoformInput params = new BlastIsoformInput(blastBinPath, blastDbPath);
 			params.setIsoformAccession(isoform);
 			params.setQuerySeqBegin(begin);
 			params.setQuerySeqEnd(end);
+			params.setBlastSearchParams(BlastSearchParams.valueOf(matrix, eValue, gapOpen, gapExtend));
 
 			return blastService.blastIsoformSequence(params);
 		} catch (ExceptionWithReason exceptionWithReason) {

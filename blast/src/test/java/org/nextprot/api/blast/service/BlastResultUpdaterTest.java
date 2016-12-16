@@ -1,9 +1,12 @@
 package org.nextprot.api.blast.service;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.nextprot.api.blast.domain.BlastSequenceInput;
 import org.nextprot.api.blast.domain.gen.BlastResult;
+import org.nextprot.api.blast.domain.gen.Report;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.service.MainNamesService;
@@ -15,47 +18,56 @@ import static org.mockito.Matchers.any;
 
 public class BlastResultUpdaterTest {
 
+    private BlastSequenceInput pParams;
+
+    @Before
+    public void setup() {
+
+        pParams = Mockito.mock(BlastSequenceInput.class);
+        Mockito.when(pParams.getSequence()).thenReturn("WHATEVER MAN");
+    }
+
     @Test
     public void updateShouldSetSomeFieldsToNull() throws Exception {
 
-        BlastResult blastResult = runBlast();
+        Report blastResult = runBlast();
 
-        Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getReference());
-        Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQueryTitle());
-        Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQueryLen());
-        Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getStat().getEntropy());
+        Assert.assertNotNull(blastResult.getReference());
+        Assert.assertNotNull(blastResult.getResults().getSearch().getQueryTitle());
+        Assert.assertNotNull(blastResult.getResults().getSearch().getQueryLen());
+        Assert.assertNotNull(blastResult.getResults().getSearch().getStat().getEntropy());
 
-        BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), "WHATEVER");
+        BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), pParams);
         updater.update(blastResult);
 
-        Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getReference());
-        Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQueryId());
-        Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getStat().getEntropy());
-        Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQueryTitle());
-        Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getQueryLen());
+        Assert.assertNull(blastResult.getReference());
+        Assert.assertNull(blastResult.getResults().getSearch().getQueryId());
+        Assert.assertNull(blastResult.getResults().getSearch().getStat().getEntropy());
+        Assert.assertNull(blastResult.getResults().getSearch().getQueryTitle());
+        Assert.assertNull(blastResult.getResults().getSearch().getQueryLen());
     }
 
     @Test
     public void updateShouldDefineNewFields() throws Exception {
 
-        BlastResult blastResult = runBlast();
+        Report blastResult = runBlast();
 
-        Assert.assertNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
+        Assert.assertNull(blastResult.getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
 
-        BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), "WHATEVER");
+        BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), pParams);
         updater.update(blastResult);
 
-        Assert.assertNotNull(blastResult.getBlastOutput2().get(0).getReport().getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
+        Assert.assertNotNull(blastResult.getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
     }
 
     @Test(expected = NextProtException.class)
     public void shouldThrowExceptionWhenUpdateNullResult() throws Exception {
 
-        BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), "WHATEVER");
+        BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), pParams);
         updater.update(null);
     }
 
-    private static BlastResult runBlast() throws IOException {
+    private static Report runBlast() throws IOException {
 
         return BlastResult.fromJson("{\n" +
                 "\"BlastOutput2\": [\n" +
@@ -216,7 +228,7 @@ public class BlastResultUpdaterTest {
                 "    }\n" +
                 "  }\n" +
                 "]\n" +
-                "}\n");
+                "}\n").getBlastOutput2().get(0).getReport();
     }
 
     private static MainNamesService mockMainNamesService() {

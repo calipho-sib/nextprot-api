@@ -1,6 +1,7 @@
 package org.nextprot.api.blast.service;
 
-import com.google.common.base.Preconditions;
+import org.nextprot.api.blast.domain.BlastIsoformInput;
+import org.nextprot.api.blast.domain.BlastSequenceInput;
 import org.nextprot.api.blast.domain.gen.*;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.MainNames;
@@ -25,38 +26,36 @@ public class BlastResultUpdater {
     private final static DecimalFormat PERCENT_FORMAT = new DecimalFormat("#.##");
 
     private final MainNamesService mainNamesService;
-    private final String sequence;
+    private final BlastSequenceInput params;
 
-    public BlastResultUpdater(MainNamesService mainNamesService, String sequence) {
+    public BlastResultUpdater(MainNamesService mainNamesService, BlastSequenceInput params) {
 
         Objects.requireNonNull(mainNamesService);
-        Objects.requireNonNull(sequence);
-        Preconditions.checkArgument(!sequence.isEmpty());
+        Objects.requireNonNull(params);
 
         this.mainNamesService = mainNamesService;
-        this.sequence = sequence;
+        this.params = params;
     }
 
     /**
      * Update BlastResult object
-     * @param blastResult the original blast output
+     * @param blastReport the original blast output report
      */
-    public void update(BlastResult blastResult) {
+    public void update(Report blastReport) {
 
-        if (blastResult == null) {
-            throw new NextProtException("nothing to update: blast result was not defined");
+        if (blastReport == null) {
+            throw new NextProtException("nothing to update: blast result report was not defined");
         }
 
-        Report report = blastResult.getBlastOutput2().get(0).getReport();
-        Search search = report.getResults().getSearch();
+        Search search = blastReport.getResults().getSearch();
 
-        updateReport(report);
+        updateReport(blastReport);
         updateSearch(search);
 
         for (Hit hit : search.getHits()) {
 
             updateHit(hit);
-            hit.getDescription().forEach(this::updateDescription);
+            hit.getDescription().forEach(this::updateHitDescription);
             hit.getHsps().forEach(this::updateHsp);
         }
 
@@ -68,6 +67,13 @@ public class BlastResultUpdater {
         report.setProgram(null);
         report.setReference(null);
         report.setSearchTarget(null);
+
+        if (params instanceof BlastIsoformInput) {
+            Description queryDescription = new Description();
+            setAccessions(queryDescription, ((BlastIsoformInput)params).getIsoformAccession(),
+                    ((BlastIsoformInput)params).getEntryAccession());
+            report.setQueryDescription(queryDescription);
+        }
     }
 
     protected void updateSearch(Search search) {
@@ -82,7 +88,7 @@ public class BlastResultUpdater {
         hit.setNum(null);
     }
 
-    protected void updateDescription(Description description) {
+    protected void updateHitDescription(Description description) {
 
         description.setId(null);
         description.setAccession(null);
@@ -120,7 +126,7 @@ public class BlastResultUpdater {
 
     protected void updateHsp(Hsp hsp) {
 
-        float identityPercent = (float) hsp.getIdentity() / sequence.length() * 100;
+        float identityPercent = (float) hsp.getIdentity() / params.getSequence().length() * 100;
 
         hsp.setIdentityPercent(Float.parseFloat(PERCENT_FORMAT.format(identityPercent)));
         hsp.setNum(null);

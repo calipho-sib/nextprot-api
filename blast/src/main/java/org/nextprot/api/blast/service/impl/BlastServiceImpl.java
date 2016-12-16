@@ -1,15 +1,10 @@
 package org.nextprot.api.blast.service.impl;
 
 import org.nextprot.api.blast.dao.BlastDAO;
-import org.nextprot.api.blast.domain.BlastPConfig;
-import org.nextprot.api.blast.domain.BlastProgramFailure;
-import org.nextprot.api.blast.domain.BlastProgramOutput;
-import org.nextprot.api.blast.domain.BlastProgramSuccess;
-import org.nextprot.api.blast.domain.gen.BlastResult;
+import org.nextprot.api.blast.domain.*;
+import org.nextprot.api.blast.domain.gen.Report;
 import org.nextprot.api.blast.service.*;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
-import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MainNamesService;
@@ -22,7 +17,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class BlastServiceImpl implements BlastService {
 
-    private static final String ISOFORM_REX_EXP= "^NX_[^-]+-\\d+$";
 
     @Autowired
     private EntryBuilderService entryBuilderService;
@@ -34,98 +28,84 @@ public class BlastServiceImpl implements BlastService {
     private BlastDAO blastDAO;
 
     @Override
-    public BlastProgramOutput blastProteinSequence(BlastPConfig config) {
+    public BlastProgramOutput blastProteinSequence(BlastSequenceInput params) {
 
         try {
-            BlastResult result = new BlastPRunner(config).run(new BlastPRunner.Query(config.getQueryHeader(), config.getSequenceQuery()));
-            new BlastResultUpdater(mainNamesService, config.getSequenceQuery()).update(result);
+            BlastPRunner.FastaEntry fastaEntry =
+                    new BlastPRunner.FastaEntry(params.getHeader(), params.getSequence());
 
-            return new BlastProgramSuccess(config, result);
+            Report result = new BlastPRunner(params).run(fastaEntry);
+
+            new BlastResultUpdater(mainNamesService, params).update(result);
+
+            return new BlastProgramSuccess(params, result);
         } catch (ExceptionWithReason exceptionWithReason) {
 
-            return new BlastProgramFailure(config, exceptionWithReason);
+            return new BlastProgramFailure(params, exceptionWithReason);
         }
     }
 
-    // TODO: refactor this messy method
     @Override
-    public BlastProgramOutput blastIsoformSequence(BlastPConfig.BlastPIsoformConfig config) {
+    public BlastProgramOutput blastIsoformSequence(BlastIsoformInput params) {
 
-        String isoformAccession = config.getIsoformAccession();
-        Integer begin1BasedIndex = config.getBegin();
-        Integer end1BasedIndex = config.getEnd();
-
-        if (!isoformAccession.matches(ISOFORM_REX_EXP)) {
-            throw new NextProtException(isoformAccession+": invalid isoform accession (format: "+ISOFORM_REX_EXP+")");
-        }
-
+        String isoformAccession = params.getIsoformAccession();
         String entryAccession = isoformAccession.split("-")[0];
 
-        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession).withTargetIsoforms());
+        try {
+            Isoform isoform = getIsoform(isoformAccession, entryAccession);
 
-        Isoform isoform = IsoformUtils.getIsoformByName(entry, isoformAccession);
+            params.setSequence(isoform.getSequence());
+            params.validateSequencePositions();
+            params.setSequence(params.getSequence().substring(params.getBeginPos()-1, params.getEndPos()));
+            params.setHeader(buildHeader(params, isoform, entryAccession));
+            params.setEntryAccession(entryAccession);
 
-        if (isoform == null) {
+            return blastProteinSequence(params);
 
-            return new BlastProgramFailure(config, ExceptionWithReason.withReason("unknown isoform",
-                    isoformAccession+": could not find isoform from entry "+entryAccession));
+        } catch (ExceptionWithReason exceptionWithReason) {
+
+            return new BlastProgramFailure(params, exceptionWithReason);
         }
-
-        String isoformSequence = isoform.getSequence();
-
-        // assign default positions
-        int begin = (begin1BasedIndex != null) ? begin1BasedIndex : 1;
-        int end = (end1BasedIndex != null) ? end1BasedIndex : isoformSequence.length();
-
-        // swap indices if needed
-        if (begin > end) {
-
-            int tmp = begin;
-            begin = end;
-            end = tmp;
-        }
-
-        // check positions
-        if (begin <= 0 || begin > isoformSequence.length()) {
-
-            return new BlastProgramFailure(config, ExceptionWithReason.withReason("begin sequence position",
-                            begin+" is out of bound (should be > 0 and <= "+isoformSequence.length()+")"));
-        }
-        if (end <= 0 || end > isoformSequence.length()) {
-
-            return new BlastProgramFailure(config, ExceptionWithReason.withReason("end sequence position",
-                    end+" is out of bound (should be > 0 and <= "+isoformSequence.length()+")"));
-        }
-
-        // format header
-        StringBuilder header = new StringBuilder();
-
-        if (end - begin + 1 < isoformSequence.length()) {
-
-            header.append("Selection of ").append(begin).append("-").append(end).append(" ");
-        }
-        header.append("from protein ").append(entryAccession).append(", isoform ").append(isoform.getMainEntityName().getName());
-
-        config.setSequenceQuery(isoformSequence.substring(begin-1, end));
-        config.setBegin(begin);
-        config.setEnd(end);
-        config.setQueryHeader(header.toString());
-
-        return blastProteinSequence(config);
     }
 
     @Override
-    public BlastProgramOutput makeNextprotBlastDb(BlastProgram.Config config) {
+    public BlastProgramOutput makeNextprotBlastDb(BlastProgram.Params params) {
 
-        BlastDbMaker runner = new BlastDbMaker(config);
+        BlastDbMaker runner = new BlastDbMaker(params);
 
         try {
             String result = runner.run(blastDAO.getAllIsoformSequences());
 
-            return new BlastProgramSuccess(config, result);
+            return new BlastProgramSuccess(params, result);
         } catch (ExceptionWithReason exceptionWithReason) {
 
-            return new BlastProgramFailure(config, exceptionWithReason);
+            return new BlastProgramFailure(params, exceptionWithReason);
         }
+    }
+
+    private Isoform getIsoform(String isoformAccession, String entryAccession) throws ExceptionWithReason {
+
+        Isoform isoform = IsoformUtils.getIsoformByName(entryBuilderService.build(EntryConfig.newConfig(entryAccession).withTargetIsoforms()), isoformAccession);
+
+        if (isoform == null) {
+
+            throw ExceptionWithReason.withReason("unknown isoform", isoformAccession+": could not find isoform from entry "+entryAccession);
+        }
+
+        return isoform;
+    }
+
+    private String buildHeader(BlastIsoformInput config, Isoform isoform, String entryAccession) {
+
+        // format header
+        StringBuilder header = new StringBuilder();
+
+        if (config.calcQuerySeqLength() < isoform.getSequenceLength()) {
+
+            header.append("Selection of ").append(config.getQuerySeqBegin()).append("-").append(config.getQuerySeqEnd()).append(" ");
+        }
+        header.append("from protein ").append(entryAccession).append(", isoform ").append(isoform.getMainEntityName().getName());
+
+        return header.toString();
     }
 }

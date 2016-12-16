@@ -3,8 +3,9 @@ package org.nextprot.api.blast.service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nextprot.api.blast.domain.BlastPConfig;
-import org.nextprot.api.blast.domain.gen.BlastResult;
+import org.nextprot.api.blast.domain.BlastSearchParams;
+import org.nextprot.api.blast.domain.BlastSequenceInput;
+import org.nextprot.api.blast.domain.gen.Report;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ActiveProfiles;
@@ -25,37 +26,37 @@ public class BlastPRunnerTest {
     @Value("${blastp.db}")
     private String blastDb;
 
-    private BlastPConfig config;
+    private BlastSequenceInput config;
 
     @Test
     public void blastpShouldFindResult() throws Exception {
 
-        config = new BlastPConfig(blastBinPath, blastDb);
+        config = new BlastSequenceInput(blastBinPath, blastDb);
 
         BlastPRunner runner = new BlastPRunner(config);
 
-        BlastResult blastResult = runner.run(new BlastPRunner.Query("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR"));
+        Report blastReport = runner.run(new BlastPRunner.FastaEntry("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR"));
 
         Assert.assertNull(config.getBinPath());
         Assert.assertNull(config.getNextprotBlastDbPath());
 
-        Assert.assertEquals(1, blastResult.getBlastOutput2().size());
+        Assert.assertEquals(4, blastReport.getResults().getSearch().getHits().size());
     }
 
     @Test(expected = NextProtException.class)
     public void blastpShouldThrowNPException() throws Exception {
 
-        config = new BlastPConfig("/work/devtools/blastw", blastDb);
+        config = new BlastSequenceInput("/work/devtools/blastw", blastDb);
 
         BlastPRunner runner = new BlastPRunner(config);
 
-        runner.run(new BlastPRunner.Query("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR"));
+        runner.run(new BlastPRunner.FastaEntry("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR"));
     }
 
     @Test
     public void testDefaultCommandLineBuilding() throws Exception {
 
-        config = new BlastPConfig(blastBinPath, blastDb);
+        config = new BlastSequenceInput(blastBinPath, blastDb);
 
         BlastPRunner runner = new BlastPRunner(config);
 
@@ -78,11 +79,8 @@ public class BlastPRunnerTest {
     @Test
     public void testCommandLineBuildingWithParams() throws Exception {
 
-        config = new BlastPConfig(blastBinPath, blastDb);
-        config.setEvalue(0.01);
-        config.setMatrix(BlastPConfig.Matrix.BLOSUM45);
-        config.setGapOpen(12);
-        config.setGapExtend(2);
+        config = new BlastSequenceInput(blastBinPath, blastDb);
+        config.setBlastSearchParams(BlastSearchParams.valueOf(BlastSearchParams.Matrix.BLOSUM45.toString(), 0.01, 12, 2));
 
         BlastPRunner runner = new BlastPRunner(config);
 
@@ -113,7 +111,7 @@ public class BlastPRunnerTest {
     @Test(expected = NextProtException.class)
     public void shouldNotBeAbleToCreateInstance() throws Exception {
 
-        config = new BlastPConfig(null, "/tmp/blastdb");
+        config = new BlastSequenceInput(null, "/tmp/blastdb");
 
         new BlastPRunner(config);
     }

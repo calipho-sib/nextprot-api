@@ -1,6 +1,7 @@
 package org.nextprot.api.blast.service;
 
-import org.nextprot.api.blast.domain.BlastPParams;
+import org.nextprot.api.blast.domain.BlastSearchParams;
+import org.nextprot.api.blast.domain.BlastSequenceInput;
 import org.nextprot.api.blast.domain.gen.BlastResult;
 import org.nextprot.api.blast.domain.gen.Report;
 
@@ -14,25 +15,25 @@ import java.util.Objects;
 /**
  * Executes locally installed blastP program with protein sequence query
  */
-public class BlastPRunner extends BlastProgram<BlastPRunner.Query, Report, BlastPParams> {
+public class BlastPRunner extends BlastProgram<BlastPRunner.FastaEntry, Report, BlastSequenceInput> {
 
-    public BlastPRunner(BlastPParams config) {
+    public BlastPRunner(BlastSequenceInput config) {
 
         super("blastp", config);
         Objects.requireNonNull(config.getBinPath(), "binary path is missing");
     }
 
     @Override
-    protected void writeFastaInput(PrintWriter pw, BlastPRunner.Query query) {
+    protected void writeFastaInput(PrintWriter pw, FastaEntry fastaEntry) {
 
-        BlastProgram.writeFastaEntry(pw, query.getHeader(), query.getSequence());
+        BlastProgram.writeFastaEntry(pw, fastaEntry.getHeader(), fastaEntry.getSequence());
     }
 
     @Override
-    protected void preConfig(BlastPRunner.Query query, BlastPParams config) {
+    protected void preConfig(FastaEntry fastaEntry, BlastSequenceInput config) {
 
-        config.setQueryHeader(query.getHeader());
-        config.setSequenceQuery(query.getSequence());
+        config.setHeader(fastaEntry.getHeader());
+        config.setSequence(fastaEntry.getSequence());
     }
 
     @Override
@@ -42,44 +43,50 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.Query, Report, Blast
     }
 
     @Override
-    protected List<String> buildCommandLine(BlastPParams config, File fastaFile) {
+    protected List<String> buildCommandLine(BlastSequenceInput input, File fastaFile) {
 
         List<String> command = new ArrayList<>();
 
-        command.add(config.getBinPath());
+        command.add(input.getBinPath());
         command.add("-db");
-        command.add(config.getNextprotBlastDbPath());
+        command.add(input.getNextprotBlastDbPath());
         command.add("-query");
         command.add(fastaFile.getAbsolutePath());
         command.add("-outfmt");
         command.add("15");
-        if (config.getMatrix() != null) {
-            command.add("-matrix");
-            command.add(config.getMatrix().toString());
-        }
-        if (config.getEvalue() != null) {
-            command.add("-evalue");
-            command.add(String.valueOf(config.getEvalue()));
-        }
-        if (config.getGapOpen() != null) {
-            command.add("-gapopen");
-            command.add(String.valueOf(config.getGapOpen()));
-        }
-        if (config.getGapExtend() != null) {
-            command.add("-gapextend");
-            command.add(String.valueOf(config.getGapExtend()));
+
+        if (input.getSearchParams() != null) {
+
+            BlastSearchParams searchParams = input.getSearchParams();
+
+            if (searchParams.getMatrix() != null) {
+                command.add("-matrix");
+                command.add(searchParams.getMatrix().toString());
+            }
+            if (searchParams.getEvalue() != null) {
+                command.add("-evalue");
+                command.add(String.valueOf(searchParams.getEvalue()));
+            }
+            if (searchParams.getGapOpen() != null) {
+                command.add("-gapopen");
+                command.add(String.valueOf(searchParams.getGapOpen()));
+            }
+            if (searchParams.getGapExtend() != null) {
+                command.add("-gapextend");
+                command.add(String.valueOf(searchParams.getGapExtend()));
+            }
         }
 
         return command;
     }
 
     /** A fasta sequence query */
-    public static class Query {
+    public static class FastaEntry {
 
         private final String header;
         private final String sequence;
 
-        public Query(String header, String sequence) {
+        public FastaEntry(String header, String sequence) {
             this.header = header;
             this.sequence = sequence;
         }
