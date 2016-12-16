@@ -11,7 +11,7 @@ import org.nextprot.api.commons.utils.ExceptionWithReason;
         "isoform_accession",
         "begin",
         "end",
-        "search_param",
+        "search_settings",
         "isoform_description"
 })
 public class BlastIsoformInput extends BlastSequenceInput {
@@ -85,9 +85,9 @@ public class BlastIsoformInput extends BlastSequenceInput {
     }
 
     @JsonIgnore
-    public String getHeader() {
+    public String getTitle() {
 
-        return super.getHeader();
+        return super.getTitle();
     }
 
     @JsonIgnore

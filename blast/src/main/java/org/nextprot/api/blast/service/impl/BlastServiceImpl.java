@@ -31,7 +31,7 @@ public class BlastServiceImpl implements BlastService {
 
         try {
             BlastPRunner.FastaEntry fastaEntry =
-                    new BlastPRunner.FastaEntry(params.getHeader(), params.getSequence());
+                    new BlastPRunner.FastaEntry(params.getTitle(), params.getSequence());
 
             Report result = new BlastPRunner(params).run(fastaEntry);
 
@@ -56,7 +56,7 @@ public class BlastServiceImpl implements BlastService {
             params.setSequence(isoform.getSequence());
             params.validateSequencePositions();
             params.setSequence(params.getSequence().substring(params.getBeginPos()-1, params.getEndPos()));
-            params.setHeader(buildHeader(params, isoform, entryAccession));
+            params.setTitle(buildTitle(params, isoform, entryAccession));
             params.setEntryAccession(entryAccession);
 
             Description queryDescription = new Description();
@@ -98,17 +98,16 @@ public class BlastServiceImpl implements BlastService {
         return isoform;
     }
 
-    private String buildHeader(BlastIsoformInput config, Isoform isoform, String entryAccession) {
+    private String buildTitle(BlastIsoformInput config, Isoform isoform, String entryAccession) {
 
-        // format header
-        StringBuilder header = new StringBuilder();
+        StringBuilder title = new StringBuilder();
 
         if (config.calcQuerySeqLength() < isoform.getSequenceLength()) {
 
-            header.append("Selection of ").append(config.getQuerySeqBegin()).append("-").append(config.getQuerySeqEnd()).append(" ");
+            title.append("Selection of ").append(config.getQuerySeqBegin()).append("-").append(config.getQuerySeqEnd()).append(" ");
         }
-        header.append("from protein ").append(entryAccession).append(", isoform ").append(isoform.getMainEntityName().getName());
+        title.append("from protein ").append(entryAccession).append(", isoform ").append(isoform.getMainEntityName().getName());
 
-        return header.toString();
+        return title.toString();
     }
 }

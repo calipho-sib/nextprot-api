@@ -37,9 +37,8 @@ public class BlastController {
 	public BlastProgramOutput blastProteinSequence(
 			@ApiPathParam(name = "sequence", description = "A protein sequence query.",  allowedvalues = { "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR" })
 			@PathVariable("sequence") String sequence,
-			@ApiPathParam(name = "header", description = "A query header.",  allowedvalues = { "protein sequence query" })
-			@RequestParam(value = "header", defaultValue = "protein sequence query") String header,
-
+			@ApiQueryParam(name = "title", description = "A query title.",  allowedvalues = { "protein sequence query" })
+			@RequestParam(value = "title", defaultValue = "protein sequence query") String title,
 			@ApiQueryParam(name = "matrix", description = "Scoring matrix name (BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30 or PAM70)", allowedvalues = { "BLOSUM62" })
 			@RequestParam(value = "matrix", required = false) String matrix,
 			@ApiQueryParam(name = "eValue", description = "Expected value (E) threshold for saving hits", allowedvalues = { "10" })
@@ -51,7 +50,7 @@ public class BlastController {
 
 		try {
 			BlastSequenceInput params = new BlastSequenceInput(blastBinPath, blastDbPath);
-			params.setHeader(header);
+			params.setTitle(title);
 			params.setSequence(sequence);
 			params.setBlastSearchParams(BlastSearchParams.valueOf(matrix, eValue, gapOpen, gapExtend));
 
@@ -73,7 +72,6 @@ public class BlastController {
 			@RequestParam(value = "begin", required = false) Integer begin,
 			@ApiQueryParam(name = "end", description = "The last sequence position (should be <= sequence length)")
 			@RequestParam(value = "end", required = false) Integer end,
-
 			@ApiQueryParam(name = "matrix", description = "Scoring matrix name (BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30 or PAM70)", allowedvalues = { "BLOSUM62" })
 			@RequestParam(value = "matrix", required = false) String matrix,
 			@ApiQueryParam(name = "evalue", description = "Expected value (E) threshold for saving hits", allowedvalues = { "10" })

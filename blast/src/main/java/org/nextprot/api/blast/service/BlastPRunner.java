@@ -32,7 +32,7 @@ public class BlastPRunner extends BlastProgram<BlastPRunner.FastaEntry, Report, 
     @Override
     protected void preConfig(FastaEntry fastaEntry, BlastSequenceInput config) {
 
-        config.setHeader(fastaEntry.getHeader());
+        config.setTitle(fastaEntry.getHeader());
         config.setSequence(fastaEntry.getSequence());
     }
 

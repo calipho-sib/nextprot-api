@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.nextprot.api.blast.service.BlastProgram;
 
 @JsonPropertyOrder({
-        "header",
+        "title",
         "sequence",
-        "search_param"
+        "search_settings"
 })
 public class BlastSequenceInput extends BlastProgram.Params {
 
-    private String header;
+    private String title;
     private String sequence;
     private BlastSearchParams blastSearchParams;
 
@@ -19,13 +19,13 @@ public class BlastSequenceInput extends BlastProgram.Params {
         super(binPath, nextprotBlastDbPath);
     }
 
-    public String getHeader() {
+    public String getTitle() {
 
-        return header;
+        return title;
     }
 
-    public void setHeader(String header) {
-        this.header = header;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getSequence() {
@@ -42,7 +42,7 @@ public class BlastSequenceInput extends BlastProgram.Params {
         this.blastSearchParams = blastSearchParams;
     }
 
-    @JsonProperty("search_param")
+    @JsonProperty("search_settings")
     public BlastSearchParams getSearchParams() {
 
         return blastSearchParams;
