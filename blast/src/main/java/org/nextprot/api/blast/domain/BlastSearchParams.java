@@ -1,10 +1,12 @@
 package org.nextprot.api.blast.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class BlastSearchParams {
+public class BlastSearchParams implements Serializable {
 
     /**
      * Amino acid substitution matrices (see also https://en.wikipedia.org/wiki/Substitution_matrix#Log-odds_matrices)
@@ -19,8 +21,11 @@ public class BlastSearchParams {
     }
 
     private Matrix matrix;
+    @JsonProperty("expect")
     private Double evalue;
+    @JsonProperty("gap_open")
     private Integer gapOpen;
+    @JsonProperty("gap_extend")
     private Integer gapExtend;
 
     public static BlastSearchParams valueOf(String matrix, Double eValue, Integer gapOpen, Integer gapExtend) throws ExceptionWithReason {

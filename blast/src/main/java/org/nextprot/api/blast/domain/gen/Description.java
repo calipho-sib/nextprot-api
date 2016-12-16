@@ -16,8 +16,8 @@ import java.io.Serializable;
     "accession",
     "title",
     "entry_accession",
-    "iso_accession",
-    "iso_name",
+    "isoform_accession",
+    "isoform_name",
     "protein_name",
     "gene_name"
 })
@@ -32,9 +32,9 @@ public class Description implements Serializable
     private String title;
     @JsonProperty("entry_accession")
     private String entryAccession;
-    @JsonProperty("iso_accession")
+    @JsonProperty("isoform_accession")
     private String isoAccession;
-    @JsonProperty("iso_name")
+    @JsonProperty("isoform_name")
     private String isoName;
     @JsonProperty("protein_name")
     private String proteinName;
@@ -112,22 +112,22 @@ public class Description implements Serializable
         this.entryAccession = entryAccession;
     }
 
-    @JsonProperty("iso_accession")
+    @JsonProperty("isoform_accession")
     public String getIsoAccession() {
         return isoAccession;
     }
 
-    @JsonProperty("iso_accession")
+    @JsonProperty("isoform_accession")
     public void setIsoAccession(String isoAccession) {
         this.isoAccession = isoAccession;
     }
 
-    @JsonProperty("iso_name")
+    @JsonProperty("isoform_name")
     public String getIsoName() {
         return isoName;
     }
 
-    @JsonProperty("iso_name")
+    @JsonProperty("isoform_name")
     public void setIsoName(String isoName) {
         this.isoName = isoName;
     }

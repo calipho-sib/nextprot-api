@@ -2,12 +2,12 @@ package org.nextprot.api.blast.service.impl;
 
 import org.nextprot.api.blast.dao.BlastDAO;
 import org.nextprot.api.blast.domain.*;
+import org.nextprot.api.blast.domain.gen.Description;
 import org.nextprot.api.blast.domain.gen.Report;
 import org.nextprot.api.blast.service.*;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.MainNamesService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.IsoformUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +17,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class BlastServiceImpl implements BlastService {
 
-
     @Autowired
     private EntryBuilderService entryBuilderService;
 
     @Autowired
-    private MainNamesService mainNamesService;
+    private BlastDAO blastDAO;
 
     @Autowired
-    private BlastDAO blastDAO;
+    private BlastResultUpdaterService blastResultUpdaterService;
 
     @Override
     public BlastProgramOutput blastProteinSequence(BlastSequenceInput params) {
@@ -36,7 +35,7 @@ public class BlastServiceImpl implements BlastService {
 
             Report result = new BlastPRunner(params).run(fastaEntry);
 
-            new BlastResultUpdater(mainNamesService, params).update(result);
+            blastResultUpdaterService.update(result, fastaEntry.getSequence());
 
             return new BlastProgramSuccess(params, result);
         } catch (ExceptionWithReason exceptionWithReason) {
@@ -59,6 +58,10 @@ public class BlastServiceImpl implements BlastService {
             params.setSequence(params.getSequence().substring(params.getBeginPos()-1, params.getEndPos()));
             params.setHeader(buildHeader(params, isoform, entryAccession));
             params.setEntryAccession(entryAccession);
+
+            Description queryDescription = new Description();
+            blastResultUpdaterService.updateDescription(queryDescription, isoformAccession, entryAccession);
+            params.setDescription(queryDescription);
 
             return blastProteinSequence(params);
 

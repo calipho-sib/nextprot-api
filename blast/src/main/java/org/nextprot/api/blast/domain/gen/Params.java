@@ -12,6 +12,7 @@ import java.io.Serializable;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+    "sequence",
     "matrix",
     "expect",
     "gap_open",
@@ -22,19 +23,31 @@ import java.io.Serializable;
 public class Params implements Serializable
 {
 
+    @JsonProperty("sequence")
+    private String sequence;
     @JsonProperty("matrix")
     private String matrix;
     @JsonProperty("expect")
-    private int expect;
+    private Double expect;
     @JsonProperty("gap_open")
-    private int gapOpen;
+    private Integer gapOpen;
     @JsonProperty("gap_extend")
-    private int gapExtend;
+    private Integer gapExtend;
     @JsonProperty("filter")
     private String filter;
     @JsonProperty("cbs")
-    private int cbs;
+    private Integer cbs;
     private final static long serialVersionUID = 597508011523172766L;
+
+    @JsonProperty("sequence")
+    public String getSequence() {
+        return sequence;
+    }
+
+    @JsonProperty("sequence")
+    public void setSequence(String sequence) {
+        this.sequence = sequence;
+    }
 
     /**
      * 
@@ -62,7 +75,7 @@ public class Params implements Serializable
      *     The expect
      */
     @JsonProperty("expect")
-    public int getExpect() {
+    public Double getExpect() {
         return expect;
     }
 
@@ -72,7 +85,7 @@ public class Params implements Serializable
      *     The expect
      */
     @JsonProperty("expect")
-    public void setExpect(int expect) {
+    public void setExpect(Double expect) {
         this.expect = expect;
     }
 
@@ -82,7 +95,7 @@ public class Params implements Serializable
      *     The gapOpen
      */
     @JsonProperty("gap_open")
-    public int getGapOpen() {
+    public Integer getGapOpen() {
         return gapOpen;
     }
 
@@ -92,7 +105,7 @@ public class Params implements Serializable
      *     The gap_open
      */
     @JsonProperty("gap_open")
-    public void setGapOpen(int gapOpen) {
+    public void setGapOpen(Integer gapOpen) {
         this.gapOpen = gapOpen;
     }
 
@@ -102,7 +115,7 @@ public class Params implements Serializable
      *     The gapExtend
      */
     @JsonProperty("gap_extend")
-    public int getGapExtend() {
+    public Integer getGapExtend() {
         return gapExtend;
     }
 
@@ -112,7 +125,7 @@ public class Params implements Serializable
      *     The gap_extend
      */
     @JsonProperty("gap_extend")
-    public void setGapExtend(int gapExtend) {
+    public void setGapExtend(Integer gapExtend) {
         this.gapExtend = gapExtend;
     }
 
@@ -142,7 +155,7 @@ public class Params implements Serializable
      *     The cbs
      */
     @JsonProperty("cbs")
-    public int getCbs() {
+    public Integer getCbs() {
         return cbs;
     }
 
@@ -152,7 +165,7 @@ public class Params implements Serializable
      *     The cbs
      */
     @JsonProperty("cbs")
-    public void setCbs(int cbs) {
+    public void setCbs(Integer cbs) {
         this.cbs = cbs;
     }
 }

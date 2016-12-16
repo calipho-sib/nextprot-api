@@ -1,7 +1,14 @@
 package org.nextprot.api.blast.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.nextprot.api.blast.service.BlastProgram;
 
+@JsonPropertyOrder({
+        "header",
+        "sequence",
+        "search_param"
+})
 public class BlastSequenceInput extends BlastProgram.Params {
 
     private String header;
@@ -35,7 +42,7 @@ public class BlastSequenceInput extends BlastProgram.Params {
         this.blastSearchParams = blastSearchParams;
     }
 
-
+    @JsonProperty("search_param")
     public BlastSearchParams getSearchParams() {
 
         return blastSearchParams;

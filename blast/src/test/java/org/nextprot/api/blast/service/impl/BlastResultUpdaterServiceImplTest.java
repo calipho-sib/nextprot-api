@@ -1,30 +1,46 @@
-package org.nextprot.api.blast.service;
+package org.nextprot.api.blast.service.impl;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.nextprot.api.blast.domain.BlastSequenceInput;
+import org.mockito.MockitoAnnotations;
 import org.nextprot.api.blast.domain.gen.BlastResult;
 import org.nextprot.api.blast.domain.gen.Report;
+import org.nextprot.api.blast.service.BlastResultUpdaterService;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.MainNames;
 import org.nextprot.api.core.service.MainNamesService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.util.Collections;
 
 import static org.mockito.Matchers.any;
 
-public class BlastResultUpdaterTest {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ActiveProfiles({"unit"})
+@ContextConfiguration("classpath:spring/commons-context.xml")
+public class BlastResultUpdaterServiceImplTest {
 
-    private BlastSequenceInput pParams;
+    @InjectMocks
+    @Autowired
+    private BlastResultUpdaterService updater;
+
+    @Mock
+    private MainNamesService mainNamesService;
 
     @Before
-    public void setup() {
+    public void init() {
 
-        pParams = Mockito.mock(BlastSequenceInput.class);
-        Mockito.when(pParams.getSequence()).thenReturn("WHATEVER MAN");
+        MockitoAnnotations.initMocks(this);
+        mockMainNamesService(mainNamesService);
     }
 
     @Test
@@ -37,8 +53,7 @@ public class BlastResultUpdaterTest {
         Assert.assertNotNull(blastResult.getResults().getSearch().getQueryLen());
         Assert.assertNotNull(blastResult.getResults().getSearch().getStat().getEntropy());
 
-        BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), pParams);
-        updater.update(blastResult);
+        updater.update(blastResult, "WHATEVER MAN");
 
         Assert.assertNull(blastResult.getReference());
         Assert.assertNull(blastResult.getResults().getSearch().getQueryId());
@@ -54,8 +69,7 @@ public class BlastResultUpdaterTest {
 
         Assert.assertNull(blastResult.getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
 
-        BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), pParams);
-        updater.update(blastResult);
+        updater.update(blastResult, "WHATEVER MAN");
 
         Assert.assertNotNull(blastResult.getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
     }
@@ -63,8 +77,7 @@ public class BlastResultUpdaterTest {
     @Test(expected = NextProtException.class)
     public void shouldThrowExceptionWhenUpdateNullResult() throws Exception {
 
-        BlastResultUpdater updater = new BlastResultUpdater(mockMainNamesService(), pParams);
-        updater.update(null);
+        updater.update(null, "WHATEVER MAN");
     }
 
     private static Report runBlast() throws IOException {
@@ -231,9 +244,7 @@ public class BlastResultUpdaterTest {
                 "}\n").getBlastOutput2().get(0).getReport();
     }
 
-    private static MainNamesService mockMainNamesService() {
-
-        MainNamesService mock = Mockito.mock(MainNamesService.class);
+    private static void mockMainNamesService(MainNamesService mock) {
 
         MainNames mainNames = new MainNames();
         mainNames.setAccession("an accession");
@@ -241,7 +252,5 @@ public class BlastResultUpdaterTest {
         mainNames.setName("a name");
 
         Mockito.when(mock.findIsoformOrEntryMainName(any(String.class))).thenReturn(mainNames);
-
-        return mock;
     }
 }

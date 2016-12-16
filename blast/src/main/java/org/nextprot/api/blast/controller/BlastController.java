@@ -31,8 +31,8 @@ public class BlastController {
     @Value("${blastp.db}")
     private String blastDbPath;
 
-	@ApiMethod(path = "/blast/seq/{sequence}", verb = ApiVerb.GET, description = "Search protein sequence", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/blast/seq/{sequence}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
+	@ApiMethod(path = "/blast/sequence/{sequence}", verb = ApiVerb.GET, description = "Search protein sequence", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/blast/sequence/{sequence}", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
 	@ResponseBody
 	public BlastProgramOutput blastProteinSequence(
 			@ApiPathParam(name = "sequence", description = "A protein sequence query.",  allowedvalues = { "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR" })

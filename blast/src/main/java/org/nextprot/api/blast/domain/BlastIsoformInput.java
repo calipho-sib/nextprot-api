@@ -1,9 +1,19 @@
 package org.nextprot.api.blast.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.nextprot.api.blast.domain.gen.Description;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 
+@JsonPropertyOrder({
+        "isoform_accession",
+        "begin",
+        "end",
+        "search_param",
+        "isoform_description"
+})
 public class BlastIsoformInput extends BlastSequenceInput {
 
     private static final String ISOFORM_REX_EXP= "^NX_[^-]+-\\d+$";
@@ -12,7 +22,7 @@ public class BlastIsoformInput extends BlastSequenceInput {
     private Integer querySeqBegin;
     private Integer querySeqEnd;
     private String entryAccession;
-    private BlastSearchParams blastSearchParams;
+    private Description description;
 
     public BlastIsoformInput(String binPath, String nextprotBlastDbPath) {
         super(binPath, nextprotBlastDbPath);
@@ -42,6 +52,7 @@ public class BlastIsoformInput extends BlastSequenceInput {
         this.entryAccession = entryAccession;
     }
 
+    @JsonProperty("isoform_accession")
     public String getIsoformAccession() {
         return isoformAccession;
     }
@@ -59,10 +70,12 @@ public class BlastIsoformInput extends BlastSequenceInput {
         return querySeqBegin;
     }
 
+    @JsonProperty("begin")
     public void setQuerySeqBegin(Integer querySeqBegin) {
         this.querySeqBegin = querySeqBegin;
     }
 
+    @JsonProperty("end")
     public Integer getQuerySeqEnd() {
         return querySeqEnd;
     }
@@ -71,12 +84,25 @@ public class BlastIsoformInput extends BlastSequenceInput {
         this.querySeqEnd = querySeqEnd;
     }
 
-    public BlastSearchParams getBlastSearchParams() {
-        return blastSearchParams;
+    @JsonIgnore
+    public String getHeader() {
+
+        return super.getHeader();
     }
 
-    public void setBlastSearchParams(BlastSearchParams blastSearchParams) {
-        this.blastSearchParams = blastSearchParams;
+    @JsonIgnore
+    public String getSequence() {
+
+        return super.getSequence();
+    }
+
+    @JsonProperty("isoform_description")
+    public Description getDescription() {
+        return description;
+    }
+
+    public void setDescription(Description description) {
+        this.description = description;
     }
 
     public void validateSequencePositions() throws ExceptionWithReason {
@@ -94,7 +120,9 @@ public class BlastIsoformInput extends BlastSequenceInput {
         // both positions are defined
         if (querySeqBegin != null) {
 
-            swapPositionsIfNeeded();
+            if (querySeqBegin > querySeqEnd) {
+                throw ExceptionWithReason.withMessage("first sequence position "+querySeqBegin+" should be lower than last position "+querySeqEnd);
+            }
 
             int seqLen = getSequence().length();
 
@@ -107,16 +135,6 @@ public class BlastIsoformInput extends BlastSequenceInput {
 
                 throw ExceptionWithReason.withReason("last sequence position ", querySeqEnd + " is out of bound (should be > 0 and <= " + seqLen + ")");
             }
-        }
-    }
-
-    private void swapPositionsIfNeeded() {
-
-        if (querySeqBegin > querySeqEnd) {
-
-            int tmp = querySeqBegin;
-            querySeqBegin = querySeqEnd;
-            querySeqEnd = tmp;
         }
     }
 }
