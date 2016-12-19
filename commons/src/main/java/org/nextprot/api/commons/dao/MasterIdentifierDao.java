@@ -12,6 +12,6 @@ public interface MasterIdentifierDao {
 
 	List<String> findUniqueNames();
 	
-	List<String> findUniqueNamesByGeneName(String geneName,String synonym);
+	List<String> findUniqueNamesByGeneName(String geneName, boolean withSynonyms);
 
 }

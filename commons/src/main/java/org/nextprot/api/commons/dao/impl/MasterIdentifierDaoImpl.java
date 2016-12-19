@@ -26,9 +26,9 @@ public class MasterIdentifierDaoImpl implements MasterIdentifierDao {
 	}
 	
 	@Override
-	public List<String> findUniqueNamesByGeneName(String geneName, String synonym) {
+	public List<String> findUniqueNamesByGeneName(String geneName, boolean withSynonyms) {
 		SqlParameterSource namedParameters = new MapSqlParameterSource("geneName", geneName);
-		if (Boolean.valueOf(synonym)) {
+		if (withSynonyms) {
 			return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("accessions-by-gene-name-with-gene-synonyms"), namedParameters, String.class);
 		} else {
 			return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("accessions-by-gene-name"), namedParameters, String.class);
