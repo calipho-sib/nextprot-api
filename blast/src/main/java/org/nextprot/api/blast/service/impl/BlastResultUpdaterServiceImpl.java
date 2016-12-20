@@ -84,10 +84,10 @@ public class BlastResultUpdaterServiceImpl implements BlastResultUpdaterService 
 
     private void updateParams(Params params, String proteinSequence) {
 
-        params.setMatrix(null);
-        params.setExpect(null);
-        params.setGapOpen(null);
-        params.setGapExtend(null);
+        //params.setMatrix(null);
+        //params.setExpect(null);
+        //params.setGapOpen(null);
+        //params.setGapExtend(null);
         params.setSequence(proteinSequence);
     }
 
