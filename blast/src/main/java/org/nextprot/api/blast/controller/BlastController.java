@@ -51,7 +51,7 @@ public class BlastController {
 		try {
 			BlastSequenceInput params = new BlastSequenceInput(blastBinPath, blastDbPath);
 			params.setTitle(title);
-			params.setSequence(sequence);
+			params.setSequence(sequence.replaceAll(" ", ""));
 			params.setBlastSearchParams(BlastSearchParams.valueOf(matrix, eValue, gapOpen, gapExtend));
 
 			return blastService.blastProteinSequence(params);
