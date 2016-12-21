@@ -6,7 +6,9 @@ import org.nextprot.api.core.domain.DbXref;
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.util.logging.*;
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 /**
  * Check http statuses of urls and resolved urls in DbXrefs
@@ -32,26 +34,23 @@ public class DbXrefUrlVisitor implements Closeable, Flushable {
         LOGGER.addHandler(fileHandler);
 
         visitedTemplateURLs = new HashSet<>();
-        dbxrefNon200HttpStatusMap = new TreeMap<>(new Comparator<String>() {
-            @Override
-            public int compare(String status1, String status2) {
+        dbxrefNon200HttpStatusMap = new TreeMap<>((status1, status2) -> {
 
-                boolean isStatus1Integer = status1.matches("\\d+");
-                boolean isStatus2Integer = status2.matches("\\d+");
+            boolean isStatus1Integer = status1.matches("\\d+");
+            boolean isStatus2Integer = status2.matches("\\d+");
 
-                // integer comes first
-                if (isStatus1Integer && isStatus2Integer) {
-                    return Integer.parseInt(status1) - (Integer.parseInt(status2));
-                }
-                else if (isStatus1Integer) {
-                    return -1;
-                }
-                else if (isStatus2Integer) {
-                    return 1;
-                }
-
-                return status1.compareTo(status2);
+            // integer comes first
+            if (isStatus1Integer && isStatus2Integer) {
+                return Integer.parseInt(status1) - (Integer.parseInt(status2));
             }
+            else if (isStatus1Integer) {
+                return -1;
+            }
+            else if (isStatus2Integer) {
+                return 1;
+            }
+
+            return status1.compareTo(status2);
         });
 
         pw.write("entry ac\tdb\txref ac\turl\thttp status\tresolved url\thttp status\n");
@@ -114,7 +113,7 @@ public class DbXrefUrlVisitor implements Closeable, Flushable {
 
         if (!dbxrefNon200HttpStatusMap.containsKey(response.getUrlHttpStatus())) {
 
-            dbxrefNon200HttpStatusMap.put(response.getUrlHttpStatus(), new HashSet<String>());
+            dbxrefNon200HttpStatusMap.put(response.getUrlHttpStatus(), new HashSet<>());
         }
         dbxrefNon200HttpStatusMap.get(response.getUrlHttpStatus()).add(url);
     }
@@ -123,7 +122,7 @@ public class DbXrefUrlVisitor implements Closeable, Flushable {
 
         if (!dbxrefNon200HttpStatusMap.containsKey(response.getResolvedUrlHttpStatus())) {
 
-            dbxrefNon200HttpStatusMap.put(response.getResolvedUrlHttpStatus(), new HashSet<String>());
+            dbxrefNon200HttpStatusMap.put(response.getResolvedUrlHttpStatus(), new HashSet<>());
         }
         dbxrefNon200HttpStatusMap.get(response.getResolvedUrlHttpStatus()).add(url);
     }
@@ -186,6 +185,7 @@ public class DbXrefUrlVisitor implements Closeable, Flushable {
             con.setRequestMethod("HEAD");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
             con.setConnectTimeout(5000);
+            con.setReadTimeout(5000);
 
             LOGGER.info(xrefAccAndDbname+": Http HEAD request "+url+"\n");
             con.connect();
