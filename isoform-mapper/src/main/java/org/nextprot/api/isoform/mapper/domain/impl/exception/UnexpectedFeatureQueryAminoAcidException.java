@@ -13,11 +13,11 @@ public class UnexpectedFeatureQueryAminoAcidException extends FeatureQueryExcept
                                                     AminoAcidCode[] sequenceAminoAcidCodes, AminoAcidCode[] featureAminoAcidCodes) {
         super(query);
 
-        getError().addCause(EXPECTED_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.THREE_LETTER, sequenceAminoAcidCodes));
-        getError().addCause(FEATURE_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.THREE_LETTER, featureAminoAcidCodes));
-        getError().addCause(OutOfBoundSequencePositionException.SEQUENCE_POS, sequencePosition);
+        getReason().addCause(EXPECTED_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.THREE_LETTER, sequenceAminoAcidCodes));
+        getReason().addCause(FEATURE_AAS, AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.THREE_LETTER, featureAminoAcidCodes));
+        getReason().addCause(OutOfBoundSequencePositionException.SEQUENCE_POS, sequencePosition);
 
-        getError().setMessage(buildErrorMessage(sequenceAminoAcidCodes));
+        getReason().setMessage(buildErrorMessage(sequenceAminoAcidCodes));
     }
 
     private String buildErrorMessage(AminoAcidCode[] sequenceAminoAcidCodes) {
@@ -37,14 +37,14 @@ public class UnexpectedFeatureQueryAminoAcidException extends FeatureQueryExcept
     }
 
     private String getFeatureAminoAcids() {
-        return (String) getError().getCause(FEATURE_AAS);
+        return (String) getReason().getCause(FEATURE_AAS);
     }
 
     private String getExpectedAminoAcids() {
-        return (String) getError().getCause(EXPECTED_AAS);
+        return (String) getReason().getCause(EXPECTED_AAS);
     }
 
     private int getIsoformSequencePosition() {
-        return (Integer) getError().getCause(OutOfBoundSequencePositionException.SEQUENCE_POS);
+        return (Integer) getReason().getCause(OutOfBoundSequencePositionException.SEQUENCE_POS);
     }
 }

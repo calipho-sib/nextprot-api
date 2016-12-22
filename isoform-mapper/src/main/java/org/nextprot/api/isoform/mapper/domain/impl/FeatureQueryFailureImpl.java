@@ -1,5 +1,6 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
+import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
 
@@ -9,12 +10,12 @@ import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
 public class FeatureQueryFailureImpl extends BaseFeatureQueryResult implements FeatureQueryFailure{
 
 	private static final long serialVersionUID = 1L;
-	private final transient FeatureQueryException.ErrorReason error;
+	private final transient ExceptionWithReason.Reason error;
 
     public FeatureQueryFailureImpl(FeatureQueryException error) {
 
         super(error.getQuery());
-        this.error = error.getError();
+        this.error = error.getReason();
     }
 
     @Override
@@ -22,7 +23,7 @@ public class FeatureQueryFailureImpl extends BaseFeatureQueryResult implements F
         return false;
     }
 
-    public FeatureQueryException.ErrorReason getError() {
+    public ExceptionWithReason.Reason getError() {
 
         return error;
     }

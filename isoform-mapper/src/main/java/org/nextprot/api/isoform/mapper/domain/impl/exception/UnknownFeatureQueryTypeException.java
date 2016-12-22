@@ -11,7 +11,7 @@ public class UnknownFeatureQueryTypeException extends FeatureQueryException {
 
         super(query);
 
-        getError().setMessage("unknown feature type: cannot find feature type " + query.getFeatureType());
-        getError().addCause(CATEGORY, query.getFeatureType());
+        getReason().setMessage("unknown feature type: cannot find feature type " + query.getFeatureType());
+        getReason().addCause(CATEGORY, query.getFeatureType());
     }
 }

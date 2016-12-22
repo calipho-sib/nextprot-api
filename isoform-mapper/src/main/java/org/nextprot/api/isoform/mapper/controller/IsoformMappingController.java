@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Lazy
 @Controller
-@Api(name = "Feature Isoform Mapping", description = "Methods to check and map features over isoforms.", group = "Iso Mapper")
+@Api(name = "Isoform Mapping", description = "Methods to check and map features over isoforms.", group = "Tools")
 public class IsoformMappingController {
 
 	@Autowired

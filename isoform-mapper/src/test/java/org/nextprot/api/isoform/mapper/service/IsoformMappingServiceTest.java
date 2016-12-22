@@ -251,7 +251,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     private static void assertIsoformFeatureNotValid(FeatureQueryFailure result, FeatureQueryException expectedException) {
 
         Assert.assertTrue(!result.isSuccess());
-        Assert.assertEquals(expectedException.getError(), result.getError());
+        Assert.assertEquals(expectedException.getReason(), result.getError());
     }
 
     private static void validateList(String filename, boolean tabSep, IsoformMappingService service) throws Exception {
