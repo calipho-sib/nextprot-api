@@ -1,9 +1,12 @@
-package org.nextprot.api.core.utils.dbxref;
+package org.nextprot.api.tasks.dbxref;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.DbXref;
 
-import java.io.*;
+import java.io.Closeable;
+import java.io.Flushable;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.*;
 import java.util.*;
 import java.util.logging.FileHandler;
@@ -11,9 +14,9 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 /**
- * Check http statuses of urls and resolved urls in DbXrefs
+ * Visit and check http statuses of urls and resolved urls in DbXrefs
  */
-public class DbXrefUrlVisitor implements Closeable, Flushable {
+class DbXrefUrlVisitor implements Closeable, Flushable {
 
     private static final Logger LOGGER = Logger.getLogger(DbXrefUrlVisitor.class.getSimpleName());
 
@@ -21,7 +24,7 @@ public class DbXrefUrlVisitor implements Closeable, Flushable {
     private final Set<String> visitedTemplateURLs;
     private final Map<String, Set<String>> dbxrefNon200HttpStatusMap;
 
-    public DbXrefUrlVisitor(String outName, String logName) throws IOException {
+    DbXrefUrlVisitor(String outName, String logName) throws IOException {
 
         Preconditions.checkNotNull(outName);
         Preconditions.checkNotNull(logName);
@@ -53,10 +56,16 @@ public class DbXrefUrlVisitor implements Closeable, Flushable {
             return status1.compareTo(status2);
         });
 
-        pw.write("entry ac\tdb\txref ac\turl\thttp status\tresolved url\thttp status\n");
+        pw.write("accession\tdb\txref ac\turl\thttp status\tresolved url\thttp status\n");
     }
 
-    public void visit(String entryAc, List<DbXref> xrefs) throws IOException {
+    /**
+     * Visit all xrefs and report statuses into outName file
+     * @param accession the accession
+     * @param xrefs xrefs that belong to accession
+     * @throws IOException
+     */
+    void visit(String accession, List<DbXref> xrefs) throws IOException {
 
         if (xrefs != null) {
             for (DbXref xref : xrefs) {
@@ -82,7 +91,7 @@ public class DbXrefUrlVisitor implements Closeable, Flushable {
                     String xrefAcc = xref.getAccession();
                     String url = xref.getUrl();
 
-                    pw.write(entryAc);
+                    pw.write(accession);
                     pw.write("\t");
                     pw.write(dbName);
                     pw.write("\t");
