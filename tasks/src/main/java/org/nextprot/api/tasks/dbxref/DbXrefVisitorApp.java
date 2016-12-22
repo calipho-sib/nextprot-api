@@ -70,15 +70,15 @@ public class DbXrefVisitorApp extends SpringBasedApp<DbXrefVisitorApp.ArgumentPa
         Set<String> allEntryAcs = getNextprotEntries();
 
         ConsoleProgressBar pb = ConsoleProgressBar.determinated(allEntryAcs.size());
+        pb.setTaskName("visiting nextprot entries");
         pb.start();
 
-        int i=0;
         for (String entryAc : allEntryAcs) {
 
             try {
                 visitor.visit(entryAc, xrefService.findDbXrefsByMaster(entryAc));
                 visitor.flush();
-                pb.setValue(++i);
+                pb.incrementValue();
             } catch (EntryNotFoundException e) {
 
                 LOGGER.error(e.getMessage()+": skipping entry "+entryAc);
@@ -114,19 +114,20 @@ public class DbXrefVisitorApp extends SpringBasedApp<DbXrefVisitorApp.ArgumentPa
 
         TerminologyService terminologyService = getConfig().getBean(TerminologyService.class);
 
+        LOGGER.info("finding all cv terms...");
         List<CvTerm> allCvTerms = terminologyService.findAllCVTerms();
 
         ConsoleProgressBar pb = ConsoleProgressBar.determinated(allCvTerms.size());
+        pb.setTaskName("visiting all cv terms");
 
         pb.start();
 
-        int i=0;
         for (CvTerm terminology : allCvTerms) {
 
             visitor.visit(terminology.getAccession(), terminology.getXrefs());
             visitor.flush();
 
-            pb.setValue(++i);
+            pb.incrementValue();
         }
 
         visitor.flush();
