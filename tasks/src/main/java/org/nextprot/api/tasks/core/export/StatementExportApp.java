@@ -1,15 +1,18 @@
 package org.nextprot.api.tasks.core.export;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.nextprot.api.annotation.builder.statement.StatementExporter;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
-import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.nextprot.api.tasks.utils.SpringApp;
+import org.nextprot.api.tasks.utils.SpringConfig;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,11 +30,11 @@ import java.util.Map;
  *
  * Created by fnikitin on 09/08/16.
  */
-public class StatementExportApp {
+public class StatementExportApp implements SpringApp {
 
     private static final Logger LOGGER = Logger.getLogger(StatementExportApp.class);
 
-    private MainConfig config;
+    private final MainConfig config;
 
     private StatementExportApp(String[] args) throws ParseException {
 
@@ -51,12 +54,12 @@ public class StatementExportApp {
 
         StatementExportApp app = new StatementExportApp(args);
 
-        app.startApplicateContext();
+        app.start();
         app.exportGenesStatements();
-        app.stopApplicateContext();
+        app.stop();
     }
 
-    public void exportGenesStatements() throws FileNotFoundException {
+    private void exportGenesStatements() throws FileNotFoundException {
 
         StatementDao statementDao = config.getSpringConfig().getBean(StatementDao.class);
         MasterIdentifierService masterIdentifierService = config.getSpringConfig().getBean(MasterIdentifierService.class);
@@ -84,15 +87,24 @@ public class StatementExportApp {
         }
     }
 
-    public void startApplicateContext() {
+    @Override
+    public SpringConfig getSpringConfig() {
+
+        return config.getSpringConfig();
+    }
+
+    @Override
+    public void start() {
+
         LOGGER.info("starting spring application context...");
-        config.getSpringConfig().startApplicateContext();
+        config.getSpringConfig().startApplicationContext();
         LOGGER.info("spring application context started");
     }
 
-    public void stopApplicateContext() {
+    @Override
+    public void stop() {
         LOGGER.info("closing spring application context...");
-        config.getSpringConfig().stopApplicateContext();
+        config.getSpringConfig().stopApplicationContext();
         LOGGER.info("spring application context closed");
     }
 
@@ -145,51 +157,97 @@ public class StatementExportApp {
         }
     }
 
-    static class SpringConfig {
+    /**
+     * Parse arguments and provides MainConfig object
+     *
+     * Created by fnikitin on 09/08/16.
+     */
+    static class ArgumentParser {
 
-        // To disable the cache temporarily: comment-out the cachemanager variable and references, and remove 'cache' from the "spring.profiles.active" properties
-        private CacheManager cacheManager = null;
-        private ClassPathXmlApplicationContext ctx = null;
+        private final StatementExportApp.MainConfig config;
 
-        private final String profiles;
+        ArgumentParser(String[] args) throws ParseException {
 
-        SpringConfig() {
-
-            this("dev, cache");
+            this.config = parseArgs(args);
         }
 
-        SpringConfig(String profiles) {
-
-            this.profiles = profiles;
+        public StatementExportApp.MainConfig getConfig() {
+            return config;
         }
 
-        void startApplicateContext() {
+        private Options createOptions() {
 
-            System.setProperty("spring.profiles.active", profiles);
-            ctx = new ClassPathXmlApplicationContext(
-                    "classpath:spring/commons-context.xml",
-                    "classpath:spring/core-context.xml");
+            Options options = new Options();
 
-            if (profiles.matches(".*cache.*"))
-                cacheManager = ctx.getBean(CacheManager.class);
+            //noinspection AccessStaticViaInstance
+            options.addOption(OptionBuilder.withArgName("profile").hasArg().withDescription("spring profile (default: dev, cache)").create("p"));
+            //noinspection AccessStaticViaInstance
+            options.addOption(OptionBuilder.withArgName("categories").hasArg().withDescription("filtered categories (default: variant, mutagenesis)").create("c"));
+            //noinspection AccessStaticViaInstance
+            options.addOption(OptionBuilder.withArgName("genes").hasArg().withDescription("genes to export (all genes are exported if not defined)").create("g"));
+
+            return options;
         }
 
-        void stopApplicateContext() {
+        private StatementExportApp.MainConfig parseArgs(String[] args) throws ParseException {
 
-            if (cacheManager != null){
-                ((EhCacheCacheManager) cacheManager).getCacheManager().shutdown();
+            Options options = createOptions();
+
+            CommandLineParser parser = new GnuParser();
+
+            CommandLine commandLine = parser.parse(options, args);
+
+            StatementExportApp.MainConfig mainConfig = new StatementExportApp.MainConfig();
+
+            mainConfig.setSpringConfig(parseSpringConfig(commandLine));
+            mainConfig.setExporterConfig(parseExporterConfig(commandLine));
+            mainConfig.setSpecificGeneListToExport(parseGeneListToExport(commandLine));
+
+            String[] remainder = commandLine.getArgs();
+
+            if (remainder.length != 1)
+                throw new ParseException("missing output directory");
+
+            mainConfig.setOutputDirname(remainder[0]);
+
+            return mainConfig;
+        }
+
+        private SpringConfig parseSpringConfig(CommandLine commandLine) {
+
+            if (commandLine.hasOption("p")) {
+                return new SpringConfig(commandLine.getOptionValue("p"));
             }
+
+            return new SpringConfig();
         }
 
-        <T> T getBean(Class<T> requiredType) {
-            return ctx.getBean(requiredType);
+        private StatementExporter.Config parseExporterConfig(CommandLine commandLine) {
+
+            if (commandLine.hasOption("c")) {
+                Iterable<String> categories = Splitter.on(',')
+                        .trimResults()
+                        .omitEmptyStrings()
+                        .split(commandLine.getOptionValue("c"));
+
+                return new StatementExporter.Config(Iterables.toArray(categories, String.class));
+            }
+
+            return new StatementExporter.Config();
         }
 
-        @Override
-        public String toString() {
-            return "SpringConfig{" +
-                    "profiles='" + profiles + '\'' +
-                    '}';
+        private List<String> parseGeneListToExport(CommandLine commandLine) {
+
+            if (commandLine.hasOption("g")) {
+                Iterable<String> genes = Splitter.on(',')
+                        .trimResults()
+                        .omitEmptyStrings()
+                        .split(commandLine.getOptionValue("g"));
+
+                return Lists.newArrayList(genes);
+            }
+
+            return new ArrayList<>();
         }
     }
 }
