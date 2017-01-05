@@ -83,11 +83,10 @@ public class BlastController {
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
 		BlastIsoformInput params = new BlastIsoformInput(blastBinPath, blastDbPath);
-		params.setIsoformAccession(isoform);
-		params.setQuerySeqBegin(begin);
-		params.setQuerySeqEnd(end);
 
 		try {
+			params.setIsoformAccession(isoform);
+			params.setQuerySeqPositions(begin, end);
 			params.setBlastSearchParams(BlastSearchParams.valueOf(matrix, eValue, gapOpen, gapExtend));
 
 			return blastService.blastIsoformSequence(params);

@@ -32,13 +32,15 @@ public class BlastSearchParams implements Serializable {
 
         BlastSearchParams params = new BlastSearchParams();
 
-        if (matrix != null) {
+        if (matrix != null && !matrix.isEmpty()) {
             if (Matrix.hasMatrix(matrix))
                 params.setMatrix(Matrix.valueOf(matrix));
             else {
-                throw ExceptionWithReason.withReason("unknown substitution matrix", matrix);
+                throw ExceptionWithReason.withReason("invalid substitution matrix parameter (valid matrices: "
+                        + Arrays.asList(Matrix.values()) + ")", matrix);
             }
         }
+
         params.setEvalue(eValue);
         params.setGapOpen(gapOpen);
         params.setGapExtend(gapExtend);
@@ -60,8 +62,8 @@ public class BlastSearchParams implements Serializable {
 
     public void setEvalue(Double evalue) throws ExceptionWithReason {
 
-        if (evalue <= 0) {
-            throw ExceptionWithReason.withReason("invalid evalue param", evalue+": should be strictly greater than 0");
+        if (evalue != null && evalue <= 0) {
+            throw ExceptionWithReason.withReason("invalid evalue parameter (should be > 0)", evalue.toString());
         }
         this.evalue = evalue;
     }
@@ -72,8 +74,8 @@ public class BlastSearchParams implements Serializable {
 
     public void setGapOpen(Integer gapOpen) throws ExceptionWithReason {
 
-        if (gapOpen < 0) {
-            throw ExceptionWithReason.withReason("invalid gapopen param", gapOpen+": should be greater than 0");
+        if (gapOpen != null && gapOpen < 0) {
+            throw ExceptionWithReason.withReason("invalid gapopen parameter (should be >= 0)", gapOpen.toString());
         }
 
         this.gapOpen = gapOpen;
@@ -85,8 +87,8 @@ public class BlastSearchParams implements Serializable {
 
     public void setGapExtend(Integer gapExtend) throws ExceptionWithReason {
 
-        if (gapExtend < 0) {
-            throw ExceptionWithReason.withReason("invalid gapextend param", gapOpen+": should be greater than 0");
+        if (gapExtend != null && gapExtend < 0) {
+            throw ExceptionWithReason.withReason("invalid gapextend parameter (should be >= 0)", gapOpen.toString());
         }
 
         this.gapExtend = gapExtend;

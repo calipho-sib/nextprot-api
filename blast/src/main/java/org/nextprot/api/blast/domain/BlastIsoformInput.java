@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.nextprot.api.blast.domain.gen.Description;
-import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 
 @JsonPropertyOrder({
@@ -57,10 +56,10 @@ public class BlastIsoformInput extends BlastSequenceInput {
         return isoformAccession;
     }
 
-    public void setIsoformAccession(String isoformAccession) {
+    public void setIsoformAccession(String isoformAccession) throws ExceptionWithReason {
 
         if (isoformAccession == null || !isoformAccession.matches(ISOFORM_REX_EXP)) {
-            throw new NextProtException(isoformAccession+": invalid isoform accession (format: "+ISOFORM_REX_EXP+")");
+            throw ExceptionWithReason.withReason("invalid isoform accession (format: "+ISOFORM_REX_EXP+")", isoformAccession);
         }
 
         this.isoformAccession = isoformAccession;
@@ -70,18 +69,22 @@ public class BlastIsoformInput extends BlastSequenceInput {
         return querySeqBegin;
     }
 
-    @JsonProperty("begin")
-    public void setQuerySeqBegin(Integer querySeqBegin) {
+    public void setQuerySeqPositions(Integer querySeqBegin, Integer querySeqEnd) throws ExceptionWithReason {
+
+        if (querySeqBegin != null && querySeqBegin < 1) {
+            throw ExceptionWithReason.withReason("invalid begin parameter (should be > 0)", querySeqBegin.toString());
+        }
+        if (querySeqEnd != null && querySeqEnd < 1) {
+            throw ExceptionWithReason.withReason("invalid end parameter (should be > 0)", querySeqEnd.toString());
+        }
+
         this.querySeqBegin = querySeqBegin;
+        this.querySeqEnd = querySeqEnd;
     }
 
     @JsonProperty("end")
     public Integer getQuerySeqEnd() {
         return querySeqEnd;
-    }
-
-    public void setQuerySeqEnd(Integer querySeqEnd) {
-        this.querySeqEnd = querySeqEnd;
     }
 
     @JsonIgnore

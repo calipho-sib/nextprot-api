@@ -1,5 +1,6 @@
 package org.nextprot.api.blast.service;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.nextprot.api.commons.utils.SystemCommandExecutor;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -147,14 +148,17 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Params> {
             this.nextprotBlastDbPath = nextprotBlastDbPath;
         }
 
+        @JsonIgnore
         public String getNextprotBlastDbPath() {
             return nextprotBlastDbPath;
         }
 
+        @JsonIgnore
         public String getBinPath() {
             return binPath;
         }
 
+        @JsonIgnore
         public Boolean isDebugMode() {
             return isDebugMode;
         }
