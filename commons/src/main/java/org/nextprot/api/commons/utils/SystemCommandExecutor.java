@@ -1,4 +1,6 @@
-package org.nextprot.api.blast.controller;
+package org.nextprot.api.commons.utils;
+
+import com.google.common.base.Preconditions;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,12 +13,14 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
+/**
+ * A wrapper class around {@code ProcessBuilder} that execute an external command and expose standard and error outputs
+ */
 // Updated code coming from article http://alvinalexander.com/java/java-exec-processbuilder-process-1
 public class SystemCommandExecutor {
 
-    private final List<String> commandInformation;
+    private final List<String> command;
     private ThreadedStreamHandler inputStreamHandler;
     private ThreadedStreamHandler errorStreamHandler;
 
@@ -36,16 +40,17 @@ public class SystemCommandExecutor {
      * working to the point where it won't hang when the given password is
      * wrong.
      *
-     * @param commandInformation The command you want to run.
+     * @param command The command you want to run.
      */
-    public SystemCommandExecutor(final List<String> commandInformation) {
-        Objects.requireNonNull(commandInformation, "The commandInformation is required.");
-        this.commandInformation = commandInformation;
+    public SystemCommandExecutor(final List<String> command) {
+        Objects.requireNonNull(command, "Cannot execute undefined command.");
+        Preconditions.checkArgument(!command.isEmpty(), "Cannot execute empty command.");
+        this.command = command;
     }
 
     public int executeCommand() throws IOException, InterruptedException {
 
-        ProcessBuilder pb = new ProcessBuilder(commandInformation);
+        ProcessBuilder pb = new ProcessBuilder(command);
         Process process = pb.start();
 
         InputStream inputStream = process.getInputStream();
@@ -64,22 +69,33 @@ public class SystemCommandExecutor {
         return process.waitFor();
     }
 
-    public String getParameterLine(int from) {
-        return commandInformation.subList(from, commandInformation.size()).stream().collect(Collectors.joining(" "));
+    /**
+     * @return true if command has been executed else false
+     */
+    public boolean hasBeenExecuted() {
+        return inputStreamHandler != null;
     }
 
     /**
      * Get the standard output (stdout) from the command you just exec'd.
      */
-    public StringBuilder getStandardOutputFromCommand() {
-        return inputStreamHandler.getOutputBuffer();
+    public String getLastExecutionStandardOutput() {
+
+        if (!hasBeenExecuted())
+            return "no command has been executed";
+
+        return inputStreamHandler.getOutputBuffer().toString();
     }
 
     /**
      * Get the standard error (stderr) from the command you just exec'd.
      */
-    public StringBuilder getStandardErrorFromCommand() {
-        return errorStreamHandler.getOutputBuffer();
+    public String getLastExecutionStandardError() {
+
+        if (!hasBeenExecuted())
+            return "no command has been executed";
+
+        return errorStreamHandler.getOutputBuffer().toString();
     }
 
     private static class ThreadedStreamHandler implements Callable<String> {

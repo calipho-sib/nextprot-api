@@ -1,7 +1,7 @@
 package org.nextprot.api.blast.service;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.nextprot.api.blast.controller.SystemCommandExecutor;
+import org.nextprot.api.commons.utils.SystemCommandExecutor;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 
@@ -71,7 +71,7 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Params> {
         SystemCommandExecutor commandExecutor = new SystemCommandExecutor(commandLine);
         commandExecutor.executeCommand();
 
-        String stderr = commandExecutor.getStandardErrorFromCommand().toString();
+        String stderr = commandExecutor.getLastExecutionStandardError();
 
         if (!stderr.isEmpty()) {
 
@@ -82,7 +82,7 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Params> {
             throw ewr;
         }
 
-        return buildOutputFromStdout(commandExecutor.getStandardOutputFromCommand().toString());
+        return buildOutputFromStdout(commandExecutor.getLastExecutionStandardOutput());
     }
 
     private void destroyFastaFile(File fastaFile) throws Exception {
