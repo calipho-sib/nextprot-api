@@ -1,8 +1,14 @@
 package org.nextprot.api.blast.domain;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.nextprot.api.blast.service.BlastProgram;
 import org.nextprot.api.commons.utils.ExceptionWithReason;
 
+@JsonPropertyOrder({
+	"query",
+	"success",
+	"error"
+})
 public class BlastProgramFailure implements BlastProgramOutput {
 
 	private final BlastProgram.Params params;
@@ -24,6 +30,7 @@ public class BlastProgramFailure implements BlastProgramOutput {
 		return exceptionWithReason.getReason();
 	}
 
+	@Override
 	public boolean isSuccess() {
 		return false;
 	}
