@@ -48,17 +48,18 @@ public class BlastController {
 			@ApiQueryParam(name = "gapextend", description = "Cost to extend a gap", allowedvalues = { "1" })
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
+		BlastSequenceInput params = new BlastSequenceInput(blastBinPath, blastDbPath);
+		params.setTitle(title);
+		params.setSequence(sequence.replaceAll(" ", ""));
+
 		try {
-			BlastSequenceInput params = new BlastSequenceInput(blastBinPath, blastDbPath);
-			params.setTitle(title);
-			params.setSequence(sequence.replaceAll(" ", ""));
 			params.setBlastSearchParams(BlastSearchParams.valueOf(matrix, eValue, gapOpen, gapExtend));
 
 			return blastService.blastProteinSequence(params);
 		} catch (ExceptionWithReason exceptionWithReason) {
 
 			exceptionWithReason.getReason().setMessage("cannot execute blastp");
-			return new BlastProgramFailure(null, exceptionWithReason);
+			return new BlastProgramFailure(params, exceptionWithReason);
 		}
 	}
 
@@ -81,18 +82,19 @@ public class BlastController {
 			@ApiQueryParam(name = "gapextend", description = "Cost to extend a gap", allowedvalues = { "1" })
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
+		BlastIsoformInput params = new BlastIsoformInput(blastBinPath, blastDbPath);
+		params.setIsoformAccession(isoform);
+		params.setQuerySeqBegin(begin);
+		params.setQuerySeqEnd(end);
+
 		try {
-			BlastIsoformInput params = new BlastIsoformInput(blastBinPath, blastDbPath);
-			params.setIsoformAccession(isoform);
-			params.setQuerySeqBegin(begin);
-			params.setQuerySeqEnd(end);
 			params.setBlastSearchParams(BlastSearchParams.valueOf(matrix, eValue, gapOpen, gapExtend));
 
 			return blastService.blastIsoformSequence(params);
 		} catch (ExceptionWithReason exceptionWithReason) {
 
 			exceptionWithReason.getReason().setMessage("cannot execute blastp");
-			return new BlastProgramFailure(null, exceptionWithReason);
+			return new BlastProgramFailure(params, exceptionWithReason);
 		}
     }
 

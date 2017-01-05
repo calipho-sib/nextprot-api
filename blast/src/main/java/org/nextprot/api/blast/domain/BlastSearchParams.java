@@ -58,7 +58,11 @@ public class BlastSearchParams implements Serializable {
         return evalue;
     }
 
-    public void setEvalue(Double evalue) {
+    public void setEvalue(Double evalue) throws ExceptionWithReason {
+
+        if (evalue <= 0) {
+            throw ExceptionWithReason.withReason("invalid evalue param", evalue+": should be strictly greater than 0");
+        }
         this.evalue = evalue;
     }
 
@@ -66,7 +70,12 @@ public class BlastSearchParams implements Serializable {
         return gapOpen;
     }
 
-    public void setGapOpen(Integer gapOpen) {
+    public void setGapOpen(Integer gapOpen) throws ExceptionWithReason {
+
+        if (gapOpen < 0) {
+            throw ExceptionWithReason.withReason("invalid gapopen param", gapOpen+": should be greater than 0");
+        }
+
         this.gapOpen = gapOpen;
     }
 
@@ -74,7 +83,12 @@ public class BlastSearchParams implements Serializable {
         return gapExtend;
     }
 
-    public void setGapExtend(Integer gapExtend) {
+    public void setGapExtend(Integer gapExtend) throws ExceptionWithReason {
+
+        if (gapExtend < 0) {
+            throw ExceptionWithReason.withReason("invalid gapextend param", gapOpen+": should be greater than 0");
+        }
+
         this.gapExtend = gapExtend;
     }
 }
