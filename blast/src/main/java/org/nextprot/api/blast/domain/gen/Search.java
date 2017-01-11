@@ -17,7 +17,8 @@ import java.util.List;
     "query_title",
     "query_len",
     "hits",
-    "stat"
+    "stat",
+    "message"
 })
 public class Search implements Serializable
 {
@@ -32,6 +33,9 @@ public class Search implements Serializable
     private List<Hit> hits = null;
     @JsonProperty("stat")
     private Stat stat;
+    @JsonProperty("message")
+    private String message;
+
     private final static long serialVersionUID = 4699115788781800260L;
 
     /**
@@ -133,5 +137,15 @@ public class Search implements Serializable
     @JsonProperty("stat")
     public void setStat(Stat stat) {
         this.stat = stat;
+    }
+
+    @JsonProperty("message")
+    public String getMessage() {
+        return message;
+    }
+
+    @JsonProperty("message")
+    public void setMessage(String message) {
+        this.message = message;
     }
 }
