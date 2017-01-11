@@ -11,7 +11,7 @@ public class InvalidFeatureQueryTypeException extends FeatureQueryException {
 
         super(query);
 
-        getError().setMessage("invalid feature type: cannot validate feature type " + query.getFeatureType());
-        getError().addCause(CATEGORY, query.getFeatureType());
+        getReason().setMessage("invalid feature type: cannot validate feature type " + query.getFeatureType());
+        getReason().addCause(CATEGORY, query.getFeatureType());
     }
 }

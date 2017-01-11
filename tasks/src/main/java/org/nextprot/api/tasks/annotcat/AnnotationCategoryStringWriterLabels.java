@@ -1,4 +1,4 @@
-package org.nextprot.api.tasks.commons;
+package org.nextprot.api.tasks.annotcat;
 
 import org.nextprot.api.commons.constants.AnnotationCategoryStringWriter;
 import org.nextprot.api.commons.constants.AnnotationCategory;

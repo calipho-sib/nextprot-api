@@ -9,6 +9,6 @@ public class UndefinedFeatureQueryException extends FeatureQueryException {
 
         super(query);
 
-        getError().setMessage("undefined feature");
+        getReason().setMessage("undefined feature");
     }
 }

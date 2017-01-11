@@ -11,7 +11,7 @@ public class OutOfBoundSequencePositionException extends FeatureQueryException {
 
         super(query);
 
-        getError().setMessage("out of bound sequence position: position " + position + " of " + query.getAccession()+" sequence");
-        getError().addCause(SEQUENCE_POS, position);
+        getReason().setMessage("out of bound sequence position: position " + position + " of " + query.getAccession()+" sequence");
+        getReason().addCause(SEQUENCE_POS, position);
     }
 }

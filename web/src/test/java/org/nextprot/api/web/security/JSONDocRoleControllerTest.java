@@ -96,7 +96,6 @@ public class JSONDocRoleControllerTest extends MVCBaseSecurityTest {
 
 
 		// Check that does not contain any "modification" verbs
-		assertFalse(this.containsWithKeyValue(responseString, "verb", "POST"));
 		assertFalse(this.containsWithKeyValue(responseString, "verb", "PATCH"));
 		assertFalse(this.containsWithKeyValue(responseString, "verb", "PUT"));
 		assertFalse(this.containsWithKeyValue(responseString, "verb", "DELETE"));

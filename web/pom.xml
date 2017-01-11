@@ -85,6 +85,12 @@
 
 		<dependency>
 			<groupId>org.nextprot</groupId>
+			<artifactId>nextprot-api-blast</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-api-etl-statements</artifactId>
 			<version>${project.version}</version>
 		</dependency>

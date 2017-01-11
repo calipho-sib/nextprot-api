@@ -1,26 +1,8 @@
 package org.nextprot.api.web.controller;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jsondoc.core.pojo.ApiDoc;
-import org.jsondoc.core.pojo.ApiMethodDoc;
-import org.jsondoc.core.pojo.ApiParamDoc;
-import org.jsondoc.core.pojo.ApiVerb;
-import org.jsondoc.core.pojo.JSONDoc;
+import org.jsondoc.core.pojo.*;
 import org.jsondoc.springmvc.controller.JSONDocController;
 import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -36,6 +18,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.PostConstruct;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Controller
 public class JSONDocRoleController extends JSONDocController {
@@ -89,7 +75,8 @@ public class JSONDocRoleController extends JSONDocController {
 				"org.nextprot.api.rdf", 
 				"org.nextprot.api.solr", 
 				"org.nextprot.api.user",
-				"org.nextprot.api.web", 
+				"org.nextprot.api.web",
+				"org.nextprot.api.blast",
 				"org.nextprot.api.etl" }));
 
 		String version = releaseInfoService.findReleaseInfo().getApiRelease();
