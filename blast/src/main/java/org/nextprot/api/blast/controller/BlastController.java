@@ -39,13 +39,13 @@ public class BlastController {
 			@PathVariable("sequence") String sequence,
 			@ApiQueryParam(name = "title", description = "A query title.",  allowedvalues = { "protein sequence query" })
 			@RequestParam(value = "title", defaultValue = "protein sequence query") String title,
-			@ApiQueryParam(name = "matrix", description = "Scoring matrix name (BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30 or PAM70)", allowedvalues = { "BLOSUM62" })
+			@ApiQueryParam(name = "matrix", defaultvalue = "BLOSUM62", description = "Scoring matrix name (value among BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30 or PAM70)", allowedvalues = { "BLOSUM62" })
 			@RequestParam(value = "matrix", required = false) String matrix,
-			@ApiQueryParam(name = "eValue", description = "Expected value (E) threshold for saving hits", allowedvalues = { "10" })
+			@ApiQueryParam(name = "eValue", defaultvalue = "10", description = "Expected value threshold for saving hits", allowedvalues = { "10" })
 			@RequestParam(value = "evalue", required = false) Double eValue,
-			@ApiQueryParam(name = "gapopen", description = "Cost to open a gap", allowedvalues = { "11" })
+			@ApiQueryParam(name = "gapopen", defaultvalue = "11", description = "Cost to open a gap", allowedvalues = { "11" })
 			@RequestParam(value = "gapopen", required = false) Integer gapOpen,
-			@ApiQueryParam(name = "gapextend", description = "Cost to extend a gap", allowedvalues = { "1" })
+			@ApiQueryParam(name = "gapextend", defaultvalue = "1", description = "Cost to extend a gap", allowedvalues = { "1" })
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
 		BlastSequenceInput params = new BlastSequenceInput(blastBinPath, blastDbPath);
@@ -73,13 +73,13 @@ public class BlastController {
 			@RequestParam(value = "begin", required = false) Integer begin,
 			@ApiQueryParam(name = "end", description = "The last sequence position (should be <= sequence length)")
 			@RequestParam(value = "end", required = false) Integer end,
-			@ApiQueryParam(name = "matrix", description = "Scoring matrix name (BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30 or PAM70)", allowedvalues = { "BLOSUM62" })
+			@ApiQueryParam(name = "matrix", defaultvalue = "BLOSUM62", description = "Scoring matrix name (value among BLOSUM45, BLOSUM50, BLOSUM62, BLOSUM80, BLOSUM90, PAM250, PAM30 or PAM70)", allowedvalues = { "BLOSUM62" })
 			@RequestParam(value = "matrix", required = false) String matrix,
-			@ApiQueryParam(name = "evalue", description = "Expected value (E) threshold for saving hits", allowedvalues = { "10" })
+			@ApiQueryParam(name = "evalue", defaultvalue = "10", description = "Expected value threshold for saving hits", allowedvalues = { "10" })
 			@RequestParam(value = "evalue", required = false) Double eValue,
-			@ApiQueryParam(name = "gapopen", description = "Cost to open a gap", allowedvalues = { "11" })
+			@ApiQueryParam(name = "gapopen",  defaultvalue = "11", description = "Cost to open a gap", allowedvalues = { "11" })
 			@RequestParam(value = "gapopen", required = false) Integer gapOpen,
-			@ApiQueryParam(name = "gapextend", description = "Cost to extend a gap", allowedvalues = { "1" })
+			@ApiQueryParam(name = "gapextend",  defaultvalue = "1", description = "Cost to extend a gap", allowedvalues = { "1" })
 			@RequestParam(value = "gapextend", required = false) Integer gapExtend) {
 
 		BlastIsoformInput params = new BlastIsoformInput(blastBinPath, blastDbPath);
