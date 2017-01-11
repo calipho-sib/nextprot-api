@@ -23,7 +23,7 @@
 
 :Proteoform
       rdf:type owl:Class ;
-      rdfs:comment "Specific information of a protein isoform variation. Variatiions include variants and PTMs."^^xsd:string ;
+      rdfs:comment "Description of a protein isoform variation. Variations may include variants and PTMs."^^xsd:string ;
       rdfs:subClassOf owl:Thing ;
       .
 
