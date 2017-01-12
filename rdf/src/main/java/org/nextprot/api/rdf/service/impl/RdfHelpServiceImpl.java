@@ -71,7 +71,7 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 		ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
 
 		for (String rdfTypeName : rdfTypesNames) {
-			LOGGER.info("step1 - found rdf:type name " + rdfTypeName);
+			//LOGGER.info("step1 - found rdf:type name " + rdfTypeName);
 			Future<RdfTypeInfo> futureRdfTypeInfo = executor.submit(new FillRdfTypeInfoTask(this, rdfTypeName));
 			rdfFutureTypes.add(futureRdfTypeInfo);
 		}
@@ -96,11 +96,11 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 
 		// now populate parent and parent triples of each type
 		for (RdfTypeInfo rti : rdfTypes) {
-			LOGGER.info("step2 - updating rdf:type " + rti.getTypeName());
+			//LOGGER.info("step2 - updating rdf:type " + rti.getTypeName());
 			for (RdfTypeInfo parent : rdfTypes) {
 				List<TripleInfo> triples = parent.findTriplesWithObjectType(rti.getTypeName());
-				LOGGER.info("step3 - linking parent rdf:type " + parent.getTypeName()  + " to rdf:type " + rti.getTypeName() + " , triple size: " + triples.size());
 					if (triples.size() > 0) {
+					//LOGGER.info("step3 - linking parent rdf:type " + parent.getTypeName()  + " to rdf:type " + rti.getTypeName() + " , triple size: " + triples.size());
 					rti.addParent(parent.getTypeName());
 					for (TripleInfo triple : triples)
 						rti.addParentTriple(triple);
@@ -293,15 +293,13 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 				ti.setSubjectType((String) getDataFromSolutionVar(sol, "subjType"));
 	
 				String objectType = (String) getDataFromSolutionVar(sol, "objType");
-				if (objectType.length() == 0) {
-					LOGGER.info(ti);
+				if (objectType.length() == 0) {					
 					objectType = getObjectTypeFromSample(sol, "objSample");
 					ti.setLiteralType(true);
 				}
 				ti.setObjectType(objectType);
-	
 				ti.setTripleCount(Integer.valueOf((String) getDataFromSolutionVar(sol, "objCount")));
-	
+				LOGGER.info(ti);
 				tripleList.add(ti);
 			}
 			qExec.close();
