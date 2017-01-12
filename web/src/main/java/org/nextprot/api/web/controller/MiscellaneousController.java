@@ -1,6 +1,5 @@
 package org.nextprot.api.web.controller;
 
-import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
@@ -33,5 +32,6 @@ public class MiscellaneousController {
 		} catch (NumberFormatException e) {id=0;};
 		return publicationService.findPublicationById(id);
 	}
+	
 	
 }
