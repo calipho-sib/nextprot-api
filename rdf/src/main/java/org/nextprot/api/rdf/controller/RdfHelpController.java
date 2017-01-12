@@ -1,4 +1,4 @@
-package org.nextprot.api.build.controller;
+package org.nextprot.api.rdf.controller;
 
 import java.util.List;
 
@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Lazy
 @Controller
-@Api(name = "RdfHelp", description = "Method to retrieve rdf help", group="Build rdf")
+//we want this undocumented @Api(name = "RdfHelp", description = "Method to retrieve rdf help", group="Build rdf")
 public class RdfHelpController {
 
 	@Autowired
 	private RdfHelpService service;
 
-	@ApiMethod(path = "/rdf/help/type/all", verb = ApiVerb.GET, description = "Gets a description and properties of all rdf types. WARNING: may require a lot of time.", produces = { MediaType.APPLICATION_JSON_VALUE })
+	//we want this undocumented @ApiMethod(path = "/rdf/help/type/all", verb = ApiVerb.GET, description = "Gets a description and properties of all rdf types. WARNING: may require a lot of time.", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping("/rdf/help/type/all")
 	@ResponseBody
 	public List<RdfTypeInfo> helpFullInfo(Model model) {
@@ -245,7 +245,7 @@ public class RdfHelpController {
 	 * @param model
 	 * @return
 	 */
-    @ApiMethod(path = "/rdf/help/type/{rdfType}", verb = ApiVerb.GET, description = "Gets a description and properties of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
+	//we want this undocumented   @ApiMethod(path = "/rdf/help/type/{rdfType}", verb = ApiVerb.GET, description = "Gets a description and properties of a rdf type", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@RequestMapping("/rdf/help/type/{rdfType}")
 	@ResponseBody
 	public RdfTypeInfo helpFullInfo(
@@ -276,7 +276,7 @@ public class RdfHelpController {
 		 return typ;
 	 }
 */	 
-	 @ApiMethod(path = "/rdf/help/type/{rdfType}/triplets", verb = ApiVerb.GET, description = "Gets the list of typical triplets found when the subject has rdf:type rdfType", produces = { MediaType.APPLICATION_JSON_VALUE })
+	//we want this undocumented @ApiMethod(path = "/rdf/help/type/{rdfType}/triplets", verb = ApiVerb.GET, description = "Gets the list of typical triplets found when the subject has rdf:type rdfType", produces = { MediaType.APPLICATION_JSON_VALUE })
 	 @RequestMapping("/rdf/help/type/{rdfType}/triplets")
 	 @ResponseBody
 	 public List<TripleInfo> helpPreds(
