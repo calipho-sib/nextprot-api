@@ -18,23 +18,15 @@ import org.springframework.stereotype.Repository;
 import com.google.common.collect.Sets;
 
 /**
- * Utility class that read SQL queries from classpath. Queries are hold in
+ * Utility class that read SPARQL queries from classpath. Queries are hold in
  * memory for improved performance
  * 
  * @author dteixeira
  */
 @Repository
 @Lazy
-public class UserQueryTutorialDictionary extends FilePatternDictionary {
+public class SparqlQueryDictionary extends FilePatternDictionary {
 
-	/**
-	 * Will return a list of sparql queries with tags
-	 * 
-	 * @return
-	 */
-	public List<String> getSparqlWithTags() {
-		throw new NextProtException("You need to implement this method");
-	}
 
 	@Override
 	protected String getExtension() {
@@ -46,13 +38,13 @@ public class UserQueryTutorialDictionary extends FilePatternDictionary {
 		return "classpath*:nextprot-queries/**/*.rq";
 	}
 
-	public UserQuery getDemoQuery(String queryId) {
+	public UserQuery getSparqlQuery(String queryId) {
 		String sparqlRaw = super.getResource(queryId);
 		return buildSparqlQueryFromRawContent(sparqlRaw);
 
 	}
 
-	public synchronized List<UserQuery> getDemoSparqlList() {
+	public synchronized List<UserQuery> getSparqlQueryList() {
 		Collection<String> rawData = super.getResourcesMap().values();
 		List<UserQuery> demoSparqlQueriesList = new ArrayList<UserQuery>();
 

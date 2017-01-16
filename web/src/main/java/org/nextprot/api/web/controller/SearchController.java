@@ -14,7 +14,7 @@ import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserQueryService;
-import org.nextprot.api.user.service.impl.UserQueryTutorialDictionary;
+import org.nextprot.api.user.service.impl.SparqlQueryDictionary;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -45,7 +45,7 @@ public class SearchController {
 	@Autowired private QueryBuilderService queryBuilderService;
 
 	@Autowired
-	private UserQueryTutorialDictionary userQueryTutorialDictionary;
+	private SparqlQueryDictionary sparqlQueryDictionary;
 	
 
 	/**
