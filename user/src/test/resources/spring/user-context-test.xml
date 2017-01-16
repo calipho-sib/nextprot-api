@@ -29,7 +29,7 @@
 	<bean class="org.nextprot.api.user.aop.UserProteinListAuthorizationChecker"/>
 	<bean class="org.nextprot.api.user.aop.UserApplicationAuthorizationChecker"/>
 	<bean class="org.nextprot.api.user.aop.UserApplicationAuthorizationChecker"/>
-	<bean class="org.nextprot.api.user.service.impl.UserQueryTutorialDictionary"> </bean>
+	<bean class="org.nextprot.api.user.service.impl.SparqlQueryDictionary"> </bean>
 
 	<bean class="org.mockito.Mockito" factory-method="mock">
 		<constructor-arg value="org.nextprot.api.user.dao.UserApplicationDao"/>
