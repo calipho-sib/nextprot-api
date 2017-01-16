@@ -42,7 +42,7 @@ public class PublicQueryController {
 
 		//start with queries
 		List<UserQuery> res = new ArrayList<UserQuery>();
-		res.addAll(userQueryService.getTutorialQueries());
+		res.addAll(userQueryService.getNxqTutorialQueries());
 
 		//add user queries if logged (access db, but is cached with cache evict if the query is modified)
 		if (NPSecurityContext.getCurrentUser() != null) { 
@@ -66,7 +66,7 @@ public class PublicQueryController {
 	public List<UserQuery> getTutorialQueries() {
 		
 		List<UserQuery> res = new ArrayList<UserQuery>();
-		res.addAll(userQueryService.getTutorialQueries());
+		res.addAll(userQueryService.getNxqTutorialQueries());
 		
 		//add user queries if logged (access db, but is cached with cache evict if the query is modified)
 		if (NPSecurityContext.getCurrentUser() != null) { 
