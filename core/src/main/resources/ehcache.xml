@@ -243,8 +243,14 @@
 	
 
 
-	<!-- Tutorial queries (only in memory) -->
-	<cache name="tutorial-queries" overflowToOffHeap="false"
+	<!-- All queries in  NXQ_*.rq files having a tag "tutorial" (only in memory) -->
+	<cache name="nxq-tutorial-queries" overflowToOffHeap="false"
+		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"
+		memoryStoreEvictionPolicy="LRU">
+	</cache>
+
+	<!--  All queries in  NXQ_*.rq files  (only in memory) -->
+	<cache name="nxq-queries" overflowToOffHeap="false"
 		overflowToDisk="false" diskPersistent="false" maxEntriesLocalHeap="1"
 		memoryStoreEvictionPolicy="LRU">
 	</cache>

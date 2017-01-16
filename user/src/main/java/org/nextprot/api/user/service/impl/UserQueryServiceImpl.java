@@ -6,6 +6,7 @@ import org.nextprot.api.commons.utils.StringGenService;
 import org.nextprot.api.user.dao.UserQueryDao;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserQueryService;
+import org.nextprot.api.user.utils.UserQueryUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -29,7 +30,7 @@ public class UserQueryServiceImpl implements UserQueryService {
 	private UserQueryDao userQueryDao;
 
 	@Autowired
-	private UserQueryTutorialDictionary userQueryTutorialDictionary;
+	private SparqlQueryDictionary sparqlQueryDictionary;
 
 	@Override
 	@Cacheable(value = "user-queries", key = "#username")
@@ -128,16 +129,35 @@ public class UserQueryServiceImpl implements UserQueryService {
 		return userQueryDao.getUserQueryByPublicId(id);
 	}
 	
+	/**
+	 * Retrieves from query sparql dictionary all the sparql queries tagged as "tutorial"
+	 * Note
+	 * Queries with tag "tutorial" are those visible in UI advanced queries (except those with tag "snorql-only")
+	 * They are also visible in snorql query samples (including those with tag 'snorql-only)
+	 */
 	@Override
 	@AllowedAnonymous
-	@Cacheable("tutorial-queries")
-	public List<UserQuery> getTutorialQueries() {
-		return userQueryTutorialDictionary.getDemoSparqlList();
+	@Cacheable("nxq-tutorial-queries")
+	public List<UserQuery> getNxqTutorialQueries() {
+		List<UserQuery> qlist = sparqlQueryDictionary.getSparqlQueryList();
+		return UserQueryUtils.filterByTag(qlist, "tutorial");
+	}
+
+	/**
+	 * Retrieves all the queries stored in the sparql query dictionary
+	 * Note
+	 * The list would not only contain tutorial queries but may include QC oriented queries, etc.
+	 */
+	@Override
+	@AllowedAnonymous
+	@Cacheable("nxq-queries")
+	public List<UserQuery> getNxqQueries() {
+		return sparqlQueryDictionary.getSparqlQueryList();
 	}
 	
 	
 	private UserQuery getTutorialQueryById(long id) {
-		for(UserQuery uq : getTutorialQueries()) { //TODO keep this on a map!!!!!!!!
+		for(UserQuery uq : getNxqTutorialQueries()) { //TODO keep this on a map!!!!!!!!
 			if(uq.getUserQueryId() == id){
 				return uq;
 			}
