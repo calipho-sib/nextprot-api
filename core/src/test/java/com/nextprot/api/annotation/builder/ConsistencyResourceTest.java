@@ -26,18 +26,22 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	@Test
 	public void shouldFindAllPublications() {
 		
+		boolean missingPublications = false;
 		List<String> pubmedIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION, StatementField.REFERENCE_DATABASE, "PubMed");
 		System.out.println("Found " + pubmedIds.size() + " distinct pubmeds");
-		pubmedIds.forEach(p -> {
+		for(String p : pubmedIds) {
 			if(p != null){ 
 				String pubmedId = p.replace("(PubMed,", "").replace(")", "");
 				Publication pub = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
 				if(pub == null){
+					missingPublications = true;
 					System.err.println("Can t find publication for " + pubmedId); 
-					Assert.fail("Can t find publication for " + pubmedId);
 				}
 			}
-		});
+		};
+		if(missingPublications)
+			Assert.fail();
+		
 	}
 
 	@Test
@@ -86,16 +90,21 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	@Test
 	public void shouldFindAllTerms() {
 		
+		boolean missingTerms = false;
 		List<String> terms = statementDao.findAllDistinctValuesforField(StatementField.ANNOT_CV_TERM_ACCESSION);
 		System.out.println("Found " + terms.size() + " distinct terms");
-		terms.forEach(t -> {
+		for(String t : terms) {
 			if(t != null){
 				CvTerm term = terminologyService.findCvTermByAccession(t);
 				if(term == null){
 					System.err.println("Can t find term " + t); 
+					missingTerms = true;
 				}
 			}
-		});
+		};
+		
+		if(missingTerms)
+			Assert.fail();
 
 	}
 

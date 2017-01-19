@@ -54,7 +54,6 @@ public class BinaryInteraction2Annotation {
 		evi.setEvidenceId(inter.getEvidenceId());
 		evi.setNegativeEvidence(false); 
 		evi.setExperimentalContextId(null); 
-		evi.setPublicationMD5(null);										
 		// see https://issues.isb-sib.ch/browse/NEXTPROT-921
 		evi.setQualifierType("IPI");								 		
 		evi.setQualityQualifier(inter.getEvidenceQuality());

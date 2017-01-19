@@ -279,14 +279,6 @@ public class AnnotationEvidence implements Serializable {
 		this.assignedBy = assignedBy;
 	}
 
-	public String getPublicationMD5() {
-		return publication_md5;
-	}
-
-	public void setPublicationMD5(String md5) {
-		this.publication_md5 = md5;
-	}
-
 	public String getQualityQualifier() {
 		return qualityQualifier;
 	}

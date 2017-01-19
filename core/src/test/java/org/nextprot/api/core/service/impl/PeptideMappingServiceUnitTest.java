@@ -375,7 +375,6 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 		ev.setExperimentalContextId(null);
 		ev.setNegativeEvidence(false);
 		ev.setProperties(new ArrayList<AnnotationEvidenceProperty>());
-		ev.setPublicationMD5(null);
 		ev.setQualifierType("some qualifier type");
 		ev.setQualityQualifier("some quality qualifier");
 		ev.setResourceAccession("some resource ac");
@@ -398,7 +397,6 @@ public class PeptideMappingServiceUnitTest extends CoreUnitBaseTest {
 		ev.setExperimentalContextId(null);
 		ev.setNegativeEvidence(false);
 		ev.setProperties(new ArrayList<AnnotationEvidenceProperty>());
-		ev.setPublicationMD5(null);
 		ev.setQualifierType("some qualifier type " + num);
 		ev.setQualityQualifier("some quality qualifier " + num);
 		ev.setResourceAccession("some resource ac " + num);

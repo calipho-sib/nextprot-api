@@ -210,7 +210,6 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 			annEvi.setEvidenceId(pepEvi.getEvidenceId());
 			annEvi.setExperimentalContextId(pepEvi.getExperimentalContextId());
 			annEvi.setNegativeEvidence(pepEvi.isNegativeEvidence());
-			annEvi.setPublicationMD5(pepEvi.getPublicationMD5());
 			annEvi.setQualifierType(pepEvi.getQualifierType());
 			annEvi.setQualityQualifier(pepEvi.getQualityQualifier());
 			annEvi.setResourceAccession(pepEvi.getResourceAccession());

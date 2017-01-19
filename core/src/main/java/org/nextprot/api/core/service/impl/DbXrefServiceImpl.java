@@ -113,7 +113,6 @@ public class DbXrefServiceImpl implements DbXrefService {
 		evidence.setNegativeEvidence(false);
 		evidence.setExperimentalContextId(null);
 		evidence.setResourceDescription(null);
-		evidence.setPublicationMD5(null);
 		evidence.setProperties(new ArrayList<>());
 		evidence.setQualifierType(xam.getQualifierType());
 		evidence.setQualityQualifier(xam.getQualityQualifier());

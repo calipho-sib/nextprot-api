@@ -1,7 +1,7 @@
 #if($prefix)
 #parse("turtle/prefix.ttl.vm")
 #end
-publication:$publication.getMD5() a :Publication;
+publication:$publication.getPublicationId() a :Publication;
 #if($publication.getIsLargeScale())
     rdf:type :LargeScalePublication;
 #end
