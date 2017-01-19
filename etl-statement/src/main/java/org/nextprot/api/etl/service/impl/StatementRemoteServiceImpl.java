@@ -20,17 +20,17 @@ public class StatementRemoteServiceImpl extends StatementExtractorBase {
 
 	// BioEditor Raw Statement service for a Gene. Example for msh2:
 	// http://kant.isb-sib.ch:9000/bioeditor/gene/msh2/statements
-	public Set<Statement> getStatementsForSourceForGeneName(NextProtSource source, String geneName) {
+	public Set<Statement> getStatementsForSourceForGeneName(NextProtSource source, String release, String geneName) {
 
-		String urlString = source.getStatementsUrl() + "/gene/" + geneName + "/statements";
+		String urlString = source.getStatementsUrl() + "/" + release + "/gene/" + geneName + "/statements";
 		return deserialize(getInputStreamFromUrl(urlString));
 	}
 
 	// BioEditor Raw Statement service for all data (CAREFUL WITH THIS ONE)
 	// http://kant.isb-sib.ch:9000/bioeditor/statements
-	public Set<Statement> getStatementsForSource(NextProtSource source) {
+	public Set<Statement> getStatementsForSource(NextProtSource source, String release) {
 
-		String urlString = source.getStatementsUrl() + "/statements";
+		String urlString = source.getStatementsUrl() + "/" + release  + "/statements";
 		return deserialize(getInputStreamFromUrl(urlString));
 
 	}

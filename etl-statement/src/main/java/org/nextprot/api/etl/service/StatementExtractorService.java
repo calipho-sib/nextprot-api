@@ -7,9 +7,9 @@ import org.nextprot.commons.statements.constants.NextProtSource;
 
 public interface StatementExtractorService {
 
-	Set<Statement> getStatementsForSourceForGeneName(NextProtSource source, String geneName);
+	Set<Statement> getStatementsForSourceForGeneName(NextProtSource source, String release, String geneName);
 
-	Set<Statement> getStatementsForSource(NextProtSource source);
+	Set<Statement> getStatementsForSource(NextProtSource source, String release);
 
 
 }

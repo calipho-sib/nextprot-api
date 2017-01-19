@@ -4,7 +4,7 @@ import org.nextprot.commons.statements.constants.NextProtSource;
 
 public interface StatementETLService {
     
-	String etlStatements(NextProtSource source, boolean load);
+	String etlStatements(NextProtSource source, String release, boolean load);
 
 	void setStatementExtractorService(StatementExtractorService statementExtractorService);
 

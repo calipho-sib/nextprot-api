@@ -40,7 +40,7 @@ public class StatementLoadAndRetrievedStatementsOnUnitDBTest extends StatementET
 	public void shouldExtractLoadAndRetriveStatements() {
 
 		StatementExtractorService extractor = new StatementsExtractorLocalMockImpl();
-		Set<Statement> rawStatements = extractor.getStatementsForSourceForGeneName(null, "msh6-variant-on-iso1-but-not-on-iso2");
+		Set<Statement> rawStatements = extractor.getStatementsForSourceForGeneName(null, "2017-01-13", "msh6-variant-on-iso1-but-not-on-iso2");
 		
 		statementETLService.setStatementExtractorService(extractor);
 		statementETLService.setStatementTransformerService(transformerMockedService);

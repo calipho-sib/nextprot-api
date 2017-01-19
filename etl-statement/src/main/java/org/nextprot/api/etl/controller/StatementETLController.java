@@ -27,10 +27,12 @@ public class StatementETLController {
 	@Autowired
 	StatementETLService statementSourceCollectorAndLoaderService;
 
-	@ApiMethod(path = "/etl/{source}", verb = ApiVerb.GET, description = "Validate isoform feature", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/etl/{source}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@ApiMethod(path = "/etl/{source}/{release}", verb = ApiVerb.GET, description = "Validate isoform feature", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/etl/{source}/{release}", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
-	public String loadStatements(@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("source") String source,
+	public String loadStatements(
+			@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("source") String source,
+			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2017-01-13" }) @PathVariable("release") String release,
 			HttpServletRequest request) {
 
 		boolean load = true;
@@ -38,7 +40,7 @@ public class StatementETLController {
 			load = false;
 		}
 		
-		return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOf(source), load);
+		return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOf(source), release, load);
 
 	}
 
