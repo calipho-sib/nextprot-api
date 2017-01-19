@@ -24,10 +24,7 @@ evidence:$evidence-uri
   :experimentalContext context:$evidence.getExperimentalContextId();
 #end
 #if($evidence.getResourceType().equals("publication"))
-## temp fix to remove
-#if($evidence.getPublicationMD5())
-  :reference publication:$evidence.getPublicationMD5();
-#end
+  :reference publication:$evidence.getResourceId();
 #end
 #if($evidence.getResourceType().equals("database"))
 #set($UNESCAPED_CDATA = $evidence.resourceAccession)
