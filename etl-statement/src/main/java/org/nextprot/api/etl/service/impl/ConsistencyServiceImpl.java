@@ -10,9 +10,11 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.etl.service.ConsistencyService;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 
+@Service
 public class ConsistencyServiceImpl implements ConsistencyService{
 
 	@Autowired PublicationService publicationService;
