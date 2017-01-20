@@ -22,7 +22,7 @@ public class ConsistencyController {
 	private ConsistencyService consistencyService;
 
 	@ApiMethod(path = "/missing-pubmed-ids", verb = ApiVerb.GET, description = "Return a list of missing publications. When consistent, the list should be empty.", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/missing-pubmed-ids/", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/missing-pubmed-ids", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
 	public List<String> checkConsistencyOfPublications() {
 		return consistencyService.findMissingPublications();
@@ -30,7 +30,7 @@ public class ConsistencyController {
 	
 	
 	@ApiMethod(path = "/missing-cvterms", verb = ApiVerb.GET, description = "Return a list of missing cv term. When consistent, the list should be empty.", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/missing-cvterms/", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@RequestMapping(value = "/missing-cvterms", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
 	public List<String> checkConsistencyOfCvTerms() {
 		return consistencyService.findMissingCvTerms();
