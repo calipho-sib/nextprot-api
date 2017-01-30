@@ -665,7 +665,7 @@
 	$(document).ready(function() {
 		
 		// update year in copyright anchor text
-        $('#copyright').html('&copy; ' + new Date().getFullYear() + ' SIB Swiss Institute of Bioinformatics');		
+        $('#copyright').html('&copy; 2011 - ' + new Date().getFullYear() + ' SIB Swiss Institute of Bioinformatics');		
 
 		
 		// This is to check if the '_JSONDOC_OFFLINE_PLACEHOLDER_' has been replaced with content coming from
