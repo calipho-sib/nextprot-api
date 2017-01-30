@@ -177,7 +177,7 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="col-md-12 text-left">
-						<a id="copyright" class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('copyright')">&copy; 2016 SIB Swiss Institute of Bioinformatics</a>
+						<a id="copyright" class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('copyright')">&copy; (year YYYY set by javascript onReady() function) SIB Swiss Institute of Bioinformatics</a>
 						<a id="legal-disclaimer" class="ft-item" href="javascript:void(0)" onclick="showMarkdownPreview('legal-disclaimer')">Legal disclaimer</a>
 						<span id="data-release" class="ft-item"></span>
 						<span id="app-release" class="ft-item"></span>
@@ -663,6 +663,11 @@
 	var jsondoc = JSON.stringify('_JSONDOC_OFFLINE_PLACEHOLDER_');
 
 	$(document).ready(function() {
+		
+		// update year in copyright anchor text
+        $('#copyright').html('&copy; ' + new Date().getFullYear() + ' SIB Swiss Institute of Bioinformatics');		
+
+		
 		// This is to check if the '_JSONDOC_OFFLINE_PLACEHOLDER_' has been replaced with content coming from
 		// the result of the jsondoc-maven-plugin
 		if(jsondoc.split('_').length != 5) {
@@ -1156,7 +1161,7 @@
 	var lock = null;
 
 	$(document).ready(function() {
-		
+				
 		if (typeof String.prototype.endsWith !== 'function') {
 		    String.prototype.endsWith = function(suffix) {
 		        return this.indexOf(suffix, this.length - suffix.length) !== -1;
