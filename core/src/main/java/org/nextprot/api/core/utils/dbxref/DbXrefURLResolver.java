@@ -49,6 +49,8 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.CGH_DB,         new CghDbArpXrefURLResolver());
         resolvers.put(XRefDatabase.IFO,            new JcrbXrefURLResolver());
         resolvers.put(XRefDatabase.JCRB,           new JcrbXrefURLResolver());
+        resolvers.put(XRefDatabase.SMR,           new SMRXrefURLResolver());
+        
 
         oboResolver = new OboLibraryXrefURLResolver();
     }
