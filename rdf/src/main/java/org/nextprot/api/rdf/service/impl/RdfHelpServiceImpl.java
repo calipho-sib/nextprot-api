@@ -50,8 +50,10 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 	private @Autowired SparqlDictionary sparqlDictionary = null;
 	private @Autowired SparqlService sparqlService = null;
 
-	private final int NUMBER_THREADS = 10;
-
+	// with 10 threads, duration is 18 minutes but the result is incomplete (some triples are missing !)
+	// with  1 thread,  duration is 57 minutes but the result is ok.
+	private final int NUMBER_THREADS = 1; 
+	
 	private int errorCount=0;
 	
 	private synchronized void incrementErrors() {
@@ -403,7 +405,5 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 		}
 
 	}
-
-
 
 }
