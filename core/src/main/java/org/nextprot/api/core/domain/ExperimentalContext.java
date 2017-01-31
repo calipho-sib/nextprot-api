@@ -18,10 +18,17 @@ public class ExperimentalContext implements Serializable{
 	// The experimental context detection method (ECO code)
 	private CvTerm detectionMethod;  // ECO code
 
-	//The experimental context metadata document identifier (md5)
-	private String metadataAC;  // md5 of publication
+	//The experimental context metadata document identifier
+	private Long metadataId; // publication id = resource id as well
 	
 	
+	
+	public Long getMetadataId() {
+		return metadataId;
+	}
+	public void setMetadataId(Long metadataId) {
+		this.metadataId = metadataId;
+	}
 	public Long getContextId() {
 		return contextId;
 	}
@@ -89,12 +96,6 @@ public class ExperimentalContext implements Serializable{
 	}
 	public void setDetectionMethod(CvTerm detectionMethod) {
 		this.detectionMethod = detectionMethod;
-	}
-	public String getMetadataAC() {
-		return metadataAC;
-	}
-	public void setMetadataAC(String ac) {
-		this.metadataAC = ac;
 	}
 
 	

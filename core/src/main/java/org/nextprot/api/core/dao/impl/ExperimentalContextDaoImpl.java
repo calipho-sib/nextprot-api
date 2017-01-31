@@ -43,8 +43,7 @@ public class ExperimentalContextDaoImpl implements ExperimentalContextDao {
 			ExperimentalContext ec = new ExperimentalContext();
 
 			ec.setContextId(rs.getLong("context_id"));
-			ec.setMetadataAC(rs.getString("metadataAC"));
-
+			ec.setMetadataId(rs.getLong("metadataId"));
 			ec.setCellLine(asTerminology(rs.getString("cellLineAC")));
 			ec.setTissue(asTerminology(rs.getString("tissueAC")));
 			ec.setOrganelle(asTerminology(rs.getString("organelleAC")));
