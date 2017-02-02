@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@Api(name = "Pepx", description = "Search for peptides on human isoforms", group = "Tools")
+@Api(name = "Peptide unicity checker", description = "Retrieve accession nos. of isoforms having a sequence matching the query peptide(s)", group = "Tools")
 @RequestMapping(value = "/entries/search/")
 public class EntriesSearchController {
 
@@ -28,9 +28,9 @@ public class EntriesSearchController {
 
 	@ResponseBody
 	@RequestMapping(value = "peptide", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ApiMethod(path = "peptide", verb = ApiVerb.GET, description = "Gets entries that match a peptide or a list of peptides. In the response, when the variants field is not null, the matched sequence includes a variant.")
+	@ApiMethod(path = "peptide", verb = ApiVerb.GET, description = "Retrieve accession nos. of isoforms having a sequence matching the query peptide(s), taking into account variants. Leucine and isoleucine are considered to be equivalent.")
 	public List<Entry> pepx(
-			@ApiQueryParam(name = "peptide(s)", description = "A peptide or a list of peptides separated with a comma", allowedvalues = { "LQELFLQEVR" }) @RequestParam(value = "peptide", required = true) String peptide)
+			@ApiQueryParam(name = "peptide(s)", description = "A peptide or a list of peptides separated with a comma", allowedvalues = { "AADDFRLKYENELALR" }) @RequestParam(value = "peptide", required = true) String peptide)
 			{
 		NPreconditions.checkTrue(peptide.length() >= 6, "The minimum length of the peptide must be 6");
 		Boolean modeIL = new Boolean(true);
