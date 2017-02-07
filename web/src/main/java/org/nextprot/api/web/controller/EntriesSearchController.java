@@ -30,7 +30,7 @@ public class EntriesSearchController {
 	@RequestMapping(value = "peptide", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ApiMethod(path = "peptide", verb = ApiVerb.GET, description = "Retrieve accession nos. of isoforms having a sequence matching the query peptide(s), taking into account variants. Leucine and isoleucine are considered to be equivalent.")
 	public List<Entry> pepx(
-			@ApiQueryParam(name = "peptide(s)", description = "A peptide or a list of peptides separated with a comma", allowedvalues = { "AADDFRLKYENELALR" }) @RequestParam(value = "peptide", required = true) String peptide)
+			@ApiQueryParam(name = "peptide(s)", description = "A peptide or a list of peptides separated with a comma", allowedvalues = { "NDVVPTMAQGVLEYK" }) @RequestParam(value = "peptide", required = true) String peptide)
 			{
 		NPreconditions.checkTrue(peptide.length() >= 6, "The minimum length of the peptide must be 6");
 		Boolean modeIL = new Boolean(true);
