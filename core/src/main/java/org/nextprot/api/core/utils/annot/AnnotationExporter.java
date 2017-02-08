@@ -94,7 +94,7 @@ public class AnnotationExporter {
 
         for (String geneName : geneNames) {
 
-            Set<String> set = masterIdentifierService.findEntryAccessionByGeneName(geneName);
+            Set<String> set = masterIdentifierService.findEntryAccessionByGeneName(geneName, false);
 
             if (set.isEmpty()) LOGGER.warn("could not find " + geneName);
             accessions.add(set.iterator().next());

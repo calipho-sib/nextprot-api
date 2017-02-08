@@ -14,8 +14,8 @@ public class IncompatibleGeneAndProteinNameException extends FeatureQueryExcepti
 
         super(query);
 
-        getError().addCause(GENE_NAME, geneName);
-        getError().addCause(EXPECTED_GENE_NAMES, expectedGeneNames);
-        getError().setMessage("gene->protein incompatibility: protein " + query.getAccession() + " is not compatible with gene " + geneName + " (expected genes: " + expectedGeneNames + ")");
+        getReason().addCause(GENE_NAME, geneName);
+        getReason().addCause(EXPECTED_GENE_NAMES, expectedGeneNames);
+        getReason().setMessage("gene->protein incompatibility: protein " + query.getAccession() + " is not compatible with gene " + geneName + " (expected genes: " + expectedGeneNames + ")");
     }
 }

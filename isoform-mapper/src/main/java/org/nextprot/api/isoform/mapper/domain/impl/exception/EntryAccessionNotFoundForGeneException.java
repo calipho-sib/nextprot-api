@@ -11,7 +11,7 @@ public class EntryAccessionNotFoundForGeneException extends FeatureQueryExceptio
 
         super(query);
 
-        getError().addCause(GENE_NAME, geneName);
-        getError().setMessage("cannot find entry accession for gene " + geneName);
+        getReason().addCause(GENE_NAME, geneName);
+        getReason().setMessage("cannot find entry accession for gene " + geneName);
     }
 }

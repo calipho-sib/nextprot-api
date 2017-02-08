@@ -62,9 +62,9 @@ public class StatementETLServiceImpl implements StatementETLService {
 		
 	}
 
-	Set<Statement> extractStatements(NextProtSource source, ReportBuilder report) {
+	Set<Statement> extractStatements(NextProtSource source, String release, ReportBuilder report) {
 		
-		Set<Statement> statements =  statementExtractorService.getStatementsForSource(source);
+		Set<Statement> statements =  statementExtractorService.getStatementsForSource(source, release);
 		report.addInfo("Extracting " + statements.size() + " raw statements from " + source.name() + " in " + source.getStatementsUrl());
 		return statements;
 	}
@@ -109,11 +109,11 @@ public class StatementETLServiceImpl implements StatementETLService {
 	
 	
 	@Override
-	public String etlStatements(NextProtSource source, boolean load) {
+	public String etlStatements(NextProtSource source, String release, boolean load) {
 
 		ReportBuilder report = new ReportBuilder();
 		
-		Set<Statement> rawStatements = extractStatements(source, report);
+		Set<Statement> rawStatements = extractStatements(source, release, report);
 		report.addInfoWithElapsedTime("Finished extraction");
 		Set<Statement> mappedStatements = transformStatements(rawStatements, report);
 		report.addInfoWithElapsedTime("Finished transformation");

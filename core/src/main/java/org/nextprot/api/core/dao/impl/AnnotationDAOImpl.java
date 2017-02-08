@@ -152,7 +152,6 @@ public class AnnotationDAOImpl implements AnnotationDAO {
             evidence.setResourceAccession(resultSet.getString("resource_accession"));
             evidence.setResourceDb(resultSet.getString("resource_db"));
             evidence.setResourceDescription(resultSet.getString("resource_desc"));
-            evidence.setPublicationMD5(resultSet.getString("publication_md5"));
             evidence.setQualityQualifier(resultSet.getString("quality_qualifier"));
             evidence.setEvidenceId(resultSet.getLong("evidence_id"));
             evidence.setAssignedBy(resultSet.getString("evidence_assigned_by"));

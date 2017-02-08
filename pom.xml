@@ -4,7 +4,7 @@
 
 	<groupId>org.nextprot</groupId>
 	<artifactId>nextprot-api-master</artifactId>
-	<version>2.2.2</version>
+	<version>2.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<description>An API to access and search for nextprot data</description>
 	<url>https://api.nextprot.org</url>
@@ -51,6 +51,7 @@
 		<module>web</module>
 		<module>test-diff-rdf-db</module>
 		<module>tasks</module>
+		<module>blast</module>
 	</modules>
 
 	<dependencies>
@@ -61,13 +62,13 @@
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-commons</artifactId>
-			<version>RELEASE</version>
+			<version>LATEST</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.nextprot</groupId>
 			<artifactId>nextprot-queries</artifactId>
-			<version>RELEASE</version>
+			<version>LATEST</version>
 		</dependency>
 
 		<!--

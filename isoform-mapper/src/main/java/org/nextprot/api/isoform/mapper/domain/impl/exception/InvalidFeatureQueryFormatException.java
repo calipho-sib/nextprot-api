@@ -13,7 +13,7 @@ public class InvalidFeatureQueryFormatException extends FeatureQueryException {
 
         super(query);
 
-        getError().addCause(PARSE_ERROR_MESSAGE, parseException.getMessage());
-        getError().setMessage("invalid feature format: " + query.getFeature());
+        getReason().addCause(PARSE_ERROR_MESSAGE, parseException.getMessage());
+        getReason().setMessage("invalid feature format: " + query.getFeature());
     }
 }

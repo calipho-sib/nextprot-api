@@ -2,6 +2,7 @@ package org.nextprot.api.core.utils.dbxref;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.XRefDatabase;
@@ -49,6 +50,8 @@ public class DbXrefURLResolver {
         resolvers.put(XRefDatabase.CGH_DB,         new CghDbArpXrefURLResolver());
         resolvers.put(XRefDatabase.IFO,            new JcrbXrefURLResolver());
         resolvers.put(XRefDatabase.JCRB,           new JcrbXrefURLResolver());
+        resolvers.put(XRefDatabase.SMR,           new SMRXrefURLResolver());
+        
 
         oboResolver = new OboLibraryXrefURLResolver();
     }
@@ -82,7 +85,7 @@ public class DbXrefURLResolver {
         Preconditions.checkNotNull(xref);
 
         Optional<XRefDatabase> db = XRefDatabase.optionalValueOfDbName(xref.getDatabaseName());
-
+        
         if (db.isPresent() && resolvers.containsKey(db.get())) {
             return resolvers.get(db.get()).resolve(xref);
         }
@@ -105,13 +108,13 @@ public class DbXrefURLResolver {
     // TODO: this implementation is ugly and should be refactored
     public String resolveWithAccession(DbXref xref, String accession) {
 
+     	
         if (xref != null && xref.getLinkUrl() != null && xref.getLinkUrl().contains("%u")) {
 
-            String templateURL = xref.getLinkUrl();
-
-            if (!templateURL.startsWith("http")) {
-                templateURL = "http://" + templateURL;
-            }
+            XRefDatabase db = XRefDatabase.valueOfDbName(xref.getDatabaseName());
+            String templateURL = resolvers.containsKey(db) ? resolvers.get(db).getTemplateURL(xref) : xref.getLinkUrl();
+            
+            if (!templateURL.startsWith("http")) templateURL = "http://" + templateURL;
 
             if ("brenda".equalsIgnoreCase(xref.getDatabaseName())) {
 

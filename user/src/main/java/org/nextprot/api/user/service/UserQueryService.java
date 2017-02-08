@@ -26,7 +26,8 @@ public interface UserQueryService {
 	 */
 	List<UserQuery> getUserQueriesByTag(String tag);
 
-	List<UserQuery> getTutorialQueries();
+	List<UserQuery> getNxqTutorialQueries();
+	List<UserQuery> getNxqQueries();
 
 	/**
 	 * Create operation for the user query

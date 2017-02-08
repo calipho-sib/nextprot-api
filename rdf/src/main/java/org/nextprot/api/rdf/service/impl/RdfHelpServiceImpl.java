@@ -40,7 +40,7 @@ import com.hp.hpl.jena.rdf.model.RDFNode;
 @Service
 public class RdfHelpServiceImpl implements RdfHelpService {
 
-	private static final Log LOGGER = LogFactory.getLog(SparqlEndpointImpl.class);
+	private static final Log LOGGER = LogFactory.getLog(RdfHelpServiceImpl.class);
 
 	private List<String> completeSetOfValuesForTypes = Arrays.asList(":Source", ":Database", ":SubcellularLocation", ":NextprotAnatomyCv");
 	private List<String> completeSetOfValuesForLiteral = Arrays.asList("NextprotAnatomyCv/rdfs:label", ":SubcellularLocation/rdfs:comment");
@@ -50,8 +50,10 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 	private @Autowired SparqlDictionary sparqlDictionary = null;
 	private @Autowired SparqlService sparqlService = null;
 
-	private final int NUMBER_THREADS = 10;
-
+	// with 10 threads, duration is 18 minutes but the result is incomplete (some triples are missing !)
+	// with  1 thread,  duration is 57 minutes but the result is ok.
+	private final int NUMBER_THREADS = 1; 
+	
 	private int errorCount=0;
 	
 	private synchronized void incrementErrors() {
@@ -71,6 +73,7 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 		ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
 
 		for (String rdfTypeName : rdfTypesNames) {
+			//LOGGER.info("step1 - found rdf:type name " + rdfTypeName);
 			Future<RdfTypeInfo> futureRdfTypeInfo = executor.submit(new FillRdfTypeInfoTask(this, rdfTypeName));
 			rdfFutureTypes.add(futureRdfTypeInfo);
 		}
@@ -95,9 +98,11 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 
 		// now populate parent and parent triples of each type
 		for (RdfTypeInfo rti : rdfTypes) {
+			//LOGGER.info("step2 - updating rdf:type " + rti.getTypeName());
 			for (RdfTypeInfo parent : rdfTypes) {
 				List<TripleInfo> triples = parent.findTriplesWithObjectType(rti.getTypeName());
-				if (triples.size() > 0) {
+					if (triples.size() > 0) {
+					//LOGGER.info("step3 - linking parent rdf:type " + parent.getTypeName()  + " to rdf:type " + rti.getTypeName() + " , triple size: " + triples.size());
 					rti.addParent(parent.getTypeName());
 					for (TripleInfo triple : triples)
 						rti.addParentTriple(triple);
@@ -290,15 +295,13 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 				ti.setSubjectType((String) getDataFromSolutionVar(sol, "subjType"));
 	
 				String objectType = (String) getDataFromSolutionVar(sol, "objType");
-				if (objectType.length() == 0) {
-					LOGGER.info(ti);
+				if (objectType.length() == 0) {					
 					objectType = getObjectTypeFromSample(sol, "objSample");
 					ti.setLiteralType(true);
 				}
 				ti.setObjectType(objectType);
-	
 				ti.setTripleCount(Integer.valueOf((String) getDataFromSolutionVar(sol, "objCount")));
-	
+				LOGGER.info(ti);
 				tripleList.add(ti);
 			}
 			qExec.close();
@@ -402,7 +405,5 @@ public class RdfHelpServiceImpl implements RdfHelpService {
 		}
 
 	}
-
-
 
 }

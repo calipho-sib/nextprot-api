@@ -1,6 +1,10 @@
 package org.nextprot.api.web.controller;
 
-import com.google.common.base.Joiner;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiQueryParam;
@@ -9,25 +13,30 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.exception.SearchQueryException;
 import org.nextprot.api.rdf.service.SparqlEndpoint;
 import org.nextprot.api.rdf.service.SparqlService;
-import org.nextprot.api.solr.*;
+import org.nextprot.api.solr.AutocompleteSearchResult;
+import org.nextprot.api.solr.Query;
+import org.nextprot.api.solr.QueryRequest;
+import org.nextprot.api.solr.SearchResult;
+import org.nextprot.api.solr.SolrConfiguration;
+import org.nextprot.api.solr.SolrService;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.domain.UserQuery;
 import org.nextprot.api.user.service.UserProteinListService;
 import org.nextprot.api.user.service.UserQueryService;
-import org.nextprot.api.user.service.impl.UserQueryTutorialDictionary;
+import org.nextprot.api.user.service.impl.SparqlQueryDictionary;
 import org.nextprot.api.web.service.QueryBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.base.Joiner;
 
 @Lazy
 @Controller
@@ -45,7 +54,7 @@ public class SearchController {
 	@Autowired private QueryBuilderService queryBuilderService;
 
 	@Autowired
-	private UserQueryTutorialDictionary userQueryTutorialDictionary;
+	private SparqlQueryDictionary sparqlQueryDictionary;
 	
 
 	/**

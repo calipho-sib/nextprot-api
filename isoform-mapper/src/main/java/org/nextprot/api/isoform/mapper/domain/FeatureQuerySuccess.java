@@ -4,7 +4,7 @@ import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl
 
 import java.util.Map;
 
-public interface FeatureQuerySuccess extends FeatureQueryResult{
+public interface FeatureQuerySuccess extends FeatureQueryResult {
 	
     Map<String, IsoformFeatureResult> getData();
 

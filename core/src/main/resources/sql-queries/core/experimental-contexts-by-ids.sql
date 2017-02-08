@@ -5,6 +5,6 @@ select context_id,
 (select x.accession from nextprot.cv_terms t inner join nextprot.db_xrefs x on (t.db_xref_id=x.resource_id) where t.cv_id=ec.disease_id) as diseaseAC,
 (select x.accession from nextprot.cv_terms t inner join nextprot.db_xrefs x on (t.db_xref_id=x.resource_id) where t.cv_id=ec.detection_method_id) as detectionMethodAC,
 (select x.accession from nextprot.cv_terms t inner join nextprot.db_xrefs x on (t.db_xref_id=x.resource_id) where t.cv_id=ec.organelle_id) as organelleAC,
-(select p.md5 from nextprot.publications p where p.resource_id=ec.metadata_id) as metadataAC
+ec.metadata_id as metadataId
 from nextprot.experimental_contexts ec 
 where ec.context_id in (:ids)

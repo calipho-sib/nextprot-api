@@ -1,11 +1,13 @@
 package org.nextprot.api.isoform.mapper.domain;
 
-public interface FeatureQueryFailure extends FeatureQueryResult{
+import org.nextprot.api.commons.utils.ExceptionWithReason;
+
+public interface FeatureQueryFailure extends FeatureQueryResult {
 	
-    public FeatureQueryException.ErrorReason getError();
+	ExceptionWithReason.Reason getError();
 
 	default boolean isSuccess() {
 		return false;
 	}
-	
+
 }

@@ -12,18 +12,18 @@ import org.nextprot.commons.statements.constants.NextProtSource;
 public class StatementsExtractorLocalMockImpl extends StatementExtractorBase {
 
 	@Override
-	public Set<Statement> getStatementsForSourceForGeneName(NextProtSource notUsed, String geneName) {
+	public Set<Statement> getStatementsForSourceForGeneName(NextProtSource notUsed, String release, String geneName) {
 
 		StatementDictionary sd = new StatementDictionary();
-		String msh2Content = sd.getStatements(geneName);
-		String removedComments = msh2Content.replaceAll("((['\"])(?:(?!\\2|\\\\).|\\\\.)*\\2)|\\/\\/[^\\n]*|\\/\\*(?:[^*]|\\*(?!\\/))*\\*\\/", "$1");
+		String content = sd.getStatements(geneName);
+		String removedComments = content.replaceAll("((['\"])(?:(?!\\2|\\\\).|\\\\.)*\\2)|\\/\\/[^\\n]*|\\/\\*(?:[^*]|\\*(?!\\/))*\\*\\/", "$1");
 		
 		return deserialize(new ByteArrayInputStream(removedComments.getBytes(StandardCharsets.UTF_8)));
 
 	}
 
 	@Override
-	public Set<Statement> getStatementsForSource(NextProtSource source) {
+	public Set<Statement> getStatementsForSource(NextProtSource source, String release) {
 		throw new NextProtException("Method not supported");
 	}
 	

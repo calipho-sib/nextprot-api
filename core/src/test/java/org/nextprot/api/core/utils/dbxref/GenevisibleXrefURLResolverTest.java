@@ -17,20 +17,21 @@ public class GenevisibleXrefURLResolverTest {
         resolver = new GenevisibleXrefURLResolver();
     }
 
-    // entry/NX_P51610/xref.json
+
     @Test
-    public void testResolveGenevisible() throws Exception {
-
-        DbXref xref = createDbXref("P51610", "Genevisible", "http://genevisible.com/tissues/%s2/UniProt/%s1");
-
-        Assert.assertEquals("http://genevisible.com/tissues/HS/UniProt/P51610", resolver.resolve(xref));
-    }
-
-    @Test (expected = UnresolvedXrefURLException.class)
     public void testResolveGenevisibleBadTemplate() throws Exception {
 
-        DbXref xref = createDbXref("P51610", "Genevisible", "whatever");
+        DbXref xref = createDbXref("P51611", "Genevisible", "whatever");
 
-        Assert.assertEquals("http://genevisible.com/tissues/HS/UniProt/P51610", resolver.resolve(xref));
+        Assert.assertEquals("https://genevisible.com/tissues/HS/UniProt/P51611", resolver.resolve(xref));
     }
+
+    @Test
+    public void testResolve2() throws Exception {
+
+        DbXref xref = createDbXref("P51612", "Genevisible", "whatever");
+        String url = DbXrefURLResolver.getInstance().resolve(xref);
+        Assert.assertEquals("https://genevisible.com/tissues/HS/UniProt/P51612", url);
+    }    
+    
 }

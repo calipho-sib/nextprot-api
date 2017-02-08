@@ -214,7 +214,6 @@ public class PeptideMappingDaoImpl implements PeptideMappingDao {
 				evidence.setExperimentalContextId(null);
 				evidence.setNegativeEvidence(false);
 				evidence.setProperties(new ArrayList<AnnotationEvidenceProperty>());
-				evidence.setPublicationMD5(null);
 				evidence.setQualifierType(pmam.getQualifierType());
 				evidence.setQualityQualifier(pmam.getQualityQualifier());
 				evidence.setResourceAccession(resultSet.getString("accession"));

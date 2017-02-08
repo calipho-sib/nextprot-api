@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@Api(name = "Search Entries", description = "Search for peptides on human isoforms")
+@Api(name = "Peptide unicity checker", description = "Retrieve accession nos. of isoforms having a sequence matching the query peptide(s)", group = "Tools")
 @RequestMapping(value = "/entries/search/")
 public class EntriesSearchController {
 
@@ -28,25 +28,14 @@ public class EntriesSearchController {
 
 	@ResponseBody
 	@RequestMapping(value = "peptide", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ApiMethod(path = "peptide", verb = ApiVerb.GET, description = "Gets entries that match a peptide")
+	@ApiMethod(path = "peptide", verb = ApiVerb.GET, description = "Retrieve accession nos. of isoforms having a sequence matching the query peptide(s), taking into account variants. Leucine and isoleucine are considered to be equivalent.")
 	public List<Entry> pepx(
-			@ApiQueryParam(name = "peptide", description = "The peptide", allowedvalues = { "GANAP" }) @RequestParam(value = "peptide", required = true) String peptide,
-			@ApiQueryParam(name = "modeIL", description = "The mode isoleucine / leucine replaces the isoleucine by a leucine", allowedvalues = { "true" }) @RequestParam(value = "modeIL", required = false) Boolean modeIL) {
-
-		NPreconditions.checkTrue(peptide.length() >= 5, "The minimum lenght of the peptide must be 5");
-		if (modeIL == null) { modeIL = true;}
+			@ApiQueryParam(name = "peptide(s)", description = "A peptide or a list of peptides separated with a comma", allowedvalues = { "NDVVPTMAQGVLEYK" }) @RequestParam(value = "peptide", required = true) String peptide)
+			{
+		NPreconditions.checkTrue(peptide.length() >= 6, "The minimum length of the peptide must be 6");
+		Boolean modeIL = new Boolean(true);
 		return pepXService.findEntriesWithPeptides(peptide, modeIL);
-
 	}
 
-	@ResponseBody
-	@RequestMapping(value = "blast", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	@ApiMethod(path = "blast", verb = ApiVerb.GET, description = "Blast either a sequence or an isoform. If an entry is speficied the first isoform is taken into account")
-	public List<Entry> blast(@ApiQueryParam(name = "sequence", description = "The sequence to blast", allowedvalues = { "IRLNK" }) @RequestParam(value = "sequence", required = false) String sequence,
-			@ApiQueryParam(name = "isoform", description = "The name of the isoform ") @RequestParam(value = "isoform", required = false) String isoform) {
-
-		throw new NextProtException("Blast not supported yet ");
-
-	}
-
+	
 }

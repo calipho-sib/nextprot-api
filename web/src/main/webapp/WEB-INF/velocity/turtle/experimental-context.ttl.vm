@@ -17,7 +17,7 @@ context:$ec.getContextId() a :ExperimentalContext;
 #if ($ec.getOrganelleAC())
   :organelle cv:$StringUtils.slug($ec.getOrganelleAC());
 #end
-#if ($ec.getMetadataAC())
-  :metadata publication:$StringUtils.slug($ec.getMetadataAC());
+#if ($ec.getMetadataId())
+  :metadata publication:$ec.getMetadataId();
 #end
   .      

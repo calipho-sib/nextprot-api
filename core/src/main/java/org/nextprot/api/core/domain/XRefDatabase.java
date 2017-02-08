@@ -36,7 +36,8 @@ public enum XRefDatabase {
     BRENDA("Brenda"),
     PROTEOPEDIA("PROTEOPEDIA"),
     REF_SEQ("RefSeq"),
-    OBO("OBO")
+    OBO("OBO"),
+    SMR("SMR")
     ;
 
     private final String name;
@@ -114,6 +115,8 @@ public enum XRefDatabase {
                 return REF_SEQ;
             case "OBO":
                 return OBO;
+            case "SMR":
+                return SMR;
             default:
                 return null;
         }

@@ -39,14 +39,14 @@ isoform:$isoform-name #if($annotation.isExpressionLevelDetected().get()):detecte
 #set($hashAnnotMap = $NXUtils.getHashAnnotationMap($entry))
 
 
-# xxx Proteoform set
+# Proteoform set
 #set($ProteoformAnnotationsMap = $NXUtils.getProteoformAnnotationsMap($entry,$isoform-name))
 #foreach($pf in $ProteoformAnnotationsMap.keySet())
 isoform:$pf.parentIsoformName :proteoform proteoform:$pf.id .
 
-# yyy Proteoform definition
-proteoform:$pf.id a :Proteoform;
-  rdfs:label "$pf.label"^^xsd::string ;
+# Proteoform definition
+proteoform:$pf.id a :Proteoform ;
+  rdfs:label "$pf.label"^^xsd:string ;
 #foreach($compId in $pf.components)
 #set($annotation = $hashAnnotMap.get($compId))
 #set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)
@@ -55,7 +55,7 @@ proteoform:$pf.id a :Proteoform;
 #end ## foreach component
 .
 
-# zzz Proteoform Annotations
+# Proteoform Annotations
 #foreach($annotation in $ProteoformAnnotationsMap.get($pf))
 #set($annotation-uri =  $isoform-name + "-" + $annotation.uniqueName)    ## used in child template(s)
 #set($annotation-type = $annotation.apiTypeName)                         ## used in child template(s)
@@ -64,7 +64,7 @@ proteoform:$pf.id :$parentPredicate annotation:$annotation-uri .
 #end ## foreach parentPredicate
 proteoform:$pf.id :$annotation.rdfPredicate annotation:$annotation-uri .
 
-# vvv Proteoform annotation details
+# Proteoform annotation details
 
 #parse("turtle/isoform-annotation.ttl.vm")
 

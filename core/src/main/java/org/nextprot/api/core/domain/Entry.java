@@ -11,6 +11,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @JsonInclude(Include.NON_NULL)
 public class Entry implements KeyValueRepresentation {
@@ -143,6 +144,7 @@ public class Entry implements KeyValueRepresentation {
 	/*
 	 * Should use get annotations by category or @json null 
 	 */
+    @JsonIgnore
 	public List<Annotation> getAnnotations() {
 		return annotations;
 	}
