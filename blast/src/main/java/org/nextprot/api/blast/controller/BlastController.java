@@ -1,9 +1,6 @@
 package org.nextprot.api.blast.controller;
 
-import org.jsondoc.core.annotation.Api;
-import org.jsondoc.core.annotation.ApiMethod;
-import org.jsondoc.core.annotation.ApiPathParam;
-import org.jsondoc.core.annotation.ApiQueryParam;
+import org.jsondoc.core.annotation.*;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.blast.domain.*;
 import org.nextprot.api.blast.service.BlastProgram;
@@ -12,6 +9,7 @@ import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -97,9 +95,11 @@ public class BlastController {
 		}
     }
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
     @ApiMethod(path = "/blast/createdb/", verb = ApiVerb.GET, description = "Create nextprot blast database", produces = MediaType.APPLICATION_JSON_VALUE)
     @RequestMapping(value = "/blast/createdb", method = {RequestMethod.GET}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
+	@ApiAuthBasic(roles={"ROLE_ADMIN"})
     public BlastProgramOutput createBlastDb() {
 
 		BlastProgram.Params params = new BlastProgram.Params(makeblastdbBinPath, blastDbPath);
