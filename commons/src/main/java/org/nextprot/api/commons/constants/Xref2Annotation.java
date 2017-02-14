@@ -16,7 +16,7 @@ public enum Xref2Annotation  {
 			"DrugBank","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
 	KEGGPATHWAY("KEGGPathway",  "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 
 			"KEGG_PTW","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
-	TCDB("TCDB",  "transporter name", AnnotationCategory.TRANSPORT_ACTIVITY.getDbAnnotationTypeName(),
+	TCDB("TCDB",  "family name", AnnotationCategory.TRANSPORT_ACTIVITY.getDbAnnotationTypeName(),
 			"TCDB","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion")
 	;
 
