@@ -11,7 +11,8 @@ class BgeeXrefURLResolver extends DbXrefURLBaseResolver {
         String templateURL = super.getTemplateURL(xref);
 
         if (accession.contains("ENSG"))
-            templateURL = templateURL.replaceFirst("uniprot_id=", "page=expression&action=data&");
+            //templateURL = templateURL.replaceFirst("uniprot_id=", "page=expression&action=data&");
+            templateURL = "http://bgee.org/?page=gene&gene_id=%s";
 
         return templateURL;
     }
