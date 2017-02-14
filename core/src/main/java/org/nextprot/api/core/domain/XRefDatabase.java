@@ -28,6 +28,7 @@ public enum XRefDatabase {
     OBO("OBO"),
     PDB("PDB"),
     PEPTIDE_ATLAS("PeptideAtlas"),
+    PEROXIBASE("PeroxiBase"),
     PIR("PIR"),
     PROSITE("PROSITE"),
     PROTEOPEDIA("PROTEOPEDIA"),
@@ -117,6 +118,8 @@ public enum XRefDatabase {
                 return OBO;
             case "SMR":
                 return SMR;
+            case "PEROXIBASE":
+                return PEROXIBASE;
             default:
                 return null;
         }
