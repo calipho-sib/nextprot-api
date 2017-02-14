@@ -15,7 +15,9 @@ public enum Xref2Annotation  {
 	DRUGBANK("DrugBank", "generic name", AnnotationCategory.SMALL_MOLECULE_INTERACTION.getDbAnnotationTypeName(),
 			"DrugBank","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
 	KEGGPATHWAY("KEGGPathway",  "pathway name", AnnotationCategory.PATHWAY.getDbAnnotationTypeName(), 
-			"KEGG_PTW","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion")
+			"KEGG_PTW","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion"),
+	TCDB("TCDB",  "transporter name", AnnotationCategory.TRANSPORT_ACTIVITY.getDbAnnotationTypeName(),
+			"TCDB","GOLD","curated","IC","ECO:0000305", "curator inference used in manual assertion")
 	;
 
 	private final String xrefDbName; // refers to an existing cv_name in cv_databases table
