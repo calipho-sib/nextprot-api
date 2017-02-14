@@ -7,5 +7,5 @@ inner join nextprot.cv_databases dbs on x.cv_database_id = dbs.cv_id
 inner join nextprot.cv_database_categories cat on cat.cv_id = dbs.cv_category_id 
 where res.cv_type_id = 1 
 and si.unique_name = :uniqueName
-and dbs.cv_name in ('Orphanet', 'DrugBank','KEGGPathway','Reactome')
+and dbs.cv_name in ('Orphanet', 'DrugBank','KEGGPathway','Reactome','TCDB')
 order by database_name,x.resource_id
