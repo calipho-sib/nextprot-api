@@ -2,7 +2,7 @@ package org.nextprot.api.core.utils.dbxref.resolver;
 
 import org.nextprot.api.core.domain.DbXref;
 
-class SMRXrefURLResolver extends DefaultDbXrefURLResolver {
+class SmrXrefURLResolver extends DefaultDbXrefURLResolver {
 
     @Override
     public String getTemplateURL(DbXref xref) {

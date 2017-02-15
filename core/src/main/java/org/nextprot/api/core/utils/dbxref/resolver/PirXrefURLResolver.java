@@ -2,7 +2,6 @@ package org.nextprot.api.core.utils.dbxref.resolver;
 
 import org.nextprot.api.core.domain.DbXref;
 
-
 class PirXrefURLResolver extends DefaultDbXrefURLResolver {
 
     @Override

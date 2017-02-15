@@ -6,14 +6,14 @@ import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
 
 
-public class SMRXrefURLResolverTest {
+public class SmrXrefURLResolverTest {
 
     private DefaultDbXrefURLResolver resolver;
 
     @Before
     public void setup() {
 
-        resolver = new SMRXrefURLResolver();
+        resolver = new SmrXrefURLResolver();
     }
     
     @Test
