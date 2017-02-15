@@ -2,6 +2,8 @@ package org.nextprot.api.core.utils.dbxref;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.utils.dbxref.resolver.StampBaseResolver;
+import org.nextprot.api.core.utils.dbxref.resolver.UnresolvedXrefURLException;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -19,7 +21,7 @@ import java.util.Set;
  * <h4>Note</h4>
  * Linked urls of each db may contain different single occurrence of any stamps (%s, %u, %n, ...) that should be resolved separately.
  */
-class DbXrefURLBaseResolver {
+public class DbXrefURLBaseResolver {
 
     private static final String UNRESOLVED_URL_REGEXP = "^.+%[a-zA-Z].*$";
 
@@ -127,14 +129,14 @@ class DbXrefURLBaseResolver {
         return templateURL;
     }
 
-    static class DefaultStampSResolver extends StampBaseResolver {
+    public static class DefaultStampSResolver extends StampBaseResolver {
 
         public DefaultStampSResolver() {
             super("s");
         }
 
         @Override
-        protected String resolve(String templateURL, String accession) {
+        public String resolve(String templateURL, String accession) {
             return templateURL.replaceAll(getStamp(), accession);
         }
     }

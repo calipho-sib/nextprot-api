@@ -89,7 +89,7 @@ public class DbXref implements Serializable {
 	public String getResolvedUrl() {
 		if (resolvedUrl == null) {
 			try {
-				resolvedUrl = DbXrefURLResolver.getInstance().resolve(this);
+				resolvedUrl = new DbXrefURLResolver().resolve(this);
 			} catch (Exception ex) {
 
 				//LOGGER.warn("xref "+accession+" (db:"+databaseName+") - " + ex.getLocalizedMessage(), ex);

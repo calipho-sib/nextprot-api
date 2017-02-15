@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.XRefDatabase;
+import org.nextprot.api.core.utils.dbxref.resolver.XRefDatabase;
 import org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest;
 
 import java.util.Collections;

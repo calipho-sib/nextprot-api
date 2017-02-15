@@ -1,0 +1,20 @@
+package org.nextprot.api.core.utils.dbxref.resolver;
+
+import org.nextprot.api.core.domain.CvDatabasePreferredLink;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
+
+class IntactXrefURLResolver extends DbXrefURLBaseResolver {
+
+    @Override
+    protected String getTemplateURL(DbXref xref) {
+
+        String accession = xref.getAccession();
+
+        if (accession.startsWith("EBI")) {
+            return CvDatabasePreferredLink.INTACT_BINARY.getLink();
+        }
+
+        return super.getTemplateURL(xref);
+    }
+}

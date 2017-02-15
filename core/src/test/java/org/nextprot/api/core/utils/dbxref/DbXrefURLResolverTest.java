@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.utils.dbxref.resolver.UnresolvedXrefURLException;
 
 import java.util.Collections;
 
@@ -290,8 +291,8 @@ public class DbXrefURLResolverTest {
 
         DbXref xref = createDbXref("ENSG00000172534", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
 
-        Assert.assertEquals("http://bgee.unil.ch/bgee/bgee?page=expression&action=data&ENSG00000172534", resolver.resolve(xref));
-        Assert.assertEquals("http://bgee.unil.ch/bgee/bgee?page=expression&action=data&%s", xref.getLinkUrl());
+        Assert.assertEquals("http://bgee.org/?page=gene&gene_id=ENSG00000172534", resolver.resolve(xref));
+        Assert.assertEquals("http://bgee.org/?page=gene&gene_id=%s", xref.getLinkUrl());
     }
 
     // entry/P51610/xref.json

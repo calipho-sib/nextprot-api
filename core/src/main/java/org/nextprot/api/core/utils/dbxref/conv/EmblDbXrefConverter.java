@@ -3,6 +3,7 @@ package org.nextprot.api.core.utils.dbxref.conv;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.utils.dbxref.resolver.XRefDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,10 +37,10 @@ class EmblDbXrefConverter implements DbXrefPropertyToXrefConverter {
         dbXRef.setDbXrefId(IdentifierOffset.XREF_PROPERTY_OFFSET +property.getPropertyId());
         dbXRef.setAccession(property.getValue());
         dbXRef.setDatabaseCategory("Sequence databases");
-        dbXRef.setDatabaseName(CvDatabasePreferredLink.EMBL_GENE.getDbName());
+        dbXRef.setDatabaseName(XRefDatabase.EMBL.getName());
         dbXRef.setUrl(xref.getUrl());
         dbXRef.setLinkUrl(preferredLink.getLink());
-        dbXRef.setProperties(new ArrayList<DbXref.DbXrefProperty>());
+        dbXRef.setProperties(new ArrayList<>());
 
         return dbXRef;
     }

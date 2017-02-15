@@ -1,14 +1,10 @@
 package org.nextprot.api.core.utils.dbxref.conv;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.XRefDatabase;
+import org.nextprot.api.core.utils.dbxref.resolver.XRefDatabase;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DbXrefConverter implements DbXrefPropertyToXrefConverter {
 
