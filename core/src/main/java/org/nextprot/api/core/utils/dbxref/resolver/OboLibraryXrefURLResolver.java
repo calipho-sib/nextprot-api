@@ -2,10 +2,9 @@ package org.nextprot.api.core.utils.dbxref.resolver;
 
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
 
 // http://www.ontobee.org/
-class OboLibraryXrefURLResolver extends DbXrefURLBaseResolver {
+class OboLibraryXrefURLResolver extends DefaultDbXrefURLResolver {
 
     @Override
     protected String getAccessionNumber(DbXref xref) {
@@ -21,7 +20,7 @@ class OboLibraryXrefURLResolver extends DbXrefURLBaseResolver {
     }
 
     @Override
-    protected String getTemplateURL(DbXref xref) {
+    public String getTemplateURL(DbXref xref) {
 
         return CvDatabasePreferredLink.OBO.getLink();
     }

@@ -4,13 +4,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest;
 
 
 public class EnsemblXrefURLResolverTest {
 
-    private DbXrefURLBaseResolver resolver;
+    private DefaultDbXrefURLResolver resolver;
 
     @Before
     public void setup() {
@@ -22,7 +20,7 @@ public class EnsemblXrefURLResolverTest {
     @Test
     public void testResolveEnsemblENSG() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("ENSG00000178093", "Ensembl", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000178093", "Ensembl", "whatever");
 
         Assert.assertEquals("http://www.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=ENSG00000178093", resolver.resolve(xref));
     }
@@ -31,7 +29,7 @@ public class EnsemblXrefURLResolverTest {
     @Test
     public void testResolveEnsemblENSP() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("ENSP00000466056", "Ensembl", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSP00000466056", "Ensembl", "whatever");
 
         Assert.assertEquals("http://www.ensembl.org/Homo_sapiens/Transcript/ProteinSummary?db=core;p=ENSP00000466056", resolver.resolve(xref));
     }
@@ -40,7 +38,7 @@ public class EnsemblXrefURLResolverTest {
     @Test
     public void testResolveEnsemblENST() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("ENST00000587522", "Ensembl", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENST00000587522", "Ensembl", "whatever");
 
         Assert.assertEquals("http://www.ensembl.org/Homo_sapiens/Transcript/Summary?db=core;t=ENST00000587522", resolver.resolve(xref));
     }
@@ -49,7 +47,7 @@ public class EnsemblXrefURLResolverTest {
     @Test(expected = UnresolvedXrefURLException.class)
     public void testResolveEnsemblBadPrimaryId() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("EST00000587522", "Ensembl", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("EST00000587522", "Ensembl", "whatever");
 
         resolver.resolve(xref);
     }

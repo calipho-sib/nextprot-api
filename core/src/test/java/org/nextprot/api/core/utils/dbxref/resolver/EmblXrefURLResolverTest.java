@@ -4,12 +4,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest;
 
 public class EmblXrefURLResolverTest {
 
-    private DbXrefURLBaseResolver resolver;
+    private DefaultDbXrefURLResolver resolver;
 
     @Before
     public void setup() {
@@ -20,7 +18,7 @@ public class EmblXrefURLResolverTest {
     @Test
     public void testResolveEmbl() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("AF009225", "EMBL", "http://www.ebi.ac.uk/ena/data/view/%s");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("AF009225", "EMBL", "http://www.ebi.ac.uk/ena/data/view/%s");
 
         Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AF009225", resolver.resolve(xref));
     }
@@ -28,7 +26,7 @@ public class EmblXrefURLResolverTest {
     @Test
     public void testResolveEmblWithDotAccession() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("CAH72401.1", "EMBL", "http://www.ebi.ac.uk/ena/data/view/%s");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("CAH72401.1", "EMBL", "http://www.ebi.ac.uk/ena/data/view/%s");
 
         Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/CAH72401", resolver.resolve(xref));
     }

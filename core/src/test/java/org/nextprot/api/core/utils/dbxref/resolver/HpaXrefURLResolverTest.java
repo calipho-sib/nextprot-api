@@ -4,12 +4,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest;
 
 public class HpaXrefURLResolverTest {
 
-    private DbXrefURLBaseResolver resolver;
+    private DefaultDbXrefURLResolver resolver;
 
     @Before
     public void setup() {
@@ -21,7 +19,7 @@ public class HpaXrefURLResolverTest {
     @Test
     public void testResolveHPAGene() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("ENSG00000254647", "HPA", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647", "HPA", "whatever");
 
         Assert.assertEquals("http://www.proteinatlas.org/ENSG00000254647", resolver.resolve(xref));
     }
@@ -30,7 +28,7 @@ public class HpaXrefURLResolverTest {
     @Test
     public void testResolveHPASubcellular() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("ENSG00000254647/subcellular", "HPA", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000254647/subcellular", "HPA", "whatever");
 
         Assert.assertEquals("http://www.proteinatlas.org/ENSG00000254647/subcellular", resolver.resolve(xref));
     }
@@ -39,7 +37,7 @@ public class HpaXrefURLResolverTest {
     @Test
     public void testResolveHPAAntibody() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("HPA018312", "HPA", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("HPA018312", "HPA", "whatever");
 
         Assert.assertEquals("http://www.proteinatlas.org/search/HPA018312", resolver.resolve(xref));
     }

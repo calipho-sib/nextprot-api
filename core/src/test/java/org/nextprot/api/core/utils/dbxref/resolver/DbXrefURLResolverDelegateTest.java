@@ -1,21 +1,20 @@
-package org.nextprot.api.core.utils.dbxref;
+package org.nextprot.api.core.utils.dbxref.resolver;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.resolver.UnresolvedXrefURLException;
 
 import java.util.Collections;
 
-public class DbXrefURLResolverTest {
+public class DbXrefURLResolverDelegateTest {
 
-    private DbXrefURLResolver resolver;
+    private DbXrefURLResolverDelegate resolver;
 
     @Before
     public void setup() {
 
-        resolver = DbXrefURLResolver.getInstance();
+        resolver = new DbXrefURLResolverDelegate();
     }
 
     @Test

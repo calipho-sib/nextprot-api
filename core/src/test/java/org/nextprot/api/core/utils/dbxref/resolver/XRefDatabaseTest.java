@@ -20,8 +20,8 @@ public class XRefDatabaseTest {
 
         for (XRefDatabase xRefDatabase : XRefDatabase.values()) {
 
-            Assert.assertTrue(XRefDatabase.optionalValueOfDbName(xRefDatabase.getName()).isPresent());
+            Assert.assertTrue(XRefDatabase.valueOfName(xRefDatabase.getName()).isPresent());
         }
-        Assert.assertTrue(!XRefDatabase.optionalValueOfDbName("dedoekode").isPresent());
+        Assert.assertTrue(!XRefDatabase.valueOfName("dedoekode").isPresent());
     }
 }

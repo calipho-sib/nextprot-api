@@ -1,9 +1,8 @@
 package org.nextprot.api.core.utils.dbxref.resolver;
 
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
 
-class HsspXrefURLResolver extends DbXrefURLBaseResolver {
+class HsspXrefURLResolver extends DefaultDbXrefURLResolver {
 
     @Override
     protected String getAccessionNumber(DbXref xref) {

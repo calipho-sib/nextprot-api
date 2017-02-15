@@ -2,10 +2,9 @@ package org.nextprot.api.core.utils.dbxref.resolver;
 
 
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
 
 
-class WebInfoXrefURLResolver extends DbXrefURLBaseResolver {
+class WebInfoXrefURLResolver extends DefaultDbXrefURLResolver {
 
     @Override
     public String resolve(DbXref xref) {
@@ -14,7 +13,7 @@ class WebInfoXrefURLResolver extends DbXrefURLBaseResolver {
     }
 
     @Override
-    protected String getTemplateURL(DbXref xref) {
+    public String getTemplateURL(DbXref xref) {
         return "";
     }
 }

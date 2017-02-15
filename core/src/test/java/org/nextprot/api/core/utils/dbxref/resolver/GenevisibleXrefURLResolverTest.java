@@ -4,13 +4,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest;
 
 public class GenevisibleXrefURLResolverTest {
 
-    private DbXrefURLBaseResolver resolver;
+    private DefaultDbXrefURLResolver resolver;
 
     @Before
     public void setup() {
@@ -22,7 +19,7 @@ public class GenevisibleXrefURLResolverTest {
     @Test
     public void testResolveGenevisibleBadTemplate() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("P51611", "Genevisible", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("P51611", "Genevisible", "whatever");
 
         Assert.assertEquals("https://genevisible.com/tissues/HS/UniProt/P51611", resolver.resolve(xref));
     }
@@ -30,8 +27,8 @@ public class GenevisibleXrefURLResolverTest {
     @Test
     public void testResolve2() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("P51612", "Genevisible", "whatever");
-        String url = DbXrefURLResolver.getInstance().resolve(xref);
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("P51612", "Genevisible", "whatever");
+        String url = new DbXrefURLResolverDelegate().resolve(xref);
         Assert.assertEquals("https://genevisible.com/tissues/HS/UniProt/P51612", url);
     }    
     

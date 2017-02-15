@@ -4,8 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest;
 
 public class ConstantLinkXrefURLResolverTest {
 
@@ -13,9 +11,9 @@ public class ConstantLinkXrefURLResolverTest {
     @Test
     public void testResolveGermOnline() throws Exception {
 
-        DbXrefURLBaseResolver resolver = new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GERMONLINE);
+        DefaultDbXrefURLResolver resolver = new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GERMONLINE);
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("ENSG00000178093", "GermOnline", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000178093", "GermOnline", "whatever");
 
         Assert.assertEquals("http://www.germonline.org/Homo_sapiens/geneview?gene=ENSG00000178093", resolver.resolve(xref));
     }
@@ -23,9 +21,9 @@ public class ConstantLinkXrefURLResolverTest {
     @Test
     public void testResolveGenevestigator() throws Exception {
 
-        DbXrefURLBaseResolver resolver = new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GENEVESTIGATOR);
+        DefaultDbXrefURLResolver resolver = new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GENEVESTIGATOR);
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("P01308", "Genevestigator", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("P01308", "Genevestigator", "whatever");
 
         Assert.assertEquals("http://genevisible.com/tissues/HS/UniProt/P01308", resolver.resolve(xref));
     }
@@ -33,9 +31,9 @@ public class ConstantLinkXrefURLResolverTest {
     @Test
     public void testResolveProsite() throws Exception {
 
-        DbXrefURLBaseResolver resolver = new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PROSITE);
+        DefaultDbXrefURLResolver resolver = new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PROSITE);
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("PS50853", "PROSITE", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("PS50853", "PROSITE", "whatever");
 
         Assert.assertEquals("http://prosite.expasy.org/cgi-bin/prosite/prosite-search-ac?PS50853", resolver.resolve(xref));
     }
@@ -44,9 +42,9 @@ public class ConstantLinkXrefURLResolverTest {
     @Test
     public void testResolvePDB() throws Exception {
 
-        DbXrefURLBaseResolver resolver = new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PDB);
+        DefaultDbXrefURLResolver resolver = new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PDB);
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("1A7F", "PDB", "whatever");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("1A7F", "PDB", "whatever");
 
         Assert.assertEquals("http://www.pdb.org/pdb/explore/explore.do?pdbId=1A7F", resolver.resolve(xref));
     }

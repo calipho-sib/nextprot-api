@@ -4,15 +4,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest;
 
 import java.util.Collections;
 
 
 public class PirXrefURLResolverTest {
 
-    private DbXrefURLBaseResolver resolver;
+    private DefaultDbXrefURLResolver resolver;
 
     @Before
     public void setup() {
@@ -24,9 +22,9 @@ public class PirXrefURLResolverTest {
     @Test
     public void testResolvePIR() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("babebibobu", "PIR", "http://pir.georgetown.edu/cgi-bin/nbrfget?uid=%s");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("babebibobu", "PIR", "http://pir.georgetown.edu/cgi-bin/nbrfget?uid=%s");
 
-        xref.setProperties(Collections.singletonList(DbXrefURLResolverTest.createDbXrefProperty("entry name", "A40718")));
+        xref.setProperties(Collections.singletonList(DbXrefURLResolverDelegateTest.createDbXrefProperty("entry name", "A40718")));
 
         Assert.assertEquals("http://pir.georgetown.edu/cgi-bin/nbrfget?uid=A40718", resolver.resolve(xref));
     }
@@ -35,9 +33,9 @@ public class PirXrefURLResolverTest {
     @Test
     public void testResolvePIRWithoutURLProtocol() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("babebibobu", "PIR", "pir.georgetown.edu/cgi-bin/nbrfget?uid=%s");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("babebibobu", "PIR", "pir.georgetown.edu/cgi-bin/nbrfget?uid=%s");
 
-        xref.setProperties(Collections.singletonList(DbXrefURLResolverTest.createDbXrefProperty("entry name", "A40718")));
+        xref.setProperties(Collections.singletonList(DbXrefURLResolverDelegateTest.createDbXrefProperty("entry name", "A40718")));
 
         Assert.assertEquals("http://pir.georgetown.edu/cgi-bin/nbrfget?uid=A40718", resolver.resolve(xref));
     }
@@ -45,7 +43,7 @@ public class PirXrefURLResolverTest {
     @Test (expected = UnresolvedXrefURLException.class)
     public void testResolvePIRShouldNotThrowsNPE() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("babebibobu", "PIR", "pir.georgetown.edu/cgi-bin/nbrfget?uid=%s");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("babebibobu", "PIR", "pir.georgetown.edu/cgi-bin/nbrfget?uid=%s");
 
         Assert.assertEquals("http://pir.georgetown.edu/cgi-bin/nbrfget?uid=A40718", resolver.resolve(xref));
     }

@@ -3,7 +3,7 @@ package org.nextprot.api.core.domain;
 import com.google.common.base.Preconditions;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
+import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverDelegate;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -89,7 +89,7 @@ public class DbXref implements Serializable {
 	public String getResolvedUrl() {
 		if (resolvedUrl == null) {
 			try {
-				resolvedUrl = new DbXrefURLResolver().resolve(this);
+				resolvedUrl = new DbXrefURLResolverDelegate().resolve(this);
 			} catch (Exception ex) {
 
 				//LOGGER.warn("xref "+accession+" (db:"+databaseName+") - " + ex.getLocalizedMessage(), ex);

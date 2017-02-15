@@ -1,16 +1,13 @@
-package org.nextprot.api.core.utils.dbxref;
+package org.nextprot.api.core.utils.dbxref.resolver;
 
 import com.google.common.base.Preconditions;
+import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.resolver.StampBaseResolver;
-import org.nextprot.api.core.utils.dbxref.resolver.UnresolvedXrefURLException;
+import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Base class resolving DbXref linked URLs.
@@ -21,7 +18,7 @@ import java.util.Set;
  * <h4>Note</h4>
  * Linked urls of each db may contain different single occurrence of any stamps (%s, %u, %n, ...) that should be resolved separately.
  */
-public class DbXrefURLBaseResolver {
+class DefaultDbXrefURLResolver implements DbXrefURLResolver {
 
     private static final String UNRESOLVED_URL_REGEXP = "^.+%[a-zA-Z].*$";
 
@@ -32,12 +29,12 @@ public class DbXrefURLBaseResolver {
         Set<StampBaseResolver> createStampResolvers();
     }
 
-    public DbXrefURLBaseResolver() {
+    public DefaultDbXrefURLResolver() {
 
         this(new DefaultStampResolverFactory());
     }
 
-    public DbXrefURLBaseResolver(StampResolverFactory factory) {
+    public DefaultDbXrefURLResolver(StampResolverFactory factory) {
 
         stampResolvers = new HashMap<>();
 
@@ -47,6 +44,7 @@ public class DbXrefURLBaseResolver {
         }
     }
 
+    @Override
     public String resolve(DbXref xref) {
 
         Preconditions.checkNotNull(xref);
@@ -56,6 +54,41 @@ public class DbXrefURLBaseResolver {
         xref.setLinkUrl(template);
 
         return resolveTemplateURL(template, getAccessionNumber(xref));
+    }
+
+    // TODO: this implementation is ugly and should be refactored
+    @Override
+    public String resolveWithAccession(DbXref xref, String accession) {
+
+        if (xref != null && xref.getLinkUrl() != null && xref.getLinkUrl().contains("%u")) {
+
+            Optional<XRefDatabase> db = XRefDatabase.valueOfName(xref.getDatabaseName());
+
+            String templateURL = db.isPresent() ? db.get().getResolver().getTemplateURL(xref) : xref.getLinkUrl();
+
+            if (!templateURL.startsWith("http")) {
+
+                templateURL = "http://" + templateURL;
+            }
+
+            if ("brenda".equalsIgnoreCase(xref.getDatabaseName())) {
+
+                if (xref.getAccession().startsWith("BTO")) {
+                    templateURL = CvDatabasePreferredLink.BRENDA_BTO.getLink().replace("%s", xref.getAccession().replace(":", "_"));
+                } else {
+                    templateURL = templateURL.replaceFirst("%s1", xref.getAccession());
+
+                    // organism always human: hardcoded as "247"
+                    templateURL = templateURL.replaceFirst("%s2", "247");
+                }
+            }
+
+            String resolved = templateURL.replaceFirst("%u", accession.startsWith("NX_") ? accession.substring(3) : accession);
+
+            return resolved.replaceFirst("%s", xref.getAccession());
+        }
+
+        return resolve(xref);
     }
 
     private String resolveTemplateURL(String templateURL, String accession) {
@@ -118,7 +151,8 @@ public class DbXrefURLBaseResolver {
         return xref.getAccession();
     }
 
-    protected String getTemplateURL(DbXref xref) {
+    @Override
+    public String getTemplateURL(DbXref xref) {
 
         String templateURL = xref.getLinkUrl();
 

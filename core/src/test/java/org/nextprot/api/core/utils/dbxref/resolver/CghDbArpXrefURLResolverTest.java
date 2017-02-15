@@ -4,12 +4,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest;
 
 public class CghDbArpXrefURLResolverTest {
 
-    private DbXrefURLBaseResolver resolver;
+    private DefaultDbXrefURLResolver resolver;
 
     @Before
     public void setup() {
@@ -20,7 +18,7 @@ public class CghDbArpXrefURLResolverTest {
     @Test
     public void testResolveCGH_DB() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("9029-4", "CGH-DB", "http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=%s&aid=%t&lang=en");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("9029-4", "CGH-DB", "http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=%s&aid=%t&lang=en");
 
         Assert.assertEquals("http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=9029&aid=4&lang=en", resolver.resolve(xref));
     }
@@ -28,7 +26,7 @@ public class CghDbArpXrefURLResolverTest {
     @Test (expected = UnresolvedXrefURLException.class)
     public void testResolveCGH_DBMissingDashInAccessionNumber() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("90294", "CGH-DB", "http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=%s&aid=%t&lang=en");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("90294", "CGH-DB", "http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=%s&aid=%t&lang=en");
 
         resolver.resolve(xref);
     }
@@ -36,7 +34,7 @@ public class CghDbArpXrefURLResolverTest {
     @Test (expected = UnresolvedXrefURLException.class)
     public void testResolveCGH_DBMissingPlaceHolder() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("9029-4", "CGH-DB", "http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=%s&aid=t&lang=en");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("9029-4", "CGH-DB", "http://www.cghtmd.jp/CGHDatabase/mapViewer?hid=%s&aid=t&lang=en");
 
         resolver.resolve(xref);
     }

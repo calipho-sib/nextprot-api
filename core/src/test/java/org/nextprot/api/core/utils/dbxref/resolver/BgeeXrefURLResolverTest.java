@@ -4,12 +4,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLResolverTest;
 
 public class BgeeXrefURLResolverTest {
 
-    private DbXrefURLBaseResolver resolver;
+    private DefaultDbXrefURLResolver resolver;
 
     @Before
     public void setup() {
@@ -21,7 +19,7 @@ public class BgeeXrefURLResolverTest {
     @Test
     public void testResolveBgeeENSG() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("ENSG00000172534", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("ENSG00000172534", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
 
         Assert.assertEquals("http://bgee.org/?page=gene&gene_id=ENSG00000172534", resolver.resolve(xref));
     }
@@ -30,7 +28,7 @@ public class BgeeXrefURLResolverTest {
     @Test
     public void testResolveBgeeNoENSG() throws Exception {
 
-        DbXref xref = DbXrefURLResolverTest.createDbXref("P51610", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
+        DbXref xref = DbXrefURLResolverDelegateTest.createDbXref("P51610", "Bgee", "http://bgee.unil.ch/bgee/bgee?uniprot_id=%s");
 
         Assert.assertEquals("http://bgee.unil.ch/bgee/bgee?uniprot_id=P51610", resolver.resolve(xref));
     }

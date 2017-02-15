@@ -1,7 +1,6 @@
 package org.nextprot.api.core.utils.dbxref.resolver;
 
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
 
 import java.util.Optional;
 
@@ -13,7 +12,7 @@ import java.util.Optional;
 public enum XRefDatabase {
 
     BGEE("Bgee",                     new BgeeXrefURLResolver()),
-    BRENDA("Brenda",                 new DbXrefURLBaseResolver()),
+    BRENDA("Brenda",                 new DefaultDbXrefURLResolver()),
     CGH_DB("CGH-DB",                 new CghDbArpXrefURLResolver()),
     CLINVAR("Clinvar",               new ClinvarXrefURLResolver()),
     COSMIC("Cosmic",                 new CosmicXrefURLResolver()),
@@ -34,8 +33,8 @@ public enum XRefDatabase {
     PEROXIBASE("PeroxiBase",         new PeroxiBaseXrefURLResolver()),
     PIR("PIR",                       new PirXrefURLResolver()),
     PROSITE("PROSITE",               new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PROSITE)),
-    PROTEOPEDIA("PROTEOPEDIA",       new DbXrefURLBaseResolver()),
-    REF_SEQ("RefSeq",                new DbXrefURLBaseResolver()),
+    PROTEOPEDIA("PROTEOPEDIA",       new DefaultDbXrefURLResolver()),
+    REF_SEQ("RefSeq",                new DefaultDbXrefURLResolver()),
     SMR("SMR",                       new SMRXrefURLResolver()),
     SRM_ATLAS("SRMAtlas",            new SrmAtlasXrefURLResolver()),
     TKG("TKG",                       new TkgXrefURLResolver()),
@@ -45,9 +44,9 @@ public enum XRefDatabase {
     ;
 
     private final String name;
-    private final DbXrefURLBaseResolver resolver;
+    private final DefaultDbXrefURLResolver resolver;
 
-    XRefDatabase(String name, DbXrefURLBaseResolver resolver) {
+    XRefDatabase(String name, DefaultDbXrefURLResolver resolver) {
 
         this.name = name;
         this.resolver = resolver;
@@ -57,7 +56,7 @@ public enum XRefDatabase {
         return name;
     }
 
-    public DbXrefURLBaseResolver getResolver() {
+    public DefaultDbXrefURLResolver getResolver() {
 
         return resolver;
     }
@@ -141,7 +140,7 @@ public enum XRefDatabase {
      * @param name the enum name
      * @return XRefDatabase enum of absent if not found
      */
-    public static Optional<XRefDatabase> optionalValueOfDbName(String name) {
+    public static Optional<XRefDatabase> valueOfName(String name) {
 
         return Optional.ofNullable(valueOfDbName(name));
     }

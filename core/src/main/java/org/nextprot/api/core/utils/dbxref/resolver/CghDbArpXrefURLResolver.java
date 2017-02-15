@@ -1,9 +1,8 @@
 package org.nextprot.api.core.utils.dbxref.resolver;
 
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
 
-class CghDbArpXrefURLResolver extends DbXrefURLBaseResolver {
+class CghDbArpXrefURLResolver extends DefaultDbXrefURLResolver {
 
     @Override
     protected String getAccessionNumber(DbXref xref) {
@@ -20,7 +19,7 @@ class CghDbArpXrefURLResolver extends DbXrefURLBaseResolver {
     }
 
     @Override
-    protected String getTemplateURL(DbXref xref) {
+    public String getTemplateURL(DbXref xref) {
 
         String accession = xref.getAccession();
 

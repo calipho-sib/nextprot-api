@@ -1,11 +1,9 @@
 package org.nextprot.api.core.utils.dbxref.resolver;
 
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
-
 import java.util.HashSet;
 import java.util.Set;
 
-class TkgXrefURLResolver extends DbXrefURLBaseResolver {
+class TkgXrefURLResolver extends DefaultDbXrefURLResolver {
 
     TkgXrefURLResolver() {
 
@@ -36,7 +34,7 @@ class TkgXrefURLResolver extends DbXrefURLBaseResolver {
             Set<StampBaseResolver> stampResolvers = new HashSet<>(2);
 
             stampResolvers.add(new StampNResolver());
-            stampResolvers.add(new DbXrefURLBaseResolver.DefaultStampSResolver());
+            stampResolvers.add(new DefaultDbXrefURLResolver.DefaultStampSResolver());
 
             return stampResolvers;
         }

@@ -1,12 +1,11 @@
 package org.nextprot.api.core.utils.dbxref.resolver;
 
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
 
 import java.util.HashSet;
 import java.util.Set;
 
-class UnigeneXrefURLResolver extends DbXrefURLBaseResolver {
+class UnigeneXrefURLResolver extends DefaultDbXrefURLResolver {
 
     public UnigeneXrefURLResolver() {
 
@@ -39,7 +38,7 @@ class UnigeneXrefURLResolver extends DbXrefURLBaseResolver {
         }
     }
 
-    private static class ResolverFactoryImpl implements DbXrefURLBaseResolver.StampResolverFactory {
+    private static class ResolverFactoryImpl implements DefaultDbXrefURLResolver.StampResolverFactory {
 
         @Override
         public Set<StampBaseResolver> createStampResolvers() {

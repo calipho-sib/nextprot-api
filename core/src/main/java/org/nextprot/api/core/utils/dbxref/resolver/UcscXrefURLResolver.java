@@ -1,11 +1,9 @@
 package org.nextprot.api.core.utils.dbxref.resolver;
 
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
-
 import java.util.HashSet;
 import java.util.Set;
 
-class UcscXrefURLResolver extends DbXrefURLBaseResolver {
+class UcscXrefURLResolver extends DefaultDbXrefURLResolver {
 
     public UcscXrefURLResolver() {
 

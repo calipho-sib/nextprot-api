@@ -39,7 +39,7 @@ public class DbXrefConverter implements DbXrefPropertyToXrefConverter {
 
         Preconditions.checkNotNull(xref);
 
-        Optional<XRefDatabase> db = XRefDatabase.optionalValueOfDbName(xref.getDatabaseName());
+        Optional<XRefDatabase> db = XRefDatabase.valueOfName(xref.getDatabaseName());
 
         if (db.isPresent() && converters.containsKey(db.get())) {
             return converters.get(db.get()).convert(xref);

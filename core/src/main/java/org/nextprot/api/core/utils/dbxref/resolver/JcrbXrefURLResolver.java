@@ -2,11 +2,10 @@ package org.nextprot.api.core.utils.dbxref.resolver;
 
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLBaseResolver;
 
 import java.util.Optional;
 
-class JcrbXrefURLResolver extends DbXrefURLBaseResolver {
+class JcrbXrefURLResolver extends DefaultDbXrefURLResolver {
 
     @Override
     protected String getAccessionNumber(DbXref xref) {
@@ -15,9 +14,9 @@ class JcrbXrefURLResolver extends DbXrefURLBaseResolver {
     }
 
     @Override
-    protected String getTemplateURL(DbXref xref) {
+    public String getTemplateURL(DbXref xref) {
 
-        Optional<XRefDatabase> db = XRefDatabase.optionalValueOfDbName(xref.getDatabaseName());
+        Optional<XRefDatabase> db = XRefDatabase.valueOfName(xref.getDatabaseName());
 
         if (db.isPresent()) {
 
