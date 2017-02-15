@@ -34,9 +34,9 @@ public class DbXrefURLResolverDelegate implements DbXrefURLResolver {
     }
 
     @Override
-    public String resolveWithAccession(DbXref xref, String accession) {
+    public String resolve(DbXref xref, String accession) {
 
-        return new DefaultDbXrefURLResolver().resolveWithAccession(xref, accession);
+         return new DefaultDbXrefURLResolver().resolve(xref, accession);
     }
 
     @Override

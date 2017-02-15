@@ -439,7 +439,7 @@ public class DbXrefURLResolverDelegateTest {
     public void testResolveHogenom() throws Exception {
 
         DbXref xref = createDbXref("HOG000007899", "HOGENOM", "http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=%u&db=HOGENOM");
-        Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=Q8NBS9&db=HOGENOM", resolver.resolveWithAccession(xref, "NX_Q8NBS9"));
+        Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=Q8NBS9&db=HOGENOM", resolver.resolve(xref, "NX_Q8NBS9"));
         Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=%u&db=HOGENOM", xref.getLinkUrl());
     }
 
@@ -462,29 +462,29 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveWithAccessionRuleBase() throws Exception {
 
-        DbXref xref = createDbXref("RU003306", "RuleBase", "http://services.uniprot.org/supplement/%u/%s");
-        Assert.assertEquals("http://services.uniprot.org/supplement/Q8NCW0/RU003306", resolver.resolveWithAccession(xref, "NX_Q8NCW0"));
+        DbXref xref = createDbXref("RU000461", "RuleBase", "http://www.uniprot.org/unirule/%s");
+        Assert.assertEquals("http://www.uniprot.org/unirule/RU000461", resolver.resolve(xref));
     }
 
     @Test
     public void testResolveWithAccessionUniPathway() throws Exception {
 
         DbXref xref = createDbXref("UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%u");
-        Assert.assertEquals("http://www.unipathway.org?upid=UPA00223&entryac=Q96I99", resolver.resolveWithAccession(xref, "NX_Q96I99"));
+        Assert.assertEquals("http://www.unipathway.org?upid=UPA00223&entryac=Q96I99", resolver.resolve(xref, "NX_Q96I99"));
     }
 
     @Test(expected = UnresolvedXrefURLException.class)
     public void testResolveWithAccessionUniPathwayMissingStampW() throws Exception {
 
         DbXref xref = createDbXref("UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%w");
-        resolver.resolveWithAccession(xref, "NX_Q96I99");
+        resolver.resolve(xref, "NX_Q96I99");
     }
 
     @Test
     public void testResolveWithUrlEncodingShouldNotThrowUnresolvedXrefURLException() throws Exception {
 
         DbXref xref = createDbXref("Thymosin_%CE%B11", "UniPathway", "http://en.wikipedia.org/wiki/%s");
-        resolver.resolveWithAccession(xref, "http://en.wikipedia.org/wiki/Thymosin_%CE%B11");
+        resolver.resolve(xref, "http://en.wikipedia.org/wiki/Thymosin_%CE%B11");
     }
 
     @Test

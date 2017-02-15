@@ -24,7 +24,7 @@ public interface DbXrefURLResolver {
      * @param accession the accession to replace %u from template
      * @return resolved url
      */
-    String resolveWithAccession(DbXref xref, String accession);
+    String resolve(DbXref xref, String accession);
 
     /**
      * @return the URL template of the given xref

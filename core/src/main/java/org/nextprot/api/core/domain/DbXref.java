@@ -85,23 +85,15 @@ public class DbXref implements Serializable {
 	public void setLinkUrl(String linkUrl) {
 		this.linkUrl = linkUrl;
 	}
-	
-	public String getResolvedUrl() {
-		if (resolvedUrl == null) {
-			try {
-				resolvedUrl = new DbXrefURLResolverDelegate().resolve(this);
-			} catch (Exception ex) {
 
-				//LOGGER.warn("xref "+accession+" (db:"+databaseName+") - " + ex.getLocalizedMessage(), ex);
-				resolvedUrl = "None";
-			}
+	public String getResolvedUrl(String entryAccession) {
+		try {
+			return new DbXrefURLResolverDelegate().resolve(this, entryAccession);
+		} catch (Exception ex) {
 
+			//LOGGER.warn("xref "+accession+" (db:"+databaseName+") - " + ex.getLocalizedMessage(), ex);
+			return  "None";
 		}
-		return resolvedUrl;
-	}
-
-	public void setResolvedUrl(String resolvedUrl) {
-		this.resolvedUrl = resolvedUrl;
 	}
 
 	public List<DbXrefProperty> getProperties() {

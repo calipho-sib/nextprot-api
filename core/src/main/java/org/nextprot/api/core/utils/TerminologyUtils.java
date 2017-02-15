@@ -111,7 +111,6 @@ public class TerminologyUtils {
 			if (url == null || url.isEmpty() || "none".equalsIgnoreCase(url)) {
 				dbref.setUrl("None");
 				dbref.setLinkUrl("None");
-				dbref.setResolvedUrl("None");
 			}
 			else {
 				dbref.setUrl(url);

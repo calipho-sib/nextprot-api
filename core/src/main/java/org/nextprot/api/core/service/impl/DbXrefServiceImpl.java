@@ -1,7 +1,10 @@
 package org.nextprot.api.core.service.impl;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.Sets;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.commons.constants.Xref2Annotation;
 import org.nextprot.api.core.dao.DbXrefDao;
@@ -9,7 +12,6 @@ import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.DbXref.DbXrefProperty;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.PublicationDbXref;
-import org.nextprot.api.core.utils.dbxref.resolver.XRefDatabase;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
@@ -17,9 +19,9 @@ import org.nextprot.api.core.service.AntibodyResourceIdsService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideNamesService;
-import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverDelegate;
 import org.nextprot.api.core.utils.dbxref.conv.DbXrefConverter;
 import org.nextprot.api.core.utils.dbxref.conv.EnsemblXrefPropertyConverter;
+import org.nextprot.api.core.utils.dbxref.resolver.XRefDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -232,9 +234,9 @@ public class DbXrefServiceImpl implements DbXrefService {
 			else
 				xref.setProperties(new ArrayList<>(propsMap.get(xref.getDbXrefId())));
 
-			if (xref.getLinkUrl().contains("%u")) {
+			/*if (xref.getLinkUrl().contains("%u")) {
 				xref.setResolvedUrl(new DbXrefURLResolverDelegate().resolveWithAccession(xref, uniqueName));
-			}
+			}*/
 
 			if (ensemblPropertiesMap.containsKey(xref.getDbXrefId())) {
 

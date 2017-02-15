@@ -28,7 +28,7 @@ public class DbXrefConverterTest {
         Assert.assertEquals("NM_000207.2", ref.getAccession());
         Assert.assertEquals("http://www.ncbi.nlm.nih.gov/nuccore/%s", ref.getLinkUrl());
         Assert.assertEquals("http://www.ncbi.nlm.nih.gov/refseq/", ref.getUrl());
-        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/nuccore/NM_000207.2", ref.getResolvedUrl());
+        Assert.assertEquals("http://www.ncbi.nlm.nih.gov/nuccore/NM_000207.2", ref.getResolvedUrl(""));
         Assert.assertEquals(XRefDatabase.REF_SEQ.getName(), ref.getDatabaseName());
         Assert.assertEquals("Sequence databases", ref.getDatabaseCategory());
         Assert.assertTrue(ref.getProperties().isEmpty());
@@ -62,7 +62,7 @@ public class DbXrefConverterTest {
         Assert.assertEquals("Sequence databases", ref.getDatabaseCategory());
         Assert.assertEquals(XRefDatabase.EMBL.getName(), ref.getDatabaseName());
         Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/%s", ref.getLinkUrl());
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/J00265", ref.getResolvedUrl());
+        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/J00265", ref.getResolvedUrl(""));
         Assert.assertEquals("http://www.ebi.ac.uk/ena", ref.getUrl());
     }
 

@@ -58,7 +58,7 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
 
     // TODO: this implementation is ugly and should be refactored
     @Override
-    public String resolveWithAccession(DbXref xref, String accession) {
+    public String resolve(DbXref xref, String accession) {
 
         if (xref != null && xref.getLinkUrl() != null && xref.getLinkUrl().contains("%u")) {
 

@@ -70,7 +70,7 @@ class DbXrefUrlVisitor implements Closeable, Flushable {
         if (xrefs != null) {
             for (DbXref xref : xrefs) {
 
-                String resolvedUrl = xref.getResolvedUrl();
+                String resolvedUrl = xref.getResolvedUrl(accession);
 
                 // url template
                 String dbName = xref.getDatabaseName();
@@ -78,13 +78,13 @@ class DbXrefUrlVisitor implements Closeable, Flushable {
 
                 if (!visitedTemplateURLs.contains(templateURL)) {
 
-                    Response response = requestUrls(xref);
+                    Response response = requestUrls(xref, accession);
 
                     int j = 0;
                     int tries = 3;
                     while (response.getResolvedUrlHttpStatus().equals("TIMEOUT") && j < tries) {
 
-                        response = requestUrls(xref);
+                        response = requestUrls(xref, accession);
                         j++;
                     }
 
@@ -166,10 +166,10 @@ class DbXrefUrlVisitor implements Closeable, Flushable {
         pw.close();
     }
 
-    private Response requestUrls(DbXref xref) throws IOException {
+    private Response requestUrls(DbXref xref, String accession) throws IOException {
 
         String urlHttpStatus = getResponseCode(xref, xref.getUrl());
-        String resolvedUrlHttpStatus = getResponseCode(xref, xref.getResolvedUrl());
+        String resolvedUrlHttpStatus = getResponseCode(xref, xref.getResolvedUrl(accession));
 
         return new Response(urlHttpStatus, resolvedUrlHttpStatus);
     }

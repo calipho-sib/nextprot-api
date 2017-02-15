@@ -35,7 +35,7 @@ public enum XRefDatabase {
     PROSITE("PROSITE",               new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.PROSITE)),
     PROTEOPEDIA("PROTEOPEDIA",       new DefaultDbXrefURLResolver()),
     REF_SEQ("RefSeq",                new DefaultDbXrefURLResolver()),
-    RULEBASE("RuleBase",             new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.RULEBASE)),
+    RULEBASE("RuleBase",             new RuleBaseXrefURLResolver()),
     SMR("SMR",                       new SmrXrefURLResolver()),
     SRM_ATLAS("SRMAtlas",            new SrmAtlasXrefURLResolver()),
     TKG("TKG",                       new TkgXrefURLResolver()),
