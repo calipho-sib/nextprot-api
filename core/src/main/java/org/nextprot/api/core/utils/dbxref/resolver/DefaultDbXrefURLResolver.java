@@ -83,6 +83,7 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
                 }
             }
 
+            // replace %u by uniprot accession
             String resolved = templateURL.replaceFirst("%u", accession.startsWith("NX_") ? accession.substring(3) : accession);
 
             return resolved.replaceFirst("%s", xref.getAccession());

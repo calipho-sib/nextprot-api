@@ -36,6 +36,7 @@ public enum XRefDatabase {
     PROTEOPEDIA("PROTEOPEDIA",       new DefaultDbXrefURLResolver()),
     REF_SEQ("RefSeq",                new DefaultDbXrefURLResolver()),
     RULEBASE("RuleBase",             new RuleBaseXrefURLResolver()),
+    SIGNOR("SIGNOR",                 new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.SIGNOR)),
     SMR("SMR",                       new SmrXrefURLResolver()),
     SRM_ATLAS("SRMAtlas",            new SrmAtlasXrefURLResolver()),
     TKG("TKG",                       new TkgXrefURLResolver()),
@@ -129,6 +130,8 @@ public enum XRefDatabase {
                 return RULEBASE;
             case "OBO":
                 return OBO;
+            case "SIGNOR":
+                return SIGNOR;
             case "SMR":
                 return SMR;
             case "PEROXIBASE":

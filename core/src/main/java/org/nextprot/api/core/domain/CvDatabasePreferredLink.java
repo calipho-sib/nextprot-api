@@ -30,7 +30,8 @@ public enum CvDatabasePreferredLink {
 	PEPTIDE_ATLAS_PROTEIN( "https://db.systemsbiology.net/sbeams/cgi/PeptideAtlas/GetProtein?protein_name=%s;organism_name=Human;action=GO"),
 	PROTEOPEDIA("http://www.proteopedia.org/wiki/index.php/%s"),
 	REFSEQ_NUCLEOTIDE( "http://www.ncbi.nlm.nih.gov/nuccore/%s"),
-	RULEBASE( "http://www.uniprot.org/unirule/%s")
+	RULEBASE( "http://www.uniprot.org/unirule/%s"),
+	SIGNOR( "http://signor.uniroma2.it/relation_result.php?id=%u&organism=human")
 	;
 
 	private final String link;
