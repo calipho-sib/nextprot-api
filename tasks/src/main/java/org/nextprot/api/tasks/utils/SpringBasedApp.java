@@ -4,6 +4,8 @@ package org.nextprot.api.tasks.utils;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
+
 /**
  * Base class for command line applications needing neXtProt spring services
  *
@@ -39,7 +41,7 @@ public abstract class SpringBasedApp<P extends CommandLineSpringParser> {
         return config;
     }
 
-    public void run() throws Exception {
+    public void run() throws IOException {
 
         startApplicationContext();
         execute();
@@ -47,7 +49,7 @@ public abstract class SpringBasedApp<P extends CommandLineSpringParser> {
     }
 
     /** The execution logic */
-    protected abstract void execute() throws Exception;
+    protected abstract void execute() throws IOException;
 
     protected void startApplicationContext() {
 

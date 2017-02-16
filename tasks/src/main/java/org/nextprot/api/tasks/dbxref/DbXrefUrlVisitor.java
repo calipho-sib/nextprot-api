@@ -68,57 +68,57 @@ class DbXrefUrlVisitor implements Closeable, Flushable {
      */
     void visit(String accession, List<DbXref> xrefs) throws IOException {
 
-        Preconditions.checkNotNull(xrefs);
+        if (xrefs != null) {
+            for (DbXref xref : xrefs) {
 
-        for (DbXref xref : xrefs) {
+                String resolvedUrl = xref.getResolvedUrl(accession);
 
-            String resolvedUrl = xref.getResolvedUrl(accession);
+                // url template
+                String dbName = xref.getDatabaseName();
+                String templateURL = dbName + "^" + xref.getLinkUrl();
 
-            // url template
-            String dbName = xref.getDatabaseName();
-            String templateURL = dbName+"^"+xref.getLinkUrl();
+                if (!visitedTemplateURLs.contains(templateURL)) {
 
-            if (!visitedTemplateURLs.contains(templateURL)) {
+                    int currentTimeOut = TIMEOUT;
 
-                int currentTimeOut = TIMEOUT;
+                    Response response = requestUrls(xref, accession, currentTimeOut);
 
-                Response response = requestUrls(xref, accession, currentTimeOut);
+                    int j = 0;
+                    int tries = 3;
 
-                int j = 0;
-                int tries = 3;
+                    while (response.getResolvedUrlHttpStatus().equals("TIMEOUT") && j < tries) {
 
-                while (response.getResolvedUrlHttpStatus().equals("TIMEOUT") && j < tries) {
+                        currentTimeOut *= 2;
+                        response = requestUrls(xref, accession, currentTimeOut);
+                        j++;
+                    }
 
-                    currentTimeOut *= 2;
-                    response = requestUrls(xref, accession, currentTimeOut);
-                    j++;
+                    String xrefAcc = xref.getAccession();
+                    String url = xref.getUrl();
+
+                    pw.write(accession);
+                    pw.write("\t");
+                    pw.write(dbName);
+                    pw.write("\t");
+                    pw.write(xrefAcc);
+                    pw.write("\t");
+                    pw.write(url);
+                    pw.write("\t");
+                    pw.write(response.getUrlHttpStatus());
+                    pw.write("\t");
+                    pw.write(resolvedUrl);
+                    pw.write("\t");
+                    pw.write(response.getResolvedUrlHttpStatus());
+                    pw.write("\n");
+
+                    if (!response.isUrlOK())
+                        addDbNameUrlStatus(response, dbName + " => " + url);
+
+                    if (!response.isResolvedUrlOK())
+                        addResolvedDbNameUrlStatus(response, dbName + " => " + resolvedUrl);
+
+                    visitedTemplateURLs.add(templateURL);
                 }
-
-                String xrefAcc = xref.getAccession();
-                String url = xref.getUrl();
-
-                pw.write(accession);
-                pw.write("\t");
-                pw.write(dbName);
-                pw.write("\t");
-                pw.write(xrefAcc);
-                pw.write("\t");
-                pw.write(url);
-                pw.write("\t");
-                pw.write(response.getUrlHttpStatus());
-                pw.write("\t");
-                pw.write(resolvedUrl);
-                pw.write("\t");
-                pw.write(response.getResolvedUrlHttpStatus());
-                pw.write("\n");
-
-                if (!response.isUrlOK())
-                    addDbNameUrlStatus(response, dbName + " => " + url);
-
-                if (!response.isResolvedUrlOK())
-                    addResolvedDbNameUrlStatus(response, dbName + " => " + resolvedUrl);
-
-                visitedTemplateURLs.add(templateURL);
             }
         }
     }

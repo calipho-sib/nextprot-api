@@ -62,6 +62,8 @@ public class DbXrefVisitorApp extends SpringBasedApp<DbXrefVisitorApp.ArgumentPa
 
     private void visitAllEntryDbXrefs() throws IOException {
 
+        LOGGER.info("**** Finding dbxrefs from entry accession...");
+
         DbXrefUrlVisitor visitor = new DbXrefUrlVisitor(outputDirectory + "/allentries-xrefs-url.tsv",
                 outputDirectory + "/allentries-xrefs-url.log");
 
@@ -109,12 +111,13 @@ public class DbXrefVisitorApp extends SpringBasedApp<DbXrefVisitorApp.ArgumentPa
 
     private void visitAllTerminologyDbXrefs() throws IOException {
 
+        LOGGER.info("**** Finding dbxrefs from terminology...");
+
         DbXrefUrlVisitor visitor = new DbXrefUrlVisitor(outputDirectory + "/allterminologies-xrefs-url.tsv",
                 outputDirectory + "/allterminologies-xrefs-url.log");
 
         TerminologyService terminologyService = getConfig().getBean(TerminologyService.class);
 
-        LOGGER.info("finding all cv terms...");
         List<CvTerm> allCvTerms = terminologyService.findAllCVTerms();
 
         ConsoleProgressBar pb = ConsoleProgressBar.determinated(allCvTerms.size());
