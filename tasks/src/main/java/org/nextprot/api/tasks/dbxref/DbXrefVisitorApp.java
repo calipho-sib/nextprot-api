@@ -193,8 +193,7 @@ public class DbXrefVisitorApp extends SpringBasedApp<DbXrefVisitorApp.ArgumentPa
             new DbXrefVisitorApp(args).run();
         } catch(Exception e) {
 
-            LOGGER.error(e.getMessage());
-            LOGGER.info("exiting app");
+            LOGGER.error(e.getMessage()+": exiting app");
             System.exit(1);
         }
     }
