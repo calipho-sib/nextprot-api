@@ -5,6 +5,7 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
+import org.nextprot.api.commons.bio.variation.impl.format.TerminationExtension;
 
 import java.util.Objects;
 
@@ -148,6 +149,16 @@ public class SequenceVariationImpl implements SequenceVariation {
             public SequenceVariationBuilder thenAddModification(AminoAcidModification mod) {
                 return new AminoAcidModificationBuilder(dataCollector, mod);
             }
+
+            @Override
+            public SequenceVariationBuilder thenInitiationExtension(int newUpstreamInitPos, AminoAcidCode newAminoAcidCode) {
+                return new InitiationExtensionBuilder(dataCollector, newUpstreamInitPos, newAminoAcidCode);
+            }
+
+            @Override
+            public SequenceVariationBuilder thenTerminationExtension(int newDownstreamTermPos, AminoAcidCode newAminoAcidCode) {
+                return new TerminationExtensionBuilder(dataCollector, newDownstreamTermPos, newAminoAcidCode);
+            }
         }
 
         abstract class SequenceVariationBuilderImpl implements SequenceVariationBuilder {
@@ -275,6 +286,40 @@ public class SequenceVariationImpl implements SequenceVariation {
             @Override
             protected SequenceChange getProteinSequenceChange() {
                 return mod;
+            }
+        }
+
+        class InitiationExtensionBuilder extends SequenceVariationBuilderImpl {
+
+            private final InitiationExtension extension;
+
+            InitiationExtensionBuilder(DataCollector dataCollector, int newUpstreamSitePos, AminoAcidCode newAminoAcidCode) {
+
+                super(dataCollector);
+                this.extension = new InitiationExtension(newUpstreamSitePos, newAminoAcidCode);
+            }
+
+            @Override
+            protected SequenceChange getProteinSequenceChange() {
+
+                return extension;
+            }
+        }
+
+        class TerminationExtensionBuilder extends SequenceVariationBuilderImpl {
+
+            private final TerminationExtension extension;
+
+            TerminationExtensionBuilder(DataCollector dataCollector, int newDownstreamTermPos, AminoAcidCode newAminoAcidCode) {
+
+                super(dataCollector);
+                this.extension = new TerminationExtension(newDownstreamTermPos, newAminoAcidCode);
+            }
+
+            @Override
+            protected SequenceChange getProteinSequenceChange() {
+
+                return extension;
             }
         }
     }
