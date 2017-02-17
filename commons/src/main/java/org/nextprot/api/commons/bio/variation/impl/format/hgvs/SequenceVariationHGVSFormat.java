@@ -33,6 +33,7 @@ public class SequenceVariationHGVSFormat extends SequenceVariationFormat {
         changeFormats.put(SequenceChange.Type.DELETION_INSERTION, new DeletionInsertionHGVSFormat());
         changeFormats.put(SequenceChange.Type.FRAMESHIFT, new FrameshiftHGVSFormat());
         changeFormats.put(SequenceChange.Type.EXTENSION_INIT, new InitiationExtensionHGVSFormat());
+        changeFormats.put(SequenceChange.Type.EXTENSION_TERM, new TerminationExtensionHGVSFormat());
     }
 
     @Override

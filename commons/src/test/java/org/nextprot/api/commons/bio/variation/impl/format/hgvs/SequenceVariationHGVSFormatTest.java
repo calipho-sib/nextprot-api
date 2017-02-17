@@ -223,12 +223,12 @@ public class SequenceVariationHGVSFormatTest {
         Assert.assertEquals("p.Met1Valext-12", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 
-    /*@Test
+    @Test
     public void testFormatExtensionCode3() throws Exception {
 
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.STOP, 110)
                 .thenTerminationExtension(17, AminoAcidCode.GLUTAMINE).build();
 
         Assert.assertEquals("p.Ter110GlnextTer17", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
-    }*/
+    }
 }
