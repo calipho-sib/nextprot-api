@@ -34,7 +34,7 @@ public class InitiationExtension implements SequenceChange<AminoAcidCode> {
 
     @Override
     public Type getType() {
-        return Type.EXTENSION;
+        return Type.EXTENSION_INIT;
     }
 
     /**
