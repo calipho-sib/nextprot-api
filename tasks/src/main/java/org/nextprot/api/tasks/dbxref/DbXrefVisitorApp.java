@@ -5,7 +5,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
-import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.DbXrefService;
@@ -81,7 +80,7 @@ public class DbXrefVisitorApp extends SpringBasedApp<DbXrefVisitorApp.ArgumentPa
                 visitor.visit(entryAc, xrefService.findDbXrefsByMaster(entryAc));
                 visitor.flush();
                 pb.incrementValue();
-            } catch (EntryNotFoundException e) {
+            } catch (Exception e) {
 
                 LOGGER.error(e.getMessage()+": skipping entry "+entryAc);
             }
@@ -127,7 +126,12 @@ public class DbXrefVisitorApp extends SpringBasedApp<DbXrefVisitorApp.ArgumentPa
 
         for (CvTerm terminology : allCvTerms) {
 
-            visitor.visit(terminology.getAccession(), terminology.getXrefs());
+            try {
+                visitor.visit(terminology.getAccession(), terminology.getXrefs());
+            } catch (IOException e) {
+
+                LOGGER.error(e.getMessage()+": skipping terminology "+terminology);
+            }
             visitor.flush();
 
             pb.incrementValue();
