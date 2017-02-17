@@ -237,6 +237,16 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_Q04771-1", 207, 207, true);
     }
 
+    @Test
+    public void shouldValidateExtensionVariantOnCanonicalIsoform() throws Exception {
+
+        Assert.fail("TO FIX: feature variant of type extension");
+
+        FeatureQueryResult result = service.validateFeature(new SingleFeatureQuery("SCN11A-p.Met1ext-5", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33"));
+
+        assertIsoformFeatureValid(result, "NX_Q9UI33-1", 1, 1, true);
+    }
+
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
 
         Assert.assertTrue(result.isSuccess());

@@ -19,7 +19,7 @@ public class SequenceVariationHGVSFormatTest {
     public void testConstrFormat() throws Exception {
 
         Collection<SequenceChange.Type> types = format.getAvailableChangeTypes();
-        Assert.assertEquals(6, types.size());
+        Assert.assertEquals(8, types.size());
     }
 
     @Test
