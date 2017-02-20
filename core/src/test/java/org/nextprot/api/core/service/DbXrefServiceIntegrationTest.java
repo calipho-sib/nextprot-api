@@ -211,7 +211,7 @@ having sum(a.cnt)=1
 	}
 
 	@Test
-	public void shouldReturnTransportActivity() {
+	public void shouldFindTransportActivityAnnotation() {
 
 		List<Annotation> annotations = this.xrefService.findDbXrefsAsAnnotationsByEntry("NX_Q86VW1").stream()
 				.filter(a -> a.getAPICategory() == AnnotationCategory.TRANSPORT_ACTIVITY)
