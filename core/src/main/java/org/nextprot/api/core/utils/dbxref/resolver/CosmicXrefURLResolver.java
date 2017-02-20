@@ -29,4 +29,10 @@ class CosmicXrefURLResolver extends DefaultDbXrefURLResolver {
 
         return accession;
     }
+
+    @Override
+    public String getValidXrefURL(String xrefURL, String databaseName) {
+
+        return "http://cancer.sanger.ac.uk/cosmic/";
+    }
 }
