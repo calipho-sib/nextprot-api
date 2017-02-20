@@ -197,7 +197,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
         } catch(Exception e) {
 
             LOGGER.error(e.getMessage()+": exiting app");
-            LOGGER.error(e.getStackTrace());
+            e.printStackTrace();
 
             System.exit(1);
         }

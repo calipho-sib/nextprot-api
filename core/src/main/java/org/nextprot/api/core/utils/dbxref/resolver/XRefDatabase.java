@@ -23,6 +23,7 @@ public enum XRefDatabase {
     GENEVESTIGATOR("Genevestigator",   new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GENEVESTIGATOR)),
     GENEVISIBLE("Genevisible",         new GenevisibleXrefURLResolver()),
     GERMONLINE("GermOnline",           new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.GERMONLINE)),
+    HAMAP_RULE("HAMAP-Rule",           new ConstantXrefDatabasebURLResolver("http://hamap.expasy.org/")),
     HPA("HPA",                         new HpaXrefURLResolver()),
     HSSP("HSSP",                       new HsspXrefURLResolver()),
     IFO("IFO",                         new JcrbXrefURLResolver()),
