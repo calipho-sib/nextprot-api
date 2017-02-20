@@ -24,4 +24,10 @@ class RuleBaseXrefURLResolver extends DefaultDbXrefURLResolver {
         // the template url no longer need accession (no %u)
         return resolve(xref);
     }
+
+    @Override
+    public String getValidXrefURL(String xrefURL, String databaseName) {
+
+        return "http://www.uniprot.org/unirule";
+    }
 }
