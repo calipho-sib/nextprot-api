@@ -12,8 +12,6 @@ import java.util.List;
 @ApiObject(name = "xref", description = "A cross reference")
 public class DbXref implements Serializable {
 
-	//private static final Log LOGGER = LogFactory.getLog(DbXref.class);
-
 	private static final long serialVersionUID = 2316953378438971441L;
 
 	@ApiObjectField(description = "The neXtProt identifier")
@@ -73,7 +71,9 @@ public class DbXref implements Serializable {
 	}
 
 	public void setUrl(String url) {
-		this.url = url;
+
+		// sometimes xref URL is not valid on NPDB (TODO: should fix the url directly there !!)
+		this.url = new DbXrefURLResolverDelegate().getValidXrefURL(url, databaseName);
 	}
 
 	public String getLinkUrl() {
