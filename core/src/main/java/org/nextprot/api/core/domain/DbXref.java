@@ -33,8 +33,6 @@ public class DbXref implements Serializable {
 
 	private String linkUrl;
 
-	private String resolvedUrl;
-
 	@ApiObjectField(description = "A list of properties. A property contains an accession, a property name and a value.")
 	private List<DbXrefProperty> properties = Collections.emptyList();
 
