@@ -1,7 +1,10 @@
 package org.nextprot.api.core.utils.dbxref.resolver;
 
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -48,6 +51,15 @@ public enum XRefDatabase {
     private final String name;
     private final DefaultDbXrefURLResolver resolver;
 
+    private static final Map<String, XRefDatabase> VALUE_OF_STRING_MAP = new HashMap<>();
+
+    static {
+        for (XRefDatabase xRefDatabase : values()) {
+
+            VALUE_OF_STRING_MAP.put(xRefDatabase.getName().toUpperCase(), xRefDatabase);
+        }
+    }
+
     XRefDatabase(String name, DefaultDbXrefURLResolver resolver) {
 
         this.name = name;
@@ -70,75 +82,12 @@ public enum XRefDatabase {
      */
     public static XRefDatabase valueOfDbName(String name) {
 
-        switch(name.toUpperCase()) {
+        String uc = name.toUpperCase();
 
-            case "WEBINFO":
-                return WEBINFO;
-            case "EMBL":
-                return EMBL;
-            case "ENSEMBL":
-                return ENSEMBL;
-            case "COSMIC":
-                return COSMIC;
-            case "CLINVAR":
-                return CLINVAR;
-            case "PIR":
-                return PIR;
-            case "GERMONLINE":
-                return GERMONLINE;
-            case "HPA":
-                return HPA;
-            case "GENEVISIBLE":
-                return GENEVISIBLE;
-            case "GENEVESTIGATOR":
-                return GENEVESTIGATOR;
-            case "UNIGENE":
-                return UNI_GENE;
-            case "UCSC":
-                return UCSC;
-            case "INTACT":
-                return INTACT;
-            case "PROSITE":
-                return PROSITE;
-            case "HSSP":
-                return HSSP;
-            case "BGEE":
-                return BGEE;
-            case "PEPTIDEATLAS":
-                return PEPTIDE_ATLAS;
-            case "SRMATLAS":
-                return SRM_ATLAS;
-            case "PDB":
-                return PDB;
-            case "TKG":
-                return TKG;
-            case "NIH-ARP":
-                return NIH_ARP;
-            case "CGH-DB":
-                return CGH_DB;
-            case "IFO":
-                return IFO;
-            case "JCRB":
-                return JCRB;
-            case "BRENDA":
-                return BRENDA;
-            case "PROTEOPEDIA":
-                return PROTEOPEDIA;
-            case "REFSEQ":
-                return REF_SEQ;
-            case "RULEBASE":
-                return RULEBASE;
-            case "OBO":
-                return OBO;
-            case "SIGNOR":
-                return SIGNOR;
-            case "SMR":
-                return SMR;
-            case "PEROXIBASE":
-                return PEROXIBASE;
-            default:
-                return null;
+        if (VALUE_OF_STRING_MAP.containsKey(uc)) {
+            return VALUE_OF_STRING_MAP.get(uc);
         }
+        return null;
     }
 
     /**
