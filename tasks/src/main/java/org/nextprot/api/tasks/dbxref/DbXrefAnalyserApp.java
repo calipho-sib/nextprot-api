@@ -35,13 +35,13 @@ import java.util.stream.Collectors;
  *
  * Created by fnikitin on 09/08/16.
  */
-public class DbXrefVisitorApp extends SpringBasedApp<DbXrefVisitorApp.ArgumentParser> {
+public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.ArgumentParser> {
 
-    private static final Logger LOGGER = Logger.getLogger(DbXrefVisitorApp.class);
+    private static final Logger LOGGER = Logger.getLogger(DbXrefAnalyserApp.class);
 
     private final String outputDirectory;
 
-    private DbXrefVisitorApp(String[] args) throws ParseException {
+    private DbXrefAnalyserApp(String[] args) throws ParseException {
 
         super(args);
         outputDirectory = getCommandLineParser().getOutputDirectory();
@@ -56,11 +56,11 @@ public class DbXrefVisitorApp extends SpringBasedApp<DbXrefVisitorApp.ArgumentPa
     @Override
     protected void execute() throws IOException {
 
-        visitAllEntryDbXrefs();
-        visitAllTerminologyDbXrefs();
+        analyseNextprotEntriesDbXrefs();
+        analyseCvTermsDbXrefs();
     }
 
-    private void visitAllEntryDbXrefs() throws IOException {
+    private void analyseNextprotEntriesDbXrefs() throws IOException {
 
         LOGGER.info("**** Finding dbxrefs from entry accession...");
 
@@ -109,7 +109,7 @@ public class DbXrefVisitorApp extends SpringBasedApp<DbXrefVisitorApp.ArgumentPa
         }
     }
 
-    private void visitAllTerminologyDbXrefs() throws IOException {
+    private void analyseCvTermsDbXrefs() throws IOException {
 
         LOGGER.info("**** Finding dbxrefs from terminology...");
 
@@ -193,7 +193,7 @@ public class DbXrefVisitorApp extends SpringBasedApp<DbXrefVisitorApp.ArgumentPa
     public static void main(String[] args) {
 
         try {
-            new DbXrefVisitorApp(args).run();
+            new DbXrefAnalyserApp(args).run();
         } catch(Exception e) {
 
             LOGGER.error(e.getMessage()+": exiting app");

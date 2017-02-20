@@ -1,6 +1,5 @@
 package org.nextprot.api.core.utils.dbxref.resolver;
 
-import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 
 import java.util.HashMap;

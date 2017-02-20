@@ -155,13 +155,16 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
     @Override
     public String getTemplateURL(DbXref xref) {
 
-        String templateURL = xref.getLinkUrl();
+        return getHttpPrefixURL(xref.getLinkUrl());
+    }
 
-        if (!templateURL.startsWith("http")) {
-            templateURL = "http://" + templateURL;
+    private String getHttpPrefixURL(String url) {
+
+        if (!url.startsWith("http")) {
+            return "http://" + url;
         }
 
-        return templateURL;
+        return url;
     }
 
     public static class DefaultStampSResolver extends StampBaseResolver {
