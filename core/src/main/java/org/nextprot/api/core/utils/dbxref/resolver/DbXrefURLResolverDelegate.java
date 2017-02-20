@@ -48,4 +48,12 @@ public class DbXrefURLResolverDelegate implements DbXrefURLResolver {
                 .map(d -> d.getResolver().getTemplateURL(xref))
                 .orElseGet(() -> "");
     }
+
+    @Override
+    public String getValidXrefURL(String xrefURL, String databaseName) {
+
+        return XRefDatabase.valueOfName(databaseName)
+                .map(d -> d.getResolver().getValidXrefURL(xrefURL, databaseName))
+                .orElseGet(() -> xrefURL);
+    }
 }

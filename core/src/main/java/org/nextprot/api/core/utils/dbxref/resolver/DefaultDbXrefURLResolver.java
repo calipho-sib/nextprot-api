@@ -158,6 +158,12 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
         return getHttpPrefixURL(xref.getLinkUrl());
     }
 
+    @Override
+    public String getValidXrefURL(String xrefURL, String databaseName) {
+
+        return getHttpPrefixURL(xrefURL);
+    }
+
     private String getHttpPrefixURL(String url) {
 
         if (!url.startsWith("http")) {

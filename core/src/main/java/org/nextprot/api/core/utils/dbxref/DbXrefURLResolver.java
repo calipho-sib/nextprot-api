@@ -30,4 +30,12 @@ public interface DbXrefURLResolver {
      * @return the URL template of the given xref
      */
     String getTemplateURL(DbXref xref);
+
+    /**
+     * Get valid Xref URL (when bad value from npdb)
+     * @param xrefURL the xref URL
+     * @param databaseName the xref database name
+     * @return a valid xref URL
+     */
+    String getValidXrefURL(String xrefURL, String databaseName);
 }
