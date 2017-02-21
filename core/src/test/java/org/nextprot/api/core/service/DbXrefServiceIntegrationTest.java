@@ -233,6 +233,7 @@ having sum(a.cnt)=1
 
 		Assert.assertEquals("database", evidence.getResourceType());
 		Assert.assertEquals("2.A.1.19.12", evidence.getResourceAccession());
+		Assert.assertEquals("ECO:0000305", evidence.getEvidenceCodeAC());
 		Assert.assertEquals(QualityQualifier.GOLD.toString(), evidence.getQualityQualifier());
 
 		// Assert Xref
