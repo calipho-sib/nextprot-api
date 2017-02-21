@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.impl.format.TerminationExtension;
 
 public class SequenceVariationImplTest {
 
@@ -185,9 +184,9 @@ public class SequenceVariationImplTest {
         Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(1, pm.getLastChangingAminoAcidPos());
 
-        Assert.assertTrue(pm.getSequenceChange() instanceof InitiationExtension);
-        Assert.assertEquals(-5, ((InitiationExtension)pm.getSequenceChange()).getNewUpstreamInitPos());
-        Assert.assertEquals(AminoAcidCode.METHIONINE, ((InitiationExtension)pm.getSequenceChange()).getValue());
+        Assert.assertTrue(pm.getSequenceChange() instanceof ExtensionInitiation);
+        Assert.assertEquals(-5, ((ExtensionInitiation)pm.getSequenceChange()).getNewPos());
+        Assert.assertEquals(AminoAcidCode.METHIONINE, ((ExtensionInitiation)pm.getSequenceChange()).getValue());
     }
 
     // p.Met1Valext-12
@@ -203,9 +202,9 @@ public class SequenceVariationImplTest {
         Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getLastChangingAminoAcid());
         Assert.assertEquals(1, pm.getLastChangingAminoAcidPos());
 
-        Assert.assertTrue(pm.getSequenceChange() instanceof InitiationExtension);
-        Assert.assertEquals(-12, ((InitiationExtension)pm.getSequenceChange()).getNewUpstreamInitPos());
-        Assert.assertEquals(AminoAcidCode.VALINE, ((InitiationExtension)pm.getSequenceChange()).getValue());
+        Assert.assertTrue(pm.getSequenceChange() instanceof ExtensionInitiation);
+        Assert.assertEquals(-12, ((ExtensionInitiation)pm.getSequenceChange()).getNewPos());
+        Assert.assertEquals(AminoAcidCode.VALINE, ((ExtensionInitiation)pm.getSequenceChange()).getValue());
     }
 
     // p.Ter110GlnextTer17
@@ -221,8 +220,8 @@ public class SequenceVariationImplTest {
         Assert.assertEquals(AminoAcidCode.STOP, pm.getLastChangingAminoAcid());
         Assert.assertEquals(110, pm.getLastChangingAminoAcidPos());
 
-        Assert.assertTrue(pm.getSequenceChange() instanceof TerminationExtension);
-        Assert.assertEquals(17, ((TerminationExtension)pm.getSequenceChange()).getNewDownstreamTermPos());
-        Assert.assertEquals(AminoAcidCode.GLUTAMINE, ((TerminationExtension)pm.getSequenceChange()).getValue());
+        Assert.assertTrue(pm.getSequenceChange() instanceof ExtensionTermination);
+        Assert.assertEquals(17, ((ExtensionTermination)pm.getSequenceChange()).getNewPos());
+        Assert.assertEquals(AminoAcidCode.GLUTAMINE, ((ExtensionTermination)pm.getSequenceChange()).getValue());
     }
 }

@@ -5,7 +5,6 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
-import org.nextprot.api.commons.bio.variation.impl.format.TerminationExtension;
 
 import java.util.Objects;
 
@@ -291,12 +290,12 @@ public class SequenceVariationImpl implements SequenceVariation {
 
         class InitiationExtensionBuilder extends SequenceVariationBuilderImpl {
 
-            private final InitiationExtension extension;
+            private final ExtensionInitiation extension;
 
             InitiationExtensionBuilder(DataCollector dataCollector, int newUpstreamSitePos, AminoAcidCode newAminoAcidCode) {
 
                 super(dataCollector);
-                this.extension = new InitiationExtension(newUpstreamSitePos, newAminoAcidCode);
+                this.extension = new ExtensionInitiation(newUpstreamSitePos, newAminoAcidCode);
             }
 
             @Override
@@ -308,12 +307,12 @@ public class SequenceVariationImpl implements SequenceVariation {
 
         class TerminationExtensionBuilder extends SequenceVariationBuilderImpl {
 
-            private final TerminationExtension extension;
+            private final ExtensionTermination extension;
 
             TerminationExtensionBuilder(DataCollector dataCollector, int newDownstreamTermPos, AminoAcidCode newAminoAcidCode) {
 
                 super(dataCollector);
-                this.extension = new TerminationExtension(newDownstreamTermPos, newAminoAcidCode);
+                this.extension = new ExtensionTermination(newDownstreamTermPos, newAminoAcidCode);
             }
 
             @Override

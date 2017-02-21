@@ -5,7 +5,7 @@ import org.nextprot.api.commons.bio.variation.SequenceChangeFormat;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
 import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
-import org.nextprot.api.commons.bio.variation.impl.InitiationExtension;
+import org.nextprot.api.commons.bio.variation.impl.ExtensionInitiation;
 
 import java.text.ParseException;
 import java.util.regex.Matcher;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 /**
  * Specifications: http://varnomen.hgvs.org/recommendations/protein/variant/extension/
  */
-public class InitiationExtensionHGVSFormat implements SequenceChangeFormat<InitiationExtension> {
+public class ExtensionInitiationHGVSFormat implements SequenceChangeFormat<ExtensionInitiation> {
 
     private static final Pattern PATTERN = Pattern.compile("^p\\.M(?:et)?1((?:[A-Z])(?:[a-z]{2})?)?ext(-\\d+)$");
 
@@ -46,13 +46,13 @@ public class InitiationExtensionHGVSFormat implements SequenceChangeFormat<Initi
     }
 
     @Override
-    public void format(StringBuilder sb, InitiationExtension change, AminoAcidCode.CodeType type) {
+    public void format(StringBuilder sb, ExtensionInitiation change, AminoAcidCode.CodeType type) {
 
         if (change.getValue() != AminoAcidCode.METHIONINE) {
 
             sb.append(AminoAcidCode.formatAminoAcidCode(type, change.getValue()));
         }
 
-        sb.append("ext").append(change.getNewUpstreamInitPos());
+        sb.append("ext").append(change.getNewPos());
     }
 }
