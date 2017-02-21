@@ -14,6 +14,8 @@ public interface SequenceChange<V> {
         INSERTION,
         SUBSTITUTION,
         DELETION_INSERTION,
+        EXTENSION_INIT,
+        EXTENSION_TERM,
         PTM
     }
 

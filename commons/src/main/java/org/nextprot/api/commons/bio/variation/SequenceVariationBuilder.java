@@ -38,6 +38,12 @@ public interface SequenceVariationBuilder {
 
         /** modifies affected amino-acid with modification */
         SequenceVariationBuilder thenAddModification(AminoAcidModification modification);
+
+        /** change translation initiation (start of stop codon) extending the normal translational reading frame at the
+         * N- or C-terminal end with one or more amino acids */
+        SequenceVariationBuilder thenInitiationExtension(int newUpstreamInitPos, AminoAcidCode newAminoAcidCode);
+
+        SequenceVariationBuilder thenTerminationExtension(int newDownstreamTermPos, AminoAcidCode newVariantTermAminoAcidCode);
     }
 
     /** mutations affecting any sequence of amino-acid */
