@@ -14,7 +14,7 @@ import java.util.Optional;
 public enum XRefDatabase {
 
     BGEE("Bgee",                       new BgeeXrefURLResolver()),
-    BRENDA("Brenda",                   new DefaultDbXrefURLResolver()),
+    BRENDA("BRENDA",                   new ConstantLinkXrefURLResolver(CvDatabasePreferredLink.BRENDA)),
     CGH_DB("CGH-DB",                   new CghDbArpXrefURLResolver()),
     CLINVAR("Clinvar",                 new ClinvarXrefURLResolver()),
     COSMIC("Cosmic",                   new CosmicXrefURLResolver()),
