@@ -10,6 +10,8 @@ import java.util.*;
 /**
  * Description: <br> * 
  * @author Pam inspired from Oliv's OWLAnnotationCategoryOld version <br>
+ *
+ * NOTE: WHEN ADDING NEW ENUM DO NOT FORGET TO UPDATE "annotation-category" element of nextprot-export-vx.xsd
  */
 
 public enum AnnotationCategory implements Serializable {

@@ -1,18 +1,5 @@
 package org.nextprot.api.web;
 
-import static org.junit.Assert.fail;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.PrintWriter;
-import java.util.Arrays;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.XMLPrettyPrinter;
@@ -23,7 +10,19 @@ import org.nextprot.api.web.service.impl.writer.EntryXMLStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles(profiles = {"cache"})
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.Arrays;
+
+import static org.junit.Assert.fail;
+
+@ActiveProfiles()
 public class XSDValidationTest extends WebIntegrationBaseTest {
 
 
