@@ -166,8 +166,8 @@ having sum(a.cnt)=1
 
             if (xref.getDbXrefId() == 1272250) {
 
-                Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u", xref.getLinkUrl());
-                Assert.assertEquals("http://www.ncbi.nlm.nih.gov/protein/NP_000198.1", xref.getResolvedUrl("NX_P01308"));
+                Assert.assertEquals("https://www.ncbi.nlm.nih.gov/protein/%s", xref.getLinkUrl());
+                Assert.assertEquals("https://www.ncbi.nlm.nih.gov/protein/NP_000198.1", xref.getResolvedUrl("NX_P01308"));
 
                 break;
             }

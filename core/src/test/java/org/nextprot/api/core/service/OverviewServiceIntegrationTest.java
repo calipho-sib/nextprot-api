@@ -115,6 +115,7 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		));
 	}
 
+	// TODO: it seems that entity name id "MP_" are not stable: we should not assert against their equality
 	@Test
 	public void testChainNamesForP51659() {
 
@@ -125,15 +126,20 @@ public class OverviewServiceIntegrationTest extends CoreUnitBaseTest {
 		Assert.assertEquals(2, chainNames.size());
 
 		Assert.assertTrue(new EntityNameCollectionTester(chainNames).contains(Arrays.asList(
-				mockEntityNameWithOtherRecNames("MP_14034499", "(3R)-hydroxyacyl-CoA dehydrogenase", "protein", "full", Collections.singletonList(
-						mockEntityName("MP_14034498", "1.1.1.n12", "chain", "EC")
-				)),
-				mockEntityNameWithSynonymsAndOtherRecNames("MP_14034503", "Enoyl-CoA hydratase 2", "protein", "full", Collections.singletonList(
-						mockEntityName("MP_14034500", "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "chain", "full")
-				), Arrays.asList(
-						mockEntityName("MP_14034501", "4.2.1.107", "chain", "EC"),
-						mockEntityName("MP_14034502", "4.2.1.119", "chain", "EC")
-				))
+				mockEntityNameWithOtherRecNames("MP_21604507", "(3R)-hydroxyacyl-CoA dehydrogenase", "protein", "full",
+						Collections.singletonList(
+							mockEntityName("MP_21604508", "1.1.1.n12", "chain", "EC")
+						)
+				),
+				mockEntityNameWithSynonymsAndOtherRecNames("MP_21604503", "Enoyl-CoA hydratase 2", "protein", "full",
+						Collections.singletonList(
+							mockEntityName("MP_21604506", "3-alpha,7-alpha,12-alpha-trihydroxy-5-beta-cholest-24-enoyl-CoA hydratase", "chain", "full")
+						),
+						Arrays.asList(
+							mockEntityName("MP_21604504", "4.2.1.107", "chain", "EC"),
+							mockEntityName("MP_21604505", "4.2.1.119", "chain", "EC")
+						)
+				)
 		)));
 	}
 
