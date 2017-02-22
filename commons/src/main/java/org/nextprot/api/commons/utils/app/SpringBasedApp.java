@@ -1,4 +1,4 @@
-package org.nextprot.api.tasks.utils;
+package org.nextprot.api.commons.utils.app;
 
 
 import org.apache.commons.cli.ParseException;

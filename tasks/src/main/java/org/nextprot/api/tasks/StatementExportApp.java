@@ -8,8 +8,8 @@ import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.service.MasterIdentifierService;
-import org.nextprot.api.tasks.utils.CommandLineSpringParser;
-import org.nextprot.api.tasks.utils.SpringBasedApp;
+import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
+import org.nextprot.api.commons.utils.app.SpringBasedApp;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -41,7 +41,7 @@ public class StatementExportApp extends SpringBasedApp<StatementExportApp.Argume
 
     @Override
     protected ArgumentParser newCommandLineParser() {
-        return new ArgumentParser();
+        return new ArgumentParser("statementexporter");
     }
 
     @Override
@@ -84,6 +84,10 @@ public class StatementExportApp extends SpringBasedApp<StatementExportApp.Argume
         private StatementExporter.Config exporterConfig;
         private List<String> specificGeneListToExport;
         private String outputDirname;
+
+        public ArgumentParser(String appName) {
+            super(appName);
+        }
 
         @Override
         protected Options createOptions() {
