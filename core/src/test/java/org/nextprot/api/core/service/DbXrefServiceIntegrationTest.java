@@ -168,8 +168,8 @@ having sum(a.cnt)=1
 
             if (xref.getDbXrefId() == 1272250) {
 
-                Assert.assertEquals("http://www.ncbi.nlm.nih.gov/protein/%s", xref.getLinkUrl());
-                Assert.assertEquals("http://www.ncbi.nlm.nih.gov/protein/NP_000198.1", xref.getResolvedUrl());
+                Assert.assertEquals("https://www.ncbi.nlm.nih.gov/protein/%s", xref.getLinkUrl());
+                Assert.assertEquals("https://www.ncbi.nlm.nih.gov/protein/NP_000198.1", xref.getResolvedUrl("NX_P01308"));
 
                 break;
             }
@@ -186,7 +186,7 @@ having sum(a.cnt)=1
 			if (xref.getDbXrefId() == 16387756) {
 
 				Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=%u&db=HOGENOM", xref.getLinkUrl());
-				Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=P01308&db=HOGENOM", xref.getResolvedUrl());
+				Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=P01308&db=HOGENOM", xref.getResolvedUrl("NX_P01308"));
 
                 break;
 			}
@@ -202,8 +202,8 @@ having sum(a.cnt)=1
 
 			if (xref.getDbXrefId() == 964246) {
 
-				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s", xref.getLinkUrl());
-				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.1", xref.getResolvedUrl());
+				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u&OrganismID=%d", xref.getLinkUrl());
+				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.1&UniProtAcc=Q9BXA6", xref.getResolvedUrl("NX_Q9BXA6"));
 
                 break;
 			}

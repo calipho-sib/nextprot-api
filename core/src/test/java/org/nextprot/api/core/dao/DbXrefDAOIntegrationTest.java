@@ -65,7 +65,7 @@ limit 100
 		Mockito.when(dbxref.getDatabaseCategory()).thenReturn(dbCat);
 		Mockito.when(dbxref.getDatabaseName()).thenReturn(dbName);
 		Mockito.when(dbxref.getLinkUrl()).thenReturn(linkUrl);
-		Mockito.when(dbxref.getResolvedUrl()).thenReturn(resolvedUrl);
+		Mockito.when(dbxref.getResolvedUrl("")).thenReturn(resolvedUrl);
 		Mockito.when(dbxref.getUrl()).thenReturn(url);
 
 		return dbxref;
@@ -80,12 +80,7 @@ limit 100
 		@Override
 		protected Function<DbXref, Long> createElementToKeyFunc() {
 
-			return new Function<DbXref, Long>() {
-				@Override
-				public Long apply(DbXref xref) {
-					return xref.getDbXrefId();
-				}
-			};
+			return xref -> xref.getDbXrefId();
 		}
 
 		@Override
@@ -95,7 +90,7 @@ limit 100
 					expectedElement.getDatabaseCategory().equals(dbxref.getDatabaseCategory()) &&
 					expectedElement.getDatabaseName().equals(dbxref.getDatabaseName()) &&
 					expectedElement.getLinkUrl().equals(dbxref.getLinkUrl()) &&
-					expectedElement.getResolvedUrl().equals(dbxref.getResolvedUrl()) &&
+					expectedElement.getResolvedUrl("").equals(dbxref.getResolvedUrl("")) &&
 					expectedElement.getUrl().equals(dbxref.getUrl());
 		}
 	}

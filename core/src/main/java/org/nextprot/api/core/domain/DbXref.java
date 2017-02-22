@@ -3,7 +3,7 @@ package org.nextprot.api.core.domain;
 import com.google.common.base.Preconditions;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
-import org.nextprot.api.core.utils.dbxref.DbXrefURLResolver;
+import org.nextprot.api.core.utils.dbxref.resolver.DbXrefURLResolverDelegate;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -11,8 +11,6 @@ import java.util.List;
 
 @ApiObject(name = "xref", description = "A cross reference")
 public class DbXref implements Serializable {
-
-	//private static final Log LOGGER = LogFactory.getLog(DbXref.class);
 
 	private static final long serialVersionUID = 2316953378438971441L;
 
@@ -32,8 +30,6 @@ public class DbXref implements Serializable {
 	private String url;
 
 	private String linkUrl;
-
-	private String resolvedUrl;
 
 	@ApiObjectField(description = "A list of properties. A property contains an accession, a property name and a value.")
 	private List<DbXrefProperty> properties = Collections.emptyList();
@@ -75,7 +71,9 @@ public class DbXref implements Serializable {
 	}
 
 	public void setUrl(String url) {
-		this.url = url;
+
+		// sometimes xref URL is not valid on NPDB (TODO: should fix the url directly there !!)
+		this.url = new DbXrefURLResolverDelegate().getValidXrefURL(url, databaseName);
 	}
 
 	public String getLinkUrl() {
@@ -85,23 +83,15 @@ public class DbXref implements Serializable {
 	public void setLinkUrl(String linkUrl) {
 		this.linkUrl = linkUrl;
 	}
-	
-	public String getResolvedUrl() {
-		if (resolvedUrl == null) {
-			try {
-				resolvedUrl = DbXrefURLResolver.getInstance().resolve(this);
-			} catch (Exception ex) {
 
-				//LOGGER.warn("xref "+accession+" (db:"+databaseName+") - " + ex.getLocalizedMessage(), ex);
-				resolvedUrl = "None";
-			}
+	public String getResolvedUrl(String entryAccession) {
+		try {
+			return new DbXrefURLResolverDelegate().resolve(this, entryAccession);
+		} catch (Exception ex) {
 
+			//LOGGER.warn("xref "+accession+" (db:"+databaseName+") - " + ex.getLocalizedMessage(), ex);
+			return  "None";
 		}
-		return resolvedUrl;
-	}
-
-	public void setResolvedUrl(String resolvedUrl) {
-		this.resolvedUrl = resolvedUrl;
 	}
 
 	public List<DbXrefProperty> getProperties() {

@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.IdentifierOffset;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.XRefDatabase;
+import org.nextprot.api.core.utils.dbxref.resolver.XRefDatabase;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,7 +33,7 @@ public class EmblDbXrefConverterTest {
         Assert.assertEquals("Sequence databases", ref.getDatabaseCategory());
         Assert.assertEquals(XRefDatabase.EMBL.getName(), ref.getDatabaseName());
         Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/%s", ref.getLinkUrl());
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/J00265", ref.getResolvedUrl());
+        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/J00265", ref.getResolvedUrl(""));
         Assert.assertEquals("http://www.ebi.ac.uk/ena", ref.getUrl());
     }
 
@@ -55,7 +55,7 @@ public class EmblDbXrefConverterTest {
         Assert.assertEquals("Sequence databases", ref.getDatabaseCategory());
         Assert.assertEquals(XRefDatabase.EMBL.getName(), ref.getDatabaseName());
         Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/%s", ref.getLinkUrl());
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AAW83741", ref.getResolvedUrl());
+        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AAW83741.1", ref.getResolvedUrl(""));
         Assert.assertEquals("http://www.ebi.ac.uk/ena", ref.getUrl());
     }
 
@@ -121,6 +121,6 @@ public class EmblDbXrefConverterTest {
         Assert.assertEquals(expectedDbCategory, xrefToCheck.getDatabaseCategory());
         Assert.assertEquals(expectedUrl, xrefToCheck.getUrl());
         Assert.assertEquals(expectedLinkUrl, xrefToCheck.getLinkUrl());
-        Assert.assertEquals(expectedResolvedUrl, xrefToCheck.getResolvedUrl());
+        Assert.assertEquals(expectedResolvedUrl, xrefToCheck.getResolvedUrl(""));
     }
 }

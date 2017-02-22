@@ -19,6 +19,7 @@ import java.util.logging.SimpleFormatter;
 class DbXrefUrlVisitor implements Closeable, Flushable {
 
     private static final Logger LOGGER = Logger.getLogger(DbXrefUrlVisitor.class.getSimpleName());
+    private static final int TIMEOUT = 5000;
 
     private final PrintWriter pw;
     private final Set<String> visitedTemplateURLs;
@@ -70,21 +71,25 @@ class DbXrefUrlVisitor implements Closeable, Flushable {
         if (xrefs != null) {
             for (DbXref xref : xrefs) {
 
-                String resolvedUrl = xref.getResolvedUrl();
+                String resolvedUrl = xref.getResolvedUrl(accession);
 
                 // url template
                 String dbName = xref.getDatabaseName();
-                String templateURL = dbName+"^"+xref.getLinkUrl();
+                String templateURL = dbName + "^" + xref.getLinkUrl();
 
                 if (!visitedTemplateURLs.contains(templateURL)) {
 
-                    Response response = requestUrls(xref);
+                    int currentTimeOut = TIMEOUT;
+
+                    Response response = requestUrls(xref, accession, currentTimeOut);
 
                     int j = 0;
                     int tries = 3;
+
                     while (response.getResolvedUrlHttpStatus().equals("TIMEOUT") && j < tries) {
 
-                        response = requestUrls(xref);
+                        currentTimeOut *= 2;
+                        response = requestUrls(xref, accession, currentTimeOut);
                         j++;
                     }
 
@@ -166,23 +171,24 @@ class DbXrefUrlVisitor implements Closeable, Flushable {
         pw.close();
     }
 
-    private Response requestUrls(DbXref xref) throws IOException {
+    private Response requestUrls(DbXref xref, String accession, int timeOut) throws IOException {
 
-        String urlHttpStatus = getResponseCode(xref, xref.getUrl());
-        String resolvedUrlHttpStatus = getResponseCode(xref, xref.getResolvedUrl());
+        String urlHttpStatus = getResponseCode(xref, xref.getUrl(), timeOut);
+        String resolvedUrlHttpStatus = getResponseCode(xref, xref.getResolvedUrl(accession), timeOut);
 
         return new Response(urlHttpStatus, resolvedUrlHttpStatus);
     }
 
-    private String getResponseCode(DbXref xref, String url) throws IOException {
+    private String getResponseCode(DbXref xref, String url, int timeOut) {
 
+        String status="-1";
         String response;
         HttpURLConnection con = null;
-        String xrefAccAndDbname = xref.getAccession()+"@"+xref.getDatabaseName();
+        String headerMessage = "xref="+xref.getAccession()+";db="+xref.getDatabaseName()+";url="+url;
 
         if (url == null || url.equalsIgnoreCase("none") || url.isEmpty()) {
 
-            LOGGER.info(xrefAccAndDbname+": No possible request for "+url+"\n");
+            LOGGER.info(headerMessage+"; Cannot execute request\n");
             return "UNDEFINED URL";
         }
 
@@ -193,34 +199,46 @@ class DbXrefUrlVisitor implements Closeable, Flushable {
 
             con.setRequestMethod("HEAD");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            con.setConnectTimeout(5000);
-            con.setReadTimeout(5000);
-
-            LOGGER.info(xrefAccAndDbname+": Http HEAD request "+url+"\n");
+            con.setConnectTimeout(timeOut);
+            con.setReadTimeout(timeOut);
             con.connect();
-            response = String.valueOf(con.getResponseCode());
+
+            status = String.valueOf(con.getResponseCode());
+            LOGGER.info(headerMessage+";status="+status);
+            response = status;
 
         } catch (SocketTimeoutException e) {
-            response = "TIMEOUT";
-            LOGGER.warning(xrefAccAndDbname+": "+response+"; "+e.getMessage()+"\n");
+
+            response = "SOCKET TIMEOUT EXCEPTION";
+            LOGGER.warning(buildErrorMessage(e, status, response, headerMessage));
         } catch (ProtocolException e) {
-            response = "PROTOCOL";
-            LOGGER.warning(xrefAccAndDbname+": "+response+"; "+e.getMessage()+"\n");
+
+            response = "PROTOCOL EXCEPTION";
+            LOGGER.warning(buildErrorMessage(e, status, response, headerMessage));
         } catch (MalformedURLException e) {
-            response = "MALFORMEDURL";
-            LOGGER.warning(xrefAccAndDbname+": "+response+"; "+e.getMessage()+"\n");
+
+            response = "MALFORMEDURL EXCEPTION";
+            LOGGER.warning(buildErrorMessage(e, status, response, headerMessage));
         } catch (IOException e) {
-            response = "IO";
-            LOGGER.warning(xrefAccAndDbname+": "+response+"; "+e.getMessage()+"\n");
+
+            response = "IO EXCEPTION";
+            LOGGER.warning(buildErrorMessage(e, status, response, headerMessage));
+
         } catch (IllegalArgumentException e) {
-            response = "ILLEGAL";
-            LOGGER.info(xrefAccAndDbname+": "+e.getLocalizedMessage());
+
+            response = "ILLEGAL ARGUMENT EXCEPTION";
+            LOGGER.warning(buildErrorMessage(e, status, response, headerMessage));
         }
 
         if (con != null)
             con.disconnect();
 
         return response;
+    }
+
+    private String buildErrorMessage(Exception e, String status, String response, String headerMessage) {
+
+        return headerMessage+";status="+status+";response="+response+";message="+e.getMessage();
     }
 
     private static class Response {
