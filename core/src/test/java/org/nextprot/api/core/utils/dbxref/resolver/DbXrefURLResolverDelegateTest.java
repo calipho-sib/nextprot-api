@@ -3,6 +3,7 @@ package org.nextprot.api.core.utils.dbxref.resolver;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.nextprot.api.core.domain.CvDatabasePreferredLink;
 import org.nextprot.api.core.domain.DbXref;
 
 import java.util.Collections;
@@ -446,9 +447,9 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveWithDefaultResolverBrenda() throws Exception {
 
-        DbXref xref = createDbXref("2.7.11.21", "BRENDA", "http://www.brenda-enzymes.org/enzyme.php?ecno=%s");
-        Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.21", resolver.resolve(xref));
-        Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s", xref.getLinkUrl());
+        DbXref xref = createDbXref("2.7.11.21", "BRENDA", CvDatabasePreferredLink.BRENDA.getLink());
+        Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.21&UniProtAcc=Q8NBS9", resolver.resolve(xref, "NX_Q8NBS9"));
+        Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u", xref.getLinkUrl());
     }
 
     @Test

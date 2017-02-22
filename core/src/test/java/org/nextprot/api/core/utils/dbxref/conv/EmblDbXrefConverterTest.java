@@ -55,7 +55,7 @@ public class EmblDbXrefConverterTest {
         Assert.assertEquals("Sequence databases", ref.getDatabaseCategory());
         Assert.assertEquals(XRefDatabase.EMBL.getName(), ref.getDatabaseName());
         Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/%s", ref.getLinkUrl());
-        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AAW83741.1", ref.getResolvedUrl(""));
+        Assert.assertEquals("http://www.ebi.ac.uk/ena/data/view/AAW83741", ref.getResolvedUrl(""));
         Assert.assertEquals("http://www.ebi.ac.uk/ena", ref.getUrl());
     }
 
