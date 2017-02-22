@@ -1,4 +1,4 @@
-package org.nextprot.api.tasks.dbxref;
+package org.nextprot.api.core.app.dbxrefanalyser;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
@@ -7,12 +7,12 @@ import org.apache.commons.cli.ParseException;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.EntryNotFoundException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
+import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
+import org.nextprot.api.commons.utils.app.SpringBasedApp;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.tasks.utils.CommandLineSpringParser;
-import org.nextprot.api.tasks.utils.ConsoleProgressBar;
-import org.nextprot.api.tasks.utils.SpringBasedApp;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -50,7 +50,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
     @Override
     public ArgumentParser newCommandLineParser() {
 
-        return new ArgumentParser();
+        return new ArgumentParser("dbxrefanalyser");
     }
 
     @Override
@@ -149,6 +149,10 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
         private String outputDirectory;
         private String entriesFilename;
 
+        public ArgumentParser(String appName) {
+            super(appName);
+        }
+
         @Override
         protected Options createOptions() {
 
@@ -158,7 +162,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
             options.addOption(OptionBuilder.withArgName("out").hasArg().withDescription("output directory").create("o"));
 
             //noinspection AccessStaticViaInstance
-            options.addOption(OptionBuilder.withArgName("file").hasArg().withDescription("input file containing entries to visit").create("f"));
+            options.addOption(OptionBuilder.withArgName("file").hasArg().withDescription("input file containing neXtProt entry accessions to analyse").create("f"));
 
             return options;
         }

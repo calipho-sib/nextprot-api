@@ -1,4 +1,4 @@
-package org.nextprot.api.tasks.utils;
+package org.nextprot.api.commons.utils.app;
 
 import java.io.PrintStream;
 import java.util.Objects;

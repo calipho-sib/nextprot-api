@@ -1,4 +1,4 @@
-package org.nextprot.api.tasks.dbxref;
+package org.nextprot.api.core.app.dbxrefanalyser;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.DbXref;
