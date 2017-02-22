@@ -237,6 +237,25 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_Q04771-1", 207, 207, true);
     }
 
+    @Test
+    public void shouldValidateExtensionVariantOnCanonicalIsoform() throws Exception {
+
+        // RAD50-p.*1313Tyrext*66 (CAVA-VD024428)
+        FeatureQueryResult result = service.validateFeature(new SingleFeatureQuery("RAD50-p.Ter1313TyrextTer66", AnnotationCategory.VARIANT.getApiTypeName(), ""));
+
+        assertIsoformFeatureValid(result, "NX_Q92878-1", 1313, 1313, true);
+    }
+
+    @Test
+    public void shouldValidateExtensionVariantOnCanonicalIsoformBadPos() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("RAD50-p.Ter1314TyrextTer66", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.validateFeature(query);
+
+        assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new OutOfBoundSequencePositionException(query, 1313));
+    }
+
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
 
         Assert.assertTrue(result.isSuccess());

@@ -2,6 +2,9 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
+    Date:		2017/02/21
+    1) New annotation category added: transport-activity
+
 	Date:		2016/08/30
 	Description: Major version change: 
 	1) New annotation categories added: phenotypic-variation, mammalian-phenotype, protein-property
@@ -12,7 +15,7 @@
 	Copyright (c) 2016 SIB Swiss Institute of Bioinformatics
 	Distributed under the Creative Commons Attribution-NoDerivs License
 *******************************************************************************-->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.0">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="2.1">
 
 	<!-- Root element nextprot export definition begins -->
 	<xs:element name="nextprot-export">
@@ -977,6 +980,7 @@
 						<xs:enumeration value="topological-domain"/>
                         <xs:enumeration value="transit-peptide"/>
                         <xs:enumeration value="transmembrane-region"/>
+                        <xs:enumeration value="transport-activity"/>
 						<xs:enumeration value="turn"/>
 						<xs:enumeration value="uniprot-keyword"/>
 						<xs:enumeration value="variant"/>
