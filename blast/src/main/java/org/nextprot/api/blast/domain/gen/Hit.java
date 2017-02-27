@@ -16,7 +16,8 @@ import java.util.List;
     "num",
     "description",
     "len",
-    "hsps"
+    "hsps",
+    "global_identity_percent"
 })
 public class Hit implements Serializable
 {
@@ -29,7 +30,10 @@ public class Hit implements Serializable
     private int len;
     @JsonProperty("hsps")
     private List<Hsp> hsps = null;
-    private final static long serialVersionUID = 8937818461376471395L;
+    @JsonProperty("global_identity_percent")
+    private Float globalIdentityPercent;
+
+    private final static long serialVersionUID = 2L;
 
     /**
      * 
@@ -109,5 +113,15 @@ public class Hit implements Serializable
     @JsonProperty("hsps")
     public void setHsps(List<Hsp> hsps) {
         this.hsps = hsps;
+    }
+
+    @JsonProperty("global_identity_percent")
+    public Float getGlobalIdentityPercent() {
+        return globalIdentityPercent;
+    }
+
+    @JsonProperty("global_identity_percent")
+    public void setGlobalIdentityPercent(Float globalIdentityPercent) {
+        this.globalIdentityPercent = globalIdentityPercent;
     }
 }

@@ -27,7 +27,7 @@ import java.io.Serializable;
     "qseq",
     "hseq",
     "midline",
-    "identity_percent",
+    "identity_percent"
 })
 public class Hsp implements Serializable
 {
