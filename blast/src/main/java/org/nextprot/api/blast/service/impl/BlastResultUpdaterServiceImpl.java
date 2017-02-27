@@ -44,9 +44,9 @@ public class BlastResultUpdaterServiceImpl implements BlastResultUpdaterService 
 
         for (Hit hit : search.getHits()) {
 
-            updateHit(hit);
+            updateHit(hit, proteinSequence);
             hit.getDescription().forEach(this::updateHitDescription);
-            hit.getHsps().forEach(hsp -> this.updateHsp(hsp, proteinSequence));
+            hit.getHsps().forEach(this::updateHsp);
         }
 
         updateStat(search.getStat());
@@ -98,9 +98,19 @@ public class BlastResultUpdaterServiceImpl implements BlastResultUpdaterService 
         search.setQueryLen(null);
     }
 
-    private void updateHit(Hit hit) {
+    private void updateHit(Hit hit, String proteinSequence) {
 
         hit.setNum(null);
+
+        int globalIdentityCount = 0;
+        for (Hsp hsp : hit.getHsps()) {
+
+            globalIdentityCount += hsp.getIdentity();
+        }
+
+        float identityPercent = (float) globalIdentityCount / proteinSequence.length() * 100;
+
+        hit.setGlobalIdentityPercent(Float.parseFloat(PERCENT_FORMAT.format(identityPercent)));
     }
 
     private void updateHitDescription(Description description) {
@@ -122,9 +132,9 @@ public class BlastResultUpdaterServiceImpl implements BlastResultUpdaterService 
         }
     }
 
-    private void updateHsp(Hsp hsp, String proteinSequence) {
+    private void updateHsp(Hsp hsp) {
 
-        float identityPercent = (float) hsp.getIdentity() / proteinSequence.length() * 100;
+        float identityPercent = (float) hsp.getIdentity() / hsp.getAlignLen() * 100;
 
         hsp.setIdentityPercent(Float.parseFloat(PERCENT_FORMAT.format(identityPercent)));
         hsp.setNum(null);

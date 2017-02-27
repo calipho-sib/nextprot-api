@@ -53,7 +53,7 @@ public class BlastResultUpdaterServiceImplTest {
         Assert.assertNotNull(blastResult.getResults().getSearch().getQueryLen());
         Assert.assertNotNull(blastResult.getResults().getSearch().getStat().getEntropy());
 
-        updater.update(blastResult, "WHATEVER MAN");
+        updater.update(blastResult, "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
 
         Assert.assertNull(blastResult.getReference());
         Assert.assertNull(blastResult.getResults().getSearch().getQueryId());
@@ -69,15 +69,16 @@ public class BlastResultUpdaterServiceImplTest {
 
         Assert.assertNull(blastResult.getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
 
-        updater.update(blastResult, "WHATEVER MAN");
+        updater.update(blastResult, "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
 
         Assert.assertNotNull(blastResult.getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
+        Assert.assertEquals(100, blastResult.getResults().getSearch().getHits().get(0).getGlobalIdentityPercent(), 0.01);
     }
 
     @Test(expected = NextProtException.class)
     public void shouldThrowExceptionWhenUpdateNullResult() throws Exception {
 
-        updater.update(null, "WHATEVER MAN");
+        updater.update(null, "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
     }
 
     private static Report runBlast() throws IOException {

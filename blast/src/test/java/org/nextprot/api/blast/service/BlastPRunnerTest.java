@@ -7,6 +7,7 @@ import org.nextprot.api.blast.domain.BlastSearchParams;
 import org.nextprot.api.blast.domain.BlastSequenceInput;
 import org.nextprot.api.blast.domain.gen.Report;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,6 +28,9 @@ public class BlastPRunnerTest {
     private String blastDb;
 
     private BlastSequenceInput config;
+
+    @Autowired
+    private BlastResultUpdaterService updater;
 
     @Test
     public void blastpShouldFindResult() throws Exception {
