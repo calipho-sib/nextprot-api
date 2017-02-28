@@ -2,21 +2,22 @@ package org.nextprot.api.isoform.mapper.controller;
 
 import org.jsondoc.core.annotation.*;
 import org.jsondoc.core.pojo.ApiVerb;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.MultipleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.service.IsoformMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@Lazy
 @Controller
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 @Api(name = "Isoform Mapping", description = "Methods to check and map features over isoforms.", group = "Tools")
+@ApiAuthBasic(roles={"ROLE_ADMIN"})
 public class IsoformMappingController {
 
 	@Autowired
