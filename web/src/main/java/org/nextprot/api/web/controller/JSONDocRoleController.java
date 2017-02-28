@@ -176,7 +176,7 @@ public class JSONDocRoleController extends JSONDocController {
 					for (ApiMethodDoc apiMethodDoc : apiDoc.getMethods()) {
 
 						//Add Iso Mapper Documentation if the user it is an ADMIN (the service doesn't need authentication to work though, it is just for documentation)
-						if(apiDoc.getGroup().equalsIgnoreCase("iso mapper")){
+						if(apiDoc.getName().equalsIgnoreCase("Isoform Mapping")){
 							
 							if((contextRoles != null) && (contextRoles.contains("ROLE_ADMIN"))){
 								contextApiMethodDocs.add(apiMethodDoc);
