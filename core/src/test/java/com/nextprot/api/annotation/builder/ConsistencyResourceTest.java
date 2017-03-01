@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.MainNames;
@@ -23,6 +24,7 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	@Autowired private TerminologyService terminologyService;
 	@Autowired private MainNamesService mainNamesService;		
 	
+	@Ignore
 	@Test
 	public void shouldFindAllPublications() {
 		
