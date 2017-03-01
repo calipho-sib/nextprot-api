@@ -43,7 +43,7 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 	/**
 	 * Flag that indicates that the build should throw an Exception at the first error or just log silently
 	 */
-	static boolean STRICT = true;
+	static boolean STRICT = false;
 
 	
 	private final Set<AnnotationCategory> ANNOT_CATEGORIES_WITHOUT_EVIDENCES = new HashSet<>(Arrays.asList(AnnotationCategory.MAMMALIAN_PHENOTYPE, AnnotationCategory.PROTEIN_PROPERTY));
