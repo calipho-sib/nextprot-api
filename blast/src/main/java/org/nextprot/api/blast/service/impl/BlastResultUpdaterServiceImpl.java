@@ -1,5 +1,6 @@
 package org.nextprot.api.blast.service.impl;
 
+import org.nextprot.api.blast.domain.GlobalHit;
 import org.nextprot.api.blast.domain.gen.*;
 import org.nextprot.api.blast.service.BlastResultUpdaterService;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,21 +32,21 @@ public class BlastResultUpdaterServiceImpl implements BlastResultUpdaterService 
     private MainNamesService mainNamesService;
 
     @Override
-    public void update(Report blastReport, String proteinSequence) {
+    public void update(Report blastReport, String querySequence) {
 
         if (blastReport == null) {
             throw new NextProtException("nothing to update: blast result report was not defined");
         }
 
         updateReport(blastReport);
-        updateParams(blastReport.getParams(), proteinSequence);
+        updateParams(blastReport.getParams(), querySequence);
 
         Search search = blastReport.getResults().getSearch();
         updateSearch(search);
 
         for (Hit hit : search.getHits()) {
 
-            updateHit(hit, proteinSequence);
+            updateHit(hit, querySequence.length());
             hit.getDescription().forEach(this::updateHitDescription);
             hit.getHsps().forEach(this::updateHsp);
         }
@@ -98,19 +100,40 @@ public class BlastResultUpdaterServiceImpl implements BlastResultUpdaterService 
         search.setQueryLen(null);
     }
 
-    private void updateHit(Hit hit, String proteinSequence) {
+    private void updateHit(Hit hit, int queryLen) {
 
         hit.setNum(null);
+        hit.setGlobalHit(buildGlobalHit(hit.getHsps(), queryLen));
+    }
 
-        int globalIdentityCount = 0;
-        for (Hsp hsp : hit.getHsps()) {
+    private GlobalHit buildGlobalHit(List<Hsp> hsps, int queryLen) {
 
-            globalIdentityCount += hsp.getIdentity();
+        int totalIdentityCount = 0;
+        int totalScore = 0;
+        int maxScore = Integer.MIN_VALUE;
+        double minEvalue = Double.MAX_VALUE;
+
+        for (Hsp hsp : hsps) {
+
+            int currentScore = hsp.getScore();
+            double currentEvalue = hsp.getEvalue();
+
+            totalIdentityCount += hsp.getIdentity();
+            totalScore += currentScore;
+
+            maxScore = (currentScore > maxScore) ? currentScore : maxScore;
+            minEvalue = (currentEvalue < minEvalue) ? currentEvalue : minEvalue;
         }
 
-        float identityPercent = (float) globalIdentityCount / proteinSequence.length() * 100;
+        float identityPercent = (float) totalIdentityCount / queryLen * 100;
 
-        hit.setGlobalIdentityPercent(Float.parseFloat(PERCENT_FORMAT.format(identityPercent)));
+        GlobalHit globalHit = new GlobalHit();
+        globalHit.setIdentityPercent(Float.parseFloat(PERCENT_FORMAT.format(identityPercent)));
+        globalHit.setMaxScore(maxScore);
+        globalHit.setMinEvalue(minEvalue);
+        globalHit.setTotalScore(totalScore);
+
+        return globalHit;
     }
 
     private void updateHitDescription(Description description) {

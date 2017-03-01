@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.blast.domain.gen.BlastResult;
+import org.nextprot.api.blast.domain.GlobalHit;
 import org.nextprot.api.blast.domain.gen.Report;
 import org.nextprot.api.blast.service.BlastResultUpdaterService;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -72,7 +73,13 @@ public class BlastResultUpdaterServiceImplTest {
         updater.update(blastResult, "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
 
         Assert.assertNotNull(blastResult.getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
-        Assert.assertEquals(100, blastResult.getResults().getSearch().getHits().get(0).getGlobalIdentityPercent(), 0.01);
+
+        GlobalHit globalHit = blastResult.getResults().getSearch().getHits().get(0).getGlobalHit();
+        Assert.assertEquals(100, globalHit.getIdentityPercent(), 0.01);
+        Assert.assertEquals(148, globalHit.getTotalScore(), 0.01);
+        Assert.assertEquals(1.45816e-12, globalHit.getMinEvalue(), 0.01);
+        Assert.assertEquals(148, globalHit.getMaxScore(), 0.01);
+
     }
 
     @Test(expected = NextProtException.class)
