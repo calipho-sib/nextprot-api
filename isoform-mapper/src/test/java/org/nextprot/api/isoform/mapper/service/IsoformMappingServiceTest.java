@@ -71,7 +71,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         Assert.assertFalse(result.isSuccess());
         Assert.assertEquals("invalid feature format: SCN11A-z.Leu1158Pro", ((FeatureQueryFailureImpl)result).getError().getMessage());
         Assert.assertEquals(1, ((FeatureQueryFailureImpl)result).getError().getCauses().size());
-        Assert.assertEquals("z.Leu1158Pro: not a valid protein sequence variant", ((FeatureQueryFailureImpl)result).getError().getCause(InvalidFeatureQueryFormatException.PARSE_ERROR_MESSAGE));
+        Assert.assertEquals("Cannot separate gene name from variation (missing '-p.')", ((FeatureQueryFailureImpl)result).getError().getCause(InvalidFeatureQueryFormatException.PARSE_ERROR_MESSAGE));
     }
 
     @Test
@@ -241,7 +241,7 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     public void shouldValidateExtensionVariantOnCanonicalIsoform() throws Exception {
 
         // RAD50-p.*1313Tyrext*66 (CAVA-VD024428)
-        FeatureQueryResult result = service.validateFeature(new SingleFeatureQuery("RAD50-p.Ter1313TyrextTer66", AnnotationCategory.VARIANT.getApiTypeName(), ""));
+        FeatureQueryResult result = service.validateFeature(new SingleFeatureQuery("RAD50-p.Ter1313Tyrext*66", AnnotationCategory.VARIANT.getApiTypeName(), ""));
 
         assertIsoformFeatureValid(result, "NX_Q92878-1", 1313, 1313, true);
     }
@@ -249,11 +249,21 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
     @Test
     public void shouldValidateExtensionVariantOnCanonicalIsoformBadPos() throws Exception {
 
-        SingleFeatureQuery query = new SingleFeatureQuery("RAD50-p.Ter1314TyrextTer66", AnnotationCategory.VARIANT.getApiTypeName(), "");
+        SingleFeatureQuery query = new SingleFeatureQuery("RAD50-p.Ter1314Tyrext*66", AnnotationCategory.VARIANT.getApiTypeName(), "");
 
         FeatureQueryResult result = service.validateFeature(query);
 
         assertIsoformFeatureNotValid((FeatureQueryFailureImpl) result, new OutOfBoundSequencePositionException(query, 1313));
+    }
+
+    @Test
+    public void shouldValidateExtensionVariantOnCanonicalIsoformBadPos1() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("BCL2-p.Met1ext-5", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.validateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_P10415-1", 1, 1, true);
     }
 
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {

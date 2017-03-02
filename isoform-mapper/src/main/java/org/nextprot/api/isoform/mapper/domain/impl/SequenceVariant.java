@@ -16,6 +16,17 @@ public class SequenceVariant extends SequenceFeatureBase {
     }
 
     @Override
+    protected int getPivotPoint(String feature) throws ParseException {
+
+        int index = feature.indexOf("-p.");
+
+        if (index >= 0) {
+            return index;
+        }
+        throw new ParseException("Cannot separate gene name from variation (missing '-p.')", 0);
+    }
+
+    @Override
     public SequenceVariationFormat newParser() {
         return new SequenceVariationHGVSFormat();
     }
@@ -30,9 +41,9 @@ public class SequenceVariant extends SequenceFeatureBase {
      *   @return null if canonical
      */
     @Override
-    protected String parseIsoformName(String feature) throws ParseException {
+    protected String parseIsoformName(String geneAndIso) throws ParseException {
 
-        String featureIsoname = extractIsonameFromFeature(feature);
+        String featureIsoname = extractIsoName(geneAndIso);
 
         // canonical
         if (featureIsoname == null) {
@@ -67,15 +78,14 @@ public class SequenceVariant extends SequenceFeatureBase {
     /**
      * @return the isoform part from feature string (null if canonical)
      */
-    private String extractIsonameFromFeature(String feature) {
+    private String extractIsoName(String feature) {
 
         Preconditions.checkNotNull(feature);
 
-        int firstIndexOfDash = feature.indexOf("-");
-        int lastIndexOfDash = feature.lastIndexOf("-");
+        int indexOfDash = feature.indexOf("-");
 
-        if (firstIndexOfDash < lastIndexOfDash) {
-            return feature.substring(firstIndexOfDash+1, lastIndexOfDash);
+        if (indexOfDash >= 0) {
+            return feature.substring(indexOfDash+1);
         }
 
         return null;

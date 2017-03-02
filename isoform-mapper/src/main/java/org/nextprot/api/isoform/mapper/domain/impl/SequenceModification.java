@@ -15,11 +15,11 @@ public class SequenceModification extends SequenceFeatureBase {
         super(feature);
     }
 
+    // TODO: Implement this method properly
     @Override
-    protected String parseVariation(String feature) {
+    protected int getPivotPoint(String feature) throws ParseException {
 
-        int dashPosition = feature.indexOf("-");
-        return feature.substring(dashPosition + 1);
+        return feature.indexOf("-");
     }
 
     @Override
