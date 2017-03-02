@@ -229,6 +229,6 @@ public class SequenceVariationHGVSFormatTest {
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.STOP, 110)
                 .thenTerminationExtension(17, AminoAcidCode.GLUTAMINE).build();
 
-        Assert.assertEquals("p.Ter110GlnextTer17", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
+        Assert.assertEquals("p.Ter110Glnext*17", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 }

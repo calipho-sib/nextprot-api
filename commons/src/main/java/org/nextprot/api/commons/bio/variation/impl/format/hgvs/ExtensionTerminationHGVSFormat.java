@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  */
 public class ExtensionTerminationHGVSFormat implements SequenceChangeFormat<ExtensionTermination> {
 
-    private static final Pattern PATTERN = Pattern.compile("^p\\.(?:Ter|\\*)(\\d+)((?:[A-Z])(?:[a-z]{2})?)ext(?:Ter|\\*)(\\d+)$");
+    private static final Pattern PATTERN = Pattern.compile("^p\\.(?:Ter|\\*)(\\d+)((?:[A-Z])(?:[a-z]{2})?)ext\\*(\\d+)$");
 
     @Override
     public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariationFormat.ParsingMode mode) throws ParseException {
@@ -47,8 +47,7 @@ public class ExtensionTerminationHGVSFormat implements SequenceChangeFormat<Exte
     public void format(StringBuilder sb, ExtensionTermination change, AminoAcidCode.CodeType type) {
 
         sb.append(AminoAcidCode.formatAminoAcidCode(type, change.getValue()))
-                .append("ext")
-                .append(AminoAcidCode.formatAminoAcidCode(type, AminoAcidCode.STOP))
+                .append("ext*")
                 .append(change.getNewPos());
     }
 }

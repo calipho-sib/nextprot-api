@@ -7,13 +7,14 @@ import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.impl.ExtensionInitiation;
 import org.nextprot.api.commons.bio.variation.impl.ExtensionTermination;
+import org.nextprot.api.commons.bio.variation.impl.SequenceVariationImpl;
 
 public class ExtensionHGVSFormatTest {
 
     SequenceVariationHGVSFormat format = new SequenceVariationHGVSFormat();
 
     @Test
-    public void testFormatInitiationExtensionCode3() throws Exception {
+    public void testParseInitiationExtensionCode3() throws Exception {
 
         SequenceVariation pm = format.parse("p.Met1Valext-12");
 
@@ -25,9 +26,9 @@ public class ExtensionHGVSFormatTest {
     }
 
     @Test
-    public void testFormatTerminationExtensionCode3() throws Exception {
+    public void testParseTerminationExtensionCode3() throws Exception {
 
-        SequenceVariation pm = format.parse("p.Ter110GlnextTer17");
+        SequenceVariation pm = format.parse("p.Ter110Glnext*17");
 
         Assert.assertEquals(AminoAcidCode.STOP, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(110, pm.getFirstChangingAminoAcidPos());
@@ -36,8 +37,14 @@ public class ExtensionHGVSFormatTest {
         Assert.assertEquals(AminoAcidCode.GLUTAMINE, ((ExtensionTermination)pm.getSequenceChange()).getValue());
     }
 
+    @Test(expected = java.text.ParseException.class)
+    public void shouldNotParseTer() throws Exception {
+
+        format.parse("p.Ter110GlnextTer17");
+    }
+
     @Test
-    public void testFormatInitiationExtensionCode1() throws Exception {
+    public void testParseInitiationExtensionCode1() throws Exception {
 
         SequenceVariation pm = format.parse("p.M1Vext-12");
 
@@ -49,7 +56,7 @@ public class ExtensionHGVSFormatTest {
     }
 
     @Test
-    public void testFormatTerminationExtensionCode1() throws Exception {
+    public void testParseTerminationExtensionCode1() throws Exception {
 
         SequenceVariation pm = format.parse("p.*110Glnext*17");
 
@@ -58,5 +65,41 @@ public class ExtensionHGVSFormatTest {
         Assert.assertEquals(SequenceChange.Type.EXTENSION_TERM, pm.getSequenceChange().getType());
         Assert.assertEquals(17, ((ExtensionTermination)pm.getSequenceChange()).getNewPos());
         Assert.assertEquals(AminoAcidCode.GLUTAMINE, ((ExtensionTermination)pm.getSequenceChange()).getValue());
+    }
+
+    @Test
+    public void testFormatExtensionCode1() throws Exception {
+
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.METHIONINE, 1)
+                .thenInitiationExtension(-12, AminoAcidCode.VALINE).build();
+
+        Assert.assertEquals("p.M1Vext-12", format.format(pm));
+    }
+
+    @Test
+    public void testFormatExtensionCode3() throws Exception {
+
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.METHIONINE, 1)
+                .thenInitiationExtension(-12, AminoAcidCode.VALINE).build();
+
+        Assert.assertEquals("p.Met1Valext-12", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
+    }
+
+    @Test
+    public void testFormatExtensionTermCode1() throws Exception {
+
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.STOP, 110)
+                .thenTerminationExtension(17, AminoAcidCode.GLUTAMINE).build();
+
+        Assert.assertEquals("p.*110Qext*17", format.format(pm));
+    }
+
+    @Test
+    public void testFormatExtensionTermCode3() throws Exception {
+
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.STOP, 110)
+                .thenTerminationExtension(17, AminoAcidCode.GLUTAMINE).build();
+
+        Assert.assertEquals("p.Ter110Glnext*17", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 }
