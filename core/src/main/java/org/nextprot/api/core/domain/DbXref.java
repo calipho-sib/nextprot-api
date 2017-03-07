@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Preconditions;
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
@@ -72,6 +73,7 @@ public class DbXref implements Serializable {
 		this.databaseCategory = databaseCategory;
 	}
 
+	@JsonIgnore
 	public String getProteinAccessionReferer() {
 		return proteinAccessionReferer;
 	}
