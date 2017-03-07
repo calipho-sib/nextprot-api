@@ -14,6 +14,9 @@ public class DbXref implements Serializable {
 
 	private static final long serialVersionUID = 2316953378438971441L;
 
+	@ApiObjectField(description = "The entry identifier referering this DbXref")
+	private String proteinAccessionReferer = "";
+
 	@ApiObjectField(description = "The neXtProt identifier")
 	private Long dbXrefId;
 
@@ -30,6 +33,9 @@ public class DbXref implements Serializable {
 	private String url;
 
 	private String linkUrl;
+
+	@ApiObjectField(description = "The resolved url")
+	private String resolvedUrl;
 
 	@ApiObjectField(description = "A list of properties. A property contains an accession, a property name and a value.")
 	private List<DbXrefProperty> properties = Collections.emptyList();
@@ -66,6 +72,14 @@ public class DbXref implements Serializable {
 		this.databaseCategory = databaseCategory;
 	}
 
+	public String getProteinAccessionReferer() {
+		return proteinAccessionReferer;
+	}
+
+	public void setProteinAccessionReferer(String proteinAccessionReferer) {
+		this.proteinAccessionReferer = proteinAccessionReferer;
+	}
+
 	public String getUrl() {
 		return url;
 	}
@@ -84,14 +98,19 @@ public class DbXref implements Serializable {
 		this.linkUrl = linkUrl;
 	}
 
-	public String getResolvedUrl(String entryAccession) {
-		try {
-			return new DbXrefURLResolverDelegate().resolve(this, entryAccession);
-		} catch (Exception ex) {
+	public String getResolvedUrl() {
 
-			//LOGGER.warn("xref "+accession+" (db:"+databaseName+") - " + ex.getLocalizedMessage(), ex);
-			return  "None";
+		if (resolvedUrl == null) {
+			try {
+				resolvedUrl = new DbXrefURLResolverDelegate().resolve(this);
+			} catch (Exception ex) {
+
+				//LOGGER.warn("xref "+accession+" (db:"+databaseName+") - " + ex.getLocalizedMessage(), ex);
+				resolvedUrl = "None";
+			}
 		}
+
+		return resolvedUrl;
 	}
 
 	public List<DbXrefProperty> getProperties() {
