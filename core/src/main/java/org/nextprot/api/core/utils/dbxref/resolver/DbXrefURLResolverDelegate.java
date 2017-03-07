@@ -34,14 +34,6 @@ public class DbXrefURLResolverDelegate implements DbXrefURLResolver {
     }
 
     @Override
-    public String resolve(DbXref xref, String accession) {
-
-        return getXRefDatabase(xref)
-                .map(d -> d.getResolver().resolve(xref, accession))
-                .orElseGet(() -> new DefaultDbXrefURLResolver().resolve(xref, accession));
-    }
-
-    @Override
     public String getTemplateURL(DbXref xref) {
 
         return getXRefDatabase(xref)

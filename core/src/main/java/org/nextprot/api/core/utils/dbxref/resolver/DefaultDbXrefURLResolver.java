@@ -53,14 +53,7 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
 
         xref.setLinkUrl(template);
 
-        return resolveTemplateURL(template, getAccessionNumber(xref));
-    }
-
-    // TODO: this implementation is ugly and should be refactored
-    @Override
-    public String resolve(DbXref xref, String accession) {
-
-        if (xref != null && xref.getLinkUrl() != null && xref.getLinkUrl().contains("%u")) {
+        if (xref.getLinkUrl() != null && xref.getLinkUrl().contains("%u")) {
 
             Optional<XRefDatabase> db = XRefDatabase.valueOfName(xref.getDatabaseName());
 
@@ -83,13 +76,15 @@ class DefaultDbXrefURLResolver implements DbXrefURLResolver {
                 }
             }
 
+            String proteinAccession = xref.getProteinAccessionReferer();
+
             // replace %u by uniprot accession
-            String resolved = templateURL.replaceFirst("%u", accession.startsWith("NX_") ? accession.substring(3) : accession);
+            String resolved = templateURL.replaceFirst("%u", proteinAccession.startsWith("NX_") ? proteinAccession.substring(3) : proteinAccession);
 
             return resolved.replaceFirst("%s", xref.getAccession());
         }
 
-        return resolve(xref);
+        return resolveTemplateURL(template, getAccessionNumber(xref));
     }
 
     private String resolveTemplateURL(String templateURL, String accession) {

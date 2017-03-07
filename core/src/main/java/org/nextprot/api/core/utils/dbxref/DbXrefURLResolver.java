@@ -18,15 +18,6 @@ public interface DbXrefURLResolver {
     String resolve(DbXref xref);
 
     /**
-     * Resolve resolve(xref) and replace %u with given accession
-     *
-     * @param xref the xref containing linked url to resolved
-     * @param accession the accession to replace %u from template
-     * @return resolved url
-     */
-    String resolve(DbXref xref, String accession);
-
-    /**
      * @return the URL template of the given xref
      */
     String getTemplateURL(DbXref xref);
