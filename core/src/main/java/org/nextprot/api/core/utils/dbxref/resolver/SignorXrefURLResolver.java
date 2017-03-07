@@ -17,11 +17,4 @@ class SignorXrefURLResolver extends DefaultDbXrefURLResolver {
 
         return link.getLink();
     }
-
-    @Override
-    public String resolve(DbXref xref, String accession) {
-
-        // the template url no longer need accession (no %u)
-        return resolve(xref);
-    }
 }

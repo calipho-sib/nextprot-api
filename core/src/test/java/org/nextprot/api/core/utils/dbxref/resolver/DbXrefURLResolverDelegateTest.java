@@ -439,16 +439,16 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveHogenom() throws Exception {
 
-        DbXref xref = createDbXref("HOG000007899", "HOGENOM", "http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=%u&db=HOGENOM");
-        Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=Q8NBS9&db=HOGENOM", resolver.resolve(xref, "NX_Q8NBS9"));
+        DbXref xref = createDbXrefWithEntry("NX_Q8NBS9", "HOG000007899", "HOGENOM", "http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=%u&db=HOGENOM");
+        Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=Q8NBS9&db=HOGENOM", resolver.resolve(xref));
         Assert.assertEquals("http://pbil.univ-lyon1.fr/cgi-bin/acnuc-ac2tree?query=%u&db=HOGENOM", xref.getLinkUrl());
     }
 
     @Test
     public void testResolveWithDefaultResolverBrenda() throws Exception {
 
-        DbXref xref = createDbXref("2.7.11.21", "BRENDA", CvDatabasePreferredLink.BRENDA.getLink());
-        Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.21&UniProtAcc=Q8NBS9", resolver.resolve(xref, "NX_Q8NBS9"));
+        DbXref xref = createDbXrefWithEntry("NX_Q8NBS9", "2.7.11.21", "BRENDA", CvDatabasePreferredLink.BRENDA.getLink());
+        Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.21&UniProtAcc=Q8NBS9", resolver.resolve(xref));
         Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u", xref.getLinkUrl());
     }
 
@@ -470,22 +470,23 @@ public class DbXrefURLResolverDelegateTest {
     @Test
     public void testResolveWithAccessionUniPathway() throws Exception {
 
-        DbXref xref = createDbXref("UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%u");
-        Assert.assertEquals("http://www.unipathway.org?upid=UPA00223&entryac=Q96I99", resolver.resolve(xref, "NX_Q96I99"));
+        DbXref xref = createDbXrefWithEntry("NX_Q96I99","UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%u");
+        Assert.assertEquals("http://www.unipathway.org?upid=UPA00223&entryac=Q96I99", resolver.resolve(xref));
     }
 
     @Test(expected = UnresolvedXrefURLException.class)
     public void testResolveWithAccessionUniPathwayMissingStampW() throws Exception {
 
-        DbXref xref = createDbXref("UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%w");
-        resolver.resolve(xref, "NX_Q96I99");
+        DbXref xref = createDbXrefWithEntry("NX_Q96I99","UPA00223", "UniPathway", "http://www.unipathway.org?upid=%s&entryac=%w");
+        resolver.resolve(xref);
     }
 
     @Test
     public void testResolveWithUrlEncodingShouldNotThrowUnresolvedXrefURLException() throws Exception {
 
         DbXref xref = createDbXref("Thymosin_%CE%B11", "UniPathway", "http://en.wikipedia.org/wiki/%s");
-        resolver.resolve(xref, "http://en.wikipedia.org/wiki/Thymosin_%CE%B11");
+        //resolver.resolve(xref, "http://en.wikipedia.org/wiki/Thymosin_%CE%B11");
+        resolver.resolve(xref);
     }
 
     @Test
@@ -501,6 +502,15 @@ public class DbXrefURLResolverDelegateTest {
 
         DbXref xref = createDbXref("ESR1", "ChiTaRS", "http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=%s&%s=1");
         Assert.assertEquals("http://chitars.bioinfo.cnio.es/cgi-bin/search.pl?searchtype=gene_name&searchstr=ESR1&ESR1=1", resolver.resolve(xref));
+    }
+
+    public static DbXref createDbXrefWithEntry(String entryAccession, String accession, String dbName, String linkURL) {
+
+        DbXref xref = createDbXref(accession, dbName, linkURL);
+
+        xref.setProteinAccessionReferer(entryAccession);
+
+        return xref;
     }
 
     public static DbXref createDbXref(String accession, String dbName, String linkURL) {

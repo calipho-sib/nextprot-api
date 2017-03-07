@@ -9,7 +9,7 @@
 		</property-list>
 	#end
 	<url>
-	#set($UNESCAPED_CDATA = $xref.getResolvedUrl($entry.getUniqueName()))
+	#set($UNESCAPED_CDATA = $xref.getResolvedUrl())
 	<![CDATA[$UNESCAPED_CDATA]]>
 	</url>
 </xref>

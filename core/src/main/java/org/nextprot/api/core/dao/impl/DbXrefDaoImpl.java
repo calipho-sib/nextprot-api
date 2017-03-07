@@ -30,7 +30,7 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	public List<DbXref> findDbXRefsByPublicationId(Long publicationId) {
 		Map<String, Object> params = new HashMap<>();
 		params.put("publicationId", publicationId);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-publication-by-id"), params, new DbXRefRowMapper());
+			return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-publication-by-id"), params, new DbXRefRowMapper());
 	};
 	
 	@Override
@@ -54,14 +54,14 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	@Override
 	public List<DbXref> findDbXrefsByMaster(String uniqueName) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", uniqueName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master"), namedParams, new DbXRefRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master"), namedParams, new DbXRefRowMapper(uniqueName));
 	}
 
 	
 	@Override
 	public List<DbXref> findDbXrefsAsAnnotByMaster(String uniqueName) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", uniqueName);
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-as-annot-by-master"), namedParams, new DbXRefRowMapper());
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-as-annot-by-master"), namedParams, new DbXRefRowMapper(uniqueName));
 	}
 	
 	// helper function to split a list
@@ -124,10 +124,20 @@ public class DbXrefDaoImpl implements DbXrefDao {
 
 	private static class DbXRefRowMapper implements ParameterizedRowMapper<DbXref> {
 
+		private final String entryAccessionReferer;
+
+		public DbXRefRowMapper() {
+			this("");
+		}
+
+		public DbXRefRowMapper(String entryAccessionReferer) {
+			this.entryAccessionReferer = entryAccessionReferer;
+		}
+
 		@Override
 		public DbXref mapRow(ResultSet resultSet, int row) throws SQLException {
 			DbXref dbXRef = new DbXref();
-			
+			dbXRef.setProteinAccessionReferer(entryAccessionReferer);
 			dbXRef.setDbXrefId(resultSet.getLong("resource_id"));
 			String acc = resultSet.getString("accession");
 			// quick fix for single error on loading with fuseki:
@@ -213,35 +223,35 @@ public class DbXrefDaoImpl implements DbXrefDao {
 	@Override
 	public Set<DbXref> findEntryAnnotationsEvidenceXrefs(String entryName) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", entryName);
-		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master-via-annotation-evidences"), namedParams, new DbXRefRowMapper());
+		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master-via-annotation-evidences"), namedParams, new DbXRefRowMapper(entryName));
 		return new HashSet<>(xrefs);
 	}
 
 	@Override
 	public Set<DbXref> findEntryIdentifierXrefs(String entryName) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", entryName);
-		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master-via-identifiers"), namedParams, new DbXRefRowMapper());
+		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master-via-identifiers"), namedParams, new DbXRefRowMapper(entryName));
 		return new HashSet<>(xrefs);
 	}
 
 	@Override
 	public Set<DbXref> findEntryAttachedXrefs(String entryName) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", entryName);
-		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master-via-entry"), namedParams, new DbXRefRowMapper());
+		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master-via-entry"), namedParams, new DbXRefRowMapper(entryName));
 		return new HashSet<>(xrefs);
 	}
 
 	@Override
 	public Set<DbXref> findEntryInteractionXrefs(String entryName) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", entryName);
-		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master-via-interactions"), namedParams, new DbXRefRowMapper());
+		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master-via-interactions"), namedParams, new DbXRefRowMapper(entryName));
 		return new HashSet<>(xrefs);
 	}
 
 	@Override
 	public Set<DbXref> findEntryInteractionInteractantsXrefs(String entryName) {
 		SqlParameterSource namedParams = new MapSqlParameterSource("uniqueName", entryName);
-		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master-via-interactions-interactants"), namedParams, new DbXRefRowMapper());
+		List<DbXref> xrefs = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("dbxref-by-master-via-interactions-interactants"), namedParams, new DbXRefRowMapper(entryName));
 		return new HashSet<>(xrefs);
 	}
 

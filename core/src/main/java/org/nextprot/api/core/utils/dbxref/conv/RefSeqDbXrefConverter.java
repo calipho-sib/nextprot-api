@@ -28,6 +28,7 @@ class RefSeqDbXrefConverter implements DbXrefPropertyToXrefConverter {
 
         DbXref dbXRef = new DbXref();
 
+        dbXRef.setProteinAccessionReferer("GIVE A REFERER NAME!!!!");
         dbXRef.setDbXrefId(IdentifierOffset.XREF_PROPERTY_OFFSET +property.getPropertyId());
         dbXRef.setAccession(property.getValue());
         dbXRef.setDatabaseCategory("Sequence databases");
