@@ -1,7 +1,6 @@
 package org.nextprot.api.core.utils.graph;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
@@ -17,29 +16,35 @@ import java.util.stream.Stream;
 @ActiveProfiles({"dev"})
 public class CvTermGraphTest extends CoreUnitBaseTest {
 
-    private List<CvTerm> cvTerms;
-
     @Autowired
     private TerminologyService terminologyService;
-
-    @Before
-    public void setup() {
-        cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
-    }
 
     @Test
     public void shouldCreateValidGeneOntologyGraph() throws Exception {
 
+        List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
         CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
         Assert.assertEquals(TerminologyCv.GoMolecularFunctionCv, graph.getTerminologyCv());
         Assert.assertEquals(10543, graph.countNodes());
-        Assert.assertEquals(25594, graph.countEdges());
+        Assert.assertEquals(12797, graph.countEdges());
+    }
+
+    @Test
+    public void shouldCreateAllTerminologyGraphs() throws Exception {
+
+        for (TerminologyCv terminologyCv : TerminologyCv.values()) {
+
+            List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(terminologyCv.name());
+            CvTermGraph graph = new CvTermGraph(terminologyCv, cvTerms);
+            Assert.assertEquals(terminologyCv, graph.getTerminologyCv());
+        }
     }
 
     @Test
     public void nodeGO0005488ShouldHaveChildren() throws Exception {
 
+        List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
         CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
         long cvId = graph.getCvTermIdByAccession("GO:0005488");
@@ -57,6 +62,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void nodeGO0005488ShouldHaveOneParent() throws Exception {
 
+        List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
         CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
         long cvId = graph.getCvTermIdByAccession("GO:0005488");
@@ -70,6 +76,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void nodeGO0000006ShouldBeALeaf() throws Exception {
 
+        List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
         CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
         long cvId = graph.getCvTermIdByAccession("GO:0000006");
@@ -80,6 +87,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void geneOntologyShouldContainOneRoot() throws Exception {
 
+        List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
         CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
         Stream<Long> roots = graph.getRoots();
@@ -89,6 +97,15 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
                 .collect(Collectors.toList())
                 .get(0);
         Assert.assertEquals("GO:0003674", root.getAccession());
+    }
 
+    @Test
+    public void GO0005488shouldBeAncestorOfGO0005488() throws Exception {
+
+        List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
+        CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
+
+        Assert.assertTrue(graph.isAncestorOf("GO:0005488", "GO:0051378"));
+        Assert.assertTrue(graph.isAncestorOfSlow("GO:0005488", "GO:0051378"));
     }
 }

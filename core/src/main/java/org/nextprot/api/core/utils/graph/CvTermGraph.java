@@ -3,14 +3,15 @@ package org.nextprot.api.core.utils.graph;
 import com.google.common.base.Preconditions;
 import grph.Grph;
 import grph.in_memory.InMemoryGrph;
+import grph.path.Path;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
+import toools.collection.bigstuff.longset.LongHashSet;
+import toools.collection.bigstuff.longset.LongSet;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -20,28 +21,62 @@ import java.util.stream.Stream;
  */
 public class CvTermGraph implements Serializable {
 
-    private final TerminologyCv terminologyCv;
+    private final static Logger LOGGER = Logger.getLogger(CvTermGraph.class.getSimpleName());
+
     private final Grph graph;
+    private final TerminologyCv terminologyCv;
     private final Map<Long, CvTerm> cvTermById;
-    private final Map<String, Long> cvTermIdByAccession; // used to connect cv terms
+    private final Map<String, Long> cvTermIdByAccession;
+    private final Map<Long, LongSet> descendants;
 
     public CvTermGraph(TerminologyCv terminologyCv, List<CvTerm> cvTerms) {
 
         Preconditions.checkNotNull(terminologyCv);
         Preconditions.checkNotNull(cvTerms);
         Preconditions.checkArgument(!cvTerms.isEmpty());
+        Preconditions.checkArgument(cvTerms.size() == new HashSet<>(cvTerms).size());
 
         this.terminologyCv = terminologyCv;
 
         cvTermById = new HashMap<>();
         cvTermIdByAccession = new HashMap<>();
+        descendants = new HashMap<>();
+
         graph = new InMemoryGrph();
 
         cvTerms.forEach(this::addCvTermNode);
         cvTerms.forEach(this::addCvTermEdges);
 
-        if (graph.getNumberOfVertices() != cvTermById.keySet().size())
-            throw new IllegalStateException("inconsistent state when creating CvTerm graph");
+        int pathNumber = precomputeAllDescendants();
+        sanityCheck();
+        summary(pathNumber);
+    }
+
+    private void sanityCheck() {
+
+        if (graph.getNumberOfVertices() != cvTermById.keySet().size()) {
+            throw new IllegalStateException(terminologyCv.name() + " inconsistent graph state: invalid number of vertices");
+        }
+    }
+
+    private void summary(int pathNumber) {
+
+        StringBuilder sb = new StringBuilder("graph of "+terminologyCv);
+
+        sb.append(": nodes=").append(countNodes());
+        sb.append(", edges=").append(countEdges());
+
+        Collection<LongSet> ccs = graph.getConnectedComponents();
+        sb.append(", connected components=").append(ccs.size());
+        sb.append(", in-degrees=").append(graph.getDegreeDistribution(Grph.TYPE.vertex, Grph.DIRECTION.in).toString(true, false));
+        sb.append("out-degrees=").append(graph.getDegreeDistribution(Grph.TYPE.vertex, Grph.DIRECTION.out).toString(true, false));
+        sb.append("paths=").append(pathNumber);
+
+        LOGGER.info(sb.toString());
+
+        if (ccs.size() > 1) {
+            LOGGER.warning(terminologyCv.name() + " has "+ccs.size()+" unconnected components");
+        }
     }
 
     private void addCvTermNode(CvTerm cvTerm) {
@@ -49,26 +84,41 @@ public class CvTermGraph implements Serializable {
         cvTermById.put(cvTerm.getId(), cvTerm);
         cvTermIdByAccession.put(cvTerm.getAccession(), cvTerm.getId());
         graph.addVertex(cvTerm.getId());
+        descendants.put(cvTerm.getId(), new LongHashSet());
     }
 
     private void addCvTermEdges(CvTerm cvTerm) {
 
         List<String> parentAccessions = cvTerm.getAncestorAccession();
-        List<String> childrenAccessions = cvTerm.getChildAccession();
 
         if (parentAccessions != null) {
-            parentAccessions.forEach(parent -> graph.addDirectedSimpleEdge(
-                    cvTermIdByAccession.get(parent),
-                    cvTerm.getId())
-            );
+            parentAccessions.forEach(parent -> {
+                try {
+                    graph.addDirectedSimpleEdge(getCvTermIdByAccession(parent), cvTerm.getId());
+                } catch (NotFoundNodeException e) {
+                    LOGGER.warning(cvTerm.getAccession()+" cannot connect to unknown node parent: "+e.getMessage() + ", CvTerm:\n"+cvTerm);
+                }
+            });
         }
+    }
 
-        if (childrenAccessions != null) {
-            childrenAccessions.forEach(child -> graph.addDirectedSimpleEdge(
-                    cvTerm.getId(),
-                    cvTermIdByAccession.get(child))
-            );
+    private int precomputeAllDescendants() {
+
+        Collection<Path> paths = graph.getAllPaths();
+
+        for (Path path : paths) {
+
+            long source = path.getSource();
+            for (long i=0 ; i<path.getNumberOfVertices() ; i++) {
+
+                long vertex  = path.getVertexAt(i);
+
+                if (vertex != source) {
+                    descendants.get(source).add(vertex);
+                }
+            }
         }
+        return paths.size();
     }
 
     /**
@@ -135,13 +185,34 @@ public class CvTermGraph implements Serializable {
     /**
      * @return the id of cvterm with given accession
      */
-    public long getCvTermIdByAccession(String accession) {
+    public long getCvTermIdByAccession(String accession) throws NotFoundNodeException {
 
         if (!cvTermIdByAccession.containsKey(accession))
-            throw new IllegalStateException("cvterm accession "+accession+" was not found");
-
+            throw new NotFoundNodeException(accession);
 
         return cvTermIdByAccession.get(accession);
+    }
+
+    /**
+     *
+     * @param queryAncestor the node
+     * @param queryDescendant
+     * @return true if node2 is a descendant of node1
+     */
+    public boolean isAncestorOf(long queryAncestor, long queryDescendant) {
+
+        return descendants.get(queryAncestor).contains(queryDescendant);
+    }
+
+    public boolean isAncestorOf(String queryAncestor, String queryDescendant) throws NotFoundNodeException {
+
+        return isAncestorOf(getCvTermIdByAccession(queryAncestor), getCvTermIdByAccession(queryDescendant));
+    }
+
+    public boolean isAncestorOfSlow(String queryAncestor, String queryDescendant) throws NotFoundNodeException {
+
+        Path path = graph.getShortestPath(getCvTermIdByAccession(queryAncestor), getCvTermIdByAccession(queryDescendant));
+        return path != null;
     }
 
     public Map<String, CvTerm> exportMap() {
@@ -154,5 +225,13 @@ public class CvTermGraph implements Serializable {
         }
 
         return map;
+    }
+
+    public class NotFoundNodeException extends Exception {
+
+        public NotFoundNodeException(String accession) {
+
+            super("CvTerm node with accession "+accession+" was not found in "+terminologyCv + " graph");
+        }
     }
 }
