@@ -4,30 +4,41 @@ import com.google.common.base.Preconditions;
 import grph.Grph;
 import grph.in_memory.InMemoryGrph;
 import grph.path.Path;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import org.github.jamm.MemoryMeter;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
+import toools.collection.bigstuff.longset.LongCursor;
 import toools.collection.bigstuff.longset.LongHashSet;
 import toools.collection.bigstuff.longset.LongSet;
+import toools.math.MathsUtilities;
 
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * A graph of CvTerm nodes with relations between them.
+ * A hierarchy of {@code CvTerm}s organised in a graph.
  *
  * Created by fnikitin on 08.03.17.
  */
 public class CvTermGraph implements Serializable {
 
     private final static Logger LOGGER = Logger.getLogger(CvTermGraph.class.getSimpleName());
+    private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("######.##");
 
     private final Grph graph;
     private final TerminologyCv terminologyCv;
     private final Map<Long, CvTerm> cvTermById;
     private final Map<String, Long> cvTermIdByAccession;
     private final Map<Long, LongSet> descendants;
+    private final Collection<Path> allPaths;
+    private final long memoryNoPrecomputation;
 
     public CvTermGraph(TerminologyCv terminologyCv, List<CvTerm> cvTerms) {
 
@@ -36,6 +47,7 @@ public class CvTermGraph implements Serializable {
         Preconditions.checkArgument(!cvTerms.isEmpty());
         Preconditions.checkArgument(cvTerms.size() == new HashSet<>(cvTerms).size());
 
+        Instant t1 = Instant.now();
         this.terminologyCv = terminologyCv;
 
         cvTermById = new HashMap<>();
@@ -47,9 +59,11 @@ public class CvTermGraph implements Serializable {
         cvTerms.forEach(this::addCvTermNode);
         cvTerms.forEach(this::addCvTermEdges);
 
-        int pathNumber = precomputeAllDescendants();
+        memoryNoPrecomputation = computeMemory(this);
+        allPaths = precomputeAllDescendants();
+
         sanityCheck();
-        summary(pathNumber);
+        logSummary();
     }
 
     private void sanityCheck() {
@@ -59,24 +73,77 @@ public class CvTermGraph implements Serializable {
         }
     }
 
-    private void summary(int pathNumber) {
+    private void logSummary() {
 
         StringBuilder sb = new StringBuilder("graph of "+terminologyCv);
 
-        sb.append(": nodes=").append(countNodes());
+        sb.append(": {nodes=").append(countNodes());
         sb.append(", edges=").append(countEdges());
 
         Collection<LongSet> ccs = graph.getConnectedComponents();
         sb.append(", connected components=").append(ccs.size());
-        sb.append(", in-degrees=").append(graph.getDegreeDistribution(Grph.TYPE.vertex, Grph.DIRECTION.in).toString(true, false));
-        sb.append("out-degrees=").append(graph.getDegreeDistribution(Grph.TYPE.vertex, Grph.DIRECTION.out).toString(true, false));
-        sb.append("paths=").append(pathNumber);
+        sb.append(", avg in-degree=").append(DECIMAL_FORMAT.format(getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.in)));
+        sb.append(", avg out-degree=").append(DECIMAL_FORMAT.format(getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.out)));
+        sb.append(", avg degree=").append(DECIMAL_FORMAT.format(graph.getAverageDegree()));
+        //sb.append(", in-degrees=").append(graph.getDegreeDistribution(Grph.TYPE.vertex, Grph.DIRECTION.in).toString(true, false));
+        //sb.append(", out-degrees=").append(graph.getDegreeDistribution(Grph.TYPE.vertex, Grph.DIRECTION.out).toString(true, false));
+        sb.append(", paths=").append(allPaths.size());
+
+        sb.append(", memory (KB)=");
+        reportMemoryDetailed(sb);
+        sb.append("}");
 
         LOGGER.info(sb.toString());
 
         if (ccs.size() > 1) {
             LOGGER.warning(terminologyCv.name() + " has "+ccs.size()+" unconnected components");
         }
+    }
+
+    long computeMemory(Object o) {
+        // 1. git clone https://github.com/fnikitin/jamm.git ; cd jamm ; ant jar ; add dependency to this jar
+        // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
+
+        return new MemoryMeter().measureDeep(o);
+    }
+
+    public void reportMemoryDetailed(StringBuilder sb) {
+        // 1. git clone https://github.com/fnikitin/jamm.git ; cd jamm ; ant jar ; add dependency to this jar
+        // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
+
+        MemoryMeter memMeter = new MemoryMeter();
+
+        sb.append("[all="+DECIMAL_FORMAT.format(memMeter.measureDeep(this)/1024.));
+        sb.append(", graph="+DECIMAL_FORMAT.format(memMeter.measureDeep(graph)/1024.));
+        sb.append(", cv-term-byid map="+DECIMAL_FORMAT.format(memMeter.measureDeep(cvTermById)/1024.));
+        sb.append(", cv-term-id-by-accession map="+DECIMAL_FORMAT.format(memMeter.measureDeep(cvTermIdByAccession)/1024.));
+        sb.append(", descendants map="+DECIMAL_FORMAT.format(memMeter.measureDeep(descendants)/1024.));
+        sb.append(", all paths list="+DECIMAL_FORMAT.format(memMeter.measureDeep(allPaths)/1024.));
+        sb.append("]");
+    }
+
+    public static List<String> getStatisticsHeaders() {
+
+        return Arrays.asList("terminology", "nodes#", "edges#", "connected components#", "avg in-degree#", "avg out-degree#", "all paths#", "memory (KB)", "precomputing memory footprint (KB)", "precomputing time (ms)");
+    }
+
+    public List<String> calcStatistics() {
+
+        long memory = computeMemory(this);
+        long precomputationFootprint = memory - memoryNoPrecomputation;
+
+        Instant t1 = Instant.now();
+        for (Path path : allPaths) {
+
+            isAncestorOf(path.getSource(), path.getDestination());
+        }
+        long ms = ChronoUnit.MILLIS.between(t1, Instant.now());
+
+        List<Number> stats = Arrays.asList(countNodes(), countEdges(), graph.getConnectedComponents().size(),
+                getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.in), getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.out),
+                allPaths.size(), (memory/1024.), (precomputationFootprint/1024), ms);
+
+        return Stream.concat(Stream.of(terminologyCv.name()), stats.stream().map(n -> DECIMAL_FORMAT.format(n))).collect(Collectors.toList());
     }
 
     private void addCvTermNode(CvTerm cvTerm) {
@@ -102,7 +169,7 @@ public class CvTermGraph implements Serializable {
         }
     }
 
-    private int precomputeAllDescendants() {
+    private Collection<Path> precomputeAllDescendants() {
 
         Collection<Path> paths = graph.getAllPaths();
 
@@ -118,7 +185,7 @@ public class CvTermGraph implements Serializable {
                 }
             }
         }
-        return paths.size();
+        return paths;
     }
 
     /**
@@ -194,10 +261,7 @@ public class CvTermGraph implements Serializable {
     }
 
     /**
-     *
-     * @param queryAncestor the node
-     * @param queryDescendant
-     * @return true if node2 is a descendant of node1
+     * @return true if queryDescendant is a descendant of queryAncestor
      */
     public boolean isAncestorOf(long queryAncestor, long queryDescendant) {
 
@@ -209,10 +273,16 @@ public class CvTermGraph implements Serializable {
         return isAncestorOf(getCvTermIdByAccession(queryAncestor), getCvTermIdByAccession(queryDescendant));
     }
 
-    public boolean isAncestorOfSlow(String queryAncestor, String queryDescendant) throws NotFoundNodeException {
+    // used for benchmarking only
+    boolean isAncestorOfSlow(long queryAncestor, long queryDescendant) {
 
-        Path path = graph.getShortestPath(getCvTermIdByAccession(queryAncestor), getCvTermIdByAccession(queryDescendant));
-        return path != null;
+        return graph.getShortestPath(queryAncestor, queryDescendant) != null;
+    }
+
+    // used for benchmarking only
+    boolean isAncestorOfSlow(String queryAncestor, String queryDescendant) throws NotFoundNodeException {
+
+        return isAncestorOfSlow(getCvTermIdByAccession(queryAncestor), getCvTermIdByAccession(queryDescendant));
     }
 
     public Map<String, CvTerm> exportMap() {
@@ -227,11 +297,31 @@ public class CvTermGraph implements Serializable {
         return map;
     }
 
+    /**
+     * @return all the paths of this graph
+     */
+    public Collection<Path> getAllPaths() {
+        return allPaths;
+    }
+
     public class NotFoundNodeException extends Exception {
 
         public NotFoundNodeException(String accession) {
 
             super("CvTerm node with accession "+accession+" was not found in "+terminologyCv + " graph");
         }
+    }
+
+    // There is a deprecation in toools.math.MathsUtilities; grph.getAverageDegree() should call another method like below
+    double getAverageDegree(Grph.TYPE type, Grph.DIRECTION direction)  {
+
+        LongArrayList l = new LongArrayList();
+
+        for (LongCursor c : graph.getVertices())
+        {
+            l.add(graph.getVertexDegree(c.value, type, direction));
+        }
+
+        return MathsUtilities.computeAverage(l.toLongArray());
     }
 }
