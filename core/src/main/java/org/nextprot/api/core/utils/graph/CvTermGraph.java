@@ -37,8 +37,8 @@ public class CvTermGraph implements Serializable {
     private final Map<Long, CvTerm> cvTermById;
     private final Map<String, Long> cvTermIdByAccession;
     private final Map<Long, LongSet> descendants;
-    private final Collection<Path> allPaths;
     private final long memoryNoPrecomputation;
+    private final int allPathsSize;
 
     public CvTermGraph(TerminologyCv terminologyCv, List<CvTerm> cvTerms) {
 
@@ -47,7 +47,6 @@ public class CvTermGraph implements Serializable {
         Preconditions.checkArgument(!cvTerms.isEmpty());
         Preconditions.checkArgument(cvTerms.size() == new HashSet<>(cvTerms).size());
 
-        Instant t1 = Instant.now();
         this.terminologyCv = terminologyCv;
 
         cvTermById = new HashMap<>();
@@ -60,7 +59,7 @@ public class CvTermGraph implements Serializable {
         cvTerms.forEach(this::addCvTermEdges);
 
         memoryNoPrecomputation = computeMemory(this);
-        allPaths = precomputeAllDescendants();
+        allPathsSize = precomputeAllDescendants();
 
         sanityCheck();
         logSummary();
@@ -84,11 +83,7 @@ public class CvTermGraph implements Serializable {
         sb.append(", connected components=").append(ccs.size());
         sb.append(", avg in-degree=").append(DECIMAL_FORMAT.format(getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.in)));
         sb.append(", avg out-degree=").append(DECIMAL_FORMAT.format(getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.out)));
-        sb.append(", avg degree=").append(DECIMAL_FORMAT.format(graph.getAverageDegree()));
-        //sb.append(", in-degrees=").append(graph.getDegreeDistribution(Grph.TYPE.vertex, Grph.DIRECTION.in).toString(true, false));
-        //sb.append(", out-degrees=").append(graph.getDegreeDistribution(Grph.TYPE.vertex, Grph.DIRECTION.out).toString(true, false));
-        sb.append(", paths=").append(allPaths.size());
-
+        sb.append(", paths=").append(allPathsSize);
         sb.append(", memory (KB)=");
         reportMemoryDetailed(sb);
         sb.append("}");
@@ -100,7 +95,7 @@ public class CvTermGraph implements Serializable {
         }
     }
 
-    long computeMemory(Object o) {
+    private long computeMemory(Object o) {
         // 1. git clone https://github.com/fnikitin/jamm.git ; cd jamm ; ant jar ; add dependency to this jar
         // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
 
@@ -113,13 +108,13 @@ public class CvTermGraph implements Serializable {
 
         MemoryMeter memMeter = new MemoryMeter();
 
-        sb.append("[all="+DECIMAL_FORMAT.format(memMeter.measureDeep(this)/1024.));
-        sb.append(", graph="+DECIMAL_FORMAT.format(memMeter.measureDeep(graph)/1024.));
-        sb.append(", cv-term-byid map="+DECIMAL_FORMAT.format(memMeter.measureDeep(cvTermById)/1024.));
-        sb.append(", cv-term-id-by-accession map="+DECIMAL_FORMAT.format(memMeter.measureDeep(cvTermIdByAccession)/1024.));
-        sb.append(", descendants map="+DECIMAL_FORMAT.format(memMeter.measureDeep(descendants)/1024.));
-        sb.append(", all paths list="+DECIMAL_FORMAT.format(memMeter.measureDeep(allPaths)/1024.));
-        sb.append("]");
+        sb.append("[all=")
+                .append(DECIMAL_FORMAT.format(memMeter.measureDeep(this) / 1024.))
+                .append(", graph=").append(DECIMAL_FORMAT.format(memMeter.measureDeep(graph) / 1024.))
+                .append(", cv-term-byid map=").append(DECIMAL_FORMAT.format(memMeter.measureDeep(cvTermById) / 1024.))
+                .append(", cv-term-id-by-accession map=").append(DECIMAL_FORMAT.format(memMeter.measureDeep(cvTermIdByAccession) / 1024.))
+                .append(", descendants map=").append(DECIMAL_FORMAT.format(memMeter.measureDeep(descendants) / 1024.))
+                .append("]");
     }
 
     public static List<String> getStatisticsHeaders() {
@@ -133,7 +128,7 @@ public class CvTermGraph implements Serializable {
         long precomputationFootprint = memory - memoryNoPrecomputation;
 
         Instant t1 = Instant.now();
-        for (Path path : allPaths) {
+        for (Path path : graph.getAllPaths()) {
 
             isAncestorOf(path.getSource(), path.getDestination());
         }
@@ -141,7 +136,7 @@ public class CvTermGraph implements Serializable {
 
         List<Number> stats = Arrays.asList(countNodes(), countEdges(), graph.getConnectedComponents().size(),
                 getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.in), getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.out),
-                allPaths.size(), (memory/1024.), (precomputationFootprint/1024), ms);
+                allPathsSize, (memory/1024.), (precomputationFootprint/1024), ms);
 
         return Stream.concat(Stream.of(terminologyCv.name()), stats.stream().map(n -> DECIMAL_FORMAT.format(n))).collect(Collectors.toList());
     }
@@ -169,7 +164,7 @@ public class CvTermGraph implements Serializable {
         }
     }
 
-    private Collection<Path> precomputeAllDescendants() {
+    private int precomputeAllDescendants() {
 
         Collection<Path> paths = graph.getAllPaths();
 
@@ -185,7 +180,7 @@ public class CvTermGraph implements Serializable {
                 }
             }
         }
-        return paths;
+        return paths.size();
     }
 
     /**
@@ -301,7 +296,7 @@ public class CvTermGraph implements Serializable {
      * @return all the paths of this graph
      */
     public Collection<Path> getAllPaths() {
-        return allPaths;
+        return graph.getAllPaths();
     }
 
     public class NotFoundNodeException extends Exception {

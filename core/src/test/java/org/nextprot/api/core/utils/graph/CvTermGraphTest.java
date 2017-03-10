@@ -108,7 +108,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     @Test
     public void shouldCreateAllTerminologyGraphs() throws Exception {
 
-        PrintWriter pw = new PrintWriter("/tmp/graph-ontology.csv");
+        PrintWriter pw = new PrintWriter("/tmp/graph-ontology-light.csv");
 
         pw.write(CvTermGraph.getStatisticsHeaders().stream().collect(Collectors.joining(",")));
         pw.write(",building time (ms)\n");
