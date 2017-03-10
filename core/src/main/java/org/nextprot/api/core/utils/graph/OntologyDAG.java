@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * A hierarchy of {@code CvTerm}s organised in a graph.
+ * A hierarchy of {@code CvTerm}s organised in a Directed Acyclic Graph.
  *
  * Created by fnikitin on 08.03.17.
  */
-public class CvTermGraph implements Serializable {
+public class OntologyDAG implements Serializable {
 
-    private final static Logger LOGGER = Logger.getLogger(CvTermGraph.class.getSimpleName());
+    private final static Logger LOGGER = Logger.getLogger(OntologyDAG.class.getSimpleName());
     private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("######.##");
 
     private final Grph graph;
@@ -40,7 +40,7 @@ public class CvTermGraph implements Serializable {
     private final long memoryNoPrecomputation;
     private final int allPathsSize;
 
-    public CvTermGraph(TerminologyCv terminologyCv, List<CvTerm> cvTerms) {
+    public OntologyDAG(TerminologyCv terminologyCv, List<CvTerm> cvTerms) {
 
         Preconditions.checkNotNull(terminologyCv);
         Preconditions.checkNotNull(cvTerms);

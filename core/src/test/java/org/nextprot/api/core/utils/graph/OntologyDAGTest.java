@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @ActiveProfiles({"dev"})
-public class CvTermGraphTest extends CoreUnitBaseTest {
+public class OntologyDAGTest extends CoreUnitBaseTest {
 
     @Autowired
     private TerminologyService terminologyService;
@@ -30,7 +30,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     public void shouldCreateValidGeneOntologyGraph() throws Exception {
 
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
-        CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
+        OntologyDAG graph = new OntologyDAG(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
         Assert.assertEquals(TerminologyCv.GoMolecularFunctionCv, graph.getTerminologyCv());
         Assert.assertEquals(10543, graph.countNodes());
@@ -41,7 +41,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     public void nodeGO0005488ShouldHaveChildren() throws Exception {
 
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
-        CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
+        OntologyDAG graph = new OntologyDAG(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
         long cvId = graph.getCvTermIdByAccession("GO:0005488");
 
@@ -59,7 +59,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     public void nodeGO0005488ShouldHaveOneParent() throws Exception {
 
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
-        CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
+        OntologyDAG graph = new OntologyDAG(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
         long cvId = graph.getCvTermIdByAccession("GO:0005488");
 
@@ -73,7 +73,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     public void nodeGO0000006ShouldBeALeaf() throws Exception {
 
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
-        CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
+        OntologyDAG graph = new OntologyDAG(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
         long cvId = graph.getCvTermIdByAccession("GO:0000006");
 
@@ -84,7 +84,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     public void geneOntologyShouldContainOneRoot() throws Exception {
 
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
-        CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
+        OntologyDAG graph = new OntologyDAG(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
         Stream<Long> roots = graph.getRoots();
         Assert.assertEquals(1, roots.count());
@@ -99,7 +99,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
     public void GO0005488shouldBeAncestorOfGO0005488() throws Exception {
 
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
-        CvTermGraph graph = new CvTermGraph(TerminologyCv.GoMolecularFunctionCv, cvTerms);
+        OntologyDAG graph = new OntologyDAG(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
         Assert.assertTrue(graph.isAncestorOf("GO:0005488", "GO:0051378"));
         Assert.assertTrue(graph.isAncestorOfSlow("GO:0005488", "GO:0051378"));
@@ -110,7 +110,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
 
         PrintWriter pw = new PrintWriter("/tmp/graph-ontology-light.csv");
 
-        pw.write(CvTermGraph.getStatisticsHeaders().stream().collect(Collectors.joining(",")));
+        pw.write(OntologyDAG.getStatisticsHeaders().stream().collect(Collectors.joining(",")));
         pw.write(",building time (ms)\n");
 
         for (TerminologyCv terminologyCv : TerminologyCv.values()) {
@@ -118,7 +118,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
             List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(terminologyCv.name());
 
             Instant t1 = Instant.now();
-            CvTermGraph graph = new CvTermGraph(terminologyCv, cvTerms);
+            OntologyDAG graph = new OntologyDAG(terminologyCv, cvTerms);
             long buildingTime = ChronoUnit.MILLIS.between(t1, Instant.now());
 
             List<String> statistics = graph.calcStatistics();
@@ -149,7 +149,7 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
 
         System.err.println("Timing isAncestorOf() for all paths of "+terminologyCv+" graph:");
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(terminologyCv.name());
-        CvTermGraph graph = new CvTermGraph(terminologyCv, cvTerms);
+        OntologyDAG graph = new OntologyDAG(terminologyCv, cvTerms);
 
         Collection<Path> allPaths = graph.getAllPaths();
 
