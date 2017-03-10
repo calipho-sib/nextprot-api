@@ -2,6 +2,7 @@ package org.nextprot.api.core.domain.annotation;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.nextprot.api.core.utils.annot.GoDatasource;
 
 import java.io.Serializable;
 import java.util.*;
@@ -40,6 +41,7 @@ public class AnnotationEvidence implements Serializable {
 	private String qualityQualifier;
 	private long evidenceId;
 	private String assignedBy;
+	private String goAssignedBy; // optional value, non null for GO annotations
 	private String assignmentMethod;
 	private String evidenceCodeAC;
 	private String evidenceCodeName;
@@ -47,6 +49,10 @@ public class AnnotationEvidence implements Serializable {
 
 	private String note;
 
+	public String getGoAssignedBy() {
+		return goAssignedBy;
+	}
+	
 	public String getEvidenceCodeAC() {
 		return evidenceCodeAC;
 	}
@@ -275,8 +281,15 @@ public class AnnotationEvidence implements Serializable {
 		return assignedBy;
 	}
 
+/*
+ * Should be set at load time for GO annotation evidence using GoDatasource class
+ */
 	public void setAssignedBy(String assignedBy) {
 		this.assignedBy = assignedBy;
+	}
+
+	public void setGoAssignedBy(String goAssignedBy) {
+		this.goAssignedBy = goAssignedBy; 
 	}
 
 	public String getQualityQualifier() {
