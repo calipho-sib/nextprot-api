@@ -1,7 +1,5 @@
 package org.nextprot.api.web.controller;
 
-import java.util.List;
-
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
@@ -16,7 +14,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @Api(name = "Terminology", description = "Method to retrieve a terminology")
@@ -48,5 +48,14 @@ public class TermController {
 	public List<String> getTerminologyNames() {
 		return terminolgyService.findTerminologyNamesList();
 	}
-	
+
+
+	@ApiMethod(path = "/ontology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/ontology/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, CvTerm> getTerminologyGraph(
+			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
+			@PathVariable("terminology") String terminology) {
+
+		return terminolgyService.findOntologyGraph(TerminologyCv.getTerminologyOf(terminology)).exportMap();
+	}
 }
