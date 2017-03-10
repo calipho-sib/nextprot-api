@@ -21,12 +21,22 @@ public interface TerminologyService {
 	 */
 	List<CvTerm> findCvTermsByOntology(String ontology);
 
+	/**
+	 * @deprecated use {@link #findOntologyGraph(TerminologyCv)} instead
+	 */
+	@Deprecated
 	Terminology findTerminology(TerminologyCv terminologyCv);
 
 	/**
 	 * @return a Directed Acyclic Graph of {@code CvTerm}s ontology
 	 */
 	OntologyDAG findOntologyGraph(TerminologyCv terminologyCv);
+
+	/**
+	 * @return a {@code CvTerm} by id
+	 */
+	// TODO: should be implemented here, implementation should be cached, OntologyDAG will refered this service
+	//CvTerm findCvTermById(long id);
 
 	/**
 	 * Retrieves terms sorted by ontology

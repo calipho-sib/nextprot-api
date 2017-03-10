@@ -50,6 +50,7 @@ public class TermController {
 	}
 
 
+	// TODO: Not sure about the representation to provide
 	@ApiMethod(path = "/ontology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/ontology/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, CvTerm> getTerminologyGraph(

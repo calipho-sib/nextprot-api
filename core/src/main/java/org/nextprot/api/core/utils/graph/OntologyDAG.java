@@ -34,6 +34,7 @@ public class OntologyDAG implements Serializable {
 
     private final Grph graph;
     private final TerminologyCv terminologyCv;
+    // TODO: this field should move out of this class as it should be the responsibility of TerminologyService to provide CvTerm given an id
     private final Map<Long, CvTerm> cvTermById;
     private final Map<String, Long> cvTermIdByAccession;
     private final Map<Long, LongSet> descendants;
