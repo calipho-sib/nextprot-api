@@ -119,7 +119,7 @@ public class OntologyDAG implements Serializable {
 
     public static List<String> getStatisticsHeaders() {
 
-        return Arrays.asList("terminology", "nodes#", "edges#", "connected components#", "avg in-degree#", "avg out-degree#", "all paths#", "memory (KB)", "precomputing memory footprint (KB)", "precomputing time (ms)");
+        return Arrays.asList("terminology", "nodes#", "edges#", "connected components#", "avg in-degree#", "avg out-degree#", "all paths#", "memory (KB)", "all descendants map memory (KB)", "precomputing time (ms)");
     }
 
     public List<String> calcStatistics() {
@@ -212,9 +212,15 @@ public class OntologyDAG implements Serializable {
      */
     public Stream<Long> getRoots() {
 
-        return Arrays.stream(graph.getVertices().toLongArray())
-                .filter(id -> graph.getInEdges(id).isEmpty())
-                .boxed();
+        return getAllNodes().filter(id -> graph.getInEdges(id).isEmpty());
+    }
+
+    /**
+     * @return a Stream of all node ids
+     */
+    public Stream<Long> getAllNodes() {
+
+        return Arrays.stream(graph.getVertices().toLongArray()).boxed();
     }
 
     /**
