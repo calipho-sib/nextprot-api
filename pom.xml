@@ -95,6 +95,22 @@
 			<version>3.0</version>
 		</dependency>
 
+		<!-- A performant graph library (http://www.i3s.unice.fr/~hogie/software/index.php) -->
+		<dependency>
+			<groupId>grph</groupId>
+			<artifactId>grph</artifactId>
+			<version>4.0.0</version>
+		</dependency>
+
+		<!-- a lib to compute sizeof java objects (https://github.com/jbellis/jamm)
+		First create jar agent artifact and start the JVM with "-javaagent:<path to>/jamm.jar
+		-->
+		<dependency>
+			<groupId>com.github.jbellis</groupId>
+			<artifactId>jamm</artifactId>
+			<version>0.2.6</version>
+		</dependency>
+
 		<!-- SOLR -->
 
 		<dependency>

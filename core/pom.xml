@@ -14,13 +14,6 @@
 	<artifactId>nextprot-api-core</artifactId>
 	<packaging>jar</packaging>
 
-	<repositories>
-		<repository>
-			<id>lhogie.i3s.maven.repo</id>
-			<url>http://www.i3s.unice.fr/~hogie/maven_repository/</url>
-		</repository>
-	</repositories>
-
 	<dependencies>
 
 		<dependency>
@@ -46,13 +39,6 @@
 		    <artifactId>httpclient</artifactId>
 		    <version>4.5.2</version>
 		</dependency>
-
-		<!-- A performant graph library (http://www.i3s.unice.fr/~hogie/software/index.php) -->
-		<!--<dependency>
-			<groupId>grph</groupId>
-			<artifactId>grph</artifactId>
-			<version>4.0.0</version>
-		</dependency> -->
 
 		<!-- used for tests -->
 		<dependency>
