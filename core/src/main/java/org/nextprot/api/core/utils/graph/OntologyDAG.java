@@ -5,7 +5,6 @@ import grph.Grph;
 import grph.in_memory.InMemoryGrph;
 import grph.path.Path;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
-import org.github.jamm.MemoryMeter;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
 import toools.collection.bigstuff.longset.LongCursor;
@@ -15,11 +14,8 @@ import toools.math.MathsUtilities;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -38,7 +34,6 @@ public class OntologyDAG implements Serializable {
     private final Map<Long, CvTerm> cvTermById;
     private final Map<String, Long> cvTermIdByAccession;
     private final Map<Long, LongSet> descendants;
-    private final long memoryNoPrecomputation;
     private final int allPathsSize;
 
     public OntologyDAG(TerminologyCv terminologyCv, List<CvTerm> cvTerms) {
@@ -59,7 +54,6 @@ public class OntologyDAG implements Serializable {
         cvTerms.forEach(this::addCvTermNode);
         cvTerms.forEach(this::addCvTermEdges);
 
-        memoryNoPrecomputation = computeMemory(this);
         allPathsSize = precomputeAllDescendants();
 
         sanityCheck();
@@ -85,8 +79,6 @@ public class OntologyDAG implements Serializable {
         sb.append(", avg in-degree=").append(DECIMAL_FORMAT.format(getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.in)));
         sb.append(", avg out-degree=").append(DECIMAL_FORMAT.format(getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.out)));
         sb.append(", paths=").append(allPathsSize);
-        sb.append(", memory (KB)=");
-        reportMemoryDetailed(sb);
         sb.append("}");
 
         LOGGER.info(sb.toString());
@@ -94,52 +86,6 @@ public class OntologyDAG implements Serializable {
         if (ccs.size() > 1) {
             LOGGER.warning(terminologyCv.name() + " has "+ccs.size()+" unconnected components");
         }
-    }
-
-    private long computeMemory(Object o) {
-        // 1. git clone https://github.com/fnikitin/jamm.git ; cd jamm ; ant jar ; add dependency to this jar
-        // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
-
-        return new MemoryMeter().measureDeep(o);
-    }
-
-    public void reportMemoryDetailed(StringBuilder sb) {
-        // 1. git clone https://github.com/fnikitin/jamm.git ; cd jamm ; ant jar ; add dependency to this jar
-        // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
-
-        MemoryMeter memMeter = new MemoryMeter();
-
-        sb.append("[all=")
-                .append(DECIMAL_FORMAT.format(memMeter.measureDeep(this) / 1024.))
-                .append(", graph=").append(DECIMAL_FORMAT.format(memMeter.measureDeep(graph) / 1024.))
-                .append(", cv-term-byid map=").append(DECIMAL_FORMAT.format(memMeter.measureDeep(cvTermById) / 1024.))
-                .append(", cv-term-id-by-accession map=").append(DECIMAL_FORMAT.format(memMeter.measureDeep(cvTermIdByAccession) / 1024.))
-                .append(", descendants map=").append(DECIMAL_FORMAT.format(memMeter.measureDeep(descendants) / 1024.))
-                .append("]");
-    }
-
-    public static List<String> getStatisticsHeaders() {
-
-        return Arrays.asList("terminology", "nodes#", "edges#", "connected components#", "avg in-degree#", "avg out-degree#", "all paths#", "memory (KB)", "all descendants map memory (KB)", "precomputing time (ms)");
-    }
-
-    public List<String> calcStatistics() {
-
-        long memory = computeMemory(this);
-        long precomputationFootprint = memory - memoryNoPrecomputation;
-
-        Instant t1 = Instant.now();
-        for (Path path : graph.getAllPaths()) {
-
-            isAncestorOf(path.getSource(), path.getDestination());
-        }
-        long ms = ChronoUnit.MILLIS.between(t1, Instant.now());
-
-        List<Number> stats = Arrays.asList(countNodes(), countEdges(), graph.getConnectedComponents().size(),
-                getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.in), getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.out),
-                allPathsSize, (memory/1024.), (precomputationFootprint/1024), ms);
-
-        return Stream.concat(Stream.of(terminologyCv.name()), stats.stream().map(n -> DECIMAL_FORMAT.format(n))).collect(Collectors.toList());
     }
 
     private void addCvTermNode(CvTerm cvTerm) {
@@ -306,6 +252,23 @@ public class OntologyDAG implements Serializable {
         return graph.getAllPaths();
     }
 
+    public Map<Long, LongSet> getDescendants() {
+        return descendants;
+    }
+
+    public Stream<LongSet> getConnectedComponents() {
+
+        return graph.getConnectedComponents().stream();
+    }
+
+    public Map<Long, CvTerm> getCvTermById() {
+        return cvTermById;
+    }
+
+    public Map<String, Long> getCvTermIdByAccession() {
+        return cvTermIdByAccession;
+    }
+
     public class NotFoundNodeException extends Exception {
 
         public NotFoundNodeException(String accession) {
@@ -315,7 +278,7 @@ public class OntologyDAG implements Serializable {
     }
 
     // There is a deprecation in toools.math.MathsUtilities; grph.getAverageDegree() should call another method like below
-    double getAverageDegree(Grph.TYPE type, Grph.DIRECTION direction)  {
+    public double getAverageDegree(Grph.TYPE type, Grph.DIRECTION direction)  {
 
         LongArrayList l = new LongArrayList();
 

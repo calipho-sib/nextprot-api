@@ -2,6 +2,7 @@ package org.nextprot.api.core.utils.graph;
 
 import grph.path.Path;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
@@ -10,11 +11,8 @@ import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.io.PrintWriter;
-import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,47 +103,14 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
         Assert.assertTrue(graph.isAncestorOfSlow("GO:0005488", "GO:0051378"));
     }
 
-    @Test
-    public void shouldCreateAllTerminologyGraphs() throws Exception {
-
-        PrintWriter pw = new PrintWriter("/tmp/graph-ontology-light.csv");
-
-        pw.write(OntologyDAG.getStatisticsHeaders().stream().collect(Collectors.joining(",")));
-        pw.write(",building time (ms)\n");
-
-        for (TerminologyCv terminologyCv : TerminologyCv.values()) {
-
-            List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(terminologyCv.name());
-
-            Instant t1 = Instant.now();
-            OntologyDAG graph = new OntologyDAG(terminologyCv, cvTerms);
-            long buildingTime = ChronoUnit.MILLIS.between(t1, Instant.now());
-
-            List<String> statistics = graph.calcStatistics();
-            statistics.add(new DecimalFormat("######.##").format(buildingTime));
-
-            Assert.assertEquals(terminologyCv, graph.getTerminologyCv());
-            pw.write(statistics.stream().collect(Collectors.joining(",")));
-            pw.write("\n");
-            pw.flush();
-        }
-
-        pw.close();
-    }
-
+    @Ignore
     @Test
     public void benchmarkingIsAncestorMethods() throws Exception {
 
-        benchmarkingIsAncestorMethods(TerminologyCv.MeshCv);
+        benchmarkingIsAncestorMethods(TerminologyCv.MeshCv, true);
     }
 
-    public void benchmarkingIsAncestorMethods(TerminologyCv terminologyCv) {
-        BitSet bitset = new BitSet();
-        bitset.set(0);
-        benchmarkingIsAncestorMethods(terminologyCv, bitset);
-    }
-
-    public void benchmarkingIsAncestorMethods(TerminologyCv terminologyCv, BitSet bitSet) {
+    private void benchmarkingIsAncestorMethods(TerminologyCv terminologyCv, boolean both) {
 
         System.err.println("Timing isAncestorOf() for all paths of "+terminologyCv+" graph:");
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(terminologyCv.name());
@@ -156,19 +121,17 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
         long precomputationExecTime = 0;
         long normalExecTime = 0;
 
-        if (bitSet.get(0)) {
-            Instant t1 = Instant.now();
+        Instant t1 = Instant.now();
 
-            for (Path path : allPaths) {
+        for (Path path : allPaths) {
 
-                graph.isAncestorOf(path.getSource(), path.getDestination());
-            }
-            precomputationExecTime = ChronoUnit.MILLIS.between(t1, Instant.now());
-            System.err.println("with precomputations: "+precomputationExecTime+" ms");
+            graph.isAncestorOf(path.getSource(), path.getDestination());
         }
+        precomputationExecTime = ChronoUnit.MILLIS.between(t1, Instant.now());
+        System.err.println("with precomputations: "+precomputationExecTime+" ms");
 
-        if (bitSet.get(1)) {
-            Instant t1 = Instant.now();
+        if (both) {
+            t1 = Instant.now();
 
             for (Path path : allPaths) {
 
@@ -180,7 +143,7 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
             // 1232024 ms (20')
         }
 
-        if (bitSet.cardinality() == 2) {
+        if (both) {
 
             System.err.println("precomputation speed up: x" + (normalExecTime / precomputationExecTime));
             // x18954
