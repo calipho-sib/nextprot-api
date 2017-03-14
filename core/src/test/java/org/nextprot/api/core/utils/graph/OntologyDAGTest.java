@@ -44,13 +44,14 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
         long cvId = graph.getCvTermIdByAccession("GO:0005488");
 
         Assert.assertEquals(50, graph.getChildren(cvId).count());
-        Assert.assertEquals(graph.getCvTermById(cvId).getChildAccession().size(), graph.getChildren(cvId).count());
+
+        CvTerm cvTerm = terminologyService.findCvTermByAccession(graph.getCvTermAccessionById(cvId));
+
+        Assert.assertEquals(cvTerm.getChildAccession().size(), graph.getChildren(cvId).count());
         Assert.assertTrue(graph.getChildren(cvId)
-                .map(graph::getCvTermById)
-                .map(CvTerm::getAccession).collect(Collectors.toSet()).contains("GO:0030246"));
+                .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0030246"));
         Assert.assertTrue(graph.getChildren(cvId)
-                .map(graph::getCvTermById)
-                .map(CvTerm::getAccession).collect(Collectors.toSet()).contains("GO:0001871"));
+                .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0001871"));
     }
 
     @Test
@@ -63,8 +64,7 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
 
         Assert.assertEquals(1, graph.getParents(cvId).count());
         Assert.assertTrue(graph.getParents(cvId)
-                .map(graph::getCvTermById)
-                .map(CvTerm::getAccession).collect(Collectors.toSet()).contains("GO:0003674"));
+                .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0003674"));
     }
 
     @Test
@@ -86,11 +86,11 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
 
         Stream<Long> roots = graph.getRoots();
         Assert.assertEquals(1, roots.count());
-        CvTerm root = graph.getRoots()
-                .map(graph::getCvTermById)
+        String rootAccession = graph.getRoots()
+                .map(graph::getCvTermAccessionById)
                 .collect(Collectors.toList())
                 .get(0);
-        Assert.assertEquals("GO:0003674", root.getAccession());
+        Assert.assertEquals("GO:0003674", rootAccession);
     }
 
     @Test
@@ -109,7 +109,7 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
         OntologyDAG graph = new OntologyDAG(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
-        Assert.assertTrue(graph.hasCvTermAccession("roudoudou"));
+        Assert.assertFalse(graph.hasCvTermAccession("roudoudou"));
     }
 
     @Ignore

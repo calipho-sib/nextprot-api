@@ -80,7 +80,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         return Arrays.asList("terminology", "nodes#", "edges#", "connected components#",
                 "avg in-degree#", "avg out-degree#", "all paths#",
-                "all graph memory (KB)", "descendants map memory (KB)", "cvterm map memory (KB)", "cv id->accession memory (KB)",
+                "all graph memory (KB)", "descendants map memory (KB)", "cv id->accession memory (KB)",
                 "precomputing time (ms)");
     }
 
@@ -92,7 +92,6 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         long wholeGraphMemory = memMeter.measureDeep(graph);
         long descendantsMemory = memMeter.measureDeep(graph.getDescendants());
-        long cvTermMapMemory = memMeter.measureDeep(graph.getCvTermById());
         long cvTermIdAccessionMemory = memMeter.measureDeep(graph.getCvTermIdByAccession());
 
         Collection<Path> allPaths = graph.getAllPaths();
@@ -106,7 +105,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         List<Number> stats = Arrays.asList(graph.countNodes(), graph.countEdges(), graph.getConnectedComponents().count(),
                 graph.getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.in), graph.getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.out), allPaths.size(),
-                (wholeGraphMemory/1024.), (descendantsMemory/1024), (cvTermMapMemory/1024), (cvTermIdAccessionMemory/1024), ms);
+                (wholeGraphMemory/1024.), (descendantsMemory/1024), (cvTermIdAccessionMemory/1024), ms);
 
         return Stream.concat(Stream.of(graph.getTerminologyCv().name()), stats.stream().map(DECIMAL_FORMAT::format)).collect(Collectors.toList());
     }

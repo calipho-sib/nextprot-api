@@ -30,9 +30,8 @@ public class OntologyDAG implements Serializable {
 
     private final Grph graph;
     private final TerminologyCv terminologyCv;
-    // TODO: this field should move out of this class as it should be the responsibility of TerminologyService to provide CvTerm given an id
-    private final Map<Long, CvTerm> cvTermById;
     private final Map<String, Long> cvTermIdByAccession;
+    private final Map<Long, String> cvTermAccessionById;
     private final Map<Long, LongSet> descendants;
     private final int allPathsSize;
 
@@ -45,8 +44,8 @@ public class OntologyDAG implements Serializable {
 
         this.terminologyCv = terminologyCv;
 
-        cvTermById = new HashMap<>();
-        cvTermIdByAccession = new HashMap<>();
+        cvTermIdByAccession = new HashMap<>(cvTerms.size());
+        cvTermAccessionById = new HashMap<>(cvTerms.size());
         descendants = new HashMap<>();
 
         graph = new InMemoryGrph();
@@ -56,15 +55,7 @@ public class OntologyDAG implements Serializable {
 
         allPathsSize = precomputeAllDescendants();
 
-        sanityCheck();
         logSummary();
-    }
-
-    private void sanityCheck() {
-
-        if (graph.getNumberOfVertices() != cvTermById.keySet().size()) {
-            throw new IllegalStateException(terminologyCv.name() + " inconsistent graph state: invalid number of vertices");
-        }
     }
 
     private void logSummary() {
@@ -90,8 +81,8 @@ public class OntologyDAG implements Serializable {
 
     private void addCvTermNode(CvTerm cvTerm) {
 
-        cvTermById.put(cvTerm.getId(), cvTerm);
         cvTermIdByAccession.put(cvTerm.getAccession(), cvTerm.getId());
+        cvTermAccessionById.put(cvTerm.getId(), cvTerm.getAccession());
         graph.addVertex(cvTerm.getId());
         descendants.put(cvTerm.getId(), new LongHashSet());
     }
@@ -189,12 +180,12 @@ public class OntologyDAG implements Serializable {
     /**
      * @return the CvTerm with given id
      */
-    public CvTerm getCvTermById(long id) {
+    public String getCvTermAccessionById(long id) {
 
-        if (!cvTermById.containsKey(id))
+        if (!cvTermAccessionById.containsKey(id))
             throw new IllegalStateException("cvterm id "+id+" was not found");
 
-        return cvTermById.get(id);
+        return cvTermAccessionById.get(id);
     }
 
     /**
@@ -241,18 +232,6 @@ public class OntologyDAG implements Serializable {
         return isAncestorOfSlow(getCvTermIdByAccession(queryAncestor), getCvTermIdByAccession(queryDescendant));
     }
 
-    public Map<String, CvTerm> exportMap() {
-
-        Map<String, CvTerm> map = new HashMap<>();
-
-        for (CvTerm cvTerm : cvTermById.values()) {
-
-            map.put(cvTerm.getAccession(), cvTerm);
-        }
-
-        return map;
-    }
-
     /**
      * @return all the paths of this graph
      */
@@ -267,10 +246,6 @@ public class OntologyDAG implements Serializable {
     public Stream<LongSet> getConnectedComponents() {
 
         return graph.getConnectedComponents().stream();
-    }
-
-    public Map<Long, CvTerm> getCvTermById() {
-        return cvTermById;
     }
 
     public Map<String, Long> getCvTermIdByAccession() {

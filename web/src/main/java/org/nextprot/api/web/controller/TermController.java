@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @Api(name = "Terminology", description = "Method to retrieve a terminology")
@@ -51,12 +50,12 @@ public class TermController {
 
 
 	// TODO: Not sure about the representation to provide
-	@ApiMethod(path = "/ontology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
+	/*@ApiMethod(path = "/ontology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/ontology/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, CvTerm> getTerminologyGraph(
+	public OntologyDAG getTerminologyGraph(
 			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
 			@PathVariable("terminology") String terminology) {
 
-		return terminolgyService.findOntologyGraph(TerminologyCv.getTerminologyOf(terminology)).exportMap();
-	}
+		return terminolgyService.findOntologyGraph(TerminologyCv.getTerminologyOf(terminology));
+	}*/
 }
