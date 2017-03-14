@@ -52,7 +52,7 @@ public class GoDatasource {
 		ref2src.put("GO_REF:0000045", "UniProtKB annot");
 		ref2src.put("GO_REF:0000046", "UniProtKB annot");
 		ref2src.put("GO_REF:0000047", "GO curators");
-		ref2src.put("GO_REF:0000052", "HPA subcellular localization");
+		ref2src.put("GO_REF:0000052", "HPA subcell");
 		ref2src.put("GO_REF:0000053", "GO curators");
 		ref2src.put("GO_REF:0000054", "LIFEdb");
 		ref2src.put("GO_REF:0000056", "GO consortium");
