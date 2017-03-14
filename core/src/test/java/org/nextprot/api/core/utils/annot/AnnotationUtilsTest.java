@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
+import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -11,6 +12,7 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -20,10 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -36,8 +35,10 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
+	@Autowired
+	private TerminologyService terminologyService;
 
-    @Test
+	@Test
     public void shouldTurnSequenceCautionRelativeEvidenceIntoDifferingSequenceProperty()  {
 				
     	long annotId=1234;
@@ -243,6 +244,27 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		}
 
 		pw.close();
+	}
+
+	@Test
+	public void shouldFilterBindingTypeDescendantAnnotations() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P17858").withAnnotations()).getAnnotations();
+
+		List<Annotation> filtered = AnnotationUtils.filterAnnotationsByCvTermDescendingFromAncestor(annotations,
+				terminologyService.findOntologyGraph(TerminologyCv.GoMolecularFunctionCv),
+				terminologyService.findCvTermByAccession("GO:0005488"));
+
+		Assert.assertEquals(7, filtered.size());
+		Set<String> terms = filtered.stream().map(Annotation::getCvTermName).collect(Collectors.toSet());
+
+		Assert.assertTrue(terms.contains("protein binding"));
+		Assert.assertTrue(terms.contains("fructose-6-phosphate binding"));
+		Assert.assertTrue(terms.contains("identical protein binding"));
+		Assert.assertTrue(terms.contains("metal ion binding"));
+		Assert.assertTrue(terms.contains("kinase binding"));
+		Assert.assertTrue(terms.contains("ATP binding"));
+		Assert.assertTrue(terms.contains("fructose binding"));
 	}
 
 	private String exportAnnotationsAsTsvString(Entry entry, List<Annotation> mergedAnnotations) {
