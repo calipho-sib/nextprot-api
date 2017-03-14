@@ -209,6 +209,14 @@ public class OntologyDAG implements Serializable {
     }
 
     /**
+     * @return true if cvTermAccession was found
+     */
+    public boolean hasCvTermAccession(String cvTermAccession) {
+
+        return cvTermIdByAccession.containsKey(cvTermAccession);
+    }
+
+    /**
      * @return true if queryDescendant is a descendant of queryAncestor
      */
     public boolean isAncestorOf(long queryAncestor, long queryDescendant) {

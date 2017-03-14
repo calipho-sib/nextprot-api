@@ -103,6 +103,15 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
         Assert.assertTrue(graph.isAncestorOfSlow("GO:0005488", "GO:0051378"));
     }
 
+    @Test
+    public void roudoudouShouldNotExistInOntology() throws Exception {
+
+        List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
+        OntologyDAG graph = new OntologyDAG(TerminologyCv.GoMolecularFunctionCv, cvTerms);
+
+        Assert.assertTrue(graph.hasCvTermAccession("roudoudou"));
+    }
+
     @Ignore
     @Test
     public void benchmarkingIsAncestorMethods() throws Exception {
