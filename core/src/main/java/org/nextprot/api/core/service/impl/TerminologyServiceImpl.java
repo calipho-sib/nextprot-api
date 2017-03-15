@@ -80,6 +80,7 @@ class TerminologyServiceImpl implements TerminologyService {
 	}
 
 	@Override
+	@Cacheable("ontology-dag")
 	public OntologyDAG findOntologyGraph(TerminologyCv terminologyCv) {
 
 		return new OntologyDAG(terminologyCv, terminologyDao.findTerminologyByOntology(terminologyCv.name()));
