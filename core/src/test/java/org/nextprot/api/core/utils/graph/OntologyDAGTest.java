@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +33,8 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
 
         Assert.assertEquals(TerminologyCv.GoMolecularFunctionCv, graph.getTerminologyCv());
         Assert.assertEquals(10543, graph.countNodes());
-        Assert.assertEquals(12797, graph.countEdges());
+        Assert.assertEquals(12797, graph.countEdgesFromTransientGraph());
+        Assert.assertTrue(graph.isTransientGraphAvailable());
     }
 
     @Test
@@ -43,14 +45,14 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
 
         long cvId = graph.getCvTermIdByAccession("GO:0005488");
 
-        Assert.assertEquals(50, graph.getChildren(cvId).count());
+        Assert.assertEquals(50, graph.getChildrenFromGrph(cvId).length);
 
         CvTerm cvTerm = terminologyService.findCvTermByAccession(graph.getCvTermAccessionById(cvId));
 
-        Assert.assertEquals(cvTerm.getChildAccession().size(), graph.getChildren(cvId).count());
-        Assert.assertTrue(graph.getChildren(cvId)
+        Assert.assertEquals(cvTerm.getChildAccession().size(), graph.getChildrenFromGrph(cvId).length);
+        Assert.assertTrue(Arrays.stream(graph.getChildrenFromGrph(cvId)).boxed()
                 .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0030246"));
-        Assert.assertTrue(graph.getChildren(cvId)
+        Assert.assertTrue(Arrays.stream(graph.getChildrenFromGrph(cvId)).boxed()
                 .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0001871"));
     }
 
@@ -62,8 +64,8 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
 
         long cvId = graph.getCvTermIdByAccession("GO:0005488");
 
-        Assert.assertEquals(1, graph.getParents(cvId).count());
-        Assert.assertTrue(graph.getParents(cvId)
+        Assert.assertEquals(1, graph.getParentsFromGrph(cvId).length);
+        Assert.assertTrue(Arrays.stream(graph.getParentsFromGrph(cvId)).boxed()
                 .map(graph::getCvTermAccessionById).collect(Collectors.toSet()).contains("GO:0003674"));
     }
 
@@ -75,7 +77,7 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
 
         long cvId = graph.getCvTermIdByAccession("GO:0000006");
 
-        Assert.assertEquals(0, graph.getChildren(cvId).count());
+        Assert.assertEquals(0, graph.getChildrenFromGrph(cvId).length);
     }
 
     @Test
@@ -99,8 +101,12 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
         OntologyDAG graph = new OntologyDAG(TerminologyCv.GoMolecularFunctionCv, cvTerms);
 
-        Assert.assertTrue(graph.isAncestorOf("GO:0005488", "GO:0051378"));
-        Assert.assertTrue(graph.isAncestorOfSlow("GO:0005488", "GO:0051378"));
+        long ancestorId = graph.getCvTermIdByAccession("GO:0005488");
+        long descendantId = graph.getCvTermIdByAccession("GO:0051378");
+
+        Assert.assertTrue(graph.isAncestorOf(ancestorId, descendantId));
+        Assert.assertTrue(graph.isAncestorOfSlow(ancestorId, descendantId));
+        Assert.assertTrue(graph.isChildOf(descendantId, ancestorId));
     }
 
     @Test
@@ -119,13 +125,13 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
         benchmarkingIsAncestorMethods(TerminologyCv.MeshCv, true);
     }
 
-    private void benchmarkingIsAncestorMethods(TerminologyCv terminologyCv, boolean both) {
+    private void benchmarkingIsAncestorMethods(TerminologyCv terminologyCv, boolean both) throws OntologyDAG.NotFoundInternalGrphException {
 
         System.err.println("Timing isAncestorOf() for all paths of "+terminologyCv+" graph:");
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(terminologyCv.name());
         OntologyDAG graph = new OntologyDAG(terminologyCv, cvTerms);
 
-        Collection<Path> allPaths = graph.getAllPaths();
+        Collection<Path> allPaths = graph.getAllPathsFromTransientGraph();
 
         long precomputationExecTime = 0;
         long normalExecTime = 0;

@@ -112,7 +112,7 @@ public class AnnotationUtils {
 		return annotations.stream()
 				.filter(annotation -> {
 					try {
-						return annotation.getCvTermAccessionCode() != null && dag.isAncestorOf(ancestor.getAccession(), annotation.getCvTermAccessionCode());
+						return annotation.getCvTermAccessionCode() != null && dag.isAncestorOf(ancestor.getId(), dag.getCvTermIdByAccession(annotation.getCvTermAccessionCode()));
 					} catch (OntologyDAG.NotFoundNodeException e) {
 						return false;
 					}

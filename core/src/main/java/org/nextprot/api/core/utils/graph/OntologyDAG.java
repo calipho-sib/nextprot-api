@@ -19,7 +19,16 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
- * A hierarchy of {@code CvTerm}s organised in a Directed Acyclic Graph.
+ * A hierarchy of {@code CvTerm} ids organised in a Directed Acyclic Graph.
+ *
+ * <h4>Warning</h4>
+ * The graph data structure is backed by an instance of Grph that is a transient field.
+ *
+ * A call of a method depending on Grph field on a deserialized OntologyDAG instance (graph not accessible anymore)
+ * will throw a NotFoundInternalGrphException.
+ *
+ * To help using this object, methods depending on this field were named with suffix "..FromTransientGraph()" and a dedicated method
+ * isTransientGraphAvailable() was added to test for grph eligibility.
  *
  * Created by fnikitin on 08.03.17.
  */
@@ -28,11 +37,11 @@ public class OntologyDAG implements Serializable {
     private final static Logger LOGGER = Logger.getLogger(OntologyDAG.class.getSimpleName());
     private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("######.##");
 
-    private final Grph graph;
+    private transient final Grph transientGraph;
     private final TerminologyCv terminologyCv;
     private final Map<String, Long> cvTermIdByAccession;
     private final Map<Long, String> cvTermAccessionById;
-    private final Map<Long, LongSet> descendants;
+    private final Map<Long, LongSet> cvTermIdDescendants;
     private final int allPathsSize;
 
     public OntologyDAG(TerminologyCv terminologyCv, List<CvTerm> cvTerms) {
@@ -46,9 +55,9 @@ public class OntologyDAG implements Serializable {
 
         cvTermIdByAccession = new HashMap<>(cvTerms.size());
         cvTermAccessionById = new HashMap<>(cvTerms.size());
-        descendants = new HashMap<>();
+        cvTermIdDescendants = new HashMap<>();
 
-        graph = new InMemoryGrph();
+        transientGraph = new InMemoryGrph();
 
         cvTerms.forEach(this::addCvTermNode);
         cvTerms.forEach(this::addCvTermEdges);
@@ -63,12 +72,11 @@ public class OntologyDAG implements Serializable {
         StringBuilder sb = new StringBuilder("graph of "+terminologyCv);
 
         sb.append(": {nodes=").append(countNodes());
-        sb.append(", edges=").append(countEdges());
+        sb.append(", edges=").append(transientGraph.getSize());
 
-        Collection<LongSet> ccs = graph.getConnectedComponents();
+        Collection<LongSet> ccs = transientGraph.getConnectedComponents();
         sb.append(", connected components=").append(ccs.size());
-        sb.append(", avg in-degree=").append(DECIMAL_FORMAT.format(getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.in)));
-        sb.append(", avg out-degree=").append(DECIMAL_FORMAT.format(getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.out)));
+        sb.append(", avg degree=").append(DECIMAL_FORMAT.format(transientGraph.getAverageDegree()));
         sb.append(", paths=").append(allPathsSize);
         sb.append("}");
 
@@ -83,8 +91,8 @@ public class OntologyDAG implements Serializable {
 
         cvTermIdByAccession.put(cvTerm.getAccession(), cvTerm.getId());
         cvTermAccessionById.put(cvTerm.getId(), cvTerm.getAccession());
-        graph.addVertex(cvTerm.getId());
-        descendants.put(cvTerm.getId(), new LongHashSet());
+        transientGraph.addVertex(cvTerm.getId());
+        cvTermIdDescendants.put(cvTerm.getId(), new LongHashSet());
     }
 
     private void addCvTermEdges(CvTerm cvTerm) {
@@ -94,7 +102,7 @@ public class OntologyDAG implements Serializable {
         if (parentAccessions != null) {
             parentAccessions.forEach(parent -> {
                 try {
-                    graph.addDirectedSimpleEdge(getCvTermIdByAccession(parent), cvTerm.getId());
+                    transientGraph.addDirectedSimpleEdge(getCvTermIdByAccession(parent), cvTerm.getId());
                 } catch (NotFoundNodeException e) {
                     LOGGER.warning(cvTerm.getAccession()+" cannot connect to unknown node parent: "+e.getMessage() + ", CvTerm:\n"+cvTerm);
                 }
@@ -104,7 +112,7 @@ public class OntologyDAG implements Serializable {
 
     private int precomputeAllDescendants() {
 
-        Collection<Path> paths = graph.getAllPaths();
+        Collection<Path> paths = transientGraph.getAllPaths();
 
         for (Path path : paths) {
 
@@ -114,7 +122,7 @@ public class OntologyDAG implements Serializable {
                 long vertex  = path.getVertexAt(i);
 
                 if (vertex != source) {
-                    descendants.get(source).add(vertex);
+                    cvTermIdDescendants.get(source).add(vertex);
                 }
             }
         }
@@ -130,27 +138,11 @@ public class OntologyDAG implements Serializable {
     }
 
     /**
-     * @return a Stream of cvterm ids that are parents of cvTermId
-     */
-    public Stream<Long> getParents(long cvTermId) {
-
-        return Arrays.stream(graph.getInNeighbors(cvTermId).toLongArray()).boxed();
-    }
-
-    /**
-     * @return a Stream of cvterm ids that are children of cvTermId
-     */
-    public Stream<Long> getChildren(long cvTermId) {
-
-        return Arrays.stream(graph.getOutNeighbors(cvTermId).toLongArray()).boxed();
-    }
-
-    /**
      * @return a Stream of root(s) ids of the graph
      */
-    public Stream<Long> getRoots() {
+    Stream<Long> getRoots() {
 
-        return getAllNodes().filter(id -> graph.getInEdges(id).isEmpty());
+        return getAllNodes().filter(id -> transientGraph.getInEdges(id).isEmpty());
     }
 
     /**
@@ -158,7 +150,7 @@ public class OntologyDAG implements Serializable {
      */
     public Stream<Long> getAllNodes() {
 
-        return Arrays.stream(graph.getVertices().toLongArray()).boxed();
+        return cvTermIdDescendants.keySet().stream();
     }
 
     /**
@@ -166,15 +158,7 @@ public class OntologyDAG implements Serializable {
      */
     public long countNodes() {
 
-        return graph.getNumberOfVertices();
-    }
-
-    /**
-     * @return the total number of graph edges
-     */
-    public long countEdges() {
-
-        return graph.getSize();
+        return cvTermIdDescendants.size();
     }
 
     /**
@@ -212,46 +196,125 @@ public class OntologyDAG implements Serializable {
      */
     public boolean isAncestorOf(long queryAncestor, long queryDescendant) {
 
-        return descendants.get(queryAncestor).contains(queryDescendant);
+        return cvTermIdDescendants.get(queryAncestor).contains(queryDescendant);
     }
 
-    public boolean isAncestorOf(String queryAncestor, String queryDescendant) throws NotFoundNodeException {
+    /**
+     * @return true if queryDescendant is a descendant of queryAncestor
+     */
+    public boolean isChildOf(long queryDescendant, long queryAncestor) {
 
-        return isAncestorOf(getCvTermIdByAccession(queryAncestor), getCvTermIdByAccession(queryDescendant));
+        return cvTermIdDescendants.get(queryAncestor).contains(queryDescendant);
     }
 
     // used for benchmarking only
     boolean isAncestorOfSlow(long queryAncestor, long queryDescendant) {
 
-        return graph.getShortestPath(queryAncestor, queryDescendant) != null;
-    }
-
-    // used for benchmarking only
-    boolean isAncestorOfSlow(String queryAncestor, String queryDescendant) throws NotFoundNodeException {
-
-        return isAncestorOfSlow(getCvTermIdByAccession(queryAncestor), getCvTermIdByAccession(queryDescendant));
+        return transientGraph.getShortestPath(queryAncestor, queryDescendant) != null;
     }
 
     /**
-     * @return all the paths of this graph
+     * @return descendants of each cvterm node by id
      */
-    public Collection<Path> getAllPaths() {
-        return graph.getAllPaths();
+    public Map<Long, LongSet> getCvTermIdDescendants() {
+        return cvTermIdDescendants;
     }
 
-    public Map<Long, LongSet> getDescendants() {
-        return descendants;
-    }
-
-    public Stream<LongSet> getConnectedComponents() {
-
-        return graph.getConnectedComponents().stream();
-    }
-
+    /**
+     * @return the mappings of cv term accession to id
+     */
     public Map<String, Long> getCvTermIdByAccession() {
         return cvTermIdByAccession;
     }
 
+    /**
+     * @return true if grph instance exist (used to check if specific method name with suffix "FromGrph" are callable)
+     */
+    public boolean isTransientGraphAvailable() {
+
+        return transientGraph != null;
+    }
+
+    /**
+     * @return a Stream of cvterm ids that are parents of cvTermId
+     * @throws NotFoundInternalGrphException if internal graph is missing
+     */
+    public long[] getParentsFromGrph(long cvTermId) throws NotFoundInternalGrphException {
+
+        checkTransientGraphAvailability();
+
+        return transientGraph.getInNeighbors(cvTermId).toLongArray();
+    }
+
+    /**
+     * @return a Stream of cvterm ids that are children of cvTermId
+     * @throws NotFoundInternalGrphException if internal graph is missing
+     */
+    public long[] getChildrenFromGrph(long cvTermId) throws NotFoundInternalGrphException {
+
+        checkTransientGraphAvailability();
+
+        return transientGraph.getOutNeighbors(cvTermId).toLongArray();
+    }
+    /**
+     * @return the total number of graph edges
+     * @throws NotFoundInternalGrphException if internal graph is missing
+     */
+    public long countEdgesFromTransientGraph() throws NotFoundInternalGrphException {
+
+        checkTransientGraphAvailability();
+
+        return transientGraph.getSize();
+    }
+
+    /**
+     * @return all the paths of this graph
+     * @throws NotFoundInternalGrphException if internal graph is missing
+     */
+    public Collection<Path> getAllPathsFromTransientGraph() throws NotFoundInternalGrphException {
+
+        checkTransientGraphAvailability();
+
+        return transientGraph.getAllPaths();
+    }
+
+    /**
+     * @return the connected components of the graph
+     * @throws NotFoundInternalGrphException if internal graph is missing
+     */
+    public Stream<LongSet> getConnectedComponentsFromTransientGraph() throws NotFoundInternalGrphException {
+
+        checkTransientGraphAvailability();
+
+        return transientGraph.getConnectedComponents().stream();
+    }
+
+    /**
+     * @return the average degree of the graph
+     * @throws NotFoundInternalGrphException if internal graph is missing
+     */
+    // There is a deprecation in toools.math.MathsUtilities; grph.getAverageDegree() should call another method like below
+    public double getAverageDegreeFromTransientGraph(Grph.TYPE type, Grph.DIRECTION direction) throws NotFoundInternalGrphException {
+
+        LongArrayList l = new LongArrayList();
+
+        for (LongCursor c : transientGraph.getVertices())
+        {
+            l.add(transientGraph.getVertexDegree(c.value, type, direction));
+        }
+
+        return MathsUtilities.computeAverage(l.toLongArray());
+    }
+
+    private void checkTransientGraphAvailability() throws NotFoundInternalGrphException {
+
+        if (transientGraph == null)
+            throw new NotFoundInternalGrphException();
+    }
+
+    /**
+     * Thrown if no nodes map the given cvterm accession
+     */
     public class NotFoundNodeException extends Exception {
 
         public NotFoundNodeException(String accession) {
@@ -260,16 +323,14 @@ public class OntologyDAG implements Serializable {
         }
     }
 
-    // There is a deprecation in toools.math.MathsUtilities; grph.getAverageDegree() should call another method like below
-    public double getAverageDegree(Grph.TYPE type, Grph.DIRECTION direction)  {
+    /**
+     * Thrown when transient graph is not available anymore from a method supposed to need it
+     */
+    public class NotFoundInternalGrphException extends Exception {
 
-        LongArrayList l = new LongArrayList();
+        public NotFoundInternalGrphException() {
 
-        for (LongCursor c : graph.getVertices())
-        {
-            l.add(graph.getVertexDegree(c.value, type, direction));
+            super("The transient field Grph was not found anymore for ontology "+terminologyCv);
         }
-
-        return MathsUtilities.computeAverage(l.toLongArray());
     }
 }

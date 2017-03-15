@@ -65,12 +65,17 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
             OntologyDAG graph = new OntologyDAG(terminologyCv, cvTerms);
             long buildingTime = ChronoUnit.MILLIS.between(t1, Instant.now());
 
-            List<String> statistics = calcStatistics(graph);
-            statistics.add(new DecimalFormat("######.##").format(buildingTime));
+            try {
+                List<String> statistics = calcStatistics(graph);
+                statistics.add(new DecimalFormat("######.##").format(buildingTime));
 
-            pw.write(statistics.stream().collect(Collectors.joining(",")));
-            pw.write("\n");
-            pw.flush();
+                pw.write(statistics.stream().collect(Collectors.joining(",")));
+                pw.write("\n");
+                pw.flush();
+            } catch (OntologyDAG.NotFoundInternalGrphException e) {
+
+                throw new IllegalStateException(e);
+            }
         }
 
         pw.close();
@@ -84,17 +89,17 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
                 "precomputing time (ms)");
     }
 
-    private List<String> calcStatistics(OntologyDAG graph) {
+    private List<String> calcStatistics(OntologyDAG graph) throws OntologyDAG.NotFoundInternalGrphException {
 
         // 1. git clone https://github.com/fnikitin/jamm.git ; cd jamm ; ant jar ; add dependency to this jar
         // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
         MemoryMeter memMeter = new MemoryMeter();
 
         long wholeGraphMemory = memMeter.measureDeep(graph);
-        long descendantsMemory = memMeter.measureDeep(graph.getDescendants());
+        long descendantsMemory = memMeter.measureDeep(graph.getCvTermIdDescendants());
         long cvTermIdAccessionMemory = memMeter.measureDeep(graph.getCvTermIdByAccession());
 
-        Collection<Path> allPaths = graph.getAllPaths();
+        Collection<Path> allPaths = graph.getAllPathsFromTransientGraph();
 
         Instant t1 = Instant.now();
         for (Path path : allPaths) {
@@ -103,8 +108,8 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         }
         long ms = ChronoUnit.MILLIS.between(t1, Instant.now());
 
-        List<Number> stats = Arrays.asList(graph.countNodes(), graph.countEdges(), graph.getConnectedComponents().count(),
-                graph.getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.in), graph.getAverageDegree(Grph.TYPE.vertex, Grph.DIRECTION.out), allPaths.size(),
+        List<Number> stats = Arrays.asList(graph.countNodes(), graph.countEdgesFromTransientGraph(), graph.getConnectedComponentsFromTransientGraph().count(),
+                graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.in), graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.out), allPaths.size(),
                 (wholeGraphMemory/1024.), (descendantsMemory/1024), (cvTermIdAccessionMemory/1024), ms);
 
         return Stream.concat(Stream.of(graph.getTerminologyCv().name()), stats.stream().map(DECIMAL_FORMAT::format)).collect(Collectors.toList());
