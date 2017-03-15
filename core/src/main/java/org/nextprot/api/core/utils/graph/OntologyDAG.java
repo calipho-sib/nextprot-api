@@ -41,7 +41,7 @@ public class OntologyDAG implements Serializable {
     private final TerminologyCv terminologyCv;
     private final Map<String, Long> cvTermIdByAccession;
     private final Map<Long, String> cvTermAccessionById;
-    private final Map<Long, LongSet> cvTermIdDescendants;
+    private final Map<Long, LongSet> cvTermIdAncestors;
     private final int allPathsSize;
 
     public OntologyDAG(TerminologyCv terminologyCv, List<CvTerm> cvTerms) {
@@ -55,14 +55,14 @@ public class OntologyDAG implements Serializable {
 
         cvTermIdByAccession = new HashMap<>(cvTerms.size());
         cvTermAccessionById = new HashMap<>(cvTerms.size());
-        cvTermIdDescendants = new HashMap<>();
+        cvTermIdAncestors = new HashMap<>(cvTerms.size());
 
         transientGraph = new InMemoryGrph();
 
         cvTerms.forEach(this::addCvTermNode);
         cvTerms.forEach(this::addCvTermEdges);
 
-        allPathsSize = precomputeAllDescendants();
+        allPathsSize = precomputeAllAncestors();
 
         logSummary();
     }
@@ -92,7 +92,7 @@ public class OntologyDAG implements Serializable {
         cvTermIdByAccession.put(cvTerm.getAccession(), cvTerm.getId());
         cvTermAccessionById.put(cvTerm.getId(), cvTerm.getAccession());
         transientGraph.addVertex(cvTerm.getId());
-        cvTermIdDescendants.put(cvTerm.getId(), new LongHashSet());
+        cvTermIdAncestors.put(cvTerm.getId(), new LongHashSet());
     }
 
     private void addCvTermEdges(CvTerm cvTerm) {
@@ -110,19 +110,18 @@ public class OntologyDAG implements Serializable {
         }
     }
 
-    private int precomputeAllDescendants() {
+    private int precomputeAllAncestors() {
 
         Collection<Path> paths = transientGraph.getAllPaths();
 
         for (Path path : paths) {
 
-            long source = path.getSource();
-            for (long i=0 ; i<path.getNumberOfVertices() ; i++) {
+            long dest = path.getDestination();
 
-                long vertex  = path.getVertexAt(i);
+            if (path.getNumberOfVertices() > 1) {
+                for (long i = 0; i < path.getNumberOfVertices() - 1; i++) {
 
-                if (vertex != source) {
-                    cvTermIdDescendants.get(source).add(vertex);
+                    cvTermIdAncestors.get(dest).add(path.getVertexAt(i));
                 }
             }
         }
@@ -150,7 +149,7 @@ public class OntologyDAG implements Serializable {
      */
     public Stream<Long> getAllNodes() {
 
-        return cvTermIdDescendants.keySet().stream();
+        return cvTermIdAncestors.keySet().stream();
     }
 
     /**
@@ -158,7 +157,7 @@ public class OntologyDAG implements Serializable {
      */
     public long countNodes() {
 
-        return cvTermIdDescendants.size();
+        return cvTermIdAncestors.size();
     }
 
     /**
@@ -196,7 +195,7 @@ public class OntologyDAG implements Serializable {
      */
     public boolean isAncestorOf(long queryAncestor, long queryDescendant) {
 
-        return cvTermIdDescendants.get(queryAncestor).contains(queryDescendant);
+        return cvTermIdAncestors.get(queryDescendant).contains(queryAncestor);
     }
 
     /**
@@ -204,7 +203,7 @@ public class OntologyDAG implements Serializable {
      */
     public boolean isChildOf(long queryDescendant, long queryAncestor) {
 
-        return cvTermIdDescendants.get(queryAncestor).contains(queryDescendant);
+        return cvTermIdAncestors.get(queryDescendant).contains(queryAncestor);
     }
 
     // used for benchmarking only
@@ -214,10 +213,17 @@ public class OntologyDAG implements Serializable {
     }
 
     /**
-     * @return descendants of each cvterm node by id
+     * @return descendants of the given cvterm id
      */
-    public Map<Long, LongSet> getCvTermIdDescendants() {
-        return cvTermIdDescendants;
+    public long[] getAncestors(long cvTermId) {
+        return cvTermIdAncestors.get(cvTermId).toLongArray();
+    }
+
+    /**
+     * @return ancestors map of all cvterm nodes
+     */
+    public Map<Long, LongSet> getCvTermIdAncestors() {
+        return cvTermIdAncestors;
     }
 
     /**

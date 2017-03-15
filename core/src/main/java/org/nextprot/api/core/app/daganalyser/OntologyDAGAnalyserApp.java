@@ -96,7 +96,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         MemoryMeter memMeter = new MemoryMeter();
 
         long wholeGraphMemory = memMeter.measureDeep(graph);
-        long descendantsMemory = memMeter.measureDeep(graph.getCvTermIdDescendants());
+        long ancestorsMemory = memMeter.measureDeep(graph.getCvTermIdAncestors());
         long cvTermIdAccessionMemory = memMeter.measureDeep(graph.getCvTermIdByAccession());
 
         Collection<Path> allPaths = graph.getAllPathsFromTransientGraph();
@@ -110,7 +110,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         List<Number> stats = Arrays.asList(graph.countNodes(), graph.countEdgesFromTransientGraph(), graph.getConnectedComponentsFromTransientGraph().count(),
                 graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.in), graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.out), allPaths.size(),
-                (wholeGraphMemory/1024.), (descendantsMemory/1024), (cvTermIdAccessionMemory/1024), ms);
+                (wholeGraphMemory/1024.), (ancestorsMemory/1024), (cvTermIdAccessionMemory/1024), ms);
 
         return Stream.concat(Stream.of(graph.getTerminologyCv().name()), stats.stream().map(DECIMAL_FORMAT::format)).collect(Collectors.toList());
     }
