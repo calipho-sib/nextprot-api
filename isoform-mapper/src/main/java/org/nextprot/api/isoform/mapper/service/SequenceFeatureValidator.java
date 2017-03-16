@@ -85,25 +85,31 @@ public class SequenceFeatureValidator {
 
         Isoform isoform = sequenceFeature.getIsoform(entry);
 
-        checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos(),
-                variation.getFirstChangingAminoAcid().get1LetterCode(), query);
+        // do check only position for STOP code
+        if (sequenceFeature.getProteinVariation().getFirstChangingAminoAcid() == AminoAcidCode.STOP) {
+            checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos()-1, query, false);
+        }
+        else {
+            checkIsoformPosAndAminoAcids(isoform, variation.getFirstChangingAminoAcidPos(), variation.getFirstChangingAminoAcid().get1LetterCode(), query);
+        }
 
-        checkIsoformPos(isoform, variation.getLastChangingAminoAcidPos(),
-                variation.getLastChangingAminoAcid().get1LetterCode(), query);
+        if (sequenceFeature.getProteinVariation().getLastChangingAminoAcid() == AminoAcidCode.STOP) {
+            checkIsoformPos(isoform, variation.getLastChangingAminoAcidPos()-1, query, false);
+        }
+        else {
+            checkIsoformPosAndAminoAcids(isoform, variation.getLastChangingAminoAcidPos(), variation.getLastChangingAminoAcid().get1LetterCode(), query);
+        }
     }
 
     /**
      * Check that the given amino-acid(s) exist(s) at the given position of given isoform sequence
      * @throws FeatureQueryException if invalid
      */
-    private void checkIsoformPos(Isoform isoform, int position, String aas, SingleFeatureQuery query) throws FeatureQueryException {
+    private void checkIsoformPosAndAminoAcids(Isoform isoform, int position, String aas, SingleFeatureQuery query) throws FeatureQueryException {
 
         boolean insertionMode = (aas == null || aas.isEmpty());
-        boolean valid = IsoformSequencePositionMapper.checkSequencePosition(isoform, position, insertionMode);
 
-        if (!valid) {
-            throw new OutOfBoundSequencePositionException(query, position);
-        }
+        checkIsoformPos(isoform, position, query, insertionMode);
 
         if (!insertionMode && !IsoformSequencePositionMapper.checkAminoAcidsFromPosition(isoform, position, aas)) {
 
@@ -112,6 +118,15 @@ public class SequenceFeatureValidator {
             throw new UnexpectedFeatureQueryAminoAcidException(query, position,
                     AminoAcidCode.valueOfAminoAcidCodeSequence(aasOnSequence),
                     AminoAcidCode.valueOfAminoAcidCodeSequence(aas));
+        }
+    }
+
+    private void checkIsoformPos(Isoform isoform, int position, SingleFeatureQuery query, boolean insertionMode) throws FeatureQueryException {
+
+        boolean valid = IsoformSequencePositionMapper.checkSequencePosition(isoform, position, insertionMode);
+
+        if (!valid) {
+            throw new OutOfBoundSequencePositionException(query, position);
         }
     }
 }

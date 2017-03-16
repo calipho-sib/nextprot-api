@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.nextprot.api.blast.domain.gen.BlastResult;
+import org.nextprot.api.blast.domain.GlobalHit;
 import org.nextprot.api.blast.domain.gen.Report;
 import org.nextprot.api.blast.service.BlastResultUpdaterService;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -53,7 +54,7 @@ public class BlastResultUpdaterServiceImplTest {
         Assert.assertNotNull(blastResult.getResults().getSearch().getQueryLen());
         Assert.assertNotNull(blastResult.getResults().getSearch().getStat().getEntropy());
 
-        updater.update(blastResult, "WHATEVER MAN");
+        updater.update(blastResult, "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
 
         Assert.assertNull(blastResult.getReference());
         Assert.assertNull(blastResult.getResults().getSearch().getQueryId());
@@ -69,15 +70,22 @@ public class BlastResultUpdaterServiceImplTest {
 
         Assert.assertNull(blastResult.getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
 
-        updater.update(blastResult, "WHATEVER MAN");
+        updater.update(blastResult, "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
 
         Assert.assertNotNull(blastResult.getResults().getSearch().getHits().get(0).getHsps().get(0).getIdentityPercent());
+
+        GlobalHit globalHit = blastResult.getResults().getSearch().getHits().get(0).getGlobalHit();
+        Assert.assertEquals(100, globalHit.getIdentityPercent(), 0.01);
+        Assert.assertEquals(148, globalHit.getTotalScore(), 0.01);
+        Assert.assertEquals(1.45816e-12, globalHit.getMinEvalue(), 0.01);
+        Assert.assertEquals(148, globalHit.getMaxScore(), 0.01);
+
     }
 
     @Test(expected = NextProtException.class)
     public void shouldThrowExceptionWhenUpdateNullResult() throws Exception {
 
-        updater.update(null, "WHATEVER MAN");
+        updater.update(null, "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR");
     }
 
     private static Report runBlast() throws IOException {

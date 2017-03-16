@@ -37,14 +37,19 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
 
         feature = feature.trim();
 
-        String variation = parseVariation(feature);
-        parser = newParser();
+        int pivotPoint = getPivotPoint(feature);
 
-        this.geneName = parseGeneName(feature);
-        this.isoformName = parseIsoformName(feature);
-        this.formattedVariation = variation;
-        this.variation = parser.parse(variation);
+        String genePlusIso = feature.substring(0, pivotPoint);
+        formattedVariation = feature.substring(pivotPoint+1);
+
+        geneName = parseGeneName(genePlusIso);
+        isoformName = parseIsoformName(genePlusIso);
+
+        parser = newParser();
+        variation = parser.parse(formattedVariation);
     }
+
+    protected abstract int getPivotPoint(String feature) throws ParseException;
 
     public static SequenceFeature newFeature(SingleFeatureQuery query) throws FeatureQueryException {
 
@@ -75,12 +80,6 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
     protected abstract String parseIsoformName(String feature) throws ParseException;
 
     protected abstract SequenceVariationFormat newParser();
-
-    protected String parseVariation(String feature) {
-
-        int lastDashPosition = feature.lastIndexOf("-");
-        return feature.substring(lastDashPosition + 1);
-    }
 
     @Override
     public boolean isValidGeneName(Entry entry) {
@@ -151,15 +150,14 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         return sb.toString();
     }
 
+    private String parseGeneName(String geneAndIso) {
 
-    private String parseGeneName(String feature) {
+        Preconditions.checkNotNull(geneAndIso);
 
-        Preconditions.checkNotNull(feature);
+        if (geneAndIso.contains("-"))
+            return geneAndIso.substring(0, geneAndIso.indexOf("-"));
 
-        if (feature.contains("-"))
-            return feature.substring(0, feature.indexOf("-"));
-
-        return null;
+        return geneAndIso;
     }
 
     @Override
@@ -233,5 +231,4 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
             return change;
         }
     }
-
 }

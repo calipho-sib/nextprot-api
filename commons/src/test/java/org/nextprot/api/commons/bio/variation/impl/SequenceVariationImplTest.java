@@ -170,4 +170,58 @@ public class SequenceVariationImplTest {
 
         Assert.assertEquals(AminoAcidModification.S_NITROSATION, pm.getSequenceChange().getValue());
     }
+
+    // p.Met1ext-5
+    @Test
+    public void testBuildExtensionInit1() throws Exception {
+
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.METHIONINE, 1)
+                .thenInitiationExtension(-5, AminoAcidCode.METHIONINE).build();
+
+        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(1, pm.getFirstChangingAminoAcidPos());
+
+        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(1, pm.getLastChangingAminoAcidPos());
+
+        Assert.assertTrue(pm.getSequenceChange() instanceof ExtensionInitiation);
+        Assert.assertEquals(-5, ((ExtensionInitiation)pm.getSequenceChange()).getNewPos());
+        Assert.assertEquals(AminoAcidCode.METHIONINE, ((ExtensionInitiation)pm.getSequenceChange()).getValue());
+    }
+
+    // p.Met1Valext-12
+    @Test
+    public void testBuildExtensionInit2() throws Exception {
+
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.METHIONINE, 1)
+                .thenInitiationExtension(-12, AminoAcidCode.VALINE).build();
+
+        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(1, pm.getFirstChangingAminoAcidPos());
+
+        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(1, pm.getLastChangingAminoAcidPos());
+
+        Assert.assertTrue(pm.getSequenceChange() instanceof ExtensionInitiation);
+        Assert.assertEquals(-12, ((ExtensionInitiation)pm.getSequenceChange()).getNewPos());
+        Assert.assertEquals(AminoAcidCode.VALINE, ((ExtensionInitiation)pm.getSequenceChange()).getValue());
+    }
+
+    // p.Ter110GlnextTer17
+    @Test
+    public void testBuildExtensionTerm() throws Exception {
+
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.STOP, 110)
+                .thenTerminationExtension(17, AminoAcidCode.GLUTAMINE).build();
+
+        Assert.assertEquals(AminoAcidCode.STOP, pm.getFirstChangingAminoAcid());
+        Assert.assertEquals(110, pm.getFirstChangingAminoAcidPos());
+
+        Assert.assertEquals(AminoAcidCode.STOP, pm.getLastChangingAminoAcid());
+        Assert.assertEquals(110, pm.getLastChangingAminoAcidPos());
+
+        Assert.assertTrue(pm.getSequenceChange() instanceof ExtensionTermination);
+        Assert.assertEquals(17, ((ExtensionTermination)pm.getSequenceChange()).getNewPos());
+        Assert.assertEquals(AminoAcidCode.GLUTAMINE, ((ExtensionTermination)pm.getSequenceChange()).getValue());
+    }
 }

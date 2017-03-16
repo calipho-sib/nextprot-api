@@ -1,16 +1,15 @@
 package org.nextprot.api.core.dao;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.List;
-
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Test;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 @DatabaseSetup(value = "DbXrefDaoTest.xml", type = DatabaseOperation.INSERT)
 public class DbXrefDaoTest extends CoreUnitBaseTest {
@@ -34,7 +33,7 @@ public class DbXrefDaoTest extends CoreUnitBaseTest {
 		assertEquals(4000L, xrefs.get(0).getDbXrefId().longValue());
 		assertEquals("333", xrefs.get(0).getAccession());
 		assertEquals("cat", xrefs.get(0).getDatabaseCategory());
-		assertEquals("http://cosmic.com", xrefs.get(0).getUrl());
+		assertEquals("http://cancer.sanger.ac.uk/cosmic/", xrefs.get(0).getUrl());
 		assertEquals("http://cosmic.com?id=5", xrefs.get(0).getLinkUrl());
 		
 		assertEquals("Ensembl", xrefs.get(1).getDatabaseName());

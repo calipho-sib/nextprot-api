@@ -8,10 +8,12 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.nextprot.commons.constants.QualityQualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 
@@ -166,8 +168,8 @@ having sum(a.cnt)=1
 
             if (xref.getDbXrefId() == 1272250) {
 
-                Assert.assertEquals("http://www.ncbi.nlm.nih.gov/protein/%s", xref.getLinkUrl());
-                Assert.assertEquals("http://www.ncbi.nlm.nih.gov/protein/NP_000198.1", xref.getResolvedUrl());
+                Assert.assertEquals("https://www.ncbi.nlm.nih.gov/protein/%s", xref.getLinkUrl());
+                Assert.assertEquals("https://www.ncbi.nlm.nih.gov/protein/NP_000198.1", xref.getResolvedUrl());
 
                 break;
             }
@@ -200,12 +202,53 @@ having sum(a.cnt)=1
 
 			if (xref.getDbXrefId() == 964246) {
 
-				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s", xref.getLinkUrl());
-				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.1", xref.getResolvedUrl());
+				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=%s&UniProtAcc=%u&OrganismID=%d", xref.getLinkUrl());
+				Assert.assertEquals("http://www.brenda-enzymes.org/enzyme.php?ecno=2.7.11.1&UniProtAcc=Q9BXA6", xref.getResolvedUrl());
 
                 break;
 			}
 		}
+	}
+
+	@Test
+	public void shouldFindTransportActivityAnnotation() {
+
+		List<Annotation> annotations = this.xrefService.findDbXrefsAsAnnotationsByEntry("NX_Q86VW1").stream()
+				.filter(a -> a.getAPICategory() == AnnotationCategory.TRANSPORT_ACTIVITY)
+				.collect(Collectors.toList());
+
+		Assert.assertEquals(1, annotations.size());
+		Annotation annotation = annotations.get(0);
+
+		Assert.assertEquals("AN_Q86VW1_XR_6580312", annotation.getUniqueName());
+		Assert.assertEquals("the major facilitator superfamily (mfs)", annotation.getDescription());
+
+		List<AnnotationEvidence> evidences = annotation.getEvidences().stream()
+				.filter(e -> e.getResourceDb().equals("TCDB"))
+				.collect(Collectors.toList());
+
+		// Assert Evidence
+		Assert.assertEquals(1, evidences.size());
+		AnnotationEvidence evidence = evidences.get(0);
+
+		Assert.assertEquals("database", evidence.getResourceType());
+		Assert.assertEquals("2.A.1.19.12", evidence.getResourceAccession());
+		Assert.assertEquals("ECO:0000305", evidence.getEvidenceCodeAC());
+		Assert.assertEquals(QualityQualifier.GOLD.toString(), evidence.getQualityQualifier());
+
+		// Assert Xref
+		Assert.assertNotNull(annotation.getParentXref());
+
+		Assert.assertEquals("2.A.1.19.12", annotation.getParentXref().getAccession());
+		Assert.assertEquals("TCDB", annotation.getParentXref().getDatabaseName());
+		Assert.assertNotNull(annotation.getParentXref().getProperties());
+
+		List<DbXref.DbXrefProperty> props = annotation.getParentXref().getProperties().stream()
+				.filter(p -> p.getName().equals("family name"))
+				.collect(Collectors.toList());
+
+		Assert.assertEquals(1, props.size());
+		Assert.assertEquals("the major facilitator superfamily (mfs)", props.get(0).getValue());
 	}
 
 	private void assertEmptyProperties(String entryName, long propertyId) {

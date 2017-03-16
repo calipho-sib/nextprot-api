@@ -80,12 +80,7 @@ limit 100
 		@Override
 		protected Function<DbXref, Long> createElementToKeyFunc() {
 
-			return new Function<DbXref, Long>() {
-				@Override
-				public Long apply(DbXref xref) {
-					return xref.getDbXrefId();
-				}
-			};
+			return xref -> xref.getDbXrefId();
 		}
 
 		@Override

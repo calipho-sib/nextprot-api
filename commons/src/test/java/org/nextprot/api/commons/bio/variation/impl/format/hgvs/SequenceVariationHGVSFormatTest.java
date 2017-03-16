@@ -19,7 +19,7 @@ public class SequenceVariationHGVSFormatTest {
     public void testConstrFormat() throws Exception {
 
         Collection<SequenceChange.Type> types = format.getAvailableChangeTypes();
-        Assert.assertEquals(6, types.size());
+        Assert.assertEquals(8, types.size());
     }
 
     @Test
@@ -212,5 +212,23 @@ public class SequenceVariationHGVSFormatTest {
         SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcidRange(AminoAcidCode.CYSTEINE, 76, AminoAcidCode.GLUTAMIC_ACID, 79).thenDuplicate().build();
 
         Assert.assertEquals("p.Cys76_Glu79dup", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
+    }
+
+    @Test
+    public void testFormatInitiationExtensionCode3() throws Exception {
+
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.METHIONINE, 1)
+                .thenInitiationExtension(-12, AminoAcidCode.VALINE).build();
+
+        Assert.assertEquals("p.Met1Valext-12", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
+    }
+
+    @Test
+    public void testFormatExtensionCode3() throws Exception {
+
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.STOP, 110)
+                .thenTerminationExtension(17, AminoAcidCode.GLUTAMINE).build();
+
+        Assert.assertEquals("p.Ter110Glnext*17", format.format(pm, AminoAcidCode.CodeType.THREE_LETTER));
     }
 }

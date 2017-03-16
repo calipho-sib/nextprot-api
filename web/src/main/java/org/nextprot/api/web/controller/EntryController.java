@@ -82,5 +82,17 @@ public class EntryController {
 
 		return entryPageService.testEntryContentForPageDisplay(entryName);
 	}
+
+	/**
+	 * Hidden service reporting the number of annotations contained for the specific entry
+	 * @param entryName the nextprot accession number
+	 * @return the annotation count
+	 */
+	@RequestMapping(value = "/entry/{entry}/annotation-count", method = { RequestMethod.GET })
+	@ResponseBody
+	public Integer countAnnotation(@PathVariable("entry") String entryName) {
+
+		return this.entryBuilderService.build(EntryConfig.newConfig(entryName).with("annotation")).getAnnotations().size();
+	}
 }
 

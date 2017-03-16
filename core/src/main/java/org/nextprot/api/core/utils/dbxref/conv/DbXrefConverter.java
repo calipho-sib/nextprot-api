@@ -1,14 +1,10 @@
 package org.nextprot.api.core.utils.dbxref.conv;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.XRefDatabase;
+import org.nextprot.api.core.utils.dbxref.resolver.XRefDatabase;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DbXrefConverter implements DbXrefPropertyToXrefConverter {
 
@@ -43,7 +39,7 @@ public class DbXrefConverter implements DbXrefPropertyToXrefConverter {
 
         Preconditions.checkNotNull(xref);
 
-        Optional<XRefDatabase> db = XRefDatabase.optionalValueOfDbName(xref.getDatabaseName());
+        Optional<XRefDatabase> db = XRefDatabase.valueOfName(xref.getDatabaseName());
 
         if (db.isPresent() && converters.containsKey(db.get())) {
             return converters.get(db.get()).convert(xref);

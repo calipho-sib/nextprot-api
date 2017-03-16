@@ -158,6 +158,14 @@
 			<property name="minPoolSize" value="${db.data.minPoolSize}" />
 			<property name="initialPoolSize" value="${db.data.initialPoolSize}" />
 			<property name="autoCommitOnClose" value="false" />
+			<!-- Tuning: time out, losing connection after inactivity period (solution here: http://www.mchange.com/projects/c3p0/#configuring_connection_testing) -->
+			<property name="testConnectionOnCheckout" value="true" />
+			<!--
+			<property name="testConnectionOnCheckout" value="false" />
+			<property name="testConnectionOnCheckin" value="true" />
+			<property name="idleConnectionTestPeriod" value="120" />
+			<property name="preferredTestQuery" value="SELECT 1" />
+			-->
 		</bean>
 
 		<bean id="statementsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">

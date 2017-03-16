@@ -4,6 +4,7 @@ package org.nextprot.api.blast.domain.gen;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.nextprot.api.blast.domain.GlobalHit;
 
 import java.io.Serializable;
 import java.util.List;
@@ -16,7 +17,8 @@ import java.util.List;
     "num",
     "description",
     "len",
-    "hsps"
+    "hsps",
+    "global_hit"
 })
 public class Hit implements Serializable
 {
@@ -29,7 +31,10 @@ public class Hit implements Serializable
     private int len;
     @JsonProperty("hsps")
     private List<Hsp> hsps = null;
-    private final static long serialVersionUID = 8937818461376471395L;
+    @JsonProperty("global")
+    private GlobalHit globalHit;
+
+    private final static long serialVersionUID = 3L;
 
     /**
      * 
@@ -109,5 +114,15 @@ public class Hit implements Serializable
     @JsonProperty("hsps")
     public void setHsps(List<Hsp> hsps) {
         this.hsps = hsps;
+    }
+
+    @JsonProperty("global")
+    public GlobalHit getGlobalHit() {
+        return globalHit;
+    }
+
+    @JsonProperty("global")
+    public void setGlobalHit(GlobalHit globalHit) {
+        this.globalHit = globalHit;
     }
 }

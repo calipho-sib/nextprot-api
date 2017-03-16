@@ -214,6 +214,21 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 					evidence.setResourceId(publication.getPublicationId());
 				}
 			}
+			
+		} else if("DOI".equalsIgnoreCase(referenceDB)){ 
+			
+			//Should work with DOI: 10.1038/npjgenmed.2016.1
+			//See https://issues.isb-sib.ch/browse/NEXTPROT-1369
+			Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", referenceAC);
+			if (publication == null) {
+				//Set -1 if not exists. Should never be the case 
+				evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication with DOI " + referenceAC, -1L));
+			}
+			else {
+				evidence.setResourceId(publication.getPublicationId());
+			}
+			
+			
 		} else {
 			
 			evidence.setResourceId(-2);

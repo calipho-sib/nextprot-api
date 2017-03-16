@@ -148,6 +148,16 @@ public class SequenceVariationImpl implements SequenceVariation {
             public SequenceVariationBuilder thenAddModification(AminoAcidModification mod) {
                 return new AminoAcidModificationBuilder(dataCollector, mod);
             }
+
+            @Override
+            public SequenceVariationBuilder thenInitiationExtension(int newUpstreamInitPos, AminoAcidCode newAminoAcidCode) {
+                return new InitiationExtensionBuilder(dataCollector, newUpstreamInitPos, newAminoAcidCode);
+            }
+
+            @Override
+            public SequenceVariationBuilder thenTerminationExtension(int newDownstreamTermPos, AminoAcidCode newAminoAcidCode) {
+                return new TerminationExtensionBuilder(dataCollector, newDownstreamTermPos, newAminoAcidCode);
+            }
         }
 
         abstract class SequenceVariationBuilderImpl implements SequenceVariationBuilder {
@@ -275,6 +285,40 @@ public class SequenceVariationImpl implements SequenceVariation {
             @Override
             protected SequenceChange getProteinSequenceChange() {
                 return mod;
+            }
+        }
+
+        class InitiationExtensionBuilder extends SequenceVariationBuilderImpl {
+
+            private final ExtensionInitiation extension;
+
+            InitiationExtensionBuilder(DataCollector dataCollector, int newUpstreamSitePos, AminoAcidCode newAminoAcidCode) {
+
+                super(dataCollector);
+                this.extension = new ExtensionInitiation(newUpstreamSitePos, newAminoAcidCode);
+            }
+
+            @Override
+            protected SequenceChange getProteinSequenceChange() {
+
+                return extension;
+            }
+        }
+
+        class TerminationExtensionBuilder extends SequenceVariationBuilderImpl {
+
+            private final ExtensionTermination extension;
+
+            TerminationExtensionBuilder(DataCollector dataCollector, int newDownstreamTermPos, AminoAcidCode newAminoAcidCode) {
+
+                super(dataCollector);
+                this.extension = new ExtensionTermination(newDownstreamTermPos, newAminoAcidCode);
+            }
+
+            @Override
+            protected SequenceChange getProteinSequenceChange() {
+
+                return extension;
             }
         }
     }

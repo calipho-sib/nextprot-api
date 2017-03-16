@@ -9,6 +9,7 @@ import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.impl.spring.BatchNamedParameterJdbcTemplate;
 import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.utils.annot.GoDatasource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -150,11 +151,12 @@ public class AnnotationDAOImpl implements AnnotationDAO {
             evidence.setResourceAssociationType(resultSet.getString("resource_assoc_type"));
             evidence.setResourceType(resultSet.getString("resource_type"));
             evidence.setResourceAccession(resultSet.getString("resource_accession"));
+            evidence.setGoAssignedBy(GoDatasource.getGoAssignedBy(resultSet.getString("resource_accession"))); // for display only: use it if not null otherwise use assignedBy
+            evidence.setAssignedBy(resultSet.getString("evidence_assigned_by"));
             evidence.setResourceDb(resultSet.getString("resource_db"));
             evidence.setResourceDescription(resultSet.getString("resource_desc"));
             evidence.setQualityQualifier(resultSet.getString("quality_qualifier"));
             evidence.setEvidenceId(resultSet.getLong("evidence_id"));
-            evidence.setAssignedBy(resultSet.getString("evidence_assigned_by"));
             evidence.setExperimentalContextId(resultSet.getLong("experimental_context_id"));
             evidence.setAssignmentMethod(resultSet.getString("assignment_method"));
             evidence.setEvidenceCodeAC(resultSet.getString("eco_ac"));
