@@ -57,6 +57,10 @@ public class TerminologyUtils {
 			mylist = terminologyservice.findCvTermByAccession(currTerm).getAncestorAccession();
 			if(mylist == null) break;
 			if(mylist.size() > 1) for (int i=1; i<mylist.size(); i++) multiParentSet.add(mylist.get(i));
+
+			// when root loop on itself !
+			if (currTerm.equals(mylist.get(0)))
+				break;
 			currTerm = mylist.get(0);
 			finalSet.add(currTerm);
 		}
@@ -73,6 +77,9 @@ public class TerminologyUtils {
 					if(mylist.size() > 1)
 						for (int i=1; i<mylist.size(); i++)
 							multiParentSet.add(mylist.get(i));
+					// when root loop on itself !
+					if (currTerm.equals(mylist.get(0)))
+						break;
 					currTerm = mylist.get(0);
 					finalSet.add(currTerm);
 					mylist = terminologyservice.findCvTermByAccession(currTerm).getAncestorAccession();
