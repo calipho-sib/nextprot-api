@@ -7,6 +7,7 @@ import grph.path.Path;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.service.TerminologyService;
 import toools.collection.bigstuff.longset.LongCursor;
 import toools.collection.bigstuff.longset.LongHashSet;
 import toools.collection.bigstuff.longset.LongSet;
@@ -27,8 +28,8 @@ import java.util.stream.Stream;
  * A call of a method depending on Grph field on a deserialized OntologyDAG instance (graph not accessible anymore)
  * will throw a NotFoundInternalGrphException.
  *
- * To help using this object, methods depending on this field were named with suffix "..FromTransientGraph()" and a dedicated method
- * isTransientGraphAvailable() was added to test for grph eligibility.
+ * To help using this object, methods depending on this field were named with suffix "..FromTransientGraph()" and a
+ * dedicated method {@code isTransientGraphAvailable()} was added to test for {@code transientGraph} eligibility.
  *
  * Created by fnikitin on 08.03.17.
  */
@@ -44,12 +45,12 @@ public class OntologyDAG implements Serializable {
     private final Map<Long, LongSet> cvTermIdAncestors;
     private final int allPathsSize;
 
-    public OntologyDAG(TerminologyCv terminologyCv, List<CvTerm> cvTerms) {
+    public OntologyDAG(TerminologyCv terminologyCv, TerminologyService service) {
 
         Preconditions.checkNotNull(terminologyCv);
-        Preconditions.checkNotNull(cvTerms);
-        Preconditions.checkArgument(!cvTerms.isEmpty());
-        Preconditions.checkArgument(cvTerms.size() == new HashSet<>(cvTerms).size());
+        Preconditions.checkNotNull(service);
+
+        List<CvTerm> cvTerms = service.findCvTermsByOntology(terminologyCv.name());
 
         this.terminologyCv = terminologyCv;
 
@@ -242,10 +243,21 @@ public class OntologyDAG implements Serializable {
     }
 
     /**
-     * @return a Stream of cvterm ids that are parents of cvTermId
-     * @throws NotFoundInternalGrphException if internal graph is missing
+     * @return the set of all path containing a cycle
+     * @throws NotFoundInternalGraphException if internal graph is missing
      */
-    public long[] getParentsFromGrph(long cvTermId) throws NotFoundInternalGrphException {
+    public Set<Path> getAllCyclesFromTransientGraph() throws NotFoundInternalGraphException {
+
+        checkTransientGraphAvailability();
+
+        return transientGraph.getAllCycles();
+    }
+
+    /**
+     * @return a Stream of cvterm ids that are parents of cvTermId
+     * @throws NotFoundInternalGraphException if internal graph is missing
+     */
+    public long[] getParentsFromTransientGraph(long cvTermId) throws NotFoundInternalGraphException {
 
         checkTransientGraphAvailability();
 
@@ -254,9 +266,9 @@ public class OntologyDAG implements Serializable {
 
     /**
      * @return a Stream of cvterm ids that are children of cvTermId
-     * @throws NotFoundInternalGrphException if internal graph is missing
+     * @throws NotFoundInternalGraphException if internal graph is missing
      */
-    public long[] getChildrenFromGrph(long cvTermId) throws NotFoundInternalGrphException {
+    public long[] getChildrenFromTransientGraph(long cvTermId) throws NotFoundInternalGraphException {
 
         checkTransientGraphAvailability();
 
@@ -264,9 +276,9 @@ public class OntologyDAG implements Serializable {
     }
     /**
      * @return the total number of graph edges
-     * @throws NotFoundInternalGrphException if internal graph is missing
+     * @throws NotFoundInternalGraphException if internal graph is missing
      */
-    public long countEdgesFromTransientGraph() throws NotFoundInternalGrphException {
+    public long countEdgesFromTransientGraph() throws NotFoundInternalGraphException {
 
         checkTransientGraphAvailability();
 
@@ -275,9 +287,9 @@ public class OntologyDAG implements Serializable {
 
     /**
      * @return all the paths of this graph
-     * @throws NotFoundInternalGrphException if internal graph is missing
+     * @throws NotFoundInternalGraphException if internal graph is missing
      */
-    public Collection<Path> getAllPathsFromTransientGraph() throws NotFoundInternalGrphException {
+    public Collection<Path> getAllPathsFromTransientGraph() throws NotFoundInternalGraphException {
 
         checkTransientGraphAvailability();
 
@@ -286,9 +298,9 @@ public class OntologyDAG implements Serializable {
 
     /**
      * @return the connected components of the graph
-     * @throws NotFoundInternalGrphException if internal graph is missing
+     * @throws NotFoundInternalGraphException if internal graph is missing
      */
-    public Stream<LongSet> getConnectedComponentsFromTransientGraph() throws NotFoundInternalGrphException {
+    public Stream<LongSet> getConnectedComponentsFromTransientGraph() throws NotFoundInternalGraphException {
 
         checkTransientGraphAvailability();
 
@@ -297,10 +309,10 @@ public class OntologyDAG implements Serializable {
 
     /**
      * @return the average degree of the graph
-     * @throws NotFoundInternalGrphException if internal graph is missing
+     * @throws NotFoundInternalGraphException if internal graph is missing
      */
     // There is a deprecation in toools.math.MathsUtilities; grph.getAverageDegree() should call another method like below
-    public double getAverageDegreeFromTransientGraph(Grph.TYPE type, Grph.DIRECTION direction) throws NotFoundInternalGrphException {
+    public double getAverageDegreeFromTransientGraph(Grph.TYPE type, Grph.DIRECTION direction) throws NotFoundInternalGraphException {
 
         LongArrayList l = new LongArrayList();
 
@@ -312,10 +324,10 @@ public class OntologyDAG implements Serializable {
         return MathsUtilities.computeAverage(l.toLongArray());
     }
 
-    private void checkTransientGraphAvailability() throws NotFoundInternalGrphException {
+    private void checkTransientGraphAvailability() throws NotFoundInternalGraphException {
 
         if (transientGraph == null)
-            throw new NotFoundInternalGrphException();
+            throw new NotFoundInternalGraphException();
     }
 
     /**
@@ -330,13 +342,13 @@ public class OntologyDAG implements Serializable {
     }
 
     /**
-     * Thrown when transient graph is not available anymore from a method supposed to need it
+     * Thrown when transient graph is not available anymore from methods supposed to need it
      */
-    public class NotFoundInternalGrphException extends Exception {
+    public class NotFoundInternalGraphException extends Exception {
 
-        public NotFoundInternalGrphException() {
+        public NotFoundInternalGraphException() {
 
-            super("The transient field Grph was not found anymore for ontology "+terminologyCv);
+            super("This instance has been deserialized: the graph (and all associated methods) is not longer accessible for ontology "+terminologyCv);
         }
     }
 }

@@ -52,9 +52,12 @@ public class TerminologyUtils {
 		Set<String> multiSetCurrent = new TreeSet<String>();
 		List<String> mylist = Arrays.asList("XXX");
 		String currTerm = cvterm;
-		
+
 		while(!mylist.isEmpty()) {
-			mylist = terminologyservice.findCvTermByAccession(currTerm).getAncestorAccession();
+			CvTerm cvt = terminologyservice.findCvTermByAccession(currTerm);
+			if (cvt == null ) break;
+
+			mylist = cvt.getAncestorAccession();
 			if(mylist == null) break;
 			if(mylist.size() > 1) for (int i=1; i<mylist.size(); i++) multiParentSet.add(mylist.get(i));
 

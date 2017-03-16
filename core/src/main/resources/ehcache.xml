@@ -77,9 +77,10 @@
 	</cache>
 	
 	<!-- Configuring cache for other services -->
+	<!-- 347609619 -->
 	<cache name="terminology-by-accession" overflowToOffHeap="false"
 		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100"
-		   maxEntriesLocalDisk="200000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   maxEntriesLocalDisk="220000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		   statistics="true">
 	</cache>
 	

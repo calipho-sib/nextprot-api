@@ -11,7 +11,6 @@ import org.github.jamm.MemoryMeter;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
 import org.nextprot.api.commons.utils.app.SpringBasedApp;
-import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.graph.OntologyDAG;
 
@@ -59,10 +58,8 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         for (TerminologyCv terminologyCv : TerminologyCv.values()) {
 
-            List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(terminologyCv.name());
-
             Instant t1 = Instant.now();
-            OntologyDAG graph = new OntologyDAG(terminologyCv, cvTerms);
+            OntologyDAG graph = new OntologyDAG(terminologyCv, terminologyService);
             long buildingTime = ChronoUnit.MILLIS.between(t1, Instant.now());
 
             try {
@@ -72,7 +69,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
                 pw.write(statistics.stream().collect(Collectors.joining(",")));
                 pw.write("\n");
                 pw.flush();
-            } catch (OntologyDAG.NotFoundInternalGrphException e) {
+            } catch (OntologyDAG.NotFoundInternalGraphException e) {
 
                 throw new IllegalStateException(e);
             }
@@ -89,7 +86,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
                 "precomputing time (ms)");
     }
 
-    private List<String> calcStatistics(OntologyDAG graph) throws OntologyDAG.NotFoundInternalGrphException {
+    private List<String> calcStatistics(OntologyDAG graph) throws OntologyDAG.NotFoundInternalGraphException {
 
         // 1. git clone https://github.com/fnikitin/jamm.git ; cd jamm ; ant jar ; add dependency to this jar
         // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
