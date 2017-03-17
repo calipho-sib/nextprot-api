@@ -55,7 +55,10 @@ public class TerminologyUtils {
 
 		while(!mylist.isEmpty()) {
 			CvTerm cvt = terminologyservice.findCvTermByAccession(currTerm);
-			if (cvt == null ) break;
+			if (cvt == null ) {
+				LOGGER.error(cvterm + " does not exist");
+				break;
+			}
 
 			mylist = cvt.getAncestorAccession();
 			if(mylist == null) break;
@@ -74,7 +77,14 @@ public class TerminologyUtils {
 			for(String cv : multiSetCurrent) {
 				finalSet.add(cv);
 				multiParentSet.remove(cv);
-				mylist = terminologyservice.findCvTermByAccession(cv).getAncestorAccession();
+
+				CvTerm cvt = terminologyservice.findCvTermByAccession(cv);
+				if (cvt == null ) {
+					LOGGER.error(cv + " does not exist");
+					break;
+				}
+
+				mylist = cvt.getAncestorAccession();
 				if(mylist == null) break;
 				while(mylist != null && !mylist.isEmpty()) {
 					if(mylist.size() > 1)
