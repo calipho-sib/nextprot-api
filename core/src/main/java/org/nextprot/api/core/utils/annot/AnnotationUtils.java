@@ -4,7 +4,6 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.BioObject;
-import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
@@ -13,7 +12,6 @@ import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.utils.annot.comp.AnnotationComparators;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;
-import org.nextprot.api.core.utils.graph.OntologyDAG;
 import org.nextprot.commons.constants.QualityQualifier;
 
 import java.util.*;
@@ -90,33 +88,6 @@ public class AnnotationUtils {
 	 */
 	public static List<Annotation> filterAnnotationsByCategory(Entry entry, AnnotationCategory annotationCategory, boolean withChildren, boolean goldOnly) {
 		return filterAnnotationsByCategory(entry.getAnnotations(), annotationCategory, withChildren, goldOnly);
-	}
-
-	/**
-	 * Filter annotations where cvterm is a descendant of the given ancestor
-	 *
-	 * @param annotations the annotation list to filter
-	 * @param dag the ontology graph
-	 * @param ancestor the ancestor node
-	 * @return the filtered list
-	 */
-	public static List<Annotation> filterAnnotationsByCvTermDescendingFromAncestor(List<Annotation> annotations, OntologyDAG dag, CvTerm ancestor) {
-
-		if (annotations == null)
-			return new ArrayList<>();
-
-		if (!dag.hasCvTermAccession(ancestor.getAccession())) {
-			return annotations;
-		}
-
-		return annotations.stream()
-				.filter(annotation -> {
-					try {
-						return annotation.getCvTermAccessionCode() != null && dag.isAncestorOf(ancestor.getId(), dag.getCvTermIdByAccession(annotation.getCvTermAccessionCode()));
-					} catch (OntologyDAG.NotFoundNodeException e) {
-						return false;
-					}
-				}).collect(Collectors.toList());
 	}
 
 	/**

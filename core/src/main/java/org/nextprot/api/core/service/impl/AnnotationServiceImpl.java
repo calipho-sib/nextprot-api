@@ -10,21 +10,25 @@ import com.nextprot.api.annotation.builder.statement.service.StatementService;
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.dao.AnnotationDAO;
 import org.nextprot.api.core.dao.BioPhyChemPropsDao;
 import org.nextprot.api.core.dao.IsoformDAO;
 import org.nextprot.api.core.dao.PtmDao;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Feature;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
+import org.nextprot.api.core.utils.graph.OntologyDAG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
@@ -38,6 +42,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private StatementService statementService;
+	@Autowired private TerminologyService terminologyService;
 	
 	@Override
 	@Cacheable("annotations")
@@ -184,7 +189,43 @@ public class AnnotationServiceImpl implements AnnotationService {
 		List<Feature> ptms = this.ptmDao.findPtmsByEntry(masterUniqueName);
 		return filterByIsoform(isoformUniqueName, ptms);
 	}
-	
+
+	/**
+	 * Filter annotations where cvterm is the given ancestor or a descendant
+	 *
+	 * @param annotations the annotation list to filter
+	 * @param ancestorTermAccession the ancestor node
+	 * @return the filtered list
+	 */
+	@Override
+	public List<Annotation> filterByCvTermAncestor(List<Annotation> annotations, String ancestorTermAccession) {
+
+		if (annotations == null)
+			return new ArrayList<>();
+
+		CvTerm ancestor = terminologyService.findCvTermByAccession(ancestorTermAccession);
+
+		if (ancestor == null) {
+			return new ArrayList<>();
+		}
+
+		OntologyDAG dag = terminologyService.findOntologyGraph(TerminologyCv.valueOf(ancestor.getOntology()));
+
+		if (!dag.hasCvTermAccession(ancestor.getAccession())) {
+			return new ArrayList<>();
+		}
+
+		return annotations.stream()
+				.filter(annotation -> {
+					try {
+						return annotation.getCvTermAccessionCode() != null &&
+								(annotation.getCvTermAccessionCode().equals(ancestorTermAccession) ||
+								 dag.isAncestorOf(ancestor.getId(), dag.getCvTermIdByAccession(annotation.getCvTermAccessionCode())));
+					} catch (OntologyDAG.NotFoundNodeException e) {
+						return false;
+					}
+				}).collect(Collectors.toList());
+	}
 	
 	// Function class to filter using guava ///////////////////////////////////////////////////////////////////////////////
 

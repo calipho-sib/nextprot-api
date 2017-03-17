@@ -4,15 +4,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
-import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryBuilderService;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.nextprot.api.core.utils.IsoformUtils;
@@ -36,7 +35,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 	@Autowired
 	private EntryBuilderService entryBuilderService;
 	@Autowired
-	private TerminologyService terminologyService;
+	private AnnotationService annotationService;
 
 	@Test
     public void shouldTurnSequenceCautionRelativeEvidenceIntoDifferingSequenceProperty()  {
@@ -249,13 +248,12 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldFilterBindingTypeDescendantAnnotations() {
 
-		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").withAnnotations()).getAnnotations();
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P01308")
+				.with("go-molecular-function")).getAnnotations();
 
-		Assert.assertEquals(883, annotations.size());
+		Assert.assertEquals(6, annotations.size());
 
-		List<Annotation> filtered = AnnotationUtils.filterAnnotationsByCvTermDescendingFromAncestor(annotations,
-				terminologyService.findOntologyGraph(TerminologyCv.GoMolecularFunctionCv),
-				terminologyService.findCvTermByAccession("GO:0005102"));
+		List<Annotation> filtered = annotationService.filterByCvTermAncestor(annotations, "GO:0005102");
 
 		Assert.assertEquals(3, filtered.size());
 		Set<String> terms = filtered.stream().map(Annotation::getCvTermAccessionCode).collect(Collectors.toSet());
