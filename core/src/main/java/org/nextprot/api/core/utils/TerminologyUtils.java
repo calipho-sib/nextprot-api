@@ -2,6 +2,7 @@ package org.nextprot.api.core.utils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.commons.utils.Tree.Node;
@@ -9,8 +10,10 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.utils.graph.OntologyDAG;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 //import org.nextprot.api.core.domain.TerminologyProperty;
 
@@ -46,7 +49,28 @@ public class TerminologyUtils {
 		return properties;
 	}
 
-	public static List<String> getAllAncestors(String cvterm, TerminologyService terminologyservice) {
+	/**
+	 * Get all ancestors of the given cvterm
+	 *
+	 * @param cvTermAccession the cvterm accession
+	 * @param terminologyservice the terminology service
+	 * @return a list of cvterm ancestor accessions
+	 */
+	public static List<String> getAllAncestors(String cvTermAccession, TerminologyService terminologyservice) {
+
+		CvTerm cvTerm = terminologyservice.findCvTermByAccession(cvTermAccession);
+		OntologyDAG graph = terminologyservice.findOntologyGraph(TerminologyCv.valueOf(cvTerm.getOntology()));
+
+		return Arrays.stream(graph.getAncestors(cvTerm.getId())).boxed()
+				.map(graph::getCvTermAccessionById)
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * @deprecated use #getAllAncestors() instead
+	 */
+	@Deprecated
+	public static List<String> getAllAncestorsOld(String cvterm, TerminologyService terminologyservice) {
 		Set<String> finalSet = new TreeSet<String>();
 		Set<String> multiParentSet = new TreeSet<String>();
 		Set<String> multiSetCurrent = new TreeSet<String>();
