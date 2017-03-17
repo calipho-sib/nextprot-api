@@ -2,19 +2,18 @@ package org.nextprot.api.core.utils.graph;
 
 import grph.path.Path;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
-import org.nextprot.api.core.utils.TerminologyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -108,109 +107,6 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
         OntologyDAG graph = new OntologyDAG(TerminologyCv.GoMolecularFunctionCv, terminologyService);
 
         Assert.assertFalse(graph.hasCvTermAccession("roudoudou"));
-    }
-
-    @Test
-    public void benchmarkingGetAncestorsMethods() throws Exception {
-
-        Set<TerminologyCv> excludedOntology = EnumSet.of(
-                TerminologyCv.NextprotCellosaurusCv, TerminologyCv.MeshAnatomyCv, TerminologyCv.MeshCv);
-
-        Set<String> allCvTerms = new HashSet<>();
-
-        // cache all (211367 terms)
-        Instant t = Instant.now();
-        for (TerminologyCv ontology : TerminologyCv.values()) {
-
-            allCvTerms.addAll(terminologyService.findCvTermsByOntology(ontology.name()).stream()
-                    .map(CvTerm::getAccession)
-                    .collect(Collectors.toSet()));
-        }
-        System.out.println("access/cache "+TerminologyCv.values().length+" terminologies via terminologyService.findCvTermsByOntology: "+ChronoUnit.SECONDS.between(t, Instant.now()) + " s");
-
-        t = Instant.now();
-        allCvTerms.forEach(cvTerm -> terminologyService.findCvTermByAccession(cvTerm));
-        System.out.println("access/cache "+allCvTerms.size()+" terms via terminologyService.findCvTermByAccession: "+ChronoUnit.SECONDS.between(t, Instant.now()) + " s");
-
-        for (TerminologyCv ontology : TerminologyCv.values()) {
-
-            if (excludedOntology.contains(ontology))
-                continue;
-
-            benchmarkingGetAncestorsMethods(ontology);
-        }
-    }
-
-    private void benchmarkingGetAncestorsMethods(TerminologyCv terminologyCv) {
-
-        System.out.println("benchmarking "+terminologyCv+"...");
-
-        OntologyDAG graph = new OntologyDAG(terminologyCv, terminologyService);
-
-        Map<Long, List<String>> ancestors = new HashMap<>();
-        Map<Long, long[]> ancestorsQuick = new HashMap<>();
-
-        List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(terminologyCv.name());
-
-        // COMPARE COMPUTATION DURATIONS
-        Instant t = Instant.now();
-        for (CvTerm cvTerm : cvTerms) {
-
-            ancestorsQuick.put(cvTerm.getId(), graph.getAncestors(cvTerm.getId()));
-        }
-        System.out.println("OntologyDAG.getAncestors(): "+ChronoUnit.MILLIS.between(t, Instant.now()) + " ms");
-
-        t = Instant.now();
-        for (CvTerm cvTerm : cvTerms) {
-            ancestors.put(cvTerm.getId(), TerminologyUtils.getAllAncestors(cvTerm.getAccession(), terminologyService));
-        }
-        System.out.println("TerminologyUtils.getAllAncestors(): "+ ChronoUnit.SECONDS.between(t, Instant.now()) + " s");
-
-
-        // TEST CORRECTNESS
-        Assert.assertEquals(ancestors.size(), ancestorsQuick.size());
-        Set<Long> ids = ancestors.keySet();
-
-        for (long id : ids) {
-
-            Set<Long> ancestorsOld = ancestors.get(id).stream().map(accession -> {
-                try {
-                    return graph.getCvTermIdByAccession(accession);
-                } catch (OntologyDAG.NotFoundNodeException e) {
-                    return -1L;
-                }
-            }).collect(Collectors.toSet());
-
-            Set<Long> ancestorsNew = Arrays.stream(ancestorsQuick.get(id)).boxed().collect(Collectors.toSet());
-
-            Assert.assertEquals(ancestorsOld, ancestorsNew);
-        }
-    }
-
-    @Ignore
-    @Test
-    public void checkCyclesForOntologies() throws OntologyDAG.NotFoundInternalGraphException {
-
-        checkCyclesForOntologies(TerminologyCv.values());
-    }
-
-    private void checkCyclesForOntologies(TerminologyCv... ontologies) throws OntologyDAG.NotFoundInternalGraphException {
-
-        for (TerminologyCv terminologyCv : ontologies) {
-
-            OntologyDAG graph = new OntologyDAG(terminologyCv, terminologyService);
-
-            Set<Path> cycles = graph.getAllCyclesFromTransientGraph();
-
-            if (!cycles.isEmpty()) {
-                System.out.println(terminologyCv + ": found "+cycles.size()+" cycles: "+cycles.stream()
-                        .map(path -> Arrays.stream(path.toVertexArray())
-                                .boxed()
-                                .map(graph::getCvTermAccessionById)
-                                .collect(Collectors.joining(" > ")))
-                        .collect(Collectors.joining("\n")));
-            }
-        }
     }
 
     private void benchmarkingPrecomputations(TerminologyCv terminologyCv, boolean both) throws OntologyDAG.NotFoundInternalGraphException {
