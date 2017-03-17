@@ -64,28 +64,6 @@ public class OntologyDAG implements Serializable {
         cvTerms.forEach(this::addCvTermEdges);
 
         allPathsSize = precomputeAllAncestors();
-
-        logSummary();
-    }
-
-    private void logSummary() {
-
-        StringBuilder sb = new StringBuilder("graph of "+terminologyCv);
-
-        sb.append(": {nodes=").append(countNodes());
-        sb.append(", edges=").append(transientGraph.getSize());
-
-        Collection<LongSet> ccs = transientGraph.getConnectedComponents();
-        sb.append(", connected components=").append(ccs.size());
-        sb.append(", avg degree=").append(DECIMAL_FORMAT.format(transientGraph.getAverageDegree()));
-        sb.append(", paths=").append(allPathsSize);
-        sb.append("}");
-
-        LOGGER.info(sb.toString());
-
-        if (ccs.size() > 1) {
-            LOGGER.warning(terminologyCv.name() + " has "+ccs.size()+" unconnected components");
-        }
     }
 
     private void addCvTermNode(CvTerm cvTerm) {
@@ -322,6 +300,23 @@ public class OntologyDAG implements Serializable {
         }
 
         return MathsUtilities.computeAverage(l.toLongArray());
+    }
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder("graph of "+terminologyCv);
+
+        sb.append(": {nodes=").append(countNodes());
+        sb.append(", edges=").append(transientGraph.getSize());
+
+        Collection<LongSet> ccs = transientGraph.getConnectedComponents();
+        sb.append(", connected components=").append(ccs.size());
+        sb.append(", avg degree=").append(DECIMAL_FORMAT.format(transientGraph.getAverageDegree()));
+        sb.append(", paths=").append(allPathsSize);
+        sb.append("}");
+
+        return sb.toString();
     }
 
     private void checkTransientGraphAvailability() throws NotFoundInternalGraphException {
