@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles({ "dev", "cache" })
+@ActiveProfiles({ "dev"})
 public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
 	@Autowired
@@ -249,22 +249,20 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 	@Test
 	public void shouldFilterBindingTypeDescendantAnnotations() {
 
-		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P17858").withAnnotations()).getAnnotations();
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P01308").withAnnotations()).getAnnotations();
+
+		Assert.assertEquals(883, annotations.size());
 
 		List<Annotation> filtered = AnnotationUtils.filterAnnotationsByCvTermDescendingFromAncestor(annotations,
 				terminologyService.findOntologyGraph(TerminologyCv.GoMolecularFunctionCv),
-				terminologyService.findCvTermByAccession("GO:0005488"));
+				terminologyService.findCvTermByAccession("GO:0005102"));
 
-		Assert.assertEquals(7, filtered.size());
-		Set<String> terms = filtered.stream().map(Annotation::getCvTermName).collect(Collectors.toSet());
+		Assert.assertEquals(3, filtered.size());
+		Set<String> terms = filtered.stream().map(Annotation::getCvTermAccessionCode).collect(Collectors.toSet());
 
-		Assert.assertTrue(terms.contains("protein binding"));
-		Assert.assertTrue(terms.contains("fructose-6-phosphate binding"));
-		Assert.assertTrue(terms.contains("identical protein binding"));
-		Assert.assertTrue(terms.contains("metal ion binding"));
-		Assert.assertTrue(terms.contains("kinase binding"));
-		Assert.assertTrue(terms.contains("ATP binding"));
-		Assert.assertTrue(terms.contains("fructose binding"));
+		Assert.assertTrue(terms.contains("GO:0005158"));
+		Assert.assertTrue(terms.contains("GO:0005159"));
+		Assert.assertTrue(terms.contains("GO:0005179"));
 	}
 
 	private String exportAnnotationsAsTsvString(Entry entry, List<Annotation> mergedAnnotations) {
