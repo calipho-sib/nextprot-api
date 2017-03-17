@@ -35,6 +35,8 @@ import java.util.stream.Stream;
  */
 public class OntologyDAG implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final static Logger LOGGER = Logger.getLogger(OntologyDAG.class.getSimpleName());
     private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("######.##");
 
