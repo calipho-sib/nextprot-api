@@ -10,12 +10,14 @@ import org.apache.log4j.Logger;
 import org.github.jamm.MemoryMeter;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.app.CommandLineSpringParser;
+import org.nextprot.api.commons.utils.app.ConsoleProgressBar;
 import org.nextprot.api.commons.utils.app.SpringBasedApp;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.core.utils.graph.OntologyDAG;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
@@ -35,6 +37,8 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
     private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
+    private TerminologyService terminologyService;
+
     private OntologyDAGAnalyserApp(String[] args) throws ParseException {
 
         super(args);
@@ -49,9 +53,18 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
     @Override
     protected void execute() throws IOException {
 
-        TerminologyService terminologyService = getConfig().getBean(TerminologyService.class);
+        terminologyService = getConfig().getBean(TerminologyService.class);
 
-        buildTerminologyCache(terminologyService);
+        System.out.println("*** write to cache timings...");
+        readWriteCache(false);
+        System.out.println("*** access to cache timings...");
+        readWriteCache(true);
+        System.out.println("*** calculate statistics...");
+        calcStatisticsForAllOntologies();
+    }
+
+    private void calcStatisticsForAllOntologies() throws FileNotFoundException {
+
         Set<TerminologyCv> excludedOntology = EnumSet.of(
                 TerminologyCv.NextprotCellosaurusCv, TerminologyCv.MeshAnatomyCv, TerminologyCv.MeshCv);
 
@@ -63,6 +76,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         for (TerminologyCv terminologyCv : TerminologyCv.values()) {
 
             Instant t1 = Instant.now();
+            // no cache here: create a new instance to access graph advanced methods
             OntologyDAG graph = new OntologyDAG(terminologyCv, terminologyService);
             long buildingTime = ChronoUnit.MILLIS.between(t1, Instant.now());
 
@@ -88,11 +102,11 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         pw.close();
     }
 
-    public static List<String> getStatisticsHeaders() {
+    private static List<String> getStatisticsHeaders() {
 
         return Arrays.asList("terminology", "nodes#", "edges#", "connected components#", "cycles#",
                 "avg in-degree#", "avg out-degree#", "all paths#",
-                "all graph memory (KB)", "descendants map memory (KB)", "cv id->accession memory (KB)",
+                "graph memory (KB)", "cv id to ancestors id memory (KB)", "cv id to accession memory (KB)",
                 "precomputing time (ms)");
     }
 
@@ -133,23 +147,48 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         return Stream.concat(Stream.of(graph.getTerminologyCv().name()), stats.stream().map(DECIMAL_FORMAT::format)).collect(Collectors.toList());
     }
 
-    private void buildTerminologyCache(TerminologyService terminologyService) {
+    private void readWriteCache(boolean readCacheForSure) {
 
         Set<String> allCvTerms = new HashSet<>();
 
-        // cache all (211367 terms)
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated(TerminologyCv.values().length);
+        pb.setTaskName(((readCacheForSure) ? "read":"read/write")+" terminology-by-ontology cache");
+        pb.start();
+        // cache all cvterms (211367 terms)
         Instant t = Instant.now();
         for (TerminologyCv ontology : TerminologyCv.values()) {
 
             allCvTerms.addAll(terminologyService.findCvTermsByOntology(ontology.name()).stream()
                     .map(CvTerm::getAccession)
                     .collect(Collectors.toSet()));
+            pb.incrementValue();
         }
-        System.out.println("access/cache "+TerminologyCv.values().length+" terminologies via terminologyService.findCvTermsByOntology: "+ChronoUnit.SECONDS.between(t, Instant.now()) + " s");
+        pb.stop();
+        System.out.println("\ttiming 'terminology-by-ontology': "+ChronoUnit.SECONDS.between(t, Instant.now()) + " s");
 
+        pb = ConsoleProgressBar.determinated(TerminologyCv.values().length);
+        pb.setTaskName(((readCacheForSure) ? "read":"read/write")+" 'ontology-dag' cache");
+        pb.start();
         t = Instant.now();
-        allCvTerms.forEach(terminologyService::findCvTermByAccession);
-        System.out.println("access/cache "+allCvTerms.size()+" terms via terminologyService.findCvTermByAccession: "+ChronoUnit.SECONDS.between(t, Instant.now()) + " s");
+        for (TerminologyCv ontology : TerminologyCv.values()) {
+
+            terminologyService.findOntologyGraph(ontology);
+            pb.incrementValue();
+        }
+        pb.stop();
+        System.out.println("\ttiming 'ontology-dag': "+ChronoUnit.SECONDS.between(t, Instant.now()) + " s");
+
+        pb = ConsoleProgressBar.determinated(allCvTerms.size());
+        pb.setTaskName(((readCacheForSure) ? "read":"read/write")+" 'terminology-by-accession' cache");
+        pb.start();
+        t = Instant.now();
+        for (String cvTerm : allCvTerms) {
+
+            terminologyService.findCvTermByAccession(cvTerm);
+            pb.incrementValue();
+        }
+        pb.stop();
+        System.out.println("\ttiming 'terminology-by-accession': "+ChronoUnit.SECONDS.between(t, Instant.now()) + " s");
     }
 
     private List<Long> benchmarkingGetAncestorsMethods(TerminologyCv terminologyCv, TerminologyService terminologyService) {
@@ -159,7 +198,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         OntologyDAG graph = new OntologyDAG(terminologyCv, terminologyService);
 
         Map<Long, List<String>> ancestors = new HashMap<>();
-        Map<Long, long[]> ancestorsQuick = new HashMap<>();
+        Map<Long, List<String>> ancestorsQuick = new HashMap<>();
 
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(terminologyCv.name());
 
@@ -174,7 +213,9 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         for (CvTerm cvTerm : cvTerms) {
 
-            ancestorsQuick.put(cvTerm.getId(), graph.getAncestors(cvTerm.getId()));
+            ancestorsQuick.put(cvTerm.getId(), Arrays.stream(graph.getAncestors(cvTerm.getId())).boxed()
+                    .map(graph::getCvTermAccessionById)
+                    .collect(Collectors.toList()));
         }
         timings.add(ChronoUnit.MILLIS.between(t, Instant.now()));
 
@@ -183,15 +224,8 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         for (long id : ids) {
 
-            Set<Long> ancestorsOld = ancestors.get(id).stream().map(accession -> {
-                try {
-                    return graph.getCvTermIdByAccession(accession);
-                } catch (OntologyDAG.NotFoundNodeException e) {
-                    return -1L;
-                }
-            }).collect(Collectors.toSet());
-
-            Set<Long> ancestorsNew = Arrays.stream(ancestorsQuick.get(id)).boxed().collect(Collectors.toSet());
+            Set<String> ancestorsOld = ancestors.get(id).stream().collect(Collectors.toSet());
+            Set<String> ancestorsNew = ancestorsQuick.get(id).stream().collect(Collectors.toSet());
 
             boolean equals = ancestorsOld.equals(ancestorsNew);
 
@@ -199,10 +233,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
                 System.err.println("WARNING: INCONSISTENCY: found different ancestors for cv term "+graph.getCvTermAccessionById(id)
                         + "\n\t: old="+ ancestors.get(id) + "\n"
-                        + "\t: new="+ Arrays.stream(ancestorsQuick.get(id)).boxed()
-                        .map(graph::getCvTermAccessionById)
-                        .collect(Collectors.joining(", "))
-                );
+                        + "\t: new="+ ancestorsNew);
             }
         }
 

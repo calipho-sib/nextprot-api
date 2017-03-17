@@ -83,7 +83,7 @@ public class OntologyDAG implements Serializable {
                 try {
                     transientGraph.addDirectedSimpleEdge(getCvTermIdByAccession(parent), cvTerm.getId());
                 } catch (NotFoundNodeException e) {
-                    LOGGER.warning(cvTerm.getAccession()+" cannot connect to unknown node parent: "+e.getMessage() + ", CvTerm:\n"+cvTerm);
+                    LOGGER.warning(cvTerm.getAccession()+" cannot connect to unknown node parent: "+e.getMessage());
                 }
             });
         }
