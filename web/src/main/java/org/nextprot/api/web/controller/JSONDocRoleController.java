@@ -3,6 +3,7 @@ package org.nextprot.api.web.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.pojo.*;
+import org.jsondoc.core.util.JSONDocType;
 import org.jsondoc.springmvc.controller.JSONDocController;
 import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -114,8 +115,11 @@ public class JSONDocRoleController extends JSONDocController {
 							String path = "/entry/{entry}/" + StringUtils.camelToKebabCase(name);
 							String description = "Exports only the " + name + " from an entry, located on the hierarchy: " + model.getHierarchy();
 
-							apiDoc.getMethods().add(cloneMethodDoc(met, path, description, true, true));
+							ApiMethodDoc methodDoc = cloneMethodDoc(met, path, description, true, true);
 
+							methodDoc.getQueryparameters().add(buildTermChildOfQueryParameters());
+
+							apiDoc.getMethods().add(methodDoc);
 						}
 					}
 
@@ -124,6 +128,15 @@ public class JSONDocRoleController extends JSONDocController {
 			}
 
 		}
+	}
+
+	private static ApiParamDoc buildTermChildOfQueryParameters() {
+
+		ApiParamDoc apiParamDoc = new ApiParamDoc("term-child-of", "An optional cv term: export annotations " +
+				"which cv term matches the cv term parameter or one of its descendants",
+				new JSONDocType(), "false", new String[] {""}, "", "");
+
+		return apiParamDoc;
 	}
 
 	private static ApiMethodDoc getMethodOfType(Collection<ApiDoc> apiDocs, String type) {
