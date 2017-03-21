@@ -3,7 +3,6 @@ package org.nextprot.api.web.controller;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
-import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
@@ -47,9 +46,17 @@ public class EntryController {
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
 	public String exportEntry(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
-			@PathVariable("entry") String entryName, Model model) {
+			@PathVariable("entry") String entryName,
+			@RequestParam(value = "term-child-of", required = false) String ancestorTerm, Model model) {
 		
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
+
+		// filter enabled
+		if (ancestorTerm != null && !ancestorTerm.isEmpty()) {
+
+			entry.setAnnotations(annotationService.filterByCvTermAncestor(entry.getAnnotations(), ancestorTerm));
+		}
+
 		model.addAttribute("entry", entry);
 
 		return "entry";
@@ -58,7 +65,6 @@ public class EntryController {
 	@RequestMapping("/entry/{entry}/{blockOrSubpart}")
 	public String getSubPart(@PathVariable("entry") String entryName,
 							 @PathVariable("blockOrSubpart") String blockOrSubpart,
-							 @ApiQueryParam(name = "term-child-of", description = "An optional CvTerm",  allowedvalues = { })
 							 @RequestParam(value = "term-child-of", required = false) String ancestorTerm,
 							 HttpServletRequest request, Model model) {
 		//example:
