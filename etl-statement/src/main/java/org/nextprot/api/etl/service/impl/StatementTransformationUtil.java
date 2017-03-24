@@ -103,8 +103,9 @@ public class StatementTransformationUtil {
 
 		if (result.size() == multipleSubjects.size()) {
 			return result;
-		} else
+		} else {
 			return new ArrayList<>(); // return an empty list
+		}
 
 	}
 

@@ -27,16 +27,26 @@ public class ConsistencyServiceImpl implements ConsistencyService{
 		List<String> missingPublications = new ArrayList<>();
 		
 		List<String> pubmedIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION, StatementField.REFERENCE_DATABASE, "PubMed");
-		for(String p : pubmedIds) {
-			if(p != null){ 
-				String pubmedId = p.replace("(PubMed,", "").replace(")", "");
-				Publication pub = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
+		List<String> doisIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION, StatementField.REFERENCE_DATABASE, "DOI");
+		
+		for(String pId : pubmedIds) {
+			if(pId != null){ 
+				Publication pub = publicationService.findPublicationByDatabaseAndAccession("PubMed", pId);
 				if(pub == null){
-					missingPublications.add(p);
+					missingPublications.add("PubMed" + pId);
 				}
 			}
 		};
-		
+
+		for(String dId : doisIds) {
+			if(dId != null){ 
+				Publication pub = publicationService.findPublicationByDatabaseAndAccession("DOI", dId);
+				if(pub == null){
+					missingPublications.add("DOI" + dId);
+				}
+			}
+		};
+
 		return missingPublications;
 	}
 
