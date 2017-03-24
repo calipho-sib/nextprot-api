@@ -17,4 +17,5 @@ public interface AnnotationService {
 
 	List<Annotation> findAnnotationsExcludingBed(String entryName);
 
+	List<Annotation> filterByCvTermAncestor(List<Annotation> annotations, String ancestorTermAccession);
 }

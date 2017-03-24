@@ -1,10 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.nextprot.api.commons.constants.TerminologyCv;
@@ -15,11 +11,15 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
+import org.nextprot.api.core.utils.graph.OntologyDAG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.ImmutableList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Service
 class TerminologyServiceImpl implements TerminologyService {
@@ -77,7 +77,13 @@ class TerminologyServiceImpl implements TerminologyService {
 		// modifying the cache, since the cache returns a reference) copy on
 		// read and copy on write is too much time consuming
 		return new ImmutableList.Builder<CvTerm>().addAll(terms).build();
+	}
 
+	@Override
+	@Cacheable("ontology-dag")
+	public OntologyDAG findOntologyGraph(TerminologyCv terminologyCv) {
+
+		return new OntologyDAG(terminologyCv, this);
 	}
 
 	@Override

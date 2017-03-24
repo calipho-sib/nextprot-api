@@ -7,6 +7,7 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.IsoformSpecificity;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -31,6 +32,7 @@ public class EntryController {
 	@Autowired private EntryBuilderService entryBuilderService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 	@Autowired private EntryPageService entryPageService;
+	@Autowired private AnnotationService annotationService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -44,9 +46,17 @@ public class EntryController {
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
 	public String exportEntry(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
-			@PathVariable("entry") String entryName, Model model) {
+			@PathVariable("entry") String entryName,
+			@RequestParam(value = "term-child-of", required = false) String ancestorTerm, Model model) {
 		
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
+
+		// filter enabled
+		if (ancestorTerm != null && !ancestorTerm.isEmpty()) {
+
+			entry.setAnnotations(annotationService.filterByCvTermAncestor(entry.getAnnotations(), ancestorTerm));
+		}
+
 		model.addAttribute("entry", entry);
 
 		return "entry";
@@ -54,13 +64,22 @@ public class EntryController {
 
 	@RequestMapping("/entry/{entry}/{blockOrSubpart}")
 	public String getSubPart(@PathVariable("entry") String entryName,
-							@PathVariable("blockOrSubpart") String blockOrSubpart, 
-							HttpServletRequest request,
-							Model model) {
-		
+							 @PathVariable("blockOrSubpart") String blockOrSubpart,
+							 @RequestParam(value = "term-child-of", required = false) String ancestorTerm,
+							 HttpServletRequest request, Model model) {
+		//example:
+		//    http://localhost:8080/entry/NX_P01308/go-molecular-function.json?term-child-of=GO:0005102
+		// or http://localhost:8080/entry/NX_P01308/go-molecular-function.json
 		boolean goldOnly = "true".equalsIgnoreCase(request.getParameter("goldOnly"));
-		
+
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withGoldOnly(goldOnly));
+
+		// filter enabled
+		if (ancestorTerm != null && !ancestorTerm.isEmpty()) {
+
+			entry.setAnnotations(annotationService.filterByCvTermAncestor(entry.getAnnotations(), ancestorTerm));
+		}
+
 		model.addAttribute("entry", entry);
 		return "entry";
 	}

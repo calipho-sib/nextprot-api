@@ -10,6 +10,7 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
@@ -20,10 +21,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -31,13 +29,15 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles({ "dev", "cache" })
+@ActiveProfiles({ "dev"})
 public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
+	@Autowired
+	private AnnotationService annotationService;
 
-    @Test
+	@Test
     public void shouldTurnSequenceCautionRelativeEvidenceIntoDifferingSequenceProperty()  {
 				
     	long annotId=1234;
@@ -243,6 +243,24 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		}
 
 		pw.close();
+	}
+
+	@Test
+	public void shouldFilterBindingTypeDescendantAnnotations() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P01308")
+				.with("go-molecular-function")).getAnnotations();
+
+		Assert.assertEquals(6, annotations.size());
+
+		List<Annotation> filtered = annotationService.filterByCvTermAncestor(annotations, "GO:0005102");
+
+		Assert.assertEquals(3, filtered.size());
+		Set<String> terms = filtered.stream().map(Annotation::getCvTermAccessionCode).collect(Collectors.toSet());
+
+		Assert.assertTrue(terms.contains("GO:0005158"));
+		Assert.assertTrue(terms.contains("GO:0005159"));
+		Assert.assertTrue(terms.contains("GO:0005179"));
 	}
 
 	private String exportAnnotationsAsTsvString(Entry entry, List<Annotation> mergedAnnotations) {

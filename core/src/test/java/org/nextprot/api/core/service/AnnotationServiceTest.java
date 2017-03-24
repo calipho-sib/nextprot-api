@@ -1,17 +1,16 @@
 package org.nextprot.api.core.service;
 
-import static org.junit.Assert.assertEquals;
-
-import java.util.List;
-
+import com.github.springtestdbunit.annotation.DatabaseOperation;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import org.junit.Test;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.github.springtestdbunit.annotation.DatabaseOperation;
-import com.github.springtestdbunit.annotation.DatabaseSetup;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author pam
@@ -22,6 +21,8 @@ public class AnnotationServiceTest extends CoreUnitBaseTest {
 
 	
 	@Autowired AnnotationService annotationService;
+	@Autowired
+	private EntryBuilderService entryBuilderService;
 
 	@Test
 	public void shouldGetAnOrphanetAnnotationFromService() {
@@ -42,5 +43,4 @@ public class AnnotationServiceTest extends CoreUnitBaseTest {
 		assertEquals("XR_ORPHA_100021", evi.getResourceAccession());
 		assertEquals("Orphanet", evi.getResourceDb());
 	}
-
 }
