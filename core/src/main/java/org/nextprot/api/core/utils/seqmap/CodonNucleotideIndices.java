@@ -60,8 +60,7 @@ public class CodonNucleotideIndices {
 		if (!has3Nucleotides()) return false;
 		int isoPos = (nuNum.get(0) + 3) / 3;
 		if ((nuNum.get(1) + 3) / 3 != isoPos || (nuNum.get(2) + 3) / 3 != isoPos) {
-			// doesn't seem to be important - 
-			logger.warn("nucleotides not in frame");
+			logger.debug("nucleotides not in frame");
 			return false;
 		} else {
 			return true;
