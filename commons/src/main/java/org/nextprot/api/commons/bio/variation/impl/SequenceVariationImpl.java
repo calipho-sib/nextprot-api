@@ -156,6 +156,7 @@ public class SequenceVariationImpl implements SequenceVariation {
 
             @Override
             public SequenceVariationBuilder thenTerminationExtension(int newDownstreamTermPos, AminoAcidCode newAminoAcidCode) {
+
                 return new TerminationExtensionBuilder(dataCollector, newDownstreamTermPos, newAminoAcidCode);
             }
         }
@@ -312,6 +313,14 @@ public class SequenceVariationImpl implements SequenceVariation {
             TerminationExtensionBuilder(DataCollector dataCollector, int newDownstreamTermPos, AminoAcidCode newAminoAcidCode) {
 
                 super(dataCollector);
+
+                if (dataCollector.getFirstChangingAminoAcid() != AminoAcidCode.STOP) {
+                    throw new IllegalStateException("Invalid termination extension: first amino-acid should be a STOP but is a "+dataCollector.getFirstChangingAminoAcid());
+                }
+                if (dataCollector.getLastChangingAminoAcid() != AminoAcidCode.STOP) {
+                    throw new IllegalStateException("Invalid termination extension: last amino-acid should be a STOP but is a "+dataCollector.getLastChangingAminoAcid());
+                }
+
                 this.extension = new ExtensionTermination(newDownstreamTermPos, newAminoAcidCode);
             }
 

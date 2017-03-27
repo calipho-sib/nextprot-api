@@ -224,4 +224,11 @@ public class SequenceVariationImplTest {
         Assert.assertEquals(17, ((ExtensionTermination)pm.getSequenceChange()).getNewPos());
         Assert.assertEquals(AminoAcidCode.GLUTAMINE, ((ExtensionTermination)pm.getSequenceChange()).getValue());
     }
+
+    @Test (expected = IllegalStateException.class)
+    public void shouldNotBuildExtensionTermThatIsNotStop() throws Exception {
+
+        new SequenceVariationImpl.FluentBuilding().selectAminoAcid(AminoAcidCode.ASPARTIC_ACID, 110)
+                .thenTerminationExtension(17, AminoAcidCode.GLUTAMINE).build();
+    }
 }
