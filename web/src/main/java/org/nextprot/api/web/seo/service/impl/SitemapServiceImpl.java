@@ -42,6 +42,8 @@ public class SitemapServiceImpl implements SitemapService {
 
 		// other application urls (help, about, home, portals, ...)
 		for (SeoTagsAndUrl tag: seoTagService.getGitHubSeoTags()) {
+			if ("/user/proteins/lists".equals(tag.getUrl())) continue; // blocked by robots.txt, thus removed from sitemap
+			if ("/user/queries".equals(tag.getUrl())) continue;        // blocked by robots.txt, thus removed from sitemap
 			urlSet.add(new SitemapUrl(base + tag.getUrl()));
 		}
 		
