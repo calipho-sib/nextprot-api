@@ -60,6 +60,7 @@ public class CodonNucleotideIndices {
 		if (!has3Nucleotides()) return false;
 		int isoPos = (nuNum.get(0) + 3) / 3;
 		if ((nuNum.get(1) + 3) / 3 != isoPos || (nuNum.get(2) + 3) / 3 != isoPos) {
+			// doesn't seem to be important - 
 			logger.warn("nucleotides not in frame");
 			return false;
 		} else {
@@ -86,6 +87,18 @@ public class CodonNucleotideIndices {
 		} else {
 			return null;
 		}
+	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		if (nuNum.size()>0) sb.append("|nu0:"+ nuNum.get(0) + "|"); else sb.append("|-|");
+		if (nuNum.size()>1) sb.append("nu1:"+ nuNum.get(1) + "|"); else sb.append("-|");
+		if (nuNum.size()>2) sb.append("nu2:"+ nuNum.get(2) + "|"); else sb.append("-|");
+		sb.append(" - aaPosition:" + getAminoAcidPosition());
+		sb.append(" - nuConseccutive:" + areConsecutive());
+		sb.append(" - nuInFrame:" + areInFrame());
+		sb.append(" - valid:"+isValid());
+		return sb.toString();
 	}
 	
 }
