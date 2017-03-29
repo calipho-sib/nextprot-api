@@ -139,7 +139,7 @@ public class JSONDocRoleController extends JSONDocController {
 
 	private ApiParamDoc buildOptionalQueryParameter(String name, String desc) {
 
-		return new ApiParamDoc(name, desc, new JSONDocType(), "false", new String[]{""}, "", "");
+		return new ApiParamDoc(name, desc, new JSONDocType("string"), "false", new String[]{""}, "", "");
 	}
 
 	private static ApiMethodDoc getMethodOfType(Collection<ApiDoc> apiDocs, String type) {
