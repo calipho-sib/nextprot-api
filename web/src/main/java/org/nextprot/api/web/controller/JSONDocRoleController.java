@@ -117,7 +117,14 @@ public class JSONDocRoleController extends JSONDocController {
 
 							ApiMethodDoc methodDoc = cloneMethodDoc(met, path, description, true, true);
 
-							methodDoc.getQueryparameters().add(buildTermChildOfQueryParameters());
+							methodDoc.getQueryparameters().add(buildOptionalQueryParameter("term-child-of", "An optional cv term filter: export annotations " +
+									"which cv term matches the cv term parameter or one of its descendants"));
+
+							methodDoc.getQueryparameters().add(buildOptionalQueryParameter("property-name", "An optional property name filter: export annotations " +
+									"which contains this property name (see also property-value filter)"));
+
+							methodDoc.getQueryparameters().add(buildOptionalQueryParameter("property-value", "An optional property value filter: export annotations " +
+									"which contains the property name with this property value or accession (see also property-name filter)"));
 
 							apiDoc.getMethods().add(methodDoc);
 						}
@@ -130,13 +137,9 @@ public class JSONDocRoleController extends JSONDocController {
 		}
 	}
 
-	private static ApiParamDoc buildTermChildOfQueryParameters() {
+	private ApiParamDoc buildOptionalQueryParameter(String name, String desc) {
 
-		ApiParamDoc apiParamDoc = new ApiParamDoc("term-child-of", "An optional cv term: export annotations " +
-				"which cv term matches the cv term parameter or one of its descendants",
-				new JSONDocType(), "false", new String[] {""}, "", "");
-
-		return apiParamDoc;
+		return new ApiParamDoc(name, desc, new JSONDocType(), "false", new String[]{""}, "", "");
 	}
 
 	private static ApiMethodDoc getMethodOfType(Collection<ApiDoc> apiDocs, String type) {

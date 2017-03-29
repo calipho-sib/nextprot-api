@@ -74,7 +74,7 @@ public class EntryController {
 			@PathVariable("blockOrSubpart") String blockOrSubpart,
 			@RequestParam(value = "term-child-of", required = false) String ancestorTerm,
 			@RequestParam(value = "property-name", required = false) String propertyName,
-			@RequestParam(value = "property-value", required = false) String propertyValue,
+			@RequestParam(value = "property-value", required = false) String propertyValueOrAccession,
 			HttpServletRequest request, Model model) {
 
     	boolean goldOnly = "true".equalsIgnoreCase(request.getParameter("goldOnly"));
@@ -82,7 +82,7 @@ public class EntryController {
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withGoldOnly(goldOnly));
 
 		if (ancestorTerm != null || propertyName != null) {
-			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
+			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValueOrAccession);
 		}
 
 		model.addAttribute("entry", entry);
@@ -124,16 +124,16 @@ public class EntryController {
 	 * @param entry the entry to update
 	 * @param ancestorCvTerm the ancestor term
 	 * @param propertyName property name
-	 * @param propertyValue property value (ignored if property name is null)
+	 * @param propertyValueOrAccession property value or accession (ignored if property name is null)
 	 */
-	private void filterEntryAnnotations(Entry entry, String ancestorCvTerm, String propertyName, String propertyValue) {
+	private void filterEntryAnnotations(Entry entry, String ancestorCvTerm, String propertyName, String propertyValueOrAccession) {
 
 		final Predicate<Annotation> cvTermPredicate = (ancestorCvTerm != null) ?
 				annotationService.buildCvTermAncestorPredicate(ancestorCvTerm) :
 				annotation -> true;
 
 		final Predicate<Annotation> propertyPredicate = (propertyName != null) ?
-				annotationService.buildPropertyPredicate(propertyName, propertyValue) :
+				annotationService.buildPropertyPredicate(propertyName, propertyValueOrAccession) :
 				annotation -> true;
 
 		entry.setAnnotations(entry.getAnnotations().stream()
