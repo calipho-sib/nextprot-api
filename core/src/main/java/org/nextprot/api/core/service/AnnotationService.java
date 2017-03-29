@@ -12,9 +12,9 @@ import java.util.function.Predicate;
 public interface AnnotationService {
 
 	List<Annotation> findAnnotations(@ValidEntry String entryName);
-	
+
 	List<Feature> findPtmsByMaster(String uniqueName);
-	
+
 	List<Feature> findPtmsByIsoform(String uniqueName);
 
 	List<Annotation> findAnnotationsExcludingBed(String entryName);
@@ -32,8 +32,8 @@ public interface AnnotationService {
 	 * depending on the definition of propertyValue
 	 *
 	 * @param propertyName the property name
-	 * @param propertyValue the property value (can be null)
+	 * @param propertyValueOrAccession the property value or accession (can be null)
 	 * @return a new predicate
 	 */
-	Predicate<Annotation> buildPropertyPredicate(String propertyName, @Nullable String propertyValue);
+	Predicate<Annotation> buildPropertyPredicate(String propertyName, @Nullable String propertyValueOrAccession);
 }

@@ -198,19 +198,21 @@ public class AnnotationServiceImpl implements AnnotationService {
 	}
 
 	@Override
-	public Predicate<Annotation> buildPropertyPredicate(String propertyName, @Nullable String propertyValue) {
+	public Predicate<Annotation> buildPropertyPredicate(String propertyName, @Nullable String propertyValueOrAccession) {
 
 		if (propertyName != null && !propertyName.isEmpty()) {
 
 			Predicate<Annotation> propExistencePredicate = annotation -> annotation.getPropertiesMap().containsKey(propertyName);
 
-			if (propertyValue != null && !propertyValue.isEmpty()) {
+			if (propertyValueOrAccession != null && !propertyValueOrAccession.isEmpty()) {
 
 				return propExistencePredicate.and(annotation -> {
 
 					Collection<AnnotationProperty> props = annotation.getPropertiesByKey(propertyName);
 
-					return props.stream().anyMatch(annotationProperty -> propertyValue.equals(annotationProperty.getValue()));
+					return props.stream().anyMatch(annotationProperty ->
+							propertyValueOrAccession.equals(annotationProperty.getValue()) ||
+									propertyValueOrAccession.equals(annotationProperty.getAccession()));
 				});
 			}
 			return propExistencePredicate;
