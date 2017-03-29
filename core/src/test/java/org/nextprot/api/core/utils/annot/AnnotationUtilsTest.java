@@ -253,7 +253,9 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
 		Assert.assertEquals(6, annotations.size());
 
-		List<Annotation> filtered = annotationService.filterByCvTermAncestor(annotations, "GO:0005102");
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildCvTermAncestorPredicate("GO:0005102"))
+				.collect(Collectors.toList());
 
 		Assert.assertEquals(3, filtered.size());
 		Set<String> terms = filtered.stream().map(Annotation::getCvTermAccessionCode).collect(Collectors.toSet());

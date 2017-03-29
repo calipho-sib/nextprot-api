@@ -26,9 +26,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.security.InvalidParameterException;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
@@ -190,43 +191,59 @@ public class AnnotationServiceImpl implements AnnotationService {
 		return filterByIsoform(isoformUniqueName, ptms);
 	}
 
-	/**
-	 * Filter annotations where cvterm is the given ancestor or a descendant
-	 *
-	 * @param annotations the annotation list to filter
-	 * @param ancestorTermAccession the ancestor node
-	 * @return the filtered list
-	 */
 	@Override
-	public List<Annotation> filterByCvTermAncestor(List<Annotation> annotations, String ancestorTermAccession) {
+	public Predicate<Annotation> buildCvTermAncestorPredicate(String ancestorAccession) {
 
-		if (annotations == null)
-			return new ArrayList<>();
-
-		CvTerm ancestor = terminologyService.findCvTermByAccession(ancestorTermAccession);
-
-		if (ancestor == null) {
-			return new ArrayList<>();
-		}
-
-		OntologyDAG dag = terminologyService.findOntologyGraph(TerminologyCv.valueOf(ancestor.getOntology()));
-
-		if (!dag.hasCvTermAccession(ancestor.getAccession())) {
-			return new ArrayList<>();
-		}
-
-		return annotations.stream()
-				.filter(annotation -> {
-					try {
-						return annotation.getCvTermAccessionCode() != null &&
-								(annotation.getCvTermAccessionCode().equals(ancestorTermAccession) ||
-								 dag.isAncestorOf(ancestor.getId(), dag.getCvTermIdByAccession(annotation.getCvTermAccessionCode())));
-					} catch (OntologyDAG.NotFoundNodeException e) {
-						return false;
-					}
-				}).collect(Collectors.toList());
+		return new CvTermAncestorPredicate(terminologyService.findCvTermByAccession(ancestorAccession));
 	}
-	
+
+	@Override
+	public Predicate<Annotation> buildPropertyPredicate(String propertyName, @Nullable String propertyValue) {
+
+		if (propertyName != null && !propertyName.isEmpty()) {
+
+			Predicate<Annotation> propExistencePredicate = annotation -> annotation.getPropertiesMap().containsKey(propertyName);
+
+			if (propertyValue != null && !propertyValue.isEmpty()) {
+
+				return propExistencePredicate.and(annotation -> {
+
+					Collection<AnnotationProperty> props = annotation.getPropertiesByKey(propertyName);
+
+					return props.stream().anyMatch(annotationProperty -> propertyValue.equals(annotationProperty.getValue()));
+				});
+			}
+			return propExistencePredicate;
+		}
+
+		return annotation -> true;
+	}
+
+	private class CvTermAncestorPredicate implements Predicate<Annotation> {
+
+		private final CvTerm ancestor;
+		private final OntologyDAG dag;
+
+		private CvTermAncestorPredicate(CvTerm ancestor) {
+
+			this.ancestor = ancestor;
+			dag = terminologyService.findOntologyGraph(TerminologyCv.valueOf(ancestor.getOntology()));
+		}
+
+		@Override
+		public boolean test(Annotation annotation) {
+
+			try {
+				return annotation.getCvTermAccessionCode() != null &&
+						(annotation.getCvTermAccessionCode().equals(ancestor.getAccession()) ||
+								dag.isAncestorOf(ancestor.getId(), dag.getCvTermIdByAccession(annotation.getCvTermAccessionCode())));
+			} catch (OntologyDAG.NotFoundNodeException e) {
+				return false;
+			}
+		}
+	}
+
+
 	// Function class to filter using guava ///////////////////////////////////////////////////////////////////////////////
 
 	private class AnnotationPropertyFunction implements Function<AnnotationProperty, Long> {
