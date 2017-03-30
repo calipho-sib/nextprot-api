@@ -1,20 +1,18 @@
 package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.ChangingSequenceFormatter;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.ChangingAAsFormat;
 
 /**
- * HGVS implementation of mutated aas
+ * Formatting changing aas in HGVS format
  *
  * Created by fnikitin on 07/09/15.
  */
-public class HGVSFormat implements ChangingAAsFormat {
+public class SequenceVariantHGVSFormatter implements ChangingSequenceFormatter {
 
     @Override
-    public void format(StringBuilder sb, SequenceVariation sequenceVariation, AminoAcidCode.CodeType type) {
-
-        sb.append("p.");
+    public void format(SequenceVariation sequenceVariation, AminoAcidCode.CodeType type, StringBuilder sb) {
 
         sb.append(AminoAcidCode.formatAminoAcidCode(type, sequenceVariation.getFirstChangingAminoAcid()));
         sb.append(sequenceVariation.getFirstChangingAminoAcidPos());

@@ -8,7 +8,7 @@ import org.nextprot.api.commons.bio.variation.SequenceVariation;
 
 public class SequenceVariationHGVSParseDeletionTest {
 
-    SequenceVariationHGVSFormat format = new SequenceVariationHGVSFormat();
+    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 
     @Test
     public void testParseAADeletion() throws Exception {
@@ -57,7 +57,7 @@ public class SequenceVariationHGVSParseDeletionTest {
     @Test
     public void testParseAANonStandardDeletion1() throws Exception {
 
-        SequenceVariation pm = format.parse("p.K487_L498del12", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.K487_L498del12", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
@@ -69,7 +69,7 @@ public class SequenceVariationHGVSParseDeletionTest {
     @Test
     public void testParseAANonStandardDeletion2() throws Exception {
 
-        SequenceVariation pm = format.parse("p.K487_L498delPRAL", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.K487_L498delPRAL", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());

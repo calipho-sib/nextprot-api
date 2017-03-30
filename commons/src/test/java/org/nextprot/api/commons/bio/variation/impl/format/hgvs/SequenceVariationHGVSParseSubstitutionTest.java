@@ -11,7 +11,7 @@ import java.text.ParseException;
 
 public class SequenceVariationHGVSParseSubstitutionTest {
 
-    SequenceVariationHGVSFormat format = new SequenceVariationHGVSFormat();
+    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 
 
     @Test(expected = ParseException.class)
@@ -69,7 +69,7 @@ public class SequenceVariationHGVSParseSubstitutionTest {
     @Test
     public void testPermissiveParserCorrectlyParseStandardSubstitution() throws Exception {
 
-        SequenceVariation pm = format.parse("p.R54C", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.R54C", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.ARGININE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(AminoAcidCode.ARGININE, pm.getLastChangingAminoAcid());
@@ -82,7 +82,7 @@ public class SequenceVariationHGVSParseSubstitutionTest {
     @Test
     public void testParseAATerSubstitutionFixCode1() throws Exception {
 
-        SequenceVariation pm = format.parse("p.*104E", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.*104E", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.STOP, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(AminoAcidCode.STOP, pm.getLastChangingAminoAcid());
@@ -94,7 +94,7 @@ public class SequenceVariationHGVSParseSubstitutionTest {
     @Test
     public void testParseAATerSubstitutionFixCode3() throws Exception {
 
-        SequenceVariation pm = format.parse("p.Ter104Glu", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.Ter104Glu", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.STOP, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(AminoAcidCode.STOP, pm.getLastChangingAminoAcid());
@@ -107,6 +107,6 @@ public class SequenceVariationHGVSParseSubstitutionTest {
     @Test
     public void testParseAATerSubstitutionFix5() throws Exception {
 
-        SequenceVariation pm = format.parse("p.Y553_K558>", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.Y553_K558>", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
     }
 }

@@ -9,9 +9,9 @@ import org.nextprot.api.commons.bio.variation.impl.SequenceVariationImpl;
 
 import java.text.ParseException;
 
-public class AminoAcidModificationBedFormatTest {
+public class SequenceModificationBedFormatTest {
 
-    private AminoAcidModificationBedFormat format = new AminoAcidModificationBedFormat();
+    private SequenceModificationBedFormat format = new SequenceModificationBedFormat();
 
     @Test
     public void testFormatWith3LetterCodeAAMod() throws Exception {

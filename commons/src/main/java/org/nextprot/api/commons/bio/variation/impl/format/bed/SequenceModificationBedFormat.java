@@ -1,32 +1,35 @@
 package org.nextprot.api.commons.bio.variation.impl.format.bed;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.*;
+import org.nextprot.api.commons.bio.variation.SequenceChange;
+import org.nextprot.api.commons.bio.variation.SequenceChangeFormat;
+import org.nextprot.api.commons.bio.variation.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
 
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class AminoAcidModificationBedFormat extends SequenceVariationFormat {
+public class SequenceModificationBedFormat extends SequenceVariationFormat {
 
-    private final ChangingAAsFormat changingAAsFormat;
+    private final AminoAcidModificationBEDFormatter aminoAcidModificationFormatter;
     private final Map<SequenceChange.Type, SequenceChangeFormat> changeFormats;
 
-    public AminoAcidModificationBedFormat() {
+    public SequenceModificationBedFormat() {
 
-        changingAAsFormat = new BEDFormat();
+        aminoAcidModificationFormatter = new AminoAcidModificationBEDFormatter();
         changeFormats = new EnumMap<>(SequenceChange.Type.class);
         changeFormats.put(SequenceChange.Type.PTM, new SingleModificationBEDFormat());
     }
 
     @Override
-    protected ChangingAAsFormat getChangingAAsFormat() {
+    protected AminoAcidModificationBEDFormatter getChangingSequenceFormatter() {
 
-        return changingAAsFormat;
+        return aminoAcidModificationFormatter;
     }
 
     @Override
-    protected SequenceChangeFormat getChangeFormat(SequenceChange.Type changeType) {
+    protected SequenceChangeFormat getSequenceChangeFormat(SequenceChange.Type changeType) {
 
         return changeFormats.get(changeType);
     }
@@ -44,7 +47,7 @@ public class AminoAcidModificationBedFormat extends SequenceVariationFormat {
 
         changeFormats.get(variation.getSequenceChange().getType()).format(sb, variation.getSequenceChange(), type);
 
-        changingAAsFormat.format(sb, variation, type);
+        aminoAcidModificationFormatter.format(variation, type, sb);
 
         return sb.toString();
     }

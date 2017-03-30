@@ -8,7 +8,7 @@ import java.text.ParseException;
 
 public class SequenceVariationHGVSParseMultiTest {
 
-    SequenceVariationHGVSFormat format = new SequenceVariationHGVSFormat();
+    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 
     @Ignore
     @Test

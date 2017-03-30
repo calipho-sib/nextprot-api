@@ -8,7 +8,7 @@ import org.nextprot.api.commons.bio.variation.SequenceVariation;
 
 public class SequenceVariationHGVSParseDelinsTest {
 
-    SequenceVariationHGVSFormat format = new SequenceVariationHGVSFormat();
+    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 
     ///// DELETION FOLLOWED BY INSERTIONS
 
@@ -89,7 +89,7 @@ public class SequenceVariationHGVSParseDelinsTest {
     @Test
     public void testParseAANonStandardDelins1() throws Exception {
 
-        SequenceVariation pm = format.parse("p.T399>L", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.T399>L", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.THREONINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(399, pm.getFirstChangingAminoAcidPos());
@@ -100,7 +100,7 @@ public class SequenceVariationHGVSParseDelinsTest {
     @Test
     public void testParseAANonStandardDelins2() throws Exception {
 
-        SequenceVariation pm = format.parse("p.L330_A331>F", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.L330_A331>F", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(AminoAcidCode.ALANINE, pm.getLastChangingAminoAcid());
@@ -113,7 +113,7 @@ public class SequenceVariationHGVSParseDelinsTest {
     @Test
     public void testParseAANonStandardDelins3() throws Exception {
 
-        SequenceVariation pm = format.parse("p.W39_E40>*", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.W39_E40>*", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.TRYPTOPHAN, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(AminoAcidCode.GLUTAMIC_ACID, pm.getLastChangingAminoAcid());
@@ -126,7 +126,7 @@ public class SequenceVariationHGVSParseDelinsTest {
     @Test
     public void testParseAANonStandardDelins4() throws Exception {
 
-        SequenceVariation pm = format.parse("p.D419_R420>SSDG", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.D419_R420>SSDG", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.ASPARTIC_ACID, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(AminoAcidCode.ARGININE, pm.getLastChangingAminoAcid());
@@ -139,7 +139,7 @@ public class SequenceVariationHGVSParseDelinsTest {
     @Test
     public void testParseAmbiguousAminoAcidsFixCALIPHOMISC568() throws Exception {
 
-        SequenceVariation pm = format.parse("p.Phe709delinsXaaTrpXaa", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.Phe709delinsXaaTrpXaa", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.PHENYLALANINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(AminoAcidCode.PHENYLALANINE, pm.getLastChangingAminoAcid());

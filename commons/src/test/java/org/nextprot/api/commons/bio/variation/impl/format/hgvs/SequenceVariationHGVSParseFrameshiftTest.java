@@ -12,7 +12,7 @@ import java.text.ParseException;
 
 public class SequenceVariationHGVSParseFrameshiftTest {
 
-    SequenceVariationHGVSFormat format = new SequenceVariationHGVSFormat();
+    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 
     @Test
     public void testParseFrameshift() throws Exception {
@@ -42,7 +42,7 @@ public class SequenceVariationHGVSParseFrameshiftTest {
     @Test
     public void testParseAANonStandardFrameshift() throws Exception {
 
-        SequenceVariation pm = format.parse("p.S1476fs*>9", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.S1476fs*>9", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
 
         Assert.assertEquals(AminoAcidCode.SERINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(1476, pm.getFirstChangingAminoAcidPos());
@@ -53,14 +53,14 @@ public class SequenceVariationHGVSParseFrameshiftTest {
     @Test(expected = ParseException.class)
     public void testParseFs1ShouldFailed() throws Exception {
 
-        format.parse("p.Met682AlafsTer1", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        format.parse("p.Met682AlafsTer1", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
     }
 
     @Ignore
     @Test
     public void testParseAAFsFix() throws Exception {
 
-        format.parse("p.E61fs", SequenceVariationHGVSFormat.ParsingMode.PERMISSIVE);
+        format.parse("p.E61fs", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
     }
 
     @Test

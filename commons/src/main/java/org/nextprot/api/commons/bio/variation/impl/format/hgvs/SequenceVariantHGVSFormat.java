@@ -1,6 +1,5 @@
 package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 
-import org.nextprot.api.commons.bio.variation.ChangingAAsFormat;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceChangeFormat;
 import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
@@ -10,21 +9,20 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * <code>ProteinMutationHGVFormat</code> can format and parse
- * ProteinMutation as recommended by the Human Genome Variation Society
+ * Format and parse SequenceVariation as recommended by the Human Genome Variation Society
  *
  * @link http://www.hgvs.org/mutnomen/recs-prot.html#prot
  *
  * Created by fnikitin on 10/07/15.
  */
-public class SequenceVariationHGVSFormat extends SequenceVariationFormat {
+public class SequenceVariantHGVSFormat extends SequenceVariationFormat {
 
-    private final ChangingAAsFormat changingAAsFormat;
+    private final SequenceVariantHGVSFormatter sequenceVariantFormatter;
     private final Map<SequenceChange.Type, SequenceChangeFormat> changeFormats;
 
-    public SequenceVariationHGVSFormat() {
+    public SequenceVariantHGVSFormat() {
 
-        changingAAsFormat = new HGVSFormat();
+        sequenceVariantFormatter = new SequenceVariantHGVSFormatter();
         changeFormats = new EnumMap<>(SequenceChange.Type.class);
         changeFormats.put(SequenceChange.Type.INSERTION, new InsertionHGVSFormat());
         changeFormats.put(SequenceChange.Type.DUPLICATION, new DuplicationHGVSFormat());
@@ -37,13 +35,19 @@ public class SequenceVariationHGVSFormat extends SequenceVariationFormat {
     }
 
     @Override
-    protected ChangingAAsFormat getChangingAAsFormat() {
-
-        return changingAAsFormat;
+    protected String prefixFormatter() {
+        // protein sequence variation
+        return "p.";
     }
 
     @Override
-    protected SequenceChangeFormat getChangeFormat(SequenceChange.Type changeType) {
+    protected SequenceVariantHGVSFormatter getChangingSequenceFormatter() {
+
+        return sequenceVariantFormatter;
+    }
+
+    @Override
+    protected SequenceChangeFormat getSequenceChangeFormat(SequenceChange.Type changeType) {
 
         return changeFormats.get(changeType);
     }

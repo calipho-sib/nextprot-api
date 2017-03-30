@@ -17,7 +17,7 @@ public class DeletionHGVSFormat implements SequenceChangeFormat<Deletion> {
     @Override
     public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariationFormat.ParsingMode mode) throws ParseException {
 
-        Matcher m = (mode == SequenceVariationHGVSFormat.ParsingMode.STRICT) ? PATTERN.matcher(source) : PATTERN_PERMISSIVE.matcher(source);
+        Matcher m = (mode == SequenceVariantHGVSFormat.ParsingMode.STRICT) ? PATTERN.matcher(source) : PATTERN_PERMISSIVE.matcher(source);
 
         if (m.matches()) {
 
@@ -39,7 +39,7 @@ public class DeletionHGVSFormat implements SequenceChangeFormat<Deletion> {
 
     @Override
     public boolean matchesWithMode(String source, SequenceVariationFormat.ParsingMode mode) {
-        return (mode == SequenceVariationHGVSFormat.ParsingMode.STRICT) ? source.matches(PATTERN.pattern()) : source.matches(PATTERN_PERMISSIVE.pattern());
+        return (mode == SequenceVariantHGVSFormat.ParsingMode.STRICT) ? source.matches(PATTERN.pattern()) : source.matches(PATTERN_PERMISSIVE.pattern());
     }
 
     @Override

@@ -11,9 +11,9 @@ import org.nextprot.api.commons.bio.variation.impl.SequenceVariationImpl;
 
 import java.util.Collection;
 
-public class SequenceVariationHGVSFormatTest {
+public class SequenceVariantSequenceVariantHGVSFormatterTest {
 
-    SequenceVariationHGVSFormat format = new SequenceVariationHGVSFormat();
+    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 
     @Test
     public void testConstrFormat() throws Exception {
@@ -25,7 +25,7 @@ public class SequenceVariationHGVSFormatTest {
     @Test
     public void testGetFormat() throws Exception {
 
-        SequenceChangeFormat fmt = format.getChangeFormat(SequenceChange.Type.SUBSTITUTION);
+        SequenceChangeFormat fmt = format.getSequenceChangeFormat(SequenceChange.Type.SUBSTITUTION);
         Assert.assertTrue(fmt.matchesWithMode("p.R54C", SequenceVariationFormat.ParsingMode.STRICT));
     }
 

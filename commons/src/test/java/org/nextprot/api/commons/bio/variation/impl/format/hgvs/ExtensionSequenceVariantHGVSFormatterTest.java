@@ -9,9 +9,9 @@ import org.nextprot.api.commons.bio.variation.impl.ExtensionInitiation;
 import org.nextprot.api.commons.bio.variation.impl.ExtensionTermination;
 import org.nextprot.api.commons.bio.variation.impl.SequenceVariationImpl;
 
-public class ExtensionHGVSFormatTest {
+public class ExtensionSequenceVariantHGVSFormatterTest {
 
-    SequenceVariationHGVSFormat format = new SequenceVariationHGVSFormat();
+    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 
     @Test
     public void testParseInitiationExtensionCode3() throws Exception {

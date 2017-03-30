@@ -8,22 +8,13 @@ import java.text.ParseException;
 import java.util.Collection;
 
 /**
- * Provides contract for formatting and parsing <code>ProteinSequenceVariation</code>s
- * A base class for parsing and formatting ProteinMutation
- *
- * A ProteinMutation is composed of 2 parts:
- * - the changing part locating the amino-acids that change
- * - the variation itself
+ * Provides contract for formatting and parsing <code>SequenceVariation</code>s
  *
  * Created by fnikitin on 07/09/15.
  */
-public abstract class SequenceVariationFormat {
+public abstract class SequenceVariationFormat implements SequenceVariationFormatter<String> {
 
     public enum ParsingMode { STRICT, PERMISSIVE }
-
-    public String format(SequenceVariation mutation) {
-        return format(mutation, AminoAcidCode.CodeType.ONE_LETTER);
-    }
 
     /**
      * Formats a <code>ProteinSequenceVariation</code>.
@@ -33,16 +24,18 @@ public abstract class SequenceVariationFormat {
      *
      * @return a formatter <code>String</>
      */
+    @Override
     public String format(SequenceVariation variation, AminoAcidCode.CodeType type) {
 
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(prefixFormatter());
 
         // format changing amino acids part
-        getChangingAAsFormat().format(sb, variation, type);
+        getChangingSequenceFormatter()
+                .format(variation, type, sb);
 
         // format change part
         //noinspection unchecked
-        getChangeFormat(variation.getSequenceChange().getType())
+        getSequenceChangeFormat(variation.getSequenceChange().getType())
                 .format(sb, variation.getSequenceChange(), type);
 
         return sb.toString();
@@ -90,7 +83,7 @@ public abstract class SequenceVariationFormat {
 
         for (SequenceChange.Type changeType : getAvailableChangeTypes()) {
 
-            SequenceChangeFormat format = getChangeFormat(changeType);
+            SequenceChangeFormat format = getSequenceChangeFormat(changeType);
 
             if (format.matchesWithMode(source, mode))
                 return format.parseWithMode(source, builder, mode);
@@ -99,7 +92,13 @@ public abstract class SequenceVariationFormat {
         throw new ParseException(source + ": not a valid protein sequence variant", 0);
     }
 
-    protected abstract ChangingAAsFormat getChangingAAsFormat();
-    protected abstract SequenceChangeFormat getChangeFormat(SequenceChange.Type changeType);
+    // prefix the protein sequence format
+    protected String prefixFormatter() { return ""; }
+
+    // get the changing sequence formatter
+    protected abstract ChangingSequenceFormatter getChangingSequenceFormatter();
+
+    // get the specific object handling formatting and parsing of sequence change
+    protected abstract SequenceChangeFormat getSequenceChangeFormat(SequenceChange.Type changeType);
     protected abstract Collection<SequenceChange.Type> getAvailableChangeTypes();
 }
