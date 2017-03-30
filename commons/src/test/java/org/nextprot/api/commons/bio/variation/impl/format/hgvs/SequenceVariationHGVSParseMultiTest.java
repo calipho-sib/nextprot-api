@@ -2,7 +2,6 @@ package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
 
 import java.text.ParseException;
 
@@ -17,6 +16,7 @@ public class SequenceVariationHGVSParseMultiTest {
 MULTIS:
 p.(=,Ile411_Gly426del)
          */
-        format.parse("p.(=,Ile411_Gly426del)", SequenceVariationFormat.ParsingMode.PERMISSIVE);
+        format = new SequenceVariantHGVSFormat(SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
+        format.parse("p.(=,Ile411_Gly426del)");
     }
 }

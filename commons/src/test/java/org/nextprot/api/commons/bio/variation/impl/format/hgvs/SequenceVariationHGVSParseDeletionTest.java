@@ -57,7 +57,8 @@ public class SequenceVariationHGVSParseDeletionTest {
     @Test
     public void testParseAANonStandardDeletion1() throws Exception {
 
-        SequenceVariation pm = format.parse("p.K487_L498del12", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
+        format = new SequenceVariantHGVSFormat(SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.K487_L498del12");
 
         Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
@@ -69,7 +70,8 @@ public class SequenceVariationHGVSParseDeletionTest {
     @Test
     public void testParseAANonStandardDeletion2() throws Exception {
 
-        SequenceVariation pm = format.parse("p.K487_L498delPRAL", SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
+        format = new SequenceVariantHGVSFormat(SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
+        SequenceVariation pm = format.parse("p.K487_L498delPRAL");
 
         Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
         Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());

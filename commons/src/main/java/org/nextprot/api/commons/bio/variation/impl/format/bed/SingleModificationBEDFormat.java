@@ -18,8 +18,7 @@ public class SingleModificationBEDFormat implements SequenceChangeFormat<AminoAc
     private static final Pattern PATTERN = Pattern.compile("^(\\w+)-([A-Z])([a-z]{2})?(\\d+)$");
 
     @Override
-    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder,
-                                           SequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public SequenceVariation parse(String source, SequenceVariationBuilder.FluentBuilding builder) throws ParseException {
 
         Matcher m = PATTERN.matcher(source);
 
@@ -36,7 +35,7 @@ public class SingleModificationBEDFormat implements SequenceChangeFormat<AminoAc
     }
 
     @Override
-    public boolean matchesWithMode(String source, SequenceVariationFormat.ParsingMode mode) {
+    public boolean matches(String source) {
         return source.matches(PATTERN.pattern());
     }
 

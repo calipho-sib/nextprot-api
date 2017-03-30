@@ -1,5 +1,6 @@
 package org.nextprot.api.commons.bio.variation.impl.format.uniprot;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
@@ -7,6 +8,7 @@ import org.nextprot.api.commons.bio.variation.impl.SequenceVariationImpl;
 
 import java.util.Map;
 
+@Ignore
 public class SequenceVariationUniprotFormatterTest {
 
     SequenceVariationUniprotFormatter format = new SequenceVariationUniprotFormatter("");

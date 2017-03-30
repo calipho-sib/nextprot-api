@@ -4,9 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
+import org.nextprot.api.commons.bio.variation.SequenceChangeHGVSFormat;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
-import org.nextprot.api.commons.bio.variation.SequenceChangeFormat;
 import org.nextprot.api.commons.bio.variation.impl.SequenceVariationImpl;
 
 import java.util.Collection;
@@ -25,8 +24,8 @@ public class SequenceVariantSequenceVariantHGVSFormatterTest {
     @Test
     public void testGetFormat() throws Exception {
 
-        SequenceChangeFormat fmt = format.getSequenceChangeFormat(SequenceChange.Type.SUBSTITUTION);
-        Assert.assertTrue(fmt.matchesWithMode("p.R54C", SequenceVariationFormat.ParsingMode.STRICT));
+        SequenceChangeHGVSFormat fmt = format.getSequenceChangeFormat(SequenceChange.Type.SUBSTITUTION);
+        Assert.assertTrue(fmt.matchesWithMode("p.R54C", SequenceVariantHGVSFormat.ParsingMode.STRICT));
     }
 
     @Test

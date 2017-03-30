@@ -1,9 +1,8 @@
 package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 
-import org.nextprot.api.commons.bio.variation.SequenceChange;
-import org.nextprot.api.commons.bio.variation.SequenceChangeFormat;
-import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.*;
 
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
@@ -17,10 +16,20 @@ import java.util.Map;
  */
 public class SequenceVariantHGVSFormat extends SequenceVariationFormat {
 
+    public enum ParsingMode { STRICT, PERMISSIVE }
+
     private final SequenceVariantHGVSFormatter sequenceVariantFormatter;
-    private final Map<SequenceChange.Type, SequenceChangeFormat> changeFormats;
+    private final Map<SequenceChange.Type, SequenceChangeHGVSFormat> changeFormats;
+    private final ParsingMode parsingMode;
 
     public SequenceVariantHGVSFormat() {
+
+        this(ParsingMode.STRICT);
+    }
+
+    public SequenceVariantHGVSFormat(ParsingMode parsingMode) {
+
+        this.parsingMode = parsingMode;
 
         sequenceVariantFormatter = new SequenceVariantHGVSFormatter();
         changeFormats = new EnumMap<>(SequenceChange.Type.class);
@@ -47,7 +56,7 @@ public class SequenceVariantHGVSFormat extends SequenceVariationFormat {
     }
 
     @Override
-    protected SequenceChangeFormat getSequenceChangeFormat(SequenceChange.Type changeType) {
+    protected SequenceChangeHGVSFormat getSequenceChangeFormat(SequenceChange.Type changeType) {
 
         return changeFormats.get(changeType);
     }
@@ -56,5 +65,19 @@ public class SequenceVariantHGVSFormat extends SequenceVariationFormat {
     protected Collection<SequenceChange.Type> getAvailableChangeTypes() {
 
         return changeFormats.keySet();
+    }
+
+    @Override
+    public SequenceVariation parse(String source, SequenceVariationBuilder.FluentBuilding builder) throws ParseException {
+
+        for (SequenceChange.Type changeType : getAvailableChangeTypes()) {
+
+            SequenceChangeHGVSFormat format = getSequenceChangeFormat(changeType);
+
+            if (format.matchesWithMode(source, parsingMode))
+                return format.parseWithMode(source, builder, parsingMode);
+        }
+
+        throw new ParseException(source + ": not a valid protein sequence variant", 0);
     }
 }

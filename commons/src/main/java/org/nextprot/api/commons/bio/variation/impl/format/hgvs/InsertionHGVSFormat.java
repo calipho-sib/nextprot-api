@@ -13,12 +13,12 @@ import java.util.regex.Pattern;
 /**
  * Specifications: http://varnomen.hgvs.org/recommendations/protein/variant/insertion/
  */
-public class InsertionHGVSFormat implements SequenceChangeFormat<Insertion> {
+public class InsertionHGVSFormat implements SequenceChangeHGVSFormat<Insertion> {
 
     private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)_([A-Z])([a-z]{2})?(\\d+)ins((?:[A-Z\\*]([a-z]{2})?)+)$");
 
     @Override
-    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariantHGVSFormat.ParsingMode mode) throws ParseException {
 
         Matcher m =  PATTERN.matcher(source);
 
@@ -44,7 +44,7 @@ public class InsertionHGVSFormat implements SequenceChangeFormat<Insertion> {
     }
 
     @Override
-    public boolean matchesWithMode(String source, SequenceVariationFormat.ParsingMode mode) {
+    public boolean matchesWithMode(String source, SequenceVariantHGVSFormat.ParsingMode mode) {
         return source.matches(PATTERN.pattern());
     }
 

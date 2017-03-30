@@ -1,7 +1,9 @@
 package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.*;
+import org.nextprot.api.commons.bio.variation.SequenceChangeHGVSFormat;
+import org.nextprot.api.commons.bio.variation.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
 import org.nextprot.api.commons.bio.variation.impl.Deletion;
 import org.nextprot.api.commons.utils.StringUtils;
 
@@ -9,13 +11,13 @@ import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DeletionHGVSFormat implements SequenceChangeFormat<Deletion> {
+public class DeletionHGVSFormat implements SequenceChangeHGVSFormat<Deletion> {
 
-    private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?del$");
-    private static final Pattern PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?del.*$");
+    private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?del(?!ins)$");
+    private static final Pattern PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?del(?!ins).*$");
 
     @Override
-    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariantHGVSFormat.ParsingMode mode) throws ParseException {
 
         Matcher m = (mode == SequenceVariantHGVSFormat.ParsingMode.STRICT) ? PATTERN.matcher(source) : PATTERN_PERMISSIVE.matcher(source);
 
@@ -38,7 +40,7 @@ public class DeletionHGVSFormat implements SequenceChangeFormat<Deletion> {
     }
 
     @Override
-    public boolean matchesWithMode(String source, SequenceVariationFormat.ParsingMode mode) {
+    public boolean matchesWithMode(String source, SequenceVariantHGVSFormat.ParsingMode mode) {
         return (mode == SequenceVariantHGVSFormat.ParsingMode.STRICT) ? source.matches(PATTERN.pattern()) : source.matches(PATTERN_PERMISSIVE.pattern());
     }
 

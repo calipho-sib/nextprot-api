@@ -15,12 +15,12 @@ import java.util.regex.Pattern;
  *
  * http://varnomen.hgvs.org/recommendations/protein/variant/duplication/
  */
-public class DuplicationHGVSFormat implements SequenceChangeFormat<Duplication> {
+public class DuplicationHGVSFormat implements SequenceChangeHGVSFormat<Duplication> {
 
     private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?dup$");
 
     @Override
-    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariantHGVSFormat.ParsingMode mode) throws ParseException {
 
         Matcher m = PATTERN.matcher(source);
 
@@ -45,7 +45,7 @@ public class DuplicationHGVSFormat implements SequenceChangeFormat<Duplication> 
     }
 
     @Override
-    public boolean matchesWithMode(String source, SequenceVariationFormat.ParsingMode mode) {
+    public boolean matchesWithMode(String source, SequenceVariantHGVSFormat.ParsingMode mode) {
         return source.matches(PATTERN.pattern());
     }
 

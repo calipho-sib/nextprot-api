@@ -9,15 +9,15 @@ import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DeletionInsertionHGVSFormat implements SequenceChangeFormat<DeletionAndInsertion> {
+public class DeletionInsertionHGVSFormat implements SequenceChangeHGVSFormat<DeletionAndInsertion> {
 
     private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?delins((?:[A-Z\\*]([a-z]{2})?)+)$");
     private static final Pattern PATTERN_PERMISSIVE = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)(?:_([A-Z])([a-z]{2})?(\\d+))?(?:delins|>)((?:[A-Z\\*]([a-z]{2})?)+)$");
 
     @Override
-    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariantHGVSFormat.ParsingMode mode) throws ParseException {
 
-        Matcher m = (mode == SequenceVariationFormat.ParsingMode.STRICT) ? PATTERN.matcher(source) : PATTERN_PERMISSIVE.matcher(source);
+        Matcher m = (mode == SequenceVariantHGVSFormat.ParsingMode.STRICT) ? PATTERN.matcher(source) : PATTERN_PERMISSIVE.matcher(source);
 
         if (m.matches()) {
 
@@ -42,8 +42,8 @@ public class DeletionInsertionHGVSFormat implements SequenceChangeFormat<Deletio
     }
 
     @Override
-    public boolean matchesWithMode(String source, SequenceVariationFormat.ParsingMode mode) {
-        return (mode == SequenceVariationFormat.ParsingMode.STRICT) ? source.matches(PATTERN.pattern()) : source.matches(PATTERN_PERMISSIVE.pattern());
+    public boolean matchesWithMode(String source, SequenceVariantHGVSFormat.ParsingMode mode) {
+        return (mode == SequenceVariantHGVSFormat.ParsingMode.STRICT) ? source.matches(PATTERN.pattern()) : source.matches(PATTERN_PERMISSIVE.pattern());
     }
 
     @Override

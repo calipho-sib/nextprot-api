@@ -1,10 +1,9 @@
 package org.nextprot.api.commons.bio.variation.impl.format.hgvs;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.SequenceChangeFormat;
+import org.nextprot.api.commons.bio.variation.SequenceChangeHGVSFormat;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
-import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
 import org.nextprot.api.commons.bio.variation.impl.Frameshift;
 import org.nextprot.api.commons.utils.StringUtils;
 
@@ -12,12 +11,12 @@ import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FrameshiftHGVSFormat implements SequenceChangeFormat<Frameshift> {
+public class FrameshiftHGVSFormat implements SequenceChangeHGVSFormat<Frameshift> {
 
     private static final Pattern PATTERN = Pattern.compile("^p\\.([A-Z])([a-z]{2})?(\\d+)([A-Z])([a-z]{2})?fs(?:\\*|Ter)(\\d+)$");
 
     @Override
-    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariationFormat.ParsingMode mode) throws ParseException {
+    public SequenceVariation parseWithMode(String source, SequenceVariationBuilder.FluentBuilding builder, SequenceVariantHGVSFormat.ParsingMode mode) throws ParseException {
 
         Matcher m = PATTERN.matcher(source);
 
@@ -42,7 +41,7 @@ public class FrameshiftHGVSFormat implements SequenceChangeFormat<Frameshift> {
     }
 
     @Override
-    public boolean matchesWithMode(String source, SequenceVariationFormat.ParsingMode mode) {
+    public boolean matchesWithMode(String source, SequenceVariantHGVSFormat.ParsingMode mode) {
         return source.matches(PATTERN.pattern());
     }
 
