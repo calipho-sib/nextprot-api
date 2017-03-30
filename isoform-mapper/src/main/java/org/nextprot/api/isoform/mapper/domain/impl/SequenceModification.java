@@ -1,7 +1,7 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
 import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
-import org.nextprot.api.commons.bio.variation.impl.format.bed.AminoAcidModificationBedFormat;
+import org.nextprot.api.commons.bio.variation.impl.format.bed.SequenceModificationBedFormat;
 import org.nextprot.api.core.domain.Isoform;
 
 import java.text.ParseException;
@@ -25,7 +25,7 @@ public class SequenceModification extends SequenceFeatureBase {
     @Override
     public SequenceVariationFormat newParser() {
 
-        return new AminoAcidModificationBedFormat();
+        return new SequenceModificationBedFormat();
     }
 
     @Override
