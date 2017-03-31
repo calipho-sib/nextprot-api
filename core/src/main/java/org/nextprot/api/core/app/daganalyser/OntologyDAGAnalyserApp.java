@@ -205,7 +205,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         // COMPARE COMPUTATION DURATIONS
         Instant t = Instant.now();
         for (CvTerm cvTerm : cvTerms) {
-            ancestors.put(cvTerm.getId(), TerminologyUtils.getAllAncestors(cvTerm.getAccession(), terminologyService));
+            ancestors.put(cvTerm.getId(), TerminologyUtils.getAllAncestorsAccession(cvTerm.getAccession(), terminologyService));
         }
         timings.add(ChronoUnit.MILLIS.between(t, Instant.now()));
 

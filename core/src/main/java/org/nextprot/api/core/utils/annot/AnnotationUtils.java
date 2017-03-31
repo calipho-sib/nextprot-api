@@ -4,10 +4,13 @@ import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.BioObject;
+import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
+import org.nextprot.api.core.domain.ExperimentalContext;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.utils.annot.comp.AnnotationComparators;
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerger;
@@ -341,4 +344,116 @@ public class AnnotationUtils {
 		
 		return QualityQualifier.SILVER;
 	}
+	
+	/**
+	 * 
+	 * @param annot
+	 * @return
+	 */
+	public static String getTermNameWithAncestors(Annotation annot, List<CvTerm> terms) {
+		
+		StringBuffer sb = new StringBuffer();
+		for (int i=terms.size(); i<0; i--) {
+			sb.append(terms.get(i).getName());
+			if (i>0) sb.append(" » ");
+		}
+		return sb.toString();
+	}
+	
+	/**
+	 * pam, 28 March 2017
+	 * This method returns true for variant annotations that are somehow related to a disease
+	 * otherwise returns false.
+	 * @param annot any annotation
+	 */
+	public static boolean isVariantRelatedToDiseaseProperty(Annotation annot, Map<Long,ExperimentalContext> ecs) {
+		
+		if (AnnotationCategory.VARIANT != annot.getAPICategory()) return false;
+		
+		// condition 1: if there is a disease in an evidence experimental context, return true > 1'000'000 cases
+		
+		for (AnnotationEvidence ev : annot.getEvidences()) {
+			Long ecId = ev.getExperimentalContextId();
+			if (ecId != null && ecId != 0) {
+				ExperimentalContext ec = ecs.get(ecId);
+				if (ec==null) {
+					System.out.println("WARNING: Could not find ExperimentalContext with id:" + ecId );
+				} else {   
+					if (ec.getDisease() != null) return true;
+				}
+			}
+		}
+		
+		// condition 2: if there exists at least 1 variant disease term, return true > 30'000 cases
+		
+		if (annot.getVariant()!=null && annot.getVariant().getDiseaseTerms() != null) {
+			if (annot.getVariant().getDiseaseTerms().size() > 0) return true;
+		}
+		
+		// condition 3: description matches some patterns, return true > 5'000 cases
+		
+		if (annot.getDescription()==null) return false;
+		
+		String desc = annot.getDescription().toLowerCase();
+		
+		if (desc.contains("allele")) return false;
+		if (desc.contains("population")) return false;
+		if (desc.contains("isozyme")) return false;
+		if (desc.contains("%")) return false;
+		if (desc.contains("clone")) return false;
+		if (desc.contains("dbsnp")) return false;
+		if (desc.contains("polymorphism")) return false;
+		
+		if (desc.startsWith("in")) return true;
+		if (desc.contains("found in")) return true;
+		if (desc.contains("associated with")) return true;
+		
+		// else  > 3'000'000 cases
+		
+		return false;
+	}
+	
+	
+	/**
+	 * Pam, 22 march 2017
+	 * 
+	 * This method is created to display properly the general annotations that are isoform specific.
+	 * 
+	 * 1) The general rule in NP1 is that an annotation is displayed as specific 
+	 * if there exists a targetingIsoformMap record for the isoform AND the number of targetingIsoformMap 
+	 * records for this annotation is inferior to the number of isoforms (which means that the annotation doesn't apply to each isoform)
+	 * 
+	 * 2) There is known exception in NP1 for binary interaction annotations. In this case we always have a targetingIsoformMap record 
+	 * for each isoform but you must rely on the targetingIsoformMap.getSpecificity() to determine if the annotation 
+	 * is specific for an isoform or not. This rule was introduced because we didn't want to penalize IntAct annotations that
+	 * are supported by experiments performed with a known isoform.
+	 * 
+	 * 3) Some annotation categories may require a review concerning how they deal with isoform specificity (NP1 & BED pipelines)
+	 * A jira issue will be created...
+	 * 
+	 * @param annot
+	 * @param entryIsoformCount
+	 * @return
+	 */
+	public static List<String> computeIsoformsDisplayedAsSpecific(Annotation annot, int entryIsoformCount) {
+		
+		List<String> result = new ArrayList<String>();
+		if (annot.getTargetingIsoformsMap()==null) return result;
+		
+		if (AnnotationCategory.BINARY_INTERACTION==annot.getAPICategory()) {
+			for (AnnotationIsoformSpecificity spec : annot.getTargetingIsoformsMap().values()) {
+				if ("SPECIFIC".equals(spec.getSpecificity())) result.add(spec.getIsoformAccession());
+			}
+			if (result.size()==entryIsoformCount) result = new ArrayList<String>();
+		} else {
+			if (annot.getTargetingIsoformsMap().size()<entryIsoformCount) {
+				for (AnnotationIsoformSpecificity spec : annot.getTargetingIsoformsMap().values()) {
+					result.add(spec.getIsoformAccession());
+				}
+			}
+		}
+		return result;
+	}
+
+	
 }
