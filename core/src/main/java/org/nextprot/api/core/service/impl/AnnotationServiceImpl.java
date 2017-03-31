@@ -1,5 +1,47 @@
 package org.nextprot.api.core.service.impl;
 
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang.StringUtils;
+import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.core.dao.AnnotationDAO;
+import org.nextprot.api.core.dao.BioPhyChemPropsDao;
+import org.nextprot.api.core.dao.PtmDao;
+import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.ExperimentalContext;
+import org.nextprot.api.core.domain.Feature;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.AntibodyMappingService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
+import org.nextprot.api.core.service.ExperimentalContextService;
+import org.nextprot.api.core.service.InteractionService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.PeptideMappingService;
+import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.utils.TerminologyUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
+import org.nextprot.api.core.utils.graph.OntologyDAG;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -7,28 +49,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.nextprot.api.annotation.builder.statement.service.StatementService;
-import org.apache.commons.lang.StringUtils;
-import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.constants.IdentifierOffset;
-import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.core.dao.AnnotationDAO;
-import org.nextprot.api.core.dao.BioPhyChemPropsDao;
-import org.nextprot.api.core.dao.IsoformDAO;
-import org.nextprot.api.core.dao.PtmDao;
-import org.nextprot.api.core.domain.CvTerm;
-import org.nextprot.api.core.domain.Feature;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.*;
-import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.utils.annot.AnnotationUtils;
-import org.nextprot.api.core.utils.graph.OntologyDAG;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
-
-import java.security.InvalidParameterException;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
@@ -38,11 +58,12 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private DbXrefService xrefService;
 	@Autowired private InteractionService interactionService;
 	@Autowired private BioPhyChemPropsDao bioPhyChemPropsDao;
-	@Autowired private IsoformDAO isoformDAO;
+	@Autowired private IsoformService isoformService;
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private StatementService statementService;
 	@Autowired private TerminologyService terminologyService;
+	@Autowired private ExperimentalContextDictionaryService experimentalContextDictionaryService;
 	
 	@Override
 	@Cacheable("annotations")
@@ -110,6 +131,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 				}
 			}
 	
+			
 			AnnotationUtils.convertRelativeEvidencesToProperties(annotations); // CALIPHOMISC-277
 
 			for (Annotation annot : annotations) {
@@ -127,15 +149,78 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		if (!ignoreStatements) annotations = AnnotationUtils.mapReduceMerge(statementService.getAnnotations(entryName), annotations);
 
+		// post-processing of annotations
+		long t0;
+		updateIsoformsDisplayedAsSpecific(annotations, entryName);
+		updateVariantsRelatedToDisease(annotations);
+		updateSubcellularLocationTermNameWithAncestors(annotations);
+		
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 	}
 
+	private void updateSubcellularLocationTermNameWithAncestors(List<Annotation> annotations) {
+		
+		long t0 = System.currentTimeMillis(); System.out.println("updateSubcellularLocationTermNameWithAncestors...");
+
+		for (Annotation annot: annotations) {
+			if (AnnotationCategory.SUBCELLULAR_LOCATION == annot.getAPICategory()) {
+				CvTerm t = terminologyService.findCvTermByAccession(annot.getCvTermAccessionCode());
+				List<CvTerm> terms = TerminologyUtils.getOnePathToRootTerm(t.getAccession(), terminologyService);
+				String longName = AnnotationUtils.getTermNameWithAncestors(annot, terms);
+				AnnotationProperty prop = new AnnotationProperty();
+				prop.setAnnotationId(annot.getAnnotationId());
+				prop.setName("long-name");
+				prop.setValue(String.valueOf(longName));
+				annot.addProperty(prop);
+			}
+		}
+		
+		System.out.println("updateSubcellularLocationTermNameWithAncestors DONE in " + (System.currentTimeMillis() - t0) + "ms");
+		
+	}
+	
+	private void updateVariantsRelatedToDisease(List<Annotation> annotations) {
+		
+		Map<Long,ExperimentalContext> ecMap = experimentalContextDictionaryService.getAllExperimentalContexts();
+		
+		long t0 = System.currentTimeMillis(); System.out.println("updateVariantsRelatedToDisease...");
+
+		// add property if annotation is a variant related to disease
+		for (Annotation annot: annotations) {
+			if (AnnotationCategory.VARIANT == annot.getAPICategory()) {
+				boolean result = AnnotationUtils.isVariantRelatedToDiseaseProperty(annot, ecMap);
+				AnnotationProperty prop = new AnnotationProperty();
+				prop.setAnnotationId(annot.getAnnotationId());
+				prop.setName("disease-related");
+				prop.setValue(String.valueOf(result));
+				annot.addProperty(prop);
+			}
+		}
+
+		System.out.println("updateVariantsRelatedToDisease DONE in " + (System.currentTimeMillis() - t0) + "ms");
+
+	}
+	
+	
+	private void updateIsoformsDisplayedAsSpecific(List<Annotation> annotations, String entryName) {
+		
+		long t0 = System.currentTimeMillis(); System.out.println("updateIsoformsDisplayedAsSpecific...");
+		
+		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryName);
+		int entryIsoformCount=isoforms.size();
+		for (Annotation annot: annotations) {
+			annot.setIsoformsDisplayedAsSpecific(AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot, entryIsoformCount));
+		}
+		System.out.println("updateIsoformsDisplayedAsSpecific DONE in " + (System.currentTimeMillis() - t0) + "ms");
+
+	}
+	
 	private List<Annotation> bioPhyChemPropsToAnnotationList(String entryName, List<AnnotationProperty> props) {
 
 		List<Annotation> annotations = new ArrayList<>(props.size());
 
-		List<Isoform> isoforms = isoformDAO.findIsoformsByEntryName(entryName);
+		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryName);
 
 		for(AnnotationProperty property :  props){
 

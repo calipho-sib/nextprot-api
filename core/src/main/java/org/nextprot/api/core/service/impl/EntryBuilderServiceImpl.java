@@ -83,7 +83,8 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
             ///////
 
 			if(entryConfig.hasExperimentalContext()){
-				entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entryName));
+				entry.setExperimentalContexts(
+						this.experimentalContextService.findExperimentalContextsByAnnotations(entry.getAnnotations()));
 			}
 			if(entryConfig.hasInteractions()){
 				entry.setInteractions(this.interactionService.findInteractionsByEntry(entryName));
@@ -136,7 +137,8 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entry.getUniqueName()));
 			}
 			if(entry.getExperimentalContexts() == null || entry.getExperimentalContexts().isEmpty()){
-				entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByEntryName(entry.getUniqueName()));
+				entry.setExperimentalContexts(
+						this.experimentalContextService.findExperimentalContextsByAnnotations(entry.getAnnotations()));
 			}
 
 		}
