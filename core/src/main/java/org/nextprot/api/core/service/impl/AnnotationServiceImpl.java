@@ -174,6 +174,16 @@ public class AnnotationServiceImpl implements AnnotationService {
 				prop.setName("long-name");
 				prop.setValue(String.valueOf(longName));
 				annot.addProperty(prop);
+				String descr = annot.getDescription();
+				if (descr != null && !annot.getCvTermName().equals(descr)) {
+					// 3 cases: "Main location", "Additional localtion" or "Note=..."
+					if (descr.startsWith("Note=")) descr=descr.substring(5); 
+					prop = new AnnotationProperty();
+					prop.setAnnotationId(annot.getAnnotationId());
+					prop.setName("name-modifier");
+					prop.setValue(String.valueOf(descr));
+					annot.addProperty(prop);
+				}
 			}
 		}
 		
