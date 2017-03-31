@@ -36,4 +36,20 @@ public class DeletionAndInsertion implements SequenceChange<AminoAcidCode[]> {
     public Type getType() {
         return Type.DELETION_INSERTION;
     }
+
+    @Override
+    public Operator getOperator() {
+
+        return new Operator() {
+            @Override
+            public PositionType getChangingPositionType() {
+                return PositionType.FIRST_LAST;
+            }
+
+            @Override
+            public String getVariatingPart() {
+                return AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.ONE_LETTER, aas);
+            }
+        };
+    }
 }

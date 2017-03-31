@@ -11,7 +11,7 @@ import org.nextprot.api.commons.bio.variation.impl.AminoAcidModification;
  */
 public interface SequenceVariationBuilder {
 
-    /** build an instance of ProteinMutation */
+    /** build an instance of SequenceVariation */
     SequenceVariation build();
 
     /** collect data through the process */
@@ -72,6 +72,7 @@ public interface SequenceVariationBuilder {
         private AminoAcidCode lastChangingAminoAcid;
         private int lastChangingAminoAcidPos;
         private SequenceChange<?> sequenceChange;
+        private String sequence;
 
         public void setFirstChangingAminoAcid(AminoAcidCode firstAffectedAminoAcid, int firstAffectedAminoAcidPos) {
 
@@ -113,6 +114,14 @@ public interface SequenceVariationBuilder {
 
         public void setSequenceChange(SequenceChange<?> sequenceChange) {
             this.sequenceChange = sequenceChange;
+        }
+
+        public String getSequence() {
+            return sequence;
+        }
+
+        public void setSequence(String sequence) {
+            this.sequence = sequence;
         }
     }
 }

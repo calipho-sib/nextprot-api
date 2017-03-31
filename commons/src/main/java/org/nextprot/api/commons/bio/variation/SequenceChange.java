@@ -26,4 +26,19 @@ public interface SequenceChange<V> {
     V getValue();
 
     Type getType();
+
+    Operator getOperator();
+
+    interface Operator {
+
+        enum PositionType {
+            FIRST_FIRST,
+            FIRST_LAST,
+            LAST_LAST
+        }
+
+        PositionType getChangingPositionType();
+
+        String getVariatingPart();
+    }
 }

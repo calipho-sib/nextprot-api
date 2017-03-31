@@ -40,6 +40,22 @@ public class Insertion implements SequenceChange<AminoAcidCode[]> {
         return Type.INSERTION;
     }
 
+    @Override
+    public Operator getOperator() {
+
+        return new Operator() {
+            @Override
+            public PositionType getChangingPositionType() {
+                return PositionType.FIRST_FIRST;
+            }
+
+            @Override
+            public String getVariatingPart() {
+                return AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.ONE_LETTER, getValue());
+            }
+        };
+    }
+
     public int getInsertAfterPos() {
         return insertAfterPos;
     }

@@ -30,6 +30,12 @@ public class Frameshift implements SequenceChange<Frameshift.Change> {
         return Type.FRAMESHIFT;
     }
 
+    @Override
+    public Operator getOperator() {
+
+        return null;
+    }
+
     public static class Change {
 
         private final AminoAcidCode changedAminoAcid;

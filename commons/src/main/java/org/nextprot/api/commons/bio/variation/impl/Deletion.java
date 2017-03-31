@@ -32,4 +32,20 @@ public class Deletion implements SequenceChange<Object> {
 
         return Type.DELETION;
     }
+
+    @Override
+    public Operator getOperator() {
+
+        return new Operator() {
+            @Override
+            public PositionType getChangingPositionType() {
+                return PositionType.FIRST_LAST;
+            }
+
+            @Override
+            public String getVariatingPart() {
+                return "";
+            }
+        };
+    }
 }

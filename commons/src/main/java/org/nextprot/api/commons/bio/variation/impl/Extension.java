@@ -33,4 +33,10 @@ abstract class Extension implements SequenceChange<AminoAcidCode> {
 
         return newPos;
     }
+
+    @Override
+    public Operator getOperator() {
+
+        return null;
+    }
 }
