@@ -68,14 +68,21 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 				
 					statementsMappedToEntryToLoad.addAll(transformStatements(originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession, report));
 					
-				}
+			}
 
 		}
 		
+
+		Set<Statement> remainingStatements = getRemainingStatements (rawStatements);
+		remainingStatements.forEach(s -> System.err.println("NOT PROCESSED" + s));
+			
 		return statementsMappedToEntryToLoad;
 	
 	}
 	
+	private Set<Statement> getRemainingStatements (Set<Statement> rawStatements){
+		return rawStatements.stream().filter(s -> s.isProcessed()).collect(Collectors.toSet());
+	}
 	
 	private String getIsoAccession (String featureName, String entryAccession){
 		
@@ -106,6 +113,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 	
 	Set<Statement> transformStatements(Statement originalStatement, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific, String isoSpecificAccession, ReportBuilder report){
 		
+		originalStatement.setProcessed();
 		Set<Statement> statementsToLoad = new HashSet<>();
 
 		//In case of entry variants have the target isoform property filled
@@ -113,7 +121,6 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 				
 		for(Map.Entry<String, List<Statement>> entry : subjectsTransformedByEntryOrIsoform.entrySet()) {
 				
-				String entryOrIsoform = entry.getKey();
 				List<Statement> subjects = entry.getValue();
 				
 				if(subjects.isEmpty()){
@@ -149,6 +156,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 				
 				if(objectStatement != null){
 
+					objectStatement.setProcessed();
 					objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject) // in case of entry
 							.buildWithAnnotationHash(AnnotationType.ENTRY);

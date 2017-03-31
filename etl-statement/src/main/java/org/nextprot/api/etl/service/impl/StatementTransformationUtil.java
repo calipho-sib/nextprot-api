@@ -90,6 +90,8 @@ public class StatementTransformationUtil {
 
 		for (Statement subject : multipleSubjects) {
 
+			subject.setProcessed();
+
 			FeatureQueryResult featureQueryResult;
 			featureQueryResult = isoformMappingService.propagateFeature(new SingleFeatureQuery(subject.getValue(StatementField.ANNOTATION_NAME), "variant", nextprotAccession));
 			if (featureQueryResult.isSuccess()) {
