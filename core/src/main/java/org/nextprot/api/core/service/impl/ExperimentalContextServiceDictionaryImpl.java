@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service.impl;
 
-import java.lang.instrument.Instrumentation;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
