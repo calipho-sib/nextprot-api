@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service.impl;
 
+import java.lang.instrument.Instrumentation;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,12 +32,21 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 		
 		long t0 = System.currentTimeMillis(); System.out.println("Building experimental context dictionary...");
 
+		Runtime.getRuntime().gc();
+		long before = Runtime.getRuntime().freeMemory();
+
 		List<ExperimentalContext> ecs = ecDao.findAllExperimentalContexts();
 		updateTerminologies(ecs);
 
 		Map<Long,ExperimentalContext> dictionary = new TreeMap<>();
 		for (ExperimentalContext ec : ecs) dictionary.put(ec.getContextId(), ec);
+		ecs=null;
 		
+		Runtime.getRuntime().gc();
+		long after = Runtime.getRuntime().freeMemory();
+
+		
+		System.out.println("Dictionary size:" + (before-after));
 		System.out.println("Building experimental context dictionary DONE in " + (System.currentTimeMillis() - t0) + "ms");
 		
 		return dictionary;
@@ -56,17 +66,17 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 			terminologyAccessions.add(ec.getDiseaseAC());
 			terminologyAccessions.add(ec.getDevelopmentalStageAC());
 		}
-		
-		List<CvTerm> terms = terminologyService.findCvTermsByAccessions(terminologyAccessions);
-		Map<String, CvTerm> map = new HashMap<>();
-		for(CvTerm term : terms){
-			map.put(term.getAccession(), term);
+		if (terminologyAccessions.size()>0) {
+			List<CvTerm> terms = terminologyService.findCvTermsByAccessions(terminologyAccessions);
+			Map<String, CvTerm> map = new HashMap<>();
+			for(CvTerm term : terms){
+				map.put(term.getAccession(), term);
+			}
+	
+			for (ExperimentalContext ec : ecs) {
+				updateTerminologies(ec, map);
+			}
 		}
-
-		for (ExperimentalContext ec : ecs) {
-			updateTerminologies(ec, map);
-		}
-
 	}
 
 	private void updateTerminologies(ExperimentalContext ec, Map<String, CvTerm> map) {
