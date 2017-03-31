@@ -20,6 +20,17 @@ public class Annotation implements Serializable, IsoformSpecific {
 	
 	private String annotationHash;
 
+	private List<String> isoformsDisplayedAsSpecific;
+
+	
+	public List<String> getIsoformsDisplayedAsSpecific() {
+		return isoformsDisplayedAsSpecific;
+	}
+
+	public void setIsoformsDisplayedAsSpecific(List<String> isoformsDisplayedAsSpecific) {
+		this.isoformsDisplayedAsSpecific = isoformsDisplayedAsSpecific;
+	}
+
 	private static final long serialVersionUID = 1L;
 
 	private List<String> synonyms;
@@ -301,16 +312,21 @@ public class Annotation implements Serializable, IsoformSpecific {
 
         for (AnnotationProperty property : props) {
 
-            String propertyName = property.getName();
-
-            if (!properties.containsKey(propertyName)) {
-                properties.put(propertyName, new TreeSet<>(new AnnotationPropertyComparator()));
-            }
-
-            properties.get(propertyName).add(property);
+        	addProperty(property);
         }
 	}
 
+	public void addProperty(AnnotationProperty property) {
+
+            String propertyName = property.getName();
+            if (!properties.containsKey(propertyName)) {
+                properties.put(propertyName, new TreeSet<>(new AnnotationPropertyComparator()));
+            }
+            properties.get(propertyName).add(property);
+
+	}
+	
+	
 	public String getSynonym() {
 		return synonym;
 	}
@@ -323,6 +339,7 @@ public class Annotation implements Serializable, IsoformSpecific {
 	public boolean isSpecificForIsoform(String isoform) {
 		return targetingIsoformsMap.containsKey(isoform);
 	}
+
 
 	public boolean isAnnotationPositionalForIsoform(String isoform) {
 		if(isSpecificForIsoform(isoform)){
