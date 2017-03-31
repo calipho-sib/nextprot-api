@@ -15,8 +15,8 @@ public class SequenceVariationHGVSParseDeletionTest {
 
         SequenceVariation pm = format.parse("p.K73del");
 
-        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(73, pm.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(73, pm.getChangingSequence().getFirstAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
     }
 
@@ -25,10 +25,10 @@ public class SequenceVariationHGVSParseDeletionTest {
 
         SequenceVariation pm = format.parse("p.K487_L498del");
 
-        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getLastChangingAminoAcid());
-        Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
-        Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getChangingSequence().getLastAminoAcid());
+        Assert.assertEquals(487, pm.getChangingSequence().getFirstAminoAcidPos());
+        Assert.assertEquals(498, pm.getChangingSequence().getLastAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
     }
 
@@ -37,8 +37,8 @@ public class SequenceVariationHGVSParseDeletionTest {
 
         SequenceVariation pm = format.parse("p.Lys73del");
 
-        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(73, pm.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(73, pm.getChangingSequence().getFirstAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
     }
 
@@ -47,10 +47,10 @@ public class SequenceVariationHGVSParseDeletionTest {
 
         SequenceVariation pm = format.parse("p.Lys487_Leu498del");
 
-        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getLastChangingAminoAcid());
-        Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
-        Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getChangingSequence().getLastAminoAcid());
+        Assert.assertEquals(487, pm.getChangingSequence().getFirstAminoAcidPos());
+        Assert.assertEquals(498, pm.getChangingSequence().getLastAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
     }
 
@@ -60,10 +60,10 @@ public class SequenceVariationHGVSParseDeletionTest {
         format = new SequenceVariantHGVSFormat(SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.K487_L498del12");
 
-        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
-        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getLastChangingAminoAcid());
-        Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(487, pm.getChangingSequence().getFirstAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getChangingSequence().getLastAminoAcid());
+        Assert.assertEquals(498, pm.getChangingSequence().getLastAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
     }
 
@@ -73,10 +73,10 @@ public class SequenceVariationHGVSParseDeletionTest {
         format = new SequenceVariantHGVSFormat(SequenceVariantHGVSFormat.ParsingMode.PERMISSIVE);
         SequenceVariation pm = format.parse("p.K487_L498delPRAL");
 
-        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(487, pm.getFirstChangingAminoAcidPos());
-        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getLastChangingAminoAcid());
-        Assert.assertEquals(498, pm.getLastChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.LYSINE, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(487, pm.getChangingSequence().getFirstAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.LEUCINE, pm.getChangingSequence().getLastAminoAcid());
+        Assert.assertEquals(498, pm.getChangingSequence().getLastAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DELETION, pm.getSequenceChange().getType());
     }
 }

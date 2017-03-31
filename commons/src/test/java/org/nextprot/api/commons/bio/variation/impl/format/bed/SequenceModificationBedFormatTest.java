@@ -34,8 +34,8 @@ public class SequenceModificationBedFormatTest {
 
         SequenceVariation pm = format.parse("SNO-Cys54");
 
-        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(54, pm.getChangingSequence().getFirstAminoAcidPos());
         Assert.assertEquals(AminoAcidModification.S_NITROSATION, pm.getSequenceChange());
     }
 
@@ -44,8 +44,8 @@ public class SequenceModificationBedFormatTest {
 
         SequenceVariation pm = format.parse("SNO-C54");
 
-        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(54, pm.getChangingSequence().getFirstAminoAcidPos());
         Assert.assertEquals(AminoAcidModification.S_NITROSATION, pm.getSequenceChange());
     }
 
@@ -56,8 +56,8 @@ public class SequenceModificationBedFormatTest {
         // P-Thr265 + P-Thr269 + P-Thr273
         SequenceVariation pm = format.parse("P-Thr265-Thr269-Thr273");
 
-        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(54, pm.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.CYSTEINE, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(54, pm.getChangingSequence().getFirstAminoAcidPos());
         Assert.assertEquals(AminoAcidModification.S_NITROSATION, pm.getSequenceChange());
     }
 }

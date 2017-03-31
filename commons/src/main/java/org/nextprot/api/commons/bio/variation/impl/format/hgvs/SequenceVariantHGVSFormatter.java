@@ -14,9 +14,9 @@ public class SequenceVariantHGVSFormatter implements ChangingSequenceFormatter {
     @Override
     public void format(SequenceVariation sequenceVariation, AminoAcidCode.CodeType type, StringBuilder sb) {
 
-        sb.append(AminoAcidCode.formatAminoAcidCode(type, sequenceVariation.getFirstChangingAminoAcid()));
-        sb.append(sequenceVariation.getFirstChangingAminoAcidPos());
-        if (sequenceVariation.isMultipleChangingAminoAcids())
-            sb.append("_").append(AminoAcidCode.formatAminoAcidCode(type, sequenceVariation.getLastChangingAminoAcid())).append(sequenceVariation.getLastChangingAminoAcidPos());
+        sb.append(AminoAcidCode.formatAminoAcidCode(type, sequenceVariation.getChangingSequence().getFirstAminoAcid()));
+        sb.append(sequenceVariation.getChangingSequence().getFirstAminoAcidPos());
+        if (sequenceVariation.getChangingSequence().isMultipleAminoAcids())
+            sb.append("_").append(AminoAcidCode.formatAminoAcidCode(type, sequenceVariation.getChangingSequence().getLastAminoAcid())).append(sequenceVariation.getChangingSequence().getLastAminoAcidPos());
     }
 }

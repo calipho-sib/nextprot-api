@@ -17,10 +17,10 @@ public class SequenceVariationHGVSParseDuplicationTest {
 
         SequenceVariation duplication = format.parse("p.Val417dup");
 
-        Assert.assertEquals(AminoAcidCode.VALINE, duplication.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcidCode.VALINE, duplication.getLastChangingAminoAcid());
-        Assert.assertEquals(417, duplication.getFirstChangingAminoAcidPos());
-        Assert.assertEquals(417, duplication.getLastChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.VALINE, duplication.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(AminoAcidCode.VALINE, duplication.getChangingSequence().getLastAminoAcid());
+        Assert.assertEquals(417, duplication.getChangingSequence().getFirstAminoAcidPos());
+        Assert.assertEquals(417, duplication.getChangingSequence().getLastAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DUPLICATION, duplication.getSequenceChange().getType());
         Assert.assertEquals(417, duplication.getSequenceChange().getValue());
     }
@@ -30,10 +30,10 @@ public class SequenceVariationHGVSParseDuplicationTest {
 
         SequenceVariation duplication = format.parse("p.Cys76_Glu79dup");
 
-        Assert.assertEquals(AminoAcidCode.CYSTEINE, duplication.getFirstChangingAminoAcid());
-        Assert.assertEquals(AminoAcidCode.GLUTAMIC_ACID, duplication.getLastChangingAminoAcid());
-        Assert.assertEquals(76, duplication.getFirstChangingAminoAcidPos());
-        Assert.assertEquals(79, duplication.getLastChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.CYSTEINE, duplication.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(AminoAcidCode.GLUTAMIC_ACID, duplication.getChangingSequence().getLastAminoAcid());
+        Assert.assertEquals(76, duplication.getChangingSequence().getFirstAminoAcidPos());
+        Assert.assertEquals(79, duplication.getChangingSequence().getLastAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.DUPLICATION, duplication.getSequenceChange().getType());
         Assert.assertEquals(79, duplication.getSequenceChange().getValue());
     }

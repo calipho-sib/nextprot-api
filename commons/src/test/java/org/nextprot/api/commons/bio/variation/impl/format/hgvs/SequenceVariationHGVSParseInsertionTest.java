@@ -72,9 +72,9 @@ public class SequenceVariationHGVSParseInsertionTest {
 
     public static void assertProteinSequenceVariation(SequenceVariation pm, AminoAcidCode expectedFirstAA,
                                                       AminoAcidCode expectedLastAA, int expectedFirstPos) {
-        Assert.assertEquals(expectedFirstAA, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(expectedLastAA, pm.getLastChangingAminoAcid());
-        Assert.assertEquals(expectedFirstPos, pm.getFirstChangingAminoAcidPos());
-        Assert.assertEquals(expectedFirstPos+1, pm.getLastChangingAminoAcidPos());
+        Assert.assertEquals(expectedFirstAA, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(expectedLastAA, pm.getChangingSequence().getLastAminoAcid());
+        Assert.assertEquals(expectedFirstPos, pm.getChangingSequence().getFirstAminoAcidPos());
+        Assert.assertEquals(expectedFirstPos+1, pm.getChangingSequence().getLastAminoAcidPos());
     }
 }

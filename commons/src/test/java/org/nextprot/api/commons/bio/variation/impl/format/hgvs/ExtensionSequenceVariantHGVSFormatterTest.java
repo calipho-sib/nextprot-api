@@ -11,15 +11,15 @@ import org.nextprot.api.commons.bio.variation.impl.SequenceVariationImpl;
 
 public class ExtensionSequenceVariantHGVSFormatterTest {
 
-    SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
+    private SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 
     @Test
     public void testParseInitiationExtensionCode3() throws Exception {
 
         SequenceVariation pm = format.parse("p.Met1Valext-12");
 
-        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(1, pm.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(1, pm.getChangingSequence().getFirstAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.EXTENSION_INIT, pm.getSequenceChange().getType());
         Assert.assertEquals(-12, ((ExtensionInitiation)pm.getSequenceChange()).getNewPos());
         Assert.assertEquals(AminoAcidCode.VALINE, ((ExtensionInitiation)pm.getSequenceChange()).getValue());
@@ -30,8 +30,8 @@ public class ExtensionSequenceVariantHGVSFormatterTest {
 
         SequenceVariation pm = format.parse("p.Ter110Glnext*17");
 
-        Assert.assertEquals(AminoAcidCode.STOP, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(110, pm.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.STOP, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(110, pm.getChangingSequence().getFirstAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.EXTENSION_TERM, pm.getSequenceChange().getType());
         Assert.assertEquals(17, ((ExtensionTermination)pm.getSequenceChange()).getNewPos());
         Assert.assertEquals(AminoAcidCode.GLUTAMINE, ((ExtensionTermination)pm.getSequenceChange()).getValue());
@@ -48,8 +48,8 @@ public class ExtensionSequenceVariantHGVSFormatterTest {
 
         SequenceVariation pm = format.parse("p.M1Vext-12");
 
-        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(1, pm.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.METHIONINE, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(1, pm.getChangingSequence().getFirstAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.EXTENSION_INIT, pm.getSequenceChange().getType());
         Assert.assertEquals(-12, ((ExtensionInitiation)pm.getSequenceChange()).getNewPos());
         Assert.assertEquals(AminoAcidCode.VALINE, ((ExtensionInitiation)pm.getSequenceChange()).getValue());
@@ -60,8 +60,8 @@ public class ExtensionSequenceVariantHGVSFormatterTest {
 
         SequenceVariation pm = format.parse("p.*110Glnext*17");
 
-        Assert.assertEquals(AminoAcidCode.STOP, pm.getFirstChangingAminoAcid());
-        Assert.assertEquals(110, pm.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.STOP, pm.getChangingSequence().getFirstAminoAcid());
+        Assert.assertEquals(110, pm.getChangingSequence().getFirstAminoAcidPos());
         Assert.assertEquals(SequenceChange.Type.EXTENSION_TERM, pm.getSequenceChange().getType());
         Assert.assertEquals(17, ((ExtensionTermination)pm.getSequenceChange()).getNewPos());
         Assert.assertEquals(AminoAcidCode.GLUTAMINE, ((ExtensionTermination)pm.getSequenceChange()).getValue());

@@ -2,6 +2,7 @@ package org.nextprot.api.commons.bio.variation.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.ChangingSequence;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
@@ -18,35 +19,22 @@ import java.util.Objects;
  */
 public class SequenceVariationImpl implements SequenceVariation {
 
-    private final AminoAcidCode firstChangingAminoAcid;
-    private final int firstChangingAminoAcidPos;
-    private final AminoAcidCode lastChangingAminoAcid;
-    private final int lastChangingAminoAcidPos;
+    private final ChangingSequence changingSequence;
     private final SequenceChange sequenceChange;
 
     private SequenceVariationImpl(SequenceVariationBuilder builder) {
 
-        this.firstChangingAminoAcid = builder.getDataCollector().getFirstChangingAminoAcid();
-        this.firstChangingAminoAcidPos = builder.getDataCollector().getFirstChangingAminoAcidPos();
-        this.lastChangingAminoAcid = builder.getDataCollector().getLastChangingAminoAcid();
-        this.lastChangingAminoAcidPos = builder.getDataCollector().getLastChangingAminoAcidPos();
-        this.sequenceChange = builder.getDataCollector().getSequenceChange();
+        changingSequence = new ChangingSequenceImpl(builder.getDataCollector().getFirstChangingAminoAcid(),
+            builder.getDataCollector().getFirstChangingAminoAcidPos(),
+            builder.getDataCollector().getLastChangingAminoAcid(),
+            builder.getDataCollector().getLastChangingAminoAcidPos());
+
+        sequenceChange = builder.getDataCollector().getSequenceChange();
     }
 
-    public AminoAcidCode getFirstChangingAminoAcid() {
-        return firstChangingAminoAcid;
-    }
-
-    public int getFirstChangingAminoAcidPos() {
-        return firstChangingAminoAcidPos;
-    }
-
-    public AminoAcidCode getLastChangingAminoAcid() {
-        return lastChangingAminoAcid;
-    }
-
-    public int getLastChangingAminoAcidPos() {
-        return lastChangingAminoAcidPos;
+    @Override
+    public ChangingSequence getChangingSequence() {
+        return changingSequence;
     }
 
     public SequenceChange getSequenceChange() {
@@ -58,23 +46,21 @@ public class SequenceVariationImpl implements SequenceVariation {
         if (this == o) return true;
         if (!(o instanceof SequenceVariationImpl)) return false;
         SequenceVariationImpl that = (SequenceVariationImpl) o;
-        return Objects.equals(firstChangingAminoAcidPos, that.firstChangingAminoAcidPos) &&
-                Objects.equals(lastChangingAminoAcidPos, that.lastChangingAminoAcidPos) &&
-                Objects.equals(firstChangingAminoAcid, that.firstChangingAminoAcid) &&
-                Objects.equals(lastChangingAminoAcid, that.lastChangingAminoAcid) &&
+        return Objects.equals(changingSequence, that.changingSequence) &&
                 Objects.equals(sequenceChange, that.sequenceChange);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstChangingAminoAcid, firstChangingAminoAcidPos, lastChangingAminoAcid, lastChangingAminoAcidPos, sequenceChange);
+        return Objects.hash(changingSequence, sequenceChange);
     }
 
     @Override
     public String toString() {
-        return "("+firstChangingAminoAcid + "[" + firstChangingAminoAcidPos + "].." +
-                lastChangingAminoAcid + "[" + lastChangingAminoAcidPos + "]) -> " +
-                sequenceChange.getValue();
+        return "SequenceVariationImpl{" +
+                "changingSequence=" + changingSequence +
+                ", sequenceChange=" + sequenceChange +
+                '}';
     }
 
     public static class FluentBuilding implements SequenceVariationBuilder.FluentBuilding {
@@ -83,6 +69,11 @@ public class SequenceVariationImpl implements SequenceVariation {
 
         public FluentBuilding() {
             dataCollector = new SequenceVariationBuilder.DataCollector();
+        }
+
+        public FluentBuilding(String sequence) {
+            this();
+            dataCollector.setSequence(sequence);
         }
 
         @Override
@@ -232,7 +223,17 @@ public class SequenceVariationImpl implements SequenceVariation {
 
             @Override
             protected SequenceChange getProteinSequenceChange() {
-                return new Duplication(dataCollector.getLastChangingAminoAcidPos());
+                // p.Leu103_Met106dup
+                //     .--.
+                //     v  v
+                // ...MLISM...
+                // ...MLISMLISM...
+                // [original=M, variant=MLISM]
+                String aas = dataCollector.getSequence()
+                        .substring(dataCollector.getFirstChangingAminoAcidPos()-2,
+                                dataCollector.getLastChangingAminoAcidPos());
+
+                return new Duplication(dataCollector.getLastChangingAminoAcidPos(), AminoAcidCode.valueOfAminoAcidCodeSequence(aas, AminoAcidCode.CodeType.ONE_LETTER));
             }
         }
 

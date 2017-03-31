@@ -106,7 +106,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
             if (firstIsoPos != null) {
                 if (IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, originalAminoAcids.getAas())
-                    && variation.isMultipleChangingAminoAcids()) {
+                    && variation.getChangingSequence().isMultipleAminoAcids()) {
                     lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getLastAAPos(), otherIsoform);
                 }
                 if (originalAminoAcids.isExtensionTerminal())
@@ -124,8 +124,8 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         SequenceChange.Type variationType = variation.getSequenceChange().getType();
 
-        int firstPos = variation.getFirstChangingAminoAcidPos();
-        int lastPos = variation.getLastChangingAminoAcidPos();
+        int firstPos = variation.getChangingSequence().getFirstAminoAcidPos();
+        int lastPos = variation.getChangingSequence().getLastAminoAcidPos();
         boolean isTerminalExtension = false;
 
         if (variationType == SequenceChange.Type.EXTENSION_TERM) {

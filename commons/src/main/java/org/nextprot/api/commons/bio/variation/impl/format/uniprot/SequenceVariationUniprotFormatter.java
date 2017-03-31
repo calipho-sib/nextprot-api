@@ -27,8 +27,8 @@ public class SequenceVariationUniprotFormatter implements SequenceVariationForma
 
         HashMap<String, String> map = new HashMap<>();
 
-        int firstIndex = sequenceVariation.getFirstChangingAminoAcidPos()-1;
-        int lastIndex = sequenceVariation.getLastChangingAminoAcidPos();
+        int firstIndex = sequenceVariation.getChangingSequence().getFirstAminoAcidPos()-1;
+        int lastIndex = sequenceVariation.getChangingSequence().getLastAminoAcidPos();
 
         map.put(CHANGING_AAS, originalSequence.substring(firstIndex, lastIndex));
 

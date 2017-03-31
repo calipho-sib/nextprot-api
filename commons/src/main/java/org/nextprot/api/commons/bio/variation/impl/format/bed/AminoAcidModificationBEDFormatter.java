@@ -10,7 +10,7 @@ public class AminoAcidModificationBEDFormatter implements ChangingSequenceFormat
     public void format(SequenceVariation sequenceVariation, AminoAcidCode.CodeType type, StringBuilder sb) {
 
         // Tyr223
-        sb.append(AminoAcidCode.formatAminoAcidCode(type, sequenceVariation.getFirstChangingAminoAcid()));
-        sb.append(sequenceVariation.getFirstChangingAminoAcidPos());
+        sb.append(AminoAcidCode.formatAminoAcidCode(type, sequenceVariation.getChangingSequence().getFirstAminoAcid()));
+        sb.append(sequenceVariation.getChangingSequence().getFirstAminoAcidPos());
     }
 }
