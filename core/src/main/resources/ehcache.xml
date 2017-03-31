@@ -15,7 +15,8 @@
 		statistics="true" >
 	</cache>
 	
-	
+	<cache name="experimental-context-dictionary"  maxEntriesLocalHeap="1" eternal="true" statistics="true" />
+
 	<cache name="statements-by-annot-hash" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
@@ -112,12 +113,6 @@
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100"
 		maxEntriesLocalDisk="1000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		statistics="true">
-	</cache>
-
-	<cache name="experimental-contexts-by-entry" overflowToOffHeap="false"
-		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
-		   maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		   statistics="true">
 	</cache>
 
 	<cache name="publications-get-by-id" overflowToOffHeap="false"
