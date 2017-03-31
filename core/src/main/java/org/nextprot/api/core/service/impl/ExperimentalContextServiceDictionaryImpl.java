@@ -29,10 +29,7 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 	@Cacheable("experimental-context-dictionary")
 	public Map<Long, ExperimentalContext> getAllExperimentalContexts() {
 		
-		long t0 = System.currentTimeMillis(); System.out.println("Building experimental context dictionary...");
-
-		Runtime.getRuntime().gc();
-		long before = Runtime.getRuntime().freeMemory();
+		//long t0 = System.currentTimeMillis(); System.out.println("Building experimental context dictionary...");
 
 		List<ExperimentalContext> ecs = ecDao.findAllExperimentalContexts();
 		updateTerminologies(ecs);
@@ -41,12 +38,7 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 		for (ExperimentalContext ec : ecs) dictionary.put(ec.getContextId(), ec);
 		ecs=null;
 		
-		Runtime.getRuntime().gc();
-		long after = Runtime.getRuntime().freeMemory();
-
-		
-		System.out.println("Dictionary size:" + (before-after));
-		System.out.println("Building experimental context dictionary DONE in " + (System.currentTimeMillis() - t0) + "ms");
+		//System.out.println("Building experimental context dictionary DONE in " + (System.currentTimeMillis() - t0) + "ms");
 		
 		return dictionary;
 	}

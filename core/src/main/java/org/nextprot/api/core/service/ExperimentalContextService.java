@@ -1,13 +1,13 @@
 package org.nextprot.api.core.service;
 
 import java.util.List;
+import java.util.Set;
 
 import org.nextprot.api.core.domain.ExperimentalContext;
-import org.nextprot.api.core.domain.annotation.Annotation;
 
 public interface ExperimentalContextService {
 
-	List<ExperimentalContext> findExperimentalContextsByAnnotations(List<Annotation> annotations);
 	List<ExperimentalContext> findAllExperimentalContexts();
+	List<ExperimentalContext> findExperimentalContextsByIds(Set<Long> ecIds);
 
 }
