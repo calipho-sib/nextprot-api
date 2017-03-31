@@ -352,10 +352,11 @@ public class AnnotationUtils {
 	 */
 	public static String getTermNameWithAncestors(Annotation annot, List<CvTerm> terms) {
 		
+
 		StringBuffer sb = new StringBuffer();
-		for (int i=terms.size(); i<0; i--) {
-			sb.append(terms.get(i).getName());
-			if (i>0) sb.append(" » ");
+		for (int i=0; i<terms.size(); i++) {
+			if (i>0) sb.insert(0, " » ");
+			sb.insert(0, terms.get(i).getName());
 		}
 		return sb.toString();
 	}
