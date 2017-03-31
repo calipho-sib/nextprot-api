@@ -2,14 +2,12 @@ package org.nextprot.api.core.service.impl;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 import org.apache.commons.lang.StringUtils;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.IdentifierOffset;
@@ -30,7 +28,6 @@ import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
-import org.nextprot.api.core.service.ExperimentalContextService;
 import org.nextprot.api.core.service.InteractionService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.PeptideMappingService;
@@ -49,6 +46,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.nextprot.api.annotation.builder.statement.service.StatementService;
+
+import javax.annotation.Nullable;
+
+//import java.util.*;
+import java.util.function.Predicate;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
@@ -150,7 +152,6 @@ public class AnnotationServiceImpl implements AnnotationService {
 		if (!ignoreStatements) annotations = AnnotationUtils.mapReduceMerge(statementService.getAnnotations(entryName), annotations);
 
 		// post-processing of annotations
-		long t0;
 		updateIsoformsDisplayedAsSpecific(annotations, entryName);
 		updateVariantsRelatedToDisease(annotations);
 		updateSubcellularLocationTermNameWithAncestors(annotations);
@@ -275,43 +276,61 @@ public class AnnotationServiceImpl implements AnnotationService {
 		return filterByIsoform(isoformUniqueName, ptms);
 	}
 
-	/**
-	 * Filter annotations where cvterm is the given ancestor or a descendant
-	 *
-	 * @param annotations the annotation list to filter
-	 * @param ancestorTermAccession the ancestor node
-	 * @return the filtered list
-	 */
 	@Override
-	public List<Annotation> filterByCvTermAncestor(List<Annotation> annotations, String ancestorTermAccession) {
+	public Predicate<Annotation> buildCvTermAncestorPredicate(String ancestorAccession) {
 
-		if (annotations == null)
-			return new ArrayList<>();
-
-		CvTerm ancestor = terminologyService.findCvTermByAccession(ancestorTermAccession);
-
-		if (ancestor == null) {
-			return new ArrayList<>();
-		}
-
-		OntologyDAG dag = terminologyService.findOntologyGraph(TerminologyCv.valueOf(ancestor.getOntology()));
-
-		if (!dag.hasCvTermAccession(ancestor.getAccession())) {
-			return new ArrayList<>();
-		}
-
-		return annotations.stream()
-				.filter(annotation -> {
-					try {
-						return annotation.getCvTermAccessionCode() != null &&
-								(annotation.getCvTermAccessionCode().equals(ancestorTermAccession) ||
-								 dag.isAncestorOf(ancestor.getId(), dag.getCvTermIdByAccession(annotation.getCvTermAccessionCode())));
-					} catch (OntologyDAG.NotFoundNodeException e) {
-						return false;
-					}
-				}).collect(Collectors.toList());
+		return new CvTermAncestorPredicate(terminologyService.findCvTermByAccession(ancestorAccession));
 	}
-	
+
+	@Override
+	public Predicate<Annotation> buildPropertyPredicate(String propertyName, @Nullable String propertyValueOrAccession) {
+
+		if (propertyName != null && !propertyName.isEmpty()) {
+
+			Predicate<Annotation> propExistencePredicate = annotation -> annotation.getPropertiesMap().containsKey(propertyName);
+
+			if (propertyValueOrAccession != null && !propertyValueOrAccession.isEmpty()) {
+
+				return propExistencePredicate.and(annotation -> {
+
+					Collection<AnnotationProperty> props = annotation.getPropertiesByKey(propertyName);
+
+					return props.stream().anyMatch(annotationProperty ->
+							propertyValueOrAccession.equals(annotationProperty.getValue()) ||
+									propertyValueOrAccession.equals(annotationProperty.getAccession()));
+				});
+			}
+			return propExistencePredicate;
+		}
+
+		return annotation -> true;
+	}
+
+	private class CvTermAncestorPredicate implements Predicate<Annotation> {
+
+		private final CvTerm ancestor;
+		private final OntologyDAG dag;
+
+		private CvTermAncestorPredicate(CvTerm ancestor) {
+
+			this.ancestor = ancestor;
+			dag = terminologyService.findOntologyGraph(TerminologyCv.valueOf(ancestor.getOntology()));
+		}
+
+		@Override
+		public boolean test(Annotation annotation) {
+
+			try {
+				return annotation.getCvTermAccessionCode() != null &&
+						(annotation.getCvTermAccessionCode().equals(ancestor.getAccession()) ||
+								dag.isAncestorOf(ancestor.getId(), dag.getCvTermIdByAccession(annotation.getCvTermAccessionCode())));
+			} catch (OntologyDAG.NotFoundNodeException e) {
+				return false;
+			}
+		}
+	}
+
+
 	// Function class to filter using guava ///////////////////////////////////////////////////////////////////////////////
 
 	private class AnnotationPropertyFunction implements Function<AnnotationProperty, Long> {

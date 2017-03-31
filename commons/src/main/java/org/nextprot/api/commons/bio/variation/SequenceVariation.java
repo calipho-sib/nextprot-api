@@ -12,7 +12,9 @@ public interface SequenceVariation {
 
     int getLastChangingAminoAcidPos();
 
-    boolean isMultipleChangingAminoAcids();
+    default boolean isMultipleChangingAminoAcids() {
+         return getLastChangingAminoAcidPos()-getFirstChangingAminoAcidPos() > 0;
+    }
 
     SequenceChange getSequenceChange();
 }

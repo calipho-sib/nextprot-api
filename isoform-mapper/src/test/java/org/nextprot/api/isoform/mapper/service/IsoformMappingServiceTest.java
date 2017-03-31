@@ -266,6 +266,42 @@ public class IsoformMappingServiceTest extends IsoformMappingBaseTest {
         assertIsoformFeatureValid(result, "NX_P10415-1", 1, 1, true);
     }
 
+    @Test
+    public void shouldMap2IsoformsContainingLastAA() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("SDHD-p.*160Leuext*3", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_O14521-1", 160, 160, true);
+        assertIsoformFeatureValid(result, "NX_O14521-2", 121, 121, true);
+        assertIsoformFeatureValid(result, "NX_O14521-3", null, null, false);
+        assertIsoformFeatureValid(result, "NX_O14521-4", null, null, false);
+    }
+
+    @Test
+    public void shouldMap2IsoformsContainingFirstAA() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("BCL2-p.Met1ext-5", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_P10415-1", 1, 1, true);
+        assertIsoformFeatureValid(result, "NX_P10415-2", 1, 1, true);
+    }
+
+    @Test
+    public void shouldNotMap1IsoformsContainingFirstAA() throws Exception {
+
+        SingleFeatureQuery query = new SingleFeatureQuery("TESPA1-p.Met1ext-5", AnnotationCategory.VARIANT.getApiTypeName(), "");
+
+        FeatureQueryResult result = service.propagateFeature(query);
+
+        assertIsoformFeatureValid(result, "NX_A2RU30-1", 1, 1, true);
+        assertIsoformFeatureValid(result, "NX_A2RU30-2", null, null, false);
+        assertIsoformFeatureValid(result, "NX_A2RU30-3", null, null, false);
+    }
+
     private static void assertIsoformFeatureValid(FeatureQueryResult result, String featureIsoformName, Integer expectedFirstPos, Integer expectedLastPos, boolean mapped) {
 
         Assert.assertTrue(result.isSuccess());

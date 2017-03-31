@@ -222,11 +222,6 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         }
 
         @Override
-        public boolean isMultipleChangingAminoAcids() {
-            return lastPos-firstPos > 0;
-        }
-
-        @Override
         public SequenceChange getSequenceChange() {
             return change;
         }

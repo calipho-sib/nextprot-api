@@ -7,9 +7,11 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.IsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.web.service.EntryPageService;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Lazy
 @Controller
@@ -33,6 +37,7 @@ public class EntryController {
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 	@Autowired private EntryPageService entryPageService;
 	@Autowired private AnnotationService annotationService;
+	@Autowired private TerminologyService terminologyService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -47,14 +52,15 @@ public class EntryController {
 	public String exportEntry(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
 			@PathVariable("entry") String entryName,
-			@RequestParam(value = "term-child-of", required = false) String ancestorTerm, Model model) {
+			@RequestParam(value = "term-child-of", required = false) String ancestorTerm,
+			@RequestParam(value = "property-name", required = false) String propertyName,
+			@RequestParam(value = "property-value", required = false) String propertyValue,
+			Model model) {
 		
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
 
-		// filter enabled
-		if (ancestorTerm != null && !ancestorTerm.isEmpty()) {
-
-			entry.setAnnotations(annotationService.filterByCvTermAncestor(entry.getAnnotations(), ancestorTerm));
+		if (ancestorTerm != null || propertyName != null) {
+			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
 		}
 
 		model.addAttribute("entry", entry);
@@ -63,21 +69,20 @@ public class EntryController {
 	}
 
 	@RequestMapping("/entry/{entry}/{blockOrSubpart}")
-	public String getSubPart(@PathVariable("entry") String entryName,
-							 @PathVariable("blockOrSubpart") String blockOrSubpart,
-							 @RequestParam(value = "term-child-of", required = false) String ancestorTerm,
-							 HttpServletRequest request, Model model) {
-		//example:
-		//    http://localhost:8080/entry/NX_P01308/go-molecular-function.json?term-child-of=GO:0005102
-		// or http://localhost:8080/entry/NX_P01308/go-molecular-function.json
-		boolean goldOnly = "true".equalsIgnoreCase(request.getParameter("goldOnly"));
+	public String getSubPart(
+			@PathVariable("entry") String entryName,
+			@PathVariable("blockOrSubpart") String blockOrSubpart,
+			@RequestParam(value = "term-child-of", required = false) String ancestorTerm,
+			@RequestParam(value = "property-name", required = false) String propertyName,
+			@RequestParam(value = "property-value", required = false) String propertyValueOrAccession,
+			HttpServletRequest request, Model model) {
+
+    	boolean goldOnly = "true".equalsIgnoreCase(request.getParameter("goldOnly"));
 
 		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withGoldOnly(goldOnly));
 
-		// filter enabled
-		if (ancestorTerm != null && !ancestorTerm.isEmpty()) {
-
-			entry.setAnnotations(annotationService.filterByCvTermAncestor(entry.getAnnotations(), ancestorTerm));
+		if (ancestorTerm != null || propertyName != null) {
+			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValueOrAccession);
 		}
 
 		model.addAttribute("entry", entry);
@@ -112,6 +117,28 @@ public class EntryController {
 	public Integer countAnnotation(@PathVariable("entry") String entryName) {
 
 		return this.entryBuilderService.build(EntryConfig.newConfig(entryName).with("annotation")).getAnnotations().size();
+	}
+
+	/**
+	 * Filter entry annotations
+	 * @param entry the entry to update
+	 * @param ancestorCvTerm the ancestor term
+	 * @param propertyName property name
+	 * @param propertyValueOrAccession property value or accession (ignored if property name is null)
+	 */
+	private void filterEntryAnnotations(Entry entry, String ancestorCvTerm, String propertyName, String propertyValueOrAccession) {
+
+		final Predicate<Annotation> cvTermPredicate = (ancestorCvTerm != null) ?
+				annotationService.buildCvTermAncestorPredicate(ancestorCvTerm) :
+				annotation -> true;
+
+		final Predicate<Annotation> propertyPredicate = (propertyName != null) ?
+				annotationService.buildPropertyPredicate(propertyName, propertyValueOrAccession) :
+				annotation -> true;
+
+		entry.setAnnotations(entry.getAnnotations().stream()
+				.filter(cvTermPredicate.and(propertyPredicate))
+				.collect(Collectors.toList()));
 	}
 }
 

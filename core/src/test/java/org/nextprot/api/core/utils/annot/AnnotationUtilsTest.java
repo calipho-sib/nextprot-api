@@ -434,7 +434,9 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
 		Assert.assertEquals(6, annotations.size());
 
-		List<Annotation> filtered = annotationService.filterByCvTermAncestor(annotations, "GO:0005102");
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildCvTermAncestorPredicate("GO:0005102"))
+				.collect(Collectors.toList());
 
 		Assert.assertEquals(3, filtered.size());
 		Set<String> terms = filtered.stream().map(Annotation::getCvTermAccessionCode).collect(Collectors.toSet());
@@ -442,6 +444,93 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		Assert.assertTrue(terms.contains("GO:0005158"));
 		Assert.assertTrue(terms.contains("GO:0005159"));
 		Assert.assertTrue(terms.contains("GO:0005179"));
+	}
+
+	@Test
+	public void shouldFilterByPropertyTopologyExistence() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
+				.with("subcellular-location")).getAnnotations();
+
+		Assert.assertEquals(21, annotations.size());
+
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildPropertyPredicate("topology", null))
+				.collect(Collectors.toList());
+
+		Assert.assertEquals(4, filtered.size());
+		for (Annotation annot : filtered) {
+
+			Assert.assertNotNull(annot.getPropertiesByKey("topology"));
+		}
+	}
+
+	@Test
+	public void shouldNotFilterByPropertyTopologyExistence() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
+				.with("subcellular-location")).getAnnotations();
+
+		Assert.assertEquals(21, annotations.size());
+
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildPropertyPredicate("tOpology", null))
+				.collect(Collectors.toList());
+
+		Assert.assertTrue(filtered.isEmpty());
+	}
+
+	@Test
+	public void shouldFilterByPropertyTopologyValue() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
+				.with("subcellular-location")).getAnnotations();
+
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildPropertyPredicate("topology", "Peripheral membrane protein"))
+				.collect(Collectors.toList());
+
+		for (Annotation annot : filtered) {
+
+			for (AnnotationProperty property : annot.getPropertiesByKey("topology")) {
+
+				Assert.assertEquals("Peripheral membrane protein", property.getValue());
+			}
+		}
+	}
+
+	@Test
+	public void shouldNotFilterByPropertyTopologyValue() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
+				.with("subcellular-location")).getAnnotations();
+
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildPropertyPredicate("topology", "Peripheral mEMbrane protein"))
+				.collect(Collectors.toList());
+
+		Assert.assertTrue(filtered.isEmpty());
+	}
+
+	@Test
+	public void shouldFilterByPropertyTopologyAccession() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
+				.with("subcellular-location")).getAnnotations();
+
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildPropertyPredicate("topology", "SL-9903"))
+				.collect(Collectors.toList());
+
+		Assert.assertTrue(!filtered.isEmpty());
+
+		for (Annotation annot : filtered) {
+
+			for (AnnotationProperty property : annot.getPropertiesByKey("topology")) {
+
+				Assert.assertEquals("Peripheral membrane protein", property.getValue());
+			}
+		}
 	}
 
 	private String exportAnnotationsAsTsvString(Entry entry, List<Annotation> mergedAnnotations) {

@@ -49,10 +49,6 @@ public class SequenceVariationImpl implements SequenceVariation {
         return lastChangingAminoAcidPos;
     }
 
-    public boolean isMultipleChangingAminoAcids() {
-        return lastChangingAminoAcidPos - firstChangingAminoAcidPos > 0;
-    }
-
     public SequenceChange getSequenceChange() {
         return sequenceChange;
     }
@@ -156,6 +152,7 @@ public class SequenceVariationImpl implements SequenceVariation {
 
             @Override
             public SequenceVariationBuilder thenTerminationExtension(int newDownstreamTermPos, AminoAcidCode newAminoAcidCode) {
+
                 return new TerminationExtensionBuilder(dataCollector, newDownstreamTermPos, newAminoAcidCode);
             }
         }
@@ -295,6 +292,7 @@ public class SequenceVariationImpl implements SequenceVariation {
             InitiationExtensionBuilder(DataCollector dataCollector, int newUpstreamSitePos, AminoAcidCode newAminoAcidCode) {
 
                 super(dataCollector);
+
                 this.extension = new ExtensionInitiation(newUpstreamSitePos, newAminoAcidCode);
             }
 
@@ -312,6 +310,11 @@ public class SequenceVariationImpl implements SequenceVariation {
             TerminationExtensionBuilder(DataCollector dataCollector, int newDownstreamTermPos, AminoAcidCode newAminoAcidCode) {
 
                 super(dataCollector);
+
+                if (dataCollector.getFirstChangingAminoAcid() != AminoAcidCode.STOP) {
+                    throw new IllegalStateException("Invalid termination extension: first amino-acid should be a STOP but is a " + dataCollector.getFirstChangingAminoAcid());
+                }
+
                 this.extension = new ExtensionTermination(newDownstreamTermPos, newAminoAcidCode);
             }
 
