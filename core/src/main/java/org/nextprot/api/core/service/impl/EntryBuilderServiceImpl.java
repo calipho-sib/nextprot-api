@@ -1,17 +1,33 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
-import org.nextprot.api.core.service.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.AntibodyMappingService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.EntryPropertiesService;
+import org.nextprot.api.core.service.ExperimentalContextService;
+import org.nextprot.api.core.service.GeneService;
+import org.nextprot.api.core.service.GenomicMappingService;
+import org.nextprot.api.core.service.IdentifierService;
+import org.nextprot.api.core.service.InteractionService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.OverviewService;
+import org.nextprot.api.core.service.PeptideMappingService;
+import org.nextprot.api.core.service.PublicationService;
+import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
@@ -83,8 +99,13 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
             ///////
 
 			if(entryConfig.hasExperimentalContext()){
-				entry.setExperimentalContexts(
-						this.experimentalContextService.findExperimentalContextsByAnnotations(entry.getAnnotations()));
+				List<Annotation> annotations = entry.getAnnotations();
+				//In case we did't set annotations but we need them to find experimental contexts
+				if(annotations == null){
+					annotations = this.annotationService.findAnnotations(entryName);
+				}
+				//TODO extract experimental context ids in order for the experimental service to not depend on annotation object
+				entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByAnnotations(annotations));
 			}
 			if(entryConfig.hasInteractions()){
 				entry.setInteractions(this.interactionService.findInteractionsByEntry(entryName));
