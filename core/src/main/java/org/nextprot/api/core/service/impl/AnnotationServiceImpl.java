@@ -162,7 +162,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 	private void updateSubcellularLocationTermNameWithAncestors(List<Annotation> annotations) {
 		
-		long t0 = System.currentTimeMillis(); System.out.println("updateSubcellularLocationTermNameWithAncestors...");
+		//long t0 = System.currentTimeMillis(); System.out.println("updateSubcellularLocationTermNameWithAncestors...");
 
 		for (Annotation annot: annotations) {
 			if (AnnotationCategory.SUBCELLULAR_LOCATION == annot.getAPICategory()) {
@@ -187,7 +187,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 			}
 		}
 		
-		System.out.println("updateSubcellularLocationTermNameWithAncestors DONE in " + (System.currentTimeMillis() - t0) + "ms");
+		//System.out.println("updateSubcellularLocationTermNameWithAncestors DONE in " + (System.currentTimeMillis() - t0) + "ms");
 		
 	}
 	
@@ -195,7 +195,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		
 		Map<Long,ExperimentalContext> ecMap = experimentalContextDictionaryService.getAllExperimentalContexts();
 		
-		long t0 = System.currentTimeMillis(); System.out.println("updateVariantsRelatedToDisease...");
+		//long t0 = System.currentTimeMillis(); System.out.println("updateVariantsRelatedToDisease...");
 
 		// add property if annotation is a variant related to disease
 		for (Annotation annot: annotations) {
@@ -209,21 +209,21 @@ public class AnnotationServiceImpl implements AnnotationService {
 			}
 		}
 
-		System.out.println("updateVariantsRelatedToDisease DONE in " + (System.currentTimeMillis() - t0) + "ms");
+		//System.out.println("updateVariantsRelatedToDisease DONE in " + (System.currentTimeMillis() - t0) + "ms");
 
 	}
 	
 	
 	private void updateIsoformsDisplayedAsSpecific(List<Annotation> annotations, String entryName) {
 		
-		long t0 = System.currentTimeMillis(); System.out.println("updateIsoformsDisplayedAsSpecific...");
+		//long t0 = System.currentTimeMillis(); System.out.println("updateIsoformsDisplayedAsSpecific...");
 		
 		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryName);
 		int entryIsoformCount=isoforms.size();
 		for (Annotation annot: annotations) {
 			annot.setIsoformsDisplayedAsSpecific(AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot, entryIsoformCount));
 		}
-		System.out.println("updateIsoformsDisplayedAsSpecific DONE in " + (System.currentTimeMillis() - t0) + "ms");
+		//System.out.println("updateIsoformsDisplayedAsSpecific DONE in " + (System.currentTimeMillis() - t0) + "ms");
 
 	}
 	
