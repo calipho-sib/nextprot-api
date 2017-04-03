@@ -102,8 +102,9 @@
 			<version>4.0.0</version>
 		</dependency>
 
-		<!-- a lib to compute sizeof java objects (https://github.com/jbellis/jamm)
-		First create jar agent artifact and start the JVM with "-javaagent:<path to>/jamm.jar
+		<!-- A lib to compute sizeof java objects (https://github.com/jbellis/jamm)
+		1. git clone this project then build jar as explained in Readme
+        2. start the JVM with "-javaagent:<path to>/jamm.jar"
 		-->
 		<dependency>
 			<groupId>com.github.jbellis</groupId>
