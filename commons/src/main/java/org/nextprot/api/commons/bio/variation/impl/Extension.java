@@ -9,7 +9,7 @@ abstract class Extension implements SequenceChange<AminoAcidCode> {
     private final int newPos;
     private final AminoAcidCode newAminoAcid;
 
-    public Extension(int newPos, AminoAcidCode newAminoAcid) {
+    Extension(int newPos, AminoAcidCode newAminoAcid) {
 
         Preconditions.checkNotNull(newAminoAcid);
         Preconditions.checkArgument(isPosOk(newPos));
@@ -32,11 +32,5 @@ abstract class Extension implements SequenceChange<AminoAcidCode> {
     public int getNewPos() {
 
         return newPos;
-    }
-
-    @Override
-    public Operator getOperator() {
-
-        return null;
     }
 }

@@ -12,7 +12,7 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
  */
 public class ExtensionInitiation extends Extension {
 
-    public ExtensionInitiation(int newUpstreamInitPos, AminoAcidCode newAminoAcid) {
+    ExtensionInitiation(int newUpstreamInitPos, AminoAcidCode newAminoAcid) {
 
         super(newUpstreamInitPos, newAminoAcid);
     }

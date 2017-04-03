@@ -9,14 +9,7 @@ import org.nextprot.api.commons.bio.variation.SequenceChange;
  */
 public class Deletion implements SequenceChange<Object> {
 
-    private static Deletion INSTANCE = new Deletion();
-
-    private Deletion() { }
-
-    public static Deletion getInstance() {
-
-        return INSTANCE;
-    }
+    Deletion() { }
 
     /**
      * No value is associated with a deletion
@@ -31,21 +24,5 @@ public class Deletion implements SequenceChange<Object> {
     public Type getType() {
 
         return Type.DELETION;
-    }
-
-    @Override
-    public Operator getOperator() {
-
-        return new Operator() {
-            @Override
-            public PositionType getChangingPositionType() {
-                return PositionType.FIRST_LAST;
-            }
-
-            @Override
-            public String getVariatingPart() {
-                return "";
-            }
-        };
     }
 }

@@ -33,20 +33,4 @@ public class Substitution implements SequenceChange<AminoAcidCode> {
 
         return Type.SUBSTITUTION;
     }
-
-    @Override
-    public Operator getOperator() {
-
-        return new Operator() {
-            @Override
-            public PositionType getChangingPositionType() {
-                return PositionType.FIRST_FIRST;
-            }
-
-            @Override
-            public String getVariatingPart() {
-                return AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.ONE_LETTER, getValue());
-            }
-        };
-    }
 }

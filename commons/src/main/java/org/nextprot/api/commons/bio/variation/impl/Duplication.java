@@ -1,10 +1,8 @@
 package org.nextprot.api.commons.bio.variation.impl;
 
 
-import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.SequenceChange;
 
-import java.util.Arrays;
 
 /**
  * A copy of one or more amino acids are inserted directly 3' of the original copy of that sequence.
@@ -12,45 +10,27 @@ import java.util.Arrays;
  *
  * Created by fnikitin on 10/07/15.
  */
-public class Duplication implements SequenceChange<AminoAcidCode[]> {
+public class Duplication implements SequenceChange<Integer> {
 
-    private final AminoAcidCode[] aas;
     private final int insertAfterPos;
 
-    Duplication(int insertAfterPos, AminoAcidCode[] aas) {
+    Duplication(int insertAfterPos) {
 
         this.insertAfterPos = insertAfterPos;
-        this.aas = aas;
     }
 
     /**
      * @return a copy of aas array
      */
     @Override
-    public AminoAcidCode[] getValue() {
+    public Integer getValue() {
 
-        return Arrays.copyOf(aas, aas.length);
+        return insertAfterPos;
     }
 
     @Override
     public Type getType() {
         return Type.DUPLICATION;
-    }
-
-    @Override
-    public Operator getOperator() {
-
-        return new Operator() {
-            @Override
-            public PositionType getChangingPositionType() {
-                return PositionType.LAST_LAST;
-            }
-
-            @Override
-            public String getVariatingPart() {
-                return AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.ONE_LETTER, aas);
-            }
-        };
     }
 
     public int getInsertAfterPos() {

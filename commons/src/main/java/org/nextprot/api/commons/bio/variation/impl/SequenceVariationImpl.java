@@ -2,10 +2,7 @@ package org.nextprot.api.commons.bio.variation.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.ChangingSequence;
-import org.nextprot.api.commons.bio.variation.SequenceChange;
-import org.nextprot.api.commons.bio.variation.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.SequenceVariationBuilder;
+import org.nextprot.api.commons.bio.variation.*;
 
 import java.util.Objects;
 
@@ -69,11 +66,6 @@ public class SequenceVariationImpl implements SequenceVariation {
 
         public FluentBuilding() {
             dataCollector = new SequenceVariationBuilder.DataCollector();
-        }
-
-        public FluentBuilding(String sequence) {
-            this();
-            dataCollector.setSequence(sequence);
         }
 
         @Override
@@ -179,7 +171,7 @@ public class SequenceVariationImpl implements SequenceVariation {
 
             @Override
             protected SequenceChange getProteinSequenceChange() {
-                return Deletion.getInstance();
+                return new Deletion();
             }
         }
 
@@ -223,17 +215,8 @@ public class SequenceVariationImpl implements SequenceVariation {
 
             @Override
             protected SequenceChange getProteinSequenceChange() {
-                // p.Leu103_Met106dup
-                //     .--.
-                //     v  v
-                // ...MLISM...
-                // ...MLISMLISM...
-                // [original=M, variant=MLISM]
-                String aas = dataCollector.getSequence()
-                        .substring(dataCollector.getFirstChangingAminoAcidPos()-2,
-                                dataCollector.getLastChangingAminoAcidPos());
 
-                return new Duplication(dataCollector.getLastChangingAminoAcidPos(), AminoAcidCode.valueOfAminoAcidCodeSequence(aas, AminoAcidCode.CodeType.ONE_LETTER));
+                return new Duplication(dataCollector.getLastChangingAminoAcidPos());
             }
         }
 

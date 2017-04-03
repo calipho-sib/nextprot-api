@@ -12,7 +12,7 @@ import org.nextprot.api.commons.bio.AminoAcidCode;
  */
 public class ExtensionTermination extends Extension {
 
-    public ExtensionTermination(int newDownstreamTermPos, AminoAcidCode newAminoAcid) {
+    ExtensionTermination(int newDownstreamTermPos, AminoAcidCode newAminoAcid) {
 
         super(newDownstreamTermPos, newAminoAcid);
     }

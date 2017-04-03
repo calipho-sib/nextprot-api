@@ -28,12 +28,6 @@ public enum AminoAcidModification implements SequenceChange<AminoAcidModificatio
     UBIQUITINATION("ubi")
     ;
 
-    // TODO: gives an implementation if applicable
-    @Override
-    public Operator getOperator() {
-        return null;
-    }
-
     private final static Set<String> validNames;
 
     static {

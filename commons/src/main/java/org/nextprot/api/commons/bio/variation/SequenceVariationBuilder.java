@@ -72,7 +72,6 @@ public interface SequenceVariationBuilder {
         private AminoAcidCode lastChangingAminoAcid;
         private int lastChangingAminoAcidPos;
         private SequenceChange<?> sequenceChange;
-        private String sequence;
 
         public void setFirstChangingAminoAcid(AminoAcidCode firstAffectedAminoAcid, int firstAffectedAminoAcidPos) {
 
@@ -114,14 +113,6 @@ public interface SequenceVariationBuilder {
 
         public void setSequenceChange(SequenceChange<?> sequenceChange) {
             this.sequenceChange = sequenceChange;
-        }
-
-        public String getSequence() {
-            return sequence;
-        }
-
-        public void setSequence(String sequence) {
-            this.sequence = sequence;
         }
     }
 }
