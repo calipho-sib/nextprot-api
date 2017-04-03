@@ -1,7 +1,7 @@
 package org.nextprot.api.commons.bio.variation;
 
 /**
- * A sequence change affecting proteins
+ * Description of a sequence change affecting protein sequence
  *
  * Created by fnikitin on 10/07/15.
  */
@@ -26,19 +26,4 @@ public interface SequenceChange<V> {
     V getValue();
 
     Type getType();
-
-    Operator getOperator();
-
-    interface Operator {
-
-        enum PositionType {
-            FIRST_FIRST,
-            FIRST_LAST,
-            LAST_LAST
-        }
-
-        PositionType getChangingPositionType();
-
-        String getVariatingPart();
-    }
 }
