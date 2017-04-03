@@ -145,7 +145,7 @@ public class SequenceVariationImplTest {
         p.Ala3_Ser5dup (several amino acids): a duplication of amino acids Ala3 to Ser5 in the sequence MetGlyAlaArgSerSerHis to MetGlyAlaArgSerAlaArgSerSerHis
          */
 
-        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding("MGARSSH").selectAminoAcidRange(AminoAcidCode.ALANINE, 3, AminoAcidCode.SERINE, 5).thenDuplicate().build();
+        SequenceVariation pm = new SequenceVariationImpl.FluentBuilding().selectAminoAcidRange(AminoAcidCode.ALANINE, 3, AminoAcidCode.SERINE, 5).thenDuplicate().build();
 
         Assert.assertEquals(AminoAcidCode.ALANINE, pm.getChangingSequence().getFirstAminoAcid());
         Assert.assertEquals(3, pm.getChangingSequence().getFirstAminoAcidPos());
