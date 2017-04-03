@@ -67,7 +67,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
         DbXrefUrlVisitor visitor = new DbXrefUrlVisitor(outputDirectory + "/allentries-xrefs-url.tsv",
                 outputDirectory + "/allentries-xrefs-url.log");
 
-        DbXrefService xrefService = getConfig().getBean(DbXrefService.class);
+        DbXrefService xrefService = getBean(DbXrefService.class);
 
         Set<String> allEntryAcs = getNextprotEntries();
 
@@ -105,7 +105,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
                     .collect(Collectors.toSet());
         }
         else {
-            return getConfig().getBean(MasterIdentifierService.class).findUniqueNames();
+            return getBean(MasterIdentifierService.class).findUniqueNames();
         }
     }
 
@@ -116,7 +116,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
         DbXrefUrlVisitor visitor = new DbXrefUrlVisitor(outputDirectory + "/allterminologies-xrefs-url.tsv",
                 outputDirectory + "/allterminologies-xrefs-url.log");
 
-        TerminologyService terminologyService = getConfig().getBean(TerminologyService.class);
+        TerminologyService terminologyService = getBean(TerminologyService.class);
 
         List<CvTerm> allCvTerms = terminologyService.findAllCVTerms();
 

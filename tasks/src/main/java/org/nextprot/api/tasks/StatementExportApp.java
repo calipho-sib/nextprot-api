@@ -47,8 +47,8 @@ public class StatementExportApp extends SpringBasedApp<StatementExportApp.Argume
     @Override
     protected void execute() throws FileNotFoundException {
 
-        StatementDao statementDao = getConfig().getBean(StatementDao.class);
-        MasterIdentifierService masterIdentifierService = getConfig().getBean(MasterIdentifierService.class);
+        StatementDao statementDao = getBean(StatementDao.class);
+        MasterIdentifierService masterIdentifierService = getBean(MasterIdentifierService.class);
 
         ArgumentParser parser = getCommandLineParser();
         StatementExporter exporter = new StatementExporter(statementDao, masterIdentifierService, parser.getExporterConfig());
