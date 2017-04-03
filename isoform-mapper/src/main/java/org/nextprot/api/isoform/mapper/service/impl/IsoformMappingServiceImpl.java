@@ -1,7 +1,7 @@
 package org.nextprot.api.isoform.mapper.service.impl;
 
 import com.google.common.base.Strings;
-import org.nextprot.api.commons.bio.variation.SequenceChange;
+import org.nextprot.api.commons.bio.variation.seqchange.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
@@ -106,7 +106,7 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
             if (firstIsoPos != null) {
                 if (IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, originalAminoAcids.getAas())
-                    && variation.getChangingSequence().isMultipleAminoAcids()) {
+                    && variation.getVaryingSequence().isMultipleAminoAcids()) {
                     lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getLastAAPos(), otherIsoform);
                 }
                 if (originalAminoAcids.isExtensionTerminal())
@@ -124,8 +124,8 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         SequenceChange.Type variationType = variation.getSequenceChange().getType();
 
-        int firstPos = variation.getChangingSequence().getFirstAminoAcidPos();
-        int lastPos = variation.getChangingSequence().getLastAminoAcidPos();
+        int firstPos = variation.getVaryingSequence().getFirstAminoAcidPos();
+        int lastPos = variation.getVaryingSequence().getLastAminoAcidPos();
         boolean isTerminalExtension = false;
 
         if (variationType == SequenceChange.Type.EXTENSION_TERM) {

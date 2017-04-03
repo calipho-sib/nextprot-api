@@ -3,6 +3,10 @@ package org.nextprot.api.commons.bio.variation.impl;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.*;
+import org.nextprot.api.commons.bio.variation.impl.seqchange.*;
+import org.nextprot.api.commons.bio.variation.impl.varseq.VaryingSequenceImpl;
+import org.nextprot.api.commons.bio.variation.seqchange.SequenceChange;
+import org.nextprot.api.commons.bio.variation.varseq.VaryingSequence;
 
 import java.util.Objects;
 
@@ -16,12 +20,12 @@ import java.util.Objects;
  */
 public class SequenceVariationImpl implements SequenceVariation {
 
-    private final ChangingSequence changingSequence;
+    private final VaryingSequence varyingSequence;
     private final SequenceChange sequenceChange;
 
     private SequenceVariationImpl(SequenceVariationBuilder builder) {
 
-        changingSequence = new ChangingSequenceImpl(builder.getDataCollector().getFirstChangingAminoAcid(),
+        varyingSequence = new VaryingSequenceImpl(builder.getDataCollector().getFirstChangingAminoAcid(),
             builder.getDataCollector().getFirstChangingAminoAcidPos(),
             builder.getDataCollector().getLastChangingAminoAcid(),
             builder.getDataCollector().getLastChangingAminoAcidPos());
@@ -30,8 +34,8 @@ public class SequenceVariationImpl implements SequenceVariation {
     }
 
     @Override
-    public ChangingSequence getChangingSequence() {
-        return changingSequence;
+    public VaryingSequence getVaryingSequence() {
+        return varyingSequence;
     }
 
     public SequenceChange getSequenceChange() {
@@ -43,19 +47,19 @@ public class SequenceVariationImpl implements SequenceVariation {
         if (this == o) return true;
         if (!(o instanceof SequenceVariationImpl)) return false;
         SequenceVariationImpl that = (SequenceVariationImpl) o;
-        return Objects.equals(changingSequence, that.changingSequence) &&
+        return Objects.equals(varyingSequence, that.varyingSequence) &&
                 Objects.equals(sequenceChange, that.sequenceChange);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(changingSequence, sequenceChange);
+        return Objects.hash(varyingSequence, sequenceChange);
     }
 
     @Override
     public String toString() {
         return "SequenceVariationImpl{" +
-                "changingSequence=" + changingSequence +
+                "changingSequence=" + varyingSequence +
                 ", sequenceChange=" + sequenceChange +
                 '}';
     }

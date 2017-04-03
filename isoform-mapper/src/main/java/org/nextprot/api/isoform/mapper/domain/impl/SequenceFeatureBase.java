@@ -2,8 +2,8 @@ package org.nextprot.api.isoform.mapper.domain.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.ChangingSequence;
-import org.nextprot.api.commons.bio.variation.SequenceChange;
+import org.nextprot.api.commons.bio.variation.varseq.VaryingSequence;
+import org.nextprot.api.commons.bio.variation.seqchange.SequenceChange;
 import org.nextprot.api.commons.bio.variation.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -136,14 +136,14 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         // create a new variation specific to the isoform
         SequenceVariationSimple isoVariation = new SequenceVariationSimple();
 
-        ChangingSequenceSimple changingSequence = new ChangingSequenceSimple();
+        VaryingSequenceSimple changingSequence = new VaryingSequenceSimple();
 
-        changingSequence.setFirst(variation.getChangingSequence().getFirstAminoAcid());
-        changingSequence.setLast(variation.getChangingSequence().getLastAminoAcid());
+        changingSequence.setFirst(variation.getVaryingSequence().getFirstAminoAcid());
+        changingSequence.setLast(variation.getVaryingSequence().getLastAminoAcid());
         changingSequence.setFirstPos(firstPos);
         changingSequence.setLastPos(lastPos);
 
-        isoVariation.setChangingSequence(changingSequence);
+        isoVariation.setVaryingSequence(changingSequence);
         isoVariation.setChange(variation.getSequenceChange());
 
         StringBuilder sb = new StringBuilder()
@@ -183,20 +183,20 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
 
     public static class SequenceVariationSimple implements SequenceVariation {
 
-        private ChangingSequence changingSequence;
+        private VaryingSequence varyingSequence;
         private SequenceChange change;
 
         public void setChange(SequenceChange change) {
             this.change = change;
         }
 
-        public void setChangingSequence(ChangingSequence changingSequence) {
-            this.changingSequence = changingSequence;
+        public void setVaryingSequence(VaryingSequence varyingSequence) {
+            this.varyingSequence = varyingSequence;
         }
 
         @Override
-        public ChangingSequence getChangingSequence() {
-            return changingSequence;
+        public VaryingSequence getVaryingSequence() {
+            return varyingSequence;
         }
 
         @Override
@@ -205,7 +205,7 @@ public abstract class SequenceFeatureBase implements SequenceFeature {
         }
     }
 
-    public static class ChangingSequenceSimple implements ChangingSequence {
+    public static class VaryingSequenceSimple implements VaryingSequence {
 
         private AminoAcidCode first, last;
         private int firstPos, lastPos;

@@ -34,8 +34,8 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
         this.feature = feature;
 
         addMappedFeature(feature.getIsoform(entry),
-                feature.getProteinVariation().getChangingSequence().getFirstAminoAcidPos(),
-                feature.getProteinVariation().getChangingSequence().getLastAminoAcidPos());
+                feature.getProteinVariation().getVaryingSequence().getFirstAminoAcidPos(),
+                feature.getProteinVariation().getVaryingSequence().getLastAminoAcidPos());
     }
 
     @JsonIgnore

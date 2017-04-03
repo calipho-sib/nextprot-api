@@ -29,8 +29,8 @@ public class SequenceVariantTest {
         SequenceVariation variation = variant.getProteinVariation();
         Assert.assertEquals("p.Lys1710Thr", variant.getFormattedVariation());
 
-        Assert.assertEquals(AminoAcidCode.LYSINE, variation.getChangingSequence().getFirstAminoAcid());
-        Assert.assertEquals(1710, variation.getChangingSequence().getFirstAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.LYSINE, variation.getVaryingSequence().getFirstAminoAcid());
+        Assert.assertEquals(1710, variation.getVaryingSequence().getFirstAminoAcidPos());
 
         Assert.assertTrue(variant.isValidGeneName(mockEntryWithGenes("SCN11A", "SCN12A", "SNS2")));
     }
@@ -44,8 +44,8 @@ public class SequenceVariantTest {
         SequenceVariation variation = variant.getProteinVariation();
         Assert.assertEquals("p.Phe154Ser", variant.getFormattedVariation());
 
-        Assert.assertEquals(AminoAcidCode.PHENYLALANINE, variation.getChangingSequence().getFirstAminoAcid());
-        Assert.assertEquals(154, variation.getChangingSequence().getFirstAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.PHENYLALANINE, variation.getVaryingSequence().getFirstAminoAcid());
+        Assert.assertEquals(154, variation.getVaryingSequence().getFirstAminoAcidPos());
 
         Assert.assertTrue(variant.isValidGeneName(mockEntryWithGenes("WT1")));
     }

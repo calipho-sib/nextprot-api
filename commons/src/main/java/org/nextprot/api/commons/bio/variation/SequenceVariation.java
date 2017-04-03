@@ -1,5 +1,8 @@
 package org.nextprot.api.commons.bio.variation;
 
+import org.nextprot.api.commons.bio.variation.seqchange.SequenceChange;
+import org.nextprot.api.commons.bio.variation.varseq.VaryingSequence;
+
 /**
  * A {@code SequenceVariation} describes a variation of a protein sequence.
  *
@@ -13,7 +16,7 @@ package org.nextprot.api.commons.bio.variation;
 public interface SequenceVariation {
 
     /** @return the changing protein sequence */
-    ChangingSequence getChangingSequence();
+    VaryingSequence getVaryingSequence();
 
     /** @return the protein sequence change itself */
     SequenceChange<?> getSequenceChange();

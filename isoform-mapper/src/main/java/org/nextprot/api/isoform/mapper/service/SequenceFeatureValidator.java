@@ -86,18 +86,18 @@ public class SequenceFeatureValidator {
         Isoform isoform = sequenceFeature.getIsoform(entry);
 
         // do check only position for STOP code
-        if (sequenceFeature.getProteinVariation().getChangingSequence().getFirstAminoAcid() == AminoAcidCode.STOP) {
-            checkIsoformPos(isoform, variation.getChangingSequence().getFirstAminoAcidPos()-1, query, false);
+        if (sequenceFeature.getProteinVariation().getVaryingSequence().getFirstAminoAcid() == AminoAcidCode.STOP) {
+            checkIsoformPos(isoform, variation.getVaryingSequence().getFirstAminoAcidPos()-1, query, false);
         }
         else {
-            checkIsoformPosAndAminoAcids(isoform, variation.getChangingSequence().getFirstAminoAcidPos(), variation.getChangingSequence().getFirstAminoAcid().get1LetterCode(), query);
+            checkIsoformPosAndAminoAcids(isoform, variation.getVaryingSequence().getFirstAminoAcidPos(), variation.getVaryingSequence().getFirstAminoAcid().get1LetterCode(), query);
         }
 
-        if (sequenceFeature.getProteinVariation().getChangingSequence().getLastAminoAcid() == AminoAcidCode.STOP) {
-            checkIsoformPos(isoform, variation.getChangingSequence().getLastAminoAcidPos()-1, query, false);
+        if (sequenceFeature.getProteinVariation().getVaryingSequence().getLastAminoAcid() == AminoAcidCode.STOP) {
+            checkIsoformPos(isoform, variation.getVaryingSequence().getLastAminoAcidPos()-1, query, false);
         }
         else {
-            checkIsoformPosAndAminoAcids(isoform, variation.getChangingSequence().getLastAminoAcidPos(), variation.getChangingSequence().getLastAminoAcid().get1LetterCode(), query);
+            checkIsoformPosAndAminoAcids(isoform, variation.getVaryingSequence().getLastAminoAcidPos(), variation.getVaryingSequence().getLastAminoAcid().get1LetterCode(), query);
         }
     }
 

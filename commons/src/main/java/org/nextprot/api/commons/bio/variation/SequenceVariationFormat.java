@@ -1,6 +1,9 @@
 package org.nextprot.api.commons.bio.variation;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
+import org.nextprot.api.commons.bio.variation.seqchange.SequenceChange;
+import org.nextprot.api.commons.bio.variation.seqchange.SequenceChangeFormat;
+import org.nextprot.api.commons.bio.variation.varseq.VaryingSequenceFormatter;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -47,7 +50,7 @@ public abstract class SequenceVariationFormat implements SequenceVariationFormat
     protected String prefixFormatter() { return ""; }
 
     // get the changing sequence formatter
-    protected abstract ChangingSequenceFormatter getChangingSequenceFormatter();
+    protected abstract VaryingSequenceFormatter getChangingSequenceFormatter();
 
     // get the specific object handling formatting and parsing of sequence change
     protected abstract SequenceChangeFormat getSequenceChangeFormat(SequenceChange.Type changeType);

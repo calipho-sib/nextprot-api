@@ -2,7 +2,8 @@ package org.nextprot.api.commons.bio.variation;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.impl.AminoAcidModification;
+import org.nextprot.api.commons.bio.variation.impl.seqchange.AminoAcidModification;
+import org.nextprot.api.commons.bio.variation.seqchange.SequenceChange;
 
 /**
  * Fluent interface for building a <code>SequenceVariation</code>
