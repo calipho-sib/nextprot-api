@@ -1,8 +1,8 @@
 package org.nextprot.api.core.dao.impl;
 
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.ParsingMode;
-import org.nextprot.api.commons.bio.variation.impl.format.SequenceVariantHGVSFormat;
+import org.nextprot.api.commons.bio.variation.prot.ParsingMode;
+import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceVariantHGVSFormat;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
