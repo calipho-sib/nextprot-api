@@ -124,7 +124,7 @@ public class AnnotationFieldBuilder extends FieldBuilder {
 					addField(Fields.ANNOTATIONS,StringUtils.getSortedValueFromPipeSeparatedField(allsynonyms)); 
 					}
 					
-					List<String> ancestors = TerminologyUtils.getAllAncestors(cvac, terminologyservice);
+					List<String> ancestors = TerminologyUtils.getAllAncestorsAccession(cvac, terminologyservice);
 						String allancestors="";
 						for (String ancestor : ancestors) {
 						if(!allancestors.isEmpty()) allancestors += " | ";

@@ -41,4 +41,13 @@ public class GeneMasterCodonPosition {
 		return status;
 	}
 	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		if (nuPos.size()>0) sb.append("|pos0:" + nuPos.get(0) + "|"); else sb.append("|-|");
+		if (nuPos.size()>1) sb.append("pos1:" + nuPos.get(1) + "|"); else sb.append("-|");
+		if (nuPos.size()>2) sb.append("pos2:" + nuPos.get(2) + "|"); else sb.append("-|");
+		sb.append(" - valid: " + isValid());
+		return sb.toString();
+	}
+	
 }

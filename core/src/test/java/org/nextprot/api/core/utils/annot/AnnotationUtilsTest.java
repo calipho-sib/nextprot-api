@@ -9,6 +9,7 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryBuilderService;
@@ -201,6 +202,186 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
     	assertTrue(AnnotationUtils.filterAnnotationsBetweenPositions(10, 20, Arrays.asList(a1), isoName).isEmpty());
     }
 
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForBinaryInteractionCase1()  { 
+
+    	// BinaryInteraction with 2 isoforms, 1 specific flag => should return 1 isoformDiplayed as specific  
+    	int isoCount=2;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	AnnotationIsoformSpecificity spec2=new AnnotationIsoformSpecificity();
+    	spec2.setIsoformAccession("iso2");
+    	spec2.setSpecificity("BY DEFAULT");
+    	targetIsoformMap.put("iso2",  spec2);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.BINARY_INTERACTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(1, result.size());
+        assertEquals("iso1", result.get(0));	
+    }
+    
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForBinaryInteractionCase2()  { 
+
+    	// BinaryInteraction with 2 isoforms, 2 specific flag => should return 0 isoformDiplayed as specific  
+    	int isoCount=2;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	AnnotationIsoformSpecificity spec2=new AnnotationIsoformSpecificity();
+    	spec2.setIsoformAccession("iso2");
+    	spec2.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso2",  spec2);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.BINARY_INTERACTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForBinaryInteractionCase3()  { 
+
+    	// BinaryInteraction with 1 isoform, 1 specific flag => 0 isoformDiplayed as specific  
+    	int isoCount=1;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.BINARY_INTERACTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(0, result.size());
+
+    }
+
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForBinaryInteractionCase4()  { 
+
+    	// BinaryInteraction with 1 isoform, 0 specific flag => 0 isoformDiplayed as specific  
+    	int isoCount=1;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("BY DEFAULT");
+    	targetIsoformMap.put("iso1",  spec1);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.BINARY_INTERACTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(0, result.size());	
+    }
+    
+// --------------------------------
+    
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForNonBinaryInteractionCase1()  { 
+
+    	// Non BinaryInteraction with 2 isoforms, 2 targetingIsoform records => should return 0 isoformDiplayed as specific  
+    	int isoCount=2;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	AnnotationIsoformSpecificity spec2=new AnnotationIsoformSpecificity();
+    	spec2.setIsoformAccession("iso2");
+    	spec2.setSpecificity("BY DEFAULT");
+    	targetIsoformMap.put("iso2",  spec2);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.GO_MOLECULAR_FUNCTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot, isoCount);
+    	assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForNonBinaryInteractionCase2()  { 
+
+    	// Non BinaryInteraction with 2 isoforms, 2 targetingIsoform records => should return 0 isoformDiplayed as specific   
+    	int isoCount=2;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	AnnotationIsoformSpecificity spec2=new AnnotationIsoformSpecificity();
+    	spec2.setIsoformAccession("iso2");
+    	spec2.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso2",  spec2);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.GO_MOLECULAR_FUNCTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForNonBinaryInteractionCase3()  { 
+
+    	// BinaryInteraction with 1 isoform, 1 targetingIsoform record => should return 0 isoformDiplayed as specific   
+    	int isoCount=1;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.GO_MOLECULAR_FUNCTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(0, result.size());
+ 
+    }
+
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForNonBinaryInteractionCase4()  { 
+
+    	// BinaryInteraction with 2 isoforms, 1 targetingIsoform record => 1 isoformDiplayed as specific  
+    	int isoCount=2;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("BY DEFAULT");
+    	targetIsoformMap.put("iso1",  spec1);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.GO_MOLECULAR_FUNCTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(1, result.size());	
+    	assertEquals("iso1", result.get(0));
+    }
+
+    
+// ----------------------------------    
+    
+    
+    
+    
 	@Test
 	public void testConvertEvidenceToExternalBioObject()  {
 

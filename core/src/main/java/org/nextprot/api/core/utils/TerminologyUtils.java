@@ -56,16 +56,49 @@ public class TerminologyUtils {
 	 * @param terminologyservice the terminology service
 	 * @return a list of cvterm ancestor accessions
 	 */
-	public static List<String> getAllAncestors(String cvTermAccession, TerminologyService terminologyservice) {
+	public static List<String> getAllAncestorsAccession(String cvTermAccession, TerminologyService terminologyservice) {
+		
+		return getAllAncestorTerms(cvTermAccession, terminologyservice).stream()
+				.map(t->t.getAccession())
+				.collect(Collectors.toList());
+	}
+
+	public static List<CvTerm> getAllAncestorTerms(String cvTermAccession, TerminologyService terminologyservice) {
 
 		CvTerm cvTerm = terminologyservice.findCvTermByAccession(cvTermAccession);
 		OntologyDAG graph = terminologyservice.findOntologyGraph(TerminologyCv.valueOf(cvTerm.getOntology()));
 
 		return Arrays.stream(graph.getAncestors(cvTerm.getId())).boxed()
 				.map(graph::getCvTermAccessionById)
+				.map(ac->terminologyservice.findCvTermByAccession(ac))
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * Returns an ordered list of terms.
+	 * The first term is the Term identified with the parameter cvTermAccession
+	 * The next term is a parent of the previous term until we reach the root term
+	 * A known limitation is that only the first parent is retrieved for each term !
+	 * 
+	 * @param cvTermAccession
+	 * @param terminologyservice
+	 * @return
+	 */
+	public static List<CvTerm> getOnePathToRootTerm(String cvTermAccession, TerminologyService terminologyservice) {
+		List<CvTerm> path = new ArrayList<CvTerm>();
+		String ac = cvTermAccession;
+		while (true) {
+			CvTerm t = terminologyservice.findCvTermByAccession(ac);
+			path.add(t);
+			List<String> parents = t.getAncestorAccession();
+			if (parents==null || parents.size()==0) break;
+			ac = parents.get(0);
+		}
+		return path;
+	}
+	
+	
+	
 	/**
 	 * @deprecated use #getAllAncestors() instead
 	 */

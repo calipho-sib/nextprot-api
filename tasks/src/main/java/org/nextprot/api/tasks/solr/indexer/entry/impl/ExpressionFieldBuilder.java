@@ -50,7 +50,7 @@ public class ExpressionFieldBuilder extends FieldBuilder {
 				CvTerm term = terminologyservice.findCvTermByAccession(cv);
 				cv_tissues_final.add(cv); // No duplicate: this is a Set
 				//List<String> ancestors = term.getAncestorAccession();
-				List<String> ancestors = TerminologyUtils.getAllAncestors(term.getAccession(), terminologyservice);
+				List<String> ancestors = TerminologyUtils.getAllAncestorsAccession(term.getAccession(), terminologyservice);
 				if(ancestors != null) 
 				  for (String ancestorac : ancestors) {
 					  //if(cv.equals("TS-0079")) System.err.println("blood ancestor: " + ancestorac);

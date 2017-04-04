@@ -75,21 +75,21 @@ public class CVFieldBuilder extends FieldBuilder {
 		// Final CV acs, ancestors and synonyms
 		//System.err.println("cumputing CV ancestors for " +  cv_acs.size() + " terms...");
 		Tree<CvTerm> tree = null;
-		Set<String> ancestors2 = new TreeSet<String>();
+		//Set<String> ancestors2 = new TreeSet<String>();
 		for (String cvac : cv_acs) {
 			CvTerm term = this.terminologyservice.findCvTermByAccession(cvac);
 			//System.err.println(cvac + ": " + term);
 			String category = term.getOntology();
-			List<String> ancestors = TerminologyUtils.getAllAncestors(term.getAccession(), terminologyservice);
-			List<Tree<CvTerm>> treeList = this.terminologyservice.findTerminology(TerminologyCv.valueOf(category));
-			if(treeList.isEmpty()) 	ancestors2.clear();
-			ancestors2 = this.terminologyservice.getAncestorSets(treeList, term.getAccession());
+			List<String> ancestors = TerminologyUtils.getAllAncestorsAccession(term.getAccession(), terminologyservice);
+			//List<Tree<CvTerm>> treeList = this.terminologyservice.findTerminology(TerminologyCv.valueOf(category));
+			//if(treeList.isEmpty()) 	ancestors2.clear();
+			//ancestors2 = this.terminologyservice.getAncestorSets(treeList, term.getAccession());
 			//Set<String> ancestors2 = TerminologyUtils.getAncestorSets(tree, term.getAccession());
-			if(ancestors.size() != ancestors2.size()) {
+			//if(ancestors.size() != ancestors2.size()) {
 				// Differences for FA-, KW-, SL-,  DO-, and enzymes...
 				//System.err.println(cvac + " old method: " + ancestors.size() + " new method: " + ancestors2.size() + " category" + category);
 				//System.err.println(ancestors);
-			}
+			//}
 			if(ancestors != null) 
 			  for (String ancestor : ancestors) {
                   cv_ancestors_acs.add(ancestor); 

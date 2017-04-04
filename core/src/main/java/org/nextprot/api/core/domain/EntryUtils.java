@@ -8,10 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.ExperimentalContextUtil;
@@ -32,6 +34,21 @@ public class EntryUtils implements Serializable{
 		return entryAccession;
 	}
 
+	public static Set<Long> getExperimentalContextIds(List<Annotation> annotations) {
+		Set<Long> ecIds = new TreeSet<>();
+		if (annotations != null) {
+			for (Annotation annot : annotations) {
+				if (annot.getEvidences() != null) {
+					for (AnnotationEvidence evi: annot.getEvidences()) {
+						Long ecId = evi.getExperimentalContextId();
+						if (ecId != null && ecId != 0) ecIds.add(ecId);
+					}
+				}
+			}
+		}
+		return ecIds;
+	}
+	
 	public static Entry filterEntryBySubPart(Entry entry, EntryConfig config) {
 		
 		List<Annotation> annotations;
@@ -195,4 +212,6 @@ public class EntryUtils implements Serializable{
 		//System.err.println("after: " + fInfoCanonical);
 		return fInfoCanonical;
 	 }
+	
+
 }
