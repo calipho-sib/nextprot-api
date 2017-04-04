@@ -52,9 +52,8 @@ public enum VariantSequenceOperator implements VariantSequenceBuilder {
             // ...MLISM...
             // ...MLISMLISM...
             // [original=M, variant=MLISM]
-            return originalSequence.substring(
-                    sequenceVariation.getVaryingSequence().getFirstAminoAcidPos() - 2,
-                    sequenceVariation.getVaryingSequence().getLastAminoAcidPos());
+            return originalSequence.charAt(sequenceVariation.getVaryingSequence().getLastAminoAcidPos()-1)+
+                    originalSequence.substring(sequenceVariation.getVaryingSequence().getFirstAminoAcidPos() - 1, sequenceVariation.getVaryingSequence().getLastAminoAcidPos());
         }
     },
     SUBSTITUTION() {

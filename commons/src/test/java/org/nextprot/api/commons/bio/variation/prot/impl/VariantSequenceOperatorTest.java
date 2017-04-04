@@ -12,8 +12,8 @@ public class VariantSequenceOperatorTest {
     @Test
     public void testBuildSequenceVariantDuplication() throws Exception {
 
-        assertOperation("KMLISMPEPTIDE", new SequenceVariantHGVSFormat().parse("p.Leu3_Met6dup"),
-                6, 6, "M", "MLISM", "KMLISMLISMPEPTIDE");
+        assertOperation("KPLISMPEPTIDE", new SequenceVariantHGVSFormat().parse("p.Leu3_Met6dup"),
+                6, 6, "M", "MLISM", "KPLISMLISMPEPTIDE");
     }
 
     @Test
