@@ -1,4 +1,4 @@
-package org.nextprot.api.commons.bio.variation.prot.impl.seqchange;
+package org.nextprot.api.commons.bio.variation.prot.impl.format;
 
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -6,11 +6,11 @@ import org.junit.Test;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.ParsingMode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
-import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceVariantHGVSFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.Substitution;
 
 import java.text.ParseException;
 
-public class SequenceVariationHGVSParseSubstitutionTest {
+public class SequenceVariantHGVSParseSubstitutionTest {
 
     SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 

@@ -9,7 +9,7 @@ import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.ExtensionIniti
 import org.nextprot.api.commons.bio.variation.prot.impl.seqchange.ExtensionTermination;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
-public class ExtensionSequenceVariantHGVSFormatterTest {
+public class SequenceVariantHGVSExtensionFormatTest {
 
     private SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 

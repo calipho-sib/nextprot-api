@@ -11,7 +11,7 @@ import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
 import java.text.ParseException;
 
-public class SequenceVariationHGVSParseFrameshiftTest {
+public class SequenceVariantHGVSParseFrameshiftTest {
 
     SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 

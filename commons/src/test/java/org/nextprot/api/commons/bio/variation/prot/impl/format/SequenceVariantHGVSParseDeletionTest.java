@@ -7,7 +7,7 @@ import org.nextprot.api.commons.bio.variation.prot.ParsingMode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
-public class SequenceVariationHGVSParseDeletionTest {
+public class SequenceVariantHGVSParseDeletionTest {
 
     SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 

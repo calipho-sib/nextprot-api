@@ -10,7 +10,7 @@ import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
 import java.text.ParseException;
 
-public class SequenceVariationHGVSParseInsertionTest {
+public class SequenceVariantHGVSParseInsertionTest {
 
     SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 

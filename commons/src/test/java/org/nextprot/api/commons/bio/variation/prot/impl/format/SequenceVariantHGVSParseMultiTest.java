@@ -6,7 +6,7 @@ import org.nextprot.api.commons.bio.variation.prot.ParsingMode;
 
 import java.text.ParseException;
 
-public class SequenceVariationHGVSParseMultiTest {
+public class SequenceVariantHGVSParseMultiTest {
 
     SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 

@@ -7,7 +7,7 @@ import org.nextprot.api.commons.bio.variation.prot.ParsingMode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
-public class SequenceVariationHGVSParseDelinsTest {
+public class SequenceVariantHGVSParseDelinsTest {
 
     SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 

@@ -11,7 +11,7 @@ import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChangeHGVSF
 
 import java.util.Collection;
 
-public class SequenceVariantSequenceVariantHGVSFormatterTest {
+public class SequenceVariantHGVSFormatterTest {
 
     SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 

@@ -8,7 +8,7 @@ import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
 
 import java.text.ParseException;
 
-public class SequenceVariationHGVSParseDuplicationTest {
+public class SequenceVariantHGVSParseDuplicationTest {
 
     SequenceVariantHGVSFormat format = new SequenceVariantHGVSFormat();
 
