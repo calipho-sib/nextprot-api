@@ -35,4 +35,12 @@ public class EntryUtilsTest {
 
         return isoform;
     }
+
+    public static Isoform mockIsoform(String accession, String name, boolean canonical, String sequence) {
+
+        Isoform isoform = mockIsoform(accession, name, canonical);
+        when(isoform.getSequence()).thenReturn(sequence);
+
+        return isoform;
+    }
 }
