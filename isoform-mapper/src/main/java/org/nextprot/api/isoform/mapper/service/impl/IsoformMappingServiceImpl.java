@@ -109,10 +109,15 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
                     && variation.getVaryingSequence().isMultipleAminoAcids()) {
                     lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getLastAAPos(), otherIsoform);
                 }
-                if (originalAminoAcids.isExtensionTerminal())
-                    successResults.addMappedFeature(otherIsoform, firstIsoPos+1, lastIsoPos+1);
-                else
-                    successResults.addMappedFeature(otherIsoform, firstIsoPos, lastIsoPos);
+                if (lastIsoPos != null) {
+                    if (originalAminoAcids.isExtensionTerminal())
+                        successResults.addMappedFeature(otherIsoform, firstIsoPos + 1, lastIsoPos + 1);
+                    else
+                        successResults.addMappedFeature(otherIsoform, firstIsoPos, lastIsoPos);
+                }
+                else {
+                    successResults.addUnmappedFeature(otherIsoform);
+                }
             }
             else {
                 successResults.addUnmappedFeature(otherIsoform);
