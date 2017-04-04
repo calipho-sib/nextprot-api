@@ -1,6 +1,8 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.prot.impl.VariantSequenceOperator;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.utils.seqmap.GeneMasterCodonPosition;
@@ -10,8 +12,9 @@ import org.nextprot.api.isoform.mapper.domain.SequenceFeature;
 import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 /**
@@ -67,15 +70,46 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
             result.setEndMasterPosition(lastCodonOnMaster.getNucleotidePosition(2));
         }
 
-        //result.setVariation(calcOriginal(firstIsoPosition, lastIsoPosition),
-        //        feature.getProteinVariation().);
+        SequenceVariation proteinVariation = newIsoformSequenceVariation(feature.getProteinVariation(), firstIsoPosition, lastIsoPosition);
+
+        setVariantSequenceBuildingInfos(result, isoform.getSequence(), proteinVariation);
 
         data.put(result.getIsoformAccession(), result);
     }
 
-    private String calcOriginal(int firstIsoPosition, int lastIsoPosition) {
+    /* create new SequenceVariation isoform specific */
+    private SequenceVariation newIsoformSequenceVariation(SequenceVariation sequenceVariation, int firstIsoPosition, int lastIsoPosition) {
 
-        return feature.getIsoform(entry).getSequence().substring(firstIsoPosition-1, lastIsoPosition);
+        SequenceVariationMutable newSequenceVariation = new SequenceVariationMutable();
+
+        VaryingSequenceMutable vs = VaryingSequenceMutable.valueOf(sequenceVariation.getVaryingSequence());
+
+        vs.setFirstPos(firstIsoPosition);
+        vs.setLastPos(lastIsoPosition);
+
+        newSequenceVariation.setVaryingSequence(vs);
+        newSequenceVariation.setSequenceChange(sequenceVariation.getSequenceChange());
+
+        return newSequenceVariation;
+    }
+
+    private void setVariantSequenceBuildingInfos(IsoformFeatureResult result, String sequence, SequenceVariation proteinVariation) {
+
+        Optional<VariantSequenceOperator> optOperator =
+                VariantSequenceOperator.findOperator(proteinVariation.getSequenceChange());
+
+        if (optOperator.isPresent()) {
+
+            VariantSequenceOperator op = optOperator.get();
+
+            result.setVariation(
+                    op.getAminoAcidTargetStringInReferenceSequence(sequence, proteinVariation.getVaryingSequence()),
+                    op.getAminoAcidReplacementString(sequence, proteinVariation),
+                    op.selectBeginPositionInReferenceSequence(proteinVariation.getVaryingSequence()),
+                    op.selectEndPositionInReferenceSequence(proteinVariation.getVaryingSequence()),
+                    proteinVariation.getSequenceChange().getType().name()
+            );
+        }
     }
 
     public void addUnmappedFeature(Isoform isoform) {
@@ -117,9 +151,9 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
         private static final long serialVersionUID = 3L;
 
         private final static String ORIGINAL = "original";
-        private final static String VARIATION = "variation";
-        private final static String BEGIN_POS = "begin-pos";
-        private final static String END_POS = "end-pos";
+        private final static String VARIATION = "variant";
+        private final static String BEGIN_POS = "position-begin";
+        private final static String END_POS = "position-end";
         private final static String TYPE = "type";
 
         private String isoformAccession;
@@ -135,7 +169,7 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
 
         // empty constructor for json serialization
         public IsoformFeatureResult(){
-        	
+            variationDesc = new LinkedHashMap<>();
         }
 
         public IsoformFeatureResult(String isoformAccession, String isoformName, Integer beginIsoformPosition, Integer endIsoformPosition, Integer beginMasterPosition, Integer endMasterPosition, boolean isCanonical, String isoSpecificFeature){
@@ -147,7 +181,7 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
         	this.endMasterPosition = endMasterPosition;
         	this.isCanonical = isCanonical;
         	this.isoSpecificFeature = isoSpecificFeature;
-            variationDesc = new HashMap<>();
+            variationDesc = new LinkedHashMap<>();
         }
 
         public String getIsoformAccession() {
