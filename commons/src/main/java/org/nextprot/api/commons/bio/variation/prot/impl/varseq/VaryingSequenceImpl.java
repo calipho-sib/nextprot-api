@@ -28,11 +28,6 @@ public class VaryingSequenceImpl implements VaryingSequence {
         this.lastChangingAminoAcidPos = lastChangingAminoAcidPos;
     }
 
-    public static VaryingSequence changingAminoAcid(AminoAcidCode changingAminoAcid, int changingAminoAcidPos) {
-
-        return new VaryingSequenceImpl(changingAminoAcid, changingAminoAcidPos, changingAminoAcid, changingAminoAcidPos);
-    }
-
     public AminoAcidCode getFirstAminoAcid() {
         return firstChangingAminoAcid;
     }
