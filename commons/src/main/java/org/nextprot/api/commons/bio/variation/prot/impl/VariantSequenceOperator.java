@@ -3,7 +3,7 @@ package org.nextprot.api.commons.bio.variation.prot.impl;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
-import org.nextprot.api.commons.bio.variation.prot.VariantSequenceFactory;
+import org.nextprot.api.commons.bio.variation.prot.VariantSequenceBuilder;
 import org.nextprot.api.commons.bio.variation.prot.varseq.VaryingSequence;
 
 import java.util.Optional;
@@ -13,38 +13,38 @@ import java.util.Optional;
  *
  * Created by fnikitin on 31.03.17.
  */
-public enum SequenceChangeOperator implements VariantSequenceFactory {
+public enum VariantSequenceOperator implements VariantSequenceBuilder {
 
     DELETION() {
         @Override
-        protected int selectPositionStart(VaryingSequence varyingSequence) {
+        public int selectBeginPositionInReferenceSequence(VaryingSequence varyingSequence) {
             return varyingSequence.getFirstAminoAcidPos();
         }
 
         @Override
-        protected int selectPositionEnd(VaryingSequence varyingSequence) {
+        public int selectEndPositionInReferenceSequence(VaryingSequence varyingSequence) {
             return varyingSequence.getLastAminoAcidPos();
         }
 
         @Override
-        protected String variant(String originalSequence, SequenceVariation sequenceVariation) {
+        public String getAminoAcidReplacementString(String originalSequence, SequenceVariation sequenceVariation) {
             return "";
         }
     },
     DUPLICATION() {
 
         @Override
-        protected int selectPositionStart(VaryingSequence varyingSequence) {
+        public int selectBeginPositionInReferenceSequence(VaryingSequence varyingSequence) {
             return varyingSequence.getLastAminoAcidPos();
         }
 
         @Override
-        protected int selectPositionEnd(VaryingSequence varyingSequence) {
+        public int selectEndPositionInReferenceSequence(VaryingSequence varyingSequence) {
             return varyingSequence.getLastAminoAcidPos();
         }
 
         @Override
-        protected String variant(String originalSequence, SequenceVariation sequenceVariation) {
+        public String getAminoAcidReplacementString(String originalSequence, SequenceVariation sequenceVariation) {
 
             // p.Leu103_Met106dup
             //     .--.
@@ -60,17 +60,17 @@ public enum SequenceChangeOperator implements VariantSequenceFactory {
     SUBSTITUTION() {
 
         @Override
-        protected int selectPositionStart(VaryingSequence varyingSequence) {
+        public int selectBeginPositionInReferenceSequence(VaryingSequence varyingSequence) {
             return varyingSequence.getFirstAminoAcidPos();
         }
 
         @Override
-        protected int selectPositionEnd(VaryingSequence varyingSequence) {
+        public int selectEndPositionInReferenceSequence(VaryingSequence varyingSequence) {
             return varyingSequence.getFirstAminoAcidPos();
         }
 
         @Override
-        protected String variant(String originalSequence, SequenceVariation sequenceVariation) {
+        public String getAminoAcidReplacementString(String originalSequence, SequenceVariation sequenceVariation) {
 
             return AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.ONE_LETTER, ((SequenceChange<AminoAcidCode>)sequenceVariation.getSequenceChange())
                     .getValue());
@@ -79,17 +79,17 @@ public enum SequenceChangeOperator implements VariantSequenceFactory {
     INSERTION() {
 
         @Override
-        protected int selectPositionStart(VaryingSequence varyingSequence) {
+        public int selectBeginPositionInReferenceSequence(VaryingSequence varyingSequence) {
             return varyingSequence.getFirstAminoAcidPos();
         }
 
         @Override
-        protected int selectPositionEnd(VaryingSequence varyingSequence) {
+        public int selectEndPositionInReferenceSequence(VaryingSequence varyingSequence) {
             return varyingSequence.getFirstAminoAcidPos();
         }
 
         @Override
-        protected String variant(String originalSequence, SequenceVariation sequenceVariation) {
+        public String getAminoAcidReplacementString(String originalSequence, SequenceVariation sequenceVariation) {
 
             return AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.ONE_LETTER, sequenceVariation.getVaryingSequence().getFirstAminoAcid()) +
                     AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.ONE_LETTER, ((SequenceChange<AminoAcidCode[]>) sequenceVariation.getSequenceChange()).getValue());
@@ -98,17 +98,17 @@ public enum SequenceChangeOperator implements VariantSequenceFactory {
     DELETION_INSERTION() {
 
         @Override
-        protected int selectPositionStart(VaryingSequence varyingSequence) {
+        public int selectBeginPositionInReferenceSequence(VaryingSequence varyingSequence) {
             return varyingSequence.getFirstAminoAcidPos();
         }
 
         @Override
-        protected int selectPositionEnd(VaryingSequence varyingSequence) {
+        public int selectEndPositionInReferenceSequence(VaryingSequence varyingSequence) {
             return varyingSequence.getLastAminoAcidPos();
         }
 
         @Override
-        protected String variant(String originalSequence, SequenceVariation sequenceVariation) {
+        public String getAminoAcidReplacementString(String originalSequence, SequenceVariation sequenceVariation) {
 
             return AminoAcidCode.formatAminoAcidCode(AminoAcidCode.CodeType.ONE_LETTER, ((SequenceChange<AminoAcidCode[]>)sequenceVariation.getSequenceChange())
                     .getValue());
@@ -116,29 +116,7 @@ public enum SequenceChangeOperator implements VariantSequenceFactory {
     }
     ;
 
-    protected abstract int selectPositionStart(VaryingSequence varyingSequence);
-    protected abstract int selectPositionEnd(VaryingSequence varyingSequence);
-    protected abstract String variant(String originalSequence, SequenceVariation sequenceVariation);
-
-    public String original(String originalSequence, VaryingSequence varyingSequence) {
-
-        return originalSequence.substring(selectPositionStart(varyingSequence)-1, selectPositionEnd(varyingSequence));
-    }
-
-    @Override
-    public String buildVariantSequence(String originalSequence, SequenceVariation sequenceVariation) {
-
-        int selectionStart = selectPositionStart(sequenceVariation.getVaryingSequence());
-        int selectionEnd = selectPositionEnd(sequenceVariation.getVaryingSequence());
-
-        return new StringBuilder()
-                .append(originalSequence.substring(0, selectionStart - 1))
-                .append(variant(originalSequence, sequenceVariation))
-                .append(originalSequence.substring(selectionEnd))
-                .toString();
-    }
-
-    public static Optional<SequenceChangeOperator> findOperator(SequenceChange sequenceChange) {
+    public static Optional<VariantSequenceOperator> findOperator(SequenceChange sequenceChange) {
 
         SequenceChange.Type sequenceType = sequenceChange.getType();
 

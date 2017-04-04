@@ -7,7 +7,7 @@ import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceVariantHG
 
 import java.util.Optional;
 
-public class SequenceChangeOperatorTest {
+public class VariantSequenceOperatorTest {
 
     @Test
     public void testBuildSequenceVariantDuplication() throws Exception {
@@ -48,14 +48,14 @@ public class SequenceChangeOperatorTest {
                                         int expectedPosStart, int expectedPosEnd, String expectedOriginal,
                                         String expectedVariant, String expectedVariantSequence) {
 
-        Optional<SequenceChangeOperator> op = SequenceChangeOperator.findOperator(sequenceVariation.getSequenceChange());
+        Optional<VariantSequenceOperator> op = VariantSequenceOperator.findOperator(sequenceVariation.getSequenceChange());
         Assert.assertTrue(op.isPresent());
 
-        Assert.assertEquals(expectedPosStart, op.get().selectPositionStart(sequenceVariation.getVaryingSequence()));
-        Assert.assertEquals(expectedPosEnd,  op.get().selectPositionEnd(sequenceVariation.getVaryingSequence()));
+        Assert.assertEquals(expectedPosStart, op.get().selectBeginPositionInReferenceSequence(sequenceVariation.getVaryingSequence()));
+        Assert.assertEquals(expectedPosEnd,  op.get().selectEndPositionInReferenceSequence(sequenceVariation.getVaryingSequence()));
 
-        Assert.assertEquals(expectedOriginal, op.get().original(originalSequence, sequenceVariation.getVaryingSequence()));
-        Assert.assertEquals(expectedVariant, op.get().variant(originalSequence, sequenceVariation));
+        Assert.assertEquals(expectedOriginal, op.get().getAminoAcidTargetStringInReferenceSequence(originalSequence, sequenceVariation.getVaryingSequence()));
+        Assert.assertEquals(expectedVariant, op.get().getAminoAcidReplacementString(originalSequence, sequenceVariation));
         Assert.assertEquals(expectedVariantSequence, op.get().buildVariantSequence(originalSequence, sequenceVariation));
     }
 }
