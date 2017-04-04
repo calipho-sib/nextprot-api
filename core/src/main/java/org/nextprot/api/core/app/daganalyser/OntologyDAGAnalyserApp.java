@@ -115,7 +115,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
     private List<String> calcStatistics(OntologyDAG graph, TerminologyCv ontology) throws OntologyDAG.NotFoundInternalGraphException {
 
-        // 1. git clone https://github.com/fnikitin/jamm.git ; cd jamm ; ant jar ; add dependency to this jar
+        // 1. git clone https://github.com/jbellis/jamm.git <path to>/ ; cd <path to>/jamm ; ant jar ; add dependency to this jar
         // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
         MemoryMeter memMeter = new MemoryMeter();
 
