@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 /**
  * This app analyses the graph of all ontologies referenced by neXtProt
  */
-// -ea -javaagent:/Users/fnikitin/Projects/jamm/target/jamm-0.3.2-SNAPSHOT.jar
+// -javaagent:/Users/fnikitin/Projects/jamm/target/jamm-0.3.2-SNAPSHOT.jar
 public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserApp.ArgumentParser> {
 
     private static final Logger LOGGER = Logger.getLogger(OntologyDAGAnalyserApp.class);
