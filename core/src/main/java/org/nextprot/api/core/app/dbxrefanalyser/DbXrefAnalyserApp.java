@@ -50,7 +50,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
     @Override
     public ArgumentParser newCommandLineParser() {
 
-        return new ArgumentParser("dbxrefanalyser");
+        return new ArgumentParser(DbXrefAnalyserApp.class.getSimpleName());
     }
 
     @Override

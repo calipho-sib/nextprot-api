@@ -90,7 +90,7 @@ public class ExperimentalContextDictEval extends SpringBasedApp<ExperimentalCont
         private boolean debugMode;
 
         public CommandLineParser() {
-            super("experimental-context-dictionary-eval");
+            super(ExperimentalContextDictEval.class.getSimpleName());
         }
 
         @Override

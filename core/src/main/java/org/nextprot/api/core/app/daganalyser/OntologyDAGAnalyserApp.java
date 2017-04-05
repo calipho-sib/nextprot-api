@@ -55,7 +55,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
     @Override
     public ArgumentParser newCommandLineParser() {
 
-        return new ArgumentParser("dbxrefanalyser");
+        return new ArgumentParser(OntologyDAGAnalyserApp.class.getSimpleName());
     }
 
     @Override
