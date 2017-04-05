@@ -13,7 +13,13 @@ import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
 import java.io.IOException;
 import java.util.Map;
 
-// -javaagent:/Users/fnikitin/Projects/jamm/target/jamm-0.3.2-SNAPSHOT.jar
+/**
+ * <h3>About estimating Java Object Sizes with Instrumentation</h3>
+ * Setting jamm as -javaagent is now optional
+ * If instrumentation is available, use it, otherwise guess the size using sun.misc.Unsafe; if that is unavailable,
+ * guess using predefined specifications
+ * <pre>-javaagent: $path/jamm/target/jamm-0.3.2-SNAPSHOT.jar</pre>
+ */
 public class ExperimentalContextDictEval extends SpringBasedApp<ExperimentalContextDictEval.CommandLineParser> {
 
     private ExperimentalContextDictEval(String[] args) throws ParseException {
@@ -33,12 +39,12 @@ public class ExperimentalContextDictEval extends SpringBasedApp<ExperimentalCont
         ExperimentalContextDictionaryService bean = getBean(ExperimentalContextDictionaryService.class);
         Map<Long, ExperimentalContext> dict = bean.getAllExperimentalContexts();
 
-        // 1. git clone https://github.com/jbellis/jamm.git <path to>/ ; cd <path to>/jamm ; ant jar ; add dependency to this jar
-        // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
-        MemoryMeter memMeter = new MemoryMeter();
+        /* If instrumentation is available, use it, otherwise guess the size using sun.misc.Unsafe; if that is unavailable,
+         * guess using predefined specifications -> setting jamm as -javaagent is now optional */
+        MemoryMeter memMeter = new MemoryMeter().withGuessing(MemoryMeter.Guess.FALLBACK_BEST);
 
         if (getCommandLineParser().isDebugMode()) {
-            memMeter.enableDebug();
+            memMeter = memMeter.enableDebug();
         }
 
         long shallowMemory = memMeter.measure(dict);

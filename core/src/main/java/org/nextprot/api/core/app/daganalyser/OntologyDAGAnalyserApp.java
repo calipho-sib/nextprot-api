@@ -29,8 +29,13 @@ import java.util.stream.Stream;
 
 /**
  * This app analyses the graph of all ontologies referenced by neXtProt
+ *
+ * <h3>About estimating Java Object Sizes with Instrumentation</h3>
+ * Setting jamm as -javaagent is now optional
+ * If instrumentation is available, use it, otherwise guess the size using sun.misc.Unsafe; if that is unavailable,
+ * guess using predefined specifications
+ * <pre>-javaagent: $path/jamm/target/jamm-0.3.2-SNAPSHOT.jar</pre>
  */
-// -javaagent:/Users/fnikitin/Projects/jamm/target/jamm-0.3.2-SNAPSHOT.jar
 public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserApp.ArgumentParser> {
 
     private static final Logger LOGGER = Logger.getLogger(OntologyDAGAnalyserApp.class);
@@ -44,7 +49,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         super(args);
         terminologyCvs = TerminologyCv.values();
-        //terminologyCvs = new TerminologyCv[] {TerminologyCv.NciThesaurusCv};
+        terminologyCvs = new TerminologyCv[] {TerminologyCv.NciThesaurusCv};
     }
 
     @Override
@@ -117,7 +122,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         // 1. git clone https://github.com/jbellis/jamm.git <path to>/ ; cd <path to>/jamm ; ant jar ; add dependency to this jar
         // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
-        MemoryMeter memMeter = new MemoryMeter();
+        MemoryMeter memMeter = new MemoryMeter().withGuessing(MemoryMeter.Guess.FALLBACK_BEST);
 
         long wholeGraphMemory = memMeter.measureDeep(graph);
         long ancestorsMemory = memMeter.measureDeep(graph.getCvTermIdAncestors());
@@ -151,7 +156,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         List<Number> stats = Arrays.asList(graph.countNodes(), graph.countEdgesFromTransientGraph(), graph.getConnectedComponentsFromTransientGraph().count(), cycles.size(),
                 graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.in), graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.out), allPaths.size(),
-                (wholeGraphMemory/1024.), (ancestorsMemory/1024), (cvTermIdAccessionMemory/1024), ms);
+                (int)Math.ceil(wholeGraphMemory/1024.), (int)Math.ceil(ancestorsMemory/1024.), (int)Math.ceil(cvTermIdAccessionMemory/1024.), ms);
 
         return Stream.concat(Stream.of(graph.getTerminologyCv().name()), stats.stream().map(DECIMAL_FORMAT::format)).collect(Collectors.toList());
     }
