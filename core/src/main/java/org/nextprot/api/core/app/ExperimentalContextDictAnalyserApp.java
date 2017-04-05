@@ -20,15 +20,15 @@ import java.util.Map;
  * guess using predefined specifications
  * <pre>-javaagent: $path/jamm/target/jamm-0.3.2-SNAPSHOT.jar</pre>
  */
-public class ExperimentalContextDictEval extends SpringBasedApp<ExperimentalContextDictEval.CommandLineParser> {
+public class ExperimentalContextDictAnalyserApp extends SpringBasedApp<ExperimentalContextDictAnalyserApp.CommandLineParser> {
 
-    private ExperimentalContextDictEval(String[] args) throws ParseException {
+    private ExperimentalContextDictAnalyserApp(String[] args) throws ParseException {
 
         super(args);
     }
 
     @Override
-    protected ExperimentalContextDictEval.CommandLineParser newCommandLineParser() {
+    protected ExperimentalContextDictAnalyserApp.CommandLineParser newCommandLineParser() {
 
         return new CommandLineParser();
     }
@@ -56,7 +56,7 @@ public class ExperimentalContextDictEval extends SpringBasedApp<ExperimentalCont
         sb
                 .append("shallow=").append(shallowMemory).append("B")
                 .append(", deep=").append((int)Math.ceil(deepMemory / 1024.)).append("KB")
-                .append(", children#=").append(childrenCount);
+                .append(", children#=").append(childrenCount).append("\n");
 
         System.out.printf(sb.toString());
     }
@@ -71,7 +71,7 @@ public class ExperimentalContextDictEval extends SpringBasedApp<ExperimentalCont
     public static void main(String[] args) {
 
         try {
-            new ExperimentalContextDictEval(args).run();
+            new ExperimentalContextDictAnalyserApp(args).run();
         } catch(Exception e) {
 
             e.printStackTrace();
@@ -90,7 +90,7 @@ public class ExperimentalContextDictEval extends SpringBasedApp<ExperimentalCont
         private boolean debugMode;
 
         public CommandLineParser() {
-            super(ExperimentalContextDictEval.class.getSimpleName());
+            super(ExperimentalContextDictAnalyserApp.class.getSimpleName());
         }
 
         @Override

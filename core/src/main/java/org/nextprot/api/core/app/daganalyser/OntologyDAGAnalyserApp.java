@@ -49,7 +49,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         super(args);
         terminologyCvs = TerminologyCv.values();
-        terminologyCvs = new TerminologyCv[] {TerminologyCv.NciThesaurusCv};
+        //terminologyCvs = new TerminologyCv[] {TerminologyCv.NciThesaurusCv};
     }
 
     @Override

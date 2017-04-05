@@ -69,50 +69,105 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
+			<plugin>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.0.0</version>
 				<executions>
 					<execution>
-						<id>experimental-context-dictionary-eval</id>
+						<id>experimental-context-dictionary-analyser</id>
 						<configuration>
-							<appendAssemblyId>false</appendAssemblyId>
-							<archive>
-								<manifest>
-									<mainClass>org.nextprot.api.core.app.ExperimentalContextDictEval</mainClass>
-								</manifest>
-							</archive>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
-							<finalName>experimental-context-dictionary-eval</finalName>
+							<finalName>experimental-context-dictionary-analyser</finalName>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.handlers</resource>
+								</transformer>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.schemas</resource>
+								</transformer>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>org.nextprot.api.core.app.ExperimentalContextDictAnalyserApp</mainClass>
+								</transformer>
+							</transformers>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
 						</configuration>
 						<phase>package</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>shade</goal>
 						</goals>
 					</execution>
 					<execution>
 						<id>ontology-dag-analyser</id>
 						<configuration>
-							<appendAssemblyId>false</appendAssemblyId>
-							<archive>
-								<manifest>
-									<mainClass>org.nextprot.api.core.app.daganalyser.OntologyDAGAnalyserApp</mainClass>
-								</manifest>
-							</archive>
-							<descriptorRefs>
-								<descriptorRef>jar-with-dependencies</descriptorRef>
-							</descriptorRefs>
 							<finalName>ontology-dag-analyser</finalName>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.handlers</resource>
+								</transformer>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.schemas</resource>
+								</transformer>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>org.nextprot.api.core.app.daganalyser.OntologyDAGAnalyserApp</mainClass>
+								</transformer>
+							</transformers>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
 						</configuration>
 						<phase>package</phase>
 						<goals>
-							<goal>single</goal>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>dbxref-analyser</id>
+						<configuration>
+							<finalName>dbxref-analyser</finalName>
+							<transformers>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.handlers</resource>
+								</transformer>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+									<resource>META-INF/spring.schemas</resource>
+								</transformer>
+								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<mainClass>org.nextprot.api.core.app.dbxrefanalyser.DbXrefAnalyserApp</mainClass>
+								</transformer>
+							</transformers>
+							<filters>
+								<filter>
+									<artifact>*:*</artifact>
+									<excludes>
+										<exclude>META-INF/*.SF</exclude>
+										<exclude>META-INF/*.DSA</exclude>
+										<exclude>META-INF/*.RSA</exclude>
+									</excludes>
+								</filter>
+							</filters>
+						</configuration>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
 						</goals>
 					</execution>
 				</executions>
-			</plugin>-->
+			</plugin>
 		</plugins>
 	</build>
 
