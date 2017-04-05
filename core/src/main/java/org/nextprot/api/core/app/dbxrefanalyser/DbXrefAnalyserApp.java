@@ -170,7 +170,7 @@ public class DbXrefAnalyserApp extends SpringBasedApp<DbXrefAnalyserApp.Argument
         @Override
         protected void parseOtherParams(CommandLine commandLine) {
 
-            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : "/tmp";
+            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : "./";
 
             if (commandLine.hasOption("f")) {
                 entriesFilename = commandLine.getOptionValue("f");

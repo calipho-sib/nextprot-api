@@ -280,7 +280,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         @Override
         protected void parseOtherParams(CommandLine commandLine) {
 
-            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : "/tmp";
+            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : "./";
         }
 
         public String getOutputDirectory() {
