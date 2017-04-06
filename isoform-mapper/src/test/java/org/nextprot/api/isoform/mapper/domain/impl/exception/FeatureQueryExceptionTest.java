@@ -1,15 +1,14 @@
 package org.nextprot.api.isoform.mapper.domain.impl.exception;
 
 import com.google.common.collect.Lists;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
 import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.core.domain.EntryUtilsTest;
-import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryException;
+import org.nextprot.api.isoform.mapper.domain.SingleFeatureQuery;
+import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariantTest;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -85,10 +84,10 @@ public class FeatureQueryExceptionTest {
                 new SingleFeatureQuery("SCN11A-p.Leu1158Pro", AnnotationCategory.VARIANT.getApiTypeName(), "NX_Q9UI33");
 
         UnknownFeatureIsoformException featureQueryException = new UnknownFeatureIsoformException(
-                EntryUtilsTest.mockEntry("NX_Q9UI33",
-                        EntryUtilsTest.mockIsoform("NX_Q9UI33-1", "Iso 1", true),
-                        EntryUtilsTest.mockIsoform("NX_Q9UI33-1", "Iso 2", false),
-                        EntryUtilsTest.mockIsoform("NX_Q9UI33-1", "Iso 3", false)),
+                SequenceVariantTest.mockEntry("NX_Q9UI33",
+                        SequenceVariantTest.mockIsoform("NX_Q9UI33-1", "Iso 1", true),
+                        SequenceVariantTest.mockIsoform("NX_Q9UI33-1", "Iso 2", false),
+                        SequenceVariantTest.mockIsoform("NX_Q9UI33-1", "Iso 3", false)),
                 query,
                 "spongebob");
 

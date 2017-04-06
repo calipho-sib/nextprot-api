@@ -2,7 +2,7 @@ package org.nextprot.api.core.utils.annot.merge.impl;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
+import org.nextprot.api.core.utils.annot.merge.AnnotationSimilarityPredicate;
 
 import java.util.List;
 
@@ -11,11 +11,11 @@ import java.util.List;
  *
  * Created by fnikitin on 02/08/16.
  */
-public class SimilarityPredicateChain implements SimilarityPredicate {
+public class SimilarityPredicateChain implements AnnotationSimilarityPredicate {
 
-    private final List<SimilarityPredicate> criteria;
+    private final List<AnnotationSimilarityPredicate> criteria;
 
-    public SimilarityPredicateChain(List<SimilarityPredicate> criteria) {
+    public SimilarityPredicateChain(List<AnnotationSimilarityPredicate> criteria) {
 
         Preconditions.checkNotNull(criteria);
         Preconditions.checkArgument(!criteria.isEmpty());
@@ -26,7 +26,7 @@ public class SimilarityPredicateChain implements SimilarityPredicate {
     @Override
     public boolean isSimilar(Annotation annotation1, Annotation annotation2) {
 
-        for (SimilarityPredicate criterium : criteria) {
+        for (AnnotationSimilarityPredicate criterium : criteria) {
 
             if (!criterium.isSimilar(annotation1, annotation2))
                 return false;

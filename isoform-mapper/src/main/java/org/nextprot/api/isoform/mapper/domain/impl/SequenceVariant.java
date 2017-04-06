@@ -1,8 +1,8 @@
 package org.nextprot.api.isoform.mapper.domain.impl;
 
 import com.google.common.base.Preconditions;
-import org.nextprot.api.commons.bio.variation.SequenceVariationFormat;
-import org.nextprot.api.commons.bio.variation.impl.format.hgvs.SequenceVariationHGVSFormat;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariationFormat;
+import org.nextprot.api.commons.bio.variation.prot.impl.format.SequenceVariantHGVSFormat;
 import org.nextprot.api.core.domain.Isoform;
 
 import java.text.ParseException;
@@ -28,7 +28,7 @@ public class SequenceVariant extends SequenceFeatureBase {
 
     @Override
     public SequenceVariationFormat newParser() {
-        return new SequenceVariationHGVSFormat();
+        return new SequenceVariantHGVSFormat();
     }
 
     /**

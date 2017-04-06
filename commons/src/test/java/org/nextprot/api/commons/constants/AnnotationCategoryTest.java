@@ -280,7 +280,7 @@ public class AnnotationCategoryTest {
 	@Test
 	public void testInstanciatedCategories() {
 
-		Assert.assertEquals(65, AnnotationCategory.getInstantiatedCategories().size());
+		Assert.assertEquals(66, AnnotationCategory.getInstantiatedCategories().size());
 	}
 
 	@Test

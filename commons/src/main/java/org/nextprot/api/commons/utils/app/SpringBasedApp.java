@@ -36,9 +36,9 @@ public abstract class SpringBasedApp<P extends CommandLineSpringParser> {
         return argumentParser;
     }
 
-    protected final SpringConfig getConfig() {
+    public <T> T getBean(Class<T> requiredType) {
 
-        return config;
+        return config.getBean(requiredType);
     }
 
     public void run() throws IOException {

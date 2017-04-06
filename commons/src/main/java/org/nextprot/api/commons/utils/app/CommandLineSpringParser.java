@@ -2,8 +2,10 @@ package org.nextprot.api.commons.utils.app;
 
 import org.apache.commons.cli.*;
 
-
-public abstract class CommandLineSpringParser {
+/**
+ * Base command line parser for Spring application
+ */
+public class CommandLineSpringParser {
 
     private final String appName;
     private final HelpFormatter formatter;
@@ -54,5 +56,5 @@ public abstract class CommandLineSpringParser {
         return options;
     }
 
-    protected abstract void parseOtherParams(CommandLine commandLine) throws ParseException;
+    protected void parseOtherParams(CommandLine commandLine) throws ParseException { }
 }

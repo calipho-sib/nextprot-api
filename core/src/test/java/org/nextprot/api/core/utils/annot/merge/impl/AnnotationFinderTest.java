@@ -4,76 +4,87 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
+import org.nextprot.api.core.utils.annot.merge.AnnotationSimilarityPredicate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
-import static org.nextprot.api.core.utils.annot.merge.impl.ObjectSimilarityPredicateTest.mockAnnotation;
+import static org.nextprot.api.core.utils.annot.merge.impl.ObjectAnnotationSimilarityPredicateTest.mockAnnotation;
 
 public class AnnotationFinderTest {
 
     @Test
     public void shouldNotFindAnnotInEmptyList() throws Exception {
 
-        AnnotationFinder finder = new AnnotationFinder(newApiCatCriteria());
+        AnnotationFinder finder = new AnnotationFinder();
 
-        Annotation found = finder.find(
+        Optional<Annotation> optAnnotation = finder.find(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 new ArrayList<>()
         );
 
-        Assert.assertNull(found);
+        Assert.assertTrue(!optAnnotation.isPresent());
     }
 
     @Test
     public void shouldFindSameAnnot() throws Exception {
 
-        AnnotationFinder finder = new AnnotationFinder(newApiCatCriteria());
+        AnnotationFinder finder = new AnnotationFinder() {
+            @Override
+            protected Optional<AnnotationSimilarityPredicate> newPredicate(Annotation annotation) {
+                return Optional.of(newApiCatCriteria());
+            }
+        };
 
-        Annotation found = finder.find(
+        Optional<Annotation> optAnnotation = finder.find(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 Collections.singletonList(mockAnnotation(AnnotationCategory.VARIANT))
         );
 
-        Assert.assertNotNull(found);
-        Assert.assertEquals(AnnotationCategory.VARIANT, found.getAPICategory());
+        Assert.assertTrue(optAnnotation.isPresent());
+        Assert.assertEquals(AnnotationCategory.VARIANT, optAnnotation.get().getAPICategory());
     }
 
     @Test
     public void shouldNotFindDiffAnnot() throws Exception {
 
-        AnnotationFinder finder = new AnnotationFinder(newApiCatCriteria());
+        AnnotationFinder finder = new AnnotationFinder();
 
-        Annotation found = finder.find(
+        Optional<Annotation> optAnnotation = finder.find(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 Collections.singletonList(mockAnnotation(AnnotationCategory.MUTAGENESIS))
         );
 
-        Assert.assertNull(found);
+        Assert.assertTrue(!optAnnotation.isPresent());
     }
 
     @Test
     public void shouldFindOneAnnotIfMultipleMatches() throws Exception {
 
-        AnnotationFinder finder = new AnnotationFinder(newApiCatCriteria());
+        AnnotationFinder finder = new AnnotationFinder() {
+            @Override
+            protected Optional<AnnotationSimilarityPredicate> newPredicate(Annotation annotation) {
+                return Optional.of(newApiCatCriteria());
+            }
+        };
 
         Annotation annot = new Annotation();
         annot.setAnnotationName("joe");
         annot.setAnnotationCategory(AnnotationCategory.VARIANT);
 
-        Annotation found = finder.find(
+        Optional<Annotation> optAnnotation = finder.find(
                 mockAnnotation(AnnotationCategory.VARIANT),
                 Arrays.asList(annot, mockAnnotation(AnnotationCategory.VARIANT))
         );
 
-        Assert.assertNotNull(found);
-        Assert.assertEquals(AnnotationCategory.VARIANT, found.getAPICategory());
-        Assert.assertEquals("joe", found.getAnnotationName());
+        Assert.assertTrue(optAnnotation.isPresent());
+        Assert.assertEquals(AnnotationCategory.VARIANT, optAnnotation.get().getAPICategory());
+        Assert.assertEquals("joe", optAnnotation.get().getAnnotationName());
     }
 
-    private static SimilarityPredicate newApiCatCriteria() {
+    private static AnnotationSimilarityPredicate newApiCatCriteria() {
 
         return (a1, a2) -> a1.getAPICategory() == a2.getAPICategory();
     }
