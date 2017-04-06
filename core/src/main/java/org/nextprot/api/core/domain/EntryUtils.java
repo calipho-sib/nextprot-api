@@ -1,16 +1,5 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.util.Comparator;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -21,17 +10,10 @@ import org.nextprot.api.core.utils.PublicationUtils;
 import org.nextprot.api.core.utils.XrefUtils;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
 
-class CustomAnnotComp implements Comparator<Annotation>{	 
-    @Override    
-    public int compare(Annotation e1, Annotation e2) {
-    	int c; // GOLD over SILVER, then GO_BP over GO_MF, then Alphabetic in term name cf: jira NEXTPROT-1238
-    	c = e1.getQualityQualifier().compareTo(e2.getQualityQualifier());
-    	if (c == 0) c = e1.getCategory().compareTo(e2.getCategory());
-        if (c == 0) c=e1.getCvTermName().compareTo(e2.getCvTermName());
-        return c;
-    }
-}  
 
 public class EntryUtils implements Serializable{	
 	private static final long serialVersionUID = 3009334685615648172L;
@@ -152,7 +134,7 @@ public class EntryUtils implements Serializable{
 	/**
 	 * Builds a dictionary (HashMap) where the key is the annotation annotationHash and the value the annotation itself.
 	 * Annotations with no hash are skipped
-	 * @param entry
+	 * @param annotations
 	 * @return a dictionary of annotations where the key is the annotation hash (= identifier in BED world)
 	 */
 	public static Map<String,Annotation> getHashAnnotationMap(List<Annotation> annotations) {
@@ -222,7 +204,14 @@ public class EntryUtils implements Serializable{
 		fInfoCanonical.addAll(fInfoNonCanonical);
 		//System.err.println("after: " + fInfoCanonical);
 		if (fInfoCanonical.size()==0) {
-			Set<Annotation> goFuncSet = new TreeSet<>(new CustomAnnotComp());
+			Set<Annotation> goFuncSet = new TreeSet<>((e1, e2) -> {
+
+                int c; // GOLD over SILVER, then GO_BP over GO_MF, then Alphabetic in term name cf: jira NEXTPROT-1238
+                c = e1.getQualityQualifier().compareTo(e2.getQualityQualifier());
+                if (c == 0) c = e1.getCategory().compareTo(e2.getCategory());
+                if (c == 0) c=e1.getCvTermName().compareTo(e2.getCvTermName());
+                return c;
+            });
 			List<Annotation> annots = entry.getAnnotations();
 			for (Annotation currannot : annots) {
 				String category = currannot.getCategory();
@@ -242,6 +231,4 @@ public class EntryUtils implements Serializable{
 
 		return fInfoCanonical;
 	 }
-	
-
 }
