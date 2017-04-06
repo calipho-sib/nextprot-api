@@ -6,18 +6,18 @@ import org.mockito.Mockito;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.BioObject;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
+import org.nextprot.api.core.utils.annot.merge.AnnotationSimilarityPredicate;
 
 import java.util.Objects;
 
 import static org.mockito.Mockito.when;
 
-public class ObjectSimilarityPredicateTest {
+public class ObjectAnnotationSimilarityPredicateTest {
 
     @Test
     public void sameObjectShouldBeSimilar() throws Exception {
 
-        SimilarityPredicate predicate = new ObjectSimilarityPredicate(Annotation::getAPICategory);
+        AnnotationSimilarityPredicate predicate = new ObjectSimilarityPredicate(Annotation::getAPICategory);
 
         Annotation annot = mockAnnotation(AnnotationCategory.VARIANT);
 
@@ -37,7 +37,7 @@ public class ObjectSimilarityPredicateTest {
     @Test
     public void shouldBeSimilar() throws Exception {
 
-        SimilarityPredicate predicate = new ObjectSimilarityPredicate(Annotation::getAPICategory);
+        AnnotationSimilarityPredicate predicate = new ObjectSimilarityPredicate(Annotation::getAPICategory);
 
         Assert.assertTrue(predicate.isSimilar(mockAnnotation(AnnotationCategory.VARIANT), mockAnnotation(AnnotationCategory.VARIANT)));
     }
@@ -45,7 +45,7 @@ public class ObjectSimilarityPredicateTest {
     @Test
     public void shouldBeDifferent() throws Exception {
 
-        SimilarityPredicate predicate = new ObjectSimilarityPredicate(Annotation::getAPICategory);
+        AnnotationSimilarityPredicate predicate = new ObjectSimilarityPredicate(Annotation::getAPICategory);
 
         Assert.assertFalse(predicate.isSimilar(mockAnnotation(AnnotationCategory.VARIANT), mockAnnotation(AnnotationCategory.MUTAGENESIS)));
     }
@@ -53,7 +53,7 @@ public class ObjectSimilarityPredicateTest {
     @Test
     public void shouldBeDifferentBasedOnBioObjectEquals() throws Exception {
 
-        SimilarityPredicate predicateBasedOnBioObjectEquals = new ObjectSimilarityPredicate(Annotation::getBioObject);
+        AnnotationSimilarityPredicate predicateBasedOnBioObjectEquals = new ObjectSimilarityPredicate(Annotation::getBioObject);
 
         Assert.assertFalse(predicateBasedOnBioObjectEquals.isSimilar(mockAnnotationWithBioObject("toto", BioObject.BioType.CHEMICAL),
                 mockAnnotationWithBioObject("toto", BioObject.BioType.GROUP)));
@@ -62,7 +62,7 @@ public class ObjectSimilarityPredicateTest {
     @Test
     public void shouldBeSimilarBasedOnBioObjectAccessionEquals() throws Exception {
 
-        SimilarityPredicate predicateBasedOnBioObjectAccessionEquals = new ObjectSimilarityPredicate(Annotation::getBioObject,
+        AnnotationSimilarityPredicate predicateBasedOnBioObjectAccessionEquals = new ObjectSimilarityPredicate(Annotation::getBioObject,
                 (o1, o2) -> Objects.equals(((BioObject)o1).getAccession(), ((BioObject)o2).getAccession()));
 
         Assert.assertTrue(predicateBasedOnBioObjectAccessionEquals.isSimilar(mockAnnotationWithBioObject("toto", BioObject.BioType.CHEMICAL),

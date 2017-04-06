@@ -9,24 +9,24 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 
 import java.util.Optional;
 
-public class SimilarityPredicateTest {
+public class AnnotationSimilarityPredicateTest {
 
     @Test
     public void newSimilarityPredicateShouldReturnNewInstanceIfDefinedCategory() throws Exception {
 
-        Assert.assertTrue(SimilarityPredicate.newSimilarityPredicate(AnnotationCategory.VARIANT).isPresent());
+        Assert.assertTrue(AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.VARIANT).isPresent());
     }
 
     @Test
     public void newSimilarityPredicateShouldReturnNullIfNotDefinedForCategory() throws Exception {
 
-        Assert.assertTrue(!SimilarityPredicate.newSimilarityPredicate(AnnotationCategory.ANTIBODY_MAPPING).isPresent());
+        Assert.assertTrue(!AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.ANTIBODY_MAPPING).isPresent());
     }
 
     @Test
     public void annotationsShouldBeSimilar() throws Exception {
 
-        Optional<SimilarityPredicate> predicate = SimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
+        Optional<AnnotationSimilarityPredicate> predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
 
         Assert.assertTrue(predicate.isPresent());
 
@@ -36,7 +36,7 @@ public class SimilarityPredicateTest {
     @Test
     public void annotationsShouldNotBeSimilarAccessionDiffer() throws Exception {
 
-        Optional<SimilarityPredicate> predicate = SimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
+        Optional<AnnotationSimilarityPredicate> predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
 
         Assert.assertTrue(predicate.isPresent());
 
@@ -46,7 +46,7 @@ public class SimilarityPredicateTest {
     @Test
     public void annotationsShouldNotBeSimilarDatabaseDiffer() throws Exception {
 
-        Optional<SimilarityPredicate> predicate = SimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
+        Optional<AnnotationSimilarityPredicate> predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
 
         Assert.assertTrue(predicate.isPresent());
 
@@ -56,7 +56,7 @@ public class SimilarityPredicateTest {
     @Test
     public void annotationsShouldBeSimilarWithDifferentDatabaseCases() throws Exception {
 
-        Optional<SimilarityPredicate> predicate = SimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
+        Optional<AnnotationSimilarityPredicate> predicate = AnnotationSimilarityPredicate.newSimilarityPredicate(AnnotationCategory.BINARY_INTERACTION);
 
         Assert.assertTrue(predicate.isPresent());
 

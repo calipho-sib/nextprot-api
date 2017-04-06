@@ -15,7 +15,7 @@ import java.util.Optional;
  *
  * Created by fnikitin on 02/08/16.
  */
-public interface SimilarityPredicate {
+public interface AnnotationSimilarityPredicate {
 
     /**
      * @return true if annotations are similar else false
@@ -26,7 +26,7 @@ public interface SimilarityPredicate {
      * Static factory method that return a default predicate specific of the given category
      * @param category the annotation category to estimate similarity
      */
-    static Optional<SimilarityPredicate> newSimilarityPredicate(AnnotationCategory category) {
+    static Optional<AnnotationSimilarityPredicate> newSimilarityPredicate(AnnotationCategory category) {
 
         Preconditions.checkNotNull(category);
 

@@ -4,17 +4,17 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
+import org.nextprot.api.core.utils.annot.merge.AnnotationSimilarityPredicate;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-public class SimilarityPredicateChainTest {
+public class AnnotationSimilarityPredicateChainTest {
 
     @Test
     public void shouldBeSimilarWhenAllPredicateTrue() throws Exception {
 
-        SimilarityPredicate predicate = new SimilarityPredicateChain(Arrays.asList(
+        AnnotationSimilarityPredicate predicate = new SimilarityPredicateChain(Arrays.asList(
                 (annotation1, annotation2) -> true,
                 (annotation1, annotation2) -> true,
                 (annotation1, annotation2) -> true
@@ -32,7 +32,7 @@ public class SimilarityPredicateChainTest {
     @Test
     public void shouldNotBeSimilarWhenAtLeastOnePredicateFalse() throws Exception {
 
-        SimilarityPredicate predicate = new SimilarityPredicateChain(Arrays.asList(
+        AnnotationSimilarityPredicate predicate = new SimilarityPredicateChain(Arrays.asList(
                 (annotation1, annotation2) -> true,
                 (annotation1, annotation2) -> false,
                 (annotation1, annotation2) -> true

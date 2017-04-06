@@ -4,21 +4,21 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
-import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
+import org.nextprot.api.core.utils.annot.merge.AnnotationSimilarityPredicate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.nextprot.api.core.utils.annot.merge.impl.ObjectSimilarityPredicateTest.mockAnnotation;
+import static org.nextprot.api.core.utils.annot.merge.impl.ObjectAnnotationSimilarityPredicateTest.mockAnnotation;
 
 public class AnnotationFinderTest {
 
     @Test
     public void shouldNotFindAnnotInEmptyList() throws Exception {
 
-        AnnotationFinder finder = new AnnotationFinder(newApiCatCriteria());
+        AnnotationFinder finder = new AnnotationFinder();
 
         Optional<Annotation> optAnnotation = finder.find(
                 mockAnnotation(AnnotationCategory.VARIANT),
@@ -31,7 +31,12 @@ public class AnnotationFinderTest {
     @Test
     public void shouldFindSameAnnot() throws Exception {
 
-        AnnotationFinder finder = new AnnotationFinder(newApiCatCriteria());
+        AnnotationFinder finder = new AnnotationFinder() {
+            @Override
+            protected Optional<AnnotationSimilarityPredicate> newPredicate(Annotation annotation) {
+                return Optional.of(newApiCatCriteria());
+            }
+        };
 
         Optional<Annotation> optAnnotation = finder.find(
                 mockAnnotation(AnnotationCategory.VARIANT),
@@ -45,7 +50,7 @@ public class AnnotationFinderTest {
     @Test
     public void shouldNotFindDiffAnnot() throws Exception {
 
-        AnnotationFinder finder = new AnnotationFinder(newApiCatCriteria());
+        AnnotationFinder finder = new AnnotationFinder();
 
         Optional<Annotation> optAnnotation = finder.find(
                 mockAnnotation(AnnotationCategory.VARIANT),
@@ -58,7 +63,12 @@ public class AnnotationFinderTest {
     @Test
     public void shouldFindOneAnnotIfMultipleMatches() throws Exception {
 
-        AnnotationFinder finder = new AnnotationFinder(newApiCatCriteria());
+        AnnotationFinder finder = new AnnotationFinder() {
+            @Override
+            protected Optional<AnnotationSimilarityPredicate> newPredicate(Annotation annotation) {
+                return Optional.of(newApiCatCriteria());
+            }
+        };
 
         Annotation annot = new Annotation();
         annot.setAnnotationName("joe");
@@ -74,7 +84,7 @@ public class AnnotationFinderTest {
         Assert.assertEquals("joe", optAnnotation.get().getAnnotationName());
     }
 
-    private static SimilarityPredicate newApiCatCriteria() {
+    private static AnnotationSimilarityPredicate newApiCatCriteria() {
 
         return (a1, a2) -> a1.getAPICategory() == a2.getAPICategory();
     }

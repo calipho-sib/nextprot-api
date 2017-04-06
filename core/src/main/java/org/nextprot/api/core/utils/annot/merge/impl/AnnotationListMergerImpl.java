@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.merge.AnnotationListMerger;
 import org.nextprot.api.core.utils.annot.merge.AnnotationMerger;
-import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +17,8 @@ public class AnnotationListMergerImpl implements AnnotationListMerger {
 
     protected static final Logger LOGGER = Logger.getLogger(AnnotationListMergerImpl.class);
 
+    private final AnnotationFinder annotationFinder = new AnnotationFinder();
+
     @Override
     public List<Annotation> merge(List<Annotation> srcAnnotationList, List<Annotation> destAnnotationList) {
 
@@ -26,7 +27,7 @@ public class AnnotationListMergerImpl implements AnnotationListMerger {
 
         for (Annotation srcAnnotation : srcAnnotationList) {
 
-            Optional<Annotation> foundAnnotation = findAnnotation(srcAnnotation, destAnnotationList);
+            Optional<Annotation> foundAnnotation = annotationFinder.find(srcAnnotation, destAnnotationList);
 
             // not found -> add new annotation
             if (!foundAnnotation.isPresent()) {
@@ -39,12 +40,5 @@ public class AnnotationListMergerImpl implements AnnotationListMerger {
         }
 
         return destAnnotationList;
-    }
-
-    private Optional<Annotation> findAnnotation(Annotation srcAnnotation, List<Annotation> list) {
-
-        return SimilarityPredicate.newSimilarityPredicate(srcAnnotation.getAPICategory())
-                    .flatMap(similarityPredicate -> new AnnotationFinder(similarityPredicate)
-                    .find(srcAnnotation, list));
     }
 }

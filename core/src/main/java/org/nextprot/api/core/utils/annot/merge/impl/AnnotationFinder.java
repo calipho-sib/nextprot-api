@@ -1,9 +1,8 @@
 package org.nextprot.api.core.utils.annot.merge.impl;
 
-import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.merge.AnnotationContainerFinder;
-import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
+import org.nextprot.api.core.utils.annot.merge.AnnotationSimilarityPredicate;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -15,26 +14,23 @@ import java.util.Optional;
  */
 public class AnnotationFinder implements AnnotationContainerFinder<Annotation> {
 
-    private final SimilarityPredicate criteria;
-
-    /**
-     * Constructor needs a criteria to find similar annotations
-     */
-    public AnnotationFinder(SimilarityPredicate criteria) {
-
-        Preconditions.checkNotNull(criteria);
-
-        this.criteria = criteria;
-    }
-
     @Override
     public Optional<Annotation> find(Annotation searchedAnnotation, Collection<Annotation> annotations) {
 
-        for (Annotation annotation : annotations) {
-            if (criteria.isSimilar(searchedAnnotation, annotation))
-                return Optional.of(annotation);
+        Optional<AnnotationSimilarityPredicate> predicate = newPredicate(searchedAnnotation);
+
+        if (predicate.isPresent()) {
+            for (Annotation annotation : annotations) {
+                if (predicate.get().isSimilar(searchedAnnotation, annotation))
+                    return Optional.of(annotation);
+            }
         }
 
         return Optional.empty();
+    }
+
+    protected Optional<AnnotationSimilarityPredicate> newPredicate(Annotation annotation) {
+
+        return AnnotationSimilarityPredicate.newSimilarityPredicate(annotation.getAPICategory());
     }
 }

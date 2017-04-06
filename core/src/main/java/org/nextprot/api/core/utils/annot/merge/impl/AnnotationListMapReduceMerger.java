@@ -6,7 +6,6 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.merge.AnnotationCluster;
 import org.nextprot.api.core.utils.annot.merge.AnnotationListMerger;
 import org.nextprot.api.core.utils.annot.merge.AnnotationMerger;
-import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
 
 import java.util.List;
 import java.util.Optional;
@@ -75,9 +74,11 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
 
     private void clusterAnnotations(List<Annotation> annotations, List<AnnotationCluster> annotationClusters) {
 
+        AnnotationClusterFinder finder = new AnnotationClusterFinder();
+
         for (Annotation annotation : annotations) {
 
-            Optional<AnnotationCluster> foundAnnotationCluster = findAnnotationCluster(annotation, annotationClusters);
+            Optional<AnnotationCluster> foundAnnotationCluster = finder.find(annotation, annotationClusters);
 
             if (foundAnnotationCluster.isPresent()) {
                 try {
@@ -91,14 +92,6 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
             }
         }
     }
-
-    private Optional<AnnotationCluster> findAnnotationCluster(Annotation srcAnnotation, List<AnnotationCluster> list) {
-
-        return SimilarityPredicate.newSimilarityPredicate(srcAnnotation.getAPICategory())
-                .flatMap(similarityPredicate -> new AnnotationClusterFinder(similarityPredicate)
-                        .find(srcAnnotation, list));
-    }
-
 
     private Annotation doMerge(AnnotationCluster cluster) {
 
