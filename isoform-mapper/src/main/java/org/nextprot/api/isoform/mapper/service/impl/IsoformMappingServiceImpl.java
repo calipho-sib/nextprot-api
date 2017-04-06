@@ -1,8 +1,8 @@
 package org.nextprot.api.isoform.mapper.service.impl;
 
 import com.google.common.base.Strings;
-import org.nextprot.api.commons.bio.variation.SequenceChange;
-import org.nextprot.api.commons.bio.variation.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.prot.seqchange.SequenceChange;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
@@ -106,13 +106,18 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
             if (firstIsoPos != null) {
                 if (IsoformSequencePositionMapper.checkAminoAcidsFromPosition(otherIsoform, firstIsoPos, originalAminoAcids.getAas())
-                    && variation.isMultipleChangingAminoAcids()) {
+                    && variation.getVaryingSequence().isMultipleAminoAcids()) {
                     lastIsoPos = IsoformSequencePositionMapper.getProjectedPosition(featureIsoform, originalAminoAcids.getLastAAPos(), otherIsoform);
                 }
-                if (originalAminoAcids.isExtensionTerminal())
-                    successResults.addMappedFeature(otherIsoform, firstIsoPos+1, lastIsoPos+1);
-                else
-                    successResults.addMappedFeature(otherIsoform, firstIsoPos, lastIsoPos);
+                if (lastIsoPos != null) {
+                    if (originalAminoAcids.isExtensionTerminal())
+                        successResults.addMappedFeature(otherIsoform, firstIsoPos + 1, lastIsoPos + 1);
+                    else
+                        successResults.addMappedFeature(otherIsoform, firstIsoPos, lastIsoPos);
+                }
+                else {
+                    successResults.addUnmappedFeature(otherIsoform);
+                }
             }
             else {
                 successResults.addUnmappedFeature(otherIsoform);
@@ -124,8 +129,8 @@ public class IsoformMappingServiceImpl implements IsoformMappingService {
 
         SequenceChange.Type variationType = variation.getSequenceChange().getType();
 
-        int firstPos = variation.getFirstChangingAminoAcidPos();
-        int lastPos = variation.getLastChangingAminoAcidPos();
+        int firstPos = variation.getVaryingSequence().getFirstAminoAcidPos();
+        int lastPos = variation.getVaryingSequence().getLastAminoAcidPos();
         boolean isTerminalExtension = false;
 
         if (variationType == SequenceChange.Type.EXTENSION_TERM) {

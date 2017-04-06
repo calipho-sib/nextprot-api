@@ -2,6 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -44,7 +45,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private InteractionService interactionService;
-	@Autowired private ExperimentalContextService experimentalContextService;
+	@Autowired private ExperimentalContextService expCtxService;
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
 	@Autowired private EntryPropertiesService entryPropertiesService;	
 
@@ -101,11 +102,11 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 			if(entryConfig.hasExperimentalContext()){
 				List<Annotation> annotations = entry.getAnnotations();
 				//In case we did't set annotations but we need them to find experimental contexts
-				if(annotations == null){
+				if(annotations == null) {
 					annotations = this.annotationService.findAnnotations(entryName);
 				}
-				//TODO extract experimental context ids in order for the experimental service to not depend on annotation object
-				entry.setExperimentalContexts(this.experimentalContextService.findExperimentalContextsByAnnotations(annotations));
+				Set<Long> ecIds = EntryUtils.getExperimentalContextIds(annotations);
+				entry.setExperimentalContexts(expCtxService.findExperimentalContextsByIds(ecIds));
 			}
 			if(entryConfig.hasInteractions()){
 				entry.setInteractions(this.interactionService.findInteractionsByEntry(entryName));
@@ -158,8 +159,8 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setXrefs(this.xrefService.findDbXrefsByMaster(entry.getUniqueName()));
 			}
 			if(entry.getExperimentalContexts() == null || entry.getExperimentalContexts().isEmpty()){
-				entry.setExperimentalContexts(
-						this.experimentalContextService.findExperimentalContextsByAnnotations(entry.getAnnotations()));
+				Set<Long> ecIds = EntryUtils.getExperimentalContextIds(entry.getAnnotations());
+				entry.setExperimentalContexts(expCtxService.findExperimentalContextsByIds(ecIds));
 			}
 
 		}

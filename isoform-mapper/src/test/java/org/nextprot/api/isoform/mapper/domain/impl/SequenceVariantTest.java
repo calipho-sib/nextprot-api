@@ -4,12 +4,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -30,8 +29,8 @@ public class SequenceVariantTest {
         SequenceVariation variation = variant.getProteinVariation();
         Assert.assertEquals("p.Lys1710Thr", variant.getFormattedVariation());
 
-        Assert.assertEquals(AminoAcidCode.LYSINE, variation.getFirstChangingAminoAcid());
-        Assert.assertEquals(1710, variation.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.LYSINE, variation.getVaryingSequence().getFirstAminoAcid());
+        Assert.assertEquals(1710, variation.getVaryingSequence().getFirstAminoAcidPos());
 
         Assert.assertTrue(variant.isValidGeneName(mockEntryWithGenes("SCN11A", "SCN12A", "SNS2")));
     }
@@ -45,8 +44,8 @@ public class SequenceVariantTest {
         SequenceVariation variation = variant.getProteinVariation();
         Assert.assertEquals("p.Phe154Ser", variant.getFormattedVariation());
 
-        Assert.assertEquals(AminoAcidCode.PHENYLALANINE, variation.getFirstChangingAminoAcid());
-        Assert.assertEquals(154, variation.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.PHENYLALANINE, variation.getVaryingSequence().getFirstAminoAcid());
+        Assert.assertEquals(154, variation.getVaryingSequence().getFirstAminoAcidPos());
 
         Assert.assertTrue(variant.isValidGeneName(mockEntryWithGenes("WT1")));
     }

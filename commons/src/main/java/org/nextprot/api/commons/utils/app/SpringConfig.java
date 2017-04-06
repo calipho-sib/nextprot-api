@@ -25,12 +25,20 @@ public class SpringConfig {
         this.profiles = profiles;
     }
 
+    /**
+     * @return array of Spring resource locations
+     */
+    protected String[] getXmlConfigResourceLocations() {
+        return new String[] {
+                "classpath:spring/commons-context.xml",
+                "classpath:spring/core-context.xml"
+        };
+    }
+
     public void startApplicationContext() {
 
         System.setProperty("spring.profiles.active", profiles);
-        ctx = new ClassPathXmlApplicationContext(
-                "classpath:spring/commons-context.xml",
-                "classpath:spring/core-context.xml");
+        ctx = new ClassPathXmlApplicationContext(getXmlConfigResourceLocations());
 
         if (profiles.matches(".*cache.*"))
             cacheManager = ctx.getBean(CacheManager.class);

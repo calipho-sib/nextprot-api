@@ -11,7 +11,6 @@ import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
-import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.NXVelocityUtils;
 import org.nextprot.api.web.service.EntryPageService;
@@ -37,7 +36,6 @@ public class EntryController {
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 	@Autowired private EntryPageService entryPageService;
 	@Autowired private AnnotationService annotationService;
-	@Autowired private TerminologyService terminologyService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {

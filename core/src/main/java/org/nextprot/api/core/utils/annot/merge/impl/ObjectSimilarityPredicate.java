@@ -5,14 +5,14 @@ import com.google.common.base.Preconditions;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.merge.ObjectAccessor;
 import org.nextprot.api.core.utils.annot.merge.ObjectMatcher;
-import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
+import org.nextprot.api.core.utils.annot.merge.AnnotationSimilarityPredicate;
 
 /**
  * Similarity predicate implementation based on object accessible from annotations
  *
  * Created by fnikitin on 02/08/16.
  */
-public class ObjectSimilarityPredicate<T> implements SimilarityPredicate, ObjectAccessor<T> {
+public class ObjectSimilarityPredicate<T> implements AnnotationSimilarityPredicate, ObjectAccessor<T> {
 
     private final ObjectAccessor<T> accessor;
     private final ObjectMatcher<T> matcher;

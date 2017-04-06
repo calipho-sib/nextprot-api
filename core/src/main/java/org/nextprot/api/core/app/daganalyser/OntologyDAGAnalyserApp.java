@@ -29,8 +29,13 @@ import java.util.stream.Stream;
 
 /**
  * This app analyses the graph of all ontologies referenced by neXtProt
+ *
+ * <h3>About estimating Java Object Sizes with Instrumentation</h3>
+ * Setting jamm as -javaagent is now optional
+ * If instrumentation is available, use it, otherwise guess the size using sun.misc.Unsafe; if that is unavailable,
+ * guess using predefined specifications
+ * <pre>-javaagent: $path/jamm/target/jamm-0.3.2-SNAPSHOT.jar</pre>
  */
-// -ea -javaagent:/Users/fnikitin/Projects/jamm/target/jamm-0.3.2-SNAPSHOT.jar
 public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserApp.ArgumentParser> {
 
     private static final Logger LOGGER = Logger.getLogger(OntologyDAGAnalyserApp.class);
@@ -38,22 +43,25 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
     private final static DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 
     private TerminologyService terminologyService;
+    private TerminologyCv[] terminologyCvs;
 
     private OntologyDAGAnalyserApp(String[] args) throws ParseException {
 
         super(args);
+        terminologyCvs = TerminologyCv.values();
+        //terminologyCvs = new TerminologyCv[] {TerminologyCv.NciThesaurusCv};
     }
 
     @Override
     public ArgumentParser newCommandLineParser() {
 
-        return new ArgumentParser("dbxrefanalyser");
+        return new ArgumentParser(OntologyDAGAnalyserApp.class.getSimpleName());
     }
 
     @Override
     protected void execute() throws IOException {
 
-        terminologyService = getConfig().getBean(TerminologyService.class);
+        terminologyService = getBean(TerminologyService.class);
 
         System.out.println("*** write to cache timings...");
         readWriteCache(false);
@@ -73,7 +81,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         pw.write(getStatisticsHeaders().stream().collect(Collectors.joining(",")));
         pw.write(",building time (ms),TerminologyUtils.getAllAncestors() time (ms),OntologyDAG.getAncestors() time (ms)\n");
 
-        for (TerminologyCv terminologyCv : TerminologyCv.values()) {
+        for (TerminologyCv terminologyCv : terminologyCvs) {
 
             Instant t1 = Instant.now();
             // no cache here: create a new instance to access graph advanced methods
@@ -85,14 +93,14 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
                 statistics.add(new DecimalFormat("######.##").format(buildingTime));
                 if (!excludedOntology.contains(terminologyCv)) {
                     statistics.addAll(benchmarkingGetAncestorsMethods(terminologyCv, terminologyService).stream().map(l -> Long.toString(l)).collect(Collectors.toList()));
-                }
-                else {
+                } else {
                     statistics.addAll(Arrays.asList("NA", "NA"));
                 }
                 pw.write(statistics.stream().collect(Collectors.joining(",")));
 
                 pw.write("\n");
                 pw.flush();
+
             } catch (OntologyDAG.NotFoundInternalGraphException e) {
 
                 throw new IllegalStateException(e);
@@ -112,9 +120,9 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
     private List<String> calcStatistics(OntologyDAG graph, TerminologyCv ontology) throws OntologyDAG.NotFoundInternalGraphException {
 
-        // 1. git clone https://github.com/fnikitin/jamm.git ; cd jamm ; ant jar ; add dependency to this jar
+        // 1. git clone https://github.com/jbellis/jamm.git <path to>/ ; cd <path to>/jamm ; ant jar ; add dependency to this jar
         // 2. start the JVM with "-javaagent:<path to>/jamm.jar"
-        MemoryMeter memMeter = new MemoryMeter();
+        MemoryMeter memMeter = new MemoryMeter().withGuessing(MemoryMeter.Guess.FALLBACK_BEST);
 
         long wholeGraphMemory = memMeter.measureDeep(graph);
         long ancestorsMemory = memMeter.measureDeep(graph.getCvTermIdAncestors());
@@ -123,10 +131,16 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         Collection<Path> allPaths = graph.getAllPathsFromTransientGraph();
 
         Instant t1 = Instant.now();
+
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated(allPaths.size());
+        pb.setTaskName(ontology+ " paths");
+        pb.start();
         for (Path path : allPaths) {
 
             graph.isAncestorOf(path.getSource(), path.getDestination());
+            pb.incrementValue();
         }
+        pb.stop();
         long ms = ChronoUnit.MILLIS.between(t1, Instant.now());
 
         Set<Path> cycles = graph.getAllCyclesFromTransientGraph();
@@ -142,7 +156,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         List<Number> stats = Arrays.asList(graph.countNodes(), graph.countEdgesFromTransientGraph(), graph.getConnectedComponentsFromTransientGraph().count(), cycles.size(),
                 graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.in), graph.getAverageDegreeFromTransientGraph(Grph.TYPE.vertex, Grph.DIRECTION.out), allPaths.size(),
-                (wholeGraphMemory/1024.), (ancestorsMemory/1024), (cvTermIdAccessionMemory/1024), ms);
+                (int)Math.ceil(wholeGraphMemory/1024.), (int)Math.ceil(ancestorsMemory/1024.), (int)Math.ceil(cvTermIdAccessionMemory/1024.), ms);
 
         return Stream.concat(Stream.of(graph.getTerminologyCv().name()), stats.stream().map(DECIMAL_FORMAT::format)).collect(Collectors.toList());
     }
@@ -151,12 +165,11 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         Set<String> allCvTerms = new HashSet<>();
 
-        ConsoleProgressBar pb = ConsoleProgressBar.determinated(TerminologyCv.values().length);
+        ConsoleProgressBar pb = ConsoleProgressBar.determinated(terminologyCvs.length);
         pb.setTaskName(((readCacheForSure) ? "read":"read/write")+" terminology-by-ontology cache");
         pb.start();
-        // cache all cvterms (211367 terms)
         Instant t = Instant.now();
-        for (TerminologyCv ontology : TerminologyCv.values()) {
+        for (TerminologyCv ontology : terminologyCvs) {
 
             allCvTerms.addAll(terminologyService.findCvTermsByOntology(ontology.name()).stream()
                     .map(CvTerm::getAccession)
@@ -166,11 +179,11 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         pb.stop();
         System.out.println("\ttiming 'terminology-by-ontology': "+ChronoUnit.SECONDS.between(t, Instant.now()) + " s");
 
-        pb = ConsoleProgressBar.determinated(TerminologyCv.values().length);
+        pb = ConsoleProgressBar.determinated(terminologyCvs.length);
         pb.setTaskName(((readCacheForSure) ? "read":"read/write")+" 'ontology-dag' cache");
         pb.start();
         t = Instant.now();
-        for (TerminologyCv ontology : TerminologyCv.values()) {
+        for (TerminologyCv ontology : terminologyCvs) {
 
             terminologyService.findOntologyGraph(ontology);
             pb.incrementValue();
@@ -224,8 +237,8 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
 
         for (long id : ids) {
 
-            Set<String> ancestorsOld = ancestors.get(id).stream().collect(Collectors.toSet());
-            Set<String> ancestorsNew = ancestorsQuick.get(id).stream().collect(Collectors.toSet());
+            Set<String> ancestorsOld = new HashSet<>(ancestors.get(id));
+            Set<String> ancestorsNew = new HashSet<>(ancestorsQuick.get(id));
 
             boolean equals = ancestorsOld.equals(ancestorsNew);
 
@@ -267,7 +280,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         @Override
         protected void parseOtherParams(CommandLine commandLine) {
 
-            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : "/tmp";
+            outputDirectory = (commandLine.hasOption("o")) ? commandLine.getOptionValue("o") : "./";
         }
 
         public String getOutputDirectory() {

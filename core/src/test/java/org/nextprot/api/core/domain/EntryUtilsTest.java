@@ -1,14 +1,23 @@
 package org.nextprot.api.core.domain;
 
+import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.core.dao.EntityName;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.nextprot.api.core.domain.EntryUtils;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 
-public class EntryUtilsTest {
-
+@ActiveProfiles({ "dev" })
+public class EntryUtilsTest extends CoreUnitBaseTest{
+		
     public static Entry mockEntry(String accession, Isoform... isoforms) {
 
         Entry entry = Mockito.mock(Entry.class);
@@ -34,5 +43,29 @@ public class EntryUtilsTest {
         when(isoform.getMainEntityName()).thenReturn(entityName);
 
         return isoform;
+    }
+
+    public static Isoform mockIsoform(String accession, String name, boolean canonical, String sequence) {
+
+        Isoform isoform = mockIsoform(accession, name, canonical);
+        when(isoform.getSequence()).thenReturn(sequence);
+
+        return isoform;
+    }
+        
+    @Autowired
+	private EntryBuilderService entryBuilderService = null;
+    
+    @Test // TODO: this is the only real test in this file, mockito stuff is rather an utility and should be moved elsewhere, without the CoreUnitBaseTest extension
+	public void testGetFunctionInfoWithCanonicalFirst() {
+     	List<String> FunctionInfoWithCanonicalFirst;
+    	
+    		Entry testentry = entryBuilderService.build(EntryConfig.newConfig("NX_P46778").withEverything());
+    		FunctionInfoWithCanonicalFirst = EntryUtils.getFunctionInfoWithCanonicalFirst(testentry);
+    		assert(FunctionInfoWithCanonicalFirst.size() == 3);
+    		
+    		testentry = entryBuilderService.build(EntryConfig.newConfig("NX_P19367").withEverything());
+    		FunctionInfoWithCanonicalFirst = EntryUtils.getFunctionInfoWithCanonicalFirst(testentry);
+    		assert(FunctionInfoWithCanonicalFirst.get(0) == "cellular glucose homeostasis");
     }
 }

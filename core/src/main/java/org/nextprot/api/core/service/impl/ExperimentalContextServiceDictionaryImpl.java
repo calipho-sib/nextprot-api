@@ -29,15 +29,16 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 	@Cacheable("experimental-context-dictionary")
 	public Map<Long, ExperimentalContext> getAllExperimentalContexts() {
 		
-		long t0 = System.currentTimeMillis(); System.out.println("Building experimental context dictionary...");
+		//long t0 = System.currentTimeMillis(); System.out.println("Building experimental context dictionary...");
 
 		List<ExperimentalContext> ecs = ecDao.findAllExperimentalContexts();
 		updateTerminologies(ecs);
 
 		Map<Long,ExperimentalContext> dictionary = new TreeMap<>();
 		for (ExperimentalContext ec : ecs) dictionary.put(ec.getContextId(), ec);
+		ecs=null;
 		
-		System.out.println("Building experimental context dictionary DONE in " + (System.currentTimeMillis() - t0) + "ms");
+		//System.out.println("Building experimental context dictionary DONE in " + (System.currentTimeMillis() - t0) + "ms");
 		
 		return dictionary;
 	}
@@ -56,17 +57,17 @@ class ExperimentalContextDictionaryServiceImpl implements ExperimentalContextDic
 			terminologyAccessions.add(ec.getDiseaseAC());
 			terminologyAccessions.add(ec.getDevelopmentalStageAC());
 		}
-		
-		List<CvTerm> terms = terminologyService.findCvTermsByAccessions(terminologyAccessions);
-		Map<String, CvTerm> map = new HashMap<>();
-		for(CvTerm term : terms){
-			map.put(term.getAccession(), term);
+		if (terminologyAccessions.size()>0) {
+			List<CvTerm> terms = terminologyService.findCvTermsByAccessions(terminologyAccessions);
+			Map<String, CvTerm> map = new HashMap<>();
+			for(CvTerm term : terms){
+				map.put(term.getAccession(), term);
+			}
+	
+			for (ExperimentalContext ec : ecs) {
+				updateTerminologies(ec, map);
+			}
 		}
-
-		for (ExperimentalContext ec : ecs) {
-			updateTerminologies(ec, map);
-		}
-
 	}
 
 	private void updateTerminologies(ExperimentalContext ec, Map<String, CvTerm> map) {
