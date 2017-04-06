@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-
+import java.util.Comparator;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -21,8 +21,19 @@ import org.nextprot.api.core.utils.PublicationUtils;
 import org.nextprot.api.core.utils.XrefUtils;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 
-public class EntryUtils implements Serializable{
-	
+
+class CustomAnnotComp implements Comparator<Annotation>{	 
+    @Override    
+    public int compare(Annotation e1, Annotation e2) {
+    	int c; // GOLD over SILVER, then GO_BP over GO_MF, then Alphabetic in term name cf: jira NEXTPROT-1238
+    	c = e1.getQualityQualifier().compareTo(e2.getQualityQualifier());
+    	if (c == 0) c = e1.getCategory().compareTo(e2.getCategory());
+        if (c == 0) c=e1.getCvTermName().compareTo(e2.getCvTermName());
+        return c;
+    }
+}  
+
+public class EntryUtils implements Serializable{	
 	private static final long serialVersionUID = 3009334685615648172L;
 
 	
@@ -210,6 +221,25 @@ public class EntryUtils implements Serializable{
 		//System.err.println("before: " + fInfoCanonical);
 		fInfoCanonical.addAll(fInfoNonCanonical);
 		//System.err.println("after: " + fInfoCanonical);
+		if (fInfoCanonical.size()==0) {
+			Set<Annotation> goFuncSet = new TreeSet<>(new CustomAnnotComp());
+			List<Annotation> annots = entry.getAnnotations();
+			for (Annotation currannot : annots) {
+				String category = currannot.getCategory();
+				if(category.equals("go biological process") || category.equals("go molecular function")) {
+				  goFuncSet.add(currannot); }
+			}
+			int rescnt = 0;
+			for (Annotation resannot : goFuncSet) {
+				// Stick term's name in the returned list
+				if(resannot.getCvTermName().equals("protein binding") && goFuncSet.size() > 3) // avoid unsignificant function if possible
+					continue;
+				if(rescnt++ < 3) // return max 3 first annotation descriptions
+					fInfoCanonical.add(resannot.getCvTermName());
+				else break;
+			}
+		}
+
 		return fInfoCanonical;
 	 }
 	
