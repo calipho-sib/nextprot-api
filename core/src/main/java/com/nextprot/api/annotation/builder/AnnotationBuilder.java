@@ -348,6 +348,8 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 						bioObject.putPropertyNameValue("geneName", firstStatement.getValue(StatementField.BIOLOGICAL_OBJECT_NAME));
 						String proteinName = (String)mainNamesService.findIsoformOrEntryMainName().get(bioObjectAccession).getName();
 						bioObject.putPropertyNameValue("proteinName", proteinName);
+						bioObject.putPropertyNameValue("url", "https://www.nextprot.org/entry/" + bioObjectAccession + "/interactions");
+						
 					}else {
 						throw new NextProtException("Binary Interaction only expects to be a nextprot entry NX_ and found " + bioObjectAccession + " with type " + bot);
 					}
