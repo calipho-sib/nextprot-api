@@ -12,11 +12,10 @@ import org.nextprot.api.core.domain.Overview;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static org.nextprot.api.core.domain.EntryUtilsTest.mockEntry;
-import static org.nextprot.api.core.domain.EntryUtilsTest.mockIsoform;
 
 public class SequenceVariantTest {
 
@@ -231,11 +230,38 @@ public class SequenceVariantTest {
         return entry;
     }
 
-    /** Other problematic entries:
-     *
-     *  NX_Q9BX84-7 M6-kinase 3
-     *  NX_O95704-3 III
-     *  NX_P29590-12 PML-12
-     */
+    public static Entry mockEntry(String accession, Isoform... isoforms) {
 
+        Entry entry = Mockito.mock(Entry.class);
+
+        when(entry.getUniqueName()).thenReturn(accession);
+
+        if (isoforms.length > 0) {
+            when(entry.getIsoforms()).thenReturn(Arrays.asList(isoforms));
+        }
+
+        return entry;
+    }
+
+    public static Isoform mockIsoform(String accession, String name, boolean canonical) {
+
+        Isoform isoform = Mockito.mock(Isoform.class);
+        when(isoform.getUniqueName()).thenReturn(accession);
+        when(isoform.isCanonicalIsoform()).thenReturn(canonical);
+
+        EntityName entityName = Mockito.mock(EntityName.class);
+        when(entityName.getName()).thenReturn(name);
+
+        when(isoform.getMainEntityName()).thenReturn(entityName);
+
+        return isoform;
+    }
+
+    public static Isoform mockIsoform(String accession, String name, boolean canonical, String sequence) {
+
+        Isoform isoform = mockIsoform(accession, name, canonical);
+        when(isoform.getSequence()).thenReturn(sequence);
+
+        return isoform;
+    }
 }
