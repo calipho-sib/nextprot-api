@@ -9,6 +9,7 @@ import org.nextprot.api.core.utils.annot.merge.AnnotationMerger;
 import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -66,19 +67,21 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
         // wrap each annotation from second list in its own cluster
         List<AnnotationCluster> annotationClusters = AnnotationCluster.valueOfClusters(annotationList2);
 
-        for (Annotation annotation : annotationList1) {
+        //clusterAnnotations(annotationList2, annotationClusters);
+        clusterAnnotations(annotationList1, annotationClusters);
 
-            AnnotationCluster foundAnnotationCluster = null;
+        return annotationClusters;
+    }
 
-            SimilarityPredicate predicate = SimilarityPredicate.newSimilarityPredicate(annotation.getAPICategory());
+    private void clusterAnnotations(List<Annotation> annotations, List<AnnotationCluster> annotationClusters) {
 
-            if (predicate != null) {
-                foundAnnotationCluster = new AnnotationClusterFinder(predicate).find(annotation, annotationClusters);
-            }
+        for (Annotation annotation : annotations) {
 
-            if (foundAnnotationCluster != null) {
+            Optional<AnnotationCluster> foundAnnotationCluster = findAnnotationCluster(annotation, annotationClusters);
+
+            if (foundAnnotationCluster.isPresent()) {
                 try {
-                    foundAnnotationCluster.add(annotation);
+                    foundAnnotationCluster.get().add(annotation);
                 } catch (AnnotationCluster.InvalidAnnotationClusterCategoryException e) {
                     throw new NextProtException(e);
                 }
@@ -87,9 +90,15 @@ public class AnnotationListMapReduceMerger implements AnnotationListMerger {
                 annotationClusters.add(AnnotationCluster.valueOf(annotation));
             }
         }
-
-        return annotationClusters;
     }
+
+    private Optional<AnnotationCluster> findAnnotationCluster(Annotation srcAnnotation, List<AnnotationCluster> list) {
+
+        return SimilarityPredicate.newSimilarityPredicate(srcAnnotation.getAPICategory())
+                .flatMap(similarityPredicate -> new AnnotationClusterFinder(similarityPredicate)
+                        .find(srcAnnotation, list));
+    }
+
 
     private Annotation doMerge(AnnotationCluster cluster) {
 

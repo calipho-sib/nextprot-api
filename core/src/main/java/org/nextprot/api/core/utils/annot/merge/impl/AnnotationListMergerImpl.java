@@ -1,11 +1,13 @@
 package org.nextprot.api.core.utils.annot.merge.impl;
 
+import org.apache.log4j.Logger;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.utils.annot.merge.AnnotationListMerger;
 import org.nextprot.api.core.utils.annot.merge.AnnotationMerger;
 import org.nextprot.api.core.utils.annot.merge.SimilarityPredicate;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Merge source annotations into destination annotations (merge destination annotations if needed)
@@ -13,6 +15,8 @@ import java.util.List;
  * Created by fnikitin on 08/08/16.
  */
 public class AnnotationListMergerImpl implements AnnotationListMerger {
+
+    protected static final Logger LOGGER = Logger.getLogger(AnnotationListMergerImpl.class);
 
     @Override
     public List<Annotation> merge(List<Annotation> srcAnnotationList, List<Annotation> destAnnotationList) {
@@ -22,20 +26,25 @@ public class AnnotationListMergerImpl implements AnnotationListMerger {
 
         for (Annotation srcAnnotation : srcAnnotationList) {
 
-            AnnotationFinder finder = new AnnotationFinder(SimilarityPredicate.newSimilarityPredicate(srcAnnotation.getAPICategory()));
-
-            Annotation foundAnnotation = finder.find(srcAnnotation, destAnnotationList);
+            Optional<Annotation> foundAnnotation = findAnnotation(srcAnnotation, destAnnotationList);
 
             // not found -> add new annotation
-            if (foundAnnotation == null) {
+            if (!foundAnnotation.isPresent()) {
                 destAnnotationList.add(srcAnnotation);
             }
             // found -> merge annotation with statementAnnotation
             else {
-                updater.merge(foundAnnotation, srcAnnotation);
+                updater.merge(foundAnnotation.get(), srcAnnotation);
             }
         }
 
         return destAnnotationList;
+    }
+
+    private Optional<Annotation> findAnnotation(Annotation srcAnnotation, List<Annotation> list) {
+
+        return SimilarityPredicate.newSimilarityPredicate(srcAnnotation.getAPICategory())
+                    .flatMap(similarityPredicate -> new AnnotationFinder(similarityPredicate)
+                    .find(srcAnnotation, list));
     }
 }

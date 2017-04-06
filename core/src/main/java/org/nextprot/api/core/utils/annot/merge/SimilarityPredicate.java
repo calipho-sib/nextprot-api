@@ -8,6 +8,7 @@ import org.nextprot.api.core.utils.annot.merge.impl.SimilarityPredicateChain;
 import org.nextprot.api.core.utils.annot.merge.impl.VariantPositionMatcher;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * Defines the contract to evaluate similarity of 2 annotations
@@ -25,7 +26,7 @@ public interface SimilarityPredicate {
      * Static factory method that return a default predicate specific of the given category
      * @param category the annotation category to estimate similarity
      */
-    static SimilarityPredicate newSimilarityPredicate(AnnotationCategory category) {
+    static Optional<SimilarityPredicate> newSimilarityPredicate(AnnotationCategory category) {
 
         Preconditions.checkNotNull(category);
 
@@ -34,23 +35,23 @@ public interface SimilarityPredicate {
             case GO_CELLULAR_COMPONENT:
             case GO_MOLECULAR_FUNCTION:
                 // TODO: there is a 'is_negative' field to consider in the future
-                return new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode);
+                return Optional.of(new ObjectSimilarityPredicate<>(Annotation::getCvTermAccessionCode));
             case VARIANT:
             case MUTAGENESIS:
-                return new SimilarityPredicateChain(Arrays.asList(
+                return Optional.of(new SimilarityPredicateChain(Arrays.asList(
                         new ObjectSimilarityPredicate<>(Annotation::getVariant,
                                 (v1, v2) -> v1.getOriginal().equals(v2.getOriginal()) && v1.getVariant().equals(v2.getVariant())),
                         new ObjectSimilarityPredicate<>(Annotation::getTargetingIsoformsMap,
                                 new VariantPositionMatcher()
                         )
-                ));
+                )));
             case BINARY_INTERACTION:
             case SMALL_MOLECULE_INTERACTION:
-                return new ObjectSimilarityPredicate<>(Annotation::getBioObject,
-                        (bo1, bo2) -> bo1.getAccession().equals(bo2.getAccession()) && bo1.getDatabase().equalsIgnoreCase(bo2.getDatabase())
+                return Optional.of(new ObjectSimilarityPredicate<>(Annotation::getBioObject,
+                        (bo1, bo2) -> bo1.getAccession().equals(bo2.getAccession()) && bo1.getDatabase().equalsIgnoreCase(bo2.getDatabase()))
                 );
             default:
-                return null;
+                return Optional.empty();
         }
     }
 }
