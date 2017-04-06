@@ -171,8 +171,9 @@ public enum AnnotationCategory implements Serializable {
 	REDOX_POTENTIAL(-23, "redox potential", "redoxPotential", "redox potential", BIOPHYSICOCHEMICAL_PROPERTY),
 	TEMPERATURE_DEPENDENCE(-24, "temperature dependence", "temperatureDependence", "Temperature dependence", BIOPHYSICOCHEMICAL_PROPERTY),
 
-	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "Protein property", GENERAL_ANNOTATION), //to represent stable form
 	//New categories added with BioEditor integration
+	ELECTROPHYSIOLOGICAL_PARAMETER(-9993, "electrophysiological-parameter", "electrophysiologicalParameter", "Electrophysiological parameter", GENERAL_ANNOTATION),
+	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "Protein property", GENERAL_ANNOTATION), //to represent stable form
 	GENERIC_PHENOTYPE(-9999, "generic-phenotype", "genericPhenotype", "Generic phenotype", GENERAL_ANNOTATION),
 	PHENOTYPIC_VARIATION(-9990, "phenotypic-variation", "phenotypicVariation", "Phenotypic variation", GENERIC_PHENOTYPE),
 	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "Mammalian phenotype", GENERIC_PHENOTYPE),
