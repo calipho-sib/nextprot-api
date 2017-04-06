@@ -107,7 +107,7 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
                     op.getAminoAcidReplacementString(sequence, proteinVariation),
                     op.selectBeginPositionInReferenceSequence(proteinVariation.getVaryingSequence()),
                     op.selectEndPositionInReferenceSequence(proteinVariation.getVaryingSequence()),
-                    proteinVariation.getSequenceChange().getType().name()
+                    proteinVariation.getSequenceChange().getType().name().toLowerCase()
             );
         }
     }
@@ -258,7 +258,7 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
             variationDesc.put(VARIATION, variation);
             variationDesc.put(BEGIN_POS, beginIsoformPosition);
             variationDesc.put(END_POS, endIsoformPosition);
-            variationDesc.put(TYPE, type.toLowerCase());
+            variationDesc.put(TYPE, type);
         }
 
         public Map<String, Object> getVariation() {
