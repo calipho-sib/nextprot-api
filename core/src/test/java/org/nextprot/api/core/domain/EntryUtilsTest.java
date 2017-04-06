@@ -1,5 +1,6 @@
 package org.nextprot.api.core.domain;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.core.dao.EntityName;
@@ -8,6 +9,7 @@ import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
+
 import org.nextprot.api.core.domain.EntryUtils;
 
 import java.util.Arrays;
@@ -62,10 +64,10 @@ public class EntryUtilsTest extends CoreUnitBaseTest{
     	
     		Entry testentry = entryBuilderService.build(EntryConfig.newConfig("NX_P46778").withEverything());
     		FunctionInfoWithCanonicalFirst = EntryUtils.getFunctionInfoWithCanonicalFirst(testentry);
-    		assert(FunctionInfoWithCanonicalFirst.size() == 3);
+    		Assert.assertEquals(3, FunctionInfoWithCanonicalFirst.size());
     		
     		testentry = entryBuilderService.build(EntryConfig.newConfig("NX_P19367").withEverything());
     		FunctionInfoWithCanonicalFirst = EntryUtils.getFunctionInfoWithCanonicalFirst(testentry);
-    		assert(FunctionInfoWithCanonicalFirst.get(0) == "cellular glucose homeostasis");
+    		Assert.assertEquals("cellular glucose homeostasis",FunctionInfoWithCanonicalFirst.get(0));
     }
 }
