@@ -152,8 +152,8 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
 
         private final static String ORIGINAL = "original";
         private final static String VARIATION = "variant";
-        private final static String BEGIN_POS = "position-begin";
-        private final static String END_POS = "position-end";
+        private final static String BEGIN_POS = "startPosition";
+        private final static String END_POS = "endPosition";
         private final static String TYPE = "type";
 
         private String isoformAccession;
@@ -258,7 +258,7 @@ public class SingleFeatureQuerySuccessImpl extends BaseFeatureQueryResult<Single
             variationDesc.put(VARIATION, variation);
             variationDesc.put(BEGIN_POS, beginIsoformPosition);
             variationDesc.put(END_POS, endIsoformPosition);
-            variationDesc.put(TYPE, type);
+            variationDesc.put(TYPE, type.toLowerCase());
         }
 
         public Map<String, Object> getVariation() {
