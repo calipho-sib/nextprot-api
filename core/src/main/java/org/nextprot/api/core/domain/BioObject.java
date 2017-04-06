@@ -117,4 +117,8 @@ public class BioObject implements Serializable {
     public int size() {
         return 1;
     }
+    
+    public String toString() {
+    	return "BioObject id: " + id + " " + database +":" +  accession + " ty:"  + bioType + " rt:" + resourceType;
+    }
 }
