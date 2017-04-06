@@ -75,11 +75,13 @@ public class EntryController {
 			@RequestParam(value = "term-child-of", required = false) String ancestorTerm,
 			@RequestParam(value = "property-name", required = false) String propertyName,
 			@RequestParam(value = "property-value", required = false) String propertyValueOrAccession,
+			
 			HttpServletRequest request, Model model) {
 
     	boolean goldOnly = "true".equalsIgnoreCase(request.getParameter("goldOnly"));
+    	boolean bed = null==request.getParameter("bed") ? true: Boolean.valueOf(request.getParameter("bed"));
 
-		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withGoldOnly(goldOnly));
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withGoldOnly(goldOnly).withBed(bed));
 
 		if (ancestorTerm != null || propertyName != null) {
 			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValueOrAccession);

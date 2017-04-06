@@ -87,7 +87,13 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				entry.setIsoforms(this.isoformService.findIsoformsByEntryName(entryName));
 			}
 			if(entryConfig.hasGeneralAnnotations()){
-				entry.setAnnotations(this.annotationService.findAnnotations(entryName));
+				if (entryConfig.hasBed()) {
+					entry.setAnnotations(
+						this.annotationService.findAnnotations(entryName));
+				} else  {
+					entry.setAnnotations(
+						this.annotationService.findAnnotationsExcludingBed(entryName));
+				}
 			}
 
             //This will be deprecated in the future
@@ -104,6 +110,8 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 				//In case we did't set annotations but we need them to find experimental contexts
 				if(annotations == null) {
 					annotations = this.annotationService.findAnnotations(entryName);
+					
+					
 				}
 				Set<Long> ecIds = EntryUtils.getExperimentalContextIds(annotations);
 				entry.setExperimentalContexts(expCtxService.findExperimentalContextsByIds(ecIds));
@@ -144,7 +152,13 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	private void setEntryAdditionalInformation(Entry entry, EntryConfig config){
 
 		if(entry.getAnnotations() == null || entry.getAnnotations().isEmpty()){
-			entry.setAnnotations(this.annotationService.findAnnotations(entry.getUniqueName()));
+			if (config.hasBed()) {
+				entry.setAnnotations(
+					this.annotationService.findAnnotations(entry.getUniqueName()));
+			} else  {
+				entry.setAnnotations(
+					this.annotationService.findAnnotationsExcludingBed(entry.getUniqueName()));
+			}
 		}
 		
 		if(!config.hasNoAdditionalReferences()){
