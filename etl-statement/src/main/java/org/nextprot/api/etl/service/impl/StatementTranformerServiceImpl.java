@@ -23,12 +23,11 @@ import org.nextprot.api.isoform.mapper.utils.SequenceVariantUtils;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import org.nextprot.commons.statements.constants.AnnotationType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 
 @Service
 public class StatementTranformerServiceImpl implements StatementTransformerService {
@@ -86,11 +85,10 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
 		return remainingRawStatements.stream().map(statement -> {
 
-			Set<TargetIsoformStatementPosition> targetIsoformForNormalAnnotation = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement, isoformService);
-			String targetIsoformForNormalAnnotationString = TargetIsoformSerializer.serializeToJsonString(targetIsoformForNormalAnnotation);
+			TargetIsoformSet targetIsoformForNormalAnnotation = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement.getValue(StatementField.ENTRY_ACCESSION), isoformService);
 			
 			return StatementBuilder.createNew().addMap(statement)
-					.addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotationString)
+					.addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotation.serializeToJsonString())
 					.removeField(StatementField.STATEMENT_ID) 
 					.buildWithAnnotationHash(AnnotationType.ENTRY);
 			
@@ -159,20 +157,25 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 				
 				List<String> isoformNames = isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());
 				
-				Set<TargetIsoformStatementPosition> targetIsoformsForPhenotypeSet = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(originalStatement, isoformMappingService, subjects, isIsoSpecific, isoSpecificAccession, isoformNames);
-				targetIsoformsForPhenotype = TargetIsoformSerializer.serializeToJsonString(targetIsoformsForPhenotypeSet);
-				//The same as for phenotype but without the name
+				TargetIsoformSet targetIsoformsForPhenotypeSet = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(originalStatement, isoformMappingService, subjects, isIsoSpecific, isoSpecificAccession, isoformNames);
+				targetIsoformsForPhenotype = targetIsoformsForPhenotypeSet.serializeToJsonString();
+				
 				Set<TargetIsoformStatementPosition> targetIsoformsForObjectSet = new TreeSet<>();
-				for(TargetIsoformStatementPosition tisp : targetIsoformsForPhenotypeSet){
-					targetIsoformsForObjectSet.add(new TargetIsoformStatementPosition(tisp.getIsoformAccession(), tisp.getSpecificity(), null));
-				}
-				targetIsoformsForObject = TargetIsoformSerializer.serializeToJsonString(targetIsoformsForObjectSet);
 				
 				//Load objects
 				Statement phenotypeIsoStatement;
 				Statement objectIsoStatement = null;
 				Statement objectStatement = sourceStatementsById.get(originalStatement.getObjectStatementId());
-				
+
+				if(isIsoSpecific){//If it is iso specific
+					for(TargetIsoformStatementPosition tisp : targetIsoformsForPhenotypeSet){
+						targetIsoformsForObjectSet.add(new TargetIsoformStatementPosition(tisp.getIsoformAccession(), tisp.getSpecificity(), null));
+					}
+					targetIsoformsForObject = new TargetIsoformSet(targetIsoformsForObjectSet).serializeToJsonString();
+				}else {
+					targetIsoformsForObject = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(objectStatement.getValue(StatementField.ENTRY_ACCESSION), isoformService).serializeToJsonString();
+				}
+
 				if(objectStatement != null){
 					
 					objectStatement.processed();

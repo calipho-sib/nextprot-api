@@ -1,6 +1,11 @@
 package org.nextprot.api.etl.service.impl;
 
-import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -16,40 +21,35 @@ import org.nextprot.commons.constants.IsoTargetSpecificity;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
 import org.nextprot.commons.statements.constants.AnnotationType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 public class StatementTransformationUtil {
 
 	private static Logger LOGGER = Logger.getLogger(StatementTransformationUtil.class);
 
-	public static Set<TargetIsoformStatementPosition> computeTargetIsoformsForNormalAnnotation(Statement statement, IsoformService isoformService) {
+	public static TargetIsoformSet computeTargetIsoformsForNormalAnnotation(String entryAccession, IsoformService isoformService) {
 
-		List<String> isoformNames = getIsoformNamesForStatement(statement, isoformService);
+		List<String> isoformNames = getIsoformNamesForEntryAccession(entryAccession, isoformService);
 
 		// Currently we don't create normal annotations (not associated with vvariant) in the bioeditor
 		Set<TargetIsoformStatementPosition> targetIsoforms = new TreeSet<>();
 		for (String isoName : isoformNames) {
-			targetIsoforms.add(new TargetIsoformStatementPosition(isoName, IsoTargetSpecificity.BY_DEFAULT.name(), null));
+			targetIsoforms.add(new TargetIsoformStatementPosition(isoName, IsoTargetSpecificity.UNKNOWN.name(), null));
 		}
-		return targetIsoforms;
+		return new TargetIsoformSet(targetIsoforms);
 
 	}
 
-	private static List<String> getIsoformNamesForStatement(Statement statement, IsoformService isoformService) {
-		String entryAccession = statement.getValue(StatementField.ENTRY_ACCESSION);
+	private static List<String> getIsoformNamesForEntryAccession(String entryAccession, IsoformService isoformService) {
 		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
 		NPreconditions.checkNotEmpty(isoforms, "Isoforms should not be null for " + entryAccession);
 		return isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());
 	}
 
-	public static Set<TargetIsoformStatementPosition> computeTargetIsoformsForProteoformAnnotation(Statement proteoformStatement, IsoformMappingService isoformMappingService,
+	public static TargetIsoformSet computeTargetIsoformsForProteoformAnnotation(Statement proteoformStatement, IsoformMappingService isoformMappingService,
 			List<Statement> subjectsForThisProteoform, boolean isIsoSpecific, String isoSpecificAccession, List<String> isoformAccessions) {
 
 		List<String> isoformsToBeConsidered = new ArrayList<>();
@@ -68,7 +68,7 @@ public class StatementTransformationUtil {
 			boolean allOk = true;
 
 			for (Statement s : subjectsForThisProteoform) {
-				Set<TargetIsoformStatementPosition> targetIsoforms = TargetIsoformSerializer.deSerializeFromJsonString(s.getValue(StatementField.TARGET_ISOFORMS));
+				TargetIsoformSet targetIsoforms = TargetIsoformSet.deSerializeFromJsonString(s.getValue(StatementField.TARGET_ISOFORMS));
 				List<TargetIsoformStatementPosition> targetIsoformsFiltered = targetIsoforms.stream().filter(ti -> ti.getIsoformAccession().equals(isoformAccession)).collect(Collectors.toList());
 
 				if (targetIsoformsFiltered.isEmpty()) {
@@ -94,7 +94,7 @@ public class StatementTransformationUtil {
 				if (isIsoSpecific) {
 					result.add(new TargetIsoformStatementPosition(isoformAccession, IsoTargetSpecificity.SPECIFIC.name(), name));
 				} else {
-					result.add(new TargetIsoformStatementPosition(isoformAccession, IsoTargetSpecificity.BY_DEFAULT.name(), name));
+					result.add(new TargetIsoformStatementPosition(isoformAccession, IsoTargetSpecificity.UNKNOWN.name(), name));
 				}
 			}
 		}
@@ -103,7 +103,7 @@ public class StatementTransformationUtil {
 		// TargetIsoformUtils.getTargetIsoformForObjectSerialized(subject,
 		// isoformNames);
 
-		return result;
+		return new TargetIsoformSet(result);
 
 	}
 
@@ -148,13 +148,13 @@ public class StatementTransformationUtil {
 
 		String isoCanonical = null;
 
-		Set<TargetIsoformStatementPosition> targetIsoforms = new TreeSet<TargetIsoformStatementPosition>();
+		TargetIsoformSet targetIsoforms = new TargetIsoformSet();
 
 		for (IsoformFeatureResult isoformFeatureResult : result.getData().values()) {
 			if (isoformFeatureResult.isMapped()) {
 
 				targetIsoforms.add(new TargetIsoformStatementPosition(isoformFeatureResult.getIsoformAccession(), isoformFeatureResult.getBeginIsoformPosition(),
-						isoformFeatureResult.getEndIsoformPosition(), IsoTargetSpecificity.BY_DEFAULT.name(), // Target
+						isoformFeatureResult.getEndIsoformPosition(), IsoTargetSpecificity.UNKNOWN.name(), // Target
 																												// by
 																												// default
 																												// to
@@ -220,7 +220,7 @@ public class StatementTransformationUtil {
 																																								// statement
 				.addField(StatementField.LOCATION_BEGIN, beginPositionOfCanonicalOrIsoSpec).addField(StatementField.LOCATION_END, endPositionOfCanonicalOrIsoSpec)
 				.addField(StatementField.LOCATION_BEGIN_MASTER, masterBeginPosition).addField(StatementField.LOCATION_END_MASTER, masterEndPosition)
-				.addField(StatementField.ISOFORM_CANONICAL, isoCanonical).addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(targetIsoforms))
+				.addField(StatementField.ISOFORM_CANONICAL, isoCanonical).addField(StatementField.TARGET_ISOFORMS, targetIsoforms.serializeToJsonString())
 				.buildWithAnnotationHash(AnnotationType.ENTRY);
 
 		return rs;
