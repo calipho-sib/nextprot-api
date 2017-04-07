@@ -48,7 +48,7 @@ public class NamesFieldBuilder extends FieldBuilder {
 		    	if(nametype.equals("CD antigen"))  
 				  addField(Fields.CD_ANTIGEN, altname.getName());
 		    	else if(nametype.equals("International Nonproprietary Names"))  
-				  addField(Fields.CD_ANTIGEN, altname.getName());
+				  addField(Fields.INTERNATIONAL_NAME, altname.getName());
 			}
 		
 		altnames = ovv.getFunctionalRegionNames(); // The enzymatic activities of a multifunctional enzyme (maybe redundent with getEnzymes)
