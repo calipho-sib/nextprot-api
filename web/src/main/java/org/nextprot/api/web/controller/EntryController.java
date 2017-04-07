@@ -53,9 +53,12 @@ public class EntryController {
 			@RequestParam(value = "term-child-of", required = false) String ancestorTerm,
 			@RequestParam(value = "property-name", required = false) String propertyName,
 			@RequestParam(value = "property-value", required = false) String propertyValue,
+			HttpServletRequest request,
 			Model model) {
 		
-		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
+		boolean bed = null==request.getParameter("bed") ? true: Boolean.valueOf(request.getParameter("bed"));
+
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything().withBed(bed));
 
 		if (ancestorTerm != null || propertyName != null) {
 			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
