@@ -30,7 +30,7 @@ public class StatementETLController {
 	@ResponseBody
 	public String loadStatements(
 			@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("source") String source,
-			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2017-03-24" }) @PathVariable("release") String release,
+			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2017-03-30" }) @PathVariable("release") String release,
 			HttpServletRequest request) {
 
 		boolean load = true;
