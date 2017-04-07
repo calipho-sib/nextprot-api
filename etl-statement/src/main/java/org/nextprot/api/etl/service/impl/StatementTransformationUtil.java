@@ -2,7 +2,10 @@ package org.nextprot.api.etl.service.impl;
 
 import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 import org.apache.log4j.Logger;
+import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryFailure;
 import org.nextprot.api.isoform.mapper.domain.FeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.FeatureQuerySuccess;
@@ -25,6 +28,26 @@ import java.util.stream.Collectors;
 public class StatementTransformationUtil {
 
 	private static Logger LOGGER = Logger.getLogger(StatementTransformationUtil.class);
+
+	public static Set<TargetIsoformStatementPosition> computeTargetIsoformsForNormalAnnotation(Statement statement, IsoformService isoformService) {
+
+		List<String> isoformNames = getIsoformNamesForStatement(statement, isoformService);
+
+		// Currently we don't create normal annotations (not associated with vvariant) in the bioeditor
+		Set<TargetIsoformStatementPosition> targetIsoforms = new TreeSet<>();
+		for (String isoName : isoformNames) {
+			targetIsoforms.add(new TargetIsoformStatementPosition(isoName, IsoTargetSpecificity.BY_DEFAULT.name(), null));
+		}
+		return targetIsoforms;
+
+	}
+
+	private static List<String> getIsoformNamesForStatement(Statement statement, IsoformService isoformService) {
+		String entryAccession = statement.getValue(StatementField.ENTRY_ACCESSION);
+		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryAccession);
+		NPreconditions.checkNotEmpty(isoforms, "Isoforms should not be null for " + entryAccession);
+		return isoforms.stream().map(Isoform::getIsoformAccession).collect(Collectors.toList());
+	}
 
 	public static Set<TargetIsoformStatementPosition> computeTargetIsoformsForProteoformAnnotation(Statement proteoformStatement, IsoformMappingService isoformMappingService,
 			List<Statement> subjectsForThisProteoform, boolean isIsoSpecific, String isoSpecificAccession, List<String> isoformAccessions) {
@@ -52,25 +75,25 @@ public class StatementTransformationUtil {
 					LOGGER.debug("(skip) Could not map to isoform " + isoformAccession);
 					allOk = false;
 					break;
-				}else if (targetIsoformsFiltered.size() > 1) {
+				} else if (targetIsoformsFiltered.size() > 1) {
 					throw new NextProtException("Something got wrong. Found more than one target isoform for same accession" + isoformAccession);
 				}
-				
+
 				TargetIsoformStatementPosition tisp = targetIsoformsFiltered.iterator().next();
 
-				if(name == null){
+				if (name == null) {
 					name = tisp.getName();
-				}else {
-					name +=  (" + " + tisp.getName());
+				} else {
+					name += (" + " + tisp.getName());
 				}
-				
+
 			}
-			
-			if(name != null && allOk){
+
+			if (name != null && allOk) {
 
 				if (isIsoSpecific) {
 					result.add(new TargetIsoformStatementPosition(isoformAccession, IsoTargetSpecificity.SPECIFIC.name(), name));
-				}else {
+				} else {
 					result.add(new TargetIsoformStatementPosition(isoformAccession, IsoTargetSpecificity.BY_DEFAULT.name(), name));
 				}
 			}
@@ -81,7 +104,7 @@ public class StatementTransformationUtil {
 		// isoformNames);
 
 		return result;
-	
+
 	}
 
 	static List<Statement> getPropagatedStatementsForEntry(IsoformMappingService isoformMappingService, Set<Statement> multipleSubjects, String nextprotAccession) {
@@ -89,8 +112,6 @@ public class StatementTransformationUtil {
 		List<Statement> result = new ArrayList<>();
 
 		for (Statement subject : multipleSubjects) {
-
-			subject.setProcessed();
 
 			FeatureQueryResult featureQueryResult;
 			featureQueryResult = isoformMappingService.propagateFeature(new SingleFeatureQuery(subject.getValue(StatementField.ANNOTATION_NAME), "variant", nextprotAccession));
@@ -110,7 +131,6 @@ public class StatementTransformationUtil {
 		}
 
 	}
-
 
 	/**
 	 * @param variationStatement
@@ -200,8 +220,8 @@ public class StatementTransformationUtil {
 																																								// statement
 				.addField(StatementField.LOCATION_BEGIN, beginPositionOfCanonicalOrIsoSpec).addField(StatementField.LOCATION_END, endPositionOfCanonicalOrIsoSpec)
 				.addField(StatementField.LOCATION_BEGIN_MASTER, masterBeginPosition).addField(StatementField.LOCATION_END_MASTER, masterEndPosition)
-				.addField(StatementField.ISOFORM_CANONICAL, isoCanonical)
-				.addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(targetIsoforms)).buildWithAnnotationHash(AnnotationType.ENTRY);
+				.addField(StatementField.ISOFORM_CANONICAL, isoCanonical).addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(targetIsoforms))
+				.buildWithAnnotationHash(AnnotationType.ENTRY);
 
 		return rs;
 	}

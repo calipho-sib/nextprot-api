@@ -43,7 +43,7 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
 		Map<String, Statement> sourceStatementsById = rawStatements.stream().collect(Collectors.toMap(Statement::getStatementId, Function.identity()));
 
-		Set<Statement> statementsMappedToEntryToLoad = new HashSet<>();
+		Set<Statement> mappedStatementsToLoad = new HashSet<>();
 
 		for (Statement originalStatement : rawStatements) {
 
@@ -51,6 +51,9 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 
 				String[] subjectStatemendIds = originalStatement.getSubjectStatementIdsArray();
 				Set<Statement> subjectStatements = getSubjects(subjectStatemendIds, sourceStatementsById);
+
+				subjectStatements.forEach(s -> s.processed());
+				originalStatement.processed();
 
 				String entryAccession = subjectStatements.iterator().next().getValue(StatementField.ENTRY_ACCESSION);
 
@@ -66,22 +69,38 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 					}else throw new NextProtException("Something wrong occured when checking for iso specificity");
 				}
 				
-					statementsMappedToEntryToLoad.addAll(transformStatements(originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession, report));
-					
+					mappedStatementsToLoad.addAll(transformStatements(originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession, report));
 			}
-
 		}
-		
 
-		Set<Statement> remainingStatements = getRemainingStatements (rawStatements);
-		remainingStatements.forEach(s -> System.err.println("NOT PROCESSED" + s));
-			
-		return statementsMappedToEntryToLoad;
+		//Currently only includes cases where we have the reciprocal binary interactions 
+		Set<Statement> remainingRawStatements = getRemainingRawStatements (rawStatements);
+		Set<Statement> remainingMappedStatements = transformRemainingRawStatementsToMappedStatements (remainingRawStatements);
+		mappedStatementsToLoad.addAll(remainingMappedStatements);	
+		
+		return mappedStatementsToLoad;
 	
 	}
-	
-	private Set<Statement> getRemainingStatements (Set<Statement> rawStatements){
-		return rawStatements.stream().filter(s -> s.isProcessed()).collect(Collectors.toSet());
+
+	private Set<Statement> transformRemainingRawStatementsToMappedStatements (Set<Statement> remainingRawStatements){
+
+		return remainingRawStatements.stream().map(statement -> {
+
+			Set<TargetIsoformStatementPosition> targetIsoformForNormalAnnotation = StatementTransformationUtil.computeTargetIsoformsForNormalAnnotation(statement, isoformService);
+			String targetIsoformForNormalAnnotationString = TargetIsoformSerializer.serializeToJsonString(targetIsoformForNormalAnnotation);
+			
+			return StatementBuilder.createNew().addMap(statement)
+					.addField(StatementField.TARGET_ISOFORMS, targetIsoformForNormalAnnotationString)
+					.removeField(StatementField.STATEMENT_ID) 
+					.buildWithAnnotationHash(AnnotationType.ENTRY);
+			
+		}).collect(Collectors.toSet());
+
+	}
+
+
+	private Set<Statement> getRemainingRawStatements (Set<Statement> rawStatements){
+		return rawStatements.stream().filter(s -> !s.isProcessed()).collect(Collectors.toSet());
 	}
 	
 	private String getIsoAccession (String featureName, String entryAccession){
@@ -111,9 +130,11 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 		return variantsOnIsoform;
 	}
 	
+	
+	
+	
 	Set<Statement> transformStatements(Statement originalStatement, Map<String, Statement> sourceStatementsById, Set<Statement> subjectStatements, String nextprotAcession, boolean isIsoSpecific, String isoSpecificAccession, ReportBuilder report){
 		
-		originalStatement.setProcessed();
 		Set<Statement> statementsToLoad = new HashSet<>();
 
 		//In case of entry variants have the target isoform property filled
@@ -130,7 +151,6 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 				
 				String targetIsoformsForObject;
 				String targetIsoformsForPhenotype;
-				
 					
 				String entryAccession = subjects.get(0).getValue(StatementField.ENTRY_ACCESSION);
 
@@ -141,7 +161,6 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 				
 				Set<TargetIsoformStatementPosition> targetIsoformsForPhenotypeSet = StatementTransformationUtil.computeTargetIsoformsForProteoformAnnotation(originalStatement, isoformMappingService, subjects, isIsoSpecific, isoSpecificAccession, isoformNames);
 				targetIsoformsForPhenotype = TargetIsoformSerializer.serializeToJsonString(targetIsoformsForPhenotypeSet);
-
 				//The same as for phenotype but without the name
 				Set<TargetIsoformStatementPosition> targetIsoformsForObjectSet = new TreeSet<>();
 				for(TargetIsoformStatementPosition tisp : targetIsoformsForPhenotypeSet){
@@ -155,21 +174,21 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 				Statement objectStatement = sourceStatementsById.get(originalStatement.getObjectStatementId());
 				
 				if(objectStatement != null){
-
-					objectStatement.setProcessed();
+					
+					objectStatement.processed();
 					objectIsoStatement = StatementBuilder.createNew().addMap(objectStatement)
-							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject) // in case of entry
+							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForObject)
 							.buildWithAnnotationHash(AnnotationType.ENTRY);
 					
 					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
-							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
+							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype)
 							.addSubjects(subjects).addObject(objectIsoStatement)							
 							.removeField(StatementField.STATEMENT_ID) 
 							.removeField(StatementField.SUBJECT_STATEMENT_IDS) 
 							.removeField(StatementField.OBJECT_STATEMENT_IDS) 
 							.buildWithAnnotationHash(AnnotationType.ENTRY);
 
-				}else {
+				} else {
 					
 					phenotypeIsoStatement = StatementBuilder.createNew().addMap(originalStatement)
 							.addField(StatementField.TARGET_ISOFORMS, targetIsoformsForPhenotype) // in case of entry
