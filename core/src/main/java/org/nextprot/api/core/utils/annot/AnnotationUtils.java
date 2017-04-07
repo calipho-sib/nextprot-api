@@ -214,12 +214,10 @@ public class AnnotationUtils {
 		if(annotations == null) return null;
 		Set<Long> xrefIds = new HashSet<>();
 		for(Annotation a : annotations){
-			if (a.getAPICategory()== AnnotationCategory.BINARY_INTERACTION) {
-				for (AnnotationProperty p: a.getProperties()) {
-					if (p.getName().equals(PropertyApiModel.NAME_INTERACTANT) && p.getValueType().equals(PropertyApiModel.VALUE_TYPE_RIF)) {
-						xrefIds.add(Long.parseLong(p.getValue()));
-					}
-				}
+			BioObject bo = a.getBioObject();
+
+			if (bo.isInteractant()) {
+				xrefIds.add(bo.getId());
 			}
 		}
 		return xrefIds;
