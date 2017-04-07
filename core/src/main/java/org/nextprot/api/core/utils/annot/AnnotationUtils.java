@@ -216,7 +216,7 @@ public class AnnotationUtils {
 		for(Annotation a : annotations){
 			BioObject bo = a.getBioObject();
 
-			if (bo.isInteractant()) {
+			if (bo != null && bo.isInteractant()) {
 				xrefIds.add(bo.getId());
 			}
 		}
