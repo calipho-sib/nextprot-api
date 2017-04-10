@@ -87,7 +87,7 @@ public class StatementETLServiceUnitTest extends StatementETLBaseUnitTest {
 		    System.err.println(result.size());
 		    Assert.assertEquals(result.size(), 2); //Because SCN9A-iso1-p.Val991Leu can only be propagated on 1 and 3
 		    Assert.assertTrue(result.iterator().next().getName().equals("SCN9A-iso1-p.Met943Leu + SCN9A-iso1-p.Val1002Leu"));
-		    Assert.assertTrue(result.iterator().next().getSpecificity().equals(IsoTargetSpecificity.BY_DEFAULT.name()));
+		    Assert.assertTrue(result.iterator().next().getSpecificity().equals(IsoTargetSpecificity.UNKNOWN.name()));
 		}
 		
 	}
