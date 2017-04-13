@@ -1,4 +1,4 @@
-select g.chromosome chromosome, s.unique_name accession, g.band band, g.strand strand, 
+select g.chromosome chromosome, s.unique_name accession, g.band band, g.strand strand, m.is_master as best_location,
 g.first_pos_chr firstPosition, g.last_pos_chr lastPosition, s.display_name as displayName,
 (select string_agg(sy.synonym_name,' ') from nextprot.identifier_synonyms sy 
 where sy.identifier_id=master.identifier_id and sy.is_main is true and sy.cv_type_id=100) as masterGeneNames

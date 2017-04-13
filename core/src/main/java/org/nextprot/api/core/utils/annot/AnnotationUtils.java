@@ -412,6 +412,17 @@ public class AnnotationUtils {
 		return false;
 	}
 	
+
+	public static boolean isMiscRegionRelatedToInteractions(Annotation annot) {
+		
+		if (AnnotationCategory.MISCELLANEOUS_REGION != annot.getAPICategory()) return false;
+		if (annot.getDescription()==null) return false;
+		
+		String desc = annot.getDescription().toLowerCase();
+		return desc.contains("bind");
+	}
+	
+	
 	
 	/**
 	 * Pam, 22 march 2017

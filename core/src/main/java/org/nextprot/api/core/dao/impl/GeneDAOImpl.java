@@ -40,6 +40,7 @@ public class GeneDAOImpl implements GeneDAO {
 			chromosomalLocation.setAccession(resultSet.getString("accession"));
 			chromosomalLocation.setBand(resultSet.getString("band"));
 			chromosomalLocation.setStrand(resultSet.getInt("strand"));
+			chromosomalLocation.setBestGeneLocation(resultSet.getBoolean("best_location"));
 			chromosomalLocation.setFirstPosition(resultSet.getInt("firstPosition"));
 			chromosomalLocation.setLastPosition(resultSet.getInt("lastPosition"));
 			chromosomalLocation.setDisplayName(resultSet.getString("displayName"));

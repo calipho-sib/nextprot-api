@@ -37,7 +37,19 @@ public class ChromosomalLocation implements Serializable {
 	// names of the "gene name" synonyms of the master (sometimes displayed) separated with comma
 	// see CALIPHOMISC-154
 	private String masterGeneNames;
+
+	private boolean isBestGeneLocation;
 	
+	
+	
+	public boolean isBestGeneLocation() {
+		return isBestGeneLocation;
+	}
+
+	public void setBestGeneLocation(boolean isBestGeneLocation) {
+		this.isBestGeneLocation = isBestGeneLocation;
+	}
+
 	public void setDisplayName(String displayName) {
 		this.displayName=displayName;
 	}
