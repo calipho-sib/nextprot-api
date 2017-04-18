@@ -2,6 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.core.domain.ChromosomalLocation;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.ProteinExistenceLevel;
@@ -11,7 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class EntryReportServiceImpl implements EntryReportService {
@@ -103,9 +108,39 @@ public class EntryReportServiceImpl implements EntryReportService {
 
     private List<EntryReport> mapByChromosomalLocationCollectToList(Entry entry, EntryReport report) {
 
-        return entry.getChromosomalLocations().stream()
-                .map(report::copyThenSetChromosomalLocation)
+        Map<String, Optional<ChromosomalLocation>> chromosomalLocationsGroupedByGeneName =
+                entry.getChromosomalLocations().stream()
+                        .collect(
+                                Collectors.groupingBy(ChromosomalLocation::getRecommendedName, // group by gene name
+                                Collectors.reducing(new BestChromosomeLocationOperator()))     // keep the best location for this gene
+                        );
+
+        return chromosomalLocationsGroupedByGeneName.values().stream()
+                .map(opt -> report.copyThenSetChromosomalLocation(opt.get()))
                 .collect(Collectors.toList());
 
+    }
+
+    private static class BestChromosomeLocationOperator implements BinaryOperator<ChromosomalLocation> {
+
+        @Override
+        public ChromosomalLocation apply(ChromosomalLocation chromosomalLocation, ChromosomalLocation chromosomalLocation2) {
+
+            if (chromosomalLocation.isBestGeneLocation())
+                return chromosomalLocation;
+
+            return chromosomalLocation2;
+        }
+    }
+
+    /**
+     * Turns an Optional<T> into a Stream<T> of length zero or one depending upon
+     * whether a value is present.
+     */
+    static <T> Stream<T> streamOpt(Optional<T> opt) {
+        if (opt.isPresent())
+            return Stream.of(opt.get());
+        else
+            return Stream.empty();
     }
 }
