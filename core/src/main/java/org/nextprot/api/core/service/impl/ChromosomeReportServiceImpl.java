@@ -5,6 +5,7 @@ import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.service.ChromosomeReportService;
 import org.nextprot.api.core.service.EntryReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -20,6 +21,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Autowired
 	private EntryReportService entryReportService;
 
+	@Cacheable("chromosome-reports")
 	@Override
 	public List<EntryReport> exportChromosomeEntryReport(String chromosome) {
 

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 @Controller
-@Api(name = "Entries by chromosome", description = "Reports statistics about entries on chromosome")
+@Api(name = "Chromosome reports", description = "Reports statistics about entries on chromosome")
 public class ChromosomeReportController {
 
 	@Autowired
