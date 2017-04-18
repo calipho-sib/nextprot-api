@@ -57,7 +57,7 @@ public class EntryReport implements Serializable {
 	private Map<String, Boolean> propertyTests = new HashMap<>(4);
 	private Map<String, Integer> propertyCounts = new HashMap<>(4);
 
-	public EntryReport copyThenSetChromosomalLocation(ChromosomalLocation chromosomalLocation) {
+	public EntryReport duplicateThenSetChromosomalLocation(ChromosomalLocation chromosomalLocation) {
 
 		EntryReport copy = new EntryReport();
 

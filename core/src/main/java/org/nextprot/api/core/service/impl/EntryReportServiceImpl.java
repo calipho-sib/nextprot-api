@@ -11,12 +11,11 @@ import org.nextprot.api.core.service.EntryReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class EntryReportServiceImpl implements EntryReportService {
@@ -42,7 +41,7 @@ public class EntryReportServiceImpl implements EntryReportService {
         setVariantCount(entry, report);
         setPTMCount(entry, report);
 
-        return mapByChromosomalLocationCollectToList(entry, report);
+        return duplicateReportForEachGene(entry, report);
     }
 
     private void setEntryDescription(Entry entry, EntryReport report) {
@@ -106,19 +105,33 @@ public class EntryReportServiceImpl implements EntryReportService {
                 .count());
     }
 
-    private List<EntryReport> mapByChromosomalLocationCollectToList(Entry entry, EntryReport report) {
+    private List<EntryReport> duplicateReportForEachGene(Entry entry, EntryReport report) {
 
-        Map<String, Optional<ChromosomalLocation>> chromosomalLocationsGroupedByGeneName =
-                entry.getChromosomalLocations().stream()
-                        .collect(
-                                Collectors.groupingBy(ChromosomalLocation::getRecommendedName, // group by gene name
-                                Collectors.reducing(new BestChromosomeLocationOperator()))     // keep the best location for this gene
-                        );
+        List<ChromosomalLocation> chromosomalLocations = entry.getChromosomalLocations();
 
-        return chromosomalLocationsGroupedByGeneName.values().stream()
-                .map(opt -> report.copyThenSetChromosomalLocation(opt.get()))
+        if (chromosomalLocations.isEmpty()) {
+            throw new NextProtException("Cannot make report for entry "  + report.getAccession() + ": no chromosome location found");
+        }
+        else if (chromosomalLocations.size() == 1) {
+            report.setChromosomalLocation(chromosomalLocations.get(0));
+            return Collections.singletonList(report);
+        }
+
+        return duplicateReportForEachGene(chromosomalLocations, report);
+    }
+
+    private List<EntryReport> duplicateReportForEachGene(List<ChromosomalLocation> chromosomalLocations, EntryReport report) {
+
+        return chromosomalLocations.stream()
+                .collect(
+                        Collectors.groupingBy(ChromosomalLocation::getRecommendedName, // group by gene name
+                        Collectors.reducing(new BestChromosomeLocationOperator()))     // keep the best location for this gene
+                )
+                .values().stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(report::duplicateThenSetChromosomalLocation)
                 .collect(Collectors.toList());
-
     }
 
     private static class BestChromosomeLocationOperator implements BinaryOperator<ChromosomalLocation> {
@@ -131,16 +144,5 @@ public class EntryReportServiceImpl implements EntryReportService {
 
             return chromosomalLocation2;
         }
-    }
-
-    /**
-     * Turns an Optional<T> into a Stream<T> of length zero or one depending upon
-     * whether a value is present.
-     */
-    static <T> Stream<T> streamOpt(Optional<T> opt) {
-        if (opt.isPresent())
-            return Stream.of(opt.get());
-        else
-            return Stream.empty();
     }
 }
