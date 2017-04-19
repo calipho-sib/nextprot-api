@@ -1,6 +1,7 @@
 package org.nextprot.api.core.service.export.format;
 
 import org.nextprot.api.commons.exception.NextProtException;
+import org.springframework.http.MediaType;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -9,10 +10,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public enum FileFormat {
 
-	TXT("txt", "text/plain"),
+	TXT("txt", MediaType.TEXT_PLAIN_VALUE),
 	XLS("xls", "application/vnd.ms-excel"),
-	XML("xml", "application/xml"),
-	JSON("json", "application/json"),
+	XML("xml", MediaType.APPLICATION_XML_VALUE),
+	JSON("json", MediaType.APPLICATION_JSON_VALUE),
 	TURTLE("ttl", "text/turtle"),
 	TSV("tsv", "text/tab-separated-values"), // https://en.wikipedia.org/wiki/Tab-separated_values
 	FASTA("fasta", "text/fasta"),
