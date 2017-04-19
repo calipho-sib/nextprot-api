@@ -34,7 +34,7 @@ public class EntryReportServiceImpl implements EntryReportService {
         setEntryDescription(entry, report);
         setProteinExistence(entry, report);
         setIsProteomics(entry, report); // TODO: PAM should implement this
-        setIsAntibody(entry, report);   // TODO: PAM should implement this
+        setIsAntibody(entry, report);   // DONE: PAM should implement this
         setIs3D(entry, report);         // TODO: PAM should implement this
         setIsDisease(entry, report);    // TODO: PAM should implement this
         setIsoformCount(entry, report);
@@ -56,7 +56,8 @@ public class EntryReportServiceImpl implements EntryReportService {
 
     private void setIsAntibody(Entry entry, EntryReport report) {
 
-        report.setPropertyTest(EntryReport.IS_ANTIBODY, false);
+        report.setPropertyTest(EntryReport.IS_ANTIBODY, 
+        		entry.getAnnotations().stream().anyMatch(a -> a.getAPICategory()==AnnotationCategory.ANTIBODY_MAPPING));
     }
 
     private void setIs3D(Entry entry, EntryReport report) {
