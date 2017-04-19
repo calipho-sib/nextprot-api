@@ -1,14 +1,16 @@
 package org.nextprot.api.core.service;
 
-import org.nextprot.api.core.domain.EntryReport;
+import org.nextprot.api.core.service.export.format.FileFormat;
 
-import java.util.List;
+import javax.servlet.http.HttpServletResponse;
 
 public interface ChromosomeReportService {
 
 	/**
-	 * Get the list of gene/neXtProt entries informations found on the given chromosome
+	 * Export the list of gene/neXtProt entries informations found on the given chromosome
 	 * @param chromosome the chromosome to get report
+	 * @param fileFormat the export file format
+	 * @param response the http response
 	 */
-	List<EntryReport> exportChromosomeEntryReport(String chromosome);
+	void exportChromosomeEntryReport(String chromosome, FileFormat fileFormat, HttpServletResponse response);
 }
