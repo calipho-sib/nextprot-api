@@ -8,22 +8,28 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * A MIME file format http://www.freeformatter.com/mime-types-list.html
  */
-public enum FileFormat {
+public enum NextprotMediaType {
 
 	TXT("txt", MediaType.TEXT_PLAIN_VALUE),
-	XLS("xls", "application/vnd.ms-excel"),
+	XLS("xls", NextprotMediaType.XLS_MEDIATYPE_VALUE),
 	XML("xml", MediaType.APPLICATION_XML_VALUE),
 	JSON("json", MediaType.APPLICATION_JSON_VALUE),
-	TURTLE("ttl", "text/turtle"),
-	TSV("tsv", "text/tab-separated-values"), // https://en.wikipedia.org/wiki/Tab-separated_values
-	FASTA("fasta", "text/fasta"),
-	PEFF("peff", "text/peff")
+	TURTLE("ttl", NextprotMediaType.TURTLE_MEDIATYPE_VALUE),
+	TSV("tsv", NextprotMediaType.TSV_MEDIATYPE_VALUE), // https://en.wikipedia.org/wiki/Tab-separated_values
+	FASTA("fasta", NextprotMediaType.FASTA_MEDIATYPE_VALUE),
+	PEFF("peff", NextprotMediaType.PEFF_MEDIATYPE_VALUE)
 	;
+
+	public final static String TSV_MEDIATYPE_VALUE = "text/tab-separated-values";
+	public final static String TURTLE_MEDIATYPE_VALUE = "text/turtle";
+	public final static String FASTA_MEDIATYPE_VALUE = "text/fasta";
+	public final static String PEFF_MEDIATYPE_VALUE = "text/peff";
+	public final static String XLS_MEDIATYPE_VALUE = "application/vnd.ms-excel";
 
 	private String extension;
 	private String contentType;
 
-	FileFormat(String extension, String contentType) {
+	NextprotMediaType(String extension, String contentType) {
 		this.extension = extension;
 		this.contentType = contentType;
 	}
@@ -36,25 +42,25 @@ public enum FileFormat {
 		return contentType;
 	}
 
-    public static FileFormat valueOf(HttpServletRequest request) {
+    public static NextprotMediaType valueOf(HttpServletRequest request) {
 
         String uri = request.getRequestURI();
         if (uri.toLowerCase().endsWith(".ttl")) {
-            return FileFormat.TURTLE;
+            return NextprotMediaType.TURTLE;
         } else if (uri.toLowerCase().endsWith(".xml")) {
-            return FileFormat.XML;
+            return NextprotMediaType.XML;
         } else if (uri.toLowerCase().endsWith(".json")) {
-            return FileFormat.JSON;
+            return NextprotMediaType.JSON;
         } else if (uri.toLowerCase().endsWith(".txt")) {
-            return FileFormat.TXT;
+            return NextprotMediaType.TXT;
 		} else if (uri.toLowerCase().endsWith(".xls")) {
-			return FileFormat.XLS;
+			return NextprotMediaType.XLS;
 		} else if (uri.toLowerCase().endsWith(".fasta")) {
-			return FileFormat.FASTA;
+			return NextprotMediaType.FASTA;
         } else if (uri.toLowerCase().endsWith(".peff")) {
-			return FileFormat.PEFF;
+			return NextprotMediaType.PEFF;
 		} else if (uri.toLowerCase().endsWith(".tsv")) {
-			return FileFormat.TSV;
+			return NextprotMediaType.TSV;
 		} else {
 			throw new NextProtException(uri + ": format not recognized");
 		}
