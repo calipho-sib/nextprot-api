@@ -881,6 +881,8 @@
                         suffix = "";
                     if (headers["Accept"] == "text/fasta")
                         suffix = ".fasta";
+                    if (headers["Accept"] == "text/tab-separated-values")
+                        suffix = ".tsv";
                     if (headers["Accept"] == "application/vnd.ms-excel")
                         suffix = ".xls";
                     //if (headers["Accept"] == "text/peff")

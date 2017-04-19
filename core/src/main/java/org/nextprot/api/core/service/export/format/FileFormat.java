@@ -5,7 +5,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * A file format
+ * A MIME file format http://www.freeformatter.com/mime-types-list.html
  */
 public enum FileFormat {
 
@@ -14,7 +14,7 @@ public enum FileFormat {
 	XML("xml", "application/xml"),
 	JSON("json", "application/json"),
 	TURTLE("ttl", "text/turtle"),
-	TSV("tsv", "text/tab-separated-values"),
+	TSV("tsv", "text/tab-separated-values"), // https://en.wikipedia.org/wiki/Tab-separated_values
 	FASTA("fasta", "text/fasta"),
 	PEFF("peff", "text/peff")
 	;
@@ -52,7 +52,10 @@ public enum FileFormat {
 			return FileFormat.FASTA;
         } else if (uri.toLowerCase().endsWith(".peff")) {
 			return FileFormat.PEFF;
-		} else
-            throw new NextProtException(uri+": format not recognized");
+		} else if (uri.toLowerCase().endsWith(".tsv")) {
+			return FileFormat.TSV;
+		} else {
+			throw new NextProtException(uri + ": format not recognized");
+		}
     }
 }
