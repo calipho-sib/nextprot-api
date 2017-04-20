@@ -45,24 +45,28 @@ public enum NextprotMediaType {
     public static NextprotMediaType valueOf(HttpServletRequest request) {
 
         String uri = request.getRequestURI();
-        if (uri.toLowerCase().endsWith(".ttl")) {
-            return NextprotMediaType.TURTLE;
-        } else if (uri.toLowerCase().endsWith(".xml")) {
-            return NextprotMediaType.XML;
-        } else if (uri.toLowerCase().endsWith(".json")) {
-            return NextprotMediaType.JSON;
-        } else if (uri.toLowerCase().endsWith(".txt")) {
-            return NextprotMediaType.TXT;
-		} else if (uri.toLowerCase().endsWith(".xls")) {
-			return NextprotMediaType.XLS;
-		} else if (uri.toLowerCase().endsWith(".fasta")) {
-			return NextprotMediaType.FASTA;
-        } else if (uri.toLowerCase().endsWith(".peff")) {
-			return NextprotMediaType.PEFF;
-		} else if (uri.toLowerCase().endsWith(".tsv")) {
-			return NextprotMediaType.TSV;
-		} else {
-			throw new NextProtException(uri + ": format not recognized");
+
+        if (uri.contains(".")) {
+			if (uri.toLowerCase().endsWith(".ttl")) {
+				return NextprotMediaType.TURTLE;
+			} else if (uri.toLowerCase().endsWith(".xml")) {
+				return NextprotMediaType.XML;
+			} else if (uri.toLowerCase().endsWith(".json")) {
+				return NextprotMediaType.JSON;
+			} else if (uri.toLowerCase().endsWith(".txt")) {
+				return NextprotMediaType.TXT;
+			} else if (uri.toLowerCase().endsWith(".xls")) {
+				return NextprotMediaType.XLS;
+			} else if (uri.toLowerCase().endsWith(".fasta")) {
+				return NextprotMediaType.FASTA;
+			} else if (uri.toLowerCase().endsWith(".peff")) {
+				return NextprotMediaType.PEFF;
+			} else if (uri.toLowerCase().endsWith(".tsv")) {
+				return NextprotMediaType.TSV;
+			} else {
+				throw new NextProtException(uri + ": format not recognized");
+			}
 		}
+		return NextprotMediaType.TXT;
     }
 }

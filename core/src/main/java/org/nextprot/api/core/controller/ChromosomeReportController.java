@@ -4,8 +4,9 @@ import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
+import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.service.ChromosomeReportService;
-import org.nextprot.api.core.service.export.format.FileFormat;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -24,14 +25,35 @@ public class ChromosomeReportController {
 	@Autowired
 	private ChromosomeReportService chromosomeReportService;
 
-	@ApiMethod(path = "/export/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries coming from genes located on a given chromosome",
-			produces = { MediaType.APPLICATION_JSON_VALUE, "text/tab-separated-values" } )
-	@RequestMapping(value = "/export/chromosome/{chromosome}", method = {RequestMethod.GET})
+	@ApiMethod(path = "/chromosome-report/{chromosome}", verb = ApiVerb.GET, description = "Report informations of neXtProt entries coming from genes located on a given chromosome",
+			produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/chromosome-report/{chromosome}", method = {RequestMethod.GET})
+	@ResponseBody
+	public ChromosomeReport reportChromosome(
+			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+			@PathVariable("chromosome")  String chromosome) {
+
+		return chromosomeReportService.reportChromosome(chromosome);
+	}
+
+	@ApiMethod(path = "/chromosome-report/{chromosome}/summary", verb = ApiVerb.GET, description = "Export summary of neXtProt entries coming from genes located on a given chromosome",
+			produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/chromosome-report/{chromosome}/summary", method = {RequestMethod.GET})
+	@ResponseBody
+	public ChromosomeReport.Summary reportChromosomeSummary(
+			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+			@PathVariable("chromosome")  String chromosome) {
+
+		return chromosomeReportService.reportChromosome(chromosome).getSummary();
+	}
+
+	@ApiMethod(path = "/chromosome-report/{chromosome}/export", verb = ApiVerb.GET, description = "Export informations of neXtProt entries coming from genes located on a given chromosome",
+			produces = { MediaType.TEXT_PLAIN_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE } )
+	@RequestMapping(value = "/chromosome-report/{chromosome}/export", method = {RequestMethod.GET})
 	@ResponseBody
 	public void exportChromosomeEntries(
 			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
 			@PathVariable("chromosome")  String chromosome, HttpServletRequest request, HttpServletResponse response) {
 
-		chromosomeReportService.exportChromosomeEntryReport(chromosome, FileFormat.valueOf(request), response);
-	}
-}
+		chromosomeReportService.exportChromosomeEntryReport(chromosome, NextprotMediaType.valueOf(request), response);
+	}}

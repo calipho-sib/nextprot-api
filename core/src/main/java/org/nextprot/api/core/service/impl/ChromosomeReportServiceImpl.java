@@ -2,13 +2,14 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.service.ChromosomeReportService;
 import org.nextprot.api.core.service.EntryReportService;
-import org.nextprot.api.core.service.export.writer.EntryReportJSONWriter;
-import org.nextprot.api.core.service.export.writer.EntryReportTSVWriter;
-import org.nextprot.api.core.service.export.EntryReportWriter;
-import org.nextprot.api.core.service.export.format.FileFormat;
+import org.nextprot.api.core.service.export.ChromosomeReportWriter;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
+import org.nextprot.api.core.service.export.writer.ChromosomeReportTXTWriter;
+import org.nextprot.api.core.service.export.writer.ChromosomeReportTSVWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -31,37 +32,62 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 	@Cacheable("chromosome-reports")
 	@Override
-	public void exportChromosomeEntryReport(String chromosome, FileFormat fileFormat, HttpServletResponse response) {
+	public ChromosomeReport reportChromosome(String chromosome) {
 
-		try (OutputStream os = response.getOutputStream()) {
-			EntryReportWriter writer;
+		ChromosomeReport report = new ChromosomeReport();
 
-			String filename = "chromosome" + chromosome + "." + fileFormat.getExtension();
-			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-
-			if (fileFormat == FileFormat.TSV) {
-				writer = new EntryReportTSVWriter(os);
-			}
-			else if (fileFormat == FileFormat.JSON) {
-				writer = new EntryReportJSONWriter(os);
-			}
-			else {
-				throw new NextProtException(fileFormat+ ": unknown format");
-			}
-
-			writer.write(exportChromosomeEntryReport(chromosome));
-		} catch (IOException e) {
-			throw new NextProtException("cannot export chromosome "+chromosome+" in "+fileFormat);
-		}
-	}
-
-	private List<EntryReport> exportChromosomeEntryReport(String chromosome) {
-
-		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
+		List<EntryReport> entryReports = masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
 				.map(entryAccession -> entryReportService.reportEntry(entryAccession))
 				.flatMap(Collection::stream)
 				.filter(er -> er.getChromosome().equals(chromosome))
 				.sorted((er1, er2) -> new EntryReport.ByGenePosComparator().compare(er1, er2))
 				.collect(Collectors.toList());
+
+		report.setEntryReports(entryReports);
+		report.setSummary(newSummary(chromosome, entryReports));
+
+		return report;
+	}
+
+	@Override
+	public void exportChromosomeEntryReport(String chromosome, NextprotMediaType nextprotMediaType, HttpServletResponse response) {
+
+		try (OutputStream os = response.getOutputStream()) {
+			ChromosomeReportWriter writer;
+
+			String filename = "chromosome" + chromosome + "." + nextprotMediaType.getExtension();
+			response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+
+			if (nextprotMediaType == NextprotMediaType.TSV) {
+				writer = new ChromosomeReportTSVWriter(os);
+			}
+			else if (nextprotMediaType == NextprotMediaType.TXT) {
+				writer = new ChromosomeReportTXTWriter(os);
+			}
+			else {
+				throw new NextProtException("cannot export chromosome "+chromosome+": " + "unsupported "+nextprotMediaType+" format");
+			}
+
+			writer.write(reportChromosome(chromosome));
+		} catch (IOException e) {
+			throw new NextProtException("cannot export chromosome "+chromosome+" as "+ nextprotMediaType);
+		}
+	}
+
+	private ChromosomeReport.Summary newSummary(String chromosome, List<EntryReport> entryReports) {
+
+		ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
+
+		summary.setChromosome(chromosome);
+		summary.setEntryCount((int) entryReports.stream()
+				.map(EntryReport::getAccession)
+				.distinct()
+				.count());
+		summary.setGeneCount((int) entryReports.stream()
+				.map(EntryReport::getGeneName)
+				.distinct()
+				.count());
+
+		return summary;
 	}
 }
