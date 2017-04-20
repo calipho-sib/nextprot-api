@@ -13,7 +13,7 @@ import java.util.List;
 })
 public class ChromosomeReport implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private Summary summary;
 	private List<EntryReport> entryReports;
@@ -42,6 +42,8 @@ public class ChromosomeReport implements Serializable {
 			"geneCount"
 	})
 	public static class Summary implements Serializable {
+
+		private static final long serialVersionUID = 1L;
 
 		private String chromosome;
 		private String dataRelease;

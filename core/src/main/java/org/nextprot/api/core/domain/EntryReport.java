@@ -32,7 +32,7 @@ import static org.nextprot.api.core.domain.EntryReport.*;
 })
 public class EntryReport implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	public static final String GENE_NAME = "geneName";
 	public static final String CHROMOSOMAL_LOCATION = "chromosomalLocation";
