@@ -2,7 +2,6 @@ package org.nextprot.api.core.service.export.writer;
 
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.service.export.ChromosomeReportWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -17,7 +16,7 @@ import static org.nextprot.api.core.service.export.writer.ChromosomeReportTSVWri
  *
  * Created by fnikitin on 19.04.17.
  */
-public class ChromosomeReportTXTWriter extends ChromosomeReportWriter {
+public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
     private final PrintWriter writer;
 

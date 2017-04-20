@@ -8,8 +8,8 @@ import org.nextprot.api.core.service.ChromosomeReportService;
 import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.export.ChromosomeReportWriter;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
-import org.nextprot.api.core.service.export.writer.ChromosomeReportTXTWriter;
 import org.nextprot.api.core.service.export.writer.ChromosomeReportTSVWriter;
+import org.nextprot.api.core.service.export.writer.ChromosomeReportTXTWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -70,7 +70,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 			writer.write(reportChromosome(chromosome));
 		} catch (IOException e) {
-			throw new NextProtException("cannot export chromosome "+chromosome+" as "+ nextprotMediaType);
+			throw new NextProtException(e.getMessage()+": cannot export chromosome "+chromosome+" as "+ nextprotMediaType);
 		}
 	}
 
