@@ -2,8 +2,11 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
+    Date:		2017/04/18
+    New annotation category added: cofactor-info
+
     Date:		2017/02/21
-    1) New annotation category added: transport-activity
+    New annotation category added: transport-activity
 
 	Date:		2016/08/30
 	Description: Major version change: 
@@ -915,6 +918,7 @@
 						<xs:enumeration value="caution"/>
 						<xs:enumeration value="cleavage-site"/>
 						<xs:enumeration value="cofactor"/>
+                        <xs:enumeration value="cofactor-info"/>
 						<xs:enumeration value="coiled-coil-region"/>
 						<xs:enumeration value="compositionally-biased-region"/>
 						<xs:enumeration value="cross-link"/>

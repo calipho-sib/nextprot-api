@@ -74,7 +74,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	}
 
 	/**
-	 * pam: just for test AnnotationServiceTest to work, could not find any better quick fix
+	 * pam: useful for test AnnotationServiceTest to work and for other tests
 	 */
 	@Override
 	public List<Annotation> findAnnotationsExcludingBed(String entryName) {
@@ -155,8 +155,9 @@ public class AnnotationServiceImpl implements AnnotationService {
 		updateIsoformsDisplayedAsSpecific(annotations, entryName);
 		updateVariantsRelatedToDisease(annotations);
 		updateSubcellularLocationTermNameWithAncestors(annotations);
+		updateMiscRegionsRelatedToInteractions(annotations);
 		
-		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
+		//returns a immutable list when the result is cache-able (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 	}
 
@@ -212,6 +213,24 @@ public class AnnotationServiceImpl implements AnnotationService {
 		//System.out.println("updateVariantsRelatedToDisease DONE in " + (System.currentTimeMillis() - t0) + "ms");
 
 	}
+	
+	
+	private void updateMiscRegionsRelatedToInteractions(List<Annotation> annotations) {
+
+		// add property if annotation is a misc region and it is related to interaction
+		for (Annotation annot: annotations) {
+			if (AnnotationCategory.MISCELLANEOUS_REGION == annot.getAPICategory()) {
+				boolean result = AnnotationUtils.isMiscRegionRelatedToInteractions(annot);
+				AnnotationProperty prop = new AnnotationProperty();
+				prop.setAnnotationId(annot.getAnnotationId());
+				prop.setName("interaction-related");
+				prop.setValue(String.valueOf(result));
+				annot.addProperty(prop);
+			}
+		}
+
+	}
+	
 	
 	
 	private void updateIsoformsDisplayedAsSpecific(List<Annotation> annotations, String entryName) {

@@ -94,7 +94,7 @@ public class AnnotationUpdater extends AnnotationBaseMerger {
             }
             else if (!srcKeyValue.getValue().equals(destBioObject.getPropertyValue(srcKeyValue.getKey()))) {
                 throw new NextProtException("unexpected value "+destBioObject.getPropertyValue(srcKeyValue.getKey())
-                        + "for property "+srcKeyValue.getKey() +" (expected: "+srcKeyValue.getValue()+")");
+                        + " for property "+srcKeyValue.getKey() +" (expected: "+srcKeyValue.getValue()+")");
             }
         }
     }
