@@ -43,6 +43,7 @@ public class ChromosomeReport implements Serializable {
 	public static class Summary implements Serializable {
 
 		private String chromosome;
+		private String dataRelease;
 		private int entryCount;
 		private int geneCount;
 
@@ -52,6 +53,14 @@ public class ChromosomeReport implements Serializable {
 
 		public void setChromosome(String chromosome) {
 			this.chromosome = chromosome;
+		}
+
+		public String getDataRelease() {
+			return dataRelease;
+		}
+
+		public void setDataRelease(String dataRelease) {
+			this.dataRelease = dataRelease;
 		}
 
 		public int getEntryCount() {
