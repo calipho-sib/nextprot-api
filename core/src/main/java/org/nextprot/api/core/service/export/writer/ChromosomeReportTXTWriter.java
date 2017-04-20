@@ -37,7 +37,7 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
         writer.write("Description: Chromosome " + summary.getChromosome() + " report\n");
         writer.write("Name:        nextprot_chromosome_" + summary.getChromosome() + "\n");
-        writer.write("Release:     YYYY-DD-MM\n");
+        writer.write("Release:     "+ summary.getDataRelease() + "\n");
         writer.write("\n----------------------------------------------------------------------------\n\n");
 
         writer.write("This file lists all neXtProt entries on chromosome Y\n");

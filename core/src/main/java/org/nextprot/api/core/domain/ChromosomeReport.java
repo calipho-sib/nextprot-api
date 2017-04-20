@@ -37,6 +37,7 @@ public class ChromosomeReport implements Serializable {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonPropertyOrder({
 			"chromosome",
+			"dataRelease",
 			"entryCount",
 			"geneCount"
 	})
