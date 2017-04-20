@@ -38,7 +38,7 @@ import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAuto
  */
 @Lazy
 @Controller
-@Api(name = "Export", description = "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
+@Api(name = "Export", description = "Export neXtProt entries ")
 public class ExportController {
 
     @Autowired

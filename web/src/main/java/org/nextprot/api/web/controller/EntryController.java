@@ -95,9 +95,12 @@ public class EntryController {
 		return "entry";
 	}
 
-	@RequestMapping("/entry/{entry}/report")
+	@ApiMethod(path = "/entry/{entry}/report", verb = ApiVerb.GET, description = "Reports neXtProt entry informations", produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/entry/{entry}/report", method = { RequestMethod.GET })
 	@ResponseBody
-	public List<EntryReport> getEntryReport(@PathVariable("entry") String entryName) {
+	public List<EntryReport> getEntryReport(
+			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
+			@PathVariable("entry") String entryName) {
 
 		return entryReportService.reportEntry(entryName).stream()
 				.sorted(new EntryReport.ByChromosomeComparator().thenComparing(new EntryReport.ByGenePosComparator()))
