@@ -62,9 +62,9 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
         writer.write("\n--------------------------------------------------------------------------------------------------------------------------------------------------------\n");
         writer.write(String.format(buildHeaderFormat(),
-                Arrays.asList("Gene ", "neXtProt", "Chromosomal", "Start", "Stop", "Protein", "	Prote-", "Anti-", "3D", "Dise-", "Iso-", "Vari-", "PTMs", "Description").toArray()));
+                Arrays.asList("Gene ", "neXtProt", "Chromosomal", "Start", "Stop", "Protein", "Prote-", "Anti-", "3D", "Dise-", "Iso-", "Vari-", "PTMs", "Description").toArray()));
         writer.write(String.format(buildHeaderFormat(),
-                Arrays.asList("name ", "AC", "position", "position", "position", "existence", "	omics", "body", "", "ase", "forms", "ants-", "", "").toArray()));
+                Arrays.asList("name ", "AC", "position", "position", "position", "existence", "omics", "body", "", "ase", "forms", "ants", "", "").toArray()));
         writer.write("________________________________________________________________________________________________________________________________________________________\n");
 
         for (EntryReport er : report.getEntryReports()) {
@@ -87,12 +87,11 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
     private static String buildHeaderFormat() {
 
-        // return "%-11s%-13s%-14s%-10s%-10s%-17s%-7s%-7s%-7s%-7s%-5s%-6s%-7s%s%n";
-        return "%-10s %-12s %-13s %-9s %-9s %-16s %-6s %-6s %-6s %-6s %-4s %-7s %-7s %s%n";
+        return "%-10s%-13s%-13s%-9s%-9s%-16s %-6s %-6s%-6s%-6s%-6s%-7s%-5s%s%n";
     }
 
     private static String buildRowFormat() {
 
-        return "%-10s %-12s %-13s %9s %9s %-16s %-6s %-6s %-6s %-6s %4s %7s %7s %s%n";
+        return "%-10s%-13s%-13s%8s%9s %-16s %-6s %-6s%-6s%-5s%6s%6s%6s %s%n";
     }
 }
