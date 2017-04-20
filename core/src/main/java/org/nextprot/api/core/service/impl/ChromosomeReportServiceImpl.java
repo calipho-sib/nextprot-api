@@ -5,6 +5,7 @@ import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.service.ChromosomeReportService;
 import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.ReleaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 	@Autowired
 	private EntryReportService entryReportService;
+
+	@Autowired
+	private ReleaseInfoService releaseInfoService;
 
 	@Cacheable("chromosome-reports")
 	@Override
@@ -46,6 +50,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
 
 		summary.setChromosome(chromosome);
+		summary.setDataRelease(releaseInfoService.findReleaseInfo().getDatabaseRelease());
 		summary.setEntryCount((int) entryReports.stream()
 				.map(EntryReport::getAccession)
 				.distinct()
