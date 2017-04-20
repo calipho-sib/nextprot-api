@@ -5,6 +5,7 @@ import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -39,6 +40,14 @@ public interface ExportService {
 	 * @param entryNames The list of entries
 	 */
 	List<Future<File>> exportEntries(Collection<String> entryNames, NextprotMediaType format);
+
+	/**
+	 * Export the list of gene/neXtProt entries informations found on the given chromosome
+	 * @param chromosome the chromosome to get report
+	 * @param nextprotMediaType the export file format
+	 * @param os the output stream to write into
+	 */
+	void exportChromosomeEntryReport(String chromosome, NextprotMediaType nextprotMediaType, OutputStream os) throws IOException;
 
 	/**
 	 * Export the entry name in the format specified with UTF-8 encoding

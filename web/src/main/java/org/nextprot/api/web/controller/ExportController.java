@@ -1,6 +1,8 @@
 package org.nextprot.api.web.controller;
 
+import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -16,6 +18,7 @@ import org.nextprot.api.web.service.SearchService;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
@@ -34,8 +38,7 @@ import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAuto
  */
 @Lazy
 @Controller
-// @Api(name = "Export", description =
-// "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
+@Api(name = "Export", description = "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
 public class ExportController {
 
     @Autowired
@@ -90,14 +93,13 @@ public class ExportController {
         streamEntries(format, response, "entry", qr);
     }
 
-
     @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
     @ResponseBody
     public Map<String, Set<String>> getXMLTemplates() {
         return EntryBlock.getFormatViews();
     }
 
-    @ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries accessions from a list")
+    //@ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries accessions from a list")
     @RequestMapping("/export/lists/{listId}")
     public void exportList(HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
 
@@ -124,6 +126,26 @@ public class ExportController {
 
         } catch (Exception e) {
             throw new NextProtException(e.getMessage(), e);
+        }
+    }
+
+    @ApiMethod(path = "/export/reports/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries coming from genes located on a given chromosome",
+            produces = { MediaType.TEXT_PLAIN_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE } )
+    @RequestMapping(value = "/export/reports/chromosome/{chromosome}", method = {RequestMethod.GET})
+    public void exportChromosomeEntriesReport(
+            @ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+            @PathVariable("chromosome")  String chromosome, HttpServletRequest request, HttpServletResponse response) {
+
+        NextprotMediaType mediaType = NextprotMediaType.valueOf(request);
+
+        try (OutputStream os = response.getOutputStream()) {
+
+            String filename = "chromosome" + chromosome + "." + mediaType.getExtension();
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+            exportService.exportChromosomeEntryReport(chromosome, NextprotMediaType.valueOf(request), os);
+        }
+        catch (IOException e) {
+            throw new NextProtException(e.getMessage()+": cannot export chromosome "+chromosome+" as "+ mediaType);
         }
     }
 

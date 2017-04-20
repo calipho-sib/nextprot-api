@@ -20,7 +20,7 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
     private final PrintWriter writer;
 
-    public ChromosomeReportTXTWriter(OutputStream os) throws IOException {
+    public ChromosomeReportTXTWriter(OutputStream os) {
 
         super(os);
         this.writer = new PrintWriter(os);
