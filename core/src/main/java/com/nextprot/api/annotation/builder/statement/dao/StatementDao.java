@@ -1,7 +1,6 @@
 package com.nextprot.api.annotation.builder.statement.dao;
 
 import java.util.List;
-
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
 import org.nextprot.commons.statements.constants.AnnotationType;
@@ -18,8 +17,6 @@ public interface StatementDao {
 
 	List<String> findAllDistinctValuesforField(StatementField field);
 
-	List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, StatementField whereField, String value);
-
-	List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, StatementField whereField, String value, StatementField whereField2, String value2);
+	List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, SimpleWhereClauseQueryDSL ... conditions);
 
 }
