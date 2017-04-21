@@ -6,6 +6,7 @@ import org.nextprot.api.core.domain.EntryReport;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -69,7 +70,9 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
         for (EntryReport er : report.getEntryReports()) {
 
-            writeEntryReport(extractValues(er));
+            List<String> allValuesExceptCodingStrand = new ArrayList<>(extractValues(er));
+            allValuesExceptCodingStrand.remove(3);
+            writeEntryReport(allValuesExceptCodingStrand);
         }
     }
 
