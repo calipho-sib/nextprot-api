@@ -48,10 +48,10 @@ public class ChromosomeReportTSVWriter extends BaseChromosomeReportWriter {
         writer.write("\n");
     }
 
-    public static List<String> extractHeaders() {
+    private static List<String> extractHeaders() {
 
         return Arrays.asList(
-                "Gene name", "neXtProt AC", "Chromosomal position", "Start position", "Stop position",
+                "Gene name", "neXtProt AC", "Chromosomal position", "Coding strand", "Start position", "Stop position",
                 "Protein existence", "Proteomics", "Antibody", "3D", "Disease", "Isoforms", "Variants",
                 "PTMs", "Description"
         );
@@ -63,6 +63,7 @@ public class ChromosomeReportTSVWriter extends BaseChromosomeReportWriter {
                 (entryReport.getGeneName() != null && !entryReport.getGeneName().isEmpty()) ? entryReport.getGeneName() : "-",
                 entryReport.getAccession(),
                 entryReport.getChromosomalLocation(),
+                entryReport.getCodingStrand(),
                 (entryReport.getGeneStartPosition() > 0) ? String.valueOf(entryReport.getGeneStartPosition()) : "-",
                 (entryReport.getGeneEndPosition() > 0) ? String.valueOf(entryReport.getGeneEndPosition()) : "-",
                 entryReport.getProteinExistence(),
