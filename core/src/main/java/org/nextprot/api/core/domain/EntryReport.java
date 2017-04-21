@@ -16,6 +16,7 @@ import static org.nextprot.api.core.domain.EntryReport.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
 	GENE_NAME,
+	CODING_STRAND,
 	CHROMOSOMAL_LOCATION,
 	GENE_START_POSITION,
 	GENE_END_POSITION,
@@ -32,9 +33,13 @@ import static org.nextprot.api.core.domain.EntryReport.*;
 })
 public class EntryReport implements Serializable {
 
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
+
+	private static final String SENSE_CODING_STRAND = "5'->3'";
+	private static final String ANTISENSE_CODING_STRAND = "3'->5'";
 
 	public static final String GENE_NAME = "geneName";
+	public static final String CODING_STRAND = "codingStrand";
 	public static final String CHROMOSOMAL_LOCATION = "chromosomalLocation";
 	public static final String GENE_START_POSITION = "geneStartPosition";
 	public static final String GENE_END_POSITION = "geneEndPosition";
@@ -89,6 +94,11 @@ public class EntryReport implements Serializable {
 	@JsonProperty(GENE_NAME)
 	public String getGeneName() {
 		return chromosomalLocation.getRecommendedName();
+	}
+
+	@JsonProperty(CODING_STRAND)
+	public String getCodingStrand() {
+		return (chromosomalLocation.getStrand() > 0) ? SENSE_CODING_STRAND: ANTISENSE_CODING_STRAND;
 	}
 
 	@JsonProperty(GENE_START_POSITION)
