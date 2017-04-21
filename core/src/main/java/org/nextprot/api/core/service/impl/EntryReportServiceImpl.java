@@ -125,8 +125,8 @@ public class EntryReportServiceImpl implements EntryReportService {
 
         return chromosomalLocations.stream()
                 .collect(
-                        Collectors.groupingBy(ChromosomalLocation::getRecommendedName, // group by gene name
-                        Collectors.reducing(new BestChromosomeLocationOperator()))     // keep the best location for this gene
+                        Collectors.groupingBy(cl -> cl.getRecommendedName()+cl.getStrand(), // group by gene name/strand
+                        Collectors.reducing(new BestChromosomeLocationOperator()))          // keep the best location for this gene
                 )
                 .values().stream()
                 .filter(Optional::isPresent)
