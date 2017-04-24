@@ -2,6 +2,9 @@
 <!-- *****************************************************************************
 	XML Schema Definition (XSD) for the neXtProt XML
 
+    Date:		2017/04/24
+    New annotation category added: electrophysiological-parameter
+
     Date:		2017/04/18
     New annotation category added: cofactor-info
 
@@ -928,6 +931,7 @@
 						<xs:enumeration value="dna-binding-region"/>
 						<xs:enumeration value="domain"/>
 						<xs:enumeration value="domain-info"/>
+                        <xs:enumeration value="electrophysiological-parameter"/>
 						<xs:enumeration value="enzyme-classification"/>
 						<xs:enumeration value="enzyme-regulation"/>
 						<xs:enumeration value="expression-info"/>

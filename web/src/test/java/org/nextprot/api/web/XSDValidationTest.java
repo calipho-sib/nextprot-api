@@ -90,7 +90,7 @@ public class XSDValidationTest extends WebIntegrationBaseTest {
 
 			if (ac.isLeaf()
 					&& ac != AnnotationCategory.FAMILY_NAME
-					&& ac != AnnotationCategory.ELECTROPHYSIOLOGICAL_PARAMETER
+					//&& ac != AnnotationCategory.ELECTROPHYSIOLOGICAL_PARAMETER
 					&& ac != AnnotationCategory.PEPX_VIRTUAL_ANNOTATION) {
 
 				String camelCaseCategoryName = StringUtils.camelToKebabCase(ac.getApiTypeName());
