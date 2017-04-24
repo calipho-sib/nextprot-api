@@ -22,9 +22,9 @@ public class GeneIdentifierDaoImpl implements GeneIdentifierDao {
 	}
 
 	@Override
-	public Map<String, Set<String>> findEntryGeneNames() {
+	public Map<String, List<String>> findEntryGeneNames() {
 
-		Map<String, Set<String>> map = new TreeMap<>();
+		Map<String, List<String>> map = new TreeMap<>();
 
 		List<Map<String,Object>> results = new JdbcTemplate(dsLocator.getDataSource())
 				.queryForList(sqlDictionary.getSQLQuery("all-accessions-with-gene-names"));
@@ -35,7 +35,7 @@ public class GeneIdentifierDaoImpl implements GeneIdentifierDao {
 			String geneName = (String) row.get("gene_name");
 
 			if (!map.containsKey(entryName)) {
-				map.put(entryName, new HashSet<>());
+				map.put(entryName, new ArrayList<>());
 			}
 			map.get(entryName).add(geneName);
 		}
