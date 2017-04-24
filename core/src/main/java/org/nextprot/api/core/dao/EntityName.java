@@ -2,17 +2,19 @@ package org.nextprot.api.core.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Overview.EntityNameClass;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class EntityName implements Serializable, Comparable<EntityName>{
+public class EntityName implements Serializable {
 
 	private static final Log LOGGER = LogFactory.getLog(EntityName.class);
 
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = 3L;
 	private Boolean isMain;
 	private EntityNameClass clazz;
 	private String type;
@@ -110,36 +112,8 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 		this.synonyms.addAll(synonyms);
 	}
 
-	@Override
-	public int compareTo(EntityName o) {
-		int thisValue = 10;
-		if(this.qualifier != null){
-			try {
-				thisValue = QualifierValue.valueOf(this.qualifier.replaceAll("\\s+","_").toUpperCase()).ordinal();
-			}catch (IllegalArgumentException e){
-				e.printStackTrace();
-				LOGGER.error("Failed to compare enum values for this qualifier " + this.qualifier + e.getMessage());
-			}
-		}
-		
-		int otherValue = 10;
-		if(o.qualifier != null){
-			try {
-				otherValue = QualifierValue.valueOf(o.qualifier.replaceAll("\\s+","_").toUpperCase()).ordinal();
-			}catch (IllegalArgumentException e){
-				e.printStackTrace();
-				LOGGER.error("Failed to compare enum values for other qualifier " + o.qualifier + e.getMessage());
-			}
-		}
-
-		//orf cases
-		if("orf".equalsIgnoreCase(o.category)){ return -1;}
-		if("orf".equalsIgnoreCase(this.category)){return 1;}
-			
-		return thisValue - otherValue;
-	}
-	
-	private static enum QualifierValue {
+	// defined for EntityNameClass.PROTEIN_NAMES, EntityNameClass.FUNCTIONAL_REGION_NAMES and EntityNameClass.CLEAVED_REGION_NAMES
+	private enum QualifierValue {
 		FULL, SHORT, EC, ALLERGEN, CD_ANTIGEN, INN 
 	}
 
@@ -190,5 +164,50 @@ public class EntityName implements Serializable, Comparable<EntityName>{
 		}
 
 		return sb.toString();
+	}
+
+	public static Comparator<EntityName> newDefaultComparator() {
+
+		return new EntityName.ByCategoryComparator()
+				.thenComparing(new EntityName.ByQualifierValueComparator())
+				.thenComparing(EntityName::getName);
+	}
+
+	public static class ByQualifierValueComparator implements Comparator<EntityName> {
+
+		@Override
+		public int compare(EntityName en1, EntityName en2) {
+
+			if (en1.qualifier != null && en2.qualifier != null) {
+				try {
+					QualifierValue qv1 = EntityName.QualifierValue.valueOf(en1.qualifier.replaceAll("\\s+","_").toUpperCase());
+					QualifierValue qv2 = EntityName.QualifierValue.valueOf(en2.qualifier.replaceAll("\\s+","_").toUpperCase());
+
+					return qv1.ordinal() - qv2.ordinal();
+				} catch (IllegalArgumentException e) {
+					throw new NextProtException("Failed to compare enum values " + en1.qualifier + " vs "+ en2.qualifier + ": " + e.getMessage());
+				}
+			}
+
+			return 0;
+		}
+	}
+
+	public static class ByCategoryComparator implements Comparator<EntityName> {
+
+		@Override
+		public int compare(EntityName en1, EntityName en2) {
+
+			// 1. ORFs come last
+			if("orf".equalsIgnoreCase(en1.getCategory())) {
+				return 1;
+			}
+
+			if("orf".equalsIgnoreCase(en2.getCategory())) {
+				return -1;
+			}
+
+			return 0;
+		}
 	}
 }
