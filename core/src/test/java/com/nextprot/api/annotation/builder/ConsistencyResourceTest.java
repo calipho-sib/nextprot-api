@@ -14,6 +14,7 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 
 public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTest{
@@ -27,7 +28,10 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 	public void shouldFindAllPublications() {
 		
 		boolean missingPublications = false;
-		List<String> pubmedIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION, StatementField.REFERENCE_DATABASE, "PubMed");
+		List<String> pubmedIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
+				StatementField.REFERENCE_ACCESSION, 
+				new SimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, "PubMed"));
+		
 		System.out.println("Found " + pubmedIds.size() + " distinct pubmeds");
 		for(String p : pubmedIds) {
 			if(p != null){ 
@@ -39,7 +43,7 @@ public class ConsistencyResourceTest extends AnnotationBuilderIntegrationBaseTes
 						System.err.println("Can t find publication for " + pubmedId); 
 					}
 				}else {
-					System.err.println("FOUND EMPTY PUBLICATION, FIX THIS IN NEXT RELEASE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Probably related to: https://issues.isb-sib.ch/browse/NEXTPROT-1369");
+					System.err.println("FOUND EMPTY PUBLICATION " + pubmedId + ", FIX THIS IN NEXT RELEASE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Probably related to: https://issues.isb-sib.ch/browse/NEXTPROT-1369");
 				}
 			}
 		};

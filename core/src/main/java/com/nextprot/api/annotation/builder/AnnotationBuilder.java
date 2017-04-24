@@ -201,39 +201,16 @@ abstract class AnnotationBuilder<T extends Annotation> implements Supplier<T> {
 		String referenceDB = statement.getValue(StatementField.REFERENCE_DATABASE);
 		String referenceAC = statement.getValue(StatementField.REFERENCE_ACCESSION);
 		
-		//If it's a publication
-		if("PubMed".equalsIgnoreCase(referenceDB)){
-			if(referenceDB != null){
-				String pubmedId = referenceAC;
-				Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", pubmedId);
-				if (publication == null) {
-					//Set -1 if not exists. Should never be the case 
-					evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication " + pubmedId, -1L));
-				}
-				else {
-					evidence.setResourceId(publication.getPublicationId());
-				}
-			}
-			
-		} else if("DOI".equalsIgnoreCase(referenceDB)){ 
-			
-			//Should work with DOI: 10.1038/npjgenmed.2016.1
-			//See https://issues.isb-sib.ch/browse/NEXTPROT-1369
-			Publication publication = publicationService.findPublicationByDatabaseAndAccession("PubMed", referenceAC);
-			if (publication == null) {
-				//Set -1 if not exists. Should never be the case 
-				evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication with DOI " + referenceAC, -1L));
-			}
-			else {
-				evidence.setResourceId(publication.getPublicationId());
-			}
-			
-			
-		} else {
-			
-			evidence.setResourceId(-2);
-			//evidence.setResourceId(dbXrefService.findDbXrefIdByDatabaseAndAccession(referenceDB, referenceAC));
+		Publication publication = publicationService.findPublicationByDatabaseAndAccession(referenceDB, referenceAC);
+		if (publication == null) {
+			//Set -1 if not exists. Should never be the case 
+			evidence.setResourceId((Long) throwErrorOrReturn("can 't find publication db:" + referenceDB + " id:" + referenceAC, -1L));
 		}
+		else {
+			evidence.setResourceId(publication.getPublicationId());
+		}
+			
+			
 	}
 
 	

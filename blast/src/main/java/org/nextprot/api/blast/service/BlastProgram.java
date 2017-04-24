@@ -27,7 +27,7 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Params> {
 
     protected BlastProgram(String name, C config) {
 
-        Objects.requireNonNull(config, "missing blast configuration");
+        Objects.requireNonNull(config, "Internal error: missing blast configuration");
 
         this.name = name;
         this.config = config;
@@ -48,13 +48,13 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Params> {
             postConfig(config);
 
             return out;
-        } catch (Exception e) {
+        } catch (IOException e) {
 
-            throw new NextProtException("error executing "+name, e);
+            throw new NextProtException("Internal error: cannot run process "+name, e);
         }
     }
 
-    private File constructFastaFile(I input) throws Exception {
+    private File constructFastaFile(I input) throws IOException {
 
         File tmpQueryFastaFile = File.createTempFile(name, ".fasta");
 
@@ -67,26 +67,31 @@ public abstract class BlastProgram<I, O, C extends BlastProgram.Params> {
         return tmpQueryFastaFile;
     }
 
-    private O process(List<String> commandLine) throws IOException, InterruptedException, ExceptionWithReason {
+    private O process(List<String> commandLine) throws ExceptionWithReason {
 
         SystemCommandExecutor commandExecutor = new SystemCommandExecutor(commandLine);
-        commandExecutor.executeCommand();
+        try {
+            commandExecutor.executeCommand();
 
-        String stderr = commandExecutor.getLastExecutionStandardError();
+            String stderr = commandExecutor.getLastExecutionStandardError();
 
-        if (!stderr.isEmpty()) {
+            if (!stderr.isEmpty()) {
 
-            ExceptionWithReason ewr = new ExceptionWithReason();
-            ewr.getReason().addCause(name+ " exception", stderr.replace("\n", " "));
-            ewr.getReason().setMessage("Error while executing "+name);
+                ExceptionWithReason ewr = new ExceptionWithReason();
+                ewr.getReason().addCause(name+ " exception", stderr.replace("\n", " "));
+                ewr.getReason().setMessage("Error while executing "+name);
 
-            throw ewr;
+                throw ewr;
+            }
+
+            return buildOutputFromStdout(commandExecutor.getLastExecutionStandardOutput());
+        } catch (InterruptedException | IOException e) {
+
+            throw new NextProtException("Internal error: cannot process "+name+" command line "+ commandLine, e);
         }
-
-        return buildOutputFromStdout(commandExecutor.getLastExecutionStandardOutput());
     }
 
-    private void destroyFastaFile(File fastaFile) throws Exception {
+    private void destroyFastaFile(File fastaFile) throws IOException {
 
         if (!config.isDebugMode()) {
 

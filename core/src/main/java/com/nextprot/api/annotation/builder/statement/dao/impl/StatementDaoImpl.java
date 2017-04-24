@@ -1,7 +1,11 @@
 package com.nextprot.api.annotation.builder.statement.dao.impl;
 
-import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
-import org.nextprot.api.commons.exception.NextProtException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.SQLDictionary;
 import org.nextprot.commons.statements.Statement;
@@ -12,8 +16,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
+import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 
 @Repository
 public class StatementDaoImpl implements StatementDao {
@@ -22,8 +26,8 @@ public class StatementDaoImpl implements StatementDao {
 	private SQLDictionary sqlDictionary;
 	@Autowired
 	private DataSourceServiceLocator dsLocator;
-
 	
+
 	private String getSQL(AnnotationType type, String sqlQueryName){
 		String sql = sqlDictionary.getSQLQuery(sqlQueryName);
 		return sql;
@@ -93,14 +97,22 @@ public class StatementDaoImpl implements StatementDao {
 	}
 
 	@Override
-	public List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, StatementField whereField, String value) {
-		String sql = "select distinct " + field.name() + " from nxflat.entry_mapped_statements where " + whereField.name() + " = '" + value + "'";
-		return new JdbcTemplate(dsLocator.getStatementsDataSource()).queryForList(sql, String.class);
-	}
+	public List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, SimpleWhereClauseQueryDSL ... conditions) {
 
-	@Override
-	public List<String> findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField field, StatementField whereField, String value, StatementField whereField2,String value2) {
-		String sql = "select distinct " + field.name() + " from nxflat.entry_mapped_statements where " + whereField.name() + " = '" + value + "' AND "  + whereField2.name() + " = '" + value2 + "'";
+		String sql = "select distinct " + field.name() + " from nxflat.entry_mapped_statements where ";
+		for(int i=0; i<conditions.length; i++){
+			String whereField = conditions[i].getWhereField().name();
+			Object value = conditions[i].getValue();
+			if(value.getClass().equals(String.class)){
+				sql += whereField + " = '" + value + "' ";
+			}else {
+				sql += whereField + " = " + value + " ";
+			}
+			if(i+1 < conditions.length){
+				sql += "AND ";
+			}
+		}
+		
 		return new JdbcTemplate(dsLocator.getStatementsDataSource()).queryForList(sql, String.class);
 	}
 

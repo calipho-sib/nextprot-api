@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,17 +31,17 @@ public class GeneNameController {
 		return geneIdentifierService.findGeneNames();
 	}
 
-	@ApiMethod(path = "/gene-names/entry/{entryAccession}", verb = ApiVerb.GET, description = "Retrieves the gene names that code the given protein", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiMethod(path = "/gene-names/entry/{entryAccession}", verb = ApiVerb.GET, description = "Retrieves the gene names that code the given protein (the first gene name is the recommended one)", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/gene-names/entry/{entryAccession}", method = { RequestMethod.GET })
 	@ResponseBody
-	public Set<String> geneIdentifiersByEntryAccession(
+	public List<String> geneIdentifiersByEntryAccession(
 			@ApiPathParam(name = "entryAccession", description = "the neXtProt entry protein name",  allowedvalues = { "NX_P01308"}) @PathVariable("entryAccession")  String entryAccession) {
 		return geneIdentifierService.findGeneNamesByEntryAccession(entryAccession);
 	}
 
 	@RequestMapping(value = "/entry-gene-names", method = { RequestMethod.GET })
 	@ResponseBody
-	public Map<String, Set<String>> entryGeneIdentifiers() {
+	public Map<String, List<String>> entryGeneIdentifiers() {
 		return geneIdentifierService.findEntryGeneNames();
 	}
 }

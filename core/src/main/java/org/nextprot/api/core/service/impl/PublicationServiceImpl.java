@@ -3,6 +3,7 @@ package org.nextprot.api.core.service.impl;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
+import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.dao.MasterIdentifierDao;
@@ -70,13 +71,19 @@ public class PublicationServiceImpl implements PublicationService {
 		Map<Long, List<PublicationDbXref>> npPublicationsXrefs = updateMissingPublicationFields(publications);
 
 		// Getting publications from nx flat database
-		List<String> nxFlatPubmedIds = this.statementDao.
-				findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION,
-						StatementField.ENTRY_ACCESSION, uniqueName, StatementField.REFERENCE_DATABASE, "PubMed");
+		List<Publication> nxflatPublications = new ArrayList<>();
+		Arrays.asList("PubMed", "DOI").stream().forEach(db -> {
 
-		List<Publication> nxflatPublications = getPublicationsFromPubmedIds(nxFlatPubmedIds, npPublicationsXrefs);
+			List<String> referenceIds = this.statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
+					StatementField.REFERENCE_ACCESSION, 
+					new SimpleWhereClauseQueryDSL(StatementField.ENTRY_ACCESSION, uniqueName),
+					new SimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, db));
+				nxflatPublications.addAll(getPublicationsFromDBReferenceIds(referenceIds, db, npPublicationsXrefs));
+
+		});
+		
+
 		updateMissingPublicationFields(nxflatPublications);
-
 		publications.addAll(nxflatPublications);
 
 		final Comparator<Publication> comparator = new PublicationComparatorAsc(Publication::getPublicationYear).reversed()
@@ -117,19 +124,19 @@ public class PublicationServiceImpl implements PublicationService {
 	 * @param npPublicationXrefs needed to avoid loading pubmed id publication multiple times
 	 * @return
 	 */
-	private List<Publication> getPublicationsFromPubmedIds(List<String> nxflatPubmedIds, Map<Long, List<PublicationDbXref>> npPublicationXrefs) {
+	private List<Publication> getPublicationsFromDBReferenceIds(List<String> nxflatReferenceIds, String referenceDatabase, Map<Long, List<PublicationDbXref>> npPublicationXrefs) {
 
 		List<Publication> nxflatPublications = new ArrayList<>();
 
 		// Filtering publications which pubmed was not already found in np publications
 		List<Long> foundPublicationIds = npPublicationXrefs.keySet().stream()
-				.filter(pubid -> npPublicationXrefs.get(pubid).stream().anyMatch(xref -> nxflatPubmedIds.contains(xref.getAccession())))
+				.filter(pubid -> npPublicationXrefs.get(pubid).stream().anyMatch(xref -> nxflatReferenceIds.contains(xref.getAccession())))
 				.collect(Collectors.toList());
 
-		nxflatPubmedIds.stream()
+		nxflatReferenceIds.stream()
 				.filter(pubmed -> pubmed != null)
 				.forEach(pubmed -> {
-					Publication pub = this.publicationDao.findPublicationByDatabaseAndAccession("PubMed", pubmed);
+					Publication pub = this.publicationDao.findPublicationByDatabaseAndAccession(referenceDatabase, pubmed);
 						if (pub == null) {
 							LOGGER.warn("Pubmed " + pubmed + " cannot be found");
 						} else if (!foundPublicationIds.contains(pub.getPublicationId())) {

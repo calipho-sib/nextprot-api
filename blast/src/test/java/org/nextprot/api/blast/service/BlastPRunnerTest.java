@@ -7,6 +7,7 @@ import org.nextprot.api.blast.domain.BlastSearchParams;
 import org.nextprot.api.blast.domain.BlastSequenceInput;
 import org.nextprot.api.blast.domain.gen.Report;
 import org.nextprot.api.commons.exception.NextProtException;
+import org.nextprot.api.commons.utils.ExceptionWithReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ActiveProfiles;
@@ -118,5 +119,16 @@ public class BlastPRunnerTest {
         config = new BlastSequenceInput(null, "/tmp/blastdb");
 
         new BlastPRunner(config);
+    }
+
+    @Test(expected = ExceptionWithReason.class)
+    public void blastpShouldThrowExceptionWithReason() throws Exception {
+
+        config = new BlastSequenceInput(blastBinPath, blastDb);
+        // pam30, gapopen11
+        config.setBlastSearchParams(BlastSearchParams.valueOf(BlastSearchParams.Matrix.PAM30.toString(), 0.01, 11, 2));
+
+        BlastPRunner runner = new BlastPRunner(config);
+        runner.run(new BlastPRunner.FastaEntry("subseq 211-239 of NX_P52701", "GTTYVTDKSEEDNEIESEEEVQPKTQGSRR"));
     }
 }

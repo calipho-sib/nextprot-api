@@ -9,10 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -42,19 +39,19 @@ public class GeneIdentifierServiceImpl implements GeneIdentifierService {
 
 	@Override
 	@Cacheable("gene-names-by-accession")
-	public Set<String> findGeneNamesByEntryAccession(String entryAccession) {
+	public List<String> findGeneNamesByEntryAccession(String entryAccession) {
 
 		List<EntityName> geneNames = overviewService.findOverviewByEntry(entryAccession).getGeneNames();
 
 		if (geneNames == null)
-			return new HashSet<>();
+			return new ArrayList<>();
 
-		return geneNames.stream().map(EntityName::getName).collect(Collectors.toSet());
+		return geneNames.stream().map(EntityName::getName).collect(Collectors.toList());
 	}
 
 	@Override
 	@Cacheable("all-entry-gene-names")
-	public Map<String, Set<String>> findEntryGeneNames() {
+	public Map<String, List<String>> findEntryGeneNames() {
 
 		return geneIdentifierDao.findEntryGeneNames();
 	}
