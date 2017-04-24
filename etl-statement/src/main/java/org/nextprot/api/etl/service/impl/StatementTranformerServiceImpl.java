@@ -10,6 +10,8 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.Logger;
+import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NPreconditions;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.Isoform;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class StatementTranformerServiceImpl implements StatementTransformerService {
 	
+	private static final Logger LOGGER = Logger.getLogger(StatementTranformerServiceImpl.class);
 
 	@Autowired private IsoformService isoformService;
 	@Autowired	private IsoformMappingService isoformMappingService;
@@ -68,12 +71,20 @@ public class StatementTranformerServiceImpl implements StatementTransformerServi
 					}else throw new NextProtException("Something wrong occured when checking for iso specificity");
 				}
 				
-					mappedStatementsToLoad.addAll(transformStatements(originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession, report));
+				mappedStatementsToLoad.addAll(transformStatements(originalStatement, sourceStatementsById, subjectStatements, entryAccession, isIsoSpecific, isoformSpecificAccession, report));
 			}
 		}
 
 		//Currently only includes cases where we have the reciprocal binary interactions 
 		Set<Statement> remainingRawStatements = getRemainingRawStatements (rawStatements);
+		
+		Set<String> distinctCategories = remainingRawStatements.stream().map(s -> s.getValue(StatementField.ANNOTATION_CATEGORY)).distinct().collect(Collectors.toSet());
+		
+		if(distinctCategories.contains(AnnotationCategory.PHENOTYPIC_VARIATION.getDbAnnotationTypeName())){
+			throw new NextProtException("Not expecting phenotypic variation at this stage.");
+		}
+		LOGGER.info("Remaining categories are " + distinctCategories);
+		
 		Set<Statement> remainingMappedStatements = transformRemainingRawStatementsToMappedStatements (remainingRawStatements);
 		mappedStatementsToLoad.addAll(remainingMappedStatements);	
 		

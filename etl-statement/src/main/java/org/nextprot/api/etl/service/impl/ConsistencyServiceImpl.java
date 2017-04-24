@@ -1,6 +1,7 @@
 package org.nextprot.api.etl.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.nextprot.api.core.domain.CvTerm;
@@ -12,6 +13,7 @@ import org.nextprot.commons.statements.StatementField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nextprot.api.annotation.builder.statement.dao.SimpleWhereClauseQueryDSL;
 import com.nextprot.api.annotation.builder.statement.dao.StatementDao;
 
 @Service
@@ -25,27 +27,23 @@ public class ConsistencyServiceImpl implements ConsistencyService{
 	public List<String> findMissingPublications() {
 		
 		List<String> missingPublications = new ArrayList<>();
-		
-		List<String> pubmedIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION, StatementField.REFERENCE_DATABASE, "PubMed");
-		List<String> doisIds = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(StatementField.REFERENCE_ACCESSION, StatementField.REFERENCE_DATABASE, "DOI");
-		
-		for(String pId : pubmedIds) {
-			if(pId != null){ 
-				Publication pub = publicationService.findPublicationByDatabaseAndAccession("PubMed", pId);
-				if(pub == null){
-					missingPublications.add("PubMed" + pId);
-				}
-			}
-		};
 
-		for(String dId : doisIds) {
-			if(dId != null){ 
-				Publication pub = publicationService.findPublicationByDatabaseAndAccession("DOI", dId);
-				if(pub == null){
-					missingPublications.add("DOI" + dId);
+		Arrays.asList("PubMed", "DOI").stream().forEach(referenceDB -> {
+		
+			List<String> ids = statementDao.findAllDistinctValuesforFieldWhereFieldEqualsValues(
+					StatementField.REFERENCE_ACCESSION, 
+					new SimpleWhereClauseQueryDSL(StatementField.REFERENCE_DATABASE, referenceDB));
+			
+			for(String id : ids) {
+				if(id != null){ 
+					Publication pub = publicationService.findPublicationByDatabaseAndAccession(referenceDB, id);
+					if(pub == null){
+						missingPublications.add(referenceDB + id);
+					}
 				}
-			}
-		};
+			};
+
+		});
 
 		return missingPublications;
 	}
