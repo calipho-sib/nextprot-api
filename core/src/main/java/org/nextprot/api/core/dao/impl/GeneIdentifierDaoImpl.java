@@ -26,19 +26,17 @@ public class GeneIdentifierDaoImpl implements GeneIdentifierDao {
 
 		Map<String, List<String>> map = new TreeMap<>();
 
-		List<Map<String,Object>> results = new JdbcTemplate(dsLocator.getDataSource())
-				.queryForList(sqlDictionary.getSQLQuery("all-accessions-with-gene-names"));
+		new JdbcTemplate(dsLocator.getDataSource()).queryForList(sqlDictionary.getSQLQuery("all-accessions-with-gene-names"))
+				.forEach(row -> {
+					String entryName = (String) row.get("unique_name");
 
-		for (Map<String,Object> row : results) {
+					if (!map.containsKey(entryName)) {
+						map.put(entryName, new ArrayList<>());
+					}
+					map.get(entryName).add((String) row.get("gene_name"));
+				});
 
-			String entryName = (String) row.get("unique_name");
-			String geneName = (String) row.get("gene_name");
-
-			if (!map.containsKey(entryName)) {
-				map.put(entryName, new ArrayList<>());
-			}
-			map.get(entryName).add(geneName);
-		}
+		map.values().forEach(geneNames -> geneNames.sort(String::compareTo));
 
 		return map;
 	}
