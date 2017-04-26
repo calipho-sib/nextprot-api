@@ -75,7 +75,8 @@ public class AnnotationCategoryTest {
 		Assert.assertTrue(cat.getChildren().contains(AnnotationCategory.PATHWAY));
 		Assert.assertTrue(cat.getChildren().contains(AnnotationCategory.GO_BIOLOGICAL_PROCESS));
 		Assert.assertTrue(cat.getChildren().contains(AnnotationCategory.GO_MOLECULAR_FUNCTION));
-		Assert.assertEquals(5, cat.getChildren().size());
+		Assert.assertTrue(cat.getChildren().contains(AnnotationCategory.TRANSPORT_ACTIVITY));
+		Assert.assertEquals(6, cat.getChildren().size());
 	}
 	
 	@Test
