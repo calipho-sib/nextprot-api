@@ -400,7 +400,6 @@ public class AnnotationUtils {
 		if (desc.contains("isozyme")) return false;
 		if (desc.contains("%")) return false;
 		if (desc.contains("clone")) return false;
-		if (desc.contains("dbsnp")) return false;
 		if (desc.contains("polymorphism")) return false;
 		
 		if (desc.startsWith("in")) return true;
