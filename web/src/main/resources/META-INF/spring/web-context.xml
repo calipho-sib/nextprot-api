@@ -12,6 +12,19 @@
 	<import resource="classpath:META-INF/spring/security-context.xml" />
 
 
+	<bean id="urlMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+				<prop key="/sparql/**">strutsWrappingController</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="strutsWrappingController"
+		class="org.nextprot.api.web.controller.SparqlProxyController">
+	</bean>
+
 	<!-- Make Content Negotiation manager available across all of Spring MVC -->
 	<mvc:annotation-driven> <!--content-negotiation-manager="cnManager" -->
 
@@ -19,18 +32,20 @@
 		<mvc:message-converters register-defaults="false">
 			<!-- This converter was added for the sitemap.xml using annotation @XmlRootElement -->
 			<bean class="org.nextprot.api.web.xstream.SiteMapMarshaller"></bean>
-			<bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter" />
 
 			<!-- TODO Described for what is this converter used -->
-			<bean class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+			<bean
+				class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
 				<property name="marshaller">
-					<bean class="org.springframework.oxm.xstream.XStreamMarshaller"/>
+					<bean class="org.springframework.oxm.xstream.XStreamMarshaller" />
 				</property>
 				<property name="unmarshaller">
-					<bean class="org.springframework.oxm.xstream.XStreamMarshaller"/>
+					<bean class="org.springframework.oxm.xstream.XStreamMarshaller" />
 				</property>
 			</bean>
-			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+			<bean
+				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 				<property name="prettyPrint" value="true" />
 			</bean>
 

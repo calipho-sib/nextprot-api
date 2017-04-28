@@ -35,15 +35,6 @@ public class SparqlController {
 
 	@Autowired
 	private SparqlDictionary sparqlDictionary;
-
-	
-	@RequestMapping("/sparql")
-	@ResponseBody
-	public ResponseEntity<?> mirrorRest(HttpServletRequest request, HttpServletResponse response) throws URISyntaxException {
-		return this.sparqlProxyEndpoint.sparql(getQueryString(request));
-	}
-
-	
 	
 	@RequestMapping("/sparql-nocache")
 	@ResponseBody

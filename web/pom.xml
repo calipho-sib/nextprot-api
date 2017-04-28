@@ -134,7 +134,13 @@
 		    <version>2.5</version>
 		</dependency>
 
-
+		<!-- Proxy -->
+		<dependency>
+			<groupId>org.mitre.dsmiley.httpproxy</groupId>
+			<artifactId>smiley-http-proxy-servlet</artifactId>
+			<version>1.7</version>
+		</dependency>
+		
 	</dependencies>
 
 

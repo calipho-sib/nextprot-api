@@ -278,6 +278,14 @@
 		statistics="true">
 	</cache>
 
+	<cache name="sparql-proxy-cache" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
+		   maxEntriesLocalDisk="100000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true">
+	</cache>
+
+
+
 	<!-- Proxies -->
 	<cache name="sparql-proxy" overflowToOffHeap="false" maxEntriesLocalHeap="100"  eternal="true" statistics="true"/>
 	<cache name="pdb-proxy" overflowToOffHeap="false" maxEntriesLocalHeap="10"  eternal="true" statistics="true"/>
