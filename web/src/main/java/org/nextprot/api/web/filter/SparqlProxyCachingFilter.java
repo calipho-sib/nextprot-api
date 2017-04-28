@@ -41,6 +41,16 @@ public class SparqlProxyCachingFilter extends SimplePageCachingFilter {
         writeResponse(request, response, pageInfo);
     }
 
+    @Override
+    protected String calculateKey(HttpServletRequest httpRequest) {
+        StringBuffer stringBuffer = new StringBuffer();
+        stringBuffer.append(httpRequest.getMethod()).append(httpRequest.getRequestURI()).append(httpRequest.getQueryString());
+        // TODO ADD POST DATA as part of the cache key
+        String key = stringBuffer.toString();
+        return key;
+    }
+
+
 
 
 }
