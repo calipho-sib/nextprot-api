@@ -124,6 +124,7 @@ public class EntryReportServiceImpl implements EntryReportService {
     private List<EntryReport> duplicateReportForEachGene(List<ChromosomalLocation> chromosomalLocations, EntryReport report) {
 
         return chromosomalLocations.stream()
+        		.filter(ChromosomalLocation::isGoldMapping)
                 .collect(
                         Collectors.groupingBy(cl -> cl.getRecommendedName()+cl.getStrand(), // group by gene name/strand
                         Collectors.reducing(new BestChromosomeLocationOperator()))          // keep the best location for this gene
