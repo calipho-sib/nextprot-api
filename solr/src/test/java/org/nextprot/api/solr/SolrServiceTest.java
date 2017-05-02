@@ -138,6 +138,7 @@ public class SolrServiceTest  {
     	assertEquals("insulin phosphorylation intracellular", s2);
     }
 
+    
 	@Test
 	public void testGetFoundFacets() throws Exception {
 		QueryRequest qr = new QueryRequest();
@@ -149,7 +150,7 @@ public class SolrServiceTest  {
 		Query q = service.buildQueryForSearchIndexes("entry", "simple", qr);
 		SearchResult result = service.executeIdQuery(q);
 		List<Map<String, Object>> found = result.getFoundFacets("id");
-		assertEquals(12, found.size());
+		assertEquals(7, found.size());
 	}
 	
     @Test

@@ -15,7 +15,8 @@
 		statistics="true" >
 	</cache>
 	
-	
+	<cache name="experimental-context-dictionary"  maxEntriesLocalHeap="1" eternal="true" statistics="true" />
+
 	<cache name="statements-by-annot-hash" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
 		maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
@@ -77,9 +78,10 @@
 	</cache>
 	
 	<!-- Configuring cache for other services -->
+	<!-- 347609619 -->
 	<cache name="terminology-by-accession" overflowToOffHeap="false"
 		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100"
-		   maxEntriesLocalDisk="200000" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   maxEntriesLocalDisk="400000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		   statistics="true">
 	</cache>
 	
@@ -100,16 +102,17 @@
 		statistics="true">
 	</cache>
 
+	<!-- http://www.ehcache.org/documentation/2.8/get-started/storage-options.html -->
+	<cache name="ontology-dag" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="10"
+		   maxEntriesLocalDisk="100" eternal="true" memoryStoreEvictionPolicy="LFU"
+		   statistics="true">
+	</cache>
+
 	<cache name="terminology-ancestor-sets" overflowToOffHeap="false"
 		overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="100"
 		maxEntriesLocalDisk="1000" eternal="true" memoryStoreEvictionPolicy="LRU"
 		statistics="true">
-	</cache>
-
-	<cache name="experimental-contexts-by-entry" overflowToOffHeap="false"
-		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="1"
-		   maxEntriesLocalDisk="22000" eternal="true" memoryStoreEvictionPolicy="LRU"
-		   statistics="true">
 	</cache>
 
 	<cache name="publications-get-by-id" overflowToOffHeap="false"

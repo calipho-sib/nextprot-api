@@ -99,4 +99,8 @@ public class Interactant implements Serializable {
 		this.isNextprot = isNextprot;
 	}
 
+	public String toString() {
+		return "Interactant ac:<" + accession + "> db:" + database + " gn:" + genename + " isSrc:" + isEntryPoint + " isNX:" + isNextprot + " pn:" + proteinName; 
+	}
+	
 }

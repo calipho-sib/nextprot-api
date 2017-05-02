@@ -1,17 +1,8 @@
 package org.nextprot.api.core.domain;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
 import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.utils.ExperimentalContextUtil;
@@ -19,8 +10,12 @@ import org.nextprot.api.core.utils.PublicationUtils;
 import org.nextprot.api.core.utils.XrefUtils;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
 
-public class EntryUtils implements Serializable{
-	
+import java.io.Serializable;
+import java.util.*;
+import java.util.stream.Collectors;
+
+
+public class EntryUtils implements Serializable{	
 	private static final long serialVersionUID = 3009334685615648172L;
 
 	
@@ -32,6 +27,21 @@ public class EntryUtils implements Serializable{
 		return entryAccession;
 	}
 
+	public static Set<Long> getExperimentalContextIds(List<Annotation> annotations) {
+		Set<Long> ecIds = new TreeSet<>();
+		if (annotations != null) {
+			for (Annotation annot : annotations) {
+				if (annot.getEvidences() != null) {
+					for (AnnotationEvidence evi: annot.getEvidences()) {
+						Long ecId = evi.getExperimentalContextId();
+						if (ecId != null && ecId != 0) ecIds.add(ecId);
+					}
+				}
+			}
+		}
+		return ecIds;
+	}
+	
 	public static Entry filterEntryBySubPart(Entry entry, EntryConfig config) {
 		
 		List<Annotation> annotations;
@@ -124,7 +134,7 @@ public class EntryUtils implements Serializable{
 	/**
 	 * Builds a dictionary (HashMap) where the key is the annotation annotationHash and the value the annotation itself.
 	 * Annotations with no hash are skipped
-	 * @param entry
+	 * @param annotations
 	 * @return a dictionary of annotations where the key is the annotation hash (= identifier in BED world)
 	 */
 	public static Map<String,Annotation> getHashAnnotationMap(List<Annotation> annotations) {
@@ -193,6 +203,32 @@ public class EntryUtils implements Serializable{
 		//System.err.println("before: " + fInfoCanonical);
 		fInfoCanonical.addAll(fInfoNonCanonical);
 		//System.err.println("after: " + fInfoCanonical);
+		if (fInfoCanonical.size()==0) {
+			Set<Annotation> goFuncSet = new TreeSet<>((e1, e2) -> {
+
+                int c; // GOLD over SILVER, then GO_BP over GO_MF, then Alphabetic in term name cf: jira NEXTPROT-1238
+                c = e1.getQualityQualifier().compareTo(e2.getQualityQualifier());
+                if (c == 0) c = e1.getCategory().compareTo(e2.getCategory());
+                if (c == 0) c=e1.getCvTermName().compareTo(e2.getCvTermName());
+                return c;
+            });
+			List<Annotation> annots = entry.getAnnotations();
+			for (Annotation currannot : annots) {
+				String category = currannot.getCategory();
+				if(category.equals("go biological process") || category.equals("go molecular function")) {
+				  goFuncSet.add(currannot); }
+			}
+			int rescnt = 0;
+			for (Annotation resannot : goFuncSet) {
+				// Stick term's name in the returned list
+				if(resannot.getCvTermName().equals("protein binding") && goFuncSet.size() > 3) // avoid unsignificant function if possible
+					continue;
+				if(rescnt++ < 3) // return max 3 first annotation descriptions
+					fInfoCanonical.add(resannot.getCvTermName());
+				else break;
+			}
+		}
+
 		return fInfoCanonical;
 	 }
 }

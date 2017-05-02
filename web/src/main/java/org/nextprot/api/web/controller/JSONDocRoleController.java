@@ -3,6 +3,7 @@ package org.nextprot.api.web.controller;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsondoc.core.pojo.*;
+import org.jsondoc.core.util.JSONDocType;
 import org.jsondoc.springmvc.controller.JSONDocController;
 import org.jsondoc.springmvc.scanner.SpringJSONDocScanner;
 import org.nextprot.api.commons.constants.AnnotationCategory;
@@ -114,8 +115,18 @@ public class JSONDocRoleController extends JSONDocController {
 							String path = "/entry/{entry}/" + StringUtils.camelToKebabCase(name);
 							String description = "Exports only the " + name + " from an entry, located on the hierarchy: " + model.getHierarchy();
 
-							apiDoc.getMethods().add(cloneMethodDoc(met, path, description, true, true));
+							ApiMethodDoc methodDoc = cloneMethodDoc(met, path, description, true, true);
 
+							methodDoc.getQueryparameters().add(buildOptionalQueryParameter("term-child-of", "An optional cv term filter: export annotations " +
+									"which cv term matches the cv term parameter or one of its descendants"));
+
+							methodDoc.getQueryparameters().add(buildOptionalQueryParameter("property-name", "An optional property name filter: export annotations " +
+									"which contains this property name (see also property-value filter)"));
+
+							methodDoc.getQueryparameters().add(buildOptionalQueryParameter("property-value", "An optional property value filter: export annotations " +
+									"which contains the property name with this property value or accession (see also property-name filter)"));
+
+							apiDoc.getMethods().add(methodDoc);
 						}
 					}
 
@@ -124,6 +135,11 @@ public class JSONDocRoleController extends JSONDocController {
 			}
 
 		}
+	}
+
+	private ApiParamDoc buildOptionalQueryParameter(String name, String desc) {
+
+		return new ApiParamDoc(name, desc, new JSONDocType("string"), "false", new String[]{""}, "", "");
 	}
 
 	private static ApiMethodDoc getMethodOfType(Collection<ApiDoc> apiDocs, String type) {

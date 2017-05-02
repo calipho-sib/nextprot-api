@@ -761,10 +761,12 @@
 		} else {
 			$("#response").text(res.responseText);
 		}
-		
+
 		$("#responseStatus").text(res.status);
 		$("#responseHeaders").text(res.getAllResponseHeaders());
 		$("#requestURL").html("<a href='" + url + "' target='_blank'>" + url + "</a>");
+
+		console.log("url=",url);
 		$('#testButton').button('reset');
 		$("#resInfo").show();
 	}
@@ -804,6 +806,7 @@
 		$('#content a[rel="method"]').each(function() {
 			$(this).click(function() {
 				var method = jlinq.from(items).equals("jsondocId", this.id).first();
+				var queryParams = method.queryparameters;
 				var test = Handlebars.compile($("#test").html());
 				var testHTML = test(method);
 				$("#testContent").html(testHTML);
@@ -818,86 +821,87 @@
 				$("#consumes input:first").attr("checked", "checked");
 				
 				$("#testButton").click(function() {
-					var headers = new Object();
-					$("#headers input").each(function() {
-						headers[this.name] = $(this).val();
-					});
-					
-					headers["Accept"] = $("#produces input:checked").val();
+                    var headers = new Object();
+                    $("#headers input").each(function () {
+                        headers[this.name] = $(this).val();
+                    });
 
-					if(method.auth) {
-						if(method.auth.type == "BASIC_AUTH") {
-							headers["Authorization"] = "Basic " + window.btoa($('#basicAuthUsername').val() + ":" + $('#basicAuthPassword').val());
-						}
+                    headers["Accept"] = $("#produces input:checked").val();
+
+                    if (method.auth) {
+                        if (method.auth.type == "BASIC_AUTH") {
+                            headers["Authorization"] = "Basic " + window.btoa($('#basicAuthUsername').val() + ":" + $('#basicAuthPassword').val());
+                        }
+                    }
+
+                    var replacedPath = method.path;
+                    var tempReplacedPath = replacedPath; // this is to handle more than one parameter on the url
+
+                    var validationErrors = [];
+                    $('#pathparametererrors').hide();
+                    $('#pathparametererrors ul').empty();
+
+                    $("#pathparameters input").each(function () {
+                        $('#' + this.id).parent().removeClass('has-error');
+
+                        if ($(this).val()) {
+                            tempReplacedPath = replacedPath.replace("{" + this.name + "}", $(this).val());
+                            replacedPath = tempReplacedPath;
+                        } else {
+                            validationErrors.push(this.name + ' must not be empty');
+                            $('#' + this.id).parent().addClass('has-error');
+                        }
+                    });
+
+                    if (validationErrors.length > 0) {
+                        for (var k = 0; k < validationErrors.length; k++) {
+                            $('#pathparametererrors ul').append($('<li/>').text(validationErrors[k]));
+
+                        }
+                        $('#pathparametererrors').show();
+                        validationErrors = [];
+                        return;
+                    }
+
+                    $("#queryparameters input").each(function () {
+                        tempReplacedPath = replacedPath.replace("{" + this.name + "}", $(this).val());
+                        replacedPath = tempReplacedPath;
+                    });
+
+                    $('#testButton').button('loading');
+
+
+                    //Add suffix for brower call
+                    var suffix = ".xml";
+                    if (headers["Accept"] == "application/json")
+                        suffix = ".json";
+                    if (headers["Accept"] == "text/turtle")
+                        suffix = ".ttl";
+                    if (headers["Accept"] == "text/plain")
+                        suffix = "";
+                    if (headers["Accept"] == "text/fasta")
+                        suffix = ".fasta";
+                    if (headers["Accept"] == "application/vnd.ms-excel")
+                        suffix = ".xls";
+                    //if (headers["Accept"] == "text/peff")
+                    //	suffix = "peff";
+
+					// extract path
+                    if (replacedPath.indexOf('?') != -1) {
+                        replacedPath = replacedPath.substring(0, replacedPath.indexOf('?'));
+                    }
+                    replacedPath += suffix;
+
+					var urlQueryString = buildUrlQueryString(queryParams);
+
+                    if (urlQueryString.length > 0) {
+                        replacedPath += "?" + urlQueryString;
 					}
-					
-					var replacedPath = method.path;
-					var tempReplacedPath = replacedPath; // this is to handle more than one parameter on the url
-					
-					var validationErrors = [];
-					$('#pathparametererrors').hide();
-					$('#pathparametererrors ul').empty();
-					
-					$("#pathparameters input").each(function() {
-						$('#' + this.id).parent().removeClass('has-error');
-						
-						if($(this).val()) {
-							tempReplacedPath = replacedPath.replace("{"+this.name+"}", $(this).val());
-							replacedPath = tempReplacedPath;	
-						} else {
-							validationErrors.push(this.name + ' must not be empty');
-							$('#' + this.id).parent().addClass('has-error');
-						}
-					});
-					
-					if(validationErrors.length > 0) {
-						for (var k=0; k<validationErrors.length; k++) {
-							$('#pathparametererrors ul').append($('<li/>').text(validationErrors[k]));
-							
-						}
-						$('#pathparametererrors').show();
-						validationErrors = [];
-						return;
-					}
 
-					$("#queryparameters input").each(function() {
-						tempReplacedPath = replacedPath.replace("{"+this.name+"}", $(this).val());
-						replacedPath = tempReplacedPath;
-					});
-					
-					$('#testButton').button('loading');
-
-					
-					//Add suffix for brower call
-					var suffix = ".xml";
-					if (headers["Accept"] == "application/json")
-						suffix = ".json";
-					if (headers["Accept"] == "text/turtle")
-						suffix = ".ttl";
-					if (headers["Accept"] == "text/plain")
-						suffix = "";
-					if (headers["Accept"] == "text/fasta")
-						suffix = ".fasta";
-					if (headers["Accept"] == "application/vnd.ms-excel")
-						suffix = ".xls";
-					//if (headers["Accept"] == "text/peff")
-					//	suffix = "peff";
-
-					if(replacedPath.indexOf('?') != -1){
-						var begin = replacedPath.substring(0, replacedPath.indexOf('?'));
-						var end = replacedPath.substring(replacedPath.indexOf('?'), replacedPath.length);
-						//replacedPath = begin + "." + suffix + end; 
-						replacedPath = begin + suffix + end; 
-					}else {
-						replacedPath += suffix;
-						//replacedPath += "." + suffix;
-					}
-					
 					if(replacedPath[0] == "/"){
 						replacedPath = replacedPath.substring(1, replacedPath.length);
 					}
-					
-					
+
 					var res = $.ajax({
 						url : window.location.href.replace("#", "") + replacedPath,
 						type: method.verb,
@@ -928,6 +932,32 @@
 				
 			});
 		});
+	}
+
+	// build url query string from queryParams object
+	function buildUrlQueryString(queryParams) {
+
+	    var query = "";
+
+        if (queryParams.length > 0) {
+
+            for (var i = 0; i < queryParams.length; i++) {
+
+                var paramName = queryParams[i].name;
+                var textInputId = "i_"+ paramName;
+                var paramValue = $("#"+textInputId).val();
+
+                if (paramValue.length > 0) {
+
+                    if (i > 0) {
+                        query += "&";
+                    }
+                    query += paramName + "=" + paramValue;
+                }
+            }
+        }
+
+ 		return query;
 	}
 
 	function showMarkdownPreview(page) {

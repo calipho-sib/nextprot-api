@@ -1,5 +1,44 @@
 package org.nextprot.api.core.service.impl;
 
+import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import org.apache.commons.lang.StringUtils;
+import org.nextprot.api.commons.constants.AnnotationCategory;
+import org.nextprot.api.commons.constants.IdentifierOffset;
+import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.core.dao.AnnotationDAO;
+import org.nextprot.api.core.dao.BioPhyChemPropsDao;
+import org.nextprot.api.core.dao.PtmDao;
+import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.domain.ExperimentalContext;
+import org.nextprot.api.core.domain.Feature;
+import org.nextprot.api.core.domain.Isoform;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.AnnotationService;
+import org.nextprot.api.core.service.AntibodyMappingService;
+import org.nextprot.api.core.service.DbXrefService;
+import org.nextprot.api.core.service.ExperimentalContextDictionaryService;
+import org.nextprot.api.core.service.InteractionService;
+import org.nextprot.api.core.service.IsoformService;
+import org.nextprot.api.core.service.PeptideMappingService;
+import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.utils.TerminologyUtils;
+import org.nextprot.api.core.utils.annot.AnnotationUtils;
+import org.nextprot.api.core.utils.graph.OntologyDAG;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -7,24 +46,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.nextprot.api.annotation.builder.statement.service.StatementService;
-import org.apache.commons.lang.StringUtils;
-import org.nextprot.api.commons.constants.AnnotationCategory;
-import org.nextprot.api.commons.constants.IdentifierOffset;
-import org.nextprot.api.core.dao.AnnotationDAO;
-import org.nextprot.api.core.dao.BioPhyChemPropsDao;
-import org.nextprot.api.core.dao.IsoformDAO;
-import org.nextprot.api.core.dao.PtmDao;
-import org.nextprot.api.core.domain.Feature;
-import org.nextprot.api.core.domain.Isoform;
-import org.nextprot.api.core.domain.annotation.*;
-import org.nextprot.api.core.service.*;
-import org.nextprot.api.core.utils.annot.AnnotationUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
 
-import java.security.InvalidParameterException;
-import java.util.*;
+import javax.annotation.Nullable;
+
+//import java.util.*;
+import java.util.function.Predicate;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
@@ -34,10 +60,12 @@ public class AnnotationServiceImpl implements AnnotationService {
 	@Autowired private DbXrefService xrefService;
 	@Autowired private InteractionService interactionService;
 	@Autowired private BioPhyChemPropsDao bioPhyChemPropsDao;
-	@Autowired private IsoformDAO isoformDAO;
+	@Autowired private IsoformService isoformService;
 	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private StatementService statementService;
+	@Autowired private TerminologyService terminologyService;
+	@Autowired private ExperimentalContextDictionaryService experimentalContextDictionaryService;
 	
 	@Override
 	@Cacheable("annotations")
@@ -46,7 +74,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 	}
 
 	/**
-	 * pam: just for test AnnotationServiceTest to work, could not find any better quick fix
+	 * pam: useful for test AnnotationServiceTest to work and for other tests
 	 */
 	@Override
 	public List<Annotation> findAnnotationsExcludingBed(String entryName) {
@@ -105,6 +133,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 				}
 			}
 	
+			
 			AnnotationUtils.convertRelativeEvidencesToProperties(annotations); // CALIPHOMISC-277
 
 			for (Annotation annot : annotations) {
@@ -122,15 +151,106 @@ public class AnnotationServiceImpl implements AnnotationService {
 
 		if (!ignoreStatements) annotations = AnnotationUtils.mapReduceMerge(statementService.getAnnotations(entryName), annotations);
 
-		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference)
+		// post-processing of annotations
+		updateIsoformsDisplayedAsSpecific(annotations, entryName);
+		updateVariantsRelatedToDisease(annotations);
+		updateSubcellularLocationTermNameWithAncestors(annotations);
+		updateMiscRegionsRelatedToInteractions(annotations);
+		
+		//returns a immutable list when the result is cache-able (this prevents modifying the cache, since the cache returns a reference)
 		return new ImmutableList.Builder<Annotation>().addAll(annotations).build();
 	}
 
+	private void updateSubcellularLocationTermNameWithAncestors(List<Annotation> annotations) {
+		
+		//long t0 = System.currentTimeMillis(); System.out.println("updateSubcellularLocationTermNameWithAncestors...");
+
+		for (Annotation annot: annotations) {
+			if (AnnotationCategory.SUBCELLULAR_LOCATION == annot.getAPICategory()) {
+				CvTerm t = terminologyService.findCvTermByAccession(annot.getCvTermAccessionCode());
+				List<CvTerm> terms = TerminologyUtils.getOnePathToRootTerm(t.getAccession(), terminologyService);
+				String longName = AnnotationUtils.getTermNameWithAncestors(annot, terms);
+				AnnotationProperty prop = new AnnotationProperty();
+				prop.setAnnotationId(annot.getAnnotationId());
+				prop.setName("long-name");
+				prop.setValue(String.valueOf(longName));
+				annot.addProperty(prop);
+				String descr = annot.getDescription();
+				if (descr != null && !annot.getCvTermName().equals(descr)) {
+					// 3 cases: "Main location", "Additional localtion" or "Note=..."
+					if (descr.startsWith("Note=")) descr=descr.substring(5); 
+					prop = new AnnotationProperty();
+					prop.setAnnotationId(annot.getAnnotationId());
+					prop.setName("name-modifier");
+					prop.setValue(String.valueOf(descr));
+					annot.addProperty(prop);
+				}
+			}
+		}
+		
+		//System.out.println("updateSubcellularLocationTermNameWithAncestors DONE in " + (System.currentTimeMillis() - t0) + "ms");
+		
+	}
+	
+	private void updateVariantsRelatedToDisease(List<Annotation> annotations) {
+		
+		Map<Long,ExperimentalContext> ecMap = experimentalContextDictionaryService.getAllExperimentalContexts();
+		
+		//long t0 = System.currentTimeMillis(); System.out.println("updateVariantsRelatedToDisease...");
+
+		// add property if annotation is a variant related to disease
+		for (Annotation annot: annotations) {
+			if (AnnotationCategory.VARIANT == annot.getAPICategory()) {
+				boolean result = AnnotationUtils.isVariantRelatedToDiseaseProperty(annot, ecMap);
+				AnnotationProperty prop = new AnnotationProperty();
+				prop.setAnnotationId(annot.getAnnotationId());
+				prop.setName("disease-related");
+				prop.setValue(String.valueOf(result));
+				annot.addProperty(prop);
+			}
+		}
+
+		//System.out.println("updateVariantsRelatedToDisease DONE in " + (System.currentTimeMillis() - t0) + "ms");
+
+	}
+	
+	
+	private void updateMiscRegionsRelatedToInteractions(List<Annotation> annotations) {
+
+		// add property if annotation is a misc region and it is related to interaction
+		for (Annotation annot: annotations) {
+			if (AnnotationCategory.MISCELLANEOUS_REGION == annot.getAPICategory()) {
+				boolean result = AnnotationUtils.isMiscRegionRelatedToInteractions(annot);
+				AnnotationProperty prop = new AnnotationProperty();
+				prop.setAnnotationId(annot.getAnnotationId());
+				prop.setName("interaction-related");
+				prop.setValue(String.valueOf(result));
+				annot.addProperty(prop);
+			}
+		}
+
+	}
+	
+	
+	
+	private void updateIsoformsDisplayedAsSpecific(List<Annotation> annotations, String entryName) {
+		
+		//long t0 = System.currentTimeMillis(); System.out.println("updateIsoformsDisplayedAsSpecific...");
+		
+		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryName);
+		int entryIsoformCount=isoforms.size();
+		for (Annotation annot: annotations) {
+			annot.setIsoformsDisplayedAsSpecific(AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot, entryIsoformCount));
+		}
+		//System.out.println("updateIsoformsDisplayedAsSpecific DONE in " + (System.currentTimeMillis() - t0) + "ms");
+
+	}
+	
 	private List<Annotation> bioPhyChemPropsToAnnotationList(String entryName, List<AnnotationProperty> props) {
 
 		List<Annotation> annotations = new ArrayList<>(props.size());
 
-		List<Isoform> isoforms = isoformDAO.findIsoformsByEntryName(entryName);
+		List<Isoform> isoforms = isoformService.findIsoformsByEntryName(entryName);
 
 		for(AnnotationProperty property :  props){
 
@@ -184,8 +304,62 @@ public class AnnotationServiceImpl implements AnnotationService {
 		List<Feature> ptms = this.ptmDao.findPtmsByEntry(masterUniqueName);
 		return filterByIsoform(isoformUniqueName, ptms);
 	}
-	
-	
+
+	@Override
+	public Predicate<Annotation> buildCvTermAncestorPredicate(String ancestorAccession) {
+
+		return new CvTermAncestorPredicate(terminologyService.findCvTermByAccession(ancestorAccession));
+	}
+
+	@Override
+	public Predicate<Annotation> buildPropertyPredicate(String propertyName, @Nullable String propertyValueOrAccession) {
+
+		if (propertyName != null && !propertyName.isEmpty()) {
+
+			Predicate<Annotation> propExistencePredicate = annotation -> annotation.getPropertiesMap().containsKey(propertyName);
+
+			if (propertyValueOrAccession != null && !propertyValueOrAccession.isEmpty()) {
+
+				return propExistencePredicate.and(annotation -> {
+
+					Collection<AnnotationProperty> props = annotation.getPropertiesByKey(propertyName);
+
+					return props.stream().anyMatch(annotationProperty ->
+							propertyValueOrAccession.equals(annotationProperty.getValue()) ||
+									propertyValueOrAccession.equals(annotationProperty.getAccession()));
+				});
+			}
+			return propExistencePredicate;
+		}
+
+		return annotation -> true;
+	}
+
+	private class CvTermAncestorPredicate implements Predicate<Annotation> {
+
+		private final CvTerm ancestor;
+		private final OntologyDAG dag;
+
+		private CvTermAncestorPredicate(CvTerm ancestor) {
+
+			this.ancestor = ancestor;
+			dag = terminologyService.findOntologyGraph(TerminologyCv.valueOf(ancestor.getOntology()));
+		}
+
+		@Override
+		public boolean test(Annotation annotation) {
+
+			try {
+				return annotation.getCvTermAccessionCode() != null &&
+						(annotation.getCvTermAccessionCode().equals(ancestor.getAccession()) ||
+								dag.isAncestorOf(ancestor.getId(), dag.getCvTermIdByAccession(annotation.getCvTermAccessionCode())));
+			} catch (OntologyDAG.NotFoundNodeException e) {
+				return false;
+			}
+		}
+	}
+
+
 	// Function class to filter using guava ///////////////////////////////////////////////////////////////////////////////
 
 	private class AnnotationPropertyFunction implements Function<AnnotationProperty, Long> {

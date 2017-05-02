@@ -1,7 +1,6 @@
 package com.nextprot.api.annotation.builder;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -15,9 +14,8 @@ import org.nextprot.commons.constants.QualityQualifier;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementBuilder;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.constants.AnnotationType;
-
-import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 
 public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 
@@ -70,7 +68,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
    		  .addCvTerm("go-xxx", "nucleus", "go-cellular-component-cv")
     	  .addField(StatementField.REFERENCE_DATABASE, "PubMed")
     	  .addField(StatementField.REFERENCE_ACCESSION, "123")
-    	  .addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(new HashSet<>()))
+    	  .addTargetIsoformsField(new TargetIsoformSet())
     	  .addField(StatementField.EVIDENCE_CODE, "ECO:00001")
 			.addField(StatementField.ASSIGNED_BY, "TUTU")
     	  .addSourceInfo("CAVA-VP0920190912", "BioEditor").buildWithAnnotationHash(AnnotationType.ENTRY);
@@ -79,7 +77,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 				addCompulsaryFields("NX_P01308", "NX_P01308", "go-cellular-component", QualityQualifier.GOLD)
 		    	  .addField(StatementField.REFERENCE_DATABASE, "PubMed")
 		    	  .addField(StatementField.REFERENCE_ACCESSION, "123")
-		    	  .addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(new HashSet<>()))
+		    	  .addTargetIsoformsField(new TargetIsoformSet())
 		    	  .addCvTerm("go-xxx", "nucleus", "go-cellular-component-cv")
 				.addField(StatementField.EVIDENCE_CODE, "ECO:00001")
 				.addField(StatementField.ASSIGNED_BY, "TOTO")
@@ -104,14 +102,14 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
 				addCompulsaryFields("NX_P01308", "NX_P01308", "go-cellular-component", QualityQualifier.GOLD)
 		    	  .addField(StatementField.REFERENCE_DATABASE, "PubMed")
 		    	  .addField(StatementField.REFERENCE_ACCESSION, "123")
-		    	  .addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(new HashSet<>()))
+		    	  .addTargetIsoformsField(new TargetIsoformSet())
 		    	  .buildWithAnnotationHash(AnnotationType.ENTRY);
 		
 		Statement sb2 = StatementBuilder.createNew().
 				addCompulsaryFields("NX_P99999", "NX_P99999", "go-cellular-component", QualityQualifier.GOLD)
 		    	  .addField(StatementField.REFERENCE_DATABASE, "PubMed")
 		    	  .addField(StatementField.REFERENCE_ACCESSION, "123")
-		    	  .addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(new HashSet<>()))
+		    	  .addTargetIsoformsField(new TargetIsoformSet())
 		    	  .buildWithAnnotationHash(AnnotationType.ENTRY);
 	
 		List<Statement> statements = Arrays.asList(sb1, sb2);
@@ -129,7 +127,7 @@ public class EntryAnnotationBuilderTest extends AnnotationBuilderBastUnitTest{
     	  .addField(StatementField.EVIDENCE_CODE, "ECO:00001")
     	  .addField(StatementField.REFERENCE_DATABASE, "PubMed")
     	  .addField(StatementField.REFERENCE_ACCESSION, "123")
-    	  .addField(StatementField.TARGET_ISOFORMS, TargetIsoformSerializer.serializeToJsonString(new HashSet<>()))
+    	  .addTargetIsoformsField(new TargetIsoformSet())
     	  .buildWithAnnotationHash(AnnotationType.ENTRY);
 		
 		List<Statement> statements = Arrays.asList(sb1);

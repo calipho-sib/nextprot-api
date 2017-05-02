@@ -11,9 +11,8 @@ import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.commons.statements.Statement;
 import org.nextprot.commons.statements.StatementField;
+import org.nextprot.commons.statements.TargetIsoformSet;
 import org.nextprot.commons.statements.TargetIsoformStatementPosition;
-
-import com.nextprot.api.annotation.builder.statement.TargetIsoformSerializer;
 
 public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 
@@ -35,7 +34,7 @@ public class EntryAnnotationBuilder extends AnnotationBuilder<Annotation> {
 	void setIsoformTargeting(Annotation annotation, Statement statement) {
 		
 		List<AnnotationIsoformSpecificity> targetingIsoforms = new ArrayList<AnnotationIsoformSpecificity>();
-		Set<TargetIsoformStatementPosition> tispSet = TargetIsoformSerializer.deSerializeFromJsonString(statement.getValue(StatementField.TARGET_ISOFORMS));
+		Set<TargetIsoformStatementPosition> tispSet = TargetIsoformSet.deSerializeFromJsonString(statement.getValue(StatementField.TARGET_ISOFORMS));
 
 		for (TargetIsoformStatementPosition tisp : tispSet) {
 			

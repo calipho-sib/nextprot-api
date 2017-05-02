@@ -1,5 +1,6 @@
 package org.nextprot.api.core.service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,12 +12,12 @@ public interface GeneIdentifierService {
 	Set<String> findGeneNames();
 
 	/**
-	 * @return gene names coding the given protein
+	 * @return gene names coding the given protein (the first gene name should be the recommended one)
 	 */
-	Set<String> findGeneNamesByEntryAccession(String entryAccession);
+	List<String> findGeneNamesByEntryAccession(String entryAccession);
 
 	/**
-	 * @return all neXtProt entries mapped to gene name(s)
+	 * @return all neXtProt entries mapped to gene name(s) (the first gene name should be the recommended one)
 	 */
-	Map<String, Set<String>> findEntryGeneNames();
+	Map<String, List<String>> findEntryGeneNames();
 }

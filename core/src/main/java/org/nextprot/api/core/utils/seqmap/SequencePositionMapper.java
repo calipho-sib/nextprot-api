@@ -43,12 +43,14 @@ public class SequencePositionMapper {
 				logger.debug("adding codon nucelotide number:" + nuNum);
 				codonPosInTranscript.addNucleotideIndex(nuNum);
 				if (codonPosInTranscript.size()==3) {
+					logger.debug("returning codonPosInTranscript: " + codonPosInTranscript);
 					return codonPosInTranscript;
 				}
 			}
 			lowNum=highNum + 1;
 		}
 		logger.debug("codon not found in the gene mapping ranges, " + codonPosInTranscript.size() + " nucleotides found");
+		logger.debug("returning codonPosInTranscript: " + codonPosInTranscript);
 		return codonPosInTranscript;
 	}
 

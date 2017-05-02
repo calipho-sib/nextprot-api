@@ -25,7 +25,7 @@ public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 		for(int i=0; i < test_list.length; i++){ testNames(getEntry(test_list[i])); }
 		//for(int i=0; i < 80; i++){ testNames(getEntry(i)); } // 'random' entries
 
-		//Entry entry = getEntry("NX_P06280");
+		//Entry entry = getEntry("NX_P62805");
 		//testNames(entry);
 	}
 
@@ -37,6 +37,8 @@ public class NamesFieldBuilderDiffTest extends SolrDiffTest {
 		nfb.initializeBuilder(entry);
 		
 		// RECOMMENDED_NAME are indexed and tested with the overviewFieldBuilder
+		String expectedGenenames = (String) getValueForFieldInCurrentSolrImplementation(entryName, Fields.RECOMMENDED_GENE_NAMES);
+		String nowGenenames = nfb.getFieldValue(Fields.RECOMMENDED_GENE_NAMES, String.class);
 		
 		List<String> altnamelist = (List) getValueForFieldInCurrentSolrImplementation(entryName, Fields.ALTERNATIVE_NAMES);
 		Set<String> expectedAltnames = null;

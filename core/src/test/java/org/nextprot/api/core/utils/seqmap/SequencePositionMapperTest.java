@@ -1,5 +1,11 @@
 package org.nextprot.api.core.utils.seqmap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.utils.NucleotidePositionRange;
@@ -11,6 +17,16 @@ import static org.junit.Assert.assertEquals;
 
 
 public class SequencePositionMapperTest {
+
+	static
+	{
+	    Logger rootLogger = Logger.getRootLogger();
+	    rootLogger.setLevel(Level.DEBUG);
+	    rootLogger.addAppender(new ConsoleAppender(
+	               new PatternLayout("\n%-6r [%p] %c - %m%n")));
+	}
+	
+	private final static Log logger = LogFactory.getLog(SequencePositionMapperTest.class);
 
 	@Test
 	public void testCheckSequencePositions() {
@@ -80,23 +96,44 @@ public class SequencePositionMapperTest {
 	}
 
     @Test
+    public void geneIsoformPosTestNotInFrameCrossExon() {
+    	// represent two coding regions of DNA mapped to an isoform sequence
+    	List<NucleotidePositionRange> genePosRanges = new ArrayList<NucleotidePositionRange>();
+    	genePosRanges.add(new NucleotidePositionRange(100,104));
+    	genePosRanges.add(new NucleotidePositionRange(201,204));    	
+    	/*
+    	 * nuNum      0   1   2   3   4            5   6   7   8
+    	 * exons     |---- exon1 ------|          |-- exon 2 ---|
+    	 * nuPos     100 101 102 103 104          201 202 203 204
+    	 * codons    |--codon1--|-------codon2-------|--codon3--|
+    	 */
+    	CodonNucleotideIndices result;
+    	GeneMasterCodonPosition codonNuPos = new GeneMasterCodonPosition();
+    	// get isoform position of aa corresponding to codon with nucleotides at position 103 104 201
+    	codonNuPos.clear();
+    	codonNuPos.addNucleotidePosition(103);
+    	codonNuPos.addNucleotidePosition(104);
+    	codonNuPos.addNucleotidePosition(201);
+    	result = SequencePositionMapper.getCodonNucleotideIndices(codonNuPos, genePosRanges);
+    	logger.debug(result);
+    	assertEquals(true, result.areInFrame());
+    	assertEquals(new Integer(2), result.getAminoAcidPosition());
+    }
+
+    
+    @Test
     public void geneIsoformPosTest() {
     	
     	// represent two coding regions of DNA mapped to an isoform sequence
     	List<NucleotidePositionRange> genePosRanges = new ArrayList<NucleotidePositionRange>();
     	genePosRanges.add(new NucleotidePositionRange(100,104));
     	genePosRanges.add(new NucleotidePositionRange(201,204));
-    	
     	/*
-    	 * 
     	 * nuNum      0   1   2   3   4            5   6   7   8
     	 * exons     |---- exon1 ------|          |-- exon 2 ---|
     	 * nuPos     100 101 102 103 104          201 202 203 204
     	 * codons    |--codon1--|-------codon2-------|--codon3--|
-    	 * 
-    	 * 
     	 */
-
     	CodonNucleotideIndices result;
     	GeneMasterCodonPosition codonNuPos = new GeneMasterCodonPosition();
 
@@ -162,7 +199,7 @@ public class SequencePositionMapperTest {
     	result = SequencePositionMapper.getCodonNucleotideIndices(codonNuPos, genePosRanges);
     	assertEquals(false, result.areInFrame());
     	assertEquals(null, result.getAminoAcidPosition());
-
+    	
     	// trying to find a codon having nucleotide positions out of the gene mapping ranges
     	// i.e. at pos  77,78,79
     	codonNuPos.clear();

@@ -1,10 +1,8 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
-
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.dao.EntityNameDao;
 import org.nextprot.api.core.dao.EntryPropertiesDao;
@@ -14,7 +12,6 @@ import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
 import org.nextprot.api.core.domain.Overview.EntityNameClass;
 import org.nextprot.api.core.domain.Overview.History;
-import org.nextprot.api.core.service.EntryPropertiesService;
 import org.nextprot.api.core.service.FamilyService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.OverviewService;
@@ -22,25 +19,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 
 @Service
 class OverviewServiceImpl implements OverviewService {
-
-	private final static Comparator<EntityName> BY_NAME_COMPARATOR = new Comparator<EntityName>() {
-		@Override
-		public int compare(EntityName en1, EntityName en2) {
-			return en1.getName().compareTo(en2.getName());
-		}
-	};
 
 	@Autowired private HistoryDao historyDao;
 	@Autowired private EntityNameDao entryNameDao;
 	@Autowired private FamilyService familyService;
 	@Autowired private IsoformService isoformService;
 	@Autowired private EntryPropertiesDao entryPropertiesDao;
-	
 
 	@Override
 	@Cacheable("overview")
@@ -86,7 +78,7 @@ class OverviewServiceImpl implements OverviewService {
 				
 				name.getSynonyms().add(s);
 			}
-			Collections.sort(name.getSynonyms(), BY_NAME_COMPARATOR);
+			name.getSynonyms().sort(Comparator.comparing(EntityName::getName));
 			
 			isoNames.add(name);
 		}
@@ -96,12 +88,7 @@ class OverviewServiceImpl implements OverviewService {
 	
 	private void setNamesInOverview(List<EntityName> entityNames, Overview overview){
 
-		Map<String, EntityName> entityMap = Maps.uniqueIndex(entityNames, new Function<EntityName, String>() {
-			@Override
-			public String apply(EntityName entityName) {
-				return entityName.getId();
-			}
-		});
+		Map<String, EntityName> entityMap = Maps.uniqueIndex(entityNames, EntityName::getId);
 
 		Map<String, EntityName> mutableEntityMap = Maps.newHashMap(entityMap);
 		String parentId;
@@ -128,12 +115,7 @@ class OverviewServiceImpl implements OverviewService {
 			if (entityName.getParentId() != null)
 				mutableEntityNames.remove(entityName);
 
-		Multimap<Overview.EntityNameClass, EntityName> entryNameMap = Multimaps.index(mutableEntityNames, new Function<EntityName, EntityNameClass>() {
-			@Override
-			public EntityNameClass apply(EntityName entryName) {
-				return entryName.getClazz();
-			}
-		});
+		Multimap<Overview.EntityNameClass, EntityName> entryNameMap = Multimaps.index(mutableEntityNames, EntityName::getClazz);
 
 		for (EntityNameClass en : entryNameMap.keySet()) {
 
@@ -143,7 +125,7 @@ class OverviewServiceImpl implements OverviewService {
 					break;
 				}
 				case GENE_NAMES: {
-					overview.setGeneNames(getSortedList(entryNameMap, en));
+					overview.setGeneNames(getSortedList(entryNameMap, en, Comparator.comparing(EntityName::getName)));
 					break;
 				}
 				case CLEAVED_REGION_NAMES: {
@@ -161,16 +143,22 @@ class OverviewServiceImpl implements OverviewService {
 			}
 		}
 	}
-	
-	private static List<EntityName> getSortedList(Multimap<Overview.EntityNameClass, EntityName> entryMap, EntityNameClass en){
+
+	private static List<EntityName> getSortedList(Multimap<Overview.EntityNameClass, EntityName> entryMap, EntityNameClass en) {
+
+		return getSortedList(entryMap, en, EntityName.newDefaultComparator());
+	}
+
+	private static List<EntityName> getSortedList(Multimap<Overview.EntityNameClass, EntityName> entryMap, EntityNameClass en, Comparator<EntityName> comparator) {
+
 		List<EntityName> list = new ArrayList<>(entryMap.get(en));
 		for(EntityName e : list){
 			if(e.getSynonyms() != null){
-				Collections.sort(e.getSynonyms());
+				e.getSynonyms().sort(comparator);
 			}
 		}
-		Collections.sort(list);
+		list.sort(comparator);
+
 		return list;
 	}
-
 }

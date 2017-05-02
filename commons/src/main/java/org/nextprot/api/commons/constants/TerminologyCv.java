@@ -6,13 +6,13 @@ import org.nextprot.api.commons.utils.StringUtils;
 public enum TerminologyCv {
 	
 	BgeeDevelopmentalStageCv,
-	NextprotCellosaurusCv,
 	EnzymeClassificationCv,
 	EvidenceCodeOntologyCv,
 	EvocDevelopmentalStageCv,
 	GoBiologicalProcessCv,
 	GoCellularComponentCv,
 	GoMolecularFunctionCv,
+	MammalianPhenotypeCv,
 	MeshAnatomyCv,
 	MeshCv,
 	NciMetathesaurusCv,
@@ -20,9 +20,13 @@ public enum TerminologyCv {
 	NextprotAnatomyCv,
 	NextprotAnnotationCv,
 	NextprotCarbohydrateCv,
+	NextprotCellosaurusCv,
 	NextprotDomainCv,
 	NextprotFamilyCv,
+	NextprotIcepoCv,
 	NextprotMetalCv,
+	NextprotModificationEffectCv,
+	NextprotProteinPropertyCv,
 	NextprotTopologyCv,
 	NonStandardAminoAcidCv,
 	OmimCv,
@@ -35,10 +39,8 @@ public enum TerminologyCv {
 	UniprotPtmCv,
 	UniprotSubcellularLocationCv,
 	UniprotSubcellularOrientationCv,
-	UniprotSubcellularTopologyCv,
-	NextprotModificationEffectCv,
-	NextprotProteinPropertyCv,
-	MammalianPhenotypeCv;
+	UniprotSubcellularTopologyCv;
+
 	
 
 	public static TerminologyCv getTerminologyOf(String terminology){

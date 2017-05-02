@@ -100,7 +100,7 @@ public class Overview implements Serializable{
 			result.addAll(this.additionalNames); 
 		}
 		
-		Collections.sort(result);
+		result.sort(EntityName.newDefaultComparator());
 		return result;
 	}
 

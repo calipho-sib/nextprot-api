@@ -30,7 +30,7 @@ public class StatementETLController {
 	@ResponseBody
 	public String loadStatements(
 			@ApiPathParam(name = "source", description = "The source to load from", allowedvalues = { "BioEditor" }) @PathVariable("source") String source,
-			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2017-01-20" }) @PathVariable("release") String release,
+			@ApiPathParam(name = "release", description = "The release date ", allowedvalues = { "2017-04-17" }) @PathVariable("release") String release,
 			HttpServletRequest request) {
 
 		boolean load = true;
@@ -41,5 +41,6 @@ public class StatementETLController {
 		return statementSourceCollectorAndLoaderService.etlStatements(NextProtSource.valueOf(source), release, load);
 
 	}
+
 
 }

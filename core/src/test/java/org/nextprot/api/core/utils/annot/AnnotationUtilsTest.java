@@ -9,7 +9,9 @@ import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
 import org.nextprot.api.core.domain.annotation.AnnotationProperty;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
@@ -20,10 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
@@ -31,13 +30,15 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles({ "dev", "cache" })
+@ActiveProfiles({ "dev"})
 public class AnnotationUtilsTest extends CoreUnitBaseTest {
 
 	@Autowired
 	private EntryBuilderService entryBuilderService;
+	@Autowired
+	private AnnotationService annotationService;
 
-    @Test
+	@Test
     public void shouldTurnSequenceCautionRelativeEvidenceIntoDifferingSequenceProperty()  {
 				
     	long annotId=1234;
@@ -201,6 +202,186 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
     	assertTrue(AnnotationUtils.filterAnnotationsBetweenPositions(10, 20, Arrays.asList(a1), isoName).isEmpty());
     }
 
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForBinaryInteractionCase1()  { 
+
+    	// BinaryInteraction with 2 isoforms, 1 specific flag => should return 1 isoformDiplayed as specific  
+    	int isoCount=2;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	AnnotationIsoformSpecificity spec2=new AnnotationIsoformSpecificity();
+    	spec2.setIsoformAccession("iso2");
+    	spec2.setSpecificity("BY DEFAULT");
+    	targetIsoformMap.put("iso2",  spec2);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.BINARY_INTERACTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(1, result.size());
+        assertEquals("iso1", result.get(0));	
+    }
+    
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForBinaryInteractionCase2()  { 
+
+    	// BinaryInteraction with 2 isoforms, 2 specific flag => should return 0 isoformDiplayed as specific  
+    	int isoCount=2;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	AnnotationIsoformSpecificity spec2=new AnnotationIsoformSpecificity();
+    	spec2.setIsoformAccession("iso2");
+    	spec2.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso2",  spec2);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.BINARY_INTERACTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForBinaryInteractionCase3()  { 
+
+    	// BinaryInteraction with 1 isoform, 1 specific flag => 0 isoformDiplayed as specific  
+    	int isoCount=1;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.BINARY_INTERACTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(0, result.size());
+
+    }
+
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForBinaryInteractionCase4()  { 
+
+    	// BinaryInteraction with 1 isoform, 0 specific flag => 0 isoformDiplayed as specific  
+    	int isoCount=1;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("BY DEFAULT");
+    	targetIsoformMap.put("iso1",  spec1);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.BINARY_INTERACTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(0, result.size());	
+    }
+    
+// --------------------------------
+    
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForNonBinaryInteractionCase1()  { 
+
+    	// Non BinaryInteraction with 2 isoforms, 2 targetingIsoform records => should return 0 isoformDiplayed as specific  
+    	int isoCount=2;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	AnnotationIsoformSpecificity spec2=new AnnotationIsoformSpecificity();
+    	spec2.setIsoformAccession("iso2");
+    	spec2.setSpecificity("BY DEFAULT");
+    	targetIsoformMap.put("iso2",  spec2);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.GO_MOLECULAR_FUNCTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot, isoCount);
+    	assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForNonBinaryInteractionCase2()  { 
+
+    	// Non BinaryInteraction with 2 isoforms, 2 targetingIsoform records => should return 0 isoformDiplayed as specific   
+    	int isoCount=2;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	AnnotationIsoformSpecificity spec2=new AnnotationIsoformSpecificity();
+    	spec2.setIsoformAccession("iso2");
+    	spec2.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso2",  spec2);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.GO_MOLECULAR_FUNCTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(0, result.size());
+    }
+    
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForNonBinaryInteractionCase3()  { 
+
+    	// BinaryInteraction with 1 isoform, 1 targetingIsoform record => should return 0 isoformDiplayed as specific   
+    	int isoCount=1;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("SPECIFIC");
+    	targetIsoformMap.put("iso1",  spec1);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.GO_MOLECULAR_FUNCTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(0, result.size());
+ 
+    }
+
+    @Test
+    public void shouldcomputeIsoformsDisplayedAsSpecificForNonBinaryInteractionCase4()  { 
+
+    	// BinaryInteraction with 2 isoforms, 1 targetingIsoform record => 1 isoformDiplayed as specific  
+    	int isoCount=2;
+    	Map<String, AnnotationIsoformSpecificity> targetIsoformMap = new HashMap<>();
+    	AnnotationIsoformSpecificity spec1=new AnnotationIsoformSpecificity();
+    	spec1.setIsoformAccession("iso1");
+    	spec1.setSpecificity("BY DEFAULT");
+    	targetIsoformMap.put("iso1",  spec1);
+    	
+    	Annotation annot = mock(Annotation.class);
+    	when(annot.getAPICategory()).thenReturn(AnnotationCategory.GO_MOLECULAR_FUNCTION);
+    	when(annot.getTargetingIsoformsMap()).thenReturn(targetIsoformMap);
+    	
+    	List<String> result = AnnotationUtils.computeIsoformsDisplayedAsSpecific(annot,isoCount);
+    	assertEquals(1, result.size());	
+    	assertEquals("iso1", result.get(0));
+    }
+
+    
+// ----------------------------------    
+    
+    
+    
+    
 	@Test
 	public void testConvertEvidenceToExternalBioObject()  {
 
@@ -243,6 +424,113 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		}
 
 		pw.close();
+	}
+
+	@Test
+	public void shouldFilterBindingTypeDescendantAnnotations() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P01308")
+				.with("go-molecular-function")).getAnnotations();
+
+		Assert.assertEquals(6, annotations.size());
+
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildCvTermAncestorPredicate("GO:0005102"))
+				.collect(Collectors.toList());
+
+		Assert.assertEquals(3, filtered.size());
+		Set<String> terms = filtered.stream().map(Annotation::getCvTermAccessionCode).collect(Collectors.toSet());
+
+		Assert.assertTrue(terms.contains("GO:0005158"));
+		Assert.assertTrue(terms.contains("GO:0005159"));
+		Assert.assertTrue(terms.contains("GO:0005179"));
+	}
+
+	@Test
+	public void shouldFilterByPropertyTopologyExistence() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
+				.with("subcellular-location")).getAnnotations();
+
+		Assert.assertEquals(21, annotations.size());
+
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildPropertyPredicate("topology", null))
+				.collect(Collectors.toList());
+
+		Assert.assertEquals(4, filtered.size());
+		for (Annotation annot : filtered) {
+
+			Assert.assertNotNull(annot.getPropertiesByKey("topology"));
+		}
+	}
+
+	@Test
+	public void shouldNotFilterByPropertyTopologyExistence() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
+				.with("subcellular-location")).getAnnotations();
+
+		Assert.assertEquals(21, annotations.size());
+
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildPropertyPredicate("tOpology", null))
+				.collect(Collectors.toList());
+
+		Assert.assertTrue(filtered.isEmpty());
+	}
+
+	@Test
+	public void shouldFilterByPropertyTopologyValue() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
+				.with("subcellular-location")).getAnnotations();
+
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildPropertyPredicate("topology", "Peripheral membrane protein"))
+				.collect(Collectors.toList());
+
+		for (Annotation annot : filtered) {
+
+			for (AnnotationProperty property : annot.getPropertiesByKey("topology")) {
+
+				Assert.assertEquals("Peripheral membrane protein", property.getValue());
+			}
+		}
+	}
+
+	@Test
+	public void shouldNotFilterByPropertyTopologyValue() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
+				.with("subcellular-location")).getAnnotations();
+
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildPropertyPredicate("topology", "Peripheral mEMbrane protein"))
+				.collect(Collectors.toList());
+
+		Assert.assertTrue(filtered.isEmpty());
+	}
+
+	@Test
+	public void shouldFilterByPropertyTopologyAccession() {
+
+		List<Annotation> annotations = entryBuilderService.build(EntryConfig.newConfig("NX_P04083")
+				.with("subcellular-location")).getAnnotations();
+
+		List<Annotation> filtered = annotations.stream()
+				.filter(annotationService.buildPropertyPredicate("topology", "SL-9903"))
+				.collect(Collectors.toList());
+
+		Assert.assertTrue(!filtered.isEmpty());
+
+		for (Annotation annot : filtered) {
+
+			for (AnnotationProperty property : annot.getPropertiesByKey("topology")) {
+
+				Assert.assertEquals("Peripheral membrane protein", property.getValue());
+			}
+		}
 	}
 
 	private String exportAnnotationsAsTsvString(Entry entry, List<Annotation> mergedAnnotations) {

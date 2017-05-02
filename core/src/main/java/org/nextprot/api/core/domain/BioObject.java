@@ -113,8 +113,16 @@ public class BioObject implements Serializable {
     	return properties.get(ANNOTATION_HASH_PROPERTY_NAME);
     }
 
+    public boolean isInteractant() {
+
+        return bioType == BioType.PROTEIN || bioType == BioType.PROTEIN_ISOFORM || bioType == BioType.CHEMICAL;
+    }
     
     public int size() {
         return 1;
+    }
+
+    public String toString() {
+    	return "BioObject id: " + id + " " + database +":" +  accession + " ty:"  + bioType + " rt:" + resourceType;
     }
 }

@@ -1,38 +1,31 @@
 package org.nextprot.api.core.domain;
 
-import org.mockito.Mockito;
-import org.nextprot.api.core.dao.EntityName;
+import org.junit.Assert;
+import org.junit.Test;
+import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Arrays;
+import java.util.List;
 
-import static org.mockito.Mockito.when;
+@ActiveProfiles({ "dev" })
+public class EntryUtilsTest extends CoreUnitBaseTest{
+        
+    @Autowired
+	private EntryBuilderService entryBuilderService = null;
+    
+    @Test
+	public void testGetFunctionInfoWithCanonicalFirst() {
+     	List<String> FunctionInfoWithCanonicalFirst;
+    	
+        Entry testentry = entryBuilderService.build(EntryConfig.newConfig("NX_P46778").withAnnotations());
+        FunctionInfoWithCanonicalFirst = EntryUtils.getFunctionInfoWithCanonicalFirst(testentry);
+        Assert.assertEquals(3, FunctionInfoWithCanonicalFirst.size());
 
-public class EntryUtilsTest {
-
-    public static Entry mockEntry(String accession, Isoform... isoforms) {
-
-        Entry entry = Mockito.mock(Entry.class);
-
-        when(entry.getUniqueName()).thenReturn(accession);
-
-        if (isoforms.length > 0) {
-            when(entry.getIsoforms()).thenReturn(Arrays.asList(isoforms));
-        }
-
-        return entry;
-    }
-
-    public static Isoform mockIsoform(String accession, String name, boolean canonical) {
-
-        Isoform isoform = Mockito.mock(Isoform.class);
-        when(isoform.getUniqueName()).thenReturn(accession);
-        when(isoform.isCanonicalIsoform()).thenReturn(canonical);
-
-        EntityName entityName = Mockito.mock(EntityName.class);
-        when(entityName.getName()).thenReturn(name);
-
-        when(isoform.getMainEntityName()).thenReturn(entityName);
-
-        return isoform;
+        testentry = entryBuilderService.build(EntryConfig.newConfig("NX_P19367").withAnnotations());
+        FunctionInfoWithCanonicalFirst = EntryUtils.getFunctionInfoWithCanonicalFirst(testentry);
+        Assert.assertEquals("cellular glucose homeostasis",FunctionInfoWithCanonicalFirst.get(0));
     }
 }

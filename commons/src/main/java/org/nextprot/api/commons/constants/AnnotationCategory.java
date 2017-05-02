@@ -138,8 +138,9 @@ public enum AnnotationCategory implements Serializable {
 	FUNCTION_INFO(1033, "function", "functionInfo", "Function info", GENERIC_FUNCTION),
 	CATALYTIC_ACTIVITY(1034, "catalytic activity", "catalyticActivity", "Catalytic activity", GENERIC_FUNCTION),
 	COFACTOR(1035, "cofactor", "cofactor", "Cofactor", GENERIC_INTERACTION),
+	COFACTOR_INFO(226874, "cofactor information", "cofactorInfo", "Cofactor information", GENERIC_INTERACTION),
 	ENZYME_REGULATION(1036, "enzyme regulation", "enzymeRegulation", "Enzyme regulation", GENERIC_INTERACTION),
-	TRANSPORT_ACTIVITY(-25, "transport activity", "transportActivity", "Transport activity", GENERIC_INTERACTION),
+	TRANSPORT_ACTIVITY(-25, "transport activity", "transportActivity", "Transport activity", GENERIC_FUNCTION),
 	PATHWAY(1038, "pathway", "pathway", "Pathway", GENERIC_FUNCTION),
 	GO_MOLECULAR_FUNCTION(1061, "go molecular function", "goMolecularFunction", "GO molecular function", GENERIC_FUNCTION),
 	GO_BIOLOGICAL_PROCESS(1062, "go biological process", "goBiologicalProcess", "GO biological process", GENERIC_FUNCTION),
@@ -171,8 +172,9 @@ public enum AnnotationCategory implements Serializable {
 	REDOX_POTENTIAL(-23, "redox potential", "redoxPotential", "redox potential", BIOPHYSICOCHEMICAL_PROPERTY),
 	TEMPERATURE_DEPENDENCE(-24, "temperature dependence", "temperatureDependence", "Temperature dependence", BIOPHYSICOCHEMICAL_PROPERTY),
 
-	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "Protein property", GENERAL_ANNOTATION), //to represent stable form
 	//New categories added with BioEditor integration
+	ELECTROPHYSIOLOGICAL_PARAMETER(-9993, "electrophysiological-parameter", "electrophysiologicalParameter", "Electrophysiological parameter", GENERAL_ANNOTATION),
+	PROTEIN_PROPERTY(-9992, "protein-property", "proteinProperty", "Protein property", GENERAL_ANNOTATION), //to represent stable form
 	GENERIC_PHENOTYPE(-9999, "generic-phenotype", "genericPhenotype", "Generic phenotype", GENERAL_ANNOTATION),
 	PHENOTYPIC_VARIATION(-9990, "phenotypic-variation", "phenotypicVariation", "Phenotypic variation", GENERIC_PHENOTYPE),
 	MAMMALIAN_PHENOTYPE(-9991, "mammalian-phenotype", "mammalianPhenotype", "Mammalian phenotype", GENERIC_PHENOTYPE),

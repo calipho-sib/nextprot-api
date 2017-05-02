@@ -48,7 +48,7 @@ public class NamesFieldBuilder extends FieldBuilder {
 		    	if(nametype.equals("CD antigen"))  
 				  addField(Fields.CD_ANTIGEN, altname.getName());
 		    	else if(nametype.equals("International Nonproprietary Names"))  
-				  addField(Fields.CD_ANTIGEN, altname.getName());
+				  addField(Fields.INTERNATIONAL_NAME, altname.getName());
 			}
 		
 		altnames = ovv.getFunctionalRegionNames(); // The enzymatic activities of a multifunctional enzyme (maybe redundent with getEnzymes)
@@ -69,23 +69,25 @@ public class NamesFieldBuilder extends FieldBuilder {
 		// Gene names, synonyms and orf names
 		List <EntityName> genenames = ovv.getGeneNames();
 		if(genenames != null ) {
-			String maingenename = ovv.getMainGeneName(); // TODO: check for multigene entries
-			if(maingenename != null); {
-				addField(Fields.RECOMMENDED_GENE_NAMES, maingenename);
-				addField(Fields.RECOMMENDED_GENE_NAMES_S, maingenename);
-				}
-			
-			List <String> orfnames = getORFNames(ovv);
-			if(orfnames != null) for( String orfname : orfnames){ addField(Fields.ORF_NAMES, orfname);}
-			
-			for (EntityName currname : genenames) {
+			String allgenenames = null;
+			for (EntityName currname : genenames) { // Concatenate official gene names
+				if (allgenenames == null) allgenenames = currname.getName();
+				else allgenenames += "; " + currname.getName();
 				List <EntityName> genesynonames = currname.getSynonyms();
 				if(genesynonames != null)
-				for (EntityName genesynoname : genesynonames) {
-					if(!genesynoname.getType().equals("open reading frame"))
-						addField(Fields.ALTERNATIVE_GENE_NAMES, genesynoname.getName());
-				}
-			}
+					for (EntityName genesynoname : genesynonames) {
+						if(!genesynoname.getType().equals("open reading frame"))
+							addField(Fields.ALTERNATIVE_GENE_NAMES, genesynoname.getName());
+					}
+				}			
+			addField(Fields.RECOMMENDED_GENE_NAMES, allgenenames);
+			addField(Fields.RECOMMENDED_GENE_NAMES_S, allgenenames);
+			
+			List <String> orfnames = getORFNames(ovv);
+			if(orfnames != null)
+				for( String orfname : orfnames)
+					addField(Fields.ORF_NAMES, orfname);
+			
 		}
 		//else System.err.println("no gene names for: " + entry.getUniqueName());
 		

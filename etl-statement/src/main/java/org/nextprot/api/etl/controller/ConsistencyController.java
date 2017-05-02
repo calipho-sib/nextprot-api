@@ -21,8 +21,8 @@ public class ConsistencyController {
 	@Autowired
 	private ConsistencyService consistencyService;
 
-	@ApiMethod(path = "/missing-pubmed-ids", verb = ApiVerb.GET, description = "Return a list of missing publications. When consistent, the list should be empty.", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/missing-pubmed-ids", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	@ApiMethod(path = "/missing-publications", verb = ApiVerb.GET, description = "Return a list of missing publications. When consistent, the list should be empty.", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/missing-publications", method = { RequestMethod.GET }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@ResponseBody
 	public List<String> checkConsistencyOfPublications() {
 		return consistencyService.findMissingPublications();

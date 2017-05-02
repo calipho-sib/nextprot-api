@@ -8,7 +8,7 @@ import org.nextprot.api.isoform.mapper.domain.impl.BaseFeatureQueryResult;
 import org.nextprot.api.isoform.mapper.domain.impl.SingleFeatureQuerySuccessImpl;
 import org.nextprot.api.isoform.mapper.domain.impl.exception.*;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
@@ -86,18 +86,18 @@ public class SequenceFeatureValidator {
         Isoform isoform = sequenceFeature.getIsoform(entry);
 
         // do check only position for STOP code
-        if (sequenceFeature.getProteinVariation().getFirstChangingAminoAcid() == AminoAcidCode.STOP) {
-            checkIsoformPos(isoform, variation.getFirstChangingAminoAcidPos()-1, query, false);
+        if (sequenceFeature.getProteinVariation().getVaryingSequence().getFirstAminoAcid() == AminoAcidCode.STOP) {
+            checkIsoformPos(isoform, variation.getVaryingSequence().getFirstAminoAcidPos()-1, query, false);
         }
         else {
-            checkIsoformPosAndAminoAcids(isoform, variation.getFirstChangingAminoAcidPos(), variation.getFirstChangingAminoAcid().get1LetterCode(), query);
+            checkIsoformPosAndAminoAcids(isoform, variation.getVaryingSequence().getFirstAminoAcidPos(), variation.getVaryingSequence().getFirstAminoAcid().get1LetterCode(), query);
         }
 
-        if (sequenceFeature.getProteinVariation().getLastChangingAminoAcid() == AminoAcidCode.STOP) {
-            checkIsoformPos(isoform, variation.getLastChangingAminoAcidPos()-1, query, false);
+        if (sequenceFeature.getProteinVariation().getVaryingSequence().getLastAminoAcid() == AminoAcidCode.STOP) {
+            checkIsoformPos(isoform, variation.getVaryingSequence().getLastAminoAcidPos()-1, query, false);
         }
         else {
-            checkIsoformPosAndAminoAcids(isoform, variation.getLastChangingAminoAcidPos(), variation.getLastChangingAminoAcid().get1LetterCode(), query);
+            checkIsoformPosAndAminoAcids(isoform, variation.getVaryingSequence().getLastAminoAcidPos(), variation.getVaryingSequence().getLastAminoAcid().get1LetterCode(), query);
         }
     }
 

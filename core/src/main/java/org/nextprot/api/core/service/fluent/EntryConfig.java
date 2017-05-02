@@ -11,6 +11,7 @@ public class EntryConfig implements KeyValueRepresentation{
 	private boolean entryModifiedAnnotations;
 	private boolean enzymes;
 	private boolean goldOnly = false;
+	private boolean bed = true;
 	private boolean withoutAdditionalReferences = false; // by default we put xrefs, publications, experimental contexts
 	private boolean withoutProperties = false; //by default we get properties
 	private AnnotationCategory subpart;
@@ -88,6 +89,10 @@ public class EntryConfig implements KeyValueRepresentation{
 		return this.goldOnly;
 	}
 
+	public boolean hasBed() {
+		return this.bed;
+	}
+
 	public String getEntryName() {
 		return this.entryName;
 	}
@@ -111,6 +116,13 @@ public class EntryConfig implements KeyValueRepresentation{
 	public EntryConfig withGoldOnly(Boolean goldOnly) {
 		if(goldOnly != null){
 			this.goldOnly = goldOnly;
+		}
+		return this;
+	}
+
+	public EntryConfig withBed(Boolean bed) {
+		if(bed != null){
+			this.bed = bed;
 		}
 		return this;
 	}

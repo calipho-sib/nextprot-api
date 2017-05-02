@@ -4,20 +4,18 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.bio.AminoAcidCode;
-import org.nextprot.api.commons.bio.variation.SequenceVariation;
+import org.nextprot.api.commons.bio.variation.prot.SequenceVariation;
 import org.nextprot.api.core.dao.EntityName;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.Isoform;
 import org.nextprot.api.core.domain.Overview;
-import org.nextprot.api.isoform.mapper.domain.impl.SequenceVariant;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
-import static org.nextprot.api.core.domain.EntryUtilsTest.mockEntry;
-import static org.nextprot.api.core.domain.EntryUtilsTest.mockIsoform;
 
 public class SequenceVariantTest {
 
@@ -30,8 +28,8 @@ public class SequenceVariantTest {
         SequenceVariation variation = variant.getProteinVariation();
         Assert.assertEquals("p.Lys1710Thr", variant.getFormattedVariation());
 
-        Assert.assertEquals(AminoAcidCode.LYSINE, variation.getFirstChangingAminoAcid());
-        Assert.assertEquals(1710, variation.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.LYSINE, variation.getVaryingSequence().getFirstAminoAcid());
+        Assert.assertEquals(1710, variation.getVaryingSequence().getFirstAminoAcidPos());
 
         Assert.assertTrue(variant.isValidGeneName(mockEntryWithGenes("SCN11A", "SCN12A", "SNS2")));
     }
@@ -45,8 +43,8 @@ public class SequenceVariantTest {
         SequenceVariation variation = variant.getProteinVariation();
         Assert.assertEquals("p.Phe154Ser", variant.getFormattedVariation());
 
-        Assert.assertEquals(AminoAcidCode.PHENYLALANINE, variation.getFirstChangingAminoAcid());
-        Assert.assertEquals(154, variation.getFirstChangingAminoAcidPos());
+        Assert.assertEquals(AminoAcidCode.PHENYLALANINE, variation.getVaryingSequence().getFirstAminoAcid());
+        Assert.assertEquals(154, variation.getVaryingSequence().getFirstAminoAcidPos());
 
         Assert.assertTrue(variant.isValidGeneName(mockEntryWithGenes("WT1")));
     }
@@ -232,11 +230,38 @@ public class SequenceVariantTest {
         return entry;
     }
 
-    /** Other problematic entries:
-     *
-     *  NX_Q9BX84-7 M6-kinase 3
-     *  NX_O95704-3 III
-     *  NX_P29590-12 PML-12
-     */
+    public static Entry mockEntry(String accession, Isoform... isoforms) {
 
+        Entry entry = Mockito.mock(Entry.class);
+
+        when(entry.getUniqueName()).thenReturn(accession);
+
+        if (isoforms.length > 0) {
+            when(entry.getIsoforms()).thenReturn(Arrays.asList(isoforms));
+        }
+
+        return entry;
+    }
+
+    public static Isoform mockIsoform(String accession, String name, boolean canonical) {
+
+        Isoform isoform = Mockito.mock(Isoform.class);
+        when(isoform.getUniqueName()).thenReturn(accession);
+        when(isoform.isCanonicalIsoform()).thenReturn(canonical);
+
+        EntityName entityName = Mockito.mock(EntityName.class);
+        when(entityName.getName()).thenReturn(name);
+
+        when(isoform.getMainEntityName()).thenReturn(entityName);
+
+        return isoform;
+    }
+
+    public static Isoform mockIsoform(String accession, String name, boolean canonical, String sequence) {
+
+        Isoform isoform = mockIsoform(accession, name, canonical);
+        when(isoform.getSequence()).thenReturn(sequence);
+
+        return isoform;
+    }
 }

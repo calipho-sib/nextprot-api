@@ -16,7 +16,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +52,7 @@ class IsoformServiceImpl implements IsoformService {
 			}
 		}
 
-		Collections.sort(isoforms, (i1, i2) -> new IsoformUtils.IsoformComparator().compare(i1, i2));
+		isoforms.sort((i1, i2) -> new IsoformUtils.IsoformComparator().compare(i1, i2));
 
 		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
 		return new ImmutableList.Builder<Isoform>().addAll(isoforms).build();

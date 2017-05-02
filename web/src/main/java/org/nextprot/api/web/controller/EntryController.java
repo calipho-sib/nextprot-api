@@ -7,6 +7,8 @@ import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.IsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.service.AnnotationService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.MasterIsoformMappingService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -22,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Lazy
 @Controller
@@ -31,6 +35,7 @@ public class EntryController {
 	@Autowired private EntryBuilderService entryBuilderService;
 	@Autowired private MasterIsoformMappingService masterIsoformMappingService;
 	@Autowired private EntryPageService entryPageService;
+	@Autowired private AnnotationService annotationService;
 
     @ModelAttribute
     private void populateModelWithUtilsMethods(Model model) {
@@ -44,23 +49,45 @@ public class EntryController {
 	@RequestMapping(value = "/entry/{entry}", method = { RequestMethod.GET })
 	public String exportEntry(
 			@ApiPathParam(name = "entry", description = "The name of the neXtProt entry. For example, the insulin: NX_P01308",  allowedvalues = { "NX_P01308"})
-			@PathVariable("entry") String entryName, Model model) {
+			@PathVariable("entry") String entryName,
+			@RequestParam(value = "term-child-of", required = false) String ancestorTerm,
+			@RequestParam(value = "property-name", required = false) String propertyName,
+			@RequestParam(value = "property-value", required = false) String propertyValue,
+			HttpServletRequest request,
+			Model model) {
 		
-		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything());
+		boolean bed = null==request.getParameter("bed") ? true: Boolean.valueOf(request.getParameter("bed"));
+
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).withEverything().withBed(bed));
+
+		if (ancestorTerm != null || propertyName != null) {
+			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValue);
+		}
+
 		model.addAttribute("entry", entry);
 
 		return "entry";
 	}
 
 	@RequestMapping("/entry/{entry}/{blockOrSubpart}")
-	public String getSubPart(@PathVariable("entry") String entryName,
-							@PathVariable("blockOrSubpart") String blockOrSubpart, 
-							HttpServletRequest request,
-							Model model) {
-		
-		boolean goldOnly = "true".equalsIgnoreCase(request.getParameter("goldOnly"));
-		
-		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withGoldOnly(goldOnly));
+	public String getSubPart(
+			@PathVariable("entry") String entryName,
+			@PathVariable("blockOrSubpart") String blockOrSubpart,
+			@RequestParam(value = "term-child-of", required = false) String ancestorTerm,
+			@RequestParam(value = "property-name", required = false) String propertyName,
+			@RequestParam(value = "property-value", required = false) String propertyValueOrAccession,
+			
+			HttpServletRequest request, Model model) {
+
+    	boolean goldOnly = "true".equalsIgnoreCase(request.getParameter("goldOnly"));
+    	boolean bed = null==request.getParameter("bed") ? true: Boolean.valueOf(request.getParameter("bed"));
+
+		Entry entry = this.entryBuilderService.build(EntryConfig.newConfig(entryName).with(blockOrSubpart).withGoldOnly(goldOnly).withBed(bed));
+
+		if (ancestorTerm != null || propertyName != null) {
+			filterEntryAnnotations(entry, ancestorTerm, propertyName, propertyValueOrAccession);
+		}
+
 		model.addAttribute("entry", entry);
 		return "entry";
 	}
@@ -93,6 +120,28 @@ public class EntryController {
 	public Integer countAnnotation(@PathVariable("entry") String entryName) {
 
 		return this.entryBuilderService.build(EntryConfig.newConfig(entryName).with("annotation")).getAnnotations().size();
+	}
+
+	/**
+	 * Filter entry annotations
+	 * @param entry the entry to update
+	 * @param ancestorCvTerm the ancestor term
+	 * @param propertyName property name
+	 * @param propertyValueOrAccession property value or accession (ignored if property name is null)
+	 */
+	private void filterEntryAnnotations(Entry entry, String ancestorCvTerm, String propertyName, String propertyValueOrAccession) {
+
+		final Predicate<Annotation> cvTermPredicate = (ancestorCvTerm != null) ?
+				annotationService.buildCvTermAncestorPredicate(ancestorCvTerm) :
+				annotation -> true;
+
+		final Predicate<Annotation> propertyPredicate = (propertyName != null) ?
+				annotationService.buildPropertyPredicate(propertyName, propertyValueOrAccession) :
+				annotation -> true;
+
+		entry.setAnnotations(entry.getAnnotations().stream()
+				.filter(cvTermPredicate.and(propertyPredicate))
+				.collect(Collectors.toList()));
 	}
 }
 
