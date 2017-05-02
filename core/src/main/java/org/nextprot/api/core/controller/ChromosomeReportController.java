@@ -23,9 +23,9 @@ public class ChromosomeReportController {
 	@Autowired
 	private ChromosomeReportService chromosomeReportService;
 
-	@ApiMethod(path = "/chromosome-names/", verb = ApiVerb.GET, description = "Get the list of chromosomes referenced in neXtProt",
+	@ApiMethod(path = "/chromosome-names", verb = ApiVerb.GET, description = "Get the list of chromosomes referenced in neXtProt",
 			produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/chromosome-names/", method = {RequestMethod.GET})
+	@RequestMapping(value = "/chromosome-names", method = {RequestMethod.GET})
 	@ResponseBody
 	public List<String> getChromosomes() {
 
