@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface GeneDAO {
 
+	List<ChromosomalLocation> findChromosomalLocationsByEntryNameOld(String entryName);
 	List<ChromosomalLocation> findChromosomalLocationsByEntryName(String entryName);
 
 	List<GenomicMapping> findGenomicMappingByEntryName(String entryName);

@@ -9,7 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-@ActiveProfiles({ "dev", "cache" })
+@ActiveProfiles({ "dev" })
 public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 
 	@Autowired
