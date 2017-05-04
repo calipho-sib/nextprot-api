@@ -54,6 +54,17 @@
 		<module>blast</module>
 	</modules>
 
+	<!-- This is used to for ehcache-web to take 2.6.11 core -->
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache-core</artifactId>
+				<version>2.6.11</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 
 		<!--
