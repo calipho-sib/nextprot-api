@@ -25,7 +25,7 @@ public class SparqlProxyController extends ServletWrappingController implements 
     @Value("${sparql.url}")
     private String sparqlEndpoint;
 
-	@Autowired
+	@Autowired(required = false)
 	private EhCacheCacheManager ehCacheManager;
 
 
@@ -215,7 +215,13 @@ public class SparqlProxyController extends ServletWrappingController implements 
 		PageInfo pageInfo = null;
 		try {
 			//TODO checkNoReentry(request);
-			Cache blockingCache = ehCacheManager.getCacheManager().getCache("sparql-proxy-cache");
+
+			Cache blockingCache;
+			if(ehCacheManager != null){
+				blockingCache = ehCacheManager.getCacheManager().getCache("sparql-proxy-cache");
+			}else {
+				return buildPage(request, response);
+			}
 
 			Element element = blockingCache.get(key);
 			if (element == null || element.getObjectValue() == null) {
