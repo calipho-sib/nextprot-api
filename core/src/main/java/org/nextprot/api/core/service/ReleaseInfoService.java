@@ -4,5 +4,5 @@ import org.nextprot.api.core.domain.release.ReleaseInfo;
 
 public interface ReleaseInfoService {
 
-	public ReleaseInfo findReleaseInfo();
+	ReleaseInfo findReleaseInfo();
 }

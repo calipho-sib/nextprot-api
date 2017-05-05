@@ -30,6 +30,14 @@ public class GeneDAOImpl implements GeneDAO {
 		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("chromosomal-location-by-entry-name"), namedParameters, new ChromosomalLocationRowMapper());
 
 	}
+
+	@Override
+	public List<ChromosomalLocation> findChromosomalLocationsByEntryNameOld(String entryName) {
+
+		SqlParameterSource namedParameters = new MapSqlParameterSource("unique_name", entryName);
+		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("chromosomal-location-by-entry-name-old"), namedParameters, new ChromosomalLocationRowMapper());
+
+	}
 	
 	private static class ChromosomalLocationRowMapper implements ParameterizedRowMapper<ChromosomalLocation> {
 
@@ -45,6 +53,11 @@ public class GeneDAOImpl implements GeneDAO {
 			chromosomalLocation.setLastPosition(resultSet.getInt("lastPosition"));
 			chromosomalLocation.setDisplayName(resultSet.getString("displayName"));
 			chromosomalLocation.setMasterGeneNames(resultSet.getString("masterGeneNames"));
+			// fields for new version 
+			if (resultSet.getMetaData().getColumnCount()>9) {
+				chromosomalLocation.setGeneGeneNames(resultSet.getString("geneGeneNames"));
+				chromosomalLocation.setMappingQuality(resultSet.getString("quality"));
+			}
 			return chromosomalLocation;
 		}
 	}
@@ -160,5 +173,7 @@ public class GeneDAOImpl implements GeneDAO {
 		
 		return new ArrayList<IsoformMapping>(isoformMappings.values());
 	}
+
+
 
 }
