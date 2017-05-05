@@ -8,9 +8,11 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
+import org.nextprot.api.core.service.ChromosomeReportService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.ReleaseInfoService;
-import org.nextprot.api.core.service.export.format.FileFormat;
+import org.nextprot.api.core.service.export.ChromosomeReportWriter;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.service.ExportService;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
@@ -42,12 +44,14 @@ public class ExportServiceImpl implements ExportService {
 	private VelocityConfig velocityConfig;
 	@Autowired
 	private ReleaseInfoService releaseInfoService;
+	@Autowired
+	private ChromosomeReportService chromosomeReportService;
 	
 	private int numberOfWorkers = 8;
 	private ExecutorService executor = null;
 
 	@Override
-	public List<Future<File>> exportAllEntries(FileFormat format) {
+	public List<Future<File>> exportAllEntries(NextprotMediaType format) {
 		List<String> uniqueNames = new ArrayList<>();
 		for (String chrm : CHROMOSOMES) {
 			uniqueNames.addAll(this.masterIdentifierService.findUniqueNamesOfChromosome(chrm));
@@ -56,13 +60,13 @@ public class ExportServiceImpl implements ExportService {
 	}
 
 	@Override
-	public List<Future<File>> exportEntriesOfChromosome(String chromossome, FileFormat format) {
+	public List<Future<File>> exportEntriesOfChromosome(String chromossome, NextprotMediaType format) {
 		List<String> uniqueNames = this.masterIdentifierService.findUniqueNamesOfChromosome(chromossome);
 		return exportEntries(uniqueNames, format);
 	}
 
 	@Override
-	public List<Future<File>> exportEntries(Collection<String> uniqueNames, FileFormat format) {
+	public List<Future<File>> exportEntries(Collection<String> uniqueNames, NextprotMediaType format) {
 		List<Future<File>> futures = new ArrayList<>();
 		futures.add(exportSubPart(SubPart.HEADER, format));
 		for (String uniqueName : uniqueNames) {
@@ -72,17 +76,30 @@ public class ExportServiceImpl implements ExportService {
 		return futures;
 	}
 
+	@Override
+	public void exportChromosomeEntryReport(String chromosome, NextprotMediaType nextprotMediaType, OutputStream os) throws IOException {
+
+		Optional<ChromosomeReportWriter> writer = ChromosomeReportWriter.valueOf(nextprotMediaType, os);
+
+		if (writer.isPresent()) {
+			writer.get().write(chromosomeReportService.reportChromosome(chromosome));
+		}
+		else {
+			throw new NextProtException("cannot export chromosome "+chromosome+": " + "unsupported "+nextprotMediaType+" format");
+		}
+	}
+
 	@PostConstruct
 	public void init() {
 		executor = Executors.newFixedThreadPool(numberOfWorkers);
 	}
 
-	private Future<File> exportSubPart(SubPart part, FileFormat format) {
+	private Future<File> exportSubPart(SubPart part, NextprotMediaType format) {
 		return executor.submit(new ExportSubPartTask(velocityConfig.getVelocityEngine(), part, format));
 	}
 
 	@Override
-	public Future<File> exportEntry(String uniqueName, FileFormat format) {
+	public Future<File> exportEntry(String uniqueName, NextprotMediaType format) {
 		return executor.submit(new ExportEntryTask(this.entryBuilderService, velocityConfig.getVelocityEngine(), uniqueName, format));
 	}
 
@@ -94,7 +111,7 @@ public class ExportServiceImpl implements ExportService {
 		private EntryBuilderService entryBuilderService;
 		private final Template template;
 
-		ExportEntryTask(EntryBuilderService entryBuilderService, VelocityEngine ve, String entryName, FileFormat format) {
+		ExportEntryTask(EntryBuilderService entryBuilderService, VelocityEngine ve, String entryName, NextprotMediaType format) {
 
 			Preconditions.checkNotNull(format, "A format should be specified (xml or ttl)");
 
@@ -105,7 +122,7 @@ public class ExportServiceImpl implements ExportService {
 			this.entryName = entryName;
 			this.format = format.getExtension();
 
-			if (this.format.equals(FileFormat.TURTLE.getExtension())) {
+			if (this.format.equals(NextprotMediaType.TURTLE.getExtension())) {
 				template = ve.getTemplate("turtle/entry." + format + ".vm");
 			} else {
 				template = ve.getTemplate("entry." + format + ".vm");
@@ -142,13 +159,13 @@ public class ExportServiceImpl implements ExportService {
 
 	private static class ExportSubPartTask implements Callable<File> {
 
-		private FileFormat npFormat;
+		private NextprotMediaType npFormat;
 		private String format;
 		private VelocityEngine ve;
 		private String filename;
 		private SubPart part;
 
-		private ExportSubPartTask(VelocityEngine ve, SubPart part, FileFormat format) {
+		private ExportSubPartTask(VelocityEngine ve, SubPart part, NextprotMediaType format) {
 			this.npFormat = format;
 			this.ve = ve;
 			this.part = part;
@@ -159,7 +176,7 @@ public class ExportServiceImpl implements ExportService {
 		}
 
 		private void checkFormatConstraints() {
-			if (!(npFormat.equals(FileFormat.TURTLE) || npFormat.equals(FileFormat.XML))) {
+			if (!(npFormat.equals(NextprotMediaType.TURTLE) || npFormat.equals(NextprotMediaType.XML))) {
 				throw new NextProtException("A format should be specified (xml or ttl)");
 			}
 		}
@@ -177,13 +194,13 @@ public class ExportServiceImpl implements ExportService {
 			VelocityContext context;
 
 			if (part.equals(SubPart.HEADER)) {
-				if (format.equals(FileFormat.TURTLE.getExtension())) {
+				if (format.equals(NextprotMediaType.TURTLE.getExtension())) {
 					template = ve.getTemplate("turtle/prefix.ttl.vm");
 				} else {
 					template = ve.getTemplate("exportStart.xml.vm");
 				}
 			} else if (part.equals(SubPart.FOOTER)) {
-				if (format.equals(FileFormat.XML.getExtension())) {
+				if (format.equals(NextprotMediaType.XML.getExtension())) {
 					template = ve.getTemplate("exportEnd.xml.vm");
 				}
 			}

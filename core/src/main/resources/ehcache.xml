@@ -310,4 +310,10 @@
 		   memoryStoreEvictionPolicy="LFU">
 		<persistence strategy="localTempSwap" />
 	</cache>
+
+	<cache name="chromosome-reports" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="5"
+		   maxEntriesLocalDisk="30" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true">
+	</cache>
 </ehcache>

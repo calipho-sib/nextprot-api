@@ -99,6 +99,7 @@
 				<entry key="html" value="text/html" />
 				<entry key="fasta" value="text/fasta" />
 				<!--<entry key="peff" value="text/peff" /> -->
+				<entry key="tsv" value="text/tab-separated-values" />
 				<entry key="txt" value="text/plain" />
 				<entry key="xls" value="application/vnd.ms-excel" />
 			</map>

@@ -6,6 +6,7 @@ import org.nextprot.api.core.utils.ChromosomalLocationComparator;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @ApiObject(name = "chromosomal-location", description = "The chromosomal location")
 public class ChromosomalLocation implements Serializable {
@@ -30,16 +31,41 @@ public class ChromosomalLocation implements Serializable {
 	@ApiObjectField(description = "The last position on the gene")
 	private int lastPosition;
 
-	// name of the gene in sequence_identifier (not always displayed in fact)
+	// name of the gene in sequence_identifier given by ENSEMBL 
+	// most of the time (when gene_identifier.unique_name like 'NX_ENSG...'
 	// see CALIPHOMISC-154
 	private String displayName;
 	
-	// names of the "gene name" synonyms of the master (sometimes displayed) separated with comma
+	// UniProt recommended name of genes associated to master separated with space
 	// see CALIPHOMISC-154
 	private String masterGeneNames;
 
+	// UniProt recommended name of genes associated to genes separated with space
+	private String geneGeneNames;
+
+	
+	// quality of the nextprot alignment gene - isoform (null=GOLD, SILVER)
+	private boolean goldMapping;
+
+	
 	private boolean isBestGeneLocation;
 	
+	private String recommendedName;
+
+	public void setGeneGeneNames(String geneGeneNames) {
+		
+		this.geneGeneNames =sortNames(geneGeneNames);
+		
+	}
+
+	public boolean isGoldMapping() {
+		return goldMapping;
+	}
+
+	public void setMappingQuality(String quality) {
+		if (null==quality) quality = "GOLD";
+		this.goldMapping = "GOLD".equals(quality);
+	}
 	
 	
 	public boolean isBestGeneLocation() {
@@ -55,7 +81,19 @@ public class ChromosomalLocation implements Serializable {
 	}
 
 	public void setMasterGeneNames(String masterGeneNames) {
-		this.masterGeneNames=masterGeneNames;
+		
+		this.masterGeneNames=sortNames(masterGeneNames);
+		
+	}
+
+	private String sortNames(String names) {
+
+		if (names==null) return null;
+		
+		return Arrays.stream(names.split(" "))
+			.sorted()
+			.collect(Collectors.joining(" "));
+		
 	}
 	
 	/**
@@ -65,7 +103,7 @@ public class ChromosomalLocation implements Serializable {
 	 * - the display name of the gene sequence identifier is sometimes wrong
 	 * @return the recommended gene name
 	 */
-	public String getRecommendedName() {
+	private String getRecommendedNameOld() {
 		if (displayName==null && masterGeneNames==null) return "unknown"; // (about 300 cases)
 		if (masterGeneNames==null) return displayName; // (0 cases but... who knows)
 		String[] mgnList=masterGeneNames.split(" "); // 
@@ -76,6 +114,48 @@ public class ChromosomalLocation implements Serializable {
 		// it no match is found choose arbitrarily the fist master gene name 
 		return mgnList[0]; 
 	}
+	
+	/**
+	 * Inspired from code in NP1 - same heuristics
+	 * @return
+	 */
+	public String getRecommendedName() {
+		
+		if (this.recommendedName==null) this.recommendedName = calcRecommendedName();
+		return this.recommendedName; 
+				
+	}
+	
+	@Deprecated
+	public String getRecommendedName(String version) {
+		
+		return "old".equals(version) ? getRecommendedNameOld() : getRecommendedName();
+				
+	}
+	
+	
+	private String calcRecommendedName() {
+
+		// case 1 - no UniProt recommended gene name in entry => return unknown ! 
+		if (masterGeneNames==null) return "unknown";
+
+		// case 2 - 1 UniProt recommended gene name in entry => return it
+		String[] mgNames = masterGeneNames.split(" ");
+		if (mgNames.length==1) return mgNames[0];
+		
+		// case 3 - multiple UniProt recommended gene names in entry => find intersection with mapped gene recommended names
+		String[] ggNames = geneGeneNames==null ? new String[]{} : geneGeneNames.split(" ");
+		for (String mgName: mgNames) {
+			for (String ggName: ggNames) {
+				if (mgName.equals(ggName)) return mgName;
+			}
+		}
+		
+		// case 4 - otherwise choose first recommended gene name in entry
+		return mgNames[0];
+		
+	}
+
 	
 	public String getChromosome() {
 		return chromosome;

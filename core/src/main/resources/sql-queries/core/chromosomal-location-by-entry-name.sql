@@ -1,10 +1,13 @@
-select g.chromosome chromosome, s.unique_name accession, g.band band, g.strand strand, m.is_master as best_location,
-g.first_pos_chr firstPosition, g.last_pos_chr lastPosition, s.display_name as displayName,
-(select string_agg(sy.synonym_name,' ') from nextprot.identifier_synonyms sy 
-where sy.identifier_id=master.identifier_id and sy.is_main is true and sy.cv_type_id=100) as masterGeneNames
-from nextprot.gene_identifiers g  
-inner join nextprot.sequence_identifiers s on (g.identifier_id = s.identifier_id)  
-inner join nextprot.mapping_annotations m on (s.identifier_id = m.reference_identifier_id)  
-inner join nextprot.sequence_identifiers master on (master.identifier_id = m.mapped_identifier_id)   
-where m.cv_type_id = 3 
-and master.unique_name = :unique_name
+select gi.chromosome, gs.unique_name as accession, 
+gi.band, gi.strand, map.is_master as best_location, 
+gi.first_pos_chr firstPosition, gi.last_pos_chr lastPosition, 
+gs.display_name as displayName,
+(select string_agg(syn.synonym_name,' ') from nextprot.identifier_synonyms syn where ms.identifier_id = syn.identifier_id and syn.cv_type_id = 100 and syn.is_main=true) as masterGeneNames,
+(select string_agg(syn.synonym_name,' ') from nextprot.identifier_synonyms syn where gs.identifier_id = syn.identifier_id and syn.cv_type_id = 1   and syn.is_main=true) as geneGeneNames,
+(select cv_name from nextprot.cv_quality_qualifiers q where q.cv_id=map.cv_quality_qualifier_id) as quality
+from nextprot.gene_identifiers gi
+inner join nextprot.sequence_identifiers gs on (gi.identifier_id=gs.identifier_id and gs.cv_type_id=3 and gs.cv_status_id=1)
+inner join nextprot.mapping_annotations map on (gi.identifier_id=map.reference_identifier_id and map.cv_type_id=3 )
+-- and (map.cv_quality_qualifier_id is null or map.cv_quality_qualifier_id !=50)) // SILVER mapping = 50
+inner join nextprot.sequence_identifiers ms on (map.mapped_identifier_id=ms.identifier_id and ms.cv_status_id=1 and ms.cv_type_id=1 )
+where ms.unique_name = :unique_name

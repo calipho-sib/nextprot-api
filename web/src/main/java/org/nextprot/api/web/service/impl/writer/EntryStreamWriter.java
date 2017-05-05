@@ -2,7 +2,7 @@ package org.nextprot.api.web.service.impl.writer;
 
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.service.export.format.FileFormat;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
 
 import java.io.*;
 import java.util.Collection;
@@ -106,7 +106,7 @@ public abstract class EntryStreamWriter<S extends Flushable & Closeable> impleme
      * @return a NPEntryWriter instance
      * @throws UnsupportedEncodingException
      */
-    public static EntryStreamWriter newAutoCloseableWriter(FileFormat format, String view, OutputStream os) throws IOException {
+    public static EntryStreamWriter newAutoCloseableWriter(NextprotMediaType format, String view, OutputStream os) throws IOException {
 
         Preconditions.checkNotNull(format);
 

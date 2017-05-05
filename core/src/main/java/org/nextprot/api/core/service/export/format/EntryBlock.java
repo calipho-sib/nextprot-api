@@ -7,21 +7,21 @@ import java.util.*;
 
 public enum EntryBlock {
 	
-	FULL_ENTRY(null, FileFormat.XML, FileFormat.TXT),
-	ACCESSION(FileFormat.XML, FileFormat.TXT),
-	OVERVIEW(FileFormat.XML),
-	ANNOTATION(FileFormat.XML),
-	PUBLICATION(FileFormat.XML),
-	XREF(FileFormat.XML),
-	IDENTIFIER(FileFormat.XML),
-	CHROMOSOMAL_LOCATION(FileFormat.XML),
-	EXPERIMENTAL_CONTEXT(FileFormat.XML),
-	GENOMIC_MAPPING(FileFormat.XML),
-	ISOFORM(FileFormat.XML);
+	FULL_ENTRY(null, NextprotMediaType.XML, NextprotMediaType.TXT),
+	ACCESSION(NextprotMediaType.XML, NextprotMediaType.TXT),
+	OVERVIEW(NextprotMediaType.XML),
+	ANNOTATION(NextprotMediaType.XML),
+	PUBLICATION(NextprotMediaType.XML),
+	XREF(NextprotMediaType.XML),
+	IDENTIFIER(NextprotMediaType.XML),
+	CHROMOSOMAL_LOCATION(NextprotMediaType.XML),
+	EXPERIMENTAL_CONTEXT(NextprotMediaType.XML),
+	GENOMIC_MAPPING(NextprotMediaType.XML),
+	ISOFORM(NextprotMediaType.XML);
 	
-	private List<FileFormat> supportedFormats = null;
+	private List<NextprotMediaType> supportedFormats = null;
 
-	EntryBlock(FileFormat... supportedFormats){
+	EntryBlock(NextprotMediaType... supportedFormats){
 		this.supportedFormats = Arrays.asList(supportedFormats);
 	}
 	
@@ -49,7 +49,7 @@ public enum EntryBlock {
 
 	static {
 		formatViews = new HashMap<>();
-		for (FileFormat format : FileFormat.values()) {
+		for (NextprotMediaType format : NextprotMediaType.values()) {
 			formatViews.put(format.name().toLowerCase(), new LinkedHashSet<String>());
 			for (EntryBlock v : EntryBlock.values()) {
 				if (v.supportedFormats.contains(format)) {

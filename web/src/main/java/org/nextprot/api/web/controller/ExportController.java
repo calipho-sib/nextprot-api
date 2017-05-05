@@ -1,13 +1,15 @@
 package org.nextprot.api.web.controller;
 
+import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.service.export.format.EntryBlock;
-import org.nextprot.api.core.service.export.format.FileFormat;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.nextprot.api.solr.QueryRequest;
 import org.nextprot.api.user.domain.UserProteinList;
 import org.nextprot.api.user.service.UserProteinListService;
@@ -16,6 +18,7 @@ import org.nextprot.api.web.service.SearchService;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.*;
 
 import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAutoCloseableWriter;
@@ -34,8 +38,7 @@ import static org.nextprot.api.web.service.impl.writer.EntryStreamWriter.newAuto
  */
 @Lazy
 @Controller
-// @Api(name = "Export", description =
-// "Export multiple entries based on a chromosome or a user list. A template can also be given in order to export only subparts of the entries.")
+@Api(name = "Export", description = "Export neXtProt entries ")
 public class ExportController {
 
     @Autowired
@@ -52,7 +55,7 @@ public class ExportController {
 
     @RequestMapping(value = "/export/entries/all", method = {RequestMethod.GET})
     public void streamAllEntries(HttpServletRequest request, HttpServletResponse response, Model model) {
-        FileFormat format = FileFormat.valueOf(request);
+        NextprotMediaType format = NextprotMediaType.valueOf(request);
         streamAllEntries(format, response, "entry");
     }
 
@@ -69,7 +72,7 @@ public class ExportController {
                                      @RequestParam(value = "quality", required = false) String quality, Model model) {
         QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
 
-        FileFormat format = FileFormat.valueOf(request);
+        NextprotMediaType format = NextprotMediaType.valueOf(request);
         streamEntries(format, response, view, qr);
     }
 
@@ -86,10 +89,9 @@ public class ExportController {
                               @RequestParam(value = "quality", required = false) String quality, Model model) {
         QueryRequest qr = getQueryRequest(query, listId, queryId, sparql, chromosome, filter, quality, sort, order);
 
-        FileFormat format = FileFormat.valueOf(request);
+        NextprotMediaType format = NextprotMediaType.valueOf(request);
         streamEntries(format, response, "entry", qr);
     }
-
 
     @RequestMapping(value = "/export/templates", method = {RequestMethod.GET})
     @ResponseBody
@@ -97,7 +99,7 @@ public class ExportController {
         return EntryBlock.getFormatViews();
     }
 
-    @ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries accessions from a list")
+    //@ApiMethod(path = "/export/lists/{listId}", verb = ApiVerb.GET, description = "Exports entries accessions from a list")
     @RequestMapping("/export/lists/{listId}")
     public void exportList(HttpServletResponse response, HttpServletRequest request, @ApiQueryParam(name = "listname", description = "The list id") @PathVariable("listId") String listId) {
 
@@ -127,6 +129,26 @@ public class ExportController {
         }
     }
 
+    @ApiMethod(path = "/export/reports/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries coming from genes located on a given chromosome",
+            produces = { MediaType.TEXT_PLAIN_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE } )
+    @RequestMapping(value = "/export/reports/chromosome/{chromosome}", method = {RequestMethod.GET})
+    public void exportChromosomeEntriesReport(
+            @ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+            @PathVariable("chromosome")  String chromosome, HttpServletRequest request, HttpServletResponse response) {
+
+        NextprotMediaType mediaType = NextprotMediaType.valueOf(request);
+
+        try (OutputStream os = response.getOutputStream()) {
+
+            String filename = "chromosome" + chromosome + "." + mediaType.getExtension();
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+            exportService.exportChromosomeEntryReport(chromosome, NextprotMediaType.valueOf(request), os);
+        }
+        catch (IOException e) {
+            throw new NextProtException(e.getMessage()+": cannot export chromosome "+chromosome+" as "+ mediaType);
+        }
+    }
+
     private List<String> getAccessions(QueryRequest queryRequest) {
 
         Set<String> accessionsSet = searchService.getAccessions(queryRequest);
@@ -143,7 +165,7 @@ public class ExportController {
         return accessions;
     }
 
-    private void streamEntries(FileFormat format, HttpServletResponse response, String viewName, QueryRequest queryRequest) {
+    private void streamEntries(NextprotMediaType format, HttpServletResponse response, String viewName, QueryRequest queryRequest) {
 
         setResponseHeader(format, viewName, queryRequest, response);
         List<String> entries = getAccessions(queryRequest);
@@ -156,7 +178,7 @@ public class ExportController {
         }
     }
 
-    private void streamAllEntries(FileFormat format, HttpServletResponse response, String viewName) {
+    private void streamAllEntries(NextprotMediaType format, HttpServletResponse response, String viewName) {
 
         setResponseHeader(format, response);
         List<String> entries = new ArrayList<>(masterIdentifierService.findUniqueNames());
@@ -169,25 +191,25 @@ public class ExportController {
         }
     }
 
-    private void setResponseHeader(FileFormat format, String viewName, QueryRequest queryRequest, HttpServletResponse response) {
+    private void setResponseHeader(NextprotMediaType format, String viewName, QueryRequest queryRequest, HttpServletResponse response) {
 
         String filename = getFilename(queryRequest, viewName, format);
 
-        if (!format.equals(FileFormat.JSON)) {
+        if (!format.equals(NextprotMediaType.JSON)) {
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
         }
     }
 
-    private void setResponseHeader(FileFormat format, HttpServletResponse response) {
+    private void setResponseHeader(NextprotMediaType format, HttpServletResponse response) {
 
         String filename = "nextprot-entries-all"  + "." + format.getExtension();
 
-        if (!format.equals(FileFormat.JSON)) {
+        if (!format.equals(NextprotMediaType.JSON)) {
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
         }
     }
 
-    private String getFilename(QueryRequest queryRequest, String viewName, FileFormat format) {
+    private String getFilename(QueryRequest queryRequest, String viewName, NextprotMediaType format) {
         if (queryRequest.hasNextProtQuery()) {
             return "nextprot-query-" + queryRequest.getQueryId() + "-" + viewName + "." + format.getExtension();
         } else if (queryRequest.hasList()) {

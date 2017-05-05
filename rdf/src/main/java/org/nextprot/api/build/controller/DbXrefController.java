@@ -7,7 +7,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.utils.StringUtils;
 import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.service.DbXrefService;
-import org.nextprot.api.core.service.export.format.FileFormat;
+import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,7 +43,7 @@ public class DbXrefController {
 		int bunchSize = 100000;
 		int bunchCount=0;
 
-		FileFormat format = getRequestedFormat(request);
+		NextprotMediaType format = getRequestedFormat(request);
 		String fileName = "nextprot-xrefs" + "." + format.getExtension() ;
 		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
@@ -74,17 +74,17 @@ public class DbXrefController {
 
 	
 	
-	private FileFormat getRequestedFormat(HttpServletRequest request) {
-		FileFormat format;
+	private NextprotMediaType getRequestedFormat(HttpServletRequest request) {
+		NextprotMediaType format;
 		String uri = request.getRequestURI();
 		if (uri.toLowerCase().endsWith(".ttl")) {
-			format = FileFormat.TURTLE;
+			format = NextprotMediaType.TURTLE;
 		} else if (uri.toLowerCase().endsWith(".xml")) {
-			format = FileFormat.XML;
+			format = NextprotMediaType.XML;
 		} else if (uri.toLowerCase().endsWith(".json")) {
-			format = FileFormat.JSON;
+			format = NextprotMediaType.JSON;
 		} else if (uri.toLowerCase().endsWith(".txt")) {
-			format = FileFormat.TXT;
+			format = NextprotMediaType.TXT;
 		} else
 			throw new NextProtException("Format not recognized");
 		return format;
