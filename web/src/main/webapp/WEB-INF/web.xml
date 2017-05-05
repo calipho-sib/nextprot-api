@@ -7,15 +7,6 @@
 
     <display-name>nextprot-api</display-name>
 
-    <filter>
-        <filter-name>sparqlCacheFilter</filter-name>
-        <filter-class>org.nextprot.api.web.filter.SparqlProxyCachingFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>sparqlCacheFilter</filter-name>
-        <url-pattern>/sparql/*</url-pattern>
-    </filter-mapping>
-
     <!--  Setting spring mvc front controller DispatcherServlet -->
     <servlet>
         <servlet-name>nextprotApi</servlet-name>
