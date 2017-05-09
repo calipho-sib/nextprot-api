@@ -13,10 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class PepXIntegrationTest extends WebIntegrationBaseTest {
 
-	//That's how it is used by unicity checker tool
+	//That's how it is used by uniqueness checker tool
 	
 	@Test
-	public void shouldReturnSomePeptidesForUnicityCheckerTool() throws Exception {
+	public void shouldReturnSomePeptidesForUniquenessCheckerTool() throws Exception {
 
 		String content = this.mockMvc.perform(get("/entries/search/peptide").param("peptide", "CLLCALK").param("modeIL", "true")).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andReturn()
 				.getResponse().getContentAsString();
