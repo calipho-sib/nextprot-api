@@ -2,7 +2,6 @@ package org.nextprot.api.core.controller;
 
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiMethod;
-import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.service.ChromosomeReportService;
@@ -32,23 +31,25 @@ public class ChromosomeReportController {
 		return chromosomeReportService.getChromosomes();
 	}
 
-	@ApiMethod(path = "/chromosome-report/{chromosome}", verb = ApiVerb.GET, description = "Report informations of neXtProt entries coming from genes located on a given chromosome",
-			produces = { MediaType.APPLICATION_JSON_VALUE } )
+	// TODO: To re-expose when ChromosomeReport is correctly built and tested !!
+	//@ApiMethod(path = "/chromosome-report/{chromosome}", verb = ApiVerb.GET, description = "Report informations of neXtProt entries coming from genes located on a given chromosome",
+	//		produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosome-report/{chromosome}", method = {RequestMethod.GET})
 	@ResponseBody
 	public ChromosomeReport reportChromosome(
-			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+			//@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
 			@PathVariable("chromosome")  String chromosome) {
 
 		return chromosomeReportService.reportChromosome(chromosome);
 	}
 
-	@ApiMethod(path = "/chromosome-report/{chromosome}/summary", verb = ApiVerb.GET, description = "Export summary of neXtProt entries coming from genes located on a given chromosome",
-			produces = { MediaType.APPLICATION_JSON_VALUE } )
+	// TODO: To re-expose when ChromosomeReport is correctly built and tested !!
+	//@ApiMethod(path = "/chromosome-report/{chromosome}/summary", verb = ApiVerb.GET, description = "Export summary of neXtProt entries coming from genes located on a given chromosome",
+    //		produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosome-report/{chromosome}/summary", method = {RequestMethod.GET})
 	@ResponseBody
 	public ChromosomeReport.Summary reportChromosomeSummary(
-			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+            //@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
 			@PathVariable("chromosome")  String chromosome) {
 
 		return chromosomeReportService.reportChromosome(chromosome).getSummary();
