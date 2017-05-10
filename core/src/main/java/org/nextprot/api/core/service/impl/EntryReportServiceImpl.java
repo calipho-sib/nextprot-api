@@ -8,6 +8,7 @@ import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.ProteinExistenceLevel;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,11 @@ public class EntryReportServiceImpl implements EntryReportService {
     @Override
     public List<EntryReport> reportEntry(String entryAccession) {
 
-        Entry entry = entryBuilderService.buildWithEverything(entryAccession);
+        Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession)
+                .withOverview()
+                .withAnnotations()
+                .withChromosomalLocations()
+        );
 
         EntryReport report = new EntryReport();
 
