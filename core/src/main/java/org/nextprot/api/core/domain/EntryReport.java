@@ -230,10 +230,13 @@ public class EntryReport implements Serializable {
 			int s2 = er2.getGeneStartPosition();
 
 			// EntryReport with undefined positions comes last
-			if (s1 < 0) {
+			if (s1 == -1 && s2 == -1) {
+				return 0;
+			}
+			else if (s1 == -1) {
 				return 1;
 			}
-			if (s2 < 0) {
+			else if (s2 == -1) {
 				return -1;
 			}
 
