@@ -19,7 +19,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
 
-@Controller
+/**
+ * This controller is initalized in the XML.
+ */
 public class SparqlProxyController extends ServletWrappingController implements InitializingBean{
 	
     @Value("${sparql.url}")
@@ -40,22 +42,30 @@ public class SparqlProxyController extends ServletWrappingController implements 
 		
 		super.afterPropertiesSet();
 	}
-	
-	
+
+
+	@Override
 	protected ModelAndView handleRequestInternal(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
-
 		PageInfo pageInfo = buildPageInfo(request, response);
-		boolean requestAcceptsGzipEncoding = acceptsGzipEncoding(request);
+		if(pageInfo == null){ // If it is the sparql welcome page
+			return new ModelAndView("welcome-sparql-page.html");
+		}else {
 
-		setStatus(response, pageInfo);
-		setContentType(response, pageInfo);
-		setCookies(pageInfo, response);
-		// do headers last so that users can override with their own header sets
-		setHeaders(pageInfo, requestAcceptsGzipEncoding, response);
-		writeContent(request, response, pageInfo);
+			boolean requestAcceptsGzipEncoding = acceptsGzipEncoding(request);
+
+			setStatus(response, pageInfo);
+			setContentType(response, pageInfo);
+			setCookies(pageInfo, response);
+			// do headers last so that users can override with their own header sets
+			setHeaders(pageInfo, requestAcceptsGzipEncoding, response);
+			writeContent(request, response, pageInfo);
+
+		}
+
 
 		return null;
+
 
 	}
 
@@ -210,8 +220,14 @@ public class SparqlProxyController extends ServletWrappingController implements 
 
 	protected PageInfo buildPageInfo(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
+		//Welcome SPARQL page
+		if(checkIsSparqlWelcomePage(request))
+			return null;
+
 		// Look up the cached page
 		final String key = calculateKey(request);
+
+
 		PageInfo pageInfo = null;
 		try {
 			//TODO checkNoReentry(request);
@@ -253,6 +269,17 @@ public class SparqlProxyController extends ServletWrappingController implements 
 		return pageInfo;
 	}
 
+	public static boolean checkIsSparqlWelcomePage(HttpServletRequest httpRequest) {
+		StringBuffer stringBuffer = new StringBuffer();
+		stringBuffer.append(httpRequest.getQueryString());
+		try {
+			stringBuffer.append(IOUtils.toString(httpRequest.getReader()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		String stringToCheck = stringBuffer.toString();
+		return (stringToCheck.toLowerCase().equals("null"));
+	}
 
 	public static String calculateKey(HttpServletRequest httpRequest) {
 		StringBuffer stringBuffer = new StringBuffer();
@@ -271,7 +298,6 @@ public class SparqlProxyController extends ServletWrappingController implements 
 		// Invoke the next entity in the chain
 		final ByteArrayOutputStream outstr = new ByteArrayOutputStream();
 		final GenericResponseWrapper wrapper = new GenericResponseWrapper(response, outstr);
-
 
 		//TODO THE ACTUAL CALL IS MADE HERE!!!!!!!!!!
 		super.handleRequestInternal(request, wrapper);

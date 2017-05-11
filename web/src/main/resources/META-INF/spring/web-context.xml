@@ -16,12 +16,12 @@
 		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
 		<property name="mappings">
 			<props>
-				<prop key="/sparql/**">strutsWrappingController</prop>
+				<prop key="/sparql/**">sparqlProxyController</prop>
 			</props>
 		</property>
 	</bean>
 
-	<bean id="strutsWrappingController"
+	<bean id="sparqlProxyController"
 		class="org.nextprot.api.web.controller.SparqlProxyController">
 	</bean>
 
@@ -87,7 +87,7 @@
 	<bean id="contentNegotiationManager"
 		class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">
 		<property name="favorPathExtension" value="true" />
-		<property name="ignoreAcceptHeader" value="true" />
+		<property name="ignoreAcceptHeader" value="false" />
 		<property name="defaultContentType" value="application/json" />
 		<property name="useJaf" value="false" />
 
@@ -114,8 +114,7 @@
 				<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
 				<bean
 					class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-					<property name="prefix" value="/WEB-INF/jsp/" />
-					<property name="suffix" value=".jsp" />
+					<property name="prefix" value="/WEB-INF/html/" />
 				</bean>
 				<bean
 					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
@@ -136,8 +135,8 @@
 					<property name="suffix" value=".vm" />
 					<property name="contentType" value="text/turtle;charset=UTF-8" />
 				</bean>
-				<!--<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver"> 
-					<property name="prefix" value="peff/" /> <property name="suffix" value=".vm" 
+				<!--<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+					<property name="prefix" value="peff/" /> <property name="suffix" value=".vm"
 					/> <property name="contentType" value="text/peff;charset=UTF-8" /> </bean> -->
 				<bean
 					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">

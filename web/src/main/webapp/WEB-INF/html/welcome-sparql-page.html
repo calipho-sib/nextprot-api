@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en" ng-app="np" ng-controller="npCtrl as nm" xmlns:flash="">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="nextprot,UniProt,Human,Proteins,Proteome,Proteomics,protein database,protein knowledgebase,protein resource,human protein,human proteome,cancer variants portal,ion channels variants portal,function,medical,disease,expression,interactions,sequence,isoform,mutation,variant,phenotypes,proteomics,peptide,structure,3D,unicity checker,annotation,biocuration,chromosomes,protein validation,protein-coding genes,post-translational modifications,ptm,data integration,systems biology,genetic variations,RDF data model,SPARQL endpoint,api,rest">
+
+    <!--    <meta name="description" content="A knowledge platform on human proteins. It strives to be a comprehensive resource that provides a variety of types of information on human proteins.">-->
+    <meta name="description" content="The neXtProt SPARQL endpoint is accessible at: https://sparql.nexptrot.org">
+    <meta name="author" content="CALIPHO Team - SIB - Swiss Institute of Bioinformatics">
+    <meta name="fragment" content="!">
+    <meta http-equiv="expires" content="0">
+    <link href='https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900' rel='stylesheet' type='text/css'>
+
+    <link rel="icon" href="./img/np-x.png">
+
+    <base href="https://www.nextprot.org/">
+
+    <title>neXtProt SPARQL endpoint</title>
+
+    <!--[if lte IE 7]>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/json2/20110223/json2.js"></script>
+    <![endif]-->
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="css/vendor.css?release=1493805584522">
+    <link rel="stylesheet" href="css/app.css?release=1493805584522">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        <!-- SIB Aggregator added on 24th of November asked by Heinz -->
+        ga('create', 'UA-87958702-1', 'auto', 'sibagg', { 'allowLinker': true });
+        ga('sibagg.send', 'pageview');
+
+    </script>
+</head>
+
+<body ng-clock="" class="preview fill ng-scope" data-spy="scroll" data-target=".subnav" data-offset="90" ng-controller="SearchCtrl" np-background="#main">
+
+<header>
+<!--
+    <div class="hidden-md hidden-sm hidden-xs hidden-lg" style="font-size: 1.7em; font-weight: 100; font-family: Helvetica; background: transparent radial-gradient(ellipse at center center , rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 100%) repeat scroll 0% 0%;" id="header-title">
+        Exploring the universe of human proteins
+    </div>
+-->
+    <a href="http://www.isb-sib.ch/" target="_blank" title="Link to the SIB Swiss Institute of Bioinformatics">
+        <img id="sib-logo" src="img/sib_logo.gif" alt="SIB Swiss Institute of Bioinformatics" />
+    </a>
+
+    <!-- Navbar ================================================== -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#nextprot-header">
+                    <span class="sr-only">Toggle navigation</span>
+<!--
+                    <span class="fa-bar"></span>
+                    <span class="fa-bar"></span>
+                    <span class="fa-bar"></span>
+-->
+                    <span class="fa fa-bars"></span>
+                </button>
+                <a class="navbar-brand navbar-logo" href="/"><img id="np-logo" src="/img/np.png" /></a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse ng-scope" id="nextprot-header" ng-controller="HelpCtrl">
+                <ul class="nav navbar-nav">
+
+                    <!-- Services dropdown -->
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Tools <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <!-- Learn -->
+                            <!-----------------------------  CHANGE ngclick !!!! -------------------------------------->
+                            <li ng-class=""><a href="/proteins/search" ng-click="routingOutside('ui')">Simple search</a></li>
+                            <li ng-class=""><a href="/proteins/search?mode=advanced" ng-click="routingOutside('snorql')">Advanced search</a></li>
+                            <li ng-class=""><a ng-href="http://snorql.nextprot.org" href="http://snorql.nextprot.org">SNORQL search</a></li>
+                            <li class="divider"></li>
+                            <li ng-class=""><a rel="nofollow" ng-click="goToUser('lists')">My Lists</a></li>
+                            <li ng-class=""><a rel="nofollow" ng-click="goToUser('queries')">My Queries</a></li>
+                            <li class="divider"></li>
+<!--                            <li ng-class=""><a href="#" ng-click="routingOutside('snorql')" style="cursor:not-allowed">BLAST</a></li>-->
+                            <li ng-class=""><a href="/tools/unicity-checker" ng-click="routingOutside('snorql')">Peptide unicity checker</a></li>
+                            <li class="divider"></li>
+                            <li ng-class=""><a ng-href="https://api.nextprot.org" href="https://api.nextprot.org">API</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Portals dropdown -->
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Portals <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <!-- Learn -->
+                            <!-----------------------------  CHANGE ngclick !!!! -------------------------------------->
+                            <li ng-class=""><a href="./portals/breast-cancer">Cancer variants portal</a></li>
+                            <li ng-class=""><a href="./portals/navmut">Ion channels variants portal</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Tools (for instance, blast) -->
+                    <!--<li ng-class=""><a href="/tools">Tools</a></li>-->
+
+                    <!-- Download -->
+                    <li ng-class=""><a href="ftp://ftp.nextprot.org/pub/current_release/" ng-click="routingOutside('ftp')">Download</a></li>
+
+                    <!-- Help dropdown -->
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Help <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li class="divider"></li>
+
+                            <li ng-class="{'active':isActiveDoc('/help/technical-corner')}">
+                                <a href="/help/technical-corner">Technical corner</a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <!-- About dropdown -->
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">About <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <!-- Learn -->
+                            <!-----------------------------  CHANGE ngclick !!!! -------------------------------------->
+                            <li ng-class="{'active':isActiveDoc('/about/nextprot')}">
+                                <a href="about/nextprot">
+                                    <span class="text">neXtProt concept</span>
+                                </a>
+                            </li>
+<!--                            <li ng-class=""><a href="release/contents">Current release</a></li>-->
+                            <li ng-class="{'active':isActiveDoc('/about/contents')}">
+                                <a href="about/contents">
+                                    <span class="text">Release contents</span>
+                                </a>
+                            </li>
+                            <li ng-class="{'active':isActiveDoc('/about/statistics')}">
+                                <a href="about/statistics">
+                                    <span class="text">Release statistics</span>
+                                </a>
+                            </li>
+                            <li ng-class="{'active':isActiveDoc('/about/protein-existence')}">
+                                <a href="about/protein-existence">
+                                    <span class="text">Protein existence</span>
+                                </a>
+                            </li>
+                            <li ng-class="{'active':isActiveDoc('/about/human-proteome')}">
+                                <a href="about/human-proteome">
+                                    <span class="text">The human proteome</span>
+                                </a>
+                            </li>
+                            <li ng-class="{'active':isActiveDoc('/about/news/*')}">
+                                <a href="news/">
+                                    <span class="text">News</span>
+                                </a>
+                            </li>
+                            <li ng-class="{'active':isActiveDoc('/about/citing-nextprot')}">
+                                <a href="about/citing-nextprot">
+                                    <span class="text">Citing neXtProt</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li ng-class="">
+                        <a href="mailto:support@nextprot.org?subject=[neXtProt%20Search]">Contact</a>
+                    </li>
+
+                </ul>
+                <ul class="nav navbar-nav navbar-right" style="margin-right:0px;">
+
+
+                    <li>
+                        <a id="sib-link" href="http://www.sib.swiss"><img id="sib-logo" src="/img/sib.png" /></a>
+                    </li>
+
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+</header>
+</div>
+
+<!-- Masthead
+================================================== -->
+
+<!-- ngView:  --><div id="main" class="container-fluid ng-scope" ng-view=""><div ng-controller="ContentCtrl" class="ng-scope">
+    <!-- ngInclude: 'partials/doc/main-doc-header.html' --><div ng-include="'partials/doc/main-doc-header.html'" class="ng-scope"><div class="row ng-scope" style="border-top: 1px solid #E7E7E7;" ng-class="minMenu ? 'minimizedMenu' : '' " smallscreen="">
+    <div class="responsive-md-screen second-header-left" style="padding:0px;background-color:#bbb;height:50px">
+        <div class="col-xs-2" id="toggle-sidemenu">
+            <a class="btn" href="javascript:void(0);" ng-click="switchMenu()">
+                <span class="fa fa-reorder" aria-hidden="true"></span>
+            </a>
+        </div>
+        <div class="col-sm-12 col-xs-8" id="entrySummaryBoxName">
+            <ul id="protein-tooltip" class=" submenu">
+                <li class="submenu-header ellipsis ng-binding">NEWS</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-12 responsive-md-screen second-header-right">
+        <div class="row" style="height:inherit;background-color:#f8f8f8;border-bottom: 1px solid #E7E7E7;margin-left:0px;">
+            <div class="col-lg-7 col-md-6 col-sm-6 col-xs-12" style="overflow:hidden;height:50px;word-break:break-all;white-space:nowrap;text-overflow:ellipsis">
+                <h1 style="margin:0px;padding:0px;font-size:28px;display:inline-block;text-overflow:ellipsis;line-height:45px;vertical-align:top;" ng-bind="nm.h1" class="ng-binding">neXtProt SPARQL endpoint</h1>
+            </div>
+        </div>
+    </div>
+</div></div>
+    <div class="row body-content" style="background-color: #252A30;display:flex;" ng-class="minMenu ? 'minimizedMenu' : '' " smallscreen="">
+        <div ng-class="hideMenu ? 'showM' : 'hideM'" class="responsive-md-screen nopadding sidemenu news hideM" style="min-height:90vh">
+            <!-- ngInclude:  --><div ng-include="" src="getSideMenuPartial()" class="ng-scope"><ul class="topmenu topmenu-responsive news-sidebar ng-scope" ng-controller="HelpCtrl">
+    <li class="active ng-scope" ng-controller="NewsCtrl">
+                <ul id="scn" class="submenu-news collapse in">
+                    <li ng-repeat="n in news" ng-class="activePage('/news/new-release-with-electrophysiology-data-in-the-phenotypes-view-and-revamped-interactions-view')" class="ng-scope active">
+                        <a href="news/new-release-with-electrophysiology-data-in-the-phenotypes-view-and-revamped-interactions-view">
+                            <div class="news-description ng-binding">SPARQL endpoint</div>
+                        </a>
+                    </li>
+                </ul>
+    </li>
+</ul></div>
+        </div>
+        <div class="col-lg-12 col-xs-12 responsive-md-screen right-content" style="border: 0;background-color: #252A30;">
+            <div style="background-color:white;height:100%;width:100%;">
+                <div id="content" class="ng-scope" ng-controller="HelpCtrl">
+                <div class="col-xs-12 col-lg-12  main ng-scope" ng-controller="DocCtrl" style="background-color:white">
+                <p id="news-centre-content" class="ng-scope">
+                    <p>The neXtProt SPARQL endpoint is accessible at: <a href="https://sparql.nexptrot.org">https://sparql.nexptrot.org</a>.<br>
+                    We recommend our new users to start looking at our <a href="https://www.nextprot.org/proteins/search?mode=advanced"> examples</a> together with our <a href="https://snorql.nextprot.org/help/doc/introduction">data model.</a></p>
+                    We are aware that those queries may be difficult to create, therefore don't hesitate to contact us if you need help!<br>
+                    Look also at <a href="https://www.nextprot.org/help/advanced-search">this doc</a> to know how to save your queries in your profile.<br>
+                    We also provide a more advanced interface accessible at <a href="https://snorql.nextprot.org">https://snorql.nextprot.org</a> that allows user to search in different axes (SPARQL queries can also be saved in this environment).<br>
+                    You may want to have a look also at the presentation <a href="https://github.com/calipho-sib/sparql-playground/blob/master/assets/lausanne2016-sparql-nextprot.pdf">Practical Introduction to SPARQL</a> and play with the <a href="http://sparql-playground.sib.swiss/">The SPARQL playground</a>.
+                </p>
+                <a href="https://snorql.nextprot.org/help/doc/introduction">
+                    <img width="60%" src="https://raw.githubusercontent.com/calipho-sib/nextprot-docs/master/pages/assets/rdf-model.png"/>
+                </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div></div>
+<footer class="container-fluid small ng-scope">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="col-md-12 text-left">
+                <a class="ft-item ng-binding" href="/copyright">© 2011 - 2017 SIB Swiss Institute of Bioinformatics</a>
+                <a class="ft-item" href="/legal-disclaimer">Legal disclaimer</a>
+                <a class="ft-item" href="https://github.com/calipho-sib/" target="_blank">
+                    <span class="fa fa-github" aria-hidden="true"></span> For developers
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+</div>
+
+
+</body></html>

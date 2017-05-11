@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HTML view not found for entry</title>
+</head>
+<body>
+The neXtProt API does not associate an HTML view for an entry. Use www.nextprot.org for HTML or dd .json / or .xml if you are willing to request the api.
+</body>
+</html>
