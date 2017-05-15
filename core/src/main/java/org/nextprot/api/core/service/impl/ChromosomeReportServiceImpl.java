@@ -30,6 +30,10 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Override
 	public ChromosomeReport reportChromosome(String chromosome) {
 
+		if (!getChromosomes().contains(chromosome)) {
+			throw new ChromosomeNotFoundException(chromosome, getChromosomes().toString());
+		}
+
 		ChromosomeReport report = new ChromosomeReport();
 
 		List<EntryReport> entryReports = masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
