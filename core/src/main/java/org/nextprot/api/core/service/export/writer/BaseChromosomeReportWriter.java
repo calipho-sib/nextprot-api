@@ -19,7 +19,7 @@ abstract class BaseChromosomeReportWriter implements ChromosomeReportWriter {
         this.os = os;
     }
 
-    protected void writeHeader(ChromosomeReport.Summary summary) throws IOException {}
+    protected void writeHeader(ChromosomeReport report) throws IOException {}
 
     protected void writeFooter() throws IOException {}
 
@@ -29,7 +29,7 @@ abstract class BaseChromosomeReportWriter implements ChromosomeReportWriter {
 
     public void write(ChromosomeReport chromosomeReport) throws IOException {
 
-        writeHeader(chromosomeReport.getSummary());
+        writeHeader(chromosomeReport);
         writeChromosomeReport(chromosomeReport);
         writeFooter();
 
