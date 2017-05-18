@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,8 +31,8 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Override
 	public ChromosomeReport reportChromosome(String chromosome) {
 
-		if (!getChromosomes().contains(chromosome)) {
-			throw new ChromosomeNotFoundException(chromosome, getChromosomes().toString());
+		if (!getChromosomeNames().contains(chromosome)) {
+			throw new ChromosomeNotFoundException(chromosome, getChromosomeNames().toString());
 		}
 
 		ChromosomeReport report = new ChromosomeReport();
@@ -49,21 +50,39 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		return report;
 	}
 
+	@Cacheable("chromosomes")
+	@Override
+	public Map<String, ChromosomeReport.Summary.Count> getChromosomeCounts() {
+
+		return getChromosomeNames().stream()
+				.collect(Collectors.toMap(
+						k -> k,
+						k -> reportChromosome(k).getSummary().getCount(),
+						(k1, k2) -> k1));
+	}
+
 	private ChromosomeReport.Summary newSummary(String chromosome, List<EntryReport> entryReports) {
 
 		ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
 
 		summary.setChromosome(chromosome);
 		summary.setDataRelease(releaseInfoService.findReleaseInfo().getDatabaseRelease());
-		summary.setEntryCount((int) entryReports.stream()
+		summary.setCount(newCounts(entryReports));
+
+		return summary;
+	}
+
+	private ChromosomeReport.Summary.Count newCounts(List<EntryReport> entryReports) {
+
+		ChromosomeReport.Summary.Count count = new ChromosomeReport.Summary.Count();
+		count.setEntryCount((int) entryReports.stream()
 				.map(EntryReport::getAccession)
 				.distinct()
 				.count());
-		summary.setGeneCount((int) entryReports.stream()
+		count.setGeneCount((int) entryReports.stream()
 				.map(er -> er.getGeneName()+er.getCodingStrand())
 				.distinct()
 				.count());
-
-		return summary;
+		return count;
 	}
 }
