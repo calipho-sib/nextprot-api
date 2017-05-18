@@ -32,8 +32,9 @@ public class ChromosomeReportController {
 		return chromosomeReportService.getChromosomeNames();
 	}
 
-	@ApiMethod(path = "/chromosomes", verb = ApiVerb.GET, description = "Get chromosomes referenced in neXtProt with count statistics",
-			produces = { MediaType.APPLICATION_JSON_VALUE } )
+	// TODO: To re-expose when ChromosomeReport is correctly built and tested !!
+	//@ApiMethod(path = "/chromosomes", verb = ApiVerb.GET, description = "Get chromosomes referenced in neXtProt with count statistics",
+	//		produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosomes", method = {RequestMethod.GET})
 	@ResponseBody
 	public Map<String, ChromosomeReport.Summary> getChromosomeSummaries() {
