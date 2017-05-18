@@ -52,14 +52,14 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		return report;
 	}
 
-	@Cacheable("chromosomes")
+	@Cacheable("chromosome-summaries")
 	@Override
-	public Map<String, ChromosomeReport.Summary.Count> getChromosomeCounts() {
+	public Map<String, ChromosomeReport.Summary> getChromosomeSummaries() {
 
 		return getChromosomeNames().stream()
 				.collect(Collectors.toMap(
 						k -> k,
-						k -> reportChromosome(k).getSummary().getCount(),
+						k -> reportChromosome(k).getSummary(),
 						(k1, k2) -> k1));
 	}
 
@@ -68,22 +68,16 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
 
 		summary.setChromosome(chromosome);
-		summary.setCount(newCounts(entryReports));
 
-		return summary;
-	}
-
-	private ChromosomeReport.Summary.Count newCounts(List<EntryReport> entryReports) {
-
-		ChromosomeReport.Summary.Count count = new ChromosomeReport.Summary.Count();
-		count.setEntryCount((int) entryReports.stream()
+		summary.setEntryCount((int) entryReports.stream()
 				.map(EntryReport::getAccession)
 				.distinct()
 				.count());
-		count.setGeneCount((int) entryReports.stream()
+		summary.setGeneCount((int) entryReports.stream()
 				.map(er -> er.getGeneName()+er.getCodingStrand())
 				.distinct()
 				.count());
-		return count;
+
+		return summary;
 	}
 }

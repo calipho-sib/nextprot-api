@@ -22,11 +22,8 @@ public class ChromosomeReportTXTWriterTest {
 
         ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
         summary.setChromosome("Y");
-
-        ChromosomeReport.Summary.Count count = new ChromosomeReport.Summary.Count();
-        count.setGeneCount(58);
-        count.setEntryCount(48);
-        summary.setCount(count);
+        summary.setGeneCount(58);
+        summary.setEntryCount(48);
 
         report.setSummary(summary);
 

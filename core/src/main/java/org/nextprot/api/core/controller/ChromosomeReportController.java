@@ -26,9 +26,9 @@ public class ChromosomeReportController {
 			produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosomes", method = {RequestMethod.GET})
 	@ResponseBody
-	public Map<String, ChromosomeReport.Summary.Count> getChromosomeCounts() {
+	public Map<String, ChromosomeReport.Summary> getChromosomeSummaries() {
 
-		return chromosomeReportService.getChromosomeCounts();
+		return chromosomeReportService.getChromosomeSummaries();
 	}
 
 	// TODO: To re-expose when ChromosomeReport is correctly built and tested !!

@@ -20,10 +20,10 @@ public interface ChromosomeReportService {
 	ChromosomeReport reportChromosome(String chromosome);
 
 	/**
-	 * Report all chromosome count informations
-	 * @return a map of Summary.Count indexed by chromosome name
+	 * Report all chromosome summary informations
+	 * @return a map of Summary indexed by chromosome name
 	 */
-	Map<String, ChromosomeReport.Summary.Count> getChromosomeCounts();
+	Map<String, ChromosomeReport.Summary> getChromosomeSummaries();
 
 	/**
 	 * @return the list of chromosomes existing in neXtProt
