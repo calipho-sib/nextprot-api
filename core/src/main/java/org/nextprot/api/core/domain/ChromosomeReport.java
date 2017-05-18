@@ -8,6 +8,7 @@ import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
+        "dataRelease",
 		"summary",
 		"entryReports"
 })
@@ -15,6 +16,7 @@ public class ChromosomeReport implements Serializable {
 
 	private static final long serialVersionUID = 2L;
 
+    private String dataRelease;
 	private Summary summary;
 	private List<EntryReport> entryReports;
 
@@ -34,10 +36,17 @@ public class ChromosomeReport implements Serializable {
 		this.entryReports = entryReports;
 	}
 
+    public String getDataRelease() {
+        return dataRelease;
+    }
+
+    public void setDataRelease(String dataRelease) {
+        this.dataRelease = dataRelease;
+    }
+
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonPropertyOrder({
 			"chromosome",
-			"dataRelease",
 			"count"
 	})
 	public static class Summary implements Serializable {
@@ -45,7 +54,6 @@ public class ChromosomeReport implements Serializable {
 		private static final long serialVersionUID = 2L;
 
 		private String chromosome;
-		private String dataRelease;
 		private Count count;
 
 		public String getChromosome() {
@@ -54,14 +62,6 @@ public class ChromosomeReport implements Serializable {
 
 		public void setChromosome(String chromosome) {
 			this.chromosome = chromosome;
-		}
-
-		public String getDataRelease() {
-			return dataRelease;
-		}
-
-		public void setDataRelease(String dataRelease) {
-			this.dataRelease = dataRelease;
 		}
 
 		public Count getCount() {

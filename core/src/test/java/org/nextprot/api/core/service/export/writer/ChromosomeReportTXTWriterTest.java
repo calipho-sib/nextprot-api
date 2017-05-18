@@ -18,12 +18,16 @@ public class ChromosomeReportTXTWriterTest {
     public void writeChromosomeReport() throws Exception {
 
         ChromosomeReport report = new ChromosomeReport();
+        report.setDataRelease("2017-01-23");
 
         ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
         summary.setChromosome("Y");
-        summary.setDataRelease("2017-01-23");
-        summary.setGeneCount(58);
-        summary.setEntryCount(48);
+
+        ChromosomeReport.Summary.Count count = new ChromosomeReport.Summary.Count();
+        count.setGeneCount(58);
+        count.setEntryCount(48);
+        summary.setCount(count);
+
         report.setSummary(summary);
 
         EntryReport entryReport = new EntryReport();

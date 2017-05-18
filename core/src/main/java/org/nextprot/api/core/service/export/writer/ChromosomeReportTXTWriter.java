@@ -28,7 +28,7 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
     }
 
     @Override
-    protected void writeHeader(ChromosomeReport.Summary summary) throws IOException {
+    protected void writeHeader(ChromosomeReport report) throws IOException {
 
         writer.write("----------------------------------------------------------------------------\n" +
                 "        neXtProt - a comprehensive human-centric discovery platform\n" +
@@ -36,14 +36,14 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
                 "        Geneva bioinformatics (GeneBio) SA; Geneva, Switzerland\n" +
                 "----------------------------------------------------------------------------\n\n");
 
-        writer.write("Description: Chromosome " + summary.getChromosome() + " report\n");
-        writer.write("Name:        nextprot_chromosome_" + summary.getChromosome() + "\n");
-        writer.write("Release:     "+ summary.getDataRelease() + "\n");
+        writer.write("Description: Chromosome " + report.getSummary().getChromosome() + " report\n");
+        writer.write("Name:        nextprot_chromosome_" + report.getSummary().getChromosome() + "\n");
+        writer.write("Release:     "+ report.getDataRelease() + "\n");
         writer.write("\n----------------------------------------------------------------------------\n\n");
 
         writer.write("This file lists all neXtProt entries on chromosome Y\n");
-        writer.write("Total number of entries: " + summary.getEntryCount()+ "\n");
-        writer.write("Total number of genes: " + summary.getGeneCount()+ "\n");
+        writer.write("Total number of entries: " + report.getSummary().getCount().getEntryCount()+ "\n");
+        writer.write("Total number of genes: " + report.getSummary().getCount().getGeneCount()+ "\n");
     }
 
     @Override

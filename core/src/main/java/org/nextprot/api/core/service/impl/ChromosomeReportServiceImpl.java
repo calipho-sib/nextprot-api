@@ -37,6 +37,8 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 		ChromosomeReport report = new ChromosomeReport();
 
+        report.setDataRelease(releaseInfoService.findReleaseInfo().getDatabaseRelease());
+
 		List<EntryReport> entryReports = masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
 				.map(entryAccession -> entryReportService.reportEntry(entryAccession))
 				.flatMap(Collection::stream)
@@ -66,7 +68,6 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
 
 		summary.setChromosome(chromosome);
-		summary.setDataRelease(releaseInfoService.findReleaseInfo().getDatabaseRelease());
 		summary.setCount(newCounts(entryReports));
 
 		return summary;
