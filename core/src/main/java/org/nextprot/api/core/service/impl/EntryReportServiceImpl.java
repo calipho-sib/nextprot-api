@@ -3,9 +3,11 @@ package org.nextprot.api.core.service.impl;
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.ChromosomalLocation;
+import org.nextprot.api.core.domain.DbXref;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.domain.ProteinExistenceLevel;
+import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -38,10 +40,10 @@ public class EntryReportServiceImpl implements EntryReportService {
         report.setAccession(entry.getUniqueName());
         setEntryDescription(entry, report);
         setProteinExistence(entry, report);
-        setIsProteomics(entry, report); // TODO: PAM should implement this
+        setIsProteomics(entry, report); // DONE: PAM should implement this
         setIsAntibody(entry, report);   // DONE: PAM should implement this
-        setIs3D(entry, report);         // TODO: PAM should implement this
-        setIsDisease(entry, report);    // TODO: PAM should implement this
+        setIs3D(entry, report);         // DONE: PAM should implement this
+        setIsDisease(entry, report);    // DONE: PAM should implement this
         setIsoformCount(entry, report);
         setVariantCount(entry, report);
         setPTMCount(entry, report);
@@ -56,25 +58,86 @@ public class EntryReportServiceImpl implements EntryReportService {
 
     private void setIsProteomics(Entry entry, EntryReport report) {
 
-        report.setPropertyTest(EntryReport.IS_PROTEOMICS, false);
+    	boolean result = false;
+    	
+    	if (entry.getXrefs().stream()
+    			.anyMatch(x -> isPeptideAtlasOrMassSpecXref(x))) {
+    		result = true;
+    	
+    	} else if (entry.getAnnotations().stream()
+    			.anyMatch(a -> isPeptideOrPtmAnnotation(a))) {
+    		result = true;
+    	}
+
+    	report.setPropertyTest(EntryReport.IS_PROTEOMICS, result);
     }
 
+    private boolean isPeptideAtlasOrMassSpecXref(DbXref x) {
+    	
+    	if ("PeptideAtlas".equals(x.getDatabaseName())) return true;
+    	
+    	if (x.getProperties().stream().anyMatch(
+    			p -> p.getName().equals("scope") && p.getValue().contains("MASS SPECTROMETRY"))) return true;
+    	
+    	return false;
+    }
+    
+    private boolean isPeptideOrPtmAnnotation(Annotation a) {
+    	if (a.getAPICategory()==AnnotationCategory.PEPTIDE_MAPPING) return true;
+    	if (a.getAPICategory()==AnnotationCategory.MODIFIED_RESIDUE) return true;
+    	if (a.getAPICategory()==AnnotationCategory.GLYCOSYLATION_SITE) return true;
+    	if (a.getAPICategory()==AnnotationCategory.CROSS_LINK) return true;
+    	return false;
+    }
+    	
     private void setIsAntibody(Entry entry, EntryReport report) {
 
         report.setPropertyTest(EntryReport.IS_ANTIBODY, 
-        		entry.getAnnotations().stream().anyMatch(a -> a.getAPICategory()==AnnotationCategory.ANTIBODY_MAPPING));
+        		entry.getAnnotations().stream()
+        			.anyMatch(a -> a.getAPICategory()==AnnotationCategory.ANTIBODY_MAPPING));
     }
 
     private void setIs3D(Entry entry, EntryReport report) {
 
-        report.setPropertyTest(EntryReport.IS_3D, false);
+        report.setPropertyTest(EntryReport.IS_3D, 
+        		entry.getAnnotations().stream().
+        			anyMatch(a -> "KW-0002".equals(a.getCvTermAccessionCode())));
     }
 
+
+    /*
+     * NP1 specifications: returns true if one of the criteria below is met	
+	 * - a disease annotation 
+	 * - a uniprot keyword annotation with a disease term 
+     * - a xref from orphanet 
+     * Note: Orphanet xrefs are turned into annotations, so should never need this criterion
+     */
     private void setIsDisease(Entry entry, EntryReport report) {
 
-        report.setPropertyTest(EntryReport.IS_DISEASE, false);
+        boolean result = false;
+        
+    	if (entry.getAnnotations().stream().anyMatch(a -> hasDiseaseCategory(a) || hasDiseaseKeywordTerm(a))) {
+    		result = true;
+    	} else if (entry.getXrefs().stream().anyMatch(x -> "Orphanet".equals(x.getDatabaseName()))) {
+    		result = true;
+    	}    	
+        report.setPropertyTest(EntryReport.IS_DISEASE, result);
     }
+    
 
+    private boolean hasDiseaseCategory(Annotation a) {
+    	return a.getAPICategory()==AnnotationCategory.DISEASE;
+    }
+    
+    private boolean hasDiseaseKeywordTerm(Annotation a) {
+    	
+    	// existence of a uniprot keyword with category "Disease" except "Proto-oncogene" term name
+    	if (a.getAPICategory() != AnnotationCategory.UNIPROT_KEYWORD) return false;
+    	if ( ! "Disease".equals(a.getCvTermType())) return false;
+    	if ( "Proto-oncogene".equals(a.getCvTermName())) return false;
+     	return true;
+    }
+    
     private void setProteinExistence(Entry entry, EntryReport report) {
 
         Integer proteinExistenceLevel = entry.getProteinExistenceLevel();

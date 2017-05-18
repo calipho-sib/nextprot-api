@@ -220,7 +220,7 @@ public class DbXrefServiceImpl implements DbXrefService {
 
 		List<Long> xrefIds = xrefs.stream().map(DbXref::getDbXrefId).collect(Collectors.toList());
 
-		List<DbXrefProperty> shownProperties = dbXRefDao.findDbXrefsProperties(xrefIds).stream()
+		List<DbXrefProperty> shownProperties = dbXRefDao.findDbXrefsProperties(uniqueName, xrefIds).stream()
 			.filter(p -> !HIDDEN_PROPERTY_NAME_SET.contains(p.getName()))
 			.collect(Collectors.toList());
 
