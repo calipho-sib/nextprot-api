@@ -5,6 +5,7 @@ import org.nextprot.api.core.domain.ChromosomeReport;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -19,9 +20,15 @@ public interface ChromosomeReportService {
 	ChromosomeReport reportChromosome(String chromosome);
 
 	/**
+	 * Report all chromosome summary informations
+	 * @return a map of Summary indexed by chromosome name
+	 */
+	Map<String, ChromosomeReport.Summary> getChromosomeSummaries();
+
+	/**
 	 * @return the list of chromosomes existing in neXtProt
 	 */
-	default List<String> getChromosomes() {
+	default List<String> getChromosomeNames() {
 
 		List<String> list = IntStream.range(1, 22).boxed()
 				.map(String::valueOf)

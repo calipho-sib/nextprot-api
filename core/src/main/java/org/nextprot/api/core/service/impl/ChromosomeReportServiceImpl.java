@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,11 +31,13 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Override
 	public ChromosomeReport reportChromosome(String chromosome) {
 
-		if (!getChromosomes().contains(chromosome)) {
-			throw new ChromosomeNotFoundException(chromosome, getChromosomes().toString());
+		if (!getChromosomeNames().contains(chromosome)) {
+			throw new ChromosomeNotFoundException(chromosome, getChromosomeNames().toString());
 		}
 
 		ChromosomeReport report = new ChromosomeReport();
+
+        report.setDataRelease(releaseInfoService.findReleaseInfo().getDatabaseRelease());
 
 		List<EntryReport> entryReports = masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
 				.map(entryAccession -> entryReportService.reportEntry(entryAccession))
@@ -49,12 +52,23 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		return report;
 	}
 
+	@Cacheable("chromosome-summaries")
+	@Override
+	public Map<String, ChromosomeReport.Summary> getChromosomeSummaries() {
+
+		return getChromosomeNames().stream()
+				.collect(Collectors.toMap(
+						k -> k,
+						k -> reportChromosome(k).getSummary(),
+						(k1, k2) -> k1));
+	}
+
 	private ChromosomeReport.Summary newSummary(String chromosome, List<EntryReport> entryReports) {
 
 		ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
 
 		summary.setChromosome(chromosome);
-		summary.setDataRelease(releaseInfoService.findReleaseInfo().getDatabaseRelease());
+
 		summary.setEntryCount((int) entryReports.stream()
 				.map(EntryReport::getAccession)
 				.distinct()
