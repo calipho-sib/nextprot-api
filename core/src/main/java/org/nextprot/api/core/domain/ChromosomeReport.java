@@ -38,8 +38,7 @@ public class ChromosomeReport implements Serializable {
 	@JsonPropertyOrder({
 			"chromosome",
 			"dataRelease",
-			"entryCount",
-			"geneCount"
+			"count"
 	})
 	public static class Summary implements Serializable {
 
@@ -73,6 +72,11 @@ public class ChromosomeReport implements Serializable {
 			this.count = count;
 		}
 
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        @JsonPropertyOrder({
+                "entryCount",
+                "geneCount"
+        })
 		public static class Count implements Serializable {
 
 			private static final long serialVersionUID = 1L;

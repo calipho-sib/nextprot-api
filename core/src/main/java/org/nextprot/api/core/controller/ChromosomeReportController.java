@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
+import java.util.Map;
 
 @Controller
 @Api(name = "Chromosome reports", description = "Reports statistics about entries on chromosome")
@@ -22,13 +22,13 @@ public class ChromosomeReportController {
 	@Autowired
 	private ChromosomeReportService chromosomeReportService;
 
-	@ApiMethod(path = "/chromosome-names", verb = ApiVerb.GET, description = "Get the list of chromosomes referenced in neXtProt",
+	@ApiMethod(path = "/chromosomes", verb = ApiVerb.GET, description = "Get chromosomes referenced in neXtProt with count statistics",
 			produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/chromosome-names", method = {RequestMethod.GET})
+	@RequestMapping(value = "/chromosomes", method = {RequestMethod.GET})
 	@ResponseBody
-	public List<String> getChromosomes() {
+	public Map<String, ChromosomeReport.Summary.Count> getChromosomeCounts() {
 
-		return chromosomeReportService.getChromosomes();
+		return chromosomeReportService.getChromosomeCounts();
 	}
 
 	// TODO: To re-expose when ChromosomeReport is correctly built and tested !!
