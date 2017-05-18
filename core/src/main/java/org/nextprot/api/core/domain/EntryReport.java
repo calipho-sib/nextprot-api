@@ -33,7 +33,7 @@ import static org.nextprot.api.core.domain.EntryReport.*;
 })
 public class EntryReport implements Serializable {
 
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 4L;
 
 	private static final String SENSE_CODING_STRAND = "5'->3'";
 	private static final String ANTISENSE_CODING_STRAND = "3'->5'";
@@ -102,18 +102,18 @@ public class EntryReport implements Serializable {
 	}
 
 	@JsonProperty(GENE_START_POSITION)
-	public int getGeneStartPosition() {
+	public String getGeneStartPosition() {
 		return getPositionOrUndefined(chromosomalLocation.getFirstPosition());
 	}
 
 	@JsonProperty(GENE_END_POSITION)
-	public int getGeneEndPosition() {
+	public String getGeneEndPosition() {
 		return getPositionOrUndefined(chromosomalLocation.getLastPosition());
 	}
 
-	private int getPositionOrUndefined(int pos) {
+	private String getPositionOrUndefined(int pos) {
 
-		return (pos > 0) ? pos : -1;
+		return (pos > 0) ? String.valueOf(pos) : "-";
 	}
 
 	@JsonProperty(PROTEIN_EXISTENCE_LEVEL)
@@ -226,21 +226,24 @@ public class EntryReport implements Serializable {
 		@Override
 		public int compare(EntryReport er1, EntryReport er2) {
 
-			int s1 = er1.getGeneStartPosition();
-			int s2 = er2.getGeneStartPosition();
+			String s1 = er1.getGeneStartPosition();
+			String s2 = er2.getGeneStartPosition();
+
+			boolean s1IsUndefined = "-".equals(s1) ;
+			boolean s2IsDefined = "-".equals(s2) ;
 
 			// EntryReport with undefined positions comes last
-			if (s1 == -1 && s2 == -1) {
+			if (s1IsUndefined && s2IsDefined) {
 				return 0;
 			}
-			else if (s1 == -1) {
+			else if (s1IsUndefined) {
 				return 1;
 			}
-			else if (s2 == -1) {
+			else if (s2IsDefined) {
 				return -1;
 			}
 
-			return Integer.compare(s1, s2);
+			return s1.compareTo(s2);
 		}
 	}
 
