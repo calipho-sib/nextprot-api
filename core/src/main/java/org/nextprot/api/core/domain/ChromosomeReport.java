@@ -43,12 +43,11 @@ public class ChromosomeReport implements Serializable {
 	})
 	public static class Summary implements Serializable {
 
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 2L;
 
 		private String chromosome;
 		private String dataRelease;
-		private int entryCount;
-		private int geneCount;
+		private Count count;
 
 		public String getChromosome() {
 			return chromosome;
@@ -66,20 +65,36 @@ public class ChromosomeReport implements Serializable {
 			this.dataRelease = dataRelease;
 		}
 
-		public int getEntryCount() {
-			return entryCount;
+		public Count getCount() {
+			return count;
 		}
 
-		public void setEntryCount(int entryCount) {
-			this.entryCount = entryCount;
+		public void setCount(Count count) {
+			this.count = count;
 		}
 
-		public int getGeneCount() {
-			return geneCount;
-		}
+		public static class Count implements Serializable {
 
-		public void setGeneCount(int geneCount) {
-			this.geneCount = geneCount;
+			private static final long serialVersionUID = 1L;
+
+			private int entryCount;
+			private int geneCount;
+
+			public int getEntryCount() {
+				return entryCount;
+			}
+
+			public void setEntryCount(int entryCount) {
+				this.entryCount = entryCount;
+			}
+
+			public int getGeneCount() {
+				return geneCount;
+			}
+
+			public void setGeneCount(int geneCount) {
+				this.geneCount = geneCount;
+			}
 		}
 	}
 }
