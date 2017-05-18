@@ -47,14 +47,16 @@ public class ChromosomeReport implements Serializable {
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonPropertyOrder({
 			"chromosome",
-			"count"
+			"entryCount",
+			"geneCount"
 	})
 	public static class Summary implements Serializable {
 
 		private static final long serialVersionUID = 2L;
 
 		private String chromosome;
-		private Count count;
+		private int entryCount;
+		private int geneCount;
 
 		public String getChromosome() {
 			return chromosome;
@@ -64,41 +66,20 @@ public class ChromosomeReport implements Serializable {
 			this.chromosome = chromosome;
 		}
 
-		public Count getCount() {
-			return count;
+		public int getEntryCount() {
+			return entryCount;
 		}
 
-		public void setCount(Count count) {
-			this.count = count;
+		public void setEntryCount(int entryCount) {
+			this.entryCount = entryCount;
 		}
 
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        @JsonPropertyOrder({
-                "entryCount",
-                "geneCount"
-        })
-		public static class Count implements Serializable {
+		public int getGeneCount() {
+			return geneCount;
+		}
 
-			private static final long serialVersionUID = 1L;
-
-			private int entryCount;
-			private int geneCount;
-
-			public int getEntryCount() {
-				return entryCount;
-			}
-
-			public void setEntryCount(int entryCount) {
-				this.entryCount = entryCount;
-			}
-
-			public int getGeneCount() {
-				return geneCount;
-			}
-
-			public void setGeneCount(int geneCount) {
-				this.geneCount = geneCount;
-			}
+		public void setGeneCount(int geneCount) {
+			this.geneCount = geneCount;
 		}
 	}
 }
