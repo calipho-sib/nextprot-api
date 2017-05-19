@@ -1,4 +1,4 @@
-package org.nextprot.api.core.service.export.writer;
+package org.nextprot.api.core.service.export.io;
 
 import org.codehaus.plexus.util.StringOutputStream;
 import org.junit.Assert;

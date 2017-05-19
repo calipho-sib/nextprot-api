@@ -1,4 +1,4 @@
-package org.nextprot.api.core.service.export.writer;
+package org.nextprot.api.core.service.export.io;
 
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.nextprot.api.core.service.export.writer.ChromosomeReportTSVWriter.extractValues;
+import static org.nextprot.api.core.service.export.io.ChromosomeReportTSVWriter.extractValues;
 
 /**
  * Writes a {@code ChromosomeReport} in TXT format
