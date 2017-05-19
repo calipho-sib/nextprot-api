@@ -32,4 +32,22 @@ public enum ProteinExistenceLevel {
         }
         return ProteinExistenceLevel.values()[level-1];
     }
+
+    public static ProteinExistenceLevel valueOfString(String value) {
+
+        switch (value) {
+            case "protein level":
+                return PROTEIN_LEVEL;
+            case "transcript level":
+                return TRANSCRIPT_LEVEL;
+            case "homology":
+                return HOMOLOGY;
+            case "predicted":
+                return PREDICTED;
+            case "uncertain":
+                return UNCERTAIN;
+            default:
+                throw new IllegalArgumentException("Invalid value "+value);
+        }
+    }
 }
