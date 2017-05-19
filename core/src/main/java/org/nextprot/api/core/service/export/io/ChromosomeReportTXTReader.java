@@ -29,20 +29,26 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
     private static final Pattern ENTRY_COUNT_PATTERN     = Pattern.compile("^Total number of entries:\\s+(\\d+)$");
     private static final Pattern GENE_COUNT_PATTERN      = Pattern.compile("^Total number of genes:\\s+(\\d+)$");
     private static final Pattern ENTRY_VALUES_PATTERN    = Pattern.compile("^" +
-                "([\\w-]+)\\s+"                    + // Gene name
-                "(NX_\\w+)\\s+"                    + // neXtProt AC
-                "([\\d\\w.-]+)\\s+"                + // Chromosomal position
-                "([\\d-]+)\\s+"                    + // Start position
-                "([\\d-]+)\\s+"                    + // Stop position
-                "((?:\\bprotein level\\b)|(?:\\btranscript level\\b)|(?:\\bhomology\\b)|(?:\\bpredicted\\b)|(?:\\buncertain\\b))\\s+" + // Protein existence
-                "((?:\\byes\\b)|(?:\\bno\\b))\\s+" + // Proteomics
-                "((?:\\byes\\b)|(?:\\bno\\b))\\s+" + // Antibody
-                "((?:\\byes\\b)|(?:\\bno\\b))\\s+" + // 3D
-                "((?:\\byes\\b)|(?:\\bno\\b))\\s+" + // Disease
-                "(\\d+)\\s+"                       + // Isoforms
-                "(\\d+)\\s+"                       + // Variants
-                "(\\d+)\\s+"                       + // PTMs
-                "(.+)$");                            // Description
+            "([\\w-]+)\\s+"                    + // Gene name
+            "(NX_\\w+)\\s+"                    + // neXtProt AC
+            "([\\d\\w.-]+)\\s+"                + // Chromosomal position
+            "([\\d-]+)\\s+"                    + // Start position
+            "([\\d-]+)\\s+"                    + // Stop position
+            "("+
+                "(?:\\b"+ProteinExistenceLevel.PROTEIN_LEVEL.getName()    + "\\b)|"+
+                "(?:\\b"+ProteinExistenceLevel.TRANSCRIPT_LEVEL.getName() + "\\b)|" +
+                "(?:\\b"+ProteinExistenceLevel.HOMOLOGY.getName()         + "\\b)|" +
+                "(?:\\b"+ProteinExistenceLevel.PREDICTED.getName()        + "\\b)|" +
+                "(?:\\b"+ProteinExistenceLevel.UNCERTAIN.getName()        + "\\b)" +
+            ")\\s+"                            + // Protein existence
+            "((?:\\byes\\b)|(?:\\bno\\b))\\s+" + // Proteomics
+            "((?:\\byes\\b)|(?:\\bno\\b))\\s+" + // Antibody
+            "((?:\\byes\\b)|(?:\\bno\\b))\\s+" + // 3D
+            "((?:\\byes\\b)|(?:\\bno\\b))\\s+" + // Disease
+            "(\\d+)\\s+"                       + // Isoforms
+            "(\\d+)\\s+"                       + // Variants
+            "(\\d+)\\s+"                       + // PTMs
+            "(.+)$");                            // Description
 
     @Override
     public ChromosomeReport read(Reader reader) throws ParseException {
