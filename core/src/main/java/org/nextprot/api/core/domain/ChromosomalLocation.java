@@ -132,7 +132,11 @@ public class ChromosomalLocation implements Serializable {
 		return this.recommendedName; 
 				
 	}
-	
+
+	public void setRecommendedName(String recommendedName) {
+		this.recommendedName = recommendedName;
+	}
+
 	@Deprecated
 	public String getRecommendedName(String version) {
 		
