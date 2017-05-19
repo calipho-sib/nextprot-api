@@ -166,23 +166,7 @@ public class EntryReport implements Serializable {
 	@JsonProperty(CHROMOSOMAL_LOCATION)
 	public String getChromosomalLocation() {
 
-		StringBuilder sb = new StringBuilder();
-
-		String chromosome = chromosomalLocation.getChromosome();
-		String band = chromosomalLocation.getBand();
-
-		if (chromosome != null && !"unknown".equals(chromosome)) {
-			sb.append(chromosome);
-		}
-		if (band != null && !"unknown".equals(band)) {
-			sb.append(band);
-		}
-
-		if (sb.length() == 0) {
-			sb.append("-");
-		}
-
-		return sb.toString();
+		return ChromosomalLocation.toString(chromosomalLocation);
 	}
 
 	public boolean testProperty(String testName) {

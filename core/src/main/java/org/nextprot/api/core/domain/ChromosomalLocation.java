@@ -5,18 +5,20 @@ import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.core.utils.ChromosomalLocationComparator;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @ApiObject(name = "chromosomal-location", description = "The chromosomal location")
 public class ChromosomalLocation implements Serializable {
 
-	private static final long serialVersionUID = -582666549875804789L;
-	private static final Pattern CHROMOSOMAL_POSITION_PATTERN = Pattern.compile("^([^qp])+([pq].+)$");
+	private static final long serialVersionUID = 2L;
+	private static final Pattern CHROMOSOMAL_POSITION_PATTERN = Pattern.compile("^([^qp])+([pq].+)?$");
 
 	@ApiObjectField(description = "The chromosome identifier")
 	private String chromosome;
@@ -247,9 +249,35 @@ public class ChromosomalLocation implements Serializable {
 		}
 
 		if (sb.length() == 0) {
-			sb.append("-");
+			sb.append("unknown");
 		}
 
 		return sb.toString();
+	}
+
+	public static ChromosomalLocation fromString(String chromosomalPosition) throws ParseException {
+
+		// 1q21.1 or -
+		ChromosomalLocation chromosomalLocation = new ChromosomalLocation();
+
+		if (!"-".equals(chromosomalPosition) && !"unknown".equals(chromosomalPosition)) {
+
+			Matcher matcher = CHROMOSOMAL_POSITION_PATTERN.matcher(chromosomalPosition);
+
+			if (matcher.find()) {
+
+				chromosomalLocation.setChromosome(matcher.group(1));
+				chromosomalLocation.setBand((matcher.group(2) != null) ? matcher.group(2) : "");
+			}
+			else {
+				throw new ParseException("cannot parse chromosomal position "+chromosomalPosition, -1);
+			}
+		}
+		else {
+			chromosomalLocation.setChromosome("unknown");
+			chromosomalLocation.setBand("unknown");
+		}
+
+		return chromosomalLocation;
 	}
 }
