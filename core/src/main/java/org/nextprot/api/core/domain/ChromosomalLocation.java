@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @ApiObject(name = "chromosomal-location", description = "The chromosomal location")
 public class ChromosomalLocation implements Serializable {
 
-	private static final long serialVersionUID = 2L;
+	private static final long serialVersionUID = -582666549875804789L;
 	private static final Pattern CHROMOSOMAL_POSITION_PATTERN = Pattern.compile("^([^qp])+([pq].+)?$");
 
 	@ApiObjectField(description = "The chromosome identifier")

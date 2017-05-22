@@ -1,6 +1,5 @@
 package org.nextprot.api.core.service;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.service.export.io.ChromosomeReportTXTReader;
@@ -11,7 +10,6 @@ import java.net.URL;
 
 public class ChromosomeEntryReportIntegrationTest {
 
-	@Ignore
 	@Test
 	public void chr1EntryReportsShouldMatchFTPReports() throws Exception {
 
