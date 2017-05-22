@@ -227,7 +227,7 @@ public class EntryReport implements Serializable {
 				return -1;
 			}
 
-			return s1.compareTo(s2);
+			return Integer.compare(Integer.parseInt(s1), Integer.parseInt(s2));
 		}
 	}
 
