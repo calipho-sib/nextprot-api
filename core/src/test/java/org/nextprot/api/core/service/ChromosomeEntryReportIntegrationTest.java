@@ -53,7 +53,7 @@ public class ChromosomeEntryReportIntegrationTest {
 
 		private Differences calcDifferences() {
 
-			differences = new Differences(chromosome);
+			differences = new Differences(this);
 
 			// 1. row count diffs
 			differences.setRowNumberInApi(chromosomeReportFromAPI.getEntryReports().size());
@@ -123,7 +123,7 @@ public class ChromosomeEntryReportIntegrationTest {
 
 	private static class Differences {
 
-		private final String chromosome;
+		private final DifferenceAnalyser analyser;
 
 		private final Set<String> distinctEntryReportAccsInAPI = new HashSet<>();
 		private final Set<String> distinctEntryReportAccsInFTP = new HashSet<>();
@@ -134,8 +134,8 @@ public class ChromosomeEntryReportIntegrationTest {
 		private int deltaEntryCount;
 		private int deltaGeneCount;
 
-        private Differences(String chromosome) {
-			this.chromosome = chromosome;
+        private Differences(DifferenceAnalyser analyser) {
+			this.analyser = analyser;
 		}
 
 		public void addAllDistinctAccsInAPI(Collection<String> notInAPIAccs) {
@@ -206,8 +206,9 @@ public class ChromosomeEntryReportIntegrationTest {
 
 		public static List<String> getHeaders() {
 			return Arrays.asList("chromosome",
-					"delta entry count (abs(api-ftp))", "delta gene count (abs(api-ftp))",
-					"row count (api)", "row count (ftp)",
+					"delta entry count (abs(api-ftp))", "entry count (api)", "entry count (ftp)",
+					"delta gene count (abs(api-ftp))", "gene count (api)", "gene count (ftp)",
+					"delta row count (abs(api-ftp))", "row count (api)", "row count (ftp)",
 					"distinct entry count (api)", "distinct entry count (ftp)",
 					"distinct gene count (api)", "distinct gene count (ftp)"
 			);
@@ -215,9 +216,10 @@ public class ChromosomeEntryReportIntegrationTest {
 
 		public List<String> getValues() {
 
-			return Arrays.asList(chromosome,
-					String.valueOf(deltaEntryCount), String.valueOf(deltaGeneCount),
-					String.valueOf(rowNumberInApi), String.valueOf(rowNumberInFTP),
+			return Arrays.asList(analyser.chromosome,
+					String.valueOf(deltaEntryCount), String.valueOf(analyser.chromosomeReportFromAPI.getSummary().getEntryCount()), String.valueOf(analyser.chromosomeReportFromFTP.getSummary().getEntryCount()),
+					String.valueOf(deltaGeneCount), String.valueOf(analyser.chromosomeReportFromAPI.getSummary().getGeneCount()), String.valueOf(analyser.chromosomeReportFromFTP.getSummary().getGeneCount()),
+					String.valueOf(Math.abs(rowNumberInApi-rowNumberInFTP)), String.valueOf(rowNumberInApi), String.valueOf(rowNumberInFTP),
 					String.valueOf(distinctEntryReportAccsInAPI.size()), String.valueOf(distinctEntryReportAccsInFTP.size()),
 					String.valueOf(distinctEntryReportGenesInAPI.size()), String.valueOf(distinctEntryReportGenesInFTP.size()));
 		}
