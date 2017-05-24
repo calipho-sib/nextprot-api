@@ -56,25 +56,4 @@ public class ChromosomeReportTSVWriter extends BaseChromosomeReportWriter {
                 "PTMs", "Description"
         );
     }
-
-    public static List<String> extractValues(EntryReport entryReport) {
-
-        return Arrays.asList(
-                (entryReport.getGeneName() != null && !entryReport.getGeneName().isEmpty()) ? entryReport.getGeneName() : "-",
-                entryReport.getAccession(),
-                entryReport.getChromosomalLocation(),
-                entryReport.getCodingStrand(),
-                entryReport.getGeneStartPosition(),
-                entryReport.getGeneEndPosition(),
-                entryReport.getProteinExistence(),
-                (entryReport.isProteomics()) ? "yes" : "no",
-                (entryReport.isAntibody()) ? "yes" : "no",
-                (entryReport.is3D()) ? "yes" : "no",
-                (entryReport.isDisease()) ? "yes" : "no",
-                String.valueOf(entryReport.countIsoforms()),
-                String.valueOf(entryReport.countVariants()),
-                String.valueOf(entryReport.countPTMs()),
-                String.valueOf(entryReport.getDescription())
-        );
-    }
 }
