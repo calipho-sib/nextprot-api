@@ -256,4 +256,12 @@ public class EntryReport implements Serializable {
 			}
 		}
 	}
+
+	public static String getValidGeneNameValue(String geneName) {
+
+		if (geneName != null && !geneName.isEmpty() && !"unknown".equals(geneName)) {
+			return geneName;
+		}
+		return "-";
+	}
 }
