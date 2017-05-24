@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.nextprot.api.core.service.export.io.ChromosomeReportTSVWriter.extractValues;
 
 /**
  * Writes a {@code ChromosomeReport} in TXT format
@@ -90,11 +89,11 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
     private static String buildHeaderFormat() {
 
-        return "%-10s%-13s%-13s%-10s %-10s %-16s %-6s %-6s%-6s%-6s%-6s%-7s%-5s%s%n";
+        return "%-14s%-13s%-13s%-10s %-10s %-16s %-6s %-6s%-6s%-6s%-6s%-7s%-5s%s%n";
     }
 
     private static String buildRowFormat() {
 
-        return "%-10s%-13s%-13s%10s %10s %-16s %-6s %-6s%-6s%-5s%6s%6s%6s %s%n";
+        return "%-14s%-13s%-13s%10s %10s %-16s %-6s %-6s%-6s%-5s%6s%6s%6s %s%n";
     }
 }
