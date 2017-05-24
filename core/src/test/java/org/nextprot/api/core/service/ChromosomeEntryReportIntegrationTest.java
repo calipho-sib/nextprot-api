@@ -113,10 +113,13 @@ public class ChromosomeEntryReportIntegrationTest {
 			differences.addAllDistinctGenesInAPI(Sets.difference(genesInAPI, genesInFTP));
 			differences.addAllDisctinctGenesInFTP(Sets.difference(genesInFTP, genesInAPI));
 
-			// 5. Duplication entries
-			differences.setGeneDuplicatesInAPI(collectGeneDuplicates(chromosomeReportFromAPI));
-			differences.setGeneDuplicatesInFTP(collectGeneDuplicates(chromosomeReportFromFTP));
-
+			// 5. Gene name duplication delta
+			differences.setGeneDuplicatesDelta(
+			        calcDiffDuplicateGenes(
+			                collectGeneDuplicates(chromosomeReportFromFTP),
+                            collectGeneDuplicates(chromosomeReportFromAPI)
+                    )
+            );
 
 			return differences;
 		}
@@ -136,7 +139,7 @@ public class ChromosomeEntryReportIntegrationTest {
 
 			return map.entrySet().stream()
 					.filter(e -> e.getValue().get() > 1)
-					.collect(Collectors.toMap(Map.Entry::getKey, p -> (int)p.getValue().get()));
+					.collect(Collectors.toMap(Map.Entry::getKey, p -> (int)p.getValue().get()-1));
 		}
 
 		private void calcSummaryDiffs() {
@@ -147,6 +150,31 @@ public class ChromosomeEntryReportIntegrationTest {
 			differences.setDeltaEntryCount(Math.abs(summaryAPI.getEntryCount() - summaryFTP.getEntryCount()));
 			differences.setDeltaGeneCount(Math.abs(summaryAPI.getGeneCount() - summaryFTP.getGeneCount()));
 		}
+
+        private Map<String, Integer> calcDiffDuplicateGenes(Map<String, Integer> fromFTP,  Map<String, Integer> fromAPI) {
+
+            Map<String, Integer> diffMap = new HashMap<>();
+
+            Set<String> genesFromFTP = fromFTP.keySet();
+            Set<String> genesFromAPI = fromAPI.keySet();
+
+            for (String geneName : genesFromAPI) {
+
+                if (!genesFromFTP.contains(geneName)) {
+                    throw new IllegalStateException("gene name " + geneName + " was not found in ftp chromosome report");
+                }
+            }
+
+            for (String geneName : genesFromFTP) {
+
+                int diff = fromFTP.get(geneName) - fromAPI.getOrDefault(geneName, 0);
+
+                if (diff > 0)
+                    diffMap.put(geneName, diff);
+            }
+
+            return diffMap;
+        }
 
 		Differences getDifferences() {
 
@@ -183,8 +211,7 @@ public class ChromosomeEntryReportIntegrationTest {
 		private int rowNumberInFTP;
 		private int deltaEntryCount;
 		private int deltaGeneCount;
-		private Map<String, Integer> geneDuplicatesInFTP;
-		private Map<String, Integer> geneDuplicatesInAPI;
+		private Map<String, Integer> geneDuplicatesDelta;
 
         private Differences(DifferenceAnalyser analyser) {
 			this.analyser = analyser;
@@ -208,12 +235,8 @@ public class ChromosomeEntryReportIntegrationTest {
 			distinctEntryReportGenesInFTP.addAll(notInFTPGenes);
 		}
 
-		public void setGeneDuplicatesInFTP(Map<String, Integer> geneDuplicatesInFTP) {
-			this.geneDuplicatesInFTP = geneDuplicatesInFTP;
-		}
-
-		public void setGeneDuplicatesInAPI(Map<String, Integer> geneDuplicatesInAPI) {
-			this.geneDuplicatesInAPI = geneDuplicatesInAPI;
+		public void setGeneDuplicatesDelta(Map<String, Integer> geneDuplicatesDelta) {
+			this.geneDuplicatesDelta = geneDuplicatesDelta;
 		}
 
 		public void setRowNumberInApi(int rowNumberInApi) {
@@ -239,7 +262,7 @@ public class ChromosomeEntryReportIntegrationTest {
 					"delta gene count (abs(api-ftp))", "gene count (api)", "gene count (ftp)",
 					"distinct entry count (api)", "distinct entry count (ftp)", "distinct entries (ftp)",
 					"distinct gene count (api)", "distinct gene count (ftp)", "distinct genes (ftp)",
-					"gene duplicates (api)", "gene duplicates (ftp)"
+                    "gene duplicates count (ftp-api)", "gene duplicates delta (ftp-api)"
 			);
 		}
 
@@ -251,7 +274,7 @@ public class ChromosomeEntryReportIntegrationTest {
 					String.valueOf(deltaGeneCount), String.valueOf(analyser.chromosomeReportFromAPI.getSummary().getGeneCount()), String.valueOf(analyser.chromosomeReportFromFTP.getSummary().getGeneCount()),
 					String.valueOf(distinctEntryReportAccsInAPI.size()), String.valueOf(distinctEntryReportAccsInFTP.size()), distinctEntryReportAccsInFTP.toString(),
 					String.valueOf(distinctEntryReportGenesInAPI.size()), String.valueOf(distinctEntryReportGenesInFTP.size()), distinctEntryReportGenesInFTP.toString(),
-					geneDuplicatesInAPI.toString(), geneDuplicatesInFTP.toString()
+					String.valueOf(geneDuplicatesDelta.values().stream().mapToInt(Integer::intValue).sum()), geneDuplicatesDelta.toString()
 			);
 		}
 	}
