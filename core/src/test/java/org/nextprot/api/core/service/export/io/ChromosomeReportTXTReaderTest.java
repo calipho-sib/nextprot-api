@@ -18,7 +18,6 @@ public class ChromosomeReportTXTReaderTest {
         String content = "----------------------------------------------------------------------------\n" +
                 "        neXtProt - a comprehensive human-centric discovery platform\n" +
                 "        SIB Swiss Institute of Bioinformatics; Geneva, Switzerland\n" +
-                "        Geneva bioinformatics (GeneBio) SA; Geneva, Switzerland\n" +
                 "----------------------------------------------------------------------------\n" +
                 "\n" +
                 "Description: Chromosome 1 report\n" +
@@ -84,7 +83,6 @@ public class ChromosomeReportTXTReaderTest {
         String content = "----------------------------------------------------------------------------\n" +
                 "        neXtProt - a comprehensive human-centric discovery platform\n" +
                 "        SIB Swiss Institute of Bioinformatics; Geneva, Switzerland\n" +
-                "        Geneva bioinformatics (GeneBio) SA; Geneva, Switzerland\n" +
                 "----------------------------------------------------------------------------\n" +
                 "\n" +
                 "Description: Kromosome 1 report\n" +
@@ -102,7 +100,6 @@ public class ChromosomeReportTXTReaderTest {
         String content = "----------------------------------------------------------------------------\n" +
                 "        neXtProt - a comprehensive human-centric discovery platform\n" +
                 "        SIB Swiss Institute of Bioinformatics; Geneva, Switzerland\n" +
-                "        Geneva bioinformatics (GeneBio) SA; Geneva, Switzerland\n" +
                 "----------------------------------------------------------------------------\n" +
                 "\n" +
                 "Description: chromosome 1 report\n" +
@@ -120,7 +117,6 @@ public class ChromosomeReportTXTReaderTest {
         String content = "----------------------------------------------------------------------------\n" +
                 "        neXtProt - a comprehensive human-centric discovery platform\n" +
                 "        SIB Swiss Institute of Bioinformatics; Geneva, Switzerland\n" +
-                "        Geneva bioinformatics (GeneBio) SA; Geneva, Switzerland\n" +
                 "----------------------------------------------------------------------------\n" +
                 "\n" +
                 "Description: Chromosome 1 report\n" +
@@ -143,7 +139,6 @@ public class ChromosomeReportTXTReaderTest {
         String content = "----------------------------------------------------------------------------\n" +
                 "        neXtProt - a comprehensive human-centric discovery platform\n" +
                 "        SIB Swiss Institute of Bioinformatics; Geneva, Switzerland\n" +
-                "        Geneva bioinformatics (GeneBio) SA; Geneva, Switzerland\n" +
                 "----------------------------------------------------------------------------\n" +
                 "\n" +
                 "Description: Chromosome 1 report\n" +

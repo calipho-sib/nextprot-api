@@ -32,7 +32,6 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
         writer.write("----------------------------------------------------------------------------\n" +
                 "        neXtProt - a comprehensive human-centric discovery platform\n" +
                 "        SIB Swiss Institute of Bioinformatics; Geneva, Switzerland\n" +
-                "        Geneva bioinformatics (GeneBio) SA; Geneva, Switzerland\n" +
                 "----------------------------------------------------------------------------\n\n");
 
         writer.write("Description: Chromosome " + report.getSummary().getChromosome() + " report\n");
