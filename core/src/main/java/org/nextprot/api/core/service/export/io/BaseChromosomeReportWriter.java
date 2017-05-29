@@ -1,4 +1,4 @@
-package org.nextprot.api.core.service.export.writer;
+package org.nextprot.api.core.service.export.io;
 
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.service.export.ChromosomeReportWriter;

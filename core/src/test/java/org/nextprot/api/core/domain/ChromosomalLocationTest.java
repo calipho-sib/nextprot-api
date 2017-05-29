@@ -20,6 +20,30 @@ public class ChromosomalLocationTest {
         Assert.assertEquals("1q21.2, 6p22.1, 6p22.2, 12p12.3", string);
     }
 
+    @Test
+    public void testFromStringUndefinedLocation() throws Exception {
+
+        ChromosomalLocation cl = ChromosomalLocation.fromString("-");
+        Assert.assertEquals("unknown", cl.getChromosome());
+        Assert.assertEquals("unknown", cl.getBand());
+    }
+
+    @Test
+    public void testFromStringLocation() throws Exception {
+
+        ChromosomalLocation cl = ChromosomalLocation.fromString("4q35.1");
+        Assert.assertEquals("4", cl.getChromosome());
+        Assert.assertEquals("q35.1", cl.getBand());
+    }
+
+    @Test
+    public void testFromStringLocation2() throws Exception {
+
+        ChromosomalLocation cl = ChromosomalLocation.fromString("Yq11.23");
+        Assert.assertEquals("Y", cl.getChromosome());
+        Assert.assertEquals("q11.23", cl.getBand());
+    }
+
     public static List<ChromosomalLocation> newChromosomalLocations(String... locations) {
 
         List<ChromosomalLocation> locs = new ArrayList<>();

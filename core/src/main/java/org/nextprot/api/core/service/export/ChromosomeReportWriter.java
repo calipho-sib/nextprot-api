@@ -2,8 +2,8 @@ package org.nextprot.api.core.service.export;
 
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
-import org.nextprot.api.core.service.export.writer.ChromosomeReportTSVWriter;
-import org.nextprot.api.core.service.export.writer.ChromosomeReportTXTWriter;
+import org.nextprot.api.core.service.export.io.ChromosomeReportTSVWriter;
+import org.nextprot.api.core.service.export.io.ChromosomeReportTXTWriter;
 
 import java.io.IOException;
 import java.io.OutputStream;

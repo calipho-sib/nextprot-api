@@ -5,13 +5,20 @@ import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.core.utils.ChromosomalLocationComparator;
 
 import java.io.Serializable;
-import java.util.*;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @ApiObject(name = "chromosomal-location", description = "The chromosomal location")
 public class ChromosomalLocation implements Serializable {
 
 	private static final long serialVersionUID = -582666549875804789L;
+	private static final Pattern CHROMOSOMAL_POSITION_PATTERN = Pattern.compile("^([^qp])+([pq].+)?$");
 
 	@ApiObjectField(description = "The chromosome identifier")
 	private String chromosome;
@@ -125,7 +132,11 @@ public class ChromosomalLocation implements Serializable {
 		return this.recommendedName; 
 				
 	}
-	
+
+	public void setRecommendedName(String recommendedName) {
+		this.recommendedName = recommendedName;
+	}
+
 	@Deprecated
 	public String getRecommendedName(String version) {
 		
@@ -214,41 +225,63 @@ public class ChromosomalLocation implements Serializable {
 
 	public static String toString(List<ChromosomalLocation> locations) {
 
-        StringBuilder sb = new StringBuilder();
-
 		if (locations != null) {
 
             Set<ChromosomalLocation> chromosomalLocations = new TreeSet<>(new ChromosomalLocationComparator());
             chromosomalLocations.addAll(locations);
 
-            StringBuilder sb2 = new StringBuilder();
-            for (ChromosomalLocation location : chromosomalLocations) {
+            return chromosomalLocations.stream()
+					.map(cl -> toString(cl))
+					.collect(Collectors.joining(", "));
+		}
 
-				sb2.delete(0, sb2.length());
+		return "";
+	}
 
-				String chromosome = location.getChromosome();
-				String band = location.getBand();
+	public static String toString(ChromosomalLocation chromosomalLocation) {
 
-				if (chromosome != null && !"unknown".equals(chromosome)) {
-					sb2.append(chromosome);
-				}
-				if (band != null && !"unknown".equals(band)) {
-					sb2.append(band);
-				}
+		StringBuilder sb = new StringBuilder();
 
-				if (sb2.length() == 0) {
-					sb2.append("unknown");
-				}
+		String chromosome = chromosomalLocation.getChromosome();
+		String band = chromosomalLocation.getBand();
 
-				sb.append(sb2);
-				sb.append(", ");
-			}
+		if (chromosome != null && !"unknown".equals(chromosome)) {
+			sb.append(chromosome);
+		}
+		if (band != null && !"unknown".equals(band)) {
+			sb.append(band);
+		}
 
-			if (sb.length() > 0) {
-				sb.delete(sb.length() - 2, sb.length());
-			}
+		if (sb.length() == 0) {
+			sb.append("unknown");
 		}
 
 		return sb.toString();
+	}
+
+	public static ChromosomalLocation fromString(String chromosomalPosition) throws ParseException {
+
+		// 1q21.1 or -
+		ChromosomalLocation chromosomalLocation = new ChromosomalLocation();
+
+		if (!"-".equals(chromosomalPosition) && !"unknown".equals(chromosomalPosition)) {
+
+			Matcher matcher = CHROMOSOMAL_POSITION_PATTERN.matcher(chromosomalPosition);
+
+			if (matcher.find()) {
+
+				chromosomalLocation.setChromosome(matcher.group(1));
+				chromosomalLocation.setBand((matcher.group(2) != null) ? matcher.group(2) : "");
+			}
+			else {
+				throw new ParseException("cannot parse chromosomal position "+chromosomalPosition, -1);
+			}
+		}
+		else {
+			chromosomalLocation.setChromosome("unknown");
+			chromosomalLocation.setBand("unknown");
+		}
+
+		return chromosomalLocation;
 	}
 }
