@@ -137,12 +137,33 @@ public class ExportController {
 
         try (OutputStream os = response.getOutputStream()) {
 
-            String filename = "chromosome" + chromosome + "." + mediaType.getExtension();
+            String filename = "nextprot_chromosome_" + chromosome + "." + mediaType.getExtension();
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
             exportService.exportChromosomeEntryReport(chromosome, NextprotMediaType.valueOf(request), os);
         }
         catch (IOException e) {
             throw new NextProtException(e.getMessage()+": cannot export chromosome "+chromosome+" as "+ mediaType);
+        }
+    }
+
+    // TODO: To re-expose when ChromosomeReport is correctly built and tested !!
+    //@ApiMethod(path = "/export/reports/chromosome/hpp/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome by accession",
+    //        produces = { MediaType.TEXT_PLAIN_VALUE } )
+    @RequestMapping(value = "/export/reports/chromosome/hpp/{chromosome}", method = {RequestMethod.GET})
+    public void exportHPPChromosomeEntriesReport(
+            //@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+            @PathVariable("chromosome")  String chromosome, HttpServletRequest request, HttpServletResponse response) {
+
+        NextprotMediaType mediaType = NextprotMediaType.valueOf(request);
+
+        try (OutputStream os = response.getOutputStream()) {
+
+            String filename = "HPP_chromosome_" + chromosome + "." + mediaType.getExtension();
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+            exportService.exportHPPChromosomeEntryReport(chromosome, NextprotMediaType.valueOf(request), os);
+        }
+        catch (IOException e) {
+            throw new NextProtException(e.getMessage()+": cannot export HPP chromosome "+chromosome+" as "+ mediaType);
         }
     }
 

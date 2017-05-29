@@ -50,6 +50,14 @@ public interface ExportService {
 	void exportChromosomeEntryReport(String chromosome, NextprotMediaType nextprotMediaType, OutputStream os) throws IOException;
 
 	/**
+	 * Export the list of neXtProt entries informations found on the given chromosome by accession
+	 * @param chromosome the chromosome to get report
+	 * @param nextprotMediaType the export file format
+	 * @param os the output stream to write into
+	 */
+	void exportHPPChromosomeEntryReport(String chromosome, NextprotMediaType nextprotMediaType, OutputStream os) throws IOException;
+
+	/**
 	 * Export the entry name in the format specified with UTF-8 encoding
 	 * 
 	 * @param entryName The entry to export

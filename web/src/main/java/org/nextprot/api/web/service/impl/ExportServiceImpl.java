@@ -10,9 +10,11 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.service.ChromosomeReportService;
 import org.nextprot.api.core.service.EntryBuilderService;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.nextprot.api.core.service.export.ChromosomeReportWriter;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
+import org.nextprot.api.core.service.export.io.HPPChromosomeReportTXTWriter;
 import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.service.ExportService;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
@@ -46,6 +48,8 @@ public class ExportServiceImpl implements ExportService {
 	private ReleaseInfoService releaseInfoService;
 	@Autowired
 	private ChromosomeReportService chromosomeReportService;
+	@Autowired
+	private OverviewService overviewService;
 	
 	private int numberOfWorkers = 8;
 	private ExecutorService executor = null;
@@ -87,6 +91,14 @@ public class ExportServiceImpl implements ExportService {
 		else {
 			throw new NextProtException("cannot export chromosome "+chromosome+": " + "unsupported "+nextprotMediaType+" format");
 		}
+	}
+
+	@Override
+	public void exportHPPChromosomeEntryReport(String chromosome, NextprotMediaType nextprotMediaType, OutputStream os) throws IOException {
+
+		HPPChromosomeReportTXTWriter writer = new HPPChromosomeReportTXTWriter(os, overviewService);
+
+		writer.write(chromosomeReportService.reportChromosome(chromosome));
 	}
 
 	@PostConstruct
