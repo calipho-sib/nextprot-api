@@ -71,7 +71,7 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
             List<String> allValuesExceptCodingStrand = new ArrayList<>(extractValues(er));
             allValuesExceptCodingStrand.remove(3);
-            writeEntryReport(allValuesExceptCodingStrand);
+            writer.write(String.format(buildRowFormat(), allValuesExceptCodingStrand.toArray()));
         }
     }
 
@@ -82,10 +82,6 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
         super.close();
     }
 
-    private void writeEntryReport(List<String> values) throws IOException {
-
-        writer.write(String.format(buildRowFormat(), values.toArray()));
-    }
 
     private static String buildHeaderFormat() {
 
