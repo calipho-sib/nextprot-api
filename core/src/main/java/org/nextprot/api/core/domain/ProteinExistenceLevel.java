@@ -2,12 +2,38 @@ package org.nextprot.api.core.domain;
 
 public enum ProteinExistenceLevel {
 
-    PROTEIN_LEVEL(),
-    TRANSCRIPT_LEVEL(),
-    HOMOLOGY(),
-    PREDICTED(),
-    UNCERTAIN()
-    ;
+    PROTEIN_LEVEL() {
+        @Override
+        public String getDescription() {
+            return "Evidence at protein level";
+        }
+    },
+    TRANSCRIPT_LEVEL() {
+        @Override
+        public String getDescription() {
+            return "Evidence at transcript level";
+        }
+    },
+    HOMOLOGY() {
+        @Override
+        public String getDescription() {
+            return "Inferred from homology";
+        }
+    },
+    PREDICTED() {
+        @Override
+        public String getDescription() {
+            return "Predicted";
+        }
+    },
+    UNCERTAIN() {
+        @Override
+        public String getDescription() {
+            return "Uncertain";
+        }
+    };
+
+    public abstract String getDescription();
 
     private final String name;
     private final int level;
