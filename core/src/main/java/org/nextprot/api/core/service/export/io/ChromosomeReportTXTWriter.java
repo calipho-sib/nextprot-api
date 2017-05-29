@@ -50,8 +50,7 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
         writer.write("____________________________________________________________________________\n" +
                 "\n" +
-                "Copyrighted by the SIB Swiss Institute of Bioinformatics and Geneva\n" +
-                "Bioinformatics (GeneBio) SA\n" +
+                "Copyrighted by the SIB Swiss Institute of Bioinformatics\n" +
                 "\n" +
                 "Distributed under the Creative Commons Attribution-NoDerivs License\n" +
                 "----------------------------------------------------------------------------\n");
