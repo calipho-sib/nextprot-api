@@ -1,12 +1,9 @@
 package org.nextprot.api.core.controller;
 
 import org.jsondoc.core.annotation.Api;
-import org.jsondoc.core.annotation.ApiMethod;
-import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.service.ChromosomeReportService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +20,9 @@ public class ChromosomeReportController {
 	@Autowired
 	private ChromosomeReportService chromosomeReportService;
 
-	@ApiMethod(path = "/chromosome-names", verb = ApiVerb.GET, description = "Get the list of chromosome names referenced in neXtProt",
-			produces = { MediaType.APPLICATION_JSON_VALUE } )
+	// TODO: To re-expose when ChromosomeReport is correctly built and tested !!
+	//@ApiMethod(path = "/chromosome-names", verb = ApiVerb.GET, description = "Get the list of chromosome names referenced in neXtProt",
+	//		produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosome-names", method = {RequestMethod.GET})
 	@ResponseBody
 	public List<String> getChromosomeNames() {
