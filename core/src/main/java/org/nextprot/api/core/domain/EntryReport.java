@@ -33,10 +33,10 @@ import static org.nextprot.api.core.domain.EntryReport.*;
 })
 public class EntryReport implements Serializable {
 
-	private static final long serialVersionUID = 4L;
+	private static final long serialVersionUID = 5L;
 
-	private static final String SENSE_CODING_STRAND = "5'->3'";
-	private static final String ANTISENSE_CODING_STRAND = "3'->5'";
+	private static final String SENSE_CODING_STRAND = "forward";
+	private static final String ANTISENSE_CODING_STRAND = "reverse";
 
 	public static final String GENE_NAME = "geneName";
 	public static final String CODING_STRAND = "codingStrand";
