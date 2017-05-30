@@ -101,7 +101,7 @@ public class EntryReportServiceImpl implements EntryReportService {
 
         report.setPropertyTest(EntryReport.IS_3D, 
         		entry.getAnnotations().stream().
-        			anyMatch(a -> "KW-0002".equals(a.getCvTermAccessionCode())));
+        			anyMatch(a -> a.getAPICategory()==AnnotationCategory.UNIPROT_KEYWORD && "KW-0002".equals(a.getCvTermAccessionCode())));
     }
 
 
