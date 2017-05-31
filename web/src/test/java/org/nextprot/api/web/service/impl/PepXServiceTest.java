@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -246,6 +247,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 	 * }
 	 */
 
+	@Ignore // because we have variants in nextprot which do not have original aa is not equal to isoform aa at that variant position (inconsistency)
 	@Test(expected = NextProtException.class)
 	public void shouldGiveAnExceptionIfTheOriginalIsNotPresentOnTheSequence() throws Exception {
 		try {
@@ -339,6 +341,7 @@ public class PepXServiceTest extends WebUnitBaseTest {
 		assertTrue(resultAnnots.size() == 0);
 	}
 
+	@Ignore // because we have variants in nextprot which do not have original aa is not equal to isoform aa at that variant position (inconsistency)
 	@Test(expected = NextProtException.class)
 	public void shouldThrowAnExceptionIfTheOriginalAminoAcidIsNotInTheSequenceAtThatPosition() throws Exception {
 		try {
