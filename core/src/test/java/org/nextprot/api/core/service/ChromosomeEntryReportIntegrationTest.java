@@ -74,7 +74,7 @@ public class ChromosomeEntryReportIntegrationTest {
 			URL ftpUrl = new URL("ftp://ftp.nextprot.org/pub/current_release/chr_reports/nextprot_chromosome_"+chromosome+".txt");
 			chromosomeReportFromFTP = reader.read(new InputStreamReader(ftpUrl.openStream()));
 
-			URL apiURL = new URL("http://build-api.nextprot.org/export/reports/chromosome/"+chromosome+".txt");
+			URL apiURL = new URL("http://build-api.nextprot.org/chromosome-report/export/"+chromosome);
 			chromosomeReportFromAPI = reader.read(new InputStreamReader(apiURL.openStream()));
 		}
 
