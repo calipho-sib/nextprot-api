@@ -95,7 +95,7 @@ public class ChromosomeReportController {
 	}
 
 	@ApiMethod(path = "/chromosome-report/export/hpp/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome by accession",
-			produces = { MediaType.TEXT_PLAIN_VALUE } )
+			produces = { MediaType.TEXT_PLAIN_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE } )
 	@RequestMapping(value = "/chromosome-report/export/hpp/{chromosome}", method = {RequestMethod.GET})
 	public void exportHPPChromosomeEntriesReport(
 			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})

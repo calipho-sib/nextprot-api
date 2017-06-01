@@ -5,7 +5,6 @@ import org.nextprot.api.core.service.ChromosomeReportExportService;
 import org.nextprot.api.core.service.ChromosomeReportService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
-import org.nextprot.api.core.service.export.io.HPPChromosomeReportTXTWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +36,13 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 	@Override
 	public void exportHPPChromosomeEntryReport(String chromosome, NextprotMediaType nextprotMediaType, OutputStream os) throws IOException {
 
-		HPPChromosomeReportTXTWriter writer = new HPPChromosomeReportTXTWriter(os, overviewService);
+		Optional<HPPChromosomeReportWriter> writer = HPPChromosomeReportWriter.valueOf(nextprotMediaType, os, overviewService);
 
-		writer.write(chromosomeReportService.reportChromosome(chromosome));
+		if (writer.isPresent()) {
+			writer.get().write(chromosomeReportService.reportChromosome(chromosome));
+		}
+		else {
+			throw new NextProtException("cannot export hpp chromosome "+chromosome+": " + "unsupported "+nextprotMediaType+" format");
+		}
 	}
 }
