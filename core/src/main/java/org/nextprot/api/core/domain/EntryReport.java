@@ -93,7 +93,9 @@ public class EntryReport implements Serializable {
 
 	@JsonProperty(GENE_NAME)
 	public String getGeneName() {
-		return chromosomalLocation.getRecommendedName();
+		String recommendedName = chromosomalLocation.getRecommendedName();
+
+		return ("unknown".equals(recommendedName)) ? "-" : recommendedName;
 	}
 
 	@JsonProperty(CODING_STRAND)
