@@ -185,11 +185,8 @@ public class ChromosomeEntryReportIntegrationTest {
 
 			StringBuilder sb = new StringBuilder();
 
-			List<String> allChromosomes = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
-					"12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "X", "Y", "MT", "unknown");
-
 			sb.append(Differences.getHeaders().stream().collect(Collectors.joining("\t"))).append("\n");
-			for (String chromosome : allChromosomes) {
+			for (String chromosome : ChromosomeReportService.getChromosomeNames()) {
 
 				DifferenceAnalyser analyser = new DifferenceAnalyser(chromosome);
 				sb.append(analyser.getDifferences().getValues().stream().collect(Collectors.joining("\t"))).append("\n");
