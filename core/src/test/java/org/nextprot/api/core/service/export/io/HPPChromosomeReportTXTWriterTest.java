@@ -71,11 +71,11 @@ public class HPPChromosomeReportTXTWriterTest extends CoreUnitBaseTest {
         String[] observedLines = sos.toString().split("\\n");
 
         Assert.assertEquals(5, observedLines.length);
-        Assert.assertEquals("neXtProt AC  Gene name(s) Protein existence         Proteomics Antibody", observedLines[0]);
-        Assert.assertEquals("NX_O14598    VCY;VCY1B    Evidence at protein level yes        yes     ", observedLines[1]);
-        Assert.assertEquals("NX_P0DJD4    RBMY1C       Evidence at protein level no         yes     ", observedLines[2]);
-        Assert.assertEquals("NX_Q05066    SRY          Uncertain                 no         yes     ", observedLines[3]);
-        Assert.assertEquals("NX_Q96MC6    MFSD14A      Evidence at protein level no         no      ", observedLines[4]);
+        Assert.assertEquals("neXtProt AC   Gene name(s) Protein existence            Proteomics Antibody", observedLines[0]);
+        Assert.assertEquals("NX_O14598     VCY;VCY1B    Evidence at protein level    yes        yes     ", observedLines[1]);
+        Assert.assertEquals("NX_P0DJD4     RBMY1C       Evidence at protein level    no         yes     ", observedLines[2]);
+        Assert.assertEquals("NX_Q05066     SRY          Uncertain                    no         yes     ", observedLines[3]);
+        Assert.assertEquals("NX_Q96MC6     MFSD14A      Evidence at protein level    no         no      ", observedLines[4]);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class HPPChromosomeReportTXTWriterTest extends CoreUnitBaseTest {
         String[] observedLines = sos.toString().split("\\n");
 
         Assert.assertEquals(2, observedLines.length);
-        Assert.assertEquals("neXtProt AC  Gene name(s) Protein existence         Proteomics Antibody", observedLines[0]);
-        Assert.assertEquals("NX_O00370    -            Evidence at protein level no         no      ", observedLines[1]);
+        Assert.assertEquals("neXtProt AC   Gene name(s) Protein existence            Proteomics Antibody", observedLines[0]);
+        Assert.assertEquals("NX_O00370     -            Evidence at protein level    no         no      ", observedLines[1]);
     }
 }

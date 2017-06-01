@@ -75,12 +75,12 @@ public class HPPChromosomeReportTXTWriter implements HPPChromosomeReportWriter {
 
     private static String buildHeaderFormat() {
 
-        return "%-12s %-12s %-25s %-10s %-8s%n";
+        return "%-13s %-12s %-28s %-10s %-8s%n";
     }
 
     private static String buildRowFormat() {
 
-        return "%-12s %-12s %-25s %-10s %-8s%n";
+        return "%-13s %-12s %-28s %-10s %-8s%n";
     }
 
     private static String getMainEntityNames(List<EntityName> entityNameList) {
