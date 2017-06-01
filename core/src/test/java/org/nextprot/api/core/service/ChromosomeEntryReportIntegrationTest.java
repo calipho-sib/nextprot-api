@@ -37,19 +37,21 @@ public class ChromosomeEntryReportIntegrationTest {
 
         private DifferenceAnalyser(String chromosome) throws IOException, ParseException {
 			this.chromosome = chromosome;
-			readReports();
+
+			readReportFromURLs(
+					"ftp://ftp.nextprot.org/pub/current_release/chr_reports/nextprot_chromosome_"+chromosome+".txt",
+					"http://build-api.nextprot.org/chromosome-report/export/"+chromosome
+			);
+
 			calcDifferences();
 		}
 
-		private void readReports() throws IOException, ParseException {
+		private void readReportFromURLs(String ftp, String api) throws IOException, ParseException {
 
 			ChromosomeReportTXTReader reader = new ChromosomeReportTXTReader();
 
-			URL ftpUrl = new URL("ftp://ftp.nextprot.org/pub/current_release/chr_reports/nextprot_chromosome_"+chromosome+".txt");
-			chromosomeReportFromFTP = reader.read(new InputStreamReader(ftpUrl.openStream()));
-
-			URL apiURL = new URL("http://build-api.nextprot.org/chromosome-report/export/"+chromosome);
-			chromosomeReportFromAPI = reader.read(new InputStreamReader(apiURL.openStream()));
+			chromosomeReportFromFTP = reader.read(new InputStreamReader(new URL(ftp).openStream()));
+			chromosomeReportFromAPI = reader.read(new InputStreamReader(new URL(api).openStream()));
 		}
 
 		private Differences calcDifferences() {
@@ -57,13 +59,40 @@ public class ChromosomeEntryReportIntegrationTest {
 			differences = new Differences(this);
 
 			// 1. row count diffs
-			differences.setCountReportsInApi(chromosomeReportFromAPI.getEntryReports().size());
-			differences.setCountReportsInFTP(chromosomeReportFromFTP.getEntryReports().size());
+			calcReportDifferences();
 
 			// 2. Summary diffs
-			calcSummaryDiffs();
+			calcReportSummaryDifferences();
 
-			// 3. Distinct entries
+			// 3. Distinct entries accessions
+			calcDistinctEntryAccessions();
+
+			// 4. Distinct genes names
+			calcDistinctGeneNames();
+
+			// 5. Gene name duplication delta
+			calcDuplicateGeneNamesDifferences();
+
+			return differences;
+		}
+
+		private void calcReportDifferences() {
+
+			differences.setCountReportsInApi(chromosomeReportFromAPI.getEntryReports().size());
+			differences.setCountReportsInFTP(chromosomeReportFromFTP.getEntryReports().size());
+        }
+
+		private void calcReportSummaryDifferences() {
+
+			ChromosomeReport.Summary summaryFTP = chromosomeReportFromFTP.getSummary();
+			ChromosomeReport.Summary summaryAPI = chromosomeReportFromAPI.getSummary();
+
+			differences.setCountEntryDelta(Math.abs(summaryAPI.getEntryCount() - summaryFTP.getEntryCount()));
+			differences.setCountGeneDelta(Math.abs(summaryAPI.getGeneCount() - summaryFTP.getGeneCount()));
+		}
+
+		private void calcDistinctEntryAccessions() {
+
 			Set<String> entriesInAPI = chromosomeReportFromAPI.getEntryReports().stream()
 					.map(EntryReport::getAccession)
 					.collect(Collectors.toSet());
@@ -74,8 +103,10 @@ public class ChromosomeEntryReportIntegrationTest {
 
 			differences.addAllDistinctAccsInAPI(Sets.difference(entriesInAPI, entriesInFTP));
 			differences.addAllDistinctAccsInFTP(Sets.difference(entriesInFTP, entriesInAPI));
+		}
 
-			// 4. Distinct genes
+		private void calcDistinctGeneNames() {
+
 			Set<String> genesInAPI = chromosomeReportFromAPI.getEntryReports().stream()
 					.map(EntryReport::getGeneName)
 					.collect(Collectors.toSet());
@@ -86,19 +117,38 @@ public class ChromosomeEntryReportIntegrationTest {
 
 			differences.addAllDistinctGenesInAPI(Sets.difference(genesInAPI, genesInFTP));
 			differences.addAllDisctinctGenesInFTP(Sets.difference(genesInFTP, genesInAPI));
-
-			// 5. Gene name duplication delta
-			differences.setGeneDuplicatesDelta(
-			        calcDiffDuplicateGenes(
-			                collectGeneDuplicates(chromosomeReportFromFTP),
-                            collectGeneDuplicates(chromosomeReportFromAPI)
-                    )
-            );
-
-			return differences;
 		}
 
-		private Map<String, Integer> collectGeneDuplicates(ChromosomeReport chromosomeReport) {
+		private void calcDuplicateGeneNamesDifferences() {
+
+			Map<String, Integer> reportCountByGeneNameFromFTP = getEntryReportCountByGeneName(chromosomeReportFromFTP);
+			Map<String, Integer> reportCountByGeneNameFromAPI = getEntryReportCountByGeneName(chromosomeReportFromAPI);
+
+			Map<String, Integer> diffMap = new HashMap<>();
+
+			Set<String> geneNamesFromFTP = reportCountByGeneNameFromFTP.keySet();
+			Set<String> geneNamesFromAPI = reportCountByGeneNameFromAPI.keySet();
+
+			// check that all gene names from API contained in FTP
+			for (String geneNameFromApi : geneNamesFromAPI) {
+
+				if (!geneNamesFromFTP.contains(geneNameFromApi)) {
+					throw new IllegalStateException("gene name " + geneNameFromApi + " was not found in ftp chromosome report");
+				}
+			}
+
+			for (String geneNameFromFTP : geneNamesFromFTP) {
+
+				int diff = reportCountByGeneNameFromFTP.get(geneNameFromFTP) - reportCountByGeneNameFromAPI.getOrDefault(geneNameFromFTP, 0);
+
+				if (diff > 0)
+					diffMap.put(geneNameFromFTP, diff);
+			}
+
+			differences.setGeneDuplicatesDelta(diffMap);
+		}
+
+		private Map<String, Integer> getEntryReportCountByGeneName(ChromosomeReport chromosomeReport) {
 
 			Map<String, Counter> map = new HashMap<>();
 
@@ -112,43 +162,8 @@ public class ChromosomeEntryReportIntegrationTest {
 					});
 
 			return map.entrySet().stream()
-					.filter(e -> e.getValue().get() > 1)
-					.collect(Collectors.toMap(Map.Entry::getKey, p -> (int)p.getValue().get()-1));
+					.collect(Collectors.toMap(Map.Entry::getKey, p -> (int)p.getValue().get()));
 		}
-
-		private void calcSummaryDiffs() {
-
-			ChromosomeReport.Summary summaryFTP = chromosomeReportFromFTP.getSummary();
-			ChromosomeReport.Summary summaryAPI = chromosomeReportFromAPI.getSummary();
-
-			differences.setCountEntryDelta(Math.abs(summaryAPI.getEntryCount() - summaryFTP.getEntryCount()));
-			differences.setCountGeneDelta(Math.abs(summaryAPI.getGeneCount() - summaryFTP.getGeneCount()));
-		}
-
-        private Map<String, Integer> calcDiffDuplicateGenes(Map<String, Integer> fromFTP,  Map<String, Integer> fromAPI) {
-
-            Map<String, Integer> diffMap = new HashMap<>();
-
-            Set<String> genesFromFTP = fromFTP.keySet();
-            Set<String> genesFromAPI = fromAPI.keySet();
-
-            for (String geneName : genesFromAPI) {
-
-                if (!genesFromFTP.contains(geneName)) {
-                    throw new IllegalStateException("gene name " + geneName + " was not found in ftp chromosome report");
-                }
-            }
-
-            for (String geneName : genesFromFTP) {
-
-                int diff = fromFTP.get(geneName) - fromAPI.getOrDefault(geneName, 0);
-
-                if (diff > 0)
-                    diffMap.put(geneName, diff);
-            }
-
-            return diffMap;
-        }
 
 		Differences getDifferences() {
 
