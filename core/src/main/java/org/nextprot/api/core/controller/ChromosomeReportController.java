@@ -40,7 +40,7 @@ public class ChromosomeReportController {
 	@ResponseBody
 	public List<String> getChromosomeNames() {
 
-		return chromosomeReportService.getChromosomeNames();
+		return ChromosomeReportService.getChromosomeNames();
 	}
 
 	@ApiMethod(path = "/chromosome-reports/summary", verb = ApiVerb.GET, description = "Get chromosomes referenced in neXtProt with count statistics",

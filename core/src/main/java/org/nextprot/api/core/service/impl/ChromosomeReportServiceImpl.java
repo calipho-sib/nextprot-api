@@ -31,8 +31,8 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Override
 	public ChromosomeReport reportChromosome(String chromosome) {
 
-		if (!getChromosomeNames().contains(chromosome)) {
-			throw new ChromosomeNotFoundException(chromosome, getChromosomeNames().toString());
+		if (!ChromosomeReportService.getChromosomeNames().contains(chromosome)) {
+			throw new ChromosomeNotFoundException(chromosome, ChromosomeReportService.getChromosomeNames().toString());
 		}
 
 		ChromosomeReport report = new ChromosomeReport();
@@ -56,7 +56,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Override
 	public Map<String, ChromosomeReport.Summary> getChromosomeSummaries() {
 
-		return getChromosomeNames().stream()
+		return ChromosomeReportService.getChromosomeNames().stream()
 				.collect(Collectors.toMap(
 						k -> k,
 						k -> reportChromosome(k).getSummary(),

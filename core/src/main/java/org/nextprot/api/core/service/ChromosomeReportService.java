@@ -28,7 +28,7 @@ public interface ChromosomeReportService {
 	/**
 	 * @return the list of chromosomes existing in neXtProt
 	 */
-	default List<String> getChromosomeNames() {
+	static List<String> getChromosomeNames() {
 
 		List<String> list = IntStream.rangeClosed(1, 22).boxed()
 				.map(String::valueOf)
