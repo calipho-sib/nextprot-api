@@ -30,7 +30,7 @@ public interface ChromosomeReportService {
 	 */
 	default List<String> getChromosomeNames() {
 
-		List<String> list = IntStream.range(1, 22).boxed()
+		List<String> list = IntStream.rangeClosed(1, 22).boxed()
 				.map(String::valueOf)
 				.collect(Collectors.toList());
 
