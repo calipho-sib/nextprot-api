@@ -1,9 +1,13 @@
 package org.nextprot.api.core.controller;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
+import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.service.ChromosomeReportService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,45 +24,41 @@ public class ChromosomeReportController {
 	@Autowired
 	private ChromosomeReportService chromosomeReportService;
 
-	// TODO: To re-expose when ChromosomeReport is correctly built and tested !!
-	//@ApiMethod(path = "/chromosome-names", verb = ApiVerb.GET, description = "Get the list of chromosome names referenced in neXtProt",
-	//		produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/chromosome-names", method = {RequestMethod.GET})
+	@ApiMethod(path = "/chromosomes", verb = ApiVerb.GET, description = "Get the list of chromosome names referenced in neXtProt",
+			produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/chromosomes", method = {RequestMethod.GET})
 	@ResponseBody
 	public List<String> getChromosomeNames() {
 
 		return chromosomeReportService.getChromosomeNames();
 	}
 
-	// TODO: To re-expose when ChromosomeReport is correctly built and tested !!
-	//@ApiMethod(path = "/chromosomes", verb = ApiVerb.GET, description = "Get chromosomes referenced in neXtProt with count statistics",
-	//		produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/chromosomes", method = {RequestMethod.GET})
+	@ApiMethod(path = "/chromosome-reports/summary", verb = ApiVerb.GET, description = "Get chromosomes referenced in neXtProt with count statistics",
+			produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/chromosome-reports/summary", method = {RequestMethod.GET})
 	@ResponseBody
 	public Map<String, ChromosomeReport.Summary> getChromosomeSummaries() {
 
 		return chromosomeReportService.getChromosomeSummaries();
 	}
 
-	// TODO: To re-expose when ChromosomeReport is correctly built and tested !!
-	//@ApiMethod(path = "/chromosome-report/{chromosome}", verb = ApiVerb.GET, description = "Report informations of neXtProt entries coming from genes located on a given chromosome",
-	//		produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@ApiMethod(path = "/chromosome-report/{chromosome}", verb = ApiVerb.GET, description = "Report informations of neXtProt entries coming from genes located on a given chromosome",
+			produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosome-report/{chromosome}", method = {RequestMethod.GET})
 	@ResponseBody
 	public ChromosomeReport reportChromosome(
-			//@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
 			@PathVariable("chromosome")  String chromosome) {
 
 		return chromosomeReportService.reportChromosome(chromosome);
 	}
 
-	// TODO: To re-expose when ChromosomeReport is correctly built and tested !!
-	//@ApiMethod(path = "/chromosome-report/{chromosome}/summary", verb = ApiVerb.GET, description = "Export summary of neXtProt entries coming from genes located on a given chromosome",
-    //		produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@ApiMethod(path = "/chromosome-report/{chromosome}/summary", verb = ApiVerb.GET, description = "Export summary of neXtProt entries coming from genes located on a given chromosome",
+    		produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosome-report/{chromosome}/summary", method = {RequestMethod.GET})
 	@ResponseBody
 	public ChromosomeReport.Summary reportChromosomeSummary(
-            //@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+            @ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
 			@PathVariable("chromosome")  String chromosome) {
 
 		return chromosomeReportService.reportChromosome(chromosome).getSummary();

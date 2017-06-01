@@ -1,7 +1,10 @@
 package org.nextprot.api.web.controller;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiMethod;
+import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.annotation.ApiQueryParam;
+import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.commons.utils.StringUtils;
@@ -15,6 +18,7 @@ import org.nextprot.api.web.service.SearchService;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -125,12 +129,11 @@ public class ExportController {
         }
     }
 
-    // TODO: To re-expose when ChromosomeReport is correctly built and tested !!
-    //@ApiMethod(path = "/export/reports/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries coming from genes located on a given chromosome",
-    //        produces = { MediaType.TEXT_PLAIN_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE } )
+    @ApiMethod(path = "/export/reports/chromosome/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome",
+            produces = { MediaType.TEXT_PLAIN_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE } )
     @RequestMapping(value = "/export/reports/chromosome/{chromosome}", method = {RequestMethod.GET})
     public void exportChromosomeEntriesReport(
-            //@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+            @ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
             @PathVariable("chromosome")  String chromosome, HttpServletRequest request, HttpServletResponse response) {
 
         NextprotMediaType mediaType = NextprotMediaType.valueOf(request);
@@ -146,12 +149,11 @@ public class ExportController {
         }
     }
 
-    // TODO: To re-expose when ChromosomeReport is correctly built and tested !!
-    //@ApiMethod(path = "/export/reports/chromosome/hpp/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome by accession",
-    //        produces = { MediaType.TEXT_PLAIN_VALUE } )
+    @ApiMethod(path = "/export/reports/chromosome/hpp/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome by accession",
+            produces = { MediaType.TEXT_PLAIN_VALUE } )
     @RequestMapping(value = "/export/reports/chromosome/hpp/{chromosome}", method = {RequestMethod.GET})
     public void exportHPPChromosomeEntriesReport(
-            //@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+            @ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
             @PathVariable("chromosome")  String chromosome, HttpServletRequest request, HttpServletResponse response) {
 
         NextprotMediaType mediaType = NextprotMediaType.valueOf(request);
