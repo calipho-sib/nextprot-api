@@ -264,7 +264,7 @@ public class ChromosomalLocation implements Serializable {
 		// 1q21.1 or -
 		ChromosomalLocation chromosomalLocation = new ChromosomalLocation();
 
-		if (!"-".equals(chromosomalPosition) && !"unknown".equals(chromosomalPosition)) {
+		if (chromosomalPosition != null && !"-".equals(chromosomalPosition) && !"unknown".equals(chromosomalPosition)) {
 
 			Matcher matcher = CHROMOSOMAL_POSITION_PATTERN.matcher(chromosomalPosition);
 
