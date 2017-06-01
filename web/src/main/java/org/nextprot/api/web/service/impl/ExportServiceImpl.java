@@ -12,9 +12,7 @@ import org.nextprot.api.core.service.ChromosomeReportService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.ReleaseInfoService;
-import org.nextprot.api.core.service.export.ChromosomeReportWriter;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
-import org.nextprot.api.core.service.export.io.HPPChromosomeReportTXTWriter;
 import org.nextprot.api.web.NXVelocityContext;
 import org.nextprot.api.web.service.ExportService;
 import org.nextprot.api.web.service.impl.writer.EntryStreamWriter;
@@ -78,27 +76,6 @@ public class ExportServiceImpl implements ExportService {
 		}
 		futures.add(exportSubPart(SubPart.FOOTER, format));
 		return futures;
-	}
-
-	@Override
-	public void exportChromosomeEntryReport(String chromosome, NextprotMediaType nextprotMediaType, OutputStream os) throws IOException {
-
-		Optional<ChromosomeReportWriter> writer = ChromosomeReportWriter.valueOf(nextprotMediaType, os);
-
-		if (writer.isPresent()) {
-			writer.get().write(chromosomeReportService.reportChromosome(chromosome));
-		}
-		else {
-			throw new NextProtException("cannot export chromosome "+chromosome+": " + "unsupported "+nextprotMediaType+" format");
-		}
-	}
-
-	@Override
-	public void exportHPPChromosomeEntryReport(String chromosome, NextprotMediaType nextprotMediaType, OutputStream os) throws IOException {
-
-		HPPChromosomeReportTXTWriter writer = new HPPChromosomeReportTXTWriter(os, overviewService);
-
-		writer.write(chromosomeReportService.reportChromosome(chromosome));
 	}
 
 	@PostConstruct
