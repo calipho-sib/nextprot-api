@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.nextprot.api.core.domain.EntryReportTest.newEntryReport;
 
@@ -75,5 +76,37 @@ public class HPPChromosomeReportTXTWriterTest extends CoreUnitBaseTest {
         Assert.assertEquals("NX_P0DJD4    RBMY1C       Evidence at protein level no         yes     ", observedLines[2]);
         Assert.assertEquals("NX_Q05066    SRY          Uncertain                 no         yes     ", observedLines[3]);
         Assert.assertEquals("NX_Q96MC6    MFSD14A      Evidence at protein level no         no      ", observedLines[4]);
+    }
+
+    @Test
+    public void writeChromosomeReportUnknownGeneNames() throws Exception {
+
+        ChromosomeReport report = new ChromosomeReport();
+        report.setDataRelease("2017-01-23");
+
+        ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
+        summary.setChromosome("unknown");
+        summary.setGeneCount(5);
+        summary.setEntryCount(5);
+
+        report.setSummary(summary);
+
+        EntryReport entryReport1 = newEntryReport(null, "NX_O00370", null,
+                "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                false, false, true, false, 1, 0, 0,
+                "LINE-1 retrotransposable element ORF2 protein");
+
+        report.setEntryReports(Collections.singletonList(entryReport1));
+
+        StringOutputStream sos = new StringOutputStream();
+
+        HPPChromosomeReportWriter writer = new HPPChromosomeReportTXTWriter(sos, overviewService);
+        writer.write(report);
+
+        String[] observedLines = sos.toString().split("\\n");
+
+        Assert.assertEquals(2, observedLines.length);
+        Assert.assertEquals("neXtProt AC  Gene name(s) Protein existence         Proteomics Antibody", observedLines[0]);
+        Assert.assertEquals("NX_O00370    -            Evidence at protein level no         no      ", observedLines[1]);
     }
 }

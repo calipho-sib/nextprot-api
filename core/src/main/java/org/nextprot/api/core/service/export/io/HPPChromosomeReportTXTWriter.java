@@ -85,9 +85,12 @@ public class HPPChromosomeReportTXTWriter implements HPPChromosomeReportWriter {
 
     private static String getMainEntityNames(List<EntityName> entityNameList) {
 
-        return entityNameList.stream()
-                .filter(EntityName::isMain)
-                .map(EntityName::getName)
-                .collect(Collectors.joining(";"));
+        if (entityNameList != null && !entityNameList.isEmpty()) {
+            return entityNameList.stream()
+                    .filter(EntityName::isMain)
+                    .map(EntityName::getName)
+                    .collect(Collectors.joining(";"));
+        }
+        return "-";
     }
 }
