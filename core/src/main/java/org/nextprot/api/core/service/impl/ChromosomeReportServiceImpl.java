@@ -3,16 +3,17 @@ package org.nextprot.api.core.service.impl;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
+import org.nextprot.api.core.domain.Overview;
+import org.nextprot.api.core.domain.ProteinExistenceLevel;
 import org.nextprot.api.core.service.ChromosomeReportService;
 import org.nextprot.api.core.service.EntryReportService;
+import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.ReleaseInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +28,9 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	@Autowired
 	private ReleaseInfoService releaseInfoService;
 
+	@Autowired
+	private OverviewService overviewService;
+
 	@Cacheable("chromosome-reports")
 	@Override
 	public ChromosomeReport reportChromosome(String chromosome) {
@@ -39,7 +43,9 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
         report.setDataRelease(releaseInfoService.findReleaseInfo().getDatabaseRelease());
 
-		List<EntryReport> entryReports = masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
+		List<String> allEntriesOnChromosome = masterIdentifierService.findUniqueNamesOfChromosome(chromosome);
+
+		List<EntryReport> entryReports = allEntriesOnChromosome.stream()
 				.map(entryAccession -> entryReportService.reportEntry(entryAccession))
 				.flatMap(Collection::stream)
 				.filter(er -> er.getChromosome().equals(chromosome))
@@ -48,6 +54,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 		report.setEntryReports(entryReports);
 		report.setSummary(newSummary(chromosome, entryReports));
+		report.setEntryCountByProteinEvidence(newChromosomeReportByProteinEvidence(allEntriesOnChromosome));
 
 		return report;
 	}
@@ -60,6 +67,17 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 				.collect(Collectors.toMap(
 						k -> k,
 						k -> reportChromosome(k).getSummary(),
+						(k1, k2) -> k1));
+	}
+
+	@Cacheable("chromosome-entry-count-by-pe")
+	@Override
+	public Map<String, ChromosomeReport.EntryCountByProteinEvidence> getChromosomeEntryCountByProteinEvidence() {
+
+		return ChromosomeReportService.getChromosomeNames().stream()
+				.collect(Collectors.toMap(
+						k -> k,
+						k -> reportChromosome(k).getEntryCountByProteinEvidence(),
 						(k1, k2) -> k1));
 	}
 
@@ -79,5 +97,30 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 				.count());
 
 		return summary;
+	}
+
+	private ChromosomeReport.EntryCountByProteinEvidence newChromosomeReportByProteinEvidence(List<String> chromosomeEntries) {
+
+		ChromosomeReport.EntryCountByProteinEvidence report = new ChromosomeReport.EntryCountByProteinEvidence();
+
+		Map<ProteinExistenceLevel, List<String>> pe2entries = new HashMap<>();
+
+		for (String entry : chromosomeEntries) {
+
+			Overview overview = overviewService.findOverviewByEntry(entry);
+
+			ProteinExistenceLevel level = ProteinExistenceLevel.valueOfLevel(overview.getProteinExistenceLevel());
+
+			if (!pe2entries.containsKey(level)) {
+
+				pe2entries.put(level, new ArrayList<>());
+			}
+
+			pe2entries.get(level).add(entry);
+		}
+
+		pe2entries.forEach((key, value) -> report.setEntryCount(key, value.size()));
+
+		return report;
 	}
 }

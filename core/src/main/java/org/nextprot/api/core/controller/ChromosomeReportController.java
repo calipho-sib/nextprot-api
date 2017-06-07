@@ -52,6 +52,15 @@ public class ChromosomeReportController {
 		return chromosomeReportService.getChromosomeSummaries();
 	}
 
+	@ApiMethod(path = "/chromosome-reports/count-by-pe", verb = ApiVerb.GET, description = "Count number of entries grouped by protein evidences for all chromosomes",
+			produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/chromosome-reports/count-by-pe", method = {RequestMethod.GET})
+	@ResponseBody
+	public Map<String, ChromosomeReport.EntryCountByProteinEvidence> getChromosomeEntryCountByProteinEvidence() {
+
+		return chromosomeReportService.getChromosomeEntryCountByProteinEvidence();
+	}
+
 	@ApiMethod(path = "/chromosome-report/{chromosome}", verb = ApiVerb.GET, description = "Report informations of neXtProt entries coming from genes located on a given chromosome",
 			produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosome-report/{chromosome}", method = {RequestMethod.GET})
@@ -63,7 +72,7 @@ public class ChromosomeReportController {
 		return chromosomeReportService.reportChromosome(chromosome);
 	}
 
-	@ApiMethod(path = "/chromosome-report/{chromosome}/summary", verb = ApiVerb.GET, description = "Export summary of neXtProt entries coming from genes located on a given chromosome",
+	@ApiMethod(path = "/chromosome-report/{chromosome}/summary", verb = ApiVerb.GET, description = "Report summary of neXtProt entries coming from genes located on a given chromosome",
     		produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosome-report/{chromosome}/summary", method = {RequestMethod.GET})
 	@ResponseBody
@@ -72,6 +81,17 @@ public class ChromosomeReportController {
 			@PathVariable("chromosome")  String chromosome) {
 
 		return chromosomeReportService.reportChromosome(chromosome).getSummary();
+	}
+
+	@ApiMethod(path = "/chromosome-report/{chromosome}/count-by-pe", verb = ApiVerb.GET, description = "Report number of entries grouped by protein evidences for a given chromosome",
+			produces = { MediaType.APPLICATION_JSON_VALUE } )
+	@RequestMapping(value = "/chromosome-report/{chromosome}/count-by-pe", method = {RequestMethod.GET})
+	@ResponseBody
+	public ChromosomeReport.EntryCountByProteinEvidence reportChromosomeEntryByProteinEvidence(
+			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
+			@PathVariable("chromosome")  String chromosome) {
+
+		return chromosomeReportService.reportChromosome(chromosome).getEntryCountByProteinEvidence();
 	}
 
 	@ApiMethod(path = "/chromosome-report/export/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome",
