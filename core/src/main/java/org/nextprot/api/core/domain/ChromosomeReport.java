@@ -21,7 +21,7 @@ public class ChromosomeReport implements Serializable {
 
     private String dataRelease;
 	private Summary summary;
-	private EntryCountByProteinEvidence entryCountByProteinEvidence;
+	private EntryCountByProteinExistence entryCountByProteinExistence;
 	private List<EntryReport> entryReports;
 
 	public Summary getSummary() {
@@ -48,12 +48,12 @@ public class ChromosomeReport implements Serializable {
         this.dataRelease = dataRelease;
     }
 
-	public EntryCountByProteinEvidence getEntryCountByProteinEvidence() {
-		return entryCountByProteinEvidence;
+	public EntryCountByProteinExistence getEntryCountByProteinExistence() {
+		return entryCountByProteinExistence;
 	}
 
-	public void setEntryCountByProteinEvidence(EntryCountByProteinEvidence entryCountByProteinEvidence) {
-		this.entryCountByProteinEvidence = entryCountByProteinEvidence;
+	public void setEntryCountByProteinExistence(EntryCountByProteinExistence entryCountByProteinExistence) {
+		this.entryCountByProteinExistence = entryCountByProteinExistence;
 	}
 
 	@JsonInclude(JsonInclude.Include.NON_NULL)
@@ -105,7 +105,7 @@ public class ChromosomeReport implements Serializable {
 			"uncertain (PE5)",
 			"awaiting protein validation (P2+P3+P4)"
 	})
-	public static class EntryCountByProteinEvidence implements Serializable {
+	public static class EntryCountByProteinExistence implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 

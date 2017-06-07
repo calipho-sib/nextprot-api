@@ -54,7 +54,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 		report.setEntryReports(entryReports);
 		report.setSummary(newSummary(chromosome, entryReports));
-		report.setEntryCountByProteinEvidence(newChromosomeReportByProteinEvidence(allEntriesOnChromosome));
+		report.setEntryCountByProteinExistence(newChromosomeReportByProteinEvidence(allEntriesOnChromosome));
 
 		return report;
 	}
@@ -72,12 +72,12 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 
 	@Cacheable("chromosome-entry-count-by-pe")
 	@Override
-	public Map<String, ChromosomeReport.EntryCountByProteinEvidence> getChromosomeEntryCountByProteinEvidence() {
+	public Map<String, ChromosomeReport.EntryCountByProteinExistence> getChromosomeEntryCountByProteinExistence() {
 
 		return ChromosomeReportService.getChromosomeNames().stream()
 				.collect(Collectors.toMap(
 						k -> k,
-						k -> reportChromosome(k).getEntryCountByProteinEvidence(),
+						k -> reportChromosome(k).getEntryCountByProteinExistence(),
 						(k1, k2) -> k1));
 	}
 
@@ -99,9 +99,9 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		return summary;
 	}
 
-	private ChromosomeReport.EntryCountByProteinEvidence newChromosomeReportByProteinEvidence(List<String> chromosomeEntries) {
+	private ChromosomeReport.EntryCountByProteinExistence newChromosomeReportByProteinEvidence(List<String> chromosomeEntries) {
 
-		ChromosomeReport.EntryCountByProteinEvidence report = new ChromosomeReport.EntryCountByProteinEvidence();
+		ChromosomeReport.EntryCountByProteinExistence report = new ChromosomeReport.EntryCountByProteinExistence();
 
 		Map<ProteinExistenceLevel, List<String>> pe2entries = new HashMap<>();
 

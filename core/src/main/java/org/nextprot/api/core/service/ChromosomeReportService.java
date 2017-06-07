@@ -26,10 +26,10 @@ public interface ChromosomeReportService {
 	Map<String, ChromosomeReport.Summary> getChromosomeSummaries();
 
 	/**
-	 * Count all entries by protein evidence by chromosome
-	 * @return a map of ChromosomeReportByProteinEvidence indexed by chromosome name
+	 * Count all entries by protein existence by chromosome
+	 * @return a map of EntryCountByProteinExistence indexed by chromosome name
 	 */
-	Map<String, ChromosomeReport.EntryCountByProteinEvidence> getChromosomeEntryCountByProteinEvidence();
+	Map<String, ChromosomeReport.EntryCountByProteinExistence> getChromosomeEntryCountByProteinExistence();
 
 	/**
 	 * @return the list of chromosomes existing in neXtProt
