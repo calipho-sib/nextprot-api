@@ -22,4 +22,10 @@ public interface ChromosomeReportExportService {
 	 * @param os the output stream to write into
 	 */
 	void exportHPPChromosomeEntryReport(String chromosome, NextprotMediaType nextprotMediaType, OutputStream os) throws IOException;
+
+	/**
+	 * Export the neXtProt entry count by protein existence on the given chromosome by accession
+	 * @param os the output stream to write into
+	 */
+	void exportHPPChromosomeEntryReportCountByProteinExistence(OutputStream os) throws IOException;
 }

@@ -52,13 +52,13 @@ public class ChromosomeReportController {
 		return chromosomeReportService.getChromosomeSummaries();
 	}
 
-	@ApiMethod(path = "/chromosome-reports/count-by-pe", verb = ApiVerb.GET, description = "Count number of entries grouped by protein evidences for all chromosomes",
+	@ApiMethod(path = "/chromosome-reports/count-by-pe", verb = ApiVerb.GET, description = "Count number of entries grouped by protein existence for all chromosomes",
 			produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosome-reports/count-by-pe", method = {RequestMethod.GET})
 	@ResponseBody
-	public Map<String, ChromosomeReport.EntryCountByProteinEvidence> getChromosomeEntryCountByProteinEvidence() {
+	public Map<String, ChromosomeReport.EntryCountByProteinExistence> getChromosomeEntryCountByProteinExistence() {
 
-		return chromosomeReportService.getChromosomeEntryCountByProteinEvidence();
+		return chromosomeReportService.getChromosomeEntryCountByProteinExistence();
 	}
 
 	@ApiMethod(path = "/chromosome-report/{chromosome}", verb = ApiVerb.GET, description = "Report informations of neXtProt entries coming from genes located on a given chromosome",
@@ -83,21 +83,21 @@ public class ChromosomeReportController {
 		return chromosomeReportService.reportChromosome(chromosome).getSummary();
 	}
 
-	@ApiMethod(path = "/chromosome-report/{chromosome}/count-by-pe", verb = ApiVerb.GET, description = "Report number of entries grouped by protein evidences for a given chromosome",
+	@ApiMethod(path = "/chromosome-report/{chromosome}/count-by-pe", verb = ApiVerb.GET, description = "Report number of entries grouped by protein existence for a given chromosome",
 			produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosome-report/{chromosome}/count-by-pe", method = {RequestMethod.GET})
 	@ResponseBody
-	public ChromosomeReport.EntryCountByProteinEvidence reportChromosomeEntryByProteinEvidence(
+	public ChromosomeReport.EntryCountByProteinExistence reportChromosomeEntryByProteinExistence(
 			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
 			@PathVariable("chromosome")  String chromosome) {
 
-		return chromosomeReportService.reportChromosome(chromosome).getEntryCountByProteinEvidence();
+		return chromosomeReportService.reportChromosome(chromosome).getEntryCountByProteinExistence();
 	}
 
 	@ApiMethod(path = "/chromosome-report/export/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome",
 			produces = { MediaType.TEXT_PLAIN_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE } )
 	@RequestMapping(value = "/chromosome-report/export/{chromosome}", method = {RequestMethod.GET})
-	public void exportChromosomeEntriesReport(
+	public void exportChromosomeEntriesReportFile(
 			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
 			@PathVariable("chromosome")  String chromosome, HttpServletRequest request, HttpServletResponse response) {
 
@@ -117,7 +117,7 @@ public class ChromosomeReportController {
 	@ApiMethod(path = "/chromosome-report/export/hpp/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome by accession",
 			produces = { MediaType.TEXT_PLAIN_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE } )
 	@RequestMapping(value = "/chromosome-report/export/hpp/{chromosome}", method = {RequestMethod.GET})
-	public void exportHPPChromosomeEntriesReport(
+	public void exportHPPChromosomeEntriesReportFile(
 			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
 			@PathVariable("chromosome")  String chromosome, HttpServletRequest request, HttpServletResponse response) {
 
@@ -131,6 +131,21 @@ public class ChromosomeReportController {
 		}
 		catch (IOException e) {
 			throw new NextProtException(e.getMessage()+": cannot export HPP chromosome "+chromosome+" as "+ mediaType);
+		}
+	}
+
+	@ApiMethod(path = "/chromosome-report/export/hpp/count-by-pe", verb = ApiVerb.GET, description = "Export number of entries grouped by protein existence for all chromosomes",
+			produces = { NextprotMediaType.TSV_MEDIATYPE_VALUE } )
+	@RequestMapping(value = "/chromosome-report/export/hpp/count-by-pe", method = {RequestMethod.GET})
+	public void exportChromosomeEntryCountByProteinEvidenceFile(HttpServletResponse response) {
+
+		try (OutputStream os = response.getOutputStream()) {
+
+			response.setHeader("Content-Disposition", "attachment; filename=\"count-of-pe12345-by-chromosome.tsv\"");
+			chromosomeReportExportService.exportHPPChromosomeEntryReportCountByProteinExistence(os);
+		}
+		catch (IOException e) {
+			throw new NextProtException(e.getMessage()+": cannot export entry count by protein existence for all chromosomes");
 		}
 	}
 }
