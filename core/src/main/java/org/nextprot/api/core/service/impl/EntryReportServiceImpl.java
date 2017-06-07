@@ -2,11 +2,7 @@ package org.nextprot.api.core.service.impl;
 
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.ChromosomalLocation;
-import org.nextprot.api.core.domain.DbXref;
-import org.nextprot.api.core.domain.Entry;
-import org.nextprot.api.core.domain.EntryReport;
-import org.nextprot.api.core.domain.ProteinExistenceLevel;
+import org.nextprot.api.core.domain.*;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportService;
@@ -16,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 @Service
@@ -61,11 +55,11 @@ public class EntryReportServiceImpl implements EntryReportService {
     	boolean result = false;
     	
     	if (entry.getXrefs().stream()
-    			.anyMatch(x -> isPeptideAtlasOrMassSpecXref(x))) {
+    			.anyMatch(this::isPeptideAtlasOrMassSpecXref)) {
     		result = true;
     	
     	} else if (entry.getAnnotations().stream()
-    			.anyMatch(a -> isPeptideOrPtmAnnotation(a))) {
+    			.anyMatch(this::isPeptideOrPtmAnnotation)) {
     		result = true;
     	}
 
@@ -186,33 +180,9 @@ public class EntryReportServiceImpl implements EntryReportService {
             return Collections.singletonList(report);
         }
 
-        return duplicateReportForEachGene(chromosomalLocations, report);
-    }
-
-    private List<EntryReport> duplicateReportForEachGene(List<ChromosomalLocation> chromosomalLocations, EntryReport report) {
-
         return chromosomalLocations.stream()
-        		.filter(ChromosomalLocation::isGoldMapping)
-                .collect(
-                        Collectors.groupingBy(cl -> cl.getRecommendedName()+cl.getStrand(), // group by gene name/strand
-                        Collectors.reducing(new BestChromosomeLocationOperator()))          // keep the best location for this gene
-                )
-                .values().stream()
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .filter(ChromosomalLocation::isGoldMapping)
                 .map(report::duplicateThenSetChromosomalLocation)
                 .collect(Collectors.toList());
-    }
-
-    private static class BestChromosomeLocationOperator implements BinaryOperator<ChromosomalLocation> {
-
-        @Override
-        public ChromosomalLocation apply(ChromosomalLocation chromosomalLocation, ChromosomalLocation chromosomalLocation2) {
-
-            if (chromosomalLocation.isBestGeneLocation())
-                return chromosomalLocation;
-
-            return chromosomalLocation2;
-        }
     }
 }
