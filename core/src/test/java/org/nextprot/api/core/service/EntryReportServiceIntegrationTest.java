@@ -33,10 +33,26 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 	}
 
 	@Test
-	public void NX_Q9Y676ShouldHave1PreferredChromosomalLocation() {
+	public void NX_Q9Y676ShouldHave1GoldOnnlyChromosomalLocation() {
 
 		List<EntryReport> reports = entryReportService.reportEntry("NX_Q9Y676");
 
 		Assert.assertEquals(1, reports.size());
+	}
+
+	@Test
+	public void NX_Q9Y676ShouldHave2GoldOnnlyChromosomalLocation() {
+
+		List<EntryReport> reports = entryReportService.reportEntry("NX_A6NER0");
+
+		Assert.assertEquals(2, reports.size());
+	}
+
+	@Test
+	public void NX_Q9Y676ShouldHaveAlso2GoldOnnlyChromosomalLocation() {
+
+		List<EntryReport> reports = entryReportService.reportEntry("NX_Q9H239");
+
+		Assert.assertEquals(2, reports.size());
 	}
 }
