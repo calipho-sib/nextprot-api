@@ -279,16 +279,10 @@ public class SparqlProxyController extends ServletWrappingController implements 
 		}
 	}
 
-	public static boolean checkIsSparqlWelcomePage(HttpServletRequest httpRequest) {
-		StringBuffer stringBuffer = new StringBuffer();
-		stringBuffer.append(httpRequest.getQueryString());
-		try {
-			stringBuffer.append(IOUtils.toString(httpRequest.getReader()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String stringToCheck = stringBuffer.toString();
-		return (stringToCheck.toLowerCase().equals("null"));
+
+	private static boolean checkIsSparqlWelcomePage(HttpServletRequest httpRequest) {
+		return ((httpRequest.getMethod() == null || httpRequest.getMethod().equals("GET"))
+			&& (httpRequest.getQueryString() == null) || (httpRequest.getQueryString().isEmpty()));
 	}
 
 	public static String calculateKey(HttpServletRequest httpRequest) {
