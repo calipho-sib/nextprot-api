@@ -73,10 +73,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 				.map(EntryReport::getAccession)
 				.distinct()
 				.count());
-		summary.setGeneCount((int) entryReports.stream()
-				.map(er -> er.getGeneName()+er.getCodingStrand())
-				.distinct()
-				.count());
+		summary.setEntryReportCount(entryReports.size());
 
 		return summary;
 	}

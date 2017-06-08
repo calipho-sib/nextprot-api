@@ -1,6 +1,7 @@
 package org.nextprot.api.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.io.Serializable;
@@ -56,7 +57,7 @@ public class ChromosomeReport implements Serializable {
 
 		private String chromosome;
 		private int entryCount;
-		private int geneCount;
+		private int entryReportCount;
 
 		public String getChromosome() {
 			return chromosome;
@@ -74,12 +75,13 @@ public class ChromosomeReport implements Serializable {
 			this.entryCount = entryCount;
 		}
 
-		public int getGeneCount() {
-			return geneCount;
+		@JsonProperty("geneCount")
+		public int getEntryReportCount() {
+			return entryReportCount;
 		}
 
-		public void setGeneCount(int geneCount) {
-			this.geneCount = geneCount;
+		public void setEntryReportCount(int entryReportCount) {
+			this.entryReportCount = entryReportCount;
 		}
 	}
 }

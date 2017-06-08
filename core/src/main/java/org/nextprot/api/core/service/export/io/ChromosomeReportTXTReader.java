@@ -67,7 +67,7 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
             matchConsumer.consumeNextMatchOfThrowException("entry count",
                     ENTRY_COUNT_PATTERN, (matcher -> summary.setEntryCount(Integer.parseInt(matcher.group(1)))));
             matchConsumer.consumeNextMatchOfThrowException("gene count",
-                    GENE_COUNT_PATTERN, (matcher -> summary.setGeneCount(Integer.parseInt(matcher.group(1)))));
+                    GENE_COUNT_PATTERN, (matcher -> summary.setEntryReportCount(Integer.parseInt(matcher.group(1)))));
 
             EntryReportConsumer entryReportConsumer = new EntryReportConsumer(entryReports);
 
