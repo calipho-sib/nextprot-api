@@ -88,7 +88,7 @@ public class ChromosomeEntryReportIntegrationTest {
 			ChromosomeReport.Summary summaryAPI = chromosomeReportFromAPI.getSummary();
 
 			differences.setCountEntryDelta(Math.abs(summaryAPI.getEntryCount() - summaryFTP.getEntryCount()));
-			differences.setCountGeneDelta(Math.abs(summaryAPI.getGeneCount() - summaryFTP.getGeneCount()));
+			differences.setCountGeneDelta(Math.abs(summaryAPI.getEntryReportCount() - summaryFTP.getEntryReportCount()));
 		}
 
 		private void calcDistinctEntryAccessions() {
@@ -257,7 +257,7 @@ public class ChromosomeEntryReportIntegrationTest {
 			return Arrays.asList(analyser.chromosome,
 					String.valueOf(Math.abs(countReportsInApi - countReportsInFTP)), String.valueOf(countReportsInApi), String.valueOf(countReportsInFTP),
 					String.valueOf(countEntryDelta), String.valueOf(analyser.chromosomeReportFromAPI.getSummary().getEntryCount()), String.valueOf(analyser.chromosomeReportFromFTP.getSummary().getEntryCount()),
-					String.valueOf(countGeneDelta), String.valueOf(analyser.chromosomeReportFromAPI.getSummary().getGeneCount()), String.valueOf(analyser.chromosomeReportFromFTP.getSummary().getGeneCount()),
+					String.valueOf(countGeneDelta), String.valueOf(analyser.chromosomeReportFromAPI.getSummary().getEntryReportCount()), String.valueOf(analyser.chromosomeReportFromFTP.getSummary().getEntryReportCount()),
 					String.valueOf(distinctEntryReportAccsInAPI.size()), String.valueOf(distinctEntryReportAccsInFTP.size()), distinctEntryReportAccsInFTP.toString(),
 					String.valueOf(distinctEntryReportGenesInAPI.size()), String.valueOf(distinctEntryReportGenesInFTP.size()), distinctEntryReportGenesInFTP.toString(),
 					String.valueOf(geneDuplicatesDelta.values().stream().mapToInt(Integer::intValue).sum()), geneDuplicatesDelta.toString()

@@ -317,8 +317,9 @@
 		   statistics="true">
 	</cache>
 
-	<cache name="chromosome-summaries" overflowToOffHeap="false" overflowToDisk="true"
-		   diskPersistent="true" maxEntriesLocalHeap="1" maxEntriesLocalDisk="30"
-		   eternal="true" memoryStoreEvictionPolicy="LRU" statistics="true">
+	<cache name="chromosome-summaries" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="5"
+		   maxEntriesLocalDisk="30" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true">
 	</cache>
 </ehcache>

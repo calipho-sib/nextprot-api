@@ -31,7 +31,7 @@ public class HPPChromosomeReportTXTWriterTest extends CoreUnitBaseTest {
 
         ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
         summary.setChromosome("Y");
-        summary.setGeneCount(58);
+        summary.setEntryReportCount(58);
         summary.setEntryCount(48);
 
         report.setSummary(summary);
@@ -86,7 +86,7 @@ public class HPPChromosomeReportTXTWriterTest extends CoreUnitBaseTest {
 
         ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
         summary.setChromosome("unknown");
-        summary.setGeneCount(5);
+        summary.setEntryReportCount(5);
         summary.setEntryCount(5);
 
         report.setSummary(summary);

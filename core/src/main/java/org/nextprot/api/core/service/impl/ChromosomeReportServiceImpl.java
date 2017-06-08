@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,17 +51,6 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		return report;
 	}
 
-	@Cacheable("chromosome-summaries")
-	@Override
-	public Map<String, ChromosomeReport.Summary> getChromosomeSummaries() {
-
-		return ChromosomeReportService.getChromosomeNames().stream()
-				.collect(Collectors.toMap(
-						k -> k,
-						k -> reportChromosome(k).getSummary(),
-						(k1, k2) -> k1));
-	}
-
 	private ChromosomeReport.Summary newSummary(String chromosome, List<EntryReport> entryReports) {
 
 		ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
@@ -73,10 +61,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 				.map(EntryReport::getAccession)
 				.distinct()
 				.count());
-		summary.setGeneCount((int) entryReports.stream()
-				.map(er -> er.getGeneName()+er.getCodingStrand())
-				.distinct()
-				.count());
+		summary.setEntryReportCount(entryReports.size());
 
 		return summary;
 	}
