@@ -263,7 +263,7 @@
                         <li>NXQ_00148 - Variants with normal "ubiquitin-protein transferase activity" and decreased or increased binding to UBE2D1 (example: BRCA1-p.Ile89Thr)</li>
                     </ul>
 
-                    We are aware that those queries may be difficult to create, therefore don't hesitate to <a href="mailto:support@nextprot.org">contact us</a> if you need help and don't forget to <a href="https://www.nextprot.org/help/advanced-search">save them in your profile</a> (section Saving queries) for future use.<br>
+                    We are aware that those queries may be difficult to create, therefore don't hesitate to <a href="mailto:support@nextprot.org">contact us</a> if you need help and don't forget to <a href="https://www.nextprot.org/help/advanced-search">save them in your profile</a> (Saving queries).<br>
 
                     Note that your saved queries can also be retrieved in the <a href="https://snorql.nextprot.org">SNORQL</a> environment if you are logged in.<br>
 
@@ -307,11 +307,7 @@ select distinct ?entry where {
 
 Save and close the file, then execute the query as follows using your terminal:
 <pre><code>QUERY=$(&lt;query.sparql)
-SPARQL_ENDPOINT="https://sparql.nextprot.org/"
-
-curl -X POST -F "format=json" -F "query=$QUERY" ${SPARQL_ENDPOINT}
-or
-curl -X POST -H "Accept:application/sparql-results+json" -F "query=$QUERY" ${SPARQL_ENDPOINT}
+curl -X POST -H "Accept:application/sparql-results+json" --data-urlencode "query=$QUERY" https://sparql.nextprot.org/
 </code></pre>
                     </div>
             </div>
