@@ -240,7 +240,7 @@
                 <div id="content" class="ng-scope" ng-controller="HelpCtrl">
                 <div class="col-xs-12 col-lg-12  main ng-scope" ng-controller="DocCtrl" style="background-color:white">
                 <p id="news-centre-content" class="ng-scope">
-                    <p>The neXtProt SPARQL endpoint is accessible at: <a href="https://sparql.nexptrot.org">https://sparql.nexptrot.org</a>.<br>
+                    <p>The neXtProt SPARQL endpoint is accessible at: <a href="https://sparql.nexptrot.org">https://sparql.nexptrot.org</a> via HTTP <a href="https://sparql.nextprot.org/?output=json&query=PREFIX+:+%3Chttp:%2F%2Fnextprot.org%2Frdf%23%3E%0APREFIX+owl:+%3Chttp:%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0APREFIX+rdf:+%3Chttp:%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0APREFIX+rdfs:+%3Chttp:%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX+dc:+%3Chttp:%2F%2Fpurl.org%2Fdc%2Felements%2F1.1%2F%3E%0APREFIX+up:+%3Chttp:%2F%2Fpurl.uniprot.org%2Fcore%2F%3E%0APREFIX+xsd:+%3Chttp:%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+entry:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fentry%2F%3E%0APREFIX+isoform:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fisoform%2F%3E%0APREFIX+annotation:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fannotation%2F%3E%0APREFIX+evidence:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fevidence%2F%3E%0APREFIX+xref:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fxref%2F%3E%0APREFIX+publication:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fpublication%2F%3E%0APREFIX+identifier:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fidentifier%2F%3E%0APREFIX+cv:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fterminology%2F%3E%0APREFIX+gene:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fgene%2F%3E%0APREFIX+source:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fsource%2F%3E%0APREFIX+db:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fdb%2F%3E%0APREFIX+context:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fcontext%2F%3E%0APREFIX+interaction:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Finteraction%2F%3E%0APREFIX+skos:+%3Chttp:%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0APREFIX+uniprot:+%3Chttp:%2F%2Fpurl.uniprot.org%2Funiprot%2F%3E%0APREFIX+unipage:+%3Chttp:%2F%2Fwww.uniprot.org%2Funiprot%2F%3E%0APREFIX+proteoform:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fproteoform%2F%3E%0A%0Aselect+distinct+%3Fentry+where+%7B%0A++%3Fentry+:isoform+%3Fiso.%0A++%3Fiso+:keyword+%2F+:term+cv:KW-0597.%0A++%3Fiso+:cellularComponent+%2F:term+%2F:childOf+cv:SL-0086.%0A%7D">GET</a> or POST (see below).<br>
                     We recommend our new users to start looking at our <a href="https://www.nextprot.org/proteins/search?mode=advanced"> examples queries</a> together with our <a href="https://snorql.nextprot.org/help/doc/introduction">data model.</a></p>
                     <div>
                         <a href="https://snorql.nextprot.org/help/doc/introduction">
@@ -270,27 +270,9 @@
                     Further links: You may want to have a look also at the presentation <a href="https://github.com/calipho-sib/sparql-playground/blob/master/assets/lausanne2016-sparql-nextprot.pdf">Practical Introduction to SPARQL</a> and play with the <a href="http://sparql-playground.sib.swiss/">The SPARQL playground</a>.
                 </p>
 
-                </div>
-                    <h1>Example of a SPARQL query using HTTP GET with CURL</h1>
-                    <div>
-
-                <pre>
-                <code>
-SPARQL_ENDPOINT="https://sparql.nextprot.org/"
-SPARQL_NEXTPROT_PREFIXES="PREFIX+:+%3Chttp:%2F%2Fnextprot.org%2Frdf%23%3E%0APREFIX+owl:+%3Chttp:%2F%2Fwww.w3.org%2F2002%2F07%2Fowl%23%3E%0APREFIX+rdf:+%3Chttp:%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0APREFIX+rdfs:+%3Chttp:%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0APREFIX+dc:+%3Chttp:%2F%2Fpurl.org%2Fdc%2Felements%2F1.1%2F%3E%0APREFIX+up:+%3Chttp:%2F%2Fpurl.uniprot.org%2Fcore%2F%3E%0APREFIX+xsd:+%3Chttp:%2F%2Fwww.w3.org%2F2001%2FXMLSchema%23%3E%0APREFIX+entry:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fentry%2F%3E%0APREFIX+isoform:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fisoform%2F%3E%0APREFIX+annotation:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fannotation%2F%3E%0APREFIX+evidence:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fevidence%2F%3E%0APREFIX+xref:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fxref%2F%3E%0APREFIX+publication:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fpublication%2F%3E%0APREFIX+identifier:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fidentifier%2F%3E%0APREFIX+cv:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fterminology%2F%3E%0APREFIX+gene:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fgene%2F%3E%0APREFIX+source:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fsource%2F%3E%0APREFIX+db:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fdb%2F%3E%0APREFIX+context:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fcontext%2F%3E%0APREFIX+interaction:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Finteraction%2F%3E%0APREFIX+skos:+%3Chttp:%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0APREFIX+uniprot:+%3Chttp:%2F%2Fpurl.uniprot.org%2Funiprot%2F%3E%0APREFIX+unipage:+%3Chttp:%2F%2Fwww.uniprot.org%2Funiprot%2F%3E%0APREFIX+proteoform:+%3Chttp:%2F%2Fnextprot.org%2Frdf%2Fproteoform%2F%3E%0A%0A"
-SPARQL_QUERY="select+distinct+%3Fentry+where+%7B%0A++%3Fentry+:isoform+%3Fiso.%0A++%3Fiso+:keyword+%2F+:term+cv:KW-0597.%0A++%3Fiso+:cellularComponent+%2F:term+%2F:childOf+cv:SL-0086.%0A%7D"
-
-curl "${SPARQL_ENDPOINT}?output=json&query=${SPARQL_NEXTPROT_PREFIXES}${SPARQL_QUERY}"
-                </code>
-                </pre>
-
                     <h1>Example of a SPARQL query using HTTP POST with CURL and a file to store the query</h1>
 
-
-Create a file where your query will be stored:
-                <pre><code>touch query.sparql
-vi query.sparql</code></pre>
-Paste the following content into the file (contains all prefixes and a simple query corresponding to example of NXQ_00001):
+                    Create a file called <i>query.sparql</i> and paste the following content:
 
 <pre><code>PREFIX : &lt;http://nextprot.org/rdf#&gt;
 PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;
@@ -323,7 +305,7 @@ select distinct ?entry where {
   ?iso :cellularComponent /:term /:childOf cv:SL-0086.
 }</code></pre>
 
-Save and close the file, then set the content of the file into a variable and execute the query as following:
+Save and close the file, then execute the query as follows using your terminal:
 <pre><code>QUERY=$(&lt;query.sparql)
 SPARQL_ENDPOINT="https://sparql.nextprot.org/"
 
