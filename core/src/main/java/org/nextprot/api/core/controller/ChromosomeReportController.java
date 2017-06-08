@@ -8,6 +8,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.service.ChromosomeReportExportService;
 import org.nextprot.api.core.service.ChromosomeReportService;
+import org.nextprot.api.core.service.ChromosomeReportSummaryService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -32,6 +33,9 @@ public class ChromosomeReportController {
 	private ChromosomeReportService chromosomeReportService;
 
 	@Autowired
+	private ChromosomeReportSummaryService chromosomeReportSummaryService;
+
+	@Autowired
 	private ChromosomeReportExportService chromosomeReportExportService;
 
 	@ApiMethod(path = "/chromosomes", verb = ApiVerb.GET, description = "Get the list of chromosome names referenced in neXtProt",
@@ -49,7 +53,7 @@ public class ChromosomeReportController {
 	@ResponseBody
 	public Map<String, ChromosomeReport.Summary> getChromosomeSummaries() {
 
-		return chromosomeReportService.getChromosomeSummaries();
+		return chromosomeReportSummaryService.getChromosomeSummaries();
 	}
 
 	@ApiMethod(path = "/chromosome-report/{chromosome}", verb = ApiVerb.GET, description = "Report informations of neXtProt entries coming from genes located on a given chromosome",
@@ -71,7 +75,7 @@ public class ChromosomeReportController {
             @ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
 			@PathVariable("chromosome")  String chromosome) {
 
-		return chromosomeReportService.reportChromosome(chromosome).getSummary();
+		return chromosomeReportSummaryService.reportChromosomeSummary(chromosome);
 	}
 
 	@ApiMethod(path = "/chromosome-report/export/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome",
