@@ -95,16 +95,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 						this.annotationService.findAnnotationsExcludingBed(entryName));
 				}
 			}
-
-            //This will be deprecated in the future
-            if(entryConfig.hasSubPart(AnnotationCategory.PEPTIDE_MAPPING)){
-				entry.setPeptideMappings(this.peptideMappingService.findNaturalPeptideMappingByMasterUniqueName(entryName));
-			}
-			if(entryConfig.hasSubPart(AnnotationCategory.SRM_PEPTIDE_MAPPING)){
-				entry.setSrmPeptideMappings(this.peptideMappingService.findSyntheticPeptideMappingByMasterUniqueName(entryName));
-			}
-            ///////
-
+			
 			if(entryConfig.hasExperimentalContext()){
 				List<Annotation> annotations = entry.getAnnotations();
 				//In case we did't set annotations but we need them to find experimental contexts
