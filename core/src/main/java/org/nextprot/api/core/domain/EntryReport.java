@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import org.nextprot.api.commons.exception.NextProtException;
 
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,6 +98,14 @@ public class EntryReport implements Serializable {
 		String recommendedName = chromosomalLocation.getRecommendedName();
 
 		return ("unknown".equals(recommendedName)) ? "-" : recommendedName;
+	}
+
+	public static String getValidGeneNameValue(String geneName) {
+
+		if (geneName != null && !geneName.isEmpty() && !"unknown".equals(geneName)) {
+			return geneName;
+		}
+		return "-";
 	}
 
 	@JsonProperty(CODING_STRAND)
@@ -207,37 +217,20 @@ public class EntryReport implements Serializable {
 		this.chromosomalLocation = chromosomalLocation;
 	}
 
-	public static class ByGenePosComparator implements Comparator<EntryReport> {
+	/**
+	 * Factory creates a new Comparator that compare EntryReport by gene position first then by chromosomal band position
+	 * @return a Comparator of EntryReport objects
+	 */
+	public static Comparator<EntryReport> newByChromosomalPositionComparator() {
 
-		@Override
-		public int compare(EntryReport er1, EntryReport er2) {
-
-			int cmp = comparePosition(er1.getGeneStartPosition(), er2.getGeneStartPosition());
-
-			if (cmp == 0)
-				cmp = comparePosition(er1.getGeneEndPosition(), er2.getGeneEndPosition());
-
-			return cmp;
-		}
-
-		private int comparePosition(String pos1, String pos2) {
-
-			boolean s1IsUndefined = "-".equals(pos1) ;
-			boolean s2IsDefined = "-".equals(pos2) ;
-
-			// EntryReport with undefined positions comes last
-			if (s1IsUndefined && s2IsDefined) {
-				return 0;
-			}
-			else if (s1IsUndefined) {
-				return 1;
-			}
-			else if (s2IsDefined) {
-				return -1;
-			}
-
-			return Integer.compare(Integer.parseInt(pos1), Integer.parseInt(pos2));
-		}
+		return new EntryReport.ByGeneLocationComparator()
+				.thenComparing((er -> {
+					try {
+						return ChromosomalLocation.fromString(er.getChromosomalLocation());
+					} catch (ParseException e) {
+						throw new NextProtException("Internal error: cannot sort EntryReport" + e.getMessage());
+					}
+				}), new EntryReport.ByChromosomalBandLocationComparator());
 	}
 
 	public static class ByChromosomeComparator implements Comparator<EntryReport> {
@@ -266,11 +259,47 @@ public class EntryReport implements Serializable {
 		}
 	}
 
-	public static String getValidGeneNameValue(String geneName) {
+	private static class ByGeneLocationComparator implements Comparator<EntryReport> {
 
-		if (geneName != null && !geneName.isEmpty() && !"unknown".equals(geneName)) {
-			return geneName;
+		@Override
+		public int compare(EntryReport er1, EntryReport er2) {
+
+			int cmp = compareLocation(er1.getGeneStartPosition(), er2.getGeneStartPosition(), "-");
+
+			if (cmp == 0)
+				cmp = compareLocation(er1.getGeneEndPosition(), er2.getGeneEndPosition(), "-");
+
+			return cmp;
 		}
-		return "-";
+	}
+
+	private static class ByChromosomalBandLocationComparator implements Comparator<ChromosomalLocation> {
+
+		@Override
+		public int compare(ChromosomalLocation cl1, ChromosomalLocation cl2) {
+
+			String band1 = cl1.getBand();
+			String band2 = cl2.getBand();
+
+			return compareLocation(band1, band2, "unknown");
+		}
+	}
+
+	private static int compareLocation(String pos1, String pos2, String undefinedValue) {
+
+		boolean pos1IsUndefined = undefinedValue.equals(pos1);
+		boolean pos2IsDefined = undefinedValue.equals(pos2);
+
+		if (pos1IsUndefined && pos2IsDefined) {
+			return 0;
+		}
+		else if (pos1IsUndefined) {
+			return 1;
+		}
+		else if (pos2IsDefined) {
+			return -1;
+		}
+
+		return Integer.compare(Integer.parseInt(pos1), Integer.parseInt(pos2));
 	}
 }

@@ -42,7 +42,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 				.map(entryAccession -> entryReportService.reportEntry(entryAccession))
 				.flatMap(Collection::stream)
 				.filter(er -> er.getChromosome().equals(chromosome))
-				.sorted((er1, er2) -> new EntryReport.ByGenePosComparator().compare(er1, er2))
+				.sorted(EntryReport.newByChromosomalPositionComparator())
 				.collect(Collectors.toList());
 
 		report.setEntryReports(entryReports);
