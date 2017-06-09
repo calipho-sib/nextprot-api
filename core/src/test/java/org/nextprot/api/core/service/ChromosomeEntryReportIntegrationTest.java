@@ -76,8 +76,11 @@ public class ChromosomeEntryReportIntegrationTest {
 			// 5. Gene name duplication delta
 			calcDuplicateGeneNamesDifferences();
 
-			// 7. Test row order and Compare all entry report values ()
-			compareEntryReports();
+			// 7. Test row order
+			compareEntryReportOrders();
+
+			// 8. Compare all entry report values
+			//compareEntryReports();
 
 			return differences;
 		}
@@ -154,7 +157,18 @@ public class ChromosomeEntryReportIntegrationTest {
 			differences.setGeneDuplicatesDelta(diffMap);
 		}
 
+		private void compareEntryReportOrders() {
+
+			compareEntryReports(Arrays.asList(GENE_NAME, CODING_STRAND, CHROMOSOMAL_LOCATION,
+					GENE_START_POSITION, GENE_END_POSITION));
+		}
+
 		private void compareEntryReports() {
+
+        	compareEntryReports(allProperties());
+		}
+
+		private void compareEntryReports(Collection<String> propertiesToCheck) {
 
 			List<EntryReport> entryReportsFromAPI = chromosomeReportFromAPI.getEntryReports();
 			List<EntryReport> entryReportsFromFTP = chromosomeReportFromFTP.getEntryReports();
@@ -166,7 +180,7 @@ public class ChromosomeEntryReportIntegrationTest {
 				Differences.EntryReportValueDifferences valueDifferences =
 						new Differences.EntryReportValueDifferences(chromosome, i);
 
-				for (String propName : funcs.keySet()) {
+				for (String propName : propertiesToCheck) {
 
 					valueDifferences.checkDifference(propName,
 							funcs.get(propName).apply(entryReportsFromAPI.get(i)),
@@ -340,7 +354,7 @@ public class ChromosomeEntryReportIntegrationTest {
 		}
 	}
 
-	public static Map<String, Function<EntryReport, String>> buildGetterFunctionMap() {
+	private static Map<String, Function<EntryReport, String>> buildGetterFunctionMap() {
 
 		Map<String, Function<EntryReport, String>> map = new HashMap<>();
 
@@ -363,5 +377,12 @@ public class ChromosomeEntryReportIntegrationTest {
 		return map;
 	}
 
+	private static Collection<String> allProperties() {
+
+		return Arrays.asList(GENE_NAME, CODING_STRAND, CHROMOSOMAL_LOCATION, GENE_START_POSITION, GENE_END_POSITION,
+				ENTRY_ACCESSION, ENTRY_DESCRIPTION, PROTEIN_EXISTENCE_LEVEL, IS_PROTEOMICS, IS_ANTIBODY, IS_DISEASE,
+				IS_3D, ISOFORM_COUNT, VARIANT_COUNT, PTM_COUNT
+		);
+	}
 }
 
