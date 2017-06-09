@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.nextprot.api.core.domain.ChromosomalLocation.comparePosition;
 import static org.nextprot.api.core.domain.EntryReport.*;
 
 
@@ -230,7 +231,7 @@ public class EntryReport implements Serializable {
 					} catch (ParseException e) {
 						throw new NextProtException("Internal error: cannot sort EntryReport" + e.getMessage());
 					}
-				}), new EntryReport.ByChromosomalBandLocationComparator());
+				}), new ChromosomalLocation.ByChromosomalBandLocationComparator());
 	}
 
 	public static class ByChromosomeComparator implements Comparator<EntryReport> {
@@ -273,60 +274,5 @@ public class EntryReport implements Serializable {
 
 			return cmp;
 		}
-	}
-
-	private static class ByChromosomalBandLocationComparator implements Comparator<ChromosomalLocation> {
-
-		@Override
-		public int compare(ChromosomalLocation cl1, ChromosomalLocation cl2) {
-
-			String band1 = cl1.getBand();
-			String band2 = cl2.getBand();
-
-			return comparePosition(band1, band2, "unknown",
-					new DefinedBandComparator());
-		}
-
-		private static class DefinedBandComparator implements Comparator<String> {
-
-			@Override
-			public int compare(String band1, String band2) {
-
-				// arm: (p)etit or (q)ueue
-				char arm1 = band1.charAt(0);
-				char arm2 = band2.charAt(0);
-
-				int cmp = arm1-arm2;
-
-				if (cmp == 0) {
-
-					cmp = Comparator.comparingDouble(Double::parseDouble).compare(band1.substring(1), band2.substring(1));
-
-					if (arm1 == 'p') {
-						cmp = -cmp;
-					}
-				}
-
-				return cmp;
-			}
-		}
-	}
-
-	private static int comparePosition(String pos1, String pos2, String undefinedValue, Comparator<String> comparator) {
-
-		boolean pos1IsUndefined = undefinedValue.equals(pos1);
-		boolean pos2IsDefined = undefinedValue.equals(pos2);
-
-		if (pos1IsUndefined && pos2IsDefined) {
-			return 0;
-		}
-		else if (pos1IsUndefined) {
-			return 1;
-		}
-		else if (pos2IsDefined) {
-			return -1;
-		}
-
-		return comparator.compare(pos1, pos2);
 	}
 }
