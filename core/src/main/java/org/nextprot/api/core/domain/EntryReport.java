@@ -212,11 +212,18 @@ public class EntryReport implements Serializable {
 		@Override
 		public int compare(EntryReport er1, EntryReport er2) {
 
-			String s1 = er1.getGeneStartPosition();
-			String s2 = er2.getGeneStartPosition();
+			int cmp = comparePosition(er1.getGeneStartPosition(), er2.getGeneStartPosition());
 
-			boolean s1IsUndefined = "-".equals(s1) ;
-			boolean s2IsDefined = "-".equals(s2) ;
+			if (cmp == 0)
+				cmp = comparePosition(er1.getGeneEndPosition(), er2.getGeneEndPosition());
+
+			return cmp;
+		}
+
+		private int comparePosition(String pos1, String pos2) {
+
+			boolean s1IsUndefined = "-".equals(pos1) ;
+			boolean s2IsDefined = "-".equals(pos2) ;
 
 			// EntryReport with undefined positions comes last
 			if (s1IsUndefined && s2IsDefined) {
@@ -229,7 +236,7 @@ public class EntryReport implements Serializable {
 				return -1;
 			}
 
-			return Integer.compare(Integer.parseInt(s1), Integer.parseInt(s2));
+			return Integer.compare(Integer.parseInt(pos1), Integer.parseInt(pos2));
 		}
 	}
 
