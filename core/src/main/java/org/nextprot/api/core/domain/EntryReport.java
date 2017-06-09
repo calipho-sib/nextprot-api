@@ -264,10 +264,12 @@ public class EntryReport implements Serializable {
 		@Override
 		public int compare(EntryReport er1, EntryReport er2) {
 
-			int cmp = compareLocation(er1.getGeneStartPosition(), er2.getGeneStartPosition(), "-");
+			int cmp = comparePosition(er1.getGeneStartPosition(), er2.getGeneStartPosition(), "-",
+					Comparator.comparingInt(Integer::parseInt));
 
 			if (cmp == 0)
-				cmp = compareLocation(er1.getGeneEndPosition(), er2.getGeneEndPosition(), "-");
+				cmp = comparePosition(er1.getGeneEndPosition(), er2.getGeneEndPosition(), "-",
+						Comparator.comparingInt(Integer::parseInt));
 
 			return cmp;
 		}
@@ -281,11 +283,36 @@ public class EntryReport implements Serializable {
 			String band1 = cl1.getBand();
 			String band2 = cl2.getBand();
 
-			return compareLocation(band1, band2, "unknown");
+			return comparePosition(band1, band2, "unknown",
+					new DefinedBandComparator());
+		}
+
+		private static class DefinedBandComparator implements Comparator<String> {
+
+			@Override
+			public int compare(String band1, String band2) {
+
+				// arm: (p)etit or (q)ueue
+				char arm1 = band1.charAt(0);
+				char arm2 = band2.charAt(0);
+
+				int cmp = arm1-arm2;
+
+				if (cmp == 0) {
+
+					cmp = Comparator.comparingDouble(Double::parseDouble).compare(band1.substring(1), band2.substring(1));
+
+					if (arm1 == 'p') {
+						cmp = -cmp;
+					}
+				}
+
+				return cmp;
+			}
 		}
 	}
 
-	private static int compareLocation(String pos1, String pos2, String undefinedValue) {
+	private static int comparePosition(String pos1, String pos2, String undefinedValue, Comparator<String> comparator) {
 
 		boolean pos1IsUndefined = undefinedValue.equals(pos1);
 		boolean pos2IsDefined = undefinedValue.equals(pos2);
@@ -300,6 +327,6 @@ public class EntryReport implements Serializable {
 			return -1;
 		}
 
-		return Integer.compare(Integer.parseInt(pos1), Integer.parseInt(pos2));
+		return comparator.compare(pos1, pos2);
 	}
 }
