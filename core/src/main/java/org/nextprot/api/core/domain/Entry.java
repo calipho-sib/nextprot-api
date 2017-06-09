@@ -34,8 +34,6 @@ public class Entry implements KeyValueRepresentation {
 
 	private List<Annotation> annotations;
 
-	private List<AntibodyMapping> antibodyMappings;
-
 	private List<GenomicMapping> genomicMappings;
 
 	private List<Interaction> interactions;
@@ -153,24 +151,12 @@ public class Entry implements KeyValueRepresentation {
 		}));
 	}
 
-	public List<AntibodyMapping> getAntibodiesByIsoform(String isoform) {
-		return Entry.filterByIsoform(antibodyMappings, isoform);
-	}
-
 	public List<Annotation> getAnnotationsByIsoform(String isoform) {
 		return Entry.filterByIsoform(annotations, isoform);
 	}
 
 	public List<Interaction> getInteractionsByIsoform(String isoform) {
 		return Entry.filterByIsoform(interactions, isoform);
-	}
-
-	public List<AntibodyMapping> getAntibodyMappings() {
-		return antibodyMappings;
-	}
-
-	public void setAntibodyMappings(List<AntibodyMapping> antibodyMappings) {
-		this.antibodyMappings = antibodyMappings;
 	}
 
 	public List<GenomicMapping> getGenomicMappings() {
