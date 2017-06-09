@@ -13,7 +13,10 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static org.nextprot.api.core.domain.EntryReport.*;
 
 
 public class ChromosomeEntryReportIntegrationTest {
@@ -72,6 +75,9 @@ public class ChromosomeEntryReportIntegrationTest {
 
 			// 5. Gene name duplication delta
 			calcDuplicateGeneNamesDifferences();
+
+			// 7. Test row order and Compare all entry report values ()
+			compareEntryReports();
 
 			return differences;
 		}
@@ -148,6 +154,30 @@ public class ChromosomeEntryReportIntegrationTest {
 			differences.setGeneDuplicatesDelta(diffMap);
 		}
 
+		private void compareEntryReports() {
+
+			List<EntryReport> entryReportsFromAPI = chromosomeReportFromAPI.getEntryReports();
+			List<EntryReport> entryReportsFromFTP = chromosomeReportFromFTP.getEntryReports();
+
+			Map<String, Function<EntryReport, String>> funcs = buildGetterFunctionMap();
+
+			for (int i=0 ; i<entryReportsFromAPI.size() ; i++) {
+
+				Differences.EntryReportValueDifferences valueDifferences =
+						new Differences.EntryReportValueDifferences(chromosome, i);
+
+				for (String propName : funcs.keySet()) {
+
+					valueDifferences.checkDifference(propName,
+							funcs.get(propName).apply(entryReportsFromAPI.get(i)),
+							funcs.get(propName).apply(entryReportsFromFTP.get(i))
+					);
+				}
+
+				differences.addValueDifferences(valueDifferences);
+			}
+		}
+
 		private Map<String, Integer> getEntryReportCountByGeneName(ChromosomeReport chromosomeReport) {
 
 			Map<String, Counter> map = new HashMap<>();
@@ -198,6 +228,7 @@ public class ChromosomeEntryReportIntegrationTest {
 		private int countEntryDelta;
 		private int countGeneDelta;
 		private Map<String, Integer> geneDuplicatesDelta;
+		private List<EntryReportValueDifferences> entryReportValueDifferenceList = new ArrayList<>();
 
         private Differences(DifferenceAnalyser analyser) {
 			this.analyser = analyser;
@@ -248,8 +279,15 @@ public class ChromosomeEntryReportIntegrationTest {
 					"gene count delta (abs(api-ftp))", "gene count (api)", "gene count (ftp)",
 					"distinct entry count (api)", "distinct entry count (ftp)", "distinct entry list (ftp)",
 					"distinct gene count (api)", "distinct gene count (ftp)", "distinct gene list (ftp)",
-                    "gene repeats count (ftp-api)", "gene repeats delta (ftp-api)"
+                    "gene repeats count (ftp-api)", "gene repeats delta (ftp-api)",
+					"count entry reports diffs", "diffs list"
 			);
+		}
+
+		public void addValueDifferences(EntryReportValueDifferences valueDifferences) {
+
+        	if (valueDifferences.countDifferences() > 0)
+				this.entryReportValueDifferenceList.add(valueDifferences);
 		}
 
 		public List<String> getValues() {
@@ -260,9 +298,70 @@ public class ChromosomeEntryReportIntegrationTest {
 					String.valueOf(countGeneDelta), String.valueOf(analyser.chromosomeReportFromAPI.getSummary().getEntryReportCount()), String.valueOf(analyser.chromosomeReportFromFTP.getSummary().getEntryReportCount()),
 					String.valueOf(distinctEntryReportAccsInAPI.size()), String.valueOf(distinctEntryReportAccsInFTP.size()), distinctEntryReportAccsInFTP.toString(),
 					String.valueOf(distinctEntryReportGenesInAPI.size()), String.valueOf(distinctEntryReportGenesInFTP.size()), distinctEntryReportGenesInFTP.toString(),
-					String.valueOf(geneDuplicatesDelta.values().stream().mapToInt(Integer::intValue).sum()), geneDuplicatesDelta.toString()
+					String.valueOf(geneDuplicatesDelta.values().stream().mapToInt(Integer::intValue).sum()), geneDuplicatesDelta.toString(),
+					String.valueOf(entryReportValueDifferenceList.size()), String.valueOf(entryReportValueDifferenceList)
 			);
 		}
+
+		public static class EntryReportValueDifferences {
+
+        	private final String chromosome;
+        	private final int entryReportIndex;
+			private final Map<String, String> differentValues = new HashMap<>();
+
+			public EntryReportValueDifferences(String chromosome, int entryReportIndex) {
+
+				this.chromosome = chromosome;
+				this.entryReportIndex = entryReportIndex;
+			}
+
+			public void checkDifference(String property, String apiValue, String ftpValue) {
+
+				if (property.equals(EntryReport.CHROMOSOMAL_LOCATION) && ftpValue.equals("unknown")) {
+					ftpValue = chromosome;
+				}
+
+				if (!ftpValue.equals(apiValue))
+					differentValues.put(property, "api:"+apiValue+", ftp:"+ftpValue);
+			}
+
+			public int countDifferences() {
+				return differentValues.size();
+			}
+
+			@Override
+			public String toString() {
+				return "{" +
+						"entryReportIndex=" + entryReportIndex +
+						", count=" + countDifferences() +
+						", differences=" + differentValues +
+						'}';
+			}
+		}
 	}
+
+	public static Map<String, Function<EntryReport, String>> buildGetterFunctionMap() {
+
+		Map<String, Function<EntryReport, String>> map = new HashMap<>();
+
+		map.put(GENE_NAME, EntryReport::getGeneName);
+		map.put(CODING_STRAND, EntryReport::getCodingStrand);
+		map.put(CHROMOSOMAL_LOCATION, EntryReport::getChromosomalLocation);
+		map.put(GENE_START_POSITION, EntryReport::getGeneStartPosition);
+		map.put(GENE_END_POSITION, EntryReport::getGeneEndPosition);
+		map.put(ENTRY_ACCESSION, EntryReport::getAccession);
+		map.put(ENTRY_DESCRIPTION, EntryReport::getDescription);
+		map.put(PROTEIN_EXISTENCE_LEVEL, EntryReport::getProteinExistence);
+		map.put(IS_PROTEOMICS, er -> String.valueOf(er.isProteomics()));
+		map.put(IS_ANTIBODY, er -> String.valueOf(er.isAntibody()));
+		map.put(IS_DISEASE, er -> String.valueOf(er.isDisease()));
+		map.put(IS_3D, er -> String.valueOf(er.is3D()));
+		map.put(ISOFORM_COUNT, er -> String.valueOf(er.countIsoforms()));
+		map.put(VARIANT_COUNT, er -> String.valueOf(er.countVariants()));
+		map.put(PTM_COUNT, er -> String.valueOf(er.countPTMs()));
+
+		return map;
+	}
+
 }
 
