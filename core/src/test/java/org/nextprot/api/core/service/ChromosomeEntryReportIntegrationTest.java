@@ -52,9 +52,12 @@ public class ChromosomeEntryReportIntegrationTest {
 		private void readReportFromURLs(String ftp, String api) throws IOException, ParseException {
 
 			ChromosomeReportTXTReader reader = new ChromosomeReportTXTReader();
-
-			chromosomeReportFromFTP = reader.read(new InputStreamReader(new URL(ftp).openStream()));
-			chromosomeReportFromAPI = reader.read(new InputStreamReader(new URL(api).openStream()));
+			try {
+				chromosomeReportFromFTP = reader.read(new InputStreamReader(new URL(ftp).openStream()));
+				chromosomeReportFromAPI = reader.read(new InputStreamReader(new URL(api).openStream()));
+			} catch (ParseException e) {
+				throw new ParseException("Error while reading chromosome "+chromosome+": "+e.getMessage(), e.getErrorOffset());
+			}
 		}
 
 		private Differences calcDifferences() {
