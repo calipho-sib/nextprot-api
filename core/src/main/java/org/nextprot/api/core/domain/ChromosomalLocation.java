@@ -271,7 +271,7 @@ public class ChromosomalLocation implements Serializable {
 			if (matcher.find()) {
 
 				chromosomalLocation.setChromosome(matcher.group(1));
-				chromosomalLocation.setBand((matcher.group(2) != null) ? matcher.group(2) : "");
+				chromosomalLocation.setBand((matcher.group(2) != null) ? matcher.group(2) : "unknown");
 			}
 			else {
 				throw new ParseException("cannot parse chromosomal position "+chromosomalPosition, -1);
