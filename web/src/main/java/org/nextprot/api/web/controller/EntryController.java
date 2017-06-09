@@ -103,7 +103,7 @@ public class EntryController {
 			@PathVariable("entry") String entryName) {
 
 		return entryReportService.reportEntry(entryName).stream()
-				.sorted(new EntryReport.ByChromosomeComparator().thenComparing(new EntryReport.ByGenePosComparator()))
+				.sorted(new EntryReport.ByChromosomeComparator().thenComparing(EntryReport.newByChromosomalPositionComparator()))
 				.collect(Collectors.toList());
 	}
 

@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class ChromosomalLocation implements Serializable {
 
 	private static final long serialVersionUID = -582666549875804789L;
-	private static final Pattern CHROMOSOMAL_POSITION_PATTERN = Pattern.compile("^([^qp])+([pq].*)?$");
+	private static final Pattern CHROMOSOMAL_POSITION_PATTERN = Pattern.compile("^([^qp]+)([pq].*)?$");
 
 	@ApiObjectField(description = "The chromosome identifier")
 	private String chromosome;
@@ -271,7 +271,7 @@ public class ChromosomalLocation implements Serializable {
 			if (matcher.find()) {
 
 				chromosomalLocation.setChromosome(matcher.group(1));
-				chromosomalLocation.setBand((matcher.group(2) != null) ? matcher.group(2) : "");
+				chromosomalLocation.setBand((matcher.group(2) != null) ? matcher.group(2) : "unknown");
 			}
 			else {
 				throw new ParseException("cannot parse chromosomal position "+chromosomalPosition, -1);
