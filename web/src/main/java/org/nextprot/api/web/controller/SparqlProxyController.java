@@ -279,7 +279,6 @@ public class SparqlProxyController extends ServletWrappingController implements 
 		}
 	}
 
-
 	private static boolean checkIsSparqlWelcomePage(HttpServletRequest httpRequest) {
 		return ((httpRequest.getMethod() == null || httpRequest.getMethod().equals("GET"))
 			&& (httpRequest.getQueryString() == null) || (httpRequest.getQueryString().isEmpty()));
