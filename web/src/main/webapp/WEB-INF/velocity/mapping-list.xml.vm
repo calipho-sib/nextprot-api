@@ -1,6 +1,0 @@
-#if($entry.peptideMappings || $entry.srmPeptideMappings)
-<mapping-list>
-    #if($entry.peptideMappings) #parse('peptide-list.xml.vm') #end
-    #if($entry.srmPeptideMappings) #parse('srm-peptide-list.xml.vm') #end
-</mapping-list>
-#end

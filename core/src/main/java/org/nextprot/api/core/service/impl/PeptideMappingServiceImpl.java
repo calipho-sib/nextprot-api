@@ -1,22 +1,28 @@
 package org.nextprot.api.core.service.impl;
 
-import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.dao.PeptideMappingDao;
-import org.nextprot.api.core.domain.PeptideMapping;
-import org.nextprot.api.core.domain.PeptideMapping.PeptideEvidence;
-import org.nextprot.api.core.domain.PeptideMapping.PeptideProperty;
-import org.nextprot.api.core.domain.annotation.*;
+import org.nextprot.api.core.domain.annotation.Annotation;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
+import org.nextprot.api.core.domain.annotation.AnnotationEvidenceProperty;
+import org.nextprot.api.core.domain.annotation.AnnotationIsoformSpecificity;
+import org.nextprot.api.core.domain.annotation.AnnotationProperty;
 import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PeptideNamesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import com.google.common.collect.ImmutableList;
 
 @Service
 public class PeptideMappingServiceImpl implements PeptideMappingService {
@@ -25,76 +31,7 @@ public class PeptideMappingServiceImpl implements PeptideMappingService {
 	@Autowired private PeptideMappingDao peptideMappingDao;
 	@Autowired private PeptideNamesService peptideNamesService;
 
-	@Override
-	@Cacheable("natural-peptides")
-	public List<PeptideMapping> findNaturalPeptideMappingByMasterUniqueName(String uniqueName) {
-		
-		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		List<PeptideMapping> peps =  findPeptideMappingByMasterId(masterId, true);
-		
-		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
-		return new ImmutableList.Builder<PeptideMapping>().addAll(peps).build();
-	}
-	
-	@Override
-	@Cacheable("srm-peptides")
-	public List<PeptideMapping> findSyntheticPeptideMappingByMasterUniqueName(String uniqueName) {
 
-		Long masterId = this.masterIdentifierService.findIdByUniqueName(uniqueName);
-		List<PeptideMapping> peps = findPeptideMappingByMasterId(masterId, false);
-
-		//returns a immutable list when the result is cacheable (this prevents modifying the cache, since the cache returns a reference) copy on read and copy on write is too much time consuming
-		return new ImmutableList.Builder<PeptideMapping>().addAll(peps).build();
-
-	}
-
-	private List<PeptideMapping> findPeptideMappingByMasterId(Long id, boolean isNatural) {
-
-		List<PeptideMapping> allMapping = isNatural ? 
-			this.peptideMappingDao.findNaturalPeptidesByMasterId(id) :
-			this.peptideMappingDao.findSyntheticPeptidesByMasterId(id) ;
-
-		// key=peptide,value=mapping with 1-n isospecs, 1-n evidences, 1-n properties
-		Map<String, PeptideMapping> mergeMap = new HashMap<>();
-
-		if (!allMapping.isEmpty()) {
-			List<String> peptideNames = new ArrayList<>();
-
-			Iterator<AnnotationIsoformSpecificity> it;
-			for (PeptideMapping mapping : allMapping) {
-				String key = mapping.getPeptideUniqueName();
-
-				if (!mergeMap.containsKey(key)) { // not in the map
-					peptideNames.add(mapping.getPeptideUniqueName());
-					mergeMap.put(key, mapping);
-				} else { // already in the map
-					it = mapping.getIsoformSpecificity().values().iterator();
-					if (it.hasNext())
-						mergeMap.get(key).addIsoformSpecificity(it.next());
-				}
-			}
-
-			// attach evidences to peptide mappings
-			List<PeptideEvidence> evidences = isNatural ?
-				this.peptideMappingDao.findNaturalPeptideEvidences(peptideNames) :
-				this.peptideMappingDao.findSyntheticPeptideEvidences(peptideNames);
-			for (PeptideEvidence evidence : evidences)
-				mergeMap.get(evidence.getPeptideName()).addEvidence(evidence);
-
-			// attach properties to peptide mappings
-			List<PeptideProperty> props = this.peptideMappingDao.findPeptideProperties(peptideNames);
-			for (PeptideProperty prop: props) 
-				mergeMap.get(prop.getPeptideName()).addProperty(prop);
-		}
-
-		return new ArrayList<>(mergeMap.values());
-	}
-	
-	/*
-	 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-	 * new interface
-	 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-	 */
 	@Override
 	@Cacheable("natural-peptide-mapping-annotations")
 	public List<Annotation> findNaturalPeptideMappingAnnotationsByMasterUniqueName(String uniqueName) {

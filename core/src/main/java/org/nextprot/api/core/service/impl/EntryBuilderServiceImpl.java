@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
@@ -42,7 +41,6 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private IsoformService isoformService;
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private AnnotationService annotationService;
-	@Autowired private PeptideMappingService peptideMappingService;
 	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService expCtxService;
