@@ -106,6 +106,76 @@ public class EntryReportTest {
         Assert.assertEquals("1q32", list.get(4).getChromosomalLocation());
     }
 
+    @Test
+    public void shouldSortAccordingToAccession() throws Exception {
+
+        Comparator<EntryReport> comparator = EntryReport.newByChromosomalPositionComparator();
+
+        List<EntryReport> list = Arrays.asList(
+                newEntryReport("KIAA0754", "NX_O94854", "1p34.2",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("ERVK11-1", "NX_P61568", "1p13.3",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("ANKRD20A12P", "NX_Q8NF67", "1q12",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("NBPF26", "NX_B4DH59", "1q21.1",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("NBPF20", "NX_Q3BBV1", "1q21.1",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("NBPF9", "NX_Q3BBW0", "1q21.1",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("NBPF8", "NX_Q3BBV2", "1q21.11",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("ERVK-7", "NX_P61567", "1q22",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("ERVK-7", "NX_P61582", "1q22",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("ERVK-7", "NX_P63130", "1q22",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("ERVK-7", "NX_P63131", "1q22",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("ERVK-7", "NX_P63135", "1q22",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("ERVK-18", "NX_O42043", "1q23.3",
+                        "-", "-", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1")
+        );
+
+        list.sort(comparator);
+
+        List<String> expectedAccessions = Arrays.asList("NX_B4DH59", "NX_O42043", "NX_O94854", "NX_P61567", "NX_P61568",
+                "NX_P61582", "NX_P63130", "NX_P63131", "NX_P63135", "NX_Q3BBV1", "NX_Q3BBV2", "NX_Q3BBW0", "NX_Q8NF67");
+
+        for (int i=0 ; i<expectedAccessions.size() ; i++) {
+            Assert.assertEquals(expectedAccessions.get(i), list.get(i).getAccession());
+        }
+    }
+
     public static EntryReport newEntryReport(String geneName, String ac, String chromosalPosition,
                                              String startPos, String stopPos, ProteinExistenceLevel protExistence,
                                              boolean isProteomics, boolean  isAntibody, boolean  is3D, boolean  isDisease,

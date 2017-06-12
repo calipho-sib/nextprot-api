@@ -219,12 +219,13 @@ public class EntryReport implements Serializable {
 	}
 
 	/**
-	 * Factory creates a new Comparator that compare EntryReport by gene position first then by chromosomal band position
+	 * Factory creates a new Comparator that compare EntryReport by gene position first then by accession then by chromosomal band position
 	 * @return a Comparator of EntryReport objects
 	 */
 	public static Comparator<EntryReport> newByChromosomalPositionComparator() {
 
 		return new EntryReport.ByGeneLocationComparator()
+				.thenComparing(EntryReport::getAccession)
 				.thenComparing((er -> {
 					try {
 						return ChromosomalLocation.fromString(er.getChromosomalLocation());
