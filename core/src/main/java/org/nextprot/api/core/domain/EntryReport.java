@@ -19,10 +19,10 @@ import static org.nextprot.api.core.domain.EntryReport.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
 	GENE_NAME,
-	CODING_STRAND,
 	CHROMOSOMAL_LOCATION,
 	GENE_START_POSITION,
 	GENE_END_POSITION,
+	CODING_STRAND,
 	ENTRY_ACCESSION,
 	PROTEIN_EXISTENCE_LEVEL,
 	IS_PROTEOMICS,
