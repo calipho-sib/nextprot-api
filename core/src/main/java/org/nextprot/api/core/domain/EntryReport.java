@@ -219,7 +219,8 @@ public class EntryReport implements Serializable {
 	}
 
 	/**
-	 * Factory creates a new Comparator that compare EntryReport by gene position first then by accession then by chromosomal band position
+	 * Factory creates a new Comparator that compare EntryReport by gene position first then by chromosomal band position
+	 * then by gene name and then by accession
 	 * @return a Comparator of EntryReport objects
 	 */
 	public static Comparator<EntryReport> newByChromosomalPositionComparator() {
@@ -232,6 +233,7 @@ public class EntryReport implements Serializable {
 						throw new NextProtException("Internal error: cannot sort EntryReport" + e.getMessage());
 					}
 				}), new ChromosomalLocation.ByChromosomalBandLocationComparator())
+				.thenComparing(EntryReport::getGeneName)
 				.thenComparing(EntryReport::getAccession);
 	}
 
