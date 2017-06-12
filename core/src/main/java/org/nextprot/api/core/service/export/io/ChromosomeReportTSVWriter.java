@@ -51,7 +51,7 @@ public class ChromosomeReportTSVWriter extends BaseChromosomeReportWriter {
     private static List<String> extractHeaders() {
 
         return Arrays.asList(
-                "Gene name", "neXtProt AC", "Chromosomal position", "Start position", "Stop position",
+                "Gene name", "neXtProt AC", "Chromosomal location", "Start position", "Stop position",
                 "Coding strand", "Protein existence", "Proteomics", "Antibody", "3D", "Disease", "Isoforms", "Variants",
                 "PTMs", "Description"
         );

@@ -62,7 +62,7 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
         writer.write(String.format(buildHeaderFormat(),
                 Arrays.asList("Gene ", "neXtProt", "Chromosomal", "Start", "Stop", "Protein", "Prote-", "Anti-", "3D", "Dise-", "Iso-", "Vari-", "PTMs", "Description").toArray()));
         writer.write(String.format(buildHeaderFormat(),
-                Arrays.asList("name ", "AC", "position", "position", "position", "existence", "omics", "body", "", "ase", "forms", "ants", "", "").toArray()));
+                Arrays.asList("name ", "AC", "location", "position", "position", "existence", "omics", "body", "", "ase", "forms", "ants", "", "").toArray()));
         writer.write("________________________________________________________________________________________________________________________________________________________\n");
 
         for (EntryReport er : report.getEntryReports()) {
