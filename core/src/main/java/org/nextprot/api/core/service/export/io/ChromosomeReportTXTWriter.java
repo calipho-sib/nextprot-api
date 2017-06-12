@@ -68,7 +68,7 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
         for (EntryReport er : report.getEntryReports()) {
 
             List<String> allValuesExceptCodingStrand = new ArrayList<>(extractValues(er));
-            allValuesExceptCodingStrand.remove(3);
+            allValuesExceptCodingStrand.remove(5);
             writer.write(String.format(buildRowFormat(), allValuesExceptCodingStrand.toArray()));
         }
     }
