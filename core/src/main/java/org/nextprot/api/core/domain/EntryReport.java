@@ -225,14 +225,14 @@ public class EntryReport implements Serializable {
 	public static Comparator<EntryReport> newByChromosomalPositionComparator() {
 
 		return new EntryReport.ByGeneLocationComparator()
-				.thenComparing(EntryReport::getAccession)
 				.thenComparing((er -> {
 					try {
 						return ChromosomalLocation.fromString(er.getChromosomalLocation());
 					} catch (ParseException e) {
 						throw new NextProtException("Internal error: cannot sort EntryReport" + e.getMessage());
 					}
-				}), new ChromosomalLocation.ByChromosomalBandLocationComparator());
+				}), new ChromosomalLocation.ByChromosomalBandLocationComparator())
+				.thenComparing(EntryReport::getAccession);
 	}
 
 	public static class ByChromosomeComparator implements Comparator<EntryReport> {
