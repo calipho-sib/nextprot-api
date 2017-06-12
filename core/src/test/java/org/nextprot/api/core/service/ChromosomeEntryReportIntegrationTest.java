@@ -181,7 +181,8 @@ public class ChromosomeEntryReportIntegrationTest {
 			for (int i=0 ; i<entryReportsFromAPI.size() ; i++) {
 
 				Differences.EntryReportValueDifferences valueDifferences =
-						new Differences.EntryReportValueDifferences(chromosome, i);
+						new Differences.EntryReportValueDifferences(chromosome, entryReportsFromAPI.get(i).getGeneName(),
+								entryReportsFromAPI.get(i).getAccession(), i);
 
 				for (String propName : propertiesToCheck) {
 
@@ -323,13 +324,13 @@ public class ChromosomeEntryReportIntegrationTest {
 		public static class EntryReportValueDifferences {
 
         	private final String chromosome;
-        	private final int entryReportIndex;
+        	private final String entryReportkey;
 			private final Map<String, String> differentValues = new HashMap<>();
 
-			public EntryReportValueDifferences(String chromosome, int entryReportIndex) {
+			public EntryReportValueDifferences(String chromosome, String geneName, String accession, int entryReportIndex) {
 
 				this.chromosome = chromosome;
-				this.entryReportIndex = entryReportIndex;
+				this.entryReportkey = geneName+"."+accession+"."+entryReportIndex;
 			}
 
 			public void checkDifference(String property, String apiValue, String ftpValue) {
@@ -349,9 +350,9 @@ public class ChromosomeEntryReportIntegrationTest {
 			@Override
 			public String toString() {
 				return "{" +
-						"entryReportIndex=" + entryReportIndex +
-						", count=" + countDifferences() +
-						", differences=" + differentValues +
+						"entryReportkey:\"" + entryReportkey + "\"" +
+						", count:" + countDifferences() +
+						", differences:" + differentValues +
 						'}';
 			}
 		}
