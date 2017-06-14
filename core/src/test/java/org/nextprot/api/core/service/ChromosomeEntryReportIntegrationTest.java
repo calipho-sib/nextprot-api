@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.nextprot.api.core.domain.EntryReport.*;
 
@@ -80,10 +81,10 @@ public class ChromosomeEntryReportIntegrationTest {
 			calcDuplicateGeneNamesDifferences();
 
 			// 7. Test row order
-			compareEntryReportOrders();
+			//compareEntryReportOrders();
 
 			// 8. Compare all entry report values
-			//compareEntryReports();
+			compareEntryReports(allProperties());
 
 			return differences;
 		}
@@ -162,17 +163,6 @@ public class ChromosomeEntryReportIntegrationTest {
 
 		private void compareEntryReportOrders() {
 
-			compareEntryReports(Arrays.asList(GENE_NAME, CODING_STRAND, CHROMOSOMAL_LOCATION,
-					GENE_START_POSITION, GENE_END_POSITION));
-		}
-
-		private void compareEntryReports() {
-
-        	compareEntryReports(allProperties());
-		}
-
-		private void compareEntryReports(Collection<String> propertiesToCheck) {
-
 			List<EntryReport> entryReportsFromAPI = chromosomeReportFromAPI.getEntryReports();
 			List<EntryReport> entryReportsFromFTP = chromosomeReportFromFTP.getEntryReports();
 
@@ -184,7 +174,8 @@ public class ChromosomeEntryReportIntegrationTest {
 						new Differences.EntryReportValueDifferences(chromosome, entryReportsFromAPI.get(i).getGeneName(),
 								entryReportsFromAPI.get(i).getAccession(), i);
 
-				for (String propName : propertiesToCheck) {
+				for (String propName : Arrays.asList(GENE_NAME, CODING_STRAND, CHROMOSOMAL_LOCATION,
+						GENE_START_POSITION, GENE_END_POSITION)) {
 
 					valueDifferences.checkDifference(propName,
 							funcs.get(propName).apply(entryReportsFromAPI.get(i)),
@@ -194,6 +185,67 @@ public class ChromosomeEntryReportIntegrationTest {
 
 				differences.addValueDifferences(valueDifferences);
 			}
+		}
+
+		private void compareEntryReports(Collection<String> propertiesToCheck) {
+
+			Map<String, EntryReport> entryReportsFromAPI = toMap(chromosomeReportFromAPI.getEntryReports());
+			Map<String, EntryReport> entryReportsFromFTP = toMap(chromosomeReportFromFTP.getEntryReports());
+
+			Map<String, Function<EntryReport, String>> funcs = buildGetterFunctionMap();
+
+			if (!Sets.difference(entryReportsFromAPI.keySet(), entryReportsFromFTP.keySet()).isEmpty()) {
+
+				Set<String> apiMinusFtp = Sets.difference(entryReportsFromAPI.keySet(), entryReportsFromFTP.keySet()).immutableCopy();
+				Set<String> ftpMinusApi = Sets.difference(entryReportsFromFTP.keySet(), entryReportsFromAPI.keySet()).immutableCopy();
+
+				System.err.println("api - ftp differences: "+apiMinusFtp.size());
+				System.err.println("ftp - api differences: "+ftpMinusApi.size());
+			}
+
+			for (String key : entryReportsFromFTP.keySet()) {
+
+				Differences.EntryReportValueDifferences valueDifferences =
+						new Differences.EntryReportValueDifferences(chromosome, key);
+
+				for (String propName : propertiesToCheck) {
+
+					EntryReport erAPI = entryReportsFromAPI.get(key);
+					EntryReport erFTP = entryReportsFromFTP.get(key);
+
+					if (erAPI != null && erFTP != null) {
+						valueDifferences.checkDifference(propName,
+								funcs.get(propName).apply(erAPI),
+								funcs.get(propName).apply(erFTP)
+						);
+					}
+					else {
+						System.err.println("key:"+key+", API defined:"+(erAPI != null)+", FTP defined:"+(erFTP != null));
+					}
+				}
+
+				differences.addValueDifferences(valueDifferences);
+			}
+
+		}
+
+		private static Map<String, EntryReport> toMap(List<EntryReport> entryReportList) {
+
+			Map<String, EntryReport> map = new HashMap<>();
+
+			for (EntryReport er : entryReportList) {
+
+				String key = Stream.of(er.getGeneName(), er.getAccession(), er.getChromosomalLocation(), er.getGeneStartPosition(), er.getGeneEndPosition())
+						.collect(Collectors.joining("~"));
+
+				if (map.containsKey(key)) {
+					System.err.println("key "+key + " already exist");
+				}
+				else {
+					map.put(key, er);
+				}
+			}
+			return map;
 		}
 
 		private Map<String, Integer> getEntryReportCountByGeneName(ChromosomeReport chromosomeReport) {
@@ -333,6 +385,12 @@ public class ChromosomeEntryReportIntegrationTest {
 				this.entryReportkey = geneName+"."+accession+"."+entryReportIndex;
 			}
 
+			public EntryReportValueDifferences(String chromosome, String key) {
+
+				this.chromosome = chromosome;
+				this.entryReportkey = key;
+			}
+
 			public void checkDifference(String property, String apiValue, String ftpValue) {
 
 				if (property.equals(EntryReport.CHROMOSOMAL_LOCATION) && ftpValue.equals("unknown")) {
@@ -347,12 +405,36 @@ public class ChromosomeEntryReportIntegrationTest {
 				return differentValues.size();
 			}
 
+			private static String formatMapInJson(Map<String, String> map) {
+
+				StringBuilder sb = new StringBuilder("{");
+
+				sb.append(map.entrySet().stream()
+						.map(EntryReportValueDifferences::formatEntryInJson)
+						.collect(Collectors.joining(",")));
+
+				sb.append("}");
+
+				return sb.toString();
+			}
+
+			private static String formatEntryInJson(Map.Entry<String, String> entry) {
+
+				StringBuilder sb = new StringBuilder();
+
+				sb.append("\"").append(entry.getKey()).append("\"");
+				sb.append(":");
+				sb.append("\"").append(entry.getValue()).append("\"");
+
+				return sb.toString();
+			}
+
 			@Override
 			public String toString() {
 				return "{" +
-						"entryReportkey:\"" + entryReportkey + "\"" +
-						", count:" + countDifferences() +
-						", differences:" + differentValues +
+						"\"entryReportkey\":\"" + entryReportkey +
+						"\", \"count\":" + countDifferences() +
+						", \"differences\":" + formatMapInJson(differentValues) +
 						'}';
 			}
 		}
