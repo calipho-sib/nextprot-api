@@ -1,5 +1,16 @@
 package org.nextprot.api.core.domain;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.domain.annotation.AnnotationEvidence;
@@ -9,10 +20,6 @@ import org.nextprot.api.core.utils.ExperimentalContextUtil;
 import org.nextprot.api.core.utils.PublicationUtils;
 import org.nextprot.api.core.utils.XrefUtils;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
-
-import java.io.Serializable;
-import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class EntryUtils implements Serializable{	
@@ -121,12 +128,6 @@ public class EntryUtils implements Serializable{
 		return result;
 	}
 	
-	private static void printMap(Map map) {
-		for (Object k: map.keySet()) {
-			System.out.println(k + " => " + map.get(k));
-		}
-	}
-
 	public static Map<String,Annotation> getHashAnnotationMap(Entry entry) {
 		return getHashAnnotationMap(entry.getAnnotations());
 	}
@@ -138,8 +139,6 @@ public class EntryUtils implements Serializable{
 	 * @return a dictionary of annotations where the key is the annotation hash (= identifier in BED world)
 	 */
 	public static Map<String,Annotation> getHashAnnotationMap(List<Annotation> annotations) {
-		
-		//printMap(getAnnotationCategoryCountMap(entry));
 		
 		Map<String,Annotation> result = new HashMap<String,Annotation>();
 		for (Annotation annot: annotations) {
@@ -231,4 +230,17 @@ public class EntryUtils implements Serializable{
 
 		return fInfoCanonical;
 	 }
+	
+	public static boolean wouldUpgradeToPE1AccordingToOldRule(Entry e) {
+		
+		if (e.getProteinExistenceLevel()==1) return false; // already PE1
+		if (e.getProteinExistenceLevel()==5) return false; // we don't upgrade PE5
+		if (! e.getAnnotationsByCategory().containsKey("peptide-mapping")) return false; // no peptide mapping, no chance to upgrade to PE1		
+		List<Annotation> list = e.getAnnotationsByCategory().get("peptide-mapping").stream()
+				.filter(a -> AnnotationUtils.isProteotypicPeptideMapping(a)).collect(Collectors.toList());
+		if (list==null) return false;
+		if (AnnotationUtils.containsAtLeastNFeaturesWithSizeGreaterOrEqualsToS(list, 2, 7)) return true;
+		if (AnnotationUtils.containsAtLeastNFeaturesWithSizeGreaterOrEqualsToS(list, 1, 9)) return true;
+		return false;
+	}
 }
