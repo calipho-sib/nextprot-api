@@ -85,8 +85,9 @@
                         <ul class="dropdown-menu" role="menu">
                             <!-- Learn -->
                             <!-----------------------------  CHANGE ngclick !!!! -------------------------------------->
-                            <li ng-class=""><a href="/proteins/search" ng-click="routingOutside('ui')">Simple search</a></li>
-                            <li ng-class=""><a href="/proteins/search?mode=advanced" ng-click="routingOutside('snorql')">Advanced search</a></li>
+                            <li ng-class=""><a href="/proteins/search">Simple search</a></li>
+                            <li ng-class=""><a href="/proteins/search?mode=advanced">Advanced search</a></li>
+                            <li ng-class=""><a ng-href="https://sparql.nextprot.org" href="https://sparql.nextprot.org">SPARQL</a></li>
                             <li ng-class=""><a ng-href="http://snorql.nextprot.org" href="http://snorql.nextprot.org">SNORQL search</a></li>
                             <li class="divider"></li>
                             <li ng-class=""><a rel="nofollow" ng-click="goToUser('lists')">My Lists</a></li>
@@ -275,29 +276,7 @@
                     Create a file called <i>query.sparql</i> and paste the following content:
 
 <pre><code>PREFIX : &lt;http://nextprot.org/rdf#&gt;
-PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;
-PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
-PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
-PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;
-PREFIX up: &lt;http://purl.uniprot.org/core/&gt;
-PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
-PREFIX entry: &lt;http://nextprot.org/rdf/entry/&gt;
-PREFIX isoform: &lt;http://nextprot.org/rdf/isoform/&gt;
-PREFIX annotation: &lt;http://nextprot.org/rdf/annotation/&gt;
-PREFIX evidence: &lt;http://nextprot.org/rdf/evidence/&gt;
-PREFIX xref: &lt;http://nextprot.org/rdf/xref/&gt;
-PREFIX publication: &lt;http://nextprot.org/rdf/publication/&gt;
-PREFIX identifier: &lt;http://nextprot.org/rdf/identifier/&gt;
 PREFIX cv: &lt;http://nextprot.org/rdf/terminology/&gt;
-PREFIX gene: &lt;http://nextprot.org/rdf/gene/&gt;
-PREFIX source: &lt;http://nextprot.org/rdf/source/&gt;
-PREFIX db: &lt;http://nextprot.org/rdf/db/&gt;
-PREFIX context: &lt;http://nextprot.org/rdf/context/&gt;
-PREFIX interaction: &lt;http://nextprot.org/rdf/interaction/&gt;
-PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
-PREFIX uniprot: &lt;http://purl.uniprot.org/uniprot/&gt;
-PREFIX unipage: &lt;http://www.uniprot.org/uniprot/&gt;
-PREFIX proteoform: &lt;http://nextprot.org/rdf/proteoform/&gt;
 
 select distinct ?entry where {
   ?entry :isoform ?iso.
@@ -306,9 +285,8 @@ select distinct ?entry where {
 }</code></pre>
 
 Save and close the file, then execute the query as follows using your terminal:
-<pre><code>QUERY=$(&lt;query.sparql)
-curl -X POST -H "Accept:application/sparql-results+json" --data-urlencode "query=$QUERY" https://sparql.nextprot.org/
-</code></pre>
+<pre><code>QUERY=$(&lt;query.sparql) && curl -X POST -H "Accept:application/sparql-results+json" --data-urlencode "query=$QUERY" https://sparql.nextprot.org/ </code></pre>
+<p><i> You will find the complete list of prefixes in <a href="https://snorql.nextprot.org/">https://snorql.nextprot.org/</a> (click on PREFIX....)</i></p>
                     </div>
             </div>
         </div>

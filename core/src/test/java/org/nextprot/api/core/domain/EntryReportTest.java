@@ -69,6 +69,43 @@ public class EntryReportTest {
         Assert.assertEquals("1", list.get(1).getChromosomalLocation());
     }
 
+    @Test
+    public void shouldSortAccordingToPositionOfBands() throws Exception {
+
+        Comparator<EntryReport> comparator = EntryReport.newByChromosomalPositionComparator();
+
+        List<EntryReport> list = Arrays.asList(
+                newEntryReport("HNRNPCL1", "NX_O60812", "1q32",
+                        "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("HNRNPCL1", "NX_O60812", "1p21.1",
+                        "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("HNRNPCL1", "NX_O60812", "1q13.4",
+                        "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("HNRNPCL1", "NX_O60812", "1p1.2-p1.4",
+                        "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1"),
+                newEntryReport("HNRNPCL1", "NX_O60812", "1p36.21",
+                        "12847408", "12848725", ProteinExistenceLevel.PROTEIN_LEVEL,
+                        true, false, false, false, 1, 322, 5,
+                        "Heterogeneous nuclear ribonucleoprotein C-like 1")
+        );
+
+        list.sort(comparator);
+
+        Assert.assertEquals("1p36.21", list.get(0).getChromosomalLocation());
+        Assert.assertEquals("1p21.1", list.get(1).getChromosomalLocation());
+        Assert.assertEquals("1p1.2-p1.4", list.get(2).getChromosomalLocation());
+        Assert.assertEquals("1q13.4", list.get(3).getChromosomalLocation());
+        Assert.assertEquals("1q32", list.get(4).getChromosomalLocation());
+    }
+
     public static EntryReport newEntryReport(String geneName, String ac, String chromosalPosition,
                                              String startPos, String stopPos, ProteinExistenceLevel protExistence,
                                              boolean isProteomics, boolean  isAntibody, boolean  is3D, boolean  isDisease,
