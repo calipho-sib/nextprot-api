@@ -4,6 +4,7 @@ import org.nextprot.api.commons.exception.NextProtException;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.service.ChromosomeReportExportService;
 import org.nextprot.api.core.service.ChromosomeReportService;
+import org.nextprot.api.core.service.ChromosomeReportSummaryService;
 import org.nextprot.api.core.service.OverviewService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 
 	@Autowired
 	private ChromosomeReportService chromosomeReportService;
+	@Autowired
+	private ChromosomeReportSummaryService chromosomeReportSummaryService;
 	@Autowired
 	private OverviewService overviewService;
 
@@ -56,7 +59,7 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 
 		PrintWriter writer = new PrintWriter(os);
 
-		Map<String, ChromosomeReport.EntryCountByProteinExistence> counts = chromosomeReportService.getChromosomeEntryCountByProteinExistence();
+		Map<String, ChromosomeReport.Summary> summaries = chromosomeReportSummaryService.getChromosomeSummaries();
 
 		writer.write(Stream.of(
 				"chromosome	",
@@ -73,17 +76,17 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 
 		for (String chromosome : ChromosomeReportService.getChromosomeNames()) {
 
-			ChromosomeReport.EntryCountByProteinExistence chrCounts = counts.get(chromosome);
+			ChromosomeReport.Summary summary = summaries.get(chromosome);
 
 			writer.write(Stream.of(
 					chromosome,
-					String.valueOf(chrCounts.countEntryCount()),
-					String.valueOf(chrCounts.countProteinLevelEntries()),
-					String.valueOf(chrCounts.countTranscriptLevelEntries()),
-					String.valueOf(chrCounts.countHomologyLevelEntries()),
-					String.valueOf(chrCounts.countPredictedLevelEntries()),
-					String.valueOf(chrCounts.countUncertainLevelEntries()),
-					String.valueOf(chrCounts.countAwaitingProteinValidationevelEntries())
+					String.valueOf(summary.getEntryCount()),
+					String.valueOf(summary.getProteinLevelEntryCount()),
+					String.valueOf(summary.getTranscriptLevelEntryCount()),
+					String.valueOf(summary.getHomologyLevelEntryCount()),
+					String.valueOf(summary.getPredictedLevelEntryCount()),
+					String.valueOf(summary.getUncertainLevelEntryCount()),
+					String.valueOf(summary.getTranscriptLevelEntryCount()+summary.getHomologyLevelEntryCount()+summary.getPredictedLevelEntryCount())
 			).collect(Collectors.joining("\t")));
 
 			writer.write("\n");

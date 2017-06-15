@@ -56,15 +56,6 @@ public class ChromosomeReportController {
 		return chromosomeReportSummaryService.getChromosomeSummaries();
 	}
 
-	@ApiMethod(path = "/chromosome-reports/count-by-pe", verb = ApiVerb.GET, description = "Count number of entries grouped by protein existence for all chromosomes",
-			produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/chromosome-reports/count-by-pe", method = {RequestMethod.GET})
-	@ResponseBody
-	public Map<String, ChromosomeReport.EntryCountByProteinExistence> getChromosomeEntryCountByProteinExistence() {
-
-		return chromosomeReportService.getChromosomeEntryCountByProteinExistence();
-	}
-
 	@ApiMethod(path = "/chromosome-report/{chromosome}", verb = ApiVerb.GET, description = "Report informations of neXtProt entries coming from genes located on a given chromosome",
 			produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosome-report/{chromosome}", method = {RequestMethod.GET})
@@ -85,17 +76,6 @@ public class ChromosomeReportController {
 			@PathVariable("chromosome")  String chromosome) {
 
 		return chromosomeReportSummaryService.reportChromosomeSummary(chromosome);
-	}
-
-	@ApiMethod(path = "/chromosome-report/{chromosome}/count-by-pe", verb = ApiVerb.GET, description = "Report number of entries grouped by protein existence for a given chromosome",
-			produces = { MediaType.APPLICATION_JSON_VALUE } )
-	@RequestMapping(value = "/chromosome-report/{chromosome}/count-by-pe", method = {RequestMethod.GET})
-	@ResponseBody
-	public ChromosomeReport.EntryCountByProteinExistence reportChromosomeEntryByProteinExistence(
-			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
-			@PathVariable("chromosome")  String chromosome) {
-
-		return chromosomeReportService.reportChromosome(chromosome).getEntryCountByProteinExistence();
 	}
 
 	@ApiMethod(path = "/chromosome-report/export/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome",

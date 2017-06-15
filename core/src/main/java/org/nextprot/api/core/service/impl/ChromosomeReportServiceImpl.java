@@ -53,32 +53,13 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 				.collect(Collectors.toList());
 
 		report.setEntryReports(entryReports);
-		report.setSummary(newSummary(chromosome, entryReports));
-		report.setEntryCountByProteinExistence(newChromosomeReportByProteinEvidence(allEntriesOnChromosome));
+
+		ChromosomeReport.Summary summary = newSummary(chromosome, entryReports);
+		setByProteinEvidenceEntryCount(allEntriesOnChromosome, summary);
+
+		report.setSummary(summary);
 
 		return report;
-	}
-
-	@Cacheable("chromosome-summaries")
-	@Override
-	public Map<String, ChromosomeReport.Summary> getChromosomeSummaries() {
-
-		return ChromosomeReportService.getChromosomeNames().stream()
-				.collect(Collectors.toMap(
-						k -> k,
-						k -> reportChromosome(k).getSummary(),
-						(k1, k2) -> k1));
-	}
-
-	@Cacheable("chromosome-entry-count-by-pe")
-	@Override
-	public Map<String, ChromosomeReport.EntryCountByProteinExistence> getChromosomeEntryCountByProteinExistence() {
-
-		return ChromosomeReportService.getChromosomeNames().stream()
-				.collect(Collectors.toMap(
-						k -> k,
-						k -> reportChromosome(k).getEntryCountByProteinExistence(),
-						(k1, k2) -> k1));
 	}
 
 	private ChromosomeReport.Summary newSummary(String chromosome, List<EntryReport> entryReports) {
@@ -96,9 +77,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		return summary;
 	}
 
-	private ChromosomeReport.EntryCountByProteinExistence newChromosomeReportByProteinEvidence(List<String> chromosomeEntries) {
-
-		ChromosomeReport.EntryCountByProteinExistence report = new ChromosomeReport.EntryCountByProteinExistence();
+	private void setByProteinEvidenceEntryCount(List<String> chromosomeEntries, ChromosomeReport.Summary summary) {
 
 		Map<ProteinExistenceLevel, List<String>> pe2entries = new HashMap<>();
 
@@ -116,8 +95,6 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 			pe2entries.get(level).add(entry);
 		}
 
-		pe2entries.forEach((key, value) -> report.setEntryCount(key, value.size()));
-
-		return report;
+		pe2entries.forEach((key, value) -> summary.setEntryCount(key, value.size()));
 	}
 }

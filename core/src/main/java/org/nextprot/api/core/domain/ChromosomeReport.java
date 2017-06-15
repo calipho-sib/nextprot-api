@@ -17,11 +17,10 @@ import java.util.Map;
 })
 public class ChromosomeReport implements Serializable {
 
-	private static final long serialVersionUID = 3L;
+	private static final long serialVersionUID = 4L;
 
     private String dataRelease;
 	private Summary summary;
-	private EntryCountByProteinExistence entryCountByProteinExistence;
 	private List<EntryReport> entryReports;
 
 	public Summary getSummary() {
@@ -48,27 +47,25 @@ public class ChromosomeReport implements Serializable {
         this.dataRelease = dataRelease;
     }
 
-	public EntryCountByProteinExistence getEntryCountByProteinExistence() {
-		return entryCountByProteinExistence;
-	}
-
-	public void setEntryCountByProteinExistence(EntryCountByProteinExistence entryCountByProteinExistence) {
-		this.entryCountByProteinExistence = entryCountByProteinExistence;
-	}
-
 	@JsonInclude(JsonInclude.Include.NON_NULL)
 	@JsonPropertyOrder({
 			"chromosome",
 			"entryCount",
-			"geneCount"
+			"geneCount",
+			"proteinLevelEntryCount",
+			"transcriptLevelEntryCount",
+			"homologyEntryCount",
+			"predictedEntryCount",
+			"uncertainEntryCount"
 	})
 	public static class Summary implements Serializable {
 
-		private static final long serialVersionUID = 2L;
+		private static final long serialVersionUID = 3L;
 
 		private String chromosome;
 		private int entryCount;
 		private int entryReportCount;
+		private Map<ProteinExistenceLevel, Integer> countByProteinEvidence = new HashMap<>(5);
 
 		public String getChromosome() {
 			return chromosome;
@@ -94,69 +91,40 @@ public class ChromosomeReport implements Serializable {
 		public void setEntryReportCount(int entryReportCount) {
 			this.entryReportCount = entryReportCount;
 		}
-	}
-
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@JsonPropertyOrder({
-			"entry count",
-			"protein level (PE1)",
-			"transcript level (PE2)",
-			"homology (PE3)",
-			"predicted (PE4)",
-			"uncertain (PE5)",
-			"awaiting protein validation (P2+P3+P4)"
-	})
-	public static class EntryCountByProteinExistence implements Serializable {
-
-		private static final long serialVersionUID = 1L;
-
-		private Map<ProteinExistenceLevel, Integer> countByProteinEvidence = new HashMap<>(5);
 
 		public void setEntryCount(ProteinExistenceLevel level, int count) {
 
 			countByProteinEvidence.put(level, count);
 		}
 
-		@JsonProperty("protein level (PE1)")
-		public int countProteinLevelEntries() {
+		@JsonProperty("proteinLevelEntryCount")
+		public int getProteinLevelEntryCount() {
 
 			return countProteinEvidenceEntries(ProteinExistenceLevel.PROTEIN_LEVEL);
 		}
 
-		@JsonProperty("transcript level (PE2)")
-		public int countTranscriptLevelEntries() {
+		@JsonProperty("transcriptLevelEntryCount")
+		public int getTranscriptLevelEntryCount() {
 
 			return countProteinEvidenceEntries(ProteinExistenceLevel.TRANSCRIPT_LEVEL);
 		}
 
-		@JsonProperty("homology (PE3)")
-		public int countHomologyLevelEntries() {
+		@JsonProperty("homologyEntryCount")
+		public int getHomologyLevelEntryCount() {
 
 			return countProteinEvidenceEntries(ProteinExistenceLevel.HOMOLOGY);
 		}
 
-		@JsonProperty("predicted (PE4)")
-		public int countPredictedLevelEntries() {
+		@JsonProperty("predictedEntryCount")
+		public int getPredictedLevelEntryCount() {
 
 			return countProteinEvidenceEntries(ProteinExistenceLevel.PREDICTED);
 		}
 
-		@JsonProperty("uncertain (PE5)")
-		public int countUncertainLevelEntries() {
+		@JsonProperty("uncertainEntryCount")
+		public int getUncertainLevelEntryCount() {
 
 			return countProteinEvidenceEntries(ProteinExistenceLevel.UNCERTAIN);
-		}
-
-		@JsonProperty("awaiting protein validation (P2+P3+P4)")
-		public int countAwaitingProteinValidationevelEntries() {
-
-			return countTranscriptLevelEntries() + countHomologyLevelEntries() + countPredictedLevelEntries();
-		}
-
-		@JsonProperty("entry count")
-		public int countEntryCount() {
-
-			return countAwaitingProteinValidationevelEntries() + countProteinLevelEntries() + countUncertainLevelEntries();
 		}
 
 		private int countProteinEvidenceEntries(ProteinExistenceLevel level) {
