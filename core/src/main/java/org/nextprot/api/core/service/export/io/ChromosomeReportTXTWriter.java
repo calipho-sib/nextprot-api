@@ -6,9 +6,7 @@ import org.nextprot.api.core.domain.EntryReport;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 
 /**
@@ -41,7 +39,7 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
         writer.write("This file lists all neXtProt entries on chromosome Y\n");
         writer.write("Total number of entries: " + report.getSummary().getEntryCount()+ "\n");
-        writer.write("Total number of genes: " + report.getSummary().getGeneCount()+ "\n");
+        writer.write("Total number of genes: " + report.getSummary().getEntryReportCount()+ "\n");
     }
 
     @Override
@@ -58,18 +56,19 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
     @Override
     protected void writeChromosomeReport(ChromosomeReport report) throws IOException {
 
+        String headerFormat = buildHeaderFormat();
+        String valuesFormat = buildValuesFormat();
+
         writer.write("\n--------------------------------------------------------------------------------------------------------------------------------------------------------\n");
-        writer.write(String.format(buildHeaderFormat(),
-                Arrays.asList("Gene ", "neXtProt", "Chromosomal", "Start", "Stop", "Protein", "Prote-", "Anti-", "3D", "Dise-", "Iso-", "Vari-", "PTMs", "Description").toArray()));
-        writer.write(String.format(buildHeaderFormat(),
-                Arrays.asList("name ", "AC", "position", "position", "position", "existence", "omics", "body", "", "ase", "forms", "ants", "", "").toArray()));
+        writer.write(String.format(headerFormat,
+                Arrays.asList("Gene", "neXtProt", "Chromosomal", "Start", "Stop", "Coding", "Protein", "Prote-", "Anti-", "3D", "Dise-", "Iso-", "Vari-", "PTMs", "Description").toArray()));
+        writer.write(String.format(headerFormat,
+                Arrays.asList("name", "AC", "location", "position", "position", "strand", "existence", "omics", "body", "", "ase", "forms", "ants", "", "").toArray()));
         writer.write("________________________________________________________________________________________________________________________________________________________\n");
 
         for (EntryReport er : report.getEntryReports()) {
 
-            List<String> allValuesExceptCodingStrand = new ArrayList<>(extractValues(er));
-            allValuesExceptCodingStrand.remove(3);
-            writer.write(String.format(buildRowFormat(), allValuesExceptCodingStrand.toArray()));
+            writer.write(String.format(valuesFormat, extractValues(er).toArray()));
         }
     }
 
@@ -83,11 +82,11 @@ public class ChromosomeReportTXTWriter extends BaseChromosomeReportWriter {
 
     private static String buildHeaderFormat() {
 
-        return "%-14s%-13s %-13s%-10s %-10s %-16s %-6s %-6s%-6s%-6s%-6s%-7s%-5s%s%n";
+        return "%-14s%-13s %-13s%-10s %-10s %-7s %-16s %-6s %-6s%-6s%-6s%-6s%-7s%-5s%s%n";
     }
 
-    private static String buildRowFormat() {
+    private static String buildValuesFormat() {
 
-        return "%-14s%-13s %-13s%10s %10s %-16s %-6s %-6s%-6s%-5s%6s%6s%6s %s%n";
+        return "%-14s%-13s %-13s%10s %10s %-7s %-16s %-6s %-6s%-6s%-5s%6s%6s%6s %s%n";
     }
 }

@@ -4,12 +4,10 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.LockTimeoutException;
 import net.sf.ehcache.constructs.web.*;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.ServletWrappingController;
 
@@ -220,75 +218,74 @@ public class SparqlProxyController extends ServletWrappingController implements 
 
 	protected PageInfo buildPageInfo(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
 
-		//Welcome SPARQL page
-		if(checkIsSparqlWelcomePage(request))
-			return null;
-
-		// Look up the cached page
-		final String key = calculateKey(request);
-
-
-		PageInfo pageInfo = null;
-		try {
-			//TODO checkNoReentry(request);
-
-			Cache blockingCache;
-			if(ehCacheManager != null){
-				blockingCache = ehCacheManager.getCacheManager().getCache("sparql-proxy-cache");
-			}else {
-				return buildPage(request, response);
-			}
-
-			Element element = blockingCache.get(key);
-			if (element == null || element.getObjectValue() == null) {
-				try {
-					// Page is not cached - build the response, cache it, and
-					// send to client
-					pageInfo = buildPage(request, response);
-					if (pageInfo.isOk()) {
-						blockingCache.put(new Element(key, pageInfo));
-					} else {
-						blockingCache.put(new Element(key, null));
-					}
-				} catch (final Throwable throwable) {
-					// Must unlock the cache if the above fails. Will be logged
-					// at Filter
-					blockingCache.put(new Element(key, null));
-					throw new Exception(throwable);
-				}
-			} else {
-				pageInfo = (PageInfo) element.getObjectValue();
-			}
-		} catch (LockTimeoutException e) {
-			// do not release the lock, because you never acquired it
-			throw e;
-		} finally {
-			// all done building page, reset the re-entrant flag
-			//TODO visitLog.clear();
+		if(request.getMethod().equals("POST")){
+			return buildPage(request, response);
 		}
-		return pageInfo;
+		else if(request.getMethod().equals("GET")){
+
+			//Welcome SPARQL page
+			if(checkIsSparqlWelcomePage(request))
+				return null;
+
+			// Look up the cached page
+			final String key = calculateKey(request);
+
+			PageInfo pageInfo;
+			try {
+				//TODO checkNoReentry(request);
+
+				Cache blockingCache;
+				if(ehCacheManager != null){
+					blockingCache = ehCacheManager.getCacheManager().getCache("sparql-proxy-cache");
+				}else {
+					return buildPage(request, response);
+				}
+
+				Element element = blockingCache.get(key);
+				if (element == null || element.getObjectValue() == null) {
+					try {
+						// Page is not cached - build the response, cache it, and
+						// send to client
+						pageInfo = buildPage(request, response);
+						if (pageInfo.isOk()) {
+							blockingCache.put(new Element(key, pageInfo));
+						} else {
+							blockingCache.put(new Element(key, null));
+						}
+					} catch (final Throwable throwable) {
+						// Must unlock the cache if the above fails. Will be logged
+						// at Filter
+						blockingCache.put(new Element(key, null));
+						throw new Exception(throwable);
+					}
+				} else {
+					pageInfo = (PageInfo) element.getObjectValue();
+				}
+			} catch (LockTimeoutException e) {
+				// do not release the lock, because you never acquired it
+				throw e;
+			} finally {
+				// all done building page, reset the re-entrant flag
+				//TODO visitLog.clear();
+			}
+			return pageInfo;
+
+		}else {
+			response.setStatus(400);
+			response.setHeader("Content-Type", "text/plain");
+			response.getWriter().write(request.getMethod() + " HTTP method not supported");
+			return null;
+		}
 	}
 
-	public static boolean checkIsSparqlWelcomePage(HttpServletRequest httpRequest) {
-		StringBuffer stringBuffer = new StringBuffer();
-		stringBuffer.append(httpRequest.getQueryString());
-		try {
-			stringBuffer.append(IOUtils.toString(httpRequest.getReader()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String stringToCheck = stringBuffer.toString();
-		return (stringToCheck.toLowerCase().equals("null"));
+	private static boolean checkIsSparqlWelcomePage(HttpServletRequest httpRequest) {
+		return ((httpRequest.getMethod() == null || httpRequest.getMethod().equals("GET"))
+			&& (httpRequest.getQueryString() == null) || (httpRequest.getQueryString().isEmpty()));
 	}
 
 	public static String calculateKey(HttpServletRequest httpRequest) {
 		StringBuffer stringBuffer = new StringBuffer();
 		stringBuffer.append(httpRequest.getMethod()).append(httpRequest.getRequestURI()).append(httpRequest.getQueryString());
-		try {
-			stringBuffer.append(IOUtils.toString(httpRequest.getReader()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		return stringBuffer.toString();
 	}
 
@@ -309,7 +306,6 @@ public class SparqlProxyController extends ServletWrappingController implements 
 				wrapper.getCookies(), outstr.toByteArray(), true,
 				10000, wrapper.getAllHeaders());
 	}
-
 
 
 }

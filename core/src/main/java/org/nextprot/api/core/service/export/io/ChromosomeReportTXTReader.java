@@ -31,9 +31,10 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
     private static final Pattern ENTRY_VALUES_PATTERN    = Pattern.compile("^" +
             "([\\w-]+)\\s+"                    + // Gene name
             "(NX_\\w+)\\s+"                    + // neXtProt AC
-            "([\\d\\w.-]+)\\s+"                + // Chromosomal position
+            "([\\d\\w.-]+)\\s+"                + // Chromosomal location
             "([\\d-]+)\\s+"                    + // Start position
             "([\\d-]+)\\s+"                    + // Stop position
+            "(?:(?:forward|reverse)\\s+)?"     + // Coding strand (only on API)
             "("+
                 "(?:\\b"+ProteinExistenceLevel.PROTEIN_LEVEL.getName()    + "\\b)|"+
                 "(?:\\b"+ProteinExistenceLevel.TRANSCRIPT_LEVEL.getName() + "\\b)|" +
@@ -67,9 +68,9 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
             matchConsumer.consumeNextMatchOfThrowException("entry count",
                     ENTRY_COUNT_PATTERN, (matcher -> summary.setEntryCount(Integer.parseInt(matcher.group(1)))));
             matchConsumer.consumeNextMatchOfThrowException("gene count",
-                    GENE_COUNT_PATTERN, (matcher -> summary.setGeneCount(Integer.parseInt(matcher.group(1)))));
+                    GENE_COUNT_PATTERN, (matcher -> summary.setEntryReportCount(Integer.parseInt(matcher.group(1)))));
 
-            EntryReportConsumer entryReportConsumer = new EntryReportConsumer(entryReports);
+            EntryReportConsumer entryReportConsumer = new EntryReportConsumer(summary.getChromosome(), entryReports);
 
             boolean moreLinesToRead;
             do {
@@ -127,9 +128,12 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
 
     private static class EntryReportConsumer implements Consumer<Matcher> {
 
+        private final String chromosome;
         private final List<EntryReport> entryReports;
 
-        EntryReportConsumer(List<EntryReport> entryReports) {
+        EntryReportConsumer(String chr, List<EntryReport> entryReports) {
+
+            chromosome = chr;
             this.entryReports = entryReports;
         }
 
@@ -139,7 +143,7 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
             EntryReport entryReport = new EntryReport();
 
             entryReport.setAccession(matcher.group(2));
-            entryReport.setChromosomalLocation(newChromosomalLocation(matcher.group(1), matcher.group(3), matcher.group(4), matcher.group(5)));
+            entryReport.setChromosomalLocation(newChromosomalLocation(matcher.group(1), (matcher.group(3).equals("-") ? chromosome : matcher.group(3)), matcher.group(4), matcher.group(5)));
             entryReport.setProteinExistence(ProteinExistenceLevel.valueOfString(matcher.group(6)));
             entryReport.setPropertyTest(EntryReport.IS_PROTEOMICS, "yes".equals(matcher.group(7)));
             entryReport.setPropertyTest(EntryReport.IS_ANTIBODY, "yes".equals(matcher.group(8)));

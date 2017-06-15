@@ -6,10 +6,7 @@ import org.nextprot.api.core.utils.ChromosomalLocationComparator;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -18,7 +15,7 @@ import java.util.stream.Collectors;
 public class ChromosomalLocation implements Serializable {
 
 	private static final long serialVersionUID = -582666549875804789L;
-	private static final Pattern CHROMOSOMAL_POSITION_PATTERN = Pattern.compile("^([^qp])+([pq].*)?$");
+	private static final Pattern CHROMOSOMAL_POSITION_PATTERN = Pattern.compile("^([^qp]+)([pq].*)?$");
 
 	@ApiObjectField(description = "The chromosome identifier")
 	private String chromosome;
@@ -271,7 +268,7 @@ public class ChromosomalLocation implements Serializable {
 			if (matcher.find()) {
 
 				chromosomalLocation.setChromosome(matcher.group(1));
-				chromosomalLocation.setBand((matcher.group(2) != null) ? matcher.group(2) : "");
+				chromosomalLocation.setBand((matcher.group(2) != null) ? matcher.group(2) : "unknown");
 			}
 			else {
 				throw new ParseException("cannot parse chromosomal position "+chromosomalPosition, -1);
@@ -283,5 +280,68 @@ public class ChromosomalLocation implements Serializable {
 		}
 
 		return chromosomalLocation;
+	}
+
+	public static class ByChromosomalBandLocationComparator implements Comparator<ChromosomalLocation> {
+
+		@Override
+		public int compare(ChromosomalLocation cl1, ChromosomalLocation cl2) {
+
+			String band1 = cl1.getBand();
+			String band2 = cl2.getBand();
+
+			return comparePosition(band1, band2, "unknown",
+					new DefinedBandComparator());
+		}
+
+		private static class DefinedBandComparator implements Comparator<String> {
+
+			@Override
+			public int compare(String band1, String band2) {
+
+				// arm: (p)etit or (q)ueue
+				char arm1 = band1.charAt(0);
+				char arm2 = band2.charAt(0);
+
+				int cmp = arm1-arm2;
+
+				if (cmp == 0) {
+
+					// compare the first band for interval
+					if (band1.contains("-")) {
+						band1 = band1.split("-")[0];
+					}
+					if (band2.contains("-")) {
+						band2 = band2.split("-")[0];
+					}
+
+					cmp = Comparator.comparingDouble(Double::parseDouble).compare(band1.substring(1), band2.substring(1));
+
+					if (arm1 == 'p') {
+						cmp = -cmp;
+					}
+				}
+
+				return cmp;
+			}
+		}
+	}
+
+	static int comparePosition(String pos1, String pos2, String undefinedValue, Comparator<String> comparator) {
+
+		boolean pos1IsUndefined = undefinedValue.equals(pos1);
+		boolean pos2IsDefined = undefinedValue.equals(pos2);
+
+		if (pos1IsUndefined && pos2IsDefined) {
+			return 0;
+		}
+		else if (pos1IsUndefined) {
+			return 1;
+		}
+		else if (pos2IsDefined) {
+			return -1;
+		}
+
+		return comparator.compare(pos1, pos2);
 	}
 }

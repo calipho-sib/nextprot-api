@@ -44,7 +44,7 @@ public class ChromosomeReportTXTReaderTest {
         Assert.assertEquals("2017-04-12", chromosomeReport.getDataRelease());
         Assert.assertEquals("1", chromosomeReport.getSummary().getChromosome());
         Assert.assertEquals(2056, chromosomeReport.getSummary().getEntryCount());
-        Assert.assertEquals(2104, chromosomeReport.getSummary().getGeneCount());
+        Assert.assertEquals(2104, chromosomeReport.getSummary().getEntryReportCount());
 
         Assert.assertEquals(4, chromosomeReport.getEntryReports().size());
         assertEquals(chromosomeReport.getEntryReports().get(0), "OR4F5", "NX_Q8NH21", "1p36.33", "69091", "70008", "homology", false, false, false, false, 1, 73, 1, "Olfactory receptor 4F5");

@@ -31,7 +31,7 @@ public class HPPChromosomeReportTSVWriterTest extends CoreUnitBaseTest {
 
         ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
         summary.setChromosome("Y");
-        summary.setGeneCount(58);
+        summary.setEntryReportCount(58);
         summary.setEntryCount(48);
 
         report.setSummary(summary);
