@@ -87,8 +87,6 @@
                             <!-----------------------------  CHANGE ngclick !!!! -------------------------------------->
                             <li ng-class=""><a href="/proteins/search">Simple search</a></li>
                             <li ng-class=""><a href="/proteins/search?mode=advanced">Advanced search</a></li>
-                            <li ng-class=""><a ng-href="https://sparql.nextprot.org" href="https://sparql.nextprot.org">SPARQL</a></li>
-                            <li ng-class=""><a ng-href="http://snorql.nextprot.org" href="http://snorql.nextprot.org">SNORQL search</a></li>
                             <li class="divider"></li>
                             <li ng-class=""><a rel="nofollow" ng-click="goToUser('lists')">My Lists</a></li>
                             <li ng-class=""><a rel="nofollow" ng-click="goToUser('queries')">My Queries</a></li>
@@ -96,7 +94,10 @@
 <!--                            <li ng-class=""><a href="#" ng-click="routingOutside('snorql')" style="cursor:not-allowed">BLAST</a></li>-->
                             <li ng-class=""><a href="/tools/unicity-checker" ng-click="routingOutside('snorql')">Peptide unicity checker</a></li>
                             <li class="divider"></li>
+                            <li class="disabled" style="font-size:12px; margin-left: 10px"><i>Programmatic access</i></li>
                             <li ng-class=""><a ng-href="https://api.nextprot.org" href="https://api.nextprot.org">API</a></li>
+                            <li ng-class=""><a ng-href="https://sparql.nextprot.org" href="https://sparql.nextprot.org">SPARQL</a></li>
+                            <li ng-class=""><a ng-href="http://snorql.nextprot.org" href="http://snorql.nextprot.org">SNORQL search</a></li>
                         </ul>
                     </li>
 
@@ -271,9 +272,10 @@
                     Further links: You may want to have a look also at the presentation <a href="https://github.com/calipho-sib/sparql-playground/blob/master/assets/lausanne2016-sparql-nextprot.pdf">Practical Introduction to SPARQL</a> and play with the <a href="http://sparql-playground.sib.swiss/">The SPARQL playground</a>.
                 </p>
 
-                    <h1>Example of a SPARQL query using HTTP POST with CURL and a file to store the query</h1>
+                    <h1>SPARQL query with HTTP POST and CURL</h1>
 
-                    Create a file called <i>query.sparql</i> and paste the following content:
+The following example, shows how to query the SPARQL endpoint using your UNIX terminal and saving your query in a file.
+Create a file called <i>query.sparql</i> and paste the following content:
 
 <pre><code>PREFIX : &lt;http://nextprot.org/rdf#&gt;
 PREFIX cv: &lt;http://nextprot.org/rdf/terminology/&gt;
@@ -284,7 +286,7 @@ select distinct ?entry where {
   ?iso :cellularComponent /:term /:childOf cv:SL-0086.
 }</code></pre>
 
-Save and close the file, then execute the query as follows using your terminal:
+Save and close the file, then execute the query as follows:
 <pre><code>QUERY=$(&lt;query.sparql) && curl -X POST -H "Accept:application/sparql-results+json" --data-urlencode "query=$QUERY" https://sparql.nextprot.org/ </code></pre>
 <p><i> You will find the complete list of prefixes in <a href="https://snorql.nextprot.org/">https://snorql.nextprot.org/</a> (click on PREFIX....)</i></p>
                     </div>
