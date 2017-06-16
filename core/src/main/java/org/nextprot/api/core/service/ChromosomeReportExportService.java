@@ -33,14 +33,12 @@ public interface ChromosomeReportExportService {
 	/**
 	 * Export the neXtProt entries modified by a N-terminal acetylation
 	 * @param os the output stream to write into
-	 * @throws IOException
 	 */
 	void exportNAcetylatedEntries(OutputStream os) throws IOException;
 
 	/**
 	 * Export the neXtProt entries modified by a phosphorylation
 	 * @param os the output stream to write into
-	 * @throws IOException
 	 */
 	void exportPhosphorylatedEntries(OutputStream os) throws IOException;
 }

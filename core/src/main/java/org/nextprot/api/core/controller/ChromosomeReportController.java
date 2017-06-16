@@ -118,9 +118,9 @@ public class ChromosomeReportController {
 		}
 	}
 
-	@ApiMethod(path = "/chromosome-report/export/hpp/count-by-pe", verb = ApiVerb.GET, description = "Export number of entries grouped by protein existence for all chromosomes",
+	@ApiMethod(path = "/chromosome-report/export/hpp/entry-count-by-pe", verb = ApiVerb.GET, description = "Export number of entries grouped by protein existence for all chromosomes",
 			produces = { NextprotMediaType.TSV_MEDIATYPE_VALUE } )
-	@RequestMapping(value = "/chromosome-report/export/hpp/count-by-pe", method = {RequestMethod.GET})
+	@RequestMapping(value = "/chromosome-report/export/hpp/entry-count-by-pe", method = {RequestMethod.GET})
 	public void exportChromosomeEntryCountByProteinEvidenceFile(HttpServletResponse response) {
 
 		try (OutputStream os = response.getOutputStream()) {

@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -131,7 +129,7 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 				.collect(Collectors.joining("\t")));
 		writer.write("\n");
 
-		for (String chromosome : ChromosomeReportService.getChromosomeNames()) {
+		for (String chromosome : Arrays.asList("MT")) {
 
 			masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
 					.map(acc -> entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations()))
@@ -155,12 +153,23 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 
 		Predicate<AnnotationEvidence> isDescendantPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
 
-		return ptms.stream()
+		return nullableListToStream(ptms)
 				.anyMatch(annot -> annot.getQualityQualifier().equals(QualityQualifier.GOLD.name()) &&
                         annot.getCvTermName().matches(ptmRegExp) &&
                         annot.getEvidences().stream()
                             .anyMatch(evi -> evi.getQualityQualifier().equals(QualityQualifier.GOLD.name())
 									&& isDescendantPredicate.test(evi))
 				);
+	}
+
+	/**
+	 * Return a stream from a nullable list
+	 * @param list the list to stream
+	 * @param <T> element type
+	 * @return a Stream
+	 */
+	private static <T> Stream<T> nullableListToStream(List<T> list) {
+
+		return list == null ? Stream.empty() : list.stream();
 	}
 }
