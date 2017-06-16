@@ -132,4 +132,37 @@ public class ChromosomeReportController {
 			throw new NextProtException(e.getMessage()+": cannot export entry count by protein existence for all chromosomes");
 		}
 	}
+
+	//chromosome	accession
+	// 1	NX_A0A096LP55
+	// 1	NX_B2RUZ4
+	@ApiMethod(path = "/chromosome-report/export/hpp/nacetylated-entries", verb = ApiVerb.GET, description = "Export list of N-acetylated protein entries",
+			produces = { NextprotMediaType.TSV_MEDIATYPE_VALUE } )
+	@RequestMapping(value = "/chromosome-report/export/hpp/nacetylated-entries", method = {RequestMethod.GET})
+	public void exportChromosomeEntryWithNAcetyl(HttpServletResponse response) {
+
+		try (OutputStream os = response.getOutputStream()) {
+
+			response.setHeader("Content-Disposition", "attachment; filename=\"HPP_entries_with_nacetyl_by_chromosome.tsv\"");
+			chromosomeReportExportService.exportNAcetylatedEntries(os);
+		}
+		catch (IOException e) {
+			throw new NextProtException(e.getMessage()+": cannot export N-acetylated protein entries");
+		}
+	}
+
+	@ApiMethod(path = "/chromosome-report/export/hpp/phospho-entries", verb = ApiVerb.GET, description = "Export list of phosphorylated protein entries",
+			produces = { NextprotMediaType.TSV_MEDIATYPE_VALUE } )
+	@RequestMapping(value = "/chromosome-report/export/hpp/phospho-entries", method = {RequestMethod.GET})
+	public void exportChromosomeEntryWithPhospho(HttpServletResponse response) {
+
+		try (OutputStream os = response.getOutputStream()) {
+
+			response.setHeader("Content-Disposition", "attachment; filename=\"HPP_entries_with_phospho_by_chromosome.tsv\"");
+			chromosomeReportExportService.exportPhosphorylatedEntries(os);
+		}
+		catch (IOException e) {
+			throw new NextProtException(e.getMessage()+": cannot export phosphorylated protein entries");
+		}
+	}
 }
