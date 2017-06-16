@@ -29,7 +29,6 @@ public interface ChromosomeReportExportService {
 	 */
 	void exportHPPChromosomeEntryReportCountByProteinExistence(OutputStream os) throws IOException;
 
-
 	/**
 	 * Export the neXtProt entries modified by a N-terminal acetylation
 	 * @param os the output stream to write into

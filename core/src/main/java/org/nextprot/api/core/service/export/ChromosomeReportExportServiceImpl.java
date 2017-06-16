@@ -129,7 +129,7 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 				.collect(Collectors.joining("\t")));
 		writer.write("\n");
 
-		for (String chromosome : Arrays.asList("MT")) {
+		for (String chromosome : ChromosomeReportService.getChromosomeNames()) {
 
 			masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
 					.map(acc -> entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations()))
