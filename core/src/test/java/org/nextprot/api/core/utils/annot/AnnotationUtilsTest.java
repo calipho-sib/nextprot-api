@@ -435,7 +435,7 @@ public class AnnotationUtilsTest extends CoreUnitBaseTest {
 		Assert.assertEquals(6, annotations.size());
 
 		List<Annotation> filtered = annotations.stream()
-				.filter(annotationService.buildCvTermAncestorPredicate("GO:0005102"))
+				.filter(annotationService.createDescendantTermPredicate("GO:0005102"))
 				.collect(Collectors.toList());
 
 		Assert.assertEquals(3, filtered.size());
