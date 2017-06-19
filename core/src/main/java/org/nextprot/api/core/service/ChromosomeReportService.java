@@ -18,6 +18,10 @@ public interface ChromosomeReportService {
 	 */
 	ChromosomeReport reportChromosome(String chromosome);
 
+	List<String> findNAcetylatedEntries(String chromosome);
+
+	List<String> findPhosphorylatedEntries(String chromosome);
+
 	/**
 	 * @return the list of chromosomes existing in neXtProt
 	 */

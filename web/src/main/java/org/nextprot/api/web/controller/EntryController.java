@@ -147,7 +147,7 @@ public class EntryController {
 	private void filterEntryAnnotations(Entry entry, String ancestorCvTerm, String propertyName, String propertyValueOrAccession) {
 
 		final Predicate<Annotation> cvTermPredicate = (ancestorCvTerm != null) ?
-				annotationService.buildCvTermAncestorPredicate(ancestorCvTerm) :
+				annotationService.createDescendantTermPredicate(ancestorCvTerm) :
 				annotation -> true;
 
 		final Predicate<Annotation> propertyPredicate = (propertyName != null) ?

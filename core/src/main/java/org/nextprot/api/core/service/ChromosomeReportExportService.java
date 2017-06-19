@@ -22,4 +22,22 @@ public interface ChromosomeReportExportService {
 	 * @param os the output stream to write into
 	 */
 	void exportHPPChromosomeEntryReport(String chromosome, NextprotMediaType nextprotMediaType, OutputStream os) throws IOException;
+
+	/**
+	 * Export the neXtProt entry count by protein existence on the given chromosome by accession
+	 * @param os the output stream to write into
+	 */
+	void exportHPPChromosomeEntryReportCountByProteinExistence(OutputStream os) throws IOException;
+
+	/**
+	 * Export the neXtProt entries modified by a N-terminal acetylation
+	 * @param os the output stream to write into
+	 */
+	void exportNAcetylatedEntries(OutputStream os) throws IOException;
+
+	/**
+	 * Export the neXtProt entries modified by a phosphorylation
+	 * @param os the output stream to write into
+	 */
+	void exportPhosphorylatedEntries(OutputStream os) throws IOException;
 }

@@ -67,7 +67,7 @@ public class ChromosomeReportController {
 		return chromosomeReportService.reportChromosome(chromosome);
 	}
 
-	@ApiMethod(path = "/chromosome-report/{chromosome}/summary", verb = ApiVerb.GET, description = "Export summary of neXtProt entries coming from genes located on a given chromosome",
+	@ApiMethod(path = "/chromosome-report/{chromosome}/summary", verb = ApiVerb.GET, description = "Report summary of neXtProt entries coming from genes located on a given chromosome",
     		produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosome-report/{chromosome}/summary", method = {RequestMethod.GET})
 	@ResponseBody
@@ -81,7 +81,7 @@ public class ChromosomeReportController {
 	@ApiMethod(path = "/chromosome-report/export/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome",
 			produces = { MediaType.TEXT_PLAIN_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE } )
 	@RequestMapping(value = "/chromosome-report/export/{chromosome}", method = {RequestMethod.GET})
-	public void exportChromosomeEntriesReport(
+	public void exportChromosomeEntriesReportFile(
 			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
 			@PathVariable("chromosome")  String chromosome, HttpServletRequest request, HttpServletResponse response) {
 
@@ -101,7 +101,7 @@ public class ChromosomeReportController {
 	@ApiMethod(path = "/chromosome-report/export/hpp/{chromosome}", verb = ApiVerb.GET, description = "Export informations of neXtProt entries located on a given chromosome by accession",
 			produces = { MediaType.TEXT_PLAIN_VALUE, NextprotMediaType.TSV_MEDIATYPE_VALUE } )
 	@RequestMapping(value = "/chromosome-report/export/hpp/{chromosome}", method = {RequestMethod.GET})
-	public void exportHPPChromosomeEntriesReport(
+	public void exportHPPChromosomeEntriesReportFile(
 			@ApiPathParam(name = "chromosome", description = "The chromosome number or name (X,Y..)",  allowedvalues = { "Y"})
 			@PathVariable("chromosome")  String chromosome, HttpServletRequest request, HttpServletResponse response) {
 
@@ -115,6 +115,51 @@ public class ChromosomeReportController {
 		}
 		catch (IOException e) {
 			throw new NextProtException(e.getMessage()+": cannot export HPP chromosome "+chromosome+" as "+ mediaType);
+		}
+	}
+
+	@ApiMethod(path = "/chromosome-report/export/hpp/entry-count-by-pe", verb = ApiVerb.GET, description = "Export number of entries grouped by protein existence for all chromosomes",
+			produces = { NextprotMediaType.TSV_MEDIATYPE_VALUE } )
+	@RequestMapping(value = "/chromosome-report/export/hpp/entry-count-by-pe", method = {RequestMethod.GET})
+	public void exportChromosomeEntryCountByProteinEvidenceFile(HttpServletResponse response) {
+
+		try (OutputStream os = response.getOutputStream()) {
+
+			response.setHeader("Content-Disposition", "attachment; filename=\"count-of-pe12345-by-chromosome.tsv\"");
+			chromosomeReportExportService.exportHPPChromosomeEntryReportCountByProteinExistence(os);
+		}
+		catch (IOException e) {
+			throw new NextProtException(e.getMessage()+": cannot export entry count by protein existence for all chromosomes");
+		}
+	}
+
+	@ApiMethod(path = "/chromosome-report/export/hpp/nacetylated-entries", verb = ApiVerb.GET, description = "Export list of N-acetylated protein entries",
+			produces = { NextprotMediaType.TSV_MEDIATYPE_VALUE } )
+	@RequestMapping(value = "/chromosome-report/export/hpp/nacetylated-entries", method = {RequestMethod.GET})
+	public void exportChromosomeEntryWithNAcetyl(HttpServletResponse response) {
+
+		try (OutputStream os = response.getOutputStream()) {
+
+			response.setHeader("Content-Disposition", "attachment; filename=\"HPP_entries_with_nacetyl_by_chromosome.tsv\"");
+			chromosomeReportExportService.exportNAcetylatedEntries(os);
+		}
+		catch (IOException e) {
+			throw new NextProtException(e.getMessage()+": cannot export N-acetylated protein entries");
+		}
+	}
+
+	@ApiMethod(path = "/chromosome-report/export/hpp/phospho-entries", verb = ApiVerb.GET, description = "Export list of phosphorylated protein entries",
+			produces = { NextprotMediaType.TSV_MEDIATYPE_VALUE } )
+	@RequestMapping(value = "/chromosome-report/export/hpp/phospho-entries", method = {RequestMethod.GET})
+	public void exportChromosomeEntryWithPhospho(HttpServletResponse response) {
+
+		try (OutputStream os = response.getOutputStream()) {
+
+			response.setHeader("Content-Disposition", "attachment; filename=\"HPP_entries_with_phospho_by_chromosome.tsv\"");
+			chromosomeReportExportService.exportPhosphorylatedEntries(os);
+		}
+		catch (IOException e) {
+			throw new NextProtException(e.getMessage()+": cannot export phosphorylated protein entries");
 		}
 	}
 }
