@@ -34,12 +34,6 @@ public class Entry implements KeyValueRepresentation {
 
 	private List<Annotation> annotations;
 
-	private List<PeptideMapping> peptideMappings;
-
-	private List<PeptideMapping> srmPeptideMappings;
-
-	private List<AntibodyMapping> antibodyMappings;
-
 	private List<GenomicMapping> genomicMappings;
 
 	private List<Interaction> interactions;
@@ -157,40 +151,12 @@ public class Entry implements KeyValueRepresentation {
 		}));
 	}
 
-	public List<AntibodyMapping> getAntibodiesByIsoform(String isoform) {
-		return Entry.filterByIsoform(antibodyMappings, isoform);
-	}
-
-	public List<PeptideMapping> getPeptidesByIsoform(String isoform) {
-		return Entry.filterByIsoform(peptideMappings, isoform);
-	}
-
-	public List<PeptideMapping> getSrmPeptidesByIsoform(String isoform) {
-		return Entry.filterByIsoform(srmPeptideMappings, isoform);
-	}
-
 	public List<Annotation> getAnnotationsByIsoform(String isoform) {
 		return Entry.filterByIsoform(annotations, isoform);
 	}
 
 	public List<Interaction> getInteractionsByIsoform(String isoform) {
 		return Entry.filterByIsoform(interactions, isoform);
-	}
-
-	public List<PeptideMapping> getPeptideMappings() {
-		return peptideMappings;
-	}
-
-	public void setPeptideMappings(List<PeptideMapping> peptideMappings) {
-		this.peptideMappings = peptideMappings;
-	}
-
-	public List<AntibodyMapping> getAntibodyMappings() {
-		return antibodyMappings;
-	}
-
-	public void setAntibodyMappings(List<AntibodyMapping> antibodyMappings) {
-		this.antibodyMappings = antibodyMappings;
 	}
 
 	public List<GenomicMapping> getGenomicMappings() {
@@ -219,14 +185,6 @@ public class Entry implements KeyValueRepresentation {
 
 	public List<CvTerm> getEnzymes() {
 		return enzymes;
-	}
-
-	public List<PeptideMapping> getSrmPeptideMappings() {
-		return srmPeptideMappings;
-	}
-
-	public void setSrmPeptideMappings(List<PeptideMapping> srmPeptideMappings) {
-		this.srmPeptideMappings = srmPeptideMappings;
 	}
 
 	public EntryProperties getProperties() {

@@ -44,14 +44,6 @@ public class NXVelocityUtils {
 		return false;
 	}
 	
-	public static boolean hasMappings(Entry entry) {
-		if ((entry.getPeptideMappings() != null) && !entry.getPeptideMappings().isEmpty()) return true;
-		if ((entry.getSrmPeptideMappings() != null) && !entry.getSrmPeptideMappings().isEmpty()) return true;
-		if ((entry.getAntibodyMappings() != null) && !entry.getAntibodyMappings().isEmpty()) return true;
-		if ((entry.getAnnotations() != null) && !getAnnotationsByCategory(entry, AnnotationCategory.PDB_MAPPING).isEmpty()) return true;
-		return false;
-	}
-	
 	public static List<AnnotationCategory> getAnnotationCategories() {
 		return AnnotationCategory.getSortedCategories();
 	}
