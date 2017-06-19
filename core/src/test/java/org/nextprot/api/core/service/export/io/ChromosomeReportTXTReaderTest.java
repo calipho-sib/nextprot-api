@@ -50,7 +50,7 @@ public class ChromosomeReportTXTReaderTest {
         assertEquals(chromosomeReport.getEntryReports().get(0), "OR4F5", "NX_Q8NH21", "1p36.33", "69091", "70008", "homology", false, false, false, false, 1, 73, 1, "Olfactory receptor 4F5");
         assertEquals(chromosomeReport.getEntryReports().get(1), "OR4F29", "NX_Q6IEY1", "1p36.33", "450740", "451678", "transcript level", false, true, false, false, 1, 9, 2, "Olfactory receptor 4F3/4F16/4F29");
         assertEquals(chromosomeReport.getEntryReports().get(2), "-", "NX_P0DMU3", "1p36.13", "-", "-", "homology", false, true, false, false, 1, 0, 0, "FAM231A/C-like protein LOC102723383");
-        assertEquals(chromosomeReport.getEntryReports().get(3), "HNRNPCL1", "NX_O60812", "unknown", "12847408", "12848725", "protein level", true, false, false, false, 1, 322, 5, "Heterogeneous nuclear ribonucleoprotein C-like 1");
+        assertEquals(chromosomeReport.getEntryReports().get(3), "HNRNPCL1", "NX_O60812", "1", "12847408", "12848725", "protein level", true, false, false, false, 1, 322, 5, "Heterogeneous nuclear ribonucleoprotein C-like 1");
     }
 
     private void assertEquals(EntryReport entryReport, String expectedGeneName, String expectedAC, String expectedChromosomalPosition,
