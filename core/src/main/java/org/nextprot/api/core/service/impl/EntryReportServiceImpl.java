@@ -59,13 +59,14 @@ public class EntryReportServiceImpl implements EntryReportService {
     		result = true;
     	
     	} else if (entry.getAnnotations().stream()
-    			.anyMatch(this::isPeptideOrPtmAnnotation)) {
+    			.anyMatch(a -> isPeptideMapping(a) || isNextprotPtmAnnotation(a)  )) {
     		result = true;
     	}
 
     	report.setPropertyTest(EntryReport.IS_PROTEOMICS, result);
     }
 
+    
     private boolean isPeptideAtlasOrMassSpecXref(DbXref x) {
     	
     	if ("PeptideAtlas".equals(x.getDatabaseName())) return true;
@@ -76,14 +77,24 @@ public class EntryReportServiceImpl implements EntryReportService {
     	return false;
     }
     
-    private boolean isPeptideOrPtmAnnotation(Annotation a) {
-    	if (a.getAPICategory()==AnnotationCategory.PEPTIDE_MAPPING) return true;
-    	if (a.getAPICategory()==AnnotationCategory.MODIFIED_RESIDUE) return true;
-    	if (a.getAPICategory()==AnnotationCategory.GLYCOSYLATION_SITE) return true;
-    	if (a.getAPICategory()==AnnotationCategory.CROSS_LINK) return true;
-    	return false;
+    private boolean isPeptideMapping(Annotation a) {
+    	return a.getAPICategory()==AnnotationCategory.PEPTIDE_MAPPING;
     }
+
+    private boolean isNextprotPtmAnnotation(Annotation a) {
     	
+    	if (a.getAPICategory()!=AnnotationCategory.MODIFIED_RESIDUE && 
+			a.getAPICategory()!=AnnotationCategory.GLYCOSYLATION_SITE &&
+			a.getAPICategory()!=AnnotationCategory.CROSS_LINK) {
+    		return false;
+    	}
+    	
+    	if (a.getEvidences()==null) return false; // should not occur but you know...
+    	
+    	return a.getEvidences().stream().anyMatch(evi -> "nextprot".equalsIgnoreCase(evi.getAssignedBy()));
+
+    }
+    
     private void setIsAntibody(Entry entry, EntryReport report) {
 
         report.setPropertyTest(EntryReport.IS_ANTIBODY, 

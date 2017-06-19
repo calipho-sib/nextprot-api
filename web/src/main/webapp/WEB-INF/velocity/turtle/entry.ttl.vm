@@ -44,9 +44,3 @@ isoform:$isoform-name :canonicalIsoform "false"^^xsd:boolean .
 ## Xrefs & Identifiers
 #parse('turtle/entry-references.ttl.vm')
 
-## peptide mappings
-#parse('turtle/peptide-list.ttl.vm')
-
-## SRM peptide mappings
-#parse('turtle/srm-peptide-list.ttl.vm')
-

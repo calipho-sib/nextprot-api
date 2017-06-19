@@ -5,13 +5,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.service.MasterIdentifierService;
 import org.nextprot.api.core.domain.Entry;
 import org.nextprot.api.core.domain.EntryUtils;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.AnnotationService;
-import org.nextprot.api.core.service.AntibodyMappingService;
 import org.nextprot.api.core.service.DbXrefService;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryPropertiesService;
@@ -22,7 +20,6 @@ import org.nextprot.api.core.service.IdentifierService;
 import org.nextprot.api.core.service.InteractionService;
 import org.nextprot.api.core.service.IsoformService;
 import org.nextprot.api.core.service.OverviewService;
-import org.nextprot.api.core.service.PeptideMappingService;
 import org.nextprot.api.core.service.PublicationService;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
@@ -42,8 +39,6 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 	@Autowired private IsoformService isoformService;
 	@Autowired private MasterIdentifierService masterIdentifierService;
 	@Autowired private AnnotationService annotationService;
-	@Autowired private PeptideMappingService peptideMappingService;
-	@Autowired private AntibodyMappingService antibodyMappingService;
 	@Autowired private InteractionService interactionService;
 	@Autowired private ExperimentalContextService expCtxService;
 	@Autowired private TerminologyService terminologyService; //TODO shouldn't we have method in entry to get the enzymes based on the EC names???
@@ -95,16 +90,7 @@ class EntryBuilderServiceImpl implements EntryBuilderService, InitializingBean{
 						this.annotationService.findAnnotationsExcludingBed(entryName));
 				}
 			}
-
-            //This will be deprecated in the future
-            if(entryConfig.hasSubPart(AnnotationCategory.PEPTIDE_MAPPING)){
-				entry.setPeptideMappings(this.peptideMappingService.findNaturalPeptideMappingByMasterUniqueName(entryName));
-			}
-			if(entryConfig.hasSubPart(AnnotationCategory.SRM_PEPTIDE_MAPPING)){
-				entry.setSrmPeptideMappings(this.peptideMappingService.findSyntheticPeptideMappingByMasterUniqueName(entryName));
-			}
-            ///////
-
+			
 			if(entryConfig.hasExperimentalContext()){
 				List<Annotation> annotations = entry.getAnnotations();
 				//In case we did't set annotations but we need them to find experimental contexts
