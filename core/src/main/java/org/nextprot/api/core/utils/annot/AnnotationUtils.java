@@ -1,5 +1,16 @@
 package org.nextprot.api.core.utils.annot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.constants.PropertyApiModel;
 import org.nextprot.api.commons.exception.NextProtException;
@@ -17,9 +28,6 @@ import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMapReduceMerge
 import org.nextprot.api.core.utils.annot.merge.impl.AnnotationListMergerImpl;
 import org.nextprot.commons.constants.QualityQualifier;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 
 public class AnnotationUtils {
 
@@ -33,7 +41,7 @@ public class AnnotationUtils {
 		sb.append("isProteoformAnnotation      :").append(a.isProteoformAnnotation()).append(sep);
 		sb.append("getAnnotationHash           :").append(a.getAnnotationHash()).append(sep);
 		sb.append("getAnnotationId             :").append(a.getAnnotationId()).append(sep);
-		sb.append("getAnnotationName           :").append(a.getAnnotationName()).append(sep);
+		//sb.append("getAnnotationName           :").append(a.getAnnotationName()).append(sep);
 		sb.append("getUniqueName               :").append(a.getUniqueName()).append(sep);
 	//	sb.append("getSubjectName              :").append(a.getSubjectName()).append(sep);
 
@@ -463,6 +471,67 @@ public class AnnotationUtils {
 		}
 		return result;
 	}
+
+	// related to old and new rule to PE1 upgrade 
+	public static Integer getFeatureSize(Annotation a) {
+		
+		for (String aIsoAC: a.getTargetingIsoformsMap().keySet() ) {
+    		AnnotationIsoformSpecificity aSpec = a.getTargetingIsoformsMap().get(aIsoAC);
+    		if (aSpec.getFirstPosition()==null || aSpec.getLastPosition()==null) continue;
+    		return aSpec.getLastPosition() - aSpec.getFirstPosition() + 1;   		
+		}
+		return null;
+	}
+	
+	// related to old and new rule to PE1 upgrade 
+	public static boolean containsAtLeastNFeaturesWithSizeGreaterOrEqualsToS(List<Annotation> list, int n, int s) {
+		int cnt=0;
+		for (Annotation a: list) {
+			if (AnnotationUtils.getFeatureSize(a) >= s) {
+				//System.out.println(a.getUniqueName() + " size:" + AnnotationUtils.getFeatureSize(a));
+				cnt++;
+			}
+		}
+		return cnt>=n;
+	}
+	
+	// related to  rule to PE1 upgrade 
+	public static boolean isProteotypicPeptideMapping(Annotation a) {
+		
+    	Collection<AnnotationProperty> props = a.getPropertiesByKey("is proteotypic");
+    	if (props==null || props.size()==0) return false; // we don't know if proteotypic or not => NO !
+    	return props.iterator().next().getValue().equals("Y");
+	}
+	
+	// related to new rule to PE1 upgrade 
+    public static void addToNonInclusivePeptideMappingList(Annotation a, ArrayList<Annotation> list, int minPepSize) {
+	   	
+    	if (! isProteotypicPeptideMapping(a)) return;
+    	
+    	for (String aIsoAC: a.getTargetingIsoformsMap().keySet() ) {
+    		AnnotationIsoformSpecificity aSpec = a.getTargetingIsoformsMap().get(aIsoAC);
+    		int aP1=aSpec.getFirstPosition();
+    		int aP2=aSpec.getLastPosition();
+    		int aPepSize = aP2 - aP1 + 1;   		
+    		if (aPepSize < minPepSize) return;  // if < min size => ignore
+    		
+    		ListIterator<Annotation> iter = list.listIterator();
+    		while (iter.hasNext()) {
+    		    Annotation b = iter.next();
+    			AnnotationIsoformSpecificity bSpec = b.getTargetingIsoformsMap().get(aIsoAC);
+        		int bP1 = bSpec.getFirstPosition();
+        		int bP2 = bSpec.getLastPosition();
+        		
+        		// if a has same coverage as b or a  included in b => ignore
+        		if (aP1 >= bP1 && aP2 <= bP2) return;
+        		
+        		// if a includes b => remove b
+        		if ((aP1 < bP1 && aP2 >= bP2) || (aP1 <= bP1 && aP2 > bP2)) iter.remove();
+    		}
+    		// add it
+    		list.add(a);
+    	}
+    }
 
 	
 }

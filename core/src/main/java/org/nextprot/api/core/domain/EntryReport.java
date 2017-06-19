@@ -12,16 +12,17 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.nextprot.api.core.domain.ChromosomalLocation.comparePosition;
 import static org.nextprot.api.core.domain.EntryReport.*;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
 	GENE_NAME,
-	CODING_STRAND,
 	CHROMOSOMAL_LOCATION,
 	GENE_START_POSITION,
 	GENE_END_POSITION,
+	CODING_STRAND,
 	ENTRY_ACCESSION,
 	PROTEIN_EXISTENCE_LEVEL,
 	IS_PROTEOMICS,
@@ -219,6 +220,7 @@ public class EntryReport implements Serializable {
 
 	/**
 	 * Factory creates a new Comparator that compare EntryReport by gene position first then by chromosomal band position
+	 * then by gene name and then by accession
 	 * @return a Comparator of EntryReport objects
 	 */
 	public static Comparator<EntryReport> newByChromosomalPositionComparator() {
@@ -230,7 +232,9 @@ public class EntryReport implements Serializable {
 					} catch (ParseException e) {
 						throw new NextProtException("Internal error: cannot sort EntryReport" + e.getMessage());
 					}
-				}), new EntryReport.ByChromosomalBandLocationComparator());
+				}), new ChromosomalLocation.ByChromosomalBandLocationComparator())
+				.thenComparing(EntryReport::getGeneName)
+				.thenComparing(EntryReport::getAccession);
 	}
 
 	public static class ByChromosomeComparator implements Comparator<EntryReport> {
@@ -264,42 +268,14 @@ public class EntryReport implements Serializable {
 		@Override
 		public int compare(EntryReport er1, EntryReport er2) {
 
-			int cmp = compareLocation(er1.getGeneStartPosition(), er2.getGeneStartPosition(), "-");
+			int cmp = comparePosition(er1.getGeneStartPosition(), er2.getGeneStartPosition(), "-",
+					Comparator.comparingInt(Integer::parseInt));
 
 			if (cmp == 0)
-				cmp = compareLocation(er1.getGeneEndPosition(), er2.getGeneEndPosition(), "-");
+				cmp = comparePosition(er1.getGeneEndPosition(), er2.getGeneEndPosition(), "-",
+						Comparator.comparingInt(Integer::parseInt));
 
 			return cmp;
 		}
-	}
-
-	private static class ByChromosomalBandLocationComparator implements Comparator<ChromosomalLocation> {
-
-		@Override
-		public int compare(ChromosomalLocation cl1, ChromosomalLocation cl2) {
-
-			String band1 = cl1.getBand();
-			String band2 = cl2.getBand();
-
-			return compareLocation(band1, band2, "unknown");
-		}
-	}
-
-	private static int compareLocation(String pos1, String pos2, String undefinedValue) {
-
-		boolean pos1IsUndefined = undefinedValue.equals(pos1);
-		boolean pos2IsDefined = undefinedValue.equals(pos2);
-
-		if (pos1IsUndefined && pos2IsDefined) {
-			return 0;
-		}
-		else if (pos1IsUndefined) {
-			return 1;
-		}
-		else if (pos2IsDefined) {
-			return -1;
-		}
-
-		return Integer.compare(Integer.parseInt(pos1), Integer.parseInt(pos2));
 	}
 }
