@@ -133,9 +133,6 @@ public class ChromosomeReportController {
 		}
 	}
 
-	//chromosome	accession
-	// 1	NX_A0A096LP55
-	// 1	NX_B2RUZ4
 	@ApiMethod(path = "/chromosome-report/export/hpp/nacetylated-entries", verb = ApiVerb.GET, description = "Export list of N-acetylated protein entries",
 			produces = { NextprotMediaType.TSV_MEDIATYPE_VALUE } )
 	@RequestMapping(value = "/chromosome-report/export/hpp/nacetylated-entries", method = {RequestMethod.GET})
