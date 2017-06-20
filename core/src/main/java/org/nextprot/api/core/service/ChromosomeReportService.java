@@ -22,6 +22,8 @@ public interface ChromosomeReportService {
 
 	List<String> findPhosphorylatedEntries(String chromosome);
 
+	List<String> findUnconfirmedMsDataEntries(String chromosome);
+
 	/**
 	 * @return the list of chromosomes existing in neXtProt
 	 */

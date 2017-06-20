@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -107,6 +108,20 @@ public class ChromosomeReportExportServiceImpl implements ChromosomeReportExport
 	public void exportPhosphorylatedEntries(OutputStream os) throws IOException {
 
 		exportPtmEntries(os, chr -> chromosomeReportService.findPhosphorylatedEntries(chr));
+	}
+
+	@Override
+	public void exportUnconfirmedMsEntries(OutputStream os) throws IOException {
+
+		PrintWriter writer = new PrintWriter(os);
+
+		ChromosomeReportService.getChromosomeNames().stream()
+				.map(chr -> chromosomeReportService.findUnconfirmedMsDataEntries(chr))
+				.flatMap(Collection::stream)
+				.sorted()
+				.forEach(acc -> writer.write(acc+"\n"));
+
+		writer.close();
 	}
 
 	private void exportPtmEntries(OutputStream os, Function<String, List<String>> func) throws IOException {

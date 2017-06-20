@@ -87,6 +87,15 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		return listPtmEntries(chromosome, PHOSPHORYLATION_REG_EXP);
 	}
 
+	@Cacheable("unconfirmed-ms-master-unique-names-by-chromosome")
+	@Override
+	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
+
+		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
+				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations())))
+				.collect(Collectors.toList());
+	}
+
 	private ChromosomeReport.Summary newSummary(String chromosome, List<EntryReport> entryReports) {
 
 		ChromosomeReport.Summary summary = new ChromosomeReport.Summary();
@@ -128,9 +137,9 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 		Predicate<AnnotationEvidence> isExperimentalPredicate = annotationService.createDescendantEvidenceTermPredicate("ECO:0000006");
 
 		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.map(acc -> entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations()))
-				.filter(e -> containsPtmAnnotation(e, ptmRegExp, isExperimentalPredicate))
-				.map(Entry::getUniqueName)
+				.filter(acc -> containsPtmAnnotation(
+						entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations()),
+						ptmRegExp, isExperimentalPredicate))
 				.sorted()
 				.collect(Collectors.toList());
 	}

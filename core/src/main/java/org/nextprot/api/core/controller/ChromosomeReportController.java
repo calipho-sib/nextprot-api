@@ -162,4 +162,19 @@ public class ChromosomeReportController {
 			throw new NextProtException(e.getMessage()+": cannot export phosphorylated protein entries");
 		}
 	}
+
+	@ApiMethod(path = "/chromosome-report/export/hpp/unconfirmed-ms-data-entries", verb = ApiVerb.GET, description = "Export list of unconfirmed MS data protein entries",
+			produces = { MediaType.TEXT_PLAIN_VALUE } )
+	@RequestMapping(value = "/chromosome-report/export/hpp/unconfirmed-ms-data-entries", method = {RequestMethod.GET})
+	public void exportChromosomeEntryWithUnconfirmedMsData(HttpServletResponse response) {
+
+		try (OutputStream os = response.getOutputStream()) {
+
+			response.setHeader("Content-Disposition", "attachment; filename=\"HPP_entries_with_unconfirmed_MS_data.txt\"");
+			chromosomeReportExportService.exportUnconfirmedMsEntries(os);
+		}
+		catch (IOException e) {
+			throw new NextProtException(e.getMessage()+": cannot export unconfirmed MS data protein entries");
+		}
+	}
 }
