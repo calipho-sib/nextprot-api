@@ -356,7 +356,7 @@ public class AnnotationServiceImpl implements AnnotationService {
 		private BaseCvTermAncestorPredicate(CvTerm ancestor) {
 
 			this.ancestor = ancestor;
-			dag = terminologyService.findOntologyGraph(TerminologyCv.EvidenceCodeOntologyCv);
+			dag = terminologyService.findOntologyGraph(TerminologyCv.valueOf(ancestor.getOntology()));
 		}
 	}
 
