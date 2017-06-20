@@ -92,7 +92,7 @@ public class ChromosomeReportServiceImpl implements ChromosomeReportService {
 	public List<String> findUnconfirmedMsDataEntries(String chromosome) {
 
 		return masterIdentifierService.findUniqueNamesOfChromosome(chromosome).stream()
-				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(entryBuilderService.build(EntryConfig.newConfig(acc).withAnnotations())))
+				.filter(acc -> EntryUtils.wouldUpgradeToPE1AccordingToOldRule(entryBuilderService.build(EntryConfig.newConfig(acc).withEverything())))
 				.collect(Collectors.toList());
 	}
 
