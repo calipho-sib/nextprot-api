@@ -14,6 +14,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,8 @@ import java.util.regex.Pattern;
  * Created by fnikitin on 19.04.17.
  */
 public class ChromosomeReportTXTReader implements ChromosomeReportReader {
+
+    private static Logger LOGGER = Logger.getLogger(ChromosomeReportTXTReader.class.getSimpleName());
 
     private static final Pattern CHROMOSOME_NAME_PATTERN = Pattern.compile("^Description:\\s+Chromosome\\s+(\\S+)\\s+report$");
     private static final Pattern RELEASE_DATE_PATTERN    = Pattern.compile("^Release:\\s+(.+)$");
@@ -70,7 +73,7 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
             matchConsumer.consumeNextMatchOfThrowException("gene count",
                     GENE_COUNT_PATTERN, (matcher -> summary.setEntryReportCount(Integer.parseInt(matcher.group(1)))));
 
-            EntryReportConsumer entryReportConsumer = new EntryReportConsumer(summary.getChromosome(), entryReports);
+            EntryReportConsumer entryReportConsumer = new EntryReportConsumer(summary, entryReports);
 
             boolean moreLinesToRead;
             do {
@@ -128,12 +131,12 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
 
     private static class EntryReportConsumer implements Consumer<Matcher> {
 
-        private final String chromosome;
+        private final ChromosomeReport.Summary summary;
         private final List<EntryReport> entryReports;
 
-        EntryReportConsumer(String chr, List<EntryReport> entryReports) {
+        EntryReportConsumer(ChromosomeReport.Summary summary, List<EntryReport> entryReports) {
 
-            chromosome = chr;
+            this.summary = summary;
             this.entryReports = entryReports;
         }
 
@@ -143,7 +146,7 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
             EntryReport entryReport = new EntryReport();
 
             entryReport.setAccession(matcher.group(2));
-            entryReport.setChromosomalLocation(newChromosomalLocation(matcher.group(1), (matcher.group(3).equals("-") ? chromosome : matcher.group(3)), matcher.group(4), matcher.group(5)));
+            entryReport.setChromosomalLocation(newChromosomalLocation(matcher.group(1), (matcher.group(3).equals("-") ? summary.getChromosome() : matcher.group(3)), matcher.group(4), matcher.group(5)));
             entryReport.setProteinExistence(ProteinExistenceLevel.valueOfString(matcher.group(6)));
             entryReport.setPropertyTest(EntryReport.IS_PROTEOMICS, "yes".equals(matcher.group(7)));
             entryReport.setPropertyTest(EntryReport.IS_ANTIBODY, "yes".equals(matcher.group(8)));
@@ -155,6 +158,8 @@ public class ChromosomeReportTXTReader implements ChromosomeReportReader {
             entryReport.setDescription(matcher.group(14));
 
             entryReports.add(entryReport);
+
+            LOGGER.info("Chromosome "+summary.getChromosome()+": read entry "+entryReport.getAccession() + " ("+entryReports.size()+"/"+summary.getEntryReportCount()+")");
         }
 
         private ChromosomalLocation newChromosomalLocation(String geneName, String chromosomalPosition,

@@ -29,9 +29,7 @@ public class EntryReportServiceImpl implements EntryReportService {
     public List<EntryReport> reportEntry(String entryAccession) {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession)
-                .withOverview()
-                .withAnnotations()
-                .withChromosomalLocations()
+                .withEverything()
         );
 
         EntryReport report = new EntryReport();
@@ -64,7 +62,7 @@ public class EntryReportServiceImpl implements EntryReportService {
     		result = true;
     	}
     	
-    	else if (entry.getPublications().stream().anyMatch(p -> hasMassSpecScope(p))) {
+    	else if (entry.getPublications().stream().anyMatch(this::hasMassSpecScope)) {
     		result = true;
  
     	
