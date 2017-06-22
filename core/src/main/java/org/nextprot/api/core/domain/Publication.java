@@ -1,14 +1,18 @@
 package org.nextprot.api.core.domain;
 
 import com.google.common.base.Preconditions;
+
 import org.jsondoc.core.annotation.ApiObject;
 import org.jsondoc.core.annotation.ApiObjectField;
 import org.nextprot.api.commons.utils.DateFormatter;
 import org.nextprot.api.core.domain.publication.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -52,6 +56,8 @@ public class Publication implements Serializable{
 	@ApiObjectField(description = "Computed Publications")
 	private Boolean isComputed;
 	
+	private Map<String,List<String>> properties;
+	
 	@ApiObjectField(description = "The list of authors")
 	private SortedSet<PublicationAuthor> authors;
 
@@ -60,6 +66,21 @@ public class Publication implements Serializable{
 
 	private PublicationResourceLocator publicationResourceLocator;
 
+	/**
+	 * 
+	 * @param name a property name i.e. scope, comment, ...
+	 * @return a list of values, the list may be empty but never null !
+	 */
+	public List<String> getProperty(String name) {
+		if (properties==null) return new ArrayList<>();
+		if (! properties.containsKey(name)) return new ArrayList<>();
+		return properties.get(name);
+	}
+	
+	public void setProperties(Map<String,List<String>> props) {
+		this.properties=props;
+	}
+	
 	public boolean isLocalizable() {
 		return publicationResourceLocator != null;
 	}
