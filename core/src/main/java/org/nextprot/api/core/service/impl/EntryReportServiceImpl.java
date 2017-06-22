@@ -24,9 +24,7 @@ public class EntryReportServiceImpl implements EntryReportService {
     public List<EntryReport> reportEntry(String entryAccession) {
 
         Entry entry = entryBuilderService.build(EntryConfig.newConfig(entryAccession)
-                .withOverview()
-                .withAnnotations()
-                .withChromosomalLocations()
+                .withEverything()
         );
 
         EntryReport report = new EntryReport();
@@ -34,10 +32,10 @@ public class EntryReportServiceImpl implements EntryReportService {
         report.setAccession(entry.getUniqueName());
         setEntryDescription(entry, report);
         setProteinExistence(entry, report);
-        setIsProteomics(entry, report); // DONE: PAM should implement this
-        setIsAntibody(entry, report);   // DONE: PAM should implement this
-        setIs3D(entry, report);         // DONE: PAM should implement this
-        setIsDisease(entry, report);    // DONE: PAM should implement this
+        setIsProteomics(entry, report);
+        setIsAntibody(entry, report);
+        setIs3D(entry, report);
+        setIsDisease(entry, report);
         setIsoformCount(entry, report);
         setVariantCount(entry, report);
         setPTMCount(entry, report);
@@ -59,7 +57,7 @@ public class EntryReportServiceImpl implements EntryReportService {
     		result = true;
     	}
     	
-    	else if (entry.getPublications().stream().anyMatch(p -> hasMassSpecScope(p))) {
+    	else if (entry.getPublications().stream().anyMatch(this::hasMassSpecScope)) {
     		result = true;
  
     	
