@@ -211,7 +211,7 @@ public class OntologyDAG implements Serializable {
      * @param cvTermId the root id of the returned graph
      * @return the ancestor graph
      */
-    public Grph getAncestorGraph(long cvTermId) {
+    public Grph getAncestorSubgraph(long cvTermId) {
 
         LongSet ancestors = new LongHashSet();
         ancestors.add(cvTermId);
