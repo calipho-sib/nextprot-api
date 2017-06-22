@@ -86,8 +86,28 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 		Assert.assertEquals(true, reports.get(0).isProteomics());
 		
 	}
-	
-	
+
+	@Test // ok on np_20170413
+    public void TheseShouldAlsoHaveProteomicsTrue() {  
+    	
+		List<String> posEntries = Arrays.asList(
+				"NX_Q07326","NX_P29459","NX_A1E959","NX_Q86UD3","NX_Q5DT21","NX_P10265","NX_Q8IZT8","NX_P81534","NX_P81534",
+				"NX_Q6JVE6","NX_P31314","NX_Q7Z5B4","NX_Q16621","NX_Q6UVW9","NX_P0DMR3","NX_P36544","NX_P80075","NX_Q99616",
+				"NX_Q8IYD9","NX_B3KS81","NX_Q2I0M5","NX_O43320","NX_P0CW71");
+		int errCnt=0;
+		for (String ac:posEntries) {
+			//if (ac.equals("NX_P29459")) break;
+			List<EntryReport> reports = entryReportService.reportEntry(ac);
+			if (reports.get(0).isProteomics()==false) {
+				errCnt++;
+				System.out.println("ERROR: " + ac + " proteomics should be true");
+			} else {
+				System.out.println("OK: " + ac + " proteomics is true");
+			}
+		}
+		Assert.assertEquals(0, errCnt);			
+    }
+
 	@Ignore 
 	@Test // ok on np_20170413
     public void TheseShouldHaveProteomicsTrue() {  
@@ -135,6 +155,8 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 			"NX_P42695","NX_Q07011","NX_Q8N3H0","NX_Q9H3M7","NX_O94907","NX_O60760","NX_Q86XW9","NX_P28335","NX_Q9UJ72","NX_P48023",
 			"NX_Q6P9H4","NX_P46695","NX_Q92736","NX_Q9UHE8","NX_P78333","NX_Q15007","NX_O14757","NX_Q6XE24","NX_Q16650","NX_P09211",
 			"NX_Q9BR10","NX_P01344","NX_P35212","NX_Q8TD84","NX_P08254","NX_P51164","NX_Q9P2E2","NX_O15083","NX_P78508","NX_Q9UKX3");
+	
+	
 	
 	
 	

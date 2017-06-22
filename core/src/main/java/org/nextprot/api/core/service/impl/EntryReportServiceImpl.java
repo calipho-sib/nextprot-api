@@ -39,10 +39,10 @@ public class EntryReportServiceImpl implements EntryReportService {
         report.setAccession(entry.getUniqueName());
         setEntryDescription(entry, report);
         setProteinExistence(entry, report);
-        setIsProteomics(entry, report); // DONE: PAM should implement this
-        setIsAntibody(entry, report);   // DONE: PAM should implement this
-        setIs3D(entry, report);         // DONE: PAM should implement this
-        setIsDisease(entry, report);    // DONE: PAM should implement this
+        setIsProteomics(entry, report); 
+        setIsAntibody(entry, report);   
+        setIs3D(entry, report);        
+        setIsDisease(entry, report);    
         setIsoformCount(entry, report);
         setVariantCount(entry, report);
         setPTMCount(entry, report);
