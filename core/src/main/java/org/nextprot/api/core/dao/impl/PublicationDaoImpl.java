@@ -1,6 +1,7 @@
 package org.nextprot.api.core.dao.impl;
 
 import com.google.common.collect.Maps;
+
 import org.apache.log4j.Logger;
 import org.nextprot.api.commons.spring.jdbc.DataSourceServiceLocator;
 import org.nextprot.api.commons.utils.DateFormatter;
@@ -56,8 +57,21 @@ public class PublicationDaoImpl implements PublicationDao {
 
 		// get all journals found for all publication ids
 		List<PublicationCvJournal> journals = journalDao.findCvJournalsByPublicationIds(publicationIds);
+		
+		List<Publication> publications = new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
 
-		return new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-sorted-for-master"), params, new PublicationRowMapper(journals));
+		 // get all entry publication properties     
+		Map<Long,Map<String,List<String>>> publiPropMap = findEntryPublicationPropertiesByMasterId(masterId);
+		
+		// attach properties to each publication
+		for (Publication pub: publications) {
+			long pubId = pub.getPublicationId();
+			if (publiPropMap.containsKey(pubId)) {
+				pub.setProperties(publiPropMap.get(pubId));
+			}
+		}
+		
+		return publications;
 	}
 
 	@Override
@@ -144,6 +158,38 @@ public class PublicationDaoImpl implements PublicationDao {
 		}
 	}
 
+	@Override
+	public Map<Long,Map<String,List<String>>> findEntryPublicationPropertiesByMasterId(Long masterId) {
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("masterId", masterId);
+		EntryPublicationPropertyRowMapper mapper = new EntryPublicationPropertyRowMapper();		
+		new NamedParameterJdbcTemplate(dsLocator.getDataSource()).query(sqlDictionary.getSQLQuery("publication-properties-for-master"), params, mapper);		
+		return mapper.getResult();
+		
+	}
+	
+	private static class EntryPublicationPropertyRowMapper implements ParameterizedRowMapper<Object> {
+		
+		private Map<Long,Map<String,List<String>>> result = new HashMap<>();
+				
+		public Map<Long,Map<String,List<String>>> getResult() { return result; }
+		
+		@Override
+		public Object mapRow(ResultSet resultSet, int row) throws SQLException {
+
+			Long pubId = resultSet.getLong("pub_id");
+			String propertyName = resultSet.getString("property_name");
+			String propertyValue = resultSet.getString("property_value");
+			if (! result.containsKey(pubId)) result.put(pubId, new HashMap<String,List<String>>()) ;
+			Map<String,List<String>> props = result.get(pubId);
+			if (! props.containsKey(propertyName)) props.put(propertyName, new ArrayList<String>());
+			props.get(propertyName).add(propertyValue);
+			return null;
+		}
+		
+	}
+	
 	private static class PublicationRowMapper implements ParameterizedRowMapper<Publication> {
 
 		private final Map<Long, PublicationCvJournal> pubIdToJournalMap;

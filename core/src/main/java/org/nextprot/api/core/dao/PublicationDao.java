@@ -3,6 +3,7 @@ package org.nextprot.api.core.dao;
 import org.nextprot.api.core.domain.Publication;
 
 import java.util.List;
+import java.util.Map;
 
 public interface PublicationDao {
 
@@ -21,6 +22,14 @@ public interface PublicationDao {
 	 * @return
 	 */
 	List<Publication> findSortedPublicationsByMasterId(Long masterId);
+	
+	/**
+	 * Returns a map with publication id as the key
+	 * The value is a Map where the key is a property name, and value a list of string 
+	 * @param masterId
+	 * @return
+	 */
+	Map<Long,Map<String,List<String>>> findEntryPublicationPropertiesByMasterId(Long masterId);	
 	
 	/**
 	 * Find publication id by database and accession.

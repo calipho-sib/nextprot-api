@@ -67,7 +67,8 @@ public class PublicationServiceImpl implements PublicationService {
 	@Cacheable("publications")
 	public List<Publication> findPublicationsByMasterUniqueName(String uniqueName) {
 
-		List<Publication> publications = publicationDao.findSortedPublicationsByMasterId(masterIdentifierDao.findIdByUniqueName(uniqueName));
+		Long masterId = masterIdentifierDao.findIdByUniqueName(uniqueName);
+		List<Publication> publications = publicationDao.findSortedPublicationsByMasterId(masterId);
 		Map<Long, List<PublicationDbXref>> npPublicationsXrefs = updateMissingPublicationFields(publications);
 
 		// Getting publications from nx flat database
