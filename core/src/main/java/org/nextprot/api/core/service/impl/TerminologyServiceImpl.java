@@ -132,4 +132,9 @@ class TerminologyServiceImpl implements TerminologyService {
 		return new ImmutableList.Builder<String>().addAll(terminologyDao.findTerminologyNamesList()).build();
 	}
 
+	@Override
+	public CvTermGraph findAncestorGraphByCvTerm(String accession) {
+		return null;
+	}
+
 }
