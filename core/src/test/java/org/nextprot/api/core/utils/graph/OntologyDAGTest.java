@@ -1,5 +1,7 @@
 package org.nextprot.api.core.utils.graph;
 
+import com.google.common.collect.Sets;
+import grph.Grph;
 import grph.path.Path;
 import org.junit.Assert;
 import org.junit.Test;
@@ -14,7 +16,10 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 @ActiveProfiles({"dev","cache"})
@@ -107,6 +112,34 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
         OntologyDAG graph = new OntologyDAG(TerminologyCv.GoMolecularFunctionCv, terminologyService);
 
         Assert.assertFalse(graph.hasCvTermAccession("roudoudou"));
+    }
+
+    @Test
+    public void ancestorGraph() throws Exception {
+
+        OntologyDAG graph = new OntologyDAG(TerminologyCv.GoBiologicalProcessCv, terminologyService);
+
+        Grph ancestorGraph = graph.getAncestorGraph(graph.getCvTermIdByAccession("GO:0050789"));
+
+        Set<String> nodes = LongStream.of(ancestorGraph.getVertices().toLongArray())
+                .mapToObj(graph::getCvTermAccessionById)
+                .collect(Collectors.toSet());
+
+        Assert.assertEquals(Sets.newHashSet("GO:0050789", "GO:0065007", "GO:0008150"), nodes);
+
+        List<String[]> expectedEdges = Arrays.asList(
+                new String[] {"GO:0065007", "GO:0050789"},
+                new String[] {"GO:0008150", "GO:0050789"},
+                new String[] {"GO:0008150", "GO:0065007"});
+
+        for (long e : ancestorGraph.getEdges().toLongArray()) {
+
+            List<String> edge = ancestorGraph.getVerticesIncidentToEdge(e).toLongArrayList().stream()
+                    .map(graph::getCvTermAccessionById)
+                    .collect(Collectors.toList());
+
+            Assert.assertTrue(expectedEdges.contains(edge));
+        }
     }
 
     private void benchmarkingPrecomputations(TerminologyCv terminologyCv, boolean both) throws OntologyDAG.NotFoundInternalGraphException {
