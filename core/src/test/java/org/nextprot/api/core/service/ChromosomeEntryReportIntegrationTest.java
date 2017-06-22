@@ -2,6 +2,8 @@ package org.nextprot.api.core.service;
 
 import com.google.common.collect.Sets;
 import org.apache.lucene.util.Counter;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.nextprot.api.core.domain.ChromosomeReport;
 import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.service.export.io.ChromosomeReportTXTReader;
@@ -21,7 +23,8 @@ import static org.nextprot.api.core.domain.EntryReport.*;
 
 public class ChromosomeEntryReportIntegrationTest {
 
-	//@Test
+	@Ignore
+	@Test
 	public void chromosomeEntryReportsShouldMatchFTPReports() throws Exception {
 
         PrintWriter pw = new PrintWriter("/tmp/ftpVSapiChromosomeEntryReports.tsv");
