@@ -28,7 +28,7 @@ import java.util.Map;
 @Api(name = "Terminology", description = "Method to retrieve a terminology")
 public class TermController {
 
-	@Autowired private TerminologyService terminolgyService;
+	@Autowired private TerminologyService terminologyService;
 	
 	@ApiMethod(path = "/terminology-tree/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/terminology-tree/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -36,7 +36,7 @@ public class TermController {
 			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
 			@PathVariable("terminology") String terminology) {
 
-		return terminolgyService.findTerminology(TerminologyCv.getTerminologyOf(terminology));
+		return terminologyService.findTerminology(TerminologyCv.getTerminologyOf(terminology));
 	}
 
 	@ApiMethod(path = "/terminology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -45,14 +45,14 @@ public class TermController {
 			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
 			@PathVariable("terminology") String terminology) {
 
-		return terminolgyService.findCvTermsByOntology(TerminologyCv.getTerminologyOf(terminology).name());
+		return terminologyService.findCvTermsByOntology(TerminologyCv.getTerminologyOf(terminology).name());
 	}
 	
 	
 	@ApiMethod(path = "/terminology-names", verb = ApiVerb.GET, description = "Gets a list of terminology names", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/terminology-names", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<String> getTerminologyNames() {
-		return terminolgyService.findTerminologyNamesList();
+		return terminologyService.findTerminologyNamesList();
 	}
 
 
@@ -79,7 +79,7 @@ public class TermController {
 		for (TerminologyCv terminologyCv : TerminologyCv.values()) {
 
 			Instant t = Instant.now();
-			terminolgyService.findOntologyGraph(terminologyCv);
+			terminologyService.findOntologyGraph(terminologyCv);
 			long ms = ChronoUnit.MILLIS.between(t, Instant.now());
 
 			map.put(terminologyCv.name(), String.valueOf(ms)+" ms");
