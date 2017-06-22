@@ -1,18 +1,23 @@
 package org.nextprot.api.core.service.impl;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.nextprot.api.commons.constants.AnnotationCategory;
 import org.nextprot.api.commons.exception.NextProtException;
-import org.nextprot.api.core.domain.*;
+import org.nextprot.api.core.domain.ChromosomalLocation;
+import org.nextprot.api.core.domain.DbXref;
+import org.nextprot.api.core.domain.Entry;
+import org.nextprot.api.core.domain.EntryReport;
+import org.nextprot.api.core.domain.ProteinExistenceLevel;
+import org.nextprot.api.core.domain.Publication;
 import org.nextprot.api.core.domain.annotation.Annotation;
 import org.nextprot.api.core.service.EntryBuilderService;
 import org.nextprot.api.core.service.EntryReportService;
 import org.nextprot.api.core.service.fluent.EntryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class EntryReportServiceImpl implements EntryReportService {
@@ -103,12 +108,25 @@ public class EntryReportServiceImpl implements EntryReportService {
     }
     
     private void setIsAntibody(Entry entry, EntryReport report) {
-
-        report.setPropertyTest(EntryReport.IS_ANTIBODY, 
-        		entry.getAnnotations().stream()
-        			.anyMatch(a -> a.getAPICategory()==AnnotationCategory.ANTIBODY_MAPPING));
+    	
+    	boolean result =false;
+    	
+    	// this works for public antibodies with accession like HPAxxxx (sequence is known and aligned on isoforms)    	 
+		if (entry.getAnnotations().stream()
+			.anyMatch(a -> a.getAPICategory()==AnnotationCategory.ANTIBODY_MAPPING)) result=true;
+			
+		// that works for patented antibodies with accession like CABxxx with an unknow sequence (and thus not aligned / mapped on isoforms)
+		if (entry.getXrefs().stream()
+				.anyMatch(x -> x.getAccession().startsWith("CAB") && x.getDatabaseName().equals("HPA"))) result=true;
+		
+        report.setPropertyTest(EntryReport.IS_ANTIBODY,result);
+    
+        
+    
     }
 
+    
+    
     private void setIs3D(Entry entry, EntryReport report) {
 
         report.setPropertyTest(EntryReport.IS_3D, 
