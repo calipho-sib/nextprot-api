@@ -1,5 +1,8 @@
 package org.nextprot.api.core.service;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -7,9 +10,6 @@ import org.nextprot.api.core.domain.EntryReport;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.Arrays;
-import java.util.List;
 
 @ActiveProfiles({ "dev" })
 public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
@@ -87,6 +87,26 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 		
 	}
 	
+	
+	@Ignore 
+	@Test // ok on np_20170413
+    public void TheseShouldHaveProteomicsTrue() {  
+    	
+		List<String> negEntries = Arrays.asList("NX_P0CW71", "NX_O43320","NX_Q07326", "NX_Q9H5Z6","NX_P29459","NX_Q96MM3","NX_Q86UD3");
+		int errCnt=0;
+		for (String ac:negEntries) {
+			List<EntryReport> reports = entryReportService.reportEntry(ac);
+			if (reports.get(0).isProteomics()==false) {
+				errCnt++;
+				System.out.println("ERROR: " + ac + " proteomics should be true");
+			} else {
+				System.out.println("OK: " + ac + " proteomics is true");
+			}
+			Assert.assertEquals(0, errCnt);			
+		}
+
+    }
+
 	
 	
 }

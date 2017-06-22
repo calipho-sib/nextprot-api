@@ -57,6 +57,11 @@ public class EntryReportServiceImpl implements EntryReportService {
     	if (entry.getXrefs().stream()
     			.anyMatch(this::isPeptideAtlasOrMassSpecXref)) {
     		result = true;
+    	}
+    	
+    	else if (entry.getPublications().stream().anyMatch(p -> hasMassSpecScope(p))) {
+    		result = true;
+ 
     	
     	} else if (entry.getAnnotations().stream()
     			.anyMatch(a -> isPeptideMapping(a) || isNextprotPtmAnnotation(a)  )) {
@@ -66,6 +71,10 @@ public class EntryReportServiceImpl implements EntryReportService {
     	report.setPropertyTest(EntryReport.IS_PROTEOMICS, result);
     }
 
+    
+    private boolean hasMassSpecScope(Publication pub) {
+    	return pub.getProperty("scope").stream().anyMatch(p -> p.contains("MASS SPECTROMETRY"));
+    }
     
     private boolean isPeptideAtlasOrMassSpecXref(DbXref x) {
     	
