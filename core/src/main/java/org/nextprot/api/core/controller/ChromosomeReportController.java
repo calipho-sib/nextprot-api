@@ -1,7 +1,6 @@
 package org.nextprot.api.core.controller;
 
 import org.jsondoc.core.annotation.Api;
-import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
@@ -13,7 +12,6 @@ import org.nextprot.api.core.service.ChromosomeReportSummaryService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,9 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@PreAuthorize("hasRole('ROLE_ADMIN')")
-@Api(name = "Chromosome reports", description = "Reports statistics about entries on chromosome", group="Admin")
-@ApiAuthBasic(roles={"ROLE_ADMIN"})
+@Api(name = "Chromosome reports", description = "Reports statistics about entries on chromosome")
 public class ChromosomeReportController {
 
 	@Autowired
@@ -42,7 +38,8 @@ public class ChromosomeReportController {
 	@Autowired
 	private ChromosomeReportExportService chromosomeReportExportService;
 
-	@PreAuthorize("permitAll()")
+	@ApiMethod(path = "/chromosomes", verb = ApiVerb.GET, description = "Get the list of chromosome names referenced in neXtProt",
+			produces = { MediaType.APPLICATION_JSON_VALUE } )
 	@RequestMapping(value = "/chromosomes", method = {RequestMethod.GET})
 	@ResponseBody
 	public List<String> getChromosomeNames() {
