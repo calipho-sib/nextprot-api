@@ -1,6 +1,7 @@
 package org.nextprot.api.core.controller;
 
 import org.jsondoc.core.annotation.Api;
+import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
@@ -12,6 +13,7 @@ import org.nextprot.api.core.service.ChromosomeReportSummaryService;
 import org.nextprot.api.core.service.export.format.NextprotMediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@Api(name = "Chromosome reports", description = "Reports statistics about entries on chromosome")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
+@Api(name = "Chromosome reports", description = "Reports statistics about entries on chromosome", group="Admin")
+@ApiAuthBasic(roles={"ROLE_ADMIN"})
 public class ChromosomeReportController {
 
 	@Autowired
@@ -160,6 +164,21 @@ public class ChromosomeReportController {
 		}
 		catch (IOException e) {
 			throw new NextProtException(e.getMessage()+": cannot export phosphorylated protein entries");
+		}
+	}
+
+	@ApiMethod(path = "/chromosome-report/export/hpp/unconfirmed-ms-data-entries", verb = ApiVerb.GET, description = "Export list of unconfirmed MS data protein entries",
+			produces = { MediaType.TEXT_PLAIN_VALUE } )
+	@RequestMapping(value = "/chromosome-report/export/hpp/unconfirmed-ms-data-entries", method = {RequestMethod.GET})
+	public void exportChromosomeEntryWithUnconfirmedMsData(HttpServletResponse response) {
+
+		try (OutputStream os = response.getOutputStream()) {
+
+			response.setHeader("Content-Disposition", "attachment; filename=\"HPP_entries_with_unconfirmed_MS_data.txt\"");
+			chromosomeReportExportService.exportUnconfirmedMsEntries(os);
+		}
+		catch (IOException e) {
+			throw new NextProtException(e.getMessage()+": cannot export unconfirmed MS data protein entries");
 		}
 	}
 }

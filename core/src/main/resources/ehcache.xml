@@ -334,4 +334,10 @@
 		   maxEntriesLocalDisk="30" eternal="true" memoryStoreEvictionPolicy="LRU"
 		   statistics="true">
 	</cache>
+
+	<cache name="unconfirmed-ms-master-unique-names-by-chromosome" overflowToOffHeap="false"
+		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="5"
+		   maxEntriesLocalDisk="30" eternal="true" memoryStoreEvictionPolicy="LRU"
+		   statistics="true">
+	</cache>
 </ehcache>

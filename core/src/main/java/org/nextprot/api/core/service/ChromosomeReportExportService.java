@@ -40,4 +40,6 @@ public interface ChromosomeReportExportService {
 	 * @param os the output stream to write into
 	 */
 	void exportPhosphorylatedEntries(OutputStream os) throws IOException;
+
+	void exportUnconfirmedMsEntries(OutputStream os) throws IOException;
 }
