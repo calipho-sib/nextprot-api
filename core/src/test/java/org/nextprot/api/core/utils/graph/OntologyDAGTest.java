@@ -115,11 +115,11 @@ public class OntologyDAGTest extends CoreUnitBaseTest {
     }
 
     @Test
-    public void ancestorGraph() throws Exception {
+    public void ancestorSubgraph() throws Exception {
 
         OntologyDAG graph = new OntologyDAG(TerminologyCv.GoBiologicalProcessCv, terminologyService);
 
-        Grph ancestorGraph = graph.getAncestorGraph(graph.getCvTermIdByAccession("GO:0050789"));
+        Grph ancestorGraph = graph.getAncestorSubgraph(graph.getCvTermIdByAccession("GO:0050789"));
 
         Set<String> nodes = LongStream.of(ancestorGraph.getVertices().toLongArray())
                 .mapToObj(graph::getCvTermAccessionById)
