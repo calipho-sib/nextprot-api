@@ -58,8 +58,6 @@ public interface TerminologyService {
 
 	List<String> findTerminologyNamesList();
 
-	CvTermGraph findAncestorGraphByCvTerm(String accession);
-
 	//TODO TRY TO PLACE THIS ELSEWHERE, BUT PROBABLY SHOULD BE CACHED!
 	Set<String> getAncestorSets(List<Tree<CvTerm>> trees, String accession);
 
