@@ -63,7 +63,7 @@ public abstract class AbstractCvTermGraphTest extends CoreUnitBaseTest {
     }
 
     @Test
-    public void isAncestorOf() throws Exception {
+    public void shouldCreateValidGeneOntologyGraph() throws Exception {
 
         List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
 
@@ -90,6 +90,33 @@ public abstract class AbstractCvTermGraphTest extends CoreUnitBaseTest {
 
         Assert.assertEquals(10543, graph.countNodes());
         Assert.assertEquals(12797, graph.countEdges());
+    }
+
+    @Test
+    public void isAncestorOf() throws Exception {
+
+        List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
+
+        final Map<String, Integer> cvTermIdByAccession = new HashMap<>(cvTerms.size());
+
+        cvTerms.forEach(cvt -> {
+            cvTermIdByAccession.put(cvt.getAccession(), Math.toIntExact(cvt.getId()));
+            graph.addNode(Math.toIntExact(cvt.getId()));
+        });
+
+        cvTerms.forEach(cvt -> {
+            List<String> parentAccessions = cvt.getAncestorAccession();
+
+            if (parentAccessions != null) {
+                parentAccessions.forEach(parent -> {
+                    try {
+                        graph.addEdge(cvTermIdByAccession.get(parent), Math.toIntExact(cvt.getId()));
+                    } catch (IllegalStateException e) {
+                        System.err.println(" cannot connect to unknown node parent: "+e.getMessage());
+                    }
+                });
+            }
+        });
 
         int ancestorId = cvTermIdByAccession.get("GO:0005488");
         int descendantId = cvTermIdByAccession.get("GO:0051378");

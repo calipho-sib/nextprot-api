@@ -49,7 +49,7 @@ public interface DirectedGraph {
 
         return isAncestorOf(queryAncestor, queryDescendant);
     }
-
+    
     Collection<Path> calcAllPaths();
 
     DirectedGraph calcAncestorSubgraph(int node);

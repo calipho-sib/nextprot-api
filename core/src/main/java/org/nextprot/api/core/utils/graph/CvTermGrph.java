@@ -78,10 +78,10 @@ public class CvTermGrph implements DirectedGraph {
 
         for (Path path : paths) {
 
-            long dest = path.getDestination();
+            int dest = (int) path.getDestination();
 
             if (path.getNumberOfVertices() > 1) {
-                for (long i = 0; i < path.getNumberOfVertices() - 1; i++) {
+                for (int i = 0; i < path.getNumberOfVertices() - 1; i++) {
 
                     cvTermIdAncestors.get(dest).add(path.getVertexAt(i));
                 }
@@ -101,6 +101,11 @@ public class CvTermGrph implements DirectedGraph {
 
     @Override
     public boolean isAncestorOf(int queryAncestor, int queryDescendant) {
+
+        if (!allAncestorComputed) {
+            computeAllAncestors();
+            allAncestorComputed = true;
+        }
 
         return cvTermIdAncestors.get(queryDescendant).contains(queryAncestor);
     }
