@@ -11,13 +11,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CvTermGrph implements DirectedGraph {
+public class IntGrph implements DirectedGraph {
 
     private final Grph graph;
     private final Map<Integer, LongSet> cvTermIdAncestors;
     private boolean allAncestorComputed = false;
 
-    public CvTermGrph() {
+    public IntGrph() {
 
         graph = new InMemoryGrph();
         cvTermIdAncestors = new HashMap<>();

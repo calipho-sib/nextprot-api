@@ -1,10 +1,10 @@
 package org.nextprot.api.core.utils.graph;
 
-public class CvTermGrphTest extends AbstractCvTermGraphTest {
+public class IntGraphTest extends AbstractIntGraphTest {
 
     @Override
     protected DirectedGraph createGraph() {
 
-        return new CvTermGrph();
+        return new IntGraph();
     }
 }

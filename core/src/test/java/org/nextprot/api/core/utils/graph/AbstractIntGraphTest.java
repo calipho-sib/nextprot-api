@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @ActiveProfiles({"dev","cache"})
-public abstract class AbstractCvTermGraphTest extends CoreUnitBaseTest {
+public abstract class AbstractIntGraphTest extends CoreUnitBaseTest {
 
     @Autowired
     private TerminologyService terminologyService;
