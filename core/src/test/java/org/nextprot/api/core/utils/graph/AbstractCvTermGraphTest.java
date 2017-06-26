@@ -62,14 +62,6 @@ public abstract class AbstractCvTermGraphTest {
     }
 
     @Test
-    public void containsNode() throws Exception {
-    }
-
-    @Test
-    public void containsEdge() throws Exception {
-    }
-
-    @Test
     public void getAncestors() throws Exception {
     }
 
