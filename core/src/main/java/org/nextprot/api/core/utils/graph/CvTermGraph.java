@@ -28,6 +28,8 @@ public class CvTermGraph implements DirectedGraph {
     @Override
     public void addNode(int node) {
 
+        assert !nodes.contains(node) : node;
+
         nodes.add(node);
     }
 
