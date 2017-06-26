@@ -148,9 +148,9 @@ public class ChromosomeReportController {
 		}
 	}
 
-	@ApiMethod(path = "/chromosome-report/export/hpp/phospho-entries", verb = ApiVerb.GET, description = "Export list of phosphorylated protein entries",
+	@ApiMethod(path = "/chromosome-report/export/hpp/phosphorylated-entries", verb = ApiVerb.GET, description = "Export list of phosphorylated protein entries",
 			produces = { NextprotMediaType.TSV_MEDIATYPE_VALUE } )
-	@RequestMapping(value = "/chromosome-report/export/hpp/phospho-entries", method = {RequestMethod.GET})
+	@RequestMapping(value = "/chromosome-report/export/hpp/phosphorylated-entries", method = {RequestMethod.GET})
 	public void exportChromosomeEntryWithPhospho(HttpServletResponse response) {
 
 		try (OutputStream os = response.getOutputStream()) {
