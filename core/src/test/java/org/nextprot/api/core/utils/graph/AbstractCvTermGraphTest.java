@@ -3,11 +3,24 @@ package org.nextprot.api.core.utils.graph;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.nextprot.api.commons.constants.TerminologyCv;
+import org.nextprot.api.core.domain.CvTerm;
+import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.test.base.CoreUnitBaseTest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
 
-public abstract class AbstractCvTermGraphTest {
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@ActiveProfiles({"dev","cache"})
+public abstract class AbstractCvTermGraphTest extends CoreUnitBaseTest {
+
+    @Autowired
+    private TerminologyService terminologyService;
 
     private DirectedGraph graph;
-
     protected abstract DirectedGraph createGraph();
 
     @Before
@@ -50,6 +63,42 @@ public abstract class AbstractCvTermGraphTest {
     }
 
     @Test
+    public void isAncestorOf() throws Exception {
+
+        List<CvTerm> cvTerms = terminologyService.findCvTermsByOntology(TerminologyCv.GoMolecularFunctionCv.name());
+
+        final Map<String, Integer> cvTermIdByAccession = new HashMap<>(cvTerms.size());
+
+        cvTerms.forEach(cvt -> {
+            cvTermIdByAccession.put(cvt.getAccession(), Math.toIntExact(cvt.getId()));
+            graph.addNode(Math.toIntExact(cvt.getId()));
+        });
+
+        cvTerms.forEach(cvt -> {
+            List<String> parentAccessions = cvt.getAncestorAccession();
+
+            if (parentAccessions != null) {
+                parentAccessions.forEach(parent -> {
+                    try {
+                        graph.addEdge(cvTermIdByAccession.get(parent), Math.toIntExact(cvt.getId()));
+                    } catch (IllegalStateException e) {
+                        System.err.println(" cannot connect to unknown node parent: "+e.getMessage());
+                    }
+                });
+            }
+        });
+
+        Assert.assertEquals(10543, graph.countNodes());
+        Assert.assertEquals(12797, graph.countEdges());
+
+        int ancestorId = cvTermIdByAccession.get("GO:0005488");
+        int descendantId = cvTermIdByAccession.get("GO:0051378");
+
+        Assert.assertTrue(graph.isAncestorOf(ancestorId, descendantId));
+        Assert.assertTrue(graph.isChildOf(descendantId, ancestorId));
+    }
+
+    @Test
     public void getNodes() throws Exception {
     }
 
@@ -65,9 +114,7 @@ public abstract class AbstractCvTermGraphTest {
     public void getAncestors() throws Exception {
     }
 
-    @Test
-    public void isAncestorOf() throws Exception {
-    }
+
 
     @Test
     public void calcAllPaths() throws Exception {

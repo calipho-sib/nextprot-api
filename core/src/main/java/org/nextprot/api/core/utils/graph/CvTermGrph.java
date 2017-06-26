@@ -3,24 +3,31 @@ package org.nextprot.api.core.utils.graph;
 import grph.Grph;
 import grph.in_memory.InMemoryGrph;
 import grph.path.Path;
+import toools.collection.bigstuff.longset.LongHashSet;
+import toools.collection.bigstuff.longset.LongSet;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CvTermGrph implements DirectedGraph {
 
     private final Grph graph;
+    private final Map<Integer, LongSet> cvTermIdAncestors;
+    private boolean allAncestorComputed = false;
 
     public CvTermGrph() {
 
         graph = new InMemoryGrph();
-
+        cvTermIdAncestors = new HashMap<>();
     }
 
     @Override
     public void addNode(int node) {
 
         graph.addVertex(node);
+        cvTermIdAncestors.put(node, new LongHashSet());
     }
 
     @Override
@@ -65,14 +72,37 @@ public class CvTermGrph implements DirectedGraph {
         return graph.containsVertex(edge);
     }
 
+    public void computeAllAncestors() {
+
+        Collection<Path> paths = graph.getAllPaths();
+
+        for (Path path : paths) {
+
+            long dest = path.getDestination();
+
+            if (path.getNumberOfVertices() > 1) {
+                for (long i = 0; i < path.getNumberOfVertices() - 1; i++) {
+
+                    cvTermIdAncestors.get(dest).add(path.getVertexAt(i));
+                }
+            }
+        }
+    }
+
     @Override
     public int[] getAncestors(int cvTermId) {
-        return new int[0];
+
+        if (!allAncestorComputed) {
+            computeAllAncestors();
+            allAncestorComputed = true;
+        }
+        return Arrays.stream(cvTermIdAncestors.get(cvTermId).toLongArray()).mapToInt(l -> (int)l).toArray();
     }
 
     @Override
     public boolean isAncestorOf(int queryAncestor, int queryDescendant) {
-        return false;
+
+        return cvTermIdAncestors.get(queryDescendant).contains(queryAncestor);
     }
 
     @Override
