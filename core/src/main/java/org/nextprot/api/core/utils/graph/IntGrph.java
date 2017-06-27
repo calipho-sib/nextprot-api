@@ -14,20 +14,25 @@ import java.util.Map;
 public class IntGrph implements DirectedGraph {
 
     private final Grph graph;
-    private final Map<Integer, LongSet> cvTermIdAncestors;
+    private final Map<Integer, LongSet> ancestors;
     private boolean allAncestorComputed = false;
 
     public IntGrph() {
 
-        graph = new InMemoryGrph();
-        cvTermIdAncestors = new HashMap<>();
+        this(new InMemoryGrph());
+    }
+
+    public IntGrph(Grph graph) {
+
+        this.graph = graph;
+        ancestors = new HashMap<>();
     }
 
     @Override
     public void addNode(int node) {
 
         graph.addVertex(node);
-        cvTermIdAncestors.put(node, new LongHashSet());
+        ancestors.put(node, new LongHashSet());
     }
 
     @Override
@@ -78,12 +83,14 @@ public class IntGrph implements DirectedGraph {
 
         for (Path path : paths) {
 
+            System.out.println(path);
             int dest = (int) path.getDestination();
-
+            System.out.println(dest);
             if (path.getNumberOfVertices() > 1) {
                 for (int i = 0; i < path.getNumberOfVertices() - 1; i++) {
 
-                    cvTermIdAncestors.get(dest).add(path.getVertexAt(i));
+                    System.out.println(" -> "+path.getVertexAt(i));
+                    ancestors.get(dest).add(path.getVertexAt(i));
                 }
             }
         }
@@ -96,7 +103,7 @@ public class IntGrph implements DirectedGraph {
             computeAllAncestors();
             allAncestorComputed = true;
         }
-        return Arrays.stream(cvTermIdAncestors.get(cvTermId).toLongArray()).mapToInt(l -> (int)l).toArray();
+        return Arrays.stream(ancestors.get(cvTermId).toLongArray()).mapToInt(l -> (int)l).toArray();
     }
 
     @Override
@@ -107,16 +114,50 @@ public class IntGrph implements DirectedGraph {
             allAncestorComputed = true;
         }
 
-        return cvTermIdAncestors.get(queryDescendant).contains(queryAncestor);
+        return ancestors.get(queryDescendant).contains(queryAncestor);
+    }
+
+    @Override
+    public int[] getPredecessors(int node) {
+
+        return Arrays.stream(graph.getInNeighbors(node).toLongArray()).mapToInt(l -> (int)l).toArray();
+    }
+
+    @Override
+    public int[] getSuccessors(int node) {
+
+        return Arrays.stream(graph.getOutNeighbors(node).toLongArray()).mapToInt(l -> (int)l).toArray();
+    }
+
+    @Override
+    public int getInDegree(int node) {
+
+        return (int) graph.getInVertexDegree(node);
+    }
+
+    @Override
+    public int getOutDegree(int node) {
+
+        return (int) graph.getOutVertexDegree(node);
     }
 
     @Override
     public Collection<Path> calcAllPaths() {
-        return null;
+        return graph.getAllPaths();
+    }
+
+    @Override
+    public int[] getEdgesIncidentTo(int... nodes) {
+
+        return Arrays.stream(graph.getEdgesIncidentTo(nodes[0]).toLongArray()).mapToInt(l -> (int)l).toArray();
     }
 
     @Override
     public DirectedGraph calcAncestorSubgraph(int node) {
-        return null;
+
+        LongSet ancestors = new LongHashSet();
+        ancestors.add(node);
+        ancestors.addAll(this.ancestors.get(node));
+        return new IntGrph(graph.getSubgraphInducedByVertices(ancestors));
     }
 }

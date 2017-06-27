@@ -1,6 +1,6 @@
 package org.nextprot.api.core.utils.graph;
 
-public class IntGraphTest extends AbstractIntGraphTest {
+public class IntGraphTest extends BaseIntGraphTest {
 
     @Override
     protected DirectedGraph createGraph() {

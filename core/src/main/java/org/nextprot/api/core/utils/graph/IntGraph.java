@@ -7,8 +7,10 @@ import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import grph.path.Path;
+import toools.collections.Arrays;
 
 import java.util.Collection;
+import java.util.stream.IntStream;
 
 /**
  * A directed graph of int nodes and edges
@@ -17,13 +19,11 @@ import java.util.Collection;
  */
 public class IntGraph implements DirectedGraph {
 
-    private static int nextElementAvailable = 0;
-
-    private final TIntSet nodes = new TIntHashSet();
-    private final TIntSet edges = new TIntHashSet();
+    private final TIntList nodes = new TIntArrayList();
     private final TIntList tails = new TIntArrayList();
     private final TIntList heads = new TIntArrayList();
-    private final TIntObjectMap<TIntSet> adjacencyLists = new TIntObjectHashMap<>();
+    private final TIntObjectMap<TIntSet> predecessorLists = new TIntObjectHashMap<>();
+    private final TIntObjectMap<TIntSet> successorLists = new TIntObjectHashMap<>();
 
     @Override
     public void addNode(int node) {
@@ -36,10 +36,6 @@ public class IntGraph implements DirectedGraph {
     @Override
     public int addEdge(int tail, int head) {
 
-        if (edges.contains(nextElementAvailable)) {
-            return nextElementAvailable;
-        }
-
         if (!containsNode(tail)) {
             addNode(tail);
         }
@@ -48,22 +44,48 @@ public class IntGraph implements DirectedGraph {
             addNode(head);
         }
 
-        if (!adjacencyLists.containsKey(tail)) {
-            adjacencyLists.put(tail, new TIntHashSet());
-        }
+        boolean created = addSuccessor(tail, head);
 
-        if (!adjacencyLists.get(tail).contains(head)) {
-            adjacencyLists.get(tail).add(head);
+        if (created) {
+            addPredecessor(tail, head);
 
             tails.add(tail);
             heads.add(head);
 
-            edges.add(nextElementAvailable++);
-
-            return nextElementAvailable-1;
+            return tails.size()-1;
         }
 
         throw new IllegalStateException("already existing edge: "+tail+ " -> "+head);
+    }
+
+    private boolean addSuccessor(int tail, int head) {
+
+        if (!successorLists.containsKey(tail)) {
+            successorLists.put(tail, new TIntHashSet());
+        }
+
+        if (!successorLists.get(tail).contains(head)) {
+            successorLists.get(tail).add(head);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean addPredecessor(int tail, int head) {
+
+        if (!predecessorLists.containsKey(head)) {
+            predecessorLists.put(head, new TIntHashSet());
+        }
+
+        if (!predecessorLists.get(head).contains(tail)) {
+            predecessorLists.get(head).add(tail);
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -75,7 +97,33 @@ public class IntGraph implements DirectedGraph {
     @Override
     public int[] getEdges() {
 
+        return IntStream.range(0, tails.size()).toArray();
+    }
+
+    @Override
+    public int[] getEdgesIncidentTo(int... nodes) {
+
+        TIntSet edges = new TIntHashSet();
+
+        for (int node : nodes) {
+
+            findMatchingPointEdges(node, tails, edges);
+            findMatchingPointEdges(node, heads, edges);
+        }
+
         return edges.toArray();
+    }
+
+    private TIntSet findMatchingPointEdges(int node, TIntList endPoints, TIntSet edges) {
+
+        for (int i=0 ; i<endPoints.size() ; i++) {
+
+            if (endPoints.get(i) == node) {
+                edges.add(i);
+            }
+        }
+
+        return edges;
     }
 
     @Override
@@ -107,17 +155,70 @@ public class IntGraph implements DirectedGraph {
     @Override
     public boolean containsEdge(int edge) {
 
-        return edges.contains(edge);
+        return edge < tails.size();
     }
 
     @Override
-    public int[] getAncestors(int cvTermId) {
-        return new int[0];
+    public int[] getAncestors(int node) {
+
+        TIntSet ancestors = new TIntHashSet();
+
+        getAncestors(node, ancestors);
+
+        return ancestors.toArray();
+    }
+
+    private void getAncestors(int node, TIntSet ancestors) {
+
+        if (!predecessorLists.containsKey(node)) {
+            return;
+        }
+
+        predecessorLists.get(node).forEach(predecessor -> {
+
+            ancestors.add(predecessor);
+            getAncestors(predecessor, ancestors);
+
+            return true;
+        });
     }
 
     @Override
     public boolean isAncestorOf(int queryAncestor, int queryDescendant) {
-        return false;
+
+        return Arrays.contains(getAncestors(queryDescendant), queryAncestor);
+    }
+
+    @Override
+    public int[] getPredecessors(int node) {
+
+        if (!predecessorLists.containsKey(node)) {
+            return new int[] {0};
+        }
+
+        return predecessorLists.get(node).toArray();
+    }
+
+    @Override
+    public int[] getSuccessors(int node) {
+
+        if (!successorLists.containsKey(node)) {
+            return new int[] {0};
+        }
+
+        return successorLists.get(node).toArray();
+    }
+
+    @Override
+    public int getInDegree(int node) {
+
+        return getPredecessors(node).length;
+    }
+
+    @Override
+    public int getOutDegree(int node) {
+
+        return getSuccessors(node).length;
     }
 
     @Override
@@ -127,6 +228,22 @@ public class IntGraph implements DirectedGraph {
 
     @Override
     public DirectedGraph calcAncestorSubgraph(int node) {
-        return null;
+
+        int[] ancestors = getAncestors(node);
+
+        IntGraph sg = new IntGraph();
+
+        sg.addNode(node);
+        for (int i=0 ; i<ancestors.length ; i++) {
+             sg.addNode(ancestors[i]);
+        }
+
+        int[] edges = getEdgesIncidentTo(ancestors);
+
+        for (int i=0; i < edges.length ; i++) {
+            sg.addEdge(getTailNode(edges[i]), getHeadNode(edges[i]));
+        }
+
+        return sg;
     }
 }
