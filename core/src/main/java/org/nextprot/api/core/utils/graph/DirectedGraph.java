@@ -37,6 +37,8 @@ public interface DirectedGraph {
     int[] getEdges();
 
     int[] getEdgesIncidentTo(int... nodes);
+    int[] getInEdges(int... nodes);
+    int[] getOutEdges(int... nodes);
 
     /**
      * @return the tail node of the given edge
@@ -57,6 +59,11 @@ public interface DirectedGraph {
      * @return true if edge belongs to graph else false
      */
     boolean containsEdge(int edge);
+
+    /**
+     * @return true if tail -> head edge belongs to graph else false
+     */
+    boolean containsEdge(int tail, int head);
 
     /**
      * @return ancestors of the given node

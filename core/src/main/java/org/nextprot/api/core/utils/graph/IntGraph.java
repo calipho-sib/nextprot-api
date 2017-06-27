@@ -105,10 +105,33 @@ public class IntGraph implements DirectedGraph {
 
         TIntSet edges = new TIntHashSet();
 
+        edges.addAll(getInEdges(nodes));
+        edges.addAll(getOutEdges(nodes));
+
+        return edges.toArray();
+    }
+
+    @Override
+    public int[] getInEdges(int... nodes) {
+
+        TIntSet edges = new TIntHashSet();
+
+        for (int node : nodes) {
+
+            findMatchingPointEdges(node, heads, edges);
+        }
+
+        return edges.toArray();
+    }
+
+    @Override
+    public int[] getOutEdges(int... nodes) {
+
+        TIntSet edges = new TIntHashSet();
+
         for (int node : nodes) {
 
             findMatchingPointEdges(node, tails, edges);
-            findMatchingPointEdges(node, heads, edges);
         }
 
         return edges.toArray();
@@ -156,6 +179,12 @@ public class IntGraph implements DirectedGraph {
     public boolean containsEdge(int edge) {
 
         return edge < tails.size();
+    }
+
+    @Override
+    public boolean containsEdge(int tail, int head) {
+
+        return successorLists.containsKey(tail) && successorLists.get(tail).contains(head);
     }
 
     @Override
@@ -238,7 +267,7 @@ public class IntGraph implements DirectedGraph {
              sg.addNode(ancestors[i]);
         }
 
-        int[] edges = getEdgesIncidentTo(ancestors);
+        int[] edges = getInEdges(sg.getNodes());
 
         for (int i=0; i < edges.length ; i++) {
             sg.addEdge(getTailNode(edges[i]), getHeadNode(edges[i]));

@@ -148,6 +148,12 @@ public abstract class BaseIntGraphTest {
 
         DirectedGraph sg = graph.calcAncestorSubgraph(4);
 
+        Assert.assertEquals(4, sg.countNodes());
         Assert.assertTrue(new TIntHashSet(sg.getNodes()).containsAll(new int[] {4, 6, 7}));
+        //Assert.assertEquals(4, sg.countEdges());
+        Assert.assertTrue(sg.containsEdge(6, 5));
+        Assert.assertTrue(sg.containsEdge(6, 7));
+        Assert.assertTrue(sg.containsEdge(5, 4));
+        Assert.assertTrue(sg.containsEdge(7, 4));
     }
 }

@@ -77,6 +77,11 @@ public class IntGrph implements DirectedGraph {
         return graph.containsVertex(edge);
     }
 
+    @Override
+    public boolean containsEdge(int tail, int head) {
+        return false;
+    }
+
     public void computeAllAncestors() {
 
         Collection<Path> paths = graph.getAllPaths();
@@ -150,6 +155,16 @@ public class IntGrph implements DirectedGraph {
     public int[] getEdgesIncidentTo(int... nodes) {
 
         return Arrays.stream(graph.getEdgesIncidentTo(nodes[0]).toLongArray()).mapToInt(l -> (int)l).toArray();
+    }
+
+    @Override
+    public int[] getInEdges(int... nodes) {
+        return new int[0];
+    }
+
+    @Override
+    public int[] getOutEdges(int... nodes) {
+        return new int[0];
     }
 
     @Override
