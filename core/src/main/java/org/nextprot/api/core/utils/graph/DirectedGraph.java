@@ -1,9 +1,5 @@
 package org.nextprot.api.core.utils.graph;
 
-import grph.path.Path;
-
-import java.util.Collection;
-
 /**
  * A graph with a set of vertices connected by edges, where the edges have a direction associated with them.
  * All nodes and edges are ints.
@@ -95,7 +91,15 @@ public interface DirectedGraph {
      */
     int getOutDegree(int node);
 
-    Collection<Path> calcAllPaths();
+    /**
+     * @return the sources (indegree = 0) of the graph
+     */
+    int[] getSources();
+
+    /**
+     * @return the sinks (outdegree = 0) of the graph
+     */
+    int[] getSinks();
 
     DirectedGraph calcAncestorSubgraph(int node);
 
@@ -129,9 +133,5 @@ public interface DirectedGraph {
 
     default boolean isSink(int node) {
         return getInDegree(node) > 0 && getOutDegree(node) == 0;
-    }
-
-    default boolean isInternal(int node) {
-        return !isSource(node) && !isSink(node);
     }
 }

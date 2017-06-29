@@ -6,10 +6,8 @@ import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
-import grph.path.Path;
 import toools.collections.Arrays;
 
-import java.util.Collection;
 import java.util.stream.IntStream;
 
 /**
@@ -187,6 +185,7 @@ public class IntGraph implements DirectedGraph {
         return successorLists.containsKey(tail) && successorLists.get(tail).contains(head);
     }
 
+    // TODO optimisation: could compute once and store all ancestors in map of nodes to ancestor nodes
     @Override
     public int[] getAncestors(int node) {
 
@@ -251,8 +250,33 @@ public class IntGraph implements DirectedGraph {
     }
 
     @Override
-    public Collection<Path> calcAllPaths() {
-        return null;
+    public int[] getSources() {
+
+        TIntSet sources = new TIntHashSet();
+
+        for (int node : getNodes()) {
+
+            if (isSource(node)) {
+                sources.add(node);
+            }
+        }
+
+        return sources.toArray();
+    }
+
+    @Override
+    public int[] getSinks() {
+
+        TIntSet sinks = new TIntHashSet();
+
+        for (int node : getNodes()) {
+
+            if (isSink(node)) {
+                sinks.add(node);
+            }
+        }
+
+        return sinks.toArray();
     }
 
     @Override

@@ -147,8 +147,13 @@ public class IntGrph implements DirectedGraph {
     }
 
     @Override
-    public Collection<Path> calcAllPaths() {
-        return graph.getAllPaths();
+    public int[] getSources() {
+        return Arrays.stream(graph.getSources().toLongArray()).mapToInt(l -> (int)l).toArray();
+    }
+
+    @Override
+    public int[] getSinks() {
+        return Arrays.stream(graph.getSinks().toLongArray()).mapToInt(l -> (int)l).toArray();
     }
 
     @Override
