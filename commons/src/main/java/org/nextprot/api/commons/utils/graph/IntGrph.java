@@ -38,6 +38,14 @@ public class IntGrph implements DirectedGraph {
     @Override
     public int addEdge(int tail, int head) {
 
+        if (!containsNode(tail)) {
+            addNode(tail);
+        }
+
+        if (!containsNode(head)) {
+            addNode(head);
+        }
+
         return (int) graph.addDirectedSimpleEdge(tail, head);
     }
 
@@ -79,6 +87,16 @@ public class IntGrph implements DirectedGraph {
 
     @Override
     public boolean containsEdge(int tail, int head) {
+
+        int[] edges = getOutEdges(tail);
+
+        for (int edge : edges) {
+
+            if (getHeadNode(edge) == head) {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -88,13 +106,10 @@ public class IntGrph implements DirectedGraph {
 
         for (Path path : paths) {
 
-            System.out.println(path);
             int dest = (int) path.getDestination();
-            System.out.println(dest);
             if (path.getNumberOfVertices() > 1) {
                 for (int i = 0; i < path.getNumberOfVertices() - 1; i++) {
 
-                    System.out.println(" -> "+path.getVertexAt(i));
                     ancestors.get(dest).add(path.getVertexAt(i));
                 }
             }
@@ -164,12 +179,26 @@ public class IntGrph implements DirectedGraph {
 
     @Override
     public int[] getInEdges(int... nodes) {
-        return new int[0];
+
+        LongSet edges = new LongHashSet();
+
+        for (int node : nodes) {
+            edges.addAll(graph.getInEdges((long)node));
+        }
+
+        return Arrays.stream(edges.toLongArray()).mapToInt(l -> (int)l).toArray();
     }
 
     @Override
     public int[] getOutEdges(int... nodes) {
-        return new int[0];
+
+        LongSet edges = new LongHashSet();
+
+        for (int node : nodes) {
+            edges.addAll(graph.getOutEdges((long)node));
+        }
+
+        return Arrays.stream(edges.toLongArray()).mapToInt(l -> (int)l).toArray();
     }
 
     @Override
@@ -177,7 +206,7 @@ public class IntGrph implements DirectedGraph {
 
         LongSet ancestors = new LongHashSet();
         ancestors.add(node);
-        ancestors.addAll(this.ancestors.get(node));
+        ancestors.addAll(getAncestors(node));
         return new IntGrph(graph.getSubgraphInducedByVertices(ancestors));
     }
 }
