@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.graph;
+package org.nextprot.api.commons.utils.graph;
 
 /**
  * A graph with a set of vertices connected by edges, where the edges have a direction associated with them.

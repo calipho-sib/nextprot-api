@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.graph;
+package org.nextprot.api.commons.utils.graph;
 
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
@@ -221,7 +221,7 @@ public class IntGraph implements DirectedGraph {
     public int[] getPredecessors(int node) {
 
         if (!predecessorLists.containsKey(node)) {
-            return new int[] {0};
+            return new int[0];
         }
 
         return predecessorLists.get(node).toArray();
@@ -231,7 +231,7 @@ public class IntGraph implements DirectedGraph {
     public int[] getSuccessors(int node) {
 
         if (!successorLists.containsKey(node)) {
-            return new int[] {0};
+            return new int[0];
         }
 
         return successorLists.get(node).toArray();

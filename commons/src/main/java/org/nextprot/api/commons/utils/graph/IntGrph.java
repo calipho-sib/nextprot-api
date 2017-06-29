@@ -1,4 +1,4 @@
-package org.nextprot.api.core.utils.graph;
+package org.nextprot.api.commons.utils.graph;
 
 import grph.Grph;
 import grph.in_memory.InMemoryGrph;

@@ -1,11 +1,11 @@
-package org.nextprot.api.core.utils.graph;
+package org.nextprot.api.commons.utils.graph;
 
 import gnu.trove.set.hash.TIntHashSet;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public abstract class BaseIntGraphTest {
+abstract class BaseIntGraphTest {
 
     private DirectedGraph graph;
     protected abstract DirectedGraph createGraph();
