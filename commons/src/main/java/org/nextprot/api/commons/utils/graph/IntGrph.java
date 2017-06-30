@@ -13,8 +13,12 @@ import java.util.Map;
 
 public class IntGrph implements DirectedGraph {
 
+    private String graphLabel;
     private final Grph graph;
     private final Map<Integer, LongSet> ancestors;
+    private final Map<Integer, String> nodeLabels;
+    private final Map<Integer, String> edgeLabels;
+
     private boolean allAncestorComputed = false;
 
     public IntGrph() {
@@ -25,7 +29,22 @@ public class IntGrph implements DirectedGraph {
     public IntGrph(Grph graph) {
 
         this.graph = graph;
+
         ancestors = new HashMap<>();
+        nodeLabels = new HashMap<>();
+        edgeLabels = new HashMap<>();
+    }
+
+    @Override
+    public void setGraphLabel(String label) {
+
+        this.graphLabel = label;
+    }
+
+    @Override
+    public String getGraphLabel() {
+
+        return graphLabel;
     }
 
     @Override
@@ -33,6 +52,22 @@ public class IntGrph implements DirectedGraph {
 
         graph.addVertex(node);
         ancestors.put(node, new LongHashSet());
+    }
+
+    @Override
+    public void setNodeLabel(int node, String label) {
+
+        if (!containsNode(node)) {
+            throw new IllegalArgumentException("node " + node+" does not exist");
+        }
+
+        nodeLabels.put(node, label);
+    }
+
+    @Override
+    public String getNodeLabel(int node) {
+
+        return nodeLabels.get(node);
     }
 
     @Override
@@ -50,6 +85,18 @@ public class IntGrph implements DirectedGraph {
     }
 
     @Override
+    public void setEdgeLabel(int edge, String label) {
+
+        edgeLabels.put(edge, label);
+    }
+
+    @Override
+    public String getEdgeLabel(int edge) {
+
+        return edgeLabels.get(edge);
+    }
+
+    @Override
     public int[] getNodes() {
 
         return Arrays.stream(graph.getVertices().toLongArray()).mapToInt(l -> (int)l).toArray();
@@ -59,6 +106,24 @@ public class IntGrph implements DirectedGraph {
     public int[] getEdges() {
 
         return Arrays.stream(graph.getEdges().toLongArray()).mapToInt(l -> (int)l).toArray();
+    }
+
+    @Override
+    public int getEdge(int tail, int head) {
+
+        if (!containsNode(tail) || !containsNode(head)) {
+            return -1;
+        }
+
+        LongSet edges = graph.getEdgesConnecting(tail, head);
+
+        if (edges.isEmpty()) {
+            return -1;
+        }
+        if (edges.size() > 1) {
+            throw new IllegalStateException("node "+tail +" should be have a direct connection with node "+head);
+        }
+        return (int) edges.toLongArray()[0];
     }
 
     @Override
@@ -202,7 +267,7 @@ public class IntGrph implements DirectedGraph {
     }
 
     @Override
-    public DirectedGraph calcAncestorSubgraph(int node) {
+    public IntGrph calcAncestorSubgraph(int node) {
 
         LongSet ancestors = new LongHashSet();
         ancestors.add(node);

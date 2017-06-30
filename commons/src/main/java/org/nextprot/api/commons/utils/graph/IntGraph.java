@@ -17,11 +17,26 @@ import java.util.stream.IntStream;
  */
 public class IntGraph implements DirectedGraph {
 
+    private String graphLabel;
     private final TIntList nodes = new TIntArrayList();
     private final TIntList tails = new TIntArrayList();
     private final TIntList heads = new TIntArrayList();
     private final TIntObjectMap<TIntSet> predecessorLists = new TIntObjectHashMap<>();
     private final TIntObjectMap<TIntSet> successorLists = new TIntObjectHashMap<>();
+    private final TIntObjectHashMap<String> nodeLabels = new TIntObjectHashMap<>();
+    private final TIntObjectHashMap<String> edgeLabels = new TIntObjectHashMap<>();
+
+    @Override
+    public void setGraphLabel(String label) {
+
+        this.graphLabel = label;
+    }
+
+    @Override
+    public String getGraphLabel() {
+
+        return graphLabel;
+    }
 
     @Override
     public void addNode(int node) {
@@ -29,6 +44,22 @@ public class IntGraph implements DirectedGraph {
         assert !nodes.contains(node) : node;
 
         nodes.add(node);
+    }
+
+    @Override
+    public void setNodeLabel(int node, String label) {
+
+        if (!containsNode(node)) {
+            throw new IllegalArgumentException("node " + node+" does not exist");
+        }
+
+        nodeLabels.put(node, label);
+    }
+
+    @Override
+    public String getNodeLabel(int node) {
+
+        return nodeLabels.get(node);
     }
 
     @Override
@@ -54,6 +85,22 @@ public class IntGraph implements DirectedGraph {
         }
 
         throw new IllegalStateException("already existing edge: "+tail+ " -> "+head);
+    }
+
+    @Override
+    public void setEdgeLabel(int edge, String label) {
+
+        if (!containsEdge(edge)) {
+            throw new IllegalArgumentException("edge " + edge+" does not exist");
+        }
+
+        edgeLabels.put(edge, label);
+    }
+
+    @Override
+    public String getEdgeLabel(int edge) {
+
+        return edgeLabels.get(edge);
     }
 
     private boolean addSuccessor(int tail, int head) {
@@ -99,6 +146,18 @@ public class IntGraph implements DirectedGraph {
     }
 
     @Override
+    public int getEdge(int tail, int head) {
+
+        for (int i=0 ; i<tails.size() ; i++) {
+
+            if (tails.get(i) == tail && heads.get(i) == head) {
+                 return i;
+            }
+        }
+        return -1;
+    }
+
+    @Override
     public int[] getEdgesIncidentTo(int... nodes) {
 
         TIntSet edges = new TIntHashSet();
@@ -135,7 +194,7 @@ public class IntGraph implements DirectedGraph {
         return edges.toArray();
     }
 
-    private TIntSet findMatchingPointEdges(int node, TIntList endPoints, TIntSet edges) {
+    private void findMatchingPointEdges(int node, TIntList endPoints, TIntSet edges) {
 
         for (int i=0 ; i<endPoints.size() ; i++) {
 
@@ -143,8 +202,6 @@ public class IntGraph implements DirectedGraph {
                 edges.add(i);
             }
         }
-
-        return edges;
     }
 
     @Override
@@ -280,7 +337,7 @@ public class IntGraph implements DirectedGraph {
     }
 
     @Override
-    public DirectedGraph calcAncestorSubgraph(int node) {
+    public IntGraph calcAncestorSubgraph(int node) {
 
         int[] ancestors = getAncestors(node);
 

@@ -148,6 +148,65 @@ abstract class BaseIntGraphTest {
         Assert.assertTrue(sg.containsEdge(7, 4));
     }
 
+    @Test
+    public void getEdgeByEndPoints() throws Exception {
+
+        populateExampleGraph(graph);
+
+        Assert.assertEquals(6, graph.getEdge(6, 5));
+    }
+
+    @Test
+    public void couldNotGetEdgeByEndPoints() throws Exception {
+
+        populateExampleGraph(graph);
+
+        Assert.assertEquals(-1, graph.getEdge(5, 6));
+    }
+
+    @Test
+    public void couldNotGetEdgeByMissingEndPoint() throws Exception {
+
+        populateExampleGraph(graph);
+
+        Assert.assertEquals(-1, graph.getEdge(16, 5));
+    }
+
+    @Test
+    public void setGraphlabel() throws Exception {
+
+        graph.setGraphLabel("maurice");
+
+        Assert.assertEquals("maurice", graph.getGraphLabel());
+    }
+
+    @Test
+    public void setNodelabel() throws Exception {
+
+        populateExampleGraph(graph);
+        graph.setNodeLabel(1, "node 1");
+
+        Assert.assertEquals("node 1", graph.getNodeLabel(1));
+        Assert.assertEquals(null, graph.getNodeLabel(2));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setNodelabelUnknownNode() throws Exception {
+
+        populateExampleGraph(graph);
+        graph.setNodeLabel(14, "node 1");
+    }
+
+    @Test
+    public void setEdgelabel() throws Exception {
+
+        populateExampleGraph(graph);
+        graph.setEdgeLabel(1, "edge 1");
+
+        Assert.assertEquals("edge 1", graph.getEdgeLabel(1));
+        Assert.assertEquals(null, graph.getEdgeLabel(2));
+    }
+
     /*
                 1 ---2--3
             6__ 5 __/  /

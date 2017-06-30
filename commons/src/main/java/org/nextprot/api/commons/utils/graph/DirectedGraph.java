@@ -9,10 +9,33 @@ package org.nextprot.api.commons.utils.graph;
 public interface DirectedGraph {
 
     /**
+     * Set a graph label
+     * @param label a graph label
+     */
+    void setGraphLabel(String label);
+
+    /**
+     * @return the graph label
+     */
+    String getGraphLabel();
+
+    /**
      * Add a node in graph
      * @param node
      */
     void addNode(int node);
+
+    /**
+     * Set a node label
+     * @param node a node id
+     * @param label a node label
+     */
+    void setNodeLabel(int node, String label);
+
+    /**
+     * @return the node label
+     */
+    String getNodeLabel(int node);
 
     /**
      * Add an edge in graph from tail to head
@@ -21,6 +44,18 @@ public interface DirectedGraph {
      * @return the edge id or -1 if already exists
      */
     int addEdge(int tail, int head);
+
+    /**
+     * Set an edge label
+     * @param edge a edge id
+     * @param label a node label
+     */
+    void setEdgeLabel(int edge, String label);
+
+    /**
+     * @return the edge label
+     */
+    String getEdgeLabel(int edge);
 
     /**
      * @return an array of graph nodes
@@ -32,17 +67,22 @@ public interface DirectedGraph {
      */
     int[] getEdges();
 
+    /**
+     * @return the edge id from end points or -1 if not found
+     */
+    int getEdge(int tail, int head);
+
     int[] getEdgesIncidentTo(int... nodes);
     int[] getInEdges(int... nodes);
     int[] getOutEdges(int... nodes);
 
     /**
-     * @return the tail node of the given edge
+     * @return the tail node of the given edge or -1 if not found
      */
     int getTailNode(int edge);
 
     /**
-     * @return the head node of the given edge
+     * @return the head node of the given edge or -1 if not found
      */
     int getHeadNode(int edge);
 
