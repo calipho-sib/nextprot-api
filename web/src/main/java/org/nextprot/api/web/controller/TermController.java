@@ -88,4 +88,15 @@ public class TermController {
 
 		return map;
 	}
+
+	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/term/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String getAncestorSubgraph(
+			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
+			@PathVariable("term") String term) {
+
+		String outputInJson = "";
+
+		return outputInJson;
+	}
 }
