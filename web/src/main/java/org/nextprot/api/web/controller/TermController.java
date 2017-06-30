@@ -1,6 +1,5 @@
 package org.nextprot.api.web.controller;
 
-import grph.Grph;
 import org.jsondoc.core.annotation.Api;
 import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
@@ -10,7 +9,7 @@ import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
-import org.nextprot.api.core.utils.graph.OntologyDAG;
+import org.nextprot.api.core.utils.graph.CvTermGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -93,14 +92,14 @@ public class TermController {
 
 	@ApiMethod(path = "/terminology/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/terminology/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Grph getAncestorSubgraph(
+	public CvTermGraph getAncestorSubgraph(
 			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "GO:0050789"})
 			@PathVariable("term") String term) {
 
 		CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
 
-		OntologyDAG ontology = terminologyService.findOntologyGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
+		CvTermGraph graph = terminologyService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
 
-		return ontology.getAncestorSubgraph(cvTerm.getId());
+		return (CvTermGraph) graph.calcAncestorSubgraph(cvTerm.getId().intValue());
 	}
 }
