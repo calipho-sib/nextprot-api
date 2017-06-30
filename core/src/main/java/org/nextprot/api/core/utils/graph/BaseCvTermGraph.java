@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * Created by fnikitin on 23.06.17.
  */
-abstract class BaseCvTermGraph implements Serializable {
+public abstract class BaseCvTermGraph implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -168,6 +168,11 @@ abstract class BaseCvTermGraph implements Serializable {
 
     public int getHeadNode(int edge) {
         return graph.getHeadNode(edge);
+    }
+
+    public String JSONify() {
+
+        return graph.JSONify();
     }
 
     /**

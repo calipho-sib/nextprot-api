@@ -28,36 +28,4 @@ public class CvTermGraph extends BaseCvTermGraph implements Serializable {
 
         return () -> new CvTermGraph(terminologyCv, graph);
     }
-
-    /*
-
-    {
-    "graph": {
-        "metadata": {
-        },
-        "nodes": [
-            {
-                "id": "0",
-                "label": "node label(0)",
-                "metadata": { }
-            },
-            {
-                "id": "1",
-                "label": "node label(1)",
-                "metadata": { }
-            }
-        ],
-        "edges": [
-            {
-                "tail": "0",
-                "relation": "edge relationship",
-                "head": "1",
-                "label": "edge label",
-                "metadata": { }
-            }
-        ]
-    }
-}
-
-     */
 }

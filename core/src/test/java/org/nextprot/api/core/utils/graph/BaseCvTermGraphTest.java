@@ -177,5 +177,7 @@ public abstract class BaseCvTermGraphTest extends CoreUnitBaseTest {
 
             Assert.assertTrue(expectedEdges.contains(edgeNodes));
         }
+
+        System.out.println(ancestorGraph.JSONify());
     }
 }
