@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.utils.graph.DirectedGraph;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
@@ -119,7 +118,7 @@ public abstract class BaseCvTermGraphTest extends CoreUnitBaseTest {
 
         BaseCvTermGraph graph = createGraph(TerminologyCv.GoBiologicalProcessCv, terminologyService);
 
-        DirectedGraph ancestorGraph = graph.calcAncestorSubgraph(graph.getCvTermIdByAccession("GO:0050789"));
+        BaseCvTermGraph ancestorGraph = graph.calcAncestorSubgraph(graph.getCvTermIdByAccession("GO:0050789"));
 
         Set<String> nodes = IntStream.of(ancestorGraph.getNodes())
                 .mapToObj(graph::getCvTermAccessionById)
@@ -131,6 +130,42 @@ public abstract class BaseCvTermGraphTest extends CoreUnitBaseTest {
                 Arrays.asList("GO:0065007", "GO:0050789"),
                 Arrays.asList("GO:0008150", "GO:0050789"),
                 Arrays.asList("GO:0008150", "GO:0065007")
+        );
+
+        for (int e : ancestorGraph.getEdges()) {
+
+            List<String> edgeNodes = Arrays.asList(
+                    graph.getCvTermAccessionById(ancestorGraph.getTailNode(e)),
+                    graph.getCvTermAccessionById(ancestorGraph.getHeadNode(e))
+            );
+
+            Assert.assertTrue(expectedEdges.contains(edgeNodes));
+        }
+    }
+
+    @Test
+    public void testBloodTermAncestorSubgraph() throws Exception {
+
+        BaseCvTermGraph graph = createGraph(TerminologyCv.NextprotAnatomyCv, terminologyService);
+
+        BaseCvTermGraph ancestorGraph = graph.calcAncestorSubgraph(graph.getCvTermIdByAccession("TS-0079"));
+
+        Set<String> nodes = IntStream.of(ancestorGraph.getNodes())
+                .mapToObj(graph::getCvTermAccessionById)
+                .collect(Collectors.toSet());
+
+        Assert.assertEquals(Sets.newHashSet("TS-0079", "TS-0449", "TS-1297", "TS-2018", "TS-2088", "TS-2101", "TS-2178"), nodes);
+
+        List<List<String>> expectedEdges = Arrays.asList(
+                Arrays.asList("TS-1297", "TS-0079"),
+                Arrays.asList("TS-0449", "TS-0079"),
+                Arrays.asList("TS-2101", "TS-0079"),
+                Arrays.asList("TS-2018", "TS-0449"),
+                Arrays.asList("TS-2088", "TS-1297"),
+                Arrays.asList("TS-2088", "TS-2018"),
+                Arrays.asList("TS-2178", "TS-2101"),
+                Arrays.asList("TS-2178", "TS-2088")
+
         );
 
         for (int e : ancestorGraph.getEdges()) {

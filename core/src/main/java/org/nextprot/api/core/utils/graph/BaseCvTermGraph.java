@@ -1,16 +1,14 @@
 package org.nextprot.api.core.utils.graph;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.graph.DirectedGraph;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
@@ -24,28 +22,29 @@ abstract class BaseCvTermGraph implements Serializable {
 
     private final static Logger LOGGER = Logger.getLogger(BaseCvTermGraph.class.getSimpleName());
 
-    private final TerminologyCv terminologyCv;
     protected final DirectedGraph graph;
-
-    private final Map<String, Integer> cvTermIdByAccession;
-    private final Map<Integer, String> cvTermAccessionById;
 
     public BaseCvTermGraph(TerminologyCv terminologyCv, TerminologyService service, Supplier<DirectedGraph> graphSupplier) {
 
         Preconditions.checkNotNull(terminologyCv);
         Preconditions.checkNotNull(service);
+        Preconditions.checkNotNull(graphSupplier);
 
         List<CvTerm> cvTerms = service.findCvTermsByOntology(terminologyCv.name());
 
-        this.terminologyCv = terminologyCv;
-
-        cvTermIdByAccession = new HashMap<>(cvTerms.size());
-        cvTermAccessionById = new HashMap<>(cvTerms.size());
-
         graph = graphSupplier.get();
+        graph.setGraphLabel(terminologyCv.name());
 
         cvTerms.forEach(this::addCvTermNode);
         cvTerms.forEach(this::addCvTermEdges);
+    }
+
+    BaseCvTermGraph(TerminologyCv terminologyCv, DirectedGraph graph) {
+
+        Preconditions.checkNotNull(graph);
+
+        this.graph = graph;
+        graph.setGraphLabel(terminologyCv.name());
     }
 
     private void addCvTermNode(CvTerm cvTerm) {
@@ -53,9 +52,7 @@ abstract class BaseCvTermGraph implements Serializable {
         int nodeId = Math.toIntExact(cvTerm.getId());
 
         graph.addNode(nodeId);
-
-        cvTermIdByAccession.put(cvTerm.getAccession(), nodeId);
-        cvTermAccessionById.put(nodeId, cvTerm.getAccession());
+        graph.setNodeLabel(nodeId, cvTerm.getAccession());
     }
 
     private void addCvTermEdges(CvTerm cvTerm) {
@@ -77,7 +74,7 @@ abstract class BaseCvTermGraph implements Serializable {
      * @return the TerminologyCv of this graph of CvTerms
      */
     public TerminologyCv getTerminologyCv() {
-        return terminologyCv;
+        return TerminologyCv.getTerminologyOf(graph.getGraphLabel());
     }
 
     /**
@@ -85,10 +82,7 @@ abstract class BaseCvTermGraph implements Serializable {
      */
     public String getCvTermAccessionById(int id) {
 
-        if (!cvTermAccessionById.containsKey(id))
-            throw new IllegalStateException("cvterm id "+id+" was not found");
-
-        return cvTermAccessionById.get(id);
+        return graph.getNodeLabel(id);
     }
 
     /**
@@ -96,10 +90,12 @@ abstract class BaseCvTermGraph implements Serializable {
      */
     public int getCvTermIdByAccession(String accession) throws NotFoundNodeException {
 
-        if (!cvTermIdByAccession.containsKey(accession))
+        int cvTerm = graph.getNode(accession);
+
+        if (cvTerm == -1)
             throw this.new NotFoundNodeException(accession);
 
-        return cvTermIdByAccession.get(accession);
+        return cvTerm;
     }
 
     /**
@@ -107,7 +103,7 @@ abstract class BaseCvTermGraph implements Serializable {
      */
     public boolean hasCvTermAccession(String cvTermAccession) {
 
-        return cvTermIdByAccession.containsKey(cvTermAccession);
+        return graph.getNode(cvTermAccession) != -1;
     }
 
     int[] getSources() {
@@ -145,10 +141,12 @@ abstract class BaseCvTermGraph implements Serializable {
         return graph.getAncestors(cvTermId);
     }
 
-    public DirectedGraph calcAncestorSubgraph(int cvTermId) {
+    public BaseCvTermGraph calcAncestorSubgraph(int cvTermId) {
 
-        return graph.calcAncestorSubgraph(cvTermId);
+        return newSupplier(getTerminologyCv(), graph.calcAncestorSubgraph(cvTermId)).get();
     }
+
+    protected abstract Supplier<? extends BaseCvTermGraph> newSupplier(TerminologyCv terminologyCv, DirectedGraph graph);
 
     public int[] getParents(int cvTermId) {
 
@@ -160,6 +158,18 @@ abstract class BaseCvTermGraph implements Serializable {
         return graph.getSuccessors(cvTermId);
     }
 
+    public int[] getEdges() {
+        return graph.getEdges();
+    }
+
+    public int getTailNode(int edge) {
+        return graph.getTailNode(edge);
+    }
+
+    public int getHeadNode(int edge) {
+        return graph.getHeadNode(edge);
+    }
+
     /**
      * Thrown if no nodes map the given cvterm accession
      */
@@ -167,7 +177,7 @@ abstract class BaseCvTermGraph implements Serializable {
 
         public NotFoundNodeException(String accession) {
 
-            super("CvTerm node with accession "+accession+" was not found in "+terminologyCv + " graph");
+            super("CvTerm node with accession "+accession+" was not found in "+getTerminologyCv() + " graph");
         }
     }
 }
