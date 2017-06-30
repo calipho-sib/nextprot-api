@@ -3,7 +3,9 @@ package org.nextprot.api.commons.utils.graph;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import toools.collections.Arrays;
@@ -23,8 +25,9 @@ public class IntGraph implements DirectedGraph {
     private final TIntList heads = new TIntArrayList();
     private final TIntObjectMap<TIntSet> predecessorLists = new TIntObjectHashMap<>();
     private final TIntObjectMap<TIntSet> successorLists = new TIntObjectHashMap<>();
-    private final TIntObjectHashMap<String> nodeLabels = new TIntObjectHashMap<>();
-    private final TIntObjectHashMap<String> edgeLabels = new TIntObjectHashMap<>();
+    private final TIntObjectMap<String> nodeLabels = new TIntObjectHashMap<>();
+    private final TObjectIntMap<String> nodesByLabel = new TObjectIntHashMap<>();
+    private final TIntObjectMap<String> edgeLabels = new TIntObjectHashMap<>();
 
     @Override
     public void setGraphLabel(String label) {
@@ -39,9 +42,20 @@ public class IntGraph implements DirectedGraph {
     }
 
     @Override
+    public void addNode(int node, String label) {
+
+        addNode(node);
+        setNodeLabel(node, label);
+    }
+
+    @Override
     public void addNode(int node) {
 
         assert !nodes.contains(node) : node;
+
+        if (node < 0) {
+            throw new IllegalStateException("node cannot be negative");
+        }
 
         nodes.add(node);
     }
@@ -53,13 +67,32 @@ public class IntGraph implements DirectedGraph {
             throw new IllegalArgumentException("node " + node+" does not exist");
         }
 
+        if (nodesByLabel.containsKey(label)) {
+            throw new IllegalArgumentException("node label " + label+" already exist");
+        }
+
         nodeLabels.put(node, label);
+
+        if (label != null) {
+
+            nodesByLabel.put(label, node);
+        }
     }
 
     @Override
     public String getNodeLabel(int node) {
 
         return nodeLabels.get(node);
+    }
+
+    @Override
+    public int getNode(String label) {
+
+        if (!nodesByLabel.containsKey(label)) {
+            return -1;
+        }
+
+        return nodesByLabel.get(label);
     }
 
     @Override
@@ -343,9 +376,9 @@ public class IntGraph implements DirectedGraph {
 
         IntGraph sg = new IntGraph();
 
-        sg.addNode(node);
+        sg.addNode(node, getNodeLabel(node));
         for (int i=0 ; i<ancestors.length ; i++) {
-             sg.addNode(ancestors[i]);
+             sg.addNode(ancestors[i], getNodeLabel(ancestors[i]));
         }
 
         int[] edges = getInEdges(sg.getNodes());

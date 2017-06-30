@@ -17,6 +17,7 @@ public class IntGrph implements DirectedGraph {
     private final Grph graph;
     private final Map<Integer, LongSet> ancestors;
     private final Map<Integer, String> nodeLabels;
+    private final Map<String, Integer> nodesByLabel;
     private final Map<Integer, String> edgeLabels;
 
     private boolean allAncestorComputed = false;
@@ -32,6 +33,7 @@ public class IntGrph implements DirectedGraph {
 
         ancestors = new HashMap<>();
         nodeLabels = new HashMap<>();
+        nodesByLabel = new HashMap<>();
         edgeLabels = new HashMap<>();
     }
 
@@ -50,8 +52,19 @@ public class IntGrph implements DirectedGraph {
     @Override
     public void addNode(int node) {
 
+        if (node < 0) {
+            throw new IllegalStateException("node cannot be negative");
+        }
+
         graph.addVertex(node);
         ancestors.put(node, new LongHashSet());
+    }
+
+    @Override
+    public void addNode(int node, String label) {
+
+        addNode(node);
+        setNodeLabel(node, label);
     }
 
     @Override
@@ -62,12 +75,23 @@ public class IntGrph implements DirectedGraph {
         }
 
         nodeLabels.put(node, label);
+        nodesByLabel.put(label, node);
     }
 
     @Override
     public String getNodeLabel(int node) {
 
         return nodeLabels.get(node);
+    }
+
+    @Override
+    public int getNode(String label) {
+
+        if (!nodesByLabel.containsKey(label)) {
+            return -1;
+        }
+
+        return nodesByLabel.get(label);
     }
 
     @Override
@@ -272,6 +296,14 @@ public class IntGrph implements DirectedGraph {
         LongSet ancestors = new LongHashSet();
         ancestors.add(node);
         ancestors.addAll(getAncestors(node));
-        return new IntGrph(graph.getSubgraphInducedByVertices(ancestors));
+
+        IntGrph sg = new IntGrph(graph.getSubgraphInducedByVertices(ancestors));
+
+        for (long ancestor : ancestors.toLongArray()) {
+
+            sg.setNodeLabel((int)ancestor, nodeLabels.get((int)ancestor));
+        }
+
+        return sg;
     }
 }

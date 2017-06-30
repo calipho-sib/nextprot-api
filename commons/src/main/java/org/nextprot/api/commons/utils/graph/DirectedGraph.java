@@ -22,8 +22,17 @@ public interface DirectedGraph {
     /**
      * Add a node in graph
      * @param node
+     * @throws IllegalArgumentException if node is negative
      */
     void addNode(int node);
+
+    /**
+     * Add a node with its label in graph
+     * @param node
+     * @param label
+     * @throws IllegalArgumentException if node is negative
+     */
+    void addNode(int node, String label);
 
     /**
      * Set a node label
@@ -33,9 +42,14 @@ public interface DirectedGraph {
     void setNodeLabel(int node, String label);
 
     /**
-     * @return the node label
+     * @return the node label or null if not defined
      */
     String getNodeLabel(int node);
+
+    /**
+     * @return the node given the label or -1 if not found
+     */
+    int getNode(String label);
 
     /**
      * Add an edge in graph from tail to head
