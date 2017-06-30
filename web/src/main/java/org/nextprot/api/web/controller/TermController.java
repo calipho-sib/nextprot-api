@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,16 +91,16 @@ public class TermController {
 		return map;
 	}
 
-	@ApiMethod(path = "/terminology/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/terminology/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String getAncestorSubgraph(
-			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "GO:0050789"})
+	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/term/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, String> getAncestorSubgraph(
+			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
 			@PathVariable("term") String term) {
 
 		CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
 
 		CvTermGraph graph = terminologyService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
 
-		return graph.calcAncestorSubgraph(cvTerm.getId().intValue()).JSONify();
+		return Collections.singletonMap("response", graph.calcAncestorSubgraph(cvTerm.getId().intValue()).JSONify().replace("//", ""));
 	}
 }

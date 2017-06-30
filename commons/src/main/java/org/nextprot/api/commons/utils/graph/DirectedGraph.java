@@ -195,14 +195,14 @@ public interface DirectedGraph {
 
         sb.append("{\"graph\": {");
         if (getGraphLabel() != null) {
-            sb.append("\"label\":").append(getGraphLabel()).append(",");
+            sb.append("\"label\":\"").append(getGraphLabel()).append("\",");
         }
         sb.append("\"nodes\": [");
         for (int node : getNodes()) {
             sb.append("{");
             sb.append("\"id\":").append(node);
             if (getNodeLabel(node) != null) {
-                sb.append(",\"label\":").append(getNodeLabel(node));
+                sb.append(",\"label\":\"").append(getNodeLabel(node)).append("\"");
             }
             sb.append("},");
         }
@@ -215,7 +215,7 @@ public interface DirectedGraph {
             sb.append("\"relation\":\"?\",");
             sb.append("\"head\":").append(getHeadNode(edge));
             if (getNodeLabel(edge) != null) {
-                sb.append(",\"label\":").append(getNodeLabel(edge));
+                sb.append(",\"label\":\"").append(getNodeLabel(edge)).append("\"");
             }
             sb.append("},");
         }
