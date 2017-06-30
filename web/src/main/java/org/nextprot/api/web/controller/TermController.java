@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,12 +92,10 @@ public class TermController {
 
 	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/term/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String getAncestorSubgraph(
+	public Map<String, String> getAncestorSubgraph(
 			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
 			@PathVariable("term") String term) {
 
-		String outputInJson = "";
-
-		return outputInJson;
+		return Collections.singletonMap("response", "{\"graph\":{\"label\":NextprotAnatomyCv,\"nodes\":[{\"id\":38286,\"label\":TS-0079},{\"id\":63267,\"label\":TS-1297},{\"id\":38700,\"label\":TS-0449},{\"id\":63332,\"label\":TS-2101},{\"id\":72643,\"label\":TS-2178},{\"id\":63254,\"label\":TS-2088},{\"id\":63345,\"label\":TS-2018}],\"edges\":[{\"tail\":63254,\"relation\":\"?\",\"head\":63345},{\"tail\":63345,\"relation\":\"?\",\"head\":38700},{\"tail\":72643,\"relation\":\"?\",\"head\":63332},{\"tail\":72643,\"relation\":\"?\",\"head\":63254},{\"tail\":63332,\"relation\":\"?\",\"head\":38286},{\"tail\":63267,\"relation\":\"?\",\"head\":38286},{\"tail\":38700,\"relation\":\"?\",\"head\":38286},{\"tail\":63254,\"relation\":\"?\",\"head\":63267}]}}");
 	}
 }
