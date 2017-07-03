@@ -1,5 +1,6 @@
 package org.nextprot.api.commons.utils.graph;
 
+import com.google.common.base.Preconditions;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.TIntObjectMap;
@@ -10,6 +11,10 @@ import gnu.trove.set.TIntSet;
 import gnu.trove.set.hash.TIntHashSet;
 import toools.collections.Arrays;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import java.util.stream.IntStream;
 
 /**
@@ -17,21 +22,32 @@ import java.util.stream.IntStream;
  *
  * Created by fnikitin on 23.06.17.
  */
-public class IntGraph implements DirectedGraph {
+public class IntGraph implements DirectedGraph, Externalizable {
 
     private String graphLabel;
-    private final TIntList nodes = new TIntArrayList();
-    private final TIntList tails = new TIntArrayList();
-    private final TIntList heads = new TIntArrayList();
-    private final TIntObjectMap<TIntSet> predecessorLists = new TIntObjectHashMap<>();
-    private final TIntObjectMap<TIntSet> successorLists = new TIntObjectHashMap<>();
-    private final TIntObjectMap<String> nodeLabels = new TIntObjectHashMap<>();
-    private final TObjectIntMap<String> nodesByLabel = new TObjectIntHashMap<>();
-    private final TIntObjectMap<String> edgeLabels = new TIntObjectHashMap<>();
+    private TIntList nodes = new TIntArrayList();
+    private TIntList tails = new TIntArrayList();
+    private TIntList heads = new TIntArrayList();
+    private TIntObjectMap<TIntSet> predecessorLists = new TIntObjectHashMap<>();
+    private TIntObjectMap<TIntSet> successorLists = new TIntObjectHashMap<>();
+    private TIntObjectMap<String> nodeLabels = new TIntObjectHashMap<>();
+    private TObjectIntMap<String> nodesByLabel = new TObjectIntHashMap<>();
+    private TIntObjectMap<String> edgeLabels = new TIntObjectHashMap<>();
+
+    public IntGraph() {
+
+        this("directed graph");
+    }
+
+    public IntGraph(String label) {
+
+        this.graphLabel = label;
+    }
 
     @Override
     public void setGraphLabel(String label) {
 
+        Preconditions.checkNotNull(label, "graph label should be defined");
         this.graphLabel = label;
     }
 
@@ -374,7 +390,7 @@ public class IntGraph implements DirectedGraph {
 
         int[] ancestors = getAncestors(node);
 
-        IntGraph sg = new IntGraph();
+        IntGraph sg = new IntGraph(getNodeLabel(node) + " ancestor graph");
 
         sg.addNode(node, getNodeLabel(node));
         for (int i=0 ; i<ancestors.length ; i++) {
@@ -388,5 +404,33 @@ public class IntGraph implements DirectedGraph {
         }
 
         return sg;
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+
+        out.writeObject(graphLabel);
+        ((TIntArrayList)nodes).writeExternal(out);
+        ((TIntArrayList)tails).writeExternal(out);
+        ((TIntArrayList)heads).writeExternal(out);
+        ((TIntObjectHashMap)predecessorLists).writeExternal(out);
+        ((TIntObjectHashMap)successorLists).writeExternal(out);
+        ((TIntObjectHashMap)nodeLabels).writeExternal(out);
+        ((TObjectIntHashMap)nodesByLabel).writeExternal(out);
+        ((TIntObjectHashMap)edgeLabels).writeExternal(out);
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+
+        graphLabel = (String) in.readObject();
+        ((TIntArrayList)nodes).readExternal(in);
+        ((TIntArrayList)tails).readExternal(in);
+        ((TIntArrayList)heads).readExternal(in);
+        ((TIntObjectHashMap)predecessorLists).readExternal(in);
+        ((TIntObjectHashMap)successorLists).readExternal(in);
+        ((TIntObjectHashMap)nodeLabels).readExternal(in);
+        ((TObjectIntHashMap)nodesByLabel).readExternal(in);
+        ((TIntObjectHashMap)edgeLabels).readExternal(in);
     }
 }

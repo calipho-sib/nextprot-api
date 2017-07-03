@@ -15,7 +15,7 @@ public class CvTermGraph extends BaseCvTermGraph implements Serializable {
 
     public CvTermGraph(TerminologyCv terminologyCv, TerminologyService service) {
 
-        super(terminologyCv, service, IntGraph::new);
+        super(terminologyCv, service, () -> new IntGraph(terminologyCv.name()));
     }
 
     private CvTermGraph(TerminologyCv terminologyCv, DirectedGraph graph) {

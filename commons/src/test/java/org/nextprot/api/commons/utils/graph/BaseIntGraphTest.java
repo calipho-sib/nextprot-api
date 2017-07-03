@@ -9,11 +9,11 @@ import toools.collections.Arrays;
 abstract class BaseIntGraphTest {
 
     private DirectedGraph graph;
-    protected abstract DirectedGraph createGraph();
+    protected abstract DirectedGraph createGraph(String title);
 
     @Before
     public void setup() throws Exception {
-        graph = createGraph();
+        graph = createGraph("graph");
     }
 
     @Test
@@ -214,7 +214,7 @@ abstract class BaseIntGraphTest {
                \     4
                 7 __/
     */
-    private static void populateExampleGraph(DirectedGraph graph) {
+    static void populateExampleGraph(DirectedGraph graph) {
 
         graph.addEdge(1, 2);
         graph.addEdge(2, 3);

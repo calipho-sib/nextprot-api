@@ -3,8 +3,10 @@ package org.nextprot.api.commons.utils.graph;
 public class IntGrphTest extends BaseIntGraphTest {
 
     @Override
-    protected DirectedGraph createGraph() {
+    protected DirectedGraph createGraph(String title) {
 
-        return new IntGrph();
+        DirectedGraph graph = new IntGrph();
+        graph.setGraphLabel(title);
+        return graph;
     }
 }
