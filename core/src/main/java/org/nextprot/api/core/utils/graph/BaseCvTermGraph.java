@@ -1,5 +1,6 @@
 package org.nextprot.api.core.utils.graph;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.common.base.Preconditions;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.commons.utils.graph.DirectedGraph;
@@ -7,6 +8,7 @@ import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -170,9 +172,26 @@ public abstract class BaseCvTermGraph implements Serializable {
         return graph.getHeadNode(edge);
     }
 
-    public String JSONify() {
+    public View toView() {
 
-        return graph.JSONify();
+        View view = new View();
+
+        view.setLabel(graph.getGraphLabel());
+
+        for (int nid : graph.getNodes()) {
+            View.Node node = new View.Node();
+            node.setData(nid, graph.getNodeLabel(nid));
+            view.addNode(node);
+        }
+
+        for (int eid : graph.getEdges()) {
+            View.Edge edge = new View.Edge();
+            edge.setData(eid, graph.getTailNode(eid), graph.getHeadNode(eid));
+            edge.setLabel(graph.getEdgeLabel(eid));
+            view.addEdge(edge);
+        }
+
+        return view;
     }
 
     /**
@@ -184,5 +203,95 @@ public abstract class BaseCvTermGraph implements Serializable {
 
             super("CvTerm node with accession "+accession+" was not found in "+getTerminologyCv() + " graph");
         }
+    }
+
+    public static class View {
+
+        private String label;
+        private List<Node> nodes = new ArrayList<>();
+        private List<Edge> edges = new ArrayList<>();
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
+
+        public List<Node> getNodes() {
+            return nodes;
+        }
+
+        public void addNode(Node node) {
+            this.nodes.add(node);
+        }
+
+        public List<Edge> getEdges() {
+            return edges;
+        }
+
+        public void addEdge(Edge edge) {
+            this.edges.add(edge);
+        }
+
+        public static class Node {
+
+            private int id;
+            private String label;
+
+            public int getId() {
+                return id;
+            }
+
+            public String getLabel() {
+                return label;
+            }
+
+            public void setData(int id, String label) {
+                this.id = id;
+                this.label = label;
+            }
+        }
+
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public static class Edge {
+
+            private int id;
+            private int tail;
+            private int head;
+            private String label;
+
+            public int getId() {
+                return id;
+            }
+
+            public void setId(int id) {
+                this.id = id;
+            }
+
+            public int getTail() {
+                return tail;
+            }
+
+            public int getHead() {
+                return head;
+            }
+
+            public void setData(int id, int tail, int head) {
+                this.id = id;
+                this.tail = tail;
+                this.head = head;
+            }
+
+            public String getLabel() {
+                return label;
+            }
+
+            public void setLabel(String label) {
+                this.label = label;
+            }
+        }
+
     }
 }

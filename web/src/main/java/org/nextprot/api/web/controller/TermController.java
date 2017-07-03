@@ -93,7 +93,7 @@ public class TermController {
 
 	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/term/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, String> getAncestorSubgraph(
+	public Map<String, CvTermGraph.View> getAncestorSubgraph(
 			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
 			@PathVariable("term") String term) {
 
@@ -101,6 +101,6 @@ public class TermController {
 
 		CvTermGraph graph = terminologyService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
 
-		return Collections.singletonMap("response", graph.calcAncestorSubgraph(cvTerm.getId().intValue()).JSONify().replace("//", ""));
+		return Collections.singletonMap("graph", graph.calcAncestorSubgraph(cvTerm.getId().intValue()).toView());
 	}
 }
