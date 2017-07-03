@@ -207,14 +207,6 @@ abstract class BaseIntGraphTest {
         Assert.assertEquals(null, graph.getEdgeLabel(2));
     }
 
-    @Test
-    public void JSONify() throws Exception {
-
-        populateExampleGraph(graph);
-        String json = graph.JSONify();
-        System.out.println(json);
-    }
-
     /*
                 1 ---2--3
             6__ 5 __/  /
