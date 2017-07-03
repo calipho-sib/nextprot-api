@@ -14,6 +14,19 @@ public class IntGraphTest extends BaseIntGraphTest {
     }
 
     @Test
+    public void testConstr() {
+
+        IntGraph g = new IntGraph();
+        Assert.assertEquals("directed graph", g.getGraphLabel());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testConstrUndefinedLabel() {
+
+        new IntGraph(null);
+    }
+
+    @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
 
         IntGraph graph = (IntGraph) createGraph("my graph");

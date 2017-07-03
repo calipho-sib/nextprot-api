@@ -41,7 +41,7 @@ public class IntGraph implements DirectedGraph, Externalizable {
 
     public IntGraph(String label) {
 
-        this.graphLabel = label;
+        setGraphLabel(label);
     }
 
     @Override
