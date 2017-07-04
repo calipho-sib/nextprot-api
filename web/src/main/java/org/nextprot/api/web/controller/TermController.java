@@ -1,22 +1,19 @@
 package org.nextprot.api.web.controller;
 
 import org.jsondoc.core.annotation.Api;
-import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
 import org.nextprot.api.commons.constants.TerminologyCv;
-import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
+import org.nextprot.api.core.utils.graph.CvTermGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -29,16 +26,7 @@ import java.util.Map;
 @Api(name = "Terminology", description = "Method to retrieve a terminology")
 public class TermController {
 
-	@Autowired private TerminologyService terminolgyService;
-	
-	@ApiMethod(path = "/terminology-tree/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/terminology-tree/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Tree<CvTerm>> getTerminologyTree(
-			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
-			@PathVariable("terminology") String terminology) {
-
-		return terminolgyService.findTerminology(TerminologyCv.getTerminologyOf(terminology));
-	}
+	@Autowired private TerminologyService terminologyService;
 
 	@ApiMethod(path = "/terminology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/terminology/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -46,33 +34,17 @@ public class TermController {
 			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
 			@PathVariable("terminology") String terminology) {
 
-		return terminolgyService.findCvTermsByOntology(TerminologyCv.getTerminologyOf(terminology).name());
+		return terminologyService.findCvTermsByOntology(TerminologyCv.getTerminologyOf(terminology).name());
 	}
-	
 	
 	@ApiMethod(path = "/terminology-names", verb = ApiVerb.GET, description = "Gets a list of terminology names", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/terminology-names", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<String> getTerminologyNames() {
-		return terminolgyService.findTerminologyNamesList();
+		return terminologyService.findTerminologyNamesList();
 	}
 
-
-	// TODO: Not sure about the representation to provide
-	/*@ApiMethod(path = "/ontology/{terminology}", verb = ApiVerb.GET, description = "Gets a terminology", produces = MediaType.APPLICATION_JSON_VALUE)
-	@RequestMapping(value = "/ontology/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public OntologyDAG getTerminologyGraph(
-			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
-			@PathVariable("terminology") String terminology) {
-
-		return terminolgyService.findOntologyGraph(TerminologyCv.getTerminologyOf(terminology));
-	}*/
-
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@ResponseBody
-	@RequestMapping(value = "/ontology/build-all", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiMethod(path = "/ontology/build-all", verb = ApiVerb.GET, description = "Build the ontology cache", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiAuthBasic(roles={"ROLE_ADMIN"})
-	public Map<String, String> buildOntologyCache() {
+	@RequestMapping(value = "/terminology-graph/build-all", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, String> buildTerminologyCache() {
 
 		Map<String, String> map = new HashMap<>();
 
@@ -80,7 +52,7 @@ public class TermController {
 		for (TerminologyCv terminologyCv : TerminologyCv.values()) {
 
 			Instant t = Instant.now();
-			terminolgyService.findOntologyGraph(terminologyCv);
+			terminologyService.findCvTermGraph(terminologyCv);
 			long ms = ChronoUnit.MILLIS.between(t, Instant.now());
 
 			map.put(terminologyCv.name(), String.valueOf(ms)+" ms");
@@ -90,12 +62,25 @@ public class TermController {
 		return map;
 	}
 
+	@ApiMethod(path = "/terminology-graph/{terminology}", verb = ApiVerb.GET, description = "Gets the graph of terminology", produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/terminology-graph/{terminology}", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
+	public Map<String, CvTermGraph.View> getTerminologyGraph(
+			@ApiPathParam(name = "terminology", description = "The name of the terminology. To get a list of possible terminologies, look at terminology-names method",  allowedvalues = { "nextprot-anatomy-cv"})
+			@PathVariable("terminology") String terminology) {
+
+		return Collections.singletonMap("terminology-graph", terminologyService.findCvTermGraph(TerminologyCv.getTerminologyOf(terminology)).toView());
+	}
+
 	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/term/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Map<String, String> getAncestorSubgraph(
+	public Map<String, CvTermGraph.View> getAncestorGraph(
 			@ApiPathParam(name = "term", description = "The accession of the cv term",  allowedvalues = { "TS-0079"})
 			@PathVariable("term") String term) {
 
-		return Collections.singletonMap("response", "{\"graph\":{\"label\":NextprotAnatomyCv,\"nodes\":[{\"id\":38286,\"label\":TS-0079},{\"id\":63267,\"label\":TS-1297},{\"id\":38700,\"label\":TS-0449},{\"id\":63332,\"label\":TS-2101},{\"id\":72643,\"label\":TS-2178},{\"id\":63254,\"label\":TS-2088},{\"id\":63345,\"label\":TS-2018}],\"edges\":[{\"tail\":63254,\"relation\":\"?\",\"head\":63345},{\"tail\":63345,\"relation\":\"?\",\"head\":38700},{\"tail\":72643,\"relation\":\"?\",\"head\":63332},{\"tail\":72643,\"relation\":\"?\",\"head\":63254},{\"tail\":63332,\"relation\":\"?\",\"head\":38286},{\"tail\":63267,\"relation\":\"?\",\"head\":38286},{\"tail\":38700,\"relation\":\"?\",\"head\":38286},{\"tail\":63254,\"relation\":\"?\",\"head\":63267}]}}");
+		CvTerm cvTerm = terminologyService.findCvTermByAccession(term);
+
+		CvTermGraph graph = terminologyService.findCvTermGraph(TerminologyCv.getTerminologyOf(cvTerm.getOntology()));
+
+		return Collections.singletonMap("ancestor-graph", graph.calcAncestorSubgraph(cvTerm.getId().intValue()).toView());
 	}
 }

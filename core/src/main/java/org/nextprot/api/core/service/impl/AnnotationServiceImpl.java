@@ -22,7 +22,7 @@ import org.nextprot.api.core.domain.annotation.*;
 import org.nextprot.api.core.service.*;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.core.utils.annot.AnnotationUtils;
-import org.nextprot.api.core.utils.graph.OntologyDAG;
+import org.nextprot.api.core.utils.graph.CvTermGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -31,8 +31,6 @@ import javax.annotation.Nullable;
 import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.function.Predicate;
-
-//import java.util.*;
 
 @Service
 public class AnnotationServiceImpl implements AnnotationService {
@@ -297,8 +295,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 				try {
 					return annotation.getCvTermAccessionCode() != null &&
 							(annotation.getCvTermAccessionCode().equals(ancestor.getAccession()) ||
-									dag.isAncestorOf(ancestor.getId(), dag.getCvTermIdByAccession(annotation.getCvTermAccessionCode())));
-				} catch (OntologyDAG.NotFoundNodeException e) {
+									graph.isAncestorOf(ancestor.getId().intValue(), graph.getCvTermIdByAccession(annotation.getCvTermAccessionCode())));
+				} catch (CvTermGraph.NotFoundNodeException e) {
 					return false;
 				}
 			}
@@ -316,8 +314,8 @@ public class AnnotationServiceImpl implements AnnotationService {
 				try {
 					return annotationEvidence.getEvidenceCodeAC() != null &&
 							(annotationEvidence.getEvidenceCodeAC().equals(ancestor.getAccession()) ||
-									dag.isAncestorOf(ancestor.getId(), dag.getCvTermIdByAccession(annotationEvidence.getEvidenceCodeAC())));
-				} catch (OntologyDAG.NotFoundNodeException e) {
+									graph.isAncestorOf(ancestor.getId().intValue(), graph.getCvTermIdByAccession(annotationEvidence.getEvidenceCodeAC())));
+				} catch (CvTermGraph.NotFoundNodeException e) {
 					return false;
 				}
 			}
@@ -351,12 +349,12 @@ public class AnnotationServiceImpl implements AnnotationService {
 	private abstract class BaseCvTermAncestorPredicate<T> implements Predicate<T> {
 
 		protected final CvTerm ancestor;
-		protected final OntologyDAG dag;
+		protected final CvTermGraph graph;
 
 		private BaseCvTermAncestorPredicate(CvTerm ancestor) {
 
 			this.ancestor = ancestor;
-			dag = terminologyService.findOntologyGraph(TerminologyCv.valueOf(ancestor.getOntology()));
+			graph = terminologyService.findCvTermGraph(TerminologyCv.valueOf(ancestor.getOntology()));
 		}
 	}
 

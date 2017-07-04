@@ -33,6 +33,7 @@ import java.util.stream.Stream;
  *
  * Created by fnikitin on 08.03.17.
  */
+@Deprecated
 public class OntologyDAG implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -205,6 +206,18 @@ public class OntologyDAG implements Serializable {
      */
     public Map<Long, LongSet> getCvTermIdAncestors() {
         return cvTermIdAncestors;
+    }
+
+    /**
+     * @param cvTermId the root id of the returned graph
+     * @return the ancestor graph
+     */
+    public Grph getAncestorSubgraph(long cvTermId) {
+
+        LongSet ancestors = new LongHashSet();
+        ancestors.add(cvTermId);
+        ancestors.addAll(cvTermIdAncestors.get(cvTermId));
+        return transientGraph.getSubgraphInducedByVertices(ancestors);
     }
 
     /**

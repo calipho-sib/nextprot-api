@@ -185,7 +185,7 @@ public class OntologyDAGAnalyserApp extends SpringBasedApp<OntologyDAGAnalyserAp
         t = Instant.now();
         for (TerminologyCv ontology : terminologyCvs) {
 
-            terminologyService.findOntologyGraph(ontology);
+            terminologyService.findCvTermGraph(ontology);
             pb.incrementValue();
         }
         pb.stop();
