@@ -88,6 +88,7 @@ class TerminologyServiceImpl implements TerminologyService {
 	}
 
 	@Override
+	@Cacheable("terminology-graph")
 	public CvTermGraph findCvTermGraph(TerminologyCv terminologyCv) {
 
 		return new CvTermGraph(terminologyCv, this);
