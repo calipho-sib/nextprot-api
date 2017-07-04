@@ -150,6 +150,8 @@ public abstract class BaseCvTermGraphTest extends CoreUnitBaseTest {
 
         BaseCvTermGraph ancestorGraph = graph.calcAncestorSubgraph(graph.getCvTermIdByAccession("TS-0079"));
 
+        Assert.assertEquals("TS-0079 ancestor graph", ancestorGraph.graph.getGraphLabel());
+
         Set<String> nodes = IntStream.of(ancestorGraph.getNodes())
                 .mapToObj(graph::getCvTermAccessionById)
                 .collect(Collectors.toSet());

@@ -49,7 +49,9 @@ public abstract class BaseCvTermGraph implements Serializable {
         this.graph = graph;
         this.terminologyCv = terminologyCv;
 
-        graph.setGraphLabel(terminologyCv.name()+ " graph");
+        if (graph.getGraphLabel().length() == 0) {
+            graph.setGraphLabel(terminologyCv.name() + " graph");
+        }
     }
 
     private void addCvTermNode(CvTerm cvTerm) {

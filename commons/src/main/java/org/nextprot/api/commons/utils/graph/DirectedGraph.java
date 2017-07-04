@@ -155,6 +155,9 @@ public interface DirectedGraph {
      */
     int[] getSinks();
 
+    /**
+     * @return the subgraph of this graph composed of given node and all ancestors nodes and edges
+     */
     DirectedGraph calcAncestorSubgraph(int node);
 
     /**
