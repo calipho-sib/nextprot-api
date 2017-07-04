@@ -33,6 +33,7 @@ import java.util.stream.Stream;
  *
  * Created by fnikitin on 08.03.17.
  */
+@Deprecated
 public class OntologyDAG implements Serializable {
 
     private static final long serialVersionUID = 1L;
