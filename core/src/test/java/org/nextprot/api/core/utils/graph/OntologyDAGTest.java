@@ -4,13 +4,13 @@ import com.google.common.collect.Sets;
 import grph.Grph;
 import grph.path.Path;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nextprot.api.commons.constants.TerminologyCv;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.test.base.CoreUnitBaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -22,7 +22,8 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-@ActiveProfiles({"dev","cache"})
+@Ignore
+//@ActiveProfiles({"dev","cache"})
 public class OntologyDAGTest extends CoreUnitBaseTest {
 
     @Autowired
