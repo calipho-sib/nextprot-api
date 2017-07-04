@@ -5,7 +5,6 @@ import org.nextprot.api.commons.utils.Tree;
 import org.nextprot.api.core.domain.CvTerm;
 import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.utils.graph.CvTermGraph;
-import org.nextprot.api.core.utils.graph.OntologyDAG;
 
 import java.util.List;
 import java.util.Set;
@@ -18,27 +17,19 @@ public interface TerminologyService {
 	CvTerm findCvTermByAccession(String accession);
 
 	/**
-	 * @return a {@code CvTerm} by id
-	 */
-	// TODO: should be implemented here, implementation should be cached, OntologyDAG will refered this service
-	//CvTerm findCvTermById(long id);
-
-	/**
 	 * @return a list of all {@code CvTerm}s of a given ontology
 	 */
 	List<CvTerm> findCvTermsByOntology(String ontology);
 
 	/**
-	 * @deprecated use {@link #findOntologyGraph(TerminologyCv)} instead
+	 * @deprecated use {@link #findCvTermGraph(TerminologyCv)} instead
 	 */
 	@Deprecated
 	Terminology findTerminology(TerminologyCv terminologyCv);
 
 	/**
-	 * @return a Directed Acyclic Graph of {@code CvTerm}s ontology
+	 * @return a graph of {@code CvTerm}s of a given terminology
 	 */
-	OntologyDAG findOntologyGraph(TerminologyCv terminologyCv);
-
 	CvTermGraph findCvTermGraph(TerminologyCv terminologyCv);
 
 	/**

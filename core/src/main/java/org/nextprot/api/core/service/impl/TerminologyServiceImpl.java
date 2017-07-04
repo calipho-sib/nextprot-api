@@ -12,7 +12,6 @@ import org.nextprot.api.core.domain.Terminology;
 import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.TerminologyUtils;
 import org.nextprot.api.core.utils.graph.CvTermGraph;
-import org.nextprot.api.core.utils.graph.OntologyDAG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -78,13 +77,6 @@ class TerminologyServiceImpl implements TerminologyService {
 		// modifying the cache, since the cache returns a reference) copy on
 		// read and copy on write is too much time consuming
 		return new ImmutableList.Builder<CvTerm>().addAll(terms).build();
-	}
-
-	@Override
-	@Cacheable("ontology-dag")
-	public OntologyDAG findOntologyGraph(TerminologyCv terminologyCv) {
-
-		return new OntologyDAG(terminologyCv, this);
 	}
 
 	@Override

@@ -102,13 +102,6 @@
 		statistics="true">
 	</cache>
 
-	<!-- http://www.ehcache.org/documentation/2.8/get-started/storage-options.html -->
-	<cache name="ontology-dag" overflowToOffHeap="false"
-		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="10"
-		   maxEntriesLocalDisk="100" eternal="true" memoryStoreEvictionPolicy="LFU"
-		   statistics="true">
-	</cache>
-
 	<cache name="terminology-graph" overflowToOffHeap="false"
 		   overflowToDisk="true" diskPersistent="true" maxEntriesLocalHeap="10"
 		   maxEntriesLocalDisk="100" eternal="true" memoryStoreEvictionPolicy="LFU"
