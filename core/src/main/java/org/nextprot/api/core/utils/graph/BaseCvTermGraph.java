@@ -24,6 +24,7 @@ public abstract class BaseCvTermGraph implements Serializable {
 
     private final static Logger LOGGER = Logger.getLogger(BaseCvTermGraph.class.getSimpleName());
 
+    protected final TerminologyCv terminologyCv;
     protected final DirectedGraph graph;
 
     public BaseCvTermGraph(TerminologyCv terminologyCv, TerminologyService service, Supplier<DirectedGraph> graphSupplier) {
@@ -34,8 +35,8 @@ public abstract class BaseCvTermGraph implements Serializable {
 
         List<CvTerm> cvTerms = service.findCvTermsByOntology(terminologyCv.name());
 
+        this.terminologyCv = terminologyCv;
         graph = graphSupplier.get();
-        graph.setGraphLabel(terminologyCv.name());
 
         cvTerms.forEach(this::addCvTermNode);
         cvTerms.forEach(this::addCvTermEdges);
@@ -46,7 +47,9 @@ public abstract class BaseCvTermGraph implements Serializable {
         Preconditions.checkNotNull(graph);
 
         this.graph = graph;
-        graph.setGraphLabel(terminologyCv.name());
+        this.terminologyCv = terminologyCv;
+
+        graph.setGraphLabel(terminologyCv.name()+ " graph");
     }
 
     private void addCvTermNode(CvTerm cvTerm) {
@@ -76,7 +79,8 @@ public abstract class BaseCvTermGraph implements Serializable {
      * @return the TerminologyCv of this graph of CvTerms
      */
     public TerminologyCv getTerminologyCv() {
-        return TerminologyCv.getTerminologyOf(graph.getGraphLabel());
+
+        return terminologyCv;
     }
 
     /**

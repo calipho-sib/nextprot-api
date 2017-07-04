@@ -36,7 +36,7 @@ public class IntGraph implements DirectedGraph, Externalizable {
 
     public IntGraph() {
 
-        this("directed graph");
+        this("");
     }
 
     public IntGraph(String label) {
@@ -390,7 +390,7 @@ public class IntGraph implements DirectedGraph, Externalizable {
 
         int[] ancestors = getAncestors(node);
 
-        IntGraph sg = new IntGraph(getNodeLabel(node) + " ancestor graph");
+        IntGraph sg = new IntGraph(getNodeLabel(node) + " ancestor subgraph");
 
         sg.addNode(node, getNodeLabel(node));
         for (int i=0 ; i<ancestors.length ; i++) {

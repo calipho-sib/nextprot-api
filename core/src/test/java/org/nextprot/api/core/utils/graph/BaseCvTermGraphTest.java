@@ -177,15 +177,5 @@ public abstract class BaseCvTermGraphTest extends CoreUnitBaseTest {
 
             Assert.assertTrue(expectedEdges.contains(edgeNodes));
         }
-
-        BaseCvTermGraph.View view = ancestorGraph.toView();
-        Assert.assertEquals("NextprotAnatomyCv", view.getLabel());
-        Assert.assertEquals(7, view.getNodes().size());
-        Assert.assertEquals(38286, view.getNodes().get(0).getId());
-        Assert.assertEquals("TS-0079", view.getNodes().get(0).getLabel());
-        Assert.assertEquals(8, view.getEdges().size());
-        Assert.assertEquals(63254, view.getEdges().get(0).getTail());
-        Assert.assertEquals(63345, view.getEdges().get(0).getHead());
-        Assert.assertEquals(null, view.getEdges().get(0).getLabel());
     }
 }

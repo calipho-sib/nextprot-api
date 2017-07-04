@@ -9,11 +9,11 @@ import toools.collections.Arrays;
 abstract class BaseIntGraphTest {
 
     private DirectedGraph graph;
-    protected abstract DirectedGraph createGraph(String title);
+    protected abstract DirectedGraph createGraph();
 
     @Before
     public void setup() throws Exception {
-        graph = createGraph("graph");
+        graph = createGraph();
     }
 
     @Test

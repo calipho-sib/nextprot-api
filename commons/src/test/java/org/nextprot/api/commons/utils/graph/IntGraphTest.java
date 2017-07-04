@@ -8,16 +8,16 @@ import java.io.*;
 public class IntGraphTest extends BaseIntGraphTest {
 
     @Override
-    protected DirectedGraph createGraph(String title) {
+    protected DirectedGraph createGraph() {
 
-        return new IntGraph(title);
+        return new IntGraph();
     }
 
     @Test
     public void testConstr() {
 
         IntGraph g = new IntGraph();
-        Assert.assertEquals("directed graph", g.getGraphLabel());
+        Assert.assertEquals("", g.getGraphLabel());
     }
 
     @Test(expected = NullPointerException.class)
@@ -29,7 +29,7 @@ public class IntGraphTest extends BaseIntGraphTest {
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
 
-        IntGraph graph = (IntGraph) createGraph("my graph");
+        IntGraph graph = (IntGraph) createGraph();
         populateExampleGraph(graph);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -44,7 +44,7 @@ public class IntGraphTest extends BaseIntGraphTest {
         graphRead = (IntGraph)ois.readObject();
         ois.close();
 
-        Assert.assertEquals("my graph", graphRead.getGraphLabel());
+        Assert.assertEquals("", graphRead.getGraphLabel());
         Assert.assertEquals(7, graphRead.countNodes());
         Assert.assertEquals(1, graphRead.getNodes()[0]);
         Assert.assertEquals(8, graphRead.countEdges());
