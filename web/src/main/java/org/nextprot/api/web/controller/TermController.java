@@ -91,6 +91,29 @@ public class TermController {
 		return map;
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	@ResponseBody
+	@RequestMapping(value = "/terminology/build-all", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiMethod(path = "/terminology/build-all", verb = ApiVerb.GET, description = "Build the terminology cache", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiAuthBasic(roles={"ROLE_ADMIN"})
+	public Map<String, String> buildTerminologyCache() {
+
+		Map<String, String> map = new HashMap<>();
+
+		Instant totalTime = Instant.now();
+		for (TerminologyCv terminologyCv : TerminologyCv.values()) {
+
+			Instant t = Instant.now();
+			terminologyService.findCvTermGraph(terminologyCv);
+			long ms = ChronoUnit.MILLIS.between(t, Instant.now());
+
+			map.put(terminologyCv.name(), String.valueOf(ms)+" ms");
+		}
+		map.put("TOTAL BUILD", String.valueOf(ChronoUnit.SECONDS.between(totalTime, Instant.now()))+" s");
+
+		return map;
+	}
+
 	@ApiMethod(path = "/term/{term}/ancestor-graph", verb = ApiVerb.GET, description = "Get the ancestor graph of the given term", produces = MediaType.APPLICATION_JSON_VALUE)
 	@RequestMapping(value = "/term/{term}/ancestor-graph", method = { RequestMethod.GET }, produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, CvTermGraph.View> getAncestorSubgraph(
