@@ -1,7 +1,6 @@
 package org.nextprot.api.web.controller;
 
 import org.jsondoc.core.annotation.Api;
-import org.jsondoc.core.annotation.ApiAuthBasic;
 import org.jsondoc.core.annotation.ApiMethod;
 import org.jsondoc.core.annotation.ApiPathParam;
 import org.jsondoc.core.pojo.ApiVerb;
@@ -11,12 +10,10 @@ import org.nextprot.api.core.service.TerminologyService;
 import org.nextprot.api.core.utils.graph.CvTermGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -46,11 +43,7 @@ public class TermController {
 		return terminologyService.findTerminologyNamesList();
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@ResponseBody
-	@RequestMapping(value = "/terminology/build-all", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiMethod(path = "/terminology/build-all", verb = ApiVerb.GET, description = "Build the terminology cache", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiAuthBasic(roles={"ROLE_ADMIN"})
+	@RequestMapping(value = "/terminology-graph/build-all", produces = MediaType.APPLICATION_JSON_VALUE)
 	public Map<String, String> buildTerminologyCache() {
 
 		Map<String, String> map = new HashMap<>();
