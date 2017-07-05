@@ -97,6 +97,7 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 		
 	}
 
+	@Ignore 
 	@Test // ok on np_20170413
     public void TheseShouldAlsoHaveProteomicsTrue() {  
     	
@@ -138,7 +139,8 @@ public class EntryReportServiceIntegrationTest extends CoreUnitBaseTest {
 
 	
  
-	//@Test // ok on np_20170413
+	@Ignore 
+	@Test // ok on np_20170413
     public void TheseShouldHaveAntibodyTrue() {  
     	
 		List<String> negEntries = Arrays.asList("NX_P03886","NX_P16949","NX_P09326","NX_P84077","NX_Q13291", "NX_O43488", "NX_Q5T7P8");
