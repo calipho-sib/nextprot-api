@@ -216,4 +216,12 @@ public class CvTermGraphTest extends CoreUnitBaseTest {
 
         Assert.assertEquals("high-affinity zinc uptake transmembrane transporter activity", graph.getCvTermNameById(1071));
     }
+
+    @Test
+    public void testUniprotFamilyGraph() throws Exception {
+
+        CvTermGraph graph = createGraph(TerminologyCv.UniprotFamilyCv, terminologyService);
+        Assert.assertEquals(9793, graph.countNodes());
+        Assert.assertEquals(2091, graph.countEdges());
+    }
 }
